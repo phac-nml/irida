@@ -30,6 +30,7 @@ import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
 import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
 import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -38,6 +39,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundExce
 import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
@@ -52,6 +54,7 @@ import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisS
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesUtils;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -78,16 +81,18 @@ public class AnalysisController {
 	private MessageSource messageSource;
 	private UserService userService;
 	private SampleService sampleService;
+	private ProjectService projectService;
 
 	@Autowired
 	public AnalysisController(AnalysisSubmissionService analysisSubmissionService,
 			IridaWorkflowsService iridaWorkflowsService, UserService userService,
-			SampleService sampleService, MessageSource messageSource) {
+			SampleService sampleService, ProjectService projectService, MessageSource messageSource) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
 		this.messageSource = messageSource;
 		this.userService = userService;
 		this.sampleService = sampleService;
+		this.projectService = projectService;
 	}
 
 	// ************************************************************************************************
@@ -202,10 +207,12 @@ public class AnalysisController {
 	@RequestMapping("/{submissionId}/advanced-phylo")
 	public String getAdvancedPhylogeneticVisualizationPage(
 			@PathVariable Long submissionId, Model model,
-			@RequestParam(required = false, defaultValue = "default") String template){
+			@RequestParam(required = false) Long templateId){
 
 		model.addAttribute("submissionId", submissionId);
-		model.addAttribute("currentTemplate", template);
+		if (templateId != null) {
+			model.addAttribute("currentTemplateId", templateId);
+		}
 		return BASE + "visualizations/phylocanvas-metadata";
 	}
 
@@ -501,6 +508,39 @@ public class AnalysisController {
 				"terms", terms,
 				"metadata", metadata
 		);
+	}
+
+	/**
+	 * Get a list of all {@link MetadataTemplate}s for the {@link Analysis}
+	 * @param submissionId
+	 * @return
+	 */
+	@RequestMapping("/ajax/{submissionId}/metadata-templates")
+	@ResponseBody
+	public Map<String, Object> getMetadataTemplatesForAnalysis(@PathVariable Long submissionId){
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+		List<Map> templates = ImmutableList.of(
+				ImmutableMap.of("label", "NCBI Export", "id", 0),
+				ImmutableMap.of("label", "PulseNet", "id", 1) );
+		return ImmutableMap.of("templates", templates);
+	}
+
+	@RequestMapping("/ajax/{submissionId}/metadata-template-fields")
+	@ResponseBody
+	public Map<String, Object> getMetadataTemplateFields(
+			@PathVariable Long submissionId,
+			@RequestParam Integer templateId){
+		List<List> templates = new ArrayList<>();
+
+		// Fake template 1
+		List<String> ncbiFields = ImmutableList.of("NLEP #", "PFGE-XbaI-pattern", "Phagetype");
+		templates.add(ncbiFields);
+
+		// Fake template 2
+		List<String> pulseNetFields = ImmutableList.of("Serotype", "PatientAge", "Outbreak", "NLEP #");
+		templates.add(pulseNetFields);
+
+		return ImmutableMap.of("fields", templates.get(templateId));
 	}
 
 	/**
