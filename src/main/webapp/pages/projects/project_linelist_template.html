@@ -4,6 +4,33 @@
         layout:decorator="projects/_base">
 <head>
     <title th:text="#{linelist.create-template.title}">Title</title>
+    <style>
+        .form-group {
+            margin-bottom: 0!important;
+        }
+        ul[dnd-list],
+        ul[dnd-list] > li {
+            position: relative;
+        }
+
+        ul[dnd-list] > li {
+            border-left: 5px solid #eee;
+        }
+
+        ul[dnd-list] .dndDraggingSource {
+            display: none;
+        }
+
+        ul[dnd-list] .dndPlaceholder {
+            display: block;
+            background-color: #ddd;
+            min-height: 42px;
+        }
+
+        ul[dnd-list] {
+            padding-left: 0;
+        }
+    </style>
 </head>
 <body>
 <main layout:fragment="main" ddl:bundle-includes="project-linelist-template">
@@ -18,7 +45,7 @@
                 <label for="template-name" th:text="#{linelist.create-template.name}">Template Name</label>
             </div>
         </div>
-        <div class="row">
+        <div class="row spaced-bottom">
             <div class="form-group col-md-8">
                 <div class="form-group">
                     <input id="template-name" class="form-control" type="text" ng-model="$ctrl.template.name"/>
@@ -33,7 +60,7 @@
                 </button>
             </div>
         </div>
-        <div class="row">
+        <div class="row spaced-bottom">
             <div class="form-group col-md-8">
                 <label for="existing-templates" th:text="#{linelist.create-template.add-existing}">Add Existing
                     Template</label>
@@ -43,38 +70,50 @@
                         select2-basic=""
                         ng-change="$ctrl.getUpdatedTemplates()"
                         ng-model="$ctrl.existing">
-                    <option th:each="template : ${templates}" th:value="${template.id}" th:text="${template.label}"></option>
+                    <option th:each="template : ${templates}" th:value="${template.id}"
+                            th:text="${template.label}"></option>
                 </select>
             </div>
         </div>
         <label th:text="#{linelist.create-template.template-fields}">Template Fields</label>
-        <div class="fields">
-            <div class="row templates entry" ng-repeat="item in $ctrl.template.list">
-                <div class="col-md-12">
-                        <span class="label label-primary"
-                              ng-repeat="(template, value) in item.templates">{{ $ctrl.nameMap.get(template) }}</span>
-                </div>
-                <div class="form-group col-md-5">
-                    <input ng-disabled="item.templates" type="text" class="form-control field-label" ng-model="item.label"
-                           placeholder="Field Name"/>
-                </div>
-                <div class="form-group col-md-3">
-                    <select disabled="disabled" class="form-control" ng-model="item.type">
-                        <option value="text" th:text="#{linelist.add-field.type.text}">_TEXT_</option>
-                    </select>
-                </div>
-                <div class="col-md-4">
-                    <button class="btn btn-default add-field-btn"
-                            ng-click="$ctrl.addField($index)"
-                            ng-disabled="item.label.length &lt; 3"
-                            th:text="#{linelist.create-template.new-field}">Add
-                    </button>
-                    <button class="btn btn-default remove-field-btn"
-                            ng-hide="$ctrl.template.list.length === 1"
-                            ng-click="$ctrl.removeField($index)"
-                            th:text="#{linelist.create-template.remove-field}">Remove
-                    </button>
-                </div>
+        <div class="row">
+            <div class="col-md-8">
+                <ul class="list-group" dnd-list="$ctrl.template.list">
+                    <li class="list-group-item" ng-repeat="item in $ctrl.template.list"
+                        dnd-draggable="item"
+                        dnd-moved="$ctrl.template.list.splice($index, 1)"
+                        dnd-effect-allowed="move">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <span class="label label-primary"
+                                      style="margin-right: .5em;"
+                                      ng-repeat="(template, value) in item.templates">
+                                      {{ $ctrl.nameMap.get(template) }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-5">
+                                <input ng-disabled="item.templates" type="text" class="form-control field-label"
+                                       ng-model="item.label"
+                                       placeholder="Field Name"/>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <select disabled="disabled" class="form-control" ng-model="item.type">
+                                    <option value="text" th:text="#{linelist.add-field.type.text}">_TEXT_</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-default remove-field-btn"
+                                    ng-click="$ctrl.removeField($index)">
+                                <fa:icon type="remove"/>
+                            </button>
+                        </div>
+                    </li>
+                </ul>
+                <button class="btn btn-default add-field-btn"
+                        ng-click="$ctrl.addField()"
+                        th:text="#{linelist.create-template.new-field}">Add
+                </button>
             </div>
         </div>
     </script>

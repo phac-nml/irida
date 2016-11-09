@@ -61,13 +61,9 @@ export const TemplateInputComponent = {
      * Adds a new empty field below the button.
      * @param {number} index index of the button being clicked.
      */
-    this.addField = index => {
-      const item = this.template.list[index];
-      const INDEX_WITH_OFFSET = index + 3;
-      if (item.label) {
-        this.template.list
-          .splice(INDEX_WITH_OFFSET, 0, Object.assign({}, emptyField));
-      }
+    this.addField = () => {
+      this.template.list
+        .push(Object.assign({}, emptyField));
     };
 
     /**
