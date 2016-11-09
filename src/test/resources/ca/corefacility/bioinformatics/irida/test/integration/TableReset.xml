@@ -83,6 +83,11 @@
 
 	<announcement />
 	<announcement_user />
+	
+	<metadata_field/>
+	<metadata_template/>
+	<metadata_template_metadata_field/>
+	<project_metadata_template/>
 
 	<!-- All auditing table references *only* refer to the Revisions table, 
 		so they can all be listed in an arbitrary order *after* the Revisions table. -->
@@ -131,4 +136,8 @@
 	<announcement_AUD />
 	<announcement_user_AUD />
 	<remote_status_AUD />
+	<metadata_field_AUD/>
+	<metadata_template_AUD/>
+	<metadata_template_metadata_field_AUD/>
+	<project_metadata_template_AUD/>
 </dataset>
