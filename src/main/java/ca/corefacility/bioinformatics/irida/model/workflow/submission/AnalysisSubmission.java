@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -30,6 +31,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -173,6 +175,9 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "reference_file_id")
 	private ReferenceFile referenceFile;
+
+	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "analysisSubmission")
+	private List<ProjectAnalysisSubmissionJoin> projects;
 
 	@NotAudited
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)

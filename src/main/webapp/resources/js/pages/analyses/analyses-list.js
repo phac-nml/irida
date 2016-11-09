@@ -54,7 +54,10 @@ var analysesTable = (function (tl, page, $, moment, notifications) {
 			buttons += "<a class='btn btn-default btn-xs download-analysis-btn' href='" + page.URLS.download + full.id + "'><span class='fa fa-download' /></a>";
 		}
 
-		buttons += "<button type='button' data-toggle='modal' data-target='#deleteConfirmModal' class='btn btn-default btn-xs delete-analysis-btn' data-analysis-id='" + full.id + "'><span class='fa fa-trash'></button></div>";
+		if(full.updatePermission){
+			buttons += "<button type='button' data-toggle='modal' data-target='#deleteConfirmModal' class='btn btn-default btn-xs delete-analysis-btn' data-analysis-id='" + full.id + "'><span class='fa fa-trash'></button>";
+		}
+		buttons += "</div>";
 		return buttons;
 	}
 

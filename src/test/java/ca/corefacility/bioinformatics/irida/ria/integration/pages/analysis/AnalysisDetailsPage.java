@@ -1,6 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -25,8 +27,14 @@ public class AnalysisDetailsPage extends AbstractPage {
 	@FindBy(id = "inputs")
 	private WebElement tabInputFiles;
 
+	@FindBy(id = "share")
+	private WebElement tabShare;
+
 	@FindBy(className = "file-info")
 	private List<WebElement> fileInfo;
+
+	@FindBy(className = "share-project")
+	List<WebElement> shareCheckboxes;
 
 	@FindBy(className = "paired_end")
 	private List<WebElement> pairedEndElements;
@@ -38,12 +46,13 @@ public class AnalysisDetailsPage extends AbstractPage {
 	}
 
 	/**
-	 * Initialize the page so that the default {@link WebElement} have been found.
+	 * Initialize the page so that the default {@link WebElement} have been
+	 * found.
 	 *
 	 * @param driver
-	 * 		{@link WebDriver}
+	 *            {@link WebDriver}
 	 * @param analysisId
-	 * 		Id the the analysis page to view.
+	 *            Id the the analysis page to view.
 	 *
 	 * @return The initialized {@link AnalysisDetailsPage}
 	 */
@@ -57,6 +66,27 @@ public class AnalysisDetailsPage extends AbstractPage {
 	 */
 	public void displayProvenanceView() {
 		tabProvenance.click();
+	}
+
+	public void displayShareTab() {
+		tabShare.click();
+
+		waitForElementVisible(By.className("share-project"));
+	}
+
+	public List<Long> getSharedProjectIds() {
+		return shareCheckboxes.stream().filter(s -> s.isSelected()).map(s -> Long.valueOf(s.getAttribute("value")))
+				.collect(Collectors.toList());
+	}
+
+	public void clickShareBox(Long id) {
+		Optional<WebElement> checkbox = shareCheckboxes.stream()
+				.filter(s -> s.getAttribute("value").equals(id.toString())).findFirst();
+
+		if (!checkbox.isPresent()) {
+			throw new IllegalArgumentException("share box with id " + id + " doesn't exist");
+		}
+		checkbox.get().click();
 	}
 
 	/**
@@ -76,6 +106,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 
 	/**
 	 * Determine the number of files created.
+	 * 
 	 * @return {@link Integer}
 	 */
 	public int getNumberOfFilesDisplayed() {
@@ -92,7 +123,8 @@ public class AnalysisDetailsPage extends AbstractPage {
 	}
 
 	/**
-	 * Determine the number of parameters and their values used in the first tool
+	 * Determine the number of parameters and their values used in the first
+	 * tool
 	 *
 	 * @return {@link Integer} count of number of parameters
 	 */

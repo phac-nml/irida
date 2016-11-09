@@ -47,6 +47,13 @@ public class AnalysesUserPage extends AbstractPage {
 		return PageFactory.initElements(driver, AnalysesUserPage.class);
 	}
 	
+	public static AnalysesUserPage initializeProjectPage(Long projectId, WebDriver driver) {
+		get(driver, "projects/" + projectId + "/analyses");
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("table tbody tr")));
+		return PageFactory.initElements(driver, AnalysesUserPage.class);
+	}
+	
 	public void deleteFirstAnalysis() {
 		deleteAnalysisBtn.iterator().next().click();
 		WebElement deleteButton = waitForElementToBeClickable(driver.findElement(By.id("delete-analysis-button")));

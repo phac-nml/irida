@@ -17,6 +17,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
@@ -24,9 +25,12 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.ProjectAnalysisSubmissionJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -47,6 +51,12 @@ public class ReadAnalysisSubmissionPermissionTest {
 	private UserRepository userRepository;
 
 	@Mock
+	ProjectAnalysisSubmissionJoinRepository pasRepository;
+
+	@Mock
+	ReadProjectPermission readProjectPermission;
+
+	@Mock
 	private ReferenceFile referenceFile;
 
 	private UUID workflowId = UUID.randomUUID();
@@ -64,7 +74,7 @@ public class ReadAnalysisSubmissionPermissionTest {
 		MockitoAnnotations.initMocks(this);
 
 		readAnalysisSubmissionPermission = new ReadAnalysisSubmissionPermission(analysisSubmissionRepository,
-				userRepository, seqObjectPermission);
+				userRepository, seqObjectPermission, pasRepository, readProjectPermission);
 
 		inputSingleFiles = Sets.newHashSet(new SingleEndSequenceFile(new SequenceFile()));
 	}
@@ -166,12 +176,22 @@ public class ReadAnalysisSubmissionPermissionTest {
 		u.setUsername(username);
 		Authentication auth = new UsernamePasswordAuthenticationToken("aaron", "password1");
 
+		Project p = new Project();
+
 		SequenceFilePair pair = new SequenceFilePair();
 
 		AnalysisSubmission analysisSubmission = AnalysisSubmission.builder(workflowId).name("test")
 				.inputFilesPaired(ImmutableSet.of(pair)).referenceFile(referenceFile).build();
 		analysisSubmission.setSubmitter(new User());
 		pair.setAutomatedAssembly(analysisSubmission);
+
+		/*
+		 * testing that analysis is shared with a project that user isn't a part
+		 * of
+		 */
+		when(pasRepository.getProjectsForSubmission(analysisSubmission))
+				.thenReturn(ImmutableList.of(new ProjectAnalysisSubmissionJoin(p, analysisSubmission)));
+		when(readProjectPermission.customPermissionAllowed(auth, p)).thenReturn(false);
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(analysisSubmissionRepository.findOne(1L)).thenReturn(analysisSubmission);
@@ -182,6 +202,33 @@ public class ReadAnalysisSubmissionPermissionTest {
 		verify(userRepository).loadUserByUsername(username);
 		verify(analysisSubmissionRepository).findOne(1L);
 		verify(seqObjectPermission).customPermissionAllowed(auth, pair);
+	}
+
+	@Test
+	public void testPermitProjectShare() {
+		String username = "aaron";
+		User u = new User();
+		u.setUsername(username);
+		Authentication auth = new UsernamePasswordAuthenticationToken("aaron", "password1");
+
+		Project p = new Project();
+
+		AnalysisSubmission analysisSubmission = AnalysisSubmission.builder(workflowId).name("test")
+				.inputFilesSingleEnd(inputSingleFiles).referenceFile(referenceFile).build();
+		analysisSubmission.setSubmitter(new User());
+
+		when(pasRepository.getProjectsForSubmission(analysisSubmission))
+				.thenReturn(ImmutableList.of(new ProjectAnalysisSubmissionJoin(p, analysisSubmission)));
+
+		when(userRepository.loadUserByUsername(username)).thenReturn(u);
+		when(analysisSubmissionRepository.findOne(1L)).thenReturn(analysisSubmission);
+
+		when(readProjectPermission.customPermissionAllowed(auth, p)).thenReturn(true);
+
+		assertTrue("permission should be granted.", readAnalysisSubmissionPermission.isAllowed(auth, 1L));
+
+		verify(userRepository).loadUserByUsername(username);
+		verify(analysisSubmissionRepository).findOne(1L);
 	}
 
 }
