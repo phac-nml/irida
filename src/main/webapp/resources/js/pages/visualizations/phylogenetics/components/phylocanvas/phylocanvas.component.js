@@ -46,7 +46,6 @@ function controller($window, $scope, PhylocanvasService) {
    * @param {object} metadata Map of leafs with their metadata
    */
   const updateMetadata = metadata => {
-    console.log(metadata);
     for (const leaf of tree.leaves) {
       leaf.data = metadata[leaf.label];
     }
@@ -60,27 +59,30 @@ function controller($window, $scope, PhylocanvasService) {
   tree.setTreeType('rectangular');
   tree.alignLabels = true;
   tree.on('beforeFirstDraw', () => {
-    // Adding empty metadata to start.
-    const empty = {};
-    tree.leaves
-      .forEach(leaf => {
-        empty[leaf.label] = {};
-      });
-    updateMetadata(empty);
+    updateMetadata(this.metadata);
   });
 
   /**
    * Listen for changes to the metadata structure and update
    * the phylocanvas accordingly.
    */
-  $scope.$on(METADATA.UPDATED, (event, args) => updateMetadata(args.metadata));
+  $scope.$on(METADATA.UPDATED, (event, args) => {
+    updateMetadata(args.metadata);
+  });
+
+  $scope.$on(METADATA.LOADED, (event, args) => {
+    this.metadata = args.metadata;
+    tree.load(this.newick);
+  });
 
   /**
    * Kick everything off by getting the newick file and the
    * initial metadata.
    */
   PhylocanvasService.getNewickData(this.newickurl)
-    .then(newick => tree.load(newick));
+    .then(newick => {
+      this.newick = newick;
+    });
 }
 
 export const PhylocanvasComponent = {

@@ -32,11 +32,11 @@
                 <div class="chechbox col-md-4 col-sm-1" ng-repeat="term in $ctrl.terms">
                     <label>
                         <input type="checkbox"
-                               ng-value="term"
-                               ng-model="$ctrl.checkedTerms[$index]"
+                               ng-value="term.term"
+                               ng-model="term.selected"
                                ng-model-options="{ 'updateOn': 'default ', 'debounce': { 'default': 200 } }"
                                ng-change="$ctrl.getUpdateMetadata()"/>
-                        <span ng-bind="term"></span>
+                        <span ng-bind="term.term"></span>
                     </label>
                 </div>
             </div>

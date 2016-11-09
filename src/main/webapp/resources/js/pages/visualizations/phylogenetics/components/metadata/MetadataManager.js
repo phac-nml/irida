@@ -38,6 +38,10 @@ export class MetadataManager {
     this[_metadata].reference = reference;
   }
 
+  getAllMetadata() {
+    return this.getMetadataForKeys(this[_terms]);
+  }
+
   getMetadataForKeys(keys) {
     const result = {};
     this[_ids].forEach(id => {

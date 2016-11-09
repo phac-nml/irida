@@ -14,7 +14,10 @@ export class MetadataService {
         this[_metadataManager] = new MetadataManager(
           response.data.terms,
           response.data.metadata);
-        return response.data.terms;
+        return {
+          terms: response.data.terms,
+          metadata: this[_metadataManager].getAllMetadata()
+        };
       });
   }
 
