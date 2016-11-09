@@ -21,10 +21,10 @@ function controller($rootScope, MetadataService) {
    * Handler for when a checkbox's value changes.
    */
   this.getUpdateMetadata = () => {
-    const keys = this.terms
+    const columns = this.terms
       .filter(term => term.selected)
       .map(term => term.term);
-    MetadataService.getMetadataForKeys(keys);
+    $rootScope.$broadcast(METADATA.UPDATED, {columns});
   };
 }
 

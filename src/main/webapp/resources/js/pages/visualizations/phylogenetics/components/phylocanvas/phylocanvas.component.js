@@ -12,6 +12,7 @@ const metadataFormat = {
   blockLength: 32,
   blockSize: 32,
   padding: 25,
+  columns: [],
   propertyName: 'data',
   underlineHeaders: true,
   headerAngle: 0,
@@ -41,25 +42,13 @@ function controller($window, $scope, PhylocanvasService) {
       metadata: metadataFormat
     });
 
-  /**
-   * Update the tree leaves with new metadata
-   * @param {object} metadata Map of leafs with their metadata
-   */
-  const updateMetadata = metadata => {
-    for (const leaf of tree.leaves) {
-      leaf.data = metadata[leaf.label];
-    }
-    if (tree.drawn) {
-      tree.fitInPanel();
-      tree.draw();
-    }
-  };
-
   // Set tree defaults
   tree.setTreeType('rectangular');
   tree.alignLabels = true;
   tree.on('beforeFirstDraw', () => {
-    updateMetadata(this.metadata);
+    for (const leaf of tree.leaves) {
+      leaf.data = this.metadata[leaf.label];
+    }
   });
 
   /**
@@ -67,7 +56,10 @@ function controller($window, $scope, PhylocanvasService) {
    * the phylocanvas accordingly.
    */
   $scope.$on(METADATA.UPDATED, (event, args) => {
-    updateMetadata(args.metadata);
+    tree.metadata.columns = args.columns;
+    tree.draw();
+    tree.fitInPanel();
+    tree.draw();
   });
 
   $scope.$on(METADATA.LOADED, (event, args) => {
@@ -83,6 +75,8 @@ function controller($window, $scope, PhylocanvasService) {
     .then(newick => {
       this.newick = newick;
     });
+
+  window.tree = tree;
 }
 
 export const PhylocanvasComponent = {
