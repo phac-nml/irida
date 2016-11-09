@@ -79,8 +79,7 @@ function controller($window, $scope, PhylocanvasService) {
 
 export const PhylocanvasComponent = {
   bindings: {
-    newickurl: '@',
-    template: '@'
+    newickurl: '@'
   },
   templateUrl: 'phylocanvas.tmpl.html',
   controller

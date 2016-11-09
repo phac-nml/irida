@@ -1,5 +1,6 @@
 export const METADATA = {
-  GET: 'metadata.get',
   LOADED: 'metadata.loaded',
-  UPDATED: 'metadata.updated'
+  UPDATED: 'metadata.updated',
+  TEMPLATE: 'metadata.template',
+  ALL_FIELDS: 'metadata.all_fields'
 };
