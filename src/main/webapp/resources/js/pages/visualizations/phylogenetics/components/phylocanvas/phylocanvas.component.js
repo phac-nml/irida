@@ -75,8 +75,6 @@ function controller($window, $scope, PhylocanvasService) {
     .then(newick => {
       this.newick = newick;
     });
-
-  window.tree = tree;
 }
 
 export const PhylocanvasComponent = {
