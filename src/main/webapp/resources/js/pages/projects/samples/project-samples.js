@@ -106,9 +106,7 @@
       if (!$($event.target).is('input')) {
         $event.preventDefault();
       }
-
-      console.log("didit");
-
+      
       // Need to stop all propagation since this is an anchor tag.
       $event.stopPropagation();
       $event.stopImmediatePropagation();
