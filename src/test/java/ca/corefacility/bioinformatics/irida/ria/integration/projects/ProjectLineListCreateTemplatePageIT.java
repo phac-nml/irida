@@ -31,11 +31,11 @@ public class ProjectLineListCreateTemplatePageIT extends AbstractIridaUIITChrome
 		assertFalse("Save button should still be disabled", page.isSaveBtnEnabled());
 
 		page.setNewTemplateName(GOOD_TEMPLATE_NAME);
-		assertTrue("Save button should be enabled when a name longer than 3 characters is present",
+		assertTrue("Save button should be enabled when a name longer than 5 characters is present",
 				page.isSaveBtnEnabled());
 
 		page.setFieldLabel(0, "firstLabel");
-		page.addNewField(0);
+		page.addNewField();
 		page.setFieldLabel(0, "secondLabel");
 
 		assertEquals("There should be two fields on the page", 2, page.getNumberOfFields());
