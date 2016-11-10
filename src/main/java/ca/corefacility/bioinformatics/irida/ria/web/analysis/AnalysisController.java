@@ -296,6 +296,16 @@ public class AnalysisController {
 		return ImmutableMap.of("result", "success", "message", message);
 	}
 
+	/**
+	 * Get the page for viewing advanced phylogenetic visualization
+	 *
+	 * @param submissionId
+	 * 		{@link Long} identifier for an {@link AnalysisSubmission}
+	 * @param model
+	 * 		{@link Model}
+	 *
+	 * @return {@link String} path to the page template.
+	 */
 	@RequestMapping("/{submissionId}/advanced-phylo")
 	public String getAdvancedPhylogeneticVisualizationPage(
 			@PathVariable Long submissionId, Model model){
