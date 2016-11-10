@@ -3,17 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
@@ -673,10 +663,17 @@ public class AnalysisController {
 		return ImmutableMap.of("templates", templates);
 	}
 
+	/**
+	 * Generates a list of metadata fields for a five template.
+	 *
+	 * @param templateId
+	 * 		{@link Long} id for the {@link MetadataTemplate} that the fields are required.
+	 *
+	 * @return {@link Map}
+	 */
 	@RequestMapping("/ajax/{submissionId}/metadata-template-fields")
 	@ResponseBody
 	public Map<String, Object> getMetadataTemplateFields(
-			@PathVariable Long submissionId,
 			@RequestParam Long templateId){
 		MetadataTemplate template = metadataTemplateService.read(templateId);
 		List<MetadataField> metadataFields = template.getFields();
