@@ -30,7 +30,6 @@ import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
 import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
 import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -39,6 +38,10 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundExce
 import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataField;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
@@ -55,6 +58,7 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesUtils;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -82,17 +86,20 @@ public class AnalysisController {
 	private UserService userService;
 	private SampleService sampleService;
 	private ProjectService projectService;
+	private MetadataTemplateService metadataTemplateService;
 
 	@Autowired
 	public AnalysisController(AnalysisSubmissionService analysisSubmissionService,
 			IridaWorkflowsService iridaWorkflowsService, UserService userService,
-			SampleService sampleService, ProjectService projectService, MessageSource messageSource) {
+			SampleService sampleService, ProjectService projectService,
+			MetadataTemplateService metadataTemplateService, MessageSource messageSource) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
 		this.messageSource = messageSource;
 		this.userService = userService;
 		this.sampleService = sampleService;
 		this.projectService = projectService;
+		this.metadataTemplateService = metadataTemplateService;
 	}
 
 	// ************************************************************************************************
@@ -519,9 +526,30 @@ public class AnalysisController {
 	@ResponseBody
 	public Map<String, Object> getMetadataTemplatesForAnalysis(@PathVariable Long submissionId){
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
-		List<Map> templates = ImmutableList.of(
-				ImmutableMap.of("label", "NCBI Export", "id", 0),
-				ImmutableMap.of("label", "PulseNet", "id", 1) );
+		Set<Sample> samples = (Set<Sample>) sampleService.getSamplesForAnalysisSubimssion(submission);
+		Set<Long> projectIds = new HashSet<>();
+		Set<Map<String, Object>> templates = new HashSet<>();
+		for (Sample sample : samples) {
+			List<Join<Project, Sample>> projectSampleJoins = projectService.getProjectsForSample(sample);
+			for (Join<Project, Sample> join : projectSampleJoins) {
+				Project project = join.getSubject();
+				if (!projectIds.contains(project.getId())) {
+					projectIds.add(project.getId());
+
+					// Get the templates for the project
+					List<ProjectMetadataTemplateJoin> templateList = metadataTemplateService
+							.getMetadataTemplatesForProject(project);
+					for (ProjectMetadataTemplateJoin projectMetadataTemplateJoin : templateList) {
+						MetadataTemplate metadataTemplate = projectMetadataTemplateJoin.getObject();
+						Map<String, Object> templateMap = ImmutableMap
+								.of("label", metadataTemplate.getLabel(), "id", metadataTemplate.getId());
+						templates.add(templateMap);
+					}
+				}
+			}
+
+		}
+
 		return ImmutableMap.of("templates", templates);
 	}
 
@@ -529,18 +557,14 @@ public class AnalysisController {
 	@ResponseBody
 	public Map<String, Object> getMetadataTemplateFields(
 			@PathVariable Long submissionId,
-			@RequestParam Integer templateId){
-		List<List> templates = new ArrayList<>();
-
-		// Fake template 1
-		List<String> ncbiFields = ImmutableList.of("NLEP #", "PFGE-XbaI-pattern", "Phagetype");
-		templates.add(ncbiFields);
-
-		// Fake template 2
-		List<String> pulseNetFields = ImmutableList.of("Serotype", "PatientAge", "Outbreak", "NLEP #");
-		templates.add(pulseNetFields);
-
-		return ImmutableMap.of("fields", templates.get(templateId));
+			@RequestParam Long templateId){
+		MetadataTemplate template = metadataTemplateService.read(templateId);
+		List<MetadataField> metadataFields = template.getFields();
+		List<String> fields = new ArrayList<>();
+		for (MetadataField metadataField : metadataFields) {
+			fields.add(metadataField.getLabel());
+		}
+		return ImmutableMap.of("fields", fields);
 	}
 
 	/**

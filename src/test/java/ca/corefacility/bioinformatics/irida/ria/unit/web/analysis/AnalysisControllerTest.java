@@ -26,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysisController;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -46,6 +47,7 @@ public class AnalysisControllerTest {
 	private UserService userServiceMock;
 	private SampleService sampleService;
 	private ProjectService projectService;
+	private MetadataTemplateService metadataTemplateService;
 
 	@Before
 	public void init() {
@@ -53,9 +55,10 @@ public class AnalysisControllerTest {
 		iridaWorkflowsServiceMock = mock(IridaWorkflowsService.class);
 		sampleService = mock(SampleService.class);
 		projectService = mock(ProjectService.class);
+		metadataTemplateService = mock(MetadataTemplateService.class);
 		MessageSource messageSourceMock = mock(MessageSource.class);
 		analysisController = new AnalysisController(analysisSubmissionServiceMock, iridaWorkflowsServiceMock,
-				userServiceMock, sampleService, projectService, messageSourceMock);
+				userServiceMock, sampleService, projectService, metadataTemplateService, messageSourceMock);
 	}
 
 	@Test
