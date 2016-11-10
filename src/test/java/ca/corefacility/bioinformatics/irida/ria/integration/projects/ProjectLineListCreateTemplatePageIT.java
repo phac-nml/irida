@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
 import static junit.framework.TestCase.assertFalse;
 
 import org.junit.Before;
@@ -31,10 +30,12 @@ public class ProjectLineListCreateTemplatePageIT extends AbstractIridaUIITChrome
 		assertFalse("Save button should still be disabled", page.isSaveBtnEnabled());
 
 		page.setNewTemplateName(GOOD_TEMPLATE_NAME);
-		assertTrue("Save button should be enabled when a name longer than 5 characters is present",
+		assertFalse("Save button should be disabled when a name longer than 5 characters is present, but no valid input",
 				page.isSaveBtnEnabled());
 
 		page.setFieldLabel(0, "firstLabel");
+		assertTrue("Save button should be enabled when a name longer than 5 characters is present, and the fiel dis valid",
+				page.isSaveBtnEnabled());
 		page.addNewField();
 		page.setFieldLabel(0, "secondLabel");
 
