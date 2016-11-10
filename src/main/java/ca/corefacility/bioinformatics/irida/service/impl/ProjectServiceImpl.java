@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,7 +39,6 @@ import org.springframework.util.StringUtils;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.events.annotations.LaunchesProjectEvent;
@@ -59,26 +59,29 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectReferenceFileJoin;
-import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.ProjectAnalysisSubmissionJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectReferenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.RelatedProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.UserGroupProjectJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-
-import com.google.common.collect.ImmutableList;
 
 /**
  * A specialized service layer for projects.
@@ -100,6 +103,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	private final ReferenceFileRepository referenceFileRepository;
 	private final ProjectReferenceFileJoinRepository prfjRepository;
 	private final UserGroupProjectJoinRepository ugpjRepository;
+	private final SampleSequencingObjectJoinRepository ssoRepository;
+	private final ProjectAnalysisSubmissionJoinRepository pasRepository;
 	private final ProjectRepository projectRepository;
 
 	@Autowired
@@ -107,7 +112,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			UserRepository userRepository, ProjectUserJoinRepository pujRepository,
 			ProjectSampleJoinRepository psjRepository, RelatedProjectRepository relatedProjectRepository,
 			ReferenceFileRepository referenceFileRepository, ProjectReferenceFileJoinRepository prfjRepository,
-			final UserGroupProjectJoinRepository ugpjRepository, Validator validator) {
+			final UserGroupProjectJoinRepository ugpjRepository, SampleSequencingObjectJoinRepository ssoRepository,
+			ProjectAnalysisSubmissionJoinRepository pasRepository, Validator validator) {
 		super(projectRepository, validator, Project.class);
 		this.projectRepository = projectRepository;
 		this.sampleRepository = sampleRepository;
@@ -118,6 +124,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		this.referenceFileRepository = referenceFileRepository;
 		this.prfjRepository = prfjRepository;
 		this.ugpjRepository = ugpjRepository;
+		this.ssoRepository = ssoRepository;
+		this.pasRepository = pasRepository;
 	}
 
 	/**
@@ -632,6 +640,43 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public List<Project> getRemoteProjects(){
 		return projectRepository.getRemoteProjects();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@PostFilter("hasPermission(filterObject, 'canReadProject')")
+	public Set<Project> getProjectsForSequencingObjects(Collection<? extends SequencingObject> sequences) {
+		Set<Project> projects = new HashSet<>();
+
+		if (sequences != null && !sequences.isEmpty()) {
+			// get the samples for a seq object
+			Set<SampleSequencingObjectJoin> samples = sequences.stream()
+					.map(s -> ssoRepository.getSampleForSequencingObject(s)).collect(Collectors.toSet());
+
+			// get the projects for the samples
+			for (SampleSequencingObjectJoin s : samples) {
+				psjRepository.getProjectForSample(s.getSubject()).forEach(p -> {
+					// p may be null if sample was removed from all projects
+					if (p != null) {
+						projects.add(p.getSubject());
+					}
+				});
+			}
+		}
+
+		return projects;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasPermission(#submission, 'canReadAnalysisSubmission')")
+	@PostFilter("hasPermission(filterObject.subject, 'canReadProject')")
+	public List<ProjectAnalysisSubmissionJoin> getProjectsForAnalysisSubmission(AnalysisSubmission submission) {
+		return pasRepository.getProjectsForSubmission(submission);
 	}
 
 	/**

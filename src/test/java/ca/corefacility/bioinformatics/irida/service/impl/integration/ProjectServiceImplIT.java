@@ -58,10 +58,15 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
+import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -85,6 +90,10 @@ public class ProjectServiceImplIT {
 	private ReferenceFileService referenceFileService;
 	@Autowired
 	private UserGroupService userGroupService;
+	@Autowired
+	private SequencingObjectService sequencingObjectService;
+	@Autowired
+	private AnalysisSubmissionService analysisSubmissionService;
 
 	@Autowired
 	@Qualifier("referenceFileBaseDirectory")
@@ -359,11 +368,13 @@ public class ProjectServiceImplIT {
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testRemoveSampleFromProject() {
 		Sample s = sampleService.read(1L);
-		Project p = projectService.read(2L);
+		Project p2 = projectService.read(2L);
+		Project p3 = projectService.read(3L);
 
-		projectService.removeSampleFromProject(p, s);
+		projectService.removeSampleFromProject(p2, s);
+		projectService.removeSampleFromProject(p3, s);
 
-		Collection<Join<Project, Sample>> samples = sampleService.getSamplesForProject(p);
+		Collection<Join<Project, Sample>> samples = sampleService.getSamplesForProject(p2);
 		assertTrue("No samples should be assigned to project.", samples.isEmpty());
 		assertFalse("sample should be deleted because it was detached", sampleService.exists(s.getId()));
 	}
@@ -677,6 +688,53 @@ public class ProjectServiceImplIT {
 		projectService.delete(1L);
 
 		projectService.findRevisions(1L, new PageRequest(1, 1));
+	}
+	
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testGetProjectsForSequencingObjectsAsAdmin() {
+		SequencingObject read = sequencingObjectService.read(1L);
+
+		Set<Project> projectsForSequencingObjects = projectService
+				.getProjectsForSequencingObjects(ImmutableList.of(read));
+
+		assertEquals("should have found 2 projects", 2, projectsForSequencingObjects.size());
+	}
+	
+	@Test
+	@WithMockUser(username = "analysisuser", password = "password1", roles = "USER")
+	public void testGetProjectForSequencingObjectsAsUser(){
+		SequencingObject read = sequencingObjectService.read(1L);
+
+		Set<Project> projectsForSequencingObjects = projectService
+				.getProjectsForSequencingObjects(ImmutableList.of(read));
+
+		assertEquals("should have found 1 project", 1, projectsForSequencingObjects.size());
+		Project project = projectsForSequencingObjects.iterator().next();
+		
+		assertEquals("should have found project 2", new Long(2), project.getId());
+	}
+	
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testGetProjectForAnalysisSubmissionAsAdmin(){
+		AnalysisSubmission analysis = analysisSubmissionService.read(1L);
+		
+		List<ProjectAnalysisSubmissionJoin> projects = projectService.getProjectsForAnalysisSubmission(analysis);
+		
+		assertEquals("should have found 2 projects", 2, projects.size());
+	}
+	
+	@Test
+	@WithMockUser(username = "analysisuser", password = "password1", roles = "USER")
+	public void testGetProjectForAnalysisSubmissionAsUser() {
+		AnalysisSubmission analysis = analysisSubmissionService.read(1L);
+
+		List<ProjectAnalysisSubmissionJoin> projects = projectService.getProjectsForAnalysisSubmission(analysis);
+
+		assertEquals("should have found 1 project", 1, projects.size());
+		ProjectAnalysisSubmissionJoin project = projects.iterator().next();
+		assertEquals("should have found project 2", new Long(2L), project.getSubject().getId());
 	}
 
 	private Project p() {

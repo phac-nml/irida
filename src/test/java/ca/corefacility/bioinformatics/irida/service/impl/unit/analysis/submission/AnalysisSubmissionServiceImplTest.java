@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.Gala
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.ProjectAnalysisSubmissionJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
@@ -46,6 +47,9 @@ public class AnalysisSubmissionServiceImplTest {
 	private SequencingObjectService sequencingObjectService;
 	
 	@Mock
+	private ProjectAnalysisSubmissionJoinRepository pasRepository;
+	
+	@Mock
 	private Validator validator;
 	@Mock
 	private GalaxyHistoriesService galaxyHistoriesService;
@@ -68,7 +72,7 @@ public class AnalysisSubmissionServiceImplTest {
 		MockitoAnnotations.initMocks(this);
 
 		analysisSubmissionServiceImpl = new AnalysisSubmissionServiceImpl(analysisSubmissionRepository, userRepository,
-				referenceFileRepository, sequencingObjectService, galaxyHistoriesService,
+				referenceFileRepository, sequencingObjectService, galaxyHistoriesService, pasRepository,
 				validator);
 		analysisSubmissionServiceImpl.setAnalysisExecutionService(analysisExecutionService);
 
