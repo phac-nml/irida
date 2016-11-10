@@ -8,7 +8,10 @@ const nameMap = new Map();                    // Map of the names of the existin
  * @param {number} id of the added template
  */
 const setSelectedTemplateName = id => {
+  // If the name is already stored than there is no need to get it again.
   if (!nameMap.has(id)) {
+    // Get the real name from the select input and store a reference to it
+    // based on the id of the template.
     const selectInput = document.querySelector('#existing-templates');
     nameMap.set(id, selectInput.options[selectInput.selectedIndex].innerText);
   }
@@ -22,10 +25,10 @@ export const TemplateInputComponent = {
   },
   templateUrl: `templateInput.tmpl.html`,
   controller(TemplateInputService) {
-    this.nameMap = nameMap;
+    this.nameMap = nameMap; // Map of templates templateId ==> templateName
     this.template = {
-      list,
-      name: ''
+      list,    // List of fields in the new template
+      name: '' // Name of the new template
     };
 
     /**
@@ -38,12 +41,16 @@ export const TemplateInputComponent = {
        * @param {object} field from list or undefined
        */
       const checkField = field => {
+        // Try to see if the current field is in the fields list.
+        // If it is not, add a templates attribute and store this template id in it.
+        // If the field exists, just add the template to the list.
         const listItem = this.template.list.find(x => x.label === field.label);
         if (typeof listItem === 'undefined') {
           field.templates = {};
           field.templates[template] = true;
           this.template.list.push(field);
         } else {
+          listItem.templates = listItem.templates || {};
           listItem.templates[template] = true;
         }
       };
@@ -61,13 +68,9 @@ export const TemplateInputComponent = {
      * Adds a new empty field below the button.
      * @param {number} index index of the button being clicked.
      */
-    this.addField = index => {
-      const item = this.template.list[index];
-      const INDEX_WITH_OFFSET = index + 3;
-      if (item.label) {
-        this.template.list
-          .splice(INDEX_WITH_OFFSET, 0, Object.assign({}, emptyField));
-      }
+    this.addField = () => {
+      this.template.list
+        .push(Object.assign({}, emptyField));
     };
 
     /**
