@@ -572,6 +572,16 @@ public class AnalysisController {
 		return result;
 	}
 
+	/**
+	 * Get a newick file associated with a specific {@link AnalysisSubmission}.
+	 *
+	 * @param submissionId
+	 * 		{@link Long} id for an {@link AnalysisSubmission}
+	 *
+	 * @return {@link Map} containing the newick file contents.
+	 * @throws IOException
+	 * 		{@link IOException} if the newick file is not found
+	 */
 	@RequestMapping("/ajax/{submissionId}/newick")
 	@ResponseBody
 	public Map<String, Object> getNewickForAnalysis(@PathVariable Long submissionId) throws IOException {
