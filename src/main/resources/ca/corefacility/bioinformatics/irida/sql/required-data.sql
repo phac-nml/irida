@@ -627,6 +627,8 @@ INSERT INTO `analysis_submission` (analysis_state, name, created_date, analysis_
 INSERT INTO `analysis_submission` (analysis_state, name, created_date, analysis_id, workflow_id, submitter, analysis_cleaned_state) VALUES ('PREPARING', 'Analysis-99', '2014-02-06 10:01:02', 13, '84360882-2959-4479-a20a-539feacb6922', 1, 'NOT_CLEANED');
 INSERT INTO `analysis_submission` (analysis_state, name, created_date, analysis_id, workflow_id, submitter, analysis_cleaned_state) VALUES ('PREPARING', 'Analysis-100', '2014-02-06 10:01:02', 13, '84360882-2959-4479-a20a-539feacb6922', 1, 'NOT_CLEANED');
 
+INSERT INTO `project_analysis_submission` (created_date, project_id, analysis_submission_id) VALUES (now(), 4, 1),(now(), 4, 2),(now(), 4, 3),(now(), 4, 4),(now(), 4, 5), (now(), 4, 13);
+
 INSERT INTO `workflow_named_parameters` (id, created_date, name, workflow_id) VALUES (1, now(), 'NML SNVPhyl', '84360882-2959-4479-a20a-539feacb6922');
 INSERT INTO `workflow_named_parameter_values` (named_parameters_id, named_parameter_value, named_parameter_name) VALUES (1, '-1', 'repeat-minimum-length');
 INSERT INTO `workflow_named_parameter_values` (named_parameters_id, named_parameter_value, named_parameter_name) VALUES (1, '-2', 'repeat-minimum-pid');

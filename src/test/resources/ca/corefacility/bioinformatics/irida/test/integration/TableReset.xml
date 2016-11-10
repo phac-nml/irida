@@ -42,6 +42,7 @@
 
 	<analysis_submission />
 	<analysis_submission_parameters />
+	<project_analysis_submission/>
 
 	<password_reset />
 	
@@ -83,7 +84,7 @@
 
 	<announcement />
 	<announcement_user />
-	
+
 	<metadata_field/>
 	<metadata_template/>
 	<metadata_template_metadata_field/>
@@ -140,4 +141,5 @@
 	<metadata_template_AUD/>
 	<metadata_template_metadata_field_AUD/>
 	<project_metadata_template_AUD/>
+	<project_analysis_submission_AUD/>
 </dataset>

@@ -24,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWork
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysisController;
+import ca.corefacility.bioinformatics.irida.security.permissions.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
@@ -45,8 +46,9 @@ public class AnalysisControllerTest {
 	private AnalysisSubmissionService analysisSubmissionServiceMock;
 	private IridaWorkflowsService iridaWorkflowsServiceMock;
 	private UserService userServiceMock;
+	private ProjectService projectServiceMock;
+	private UpdateAnalysisSubmissionPermission updatePermission;
 	private SampleService sampleService;
-	private ProjectService projectService;
 	private MetadataTemplateService metadataTemplateService;
 
 	@Before
@@ -54,11 +56,12 @@ public class AnalysisControllerTest {
 		analysisSubmissionServiceMock = mock(AnalysisSubmissionService.class);
 		iridaWorkflowsServiceMock = mock(IridaWorkflowsService.class);
 		sampleService = mock(SampleService.class);
-		projectService = mock(ProjectService.class);
 		metadataTemplateService = mock(MetadataTemplateService.class);
+		projectServiceMock = mock(ProjectService.class);
+		updatePermission = mock(UpdateAnalysisSubmissionPermission.class);
 		MessageSource messageSourceMock = mock(MessageSource.class);
 		analysisController = new AnalysisController(analysisSubmissionServiceMock, iridaWorkflowsServiceMock,
-				userServiceMock, sampleService, projectService, metadataTemplateService, messageSourceMock);
+				userServiceMock, sampleService, projectServiceMock, updatePermission, metadataTemplateService, messageSourceMock);
 	}
 
 	@Test

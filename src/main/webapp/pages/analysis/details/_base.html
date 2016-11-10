@@ -12,7 +12,8 @@
     var PAGE = {
       URLS: {
         download: /*[[@{/analysis/ajax/download/}]]*/ '',
-        status: /*[[@{/analysis/ajax/status/{id}(id=${analysisSubmission.getId()})}]]*/ '/analysis/ajax/status'
+        status: /*[[@{/analysis/ajax/status/{id}(id=${analysisSubmission.getId()})}]]*/ '/analysis/ajax/status',
+        share: /*[[@{/analysis/ajax/{id}/share/(id=${analysisSubmission.getId()})}]]*/ '/analysis/ajax/share'
       },
       NEWICK: /*[[${newick}]]*/ ''
     };

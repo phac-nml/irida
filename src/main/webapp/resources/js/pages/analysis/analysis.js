@@ -1,4 +1,4 @@
-(function (angular, page) {
+(function (angular, page, notifications) {
   /**
    * Controller to download the analysis.
    * @constructor
@@ -41,6 +41,7 @@
       });
     }
 
+    
     /**
      * Exported function to call the server for information about the current analysis.
      * @param fn Callback function with how to handle the results.
@@ -51,7 +52,47 @@
       });
     };
 
+    /**
+     * Call the server to update the shared status of the current analysis.
+     */
+    svc.updateProjectShare = function(project, shared) {
+      var data = {project: project, shared: shared};
+      return $http.post(page.URLS.share, data).then(function(response) {
+        return response.data;
+      });
+    };
+
+    /**
+     * Call the server to get the shared status of project
+     */
+    svc.getSharedProjects = function() {
+      return $http.get(page.URLS.share).then(function(response) {
+        return response.data;
+      });
+    };
+
     return svc;
+  }
+
+  function ProjectShareController(AnalysisService, notifications) {
+    var vm = this;
+
+    vm.projects = {};
+
+    function initialize() {
+      AnalysisService.getSharedProjects().then(function(response){
+        vm.projects = response;
+        console.log(vm.projects);
+      });
+    }
+
+    vm.updateShared = function(project) {
+      AnalysisService.updateProjectShare(project.project.identifier, project.shared).then(function(response) {
+        notifications.show({msg: response.message});
+      });
+    };
+
+    initialize();
   }
 
   /**
@@ -108,11 +149,16 @@
           url        : "/provenance",
           templateUrl: "provenance.html"
         })
+        .state("share", {
+          url        : "/share",
+          templateUrl: "share.html"
+        })
       ;
     }])
     .service('AnalysisService', ['$http', AnalysisService])
     .controller('FileDownloadController', [FileDownloadController])
     .controller('StateController', ['AnalysisService', StateController])
     .controller('PreviewController', [PreviewController])
+    .controller('ProjectShareController', ['AnalysisService', 'notifications', ProjectShareController])
   ;
-})(window.angular, window.PAGE);
+})(window.angular, window.PAGE, window.notifications);
