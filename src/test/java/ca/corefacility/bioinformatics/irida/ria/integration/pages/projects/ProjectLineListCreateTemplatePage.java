@@ -49,7 +49,7 @@ public class ProjectLineListCreateTemplatePage extends ProjectPageBase {
 	public void setNewTemplateName(String name) {
 		templateNameInput.clear();
 		templateNameInput.sendKeys(name);
-		waitForTime(300);
+		waitForTime(500);
 	}
 
 	public void addExistingTemplate(String templateName) {
