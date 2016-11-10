@@ -3,7 +3,17 @@ package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.security.Principal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
@@ -41,7 +51,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundExce
 import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataField;
@@ -635,36 +644,34 @@ public class AnalysisController {
 	}
 
 	/**
-	 * Get a list of all {@link MetadataTemplate}s for the {@link Analysis}
-	 * @param submissionId
-	 * @return
+	 * Get a list of all {@link MetadataTemplate}s for the {@link AnalysisSubmission}
+	 * 
+	 * @param submissionId id of the {@link AnalysisSubmission}
+	 * @return a map of {@link MetadataTemplate}s
 	 */
 	@RequestMapping("/ajax/{submissionId}/metadata-templates")
 	@ResponseBody
-	public Map<String, Object> getMetadataTemplatesForAnalysis(@PathVariable Long submissionId){
+	public Map<String, Object> getMetadataTemplatesForAnalysis(@PathVariable Long submissionId) {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
-		Set<Sample> samples = (Set<Sample>) sampleService.getSamplesForAnalysisSubimssion(submission);
+		List<Project> projectsUsedInAnalysisSubmission = projectService.getProjectsUsedInAnalysisSubmission(submission);
+
 		Set<Long> projectIds = new HashSet<>();
 		Set<Map<String, Object>> templates = new HashSet<>();
-		for (Sample sample : samples) {
-			List<Join<Project, Sample>> projectSampleJoins = projectService.getProjectsForSample(sample);
-			for (Join<Project, Sample> join : projectSampleJoins) {
-				Project project = join.getSubject();
-				if (!projectIds.contains(project.getId())) {
-					projectIds.add(project.getId());
 
-					// Get the templates for the project
-					List<ProjectMetadataTemplateJoin> templateList = metadataTemplateService
-							.getMetadataTemplatesForProject(project);
-					for (ProjectMetadataTemplateJoin projectMetadataTemplateJoin : templateList) {
-						MetadataTemplate metadataTemplate = projectMetadataTemplateJoin.getObject();
-						Map<String, Object> templateMap = ImmutableMap
-								.of("label", metadataTemplate.getLabel(), "id", metadataTemplate.getId());
-						templates.add(templateMap);
-					}
+		for (Project project : projectsUsedInAnalysisSubmission) {
+			if (!projectIds.contains(project.getId())) {
+				projectIds.add(project.getId());
+
+				// Get the templates for the project
+				List<ProjectMetadataTemplateJoin> templateList = metadataTemplateService
+						.getMetadataTemplatesForProject(project);
+				for (ProjectMetadataTemplateJoin projectMetadataTemplateJoin : templateList) {
+					MetadataTemplate metadataTemplate = projectMetadataTemplateJoin.getObject();
+					Map<String, Object> templateMap = ImmutableMap.of("label", metadataTemplate.getLabel(), "id",
+							metadataTemplate.getId());
+					templates.add(templateMap);
 				}
 			}
-
 		}
 
 		return ImmutableMap.of("templates", templates);
