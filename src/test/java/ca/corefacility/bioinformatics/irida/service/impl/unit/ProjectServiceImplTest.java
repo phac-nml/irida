@@ -53,11 +53,13 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.ProjectAnalysisSubmissionJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectReferenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.RelatedProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.UserGroupProjectJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
@@ -77,6 +79,8 @@ public class ProjectServiceImplTest {
 	private ReferenceFileRepository referenceFileRepository;
 	private ProjectReferenceFileJoinRepository prfjRepository;
 	private UserGroupProjectJoinRepository ugpjRepository;
+	private SampleSequencingObjectJoinRepository ssoRepository;
+	private ProjectAnalysisSubmissionJoinRepository pasRepository;
 	private Validator validator;
 
 	@Before
@@ -93,7 +97,7 @@ public class ProjectServiceImplTest {
 		ugpjRepository = mock(UserGroupProjectJoinRepository.class);
 		projectService = new ProjectServiceImpl(projectRepository, sampleRepository, userRepository, pujRepository,
 				psjRepository, relatedProjectRepository, referenceFileRepository, prfjRepository,
-				ugpjRepository, validator);
+				ugpjRepository, ssoRepository, pasRepository, validator);
 	}
 
 	@Test

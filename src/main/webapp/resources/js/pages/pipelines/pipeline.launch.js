@@ -54,7 +54,9 @@
 			remoteSingle = [],
 			remotePaired = [],
 			// User-written description of the analysis
-			description = ng.element('#analysis-description').val();
+			description = ng.element('#analysis-description').val(),
+			// Projects to share results with
+			shared = [];
 
 			if (name === null || name.length === 0) {
 				vm.error = page.i18n.required;
@@ -81,6 +83,11 @@
 							paired.push(Number(c.val()));
 						}
 					}
+				});
+
+				ng.element('.share-project:checked').each(function() {
+					var box = $(this);
+					shared.push(box.val());
 				});
 
 				var currentSettings = ParameterService.getSelectedParameters().currentSettings;
@@ -113,6 +120,10 @@
 				}
 				params['name'] = name;
 				params['description'] = description;
+
+				if(shared.length > 0){
+					params['sharedProjects'] = shared;
+				}
 
 
 				$http({

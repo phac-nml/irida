@@ -201,4 +201,29 @@ You can further inspect the parameters of each of the tools that were used to ge
 
 ![Actual pipeline parameters.](images/actual-pipeline-parameters.png)
 
+## Sharing pipeline results
+
+Pipeline results can be shared with projects so that other users on a shared project can view results of the analysis.
+
+### Sharing when launching a pipeline
+
+When launching a pipeline you can select which projects the results should be shared with by selecting them in the `Share Results` section of the pipeline setup.
+
+![Share analysis results.](images/analysis-share-launch.png)
+
+Note that for a project to be displayed in this list it must have samples being used in the pipeline.
+
+Once the pipeline has been submitted the submission will show up in the analysis listing for the selected projects.  From this page users on the project will be able to monitor the pipeline's progress and view results once they are complete.  For more information on viewing analysis results shared with a project, see the [Managing Projects](/user/user/project/#project-analysis-results) page. 
+
+### Share results after pipeline has been launched
+
+Pipeline results can also be shared anytime after a pipeline has been launched.  To view or modify which projects an analysis has been shared with, click the `Share Results` tab on the pipeline results page.
+
+![Share analysis results with project.](images/analysis-share-results-with-project.png)
+
+ From this page you will be shown all projects that the pipeline result has been shared with (indicated by a check mark) along with additional projects available for sharing results.  To share or unshare the results with a project, check or uncheck the box next to the project name.
+
+ Note that for a project to be displayed in this list it must contain samples which were used in the analysis.
+
+
 <a href="../samples/">Previous: Managing Samples</a>

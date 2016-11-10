@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -24,10 +25,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -36,6 +41,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundExce
 import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -44,10 +50,13 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesUtils;
+import ca.corefacility.bioinformatics.irida.security.permissions.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
@@ -80,14 +89,19 @@ public class AnalysisController {
 	private IridaWorkflowsService workflowsService;
 	private MessageSource messageSource;
 	private UserService userService;
+	private ProjectService projectService;
+	private UpdateAnalysisSubmissionPermission updateAnalysisPermission;
 
 	@Autowired
 	public AnalysisController(AnalysisSubmissionService analysisSubmissionService,
-			IridaWorkflowsService iridaWorkflowsService, UserService userService, MessageSource messageSource) {
+			IridaWorkflowsService iridaWorkflowsService, UserService userService, ProjectService projectService, UpdateAnalysisSubmissionPermission updateAnalysisPermission,
+			MessageSource messageSource) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
 		this.messageSource = messageSource;
 		this.userService = userService;
+		this.projectService = projectService;
+		this.updateAnalysisPermission = updateAnalysisPermission;
 	}
 
 	// ************************************************************************************************
@@ -171,6 +185,11 @@ public class AnalysisController {
 		Set<SequenceFilePairSnapshot> remoteFilesPaired = submission.getRemoteFilesPaired();
 		model.addAttribute("remote_paired", remoteFilesPaired);
 		
+		// Check if user can update analysis
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		model.addAttribute("updatePermission", updateAnalysisPermission.isAllowed(authentication, submission));
+		
+		
 		// Get the number of files currently being mirrored
 		int mirroringCount = remoteFilesPaired.stream().mapToInt(p -> p.isMirrored() ? 0 : 1).sum();
 		model.addAttribute("mirroringCount", mirroringCount);
@@ -197,6 +216,78 @@ public class AnalysisController {
 		} 
 
 		return viewName;
+	}
+	
+	/**
+	 * Get the status of projects that can be shared with the given analysis
+	 * 
+	 * @param submissionId
+	 *            the {@link AnalysisSubmission} id
+	 * @return a list of {@link SharedProjectResponse}
+	 */
+	@RequestMapping(value = "/ajax/{submissionId}/share", method = RequestMethod.GET)
+	@ResponseBody
+	public List<SharedProjectResponse> getSharedProjectsForAnalysis(@PathVariable Long submissionId) {
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+		// Input files
+		// - Paired
+		Set<SequenceFilePair> inputFilePairs = submission.getPairedInputFiles();
+
+		// get projects already shared with submission
+		Set<Project> projectsShared = projectService.getProjectsForAnalysisSubmission(submission).stream()
+				.map(ProjectAnalysisSubmissionJoin::getSubject).collect(Collectors.toSet());
+
+		// get available projects
+		Set<Project> projectsInAnalysis = projectService.getProjectsForSequencingObjects(inputFilePairs);
+
+		List<SharedProjectResponse> projectResponses = projectsShared.stream()
+				.map(p -> new SharedProjectResponse(p, true)).collect(Collectors.toList());
+
+		// Create response for shared projects
+		projectResponses.addAll(projectsInAnalysis.stream().filter(p -> !projectsShared.contains(p))
+				.map(p -> new SharedProjectResponse(p, false)).collect(Collectors.toList()));
+		
+		projectResponses.sort(new Comparator<SharedProjectResponse>() {
+
+			@Override
+			public int compare(SharedProjectResponse p1, SharedProjectResponse p2) {
+				return p1.getProject().getName().compareTo(p2.getProject().getName());
+			}
+		});
+
+		return projectResponses;
+	}
+	
+	/**
+	 * Update the share status of a given {@link AnalysisSubmission} for a given
+	 * {@link Project}
+	 * 
+	 * @param submissionId
+	 *            the {@link AnalysisSubmission} id to share/unshare
+	 * @param projectId
+	 *            the {@link Project} id to share with
+	 * @param shareStatus
+	 *            whether or not to share the {@link AnalysisSubmission}
+	 * @return Success message if successful
+	 */
+	@RequestMapping(value = "/ajax/{submissionId}/share", method = RequestMethod.POST)
+	public Map<String, String> updateProjectShare(@PathVariable Long submissionId,
+			@RequestParam("project") Long projectId,
+			@RequestParam("shared") boolean shareStatus, Locale locale) {
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+		Project project = projectService.read(projectId);
+
+		String message = "";
+		if (shareStatus) {
+			analysisSubmissionService.shareAnalysisSubmissionWithProject(submission, project);
+			
+			message = messageSource.getMessage("analysis.details.share.enable", new Object[] { project.getLabel() }, locale);
+		} else {
+			analysisSubmissionService.removeAnalysisProjectShare(submission, project);
+			message = messageSource.getMessage("analysis.details.share.remove", new Object[] { project.getLabel() }, locale);
+		}
+		
+		return ImmutableMap.of("result", "success", "message", message);
 	}
 
 	
@@ -253,7 +344,7 @@ public class AnalysisController {
 		Map<String, Object> sortProps = DatatablesUtils.getSortProperties(criterias);
 		String searchString = criterias.getSearch();
 
-		Specification<AnalysisSubmission> filters = getFilters(searchString, criterias, null);
+		Specification<AnalysisSubmission> filters = getFilters(searchString, criterias, null, null);
 
 		Page<AnalysisSubmission> submissions = analysisSubmissionService.search(filters, currentPage,
 				criterias.getLength(), (Sort.Direction) sortProps.get(DatatablesUtils.SORT_DIRECTION),
@@ -303,7 +394,38 @@ public class AnalysisController {
 		Map<String, Object> sortProps = DatatablesUtils.getSortProperties(criterias);
 		String searchString = criterias.getSearch();
 
-		Specification<AnalysisSubmission> filters = getFilters(searchString, criterias, principalUser);
+		Specification<AnalysisSubmission> filters = getFilters(searchString, criterias, principalUser, null);
+
+		Page<AnalysisSubmission> submissions = analysisSubmissionService.search(filters, currentPage,
+				criterias.getLength(), (Sort.Direction) sortProps.get(DatatablesUtils.SORT_DIRECTION),
+				(String) sortProps.get(DatatablesUtils.SORT_STRING));
+
+		List<AnalysisTableResponse> responses = new ArrayList<>();
+		for (AnalysisSubmission sub : submissions) {
+			AnalysisTableResponse analysisTableResponse = new AnalysisTableResponse(sub, locale);
+			responses.add(analysisTableResponse);
+		}
+
+		DataSet<AnalysisTableResponse> dataSet = new DataSet<>(responses, submissions.getTotalElements(),
+				submissions.getTotalElements());
+
+		return DatatablesResponse.build(dataSet, criterias);
+	}
+	
+	@RequestMapping("/ajax/project/{projectId}/list")
+	@ResponseBody
+	public DatatablesResponse<AnalysisTableResponse> getSubmissionsForProject(
+			@DatatablesParams DatatablesCriterias criterias, @PathVariable Long projectId, Principal principal, Locale locale)
+			throws IridaWorkflowNotFoundException, NoPercentageCompleteException, EntityNotFoundException,
+			ExecutionManagerException {
+
+		Project project = projectService.read(projectId);
+		
+		int currentPage = DatatablesUtils.getCurrentPage(criterias);
+		Map<String, Object> sortProps = DatatablesUtils.getSortProperties(criterias);
+		String searchString = criterias.getSearch();
+
+		Specification<AnalysisSubmission> filters = getFilters(searchString, criterias, null, project);
 
 		Page<AnalysisSubmission> submissions = analysisSubmissionService.search(filters, currentPage,
 				criterias.getLength(), (Sort.Direction) sortProps.get(DatatablesUtils.SORT_DIRECTION),
@@ -334,7 +456,7 @@ public class AnalysisController {
 	 * @throws IridaWorkflowNotFoundException
 	 *             If the requested workflow dows not exist
 	 */
-	private Specification<AnalysisSubmission> getFilters(String searchString, DatatablesCriterias criterias, User user)
+	private Specification<AnalysisSubmission> getFilters(String searchString, DatatablesCriterias criterias, User user, Project project)
 			throws IridaWorkflowNotFoundException {
 		//properties to search
 		String name = null;
@@ -361,7 +483,7 @@ public class AnalysisController {
 
 		}
 
-		return AnalysisSubmissionSpecification.filterAnalyses(searchString, name, state, user, workflowIds);
+		return AnalysisSubmissionSpecification.filterAnalyses(searchString, name, state, user, workflowIds, project);
 	}
 
 	// ************************************************************************************************
@@ -469,6 +591,7 @@ public class AnalysisController {
 		private String duration;
 		private String percentComplete;
 		private Date createdDate;
+		private boolean updatePermission;
 
 		public AnalysisTableResponse(AnalysisSubmission submission, Locale locale)
 				throws IridaWorkflowNotFoundException, NoPercentageCompleteException, EntityNotFoundException,
@@ -502,6 +625,9 @@ public class AnalysisController {
 						.getId());
 				this.percentComplete = Float.toString(percentComplete);
 			}
+			
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			updatePermission = updateAnalysisPermission.isAllowed(authentication, submission);
 		}
 
 		public AnalysisSubmission getSubmission() {
@@ -538,6 +664,33 @@ public class AnalysisController {
 		
 		public Date getCreatedDate() {
 			return createdDate;
+		}
+		
+		public boolean getUpdatePermission() {
+			return updatePermission;
+		}
+	}
+	
+	/**
+	 * Response object storing a project and whether or not it's shared with a
+	 * given {@link AnalysisSubmission}
+	 */
+	@SuppressWarnings("unused")
+	private class SharedProjectResponse {
+		private Project project;
+		private boolean shared;
+
+		public SharedProjectResponse(Project project, boolean shared) {
+			this.project = project;
+			this.shared = shared;
+		}
+
+		public Project getProject() {
+			return project;
+		}
+
+		public boolean isShared() {
+			return shared;
 		}
 	}
 }

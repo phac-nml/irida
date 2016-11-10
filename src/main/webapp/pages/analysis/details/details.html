@@ -44,9 +44,26 @@
 				<th:block th:if="${isCompleted}">
 					<sub-nav-item state="provenance" data:text="#{analysis.tab.provenance}"></sub-nav-item>
 				</th:block>
+				<th:block th:if="${updatePermission}">
+					<sub-nav-item state="share" data:text="#{analysis.tab.share-results}"></sub-nav-item>
+				</th:block>
 			</sub-nav>
 
 			<div ui-view=""></div>
+
+			<script type="text/ng-template" id="share.html" th:if="${updatePermission}">
+				<h2 th:text="#{analysis.details.share.title}">_Share Results With Projects_</h2>
+				<div class="row" ng-controller="ProjectShareController as shareController">
+					<div class="col-md-6" ng-repeat="resp in shareController.projects">
+						<div class="checkbox">
+							<label>
+								<input type="checkbox" class="share-project" ng-model="resp.shared" ng-value="resp.project.identifier" ng-change="shareController.updateShared(resp)"/>
+								<span>{{resp.project.name}}</span>
+							</label>
+						</div>
+					</div>
+				</div>
+			</script>
 
 			<script type="text/ng-template" id="preview.html">
 				<div th:if="${isCompleted} and ${preview}" ng-controller="PreviewController as previewController">
