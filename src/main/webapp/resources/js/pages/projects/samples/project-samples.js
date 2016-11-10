@@ -106,6 +106,9 @@
       if (!$($event.target).is('input')) {
         $event.preventDefault();
       }
+
+      console.log("didit");
+
       // Need to stop all propagation since this is an anchor tag.
       $event.stopPropagation();
       $event.stopImmediatePropagation();
@@ -114,8 +117,12 @@
         checkbox = $(target.find("input:checkbox")),
         alinks = $(".associated-link"); // Find the checkbox so we can select it later.
 
+      // find how many associated projects are checked
+      var checkedLinks = alinks.find("input:checked");
+
       // Get all the ids required
-      if (checkbox.prop('checked')) {
+      // If all boxes are checked, uncheck them all
+      if (alinks.length === checkedLinks.length) {
         alinks
           .each(function(index, item) {
             var link = $(item);
