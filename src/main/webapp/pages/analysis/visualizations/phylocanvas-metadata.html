@@ -16,7 +16,7 @@
     </style>
 </head>
 <body>
-<div layout:fragment="page">
+<div layout:fragment="page" ddl:bundle-includes="visualizations-phylogenetics">
     <h1 th:text="#{visualization.phylogenomics.title}"></h1>
     <phylocanvas-component
             data:newickurl="@{/analysis/ajax/{id}/newick(id=${submissionId})}">
@@ -61,8 +61,6 @@
             </div>
         </div>
     </script>
-    <script src="/resources/js/build/visualizations-phylogenetics.bundle.js"
-            th:src="@{/resources/js/build/visualizations-phylogenetics.bundle.js}"></script>
 </th:block>
 </body>
 </html>
