@@ -30,6 +30,8 @@ public class MetadataField {
 	@NotNull
 	private String type;
 
+	public MetadataField() {}
+
 	public MetadataField(String label, String type) {
 		this.label = label;
 		this.type = type;
@@ -45,5 +47,13 @@ public class MetadataField {
 
 	public String getType() {
 		return type;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 }

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html
+        xmlns:th="http://www.thymeleaf.org"
         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
         layout:decorator="projects/_base">
 <head>
@@ -9,23 +10,40 @@
 <main layout:fragment="main" ddl:bundle-includes="project-linelist">
     <div class="row spaced-bottom">
         <div class="col-md-12">
-            <a class="btn btn-default" th:href="@{/projects/{id}/sample-metadata(id=${project.getId()})}" th:text="#{linelist.add-metadata.btn}">Upload new metadata</a>
+            <a class="btn btn-default"
+               th:href="@{/projects/{id}/sample-metadata(id=${project.getId()})}"
+               th:text="#{linelist.add-metadata.btn}">Upload new metadata</a>
         </div>
     </div>
     <div class="row">
         <div class="col-md-12 spaced-bottom">
             <div class="form-group">
-                <label for="template-select" th:text="#{linelist.template-select.label}">Select Metadata Template</label>
-                <select class="form-control" id="template-select">
-                    <option th:each="template : ${templates}" th:value="${template}"
-                            th:text="${#strings.capitalizeWords(template)}"></option>
-                </select>
+                <label for="template-select"
+                       th:text="#{linelist.template-select.label}">Select Metadata
+                    Template</label>
+                <div class="row">
+                    <div class="col-md-9 col-sm-7">
+                        <select class="form-control" id="template-select">
+                            <option th:each="template : ${templates}" th:value="${template.id}"
+                                    th:text="${#strings.capitalizeWords(template.label)}"
+                                    th:selected="${template == currentTemplate}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 col-sm-5">
+                        <a th:href="@{/projects/4/linelist/linelist-templates}"
+                           class="btn btn-default btn-block"
+                           th:text="#{linelist.template.create-new}">Create New Template</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
     <div class="row">
         <div class="col-md-12">
-            <linelist-component data:url="@{/projects/{id}/linelist(id=${project.getId()})}"></linelist-component>
+            <linelist-component
+                    data:url="@{/projects/{id}/linelist(id=${project.getId()})}"
+                    data:template="${currentTemplate}">
+            </linelist-component>
         </div>
     </div>
 </main>

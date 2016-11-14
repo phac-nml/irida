@@ -14,9 +14,10 @@ const TABLE_ID = 'linelist';
 
 const createTable = (template, data) => {
   const $table = $(`#${TABLE_ID}`);
-  const headers = template.map(header => header.label);
-  const columns = formatBasicHeaders(headers);
+  const columns = formatBasicHeaders(template);
 
+  // If the table is already initialized it needs to be destroyed before
+  // it can be loaded again.
   if ($.fn.DataTable.isDataTable(`#${TABLE_ID}`)) {
     $table.DataTable().destroy();
     $table.empty();
@@ -38,7 +39,8 @@ const createTable = (template, data) => {
 
 export const LinelistComponent = {
   bindings: {
-    url: '@'
+    url: '@',     // url to get the metadata from
+    template: '@' // identifier for the current template.
   },
   template: getDefaultTable('linelist'),
   controller($q, $scope, LinelistService) {
@@ -46,7 +48,7 @@ export const LinelistComponent = {
      * Generate the line list table.
      * @param {string} templateName name of the table header template
      */
-    const generate = (templateName = 'default') => {
+    const generate = templateName => {
       const promises = [];
       promises.push(LinelistService.getTemplate(this.url, templateName));
       promises.push(LinelistService.getMetadata(this.url, templateName));
@@ -54,16 +56,17 @@ export const LinelistComponent = {
       $q
         .all(promises)
         .then(results => {
-          const template = results[0].data.template;
-          const data = results[1].data.metadata;
+          const template = results[0];
+          const data = results[1];
           createTable(template, data);
         });
     };
 
-    generate();
+    // Initialize the table.
+    generate(this.template);
 
     /**
-     * Listen for a change in the tempalte to reload the table.
+     * Listen for a change in the template to reload the table.
      */
     $scope.$on('LINELIST_TEMPLATE_CHANGE', (event, args) => {
       generate(args.template);
