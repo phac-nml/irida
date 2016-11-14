@@ -79,8 +79,7 @@ public class ProjectLineListCreateTemplatePage extends ProjectPageBase {
 
 	public void saveNewTemplate(String templateName) {
 		saveTemplateBtn.click();
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		wait.until(ExpectedConditions.urlContains(templateName));
+		waitForTime(1000);
 	}
 
 	public int getNumberOfFields() {

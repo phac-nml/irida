@@ -38,7 +38,7 @@ public class ProjectLineListCreateTemplatePageIT extends AbstractIridaUIITChrome
 		assertTrue("Save button should be enabled when a name longer than 5 characters is present, and the fiel dis valid",
 				page.isSaveBtnEnabled());
 		page.addNewField();
-		page.setFieldLabel(0, "secondLabel");
+		page.setFieldLabel(1, "secondLabel");
 
 		assertEquals("There should be two fields on the page", 2, page.getNumberOfFields());
 
