@@ -27,9 +27,11 @@ public class ProjectLineListCreateTemplatePage extends ProjectPageBase {
 	@FindBy(className = "entry")
 	private List<WebElement> fieldEntries;
 
-	@FindBy(className = "remove-field-btn") private List<WebElement> removeFieldBtns;
+	@FindBy(className = "remove-field-btn")
+	private List<WebElement> removeFieldBtns;
 
-	@FindBy(className = "add-field-btn") private List<WebElement> addFieldBtns;
+	@FindBy(id = "add-field-btn")
+	private WebElement addFieldBtn;
 
 	public ProjectLineListCreateTemplatePage(WebDriver driver) {
 		super(driver);
@@ -47,6 +49,7 @@ public class ProjectLineListCreateTemplatePage extends ProjectPageBase {
 	public void setNewTemplateName(String name) {
 		templateNameInput.clear();
 		templateNameInput.sendKeys(name);
+		waitForTime(500);
 	}
 
 	public void addExistingTemplate(String templateName) {
@@ -58,8 +61,8 @@ public class ProjectLineListCreateTemplatePage extends ProjectPageBase {
 		waitForTime(500);
 	}
 
-	public void addNewField(int afterField) {
-		addFieldBtns.get(afterField).click();
+	public void addNewField() {
+		addFieldBtn.click();
 		// wait for field to be added
 		waitForTime(500);
 	}
@@ -76,8 +79,7 @@ public class ProjectLineListCreateTemplatePage extends ProjectPageBase {
 
 	public void saveNewTemplate(String templateName) {
 		saveTemplateBtn.click();
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		wait.until(ExpectedConditions.urlContains(templateName));
+		waitForTime(1000);
 	}
 
 	public int getNumberOfFields() {

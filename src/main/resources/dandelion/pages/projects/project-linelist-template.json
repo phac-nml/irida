@@ -1,5 +1,12 @@
 {
   "assets": [
+
+  {
+    "type": "css",
+    "locations": {
+      "webapp": "/resources/css/pages/project_linelist_template.css"
+    }
+  },
   {
     "type": "js",
     "locations": {
