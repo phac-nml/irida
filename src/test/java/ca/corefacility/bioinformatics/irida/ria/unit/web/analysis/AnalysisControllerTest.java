@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.analysis;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -29,6 +27,8 @@ import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysisController;
 import ca.corefacility.bioinformatics.irida.security.permissions.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
@@ -48,16 +48,20 @@ public class AnalysisControllerTest {
 	private UserService userServiceMock;
 	private ProjectService projectServiceMock;
 	private UpdateAnalysisSubmissionPermission updatePermission;
+	private SampleService sampleService;
+	private MetadataTemplateService metadataTemplateService;
 
 	@Before
 	public void init() {
 		analysisSubmissionServiceMock = mock(AnalysisSubmissionService.class);
 		iridaWorkflowsServiceMock = mock(IridaWorkflowsService.class);
+		sampleService = mock(SampleService.class);
+		metadataTemplateService = mock(MetadataTemplateService.class);
 		projectServiceMock = mock(ProjectService.class);
 		updatePermission = mock(UpdateAnalysisSubmissionPermission.class);
 		MessageSource messageSourceMock = mock(MessageSource.class);
 		analysisController = new AnalysisController(analysisSubmissionServiceMock, iridaWorkflowsServiceMock,
-				userServiceMock, projectServiceMock, updatePermission, messageSourceMock);
+				userServiceMock, sampleService, projectServiceMock, updatePermission, metadataTemplateService, messageSourceMock);
 	}
 
 	@Test

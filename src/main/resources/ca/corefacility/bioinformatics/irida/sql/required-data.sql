@@ -178,11 +178,11 @@ INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `d
 INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:13', 'E. coli', '2015-07-04 08:24:09', '10-1358', 'The fourth sample');
 INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:14', 'E. coli', '2015-07-05 08:24:09', '10-1677', 'The fifth sample');
 INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:15', 'E. coli', '2015-07-06 08:24:09', '10-1930', 'The sixth sample');
-INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:16', 'E. coli', '2015-07-07 08:24:09', '10-2347', 'The seventh sample');
-INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:17', 'E. coli', '2015-07-08 08:24:09', '10-1430', 'The eigth sample');
-INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:18', 'E. coli', '2015-07-09 08:24:09', '15-7569', 'The nineth sample');
-INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:19', 'E. coli', '2015-07-10 08:24:09', '15-7570', 'The tenth sample');
-INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:20', 'E. coli', '2015-07-11 08:24:09', '15-7570', 'The eleventh sample');
+INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:16', 'S. pneumoniae', '2015-07-07 08:24:09', '10-2347', 'The seventh sample');
+INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:17', 'S. pneumoniae', '2015-07-08 08:24:09', '10-1430', 'The eigth sample');
+INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:18', 'S. milleri', '2015-07-09 08:24:09', '15-7569', 'The nineth sample');
+INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:19', 'S. orisratti', '2015-07-10 08:24:09', '15-7570', 'The tenth sample');
+INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:20', 'S. sanguinis', '2015-07-11 08:24:09', '15-7570', 'The eleventh sample');
 INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:21', 'E. coli', '2015-07-12 08:24:09', '15-7571', 'The twelveth sample');
 INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:22', 'E. coli', '2015-07-13 08:24:09', '15-7572', 'The thirteenth sample');
 INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:23', 'E. coli', '2015-07-14 08:24:09', '15-7573', 'The fourteenth sample');
@@ -651,7 +651,7 @@ INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, se
 INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 23);
 INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 24);
 
-INSERT INTO `remote_related_project`(id, created_date, remote_project_uri, project_id, remote_api_id) VALUES ('1','2015-03-27 11:13:39','http://localhost:8080/api/projects/5','4','1');
+INSERT INTO `remote_related_project`(id, created_date, remote_project_uri, project_id, remote_api_id) VALUES ('1','2015-03-27 11:13:39','http://localhost:8080/api/projects/5','4','1'); 
 
 INSERT INTO `project_event` (created_date, role, project_id, user_id, sample_id, DTYPE) values (now(), 'PROJECT_OWNER', 1, 2, NULL, 'UserRoleSetProjectEvent');
 INSERT INTO `project_event` (created_date, role, project_id, user_id, sample_id, DTYPE) values (now(), 'PROJECT_USER', 3, 2, NULL, 'UserRoleSetProjectEvent');
