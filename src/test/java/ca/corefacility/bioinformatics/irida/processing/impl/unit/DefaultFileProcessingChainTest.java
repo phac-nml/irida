@@ -36,7 +36,7 @@ public class DefaultFileProcessingChainTest {
 
 	@Test(expected = FileProcessorTimeoutException.class)
 	public void testExceedsTimeout() throws FileProcessorTimeoutException {
-		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository);
+		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, null, null);
 		fileProcessingChain.setTimeout(1);
 		fileProcessingChain.setSleepDuration(0);
 
@@ -48,7 +48,7 @@ public class DefaultFileProcessingChainTest {
 
 	@Test
 	public void testProcessEmptyChain() {
-		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository);
+		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, null, null);
 		SequenceFile sf = new SequenceFile();
 		sf.setId(1L);
 		when(objectRepository.exists(1L)).thenReturn(true);
@@ -62,7 +62,7 @@ public class DefaultFileProcessingChainTest {
 
 	@Test
 	public void testFailWithContinueChain() {
-		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository,
+		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, null, null,
 				new FailingFileProcessor());
 		SequenceFile sf = new SequenceFile();
 		sf.setId(1L);
@@ -83,7 +83,7 @@ public class DefaultFileProcessingChainTest {
 
 	@Test
 	public void testFastFailProcessorChain() {
-		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository,
+		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, null, null,
 				new FailingFileProcessor());
 		SequenceFile sf = new SequenceFile();
 		sf.setId(1L);
@@ -102,7 +102,7 @@ public class DefaultFileProcessingChainTest {
 
 	@Test
 	public void testFailOnProcessorChain() {
-		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository,
+		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, null, null,
 				new FailingFileProcessorNoContinue());
 		SequenceFile sf = new SequenceFile();
 		sf.setId(1L);
