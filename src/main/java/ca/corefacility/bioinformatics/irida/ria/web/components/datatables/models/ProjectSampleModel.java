@@ -4,6 +4,7 @@ import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 
 import com.google.common.collect.ImmutableList;
@@ -107,5 +108,9 @@ public class ProjectSampleModel extends AbstractExportModel {
 
 	public String getLongitude() {
 		return checkNullStrings(sample.getLongitude());
+	}
+	
+	public List<QCEntry> getQcEntries(){
+		return sample.getQcEntries();
 	}
 }

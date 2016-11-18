@@ -15,7 +15,7 @@ import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sample.FileProcessorErrorQCEntryRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 
 /**
@@ -38,16 +38,16 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 
 	private final SequencingObjectRepository sequencingObjectRepository;
 	private SampleSequencingObjectJoinRepository ssoRepository;
-	private FileProcessorErrorQCEntryRepository qcRepository;
+	private QCEntryRepository qcRepository;
 
 	public DefaultFileProcessingChain(SequencingObjectRepository sequencingObjectRepository,
-			SampleSequencingObjectJoinRepository ssoRepository, FileProcessorErrorQCEntryRepository qcRepository,
+			SampleSequencingObjectJoinRepository ssoRepository, QCEntryRepository qcRepository,
 			FileProcessor... fileProcessors) {
 		this(sequencingObjectRepository, ssoRepository, qcRepository, Arrays.asList(fileProcessors));
 	}
 
 	public DefaultFileProcessingChain(SequencingObjectRepository sequencingObjectRepository,
-			SampleSequencingObjectJoinRepository ssoRepository, FileProcessorErrorQCEntryRepository qcRepository,
+			SampleSequencingObjectJoinRepository ssoRepository, QCEntryRepository qcRepository,
 			List<FileProcessor> fileProcessors) {
 		this.fileProcessors = fileProcessors;
 		this.sequencingObjectRepository = sequencingObjectRepository;

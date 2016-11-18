@@ -1,26 +1,21 @@
 package ca.corefacility.bioinformatics.irida.model.sample;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 
 @Entity
-public class FileProcessorErrorQCEntry {
+public class FileProcessorErrorQCEntry extends QCEntry {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	public Long id;
-
-	@ManyToOne
-	public Sample sample;
+	public FileProcessorErrorQCEntry() {
+		super();
+	}
 
 	public FileProcessorErrorQCEntry(Sample sample) {
-		this.sample = sample;
+		super(sample);
 	}
 
-	public Long getId() {
-		return id;
+	@Override
+	public String getIcon() {
+		return "fa fa-cogs";
 	}
+
 }

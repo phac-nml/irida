@@ -371,6 +371,15 @@ var datatable = (function(moment, tl, page) {
 
   }
 
+  function formatQCResponse(data, type, full) {
+    var qcIcons = "";
+    data.forEach(function(qc) {
+      qcIcons += '<span class="label label-danger"><i class="fa fa-exclamation"></i> <i class="' + qc.icon + '"></i></span>';
+    });
+
+    return qcIcons;
+  }
+
   /**
    * Translate text from the server
    * @param data text to be translated
@@ -520,6 +529,7 @@ var datatable = (function(moment, tl, page) {
     formatCheckbox: formatCheckbox,
     selectAll: selectAll,
     selectPage: selectPage,
-    deselectPage: deselectPage
+    deselectPage: deselectPage,
+    formatQCResponse: formatQCResponse
   };
 })(window.moment, window.TL, window.PAGE);

@@ -125,6 +125,7 @@
                 </div>
             </th>
             <th dt:property="sampleName" th:text="#{project.samples.table.name}" dt:renderFunction="datatables-utils#datatable.formatSampleLink"></th>
+            <th dt:property="qcEntries" dt:renderFunction="datatables-utils#datatable.formatQCResponse">QC</th>
             <th dt:property="organism" th:text="#{project.samples.table.organism}" dt:renderFunction="datatables-utils#datatable.forceContentSize"></th>
             <th dt:property="projectName" th:text="#{project.samples.table.project}" dt:renderFunction="datatables-utils#datatable.highlightAssociatedProjectRows"></th>
             <th width="120px" dt:property="createdDate" dt:sortType="natural" th:text="#{project.samples.table.created}"

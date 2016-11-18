@@ -131,6 +131,10 @@ public class Sample extends IridaResourceSupport
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "remote_status")
 	private RemoteStatus remoteStatus;
+	
+	@OneToMany(mappedBy = "sample", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+	@NotAudited
+	private List<QCEntry> qcEntries;
 
 	public Sample() {
 		createdDate = new Date();
@@ -300,5 +304,9 @@ public class Sample extends IridaResourceSupport
 	@Override
 	public void setRemoteStatus(RemoteStatus status) {
 		this.remoteStatus = status;
+	}
+	
+	public List<QCEntry> getQcEntries() {
+		return qcEntries;
 	}
 }
