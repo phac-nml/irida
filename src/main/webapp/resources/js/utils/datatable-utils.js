@@ -374,7 +374,8 @@ var datatable = (function(moment, tl, page) {
   function formatQCResponse(data, type, full) {
     var qcIcons = "";
     data.forEach(function(qc) {
-      qcIcons += '<span class="label label-danger"><i class="fa fa-exclamation"></i> <i class="' + qc.icon + '"></i></span>';
+      var icon = page.qc[qc.type];
+      qcIcons += '<span class="label label-danger"><i class="fa fa-exclamation"></i> <i class="' + icon + '"></i></span>';
     });
 
     return qcIcons;
