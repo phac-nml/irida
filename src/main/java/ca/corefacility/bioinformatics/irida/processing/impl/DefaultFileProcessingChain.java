@@ -88,7 +88,11 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 			} catch (FileProcessorException e) {
 				SequencingObject sequencingObject = sequencingObjectRepository.findOne(sequencingObjectId);
 				SampleSequencingObjectJoin sso = ssoRepository.getSampleForSequencingObject(sequencingObject);
-				qcRepository.save(new FileProcessorErrorQCEntry(sso.getSubject()));
+				
+				// unlikely but possible that object would not have a sample
+				if (sso != null) {
+					qcRepository.save(new FileProcessorErrorQCEntry(sso.getSubject()));
+				}
 				
 				// if the file processor modifies the file, then just fast fail,
 				// we can't proceed with the remaining file processors. If the

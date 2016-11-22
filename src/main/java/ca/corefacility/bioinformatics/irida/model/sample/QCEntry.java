@@ -60,6 +60,10 @@ public abstract class QCEntry {
 		return createdDate;
 	}
 
+	public Sample getSample() {
+		return sample;
+	}
+
 	/**
 	 * Return the type of qc entry. This will be used for display and grouping
 	 * in the UI.
