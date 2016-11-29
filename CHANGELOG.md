@@ -1,6 +1,9 @@
 Changes
 =======
 
+0.14.0 to 0.15.0
+----------------
+
 0.13.0 to 0.14.0
 ----------------
 * [UI]: Added ability to select or deselect viewing all associated projects. (0.13.1)
