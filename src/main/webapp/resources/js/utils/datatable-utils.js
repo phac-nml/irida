@@ -373,9 +373,14 @@ var datatable = (function(moment, tl, page) {
 
   function formatQCResponse(data, type, full) {
     var qcIcons = "";
+    var qcTypes = {};
     data.forEach(function(qc) {
-      var icon = page.qc[qc.type];
-      qcIcons += '<span class="label label-danger"><i class="fa fa-exclamation"></i> <i class="' + icon + '"></i></span>';
+      // only allow one indicator of each type for a sample
+      if (!qcTypes.hasOwnProperty(qc.type)) {
+        var icon = page.qc[qc.type];
+        qcIcons += '<span class="label label-danger"><i class="fa fa-exclamation"></i> <i class="' + icon + '"></i></span>';
+        qcTypes[qc.type] = 1;
+      }
     });
 
     return qcIcons;
