@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.zip.GZIPOutputStream;
 
@@ -39,6 +40,8 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
+import ca.corefacility.bioinformatics.irida.model.sample.FileProcessorErrorQCEntry;
+import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
@@ -170,6 +173,39 @@ public class SequencingObjectServiceImplIT {
 		SequencingRun mr = sequencingRunService.read(1L);
 		sequencingRunService.addSequencingObjectToSequencingRun(mr, so);
 	}
+	
+	@Test
+	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
+	public void testCreateCorruptSequenceFileInSample() throws IOException, InterruptedException {
+		Sample s = sampleService.read(1L);
+		SequenceFile sf = new SequenceFile();
+		Path sequenceFile = Files.createTempFile("TEMPORARY-SEQUENCE-FILE", ".gz");
+		OutputStream gzOut = Files.newOutputStream(sequenceFile);
+		gzOut.write("not a file".getBytes());
+		gzOut.close();
+
+		sf.setFile(sequenceFile);
+		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
+
+		SampleSequencingObjectJoin createdObject = objectService.createSequencingObjectInSample(so, s);
+
+		// Wait 5 seconds. file processing should have failed by then.
+		Thread.sleep(5000);
+
+		SequencingObject readObject = objectService.read(createdObject.getId());
+
+		assertEquals("File should still be in 1st revision", new Long(1),
+				readObject.getFiles().iterator().next().getFileRevisionNumber());
+
+		Sample readSample = sampleService.read(s.getId());
+		List<QCEntry> qcEntries = readSample.getQcEntries();
+
+		assertFalse("should be a qc entry", qcEntries.isEmpty());
+		QCEntry qc = qcEntries.iterator().next();
+
+		assertTrue("should be a FileProcessorErrorQCEntry", qc instanceof FileProcessorErrorQCEntry);
+	}
+	
 
 	@Test
 	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
