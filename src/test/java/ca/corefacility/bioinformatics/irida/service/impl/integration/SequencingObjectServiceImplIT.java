@@ -142,8 +142,8 @@ public class SequencingObjectServiceImplIT {
 
 		Set<Long> fileIds = Sets.newHashSet(3L, 4L);
 
-		Collection<SampleSequencingObjectJoin> sequenceFilePairsForSample = objectService.getSequencesForSampleOfType(
-				s, SequenceFilePair.class);
+		Collection<SampleSequencingObjectJoin> sequenceFilePairsForSample = objectService.getSequencesForSampleOfType(s,
+				SequenceFilePair.class);
 		assertEquals(1, sequenceFilePairsForSample.size());
 		SequencingObject pair = sequenceFilePairsForSample.iterator().next().getObject();
 
@@ -173,7 +173,7 @@ public class SequencingObjectServiceImplIT {
 		SequencingRun mr = sequencingRunService.read(1L);
 		sequencingRunService.addSequencingObjectToSequencingRun(mr, so);
 	}
-	
+
 	@Test
 	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
 	public void testCreateCorruptSequenceFileInSample() throws IOException, InterruptedException {
@@ -187,15 +187,10 @@ public class SequencingObjectServiceImplIT {
 		sf.setFile(sequenceFile);
 		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
 
-		SampleSequencingObjectJoin createdObject = objectService.createSequencingObjectInSample(so, s);
+		objectService.createSequencingObjectInSample(so, s);
 
 		// Wait 5 seconds. file processing should have failed by then.
 		Thread.sleep(5000);
-
-		SequencingObject readObject = objectService.read(createdObject.getId());
-
-		assertEquals("File should still be in 1st revision", new Long(1),
-				readObject.getFiles().iterator().next().getFileRevisionNumber());
 
 		Sample readSample = sampleService.read(s.getId());
 		List<QCEntry> qcEntries = readSample.getQcEntries();
@@ -205,7 +200,6 @@ public class SequencingObjectServiceImplIT {
 
 		assertTrue("should be a FileProcessorErrorQCEntry", qc instanceof FileProcessorErrorQCEntry);
 	}
-	
 
 	@Test
 	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
@@ -273,7 +267,8 @@ public class SequencingObjectServiceImplIT {
 		} while (sf.getFileRevisionNumber() < expectedRevisionNumber);
 		assertEquals("Wrong version number after processing.", expectedRevisionNumber, sf.getFileRevisionNumber());
 
-		AnalysisFastQC analysis = asRole(Role.ROLE_ADMIN, "admin").analysisService.getFastQCAnalysisForSequenceFile(readObject, sf.getId());
+		AnalysisFastQC analysis = asRole(Role.ROLE_ADMIN, "admin").analysisService
+				.getFastQCAnalysisForSequenceFile(readObject, sf.getId());
 		assertNotNull("FastQCAnalysis should have been created for the file.", analysis);
 
 		Set<OverrepresentedSequence> overrepresentedSequences = analysis.getOverrepresentedSequences();
@@ -286,8 +281,8 @@ public class SequencingObjectServiceImplIT {
 
 		// confirm that the file structure is correct
 		Path idDirectory = baseDirectory.resolve(Paths.get(sf.getId().toString()));
-		assertTrue("Revision directory doesn't exist.", Files.exists(idDirectory.resolve(Paths.get(sf
-				.getFileRevisionNumber().toString(), sequenceFile.getFileName().toString()))));
+		assertTrue("Revision directory doesn't exist.", Files.exists(idDirectory
+				.resolve(Paths.get(sf.getFileRevisionNumber().toString(), sequenceFile.getFileName().toString()))));
 		// no other files or directories should be beneath the ID directory
 		int fileCount = 0;
 		Iterator<Path> dir = Files.newDirectoryStream(idDirectory).iterator();
@@ -332,7 +327,8 @@ public class SequencingObjectServiceImplIT {
 		} while (sf.getFileRevisionNumber() < expectedRevisionNumber);
 		assertEquals("Wrong version number after processing.", expectedRevisionNumber, sf.getFileRevisionNumber());
 		assertFalse("File name is still gzipped.", sf.getFile().getFileName().toString().endsWith(".gz"));
-		AnalysisFastQC analysis = asRole(Role.ROLE_ADMIN, "admin").analysisService.getFastQCAnalysisForSequenceFile(readObject, sf.getId());
+		AnalysisFastQC analysis = asRole(Role.ROLE_ADMIN, "admin").analysisService
+				.getFastQCAnalysisForSequenceFile(readObject, sf.getId());
 
 		Set<OverrepresentedSequence> overrepresentedSequences = analysis.getOverrepresentedSequences();
 		assertNotNull("No overrepresented sequences were found.", overrepresentedSequences);
