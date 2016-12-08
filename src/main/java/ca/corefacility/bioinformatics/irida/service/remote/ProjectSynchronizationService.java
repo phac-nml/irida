@@ -284,14 +284,19 @@ public class ProjectSynchronizationService {
 		fileStatus.setSyncStatus(SyncStatus.UPDATING);
 		file = singleEndRemoteService.mirrorSequencingObject(file);
 
-		file.getSequenceFile().setId(null);
-		file.getSequenceFile().getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
+		try {
+			file.getSequenceFile().setId(null);
+			file.getSequenceFile().getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
 
-		objectService.createSequencingObjectInSample(file, sample);
+			objectService.createSequencingObjectInSample(file, sample);
 
-		fileStatus.setSyncStatus(SyncStatus.SYNCHRONIZED);
+			fileStatus.setSyncStatus(SyncStatus.SYNCHRONIZED);
 
-		objectService.updateRemoteStatus(file.getId(), fileStatus);
+			objectService.updateRemoteStatus(file.getId(), fileStatus);
+		} catch (Exception e) {
+			logger.error("Error transferring file: " + file.getRemoteStatus().getURL(), e);
+			// TODO: Capture these errors for display in application
+		}
 	}
 
 	/**
@@ -308,7 +313,6 @@ public class ProjectSynchronizationService {
 		pair = pairRemoteService.mirrorSequencingObject(pair);
 
 		try {
-
 			pair.getFiles().forEach(s -> {
 				s.setId(null);
 				s.getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
