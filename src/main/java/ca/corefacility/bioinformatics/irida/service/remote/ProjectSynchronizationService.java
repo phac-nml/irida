@@ -322,6 +322,7 @@ public class ProjectSynchronizationService {
 			objectService.updateRemoteStatus(pair.getId(), pairStatus);
 		} catch (Exception e) {
 			logger.error("Error transferring file: " + pair.getRemoteStatus().getURL(), e);
+			// TODO: Capture these errors for display in application
 		}
 	}
 
