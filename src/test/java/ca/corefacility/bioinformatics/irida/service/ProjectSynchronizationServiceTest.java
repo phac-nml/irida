@@ -173,4 +173,25 @@ public class ProjectSynchronizationServiceTest {
 		verify(pairRemoteService).mirrorSequencingObject(pair);
 		verify(objectService).createSequencingObjectInSample(pair, sample);
 	}
+	
+	@Test
+	public void testSyncFilesError(){
+		Sample sample = new Sample();
+		
+		SequenceFilePair pair = new SequenceFilePair();
+		RemoteStatus pairStatus = new RemoteStatus("http://pair",api);
+		pair.setRemoteStatus(pairStatus);
+		pair.setId(1L);
+		
+		when(pairRemoteService.mirrorSequencingObject(pair)).thenReturn(pair);
+		
+		syncService.syncSequenceFilePair(pair, sample);
+		
+		when(objectService.createSequencingObjectInSample(pair, sample)).thenThrow(new NullPointerException("Bad file"));
+		
+		verify(pairRemoteService).mirrorSequencingObject(pair);
+		verify(objectService).createSequencingObjectInSample(pair, sample);
+		
+		// An error should have been swallowed and logged
+	}
 }
