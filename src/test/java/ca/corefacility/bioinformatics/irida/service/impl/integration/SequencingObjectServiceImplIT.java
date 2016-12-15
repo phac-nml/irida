@@ -75,8 +75,8 @@ public class SequencingObjectServiceImplIT {
 	private static final String SEQUENCE = "ACGTACGTN";
 	private static final byte[] FASTQ_FILE_CONTENTS = ("@testread\n" + SEQUENCE + "\n+\n?????????\n@testread2\n"
 			+ SEQUENCE + "\n+\n?????????").getBytes();
-	
-	private static final String CHECKSUM = "5049e781d29d5949bd0bfd5a7043ff69";
+
+	private static final String CHECKSUM = "ce4884eb1d03b1781241a743d61edd02";
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -141,8 +141,8 @@ public class SequencingObjectServiceImplIT {
 
 		Set<Long> fileIds = Sets.newHashSet(3L, 4L);
 
-		Collection<SampleSequencingObjectJoin> sequenceFilePairsForSample = objectService.getSequencesForSampleOfType(
-				s, SequenceFilePair.class);
+		Collection<SampleSequencingObjectJoin> sequenceFilePairsForSample = objectService.getSequencesForSampleOfType(s,
+				SequenceFilePair.class);
 		assertEquals(1, sequenceFilePairsForSample.size());
 		SequencingObject pair = sequenceFilePairsForSample.iterator().next().getObject();
 
@@ -238,11 +238,12 @@ public class SequencingObjectServiceImplIT {
 			}
 		} while (sf.getFileRevisionNumber() < expectedRevisionNumber);
 		assertEquals("Wrong version number after processing.", expectedRevisionNumber, sf.getFileRevisionNumber());
-		
-		//verify the file checksum was taken properly
+
+		// verify the file checksum was taken properly
 		assertEquals("checksum should be equal", CHECKSUM, sf.getUploadChecksum());
 
-		AnalysisFastQC analysis = asRole(Role.ROLE_ADMIN, "admin").analysisService.getFastQCAnalysisForSequenceFile(readObject, sf.getId());
+		AnalysisFastQC analysis = asRole(Role.ROLE_ADMIN, "admin").analysisService
+				.getFastQCAnalysisForSequenceFile(readObject, sf.getId());
 		assertNotNull("FastQCAnalysis should have been created for the file.", analysis);
 
 		Set<OverrepresentedSequence> overrepresentedSequences = analysis.getOverrepresentedSequences();
@@ -255,8 +256,8 @@ public class SequencingObjectServiceImplIT {
 
 		// confirm that the file structure is correct
 		Path idDirectory = baseDirectory.resolve(Paths.get(sf.getId().toString()));
-		assertTrue("Revision directory doesn't exist.", Files.exists(idDirectory.resolve(Paths.get(sf
-				.getFileRevisionNumber().toString(), sequenceFile.getFileName().toString()))));
+		assertTrue("Revision directory doesn't exist.", Files.exists(idDirectory
+				.resolve(Paths.get(sf.getFileRevisionNumber().toString(), sequenceFile.getFileName().toString()))));
 		// no other files or directories should be beneath the ID directory
 		int fileCount = 0;
 		Iterator<Path> dir = Files.newDirectoryStream(idDirectory).iterator();
@@ -301,7 +302,8 @@ public class SequencingObjectServiceImplIT {
 		} while (sf.getFileRevisionNumber() < expectedRevisionNumber);
 		assertEquals("Wrong version number after processing.", expectedRevisionNumber, sf.getFileRevisionNumber());
 		assertFalse("File name is still gzipped.", sf.getFile().getFileName().toString().endsWith(".gz"));
-		AnalysisFastQC analysis = asRole(Role.ROLE_ADMIN, "admin").analysisService.getFastQCAnalysisForSequenceFile(readObject, sf.getId());
+		AnalysisFastQC analysis = asRole(Role.ROLE_ADMIN, "admin").analysisService
+				.getFastQCAnalysisForSequenceFile(readObject, sf.getId());
 
 		Set<OverrepresentedSequence> overrepresentedSequences = analysis.getOverrepresentedSequences();
 		assertNotNull("No overrepresented sequences were found.", overrepresentedSequences);
@@ -324,7 +326,7 @@ public class SequencingObjectServiceImplIT {
 			dir.next();
 			fileCount++;
 		}
-		assertEquals("Wrong number of directories beneath the id directory", 3, fileCount);
+		assertEquals("Wrong number of directories beneath the id directory", 4, fileCount);
 	}
 
 	@Test
