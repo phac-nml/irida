@@ -265,7 +265,7 @@ public class SequencingObjectServiceImplIT {
 			dir.next();
 			fileCount++;
 		}
-		assertEquals("Wrong number of directories beneath the id directory", 2, fileCount);
+		assertEquals("Wrong number of directories beneath the id directory", 3, fileCount);
 	}
 
 	@Test
