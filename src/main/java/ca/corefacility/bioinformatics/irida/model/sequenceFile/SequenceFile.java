@@ -291,7 +291,7 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 		this.remoteStatus = remoteStatus;
 	}
 
-	public String getUploadCheckusm() {
+	public String getUploadChecksum() {
 		return uploadChecksum;
 	}
 
