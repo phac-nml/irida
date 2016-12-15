@@ -212,7 +212,7 @@ public class SequencingObjectServiceImplIT {
 	@Test
 	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
 	public void testCreateNotCompressedSequenceFile() throws IOException, InterruptedException {
-		final Long expectedRevisionNumber = 2L;
+		final Long expectedRevisionNumber = 3L;
 		SequenceFile sf = new SequenceFile();
 		Path sequenceFile = Files.createTempFile(null, null);
 		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
@@ -270,7 +270,7 @@ public class SequencingObjectServiceImplIT {
 	@Test
 	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
 	public void testCreateCompressedSequenceFile() throws IOException, InterruptedException {
-		final Long expectedRevisionNumber = 3L;
+		final Long expectedRevisionNumber = 4L;
 		SequenceFile sf = new SequenceFile();
 		Path sequenceFile = Files.createTempFile("TEMPORARY-SEQUENCE-FILE", ".gz");
 		OutputStream gzOut = new GZIPOutputStream(Files.newOutputStream(sequenceFile));
