@@ -18,15 +18,34 @@ import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 
+/**
+ * {@link FileProcessor} used to calculate a checksum using md5 for uploaded
+ * {@link SequenceFile}s
+ */
 @Component
 public class ChecksumFileProcessor implements FileProcessor {
 	private static final Logger logger = LoggerFactory.getLogger(ChecksumFileProcessor.class);
 
-	@Autowired
 	private SequenceFileRepository fileRepository;
-	@Autowired
+
 	private SequencingObjectRepository objectRepository;
 
+	@Autowired
+	public ChecksumFileProcessor(SequencingObjectRepository objectRepository, SequenceFileRepository fileRepository) {
+		this.objectRepository = objectRepository;
+		this.fileRepository = fileRepository;
+	}
+
+	/**
+	 * Create an md5sum for the files in a {@link SequencingObject} and save it
+	 * with the file.
+	 * 
+	 * @param sequenceFileId
+	 *            the id of the {@link SequencingObject} to modify
+	 * @throws FileProcessorException
+	 *             a {@link FileProcessorException} if the file could not be
+	 *             processed
+	 */
 	@Override
 	public void process(Long sequenceFileId) throws FileProcessorException {
 		SequencingObject sequencingObject = objectRepository.findOne(sequenceFileId);
@@ -37,17 +56,22 @@ public class ChecksumFileProcessor implements FileProcessor {
 			try (InputStream is = Files.newInputStream(file.getFile())) {
 				String md5Digest = DigestUtils.md5DigestAsHex(is);
 				logger.trace("Checksum generated for file " + file.getId() + ": " + md5Digest);
-				file.setChecksum(md5Digest);
+				file.setUploadChecksum(md5Digest);
 
 				fileRepository.save(file);
 			} catch (IOException e) {
-				logger.error("Could not calculate checksum", e);
+				throw new FileProcessorException("could not calculate checksum", e);
 			}
 
 		}
 
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @return
+	 */
 	@Override
 	public Boolean modifiesFile() {
 		return false;
