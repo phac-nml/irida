@@ -4,6 +4,8 @@ Changes
 0.14.0 to 0.15.0
 ----------------
 
+* [UI]: Added a QC column to the project/samples table to indicate when a file processing chain failed on a file.
+
 0.13.0 to 0.14.0
 ----------------
 * [UI]: Added ability to select or deselect viewing all associated projects. (0.13.1)
