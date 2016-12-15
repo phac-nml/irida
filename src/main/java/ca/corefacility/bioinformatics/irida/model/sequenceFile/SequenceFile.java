@@ -291,6 +291,14 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 		this.remoteStatus = remoteStatus;
 	}
 
+	/**
+	 * Get the md5 checksum for a file when it was uploaded. NOTE: This checksum
+	 * may not be the same as the md5sum for the current file. The checksum from
+	 * the originally uploaded file is saved so an uploader can verify its file
+	 * upload.
+	 * 
+	 * @return the string md5 for the uploaded file.
+	 */
 	public String getUploadChecksum() {
 		return uploadChecksum;
 	}
