@@ -75,6 +75,8 @@ public class SequencingObjectServiceImplIT {
 	private static final String SEQUENCE = "ACGTACGTN";
 	private static final byte[] FASTQ_FILE_CONTENTS = ("@testread\n" + SEQUENCE + "\n+\n?????????\n@testread2\n"
 			+ SEQUENCE + "\n+\n?????????").getBytes();
+	
+	private static final String CHECKSUM = "5049e781d29d5949bd0bfd5a7043ff69";
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -236,6 +238,9 @@ public class SequencingObjectServiceImplIT {
 			}
 		} while (sf.getFileRevisionNumber() < expectedRevisionNumber);
 		assertEquals("Wrong version number after processing.", expectedRevisionNumber, sf.getFileRevisionNumber());
+		
+		//verify the file checksum was taken properly
+		assertEquals("checksum should be equal", CHECKSUM, sf.getUploadChecksum());
 
 		AnalysisFastQC analysis = asRole(Role.ROLE_ADMIN, "admin").analysisService.getFastQCAnalysisForSequenceFile(readObject, sf.getId());
 		assertNotNull("FastQCAnalysis should have been created for the file.", analysis);
