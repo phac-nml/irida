@@ -58,7 +58,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name = "sequence_file")
 @Audited
-@EntityListeners({AuditingEntityListener.class, RelativePathTranslatorListener.class})
+@EntityListeners({ AuditingEntityListener.class, RelativePathTranslatorListener.class })
 public class SequenceFile extends IridaResourceSupport implements MutableIridaThing, Comparable<SequenceFile>,
 		VersionedFileFields<Long>, IridaSequenceFile, RemoteSynchronizable {
 
@@ -83,6 +83,9 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 	@Column(name = "modified_date")
 	private Date modifiedDate;
 
+	@Column(name = "upload_checksum")
+	private String uploadChecksum;
+
 	@Column(name = "file_revision_number")
 	private Long fileRevisionNumber; // the filesystem file revision number
 
@@ -99,7 +102,7 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 	@NotAudited
 	@JoinColumn(name = "fastqc_analysis_id")
 	private AnalysisFastQC fastqcAnalysis;
-	
+
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "remote_status")
 	private RemoteStatus remoteStatus;
@@ -228,7 +231,7 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 			size = IridaSequenceFile.humanReadableByteCount(Files.size(file), true);
 		} catch (NoSuchFileException e) {
 			logger.error("Could not find file " + file);
-		} catch(IOException e) {
+		} catch (IOException e) {
 			logger.error("Could not calculate file size: ", e);
 		}
 		return size;
@@ -277,7 +280,7 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 					"The FastQC Analysis can only be applied to a sequence file one time.");
 		}
 	}
-	
+
 	@Override
 	public RemoteStatus getRemoteStatus() {
 		return remoteStatus;
@@ -286,5 +289,13 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 	@Override
 	public void setRemoteStatus(RemoteStatus remoteStatus) {
 		this.remoteStatus = remoteStatus;
+	}
+
+	public String getUploadCheckusm() {
+		return uploadChecksum;
+	}
+
+	public void setUploadChecksum(String uploadChecksum) {
+		this.uploadChecksum = uploadChecksum;
 	}
 }
