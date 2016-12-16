@@ -19,7 +19,7 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFi
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 
 /**
- * {@link FileProcessor} used to calculate a checksum using sha1 for uploaded
+ * {@link FileProcessor} used to calculate a checksum using sha256 for uploaded
  * {@link SequenceFile}s
  */
 @Component
@@ -37,7 +37,7 @@ public class ChecksumFileProcessor implements FileProcessor {
 	}
 
 	/**
-	 * Create an sha1sum for the files in a {@link SequencingObject} and save it
+	 * Create an sha256sum for the files in a {@link SequencingObject} and save it
 	 * with the file.
 	 * 
 	 * @param sequenceFileId
@@ -54,7 +54,7 @@ public class ChecksumFileProcessor implements FileProcessor {
 		for (SequenceFile file : files) {
 
 			try (InputStream is = Files.newInputStream(file.getFile())) {
-				String shaDigest = DigestUtils.shaHex(is);
+				String shaDigest = DigestUtils.sha256Hex(is);
 				logger.trace("Checksum generated for file " + file.getId() + ": " + shaDigest);
 				file.setUploadChecksum(shaDigest);
 
