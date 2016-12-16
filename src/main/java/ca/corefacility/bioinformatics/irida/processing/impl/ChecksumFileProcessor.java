@@ -5,11 +5,11 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.Set;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.DigestUtils;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
@@ -19,7 +19,7 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFi
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 
 /**
- * {@link FileProcessor} used to calculate a checksum using md5 for uploaded
+ * {@link FileProcessor} used to calculate a checksum using sha1 for uploaded
  * {@link SequenceFile}s
  */
 @Component
@@ -37,7 +37,7 @@ public class ChecksumFileProcessor implements FileProcessor {
 	}
 
 	/**
-	 * Create an md5sum for the files in a {@link SequencingObject} and save it
+	 * Create an sha1sum for the files in a {@link SequencingObject} and save it
 	 * with the file.
 	 * 
 	 * @param sequenceFileId
@@ -54,9 +54,9 @@ public class ChecksumFileProcessor implements FileProcessor {
 		for (SequenceFile file : files) {
 
 			try (InputStream is = Files.newInputStream(file.getFile())) {
-				String md5Digest = DigestUtils.md5DigestAsHex(is);
-				logger.trace("Checksum generated for file " + file.getId() + ": " + md5Digest);
-				file.setUploadChecksum(md5Digest);
+				String shaDigest = DigestUtils.shaHex(is);
+				logger.trace("Checksum generated for file " + file.getId() + ": " + shaDigest);
+				file.setUploadChecksum(shaDigest);
 
 				fileRepository.save(file);
 			} catch (IOException e) {

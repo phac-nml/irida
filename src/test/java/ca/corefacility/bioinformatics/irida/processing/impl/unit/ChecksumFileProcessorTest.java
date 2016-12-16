@@ -27,7 +27,7 @@ public class ChecksumFileProcessorTest {
 	private ChecksumFileProcessor fileProcessor;
 	private SequenceFileRepository sequenceFileRepository;
 	private static final String FILE_CONTENTS = ">test read\nACGTACTCATG";
-	private static final String CHECKSUM = "355b1d2979d94fc18d7576810b208c5d";
+	private static final String CHECKSUM = "acc5f5d42fc2302e87691915d971368527a968e";
 
 	@Before
 	public void setUp() {
