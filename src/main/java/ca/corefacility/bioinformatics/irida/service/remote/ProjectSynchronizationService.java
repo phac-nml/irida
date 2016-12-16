@@ -282,9 +282,9 @@ public class ProjectSynchronizationService {
 	public void syncSingleEndSequenceFile(SingleEndSequenceFile file, Sample sample) {
 		RemoteStatus fileStatus = file.getRemoteStatus();
 		fileStatus.setSyncStatus(SyncStatus.UPDATING);
-		file = singleEndRemoteService.mirrorSequencingObject(file);
-
 		try {
+			file = singleEndRemoteService.mirrorSequencingObject(file);
+
 			file.getSequenceFile().setId(null);
 			file.getSequenceFile().getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
 
@@ -310,9 +310,9 @@ public class ProjectSynchronizationService {
 	 */
 	public void syncSequenceFilePair(SequenceFilePair pair, Sample sample) {
 		pair.getRemoteStatus().setSyncStatus(SyncStatus.UPDATING);
-		pair = pairRemoteService.mirrorSequencingObject(pair);
-
 		try {
+			pair = pairRemoteService.mirrorSequencingObject(pair);
+
 			pair.getFiles().forEach(s -> {
 				s.setId(null);
 				s.getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
