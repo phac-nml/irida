@@ -76,7 +76,7 @@ public class SequencingObjectServiceImplIT {
 	private static final byte[] FASTQ_FILE_CONTENTS = ("@testread\n" + SEQUENCE + "\n+\n?????????\n@testread2\n"
 			+ SEQUENCE + "\n+\n?????????").getBytes();
 
-	private static final String CHECKSUM = "ce4884eb1d03b1781241a743d61edd02";
+	private static final String CHECKSUM = "79baa035f7d00473d42032a8efde2be0861fdc75";
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
