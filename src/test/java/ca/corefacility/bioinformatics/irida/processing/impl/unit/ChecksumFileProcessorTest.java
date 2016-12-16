@@ -49,7 +49,7 @@ public class ChecksumFileProcessorTest {
 
 		SequenceFile file = fileCaptor.getValue();
 
-		assertEquals("checksums should be equal", CHECKSUM, file.getUploadChecksum());
+		assertEquals("checksums should be equal", CHECKSUM, file.getUploadSha256());
 	}
 
 	@Test(expected = FileProcessorException.class)

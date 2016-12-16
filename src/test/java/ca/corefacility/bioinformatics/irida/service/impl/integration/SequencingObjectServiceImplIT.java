@@ -240,7 +240,7 @@ public class SequencingObjectServiceImplIT {
 		assertEquals("Wrong version number after processing.", expectedRevisionNumber, sf.getFileRevisionNumber());
 
 		// verify the file checksum was taken properly
-		assertEquals("checksum should be equal", CHECKSUM, sf.getUploadChecksum());
+		assertEquals("checksum should be equal", CHECKSUM, sf.getUploadSha256());
 
 		AnalysisFastQC analysis = asRole(Role.ROLE_ADMIN, "admin").analysisService
 				.getFastQCAnalysisForSequenceFile(readObject, sf.getId());

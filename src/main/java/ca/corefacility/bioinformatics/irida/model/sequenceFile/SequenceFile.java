@@ -83,8 +83,8 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 	@Column(name = "modified_date")
 	private Date modifiedDate;
 
-	@Column(name = "upload_checksum")
-	private String uploadChecksum;
+	@Column(name = "upload_sha256")
+	private String uploadSha256;
 
 	@Column(name = "file_revision_number")
 	private Long fileRevisionNumber; // the filesystem file revision number
@@ -299,11 +299,11 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 	 * 
 	 * @return the string sha256 for the uploaded file.
 	 */
-	public String getUploadChecksum() {
-		return uploadChecksum;
+	public String getUploadSha256() {
+		return uploadSha256;
 	}
 
-	public void setUploadChecksum(String uploadChecksum) {
-		this.uploadChecksum = uploadChecksum;
+	public void setUploadSha256(String uploadSha256) {
+		this.uploadSha256 = uploadSha256;
 	}
 }

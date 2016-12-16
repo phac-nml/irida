@@ -8,11 +8,11 @@
 	<changeSet id="file-checksum" author="tom">
 
 		<addColumn tableName="sequence_file">
-			<column name="upload_checksum" type="varchar(255)" />
+			<column name="upload_sha256" type="varchar(255)" />
 		</addColumn>
 
 		<addColumn tableName="sequence_file_AUD">
-			<column name="upload_checksum" type="varchar(255)" />
+			<column name="upload_sha256" type="varchar(255)" />
 		</addColumn>
 
 	</changeSet>
