@@ -223,7 +223,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	@Override
 	@PreAuthorize(UPDATE_USER_PERMISSIONS)
 	public User update(Long uid, Map<String, Object> properties) {
-		return updateFields(uid, properties);
+		return super.update(uid, properties);
 	}
 	
 	/**
