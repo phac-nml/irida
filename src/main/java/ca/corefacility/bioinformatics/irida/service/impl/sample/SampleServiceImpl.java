@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityExistsException;
+import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import javax.validation.Validator;
 
@@ -29,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -136,6 +138,16 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@PreAuthorize("hasPermission(#id, 'canUpdateSample')")
 	public Sample update(final Long id, final Map<String, Object> updatedProperties) {
 		return super.update(id, updatedProperties);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasPermission(#id, 'canUpdateSample')")
+	public Sample updateFields(Long id, Map<String, Object> updatedFields) throws ConstraintViolationException,
+			ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException, InvalidPropertyException {
+		return super.updateFields(id, updatedFields);
 	}
 	
 	/**

@@ -197,7 +197,7 @@ public class SamplesController extends BaseController {
 
 		if (updatedValues.size() > 0) {
 			try {
-				sampleService.update(sampleId, updatedValues);
+				sampleService.updateFields(sampleId, updatedValues);
 			} catch (ConstraintViolationException e) {
 				model.addAttribute(MODEL_ERROR_ATTR, getErrorsFromViolationException(e));
 				return getEditSampleSpecificPage(model, sampleId);
