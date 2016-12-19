@@ -362,8 +362,9 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testUpdateRegularUser() {
-		AnalysisSubmission updated = analysisSubmissionService.update(1L,
-				ImmutableMap.of("analysisState", AnalysisState.COMPLETED));
+		AnalysisSubmission submission = analysisSubmissionService.read(1L);
+		submission.setAnalysisState(AnalysisState.COMPLETED);
+		AnalysisSubmission updated = analysisSubmissionService.update(submission);
 		assertEquals("analysis should be completed", AnalysisState.COMPLETED, updated.getAnalysisState());
 	}
 
@@ -373,8 +374,9 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testUpdateAdminUser() {
-		assertNotNull("submission should be updated",
-				analysisSubmissionService.update(1L, ImmutableMap.of("analysisState", AnalysisState.COMPLETED)));
+		AnalysisSubmission submission = analysisSubmissionService.read(1L);
+		submission.setAnalysisState(AnalysisState.COMPLETED);
+		assertNotNull("submission should be updated", analysisSubmissionService.update(submission));
 	}
 
 	/**

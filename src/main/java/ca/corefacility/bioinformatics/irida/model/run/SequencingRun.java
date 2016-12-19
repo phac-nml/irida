@@ -101,6 +101,10 @@ public abstract class SequencingRun extends IridaResourceSupport implements Muta
 	public String getDescription() {
 		return description;
 	}
+	
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
 	@Override
 	public Date getCreatedDate() {
