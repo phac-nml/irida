@@ -33,6 +33,7 @@ import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
@@ -185,7 +186,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 		Set<ConstraintViolation<User>> violations = validatePassword(password);
 		if (violations.isEmpty()) {
 			String encodedPassword = passwordEncoder.encode(password);
-			return super.update(userId, ImmutableMap.of(PASSWORD_PROPERTY, (Object) encodedPassword,
+			return super.updateFields(userId, ImmutableMap.of(PASSWORD_PROPERTY, (Object) encodedPassword,
 					CREDENTIALS_NON_EXPIRED_PROPERTY, true));
 		}
 
@@ -222,17 +223,27 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	@Override
 	@PreAuthorize(UPDATE_USER_PERMISSIONS)
 	public User update(Long uid, Map<String, Object> properties) {
-		if (properties.containsKey(PASSWORD_PROPERTY)) {
-			String password = properties.get(PASSWORD_PROPERTY).toString();
+		return updateFields(uid, properties);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize(UPDATE_USER_PERMISSIONS)
+	@Override
+	public User updateFields(Long id, Map<String, Object> updatedFields)
+			throws ConstraintViolationException, EntityExistsException, InvalidPropertyException {
+		if (updatedFields.containsKey(PASSWORD_PROPERTY)) {
+			String password = updatedFields.get(PASSWORD_PROPERTY).toString();
 			Set<ConstraintViolation<User>> violations = validatePassword(password);
 			if (violations.isEmpty()) {
-				properties.put(PASSWORD_PROPERTY, passwordEncoder.encode(password));
+				updatedFields.put(PASSWORD_PROPERTY, passwordEncoder.encode(password));
 			} else {
 				throw new ConstraintViolationException(violations);
 			}
 		}
 
-		return super.update(uid, properties);
+		return super.updateFields(id, updatedFields);
 	}
 
 	/**
