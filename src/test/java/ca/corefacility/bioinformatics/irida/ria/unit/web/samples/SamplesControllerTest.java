@@ -146,6 +146,7 @@ public class SamplesControllerTest {
 				model.containsAttribute(SamplesController.LATITUDE));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetSampleFiles() throws IOException {
 		ExtendedModelMap model = new ExtendedModelMap();
@@ -210,6 +211,7 @@ public class SamplesControllerTest {
 		verifyZeroInteractions(projectService);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetSampleFilesNoAccess() throws IOException {
 		ExtendedModelMap model = new ExtendedModelMap();

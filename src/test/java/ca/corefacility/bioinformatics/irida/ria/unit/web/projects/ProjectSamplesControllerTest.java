@@ -310,6 +310,7 @@ public class ProjectSamplesControllerTest {
 		verify(projectService).getUnassociatedProjects(p, term, page, pagesize, order, ProjectSamplesController.PROJECT_NAME_PROPERTY);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetAjaxProjectSampleModels() {
 		Sample sample = TestDataFactory.constructSample();
