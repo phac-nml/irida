@@ -216,34 +216,25 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 			}
 		}
 	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@PreAuthorize(UPDATE_USER_PERMISSIONS)
-	public User update(Long uid, Map<String, Object> properties) {
-		return super.update(uid, properties);
-	}
 	
 	/**
 	 * {@inheritDoc}
 	 */
 	@PreAuthorize(UPDATE_USER_PERMISSIONS)
 	@Override
-	public User updateFields(Long id, Map<String, Object> updatedFields)
+	public User updateFields(Long id, Map<String, Object> properties)
 			throws ConstraintViolationException, EntityExistsException, InvalidPropertyException {
-		if (updatedFields.containsKey(PASSWORD_PROPERTY)) {
-			String password = updatedFields.get(PASSWORD_PROPERTY).toString();
+		if (properties.containsKey(PASSWORD_PROPERTY)) {
+			String password = properties.get(PASSWORD_PROPERTY).toString();
 			Set<ConstraintViolation<User>> violations = validatePassword(password);
 			if (violations.isEmpty()) {
-				updatedFields.put(PASSWORD_PROPERTY, passwordEncoder.encode(password));
+				properties.put(PASSWORD_PROPERTY, passwordEncoder.encode(password));
 			} else {
 				throw new ConstraintViolationException(violations);
 			}
 		}
 
-		return super.updateFields(id, updatedFields);
+		return super.updateFields(id, properties);
 	}
 
 	/**
