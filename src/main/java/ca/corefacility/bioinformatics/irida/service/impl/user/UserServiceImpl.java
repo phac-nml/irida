@@ -222,7 +222,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 */
 	@PreAuthorize(UPDATE_USER_PERMISSIONS)
 	@Override
-	public User updateFields(Long id, Map<String, Object> properties)
+	public User updateFields(Long uid, Map<String, Object> properties)
 			throws ConstraintViolationException, EntityExistsException, InvalidPropertyException {
 		if (properties.containsKey(PASSWORD_PROPERTY)) {
 			String password = properties.get(PASSWORD_PROPERTY).toString();
@@ -234,7 +234,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 			}
 		}
 
-		return super.updateFields(id, properties);
+		return super.updateFields(uid, properties);
 	}
 
 	/**
