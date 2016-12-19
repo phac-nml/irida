@@ -176,15 +176,15 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 			}
 		}
 	}
-
+	
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
 	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER','ROLE_ADMIN') or hasPermission(#id, 'canUpdateSequencingRun')")
-	public SequencingRun update(Long id, Map<String, Object> updatedFields)
+	@Override
+	public SequencingRun updateFields(Long id, Map<String, Object> updatedFields)
 			throws ConstraintViolationException, EntityExistsException, InvalidPropertyException {
-		return super.update(id, updatedFields);
+		return super.updateFields(id, updatedFields);
 	}
 
 	/**

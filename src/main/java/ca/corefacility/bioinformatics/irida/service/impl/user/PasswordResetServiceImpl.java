@@ -57,11 +57,6 @@ public class PasswordResetServiceImpl extends CRUDServiceImpl<String, PasswordRe
 	public PasswordReset read(String key) {
 		return super.read(key);
 	}
-
-	@Override
-	public PasswordReset update(String key, Map<String, Object> changes) {
-		throw new UnsupportedOperationException("PasswordResets cannot be updated.");
-	}
 	
 	@Override
 	public PasswordReset update(PasswordReset object) {

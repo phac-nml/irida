@@ -200,16 +200,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		addUserToProject(project, user, ProjectRole.PROJECT_OWNER);
 		return project;
 	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@Transactional
-	@PreAuthorize("hasPermission(#id, 'isProjectOwner')")
-	public Project update(final Long id, final Map<String, Object> updateProperties) {
-		return super.update(id, updateProperties);
-	}
 	
 	/**
 	 * {@inheritDoc}

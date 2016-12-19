@@ -136,15 +136,6 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#id, 'canUpdateSample')")
-	public Sample update(final Long id, final Map<String, Object> updatedProperties) {
-		return super.update(id, updatedProperties);
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@PreAuthorize("hasPermission(#id, 'canUpdateSample')")
 	public Sample updateFields(Long id, Map<String, Object> updatedFields) throws ConstraintViolationException,
 			ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException, InvalidPropertyException {
 		return super.updateFields(id, updatedFields);
