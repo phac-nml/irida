@@ -2,12 +2,15 @@ package ca.corefacility.bioinformatics.irida.service.impl.user;
 
 import java.util.Map;
 
+import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.repositories.user.PasswordResetRepository;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
@@ -57,6 +60,17 @@ public class PasswordResetServiceImpl extends CRUDServiceImpl<String, PasswordRe
 
 	@Override
 	public PasswordReset update(String key, Map<String, Object> changes) {
+		throw new UnsupportedOperationException("PasswordResets cannot be updated.");
+	}
+	
+	@Override
+	public PasswordReset update(PasswordReset object) {
+		throw new UnsupportedOperationException("PasswordResets cannot be updated.");
+	}
+	
+	@Override
+	public PasswordReset updateFields(String id, Map<String, Object> updatedFields)
+			throws ConstraintViolationException, EntityExistsException, InvalidPropertyException {
 		throw new UnsupportedOperationException("PasswordResets cannot be updated.");
 	}
 }
