@@ -5,7 +5,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.Principal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -43,7 +51,6 @@ import com.github.dandelion.datatables.core.export.ExportUtils;
 import com.github.dandelion.datatables.core.export.ReservedFormat;
 import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -704,7 +711,8 @@ public class ProjectSamplesController {
 
 		if (!Strings.isNullOrEmpty(newName)) {
 			try {
-				mergeIntoSample = sampleService.update(mergeSampleId, ImmutableMap.of("sampleName", newName));
+				mergeIntoSample.setSampleName(newName);
+				mergeIntoSample = sampleService.update(mergeIntoSample);
 			} catch (ConstraintViolationException e) {
 				logger.error(e.getLocalizedMessage());
 				result.put("result", "error");

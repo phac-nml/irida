@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyMap;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -18,7 +17,6 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -29,12 +27,19 @@ import java.util.zip.ZipInputStream;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import com.github.dandelion.datatables.core.ajax.ColumnDef;
+import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
+import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -55,12 +60,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectSamplesContr
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-
-import com.github.dandelion.datatables.core.ajax.ColumnDef;
-import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
-import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 public class ProjectSamplesControllerTest {
 	public static final String PROJECT_ORGANISM = "E. coli";
@@ -225,7 +224,6 @@ public class ProjectSamplesControllerTest {
 		verify(projectService).removeSampleFromProject(project1, sample);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testAjaxSamplesMerge() {
 		String newName = "FRED";
@@ -242,7 +240,7 @@ public class ProjectSamplesControllerTest {
 		when(sampleService.read(1L)).thenReturn(sample1);
 		when(sampleService.read(11L)).thenReturn(sample2);
 		when(projectService.read(TestDataFactory.PROJECT_ID)).thenReturn(project);
-		when(sampleService.update(anyLong(), anyMap())).thenReturn(sample1);
+		when(sampleService.update(any(Sample.class))).thenReturn(sample1);
 
 		// Call the controller with a new name
 		Map<String, Object> result = controller.ajaxSamplesMerge(TestDataFactory.PROJECT_ID, 1L, sampleIds, newName, Locale.US);
@@ -251,9 +249,9 @@ public class ProjectSamplesControllerTest {
 		verify(sampleService, times(1)).mergeSamples(any(Project.class), any(Sample.class), any());
 
 		// Ensure that the rename was not requested
-		Map<String, Object> updateMap = new HashMap<>();
-		updateMap.put("sampleName", newName);
-		verify(sampleService, times(1)).update(1L, updateMap);
+		ArgumentCaptor<Sample> captor = ArgumentCaptor.forClass(Sample.class);
+		verify(sampleService, times(1)).update(captor.capture());
+		assertEquals("Sample name should be set", newName,captor.getValue().getSampleName());
 		assertEquals("Result is success", result.get("result"), "success");
 	}
 
