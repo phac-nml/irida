@@ -369,7 +369,6 @@ public class ProjectSamplesController {
 			@RequestParam(value = "sampleNames[]") List<String> sampleNames, Locale locale) {
 		// Need to keep the count for comparison after.
 		int originalCount = sampleNames.size();
-		List<Join<Project, Sample>> samples = new ArrayList<>();
 
 		// Get a list of all samples for all projects
 		projects.add(0, projectId);
@@ -947,7 +946,6 @@ public class ProjectSamplesController {
 
 		Project project = projectService.read(projectId);
 		List<Project> projects = new ArrayList<>();
-		List<Sample> samples = new ArrayList<>();
 
 		if (!associated.isEmpty()) {
 			projects = (List<Project>) projectService.readMultiple(associated);

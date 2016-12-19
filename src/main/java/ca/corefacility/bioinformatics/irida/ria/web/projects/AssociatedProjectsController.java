@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -30,6 +28,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.common.collect.ImmutableMap;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
@@ -46,13 +46,10 @@ import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
-import com.google.common.collect.ImmutableMap;
-
 @Controller
 @RequestMapping("/projects")
 @Scope("session")
 public class AssociatedProjectsController {
-	private static final Logger logger = LoggerFactory.getLogger(AssociatedProjectsController.class);
 
 	private static final String ACTIVE_NAV = "activeNav";
 	private static final String ACTIVE_NAV_ASSOCIATED_PROJECTS = "associated";
@@ -66,9 +63,6 @@ public class AssociatedProjectsController {
 	private final RemoteAPIService apiService;
 	private final UserService userService;
 	private final ProjectRemoteService projectRemoteService;
-	private SampleRemoteService sampleRemoteService;
-
-	private final SampleService sampleService;
 
 	private final Formatter<Date> dateFormatter;
 
@@ -84,8 +78,6 @@ public class AssociatedProjectsController {
 		this.userService = userService;
 		this.apiService = apiService;
 		this.projectRemoteService = projectRemoteService;
-		this.sampleService = sampleService;
-		this.sampleRemoteService = sampleRemoteService;
 		dateFormatter = new DateFormatter();
 	}
 
