@@ -41,7 +41,6 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -631,8 +630,9 @@ public class ProjectServiceImplIT {
 		final String modifiedName = "creates a new revision";
 		final String modifiedDesc = "another new revision";
 		final Project p = projectService.read(1L);
-		projectService.update(p.getId(), ImmutableMap.of("name", modifiedName));
-		projectService.update(p.getId(), ImmutableMap.of("projectDescription", modifiedDesc));
+		p.setName(modifiedName);
+		p.setProjectDescription(modifiedDesc);
+		projectService.update(p);
 
 		// reverse the order so that the latest revision is first in the list.
 		final Revisions<Integer, Project> revisions = projectService.findRevisions(1L).reverse();
@@ -658,8 +658,9 @@ public class ProjectServiceImplIT {
 		final String modifiedName = "creates a new revision";
 		final String modifiedDesc = "another new revision";
 		final Project p = projectService.read(1L);
-		projectService.update(p.getId(), ImmutableMap.of("name", modifiedName));
-		projectService.update(p.getId(), ImmutableMap.of("projectDescription", modifiedDesc));
+		p.setName(modifiedName);
+		p.setProjectDescription(modifiedDesc);
+		projectService.update(p);
 
 		// reverse the order so that the latest revision is first in the list.
 		final Page<Revision<Integer, Project>> revisions = projectService.findRevisions(1L, new PageRequest(1, 1));
@@ -675,7 +676,9 @@ public class ProjectServiceImplIT {
 	@Test(expected = EntityRevisionDeletedException.class)
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testGetDeletedProjectRevisions() {
-		projectService.update(1L, ImmutableMap.of("name", "some useless new name"));
+		Project p = projectService.read(1L);
+		p.setName("some useless new name");
+		projectService.update(p);
 		projectService.delete(1L);
 
 		projectService.findRevisions(1L);
@@ -684,7 +687,9 @@ public class ProjectServiceImplIT {
 	@Test(expected = EntityRevisionDeletedException.class)
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testGetPagedDeletedProjectRevisions() {
-		projectService.update(1L, ImmutableMap.of("name", "some useless new name"));
+		Project p = projectService.read(1L);
+		p.setName("some useless new name");
+		projectService.update(p);
 		projectService.delete(1L);
 
 		projectService.findRevisions(1L, new PageRequest(1, 1));
