@@ -55,6 +55,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.impl.AssemblyFileProcessor;
+import ca.corefacility.bioinformatics.irida.processing.impl.ChecksumFileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.impl.DefaultFileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
@@ -153,10 +154,10 @@ public class IridaApiServicesConfig {
 			SampleSequencingObjectJoinRepository ssoRepository, QCEntryRepository qcRepository,
 			GzipFileProcessor gzipFileProcessor, FastqcFileProcessor fastQcFileProcessor,
 			AssemblyFileProcessor assemblyFileProcessor) {
-
+		
 		gzipFileProcessor.setRemoveCompressedFiles(removeCompressedFiles);
 
-		final List<FileProcessor> fileProcessors = Lists.newArrayList(gzipFileProcessor, fastQcFileProcessor,
+		final List<FileProcessor> fileProcessors = Lists.newArrayList(checksumProcessor, gzipFileProcessor, fastQcFileProcessor,
 				assemblyFileProcessor);
 
 		if (!decompressFiles) {

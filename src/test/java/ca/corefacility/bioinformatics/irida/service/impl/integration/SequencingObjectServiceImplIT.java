@@ -79,6 +79,10 @@ public class SequencingObjectServiceImplIT {
 	private static final byte[] FASTQ_FILE_CONTENTS = ("@testread\n" + SEQUENCE + "\n+\n?????????\n@testread2\n"
 			+ SEQUENCE + "\n+\n?????????").getBytes();
 
+	private static final String CHECKSUM = "85e440ab2f17636ab24b12e8e4b4d445b6131e7df785cbd02d56c2688eef55fb";
+	
+	private static final String ZIPPED_CHECKSUM = "a2ff0d0790029822b4a2457a2912414ffc532136729ad2fd06efc70fe428ab32";
+
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
@@ -240,7 +244,7 @@ public class SequencingObjectServiceImplIT {
 	@Test
 	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
 	public void testCreateNotCompressedSequenceFile() throws IOException, InterruptedException {
-		final Long expectedRevisionNumber = 2L;
+		final Long expectedRevisionNumber = 3L;
 		SequenceFile sf = new SequenceFile();
 		Path sequenceFile = Files.createTempFile(null, null);
 		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
@@ -267,6 +271,9 @@ public class SequencingObjectServiceImplIT {
 		} while (sf.getFileRevisionNumber() < expectedRevisionNumber);
 		assertEquals("Wrong version number after processing.", expectedRevisionNumber, sf.getFileRevisionNumber());
 
+		// verify the file checksum was taken properly
+		assertEquals("checksum should be equal", CHECKSUM, sf.getUploadSha256());
+
 		AnalysisFastQC analysis = asRole(Role.ROLE_ADMIN, "admin").analysisService
 				.getFastQCAnalysisForSequenceFile(readObject, sf.getId());
 		assertNotNull("FastQCAnalysis should have been created for the file.", analysis);
@@ -290,13 +297,13 @@ public class SequencingObjectServiceImplIT {
 			dir.next();
 			fileCount++;
 		}
-		assertEquals("Wrong number of directories beneath the id directory", 2, fileCount);
+		assertEquals("Wrong number of directories beneath the id directory", 3, fileCount);
 	}
 
 	@Test
 	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
 	public void testCreateCompressedSequenceFile() throws IOException, InterruptedException {
-		final Long expectedRevisionNumber = 3L;
+		final Long expectedRevisionNumber = 4L;
 		SequenceFile sf = new SequenceFile();
 		Path sequenceFile = Files.createTempFile("TEMPORARY-SEQUENCE-FILE", ".gz");
 		OutputStream gzOut = new GZIPOutputStream(Files.newOutputStream(sequenceFile));
@@ -329,6 +336,9 @@ public class SequencingObjectServiceImplIT {
 		assertFalse("File name is still gzipped.", sf.getFile().getFileName().toString().endsWith(".gz"));
 		AnalysisFastQC analysis = asRole(Role.ROLE_ADMIN, "admin").analysisService
 				.getFastQCAnalysisForSequenceFile(readObject, sf.getId());
+		
+		// verify the file checksum was taken properly
+		assertEquals("checksum should be equal", ZIPPED_CHECKSUM, sf.getUploadSha256());
 
 		Set<OverrepresentedSequence> overrepresentedSequences = analysis.getOverrepresentedSequences();
 		assertNotNull("No overrepresented sequences were found.", overrepresentedSequences);
@@ -351,7 +361,7 @@ public class SequencingObjectServiceImplIT {
 			dir.next();
 			fileCount++;
 		}
-		assertEquals("Wrong number of directories beneath the id directory", 3, fileCount);
+		assertEquals("Wrong number of directories beneath the id directory", 4, fileCount);
 	}
 
 	@Test
