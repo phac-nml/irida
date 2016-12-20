@@ -193,11 +193,19 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 	public ValueType update(ValueType object) {
 		KeyType id = object.getId();
 
+		// try to validate the new state of the object
+		Set<ConstraintViolation<ValueType>> constraintViolations = validator.validate(object, valueType);
+
+		// if any validations fail, throw a constraint violation exception.
+		if (!constraintViolations.isEmpty()) {
+			throw new ConstraintViolationException(constraintViolations);
+		}
+
 		// check if the entity exists in the database
 		if (!exists(id)) {
 			throw new EntityNotFoundException("Entity not found.");
 		}
-		
+
 		return repository.save(object);
 	}
 
