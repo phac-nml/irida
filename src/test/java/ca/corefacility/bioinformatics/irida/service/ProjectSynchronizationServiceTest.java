@@ -17,6 +17,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ProjectSynchronizationException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
@@ -174,7 +175,7 @@ public class ProjectSynchronizationServiceTest {
 		verify(objectService).createSequencingObjectInSample(pair, sample);
 	}
 	
-	@Test
+	@Test(expected = ProjectSynchronizationException.class)
 	public void testSyncFilesError(){
 		Sample sample = new Sample();
 		
@@ -184,14 +185,8 @@ public class ProjectSynchronizationServiceTest {
 		pair.setId(1L);
 		
 		when(pairRemoteService.mirrorSequencingObject(pair)).thenReturn(pair);
-		
-		syncService.syncSequenceFilePair(pair, sample);
-		
 		when(objectService.createSequencingObjectInSample(pair, sample)).thenThrow(new NullPointerException("Bad file"));
 		
-		verify(pairRemoteService).mirrorSequencingObject(pair);
-		verify(objectService).createSequencingObjectInSample(pair, sample);
-		
-		// An error should have been swallowed and logged
+		syncService.syncSequenceFilePair(pair, sample);
 	}
 }

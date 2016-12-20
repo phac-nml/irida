@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.remote;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
+import ca.corefacility.bioinformatics.irida.exceptions.ProjectSynchronizationException;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -251,11 +253,17 @@ public class ProjectSynchronizationService {
 		});
 
 		List<SequenceFilePair> sequenceFilePairsForSample = pairRemoteService.getSequenceFilePairsForSample(sample);
+		
+		List<ProjectSynchronizationException> syncErrors = new ArrayList<>();
 
 		for (SequenceFilePair pair : sequenceFilePairsForSample) {
 			if (!pairsByUrl.containsKey(pair.getRemoteStatus().getURL())) {
 				pair.setId(null);
-				syncSequenceFilePair(pair, localSample);
+				try {
+					syncSequenceFilePair(pair, localSample);
+				} catch (ProjectSynchronizationException e) {
+					syncErrors.add(e);
+				}
 			}
 		}
 
@@ -263,10 +271,21 @@ public class ProjectSynchronizationService {
 
 		for (SingleEndSequenceFile file : unpairedFilesForSample) {
 			file.setId(null);
-			syncSingleEndSequenceFile(file, localSample);
+			try {
+				syncSingleEndSequenceFile(file, localSample);
+			} catch (ProjectSynchronizationException e) {
+				syncErrors.add(e);
+			}
 		}
 
-		localSample.getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
+		if (syncErrors.isEmpty()) {
+			localSample.getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
+		} else {
+			localSample.getRemoteStatus().setSyncStatus(SyncStatus.ERROR);
+			logger.error(
+					"Setting sample " + localSample.getId() + "sync status to ERROR due to sync errors with files");
+		}
+		
 		sampleService.update(localSample);
 	}
 
@@ -295,7 +314,8 @@ public class ProjectSynchronizationService {
 			objectService.updateRemoteStatus(file.getId(), fileStatus);
 		} catch (Exception e) {
 			logger.error("Error transferring file: " + file.getRemoteStatus().getURL(), e);
-			// TODO: Capture these errors for display in application
+			throw new ProjectSynchronizationException("Could not synchronize file " + file.getRemoteStatus().getURL(),
+					e);
 		}
 	}
 
@@ -326,7 +346,8 @@ public class ProjectSynchronizationService {
 			objectService.updateRemoteStatus(pair.getId(), pairStatus);
 		} catch (Exception e) {
 			logger.error("Error transferring file: " + pair.getRemoteStatus().getURL(), e);
-			// TODO: Capture these errors for display in application
+			throw new ProjectSynchronizationException("Could not synchronize pair " + pair.getRemoteStatus().getURL(),
+					e);
 		}
 	}
 
