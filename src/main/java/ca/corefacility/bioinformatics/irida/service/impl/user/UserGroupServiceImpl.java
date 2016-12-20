@@ -174,6 +174,15 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 			String... sortProperties) {
 		return super.search(specification, page, size, order, sortProperties);
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasPermission(#object, 'canUpdateUserGroup')")
+	@Override
+	public UserGroup update(UserGroup object) {
+		return super.update(object);
+	}
 
 	/**
 	 * {@inheritDoc}
