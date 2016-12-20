@@ -77,6 +77,8 @@ public class SequencingObjectServiceImplIT {
 			+ SEQUENCE + "\n+\n?????????").getBytes();
 
 	private static final String CHECKSUM = "85e440ab2f17636ab24b12e8e4b4d445b6131e7df785cbd02d56c2688eef55fb";
+	
+	private static final String ZIPPED_CHECKSUM = "a2ff0d0790029822b4a2457a2912414ffc532136729ad2fd06efc70fe428ab32";
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -304,6 +306,9 @@ public class SequencingObjectServiceImplIT {
 		assertFalse("File name is still gzipped.", sf.getFile().getFileName().toString().endsWith(".gz"));
 		AnalysisFastQC analysis = asRole(Role.ROLE_ADMIN, "admin").analysisService
 				.getFastQCAnalysisForSequenceFile(readObject, sf.getId());
+		
+		// verify the file checksum was taken properly
+		assertEquals("checksum should be equal", ZIPPED_CHECKSUM, sf.getUploadSha256());
 
 		Set<OverrepresentedSequence> overrepresentedSequences = analysis.getOverrepresentedSequences();
 		assertNotNull("No overrepresented sequences were found.", overrepresentedSequences);
