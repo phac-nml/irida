@@ -197,14 +197,6 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 		if (!exists(id)) {
 			throw new EntityNotFoundException("Entity not found.");
 		}
-		
-		// try to validate the new state of the object
-		Set<ConstraintViolation<ValueType>> constraintViolations = validator.validate(object, valueType);
-
-		// if any validations fail, throw a constraint violation exception.
-		if (!constraintViolations.isEmpty()) {
-			throw new ConstraintViolationException(constraintViolations);
-		}
 
 		return repository.save(object);
 	}
