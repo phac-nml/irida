@@ -633,6 +633,9 @@ public class ProjectServiceImplIT {
 		p.setName(modifiedName);
 		p.setProjectDescription(modifiedDesc);
 		projectService.update(p);
+		
+		p.setProjectDescription(modifiedDesc);
+		projectService.update(p);
 
 		// reverse the order so that the latest revision is first in the list.
 		final Revisions<Integer, Project> revisions = projectService.findRevisions(1L).reverse();
@@ -659,6 +662,8 @@ public class ProjectServiceImplIT {
 		final String modifiedDesc = "another new revision";
 		final Project p = projectService.read(1L);
 		p.setName(modifiedName);
+		projectService.update(p);
+		
 		p.setProjectDescription(modifiedDesc);
 		projectService.update(p);
 
