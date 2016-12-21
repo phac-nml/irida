@@ -4,6 +4,7 @@ Changes
 0.14.0 to 0.15.0
 ----------------
 * [API]: Added a checksum to files on upload so uploaders can validate upload was successful.
+* [UI]: Project sync jobs ignore bad files and set a sample to error when it can't transfer files, but gracefully continues the rest of the sync. (0.14.1)
 
 0.13.0 to 0.14.0
 ----------------
