@@ -584,7 +584,6 @@ public class ProjectsController {
 
 		Project project = projectService.read(projectId);
 
-		Map<String, Object> updatedValues = new HashMap<>();
 		if (!Strings.isNullOrEmpty(name)) {
 			project.setName(name);
 		}
@@ -597,14 +596,14 @@ public class ProjectsController {
 		if (!Strings.isNullOrEmpty(remoteURL)) {
 			project.setRemoteURL(remoteURL);
 		}
-		if (updatedValues.size() > 0) {
-			try {
-				projectService.update(project);
-			} catch (ConstraintViolationException ex) {
-				model.addAttribute("errors", getErrorsFromViolationException(ex));
-				return getProjectMetadataEditPage(model, principal, projectId);
-			}
+		
+		try {
+			projectService.update(project);
+		} catch (ConstraintViolationException ex) {
+			model.addAttribute("errors", getErrorsFromViolationException(ex));
+			return getProjectMetadataEditPage(model, principal, projectId);
 		}
+		
 		return "redirect:/projects/" + projectId + "/metadata";
 	}
 
