@@ -104,7 +104,7 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		User user = userRepository.loadUserByUsername(authentication.getName());
 		o.setUser(user);
-		
+
 		return super.create(o);
 	}
 
@@ -176,7 +176,7 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 			}
 		}
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -185,6 +185,15 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 	public SequencingRun updateFields(Long id, Map<String, Object> updatedFields)
 			throws ConstraintViolationException, EntityExistsException, InvalidPropertyException {
 		return super.updateFields(id, updatedFields);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER','ROLE_ADMIN') or hasPermission(#id, 'canUpdateSequencingRun')")
+	@Override
+	public SequencingRun update(SequencingRun object) {
+		return super.update(object);
 	}
 
 	/**
