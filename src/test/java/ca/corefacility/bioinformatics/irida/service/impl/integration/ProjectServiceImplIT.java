@@ -631,7 +631,6 @@ public class ProjectServiceImplIT {
 		final String modifiedDesc = "another new revision";
 		final Project p = projectService.read(1L);
 		p.setName(modifiedName);
-		p.setProjectDescription(modifiedDesc);
 		projectService.update(p);
 		
 		p.setProjectDescription(modifiedDesc);

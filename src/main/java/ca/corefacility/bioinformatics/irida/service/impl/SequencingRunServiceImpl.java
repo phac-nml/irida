@@ -190,7 +190,7 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 	/**
 	 * {@inheritDoc}
 	 */
-	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER','ROLE_ADMIN') or hasPermission(#id, 'canUpdateSequencingRun')")
+	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER','ROLE_ADMIN') or hasPermission(#object, 'canUpdateSequencingRun')")
 	@Override
 	public SequencingRun update(SequencingRun object) {
 		return super.update(object);
