@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.model.sample;
 
 import javax.persistence.Entity;
 
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 
 /**
@@ -16,8 +17,8 @@ public class FileProcessorErrorQCEntry extends QCEntry {
 		super();
 	}
 
-	public FileProcessorErrorQCEntry(Sample sample) {
-		super(sample);
+	public FileProcessorErrorQCEntry(SequencingObject sequencingObject) {
+		super(sequencingObject);
 	}
 
 	@Override

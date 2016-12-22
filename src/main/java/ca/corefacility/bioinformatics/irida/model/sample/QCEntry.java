@@ -23,8 +23,11 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+
 /**
- * Abstract class describing quality control entries for a {@link Sample}
+ * Abstract class describing quality control entries for a
+ * {@link SequencingObject}
  */
 @Entity
 @Table(name = "qc_entry")
@@ -37,7 +40,7 @@ public abstract class QCEntry {
 
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
 	@JsonIgnore
-	public Sample sample;
+	SequencingObject sequencingObject;
 
 	@CreatedDate
 	@Temporal(TemporalType.TIMESTAMP)
@@ -48,8 +51,8 @@ public abstract class QCEntry {
 	public QCEntry() {
 	}
 
-	public QCEntry(Sample sample) {
-		this.sample = sample;
+	public QCEntry(SequencingObject sequencingObject) {
+		this.sequencingObject = sequencingObject;
 	}
 
 	public Long getId() {
@@ -60,8 +63,8 @@ public abstract class QCEntry {
 		return createdDate;
 	}
 
-	public Sample getSample() {
-		return sample;
+	public SequencingObject getSequencingObject() {
+		return sequencingObject;
 	}
 
 	/**
