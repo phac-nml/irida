@@ -40,6 +40,7 @@ public abstract class QCEntry {
 
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
 	@JsonIgnore
+	@NotNull
 	SequencingObject sequencingObject;
 
 	@CreatedDate
