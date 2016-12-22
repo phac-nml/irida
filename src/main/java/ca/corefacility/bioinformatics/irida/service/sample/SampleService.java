@@ -14,6 +14,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -235,4 +236,14 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @return a Collection of {@link Sample}
 	 */
 	public Collection<Sample> getSamplesForAnalysisSubimssion(AnalysisSubmission submission);
+	
+	/**
+	 * Find all the {@link QCEntry} associated with {@link SequencingObject}s in
+	 * a given {@link Sample}
+	 * 
+	 * @param sample
+	 *            the {@link Sample} to get {@link QCEntry} for
+	 * @return a list of {@link QCEntry}
+	 */
+	public List<QCEntry> getQCEntriesForSample(Sample sample);
 }
