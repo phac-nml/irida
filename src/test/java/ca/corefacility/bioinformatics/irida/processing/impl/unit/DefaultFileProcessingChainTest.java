@@ -4,8 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 
@@ -15,15 +15,12 @@ import org.mockito.ArgumentCaptor;
 
 import ca.corefacility.bioinformatics.irida.exceptions.FileProcessorTimeoutException;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.processing.impl.DefaultFileProcessingChain;
-import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 
@@ -35,7 +32,6 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.Sequencing
 public class DefaultFileProcessingChainTest {
 
 	private SequencingObjectRepository objectRepository;
-	private SampleSequencingObjectJoinRepository ssoRepository;
 	private QCEntryRepository qcRepository;
 
 	private SingleEndSequenceFile seqObject;
@@ -44,7 +40,6 @@ public class DefaultFileProcessingChainTest {
 	@Before
 	public void setUp() {
 		this.objectRepository = mock(SequencingObjectRepository.class);
-		this.ssoRepository = mock(SampleSequencingObjectJoinRepository.class);
 		this.qcRepository = mock(QCEntryRepository.class);
 
 		seqObject = new SingleEndSequenceFile(null);
@@ -53,8 +48,7 @@ public class DefaultFileProcessingChainTest {
 
 	@Test(expected = FileProcessorTimeoutException.class)
 	public void testExceedsTimeout() throws FileProcessorTimeoutException {
-		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, ssoRepository,
-				qcRepository);
+		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, qcRepository);
 		fileProcessingChain.setTimeout(1);
 		fileProcessingChain.setSleepDuration(0);
 
@@ -66,8 +60,7 @@ public class DefaultFileProcessingChainTest {
 
 	@Test
 	public void testProcessEmptyChain() throws FileProcessorTimeoutException {
-		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, ssoRepository,
-				qcRepository);
+		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, qcRepository);
 		SequenceFile sf = new SequenceFile();
 		sf.setId(1L);
 		when(objectRepository.exists(objectId)).thenReturn(true);
@@ -77,8 +70,8 @@ public class DefaultFileProcessingChainTest {
 
 	@Test
 	public void testFailWithContinueChain() throws FileProcessorTimeoutException {
-		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, ssoRepository,
-				qcRepository, new FailingFileProcessor());
+		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, qcRepository,
+				new FailingFileProcessor());
 		SequenceFile sf = new SequenceFile();
 		sf.setId(1L);
 		when(objectRepository.exists(objectId)).thenReturn(true);
@@ -93,8 +86,8 @@ public class DefaultFileProcessingChainTest {
 
 	@Test(expected = FileProcessorException.class)
 	public void testFastFailProcessorChain() throws FileProcessorTimeoutException {
-		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, ssoRepository,
-				qcRepository, new FailingFileProcessor());
+		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, qcRepository,
+				new FailingFileProcessor());
 		SequenceFile sf = new SequenceFile();
 		sf.setId(1L);
 		when(objectRepository.exists(objectId)).thenReturn(true);
@@ -107,8 +100,8 @@ public class DefaultFileProcessingChainTest {
 
 	@Test(expected = FileProcessorException.class)
 	public void testFailOnProcessorChain() throws FileProcessorTimeoutException {
-		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, ssoRepository,
-				qcRepository, new FailingFileProcessorNoContinue());
+		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, qcRepository,
+				new FailingFileProcessorNoContinue());
 		SequenceFile sf = new SequenceFile();
 		sf.setId(1L);
 		when(objectRepository.exists(objectId)).thenReturn(true);
@@ -118,15 +111,12 @@ public class DefaultFileProcessingChainTest {
 
 	@Test
 	public void testFailWriteQCEntry() throws FileProcessorTimeoutException {
-		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, ssoRepository,
-				qcRepository, new FailingFileProcessorNoContinue());
+		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, qcRepository,
+				new FailingFileProcessorNoContinue());
 
 		SequenceFile sf = new SequenceFile();
 		sf.setId(1L);
 		when(objectRepository.exists(objectId)).thenReturn(true);
-		Sample sample = new Sample("test");
-		when(ssoRepository.getSampleForSequencingObject(seqObject))
-				.thenReturn(new SampleSequencingObjectJoin(sample, seqObject));
 
 		boolean exceptionCaught = false;
 		try {
@@ -140,7 +130,8 @@ public class DefaultFileProcessingChainTest {
 		verify(qcRepository).save(captor.capture());
 
 		QCEntry qcEntry = captor.getValue();
-		assertEquals("should have saved qc entry for sample", sample, qcEntry.getSample());
+
+		assertEquals("should have saved qc entry for sample", seqObject, qcEntry.getSequencingObject());
 
 	}
 

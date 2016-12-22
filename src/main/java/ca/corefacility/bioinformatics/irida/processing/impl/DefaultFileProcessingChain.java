@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.exceptions.FileProcessorTimeoutException;
 import ca.corefacility.bioinformatics.irida.model.sample.FileProcessorErrorQCEntry;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
@@ -37,21 +36,17 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 	private Integer sleepDuration = 1000;
 
 	private final SequencingObjectRepository sequencingObjectRepository;
-	private SampleSequencingObjectJoinRepository ssoRepository;
 	private QCEntryRepository qcRepository;
 
 	public DefaultFileProcessingChain(SequencingObjectRepository sequencingObjectRepository,
-			SampleSequencingObjectJoinRepository ssoRepository, QCEntryRepository qcRepository,
-			FileProcessor... fileProcessors) {
-		this(sequencingObjectRepository, ssoRepository, qcRepository, Arrays.asList(fileProcessors));
+			QCEntryRepository qcRepository, FileProcessor... fileProcessors) {
+		this(sequencingObjectRepository, qcRepository, Arrays.asList(fileProcessors));
 	}
 
 	public DefaultFileProcessingChain(SequencingObjectRepository sequencingObjectRepository,
-			SampleSequencingObjectJoinRepository ssoRepository, QCEntryRepository qcRepository,
-			List<FileProcessor> fileProcessors) {
+			QCEntryRepository qcRepository, List<FileProcessor> fileProcessors) {
 		this.fileProcessors = fileProcessors;
 		this.sequencingObjectRepository = sequencingObjectRepository;
-		this.ssoRepository = ssoRepository;
 		this.qcRepository = qcRepository;
 	}
 
@@ -87,12 +82,8 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 				}
 			} catch (FileProcessorException e) {
 				SequencingObject sequencingObject = sequencingObjectRepository.findOne(sequencingObjectId);
-				SampleSequencingObjectJoin sso = ssoRepository.getSampleForSequencingObject(sequencingObject);
 				
-				// unlikely but possible that object would not have a sample
-				if (sso != null) {
-					qcRepository.save(new FileProcessorErrorQCEntry(sso.getSubject()));
-				}
+				qcRepository.save(new FileProcessorErrorQCEntry(sequencingObject));
 				
 				// if the file processor modifies the file, then just fast fail,
 				// we can't proceed with the remaining file processors. If the

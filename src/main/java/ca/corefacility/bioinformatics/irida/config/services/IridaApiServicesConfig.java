@@ -151,9 +151,9 @@ public class IridaApiServicesConfig {
 
 	@Bean
 	public FileProcessingChain fileProcessorChain(SequencingObjectRepository sequencingObjectRepository,
-			SampleSequencingObjectJoinRepository ssoRepository, QCEntryRepository qcRepository,
-			GzipFileProcessor gzipFileProcessor, FastqcFileProcessor fastQcFileProcessor,
-			AssemblyFileProcessor assemblyFileProcessor, ChecksumFileProcessor checksumProcessor) {
+			QCEntryRepository qcRepository, GzipFileProcessor gzipFileProcessor,
+			FastqcFileProcessor fastQcFileProcessor, AssemblyFileProcessor assemblyFileProcessor,
+			ChecksumFileProcessor checksumProcessor) {
 
 		gzipFileProcessor.setRemoveCompressedFiles(removeCompressedFiles);
 
@@ -165,7 +165,7 @@ public class IridaApiServicesConfig {
 			fileProcessors.remove(gzipFileProcessor);
 		}
 
-		return new DefaultFileProcessingChain(sequencingObjectRepository, ssoRepository, qcRepository, fileProcessors);
+		return new DefaultFileProcessingChain(sequencingObjectRepository, qcRepository, fileProcessors);
 	}
 	
 	@Bean(name = "fileProcessingChainExecutor")
