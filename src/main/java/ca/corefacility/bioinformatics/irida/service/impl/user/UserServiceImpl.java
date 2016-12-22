@@ -238,6 +238,17 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	}
 
 	/**
+	 * Throws an {@link UnsupportedOperationException} telling user to use
+	 * {@link UserServiceImpl#updateFields(Long, Map)} instead. They should use
+	 * the other method so that they cannot update a password without explicitly
+	 * trying to do so.
+	 */
+	@Override
+	public User update(User object) {
+		throw new UnsupportedOperationException("Update is not supported for UserService.  Use updateFields instead.");
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	@Override
