@@ -36,10 +36,12 @@ public class ProjectSampleModel extends AbstractExportModel {
 	);
 	private Project project;
 	private Sample sample;
+	private List<QCEntry> qcEntries;
 
-	public ProjectSampleModel(ProjectSampleJoin psj) {
+	public ProjectSampleModel(ProjectSampleJoin psj, List<QCEntry> qcEntries) {
 		this.project = psj.getSubject();
 		this.sample = psj.getObject();
+		this.qcEntries = qcEntries;
 	}
 
 	public static String generateSortName(String name) {
@@ -111,6 +113,6 @@ public class ProjectSampleModel extends AbstractExportModel {
 	}
 	
 	public List<QCEntry> getQcEntries(){
-		return sample.getQcEntries();
+		return qcEntries;
 	}
 }
