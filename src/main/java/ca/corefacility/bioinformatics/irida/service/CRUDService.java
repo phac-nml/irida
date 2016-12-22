@@ -101,8 +101,12 @@ public interface CRUDService<IdentifierType extends Serializable, Type extends T
 	 * @param object
 	 *            The object to update
 	 * @return The updated object
+	 * @throws EntityNotFoundException
+	 *             If the entity being updated is not in the database
+	 * @throws ConstraintViolationException
+	 *             if the entity being updated contains constraint violations
 	 */
-	public Type update(Type object);
+	public Type update(Type object) throws EntityNotFoundException, ConstraintViolationException;
 
 	/**
 	 * Delete the object with the specified identifier from the database.
