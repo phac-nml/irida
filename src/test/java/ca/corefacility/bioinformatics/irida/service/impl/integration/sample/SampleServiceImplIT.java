@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,6 +27,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
+
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -35,18 +40,13 @@ import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisExcep
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Sets;
 
 /**
  * Integration tests for the sample service.
@@ -349,6 +349,15 @@ public class SampleServiceImplIT {
 		samples.forEach(s -> ids.remove(s.getId()));
 		
 		assertTrue("all sample ids should be found", ids.isEmpty());
+	}
+	
+	@Test
+	@WithMockUser(username = "fbristow", roles = "ADMIN")
+	public void testGetQCEntiresForSample() {
+		Sample s = sampleService.read(1L);
+		List<QCEntry> qcEntriesForSample = sampleService.getQCEntriesForSample(s);
+
+		assertEquals("should be 1 qc entry", 1L, qcEntriesForSample.size());
 	}
 
 	private void assertSampleNotFound(Long id) {

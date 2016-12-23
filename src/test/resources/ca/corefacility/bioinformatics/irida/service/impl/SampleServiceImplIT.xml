@@ -153,4 +153,7 @@
 	analysis_submission_id="1" sequence_file_pair_id="1" />
 	<analysis_submission_sequence_file_pair
 		analysis_submission_id="1" sequence_file_pair_id="2" />
+
+	<qc_entry id="1" created_date="2013-07-18 14:20:19.0"
+		sequencingObject_id="4" DTYPE="FileProcessorErrorQCEntry" />
 </dataset>
