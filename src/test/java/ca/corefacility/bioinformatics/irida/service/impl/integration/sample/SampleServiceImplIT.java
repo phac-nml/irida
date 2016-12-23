@@ -359,6 +359,14 @@ public class SampleServiceImplIT {
 
 		assertEquals("should be 1 qc entry", 1L, qcEntriesForSample.size());
 	}
+	
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "dr-evil", roles = "USER")
+	public void testGetQCEntiresForSampleNotAllowed() {
+		Sample s = new Sample();
+		s.setId(1L);
+		sampleService.getQCEntriesForSample(s);
+	}
 
 	private void assertSampleNotFound(Long id) {
 		try {
