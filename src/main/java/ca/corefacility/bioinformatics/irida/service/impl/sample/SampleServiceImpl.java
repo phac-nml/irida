@@ -90,6 +90,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 *            the analysis repository.
 	 * @param ssoRepository
 	 *            The {@link SampleSequencingObjectJoin} repository
+	 * @param qcEntryRepository
+	 *            a repository for storing and reading {@link QCEntry}
 	 * @param validator
 	 *            validator.
 	 */
@@ -401,6 +403,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Transactional(readOnly = true)
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public List<QCEntry> getQCEntriesForSample(Sample sample) {
