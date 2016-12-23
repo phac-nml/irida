@@ -161,7 +161,7 @@ public class SequencingObjectServiceImplIT {
 
 	@Test
 	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
-	public void testCreateSequenceFileInSample() throws IOException {
+	public void testCreateSequenceFileInSample() throws IOException, InterruptedException {
 		Sample s = sampleService.read(1L);
 		SequenceFile sf = new SequenceFile();
 		Path sequenceFile = Files.createTempFile("TEMPORARY-SEQUENCE-FILE", ".gz");
@@ -176,6 +176,15 @@ public class SequencingObjectServiceImplIT {
 
 		SequencingRun mr = sequencingRunService.read(1L);
 		sequencingRunService.addSequencingObjectToSequencingRun(mr, so);
+		
+		// Wait 5 seconds. file processing should have failed by then.
+		Thread.sleep(5000);
+
+		Sample readSample = sampleService.read(s.getId());
+
+		List<QCEntry> qcEntries = sampleService.getQCEntriesForSample(readSample);
+
+		assertTrue("should be no qc entries", qcEntries.isEmpty());
 	}
 
 	@Test
