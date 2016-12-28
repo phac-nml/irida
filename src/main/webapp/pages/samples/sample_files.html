@@ -117,7 +117,8 @@
 					</tr>
 					<tr><td colspan="5" class="sequence_spacer"></td></tr>
 				</th:block>
-				<tr class="single_end sequence-file-row" th:each="join : ${single_end}" th:with="file=${join.getObject()}">
+				<th:block th:each="join : ${single_end}" th:with="file=${join.getObject()}">
+				<tr class="single_end sequence-file-row">
 					<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${file},file=${file.getSequenceFile()},icon='single',relative='true')"></td>
 					<td>
 						<div class="btn-group-sm pull-right" role="group">
@@ -135,6 +136,8 @@
 						</div>
 					</td>
 				</tr>
+				<tr><td colspan="5" class="sequence_spacer"></td></tr>
+				</th:block>
 			</table>
 		</div>
 	</div>
