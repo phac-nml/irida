@@ -65,6 +65,17 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 				page.isDeleteConfirmationMessageDisplayed());
 		assertEquals("Displays the correct number of sequence files", 2, page.getSequenceFileCount());
 	}
+	
+	@Test
+	public void testDeleteQc() {
+		page.gotoPage(SAMPLE_ID);
+
+		assertEquals("should be 1 qc entry", 1, page.getQcEntryCount());
+		page.deleteFirstQc();
+		assertTrue("Should display a confirmation message that the qc was deleted",
+				page.isDeleteConfirmationMessageDisplayed());
+		assertEquals("Displays the correct number of qc entries", 0, page.getQcEntryCount());
+	}
 
 	@Test
 	public void testDeletePair(){
