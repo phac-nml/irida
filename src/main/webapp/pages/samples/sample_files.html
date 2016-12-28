@@ -115,6 +115,22 @@
 							<span th:text="#{'analysis.state.' + ${pair.getAutomatedAssembly().getAnalysisState()}}"></span>
 						</td>
 					</tr>
+					<tr class="paired_end file__qc" th:each="qc : ${pair.getQcEntries()}">
+						<td class="td_icon">
+							<fa:icon th:attr="type=${qc.getType()}"/>
+						</td>
+						<td colspan="3">
+							<span th:text="#{'sample.files.qc.'+${qc.getType()}}"></span>
+						</td>
+						<td>
+							<div class="btn-group-sm pull-right" role="group">
+								<button th:if="${canManageSample}"
+										class="btn btn-default">
+									<span class="fa fa-fw fa-times"></span>
+								</button>
+							</div>
+						</td>
+					</tr>
 					<tr><td colspan="5" class="sequence_spacer"></td></tr>
 				</th:block>
 				<th:block th:each="join : ${single_end}" th:with="file=${join.getObject()}">

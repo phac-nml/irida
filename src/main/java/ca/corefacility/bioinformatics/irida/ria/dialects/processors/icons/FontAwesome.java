@@ -218,6 +218,10 @@ public class FontAwesome {
 	 */
 	public static final String EXCEL_ATTRIBUTE = "excel";
 	public static final String EXCEL_ICON = "file-excel-o";
+	
+	public static final String QC_PROCESSING_ATTRIBUTE="PROCESSING";
+	public static final String QC_PROCESSING_ICON="cogs";
+			
 
 	/*
 	* If using multiple icons in a list (such as a side bar) add the 'fixed=""'
@@ -269,6 +273,7 @@ public class FontAwesome {
 			.put(CLIPBOARD_ATTRIBUTE, CLIPBOARD_ICON)
 			.put(REMOTE_ATTRIBUTE, REMOTE_ICON)
 			.put(EXCEL_ATTRIBUTE, EXCEL_ICON)
+			.put(QC_PROCESSING_ATTRIBUTE,QC_PROCESSING_ICON)
 			.build();
 	// @formatter:on
 
