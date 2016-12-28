@@ -125,7 +125,8 @@
 						<td>
 							<div class="btn-group-sm pull-right" role="group">
 								<button th:if="${canManageSample}"
-										class="btn btn-default">
+										class="btn btn-default"
+										data:ng-click="${'fileCtrl.deleteQc(' + qc.id + ', &#39;'' + pair.getLabel() +'&#39;')'}">
 									<span class="fa fa-fw fa-times"></span>
 								</button>
 							</div>
@@ -217,6 +218,21 @@
 		<div class="modal-body">
 			<h4>{{ ::deleteCtrl.label }}</h4>
 			<input type="hidden" name="fileId" value="{{ deleteCtrl.fileId }}"/>
+		</div>
+		<div class="modal-footer">
+			<button type="button" class="btn btn-default" ng-click="deleteCtrl.cancel()" th:text="#{form.btn.cancel}">Cancel</button>
+			<button id="remove-file-confirm" type="submit" class="btn btn-warning remove-file-confirm" th:text="#{form.btn.remove}">OK</button>
+		</div>
+		</form>
+	</script>
+	<script type="text/ng-template" id="/confirm_qc.html">
+		<form method="post" th:action="@{/samples/{sId}/qc/delete(sId=${sampleId})}">
+			<div class="modal-header">
+			<h3 class="modal-title" th:text="#{sample.files.qc.remove.confirmation}"></h3>
+		</div>
+		<div class="modal-body">
+			<h4>{{ ::deleteCtrl.label }}</h4>
+			<input type="hidden" name="qcId" value="{{ deleteCtrl.fileId }}"/>
 		</div>
 		<div class="modal-footer">
 			<button type="button" class="btn btn-default" ng-click="deleteCtrl.cancel()" th:text="#{form.btn.cancel}">Cancel</button>

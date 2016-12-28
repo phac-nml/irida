@@ -64,6 +64,28 @@
         }
       });
     };
+
+   /**
+     * Click handler for the delete button for qc of a sequencefile
+     *  Displays a confirmation modal
+     *
+     * @param {long} id Id for the qc entry
+     * @param {String} label Name of the sequenceFile to delete qc from
+     */
+    vm.deleteQc = function(id, label) {
+      $uibModal.open({
+        templateUrl: '/confirm_qc.html',
+        controller: 'FileDeletionController as deleteCtrl',
+        resolve: {
+          id: function() {
+            return id;
+          },
+          label: function() {
+            return label;
+          }
+        }
+      });
+    };
   }
 
   /**

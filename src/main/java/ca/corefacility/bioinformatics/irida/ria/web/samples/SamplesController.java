@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -43,6 +44,7 @@ import com.google.common.collect.ImmutableMap;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -301,6 +303,44 @@ public class SamplesController extends BaseController {
 			attributes.addFlashAttribute("fileDeleted", true);
 			attributes.addFlashAttribute("fileDeletedError", messageSource.getMessage("samples.files.remove.error",
 					new Object[] { sequencingObject.getLabel() }, locale));
+		}
+
+		return "redirect:" + request.getHeader("referer");
+	}
+
+	/**
+	 * Remove a {@link QCEntry} in a given {@link Sample}
+	 * 
+	 * @param attributes
+	 *            the redirect attributes where we can add flash-scoped messages
+	 *            for the client.
+	 * @param sampleId
+	 *            the {@link Sample} id
+	 * @param qcId
+	 *            The {@link QCEntry} id
+	 * @param request
+	 *            {@link HttpServletRequest}
+	 * @param locale
+	 *            the locale specified by the browser.
+	 * @return map stating the request was successful
+	 */
+	@RequestMapping(value = "/samples/{sampleId}/qc/delete", method = RequestMethod.POST)
+	public String removeQCEntryFromSample(RedirectAttributes attributes, @PathVariable Long sampleId,
+			@RequestParam Long qcId, HttpServletRequest request, Locale locale) {
+		Sample sample = sampleService.read(sampleId);
+		Optional<QCEntry> findFirst = sampleService.getQCEntriesForSample(sample).stream()
+				.filter(q -> q.getId().equals(qcId)).findFirst();
+
+		try {
+			sampleService.removeQcEntry(sample, findFirst.get());
+			attributes.addFlashAttribute("fileDeleted", true);
+			attributes.addFlashAttribute("fileDeletedMessage",
+					messageSource.getMessage("samples.files.qc.remove.message", null, locale));
+		} catch (Exception e) {
+			logger.error("Could not remove sequence file from sample: ", e);
+			attributes.addFlashAttribute("fileDeleted", true);
+			attributes.addFlashAttribute("fileDeletedError",
+					messageSource.getMessage("samples.files.qc.remove.error", null, locale));
 		}
 
 		return "redirect:" + request.getHeader("referer");

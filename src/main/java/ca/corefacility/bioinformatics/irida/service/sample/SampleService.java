@@ -246,4 +246,14 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @return a list of {@link QCEntry}
 	 */
 	public List<QCEntry> getQCEntriesForSample(Sample sample);
+	
+	/**
+	 * Remove a given QCEntry from a {@link Sample}
+	 * 
+	 * @param sample
+	 *            the {@link Sample} the {@link QCEntry} is associated with
+	 * @param entry
+	 *            the {@link QCEntry} to remove
+	 */
+	public void removeQcEntry(Sample sample, QCEntry entry);
 }
