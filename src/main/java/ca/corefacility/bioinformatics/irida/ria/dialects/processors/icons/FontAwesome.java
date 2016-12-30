@@ -221,6 +221,9 @@ public class FontAwesome {
 	
 	public static final String QC_PROCESSING_ATTRIBUTE="PROCESSING";
 	public static final String QC_PROCESSING_ICON="cogs";
+	
+	public static final String QC_COVERAGE_ATTRIBUTE="COVERAGE";
+	public static final String QC_COVERAGE_ICON="sort-amount-asc";
 			
 
 	/*
@@ -274,6 +277,7 @@ public class FontAwesome {
 			.put(REMOTE_ATTRIBUTE, REMOTE_ICON)
 			.put(EXCEL_ATTRIBUTE, EXCEL_ICON)
 			.put(QC_PROCESSING_ATTRIBUTE,QC_PROCESSING_ICON)
+			.put(QC_COVERAGE_ATTRIBUTE, QC_COVERAGE_ICON)
 			.build();
 	// @formatter:on
 

@@ -56,6 +56,7 @@ import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.impl.AssemblyFileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.impl.ChecksumFileProcessor;
+import ca.corefacility.bioinformatics.irida.processing.impl.CoverageFileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.impl.DefaultFileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
@@ -153,12 +154,12 @@ public class IridaApiServicesConfig {
 	public FileProcessingChain fileProcessorChain(SequencingObjectRepository sequencingObjectRepository,
 			QCEntryRepository qcRepository, GzipFileProcessor gzipFileProcessor,
 			FastqcFileProcessor fastQcFileProcessor, AssemblyFileProcessor assemblyFileProcessor,
-			ChecksumFileProcessor checksumProcessor) {
+			ChecksumFileProcessor checksumProcessor, CoverageFileProcessor coverageProcessor) {
 
 		gzipFileProcessor.setRemoveCompressedFiles(removeCompressedFiles);
 
 		final List<FileProcessor> fileProcessors = Lists.newArrayList(checksumProcessor, gzipFileProcessor,
-				fastQcFileProcessor, assemblyFileProcessor);
+				fastQcFileProcessor, coverageProcessor, assemblyFileProcessor);
 
 		if (!decompressFiles) {
 			logger.info("File decompression is disabled [file.processing.decompress=false]");

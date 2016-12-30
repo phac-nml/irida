@@ -68,6 +68,8 @@ public abstract class QCEntry {
 		return sequencingObject;
 	}
 
+	public abstract String getMessage();
+
 	/**
 	 * Return the type of qc entry. This will be used for display and grouping
 	 * in the UI.
@@ -77,6 +79,6 @@ public abstract class QCEntry {
 	public abstract QCEntryType getType();
 
 	public enum QCEntryType {
-		PROCESSING
+		PROCESSING, COVERAGE
 	}
 }

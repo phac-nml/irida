@@ -9,13 +9,17 @@ import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.CoverageQCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 
 @Component
@@ -24,8 +28,14 @@ public class CoverageFileProcessor implements FileProcessor {
 
 	@Autowired
 	private SequencingObjectRepository objectRepository;
+	@Autowired
 	private SampleSequencingObjectJoinRepository ssoRepository;
+	@Autowired
 	private ProjectSampleJoinRepository psRepository;
+	@Autowired
+	private QCEntryRepository qcEntryRepository;
+	@Autowired
+	private AnalysisRepository analysisRepository;
 
 	@Override
 	public void process(Long sequenceFileId) throws FileProcessorException {
@@ -37,12 +47,19 @@ public class CoverageFileProcessor implements FileProcessor {
 		if (projectForSample.size() == 1) {
 
 			Project project = projectForSample.iterator().next().getSubject();
-			if (project.getGenomeSize() == null) {
+			if (project.getGenomeSize() != null) {
 				Long projectGenomeSize = project.getGenomeSize();
 
-				long totalBases = read.getFiles().stream().mapToLong(f -> f.getFastQCAnalysis().getTotalBases()).sum();
+				long totalBases = read.getFiles().stream().mapToLong(f -> {
+					AnalysisFastQC fastqc = analysisRepository.findFastqcAnalysisForSequenceFile(f);
+					return fastqc.getTotalBases();
+				}).sum();
 
 				Long coverage = totalBases / projectGenomeSize;
+
+				CoverageQCEntry coverageQCEntry = new CoverageQCEntry(read, coverage);
+				qcEntryRepository.save(coverageQCEntry);
+
 			} else {
 				logger.debug("Cannot report coverage for object " + read.getId()
 						+ " as it's project has no reference length");
