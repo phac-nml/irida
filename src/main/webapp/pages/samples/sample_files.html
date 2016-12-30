@@ -119,8 +119,11 @@
 						<td class="td_icon">
 							<fa:icon th:attr="type=${qc.getType()}"/>
 						</td>
-						<td colspan="3">
+						<td>
 							<span th:text="#{'sample.files.qc.'+${qc.getType()}}"></span>
+						</td>
+						<td colspan="2">
+								<span th:text="${qc.getMessage()}"/>
 						</td>
 						<td>
 							<div class="btn-group-sm pull-right" role="group">
