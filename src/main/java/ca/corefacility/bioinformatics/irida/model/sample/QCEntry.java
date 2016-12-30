@@ -36,24 +36,29 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 public abstract class QCEntry {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	public Long id;
+	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
 	@JsonIgnore
 	@NotNull
-	SequencingObject sequencingObject;
+	private SequencingObject sequencingObject;
 
 	@CreatedDate
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_date")
 	@NotNull
-	public Date createdDate;
+	private Date createdDate;
+	
+	@NotNull
+	private boolean positive;
 
 	public QCEntry() {
+		positive = false;
 	}
 
-	public QCEntry(SequencingObject sequencingObject) {
+	public QCEntry(SequencingObject sequencingObject, boolean positive) {
 		this.sequencingObject = sequencingObject;
+		this.positive = positive;
 	}
 
 	public Long getId() {
@@ -66,6 +71,14 @@ public abstract class QCEntry {
 
 	public SequencingObject getSequencingObject() {
 		return sequencingObject;
+	}
+	
+	public boolean isPositive() {
+		return positive;
+	}
+	
+	public void setPositive(boolean positive) {
+		this.positive = positive;
 	}
 
 	public abstract String getMessage();

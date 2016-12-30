@@ -378,9 +378,13 @@ var datatable = (function(moment, tl, page) {
       // only allow one indicator of each type for a sample
       if (!qcTypes.hasOwnProperty(qc.type)) {
         var icon = page.qc[qc.type];
-        qcIcons += '<span class="label label-danger"><i class="' + icon + '"></i>';
-        if(qc.message){
-          qcIcons += qc.message;
+        var labelType = "label-danger";
+        if (qc.positive){
+          labelType = "label-success";
+        }
+        qcIcons += '<span class="label ' + labelType + '"><i class="' + icon + '"></i>';
+        if (qc.message){
+          qcIcons += ' ' + qc.message;
         }
 
         qcIcons += '</span> ';

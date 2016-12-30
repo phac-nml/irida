@@ -49,6 +49,7 @@ public class CoverageFileProcessor implements FileProcessor {
 			Project project = projectForSample.iterator().next().getSubject();
 			if (project.getGenomeSize() != null) {
 				Long projectGenomeSize = project.getGenomeSize();
+				Integer requiredCoverage = project.getRequiredCoverage();
 
 				long totalBases = read.getFiles().stream().mapToLong(f -> {
 					AnalysisFastQC fastqc = analysisRepository.findFastqcAnalysisForSequenceFile(f);
@@ -56,8 +57,9 @@ public class CoverageFileProcessor implements FileProcessor {
 				}).sum();
 
 				Long coverage = totalBases / projectGenomeSize;
+				boolean positive = coverage >= requiredCoverage;
 
-				CoverageQCEntry coverageQCEntry = new CoverageQCEntry(read, coverage);
+				CoverageQCEntry coverageQCEntry = new CoverageQCEntry(read, coverage, positive);
 				qcEntryRepository.save(coverageQCEntry);
 
 			} else {

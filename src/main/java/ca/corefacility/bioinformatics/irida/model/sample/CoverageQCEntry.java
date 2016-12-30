@@ -15,8 +15,8 @@ public class CoverageQCEntry extends QCEntry {
 		super();
 	}
 
-	public CoverageQCEntry(SequencingObject sequencingObject, Long coverage) {
-		super(sequencingObject);
+	public CoverageQCEntry(SequencingObject sequencingObject, Long coverage, boolean positive) {
+		super(sequencingObject, positive);
 		this.coverage = coverage;
 	}
 

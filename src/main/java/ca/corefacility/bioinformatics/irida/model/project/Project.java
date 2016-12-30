@@ -104,6 +104,10 @@ public class Project extends IridaResourceSupport
 	@Column(name = "genome_size", nullable = true)
 	private Long genomeSize;
 	
+	@Min(1)
+	@Column(name = "required_coverage", nullable = true)
+	private Integer requiredCoverage;
+	
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "remote_status")
 	private RemoteStatus remoteStatus;
@@ -242,5 +246,13 @@ public class Project extends IridaResourceSupport
 	
 	public void setGenomeSize(Long genomeSize) {
 		this.genomeSize = genomeSize;
+	}
+	
+	public Integer getRequiredCoverage() {
+		return requiredCoverage;
+	}
+	
+	public void setRequiredCoverage(Integer requiredCoverage) {
+		this.requiredCoverage = requiredCoverage;
 	}
 }
