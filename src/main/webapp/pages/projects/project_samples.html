@@ -12,6 +12,9 @@
                 id: /*[[${project.getId()}]]*/ '4'
             },
             ajaxParam: {date:{}},
+            qc: {
+                PROCESSING: "fa fa-cogs"
+            },
             urls: {
                 associated: {
                     local: /*[[@{/projects/{id}/ajax/associated(id=${project.getId()})}]]*/ ''
@@ -125,6 +128,7 @@
                 </div>
             </th>
             <th dt:property="sampleName" th:text="#{project.samples.table.name}" dt:renderFunction="datatables-utils#datatable.formatSampleLink"></th>
+            <th dt:property="qcEntries" dt:renderFunction="datatables-utils#datatable.formatQCResponse" dt:sortable="false">QC</th>
             <th dt:property="organism" th:text="#{project.samples.table.organism}" dt:renderFunction="datatables-utils#datatable.forceContentSize"></th>
             <th dt:property="projectName" th:text="#{project.samples.table.project}" dt:renderFunction="datatables-utils#datatable.highlightAssociatedProjectRows"></th>
             <th width="120px" dt:property="createdDate" dt:sortType="natural" th:text="#{project.samples.table.created}"

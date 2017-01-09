@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="qc-metrics" author="tom">
+
+		<createTable tableName="qc_entry">
+			<column name="id" autoIncrement="true" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="created_date" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="DTYPE" type="varchar(31)">
+				<constraints nullable="false" />
+			</column>
+			<column name="sequencingObject_id" type="bigint(20)">
+				<constraints referencedTableName="sequencing_object"
+					referencedColumnNames="id" foreignKeyName="FK_SEQOBJECT_QC_ENTRY"
+					nullable="false" />
+			</column>
+		</createTable>
+
+		<sql>
+			insert into qc_entry (DTYPE, sequencingObject_id, created_date)
+			select distinct 'FileProcessorErrorQCEntry', p.pair_id, now() from
+			sequence_file_pair_files p INNER JOIN sequence_file s ON
+			s.id=p.files_id where s.file_path like "%.fastq.gz"
+		</sql>
+
+		<sql>
+			insert into qc_entry (DTYPE, sequencingObject_id, created_date)
+			select distinct 'FileProcessorErrorQCEntry', p.id, now() FROM
+			sequence_file_single_end p INNER JOIN sequence_file s ON
+			s.id=p.file_id where s.file_path like "%.fastq.gz";
+		</sql>
+	</changeSet>
+</databaseChangeLog>

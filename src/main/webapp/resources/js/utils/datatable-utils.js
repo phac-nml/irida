@@ -371,6 +371,21 @@ var datatable = (function(moment, tl, page) {
 
   }
 
+  function formatQCResponse(data, type, full) {
+    var qcIcons = "";
+    var qcTypes = {};
+    data.forEach(function(qc) {
+      // only allow one indicator of each type for a sample
+      if (!qcTypes.hasOwnProperty(qc.type)) {
+        var icon = page.qc[qc.type];
+        qcIcons += '<span class="label label-danger"><i class="' + icon + '"></i></span>';
+        qcTypes[qc.type] = 1;
+      }
+    });
+
+    return qcIcons;
+  }
+
   /**
    * Translate text from the server
    * @param data text to be translated
@@ -520,6 +535,7 @@ var datatable = (function(moment, tl, page) {
     formatCheckbox: formatCheckbox,
     selectAll: selectAll,
     selectPage: selectPage,
-    deselectPage: deselectPage
+    deselectPage: deselectPage,
+    formatQCResponse: formatQCResponse
   };
 })(window.moment, window.TL, window.PAGE);

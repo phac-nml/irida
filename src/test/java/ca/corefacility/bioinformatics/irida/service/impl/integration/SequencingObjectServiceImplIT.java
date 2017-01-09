@@ -13,10 +13,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.zip.GZIPOutputStream;
 
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,8 +37,18 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseOperation;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Sets;
+
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
+import ca.corefacility.bioinformatics.irida.model.sample.FileProcessorErrorQCEntry;
+import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
@@ -53,13 +63,6 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseOperation;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
@@ -158,7 +161,7 @@ public class SequencingObjectServiceImplIT {
 
 	@Test
 	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
-	public void testCreateSequenceFileInSample() throws IOException {
+	public void testCreateSequenceFileInSample() throws IOException, InterruptedException {
 		Sample s = sampleService.read(1L);
 		SequenceFile sf = new SequenceFile();
 		Path sequenceFile = Files.createTempFile("TEMPORARY-SEQUENCE-FILE", ".gz");
@@ -173,6 +176,43 @@ public class SequencingObjectServiceImplIT {
 
 		SequencingRun mr = sequencingRunService.read(1L);
 		sequencingRunService.addSequencingObjectToSequencingRun(mr, so);
+		
+		// Wait 5 seconds. file processing should have failed by then.
+		Thread.sleep(5000);
+
+		Sample readSample = sampleService.read(s.getId());
+
+		List<QCEntry> qcEntries = sampleService.getQCEntriesForSample(readSample);
+
+		assertTrue("should be no qc entries", qcEntries.isEmpty());
+	}
+
+	@Test
+	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
+	public void testCreateCorruptSequenceFileInSample() throws IOException, InterruptedException {
+		Sample s = sampleService.read(1L);
+		SequenceFile sf = new SequenceFile();
+		Path sequenceFile = Files.createTempFile("TEMPORARY-SEQUENCE-FILE", ".gz");
+		OutputStream gzOut = Files.newOutputStream(sequenceFile);
+		gzOut.write("not a file".getBytes());
+		gzOut.close();
+
+		sf.setFile(sequenceFile);
+		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
+
+		objectService.createSequencingObjectInSample(so, s);
+
+		// Wait 5 seconds. file processing should have failed by then.
+		Thread.sleep(5000);
+
+		Sample readSample = sampleService.read(s.getId());
+
+		List<QCEntry> qcEntries = sampleService.getQCEntriesForSample(readSample);
+
+		assertFalse("should be a qc entry", qcEntries.isEmpty());
+		QCEntry qc = qcEntries.iterator().next();
+
+		assertTrue("should be a FileProcessorErrorQCEntry", qc instanceof FileProcessorErrorQCEntry);
 	}
 
 	@Test

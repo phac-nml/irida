@@ -6,5 +6,6 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 	<include file="sequencing-run-by-user.xml" relativeToChangelogFile="true" />
 	<include file="analysis-project-share.xml" relativeToChangelogFile="true" />
+	<include file="qc-metrics.xml" relativeToChangelogFile="true" />
 
 </databaseChangeLog>
