@@ -39,7 +39,6 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteRelatedProjectService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
-import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 public class AssociatedProjectControllerTest {
@@ -52,7 +51,6 @@ public class AssociatedProjectControllerTest {
 	private RemoteRelatedProjectService remoteRelatedProjectService;
 	private RemoteAPIService apiService;
 	private ProjectRemoteService projectRemoteService;
-	private SampleRemoteService sampleRemoteService;
 
 	@Before
 	public void setUp() {
@@ -62,9 +60,8 @@ public class AssociatedProjectControllerTest {
 		apiService = mock(RemoteAPIService.class);
 		projectRemoteService = mock(ProjectRemoteService.class);
 		remoteRelatedProjectService = mock(RemoteRelatedProjectService.class);
-		sampleRemoteService = mock(SampleRemoteService.class);
 		controller = new AssociatedProjectsController(remoteRelatedProjectService, projectService, projectUtils,
-				userService, apiService, projectRemoteService, sampleRemoteService);
+				userService, apiService, projectRemoteService);
 		
         // fake out the servlet response so that the URI builder will work.
         RequestAttributes ra = new ServletRequestAttributes(new MockHttpServletRequest());
