@@ -19,6 +19,28 @@ var projectSettings = (function(page, notifications) {
             }
         });
     });
+
+    $("#coverage-save").on("click", function() {
+        var genomeSize = $("#genome-size").val();
+        var requiredCoverage = $("#required-coverage").val();
+
+        $.ajax({
+            url: page.urls.coverage,
+            type: 'POST',
+            data: {
+                genomeSize: genomeSize,
+                requiredCoverage: requiredCoverage
+            }, 
+            statusCode : {
+                200 : function(response){
+                    notifications.show({'msg': response.result});
+                }
+            },
+            fail : function(){
+                notifications.show({'msg': page.i18n.error, type:"error"});
+            }
+        });
+    });
     
     $(".sync-setting").change(function(){
         var freq = $(this).val();

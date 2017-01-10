@@ -261,8 +261,8 @@ public class ProjectsController {
 	 *            the ID of a {@link Project}
 	 * @param assemble
 	 *            Whether or not to do automated assemblies
-	 * @param model
-	 *            Model for the view
+	 * @param locale
+	 *            locale of the user
 	 * @return success message if successful
 	 */
 	@RequestMapping(value = "/projects/{projectId}/settings/assemble", method = RequestMethod.POST)
@@ -270,12 +270,11 @@ public class ProjectsController {
 	public Map<String, String> updateAssemblySetting(@PathVariable Long projectId, @RequestParam boolean assemble,
 			final Model model, Locale locale) {
 		Project read = projectService.read(projectId);
-		
-		Map<String,Object> updates = new HashMap<>();
+
+		Map<String, Object> updates = new HashMap<>();
 		updates.put("assembleUploads", assemble);
-		
+
 		projectService.updateProjectSettings(read, updates);
-		
 
 		String message = null;
 		if (assemble) {
@@ -285,6 +284,37 @@ public class ProjectsController {
 			message = messageSource.getMessage("project.settings.notifications.assemble.disabled",
 					new Object[] { read.getLabel() }, locale);
 		}
+
+		return ImmutableMap.of("result", message);
+	}
+
+	/**
+	 * Update the coverage QC setting of a {@link Project}
+	 * 
+	 * @param projectId
+	 *            the ID of a {@link Project}
+	 * @param genomeSize
+	 *            the genomeSize to set for the project
+	 * @param requiredCoverage
+	 *            coverage needed for qc to pass
+	 * @param locale
+	 *            locale of the user
+	 * 
+	 * @return success message if successful
+	 */
+	@RequestMapping(value = "/projects/{projectId}/settings/coverage", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, String> updateCoverageSetting(@PathVariable Long projectId, @RequestParam Long genomeSize,
+			@RequestParam Integer requiredCoverage, Locale locale) {
+		Project read = projectService.read(projectId);
+
+		Map<String, Object> updates = new HashMap<>();
+		updates.put("requiredCoverage", requiredCoverage);
+		updates.put("genomeSize", genomeSize);
+
+		projectService.updateProjectSettings(read, updates);
+
+		String message = messageSource.getMessage("project.settings.notifications.coverage.updated", null, locale);
 
 		return ImmutableMap.of("result", message);
 	}
