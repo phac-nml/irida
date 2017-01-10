@@ -33,6 +33,7 @@ import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
@@ -185,7 +186,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 		Set<ConstraintViolation<User>> violations = validatePassword(password);
 		if (violations.isEmpty()) {
 			String encodedPassword = passwordEncoder.encode(password);
-			return super.update(userId, ImmutableMap.of(PASSWORD_PROPERTY, (Object) encodedPassword,
+			return super.updateFields(userId, ImmutableMap.of(PASSWORD_PROPERTY, (Object) encodedPassword,
 					CREDENTIALS_NON_EXPIRED_PROPERTY, true));
 		}
 
@@ -215,13 +216,14 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 			}
 		}
 	}
-
+	
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
 	@PreAuthorize(UPDATE_USER_PERMISSIONS)
-	public User update(Long uid, Map<String, Object> properties) {
+	@Override
+	public User updateFields(Long uid, Map<String, Object> properties)
+			throws ConstraintViolationException, EntityExistsException, InvalidPropertyException {
 		if (properties.containsKey(PASSWORD_PROPERTY)) {
 			String password = properties.get(PASSWORD_PROPERTY).toString();
 			Set<ConstraintViolation<User>> violations = validatePassword(password);
@@ -232,7 +234,18 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 			}
 		}
 
-		return super.update(uid, properties);
+		return super.updateFields(uid, properties);
+	}
+
+	/**
+	 * Throws an {@link UnsupportedOperationException} telling user to use
+	 * {@link UserServiceImpl#updateFields(Long, Map)} instead. They should use
+	 * the other method so that they cannot update a password without explicitly
+	 * trying to do so.
+	 */
+	@Override
+	public User update(User object) {
+		throw new UnsupportedOperationException("Update is not supported for UserService.  Use updateFields instead.");
 	}
 
 	/**

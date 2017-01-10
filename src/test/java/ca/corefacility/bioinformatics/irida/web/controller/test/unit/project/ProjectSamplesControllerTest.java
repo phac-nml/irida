@@ -208,11 +208,11 @@ public class ProjectSamplesControllerTest {
 		Sample s = TestDataFactory.constructSample();
 		Map<String, Object> updatedFields = ImmutableMap.of("sampleName", (Object) "some new name");
 
-		when(sampleService.update(s.getId(), updatedFields)).thenReturn(s);
+		when(sampleService.updateFields(s.getId(), updatedFields)).thenReturn(s);
 
 		ModelMap modelMap = controller.updateSample(s.getId(), updatedFields);
 
-		verify(sampleService).update(s.getId(), updatedFields);
+		verify(sampleService).updateFields(s.getId(), updatedFields);
 
 		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
 		assertNotNull("There should be *something* in the response!", o);

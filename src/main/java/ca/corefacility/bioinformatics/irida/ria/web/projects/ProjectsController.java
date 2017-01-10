@@ -582,27 +582,28 @@ public class ProjectsController {
 			@RequestParam(required = false, defaultValue = "") String projectDescription,
 			@RequestParam(required = false, defaultValue = "") String remoteURL) throws IOException {
 
-		Map<String, Object> updatedValues = new HashMap<>();
+		Project project = projectService.read(projectId);
+
 		if (!Strings.isNullOrEmpty(name)) {
-			updatedValues.put("name", name);
+			project.setName(name);
 		}
 		if (!Strings.isNullOrEmpty(organism)) {
-			updatedValues.put("organism", organism);
+			project.setOrganism(organism);
 		}
 		if (!Strings.isNullOrEmpty(projectDescription)) {
-			updatedValues.put("projectDescription", projectDescription);
+			project.setProjectDescription(projectDescription);
 		}
 		if (!Strings.isNullOrEmpty(remoteURL)) {
-			updatedValues.put("remoteURL", remoteURL);
+			project.setRemoteURL(remoteURL);
 		}
-		if (updatedValues.size() > 0) {
-			try {
-				projectService.update(projectId, updatedValues);
-			} catch (ConstraintViolationException ex) {
-				model.addAttribute("errors", getErrorsFromViolationException(ex));
-				return getProjectMetadataEditPage(model, principal, projectId);
-			}
+		
+		try {
+			projectService.update(project);
+		} catch (ConstraintViolationException ex) {
+			model.addAttribute("errors", getErrorsFromViolationException(ex));
+			return getProjectMetadataEditPage(model, principal, projectId);
 		}
+		
 		return "redirect:/projects/" + projectId + "/metadata";
 	}
 

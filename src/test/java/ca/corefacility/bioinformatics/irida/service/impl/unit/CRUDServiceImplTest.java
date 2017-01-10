@@ -110,7 +110,7 @@ public class CRUDServiceImplTest {
 		updatedFields.put("nonNull", newNonNull);
 		// need to sleep for a bit so that the dates are different
 		Thread.sleep(500L);
-		crudService.update(id, updatedFields);
+		crudService.updateFields(id, updatedFields);
 
 		verify(crudRepository).save(pageArgument.capture());
 
@@ -124,7 +124,7 @@ public class CRUDServiceImplTest {
 		Map<String, Object> updatedProperties = new HashMap<>();
 		when(crudRepository.exists(id)).thenReturn(Boolean.FALSE);
 
-		crudService.update(id, updatedProperties);
+		crudService.updateFields(id, updatedProperties);
 	}
 
 	@Test
@@ -136,7 +136,7 @@ public class CRUDServiceImplTest {
 		when(crudRepository.findOne(1L)).thenReturn(entity);
 
 		try {
-			crudService.update(entity.getId(), updatedProperties);
+			crudService.updateFields(entity.getId(), updatedProperties);
 			fail();
 		} catch (InvalidPropertyException ex) {
 			assertNotNull(ex.getAffectedClass());
@@ -152,7 +152,7 @@ public class CRUDServiceImplTest {
 		when(crudRepository.findOne(1L)).thenReturn(entity);
 
 		try {
-			crudService.update(entity.getId(), updatedProperties);
+			crudService.updateFields(entity.getId(), updatedProperties);
 			fail();
 		} catch (InvalidPropertyException ex) {
 			assertNotNull(ex.getAffectedClass());
@@ -172,7 +172,7 @@ public class CRUDServiceImplTest {
 		Map<String, Object> updatedFields = new HashMap<>();
 		updatedFields.put("nonNull", null);
 		try {
-			crudService.update(id, updatedFields);
+			crudService.updateFields(id, updatedFields);
 			fail();
 		} catch (ConstraintViolationException e) {
 			Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
