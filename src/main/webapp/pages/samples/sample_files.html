@@ -135,25 +135,25 @@
 					<tr><td colspan="5" class="sequence_spacer"></td></tr>
 				</th:block>
 				<th:block th:each="join : ${single_end}" th:with="file=${join.getObject()}">
-				<tr class="single_end sequence-file-row">
-					<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${file},file=${file.getSequenceFile()},icon='single',relative='true')"></td>
-					<td>
-						<div class="btn-group-sm pull-right" role="group">
-                            <button th:if="${canManageSample}"
-							        class="btn btn-default remove-file"
-							        th:with="fId=${file.id + ', &#39;'' + file.getLabel() + ''&#39;'}"
-							        data:ng-click="${'fileCtrl.deleteFile(' + fId + ')'}">
-								<span class="fa fa-fw fa-trash"></span>
-							</button>
-							<button class="btn btn-default"
-							        data:ng-click="${'fileCtrl.download(' + file.getId() + ', ' + + file.getSequenceFile().getId() + ')'}">
-								<span class="fa fa-fw fa-download"></span>
-							</button>
+					<tr class="single_end sequence-file-row">
+						<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${file},file=${file.getSequenceFile()},icon='single',relative='true')"></td>
+						<td>
+							<div class="btn-group-sm pull-right" role="group">
+								<button th:if="${canManageSample}"
+										class="btn btn-default remove-file"
+										th:with="fId=${file.id + ', &#39;'' + file.getLabel() + ''&#39;'}"
+										data:ng-click="${'fileCtrl.deleteFile(' + fId + ')'}">
+									<span class="fa fa-fw fa-trash"></span>
+								</button>
+								<button class="btn btn-default"
+										data:ng-click="${'fileCtrl.download(' + file.getId() + ', ' + + file.getSequenceFile().getId() + ')'}">
+									<span class="fa fa-fw fa-download"></span>
+								</button>
 
-						</div>
-					</td>
-				</tr>
-				<tr class="single_end file__qc" th:each="qc : ${file.getQcEntries()}">
+							</div>
+						</td>
+					</tr>
+					<tr class="single_end file__qc" th:each="qc : ${file.getQcEntries()}">
 						<td class="td_icon">
 							<fa:icon th:attr="type=${qc.getType()}"/>
 						</td>
@@ -170,7 +170,7 @@
 							</div>
 						</td>
 					</tr>
-				<tr><td colspan="5" class="sequence_spacer"></td></tr>
+					<tr><td colspan="5" class="sequence_spacer"></td></tr>
 				</th:block>
 			</table>
 		</div>
