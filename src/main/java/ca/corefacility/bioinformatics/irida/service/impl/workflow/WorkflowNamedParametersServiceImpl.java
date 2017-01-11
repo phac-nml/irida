@@ -73,7 +73,7 @@ public class WorkflowNamedParametersServiceImpl extends CRUDServiceImpl<Long, Ir
 	 * {@inheritDoc}
 	 */
 	@Override
-	public IridaWorkflowNamedParameters update(final Long id, final Map<String, Object> properties) {
+	public IridaWorkflowNamedParameters updateFields(final Long id, final Map<String, Object> properties) {
 		throw new UnsupportedOperationException("IridaWorkflowNamedParameters may not be modified.");
 	}
 }

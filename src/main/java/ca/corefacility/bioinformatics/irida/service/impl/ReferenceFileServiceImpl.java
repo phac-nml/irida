@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
@@ -48,18 +46,6 @@ public class ReferenceFileServiceImpl extends CRUDServiceImpl<Long, ReferenceFil
 			+ "')")
 	public ReferenceFile read(Long id) throws EntityNotFoundException {
 		return super.read(id);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@Transactional
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, '" + UpdateReferenceFilePermission.PERMISSION_PROVIDED
-			+ "')")
-	public ReferenceFile update(Long id, Map<String, Object> updatedFields) throws ConstraintViolationException,
-			EntityExistsException, InvalidPropertyException {
-		return super.update(id, updatedFields);
 	}
 
 	/**

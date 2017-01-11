@@ -45,6 +45,7 @@ import ca.corefacility.bioinformatics.irida.events.annotations.LaunchesProjectEv
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityRevisionDeletedException;
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.enums.UserGroupRemovedProjectEvent;
@@ -201,16 +202,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		addUserToProject(project, user, ProjectRole.PROJECT_OWNER);
 		return project;
 	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@Transactional
-	@PreAuthorize("hasPermission(#id, 'isProjectOwner')")
-	public Project update(final Long id, final Map<String, Object> updateProperties) {
-		return super.update(id, updateProperties);
-	}
 	
 	/**
 	 * {@inheritDoc}
@@ -220,6 +211,17 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@PreAuthorize("hasPermission(#object, 'isProjectOwner')")
 	public Project update(Project object) {
 		return super.update(object);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	@PreAuthorize("hasPermission(#id, 'isProjectOwner')")
+	public Project updateFields(Long id, Map<String, Object> updatedFields)
+			throws ConstraintViolationException, EntityExistsException, InvalidPropertyException {
+		return super.updateFields(id, updatedFields);
 	}
 
 	/**

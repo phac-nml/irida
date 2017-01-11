@@ -30,7 +30,6 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
@@ -176,7 +175,8 @@ public class SequencingRunServiceImplIT {
 	public void testUpdateMiseqRunAsUserFail() {
 		// run 2 is not owned by "user"
 		SequencingRun mr = miseqRunService.read(2L);
-		miseqRunService.update(mr.getId(), ImmutableMap.of("description", "a different description"));
+		mr.setDescription("different description");
+		miseqRunService.update(mr);
 	}
 
 	@Test
@@ -184,7 +184,8 @@ public class SequencingRunServiceImplIT {
 	public void testUpdateMiseqRunAsUserSuccess() {
 		// run 1 is owned by "user" so should be able to update
 		SequencingRun mr = miseqRunService.read(1L);
-		miseqRunService.update(mr.getId(), ImmutableMap.of("description", "a different description"));
+		mr.setDescription("different description");
+		miseqRunService.update(mr);
 	}
 
 	@Test
@@ -192,7 +193,9 @@ public class SequencingRunServiceImplIT {
 	public void testUpdateMiseqRunAsSequencer() {
 		String newDescription = "a different description";
 		SequencingRun mr = miseqRunService.read(1L);
-		SequencingRun update = miseqRunService.update(mr.getId(), ImmutableMap.of("description", newDescription));
+		mr.setDescription(newDescription);
+		
+		SequencingRun update = miseqRunService.update(mr);
 		assertEquals(update.getDescription(), newDescription);
 	}
 

@@ -279,7 +279,7 @@ public class UsersController {
 		String returnView;
 		if (errors.isEmpty()) {
 			try {
-				User user = userService.update(userId, updatedValues);
+				User user = userService.updateFields(userId, updatedValues);
 				returnView = "redirect:/users/" + userId;
 
 				// If the user is updating their account make sure you update it in the sesion variable

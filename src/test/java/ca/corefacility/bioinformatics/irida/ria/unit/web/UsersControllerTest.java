@@ -229,7 +229,7 @@ public class UsersControllerTest {
 
 		assertEquals("redirect:/users/1", updateUser);
 
-		verify(userService).update(userId, expected);
+		verify(userService).updateFields(userId, expected);
 		verify(userService).getUserByUsername(USER_NAME);
 	}
 
@@ -252,7 +252,7 @@ public class UsersControllerTest {
 
 		when(userService.read(userId)).thenReturn(puser);
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(puser);
-		when(userService.update(userId, expected)).thenThrow(dataIntegrityViolationException);
+		when(userService.updateFields(userId, expected)).thenThrow(dataIntegrityViolationException);
 
 		String updateUser = controller.updateUser(userId, null, null, email, null, null, null, "checked", null, model,
 				principal, new MockHttpServletRequest());
@@ -263,7 +263,7 @@ public class UsersControllerTest {
 		Map modelMap = (Map) model.get("errors");
 		assertTrue(modelMap.containsKey("email"));
 
-		verify(userService).update(userId, expected);
+		verify(userService).updateFields(userId, expected);
 		verify(userService).getUserByUsername(USER_NAME);
 	}
 
