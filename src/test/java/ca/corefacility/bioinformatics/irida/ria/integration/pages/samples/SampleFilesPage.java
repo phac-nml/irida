@@ -62,14 +62,6 @@ public class SampleFilesPage extends AbstractPage {
 				.id("remove-file-confirm")));
 		confirmRemoveButton.click();
 	}
-	
-	public void deleteFirstQc(){
-		WebElement removeButton = driver.findElements(By.className("remove-qc")).iterator().next();
-		removeButton.click();
-		WebElement confirmRemoveButton = (new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(By
-				.id("remove-file-confirm")));
-		confirmRemoveButton.click();
-	}
 
 	public boolean isDeleteConfirmationMessageDisplayed() {
 		return waitForElementsVisible(By.id("file-deleted-success")).size() > 0;

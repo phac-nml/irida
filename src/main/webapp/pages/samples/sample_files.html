@@ -157,17 +157,8 @@
 						<td class="td_icon">
 							<fa:icon th:attr="type=${qc.getType()}"/>
 						</td>
-						<td colspan="3">
+						<td colspan="4">
 							<span th:text="#{'sample.files.qc.'+${qc.getType()}}"></span>
-						</td>
-						<td>
-							<div class="btn-group-sm pull-right" role="group">
-								<button th:if="${canManageSample}"
-										class="btn btn-default remove-qc"
-										data:ng-click="${'fileCtrl.deleteQc(' + qc.id + ', &#39;'' + file.getLabel() +'&#39;')'}">
-									<span class="fa fa-fw fa-times"></span>
-								</button>
-							</div>
 						</td>
 					</tr>
 					<tr><td colspan="5" class="sequence_spacer"></td></tr>

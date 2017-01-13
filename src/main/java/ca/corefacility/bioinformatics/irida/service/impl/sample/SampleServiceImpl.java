@@ -411,21 +411,6 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	}
 
 	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@Transactional
-	@PreAuthorize("hasPermission(#sample, 'canUpdateSample')")
-	public void removeQcEntry(Sample sample, QCEntry entry) {
-		List<QCEntry> qcEntriesForSample = getQCEntriesForSample(sample);
-		if (!qcEntriesForSample.stream().anyMatch(q -> q.getId().equals(entry.getId()))) {
-			throw new IllegalArgumentException("Sample does not contain this QCEntry");
-		}
-
-		qcEntryRepository.delete(entry);
-	}
-
-	/**
 	 * Verify that the given sort properties array is not null or empty. If it
 	 * is, give a default sort property.
 	 * 
