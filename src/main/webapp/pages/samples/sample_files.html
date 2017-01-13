@@ -115,23 +115,20 @@
 							<span th:text="#{'analysis.state.' + ${pair.getAutomatedAssembly().getAnalysisState()}}"></span>
 						</td>
 					</tr>
-					<tr class="paired_end file__qc" th:each="qc : ${pair.getQcEntries()}">
-						<td class="td_icon">
-							<fa:icon th:attr="type=${qc.getType()}"/>
-						</td>
-						<td colspan="3">
-							<span th:text="#{'sample.files.qc.'+${qc.getType()}}"></span>
-						</td>
-						<td>
-							<div class="btn-group-sm pull-right" role="group">
-								<button th:if="${canManageSample}"
-										class="btn btn-default remove-qc"
-										data:ng-click="${'fileCtrl.deleteQc(' + qc.id + ', &#39;'' + pair.getLabel() +'&#39;')'}">
-									<span class="fa fa-fw fa-times"></span>
-								</button>
-							</div>
-						</td>
-					</tr>
+					<th:block th:if="${not #lists.isEmpty(pair.getQcEntries())}">
+						<tr class="paired_end file__qc" th:each="qc : ${pair.getQcEntries()}">
+							<td class="td_icon qc_icon">
+								<i class="fa fa-bar-chart"></i>
+							</td>
+							<td colspan="4">
+								<ul class="list-group qc_list">
+									<li class="list-group-item list-group-item-danger" th:each="qc : ${pair.getQcEntries()}">
+										<span th:text="#{'sample.files.qc.'+${qc.getType()}}"></span>
+									</li>
+								</ul>
+							</td>
+						</tr>
+					</th:block>
 					<tr><td colspan="5" class="sequence_spacer"></td></tr>
 				</th:block>
 				<th:block th:each="join : ${single_end}" th:with="file=${join.getObject()}">
@@ -153,14 +150,20 @@
 							</div>
 						</td>
 					</tr>
-					<tr class="single_end file__qc" th:each="qc : ${file.getQcEntries()}">
-						<td class="td_icon">
-							<fa:icon th:attr="type=${qc.getType()}"/>
-						</td>
-						<td colspan="4">
-							<span th:text="#{'sample.files.qc.'+${qc.getType()}}"></span>
-						</td>
-					</tr>
+					<th:block th:if="${not #lists.isEmpty(file.getQcEntries())}">
+						<tr class="single_end file__qc">
+							<td class="td_icon qc_icon">
+								<i class="fa fa-bar-chart"></i>
+							</td>
+							<td colspan="4">
+								<ul class="list-group qc_list">
+									<li class="list-group-item list-group-item-danger" th:each="qc : ${file.getQcEntries()}">
+										<span th:text="#{'sample.files.qc.'+${qc.getType()}}"></span>
+									</li>
+								</ul>
+							</td>
+						</tr>
+					</th:block>
 					<tr><td colspan="5" class="sequence_spacer"></td></tr>
 				</th:block>
 			</table>
