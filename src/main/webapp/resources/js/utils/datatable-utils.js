@@ -469,6 +469,11 @@ var datatable = (function(moment, tl, page) {
       row.classList.add("selected");
       row.querySelector("input[type=checkbox]").checked = true;
     }
+
+    // if bad qc entry exists theme the row
+    if (item.qcEntries.length > 0) {
+      row.classList.add("bad-sample-qc");
+    }
   }
 
   /**
