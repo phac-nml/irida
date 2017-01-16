@@ -24,6 +24,9 @@ public class SampleMetadata {
 	}
 
 	public Map<String, Object> getMetadata() {
+		if (this.metadata == null) {
+			this.metadata = new HashMap<>();
+		}
 		return metadata;
 	}
 
