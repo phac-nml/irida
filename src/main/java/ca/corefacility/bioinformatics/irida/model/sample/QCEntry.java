@@ -51,14 +51,17 @@ public abstract class QCEntry {
 	
 	@NotNull
 	private boolean positive;
+	
+	private String message;
 
 	public QCEntry() {
 		positive = false;
 	}
 
-	public QCEntry(SequencingObject sequencingObject, boolean positive) {
+	public QCEntry(SequencingObject sequencingObject, boolean positive, String message) {
 		this.sequencingObject = sequencingObject;
 		this.positive = positive;
+		this.message = message;
 	}
 
 	public Long getId() {
@@ -81,7 +84,9 @@ public abstract class QCEntry {
 		this.positive = positive;
 	}
 
-	public abstract String getMessage();
+	public String getMessage(){
+		return message;
+	}
 
 	/**
 	 * Return the type of qc entry. This will be used for display and grouping

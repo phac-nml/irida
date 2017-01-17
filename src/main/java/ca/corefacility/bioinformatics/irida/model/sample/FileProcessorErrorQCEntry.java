@@ -16,9 +16,9 @@ public class FileProcessorErrorQCEntry extends QCEntry {
 	public FileProcessorErrorQCEntry() {
 		super();
 	}
-	
+
 	public FileProcessorErrorQCEntry(SequencingObject sequencingObject) {
-		super(sequencingObject, false);
+		super(sequencingObject, false, null);
 	}
 
 	@Override
