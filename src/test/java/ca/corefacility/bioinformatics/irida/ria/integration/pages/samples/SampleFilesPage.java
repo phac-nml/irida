@@ -44,7 +44,7 @@ public class SampleFilesPage extends AbstractPage {
 	}
 	
 	public int getQcEntryCount() {
-		return driver.findElements(By.className("file__qc")).size();
+		return driver.findElements(By.className("qc-item")).size();
 	}
 	
 	public void deleteFirstFile(){

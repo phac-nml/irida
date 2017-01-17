@@ -371,21 +371,6 @@ var datatable = (function(moment, tl, page) {
 
   }
 
-  function formatQCResponse(data, type, full) {
-    var qcIcons = "";
-    var qcTypes = {};
-    data.forEach(function(qc) {
-      // only allow one indicator of each type for a sample
-      if (!qcTypes.hasOwnProperty(qc.type)) {
-        var icon = page.qc[qc.type];
-        qcIcons += '<span class="label label-danger"><i class="' + icon + '"></i></span>';
-        qcTypes[qc.type] = 1;
-      }
-    });
-
-    return qcIcons;
-  }
-
   /**
    * Translate text from the server
    * @param data text to be translated
@@ -469,6 +454,11 @@ var datatable = (function(moment, tl, page) {
       row.classList.add("selected");
       row.querySelector("input[type=checkbox]").checked = true;
     }
+
+    // if bad qc entry exists theme the row
+    if (item.qcEntries.length > 0) {
+      row.classList.add("bad-sample-qc");
+    }
   }
 
   /**
@@ -535,7 +525,6 @@ var datatable = (function(moment, tl, page) {
     formatCheckbox: formatCheckbox,
     selectAll: selectAll,
     selectPage: selectPage,
-    deselectPage: deselectPage,
-    formatQCResponse: formatQCResponse
+    deselectPage: deselectPage
   };
 })(window.moment, window.TL, window.PAGE);
