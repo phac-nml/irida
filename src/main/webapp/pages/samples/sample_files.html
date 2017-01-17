@@ -105,7 +105,7 @@
 					</tr>
 					<tr class="paired_end paired_end__assembly" th:if="${pair.getAutomatedAssembly()}">
 						<td class="td_icon">
-							<fa:icon type="align"/>
+							<fa:icon data:uib-tooltip="#{sf.tooltip.assembly}" type="align"/>
 						</td>
 						<td>
 							<a href="#" th:href="@{/analysis/{id}(id=${pair.getAutomatedAssembly().getId()})}" class="btn btn-default btn-sm file-name" th:text="#{samples.files.assembly}">_Assembly_</a>
@@ -115,65 +115,56 @@
 							<span th:text="#{'analysis.state.' + ${pair.getAutomatedAssembly().getAnalysisState()}}"></span>
 						</td>
 					</tr>
-					<tr class="paired_end file__qc" th:each="qc : ${pair.getQcEntries()}">
-						<td class="td_icon">
-							<fa:icon th:attr="type=${qc.getType()}"/>
-						</td>
-						<td>
-							<span th:text="#{'sample.files.qc.'+${qc.getType()}}"></span>
-						</td>
-						<td colspan="2">
-								<span th:text="${qc.getMessage()}"/>
-						</td>
-						<td>
-							<div class="btn-group-sm pull-right" role="group">
-								<button th:if="${canManageSample}"
-										class="btn btn-default remove-qc"
-										data:ng-click="${'fileCtrl.deleteQc(' + qc.id + ', &#39;'' + pair.getLabel() +'&#39;')'}">
-									<span class="fa fa-fw fa-times"></span>
-								</button>
-							</div>
-						</td>
-					</tr>
+					<th:block th:if="${not #lists.isEmpty(pair.getQcEntries())}">
+						<tr class="paired_end file__qc" th:each="qc : ${pair.getQcEntries()}">
+							<td class="td_icon qc_icon">
+								<i data:uib-tooltip="#{sf.tooltip.qc}" class="fa fa-bar-chart"></i>
+							</td>
+							<td colspan="4">
+								<ul class="list-group qc_list">
+									<li class="qc-item list-group-item list-group-item-danger" th:each="qc : ${pair.getQcEntries()}">
+										<span th:text="#{'sample.files.qc.'+${qc.getType()}}"></span>
+									</li>
+								</ul>
+							</td>
+						</tr>
+					</th:block>
 					<tr><td colspan="5" class="sequence_spacer"></td></tr>
 				</th:block>
 				<th:block th:each="join : ${single_end}" th:with="file=${join.getObject()}">
-				<tr class="single_end sequence-file-row">
-					<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${file},file=${file.getSequenceFile()},icon='single',relative='true')"></td>
-					<td>
-						<div class="btn-group-sm pull-right" role="group">
-                            <button th:if="${canManageSample}"
-							        class="btn btn-default remove-file"
-							        th:with="fId=${file.id + ', &#39;'' + file.getLabel() + ''&#39;'}"
-							        data:ng-click="${'fileCtrl.deleteFile(' + fId + ')'}">
-								<span class="fa fa-fw fa-trash"></span>
-							</button>
-							<button class="btn btn-default"
-							        data:ng-click="${'fileCtrl.download(' + file.getId() + ', ' + + file.getSequenceFile().getId() + ')'}">
-								<span class="fa fa-fw fa-download"></span>
-							</button>
-
-						</div>
-					</td>
-				</tr>
-				<tr class="single_end file__qc" th:each="qc : ${file.getQcEntries()}">
-						<td class="td_icon">
-							<fa:icon th:attr="type=${qc.getType()}"/>
-						</td>
-						<td colspan="3">
-							<span th:text="#{'sample.files.qc.'+${qc.getType()}}"></span>
-						</td>
+					<tr class="single_end sequence-file-row">
+						<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${file},file=${file.getSequenceFile()},icon='single',relative='true')"></td>
 						<td>
 							<div class="btn-group-sm pull-right" role="group">
 								<button th:if="${canManageSample}"
-										class="btn btn-default remove-qc"
-										data:ng-click="${'fileCtrl.deleteQc(' + qc.id + ', &#39;'' + file.getLabel() +'&#39;')'}">
-									<span class="fa fa-fw fa-times"></span>
+										class="btn btn-default remove-file"
+										th:with="fId=${file.id + ', &#39;'' + file.getLabel() + ''&#39;'}"
+										data:ng-click="${'fileCtrl.deleteFile(' + fId + ')'}">
+									<span class="fa fa-fw fa-trash"></span>
 								</button>
+								<button class="btn btn-default"
+										data:ng-click="${'fileCtrl.download(' + file.getId() + ', ' + + file.getSequenceFile().getId() + ')'}">
+									<span class="fa fa-fw fa-download"></span>
+								</button>
+
 							</div>
 						</td>
 					</tr>
-				<tr><td colspan="5" class="sequence_spacer"></td></tr>
+					<th:block th:if="${not #lists.isEmpty(file.getQcEntries())}">
+						<tr class="single_end file__qc">
+							<td class="td_icon qc_icon">
+								<i data:uib-tooltip="#{sf.tooltip.qc}" class="fa fa-bar-chart"></i>
+							</td>
+							<td colspan="4">
+								<ul class="list-group qc_list">
+									<li class="qc-item list-group-item list-group-item-danger" th:each="qc : ${file.getQcEntries()}">
+										<span th:text="#{'sample.files.qc.'+${qc.getType()}}"></span>
+									</li>
+								</ul>
+							</td>
+						</tr>
+					</th:block>
+					<tr><td colspan="5" class="sequence_spacer"></td></tr>
 				</th:block>
 			</table>
 		</div>

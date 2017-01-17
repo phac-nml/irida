@@ -44,7 +44,7 @@ public class SampleFilesPage extends AbstractPage {
 	}
 	
 	public int getQcEntryCount() {
-		return driver.findElements(By.className("file__qc")).size();
+		return driver.findElements(By.className("qc-item")).size();
 	}
 	
 	public void deleteFirstFile(){
@@ -57,14 +57,6 @@ public class SampleFilesPage extends AbstractPage {
 	
 	public void deleteFirstPair(){
 		WebElement removeButton = driver.findElements(By.className("remove-pair")).iterator().next();
-		removeButton.click();
-		WebElement confirmRemoveButton = (new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(By
-				.id("remove-file-confirm")));
-		confirmRemoveButton.click();
-	}
-	
-	public void deleteFirstQc(){
-		WebElement removeButton = driver.findElements(By.className("remove-qc")).iterator().next();
 		removeButton.click();
 		WebElement confirmRemoveButton = (new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(By
 				.id("remove-file-confirm")));
