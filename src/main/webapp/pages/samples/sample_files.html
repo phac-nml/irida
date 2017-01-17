@@ -105,7 +105,7 @@
 					</tr>
 					<tr class="paired_end paired_end__assembly" th:if="${pair.getAutomatedAssembly()}">
 						<td class="td_icon">
-							<fa:icon type="align"/>
+							<fa:icon data:uib-tooltip="#{sf.tooltip.assembly}" type="align"/>
 						</td>
 						<td>
 							<a href="#" th:href="@{/analysis/{id}(id=${pair.getAutomatedAssembly().getId()})}" class="btn btn-default btn-sm file-name" th:text="#{samples.files.assembly}">_Assembly_</a>
@@ -118,7 +118,7 @@
 					<th:block th:if="${not #lists.isEmpty(pair.getQcEntries())}">
 						<tr class="paired_end file__qc" th:each="qc : ${pair.getQcEntries()}">
 							<td class="td_icon qc_icon">
-								<i class="fa fa-bar-chart"></i>
+								<i data:uib-tooltip="#{sf.tooltip.qc}" class="fa fa-bar-chart"></i>
 							</td>
 							<td colspan="4">
 								<ul class="list-group qc_list">
@@ -153,7 +153,7 @@
 					<th:block th:if="${not #lists.isEmpty(file.getQcEntries())}">
 						<tr class="single_end file__qc">
 							<td class="td_icon qc_icon">
-								<i class="fa fa-bar-chart"></i>
+								<i data:uib-tooltip="#{sf.tooltip.qc}" class="fa fa-bar-chart"></i>
 							</td>
 							<td colspan="4">
 								<ul class="list-group qc_list">
