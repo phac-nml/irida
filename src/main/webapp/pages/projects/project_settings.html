@@ -46,7 +46,7 @@
               <div class="input-group-addon">x</div>
             </div>
             &nbsp;
-            <button id="coverage-save" class="btn btn-primary btn-sm" type="button" th:text="#{form.btn.update}">_save_</button>
+            <button id="coverage-save" class="btn btn-default btn-sm" type="button" th:text="#{form.btn.update}">_save_</button>
           </div>
         </div>
       </div>
@@ -59,7 +59,7 @@
           <label class="control-label" th:text="#{project.settings.sync.lastSync}">_Last Sync_</label>
           <div>
             <span th:text="${#calendars.format(project.getRemoteStatus().getLastUpdate(), 'dd MMM yyyy hh:mma')}"></span>
-            <button id="forceSync" role="button" class="btn btn-primary btn-sm" th:text="#{project.settings.sync.forceSync}">_Force Sync_</button>
+            <button id="forceSync" role="button" class="btn btn-default btn-sm" th:text="#{project.settings.sync.forceSync}">_Force Sync_</button>
           </div>
         </div>
         <div class="form-group">
@@ -85,7 +85,7 @@
           <div>
             <a href="#" th:text="${status.getReadBy().getLabel()}" th:href="@{/users/{id}(id=${status.getReadBy().getId()})}">_User</a>
             <span class="api-connected-action" hidden="hidden">
-              <button id="becomeSyncUser" role="button" class="btn btn-primary btn-sm" th:text="#{project.settings.sync.becomeSyncUser}">_Become owner_</button>
+              <button id="becomeSyncUser" role="button" class="btn btn-default btn-sm" th:text="#{project.settings.sync.becomeSyncUser}">_Become owner_</button>
             </span>
           </div>
         </div>
