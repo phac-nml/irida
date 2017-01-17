@@ -313,6 +313,7 @@ public class ProjectsController {
 		updates.put("genomeSize", genomeSize);
 
 		projectService.updateProjectSettings(read, updates);
+		projectService.runCoverageForProject(read);
 
 		String message = messageSource.getMessage("project.settings.notifications.coverage.updated", null, locale);
 

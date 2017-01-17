@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.processing.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.CoverageQCEntry;
+import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
@@ -58,6 +60,10 @@ public class CoverageFileProcessor implements FileProcessor {
 
 				Long coverage = totalBases / projectGenomeSize;
 				boolean positive = coverage >= requiredCoverage;
+				
+				// remove any existing coveratge entries
+				read.getQcEntries().stream().filter(q -> q instanceof CoverageQCEntry)
+						.forEach(q -> qcEntryRepository.delete(q));
 
 				CoverageQCEntry coverageQCEntry = new CoverageQCEntry(read, coverage, positive);
 				qcEntryRepository.save(coverageQCEntry);
