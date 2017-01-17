@@ -39,18 +39,25 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-12">
-            <linelist-component
-                    data:url="@{/projects/{id}/linelist(id=${project.getId()})}"
-                    data:template="${currentTemplate}">
-            </linelist-component>
+        <div class="col-md-12" style="overflow: hidden;">
+            <table id="linelist" class="table table-bordered table-striped" style="width: 100%;">
+                <thead>
+                <tr>
+                    <th th:each="header : ${headers}" th:text="${header}"></th>
+                </tr>
+                </thead>
+            </table>
         </div>
     </div>
 
 </main>
 
 <th:block layout:fragment="scripts">
-    <script src="/resources/js/build/project-linelist.bundle.js"></script>
+    <script th:inline="javascript">
+        var metadataList = /*[[${metadataList}]]*/ [];
+    </script>
+    <script src="/resources/js/build/project-linelist.bundle.js"
+        th:src="@{/resources/js/build/project-linelist.bundle.js}"></script>
 </th:block>
 </body>
 </html>

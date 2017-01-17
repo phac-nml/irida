@@ -2,10 +2,11 @@ package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.github.dandelion.datatables.core.ajax.DataSet;
+import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
+import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
+import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
@@ -97,10 +102,45 @@ public class ProjectLineListController {
 		Project project = projectService.read(projectId);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		model.addAttribute("activeNav", "linelist");
+
+		// templateId usually comes into play when a user just uploaded a metadata
+		// spreadsheet and is being redirected to this page.
 		if (templateId != null) {
 			model.addAttribute("currentTemplate", templateId);
 		}
+
+		// Get a list of all available templates for displaying metadata
 		model.addAttribute("templates", getTemplateNames(locale, project));
+
+		// Get the headers (metadata fields)
+		List<String> headers = getAllProjectMetadataFields(projectId);
+		model.addAttribute("headers", headers);
+
+		// Get all the metadata for each sample in the project
+		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(project);
+		List<List<Object>> metadataList = new ArrayList<>(samplesForProject.size());
+		for (Join<Project, Sample> join : samplesForProject) {
+			Sample sample = join.getObject();
+			List<Object> fullMetadata = new ArrayList<>();
+			SampleMetadata sampleMetadata = sampleService.getMetadataForSample(sample);
+			if (sampleMetadata != null) {
+				Map<String, Object> metadata = sampleMetadata.getMetadata();
+				for (String header : headers) {
+					if (header.equalsIgnoreCase("id")) {
+						fullMetadata.add(sample.getId());
+					} else if (header.equalsIgnoreCase("label")) {
+						fullMetadata.add(sample.getSampleName());
+					} else {
+						fullMetadata.add(metadata.getOrDefault(header, ""));
+					}
+				}
+
+				// Put this here to avoid showing samples that do not have
+				// any metadata associated with them.
+				metadataList.add(fullMetadata);
+			}
+		}
+		model.addAttribute("metadataList", metadataList);
 		return "projects/project_linelist";
 	}
 
@@ -131,28 +171,42 @@ public class ProjectLineListController {
 	/**
 	 * Get the template the the line list table.  This becomes the table headers.
 	 *
-	 * @param templateId
-	 * 		{@link Long} identifier of the template to get.
+	 * @param projectId
+	 * 		{@link Long} identifier of the current {@link Project}
 	 *
-	 * @return {@link Map} containing the template.
+	 * @return {@link Set} containing unique metadata fields
 	 */
 	@RequestMapping("/fields")
 	@ResponseBody
-	public Map<String, Object> getLinelistTemplate(@RequestParam(required = false) Long templateId) {
-		List<String> fields = new ArrayList<>();
-		if (templateId != null) {
-			MetadataTemplate metadataTemplate = metadataTemplateService.read(templateId);
-			List<MetadataField> metadataTemplateFields = metadataTemplate.getFields();
-			for (MetadataField metadataField : metadataTemplateFields) {
-				fields.add(metadataField.getLabel());
+	public List<String> getAllProjectMetadataFields(@PathVariable Long projectId) {
+		Project project = projectService.read(projectId);
+		Set<String> fields = new HashSet<>();
+
+		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(project);
+		for (Join<Project, Sample> join : samplesForProject) {
+			Sample sample = join.getObject();
+			SampleMetadata sampleMetadata = sampleService.getMetadataForSample(sample);
+			if (sampleMetadata != null) {
+				Map<String, Object> metadataFields = sampleMetadata.getMetadata();
+				fields.addAll(metadataFields.keySet());
 			}
-		} else {
-			logger.debug("Trying to load a metadata template that does not exist.");
-			fields = DEFAULT_TEMPLATE;
 		}
-		return ImmutableMap.of("fields", fields);
+		List<String> fieldList = new ArrayList<>(fields);
+		// These are default fields for the start
+		fieldList.add(0, "label");
+		fieldList.add(0, "id");
+
+		return fieldList;
 	}
 
+	/**
+	 * Get the metadata fields for a specific template
+	 *
+	 * @param templateId
+	 * 		{@link Long} identifier for a template
+	 *
+	 * @return {@link List} list of {@link MetadataField} for a template.
+	 */
 	@RequestMapping("/metadatafields")
 	@ResponseBody
 	public List<MetadataField> getMetadaFieldsForTemplate(@RequestParam Long templateId) {
@@ -163,53 +217,23 @@ public class ProjectLineListController {
 	/**
 	 * Get the metadata for the table that matches the current template.
 	 *
+	 * @param criterias
+	 * 		{@link DatatablesCriterias} ajax query sent by Datatables
 	 * @param projectId
 	 * 		{@link Long} identifier for the current {@link Project}.
-	 * @param templateId
-	 * 		{@link Long} name of the template to metadata for.
 	 *
 	 * @return {@link Map} of all the metadata.
 	 */
 	@RequestMapping("/metadata")
 	@ResponseBody
-	public Map<String, Object> getLinelistMetadata(@PathVariable Long projectId,
-			@RequestParam(required = false) Long templateId) {
+	public DatatablesResponse<Map<String, Object>> getLinelistMetadata(@DatatablesParams DatatablesCriterias criterias,
+			@PathVariable Long projectId) {
 		Project project = projectService.read(projectId);
-		List<Join<Project, Sample>> projectSamples = sampleService.getSamplesForProject(project);
-		List<MetadataField> lineListFields = new ArrayList<>();
-		if (templateId != null) {
-			MetadataTemplate metadataTemplate = metadataTemplateService.read(templateId);
-			lineListFields = metadataTemplate.getFields();
-		}
 
-		List<Map<String, Object>> metadata = new ArrayList<>();
-		for (Join<Project, Sample> join : projectSamples) {
-			Sample sample = join.getObject();
-			SampleMetadata sampleMetadata = sampleService.getMetadataForSample(sample);
-
-			// Get the current samples metadata (if it exists).
-			Map<String, Object> data;
-			if (sampleMetadata != null) {
-				data = sampleMetadata.getMetadata();
-			} else {
-				data = ImmutableMap.of();
-			}
-			Map<String, Object> md = new HashMap<>();
-			md.put("id", sample.getId());
-			md.put("label", sample.getLabel());
-			// Every template is expected to start with the sample identifier and label
-			for (MetadataField field : lineListFields) {
-				String header = field.getLabel();
-				if (data.containsKey(header)) {
-					md.put(header, data.get(header));
-				} else {
-					md.put(header, "");
-				}
-			}
-			metadata.add(md);
-		}
-		return ImmutableMap.of("metadata", metadata);
+		DataSet<Map<String, Object>> dataSet = new DataSet<>(null, 100L, 100L);
+		return DatatablesResponse.build(dataSet, criterias);
 	}
+
 
 	/**
 	 * Save a new line list template.
