@@ -32,21 +32,39 @@
           </div>
         </div>
         <div class="form-group">
-          <label class="control-label" th:text="#{project.settings.coverage}">_Coverage_</label>
-          <div class="form-inline">
-            <label for="genome-size" th:text="#{project.settings.coverage.genome_size}">_Genome Size_</label>
-            <div class="input-group">
-              <input class="form-control" type="text" id="genome-size" th:value="${project.genomeSize}"/>
-              <div class="input-group-addon">bp</div>
+          <label class="control-label">
+            <span th:text="#{project.settings.coverage}">_Coverage_</span>
+            <button id="edit-coverage-btn" class="btn btn-xs btn-default" th:text="#{form.btn.edit}">_Edit_</button>
+            <button id="coverage-cancel" class="btn btn-danger btn-xs" style="display: none" type="button" th:text="#{form.btn.cancel}">_save_</button>
+            <button id="coverage-save" class="btn btn-success btn-xs" style="display: none" type="button" th:text="#{form.btn.update}">_save_</button>
+          </label>
+          <div id="display-coverage" class="row">
+            <div class="col-md-3">
+              <label for="required-coverage-display" th:text="#{project.settings.coverage.required_coverage}">_Required Coverage_</label>
+              <span id="required-coverage-display" th:text="${project.requiredCoverage} + 'x'"></span>
             </div>
-            &nbsp;
-            <label for="required-coverage" th:text="#{project.settings.coverage.required_coverage}">_Required Coverage_</label>
-            <div class="input-group">
-              <input class="form-control" type="text" size="4" id="required-coverage" th:value="${project.requiredCoverage}"/>
-              <div class="input-group-addon">x</div>
+
+            <div class="col-md-4">
+              <label for="genome-size-display" th:text="#{project.settings.coverage.genome_size}">_Genome Size_</label>
+              <span id="genome-size-display" th:text="${project.genomeSize} + 'bp'"></span>
             </div>
-            &nbsp;
-            <button id="coverage-save" class="btn btn-default btn-sm" type="button" th:text="#{form.btn.update}">_save_</button>
+          </div>
+          <div id="edit-coverage" class="form row" style="display: none">
+            <div class="col-md-3">
+              <label for="required-coverage" th:text="#{project.settings.coverage.required_coverage}">_Required Coverage_</label>
+              <div class="input-group">
+                <input class="form-control" type="text" size="4" id="required-coverage" th:value="${project.requiredCoverage}"/>
+                <div class="input-group-addon">x</div>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <label for="genome-size" th:text="#{project.settings.coverage.genome_size}">_Genome Size_</label>
+              <div class="input-group">
+                <input class="form-control" type="text" id="genome-size" th:value="${project.genomeSize}" size="10"/>
+                <div class="input-group-addon">bp</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

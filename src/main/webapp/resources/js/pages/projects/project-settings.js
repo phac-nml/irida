@@ -34,12 +34,21 @@ var projectSettings = (function(page, notifications) {
             statusCode : {
                 200 : function(response){
                     notifications.show({'msg': response.result});
+                    
+                    $("#required-coverage-display").html(requiredCoverage + "x");
+                    $("#genome-size-display").html(genomeSize + "bp");
+
+                    toggleCoverageVisibility();
                 }
             },
             fail : function(){
                 notifications.show({'msg': page.i18n.error, type:"error"});
             }
         });
+    });
+
+    $("#edit-coverage-btn, #coverage-cancel").on("click", function() {
+        toggleCoverageVisibility();
     });
     
     $(".sync-setting").change(function(){
@@ -65,6 +74,14 @@ var projectSettings = (function(page, notifications) {
     
     function showConnectedActions(){
         $(".api-connected-action").show();
+    }
+
+    function toggleCoverageVisibility(){
+        $("#edit-coverage-btn").toggle();
+        $("#display-coverage").toggle();
+        $("#edit-coverage").toggle();
+        $("#coverage-save").toggle();
+        $("#coverage-cancel").toggle();
     }
     
     function updateSyncSettings(params){
