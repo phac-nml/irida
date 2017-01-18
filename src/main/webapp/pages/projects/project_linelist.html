@@ -74,7 +74,8 @@
             </div>
             <div class="sidepanel">
                 <button class="btn btn-default btn-block"
-                        ng-repeat="field in $ctrl.fields"
+                        ng-repeat="field in $ctrl.fields track by $index"
+                        ng-disabled="$index === 0"
                         uib-btn-checkbox=""
                         ng-model="field.selected"
                         ng-click="$ctrl.toggleField($event, field)">{{ field.text }}
