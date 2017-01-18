@@ -67,7 +67,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 		this.analysisExecutionService = analysisExecutionServiceGalaxy;
 		this.cleanupCondition = cleanupCondition;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -76,13 +76,26 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 		synchronized (downloadFilesLock) {
 			logger.trace("Running downloadFiles");
 
-			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
-					.findByAnalysisState(AnalysisState.NEW);
-
 			Set<Future<AnalysisSubmission>> submissions = Sets.newHashSet();
 
-			for (AnalysisSubmission submission : analysisSubmissions) {
-				submissions.add(analysisExecutionService.downloadSubmissionFiles(submission));
+			// check to see if execution service wants any more jobs
+			int capacity = analysisExecutionService.getCapacity();
+			if (capacity > 0) {
+				List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
+						.findByAnalysisState(AnalysisState.NEW);
+
+				if (capacity < analysisSubmissions.size()) {
+					logger.debug("Attempting to submit more jobs than capacity, list will be trimmed: "
+							+ analysisSubmissions.size() + "=>" + capacity);
+					// only submit up to capacity
+					analysisSubmissions = analysisSubmissions.subList(0, capacity);
+				}
+
+				for (AnalysisSubmission submission : analysisSubmissions) {
+					submissions.add(analysisExecutionService.downloadSubmissionFiles(submission));
+				}
+			} else {
+				logger.debug("AnalysisExecutionService at max capacity.  No jobs updated.");
 			}
 
 			return submissions;

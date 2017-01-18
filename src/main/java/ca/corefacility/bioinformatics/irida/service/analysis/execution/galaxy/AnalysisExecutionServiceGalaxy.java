@@ -4,10 +4,13 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.concurrent.Future;
 
 import javax.transaction.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
@@ -27,11 +30,15 @@ import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisE
  * 
  */
 public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService {
+	
+	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionServiceGalaxy.class);
 
 	private final AnalysisSubmissionService analysisSubmissionService;
 	private final GalaxyHistoriesService galaxyHistoriesService;
 	private final AnalysisExecutionServiceGalaxyAsync analysisExecutionServiceGalaxyAsync;
 	private final AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionServiceGalaxyCleanupAsync;
+	
+	private int maxJobs = 2;
 
 	/**
 	 * Builds a new {@link AnalysisExecutionServiceGalaxy} with the given
@@ -149,5 +156,19 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 		AnalysisSubmission cleaningAnalysis = analysisSubmissionService.update(analysisSubmission);
 
 		return analysisExecutionServiceGalaxyCleanupAsync.cleanupSubmission(cleaningAnalysis);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int getCapacity() {
+		Collection<AnalysisSubmission> runningAnalyses = analysisSubmissionService
+				.findAnalysesByState(AnalysisState.getRunningStates());
+
+		int available = maxJobs - runningAnalyses.size();
+
+		logger.debug("Available analysis slots: " + available);
+		return available;
 	}
 }

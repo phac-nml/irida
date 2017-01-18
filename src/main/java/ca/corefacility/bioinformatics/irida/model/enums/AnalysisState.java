@@ -3,7 +3,10 @@ package ca.corefacility.bioinformatics.irida.model.enums;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
@@ -98,6 +101,27 @@ public enum AnalysisState {
 		checkNotNull(state, "state for string \"" + stateString + "\" does not exist");
 
 		return state;
+	}
+
+	/**
+	 * Get the {@link AnalysisState}s that denote an {@link AnalysisSubmission}
+	 * that has no more steps to undergo.
+	 * 
+	 * @return a List of {@link AnalysisState}
+	 */
+	public static List<AnalysisState> getTerminalStates() {
+		return Lists.newArrayList(COMPLETED, ERROR);
+	}
+
+	/**
+	 * Get the {@link AnalysisState}s that denote an {@link AnalysisSubmission}
+	 * that has been picked up and is currently being processed.
+	 * 
+	 * @return a List of {@link AnalysisState}
+	 */
+	public static List<AnalysisState> getRunningStates() {
+		return Lists.newArrayList(DOWNLOADING, FINISHED_DOWNLOADING, PREPARED, SUBMITTING, RUNNING, FINISHED_RUNNING,
+				COMPLETING);
 	}
 
 	/**

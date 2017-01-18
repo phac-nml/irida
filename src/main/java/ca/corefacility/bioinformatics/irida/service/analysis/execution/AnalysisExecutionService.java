@@ -112,4 +112,12 @@ public interface AnalysisExecutionService {
 	 */
 	public Future<AnalysisSubmission> cleanupSubmission(AnalysisSubmission analysisSubmission)
 			throws ExecutionManagerException;
+	
+	/**
+	 * Get the {@link AnalysisExecutionService} capacity for running new jobs.
+	 * This will return the number of open slots for running new workflows.
+	 * 
+	 * @return the number of available slots for running jobs
+	 */
+	public int getCapacity();
 }
