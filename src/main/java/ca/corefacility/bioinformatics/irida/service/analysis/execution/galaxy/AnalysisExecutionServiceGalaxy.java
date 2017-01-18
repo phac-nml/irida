@@ -170,7 +170,7 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 
 		int available = maxJobs - runningAnalyses.size();
 
-		logger.debug("Available analysis slots: " + available);
+		logger.trace("Available analysis slots: " + available);
 		return available;
 	}
 }
