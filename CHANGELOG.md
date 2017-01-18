@@ -6,6 +6,7 @@ Changes
 * [API]: Added a checksum to files on upload so uploaders can validate upload was successful.
 * [UI]: Project sync jobs ignore bad files and set a sample to error when it can't transfer files, but gracefully continues the rest of the sync. (0.14.1)
 * [Developer]: Cleaned up old use deprecated method `CrudService.update(Long, Map)` and removed the method from the project.
+* [API]: Added configurable maximum number of workflows IRIDA will schedule at a time `irida.workflow.max-running`.  Default 20.
 
 0.13.0 to 0.14.0
 ----------------
