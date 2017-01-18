@@ -4,6 +4,7 @@
   "description": "Need to set this",
   "dependencies": {
     "angular": "^1.5.8",
+    "angular-aside": "^1.3.2",
     "angular-drag-and-drop-lists": "^1.4.0",
     "angular-messages": "^1.5.8",
     "angular-ui-router": "1.0.0-alpha.4",

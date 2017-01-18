@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -118,20 +119,20 @@ public class ProjectLineListController {
 
 		// Get all the metadata for each sample in the project
 		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(project);
-		List<List<Object>> metadataList = new ArrayList<>(samplesForProject.size());
+		List<Map<String, Object>> metadataList = new ArrayList<>(samplesForProject.size());
 		for (Join<Project, Sample> join : samplesForProject) {
 			Sample sample = join.getObject();
-			List<Object> fullMetadata = new ArrayList<>();
+			Map<String, Object> fullMetadata = new HashMap<>();
 			SampleMetadata sampleMetadata = sampleService.getMetadataForSample(sample);
 			if (sampleMetadata != null) {
 				Map<String, Object> metadata = sampleMetadata.getMetadata();
 				for (String header : headers) {
 					if (header.equalsIgnoreCase("id")) {
-						fullMetadata.add(sample.getId());
+						fullMetadata.put(header, sample.getId());
 					} else if (header.equalsIgnoreCase("label")) {
-						fullMetadata.add(sample.getSampleName());
+						fullMetadata.put(header, sample.getSampleName());
 					} else {
-						fullMetadata.add(metadata.getOrDefault(header, ""));
+						fullMetadata.put(header, metadata.getOrDefault(header, ""));
 					}
 				}
 

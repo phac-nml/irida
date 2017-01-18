@@ -5,6 +5,18 @@
         layout:decorator="projects/_base">
 <head>
     <title th:text="#{linelist.page-title}">Title</title>
+    <!-- TODO: (Josh) Move this to external css file -->
+    <style>
+        .sidepanel {
+            height: 100%;
+            overflow-y: scroll;
+            padding: 1rem;
+            background: #3d72b4; /* fallback for old browsers */
+            background: -webkit-linear-gradient(to top right, #525252, #3d72b4); /* Chrome 10-25, Safari 5.1-6 */
+            background: linear-gradient(to top right, #525252, #3d72b4); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+        }
+    </style>
 </head>
 <body>
 <main layout:fragment="main" ddl:bundle-includes="project-linelist">
@@ -40,13 +52,8 @@
     </div>
     <div class="row">
         <div class="col-md-12" style="overflow: hidden;">
-            <table id="linelist" class="table table-bordered table-striped" style="width: 100%;">
-                <thead>
-                <tr>
-                    <th th:each="header : ${headers}" th:text="${header}"></th>
-                </tr>
-                </thead>
-            </table>
+            <metadata-component></metadata-component>
+            <table id="linelist" class="table table-bordered table-striped" style="width: 100%;"></table>
         </div>
     </div>
 
@@ -55,6 +62,25 @@
 <th:block layout:fragment="scripts">
     <script th:inline="javascript">
         var metadataList = /*[[${metadataList}]]*/ [];
+        var headersList = /*[[${headers}]]*/ [];
+    </script>
+    <script type="text/ng-template" id="metadata.button.tmpl">
+        <button class="btn btn-default" ng-click="$ctrl.showMetadataTemplator()">_Header Fields_</button>
+    </script>
+    <script type="text/ng-template" id="metadata.aside.tmpl">
+        <div style="height: 100%;">
+            <div style="background: #000; padding: 1rem;">
+                <input type="text" class="form-control" placeholder="Search"/>
+            </div>
+            <div class="sidepanel">
+                <button class="btn btn-default btn-block"
+                        ng-repeat="field in $ctrl.fields"
+                        uib-btn-checkbox=""
+                        ng-model="field.selected"
+                        ng-click="$ctrl.toggleField($event, field)">{{ field.text }}
+                </button>
+            </div>
+        </div>
     </script>
     <script src="/resources/js/build/project-linelist.bundle.js"
         th:src="@{/resources/js/build/project-linelist.bundle.js}"></script>
