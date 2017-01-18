@@ -12,6 +12,7 @@ import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
@@ -38,7 +39,8 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 	private final AnalysisExecutionServiceGalaxyAsync analysisExecutionServiceGalaxyAsync;
 	private final AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionServiceGalaxyCleanupAsync;
 	
-	private int maxJobs = 2;
+	@Value("${irida.workflow.max-running}")
+	private int maxJobs;
 
 	/**
 	 * Builds a new {@link AnalysisExecutionServiceGalaxy} with the given
