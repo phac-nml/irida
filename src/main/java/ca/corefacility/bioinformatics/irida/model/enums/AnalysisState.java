@@ -105,16 +105,6 @@ public enum AnalysisState {
 
 	/**
 	 * Get the {@link AnalysisState}s that denote an {@link AnalysisSubmission}
-	 * that has no more steps to undergo.
-	 * 
-	 * @return a List of {@link AnalysisState}
-	 */
-	public static List<AnalysisState> getTerminalStates() {
-		return Lists.newArrayList(COMPLETED, ERROR);
-	}
-
-	/**
-	 * Get the {@link AnalysisState}s that denote an {@link AnalysisSubmission}
 	 * that has been picked up and is currently being processed.
 	 * 
 	 * @return a List of {@link AnalysisState}
