@@ -457,7 +457,7 @@ var datatable = (function(moment, tl, page) {
 
     // if bad qc entry exists theme the row
     if (item.qcEntries.length > 0) {
-      row.classList.add("bad-sample-qc");
+      row.classList.add("row-warning");
     }
   }
 

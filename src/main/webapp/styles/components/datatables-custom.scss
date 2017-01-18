@@ -74,6 +74,10 @@ table.selectable tbody tr.selected td {
   line-height: 2em;
 }
 
+.row-warning {
+  background-color: #f2dede !important;
+}
+
 // Prevents table from overflowing the panel box that wraps it.
 //.dataTables_wrapper {
 //  .panel {
