@@ -8,8 +8,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
@@ -22,11 +20,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.github.dandelion.datatables.core.ajax.DataSet;
-import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
-import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
-import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -43,15 +36,11 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 @Controller
 @RequestMapping("/projects/{projectId}/linelist")
 public class ProjectLineListController {
-	private static final Logger logger = LoggerFactory.getLogger(ProjectLineListController.class);
-
 	private final ProjectService projectService;
 	private final SampleService sampleService;
 	private final MetadataTemplateService metadataTemplateService;
 	private final ProjectControllerUtils projectControllerUtils;
 	private final MessageSource messageSource;
-
-	private final List<String> DEFAULT_TEMPLATE = ImmutableList.of("id", "label");
 
 	@Autowired
 	public ProjectLineListController(ProjectService projectService, SampleService sampleService,
@@ -64,6 +53,16 @@ public class ProjectLineListController {
 		this.projectControllerUtils = utils;
 	}
 
+	/**
+	 * Get a {@link List} of {@link MetadataTemplate}s available for the current {@link Project}
+	 *
+	 * @param locale
+	 * 		{@link Locale} users current locale
+	 * @param project
+	 * 		{@link Project} the project to get {@link MetadataTemplate}s for
+	 *
+	 * @return {@link List} of {@link MetadataTemplate}
+	 */
 	private List<Map<String, String>> getTemplateNames(Locale locale, Project project) {
 		List<ProjectMetadataTemplateJoin> metadataTemplatesForProject = metadataTemplateService.getMetadataTemplatesForProject(project);
 		List<Map<String, String>> templates = new ArrayList<>();
@@ -169,37 +168,6 @@ public class ProjectLineListController {
 	}
 
 	/**
-	 * Get the template the the line list table.  This becomes the table headers.
-	 *
-	 * @param projectId
-	 * 		{@link Long} identifier of the current {@link Project}
-	 *
-	 * @return {@link Set} containing unique metadata fields
-	 */
-	@RequestMapping("/fields")
-	@ResponseBody
-	public List<String> getAllProjectMetadataFields(@PathVariable Long projectId) {
-		Project project = projectService.read(projectId);
-		Set<String> fields = new HashSet<>();
-
-		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(project);
-		for (Join<Project, Sample> join : samplesForProject) {
-			Sample sample = join.getObject();
-			SampleMetadata sampleMetadata = sampleService.getMetadataForSample(sample);
-			if (sampleMetadata != null) {
-				Map<String, Object> metadataFields = sampleMetadata.getMetadata();
-				fields.addAll(metadataFields.keySet());
-			}
-		}
-		List<String> fieldList = new ArrayList<>(fields);
-		// These are default fields for the start
-		fieldList.add(0, "label");
-		fieldList.add(0, "id");
-
-		return fieldList;
-	}
-
-	/**
 	 * Get the metadata fields for a specific template
 	 *
 	 * @param templateId
@@ -213,27 +181,6 @@ public class ProjectLineListController {
 		MetadataTemplate template = metadataTemplateService.read(templateId);
 		return template.getFields();
 	}
-
-	/**
-	 * Get the metadata for the table that matches the current template.
-	 *
-	 * @param criterias
-	 * 		{@link DatatablesCriterias} ajax query sent by Datatables
-	 * @param projectId
-	 * 		{@link Long} identifier for the current {@link Project}.
-	 *
-	 * @return {@link Map} of all the metadata.
-	 */
-	@RequestMapping("/metadata")
-	@ResponseBody
-	public DatatablesResponse<Map<String, Object>> getLinelistMetadata(@DatatablesParams DatatablesCriterias criterias,
-			@PathVariable Long projectId) {
-		Project project = projectService.read(projectId);
-
-		DataSet<Map<String, Object>> dataSet = new DataSet<>(null, 100L, 100L);
-		return DatatablesResponse.build(dataSet, criterias);
-	}
-
 
 	/**
 	 * Save a new line list template.
@@ -272,5 +219,34 @@ public class ProjectLineListController {
 				.createMetadataTemplateInProject(metadataTemplate, project);
 
 		return ImmutableMap.of("templateId", projectMetadataTemplateJoin.getObject().getId());
+	}
+
+	/**
+	 * Get the template the the line list table.  This becomes the table headers.
+	 *
+	 * @param projectId
+	 * 		{@link Long} identifier of the current {@link Project}
+	 *
+	 * @return {@link Set} containing unique metadata fields
+	 */
+	private List<String> getAllProjectMetadataFields(Long projectId) {
+		Project project = projectService.read(projectId);
+		Set<String> fields = new HashSet<>();
+
+		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(project);
+		for (Join<Project, Sample> join : samplesForProject) {
+			Sample sample = join.getObject();
+			SampleMetadata sampleMetadata = sampleService.getMetadataForSample(sample);
+			if (sampleMetadata != null) {
+				Map<String, Object> metadataFields = sampleMetadata.getMetadata();
+				fields.addAll(metadataFields.keySet());
+			}
+		}
+		List<String> fieldList = new ArrayList<>(fields);
+		// These are default fields for the start
+		fieldList.add(0, "label");
+		fieldList.add(0, "id");
+
+		return fieldList;
 	}
 }
