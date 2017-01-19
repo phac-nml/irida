@@ -21,12 +21,12 @@ public enum AnalysisState {
 	 * Occurs when an analysis is first entered for submission.
 	 */
 	NEW("NEW"),
-	
+
 	/**
 	 * Occurs when an analysis is downloading remote files
 	 */
 	DOWNLOADING("DOWNLOADING"),
-	
+
 	/**
 	 * Occurs when an analysis has completed downloading remote files
 	 */
@@ -110,8 +110,8 @@ public enum AnalysisState {
 	 * @return a List of {@link AnalysisState}
 	 */
 	public static List<AnalysisState> getRunningStates() {
-		return Lists.newArrayList(DOWNLOADING, FINISHED_DOWNLOADING, PREPARED, SUBMITTING, RUNNING, FINISHED_RUNNING,
-				COMPLETING);
+		return Lists.newArrayList(DOWNLOADING, FINISHED_DOWNLOADING, PREPARING, PREPARED, SUBMITTING, RUNNING,
+				FINISHED_RUNNING, COMPLETING);
 	}
 
 	/**
