@@ -11,10 +11,8 @@
             height: 100%;
             overflow-y: scroll;
             padding: 1rem;
-            background: #3d72b4; /* fallback for old browsers */
-            background: -webkit-linear-gradient(to top right, #525252, #3d72b4); /* Chrome 10-25, Safari 5.1-6 */
-            background: linear-gradient(to top right, #525252, #3d72b4); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-
+            background: #222222;
+            background: linear-gradient(#3A3A3A, #222222) !important;
         }
     </style>
 </head>
@@ -69,9 +67,6 @@
     </script>
     <script type="text/ng-template" id="metadata.aside.tmpl">
         <div style="height: 100%;">
-            <div style="background: #000; padding: 1rem;">
-                <input type="text" class="form-control" placeholder="Search"/>
-            </div>
             <div class="sidepanel">
                 <button class="btn btn-default btn-block"
                         ng-repeat="field in $ctrl.fields track by $index"
