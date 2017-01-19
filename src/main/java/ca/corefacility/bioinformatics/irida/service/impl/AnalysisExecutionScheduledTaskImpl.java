@@ -95,7 +95,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 					submissions.add(analysisExecutionService.downloadSubmissionFiles(submission));
 				}
 			} else {
-				logger.debug("AnalysisExecutionService at max capacity.  No jobs updated.");
+				logger.trace("AnalysisExecutionService at max capacity.  No jobs updated.");
 			}
 
 			return submissions;
