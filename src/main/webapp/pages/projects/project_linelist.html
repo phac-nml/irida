@@ -7,12 +7,16 @@
     <title th:text="#{linelist.page-title}">Title</title>
     <!-- TODO: (Josh) Move this to external css file -->
     <style>
-        .sidepanel {
-            height: 100%;
-            overflow-y: scroll;
+        .metadata-open .modal-content {
             padding: 1rem;
             background: #222222;
             background: linear-gradient(#3A3A3A, #222222) !important;
+        }
+
+        .scroll-col {
+            overflow-y: scroll !important;
+            overflow-x: hidden;
+            padding: 0 !important;
         }
     </style>
 </head>
@@ -20,37 +24,11 @@
 <main layout:fragment="main" ddl:bundle-includes="project-linelist">
     <div class="row spaced-bottom">
         <div class="col-md-12">
-            <a class="btn btn-default"
-               th:href="@{/projects/{id}/sample-metadata(id=${project.getId()})}"
-               th:text="#{linelist.add-metadata.btn}">Upload new metadata</a>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12 spaced-bottom">
-            <div class="form-group">
-                <label for="template-select"
-                       th:text="#{linelist.template-select.label}">Select Metadata
-                    Template</label>
-                <div class="row">
-                    <div class="col-md-9 col-sm-7">
-                        <select class="form-control" id="template-select">
-                            <option th:each="template : ${templates}" th:value="${template.id}"
-                                    th:text="${#strings.capitalizeWords(template.label)}"
-                                    th:selected="${template == currentTemplate}"></option>
-                        </select>
-                    </div>
-                    <div class="col-md-3 col-sm-5">
-                        <a th:href="@{/projects/4/linelist/linelist-templates}"
-                           class="btn btn-default btn-block"
-                           th:text="#{linelist.template.create-new}">Create New Template</a>
-                    </div>
-                </div>
-            </div>
+            <metadata-component></metadata-component>
         </div>
     </div>
     <div class="row">
         <div class="col-md-12" style="overflow: hidden;">
-            <metadata-component></metadata-component>
             <table id="linelist" class="table table-bordered table-striped" style="width: 100%;"></table>
         </div>
     </div>
@@ -63,18 +41,41 @@
         var headersList = /*[[${headers}]]*/ [];
     </script>
     <script type="text/ng-template" id="metadata.button.tmpl">
-        <button class="btn btn-default" ng-click="$ctrl.showMetadataTemplator()">_Header Fields_</button>
+        <div class="btn-group">
+            <button class="btn btn-default" ng-click="$ctrl.showMetadataTemplator()"
+                    th:text="#{linelist.datatable.column-select.button}">_Header Fields_
+            </button>
+            <a class="btn btn-default"
+               th:href="@{/projects/{id}/sample-metadata(id=${project.getId()})}"
+               th:text="#{linelist.add-metadata.btn}">_Upload new metadata_</a></div>
     </script>
     <script type="text/ng-template" id="metadata.aside.tmpl">
-        <div style="height: 100%;">
-            <div class="sidepanel">
-                <button class="btn btn-default btn-block"
-                        ng-repeat="field in $ctrl.fields track by $index"
-                        ng-disabled="$index === 0"
-                        uib-btn-checkbox=""
-                        ng-model="field.selected"
-                        ng-click="$ctrl.toggleField($event, field)">{{ field.text }}
-                </button>
+        <div class="row" style="height: 100%;">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <Label th:text="#{linelist.columns.select-metadata.label}">
+                            _Select metadata columns to display_</Label>
+                    </div>
+                </div>
+                <div class="col-md-12 scroll-col">
+                    <div class="row spaced-bottom"
+                         ng-repeat="field in $ctrl.fields track by $index">
+                        <div class="col-sm-12">
+                            <input type="checkbox"
+                                   ng-change="$ctrl.toggleField(field)"
+                                   bs-switch=""
+                                   switch-size="small"
+                                   switch-on-color="success"
+                                   ng-model="field.selected"
+                                   switch-label-width="200"
+                                   switch-label="{{ field.text }}"
+                                   switch-readonly="{{ $index === 0 }}"
+                            />
+                            <small class="text-info" ng-if="$index === 0" th:text="#{linelist.columns.first-warning}">_First column can not be hidden._</small>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </script>
