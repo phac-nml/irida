@@ -17,11 +17,12 @@ export const MetadataComponent = {
     showMetadataTemplator() {
       this.$aside.open({
         templateUrl: asideTemplateUrl,
+        openedClass: 'metadata-open',
         controllerAs: '$ctrl',
         controller() {
           this.fields = Object.assign(FIELDS);
 
-          this.toggleField = (e, field) => {
+          this.toggleField = field => {
             // Broadcast change column visibility
             const event = new CustomEvent(
               EVENTS.TABLE.columnVisibility,
@@ -31,7 +32,7 @@ export const MetadataComponent = {
                 },
                 bubbles: true
               });
-            e.currentTarget
+            document.body.querySelector('.modal-content')
               .dispatchEvent(event);
           };
         },
