@@ -2,7 +2,7 @@
 #
 #
 
-FROM apetkau/snvphyl-galaxy-1.0
+FROM apetkau/snvphyl-galaxy-1.0.1
 
 MAINTAINER Aaron Petkau, aaron.petkau@gmail.com
 
