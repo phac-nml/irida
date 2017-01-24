@@ -73,6 +73,12 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 
 	@PreAuthorize("permitAll()")
 	@Override
+	public MetadataField readMetadataFieldByLabel(String label) {
+		return fieldRepository.findMetadataFieldByLabel(label);
+	}
+
+	@PreAuthorize("permitAll()")
+	@Override
 	public MetadataField saveMetadataField(MetadataField field) {
 		if (field.getId() != null) {
 			throw new IllegalArgumentException("Cannot save a MetadataField that has an ID");
