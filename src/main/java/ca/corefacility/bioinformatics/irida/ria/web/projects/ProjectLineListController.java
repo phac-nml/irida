@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -118,20 +117,20 @@ public class ProjectLineListController {
 
 		// Get all the metadata for each sample in the project
 		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(project);
-		List<Map<String, Object>> metadataList = new ArrayList<>(samplesForProject.size());
+		List<List<Object>> metadataList = new ArrayList<>(samplesForProject.size());
 		for (Join<Project, Sample> join : samplesForProject) {
 			Sample sample = join.getObject();
-			Map<String, Object> fullMetadata = new HashMap<>();
+			List<Object> fullMetadata = new ArrayList<>();
 			SampleMetadata sampleMetadata = sampleService.getMetadataForSample(sample);
 			if (sampleMetadata != null) {
 				Map<String, Object> metadata = sampleMetadata.getMetadata();
 				for (String header : headers) {
 					if (header.equalsIgnoreCase("id")) {
-						fullMetadata.put(header, sample.getId());
+						fullMetadata.add(ImmutableMap.of("value", sample.getId()));
 					} else if (header.equalsIgnoreCase("label")) {
-						fullMetadata.put(header, sample.getSampleName());
+						fullMetadata.add(ImmutableMap.of("value", sample.getSampleName()));
 					} else {
-						fullMetadata.put(header, metadata.getOrDefault(header, ""));
+						fullMetadata.add(metadata.getOrDefault(header, ""));
 					}
 				}
 
@@ -244,7 +243,8 @@ public class ProjectLineListController {
 			}
 		}
 		List<String> fieldList = new ArrayList<>(fields);
-		// These are default fields for the start
+
+		// Need to add default sample fields.
 		fieldList.add(0, "label");
 		fieldList.add(0, "id");
 

@@ -8,12 +8,21 @@ require('datatables-bootstrap3-plugin');
 require('datatables.net-scroller');
 require('style!datatables.net-scroller-bs/css/scroller.bootstrap.css');
 require('style!datatables-bootstrap3-plugin/media/css/datatables-bootstrap3.css');
+import {domButtonsScroller} from './../../../utilities/datatables.utilities';
 
 const headers = formatBasicHeaders(window.headersList);
 
+const data = window.metadataList.map(row => {
+  return row.map(cell => cell.value);
+});
+
 const $table = $(`#linelist`).DataTable({
-  data: window.metadataList,
+  data,
   columns: headers,
+  dom: domButtonsScroller,
+  buttons: [
+    'colvis'
+  ],
   scrollX: true,
   scrollY: 600,
   deferRender: true,
