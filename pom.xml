@@ -1,10 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ca.corefacility.bioinformatics</groupId>
 	<artifactId>irida</artifactId>
 	<packaging>war</packaging>
-	<version>0.14.2</version>
+	<version>0.15.0-SNAPSHOT</version>
 	<name>irida</name>
 	<url>http://www.irida.ca</url>
 
@@ -197,6 +197,16 @@
 			</exclusions>
 		</dependency>
 		<dependency>
+			<groupId>com.lordofthejars</groupId>
+			<artifactId>nosqlunit-mongodb</artifactId>
+			<version>${nosqlunit.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongo-java-driver</artifactId>
+			<version>${mongo.driver.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-dbcp2</artifactId>
 			<version>${commons.dbcp.version}</version>
@@ -212,6 +222,11 @@
 			<groupId>javax.interceptor</groupId>
 			<artifactId>javax.interceptor-api</artifactId>
 			<version>${javax.interceptor-api.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-mongodb</artifactId>
+			<version>${spring.mongodb.version}</version>
 		</dependency>
 
 		<!-- RDF Database -->
@@ -238,8 +253,8 @@
 			</exclusions>
 		</dependency>
 
-		<!-- This dependency is brought in by hibernate and jena with conflicting 
-			versions. Solution was to exclude it from both of their imports and import 
+		<!-- This dependency is brought in by hibernate and jena with conflicting
+			versions. Solution was to exclude it from both of their imports and import
 			it explicitly. -->
 		<dependency>
 			<groupId>xml-apis</groupId>
@@ -651,8 +666,8 @@
 						</goals>
 						<configuration>
 							<!-- Uncomment below to disable Galaxy integration tests -->
-							<!-- <excludes> <exclude>/ca/corefacility/bioinformatics/irida/**/galaxy/**</exclude> 
-								<exclude>ca/corefacility/bioinformatics/irida/service/impl/integration/AnalysisExecutionScheduledTaskImplIT.java</exclude> 
+							<!-- <excludes> <exclude>/ca/corefacility/bioinformatics/irida/**/galaxy/**</exclude>
+								<exclude>ca/corefacility/bioinformatics/irida/service/impl/integration/AnalysisExecutionScheduledTaskImplIT.java</exclude>
 								</excludes> -->
 							<includes>
 								<include>${include.tests}</include>
@@ -877,7 +892,7 @@
 							<daemon>true</daemon>
 							<systemProperties>
 								<systemProperty>
-									<!-- Setting spring profile for integration tests to "it". Also 
+									<!-- Setting spring profile for integration tests to "it". Also
 										done in failsafe plugin -->
 									<name>spring.profiles.active</name>
 									<value>it</value>
@@ -1015,11 +1030,14 @@
 		<spring.version>4.2.3.RELEASE</spring.version>
 		<spring.security.version>4.0.0.M1</spring.security.version>
 		<spring.data.jpa.version>1.7.0.RELEASE</spring.data.jpa.version>
+		<spring.mongodb.version>1.6.0.RELEASE</spring.mongodb.version>
 		<spring.security.oauth.version>2.0.4.RELEASE</spring.security.oauth.version>
 		<spring.data.envers.version>0.2.0.RELEASE</spring.data.envers.version>
 		<spring.ws.test.version>2.2.0.RELEASE</spring.ws.test.version>
 		<mockito.version>1.10.19</mockito.version>
 		<mysql.connector.version>5.1.31</mysql.connector.version>
+		<mongo.driver.version>2.13.3</mongo.driver.version>
+		<nosqlunit.version>0.8.1</nosqlunit.version>
 		<hibernate.version>4.3.6.Final</hibernate.version>
 		<h2.version>1.4.180</h2.version>
 		<jsr250.api.version>1.0</jsr250.api.version>
@@ -1130,7 +1148,7 @@
 				<include.tests>
 					**/service/impl/integration/**/*IT.java,
 					**/service/workflow/integration/**/*IT.java,
-					**/repositories/**/*IT.java	
+					**/repositories/**/*IT.java
 				</include.tests>
 				<exclude.tests>**/*Galaxy*IT.java,
 					**/AnalysisExecutionScheduledTaskImplIT.java,
