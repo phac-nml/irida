@@ -25,6 +25,8 @@ import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -45,6 +47,7 @@ import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
+import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.NonWindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
@@ -74,6 +77,9 @@ import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionSchedu
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/model/enums/analysis/integration/SNVPhyl/SNVPhylAnalysisIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class SNVPhylAnalysisIT {
+	
+	private static final Logger logger = LoggerFactory
+			.getLogger(SNVPhylAnalysisIT.class);
 	
 	@Autowired
 	private DatabaseSetupGalaxyITService databaseSetupGalaxyITService;
@@ -357,7 +363,10 @@ public class SNVPhylAnalysisIT {
 
 			if (ex.isInputTool()) {
 				final Map<String, String> params = ex.getExecutionTimeParameters();
-				foundReferenceInputTool |= params.get("files.NAME").contains("reference")
+				logger.debug("Input tool has " + params);
+
+				foundReferenceInputTool |= params.containsKey("files.NAME")
+						&& params.get("files.NAME").contains("reference")
 						&& params.get("file_type").contains("fasta");
 				foundReadsInputTool |= params.get("file_type").contains("fastq");
 			}
@@ -490,7 +499,7 @@ public class SNVPhylAnalysisIT {
 			if (ex.getToolName().contains("Consolidate VCFs")) {
 				final Map<String, String> params = ex.getExecutionTimeParameters();
 				minVcf2AlignCov = params.get("coverage");
-				altAlleleFraction = params.get("ao");
+				altAlleleFraction = params.get("snv_abundance_ratio");
 				filterDensityThreshold = params.get("use_density_filter.threshold");
 				filterDensityWindowSize = params.get("use_density_filter.window_size");
 				break;
@@ -641,7 +650,7 @@ public class SNVPhylAnalysisIT {
 			if (ex.getToolName().contains("Consolidate VCFs")) {
 				final Map<String, String> params = ex.getExecutionTimeParameters();
 				minVcf2AlignCov = params.get("coverage");
-				altAlleleFraction = params.get("ao");
+				altAlleleFraction = params.get("snv_abundance_ratio");
 				filterDensityThreshold = params.get("use_density_filter.threshold");
 				filterDensityWindowSize = params.get("use_density_filter.window_size");
 				break;
