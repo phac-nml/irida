@@ -650,4 +650,13 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 				project);
 		pasRepository.delete(projectSubmissionShare);
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public Collection<AnalysisSubmission> findAnalysesByState(Collection<AnalysisState> states) {
+		return analysisSubmissionRepository.findByAnalysisState(states);
+	}
 }
