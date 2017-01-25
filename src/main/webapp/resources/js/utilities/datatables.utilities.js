@@ -23,6 +23,6 @@ export const domButtonsScroller = `
  */
 export const formatBasicHeaders = headers => {
   return headers.map(title => {
-    return {title, data: title};
+    return {title, data: title.value};
   });
 };
