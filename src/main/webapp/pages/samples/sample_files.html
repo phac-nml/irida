@@ -105,7 +105,7 @@
 					</tr>
 					<tr class="paired_end paired_end__assembly" th:if="${pair.getAutomatedAssembly()}">
 						<td class="td_icon">
-							<fa:icon data:uib-tooltip="#{sf.tooltip.assembly}" type="align"/>
+							<i data:uib-tooltip="#{sf.tooltip.assembly}" class="fa fa-align-right"/>
 						</td>
 						<td>
 							<a href="#" th:href="@{/analysis/{id}(id=${pair.getAutomatedAssembly().getId()})}" class="btn btn-default btn-sm file-name" th:text="#{samples.files.assembly}">_Assembly_</a>
