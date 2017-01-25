@@ -33,6 +33,16 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	public List<ProjectMetadataTemplateJoin> getMetadataTemplatesForProject(Project project);
 	
 	public MetadataField readMetadataField(Long id);
-	
+
+	/**
+	 * Get a {@link MetadataField} by its {@link String} label
+	 *
+	 * @param label
+	 * 		the {@link String} label for the {@link MetadataField}.
+	 *
+	 * @return {@link MetadataField}
+	 */
+	public MetadataField readMetadataFieldByLabel(String label);
+
 	public MetadataField saveMetadataField(MetadataField field);
 }
