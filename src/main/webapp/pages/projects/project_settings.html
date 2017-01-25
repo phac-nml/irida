@@ -41,12 +41,14 @@
           <div id="display-coverage" class="row">
             <div class="col-md-3">
               <label for="required-coverage-display" th:text="#{project.settings.coverage.required_coverage}">_Required Coverage_</label>
-              <span id="required-coverage-display" th:text="${project.requiredCoverage} + 'x'"></span>
+              <span id="required-coverage-display" th:if="${project.requiredCoverage != NULL}" th:text="${project.requiredCoverage} + 'x'"></span>
+              <span id="required-coverage-display" th:if="${project.requiredCoverage == NULL}"  th:text="#{project.settings.notset}">N/A</span>
             </div>
 
             <div class="col-md-4">
               <label for="genome-size-display" th:text="#{project.settings.coverage.genome_size}">_Genome Size_</label>
-              <span id="genome-size-display" th:text="${project.genomeSize} + 'bp'"></span>
+              <span id="genome-size-display" th:if="${project.genomeSize != NULL}" th:text="${project.genomeSize} + 'bp'"></span>
+              <span id="genome-size-display" th:if="${project.genomeSize == NULL}" th:text="#{project.settings.notset}">N/A</span>
             </div>
           </div>
           <div id="edit-coverage" class="form row" style="display: none">
