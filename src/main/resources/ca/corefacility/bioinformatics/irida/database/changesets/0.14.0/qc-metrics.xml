@@ -22,6 +22,11 @@
 					referencedColumnNames="id" foreignKeyName="FK_SEQOBJECT_QC_ENTRY"
 					nullable="false" />
 			</column>
+			<column name="positive" type="bit(1)">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="message" type="varchar(255)" />
 		</createTable>
 
 		<sql>
