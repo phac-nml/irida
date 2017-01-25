@@ -455,10 +455,18 @@ var datatable = (function(moment, tl, page) {
       row.querySelector("input[type=checkbox]").checked = true;
     }
 
-    // if bad qc entry exists theme the row
-    if (item.qcEntries.length > 0) {
+    // if bad qc entry exists theme the row    
+    var badQc = false;
+    item.qcEntries.forEach(function(q) {
+      if (q.positive === false) {
+        badQc = true;
+      }
+    });
+
+    if (badQc) {
       row.classList.add("row-warning");
     }
+    
   }
 
   /**
