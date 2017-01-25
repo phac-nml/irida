@@ -87,18 +87,42 @@
     "_class": "ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata",
     "sampleId": 53,
     "metadata": {
-      "firstName": "Foo",
-      "lastName": "Bar",
-      "city": "Comox",
-      "healthAuthority": "BC Vancouver Island Health Authority",
-      "birthDate": "1986-02-28",
-      "firstSymptom": "Diarrhea",
-      "onsetDate": "2015-06-04T10:16:42+00:00",
-      "species": "Salmonella enterica",
-      "serotype": "",
-      "primaryPfge": "SENXAI.0038",
-      "secondaryPfge": "SENBNI.0016",
-      "phageType": "DT13"
+      "firstName": {
+        "value": "Foo"
+      },
+      "lastName": {
+        "value": "Bar"
+      },
+      "city": {
+        "value": "Comox"
+      },
+      "healthAuthority": {
+        "value": "BC Vancouver Island Health Authority"
+      },
+      "birthDate": {
+        "value": "1986-02-28"
+      },
+      "firstSymptom": {
+        "value": "Diarrhea"
+      },
+      "onsetDate": {
+        "value": "2015-06-04T10:16:42+00:00"
+      },
+      "species": {
+        "value": "Salmonella enterica"
+      },
+      "serotype": {
+        "value": ""
+      },
+      "primaryPfge": {
+        "value": "SENXAI.0038"
+      },
+      "secondaryPfge": {
+        "value": "SENBNI.0016"
+      },
+      "phageType": {
+        "value": "DT13"
+      }
     }
   }
 ]
