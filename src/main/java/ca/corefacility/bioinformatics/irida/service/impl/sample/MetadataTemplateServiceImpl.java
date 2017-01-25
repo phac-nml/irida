@@ -71,6 +71,9 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 		return fieldRepository.findOne(id);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@PreAuthorize("permitAll()")
 	@Override
 	public MetadataField readMetadataFieldByLabel(String label) {
