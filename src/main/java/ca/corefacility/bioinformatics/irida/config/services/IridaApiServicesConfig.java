@@ -169,6 +169,19 @@ public class IridaApiServicesConfig {
 		return new DefaultFileProcessingChain(sequencingObjectRepository, qcRepository, fileProcessors);
 	}
 	
+	/**
+	 * A separate {@link FileProcessingChain} to be used for re-running coverage
+	 * measurements
+	 * 
+	 * @param sequencingObjectRepository
+	 *            a {@link SequencingObjectRepository}
+	 * @param qcRepository
+	 *            a {@link QCEntryRepository}
+	 * @param coverageProcessor
+	 *            the {@link CoverageFileProcessor}
+	 * @return a {@link FileProcessingChain} which only contains
+	 *         {@link CoverageFileProcessor}
+	 */
 	@Bean(name = "coverageFileProcessingChain")
 	public FileProcessingChain coverageFileProcssingChain(SequencingObjectRepository sequencingObjectRepository,
 			QCEntryRepository qcRepository, CoverageFileProcessor coverageProcessor) {
