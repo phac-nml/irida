@@ -27,6 +27,10 @@ const table = $(`#linelist`).DataTable({
   colReorder: true
 });
 
+// Move the toolbar inside the table.
+const toolbar = document.querySelector('.toolbar');
+toolbar.appendChild(document.getElementsByTagName('metadata-component')[0]);
+
 table.on('column-reorder', (e, settings, detail) => {
   const event = new CustomEvent(EVENTS.TABLE.colReorder, {detail,
     bubbles: true});

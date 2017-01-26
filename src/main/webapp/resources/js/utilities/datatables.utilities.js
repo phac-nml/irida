@@ -1,6 +1,6 @@
 // Default table html DOM layout
 export const dom = `
-<'row'<'col-sm-6'l><'col-sm-6'f>>
+<'row spaced-bottom'<'col-sm-9 toolbar'l><'col-sm-3'f>>
 <'row'<'col-sm-12'B>>
 <'row'<'col-sm-12'tr>>
 <'row'<'col-sm-12'i>>

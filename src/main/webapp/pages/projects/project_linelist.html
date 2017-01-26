@@ -41,17 +41,21 @@
 
 <th:block layout:fragment="scripts">
     <script th:inline="javascript">
-        var headersList = /*[[${headers}]]*/ [];
-        var metadataList = /*[[${metadataList}]]*/ [];
+      var headersList = /*[[${headers}]]*/ [];
+      var metadataList = /*[[${metadataList}]]*/ [];
     </script>
     <script type="text/ng-template" id="metadata.button.tmpl">
             <button class="btn btn-default" ng-click="$ctrl.showMetadataTemplator()"
                     th:text="#{linelist.datatable.column-select.button}">_Header Fields_
             </button>
-            <a class="btn btn-link"
-               th:href="@{/projects/{id}/sample-metadata(id=${project.getId()})}">
-                <i class="fa fa-upload" aria-hidden="true"></i>&nbsp;<span
-                    th:text="#{linelist.add-metadata.btn}"></span></a>
+            <select class="form-control" name="template" id="templage-select">
+                <option value="" th:each="templage : ${templates}" th:text="${template}" th:value="${template}">No Template Around Here</option>
+            </select>
+            <button class="btn btn-default">_Save Template_</button>
+        <a class="btn btn-link"
+           th:href="@{/projects/{id}/sample-metadata(id=${project.getId()})}">
+            <i class="fa fa-upload" aria-hidden="true"></i>&nbsp;<span
+                th:text="#{linelist.add-metadata.btn}"></span></a>
     </script>
     <script type="text/ng-template" id="metadata.aside.tmpl">
         <div class="row" style="height: 100%;">
@@ -76,7 +80,9 @@
                                    switch-label="{{ field.text }}"
                                    switch-readonly="{{ $index === 0 }}"
                             />
-                            <small class="text-info" ng-if="$index === 0" th:text="#{linelist.columns.first-warning}">_First column can not be hidden._</small>
+                            <small class="text-info" ng-if="$index === 0" th:text="#{linelist.columns.first-warning}">
+                                _First column can not be hidden._
+                            </small>
                         </div>
                     </div>
                 </div>
@@ -84,7 +90,7 @@
         </div>
     </script>
     <script src="/resources/js/build/project-linelist.bundle.js"
-        th:src="@{/resources/js/build/project-linelist.bundle.js}"></script>
+            th:src="@{/resources/js/build/project-linelist.bundle.js}"></script>
 </th:block>
 </body>
 </html>
