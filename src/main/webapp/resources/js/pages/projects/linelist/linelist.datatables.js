@@ -1,6 +1,6 @@
 /* eslint new-cap: [2, {'capIsNewExceptions': ['DataTable']}] */
 import {EVENTS} from './constants';
-import {formatBasicHeaders} from '../../../utilities/datatables.utilities';
+import {dom} from '../../../utilities/datatables.utilities';
 const $ = require('jquery');
 require('datatables.net');
 require('datatables-bootstrap3-plugin');
@@ -10,19 +10,23 @@ require('style!datatables.net-scroller-bs/css/scroller.bootstrap.css');
 require('style!datatables-bootstrap3-plugin/media/css/datatables-bootstrap3.css');
 require('style!datatables.net-colreorder-bs/css/colReorder.bootstrap.css');
 
-const headers = formatBasicHeaders(Object.assign(window.headersList));
+// window.metadataList is not in a format that Datatables
+// can use.  This transforms it into an array of values.
+const data = window.metadataList.map(row => {
+  return window.headersList.map(header => row[header].value);
+});
 
-const $table = $(`#linelist`).DataTable({
-  data: Object.assign(window.metadataList),
-  columns: headers,
+// Initialize the Datatable on the page.
+const table = $(`#linelist`).DataTable({
+  data,
+  dom,
   scrollX: true,
-  scrollY: 600,
-  deferRender: true,
+  scrollY: '50vh',
   scroller: true,
   colReorder: true
 });
 
-$table.on('column-reorder', (e, settings, detail) => {
+table.on('column-reorder', (e, settings, detail) => {
   const event = new CustomEvent(EVENTS.TABLE.colReorder, {detail,
     bubbles: true});
   e.currentTarget.dispatchEvent(event);
@@ -31,7 +35,7 @@ $table.on('column-reorder', (e, settings, detail) => {
 document.body.addEventListener(EVENTS.TABLE.columnVisibility, e => {
   const columnName = e.detail.column;
   if (columnName) {
-    const column = $table.column(columnName);
+    const column = table.column(columnName);
     column.visible(!column.visible());
   }
 });

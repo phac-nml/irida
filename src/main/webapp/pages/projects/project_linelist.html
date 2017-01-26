@@ -27,7 +27,13 @@
     </div>
     <div class="row">
         <div class="col-md-12" style="overflow: hidden;">
-            <table id="linelist" class="table table-bordered table-striped" style="width: 100%;"></table>
+            <table id="linelist" class="table table-bordered table-striped" style="width: 100%;">
+                <thead>
+                <tr>
+                    <th th:each="column : ${headers}" th:text="${column}"></th>
+                </tr>
+                </thead>
+            </table>
         </div>
     </div>
 
@@ -35,17 +41,17 @@
 
 <th:block layout:fragment="scripts">
     <script th:inline="javascript">
-        var metadataList = /*[[${metadataList}]]*/ [];
         var headersList = /*[[${headers}]]*/ [];
+        var metadataList = /*[[${metadataList}]]*/ [];
     </script>
     <script type="text/ng-template" id="metadata.button.tmpl">
-        <div class="btn-group">
             <button class="btn btn-default" ng-click="$ctrl.showMetadataTemplator()"
                     th:text="#{linelist.datatable.column-select.button}">_Header Fields_
             </button>
-            <a class="btn btn-default"
-               th:href="@{/projects/{id}/sample-metadata(id=${project.getId()})}"
-               th:text="#{linelist.add-metadata.btn}">_Upload new metadata_</a></div>
+            <a class="btn btn-link"
+               th:href="@{/projects/{id}/sample-metadata(id=${project.getId()})}">
+                <i class="fa fa-upload" aria-hidden="true"></i>&nbsp;<span
+                    th:text="#{linelist.add-metadata.btn}"></span></a>
     </script>
     <script type="text/ng-template" id="metadata.aside.tmpl">
         <div class="row" style="height: 100%;">

@@ -127,11 +127,11 @@ public class ProjectLineListController {
 				Map<String, Object> metadata = sampleMetadata.getMetadata();
 				for (String header : headers) {
 					if (header.equalsIgnoreCase("id")) {
-						fullMetadata.put(header, sample.getId());
+						fullMetadata.put("id", ImmutableMap.of("value", sample.getId()));
 					} else if (header.equalsIgnoreCase("label")) {
-						fullMetadata.put(header, sample.getSampleName());
+						fullMetadata.put("label", ImmutableMap.of("value", sample.getSampleName()));
 					} else {
-						fullMetadata.put(header, metadata.getOrDefault(header, ""));
+						fullMetadata.put(header, metadata.getOrDefault(header, ImmutableMap.of("value", "")));
 					}
 				}
 
@@ -244,7 +244,8 @@ public class ProjectLineListController {
 			}
 		}
 		List<String> fieldList = new ArrayList<>(fields);
-		// These are default fields for the start
+
+		// Need to add default sample fields.
 		fieldList.add(0, "label");
 		fieldList.add(0, "id");
 

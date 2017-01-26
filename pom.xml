@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ca.corefacility.bioinformatics</groupId>
 	<artifactId>irida</artifactId>
@@ -253,8 +253,8 @@
 			</exclusions>
 		</dependency>
 
-		<!-- This dependency is brought in by hibernate and jena with conflicting 
-			versions. Solution was to exclude it from both of their imports and import 
+		<!-- This dependency is brought in by hibernate and jena with conflicting
+			versions. Solution was to exclude it from both of their imports and import
 			it explicitly. -->
 		<dependency>
 			<groupId>xml-apis</groupId>
@@ -666,8 +666,8 @@
 						</goals>
 						<configuration>
 							<!-- Uncomment below to disable Galaxy integration tests -->
-							<!-- <excludes> <exclude>/ca/corefacility/bioinformatics/irida/**/galaxy/**</exclude> 
-								<exclude>ca/corefacility/bioinformatics/irida/service/impl/integration/AnalysisExecutionScheduledTaskImplIT.java</exclude> 
+							<!-- <excludes> <exclude>/ca/corefacility/bioinformatics/irida/**/galaxy/**</exclude>
+								<exclude>ca/corefacility/bioinformatics/irida/service/impl/integration/AnalysisExecutionScheduledTaskImplIT.java</exclude>
 								</excludes> -->
 							<includes>
 								<include>${include.tests}</include>
@@ -892,7 +892,7 @@
 							<daemon>true</daemon>
 							<systemProperties>
 								<systemProperty>
-									<!-- Setting spring profile for integration tests to "it". Also 
+									<!-- Setting spring profile for integration tests to "it". Also
 										done in failsafe plugin -->
 									<name>spring.profiles.active</name>
 									<value>it</value>
@@ -1148,7 +1148,7 @@
 				<include.tests>
 					**/service/impl/integration/**/*IT.java,
 					**/service/workflow/integration/**/*IT.java,
-					**/repositories/**/*IT.java	
+					**/repositories/**/*IT.java
 				</include.tests>
 				<exclude.tests>**/*Galaxy*IT.java,
 					**/AnalysisExecutionScheduledTaskImplIT.java,
