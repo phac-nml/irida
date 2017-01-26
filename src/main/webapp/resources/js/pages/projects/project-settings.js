@@ -38,7 +38,7 @@ var projectSettings = (function(page, notifications) {
                     $("#required-coverage-display").html(requiredCoverage + "x");
                     $("#genome-size-display").html(genomeSize + "bp");
 
-                    toggleCoverageVisibility();
+                    $(".edit-coverage").toggle();
                 }
             },
             fail : function(){
@@ -48,7 +48,7 @@ var projectSettings = (function(page, notifications) {
     });
 
     $("#edit-coverage-btn, #coverage-cancel").on("click", function() {
-        toggleCoverageVisibility();
+        $(".edit-coverage").toggle();
     });
     
     $(".sync-setting").change(function(){
@@ -74,14 +74,6 @@ var projectSettings = (function(page, notifications) {
     
     function showConnectedActions(){
         $(".api-connected-action").show();
-    }
-
-    function toggleCoverageVisibility(){
-        $("#edit-coverage-btn").toggle();
-        $("#display-coverage").toggle();
-        $("#edit-coverage").toggle();
-        $("#coverage-save").toggle();
-        $("#coverage-cancel").toggle();
     }
     
     function updateSyncSettings(params){

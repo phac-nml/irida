@@ -34,11 +34,11 @@
         <div class="form-group">
           <label class="control-label">
             <span th:text="#{project.settings.coverage}">_Coverage_</span>
-            <button id="edit-coverage-btn" class="btn btn-xs btn-default" th:text="#{form.btn.edit}">_Edit_</button>
-            <button id="coverage-cancel" class="btn btn-danger btn-xs" style="display: none" type="button" th:text="#{form.btn.cancel}">_save_</button>
-            <button id="coverage-save" class="btn btn-success btn-xs" style="display: none" type="button" th:text="#{form.btn.update}">_save_</button>
+            <button id="edit-coverage-btn" class="btn btn-xs btn-default edit-coverage" th:text="#{form.btn.edit}">_Edit_</button>
+            <button id="coverage-cancel" class="btn btn-default btn-xs edit-coverage" style="display: none" type="button" th:text="#{form.btn.cancel}">_cancel_</button>
+            <button id="coverage-save" class="btn btn-success btn-xs edit-coverage" style="display: none" type="button" th:text="#{form.btn.update}">_save_</button>
           </label>
-          <div id="display-coverage" class="row">
+          <div id="display-coverage" class="row edit-coverage">
             <div class="col-md-3">
               <label for="required-coverage-display" th:text="#{project.settings.coverage.required_coverage}">_Required Coverage_</label>
               <span id="required-coverage-display" th:if="${project.requiredCoverage != NULL}" th:text="${project.requiredCoverage} + 'x'"></span>
@@ -51,7 +51,7 @@
               <span id="genome-size-display" th:if="${project.genomeSize == NULL}" th:text="#{project.settings.notset}">N/A</span>
             </div>
           </div>
-          <div id="edit-coverage" class="form row" style="display: none">
+          <div id="edit-coverage" class="form row edit-coverage" style="display: none">
             <div class="col-md-3">
               <label for="required-coverage" th:text="#{project.settings.coverage.required_coverage}">_Required Coverage_</label>
               <div class="input-group">
