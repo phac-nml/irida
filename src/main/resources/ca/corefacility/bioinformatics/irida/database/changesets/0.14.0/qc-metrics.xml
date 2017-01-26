@@ -28,9 +28,9 @@
 
 			<column name="message" type="varchar(255)" />
 		</createTable>
-		
+
 		<addDefaultValue columnDataType="bit(1)" columnName="positive"
-				defaultValue="0" tableName=qc_entry />
+			defaultValue="0" tableName="qc_entry" />
 
 		<sql>
 			insert into qc_entry (DTYPE, sequencingObject_id, created_date)
