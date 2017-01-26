@@ -22,6 +22,7 @@ const table = $(`#linelist`).DataTable({
   dom,
   scrollX: true,
   scrollY: '50vh',
+  scrollCollapse: true,
   scroller: true,
   colReorder: true
 });
