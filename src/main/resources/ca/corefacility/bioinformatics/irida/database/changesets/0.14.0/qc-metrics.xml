@@ -23,7 +23,7 @@
 					nullable="false" />
 			</column>
 			<column name="positive" type="bit(1)">
-				<constraints nullable="false" />
+				<constraints nullable="false" defalutValue="0"/>
 			</column>
 
 			<column name="message" type="varchar(255)" />
