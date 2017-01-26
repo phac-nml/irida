@@ -38,12 +38,6 @@
                     <th th:each="column : ${headers}" th:text="${column}"></th>
                 </tr>
                 </thead>
-                <tbody>
-                <tr th:each="row : ${metadataList}">
-                    <td th:each="column : ${headers}" th:text="${row.get(column).value}">
-                    </td>
-                </tr>
-                </tbody>
             </table>
         </div>
     </div>
@@ -53,15 +47,16 @@
 <th:block layout:fragment="scripts">
     <script th:inline="javascript">
         var headersList = /*[[${headers}]]*/ [];
+        var metadataList = /*[[${metadataList}]]*/ [];
     </script>
     <script type="text/ng-template" id="metadata.button.tmpl">
-        <div class="btn-group">
             <button class="btn btn-default" ng-click="$ctrl.showMetadataTemplator()"
                     th:text="#{linelist.datatable.column-select.button}">_Header Fields_
             </button>
-            <a class="btn btn-default"
-               th:href="@{/projects/{id}/sample-metadata(id=${project.getId()})}"
-               th:text="#{linelist.add-metadata.btn}">_Upload new metadata_</a></div>
+            <a class="btn btn-link"
+               th:href="@{/projects/{id}/sample-metadata(id=${project.getId()})}">
+                <i class="fa fa-upload" aria-hidden="true"></i>&nbsp;<span
+                    th:text="#{linelist.add-metadata.btn}"></span></a>
     </script>
     <script type="text/ng-template" id="metadata.aside.tmpl">
         <div class="row" style="height: 100%;">
