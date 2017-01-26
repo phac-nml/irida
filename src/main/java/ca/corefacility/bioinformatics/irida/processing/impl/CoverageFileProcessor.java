@@ -59,7 +59,7 @@ public class CoverageFileProcessor implements FileProcessor {
 				int coverage = (int) (totalBases / projectGenomeSize);
 				boolean positive = coverage >= requiredCoverage;
 
-				// remove any existing coveratge entries
+				// remove any existing coverage entries
 				read.getQcEntries().stream().filter(q -> q instanceof CoverageQCEntry)
 						.forEach(q -> qcEntryRepository.delete(q));
 
