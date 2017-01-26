@@ -12,7 +12,7 @@ require('style!datatables-bootstrap3-plugin/media/css/datatables-bootstrap3.css'
 // window.metadataList is not in a format that Datatables
 // can use.  This transforms it into an array of values.
 const data = window.metadataList.map(row => {
-  return Object.keys(row).map(key => row[key].value || '');
+  return window.headersList.map(header => row[header].value);
 });
 
 // Initialize the Datatable on the page.

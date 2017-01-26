@@ -1131,8 +1131,9 @@ public class ProjectSamplesController {
 					Map<String, Object> metadata = sampleMetadata.getMetadata();
 
 					// Need to overwrite duplicate keys
-					for (String item : row.keySet()) {
-						metadata.put(item, row.get(item));
+					for (String metadataName : row.keySet()) {
+						Map<String, Object> value = ImmutableMap.of("value", row.get(metadataName));
+						metadata.put(metadataName, value);
 					}
 
 					// Save metadata back to the sample

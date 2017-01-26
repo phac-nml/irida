@@ -131,7 +131,7 @@ public class ProjectLineListController {
 					} else if (header.equalsIgnoreCase("label")) {
 						fullMetadata.put("label", ImmutableMap.of("value", sample.getSampleName()));
 					} else {
-						fullMetadata.put(header, metadata.getOrDefault(header, ""));
+						fullMetadata.put(header, metadata.getOrDefault(header, ImmutableMap.of("value", "")));
 					}
 				}
 
