@@ -11,7 +11,7 @@ require('style!datatables-bootstrap3-plugin/media/css/datatables-bootstrap3.css'
 import {domButtonsScroller} from '../../../utilities/datatables.utilities';
 
 const data = window.metadataList.map(row => {
-  return row.map(cell => cell.value);
+  return row.map(cell => cell.value || '');
 });
 
 $(`#linelist`).DataTable({
