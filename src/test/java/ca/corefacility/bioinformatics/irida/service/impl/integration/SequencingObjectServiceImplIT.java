@@ -437,7 +437,7 @@ public class SequencingObjectServiceImplIT {
 
 		assertTrue("should be coverage entry", qcEntry instanceof CoverageQCEntry);
 		assertTrue("qc should have passed", qcEntry.isPositive());
-		assertEquals("should be 3x coverage", "3x", qcEntry.getMessage());
+		assertEquals("should be 6x coverage", "6x", qcEntry.getMessage());
 
 		project.setRequiredCoverage(10);
 		project = projectService.update(project);

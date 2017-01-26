@@ -30,7 +30,17 @@
 		</createTable>
 
 		<addDefaultValue columnDataType="bit(1)" columnName="positive"
-			defaultValue="0" tableName="qc_entry" />
+			defaultValueBoolean="false" tableName="qc_entry" />
+
+		<addColumn tableName="project">
+			<column name="genome_size" type="bigint(20)" />
+			<column name="required_coverage" type="int(11)" />
+		</addColumn>
+		
+		<addColumn tableName="project_AUD">
+			<column name="genome_size" type="bigint(20)" />
+			<column name="required_coverage" type="int(11)" />
+		</addColumn>
 
 		<sql>
 			insert into qc_entry (DTYPE, sequencingObject_id, created_date)
