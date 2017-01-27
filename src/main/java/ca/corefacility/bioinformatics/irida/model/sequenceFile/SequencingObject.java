@@ -175,4 +175,9 @@ public abstract class SequencingObject extends IridaResourceSupport implements M
 	public List<QCEntry> getQcEntries() {
 		return qcEntries;
 	}
+	
+	@JsonIgnore
+	public void setQcEntries(List<QCEntry> qcEntries) {
+		this.qcEntries = qcEntries;
+	}
 }

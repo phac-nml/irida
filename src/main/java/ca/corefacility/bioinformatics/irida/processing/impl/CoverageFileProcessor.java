@@ -63,9 +63,11 @@ public class CoverageFileProcessor implements FileProcessor {
 		SampleSequencingObjectJoin sampleJoin = ssoRepository.getSampleForSequencingObject(read);
 		List<Join<Project, Sample>> projectForSample = psRepository.getProjectForSample(sampleJoin.getSubject());
 
+		if(read.getQcEntries() != null){
 		// remove any existing coverage entries
-		read.getQcEntries().stream().filter(q -> q instanceof CoverageQCEntry)
-				.forEach(q -> qcEntryRepository.delete(q));
+			read.getQcEntries().stream().filter(q -> q instanceof CoverageQCEntry)
+					.forEach(q -> qcEntryRepository.delete(q));
+		}
 
 		// find projects with a set genome size and required coverage
 		List<Join<Project, Sample>> projectsWithSize = projectForSample.stream()
