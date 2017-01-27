@@ -76,7 +76,17 @@ table.selectable tbody tr.selected td {
 
 .row-warning {
   background-color: #f2dede !important;
-  border-style: dashed;
+  td:nth-child(2) {
+    position: relative;
+    &:before {
+      font-family: FontAwesome;
+      content: "\f071";
+      color: #000000;
+      position: absolute;
+      left: 12px;
+      top: 12px;
+    }
+  }
 }
 
 // Prevents table from overflowing the panel box that wraps it.
