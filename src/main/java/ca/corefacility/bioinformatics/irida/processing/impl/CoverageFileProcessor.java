@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.processing.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,56 +23,81 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequ
 import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 
+/**
+ * {@link FileProcessor} used to calculate coverage of a
+ * {@link SequencingObject} for a {@link Project}s
+ */
 @Component
 public class CoverageFileProcessor implements FileProcessor {
 	private static final Logger logger = LoggerFactory.getLogger(CoverageFileProcessor.class);
 
-	@Autowired
 	private SequencingObjectRepository objectRepository;
-	@Autowired
+
 	private SampleSequencingObjectJoinRepository ssoRepository;
-	@Autowired
+
 	private ProjectSampleJoinRepository psRepository;
-	@Autowired
+
 	private QCEntryRepository qcEntryRepository;
-	@Autowired
+
 	private AnalysisRepository analysisRepository;
 
+	@Autowired
+	public CoverageFileProcessor(SequencingObjectRepository objectRepository,
+			SampleSequencingObjectJoinRepository ssoRepository, ProjectSampleJoinRepository psRepository,
+			QCEntryRepository qcEntryRepository, AnalysisRepository analysisRepository) {
+		this.objectRepository = objectRepository;
+		this.ssoRepository = ssoRepository;
+		this.psRepository = psRepository;
+		this.qcEntryRepository = qcEntryRepository;
+		this.analysisRepository = analysisRepository;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void process(Long sequenceFileId) throws FileProcessorException {
+		// read the seqobject, sample and project
 		SequencingObject read = objectRepository.findOne(sequenceFileId);
 
 		SampleSequencingObjectJoin sampleJoin = ssoRepository.getSampleForSequencingObject(read);
 		List<Join<Project, Sample>> projectForSample = psRepository.getProjectForSample(sampleJoin.getSubject());
 
-		if (projectForSample.size() == 1) {
+		// remove any existing coverage entries
+		read.getQcEntries().stream().filter(q -> q instanceof CoverageQCEntry)
+				.forEach(q -> qcEntryRepository.delete(q));
 
-			Project project = projectForSample.iterator().next().getSubject();
-			if (project.getGenomeSize() != null) {
-				Long projectGenomeSize = project.getGenomeSize();
-				Integer requiredCoverage = project.getRequiredCoverage();
+		// find projects with a set genome size and required coverage
+		List<Join<Project, Sample>> projectsWithSize = projectForSample.stream()
+				.filter(p -> p.getSubject().getGenomeSize() != null && p.getSubject().getRequiredCoverage() != null)
+				.collect(Collectors.toList());
 
-				long totalBases = read.getFiles().stream().mapToLong(f -> {
-					AnalysisFastQC fastqc = analysisRepository.findFastqcAnalysisForSequenceFile(f);
-					return fastqc.getTotalBases();
-				}).sum();
+		// only run if it's in a single project with coverage settings
+		if (projectsWithSize.size() == 1) {
+			// get the settings
+			Project project = projectsWithSize.iterator().next().getSubject();
+			Long projectGenomeSize = project.getGenomeSize();
+			Integer requiredCoverage = project.getRequiredCoverage();
 
-				int coverage = (int) (totalBases / projectGenomeSize);
-				boolean positive = coverage >= requiredCoverage;
+			// count the total bases
+			long totalBases = read.getFiles().stream().mapToLong(f -> {
+				AnalysisFastQC fastqc = analysisRepository.findFastqcAnalysisForSequenceFile(f);
+				return fastqc.getTotalBases();
+			}).sum();
 
-				// remove any existing coverage entries
-				read.getQcEntries().stream().filter(q -> q instanceof CoverageQCEntry)
-						.forEach(q -> qcEntryRepository.delete(q));
+			// calculate coverage as integer
+			int coverage = (int) (totalBases / projectGenomeSize);
 
-				CoverageQCEntry coverageQCEntry = new CoverageQCEntry(read, coverage, positive);
-				qcEntryRepository.save(coverageQCEntry);
+			// check if coverage exceeds the required coverage
+			boolean positive = coverage >= requiredCoverage;
 
-			} else {
-				logger.debug("Cannot report coverage for object " + read.getId()
-						+ " as it's project has no reference length");
-			}
+			// save the entry
+			CoverageQCEntry coverageQCEntry = new CoverageQCEntry(read, coverage, positive);
+			qcEntryRepository.save(coverageQCEntry);
+
 		} else {
-			logger.debug("Cannot report coverage for object " + read.getId() + " as it's in multiple projects.");
+			logger.debug("Cannot report coverage for object " + read.getId()
+					+ ".  It must exist in a single project with a genome size and required coverage.");
 		}
 
 	}
