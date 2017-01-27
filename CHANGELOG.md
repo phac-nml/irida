@@ -8,7 +8,6 @@ Changes
 * [Workflow]: Removed `@Transactional` from the AnalysisExecutionServiceGalaxyAsync.executeAnalysis method as transactions were timing out while waiting for files to upload to galaxy. (0.14.2)
 * [Developer]: Cleaned up old use deprecated method `CrudService.update(Long, Map)` and removed the method from the project.
 * [API]: Added configurable maximum number of workflows IRIDA will schedule at a time `irida.workflow.max-running`.  Default 4.
-* [UI]: New Project Sample Metadata Page. (0.14.2)
 
 0.13.0 to 0.14.0
 ----------------
