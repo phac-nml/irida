@@ -261,7 +261,7 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 		// to update the identifier of some resources, and so we should get a
 		// handle on the updated resource so that we can respond with a
 		// possibly updated location.
-		Type resource = crudService.update(identifier, representation);
+		Type resource = crudService.updateFields(identifier, representation);
 		Long id = resource.getId();
 		logger.debug("Updated resource with ID [" + resource.getId() + "]");
 

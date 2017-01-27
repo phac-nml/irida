@@ -7,7 +7,6 @@ import static org.junit.Assert.fail;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.validation.ConstraintViolationException;
@@ -30,7 +29,6 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
@@ -182,29 +180,35 @@ public class SampleServiceImplIT {
 	@Test(expected = ConstraintViolationException.class)
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
 	public void testUpdateWithInvalidLatLong() {
-		Long sampleId = 2L;
-		Map<String, Object> properties = ImmutableMap.of("latitude", "not a geographic latitude", "longitude",
-				"not a geographic longitude");
+		Sample s = sampleService.read(2L);
+		s.setLatitude("not a geographic latitude");
+		s.setLongitude("not a geographic longitude");
 
-		sampleService.update(sampleId, properties);
+		sampleService.update(s);
 	}
 
 	@Test(expected = ConstraintViolationException.class)
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
 	public void testUpdateWithInvalidRangeLatLong() {
-		Long sampleId = 2L;
-		Map<String, Object> properties = ImmutableMap.of("latitude", "-1000.00", "longitude", "1000.00");
-		sampleService.update(sampleId, properties);
+		Sample s = sampleService.read(2L);
+		s.setLatitude("-1000.00");
+		s.setLongitude("1000.00");
+
+		sampleService.update(s);
 	}
 
 	@Test
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
 	public void testUpdateLatLong() {
-		Long sampleId = 2L;
+		Sample s = sampleService.read(2L);
+
 		String latitude = "50.00";
 		String longitude = "-100.00";
-		Map<String, Object> properties = ImmutableMap.of("latitude", latitude, "longitude", longitude);
-		Sample s = sampleService.update(sampleId, properties);
+
+		s.setLatitude(latitude);
+		s.setLongitude(longitude);
+
+		s = sampleService.update(s);
 		assertEquals("Wrong latitude was stored.", latitude, s.getLatitude());
 		assertEquals("Wrong longitude was stored.", longitude, s.getLongitude());
 	}

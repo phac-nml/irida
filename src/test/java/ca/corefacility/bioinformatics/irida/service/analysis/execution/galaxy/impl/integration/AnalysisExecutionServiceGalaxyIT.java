@@ -282,8 +282,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
 
 		analysisSubmitted.setRemoteWorkflowId(localGalaxy.getInvalidWorkflowId());
-		analysisSubmissionService.update(analysisSubmitted.getId(),
-				ImmutableMap.of("remoteWorkflowId", localGalaxy.getInvalidWorkflowId()));
+		
+		analysisSubmissionService.update(analysisSubmitted);
 
 		Future<AnalysisSubmission> analysisExecutedFuture = analysisExecutionService
 				.executeAnalysis(analysisSubmitted);
@@ -320,7 +320,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
 
 		analysisSubmitted.setRemoteAnalysisId("invalid");
-		analysisSubmissionService.update(analysisSubmitted.getId(), ImmutableMap.of("remoteAnalysisId", "invalid"));
+		analysisSubmissionService.update(analysisSubmitted);
 
 		Future<AnalysisSubmission> analysisExecutedFuture = analysisExecutionService
 				.executeAnalysis(analysisSubmitted);
