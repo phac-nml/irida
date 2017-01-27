@@ -32,7 +32,7 @@ public class PipelinesSelectionPage extends AbstractPage {
 
 	public static void goToPhylogenomicsPipeline(WebDriver webDriver) {
 		get(webDriver, RELATIVE_URL);
-		PipelinesSelectionPage page = PageFactory.initElements(webDriver, PipelinesSelectionPage.class);
+		PageFactory.initElements(webDriver, PipelinesSelectionPage.class);
 		phylogenomicsBtn.click();
 	}
 }

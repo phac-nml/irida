@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.remote;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
+import ca.corefacility.bioinformatics.irida.exceptions.ProjectSynchronizationException;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -139,7 +141,7 @@ public class ProjectSynchronizationService {
 
 				syncProject(project);
 			} catch (IridaOAuthException e) {
-				logger.debug("Can't sync project " + project.getRemoteStatus().getURL() + " due to oauth error:", e);
+				logger.trace("Can't sync project " + project.getRemoteStatus().getURL() + " due to oauth error:", e);
 				project.getRemoteStatus().setSyncStatus(SyncStatus.UNAUTHORIZED);
 				projectService.update(project);
 			} catch (Exception e) {
@@ -251,11 +253,17 @@ public class ProjectSynchronizationService {
 		});
 
 		List<SequenceFilePair> sequenceFilePairsForSample = pairRemoteService.getSequenceFilePairsForSample(sample);
+		
+		List<ProjectSynchronizationException> syncErrors = new ArrayList<>();
 
 		for (SequenceFilePair pair : sequenceFilePairsForSample) {
 			if (!pairsByUrl.containsKey(pair.getRemoteStatus().getURL())) {
 				pair.setId(null);
-				syncSequenceFilePair(pair, localSample);
+				try {
+					syncSequenceFilePair(pair, localSample);
+				} catch (ProjectSynchronizationException e) {
+					syncErrors.add(e);
+				}
 			}
 		}
 
@@ -263,10 +271,21 @@ public class ProjectSynchronizationService {
 
 		for (SingleEndSequenceFile file : unpairedFilesForSample) {
 			file.setId(null);
-			syncSingleEndSequenceFile(file, localSample);
+			try {
+				syncSingleEndSequenceFile(file, localSample);
+			} catch (ProjectSynchronizationException e) {
+				syncErrors.add(e);
+			}
 		}
 
-		localSample.getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
+		if (syncErrors.isEmpty()) {
+			localSample.getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
+		} else {
+			localSample.getRemoteStatus().setSyncStatus(SyncStatus.ERROR);
+			logger.error(
+					"Setting sample " + localSample.getId() + "sync status to ERROR due to sync errors with files");
+		}
+		
 		sampleService.update(localSample);
 	}
 
@@ -282,16 +301,22 @@ public class ProjectSynchronizationService {
 	public void syncSingleEndSequenceFile(SingleEndSequenceFile file, Sample sample) {
 		RemoteStatus fileStatus = file.getRemoteStatus();
 		fileStatus.setSyncStatus(SyncStatus.UPDATING);
-		file = singleEndRemoteService.mirrorSequencingObject(file);
+		try {
+			file = singleEndRemoteService.mirrorSequencingObject(file);
 
-		file.getSequenceFile().setId(null);
-		file.getSequenceFile().getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
+			file.getSequenceFile().setId(null);
+			file.getSequenceFile().getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
 
-		objectService.createSequencingObjectInSample(file, sample);
+			objectService.createSequencingObjectInSample(file, sample);
 
-		fileStatus.setSyncStatus(SyncStatus.SYNCHRONIZED);
+			fileStatus.setSyncStatus(SyncStatus.SYNCHRONIZED);
 
-		objectService.updateRemoteStatus(file.getId(), fileStatus);
+			objectService.updateRemoteStatus(file.getId(), fileStatus);
+		} catch (Exception e) {
+			logger.error("Error transferring file: " + file.getRemoteStatus().getURL(), e);
+			throw new ProjectSynchronizationException("Could not synchronize file " + file.getRemoteStatus().getURL(),
+					e);
+		}
 	}
 
 	/**
@@ -305,19 +330,25 @@ public class ProjectSynchronizationService {
 	 */
 	public void syncSequenceFilePair(SequenceFilePair pair, Sample sample) {
 		pair.getRemoteStatus().setSyncStatus(SyncStatus.UPDATING);
-		pair = pairRemoteService.mirrorSequencingObject(pair);
+		try {
+			pair = pairRemoteService.mirrorSequencingObject(pair);
 
-		pair.getFiles().forEach(s -> {
-			s.setId(null);
-			s.getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
-		});
+			pair.getFiles().forEach(s -> {
+				s.setId(null);
+				s.getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
+			});
 
-		objectService.createSequencingObjectInSample(pair, sample);
+			objectService.createSequencingObjectInSample(pair, sample);
 
-		RemoteStatus pairStatus = pair.getRemoteStatus();
-		pairStatus.setSyncStatus(SyncStatus.SYNCHRONIZED);
+			RemoteStatus pairStatus = pair.getRemoteStatus();
+			pairStatus.setSyncStatus(SyncStatus.SYNCHRONIZED);
 
-		objectService.updateRemoteStatus(pair.getId(), pairStatus);
+			objectService.updateRemoteStatus(pair.getId(), pairStatus);
+		} catch (Exception e) {
+			logger.error("Error transferring file: " + pair.getRemoteStatus().getURL(), e);
+			throw new ProjectSynchronizationException("Could not synchronize pair " + pair.getRemoteStatus().getURL(),
+					e);
+		}
 	}
 
 	/**

@@ -38,6 +38,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.google.common.collect.ImmutableSet;
+
 import ca.corefacility.bioinformatics.irida.exceptions.NcbiXmlParseException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
@@ -47,9 +49,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Class which handles uploading a {@link NcbiExportSubmission} to NCBI
@@ -134,22 +133,20 @@ public class ExportUploadService {
 			try {
 				logger.trace("Updating submission " + submission.getId());
 
-				submission = exportSubmissionService.update(submission.getId(),
-						ImmutableMap.of("uploadState", ExportUploadState.UPLOADING));
+				submission.setUploadState(ExportUploadState.UPLOADING);
+				submission = exportSubmissionService.update(submission);
 
 				String xmlContent = createXml(submission);
 
 				submission = uploadSubmission(submission, xmlContent);
 
-				submission = exportSubmissionService.update(
-						submission.getId(),
-						ImmutableMap.of("uploadState", ExportUploadState.UPLOADED, "directoryPath",
-								submission.getDirectoryPath()));
+				submission.setUploadState(ExportUploadState.UPLOADED);
+				submission = exportSubmissionService.update(submission);
 			} catch (Exception e) {
 				logger.error("Upload failed", e);
 
-				submission = exportSubmissionService.update(submission.getId(),
-						ImmutableMap.of("uploadState", ExportUploadState.UPLOAD_ERROR));
+				submission.setUploadState(ExportUploadState.UPLOAD_ERROR);
+				submission = exportSubmissionService.update(submission);
 
 				emailController.sendNCBIUploadExceptionEmail(notificationAdminEmail, e, submission.getId());
 			}
@@ -179,17 +176,15 @@ public class ExportUploadService {
 					if (xmlStream != null) {
 						NcbiExportSubmission updateSubmissionForXml = updateSubmissionForXml(submission, xmlStream);
 
-						exportSubmissionService.update(updateSubmissionForXml.getId(), ImmutableMap.of("uploadState",
-								updateSubmissionForXml.getUploadState(), "bioSampleFiles",
-								updateSubmissionForXml.getBioSampleFiles()));
+						exportSubmissionService.update(updateSubmissionForXml);
 
 						xmlStream.close();
 					}
 				} catch (NcbiXmlParseException e) {
 					logger.error("Error getting response", e);
 
-					submission = exportSubmissionService.update(submission.getId(),
-							ImmutableMap.of("uploadState", ExportUploadState.UPLOAD_ERROR));
+					submission.setUploadState(ExportUploadState.UPLOAD_ERROR);
+					submission = exportSubmissionService.update(submission);
 
 					emailController.sendNCBIUploadExceptionEmail(notificationAdminEmail, e, submission.getId());
 				} catch (IOException e) {

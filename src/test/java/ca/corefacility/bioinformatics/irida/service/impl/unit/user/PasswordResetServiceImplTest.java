@@ -41,7 +41,7 @@ public class PasswordResetServiceImplTest {
 	@Test(expected = UnsupportedOperationException.class)
 	public void testCannotUpdateAPasswordReset() {
 		Map<String, Object> properties = ImmutableMap.of("user_id", (Object) "3");
-		passwordResetService.update("1121-1212-1d2d1-df433", properties);
+		passwordResetService.updateFields("1121-1212-1d2d1-df433", properties);
 	}
 
 	@Test

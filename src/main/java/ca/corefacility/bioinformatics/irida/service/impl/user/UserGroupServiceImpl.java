@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.service.impl.user;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -28,7 +27,6 @@ import org.springframework.stereotype.Service;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityRevisionDeletedException;
-import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.UserGroupWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -117,16 +115,6 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canUpdateUserGroup')")
-	public UserGroup update(Long id, Map<String, Object> updatedProperties) throws EntityExistsException,
-			EntityNotFoundException, ConstraintViolationException, InvalidPropertyException {
-		return super.update(id, updatedProperties);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canUpdateUserGroup')")
 	public void delete(Long id) throws EntityNotFoundException {
 		super.delete(id);
 	}
@@ -185,6 +173,15 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	public Page<UserGroup> search(Specification<UserGroup> specification, int page, int size, Direction order,
 			String... sortProperties) {
 		return super.search(specification, page, size, order, sortProperties);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasPermission(#object, 'canUpdateUserGroup')")
+	@Override
+	public UserGroup update(UserGroup object) {
+		return super.update(object);
 	}
 
 	/**

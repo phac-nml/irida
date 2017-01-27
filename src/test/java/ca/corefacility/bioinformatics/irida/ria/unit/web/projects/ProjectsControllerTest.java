@@ -4,11 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.anyVararg;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -166,7 +163,6 @@ public class ProjectsControllerTest {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
 	public void testCreateNewProject() {
 		Model model = new ExtendedModelMap();
 		String projectName = "Test Project";
@@ -175,7 +171,7 @@ public class ProjectsControllerTest {
 		project.setId(projectId);
 		// Test creating project
 		when(projectService.create(any(Project.class))).thenReturn(project);
-		when(projectService.update(eq(project.getId()), anyMap())).thenReturn(project);
+		when(projectService.update(any(Project.class))).thenReturn(project);
 		String page = controller.createNewProject(model, projectName, "", "", "", false);
 		assertEquals("Returns the correct redirect to the collaborators page", "redirect:/projects/" + projectId
 				+ "/metadata", page);
@@ -190,7 +186,6 @@ public class ProjectsControllerTest {
 		assertTrue("Model should contain a project", model.containsAttribute("project"));
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testPostProjectMetadataEditPage() throws IOException {
 		Model model = new ExtendedModelMap();
@@ -201,7 +196,7 @@ public class ProjectsControllerTest {
 		String newDescritption = "Another new description.";
 		String newRemoteURL = "http://ghosturl.ca";
 
-		when(projectService.update(anyLong(), anyMap())).thenReturn(getProject());
+		when(projectService.update(any(Project.class))).thenReturn(getProject());
 
 		String page = controller.postProjectMetadataEditPage(model, principal, PROJECT_ID, newName, newOrganism,
 				newDescritption, newRemoteURL);

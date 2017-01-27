@@ -73,7 +73,8 @@ public class AnnouncementsControllerTest {
         announcementUserList = Lists.newArrayList(auj1, auj2);
     }
 
-    @Test
+    @SuppressWarnings("rawtypes")
+	@Test
     public void testGetReadAnnouncementsAsUser() {
         Principal principal = () -> USER_NAME;
         ExtendedModelMap model = new ExtendedModelMap();
@@ -90,6 +91,7 @@ public class AnnouncementsControllerTest {
         assertTrue("Unexpected page returned", ANNOUNCEMENT_VIEW_READ.equals(page));
     }
 
+    @SuppressWarnings("rawtypes")
     @Test
     public void testGetUnreadAnnouncementsForUser() {
         Principal principal = () -> USER_NAME;
@@ -107,6 +109,7 @@ public class AnnouncementsControllerTest {
         assertTrue("Unexpected page returned", ANNOUNCEMENT_VIEW.equals(page));
     }
 
+    @SuppressWarnings("rawtypes")
     @Test
     public void testGetControlCentreAdminPage() {
         ExtendedModelMap model = new ExtendedModelMap();
@@ -138,7 +141,7 @@ public class AnnouncementsControllerTest {
         when(announcementService.create(any(Announcement.class))).thenReturn(a);
         when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
 
-        String page = announcementsController.submitCreateAnnouncement(message, model, principal);
+        announcementsController.submitCreateAnnouncement(message, model, principal);
 
         assertTrue("Unexpected page returned", ANNOUNCEMENT_CREATE.equals(announcementsController.getCreateAnnouncementPage()));
         verify(announcementService).create(any(Announcement.class));

@@ -88,7 +88,7 @@ public class UserServiceImplTest {
 		when(userRepository.findOne(id)).thenReturn(persisted);
 		when(userRepository.exists(id)).thenReturn(true);
 
-		User u = userService.update(id, properties);
+		User u = userService.updateFields(id, properties);
 		assertEquals("User-type was not returned.", persisted, u);
 
 		verify(passwordEncoder).encode(password);
@@ -103,7 +103,7 @@ public class UserServiceImplTest {
 
 		when(userRepository.exists(1L)).thenReturn(true);
 		when(userRepository.findOne(1L)).thenReturn(user());
-		userService.update(1L, properties);
+		userService.updateFields(1L, properties);
 		verifyZeroInteractions(passwordEncoder);
 	}
 
