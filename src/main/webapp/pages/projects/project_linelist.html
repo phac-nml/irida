@@ -39,13 +39,26 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-12">
-            <linelist-component
-                    data:url="@{/projects/{id}/linelist(id=${project.getId()})}"
-                    data:template="${currentTemplate}">
-            </linelist-component>
+        <div class="col-md-12" style="overflow: hidden;">
+            <table id="linelist" class="table table-bordered table-striped" style="width: 100%;">
+                <thead>
+                <tr>
+                    <th th:each="header : ${headers}" th:text="${header}"></th>
+                </tr>
+                </thead>
+            </table>
         </div>
     </div>
+
 </main>
+
+<th:block layout:fragment="scripts">
+    <script th:inline="javascript">
+        var metadataList = /*[[${metadataList}]]*/ [];
+    </script>
+    <!-- TODO: (Josh | 27 Jan, 2017) Remove this script:src tag before committing to development and put in dandelion -->
+    <script src="/resources/js/build/project-linelist.bundle.js"
+        th:src="@{/resources/js/build/project-linelist.bundle.js}"></script>
+</th:block>
 </body>
 </html>

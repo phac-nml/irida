@@ -2,6 +2,7 @@ let entries = require("./configs/es6-entries.js");
 
 module.exports = {
   entry: entries,
+  devtool: 'source-map',
   module: {
     loaders: [
       {

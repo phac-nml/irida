@@ -1,26 +1,27 @@
-const angular = require('angular');
-import {LineListModule} from './components/linelist/linelist.module';
+/* eslint new-cap: [2, {'capIsNewExceptions': ['DataTable']}] */
+const $ = require('jquery');
+require('datatables.net');
+require('datatables-bootstrap3-plugin');
+require('datatables.net-buttons');
+require('datatables.net-buttons-bs');
+require('datatables.net-buttons/js/buttons.colVis.js');
+require('datatables.net-scroller');
+require('style!datatables.net-scroller-bs/css/scroller.bootstrap.css');
+require('style!datatables-bootstrap3-plugin/media/css/datatables-bootstrap3.css');
+import {domButtonsScroller} from '../../../utilities/datatables.utilities';
 
-const app = angular.module('irida');
-app.requires.push(LineListModule);
+const data = window.metadataList.map(row => {
+  return row.map(cell => cell.value || '');
+});
 
-/**
- * Listening for changes to the template selection select input.
- */
-const templateSelect = document.querySelector('#template-select');
-if (templateSelect) {
-  templateSelect.addEventListener('change', function(event) {
-    broadcast('LINELIST_TEMPLATE_CHANGE', {template: event.target.value});
-  });
-}
-
-/**
- * Use AngularJS broadcast system to send a message to all listeners.
- * @param {string} name of event
- * @param {args} args to send to the listener
- */
-function broadcast(name, args) {
-  const elm = document.querySelector('[ng-app]');
-  const scope = angular.element(elm).scope();
-  scope.$broadcast(name, args);
-}
+$(`#linelist`).DataTable({
+  data,
+  dom: domButtonsScroller,
+  buttons: [
+    'colvis'
+  ],
+  scrollX: true,
+  scrollY: 600,
+  deferRender: true,
+  scroller: true
+});
