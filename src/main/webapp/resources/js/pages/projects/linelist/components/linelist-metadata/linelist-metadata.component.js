@@ -19,32 +19,23 @@ document.body.addEventListener(EVENTS.TABLE.colReorder, e => {
 
 export const MetadataComponent = {
   templateUrl,
+  require: {
+    parent: '^^linelist'
+  },
   controller: class MetadataComponent {
     constructor($aside) {
       this.$aside = $aside;
     }
 
     showMetadataTemplator() {
+      const vm = this;
       this.$aside.open({
         templateUrl: asideTemplateUrl,
         openedClass: 'metadata-open',
         controllerAs: '$ctrl',
         controller() {
           this.fields = Object.assign(FIELDS);
-
-          this.toggleField = field => {
-            // Broadcast change column visibility
-            const event = new CustomEvent(
-              EVENTS.TABLE.columnVisibility,
-              {
-                detail: {
-                  column: Number(field.index)
-                },
-                bubbles: true
-              });
-            document.body.querySelector('.modal-content')
-              .dispatchEvent(event);
-          };
+          this.toggleField = vm.parent.updateColumnVisibility;
         },
         placement: 'left',
         size: 'sm'

@@ -20,29 +20,17 @@
 </head>
 <body>
 <main layout:fragment="main" ddl:bundle-includes="project-linelist">
-    <div class="row spaced-bottom">
-        <div class="col-md-12">
-            <metadata-component></metadata-component>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12" style="overflow: hidden;">
-            <table id="linelist" class="table table-bordered table-striped" style="width: 100%;">
-                <thead>
-                <tr>
-                    <th th:each="column : ${headers}" th:text="${column}"></th>
-                </tr>
-                </thead>
-            </table>
-        </div>
-    </div>
-
+    <linelist></linelist>
 </main>
 
 <th:block layout:fragment="scripts">
     <script th:inline="javascript">
         var headersList = /*[[${headers}]]*/ [];
         var metadataList = /*[[${metadataList}]]*/ [];
+    </script>
+    <script type="text/ng-template" id="linelist.tmpl.html">
+        <metadata-component></metadata-component>
+        <linelist-table></linelist-table>
     </script>
     <script type="text/ng-template" id="metadata.button.tmpl">
             <button class="btn btn-default" ng-click="$ctrl.showMetadataTemplator()"
