@@ -20,6 +20,8 @@ import javax.validation.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -71,6 +73,7 @@ import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
+import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.ProjectAnalysisSubmissionJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectReferenceFileJoinRepository;
@@ -83,6 +86,7 @@ import ca.corefacility.bioinformatics.irida.repositories.referencefile.Reference
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.impl.processor.SequenceFileProcessorLauncher;
 
 /**
  * A specialized service layer for projects.
@@ -92,7 +96,8 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implements ProjectService {
 
 	// settings that can be updated locally for a remote project
-	public List<String> VALID_LOCAL_SETTINGS = Lists.newArrayList("assembleUploads", "syncFrequency", "remoteStatus");
+	public List<String> VALID_LOCAL_SETTINGS = Lists.newArrayList("assembleUploads", "syncFrequency", "remoteStatus",
+			"genomeSize", "requiredCoverage");
 
 	private static final Logger logger = LoggerFactory.getLogger(ProjectServiceImpl.class);
 
@@ -107,6 +112,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	private final SampleSequencingObjectJoinRepository ssoRepository;
 	private final ProjectAnalysisSubmissionJoinRepository pasRepository;
 	private final ProjectRepository projectRepository;
+	private final TaskExecutor fileProcessingChainExecutor;
+	private final FileProcessingChain coverageFileProcessingChain;
 
 	@Autowired
 	public ProjectServiceImpl(ProjectRepository projectRepository, SampleRepository sampleRepository,
@@ -114,7 +121,9 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			ProjectSampleJoinRepository psjRepository, RelatedProjectRepository relatedProjectRepository,
 			ReferenceFileRepository referenceFileRepository, ProjectReferenceFileJoinRepository prfjRepository,
 			final UserGroupProjectJoinRepository ugpjRepository, SampleSequencingObjectJoinRepository ssoRepository,
-			ProjectAnalysisSubmissionJoinRepository pasRepository, Validator validator) {
+			ProjectAnalysisSubmissionJoinRepository pasRepository,
+			@Qualifier("fileProcessingChainExecutor") TaskExecutor fileProcessingChainExecutor,
+			@Qualifier("coverageFileProcessingChain") FileProcessingChain coverageFileProcessingChain, Validator validator) {
 		super(projectRepository, validator, Project.class);
 		this.projectRepository = projectRepository;
 		this.sampleRepository = sampleRepository;
@@ -127,6 +136,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		this.ugpjRepository = ugpjRepository;
 		this.ssoRepository = ssoRepository;
 		this.pasRepository = pasRepository;
+		this.fileProcessingChainExecutor = fileProcessingChainExecutor;
+		this.coverageFileProcessingChain = coverageFileProcessingChain;
 	}
 
 	/**
@@ -679,6 +690,22 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@PostFilter("hasPermission(filterObject.subject, 'canReadProject')")
 	public List<ProjectAnalysisSubmissionJoin> getProjectsForAnalysisSubmission(AnalysisSubmission submission) {
 		return pasRepository.getProjectsForSubmission(submission);
+	}
+	
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canManageLocalProjectSettings')")
+	public void runCoverageForProject(Project project) {
+		List<Join<Project, Sample>> samplesForProject = psjRepository.getSamplesForProject(project);
+
+		//get the seqobjects for the project
+		List<SampleSequencingObjectJoin> seqObjects = samplesForProject.stream()
+				.flatMap(s -> ssoRepository.getSequencesForSample(s.getObject()).stream()).collect(Collectors.toList());
+
+		// re-run the coverage processor for every file
+		seqObjects.forEach(s -> {
+			fileProcessingChainExecutor.execute(new SequenceFileProcessorLauncher(coverageFileProcessingChain,
+					s.getObject().getId(), SecurityContextHolder.getContext()));
+		});
 	}
 
 	/**

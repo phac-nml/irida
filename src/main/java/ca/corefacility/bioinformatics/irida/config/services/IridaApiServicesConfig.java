@@ -56,6 +56,7 @@ import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.impl.AssemblyFileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.impl.ChecksumFileProcessor;
+import ca.corefacility.bioinformatics.irida.processing.impl.CoverageFileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.impl.DefaultFileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
@@ -149,16 +150,16 @@ public class IridaApiServicesConfig {
 		return source;
 	}
 
-	@Bean
+	@Bean(name = "uploadFileProcessingChain")
 	public FileProcessingChain fileProcessorChain(SequencingObjectRepository sequencingObjectRepository,
 			QCEntryRepository qcRepository, GzipFileProcessor gzipFileProcessor,
 			FastqcFileProcessor fastQcFileProcessor, AssemblyFileProcessor assemblyFileProcessor,
-			ChecksumFileProcessor checksumProcessor) {
+			ChecksumFileProcessor checksumProcessor, CoverageFileProcessor coverageProcessor) {
 
 		gzipFileProcessor.setRemoveCompressedFiles(removeCompressedFiles);
 
 		final List<FileProcessor> fileProcessors = Lists.newArrayList(checksumProcessor, gzipFileProcessor,
-				fastQcFileProcessor, assemblyFileProcessor);
+				fastQcFileProcessor, coverageProcessor, assemblyFileProcessor);
 
 		if (!decompressFiles) {
 			logger.info("File decompression is disabled [file.processing.decompress=false]");
@@ -168,6 +169,28 @@ public class IridaApiServicesConfig {
 		return new DefaultFileProcessingChain(sequencingObjectRepository, qcRepository, fileProcessors);
 	}
 	
+	/**
+	 * A separate {@link FileProcessingChain} to be used for re-running coverage
+	 * measurements
+	 * 
+	 * @param sequencingObjectRepository
+	 *            a {@link SequencingObjectRepository}
+	 * @param qcRepository
+	 *            a {@link QCEntryRepository}
+	 * @param coverageProcessor
+	 *            the {@link CoverageFileProcessor}
+	 * @return a {@link FileProcessingChain} which only contains
+	 *         {@link CoverageFileProcessor}
+	 */
+	@Bean(name = "coverageFileProcessingChain")
+	public FileProcessingChain coverageFileProcssingChain(SequencingObjectRepository sequencingObjectRepository,
+			QCEntryRepository qcRepository, CoverageFileProcessor coverageProcessor) {
+
+		final List<FileProcessor> fileProcessors = Lists.newArrayList(coverageProcessor);
+
+		return new DefaultFileProcessingChain(sequencingObjectRepository, qcRepository, fileProcessors);
+	}
+
 	@Bean(name = "fileProcessingChainExecutor")
 	@Profile({ "dev", "prod" })
 	public TaskExecutor fileProcessingChainExecutor() {

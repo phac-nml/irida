@@ -382,6 +382,8 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 */
 	public List<ProjectAnalysisSubmissionJoin> getProjectsForAnalysisSubmission(AnalysisSubmission submission);
 	
+	public void runCoverageForProject(Project project);
+	
 	/**
 	 * Update select {@link Project} settings
 	 * @param project the project to update

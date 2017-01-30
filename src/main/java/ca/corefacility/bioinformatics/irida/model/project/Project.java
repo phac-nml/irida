@@ -21,6 +21,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
@@ -98,6 +99,14 @@ public class Project extends IridaResourceSupport
 	private List<RemoteRelatedProject> remoteRelatedProjects;
 
 	private String organism;
+	
+	@Min(1)
+	@Column(name = "genome_size", nullable = true)
+	private Long genomeSize;
+	
+	@Min(1)
+	@Column(name = "required_coverage", nullable = true)
+	private Integer requiredCoverage;
 	
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "remote_status")
@@ -229,5 +238,21 @@ public class Project extends IridaResourceSupport
 
 	public void setSyncFrequency(ProjectSyncFrequency syncFrequency) {
 		this.syncFrequency = syncFrequency;
+	}
+	
+	public Long getGenomeSize() {
+		return genomeSize;
+	}
+	
+	public void setGenomeSize(Long genomeSize) {
+		this.genomeSize = genomeSize;
+	}
+	
+	public Integer getRequiredCoverage() {
+		return requiredCoverage;
+	}
+	
+	public void setRequiredCoverage(Integer requiredCoverage) {
+		this.requiredCoverage = requiredCoverage;
 	}
 }

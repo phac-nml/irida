@@ -332,7 +332,8 @@ insert into sequence_file_single_end (id, file_id) values (3, 5), (4,6), (5,7), 
 INSERT INTO `sample_sequencingobject` (created_date, sample_id, sequencingobject_id) VALUES ('2014-07-30 08:24:34',52,1), ('2014-07-30 08:24:35',52,2),('2014-07-30 08:24:35',53,3),('2014-07-30 08:24:35',53,4),('2014-08-06 10:01:03',52,5),('2014-08-06 10:01:03',52,6),('2014-08-06 10:01:03',51,7),('2014-08-06 10:01:04',51,8),('2014-08-06 10:01:04',53,9),('2014-08-06 10:01:04',53,10);
 
 -- qc_entry
-INSERT INTO `qc_entry` (created_date, sequencingObject_id, DTYPE) VALUES (now(), 3, 'FileProcessorErrorQCEntry');
+INSERT INTO `qc_entry` (created_date, sequencingObject_id, positive, DTYPE) VALUES (now(), 3, 0, 'FileProcessorErrorQCEntry');
+INSERT INTO `qc_entry` (created_date, sequencingObject_id, positive, coverage, DTYPE) VALUES (now(), 3, 1, '100', 'CoverageQCEntry');
 
 -- analysis
 INSERT INTO `analysis` (id, createdDate, description, executionManagerAnalysisId) VALUES (1,'2014-07-30 08:24:35','Analysis produced by FastQC','internal-fastqc'),(2,'2014-07-30 08:24:35','Analysis produced by FastQC','internal-fastqc'),(3,'2014-07-30 08:24:34','Analysis produced by FastQC','internal-fastqc'),(4,'2014-07-30 08:24:35','Analysis produced by FastQC','internal-fastqc'),(5,'2014-07-30 08:24:35','Analysis produced by FastQC','internal-fastqc'),(6,'2014-07-30 08:24:35','Analysis produced by FastQC','internal-fastqc'),(7,'2014-08-06 10:01:04','Analysis produced by FastQC','internal-fastqc'),(8,'2014-08-06 10:01:03','Analysis produced by FastQC','internal-fastqc'),(9,'2014-08-06 10:01:03','Analysis produced by FastQC','internal-fastqc'),(10,'2014-08-06 10:01:04','Analysis produced by FastQC','internal-fastqc'),(11,'2014-08-06 10:01:04','Analysis produced by FastQC','internal-fastqc'),(12,'2014-08-06 10:01:03','Analysis produced by FastQC','internal-fastqc');

@@ -22,7 +22,25 @@
 					referencedColumnNames="id" foreignKeyName="FK_SEQOBJECT_QC_ENTRY"
 					nullable="false" />
 			</column>
+			<column name="positive" type="bit(1)">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="coverage" type="int(11)" />
 		</createTable>
+
+		<addDefaultValue columnDataType="bit(1)" columnName="positive"
+			defaultValueBoolean="false" tableName="qc_entry" />
+
+		<addColumn tableName="project">
+			<column name="genome_size" type="bigint(20)" />
+			<column name="required_coverage" type="int(11)" />
+		</addColumn>
+
+		<addColumn tableName="project_AUD">
+			<column name="genome_size" type="bigint(20)" />
+			<column name="required_coverage" type="int(11)" />
+		</addColumn>
 
 		<sql>
 			insert into qc_entry (DTYPE, sequencingObject_id, created_date)

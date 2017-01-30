@@ -25,6 +25,7 @@ The samples listing shows high-level sample details, such as:
 * The name of the person who collected the sample (if provided),
 * The project that the sample belongs to (if from a related project),
 * The date that the sample was created in IRIDA.
+* Whether the sample failed IRIDA's QC checks.  If a sample has failed QC, the cell will have a red background and warning icon <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>.
 
 ### Viewing individual sample details
 
