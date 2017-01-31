@@ -5,6 +5,8 @@ function TableController(DTOptionsBuilder,
                          DTColumnBuilder,
                          LinelistTableService,
                          $scope) {
+  const vm = this;
+
   this.dtOptions = DTOptionsBuilder
     .fromFnPromise(function() {
       return LinelistTableService.getMetadata();
@@ -13,7 +15,12 @@ function TableController(DTOptionsBuilder,
     .withScroller()
     .withOption('scrollX', true)
     .withOption('deferRender', true)
-    .withOption('scrollY', '50vh');
+    .withOption('scrollY', '50vh')
+    .withOption('scrollCollapse', true)
+    .withColReorder()
+    .withColReorderCallback(function() {
+      vm.parent.columnReorder(this.fnOrder());
+    });
 
   const headers = LinelistTableService.getColumns();
 
@@ -29,7 +36,10 @@ function TableController(DTOptionsBuilder,
   });
 
   $scope.$on(EVENTS.TABLE.columnVisibility, (e, args) => {
-    this.dtColumns[args.index].visible = args.selected;
+    const column = args.column;
+    if (column) {
+      this.dtColumns[column.index].visible = column.selected;
+    }
   });
 }
 

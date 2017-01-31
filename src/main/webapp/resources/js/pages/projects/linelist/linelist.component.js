@@ -1,8 +1,12 @@
 import {EVENTS} from './constants';
 
 function LinelistController($scope) {
-  this.updateColumnVisibility = function(column) {
-    $scope.$broadcast(EVENTS.TABLE.columnVisibility, column);
+  this.updateColumnVisibility = column => {
+    $scope.$broadcast(EVENTS.TABLE.columnVisibility, {column});
+  };
+
+  this.columnReorder = columns => {
+    $scope.$broadcast(EVENTS.TABLE.colReorder, {columns});
   };
 }
 
