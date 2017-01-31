@@ -1,0 +1,50 @@
+import {EVENTS} from './../../constants';
+const templateUrl = 'metadata.button.tmpl';
+const asideTemplateUrl = 'metadata.aside.tmpl';
+
+// This is all the headers in their original order when
+// the datatable was created.
+const FIELDS = window.headersList.map((header, index) => {
+  return ({text: header, index, selected: true});
+});
+
+export const MetadataComponent = {
+  templateUrl,
+  require: {
+    parent: '^^linelist'
+  },
+  controller: class MetadataComponent {
+    constructor($scope, $aside) {
+      this.displayFields = Object.assign(FIELDS);
+      this.$aside = $aside;
+      $scope.$on(EVENTS.TABLE.colReorder, (e, args) => {
+        const order = args.columns;
+        if (order) {
+          this.displayFields = order.map(originalIndex => {
+            return FIELDS[originalIndex];
+          });
+        }
+      });
+    }
+
+    showMetadataTemplator() {
+      const vm = this;
+      this.$aside.open({
+        templateUrl: asideTemplateUrl,
+        openedClass: 'metadata-open',
+        controllerAs: '$ctrl',
+        resolve: {
+          fields() {
+            return vm.displayFields;
+          }
+        },
+        controller(fields) {
+          this.fields = fields;
+          this.toggleField = vm.parent.updateColumnVisibility;
+        },
+        placement: 'left',
+        size: 'sm'
+      });
+    }
+  }
+};
