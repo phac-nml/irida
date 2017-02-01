@@ -55,6 +55,7 @@ public class GalaxyLibrariesServiceIT {
 	
 	private Path dataFile;
 	private Path dataFile2;
+	private Path dataFileFail;
 	
 	private GalaxyInstance galaxyInstanceAdmin;
 	private LibrariesClient librariesClient;
@@ -88,6 +89,9 @@ public class GalaxyLibrariesServiceIT {
 		
 		dataFile2 = Paths.get(GalaxyLibrariesServiceIT.class.getResource(
 				"testData2.fastq").toURI());
+		
+		dataFileFail = Paths.get(GalaxyLibrariesServiceIT.class.getResource(
+				"fail.fastq.gz").toURI());
 	}
 	
 	/**
@@ -175,6 +179,35 @@ public class GalaxyLibrariesServiceIT {
 		library.setId("invalid");
 		galaxyLibrariesService.filesToLibraryWait(ImmutableSet.of(dataFile),
 				FILE_TYPE, library, DataStorage.LOCAL);
+	}
+
+	/**
+	 * Tests failure to upload to a library due to a timeout issue.
+	 * 
+	 * @throws UploadException
+	 * @throws GalaxyDatasetException
+	 */
+	@Test(expected = UploadException.class)
+	public void testFilesToLibraryWaitFailTimeout() throws UploadException, GalaxyDatasetException {
+		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, 1, 1);
+
+		Library library = buildEmptyLibrary("testFilesToLibraryWaitFailTimeout");
+		galaxyLibrariesService.filesToLibraryWait(Sets.newHashSet(dataFile, dataFile2), FILE_TYPE, library,
+				DataStorage.LOCAL);
+	}
+	
+
+	/**
+	 * Tests failure to upload to a library due to an error with the dataset upload.
+	 * 
+	 * @throws UploadException
+	 * @throws GalaxyDatasetException
+	 */
+	@Test(expected = UploadException.class)
+	public void testFilesToLibraryWaitFailDatasetError() throws UploadException, GalaxyDatasetException {
+		Library library = buildEmptyLibrary("testFilesToLibraryWaitFailDatasetError");
+		galaxyLibrariesService.filesToLibraryWait(Sets.newHashSet(dataFileFail, dataFile2), FILE_TYPE, library,
+				DataStorage.LOCAL);
 	}
 	
 	/**

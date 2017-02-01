@@ -7,6 +7,7 @@ import static com.google.common.base.Preconditions.checkState;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -33,6 +34,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.GalaxyObject;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryDataset;
+import com.google.common.collect.Lists;
 import com.sun.jersey.api.client.ClientResponse;
 
 /**
@@ -56,6 +58,7 @@ public class GalaxyLibrariesService {
 	 * State a library dataset should be in on proper upload.
 	 */
 	private static final String LIBRARY_OK_STATE = "ok";
+	private static List<String> LIBRARY_FAIL_STATES = Lists.newArrayList("error", "paused");
 
 	/**
 	 * Builds a new GalaxyLibrariesService with the given LibrariesClient.
@@ -207,6 +210,13 @@ public class GalaxyLibrariesService {
 	
 							libraryDataset = librariesClient.showDataset(
 									library.getId(), datasetLibraryId);
+
+							if (LIBRARY_FAIL_STATES.contains(libraryDataset.getState())) {
+								throw new UploadException("Error: upload to Galaxy library id=" + library.getId()
+										+ " name=" + library.getName() + " for dataset id=" + datasetLibraryId
+										+ " name=" + libraryDataset.getName() + " failed with state "
+										+ libraryDataset.getId());
+							}
 						}
 					}
 					
