@@ -4,7 +4,7 @@ import {EVENTS} from './../../constants';
 function TableController(DTOptionsBuilder,
                          DTColumnBuilder,
                          LinelistTableService,
-                         $scope) {
+                         $scope, $compile) {
   const vm = this;
 
   this.dtOptions = DTOptionsBuilder
@@ -20,6 +20,11 @@ function TableController(DTOptionsBuilder,
     .withColReorder()
     .withColReorderCallback(function() {
       vm.parent.columnReorder(this.fnOrder());
+    })
+    .withOption('drawCallback', () => {
+      const div = document.querySelector('.toolbar');
+      div.innerHTML = `<metadata-component></metadata-component>`;
+      $compile(div)($scope);
     });
 
   const headers = LinelistTableService.getColumns();
@@ -47,7 +52,8 @@ TableController.$inject = [
   'DTOptionsBuilder',
   'DTColumnBuilder',
   'LinelistTableService',
-  '$scope'
+  '$scope',
+  '$compile'
 ];
 
 export const TableComponent = {
