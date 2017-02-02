@@ -189,7 +189,7 @@ public class GalaxyLibrariesServiceIT {
 	 */
 	@Test(expected = UploadException.class)
 	public void testFilesToLibraryWaitFailTimeout() throws UploadException, GalaxyDatasetException {
-		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, 1, 1);
+		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, 1, 2);
 
 		Library library = buildEmptyLibrary("testFilesToLibraryWaitFailTimeout");
 		galaxyLibrariesService.filesToLibraryWait(Sets.newHashSet(dataFile, dataFile2), FILE_TYPE, library,
