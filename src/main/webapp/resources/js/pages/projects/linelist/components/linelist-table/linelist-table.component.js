@@ -1,12 +1,10 @@
-import {dom} from './../../../../../utilities/datatables.utilities';
 import {EVENTS} from './../../constants';
+import {dom} from './../../../../../utilities/datatables.utilities';
 
 function TableController(DTOptionsBuilder,
                          DTColumnBuilder,
                          LinelistTableService,
                          $scope, $compile) {
-  const vm = this;
-
   this.dtOptions = DTOptionsBuilder
     .fromFnPromise(function() {
       return LinelistTableService.getMetadata();
@@ -19,11 +17,12 @@ function TableController(DTOptionsBuilder,
     .withOption('scrollCollapse', true)
     .withColReorder()
     .withColReorderCallback(function() {
-      vm.parent.columnReorder(this.fnOrder());
+      $scope.$broadcast(EVENTS.TABLE.colReorder, {columns: this.fnOrder()});
     })
     .withOption('drawCallback', () => {
       const div = document.querySelector('.toolbar');
-      div.innerHTML = `<metadata-component></metadata-component>`;
+      div.innerHTML = `
+<metadata-component></metadata-component>`;
       $compile(div)($scope);
     });
 
@@ -34,18 +33,17 @@ function TableController(DTOptionsBuilder,
       .newColumn(header)
       .withTitle(header)
       .renderWith(data => {
-        // This is where any custom rendering logic should go.
+        // This is where any custom rendering logic should go.`
         // example formatting date columns.
         return data.value;
       });
   });
 
-  $scope.$on(EVENTS.TABLE.columnVisibility, (e, args) => {
-    const column = args.column;
+  this.toggleFieldVisibility = column => {
     if (column) {
       this.dtColumns[column.index].visible = column.selected;
     }
-  });
+  };
 }
 
 TableController.$inject = [
@@ -62,10 +60,6 @@ export const TableComponent = {
   class="table" 
   dt-options="$ctrl.dtOptions" 
   dt-columns="$ctrl.dtColumns">
-
 </table>`,
-  require: {
-    parent: '^^linelist'
-  },
   controller: TableController
 };

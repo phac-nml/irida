@@ -10,14 +10,14 @@ const FIELDS = window.headersList.map((header, index) => {
 
 export const MetadataComponent = {
   templateUrl,
-  require: {
-    parent: '^^linelist'
-  },
   controller: class MetadataComponent {
     constructor($scope, $aside) {
       this.displayFields = Object.assign(FIELDS);
       this.$aside = $aside;
-      $scope.$on(EVENTS.TABLE.colReorder, (e, args) => {
+      this.$scope = $scope;
+
+      // Set up event listener for re-arranging the columns on the table.
+      this.$scope.$on(EVENTS.TABLE.colReorder, (e, args) => {
         const order = args.columns;
         if (order) {
           this.displayFields = order.map(originalIndex => {
@@ -40,11 +40,17 @@ export const MetadataComponent = {
         },
         controller(fields) {
           this.fields = fields;
-          this.toggleField = vm.parent.updateColumnVisibility;
+          this.toggleField = field => {
+            vm.$scope.$parent.$ctrl.toggleFieldVisibility(field);
+          };
         },
         placement: 'left',
         size: 'sm'
       });
+    }
+
+    saveTemplate() {
+      console.log(this.displayFields);
     }
   }
 };
