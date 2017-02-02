@@ -84,7 +84,7 @@ public class GalaxyLibrariesServiceIT {
 		galaxyInstanceAdmin = localGalaxy.getGalaxyInstanceAdmin();
 		librariesClient = galaxyInstanceAdmin.getLibrariesClient();
 		
-		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT);
+		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT, 1);
 		
 		dataFile = Paths.get(GalaxyLibrariesServiceIT.class.getResource(
 				"testData1.fastq").toURI());
@@ -191,7 +191,7 @@ public class GalaxyLibrariesServiceIT {
 	 */
 	@Test(expected = UploadTimeoutException.class)
 	public void testFilesToLibraryWaitFailTimeout() throws UploadException, GalaxyDatasetException {
-		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, 1, 2);
+		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, 1, 2, 1);
 
 		Library library = buildEmptyLibrary("testFilesToLibraryWaitFailTimeout");
 		galaxyLibrariesService.filesToLibraryWait(Sets.newHashSet(dataFile, dataFile2), FILE_TYPE, library,

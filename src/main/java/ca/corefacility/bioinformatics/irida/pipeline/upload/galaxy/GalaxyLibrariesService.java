@@ -51,7 +51,7 @@ public class GalaxyLibrariesService {
 
 	private LibrariesClient librariesClient;
 	
-	private final ExecutorService executor = Executors.newFixedThreadPool(1);
+	private final ExecutorService executor;
 
 	private final int libraryPollingTime;
 	private final int libraryUploadTimeout;
@@ -77,20 +77,26 @@ public class GalaxyLibrariesService {
 	 * @param libraryUploadTimeout
 	 *            The timeout (in seconds) for waiting for files to be uploaded
 	 *            to a library.
+	 * @param threadPoolSize
+	 *            The thread pool size for parallel polling of Galaxy to check if uploads are finished.
 	 */
 	public GalaxyLibrariesService(LibrariesClient librariesClient, final int libraryPollingTime,
-			final int libraryUploadTimeout) {
+			final int libraryUploadTimeout, final int threadPoolSize) {
 		checkNotNull(librariesClient, "librariesClient is null");
 		checkArgument(libraryPollingTime > 0, "libraryPollingTime=" + libraryPollingTime + " must be positive");
 		checkArgument(libraryUploadTimeout > 0, "libraryUploadTimeout=" + libraryUploadTimeout + " must be positive");
 		checkArgument(libraryUploadTimeout > libraryPollingTime, "libraryUploadTimeout=" + libraryUploadTimeout
 				+ " must be greater then libraryPollingTime=" + libraryPollingTime);
+		checkArgument(threadPoolSize > 0, "threadPoolSize=" + threadPoolSize + " must be positive");
 		
-		logger.debug("Setting libraryPollingTime=" + libraryPollingTime + ", libraryUploadTimeout=" + libraryUploadTimeout);
+		logger.debug("Setting libraryPollingTime=" + libraryPollingTime + ", libraryUploadTimeout=" + libraryUploadTimeout 
+				+ ", threadPoolSize=" + threadPoolSize);
 
 		this.librariesClient = librariesClient;
 		this.libraryPollingTime = libraryPollingTime;
 		this.libraryUploadTimeout = libraryUploadTimeout;
+		
+		executor = Executors.newFixedThreadPool(threadPoolSize);
 	}
 	
 	/**
@@ -221,8 +227,8 @@ public class GalaxyLibrariesService {
 							if (LIBRARY_FAIL_STATES.contains(libraryDataset.getState())) {
 								throw new UploadErrorException("Error: upload to Galaxy library id=" + library.getId()
 										+ " name=" + library.getName() + " for dataset id=" + datasetLibraryId
-										+ " name=" + libraryDataset.getName() + " failed with state "
-										+ libraryDataset.getId());
+										+ " name=" + libraryDataset.getName() + " failed with state="
+										+ libraryDataset.getState());
 							}
 						}
 					}
@@ -236,6 +242,8 @@ public class GalaxyLibrariesService {
 			throw new UploadException(e);
 		} catch (TimeoutException e) {
 			throw new UploadTimeoutException("Timeout while uploading, time limit = " + libraryUploadTimeout + " seconds", e);
+		} catch (UploadErrorException e) {
+			throw e;
 		} catch (ExecutionException | InterruptedException e) {
 			throw new UploadException(e);
 		}
