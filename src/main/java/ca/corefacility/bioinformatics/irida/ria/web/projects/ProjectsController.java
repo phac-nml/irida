@@ -92,7 +92,6 @@ public class ProjectsController {
 	private static final String ACTIVE_NAV_METADATA = "metadata";
 	private static final String ACTIVE_NAV_REFERENCE = "reference";
 	private static final String ACTIVE_NAV_ACTIVITY = "activity";
-	private static final String ACTIVE_NAV_SETTINGS = "settings";
 	private static final String ACTIVE_NAV_ANALYSES = "analyses";
 
 	// Page Names
@@ -107,7 +106,6 @@ public class ProjectsController {
 	public static final String PROJECT_SAMPLES_PAGE = PROJECTS_DIR + "project_samples";
 	public static final String PROJECT_ACTIVITY_PAGE = PROJECTS_DIR + "project_details";
 	public static final String PROJECT_REFERENCE_FILES_PAGE = PROJECTS_DIR + "project_reference";
-	public static final String PROJECT_SETTINGS_PAGE = PROJECTS_DIR + "project_settings";
 	public static final String PROJECT_ANALYSES_PAGE = PROJECTS_DIR + "project_analyses";
 	private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
 
@@ -229,135 +227,6 @@ public class ProjectsController {
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ACTIVITY);
 		return SPECIFIC_PROJECT_PAGE;
-	}
-	
-	/**
-	 * Request for a {@link Project} settings page
-	 * 
-	 * @param projectId
-	 *            the ID of the {@link Project} to read
-	 * @param model
-	 *            Model for the view
-	 * @param principal
-	 *            Logged in user
-	 * @return name of the project settings page
-	 */
-	@RequestMapping(value = "/projects/{projectId}/settings")
-	@PreAuthorize("hasPermission(#projectId, 'canManageLocalProjectSettings')")
-	public String getProjectSettingsPage(@PathVariable Long projectId, final Model model, final Principal principal) {
-		logger.debug("Getting project settings for [Project " + projectId + "]");
-		Project project = projectService.read(projectId);
-		model.addAttribute("project", project);
-		model.addAttribute("frequencies", ProjectSyncFrequency.values());
-		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_SETTINGS);
-		return PROJECT_SETTINGS_PAGE;
-	}
-
-	/**
-	 * Update the project assembly setting for the {@link Project}
-	 * 
-	 * @param projectId
-	 *            the ID of a {@link Project}
-	 * @param assemble
-	 *            Whether or not to do automated assemblies
-	 * @param model
-	 *            Model for the view
-	 * @return success message if successful
-	 */
-	@RequestMapping(value = "/projects/{projectId}/settings/assemble", method = RequestMethod.POST)
-	@ResponseBody
-	public Map<String, String> updateAssemblySetting(@PathVariable Long projectId, @RequestParam boolean assemble,
-			final Model model, Locale locale) {
-		Project read = projectService.read(projectId);
-		
-		Map<String,Object> updates = new HashMap<>();
-		updates.put("assembleUploads", assemble);
-		
-		projectService.updateProjectSettings(read, updates);
-		
-
-		String message = null;
-		if (assemble) {
-			message = messageSource.getMessage("project.settings.notifications.assemble.enabled",
-					new Object[] { read.getLabel() }, locale);
-		} else {
-			message = messageSource.getMessage("project.settings.notifications.assemble.disabled",
-					new Object[] { read.getLabel() }, locale);
-		}
-
-		return ImmutableMap.of("result", message);
-	}
-
-	/**
-	 * Update the project sync settings
-	 * 
-	 * @param projectId
-	 *            the project id to update
-	 * @param frequency
-	 *            the sync frequency to set
-	 * @param forceSync
-	 *            Set the project's sync status to MARKED
-	 * @param changeUser
-	 *            update the user on a remote project to the current logged in
-	 *            user
-	 * @param principal
-	 *            The current logged in user
-	 * @param locale
-	 *            user's locale
-	 * @return result message if successful
-	 */
-	@RequestMapping(value = "/projects/{projectId}/settings/sync", method = RequestMethod.POST)
-	@ResponseBody
-	public Map<String, String> updateProjectSyncSettings(@PathVariable Long projectId,
-			@RequestParam(required = false) ProjectSyncFrequency frequency,
-			@RequestParam(required = false, defaultValue = "false") boolean forceSync,
-			@RequestParam(required = false, defaultValue = "false") boolean changeUser, Principal principal,
-			Locale locale) {
-		Project read = projectService.read(projectId);
-		RemoteStatus remoteStatus = read.getRemoteStatus();
-
-		Map<String, Object> updates = new HashMap<>();
-		
-		String message = null;
-		String error = null;
-
-		if (frequency != null) {
-			updates.put("syncFrequency", frequency);
-			message = messageSource.getMessage("project.settings.notifications.sync", new Object[] {}, locale);
-		}
-
-		if (forceSync) {
-			remoteStatus.setSyncStatus(SyncStatus.MARKED);
-			updates.put("remoteStatus", remoteStatus);
-			message = messageSource.getMessage("project.settings.notifications.sync", new Object[] {}, locale);
-		}
-
-		if (changeUser) {
-			// ensure the user can read the project
-			try{
-				projectRemoteService.read(remoteStatus.getURL());
-				
-				User user = userService.getUserByUsername(principal.getName());
-				remoteStatus.setReadBy(user);
-				updates.put("remoteStatus", remoteStatus);
-				message = messageSource.getMessage("project.settings.notifications.sync.userchange", new Object[] {}, locale);
-			}catch(Exception ex){
-				error = messageSource.getMessage("project.settings.notifications.sync.userchange.error", new Object[] {}, locale);
-			}
-		}
-
-		projectService.updateProjectSettings(read, updates);
-		
-		Map<String,String> response;
-		if(error == null){
-			response = ImmutableMap.of("result", message);
-		}
-		else{
-			response = ImmutableMap.of("error", error);
-		}
-
-		return response;
 	}
 
 	/**
