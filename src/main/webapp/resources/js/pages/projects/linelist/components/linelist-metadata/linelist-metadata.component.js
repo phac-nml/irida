@@ -50,7 +50,9 @@ export const MetadataComponent = {
     }
 
     saveTemplate() {
-      console.log(this.displayFields);
+      const fields = this.displayFields
+        .filter(field => field.selected);
+      console.log('These fields need to be saved: ', fields);
     }
   }
 };
