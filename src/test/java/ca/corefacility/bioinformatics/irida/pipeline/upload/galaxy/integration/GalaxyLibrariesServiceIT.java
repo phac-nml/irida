@@ -20,6 +20,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.exceptions.UploadErrorException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteGalaxyObjectFailedException;
@@ -187,7 +188,7 @@ public class GalaxyLibrariesServiceIT {
 	 * @throws UploadException
 	 * @throws GalaxyDatasetException
 	 */
-	@Test(expected = UploadException.class)
+	@Test(expected = UploadTimeoutException.class)
 	public void testFilesToLibraryWaitFailTimeout() throws UploadException, GalaxyDatasetException {
 		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, 1, 2);
 
@@ -203,7 +204,7 @@ public class GalaxyLibrariesServiceIT {
 	 * @throws UploadException
 	 * @throws GalaxyDatasetException
 	 */
-	@Test(expected = UploadException.class)
+	@Test(expected = UploadErrorException.class)
 	public void testFilesToLibraryWaitFailDatasetError() throws UploadException, GalaxyDatasetException {
 		Library library = buildEmptyLibrary("testFilesToLibraryWaitFailDatasetError");
 		galaxyLibrariesService.filesToLibraryWait(Sets.newHashSet(dataFileFail, dataFile2), FILE_TYPE, library,

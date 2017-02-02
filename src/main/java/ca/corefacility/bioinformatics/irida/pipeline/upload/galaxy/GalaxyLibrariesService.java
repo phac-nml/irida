@@ -21,7 +21,9 @@ import java.util.concurrent.TimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.corefacility.bioinformatics.irida.exceptions.UploadErrorException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.exceptions.UploadTimeoutException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteGalaxyObjectFailedException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
@@ -58,7 +60,7 @@ public class GalaxyLibrariesService {
 	 * State a library dataset should be in on proper upload.
 	 */
 	private static final String LIBRARY_OK_STATE = "ok";
-	private static List<String> LIBRARY_FAIL_STATES = Lists.newArrayList("error", "paused");
+	private static List<String> LIBRARY_FAIL_STATES = Lists.newArrayList("error");
 
 	/**
 	 * Builds a new GalaxyLibrariesService with the given LibrariesClient.
@@ -212,7 +214,7 @@ public class GalaxyLibrariesService {
 									library.getId(), datasetLibraryId);
 
 							if (LIBRARY_FAIL_STATES.contains(libraryDataset.getState())) {
-								throw new UploadException("Error: upload to Galaxy library id=" + library.getId()
+								throw new UploadErrorException("Error: upload to Galaxy library id=" + library.getId()
 										+ " name=" + library.getName() + " for dataset id=" + datasetLibraryId
 										+ " name=" + libraryDataset.getName() + " failed with state "
 										+ libraryDataset.getId());
@@ -227,7 +229,9 @@ public class GalaxyLibrariesService {
 			waitForLibraries.get(libraryUploadTimeout, TimeUnit.SECONDS);
 		} catch (RuntimeException e) {
 			throw new UploadException(e);
-		} catch (ExecutionException | InterruptedException | TimeoutException e) {
+		} catch (TimeoutException e) {
+			throw new UploadTimeoutException("Timeout while uploading, time limit = " + libraryUploadTimeout + " seconds", e);
+		} catch (ExecutionException | InterruptedException e) {
 			throw new UploadException(e);
 		}
 
