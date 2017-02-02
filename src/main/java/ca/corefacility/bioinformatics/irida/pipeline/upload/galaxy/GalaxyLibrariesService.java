@@ -60,7 +60,12 @@ public class GalaxyLibrariesService {
 	 * State a library dataset should be in on proper upload.
 	 */
 	private static final String LIBRARY_OK_STATE = "ok";
-	private static List<String> LIBRARY_FAIL_STATES = Lists.newArrayList("error");
+	
+	/**
+	 * Failure states for a library dataset.  Derived from
+	 * https://github.com/galaxyproject/galaxy/blob/release_16.10/lib/galaxy/model/__init__.py#L1645
+	 */
+	private static List<String> LIBRARY_FAIL_STATES = Lists.newArrayList("paused", "error", "failed_metadata", "discarded");
 
 	/**
 	 * Builds a new GalaxyLibrariesService with the given LibrariesClient.
