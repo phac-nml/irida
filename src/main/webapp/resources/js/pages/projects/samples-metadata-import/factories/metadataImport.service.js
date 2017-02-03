@@ -15,7 +15,7 @@ export const sampleMetadataService = ($http, $window, Upload) => {
   const uploadMetadata = file => {
     return Upload
       .upload({
-        url: `${URL}/uploadFile`,
+        url: `${URL}/file`,
         data: {file: file}
       });
   };

@@ -54,31 +54,6 @@ public class ProjectLineListController {
 	}
 
 	/**
-	 * Get a {@link List} of {@link MetadataTemplate}s available for the current {@link Project}
-	 *
-	 * @param locale
-	 * 		{@link Locale} users current locale
-	 * @param project
-	 * 		{@link Project} the project to get {@link MetadataTemplate}s for
-	 *
-	 * @return {@link List} of {@link MetadataTemplate}
-	 */
-	private List<Map<String, String>> getTemplateNames(Locale locale, Project project) {
-		List<ProjectMetadataTemplateJoin> metadataTemplatesForProject = metadataTemplateService.getMetadataTemplatesForProject(project);
-		List<Map<String, String>> templates = new ArrayList<>();
-		for (ProjectMetadataTemplateJoin projectMetadataTemplateJoin : metadataTemplatesForProject) {
-			MetadataTemplate template = projectMetadataTemplateJoin.getObject();
-			templates.add(ImmutableMap.of("label", template.getLabel(), "id", String.valueOf(template.getId())));
-		}
-		if (templates.size() == 0) {
-			templates.add(ImmutableMap
-					.of("label", messageSource.getMessage("linelist.no-templates-available", new Object[] {}, locale),
-							"id", ""));
-		}
-		return templates;
-	}
-
-	/**
 	 * Get the page to display the project samples linelist.
 	 *
 	 * @param projectId
@@ -109,7 +84,7 @@ public class ProjectLineListController {
 		}
 
 		// Get a list of all available templates for displaying metadata
-		model.addAttribute("templates", getTemplateNames(locale, project));
+		model.addAttribute("templates", projectControllerUtils.getTemplateNames(locale, project));
 
 		// Get the headers (metadata fields)
 		List<String> headers = getAllProjectMetadataFields(projectId);
@@ -163,7 +138,7 @@ public class ProjectLineListController {
 		// Set up the template information
 		Project project = projectService.read(projectId);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute("templates", getTemplateNames(locale, project));
+		model.addAttribute("templates", projectControllerUtils.getTemplateNames(locale, project));
 		return "projects/project_linelist_template";
 	}
 
@@ -175,7 +150,7 @@ public class ProjectLineListController {
 	 *
 	 * @return {@link List} list of {@link MetadataField} for a template.
 	 */
-	@RequestMapping("/metadatafields")
+	@RequestMapping("/upload/metadatafields")
 	@ResponseBody
 	public List<MetadataField> getMetadaFieldsForTemplate(@RequestParam Long templateId) {
 		MetadataTemplate template = metadataTemplateService.read(templateId);
