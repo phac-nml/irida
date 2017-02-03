@@ -178,7 +178,7 @@ public class ProjectSampleMetadataController {
 
 			fis.close();
 		} catch (FileNotFoundException e) {
-			logger.debug("No file found for uploading and excel file of metadata.");
+			logger.debug("No file found for uploading an excel file of metadata.");
 		} catch (IOException e) {
 			logger.error("Error opening file" + file.getOriginalFilename());
 		}
