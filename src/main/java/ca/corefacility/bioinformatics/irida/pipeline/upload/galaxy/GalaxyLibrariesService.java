@@ -242,9 +242,13 @@ public class GalaxyLibrariesService {
 			throw new UploadException(e);
 		} catch (TimeoutException e) {
 			throw new UploadTimeoutException("Timeout while uploading, time limit = " + libraryUploadTimeout + " seconds", e);
-		} catch (UploadErrorException e) {
-			throw e;
-		} catch (ExecutionException | InterruptedException e) {
+		} catch (ExecutionException e) {
+			if (e.getCause() instanceof UploadErrorException) {
+				throw (UploadErrorException)e.getCause();
+			} else {
+				throw new UploadException(e);
+			}
+		} catch (InterruptedException e) {
 			throw new UploadException(e);
 		}
 
