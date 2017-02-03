@@ -20,10 +20,16 @@ function TableController(DTOptionsBuilder,
       $scope.$broadcast(EVENTS.TABLE.colReorder, {columns: this.fnOrder()});
     })
     .withOption('drawCallback', () => {
+      // This adds the tools to handle meta data header hiding, template selection and saving.
+      // Datatables will add this after the table is created to we need the $compile so that
+      // angularjs can grab hold of it.
       const div = document.querySelector('.toolbar');
-      div.innerHTML = `
-<metadata-component></metadata-component>`;
-      $compile(div)($scope);
+      // Make sure this only gets added once
+      if (div.getElementsByTagName('metadata-component').length === 0) {
+        div.innerHTML = `
+  <metadata-component></metadata-component>`;
+        $compile(div)($scope);
+      }
     });
 
   const headers = LinelistTableService.getColumns();

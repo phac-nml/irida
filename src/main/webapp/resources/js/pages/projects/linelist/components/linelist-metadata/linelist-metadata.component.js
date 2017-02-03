@@ -11,8 +11,11 @@ const FIELDS = window.headersList.map((header, index) => {
 export const MetadataComponent = {
   templateUrl,
   controller: class MetadataComponent {
-    constructor($scope, $aside) {
+    constructor(MetadataService, $scope, $aside) {
       this.displayFields = Object.assign(FIELDS);
+      this.templates = window.templates;  // TODO:  get this from a service;
+      this.templates = MetadataService.query();
+      this.selectedTemplate = '';
       this.$aside = $aside;
       this.$scope = $scope;
 
@@ -47,6 +50,10 @@ export const MetadataComponent = {
         placement: 'left',
         size: 'sm'
       });
+    }
+
+    templateSelected(event) {
+      console.log(event);
     }
 
     saveTemplate() {
