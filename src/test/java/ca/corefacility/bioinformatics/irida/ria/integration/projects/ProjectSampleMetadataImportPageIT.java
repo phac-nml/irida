@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
@@ -17,11 +15,9 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Proje
 public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDriver {
 	private static final String GOOD_FILE_PATH = "src/test/resources/files/metadata-upload/good.xlsx";
 	private static final String MIXED_FILE_PATH = "src/test/resources/files/metadata-upload/mixed.xlsx";
-	private static final Logger logger = LoggerFactory.getLogger(ProjectSampleMetadataImportPageIT.class);
 
 	@Before
 	public void init() {
-		logger.debug("Testing Project Samples Metadata Import.");
 		LoginPage.loginAsManager(driver());
 	}
 
