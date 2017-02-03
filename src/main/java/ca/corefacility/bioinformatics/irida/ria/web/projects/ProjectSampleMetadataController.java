@@ -56,16 +56,14 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 public class ProjectSampleMetadataController {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectSampleMetadataController.class);
 	private final MessageSource messageSource;
-	private final MetadataTemplateService metadataTemplateService;
 	private final ProjectControllerUtils projectControllerUtils;
 	private final ProjectService projectService;
 	private final SampleService sampleService;
 
 	@Autowired
-	public ProjectSampleMetadataController(MessageSource messageSource, MetadataTemplateService metadataTemplateService,
-			ProjectControllerUtils projectControllerUtils, ProjectService projectService, SampleService sampleService) {
+	public ProjectSampleMetadataController(MessageSource messageSource, ProjectControllerUtils projectControllerUtils,
+			ProjectService projectService, SampleService sampleService) {
 		this.messageSource = messageSource;
-		this.metadataTemplateService = metadataTemplateService;
 		this.projectControllerUtils = projectControllerUtils;
 		this.projectService = projectService;
 		this.sampleService = sampleService;
@@ -122,19 +120,19 @@ public class ProjectSampleMetadataController {
 	 * @param file
 	 * 		{@link MultipartFile} The excel file containing the metadata.
 	 *
-	 * @return {@link Map} of headers and rows from the excel file for the user to select the header corresponding the {@link
-	 * Sample} identifier.
+	 * @return {@link Map} of headers and rows from the excel file for the user to select the header corresponding the
+	 * {@link Sample} identifier.
 	 */
-	@RequestMapping(value = "/upload/file", method = RequestMethod.POST) @ResponseBody public SampleMetadataStorage createProjectSampleMetadata(
-			HttpSession session,
-			@PathVariable long projectId,
+	@RequestMapping(value = "/upload/file", method = RequestMethod.POST)
+	@ResponseBody
+	public SampleMetadataStorage createProjectSampleMetadata(HttpSession session, @PathVariable long projectId,
 			@RequestParam("file") MultipartFile file) throws MetadataImportFileTypeNotSupportedError {
 		// We want to return a list of the table headers back to the UI.
 		SampleMetadataStorage storage = new SampleMetadataStorage();
 		try {
 			// Need an input stream
 			String filename = file.getOriginalFilename();
-			byte [] byteArr= file.getBytes();
+			byte[] byteArr = file.getBytes();
 			InputStream fis = new ByteArrayInputStream(byteArr);
 
 			Workbook workbook;
@@ -193,7 +191,9 @@ public class ProjectSampleMetadataController {
 	/**
 	 * Extract the headers from an excel file.
 	 *
-	 * @param row {@link Row} First row from the excel file.
+	 * @param row
+	 * 		{@link Row} First row from the excel file.
+	 *
 	 * @return {@link List} of {@link String} header values.
 	 */
 	private List<String> getWorkbookHeaders(Row row) {
@@ -228,9 +228,7 @@ public class ProjectSampleMetadataController {
 	 */
 	@RequestMapping(value = "/upload/setSampleColumn", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> setProjectSampleMetadataSampleId(
-			HttpSession session,
-			@PathVariable long projectId,
+	public Map<String, Object> setProjectSampleMetadataSampleId(HttpSession session, @PathVariable long projectId,
 			@RequestParam String sampleNameColumn) {
 		// Attempt to get the metadata from the sessions
 		SampleMetadataStorage stored = (SampleMetadataStorage) session.getAttribute("pm-" + projectId);
@@ -268,13 +266,19 @@ public class ProjectSampleMetadataController {
 	/**
 	 * Save uploaded metadata to the
 	 *
-	 * @param locale    {@link Locale} of the current user.
-	 * @param session   {@link HttpSession}
-	 * @param projectId {@link Long} identifier for the current project
+	 * @param locale
+	 * 		{@link Locale} of the current user.
+	 * @param session
+	 * 		{@link HttpSession}
+	 * @param projectId
+	 * 		{@link Long} identifier for the current project
+	 *
 	 * @return {@link Map} of potential errors.
 	 */
-	@RequestMapping(value = "/upload/save", method = RequestMethod.POST) @ResponseBody public Map<String, Object> saveProjectSampleMetadata(
-			Locale locale, HttpSession session, @PathVariable long projectId) {
+	@RequestMapping(value = "/upload/save", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> saveProjectSampleMetadata(Locale locale, HttpSession session,
+			@PathVariable long projectId) {
 		Map<String, Object> errors = new HashMap<>();
 
 		SampleMetadataStorage stored = (SampleMetadataStorage) session.getAttribute("pm-" + projectId);
@@ -308,7 +312,8 @@ public class ProjectSampleMetadataController {
 					errorList.add(messageSource.getMessage("metadata.results.save.sample-not-found",
 							new Object[] { row.get(stored.getSampleNameColumn()) }, locale));
 				}
-			} if (errorList.size() > 0) {
+			}
+			if (errorList.size() > 0) {
 				errors.put("save-errors", errorList);
 			}
 		} else {
@@ -325,23 +330,29 @@ public class ProjectSampleMetadataController {
 	/**
 	 * Clear any uploaded sample metadata stored into the session.
 	 *
-	 * @param session   {@link HttpSession}
-	 * @param projectId identifier for the {@link Project} currently uploaded metadata to.
+	 * @param session
+	 * 		{@link HttpSession}
+	 * @param projectId
+	 * 		identifier for the {@link Project} currently uploaded metadata to.
 	 */
-	@RequestMapping("/upload/clear") public void clearProjectSampleMetadata(
-			HttpSession session, @PathVariable long projectId) {
+	@RequestMapping("/upload/clear")
+	public void clearProjectSampleMetadata(HttpSession session, @PathVariable long projectId) {
 		session.removeAttribute("pm-" + projectId);
 	}
 
 	/**
 	 * Get the currently stored metadata.
-	 * @param session {@link HttpSession}
-	 * @param projectId {@link Long} identifier for the current {@link Project}
+	 *
+	 * @param session
+	 * 		{@link HttpSession}
+	 * @param projectId
+	 * 		{@link Long} identifier for the current {@link Project}
+	 *
 	 * @return
 	 */
-	@RequestMapping("/upload/getMetadata") @ResponseBody
-	public SampleMetadataStorage getProjectSampleMetadata(
-			HttpSession session, @PathVariable long projectId) {
+	@RequestMapping("/upload/getMetadata")
+	@ResponseBody
+	public SampleMetadataStorage getProjectSampleMetadata(HttpSession session, @PathVariable long projectId) {
 		return (SampleMetadataStorage) session.getAttribute("pm-" + projectId);
 	}
 }
