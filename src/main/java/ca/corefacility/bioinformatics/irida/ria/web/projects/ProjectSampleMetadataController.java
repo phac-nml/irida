@@ -35,6 +35,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.io.Files;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.MetadataImportFileTypeNotSupportedError;
@@ -44,7 +45,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
 import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 /**
@@ -136,8 +136,7 @@ public class ProjectSampleMetadataController {
 			InputStream fis = new ByteArrayInputStream(byteArr);
 
 			Workbook workbook;
-			String[] splitFile = filename.split("\\.(?=[^\\.]+$)");
-			String extension = splitFile[splitFile.length - 1];
+			String extension = Files.getFileExtension(filename);
 
 			// Check the type of workbook
 			switch (extension) {
