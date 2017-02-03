@@ -38,7 +38,7 @@ public class ProjectLineListCreateTemplatePage extends ProjectPageBase {
 	}
 
 	public static ProjectLineListCreateTemplatePage goToPage(WebDriver driver) {
-		get(driver, "/projects/1/linelist/linelist-templates");
+		get(driver, "/projects/1/sample-metadata/templates/new");
 		return PageFactory.initElements(driver, ProjectLineListCreateTemplatePage.class);
 	}
 
