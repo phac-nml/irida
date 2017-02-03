@@ -26,3 +26,17 @@ export const formatBasicHeaders = headers => {
     return {title, data: title};
   });
 };
+
+/**
+ * All datatables essential need the same default template
+ * @param {string} id for the table
+ * @return {string} html for the table
+ */
+export const getDefaultTable = id => {
+  return `
+<table id='${id}' 
+    class='table table-striped' 
+    cellspacing='0' width='100%'>
+</table>
+`;
+};
