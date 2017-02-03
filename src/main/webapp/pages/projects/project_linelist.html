@@ -30,7 +30,7 @@
                         </select>
                     </div>
                     <div class="col-md-3 col-sm-5">
-                        <a th:href="@{/projects/4/sample-metadata/templates/new}"
+                        <a th:href="@{/projects/{id}/sample-metadata/templates/new(id=${project.getId()})}"
                            class="btn btn-default btn-block"
                            th:text="#{linelist.template.create-new}">Create New Template</a>
                     </div>
