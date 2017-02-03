@@ -150,7 +150,7 @@ public class ProjectLineListController {
 	 *
 	 * @return {@link List} list of {@link MetadataField} for a template.
 	 */
-	@RequestMapping("/metadatafields")
+	@RequestMapping("/upload/metadatafields")
 	@ResponseBody
 	public List<MetadataField> getMetadaFieldsForTemplate(@RequestParam Long templateId) {
 		MetadataTemplate template = metadataTemplateService.read(templateId);

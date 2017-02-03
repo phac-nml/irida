@@ -125,7 +125,7 @@ public class ProjectSampleMetadataController {
 	 * @return {@link Map} of headers and rows from the excel file for the user to select the header corresponding the {@link
 	 * Sample} identifier.
 	 */
-	@RequestMapping(value = "/uploadFile", method = RequestMethod.POST) @ResponseBody public SampleMetadataStorage createProjectSampleMetadata(
+	@RequestMapping(value = "/upload/file", method = RequestMethod.POST) @ResponseBody public SampleMetadataStorage createProjectSampleMetadata(
 			HttpSession session,
 			@PathVariable long projectId,
 			@RequestParam("file") MultipartFile file) throws MetadataImportFileTypeNotSupportedError {
@@ -226,7 +226,7 @@ public class ProjectSampleMetadataController {
 	 *
 	 * @return {@link Map} containing
 	 */
-	@RequestMapping(value = "/setSampleColumn", method = RequestMethod.POST)
+	@RequestMapping(value = "/upload/setSampleColumn", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> setProjectSampleMetadataSampleId(
 			HttpSession session,
@@ -273,7 +273,7 @@ public class ProjectSampleMetadataController {
 	 * @param projectId {@link Long} identifier for the current project
 	 * @return {@link Map} of potential errors.
 	 */
-	@RequestMapping(value = "/save", method = RequestMethod.POST) @ResponseBody public Map<String, Object> saveProjectSampleMetadata(
+	@RequestMapping(value = "/upload/save", method = RequestMethod.POST) @ResponseBody public Map<String, Object> saveProjectSampleMetadata(
 			Locale locale, HttpSession session, @PathVariable long projectId) {
 		Map<String, Object> errors = new HashMap<>();
 
@@ -328,7 +328,7 @@ public class ProjectSampleMetadataController {
 	 * @param session   {@link HttpSession}
 	 * @param projectId identifier for the {@link Project} currently uploaded metadata to.
 	 */
-	@RequestMapping("/clear") public void clearProjectSampleMetadata(
+	@RequestMapping("/upload/clear") public void clearProjectSampleMetadata(
 			HttpSession session, @PathVariable long projectId) {
 		session.removeAttribute("pm-" + projectId);
 	}
@@ -339,7 +339,7 @@ public class ProjectSampleMetadataController {
 	 * @param projectId {@link Long} identifier for the current {@link Project}
 	 * @return
 	 */
-	@RequestMapping("/getMetadata") @ResponseBody
+	@RequestMapping("/upload/getMetadata") @ResponseBody
 	public SampleMetadataStorage getProjectSampleMetadata(
 			HttpSession session, @PathVariable long projectId) {
 		return (SampleMetadataStorage) session.getAttribute("pm-" + projectId);
