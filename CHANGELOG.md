@@ -9,7 +9,7 @@ Changes
 * [Developer]: Cleaned up old use deprecated method `CrudService.update(Long, Map)` and removed the method from the project.
 * [API]: Added configurable maximum number of workflows IRIDA will schedule at a time `irida.workflow.max-running`.  Default 4.
 * [UI]: Fixed login error message that requested an email instead of username.
-* [UI]: Added a QC column to the project/samples table to indicate when a file processing chain failed on a file.
+* [UI]: Added a QC indicator to the project/samples table to indicate file processing failure or low coverage.  Also visible in the sample/files page.
 
 0.13.0 to 0.14.0
 ----------------
