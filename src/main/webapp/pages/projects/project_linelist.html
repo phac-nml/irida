@@ -29,8 +29,8 @@
         var metadataList = /*[[${metadataList}]]*/ [];
     </script>
     <script type="text/ng-template" id="linelist.tmpl.html">
-        <metadata-component></metadata-component>
-        <linelist-table></linelist-table>
+        <metadata-component headers="$ctrl.headers"></metadata-component>
+        <linelist-table headers="$ctrl.headers"></linelist-table>
     </script>
     <script type="text/ng-template" id="metadata.button.tmpl">
             <button class="btn btn-default" ng-click="$ctrl.showMetadataTemplator()"

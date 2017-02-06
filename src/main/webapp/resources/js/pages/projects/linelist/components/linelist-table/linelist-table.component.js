@@ -1,15 +1,13 @@
 import {dom} from './../../../../../utilities/datatables.utilities';
 import {EVENTS} from './../../constants';
 
-function TableController(DTOptionsBuilder,
-                         DTColumnBuilder,
-                         LinelistTableService,
-                         $scope) {
-  const vm = this;
-
+function controller(DTOptionsBuilder,
+                    DTColumnBuilder,
+                    LinelistService,
+                    $scope) {
   this.dtOptions = DTOptionsBuilder
-    .fromFnPromise(function() {
-      return LinelistTableService.getMetadata();
+    .fromFnPromise(() => {
+      return LinelistService.getMetadata();
     })
     .withDOM(dom)
     .withScroller()
@@ -18,13 +16,11 @@ function TableController(DTOptionsBuilder,
     .withOption('scrollY', '50vh')
     .withOption('scrollCollapse', true)
     .withColReorder()
-    .withColReorderCallback(function() {
-      vm.parent.columnReorder(this.fnOrder());
+    .withColReorderCallback(() => {
+      this.parent.columnReorder(this.fnOrder());
     });
 
-  const headers = LinelistTableService.getColumns();
-
-  this.dtColumns = headers.map(header => {
+  this.dtColumns = this.headers.map(header => {
     return DTColumnBuilder
       .newColumn(header)
       .withTitle(header)
@@ -36,17 +32,14 @@ function TableController(DTOptionsBuilder,
   });
 
   $scope.$on(EVENTS.TABLE.columnVisibility, (e, args) => {
-    const column = args.column;
-    if (column) {
-      this.dtColumns[column.index].visible = column.selected;
-    }
+    this.dtColumns[args.index].visible = args.selected;
   });
 }
 
-TableController.$inject = [
+controller.$inject = [
   'DTOptionsBuilder',
   'DTColumnBuilder',
-  'LinelistTableService',
+  'LinelistService',
   '$scope'
 ];
 
@@ -56,10 +49,12 @@ export const TableComponent = {
   class="table" 
   dt-options="$ctrl.dtOptions" 
   dt-columns="$ctrl.dtColumns">
-
 </table>`,
   require: {
     parent: '^^linelist'
   },
-  controller: TableController
+  bindings: {
+    headers: '<'
+  },
+  controller
 };
