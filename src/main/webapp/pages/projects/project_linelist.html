@@ -25,7 +25,6 @@
 
 <th:block layout:fragment="scripts">
     <script th:inline="javascript">
-        var templates = /*[[${templates}]]*/ [];
       var headersList = /*[[${headers}]]*/ [];
       var metadataList = /*[[${metadataList}]]*/ [];
       var PAGE = {
@@ -42,9 +41,9 @@
                 name="template"
                 id="templage-select"
                 th:disabled="${#lists.isEmpty(templates)}"
-                ng-model="$ctrl.selectedTemplate"
-                ng-options="template as template.label for template in $ctrl.templates track by template.id">
-
+                ng-model="$ctrl.selectedTemplate">
+            <option value="" th:if="#{lists.isEmpty(${templates})}">_No Templates Available_</option>
+            <option value="" th:each="template : ${templates}">${template.label}</option>
         </select>
         <button class="btn btn-default" ng-click="$ctrl.saveTemplate()">_Save Template_</button>
         <a class="btn btn-link"

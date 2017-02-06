@@ -11,10 +11,9 @@ const FIELDS = window.headersList.map((header, index) => {
 export const MetadataComponent = {
   templateUrl,
   controller: class MetadataComponent {
-    constructor(MetadataService, $scope, $aside) {
+    constructor($scope, $aside) {
       this.displayFields = Object.assign(FIELDS);
       this.templates = window.templates;  // TODO:  get this from a service;
-      this.templates = MetadataService.query();
       this.selectedTemplate = '';
       this.$aside = $aside;
       this.$scope = $scope;
