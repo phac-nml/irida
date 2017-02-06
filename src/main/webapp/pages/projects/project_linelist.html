@@ -20,7 +20,7 @@
 </head>
 <body>
 <main layout:fragment="main" ddl:bundle-includes="project-linelist">
-    <linelist-table></linelist-table>
+    <linelist></linelist>
 </main>
 
 <th:block layout:fragment="scripts">
@@ -33,6 +33,10 @@
         }
       };
     </script>
+    <script type="text/ng-template" id="linelist.tmpl.html">
+        <!--<metadata-component headers="$ctrl.headers"></metadata-component>-->
+        <linelist-table headers="$ctrl.headers"></linelist-table>
+    </script>
     <script type="text/ng-template" id="metadata.button.tmpl">
         <button class="btn btn-default" ng-click="$ctrl.showMetadataTemplator()"
                 th:text="#{linelist.datatable.column-select.button}">_Header Fields_
@@ -42,8 +46,8 @@
                 id="templage-select"
                 th:disabled="${#lists.isEmpty(templates)}"
                 ng-model="$ctrl.selectedTemplate">
-            <option value="" th:if="#{lists.isEmpty(${templates})}">_No Templates Available_</option>
-            <option value="" th:each="template : ${templates}">${template.label}</option>
+            <option value="" th:if="${#lists.isEmpty(templates)}">_No Templates Available_</option>
+            <option value="" th:each="template : ${templates}" th:text="${template.label}"></option>
         </select>
         <button class="btn btn-default" ng-click="$ctrl.saveTemplate()">_Save Template_</button>
         <a class="btn btn-link"

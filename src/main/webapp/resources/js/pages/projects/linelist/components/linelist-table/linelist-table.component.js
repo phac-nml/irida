@@ -1,13 +1,13 @@
-import {EVENTS} from './../../constants';
 import {dom} from './../../../../../utilities/datatables.utilities';
 
-function TableController(DTOptionsBuilder,
+function controller(DTOptionsBuilder,
                          DTColumnBuilder,
-                         LinelistTableService,
-                         $scope, $compile) {
+                         LinelistService,
+                         $scope,
+                         $compile) {
   this.dtOptions = DTOptionsBuilder
-    .fromFnPromise(function() {
-      return LinelistTableService.getMetadata();
+    .fromFnPromise(() => {
+      return LinelistService.getMetadata();
     })
     .withDOM(dom)
     .withScroller()
@@ -16,8 +16,8 @@ function TableController(DTOptionsBuilder,
     .withOption('scrollY', '50vh')
     .withOption('scrollCollapse', true)
     .withColReorder()
-    .withColReorderCallback(function() {
-      $scope.$broadcast(EVENTS.TABLE.colReorder, {columns: this.fnOrder()});
+    .withColReorderCallback(() => {
+      this.parent.columnReorder(this.fnOrder());
     })
     .withOption('drawCallback', () => {
       // This adds the tools to handle meta data header hiding, template selection and saving.
@@ -27,35 +27,36 @@ function TableController(DTOptionsBuilder,
       // Make sure this only gets added once
       if (div.getElementsByTagName('metadata-component').length === 0) {
         div.innerHTML = `
-  <metadata-component></metadata-component>`;
+<metadata-component 
+    headers="$ctrl.headers" 
+    on-toggle-field="$ctrl.toggleColumn($event)">
+</metadata-component>
+`;
         $compile(div)($scope);
       }
     });
 
-  const headers = LinelistTableService.getColumns();
-
-  this.dtColumns = headers.map(header => {
+  this.dtColumns = this.headers.map(header => {
     return DTColumnBuilder
       .newColumn(header)
       .withTitle(header)
       .renderWith(data => {
-        // This is where any custom rendering logic should go.`
+        // This is where any custom rendering logic should go.
         // example formatting date columns.
         return data.value;
       });
   });
 
-  this.toggleFieldVisibility = column => {
-    if (column) {
-      this.dtColumns[column.index].visible = column.selected;
-    }
+  this.toggleColumn = $event => {
+    const field = $event.field;
+    this.dtColumns[field.index].visible = field.selected;
   };
 }
 
-TableController.$inject = [
+controller.$inject = [
   'DTOptionsBuilder',
   'DTColumnBuilder',
-  'LinelistTableService',
+  'LinelistService',
   '$scope',
   '$compile'
 ];
@@ -67,5 +68,11 @@ export const TableComponent = {
   dt-options="$ctrl.dtOptions" 
   dt-columns="$ctrl.dtColumns">
 </table>`,
-  controller: TableController
+  require: {
+    parent: '^^linelist'
+  },
+  bindings: {
+    headers: '<'
+  },
+  controller
 };
