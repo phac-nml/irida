@@ -8,7 +8,7 @@ require('datatables.net-scroller');
 require('style!datatables.net-scroller-bs/css/scroller.bootstrap.css');
 require('style!datatables-bootstrap3-plugin/media/css/datatables-bootstrap3.css');
 
-import {LinelistTableService} from './linelist-table.service';
+import {LinelistService} from '../../linelist.service';
 import {TableComponent} from './linelist-table.component';
 
 export const LinelistTable = angular
@@ -16,6 +16,6 @@ export const LinelistTable = angular
     datatables,
     datatablesScroller
   ])
-  .service('LinelistTableService', LinelistTableService)
+  .service('LinelistService', LinelistService)
   .component('linelistTable', TableComponent)
   .name;

@@ -1,6 +1,7 @@
 const angular = require('angular');
 import {LinelistTable} from './components/linelist-table/linelist-table.module';
 import {Linelist} from './linelist.component';
+import {LinelistService} from './linelist.service';
 import {MetadataModule} from './components/linelist-metadata/linelist-metadata.module';
 
 export const LinelistModule = angular
@@ -9,5 +10,6 @@ export const LinelistModule = angular
     LinelistTable,
     MetadataModule
   ])
+  .service('LinelistService', LinelistService)
   .component('linelist', Linelist)
   .name;

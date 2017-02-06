@@ -1,13 +1,13 @@
 import {dom} from './../../../../../utilities/datatables.utilities';
 import {EVENTS} from './../../constants';
 
-function TableController(DTOptionsBuilder,
-                         DTColumnBuilder,
-                         LinelistTableService,
-                         $scope) {
+function controller(DTOptionsBuilder,
+                    DTColumnBuilder,
+                    LinelistService,
+                    $scope) {
   this.dtOptions = DTOptionsBuilder
-    .fromFnPromise(function() {
-      return LinelistTableService.getMetadata();
+    .fromFnPromise(() => {
+      return LinelistService.getMetadata();
     })
     .withDOM(dom)
     .withScroller()
@@ -15,9 +15,7 @@ function TableController(DTOptionsBuilder,
     .withOption('deferRender', true)
     .withOption('scrollY', '50vh');
 
-  const headers = LinelistTableService.getColumns();
-
-  this.dtColumns = headers.map(header => {
+  this.dtColumns = this.headers.map(header => {
     return DTColumnBuilder
       .newColumn(header)
       .withTitle(header)
@@ -33,10 +31,10 @@ function TableController(DTOptionsBuilder,
   });
 }
 
-TableController.$inject = [
+controller.$inject = [
   'DTOptionsBuilder',
   'DTColumnBuilder',
-  'LinelistTableService',
+  'LinelistService',
   '$scope'
 ];
 
@@ -46,10 +44,12 @@ export const TableComponent = {
   class="table" 
   dt-options="$ctrl.dtOptions" 
   dt-columns="$ctrl.dtColumns">
-
 </table>`,
   require: {
     parent: '^^linelist'
   },
-  controller: TableController
+  bindings: {
+    headers: '<'
+  },
+  controller
 };
