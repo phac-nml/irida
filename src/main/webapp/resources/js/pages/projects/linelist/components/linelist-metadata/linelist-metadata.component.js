@@ -10,21 +10,13 @@ const asideTemplateUrl = 'metadata.aside.tmpl';
  */
 function controller($scope, $aside) {
   const vm = this;
-  this.$onInit = () => {
-    this.fields = this.headers
-      .map((header, index) => {
-        return ({text: header, index, selected: true});
-      });
-    delete this.headers;
-  };
-
   this.showMetadataTemplator = () => {
     $aside.open({
       templateUrl: asideTemplateUrl,
       openedClass: 'metadata-open',
       controllerAs: '$ctrl',
-      controller() {
-        this.fields = Object.assign(vm.fields);
+      controller(fields) {
+        this.fields = fields;
         this.toggleField = field => {
           vm.onToggleField({
             $event: {
@@ -32,6 +24,11 @@ function controller($scope, $aside) {
             }
           });
         };
+      },
+      resolve: {
+        fields() {
+          return vm.fields;
+        }
       },
       placement: 'left',
       size: 'sm'
@@ -43,9 +40,13 @@ function controller($scope, $aside) {
   };
 
   this.saveTemplate = () => {
-    const fields = this.displayFields
+    const fields = this.fields
       .filter(field => field.selected);
-    console.log('These fields need to be saved: ', fields);
+    vm.onSaveTemplate({
+      $event: {
+        fields
+      }
+    });
   };
 
   // Set up event listener for re-arranging the columns on the table.
@@ -67,8 +68,9 @@ export const MetadataComponent = {
     parent: '^^linelistTable'
   },
   bindings: {
-    headers: '<',
-    onToggleField: '&'
+    fields: '=',
+    onToggleField: '&',
+    onSaveTemplate: '&'
   },
   controller
 };
