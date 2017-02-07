@@ -23,6 +23,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
+import ca.corefacility.bioinformatics.irida.processing.impl.CoverageFileProcessor;
 
 /**
  * A specialized service layer for projects.
@@ -382,6 +383,13 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 */
 	public List<ProjectAnalysisSubmissionJoin> getProjectsForAnalysisSubmission(AnalysisSubmission submission);
 	
+	/**
+	 * Re-run the {@link CoverageFileProcessor} for all samples within the given
+	 * {@link Project}
+	 * 
+	 * @param project
+	 *            the {@link Project} to get coverage for
+	 */
 	public void runCoverageForProject(Project project);
 	
 	/**

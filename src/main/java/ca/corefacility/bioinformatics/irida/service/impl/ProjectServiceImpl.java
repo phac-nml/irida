@@ -692,6 +692,9 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		return pasRepository.getProjectsForSubmission(submission);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canManageLocalProjectSettings')")
 	public void runCoverageForProject(Project project) {
