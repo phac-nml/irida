@@ -26,7 +26,7 @@
 				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/verify_map/verify_map/1.8.0"
 				parameterName="minmap" />
 		</parameter>
-		<parameter name="alternative-allele-fraction" defaultValue="0.75">
+		<parameter name="snv-abundance-ratio" defaultValue="0.75">
 			<toolParameter
 				toolId="irida.corefacility.ca/galaxy-shed/repos/nml/consolidate_vcfs/consolidate_vcfs/1.8.0"
 				parameterName="snv_abundance_ratio" />

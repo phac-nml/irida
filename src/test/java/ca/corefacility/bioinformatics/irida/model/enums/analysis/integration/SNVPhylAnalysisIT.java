@@ -263,7 +263,7 @@ public class SNVPhylAnalysisIT {
 		SequenceFilePair sequenceFilePairC = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(3L,
 				sequenceFilePathsC1List, sequenceFilePathsC2List).get(0);
 		
-		Map<String,String> parameters = ImmutableMap.of("alternative-allele-fraction", "0.75", "minimum-read-coverage", "2",
+		Map<String,String> parameters = ImmutableMap.of("snv-abundance-ratio", "0.75", "minimum-read-coverage", "2",
 				"filter-density-threshold", "2", "filter-density-window-size", "3");
 		waitForFilesToSettle(sequenceFilePairA, sequenceFilePairB, sequenceFilePairC);
 
@@ -394,7 +394,7 @@ public class SNVPhylAnalysisIT {
 		waitForFilesToSettle(sequenceFilePairA, sequenceFilePairB, sequenceFilePairC);
 
 		Map<String, String> parameters = ImmutableMap.<String, String> builder()
-				.put("alternative-allele-fraction", "0.90").put("minimum-read-coverage", "2")
+				.put("snv-abundance-ratio", "0.90").put("minimum-read-coverage", "2")
 				.put("minimum-percent-coverage", "75").put("minimum-mean-mapping-quality", "20")
 				.put("filter-density-threshold", "3").put("filter-density-window-size", "30").build();
 		
@@ -546,7 +546,7 @@ public class SNVPhylAnalysisIT {
 		SequenceFilePair sequenceFilePairC = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(3L,
 				sequenceFilePathsC1List, sequenceFilePathsC2List).get(0);
 
-		Map<String,String> parameters = ImmutableMap.of("alternative-allele-fraction", "0.75", "minimum-read-coverage", "2",
+		Map<String,String> parameters = ImmutableMap.of("snv-abundance-ratio", "0.75", "minimum-read-coverage", "2",
 				"filter-density-threshold", "2", "filter-density-window-size", "4");
 		
 		AnalysisSubmission submission = databaseSetupGalaxyITService.setupPairSubmissionInDatabase(
