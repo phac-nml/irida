@@ -5,6 +5,12 @@ function controller(DTOptionsBuilder,
                          LinelistService,
                          $scope,
                          $compile) {
+  // This will be used by the child component to control which columns are visible
+  this.fields = this.headers
+    .map((header, index) => {
+      return ({text: header, index, selected: true});
+    });
+
   this.dtOptions = DTOptionsBuilder
     .fromFnPromise(() => {
       return LinelistService.getMetadata();
@@ -28,8 +34,9 @@ function controller(DTOptionsBuilder,
       if (div.getElementsByTagName('metadata-component').length === 0) {
         div.innerHTML = `
 <metadata-component 
-    headers="$ctrl.headers" 
-    on-toggle-field="$ctrl.toggleColumn($event)">
+    fields="$ctrl.fields" 
+    on-toggle-field="$ctrl.toggleColumn($event)"
+    on-save-template="$ctrl.saveTemplate($event)">
 </metadata-component>
 `;
         $compile(div)($scope);
@@ -50,6 +57,14 @@ function controller(DTOptionsBuilder,
   this.toggleColumn = $event => {
     const field = $event.field;
     this.dtColumns[field.index].visible = field.selected;
+  };
+
+  this.saveTemplate = $event => {
+    const fields = $event.fields.map(field => field.text);
+    console.log(fields);
+    LinelistService
+      .saveTemplate({url: this.savetemplateurl, fields, name: 'freds'})
+      .then(result => console.log(result));
   };
 }
 
@@ -72,7 +87,8 @@ export const TableComponent = {
     parent: '^^linelist'
   },
   bindings: {
-    headers: '<'
+    headers: '<',
+    savetemplateurl: '@'
   },
   controller
 };
