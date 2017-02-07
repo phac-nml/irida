@@ -706,3 +706,16 @@ INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VAL
 INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (18, now(), 6, 2);
 INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (19, now(), 6, 3);
 INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (20, now(), 6, 5);
+
+INSERT INTO `metadata_field` (id, label, type) VALUES (1, "firstName", "text");
+INSERT INTO `metadata_field` (id, label, type) VALUES (2, "lastName", "text");
+INSERT INTO `metadata_field` (id, label, type) VALUES (3, "city", "text");
+INSERT INTO `metadata_field` (id, label, type) VALUES (4, "healthAuthority", "text");
+INSERT INTO `metadata_field` (id, label, type) VALUES (5, "birthDate", "date");
+INSERT INTO `metadata_field` (id, label, type) VALUES (6, "firstSymptom", "text");
+INSERT INTO `metadata_field` (id, label, type) VALUES (7, "onsetDate", "date");
+INSERT INTO `metadata_field` (id, label, type) VALUES (8, "species", "text");
+INSERT INTO `metadata_field` (id, label, type) VALUES (9, "serotype", "text");
+INSERT INTO `metadata_field` (id, label, type) VALUES (10, "primaryPfge", "text");
+INSERT INTO `metadata_field` (id, label, type) VALUES (11, "phageType", "text");
+INSERT INTO `metadata_field` (id, label, type) VALUES (12, "id", "text");
