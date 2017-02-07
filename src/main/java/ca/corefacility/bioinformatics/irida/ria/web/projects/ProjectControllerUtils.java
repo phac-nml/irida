@@ -1,18 +1,28 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 
+import com.google.common.collect.ImmutableMap;
+
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.security.permissions.ManageLocalProjectSettingsPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.ProjectOwnerPermission;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 /**
@@ -27,11 +37,18 @@ public class ProjectControllerUtils {
 	
 	private final ProjectOwnerPermission projectOwnerPermission;
 	private final ManageLocalProjectSettingsPermission projectMembersPermission;
+	private final MetadataTemplateService metadataTemplateService;
+	private final MessageSource messageSource;
 
 	@Autowired
-	public ProjectControllerUtils(final UserService userService, final ProjectOwnerPermission projectOwnerPermission,
+	public ProjectControllerUtils(final UserService userService,
+			MetadataTemplateService metadataTemplateService,
+			MessageSource messageSource,
+			final ProjectOwnerPermission projectOwnerPermission,
 			final ManageLocalProjectSettingsPermission projectMembersPermission) {
 		this.userService = userService;
+		this.messageSource = messageSource;
+		this.metadataTemplateService = metadataTemplateService;
 		this.projectOwnerPermission = projectOwnerPermission;
 		this.projectMembersPermission = projectMembersPermission;
 	}
@@ -65,5 +82,26 @@ public class ProjectControllerUtils {
 
 		boolean manageMembers = projectMembersPermission.isAllowed(authentication, project);
 		model.addAttribute("manageMembers", manageMembers);
+	}
+
+	/**
+	 * Get a {@link List} of {@link MetadataTemplate}s available for the current {@link Project}
+	 *
+	 * @param locale
+	 * 		{@link Locale} users current locale
+	 * @param project
+	 * 		{@link Project} the project to get {@link MetadataTemplate}s for
+	 *
+	 * @return {@link List} of {@link MetadataTemplate}
+	 */
+	protected List<Map<String, String>> getTemplateNames(Locale locale, Project project) {
+		List<ProjectMetadataTemplateJoin> metadataTemplatesForProject = metadataTemplateService
+				.getMetadataTemplatesForProject(project);
+		List<Map<String, String>> templates = new ArrayList<>();
+		for (ProjectMetadataTemplateJoin projectMetadataTemplateJoin : metadataTemplatesForProject) {
+			MetadataTemplate template = projectMetadataTemplateJoin.getObject();
+			templates.add(ImmutableMap.of("label", template.getLabel(), "id", String.valueOf(template.getId())));
+		}
+		return templates;
 	}
 }

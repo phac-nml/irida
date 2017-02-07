@@ -46,7 +46,7 @@
                 id="templage-select"
                 th:disabled="${#lists.isEmpty(templates)}"
                 ng-model="$ctrl.selectedTemplate">
-            <option value="" th:if="${#lists.isEmpty(templates)}">_No Templates Available_</option>
+            <option value="" th:if="${#lists.isEmpty(templates)}" th:text="#{"linelist.no-templates-available"}">_No Templates Available_</option>
             <option value="" th:each="template : ${templates}" th:text="${template.label}"></option>
         </select>
         <button class="btn btn-default" ng-click="$ctrl.saveTemplate()">_Save Template_</button>
