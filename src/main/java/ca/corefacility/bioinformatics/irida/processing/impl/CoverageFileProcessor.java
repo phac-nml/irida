@@ -88,7 +88,7 @@ public class CoverageFileProcessor implements FileProcessor {
 			}).sum();
 
 			// calculate coverage as integer
-			int coverage = (int) (totalBases / projectGenomeSize);
+			int coverage = Math.round(totalBases / projectGenomeSize);
 
 			// check if coverage exceeds the required coverage
 			boolean positive = coverage >= requiredCoverage;
