@@ -10,6 +10,7 @@ const asideTemplateUrl = 'metadata.aside.tmpl';
  */
 function controller($scope, $aside) {
   const vm = this;
+  const ORIGINAL_ORDER = Array.from(this.fields);
   this.showMetadataTemplator = () => {
     $aside.open({
       templateUrl: asideTemplateUrl,
@@ -42,6 +43,7 @@ function controller($scope, $aside) {
   this.saveTemplate = () => {
     const fields = this.fields
       .filter(field => field.selected);
+    console.log(fields);
     vm.onSaveTemplate({
       $event: {
         fields
@@ -54,7 +56,7 @@ function controller($scope, $aside) {
     const order = args.columns;
     if (order) {
       this.fields = order.map(originalIndex => {
-        return this.fields[originalIndex];
+        return ORIGINAL_ORDER[originalIndex];
       });
     }
   });

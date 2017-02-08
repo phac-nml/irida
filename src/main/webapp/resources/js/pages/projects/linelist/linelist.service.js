@@ -16,7 +16,11 @@ export class LinelistService {
   }
 
   saveTemplate({url, name, fields}) {
-    return this.$http.post(url, {fields, name});
+    return this.$http
+      .post(url, {
+        fields,
+        name
+      });
   }
 }
 
