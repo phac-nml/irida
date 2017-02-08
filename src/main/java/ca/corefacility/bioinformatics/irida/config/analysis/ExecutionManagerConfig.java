@@ -74,6 +74,12 @@ public class ExecutionManagerConfig {
 	 */
 	@Value("${galaxy.library.upload.polling.time}")
 	private int pollingTime;
+	
+	/**
+	 * Number of independent threads to use for uploading files to a Galaxy library.
+	 */
+	@Value("${galaxy.library.upload.threads}")
+	private int libraryUploadThreads;
 
 	@Autowired
 	private Environment environment;
@@ -256,7 +262,7 @@ public class ExecutionManagerConfig {
 	@Lazy
 	@Bean
 	public GalaxyLibrariesService galaxyLibrariesService() throws ExecutionManagerConfigurationException {
-		return new GalaxyLibrariesService(librariesClient(), pollingTime, libraryTimeout);
+		return new GalaxyLibrariesService(librariesClient(), pollingTime, libraryTimeout, libraryUploadThreads);
 	}
 
 	/**
