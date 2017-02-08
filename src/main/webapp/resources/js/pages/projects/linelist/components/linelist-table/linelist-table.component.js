@@ -1,10 +1,11 @@
 import {dom} from './../../../../../utilities/datatables.utilities';
 
 function controller(DTOptionsBuilder,
-                         DTColumnBuilder,
-                         LinelistService,
-                         $scope,
-                         $compile) {
+                    DTColumnBuilder,
+                    LinelistService,
+                    $scope,
+                    $compile) {
+  const $ctrl = this;
   // This will be used by the child component to control which columns are visible
   this.fields = this.headers
     .map((header, index) => {
@@ -22,8 +23,8 @@ function controller(DTOptionsBuilder,
     .withOption('scrollY', '50vh')
     .withOption('scrollCollapse', true)
     .withColReorder()
-    .withColReorderCallback(() => {
-      this.parent.columnReorder(this.fnOrder());
+    .withColReorderCallback(function() {
+      $ctrl.parent.columnReorder(this.fnOrder());
     })
     .withOption('drawCallback', () => {
       // This adds the tools to handle meta data header hiding, template selection and saving.

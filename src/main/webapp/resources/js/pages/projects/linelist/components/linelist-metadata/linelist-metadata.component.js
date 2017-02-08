@@ -53,7 +53,7 @@ function controller($scope, $aside) {
   $scope.$on(EVENTS.TABLE.colReorder, (e, args) => {
     const order = args.columns;
     if (order) {
-      this.displayFields = order.map(originalIndex => {
+      this.fields = order.map(originalIndex => {
         return this.fields[originalIndex];
       });
     }
