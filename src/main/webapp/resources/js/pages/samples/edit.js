@@ -12,7 +12,9 @@ $(document).ready(function(){
         });
 
         // paste the json into a hidden text field for submission
+      if (Object.keys(metadata).length > 0) {
         $("#metadata").val(JSON.stringify(metadata));
+      }
     });
 
     /**
