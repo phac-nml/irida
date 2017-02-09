@@ -298,10 +298,12 @@ public class SamplesController extends BaseController {
 	 */
 	private void enhanceQcEntries(SequencingObject obj, Project project) {
 		List<QCEntry> availableEntries = new ArrayList<>();
-		for (QCEntry q : obj.getQcEntries()) {
-			q.addProjectSettings(project);
-			if (!q.getStatus().equals(QCEntryStatus.UNAVAILABLE)) {
-				availableEntries.add(q);
+		if (obj.getQcEntries() != null) {
+			for (QCEntry q : obj.getQcEntries()) {
+				q.addProjectSettings(project);
+				if (!q.getStatus().equals(QCEntryStatus.UNAVAILABLE)) {
+					availableEntries.add(q);
+				}
 			}
 		}
 
