@@ -22,15 +22,9 @@
 					referencedColumnNames="id" foreignKeyName="FK_SEQOBJECT_QC_ENTRY"
 					nullable="false" />
 			</column>
-			<column name="positive" type="bit(1)">
-				<constraints nullable="false" />
-			</column>
 
-			<column name="coverage" type="int(11)" />
+			<column name="total_bases" type="bigint(20)" />
 		</createTable>
-
-		<addDefaultValue columnDataType="bit(1)" columnName="positive"
-			defaultValueBoolean="false" tableName="qc_entry" />
 
 		<addColumn tableName="project">
 			<column name="genome_size" type="bigint(20)" />
