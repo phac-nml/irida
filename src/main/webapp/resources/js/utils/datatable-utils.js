@@ -458,7 +458,7 @@ var datatable = (function(moment, tl, page) {
     // if bad qc entry exists theme the row    
     var badQc = false;
     item.qcEntries.forEach(function(q) {
-      if (q.positive === false) {
+      if (q.status === "NEGATIVE") {
         badQc = true;
       }
     });
