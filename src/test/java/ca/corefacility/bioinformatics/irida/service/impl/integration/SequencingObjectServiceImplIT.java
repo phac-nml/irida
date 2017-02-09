@@ -191,7 +191,11 @@ public class SequencingObjectServiceImplIT {
 
 		List<QCEntry> qcEntries = sampleService.getQCEntriesForSample(readSample);
 
-		assertTrue("should be no qc entries", qcEntries.isEmpty());
+		assertEquals("should be one qc entries", 1, qcEntries.size());
+		QCEntry qcEntry = qcEntries.iterator().next();
+		assertTrue("should be coverage entry", qcEntry instanceof CoverageQCEntry);
+		CoverageQCEntry coverage = (CoverageQCEntry) qcEntry;
+		assertEquals("should be 18 bases", 18, coverage.getTotalBases());
 	}
 
 	@Test
