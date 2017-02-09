@@ -6,7 +6,7 @@ upgrading IRIDA that cannot be automated.
 
 0.14.0 to 0.15.0
 ----------------
-* No special upgrade steps required, just deploy the new `war` file.
+* A new version of SNVPhyl should be installed in Galaxy (version 1.0.1).  You must install the repository `suite_snvphyl_1_0_1` with revision `4841b7148c44` from the [IRIDA Main Toolshed](https://irida.corefacility.ca/galaxy-shed/view/nml/suite_snvphyl_1_0_1/4841b7148c44).  Please see <https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/phylogenomics/#irida-whole-genome-phylogenomics> for more information.
 
 0.13.0 to 0.14.0
 ----------------

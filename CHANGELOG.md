@@ -9,6 +9,7 @@ Changes
 * [Developer]: Cleaned up old use deprecated method `CrudService.update(Long, Map)` and removed the method from the project.
 * [API]: Added configurable maximum number of workflows IRIDA will schedule at a time `irida.workflow.max-running`.  Default 4.
 * [UI]: Fixed login error message that requested an email instead of username.
+* [Workflow]: Upgraded SNVPhyl from 1.0 to 1.0.1. Details of changes found at <http://snvphyl.readthedocs.io/en/latest/install/versions/#version-101>.
 
 0.13.0 to 0.14.0
 ----------------
