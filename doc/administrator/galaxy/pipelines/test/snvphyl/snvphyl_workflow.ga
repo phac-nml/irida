@@ -2,7 +2,7 @@
     "a_galaxy_workflow": "true", 
     "annotation": "snvphyl", 
     "format-version": "0.1", 
-    "name": "SNVPhyl v1.0 Paired-End", 
+    "name": "SNVPhyl v1.0.1 Paired-End", 
     "steps": {
         "0": {
             "annotation": "", 
@@ -92,7 +92,7 @@
                 }
             ], 
             "position": {
-                "left": 464, 
+                "left": 479, 
                 "top": 200
             }, 
             "post_job_actions": {
@@ -117,7 +117,7 @@
         }, 
         "3": {
             "annotation": "", 
-            "content_id": "irida.corefacility.ca/galaxy-shed/repos/nml/find_repeats/findrepeat/1.7.0", 
+            "content_id": "irida.corefacility.ca/galaxy-shed/repos/nml/find_repeats/findrepeat/1.8.0", 
             "id": 3, 
             "input_connections": {
                 "fasta": {
@@ -135,7 +135,7 @@
                 }
             ], 
             "position": {
-                "left": 464, 
+                "left": 479, 
                 "top": 341
             }, 
             "post_job_actions": {
@@ -155,9 +155,9 @@
                 }
             }, 
             "tool_errors": null, 
-            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/find_repeats/findrepeat/1.7.0", 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/find_repeats/findrepeat/1.8.0", 
             "tool_state": "{\"__page__\": 0, \"fasta\": \"null\", \"__rerun_remap_job_id__\": null, \"pid\": \"\\\"90\\\"\", \"length\": \"\\\"150\\\"\"}", 
-            "tool_version": "1.7.0", 
+            "tool_version": "1.8.0", 
             "type": "tool", 
             "uuid": "3c2257f4-d708-47c4-934e-7a027804f7db", 
             "workflow_outputs": [
@@ -196,7 +196,7 @@
                 }
             ], 
             "position": {
-                "left": 692, 
+                "left": 707, 
                 "top": 200
             }, 
             "post_job_actions": {
@@ -216,7 +216,7 @@
         }, 
         "5": {
             "annotation": "", 
-            "content_id": "irida.corefacility.ca/galaxy-shed/repos/nml/verify_map/verify_map/1.7.0", 
+            "content_id": "irida.corefacility.ca/galaxy-shed/repos/nml/verify_map/verify_map/1.8.0", 
             "id": 5, 
             "input_connections": {
                 "bams": {
@@ -234,7 +234,7 @@
                 }
             ], 
             "position": {
-                "left": 976, 
+                "left": 1011, 
                 "top": 200
             }, 
             "post_job_actions": {
@@ -247,9 +247,9 @@
                 }
             }, 
             "tool_errors": null, 
-            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/verify_map/verify_map/1.7.0", 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/verify_map/verify_map/1.8.0", 
             "tool_state": "{\"minmap\": \"\\\"80\\\"\", \"__page__\": 0, \"__rerun_remap_job_id__\": null, \"mindepth\": \"\\\"${min_coverage}\\\"\", \"bams\": \"null\"}", 
-            "tool_version": "1.7.0", 
+            "tool_version": "1.8.0", 
             "type": "tool", 
             "uuid": "82bed622-a144-43fd-869e-c4468e6131ff", 
             "workflow_outputs": [
@@ -292,7 +292,7 @@
                 }
             ], 
             "position": {
-                "left": 976, 
+                "left": 1011, 
                 "top": 313
             }, 
             "post_job_actions": {
@@ -348,8 +348,8 @@
                 }
             ], 
             "position": {
-                "left": 976, 
-                "top": 537
+                "left": 1011, 
+                "top": 541
             }, 
             "post_job_actions": {
                 "HideDatasetActionoutput_log": {
@@ -373,7 +373,7 @@
         }, 
         "8": {
             "annotation": "", 
-            "content_id": "irida.corefacility.ca/galaxy-shed/repos/nml/filter_vcf/filtervcf/1.7.0", 
+            "content_id": "irida.corefacility.ca/galaxy-shed/repos/nml/filter_vcf/filtervcf/1.8.0", 
             "id": 8, 
             "input_connections": {
                 "vcf": {
@@ -391,7 +391,7 @@
                 }
             ], 
             "position": {
-                "left": 1304, 
+                "left": 1339, 
                 "top": 200
             }, 
             "post_job_actions": {
@@ -402,9 +402,9 @@
                 }
             }, 
             "tool_errors": null, 
-            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/filter_vcf/filtervcf/1.7.0", 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/filter_vcf/filtervcf/1.8.0", 
             "tool_state": "{\"__page__\": 0, \"__rerun_remap_job_id__\": null, \"vcf\": \"null\"}", 
-            "tool_version": "1.7.0", 
+            "tool_version": "1.8.0", 
             "type": "tool", 
             "uuid": "92790084-218f-4ad5-bdbb-5925d0b63cdc", 
             "workflow_outputs": []
@@ -429,8 +429,8 @@
                 }
             ], 
             "position": {
-                "left": 1304, 
-                "top": 319
+                "left": 1339, 
+                "top": 321
             }, 
             "post_job_actions": {
                 "HideDatasetActionoutput": {
@@ -474,7 +474,7 @@
                 }
             ], 
             "position": {
-                "left": 1618, 
+                "left": 1667, 
                 "top": 200
             }, 
             "post_job_actions": {
@@ -501,7 +501,7 @@
         }, 
         "11": {
             "annotation": "", 
-            "content_id": "irida.corefacility.ca/galaxy-shed/repos/nml/consolidate_vcfs/consolidate_vcfs/1.7.0", 
+            "content_id": "irida.corefacility.ca/galaxy-shed/repos/nml/consolidate_vcfs/consolidate_vcfs/1.8.0", 
             "id": 11, 
             "input_connections": {
                 "freebayes": {
@@ -527,7 +527,7 @@
                 }
             ], 
             "position": {
-                "left": 1932, 
+                "left": 1995, 
                 "top": 200
             }, 
             "post_job_actions": {
@@ -543,9 +543,9 @@
                 }
             }, 
             "tool_errors": null, 
-            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/consolidate_vcfs/consolidate_vcfs/1.7.0", 
-            "tool_state": "{\"__page__\": 0, \"__rerun_remap_job_id__\": null, \"use_density_filter\": \"{\\\"select_list\\\": \\\"yes\\\", \\\"threshold\\\": \\\"2\\\", \\\"window_size\\\": \\\"20\\\", \\\"__current_case__\\\": 0}\", \"ao\": \"\\\"${alternative_allele_proportion}\\\"\", \"mpileup\": \"null\", \"coverage\": \"\\\"${min_coverage}\\\"\", \"mean_mapping\": \"\\\"${min_mean_mapping}\\\"\", \"freebayes\": \"null\"}", 
-            "tool_version": "1.7.0", 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/consolidate_vcfs/consolidate_vcfs/1.8.0", 
+            "tool_state": "{\"__page__\": 0, \"__rerun_remap_job_id__\": null, \"use_density_filter\": \"{\\\"select_list\\\": \\\"yes\\\", \\\"threshold\\\": \\\"2\\\", \\\"window_size\\\": \\\"500\\\", \\\"__current_case__\\\": 0}\", \"mpileup\": \"null\", \"mean_mapping\": \"\\\"${min_mean_mapping}\\\"\", \"coverage\": \"\\\"${min_coverage}\\\"\", \"snv_abundance_ratio\": \"\\\"${snv_abundance_ratio}\\\"\", \"freebayes\": \"null\"}", 
+            "tool_version": "1.8.0", 
             "type": "tool", 
             "uuid": "20d83b1e-ea37-48e3-b78d-56baf1021e6e", 
             "workflow_outputs": []
@@ -570,7 +570,7 @@
                 }
             ], 
             "position": {
-                "left": 2188, 
+                "left": 2261, 
                 "top": 200
             }, 
             "post_job_actions": {
@@ -612,7 +612,7 @@
                 }
             ], 
             "position": {
-                "left": 2516, 
+                "left": 2589, 
                 "top": 200
             }, 
             "post_job_actions": {
@@ -640,7 +640,7 @@
         }, 
         "14": {
             "annotation": "", 
-            "content_id": "irida.corefacility.ca/galaxy-shed/repos/nml/vcf2snvalignment/vcf2snvalignment/1.7.0", 
+            "content_id": "irida.corefacility.ca/galaxy-shed/repos/nml/vcf2snvalignment/vcf2snvalignment/1.8.0", 
             "id": 14, 
             "input_connections": {
                 "invalid": {
@@ -678,7 +678,7 @@
                 }
             ], 
             "position": {
-                "left": 2774, 
+                "left": 2857, 
                 "top": 200
             }, 
             "post_job_actions": {
@@ -708,9 +708,9 @@
                 }
             }, 
             "tool_errors": null, 
-            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/vcf2snvalignment/vcf2snvalignment/1.7.0", 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/vcf2snvalignment/vcf2snvalignment/1.8.0", 
             "tool_state": "{\"__page__\": 0, \"ref_fasta\": \"null\", \"strain_list\": \"{\\\"select_list\\\": \\\"all\\\", \\\"__current_case__\\\": 2}\", \"reference\": \"\\\"reference\\\"\", \"__rerun_remap_job_id__\": null, \"invalid\": \"null\", \"vcf_collection\": \"null\"}", 
-            "tool_version": "1.7.0", 
+            "tool_version": "1.8.0", 
             "type": "tool", 
             "uuid": "3bcc5ef2-aa54-4a91-9b70-c57cf47b5bea", 
             "workflow_outputs": [
@@ -746,7 +746,7 @@
                 }
             ], 
             "position": {
-                "left": 3023, 
+                "left": 3116, 
                 "top": 200
             }, 
             "post_job_actions": {
@@ -774,7 +774,7 @@
         }, 
         "16": {
             "annotation": "", 
-            "content_id": "irida.corefacility.ca/galaxy-shed/repos/nml/filter_stats/filterstat/1.7.0", 
+            "content_id": "irida.corefacility.ca/galaxy-shed/repos/nml/filter_stats/filterstat/1.8.0", 
             "id": 16, 
             "input_connections": {
                 "tabfile": {
@@ -792,7 +792,7 @@
                 }
             ], 
             "position": {
-                "left": 3023, 
+                "left": 3116, 
                 "top": 313
             }, 
             "post_job_actions": {
@@ -805,9 +805,9 @@
                 }
             }, 
             "tool_errors": null, 
-            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/filter_stats/filterstat/1.7.0", 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/filter_stats/filterstat/1.8.0", 
             "tool_state": "{\"__page__\": 0, \"__rerun_remap_job_id__\": null, \"tabfile\": \"null\", \"summary\": \"[\\\"invalids\\\"]\"}", 
-            "tool_version": "1.7.0", 
+            "tool_version": "1.8.0", 
             "type": "tool", 
             "uuid": "157fd5be-539c-44f6-b534-d6c7aeef72de", 
             "workflow_outputs": [
@@ -842,7 +842,7 @@
                 }
             ], 
             "position": {
-                "left": 3351, 
+                "left": 3444, 
                 "top": 200
             }, 
             "post_job_actions": {
@@ -889,7 +889,7 @@
         }, 
         "18": {
             "annotation": "", 
-            "content_id": "irida.corefacility.ca/galaxy-shed/repos/nml/snv_matrix/snvmatrix/1.7.0", 
+            "content_id": "irida.corefacility.ca/galaxy-shed/repos/nml/snv_matrix/snvmatrix/1.8.0", 
             "id": 18, 
             "input_connections": {
                 "phylip": {
@@ -907,7 +907,7 @@
                 }
             ], 
             "position": {
-                "left": 3351, 
+                "left": 3444, 
                 "top": 358
             }, 
             "post_job_actions": {
@@ -920,9 +920,9 @@
                 }
             }, 
             "tool_errors": null, 
-            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/snv_matrix/snvmatrix/1.7.0", 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/nml/snv_matrix/snvmatrix/1.8.0", 
             "tool_state": "{\"__page__\": 0, \"phylip\": \"null\", \"__rerun_remap_job_id__\": null}", 
-            "tool_version": "1.7.0", 
+            "tool_version": "1.8.0", 
             "type": "tool", 
             "uuid": "19028cf9-fd41-470b-8cc7-f987db36fcfe", 
             "workflow_outputs": [
@@ -934,5 +934,5 @@
             ]
         }
     }, 
-    "uuid": "1122afdd-99c8-4177-82ee-519d2c6b59d7"
+    "uuid": "3400a6d1-2329-422a-80ed-1be69bc36496"
 }
