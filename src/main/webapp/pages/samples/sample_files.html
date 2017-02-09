@@ -122,7 +122,7 @@
 							</td>
 							<td colspan="4">
 								<ul class="list-group qc_list">
-									<li class="qc-item list-group-item" th:each="qc : ${pair.getQcEntries()}" th:classappend="${qc.positive} ? list-group-item-success : list-group-item-danger">
+									<li class="qc-item list-group-item" th:each="qc : ${pair.getQcEntries()}" th:if="${qc.getStatus().value != 'UNAVAILABLE'}" th:classappend="${qc.getStatus().value == 'POSITIVE'} ? list-group-item-success : list-group-item-danger">
 										<span th:text="#{'sample.files.qc.'+${qc.getType()} (${qc.getMessage()})}"></span>
 									</li>
 								</ul>
@@ -157,7 +157,7 @@
 							</td>
 							<td colspan="4">
 								<ul class="list-group qc_list">
-									<li class="qc-item list-group-item" th:each="qc : ${file.getQcEntries()}" th:classappend="${qc.positive} ? list-group-item-success : list-group-item-danger">
+									<li class="qc-item list-group-item" th:each="qc : ${file.getQcEntries()}" th:if="${qc.getStatus().value != 'UNAVAILABLE'}" th:classappend="${qc.getStatus().value == 'POSITIVE'} ? list-group-item-success : list-group-item-danger">
 										<span th:text="#{'sample.files.qc.'+${qc.getType()} (${qc.getMessage()})}"></span>
 									</li>
 								</ul>
