@@ -221,13 +221,20 @@ public class SamplesController extends BaseController {
 				metadataForSample = new SampleMetadata();
 			}
 
-			Map<String, Object> metadata = new HashMap<String, Object>();
+			Map<String, Object> metadataMap = new HashMap<String, Object>();
 			ObjectMapper mapper = new ObjectMapper();
 			try {
-				metadata = mapper.readValue(metadataString, new TypeReference<Map<String, Object>>() {
+				metadataMap = mapper.readValue(metadataString, new TypeReference<Map<String, Object>>() {
 				});
 			} catch (IOException e) {
 				throw new IllegalArgumentException("Could not map metadata to sample object", e);
+			}
+			Map<String, Object> metadata = new HashMap<>();
+			for (String key : metadataMap.keySet()) {
+				metadata.put(key, ImmutableMap.of(
+						"value", metadataMap.get(key),
+						"modified_date", new Date()
+				));
 			}
 			metadataForSample.setMetadata(metadata);
 		}

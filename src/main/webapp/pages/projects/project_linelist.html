@@ -12,7 +12,7 @@
         }
 
         .scroll-col {
-            overflow-y: scroll !important;
+            overflow-y: auto !important;
             overflow-x: hidden;
             padding: 0 !important;
         }
@@ -25,9 +25,8 @@
 
 <th:block layout:fragment="scripts">
     <script th:inline="javascript">
-      var headersList = /*[[${headers}]]*/ [];
-      var metadataList = /*[[${metadataList}]]*/ [];
-
+        var headersList = /*[[${headers}]]*/ [];
+        var metadataList = /*[[${metadataList}]]*/ [];
     </script>
     <script type="text/ng-template" id="linelist.tmpl.html">
         <linelist-table
@@ -49,7 +48,7 @@
         </select>
         <button class="btn btn-default" ng-click="$ctrl.saveTemplate()" th:text="#{linelist.create-template.save-template}">_Save Template_</button>
         <a class="btn btn-link"
-           th:href="@{/projects/{id}/sample-metadata(id=${project.getId()})}">
+           th:href="@{/projects/{id}/sample-metadata/upload(id=${project.getId()})}">
             <i class="fa fa-upload" aria-hidden="true"></i>&nbsp;<span
                 th:text="#{linelist.add-metadata.btn}"></span></a>
     </script>
