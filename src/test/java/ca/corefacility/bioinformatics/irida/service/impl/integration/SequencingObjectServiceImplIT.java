@@ -53,6 +53,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.FileProcessorErrorQCEnt
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
+import ca.corefacility.bioinformatics.irida.model.sample.QCEntry.QCEntryStatus;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
@@ -434,14 +435,14 @@ public class SequencingObjectServiceImplIT {
 
 		assertEquals("should be one qc entry", 1, qcEntries.size());
 		QCEntry qcEntry = qcEntries.iterator().next();
+		qcEntry.addProjectSettings(project);
 
 		assertTrue("should be coverage entry", qcEntry instanceof CoverageQCEntry);
-		assertTrue("qc should have passed", qcEntry.isPositive());
+		assertEquals("qc should have passed", QCEntryStatus.POSITIVE, qcEntry.getStatus());
 		assertEquals("should be 6x coverage", "6x", qcEntry.getMessage());
 
 		project.setRequiredCoverage(10);
 		project = projectService.update(project);
-		projectService.runCoverageForProject(project);
 
 		// Wait 5 seconds. file processing should have run by then.
 		Thread.sleep(5000);
@@ -449,7 +450,8 @@ public class SequencingObjectServiceImplIT {
 		qcEntries = sampleService.getQCEntriesForSample(readSample);
 		assertEquals("should be one qc entry", 1, qcEntries.size());
 		qcEntry = qcEntries.iterator().next();
+		qcEntry.addProjectSettings(project);
 		assertTrue("should be coverage entry", qcEntry instanceof CoverageQCEntry);
-		assertFalse("qc should have failed", qcEntry.isPositive());
+		assertEquals("qc should have failed", QCEntryStatus.NEGATIVE, qcEntry.getStatus());
 	}
 }

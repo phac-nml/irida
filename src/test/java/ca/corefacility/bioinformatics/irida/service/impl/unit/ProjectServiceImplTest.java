@@ -25,7 +25,6 @@ import javax.validation.Validator;
 import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -53,7 +52,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
-import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.ProjectAnalysisSubmissionJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectReferenceFileJoinRepository;
@@ -83,8 +81,7 @@ public class ProjectServiceImplTest {
 	private UserGroupProjectJoinRepository ugpjRepository;
 	private SampleSequencingObjectJoinRepository ssoRepository;
 	private ProjectAnalysisSubmissionJoinRepository pasRepository;
-	private TaskExecutor executor;
-	private FileProcessingChain fileProcessingChain;
+
 	private Validator validator;
 
 	@Before
@@ -101,7 +98,7 @@ public class ProjectServiceImplTest {
 		ugpjRepository = mock(UserGroupProjectJoinRepository.class);
 		projectService = new ProjectServiceImpl(projectRepository, sampleRepository, userRepository, pujRepository,
 				psjRepository, relatedProjectRepository, referenceFileRepository, prfjRepository, ugpjRepository,
-				ssoRepository, pasRepository, executor, fileProcessingChain, validator);
+				ssoRepository, pasRepository, validator);
 	}
 
 	@Test
