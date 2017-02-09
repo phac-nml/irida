@@ -63,7 +63,7 @@ function controller(DTOptionsBuilder,
   this.saveTemplate = $event => {
     const fields = $event.fields.map(field => field.text);
     console.log(fields);
-    LinelistService
+    return LinelistService
       .saveTemplate({url: this.savetemplateurl, fields, name: 'freds'})
       .then(result => console.log(result));
   };

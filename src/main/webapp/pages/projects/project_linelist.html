@@ -35,8 +35,9 @@
         </linelist-table>
     </script>
     <script type="text/ng-template" id="metadata.button.tmpl">
-        <button class="btn btn-default" ng-click="$ctrl.showMetadataTemplator()"
-                th:text="#{linelist.datatable.column-select.button}">_Header Fields_
+        <button class="btn btn-default" ng-click="$ctrl.showMetadataTemplator()">
+            <i class="fa fa-list fa-fw" aria-hidden="true"></i> <th:block
+                th:text="#{linelist.datatable.column-select.button}"/>
         </button>
         <select class="form-control"
                 name="template"
@@ -46,7 +47,14 @@
             <option value="" th:if="${#lists.isEmpty(templates)}" th:text="#{linelist.no-templates-available}">_No Templates Available_</option>
             <option th:each="template : ${templates}" value="" th:value="${template.label}"  th:text="${template.label}"></option>
         </select>
-        <button class="btn btn-default" ng-click="$ctrl.saveTemplate()" th:text="#{linelist.create-template.save-template}">_Save Template_</button>
+        <button class="btn btn-default" ng-click="$ctrl.saveTemplate()">
+            <span ng-hide="$ctrl.saving">
+                <i class="fa fa-save fa-fw"></i> <th:block th:text="#{linelist.create-template.save-template}" />
+            </span>
+            <span ng-show="$ctrl.saving">
+                <i class="fa fa-circle-o-notch fa-spin fa-fw"></i> <th:block th:text="#{linelist.create-template.saving-template}" />
+            </span>
+        </button>
         <a class="btn btn-link"
            th:href="@{/projects/{id}/sample-metadata/upload(id=${project.getId()})}">
             <i class="fa fa-upload" aria-hidden="true"></i>&nbsp;<span

@@ -41,13 +41,18 @@ function controller($scope, $aside) {
   };
 
   this.saveTemplate = () => {
+    this.saving = true;
     const fields = this.fields
       .filter(field => field.selected);
-    console.log(fields);
     vm.onSaveTemplate({
       $event: {
         fields
       }
+    }).then(result => {
+      console.info(result);
+    }, error => {
+      console.error(error);
+      this.saving = false;
     });
   };
 
