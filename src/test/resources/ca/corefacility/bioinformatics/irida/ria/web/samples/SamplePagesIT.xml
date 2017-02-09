@@ -84,5 +84,5 @@
 		sequencingobject_id="2" />
 	
 	<qc_entry id="1" created_date="2013-07-18 14:20:19.0"
-		sequencingObject_id="1" DTYPE="FileProcessorErrorQCEntry" positive="0"/>
+		sequencingObject_id="1" DTYPE="FileProcessorErrorQCEntry"/>
 </dataset>
