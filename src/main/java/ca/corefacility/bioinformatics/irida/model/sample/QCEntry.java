@@ -23,6 +23,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 
 /**
@@ -48,17 +49,12 @@ public abstract class QCEntry {
 	@Column(name = "created_date")
 	@NotNull
 	private Date createdDate;
-	
-	@NotNull
-	private boolean positive;
-	
+
 	public QCEntry() {
-		positive = false;
 	}
 
-	public QCEntry(SequencingObject sequencingObject, boolean positive) {
+	public QCEntry(SequencingObject sequencingObject) {
 		this.sequencingObject = sequencingObject;
-		this.positive = positive;
 	}
 
 	public Long getId() {
@@ -72,14 +68,6 @@ public abstract class QCEntry {
 	public SequencingObject getSequencingObject() {
 		return sequencingObject;
 	}
-	
-	public boolean isPositive() {
-		return positive;
-	}
-	
-	public void setPositive(boolean positive) {
-		this.positive = positive;
-	}
 
 	public abstract String getMessage();
 
@@ -91,7 +79,40 @@ public abstract class QCEntry {
 	 */
 	public abstract QCEntryType getType();
 
+	/**
+	 * Enhance the {@link QCEntry} with a {@link Project} if required. This way
+	 * a {@link QCEntry} can read project's settings to decide whether it's
+	 * positive or negative.
+	 * 
+	 * @param project
+	 *            the {@link Project} to read from
+	 */
+	public abstract void addProjectSettings(Project project);
+
+	/**
+	 * Get the {@link QCEntry} status.
+	 * 
+	 * @return a {@link QCEntryStatus}
+	 */
+	public abstract QCEntryStatus getStatus();
+
 	public enum QCEntryType {
 		PROCESSING, COVERAGE
+	}
+
+	public enum QCEntryStatus {
+		POSITIVE("POSITIVE"), NEGATIVE("NEGATIVE"), UNAVAILABLE("UNAVAILABLE");
+
+		public String value;
+
+		private QCEntryStatus(String value) {
+			this.value = value;
+		}
+
+		@Override
+		public String toString() {
+			return value;
+		}
+
 	}
 }
