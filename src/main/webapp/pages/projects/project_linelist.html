@@ -49,15 +49,15 @@
         </select>
         <button class="btn btn-default" ng-click="$ctrl.saveTemplate()">
             <span ng-hide="$ctrl.saving">
-                <i class="fa fa-save fa-fw"></i> <th:block th:text="#{linelist.create-template.save-template}" />
+                <i class="fa fa-save fa-fw" aria-hidden="true"></i> <th:block th:text="#{linelist.create-template.save-template}" />
             </span>
             <span ng-show="$ctrl.saving">
-                <i class="fa fa-circle-o-notch fa-spin fa-fw"></i> <th:block th:text="#{linelist.create-template.saving-template}" />
+                <i class="fa fa-circle-o-notch fa-spin fa-fw" aria-hidden="true"></i> <th:block th:text="#{linelist.create-template.saving-template}" />
             </span>
         </button>
         <a class="btn btn-link"
            th:href="@{/projects/{id}/sample-metadata/upload(id=${project.getId()})}">
-            <i class="fa fa-upload" aria-hidden="true"></i>&nbsp;<span
+            <i class="fa fa-upload fw" aria-hidden="true"></i>&nbsp;<span
                 th:text="#{linelist.add-metadata.btn}"></span></a>
     </script>
     <script type="text/ng-template" id="metadata.aside.tmpl">
