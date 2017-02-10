@@ -21,8 +21,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.common.collect.ImmutableMap;
-
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -33,6 +31,8 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
+import com.google.common.collect.ImmutableMap;
 
 @Controller
 @RequestMapping("/projects/{projectId}/linelist")
@@ -101,6 +101,10 @@ public class ProjectLineListController {
 			if (sampleMetadata != null) {
 				Map<String, Object> metadata = sampleMetadata.getMetadata();
 				for (String header : headers) {
+					/*
+					Since the id and the label are kept on the Sample not in the JSON,
+					They need to be pulled specifically from the sample.
+					 */
 					if (header.equalsIgnoreCase("id")) {
 						fullMetadata.put("id", ImmutableMap.of("value", sample.getId()));
 					} else if (header.equalsIgnoreCase("label")) {
