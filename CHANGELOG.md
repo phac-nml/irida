@@ -5,7 +5,7 @@ Changes
 ----------------
 * [UI]: Project sync jobs ignore bad files and set a sample to error when it can't transfer files, but gracefully continues the rest of the sync. (0.14.1)
 * [Workflow]: Removed `@Transactional` from the AnalysisExecutionServiceGalaxyAsync.executeAnalysis method as transactions were timing out while waiting for files to upload to galaxy. (0.14.2)
-
+* [UI]: Fixed bug for users the could not select all samples on the Project > Samples page.
 
 0.13.0 to 0.14.0
 ----------------
