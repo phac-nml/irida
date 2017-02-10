@@ -5,6 +5,7 @@ stages:
 
 before_script:
   - echo 'drop database if exists irida_test; create database irida_test' | mysql -u test -ptest
+  - echo 'db.dropDatabase()' | mongo
   - pushd lib
   - ./install-libs.sh
   - popd
