@@ -232,8 +232,7 @@ public class SamplesController extends BaseController {
 			Map<String, Object> metadata = new HashMap<>();
 			for (String key : metadataMap.keySet()) {
 				metadata.put(key, ImmutableMap.of(
-						"value", metadataMap.get(key),
-						"modified_date", new Date()
+						"value", metadataMap.get(key)
 				));
 			}
 			metadataForSample.setMetadata(metadata);
