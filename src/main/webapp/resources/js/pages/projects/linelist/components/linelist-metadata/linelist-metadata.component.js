@@ -52,6 +52,7 @@ function controller($scope, $aside) {
       console.info(result);
     }, error => {
       console.error(error);
+    }).then(() => {
       this.saving = false;
     });
   };
