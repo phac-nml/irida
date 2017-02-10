@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -20,8 +21,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.common.collect.ImmutableMap;
-
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -32,6 +31,8 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
+import com.google.common.collect.ImmutableMap;
 
 @Controller
 @RequestMapping("/projects/{projectId}/linelist")
@@ -92,20 +93,24 @@ public class ProjectLineListController {
 
 		// Get all the metadata for each sample in the project
 		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(project);
-		List<List<Object>> metadataList = new ArrayList<>(samplesForProject.size());
+		List<Map<String, Object>> metadataList = new ArrayList<>(samplesForProject.size());
 		for (Join<Project, Sample> join : samplesForProject) {
 			Sample sample = join.getObject();
-			List<Object> fullMetadata = new ArrayList<>();
+			Map<String, Object> fullMetadata = new HashMap<>();
 			SampleMetadata sampleMetadata = sampleService.getMetadataForSample(sample);
 			if (sampleMetadata != null) {
 				Map<String, Object> metadata = sampleMetadata.getMetadata();
 				for (String header : headers) {
+					/*
+					Since the id and the label are kept on the Sample not in the JSON,
+					They need to be pulled specifically from the sample.
+					 */
 					if (header.equalsIgnoreCase("id")) {
-						fullMetadata.add(ImmutableMap.of("value", sample.getId()));
+						fullMetadata.put("id", ImmutableMap.of("value", sample.getId()));
 					} else if (header.equalsIgnoreCase("label")) {
-						fullMetadata.add(ImmutableMap.of("value", sample.getSampleName()));
+						fullMetadata.put("label", ImmutableMap.of("value", sample.getSampleName()));
 					} else {
-						fullMetadata.add(metadata.getOrDefault(header, ""));
+						fullMetadata.put(header, metadata.getOrDefault(header, ImmutableMap.of("value", "")));
 					}
 				}
 
