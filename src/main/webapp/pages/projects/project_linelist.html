@@ -47,7 +47,7 @@
             <option value="" th:if="${#lists.isEmpty(templates)}" th:text="#{linelist.no-templates-available}">_No Templates Available_</option>
             <option th:each="template : ${templates}" value="" th:value="${template.label}"  th:text="${template.label}"></option>
         </select>
-        <button class="btn btn-default" ng-click="$ctrl.saveTemplate()">
+        <button class="btn btn-default" ng-click="$ctrl.saveTemplate()" ng-disabled="$ctrl.saving">
             <span ng-hide="$ctrl.saving">
                 <i class="fa fa-save fa-fw" aria-hidden="true"></i> <th:block th:text="#{linelist.create-template.save-template}" />
             </span>
