@@ -50,15 +50,7 @@ function controller($scope, $aside, $uibModal) {
         controllerAs: '$modal',
         controller: function(templates) {
           this.template = {};
-
-          // Create a validator for the tamplate name field
-          this.$validators.templateName
-
-          console.log(templates);
-          this.checkName = () => {
-            templates
-              .filter(template => this.template.name === template);
-          };
+          this.templates = [{name: 'fred'}, {name: 'johny'}];
         },
         resolve: {
           templates: () => {

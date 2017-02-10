@@ -5,18 +5,7 @@
         layout:decorator="projects/_base">
 <head>
     <title th:text="#{linelist.page-title}">Title</title>
-    <!-- TODO: (Josh) Move this to external css file -->
-    <style>
-        .metadata-open .modal-content {
-            padding: 1rem;
-        }
-
-        .scroll-col {
-            overflow-y: auto !important;
-            overflow-x: hidden;
-            padding: 0 !important;
-        }
-    </style>
+    <link rel="stylesheet" href="/resources/css/pages/project_linelist.css"/>
 </head>
 <body>
 <main layout:fragment="main" ddl:bundle-includes="project-linelist">
@@ -25,9 +14,9 @@
 
 <th:block layout:fragment="scripts">
     <script th:inline="javascript">
-        var headersList = /*[[${headers}]]*/ [];
-        var metadataList = /*[[${metadataList}]]*/ [];
-        var templates = /*[[${templates}]]*/ [];
+      var headersList = /*[[${headers}]]*/ [];
+      var metadataList = /*[[${metadataList}]]*/ [];
+      var templates = /*[[${templates}]]*/ [];
     </script>
     <script type="text/ng-template" id="linelist.tmpl.html">
         <linelist-table
@@ -37,23 +26,29 @@
     </script>
     <script type="text/ng-template" id="metadata.button.tmpl">
         <button class="btn btn-default" ng-click="$ctrl.showMetadataTemplator()">
-            <i class="fa fa-list fa-fw" aria-hidden="true"></i> <th:block
-                th:text="#{linelist.datatable.column-select.button}"/>
+            <i class="fa fa-list fa-fw" aria-hidden="true"></i>
+            <th:block
+                    th:text="#{linelist.datatable.column-select.button}"/>
         </button>
         <select class="form-control"
                 name="template"
                 id="templage-select"
                 th:disabled="${#lists.isEmpty(templates)}"
                 ng-model="$ctrl.selectedTemplate">
-            <option value="" th:if="${#lists.isEmpty(templates)}" th:text="#{linelist.no-templates-available}">_No Templates Available_</option>
-            <option th:each="template : ${templates}" value="" th:value="${template.label}"  th:text="${template.label}"></option>
+            <option value="" th:if="${#lists.isEmpty(templates)}" th:text="#{linelist.no-templates-available}">_No
+                Templates Available_
+            </option>
+            <option th:each="template : ${templates}" value="" th:value="${template.label}"
+                    th:text="${template.label}"></option>
         </select>
-      <button class="btn btn-default" ng-click="$ctrl.saveTemplate()" ng-disabled="$ctrl.saving">
+        <button class="btn btn-default" ng-click="$ctrl.saveTemplate()" ng-disabled="$ctrl.saving">
             <span ng-hide="$ctrl.saving">
-                <i class="fa fa-save fa-fw" aria-hidden="true"></i> <th:block th:text="#{linelist.create-template.save-template}" />
+                <i class="fa fa-save fa-fw" aria-hidden="true"></i> <th:block
+                    th:text="#{linelist.create-template.save-template}"/>
             </span>
             <span ng-show="$ctrl.saving">
-                <i class="fa fa-circle-o-notch fa-spin fa-fw" aria-hidden="true"></i> <th:block th:text="#{linelist.create-template.saving-template}" />
+                <i class="fa fa-circle-o-notch fa-spin fa-fw" aria-hidden="true"></i> <th:block
+                    th:text="#{linelist.create-template.saving-template}"/>
             </span>
         </button>
         <a class="btn btn-link"
@@ -95,28 +90,38 @@
     </script>
 
     <script type="text/ng-template" id="save-template.tmpl.html">
-      <div class="modal-header">
-        <h3 class="modal-title">_Save_Template_As_</h3>
-      </div>
-      <div class="modal-body">
-          <form name="templateNameForm">
-              <div class="form-group">
-                  <label for="template-name">_Name for Template_</label>
-                  <input
-                          id="template-name"
-                          class="form-control"
-                          name="templateName"
-                          required="required"
-                          type="text"
-                          ng-change="$modal.checkName()"
-                          ng-model-options="{ debounce: 300 }"
-                          ng-model="$modal.template.name" />
-              </div>
-          </form>
-          <pre>{{ templateNameForm | json }}</pre>
-      </div>
+        <div class="modal-header">
+            <h3 class="modal-title">_Save_Template_As_</h3>
+        </div>
+        <div class="modal-body">
+            <form name="templateNameForm">
+                <div class="form-group"
+                ng-class="{'has-error': !templateNameForm.templateName.$pristine &amp;&amp; !templateNameForm.templateName.$valid}">
+                    <label for="template-name">_Name for Template_</label>
+                    <input
+                            id="template-name"
+                            class="form-control"
+                            name="templateName"
+                            required="required"
+                            type="text"
+                            existing-templates="$modal.templates"
+                            metadata-template-name=""
+                            ng-model="$modal.template.name"/>
+                    <div ng-show="!templateNameForm.templateName.$pristine"
+                         ng-messages="templateNameForm.templateName.$error">
+                        <span ng-message="unique"
+                              class="help-block"
+                              th:text="#{linelist.create-template.saving.error.unique}"></span>
+                        <span class="help-block"
+                              ng-message="required"
+                              th:text="#{linelist.create-template.saving.error.required}"></span>
+                    </div>
+                </div>
+            </form>
+        </div>
         <div class="modal-footer">
-            <button class="btn btn-default">_Save_</button>
+            <button class="btn btn-default">_Cancel_</button>
+            <button ng-disabled="templateNameForm.$invalid" class="btn btn-default">_Save_</button>
         </div>
     </script>
 
