@@ -11,6 +11,7 @@ function controller(DTOptionsBuilder,
     .map((header, index) => {
       return ({text: header, index, selected: true});
     });
+  this.templates = LinelistService.getTemplates();
 
   this.dtOptions = DTOptionsBuilder
     .fromFnPromise(() => {
@@ -35,7 +36,8 @@ function controller(DTOptionsBuilder,
       if (div.getElementsByTagName('metadata-component').length === 0) {
         div.innerHTML = `
 <metadata-component 
-    fields="$ctrl.fields" 
+    fields="$ctrl.fields"
+    templates="$ctrl.templates"
     on-toggle-field="$ctrl.toggleColumn($event)"
     on-save-template="$ctrl.saveTemplate($event)">
 </metadata-component>

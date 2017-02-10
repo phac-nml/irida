@@ -27,6 +27,7 @@
     <script th:inline="javascript">
         var headersList = /*[[${headers}]]*/ [];
         var metadataList = /*[[${metadataList}]]*/ [];
+        var templates = /*[[${templates}]]*/ [];
     </script>
     <script type="text/ng-template" id="linelist.tmpl.html">
         <linelist-table
@@ -47,7 +48,7 @@
             <option value="" th:if="${#lists.isEmpty(templates)}" th:text="#{linelist.no-templates-available}">_No Templates Available_</option>
             <option th:each="template : ${templates}" value="" th:value="${template.label}"  th:text="${template.label}"></option>
         </select>
-        <button class="btn btn-default" ng-click="$ctrl.saveTemplate()" ng-disabled="$ctrl.saving">
+      <button class="btn btn-default" ng-click="$ctrl.saveTemplate()" ng-disabled="$ctrl.saving">
             <span ng-hide="$ctrl.saving">
                 <i class="fa fa-save fa-fw" aria-hidden="true"></i> <th:block th:text="#{linelist.create-template.save-template}" />
             </span>
@@ -92,6 +93,33 @@
             </div>
         </div>
     </script>
+
+    <script type="text/ng-template" id="save-template.tmpl.html">
+      <div class="modal-header">
+        <h3 class="modal-title">_Save_Template_As_</h3>
+      </div>
+      <div class="modal-body">
+          <form name="templateNameForm">
+              <div class="form-group">
+                  <label for="template-name">_Name for Template_</label>
+                  <input
+                          id="template-name"
+                          class="form-control"
+                          name="templateName"
+                          required="required"
+                          type="text"
+                          ng-change="$modal.checkName()"
+                          ng-model-options="{ debounce: 300 }"
+                          ng-model="$modal.template.name" />
+              </div>
+          </form>
+          <pre>{{ templateNameForm | json }}</pre>
+      </div>
+        <div class="modal-footer">
+            <button class="btn btn-default">_Save_</button>
+        </div>
+    </script>
+
     <!-- TODO: (Josh | 27 Jan, 2017) Remove this script:src tag before committing to development and put in dandelion -->
     <script src="/resources/js/build/project-linelist.bundle.js"
             th:src="@{/resources/js/build/project-linelist.bundle.js}"></script>

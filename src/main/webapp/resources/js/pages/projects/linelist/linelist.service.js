@@ -15,6 +15,10 @@ export class LinelistService {
     return this.$window.headersList;
   }
 
+  getTemplates() {
+    return this.$window.templates;
+  }
+
   saveTemplate({url, name, fields}) {
     return this.$http
       .post(url, {

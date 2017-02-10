@@ -7,8 +7,9 @@ const asideTemplateUrl = 'metadata.aside.tmpl';
  * for hiding and showing metadata columns,
  * @param {object} $scope angular DOM scope reference.
  * @param {object} $aside Reference to the angular-aside instance
+ * @param {object} $uibModal Reference to the angular-bootstrap modal instance
  */
-function controller($scope, $aside) {
+function controller($scope, $aside, $uibModal) {
   const vm = this;
   const ORIGINAL_ORDER = Array.from(this.fields);
   this.showMetadataTemplator = () => {
@@ -42,19 +43,42 @@ function controller($scope, $aside) {
 
   this.saveTemplate = () => {
     this.saving = true;
-    const fields = this.fields
-      .filter(field => field.selected);
-    vm.onSaveTemplate({
-      $event: {
-        fields
-      }
-    }).then(result => {
-      console.info(result);
-    }, error => {
-      console.error(error);
-    }).then(() => {
-      this.saving = false;
-    });
+
+    $uibModal
+      .open({
+        templateUrl: `save-template.tmpl.html`,
+        controllerAs: '$modal',
+        controller: function(templates) {
+          this.template = {};
+
+          // Create a validator for the tamplate name field
+          this.$validators.templateName
+
+          console.log(templates);
+          this.checkName = () => {
+            templates
+              .filter(template => this.template.name === template);
+          };
+        },
+        resolve: {
+          templates: () => {
+            return vm.templates;
+          }
+        }
+      });
+    // const fields = this.fields
+    //   .filter(field => field.selected);
+    // vm.onSaveTemplate({
+    //   $event: {
+    //     fields
+    //   }
+    // }).then(result => {
+    //   console.info(result);
+    // }, error => {
+    //   console.error(error);
+    // }).then(() => {
+    //   this.saving = false;
+    // });
   };
 
   // Set up event listener for re-arranging the columns on the table.
@@ -68,7 +92,7 @@ function controller($scope, $aside) {
   });
 }
 
-controller.$inject = ['$scope', '$aside'];
+controller.$inject = ['$scope', '$aside', '$uibModal'];
 
 export const MetadataComponent = {
   templateUrl,
@@ -77,6 +101,7 @@ export const MetadataComponent = {
   },
   bindings: {
     fields: '=',
+    templates: '<',
     onToggleField: '&',
     onSaveTemplate: '&'
   },
