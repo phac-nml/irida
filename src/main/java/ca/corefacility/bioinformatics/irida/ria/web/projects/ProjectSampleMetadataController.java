@@ -33,10 +33,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.io.Files;
-
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.MetadataImportFileTypeNotSupportedError;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -48,6 +44,10 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.io.Files;
 
 /**
  * This class is designed to be used for bulk actions on {@link SampleMetadata}
@@ -305,7 +305,7 @@ public class ProjectSampleMetadataController {
 
 					// Need to overwrite duplicate keys
 					for (String item : row.keySet()) {
-						metadata.put(item, row.get(item));
+						metadata.put(item, ImmutableMap.of("value", row.get(item)));
 					}
 
 					// Save metadata back to the sample
