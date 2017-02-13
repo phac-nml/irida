@@ -48,30 +48,48 @@ function controller($scope, $aside, $uibModal) {
       .open({
         templateUrl: `save-template.tmpl.html`,
         controllerAs: '$modal',
-        controller: function(templates) {
+        controller: function(templates, $uibModalInstance) {
           this.template = {};
           this.templates = [{name: 'fred'}, {name: 'johny'}];
+
+          this.cancel = () => {
+            $uibModalInstance.dismiss();
+          };
+
+          this.save = () => {
+            $uibModalInstance.close(this.template.name);
+          };
         },
         resolve: {
           templates: () => {
             return vm.templates;
           }
         }
+      })
+      .result
+      .then(name => {
+        saveTempalte(name);
       });
-    // const fields = this.fields
-    //   .filter(field => field.selected);
-    // vm.onSaveTemplate({
-    //   $event: {
-    //     fields
-    //   }
-    // }).then(result => {
-    //   console.info(result);
-    // }, error => {
-    //   console.error(error);
-    // }).then(() => {
-    //   this.saving = false;
-    // });
   };
+
+  function saveTempalte(templateName) {
+    const fields = vm.fields
+      .filter(field => field.selected)
+      .map(field => field.text);
+
+    vm.onSaveTemplate({
+      $event: {
+        templateName,
+        fields
+      }
+    }).then(result => {
+      console.info(result);
+    }, error => {
+      console.error(error);
+    }).then(() => {
+      vm.saving = false;
+    });
+  }
 
   // Set up event listener for re-arranging the columns on the table.
   $scope.$on(EVENTS.TABLE.colReorder, (e, args) => {

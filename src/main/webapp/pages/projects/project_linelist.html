@@ -91,19 +91,20 @@
 
     <script type="text/ng-template" id="save-template.tmpl.html">
         <div class="modal-header">
-            <h3 class="modal-title">_Save_Template_As_</h3>
+            <h3 class="modal-title" th:text="#{linelist.create-template.saving.modal.title}">_Save_Template_As_</h3>
         </div>
         <div class="modal-body">
             <form name="templateNameForm">
                 <div class="form-group"
                 ng-class="{'has-error': !templateNameForm.templateName.$pristine &amp;&amp; !templateNameForm.templateName.$valid}">
-                    <label for="template-name">_Name for Template_</label>
+                    <label for="template-name" th:text="#{linelist.create-template.saving.modal.label}">_Name for Template_</label>
                     <input
                             id="template-name"
                             class="form-control"
                             name="templateName"
                             required="required"
                             type="text"
+                            minlength="5"
                             existing-templates="$modal.templates"
                             metadata-template-name=""
                             ng-model="$modal.template.name"/>
@@ -114,14 +115,22 @@
                               th:text="#{linelist.create-template.saving.error.unique}"></span>
                         <span class="help-block"
                               ng-message="required"
-                              th:text="#{linelist.create-template.saving.error.required}"></span>
+                              th:text="#{linelist.create-template.templateName.required}"></span>
+                        <span class="help-block"
+                              ng-message="minlength"
+                              th:text="#{linelist.create-template.templateName.minlength}"></span>
                     </div>
                 </div>
             </form>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-default">_Cancel_</button>
-            <button ng-disabled="templateNameForm.$invalid" class="btn btn-default">_Save_</button>
+            <button class="btn btn-default"
+                    th:text="#{form.btn.cancel}"
+                    ng-click="$modal.cancel()">_Cancel_</button>
+            <button ng-disabled="templateNameForm.$invalid"
+                    class="btn btn-default"
+                    th:text="#{form.btn.save}"
+                    ng-click="$modal.save()">_Save_</button>
         </div>
     </script>
 

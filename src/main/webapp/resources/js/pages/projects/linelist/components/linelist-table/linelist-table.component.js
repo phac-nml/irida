@@ -63,10 +63,11 @@ function controller(DTOptionsBuilder,
   };
 
   this.saveTemplate = $event => {
-    const fields = $event.fields.map(field => field.text);
-    console.log(fields);
+    const {templateName, fields} = $event;
+
+    console.log(templateName, fields);
     return LinelistService
-      .saveTemplate({url: this.savetemplateurl, fields, name: 'freds'})
+      .saveTemplate({url: this.savetemplateurl, fields, name: templateName})
       .then(result => console.log(result));
   };
 }
