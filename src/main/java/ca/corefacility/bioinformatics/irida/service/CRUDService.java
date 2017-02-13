@@ -68,34 +68,6 @@ public interface CRUDService<IdentifierType extends Serializable, Type extends T
 	 * @return A collection of the requested objects
 	 */
 	public Iterable<Type> readMultiple(Iterable<IdentifierType> idents);
-
-	/**
-	 * Update the specified object in the database. The object <b>must</b> have
-	 * a valid identifier prior to being passed to this method.
-	 *
-	 * @param id
-	 *            The identifier of the object to update.
-	 * @param updatedProperties
-	 *            the object properties that should be updated.
-	 * @return The object as it was persisted in the database. May modify the
-	 *         identifier of the object when returned.
-	 * @throws EntityExistsException
-	 *             If the object being persisted violates uniqueness constraints
-	 *             in the database.
-	 * @throws EntityNotFoundException
-	 *             If no object with the supplied identifier exists in the
-	 *             database.
-	 * @throws ConstraintViolationException
-	 *             If the object being persisted cannot be validated by
-	 *             validation rules associated with the object.
-	 * @throws InvalidPropertyException
-	 *             If the updated properties map contains a property name that
-	 *             does not exist on the domain model.
-	 * @deprecated Use {@link CRUDService#update(Timestamped)} instead.
-	 */
-	@Deprecated
-	public Type update(IdentifierType id, Map<String, Object> updatedProperties) throws EntityExistsException,
-			EntityNotFoundException, ConstraintViolationException, InvalidPropertyException;
 	
 	/**
 	 * Update properties of the given object by given fields. The object <b>must</b> have
@@ -129,8 +101,12 @@ public interface CRUDService<IdentifierType extends Serializable, Type extends T
 	 * @param object
 	 *            The object to update
 	 * @return The updated object
+	 * @throws EntityNotFoundException
+	 *             If the entity being updated is not in the database
+	 * @throws ConstraintViolationException
+	 *             if the entity being updated contains constraint violations
 	 */
-	public Type update(Type object);
+	public Type update(Type object) throws EntityNotFoundException, ConstraintViolationException;
 
 	/**
 	 * Delete the object with the specified identifier from the database.

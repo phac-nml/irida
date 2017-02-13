@@ -74,14 +74,14 @@ public class UserServiceImplIT {
 	@WithMockUser(username = "fbristow", roles = "MANAGER")
 	public void testEditAdministratorAsManagerFail() {
 		// managers should *not* be able to edit administrator accounts.
-		userService.update(3L, ImmutableMap.of("enabled", (Object) Boolean.FALSE));
+		userService.updateFields(3L, ImmutableMap.of("enabled", (Object) Boolean.FALSE));
 	}
 
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "fbristow", roles = "USER")
 	public void testChangeSelfToAdministrator() {
 		// I should not be able to elevate myself to administrator.
-		userService.update(2L, ImmutableMap.of("systemRole", (Object) Role.ROLE_ADMIN));
+		userService.updateFields(2L, ImmutableMap.of("systemRole", (Object) Role.ROLE_ADMIN));
 	}
 
 	@Test(expected = AccessDeniedException.class)
@@ -140,28 +140,28 @@ public class UserServiceImplIT {
 	@WithMockUser(username = "fbristow", roles = "MANAGER")
 	public void testUpdateToAdministratorAsManagerFail() {
 		Map<String, Object> properties = ImmutableMap.of("systemRole", (Object) Role.ROLE_ADMIN);
-		userService.update(1L, properties);
+		userService.updateFields(1L, properties);
 	}
 
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "fbristow", roles = "MANAGER")
 	public void testUpdateToManagerAsManagerFail() {
 		Map<String, Object> properties = ImmutableMap.of("systemRole", (Object) Role.ROLE_MANAGER);
-		userService.update(1L, properties);
+		userService.updateFields(1L, properties);
 	}
 
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "fbristow", roles = "USER")
 	public void testUpdateToAdminAsUserFail() {
 		Map<String, Object> properties = ImmutableMap.of("systemRole", (Object) Role.ROLE_ADMIN);
-		userService.update(1L, properties);
+		userService.updateFields(1L, properties);
 	}
 
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "fbristow", roles = "USER")
 	public void testUpdateToManagerAsUserFail() {
 		Map<String, Object> properties = ImmutableMap.of("systemRole", (Object) Role.ROLE_MANAGER);
-		userService.update(1L, properties);
+		userService.updateFields(1L, properties);
 	}
 
 	@Test
@@ -169,7 +169,7 @@ public class UserServiceImplIT {
 	public void testUpdateUserAsManagerSucceed() {
 		String updatedPhoneNumber = "123-4567";
 		Map<String, Object> properties = ImmutableMap.of("phoneNumber", (Object) updatedPhoneNumber);
-		User updated = userService.update(1L, properties);
+		User updated = userService.updateFields(1L, properties);
 		assertEquals("Phone number should be updated.", updatedPhoneNumber, updated.getPhoneNumber());
 	}
 
@@ -178,7 +178,7 @@ public class UserServiceImplIT {
 	public void testUpdateOwnAccountSucceed() {
 		String updatedPhoneNumber = "456-7890";
 		Map<String, Object> properties = ImmutableMap.of("phoneNumber", (Object) updatedPhoneNumber);
-		User updated = userService.update(1L, properties);
+		User updated = userService.updateFields(1L, properties);
 		assertEquals("Phone number should be updated.", updatedPhoneNumber, updated.getPhoneNumber());
 	}
 
@@ -310,7 +310,7 @@ public class UserServiceImplIT {
 		properties.put("password", password);
 
 		try {
-			userService.update(2L, properties);
+			userService.updateFields(2L, properties);
 			fail();
 		} catch (ConstraintViolationException e) {
 			Set<ConstraintViolation<?>> violationSet = e.getConstraintViolations();
