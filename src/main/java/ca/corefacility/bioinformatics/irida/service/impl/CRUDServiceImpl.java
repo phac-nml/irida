@@ -133,17 +133,6 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 	public long count() {
 		return repository.count();
 	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@Transactional
-	@Deprecated
-	public ValueType update(KeyType id, Map<String, Object> updatedFields) throws ConstraintViolationException,
-	EntityExistsException, InvalidPropertyException {
-		return updateFields(id, updatedFields);
-	}
 
 	/**
 	 * {@inheritDoc}
@@ -209,6 +198,12 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 			throw new EntityNotFoundException("Entity not found.");
 		}
 		
+		Set<ConstraintViolation<ValueType>> constraintViolations = validator.validate(object);
+		// if any validations fail, throw a constraint violation exception.
+		if (!constraintViolations.isEmpty()) {
+			throw new ConstraintViolationException(constraintViolations);
+		}
+
 		return repository.save(object);
 	}
 

@@ -141,7 +141,7 @@ public class ProjectSynchronizationService {
 
 				syncProject(project);
 			} catch (IridaOAuthException e) {
-				logger.debug("Can't sync project " + project.getRemoteStatus().getURL() + " due to oauth error:", e);
+				logger.trace("Can't sync project " + project.getRemoteStatus().getURL() + " due to oauth error:", e);
 				project.getRemoteStatus().setSyncStatus(SyncStatus.UNAUTHORIZED);
 				projectService.update(project);
 			} catch (Exception e) {

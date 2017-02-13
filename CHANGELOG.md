@@ -3,8 +3,14 @@ Changes
 
 0.14.0 to 0.15.0
 ----------------
+* [API]: Added a checksum to files on upload so uploaders can validate upload was successful.
 * [UI]: Project sync jobs ignore bad files and set a sample to error when it can't transfer files, but gracefully continues the rest of the sync. (0.14.1)
 * [Workflow]: Removed `@Transactional` from the AnalysisExecutionServiceGalaxyAsync.executeAnalysis method as transactions were timing out while waiting for files to upload to galaxy. (0.14.2)
+* [Developer]: Cleaned up old use deprecated method `CrudService.update(Long, Map)` and removed the method from the project.
+* [API]: Added configurable maximum number of workflows IRIDA will schedule at a time `irida.workflow.max-running`.  Default 4.
+* [UI]: Fixed login error message that requested an email instead of username.
+* [Developer]: Added quick failure on detection of an upload error in Galaxy.
+* [Developer]: Added ability to adjust size of thread pool for polling Galaxy after uploading files with `galaxy.library.upload.threads`.
 * [UI]: Fixed bug where pipeline customization button could not be clicked in browser width > 758px and < 991px.
 
 0.13.0 to 0.14.0

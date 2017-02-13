@@ -3,8 +3,6 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.springframework.ui.ExtendedModelMap;
-import org.springframework.ui.Model;
 
 import ca.corefacility.bioinformatics.irida.ria.web.DashboardController;
 
@@ -18,7 +16,6 @@ public class DashboardControllerTest {
 
 	@Test
 	public void indexPageNormal() {
-		Model model = new ExtendedModelMap();
 		assertEquals("index", controller.showIndex());
 	}
 }

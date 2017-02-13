@@ -19,7 +19,6 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
@@ -60,7 +59,8 @@ public class UserGroupServiceImplIT {
 				groupUsers.stream().anyMatch(j -> j.getSubject().equals(u)));
 
 		// and then also check that we can edit the group
-		userGroupService.update(ug.getId(), ImmutableMap.of("name", "not new group"));
+		ug.setName("not new group");
+		userGroupService.update(ug);
 		
 		// and add users to the group
 		userGroupService.addUserToGroup(u2, ug, UserGroupRole.GROUP_MEMBER);

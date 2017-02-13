@@ -345,7 +345,7 @@ public class RESTProjectSamplesController {
 		ModelMap modelMap = new ModelMap();
 
 		// issue an update request
-		final Sample s = sampleService.update(sampleId, updatedFields);
+		final Sample s = sampleService.updateFields(sampleId, updatedFields);
 		addLinksForSample(Optional.empty(), s);
 
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, s);

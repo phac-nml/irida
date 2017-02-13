@@ -282,9 +282,12 @@ public class GroupsController {
 			final @RequestParam String description, final Principal principal, final Model model, final Locale locale) {
 		logger.debug("Editing group: [" + userGroupId + "]");
 		final Map<String, String> errors = new HashMap<>();
+		UserGroup group = userGroupService.read(userGroupId);
 
 		try {
-			userGroupService.update(userGroupId, ImmutableMap.of("name", name, "description", description));
+			group.setName(name);
+			group.setDescription(description);
+			userGroupService.update(group);
 			return getDetailsPage(userGroupId, principal, model);
 		} catch (final ConstraintViolationException e) {
 			for (final ConstraintViolation<?> v : e.getConstraintViolations()) {

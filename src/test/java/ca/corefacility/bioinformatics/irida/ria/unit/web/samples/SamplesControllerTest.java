@@ -129,7 +129,7 @@ public class SamplesControllerTest {
 				SamplesController.GEOGRAPHIC_LOCATION_NAME, geographicLocationName);
 		Map<String, String> update = ImmutableMap.of(SamplesController.ORGANISM, organism,
 				SamplesController.GEOGRAPHIC_LOCATION_NAME, geographicLocationName);
-		when(sampleService.update(sample.getId(), updatedValues)).thenReturn(sample);
+		when(sampleService.updateFields(sample.getId(), updatedValues)).thenReturn(sample);
 
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.setAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE,
@@ -146,6 +146,7 @@ public class SamplesControllerTest {
 				model.containsAttribute(SamplesController.LATITUDE));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetSampleFiles() throws IOException {
 		ExtendedModelMap model = new ExtendedModelMap();
@@ -210,6 +211,7 @@ public class SamplesControllerTest {
 		verifyZeroInteractions(projectService);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetSampleFilesNoAccess() throws IOException {
 		ExtendedModelMap model = new ExtendedModelMap();

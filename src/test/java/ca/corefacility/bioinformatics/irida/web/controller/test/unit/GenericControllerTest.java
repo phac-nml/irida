@@ -131,7 +131,7 @@ public class GenericControllerTest {
 
 	@Test
 	public void testUpdate() throws InstantiationException, IllegalAccessException {
-		when(crudService.update(identifier, updatedFields)).thenReturn(entity);
+		when(crudService.updateFields(identifier, updatedFields)).thenReturn(entity);
 		ModelMap response = controller.update(identifier, updatedFields);
 		RootResource r = (RootResource) response.get(RESTGenericController.RESOURCE_NAME);
 		assertNotNull(r.getLink(Link.REL_SELF));
@@ -140,7 +140,7 @@ public class GenericControllerTest {
 
 	@Test
 	public void testUpdateBadResource() throws InstantiationException, IllegalAccessException {
-		when(crudService.update(identifier, updatedFields)).thenThrow(new EntityNotFoundException("not found"));
+		when(crudService.updateFields(identifier, updatedFields)).thenThrow(new EntityNotFoundException("not found"));
 		try {
 			controller.update(identifier, updatedFields);
 			fail();
@@ -152,7 +152,7 @@ public class GenericControllerTest {
 
 	@Test
 	public void testUpdateFailsConstraints() throws InstantiationException, IllegalAccessException {
-		when(crudService.update(identifier, updatedFields)).thenThrow(
+		when(crudService.updateFields(identifier, updatedFields)).thenThrow(
 				new ConstraintViolationException(new HashSet<ConstraintViolation<?>>()));
 		try {
 			controller.update(identifier, updatedFields);
