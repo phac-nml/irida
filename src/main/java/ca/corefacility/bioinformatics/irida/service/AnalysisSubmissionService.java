@@ -175,4 +175,15 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 *            the {@link Project} to stop sharing with
 	 */
 	public void removeAnalysisProjectShare(AnalysisSubmission submission, Project project);
+	
+	/**
+	 * Get a list of all {@link AnalysisSubmission}s with a given
+	 * {@link AnalysisState}
+	 * 
+	 * @param states
+	 *            A list of {@link AnalysisState} to find
+	 *            {@link AnalysisSubmission}s for
+	 * @return a Collection of {@link AnalysisSubmission}
+	 */
+	public Collection<AnalysisSubmission> findAnalysesByState(Collection<AnalysisState> states);
 }
