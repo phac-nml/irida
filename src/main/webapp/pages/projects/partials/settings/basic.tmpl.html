@@ -1,0 +1,12 @@
+<!-- BASIC SETTINGS -->
+<div class="panel panel-default">
+    <div class="panel-heading" th:text="#{project.settings.basic.heading}">_Basic project settings_</div>
+    <div class="panel-body">
+        <div class="checkbox">
+            <label>
+                <input id="assemble" type="checkbox" value="assemble" th:checked="${project.assembleUploads}"/>
+                <span th:text="#{project.settings.assemble}">_Automatically assemble uploads_</span>
+            </label>
+        </div>
+    </div>
+</div>

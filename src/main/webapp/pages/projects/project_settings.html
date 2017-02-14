@@ -1,41 +1,45 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="projects/_base" ddl:bundle-includes="project-settings">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="projects/_base" ddl:bundle-includes="project-settings">
 
 <head>
-  <title th:text="${project.label} + ' - ' + #{project.nav.settings}"></title>
-  <script th:inline="javascript">
-        var PAGE = {
-            i18n: {
-                'error' : /*[[#{project.settings.notifications.error}]]*/ '_Error updating project_'
-            },
-            urls: {
-                'assemble': /*[[@{/projects/{id}/settings/assemble(id=${project.getId()})}]]*/ '/projects/1/settings/assemble',
-                'sync': /*[[@{/projects/{id}/settings/sync(id=${project.getId()})}]]*/ '/projects/1/settings/sync'
-            }
-        };
+    <title th:text="${project.label} + ' - ' + #{project.nav.settings}"></title>
+    <script th:inline="javascript">
+			var PAGE = {
+				i18n: {
+					'error': /*[[#{project.settings.notifications.error}]]*/ '_Error updating project_'
+				},
+				urls: {
+					'assemble': /*[[@{/projects/{id}/settings/assemble(id=${project.getId()})}]]*/ '/projects/1/settings/assemble',
+					'sync': /*[[@{/projects/{id}/settings/sync(id=${project.getId()})}]]*/ '/projects/1/settings/sync'
+				}
+			};
     </script>
 </head>
 
 <body>
-  <main layout:fragment="main" ddl:bundle-includes="project-settings" >
+<main layout:fragment="main" ddl:bundle-includes="project-settings">
     <div class="row">
-      <div class="col-md-2">
-        <ul class="nav nav-pills nav-stacked">
-          <li th:class="${#strings.equalsIgnoreCase(page, 'basic') ? 'active' : ''}" role="presentation">
-            <a href="" th:href="@{/projects/{id}/settings(id=${project.getId()})}">_Basic Settings_</a>
-          </li>
-          <li th:class="${#strings.equalsIgnoreCase(page, 'remote') ? 'active' : ''}" role="presentation">
-            <a href=""
-               th:href="@{/projects/{id}/settings/remote(id=${project.getId()})}"
-               th:if="${project.isRemote()}">_Remote</a>
-          </li>
-        </ul>
-      </div>
-      <div class="col-md-10">
-        <th:block th:replace="projects/partials/settings.tmpl :: #__${page}__"/>
-      </div>
+        <div class="col-md-2">
+            <ul class="nav nav-pills nav-stacked">
+                <li th:class="${#strings.equalsIgnoreCase(page, 'basic') ? 'active' : ''}" role="presentation">
+                    <a href=""
+                       th:href="@{/projects/{id}/settings(id=${project.getId()})}"
+                       th:text="#{project.settings.page.basic}">_Basic Settings_</a>
+                </li>
+                <li th:class="${#strings.equalsIgnoreCase(page, 'remote') ? 'active' : ''}" role="presentation">
+                    <a href=""
+                       th:href="@{/projects/{id}/settings/remote(id=${project.getId()})}"
+                       th:if="${project.isRemote()}"
+                       th:text="#{project.settings.page.remote}">_Remote</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-10">
+            <th:block th:replace="projects/partials/settings/__${page}__.tmpl "/>
+        </div>
     </div>
-  </main>
+</main>
 </body>
 
 </html>
