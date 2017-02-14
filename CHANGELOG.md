@@ -11,6 +11,7 @@ Changes
 * [UI]: Fixed login error message that requested an email instead of username.
 * [Developer]: Added quick failure on detection of an upload error in Galaxy.
 * [Developer]: Added ability to adjust size of thread pool for polling Galaxy after uploading files with `galaxy.library.upload.threads`.
+* [Administration]: Recommending enabling `prod` profile for dandelion for performance improvements.
 * [UI]: Fixed bug where pipeline customization button could not be clicked in browser width > 758px and < 991px.
 
 0.13.0 to 0.14.0
