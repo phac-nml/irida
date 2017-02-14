@@ -6,7 +6,8 @@ upgrading IRIDA that cannot be automated.
 
 0.14.0 to 0.15.0
 ----------------
-* No special upgrade steps required, just deploy the new `war` file.
+* Enable Dandelion `prod` profile by setting the environment variable `dandelion.profile.active=prod` in the Tomcat settings.  See https://irida.corefacility.ca/documentation/administrator/web/#servlet-container-configuration for more information.
+* This upgrade makes schema changes to the databases and cannot be parallel deployed.  Servlet container must be stopped before deploying the new `war` file.
 
 0.13.0 to 0.14.0
 ----------------
