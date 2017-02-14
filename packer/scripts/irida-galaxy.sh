@@ -40,7 +40,7 @@ After=docker.service
 
 [Service]
 ExecStartPre=-/usr/bin/docker rm --force galaxy
-ExecStart=/usr/bin/docker run --name galaxy -d -p 9090:80 -v /home/irida/data/galaxy-export/:/export/ -v /home/irida/data/sequencing:/home/irida/data/sequencing apetkau/galaxy-irida-16.01:0.12.0
+ExecStart=/usr/bin/docker run --name galaxy -d -p 9090:80 -v /home/irida/data/galaxy-export/:/export/ -v /home/irida/data/sequencing:/home/irida/data/sequencing apetkau/galaxy-irida-16.10:0.15.0
 
 [Install]
 WantedBy=multi-user.target
