@@ -12,6 +12,7 @@ Changes
 * [Developer]: Added quick failure on detection of an upload error in Galaxy.
 * [Developer]: Added ability to adjust size of thread pool for polling Galaxy after uploading files with `galaxy.library.upload.threads`.
 * [Administration]: Recommending enabling `prod` profile for dandelion for performance improvements.
+* [UI]: Fixed bug for users the could not select all samples on the Project > Samples page.
 
 0.13.0 to 0.14.0
 ----------------
