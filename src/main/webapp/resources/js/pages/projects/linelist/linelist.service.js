@@ -19,8 +19,19 @@ export class LinelistService {
     return this.$window.templates;
   }
 
+  getTemplateFields({url, templateId}) {
+    return this
+      .$http({
+        method: 'GET',
+        url,
+        params: {templateId}
+      })
+      .then(response => response.data);
+  }
+
   saveTemplate({url, name, fields}) {
-    return this.$http
+    return this
+      .$http
       .post(url, {
         fields,
         name

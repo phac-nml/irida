@@ -39,7 +39,8 @@ function controller(DTOptionsBuilder,
     fields="$ctrl.fields"
     templates="$ctrl.templates"
     on-toggle-field="$ctrl.toggleColumn($event)"
-    on-save-template="$ctrl.saveTemplate($event)">
+    on-save-template="$ctrl.saveTemplate($event)"
+    on-get-template-fields="$ctrl.getTemplateFields($event)">
 </metadata-component>
 `;
         $compile(div)($scope);
@@ -70,6 +71,35 @@ function controller(DTOptionsBuilder,
       .saveTemplate({url: this.savetemplateurl, fields, name: templateName})
       .then(result => console.log(result));
   };
+
+  this.getTemplateFields = $event => {
+    const {templateId} = $event;
+    return LinelistService
+      .getTemplateFields({templateId, url: this.gettemplatefieldsurl})
+      .then(columns => {
+        let dtCols = Array.from(this.dtColumns);
+        let newCols = [];
+        // Need to reorder the columns
+        columns.forEach(c => {
+          for (let i = 0; i < dtCols.length; i++) {
+            const e = Object.assign({}, dtCols[i]);
+            if (c.label === e.sTitle) {
+              dtCols.splice(i, 1);
+              e.visible = true;
+              newCols.push(e);
+              break;
+            }
+          }
+        });
+        dtCols.forEach(c => {
+          c.visible = false;
+        });
+        this.dtColumns = newCols.concat(dtCols);
+
+        // TODO: Need to return the order and what is visible somehow?
+        return columns;
+      });
+  };
 }
 
 controller.$inject = [
@@ -92,7 +122,8 @@ export const TableComponent = {
   },
   bindings: {
     headers: '<',
-    savetemplateurl: '@'
+    savetemplateurl: '@',
+    gettemplatefieldsurl: '@'
   },
   controller
 };

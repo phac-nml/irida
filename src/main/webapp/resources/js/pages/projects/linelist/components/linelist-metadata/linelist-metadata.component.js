@@ -11,8 +11,10 @@ const asideTemplateUrl = 'metadata.aside.tmpl';
  */
 function controller($scope, $aside, $uibModal) {
   const vm = this;
-  const ORIGINAL_ORDER = Array.from(this.fields);
-  this.showMetadataTemplator = () => {
+  vm.selectedTemplate = vm.templates[0] || {};
+
+  const ORIGINAL_ORDER = Array.from(vm.fields);
+  vm.showMetadataTemplator = () => {
     $aside.open({
       templateUrl: asideTemplateUrl,
       openedClass: 'metadata-open',
@@ -37,12 +39,12 @@ function controller($scope, $aside, $uibModal) {
     });
   };
 
-  this.templateSelected = event => {
+  vm.templateSelected = event => {
     console.log(event);
   };
 
-  this.saveTemplate = () => {
-    this.saving = true;
+  vm.saveTemplate = () => {
+    vm.saving = true;
 
     $uibModal
       .open({
@@ -68,11 +70,24 @@ function controller($scope, $aside, $uibModal) {
       })
       .result
       .then(name => {
-        saveTempalte(name);
+        saveTemplate(name);
       });
   };
 
-  function saveTempalte(templateName) {
+  vm.templateSelected = () => {
+    if (vm.selectedTemplate.id !== 'all') {
+      vm.onGetTemplateFields({
+        $event: {
+          templateId: vm.selectedTemplate.id
+        }
+      })
+        .then(columns => {
+          console.log(this.fields, columns);
+        });
+    }
+  };
+
+  function saveTemplate(templateName) {
     const fields = vm.fields
       .filter(field => field.selected)
       .map(field => field.text);
@@ -113,7 +128,8 @@ export const MetadataComponent = {
     fields: '=',
     templates: '<',
     onToggleField: '&',
-    onSaveTemplate: '&'
+    onSaveTemplate: '&',
+    onGetTemplateFields: '&'
   },
   controller
 };

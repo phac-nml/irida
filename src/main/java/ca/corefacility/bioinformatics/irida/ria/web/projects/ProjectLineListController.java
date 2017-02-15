@@ -85,7 +85,12 @@ public class ProjectLineListController {
 		}
 
 		// Get a list of all available templates for displaying metadata
-		model.addAttribute("templates", projectControllerUtils.getTemplateNames(locale, project));
+		List<Map<String, String>> templates = projectControllerUtils.getTemplateNames(locale, project);
+		if (templates.size() > 0) {
+			templates.add(0, ImmutableMap.of("id", "all", "label",
+					messageSource.getMessage("linelist.templates.all", new Object[] {}, locale)));
+		}
+		model.addAttribute("templates", templates);
 
 		// Get the headers (metadata fields)
 		List<String> headers = getAllProjectMetadataFields(projectId);
@@ -131,7 +136,7 @@ public class ProjectLineListController {
 	 * @param model
 	 * 		{@link Model}
 	 * @param locale
-	 *   	{@link Locale}
+	 * 		{@link Locale}
 	 * @param principal
 	 * 		{@link Principal}
 	 *

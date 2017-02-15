@@ -65,8 +65,7 @@ public class ProjectSampleMetadataController {
 
 	@Autowired
 	public ProjectSampleMetadataController(MessageSource messageSource, MetadataTemplateService metadataTemplateService,
-			ProjectControllerUtils projectControllerUtils,
-			ProjectService projectService, SampleService sampleService) {
+			ProjectControllerUtils projectControllerUtils, ProjectService projectService, SampleService sampleService) {
 		this.messageSource = messageSource;
 		this.metadataTemplateService = metadataTemplateService;
 		this.projectControllerUtils = projectControllerUtils;
@@ -375,7 +374,6 @@ public class ProjectSampleMetadataController {
 	public void saveMetadataTemplate(@PathVariable long projectId,
 			@RequestParam(value = "fields[]") List<String> fields, @RequestParam String name) {
 		Project project = projectService.read(projectId);
-		// TODO: (Josh | 2017-02-07) Check to see if the name already exists.
 		List<MetadataField> metadataFields = new ArrayList<>();
 		for (String field : fields) {
 			metadataFields.add(metadataTemplateService.readMetadataFieldByLabel(field));
