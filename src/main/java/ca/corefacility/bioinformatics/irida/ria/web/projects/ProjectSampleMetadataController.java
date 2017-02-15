@@ -375,10 +375,14 @@ public class ProjectSampleMetadataController {
 	public void saveMetadataTemplate(@PathVariable long projectId,
 			@RequestParam(value = "fields[]") List<String> fields, @RequestParam String name) {
 		Project project = projectService.read(projectId);
-		// TODO: (Josh | 2017-02-07) Check to see if the name already exists.
 		List<MetadataField> metadataFields = new ArrayList<>();
 		for (String field : fields) {
-			metadataFields.add(metadataTemplateService.readMetadataFieldByLabel(field));
+			MetadataField metadataField = metadataTemplateService.readMetadataFieldByLabel(field);
+			if (metadataField == null) {
+				metadataField = new MetadataField(field, "text");
+				metadataTemplateService.saveMetadataField(metadataField);
+			}
+			metadataFields.add(metadataField);
 		}
 		MetadataTemplate template = new MetadataTemplate(name, metadataFields);
 		metadataTemplateService.createMetadataTemplateInProject(template, project);
