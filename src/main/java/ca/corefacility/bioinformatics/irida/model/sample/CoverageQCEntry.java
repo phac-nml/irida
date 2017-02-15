@@ -82,7 +82,7 @@ public class CoverageQCEntry extends QCEntry {
 	}
 
 	private int calculateCoverage() {
-		return Math.round(totalBases / project.getGenomeSize());
+		return Math.round((float) totalBases / project.getGenomeSize());
 	}
 
 }
