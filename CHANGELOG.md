@@ -14,6 +14,7 @@ Changes
 * [Administration]: Recommending enabling `prod` profile for dandelion for performance improvements.
 * [UI]: Fixed bug for users the could not select all samples on the Project > Samples page.
 * [UI]: Fixed bug where pipeline customization button could not be clicked in browser width > 758px and < 991px.
+* [UI]: Added a QC indicator to the project/samples table to indicate file processing failure or low coverage.  Also visible in the sample/files page.
 
 0.13.0 to 0.14.0
 ----------------

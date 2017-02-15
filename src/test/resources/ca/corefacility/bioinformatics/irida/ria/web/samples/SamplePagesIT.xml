@@ -82,4 +82,7 @@
 	<sample_sequencingobject id="2"
 		created_date="2013-07-18 14:20:19.0" sample_id="1"
 		sequencingobject_id="2" />
+	
+	<qc_entry id="1" created_date="2013-07-18 14:20:19.0"
+		sequencingObject_id="1" DTYPE="FileProcessorErrorQCEntry"/>
 </dataset>

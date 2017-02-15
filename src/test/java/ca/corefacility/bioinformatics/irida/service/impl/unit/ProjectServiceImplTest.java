@@ -81,6 +81,7 @@ public class ProjectServiceImplTest {
 	private UserGroupProjectJoinRepository ugpjRepository;
 	private SampleSequencingObjectJoinRepository ssoRepository;
 	private ProjectAnalysisSubmissionJoinRepository pasRepository;
+
 	private Validator validator;
 
 	@Before
@@ -96,8 +97,8 @@ public class ProjectServiceImplTest {
 		prfjRepository = mock(ProjectReferenceFileJoinRepository.class);
 		ugpjRepository = mock(UserGroupProjectJoinRepository.class);
 		projectService = new ProjectServiceImpl(projectRepository, sampleRepository, userRepository, pujRepository,
-				psjRepository, relatedProjectRepository, referenceFileRepository, prfjRepository,
-				ugpjRepository, ssoRepository, pasRepository, validator);
+				psjRepository, relatedProjectRepository, referenceFileRepository, prfjRepository, ugpjRepository,
+				ssoRepository, pasRepository, validator);
 	}
 
 	@Test
