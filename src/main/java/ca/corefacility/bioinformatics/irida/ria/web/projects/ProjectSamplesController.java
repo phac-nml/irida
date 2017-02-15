@@ -464,7 +464,12 @@ public class ProjectSamplesController {
 	 * @return a newly constructed {@link ProjectSampleModel}
 	 */
 	private ProjectSampleModel buildProjectSampleModel(ProjectSampleJoin sso) {
+		Project p = sso.getSubject();
+		
 		List<QCEntry> qcEntriesForSample = sampleService.getQCEntriesForSample(sso.getObject());
+		
+		//add the project settings for the qc entries
+		qcEntriesForSample.forEach(q -> q.addProjectSettings(p));
 		return new ProjectSampleModel(sso, qcEntriesForSample);
 	}
 

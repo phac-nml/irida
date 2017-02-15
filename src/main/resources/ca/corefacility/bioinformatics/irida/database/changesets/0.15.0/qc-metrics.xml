@@ -22,15 +22,9 @@
 					referencedColumnNames="id" foreignKeyName="FK_SEQOBJECT_QC_ENTRY"
 					nullable="false" />
 			</column>
-			<column name="positive" type="bit(1)">
-				<constraints nullable="false" />
-			</column>
 
-			<column name="coverage" type="int(11)" />
+			<column name="total_bases" type="bigint(20)" />
 		</createTable>
-
-		<addDefaultValue columnDataType="bit(1)" columnName="positive"
-			defaultValueBoolean="false" tableName="qc_entry" />
 
 		<addColumn tableName="project">
 			<column name="genome_size" type="bigint(20)" />
@@ -54,6 +48,29 @@
 			select distinct 'FileProcessorErrorQCEntry', p.id, now() FROM
 			sequence_file_single_end p INNER JOIN sequence_file s ON
 			s.id=p.file_id where s.file_path like "%.fastq.gz";
+		</sql>
+
+		<sql>
+			insert into qc_entry (DTYPE, sequencingObject_id, created_date,
+			total_bases)
+			select 'CoverageQCEntry', o.pair_id, now(),
+			sum(a.totalBases) from
+			sequence_file_pair_files o inner join
+			sequence_file f ON
+			o.files_id=f.id INNER JOIN analysis_fastqc a ON
+			f.fastqc_analysis_id=a.id group by o.pair_id;
+		</sql>
+
+		<sql>
+			insert into qc_entry (DTYPE, sequencingObject_id, created_date,
+			total_bases)
+			select 'CoverageQCEntry', o.id, now(),
+			a.totalBases
+			from
+			sequence_file_single_end o inner join
+			sequence_file f ON
+			o.file_id=f.id INNER JOIN analysis_fastqc a ON
+			f.fastqc_analysis_id=a.id;
 		</sql>
 	</changeSet>
 </databaseChangeLog>

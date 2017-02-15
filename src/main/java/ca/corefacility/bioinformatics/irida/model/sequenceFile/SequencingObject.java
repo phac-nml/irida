@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -30,6 +29,8 @@ import org.hibernate.envers.RelationTargetAuditMode;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
@@ -39,8 +40,6 @@ import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Objects that were obtained from some sequencing platform.
@@ -80,7 +79,7 @@ public abstract class SequencingObject extends IridaResourceSupport implements M
 
 	@OneToMany(mappedBy = "sequencingObject", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
 	@NotAudited
-	private List<QCEntry> qcEntries;
+	private Set<QCEntry> qcEntries;
 
 	public SequencingObject() {
 		createdDate = new Date();
@@ -172,12 +171,12 @@ public abstract class SequencingObject extends IridaResourceSupport implements M
 	}
 
 	@JsonIgnore
-	public List<QCEntry> getQcEntries() {
+	public Set<QCEntry> getQcEntries() {
 		return qcEntries;
 	}
 	
 	@JsonIgnore
-	public void setQcEntries(List<QCEntry> qcEntries) {
+	public void setQcEntries(Set<QCEntry> qcEntries) {
 		this.qcEntries = qcEntries;
 	}
 }

@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.model.sample;
 
 import javax.persistence.Entity;
 
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 
@@ -18,7 +19,7 @@ public class FileProcessorErrorQCEntry extends QCEntry {
 	}
 
 	public FileProcessorErrorQCEntry(SequencingObject sequencingObject) {
-		super(sequencingObject, false);
+		super(sequencingObject);
 	}
 
 	@Override
@@ -29,6 +30,22 @@ public class FileProcessorErrorQCEntry extends QCEntry {
 	@Override
 	public QCEntryType getType() {
 		return QCEntryType.PROCESSING;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void addProjectSettings(Project project) {
+		// Project is not required to calculate anything for this qc type.
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public QCEntryStatus getStatus() {
+		return QCEntryStatus.NEGATIVE;
 	}
 
 }
