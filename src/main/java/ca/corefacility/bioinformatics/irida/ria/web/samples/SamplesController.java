@@ -302,7 +302,6 @@ public class SamplesController extends BaseController {
 		Set<QCEntry> availableEntries = new HashSet<>();
 		if (obj.getQcEntries() != null) {
 			for (QCEntry q : obj.getQcEntries()) {
-				logger.debug("QC Entry id: " + q.getId());
 				q.addProjectSettings(project);
 				if (!q.getStatus().equals(QCEntryStatus.UNAVAILABLE)) {
 					availableEntries.add(q);
