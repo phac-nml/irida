@@ -42,7 +42,7 @@ public class CoverageFileProcessor implements FileProcessor {
 	 */
 	@Override
 	public void process(Long sequenceFileId) throws FileProcessorException {
-		logger.trace("Countring coverage for file " + sequenceFileId);
+		logger.trace("Counting coverage for file " + sequenceFileId);
 
 		// read the seqobject
 		SequencingObject read = objectRepository.findOne(sequenceFileId);
