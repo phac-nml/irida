@@ -37,14 +37,10 @@ function controller($scope, $aside, $uibModal) {
     });
   };
 
-  this.templateSelected = event => {
-    console.log(event);
-  };
-
   this.saveTemplate = () => {
     this.saving = true;
 
-    $uibModal
+    const aside = $uibModal
       .open({
         templateUrl: `save-template.tmpl.html`,
         controllerAs: '$modal',
@@ -65,10 +61,15 @@ function controller($scope, $aside, $uibModal) {
             return vm.templates;
           }
         }
-      })
+      });
+
+    aside
       .result
       .then(name => {
         saveTempalte(name);
+      })
+      .finally(() => {
+        this.saving = false;
       });
   };
 
@@ -83,11 +84,11 @@ function controller($scope, $aside, $uibModal) {
         fields
       }
     }).then(result => {
+      // TODO: (Josh | 2017-02-15) Handled in next merge request
       console.info(result);
     }, error => {
+      // TODO: (Josh | 2017-02-15) Handled in next merge request.
       console.error(error);
-    }).then(() => {
-      vm.saving = false;
     });
   }
 
