@@ -11,9 +11,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -297,9 +299,10 @@ public class SamplesController extends BaseController {
 	 *            the {@link Project} to add
 	 */
 	private void enhanceQcEntries(SequencingObject obj, Project project) {
-		List<QCEntry> availableEntries = new ArrayList<>();
+		Set<QCEntry> availableEntries = new HashSet<>();
 		if (obj.getQcEntries() != null) {
 			for (QCEntry q : obj.getQcEntries()) {
+				logger.debug("QC Entry id: " + q.getId());
 				q.addProjectSettings(project);
 				if (!q.getStatus().equals(QCEntryStatus.UNAVAILABLE)) {
 					availableEntries.add(q);

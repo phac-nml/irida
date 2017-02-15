@@ -80,7 +80,7 @@ public abstract class SequencingObject extends IridaResourceSupport implements M
 
 	@OneToMany(mappedBy = "sequencingObject", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
 	@NotAudited
-	private List<QCEntry> qcEntries;
+	private Set<QCEntry> qcEntries;
 
 	public SequencingObject() {
 		createdDate = new Date();
@@ -172,12 +172,12 @@ public abstract class SequencingObject extends IridaResourceSupport implements M
 	}
 
 	@JsonIgnore
-	public List<QCEntry> getQcEntries() {
+	public Set<QCEntry> getQcEntries() {
 		return qcEntries;
 	}
 	
 	@JsonIgnore
-	public void setQcEntries(List<QCEntry> qcEntries) {
+	public void setQcEntries(Set<QCEntry> qcEntries) {
 		this.qcEntries = qcEntries;
 	}
 }

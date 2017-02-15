@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.sample;
 
 import java.util.Date;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -114,5 +115,21 @@ public abstract class QCEntry {
 			return value;
 		}
 
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getStatus(), getType(), createdDate);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof QCEntry) {
+			QCEntry other = (QCEntry) obj;
+
+			return Objects.equals(getStatus(), other.getStatus()) && Objects.equals(getType(), other.getType())
+					&& Objects.equals(createdDate, other.getCreatedDate());
+		}
+		return false;
 	}
 }
