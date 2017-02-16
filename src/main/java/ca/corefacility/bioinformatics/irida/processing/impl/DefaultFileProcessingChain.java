@@ -8,9 +8,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.exceptions.FileProcessorTimeoutException;
+import ca.corefacility.bioinformatics.irida.model.sample.FileProcessorErrorQCEntry;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
+import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 
 /**
@@ -32,14 +35,18 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 	private Integer sleepDuration = 1000;
 
 	private final SequencingObjectRepository sequencingObjectRepository;
+	private QCEntryRepository qcRepository;
 
-	public DefaultFileProcessingChain(SequencingObjectRepository sequencingObjectRepository, FileProcessor... fileProcessors) {
-		this(sequencingObjectRepository, Arrays.asList(fileProcessors));
+	public DefaultFileProcessingChain(SequencingObjectRepository sequencingObjectRepository,
+			QCEntryRepository qcRepository, FileProcessor... fileProcessors) {
+		this(sequencingObjectRepository, qcRepository, Arrays.asList(fileProcessors));
 	}
 
-	public DefaultFileProcessingChain(SequencingObjectRepository sequencingObjectRepository, List<FileProcessor> fileProcessors) {
+	public DefaultFileProcessingChain(SequencingObjectRepository sequencingObjectRepository,
+			QCEntryRepository qcRepository, List<FileProcessor> fileProcessors) {
 		this.fileProcessors = fileProcessors;
 		this.sequencingObjectRepository = sequencingObjectRepository;
+		this.qcRepository = qcRepository;
 	}
 
 	/**
@@ -73,6 +80,10 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 					fileProcessor.process(sequencingObjectId);
 				}
 			} catch (FileProcessorException e) {
+				SequencingObject sequencingObject = sequencingObjectRepository.findOne(sequencingObjectId);
+				
+				qcRepository.save(new FileProcessorErrorQCEntry(sequencingObject));
+				
 				// if the file processor modifies the file, then just fast fail,
 				// we can't proceed with the remaining file processors. If the
 				// file processor *doesn't* modify the file, then continue with
