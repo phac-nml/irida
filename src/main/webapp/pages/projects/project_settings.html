@@ -16,11 +16,15 @@
       };
     </script>
     <style>
-        h2.settings-heading  {
-            margin-top: 0!important;
-            color: #222;
-            font-weight: 300!important;
-            font-size:  2.5rem;
+        h2.h2-muted {
+            margin-top: 0 !important;
+            font-weight: 300 !important;
+            font-size: 2.5rem;
+        }
+
+        .list-group-item.active {
+            background-color: white!important;
+            border: 1px solid #dddddd!important;
         }
     </style>
 </head>
@@ -34,11 +38,12 @@
                    class="list-group-item"
                    th:classappend="${#strings.equalsIgnoreCase(page, 'basic') ? 'active' : ''}"
                    th:text="#{project.settings.page.basic}">_Basic Settings_</a>
-                <a href=""
+                <a th:if="${project.isRemote()}"
+                   href=""
                    th:href="@{/projects/{id}/settings/remote(id=${project.getId()})}"
                    class="list-group-item"
-                   th:classappend="${#strings.equalsIgnoreCase(page, 'remote') ? 'active' : ''}" role="presentation"
-                   th:if="${project.isRemote()}"
+                   th:classappend="${#strings.equalsIgnoreCase(page, 'remote') ? 'active' : ''}"
+                   role="presentation"
                    th:text="#{project.settings.page.remote}">_Remote</a>
             </div>
         </div>
@@ -47,5 +52,8 @@
         </div>
     </div>
 </main>
+
+<th:block th:if="${#strings.equalsIgnoreCase(page, 'remote')}" layout:fragment="scripts"
+          th:replace="remote_apis/remote_api_connect"/>
 </body>
 </html>
