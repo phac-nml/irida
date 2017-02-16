@@ -66,10 +66,12 @@ function controller(DTOptionsBuilder,
   this.saveTemplate = $event => {
     const {templateName, fields} = $event;
 
-    console.log(templateName, fields);
     return LinelistService
       .saveTemplate({url: this.savetemplateurl, fields, name: templateName})
-      .then(result => console.log(result));
+      .then(result => {
+        // TODO: (Josh | 2017-02-15) This will be completed in the next merge request
+        console.log(result);
+      });
   };
 
   this.getTemplateFields = $event => {

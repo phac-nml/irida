@@ -11,9 +11,12 @@ const asideTemplateUrl = 'metadata.aside.tmpl';
  */
 function controller($scope, $aside, $uibModal) {
   const vm = this;
-  vm.selectedTemplate = vm.templates[0] || {};
-
   const ORIGINAL_ORDER = Array.from(vm.fields);
+
+  vm.$onInit = () => {
+    vm.selectedTemplate = vm.templates[0] || {};
+  };
+
   vm.showMetadataTemplator = () => {
     $aside.open({
       templateUrl: asideTemplateUrl,
@@ -39,14 +42,10 @@ function controller($scope, $aside, $uibModal) {
     });
   };
 
-  vm.templateSelected = event => {
-    console.log(event);
-  };
+  this.saveTemplate = () => {
+    this.saving = true;
 
-  vm.saveTemplate = () => {
-    vm.saving = true;
-
-    $uibModal
+    const aside = $uibModal
       .open({
         templateUrl: `save-template.tmpl.html`,
         controllerAs: '$modal',
@@ -67,10 +66,15 @@ function controller($scope, $aside, $uibModal) {
             return vm.templates;
           }
         }
-      })
+      });
+
+    aside
       .result
       .then(name => {
         saveTemplate(name);
+      })
+      .finally(() => {
+        this.saving = false;
       });
   };
 
@@ -98,11 +102,11 @@ function controller($scope, $aside, $uibModal) {
         fields
       }
     }).then(result => {
+      // TODO: (Josh | 2017-02-15) Handled in next merge request
       console.info(result);
     }, error => {
+      // TODO: (Josh | 2017-02-15) Handled in next merge request.
       console.error(error);
-    }).then(() => {
-      vm.saving = false;
     });
   }
 

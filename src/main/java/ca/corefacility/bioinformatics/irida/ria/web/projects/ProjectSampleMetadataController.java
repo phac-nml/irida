@@ -376,7 +376,12 @@ public class ProjectSampleMetadataController {
 		Project project = projectService.read(projectId);
 		List<MetadataField> metadataFields = new ArrayList<>();
 		for (String field : fields) {
-			metadataFields.add(metadataTemplateService.readMetadataFieldByLabel(field));
+			MetadataField metadataField = metadataTemplateService.readMetadataFieldByLabel(field);
+			if (metadataField == null) {
+				metadataField = new MetadataField(field, "text");
+				metadataTemplateService.saveMetadataField(metadataField);
+			}
+			metadataFields.add(metadataField);
 		}
 		MetadataTemplate template = new MetadataTemplate(name, metadataFields);
 		metadataTemplateService.createMetadataTemplateInProject(template, project);
