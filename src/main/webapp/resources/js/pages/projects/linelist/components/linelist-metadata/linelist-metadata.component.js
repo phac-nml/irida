@@ -13,13 +13,20 @@ function controller($scope, $aside, $uibModal) {
   const vm = this;
   const ORIGINAL_ORDER = Array.from(this.fields);
   this.showMetadataTemplator = () => {
+    // Open side panel to display the column headers for toggling column visibility.
     $aside.open({
       templateUrl: asideTemplateUrl,
       openedClass: 'metadata-open',
       controllerAs: '$ctrl',
-      controller(fields) {
-        this.fields = fields;
+      controller() {
+        this.fields = vm.fields;
+
+        /**
+         * UI event handler for toggling the visibility one of the table columns.
+         * @param {object} field the field to toggle.
+         */
         this.toggleField = field => {
+          // Tell the parent controller to toggle the columns on the table.
           vm.onToggleField({
             $event: {
               field
@@ -27,20 +34,19 @@ function controller($scope, $aside, $uibModal) {
           });
         };
       },
-      resolve: {
-        fields() {
-          return vm.fields;
-        }
-      },
       placement: 'left',
       size: 'sm'
     });
   };
 
+  /**
+   * UI event handling for saving the currently visible columns as a MetadataTemplate
+   */
   this.saveTemplate = () => {
     this.saving = true;
 
-    const aside = $uibModal
+    // Open a uiModal to get a name for this template.
+    $uibModal
       .open({
         templateUrl: `save-template.tmpl.html`,
         controllerAs: '$modal',
@@ -60,23 +66,27 @@ function controller($scope, $aside, $uibModal) {
             return vm.templates;
           }
         }
-      });
-
-    aside
+      })
       .result
       .then(name => {
-        saveTempalte(name);
+        saveTemplate(name);
       })
       .finally(() => {
         this.saving = false;
       });
   };
 
-  function saveTempalte(templateName) {
+  /**
+   * Save the currently visible columns and their order as a MetadataTemplate.
+   * @param {string} templateName name of the template to create.
+   */
+  function saveTemplate(templateName) {
+    // Get the names of the visible columns
     const fields = vm.fields
       .filter(field => field.selected)
       .map(field => field.text);
 
+    // This action is handled by the table so pass it up to it.
     vm.onSaveTemplate({
       $event: {
         templateName,
