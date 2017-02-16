@@ -19,6 +19,8 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
@@ -44,10 +46,12 @@ public class MetadataTemplate implements MutableIridaThing {
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_date")
+	@CreatedDate
 	private Date createdDate;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "modified_date")
+	@LastModifiedDate
 	private Date modifiedDate;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "template")
