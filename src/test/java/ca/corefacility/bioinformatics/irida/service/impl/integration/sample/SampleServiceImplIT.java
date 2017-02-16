@@ -38,6 +38,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisExcep
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
@@ -203,10 +204,10 @@ public class SampleServiceImplIT {
 
 		String latitude = "50.00";
 		String longitude = "-100.00";
-		
+
 		s.setLatitude(latitude);
 		s.setLongitude(longitude);
-		
+
 		s = sampleService.update(s);
 		assertEquals("Wrong latitude was stored.", latitude, s.getLatitude());
 		assertEquals("Wrong longitude was stored.", longitude, s.getLongitude());
@@ -352,6 +353,23 @@ public class SampleServiceImplIT {
 		samples.forEach(s -> ids.remove(s.getId()));
 		
 		assertTrue("all sample ids should be found", ids.isEmpty());
+	}
+	
+	@Test
+	@WithMockUser(username = "fbristow", roles = "ADMIN")
+	public void testGetQCEntiresForSample() {
+		Sample s = sampleService.read(1L);
+		List<QCEntry> qcEntriesForSample = sampleService.getQCEntriesForSample(s);
+
+		assertEquals("should be 1 qc entry", 1L, qcEntriesForSample.size());
+	}
+	
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "dr-evil", roles = "USER")
+	public void testGetQCEntiresForSampleNotAllowed() {
+		Sample s = new Sample();
+		s.setId(1L);
+		sampleService.getQCEntriesForSample(s);
 	}
 
 	private void assertSampleNotFound(Long id) {

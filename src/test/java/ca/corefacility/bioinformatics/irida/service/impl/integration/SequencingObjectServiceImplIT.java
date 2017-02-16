@@ -13,10 +13,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.zip.GZIPOutputStream;
 
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,10 +37,23 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseOperation;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Sets;
+
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
+import ca.corefacility.bioinformatics.irida.model.sample.CoverageQCEntry;
+import ca.corefacility.bioinformatics.irida.model.sample.FileProcessorErrorQCEntry;
+import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
+import ca.corefacility.bioinformatics.irida.model.sample.QCEntry.QCEntryStatus;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
@@ -50,16 +63,10 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseOperation;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
@@ -77,7 +84,7 @@ public class SequencingObjectServiceImplIT {
 			+ SEQUENCE + "\n+\n?????????").getBytes();
 
 	private static final String CHECKSUM = "85e440ab2f17636ab24b12e8e4b4d445b6131e7df785cbd02d56c2688eef55fb";
-	
+
 	private static final String ZIPPED_CHECKSUM = "a2ff0d0790029822b4a2457a2912414ffc532136729ad2fd06efc70fe428ab32";
 
 	@Autowired
@@ -94,6 +101,9 @@ public class SequencingObjectServiceImplIT {
 
 	@Autowired
 	private SequencingRunService sequencingRunService;
+
+	@Autowired
+	private ProjectService projectService;
 
 	@Autowired
 	@Qualifier("sequenceFileBaseDirectory")
@@ -158,7 +168,7 @@ public class SequencingObjectServiceImplIT {
 
 	@Test
 	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
-	public void testCreateSequenceFileInSample() throws IOException {
+	public void testCreateSequenceFileInSample() throws IOException, InterruptedException {
 		Sample s = sampleService.read(1L);
 		SequenceFile sf = new SequenceFile();
 		Path sequenceFile = Files.createTempFile("TEMPORARY-SEQUENCE-FILE", ".gz");
@@ -173,6 +183,47 @@ public class SequencingObjectServiceImplIT {
 
 		SequencingRun mr = sequencingRunService.read(1L);
 		sequencingRunService.addSequencingObjectToSequencingRun(mr, so);
+
+		// Wait 5 seconds. file processing should have failed by then.
+		Thread.sleep(5000);
+
+		Sample readSample = sampleService.read(s.getId());
+
+		List<QCEntry> qcEntries = sampleService.getQCEntriesForSample(readSample);
+
+		assertEquals("should be one qc entries", 1, qcEntries.size());
+		QCEntry qcEntry = qcEntries.iterator().next();
+		assertTrue("should be coverage entry", qcEntry instanceof CoverageQCEntry);
+		CoverageQCEntry coverage = (CoverageQCEntry) qcEntry;
+		assertEquals("should be 18 bases", 18, coverage.getTotalBases());
+	}
+
+	@Test
+	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
+	public void testCreateCorruptSequenceFileInSample() throws IOException, InterruptedException {
+		Sample s = sampleService.read(1L);
+		SequenceFile sf = new SequenceFile();
+		Path sequenceFile = Files.createTempFile("TEMPORARY-SEQUENCE-FILE", ".gz");
+		OutputStream gzOut = Files.newOutputStream(sequenceFile);
+		gzOut.write("not a file".getBytes());
+		gzOut.close();
+
+		sf.setFile(sequenceFile);
+		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
+
+		objectService.createSequencingObjectInSample(so, s);
+
+		// Wait 5 seconds. file processing should have failed by then.
+		Thread.sleep(5000);
+
+		Sample readSample = sampleService.read(s.getId());
+
+		List<QCEntry> qcEntries = sampleService.getQCEntriesForSample(readSample);
+
+		assertFalse("should be a qc entry", qcEntries.isEmpty());
+		QCEntry qc = qcEntries.iterator().next();
+
+		assertTrue("should be a FileProcessorErrorQCEntry", qc instanceof FileProcessorErrorQCEntry);
 	}
 
 	@Test
@@ -306,7 +357,7 @@ public class SequencingObjectServiceImplIT {
 		assertFalse("File name is still gzipped.", sf.getFile().getFileName().toString().endsWith(".gz"));
 		AnalysisFastQC analysis = asRole(Role.ROLE_ADMIN, "admin").analysisService
 				.getFastQCAnalysisForSequenceFile(readObject, sf.getId());
-		
+
 		// verify the file checksum was taken properly
 		assertEquals("checksum should be equal", ZIPPED_CHECKSUM, sf.getUploadSha256());
 
@@ -353,5 +404,58 @@ public class SequencingObjectServiceImplIT {
 		SequenceFile read = sequencingObject.getFileWithId(1L);
 		assertEquals("5", read.getOptionalProperty("samplePlate"));
 		assertEquals("10", read.getOptionalProperty("sampleWell"));
+	}
+
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testCoverage() throws IOException, InterruptedException {
+		Project project = projectService.read(1L);
+		project.setGenomeSize(3L);
+		project.setRequiredCoverage(2);
+
+		project = projectService.update(project);
+
+		Sample s = sampleService.read(1L);
+		SequenceFile sf = new SequenceFile();
+		Path sequenceFile = Files.createTempFile("TEMPORARY-SEQUENCE-FILE", ".gz");
+		OutputStream gzOut = new GZIPOutputStream(Files.newOutputStream(sequenceFile));
+		gzOut.write(FASTQ_FILE_CONTENTS);
+		gzOut.close();
+
+		sf.setFile(sequenceFile);
+		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
+
+		objectService.createSequencingObjectInSample(so, s);
+
+		SequencingRun mr = sequencingRunService.read(1L);
+		sequencingRunService.addSequencingObjectToSequencingRun(mr, so);
+
+		// Wait 5 seconds. file processing should have run by then.
+		Thread.sleep(5000);
+
+		Sample readSample = sampleService.read(s.getId());
+
+		List<QCEntry> qcEntries = sampleService.getQCEntriesForSample(readSample);
+
+		assertEquals("should be one qc entry", 1, qcEntries.size());
+		QCEntry qcEntry = qcEntries.iterator().next();
+		qcEntry.addProjectSettings(project);
+
+		assertTrue("should be coverage entry", qcEntry instanceof CoverageQCEntry);
+		assertEquals("qc should have passed", QCEntryStatus.POSITIVE, qcEntry.getStatus());
+		assertEquals("should be 6x coverage", "6x", qcEntry.getMessage());
+
+		project.setRequiredCoverage(10);
+		project = projectService.update(project);
+
+		// Wait 5 seconds. file processing should have run by then.
+		Thread.sleep(5000);
+
+		qcEntries = sampleService.getQCEntriesForSample(readSample);
+		assertEquals("should be one qc entry", 1, qcEntries.size());
+		qcEntry = qcEntries.iterator().next();
+		qcEntry.addProjectSettings(project);
+		assertTrue("should be coverage entry", qcEntry instanceof CoverageQCEntry);
+		assertEquals("qc should have failed", QCEntryStatus.NEGATIVE, qcEntry.getStatus());
 	}
 }
