@@ -53,6 +53,8 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 		page.gotoPage(SAMPLE_ID);
 		assertTrue("Page Title contains the sample label", page.getPageTitle().contains(SAMPLE_LABEL));
 		assertEquals("Displays the correct number of sequence files", 3, page.getSequenceFileCount());
+		assertEquals("should be 1 qc entry", 1, page.getQcEntryCount());
+		
 		page.checkBreadCrumbs(BREADCRUMBS);
 	}
 	

@@ -147,6 +147,7 @@ public class ProjectSettingsController {
 				User user = userService.getUserByUsername(principal.getName());
 				remoteStatus.setReadBy(user);
 				updates.put("remoteStatus", remoteStatus);
+
 				message = messageSource
 						.getMessage("project.settings.notifications.sync.userchange", new Object[] {}, locale);
 			} catch (Exception ex) {
@@ -200,6 +201,37 @@ public class ProjectSettingsController {
 					.getMessage("project.settings.notifications.assemble.disabled", new Object[] { read.getLabel() },
 							locale);
 		}
+
+		return ImmutableMap.of("result", message);
+	}
+
+	/**
+	 * Update the coverage QC setting of a {@link Project}
+	 *
+	 * @param projectId
+	 * 		the ID of a {@link Project}
+	 * @param genomeSize
+	 * 		the genomeSize to set for the project
+	 * @param requiredCoverage
+	 * 		coverage needed for qc to pass
+	 * @param locale
+	 * 		locale of the user
+	 *
+	 * @return success message if successful
+	 */
+	@RequestMapping(value = "/coverage", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, String> updateCoverageSetting(@PathVariable Long projectId, @RequestParam Long genomeSize,
+			@RequestParam Integer requiredCoverage, Locale locale) {
+		Project read = projectService.read(projectId);
+
+		Map<String, Object> updates = new HashMap<>();
+		updates.put("requiredCoverage", requiredCoverage);
+		updates.put("genomeSize", genomeSize);
+
+		projectService.updateProjectSettings(read, updates);
+
+		String message = messageSource.getMessage("project.settings.notifications.coverage.updated", null, locale);
 
 		return ImmutableMap.of("result", message);
 	}
