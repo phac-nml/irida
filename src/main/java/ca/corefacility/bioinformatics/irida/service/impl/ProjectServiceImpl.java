@@ -92,7 +92,8 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implements ProjectService {
 
 	// settings that can be updated locally for a remote project
-	public List<String> VALID_LOCAL_SETTINGS = Lists.newArrayList("assembleUploads", "syncFrequency", "remoteStatus");
+	public List<String> VALID_LOCAL_SETTINGS = Lists.newArrayList("assembleUploads", "syncFrequency", "remoteStatus",
+			"genomeSize", "requiredCoverage");
 
 	private static final Logger logger = LoggerFactory.getLogger(ProjectServiceImpl.class);
 

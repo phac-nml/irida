@@ -16,6 +16,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -23,9 +24,12 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.hibernate.envers.RelationTargetAuditMode;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
@@ -33,10 +37,9 @@ import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
+import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Objects that were obtained from some sequencing platform.
@@ -64,15 +67,19 @@ public abstract class SequencingObject extends IridaResourceSupport implements M
 
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sequencingObject")
 	private SampleSequencingObjectJoin sample;
-	
+
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "automated_assembly", unique = true, nullable = true)
 	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 	private AnalysisSubmission automatedAssembly;
-	
+
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "remote_status")
 	private RemoteStatus remoteStatus;
+
+	@OneToMany(mappedBy = "sequencingObject", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+	@NotAudited
+	private Set<QCEntry> qcEntries;
 
 	public SequencingObject() {
 		createdDate = new Date();
@@ -143,23 +150,33 @@ public abstract class SequencingObject extends IridaResourceSupport implements M
 	public int hashCode() {
 		return Objects.hash(createdDate);
 	}
-	
+
 	@JsonIgnore
 	public AnalysisSubmission getAutomatedAssembly() {
 		return automatedAssembly;
 	}
-	
+
 	public void setAutomatedAssembly(AnalysisSubmission automatedAssembly) {
 		this.automatedAssembly = automatedAssembly;
 	}
-	
+
 	@Override
 	public RemoteStatus getRemoteStatus() {
 		return remoteStatus;
 	}
-	
+
 	@Override
 	public void setRemoteStatus(RemoteStatus remoteStatus) {
 		this.remoteStatus = remoteStatus;
+	}
+
+	@JsonIgnore
+	public Set<QCEntry> getQcEntries() {
+		return qcEntries;
+	}
+	
+	@JsonIgnore
+	public void setQcEntries(Set<QCEntry> qcEntries) {
+		this.qcEntries = qcEntries;
 	}
 }
