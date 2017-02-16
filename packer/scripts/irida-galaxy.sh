@@ -19,6 +19,8 @@ EOF
 
 # install docker so that we can pull down the IRIDA Galaxy Docker container:
 yum -y install docker-engine
+# switch to `devicemapper` for docker as I found the that the IRIDA Galaxy docker image failed to run with the default storage driver (overlay)
+sed -i -e 's@ExecStart=/usr/bin/dockerd@ExecStart=/usr/bin/dockerd --storage-driver=devicemapper@' /usr/lib/systemd/system/docker.service
 systemctl enable docker
 systemctl start docker
 
