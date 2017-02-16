@@ -10,7 +10,7 @@ This guide describes the Best Practices for UI Development on the IRIDA Platform
 Font Awesome Icons
 ==================
 
-The IRIDA UI relies heavily on [Font Awesome](http://fortawesome.github.io/Font-Awesome/) for vector icons. 
+The IRIDA UI relies heavily on [Font Awesome](http://fortawesome.github.io/Font-Awesome/) for font icons. 
 
 ### Commonly Used Icons
 
