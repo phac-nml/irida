@@ -11,3 +11,7 @@ Single-end files will appear in the sample alone:
 Paired-end files will appear in a pair:
 
 ![Paired-end sequencing file.]({{ site.baseurl }}/images/tutorials/common/samples/sample-sequence-file-paired-end.png)
+
+Quality control information for a sequence file may appear below the file:
+
+![File QC]({{ site.baseurl }}/images/tutorials/common/samples/sequence-file-qc.png)

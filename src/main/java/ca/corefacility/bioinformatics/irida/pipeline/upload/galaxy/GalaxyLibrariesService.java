@@ -7,6 +7,7 @@ import static com.google.common.base.Preconditions.checkState;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -20,7 +21,9 @@ import java.util.concurrent.TimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.corefacility.bioinformatics.irida.exceptions.UploadErrorException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.exceptions.UploadTimeoutException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteGalaxyObjectFailedException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
@@ -33,6 +36,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.GalaxyObject;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryDataset;
+import com.google.common.collect.Lists;
 import com.sun.jersey.api.client.ClientResponse;
 
 /**
@@ -47,7 +51,7 @@ public class GalaxyLibrariesService {
 
 	private LibrariesClient librariesClient;
 	
-	private final ExecutorService executor = Executors.newFixedThreadPool(1);
+	private final ExecutorService executor;
 
 	private final int libraryPollingTime;
 	private final int libraryUploadTimeout;
@@ -56,6 +60,12 @@ public class GalaxyLibrariesService {
 	 * State a library dataset should be in on proper upload.
 	 */
 	private static final String LIBRARY_OK_STATE = "ok";
+	
+	/**
+	 * Failure states for a library dataset.  Derived from
+	 * https://github.com/galaxyproject/galaxy/blob/release_16.10/lib/galaxy/model/__init__.py#L1645
+	 */
+	private static List<String> LIBRARY_FAIL_STATES = Lists.newArrayList("paused", "error", "failed_metadata", "discarded");
 
 	/**
 	 * Builds a new GalaxyLibrariesService with the given LibrariesClient.
@@ -67,20 +77,26 @@ public class GalaxyLibrariesService {
 	 * @param libraryUploadTimeout
 	 *            The timeout (in seconds) for waiting for files to be uploaded
 	 *            to a library.
+	 * @param threadPoolSize
+	 *            The thread pool size for parallel polling of Galaxy to check if uploads are finished.
 	 */
 	public GalaxyLibrariesService(LibrariesClient librariesClient, final int libraryPollingTime,
-			final int libraryUploadTimeout) {
+			final int libraryUploadTimeout, final int threadPoolSize) {
 		checkNotNull(librariesClient, "librariesClient is null");
 		checkArgument(libraryPollingTime > 0, "libraryPollingTime=" + libraryPollingTime + " must be positive");
 		checkArgument(libraryUploadTimeout > 0, "libraryUploadTimeout=" + libraryUploadTimeout + " must be positive");
 		checkArgument(libraryUploadTimeout > libraryPollingTime, "libraryUploadTimeout=" + libraryUploadTimeout
 				+ " must be greater then libraryPollingTime=" + libraryPollingTime);
+		checkArgument(threadPoolSize > 0, "threadPoolSize=" + threadPoolSize + " must be positive");
 		
-		logger.debug("Setting libraryPollingTime=" + libraryPollingTime + ", libraryUploadTimeout=" + libraryUploadTimeout);
+		logger.debug("Setting libraryPollingTime=" + libraryPollingTime + ", libraryUploadTimeout=" + libraryUploadTimeout 
+				+ ", threadPoolSize=" + threadPoolSize);
 
 		this.librariesClient = librariesClient;
 		this.libraryPollingTime = libraryPollingTime;
 		this.libraryUploadTimeout = libraryUploadTimeout;
+		
+		executor = Executors.newFixedThreadPool(threadPoolSize);
 	}
 	
 	/**
@@ -207,6 +223,13 @@ public class GalaxyLibrariesService {
 	
 							libraryDataset = librariesClient.showDataset(
 									library.getId(), datasetLibraryId);
+
+							if (LIBRARY_FAIL_STATES.contains(libraryDataset.getState())) {
+								throw new UploadErrorException("Error: upload to Galaxy library id=" + library.getId()
+										+ " name=" + library.getName() + " for dataset id=" + datasetLibraryId
+										+ " name=" + libraryDataset.getName() + " failed with state="
+										+ libraryDataset.getState());
+							}
 						}
 					}
 					
@@ -217,7 +240,15 @@ public class GalaxyLibrariesService {
 			waitForLibraries.get(libraryUploadTimeout, TimeUnit.SECONDS);
 		} catch (RuntimeException e) {
 			throw new UploadException(e);
-		} catch (ExecutionException | InterruptedException | TimeoutException e) {
+		} catch (TimeoutException e) {
+			throw new UploadTimeoutException("Timeout while uploading, time limit = " + libraryUploadTimeout + " seconds", e);
+		} catch (ExecutionException e) {
+			if (e.getCause() instanceof UploadErrorException) {
+				throw (UploadErrorException)e.getCause();
+			} else {
+				throw new UploadException(e);
+			}
+		} catch (InterruptedException e) {
 			throw new UploadException(e);
 		}
 

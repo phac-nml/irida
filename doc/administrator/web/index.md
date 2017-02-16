@@ -43,11 +43,11 @@ Deploying IRIDA mainly involves deploying the `WAR` file into your Servlet conta
 
 Servlet Container Configuration
 -------------------------------
-One environment variable needs to be set in your Servlet container for IRIDA to function correctly: `spring.profiles.active=prod`.
+Two environment variables needs to be set in your Servlet container for IRIDA to function correctly: `spring.profiles.active=prod`, and `dandelion.profile.active=prod`.
 
-You can adjust this variable in Tomcat by editing (depending on your distribution) `/etc/tomcat/tomcat.conf` (CentOS) or `/etc/default/tomcat7` (Ubuntu), and finding the `JAVA_OPTS` variable and setting `spring.profiles.active`:
+You can adjust these variables in Tomcat by editing (depending on your distribution) `/etc/tomcat/tomcat.conf` (CentOS) or `/etc/default/tomcat7` (Ubuntu), and finding the `JAVA_OPTS` variable and setting the variables as shown below:
 
-    JAVA_OPTS="-Dspring.profiles.active=prod"
+    JAVA_OPTS="-Dspring.profiles.active=prod -Ddandelion.profile.active=prod"
 
 Core Configuration
 ------------------
@@ -78,6 +78,7 @@ The main configuration parameters you will need to change are:
   * `galaxy.execution.url=http://localhost/`
   * `galaxy.execution.apiKey=xxxx`
   * `galaxy.execution.email=user@localhost`
+  * `irida.workflow.max-running=4` - The maximum number of running workflows.  For larger installations this number can be increased.
 4. **NCBI SRA export configuration** - An SRA bulk upload user account must be created with NCBI to allow automated SRA uploads.  See [NCBI SRA Handbook](http://www.ncbi.nlm.nih.gov/books/NBK47529/#_SRA_Quick_Sub_BK_Establishing_a_Center_A_) for details.
   * `ncbi.upload.host` - FTP host to upload ncbi exports
   * `ncbi.upload.user` - FTP Username

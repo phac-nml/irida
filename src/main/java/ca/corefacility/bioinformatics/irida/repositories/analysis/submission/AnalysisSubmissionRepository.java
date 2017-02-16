@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.repositories.analysis.submission;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -32,6 +33,17 @@ public interface AnalysisSubmissionRepository extends IridaJpaRepository<Analysi
 	 */
 	@Query("select s from AnalysisSubmission s where s.analysisState = ?1")
 	public List<AnalysisSubmission> findByAnalysisState(AnalysisState state);
+	
+	/**
+	 * Loads up a list of {@link AnalysisSubmission}s with the given state.
+	 * 
+	 * @param state
+	 *            A collection of states to search for.
+	 * @return A {@link List} of {@link AnalysisSubmission} objects with the
+	 *         given state.
+	 */
+	@Query("select s from AnalysisSubmission s where s.analysisState in ?1")
+	public List<AnalysisSubmission> findByAnalysisState(Collection<AnalysisState> state);
 
 	/**
 	 * Loads up a list of {@link AnalysisSubmission}s with the given states.
