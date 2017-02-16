@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.concurrent.Future;
 
-import javax.transaction.Transactional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,7 +70,6 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 	 * {@inheritDoc}
 	 */
 	@Override
-	@Transactional
 	public Future<AnalysisSubmission> downloadSubmissionFiles(AnalysisSubmission analysisSubmission) {
 		checkArgument(AnalysisState.NEW.equals(analysisSubmission.getAnalysisState()), "analysis state should be "
 				+ AnalysisState.NEW);
@@ -87,7 +84,6 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 	 * {@inheritDoc}
 	 */
 	@Override
-	@Transactional
 	public Future<AnalysisSubmission> prepareSubmission(final AnalysisSubmission analysisSubmission)
 			throws IridaWorkflowNotFoundException, IOException, ExecutionManagerException {
 		checkArgument(AnalysisState.FINISHED_DOWNLOADING.equals(analysisSubmission.getAnalysisState()), "analysis state should be "
@@ -103,7 +99,6 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 	 * {@inheritDoc}
 	 */
 	@Override
-	@Transactional
 	public Future<AnalysisSubmission> executeAnalysis(AnalysisSubmission analysisSubmission)
 			throws ExecutionManagerException, IridaWorkflowException {
 		checkArgument(AnalysisState.PREPARED.equals(analysisSubmission.getAnalysisState()), " analysis should be "
@@ -119,7 +114,6 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 	 * {@inheritDoc} 
 	 */
 	@Override
-	@Transactional
 	public Future<AnalysisSubmission> transferAnalysisResults(AnalysisSubmission submittedAnalysis)
 			throws ExecutionManagerException, IOException, IridaWorkflowNotFoundException, IridaWorkflowAnalysisTypeException {
 		checkArgument(AnalysisState.FINISHED_RUNNING.equals(submittedAnalysis.getAnalysisState()),
@@ -147,7 +141,6 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 	 * {@inheritDoc}
 	 */
 	@Override
-	@Transactional
 	public Future<AnalysisSubmission> cleanupSubmission(AnalysisSubmission analysisSubmission)
 			throws ExecutionManagerException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
