@@ -45,8 +45,7 @@ function controller($scope, $aside, $uibModal) {
         templateUrl: `save-template.tmpl.html`,
         controllerAs: '$modal',
         controller: function(templates, $uibModalInstance) {
-          this.template = {};
-          this.templates = [{name: 'fred'}, {name: 'johny'}];
+          this.template = templates || {};
 
           this.cancel = () => {
             $uibModalInstance.dismiss();
