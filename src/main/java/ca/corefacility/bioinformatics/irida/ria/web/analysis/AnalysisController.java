@@ -1,7 +1,11 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -10,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -49,6 +54,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisSISTRTyping;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
@@ -76,7 +82,8 @@ import com.google.common.collect.ImmutableMap;
 public class AnalysisController {
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisController.class);
 	// PAGES
-	public static final Map<AnalysisType, String> PREVIEWS = ImmutableMap.of(AnalysisType.PHYLOGENOMICS, "tree");
+	public static final Map<AnalysisType, String> PREVIEWS = ImmutableMap
+			.of(AnalysisType.PHYLOGENOMICS, "tree", AnalysisType.SISTR_TYPING, "sistr");
 	private static final String BASE = "analysis/";
 	public static final String PAGE_DETAILS_DIRECTORY = BASE + "details/";
 	public static final String PREVIEW_UNAVAILABLE = PAGE_DETAILS_DIRECTORY + "unavailable";
@@ -208,6 +215,8 @@ public class AnalysisController {
 			if (submission.getAnalysisState().equals(AnalysisState.COMPLETED)) {
 				if (analysisType.equals(AnalysisType.PHYLOGENOMICS)) {
 					tree(submission, model);
+				} else if (analysisType.equals(AnalysisType.SISTR_TYPING)) {
+					model.addAttribute("sistr", true);
 				}
 			}
 
@@ -441,6 +450,32 @@ public class AnalysisController {
 				submissions.getTotalElements());
 
 		return DatatablesResponse.build(dataSet, criterias);
+	}
+
+	@RequestMapping("/ajax/sistr/{id}") @ResponseBody public String getSistrAnalysis(@PathVariable Long id) {
+		AnalysisSubmission submission = analysisSubmissionService.read(id);
+		String result = "";
+
+		// Get details about the workflow
+		UUID workflowUUID = submission.getWorkflowId();
+		IridaWorkflow iridaWorkflow;
+		try {
+			iridaWorkflow = workflowsService.getIridaWorkflow(workflowUUID);
+		} catch (IridaWorkflowNotFoundException e) {
+			logger.error("Error finding workflow, ", e);
+			throw new EntityNotFoundException("Couldn't find workflow for submission " + submission.getId(), e);
+		}
+		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription().getAnalysisType();
+		if (analysisType.equals(AnalysisType.SISTR_TYPING)) {
+			AnalysisSISTRTyping analysis = (AnalysisSISTRTyping) submission.getAnalysis();
+			Path path = analysis.getSISTRResults().getFile();
+			try {
+				result = new Scanner(new BufferedReader(new FileReader(path.toFile()))).useDelimiter("\\Z").next();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
 	}
 
 	/**

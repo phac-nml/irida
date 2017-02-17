@@ -40,6 +40,7 @@
 				<th:block th:if="${isCompleted} and ${preview}">
 					<sub-nav-item state="preview" data:text="#{analysis.tab.preview}"></sub-nav-item>
 				</th:block>
+				<sub-nav-item th:if="${sistr}" state="sistr" text="Sistr"></sub-nav-item>
 				<sub-nav-item state="inputs" data:text="#{analysis.tab.input-files}"></sub-nav-item>
 				<th:block th:if="${isCompleted}">
 					<sub-nav-item state="provenance" data:text="#{analysis.tab.provenance}"></sub-nav-item>
@@ -85,6 +86,24 @@
 					</phylocanvas>
 				</div>
 				<div th:unless="${isCompleted} and ${preview}"></div>
+			</script>
+
+			<script type="text/ng-template" id="sistr.html">
+				<h2>Serovar Prediction</h2>
+				<table class="table table-bordered">
+					<tr ng-repeat="item in sistrCtrl.serotype_predictions_order">
+						<td width="30%"><strong ng-bind="item"></strong></td>
+						<td ng-bind="sistrCtrl.serotype_predictions[item]" style="word-wrap: break-word;"></td>
+					</tr>
+				</table>
+				<br/>
+				<h2>cgMLST</h2>
+				<table class="table table-bordered">
+					<tr ng-repeat="item in sistrCtrl.cgMLST_predictions_order">
+						<td width="30%"><strong ng-bind="item"></strong></td>
+						<td ng-bind="sistrCtrl.cgMLST_predictions[item]" style="word-wrap: break-word;"></td>
+					</tr>
+				</table>
 			</script>
 
 			<script type="text/ng-template" id="inputs.html" th:with="fileCount = ${#lists.size(paired_end) + #lists.size(remote_paired)}">
