@@ -10,7 +10,8 @@
             },
             urls: {
                 'assemble': /*[[@{/projects/{id}/settings/assemble(id=${project.getId()})}]]*/ '/projects/1/settings/assemble',
-                'sync': /*[[@{/projects/{id}/settings/sync(id=${project.getId()})}]]*/ '/projects/1/settings/sync'
+                'sync': /*[[@{/projects/{id}/settings/sync(id=${project.getId()})}]]*/ '/projects/1/settings/sync',
+                'coverage': /*[[@{/projects/{id}/settings/coverage(id=${project.getId()})}]]*/ '/projects/1/settings/coverage'
             }
         };
     </script>
@@ -21,11 +22,52 @@
     <div class="panel panel-default">
       <div class="panel-heading" th:text="#{project.settings.basic.heading}">_Basic project settings_</div>
       <div class="panel-body">
-        <div class="checkbox">
-          <label>
-            <input id="assemble" type="checkbox" value="assemble" th:checked="${project.assembleUploads}"/>
-            <span th:text="#{project.settings.assemble}">_Automatically assemble uploads_</span>
+        <div class="form-group">
+          <label class="control-label" th:text="#{project.settings.assemble}">_Assembly_</label>
+          <div class="checkbox">
+            <label>
+              <input id="assemble" type="checkbox" value="assemble" th:checked="${project.assembleUploads}"/>
+              <span th:text="#{project.settings.assemble.control}">_Automatically assemble uploads_</span>
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label">
+            <span th:text="#{project.settings.coverage}">_Coverage_</span>
+            <button id="edit-coverage-btn" class="btn btn-xs btn-default edit-coverage" th:text="#{form.btn.edit}">_Edit_</button>
+            <button id="coverage-cancel" class="btn btn-default btn-xs edit-coverage" style="display: none" type="button" th:text="#{form.btn.cancel}">_cancel_</button>
+            <button id="coverage-save" class="btn btn-success btn-xs edit-coverage" style="display: none" type="button" th:text="#{form.btn.update}">_save_</button>
           </label>
+          <div id="display-coverage" class="row edit-coverage">
+            <div class="col-md-3">
+              <label for="required-coverage-display" th:text="#{project.settings.coverage.required_coverage}">_Required Coverage_</label>
+              <span id="required-coverage-display" th:if="${project.requiredCoverage != NULL}" th:text="${project.requiredCoverage} + 'x'"></span>
+              <span id="required-coverage-display" th:if="${project.requiredCoverage == NULL}"  th:text="#{project.settings.notset}">N/A</span>
+            </div>
+
+            <div class="col-md-4">
+              <label for="genome-size-display" th:text="#{project.settings.coverage.genome_size}">_Genome Size_</label>
+              <span id="genome-size-display" th:if="${project.genomeSize != NULL}" th:text="${project.genomeSize} + 'bp'"></span>
+              <span id="genome-size-display" th:if="${project.genomeSize == NULL}" th:text="#{project.settings.notset}">N/A</span>
+            </div>
+          </div>
+          <div id="edit-coverage" class="form row edit-coverage" style="display: none">
+            <div class="col-md-3">
+              <label for="required-coverage" th:text="#{project.settings.coverage.required_coverage}">_Required Coverage_</label>
+              <div class="input-group">
+                <input class="form-control" type="text" id="required-coverage" th:value="${project.requiredCoverage}"/>
+                <div class="input-group-addon">x</div>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <label for="genome-size" th:text="#{project.settings.coverage.genome_size}">_Genome Size_</label>
+              <div class="input-group">
+                <input class="form-control" type="text" id="genome-size" th:value="${project.genomeSize}" size="10"/>
+                <div class="input-group-addon">bp</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -37,7 +79,7 @@
           <label class="control-label" th:text="#{project.settings.sync.lastSync}">_Last Sync_</label>
           <div>
             <span th:text="${#calendars.format(project.getRemoteStatus().getLastUpdate(), 'dd MMM yyyy hh:mma')}"></span>
-            <button id="forceSync" role="button" class="btn btn-primary btn-sm" th:text="#{project.settings.sync.forceSync}">_Force Sync_</button>
+            <button id="forceSync" role="button" class="btn btn-default btn-sm" th:text="#{project.settings.sync.forceSync}">_Force Sync_</button>
           </div>
         </div>
         <div class="form-group">
@@ -63,7 +105,7 @@
           <div>
             <a href="#" th:text="${status.getReadBy().getLabel()}" th:href="@{/users/{id}(id=${status.getReadBy().getId()})}">_User</a>
             <span class="api-connected-action" hidden="hidden">
-              <button id="becomeSyncUser" role="button" class="btn btn-primary btn-sm" th:text="#{project.settings.sync.becomeSyncUser}">_Become owner_</button>
+              <button id="becomeSyncUser" role="button" class="btn btn-default btn-sm" th:text="#{project.settings.sync.becomeSyncUser}">_Become owner_</button>
             </span>
           </div>
         </div>

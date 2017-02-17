@@ -43,6 +43,10 @@ public class SampleFilesPage extends AbstractPage {
 		return driver.findElement(By.id("sample-name")).getText();
 	}
 	
+	public int getQcEntryCount() {
+		return driver.findElements(By.className("qc-item")).size();
+	}
+	
 	public void deleteFirstFile(){
 		WebElement removeButton = driver.findElements(By.className("remove-file")).iterator().next();
 		removeButton.click();

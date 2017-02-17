@@ -54,7 +54,7 @@ public class GalaxyLibrariesServiceTest {
 	 */
 	@Test(expected=IllegalArgumentException.class)
 	public void testZeroPollingTime() {
-		new GalaxyLibrariesService(librariesClient, 0, 1);
+		new GalaxyLibrariesService(librariesClient, 0, 1, 1);
 	}
 	
 	/**
@@ -62,7 +62,7 @@ public class GalaxyLibrariesServiceTest {
 	 */
 	@Test(expected=IllegalArgumentException.class)
 	public void testZeroUploadTimeout() {
-		new GalaxyLibrariesService(librariesClient, 1, 0);
+		new GalaxyLibrariesService(librariesClient, 1, 0, 1);
 	}
 	
 	/**
@@ -70,7 +70,7 @@ public class GalaxyLibrariesServiceTest {
 	 */
 	@Test(expected=IllegalArgumentException.class)
 	public void testEqualPollingTimeUploadTimeout() {
-		new GalaxyLibrariesService(librariesClient, 1, 1);
+		new GalaxyLibrariesService(librariesClient, 1, 1, 1);
 	}
 	
 	/**
@@ -78,7 +78,15 @@ public class GalaxyLibrariesServiceTest {
 	 */
 	@Test
 	public void testSuccessfullTimeoutValues() {
-		new GalaxyLibrariesService(librariesClient, 1, 2);
+		new GalaxyLibrariesService(librariesClient, 1, 2, 1);
+	}
+	
+	/**
+	 * Tests using unsuccessful thread value.
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void testFailThreadValue() {
+		new GalaxyLibrariesService(librariesClient, 1, 2, 0);
 	}
 	
 	/**
@@ -90,7 +98,7 @@ public class GalaxyLibrariesServiceTest {
 		when(librariesClient.createLibrary(any(Library.class))).thenReturn(
 				testLibrary);
 
-		Library library = new GalaxyLibrariesService(librariesClient, 1, 2).buildEmptyLibrary(new GalaxyProjectName(
+		Library library = new GalaxyLibrariesService(librariesClient, 1, 2, 1).buildEmptyLibrary(new GalaxyProjectName(
 				"test"));
 
 		assertNotNull(library);
@@ -107,6 +115,6 @@ public class GalaxyLibrariesServiceTest {
 	public void testBuildEmptyLibraryFail() throws CreateLibraryException {
 		when(librariesClient.createLibrary(any(Library.class))).thenReturn(null);
 
-		new GalaxyLibrariesService(librariesClient, 1, 2).buildEmptyLibrary(new GalaxyProjectName("test"));
+		new GalaxyLibrariesService(librariesClient, 1, 2, 1).buildEmptyLibrary(new GalaxyProjectName("test"));
 	}
 }

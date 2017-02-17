@@ -27,8 +27,7 @@
      * @private
      */
     function _getFilterState() {
-      var filters = {};
-      Object.assign(filters, page.ajaxParam);
+      var filters = ng.extend({}, filters, page.ajaxParam);
       var searchTerm = document.querySelector(".dataTables_filter input").value;
       filters.search = searchTerm;
       return filters;

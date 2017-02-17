@@ -59,8 +59,8 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 	@Autowired
 	public SequencingObjectServiceImpl(SequencingObjectRepository repository,
 			SequenceFileRepository sequenceFileRepository, SampleSequencingObjectJoinRepository ssoRepository,
-			@Qualifier("fileProcessingChainExecutor") TaskExecutor executor, FileProcessingChain fileProcessingChain,
-			Validator validator) {
+			@Qualifier("fileProcessingChainExecutor") TaskExecutor executor,
+			@Qualifier("uploadFileProcessingChain") FileProcessingChain fileProcessingChain, Validator validator) {
 		super(repository, validator, SequencingObject.class);
 		this.repository = repository;
 		this.ssoRepository = ssoRepository;

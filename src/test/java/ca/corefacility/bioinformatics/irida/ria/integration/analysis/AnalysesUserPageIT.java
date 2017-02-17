@@ -44,8 +44,8 @@ public class AnalysesUserPageIT extends AbstractIridaUIITChromeDriver {
 		AnalysesUserPage page = AnalysesUserPage.initializePage(driver());
 		assertEquals("Should be 8 analyses displayed on the page", 8, page.getNumberOfAnalyses());
 
-		page.filterByState("New");
-		assertEquals("Should be 1 analysis in the state of 'NEW'", 1, page.getNumberOfAnalyses());
+		page.filterByState("Queued");
+		assertEquals("Should be 1 analysis in the state of 'NEW/Queued'", 1, page.getNumberOfAnalyses());
 
 		page.filterByState("Completed");
 		assertEquals("Should be 2 analysis in the state of 'COMPLETED'", 2, page.getNumberOfAnalyses());
