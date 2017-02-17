@@ -14,7 +14,7 @@ function controller($scope, $aside, $uibModal) {
   const ORIGINAL_ORDER = Array.from(vm.fields);
 
   vm.$onInit = () => {
-    vm.selectedTemplate = vm.templates[0] || {};
+    vm.selectedTemplate = vm.templates[vm.activeTemplate];
   };
 
   vm.showMetadataTemplator = () => {
@@ -22,13 +22,8 @@ function controller($scope, $aside, $uibModal) {
       templateUrl: asideTemplateUrl,
       openedClass: 'metadata-open',
       controllerAs: '$ctrl',
-      controller(fields) {
-        this.fields = fields;
-      },
-      resolve: {
-        fields() {
-          return vm.fields;
-        }
+      controller() {
+        this.fields = vm.fields;
       },
       placement: 'left',
       size: 'sm'
@@ -43,8 +38,7 @@ function controller($scope, $aside, $uibModal) {
         templateUrl: `save-template.tmpl.html`,
         controllerAs: '$modal',
         controller: function(templates, $uibModalInstance) {
-          this.template = {};
-          this.templates = [{name: 'fred'}, {name: 'johny'}];
+          this.template = templates;
 
           this.cancel = () => {
             $uibModalInstance.dismiss();
@@ -70,28 +64,18 @@ function controller($scope, $aside, $uibModal) {
   };
 
   vm.templateSelected = () => {
-    if (vm.selectedTemplate.id !== 'all') {
+    if (vm.selectedTemplate.id === 'all') {
+      vm.fields.forEach(field => {
+        field.visible = true;
+      });
+    } else {
       vm.onGetTemplateFields({
         $event: {
           templateId: vm.selectedTemplate.id
         }
       })
         .then(columns => {
-          const oldCols = Array.from(vm.dtColumns);
-          const newCols = [];
-
-          columns.forEach(col => {
-            for (let i = 0; i < oldCols.length; i++) {
-              const c = oldCols[i];
-              if (c.sTitle === col.label) {
-                c.visible = true;
-                newCols.push(c);
-                oldCols.splice(i, 1);
-                break;
-              }
-            }
-          });
-          vm.dtColumns = [...newCols, ...oldCols];
+          vm.fields = columns;
         });
     }
   };
@@ -137,7 +121,8 @@ export const MetadataComponent = {
     fields: '=',
     templates: '<',
     onSaveTemplate: '&',
-    onGetTemplateFields: '&'
+    onGetTemplateFields: '&',
+    activeTemplate: '<'
   },
   controller
 };

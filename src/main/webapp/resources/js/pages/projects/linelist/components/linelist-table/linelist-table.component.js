@@ -6,11 +6,10 @@ function controller(DTOptionsBuilder,
                     $scope,
                     $compile) {
   const $ctrl = this;
-  // This will be used by the child component to control which columns are visible
-  this.fields = this.headers
-    .map((header, index) => {
-      return ({text: header, index, selected: true});
-    });
+  $ctrl.$onInit = () => {
+    $ctrl.currentTemplate = 0;
+  };
+
   this.templates = LinelistService.getTemplates();
 
   this.dtOptions = DTOptionsBuilder
@@ -38,6 +37,7 @@ function controller(DTOptionsBuilder,
 <metadata-component 
     fields="$ctrl.dtColumns"
     templates="$ctrl.templates"
+    active-template="$ctrl.currentTemplate"
     on-toggle-field="$ctrl.toggleColumn($event)"
     on-save-template="$ctrl.saveTemplate($event)"
     on-get-template-fields="$ctrl.getTemplateFields($event)">
@@ -73,30 +73,35 @@ function controller(DTOptionsBuilder,
 
   this.getTemplateFields = $event => {
     const {templateId} = $event;
+
+    // Make sure that the current template index is indicated since the metadata component
+    // will be redrawn.
+    this.currentTemplate = this.templates.findIndex(template => {
+      return template.id === templateId;
+    });
+
     return LinelistService
-      .getTemplateFields({templateId, url: this.gettemplatefieldsurl})
+      .getTemplateFields({templateId, url: $ctrl.gettemplatefieldsurl})
       .then(columns => {
-        let dtCols = Array.from(this.dtColumns);
-        let newCols = [];
-        // Need to reorder the columns
-        columns.forEach(c => {
-          for (let i = 0; i < dtCols.length; i++) {
-            const e = Object.assign({}, dtCols[i]);
-            if (c.label === e.sTitle) {
-              dtCols.splice(i, 1);
-              e.visible = true;
-              newCols.push(e);
+        const oldCols = Array.from($ctrl.dtColumns);
+        const newCols = [];
+
+        columns.forEach(col => {
+          for (let i = 0; i < oldCols.length; i++) {
+            const c = oldCols[i];
+            if (c.sTitle === col.label) {
+              c.visible = true;
+              newCols.push(c);
+              oldCols.splice(i, 1);
               break;
             }
           }
         });
-        dtCols.forEach(c => {
-          c.visible = false;
+        oldCols.forEach(col => {
+          col.visible = false;
         });
-        this.dtColumns = newCols.concat(dtCols);
-
-        // TODO: Need to return the order and what is visible somehow?
-        return columns;
+        $ctrl.dtColumns = [...newCols, ...oldCols];
+        return $ctrl.dtColumns;
       });
   };
 }
