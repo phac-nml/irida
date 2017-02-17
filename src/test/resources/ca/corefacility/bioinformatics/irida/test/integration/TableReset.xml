@@ -84,6 +84,7 @@
 
 	<announcement />
 	<announcement_user />
+	<qc_entry />
 
 	<metadata_field/>
 	<metadata_template/>

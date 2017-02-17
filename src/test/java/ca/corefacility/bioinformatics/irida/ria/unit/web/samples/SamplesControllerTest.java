@@ -170,7 +170,7 @@ public class SamplesControllerTest {
 				Lists.newArrayList(new ProjectSampleJoin(project, sample)));
 		when(projectService.userHasProjectRole(user, project, ProjectRole.PROJECT_OWNER)).thenReturn(true);
 
-		String sampleFiles = controller.getSampleFiles(model, sampleId, principal);
+		String sampleFiles = controller.getSampleFilesWithoutProject(model, sampleId, principal);
 
 		assertEquals(SamplesController.SAMPLE_FILES_PAGE, sampleFiles);
 		assertTrue((boolean) model.get(SamplesController.MODEL_ATTR_CAN_MANAGE_SAMPLE));
@@ -200,7 +200,7 @@ public class SamplesControllerTest {
 				.thenReturn(files);
 		when(userService.getUserByUsername(userName)).thenReturn(user);
 
-		String sampleFiles = controller.getSampleFiles(model, sampleId, principal);
+		String sampleFiles = controller.getSampleFilesWithoutProject(model, sampleId, principal);
 
 		assertEquals(SamplesController.SAMPLE_FILES_PAGE, sampleFiles);
 		assertTrue((boolean) model.get(SamplesController.MODEL_ATTR_CAN_MANAGE_SAMPLE));
@@ -238,7 +238,7 @@ public class SamplesControllerTest {
 		when(userService.getUsersForProject(project)).thenReturn(
 				(Lists.newArrayList(new ProjectUserJoin(project, user, ProjectRole.PROJECT_USER))));
 
-		String sampleFiles = controller.getSampleFiles(model, sampleId, principal);
+		String sampleFiles = controller.getSampleFilesWithoutProject(model, sampleId, principal);
 
 		assertEquals(SamplesController.SAMPLE_FILES_PAGE, sampleFiles);
 		assertFalse((boolean) model.get(SamplesController.MODEL_ATTR_CAN_MANAGE_SAMPLE));

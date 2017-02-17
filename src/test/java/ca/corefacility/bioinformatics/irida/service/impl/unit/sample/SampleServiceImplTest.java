@@ -2,9 +2,7 @@ package ca.corefacility.bioinformatics.irida.service.impl.unit.sample;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -18,6 +16,8 @@ import javax.validation.ValidatorFactory;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
@@ -33,12 +33,11 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFast
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleMetadataRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.service.impl.sample.SampleServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-
-import com.google.common.collect.Lists;
 
 /**
  * Unit tests for {@link SampleServiceImpl}.
@@ -52,6 +51,7 @@ public class SampleServiceImplTest {
 	private AnalysisRepository analysisRepository;
 	private SampleMetadataRepository sampleMetadataRepository;
 	private SampleSequencingObjectJoinRepository ssoRepository;
+	private QCEntryRepository qcEntryRepository;
 	private Validator validator;
 
 	/**
@@ -65,11 +65,13 @@ public class SampleServiceImplTest {
 		psjRepository = mock(ProjectSampleJoinRepository.class);
 		analysisRepository = mock(AnalysisRepository.class);
 		ssoRepository = mock(SampleSequencingObjectJoinRepository.class);
-		
+		sampleMetadataRepository = mock(SampleMetadataRepository.class);
+		qcEntryRepository = mock(QCEntryRepository.class);
+
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		validator = factory.getValidator();
 		sampleService = new SampleServiceImpl(sampleRepository, psjRepository, analysisRepository,
-				ssoRepository, sampleMetadataRepository, validator);
+				ssoRepository, qcEntryRepository, sampleMetadataRepository, validator);
 
 	}
 

@@ -36,6 +36,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
@@ -47,6 +48,7 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisReposi
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleMetadataRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleSpecification;
@@ -74,6 +76,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	
 	private SampleSequencingObjectJoinRepository ssoRepository;
 	
+	private QCEntryRepository qcEntryRepository;
+
 	/**
 	 * Reference to {@link AnalysisRepository}.
 	 */
@@ -92,19 +96,24 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 *            the analysis repository.
 	 * @param ssoRepository
 	 *            The {@link SampleSequencingObjectJoin} repository
+	 * @param sampleDataRepository
+	 * 			  {@link SampleMetadataRepository} the repository for story sample metadata
+	 * @param qcEntryRepository
+	 *            a repository for storing and reading {@link QCEntry}
 	 * @param validator
 	 *            validator.
 	 */
 	@Autowired
 	public SampleServiceImpl(SampleRepository sampleRepository, ProjectSampleJoinRepository psjRepository,
 			final AnalysisRepository analysisRepository, SampleSequencingObjectJoinRepository ssoRepository,
-			SampleMetadataRepository sampleDataRepository, Validator validator) {
+			QCEntryRepository qcEntryRepository, SampleMetadataRepository sampleDataRepository, Validator validator) {
 		super(sampleRepository, validator, Sample.class);
 		this.sampleRepository = sampleRepository;
 		this.psjRepository = psjRepository;
 		this.analysisRepository = analysisRepository;
 		this.ssoRepository = ssoRepository;
 		this.sampleDataRepository = sampleDataRepository;
+		this.qcEntryRepository = qcEntryRepository;
 	}
 	
 	/**
@@ -402,6 +411,16 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	@Transactional(readOnly = true)
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
+	public List<QCEntry> getQCEntriesForSample(Sample sample) {
+		return qcEntryRepository.getQCEntriesForSample(sample);
+	}
+
+	/**
 	 * Verify that the given sort properties array is not null or empty. If it
 	 * is, give a default sort property.
 	 * 
@@ -446,7 +465,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 		return sampleDataRepository.save(metadata);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */

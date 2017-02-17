@@ -260,7 +260,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	public void selectSample(int row) {
 		// Need to get the anything but the first column as that is a link to the sample!
-		WebElement checkbox = tableRows.get(row).findElements(By.cssSelector("td")).get(2);
+		WebElement checkbox = tableRows.get(row).findElement(By.cssSelector("td input[type='checkbox']"));
 		checkbox.click();
 	}
 
