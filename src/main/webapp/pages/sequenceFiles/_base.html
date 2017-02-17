@@ -23,7 +23,7 @@
         </div>
     </div>
 </nav>
-<div layout:fragment="page">
+<div layout:fragment="page" ddl:bundle-includes="sequence-files">
     <div th:if="!${fastQC}" id="fastQC-no-run" class="alert alert-info" role="alert">
         <h1 id="wb-cont" role="heading" th:text="${file.getLabel()}"></h1>
         <b th:text="#{sf.no-results}">There is no FastQC data available for this file.</b>
