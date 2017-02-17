@@ -24,13 +24,6 @@ function controller($scope, $aside, $uibModal) {
       controllerAs: '$ctrl',
       controller(fields) {
         this.fields = fields;
-        this.toggleField = field => {
-          vm.onToggleField({
-            $event: {
-              field
-            }
-          });
-        };
       },
       resolve: {
         fields() {
@@ -45,7 +38,7 @@ function controller($scope, $aside, $uibModal) {
   this.saveTemplate = () => {
     this.saving = true;
 
-    const aside = $uibModal
+    $uibModal
       .open({
         templateUrl: `save-template.tmpl.html`,
         controllerAs: '$modal',
@@ -66,9 +59,7 @@ function controller($scope, $aside, $uibModal) {
             return vm.templates;
           }
         }
-      });
-
-    aside
+      })
       .result
       .then(name => {
         saveTemplate(name);
@@ -86,15 +77,29 @@ function controller($scope, $aside, $uibModal) {
         }
       })
         .then(columns => {
-          console.log(this.fields, columns);
+          const oldCols = Array.from(vm.dtColumns);
+          const newCols = [];
+
+          columns.forEach(col => {
+            for (let i = 0; i < oldCols.length; i++) {
+              const c = oldCols[i];
+              if (c.sTitle === col.label) {
+                c.visible = true;
+                newCols.push(c);
+                oldCols.splice(i, 1);
+                break;
+              }
+            }
+          });
+          vm.dtColumns = [...newCols, ...oldCols];
         });
     }
   };
 
   function saveTemplate(templateName) {
     const fields = vm.fields
-      .filter(field => field.selected)
-      .map(field => field.text);
+      .filter(field => field.visible)
+      .map(field => field.sTitle);
 
     vm.onSaveTemplate({
       $event: {
@@ -131,7 +136,6 @@ export const MetadataComponent = {
   bindings: {
     fields: '=',
     templates: '<',
-    onToggleField: '&',
     onSaveTemplate: '&',
     onGetTemplateFields: '&'
   },

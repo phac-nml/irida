@@ -68,13 +68,12 @@
                          ng-repeat="field in $ctrl.fields track by $index">
                         <div class="col-sm-12">
                             <input type="checkbox"
-                                   ng-change="$ctrl.toggleField(field)"
                                    bs-switch=""
                                    switch-size="small"
                                    switch-on-color="success"
-                                   ng-model="field.selected"
+                                   ng-model="field.visible"
                                    switch-label-width="200"
-                                   switch-label="{{ field.text }}"
+                                   switch-label="{{ field.sTitle }}"
                                    switch-readonly="{{ $index === 0 }}"
                             />
                             <small class="text-info" ng-if="$index === 0" th:text="#{linelist.columns.first-warning}">

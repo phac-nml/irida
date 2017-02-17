@@ -36,7 +36,7 @@ function controller(DTOptionsBuilder,
       if (div.getElementsByTagName('metadata-component').length === 0) {
         div.innerHTML = `
 <metadata-component 
-    fields="$ctrl.fields"
+    fields="$ctrl.dtColumns"
     templates="$ctrl.templates"
     on-toggle-field="$ctrl.toggleColumn($event)"
     on-save-template="$ctrl.saveTemplate($event)"
@@ -48,7 +48,7 @@ function controller(DTOptionsBuilder,
     });
 
   this.dtColumns = this.headers.map(header => {
-    return DTColumnBuilder
+    const col = DTColumnBuilder
       .newColumn(header)
       .withTitle(header)
       .renderWith(data => {
@@ -56,12 +56,9 @@ function controller(DTOptionsBuilder,
         // example formatting date columns.
         return data.value;
       });
+    col.visible = true;
+    return col;
   });
-
-  this.toggleColumn = $event => {
-    const field = $event.field;
-    this.dtColumns[field.index].visible = field.selected;
-  };
 
   this.saveTemplate = $event => {
     const {templateName, fields} = $event;
