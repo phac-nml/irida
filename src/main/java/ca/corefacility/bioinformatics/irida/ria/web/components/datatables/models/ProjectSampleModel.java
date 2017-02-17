@@ -4,6 +4,7 @@ import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 
 import com.google.common.collect.ImmutableList;
@@ -35,10 +36,12 @@ public class ProjectSampleModel extends AbstractExportModel {
 	);
 	private Project project;
 	private Sample sample;
+	private List<QCEntry> qcEntries;
 
-	public ProjectSampleModel(ProjectSampleJoin psj) {
+	public ProjectSampleModel(ProjectSampleJoin psj, List<QCEntry> qcEntries) {
 		this.project = psj.getSubject();
 		this.sample = psj.getObject();
+		this.qcEntries = qcEntries;
 	}
 
 	public static String generateSortName(String name) {
@@ -107,5 +110,9 @@ public class ProjectSampleModel extends AbstractExportModel {
 
 	public String getLongitude() {
 		return checkNullStrings(sample.getLongitude());
+	}
+	
+	public List<QCEntry> getQcEntries(){
+		return qcEntries;
 	}
 }

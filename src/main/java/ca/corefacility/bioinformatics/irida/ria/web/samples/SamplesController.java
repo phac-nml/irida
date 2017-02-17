@@ -11,9 +11,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,6 +41,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
+import ca.corefacility.bioinformatics.irida.model.sample.QCEntry.QCEntryStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
@@ -104,15 +108,14 @@ public class SamplesController extends BaseController {
 
 	private final ProjectService projectService;
 	private final UserService userService;
-	
+
 	private final SequencingObjectService sequencingObjectService;
 
 	private final MessageSource messageSource;
 
 	@Autowired
 	public SamplesController(SampleService sampleService, UserService userService, ProjectService projectService,
-			SequencingObjectService sequencingObjectService, 
-			MessageSource messageSource) {
+			SequencingObjectService sequencingObjectService, MessageSource messageSource) {
 		this.sampleService = sampleService;
 		this.userService = userService;
 		this.projectService = projectService;
@@ -154,7 +157,8 @@ public class SamplesController extends BaseController {
 	 *            The id for the sample
 	 * @return The name of the edit page
 	 */
-	@RequestMapping(value = { "/samples/{sampleId}/edit", "/projects/{projectId}/samples/{sampleId}/edit" }, method = RequestMethod.GET)
+	@RequestMapping(value = { "/samples/{sampleId}/edit",
+			"/projects/{projectId}/samples/{sampleId}/edit" }, method = RequestMethod.GET)
 	public String getEditSampleSpecificPage(final Model model, @PathVariable Long sampleId) {
 		logger.debug("Getting sample edit for sample [" + sampleId + "]");
 		if (!model.containsAttribute(MODEL_ERROR_ATTR)) {
@@ -271,25 +275,42 @@ public class SamplesController extends BaseController {
 	 *
 	 * @param model
 	 *            Spring {@link Model}
+	 * @param projectId
+	 *            the id of the {@link Project} the sample is in
 	 * @param sampleId
 	 *            Sample id
 	 * @param principal
 	 *            a reference to the logged in user.
 	 * @return a Map representing all files (pairs and singles) for the sample.
 	 */
-	@RequestMapping(value = { "/samples/{sampleId}/sequenceFiles",
-			"/projects/{projectId}/samples/{sampleId}/sequenceFiles" })
-	public String getSampleFiles(final Model model, @PathVariable Long sampleId, Principal principal) {
+	@RequestMapping(value = { "/projects/{projectId}/samples/{sampleId}/sequenceFiles" })
+	public String getSampleFiles(final Model model, @PathVariable Long projectId, @PathVariable Long sampleId,
+			Principal principal) {
 		Sample sample = sampleService.read(sampleId);
 		model.addAttribute("sampleId", sampleId);
 
-		Collection<SampleSequencingObjectJoin> filePairJoins = sequencingObjectService.getSequencesForSampleOfType(
-				sample, SequenceFilePair.class);
-		Collection<SampleSequencingObjectJoin> singleFileJoins = sequencingObjectService.getSequencesForSampleOfType(
-				sample, SingleEndSequenceFile.class);
+		Collection<SampleSequencingObjectJoin> filePairJoins = sequencingObjectService
+				.getSequencesForSampleOfType(sample, SequenceFilePair.class);
+		Collection<SampleSequencingObjectJoin> singleFileJoins = sequencingObjectService
+				.getSequencesForSampleOfType(sample, SingleEndSequenceFile.class);
 
 		List<SequencingObject> filePairs = filePairJoins.stream().map(SampleSequencingObjectJoin::getObject)
 				.collect(Collectors.toList());
+
+		// get the project if available
+		Project project = null;
+		if (projectId != null) {
+			project = projectService.read(projectId);
+		}
+
+		// add project to qc entries and filter any unavailable entries
+		for (SequencingObject f : filePairs) {
+			enhanceQcEntries(f, project);
+		}
+
+		for (SampleSequencingObjectJoin f : singleFileJoins) {
+			enhanceQcEntries(f.getObject(), project);
+		}
 
 		// SequenceFile
 		model.addAttribute("paired_end", filePairs);
@@ -302,11 +323,53 @@ public class SamplesController extends BaseController {
 	}
 
 	/**
-	 * Redirect user to the project sequenceFile page.  This was added to support links that previously
-	 * existed and may be bookmarked. These url require the "/sequenceFiles" to prevent loading errors.
+	 * Get the page that shows the files belonging to that sample.
+	 *
+	 * @param model
+	 *            Spring {@link Model}
+	 * @param sampleId
+	 *            Sample id
+	 * @param principal
+	 *            a reference to the logged in user.
+	 * @return a Map representing all files (pairs and singles) for the sample.
+	 */
+	@RequestMapping("/samples/{sampleId}/sequenceFiles")
+	public String getSampleFilesWithoutProject(final Model model, @PathVariable Long sampleId, Principal principal) {
+		return getSampleFiles(model, null, sampleId, principal);
+	}
+
+	/**
+	 * Adds the {@link Project} to any {@link QCEntry} within a
+	 * {@link SequencingObject}. If the {@link QCEntry} reports as
+	 * {@link QCEntryStatus#UNAVAILABLE} after being enhanced it is removed from
+	 * the list
+	 * 
+	 * @param obj
+	 *            the {@link SequencingObject} to enhance
+	 * @param project
+	 *            the {@link Project} to add
+	 */
+	private void enhanceQcEntries(SequencingObject obj, Project project) {
+		Set<QCEntry> availableEntries = new HashSet<>();
+		if (obj.getQcEntries() != null) {
+			for (QCEntry q : obj.getQcEntries()) {
+				q.addProjectSettings(project);
+				if (!q.getStatus().equals(QCEntryStatus.UNAVAILABLE)) {
+					availableEntries.add(q);
+				}
+			}
+		}
+
+		obj.setQcEntries(availableEntries);
+	}
+
+	/**
+	 * Redirect user to the project sequenceFile page. This was added to support
+	 * links that previously existed and may be bookmarked. These url require
+	 * the "/sequenceFiles" to prevent loading errors.
 	 *
 	 * @param request{@link
-	 * 		HttpServletRequest}
+	 * 			HttpServletRequest}
 	 *
 	 * @return {@link String} with the project sequence file URL
 	 */
@@ -344,10 +407,8 @@ public class SamplesController extends BaseController {
 		try {
 			sampleService.removeSequencingObjectFromSample(sample, sequencingObject);
 			attributes.addFlashAttribute("fileDeleted", true);
-			attributes.addFlashAttribute(
-					"fileDeletedMessage",
-					messageSource.getMessage("samples.files.removed.message",
-							new Object[] { sequencingObject.getLabel() }, locale));
+			attributes.addFlashAttribute("fileDeletedMessage", messageSource.getMessage("samples.files.removed.message",
+					new Object[] { sequencingObject.getLabel() }, locale));
 		} catch (Exception e) {
 			logger.error("Could not remove sequence file from sample: ", e);
 			attributes.addFlashAttribute("fileDeleted", true);
@@ -369,7 +430,7 @@ public class SamplesController extends BaseController {
 	 *            HTTP response object to update response status if there's an
 	 *            error.
 	 * @throws IOException
-	 * 			  on upload failure
+	 *             on upload failure
 	 */
 	@RequestMapping(value = { "/samples/{sampleId}/sequenceFiles/upload" })
 	public void uploadSequenceFiles(@PathVariable Long sampleId,
@@ -384,34 +445,32 @@ public class SamplesController extends BaseController {
 			createSequenceFilePairsInSample(list, sample);
 		}
 
-		for (MultipartFile file: singleFiles) {
+		for (MultipartFile file : singleFiles) {
 			createSequenceFileInSample(file, sample);
 		}
 	}
 
 	/**
-	 * Utility method to get a l{@link List} of {@link Sample}s based on their ids.
+	 * Utility method to get a l{@link List} of {@link Sample}s based on their
+	 * ids.
 	 *
 	 * @param sampleIds
-	 * 		{@link List} of {@link Sample} ids
-	 * @param projectId {@link Long} identifier for the current {@link Project}
+	 *            {@link List} of {@link Sample} ids
+	 * @param projectId
+	 *            {@link Long} identifier for the current {@link Project}
 	 *
-	 * @return {@link List} 
+	 * @return {@link List}
 	 */
-	@RequestMapping(value ="/samples/idList", method = RequestMethod.POST)
+	@RequestMapping(value = "/samples/idList", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> getSampleListByIdList(@RequestParam(value = "sampleIds[]") List<Long> sampleIds, @RequestParam Long projectId) {
+	public Map<String, Object> getSampleListByIdList(@RequestParam(value = "sampleIds[]") List<Long> sampleIds,
+			@RequestParam Long projectId) {
 		List<Sample> list = (List<Sample>) sampleService.readMultiple(sampleIds);
 		List<Map<String, String>> result = new ArrayList<>();
 		for (Sample sample : list) {
-			result.add(ImmutableMap.of(
-					"label", sample.getSampleName(),
-					"href", linkTo(
-							methodOn(RESTProjectSamplesController.class).getProjectSample(
-									projectId, sample.getId()
-							)
-					).withSelfRel().getHref()
-			));
+			result.add(ImmutableMap.of("label", sample.getSampleName(), "href",
+					linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sample.getId()))
+							.withSelfRel().getHref()));
 		}
 
 		return ImmutableMap.of("samples", result);
@@ -478,11 +537,11 @@ public class SamplesController extends BaseController {
 	private boolean isProjectManagerForSample(Sample sample, Principal principal) {
 		User userByUsername = userService.getUserByUsername(principal.getName());
 
-		//if the sample is remote nobody should be able to edit
-		if(sample.isRemote()){
+		// if the sample is remote nobody should be able to edit
+		if (sample.isRemote()) {
 			return false;
 		}
-		
+
 		if (userByUsername.getSystemRole().equals(Role.ROLE_ADMIN)) {
 			return true;
 		}

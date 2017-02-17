@@ -284,6 +284,23 @@ To enable automated assemblies, check the *Automatically assemble data uploaded 
 
 ![Automated assembly check](images/project-settings-automated-assembly.png)
 
+#### Project coverage
+
+IRIDA can calculate the coverage of uploaded sequencing data for a sample.  To enable this a genome size and expected coverage must be set for a project.
+
+* **Required Coverage** - The coverage expected by any sequencing data being uploaded to the project.
+* **Genome Size** - The size of the genome of the organism being targeted by the project.
+
+To edit coverage settings, click the `Edit` button.
+
+![Coverage Edit Button](images/project-settings-coverage-edit-button.png)
+
+You can then enter your coverage settings and click `Update`.
+
+![Coverage Update](images/project-settings-coverage-update.png) 
+
+When these options are set IRIDA will flag any samples which do not meet the expected coverage requirement in the [project/samples list](/user/user/samples/#viewing-samples-in-a-project).  It will also display the coverage for a sample when you [view sequence files for a sample](/user/user/samples/#viewing-sequence-files). 
+
 #### Remote project settings
 
 Settings for remote synchronized projects can also be managed from the project settings page.  These settings will only appear for synchronized projects.

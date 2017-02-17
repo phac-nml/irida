@@ -37,7 +37,7 @@ public class ProjectSamplesTableExport extends TableExport {
 	 */
 	public HtmlTable generateHtmlTable(Page<ProjectSampleJoin> page, HttpServletRequest request) {
 
-		List<ProjectSampleModel> samples = page.getContent().stream().map(ProjectSampleModel::new)
+		List<ProjectSampleModel> samples = page.getContent().stream().map(j -> new ProjectSampleModel(j, null))
 				.collect(Collectors.toList());
 
 		HtmlTableBuilder.ColumnStep steps = new HtmlTableBuilder<ProjectSampleModel>()

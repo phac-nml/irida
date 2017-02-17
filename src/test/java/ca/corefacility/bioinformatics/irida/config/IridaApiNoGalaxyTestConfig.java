@@ -92,7 +92,7 @@ public class IridaApiNoGalaxyTestConfig {
 	
 	@Bean
 	public GalaxyLibrariesService galaxyLibrariesService(LibrariesClient librariesClient) {
-		return new GalaxyLibrariesService(librariesClient, 5, 60);
+		return new GalaxyLibrariesService(librariesClient, 5, 60, 1);
 	}
 	
 	@Bean

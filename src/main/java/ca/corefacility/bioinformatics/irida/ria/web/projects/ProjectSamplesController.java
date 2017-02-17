@@ -62,6 +62,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
@@ -452,12 +453,30 @@ public class ProjectSamplesController {
 				utils.getSortDirection(), utils.getSortProperty());
 
 		// Create a more usable Map of the sample data.
-		List<ProjectSampleModel> models = page.getContent().stream().map(ProjectSampleModel::new)
+		List<ProjectSampleModel> models = page.getContent().stream().map(j -> buildProjectSampleModel(j))
 				.collect(Collectors.toList());
 
 		DataSet<ProjectSampleModel> dataSet = new DataSet<>(models, page.getTotalElements(),
 				page.getTotalElements());
 		return DatatablesResponse.build(dataSet, criterias);
+	}
+
+	/**
+	 * Build a {@link ProjectSampleModel} object for a given {@link Sample}
+	 * 
+	 * @param sso
+	 *            a {@link ProjectSampleJoin} to build the
+	 *            {@link ProjectSampleModel} from
+	 * @return a newly constructed {@link ProjectSampleModel}
+	 */
+	private ProjectSampleModel buildProjectSampleModel(ProjectSampleJoin sso) {
+		Project p = sso.getSubject();
+		
+		List<QCEntry> qcEntriesForSample = sampleService.getQCEntriesForSample(sso.getObject());
+		
+		//add the project settings for the qc entries
+		qcEntriesForSample.forEach(q -> q.addProjectSettings(p));
+		return new ProjectSampleModel(sso, qcEntriesForSample);
 	}
 
 	/**

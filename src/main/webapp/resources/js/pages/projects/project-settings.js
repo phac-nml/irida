@@ -19,6 +19,37 @@ var projectSettings = (function(page, notifications) {
             }
         });
     });
+
+    $("#coverage-save").on("click", function() {
+        var genomeSize = $("#genome-size").val();
+        var requiredCoverage = $("#required-coverage").val();
+
+        $.ajax({
+            url: page.urls.coverage,
+            type: 'POST',
+            data: {
+                genomeSize: genomeSize,
+                requiredCoverage: requiredCoverage
+            }, 
+            statusCode : {
+                200 : function(response){
+                    notifications.show({'msg': response.result});
+                    
+                    $("#required-coverage-display").html(requiredCoverage + "x");
+                    $("#genome-size-display").html(genomeSize + "bp");
+
+                    $(".edit-coverage").toggle();
+                }
+            },
+            fail : function(){
+                notifications.show({'msg': page.i18n.error, type:"error"});
+            }
+        });
+    });
+
+    $("#edit-coverage-btn, #coverage-cancel").on("click", function() {
+        $(".edit-coverage").toggle();
+    });
     
     $(".sync-setting").change(function(){
         var freq = $(this).val();
