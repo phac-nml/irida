@@ -1,15 +1,17 @@
 import {EVENTS} from './../../constants';
-const templateUrl = 'metadata.button.tmpl';
-const asideTemplateUrl = 'metadata.aside.tmpl';
 
 /**
  * Controller for MetadataComponent. Handles displaying toggles
- * for hiding and showing metadata columns,
+ * for hiding and showing metadata columns.
+ *
  * @param {object} $scope angular DOM scope reference.
  * @param {object} $aside Reference to the angular-aside instance
  * @param {object} $uibModal Reference to the angular-bootstrap modal instance
+ *
+ * @description
+ *
  */
-function controller($scope, $aside, $uibModal) {
+function MetadataController($scope, $aside, $uibModal) {
   const vm = this;
   const ORIGINAL_ORDER = Array.from(vm.fields);
 
@@ -19,7 +21,7 @@ function controller($scope, $aside, $uibModal) {
 
   vm.showMetadataTemplator = () => {
     $aside.open({
-      templateUrl: asideTemplateUrl,
+      templateUrl: 'metadata.aside.tmpl',
       openedClass: 'metadata-open',
       controllerAs: '$ctrl',
       controller() {
@@ -80,6 +82,10 @@ function controller($scope, $aside, $uibModal) {
     }
   };
 
+  /**
+   * Save the currently visible fields as a MetadataTemplate
+   * @param {string} templateName name for the new template
+   */
   function saveTemplate(templateName) {
     const fields = vm.fields
       .filter(field => field.visible)
@@ -110,10 +116,10 @@ function controller($scope, $aside, $uibModal) {
   });
 }
 
-controller.$inject = ['$scope', '$aside', '$uibModal'];
+MetadataController.$inject = ['$scope', '$aside', '$uibModal'];
 
 export const MetadataComponent = {
-  templateUrl,
+  templateUrl: 'metadata.button.tmpl',
   require: {
     parent: '^^linelistTable'
   },
@@ -124,5 +130,5 @@ export const MetadataComponent = {
     onGetTemplateFields: '&',
     activeTemplate: '<'
   },
-  controller
+  controller: MetadataController
 };

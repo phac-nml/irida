@@ -7,12 +7,14 @@ function controller(DTOptionsBuilder,
                     $compile) {
   const $ctrl = this;
   $ctrl.$onInit = () => {
+    $ctrl.templates = LinelistService.getTemplates();
+  };
+
+  $ctrl.$postLink = () => {
     $ctrl.currentTemplate = 0;
   };
 
-  this.templates = LinelistService.getTemplates();
-
-  this.dtOptions = DTOptionsBuilder
+  $ctrl.dtOptions = DTOptionsBuilder
     .fromFnPromise(() => {
       return LinelistService.getMetadata();
     })
@@ -47,7 +49,7 @@ function controller(DTOptionsBuilder,
       }
     });
 
-  this.dtColumns = this.headers.map(header => {
+  $ctrl.dtColumns = this.headers.map(header => {
     const col = DTColumnBuilder
       .newColumn(header)
       .withTitle(header)
@@ -60,23 +62,23 @@ function controller(DTOptionsBuilder,
     return col;
   });
 
-  this.saveTemplate = $event => {
+  $ctrl.saveTemplate = $event => {
     const {templateName, fields} = $event;
 
     return LinelistService
-      .saveTemplate({url: this.savetemplateurl, fields, name: templateName})
+      .saveTemplate({url: $ctrl.savetemplateurl, fields, name: templateName})
       .then(result => {
         // TODO: (Josh | 2017-02-15) This will be completed in the next merge request
         console.log(result);
       });
   };
 
-  this.getTemplateFields = $event => {
+  $ctrl.getTemplateFields = $event => {
     const {templateId} = $event;
 
     // Make sure that the current template index is indicated since the metadata component
     // will be redrawn.
-    this.currentTemplate = this.templates.findIndex(template => {
+    $ctrl.currentTemplate = $ctrl.templates.findIndex(template => {
       return template.id === templateId;
     });
 

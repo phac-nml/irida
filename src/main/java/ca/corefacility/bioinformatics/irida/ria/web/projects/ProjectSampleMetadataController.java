@@ -36,7 +36,6 @@ import org.springframework.web.multipart.MultipartFile;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.MetadataImportFileTypeNotSupportedError;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataField;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
@@ -357,33 +356,5 @@ public class ProjectSampleMetadataController {
 	@ResponseBody
 	public SampleMetadataStorage getProjectSampleMetadata(HttpSession session, @PathVariable long projectId) {
 		return (SampleMetadataStorage) session.getAttribute("pm-" + projectId);
-	}
-
-	/**
-	 * Save a list a {@link MetadataField} as a {@link MetadataTemplate}
-	 *
-	 * @param projectId
-	 * 		identifier for the current {@link Project}
-	 * @param fields
-	 * 		{@link List} of {@link String} names of {@link MetadataField}
-	 * @param name
-	 * 		{@link String} name for the new template.
-	 */
-	@RequestMapping(value = "/templates/save", method = RequestMethod.POST)
-	@ResponseBody
-	public void saveMetadataTemplate(@PathVariable long projectId,
-			@RequestParam(value = "fields[]") List<String> fields, @RequestParam String name) {
-		Project project = projectService.read(projectId);
-		List<MetadataField> metadataFields = new ArrayList<>();
-		for (String field : fields) {
-			MetadataField metadataField = metadataTemplateService.readMetadataFieldByLabel(field);
-			if (metadataField == null) {
-				metadataField = new MetadataField(field, "text");
-				metadataTemplateService.saveMetadataField(metadataField);
-			}
-			metadataFields.add(metadataField);
-		}
-		MetadataTemplate template = new MetadataTemplate(name, metadataFields);
-		metadataTemplateService.createMetadataTemplateInProject(template, project);
 	}
 }

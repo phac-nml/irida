@@ -9,14 +9,15 @@ export function metadataTemplateName() {
       existing: '=existingTemplates'
     },
     link($scope, $elm, $attrs, $ctrl) {
-      if (Array.isArray($scope.existing)) {
-        $ctrl.$validators.unique = (modelValue, viewValue) => {
-          return !$scope.existing
-            .find(template => {
-              return template.name === viewValue;
-            });
-        };
+      if (!Array.isArray($scope.existing)) {
+        return true;
       }
+      $ctrl.$validators.unique = (modelValue, viewValue) => {
+        return !$scope.existing
+          .find(template => {
+            return template.name === viewValue;
+          });
+      };
     }
   };
 }

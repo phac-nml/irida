@@ -235,4 +235,34 @@ public class ProjectLineListController {
 
 		return fieldList;
 	}
+
+	/**
+	 * Save a list a {@link MetadataField} as a {@link MetadataTemplate}
+	 *
+	 * @param projectId
+	 * 		identifier for the current {@link Project}
+	 * @param fields
+	 * 		{@link List} of {@link String} names of {@link MetadataField}
+	 * @param name
+	 * 		{@link String} name for the new template.
+	 * @return
+	 */
+	@RequestMapping(value = "/templates/create", method = RequestMethod.POST)
+	@ResponseBody
+	public MetadataTemplate saveMetadataTemplate(@PathVariable long projectId,
+			@RequestParam(value = "fields[]") List<String> fields, @RequestParam String name) {
+		Project project = projectService.read(projectId);
+		List<MetadataField> metadataFields = new ArrayList<>();
+		for (String field : fields) {
+			MetadataField metadataField = metadataTemplateService.readMetadataFieldByLabel(field);
+			if (metadataField == null) {
+				metadataField = new MetadataField(field, "text");
+				metadataTemplateService.saveMetadataField(metadataField);
+			}
+			metadataFields.add(metadataField);
+		}
+		MetadataTemplate template = new MetadataTemplate(name, metadataFields);
+		ProjectMetadataTemplateJoin join = metadataTemplateService.createMetadataTemplateInProject(template, project);
+		return join.getObject();
+	}
 }
