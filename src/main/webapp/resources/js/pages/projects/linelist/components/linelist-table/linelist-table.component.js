@@ -1,10 +1,18 @@
 import {dom} from './../../../../../utilities/datatables.utilities';
-import {EVENTS} from './../../constants';
 
 function controller(DTOptionsBuilder,
                     DTColumnBuilder,
                     LinelistService,
-                    $scope) {
+                    $scope,
+                    $compile) {
+  const $ctrl = this;
+  // This will be used by the child component to control which columns are visible
+  this.fields = this.headers
+    .map((header, index) => {
+      return ({text: header, index, selected: true});
+    });
+  this.templates = LinelistService.getTemplates();
+
   this.dtOptions = DTOptionsBuilder
     .fromFnPromise(() => {
       return LinelistService.getMetadata();
@@ -13,7 +21,30 @@ function controller(DTOptionsBuilder,
     .withScroller()
     .withOption('scrollX', true)
     .withOption('deferRender', true)
-    .withOption('scrollY', '50vh');
+    .withOption('scrollY', '50vh')
+    .withOption('scrollCollapse', true)
+    .withColReorder()
+    .withColReorderCallback(function() {
+      $ctrl.parent.columnReorder(this.fnOrder());
+    })
+    .withOption('drawCallback', () => {
+      // This adds the tools to handle meta data header hiding, template selection and saving.
+      // Datatables will add this after the table is created to we need the $compile so that
+      // angularjs can grab hold of it.
+      const div = document.querySelector('.toolbar');
+      // Make sure this only gets added once
+      if (div.getElementsByTagName('metadata-component').length === 0) {
+        div.innerHTML = `
+<metadata-component 
+    fields="$ctrl.fields"
+    templates="$ctrl.templates"
+    on-toggle-field="$ctrl.toggleColumn($event)"
+    on-save-template="$ctrl.saveTemplate($event)">
+</metadata-component>
+`;
+        $compile(div)($scope);
+      }
+    });
 
   this.dtColumns = this.headers.map(header => {
     return DTColumnBuilder
@@ -26,16 +57,29 @@ function controller(DTOptionsBuilder,
       });
   });
 
-  $scope.$on(EVENTS.TABLE.columnVisibility, (e, args) => {
-    this.dtColumns[args.index].visible = args.selected;
-  });
+  this.toggleColumn = $event => {
+    const field = $event.field;
+    this.dtColumns[field.index].visible = field.selected;
+  };
+
+  this.saveTemplate = $event => {
+    const {templateName, fields} = $event;
+
+    return LinelistService
+      .saveTemplate({url: this.savetemplateurl, fields, name: templateName})
+      .then(result => {
+        // TODO: (Josh | 2017-02-15) This will be completed in the next merge request
+        console.log(result);
+      });
+  };
 }
 
 controller.$inject = [
   'DTOptionsBuilder',
   'DTColumnBuilder',
   'LinelistService',
-  '$scope'
+  '$scope',
+  '$compile'
 ];
 
 export const TableComponent = {
@@ -49,7 +93,8 @@ export const TableComponent = {
     parent: '^^linelist'
   },
   bindings: {
-    headers: '<'
+    headers: '<',
+    savetemplateurl: '@'
   },
   controller
 };

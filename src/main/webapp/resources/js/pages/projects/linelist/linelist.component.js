@@ -7,6 +7,10 @@ function controller(LinelistService, $scope) {
   this.updateColumnVisibility = function(column) {
     $scope.$broadcast(EVENTS.TABLE.columnVisibility, column);
   };
+
+  this.columnReorder = columns => {
+    $scope.$broadcast(EVENTS.TABLE.colReorder, {columns});
+  };
 }
 
 controller.$inject = ['LinelistService', '$scope'];

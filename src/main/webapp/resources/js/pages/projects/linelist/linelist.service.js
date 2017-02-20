@@ -1,6 +1,7 @@
 export class LinelistService {
-  constructor($window, $q) {
+  constructor($window, $http, $q) {
     this.$window = $window;
+    this.$http = $http;
     this.$q = $q;
   }
 
@@ -13,6 +14,18 @@ export class LinelistService {
   getColumns() {
     return this.$window.headersList;
   }
+
+  getTemplates() {
+    return this.$window.templates;
+  }
+
+  saveTemplate({url, name, fields}) {
+    return this.$http
+      .post(url, {
+        fields,
+        name
+      });
+  }
 }
 
-LinelistService.$inject = ['$window', '$q'];
+LinelistService.$inject = ['$window', '$http', '$q'];

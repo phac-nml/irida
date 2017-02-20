@@ -102,11 +102,6 @@ public class ProjectControllerUtils {
 			MetadataTemplate template = projectMetadataTemplateJoin.getObject();
 			templates.add(ImmutableMap.of("label", template.getLabel(), "id", String.valueOf(template.getId())));
 		}
-		if (templates.size() == 0) {
-			templates.add(ImmutableMap
-					.of("label", messageSource.getMessage("linelist.no-templates-available", new Object[] {}, locale),
-							"id", ""));
-		}
 		return templates;
 	}
 }

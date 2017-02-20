@@ -33,19 +33,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.io.Files;
-
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.MetadataImportFileTypeNotSupportedError;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataField;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
 import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.io.Files;
 
 /**
  * This class is designed to be used for bulk actions on {@link SampleMetadata}
@@ -56,14 +58,17 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 public class ProjectSampleMetadataController {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectSampleMetadataController.class);
 	private final MessageSource messageSource;
+	private final MetadataTemplateService metadataTemplateService;
 	private final ProjectControllerUtils projectControllerUtils;
 	private final ProjectService projectService;
 	private final SampleService sampleService;
 
 	@Autowired
-	public ProjectSampleMetadataController(MessageSource messageSource, ProjectControllerUtils projectControllerUtils,
+	public ProjectSampleMetadataController(MessageSource messageSource, MetadataTemplateService metadataTemplateService,
+			ProjectControllerUtils projectControllerUtils,
 			ProjectService projectService, SampleService sampleService) {
 		this.messageSource = messageSource;
+		this.metadataTemplateService = metadataTemplateService;
 		this.projectControllerUtils = projectControllerUtils;
 		this.projectService = projectService;
 		this.sampleService = sampleService;
@@ -300,7 +305,7 @@ public class ProjectSampleMetadataController {
 
 					// Need to overwrite duplicate keys
 					for (String item : row.keySet()) {
-						metadata.put(item, row.get(item));
+						metadata.put(item, ImmutableMap.of("value", row.get(item)));
 					}
 
 					// Save metadata back to the sample
@@ -353,5 +358,33 @@ public class ProjectSampleMetadataController {
 	@ResponseBody
 	public SampleMetadataStorage getProjectSampleMetadata(HttpSession session, @PathVariable long projectId) {
 		return (SampleMetadataStorage) session.getAttribute("pm-" + projectId);
+	}
+
+	/**
+	 * Save a list a {@link MetadataField} as a {@link MetadataTemplate}
+	 *
+	 * @param projectId
+	 * 		identifier for the current {@link Project}
+	 * @param fields
+	 * 		{@link List} of {@link String} names of {@link MetadataField}
+	 * @param name
+	 * 		{@link String} name for the new template.
+	 */
+	@RequestMapping(value = "/templates/save", method = RequestMethod.POST)
+	@ResponseBody
+	public void saveMetadataTemplate(@PathVariable long projectId,
+			@RequestParam(value = "fields[]") List<String> fields, @RequestParam String name) {
+		Project project = projectService.read(projectId);
+		List<MetadataField> metadataFields = new ArrayList<>();
+		for (String field : fields) {
+			MetadataField metadataField = metadataTemplateService.readMetadataFieldByLabel(field);
+			if (metadataField == null) {
+				metadataField = new MetadataField(field, "text");
+				metadataTemplateService.saveMetadataField(metadataField);
+			}
+			metadataFields.add(metadataField);
+		}
+		MetadataTemplate template = new MetadataTemplate(name, metadataFields);
+		metadataTemplateService.createMetadataTemplateInProject(template, project);
 	}
 }
