@@ -11,6 +11,7 @@ Changes
 * [UI]: Fixed login error message that requested an email instead of username.
 * [Developer]: Added quick failure on detection of an upload error in Galaxy.
 * [Developer]: Added ability to adjust size of thread pool for polling Galaxy after uploading files with `galaxy.library.upload.threads`.
+* [Workflow]: Upgraded SNVPhyl from 1.0 to 1.0.1. Details of changes found at <http://snvphyl.readthedocs.io/en/latest/install/versions/#version-101>.
 * [Workflow]: Removed `@Transactional` from methods in `AnalysisExecutionServiceGalaxy` as this was causing occasional conflicts between database entries written under different threads, causing analysis pipelines to get stuck in an invalid state.
 * [Administration]: Recommending enabling `prod` profile for dandelion for performance improvements.
 * [UI]: Fixed bug for users the could not select all samples on the Project > Samples page.

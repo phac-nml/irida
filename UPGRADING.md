@@ -6,6 +6,7 @@ upgrading IRIDA that cannot be automated.
 
 0.14.0 to 0.15.0
 ----------------
+* A new version of SNVPhyl should be installed in Galaxy (version 1.0.1).  You must install the repository `suite_snvphyl_1_0_1` with revision `4841b7148c44` from the [IRIDA Main Toolshed](https://irida.corefacility.ca/galaxy-shed/view/nml/suite_snvphyl_1_0_1/4841b7148c44).  Please see <https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/phylogenomics/#irida-whole-genome-phylogenomics> for more information.
 * Enable Dandelion `prod` profile by setting the environment variable `dandelion.profile.active=prod` in the Tomcat settings.  See https://irida.corefacility.ca/documentation/administrator/web/#servlet-container-configuration for more information.
 * This upgrade makes schema changes to the databases and cannot be parallel deployed.  Servlet container must be stopped before deploying the new `war` file.
 
