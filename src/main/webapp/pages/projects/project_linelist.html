@@ -6,6 +6,13 @@
 <head>
     <title th:text="#{linelist.page-title}">Title</title>
     <link rel="stylesheet" href="/resources/css/pages/project_linelist.css"/>
+    <script th:inline="javascript">
+      var PAGE = {
+        urls: {
+          saveTemplate: /*[[@{/projects/{id}/linelist/templates/:id(id=${project.getId()})}]]*/ ''
+        }
+      };
+    </script>
 </head>
 <body>
 <main layout:fragment="main" ddl:bundle-includes="project-linelist">
@@ -14,45 +21,42 @@
 
 <th:block layout:fragment="scripts">
     <script th:inline="javascript">
-			var headersList = /*[[${headers}]]*/ [];
-			var metadataList = /*[[${metadataList}]]*/ [];
-			var templates = /*[[${templates}]]*/ [];
+      var headersList = /*[[${headers}]]*/ [];
+      var metadataList = /*[[${metadataList}]]*/ [];
     </script>
     <script type="text/ng-template" id="linelist.tmpl.html">
+        <metadata-component></metadata-component>
         <linelist-table
                 headers="$ctrl.headers"
-                data:saveTemplateUrl="@{/projects/{id}/linelist/templates/create(id=${project.getId()})}"
+                data:saveTemplateUrl="@{/projects/{id}/linelist/templates(id=${project.getId()})}"
                 data:getTemplateFieldsUrl="@{/projects/{id}/linelist/upload/metadatafields(id=${project.getId()})}">
         </linelist-table>
     </script>
     <script type="text/ng-template" id="metadata.button.tmpl">
-        <button class="btn btn-default" ng-click="$ctrl.showMetadataTemplator()">
-            <i class="fa fa-list fa-fw" aria-hidden="true"></i>
-            <th:block
-                    th:text="#{linelist.datatable.column-select.button}"/>
-        </button>
-        <select class="form-control"
-                name="template"
-                id="template-select"
-                ng-show="$ctrl.templates.length"
-                ng-model="$ctrl.selectedTemplate"
-                ng-change="$ctrl.templateSelected()"
-                ng-options="template.label for template in $ctrl.templates track by template.id">
-        </select>
-        <button class="btn btn-default" ng-click="$ctrl.saveTemplate()" ng-disabled="$ctrl.saving">
-            <span ng-hide="$ctrl.saving">
-                <i class="fa fa-save fa-fw" aria-hidden="true"></i> <th:block
-                    th:text="#{linelist.create-template.save-template}"/>
-            </span>
-            <span ng-show="$ctrl.saving">
-                <i class="fa fa-circle-o-notch fa-spin fa-fw" aria-hidden="true"></i> <th:block
-                    th:text="#{linelist.create-template.saving-template}"/>
-            </span>
-        </button>
-        <a class="btn btn-link"
-           th:href="@{/projects/{id}/sample-metadata/upload(id=${project.getId()})}">
-            <i class="fa fa-upload fw" aria-hidden="true"></i>&nbsp;<span
-                th:text="#{linelist.add-metadata.btn}"></span></a>
+        <div class="spaced-bottom">
+            <button class="btn btn-default" ng-click="$ctrl.showMetadataTemplator()">
+                <i class="fa fa-list fa-fw" aria-hidden="true"></i>
+                <th:block
+                        th:text="#{linelist.datatable.column-select.button}"/>
+            </button>
+            <select class="form-control"
+                    name="template"
+                    id="template-select"
+                    ng-show="$ctrl.templates.length"
+                    ng-model="$ctrl.selectedTemplate"
+                    ng-change="$ctrl.templateSelected()"
+                    ng-options="template.label for template in $ctrl.templates track by template.identifier">
+            </select>
+            <button class="btn btn-default" ng-click="$ctrl.saveTemplate()" ng-disabled="$ctrl.saving">
+                <i class="fa fa-save fa-fw" aria-hidden="true"></i>
+                <th:block
+                        th:text="#{linelist.create-template.save-template}"/>
+            </button>
+            <a class="btn btn-link"
+               th:href="@{/projects/{id}/sample-metadata/upload(id=${project.getId()})}">
+                <i class="fa fa-upload fw" aria-hidden="true"></i>&nbsp;<span
+                    th:text="#{linelist.add-metadata.btn}"></span></a>
+        </div>
     </script>
     <script type="text/ng-template" id="metadata.aside.tmpl">
         <div class="row" style="height: 100%;">

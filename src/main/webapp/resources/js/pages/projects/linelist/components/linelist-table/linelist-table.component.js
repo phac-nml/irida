@@ -42,7 +42,7 @@ function controller(DTOptionsBuilder,
     active-template="$ctrl.currentTemplate"
     on-toggle-field="$ctrl.toggleColumn($event)"
     on-save-template="$ctrl.saveTemplate($event)"
-    on-get-template-fields="$ctrl.getTemplateFields($event)">
+    on-template-selected="$ctrl.setTemplatedFields($event)">
 </metadata-component>
 `;
         $compile(div)($scope);
@@ -73,38 +73,28 @@ function controller(DTOptionsBuilder,
       });
   };
 
-  $ctrl.getTemplateFields = $event => {
-    const {templateId} = $event;
+  $ctrl.setTemplatedFields = $event => {
+    const {fields} = $event;
+    const oldCols = Array.from($ctrl.dtColumns);
+    const newCols = [];
 
-    // Make sure that the current template index is indicated since the metadata component
-    // will be redrawn.
-    $ctrl.currentTemplate = $ctrl.templates.findIndex(template => {
-      return template.id === templateId;
+    fields.forEach(field => {
+      for (let i = 0; i < oldCols.length; i++) {
+        const column = oldCols[i];
+        if (column.sTitle === field.label) {
+          column.visible = true;
+          newCols.push(column);
+          oldCols.splice(i, 1);
+          break;
+        }
+      }
     });
 
-    return LinelistService
-      .getTemplateFields({templateId, url: $ctrl.gettemplatefieldsurl})
-      .then(columns => {
-        const oldCols = Array.from($ctrl.dtColumns);
-        const newCols = [];
-
-        columns.forEach(col => {
-          for (let i = 0; i < oldCols.length; i++) {
-            const c = oldCols[i];
-            if (c.sTitle === col.label) {
-              c.visible = true;
-              newCols.push(c);
-              oldCols.splice(i, 1);
-              break;
-            }
-          }
-        });
-        oldCols.forEach(col => {
-          col.visible = false;
-        });
-        $ctrl.dtColumns = [...newCols, ...oldCols];
-        return $ctrl.dtColumns;
-      });
+    oldCols.forEach(col => {
+      col.visible = false;
+    });
+    $ctrl.dtColumns = [...newCols, ...oldCols];
+    return $ctrl.dtColumns;
   };
 }
 
@@ -120,6 +110,7 @@ export const TableComponent = {
   template: `
 <table datatable="" 
   class="table" 
+  width="100%"
   dt-options="$ctrl.dtOptions" 
   dt-columns="$ctrl.dtColumns">
 </table>`,

@@ -2,7 +2,6 @@
     angular
         .module('irida.session', [])
         .run(['SessionFactory', runSessionFactory])
-        .config(['$httpProvider', httpProviderConfig])
         .factory('SessionFactory', ['$timeout', '$interval', '$window', '$uibModal', SessionFactory])
         .factory('HttpInterceptor', ['$injector', HttpInterceptor])
         .filter('countdown', countdownFilter)
@@ -18,25 +17,6 @@
 
     function runSessionFactory(session) {
         session.start();
-    }
-
-    function httpProviderConfig ($httpProvider) {
-        $httpProvider.interceptors.push('HttpInterceptor');
-
-        //initialize get if not there
-        if (!$httpProvider.defaults.headers.get) {
-            $httpProvider.defaults.headers.get = {};
-        }
-        $httpProvider.defaults.headers.get['Cache-Control'] = 'no-cache';
-        $httpProvider.defaults.headers.get['Pragma'] = 'no-cache';
-
-        // Make sure that all ajax form data is sent in the correct format.
-        $httpProvider.defaults.transformRequest = function (data) {
-            if (data === undefined) {
-                return data;
-            }
-            return $.param(data);
-        };
     }
 
     function SessionFactory($timeout, $interval, $window, $uibModal) {
@@ -99,12 +79,6 @@
 
     function HttpInterceptor($injector) {
         return {
-            request : function (config) {
-                if (config.url.indexOf("/template") > -1) {
-                    config.headers.Accept = "text/html";
-                }
-                return config;
-            },
             response: function (response) {
                 var session = $injector.get('SessionFactory');
                 session.reset();

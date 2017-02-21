@@ -32,6 +32,7 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 @Controller
@@ -83,14 +84,6 @@ public class ProjectLineListController {
 		if (templateId != null) {
 			model.addAttribute("currentTemplate", templateId);
 		}
-
-		// Get a list of all available templates for displaying metadata
-		List<Map<String, String>> templates = projectControllerUtils.getTemplateNames(locale, project);
-		if (templates.size() > 0) {
-			templates.add(0, ImmutableMap.of("id", "all", "label",
-					messageSource.getMessage("linelist.templates.all", new Object[] {}, locale)));
-		}
-		model.addAttribute("templates", templates);
 
 		// Get the headers (metadata fields)
 		List<String> headers = getAllProjectMetadataFields(projectId);
@@ -236,6 +229,23 @@ public class ProjectLineListController {
 		return fieldList;
 	}
 
+	@RequestMapping(value = "/templates", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public List<MetadataTemplate> getMetadataTemplates(@PathVariable long projectId) {
+		Project project = projectService.read(projectId);
+		List<ProjectMetadataTemplateJoin> joins = metadataTemplateService.getMetadataTemplatesForProject(project);
+		List<MetadataTemplate> templates = new ArrayList<>();
+		// Add Template for all fields
+		MetadataTemplate allTemplate = new MetadataTemplate("_All Fields_", ImmutableList.of());
+		allTemplate.setId(0L);
+		templates.add(allTemplate);
+
+		for (ProjectMetadataTemplateJoin join : joins) {
+			templates.add(join.getObject());
+		}
+		return templates;
+	}
+
 	/**
 	 * Save a list a {@link MetadataField} as a {@link MetadataTemplate}
 	 *
@@ -247,7 +257,7 @@ public class ProjectLineListController {
 	 * 		{@link String} name for the new template.
 	 * @return
 	 */
-	@RequestMapping(value = "/templates/create", method = RequestMethod.POST)
+	@RequestMapping(value = "/templates", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public MetadataTemplate saveMetadataTemplate(@PathVariable long projectId,
 			@RequestParam(value = "fields[]") List<String> fields, @RequestParam String name) {
