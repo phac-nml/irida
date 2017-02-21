@@ -1,4 +1,6 @@
-# Galaxy - Irida image with SISTR web tool installed
+# Galaxy - Irida Integration Testing Image
+#
+#
 
 FROM apetkau/galaxy-irida-16.10:0.15.0
 
@@ -8,6 +10,17 @@ ENV GALAXY_CONFIG_BRAND IRIDA Galaxy
 
 WORKDIR /galaxy-central/
 
-RUN sed -i -e 's@^</tool_sheds>@  <tool_shed name="Test Toolshed" url="https://testtoolshed.g2.bx.psu.edu/"/>\n</tool_sheds>@' /etc/galaxy/tool_sheds_conf.xml
-RUN install-repository "-r 84560b3e1777 --url https://testtoolshed.g2.bx.psu.edu/ -o peterk87 --name sistr_web_analyze"
-RUN bash -c "source .venv/bin/activate && pip install -r /shed_tools/testtoolshed.g2.bx.psu.edu/repos/peterk87/sistr_web_analyze/84560b3e1777/sistr_web_analyze/sistr_web_analyze/requirements.txt"
+ADD ./dependency_resolvers_conf.xml /etc/galaxy/dependency_resolvers_conf.xml
+RUN sed -i -e 's@^</tool_sheds>@  <tool_shed name="Jupiter Toolshed" url="http://jupiter:9009/"/>\n</tool_sheds>@' /etc/galaxy/tool_sheds_conf.xml && \
+    sed -i -e 's@^#conda_prefix.*@conda_prefix = /tool_deps/_conda@' /etc/galaxy/galaxy.ini && \
+    sed -i -e 's@^#conda_ensure_channels@conda_ensure_channels@' /etc/galaxy/galaxy.ini && \
+    sed -i -e 's@^#conda_auto_install.*@conda_auto_install = True@' /etc/galaxy/galaxy.ini && \
+    sed -i -e 's@^#use_cached_dependency_manager = False@use_cached_dependency_manager = True@' /etc/galaxy/galaxy.ini && \
+    sed -i -e 's@^#dependency_resolvers_config_file.*@dependency_resolvers_config_file = /etc/galaxy/dependency_resolvers_conf.xml@' /etc/galaxy/galaxy.ini
+RUN install-repository "-r e0bac029234f --url http://jupiter:9009/ -o aaron --name sistr --tool-deps"
+RUN /tool_deps/_conda/bin/conda config --add channels conda-forge && \
+    /tool_deps/_conda/bin/conda config --add channels defaults && \
+    /tool_deps/_conda/bin/conda config --add channels r && \
+    /tool_deps/_conda/bin/conda config --add channels bioconda && \
+    /tool_deps/_conda/bin/conda create -y --name __sistr_cmd@0.3.1 sistr_cmd=0.3.1 && \
+    /tool_deps/_conda/bin/conda create -y --name __samtools@_uv_ samtools
