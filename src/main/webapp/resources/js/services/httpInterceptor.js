@@ -79,12 +79,6 @@
 
     function HttpInterceptor($injector) {
         return {
-            request : function (config) {
-                if (config.url.indexOf("/template") > -1) {
-                    config.headers.Accept = "text/html";
-                }
-                return config;
-            },
             response: function (response) {
                 var session = $injector.get('SessionFactory');
                 session.reset();
