@@ -147,53 +147,34 @@
     var vm = this;
 
     analysisService.getSistrResults().then(function(result) {
-      vm.order = ["serovar_prediction",
-                  "Serogroup_prediction",
-                  "H1_prediction",
-                  "H2_prediction",
-                  "cgMLST_serovar_prediction",
-                  "cgMLST_serovar_count_predictions",
-                  "cgMLST_cluster_level",
-                  "wgMLST_330"];
-      var preds = result.serovar_prediction;
-      var serotype_predictions_order = ['Subspecies', 'Serovar (overall)', 'Serovar (antigen)', 'Serovar (cgMLST)', 'Serogroup', 'H1', 'H2'];
+      var preds = result[0];
+      var serotype_predictions_order = ['Serovar (overall)', 'Serovar (antigen)', 'Serovar (cgMLST)', 'Serovar (mash)', 'Serogroup', 'H1', 'H2'];
       var serotype_predictions = {};
-      serotype_predictions['Subspecies'] = preds['subspecies'];
-      serotype_predictions['Serovar (overall)'] = preds['serovar_prediction'];
-      serotype_predictions['Serovar (antigen)'] = preds['serovar_antigen_prediction'];
-      serotype_predictions['Serovar (cgMLST)'] = preds['cgMLST_serovar_prediction'];
-      serotype_predictions['Serogroup'] = preds['Serogroup_prediction'];
-      serotype_predictions['H1'] = preds['H1_prediction'];
-      serotype_predictions['H2'] = preds['H2_prediction'];
+      serotype_predictions['Serovar (overall)'] = preds['serovar'];
+      serotype_predictions['Serovar (antigen)'] = preds['serovar_antigen'];
+      serotype_predictions['Serovar (cgMLST)'] = preds['serovar_cgmlst'];
+      serotype_predictions['Serovar (mash)'] = preds['mash_serovar'];
+      serotype_predictions['Serogroup'] = preds['serogroup'];
+      serotype_predictions['H1'] = preds['h1'];
+      serotype_predictions['H2'] = preds['h2'];
 
       var cgMLST_predictions = {};
-      var cgMLST_predictions_order = ['Serovar count predictions', 'Cluster level', 'Allele stats'];
-      cgMLST_predictions['Serovar count predictions'] = preds['cgMLST_serovar_count_predictions'];
-      cgMLST_predictions['Cluster level'] = preds['cgMLST_cluster_level'];
+      var cgMLST_predictions_order = ['cgmlst_matching_alleles', 'cgmlst_genome_match', 'cgmlst_ST'];
+      cgMLST_predictions['cgmlst_matching_alleles'] = preds['cgmlst_matching_alleles'];
+      cgMLST_predictions['cgmlst_genome_match'] = preds['cgmlst_genome_match'];
+      cgMLST_predictions['cgmlst_ST'] = preds['cgmlst_ST'];
 
-      var cgMLST = result.in_silico_typing.marker_results.wgMLST_330;
-      var cgMLST_complete_alleles = 0;
-      var cgMLST_missing_alleles = 0;
-      var cgMLST_partial_alleles = 0;
-      var cgMLST_total_alleles = 0;
-      for (var i in cgMLST) {
-        if (cgMLST[i].is_missing) {
-          cgMLST_missing_alleles++;
-        } else if (cgMLST[i].is_contig_truncated) {
-          cgMLST_partial_alleles++;
-        } else {
-          cgMLST_complete_alleles++;
-        }
-
-        cgMLST_total_alleles++;
-      }
-
-      cgMLST_predictions['Allele stats'] = 'complete ('+cgMLST_complete_alleles+'/'+cgMLST_total_alleles+'), partial ('+cgMLST_partial_alleles+'/'+cgMLST_total_alleles+'), missing ('+cgMLST_missing_alleles+'/'+cgMLST_total_alleles+')';
+      var qc = {};
+      var qc_order = ['Status', 'Messages'];
+      qc['Messages'] = preds['qc_messages'];
+      qc['Status'] = preds['qc_status'];
 
       vm.serotype_predictions = serotype_predictions;
       vm.serotype_predictions_order = serotype_predictions_order;
       vm.cgMLST_predictions_order = cgMLST_predictions_order;
       vm.cgMLST_predictions = cgMLST_predictions;
+      vm.qc = qc;
+      vm.qc_order = qc_order;
     });
   }
 

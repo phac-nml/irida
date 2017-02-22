@@ -104,6 +104,13 @@
 						<td ng-bind="sistrCtrl.cgMLST_predictions[item]" style="word-wrap: break-word;"></td>
 					</tr>
 				</table>
+				<h2>Quality Control</h2>
+				<table class="table table-bordered">
+					<tr ng-repeat="item in sistrCtrl.qc_order">
+						<td width="30%"><strong ng-bind="item"></strong></td>
+						<td ng-bind="sistrCtrl.qc[item]" style="word-wrap: break-word;"></td>
+					</tr>
+				</table>
 			</script>
 
 			<script type="text/ng-template" id="inputs.html" th:with="fileCount = ${#lists.size(paired_end) + #lists.size(remote_paired)}">
