@@ -31,6 +31,6 @@ public class AnalysisSISTRTyping extends Analysis {
 
 	@JsonIgnore
 	public AnalysisOutputFile getSISTRResults() {
-		return getAnalysisOutputFile("sistr-results");
+		return getAnalysisOutputFile("sistr-predictions");
 	}
 }

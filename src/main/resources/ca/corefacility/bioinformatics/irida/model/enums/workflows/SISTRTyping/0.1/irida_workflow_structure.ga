@@ -2,7 +2,7 @@
     "a_galaxy_workflow": "true", 
     "annotation": "", 
     "format-version": "0.1", 
-    "name": "SISTR Web Analyze Reads", 
+    "name": "SISTR Analyze Reads", 
     "steps": {
         "0": {
             "annotation": "", 
@@ -46,7 +46,12 @@
                     "output_name": "output"
                 }
             }, 
-            "inputs": [], 
+            "inputs": [
+                {
+                    "description": "runtime parameter for tool FLASH", 
+                    "name": "input_type"
+                }
+            ], 
             "label": null, 
             "name": "FLASH", 
             "outputs": [
@@ -76,7 +81,7 @@
                 }
             ], 
             "position": {
-                "left": 479, 
+                "left": 464, 
                 "top": 200
             }, 
             "post_job_actions": {
@@ -120,7 +125,13 @@
             }, 
             "tool_errors": null, 
             "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/flash/FLASH/1.3.0", 
-            "tool_state": "{\"__page__\": 0, \"min_overlap\": \"\\\"20\\\"\", \"input_type\": \"{\\\"fastq_collection\\\": null, \\\"sPaired\\\": \\\"collections\\\", \\\"__current_case__\\\": 1}\", \"__rerun_remap_job_id__\": null, \"max_overlap\": \"\\\"300\\\"\", \"options\": \"{\\\"__current_case__\\\": 1, \\\"options_select\\\": \\\"basic\\\"}\", \"outputs\": \"{\\\"output_type\\\": \\\"Non-interleaved_fastq\\\", \\\"__current_case__\\\": 0}\"}", 
+            "tool_shed_repository": {
+                "changeset_revision": "4287dd541327", 
+                "name": "flash", 
+                "owner": "irida", 
+                "tool_shed": "irida.corefacility.ca/galaxy-shed"
+            }, 
+            "tool_state": "{\"__page__\": 0, \"min_overlap\": \"\\\"20\\\"\", \"input_type\": \"{\\\"fastq_collection\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"sPaired\\\": \\\"collections\\\", \\\"__current_case__\\\": 1}\", \"__rerun_remap_job_id__\": null, \"max_overlap\": \"\\\"300\\\"\", \"options\": \"{\\\"__current_case__\\\": 1, \\\"options_select\\\": \\\"basic\\\"}\", \"outputs\": \"{\\\"output_type\\\": \\\"Non-interleaved_fastq\\\", \\\"__current_case__\\\": 0}\"}", 
             "tool_version": "1.3.0", 
             "type": "tool", 
             "uuid": "d1d70bc2-41f1-43d3-983d-c1d66f5b8470", 
@@ -166,7 +177,7 @@
                 }
             ], 
             "position": {
-                "left": 785, 
+                "left": 754, 
                 "top": 200
             }, 
             "post_job_actions": {
@@ -212,7 +223,13 @@
             }, 
             "tool_errors": null, 
             "tool_id": "toolshed.g2.bx.psu.edu/repos/lionelguy/spades/spades/1.0", 
-            "tool_state": "{\"__page__\": 0, \"iontorrent\": \"\\\"False\\\"\", \"kmers\": \"\\\"21,33,55,77,99,127\\\"\", \"cov\": \"{\\\"state\\\": \\\"off\\\", \\\"__current_case__\\\": 0}\", \"__rerun_remap_job_id__\": null, \"nanopore\": \"[]\", \"libraries\": \"[{\\\"lib_type\\\": \\\"paired_end\\\", \\\"__index__\\\": 0, \\\"orientation\\\": \\\"fr\\\", \\\"files\\\": [{\\\"file_type\\\": {\\\"fastq_collection\\\": null, \\\"type\\\": \\\"paired-collection\\\", \\\"__current_case__\\\": 3}, \\\"__index__\\\": 0}]}, {\\\"lib_type\\\": \\\"paired_end\\\", \\\"__index__\\\": 1, \\\"orientation\\\": \\\"fr\\\", \\\"files\\\": [{\\\"file_type\\\": {\\\"type\\\": \\\"unpaired\\\", \\\"unpaired_reads\\\": null, \\\"__current_case__\\\": 2}, \\\"__index__\\\": 0}]}]\", \"onlyassembler\": \"\\\"False\\\"\", \"trustedcontigs\": \"[]\", \"pacbio\": \"[]\", \"sc\": \"\\\"False\\\"\", \"untrustedcontigs\": \"[]\", \"sanger\": \"[]\", \"careful\": \"\\\"True\\\"\"}", 
+            "tool_shed_repository": {
+                "changeset_revision": "21734680d921", 
+                "name": "spades", 
+                "owner": "lionelguy", 
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            }, 
+            "tool_state": "{\"__page__\": 0, \"iontorrent\": \"\\\"false\\\"\", \"kmers\": \"\\\"21,33,55,77,99,127\\\"\", \"cov\": \"{\\\"state\\\": \\\"off\\\", \\\"__current_case__\\\": 0}\", \"__rerun_remap_job_id__\": null, \"nanopore\": \"[]\", \"libraries\": \"[{\\\"lib_type\\\": \\\"paired_end\\\", \\\"__index__\\\": 0, \\\"orientation\\\": \\\"fr\\\", \\\"files\\\": [{\\\"file_type\\\": {\\\"fastq_collection\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"type\\\": \\\"paired-collection\\\", \\\"__current_case__\\\": 3}, \\\"__index__\\\": 0}]}, {\\\"lib_type\\\": \\\"paired_end\\\", \\\"__index__\\\": 1, \\\"orientation\\\": \\\"fr\\\", \\\"files\\\": [{\\\"file_type\\\": {\\\"type\\\": \\\"unpaired\\\", \\\"unpaired_reads\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"__current_case__\\\": 2}, \\\"__index__\\\": 0}]}]\", \"onlyassembler\": \"\\\"false\\\"\", \"trustedcontigs\": \"[]\", \"pacbio\": \"[]\", \"sc\": \"\\\"false\\\"\", \"untrustedcontigs\": \"[]\", \"sanger\": \"[]\", \"careful\": \"\\\"true\\\"\"}", 
             "tool_version": "1.0", 
             "type": "tool", 
             "uuid": "6cedfafd-88e3-4ee5-a609-c6756809ca94", 
@@ -228,7 +245,12 @@
                     "output_name": "out_contig_stats"
                 }
             }, 
-            "inputs": [], 
+            "inputs": [
+                {
+                    "description": "runtime parameter for tool Column Regex Find And Replace", 
+                    "name": "input"
+                }
+            ], 
             "label": null, 
             "name": "Column Regex Find And Replace", 
             "outputs": [
@@ -238,7 +260,7 @@
                 }
             ], 
             "position": {
-                "left": 1113, 
+                "left": 1082, 
                 "top": 200
             }, 
             "post_job_actions": {
@@ -250,7 +272,13 @@
             }, 
             "tool_errors": null, 
             "tool_id": "toolshed.g2.bx.psu.edu/repos/jjohnson/regex_find_replace/regexColumn1/0.1.0", 
-            "tool_state": "{\"__page__\": 0, \"field\": \"{\\\"__class__\\\": \\\"UnvalidatedValue\\\", \\\"value\\\": \\\"3\\\"}\", \"__rerun_remap_job_id__\": null, \"checks\": \"[{\\\"__index__\\\": 0, \\\"replacement\\\": \\\"0.000000000000000001\\\", \\\"pattern\\\": \\\"^0$\\\"}]\", \"input\": \"null\"}", 
+            "tool_shed_repository": {
+                "changeset_revision": "9ea374bb0350", 
+                "name": "regex_find_replace", 
+                "owner": "jjohnson", 
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            }, 
+            "tool_state": "{\"__page__\": 0, \"field\": \"\\\"3\\\"\", \"__rerun_remap_job_id__\": null, \"checks\": \"[{\\\"__index__\\\": 0, \\\"replacement\\\": \\\"0.000000000000000001\\\", \\\"pattern\\\": \\\"^0$\\\"}]\", \"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\"}", 
             "tool_version": "0.1.0", 
             "type": "tool", 
             "uuid": "b25b6100-7467-47c3-a616-cd60938eb5e8", 
@@ -270,7 +298,16 @@
                     "output_name": "out_file1"
                 }
             }, 
-            "inputs": [], 
+            "inputs": [
+                {
+                    "description": "runtime parameter for tool Filter SPAdes repeats", 
+                    "name": "tab_input"
+                }, 
+                {
+                    "description": "runtime parameter for tool Filter SPAdes repeats", 
+                    "name": "fasta_input"
+                }
+            ], 
             "label": null, 
             "name": "Filter SPAdes repeats", 
             "outputs": [
@@ -296,7 +333,7 @@
                 }
             ], 
             "position": {
-                "left": 1441, 
+                "left": 1404, 
                 "top": 200
             }, 
             "post_job_actions": {
@@ -349,7 +386,13 @@
             }, 
             "tool_errors": null, 
             "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/filter_spades_repeats/filter_spades_repeat/1.0.0", 
-            "tool_state": "{\"__page__\": 0, \"len_cutoff\": \"\\\"1000\\\"\", \"rep_cutoff\": \"\\\"1.75\\\"\", \"__rerun_remap_job_id__\": null, \"keep_leftover\": \"\\\"yes\\\"\", \"tab_input\": \"null\", \"cov_len_cutoff\": \"\\\"5000\\\"\", \"print_summary\": \"\\\"yes\\\"\", \"cov_cutoff\": \"\\\"0.33\\\"\", \"fasta_input\": \"null\"}", 
+            "tool_shed_repository": {
+                "changeset_revision": "f9fc830fa47c", 
+                "name": "filter_spades_repeats", 
+                "owner": "irida", 
+                "tool_shed": "irida.corefacility.ca/galaxy-shed"
+            }, 
+            "tool_state": "{\"__page__\": 0, \"len_cutoff\": \"\\\"1000\\\"\", \"rep_cutoff\": \"\\\"1.75\\\"\", \"__rerun_remap_job_id__\": null, \"keep_leftover\": \"\\\"yes\\\"\", \"tab_input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"cov_len_cutoff\": \"\\\"5000\\\"\", \"print_summary\": \"\\\"yes\\\"\", \"cov_cutoff\": \"\\\"0.33\\\"\", \"fasta_input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\"}", 
             "tool_version": "1.0.0", 
             "type": "tool", 
             "uuid": "61a9e304-bfac-4462-8332-fa2f346dabc2", 
@@ -365,7 +408,12 @@
                     "output_name": "output_with_repeats"
                 }
             }, 
-            "inputs": [], 
+            "inputs": [
+                {
+                    "description": "runtime parameter for tool assemblystats", 
+                    "name": "input"
+                }
+            ], 
             "label": null, 
             "name": "assemblystats", 
             "outputs": [
@@ -395,7 +443,7 @@
                 }
             ], 
             "position": {
-                "left": 1745, 
+                "left": 1688, 
                 "top": 200
             }, 
             "post_job_actions": {
@@ -434,7 +482,13 @@
             }, 
             "tool_errors": null, 
             "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/assemblystats/assemblystats/1.0.2", 
-            "tool_state": "{\"__page__\": 0, \"input_type\": \"\\\"contig\\\"\", \"__rerun_remap_job_id__\": null, \"bucket\": \"\\\"False\\\"\", \"all_outputs\": \"\\\"False\\\"\", \"input\": \"null\"}", 
+            "tool_shed_repository": {
+                "changeset_revision": "51b76a5d78a5", 
+                "name": "assemblystats", 
+                "owner": "irida", 
+                "tool_shed": "irida.corefacility.ca/galaxy-shed"
+            }, 
+            "tool_state": "{\"__page__\": 0, \"input_type\": \"\\\"contig\\\"\", \"__rerun_remap_job_id__\": null, \"bucket\": \"\\\"false\\\"\", \"all_outputs\": \"\\\"false\\\"\", \"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\"}", 
             "tool_version": "1.0.2", 
             "type": "tool", 
             "uuid": "74cbd982-b7a6-4c72-aa10-28e7198dccef", 
@@ -448,50 +502,127 @@
         }, 
         "6": {
             "annotation": "", 
-            "content_id": "testtoolshed.g2.bx.psu.edu/repos/peterk87/sistr_web_analyze/sistr_web_analyze/0.1.0", 
+            "content_id": "jupiter:9009/repos/aaron/sistr/sistr_cmd/0.3.3", 
             "id": 6, 
             "input_connections": {
-                "input": {
+                "input_fastas": {
                     "id": 4, 
                     "output_name": "output_with_repeats"
                 }
             }, 
-            "inputs": [], 
+            "inputs": [
+                {
+                    "description": "runtime parameter for tool sistr_cmd", 
+                    "name": "input_fastas"
+                }
+            ], 
             "label": null, 
-            "name": "SISTR Web Analyze", 
+            "name": "sistr_cmd", 
             "outputs": [
                 {
-                    "name": "output", 
+                    "name": "output_prediction_csv", 
+                    "type": "csv"
+                }, 
+                {
+                    "name": "output_prediction_json", 
+                    "type": "json"
+                }, 
+                {
+                    "name": "output_prediction_tab", 
+                    "type": "tabular"
+                }, 
+                {
+                    "name": "cgmlst_profiles", 
+                    "type": "csv"
+                }, 
+                {
+                    "name": "novel_alleles", 
+                    "type": "fasta"
+                }, 
+                {
+                    "name": "alleles_output", 
                     "type": "json"
                 }
             ], 
             "position": {
-                "left": 1745, 
-                "top": 494
+                "left": 1688, 
+                "top": 483
             }, 
             "post_job_actions": {
-                "RenameDatasetActionoutput": {
+                "HideDatasetActionoutput_prediction_csv": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "output_prediction_csv"
+                }, 
+                "RenameDatasetActionalleles_output": {
                     "action_arguments": {
-                        "newname": "sistr_results.json"
+                        "newname": "sistr-alleles-out.json"
                     }, 
                     "action_type": "RenameDatasetAction", 
-                    "output_name": "output"
+                    "output_name": "alleles_output"
+                }, 
+                "RenameDatasetActioncgmlst_profiles": {
+                    "action_arguments": {
+                        "newname": "sistr-cgmlst-profiles.csv"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "cgmlst_profiles"
+                }, 
+                "RenameDatasetActionnovel_alleles": {
+                    "action_arguments": {
+                        "newname": "sistr-novel-alleles.fasta"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "novel_alleles"
+                }, 
+                "RenameDatasetActionoutput_prediction_json": {
+                    "action_arguments": {
+                        "newname": "sistr-predictions.json"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "output_prediction_json"
                 }
             }, 
             "tool_errors": null, 
-            "tool_id": "testtoolshed.g2.bx.psu.edu/repos/peterk87/sistr_web_analyze/sistr_web_analyze/0.1.0", 
-            "tool_state": "{\"__page__\": 0, \"__rerun_remap_job_id__\": null, \"timeout\": \"\\\"600\\\"\", \"genome_name\": \"\\\"galaxy_genome\\\"\", \"input\": \"null\", \"sistr_api_url\": \"\\\"https://lfz.corefacility.ca/sistr-wtf/api/\\\"\"}", 
-            "tool_version": "0.1.0", 
+            "tool_id": "jupiter:9009/repos/aaron/sistr/sistr_cmd/0.3.3", 
+            "tool_shed_repository": {
+                "changeset_revision": "3b4064d79ec1", 
+                "name": "sistr", 
+                "owner": "aaron", 
+                "tool_shed": "jupiter:9009"
+            }, 
+            "tool_state": "{\"input_fastas\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"no_cgmlst\": \"\\\"false\\\"\", \"use_full_cgmlst_db\": \"\\\"true\\\"\", \"__page__\": 0, \"output_format\": \"\\\"json\\\"\", \"keep_tmp\": \"\\\"false\\\"\", \"run_mash\": \"\\\"true\\\"\", \"qc\": \"\\\"true\\\"\", \"__rerun_remap_job_id__\": null}", 
+            "tool_version": "0.3.3", 
             "type": "tool", 
-            "uuid": "f2a5dfb4-0926-42f6-bc4d-c3803584445c", 
+            "uuid": "61dbb021-4ab0-49c8-9c97-2e28848dec71", 
             "workflow_outputs": [
                 {
-                    "label": "sistr_results", 
-                    "output_name": "output", 
-                    "uuid": "5227aeed-79b1-4b0c-8a8c-425b09f3969e"
+                    "label": null, 
+                    "output_name": "alleles_output", 
+                    "uuid": "cb3ad8c8-076d-4994-85db-a192c7064591"
+                }, 
+                {
+                    "label": "", 
+                    "output_name": "output_prediction_json", 
+                    "uuid": "f1ac3d13-fc8b-4757-ba7c-76768b36da94"
+                }, 
+                {
+                    "label": null, 
+                    "output_name": "novel_alleles", 
+                    "uuid": "fab9645a-14de-4047-8c96-a302a3ac6ce1"
+                }, 
+                {
+                    "label": null, 
+                    "output_name": "output_prediction_tab", 
+                    "uuid": "5e54280f-4a0a-4efb-8877-789496cb2781"
+                }, 
+                {
+                    "label": null, 
+                    "output_name": "cgmlst_profiles", 
+                    "uuid": "69edfaa0-52f1-4872-8926-2ba41095e857"
                 }
             ]
         }
     }, 
-    "uuid": "4415dcd7-5462-4ba6-a02e-8ca57ec93ae4"
+    "uuid": "b02aedb7-c6dc-4011-9b60-8ba5aac10d5a"
 }

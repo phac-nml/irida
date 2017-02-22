@@ -48,15 +48,12 @@
 				toolId="irida.corefacility.ca/galaxy-shed/repos/irida/filter_spades_repeats/filter_spades_repeat/1.0.0"
 				parameterName="cov_len_cutoff" />
 		</parameter>
-		<parameter name="sistr-api-url"
-			defaultValue="https://lfz.corefacility.ca/sistr-wtf/api/">
-			<toolParameter
-				toolId="sistr_web_analyze"
-				parameterName="sistr_api_url" />
-		</parameter>
 	</parameters>
 	<outputs>
-		<output name="sistr-results" fileName="sistr_results.json" />
+		<output name="sistr-predictions" fileName="sistr-predictions.json" />
+		<output name="sistr-cgmlst" fileName="sistr-cgmlst-profiles.csv" />
+		<output name="sistr-novel-alleles" fileName="sistr-novel-alleles.fasta" />
+		<output name="sistr-alleles" fileName="sistr-alleles-out.json" />
 		<output name="assembly" fileName="contigs-with-repeats.fasta" />
 		<output name="assembly-stats" fileName="assembly-stats-with-repeats.txt" />
 	</outputs>
