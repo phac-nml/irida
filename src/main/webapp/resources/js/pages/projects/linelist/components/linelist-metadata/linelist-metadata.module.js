@@ -6,7 +6,7 @@ require('style!./../../../../../../../node_modules/angular-aside/dist/css/angula
 require('bootstrap-switch');
 require('angular-bootstrap-switch');
 require('style!./../../../../../../../node_modules/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.min.css');
-import {MetadataService} from './metadata.service';
+import {MetadataTemplateService} from '../../services/metadata-template.service';
 import {MetadataComponent} from './linelist-metadata.component';
 import {metadataTemplateName} from './../../directives/metadataTemplateName';
 
@@ -19,6 +19,6 @@ export const MetadataModule = angular
     'frapontillo.bootstrap-switch'
   ])
   .directive('metadataTemplateName', metadataTemplateName)
-  .service('MetadataService', MetadataService)
+  .service('MetadataService', MetadataTemplateService)
   .component('metadataComponent', MetadataComponent)
   .name;
