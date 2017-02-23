@@ -14,7 +14,6 @@ export function MetadataTemplateService($resource, $window,
     save: {
       method: 'POST',
       transformRequest: function(data) {
-        console.log(data);
         return $httpParamSerializerJQLike(data);
       }
     }

@@ -48,12 +48,10 @@ function controller($scope,
 
   $scope.$on(EVENTS.TABLE.columnVisibility, (e, args) => {
     const {column} = args;
-    console.log(column);
     const col = $ctrl.dtColumns
       .find(c => {
         return c.sTitle === column.label;
       });
-    console.log(col);
 
     col.visible = column.visible;
   });
