@@ -91,7 +91,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 	
 	private static final float DELTA = 0.000001f;
 
-	private static final String CMD_LINE_PATTERN = "echo \"csv,1[^\"]+\" > (/.*?)+; echo \"output_tree\" > (/.*?)+; echo \"positions\" > (/.*?)+";
+	private static final String CMD_LINE_PATTERN = "echo -e \"csv,1[^\"]+\" > (/.*?)+; echo \"output_tree\" > (/.*?)+; echo \"positions\" > (/.*?)+";
 
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionServiceGalaxyIT.class);
 
