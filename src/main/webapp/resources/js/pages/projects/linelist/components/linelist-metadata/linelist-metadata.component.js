@@ -1,6 +1,47 @@
 import {EVENTS} from './../../constants';
 
 /**
+ * Controller for handling getting the name for a new template.
+ * @param {array} templates of existing templates.
+ * @param {object} $uibModalInstance handle on the current modal.
+ */
+function saveTemplateController(templates, $uibModalInstance) {
+  this.templates = templates;
+  this.template = {};
+
+  this.cancel = () => {
+    this.template.name = '';
+    $uibModalInstance.dismiss();
+  };
+
+  this.save = () => {
+    $uibModalInstance.close(this.template.name);
+    this.template.name = '';
+  };
+}
+
+saveTemplateController.$inject = [
+  'templates',
+  '$uibModalInstance'
+];
+
+/**
+ * Controller for the ng-aside that allows the user to select
+ * visible metadata fields
+ * @param {array} fields metadata fields
+ * @param {function} toggleColumnVisibility call to toggle the column within the Datatables.
+ */
+function showMetadataFieldSelectionsController(fields, toggleColumnVisibility) {
+  this.fields = fields;
+
+  this.toggleColumn = column => {
+    toggleColumnVisibility(column);
+  };
+}
+
+showMetadataFieldSelectionsController.$inject = ['fields', 'toggleColumnVisibility'];
+
+/**
  * Controller for MetadataComponent. Handles displaying toggles
  * for hiding and showing metadata columns.
  *
@@ -29,7 +70,6 @@ function MetadataController($scope, $aside, $uibModal,
       .map(field => {
         return {label: field, visible: true};
       });
-    console.table(FIELDS);
     FIELD_ORDER = vm.fields.map((x, i) => i);
   };
 
@@ -38,18 +78,17 @@ function MetadataController($scope, $aside, $uibModal,
       templateUrl: 'metadata.aside.tmpl',
       openedClass: 'metadata-open',
       controllerAs: '$ctrl',
-      controller(fields) {
-        this.fields = fields;
-
-        this.toggleColumn = column => {
-          vm.parent.updateColumnVisibility(column);
-        };
-      },
+      controller: showMetadataFieldSelectionsController,
       resolve: {
         fields() {
+          // Send in the appropriately ordered fields based
+          // on the current table order.
           return FIELD_ORDER.map(col => {
             return FIELDS[col];
           });
+        },
+        toggleColumnVisibility() {
+          return vm.parent.updateColumnVisibility;
         }
       },
       placement: 'left',
@@ -62,17 +101,7 @@ function MetadataController($scope, $aside, $uibModal,
       .open({
         templateUrl: `save-template.tmpl.html`,
         controllerAs: '$modal',
-        controller: function(templates, $uibModalInstance) {
-          this.template = templates;
-
-          this.cancel = () => {
-            $uibModalInstance.dismiss();
-          };
-
-          this.save = () => {
-            $uibModalInstance.close(this.template.name);
-          };
-        },
+        controller: saveTemplateController,
         resolve: {
           templates: () => {
             return vm.templates;
@@ -93,6 +122,10 @@ function MetadataController($scope, $aside, $uibModal,
         field.visible = true;
       });
       fields = Array.from(FIELDS);
+
+      // Datatables does not fire an event when the table is reset to its
+      // original state, so we will just reset the field order here.
+      FIELD_ORDER = vm.fields.map((x, i) => i);
     } else {
       fields = Array.from(vm.selectedTemplate.fields);
 
@@ -107,11 +140,11 @@ function MetadataController($scope, $aside, $uibModal,
     vm.parent.templateSelected(fields);
   };
 
+  /**
+   * Save the currently visible fields as a MetadataTemplate
+   * @param {string} name for the new template
+   */
   function saveTemplate(name) {
-    /**
-     * Save the currently visible fields as a MetadataTemplate
-     * @param {string} name for the new template
-     */
     const fields = FIELD_ORDER
       .map(index => {
         // Need to put the fields in the order they are in the table
