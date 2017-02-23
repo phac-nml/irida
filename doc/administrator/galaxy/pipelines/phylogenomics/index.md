@@ -11,13 +11,13 @@ IRIDA uses the software [SNVPhyl][] for constructing whole genome phylogenies.  
 
 | Tool Name               | Tool Revision | Toolshed Installable Revision | Toolshed             |
 |:-----------------------:|:-------------:|:-----------------------------:|:--------------------:|
-| **suite_snvphyl_1_0_0** | 4e41de612a14  | 0 (2016-05-25)                | [IRIDA Main Shed][]  |
+| **suite_snvphyl_1_0_1** | 4841b7148c44  | 0 (2017-01-18)                | [IRIDA Main Shed][]  |
 
 To install these tools, please proceed through the following steps.
 
 ## Step 1: Install Build Dependencies
 
-SNVPhyl relies on `ncurses` version **2.9** which requires [GCC][] version **4.9** or **less**.  Please verify you have the correct version of GCC by running `gcc --version`.  If you have a more recent version installed please install version **4.9** before proceeding.
+SNVPhyl relies on `ncurses` version **2.9** which requires [GCC][] version **4.9** or **less** to build.  Please verify you have the correct version of GCC by running `gcc --version`.  If you have a more recent version installed please install version **4.9** before proceeding.  Alternativly, please verify that `ncurses` is installed on your system before installing SNVPhyl.
 
 ## Step 2: Install Perl Modules
 
@@ -48,7 +48,7 @@ A Galaxy workflow and some test data has been included with this documentation t
     ![dataset-pair-screen][]
 
 5. This should have properly paired your data and named each sample **a**, **b**, and **c**.  Enter the name of this paired dataset collection at the bottom and click **Create list**.
-6. Run the uploaded workflow by clicking on **Workflow**, clicking on the name of the workflow **SNVPhyl Pipeline** and clicking **Run**.  This should auto fill in the reference file and dataset collection.  There should be three boxes for filling in runtime parameters.  Please fill in `min_coverage=5`, `min_mean_mapping=30`, and `alternative_allele_proportion=0.75`.  Now, at the very bottom of the screen click **Run workflow**.
+6. Run the uploaded workflow by clicking on **Workflow**, clicking on the name of the workflow **SNVPhyl Pipeline** and clicking **Run**.  This should auto fill in the reference file and dataset collection.  There should be three boxes for filling in runtime parameters.  Please fill in `min_coverage=5`, `min_mean_mapping=30`, and `snv_abundance_ratio=0.75`.  Now, at the very bottom of the screen click **Run workflow**.
 7. If everything was installed correctly, you should see each of the tools run successfully (turn green).  On completion this should look like.
 
     ![workflow-success][]
@@ -57,7 +57,7 @@ A Galaxy workflow and some test data has been included with this documentation t
 
 If everything was successfull then all dependencies for this pipeline have been properly installed.
 
-[SNVPhyl]: https://irida.corefacility.ca/gitlab/analysis-pipelines/snvphyl-galaxy/tree/development
+[SNVPhyl]: http://snvphyl.readthedocs.io
 [GCC]: https://gcc.gnu.org/
 [Galaxy Main Shed]: http://toolshed.g2.bx.psu.edu/
 [IRIDA Main Shed]: https://irida.corefacility.ca/galaxy-shed

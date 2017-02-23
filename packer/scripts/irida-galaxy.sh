@@ -19,13 +19,15 @@ EOF
 
 # install docker so that we can pull down the IRIDA Galaxy Docker container:
 yum -y install docker-engine
+# switch to `devicemapper` for docker as I found the that the IRIDA Galaxy docker image failed to run with the default storage driver (overlay)
+sed -i -e 's@ExecStart=/usr/bin/dockerd@ExecStart=/usr/bin/dockerd --storage-driver=devicemapper@' /usr/lib/systemd/system/docker.service
 systemctl enable docker
 systemctl start docker
 
 # run the galaxy container, --restart=always makes sure it starts up on boot
 mkdir -p /home/irida/data/galaxy-export
 curl https://irida.corefacility.ca/downloads/docker/irida-galaxy-docker-latest.tar.gz | gunzip -c | docker load
-docker run --name galaxy -d -p 9090:80 -v /home/irida/data/galaxy-export/:/export/ -v /home/irida/data/sequencing:/home/irida/data/sequencing apetkau/galaxy-irida-16.01:0.12.0
+docker run --name galaxy -d -p 9090:80 -v /home/irida/data/galaxy-export/:/export/ -v /home/irida/data/sequencing:/home/irida/data/sequencing apetkau/galaxy-irida-16.10:0.15.0
 
 # wait for galaxy to succeed starting up for the first time, so we don't have to wait for postgres to start up next time
 wait_for_galaxy
@@ -40,7 +42,7 @@ After=docker.service
 
 [Service]
 ExecStartPre=-/usr/bin/docker rm --force galaxy
-ExecStart=/usr/bin/docker run --name galaxy -d -p 9090:80 -v /home/irida/data/galaxy-export/:/export/ -v /home/irida/data/sequencing:/home/irida/data/sequencing apetkau/galaxy-irida-16.01:0.12.0
+ExecStart=/usr/bin/docker run --name galaxy -d -p 9090:80 -v /home/irida/data/galaxy-export/:/export/ -v /home/irida/data/sequencing:/home/irida/data/sequencing apetkau/galaxy-irida-16.10:0.15.0
 
 [Install]
 WantedBy=multi-user.target

@@ -22,7 +22,7 @@ MOUNTPATH="$PWD"
 
 #run docker container and save the outputted container ID
 OUTPUT="$(docker run -d -p 48888:80 -v ${MOUNTPATH}:${MOUNTPATH} \
-    -v /tmp/irida:/tmp/irida apetkau/galaxy-irida-16.01-it:0.1)"
+    -v /tmp/irida:/tmp/irida apetkau/galaxy-irida-16.10-it:0.1)"
 
 #run the test suite
 mvn clean verify -Pgalaxy_testing
