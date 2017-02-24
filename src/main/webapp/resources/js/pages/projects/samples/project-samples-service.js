@@ -91,7 +91,7 @@
      */
     function _copyMoveSamples(params) {
       return post(page.urls.samples.copy, params)
-        .success(function(result) {
+        .then(function(result) {
           showCopyRemoveErrors(result);
         });
     }
@@ -108,7 +108,7 @@
         newName: data.newName
       };
       return post(page.urls.samples.merge, params)
-        .success(function(result) {
+        .then(function(result) {
           notifications.show({type: result.result, msg: result.message});
         });
     };
@@ -139,8 +139,8 @@
      */
     SampleService.prototype.remove = function(ids) {
       return post(page.urls.samples.remove, {sampleIds: ids})
-        .success(function(data) {
-          notifications.show({type: data.result, msg: data.message})
+        .then(function(result) {
+          notifications.show({type: result.data.result, msg: result.data.message})
         });
     };
 
