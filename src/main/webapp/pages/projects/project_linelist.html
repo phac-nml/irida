@@ -5,7 +5,6 @@
         layout:decorator="projects/_base">
 <head>
     <title th:text="#{linelist.page-title}">Title</title>
-    <link rel="stylesheet" href="/resources/css/pages/project_linelist.css"/>
     <script th:inline="javascript">
       var PAGE = {
         urls: {
@@ -93,9 +92,11 @@
                                    switch-label="{{ field.label }}"
                                    switch-readonly="{{ $index === 0 }}"
                             />
-                            <small class="text-info" ng-if="$index === 0" th:text="#{linelist.columns.first-warning}">
+                            <div ng-if="$index === 0">
+                                <small class="text-info" th:text="#{linelist.columns.first-warning}">
                                 _First column can not be hidden._
-                            </small>
+                                </small>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -107,7 +108,7 @@
         <div class="modal-header">
             <h3 class="modal-title" th:text="#{linelist.create-template.saving.modal.title}">_Save_Template_As_</h3>
         </div>
-        <div class="modal-body">
+        <div class="modal-body metadata-aside">
             <form name="templateNameForm">
                 <div class="form-group"
                      ng-class="{'has-error': !templateNameForm.templateName.$pristine &amp;&amp; !templateNameForm.templateName.$valid}">
@@ -150,10 +151,6 @@
             </button>
         </div>
     </script>
-
-    <!-- TODO: (Josh | 27 Jan, 2017) Remove this script:src tag before committing to development and put in dandelion -->
-    <script src="/resources/js/build/project-linelist.bundle.js"
-            th:src="@{/resources/js/build/project-linelist.bundle.js}"></script>
 </th:block>
 </body>
 </html>
