@@ -16,4 +16,8 @@ export class LinelistService {
   }
 }
 
-LinelistService.$inject = ['$window', '$http', '$q'];
+LinelistService.$inject = [
+  '$window',
+  '$http',
+  '$q'
+];

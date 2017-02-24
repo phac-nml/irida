@@ -229,6 +229,16 @@ public class ProjectLineListController {
 		return fieldList;
 	}
 
+	/**
+	 * Get a {@link List} of {@link MetadataTemplate}s for a specific {@link Project}
+	 *
+	 * @param projectId
+	 * 		{@link Long} identifier for a {@link Project}
+	 * @param locale
+	 * 		users current {@link Locale}
+	 *
+	 * @return {@link List} of {@link MetadataTemplate}
+	 */
 	@RequestMapping(value = "/templates", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public List<MetadataTemplate> getMetadataTemplates(@PathVariable long projectId, Locale locale) {
@@ -236,7 +246,8 @@ public class ProjectLineListController {
 		List<ProjectMetadataTemplateJoin> joins = metadataTemplateService.getMetadataTemplatesForProject(project);
 		List<MetadataTemplate> templates = new ArrayList<>();
 		// Add Template for all fields
-		MetadataTemplate allTemplate = new MetadataTemplate(messageSource.getMessage("linelist.templates.all", new Object[]{}, locale), ImmutableList.of());
+		MetadataTemplate allTemplate = new MetadataTemplate(
+				messageSource.getMessage("linelist.templates.all", new Object[] {}, locale), ImmutableList.of());
 		allTemplate.setId(0L);
 		templates.add(allTemplate);
 
@@ -255,6 +266,7 @@ public class ProjectLineListController {
 	 * 		{@link List} of {@link String} names of {@link MetadataField}
 	 * @param name
 	 * 		{@link String} name for the new template.
+	 *
 	 * @return
 	 */
 	@RequestMapping(value = "/templates", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)

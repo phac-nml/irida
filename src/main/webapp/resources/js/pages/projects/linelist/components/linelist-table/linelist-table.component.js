@@ -15,6 +15,10 @@ function controller($scope,
   const $ctrl = this;
   $ctrl.table = {};
 
+  /**
+   * Angular controller initialization
+   *  - Setting upt the table options and columns
+   */
   $ctrl.$onInit = () => {
     $ctrl.dtOptions = DTOptionsBuilder
       .fromFnPromise(() => {
@@ -46,6 +50,9 @@ function controller($scope,
       });
   };
 
+  /**
+   * Listen for changes to the column visibility called from the Metadata sidebar.
+   */
   $scope.$on(EVENTS.TABLE.columnVisibility, (e, args) => {
     const {column} = args;
     const col = $ctrl.dtColumns
@@ -56,6 +63,9 @@ function controller($scope,
     col.visible = column.visible;
   });
 
+  /**
+   * Listen for changes to which template is to be displayed in the table.
+   */
   $scope.$on(EVENTS.TABLE.template, (e, args) => {
     const {fields} = args;
     const order = $ctrl.table.DataTable.colReorder.order();

@@ -39,7 +39,10 @@ function showMetadataFieldSelectionsController(fields, toggleColumnVisibility) {
   };
 }
 
-showMetadataFieldSelectionsController.$inject = ['fields', 'toggleColumnVisibility'];
+showMetadataFieldSelectionsController.$inject = [
+  'fields',
+  'toggleColumnVisibility'
+];
 
 /**
  * Controller for MetadataComponent. Handles displaying toggles
@@ -60,6 +63,11 @@ function MetadataController($scope, $aside, $uibModal,
   let FIELDS;
   vm.headers = [];
 
+  /**
+   * Angular controller initialization block.
+   *  - Getting the templates for this project
+   *  - Setting up the metadata fields for toggling columns on the Datatables.
+   */
   vm.$onInit = () => {
     MetadataTemplateService.query(templates => {
       this.templates = templates;
@@ -73,6 +81,9 @@ function MetadataController($scope, $aside, $uibModal,
     FIELD_ORDER = vm.fields.map((x, i) => i);
   };
 
+  /**
+   * EventHandler for a click to open the metadata selection side panel.
+   */
   vm.showMetadataTemplator = () => {
     $aside.open({
       templateUrl: 'metadata.aside.tmpl',
@@ -96,6 +107,9 @@ function MetadataController($scope, $aside, $uibModal,
     });
   };
 
+  /**
+   * EventHandler for a click on the button to save a new MetadataTemplate
+   */
   vm.saveTemplate = () => {
     $uibModal
       .open({
@@ -114,8 +128,12 @@ function MetadataController($scope, $aside, $uibModal,
       });
   };
 
+  /**
+   * EventHandler for a selection of a MetadataTemplate to use.
+   */
   vm.templateSelected = () => {
     let fields;
+    // "All Fields" is set to have an identifier of 0.
     if (Number(vm.selectedTemplate.identifier) === 0) {
       // Make sure that all fields are visible
       FIELDS.forEach(field => {
@@ -137,6 +155,7 @@ function MetadataController($scope, $aside, $uibModal,
         field.visible = index > -1;
       });
     }
+    // Update the Datatables with the fields to display.
     vm.parent.templateSelected(fields);
   };
 
