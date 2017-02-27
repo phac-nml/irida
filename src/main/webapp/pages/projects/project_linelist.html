@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorator="projects/_base">
+<head>
+    <title th:text="#{linelist.page-title}">Title</title>
+    <link rel="stylesheet" href="/resources/css/pages/project_linelist.css"/>
+</head>
+<body>
+<main layout:fragment="main" ddl:bundle-includes="project-linelist">
+    <linelist></linelist>
+</main>
+
+<th:block layout:fragment="scripts">
+    <script th:inline="javascript">
+      var headersList = /*[[${headers}]]*/ [];
+      var metadataList = /*[[${metadataList}]]*/ [];
+      var templates = /*[[${templates}]]*/ [];
+    </script>
+    <script type="text/ng-template" id="linelist.tmpl.html">
+        <linelist-table
+                headers="$ctrl.headers"
+                data:saveTemplateUrl="@{/projects/{id}/sample-metadata/templates/save(id=${project.getId()})}">
+        </linelist-table>
+    </script>
+    <script type="text/ng-template" id="metadata.button.tmpl">
+        <button class="btn btn-default" ng-click="$ctrl.showMetadataTemplator()">
+            <i class="fa fa-list fa-fw" aria-hidden="true"></i>
+            <th:block
+                    th:text="#{linelist.datatable.column-select.button}"/>
+        </button>
+        <select class="form-control"
+                name="template"
+                id="templage-select"
+                th:disabled="${#lists.isEmpty(templates)}"
+                ng-model="$ctrl.selectedTemplate">
+            <option value="" th:if="${#lists.isEmpty(templates)}" th:text="#{linelist.no-templates-available}">_No
+                Templates Available_
+            </option>
+            <option th:each="template : ${templates}" value="" th:value="${template.label}"
+                    th:text="${template.label}"></option>
+        </select>
+        <button class="btn btn-default" ng-click="$ctrl.saveTemplate()" ng-disabled="$ctrl.saving">
+            <span ng-hide="$ctrl.saving">
+                <i class="fa fa-save fa-fw" aria-hidden="true"></i> <th:block
+                    th:text="#{linelist.create-template.save-template}"/>
+            </span>
+            <span ng-show="$ctrl.saving">
+                <i class="fa fa-circle-o-notch fa-spin fa-fw" aria-hidden="true"></i> <th:block
+                    th:text="#{linelist.create-template.saving-template}"/>
+            </span>
+        </button>
+        <a class="btn btn-link"
+           th:href="@{/projects/{id}/sample-metadata/upload(id=${project.getId()})}">
+            <i class="fa fa-upload fw" aria-hidden="true"></i>&nbsp;<span
+                th:text="#{linelist.add-metadata.btn}"></span></a>
+    </script>
+    <script type="text/ng-template" id="metadata.aside.tmpl">
+        <div class="row" style="height: 100%;">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <Label th:text="#{linelist.columns.select-metadata.label}">
+                            _Select metadata columns to display_</Label>
+                    </div>
+                </div>
+                <div class="col-md-12 scroll-col">
+                    <div class="row spaced-bottom"
+                         ng-repeat="field in $ctrl.fields track by $index">
+                        <div class="col-sm-12">
+                            <input type="checkbox"
+                                   ng-change="$ctrl.toggleField(field)"
+                                   bs-switch=""
+                                   switch-size="small"
+                                   switch-on-color="success"
+                                   ng-model="field.selected"
+                                   switch-label-width="200"
+                                   switch-label="{{ field.text }}"
+                                   switch-readonly="{{ $index === 0 }}"
+                            />
+                            <small class="text-info" ng-if="$index === 0" th:text="#{linelist.columns.first-warning}">
+                                _First column can not be hidden._
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <script type="text/ng-template" id="save-template.tmpl.html">
+        <div class="modal-header">
+            <h3 class="modal-title" th:text="#{linelist.create-template.saving.modal.title}">_Save_Template_As_</h3>
+        </div>
+        <div class="modal-body">
+            <form name="templateNameForm">
+                <div class="form-group"
+                ng-class="{'has-error': !templateNameForm.templateName.$pristine &amp;&amp; !templateNameForm.templateName.$valid}">
+                    <label for="template-name" th:text="#{linelist.create-template.saving.modal.label}">_Name for Template_</label>
+                    <input
+                            id="template-name"
+                            class="form-control"
+                            name="templateName"
+                            required="required"
+                            type="text"
+                            minlength="5"
+                            existing-templates="$modal.templates"
+                            metadata-template-name=""
+                            ng-model="$modal.template.name"/>
+                    <div ng-show="!templateNameForm.templateName.$pristine"
+                         ng-messages="templateNameForm.templateName.$error">
+                        <span ng-message="unique"
+                              class="help-block"
+                              th:text="#{linelist.create-template.saving.error.unique}"></span>
+                        <span class="help-block"
+                              ng-message="required"
+                              th:text="#{linelist.create-template.templateName.required}"></span>
+                        <span class="help-block"
+                              ng-message="minlength"
+                              th:text="#{linelist.create-template.templateName.minlength}"></span>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-default"
+                    th:text="#{form.btn.cancel}"
+                    ng-click="$modal.cancel()">_Cancel_</button>
+            <button ng-disabled="templateNameForm.$invalid"
+                    class="btn btn-default"
+                    th:text="#{form.btn.save}"
+                    ng-click="$modal.save()">_Save_</button>
+        </div>
+    </script>
+
+    <!-- TODO: (Josh | 27 Jan, 2017) Remove this script:src tag before committing to development and put in dandelion -->
+    <script src="/resources/js/build/project-linelist.bundle.js"
+            th:src="@{/resources/js/build/project-linelist.bundle.js}"></script>
+</th:block>
+</body>
+</html>

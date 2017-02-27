@@ -1,6 +1,6 @@
 <tool id="core_pipeline_outputs_paired" name="core_pipeline_outputs_paired" version="0.1.0">
   <command>
-    echo "csv,1\ncsv,1" > $csv; echo "output_tree" > $output_tree; echo "positions" > $positions;
+    echo -e "csv,1\ncsv,1" > $csv; echo "output_tree" > $output_tree; echo "positions" > $positions;
   </command>
   <inputs>
     <param name="sequence_reads" label="sequence_reads" type="data_collection" collection_type="list:paired" />

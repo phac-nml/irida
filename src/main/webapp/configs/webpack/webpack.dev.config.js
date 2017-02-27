@@ -2,6 +2,7 @@ let entries = require("./entries.js");
 
 module.exports = {
   entry: entries,
+  devtool: 'source-maps',
   module: {
     loaders: [
       {
@@ -12,6 +13,7 @@ module.exports = {
           presets: ['es2015', 'stage-0']
         }
       },
+      {test: /\.css$/, exclude: /\.useable\.css$/, loader: "style!css"},
       {test: /\.js$/, loader: 'eslint-loader', exclude: /node_modules/}
     ]
   },

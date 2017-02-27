@@ -1,0 +1,10 @@
+{
+  "assets": [
+    {
+      "type": "css",
+      "locations": {
+        "webapp": "/resources/css/components/datatables-custom.css"
+      }
+    }
+  ]
+}

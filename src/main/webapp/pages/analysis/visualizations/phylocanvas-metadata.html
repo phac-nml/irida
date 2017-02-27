@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorator="template/page">
+<head>
+    <title th:text="#{visualization.phylogenomics.title}">Title</title>
+    <style>
+        canvas {
+            border: 1px solid rgb(176, 190, 197);
+            border-radius: .5rem;
+        }
+        h2 {
+            font-size: 1.6rem!important;
+            margin-top: 0!important;
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="page" ddl:bundle-includes="visualizations-phylogenetics">
+    <h1 th:text="#{visualization.phylogenomics.title}"></h1>
+    <phylocanvas-component
+            data:newickurl="@{/analysis/ajax/{id}/newick(id=${submissionId})}">
+    </phylocanvas-component>
+    <template-component
+            data:templatesurl="@{/analysis/ajax/{id}/metadata-templates(id=${submissionId})}"
+            data:fieldsurl="@{/analysis/ajax/{id}/metadata-template-fields(id=${submissionId})}">
+    </template-component>
+    <metadata-component
+            data:metadataurl="@{/analysis/ajax/{id}/metadata(id=${submissionId})}">
+    </metadata-component>
+</div>
+<th:block layout:fragment="scripts">
+    <script type="text/ng-template" id="phylocanvas.tmpl.html">
+        <div class="spaced-bottom" id="phylocanvas"></div>
+    </script>
+    <script type="text/ng-template" id="metadata-component.tmpl.html">
+        <h2 th:text="#{visualization.phylogenomics.select-template-fields.label}">_Select Metadata Fields to Visualize_</h2>
+        <div class="well">
+            <div class="row">
+                <div class="col-md-4 col-sm-1" ng-repeat="term in $ctrl.terms">
+                    <button class="btn btn-default spaced-bottom btn-block"
+                            ng-model="term.selected" uib-btn-checkbox=""
+                            ng-change="$ctrl.getUpdateMetadata()" ng-bind="term.term">
+                    </button>
+                </div>
+            </div>
+        </div>
+    </script>
+    <script type="text/ng-template" id="template-component.tmpl.html">
+        <div class="row spaced-bottom">
+            <div class="col-md-12">
+                <h2 aria-label="template-select" th:text="#{visualization.phylogenomics.select-template.label}">_Select a Template_</h2>
+                <select name="template-select" id="template-select"
+                        class="form-control"
+                        ng-model="$ctrl.selectedTemplate"
+                        ng-change="$ctrl.templateChange()">
+                    <option value="" th:text="#{visualization.phylogenomics.select-template.all-field}">_ALL_FIELDS_</option>
+                    <option ng-repeat="template in $ctrl.templates"
+                        value="{{ template.id }}">{{ template.label }}</option>
+                </select>
+            </div>
+        </div>
+    </script>
+</th:block>
+</body>
+</html>

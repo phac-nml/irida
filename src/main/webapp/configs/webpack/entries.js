@@ -4,5 +4,9 @@
  *  Webpack will then create the bundle in `resource/js/build/`
  */
 module.exports = {
-  app: './resources/js/app.js'
+  app: './resources/js/app.js',
+  'samples-metadata-import': './resources/js/pages/projects/samples-metadata-import/index.js',
+  'project-linelist': './resources/js/pages/projects/linelist/index.js',
+  'project-linelist-template': './resources/js/pages/projects/create-template/index.js',
+  'visualizations-phylogenetics': './resources/js/pages/visualizations/phylogenetics/index.js'
 };

@@ -84,10 +84,16 @@
             <div th:text="${file.getLabel()}"></div>
           </div>
           <div class="sidebar__item">
-            <button class="btn btn-primary btn-sm btn-block" data:ng-click="'fileDownloadController.getZipFile(\'' + ${analysisSubmission.getId()} +'\')'">
+            <button class="btn btn-default btn-sm btn-block spaced-bottom" data:ng-click="'fileDownloadController.getZipFile(\'' + ${analysisSubmission.getId()} +'\')'">
               <fa:icon type="download" />&nbsp;
               <th:block th:text="#{form.download-files}">Download Files</th:block>
             </button>
+          </div>
+          <div class="sidebar__item">
+            <a th:href="@{/analysis/{id}/advanced-phylo(id=${analysisSubmission.getId()})}"
+               class="btn btn-success btn-block"
+               th:text="#{analysis.details.view-advanced}">_View Advanced Visualization_
+            </a>
           </div>
         </div>
       </div>

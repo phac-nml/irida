@@ -3,15 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
@@ -35,13 +27,26 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.github.dandelion.datatables.core.ajax.ColumnDef;
+import com.github.dandelion.datatables.core.ajax.DataSet;
+import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
+import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
+import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataField;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -57,16 +62,10 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.Datata
 import ca.corefacility.bioinformatics.irida.security.permissions.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
-
-import com.github.dandelion.datatables.core.ajax.ColumnDef;
-import com.github.dandelion.datatables.core.ajax.DataSet;
-import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
-import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
-import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for Analysis.
@@ -89,19 +88,26 @@ public class AnalysisController {
 	private IridaWorkflowsService workflowsService;
 	private MessageSource messageSource;
 	private UserService userService;
+	private SampleService sampleService;
+	private MetadataTemplateService metadataTemplateService;
 	private ProjectService projectService;
 	private UpdateAnalysisSubmissionPermission updateAnalysisPermission;
 
 	@Autowired
 	public AnalysisController(AnalysisSubmissionService analysisSubmissionService,
-			IridaWorkflowsService iridaWorkflowsService, UserService userService, ProjectService projectService, UpdateAnalysisSubmissionPermission updateAnalysisPermission,
-			MessageSource messageSource) {
+			IridaWorkflowsService iridaWorkflowsService, UserService userService,
+			SampleService sampleService, ProjectService projectService,
+			UpdateAnalysisSubmissionPermission updateAnalysisPermission,
+			MetadataTemplateService metadataTemplateService, MessageSource messageSource) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
 		this.messageSource = messageSource;
 		this.userService = userService;
 		this.projectService = projectService;
 		this.updateAnalysisPermission = updateAnalysisPermission;
+		this.sampleService = sampleService;
+		this.projectService = projectService;
+		this.metadataTemplateService = metadataTemplateService;
 	}
 
 	// ************************************************************************************************
@@ -188,8 +194,8 @@ public class AnalysisController {
 		// Check if user can update analysis
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		model.addAttribute("updatePermission", updateAnalysisPermission.isAllowed(authentication, submission));
-		
-		
+
+
 		// Get the number of files currently being mirrored
 		int mirroringCount = remoteFilesPaired.stream().mapToInt(p -> p.isMirrored() ? 0 : 1).sum();
 		model.addAttribute("mirroringCount", mirroringCount);
@@ -217,10 +223,10 @@ public class AnalysisController {
 
 		return viewName;
 	}
-	
+
 	/**
 	 * Get the status of projects that can be shared with the given analysis
-	 * 
+	 *
 	 * @param submissionId
 	 *            the {@link AnalysisSubmission} id
 	 * @return a list of {@link SharedProjectResponse}
@@ -246,7 +252,7 @@ public class AnalysisController {
 		// Create response for shared projects
 		projectResponses.addAll(projectsInAnalysis.stream().filter(p -> !projectsShared.contains(p))
 				.map(p -> new SharedProjectResponse(p, false)).collect(Collectors.toList()));
-		
+
 		projectResponses.sort(new Comparator<SharedProjectResponse>() {
 
 			@Override
@@ -257,11 +263,11 @@ public class AnalysisController {
 
 		return projectResponses;
 	}
-	
+
 	/**
 	 * Update the share status of a given {@link AnalysisSubmission} for a given
 	 * {@link Project}
-	 * 
+	 *
 	 * @param submissionId
 	 *            the {@link AnalysisSubmission} id to share/unshare
 	 * @param projectId
@@ -280,17 +286,35 @@ public class AnalysisController {
 		String message = "";
 		if (shareStatus) {
 			analysisSubmissionService.shareAnalysisSubmissionWithProject(submission, project);
-			
+
 			message = messageSource.getMessage("analysis.details.share.enable", new Object[] { project.getLabel() }, locale);
 		} else {
 			analysisSubmissionService.removeAnalysisProjectShare(submission, project);
 			message = messageSource.getMessage("analysis.details.share.remove", new Object[] { project.getLabel() }, locale);
 		}
-		
+
 		return ImmutableMap.of("result", "success", "message", message);
 	}
 
-	
+	/**
+	 * Get the page for viewing advanced phylogenetic visualization
+	 *
+	 * @param submissionId
+	 * 		{@link Long} identifier for an {@link AnalysisSubmission}
+	 * @param model
+	 * 		{@link Model}
+	 *
+	 * @return {@link String} path to the page template.
+	 */
+	@RequestMapping("/{submissionId}/advanced-phylo")
+	public String getAdvancedPhylogeneticVisualizationPage(
+			@PathVariable Long submissionId, Model model){
+
+		model.addAttribute("submissionId", submissionId);
+		return BASE + "visualizations/phylocanvas-metadata";
+	}
+
+
 	// ************************************************************************************************
 	// Analysis view setup
 	// ************************************************************************************************
@@ -411,7 +435,7 @@ public class AnalysisController {
 
 		return DatatablesResponse.build(dataSet, criterias);
 	}
-	
+
 	@RequestMapping("/ajax/project/{projectId}/list")
 	@ResponseBody
 	public DatatablesResponse<AnalysisTableResponse> getSubmissionsForProject(
@@ -420,7 +444,7 @@ public class AnalysisController {
 			ExecutionManagerException {
 
 		Project project = projectService.read(projectId);
-		
+
 		int currentPage = DatatablesUtils.getCurrentPage(criterias);
 		Map<String, Object> sortProps = DatatablesUtils.getSortProperties(criterias);
 		String searchString = criterias.getSearch();
@@ -559,6 +583,128 @@ public class AnalysisController {
 	}
 
 	/**
+	 * Get a newick file associated with a specific {@link AnalysisSubmission}.
+	 *
+	 * @param submissionId
+	 * 		{@link Long} id for an {@link AnalysisSubmission}
+	 *
+	 * @return {@link Map} containing the newick file contents.
+	 * @throws IOException
+	 * 		{@link IOException} if the newick file is not found
+	 */
+	@RequestMapping("/ajax/{submissionId}/newick")
+	@ResponseBody
+	public Map<String, Object> getNewickForAnalysis(@PathVariable Long submissionId) throws IOException {
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+		AnalysisPhylogenomicsPipeline analysis = (AnalysisPhylogenomicsPipeline) submission.getAnalysis();
+		AnalysisOutputFile file = analysis.getPhylogeneticTree();
+		List<String> lines = Files.readAllLines(file.getFile());
+		return ImmutableMap.of("newick", lines.get(0));
+	}
+
+	/**
+	 * Get the metadata associated with a template for an analysis.
+	 *
+	 * @param submissionId
+	 * 		{@link Long} identifier for the {@link AnalysisSubmission}
+	 *
+	 * @return {@link Map}
+	 */
+	@RequestMapping("/ajax/{submissionId}/metadata")
+	@ResponseBody
+	public Map<String, Object> getMetadataForAnalysisSamples(
+			@PathVariable Long submissionId) {
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubimssion(submission);
+
+		// Let's get a list of all the metadata available that is unique.
+		Set<String> terms = new HashSet<>();
+		for (Sample sample : samples) {
+			SampleMetadata sampleMetadata = sampleService.getMetadataForSample(sample);
+			if (sampleMetadata != null) {
+				Map<String, Object> metadata = sampleMetadata.getMetadata();
+				terms.addAll(metadata.keySet());
+			} else {
+				// Might as well add a new empty one if it is not there.
+				SampleMetadata newSampleMetadata = new SampleMetadata();
+				sampleService.saveSampleMetadaForSample(sample, newSampleMetadata);
+			}
+		}
+
+		// Get the metadata for the samples;
+		Map<String, Object> metadata = new HashMap<>();
+		for (Sample sample : samples) {
+			SampleMetadata sampleMetadata = sampleService.getMetadataForSample(sample);
+			Map<String, Object> data = sampleMetadata.getMetadata();
+			Map<String, Object> valuesMap = new HashMap<>();
+			for (String term : terms) {
+				valuesMap.put(term, data.get(term));
+			}
+			metadata.put(sample.getLabel(), valuesMap);
+		}
+
+		return ImmutableMap.of(
+				"terms", terms,
+				"metadata", metadata
+		);
+	}
+
+	/**
+	 * Get a list of all {@link MetadataTemplate}s for the {@link AnalysisSubmission}
+	 * 
+	 * @param submissionId id of the {@link AnalysisSubmission}
+	 * @return a map of {@link MetadataTemplate}s
+	 */
+	@RequestMapping("/ajax/{submissionId}/metadata-templates")
+	@ResponseBody
+	public Map<String, Object> getMetadataTemplatesForAnalysis(@PathVariable Long submissionId) {
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+		List<Project> projectsUsedInAnalysisSubmission = projectService.getProjectsUsedInAnalysisSubmission(submission);
+
+		Set<Long> projectIds = new HashSet<>();
+		Set<Map<String, Object>> templates = new HashSet<>();
+
+		for (Project project : projectsUsedInAnalysisSubmission) {
+			if (!projectIds.contains(project.getId())) {
+				projectIds.add(project.getId());
+
+				// Get the templates for the project
+				List<ProjectMetadataTemplateJoin> templateList = metadataTemplateService
+						.getMetadataTemplatesForProject(project);
+				for (ProjectMetadataTemplateJoin projectMetadataTemplateJoin : templateList) {
+					MetadataTemplate metadataTemplate = projectMetadataTemplateJoin.getObject();
+					Map<String, Object> templateMap = ImmutableMap.of("label", metadataTemplate.getLabel(), "id",
+							metadataTemplate.getId());
+					templates.add(templateMap);
+				}
+			}
+		}
+
+		return ImmutableMap.of("templates", templates);
+	}
+
+	/**
+	 * Generates a list of metadata fields for a five template.
+	 *
+	 * @param templateId
+	 * 		{@link Long} id for the {@link MetadataTemplate} that the fields are required.
+	 *
+	 * @return {@link Map}
+	 */
+	@RequestMapping("/ajax/{submissionId}/metadata-template-fields")
+	@ResponseBody
+	public Map<String, Object> getMetadataTemplateFields(
+			@RequestParam Long templateId){
+		MetadataTemplate template = metadataTemplateService.read(templateId);
+		List<MetadataField> metadataFields = template.getFields();
+		List<String> fields = new ArrayList<>();
+		for (MetadataField metadataField : metadataFields) {
+			fields.add(metadataField.getLabel());
+		}
+		return ImmutableMap.of("fields", fields);
+	}
+
+	/**
 	 * Get the view name for different analysis types
 	 *
 	 * @param type
@@ -625,7 +771,7 @@ public class AnalysisController {
 						.getId());
 				this.percentComplete = Float.toString(percentComplete);
 			}
-			
+
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			updatePermission = updateAnalysisPermission.isAllowed(authentication, submission);
 		}
@@ -665,12 +811,12 @@ public class AnalysisController {
 		public Date getCreatedDate() {
 			return createdDate;
 		}
-		
+
 		public boolean getUpdatePermission() {
 			return updatePermission;
 		}
 	}
-	
+
 	/**
 	 * Response object storing a project and whether or not it's shared with a
 	 * given {@link AnalysisSubmission}

@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration;
 
+import static com.lordofthejars.nosqlunit.mongodb.MongoDbRule.MongoDbRuleBuilder.newMongoDbRule;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,6 +21,8 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -28,9 +32,10 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
-
+import com.lordofthejars.nosqlunit.mongodb.MongoDbRule;
 
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
+import ca.corefacility.bioinformatics.irida.config.data.MongoDatasourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 
@@ -39,7 +44,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
  */
 @ActiveProfiles("it")
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {IridaApiJdbcDataSourceConfig.class,
-        IridaApiPropertyPlaceholderConfig.class})
+        IridaApiPropertyPlaceholderConfig.class, MongoDatasourceConfig.class})
 @TestExecutionListeners({DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class})
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -54,6 +59,18 @@ public class AbstractIridaUIITChromeDriver {
     @Rule
     public ScreenshotOnFailureWatcher watcher = new ScreenshotOnFailureWatcher();
     
+    /**
+ 	 * NoSQLUnit requirement to wire in ApplicationContext. Really not sure why
+ 	 * but it doesn't work if you don't.
+ 	 */
+ 	@SuppressWarnings("unused")
+	@Autowired
+ 	private ApplicationContext applicationContext;
+    
+    
+    @Rule
+    public MongoDbRule mongoDbRule = newMongoDbRule().defaultSpringMongoDb("test");
+
     /**
      * Code to execute before *each* test.
      */

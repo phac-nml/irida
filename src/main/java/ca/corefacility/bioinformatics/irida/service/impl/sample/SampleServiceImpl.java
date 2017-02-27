@@ -38,6 +38,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
@@ -46,6 +47,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sample.SampleMetadataRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
@@ -75,11 +77,13 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	private SampleSequencingObjectJoinRepository ssoRepository;
 	
 	private QCEntryRepository qcEntryRepository;
-	
+
 	/**
 	 * Reference to {@link AnalysisRepository}.
 	 */
 	private final AnalysisRepository analysisRepository;
+
+	private final SampleMetadataRepository sampleDataRepository;
 
 	/**
 	 * Constructor.
@@ -92,6 +96,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 *            the analysis repository.
 	 * @param ssoRepository
 	 *            The {@link SampleSequencingObjectJoin} repository
+	 * @param sampleDataRepository
+	 * 			  {@link SampleMetadataRepository} the repository for story sample metadata
 	 * @param qcEntryRepository
 	 *            a repository for storing and reading {@link QCEntry}
 	 * @param validator
@@ -100,12 +106,13 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Autowired
 	public SampleServiceImpl(SampleRepository sampleRepository, ProjectSampleJoinRepository psjRepository,
 			final AnalysisRepository analysisRepository, SampleSequencingObjectJoinRepository ssoRepository,
-			QCEntryRepository qcEntryRepository, Validator validator) {
+			QCEntryRepository qcEntryRepository, SampleMetadataRepository sampleDataRepository, Validator validator) {
 		super(sampleRepository, validator, Sample.class);
 		this.sampleRepository = sampleRepository;
 		this.psjRepository = psjRepository;
 		this.analysisRepository = analysisRepository;
 		this.ssoRepository = ssoRepository;
+		this.sampleDataRepository = sampleDataRepository;
 		this.qcEntryRepository = qcEntryRepository;
 	}
 	
@@ -402,7 +409,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 				.collect(Collectors.toSet());
 		return samples;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -430,5 +437,46 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		}
 
 		return sortProperties;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	// TODO: Add investigation permission
+	@PreAuthorize("permitAll()")
+	@Override
+	public SampleMetadata getMetadataForSample(Sample s) {
+		return sampleDataRepository.findMetadataForSample(s.getId());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
+	public SampleMetadata saveSampleMetadaForSample(Sample sample, SampleMetadata metadata) {
+		SampleMetadata original = sampleDataRepository.findMetadataForSample(sample.getId());
+		if (original != null) {
+			original.setMetadata(metadata.getMetadata());
+			metadata = original;
+		} else {
+			metadata.setSampleId(sample.getId());
+		}
+
+		return sampleDataRepository.save(metadata);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
+	public void deleteSampleMetadaForSample(Sample sample) {
+		SampleMetadata original = sampleDataRepository.findMetadataForSample(sample.getId());
+		if (original != null) {
+			sampleDataRepository.delete(original);
+		} else {
+			throw new EntityNotFoundException("No metadata foud for sample " + sample.getId());
+		}
 	}
 }

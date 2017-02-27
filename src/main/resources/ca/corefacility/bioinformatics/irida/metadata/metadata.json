@@ -1,0 +1,128 @@
+[
+  {
+    "_class": "ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata",
+    "sampleId": 51,
+    "metadata": {
+      "firstName": {
+        "value": "Jon"
+      },
+      "lastName": {
+        "value": "Doe"
+      },
+      "city": {
+        "value": "Winnipeg"
+      },
+      "healthAuthority": {
+        "value": "Winnipeg Regional Health Authority"
+      },
+      "birthDate": {
+        "value": "1987-11-28"
+      },
+      "firstSymptom": {
+        "value": "Coughing"
+      },
+      "onsetDate": {
+        "value": "2015-10-15T10:16:42+00:00"
+      },
+      "species": {
+        "value": "Salmonella"
+      },
+      "serotype": {
+        "value": "XXX"
+      },
+      "primaryPfge": {
+        "value": "ABC123"
+      },
+      "secondaryPfge": {
+        "value": "DEF456"
+      },
+      "phageType": {
+        "value": "5"
+      }
+    }
+  },
+  {
+    "_class": "ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata",
+    "sampleId": 52,
+    "metadata": {
+      "firstName": {
+        "value": "Damion"
+      },
+      "lastName": {
+        "value": "Dooley"
+      },
+      "city": {
+        "value": "Vancouver"
+      },
+      "healthAuthority": {
+        "value": "BC Fraser Health Authority"
+      },
+      "birthDate": {
+        "value": "1966-01-13"
+      },
+      "firstSymptom": {
+        "value": "Blurred vision"
+      },
+      "onsetDate": {
+        "value": "2015-02-11T10:16:42+00:00"
+      },
+      "species": {
+        "value": "Salmonella enterica"
+      },
+      "serotype": {
+        "value": "SENXAI.0001"
+      },
+      "primaryPfge": {
+        "value": "SENBNI.0017"
+      },
+      "secondaryPfge": {
+        "value": "DEF456"
+      },
+      "phageType": {
+        "value": "DT4b"
+      }
+    }
+  },
+  {
+    "_class": "ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata",
+    "sampleId": 53,
+    "metadata": {
+      "firstName": {
+        "value": "Foo"
+      },
+      "lastName": {
+        "value": "Bar"
+      },
+      "city": {
+        "value": "Comox"
+      },
+      "healthAuthority": {
+        "value": "BC Vancouver Island Health Authority"
+      },
+      "birthDate": {
+        "value": "1986-02-28"
+      },
+      "firstSymptom": {
+        "value": "Diarrhea"
+      },
+      "onsetDate": {
+        "value": "2015-06-04T10:16:42+00:00"
+      },
+      "species": {
+        "value": "Salmonella enterica"
+      },
+      "serotype": {
+        "value": ""
+      },
+      "primaryPfge": {
+        "value": "SENXAI.0038"
+      },
+      "secondaryPfge": {
+        "value": "SENBNI.0016"
+      },
+      "phageType": {
+        "value": "DT13"
+      }
+    }
+  }
+]

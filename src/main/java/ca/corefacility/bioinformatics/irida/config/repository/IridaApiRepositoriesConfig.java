@@ -14,6 +14,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.envers.repository.support.EnversRevisionRepositoryFactoryBean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.data.mongodb.config.EnableMongoAuditing;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -24,6 +26,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import ca.corefacility.bioinformatics.irida.config.data.DataConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
+import ca.corefacility.bioinformatics.irida.config.data.MongoDatasourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.repositories.relational.auditing.UserRevListener;
 
@@ -37,8 +40,10 @@ import ca.corefacility.bioinformatics.irida.repositories.relational.auditing.Use
 @EnableJpaRepositories(basePackages = "ca.corefacility.bioinformatics.irida.repositories", repositoryFactoryBeanClass = EnversRevisionRepositoryFactoryBean.class)
 @ComponentScan("ca.corefacility.bioinformatics.irida.repositories.remote")
 @Import({ IridaApiPropertyPlaceholderConfig.class, IridaApiJdbcDataSourceConfig.class,
-		IridaApiFilesystemRepositoryConfig.class })
+		IridaApiFilesystemRepositoryConfig.class, MongoDatasourceConfig.class })
 @EnableJpaAuditing
+@EnableMongoRepositories(basePackages="ca.corefacility.bioinformatics.irida.repositories")
+@EnableMongoAuditing
 public class IridaApiRepositoriesConfig {
 
 	/**

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorator="projects/_base">
+<head>
+    <title th:text="#{linelist.create-template.title}">Title</title>
+</head>
+<body>
+<main layout:fragment="main" ddl:bundle-includes="project-linelist-template">
+    <h2 th:text="#{linelist.create-template.title}">Create a New Line List Template</h2>
+    <template-input-component
+            data:templateurl="@{/projects/{id}/linelist/metadatafields(id=${project.getId()})}"
+            data:saveurl="@{/projects/{id}/linelist/linelist-templates/save-template(id=${project.getId()})}"
+            data:redirecturl="@{/projects/{id}/linelist(id=${project.getId()})}"/>
+    <script type="text/ng-template" id="templateInput.tmpl.html">
+        <form name="fields" novalidate="novalidate">
+            <div class="row">
+                <div class="col-md-12">
+                    <label for="template-name" th:text="#{linelist.create-template.name}">Template Name</label>
+                </div>
+            </div>
+            <div class="row spaced-bottom">
+                <div class="form-group col-md-8">
+                    <div class="form-group" ng-class="{'has-error': fields.templateName.$invalid}">
+                        <input id="template-name"
+                               name="templateName"
+                               class="form-control"
+                               type="text"
+                               required="required"
+                               minlength="5"
+                               ng-model="$ctrl.template.name"/>
+
+                        <div ng-messages="fields.templateName.$error">
+                            <p class="label label-danger" ng-message="required"
+                               th:text="#{linelist.create-template.templateName.required}">_This is a required
+                                field_</p>
+                            <p class="label label-danger" ng-message="minlength"
+                               th:text="#{linelist.create-template.templateName.minlength}">_Templage name must be 5
+                                letters long_</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <button id="save-template-btn"
+                            class="btn btn-primary"
+                            ng-disabled="fields.$invalid"
+                            ng-click="$ctrl.saveTemplate()"
+                            th:text="#{linelist.create-template.save-template}">Save
+                    </button>
+                </div>
+            </div>
+            <div class="row spaced-bottom">
+                <div class="form-group col-md-8">
+                    <label for="existing-templates" th:text="#{linelist.create-template.add-existing}">Add Existing
+                        Template</label>
+                    <select id="existing-templates"
+                            class="form-control spaced-bottom"
+                            multiple="multiple"
+                            select2-basic=""
+                            ng-change="$ctrl.getUpdatedTemplates()"
+                            ng-model="$ctrl.existing">
+                        <option th:each="template : ${templates}" th:value="${template.id}"
+                                th:text="${template.label}"></option>
+                    </select>
+                </div>
+            </div>
+            <label th:text="#{linelist.create-template.template-fields}">Template Fields</label>
+            <div class="row">
+                <div class="col-md-8">
+                    <ul class="list-group"
+                        dnd-list="$ctrl.template.list">
+
+                        <li class="list-group-item" ng-repeat="item in $ctrl.template.list"
+                            dnd-draggable="item"
+                            dnd-moved="$ctrl.template.list.splice($index, 1)"
+                            dnd-disable-if="$ctrl.template.list.length === 1"
+                            dnd-effect-allowed="move">
+                            <div class="row">
+                                <div class="col-md-12">
+                                <span class="label label-primary"
+                                      style="margin-right: .5em;"
+                                      ng-repeat="(template, value) in item.templates">
+                                      {{ $ctrl.nameMap.get(template) }}
+                                </span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <ng-form name="entry">
+                                    <div class="form-group col-md-5 entry"
+                                         ng-class="{'has-error' : entry.fieldName.$invalid}">
+                                        <input type="text"
+                                               name="fieldName"
+                                               class="form-control field-label"
+                                               ng-model="item.label"
+                                               required="required"
+                                               placeholder="Field Name"
+                                               index="{{ $index }}"
+                                               minlength="5"
+                                               no-repeat-name=""/>
+                                        <div ng-messages="entry.fieldName.$error">
+                                            <p class="label label-danger" ng-message="required"
+                                               th:text="#{linelist.create-template.field.required}">_This is a
+                                                required field_</p>
+                                            <p class="label label-danger" ng-message="minlength"
+                                               th:text="#{linelist.create-template.field.minlength}">_This is a
+                                                required field_</p>
+                                            <p class="label label-danger" ng-message="noRepeatName"
+                                               th:text="#{linelist.create-template.field.noRepeatName}">_This name
+                                                already exists on a field_</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <select disabled="disabled" class="form-control" ng-model="item.type">
+                                            <option value="text" th:text="#{linelist.add-field.type.text}">_TEXT_
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <button class="btn btn-default remove-field-btn"
+                                            ng-click="$ctrl.removeField($index)">
+                                        <fa:icon type="remove"/>
+                                    </button>
+                                </ng-form>
+                            </div>
+                        </li>
+                    </ul>
+                    <button id="add-field-btn"
+                            class="btn btn-default"
+                            ng-click="$ctrl.addField()"
+                            th:text="#{linelist.create-template.new-field}">_Add_
+                    </button>
+                </div>
+            </div>
+        </form>
+    </script>
+</main>
+</body>
+</html>

@@ -134,7 +134,7 @@ public class SamplesControllerTest {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.setAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE,
 				"/projects/5/samples/" + sample.getId() + "/edit");
-		String result = controller.updateSample(model, sample.getId(), null, update, request);
+		String result = controller.updateSample(model, sample.getId(), null, null, update, request);
 		assertTrue("Returns the correct redirect", result.contains(sample.getId() + "/details"));
 		assertTrue("Should be a redirect response.", result.startsWith("redirect:"));
 		assertFalse("Redirect should **not** contain the context path.", result.contains(contextPath));
