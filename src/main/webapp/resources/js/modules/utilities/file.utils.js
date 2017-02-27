@@ -48,10 +48,10 @@
         var currentUpload = upload.upload({
           url: url,
           file: file
-        }).success(function (response) {
+        }).then(function(response) {
           $rootScope.$broadcast(UPLOAD_COMPLETE_EVENT);
           defer.resolve(response);
-        }).error(function(data){
+        }, function(data) {
           $rootScope.$broadcast(UPLOAD_ERROR, data["error_message"]);
           defer.reject("Error uploading file");
         });
@@ -75,14 +75,14 @@
      * @param files Array of files.
      */
     function uploadBulkFiles(url, files) {
-      var defer = $q.defer()
+      var defer = $q.defer();
 
       upload.upload({
         url: url,
         file: files
-      }).success(function () {
+      }).then(function() {
         defer.resolve();
-      }).error(function (data) {
+      }, function(data) {
         $rootScope.$broadcast(UPLOAD_ERROR, data["error_message"]);
         defer.reject("Error uploading file");
       });

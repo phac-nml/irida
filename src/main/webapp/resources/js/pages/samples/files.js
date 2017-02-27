@@ -97,7 +97,7 @@
           vm.uploading = false;
           vm.processing = true;
         }
-      }).success(function() {
+      }).then(function() {
         $window.onbeforeunload = undefined;
         $timeout(function() {
           vm.uploading = false;
@@ -105,7 +105,7 @@
           $window.location.reload();
           vm.processing = false;
         }, 100);
-      }).error(function(data) {
+      }, function(data) {
         $window.onbeforeunload = undefined;
         vm.processing = false;
         vm.uploading = false;

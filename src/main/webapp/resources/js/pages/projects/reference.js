@@ -7,8 +7,8 @@
 
     svc.getFiles = function getFiles() {
       return $http.get(page.urls.get)
-        .then(function(data) {
-          angular.copy(data.files, svc.files);
+        .then(function(response) {
+          angular.copy(response.data.files, svc.files);
         });
     };
 
@@ -50,8 +50,8 @@
         $http.post(page.urls.remove, {
           fileId: file.id,
           projectId: project.id
-        }).then(function(data) {
-          notifications.show({msg: data.msg, type: data.result});
+        }).then(function(response) {
+          notifications.show({msg: response.data.msg, type: response.data.result});
           $rootScope.$broadcast('FILE_DELETED', {id: file.id});
         });
       });
