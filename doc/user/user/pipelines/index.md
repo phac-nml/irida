@@ -213,7 +213,7 @@ When launching a pipeline you can select which projects the results should be sh
 
 Note that for a project to be displayed in this list it must have samples being used in the pipeline.
 
-Once the pipeline has been submitted the submission will show up in the analysis listing for the selected projects.  From this page users on the project will be able to monitor the pipeline's progress and view results once they are complete.  For more information on viewing analysis results shared with a project, see the [Managing Projects](/user/user/project/#project-analysis-results) page. 
+Once the pipeline has been submitted the submission will show up in the analysis listing for the selected projects.  From this page users on the project will be able to monitor the pipeline's progress and view results once they are complete.  For more information on viewing analysis results shared with a project, see the [Managing Projects](../project/#project-analysis-results) page. 
 
 ### Share results after pipeline has been launched
 
