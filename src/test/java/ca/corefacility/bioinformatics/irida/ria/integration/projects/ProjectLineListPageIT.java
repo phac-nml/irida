@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -27,6 +27,6 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testTableSetup() {
 		ProjectLineListPage page = ProjectLineListPage.goToPage(driver(), 1);
-		assertTrue("Should be on the correct page.", false);
+		assertEquals("Should be on the correct page.", "Line List", page.getActivePage());
 	}
 }
