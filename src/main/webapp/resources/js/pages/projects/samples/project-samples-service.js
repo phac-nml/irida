@@ -108,8 +108,8 @@
         newName: data.newName
       };
       return post(page.urls.samples.merge, params)
-        .then(function(result) {
-          notifications.show({type: result.result, msg: result.message});
+        .then(function(response) {
+          notifications.show({type: response.data.result, msg: response.data.message});
         });
     };
 
