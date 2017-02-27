@@ -91,12 +91,6 @@
       fileUpload = Upload.upload({
         url: url,
         file: files
-      }).progress(function(evt) {
-        vm.progress = parseInt(100.0 * evt.loaded / evt.total);
-        if (vm.progress >= 99) {
-          vm.uploading = false;
-          vm.processing = true;
-        }
       }).then(function() {
         $window.onbeforeunload = undefined;
         $timeout(function() {
@@ -110,6 +104,12 @@
         vm.processing = false;
         vm.uploading = false;
         vm.errorMessage = data.error_message;
+      }, function(evt) {
+        vm.progress = parseInt(100.0 * evt.loaded / evt.total);
+        if (vm.progress >= 99) {
+          vm.uploading = false;
+          vm.processing = true;
+        }
       });
     }
 
