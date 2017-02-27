@@ -502,7 +502,7 @@
         }, 
         "6": {
             "annotation": "", 
-            "content_id": "jupiter:9009/repos/aaron/sistr/sistr_cmd/0.3.3", 
+            "content_id": "jupiter:9009/repos/aaron/sistr_cmd/sistr_cmd/0.3.4", 
             "id": 6, 
             "input_connections": {
                 "input_fastas": {
@@ -554,6 +554,11 @@
                     "action_type": "HideDatasetAction", 
                     "output_name": "output_prediction_csv"
                 }, 
+                "HideDatasetActionoutput_prediction_tab": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "output_prediction_tab"
+                }, 
                 "RenameDatasetActionalleles_output": {
                     "action_arguments": {
                         "newname": "sistr-alleles-out.json"
@@ -584,45 +589,40 @@
                 }
             }, 
             "tool_errors": null, 
-            "tool_id": "jupiter:9009/repos/aaron/sistr/sistr_cmd/0.3.3", 
+            "tool_id": "jupiter:9009/repos/aaron/sistr_cmd/sistr_cmd/0.3.4", 
             "tool_shed_repository": {
-                "changeset_revision": "3b4064d79ec1", 
-                "name": "sistr", 
+                "changeset_revision": "d01c6e641d78", 
+                "name": "sistr_cmd", 
                 "owner": "aaron", 
                 "tool_shed": "jupiter:9009"
             }, 
-            "tool_state": "{\"input_fastas\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"no_cgmlst\": \"\\\"false\\\"\", \"use_full_cgmlst_db\": \"\\\"true\\\"\", \"__page__\": 0, \"output_format\": \"\\\"json\\\"\", \"keep_tmp\": \"\\\"false\\\"\", \"run_mash\": \"\\\"true\\\"\", \"qc\": \"\\\"true\\\"\", \"__rerun_remap_job_id__\": null}", 
-            "tool_version": "0.3.3", 
+            "tool_state": "{\"input_fastas\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"no_cgmlst\": \"\\\"false\\\"\", \"use_full_cgmlst_db\": \"\\\"false\\\"\", \"__page__\": 0, \"output_format\": \"\\\"json\\\"\", \"keep_tmp\": \"\\\"false\\\"\", \"run_mash\": \"\\\"true\\\"\", \"qc\": \"\\\"true\\\"\", \"__rerun_remap_job_id__\": null, \"verbosity\": \"\\\"-vv\\\"\"}", 
+            "tool_version": "0.3.4", 
             "type": "tool", 
-            "uuid": "61dbb021-4ab0-49c8-9c97-2e28848dec71", 
+            "uuid": "61b3467c-80d5-48dc-978c-72949e6ab7d7", 
             "workflow_outputs": [
                 {
                     "label": null, 
                     "output_name": "alleles_output", 
-                    "uuid": "cb3ad8c8-076d-4994-85db-a192c7064591"
+                    "uuid": "2b7a30ce-4d68-4f83-bf6b-dd8abf6f7dfe"
                 }, 
                 {
-                    "label": "", 
+                    "label": null, 
                     "output_name": "output_prediction_json", 
-                    "uuid": "f1ac3d13-fc8b-4757-ba7c-76768b36da94"
+                    "uuid": "499f32f7-e38e-4d67-9240-a0e0e9f178c2"
                 }, 
                 {
                     "label": null, 
                     "output_name": "novel_alleles", 
-                    "uuid": "fab9645a-14de-4047-8c96-a302a3ac6ce1"
-                }, 
-                {
-                    "label": null, 
-                    "output_name": "output_prediction_tab", 
-                    "uuid": "5e54280f-4a0a-4efb-8877-789496cb2781"
+                    "uuid": "a688e3dc-a16d-4daf-834b-12fc0dc7b984"
                 }, 
                 {
                     "label": null, 
                     "output_name": "cgmlst_profiles", 
-                    "uuid": "69edfaa0-52f1-4872-8926-2ba41095e857"
+                    "uuid": "7f111100-4cc7-458b-bff7-da82b0c7682c"
                 }
             ]
         }
     }, 
-    "uuid": "b02aedb7-c6dc-4011-9b60-8ba5aac10d5a"
+    "uuid": "75b938d5-49f5-4dc9-91cc-5ea1d5f75be1"
 }
