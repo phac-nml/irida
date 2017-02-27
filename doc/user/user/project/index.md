@@ -158,7 +158,7 @@ To view the results of an analysis that has been shared with a project, click th
 
 ![Project analysis tab.](images/analysis-tab.png)
 
-From this page you can view and monitor the progress of all analyses which have been shared with this project.  To view the results of an analysis click on the analysis name.  For more information on analysis results, see the [pipeline documentation page](/user/user/pipelines/#viewing-pipeline-results).
+From this page you can view and monitor the progress of all analyses which have been shared with this project.  To view the results of an analysis click on the analysis name.  For more information on analysis results, see the [pipeline documentation page](../pipelines/#viewing-pipeline-results).
 
 ![Project analysis tab.](images/project-analysis-results.png)
 
@@ -230,9 +230,9 @@ IRIDA allows you to synchronize projects between different IRIDA installations. 
 
 Before a remote project can be synchronized a connection must be set up between the IRIDA project host installation and the receiving IRIDA installation.  The connection between installations is handled by the IRIDA client and remote api connections.
 
-First the IRIDA installation hosting the project must create a client which will be used to connect to the REST API.  The client must be created with a grant type of `authorization_code` and scope of `read`.  It is also recommended to enable refresh tokens for clients which will be involved in project synchronization.  Documentation on creating system clients can be found in the adminstrator guide's [managing system clients section](/user/administrator/#managing-system-clients) and it must be performed by a system administrator.
+First the IRIDA installation hosting the project must create a client which will be used to connect to the REST API.  The client must be created with a grant type of `authorization_code` and scope of `read`.  It is also recommended to enable refresh tokens for clients which will be involved in project synchronization.  Documentation on creating system clients can be found in the adminstrator guide's [managing system clients section](../../administrator/#managing-system-clients) and it must be performed by a system administrator.
 
-Next the receiving IRIDA installation must set up a remote API connection to the hosting IRIDA site.  Information on adding a remote API connection can be found in the administrator guide's [adding a remote api section](/user/administrator/#adding-a-remote-api) and must also be perfomed by an administrator.
+Next the receiving IRIDA installation must set up a remote API connection to the hosting IRIDA site.  Information on adding a remote API connection can be found in the administrator guide's [adding a remote api section](../../administrator/#adding-a-remote-api) and must also be perfomed by an administrator.
 
 #### Creating a remote synchronized project
 
@@ -242,7 +242,7 @@ To begin creating a synchronized project, click the **Synchronize Remote Project
 
 ![Synchronize menu option](images/synchronize-menu-option.png) 
 
-Once on the **Synchronize New Remote Project** page, you must select the required remote API and verify your connection status.  If you don't have a valid connection to the remote API you must click the `Connect` button and follow the instructions to connect to the remote API to proceed.  For more information on connecting to remote APIs see the [remote APIs documentation](/user/user/dashboard/#remote-apis).
+Once on the **Synchronize New Remote Project** page, you must select the required remote API and verify your connection status.  If you don't have a valid connection to the remote API you must click the `Connect` button and follow the instructions to connect to the remote API to proceed.  For more information on connecting to remote APIs see the [remote APIs documentation](../dashboard/#remote-apis).
 
 ![Synchronize api connect](images/synchronize-connect-api.png)
 
@@ -299,7 +299,7 @@ You can then enter your coverage settings and click `Update`.
 
 ![Coverage Update](images/project-settings-coverage-update.png) 
 
-When these options are set IRIDA will flag any samples which do not meet the expected coverage requirement in the [project/samples list](/user/user/samples/#viewing-samples-in-a-project).  It will also display the coverage for a sample when you [view sequence files for a sample](/user/user/samples/#viewing-sequence-files). 
+When these options are set IRIDA will flag any samples which do not meet the expected coverage requirement in the [project/samples list](../samples/#viewing-samples-in-a-project).  It will also display the coverage for a sample when you [view sequence files for a sample](../samples/#viewing-sequence-files). 
 
 #### Remote project settings
 
