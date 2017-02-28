@@ -115,7 +115,7 @@
 							<span th:text="#{'analysis.state.' + ${pair.getAutomatedAssembly().getAnalysisState()}}"></span>
 						</td>
 					</tr>
-					<tr class="file_info" th:if="${pair.getSistrTyping()}">
+					<tr class="paired_end paired_end__sistr_typing" th:if="${pair.getSistrTyping()}">
 						<td class="td_icon">
 							<i data:uib-tooltip="#{sf.tooltip.sistr}" class="fa fa-align-right"/>
 						</td>
