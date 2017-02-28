@@ -200,7 +200,7 @@
 
 			svc.resetPassword = function () {
 				return $http.get(PAGE.urls.reset)
-					.success(function (data) {
+                  .then(function(data) {
 						if(data.success){
 							notifications.show({type: 'success', msg: data.message, title: data.title});
 						}else{
