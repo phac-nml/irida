@@ -20,7 +20,7 @@ import com.lordofthejars.nosqlunit.core.LoadStrategyEnum;
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectLineListView.xml")
 @UsingDataSet(locations = "/ca/corefacility/bioinformatics/irida/ria/web/projects/LineListView.json",
-			  loadStrategy = LoadStrategyEnum.DELETE_ALL)
+			  loadStrategy = LoadStrategyEnum.INSERT)
 public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Before
