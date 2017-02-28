@@ -10,6 +10,8 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectLineListPage;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.lordofthejars.nosqlunit.annotation.UsingDataSet;
+import com.lordofthejars.nosqlunit.core.LoadStrategyEnum;
 
 /**
  * <p>
@@ -17,6 +19,8 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
  * </p>
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectLineListView.xml")
+@UsingDataSet(locations = "/ca/corefacility/bioinformatics/irida/ria/web/projects/LineListView.json",
+			  loadStrategy = LoadStrategyEnum.DELETE_ALL)
 public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Before
