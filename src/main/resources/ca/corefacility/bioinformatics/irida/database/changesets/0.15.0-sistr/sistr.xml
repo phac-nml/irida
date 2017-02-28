@@ -26,14 +26,14 @@
 		</addColumn>
 
 		<addColumn tableName="project">
-			<column name="sistr_type_uploads" type="bit(1)" valueBoolean="false"
+			<column name="sistr_typing_uploads" type="bit(1)" valueBoolean="false"
 				defaultValueBoolean="false">
 				<constraints nullable="false" />
 			</column>
 		</addColumn>
 
 		<addColumn tableName="project_AUD">
-			<column name="sistr_type_uploads" type="bit(1)" valueBoolean="false"/>
+			<column name="sistr_typing_uploads" type="bit(1)" valueBoolean="false"/>
 		</addColumn>
 
 	</changeSet>

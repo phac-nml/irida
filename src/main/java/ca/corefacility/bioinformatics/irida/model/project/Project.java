@@ -78,7 +78,7 @@ public class Project extends IridaResourceSupport
 	private boolean assembleUploads;
 	
 	@NotNull
-	@Column(name="sistr_type_uploads")
+	@Column(name="sistr_typing_uploads")
 	private boolean sistrTypingUploads;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "project")
