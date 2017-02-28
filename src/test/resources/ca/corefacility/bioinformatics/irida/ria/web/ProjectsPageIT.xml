@@ -106,11 +106,11 @@
     <sample_sequencingobject id="1" sample_id="1" sequencingobject_id="1" created_date="2013-07-18 14:20:19.0" />
 
 	<analysis_submission id="1" name="another analysis" remote_analysis_id="1" 
-                         analysis_state="ERROR" created_date="2013-07-18 14:20:19" workflow_id="84360882-2959-4479-a20a-539feacb6922" submitter="4" analysis_cleaned_state="NOT_CLEANED"/>
+                         analysis_state="ERROR" created_date="2013-07-18 14:20:19" workflow_id="b7c8b437-3c41-485e-92e5-72b67e37959f" submitter="4" analysis_cleaned_state="NOT_CLEANED"/>
     <analysis_submission id="2" analysis_state="ERROR" created_date="2013-09-06 10:01:02" name="My Pretend Submission"  
-                         workflow_id="84360882-2959-4479-a20a-539feacb6922" submitter="4" analysis_cleaned_state="NOT_CLEANED"/>
+                         workflow_id="b7c8b437-3c41-485e-92e5-72b67e37959f" submitter="4" analysis_cleaned_state="NOT_CLEANED"/>
     <analysis_submission id="3" analysis_state="ERROR" created_date="2013-10-06 10:01:02"
-                         name="My Submitted Submission" workflow_id="84360882-2959-4479-a20a-539feacb6922" submitter="4" analysis_cleaned_state="NOT_CLEANED"/>
+                         name="My Submitted Submission" workflow_id="b7c8b437-3c41-485e-92e5-72b67e37959f" submitter="4" analysis_cleaned_state="NOT_CLEANED"/>
 	
 	<analysis_submission_sequence_file_pair analysis_submission_id="1" sequence_file_pair_id="1" />
 	<analysis_submission_sequence_file_pair analysis_submission_id="2" sequence_file_pair_id="1" />
