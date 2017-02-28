@@ -25,6 +25,8 @@ import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -74,6 +76,9 @@ import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionSchedu
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/model/enums/analysis/integration/SNVPhyl/SNVPhylAnalysisIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class SNVPhylAnalysisIT {
+	
+	private static final Logger logger = LoggerFactory
+			.getLogger(SNVPhylAnalysisIT.class);
 	
 	@Autowired
 	private DatabaseSetupGalaxyITService databaseSetupGalaxyITService;
@@ -257,7 +262,7 @@ public class SNVPhylAnalysisIT {
 		SequenceFilePair sequenceFilePairC = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(3L,
 				sequenceFilePathsC1List, sequenceFilePathsC2List).get(0);
 		
-		Map<String,String> parameters = ImmutableMap.of("alternative-allele-fraction", "0.75", "minimum-read-coverage", "2",
+		Map<String,String> parameters = ImmutableMap.of("snv-abundance-ratio", "0.75", "minimum-read-coverage", "2",
 				"filter-density-threshold", "2", "filter-density-window-size", "3");
 		waitForFilesToSettle(sequenceFilePairA, sequenceFilePairB, sequenceFilePairC);
 
@@ -357,7 +362,10 @@ public class SNVPhylAnalysisIT {
 
 			if (ex.isInputTool()) {
 				final Map<String, String> params = ex.getExecutionTimeParameters();
-				foundReferenceInputTool |= params.get("files.NAME").contains("reference")
+				logger.debug("Input tool has " + params);
+
+				foundReferenceInputTool |= params.containsKey("files.NAME")
+						&& params.get("files.NAME").contains("reference")
 						&& params.get("file_type").contains("fasta");
 				foundReadsInputTool |= params.get("file_type").contains("fastq");
 			}
@@ -385,7 +393,7 @@ public class SNVPhylAnalysisIT {
 		waitForFilesToSettle(sequenceFilePairA, sequenceFilePairB, sequenceFilePairC);
 
 		Map<String, String> parameters = ImmutableMap.<String, String> builder()
-				.put("alternative-allele-fraction", "0.90").put("minimum-read-coverage", "2")
+				.put("snv-abundance-ratio", "0.90").put("minimum-read-coverage", "2")
 				.put("minimum-percent-coverage", "75").put("minimum-mean-mapping-quality", "20")
 				.put("filter-density-threshold", "3").put("filter-density-window-size", "30").build();
 		
@@ -490,7 +498,7 @@ public class SNVPhylAnalysisIT {
 			if (ex.getToolName().contains("Consolidate VCFs")) {
 				final Map<String, String> params = ex.getExecutionTimeParameters();
 				minVcf2AlignCov = params.get("coverage");
-				altAlleleFraction = params.get("ao");
+				altAlleleFraction = params.get("snv_abundance_ratio");
 				filterDensityThreshold = params.get("use_density_filter.threshold");
 				filterDensityWindowSize = params.get("use_density_filter.window_size");
 				break;
@@ -537,7 +545,7 @@ public class SNVPhylAnalysisIT {
 		SequenceFilePair sequenceFilePairC = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(3L,
 				sequenceFilePathsC1List, sequenceFilePathsC2List).get(0);
 
-		Map<String,String> parameters = ImmutableMap.of("alternative-allele-fraction", "0.75", "minimum-read-coverage", "2",
+		Map<String,String> parameters = ImmutableMap.of("snv-abundance-ratio", "0.75", "minimum-read-coverage", "2",
 				"filter-density-threshold", "2", "filter-density-window-size", "4");
 		
 		AnalysisSubmission submission = databaseSetupGalaxyITService.setupPairSubmissionInDatabase(
@@ -641,7 +649,7 @@ public class SNVPhylAnalysisIT {
 			if (ex.getToolName().contains("Consolidate VCFs")) {
 				final Map<String, String> params = ex.getExecutionTimeParameters();
 				minVcf2AlignCov = params.get("coverage");
-				altAlleleFraction = params.get("ao");
+				altAlleleFraction = params.get("snv_abundance_ratio");
 				filterDensityThreshold = params.get("use_density_filter.threshold");
 				filterDensityWindowSize = params.get("use_density_filter.window_size");
 				break;
