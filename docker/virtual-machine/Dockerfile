@@ -2,7 +2,7 @@
 #
 #
 
-FROM apetkau/snvphyl-galaxy-1.0
+FROM apetkau/snvphyl-galaxy-1.0.1
 
 MAINTAINER Aaron Petkau, aaron.petkau@phac-aspc.gc.ca
 
@@ -34,7 +34,7 @@ RUN apt update && apt install --yes gnuplot && apt-get autoremove -y && apt-get 
 RUN curl ftp://ftp.ncbi.nih.gov/toolbox/ncbi_tools/converters/by_program/tbl2asn/linux64.tbl2asn.gz > tbl2asn.gz && \
 	gunzip --force tbl2asn.gz && \
 	chmod +x tbl2asn && \
-	find tool_deps/ -executable -name tbl2asn -type f -exec cp tbl2asn '{}' \;
+	find /export/tool_deps/ -executable -name tbl2asn -type f -exec cp tbl2asn '{}' \;
 
 # Expose port 80 (webserver), 21 (FTP server), 8800 (Proxy)
 EXPOSE :80
