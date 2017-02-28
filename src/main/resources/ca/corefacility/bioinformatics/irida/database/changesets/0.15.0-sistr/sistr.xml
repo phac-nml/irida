@@ -13,5 +13,29 @@
 					foreignKeyName="FK_ANALYSIS_SISTR_TYPING_ANALYSIS" />
 			</column>
 		</createTable>
+
+		<addColumn tableName="sequencing_object">
+			<column name="sistr_typing" type="bigint(20)">
+			<constraints referencedTableName="analysis_submission"
+				referencedColumnNames="id" nullable="true" foreignKeyName="FK_SEQUENCING_OBJECT_SISTR" />
+			</column>
+		</addColumn>
+
+		<addColumn tableName="sequencing_object_AUD">
+			<column name="sistr_typing" type="bigint(20)" />
+		</addColumn>
+
+		<addColumn tableName="project">
+			<column name="sistr_type_uploads" type="bit(1)" valueBoolean="false"
+				defaultValueBoolean="false">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+
+		<addColumn tableName="project_AUD">
+			<column name="sistr_type_uploads" type="bit(1)" valueBoolean="false"/>
+		</addColumn>
+
 	</changeSet>
+
 </databaseChangeLog>

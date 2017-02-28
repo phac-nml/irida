@@ -10,6 +10,7 @@
             },
             urls: {
                 'assemble': /*[[@{/projects/{id}/settings/assemble(id=${project.getId()})}]]*/ '/projects/1/settings/assemble',
+                'sistr': /*[[@{/projects/{id}/settings/sistr(id=${project.getId()})}]]*/ '/projects/1/settings/sistr',
                 'sync': /*[[@{/projects/{id}/settings/sync(id=${project.getId()})}]]*/ '/projects/1/settings/sync',
                 'coverage': /*[[@{/projects/{id}/settings/coverage(id=${project.getId()})}]]*/ '/projects/1/settings/coverage'
             }
@@ -28,6 +29,15 @@
             <label>
               <input id="assemble" type="checkbox" value="assemble" th:checked="${project.assembleUploads}"/>
               <span th:text="#{project.settings.assemble.control}">_Automatically assemble uploads_</span>
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label" th:text="#{project.settings.sistr}">_SISTR_</label>
+          <div class="checkbox">
+            <label>
+              <input id="sistr" type="checkbox" value="sistr" th:checked="${project.sistrTypingUploads}"/>
+              <span th:text="#{project.settings.sistr.control}">_Automatically type uploads with SISTR_</span>
             </label>
           </div>
         </div>
