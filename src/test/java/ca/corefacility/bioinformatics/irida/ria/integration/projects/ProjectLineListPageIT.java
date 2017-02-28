@@ -32,5 +32,6 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 	public void testTableSetup() {
 		ProjectLineListPage page = ProjectLineListPage.goToPage(driver(), 1);
 		assertEquals("Should be on the correct page.", "Line List", page.getActivePage());
+		assertEquals("Should be 3 samples with metadata", 3, page.getNumberSamplesWithMetadata());
 	}
 }

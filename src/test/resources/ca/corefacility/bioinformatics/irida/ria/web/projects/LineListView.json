@@ -1,7 +1,7 @@
 [
   {
     "_class": "ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata",
-    "sampleId": 51,
+    "sampleId": 1,
     "metadata": {
       "firstName": {
         "value": "Jon"
@@ -43,19 +43,19 @@
   },
   {
     "_class": "ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata",
-    "sampleId": 52,
+    "sampleId": 2,
     "metadata": {
       "firstName": {
-        "value": "Damion"
+        "value": "Fred"
       },
       "lastName": {
-        "value": "Dooley"
+        "value": "Penner"
       },
       "city": {
-        "value": "Vancouver"
+        "value": "Winnipeg"
       },
       "healthAuthority": {
-        "value": "BC Fraser Health Authority"
+        "value": "Winnipeg Regional Health Authority"
       },
       "birthDate": {
         "value": "1966-01-13"
@@ -70,10 +70,10 @@
         "value": "Salmonella enterica"
       },
       "serotype": {
-        "value": "SENXAI.0001"
+        "value": "SENXAI.0056"
       },
       "primaryPfge": {
-        "value": "SENBNI.0017"
+        "value": "SENBNI.0019"
       },
       "secondaryPfge": {
         "value": "DEF456"
@@ -85,7 +85,7 @@
   },
   {
     "_class": "ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata",
-    "sampleId": 53,
+    "sampleId": 3,
     "metadata": {
       "firstName": {
         "value": "Foo"
