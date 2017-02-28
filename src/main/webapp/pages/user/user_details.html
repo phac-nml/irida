@@ -200,7 +200,8 @@
 
 			svc.resetPassword = function () {
 				return $http.get(PAGE.urls.reset)
-                  .then(function(data) {
+                  .then(function(response) {
+                    var data = response.data;
 						if(data.success){
 							notifications.show({type: 'success', msg: data.message, title: data.title});
 						}else{
@@ -236,9 +237,11 @@
               subscribe = true;
             }
 
-            SubscriptionService.updateSubscription(PAGE.userId, projectId, subscribe).then(function(data) {
+            SubscriptionService.updateSubscription(PAGE.userId, projectId, subscribe).then(function(response) {
+              var data = response.data;
               notifications.show({type: 'success', msg: data.message, title: title});
-            }, function(data) {
+            }, function(response) {
+              var data = response.data;
               notifications.show({type: 'error', msg: errorMessage, title: title});
               box.attr('checked', false);
             });
