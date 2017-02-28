@@ -235,12 +235,12 @@
             if(box.is(":checked")){
               subscribe = true;
             }
-            
-            SubscriptionService.updateSubscription(PAGE.userId, projectId, subscribe).success(function (data){
+
+            SubscriptionService.updateSubscription(PAGE.userId, projectId, subscribe).then(function(data) {
               notifications.show({type: 'success', msg: data.message, title: title});
-            }).error(function (data){
+            }, function(data) {
               notifications.show({type: 'error', msg: errorMessage, title: title});
-              box.attr('checked', false); 
+              box.attr('checked', false);
             });
           });
         }]);
