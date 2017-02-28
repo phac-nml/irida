@@ -1,17 +1,15 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectLineListCreateTemplatePage;
+
+import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectLineListCreateTemplatePage.xml")
 public class ProjectLineListCreateTemplatePageIT extends AbstractIridaUIITChromeDriver {
@@ -47,6 +45,7 @@ public class ProjectLineListCreateTemplatePageIT extends AbstractIridaUIITChrome
 		assertEquals("There should only be one field left after removal", 1, page.getNumberOfFields());
 
 		page.saveNewTemplate(GOOD_TEMPLATE_NAME);
-		assertEquals("Should be redirected to the line list page", "IRIDA Platform - Line List", driver().getTitle());
+		assertEquals("Should be redirected to the line list page", "IRIDA Platform - project - Samples",
+				driver().getTitle());
 	}
 }
