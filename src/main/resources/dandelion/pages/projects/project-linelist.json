@@ -9,7 +9,7 @@
     {
       "type": "css",
       "locations": {
-        "webapp": "/resources/css/pages/project_linelist.css"
+        "webapp": "/resources/css/pages/projects_linelist.css"
       }
     },
     {
