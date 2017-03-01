@@ -35,7 +35,7 @@
                 <a href=""
                    th:href="@{/projects/{id}/settings/groups(id=${project.getId()})}"
                    class="list-group-item"
-                   th:classappend="${#strings.equalsIgnoreCase(page, 'members') ? 'active' : ''}"
+                   th:classappend="${#strings.equalsIgnoreCase(page, 'groups') ? 'active' : ''}"
                    th:text="#{project.settings.page.groups}">_Groups_</a>
                 <a th:if="${project.isRemote()} AND (${manageMembers} or ${isAdmin})"
                    href=""
