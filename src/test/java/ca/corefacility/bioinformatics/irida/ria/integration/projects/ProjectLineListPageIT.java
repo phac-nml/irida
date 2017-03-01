@@ -27,7 +27,7 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	@UsingDataSet(locations = "/ca/corefacility/bioinformatics/irida/ria/web/projects/LineListView.json",
+	@UsingDataSet(locations = "LineListView.json",
 				  loadStrategy = LoadStrategyEnum.INSERT)
 	public void testTableSetup() {
 		ProjectLineListPage page = ProjectLineListPage.goToPage(driver(), 1);
