@@ -48,7 +48,7 @@ public class MongoDatasourceConfig {
 	 * @return {@link Jackson2RepositoryPopulatorFactoryBean}
 	 */
 	@Bean
-	@Profile({"dev", "test"})
+	@Profile({"dev", "it"})
 	public Jackson2RepositoryPopulatorFactoryBean loadExampleData(MongoTemplate mongoTemplate) {
 
 		// clearing the existing samples
