@@ -59,7 +59,6 @@ public class ProjectSettingsController {
 	 * @return name of the project settings page
 	 */
 	@RequestMapping("")
-	@PreAuthorize("hasPermission(#projectId, 'canManageLocalProjectSettings')")
 	public String getProjectSettingsBasicPage(@PathVariable Long projectId, final Model model,
 			final Principal principal) {
 		Project project = projectService.read(projectId);

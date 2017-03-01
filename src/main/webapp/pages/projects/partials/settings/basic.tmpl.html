@@ -4,7 +4,7 @@
         <h2 class="h2-muted" th:text="#{project.settings.assemble}">_Basic Settings_</h2>
         <div class="checkbox">
             <label>
-                <input id="assemble" type="checkbox" value="assemble" th:checked="${project.assembleUploads}"/>
+                <input id="assemble" type="checkbox" value="assemble" th:checked="${project.assembleUploads}" th:disabled="not ${manageMembers}"/>
                 <span th:text="#{project.settings.assemble.control}">_Automatically assemble uploads_</span>
             </label>
         </div>
@@ -16,7 +16,7 @@
 
         <h2 class="h2-muted">Coverage
             <span>
-            <button id="edit-coverage-btn" class="btn btn-xs btn-default edit-coverage" th:text="#{form.btn.edit}">_Edit_</button>
+            <button id="edit-coverage-btn" class="btn btn-xs btn-default edit-coverage" th:text="#{form.btn.edit}" th:if="${manageMembers}">_Edit_</button>
             <button id="coverage-cancel" class="btn btn-default btn-xs edit-coverage" style="display: none"
                     type="button" th:text="#{form.btn.cancel}">_cancel_</button>
             <button id="coverage-save" class="btn btn-success btn-xs edit-coverage" style="display: none" type="button"

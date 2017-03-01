@@ -25,8 +25,7 @@
                    th:href="@{/projects/{id}/settings(id=${project.getId()})}"
                    class="list-group-item"
                    th:classappend="${#strings.equalsIgnoreCase(page, 'basic') ? 'active' : ''}"
-                   th:text="#{project.settings.page.basic}"
-                   th:if="${manageMembers} or ${isAdmin}">_Basic Settings_</a>
+                   th:text="#{project.settings.page.basic}">_Basic Settings_</a>
                 <a href=""
                    th:href="@{/projects/{id}/settings/members(id=${project.getId()})}"
                    class="list-group-item"
