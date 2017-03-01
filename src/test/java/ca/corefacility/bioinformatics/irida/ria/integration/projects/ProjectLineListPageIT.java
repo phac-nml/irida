@@ -19,8 +19,6 @@ import com.lordofthejars.nosqlunit.core.LoadStrategyEnum;
  * </p>
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectLineListView.xml")
-@UsingDataSet(locations = "/ca/corefacility/bioinformatics/irida/ria/web/projects/LineListView.json",
-			  loadStrategy = LoadStrategyEnum.INSERT)
 public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Before
@@ -29,6 +27,8 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
+	@UsingDataSet(locations = "/ca/corefacility/bioinformatics/irida/ria/web/projects/LineListView.json",
+				  loadStrategy = LoadStrategyEnum.INSERT)
 	public void testTableSetup() {
 		ProjectLineListPage page = ProjectLineListPage.goToPage(driver(), 1);
 		assertEquals("Should be on the correct page.", "Line List", page.getActivePage());
