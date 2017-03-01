@@ -25,7 +25,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
  * 
  */
 public class ProjectMembersPage extends AbstractPage {
-	public static final String RELATIVE_URL = "projects/1/members";
+	public static final String RELATIVE_URL = "projects/1/settings/members";
 	public static final String GROUPS_URL = "projects/1/groups";
 			
 	private static final Logger logger = LoggerFactory.getLogger(ProjectMembersPage.class);
