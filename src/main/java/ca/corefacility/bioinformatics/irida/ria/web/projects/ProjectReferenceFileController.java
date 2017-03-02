@@ -58,7 +58,7 @@ public class ProjectReferenceFileController {
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 
 		model.addAttribute("project", project);
-		model.addAttribute(ProjectsController.ACTIVE_NAV, "settings");
+		model.addAttribute(ProjectsController.ACTIVE_NAV, ProjectSettingsController.ACTIVE_NAV_SETTINGS);
 		model.addAttribute("page", "referenceFiles");
 		return "projects/project_settings";
 	}
