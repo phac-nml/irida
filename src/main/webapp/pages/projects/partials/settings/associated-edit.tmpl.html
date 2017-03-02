@@ -1,25 +1,17 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="projects/_base">
-<head>
-	<title th:text="#{project.associated.heading(${project.label})}"></title>
-	<script>
-		window.dependencies = ['associated.edit'];
-	</script>
-	<link rel="stylesheet"
-	      th:href="@{/resources/bower_components/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.css}"
-	      href="/resources/bower_components/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.css"/>
-</head>
-<body>
-
-<main layout:fragment="main" th:object="${project}">
+<script>
+	window.dependencies = ['associated.edit'];
+</script>
+<link rel="stylesheet"
+		th:href="@{/resources/bower_components/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.css}"
+		href="/resources/bower_components/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.css"/>
+		
+<div th:object="${project}">
 	<div class="row">
 		<div class="col-md-10">
 			<h2 style="margin-top: 0;" th:text="#{project.associated.title}"></h2>
 		</div>
 		<a class="btn btn-sm btn-default pull-right" href="/projects/1/associated"
-		   th:href="@{/projects/{pid}/associated(pid=${project.getId()})}" th:text="#{form.btn.done}">_Done_
+		   th:href="@{/projects/{pid}/settings/associated(pid=${project.getId()})}" th:text="#{form.btn.done}">_Done_
 		</a>
 	</div>
 
@@ -108,9 +100,9 @@
 			            boundary-links="true"></pagination>
 		</div>
 	</div>
-</main>
+</div>
 
-<th:block layout:fragment="scripts">
+<th:block>
 	<script th:src="@{/resources/js/directives/datatables/irida-datatable.js}"
 	        src="/resources/js/directives/datatables/irida-datatable.js"></script>
 	<script th:src="@{/resources/bower_components/bootstrap-switch/dist/js/bootstrap-switch.js}"
@@ -121,9 +113,9 @@
 		var PAGE = {
 				urls: {
 					local: {
-						get: /*[[@{/projects/{id}/associated/ajax/available(id=${project.getId()})}]]*/ '/projects/1/associated/ajax/available',
-						add: /*[[@{/projects/{id}/associated/(id=${project.getId()})}]]*/ '/projects/1/associated/',
-						remove: /*[[@{/projects/{id}/associated/(id=${project.getId()})}]]*/ '/projects/1/associated/'
+						get: /*[[@{/projects/{id}/settings/associated/ajax/available(id=${project.getId()})}]]*/ '/projects/1/associated/ajax/available',
+						add: /*[[@{/projects/{id}/settings/associated/(id=${project.getId()})}]]*/ '/projects/1/associated/',
+						remove: /*[[@{/projects/{id}/settings/associated/(id=${project.getId()})}]]*/ '/projects/1/associated/'
 					}
 				}
 			},
@@ -324,5 +316,3 @@
 		}
 	</script>
 </th:block>
-</body>
-</html>

@@ -1,20 +1,11 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="projects/_base">
-<head>
-    <title th:text="#{project.associated.heading(${project.label})}"></title>
-</head>
-<body>
-
-<main layout:fragment="main" th:object="${project}" ddl:bundle-includes="project-associated">
+<div th:object="${project}" ddl:bundle-includes="project-associated">
     <div class="row">
         <div class="col-md-10">
             <h2 style="margin-top: 0" th:text="#{project.associated.title}">_Projects_</h2>
         </div>
         <div class="col-md-2">
             <a id="edit-metadata" th:if="${isOwner} or ${isAdmin}" class="btn btn-default btn-sm pull-right" 
-                th:text="#{form.btn.edit}" th:href="@{/projects/{id}/associated/edit(id=${project.getId()})}" 
+                th:text="#{form.btn.edit}" th:href="@{/projects/{id}/settings/associated-edit(id=${project.getId()})}" 
                 href="projects/4/associated/edit">_Edit_</a>
         </div>
     </div>
@@ -39,6 +30,4 @@
     </tr>
   </table>
 </div>
-</main>
-</body>
-</html>
+</div>

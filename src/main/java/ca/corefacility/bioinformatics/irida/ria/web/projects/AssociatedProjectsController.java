@@ -89,7 +89,7 @@ public class AssociatedProjectsController {
 	 *            a reference to the logged in user.
 	 * @return The view name of the assocated projects view
 	 */
-	@RequestMapping(value = "/{projectId}/associated", method = RequestMethod.GET)
+	@RequestMapping(value = "/{projectId}/settings/associated", method = RequestMethod.GET)
 	public String getAssociatedProjectsPage(@PathVariable Long projectId, Model model, Principal principal) {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
@@ -110,10 +110,11 @@ public class AssociatedProjectsController {
 		
 		model.addAttribute("noAssociated", associatedProjects.isEmpty() && remoteRelatedProjectsByApi.isEmpty());
 
-		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ASSOCIATED_PROJECTS);
+		model.addAttribute(ProjectsController.ACTIVE_NAV, ProjectSettingsController.ACTIVE_NAV_SETTINGS);
+		model.addAttribute("page", "associated");
 
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		return ASSOCIATED_PROJECTS_PAGE;
+		return "projects/project_settings";
 	}
 
 	/**
@@ -180,7 +181,7 @@ public class AssociatedProjectsController {
 	 *            The logged in user
 	 * @return The name of the edit associated projects view
 	 */
-	@RequestMapping("/{projectId}/associated/edit")
+	@RequestMapping("/{projectId}/settings/associated-edit")
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId, 'isProjectOwner')")
 	public String editAssociatedProjectsForProject(@PathVariable Long projectId, Model model, Principal principal) {
 		Project project = projectService.read(projectId);
@@ -190,9 +191,10 @@ public class AssociatedProjectsController {
 		model.addAttribute("apis", remoteApis);
 
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ASSOCIATED_PROJECTS);
+		model.addAttribute(ProjectsController.ACTIVE_NAV, ProjectSettingsController.ACTIVE_NAV_SETTINGS);
+		model.addAttribute("page", "associated-edit");
 
-		return EDIT_ASSOCIATED_PROJECTS_PAGE;
+		return "projects/project_settings";
 	}
 
 	/**
