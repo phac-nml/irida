@@ -2,7 +2,7 @@
   "sampleMetadata": [
     {
       "_class": "ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata",
-      "sampleId": 1,
+      "_id": 1,
       "metadata": {
         "firstName": {
           "value": "Jon"
@@ -44,7 +44,7 @@
     },
     {
       "_class": "ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata",
-      "sampleId": 2,
+      "_id": 2,
       "metadata": {
         "firstName": {
           "value": "Fred"
@@ -86,7 +86,7 @@
     },
     {
       "_class": "ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata",
-      "sampleId": 3,
+      "_id": 3,
       "metadata": {
         "firstName": {
           "value": "Foo"
