@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.integration;
 
-import static com.lordofthejars.nosqlunit.mongodb.ManagedMongoDb.MongoServerRuleBuilder.newManagedMongoDbRule;
 import static com.lordofthejars.nosqlunit.mongodb.MongoDbRule.MongoDbRuleBuilder.newMongoDbRule;
 
 import java.io.IOException;
@@ -12,7 +11,6 @@ import java.nio.file.StandardCopyOption;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
@@ -39,7 +37,6 @@ import ca.corefacility.bioinformatics.irida.web.controller.test.listeners.Integr
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.lordofthejars.nosqlunit.mongodb.ManagedMongoDb;
 import com.lordofthejars.nosqlunit.mongodb.MongoDbRule;
 /**
  * Common functionality to all UI integration tests.
@@ -57,10 +54,10 @@ public class AbstractIridaUIITChromeDriver {
     public static final int DRIVER_TIMEOUT_IN_SECONDS = IntegrationUITestListener.DRIVER_TIMEOUT_IN_SECONDS;
 
     private static boolean isSingleTest = false;
-    
+
     @Rule
     public ScreenshotOnFailureWatcher watcher = new ScreenshotOnFailureWatcher();
-    
+
     /**
  	 * NoSQLUnit requirement to wire in ApplicationContext. Really not sure why
  	 * but it doesn't work if you don't.
@@ -69,9 +66,6 @@ public class AbstractIridaUIITChromeDriver {
 	@Autowired
  	private ApplicationContext applicationContext;
 
-	@ClassRule
-	public static ManagedMongoDb managedMongoDb = newManagedMongoDbRule().mongodPath("/usr/bin/mongo").build();
-    
     @Rule
     public MongoDbRule mongoDbRule = newMongoDbRule().defaultSpringMongoDb("test");
 
@@ -121,7 +115,7 @@ public class AbstractIridaUIITChromeDriver {
         return IntegrationUITestListener.driver();
 
     }
-    
+
     /**
      * Simple test watcher for taking screenshots of the browser on failure.
      *
@@ -129,7 +123,7 @@ public class AbstractIridaUIITChromeDriver {
     private static class ScreenshotOnFailureWatcher extends TestWatcher {
 
     	private static final Logger logger = LoggerFactory.getLogger(ScreenshotOnFailureWatcher.class);
-    	
+
     	/**
     	 * {@inheritDoc}
     	 */
@@ -137,9 +131,9 @@ public class AbstractIridaUIITChromeDriver {
     	protected void failed(final Throwable t, final Description description) {
 			logger.debug("Handling exception of type [" + t.getClass() + "], taking screenshot: " + t.getMessage(), t);
     		final TakesScreenshot takesScreenshot = (TakesScreenshot) driver();
-    		
+
     		final Path screenshot = Paths.get(takesScreenshot.getScreenshotAs(OutputType.FILE).toURI());
-    		
+
     		try {
 				final Path destination = Files.createTempFile(
 						"irida-" + description.getTestClass().getSimpleName() + "#" + description.getMethodName(),
