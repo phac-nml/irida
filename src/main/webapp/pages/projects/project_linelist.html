@@ -34,7 +34,9 @@
     <script type="text/ng-template" id="metadata.button.tmpl">
         <div class="btn-toolbar spaced-bottom clearfix" role="toolbar">
             <div class="btn-group pull-left" role="group">
-                <button class="btn btn-default" ng-click="$ctrl.showMetadataTemplator()">
+                <button id="col-vis-btn"
+                        class="btn btn-default"
+                        ng-click="$ctrl.showMetadataTemplator()">
                     <i class="fa fa-list fa-fw" aria-hidden="true"></i>
                     <th:block
                             th:text="#{linelist.datatable.column-select.button}"/>

@@ -6,6 +6,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * Represents page found at url: /projects/{projectId}/linelist
@@ -13,8 +15,20 @@ import org.openqa.selenium.support.PageFactory;
 public class ProjectLineListPage extends ProjectPageBase {
 	private static final String RELATIVE_URL = "/projects/{projectId}/linelist";
 
+	@FindBy(css = ".dataTables_scrollHeadInner th")
+	private List<WebElement> tableHeaders;
+
 	@FindBy(css = "tbody tr")
 	private List<WebElement> tableRows;
+
+	@FindBy(id = "col-vis-btn")
+	private WebElement metadataColVisBtn;
+
+	@FindBy(css = ".metadata-open .modal-content")
+	private WebElement metadataColVisAside;
+
+	@FindBy(className = "bootstrap-switch-label")
+	private List<WebElement> colVisBtns;
 
 	public ProjectLineListPage(WebDriver driver) {
 		super(driver);
@@ -27,5 +41,24 @@ public class ProjectLineListPage extends ProjectPageBase {
 
 	public int getNumberSamplesWithMetadata() {
 		return tableRows.size();
+	}
+
+	public int getNumberTableColumns() {
+		return tableHeaders.size();
+	}
+
+	public void openColumnVisibilityPanel() {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		metadataColVisBtn.click();
+		wait.until(ExpectedConditions.visibilityOf(metadataColVisAside));
+	}
+
+	public void toggleColumn(String buttonLabel) {
+		for (WebElement btn : colVisBtns) {
+			if (btn.getText().equalsIgnoreCase(buttonLabel)) {
+				btn.click();
+				break;
+			}
+		}
 	}
 }

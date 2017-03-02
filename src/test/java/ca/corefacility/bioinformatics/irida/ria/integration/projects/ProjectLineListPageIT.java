@@ -33,5 +33,14 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 		ProjectLineListPage page = ProjectLineListPage.goToPage(driver(), 1);
 		assertEquals("Should be on the correct page.", "Line List", page.getActivePage());
 		assertEquals("Should be 3 samples with metadata", 3, page.getNumberSamplesWithMetadata());
+
+		// Make sure you can toggle table columns
+		int initialCount = page.getNumberTableColumns();
+		// Open the metadata column visible panel
+		page.openColumnVisibilityPanel();
+		// Toggle 2 columns
+		page.toggleColumn("firstName");
+		page.toggleColumn("healthAuthority");
+		assertEquals("Should have 2 less columns visible", initialCount - 2, page.getNumberTableColumns());
 	}
 }
