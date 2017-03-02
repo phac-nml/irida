@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration;
 
+import static com.lordofthejars.nosqlunit.mongodb.ManagedMongoDb.MongoServerRuleBuilder.newManagedMongoDbRule;
 import static com.lordofthejars.nosqlunit.mongodb.MongoDbRule.MongoDbRuleBuilder.newMongoDbRule;
 
 import java.io.IOException;
@@ -8,10 +9,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
-import ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationUITestListener;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
@@ -30,15 +31,16 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.lordofthejars.nosqlunit.mongodb.MongoDbRule;
-
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.data.MongoDatasourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationUITestListener;
 
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.lordofthejars.nosqlunit.mongodb.ManagedMongoDb;
+import com.lordofthejars.nosqlunit.mongodb.MongoDbRule;
 /**
  * Common functionality to all UI integration tests.
  */
@@ -66,7 +68,9 @@ public class AbstractIridaUIITChromeDriver {
  	@SuppressWarnings("unused")
 	@Autowired
  	private ApplicationContext applicationContext;
-    
+
+	@ClassRule
+	public static ManagedMongoDb managedMongoDb = newManagedMongoDbRule().mongodPath("/usr/bin/mongo").build();
     
     @Rule
     public MongoDbRule mongoDbRule = newMongoDbRule().defaultSpringMongoDb("test");
