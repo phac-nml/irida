@@ -49,12 +49,6 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 public class ProjectMembersController {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectMembersController.class);
 
-	private static final String ACTIVE_NAV_MEMBERS = "members";
-	private static final String PROJECTS_DIR = "projects/";
-	private static final String ACTIVE_NAV = "activeNav";
-
-	public static final String PROJECT_MEMBERS_PAGE = PROJECTS_DIR + "project_members";
-	public static final String PROJECT_GROUPS_PAGE = PROJECTS_DIR + "project_members_groups";
 	private static final String REMOVE_USER_MODAL = "projects/templates/remove-user-modal";
 
 	private final ProjectControllerUtils projectUtils;
@@ -89,16 +83,15 @@ public class ProjectMembersController {
 	 * @return The name of the project members page.
 	 */
 	@RequestMapping("/{projectId}/settings/members")
-	public String getProjectUsersPage(final Model model,
-			final Principal principal, @PathVariable Long projectId) {
-		
+	public String getProjectUsersPage(final Model model, final Principal principal, @PathVariable Long projectId) {
+
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
-		
+
 		projectUtils.getProjectTemplateDetails(model, principal, project);
-		
+
 		model.addAttribute("projectRoles", projectRoles);
-		model.addAttribute("activeNav", "settings");
+		model.addAttribute(ProjectsController.ACTIVE_NAV, ProjectSettingsController.ACTIVE_NAV_SETTINGS);
 		model.addAttribute("page", "members");
 		return "projects/project_settings";
 	}
@@ -121,7 +114,7 @@ public class ProjectMembersController {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
 		projectUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_MEMBERS);
+		model.addAttribute(ProjectsController.ACTIVE_NAV, ProjectSettingsController.ACTIVE_NAV_SETTINGS);
 		model.addAttribute("projectRoles", projectRoles);
 		model.addAttribute("page", "groups");
 		return "projects/project_settings";
@@ -227,7 +220,8 @@ public class ProjectMembersController {
 	 */
 	@RequestMapping(path = "{projectId}/settings/members/{userId}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public Map<String, String> removeUser(final @PathVariable Long projectId, final @PathVariable Long userId, final Locale locale) {
+	public Map<String, String> removeUser(final @PathVariable Long projectId, final @PathVariable Long userId,
+			final Locale locale) {
 		Project project = projectService.read(projectId);
 		User user = userService.read(userId);
 
@@ -251,7 +245,8 @@ public class ProjectMembersController {
 	 */
 	@RequestMapping(path = "{projectId}/settings/groups/{userId}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public Map<String, String> removeUserGroup(final @PathVariable Long projectId, final @PathVariable Long userId, final Locale locale) {
+	public Map<String, String> removeUserGroup(final @PathVariable Long projectId, final @PathVariable Long userId,
+			final Locale locale) {
 		final Project project = projectService.read(projectId);
 		final UserGroup userGroup = userGroupService.read(userId);
 
