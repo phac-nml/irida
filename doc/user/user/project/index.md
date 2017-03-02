@@ -286,7 +286,7 @@ To enable automated assemblies, check the *Automatically assemble data uploaded 
 
 #### Project coverage
 
-IRIDA can calculate the coverage of uploaded sequencing data for a sample.  To enable this a genome size and expected coverage must be set for a project.
+IRIDA can calculate the coverage of uploaded sequencing data for a sample.  To enable this a genome size and expected coverage must be set for a project, under the Project > Settings > Basic menu.
 
 * **Required Coverage** - The coverage expected by any sequencing data being uploaded to the project.
 * **Genome Size** - The size of the genome of the organism being targeted by the project.
@@ -303,7 +303,7 @@ When these options are set IRIDA will flag any samples which do not meet the exp
 
 #### Remote project settings
 
-Settings for remote synchronized projects can also be managed from the project settings page.  These settings will only appear for synchronized projects.
+Settings for remote synchronized projects can also be managed from the project settings page.  These settings will only appear for synchronized projects, and will be available within the 'Remote' menu item.  
 
 ![Automated assembly check](images/project-settings-sync.png)
 
