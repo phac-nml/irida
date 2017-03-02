@@ -66,7 +66,7 @@ public class ProjectSettingsController {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute("activeNav", "settings");
+		model.addAttribute(ProjectsController.ACTIVE_NAV, ACTIVE_NAV_SETTINGS);
 		model.addAttribute("page", "basic");
 		return "projects/project_settings";
 	}
@@ -91,7 +91,7 @@ public class ProjectSettingsController {
 		model.addAttribute("project", project);
 		model.addAttribute("frequencies", ProjectSyncFrequency.values());
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute("activeNav", "settings");
+		model.addAttribute(ProjectsController.ACTIVE_NAV, ACTIVE_NAV_SETTINGS);
 		model.addAttribute("page", "remote");
 		return "projects/project_settings";
 	}
