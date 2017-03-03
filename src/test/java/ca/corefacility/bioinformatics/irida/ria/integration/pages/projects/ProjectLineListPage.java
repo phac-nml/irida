@@ -74,7 +74,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 		}
 	}
 
-	public void selectTemplage(String templateName) {
+	public void selectTemplate(String templateName) {
 		Select select = new Select(templateSelect);
 		select.selectByVisibleText(templateName);
 		waitForDatatableAjax();
