@@ -2,11 +2,13 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
 import java.util.List;
 
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
@@ -14,6 +16,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  */
 public class ProjectLineListPage extends ProjectPageBase {
 	private static final String RELATIVE_URL = "/projects/{projectId}/linelist";
+
+	@FindBy(css = "document.body")
+	private WebElement bodyElement;
 
 	@FindBy(css = ".dataTables_scrollHeadInner th")
 	private List<WebElement> tableHeaders;
@@ -29,6 +34,9 @@ public class ProjectLineListPage extends ProjectPageBase {
 
 	@FindBy(className = "bootstrap-switch-label")
 	private List<WebElement> colVisBtns;
+
+	@FindBy(id = "template-select")
+	private WebElement templateSelect;
 
 	public ProjectLineListPage(WebDriver driver) {
 		super(driver);
@@ -53,6 +61,10 @@ public class ProjectLineListPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.visibilityOf(metadataColVisAside));
 	}
 
+	public void closeColumnVisibilityPanel() {
+		bodyElement.sendKeys(Keys.ESCAPE);
+	}
+
 	public void toggleColumn(String buttonLabel) {
 		for (WebElement btn : colVisBtns) {
 			if (btn.getText().equalsIgnoreCase(buttonLabel)) {
@@ -60,5 +72,11 @@ public class ProjectLineListPage extends ProjectPageBase {
 				break;
 			}
 		}
+	}
+
+	public void selectTemplage(String templateName) {
+		Select select = new Select(templateSelect);
+		select.selectByVisibleText(templateName);
+		waitForDatatableAjax();
 	}
 }
