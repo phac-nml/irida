@@ -4,16 +4,7 @@
 <head>
     <title th:text="${project.label} + ' - ' + #{project.nav.settings}"></title>
     <script th:inline="javascript">
-      var PAGE = {
-        i18n: {
-          'error': /*[[#{project.settings.notifications.error}]]*/ '_Error updating project_'
-        },
-        urls: {
-          'assemble': /*[[@{/projects/{id}/settings/assemble(id=${project.getId()})}]]*/ '/projects/1/settings/assemble',
-          'sync': /*[[@{/projects/{id}/settings/sync(id=${project.getId()})}]]*/ '/projects/1/settings/sync',
-          'coverage': /*[[@{/projects/{id}/settings/coverage(id=${project.getId()})}]]*/ '/projects/1/settings/coverage'
-        }
-      };
+
     </script>
 </head>
 <body>
@@ -61,7 +52,38 @@
     </div>
 </main>
 
-<th:block th:if="${#strings.equalsIgnoreCase(page, 'remote')}" layout:fragment="scripts"
-          th:replace="remote_apis/remote_api_connect"/>
+<th:block layout:fragment="scripts">
+    <th:block th:switch="${page}">
+        <script th:case="'basic'">
+          var PAGE = {
+            i18n: {
+              'error': /*[[#{project.settings.notifications.error}]]*/ '_Error updating project_'
+            },
+            urls: {
+              'assemble': /*[[@{/projects/{id}/settings/assemble(id=${project.getId()})}]]*/ '/projects/1/settings/assemble',
+              'sync': /*[[@{/projects/{id}/settings/sync(id=${project.getId()})}]]*/ '/projects/1/settings/sync',
+              'coverage': /*[[@{/projects/{id}/settings/coverage(id=${project.getId()})}]]*/ '/projects/1/settings/coverage'
+            }
+          };
+        </script>
+        <th:block th:case="'remote'">
+            <th:block th:replace="remote_apis/remote_api_connect"/>
+        </th:block>
+        <th:block th:case="'associated-edit'">
+            <script>
+              var PAGE = {
+                urls: {
+                  local: {
+                    get: /*[[@{/projects/{id}/settings/associated/ajax/available(id=${project.getId()})}]]*/ '/projects/1/associated/ajax/available',
+                    add: /*[[@{/projects/{id}/settings/associated/(id=${project.getId()})}]]*/ '/projects/1/associated/',
+                    remove: /*[[@{/projects/{id}/settings/associated/(id=${project.getId()})}]]*/ '/projects/1/associated/'
+                  }
+                }
+              };
+            </script>
+            <script src="/resources/js/build/projects-associated-edit.bundle.js"></script>
+        </th:block>
+    </th:block>
+</th:block>
 </body>
 </html>
