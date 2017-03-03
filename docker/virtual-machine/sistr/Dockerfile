@@ -6,14 +6,10 @@ FROM apetkau/galaxy-irida-16.10:0.15.0
 
 MAINTAINER Aaron Petkau, aaron.petkau@phac-aspc.gc.ca
 
-ENV GALAXY_CONFIG_BRAND IRIDA Galaxy
-
-WORKDIR /galaxy-central/
-
 RUN sed -i -e 's@^#conda_prefix.*@conda_prefix = /tool_deps/_conda@' /etc/galaxy/galaxy.ini && \
     sed -i -e 's@^#conda_ensure_channels@conda_ensure_channels@' /etc/galaxy/galaxy.ini && \
     sed -i -e 's@^#use_cached_dependency_manager = False@use_cached_dependency_manager = True@' /etc/galaxy/galaxy.ini
-RUN install-repository "-r ebee10be4297 --url https://toolshed.g2.bx.psu.edu/ -o nml --name sistr_cmd --tool-deps"
+RUN install-repository "-r 9d7e381dfa5a --url https://toolshed.g2.bx.psu.edu/ -o nml --name sistr_cmd --tool-deps"
 RUN /tool_deps/_conda/bin/conda config --add channels conda-forge && \
     /tool_deps/_conda/bin/conda config --add channels defaults && \
     /tool_deps/_conda/bin/conda config --add channels r && \

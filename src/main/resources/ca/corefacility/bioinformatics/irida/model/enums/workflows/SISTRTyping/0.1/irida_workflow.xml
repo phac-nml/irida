@@ -92,7 +92,7 @@
 			<name>sistr_cmd</name>
 			<owner>nml</owner>
 			<url>https://toolshed.g2.bx.psu.edu/</url>
-			<revision>ebee10be4297</revision>
+			<revision>9d7e381dfa5a</revision>
 		</repository>
 	</toolRepositories>
 </iridaWorkflow>

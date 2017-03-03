@@ -591,7 +591,7 @@
             "tool_errors": null, 
             "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/sistr_cmd/sistr_cmd/0.3.4", 
             "tool_shed_repository": {
-                "changeset_revision": "ebee10be4297", 
+                "changeset_revision": "9d7e381dfa5a", 
                 "name": "sistr_cmd", 
                 "owner": "nml", 
                 "tool_shed": "toolshed.g2.bx.psu.edu"
