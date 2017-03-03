@@ -210,6 +210,7 @@ public class AssociatedProjectControllerTest {
 
 		when(projectService.read(projectId)).thenReturn(p1);
 		when(projectService.read(associatedProjectId)).thenReturn(p2);
+		when(messageSource.getMessage("project.associated.added", new Object[]{}, Locale.US)).thenReturn("Success");
 
 		ImmutableMap.of("associatedProjectId", associatedProjectId);
 		controller.addAssociatedProject(projectId, associatedProjectId, Locale.US);
@@ -226,6 +227,7 @@ public class AssociatedProjectControllerTest {
 
 		when(projectService.read(projectId)).thenReturn(p1);
 		when(projectService.read(associatedProjectId)).thenReturn(p2);
+		when(messageSource.getMessage("project.associated.removed", new Object[]{}, Locale.US)).thenReturn("Removed");
 
 		controller.removeAssociatedProject(projectId, associatedProjectId, Locale.US);
 
@@ -244,7 +246,7 @@ public class AssociatedProjectControllerTest {
 
 		verify(apiService).findAll();
 
-		assertEquals(AssociatedProjectsController.EDIT_ASSOCIATED_PROJECTS_PAGE, editAssociatedProjectsForProject);
+		assertEquals("projects/project_settings", editAssociatedProjectsForProject);
 	}
 
 	@Test
