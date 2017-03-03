@@ -90,7 +90,6 @@ public class ProjectsController {
 	// Sub Navigation Strings
 	public static final String ACTIVE_NAV = "activeNav";
 	private static final String ACTIVE_NAV_METADATA = "metadata";
-	private static final String ACTIVE_NAV_REFERENCE = "reference";
 	private static final String ACTIVE_NAV_ACTIVITY = "activity";
 	private static final String ACTIVE_NAV_ANALYSES = "analyses";
 
@@ -105,7 +104,6 @@ public class ProjectsController {
 	public static final String PROJECT_METADATA_EDIT_PAGE = PROJECTS_DIR + "project_metadata_edit";
 	public static final String PROJECT_SAMPLES_PAGE = PROJECTS_DIR + "project_samples";
 	public static final String PROJECT_ACTIVITY_PAGE = PROJECTS_DIR + "project_details";
-	public static final String PROJECT_REFERENCE_FILES_PAGE = PROJECTS_DIR + "project_reference";
 	public static final String PROJECT_ANALYSES_PAGE = PROJECTS_DIR + "project_analyses";
 	private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
 
@@ -431,17 +429,6 @@ public class ProjectsController {
 		} else {
 			throw new AccessDeniedException("Do not have permissions to modify this project.");
 		}
-	}
-
-	@RequestMapping(value = "/projects/{projectId}/referenceFiles", method = RequestMethod.GET)
-	public String getProjectReferenceFilesPage(final Model model, final Principal principal,
-			@PathVariable long projectId) {
-		Project project = projectService.read(projectId);
-		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-
-		model.addAttribute("project", project);
-		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_REFERENCE);
-		return PROJECT_REFERENCE_FILES_PAGE;
 	}
 
 	@RequestMapping(value = "/projects/{projectId}/metadata/edit", method = RequestMethod.POST)

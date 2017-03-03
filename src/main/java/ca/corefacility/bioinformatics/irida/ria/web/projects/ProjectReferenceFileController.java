@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.projects;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,8 +15,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -31,22 +34,36 @@ import com.google.common.collect.ImmutableMap;
  *
  */
 @Controller
-@RequestMapping(value = "/projects/{projectId}/ajax/reference")
+@RequestMapping(value = "/projects")
 public class ProjectReferenceFileController {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectReferenceFileController.class);
 	private final ProjectService projectService;
 	private final ReferenceFileService referenceFileService;
+	private final ProjectControllerUtils projectControllerUtils;
 	private final MessageSource messageSource;
 
 	@Autowired
 	public ProjectReferenceFileController(ProjectService projectService, ReferenceFileService referenceFileService,
-			MessageSource messageSource) {
+			ProjectControllerUtils projectControllerUtils, MessageSource messageSource) {
 		this.projectService = projectService;
 		this.referenceFileService = referenceFileService;
+		this.projectControllerUtils = projectControllerUtils;
 		this.messageSource = messageSource;
 	}
 
-	@RequestMapping("/all")
+	@RequestMapping(value = "/{projectId}/settings/referenceFiles", method = RequestMethod.GET)
+	public String getProjectReferenceFilesPage(final Model model, final Principal principal,
+			@PathVariable long projectId) {
+		Project project = projectService.read(projectId);
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+
+		model.addAttribute("project", project);
+		model.addAttribute(ProjectsController.ACTIVE_NAV, ProjectSettingsController.ACTIVE_NAV_SETTINGS);
+		model.addAttribute("page", "referenceFiles");
+		return "projects/project_settings";
+	}
+
+	@RequestMapping("/{projectId}/settings/ajax/reference/all")
 	public @ResponseBody Map<String, Object> getReferenceFilesForProject(@PathVariable Long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
 		// Let's add the reference files
@@ -63,8 +80,7 @@ public class ProjectReferenceFileController {
 				map.put("size", Files.size(path));
 			} catch (IOException e) {
 				logger.error("Cannot find the size of file " + file.getLabel());
-				map.put("size",
-						messageSource.getMessage("projects.reference-file.not-found", new Object[] { }, locale));
+				map.put("size", messageSource.getMessage("projects.reference-file.not-found", new Object[] {}, locale));
 			}
 			files.add(map);
 		}

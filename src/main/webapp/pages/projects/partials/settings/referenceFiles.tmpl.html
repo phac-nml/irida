@@ -1,25 +1,19 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="projects/_base">
-<head>
-	<title th:text="${project.label} + ' - ' + #{project.nav.referenceFiles}">TITLE</title>
-	<script th:inline="javascript">
-		window.dependencies = ['References'];
-		var PAGE = {
-			urls: {
-				get: /*[[@{/projects/{id}/ajax/reference/all(id=${project.identifier})}]]*/ '/projects/1/ajax/reference/all',
-				remove: /*[[@{/referenceFiles/delete}]]*/ '/projects/1/ajax/reference/delete',
-				download: /*[[@{/referenceFiles/download/}]]*/ '/referenceFiles/download/',
-				upload: /*[[@{/referenceFiles/project/{id}/new(id=${project.identifier})}]]*/ 'referenceFiles/project/1/new'
-			},
-			templates: {
-				deleteFile: /*[[@{/projects/templates/referenceFiles/delete'}]]*/ '/projects/templates/referenceFiles/delete'
-			}
-		};
-	</script>
-</head>
-<body>
-<main layout:fragment="main" ddl:bundle-includes="project-reference-files" th:with="owner=(${isOwner} or ${isAdmin})">
+<script th:inline="javascript">
+	window.dependencies = ['References'];
+	var PAGE = {
+		urls: {
+			get: /*[[@{/projects/{id}/settings/ajax/reference/all(id=${project.identifier})}]]*/ '/projects/1/ajax/reference/all',
+			remove: /*[[@{/referenceFiles/delete}]]*/ '/projects/1/ajax/reference/delete',
+			download: /*[[@{/referenceFiles/download/}]]*/ '/referenceFiles/download/',
+			upload: /*[[@{/referenceFiles/project/{id}/new(id=${project.identifier})}]]*/ 'referenceFiles/project/1/new'
+		},
+		templates: {
+			deleteFile: /*[[@{/projects/templates/referenceFiles/delete'}]]*/ '/projects/templates/referenceFiles/delete'
+		}
+	};
+</script>
+
+<div ddl:bundle-includes="project-reference-files" th:with="owner=(${isOwner} or ${isAdmin})">
 	<div class="row">
 		<div class="col-md-12 clearfix">
 				<span class="pull-right" th:if="${owner}" ng-controller="FileUploadCtrl as upload">
@@ -74,8 +68,8 @@
 			</table>
 		</section>
 	</div>
-</main>
-<th:block layout:fragment="scripts" th:inline="javascript">
+</div>
+<th:block  th:inline="javascript">
 	<div th:replace="templates/_file.utils :: upload-progress"></div>
 	<div th:replace="templates/_file.utils :: upload-error"></div>
   <script type="text/ng-template" id="/delete-modal.html">
@@ -101,5 +95,3 @@
 	  </div>
   </script>
 </th:block>
-</body>
-</html>
