@@ -49,12 +49,6 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 public class ProjectMembersController {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectMembersController.class);
 
-	private static final String ACTIVE_NAV_MEMBERS = "members";
-	private static final String PROJECTS_DIR = "projects/";
-	private static final String ACTIVE_NAV = "activeNav";
-
-	public static final String PROJECT_MEMBERS_PAGE = PROJECTS_DIR + "project_members";
-	public static final String PROJECT_GROUPS_PAGE = PROJECTS_DIR + "project_members_groups";
 	private static final String REMOVE_USER_MODAL = "projects/templates/remove-user-modal";
 
 	private final ProjectControllerUtils projectUtils;
@@ -88,15 +82,18 @@ public class ProjectMembersController {
 	 *            Id for the project to show the users for
 	 * @return The name of the project members page.
 	 */
-	@RequestMapping(value = "/{projectId}/members", method = RequestMethod.GET)
+	@RequestMapping("/{projectId}/settings/members")
 	public String getProjectUsersPage(final Model model, final Principal principal, @PathVariable Long projectId) {
-		logger.trace("Getting project members for project " + projectId);
+
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
+
 		projectUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_MEMBERS);
+
 		model.addAttribute("projectRoles", projectRoles);
-		return PROJECT_MEMBERS_PAGE;
+		model.addAttribute(ProjectsController.ACTIVE_NAV, ProjectSettingsController.ACTIVE_NAV_SETTINGS);
+		model.addAttribute("page", "members");
+		return "projects/project_settings";
 	}
 
 	/**
@@ -111,15 +108,16 @@ public class ProjectMembersController {
 	 *            Id for the project to show the users for
 	 * @return The name of the project members page.
 	 */
-	@RequestMapping(value = "/{projectId}/groups", method = RequestMethod.GET)
+	@RequestMapping(value = "/{projectId}/settings/groups", method = RequestMethod.GET)
 	public String getProjectGroupsPage(final Model model, final Principal principal, @PathVariable Long projectId) {
 		logger.trace("Getting project members for project " + projectId);
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
 		projectUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_MEMBERS);
+		model.addAttribute(ProjectsController.ACTIVE_NAV, ProjectSettingsController.ACTIVE_NAV_SETTINGS);
 		model.addAttribute("projectRoles", projectRoles);
-		return PROJECT_GROUPS_PAGE;
+		model.addAttribute("page", "groups");
+		return "projects/project_settings";
 	}
 
 	/**
@@ -135,7 +133,7 @@ public class ProjectMembersController {
 	 *            the reported locale of the browser
 	 * @return map for showing success message.
 	 */
-	@RequestMapping(value = "/{projectId}/members", method = RequestMethod.POST)
+	@RequestMapping(value = "/{projectId}/settings/members", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, String> addProjectMember(@PathVariable Long projectId, @RequestParam Long memberId,
 			@RequestParam String projectRole, Locale locale) {
@@ -162,7 +160,7 @@ public class ProjectMembersController {
 	 *            the reported locale of the browser
 	 * @return map for showing success message.
 	 */
-	@RequestMapping(value = "/{projectId}/groups", method = RequestMethod.POST)
+	@RequestMapping(value = "/{projectId}/settings/groups", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, String> addProjectGroupMember(@PathVariable Long projectId, @RequestParam Long memberId,
 			@RequestParam String projectRole, Locale locale) {
@@ -185,7 +183,7 @@ public class ProjectMembersController {
 	 *            A search term
 	 * @return A {@code Map<Long,String>} of the userID and user label
 	 */
-	@RequestMapping("/{projectId}/ajax/availablemembers")
+	@RequestMapping("/{projectId}/settings/ajax/availablemembers")
 	@ResponseBody
 	public Collection<User> getUsersAvailableForProject(@PathVariable Long projectId, @RequestParam String term) {
 		final Project project = projectService.read(projectId);
@@ -203,7 +201,7 @@ public class ProjectMembersController {
 	 *            A search term
 	 * @return A {@code Map<Long,String>} of the userID and user label
 	 */
-	@RequestMapping("/{projectId}/ajax/availablegroupmembers")
+	@RequestMapping("/{projectId}/settings/ajax/availablegroupmembers")
 	@ResponseBody
 	public Collection<UserGroup> getGroupsAvailableForProject(@PathVariable Long projectId, @RequestParam String term) {
 		final Project project = projectService.read(projectId);
@@ -220,9 +218,10 @@ public class ProjectMembersController {
 	 * @param userId
 	 *            The user to remove
 	 */
-	@RequestMapping(path = "{projectId}/members/{userId}", method = RequestMethod.DELETE)
+	@RequestMapping(path = "{projectId}/settings/members/{userId}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public Map<String, String> removeUser(final @PathVariable Long projectId, final @PathVariable Long userId, final Locale locale) {
+	public Map<String, String> removeUser(final @PathVariable Long projectId, final @PathVariable Long userId,
+			final Locale locale) {
 		Project project = projectService.read(projectId);
 		User user = userService.read(userId);
 
@@ -244,9 +243,10 @@ public class ProjectMembersController {
 	 * @param userId
 	 *            The user to remove
 	 */
-	@RequestMapping(path = "{projectId}/groups/{userId}", method = RequestMethod.DELETE)
+	@RequestMapping(path = "{projectId}/settings/groups/{userId}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public Map<String, String> removeUserGroup(final @PathVariable Long projectId, final @PathVariable Long userId, final Locale locale) {
+	public Map<String, String> removeUserGroup(final @PathVariable Long projectId, final @PathVariable Long userId,
+			final Locale locale) {
 		final Project project = projectService.read(projectId);
 		final UserGroup userGroup = userGroupService.read(userId);
 
@@ -270,7 +270,7 @@ public class ProjectMembersController {
 	 * @param projectRole
 	 *            The role to set
 	 */
-	@RequestMapping(path = "{projectId}/members/editrole/{userId}", method = RequestMethod.POST)
+	@RequestMapping(path = "{projectId}/settings/members/editrole/{userId}", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, String> updateUserRole(final @PathVariable Long projectId, final @PathVariable Long userId,
 			final @RequestParam String projectRole, final Locale locale) {
@@ -299,7 +299,7 @@ public class ProjectMembersController {
 	 * @param projectRole
 	 *            The role to set
 	 */
-	@RequestMapping(path = "{projectId}/groups/editrole/{userId}", method = RequestMethod.POST)
+	@RequestMapping(path = "{projectId}/settings/groups/editrole/{userId}", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, String> updateUserGroupRole(final @PathVariable Long projectId, final @PathVariable Long userId,
 			final @RequestParam String projectRole, final Locale locale) {
@@ -327,7 +327,7 @@ public class ProjectMembersController {
 	 *            the id of the project we're looking at
 	 * @return a page of users on the project
 	 */
-	@RequestMapping(value = "/ajax/{projectId}/members")
+	@RequestMapping(value = "/{projectId}/settings/ajax/members")
 	public @ResponseBody DatatablesResponse<Join<Project, User>> getProjectUserMembers(
 			final @DatatablesParams DatatablesCriterias criteria, final @PathVariable Long projectId) {
 		final Project p = projectService.read(projectId);
@@ -358,7 +358,7 @@ public class ProjectMembersController {
 	 *            the id of the project we're looking at
 	 * @return a page of groups on the project.
 	 */
-	@RequestMapping(value = "/ajax/{projectId}/groups")
+	@RequestMapping(value = "/{projectId}/settings/ajax/groups")
 	public @ResponseBody DatatablesResponse<UserGroupProjectJoin> getProjectGroupMembers(
 			final @DatatablesParams DatatablesCriterias criteria, final @PathVariable Long projectId) {
 		final Project p = projectService.read(projectId);
@@ -388,7 +388,7 @@ public class ProjectMembersController {
 	 *            model for rendering the view
 	 * @return name of the user removal modal
 	 */
-	@RequestMapping(path = "/removeUserModal", method = RequestMethod.POST)
+	@RequestMapping(path = "/settings/removeUserModal", method = RequestMethod.POST)
 	public String getRemoveUserModal(final @RequestParam Long memberId, final Model model) {
 		final User user = userService.read(memberId);
 		model.addAttribute("member", user);
@@ -404,7 +404,7 @@ public class ProjectMembersController {
 	 *            Model for rendering the view
 	 * @return Name of the user group removal modal
 	 */
-	@RequestMapping(path = "/removeUserGroupModal", method = RequestMethod.POST)
+	@RequestMapping(path = "/settings/removeUserGroupModal", method = RequestMethod.POST)
 	public String getRemoveUserGroupModal(final @RequestParam Long memberId, final Model model) {
 		final UserGroup userGroup = userGroupService.read(memberId);
 		model.addAttribute("member", userGroup);

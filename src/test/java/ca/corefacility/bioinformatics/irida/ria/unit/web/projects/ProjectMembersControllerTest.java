@@ -18,7 +18,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.ui.ExtendedModelMap;
-import org.springframework.ui.Model;
 
 import com.google.common.collect.Lists;
 
@@ -28,7 +27,6 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectMembersController;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -60,11 +58,13 @@ public class ProjectMembersControllerTest {
 
 	@Test
 	public void testGetProjectUsersPage() {
-		Model model = new ExtendedModelMap();
+		ExtendedModelMap model = new ExtendedModelMap();
 		Long projectId = 1L;
 		Principal principal = () -> USER_NAME;
-		assertEquals("Gets the correct project members page",
-				controller.getProjectUsersPage(model, principal, projectId), ProjectsController.PROJECT_MEMBERS_PAGE);
+		assertEquals("Gets the correct project members page", "projects/project_settings",
+				controller.getProjectUsersPage(model, principal, projectId));
+		
+		assertEquals("Should be the memebers subpage", model.get("page"), "members");
 	}
 
 	@Test

@@ -88,7 +88,7 @@ import ca.corefacility.bioinformatics.irida.util.TreeNode;
 @Controller
 public class ProjectsController {
 	// Sub Navigation Strings
-	private static final String ACTIVE_NAV = "activeNav";
+	public static final String ACTIVE_NAV = "activeNav";
 	private static final String ACTIVE_NAV_METADATA = "metadata";
 	private static final String ACTIVE_NAV_REFERENCE = "reference";
 	private static final String ACTIVE_NAV_ACTIVITY = "activity";
