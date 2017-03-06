@@ -119,7 +119,7 @@ public class ProjectSettingsAssociatedProjectsController {
 		model.addAttribute("page", "associated");
 
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		return "projects/project_settings";
+		return "projects/settings/pages/associated";
 	}
 
 	/**
@@ -207,9 +207,8 @@ public class ProjectSettingsAssociatedProjectsController {
 
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		model.addAttribute(ProjectsController.ACTIVE_NAV, ProjectSettingsController.ACTIVE_NAV_SETTINGS);
-		model.addAttribute("page", "associated-edit");
 
-		return "projects/project_settings";
+		return "projects/settings/pages/associated_edit";
 	}
 
 	/**
