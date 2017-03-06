@@ -86,14 +86,13 @@
 			</tbody>
 
 		</table>
-		<div class="text-center">
-			<uib-pagination ng-hide="$ctrl.paging.totalPages &lt; 2"
-			            items-per-page="$ctrl.filterCriteria.count"
-			            total-items="$ctrl.paging.totalAssociated"
-			            ng-model="$ctrl.paging.page" first-text="&laquo;"
-			            last-text="&raquo;"
-			            next-text="&rsaquo;" previous-text="&lsaquo;"
-			            boundary-links="true"></uib-pagination>
+		<div class="text-center" ng-hide="$ctrl.paging.totalPages &lt; 2">
+			<ul uib-pagination=""
+				boundary-links="true"
+				total-items="$ctrl.paging.totalAssociated"
+				max-size="8"
+				ng-model="$ctrl.paging.page">
+			</ul>
 		</div>
 	</div>
 </div>

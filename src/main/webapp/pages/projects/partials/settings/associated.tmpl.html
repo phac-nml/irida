@@ -5,8 +5,8 @@
         </div>
         <div class="col-md-2">
             <a id="edit-metadata" th:if="${isOwner} or ${isAdmin}" class="btn btn-default btn-sm pull-right" 
-                th:text="#{form.btn.edit}" th:href="@{/projects/{id}/settings/associated-edit(id=${project.getId()})}" 
-                href="projects/4/associated/edit">_Edit_</a>
+                th:text="#{form.btn.edit}" th:href="@{/projects/{id}/settings/associated/edit(id=${project.getId()})}"
+                href="projects/4/settings/associated/edit">_Edit_</a>
         </div>
     </div>
   <span th:if="${noAssociated}" th:text="#{project.associated.empty}">_No associated projects_</span>

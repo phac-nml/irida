@@ -29,8 +29,8 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.AssociatedProjectsController;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectSettingsAssociatedProjectsController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteRelatedProjectService;
@@ -40,11 +40,11 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
-public class AssociatedProjectControllerTest {
+public class ProjectSettingsAssociatedProjectsControllerTest {
 	private static final String USER_NAME = "testme";
 
 	private ProjectService projectService;
-	private AssociatedProjectsController controller;
+	private ProjectSettingsAssociatedProjectsController controller;
 	private UserService userService;
 	private ProjectControllerUtils projectUtils;
 	private RemoteRelatedProjectService remoteRelatedProjectService;
@@ -61,7 +61,7 @@ public class AssociatedProjectControllerTest {
 		projectRemoteService = mock(ProjectRemoteService.class);
 		remoteRelatedProjectService = mock(RemoteRelatedProjectService.class);
 		messageSource = mock(MessageSource.class);
-		controller = new AssociatedProjectsController(remoteRelatedProjectService, projectService, projectUtils,
+		controller = new ProjectSettingsAssociatedProjectsController(remoteRelatedProjectService, projectService, projectUtils,
 				userService, apiService, projectRemoteService, messageSource);
 		
         // fake out the servlet response so that the URI builder will work.
@@ -246,7 +246,7 @@ public class AssociatedProjectControllerTest {
 
 		verify(apiService).findAll();
 
-		assertEquals("projects/project_settings", editAssociatedProjectsForProject);
+		assertEquals("projects/project_settingsHCE1mmo", editAssociatedProjectsForProject);
 	}
 
 	@Test

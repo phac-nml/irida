@@ -47,9 +47,9 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import com.google.common.collect.ImmutableMap;
 
 @Controller
-@RequestMapping("/projects")
+@RequestMapping("/projects/{projectId}/settings/associated")
 @Scope("session")
-public class AssociatedProjectsController {
+public class ProjectSettingsAssociatedProjectsController {
 
 	private static final String ACTIVE_NAV = "activeNav";
 	private static final String ACTIVE_NAV_ASSOCIATED_PROJECTS = "associated";
@@ -68,7 +68,7 @@ public class AssociatedProjectsController {
 	private final Formatter<Date> dateFormatter;
 
 	@Autowired
-	public AssociatedProjectsController(RemoteRelatedProjectService remoteRelatedProjectService,
+	public ProjectSettingsAssociatedProjectsController(RemoteRelatedProjectService remoteRelatedProjectService,
 			ProjectService projectService, ProjectControllerUtils projectControllerUtils, UserService userService,
 			RemoteAPIService apiService, ProjectRemoteService projectRemoteService, MessageSource messageSource) {
 
@@ -94,7 +94,7 @@ public class AssociatedProjectsController {
 	 *
 	 * @return The view name of the assocated projects view
 	 */
-	@RequestMapping(value = "/{projectId}/settings/associated", method = RequestMethod.GET)
+	@RequestMapping(value = "", method = RequestMethod.GET)
 	public String getAssociatedProjectsPage(@PathVariable Long projectId, Model model, Principal principal) {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
@@ -130,7 +130,7 @@ public class AssociatedProjectsController {
 	 *
 	 * @return
 	 */
-	@RequestMapping("/{projectId}/ajax/associated")
+	@RequestMapping("/ajax/associated")
 	public @ResponseBody
 	List<Project> ajaxAssociatedProjects(@PathVariable Long projectId) {
 		Project project = projectService.read(projectId);
@@ -148,7 +148,7 @@ public class AssociatedProjectsController {
 	 *
 	 * @return "success" if the request was successful
 	 */
-	@RequestMapping(value = "/{projectId}/associated", method = RequestMethod.POST)
+	@RequestMapping(value = "", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, String> addAssociatedProject(@PathVariable Long projectId,
 			@RequestParam Long associatedProjectId, Locale locale) {
@@ -171,7 +171,7 @@ public class AssociatedProjectsController {
 	 *
 	 * @return "success" if the request was successful
 	 */
-	@RequestMapping(value = "/{projectId}/associated", method = RequestMethod.DELETE)
+	@RequestMapping(value = "", method = RequestMethod.DELETE)
 	@ResponseBody
 	public Map<String, String> removeAssociatedProject(@PathVariable Long projectId,
 			@RequestParam Long associatedProjectId, Locale locale) {
@@ -196,7 +196,7 @@ public class AssociatedProjectsController {
 	 *
 	 * @return The name of the edit associated projects view
 	 */
-	@RequestMapping("/{projectId}/settings/associated-edit")
+	@RequestMapping("/edit")
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId, 'isProjectOwner')")
 	public String editAssociatedProjectsForProject(@PathVariable Long projectId, Model model, Principal principal) {
 		Project project = projectService.read(projectId);
@@ -232,7 +232,7 @@ public class AssociatedProjectsController {
 	 *
 	 * @return A {@code Map<String,Object>} of elements for a datatable
 	 */
-	@RequestMapping("/{projectId}/associated/ajax/available")
+	@RequestMapping("/ajax/available")
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId, 'isProjectOwner')")
 	@ResponseBody
 	public Map<String, Object> getPotentialAssociatedProjects(@PathVariable Long projectId, final Principal principal,
@@ -274,7 +274,7 @@ public class AssociatedProjectsController {
 	 *
 	 * @return A List of Maps of the project properties
 	 */
-	@RequestMapping("/{projectId}/associated/remote/{apiId}/available")
+	@RequestMapping("/remote/{apiId}/available")
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId, 'isProjectOwner')")
 	@ResponseBody
 	public List<Map<String, String>> getPotentialRemoteAssociatedProjectsForApi(@PathVariable Long projectId,
@@ -299,7 +299,7 @@ public class AssociatedProjectsController {
 	 *
 	 * @return a Map representation of the status of adding the associated project.
 	 */
-	@RequestMapping(value = "/{projectId}/associated/remote", method = RequestMethod.POST)
+	@RequestMapping(value = "/remote", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, String> addRemoteAssociatedProject(@PathVariable Long projectId,
 			@RequestParam String projectUrl) {
@@ -324,7 +324,7 @@ public class AssociatedProjectsController {
 	 *
 	 * @return a Map representation of the status of removing the associated project.
 	 */
-	@RequestMapping(value = "/{projectId}/associated/remote/remove", method = RequestMethod.POST)
+	@RequestMapping(value = "/remote/remove", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, String> removeRemoteAssociatedProject(@PathVariable Long projectId,
 			@RequestParam String projectUrl) {
