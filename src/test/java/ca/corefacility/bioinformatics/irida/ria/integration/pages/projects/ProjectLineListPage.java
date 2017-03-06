@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
 import java.util.List;
 
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -16,6 +15,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  */
 public class ProjectLineListPage extends ProjectPageBase {
 	private static final String RELATIVE_URL = "/projects/{projectId}/linelist";
+
+	@FindBy(css = "modal-backdrop")
+	private WebElement modalBackdrop;
 
 	@FindBy(css = ".dataTables_scrollHeadInner th")
 	private List<WebElement> tableHeaders;
@@ -59,7 +61,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 	}
 
 	public void closeColumnVisibilityPanel() {
-		colVisBtns.get(1).sendKeys(Keys.ESCAPE);
+		modalBackdrop.click();
 	}
 
 	public void toggleColumn(String buttonLabel) {
