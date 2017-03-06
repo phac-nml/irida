@@ -17,9 +17,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class ProjectLineListPage extends ProjectPageBase {
 	private static final String RELATIVE_URL = "/projects/{projectId}/linelist";
 
-	@FindBy(css = "document body")
-	private WebElement bodyElement;
-
 	@FindBy(css = ".dataTables_scrollHeadInner th")
 	private List<WebElement> tableHeaders;
 
@@ -62,7 +59,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 	}
 
 	public void closeColumnVisibilityPanel() {
-		bodyElement.sendKeys(Keys.ESCAPE);
+		metadataColVisAside.sendKeys(Keys.ESCAPE);
 	}
 
 	public void toggleColumn(String buttonLabel) {
