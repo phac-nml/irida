@@ -130,12 +130,12 @@
     <project_sample id="22" project_id="6" sample_id="21" createdDate="2013-07-18 14:42:19.0"/>
     <project_sample id="23" project_id="3" sample_id="21" createdDate="2013-07-18 14:42:19.0"/>
 
-    <metadata_fields id="1" label="firstName" type="text" />
-    <metadata_fields id="2" label="lastName" type="text" />
-    <metadata_fields id="3" label="healthAuthority" type="text" />
-    <metadata_fields id="4" label="firstSymptom" type="text" />
-    <metadata_fields id="5" label="serotype" type="text" />
-    <metadata_fields id="6" label="phageType" type="text" />
+    <metadata_field id="1" label="firstName" type="text" />
+    <metadata_field id="2" label="lastName" type="text" />
+    <metadata_field id="3" label="healthAuthority" type="text" />
+    <metadata_field id="4" label="firstSymptom" type="text" />
+    <metadata_field id="5" label="serotype" type="text" />
+    <metadata_field id="6" label="phageType" type="text" />
 
     <metadata_template id="1" created_date="2016-06-10 08:05:53" modified_date="2016-06-10 08:05:53" name="Testing Template 1" />
 
