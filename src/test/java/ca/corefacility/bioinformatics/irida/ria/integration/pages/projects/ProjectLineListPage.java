@@ -59,7 +59,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 	}
 
 	public void closeColumnVisibilityPanel() {
-		metadataColVisAside.sendKeys(Keys.ESCAPE);
+		colVisBtns.get(1).sendKeys(Keys.ESCAPE);
 	}
 
 	public void toggleColumn(String buttonLabel) {
