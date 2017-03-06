@@ -17,7 +17,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class ProjectLineListPage extends ProjectPageBase {
 	private static final String RELATIVE_URL = "/projects/{projectId}/linelist";
 
-	@FindBy(css = "document.body")
+	@FindBy(css = "document body")
 	private WebElement bodyElement;
 
 	@FindBy(css = ".dataTables_scrollHeadInner th")
