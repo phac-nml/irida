@@ -12,6 +12,23 @@
         }
       };
     </script>
+    <style>
+        .btn-icon {
+            background-color: transparent;
+            border: none;
+            border-radius: 50%;
+            color: lightgray;
+            transition: color .2s, text-shadow .1s;
+        }
+        .btn-icon:hover {
+            color: #222222;
+            text-shadow: 1px 1px 2px grey;
+        }
+        .btn-icon:active {
+            color: #2e2e2e;
+            text-shadow: 0 0 1px grey;
+        }
+    </style>
 </head>
 <body>
 <main layout:fragment="main" ddl:bundle-includes="project-linelist">
@@ -72,6 +89,11 @@
         </div>
     </script>
     <script type="text/ng-template" id="metadata.aside.tmpl">
+        <div class="row">
+            <div class="col-md-12 clearfix">
+                <button id="close-aside-btn" class="btn-icon pull-right" ng-click="$ctrl.close()"><i class="fa fa-fw fa-times-circle-o fa-2x pull-right" aria-hidden="true"></i></button>
+            </div>
+        </div>
         <div class="row" style="height: 100%;">
             <div class="col-md-12">
                 <div class="row">

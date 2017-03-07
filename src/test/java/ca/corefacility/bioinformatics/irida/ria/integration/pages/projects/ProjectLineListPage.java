@@ -16,9 +16,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class ProjectLineListPage extends ProjectPageBase {
 	private static final String RELATIVE_URL = "/projects/{projectId}/linelist";
 
-	@FindBy(css = "modal-backdrop")
-	private WebElement modalBackdrop;
-
 	@FindBy(css = ".dataTables_scrollHeadInner th")
 	private List<WebElement> tableHeaders;
 
@@ -30,6 +27,9 @@ public class ProjectLineListPage extends ProjectPageBase {
 
 	@FindBy(css = ".metadata-open .modal-content")
 	private WebElement metadataColVisAside;
+
+	@FindBy(id = "close-aside-btn")
+	private WebElement closeAsideBtn;
 
 	@FindBy(className = "bootstrap-switch-label")
 	private List<WebElement> colVisBtns;
@@ -61,7 +61,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 	}
 
 	public void closeColumnVisibilityPanel() {
-		modalBackdrop.click();
+		closeAsideBtn.click();
 	}
 
 	public void toggleColumn(String buttonLabel) {
