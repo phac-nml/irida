@@ -89,10 +89,10 @@
 			<revision>9ea374bb0350</revision>
 		</repository>
 		<repository>
-			<name>sistr_web_analyze</name>
-			<owner>peterk87</owner>
-			<url>https://testtoolshed.g2.bx.psu.edu/</url>
-			<revision>84560b3e1777</revision>
+			<name>sistr_cmd</name>
+			<owner>nml</owner>
+			<url>https://toolshed.g2.bx.psu.edu/</url>
+			<revision>9d7e381dfa5a</revision>
 		</repository>
 	</toolRepositories>
 </iridaWorkflow>

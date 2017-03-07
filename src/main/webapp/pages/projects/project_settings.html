@@ -1,131 +1,48 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="projects/_base" ddl:bundle-includes="project-settings">
-
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="projects/_base" ddl:bundle-includes="project-settings">
 <head>
-  <title th:text="${project.label} + ' - ' + #{project.nav.settings}"></title>
-  <script th:inline="javascript">
-        var PAGE = {
-            i18n: {
-                'error' : /*[[#{project.settings.notifications.error}]]*/ '_Error updating project_'
-            },
-            urls: {
-                'assemble': /*[[@{/projects/{id}/settings/assemble(id=${project.getId()})}]]*/ '/projects/1/settings/assemble',
-                'sistr': /*[[@{/projects/{id}/settings/sistr(id=${project.getId()})}]]*/ '/projects/1/settings/sistr',
-                'sync': /*[[@{/projects/{id}/settings/sync(id=${project.getId()})}]]*/ '/projects/1/settings/sync',
-                'coverage': /*[[@{/projects/{id}/settings/coverage(id=${project.getId()})}]]*/ '/projects/1/settings/coverage'
-            }
-        };
+    <title th:text="${project.label} + ' - ' + #{project.nav.settings}"></title>
+    <script th:inline="javascript">
+      var PAGE = {
+        i18n: {
+          'error': /*[[#{project.settings.notifications.error}]]*/ '_Error updating project_'
+        },
+        urls: {
+          'assemble': /*[[@{/projects/{id}/settings/assemble(id=${project.getId()})}]]*/ '/projects/1/settings/assemble',
+          'sistr': /*[[@{/projects/{id}/settings/sistr(id=${project.getId()})}]]*/ '/projects/1/settings/sistr',
+          'sync': /*[[@{/projects/{id}/settings/sync(id=${project.getId()})}]]*/ '/projects/1/settings/sync',
+          'coverage': /*[[@{/projects/{id}/settings/coverage(id=${project.getId()})}]]*/ '/projects/1/settings/coverage'
+        }
+      };
     </script>
 </head>
-
 <body>
-  <main layout:fragment="main" ddl:bundle-includes="project-settings" >
-    <div class="panel panel-default">
-      <div class="panel-heading" th:text="#{project.settings.basic.heading}">_Basic project settings_</div>
-      <div class="panel-body">
-        <div class="form-group">
-          <label class="control-label" th:text="#{project.settings.assemble}">_Assembly_</label>
-          <div class="checkbox">
-            <label>
-              <input id="assemble" type="checkbox" value="assemble" th:checked="${project.assembleUploads}"/>
-              <span th:text="#{project.settings.assemble.control}">_Automatically assemble uploads_</span>
-            </label>
-          </div>
+<main layout:fragment="main" ddl:bundle-includes="project-settings">
+    <div class="row">
+        <div class="col-md-2">
+            <div class="list-group">
+                <a href=""
+                   th:href="@{/projects/{id}/settings(id=${project.getId()})}"
+                   class="list-group-item"
+                   th:classappend="${#strings.equalsIgnoreCase(page, 'basic') ? 'active' : ''}"
+                   th:text="#{project.settings.page.basic}">_Basic Settings_</a>
+                <a th:if="${project.isRemote()}"
+                   href=""
+                   th:href="@{/projects/{id}/settings/remote(id=${project.getId()})}"
+                   class="list-group-item"
+                   th:classappend="${#strings.equalsIgnoreCase(page, 'remote') ? 'active' : ''}"
+                   role="presentation"
+                   th:text="#{project.settings.page.remote}">_Remote</a>
+            </div>
         </div>
-        <div class="form-group">
-          <label class="control-label" th:text="#{project.settings.sistr}">_SISTR_</label>
-          <div class="checkbox">
-            <label>
-              <input id="sistr" type="checkbox" value="sistr" th:checked="${project.sistrTypingUploads}"/>
-              <span th:text="#{project.settings.sistr.control}">_Automatically type uploads with SISTR_</span>
-            </label>
-          </div>
+        <div class="col-md-10">
+            <th:block th:replace="projects/partials/settings/__${page}__.tmpl "/>
         </div>
-        <div class="form-group">
-          <label class="control-label">
-            <span th:text="#{project.settings.coverage}">_Coverage_</span>
-            <button id="edit-coverage-btn" class="btn btn-xs btn-default edit-coverage" th:text="#{form.btn.edit}">_Edit_</button>
-            <button id="coverage-cancel" class="btn btn-default btn-xs edit-coverage" style="display: none" type="button" th:text="#{form.btn.cancel}">_cancel_</button>
-            <button id="coverage-save" class="btn btn-success btn-xs edit-coverage" style="display: none" type="button" th:text="#{form.btn.update}">_save_</button>
-          </label>
-          <div id="display-coverage" class="row edit-coverage">
-            <div class="col-md-3">
-              <label for="required-coverage-display" th:text="#{project.settings.coverage.required_coverage}">_Required Coverage_</label>
-              <span id="required-coverage-display" th:if="${project.requiredCoverage != NULL}" th:text="${project.requiredCoverage} + 'x'"></span>
-              <span id="required-coverage-display" th:if="${project.requiredCoverage == NULL}"  th:text="#{project.settings.notset}">N/A</span>
-            </div>
-
-            <div class="col-md-4">
-              <label for="genome-size-display" th:text="#{project.settings.coverage.genome_size}">_Genome Size_</label>
-              <span id="genome-size-display" th:if="${project.genomeSize != NULL}" th:text="${project.genomeSize} + 'bp'"></span>
-              <span id="genome-size-display" th:if="${project.genomeSize == NULL}" th:text="#{project.settings.notset}">N/A</span>
-            </div>
-          </div>
-          <div id="edit-coverage" class="form row edit-coverage" style="display: none">
-            <div class="col-md-3">
-              <label for="required-coverage" th:text="#{project.settings.coverage.required_coverage}">_Required Coverage_</label>
-              <div class="input-group">
-                <input class="form-control" type="text" id="required-coverage" th:value="${project.requiredCoverage}"/>
-                <div class="input-group-addon">x</div>
-              </div>
-            </div>
-
-            <div class="col-md-4">
-              <label for="genome-size" th:text="#{project.settings.coverage.genome_size}">_Genome Size_</label>
-              <div class="input-group">
-                <input class="form-control" type="text" id="genome-size" th:value="${project.genomeSize}" size="10"/>
-                <div class="input-group-addon">bp</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
-    
-    <div class="panel panel-default" th:if="${project.isRemote()}">
-      <div class="panel-heading" th:text="#{project.settings.sync.heading}">_Project Sync Settings_</div>
-      <div class="panel-body" th:with="status = ${project.getRemoteStatus()}">
-        <div class="form-group">
-          <label class="control-label" th:text="#{project.settings.sync.lastSync}">_Last Sync_</label>
-          <div>
-            <span th:text="${#calendars.format(project.getRemoteStatus().getLastUpdate(), 'dd MMM yyyy hh:mma')}"></span>
-            <button id="forceSync" role="button" class="btn btn-default btn-sm" th:text="#{project.settings.sync.forceSync}">_Force Sync_</button>
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="control-label" th:text="#{project.settings.api}">_API_</label>
-          <div>
-            <a href="#" th:href="@{/remote_api/{id}(id=${status.getApi().getId()})}" th:text="${status.getApi().getLabel()}">_api_</a>
-            <span id="api-status" class="api-status">
-                <i class="fa fa-spinner fa-spin"></i>
-            </span>
-        
-            <button type="button" class="oauth-connect-link btn btn-default hidden" id="connect-button"
-                th:text="#{remoteapi.status.connect.button}" th:attr="data-api-id=${status.getApi().getId()}">_Connect_</button>
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="control-label" for="frequency" th:text="#{project.settings.sync.frequency}">_Sync Frequency_</label>
-          <select id="frequency" class="form-control input-full sync-setting">
-            <option th:each="freq : ${frequencies}" th:value="${freq}" th:text="#{'project.settings.frequency.' + ${freq}}" th:selected="${project.getSyncFrequency() == freq}"></option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="control-label" for="frequency" th:text="#{project.settings.sync.user}">_Sync User_</label>
-          <div>
-            <a href="#" th:text="${status.getReadBy().getLabel()}" th:href="@{/users/{id}(id=${status.getReadBy().getId()})}">_User</a>
-            <span class="api-connected-action" hidden="hidden">
-              <button id="becomeSyncUser" role="button" class="btn btn-default btn-sm" th:text="#{project.settings.sync.becomeSyncUser}">_Become owner_</button>
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-  </main>
-  <th:block layout:fragment="scripts" th:inline="javascript">
-      <script layout:fragment="scripts" th:inline="javascript" th:replace="remote_apis/remote_api_connect"></script>
-  </th:block>
+</main>
+
+<th:block th:if="${#strings.equalsIgnoreCase(page, 'remote')}" layout:fragment="scripts"
+          th:replace="remote_apis/remote_api_connect"/>
 </body>
-
 </html>
