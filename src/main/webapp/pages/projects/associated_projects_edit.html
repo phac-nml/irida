@@ -130,40 +130,47 @@
 			app = angular.module('associated.edit', ['irida.datatables', 'frapontillo.bootstrap-switch']);
 
 		app.factory('AssociatedService', function($http) {
-			'use strict';
+          var self = this;
+          self.getAssociated = function(params) {
+            return $http.get(PAGE.urls.local.get, {
+              params: params
+            })
+              .then(function(result) {
+                return result.data;
+              });
+          };
 
-			function AssociatedService() {
-				var self = this;
-				self.getAssociated = function(params) {
-					return $http.get(PAGE.urls.local.get, {
-						params: params
-					});
-				};
+          self.removeAssociatedStatus = function(params) {
+            return $http.delete(PAGE.urls.local.remove, {
+              params: params
+            })
+              .then(function(result) {
+                return result.data;
+              });
+          };
 
-				self.getRemoteAssociated = function(apiId) {
-					return $http.get(PAGE.urls.remote.get + apiId + '/available');
-				};
+          self.addAssociatedProject = function(params) {
+            return $http.post(PAGE.urls.local.add, params)
+              .then(function(result) {
+                return result.data;
+              });
+          };
 
-				self.removeAssociatedStatus = function(params) {
-					return $http.delete(PAGE.urls.local.remove, {
-						params: params
-					});
-				};
+          self.addRemoteAssociatedProject = function(params) {
+            return $http.post(PAGE.urls.remote.add, params)
+              .then(function(result) {
+                return result.data;
+              });
+          };
 
-				self.addAssociatedProject = function(params) {
-					return $http.post(PAGE.urls.local.add, params);
-				};
+          self.removeRemoteAssociatedStatus = function(params) {
+            return $http.post(PAGE.urls.remote.remove, params)
+              .then(function(result) {
+                return result.data;
+              });
+          };
 
-				self.addRemoteAssociatedProject = function(params) {
-					return $http.post(PAGE.urls.remote.add, params);
-				};
-
-				self.removeRemoteAssociatedStatus = function(params) {
-					return $http.post(PAGE.urls.remote.remove, params);
-				};
-			}
-
-			return new AssociatedService();
+			return self;
 		});
 
 		app.controller('AssociatedTableCtrl', function($rootScope, $scope, $log, AssociatedService) {
@@ -212,16 +219,16 @@
 			$scope.fetchResult = function() {
 				$scope.filterPromise = AssociatedService.getAssociated($scope.filterCriteria);
 
-				return $scope.filterPromise.success(function(data) {
+				return $scope.filterPromise.then(function(data) {
 					if (data.hasOwnProperty('associated')) {
 						$scope.associated = data.associated;
 						$scope.paging.totalAssociated = data.totalAssociated;
 						$scope.paging.totalPages = data.totalPages;
 					} else {
 						// Normally will only hit on bad credentials.
-						window.location = window.location;
+//						window.location = window.location;
 					}
-				}).error(function() {
+				}).catch(function() {
 					$scope.associated = [];
 				});
 			};
@@ -275,7 +282,7 @@
 				var titleElem = angular.element(".navbar-sm li.active span"),
 					titleVal = parseInt(titleElem.html());
 				if (project.associated) {
-					AssociatedService.addAssociatedProject({associatedProjectId: project.id}).success(function(data) {
+					AssociatedService.addAssociatedProject({associatedProjectId: project.id}).then(function(data) {
 						if (data.result === 'success') {
 							notySuccess(/*[[#{project.associated.added}]]*/ "Associated project added.");
 							titleElem.html(++titleVal);
@@ -284,12 +291,12 @@
 							notyError();
 							project.associated = 'associated';
 						}
-					}).error(function() {
+					}).catch(function() {
 						notyError();
 					});
 				}
 				else {
-					AssociatedService.removeAssociatedStatus({associatedProjectId: project.id}).success(function(data) {
+					AssociatedService.removeAssociatedStatus({associatedProjectId: project.id}).then(function(data) {
 						if (data.result === 'success') {
 							notySuccess(/*[[#{project.associated.removed}]]*/ "Associated project removed.");
 							titleElem.html(--titleVal);
@@ -298,7 +305,7 @@
 							notyError();
 							project.associated = false;
 						}
-					}).error(function() {
+					}).catch(function() {
 						notyError();
 					});
 				}
