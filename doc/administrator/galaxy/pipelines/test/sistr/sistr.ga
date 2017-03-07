@@ -1,0 +1,628 @@
+{
+    "a_galaxy_workflow": "true", 
+    "annotation": "", 
+    "format-version": "0.1", 
+    "name": "SISTR Analyze Reads", 
+    "steps": {
+        "0": {
+            "annotation": "", 
+            "content_id": null, 
+            "id": 0, 
+            "input_connections": {}, 
+            "inputs": [
+                {
+                    "description": "", 
+                    "name": "sequence_reads_paired"
+                }
+            ], 
+            "label": null, 
+            "name": "Input dataset collection", 
+            "outputs": [], 
+            "position": {
+                "left": 200, 
+                "top": 200
+            }, 
+            "tool_errors": null, 
+            "tool_id": null, 
+            "tool_state": "{\"collection_type\": \"list:paired\", \"name\": \"sequence_reads_paired\"}", 
+            "tool_version": null, 
+            "type": "data_collection_input", 
+            "uuid": "f39af4f6-29a6-4358-84b4-3319899cbb12", 
+            "workflow_outputs": [
+                {
+                    "label": null, 
+                    "output_name": "output", 
+                    "uuid": "41ac8846-6f36-468d-9b73-9e858d7529be"
+                }
+            ]
+        }, 
+        "1": {
+            "annotation": "", 
+            "content_id": "irida.corefacility.ca/galaxy-shed/repos/irida/flash/FLASH/1.3.0", 
+            "id": 1, 
+            "input_connections": {
+                "input_type|fastq_collection": {
+                    "id": 0, 
+                    "output_name": "output"
+                }
+            }, 
+            "inputs": [
+                {
+                    "description": "runtime parameter for tool FLASH", 
+                    "name": "input_type"
+                }
+            ], 
+            "label": null, 
+            "name": "FLASH", 
+            "outputs": [
+                {
+                    "name": "extendedFrags", 
+                    "type": "fastqsanger"
+                }, 
+                {
+                    "name": "notCombined1", 
+                    "type": "fastqsanger"
+                }, 
+                {
+                    "name": "notCombined2", 
+                    "type": "fastqsanger"
+                }, 
+                {
+                    "name": "interNotCombined", 
+                    "type": "fastqsanger"
+                }, 
+                {
+                    "name": "readsAndPairs", 
+                    "type": "tabular"
+                }, 
+                {
+                    "name": "log_file", 
+                    "type": "txt"
+                }
+            ], 
+            "position": {
+                "left": 464, 
+                "top": 200
+            }, 
+            "post_job_actions": {
+                "HideDatasetActionextendedFrags": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "extendedFrags"
+                }, 
+                "HideDatasetActioninterNotCombined": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "interNotCombined"
+                }, 
+                "HideDatasetActionlog_file": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "log_file"
+                }, 
+                "HideDatasetActionnotCombined1": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "notCombined1"
+                }, 
+                "HideDatasetActionnotCombined2": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "notCombined2"
+                }, 
+                "HideDatasetActionreadsAndPairs": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "readsAndPairs"
+                }, 
+                "RenameDatasetActionlog_file": {
+                    "action_arguments": {
+                        "newname": "flash.log"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "log_file"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/flash/FLASH/1.3.0", 
+            "tool_shed_repository": {
+                "changeset_revision": "4287dd541327", 
+                "name": "flash", 
+                "owner": "irida", 
+                "tool_shed": "irida.corefacility.ca/galaxy-shed"
+            }, 
+            "tool_state": "{\"__page__\": 0, \"min_overlap\": \"\\\"20\\\"\", \"input_type\": \"{\\\"fastq_collection\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"sPaired\\\": \\\"collections\\\", \\\"__current_case__\\\": 1}\", \"__rerun_remap_job_id__\": null, \"max_overlap\": \"\\\"300\\\"\", \"options\": \"{\\\"__current_case__\\\": 1, \\\"options_select\\\": \\\"basic\\\"}\", \"outputs\": \"{\\\"output_type\\\": \\\"Non-interleaved_fastq\\\", \\\"__current_case__\\\": 0}\"}", 
+            "tool_version": "1.3.0", 
+            "type": "tool", 
+            "uuid": "d1d70bc2-41f1-43d3-983d-c1d66f5b8470", 
+            "workflow_outputs": []
+        }, 
+        "2": {
+            "annotation": "", 
+            "content_id": "toolshed.g2.bx.psu.edu/repos/lionelguy/spades/spades/1.0", 
+            "id": 2, 
+            "input_connections": {
+                "libraries_0|files_0|file_type|fastq_collection": {
+                    "id": 0, 
+                    "output_name": "output"
+                }, 
+                "libraries_1|files_0|file_type|unpaired_reads": {
+                    "id": 1, 
+                    "output_name": "extendedFrags"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
+            "name": "spades", 
+            "outputs": [
+                {
+                    "name": "out_contigs", 
+                    "type": "fasta"
+                }, 
+                {
+                    "name": "out_contig_stats", 
+                    "type": "tabular"
+                }, 
+                {
+                    "name": "out_scaffolds", 
+                    "type": "fasta"
+                }, 
+                {
+                    "name": "out_scaffold_stats", 
+                    "type": "tabular"
+                }, 
+                {
+                    "name": "out_log", 
+                    "type": "txt"
+                }
+            ], 
+            "position": {
+                "left": 754, 
+                "top": 200
+            }, 
+            "post_job_actions": {
+                "HideDatasetActionout_contig_stats": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "out_contig_stats"
+                }, 
+                "HideDatasetActionout_contigs": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "out_contigs"
+                }, 
+                "HideDatasetActionout_log": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "out_log"
+                }, 
+                "HideDatasetActionout_scaffold_stats": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "out_scaffold_stats"
+                }, 
+                "HideDatasetActionout_scaffolds": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "out_scaffolds"
+                }, 
+                "RenameDatasetActionout_contigs": {
+                    "action_arguments": {
+                        "newname": "contigs-all.fasta"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "out_contigs"
+                }, 
+                "RenameDatasetActionout_log": {
+                    "action_arguments": {
+                        "newname": "spades.log"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "out_log"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/lionelguy/spades/spades/1.0", 
+            "tool_shed_repository": {
+                "changeset_revision": "21734680d921", 
+                "name": "spades", 
+                "owner": "lionelguy", 
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            }, 
+            "tool_state": "{\"__page__\": 0, \"iontorrent\": \"\\\"false\\\"\", \"kmers\": \"\\\"21,33,55,77,99,127\\\"\", \"cov\": \"{\\\"state\\\": \\\"off\\\", \\\"__current_case__\\\": 0}\", \"__rerun_remap_job_id__\": null, \"nanopore\": \"[]\", \"libraries\": \"[{\\\"lib_type\\\": \\\"paired_end\\\", \\\"__index__\\\": 0, \\\"orientation\\\": \\\"fr\\\", \\\"files\\\": [{\\\"file_type\\\": {\\\"fastq_collection\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"type\\\": \\\"paired-collection\\\", \\\"__current_case__\\\": 3}, \\\"__index__\\\": 0}]}, {\\\"lib_type\\\": \\\"paired_end\\\", \\\"__index__\\\": 1, \\\"orientation\\\": \\\"fr\\\", \\\"files\\\": [{\\\"file_type\\\": {\\\"type\\\": \\\"unpaired\\\", \\\"unpaired_reads\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"__current_case__\\\": 2}, \\\"__index__\\\": 0}]}]\", \"onlyassembler\": \"\\\"false\\\"\", \"trustedcontigs\": \"[]\", \"pacbio\": \"[]\", \"sc\": \"\\\"false\\\"\", \"untrustedcontigs\": \"[]\", \"sanger\": \"[]\", \"careful\": \"\\\"true\\\"\"}", 
+            "tool_version": "1.0", 
+            "type": "tool", 
+            "uuid": "6cedfafd-88e3-4ee5-a609-c6756809ca94", 
+            "workflow_outputs": []
+        }, 
+        "3": {
+            "annotation": "", 
+            "content_id": "toolshed.g2.bx.psu.edu/repos/jjohnson/regex_find_replace/regexColumn1/0.1.0", 
+            "id": 3, 
+            "input_connections": {
+                "input": {
+                    "id": 2, 
+                    "output_name": "out_contig_stats"
+                }
+            }, 
+            "inputs": [
+                {
+                    "description": "runtime parameter for tool Column Regex Find And Replace", 
+                    "name": "input"
+                }
+            ], 
+            "label": null, 
+            "name": "Column Regex Find And Replace", 
+            "outputs": [
+                {
+                    "name": "out_file1", 
+                    "type": "input"
+                }
+            ], 
+            "position": {
+                "left": 1082, 
+                "top": 200
+            }, 
+            "post_job_actions": {
+                "HideDatasetActionout_file1": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "out_file1"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/jjohnson/regex_find_replace/regexColumn1/0.1.0", 
+            "tool_shed_repository": {
+                "changeset_revision": "9ea374bb0350", 
+                "name": "regex_find_replace", 
+                "owner": "jjohnson", 
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            }, 
+            "tool_state": "{\"__page__\": 0, \"field\": \"\\\"3\\\"\", \"__rerun_remap_job_id__\": null, \"checks\": \"[{\\\"__index__\\\": 0, \\\"replacement\\\": \\\"0.000000000000000001\\\", \\\"pattern\\\": \\\"^0$\\\"}]\", \"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\"}", 
+            "tool_version": "0.1.0", 
+            "type": "tool", 
+            "uuid": "b25b6100-7467-47c3-a616-cd60938eb5e8", 
+            "workflow_outputs": []
+        }, 
+        "4": {
+            "annotation": "", 
+            "content_id": "irida.corefacility.ca/galaxy-shed/repos/irida/filter_spades_repeats/filter_spades_repeat/1.0.0", 
+            "id": 4, 
+            "input_connections": {
+                "fasta_input": {
+                    "id": 2, 
+                    "output_name": "out_contigs"
+                }, 
+                "tab_input": {
+                    "id": 3, 
+                    "output_name": "out_file1"
+                }
+            }, 
+            "inputs": [
+                {
+                    "description": "runtime parameter for tool Filter SPAdes repeats", 
+                    "name": "tab_input"
+                }, 
+                {
+                    "description": "runtime parameter for tool Filter SPAdes repeats", 
+                    "name": "fasta_input"
+                }
+            ], 
+            "label": null, 
+            "name": "Filter SPAdes repeats", 
+            "outputs": [
+                {
+                    "name": "output_with_repeats", 
+                    "type": "fasta"
+                }, 
+                {
+                    "name": "output_without_repeats", 
+                    "type": "fasta"
+                }, 
+                {
+                    "name": "repeat_sequences_only", 
+                    "type": "fasta"
+                }, 
+                {
+                    "name": "discarded_sequences", 
+                    "type": "fasta"
+                }, 
+                {
+                    "name": "summary", 
+                    "type": "txt"
+                }
+            ], 
+            "position": {
+                "left": 1404, 
+                "top": 200
+            }, 
+            "post_job_actions": {
+                "HideDatasetActiondiscarded_sequences": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "discarded_sequences"
+                }, 
+                "HideDatasetActionoutput_with_repeats": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "output_with_repeats"
+                }, 
+                "HideDatasetActionoutput_without_repeats": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "output_without_repeats"
+                }, 
+                "HideDatasetActionrepeat_sequences_only": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "repeat_sequences_only"
+                }, 
+                "HideDatasetActionsummary": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "summary"
+                }, 
+                "RenameDatasetActionoutput_with_repeats": {
+                    "action_arguments": {
+                        "newname": "contigs-with-repeats.fasta"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "output_with_repeats"
+                }, 
+                "RenameDatasetActionoutput_without_repeats": {
+                    "action_arguments": {
+                        "newname": "contigs-without-repeats.fasta"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "output_without_repeats"
+                }, 
+                "RenameDatasetActionsummary": {
+                    "action_arguments": {
+                        "newname": "filter-spades.txt"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "summary"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/filter_spades_repeats/filter_spades_repeat/1.0.0", 
+            "tool_shed_repository": {
+                "changeset_revision": "f9fc830fa47c", 
+                "name": "filter_spades_repeats", 
+                "owner": "irida", 
+                "tool_shed": "irida.corefacility.ca/galaxy-shed"
+            }, 
+            "tool_state": "{\"__page__\": 0, \"len_cutoff\": \"\\\"1000\\\"\", \"rep_cutoff\": \"\\\"1.75\\\"\", \"__rerun_remap_job_id__\": null, \"keep_leftover\": \"\\\"yes\\\"\", \"tab_input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"cov_len_cutoff\": \"\\\"5000\\\"\", \"print_summary\": \"\\\"yes\\\"\", \"cov_cutoff\": \"\\\"0.33\\\"\", \"fasta_input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\"}", 
+            "tool_version": "1.0.0", 
+            "type": "tool", 
+            "uuid": "61a9e304-bfac-4462-8332-fa2f346dabc2", 
+            "workflow_outputs": []
+        }, 
+        "5": {
+            "annotation": "", 
+            "content_id": "irida.corefacility.ca/galaxy-shed/repos/irida/assemblystats/assemblystats/1.0.2", 
+            "id": 5, 
+            "input_connections": {
+                "input": {
+                    "id": 4, 
+                    "output_name": "output_with_repeats"
+                }
+            }, 
+            "inputs": [
+                {
+                    "description": "runtime parameter for tool assemblystats", 
+                    "name": "input"
+                }
+            ], 
+            "label": null, 
+            "name": "assemblystats", 
+            "outputs": [
+                {
+                    "name": "stats", 
+                    "type": "tabular"
+                }, 
+                {
+                    "name": "sortedcontigs", 
+                    "type": "fasta"
+                }, 
+                {
+                    "name": "histogrampng", 
+                    "type": "png"
+                }, 
+                {
+                    "name": "summedcontigspng", 
+                    "type": "png"
+                }, 
+                {
+                    "name": "histogramdata", 
+                    "type": "tabular"
+                }, 
+                {
+                    "name": "summedcontigdata", 
+                    "type": "tabular"
+                }
+            ], 
+            "position": {
+                "left": 1688, 
+                "top": 200
+            }, 
+            "post_job_actions": {
+                "HideDatasetActionhistogramdata": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "histogramdata"
+                }, 
+                "HideDatasetActionhistogrampng": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "histogrampng"
+                }, 
+                "HideDatasetActionsortedcontigs": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "sortedcontigs"
+                }, 
+                "HideDatasetActionsummedcontigdata": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "summedcontigdata"
+                }, 
+                "HideDatasetActionsummedcontigspng": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "summedcontigspng"
+                }, 
+                "RenameDatasetActionstats": {
+                    "action_arguments": {
+                        "newname": "assembly-stats-with-repeats.txt"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "stats"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/assemblystats/assemblystats/1.0.2", 
+            "tool_shed_repository": {
+                "changeset_revision": "51b76a5d78a5", 
+                "name": "assemblystats", 
+                "owner": "irida", 
+                "tool_shed": "irida.corefacility.ca/galaxy-shed"
+            }, 
+            "tool_state": "{\"__page__\": 0, \"input_type\": \"\\\"contig\\\"\", \"__rerun_remap_job_id__\": null, \"bucket\": \"\\\"false\\\"\", \"all_outputs\": \"\\\"false\\\"\", \"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\"}", 
+            "tool_version": "1.0.2", 
+            "type": "tool", 
+            "uuid": "74cbd982-b7a6-4c72-aa10-28e7198dccef", 
+            "workflow_outputs": [
+                {
+                    "label": null, 
+                    "output_name": "stats", 
+                    "uuid": "3eefa59c-1c0f-417f-acd0-ae68576efc78"
+                }
+            ]
+        }, 
+        "6": {
+            "annotation": "", 
+            "content_id": "toolshed.g2.bx.psu.edu/repos/nml/sistr_cmd/sistr_cmd/0.3.4", 
+            "id": 6, 
+            "input_connections": {
+                "input_fastas": {
+                    "id": 4, 
+                    "output_name": "output_with_repeats"
+                }
+            }, 
+            "inputs": [
+                {
+                    "description": "runtime parameter for tool sistr_cmd", 
+                    "name": "input_fastas"
+                }
+            ], 
+            "label": null, 
+            "name": "sistr_cmd", 
+            "outputs": [
+                {
+                    "name": "output_prediction_csv", 
+                    "type": "csv"
+                }, 
+                {
+                    "name": "output_prediction_json", 
+                    "type": "json"
+                }, 
+                {
+                    "name": "output_prediction_tab", 
+                    "type": "tabular"
+                }, 
+                {
+                    "name": "cgmlst_profiles", 
+                    "type": "csv"
+                }, 
+                {
+                    "name": "novel_alleles", 
+                    "type": "fasta"
+                }, 
+                {
+                    "name": "alleles_output", 
+                    "type": "json"
+                }
+            ], 
+            "position": {
+                "left": 1688, 
+                "top": 483
+            }, 
+            "post_job_actions": {
+                "HideDatasetActionoutput_prediction_csv": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "output_prediction_csv"
+                }, 
+                "HideDatasetActionoutput_prediction_tab": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "output_prediction_tab"
+                }, 
+                "RenameDatasetActionalleles_output": {
+                    "action_arguments": {
+                        "newname": "sistr-alleles-out.json"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "alleles_output"
+                }, 
+                "RenameDatasetActioncgmlst_profiles": {
+                    "action_arguments": {
+                        "newname": "sistr-cgmlst-profiles.csv"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "cgmlst_profiles"
+                }, 
+                "RenameDatasetActionnovel_alleles": {
+                    "action_arguments": {
+                        "newname": "sistr-novel-alleles.fasta"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "novel_alleles"
+                }, 
+                "RenameDatasetActionoutput_prediction_json": {
+                    "action_arguments": {
+                        "newname": "sistr-predictions.json"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "output_prediction_json"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/sistr_cmd/sistr_cmd/0.3.4", 
+            "tool_shed_repository": {
+                "changeset_revision": "9d7e381dfa5a", 
+                "name": "sistr_cmd", 
+                "owner": "nml", 
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            }, 
+            "tool_state": "{\"input_fastas\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"no_cgmlst\": \"\\\"false\\\"\", \"use_full_cgmlst_db\": \"\\\"false\\\"\", \"__page__\": 0, \"output_format\": \"\\\"json\\\"\", \"keep_tmp\": \"\\\"false\\\"\", \"run_mash\": \"\\\"true\\\"\", \"qc\": \"\\\"true\\\"\", \"__rerun_remap_job_id__\": null, \"verbosity\": \"\\\"-vv\\\"\"}", 
+            "tool_version": "0.3.4", 
+            "type": "tool", 
+            "uuid": "61b3467c-80d5-48dc-978c-72949e6ab7d7", 
+            "workflow_outputs": [
+                {
+                    "label": null, 
+                    "output_name": "alleles_output", 
+                    "uuid": "2b7a30ce-4d68-4f83-bf6b-dd8abf6f7dfe"
+                }, 
+                {
+                    "label": null, 
+                    "output_name": "output_prediction_json", 
+                    "uuid": "499f32f7-e38e-4d67-9240-a0e0e9f178c2"
+                }, 
+                {
+                    "label": null, 
+                    "output_name": "novel_alleles", 
+                    "uuid": "a688e3dc-a16d-4daf-834b-12fc0dc7b984"
+                }, 
+                {
+                    "label": null, 
+                    "output_name": "cgmlst_profiles", 
+                    "uuid": "7f111100-4cc7-458b-bff7-da82b0c7682c"
+                }
+            ]
+        }
+    }, 
+    "uuid": "75b938d5-49f5-4dc9-91cc-5ea1d5f75be1"
+}
