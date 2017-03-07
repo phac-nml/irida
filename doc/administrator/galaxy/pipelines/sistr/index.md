@@ -7,7 +7,7 @@ description: "Install guide for the SISTR pipeline."
 SISTR Typing
 ============
 
-This workflow uses the software [SPAdes][] and [Prokka][] for assembly and annotation of genomes as well as a few tools for filtering of data and generating assembly statistics.  The specific Galaxy tools are listed in the table below.
+This workflow uses the software [sistr_cmd][] for typing of Salmonella genomes which are first assembled using [SPAdes][].  The specific Galaxy tools are listed in the table below.
 
 | Tool Name                 | Tool Revision | Toolshed Installable Revision | Toolshed             |
 |:-------------------------:|:-------------:|:-----------------------------:|:--------------------:|
@@ -96,7 +96,7 @@ A Galaxy workflow and some test data has been included with this documentation t
     ![dataset-pair-screen][]
 
 4. This should have properly paired your data and named the sample **AE014613-699860**.  Enter the name of this paired dataset collection at the bottom and click **Create list**.
-5. Run the uploaded workflow by clicking on **Workflow**, clicking on the name of the workflow **SISTR Analyze Reads (imported from uploaded file)** and clicking **Run**.  This should auto fill in the dataset collection.  At the very bottom of the screen click **Run workflow**.
+5. Run the uploaded workflow by clicking on **Workflow**, clicking on the name of the workflow **SISTR Analyze Reads v0.1 (imported from uploaded file)** and clicking **Run**.  This should auto fill in the dataset collection.  At the very bottom of the screen click **Run workflow**.
 6. If everything was installed correctly, you should see each of the tools run successfully (turn green).  On completion this should look like.
 
     ![workflow-success][]
