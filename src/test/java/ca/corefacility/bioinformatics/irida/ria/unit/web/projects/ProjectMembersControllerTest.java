@@ -1,12 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.projects;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.security.Principal;
 import java.util.Collection;
@@ -19,8 +15,6 @@ import org.junit.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.ui.ExtendedModelMap;
 
-import com.google.common.collect.Lists;
-
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -30,6 +24,8 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectMembersContr
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
+import com.google.common.collect.Lists;
 
 public class ProjectMembersControllerTest {
 	// Services
@@ -61,7 +57,7 @@ public class ProjectMembersControllerTest {
 		ExtendedModelMap model = new ExtendedModelMap();
 		Long projectId = 1L;
 		Principal principal = () -> USER_NAME;
-		assertEquals("Gets the correct project members page", "projects/project_settings",
+		assertEquals("Gets the correct project members page", "projects/settings/pages/members",
 				controller.getProjectUsersPage(model, principal, projectId));
 		
 		assertEquals("Should be the memebers subpage", model.get("page"), "members");
