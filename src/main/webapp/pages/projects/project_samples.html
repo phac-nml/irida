@@ -286,59 +286,6 @@
         <div th:replace="projects/partials/samples.tmpl :: filterButtons"></div>
     </script>
 
-    <script id="associated-projects.modal.html" type="text/ng-template" th:inline="javascript">
-        <div class="modal-header">
-            <h3 class="modal-title" th:text="#{project.samples.associated.modal.title}">Projects to include in
-                table</h3>
-        </div>
-        <div class="modal-body">
-            <h4 th:text="#{project.samples.associated.modal.local}">Local Associated Projects</h4>
-            <table class="associated-projects-table" width="100%">
-                <tr ng-class="associatedProjectsCtrl.display.project ? 'selected' : ''"
-                    ng-click="associatedProjectsCtrl.display.project = !associatedProjectsCtrl.display.project">
-                    <td width="300px">
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" ng-model="associatedProjectsCtrl.display.project"/>&nbsp;
-                                <th:block th:text="${project.label}"></th:block>
-                            </label>
-                        </div>
-                    </td>
-                    <td th:text="${project.organism}"></td>
-                    <td><span class="label label-info" th:text="#{project.samples.associated.modal.current-project}">Current Project</span>
-                    </td>
-                </tr>
-                <tr ng-class="project.selected ? 'selected' : ''"
-                    ng-repeat="project in associatedProjectsCtrl.projects.local"
-                    ng-click="project.selected = !project.selected; associatedProjectsCtrl.rowClick($event)">
-                    <td>
-                        <div class="checkbox"><label>
-                            <input type="checkbox" ng-model="project.selected"/>&nbsp;{{project.getName()}}
-                        </label></div>
-                    </td>
-                    <td ng-bind="project.getOrganism()"></td>
-                    <td></td>
-                </tr>
-            </table>
-            <strong ng-hide="associatedProjectsCtrl.projects.local">
-                <fa:icon type="loading" fixed="true"/>
-                &nbsp;
-                <th:block th:text="#{project.samples.associated.modal.fetching-local}"></th:block>
-            </strong>
-            <div class="alert alert-info" ng-show="associatedProjectsCtrl.projects.local.length === 0">
-                <strong th:text="#{project.samples.associated.modal.no-local}">No Locally Associated Projects</strong>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-default" ng-click="associatedProjectsCtrl.close()" th:text="#{form.btn.cancel}">
-                [Cancel]
-            </button>
-            <button class="btn btn-primary" ng-click="associatedProjectsCtrl.showProjects()"
-                    th:text="#{project.samples.associated.modal.selectBtn}">[Show Selected Projects]
-            </button>
-        </div>
-    </script>
-
     <script type="text/ng-template" id="samplesUpdate.html" th:inline="javascript">
         <div>
             <strong th:text="#{project.samples.display.notification.title}">Displaying:</strong><br/>
