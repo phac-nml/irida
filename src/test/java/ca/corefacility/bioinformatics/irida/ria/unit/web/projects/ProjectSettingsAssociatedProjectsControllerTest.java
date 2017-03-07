@@ -246,7 +246,7 @@ public class ProjectSettingsAssociatedProjectsControllerTest {
 
 		verify(apiService).findAll();
 
-		assertEquals("projects/project_settings", editAssociatedProjectsForProject);
+		assertEquals("projects/settings/pages/associated_edit", editAssociatedProjectsForProject);
 	}
 
 	@Test
