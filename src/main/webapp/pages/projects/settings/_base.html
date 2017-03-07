@@ -44,32 +44,11 @@
             </div>
         </div>
         <div class="col-md-10">
-            <th:block layout:fragment="settings-content"></th:block>
+            <div class="alert alert-error" layout:fragment="settings-content">
+                <strong>This should not be displayed.  It should be overwritten by the specific page.</strong>
+            </div>
         </div>
     </div>
 </main>
-
-<!--<th:block layout:fragment="scripts" th:inline="javascript">-->
-    <!--<th:block th:switch="${page}">-->
-        <!--<script th:case="'basic'">-->
-          <!--var PAGE = {-->
-            <!--i18n: {-->
-              <!--'error': /*[[#{project.settings.notifications.error}]]*/ '_Error updating project_'-->
-            <!--},-->
-            <!--urls: {-->
-              <!--'assemble': /*[[@{/projects/{id}/settings/assemble(id=${project.getId()})}]]*/ '/projects/1/settings/assemble',-->
-              <!--'sync': /*[[@{/projects/{id}/settings/sync(id=${project.getId()})}]]*/ '/projects/1/settings/sync',-->
-              <!--'coverage': /*[[@{/projects/{id}/settings/coverage(id=${project.getId()})}]]*/ '/projects/1/settings/coverage'-->
-            <!--}-->
-          <!--};-->
-        <!--</script>-->
-        <!--<th:block th:case="'remote'">-->
-            <!--<th:block th:replace="remote_apis/remote_api_connect"/>-->
-        <!--</th:block>-->
-        <!--<th:block th:case="'associated-edit'">-->
-
-        <!--</th:block>-->
-    <!--</th:block>-->
-<!--</th:block>-->
 </body>
 </html>
