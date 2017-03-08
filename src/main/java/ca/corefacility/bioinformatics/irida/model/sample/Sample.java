@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.model.sample;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
@@ -33,6 +34,7 @@ import ca.corefacility.bioinformatics.irida.model.irida.IridaSample;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 
 /**
  * A biological sample. Each sample may correspond to many files.
@@ -131,6 +133,9 @@ public class Sample extends IridaResourceSupport
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "remote_status")
 	private RemoteStatus remoteStatus;
+
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private Map<String, MetadataEntry> metadata;
 
 	public Sample() {
 		createdDate = new Date();
