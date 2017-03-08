@@ -5,6 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 
@@ -16,7 +17,11 @@ public class MetadataEntry {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
+
+	@NotNull
 	private String value;
+
+	@NotNull
 	private String type;
 
 	public MetadataEntry(String value, String type) {
