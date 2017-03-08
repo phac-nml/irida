@@ -16,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
  * the creation date and {@link User} that created the object.
  */
 @Document
+@Deprecated
 public class MetadataAudit {
 
 	@Id
