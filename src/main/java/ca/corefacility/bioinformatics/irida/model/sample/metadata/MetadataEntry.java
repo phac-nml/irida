@@ -31,6 +31,9 @@ public class MetadataEntry {
 	@NotNull
 	private String type;
 
+	public MetadataEntry() {
+	}
+
 	public MetadataEntry(String value, String type) {
 		this.value = value;
 		this.type = type;
