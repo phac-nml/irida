@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.sample;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -139,6 +140,7 @@ public class Sample extends IridaResourceSupport
 
 	public Sample() {
 		createdDate = new Date();
+		metadata = new HashMap<>();
 	}
 
 	/**
@@ -305,5 +307,17 @@ public class Sample extends IridaResourceSupport
 	@Override
 	public void setRemoteStatus(RemoteStatus status) {
 		this.remoteStatus = status;
+	}
+
+	public Map<String, MetadataEntry> getMetadata() {
+		return metadata;
+	}
+
+	public void setMetadata(Map<String, MetadataEntry> metadata) {
+		this.metadata = metadata;
+	}
+
+	public void addMetadata(String key, MetadataEntry entry) {
+		metadata.put(key, entry);
 	}
 }
