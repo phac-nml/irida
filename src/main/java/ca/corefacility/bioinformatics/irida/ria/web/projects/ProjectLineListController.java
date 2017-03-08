@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,18 +20,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.common.collect.ImmutableMap;
+
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataField;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-
-import com.google.common.collect.ImmutableMap;
 
 @Controller
 @RequestMapping("/projects/{projectId}/linelist")
@@ -41,16 +40,13 @@ public class ProjectLineListController {
 	private final SampleService sampleService;
 	private final MetadataTemplateService metadataTemplateService;
 	private final ProjectControllerUtils projectControllerUtils;
-	private final MessageSource messageSource;
 
 	@Autowired
 	public ProjectLineListController(ProjectService projectService, SampleService sampleService,
-			MetadataTemplateService metadataTemplateService, MessageSource messageSource,
-			ProjectControllerUtils utils) {
+			MetadataTemplateService metadataTemplateService, ProjectControllerUtils utils) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.metadataTemplateService = metadataTemplateService;
-		this.messageSource = messageSource;
 		this.projectControllerUtils = utils;
 	}
 
@@ -97,9 +93,8 @@ public class ProjectLineListController {
 		for (Join<Project, Sample> join : samplesForProject) {
 			Sample sample = join.getObject();
 			Map<String, Object> fullMetadata = new HashMap<>();
-			SampleMetadata sampleMetadata = sampleService.getMetadataForSample(sample);
-			if (sampleMetadata != null) {
-				Map<String, Object> metadata = sampleMetadata.getMetadata();
+			if (!sample.getMetadata().isEmpty()) {
+				Map<String, MetadataEntry> metadata = sample.getMetadata();
 				for (String header : headers) {
 					/*
 					Since the id and the label are kept on the Sample not in the JSON,
@@ -110,7 +105,7 @@ public class ProjectLineListController {
 					} else if (header.equalsIgnoreCase("label")) {
 						fullMetadata.put("label", ImmutableMap.of("value", sample.getSampleName()));
 					} else {
-						fullMetadata.put(header, metadata.getOrDefault(header, ImmutableMap.of("value", "")));
+						fullMetadata.put(header, metadata.getOrDefault(header, new MetadataEntry("", "")));
 					}
 				}
 
@@ -216,9 +211,8 @@ public class ProjectLineListController {
 		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(project);
 		for (Join<Project, Sample> join : samplesForProject) {
 			Sample sample = join.getObject();
-			SampleMetadata sampleMetadata = sampleService.getMetadataForSample(sample);
-			if (sampleMetadata != null) {
-				Map<String, Object> metadataFields = sampleMetadata.getMetadata();
+			if (! sample.getMetadata().isEmpty()) {
+				Map<String, MetadataEntry> metadataFields = sample.getMetadata();
 				fields.addAll(metadataFields.keySet());
 			}
 		}
