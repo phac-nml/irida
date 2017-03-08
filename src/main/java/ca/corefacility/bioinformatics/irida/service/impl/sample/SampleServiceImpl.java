@@ -38,7 +38,6 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
@@ -433,22 +432,4 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 		return sortProperties;
 	}
-
-	@Override
-	public SampleMetadata getMetadataForSample(Sample s) {
-		return null;
-	}
-
-	@Override
-	public SampleMetadata saveSampleMetadaForSample(Sample sample, SampleMetadata metadata) {
-		return null;
-	}
-
-	@Override
-	public void deleteSampleMetadaForSample(Sample sample) {
-		
-	}
-	
-	
-
 }
