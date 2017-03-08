@@ -165,16 +165,14 @@
       cgMLST_predictions['cgmlst_ST'] = preds['cgmlst_ST'];
 
       var qc = {};
-      var qc_order = ['Status', 'Messages'];
-      qc['Messages'] = preds['qc_messages'];
-      qc['Status'] = preds['qc_status'];
+      qc['messages'] = preds['qc_messages'].split("|");
+      qc['status'] = preds['qc_status'];
 
       vm.serotype_predictions = serotype_predictions;
       vm.serotype_predictions_order = serotype_predictions_order;
       vm.cgMLST_predictions_order = cgMLST_predictions_order;
       vm.cgMLST_predictions = cgMLST_predictions;
       vm.qc = qc;
-      vm.qc_order = qc_order;
     });
   }
 
