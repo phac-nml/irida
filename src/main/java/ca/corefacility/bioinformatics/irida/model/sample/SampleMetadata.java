@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
  * Stores unstructured metadata for a given {@link Sample}.
  */
 @Document
+@Deprecated
 public class SampleMetadata {
 
 	@Field(value = "metadata")

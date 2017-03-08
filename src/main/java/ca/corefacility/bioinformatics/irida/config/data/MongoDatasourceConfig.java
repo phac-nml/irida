@@ -18,6 +18,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
 import com.mongodb.MongoClient;
 
 @Configuration
+@Deprecated
 public class MongoDatasourceConfig {
 
 	private String mongoHost = "localhost";

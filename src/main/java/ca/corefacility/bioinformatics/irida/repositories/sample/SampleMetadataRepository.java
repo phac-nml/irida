@@ -8,6 +8,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
 /**
  * Repository for storing and retrieving {@link SampleMetadata}
  */
+@Deprecated
 public interface SampleMetadataRepository
 		extends MongoRepository<SampleMetadata, String>, SampleMetadataRepositoryCustom {
 

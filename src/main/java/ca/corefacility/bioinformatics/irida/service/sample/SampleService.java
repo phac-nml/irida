@@ -235,6 +235,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *            {@link Sample} to read metadata for
 	 * @return a {@link SampleMetadata} object
 	 */
+	@Deprecated
 	public SampleMetadata getMetadataForSample(Sample s);
 
 	/**
@@ -247,6 +248,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *            {@link SampleMetadata} object to save.
 	 * @return The newly saved {@link SampleMetadata}
 	 */
+	@Deprecated
 	public SampleMetadata saveSampleMetadaForSample(Sample sample, SampleMetadata metadata);
 
 	/**
@@ -255,6 +257,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @param sample
 	 *            The {@link Sample} to delete metadata for
 	 */
+	@Deprecated
 	public void deleteSampleMetadaForSample(Sample sample);
 
 	/**
