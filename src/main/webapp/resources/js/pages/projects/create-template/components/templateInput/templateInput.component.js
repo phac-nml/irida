@@ -10,6 +10,7 @@ export const TemplateInputComponent = {
   templateUrl: `templateInput.tmpl.html`,
   controller(TemplateInputService) {
     this.templates = window.PAGE.templates;
+    this.templateMap = {};
     this.$onInit = () => {
       this.template = {
         list,    // List of fields in the new template
@@ -28,18 +29,26 @@ export const TemplateInputComponent = {
     };
 
     const getSetOfExistingTemplateFields = () => {
+      // Reset the map of field in template;
+      this.templateMap = {};
       let allFields = new Set();
       for (let template of this.existing) {
         // Make a copy of the fields on this template
         const fields = Array.from(template.fields);
-        // Add teh fields to the set.
-        allFields.add(...fields);
+        for (let field of fields) {
+          if (!this.templateMap[field.id]) {
+            this.templateMap[field.id] = [];
+          }
+          this.templateMap[field.id].push(template.label);
+          allFields.add(field);
+        }
       }
       return allFields;
     };
 
     const updateTemplateFields = () => {
       const templateFieldSet = getSetOfExistingTemplateFields();
+      console.log(templateFieldSet);
       const fields = Array.from(this.template.list);
       const updatedFields = [];
       for (let field of fields) {

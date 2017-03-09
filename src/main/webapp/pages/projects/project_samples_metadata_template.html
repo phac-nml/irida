@@ -53,28 +53,18 @@
                 <div class="form-group col-md-8">
                     <label for="existing-templates" th:text="#{linelist.create-template.add-existing}">Add Existing
                         Template</label>
-                    <!--<select id="existing-templates"-->
-                            <!--class="form-control spaced-bottom"-->
-                            <!--multiple="multiple"-->
-                            <!--select2-basic=""-->
-                            <!--ng-change="$ctrl.getUpdatedTemplates()"-->
-                            <!--ng-model="$ctrl.existing">-->
-                        <!--<option th:each="template : ${templates}" th:value="${template.id}"-->
-                                <!--th:text="${template.label}"></option>-->
-                    <!--</select>-->
                     <ui-select multiple=""
                                ng-model="$ctrl.existing"
                                on-select="$ctrl.onSelectTemplate($item, $model)"
                                on-remove="$ctrl.onRemoveTemplate($item, $model)"
                                theme="bootstrap">
-                        <ui-select-match placeholder="Something">{{$item.label}}</ui-select-match>
+                        <ui-select-match>{{$item.label}}</ui-select-match>
                         <ui-select-choices repeat="template in $ctrl.templates">
                             <div ng-bind="template.label"></div>
                         </ui-select-choices>
                     </ui-select>
                 </div>
             </div>
-            <pre>{{$ctrl.template.list}}</pre>
             <label th:text="#{linelist.create-template.template-fields}">Template Fields</label>
             <div class="row">
                 <div class="col-md-8">
@@ -90,8 +80,8 @@
                                 <div class="col-md-12">
                                 <span class="label label-primary"
                                       style="margin-right: .5em;"
-                                      ng-repeat="(template, value) in item.templates">
-                                      {{ $ctrl.nameMap.get(template) }}
+                                      ng-repeat="template in $ctrl.templateMap[item.id]">
+                                      {{ template }}
                                 </span>
                                 </div>
                             </div>
