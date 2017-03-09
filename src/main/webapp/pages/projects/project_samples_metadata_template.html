@@ -6,10 +6,10 @@
     <title th:text="#{linelist.create-template.title}">Title</title>
 </head>
 <body>
-<main layout:fragment="main" ddl:bundle-includes="project-linelist-template">
+<main layout:fragment="main">
     <h2 th:text="#{linelist.create-template.title}">Create a New Line List Template</h2>
     <template-input-component
-            data:templateurl="@{/projects/{id}/linelist/metadatafields(id=${project.getId()})}"
+            data:templateurl="@{/projects/{id}/linelist/upload/metadatafields(id=${project.getId()})}"
             data:saveurl="@{/projects/{id}/linelist/linelist-templates/save-template(id=${project.getId()})}"
             data:redirecturl="@{/projects/{id}/linelist(id=${project.getId()})}"/>
     <script type="text/ng-template" id="templateInput.tmpl.html">
@@ -49,21 +49,32 @@
                     </button>
                 </div>
             </div>
-            <div class="row spaced-bottom">
+            <div class="row spaced-bottom" th:if="${!#lists.isEmpty(templates)}">
                 <div class="form-group col-md-8">
                     <label for="existing-templates" th:text="#{linelist.create-template.add-existing}">Add Existing
                         Template</label>
-                    <select id="existing-templates"
-                            class="form-control spaced-bottom"
-                            multiple="multiple"
-                            select2-basic=""
-                            ng-change="$ctrl.getUpdatedTemplates()"
-                            ng-model="$ctrl.existing">
-                        <option th:each="template : ${templates}" th:value="${template.id}"
-                                th:text="${template.label}"></option>
-                    </select>
+                    <!--<select id="existing-templates"-->
+                            <!--class="form-control spaced-bottom"-->
+                            <!--multiple="multiple"-->
+                            <!--select2-basic=""-->
+                            <!--ng-change="$ctrl.getUpdatedTemplates()"-->
+                            <!--ng-model="$ctrl.existing">-->
+                        <!--<option th:each="template : ${templates}" th:value="${template.id}"-->
+                                <!--th:text="${template.label}"></option>-->
+                    <!--</select>-->
+                    <ui-select multiple=""
+                               ng-model="$ctrl.existing"
+                               on-select="$ctrl.onSelectTemplate($item, $model)"
+                               on-remove="$ctrl.onRemoveTemplate($item, $model)"
+                               theme="bootstrap">
+                        <ui-select-match placeholder="Something">{{$item.label}}</ui-select-match>
+                        <ui-select-choices repeat="template in $ctrl.templates">
+                            <div ng-bind="template.label"></div>
+                        </ui-select-choices>
+                    </ui-select>
                 </div>
             </div>
+            <pre>{{$ctrl.template.list}}</pre>
             <label th:text="#{linelist.create-template.template-fields}">Template Fields</label>
             <div class="row">
                 <div class="col-md-8">
@@ -132,6 +143,16 @@
             </div>
         </form>
     </script>
+
+
 </main>
+<th:block layout:fragment="scripts">
+    <script th:inline="javascript">
+      var PAGE = {
+        templates: /*[[${templates}]]*/ []
+      };
+    </script>
+    <script src="/resources/js/build/project-linelist-template.bundle.js"></script>
+</th:block>
 </body>
 </html>

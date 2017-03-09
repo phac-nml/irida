@@ -7,7 +7,7 @@ export class TemplateInputService {
     this.$window = $window;
   }
 
-  getFieldsForTemplates(url, template) {
+  getFieldsForTemplate(url, template) {
     if (template) {
       url = `${url}?templateId=${template}`;
     }

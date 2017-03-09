@@ -124,30 +124,6 @@ public class ProjectLineListController {
 	}
 
 	/**
-	 * Get the page to create new linelist templates
-	 *
-	 * @param projectId
-	 * 		{@link Long} identifier for the current {@link Project}
-	 * @param model
-	 * 		{@link Model}
-	 * @param locale
-	 *   	{@link Locale}
-	 * @param principal
-	 * 		{@link Principal}
-	 *
-	 * @return {@link String} path to the page.
-	 */
-	@RequestMapping("/linelist-templates")
-	public String getLinelistTemplatePage(@PathVariable Long projectId, Model model, Locale locale,
-			Principal principal) {
-		// Set up the template information
-		Project project = projectService.read(projectId);
-		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute("templates", projectControllerUtils.getTemplateNames(locale, project));
-		return "projects/project_linelist_template";
-	}
-
-	/**
 	 * Get the metadata fields for a specific template
 	 *
 	 * @param templateId
@@ -189,8 +165,12 @@ public class ProjectLineListController {
 				// instead of creating a new one.
 				metadataField = metadataTemplateService.readMetadataField(Long.parseLong(field.get("identifier")));
 			} else {
-				metadataField = new MetadataField(label, field.get("type"));
-				metadataTemplateService.saveMetadataField(metadataField);
+				// Check to see if the field already exists
+				metadataField = metadataTemplateService.readMetadataFieldByLabel(label);
+				if (metadataField == null) {
+					metadataField = new MetadataField(label, field.get("type"));
+					metadataTemplateService.saveMetadataField(metadataField);
+				}
 			}
 			metadataFields.add(metadataField);
 		}
