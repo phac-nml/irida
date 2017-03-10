@@ -8,8 +8,10 @@ const resultsComponent = {
     data: '='
   },
   controller() {
-    this.found = this.data.found.length;
-    this.missing = this.data.missing.length;
+    this.$inInit = () => {
+      this.found = this.data.found.length;
+      this.missing = this.data.missing.length;
+    };
   }
 };
 
