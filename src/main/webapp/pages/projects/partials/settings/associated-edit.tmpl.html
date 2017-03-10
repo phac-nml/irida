@@ -1,3 +1,6 @@
+<script>
+	window.dependencies = ['associated.edit'];
+</script>
 <link rel="stylesheet"
 		th:href="@{/resources/bower_components/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.css}"
 		href="/resources/bower_components/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.css"/>
@@ -5,24 +8,24 @@
 <div th:object="${project}">
 	<div class="row">
 		<div class="col-md-10">
-			<h2 class="h2-muted" th:text="#{project.associated.title}"></h2>
+			<h2 style="margin-top: 0;" th:text="#{project.associated.title}"></h2>
 		</div>
 		<a class="btn btn-sm btn-default pull-right" href="/projects/1/associated"
 		   th:href="@{/projects/{pid}/settings/associated(pid=${project.getId()})}" th:text="#{form.btn.done}">_Done_
 		</a>
 	</div>
 
-	<div ng-controller="AssociatedTableCtrl as $ctrl">
+	<div ng-controller="AssociatedTableCtrl">
 		<div class="form-inline">
 			<button id="filterBtn" class="btn btn-info"
-			        ng-click="$ctrl.filter.isCollapsed = !$ctrl.filter.isCollapsed"
+			        ng-click="filter.isCollapsed = !filter.isCollapsed"
 			        th:inline="text">
 				<span class="fa fa-filter fa-fw"></span>
 				[[#{project.associated.filter}]]
 			</button>
 			<div class="form-group">
-				<select class="form-control" name="count" id="count" ng-model="$ctrl.filterCriteria.count"
-				        ng-change="$ctrl.filterResult()">
+				<select class="form-control" name="count" id="count" ng-model="filterCriteria.count"
+				        ng-change="filterResult()">
 					<option value="10">10</option>
 					<option value="25">25</option>
 					<option value="50">50</option>
@@ -35,19 +38,19 @@
 		<table class="table table-striped">
 			<thead>
 			<tr>
-				<th sort-by="" onsort="$ctrl.onSort" sortdir="$ctrl.filterCriteria.sortDir"
-				    sortedby="$ctrl.filterCriteria.sortedBy"
+				<th sort-by="" onsort="onSort" sortdir="filterCriteria.sortDir"
+				    sortedby="filterCriteria.sortedBy"
 				    sortValue="id" th:text="#{iridaThing.id}">_ID_
 				</th>
-				<th sort-by="" onsort="$ctrl.onSort" sortdir="filterCriteria.sortDir"
+				<th sort-by="" onsort="onSort" sortdir="filterCriteria.sortDir"
 				    sortedby="filterCriteria.sortedBy"
 				    sortValue="name" th:text="#{projects.table.name}">_Name_
 				</th>
-				<th sort-by="" onsort="$ctrl.onSort" sortdir="filterCriteria.sortDir"
+				<th sort-by="" onsort="onSort" sortdir="filterCriteria.sortDir"
 				    sortedby="filterCriteria.sortedBy"
 				    sortValue="organism" th:text="#{projects.table.organism}">_State_
 				</th>
-				<th sort-by="" onsort="$ctrl.onSort" sortdir="filterCriteria.sortDir"
+				<th sort-by="" onsort="onSort" sortdir="filterCriteria.sortDir"
 				    sortedby="filterCriteria.sortedBy"
 				    sortValue="createdDate" th:text="#{project.created}">_Created_
 				</th>
@@ -55,19 +58,19 @@
 			</tr>
 			<tr>
 				<td id="table-filter" colspan="5">
-					<div class="row ng-cloak" uib-collapse="$ctrl.filter.isCollapsed">
+					<div class="row ng-cloak" collapse="filter.isCollapsed">
 						<div class="form-group col-md-3">
 							<label for="name-filter" th:text="#{table.filter.name}">_Filter by Name_</label> <input
 							id="name-filter" name="name-filter" type="text"
 							class="form-control input-full"
-							ng-model="$ctrl.filterCriteria.name"/>
+							ng-model="filterCriteria.name"/>
 						</div>
 					</div>
 				</td>
 			</tr>
 			</thead>
 			<tbody>
-			<tr class="associated-project-row" ng-repeat="project in $ctrl.associated">
+			<tr class="associated-project-row" ng-repeat="project in associated">
 				<td class="project-id" ng-bind="project.id"></td>
 				<td class="project-name" ng-bind="project.name"></td>
 				<td ng-bind="project.organism"></td>
@@ -76,24 +79,247 @@
 					<input
 						bs-switch="bs-switch"
 						class="associated-switch"
-						ng-init="project.associated = !!project.associated"
 						ng-model="project.associated"
-						ng-change="$ctrl.updateAssociated(project)"
+						ng-change="updateAssociated(project)"
 						switch-size="mini"
-						type="checkbox"/>
+						type="checkbox"
+						ng-true-value="'associated'"
+						ng-false-value="false"/>
 				</td>
 			</tr>
 			</tbody>
 
 		</table>
-		<div class="text-center" ng-hide="$ctrl.paging.totalPages &lt; 2">
-			<ul uib-pagination=""
-				boundary-links="true"
-				total-items="$ctrl.paging.totalAssociated"
-				max-size="8"
-				ng-model="$ctrl.paging.page">
-			</ul>
+		<div class="text-center">
+			<pagination ng-hide="paging.totalPages &lt; 2"
+			            items-per-page="filterCriteria.count"
+			            total-items="paging.totalAssociated"
+			            ng-model="paging.page" first-text="&laquo;"
+			            last-text="&raquo;"
+			            next-text="&rsaquo;" previous-text="&lsaquo;"
+			            boundary-links="true"></pagination>
 		</div>
 	</div>
 </div>
 
+<th:block>
+	<script th:src="@{/resources/js/directives/datatables/irida-datatable.js}"
+	        src="/resources/js/directives/datatables/irida-datatable.js"></script>
+	<script th:src="@{/resources/bower_components/bootstrap-switch/dist/js/bootstrap-switch.js}"
+	        src="/resources/bower_components/bootstrap-switch/dist/js/bootstrap-switch.js"></script>
+	<script th:src="@{/resources/bower_components/angular-bootstrap-switch/dist/angular-bootstrap-switch.js}"
+	        src="/resources/bower_components/angular-bootstrap-switch/dist/angular-bootstrap-switch.js"></script>
+	<script th:inline="javascript">
+		var PAGE = {
+				urls: {
+					local: {
+						get: /*[[@{/projects/{id}/settings/associated/ajax/available(id=${project.getId()})}]]*/ '/projects/1/associated/ajax/available',
+						add: /*[[@{/projects/{id}/settings/associated/(id=${project.getId()})}]]*/ '/projects/1/associated/',
+						remove: /*[[@{/projects/{id}/settings/associated/(id=${project.getId()})}]]*/ '/projects/1/associated/'
+					}
+				}
+			},
+			app = angular.module('associated.edit', ['irida.datatables', 'frapontillo.bootstrap-switch']);
+
+		app.factory('AssociatedService', function($http) {
+          var self = this;
+          self.getAssociated = function(params) {
+            return $http.get(PAGE.urls.local.get, {
+              params: params
+            })
+              .then(function(result) {
+                return result.data;
+              });
+          };
+
+          self.removeAssociatedStatus = function(params) {
+            return $http.delete(PAGE.urls.local.remove, {
+              params: params
+            })
+              .then(function(result) {
+                return result.data;
+              });
+          };
+
+          self.addAssociatedProject = function(params) {
+            return $http.post(PAGE.urls.local.add, params)
+              .then(function(result) {
+                return result.data;
+              });
+          };
+
+          self.addRemoteAssociatedProject = function(params) {
+            return $http.post(PAGE.urls.remote.add, params)
+              .then(function(result) {
+                return result.data;
+              });
+          };
+
+          self.removeRemoteAssociatedStatus = function(params) {
+            return $http.post(PAGE.urls.remote.remove, params)
+              .then(function(result) {
+                return result.data;
+              });
+          };
+
+			return self;
+		});
+
+		app.controller('AssociatedTableCtrl', function($rootScope, $scope, $log, AssociatedService) {
+			'use strict';
+
+			/*[- */
+			// paging: handle all things to do with the paging of the
+			//  - page = the current page being displayed.
+			//  - totalAssociated = the total number of associated projects for this project
+			//  - totalPages = the total number of pages (totalAssociated / num per page)
+			/* -]*/
+			$scope.paging = {
+				page: 1,
+				totalAssociated: 1,
+				totalPages: 1
+			};
+
+			/*[- */
+			// defaultCriteria: these are the defaults for creating the table
+			/* -]*/
+			var defaultCriteria = {
+				page: 0,
+				sortDir: 'asc',
+				sortedBy: 'id',
+				count: 10
+			};
+
+			/*[- */
+			// filter: used to control the filter section of the page.
+			//  - isCollapsed = whether the filter is open on the screen (initially closed)
+			//  - states = populates the states select.
+			/* -]*/
+			$scope.filter = {
+				isCollapsed: true
+			};
+
+			/*[- */
+			// filterCriteria: this is passed to the server on each page request.
+			//  - initially a copy of the defaultCriteria
+			/* -]*/
+			$scope.filterCriteria = _.clone(defaultCriteria);
+
+			/*[- */
+			// When the ajax call is complete the table is recreated.
+			/* -]*/
+			$scope.fetchResult = function() {
+				$scope.filterPromise = AssociatedService.getAssociated($scope.filterCriteria);
+
+				return $scope.filterPromise.then(function(data) {
+					if (data.hasOwnProperty('associated')) {
+						$scope.associated = data.associated;
+						$scope.paging.totalAssociated = data.totalAssociated;
+						$scope.paging.totalPages = data.totalPages;
+					} else {
+						// Normally will only hit on bad credentials.
+//						window.location = window.location;
+					}
+				}).catch(function() {
+					$scope.associated = [];
+				});
+			};
+
+			/*[- */
+			// filterResult
+			//  - Called when filtering data.
+			/* -]*/
+			$scope.filterResult = function() {
+				$scope.filterCriteria.page = 0;
+				$scope.fetchResult().then(function() {
+					$scope.paging.page = 1;
+				});
+			};
+
+			/*[- */
+			// This watch occurs when a different page is select.  Triggers a server call with the new page.
+			/* -]*/
+			$scope.$watch('paging.page', function() {
+				$scope.filterCriteria.page = $scope.paging.page - 1;
+				$scope.fetchResult();
+			});
+
+			/*[- */
+			// onSort
+			//
+			/* -]*/
+			$scope.onSort = function(sortedBy, sortDir) {
+				$scope.filterCriteria.sortedBy = sortedBy;
+				$scope.filterCriteria.sortDir = sortDir;
+				$scope.filterCriteria.page = 1;
+				$scope.fetchResult().then(function() {
+					$scope.filterCriteria.page = 0;
+				});
+			};
+
+			/*[- */
+			// This watch occurs when the name is filtered.
+			//  'debounce' whats for the given time before calling.  This allows the user to enter
+			//  multiple characters without triggering for each one.
+			/* -]*/
+			$scope.$watch("filterCriteria.name", _.debounce(function(n, o) {
+				if (n != o) {
+					$scope.fetchResult().then(function() {
+						$scope.paging.page = 1;
+					});
+				}
+			}, 500));
+
+			$scope.updateAssociated = function(project) {
+				var titleElem = angular.element(".navbar-sm li.active span"),
+					titleVal = parseInt(titleElem.html());
+				if (project.associated) {
+					AssociatedService.addAssociatedProject({associatedProjectId: project.id}).then(function(data) {
+						if (data.result === 'success') {
+							notySuccess(/*[[#{project.associated.added}]]*/ "Associated project added.");
+							titleElem.html(++titleVal);
+						}
+						else {
+							notyError();
+							project.associated = 'associated';
+						}
+					}).catch(function() {
+						notyError();
+					});
+				}
+				else {
+					AssociatedService.removeAssociatedStatus({associatedProjectId: project.id}).then(function(data) {
+						if (data.result === 'success') {
+							notySuccess(/*[[#{project.associated.removed}]]*/ "Associated project removed.");
+							titleElem.html(--titleVal);
+						}
+						else {
+							notyError();
+							project.associated = false;
+						}
+					}).catch(function() {
+						notyError();
+					});
+				}
+			};
+
+		});
+
+		function notySuccess(msg) {
+			noty({
+				layout: "topCenter",
+				type: "success",
+				text: msg,
+				timeout: 3000
+			});
+		}
+
+		function notyError() {
+			noty({
+				layout: "topCenter",
+				type: "error",
+				text: /*[[#{project.associated.error}]]*/ "An error occurred while changing associated project status."
+			});
+		}
+	</script>
+</th:block>
