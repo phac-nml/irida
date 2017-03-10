@@ -176,7 +176,7 @@
     };
 
     vm.busy = svc.load()
-      .success(function (data) {
+      .then(function(data) {
         vm.analyses = data.analyses;
         vm.loading = false;
       });

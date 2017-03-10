@@ -25,11 +25,11 @@
      */
     function createSample(sample, successFn, errorFn) {
       return $http.post(URL_BASE, sample)
-        .success(function(response) {
-          successFn(response);
+        .then(function(response) {
+          successFn(response.data);
         })
-        .error(function(response) {
-          errorFn(response);
+        .catch(function(response) {
+          errorFn(response.data);
         });
     }
   }
