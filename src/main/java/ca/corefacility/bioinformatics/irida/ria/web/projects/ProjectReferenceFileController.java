@@ -60,7 +60,7 @@ public class ProjectReferenceFileController {
 		model.addAttribute("project", project);
 		model.addAttribute(ProjectsController.ACTIVE_NAV, ProjectSettingsController.ACTIVE_NAV_SETTINGS);
 		model.addAttribute("page", "referenceFiles");
-		return "projects/project_settings";
+		return "projects/settings/pages/references";
 	}
 
 	@RequestMapping("/{projectId}/settings/ajax/reference/all")
