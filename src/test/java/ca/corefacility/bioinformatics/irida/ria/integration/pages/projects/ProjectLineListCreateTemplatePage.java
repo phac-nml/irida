@@ -18,11 +18,8 @@ public class ProjectLineListCreateTemplatePage extends ProjectPageBase {
 	@FindBy(id = "save-template-btn")
 	private WebElement saveTemplateBtn;
 
-	@FindBy(className = "select2-selection__rendered")
+	@FindBy(className = "ui-select-search")
 	private WebElement existingTemplatesSelect;
-
-	@FindBy(className = "select2-search__field")
-	private WebElement existTemplateField;
 
 	@FindBy(className = "entry")
 	private List<WebElement> fieldEntries;
@@ -55,8 +52,8 @@ public class ProjectLineListCreateTemplatePage extends ProjectPageBase {
 	public void addExistingTemplate(String templateName) {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		existingTemplatesSelect.click();
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("select2-selection__rendered")));
-		existTemplateField.sendKeys(templateName, Keys.ENTER);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("ui-select-choices-row")));
+		existingTemplatesSelect.sendKeys(templateName, Keys.ENTER);
 		// Wait for page to update
 		waitForTime(500);
 	}
