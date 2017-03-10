@@ -1,5 +1,24 @@
+.inner-table {
+  width: 100%;
+}
+
+.inner-table td {
+  vertical-align: top;
+  margin-bottom: 0;
+  padding: 5px 5px 0 5px;
+}
+
+.template-label {
+  margin-right: .4em;
+}
+
 .form-group {
   margin-bottom: 0 !important;
+}
+
+ul[dnd-list] {
+  list-style: none;
+  padding-left: 0;
 }
 
 ul[dnd-list],
@@ -8,7 +27,9 @@ ul[dnd-list] > li {
 }
 
 ul[dnd-list] > li {
+  border: 1px solid #eee;
   border-left: 5px solid #eee;
+  padding: 2px 2px 5px 2px;
 }
 
 ul[dnd-list] .dndDraggingSource {
@@ -18,24 +39,22 @@ ul[dnd-list] .dndDraggingSource {
 ul[dnd-list] .dndPlaceholder {
   display: block;
   background-color: #ddd;
-  min-height: 42px;
+  min-height: 25px;
 }
 
-ul[dnd-list] {
-  padding-left: 0;
-}
-
-.list-group-item {
-  padding-left: 25px !important;
+ul[dnd-list] table {
+  margin-left: 20px !important;
 
   &:before {
-    position: absolute;
-    top: 13px;
-    left: 5px;
     content: ':::';
     font-size: 1.8rem;
     color: lightgray;
-    cursor: move!important;
+    cursor: move !important;
+    position: absolute;
+    display: block;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 4px;
   }
 }
 

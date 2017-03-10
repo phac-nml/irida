@@ -6,7 +6,7 @@
     <title th:text="#{linelist.create-template.title}">Title</title>
 </head>
 <body>
-<main layout:fragment="main">
+<main layout:fragment="main" ddl:bundle-includes="project-linelist-template">
     <h2 th:text="#{linelist.create-template.title}">Create a New Line List Template</h2>
     <template-input-component
             data:templateurl="@{/projects/{id}/linelist/upload/metadatafields(id=${project.getId()})}"
@@ -68,60 +68,62 @@
             <label th:text="#{linelist.create-template.template-fields}">Template Fields</label>
             <div class="row">
                 <div class="col-md-8">
-                    <ul class="list-group"
-                        dnd-list="$ctrl.template.list">
-
-                        <li class="list-group-item" ng-repeat="item in $ctrl.template.list"
+                    <ul dnd-list="$ctrl.template.list">
+                        <li class="ng-form" name="entry" ng-repeat="item in $ctrl.template.list"
                             dnd-draggable="item"
                             dnd-moved="$ctrl.template.list.splice($index, 1)"
                             dnd-disable-if="$ctrl.template.list.length === 1"
                             dnd-effect-allowed="move">
-                            <div class="row">
-                                <div class="col-md-12">
-                                <span class="label label-primary"
-                                      style="margin-right: .5em;"
-                                      ng-repeat="template in $ctrl.templateMap[item.id]">
-                                      {{ template }}
-                                </span>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <ng-form name="entry">
-                                    <div class="form-group col-md-5 entry"
-                                         ng-class="{'has-error' : entry.fieldName.$invalid}">
-                                        <input type="text"
-                                               name="fieldName"
-                                               class="form-control field-label"
-                                               ng-model="item.label"
-                                               required="required"
-                                               placeholder="Field Name"
-                                               index="{{ $index }}"
-                                               minlength="5"
-                                               no-repeat-name=""/>
-                                        <div ng-messages="entry.fieldName.$error">
-                                            <p class="label label-danger" ng-message="required"
-                                               th:text="#{linelist.create-template.field.required}">_This is a
-                                                required field_</p>
-                                            <p class="label label-danger" ng-message="minlength"
-                                               th:text="#{linelist.create-template.field.minlength}">_This is a
-                                                required field_</p>
-                                            <p class="label label-danger" ng-message="noRepeatName"
-                                               th:text="#{linelist.create-template.field.noRepeatName}">_This name
-                                                already exists on a field_</p>
-                                        </div>
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                        <select disabled="disabled" class="form-control" ng-model="item.type">
-                                            <option value="text" th:text="#{linelist.add-field.type.text}">_TEXT_
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <button class="btn btn-default remove-field-btn"
-                                            ng-click="$ctrl.removeField($index)">
-                                        <fa:icon type="remove"/>
-                                    </button>
-                                </ng-form>
-                            </div>
+                                <table class="inner-table">
+                                    <tr>
+                                        <td colspan="3">
+                                            <span class="label label-primary template-label"
+                                                  ng-repeat="template in $ctrl.templateMap[item.id]">
+                                                {{ template }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="form-group entry"
+                                                 ng-class="{'has-error' : entry.fieldName.$invalid}">
+                                                <input type="text"
+                                                       name="fieldName"
+                                                       class="form-control field-label"
+                                                       ng-model="item.label"
+                                                       required="required"
+                                                       placeholder="Field Name"
+                                                       index="{{ $index }}"
+                                                       minlength="2"
+                                                       no-repeat-name=""/>
+                                                <div ng-messages="entry.fieldName.$error">
+                                                    <p class="label label-danger" ng-message="required"
+                                                       th:text="#{linelist.create-template.field.required}">_This is a
+                                                        required field_</p>
+                                                    <p class="label label-danger" ng-message="minlength"
+                                                       th:text="#{linelist.create-template.field.minlength}">_This is a
+                                                        required field_</p>
+                                                    <p class="label label-danger" ng-message="noRepeatName"
+                                                       th:text="#{linelist.create-template.field.noRepeatName}">_This
+                                                        name
+                                                        already exists on a field_</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <select disabled="disabled" class="form-control" ng-model="item.type">
+                                                <option value="text" th:text="#{linelist.add-field.type.text}">_TEXT_
+                                                </option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-default remove-field-btn"
+                                                    ng-click="$ctrl.removeField($index)">
+                                                <fa:icon type="remove"/>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </table>
                         </li>
                     </ul>
                     <button id="add-field-btn"

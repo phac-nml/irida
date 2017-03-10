@@ -28,62 +28,76 @@ export const TemplateInputComponent = {
         .push(Object.assign({}, emptyField));
     };
 
-    const getSetOfExistingTemplateFields = () => {
-      // Reset the map of field in template;
+    const getExistingTemplateFields = () => {
+      // Reset the map of field in template, this allows the UI to display
+      // which template a specific field came from.
       this.templateMap = {};
-      let allFields = new Set();
+
+      let allFields = [];
       for (let template of this.existing) {
-        // Make a copy of the fields on this template
+        // Make a copy of the fields on this template to prevent overwriting the originals.
         const fields = Array.from(template.fields);
+
+        // Add the fields if they are required
         for (let field of fields) {
+          // look this up in the angular docs
           if (!this.templateMap[field.id]) {
             this.templateMap[field.id] = [];
           }
           this.templateMap[field.id].push(template.label);
-          allFields.add(field);
+
+          // Check to see if the field is already in the list.
+          const index = allFields.findIndex(f => f.id === field.id);
+          if (index === -1) {
+            allFields.push(field);
+          }
         }
       }
       return allFields;
     };
 
     const updateTemplateFields = () => {
-      const templateFieldSet = getSetOfExistingTemplateFields();
-      console.log(templateFieldSet);
+      let templateFields = getExistingTemplateFields();
       const fields = Array.from(this.template.list);
       const updatedFields = [];
       for (let field of fields) {
-        // Check to see if the field is in the chosen templates.
-        if (templateFieldSet.has(field)) {
-          updatedFields.push(field);
-          templateFieldSet.delete(field);
-        } else if (!field.id) {
-          let found = false;
-          // if the field does not have an id then it is a new field.
-          // Check to see if the label is in the templated fields.
-          for (let setField of templateFieldSet) {
-            if (setField.label === field.label) {
-              updatedFields.push(setField);
-              templateFieldSet.delete(setField);
-              found = true;
-              break;
-            }
-          }
+        // See if the a template field has the same label as an existing field.
+        // The template label gets priority since it is already an existing
+        // metadata field.
+        const STD_FIELD_NAME = field.label.toLowerCase();
+        const templateFieldMatched = [];
+        const templateFieldUnMatched = [];
 
-          // IF the label is not found in the template fields.  Keep the field
-          if (!found) {
-            updatedFields.push(field);
+        for (let tf of templateFields) {
+          if (tf.label.toLowerCase() === STD_FIELD_NAME) {
+            templateFieldMatched.push(tf);
+          } else {
+            templateFieldUnMatched.push(tf);
           }
         }
+
+        if (templateFieldMatched.length) {
+          // Add the first found field to the list.
+          updatedFields.push(templateFieldMatched[0]);
+
+          // Only keep the unmatched fields
+          templateFields = templateFieldUnMatched;
+        } else {
+          // Field label not found in the template fields.
+          // Keep the field
+          updatedFields.push(field);
+        }
       }
-      // Update the UI with the new list of fields
-      this.template.list = [...updatedFields, ...templateFieldSet];
+      // Combine the leftover UI fields with the leftover template fields
+      this.template.list = [...updatedFields, ...templateFields];
     };
 
-    this.onRemoveTemplate = ($item, $model) => {
-      console.log('Removed: ', $item, this.existing);
+    this.onRemoveTemplate = () => {
+      updateTemplateFields();
     };
 
     this.onSelectTemplate = $item => {
+      // Check to see if we need to get the fields for the selected template
       if ($item.fields) {
         updateTemplateFields();
       } else {
@@ -94,53 +108,6 @@ export const TemplateInputComponent = {
             updateTemplateFields();
           });
       }
-
-      // Check to see if we already have the fields for this template
-      // If not get them, and add them to the template.
-      // for(let template of this.existing) {
-
-      // }
-      // const wantedTemplates = Array.from(this.existing);
-      // const currentTemplates = [...selectedTemplates.keys()];
-      //
-      // // See if we added or removed templates
-      // if (wantedTemplates.length > currentTemplates.length) {
-      //   // Added a template
-      //   // Need to find out which template was added.
-      //   const differentTemplate = wantedTemplates
-      //     .filter(name => currentTemplates.indexOf(name) === -1)[0];
-      //
-      //   // Store the name of the template.
-      //   setSelectedTemplateName(differentTemplate);
-      //
-      //   // Get the new fields
-      //   TemplateInputService
-      //     .getFieldsForTemplates(this.templateurl, differentTemplate)
-      //     .then(fields => {
-      //       selectedTemplates.set(differentTemplate, fields);
-      //       updateFields(differentTemplate);
-      //     });
-      // } else {
-      //   // This area is for removing an existing template that was previously selected
-      //   // Need to make sure we don't remove fields that come from other templates too.
-      //   const templateToRemove = currentTemplates
-      //     .filter(name => wantedTemplates.indexOf(name) === -1)[0];
-      //   const values = selectedTemplates.get(templateToRemove);
-      //   selectedTemplates.delete(templateToRemove);
-      //
-      //   const removeFromList = field => {
-      //     const index = this.template.list
-      //       .findIndex(item => item.label === field.label);
-      //     const item = this.template.list[index];
-      //     if (item && Object.keys(item.templates).length > 1) {
-      //       delete item.templates[templateToRemove];
-      //     } else if (item) {
-      //       this.template.list.splice(index, 1);
-      //     }
-      //   };
-      //
-      //   values.forEach(value => removeFromList(value));
-      // }
     };
 
     /**
