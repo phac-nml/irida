@@ -8,7 +8,7 @@ const resultsComponent = {
     data: '='
   },
   controller() {
-    this.$inInit = () => {
+    this.$onInit = () => {
       this.found = this.data.found.length;
       this.missing = this.data.missing.length;
     };
