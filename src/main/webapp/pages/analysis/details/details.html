@@ -108,11 +108,17 @@
 				<table class="table table-bordered">
 					<tr>
 						<td width="30%"><strong>Status</strong></td>
-						<td ng-bind="sistrCtrl.qc.status">QC Status</td>
+						<td ng-class="{'list-group-item-success' : sistrCtrl.qc.pass, 'list-group-item-danger' : !sistrCtrl.qc.pass}" ng-bind="sistrCtrl.qc.status">QC Status</td>
 					</tr>
-					<tr ng-repeat="item in sistrCtrl.qc.messages">
-						<td width="30%"><strong>Message</strong></td>
-						<td ng-bind="item" style="word-wrap: break-word;"></td>
+					<tr ng-if="!sistrCtrl.qc.pass">
+						<td><strong>Messages</strong></td>
+						<td>
+							<table class="qc-messages">
+								<tr ng-repeat="item in sistrCtrl.qc.messages">
+									<td ng-bind="item" style="word-wrap: break-word;"></td>
+								</tr>
+							</table>
+						</td>
 					</tr>
 				</table>
 			</script>

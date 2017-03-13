@@ -167,6 +167,7 @@
       var qc = {};
       qc['messages'] = preds['qc_messages'].split("|");
       qc['status'] = preds['qc_status'];
+      qc['pass'] = (preds['qc_status'] == 'PASS');
 
       vm.serotype_predictions = serotype_predictions;
       vm.serotype_predictions_order = serotype_predictions_order;
