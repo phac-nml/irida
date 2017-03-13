@@ -11,7 +11,11 @@ const asideTemplateUrl = 'metadata.aside.tmpl';
  */
 function controller($scope, $aside, $uibModal) {
   const vm = this;
-  const ORIGINAL_ORDER = Array.from(this.fields);
+  let ORIGINAL_ORDER = [];
+  vm.$onInit = () => {
+    ORIGINAL_ORDER = Array.from(this.fields);
+  };
+
   this.showMetadataTemplator = () => {
     // Open side panel to display the column headers for toggling column visibility.
     $aside.open({
