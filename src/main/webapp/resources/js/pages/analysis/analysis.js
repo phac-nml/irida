@@ -159,10 +159,17 @@
       serotype_predictions['H2'] = preds['h2'];
 
       var cgMLST_predictions = {};
-      var cgMLST_predictions_order = ['cgmlst_matching_alleles', 'cgmlst_genome_match', 'cgmlst_ST'];
-      cgMLST_predictions['cgmlst_matching_alleles'] = preds['cgmlst_matching_alleles'];
-      cgMLST_predictions['cgmlst_genome_match'] = preds['cgmlst_genome_match'];
-      cgMLST_predictions['cgmlst_ST'] = preds['cgmlst_ST'];
+      var cgMLST_predictions_order = ['cgMLST subspecies', 'cgMLST matching alleles', 'cgMLST genome match', 'cgMLST ST'];
+      cgMLST_predictions['cgMLST subspecies'] = preds['cgmlst_subspecies'];
+      cgMLST_predictions['cgMLST matching alleles'] = preds['cgmlst_matching_alleles'];
+      cgMLST_predictions['cgMLST genome match'] = preds['cgmlst_genome_match'];
+      cgMLST_predictions['cgMLST ST'] = preds['cgmlst_ST'];
+
+      var mash_predictions = {};
+      var mash_predictions_order = ['Mash subspecies', 'Mash match', 'Mash genome'];
+      mash_predictions['Mash subspecies'] = preds['mash_subspecies'];
+      mash_predictions['Mash match'] = preds['mash_match'];
+      mash_predictions['Mash genome'] = preds['mash_genome'];
 
       var qc = {};
       qc['messages'] = preds['qc_messages'].split("|");
@@ -173,6 +180,8 @@
       vm.serotype_predictions_order = serotype_predictions_order;
       vm.cgMLST_predictions_order = cgMLST_predictions_order;
       vm.cgMLST_predictions = cgMLST_predictions;
+      vm.mash_predictions_order = mash_predictions_order;
+      vm.mash_predictions = mash_predictions;
       vm.qc = qc;
     });
   }

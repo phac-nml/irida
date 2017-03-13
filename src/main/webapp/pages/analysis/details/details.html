@@ -96,7 +96,6 @@
 						<td ng-bind="sistrCtrl.serotype_predictions[item]" style="word-wrap: break-word;"></td>
 					</tr>
 				</table>
-				<br/>
 				<h2>cgMLST</h2>
 				<table class="table table-bordered">
 					<tr ng-repeat="item in sistrCtrl.cgMLST_predictions_order">
@@ -104,6 +103,14 @@
 						<td ng-bind="sistrCtrl.cgMLST_predictions[item]" style="word-wrap: break-word;"></td>
 					</tr>
 				</table>
+				<h2>Mash</h2>
+				<table class="table table-bordered">
+					<tr ng-repeat="item in sistrCtrl.mash_predictions_order">
+						<td width="30%"><strong ng-bind="item"></strong></td>
+						<td ng-bind="sistrCtrl.mash_predictions[item]" style="word-wrap: break-word;"></td>
+					</tr>
+				</table>
+				<br/>
 				<h2>Quality Control</h2>
 				<table class="table table-bordered">
 					<tr>
