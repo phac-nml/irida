@@ -136,7 +136,7 @@
 					<h2 th:text="#{analysis.details.reference}"></h2>
 					<span th:text="${referenceFile.label}"></span>
 					<a class="btn btn-default btn-sm pull-right" th:href="@{/referenceFiles/download/{id}(id=${referenceFile.id})}">
-						<fa:icon type="download"/>&nbsp;<th:block th:text="#{form.download}">__Download__</th:block>
+						<span class="fa fa-download" aria-hidden="true"></span>&nbsp;<th:block th:text="#{form.download}">__Download__</th:block>
 					</a>
 				</th:block>
 			
@@ -173,7 +173,7 @@
 					<accordion>
 						<accordion-group class="file-info" th:each="file : ${files}">
 							<accordion-heading class="filename">
-								<fa:icon type="file" />&nbsp;
+								<span class="fa fa-file-o" aria-hidden="true"></span>&nbsp;
 								<span class="name" th:text="${file.getLabel()}"></span>
 							</accordion-heading>
 							<div th:include="analysis/details/details :: toolsLayout (${file.getCreatedByTool()})"></div>
@@ -184,8 +184,8 @@
 						     th:with="toolId=${'tool' + tool.getId()}"
 						     data:ng-init="${toolId + '=false'}">
 							<button data:ng-click="${toolId + '=!' + toolId}" class="btn btn-link tool">
-								<fa:icon data:ng-hide="${toolId}" type="show" />
-								<fa:icon data:ng-show="${toolId}" type="hide" />
+								<span class="fa fa-chevron-right" data:ng-hide="${toolId}" aria-hidden="true"></span>
+								<span class="fa fa-chevron-down" data:ng-show="${toolId}" aria-hidden="true"></span>
 								&nbsp;<span th:text="${tool.getLabel()}"></span>
 							</button>
 

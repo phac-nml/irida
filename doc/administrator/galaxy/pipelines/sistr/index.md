@@ -31,9 +31,17 @@ Some of these tools require additional dependencies to be installed.  For a clus
 cpanm Time::Piece XML::Simple Data::Dumper
 ```
 
-## Step 2: Install conda dependenies (for older Galaxy versions)
+## Step 2.a: Conda dependenies (for Galaxy versions >= v16.01)
 
-The SISTR pipeline makes use of the [conda][] package manager and [bioconda][] channel to distribute some dependencies, particularly the [sistr_cmd][] software.  It is **strongly** recommended to upgrade your Galaxy version to take advantage of automated installation of dependencies using conda.  However, if you are unable to upgrade Galaxy, the following steps can be taken to get the `sistr_cmd` dependency working with an older version of Galaxy (by writing a wrapper to load up dependencies for `sistr_cmd` via conda).
+The SISTR pipeline makes use of the [conda][] package manager and [bioconda][] channel to distribute some dependencies, particularly the [sistr_cmd][] software.  It is **strongly** recommended to upgrade your Galaxy version (minimum >= v16.01, although > v16.07 is recommended) to take advantage of automated installation of dependencies using conda.
+
+If the Galaxy version supports conda, then you must verify that Galaxy is setup to use conda for dependency installation.  This will primarly involve setting `conda_prefix` to point to the PATH of conda in your `config/galaxy.ini` file and verifying that conda will be used for dependency management in the file `config/dependency_resolvers_conf.xml`.  More details can be found at <https://docs.galaxyproject.org/en/master/admin/conda_faq.html>.
+
+If conda is setup with your instance of Galaxy, please proceed to **Step 3**.  Otherwise, proceed to **Step 2.b**.
+
+## Step 2.b: Conda dependenies (for Galaxy versions < v16.01)
+
+If you are unable to upgrade Galaxy to take advantage of `conda`, then the following steps can be taken to get the `sistr_cmd` dependency working with an older version of Galaxy (by writing a wrapper to load up dependencies for `sistr_cmd` via conda).
 
 1. If `conda` is not already installed, please download and install <https://conda.io/miniconda.html>.
 2. Install the `sistr_cmd` dependency to it's own conda environment:
