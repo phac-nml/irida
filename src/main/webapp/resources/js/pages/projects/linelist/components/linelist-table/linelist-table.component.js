@@ -6,12 +6,12 @@ function controller(DTOptionsBuilder,
                     $scope,
                     $compile) {
   const $ctrl = this;
-$ctrl.$onInit = () => {  // This will be used by the child component to control which columns are visiblethis.$onInit = () => {
-  this.fields = this.headers
-    .map((header, index) => {
-      return ({text: header, index, selected: true});
-    });
-  this.templates = LinelistService.getTemplates();
+  $ctrl.$onInit = () => {  // This will be used by the child component to control which columns are visiblethis.$onInit = () => {
+    this.fields = this.headers
+      .map((header, index) => {
+        return ({text: header, index, selected: true});
+      });
+    this.templates = LinelistService.getTemplates();
 
     this.dtOptions = DTOptionsBuilder
       .fromFnPromise(() => {
