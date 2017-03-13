@@ -36,7 +36,7 @@
 			</div>
 			<div dt:confType="extrahtml" dt:uid="2">
 				<div class="dropdown">
-					<button class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"><fa:icon type="download" fixed="true"/>&nbsp;<span th:text="#{projects.export}">Export</span>&nbsp;&nbsp;<span class="caret"></span></button>
+					<button class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-download fa-fw" aria-hidden="true"></i>&nbsp;<span th:text="#{projects.export}">Export</span>&nbsp;&nbsp;<span class="caret"></span></button>
 					<ul class="dropdown-menu" aria-labelledby="reportMenu">
 						<li role="menuitem" th:each="type : ${exportTypes}">
 							<a th:href="@{'/projects/ajax/export?dtf=' + ${type.format} + '&amp;admin=' + ${isAdmin}}" href="/projects/ajax/export/xlsx" th:text="#{'projects.export.' + ${type.format}}">Excel</a>
