@@ -148,7 +148,7 @@
 
     analysisService.getSistrResults().then(function(result) {
       var preds = result[0];
-      var serotype_predictions_order = ['Serovar (overall)', 'Serovar (antigen)', 'Serovar (cgMLST)', 'Serovar (mash)', 'Serogroup', 'H1', 'H2'];
+      var serotype_predictions_order = ['Serovar (overall)', 'Serovar (antigen)', 'Serovar (cgMLST)', 'Serovar (mash)', 'Serogroup', 'H1', 'H2', 'O antigen'];
       var serotype_predictions = {};
       serotype_predictions['Serovar (overall)'] = preds['serovar'];
       serotype_predictions['Serovar (antigen)'] = preds['serovar_antigen'];
@@ -157,6 +157,7 @@
       serotype_predictions['Serogroup'] = preds['serogroup'];
       serotype_predictions['H1'] = preds['h1'];
       serotype_predictions['H2'] = preds['h2'];
+      serotype_predictions['O antigen'] = preds['o_antigen'];
 
       var cgMLST_predictions = {};
       var cgMLST_predictions_order = ['cgMLST subspecies', 'cgMLST matching alleles', 'cgMLST genome match', 'cgMLST ST'];
