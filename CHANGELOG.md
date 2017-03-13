@@ -5,6 +5,7 @@ Changes
 ----------------
 * [Developer]: Upgraded to AngularJS 1.6.2 <https://github.com/angular/angular.js/blob/master/CHANGELOG.md>
 * [Developer]: Removed FontAwesome thymeleaf dialect, updated developer documentation <https://irida.corefacility.ca/documentation//developer/interface/icons/>.
+* [Workflow]: Added version 0.1 of a pipeline for Salmonella typing (SISTR) using the [sistr_cmd](https://github.com/peterk87/sistr_cmd).
 
 0.14.0 to 0.15.0
 ----------------
