@@ -36,6 +36,17 @@ function controller($window, $scope, PhylocanvasService) {
   // Make the canvas fill the viewable window.
   setCanvasHeight($window);
 
+  this.$onInit = () => {
+    /**
+     * Kick everything off by getting the newick file and the
+     * initial metadata.
+     */
+    PhylocanvasService.getNewickData(this.newickurl)
+      .then(newick => {
+        this.newick = newick;
+      });
+  };
+
   // Initialize phylocanvas.
   const tree = Phylocanvas
     .createTree(PHYLOCANVAS_DIV, {
@@ -66,15 +77,6 @@ function controller($window, $scope, PhylocanvasService) {
     this.metadata = args.metadata;
     tree.load(this.newick);
   });
-
-  /**
-   * Kick everything off by getting the newick file and the
-   * initial metadata.
-   */
-  PhylocanvasService.getNewickData(this.newickurl)
-    .then(newick => {
-      this.newick = newick;
-    });
 }
 
 export const PhylocanvasComponent = {

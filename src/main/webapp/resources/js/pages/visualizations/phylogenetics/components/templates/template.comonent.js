@@ -5,12 +5,13 @@ import {METADATA} from './../../constants';
  * @param {object} TemplateService angular service
  */
 function controller($rootScope, TemplateService) {
-  // Get a list of templates that can be rendered
-  TemplateService
-    .getTemplates(this.templatesurl)
-    .then(templates => {
-      this.templates = templates;
-    });
+  this.$onInit = () => {  // Get a list of templates that can be rendered
+    TemplateService
+      .getTemplates(this.templatesurl)
+      .then(templates => {
+        this.templates = templates;
+      });
+  };
 
   this.templateChange = () => {
     if (this.selectedTemplate) {
