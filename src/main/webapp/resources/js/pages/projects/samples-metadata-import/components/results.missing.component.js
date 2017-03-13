@@ -16,16 +16,18 @@ const resultsMissingComponent = {
     headers: '='
   },
   controller() {
-    if (this.rows.length > 0) {
-      const columns = formatBasicHeaders(this.headers);
-      $('#missing-table').DataTable({
-        dom,
-        scrollX: true,
-        sScrollX: '100%',
-        data: this.rows,
-        columns
-      });
-    }
+    this.$onInit = () => {
+      if (this.rows.length > 0) {
+        const columns = formatBasicHeaders(this.headers);
+        $('#missing-table').DataTable({
+          dom,
+          scrollX: true,
+          sScrollX: '100%',
+          data: this.rows,
+          columns
+        });
+      }
+    };
   }
 };
 
