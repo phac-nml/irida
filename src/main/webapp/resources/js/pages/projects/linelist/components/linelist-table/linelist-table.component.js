@@ -21,19 +21,20 @@ function controller($scope,
    */
   $ctrl.$onInit = () => {
     $ctrl.dtOptions = DTOptionsBuilder
-      .fromFnPromise(() => {
-        return LinelistService.getMetadata();
-      })
-      .withDOM(dom)
-      .withScroller()
-      .withOption('scrollX', true)
-      .withOption('deferRender', true)
-      .withOption('scrollY', '50vh')
-      .withOption('scrollCollapse', true)
-      .withColReorder()
-      .withColReorderCallback(function() {
-        $ctrl.parent.columnReorder(this.fnOrder());
-      });
+    .fromFnPromise(() => {
+      return LinelistService.getMetadata();
+    })
+    .withDOM(dom)
+    .withScroller()
+    .withOption('scrollX', true)
+    .withOption('deferRender', true)
+    .withOption('scrollY', '50vh')
+    .withOption('scrollCollapse', true)
+    .withColReorder()
+    .withColReorderCallback(function() {
+      $ctrl.parent.columnReorder(this.fnOrder());
+    })
+    ;
 
     $ctrl.dtColumns = $ctrl.fields
       .map(header => {

@@ -8,19 +8,21 @@ const selectSampleNameColumnComponent = {
     data: '='
   },
   controller(sampleMetadataService, $state) {
-    // If there are no headers or rows than no file has been uploaded,
-    // therefore we need to go to the upload page.
-    if (this.data.headers === null || this.data.rows === null) {
-      $state.go('upload');
-    }
+    this.$onInit = () => {
+      // If there are no headers or rows than no file has been uploaded,
+      // therefore we need to go to the upload page.
+      if (this.data.headers === null || this.data.rows === null) {
+        $state.go('upload');
+      }
 
-    // Check to see if an 'idColumn' has already been set.
-    if (this.data.sampleNameColumn === null) {
-      this.idColumn = this.data.headers[0];
-    } else {
-      this.idColumn = this.data.sampleNameColumn;
-    }
-    this.headers = this.data.headers;
+      // Check to see if an 'idColumn' has already been set.
+      if (this.data.sampleNameColumn === null) {
+        this.idColumn = this.data.headers[0];
+      } else {
+        this.idColumn = this.data.sampleNameColumn;
+      }
+      this.headers = this.data.headers;
+    };
 
     /**
      * The selected header will be used as the sample name.
