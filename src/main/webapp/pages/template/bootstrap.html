@@ -173,11 +173,11 @@
 						</li>
 						<li role="separator" class="divider"></li>
 						<li role="menuitem" th:if="#{help.contact.email}">
-							<a href="mailto:" th:attr="href='mailto:'+#{help.contact.email}"><fa:icon type="email" fixed=""/>&nbsp;<span th:text="#{generic.irida.contact}"></span></a>
+							<a href="mailto:" th:attr="href='mailto:'+#{help.contact.email}"><i class="fa fa-envelope-o fa-fw" aria-hidden="true"></i>&nbsp;<span th:text="#{generic.irida.contact}"></span></a>
 						</li>
 						<li role="menuitem">
 							<a href="http://www.irida.ca" target="_blank">
-								<fa:icon type="external-link" fixed="" />&nbsp;<span th:text="#{generic.irida.website}"></span></a>
+								<i class="fa fa-external-link-square fa-fw" aria-hidden="true"></i>&nbsp;<span th:text="#{generic.irida.website}"></span></a>
 						</li>
 						<li role="separator" class="divider"></li>
 						<li class="dropdown-header"><span th:text="#{irida.version}" /></li>
@@ -191,7 +191,7 @@
 				</li>
 				<li>
 					<a href="#" th:href="@{/remote_api}" data:uib-tooltip="#{nav.main.remoteapis}" tooltip-placement="bottom">
-						<fa:icon type="remote"/>
+						<i class="fa fa-exchange fa-fw" aria-hidden="true"></i>
 					</a>
 				</li>
 
