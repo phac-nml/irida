@@ -13,19 +13,19 @@
 	<!-- SAMPLE ACTIONS -->
 	<div class="btn-group btn-group-sm">
 		<button id="mergeBtn" class="btn btn-default" ng-disabled="samplesCtrl.disabled.lessThanTwo || samplesCtrl.disabled.otherProjects" ng-click="samplesCtrl.merge()">
-			<fa:icon type="merge" fixed="true"/>
+			<i class="fa fa-compress fa-fw" aria-hidden="true"></i>
 			<span th:text="#{project.samples.nav.merge}">Merge</span>
 		</button>
 		<button id="copyBtn" class="btn btn-default" ng-disabled="samplesCtrl.disabled.lessThanOne" ng-click="samplesCtrl.copy()">
-			<fa:icon type="copy" fixed="true"/>
+			<i class="fa fa-files-o fa-fw" aria-hidden="true"></i>
 			<span th:text="#{project.samples.nav.copy}">_COPY_</span>
 		</button>
 		<button id="moveBtn" class="btn btn-default" ng-disabled="samplesCtrl.disabled.lessThanOne" ng-click="samplesCtrl.move()">
-			<fa:icon type="move" fixed="true"/>
+			<i class="fa fa-truck fa-fw" aria-hidden="true"></i>
 			<span th:text="#{project.samples.nav.move}"></span>
 		</button>
 		<button id="removeBtn" class="btn btn-default" ng-disabled="samplesCtrl.disabled.lessThanOne || samplesCtrl.disabled.otherProjects" ng-click="samplesCtrl.delete()">
-			<fa:icon type="delete" fixed="true"/>
+			<i class="fa fa-trash fa-fw" aria-hidden="true"></i>
 			<span th:text="#{project.samples.nav.remove}"></span>
 		</button>
 	</div>
@@ -35,12 +35,12 @@
 		<button id="export-btn" class="btn btn-default" uib-dropdown-toggle=""
 		        ng-disabled="samplesCtrl.disabled.lessThanOne">
 			<span th:text="#{project.samples.export.label}">Export</span>
-			<fa:icon type="caret-down" fixed="true"/>
+			<i class="fa fa-caret-down" aria-hidden="true"></i>
 		</button>
 		<ul class="ng-cloak" uib-dropdown-menu="" role="menu" aria-labelledby="export-btn">
 			<li role="menuitem">
 				<a id="exportDownloadBtn" href="#">
-					<fa:icon type="download" fixed="true"/>
+					<i class="fa fa-download fa-fw" aria-hidden="true"></i>
 					<span th:text="#{form.download}">_Download</span>
 				</a>
 			</li>
@@ -49,19 +49,19 @@
 			    ng-attr-uib-tooltip="{{subnav.showuib-tooltip()}}" uib-tooltip-append-to-body="true"
 			    uib-tooltip-placement="right">
 				<a id="exportLinkerBtn" href="#" ng-click="subnav.export.linker()">
-					<fa:icon type="terminal" fixed="true"/>
+					<i class="fa fa-terminal fa-fw" aria-hidden="true"></i>
 					<span th:text="#{project.samples.export.linker}"></span>
 				</a>
 			</li>
 			<li role="menuitem">
 				<a id="exportNcbiButton" href="#" ng-click="subnav.export.ncbi()">
-					<fa:icon type="upload" fixed="true"/>
+					<i class="fa fa-upload fa-fw" aria-hidden="true"></i>
 					<span th:text="#{project.samples.export.ncbi}">_Upload to NCBI_</span>
 				</a>
 			</li>
 			<li role="menuitem" th:if="${galaxyCallback}">
 				<a href="#" ng-click="subnav.export.galaxy(); cart.show=false">
-					<fa:icon type="cloud" fixed="true"/>
+					<i class="fa fa-cloud-upload fa-fw" aria-hidden="true"></i>
 					<span th:text="#{project.samples.export.galaxy}"></span>
 				</a>
 			</li>
@@ -77,7 +77,7 @@
 		<button id="cart-add-btn"
 		        class="btn btn-primary" ng-disabled="samplesCtrl.disabled.lessThanOne"
 		        ng-click="samplesCtrl.addToCart()">
-			<fa:icon type="cart-plus" fixed="true"/>
+			<i class="fa fa-cart-plus fa-fw" aria-hidden="true"></i>
 			<span th:text="#{project.samples.nav.add-to-cart}">Add to Cart></span>
 		</button>
 	</div>
@@ -90,7 +90,7 @@
 			Advanced Filter
 		</button>
 		<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-			<fa:icon type="caret-down"/>
+			<i class="fa fa-caret-down" aria-hidden="true"></i>
 			 <span class="sr-only" th:text="#{sr.nav.toggle}">Toggle Dropdown</span>
 		</button>
 		<ul class="dropdown-menu">
