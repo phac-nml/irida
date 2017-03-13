@@ -161,7 +161,7 @@
       var cgMLST_predictions = {};
       var cgMLST_predictions_order = ['cgMLST subspecies', 'cgMLST matching alleles', 'cgMLST genome match', 'cgMLST ST'];
       cgMLST_predictions['cgMLST subspecies'] = preds['cgmlst_subspecies'];
-      cgMLST_predictions['cgMLST matching alleles'] = preds['cgmlst_matching_alleles'];
+      cgMLST_predictions['cgMLST matching alleles'] = preds['cgmlst_matching_alleles']+'/330';
       cgMLST_predictions['cgMLST genome match'] = preds['cgmlst_genome_match'];
       cgMLST_predictions['cgMLST ST'] = preds['cgmlst_ST'];
 
