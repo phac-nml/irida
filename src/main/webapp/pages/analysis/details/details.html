@@ -89,32 +89,46 @@
 			</script>
 
 			<script type="text/ng-template" id="sistr.html">
-				<h2>Serovar Prediction</h2>
+				<h2 th:text="#{analysis.details.sistr.serovar}">_Serovar Prediction_</h2>
 				<table class="table table-bordered">
 					<tr ng-repeat="item in sistrCtrl.serotype_predictions_order">
 						<td width="30%"><strong ng-bind="item"></strong></td>
 						<td ng-bind="sistrCtrl.serotype_predictions[item]" style="word-wrap: break-word;"></td>
 					</tr>
 				</table>
-				<br/>
-				<h2>cgMLST</h2>
+				<h2 th:text="#{analysis.details.sistr.cgmlst}">_cgMLST330_</h2>
 				<table class="table table-bordered">
 					<tr ng-repeat="item in sistrCtrl.cgMLST_predictions_order">
 						<td width="30%"><strong ng-bind="item"></strong></td>
 						<td ng-bind="sistrCtrl.cgMLST_predictions[item]" style="word-wrap: break-word;"></td>
 					</tr>
 				</table>
-				<h2>Quality Control</h2>
+				<h2 th:text="#{analysis.details.sistr.mash}">_Mash_</h2>
 				<table class="table table-bordered">
-					<tr>
-						<td width="30%"><strong>Status</strong></td>
-						<td ng-bind="sistrCtrl.qc.status">QC Status</td>
-					</tr>
-					<tr ng-repeat="item in sistrCtrl.qc.messages">
-						<td width="30%"><strong>Message</strong></td>
-						<td ng-bind="item" style="word-wrap: break-word;"></td>
+					<tr ng-repeat="item in sistrCtrl.mash_predictions_order">
+						<td width="30%"><strong ng-bind="item"></strong></td>
+						<td ng-bind="sistrCtrl.mash_predictions[item]" style="word-wrap: break-word;"></td>
 					</tr>
 				</table>
+				<br/>
+				<h2 th:text="#{analysis.details.sistr.qc}">_Quality Control_</h2>
+				<table class="table table-bordered">
+					<tr>
+						<td width="30%"><strong th:text="#{analysis.details.sistr.qc.status}">_Status_</strong></td>
+						<td ng-class="{'list-group-item-success' : sistrCtrl.qc.pass, 'list-group-item-danger' : !sistrCtrl.qc.pass}" ng-bind="sistrCtrl.qc.status">QC Status</td>
+					</tr>
+					<tr ng-if="!sistrCtrl.qc.pass">
+						<td><strong th:text="#{analysis.details.sistr.qc.details}">_Details_</strong></td>
+						<td>
+							<ul ng-repeat="item in sistrCtrl.qc.messages">
+								<li ng-bind="item" style="word-wrap: break-word;"></li>
+							</ul>
+						</td>
+					</tr>
+				</table>
+				<br/>
+				<h2 th:text="#{analysis.details.sistr.citation}">_Citation_</h2>
+				<p><a href="https://doi.org/10.1371/journal.pone.0147101">The Salmonella In Silico Typing Resource (SISTR): an open web-accessible tool for rapidly typing and subtyping draft Salmonella genome assemblies. Catherine Yoshida, Peter Kruczkiewicz, Chad R. Laing, Erika J. Lingohr, Victor P.J. Gannon, John H.E. Nash, Eduardo N. Taboada. PLoS ONE 11(1): e0147101. doi: 10.1371/journal.pone.0147101</a></p>
 			</script>
 
 			<script type="text/ng-template" id="inputs.html" th:with="fileCount = ${#lists.size(paired_end) + #lists.size(remote_paired)}">
@@ -122,7 +136,7 @@
 					<h2 th:text="#{analysis.details.reference}"></h2>
 					<span th:text="${referenceFile.label}"></span>
 					<a class="btn btn-default btn-sm pull-right" th:href="@{/referenceFiles/download/{id}(id=${referenceFile.id})}">
-						<fa:icon type="download"/>&nbsp;<th:block th:text="#{form.download}">__Download__</th:block>
+						<span class="fa fa-download" aria-hidden="true"></span>&nbsp;<th:block th:text="#{form.download}">__Download__</th:block>
 					</a>
 				</th:block>
 			
@@ -159,7 +173,7 @@
 					<accordion>
 						<accordion-group class="file-info" th:each="file : ${files}">
 							<accordion-heading class="filename">
-								<fa:icon type="file" />&nbsp;
+								<span class="fa fa-file-o" aria-hidden="true"></span>&nbsp;
 								<span class="name" th:text="${file.getLabel()}"></span>
 							</accordion-heading>
 							<div th:include="analysis/details/details :: toolsLayout (${file.getCreatedByTool()})"></div>
@@ -170,8 +184,8 @@
 						     th:with="toolId=${'tool' + tool.getId()}"
 						     data:ng-init="${toolId + '=false'}">
 							<button data:ng-click="${toolId + '=!' + toolId}" class="btn btn-link tool">
-								<fa:icon data:ng-hide="${toolId}" type="show" />
-								<fa:icon data:ng-show="${toolId}" type="hide" />
+								<span class="fa fa-chevron-right" data:ng-hide="${toolId}" aria-hidden="true"></span>
+								<span class="fa fa-chevron-down" data:ng-show="${toolId}" aria-hidden="true"></span>
 								&nbsp;<span th:text="${tool.getLabel()}"></span>
 							</button>
 
