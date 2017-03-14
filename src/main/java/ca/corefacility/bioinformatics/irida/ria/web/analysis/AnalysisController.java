@@ -452,6 +452,7 @@ public class AnalysisController {
 		return DatatablesResponse.build(dataSet, criterias);
 	}
 
+	@SuppressWarnings("resource")
 	@RequestMapping("/ajax/sistr/{id}") @ResponseBody public String getSistrAnalysis(@PathVariable Long id) {
 		AnalysisSubmission submission = analysisSubmissionService.read(id);
 		String result = "";
