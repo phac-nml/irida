@@ -3,18 +3,6 @@
       layout:decorator="projects/_base" ddl:bundle-includes="project-settings">
 <head>
     <title th:text="${project.label} + ' - ' + #{project.nav.settings}"></title>
-    <script th:inline="javascript">
-      var PAGE = {
-        i18n: {
-          'error': /*[[#{project.settings.notifications.error}]]*/ '_Error updating project_'
-        },
-        urls: {
-          'assemble': /*[[@{/projects/{id}/settings/assemble(id=${project.getId()})}]]*/ '/projects/1/settings/assemble',
-          'sync': /*[[@{/projects/{id}/settings/sync(id=${project.getId()})}]]*/ '/projects/1/settings/sync',
-          'coverage': /*[[@{/projects/{id}/settings/coverage(id=${project.getId()})}]]*/ '/projects/1/settings/coverage'
-        }
-      };
-    </script>
 </head>
 <body>
 <main layout:fragment="main" ddl:bundle-includes="project-settings">
@@ -56,12 +44,11 @@
             </div>
         </div>
         <div class="col-md-10">
-            <th:block th:replace="projects/partials/settings/__${page}__.tmpl "/>
+            <div class="alert alert-error" layout:fragment="settings-content">
+                <strong>This should not be displayed.  It should be overwritten by the specific page.</strong>
+            </div>
         </div>
     </div>
 </main>
-
-<th:block th:if="${#strings.equalsIgnoreCase(page, 'remote')}" layout:fragment="scripts"
-          th:replace="remote_apis/remote_api_connect"/>
 </body>
 </html>

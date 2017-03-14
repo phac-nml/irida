@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.common.collect.ImmutableMap;
-
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
@@ -26,6 +24,8 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
+import com.google.common.collect.ImmutableMap;
 
 @Controller
 @RequestMapping("/projects/{projectId}/settings")
@@ -65,10 +65,10 @@ public class ProjectSettingsController {
 			final Principal principal) {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
-		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		model.addAttribute(ProjectsController.ACTIVE_NAV, ACTIVE_NAV_SETTINGS);
 		model.addAttribute("page", "basic");
-		return "projects/project_settings";
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+		return "projects/settings/pages/basic";
 	}
 
 	/**
@@ -89,11 +89,11 @@ public class ProjectSettingsController {
 			final Principal principal) {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
-		model.addAttribute("frequencies", ProjectSyncFrequency.values());
-		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		model.addAttribute(ProjectsController.ACTIVE_NAV, ACTIVE_NAV_SETTINGS);
 		model.addAttribute("page", "remote");
-		return "projects/project_settings";
+		model.addAttribute("frequencies", ProjectSyncFrequency.values());
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+		return "projects/settings/pages/remote";
 	}
 
 	/**
