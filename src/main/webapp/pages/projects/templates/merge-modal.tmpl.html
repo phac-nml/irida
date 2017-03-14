@@ -1,7 +1,7 @@
 <div id="merge-samples-modal" class="form">
 	<div class="modal-header">
 		<h3 class="modal-title">
-			<fa:icon type="merge"/>
+			<i class="fa fa-compress fa-fw" aria-hidden="true"></i>
 			&nbsp;
 			<span th:utext="#{project.samples.modal.merge.title}">__COMBINE_SAMPLES__</span>
 		</h3>
@@ -10,7 +10,7 @@
 		<form name="mergeForm">
 			<h4 th:text="#{project.samples.modal.merge.intro(${#lists.size(samples)})}"/>
 			<div class="alert alert-warning">
-				<strong><fa:icon type="warning" fixed="fixed" /></strong>
+				<strong><i class="fa fa-exclamation-triangle fa-fw" aria-hidden="true"></i></strong>
 				<th:block th:text="#{project.samples.modal.merge.warning}" />
 			</div>
 			<div class="radio" th:each="sample : ${samples}">
