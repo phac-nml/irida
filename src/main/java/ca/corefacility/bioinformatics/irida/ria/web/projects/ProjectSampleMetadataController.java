@@ -94,8 +94,13 @@ public class ProjectSampleMetadataController {
 		// Set up the template information
 		Project project = projectService.read(projectId);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute("templates", projectControllerUtils.getTemplateNames(locale, project));
 		return "projects/project_samples_metadata_template";
+	}
+
+	@RequestMapping("/fields")
+	@ResponseBody
+	public List<MetadataField> getMetadataFieldsForProject(@RequestParam String query) {
+		return metadataTemplateService.getAllMetadataFieldsByQueryString(query);
 	}
 
 	/**

@@ -9,7 +9,6 @@
 <main layout:fragment="main" ddl:bundle-includes="project-linelist-template">
     <h2 th:text="#{linelist.create-template.title}">Create a New Line List Template</h2>
     <template-input-component
-            data:templateurl="@{/projects/{id}/linelist/upload/metadatafields(id=${project.getId()})}"
             data:saveurl="@{/projects/{id}/linelist/linelist-templates/save-template(id=${project.getId()})}"
             data:redirecturl="@{/projects/{id}/linelist(id=${project.getId()})}"/>
     <script type="text/ng-template" id="templateInput.tmpl.html">
@@ -49,22 +48,6 @@
                     </button>
                 </div>
             </div>
-            <div class="row spaced-bottom" th:if="${!#lists.isEmpty(templates)}">
-                <div class="form-group col-md-8">
-                    <label for="existing-templates" th:text="#{linelist.create-template.add-existing}">Add Existing
-                        Template</label>
-                    <ui-select multiple=""
-                               ng-model="$ctrl.existing"
-                               on-select="$ctrl.onSelectTemplate($item, $model)"
-                               on-remove="$ctrl.onRemoveTemplate($item, $model)"
-                               theme="bootstrap">
-                        <ui-select-match>{{$item.label}}</ui-select-match>
-                        <ui-select-choices repeat="template in $ctrl.templates">
-                            <div ng-bind="template.label"></div>
-                        </ui-select-choices>
-                    </ui-select>
-                </div>
-            </div>
             <label th:text="#{linelist.create-template.template-fields}">Template Fields</label>
             <div class="row">
                 <div class="col-md-8">
@@ -87,15 +70,16 @@
                                         <td>
                                             <div class="form-group entry"
                                                  ng-class="{'has-error' : entry.fieldName.$invalid}">
-                                                <input type="text"
-                                                       name="fieldName"
-                                                       class="form-control field-label"
-                                                       ng-model="item.label"
-                                                       required="required"
-                                                       placeholder="Field Name"
-                                                       index="{{ $index }}"
-                                                       minlength="2"
-                                                       no-repeat-name=""/>
+                                                <metadata-select2></metadata-select2>
+                                                <!--<input type="text"-->
+                                                       <!--name="fieldName"-->
+                                                       <!--class="form-control field-label"-->
+                                                       <!--ng-model="item.label"-->
+                                                       <!--required="required"-->
+                                                       <!--placeholder="Field Name"-->
+                                                       <!--index="{{ $index }}"-->
+                                                       <!--minlength="2"-->
+                                                       <!--no-repeat-name=""/>-->
                                                 <div ng-messages="entry.fieldName.$error">
                                                     <p class="label label-danger" ng-message="required"
                                                        th:text="#{linelist.create-template.field.required}">_This is a
@@ -139,11 +123,6 @@
 
 </main>
 <th:block layout:fragment="scripts">
-    <script th:inline="javascript">
-      var PAGE = {
-        templates: /*[[${templates}]]*/ []
-      };
-    </script>
     <script src="/resources/js/build/project-linelist-template.bundle.js"></script>
 </th:block>
 </body>

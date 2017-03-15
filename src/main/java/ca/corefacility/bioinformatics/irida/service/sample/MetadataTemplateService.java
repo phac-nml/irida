@@ -44,5 +44,23 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	 */
 	public MetadataField readMetadataFieldByLabel(String label);
 
+	/**
+	 * Save a new metadata fields
+	 *
+	 * @param field
+	 * 		the {@link MetadataField} to save.
+	 *
+	 * @return the saved {@link MetadataField}
+	 */
 	public MetadataField saveMetadataField(MetadataField field);
+
+	/**
+	 * Get a list of all {@link MetadataField}s that contain the query
+	 *
+	 * @param query
+	 * 		the {@link String} to search labels for.
+	 *
+	 * @return {@link List} of {@link MetadataField}
+	 */
+	public List<MetadataField> getAllMetadataFieldsByQueryString(String query);
 }

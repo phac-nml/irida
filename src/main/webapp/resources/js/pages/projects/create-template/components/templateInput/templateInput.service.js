@@ -6,14 +6,6 @@ export class TemplateInputService {
     this.$http = $http;
     this.$window = $window;
   }
-
-  getFieldsForTemplate(url, template) {
-    if (template) {
-      url = `${url}?templateId=${template}`;
-    }
-    return this.$http.get(url)
-      .then(response => response.data);
-  }
   saveTemplate(url, template, redirectUrl) {
     // Need to use jquery since I made a bad decision early on to wrap $http posts
     // to be form data :(
