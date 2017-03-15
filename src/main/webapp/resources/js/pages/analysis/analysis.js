@@ -150,8 +150,9 @@
       if (result['parse_results_error']) {
         vm.parse_results_error = true;
       } else {
-        var serotype_predictions_order = ['Serovar (overall)', 'Serovar (antigen)', 'Serovar (cgMLST)', 'Serovar (mash)', 'Serogroup', 'H1', 'H2', 'O antigen'];
+        var serotype_predictions_order = ['Sample name', 'Serovar (overall)', 'Serovar (antigen)', 'Serovar (cgMLST)', 'Serovar (mash)', 'Serogroup', 'H1', 'H2', 'O antigen'];
         var serotype_predictions = {};
+        serotype_predictions['Sample name'] = result['sample_name'];
         serotype_predictions['Serovar (overall)'] = result['serovar'];
         serotype_predictions['Serovar (antigen)'] = result['serovar_antigen'];
         serotype_predictions['Serovar (cgMLST)'] = result['serovar_cgmlst'];

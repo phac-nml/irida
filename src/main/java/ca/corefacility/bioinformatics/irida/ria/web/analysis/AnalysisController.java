@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -47,6 +48,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteExcep
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -63,6 +65,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.Datata
 import ca.corefacility.bioinformatics.irida.security.permissions.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
@@ -101,17 +104,19 @@ public class AnalysisController {
 	private MessageSource messageSource;
 	private UserService userService;
 	private ProjectService projectService;
+	private SampleService sampleService;
 	private UpdateAnalysisSubmissionPermission updateAnalysisPermission;
 
 	@Autowired
 	public AnalysisController(AnalysisSubmissionService analysisSubmissionService,
 			IridaWorkflowsService iridaWorkflowsService, UserService userService, ProjectService projectService, UpdateAnalysisSubmissionPermission updateAnalysisPermission,
-			MessageSource messageSource) {
+			SampleService sampleService, MessageSource messageSource) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
 		this.messageSource = messageSource;
 		this.userService = userService;
 		this.projectService = projectService;
+		this.sampleService = sampleService;
 		this.updateAnalysisPermission = updateAnalysisPermission;
 	}
 
@@ -459,8 +464,9 @@ public class AnalysisController {
 	@SuppressWarnings("resource")
 	@RequestMapping("/ajax/sistr/{id}") @ResponseBody public Map<String,Object> getSistrAnalysis(@PathVariable Long id) {
 		AnalysisSubmission submission = analysisSubmissionService.read(id);
+		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubimssion(submission);
 		Map<String,Object> result = ImmutableMap.of("parse_results_error", true);
-
+		
 		// Get details about the workflow
 		UUID workflowUUID = submission.getWorkflowId();
 		IridaWorkflow iridaWorkflow;
@@ -482,8 +488,17 @@ public class AnalysisController {
 				List<Map<String,Object>> sistrResults = mapper.readValue(json, new TypeReference<List<Map<String,String>>>(){});
 				
 				if (sistrResults.size() > 0) {
-					result = sistrResults.get(0);
-					result.put("parse_results_error", false);
+					// should only ever be one sample for these results
+					if (samples.size() == 1) {
+						Sample sample = samples.iterator().next();
+						result = sistrResults.get(0);
+						
+						result.put("parse_results_error", false);
+						
+						result.put("sample_name", sample.getSampleName());
+					} else {
+						logger.error("Invalid number of associated samles for submission " + submission);
+					}
 				} else {
 					logger.error("SISTR results for file [" + path + "] are not correctly formatted");
 				}
