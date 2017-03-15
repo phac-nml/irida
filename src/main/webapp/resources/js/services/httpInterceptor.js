@@ -36,7 +36,7 @@
                             $interval.cancel(countdown);
                             $timeout.cancel(restartTimeout);
                             $timeout.cancel(timeout);
-                            $http.head($window.location.href).success(function () {
+                          $http.head($window.location.href).then(function() {
                                 start();
                                 opened = false;
                                 $uibModalInstance.close();

@@ -74,7 +74,7 @@
                 $http({
                   method: 'DELETE',
                   url: PAGE.urls.remove,
-                }).success(function(){
+                }).then(function() {
                   window.location = PAGE.urls.list
                 });
               };

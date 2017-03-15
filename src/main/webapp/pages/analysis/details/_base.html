@@ -36,35 +36,35 @@
         <div class="sidebar__body">
           <div class="sidebar__item">
             <div class="sidebar__icon">
-              <fa:icon type="id" fixed="fixed"/>
+              <span class="fa fa-barcode fa-fw" aria-hidden="true"></span>
             </div>
             <div th:text="#{iridaThing.id}">_ID_</div>
             <div class="sidebar__value" th:text="${analysisSubmission.getId()}"></div>
           </div>
           <div class="sidebar__item">
             <div class="sidebar__icon">
-              <fa:icon type="pipelineType" fixed="fixed"/>
+              <span class="fa fa-cogs fa-fw" aria-hidden="true"></span>
             </div>
             <div th:text="#{analysis.details.type}">_Workflow_</div>
             <div class="sidebar__value" th:text="${workflowName}"></div>
           </div>
           <div class="sidebar__item">
             <div class="sidebar__icon">
-              <fa:icon type="pipelineVersion" fixed="fixed"/>
+              <span class="fa fa-heartbeat fa-fw" aria-hidden="true"></span>
             </div>
             <div th:text="#{analysis.details.version}">_Workflow_</div>
             <div class="sidebar__value" th:text="${version}"></div>
           </div>
           <div class="sidebar__item">
             <div class="sidebar__icon">
-              <fa:icon type="pipelineState" fixed="fixed"/>
+              <span class="fa fa-code-fork fa-fw" aria-hidden="true"></span>
             </div>
             <div th:text="#{analysis.details.state}">_State_</div>
             <div class="sidebar__value" ng-bind="stateController.stateLang"></div>
           </div>
           <div class="sidebar__item">
             <div class="sidebar__icon">
-              <fa:icon type="date" fixed="fixed"/>
+              <span class="fa fa-calendar-o fa-fw" aria-hidden="true"></span>
             </div>
             <div th:text="#{iridaThing.timestamp}">Created</div>
             <div class="sidebar__value" th:text="${#calendars.format(analysisSubmission.getCreatedDate(), 'dd MMM yyyy')}"></div>
@@ -79,13 +79,13 @@
         <div class="sidebar__body">
           <div class="sidebar__item" th:each="file : ${files}">
             <div class="sidebar__icon">
-              <fa:icon type="file" />
+              <span class="fa fa-file-o fa-fw" aria-hidden="true"></span>
             </div>
             <div th:text="${file.getLabel()}"></div>
           </div>
           <div class="sidebar__item">
             <button class="btn btn-default btn-sm btn-block spaced-bottom" data:ng-click="'fileDownloadController.getZipFile(\'' + ${analysisSubmission.getId()} +'\')'">
-              <fa:icon type="download" />&nbsp;
+              <span class="fa fa-download" aria-hidden="true"></span>&nbsp;
               <th:block th:text="#{form.download-files}">Download Files</th:block>
             </button>
           </div>

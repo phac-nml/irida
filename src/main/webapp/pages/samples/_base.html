@@ -32,14 +32,14 @@
 			<div class="sidebar__body">
 				<div class="sidebar__item">
 					<div class="sidebar__item">
-						<fa:icon type="id" />
+						<i class="fa fa-barcode fa-fw" aria-hidden="true"></i>
 					</div>
 					<div th:text="#{samples.details.id}">ID</div>
 					<div id="sb-id" class="sidebar__value" th:text="${sample.getId()}"></div>
 				</div>
 				<div class="sidebar__item">
 					<div class="sidebar__icon">
-						<fa:icon type="organism" />
+						<i class="fa fa-leaf fa-fw" aria-hidden="true"></i>
 					</div>
 					<div th:text="#{samples.details.organism}">Organism</div>
 					<div class="sidebar__value"><i
@@ -48,15 +48,15 @@
 				</div>
 				<div class="sidebar__item">
 					<div class="sidebar__icon">
-						<fa:icon type="date" />
+						<i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
 					</div>
-					<div><em th:text="#{samples.details.created}">Created</em></div>
+					<div th:text="#{samples.details.created}">Createdr</div>
 					<div id="sb-created" class="sidebar__value"
 					     th:text="${#calendars.format(sample.getCreatedDate(), 'dd MMM yyyy')}"></div>
 				</div>
 				<div class="sidebar__item">
 					<div class="sidebar__icon">
-						<fa:icon type="date" />
+						<i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
 					</div>
 					<div th:text="#{samples.details.modified}">Modified</div>
 					<div class="sidebar__value" id="sb-modified" data:livestamp="${sample.getModifiedDate()}"
@@ -65,7 +65,7 @@
 				<div th:if="${sample.isRemote()}" th:with="status=${sample.getRemoteStatus()}">
 					<div class="sidebar__item">
 						<div class="sidebar__icon">
-							<fa:icon type="remote" />
+							<i class="fa fa-exchange fa-fw" aria-hidden="true"></i>
 						</div>
 						<div th:text="#{sample.sync.source}">_Source_</div>
 						<div class="sidebar__value">
@@ -74,7 +74,7 @@
 					</div>
 					<div class="sidebar__item">
 						<div class="sidebar__icon">
-							<fa:icon type="pipelineState" />
+							<i class="fa fa-heartbeat fa-fw" aria-hidden="true"></i>
 						</div>
 						<div th:text="#{project.sync.status}">_Status_</div>
 						<div class="sidebar__value" th:text="#{'project.sync.status.'+${status.getSyncStatus()}}">_status_</div>
