@@ -147,43 +147,47 @@
     var vm = this;
 
     analysisService.getSistrResults().then(function(result) {
-      var preds = result[0];
-      var serotype_predictions_order = ['Serovar (overall)', 'Serovar (antigen)', 'Serovar (cgMLST)', 'Serovar (mash)', 'Serogroup', 'H1', 'H2', 'O antigen'];
-      var serotype_predictions = {};
-      serotype_predictions['Serovar (overall)'] = preds['serovar'];
-      serotype_predictions['Serovar (antigen)'] = preds['serovar_antigen'];
-      serotype_predictions['Serovar (cgMLST)'] = preds['serovar_cgmlst'];
-      serotype_predictions['Serovar (mash)'] = preds['mash_serovar'];
-      serotype_predictions['Serogroup'] = preds['serogroup'];
-      serotype_predictions['H1'] = preds['h1'];
-      serotype_predictions['H2'] = preds['h2'];
-      serotype_predictions['O antigen'] = preds['o_antigen'];
-
-      var cgMLST_predictions = {};
-      var cgMLST_predictions_order = ['cgMLST subspecies', 'cgMLST matching alleles', 'cgMLST genome match', 'cgMLST ST'];
-      cgMLST_predictions['cgMLST subspecies'] = preds['cgmlst_subspecies'];
-      cgMLST_predictions['cgMLST matching alleles'] = preds['cgmlst_matching_alleles']+'/330';
-      cgMLST_predictions['cgMLST genome match'] = preds['cgmlst_genome_match'];
-      cgMLST_predictions['cgMLST ST'] = preds['cgmlst_ST'];
-
-      var mash_predictions = {};
-      var mash_predictions_order = ['Mash subspecies', 'Mash match', 'Mash genome'];
-      mash_predictions['Mash subspecies'] = preds['mash_subspecies'];
-      mash_predictions['Mash match'] = preds['mash_match'];
-      mash_predictions['Mash genome'] = preds['mash_genome'];
-
-      var qc = {};
-      qc['messages'] = preds['qc_messages'].split("|");
-      qc['status'] = preds['qc_status'];
-      qc['pass'] = (preds['qc_status'] == 'PASS');
-
-      vm.serotype_predictions = serotype_predictions;
-      vm.serotype_predictions_order = serotype_predictions_order;
-      vm.cgMLST_predictions_order = cgMLST_predictions_order;
-      vm.cgMLST_predictions = cgMLST_predictions;
-      vm.mash_predictions_order = mash_predictions_order;
-      vm.mash_predictions = mash_predictions;
-      vm.qc = qc;
+      if (result['parse_results_error']) {
+        vm.parse_results_error = true;
+      } else {
+        var serotype_predictions_order = ['Serovar (overall)', 'Serovar (antigen)', 'Serovar (cgMLST)', 'Serovar (mash)', 'Serogroup', 'H1', 'H2', 'O antigen'];
+        var serotype_predictions = {};
+        serotype_predictions['Serovar (overall)'] = result['serovar'];
+        serotype_predictions['Serovar (antigen)'] = result['serovar_antigen'];
+        serotype_predictions['Serovar (cgMLST)'] = result['serovar_cgmlst'];
+        serotype_predictions['Serovar (mash)'] = result['mash_serovar'];
+        serotype_predictions['Serogroup'] = result['serogroup'];
+        serotype_predictions['H1'] = result['h1'];
+        serotype_predictions['H2'] = result['h2'];
+        serotype_predictions['O antigen'] = result['o_antigen'];
+  
+        var cgMLST_predictions = {};
+        var cgMLST_predictions_order = ['cgMLST subspecies', 'cgMLST matching alleles', 'cgMLST genome match', 'cgMLST ST'];
+        cgMLST_predictions['cgMLST subspecies'] = result['cgmlst_subspecies'];
+        cgMLST_predictions['cgMLST matching alleles'] = result['cgmlst_matching_alleles']+'/330';
+        cgMLST_predictions['cgMLST genome match'] = result['cgmlst_genome_match'];
+        cgMLST_predictions['cgMLST ST'] = result['cgmlst_ST'];
+  
+        var mash_predictions = {};
+        var mash_predictions_order = ['Mash subspecies', 'Mash match', 'Mash genome'];
+        mash_predictions['Mash subspecies'] = result['mash_subspecies'];
+        mash_predictions['Mash match'] = result['mash_match'];
+        mash_predictions['Mash genome'] = result['mash_genome'];
+  
+        var qc = {};
+        qc['messages'] = result['qc_messages'].split("|");
+        qc['status'] = result['qc_status'];
+        qc['pass'] = (result['qc_status'] == 'PASS');
+  
+        vm.serotype_predictions = serotype_predictions;
+        vm.serotype_predictions_order = serotype_predictions_order;
+        vm.cgMLST_predictions_order = cgMLST_predictions_order;
+        vm.cgMLST_predictions = cgMLST_predictions;
+        vm.mash_predictions_order = mash_predictions_order;
+        vm.mash_predictions = mash_predictions;
+        vm.qc = qc;
+        vm.parse_results_error = result['parse_results_error'];
+      }
     });
   }
 
