@@ -1,7 +1,7 @@
 <div id="copy-samples-modal" th:with="total=${#lists.size(samples) + #lists.size(extraSamples)}">
 	<div class="modal-header">
 		<h3 class="modal-title">
-			<fa:icon type="copy"/>
+			<i class="fa fa-files-o fa-fw" aria-hidden="true"></i>
 			&nbsp;
 			<th:block th:if="${total == 1}" th:text="#{project.samples.modal.copy.title-singular}"/>
 			<th:block th:if="${total > 1}" th:text="#{project.samples.modal.copy.title-plural}"/>

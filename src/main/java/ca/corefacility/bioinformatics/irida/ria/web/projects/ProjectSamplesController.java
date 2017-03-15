@@ -186,7 +186,7 @@ public class ProjectSamplesController {
 	 *
 	 * @return Location of the modal template
 	 */
-	@RequestMapping("/projects/template/samples/linker")
+	@RequestMapping(value = "/projects/template/samples/linker", produces = MediaType.TEXT_HTML_VALUE)
 	public String getLinkerModal(@RequestParam Long projectId,
 			@RequestParam(name = "ids[]", required = false) List<Long> ids,
 			Model model) {
@@ -212,7 +212,7 @@ public class ProjectSamplesController {
 	 *
 	 * @return
 	 */
-	@RequestMapping("/projects/templates/remove-modal")
+	@RequestMapping(value = "/projects/templates/remove-modal", produces = MediaType.TEXT_HTML_VALUE)
 	public String getRemoveSamplesFromProjectModal(@RequestParam(name = "sampleIds[]") List<Long> ids, Model model) {
 		List<Sample> samplesThatAreInMultiple = new ArrayList<>();
 		List<Sample> samplesThatAreInOne = new ArrayList<>();
@@ -255,7 +255,7 @@ public class ProjectSamplesController {
 	 *
 	 * @return
 	 */
-	@RequestMapping("/projects/templates/merge-modal")
+	@RequestMapping(value = "/projects/templates/merge-modal", produces = MediaType.TEXT_HTML_VALUE)
 	public String getMergeSamplesInProjectModal(@RequestParam(name = "sampleIds[]") List<Long> ids, Model model) {
 		List<Sample> samples = (List<Sample>) sampleService.readMultiple(ids);
 		model.addAttribute("samples", samples);
@@ -272,7 +272,7 @@ public class ProjectSamplesController {
 	 *
 	 * @return
 	 */
-	@RequestMapping("/projects/templates/copy-modal")
+	@RequestMapping(value = "/projects/templates/copy-modal", produces = MediaType.TEXT_HTML_VALUE)
 	public String getCopySamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, @RequestParam Long projectId,
 			Model model) {
 		model.addAllAttributes(generateCopyMoveSamplesContent(ids));
@@ -292,7 +292,7 @@ public class ProjectSamplesController {
 	 *
 	 * @return {@link String} path to the modal template
 	 */
-	@RequestMapping("/projects/template/samples-filter-modal")
+	@RequestMapping(value = "/projects/template/samples-filter-modal", produces = MediaType.TEXT_HTML_VALUE)
 	public String getProjectSamplesFilterModal(
 			@RequestParam(value = "projectIds[]", required = false, defaultValue = "") List<Long> projectIds,
 			Model model) {
@@ -325,7 +325,7 @@ public class ProjectSamplesController {
 	 *
 	 * @return
 	 */
-	@RequestMapping("/projects/templates/move-modal")
+	@RequestMapping(value = "/projects/templates/move-modal", produces = MediaType.TEXT_HTML_VALUE)
 	public String getMoveSamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, @RequestParam Long projectId,
 			Model model) {
 		model.addAllAttributes(generateCopyMoveSamplesContent(ids));
