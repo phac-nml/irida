@@ -146,7 +146,7 @@
                             aria-haspopup="true">
                         <th:block th:text="#{project.samples.nav.associated}"></th:block>
                         &nbsp;
-                        <fa:icon type="caret-down" fixed="fixed"/>
+                        <i class="fa fa-caret-down" aria-hidden="true"></i>
                     </button>
                     <ul id="associated-dropdown" class="dropdown-menu" uib-dropdown-menu="" role="menu"
                         aria-labelledby="associated-btn">
@@ -177,14 +177,14 @@
                     <div style="display: inline-block;" uib-dropdown="" >
                         <button id="sample-tools" class="btn btn-default btn-sm" uib-dropdown-toggle="" type="button">
                         <th:block th:text="#{project.samples.nav.sample-tools}"></th:block>&nbsp;
-                        <fa:icon type="caret-down" fixed="fixed"/>
+                            <i class="fa fa-caret-down fa-fw" aria-hidden="true"></i>
                     </button>
                     <ul id="sample-tools-dropdown" class="dropdown-menu" uib-dropdown-menu="" role="menu">
                         <li id="mergeBtn" ng-class="{disabled: toolsCtrl.disabled.lessThanTwo || toolsCtrl.disabled.hasAssociated}"
                             tooltip-enable="toolsCtrl.disabled.lessThanTwo || toolsCtrl.disabled.hasAssociated"
                             uib-tooltip-template="'merge.msg.tmpl'">
                             <a href="#" ng-click="toolsCtrl.merge()">
-                                <fa:icon type="merge" fixed="true"/>&nbsp;
+                                <i class="fa fa-compress fa-fw" aria-hidden="true"></i> &nbsp;
                                 <th:block th:text="#{project.samples.nav.merge}">Merge</th:block>
                             </a>
                         </li>
@@ -192,7 +192,7 @@
                             tooltip-enable="toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated"
                             uib-tooltip-template="'copy.msg.tmpl'">
                             <a href="#" ng-click="toolsCtrl.copy()">
-                                <fa:icon type="copy" fixed="true"/>&nbsp;
+                                <i class="fa fa-files-o fa-fw" aria-hidden="true"></i>&nbsp;
                                 <th:block th:text="#{project.samples.nav.copy}">_COPY_</th:block>
                             </a>
                         </li>
@@ -200,7 +200,7 @@
                             tooltip-enable="toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated"
                             uib-tooltip-template="'move.msg.tmpl'">
                             <a href="#" ng-click="toolsCtrl.move()">
-                                <fa:icon type="move" fixed="true"/>&nbsp;
+                                <i class="fa fa-truck fa-fw" aria-hidden="true"></i>&nbsp;
                                 <th:block th:text="#{project.samples.nav.move}">_MOVE_</th:block>
                             </a>
                         </li>
@@ -208,14 +208,14 @@
                             tooltip-enable="toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated"
                             uib-tooltip-template="'remove.msg.tmpl'">
                             <a href="#" ng-click="toolsCtrl.remove()">
-                                <fa:icon type="delete" fixed="true"/>&nbsp;
+                                <i class="fa fa-trash fa-fw" aria-hidden="true"></i>&nbsp;
                                 <th:block th:text="#{project.samples.nav.remove}">_MOVE_</th:block>
                             </a>
                         </li>
                         <li role="separator" class="divider"></li>
                         <li>
                             <a th:href="@{/projects/{id}/samples/new(id=${project.getId()})}">
-                                <fa:icon type="create" fixed="true"/>&nbsp;
+                                <i class="fa fa-plus fa-fw" aria-hidden="true"></i>&nbsp;
                                 <th:block th:text="#{project.samples.nav.new}"/>
                             </a></li>
                     </ul>
@@ -223,7 +223,7 @@
                     <div style="display: inline-block;" uib-dropdown="">
                         <button id="export-samples-btn" class="btn btn-default btn-sm" uib-dropdown-toggle="">
                             <th:block th:text="#{project.samples.export.label}" />&nbsp;
-                            <fa:icon type="caret-down" fixed="fixed"/>
+                            <i class="fa fa-caret-down fa-fw" aria-hidden="true"></i>
                         </button>
                         <ul class="dropdown-menu" uib-dropdown-menu="" role="menu" aria-labelledby="export-samples-btn">
                             <li id="download-btn" role="menuitem"
@@ -231,7 +231,7 @@
                                 tooltip-enable="toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated"
                                 uib-tooltip-template="'download.msg.tmpl'">
                                 <a href="#" ng-click="toolsCtrl.download()">
-                                    <fa:icon type="download" />&nbsp;<th:block th:text="#{project.samples.export.download}"/>
+                                    <i class="fa fa-download fa-fw" aria-hidden="true"></i>&nbsp;<th:block th:text="#{project.samples.export.download}"/>
                                 </a>
                             </li>
                             <li id="linker-btn" th:if="${linkerAvailable}" role="menuitem"
@@ -239,14 +239,14 @@
                                 tooltip-enable="toolsCtrl.disabled.hasAssociated"
                                 uib-tooltip-template="'linker.msg.tmpl'">
                                 <a href="#" ng-click="toolsCtrl.linker()">
-                                    <fa:icon type="terminal" />&nbsp;<th:block th:text="#{project.samples.export.linker}"/>
+                                    <i class="fa fa-terminal fa-fw" aria-hidden="true"></i>&nbsp;<th:block th:text="#{project.samples.export.linker}"/>
                                 </a>
                             </li>
                             <li role="menuitem"
                                 th:if="${galaxyCallback}"
                                 ng-class="{disabled: toolsCtrl.disabled.hasAssociated}">
                                 <a href="#" ng-click="toolsCtrl.galaxy(); cart.show=false">
-                                    <fa:icon type="cloud" fixed="true"/>
+                                    <i class="fa fa-cloud-upload fa-fw" aria-hidden="true"></i>
                                     <span th:text="#{project.samples.export.galaxy}"></span>
                                 </a>
                             </li>
@@ -255,22 +255,22 @@
                                 tooltip-enable="toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated"
                                 uib-tooltip-template="'ncbi.msg.tmpl'">
                                 <a href="#" ng-click="toolsCtrl.ncbiExport()">
-                                    <fa:icon type="upload" />&nbsp;<th:block th:text="#{project.samples.export.ncbi}"/>
+                                    <i class="fa fa-upload fa-fw" aria-hidden="true"></i>&nbsp;<th:block th:text="#{project.samples.export.ncbi}"/>
                                 </a>
                             </li>
                             <li role="separator" class="divider"></li>
                             <li>
                                 <a href="#" ng-click="toolsCtrl.exportToFile('xlsx')">
-                                    <fa:icon type="excel" />&nbsp;<th:block th:text="#{project.samples.export-to-excel}"/>
+                                    <i class="fa fa-file-excel-o fa-fw" aria-hidden="true"></i>&nbsp;<th:block th:text="#{project.samples.export-to-excel}"/>
                                 </a></li>
                             <li>
                                 <a href="#" ng-click="toolsCtrl.exportToFile('csv')">
-                                    <fa:icon type="file" />&nbsp;<th:block th:text="#{project.samples.export-to-csv}"/>
+                                    <i class="fa fa-file-o fa-fw" aria-hidden="true"></i>&nbsp;<th:block th:text="#{project.samples.export-to-csv}"/>
                                 </a></li>
                         </ul>
                     </div>
                     <button id="cart-add-btn" class="btn btn-primary btn-sm" ng-click="toolsCtrl.addToCart()">
-                        <fa:icon type="cart-plus"/>
+                        <i class="fa fa-cart-plus fa-fw" aria-hidden="true"></i>
                         &nbsp;
                         <th:block th:text="#{project.samples.nav.add-to-cart}">Add To Cart</th:block>
                     </button>
@@ -305,7 +305,7 @@
                 <label class="btn btn-default" for="filter-file-input" data:uib-tooltip="#{project.sample.filterByFile.modal.title}"
                        tooltip-append-to-body="true">
                     <input type="file" name="file" id="filter-file-input" class="inputfile" filter-by-file="filterCtrl.filterByFile($fileContent)"/>
-                    <fa:icon type="file" />
+                    <i class="fa fa-file-o fa-fw" aria-hidden="true"></i>
                 </label>
             </div>
             <button id="clearFilterBtn" class="btn btn-sm" th:text="#{form.btn.clear}" ng-click="filterCtrl.clearAll()">Clear</button>
