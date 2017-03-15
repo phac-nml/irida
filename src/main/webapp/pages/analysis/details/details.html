@@ -93,6 +93,13 @@
 					<h2 th:text="#{analysis.details.sistr.error}">_SISTR results unavailable._</h2>
 				</div>
 				<div ng-hide="sistrCtrl.parse_results_error">
+					<h2 th:text="#{analysis.details.sistr.sample.information}">_Sample information_</h2>
+					<table class="table table-bordered">
+						<tr ng-repeat="item in sistrCtrl.sample_information_order">
+							<td width="30%"><strong ng-bind="item"></strong></td>
+							<td ng-bind="sistrCtrl.sample_information[item]" style="word-wrap: break-word;"></td>
+						</tr>
+					</table>
 					<h2 th:text="#{analysis.details.sistr.serovar}">_Serovar Prediction_</h2>
 					<table class="table table-bordered">
 						<tr ng-repeat="item in sistrCtrl.serotype_predictions_order">

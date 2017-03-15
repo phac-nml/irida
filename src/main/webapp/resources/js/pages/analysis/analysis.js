@@ -150,9 +150,13 @@
       if (result['parse_results_error']) {
         vm.parse_results_error = true;
       } else {
+        var sample_information_order = ['Name', 'Organism'];
+        var sample_information = {};
+        sample_information['Name'] = result['sample_name'];
+        sample_information['Organism'] = result['organism'];
+
         var serotype_predictions_order = ['Sample name', 'Serovar (overall)', 'Serovar (antigen)', 'Serovar (cgMLST)', 'Serovar (mash)', 'Serogroup', 'H1', 'H2', 'O antigen'];
         var serotype_predictions = {};
-        serotype_predictions['Sample name'] = result['sample_name'];
         serotype_predictions['Serovar (overall)'] = result['serovar'];
         serotype_predictions['Serovar (antigen)'] = result['serovar_antigen'];
         serotype_predictions['Serovar (cgMLST)'] = result['serovar_cgmlst'];
@@ -180,6 +184,8 @@
         qc['status'] = result['qc_status'];
         qc['pass'] = (result['qc_status'] == 'PASS');
   
+        vm.sample_information = sample_information;
+        vm.sample_information_order = sample_information_order;
         vm.serotype_predictions = serotype_predictions;
         vm.serotype_predictions_order = serotype_predictions_order;
         vm.cgMLST_predictions_order = cgMLST_predictions_order;
