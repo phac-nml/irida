@@ -95,9 +95,9 @@
 				<div ng-hide="sistrCtrl.parse_results_error">
 					<h2 th:text="#{analysis.details.sistr.sample.information}">_Sample information_</h2>
 					<table class="table table-bordered">
-						<tr ng-repeat="item in sistrCtrl.sample_information_order">
-							<td width="30%"><strong ng-bind="item"></strong></td>
-							<td ng-bind="sistrCtrl.sample_information[item]" style="word-wrap: break-word;"></td>
+						<tr>
+							<td width="30%"><strong th:text="#{analysis.details.sistr.sample.information.name}">_Name_</strong></td>
+							<td ng-bind="sistrCtrl.sample_information['name']" style="word-wrap: break-word;"></td>
 						</tr>
 					</table>
 					<h2 th:text="#{analysis.details.sistr.serovar}">_Serovar Prediction_</h2>
@@ -132,7 +132,7 @@
 							<td><strong th:text="#{analysis.details.sistr.qc.details}">_Details_</strong></td>
 							<td>
 								<ul ng-repeat="item in sistrCtrl.qc.messages">
-									<li ng-bind="item" style="word-wrap: break-word;"></li>
+									<li ng-bind="item"/>
 								</ul>
 							</td>
 						</tr>

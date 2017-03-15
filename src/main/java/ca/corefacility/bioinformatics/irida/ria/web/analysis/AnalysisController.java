@@ -496,7 +496,6 @@ public class AnalysisController {
 						result.put("parse_results_error", false);
 						
 						result.put("sample_name", sample.getSampleName());
-						result.put("sample_organism", sample.getOrganism());
 					} else {
 						logger.error("Invalid number of associated samles for submission " + submission);
 					}
