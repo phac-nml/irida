@@ -4,3 +4,7 @@ export const METADATA = {
   TEMPLATE: 'metadata.template',
   ALL_FIELDS: 'metadata.all_fields'
 };
+
+export const ERRORS = {
+
+};
