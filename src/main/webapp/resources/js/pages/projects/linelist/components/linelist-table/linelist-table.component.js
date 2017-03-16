@@ -68,7 +68,7 @@ function controller($scope,
    * Listen for changes to which template is to be displayed in the table.
    */
   $scope.$on(EVENTS.TABLE.template, (e, args) => {
-    const {templateFields} = args.fields;
+    const templateFields = args.fields;
 
     // The `order` will be and array of the current ordering (e.g.: [1, 2, 4, 5, 3])
     // in relation to its initial order.
