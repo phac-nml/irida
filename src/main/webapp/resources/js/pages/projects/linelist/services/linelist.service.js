@@ -11,21 +11,13 @@ export class LinelistService {
     return defer.promise;
   }
 
-  getColumns() {
+  getHeaders() {
     return this.$window.headersList;
-  }
-
-  getTemplates() {
-    return this.$window.templates;
-  }
-
-  saveTemplate({url, name, fields}) {
-    return this.$http
-      .post(url, {
-        fields,
-        name
-      });
   }
 }
 
-LinelistService.$inject = ['$window', '$http', '$q'];
+LinelistService.$inject = [
+  '$window',
+  '$http',
+  '$q'
+];

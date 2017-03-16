@@ -23,7 +23,6 @@ const saveMetadata = {
             notifications.show({
               msg: results.success
             });
-            // Redirection to the project samples page.
             $window.location.href = this.url;
           }
           if (results['save-errors']) {

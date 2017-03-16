@@ -1,19 +1,34 @@
 import {EVENTS} from './constants';
 
+/**
+ * Controller for the entire LineList page
+ * @param {function} LinelistService service to handle getting linelist fields.
+ * @param {object} $scope Angular dom scoppe
+ */
 function controller(LinelistService, $scope) {
-  this.headers = LinelistService.getColumns();
-  this.metadata = LinelistService.getMetadata();
+  this.fields = [];
 
-  this.updateColumnVisibility = function(column) {
-    $scope.$broadcast(EVENTS.TABLE.columnVisibility, column);
+  this.$onInit = function onInit() {
+    this.fields = LinelistService.getHeaders();
+  };
+
+  this.updateColumnVisibility = column => {
+    $scope.$broadcast(EVENTS.TABLE.columnVisibility, {column});
   };
 
   this.columnReorder = columns => {
     $scope.$broadcast(EVENTS.TABLE.colReorder, {columns});
   };
+
+  this.templateSelected = fields => {
+    $scope.$broadcast(EVENTS.TABLE.template, {fields});
+  };
 }
 
-controller.$inject = ['LinelistService', '$scope'];
+controller.$inject = [
+  'LinelistService',
+  '$scope'
+];
 
 export const Linelist = {
   templateUrl: 'linelist.tmpl.html',
