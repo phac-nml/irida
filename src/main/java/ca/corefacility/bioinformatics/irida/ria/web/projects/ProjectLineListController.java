@@ -32,7 +32,6 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 @Controller
@@ -245,11 +244,6 @@ public class ProjectLineListController {
 		Project project = projectService.read(projectId);
 		List<ProjectMetadataTemplateJoin> joins = metadataTemplateService.getMetadataTemplatesForProject(project);
 		List<MetadataTemplate> templates = new ArrayList<>();
-		// Add Template for all fields
-		MetadataTemplate allTemplate = new MetadataTemplate(
-				messageSource.getMessage("linelist.templates.all", new Object[] {}, locale), ImmutableList.of());
-		allTemplate.setId(0L);
-		templates.add(allTemplate);
 
 		for (ProjectMetadataTemplateJoin join : joins) {
 			templates.add(join.getObject());
