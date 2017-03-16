@@ -1,5 +1,9 @@
+import {ERRORS} from './../../constants';
+
 function appController($scope) {
-  this.hasErrors = true;
+  $scope.$on(ERRORS.METADATA, () => {
+    this.metadataError = true;
+  });
 }
 
 appController.$inject = [

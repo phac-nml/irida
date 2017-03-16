@@ -54,7 +54,10 @@
 
     <script type="text/ng-template" id="app-component.tmpl.html">
         <h1 th:text="#{visualization.phylogenomics.title}"></h1>
-        <section ng-hide="$ctrl.hasErros">
+        <section ng-show="$ctrl.metadataError">
+            <div class="alert alert-danger">NO METADATA WARNING</div>
+        </section>
+        <section ng-hide="$ctrl.metadataError" class="ng-cloak">
             <phylocanvas-component
                     data:newickurl="@{/analysis/ajax/{id}/newick(id=${submissionId})}">
             </phylocanvas-component>

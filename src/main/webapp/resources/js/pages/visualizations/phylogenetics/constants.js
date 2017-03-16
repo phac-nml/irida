@@ -6,5 +6,5 @@ export const METADATA = {
 };
 
 export const ERRORS = {
-
+  METADATA: 'errors.metadata'
 };

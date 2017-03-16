@@ -1,4 +1,4 @@
-import {METADATA} from './../../constants';
+import {METADATA, ERRORS} from './../../constants';
 /**
  * Controller for MetadataComponent
  * @param {object} $rootScope angular root scope.
@@ -10,13 +10,17 @@ function controller($rootScope, $scope, MetadataService) {
   this.$onInit = () => {
     MetadataService.getMetadata(this.metadataurl)
       .then(results => {
-        this.terms = results.terms.map(term => {
-          return ({
-            term,
-            selected: true
+        if (Object.keys(results.metadata).length > 0) {
+          this.terms = results.terms.map(term => {
+            return ({
+              term,
+              selected: true
+            });
           });
-        });
-        $rootScope.$broadcast(METADATA.LOADED, {metadata: results.metadata});
+          $rootScope.$broadcast(METADATA.LOADED, {metadata: results.metadata});
+        } else {
+          $rootScope.$broadcast(ERRORS.METADATA);
+        }
       });
   };
 
