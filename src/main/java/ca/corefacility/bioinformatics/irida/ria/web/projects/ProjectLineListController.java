@@ -276,7 +276,9 @@ public class ProjectLineListController {
 		Project project = projectService.read(projectId);
 		List<MetadataField> metadataFields = new ArrayList<>();
 		for (String field : fields) {
+			// Check to see if this field already exists.
 			MetadataField metadataField = metadataTemplateService.readMetadataFieldByLabel(field);
+			// If it does not exist, create a new field.
 			if (metadataField == null) {
 				metadataField = new MetadataField(field, "text");
 				metadataTemplateService.saveMetadataField(metadataField);
