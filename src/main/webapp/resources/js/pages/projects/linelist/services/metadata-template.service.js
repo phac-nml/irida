@@ -8,7 +8,7 @@
  */
 export function MetadataTemplateService($resource, $window,
                                         $httpParamSerializerJQLike) {
-  return $resource($window.PAGE.urls.saveTemplate, {
+  return $resource($window.PAGE.urls.templates, {
     id: '@id'
   }, {
     save: {

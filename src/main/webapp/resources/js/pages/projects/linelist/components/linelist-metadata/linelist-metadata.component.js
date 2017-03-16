@@ -48,6 +48,7 @@ showMetadataFieldSelectionsController.$inject = [
  * Controller for MetadataComponent. Handles displaying toggles
  * for hiding and showing metadata columns.
  *
+ * @param {object} $window angular window reference.
  * @param {object} $scope angular DOM scope reference.
  * @param {object} $aside Reference to the angular-aside instance
  * @param {object} $uibModal Reference to the angular-bootstrap modal instance
@@ -56,7 +57,7 @@ showMetadataFieldSelectionsController.$inject = [
  * @description
  *
  */
-function MetadataController($scope, $aside, $uibModal,
+function MetadataController($window, $scope, $aside, $uibModal,
                             MetadataTemplateService) {
   const vm = this;
   let FIELD_ORDER;
@@ -71,6 +72,14 @@ function MetadataController($scope, $aside, $uibModal,
   vm.$onInit = () => {
     MetadataTemplateService.query(templates => {
       this.templates = templates;
+      // Add a fake template so the user can see all the fields.
+      this.templates.unshift(
+        {
+          label: $window.PAGE.i18n.allFields,
+          identifier: 0,
+          fields: []
+        }
+      );
       this.selectedTemplate = this.templates[0];
     });
 
@@ -189,6 +198,7 @@ function MetadataController($scope, $aside, $uibModal,
 }
 
 MetadataController.$inject = [
+  '$window',
   '$scope',
   '$aside',
   '$uibModal',
