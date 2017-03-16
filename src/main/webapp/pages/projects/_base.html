@@ -22,7 +22,6 @@
 	<ul class="nav nav-tabs subnav" th:with="baseLink=${'/projects/' + project.getId()}">
 		<li th:class="${activeNav} == 'samples' ? 'active'"><a th:href="@{${baseLink}}" th:text="#{project.nav.samples}">[Samples]</a></li>
 		<li th:classappend="${activeNav} == 'analyses' ? 'active'"><a href="" th:href="@{${baseLink} + '/analyses'}" th:text="#{project.nav.analysis}">[Analyses]</a></li>
-		<li th:class="${activeNav} == 'associated' ? 'active'"><a th:href="@{${baseLink} + '/associated'}" th:text="#{project.nav.associated}">[Associated]</a></li>
 		<li th:classappend="${activeNav} == 'metadata' ? 'active'"><a th:href="@{${baseLink} + '/metadata'}" th:text="#{project.nav.metadata}">[Metadata]</a></li>
 		<li th:classappend="${activeNav} == 'export' ? 'active'"><a href="" th:href="@{${baseLink} + '/export'}" th:text="#{project.nav.exports}">[Exports]</a></li>
 		<li th:classappend="${activeNav} == 'activity' ? 'active'"><a href="" th:href="@{${baseLink} + '/activity'}" th:text="#{project.nav.activity}">[Recent]</a></li>
