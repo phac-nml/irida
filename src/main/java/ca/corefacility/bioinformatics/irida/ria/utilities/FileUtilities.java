@@ -43,6 +43,13 @@ public class FileUtilities {
 	 */
 	public static void createAnalysisOutputFileZippedResponse(HttpServletResponse response, String fileName,
 			Set<AnalysisOutputFile> files) throws IOException {
+		/*
+		 * Replacing spaces and commas as they cause issues with
+		 * Content-disposition response header.
+		 */
+		fileName = fileName.replaceAll(" ", "_");
+		fileName = fileName.replaceAll(",", "");
+		
 		logger.debug("Creating zipped file response. [" + fileName + "]");
 		
 		// set the response headers before we do *ANYTHING* so that the filename

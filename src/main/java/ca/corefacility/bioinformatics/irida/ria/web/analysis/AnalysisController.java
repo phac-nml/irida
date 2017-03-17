@@ -523,12 +523,7 @@ public class AnalysisController {
 		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(analysisSubmissionId);
 		Analysis analysis = analysisSubmission.getAnalysis();
 		Set<AnalysisOutputFile> files = analysis.getAnalysisOutputFiles();
-		
-		String responseName = analysisSubmission.getName();
-		responseName = responseName.replaceAll(" ", "_");
-		responseName = responseName.replaceAll(",", "");
-		
-		FileUtilities.createAnalysisOutputFileZippedResponse(response, responseName, files);
+		FileUtilities.createAnalysisOutputFileZippedResponse(response, analysisSubmission.getName(), files);
 	}
 
 	/**
