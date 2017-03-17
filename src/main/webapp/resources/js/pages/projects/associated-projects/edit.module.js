@@ -113,7 +113,6 @@ const editApp = angular
 
       // This watch occurs when a different page is select.  Triggers a server call with the new page.
       $scope.$watch(() => $ctrl.paging.page, () => {
-        console.log('fixing paging');
         $ctrl.filterCriteria.page = $ctrl.paging.page - 1;
         $ctrl.fetchResult();
       });
