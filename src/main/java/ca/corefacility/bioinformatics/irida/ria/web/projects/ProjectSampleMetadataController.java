@@ -65,8 +65,7 @@ public class ProjectSampleMetadataController {
 
 	@Autowired
 	public ProjectSampleMetadataController(MessageSource messageSource, MetadataTemplateService metadataTemplateService,
-			ProjectControllerUtils projectControllerUtils,
-			ProjectService projectService, SampleService sampleService) {
+			ProjectControllerUtils projectControllerUtils, ProjectService projectService, SampleService sampleService) {
 		this.messageSource = messageSource;
 		this.metadataTemplateService = metadataTemplateService;
 		this.projectControllerUtils = projectControllerUtils;
@@ -363,33 +362,5 @@ public class ProjectSampleMetadataController {
 	@ResponseBody
 	public SampleMetadataStorage getProjectSampleMetadata(HttpSession session, @PathVariable long projectId) {
 		return (SampleMetadataStorage) session.getAttribute("pm-" + projectId);
-	}
-
-	/**
-	 * Save a list a {@link MetadataField} as a {@link MetadataTemplate}
-	 *
-	 * @param projectId
-	 * 		identifier for the current {@link Project}
-	 * @param fields
-	 * 		{@link List} of {@link String} names of {@link MetadataField}
-	 * @param name
-	 * 		{@link String} name for the new template.
-	 */
-	@RequestMapping(value = "/templates/save", method = RequestMethod.POST)
-	@ResponseBody
-	public void saveMetadataTemplate(@PathVariable long projectId,
-			@RequestParam(value = "fields[]") List<String> fields, @RequestParam String name) {
-		Project project = projectService.read(projectId);
-		List<MetadataField> metadataFields = new ArrayList<>();
-		for (String field : fields) {
-			MetadataField metadataField = metadataTemplateService.readMetadataFieldByLabel(field);
-			if (metadataField == null) {
-				metadataField = new MetadataField(field, "text");
-				metadataTemplateService.saveMetadataField(metadataField);
-			}
-			metadataFields.add(metadataField);
-		}
-		MetadataTemplate template = new MetadataTemplate(name, metadataFields);
-		metadataTemplateService.createMetadataTemplateInProject(template, project);
 	}
 }

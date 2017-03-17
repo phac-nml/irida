@@ -61,7 +61,7 @@ public class ProjectLineListCreateTemplatePage extends ProjectPageBase {
 	public void addNewField() {
 		addFieldBtn.click();
 		// wait for field to be added
-		waitForTime(500);
+		waitForTime(600);
 	}
 
 	public void setFieldLabel(int item, String label) {

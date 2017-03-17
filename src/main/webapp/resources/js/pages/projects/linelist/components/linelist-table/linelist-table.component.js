@@ -1,101 +1,135 @@
 import {dom} from './../../../../../utilities/datatables.utilities';
+import {EVENTS} from './../../constants';
 
-function controller(DTOptionsBuilder,
+/**
+ * Controller for the metadata linelist Datatables
+ * @param {object} $scope angular dom scope
+ * @param {object} DTOptionsBuilder Datatables option builder
+ * @param {object} DTColumnBuilder Datatables column builder
+ * @param {object} LinelistService service to get information for the linelist
+ */
+function controller($scope,
+                    DTOptionsBuilder,
                     DTColumnBuilder,
-                    LinelistService,
-                    $scope,
-                    $compile) {
+                    LinelistService) {
   const $ctrl = this;
-  $ctrl.$onInit = () => {  // This will be used by the child component to control which columns are visiblethis.$onInit = () => {
-    this.fields = this.headers
-      .map((header, index) => {
-        return ({text: header, index, selected: true});
-      });
-    this.templates = LinelistService.getTemplates();
+  $ctrl.table = {};
 
-    this.dtOptions = DTOptionsBuilder
-      .fromFnPromise(() => {
-        return LinelistService.getMetadata();
-      })
-      .withDOM(dom)
-      .withScroller()
-      .withOption('scrollX', true)
-      .withOption('deferRender', true)
-      .withOption('scrollY', '50vh')
-      .withOption('scrollCollapse', true)
-      .withColReorder()
-      .withColReorderCallback(function() {
-        $ctrl.parent.columnReorder(this.fnOrder());
-      })
-      .withOption('drawCallback', () => {
-        // This adds the tools to handle meta data header hiding, template selection and saving.
-        // Datatables will add this after the table is created to we need the $compile so that
-        // angularjs can grab hold of it.
-        const div = document.querySelector('.toolbar');
-        // Make sure this only gets added once
-        if (div.getElementsByTagName('metadata-component').length === 0) {
-          div.innerHTML = `
-<metadata-component 
-    fields="$ctrl.fields"
-    templates="$ctrl.templates"
-    on-toggle-field="$ctrl.toggleColumn($event)"
-    on-save-template="$ctrl.saveTemplate($event)">
-</metadata-component>
-`;
-          $compile(div)($scope);
-        }
+  /**
+   * Angular controller initialization
+   *  - Setting upt the table options and columns
+   */
+  $ctrl.$onInit = () => {
+    $ctrl.dtOptions = DTOptionsBuilder
+    .fromFnPromise(() => {
+      return LinelistService.getMetadata();
+    })
+    .withDOM(dom)
+    .withScroller()
+    .withOption('scrollX', true)
+    .withOption('deferRender', true)
+    .withOption('scrollY', '50vh')
+    .withOption('scrollCollapse', true)
+    .withColReorder()
+    .withColReorderCallback(function() {
+      $ctrl.parent.columnReorder(this.fnOrder());
+    })
+    ;
+
+    $ctrl.dtColumns = $ctrl.fields
+      .map(header => {
+        const col = DTColumnBuilder
+          .newColumn(header)
+          .withTitle(header)
+          .renderWith(data => {
+            // This is where any custom rendering logic should go.
+            // example formatting date columns.
+            return data.value;
+          });
+        col.visible = true;
+        return col;
+      });
+  };
+
+  /**
+   * Listen for changes to the column visibility called from the Metadata sidebar.
+   */
+  $scope.$on(EVENTS.TABLE.columnVisibility, (e, args) => {
+    const {column} = args;
+    const col = $ctrl.dtColumns
+      .find(c => {
+        return c.sTitle === column.label;
       });
 
-    this.dtColumns = this.headers.map(header => {
-      return DTColumnBuilder
-        .newColumn(header)
-        .withTitle(header)
-        .renderWith(data => {
-          // This is where any custom rendering logic should go.
-          // example formatting date columns.
-          return data.value;
-        });
+    col.visible = column.visible;
+  });
+
+  /**
+   * Listen for changes to which template is to be displayed in the table.
+   */
+  $scope.$on(EVENTS.TABLE.template, (e, args) => {
+    const templateFields = args.fields;
+
+    // The `order` will be and array of the current ordering (e.g.: [1, 2, 4, 5, 3])
+    // in relation to its initial order.
+    const order = $ctrl.table.DataTable.colReorder.order();
+
+    // This will be the position in the order for the next non-template field.
+    let openColumn = templateFields.length;
+
+    // We need to update the order of the table to reflect the current template.
+    // This goes through each column int the table
+    $ctrl.dtColumns.forEach((column, index) => {
+      // See if the column is in the template fields, and capture its index
+      // to add to the new order.
+      const templateIndex = templateFields.findIndex(field => {
+        return field.label === column.sTitle;
+      });
+
+      if (templateIndex > -1) {
+        // Column has been found in the template.
+        // Add the column's index (this is the columns original index when the table was created)
+        // to the order array and the position it is required in the template.
+        // E.g. If it is originally the 2nd column, but needs to be in the first position [2, ...]
+        order[templateIndex] = index;
+        // Only template columns should be visible
+        column.visible = true;
+      } else {
+        // Column not found in the template.
+        // Add it to the next open column position - these are after the template slots.
+        order[openColumn] = index;
+        openColumn += 1;
+        // Only template columns should be visible
+        column.visible = false;
+      }
     });
-  };
-
-  this.toggleColumn = $event => {
-    const field = $event.field;
-    this.dtColumns[field.index].visible = field.selected;
-  };
-
-  this.saveTemplate = $event => {
-    const {templateName, fields} = $event;
-
-    return LinelistService
-      .saveTemplate({url: this.savetemplateurl, fields, name: templateName})
-      .then(result => {
-        // TODO: (Josh | 2017-02-15) This will be completed in the next merge request
-        console.log(result);
-      });
-  };
+    // Ask Datatables to display the updated order.
+    $ctrl.dtOptions.withColReorderOrder(order);
+  });
 }
 
 controller.$inject = [
+  '$scope',
   'DTOptionsBuilder',
   'DTColumnBuilder',
-  'LinelistService',
-  '$scope',
-  '$compile'
+  'LinelistService'
 ];
 
 export const TableComponent = {
   template: `
 <table datatable="" 
   class="table" 
+  width="100%"
   dt-options="$ctrl.dtOptions" 
-  dt-columns="$ctrl.dtColumns">
+  dt-columns="$ctrl.dtColumns"
+  dt-instance="$ctrl.table">
 </table>`,
   require: {
     parent: '^^linelist'
   },
   bindings: {
-    headers: '<',
-    savetemplateurl: '@'
+    fields: '<',
+    metadata: '<'
   },
   controller
 };

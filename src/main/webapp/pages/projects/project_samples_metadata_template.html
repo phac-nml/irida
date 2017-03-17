@@ -10,7 +10,7 @@
     <h2 th:text="#{linelist.create-template.title}">Create a New Line List Template</h2>
     <template-input-component
             data:saveurl="@{/projects/{id}/linelist/linelist-templates/save-template(id=${project.getId()})}"
-            data:redirecturl="@{/projects/{id}/linelist(id=${project.getId()})}"/>
+            data:redirecturl="@{/projects/{id}/samples(id=${project.getId()})}"/>
     <script type="text/ng-template" id="templateInput.tmpl.html">
         <form name="fields" novalidate="novalidate">
             <div class="row">

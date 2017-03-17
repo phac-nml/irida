@@ -84,9 +84,6 @@ public class ProjectLineListController {
 			model.addAttribute("currentTemplate", templateId);
 		}
 
-		// Get a list of all available templates for displaying metadata
-		model.addAttribute("templates", projectControllerUtils.getTemplateNames(locale, project));
-
 		// Get the headers (metadata fields)
 		List<String> headers = getAllProjectMetadataFields(projectId);
 		model.addAttribute("headers", headers);
@@ -121,6 +118,30 @@ public class ProjectLineListController {
 		}
 		model.addAttribute("metadataList", metadataList);
 		return "projects/project_linelist";
+	}
+
+	/**
+	 * Get the page to create new linelist templates
+	 *
+	 * @param projectId
+	 * 		{@link Long} identifier for the current {@link Project}
+	 * @param model
+	 * 		{@link Model}
+	 * @param locale
+	 * 		{@link Locale}
+	 * @param principal
+	 * 		{@link Principal}
+	 *
+	 * @return {@link String} path to the page.
+	 */
+	@RequestMapping("/linelist-templates")
+	public String getLinelistTemplatePage(@PathVariable Long projectId, Model model, Locale locale,
+			Principal principal) {
+		// Set up the template information
+		Project project = projectService.read(projectId);
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+		model.addAttribute("templates", projectControllerUtils.getTemplateNames(locale, project));
+		return "projects/project_linelist_template";
 	}
 
 	/**
@@ -209,5 +230,61 @@ public class ProjectLineListController {
 		fieldList.add(0, "id");
 
 		return fieldList;
+	}
+
+	/**
+	 * Get a {@link List} of {@link MetadataTemplate}s for a specific {@link Project}
+	 *
+	 * @param projectId
+	 * 		{@link Long} identifier for a {@link Project}
+	 * @param locale
+	 * 		users current {@link Locale}
+	 *
+	 * @return {@link List} of {@link MetadataTemplate}
+	 */
+	@RequestMapping(value = "/templates", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public List<MetadataTemplate> getMetadataTemplates(@PathVariable long projectId, Locale locale) {
+		Project project = projectService.read(projectId);
+		List<ProjectMetadataTemplateJoin> joins = metadataTemplateService.getMetadataTemplatesForProject(project);
+		List<MetadataTemplate> templates = new ArrayList<>();
+
+		for (ProjectMetadataTemplateJoin join : joins) {
+			templates.add(join.getObject());
+		}
+		return templates;
+	}
+
+	/**
+	 * Save a list a {@link MetadataField} as a {@link MetadataTemplate}
+	 *
+	 * @param projectId
+	 * 		identifier for the current {@link Project}
+	 * @param fields
+	 * 		{@link List} of {@link String} names of {@link MetadataField}
+	 * @param name
+	 * 		{@link String} name for the new template.
+	 *
+	 * @return
+	 */
+	@RequestMapping(value = "/templates", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public MetadataTemplate saveMetadataTemplate(@PathVariable long projectId,
+			@RequestParam(value = "fields[]") List<String> fields, @RequestParam String name) {
+		Project project = projectService.read(projectId);
+		List<MetadataField> metadataFields = new ArrayList<>();
+		for (String field : fields) {
+			// Check to see if this field already exists.
+			MetadataField metadataField = metadataTemplateService.readMetadataFieldByLabel(field);
+			// If it does not exist, create a new field.
+			if (metadataField == null) {
+				metadataField = new MetadataField(field, "text");
+				metadataTemplateService.saveMetadataField(metadataField);
+			}
+			metadataFields.add(metadataField);
+		}
+		MetadataTemplate template = new MetadataTemplate(name, metadataFields);
+		ProjectMetadataTemplateJoin join = metadataTemplateService.createMetadataTemplateInProject(template, project);
+		return join.getObject();
 	}
 }
