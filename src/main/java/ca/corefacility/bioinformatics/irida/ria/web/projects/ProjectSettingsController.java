@@ -131,10 +131,9 @@ public class ProjectSettingsController {
 			templates.add(join.getObject());
 		}
 		model.addAttribute("templates", templates);
-
-		model.addAttribute("activeNave", "settings");
+		model.addAttribute(ProjectsController.ACTIVE_NAV, ACTIVE_NAV_SETTINGS);
 		model.addAttribute("page", "metadata_templates");
-		return "projects/project_settings";
+		return "projects/settings/pages/metadata_templates";
 	}
 
 	/**

@@ -1,4 +1,11 @@
-<div>
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="projects/settings/_base">
+<head>
+    <title th:text="#{project.settings.metadata-templates}">Basic</title>
+</head>
+<body>
+<th:block layout:fragment="settings-content">
     <div class="clearfix spaced-bottom">
         <h2 class="h2-muted pull-left" th:text="#{project.settings.metadata-templates}">_Sample Metadata Templates_</h2>
         <a href="#"
@@ -23,4 +30,7 @@
         </tr>
         </tbody>
     </table>
-</div>
+</th:block>
+
+</body>
+</html>
