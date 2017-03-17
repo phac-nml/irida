@@ -42,6 +42,8 @@ public class ProjectSettingsController {
 	private final ProjectRemoteService projectRemoteService;
 	private final UserService userService;
 
+	public static final String ACTIVE_NAV_SETTINGS = "settings";
+
 	@Autowired
 	public ProjectSettingsController(MessageSource messageSource, MetadataTemplateService metadataTemplateService,
 			ProjectControllerUtils projectControllerUtils, ProjectService projectService,
@@ -58,35 +60,34 @@ public class ProjectSettingsController {
 	 * Request for a {@link Project} basic settings page
 	 *
 	 * @param projectId
-	 * 		the ID of the {@link Project} to read
+	 *            the ID of the {@link Project} to read
 	 * @param model
-	 * 		Model for the view
+	 *            Model for the view
 	 * @param principal
-	 * 		Logged in user
+	 *            Logged in user
 	 *
 	 * @return name of the project settings page
 	 */
 	@RequestMapping("")
-	@PreAuthorize("hasPermission(#projectId, 'canManageLocalProjectSettings')")
 	public String getProjectSettingsBasicPage(@PathVariable Long projectId, final Model model,
 			final Principal principal) {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
-		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute("activeNave", "settings");
+		model.addAttribute(ProjectsController.ACTIVE_NAV, ACTIVE_NAV_SETTINGS);
 		model.addAttribute("page", "basic");
-		return "projects/project_settings";
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+		return "projects/settings/pages/basic";
 	}
 
 	/**
 	 * Request for a {@link Project} remote settings page
 	 *
 	 * @param projectId
-	 * 		the ID of the {@link Project} to read
+	 *            the ID of the {@link Project} to read
 	 * @param model
-	 * 		Model for the view
+	 *            Model for the view
 	 * @param principal
-	 * 		Logged in user
+	 *            Logged in user
 	 *
 	 * @return name of the project remote settings page
 	 */
@@ -96,11 +97,11 @@ public class ProjectSettingsController {
 			final Principal principal) {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
+		model.addAttribute(ProjectsController.ACTIVE_NAV, ACTIVE_NAV_SETTINGS);
+		model.addAttribute("page", "remote");
 		model.addAttribute("frequencies", ProjectSyncFrequency.values());
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute("activeNave", "settings");
-		model.addAttribute("page", "remote");
-		return "projects/project_settings";
+		return "projects/settings/pages/remote";
 	}
 
 	/**
@@ -140,17 +141,18 @@ public class ProjectSettingsController {
 	 * Update the project sync settings
 	 *
 	 * @param projectId
-	 * 		the project id to update
+	 *            the project id to update
 	 * @param frequency
-	 * 		the sync frequency to set
+	 *            the sync frequency to set
 	 * @param forceSync
-	 * 		Set the project's sync status to MARKED
+	 *            Set the project's sync status to MARKED
 	 * @param changeUser
-	 * 		update the user on a remote project to the current logged in user
+	 *            update the user on a remote project to the current logged in
+	 *            user
 	 * @param principal
-	 * 		The current logged in user
+	 *            The current logged in user
 	 * @param locale
-	 * 		user's locale
+	 *            user's locale
 	 *
 	 * @return result message if successful
 	 */
@@ -189,11 +191,11 @@ public class ProjectSettingsController {
 				remoteStatus.setReadBy(user);
 				updates.put("remoteStatus", remoteStatus);
 
-				message = messageSource
-						.getMessage("project.settings.notifications.sync.userchange", new Object[] {}, locale);
+				message = messageSource.getMessage("project.settings.notifications.sync.userchange", new Object[] {},
+						locale);
 			} catch (Exception ex) {
-				error = messageSource
-						.getMessage("project.settings.notifications.sync.userchange.error", new Object[] {}, locale);
+				error = messageSource.getMessage("project.settings.notifications.sync.userchange.error",
+						new Object[] {}, locale);
 			}
 		}
 
@@ -213,11 +215,11 @@ public class ProjectSettingsController {
 	 * Update the project assembly setting for the {@link Project}
 	 *
 	 * @param projectId
-	 * 		the ID of a {@link Project}
+	 *            the ID of a {@link Project}
 	 * @param assemble
-	 * 		Whether or not to do automated assemblies
+	 *            Whether or not to do automated assemblies
 	 * @param model
-	 * 		Model for the view
+	 *            Model for the view
 	 *
 	 * @return success message if successful
 	 */
@@ -234,13 +236,11 @@ public class ProjectSettingsController {
 
 		String message = null;
 		if (assemble) {
-			message = messageSource
-					.getMessage("project.settings.notifications.assemble.enabled", new Object[] { read.getLabel() },
-							locale);
+			message = messageSource.getMessage("project.settings.notifications.assemble.enabled",
+					new Object[] { read.getLabel() }, locale);
 		} else {
-			message = messageSource
-					.getMessage("project.settings.notifications.assemble.disabled", new Object[] { read.getLabel() },
-							locale);
+			message = messageSource.getMessage("project.settings.notifications.assemble.disabled",
+					new Object[] { read.getLabel() }, locale);
 		}
 
 		return ImmutableMap.of("result", message);
@@ -250,13 +250,13 @@ public class ProjectSettingsController {
 	 * Update the coverage QC setting of a {@link Project}
 	 *
 	 * @param projectId
-	 * 		the ID of a {@link Project}
+	 *            the ID of a {@link Project}
 	 * @param genomeSize
-	 * 		the genomeSize to set for the project
+	 *            the genomeSize to set for the project
 	 * @param requiredCoverage
-	 * 		coverage needed for qc to pass
+	 *            coverage needed for qc to pass
 	 * @param locale
-	 * 		locale of the user
+	 *            locale of the user
 	 *
 	 * @return success message if successful
 	 */
