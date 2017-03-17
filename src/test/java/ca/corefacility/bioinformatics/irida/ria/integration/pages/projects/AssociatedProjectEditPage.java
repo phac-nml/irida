@@ -23,7 +23,7 @@ public class AssociatedProjectEditPage extends AbstractPage {
 	}
 
 	public void goTo(Long projectId) {
-		get(driver, "/projects/" + projectId + "/associated/edit");
+		get(driver, "/projects/" + projectId + "/settings/associated/edit");
 	}
 
 	public List<String> getProjects() {
