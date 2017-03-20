@@ -8,7 +8,7 @@ require('angular-bootstrap-switch');
 require('style!./../../../../../../../node_modules/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.min.css');
 import {MetadataTemplateService} from '../../services/metadata-template.service';
 import {MetadataComponent} from './linelist-metadata.component';
-import {metadataTemplateName} from './../../directives/metadataTemplateName';
+import {metadataTemplateName} from '../../../common/sample-metadata-templates/directives/metadataTemplateName';
 
 export const MetadataModule = angular
   .module('irida.linelist.metadata', [
