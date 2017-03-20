@@ -1,6 +1,10 @@
 Changes
 =======
 
+0.15.0 to 0.16.0
+----------------
+* [UI]: Removing commas (`,`) and replacing spaces with underscores (`_`) in download filenames as they confuse browsers. (0.15.1)
+
 0.14.0 to 0.15.0
 ----------------
 * [API]: Added a checksum to files on upload so uploaders can validate upload was successful.
