@@ -60,11 +60,14 @@
 
     <script type="text/ng-template" id="app-component.tmpl.html">
         <h1 th:text="#{visualization.phylogenomics.title}"></h1>
-        <section ng-show="$ctrl.metadataError">
-            <div class="alert alert-danger">NO METADATA WARNING</div>
+        <section>
+            <div ng-show="$ctrl.metadataError" class="alert alert-danger">NO METADATA WARNING</div>
+            <div ng-show="$ctrl.treeError" class="alert alert-danger">NO METADATA WARNING</div>
         </section>
+        <div class="alert alert-info" ng-hide="$ctrl.metadataLoaded || $ctrl.metadataError">Load cows ...</div>
         <section ng-hide="$ctrl.metadataError" class="ng-cloak">
             <phylocanvas-component
+                    ng-show="$ctrl.metadataLoaded"
                     data:newickurl="@{/analysis/ajax/{id}/newick(id=${submissionId})}">
             </phylocanvas-component>
             <template-component

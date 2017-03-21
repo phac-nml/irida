@@ -1,17 +1,27 @@
-import {ERRORS} from './../../constants';
+import {ERRORS, METADATA} from './../../constants';
 
-function appController($scope) {
-  $scope.$on(ERRORS.METADATA, () => {
-    this.metadataError = true;
-  });
+class AppController {
+  constructor($scope) {
+    $scope.$on(ERRORS.METADATA, () => {
+      this.metadataError = true;
+    });
+
+    $scope.$on(ERRORS.TREE_NOT_LOADED, () => {
+      this.treeError = true;
+    });
+
+    $scope.$on(METADATA.LOADED, () => {
+      this.metadataLoaded = true;
+    });
+  }
 }
 
-appController.$inject = [
+AppController.$inject = [
   '$scope'
 ];
 
 export const AppComponent = {
   transclude: true,
-  controller: appController,
+  controller: AppController,
   templateUrl: 'app-component.tmpl.html'
 };

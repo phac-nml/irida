@@ -1,6 +1,6 @@
 import Phylocanvas from 'phylocanvas';
 import metadataPlugin from 'phylocanvas-plugin-metadata';
-import {METADATA} from './../../constants';
+import {ERRORS, METADATA} from './../../constants';
 
 const PHYLOCANVAS_DIV = 'phylocanvas';
 
@@ -43,7 +43,14 @@ function controller($window, $scope, PhylocanvasService) {
      */
     PhylocanvasService.getNewickData(this.newickurl)
       .then(newick => {
-        this.newick = newick;
+        if (newick) {
+          $scope.$emit(ERRORS.TREE_NOT_LOADED);
+          this.newick = newick;
+        } else {
+          $scope.$emit(ERRORS.TREE_NOT_LOADED);
+        }
+      }, () => {
+        $scope.$emit(ERRORS.TREE_NOT_LOADED);
       });
   };
 
@@ -56,11 +63,6 @@ function controller($window, $scope, PhylocanvasService) {
   // Set tree defaults
   tree.setTreeType('rectangular');
   tree.alignLabels = true;
-  tree.on('beforeFirstDraw', () => {
-    for (const leaf of tree.leaves) {
-      leaf.data = this.metadata[leaf.label];
-    }
-  });
 
   /**
    * Listen for changes to the metadata structure and update
@@ -74,7 +76,12 @@ function controller($window, $scope, PhylocanvasService) {
   });
 
   $scope.$on(METADATA.LOADED, (event, args) => {
-    this.metadata = args.metadata;
+    const {metadata} = args;
+    tree.on('beforeFirstDraw', () => {
+      for (const leaf of tree.leaves) {
+        leaf.data = metadata[leaf.label];
+      }
+    });
     tree.load(this.newick);
   });
 }

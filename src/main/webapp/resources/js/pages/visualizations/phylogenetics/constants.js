@@ -6,5 +6,6 @@ export const METADATA = {
 };
 
 export const ERRORS = {
-  METADATA: 'errors.metadata'
+  METADATA: 'errors.metadata',
+  TREE_NOT_LOADED: 'errors.treesNotLoaded'
 };
