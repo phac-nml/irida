@@ -89,46 +89,58 @@
 			</script>
 
 			<script type="text/ng-template" id="sistr.html">
-				<h2 th:text="#{analysis.details.sistr.serovar}">_Serovar Prediction_</h2>
-				<table class="table table-bordered">
-					<tr ng-repeat="item in sistrCtrl.serotype_predictions_order">
-						<td width="30%"><strong ng-bind="item"></strong></td>
-						<td ng-bind="sistrCtrl.serotype_predictions[item]" style="word-wrap: break-word;"></td>
-					</tr>
-				</table>
-				<h2 th:text="#{analysis.details.sistr.cgmlst}">_cgMLST330_</h2>
-				<table class="table table-bordered">
-					<tr ng-repeat="item in sistrCtrl.cgMLST_predictions_order">
-						<td width="30%"><strong ng-bind="item"></strong></td>
-						<td ng-bind="sistrCtrl.cgMLST_predictions[item]" style="word-wrap: break-word;"></td>
-					</tr>
-				</table>
-				<h2 th:text="#{analysis.details.sistr.mash}">_Mash_</h2>
-				<table class="table table-bordered">
-					<tr ng-repeat="item in sistrCtrl.mash_predictions_order">
-						<td width="30%"><strong ng-bind="item"></strong></td>
-						<td ng-bind="sistrCtrl.mash_predictions[item]" style="word-wrap: break-word;"></td>
-					</tr>
-				</table>
-				<br/>
-				<h2 th:text="#{analysis.details.sistr.qc}">_Quality Control_</h2>
-				<table class="table table-bordered">
-					<tr>
-						<td width="30%"><strong th:text="#{analysis.details.sistr.qc.status}">_Status_</strong></td>
-						<td ng-class="{'list-group-item-success' : sistrCtrl.qc.pass, 'list-group-item-danger' : !sistrCtrl.qc.pass}" ng-bind="sistrCtrl.qc.status">QC Status</td>
-					</tr>
-					<tr ng-if="!sistrCtrl.qc.pass">
-						<td><strong th:text="#{analysis.details.sistr.qc.details}">_Details_</strong></td>
-						<td>
-							<ul ng-repeat="item in sistrCtrl.qc.messages">
-								<li ng-bind="item" style="word-wrap: break-word;"></li>
-							</ul>
-						</td>
-					</tr>
-				</table>
-				<br/>
-				<h2 th:text="#{analysis.details.sistr.citation}">_Citation_</h2>
-				<p><a href="https://doi.org/10.1371/journal.pone.0147101">The Salmonella In Silico Typing Resource (SISTR): an open web-accessible tool for rapidly typing and subtyping draft Salmonella genome assemblies. Catherine Yoshida, Peter Kruczkiewicz, Chad R. Laing, Erika J. Lingohr, Victor P.J. Gannon, John H.E. Nash, Eduardo N. Taboada. PLoS ONE 11(1): e0147101. doi: 10.1371/journal.pone.0147101</a></p>
+				<div ng-hide="!sistrCtrl.parse_results_error">
+					<h2 th:text="#{analysis.details.sistr.error}">_SISTR results unavailable._</h2>
+				</div>
+				<div ng-hide="sistrCtrl.parse_results_error">
+					<h2 th:text="#{analysis.details.sistr.sample.information}">_Sample information_</h2>
+					<table class="table table-bordered">
+						<tr>
+							<td width="30%"><strong th:text="#{analysis.details.sistr.sample.information.name}">_Name_</strong></td>
+							<td ng-bind="sistrCtrl.sample_information['name']" style="word-wrap: break-word;"></td>
+						</tr>
+					</table>
+					<h2 th:text="#{analysis.details.sistr.serovar}">_Serovar Prediction_</h2>
+					<table class="table table-bordered">
+						<tr ng-repeat="item in sistrCtrl.serotype_predictions_order">
+							<td width="30%"><strong ng-bind="item"></strong></td>
+							<td ng-bind="sistrCtrl.serotype_predictions[item]" style="word-wrap: break-word;"></td>
+						</tr>
+					</table>
+					<h2 th:text="#{analysis.details.sistr.cgmlst}">_cgMLST330_</h2>
+					<table class="table table-bordered">
+						<tr ng-repeat="item in sistrCtrl.cgMLST_predictions_order">
+							<td width="30%"><strong ng-bind="item"></strong></td>
+							<td ng-bind="sistrCtrl.cgMLST_predictions[item]" style="word-wrap: break-word;"></td>
+						</tr>
+					</table>
+					<h2 th:text="#{analysis.details.sistr.mash}">_Mash_</h2>
+					<table class="table table-bordered">
+						<tr ng-repeat="item in sistrCtrl.mash_predictions_order">
+							<td width="30%"><strong ng-bind="item"></strong></td>
+							<td ng-bind="sistrCtrl.mash_predictions[item]" style="word-wrap: break-word;"></td>
+						</tr>
+					</table>
+					<br/>
+					<h2 th:text="#{analysis.details.sistr.qc}">_Quality Control_</h2>
+					<table class="table table-bordered">
+						<tr>
+							<td width="30%"><strong th:text="#{analysis.details.sistr.qc.status}">_Status_</strong></td>
+							<td ng-class="{'list-group-item-success' : sistrCtrl.qc.pass, 'list-group-item-danger' : !sistrCtrl.qc.pass}" ng-bind="sistrCtrl.qc.status">QC Status</td>
+						</tr>
+						<tr ng-if="!sistrCtrl.qc.pass">
+							<td><strong th:text="#{analysis.details.sistr.qc.details}">_Details_</strong></td>
+							<td>
+								<ul ng-repeat="item in sistrCtrl.qc.messages">
+									<li ng-bind="item"/>
+								</ul>
+							</td>
+						</tr>
+					</table>
+					<br/>
+					<h2 th:text="#{analysis.details.sistr.citation}">_Citation_</h2>
+					<p><a href="https://doi.org/10.1371/journal.pone.0147101">The Salmonella In Silico Typing Resource (SISTR): an open web-accessible tool for rapidly typing and subtyping draft Salmonella genome assemblies. Catherine Yoshida, Peter Kruczkiewicz, Chad R. Laing, Erika J. Lingohr, Victor P.J. Gannon, John H.E. Nash, Eduardo N. Taboada. PLoS ONE 11(1): e0147101. doi: 10.1371/journal.pone.0147101</a></p>
+				</div>
 			</script>
 
 			<script type="text/ng-template" id="inputs.html" th:with="fileCount = ${#lists.size(paired_end) + #lists.size(remote_paired)}">
