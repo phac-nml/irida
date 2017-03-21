@@ -39,15 +39,21 @@
     <script type="text/ng-template" id="template-component.tmpl.html">
         <div class="row spaced-bottom">
             <div class="col-md-12">
-                <h2 aria-label="template-select" th:text="#{visualization.phylogenomics.select-template.label}">_Select a Template_</h2>
-                <select name="template-select" id="template-select"
-                        class="form-control"
-                        ng-model="$ctrl.selectedTemplate"
-                        ng-change="$ctrl.templateChange()">
-                    <option value="" th:text="#{visualization.phylogenomics.select-template.all-field}">_ALL_FIELDS_</option>
-                    <option ng-repeat="template in $ctrl.templates"
-                        value="{{ template.id }}">{{ template.label }}</option>
-                </select>
+                <div ng-if="$ctrl.templates.length">
+                    <h2 aria-label="template-select" th:text="#{visualization.phylogenomics.select-template.label}">
+                        _Select a Template_</h2>
+                    <select name="template-select" id="template-select"
+                            class="form-control"
+                            ng-model="$ctrl.selectedTemplate"
+                            ng-change="$ctrl.templateChange()">
+                        <option value="" th:text="#{visualization.phylogenomics.select-template.all-field}">
+                            _ALL_FIELDS_
+                        </option>
+                        <option ng-repeat="template in $ctrl.templates"
+                                value="{{ template.id }}">{{ template.label }}
+                        </option>
+                    </select>
+                </div>
             </div>
         </div>
     </script>

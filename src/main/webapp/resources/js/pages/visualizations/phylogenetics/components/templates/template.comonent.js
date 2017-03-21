@@ -6,6 +6,7 @@ import {METADATA} from './../../constants';
  */
 function controller($rootScope, TemplateService) {
   this.$onInit = () => {  // Get a list of templates that can be rendered
+    this.templates = [];
     TemplateService
       .getTemplates(this.templatesurl)
       .then(templates => {
