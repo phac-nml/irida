@@ -35,13 +35,13 @@
     "angular-daterangepicker-enhanced": "^0.1.24",
     "lodash": "4.6.1",
     "clipboard": "^1.5.12",
-    "moment": "^2.15.0"
+    "moment": "2.15.0"
   },
   "devDependencies": {},
   "resolutions": {
     "angular": "1.6.2",
     "angular-animate": "1.6.2",
-    "moment": "^2.15.0",
+    "moment": "2.15.0",
     "font-awesome": "^4.7.0"
   }
 }
