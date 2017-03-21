@@ -7,13 +7,10 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
-
-import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -24,6 +21,8 @@ import ca.corefacility.bioinformatics.irida.security.permissions.ManageLocalProj
 import ca.corefacility.bioinformatics.irida.security.permissions.ProjectOwnerPermission;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Common functions for project related controllers
@@ -38,16 +37,13 @@ public class ProjectControllerUtils {
 	private final ProjectOwnerPermission projectOwnerPermission;
 	private final ManageLocalProjectSettingsPermission projectMembersPermission;
 	private final MetadataTemplateService metadataTemplateService;
-	private final MessageSource messageSource;
 
 	@Autowired
 	public ProjectControllerUtils(final UserService userService,
 			MetadataTemplateService metadataTemplateService,
-			MessageSource messageSource,
 			final ProjectOwnerPermission projectOwnerPermission,
 			final ManageLocalProjectSettingsPermission projectMembersPermission) {
 		this.userService = userService;
-		this.messageSource = messageSource;
 		this.metadataTemplateService = metadataTemplateService;
 		this.projectOwnerPermission = projectOwnerPermission;
 		this.projectMembersPermission = projectMembersPermission;
