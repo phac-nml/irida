@@ -1,8 +1,10 @@
+const angular = require('angular');
 import Phylocanvas from 'phylocanvas';
 import metadataPlugin from 'phylocanvas-plugin-metadata';
-import {ERRORS, METADATA} from './../../constants';
+import {METADATA, TREE} from './../../constants';
 
 const PHYLOCANVAS_DIV = 'phylocanvas';
+const BOTTOM_PADDING = 250;
 
 Phylocanvas.plugin(metadataPlugin);
 
@@ -23,42 +25,55 @@ const metadataFormat = {
 
 const setCanvasHeight = $window => {
   const canvas = document.querySelector(`#${PHYLOCANVAS_DIV}`);
-  canvas.style.height = `${$window.innerHeight - 250}px`;
+  canvas.style.height = `${$window.innerHeight - BOTTOM_PADDING}px`;
 };
 
 /**
  * Angular controller function for this scope.
  * @param {object} $window AngularJS window object
  * @param {object} $scope AngularJS $scope object for current dom
+ * @param {object} $q AngularJS promise object
  * @param {object} PhylocanvasService angular service for server exchanges for newick data
  */
-function controller($window, $scope, PhylocanvasService) {
+function phylocanvasController($window, $scope, $q, PhylocanvasService) {
   // Make the canvas fill the viewable window.
   setCanvasHeight($window);
-
-  this.$onInit = () => {
-    /**
-     * Kick everything off by getting the newick file and the
-     * initial metadata.
-     */
-    PhylocanvasService.getNewickData(this.newickurl)
-      .then(newick => {
-        if (newick) {
-          $scope.$emit(ERRORS.TREE_NOT_LOADED);
-          this.newick = newick;
-        } else {
-          $scope.$emit(ERRORS.TREE_NOT_LOADED);
-        }
-      }, () => {
-        $scope.$emit(ERRORS.TREE_NOT_LOADED);
-      });
-  };
 
   // Initialize phylocanvas.
   const tree = Phylocanvas
     .createTree(PHYLOCANVAS_DIV, {
       metadata: metadataFormat
     });
+
+  const promises = [];
+
+  // Create a promise for when the metadata is given.
+  const metadataPromise = $q.defer();
+  promises.push(metadataPromise.promise);
+
+  this.$onInit = () => {
+    /**
+     * Kick everything off by getting the newick file and the
+     * initial metadata.
+     */
+    const newickPromise = PhylocanvasService
+      .getNewickData(this.newickurl)
+      .then(result => result, () => {
+        $scope.$emit(TREE.NOT_LOADED);
+      });
+    promises.push(newickPromise);
+
+    // Create the tree when the promises complete.
+    $q
+      .all(promises)
+      .then(results => {
+        const newick = results[1];
+        if (angular.isString(newick)) {
+          tree.load(newick);
+        }
+        $scope.$emit(TREE.COMPLETED);
+      });
+  };
 
   // Set tree defaults
   tree.setTreeType('rectangular');
@@ -75,21 +90,33 @@ function controller($window, $scope, PhylocanvasService) {
     tree.draw();
   });
 
+  $scope.$on(METADATA.EMPTY, () => {
+    metadataPromise.resolve();
+  });
+
   $scope.$on(METADATA.LOADED, (event, args) => {
     const {metadata} = args;
+    // Add the metadata to the branches before the tree is drawn.
     tree.on('beforeFirstDraw', () => {
       for (const leaf of tree.leaves) {
         leaf.data = metadata[leaf.label];
       }
     });
-    tree.load(this.newick);
+    metadataPromise.resolve();
   });
 }
+
+phylocanvasController.$inject = [
+  '$window',
+  '$scope',
+  '$q',
+  'PhylocanvasService'
+];
 
 export const PhylocanvasComponent = {
   bindings: {
     newickurl: '@'
   },
   templateUrl: 'phylocanvas.tmpl.html',
-  controller
+  controller: phylocanvasController
 };
