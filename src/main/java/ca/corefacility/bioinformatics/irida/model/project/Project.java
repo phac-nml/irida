@@ -122,6 +122,7 @@ public class Project extends IridaResourceSupport
 
 	public Project() {
 		assembleUploads = false;
+		sistrTypingUploads = false;
 		createdDate = new Date();
 	}
 
