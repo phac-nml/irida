@@ -41,7 +41,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
 import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import com.google.common.base.Strings;
@@ -57,16 +56,13 @@ import com.google.common.io.Files;
 public class ProjectSampleMetadataController {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectSampleMetadataController.class);
 	private final MessageSource messageSource;
-	private final MetadataTemplateService metadataTemplateService;
 	private final ProjectControllerUtils projectControllerUtils;
 	private final ProjectService projectService;
 	private final SampleService sampleService;
 
 	@Autowired
-	public ProjectSampleMetadataController(MessageSource messageSource, MetadataTemplateService metadataTemplateService,
-			ProjectControllerUtils projectControllerUtils, ProjectService projectService, SampleService sampleService) {
+	public ProjectSampleMetadataController(MessageSource messageSource, ProjectControllerUtils projectControllerUtils, ProjectService projectService, SampleService sampleService) {
 		this.messageSource = messageSource;
-		this.metadataTemplateService = metadataTemplateService;
 		this.projectControllerUtils = projectControllerUtils;
 		this.projectService = projectService;
 		this.sampleService = sampleService;
