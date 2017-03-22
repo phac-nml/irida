@@ -64,11 +64,11 @@
             <div ng-show="$ctrl.metadataError &amp;&amp; !$ctrl.templateError" class="alert alert-danger">NO METADATA WARNING</div>
             <div ng-show="$ctrl.treeError" class="alert alert-danger">
                 <strong><i class="fa fa-exclamation-triangle" aria-hidden="true"></i></strong>
-                CANNOT FIND THE NEWICK FILE ASSOCIATED WITH THIS ANALYSIS.
+                <th:block th:text="#{visualization.phylogenomics.missing-newick}"/>
             </div>
             <div ng-show="$ctrl.showEmptyMetadataWarning" class="alert alert-warning">
                 <strong><i class="fa fa-exclamation-triangle" aria-hidden="true"></i></strong>
-                NO METADATA IS ASSOCIATED WITH THESE SAMPLES.
+                <th:block th:text="#{visualization.phylogenomics.missing-metadata}"/>
                 <div class="close" ng-click="$ctrl.closeEmptyMetadataWarning()">
                     <i class="fa fa-close" aria-hidden="true"></i>
                 </div>
@@ -77,9 +77,12 @@
                 <strong><i class="fa fa-exclamation-triangle" aria-hidden="true"></i></strong>
                 <th:block th:text="#{visualization.phylogenomics.error.missing-samples}" />
             </div>
-            <div class="alert alert-info" ng-show="$ctrl.loading">Load cows ...</div>
+            <div class="alert alert-info" ng-show="$ctrl.loading">
+                <i class="fa fa-circle-o-notch fa-spin fa-fw"></i>
+                <th:block th:text="#{visualization.phylogenomics.loading}"/>
+            </div>
         </section>
-        <section ng-hide="$ctrl.treeError || $ctrl.templateError">
+        <section ng-hide="$ctrl.loading || $ctrl.treeError || $ctrl.templateError">
             <phylocanvas-component
                     data:newickurl="@{/analysis/ajax/{id}/newick(id=${submissionId})}">
             </phylocanvas-component>
