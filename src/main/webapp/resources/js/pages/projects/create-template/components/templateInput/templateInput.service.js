@@ -21,4 +21,9 @@ export class TemplateInputService {
         `${redirectUrl}?templateId=${response.templateId}`;
     });
   }
+  getMetadataFieldNames(query) {
+    return this.$http
+      .get(`/projects/4/sample-metadata/fields?query=${query}`)
+      .then(results => results.data);
+  }
 }

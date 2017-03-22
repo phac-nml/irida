@@ -267,18 +267,21 @@ public class ProjectLineListController {
 	 *
 	 * @return
 	 */
-	@RequestMapping(value = "/templates", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(
+			value = "/templates",
+			method = RequestMethod.POST
+	)
 	@ResponseBody
-	public MetadataTemplate saveMetadataTemplate(@PathVariable long projectId,
-			@RequestParam(value = "fields[]") List<String> fields, @RequestParam String name) {
+	public MetadataTemplate saveMetadataTemplate(@PathVariable long projectId, @RequestParam String name,
+			@RequestParam(value = "fields[]") List<String> fields) {
 		Project project = projectService.read(projectId);
 		List<MetadataField> metadataFields = new ArrayList<>();
-		for (String field : fields) {
+		for (String label : fields) {
 			// Check to see if this field already exists.
-			MetadataField metadataField = metadataTemplateService.readMetadataFieldByLabel(field);
+			MetadataField metadataField = metadataTemplateService.readMetadataFieldByLabel(label);
 			// If it does not exist, create a new field.
 			if (metadataField == null) {
-				metadataField = new MetadataField(field, "text");
+				metadataField = new MetadataField(label, "text");
 				metadataTemplateService.saveMetadataField(metadataField);
 			}
 			metadataFields.add(metadataField);

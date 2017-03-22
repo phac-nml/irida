@@ -87,8 +87,10 @@ public class ProjectSampleMetadataController {
 	 *
 	 * @return {@link String} path to the page
 	 */
-	@RequestMapping("/templates/new")
-	public String getCreateNewSampleMetadataTemplatePage(@PathVariable Long projectId, Model model, Principal principal,
+	@RequestMapping("/template")
+	public String getCreateNewSampleMetadataTemplatePage(@PathVariable Long projectId,
+			@RequestParam(required = false) Long templateId,
+			Model model, Principal principal,
 			Locale locale) {
 		// Set up the template information
 		Project project = projectService.read(projectId);

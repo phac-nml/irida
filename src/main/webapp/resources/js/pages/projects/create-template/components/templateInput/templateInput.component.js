@@ -33,6 +33,14 @@ export const TemplateInputComponent = {
       this.template.list.splice(index, 1);
     };
 
+    this.getMetadataNames = query => {
+      return TemplateInputService
+        .getMetadataFieldNames(query)
+        .then(fields => {
+          this.fields = fields;
+        });
+    };
+
     /**
      * Button click handler for saving the template.
      */

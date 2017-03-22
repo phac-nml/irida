@@ -183,9 +183,10 @@ function MetadataController($window, $scope, $aside, $uibModal,
     const newTemplate = new MetadataTemplateService();
     newTemplate.name = name;
     newTemplate.fields = fields;
-    newTemplate.$save();
-    vm.templates.push(newTemplate);
-    vm.selectedTemplate = newTemplate;
+    newTemplate.$save(template => {
+      vm.templates.push(template);
+      vm.selectedTemplate = template;
+    });
   }
 
   // Set up event listener for re-arranging the columns on the table.
@@ -202,7 +203,7 @@ MetadataController.$inject = [
   '$scope',
   '$aside',
   '$uibModal',
-  'MetadataTemplateService'
+  'SampleMetadataTemplateService'
 ];
 
 export const MetadataComponent = {
