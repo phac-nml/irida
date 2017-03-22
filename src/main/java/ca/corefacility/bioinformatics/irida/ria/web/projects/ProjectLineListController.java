@@ -272,8 +272,8 @@ public class ProjectLineListController {
 			method = RequestMethod.POST
 	)
 	@ResponseBody
-	public MetadataTemplate saveMetadataTemplate(@PathVariable long projectId, @RequestParam String name,
-			@RequestParam(value = "fields[]") List<String> fields) {
+	public Map<String, Object> saveMetadataTemplate(@PathVariable long projectId, @RequestParam String name,
+			@RequestParam(value = "fields[]") List<String> fields, Locale locale) {
 		Project project = projectService.read(projectId);
 		List<MetadataField> metadataFields = new ArrayList<>();
 		for (String label : fields) {
@@ -288,6 +288,9 @@ public class ProjectLineListController {
 		}
 		MetadataTemplate template = new MetadataTemplate(name, metadataFields);
 		ProjectMetadataTemplateJoin join = metadataTemplateService.createMetadataTemplateInProject(template, project);
-		return join.getObject();
+		return ImmutableMap.of(
+				"template", join.getObject(),
+				"message", messageSource.getMessage("linelist.create-template.success", new Object[]{name}, locale)
+		);
 	}
 }

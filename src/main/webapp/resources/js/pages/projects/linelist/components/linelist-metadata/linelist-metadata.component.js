@@ -53,12 +53,13 @@ showMetadataFieldSelectionsController.$inject = [
  * @param {object} $aside Reference to the angular-aside instance
  * @param {object} $uibModal Reference to the angular-bootstrap modal instance
  * @param {object} MetadataTemplateService service for handling metadata templates
+ * @param {object} notifications IRIDA browser notification service.
  *
  * @description
  *
  */
 function MetadataController($window, $scope, $aside, $uibModal,
-                            MetadataTemplateService) {
+                            MetadataTemplateService, notifications) {
   const vm = this;
   let FIELD_ORDER;
   let FIELDS;
@@ -183,9 +184,14 @@ function MetadataController($window, $scope, $aside, $uibModal,
     const newTemplate = new MetadataTemplateService();
     newTemplate.name = name;
     newTemplate.fields = fields;
-    newTemplate.$save(template => {
+    newTemplate.$save(response => {
+      const {template, message} = response;
       vm.templates.push(template);
       vm.selectedTemplate = template;
+      notifications.show({
+        msg: message,
+        type: 'success'
+      });
     });
   }
 
@@ -203,7 +209,8 @@ MetadataController.$inject = [
   '$scope',
   '$aside',
   '$uibModal',
-  'SampleMetadataTemplateService'
+  'SampleMetadataTemplateService',
+  'notifications'
 ];
 
 export const MetadataComponent = {

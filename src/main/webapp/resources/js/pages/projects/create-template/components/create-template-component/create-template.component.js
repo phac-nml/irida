@@ -14,10 +14,10 @@ class createTemplateController {
     const newTemplate = new this.TemplateService();
     newTemplate.name = this.template.name;
     newTemplate.fields = this.template.fields || ['Fred', 'money'];
-    newTemplate.$save(template => {
+    newTemplate.$save(response => {
       this.notifications.show({
         type: 'success',
-        msg: `Metadata template ${template.label} successfully created.`
+        msg: response.message
       });
     });
   }

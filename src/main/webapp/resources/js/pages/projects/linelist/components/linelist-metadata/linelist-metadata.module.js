@@ -14,6 +14,7 @@ export const MetadataModule = angular
     'ui.bootstrap',
     'ngAside',
     'frapontillo.bootstrap-switch',
+    'irida.notifications',
     SampleMetadataTemplateModule
   ])
   .component('metadataComponent', MetadataComponent)
