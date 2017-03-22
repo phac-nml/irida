@@ -43,7 +43,15 @@ If conda is setup with your instance of Galaxy, please proceed to **Step 3**.  O
 
 If you are unable to upgrade Galaxy to take advantage of `conda`, then the following steps can be taken to get the `sistr_cmd` dependency working with an older version of Galaxy (by writing a wrapper to load up dependencies for `sistr_cmd` via conda).
 
-1. If `conda` is not already installed, please download and install <https://conda.io/miniconda.html>.
+1. If `conda` is not already installed, please download and install <https://conda.io/miniconda.html>. Make sure to add the appropriate channels for installing software from bioconda:
+
+   ```bash
+   conda config --add channels conda-forge
+   conda config --add channels defaults
+   conda config --add channels r
+   conda config --add channels bioconda
+   ```
+
 2. Install the `sistr_cmd` dependency to it's own conda environment:
 
    ```bash
