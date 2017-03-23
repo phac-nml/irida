@@ -193,6 +193,8 @@ public class SamplesController extends BaseController {
 			@RequestParam(name = "metadata") String metadataString, @RequestParam Map<String, String> params,
 			HttpServletRequest request) {
 		logger.debug("Updating sample [" + sampleId + "]");
+		
+		Sample sample = sampleService.read(sampleId);
 
 		Map<String, Object> updatedValues = new HashMap<>();
 		for (String field : FIELDS) {
@@ -222,6 +224,9 @@ public class SamplesController extends BaseController {
 				throw new IllegalArgumentException("Could not map metadata to sample object", e);
 			}
 
+			//setting metadata here for validation
+			sample.setMetadata(metadataMap);
+			
 			updatedValues.put("metadata", metadataMap);
 		}
 

@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpSession;
 
@@ -292,16 +293,14 @@ public class ProjectSampleMetadataController {
 					Long id = Long.valueOf(row.get("identifier"));
 					Sample sample = sampleService.read(id);
 					
-					Map<String, MetadataEntry> sampleMetadata = sample.getMetadata();
-
-					// Need to overwrite duplicate keys
-					for (String item : row.keySet()) {
-						if(!row.get(item).isEmpty()){
-							sampleMetadata.put(item, new MetadataEntry(row.get(item), "text"));
-						}
-					}
+					Map<String, MetadataEntry> newData = new HashMap<>();
 					
-					sample.setMetadata(sampleMetadata);
+					// Need to overwrite duplicate keys
+					for (Entry<String, String> entry : row.entrySet()) {
+						newData.put(entry.getKey(), new MetadataEntry(entry.getValue(), "text"));
+					}
+
+					sample.mergeMetadata(newData);
 
 					// Save metadata back to the sample
 					sampleService.update(sample);
