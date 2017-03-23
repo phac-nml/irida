@@ -352,7 +352,7 @@ public class Sample extends IridaResourceSupport
 	}
 	
 	/**
-	 * Merge metadata into the sample's existing metadata collection. Duplicate
+	 * Merge {@link MetadataEntry} into the sample's existing metadata collection. Duplicate
 	 * keys will be overwritten.
 	 * 
 	 * @param inputMetadata
