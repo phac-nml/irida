@@ -12,7 +12,8 @@
           success: "Metadata template  successfully created."
         },
         urls: {
-          templates: /*[[@{/projects/{id}/linelist/templates/:id(id=${project.getId()})}]]*/ ''
+          templates: /*[[@{/projects/{id}/linelist/templates/:id(id=${project.getId()})}]]*/ '',
+          fields: /*[[@{/projects/{id}/sample-metadata/fields(id=${project.getId()})}]]*/ ''
         }
       };
     </script>
@@ -145,31 +146,56 @@
         <form name="createTemplateForm">
             <div class="row">
                 <div class="col-md-9">
-                    <div class="form-group"
-                         show-validation="">
-                        <label class="control-label"
-                               for="template-name"
-                               th:text="#{linelist.create-template.name}">_TEMPLATE_NAME_</label>
-                        <input id="template-name"
-                               name="templateName"
-                               class="form-control"
-                               metadata-template-name=""
-                               existing-templates="$ctrl.templates"
-                               type="text"
-                               required="required"
-                               minlength="5"
-                               ng-model="$ctrl.template.name"/>
-                        <div ng-messages="createTemplateForm.templateName.$error"
-                             ng-show="createTemplateForm.templateName.$dirty">
-                            <p class="label label-danger" ng-message="required"
-                               th:text="#{linelist.create-template.templateName.required}">_This is a required
-                                field_</p>
-                            <p class="label label-danger" ng-message="minlength"
-                               th:text="#{linelist.create-template.templateName.minlength}">_Templage name must be 5
-                                letters long_</p>
-                            <p class="label label-danger" ng-message="unique" th:text="#{linelist.create-template.saving.error.unique}">
-                                This field already exists.
-                            </p>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group"
+                                 show-validation="">
+                                <label class="control-label"
+                                       for="template-name"
+                                       th:text="#{linelist.create-template.name}">_TEMPLATE_NAME_</label>
+                                <input id="template-name"
+                                       name="templateName"
+                                       class="form-control"
+                                       metadata-template-name=""
+                                       existing-templates="$ctrl.templates"
+                                       type="text"
+                                       required="required"
+                                       minlength="5"
+                                       ng-model="$ctrl.template.name"/>
+                                <div ng-messages="createTemplateForm.templateName.$error"
+                                     ng-show="createTemplateForm.templateName.$dirty">
+                                    <p class="label label-danger" ng-message="required"
+                                       th:text="#{linelist.create-template.templateName.required}">_This is a required
+                                        field_</p>
+                                    <p class="label label-danger" ng-message="minlength"
+                                       th:text="#{linelist.create-template.templateName.minlength}">_Templage name must
+                                        be 5
+                                        letters long_</p>
+                                    <p class="label label-danger" ng-message="unique"
+                                       th:text="#{linelist.create-template.saving.error.unique}">
+                                        This field already exists.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div class="row spaced-bottom">
+                        <div class="col-md-12">
+                            <button class="btn btn-default" ng-click="$ctrl.addNewField()">_ADD_NEW_FIELD_</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table class="table" width="100%">
+                                <tbody>
+                                <tr>
+                                    <td>Field Name</td>
+                                    <td>Field Type</td>
+                                    <td>Buttons</td>
+                                </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -183,6 +209,31 @@
                 </div>
             </div>
         </form>
+    </script>
+    <script type="text/ng-template" id="addMetadataField.tmpl.html">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                _ADD_METADATA_FIELD_
+            </h3>
+        </div>
+        <div class="modal-body">
+            <ui-select ng-model="model.field" style="width: 100%">
+                <ui-select-match placeholder="_Search_Metadata_Fields_">{{model.field.label}}</ui-select-match>
+                <ui-select-choices
+                        repeat="field in model.list"
+                        refresh="model.queryName($select.search)"
+                        refresh-delay="350"
+                        minimum-input-length="2">
+                    {{field.label}}
+                </ui-select-choices>
+            </ui-select>
+            <div class="spaced-top alert alert-info" ng-show="model.field.label &amp;&amp; !model.field.id">
+                _THIS_IS_WILL_BE_A_NEW_METADATA_FIELD_
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="model.addField()">_ADD_FIELD_</button>
+        </div>
     </script>
     <script src="/resources/js/build/create-metadata-template.bundle.js"
             th:src="@{/resources/js/build/create-metadata-template.bundle.js}"></script>

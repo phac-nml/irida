@@ -1,6 +1,7 @@
 class createTemplateController {
-  constructor(SampleMetadataTemplateService, notifications) {
+  constructor(SampleMetadataTemplateService, addMetadataField, notifications) {
     this.TemplateService = SampleMetadataTemplateService;
+    this.addMetadataField = addMetadataField;
     this.notifications = notifications;
     this.templates = [];
   }
@@ -21,10 +22,19 @@ class createTemplateController {
       });
     });
   }
+
+  addNewField() {
+    this
+      .addMetadataField()
+      .then(field => {
+        console.log(field);
+      });
+  }
 }
 
 createTemplateController.$inject = [
   'SampleMetadataTemplateService',
+  'addMetadataField',
   'notifications'
 ];
 
