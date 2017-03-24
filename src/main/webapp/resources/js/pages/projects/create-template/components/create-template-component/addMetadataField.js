@@ -1,11 +1,28 @@
 const angular = require('angular');
 
+function filterFields(tableFields, serverResults) {
+  return serverResults
+    .filter(field => {
+      return !tableFields
+        .find(tf => {
+          return tf.id === field.id;
+        });
+    });
+}
+
 class AddMetadataFieldController {
-  constructor($uibModalInstance, MetadataFieldService) {
+  constructor($scope, $uibModalInstance, MetadataFieldService, fields) {
     this.service = MetadataFieldService;
     this.modal = $uibModalInstance;
+    this.fields = fields;
     this.field = {};
     this.list = [];
+
+    $scope.$on(() => {
+      return this.field;
+    }, () => {
+      console.info(this.field);
+    });
   }
 
   queryName(query) {
@@ -15,15 +32,20 @@ class AddMetadataFieldController {
         .query({query})
         .$promise
         .then(results => {
-          if (results.length > 0) {
-            this.list = results;
-          } else {
-            this.list = [{
+          // Make sure the fields returned are not already in the table.
+          const fields = filterFields(this.fields, results);
+
+          // See if the query is in the list
+          const found = fields
+            .filter(field => field.label === query);
+          if (found.length === 0) {
+            fields.push({
               id: undefined,
               label: query,
               type: 'text'
-            }];
+            });
           }
+          this.list = fields;
         });
     } else {
       this.list = [];
@@ -36,16 +58,23 @@ class AddMetadataFieldController {
 }
 
 AddMetadataFieldController.$inject = [
+  '$scope'
   '$uibModalInstance',
-  'MetadataFieldService'
+  'MetadataFieldService',
+  'fields'
 ];
 
 export function addMetadataField($uibModal) {
-  return function() {
+  return function(fields) {
     const options = {
       templateUrl: `addMetadataField.tmpl.html`,
       controllerAs: 'model',
-      controller: AddMetadataFieldController
+      controller: AddMetadataFieldController,
+      resolve: {
+        fields() {
+          return fields;
+        }
+      }
     };
 
     const modal = $uibModal.open(options);

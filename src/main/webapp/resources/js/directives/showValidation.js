@@ -4,8 +4,6 @@ const angular = require('angular');
  * Angular Directive to display errors on an input field.
  * Add the directive as an attribute on the surrounding `class="form-group"` div.
  * @return {object} Angular directive
- *
- * ng-model-options="{debounce: 350}"
  */
 export function showValidation() {
   return {
@@ -22,21 +20,13 @@ export function showValidation() {
       const elName = ngEl.attr('name');
 
       // Update the inputs model-options to only update the angular model after 350ms.
-      $formCtrl[elName].$options.$$options.debounce = 350;
+      $formCtrl[elName].$options.$$options.debounce = {default: 350, blur: 0};
 
       // Watch for changes to the input and apply the error if required.
       $scope.$watch(() => {
         return inputEl.value;
-      }, (newVal, oldVal) => {
-        if (newVal !== oldVal) {
-          if ($formCtrl[elName].$invalid) {
-            $elem.addClass('has-error');
-            $elem.removeClass('has-success');
-          } else if ($formCtrl[elName].$valid) {
-            $elem.removeClass('has-error');
-            $elem.addClass('has-success');
-          }
-        }
+      }, () => {
+        $elem.toggleClass('has-error', $formCtrl[elName].$invalid);
       });
     }
   };

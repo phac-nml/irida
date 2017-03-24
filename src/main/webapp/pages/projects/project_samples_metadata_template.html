@@ -189,10 +189,9 @@
                         <div class="col-md-12">
                             <table class="table" width="100%">
                                 <tbody>
-                                <tr>
-                                    <td>Field Name</td>
-                                    <td>Field Type</td>
-                                    <td>Buttons</td>
+                                <tr ng-repeat="field in $ctrl.fields">
+                                    <td>{{field.label}}</td>
+                                    <td>{{field.type}}</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -202,7 +201,7 @@
                 <div class="col-md-3">
                     <button id="save-template-btn"
                             class="btn btn-primary btn-block"
-                            ng-disabled="createTemplateForm.$invalid"
+                            ng-disabled="createTemplateForm.$invalid &amp;&amp; $ctrl.fields.length === 0"
                             ng-click="$ctrl.saveTemplate()"
                             th:text="#{linelist.create-template.save-template}">Save
                     </button>
@@ -224,7 +223,7 @@
                         refresh="model.queryName($select.search)"
                         refresh-delay="350"
                         minimum-input-length="2">
-                    {{field.label}}
+                    <div>{{field.label}} <span ng-hide="field.id" class="badge badge-warning">_NEW_</span></div>
                 </ui-select-choices>
             </ui-select>
             <div class="spaced-top alert alert-info" ng-show="model.field.label &amp;&amp; !model.field.id">

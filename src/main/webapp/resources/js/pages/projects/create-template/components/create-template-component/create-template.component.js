@@ -3,13 +3,14 @@ class createTemplateController {
     this.TemplateService = SampleMetadataTemplateService;
     this.addMetadataField = addMetadataField;
     this.notifications = notifications;
-    this.templates = [];
   }
   $onInit() {
+    this.templates = [];
+    this.fields = [];
+    this.template = {};
     this.TemplateService.query(templates => {
       this.templates = templates;
     });
-    this.template = {};
   }
   saveTemplate() {
     const newTemplate = new this.TemplateService();
@@ -25,9 +26,9 @@ class createTemplateController {
 
   addNewField() {
     this
-      .addMetadataField()
+      .addMetadataField(this.fields)
       .then(field => {
-        console.log(field);
+        this.fields.push(field);
       });
   }
 }

@@ -10,7 +10,6 @@ export function metadataTemplateName() {
       existing: '=existingTemplates'
     },
     link($scope, $elm, $attrs, $ctrl) {
-      console.debug($scope);
       // existingTemplates is an attribute on the input value that passes a reference to a list
       // of MetadataTemplate names that already exist on this project.
       if (!Array.isArray($scope.existing)) {
