@@ -638,7 +638,12 @@ public class AnalysisController {
 			Map<String, Object> data = sampleMetadata.getMetadata();
 			Map<String, Object> valuesMap = new HashMap<>();
 			for (String term : terms) {
-				valuesMap.put(term, data.get(term));
+
+				Object value = data.get(term);
+				if (value == null) {
+					value = ImmutableMap.of("value", "");
+				}
+				valuesMap.put(term, value);
 			}
 			metadata.put(sample.getLabel(), valuesMap);
 		}
