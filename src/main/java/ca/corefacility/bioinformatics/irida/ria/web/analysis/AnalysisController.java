@@ -1,15 +1,21 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -42,6 +48,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteExcep
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -49,6 +56,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisSISTRTyping;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
@@ -57,9 +65,14 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.Datata
 import ca.corefacility.bioinformatics.irida.security.permissions.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dandelion.datatables.core.ajax.ColumnDef;
 import com.github.dandelion.datatables.core.ajax.DataSet;
 import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
@@ -76,7 +89,8 @@ import com.google.common.collect.ImmutableMap;
 public class AnalysisController {
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisController.class);
 	// PAGES
-	public static final Map<AnalysisType, String> PREVIEWS = ImmutableMap.of(AnalysisType.PHYLOGENOMICS, "tree");
+	public static final Map<AnalysisType, String> PREVIEWS = ImmutableMap
+			.of(AnalysisType.PHYLOGENOMICS, "tree", AnalysisType.SISTR_TYPING, "sistr");
 	private static final String BASE = "analysis/";
 	public static final String PAGE_DETAILS_DIRECTORY = BASE + "details/";
 	public static final String PREVIEW_UNAVAILABLE = PAGE_DETAILS_DIRECTORY + "unavailable";
@@ -90,17 +104,19 @@ public class AnalysisController {
 	private MessageSource messageSource;
 	private UserService userService;
 	private ProjectService projectService;
+	private SampleService sampleService;
 	private UpdateAnalysisSubmissionPermission updateAnalysisPermission;
 
 	@Autowired
 	public AnalysisController(AnalysisSubmissionService analysisSubmissionService,
 			IridaWorkflowsService iridaWorkflowsService, UserService userService, ProjectService projectService, UpdateAnalysisSubmissionPermission updateAnalysisPermission,
-			MessageSource messageSource) {
+			SampleService sampleService, MessageSource messageSource) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
 		this.messageSource = messageSource;
 		this.userService = userService;
 		this.projectService = projectService;
+		this.sampleService = sampleService;
 		this.updateAnalysisPermission = updateAnalysisPermission;
 	}
 
@@ -208,6 +224,8 @@ public class AnalysisController {
 			if (submission.getAnalysisState().equals(AnalysisState.COMPLETED)) {
 				if (analysisType.equals(AnalysisType.PHYLOGENOMICS)) {
 					tree(submission, model);
+				} else if (analysisType.equals(AnalysisType.SISTR_TYPING)) {
+					model.addAttribute("sistr", true);
 				}
 			}
 
@@ -441,6 +459,58 @@ public class AnalysisController {
 				submissions.getTotalElements());
 
 		return DatatablesResponse.build(dataSet, criterias);
+	}
+
+	@SuppressWarnings("resource")
+	@RequestMapping("/ajax/sistr/{id}") @ResponseBody public Map<String,Object> getSistrAnalysis(@PathVariable Long id) {
+		AnalysisSubmission submission = analysisSubmissionService.read(id);
+		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubimssion(submission);
+		Map<String,Object> result = ImmutableMap.of("parse_results_error", true);
+		
+		// Get details about the workflow
+		UUID workflowUUID = submission.getWorkflowId();
+		IridaWorkflow iridaWorkflow;
+		try {
+			iridaWorkflow = workflowsService.getIridaWorkflow(workflowUUID);
+		} catch (IridaWorkflowNotFoundException e) {
+			logger.error("Error finding workflow, ", e);
+			throw new EntityNotFoundException("Couldn't find workflow for submission " + submission.getId(), e);
+		}
+		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription().getAnalysisType();
+		if (analysisType.equals(AnalysisType.SISTR_TYPING)) {
+			AnalysisSISTRTyping analysis = (AnalysisSISTRTyping) submission.getAnalysis();
+			Path path = analysis.getSISTRResults().getFile();
+			try {
+				String json = new Scanner(new BufferedReader(new FileReader(path.toFile()))).useDelimiter("\\Z").next();
+				
+				// verify file is proper json file
+				ObjectMapper mapper = new ObjectMapper();
+				List<Map<String,Object>> sistrResults = mapper.readValue(json, new TypeReference<List<Map<String,String>>>(){});
+				
+				if (sistrResults.size() > 0) {
+					// should only ever be one sample for these results
+					if (samples.size() == 1) {
+						Sample sample = samples.iterator().next();
+						result = sistrResults.get(0);
+						
+						result.put("parse_results_error", false);
+						
+						result.put("sample_name", sample.getSampleName());
+					} else {
+						logger.error("Invalid number of associated samles for submission " + submission);
+					}
+				} else {
+					logger.error("SISTR results for file [" + path + "] are not correctly formatted");
+				}
+			} catch (FileNotFoundException e) {
+				logger.error("File [" + path + "] not found",e);
+			} catch (JsonParseException | JsonMappingException e) {
+				logger.error("Error attempting to parse file [" + path + "] as JSON",e);
+			} catch (IOException e) {
+				logger.error("Error reading file [" + path + "]", e);
+			}
+		}
+		return result;
 	}
 
 	/**
