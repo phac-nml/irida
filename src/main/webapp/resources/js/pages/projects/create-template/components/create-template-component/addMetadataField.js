@@ -18,10 +18,12 @@ class AddMetadataFieldController {
     this.field = {};
     this.list = [];
 
-    $scope.$on(() => {
+    $scope.$watch(() => {
       return this.field;
-    }, () => {
-      console.info(this.field);
+    }, (newValue, oldValue) => {
+      if (newValue.label !== oldValue.label) {
+        this.modal.close(angular.copy(this.field));
+      }
     });
   }
 
@@ -50,10 +52,6 @@ class AddMetadataFieldController {
     } else {
       this.list = [];
     }
-  }
-
-  addField() {
-    this.modal.close(angular.copy(this.field));
   }
 }
 
