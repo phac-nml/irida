@@ -58,7 +58,7 @@ class AddMetadataFieldController {
 }
 
 AddMetadataFieldController.$inject = [
-  '$scope'
+  '$scope',
   '$uibModalInstance',
   'MetadataFieldService',
   'fields'
