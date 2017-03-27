@@ -641,8 +641,11 @@ public class AnalysisController {
 
 				Object value = data.get(term);
 				if (value == null) {
+					// Not all samples will have the same metadata associated with it.  If a sample
+					// is missing one of the terms, just give it an empty string.
 					value = ImmutableMap.of("value", "");
 				}
+
 				valuesMap.put(term, value);
 			}
 			metadata.put(sample.getLabel(), valuesMap);
