@@ -16,7 +16,6 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
@@ -227,38 +226,6 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	public Page<ProjectSampleJoin> getFilteredSamplesForProjects(List<Project> projects, List<String> sampleNames,
 			String sampleName, String searchTerm, String organism,
 			Date minDate, Date maxDate, int currentPage, int pageSize, Sort.Direction direction, String sortProperty);
-
-	/**
-	 * Get the {@link SampleMetadata} object for a given {@link Sample}
-	 *
-	 * @param s
-	 *            {@link Sample} to read metadata for
-	 * @return a {@link SampleMetadata} object
-	 */
-	@Deprecated
-	public SampleMetadata getMetadataForSample(Sample s);
-
-	/**
-	 * Save a {@link SampleMetadata} object for a given {@link Sample}. If an
-	 * existing {@link SampleMetadata} object exists, this will overwrite it.
-	 *
-	 * @param sample
-	 *            The {@link Sample} to save {@link SampleMetadata} for
-	 * @param metadata
-	 *            {@link SampleMetadata} object to save.
-	 * @return The newly saved {@link SampleMetadata}
-	 */
-	@Deprecated
-	public SampleMetadata saveSampleMetadaForSample(Sample sample, SampleMetadata metadata);
-
-	/**
-	 * Delete the {@link SampleMetadata} for a given {@link Sample}
-	 *
-	 * @param sample
-	 *            The {@link Sample} to delete metadata for
-	 */
-	@Deprecated
-	public void deleteSampleMetadaForSample(Sample sample);
 
 	/**
 	 * Get a list of all {@link Sample}s associated with a given

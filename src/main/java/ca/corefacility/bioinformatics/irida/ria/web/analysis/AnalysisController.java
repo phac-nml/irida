@@ -3,7 +3,17 @@ package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.security.Principal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
@@ -46,7 +56,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataField;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -620,23 +630,17 @@ public class AnalysisController {
 		// Let's get a list of all the metadata available that is unique.
 		Set<String> terms = new HashSet<>();
 		for (Sample sample : samples) {
-			SampleMetadata sampleMetadata = sampleService.getMetadataForSample(sample);
-			if (sampleMetadata != null) {
-				Map<String, Object> metadata = sampleMetadata.getMetadata();
+			if (!sample.getMetadata().isEmpty()) {
+				Map<String, MetadataEntry> metadata = sample.getMetadata();
 				terms.addAll(metadata.keySet());
-			} else {
-				// Might as well add a new empty one if it is not there.
-				SampleMetadata newSampleMetadata = new SampleMetadata();
-				sampleService.saveSampleMetadaForSample(sample, newSampleMetadata);
 			}
 		}
 
 		// Get the metadata for the samples;
 		Map<String, Object> metadata = new HashMap<>();
 		for (Sample sample : samples) {
-			SampleMetadata sampleMetadata = sampleService.getMetadataForSample(sample);
-			Map<String, Object> data = sampleMetadata.getMetadata();
-			Map<String, Object> valuesMap = new HashMap<>();
+			Map<String, MetadataEntry> data = sample.getMetadata();
+			Map<String, MetadataEntry> valuesMap = new HashMap<>();
 			for (String term : terms) {
 				valuesMap.put(term, data.get(term));
 			}
