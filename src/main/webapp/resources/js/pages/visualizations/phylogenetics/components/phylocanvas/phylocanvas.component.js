@@ -84,9 +84,9 @@ function phylocanvasController($window, $scope, $q, PhylocanvasService) {
    * the phylocanvas accordingly.
    */
   $scope.$on(METADATA.UPDATED, (event, args) => {
-    if (args.columns.length) {
+    if (args.columns.length > 0) {
       tree.metadata.active = true;
-      tree.mvetadata.columns = args.columns.length;
+      tree.metadata.columns = args.columns;
     } else {
       tree.metadata.active = false;
     }
