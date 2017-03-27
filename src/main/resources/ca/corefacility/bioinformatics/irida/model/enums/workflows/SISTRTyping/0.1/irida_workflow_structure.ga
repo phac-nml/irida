@@ -6,7 +6,6 @@
     "steps": {
         "0": {
             "annotation": "", 
-            "content_id": null, 
             "id": 0, 
             "input_connections": {}, 
             "inputs": [
@@ -27,18 +26,11 @@
             "tool_state": "{\"collection_type\": \"list:paired\", \"name\": \"sequence_reads_paired\"}", 
             "tool_version": null, 
             "type": "data_collection_input", 
-            "uuid": "f39af4f6-29a6-4358-84b4-3319899cbb12", 
-            "workflow_outputs": [
-                {
-                    "label": null, 
-                    "output_name": "output", 
-                    "uuid": "ff2d89f4-7b25-4119-922a-390f1effb191"
-                }
-            ]
+            "user_outputs": [], 
+            "uuid": "f39af4f6-29a6-4358-84b4-3319899cbb12"
         }, 
         "1": {
             "annotation": "", 
-            "content_id": "irida.corefacility.ca/galaxy-shed/repos/irida/flash/FLASH/1.3.0", 
             "id": 1, 
             "input_connections": {
                 "input_type|fastq_collection": {
@@ -46,12 +38,7 @@
                     "output_name": "output"
                 }
             }, 
-            "inputs": [
-                {
-                    "description": "runtime parameter for tool FLASH", 
-                    "name": "input_type"
-                }
-            ], 
+            "inputs": [], 
             "label": null, 
             "name": "FLASH", 
             "outputs": [
@@ -81,7 +68,7 @@
                 }
             ], 
             "position": {
-                "left": 464, 
+                "left": 447, 
                 "top": 200
             }, 
             "post_job_actions": {
@@ -125,21 +112,14 @@
             }, 
             "tool_errors": null, 
             "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/flash/FLASH/1.3.0", 
-            "tool_shed_repository": {
-                "changeset_revision": "4287dd541327", 
-                "name": "flash", 
-                "owner": "irida", 
-                "tool_shed": "irida.corefacility.ca/galaxy-shed"
-            }, 
-            "tool_state": "{\"__page__\": 0, \"min_overlap\": \"\\\"20\\\"\", \"input_type\": \"{\\\"fastq_collection\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"sPaired\\\": \\\"collections\\\", \\\"__current_case__\\\": 1}\", \"__rerun_remap_job_id__\": null, \"max_overlap\": \"\\\"300\\\"\", \"options\": \"{\\\"__current_case__\\\": 1, \\\"options_select\\\": \\\"basic\\\"}\", \"outputs\": \"{\\\"output_type\\\": \\\"Non-interleaved_fastq\\\", \\\"__current_case__\\\": 0}\"}", 
+            "tool_state": "{\"__page__\": 0, \"min_overlap\": \"\\\"20\\\"\", \"input_type\": \"{\\\"fastq_collection\\\": null, \\\"sPaired\\\": \\\"collections\\\", \\\"__current_case__\\\": 1}\", \"__rerun_remap_job_id__\": null, \"max_overlap\": \"\\\"300\\\"\", \"options\": \"{\\\"__current_case__\\\": 1, \\\"options_select\\\": \\\"basic\\\"}\", \"outputs\": \"{\\\"output_type\\\": \\\"Non-interleaved_fastq\\\", \\\"__current_case__\\\": 0}\"}", 
             "tool_version": "1.3.0", 
             "type": "tool", 
-            "uuid": "d1d70bc2-41f1-43d3-983d-c1d66f5b8470", 
-            "workflow_outputs": []
+            "user_outputs": [], 
+            "uuid": "d1d70bc2-41f1-43d3-983d-c1d66f5b8470"
         }, 
         "2": {
             "annotation": "", 
-            "content_id": "toolshed.g2.bx.psu.edu/repos/nml/spades/spades/1.4", 
             "id": 2, 
             "input_connections": {
                 "libraries_0|files_0|file_type|fastq_collection": {
@@ -177,7 +157,7 @@
                 }
             ], 
             "position": {
-                "left": 754, 
+                "left": 737, 
                 "top": 200
             }, 
             "post_job_actions": {
@@ -205,25 +185,32 @@
                     "action_arguments": {}, 
                     "action_type": "HideDatasetAction", 
                     "output_name": "out_scaffolds"
+                }, 
+                "RenameDatasetActionout_contigs": {
+                    "action_arguments": {
+                        "newname": "contigs-all.fasta"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "out_contigs"
+                }, 
+                "RenameDatasetActionout_log": {
+                    "action_arguments": {
+                        "newname": "spades.log"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "out_log"
                 }
             }, 
             "tool_errors": null, 
             "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/spades/spades/1.4", 
-            "tool_shed_repository": {
-                "changeset_revision": "35cb17bd8bf9", 
-                "name": "spades", 
-                "owner": "nml", 
-                "tool_shed": "toolshed.g2.bx.psu.edu"
-            }, 
-            "tool_state": "{\"__page__\": 0, \"iontorrent\": \"\\\"false\\\"\", \"cov\": \"{\\\"state\\\": \\\"off\\\", \\\"__current_case__\\\": 0}\", \"__rerun_remap_job_id__\": null, \"nanopore\": \"[]\", \"kmer_choice\": \"{\\\"auto_kmer_choice\\\": \\\"true\\\", \\\"__current_case__\\\": 1}\", \"libraries\": \"[{\\\"lib_type\\\": \\\"paired_end\\\", \\\"__index__\\\": 0, \\\"orientation\\\": \\\"fr\\\", \\\"files\\\": [{\\\"file_type\\\": {\\\"fastq_collection\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"type\\\": \\\"paired-collection\\\", \\\"__current_case__\\\": 3}, \\\"__index__\\\": 0}]}, {\\\"lib_type\\\": \\\"paired_end\\\", \\\"__index__\\\": 1, \\\"orientation\\\": \\\"fr\\\", \\\"files\\\": [{\\\"file_type\\\": {\\\"type\\\": \\\"unpaired\\\", \\\"unpaired_reads\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"__current_case__\\\": 2}, \\\"__index__\\\": 0}]}]\", \"onlyassembler\": \"\\\"false\\\"\", \"trustedcontigs\": \"[]\", \"pacbio\": \"[]\", \"sc\": \"\\\"false\\\"\", \"untrustedcontigs\": \"[]\", \"sanger\": \"[]\", \"careful\": \"\\\"true\\\"\"}", 
+            "tool_state": "{\"__page__\": 0, \"iontorrent\": \"\\\"False\\\"\", \"cov\": \"{\\\"state\\\": \\\"off\\\", \\\"__current_case__\\\": 0}\", \"__rerun_remap_job_id__\": null, \"nanopore\": \"[]\", \"kmer_choice\": \"{\\\"auto_kmer_choice\\\": \\\"True\\\", \\\"__current_case__\\\": 1}\", \"libraries\": \"[{\\\"lib_type\\\": \\\"paired_end\\\", \\\"__index__\\\": 0, \\\"orientation\\\": \\\"fr\\\", \\\"files\\\": [{\\\"file_type\\\": {\\\"fastq_collection\\\": null, \\\"type\\\": \\\"paired-collection\\\", \\\"__current_case__\\\": 3}, \\\"__index__\\\": 0}]}, {\\\"lib_type\\\": \\\"paired_end\\\", \\\"__index__\\\": 1, \\\"orientation\\\": \\\"fr\\\", \\\"files\\\": [{\\\"file_type\\\": {\\\"type\\\": \\\"unpaired\\\", \\\"unpaired_reads\\\": null, \\\"__current_case__\\\": 2}, \\\"__index__\\\": 0}]}]\", \"onlyassembler\": \"\\\"False\\\"\", \"trustedcontigs\": \"[]\", \"pacbio\": \"[]\", \"sc\": \"\\\"False\\\"\", \"untrustedcontigs\": \"[]\", \"sanger\": \"[]\", \"careful\": \"\\\"True\\\"\"}", 
             "tool_version": "1.4", 
             "type": "tool", 
-            "uuid": "bd1169be-e339-429f-8a01-f5af80845ae3", 
-            "workflow_outputs": []
+            "user_outputs": [], 
+            "uuid": "463d6f38-aea5-450e-b64f-66a971397426"
         }, 
         "3": {
             "annotation": "", 
-            "content_id": "toolshed.g2.bx.psu.edu/repos/jjohnson/regex_find_replace/regexColumn1/0.1.0", 
             "id": 3, 
             "input_connections": {
                 "input": {
@@ -231,12 +218,7 @@
                     "output_name": "out_contig_stats"
                 }
             }, 
-            "inputs": [
-                {
-                    "description": "runtime parameter for tool Column Regex Find And Replace", 
-                    "name": "input"
-                }
-            ], 
+            "inputs": [], 
             "label": null, 
             "name": "Column Regex Find And Replace", 
             "outputs": [
@@ -246,7 +228,7 @@
                 }
             ], 
             "position": {
-                "left": 1082, 
+                "left": 1031, 
                 "top": 200
             }, 
             "post_job_actions": {
@@ -258,21 +240,14 @@
             }, 
             "tool_errors": null, 
             "tool_id": "toolshed.g2.bx.psu.edu/repos/jjohnson/regex_find_replace/regexColumn1/0.1.0", 
-            "tool_shed_repository": {
-                "changeset_revision": "9ea374bb0350", 
-                "name": "regex_find_replace", 
-                "owner": "jjohnson", 
-                "tool_shed": "toolshed.g2.bx.psu.edu"
-            }, 
-            "tool_state": "{\"__page__\": 0, \"field\": \"\\\"3\\\"\", \"__rerun_remap_job_id__\": null, \"checks\": \"[{\\\"__index__\\\": 0, \\\"replacement\\\": \\\"0.000000000000000001\\\", \\\"pattern\\\": \\\"^0$\\\"}]\", \"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\"}", 
+            "tool_state": "{\"__page__\": 0, \"field\": \"{\\\"__class__\\\": \\\"UnvalidatedValue\\\", \\\"value\\\": \\\"3\\\"}\", \"__rerun_remap_job_id__\": null, \"checks\": \"[{\\\"__index__\\\": 0, \\\"replacement\\\": \\\"0.000000000000000001\\\", \\\"pattern\\\": \\\"^0$\\\"}]\", \"input\": \"null\"}", 
             "tool_version": "0.1.0", 
             "type": "tool", 
-            "uuid": "b25b6100-7467-47c3-a616-cd60938eb5e8", 
-            "workflow_outputs": []
+            "user_outputs": [], 
+            "uuid": "b25b6100-7467-47c3-a616-cd60938eb5e8"
         }, 
         "4": {
             "annotation": "", 
-            "content_id": "irida.corefacility.ca/galaxy-shed/repos/irida/filter_spades_repeats/filter_spades_repeat/1.0.0", 
             "id": 4, 
             "input_connections": {
                 "fasta_input": {
@@ -284,16 +259,7 @@
                     "output_name": "out_file1"
                 }
             }, 
-            "inputs": [
-                {
-                    "description": "runtime parameter for tool Filter SPAdes repeats", 
-                    "name": "tab_input"
-                }, 
-                {
-                    "description": "runtime parameter for tool Filter SPAdes repeats", 
-                    "name": "fasta_input"
-                }
-            ], 
+            "inputs": [], 
             "label": null, 
             "name": "Filter SPAdes repeats", 
             "outputs": [
@@ -319,7 +285,7 @@
                 }
             ], 
             "position": {
-                "left": 1404, 
+                "left": 1336, 
                 "top": 200
             }, 
             "post_job_actions": {
@@ -360,27 +326,14 @@
             }, 
             "tool_errors": null, 
             "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/filter_spades_repeats/filter_spades_repeat/1.0.0", 
-            "tool_shed_repository": {
-                "changeset_revision": "f9fc830fa47c", 
-                "name": "filter_spades_repeats", 
-                "owner": "irida", 
-                "tool_shed": "irida.corefacility.ca/galaxy-shed"
-            }, 
-            "tool_state": "{\"__page__\": 0, \"len_cutoff\": \"\\\"1000\\\"\", \"rep_cutoff\": \"\\\"1.75\\\"\", \"__rerun_remap_job_id__\": null, \"keep_leftover\": \"\\\"yes\\\"\", \"tab_input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"cov_len_cutoff\": \"\\\"5000\\\"\", \"print_summary\": \"\\\"yes\\\"\", \"cov_cutoff\": \"\\\"0.33\\\"\", \"fasta_input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\"}", 
+            "tool_state": "{\"__page__\": 0, \"len_cutoff\": \"\\\"1000\\\"\", \"rep_cutoff\": \"\\\"1.75\\\"\", \"__rerun_remap_job_id__\": null, \"keep_leftover\": \"\\\"yes\\\"\", \"tab_input\": \"null\", \"cov_len_cutoff\": \"\\\"5000\\\"\", \"print_summary\": \"\\\"yes\\\"\", \"cov_cutoff\": \"\\\"0.33\\\"\", \"fasta_input\": \"null\"}", 
             "tool_version": "1.0.0", 
             "type": "tool", 
-            "uuid": "61a9e304-bfac-4462-8332-fa2f346dabc2", 
-            "workflow_outputs": [
-                {
-                    "label": null, 
-                    "output_name": "output_with_repeats", 
-                    "uuid": "628e570f-7def-42f9-bd56-5aea366099ad"
-                }
-            ]
+            "user_outputs": [], 
+            "uuid": "61a9e304-bfac-4462-8332-fa2f346dabc2"
         }, 
         "5": {
             "annotation": "", 
-            "content_id": "irida.corefacility.ca/galaxy-shed/repos/irida/assemblystats/assemblystats/1.0.2", 
             "id": 5, 
             "input_connections": {
                 "input": {
@@ -388,12 +341,7 @@
                     "output_name": "output_with_repeats"
                 }
             }, 
-            "inputs": [
-                {
-                    "description": "runtime parameter for tool assemblystats", 
-                    "name": "input"
-                }
-            ], 
+            "inputs": [], 
             "label": null, 
             "name": "assemblystats", 
             "outputs": [
@@ -423,7 +371,7 @@
                 }
             ], 
             "position": {
-                "left": 1688, 
+                "left": 1620, 
                 "top": 200
             }, 
             "post_job_actions": {
@@ -462,27 +410,14 @@
             }, 
             "tool_errors": null, 
             "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/assemblystats/assemblystats/1.0.2", 
-            "tool_shed_repository": {
-                "changeset_revision": "51b76a5d78a5", 
-                "name": "assemblystats", 
-                "owner": "irida", 
-                "tool_shed": "irida.corefacility.ca/galaxy-shed"
-            }, 
-            "tool_state": "{\"__page__\": 0, \"input_type\": \"\\\"contig\\\"\", \"__rerun_remap_job_id__\": null, \"bucket\": \"\\\"false\\\"\", \"all_outputs\": \"\\\"false\\\"\", \"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\"}", 
+            "tool_state": "{\"__page__\": 0, \"input_type\": \"\\\"contig\\\"\", \"__rerun_remap_job_id__\": null, \"bucket\": \"\\\"False\\\"\", \"all_outputs\": \"\\\"False\\\"\", \"input\": \"null\"}", 
             "tool_version": "1.0.2", 
             "type": "tool", 
-            "uuid": "bf422dc1-68e2-4238-b65d-4969b07c326b", 
-            "workflow_outputs": [
-                {
-                    "label": null, 
-                    "output_name": "stats", 
-                    "uuid": "75099ed8-1da5-4c2b-bb19-44839f1c386d"
-                }
-            ]
+            "user_outputs": [], 
+            "uuid": "bf422dc1-68e2-4238-b65d-4969b07c326b"
         }, 
         "6": {
             "annotation": "", 
-            "content_id": "toolshed.g2.bx.psu.edu/repos/nml/sistr_cmd/sistr_cmd/0.3.4", 
             "id": 6, 
             "input_connections": {
                 "input_fastas": {
@@ -490,12 +425,7 @@
                     "output_name": "output_with_repeats"
                 }
             }, 
-            "inputs": [
-                {
-                    "description": "runtime parameter for tool sistr_cmd", 
-                    "name": "input_fastas"
-                }
-            ], 
+            "inputs": [], 
             "label": null, 
             "name": "sistr_cmd", 
             "outputs": [
@@ -525,8 +455,8 @@
                 }
             ], 
             "position": {
-                "left": 1688, 
-                "top": 483
+                "left": 1620, 
+                "top": 490
             }, 
             "post_job_actions": {
                 "HideDatasetActionoutput_prediction_csv": {
@@ -570,39 +500,12 @@
             }, 
             "tool_errors": null, 
             "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/sistr_cmd/sistr_cmd/0.3.4", 
-            "tool_shed_repository": {
-                "changeset_revision": "ebee10be4297", 
-                "name": "sistr_cmd", 
-                "owner": "nml", 
-                "tool_shed": "toolshed.g2.bx.psu.edu"
-            }, 
-            "tool_state": "{\"input_fastas\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"no_cgmlst\": \"\\\"false\\\"\", \"use_full_cgmlst_db\": \"\\\"false\\\"\", \"__page__\": 0, \"output_format\": \"\\\"json\\\"\", \"keep_tmp\": \"\\\"false\\\"\", \"run_mash\": \"\\\"true\\\"\", \"qc\": \"\\\"true\\\"\", \"__rerun_remap_job_id__\": null, \"verbosity\": \"\\\"-vv\\\"\"}", 
+            "tool_state": "{\"input_fastas\": \"null\", \"no_cgmlst\": \"\\\"False\\\"\", \"use_full_cgmlst_db\": \"\\\"False\\\"\", \"__page__\": 0, \"output_format\": \"\\\"json\\\"\", \"keep_tmp\": \"\\\"False\\\"\", \"run_mash\": \"\\\"True\\\"\", \"qc\": \"\\\"True\\\"\", \"__rerun_remap_job_id__\": null, \"verbosity\": \"\\\"-vv\\\"\"}", 
             "tool_version": "0.3.4", 
             "type": "tool", 
-            "uuid": "f895c2af-57e5-4462-ae5e-4d8b5cc9c871", 
-            "workflow_outputs": [
-                {
-                    "label": null, 
-                    "output_name": "alleles_output", 
-                    "uuid": "24c9dd2c-67b0-4ebf-b027-abe8ed72edeb"
-                }, 
-                {
-                    "label": null, 
-                    "output_name": "output_prediction_json", 
-                    "uuid": "ee4d37c9-f8e5-483c-a6db-fad02a1a318c"
-                }, 
-                {
-                    "label": null, 
-                    "output_name": "novel_alleles", 
-                    "uuid": "73d27987-b4df-4dd8-bc3f-bcefc79d96d4"
-                }, 
-                {
-                    "label": null, 
-                    "output_name": "cgmlst_profiles", 
-                    "uuid": "2d15ab77-0f72-4e97-a2d2-19d76c2fe016"
-                }
-            ]
+            "user_outputs": [], 
+            "uuid": "f895c2af-57e5-4462-ae5e-4d8b5cc9c871"
         }
     }, 
-    "uuid": "5c42286d-4dab-49ef-9e14-2ef0c01915dc"
+    "uuid": "39348cf5-c15b-42c6-823a-4d49c83ecfe3"
 }
