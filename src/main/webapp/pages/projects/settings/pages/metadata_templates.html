@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="projects/settings/_base">
+<head>
+    <title th:text="#{project.settings.metadata-templates}">Basic</title>
+</head>
+<body>
+<th:block layout:fragment="settings-content">
+    <div class="clearfix spaced-bottom">
+        <h2 class="h2-muted pull-left" th:text="#{project.settings.metadata-templates}">_Sample Metadata Templates_</h2>
+        <a href="#"
+           th:href="@{/}"
+           class="btn btn-link pull-right" th:text="#{project.settings.metadata-templates.new}">Create New Template</a>
+    </div>
+    <table class="table table-border table-striped">
+        <thead>
+        <tr>
+            <th th:text="#{project.settings.metadata-templates.table.template-name}">Template Name</th>
+            <th th:text="#{project.settings.metadata-templates.table.create-date}" style="text-align: right;">Created Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="template : ${templates}">
+            <td>
+                <a href=""
+                   th:href="@{/projects/{id}/settings/metadata-templates/{templateId}(id=${project.getId()}, templateId=${template.getId()})}"
+                   th:text="${template.name}"></a>
+            </td>
+            <td style="text-align: right;" th:text="${#calendars.format(template.createdDate, #messages.msg('generic.dateformat'))}"></td>
+        </tr>
+        </tbody>
+    </table>
+</th:block>
+
+</body>
+</html>

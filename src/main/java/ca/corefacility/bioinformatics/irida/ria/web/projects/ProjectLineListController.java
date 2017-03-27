@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -41,16 +40,13 @@ public class ProjectLineListController {
 	private final SampleService sampleService;
 	private final MetadataTemplateService metadataTemplateService;
 	private final ProjectControllerUtils projectControllerUtils;
-	private final MessageSource messageSource;
 
 	@Autowired
 	public ProjectLineListController(ProjectService projectService, SampleService sampleService,
-			MetadataTemplateService metadataTemplateService, MessageSource messageSource,
-			ProjectControllerUtils utils) {
+			MetadataTemplateService metadataTemplateService, ProjectControllerUtils utils) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.metadataTemplateService = metadataTemplateService;
-		this.messageSource = messageSource;
 		this.projectControllerUtils = utils;
 	}
 

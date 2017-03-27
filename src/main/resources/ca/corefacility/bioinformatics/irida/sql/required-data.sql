@@ -636,7 +636,7 @@ INSERT INTO `project_analysis_submission` (created_date, project_id, analysis_su
 INSERT INTO `workflow_named_parameters` (id, created_date, name, workflow_id) VALUES (1, now(), 'NML SNVPhyl', 'b7c8b437-3c41-485e-92e5-72b67e37959f');
 INSERT INTO `workflow_named_parameter_values` (named_parameters_id, named_parameter_value, named_parameter_name) VALUES (1, '-1', 'repeat-minimum-length');
 INSERT INTO `workflow_named_parameter_values` (named_parameters_id, named_parameter_value, named_parameter_name) VALUES (1, '-2', 'repeat-minimum-pid');
-INSERT INTO `workflow_named_parameter_values` (named_parameters_id, named_parameter_value, named_parameter_name) VALUES (1, '-3', 'alternative-allele-fraction');
+INSERT INTO `workflow_named_parameter_values` (named_parameters_id, named_parameter_value, named_parameter_name) VALUES (1, '-3', 'snv-abundance-ratio');
 INSERT INTO `workflow_named_parameter_values` (named_parameters_id, named_parameter_value, named_parameter_name) VALUES (1, '-6', 'minimum-read-coverage');
 
 -- analysis_submission_sequence_file_pair
@@ -723,3 +723,29 @@ INSERT INTO `metadata_field` (id, label, type) VALUES (9, "serotype", "text");
 INSERT INTO `metadata_field` (id, label, type) VALUES (10, "primaryPfge", "text");
 INSERT INTO `metadata_field` (id, label, type) VALUES (11, "phageType", "text");
 INSERT INTO `metadata_field` (id, label, type) VALUES (12, "id", "text");
+
+-- METADATA TEMPLATES
+INSERT INTO `metadata_template` (id, created_date, modified_date, name) VALUES (1, '2016-06-10 08:05:53', '2016-07-10 08:05:53', 'Test Date Template 01');
+INSERT INTO `metadata_template` (id, created_date, modified_date, name) VALUES (2, '2016-07-10 04:45:53', '2016-07-10 08:05:53', 'Special Pathogen Template');
+
+-- METADATA TEMPLATE METADATA FIELD
+-- METADATA TEMPLATE 1 FIELDS
+INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (1, 1);
+INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (1, 2);
+INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (1, 5);
+INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (1, 9);
+INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (1, 10);
+INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (1, 11);
+
+-- METADATA TEMPLATE 2 FIELDS
+INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (2, 1);
+INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (2, 2);
+INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (2, 3);
+INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (2, 5);
+INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (2, 8);
+INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (2, 11);
+INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (2, 12);
+
+-- PROJECT METADATA TEMPLATE
+INSERT INTO `project_metadata_template` (id, created_date, project_id, template_id) VALUES (1, '2016-06-10 08:05:53',4, 1);
+INSERT INTO `project_metadata_template` (id, created_date, project_id, template_id) VALUES (2, '2017-01-11 08:05:53',4, 2);
