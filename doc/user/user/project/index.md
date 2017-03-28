@@ -77,11 +77,13 @@ Creating a new project
 Viewing project samples
 -----------------------
 
-The project samples page shows a summary of the project details and provides a view of the samples that belong to the project. You can find out more about managing samples in a project by navigating to the [managing samples](../samples) section.
+The project samples page provides a view of the samples that belong to the project.  To view the samples for a project, click on the **Samples** tab on the project page:
+
+![Project samples tab.](images/project-samples-tab.png)
+
+You can find out more about managing samples in a project by navigating to the [managing samples](../samples) section.
 
 ![Project samples panel.](images/project-details-samples.png)
-
-More detailed project information can be found by clicking the tabs at the top of the project page.
 
 Project details
 ---------------
