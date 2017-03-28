@@ -276,6 +276,12 @@ If you are a manager on a project you can manage settings on individual projects
 
 ![Project settings tab.](images/project-settings-tab.png)
 
+### Processing
+
+Project processing settings can be found in the **Processing** tab in the project settings page.
+
+![Processing tab](images/project-settings-processing.png)
+
 #### Automated assemblies
 
 Data that is uploaded to a project in IRIDA can be automatically assembled using IRIDA's assembly and annotation pipeline.  This setting is enabled on a project-by-project basis and must be enabled by a project **manager**.
@@ -286,7 +292,7 @@ To enable automated assemblies, check the *Automatically assemble data uploaded 
 
 #### Project coverage
 
-IRIDA can calculate the coverage of uploaded sequencing data for a sample.  To enable this a genome size and expected coverage must be set for a project, under the Project > Settings > Basic menu.
+IRIDA can calculate the coverage of uploaded sequencing data for a sample.  To enable this a genome size and expected coverage must be set for a project in the project settings page.
 
 * **Required Coverage** - The coverage expected by any sequencing data being uploaded to the project.
 * **Genome Size** - The size of the genome of the organism being targeted by the project.
@@ -301,11 +307,11 @@ You can then enter your coverage settings and click `Update`.
 
 When these options are set IRIDA will flag any samples which do not meet the expected coverage requirement in the [project/samples list](../samples/#viewing-samples-in-a-project).  It will also display the coverage for a sample when you [view sequence files for a sample](../samples/#viewing-sequence-files). 
 
-#### Remote project settings
+### Remote project settings
 
-Settings for remote synchronized projects can also be managed from the project settings page.  These settings will only appear for synchronized projects, and will be available within the 'Remote' menu item.  
+Settings for remote synchronized projects can also be managed from the project settings page.  **Note:** these settings will only appear for synchronized projects, and will be available within the 'Remote' menu item.  
 
-![Automated assembly check](images/project-settings-sync.png)
+![Remote Project Settings](images/project-settings-sync.png)
 
 * **Last Synchronization** - The time the project was last synchronized or checked for updates.  Click the **Sync Now** button to mark the project for synchronization before it's scheduled sync time. 
 * **Remote API** - Displays the remote IRIDA installation the project is hosted on and your connection status with that API.
