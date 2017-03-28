@@ -107,23 +107,6 @@ From this page you can view and monitor the progress of all analyses which have 
 
 ![Project analysis tab.](images/project-analysis-results.png)
 
-Adding reference files to a project
------------------------------------
-
-Reference files are required by at least one of the workflows that are installed in IRIDA by default. Reference files are stored on a project-by-project basis.
-
-Starting from [viewing project details](#viewing-project-details), you can add a reference file to a project by clicking on the "Reference Files" tab at the top of the projects page:
-
-![Project details reference files tab.](images/project-details-reference-files-tab.png)
-
-You can upload a new reference file to the project by clicking on the "Upload Reference File" button:
-
-![Upload reference file button.](images/upload-reference-file-button.png)
-
-Reference files **must** be in `fasta` format. Files containing **ambiguous base calls** will be rejected.
-
-Once you've uploaded a reference file, you can optionally download the reference file (useful if someone else uploaded the reference file for the project) by clicking on the <img src="images/download-icon.png" class="inline" alt="Download icon."> download icon in the list of reference files.
-
 Viewing recent project activity
 -------------------------------
 
@@ -304,6 +287,22 @@ Project Managers can add or remove associated projects for a project.  From the 
 You will be presented with a list of all projects you have access to in the local installation.  To add or remove an associated project, click the "On/Off" switch.
 
 ![Edit local associated projects](images/associated-local.png)
+
+### Reference files
+
+Reference files are required by at least one of the workflows that are installed in IRIDA by default. Reference files are stored on a project-by-project basis.
+
+Starting from [viewing project details](#viewing-project-details), you can add a reference file to a project by clicking on the "Reference Files" tab at the top of the projects page:
+
+![Project details reference files tab.](images/project-details-reference-files-tab.png)
+
+You can upload a new reference file to the project by clicking on the "Upload Reference File" button:
+
+![Upload reference file button.](images/upload-reference-file-button.png)
+
+Reference files **must** be in `fasta` format. Files containing **ambiguous base calls** will be rejected.
+
+Once you've uploaded a reference file, you can optionally download the reference file (useful if someone else uploaded the reference file for the project) by clicking on the <img src="images/download-icon.png" class="inline" alt="Download icon."> download icon in the list of reference files.
 
 ### Remote project settings
 
