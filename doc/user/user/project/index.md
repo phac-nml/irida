@@ -107,35 +107,6 @@ From this page you can view and monitor the progress of all analyses which have 
 
 ![Project analysis tab.](images/project-analysis-results.png)
 
-Associated Projects
--------------------
-
-Associated projects can be used to help manage related sample data across multiple projects.  Samples from associated projects can be viewed seamlessly with samples from the local project and used together in analysis pipelines.
-
-### Viewing associated projects
-
-Click the "Associated Projects" tab at the top of the project page.
-
-![Associated projects tab](images/associated-tab.png)
-
-The "Projects" list will display the projects associated with this project. The associated projects list will also display whether the project is on the local installation or if the project exists on a remote IRIDA installation.
-
-The "Remote APIs" section displays your connection status to remote IRIDA installations that have projects associated to this project.
-
-![Associated projects list](images/associated-list.png)
-
-### Adding or removing associated projects
-
-Project Managers can add or remove associated projects for a project.  From the "Associated Projects" page, click the "Edit" button.
-
-**Note:** To add or remove a project to the list of associated projects, the manager must *at least* be able to read the data in the project to be added in the associated projects list.
-
-You will be presented with a list of all projects you have access to in the local installation.  To add or remove an associated project, click the "On/Off" switch.
-
-![Edit local associated projects](images/associated-local.png)
-
-To add or remove an associated project from the API, click the "On/Off" switch next to the project name.
-
 Adding reference files to a project
 -----------------------------------
 
