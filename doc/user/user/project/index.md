@@ -121,7 +121,7 @@ The project details editing page provides the same form as when you [created the
 Project NCBI Exports
 --------------------
 
-To view exports from this project to NCBI, click on the **Export** tab.
+To view exports from this project to NCBI, click on the **NCBI Exports** tab.
 
 ![Project exports tab](images/project-export-tab.png) 
 
