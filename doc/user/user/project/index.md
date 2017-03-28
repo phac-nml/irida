@@ -310,6 +310,30 @@ When you click the remove button, you will be asked to confirm the project membe
 
 To confirm, click the "Ok" button.
 
+### Associated Projects
+
+Associated projects can be used to help manage related sample data across multiple projects.  Samples from associated projects can be viewed seamlessly with samples from the local project and used together in analysis pipelines.
+
+To view associated projects click the **Associated Projects** tab in the project settings page.
+
+![Associated projects tab](images/associated-tab.png)
+
+#### Viewing associated projects
+
+The "Associated Projects" list will display the projects associated with this project.  Projects in this view will be available in the ["Associated Projects" view on the project samples listing](../samples/#viewing-associated-samples).
+
+![Associated projects list](images/associated-list.png)
+
+#### Adding or removing associated projects
+
+Project Managers can add or remove associated projects for a project.  From the "Associated Projects" page, click the "Edit" button.
+
+**Note:** To add or remove a project to the list of associated projects, the manager must *at least* be able to read the data in the project to be added in the associated projects list.
+
+You will be presented with a list of all projects you have access to in the local installation.  To add or remove an associated project, click the "On/Off" switch.
+
+![Edit local associated projects](images/associated-local.png)
+
 ### Remote project settings
 
 Settings for remote synchronized projects can also be managed from the project settings page.  **Note:** these settings will only appear for synchronized projects, and will be available within the 'Remote' menu item.  
