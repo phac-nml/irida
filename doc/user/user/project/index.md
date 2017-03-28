@@ -34,6 +34,10 @@ The projects list provides a high-level overview of project details, including:
 * The date that the project was created in IRIDA,
 * The time that the project was last modified.
 
+To enter into a project click the **Name** of the project:
+
+![Project name button.](images/project-name-button.png)
+
 Filtering and Searching the Projects Table
 ------------------------------------------
 
@@ -70,33 +74,38 @@ Creating a new project
 
 {% include tutorials/common/creating-a-project.md %}
 
-Viewing project details
+Viewing project samples
 -----------------------
 
-To view project details, start from the [projects list](#viewing-existing-projects) and click on the **Name** of the project:
+The project samples page shows a summary of the project details and provides a view of the samples that belong to the project. You can find out more about managing samples in a project by navigating to the [managing samples](../samples) section.
 
-![Project name button.](images/project-name-button.png)
+![Project samples panel.](images/project-details-samples.png)
 
-The project details page shows a summary of the project details and provides a view of the samples that belong to the project. You can find out more about managing samples in a project by navigating to the [managing samples](../samples) section.
+More detailed project information can be found by clicking the tabs at the top of the project page.
 
-![Project details panel.](images/project-details-details.png)
+Project details
+---------------
 
-More detailed project information can be found by clicking the tabs at the top of the project details page.
+To view project details, click the **Details** tab on the project page:
 
-Editing project details
------------------------
+![Project details tab](images/project-details-tab.png) 
 
-To edit project details, start by [viewing the project details](#viewing-project-details), then click on the "Metadata" tab:
+This view will display basic information about the project such as:
 
-![Project metadata tab.](images/project-metadata-tab.png)
+* Project name - The given name of the project which will show up in the projects table.
+* Project description - A general description of the project.
+* Project organism - The organism expected to be stored within this project.
+* Project Wiki URL - An external URL where users can go to view more details about the project.
 
-On the project metadata page, click on the "Edit" button in the top, right-hand corner of the page:
+![Project details view](images/project-details-details.png) 
+
+To edit project details, from the project details page click on the "Edit" button:
 
 ![Project metadata edit button.](images/project-details-edit-button.png)
 
 The project details editing page provides the same form as when you [created the project](#creating-a-new-project), and all of the same descriptions apply. When you've finished editing the project details, you can click on the "Update" button at the bottom of the form.
 
-Project Analysis Results
+Project analysis results
 ------------------------
 
 To view the results of an analysis that has been shared with a project, click the `Analysis` tab at the top of the project page. 
@@ -292,7 +301,7 @@ You will be presented with a list of all projects you have access to in the loca
 
 Reference files are required by at least one of the workflows that are installed in IRIDA by default. Reference files are stored on a project-by-project basis.
 
-Starting from [viewing project details](#viewing-project-details), you can add a reference file to a project by clicking on the "Reference Files" tab at the top of the projects page:
+You can view or add reference files by clicking on the "Reference Files" tab in the project settings page.
 
 ![Project details reference files tab.](images/project-details-reference-files-tab.png)
 
