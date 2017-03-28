@@ -96,61 +96,6 @@ On the project metadata page, click on the "Edit" button in the top, right-hand 
 
 The project details editing page provides the same form as when you [created the project](#creating-a-new-project), and all of the same descriptions apply. When you've finished editing the project details, you can click on the "Update" button at the bottom of the form.
 
-Project members
----------------
-
-Project members are users who have permissions to view or edit project metadata. Project members can also view, download, and submit pipelines using sequencing data that's contained in a project. Project members can have two different roles: a project collaborator (*read-only* permissions), and a project manager (*read* and *modify* permissions).
-
-If you are a project **Manager**, you can add new members to the project. Start by clicking on the "Members" tab, above the [project details panel](#viewing-project-details):
-
-![Project details members tab.]({{ site.baseurl }}/images/tutorials/common/projects/project-details-members-tab.png)
-
-A project **Collaborator** will only be able to *view* the project members:
-
-![Project members (as a collaborator).](images/project-members-collaborator.png)
-
-A project **Manager** will be able to *modify* the project members:
-
-![Project members (as a manager).](images/project-members-manager.png)
-
-### Adding a project member
-
-#### Adding an individual project member
-
-{% include tutorials/common/project-add-member.md %}
-
-#### Adding a group project member
-
-{% include tutorials/common/project-add-member-group.md %}
-
-### Changing a project member role
-
-You may want to change a project member role if you wish to remove permissions for an individual user account to modify project details, but still want to allow that user account to view the project data. You can only change a project member role if you have the **Manager** role on the project.
-
-Start by [viewing the project members](#project-members).
-
-To change the role of a project member, click on the role drop-down menu of the user that you would like to change:
-
-![Edit project role button.](images/edit-project-role-button.png)
-
-The project role is saved as soon as you make a selection -- you **do not** need to click a "Save" button.
-
-### Removing a user from a project
-
-You may want to completely remove all permissions for a user to access data in a project. To remove those permissions, you must remove the user account from the project members list.
-
-Start by [viewing the project members](#project-members).
-
-To remove a project member, click on the remove button on the right-hand side of the table:
-
-![Remove project member button.](images/remove-project-member-button.png)
-
-When you click the remove button, you will be asked to confirm the project member removal:
-
-![Remove project member confirmation dialog.](images/remove-project-member-confirm.png)
-
-To confirm, click the "Ok" button.
-
 Project Analysis Results
 ------------------------
 
@@ -305,7 +250,65 @@ You can then enter your coverage settings and click `Update`.
 
 ![Coverage Update](images/project-settings-coverage-update.png) 
 
-When these options are set IRIDA will flag any samples which do not meet the expected coverage requirement in the [project/samples list](../samples/#viewing-samples-in-a-project).  It will also display the coverage for a sample when you [view sequence files for a sample](../samples/#viewing-sequence-files). 
+When these options are set IRIDA will flag any samples which do not meet the expected coverage requirement in the [project/samples list](../samples/#viewing-samples-in-a-project).  It will also display the coverage for a sample when you [view sequence files for a sample](../samples/#viewing-sequence-files).
+
+### Project members
+
+Project member settings can be found in the **Members** tab in the project settings page.
+
+![Project details members tab.]({{ site.baseurl }}/images/tutorials/common/projects/project-details-members-tab.png)
+
+Project members are users who have permissions to view or edit project metadata. Project members can also view, download, and submit pipelines using sequencing data that's contained in a project. Project members can have two different roles: a project collaborator (*read-only* permissions), and a project manager (*read* and *modify* permissions).  A user must be a **Manager** on a project to add or remove members.
+
+A project **Collaborator** will only be able to *view* the project members:
+
+![Project members (as a collaborator).](images/project-members-collaborator.png)
+
+A project **Manager** will be able to *modify* the project members:
+
+![Project members (as a manager).](images/project-members-manager.png)
+
+Similar to project members, user groups can also be added to projects to manage collections of users.
+
+![Project details groups tab.]({{ site.baseurl }}/images/tutorials/common/projects/project-details-groups-tab.png)
+
+#### Adding a project member
+
+##### Adding an individual project member
+
+{% include tutorials/common/project-add-member.md %}
+
+##### Adding a group project member
+
+{% include tutorials/common/project-add-member-group.md %}
+
+#### Changing a project member role
+
+You may want to change a project member role if you wish to remove permissions for an individual user account to modify project details, but still want to allow that user account to view the project data. You can only change a project member role if you have the **Manager** role on the project.
+
+Start by [viewing the project members](#project-members).
+
+To change the role of a project member, click on the role drop-down menu of the user that you would like to change:
+
+![Edit project role button.](images/edit-project-role-button.png)
+
+The project role is saved as soon as you make a selection -- you **do not** need to click a "Save" button.
+
+#### Removing a user from a project
+
+You may want to completely remove all permissions for a user to access data in a project. To remove those permissions, you must remove the user account from the project members list.
+
+Start by [viewing the project members](#project-members).
+
+To remove a project member, click on the remove button on the right-hand side of the table:
+
+![Remove project member button.](images/remove-project-member-button.png)
+
+When you click the remove button, you will be asked to confirm the project member removal:
+
+![Remove project member confirmation dialog.](images/remove-project-member-confirm.png)
+
+To confirm, click the "Ok" button.
 
 ### Remote project settings
 
