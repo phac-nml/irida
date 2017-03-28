@@ -7,16 +7,26 @@ import {METADATA} from './../../constants';
  */
 function controller($rootScope, $scope, MetadataService) {
   // Get the initial metadata and terms.
-  MetadataService.getMetadata(this.metadataurl)
-    .then(results => {
-      this.terms = results.terms.map(term => {
-        return ({
-          term,
-          selected: true
-        });
+  this.$onInit = () => {
+    MetadataService.getMetadata(this.metadataurl)
+      .then(results => {
+        if (Object.keys(results.metadata).length &&
+          results.terms.length) {
+          // By default all terms are selected.
+          this.terms = results.terms.map(term => {
+            return ({
+              term,
+              selected: true
+            });
+          });
+          $rootScope.$broadcast(METADATA.LOADED, {metadata: results.metadata});
+        } else {
+          $rootScope.$broadcast(METADATA.EMPTY);
+        }
+      }, () => {
+        $rootScope.$broadcast(METADATA.ERROR);
       });
-      $rootScope.$broadcast(METADATA.LOADED, {metadata: results.metadata});
-    });
+  };
 
   /**
    * Handler for when a checkbox's value changes.

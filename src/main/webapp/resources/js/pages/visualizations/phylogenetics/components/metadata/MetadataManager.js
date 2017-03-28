@@ -12,7 +12,7 @@ const _formatMetadata = (ids, terms, metadata) => {
     const data = metadata[id];
     result[id] = {};
     terms.forEach(term => {
-      const label = data[term];
+      const label = data[term].value;
       colourMap[term] = colourMap[term] || {};
       colourMap[term][label] =
         colourMap[term][label] || getRandomColour();
