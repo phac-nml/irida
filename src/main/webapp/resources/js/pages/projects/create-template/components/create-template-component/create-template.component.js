@@ -4,6 +4,7 @@ class createTemplateController {
     this.addMetadataField = addMetadataField;
     this.notifications = notifications;
   }
+
   $onInit() {
     this.templates = [];
     this.fields = [];
@@ -12,10 +13,11 @@ class createTemplateController {
       this.templates = templates;
     });
   }
+
   saveTemplate() {
     const newTemplate = new this.TemplateService();
     newTemplate.name = this.template.name;
-    newTemplate.fields = this.template.fields || ['Fred', 'money'];
+    newTemplate.fields = this.template.fields;
     newTemplate.$save(response => {
       this.notifications.show({
         type: 'success',
@@ -30,6 +32,10 @@ class createTemplateController {
       .then(field => {
         this.fields.push(field);
       });
+  }
+
+  removeField($index) {
+    this.fields.splice($index, 1);
   }
 }
 

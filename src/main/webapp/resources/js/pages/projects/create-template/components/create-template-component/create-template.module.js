@@ -3,6 +3,7 @@ require('angular-messages');
 require('ui-select');
 require('style!ui-select/dist/select.css');
 require('style!select2/dist/css/select2.css');
+require('angular-drag-and-drop-lists');
 import {showValidation} from '../../../../../directives/showValidation';
 import {SampleMetadataTemplateModule} from '../../../common/sample-metadata-templates/sample-metadata-template.module';
 import {addMetadataField} from './addMetadataField';
@@ -13,7 +14,8 @@ export const CreateSampleMetadataTemplateModule = angular
   .module('irida.metadata.template', [
     SampleMetadataTemplateModule,
     'ngMessages',
-    'ui.select'
+    'ui.select',
+    'dndLists'
   ])
   .service('MetadataFieldService', MetadataFieldService)
   .factory('addMetadataField', addMetadataField)

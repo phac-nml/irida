@@ -97,7 +97,7 @@
         <div dt:confType="extrajs" dt:bundles="project-samples-angular" dt:placeholder="before_start_document_ready"/>
         <div dt:confType="callback" dt:type="createdrow" dt:function="datatables-utils#datatable.projectRowCreated"></div>
     </div>
-    <table class="selectable" id="samplesTable" dt:table="true" dt:url="@{/projects/{id}/ajax/samples(id=${project.getId()})}" dt:ajaxParams="sample-ajax-params#samplesAjaxParams">
+    <table class="selectable" id="samplesTable" dt:table="true" dt:stateSave="true" dt:url="@{/projects/{id}/ajax/samples(id=${project.getId()})}" dt:ajaxParams="sample-ajax-params#samplesAjaxParams">
         <thead>
         <tr>
             <th dt:sortable="false" width="70px" dt:renderFunction="datatables-utils#datatable.formatCheckbox">

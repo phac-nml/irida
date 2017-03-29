@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html
-        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-        layout:decorator="projects/_base">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="projects/_base">
 <head>
     <title th:text="#{linelist.create-template.title}">Title</title>
     <link rel="stylesheet" href="/resources/css/pages/create-linelist-template.css"
@@ -24,7 +24,7 @@
 </main>
 <th:block layout:fragment="scripts">
     <script type="text/ng-template" id="create-template.tmpl.html">
-        <form name="createTemplateForm">
+        <form name="createTemplateForm" novalidate="">
             <div class="row">
                 <div class="col-md-9">
                     <div class="row">
@@ -63,52 +63,88 @@
                     <hr/>
                     <div class="row spaced-bottom">
                         <div class="col-md-12">
-                            <button class="btn btn-default" ng-click="$ctrl.addNewField()">_ADD_NEW_FIELD_</button>
+                            <button class="btn btn-default"
+                                    ng-click="$ctrl.addNewField()"
+                                    th:text="#{visualization.phylogenomics.add-new-field.btn}">_ADD_NEW_FIELD_
+                            </button>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-12">
-                            <table class="table" width="100%">
-                                <tbody>
-                                <tr ng-repeat="field in $ctrl.fields">
-                                    <td>{{field.label}}</td>
-                                    <td>{{field.type}}</td>
-                                </tr>
-                                </tbody>
-                            </table>
+                            <ul class="list-group" dnd-list="$ctrl.fields">
+                                <li class="list-group-item" ng-repeat="field in $ctrl.fields track by $index"
+                                    dnd-draggable="field"
+                                    dnd-effect-allowed="move"
+                                    dnd-disable-if="$ctrl.fields.length &lt; 2"
+                                    dnd-moved="$ctrl.fields.splice($index, 1)">
+                                    <div class="field-label">{{field.label}}&nbsp;&nbsp;
+                                        <span class="label label-info"
+                                              ng-show="!field.id"
+                                              th:text="#{visualization.phylogenomics.new-field}">_NEW_FIELD_</span>
+                                    </div>
+                                    <div class="field-buttons">
+                                        <div class="close" ng-click="$ctrl.removeField($index)">&times;</div>
+                                    </div>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <button id="save-template-btn"
-                            class="btn btn-primary btn-block"
-                            ng-disabled="createTemplateForm.$invalid &amp;&amp; $ctrl.fields.length === 0"
-                            ng-click="$ctrl.saveTemplate()"
-                            th:text="#{linelist.create-template.save-template}">Save
-                    </button>
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <p class="text-danger"
+                               ng-show="createTemplateForm.$invalid || $ctrl.fields.length === 0"
+                               th:text="#{visualization.phylogenomics.aside.warning}">_Templates require a unique name
+                                within the project and at least 1 field._</p>
+                            <p class="text-success" ng-hide="createTemplateForm.$invalid || $ctrl.fields.length === 0"
+                               th:text="#{visualization.phylogenomics.aside.correct}">
+                                _Templates can be viewed or modified through the Settings tab._</p>
+                            <button id="save-template-btn"
+                                    class="btn btn-primary btn-block"
+                                    ng-disabled="createTemplateForm.$invalid || $ctrl.fields.length === 0"
+                                    ng-click="$ctrl.saveTemplate()"
+                                    th:text="#{linelist.create-template.save-template}">_Save_
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </form>
     </script>
     <script type="text/ng-template" id="addMetadataField.tmpl.html">
         <div class="modal-header">
-            <h3 class="modal-title">
+            <h3 class="modal-title" th:text="#{visualization.phylogenomics.field-modal.title}">
                 _ADD_METADATA_FIELD_
+                <div class="close" ng-click="model.close()">
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </div>
             </h3>
         </div>
         <div class="modal-body">
-            <ui-select ng-model="model.field" style="width: 100%">
-                <ui-select-match placeholder="_Search_Metadata_Fields_">{{model.field.label}}</ui-select-match>
+            <p th:text="#{visualization.phylogenomics.field-modal.description}"></p>
+            <ui-select ng-model="model.field" style="width: 100%" autofocus="">
+                <ui-select-match data:placeholder="#{visualization.phylogenomics.field-modal.input.placeholder}">
+                    {{model.field.label}}
+                </ui-select-match>
                 <ui-select-choices
                         repeat="field in model.list"
                         refresh="model.queryName($select.search)"
-                        refresh-delay="350"
                         minimum-input-length="2">
-                    <div>
-                        {{field.label}} <span ng-hide="field.id" class="badge badge-warning">_NEW_</span>
+                    <div class="clearfix">
+                        <span class="pull-left">{{field.label}} </span>
+                        <span ng-hide="field.id"
+                              class="label label-warning pull-right"
+                              style="margin-top: 3px;"
+                              th:text="#{visualization.phylogenomics.new-field}">_NEW_</span>
                     </div>
                 </ui-select-choices>
             </ui-select>
+            <div ng-show="model.fieldExists" class="spaced-top alert alert-info">
+                <strong><i class="fa fa-exclamation-triangle" aria-hidden="true"></i></strong>
+                <p th:text="#{visualization.phylogenomics.field-modal.existing-field-warning}">THIS FIELD ALREADY EXISTS
+                    IN THE TABEL</p>
+            </div>
         </div>
     </script>
     <script src="/resources/js/build/create-metadata-template.bundle.js"

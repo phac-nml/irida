@@ -1,20 +1,30 @@
 const angular = require('angular');
 
+/**
+ * Private function to remove fields that are already displayed
+ * in the table of metadata fields for this template.
+ * @param {Array} tableFields metadata fields already displayed in table
+ * @param {Array} serverResults metadata fields available from server based on query.
+ * @return {Array} list of new server defined metadata fields.
+ */
 function filterFields(tableFields, serverResults) {
-  return serverResults
-    .filter(field => {
-      return !tableFields
-        .find(tf => {
-          return tf.id === field.id;
-        });
-    });
+  const serverFields = new Set(serverResults);
+  tableFields.forEach(field => {
+    for (let item of serverFields) {
+      if (angular.equals(item, field)) {
+        serverFields.delete(item);
+        break;
+      }
+    }
+  });
+  return Array.from(serverFields);
 }
 
 class AddMetadataFieldController {
   constructor($scope, $uibModalInstance, MetadataFieldService, fields) {
     this.service = MetadataFieldService;
     this.modal = $uibModalInstance;
-    this.fields = fields;
+    this.tableFields = fields;
     this.field = {};
     this.list = [];
 
@@ -27,30 +37,48 @@ class AddMetadataFieldController {
     });
   }
 
+  close() {
+    this.modal.dismiss();
+  }
+
   queryName(query) {
     if (query.length > 2) {
-      this
-        .service
-        .query({query})
-        .$promise
-        .then(results => {
-          // Make sure the fields returned are not already in the table.
-          const fields = filterFields(this.fields, results);
-
-          // See if the query is in the list
-          const found = fields
-            .filter(field => field.label === query);
-          if (found.length === 0) {
-            fields.push({
-              id: undefined,
-              label: query,
-              type: 'text'
-            });
-          }
-          this.list = fields;
+      // First check to see if the query is already in the table
+      const matchesInTable = this.tableFields
+        .filter(field => {
+          return field.label.toLowerCase() === query.toLowerCase();
         });
-    } else {
-      this.list = [];
+
+      if (matchesInTable.length > 0) {
+        // Display Message that fields already in the table
+        this.fieldExists = true;
+        this.list = [];
+      } else {
+        // Clear any warning message;
+        this.fieldExists = false;
+
+        this
+          .service
+          .query({query})
+          .$promise
+          .then(results => {
+            // Make sure the fields returned are not already in the table.
+            const availableFields = filterFields(this.tableFields, results);
+
+            // See if the query is in the list
+            const found = availableFields
+              .filter(field => field.label === query);
+
+            if (found.length === 0) {
+              availableFields.push({
+                id: undefined,
+                label: query,
+                type: 'text'
+              });
+            }
+            this.list = availableFields;
+          });
+      }
     }
   }
 }
@@ -62,6 +90,11 @@ AddMetadataFieldController.$inject = [
   'fields'
 ];
 
+/**
+ * Controller for displaying a modal for selection of metadata fields.
+ * @param {object} $uibModal angular-ui bootstrap modal service.
+ * @return {promise} A promise that the modal will sometimes be closed.
+ */
 export function addMetadataField($uibModal) {
   return function(fields) {
     const options = {
