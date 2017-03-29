@@ -3,12 +3,15 @@ class createTemplateController {
     this.TemplateService = SampleMetadataTemplateService;
     this.addMetadataField = addMetadataField;
     this.notifications = notifications;
-  }
 
-  $onInit() {
+    // Initialize fields
     this.templates = [];
     this.fields = [];
     this.template = {};
+  }
+
+  $onInit() {
+    // Get a list of the templates so that we can validate that the name is unique.
     this.TemplateService.query(templates => {
       this.templates = templates;
     });
@@ -17,7 +20,8 @@ class createTemplateController {
   saveTemplate() {
     const newTemplate = new this.TemplateService();
     newTemplate.name = this.template.name;
-    newTemplate.fields = this.template.fields;
+    newTemplate.fields = this.fields
+      .map(field => field.label);
     newTemplate.$save(response => {
       this.notifications.show({
         type: 'success',
