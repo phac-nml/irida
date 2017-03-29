@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpSession;
 
@@ -33,24 +34,24 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.io.Files;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.MetadataImportFileTypeNotSupportedError;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataField;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.io.Files;
-
 /**
- * This class is designed to be used for bulk actions on {@link SampleMetadata}
+ * This class is designed to be used for bulk actions on {@link MetadataEntry}
  * within a {@link Project}.
  */
 @Controller
@@ -303,20 +304,18 @@ public class ProjectSampleMetadataController {
 				try {
 					Long id = Long.valueOf(row.get("identifier"));
 					Sample sample = sampleService.read(id);
-					SampleMetadata sampleMetadata = sampleService.getMetadataForSample(sample);
-					if (sampleMetadata == null) {
-						sampleMetadata = new SampleMetadata();
-					}
-					Map<String, Object> metadata = sampleMetadata.getMetadata();
-
+					
+					Map<String, MetadataEntry> newData = new HashMap<>();
+					
 					// Need to overwrite duplicate keys
-					for (String item : row.keySet()) {
-						metadata.put(item, ImmutableMap.of("value", row.get(item)));
+					for (Entry<String, String> entry : row.entrySet()) {
+						newData.put(entry.getKey(), new MetadataEntry(entry.getValue(), "text"));
 					}
+
+					sample.mergeMetadata(newData);
 
 					// Save metadata back to the sample
-					sampleMetadata.setMetadata(metadata);
-					sampleService.saveSampleMetadaForSample(sample, sampleMetadata);
+					sampleService.update(sample);
 				} catch (EntityNotFoundException e) {
 					// This really should not happen, but hey, you never know!
 					errorList.add(messageSource.getMessage("metadata.results.save.sample-not-found",

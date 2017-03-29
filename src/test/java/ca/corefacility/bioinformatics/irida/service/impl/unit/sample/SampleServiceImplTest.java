@@ -2,7 +2,9 @@ package ca.corefacility.bioinformatics.irida.service.impl.unit.sample;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -34,7 +36,6 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisReposi
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sample.SampleMetadataRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.service.impl.sample.SampleServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -49,7 +50,6 @@ public class SampleServiceImplTest {
 	private SampleRepository sampleRepository;
 	private ProjectSampleJoinRepository psjRepository;
 	private AnalysisRepository analysisRepository;
-	private SampleMetadataRepository sampleMetadataRepository;
 	private SampleSequencingObjectJoinRepository ssoRepository;
 	private QCEntryRepository qcEntryRepository;
 	private Validator validator;
@@ -65,13 +65,12 @@ public class SampleServiceImplTest {
 		psjRepository = mock(ProjectSampleJoinRepository.class);
 		analysisRepository = mock(AnalysisRepository.class);
 		ssoRepository = mock(SampleSequencingObjectJoinRepository.class);
-		sampleMetadataRepository = mock(SampleMetadataRepository.class);
 		qcEntryRepository = mock(QCEntryRepository.class);
 
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		validator = factory.getValidator();
 		sampleService = new SampleServiceImpl(sampleRepository, psjRepository, analysisRepository,
-				ssoRepository, qcEntryRepository, sampleMetadataRepository, validator);
+				ssoRepository, qcEntryRepository, validator);
 
 	}
 
