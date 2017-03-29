@@ -92,13 +92,13 @@
                     </div>
                 </div>
             </div>
-            <div class="panel panel-info" th:if="${metadata}">
+            <div class="panel panel-info" th:unless="${#maps.isEmpty(sample.getMetadata())}">
                 <div class="panel-heading">
                     <b class="panel-title" th:text="#{sample.metadata.other}">_Other Metadata_</b>
                 </div>
                 <div class="panel-body">
                     
-                    <div th:each="entry : ${metadata.metadata}" class="col-md-6">
+                    <div th:each="entry : ${sample.getMetadata()}" class="col-md-6">
                     <dl>
                         <dt th:text="${entry.key}"></dt>
                         <dd th:if="${entry.value}" th:text="${entry.value.value}"></dd>
