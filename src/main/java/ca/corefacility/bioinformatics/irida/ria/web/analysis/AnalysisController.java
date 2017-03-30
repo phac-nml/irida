@@ -639,15 +639,15 @@ public class AnalysisController {
 		// Get the metadata for the samples;
 		Map<String, Object> metadata = new HashMap<>();
 		for (Sample sample : samples) {
-			Map<String, MetadataEntry> data = sample.getMetadata();
+			Map<String, MetadataEntry> sampleMetadata = sample.getMetadata();
 			Map<String, MetadataEntry> valuesMap = new HashMap<>();
 			for (String term : terms) {
 
-				Object value = data.get(term);
+				MetadataEntry value = sampleMetadata.get(term);
 				if (value == null) {
 					// Not all samples will have the same metadata associated with it.  If a sample
 					// is missing one of the terms, just give it an empty string.
-					value = ImmutableMap.of("value", "");
+					value = new MetadataEntry("", "text");
 				}
 
 				valuesMap.put(term, value);
