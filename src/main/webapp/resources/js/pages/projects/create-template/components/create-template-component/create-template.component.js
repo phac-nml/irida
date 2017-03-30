@@ -59,8 +59,7 @@ class createTemplateController {
   }
 
   deleteTemplate() {
-    // TODO: implement this.
-    console.warn('Delete template methods needs to be implmented');
+    this.TemplateService.delete({id: this.template.identifier});
   }
 }
 

@@ -285,18 +285,30 @@ public class ProjectLineListController {
 			metadataFields.add(metadataField);
 		}
 		MetadataTemplate template;
+		String message;
 		// If the template already has an ID, it is an existing template, so just update it.
 		if (templateId != null) {
 			template = metadataTemplateService.read(templateId);
 			metadataTemplateService.update(template);
+			message = messageSource.getMessage("linelist.create-template.update-success", new Object[]{name}, locale);
 		} else  {
 			template = new MetadataTemplate(name, metadataFields);
 			ProjectMetadataTemplateJoin join = metadataTemplateService.createMetadataTemplateInProject(template, project);
 			template = join.getObject();
+			message = messageSource.getMessage("linelist.create-template.success", new Object[]{name}, locale);
 		}
 		return ImmutableMap.of(
 				"template", template,
-				"message", messageSource.getMessage("linelist.create-template.success", new Object[]{name}, locale)
+				"message", message
 		);
+	}
+
+	@RequestMapping(
+			value = "/templates/{templateId}",
+			method = RequestMethod.DELETE
+	)
+	public String deleteMetadataTemplate(@PathVariable Long templateId) {
+		metadataTemplateService.delete(templateId);
+		return "/projects/4/settings/";
 	}
 }
