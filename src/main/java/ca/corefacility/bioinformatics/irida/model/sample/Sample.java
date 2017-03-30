@@ -1,8 +1,14 @@
 package ca.corefacility.bioinformatics.irida.model.sample;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -13,6 +19,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -26,6 +33,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.google.common.collect.Sets;
+
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.event.SampleAddedProjectEvent;
@@ -33,6 +42,7 @@ import ca.corefacility.bioinformatics.irida.model.irida.IridaSample;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 
 /**
  * A biological sample. Each sample may correspond to many files.
@@ -132,8 +142,13 @@ public class Sample extends IridaResourceSupport
 	@JoinColumn(name = "remote_status")
 	private RemoteStatus remoteStatus;
 
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@MapKeyColumn(name = "metadata_KEY")
+	private Map<String, MetadataEntry> metadata;
+
 	public Sample() {
 		createdDate = new Date();
+		metadata = new HashMap<>();
 	}
 
 	/**
@@ -300,5 +315,73 @@ public class Sample extends IridaResourceSupport
 	@Override
 	public void setRemoteStatus(RemoteStatus status) {
 		this.remoteStatus = status;
+	}
+
+	public Map<String, MetadataEntry> getMetadata() {
+		return metadata;
+	}
+
+	
+	/**
+	 * Set the {@link MetadataEntry} collection for the sample. Note duplicate
+	 * keys cannot be used (ignoring case)
+	 * 
+	 * @param inputMetadata
+	 *            the collection of {@link MetadataEntry}s
+	 */
+	public void setMetadata(Map<String, MetadataEntry> inputMetadata) {
+		// checking for duplicate keys ignoring case
+
+		// reducing to lower case
+		List<String> smalls = inputMetadata.keySet().stream().map(String::toLowerCase).collect(Collectors.toList());
+
+		// getting unique keys
+		Set<String> unique = Sets.newHashSet(smalls);
+
+		// looping unique set to check for collisions in the lower case names
+		Set<String> collisionSet = unique.stream().filter(k -> Collections.frequency(smalls, k) > 1)
+				.collect(Collectors.toSet());
+
+		// if there are collisions throw error
+		if (!collisionSet.isEmpty()) {
+			String collisions = collisionSet.stream().collect(Collectors.joining(", "));
+			throw new IllegalArgumentException("Duplicate metadata keys cannot be used: " + collisions);
+		}
+
+		this.metadata = inputMetadata;
+	}
+	
+	/**
+	 * Merge {@link MetadataEntry} into the sample's existing metadata collection. Duplicate
+	 * keys will be overwritten.
+	 * 
+	 * @param inputMetadata
+	 *            the metadata to merge into the sample
+	 */
+	public void mergeMetadata(Map<String, MetadataEntry> inputMetadata) {
+		// reducing existing to lower case for comparison
+		Map<String, MetadataEntry> smalls = new HashMap<>();
+
+		metadata.keySet().forEach(k -> {
+			String lowerCaseKey = k.toLowerCase();
+			smalls.put(lowerCaseKey, metadata.get(k));
+		});
+
+		// loop through entry set and see if it already exists
+		for (Entry<String, MetadataEntry> entry : inputMetadata.entrySet()) {
+
+			// if the value isn't empty
+			if (!entry.getValue().getValue().isEmpty()) {
+
+				// if the key is found, replace the entry
+				if (smalls.containsKey(entry.getKey().toLowerCase())) {
+					MetadataEntry metadataEntry = smalls.get(entry.getKey().toLowerCase());
+					metadataEntry.setValue(entry.getValue().getValue());
+				} else {
+					// otherwise add the new entry
+					metadata.put(entry.getKey(), entry.getValue());
+				}
+			}
+		}
 	}
 }
