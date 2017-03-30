@@ -270,8 +270,9 @@ public class ProjectLineListController {
 	)
 	@ResponseBody
 	public Map<String, Object> saveMetadataTemplate(@PathVariable long projectId, @RequestParam String name,
-			@RequestParam(value = "fields[]") List<String> fields, Locale locale) {
+			@RequestParam(value = "fields[]") List<String> fields, @RequestParam(required = false) Long templateId, Locale locale) {
 		Project project = projectService.read(projectId);
+
 		List<MetadataField> metadataFields = new ArrayList<>();
 		for (String label : fields) {
 			// Check to see if this field already exists.
@@ -283,10 +284,18 @@ public class ProjectLineListController {
 			}
 			metadataFields.add(metadataField);
 		}
-		MetadataTemplate template = new MetadataTemplate(name, metadataFields);
-		ProjectMetadataTemplateJoin join = metadataTemplateService.createMetadataTemplateInProject(template, project);
+		MetadataTemplate template;
+		// If the template already has an ID, it is an existing template, so just update it.
+		if (templateId != null) {
+			template = metadataTemplateService.read(templateId);
+			metadataTemplateService.update(template);
+		} else  {
+			template = new MetadataTemplate(name, metadataFields);
+			ProjectMetadataTemplateJoin join = metadataTemplateService.createMetadataTemplateInProject(template, project);
+			template = join.getObject();
+		}
 		return ImmutableMap.of(
-				"template", join.getObject(),
+				"template", template,
 				"message", messageSource.getMessage("linelist.create-template.success", new Object[]{name}, locale)
 		);
 	}

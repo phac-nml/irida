@@ -23,7 +23,7 @@
         <tr th:each="template : ${templates}">
             <td>
                 <a href=""
-                   th:href="@{/projects/{id}/settings/metadata-templates/{templateId}(id=${project.getId()}, templateId=${template.getId()})}"
+                   th:href="@{/projects/{id}/sample-metadata/template(id=${project.getId()}, templateId=${template.getId()})}"
                    th:text="${template.name}"></a>
             </td>
             <td style="text-align: right;" th:text="${#calendars.format(template.createdDate, #messages.msg('generic.dateformat'))}"></td>
