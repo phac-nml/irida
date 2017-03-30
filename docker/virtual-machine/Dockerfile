@@ -21,7 +21,7 @@ RUN sed -i -e 's/#admin_users = None/admin_users = admin@galaxy.org,workflowUser
 RUN install-repository "-r 4287dd541327 --url https://irida.corefacility.ca/galaxy-shed/ -o irida --name flash" && \
 	install-repository "-r f9fc830fa47c --url https://irida.corefacility.ca/galaxy-shed/ -o irida --name filter_spades_repeats" && \
 	install-repository "-r 51b76a5d78a5 --url https://irida.corefacility.ca/galaxy-shed/ -o irida --name assemblystats" && \
-	install-repository "-r 21734680d921 --url https://toolshed.g2.bx.psu.edu -o lionelguy --name spades" && \
+	install-repository "-r 35cb17bd8bf9 --url https://toolshed.g2.bx.psu.edu -o nml --name spades" && \
 	install-repository "-r f5e44aad6498 --url https://toolshed.g2.bx.psu.edu -o crs4 --name prokka" && \
 	install-repository "-r 9ea374bb0350 --url https://toolshed.g2.bx.psu.edu -o jjohnson --name regex_find_replace" && \
 	install-repository "-r 7bc329e1ada4 --url https://irida.corefacility.ca/galaxy-shed/ -o irida --name bundle_collections" && \
