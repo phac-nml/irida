@@ -24,7 +24,7 @@
 </main>
 <th:block layout:fragment="scripts">
     <script type="text/ng-template" id="create-template.tmpl.html">
-        <form name="createTemplateForm" novalidate="">
+        <form name="$ctrl.createTemplateForm" novalidate="">
             <div class="row">
                 <div class="col-md-9">
                     <div class="row">
@@ -49,8 +49,8 @@
                                        required="required"
                                        minlength="5"
                                        ng-model="$ctrl.template.name"/>
-                                <div ng-messages="createTemplateForm.templateName.$error"
-                                     ng-show="createTemplateForm.templateName.$dirty">
+                                <div ng-messages="$ctrl.createTemplateForm.templateName.$error"
+                                     ng-show="$ctrl.createTemplateForm.templateName.$dirty">
                                     <p class="label label-danger" ng-message="required"
                                        th:text="#{linelist.create-template.templateName.required}">_This is a required
                                         field_</p>
@@ -106,7 +106,7 @@
                                             <p th:text="#{linelist.create-template.delete-warning}">Once you delete a template, there is no going back. Please be certain.</p>
                                         </div>
                                         <div class="col-md-4 text-right">
-                                            <button class="btn btn-danger" ng-click="$ctrl.deleteTemplate()">
+                                            <button class="btn btn-danger" ng-click="$ctrl.removeTemplate()">
                                                 <i class="fa fa-trash" aria-hidden="true"></i> <th:block th:text="#{linelist.create-template.delete}" />
                                             </button>
                                         </div>
@@ -120,16 +120,16 @@
                     <div class="panel panel-default">
                         <div class="panel-body">
                             <p class="text-danger"
-                               ng-show="createTemplateForm.$invalid || $ctrl.template.fields.length === 0"
+                               ng-show="$ctrl.createTemplateForm.$invalid || $ctrl.template.fields.length === 0"
                                th:text="#{visualization.phylogenomics.aside.warning}">_Templates require a unique name
                                 within the project and at least 1 field._</p>
                             <p class="text-success"
-                               ng-hide="createTemplateForm.$invalid || $ctrl.template.fields.length === 0"
+                               ng-hide="$ctrl.createTemplateForm.$invalid || $ctrl.template.fields.length === 0"
                                th:text="#{visualization.phylogenomics.aside.correct}">
                                 _Templates can be viewed or modified through the Settings tab._</p>
                             <button id="save-template-btn"
                                     class="btn btn-primary btn-block"
-                                    ng-disabled="createTemplateForm.$invalid || $ctrl.template.fields.length === 0"
+                                    ng-disabled="$ctrl.createTemplateForm.$invalid || $ctrl.template.fields.length === 0"
                                     ng-click="$ctrl.saveTemplate()"
                                     th:text="#{linelist.create-template.save-template}">_Save_
                             </button>
@@ -172,6 +172,20 @@
                 <p th:text="#{visualization.phylogenomics.field-modal.existing-field-warning}">THIS FIELD ALREADY EXISTS
                     IN THE TABEL</p>
             </div>
+        </div>
+    </script>
+
+    <script type="text/ng-template" id="deleteTemplate.tmpl.html">
+        <div class="modal-header"
+             style="background-color: rgba(217, 83, 79, 1.00); color: white; border-radius: 4px 4px 0 0;">
+            <h3 class="modal-title">
+                <i class="fa fa-trash-o"></i>
+                _Confirm Delete Template_ {{modal.template.label}}
+                <div class="close" ng-click="modal.dismiss()"></div>
+            </h3>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-danger" ng-click="modal.confirm()">_Delete Tempate_</button>
         </div>
     </script>
     <script src="/resources/js/build/create-metadata-template.bundle.js"

@@ -21,8 +21,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.common.collect.ImmutableMap;
-
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -33,6 +31,8 @@ import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
+import com.google.common.collect.ImmutableMap;
 
 @Controller
 @RequestMapping("/projects/{projectId}/linelist")
@@ -289,7 +289,8 @@ public class ProjectLineListController {
 		// If the template already has an ID, it is an existing template, so just update it.
 		if (templateId != null) {
 			template = metadataTemplateService.read(templateId);
-			metadataTemplateService.update(template);
+			template.setFields(metadataFields);
+			metadataTemplateService.updateMetadataTemplateInProject(project, template);
 			message = messageSource.getMessage("linelist.create-template.update-success", new Object[]{name}, locale);
 		} else  {
 			template = new MetadataTemplate(name, metadataFields);
@@ -303,12 +304,9 @@ public class ProjectLineListController {
 		);
 	}
 
-	@RequestMapping(
-			value = "/templates/{templateId}",
-			method = RequestMethod.DELETE
-	)
-	public String deleteMetadataTemplate(@PathVariable Long templateId) {
-		metadataTemplateService.delete(templateId);
-		return "/projects/4/settings/";
+	@RequestMapping(value = "/templates/{templateId}", method = RequestMethod.DELETE)
+	public void deleteMetadataTemplate(@PathVariable Long projectId, @PathVariable Long templateId) {
+		Project project = projectService.read(projectId);
+		metadataTemplateService.deleteMetadataTemplateFromProject(project, templateId);
 	}
 }

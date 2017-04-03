@@ -1,13 +1,14 @@
 const angular = require('angular');
 
 class createTemplateController {
-  constructor(SampleMetadataTemplateService,
+  constructor(SampleMetadataTemplateService, deleteTemplate,
               addMetadataField, notifications) {
     const params = new URLSearchParams(window.location.search);
     if (params.has('templateId')) {
       this.templateId = params.get('templateId');
     }
     this.TemplateService = SampleMetadataTemplateService;
+    this.deleteTemplate = deleteTemplate;
     this.addMetadataField = addMetadataField;
     this.notifications = notifications;
 
@@ -26,8 +27,10 @@ class createTemplateController {
         const index = this.templates.findIndex(template => {
           return template.identifier === this.templateId;
         });
-        this.template = angular.copy(this.templates[index]);
-        this.templates.splice(index, 1);
+        if (index > -1) {
+          this.template = angular.copy(this.templates[index]);
+          this.templates.splice(index, 1);
+        }
       }
     });
   }
@@ -35,10 +38,11 @@ class createTemplateController {
   saveTemplate() {
     const newTemplate = new this.TemplateService();
     newTemplate.name = this.template.name;
+    newTemplate.templateId = this.template.identifier;
     newTemplate.fields = this.template.fields
       .map(field => field.label);
     newTemplate.$save(response => {
-      this.template = response.template;
+      this.template = new this.TemplateService(response.template);
       this.notifications.show({
         type: 'success',
         msg: response.message
@@ -58,13 +62,25 @@ class createTemplateController {
     this.template.fields.splice($index, 1);
   }
 
-  deleteTemplate() {
-    this.TemplateService.delete({id: this.template.identifier});
+  removeTemplate() {
+    this.deleteTemplate(this.template)
+      .then(() => {
+        this.template
+          .$delete(
+            {id: this.template.identifier},
+            () => {
+              this.template = {};
+              this.createTemplateForm.$setPristine();
+            });
+      }, () => {
+        console.log('Not deleted.');
+      });
   }
 }
 
 createTemplateController.$inject = [
   'SampleMetadataTemplateService',
+  'deleteTemplate',
   'addMetadataField',
   'notifications'
 ];
