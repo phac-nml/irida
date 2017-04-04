@@ -305,8 +305,12 @@ public class ProjectLineListController {
 	}
 
 	@RequestMapping(value = "/templates/{templateId}", method = RequestMethod.DELETE)
-	public void deleteMetadataTemplate(@PathVariable Long projectId, @PathVariable Long templateId) {
+	@ResponseBody
+	public Map<String, String> deleteMetadataTemplate(@PathVariable Long projectId, @PathVariable Long templateId, Locale locale) {
 		Project project = projectService.read(projectId);
+		MetadataTemplate template = metadataTemplateService.read(templateId);
 		metadataTemplateService.deleteMetadataTemplateFromProject(project, templateId);
+		return ImmutableMap.of("message", messageSource.getMessage("linelist.create-template.delete-success",
+				new Object[] { template.getLabel(), project.getLabel() }, locale));
 	}
 }

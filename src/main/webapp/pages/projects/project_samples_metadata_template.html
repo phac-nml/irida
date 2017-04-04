@@ -180,12 +180,12 @@
              style="background-color: rgba(217, 83, 79, 1.00); color: white; border-radius: 4px 4px 0 0;">
             <h3 class="modal-title">
                 <i class="fa fa-trash-o"></i>
-                _Confirm Delete Template_ {{modal.template.label}}
+                <th:block th:text="#{linelist.create-template.delete-confirm}" />
                 <div class="close" ng-click="modal.dismiss()"></div>
             </h3>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-danger" ng-click="modal.confirm()">_Delete Tempate_</button>
+            <button class="btn btn-danger" ng-click="modal.confirm()" th:text="#{linelist.create-template.delete}">_Delete Tempate_</button>
         </div>
     </script>
     <script src="/resources/js/build/create-metadata-template.bundle.js"

@@ -68,9 +68,13 @@ class createTemplateController {
         this.template
           .$delete(
             {id: this.template.identifier},
-            () => {
+            response => {
               this.template = {};
               this.createTemplateForm.$setPristine();
+              this.notifications.show({
+                type: 'success',
+                msg: response.message
+              });
             });
       }, () => {
         console.log('Not deleted.');
