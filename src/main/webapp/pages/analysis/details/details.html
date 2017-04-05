@@ -99,7 +99,20 @@
 							<td width="30%"><strong th:text="#{analysis.details.sistr.sample.information.name}">_Name_</strong></td>
 							<td ng-bind="sistrCtrl.sample_information['name']" style="word-wrap: break-word;"></td>
 						</tr>
+						<tr>
+							<td width="30%"><strong th:text="#{analysis.details.sistr.qc.status}">_Status_</strong></td>
+							<td ng-class="{'list-group-item-success' : sistrCtrl.sample_information.qc_pass, 'list-group-item-danger' : !sistrCtrl.sample_information.qc_pass}" ng-bind="sistrCtrl.sample_information.qc_status">QC Status</td>
+						</tr>
+						<tr ng-if="!sistrCtrl.sample_information.qc_pass">
+							<td><strong th:text="#{analysis.details.sistr.qc.details}">_Details_</strong></td>
+							<td>
+								<ul ng-repeat="item in sistrCtrl.sample_information.qc_messages">
+									<li ng-bind="item"/>
+								</ul>
+							</td>
+						</tr>
 					</table>
+					<br/>
 					<h2 th:text="#{analysis.details.sistr.serovar}">_Serovar Prediction_</h2>
 					<table class="table table-bordered">
 						<tr ng-repeat="item in sistrCtrl.serotype_predictions_order">
@@ -119,22 +132,6 @@
 						<tr ng-repeat="item in sistrCtrl.mash_predictions_order">
 							<td width="30%"><strong ng-bind="item"></strong></td>
 							<td ng-bind="sistrCtrl.mash_predictions[item]" style="word-wrap: break-word;"></td>
-						</tr>
-					</table>
-					<br/>
-					<h2 th:text="#{analysis.details.sistr.qc}">_Quality Control_</h2>
-					<table class="table table-bordered">
-						<tr>
-							<td width="30%"><strong th:text="#{analysis.details.sistr.qc.status}">_Status_</strong></td>
-							<td ng-class="{'list-group-item-success' : sistrCtrl.qc.pass, 'list-group-item-danger' : !sistrCtrl.qc.pass}" ng-bind="sistrCtrl.qc.status">QC Status</td>
-						</tr>
-						<tr ng-if="!sistrCtrl.qc.pass">
-							<td><strong th:text="#{analysis.details.sistr.qc.details}">_Details_</strong></td>
-							<td>
-								<ul ng-repeat="item in sistrCtrl.qc.messages">
-									<li ng-bind="item"/>
-								</ul>
-							</td>
 						</tr>
 					</table>
 					<br/>

@@ -152,13 +152,15 @@
       } else {
         var sample_information = {};
         sample_information['name'] = result['sample_name'];
+        sample_information['qc_status'] = result['qc_status'];
+        sample_information['qc_messages'] = result['qc_messages'].split("|");
+        sample_information['qc_pass'] = (result['qc_status'] == 'PASS');
 
-        var serotype_predictions_order = ['Serovar (overall)', 'Serovar (antigen)', 'Serovar (cgMLST)', 'Serovar (mash)', 'Serogroup', 'H1', 'H2', 'O antigen'];
+        var serotype_predictions_order = ['Serovar (overall)', 'Serovar (antigen)', 'Serovar (cgMLST)', 'Serogroup', 'H1', 'H2', 'O antigen'];
         var serotype_predictions = {};
         serotype_predictions['Serovar (overall)'] = result['serovar'];
         serotype_predictions['Serovar (antigen)'] = result['serovar_antigen'];
         serotype_predictions['Serovar (cgMLST)'] = result['serovar_cgmlst'];
-        serotype_predictions['Serovar (mash)'] = result['mash_serovar'];
         serotype_predictions['Serogroup'] = result['serogroup'];
         serotype_predictions['H1'] = result['h1'];
         serotype_predictions['H2'] = result['h2'];
@@ -172,15 +174,11 @@
         cgMLST_predictions['cgMLST ST'] = result['cgmlst_ST'];
   
         var mash_predictions = {};
-        var mash_predictions_order = ['Mash subspecies', 'Mash match', 'Mash genome'];
+        var mash_predictions_order = ['Mash subspecies', 'Mash serovar', 'Mash match', 'Mash genome'];
         mash_predictions['Mash subspecies'] = result['mash_subspecies'];
+        mash_predictions['Mash serovar'] = result['mash_serovar'];
         mash_predictions['Mash match'] = result['mash_match'];
         mash_predictions['Mash genome'] = result['mash_genome'];
-  
-        var qc = {};
-        qc['messages'] = result['qc_messages'].split("|");
-        qc['status'] = result['qc_status'];
-        qc['pass'] = (result['qc_status'] == 'PASS');
   
         vm.sample_information = sample_information;
         vm.serotype_predictions = serotype_predictions;
@@ -189,7 +187,6 @@
         vm.cgMLST_predictions = cgMLST_predictions;
         vm.mash_predictions_order = mash_predictions_order;
         vm.mash_predictions = mash_predictions;
-        vm.qc = qc;
         vm.parse_results_error = result['parse_results_error'];
       }
     });
