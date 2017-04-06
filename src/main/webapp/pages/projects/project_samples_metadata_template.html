@@ -102,7 +102,7 @@
                                 _Templates can be viewed or modified through the Settings tab._</p>
                             <button id="save-template-btn"
                                     class="btn btn-primary btn-block"
-                                    ng-disabled="createTemplateForm.$invalid || $ctrl.fields.length === 0"
+                                    ng-disabled="$ctrl.disableSave()"
                                     ng-click="$ctrl.saveTemplate()"
                                     th:text="#{linelist.create-template.save-template}">_Save_
                             </button>

@@ -17,6 +17,10 @@ class createTemplateController {
     });
   }
 
+  disableSave() {
+    return document.createTemplateForm.$invalid || this.fields.length === 0;
+  }
+
   saveTemplate() {
     const newTemplate = new this.TemplateService();
     newTemplate.name = this.template.name;
