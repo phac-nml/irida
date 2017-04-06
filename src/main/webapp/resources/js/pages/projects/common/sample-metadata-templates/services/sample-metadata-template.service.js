@@ -6,8 +6,8 @@
  * @return {*} Angular resource object for handling metadata templates.
  * @constructor
  */
-export function MetadataTemplateService($resource, $window,
-                                        $httpParamSerializerJQLike) {
+export function SampleMetadataTemplateService($resource, $window,
+                                              $httpParamSerializerJQLike) {
   return $resource($window.PAGE.urls.templates, {
     id: '@id'
   }, {
@@ -20,7 +20,7 @@ export function MetadataTemplateService($resource, $window,
   });
 }
 
-MetadataTemplateService.$inject = [
+SampleMetadataTemplateService.$inject = [
   '$resource',
   '$window',
   '$httpParamSerializerJQLike'
