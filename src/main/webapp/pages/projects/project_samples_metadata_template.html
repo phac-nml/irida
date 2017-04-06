@@ -133,6 +133,10 @@
                                     ng-click="$ctrl.saveTemplate()"
                                     th:text="#{linelist.create-template.save-template}">_Save_
                             </button>
+                            <p class="spaced-top text-muted"
+                               ng-hide="$ctrl.templateIsModified()"
+                               th:text="#{linelist.create-template.not-modified}">_This template has not been
+                                modified_</p>
                         </div>
                     </div>
                 </div>

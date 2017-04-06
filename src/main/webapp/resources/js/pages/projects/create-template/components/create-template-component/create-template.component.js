@@ -1,5 +1,6 @@
 const angular = require('angular');
 
+let original = {};
 class createTemplateController {
   constructor(SampleMetadataTemplateService, deleteTemplate,
               addMetadataField, notifications) {
@@ -30,14 +31,20 @@ class createTemplateController {
         if (index > -1) {
           this.template = angular.copy(this.templates[index]);
           this.templates.splice(index, 1);
+          original = angular.copy(this.template);
         }
       }
     });
   }
 
   disableSave() {
-    return this.createTemplateForm.$invalid ||
-      this.template.fields.length === 0;
+    return (this.createTemplateForm.$invalid ||
+      this.template.fields.length === 0) ||
+      !this.templateIsModified();
+  }
+
+  templateIsModified() {
+    return !angular.equals(original, this.template);
   }
 
   saveTemplate() {
@@ -48,6 +55,7 @@ class createTemplateController {
       .map(field => field.label);
     newTemplate.$save(response => {
       this.template = new this.TemplateService(response.template);
+      original = angular.copy(this.template);
       this.notifications.show({
         type: 'success',
         msg: response.message
