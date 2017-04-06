@@ -311,6 +311,8 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		waitForTime(350);
 		mergeBtnOK.click();
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("merge-modal")));
+		// Adding an extra wait because having issues getting the updated name value completely.
+		waitForTime(500);
 	}
 
 	public void copySamples(String project) {
