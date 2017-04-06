@@ -163,7 +163,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		// Merge with a new name
 		page.selectSample(0);
 		page.selectSample(1);
-		String newSampleName = "MY_NEW_SAMPLE_NAME";
+		String newSampleName = "NEW_NAME";
 		page.mergeSamplesWithNewName(newSampleName);
 		String name = page.getSampleNamesOnPage().get(0);
 		assertEquals("Should have the new sample name", newSampleName, name);
