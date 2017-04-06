@@ -174,11 +174,11 @@
         cgMLST_predictions['cgMLST ST'] = result['cgmlst_ST'];
   
         var mash_predictions = {};
-        var mash_predictions_order = ['Mash subspecies', 'Mash serovar', 'Mash match', 'Mash genome'];
+        var mash_predictions_order = ['Mash subspecies', 'Mash serovar', 'Mash match', 'Mash genome match'];
         mash_predictions['Mash subspecies'] = result['mash_subspecies'];
         mash_predictions['Mash serovar'] = result['mash_serovar'];
         mash_predictions['Mash match'] = result['mash_match'];
-        mash_predictions['Mash genome'] = result['mash_genome'];
+        mash_predictions['Mash genome match'] = result['mash_genome'];
   
         vm.sample_information = sample_information;
         vm.serotype_predictions = serotype_predictions;

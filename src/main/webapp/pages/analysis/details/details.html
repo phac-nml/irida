@@ -100,11 +100,11 @@
 							<td ng-bind="sistrCtrl.sample_information['name']" style="word-wrap: break-word;"></td>
 						</tr>
 						<tr>
-							<td width="30%"><strong th:text="#{analysis.details.sistr.qc.status}">_Status_</strong></td>
+							<td width="30%"><strong th:text="#{analysis.details.sistr.sample.information.qc.status}">_Status_</strong></td>
 							<td ng-class="{'list-group-item-success' : sistrCtrl.sample_information.qc_pass, 'list-group-item-danger' : !sistrCtrl.sample_information.qc_pass}" ng-bind="sistrCtrl.sample_information.qc_status">QC Status</td>
 						</tr>
 						<tr ng-if="!sistrCtrl.sample_information.qc_pass">
-							<td><strong th:text="#{analysis.details.sistr.qc.details}">_Details_</strong></td>
+							<td><strong th:text="#{analysis.details.sistr.sample.information.qc.details}">_Details_</strong></td>
 							<td>
 								<ul ng-repeat="item in sistrCtrl.sample_information.qc_messages">
 									<li ng-bind="item"/>
