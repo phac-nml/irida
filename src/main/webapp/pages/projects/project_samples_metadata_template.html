@@ -130,6 +130,7 @@
                 <ui-select-choices
                         repeat="field in model.list"
                         refresh="model.queryName($select.search)"
+                        refresh-delay="0"
                         minimum-input-length="2">
                     <div class="clearfix">
                         <span class="pull-left">{{field.label}} </span>
