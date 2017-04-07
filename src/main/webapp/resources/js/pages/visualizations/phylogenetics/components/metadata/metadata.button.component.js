@@ -1,10 +1,27 @@
 import {METADATA} from '../../constants';
 
 class MetadataButtonController {
-  constructor($rootScope, $aside, MetadataService) {
+  constructor($rootScope, $scope, $aside, MetadataService) {
     this.$rootScope = $rootScope;
     this.MetadataService = MetadataService;
     this.$aside = $aside;
+    this.terms = [];
+
+    // Register listeners
+    $scope.$on(METADATA.TEMPLATE, (e, args) => {
+      const {fields} = args;
+
+      if (fields) {
+        this.terms.forEach(term => {
+          term.selected = fields.indexOf(term.term) >= 0;
+        });
+      } else {
+        this.terms.forEach(term => {
+          term.selected = true;
+        });
+      }
+      this.handleTermVisibilityChange();
+    });
   }
 
   $onInit() {
@@ -24,7 +41,6 @@ class MetadataButtonController {
             METADATA.LOADED,
             {metadata: results.metadata}
           );
-          console.log(this);
         } else {
           this.$rootScope.$broadcast(METADATA.EMPTY);
         }
@@ -33,7 +49,7 @@ class MetadataButtonController {
       });
   }
 
-  handleTermVisibilityChange(term) {
+  handleTermVisibilityChange() {
     const columns = this.terms
       .filter(term => term.selected)
       .map(term => term.term);
@@ -68,6 +84,7 @@ class MetadataButtonController {
 
 MetadataButtonController.$inject = [
   '$rootScope',
+  '$scope',
   '$aside',
   'MetadataService'
 ];
