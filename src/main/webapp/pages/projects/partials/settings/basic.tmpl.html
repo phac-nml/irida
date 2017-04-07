@@ -1,11 +1,17 @@
 <!-- BASIC SETTINGS -->
 <div class="row">
     <div class="col-md-12">
-        <h2 class="h2-muted" th:text="#{project.settings.assemble}">_Basic Settings_</h2>
+        <h2 class="h2-muted" th:text="#{project.settings.automated-pipelines}">_Automated Pipelines_</h2>
         <div class="checkbox">
             <label>
                 <input id="assemble" type="checkbox" value="assemble" th:checked="${project.assembleUploads}"/>
                 <span th:text="#{project.settings.assemble.control}">_Automatically assemble uploads_</span>
+            </label>
+        </div>
+        <div class="checkbox">
+            <label>
+                <input id="sistr" type="checkbox" value="sistr" th:checked="${project.sistrTypingUploads}"/>
+                <span th:text="#{project.settings.sistr.control}">_Automatically type uploads with SISTR_</span>
             </label>
         </div>
     </div>

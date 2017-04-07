@@ -72,6 +72,11 @@ public abstract class SequencingObject extends IridaResourceSupport implements M
 	@JoinColumn(name = "automated_assembly", unique = true, nullable = true)
 	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 	private AnalysisSubmission automatedAssembly;
+	
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinColumn(name = "sistr_typing", unique = true, nullable = true)
+	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+	private AnalysisSubmission sistrTyping;
 
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "remote_status")
@@ -158,6 +163,15 @@ public abstract class SequencingObject extends IridaResourceSupport implements M
 
 	public void setAutomatedAssembly(AnalysisSubmission automatedAssembly) {
 		this.automatedAssembly = automatedAssembly;
+	}
+	
+	@JsonIgnore
+	public AnalysisSubmission getSistrTyping() {
+		return sistrTyping;
+	}
+
+	public void setSistrTyping(AnalysisSubmission sistrTyping) {
+		this.sistrTyping = sistrTyping;
 	}
 
 	@Override
