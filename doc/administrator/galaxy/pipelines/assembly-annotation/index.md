@@ -9,14 +9,14 @@ Assembly and Annotation
 
 This workflow uses the software [SPAdes][] and [Prokka][] for assembly and annotation of genomes as well as a few tools for filtering of data and generating assembly statistics.  The specific Galaxy tools are listed in the table below.
 
-| Tool Name                 | Tool Revision | Toolshed Installable Revision | Toolshed             |
-|:-------------------------:|:-------------:|:-----------------------------:|:--------------------:|
-| **flash**                 | 4287dd541327  | 0 (2015-05-05)                | [IRIDA Toolshed][]   |
-| **filter_spades_repeats** | f9fc830fa47c  | 0 (2015-05-05)                | [IRIDA Toolshed][]   |
-| **assemblystats**         | 51b76a5d78a5  | 1 (2015-05-07)                | [IRIDA Toolshed][]   |
-| **spades**                | 21734680d921  | 14 (2015-02-27)               | [Galaxy Main Shed][] |
-| **prokka**                | f5e44aad6498  | 7 (2015-10-01)                | [Galaxy Main Shed][] |
-| **regex_find_replace**    | 9ea374bb0350  | 0 (2014-03-29)                | [Galaxy Main Shed][] |
+| Tool Name                 | Owner    | Tool Revision | Toolshed Installable Revision | Toolshed             |
+|:-------------------------:|:--------:|:-------------:|:-----------------------------:|:--------------------:|
+| **flash**                 | irida    | 4287dd541327  | 0 (2015-05-05)                | [IRIDA Toolshed][]   |
+| **filter_spades_repeats** | irida    | f9fc830fa47c  | 0 (2015-05-05)                | [IRIDA Toolshed][]   |
+| **assemblystats**         | irida    | 51b76a5d78a5  | 1 (2015-05-07)                | [IRIDA Toolshed][]   |
+| **spades**                | nml      | 35cb17bd8bf9  | 4 (2016-08-08)                | [Galaxy Main Shed][] |
+| **prokka**                | crs4     | f5e44aad6498  | 7 (2015-10-01)                | [Galaxy Main Shed][] |
+| **regex_find_replace**    | jjohnson | 9ea374bb0350  | 0 (2014-03-29)                | [Galaxy Main Shed][] |
 
 To install these tools please proceed through the following steps.
 
@@ -26,7 +26,7 @@ Some of these tools require additional dependencies to be installed.  For a clus
 
 1. [Java][]:  Please download and install [Java][] version 1.6+ or make sure it is available in your execution environment.
 2. [gnuplot][]: Please download and install [gnuplot][] or make sure this is available in your execution environment.
-2. **Perl Modules**: Please download and install dependency Perl modules with the command.
+3. **Perl Modules**: Please download and install dependency Perl modules with the command.
 
 ```bash
 cpanm Time::Piece XML::Simple Data::Dumper
