@@ -1,3 +1,4 @@
+const angular = require('angular');
 import {METADATA} from '../../constants';
 
 class MetadataButtonController {
@@ -10,16 +11,32 @@ class MetadataButtonController {
     // Register listeners
     $scope.$on(METADATA.TEMPLATE, (e, args) => {
       const {fields} = args;
+      const existing = angular.copy(this.terms);
+      const newOrder = [];
 
-      if (fields) {
-        this.terms.forEach(term => {
-          term.selected = fields.indexOf(term.term) >= 0;
-        });
-      } else {
-        this.terms.forEach(term => {
-          term.selected = true;
+      if (fields) { // Add the visible fields in order
+        fields.forEach(field => {
+          const index = existing.findIndex(t => {
+            return t.term === field;
+          });
+          if (index >= 0) {
+            const item = existing.splice(index, 1)[0];
+            item.selected = true;
+            newOrder.push(item);
+          }
         });
       }
+
+      // Hide remainder of fields;
+      // typeof fields === 'undefined' would evaluate to try only for the show all fields option.
+      const showFields = typeof fields === 'undefined';
+      existing.forEach(term => {
+        term.selected = showFields;
+        newOrder.push(term);
+      });
+
+      // Update the UI;
+      this.terms = newOrder;
       this.handleTermVisibilityChange();
     });
   }
