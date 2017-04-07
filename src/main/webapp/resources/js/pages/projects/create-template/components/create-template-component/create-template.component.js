@@ -82,7 +82,7 @@ class createTemplateController {
           .$delete(
             {id: this.template.identifier},
             response => {
-              this.template = {};
+              this.template = {fields: []};
               this.createTemplateForm.$setPristine();
               this.notifications.show({
                 type: 'success',
