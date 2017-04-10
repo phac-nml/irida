@@ -34,10 +34,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.io.Files;
-
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.MetadataImportFileTypeNotSupportedError;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -49,6 +45,10 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.io.Files;
 
 /**
  * This class is designed to be used for bulk actions on {@link MetadataEntry}
@@ -304,15 +304,32 @@ public class ProjectSampleMetadataController {
 				try {
 					Long id = Long.valueOf(row.get("identifier"));
 					Sample sample = sampleService.read(id);
-					
-					Map<String, MetadataEntry> newData = new HashMap<>();
-					
-					// Need to overwrite duplicate keys
-					for (Entry<String, String> entry : row.entrySet()) {
-						newData.put(entry.getKey(), new MetadataEntry(entry.getValue(), "text"));
+
+					// Get the current sample metadata
+					Map<String, MetadataEntry> sampleMetadata = sample.getMetadata();
+					if (sampleMetadata == null) {
+						sampleMetadata = new HashMap<>();
 					}
 
-					sample.mergeMetadata(newData);
+					// Need to overwrite duplicate keys
+					for (Entry<String, String> rowEntry : row.entrySet()) {
+						String key = rowEntry.getKey();
+
+						// See if there is a MetadataField corresponding to this header.
+						MetadataField metadataField = metadataTemplateService.readMetadataFieldByLabel(key);
+						// If it does not exist actually create it.
+						if (metadataField == null) {
+							metadataField = new MetadataField(key, "text");
+							metadataTemplateService.saveMetadataField(metadataField);
+						}
+
+						// Create the metadata entry
+						// NOTE: we are overwriting an currently save metadata for this field by doing this.
+						MetadataEntry entry = new MetadataEntry(rowEntry.getValue(), "text");
+						sampleMetadata.put(key, entry);
+					}
+
+					sample.mergeMetadata(sampleMetadata);
 
 					// Save metadata back to the sample
 					sampleService.update(sample);
