@@ -1,12 +1,9 @@
 const angular = require('angular');
-import Phylocanvas from 'phylocanvas';
 import metadataPlugin from 'phylocanvas-plugin-metadata';
 import {METADATA, TREE} from './../../constants';
 
 const PHYLOCANVAS_DIV = 'phylocanvas';
 const BOTTOM_PADDING = 180;
-
-Phylocanvas.plugin(metadataPlugin);
 
 const metadataFormat = {
   showHeaders: true,
@@ -33,17 +30,22 @@ const setCanvasHeight = $window => {
  * @param {object} $window AngularJS window object
  * @param {object} $scope AngularJS $scope object for current dom
  * @param {object} $q AngularJS promise object
+ * @param {object} Phylocanvas angular injection of the Phylocanvas library.
  * @param {object} PhylocanvasService angular service for server exchanges for newick data
  * @param {object} MetadataService angular service for getting metedata terms
  */
-function phylocanvasController($window, $scope, $q,
+function phylocanvasController($window, $scope, $q, Phylocanvas,
                                PhylocanvasService, MetadataService) {
   // Make the canvas fill the viewable window.
   setCanvasHeight($window);
 
+  // Initialize the metadata plugin.
+  Phylocanvas.plugin(metadataPlugin);
+
   // Initialize phylocanvas.
   const tree = Phylocanvas
     .createTree(PHYLOCANVAS_DIV, {
+      lineWidth: 2,
       metadata: metadataFormat
     });
 
@@ -124,6 +126,7 @@ phylocanvasController.$inject = [
   '$window',
   '$scope',
   '$q',
+  'Phylocanvas',
   'PhylocanvasService',
   'MetadataService'
 ];
