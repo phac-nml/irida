@@ -4,7 +4,7 @@ import metadataPlugin from 'phylocanvas-plugin-metadata';
 import {METADATA, TREE} from './../../constants';
 
 const PHYLOCANVAS_DIV = 'phylocanvas';
-const BOTTOM_PADDING = 250;
+const BOTTOM_PADDING = 180;
 
 Phylocanvas.plugin(metadataPlugin);
 
