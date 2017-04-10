@@ -18,6 +18,13 @@
             background-color: rgba(34, 45, 50, 1.00)!important;
         }
     </style>
+    <script th:inline="javascript">
+        var PAGE = {
+          urls: {
+            metadata: /*[[@{/analysis/ajax/{id}/metadata(id=${submissionId})}]]*/ ''
+          }
+        };
+    </script>
 </head>
 <body>
 <div layout:fragment="page">
@@ -60,9 +67,7 @@
         <h1 th:text="#{visualization.phylogenomics.title}"></h1>
         <div class="form-inline spaced-bottom">
             <div class="form-group">
-                <metadata-button
-                        data:metadata-url="@{/analysis/ajax/{id}/metadata(id=${submissionId})}">
-                </metadata-button>
+                <metadata-button></metadata-button>
             </div>
             <div class="form-group">
                 <template-component

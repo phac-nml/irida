@@ -39,31 +39,16 @@ class MetadataButtonController {
       this.terms = newOrder;
       this.handleTermVisibilityChange();
     });
-  }
 
-  $onInit() {
-    this.MetadataService
-      .getMetadata(this.metadataUrl)
-      .then(results => {
-        if (Object.keys(results.metadata).length &&
-          results.terms.length) {
-          // By default all terms are selected.
-          this.terms = results.terms.map(term => {
-            return ({
-              term,
-              selected: true
-            });
-          });
-          this.$rootScope.$broadcast(
-            METADATA.LOADED,
-            {metadata: results.metadata}
-          );
-        } else {
-          this.$rootScope.$broadcast(METADATA.EMPTY);
-        }
-      }, () => {
-        this.$rootScope.$broadcast(METADATA.ERROR);
+    $scope.$on(METADATA.LOADED, (event, args) => {
+      const {terms} = args;
+      this.terms = terms.map(term => {
+        return ({
+          term,
+          selected: true
+        });
       });
+    });
   }
 
   handleTermVisibilityChange() {
@@ -107,9 +92,6 @@ MetadataButtonController.$inject = [
 ];
 
 export const MetadataButton = {
-  bindings: {
-    metadataUrl: '@'
-  },
   templateUrl: 'metadataButton.tmpl.html',
   controller: MetadataButtonController
 };

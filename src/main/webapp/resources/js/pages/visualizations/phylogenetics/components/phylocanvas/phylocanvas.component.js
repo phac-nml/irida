@@ -34,8 +34,10 @@ const setCanvasHeight = $window => {
  * @param {object} $scope AngularJS $scope object for current dom
  * @param {object} $q AngularJS promise object
  * @param {object} PhylocanvasService angular service for server exchanges for newick data
+ * @param {object} MetadataService angular service for getting metedata terms
  */
-function phylocanvasController($window, $scope, $q, PhylocanvasService) {
+function phylocanvasController($window, $scope, $q,
+                               PhylocanvasService, MetadataService) {
   // Make the canvas fill the viewable window.
   setCanvasHeight($window);
 
@@ -109,13 +111,21 @@ function phylocanvasController($window, $scope, $q, PhylocanvasService) {
     });
     metadataPromise.resolve();
   });
+
+  $scope.$on(METADATA.TEMPLATE, (event, args) => {
+    const {fields} = args;
+    tree.metadata.columns = MetadataService
+      .getSortedAndFilteredColumns(fields);
+    tree.draw();
+  });
 }
 
 phylocanvasController.$inject = [
   '$window',
   '$scope',
   '$q',
-  'PhylocanvasService'
+  'PhylocanvasService',
+  'MetadataService'
 ];
 
 export const PhylocanvasComponent = {
