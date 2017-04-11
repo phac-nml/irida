@@ -8,7 +8,10 @@
     <script th:inline="javascript">
       var PAGE = {
         urls: {
-          saveTemplate: /*[[@{/projects/{id}/linelist/templates/:id(id=${project.getId()})}]]*/ ''
+          templates: /*[[@{/projects/{id}/linelist/templates/:id(id=${project.getId()})}]]*/ ''
+        },
+        i18n: {
+          allFields: /*[[#{linelist.templates.all}]]*/ 'All Fields'
         }
       };
     </script>

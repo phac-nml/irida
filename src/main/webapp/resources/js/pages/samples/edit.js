@@ -8,7 +8,7 @@ $(document).ready(function(){
             var entry = $(this);
             var key = entry.find(".metadata-key").val();
             var value = entry.find(".metadata-value").val();
-            metadata[key] = value;
+            metadata[key] = {value: value, type: 'text'};
         });
 
         // paste the json into a hidden text field for submission

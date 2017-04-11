@@ -42,6 +42,18 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 		return super.read(id);
 	}
 
+	@PreAuthorize("hasPermission(#project, 'isProjectOwner') or hasRole('ROLE_ADMIN')")
+	@Override
+	public MetadataTemplate updateMetadataTemplateInProject(Project project, MetadataTemplate template) {
+		return super.update(template);
+	}
+
+	@PreAuthorize("hasPermission(#project, 'isProjectOwner') or hasRole('ROLE_ADMIN')")
+	@Override
+	public void deleteMetadataTemplateFromProject(Project project, Long id) throws EntityNotFoundException {
+		super.delete(id);
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -90,4 +102,12 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 		return fieldRepository.save(field);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("permitAll()")
+	public List<MetadataField> getAllMetadataFieldsByQueryString(String query) {
+		return fieldRepository.findAllMetadataFieldsByLabelQuery(query);
+	}
 }

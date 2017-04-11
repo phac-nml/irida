@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpSession;
 
@@ -36,9 +37,10 @@ import org.springframework.web.multipart.MultipartFile;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.MetadataImportFileTypeNotSupportedError;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataField;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
@@ -49,7 +51,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Files;
 
 /**
- * This class is designed to be used for bulk actions on {@link SampleMetadata}
+ * This class is designed to be used for bulk actions on {@link MetadataEntry}
  * within a {@link Project}.
  */
 @Controller
@@ -57,19 +59,19 @@ import com.google.common.io.Files;
 public class ProjectSampleMetadataController {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectSampleMetadataController.class);
 	private final MessageSource messageSource;
-	private final MetadataTemplateService metadataTemplateService;
 	private final ProjectControllerUtils projectControllerUtils;
 	private final ProjectService projectService;
 	private final SampleService sampleService;
+	private final MetadataTemplateService metadataTemplateService;
 
 	@Autowired
-	public ProjectSampleMetadataController(MessageSource messageSource, MetadataTemplateService metadataTemplateService,
-			ProjectControllerUtils projectControllerUtils, ProjectService projectService, SampleService sampleService) {
+	public ProjectSampleMetadataController(MessageSource messageSource, ProjectControllerUtils projectControllerUtils,
+			ProjectService projectService, SampleService sampleService, MetadataTemplateService templateService) {
 		this.messageSource = messageSource;
-		this.metadataTemplateService = metadataTemplateService;
 		this.projectControllerUtils = projectControllerUtils;
 		this.projectService = projectService;
 		this.sampleService = sampleService;
+		this.metadataTemplateService = templateService;
 	}
 
 	/**
@@ -86,14 +88,21 @@ public class ProjectSampleMetadataController {
 	 *
 	 * @return {@link String} path to the page
 	 */
-	@RequestMapping("/templates/new")
-	public String getCreateNewSampleMetadataTemplatePage(@PathVariable Long projectId, Model model, Principal principal,
+	@RequestMapping("/template")
+	public String getCreateNewSampleMetadataTemplatePage(@PathVariable Long projectId,
+			@RequestParam(required = false) Long templateId,
+			Model model, Principal principal,
 			Locale locale) {
 		// Set up the template information
 		Project project = projectService.read(projectId);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute("templates", projectControllerUtils.getTemplateNames(locale, project));
 		return "projects/project_samples_metadata_template";
+	}
+
+	@RequestMapping("/fields")
+	@ResponseBody
+	public List<MetadataField> getMetadataFieldsForProject(@RequestParam String query) {
+		return metadataTemplateService.getAllMetadataFieldsByQueryString(query);
 	}
 
 	/**
@@ -295,20 +304,35 @@ public class ProjectSampleMetadataController {
 				try {
 					Long id = Long.valueOf(row.get("identifier"));
 					Sample sample = sampleService.read(id);
-					SampleMetadata sampleMetadata = sampleService.getMetadataForSample(sample);
+
+					// Get the current sample metadata
+					Map<String, MetadataEntry> sampleMetadata = sample.getMetadata();
 					if (sampleMetadata == null) {
-						sampleMetadata = new SampleMetadata();
+						sampleMetadata = new HashMap<>();
 					}
-					Map<String, Object> metadata = sampleMetadata.getMetadata();
 
 					// Need to overwrite duplicate keys
-					for (String item : row.keySet()) {
-						metadata.put(item, ImmutableMap.of("value", row.get(item)));
+					for (Entry<String, String> rowEntry : row.entrySet()) {
+						String key = rowEntry.getKey();
+
+						// See if there is a MetadataField corresponding to this header.
+						MetadataField metadataField = metadataTemplateService.readMetadataFieldByLabel(key);
+						// If it does not exist actually create it.
+						if (metadataField == null) {
+							metadataField = new MetadataField(key, "text");
+							metadataTemplateService.saveMetadataField(metadataField);
+						}
+
+						// Create the metadata entry
+						// NOTE: we are overwriting an currently save metadata for this field by doing this.
+						MetadataEntry entry = new MetadataEntry(rowEntry.getValue(), "text");
+						sampleMetadata.put(key, entry);
 					}
 
+					sample.mergeMetadata(sampleMetadata);
+
 					// Save metadata back to the sample
-					sampleMetadata.setMetadata(metadata);
-					sampleService.saveSampleMetadaForSample(sample, sampleMetadata);
+					sampleService.update(sample);
 				} catch (EntityNotFoundException e) {
 					// This really should not happen, but hey, you never know!
 					errorList.add(messageSource.getMessage("metadata.results.save.sample-not-found",

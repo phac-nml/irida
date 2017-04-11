@@ -11,7 +11,7 @@ can be internationalized.
 */-->
 
 <th:block class="event-text" th:fragment="user-role-event (event)">
-    <div class="event-icon"><fa:icon type="user" /></div>
+    <div class="event-icon"><i class="fa fa-user fa-fw" aria-hidden="true"></i></div>
     <div class="event-content user-role-event"
         th:with="userHref=@{/users/{uid}(uid=${event.user.getId()})},
         userLink=${'&lt;a href='+ userHref +'&gt;'+ event.user.label +'&lt;/a&gt; '},
@@ -21,7 +21,7 @@ can be internationalized.
 </th:block>
 
 <th:block class="event-text" th:fragment="user-removed-event (event)">
-    <div class="event-icon"><fa:icon type="user" /></div>
+    <div class="event-icon"><i class="fa fa-user fa-fw" aria-hidden="true"></i></div>
     <div class="event-content user-removed-event"
             th:with="userHref=@{/users/{uid}(uid=${event.user.getId()})},
             userLink=${'&lt;a href='+ userHref +'&gt;'+ event.user.label +'&lt;/a&gt; '},
@@ -31,7 +31,7 @@ can be internationalized.
 </th:block>
 
 <th:block class="event-text" th:fragment="sample-added-event (event)">
-    <div class="event-icon"><fa:icon type="sample" /></div>
+    <div class="event-icon"><i class="fa fa-flask fa-fw" aria-hidden="true"></i></div>
     <div class="event-content sample-added-event"
             th:with="sampleHref=@{/projects/{pid}/samples/{sid}/sequenceFiles(sid=${event.sample.getId()}, pid=${event.project.getId()})},
             sampleLink=${'&lt;a href='+ sampleHref +'&gt;'+ event.sample.label +'&lt;/a&gt; '},
@@ -41,7 +41,7 @@ can be internationalized.
 </th:block>
 
 <th:block class="event-text" th:fragment="sample-removed-event (event)">
-    <div class="event-icon"><fa:icon type="delete" /></div>
+    <div class="event-icon"><i class="fa fa-trash-o fa-fw" aria-hidden="true"></i></div>
     <div class="event-content sample-removed-event"
             th:with="projectHref=@{/projects/{pid}(pid=${event.project.getId()})},
             projectLink=${'&lt;a href='+ projectHref +'&gt;'+ event.project.label +'&lt;/a&gt; '}">
@@ -49,7 +49,7 @@ can be internationalized.
 </th:block>
 
 <th:block class="event-text" th:fragment="data-added-event (event)">
-    <div class="event-icon"><fa:icon type="file" /></div>
+    <div class="event-icon"><i class="fa fa-file-o fa-fw" aria-hidden="true"></i></div>
     <div class="event-content data-added-event"
             th:with="sampleHref=@{/projects/{pid}/samples/{sid}/sequenceFiles(sid=${event.sample.getId()}, pid=${event.project.getId()})},
             sampleLink=${'&lt;a href='+ sampleHref +'&gt;'+ event.sample.label +'&lt;/a&gt; '},
@@ -59,7 +59,7 @@ can be internationalized.
 </th:block>
 
 <th:block class="event-text" th:fragment="user-group-role-event (event)">
-    <div class="event-icon"><fa:icon type="group" /></div>
+    <div class="event-icon"><i class="fa fa-users fa-fw" aria-hidden="true"></i></div>
     <div class="event-content user-role-event"
         th:with="groupHref=@{/groups/{groupId}(groupId=${event.userGroup.getId()})},
         groupLink=${'&lt;a href='+ groupHref +'&gt;'+ event.userGroup.label +'&lt;/a&gt; '},
@@ -69,7 +69,7 @@ can be internationalized.
 </th:block>
 
 <th:block class="event-text" th:fragment="user-group-removed-event (event)">
-    <div class="event-icon"><fa:icon type="group" /></div>
+    <div class="event-icon"><i class="fa fa-users fa-fw" aria-hidden="true"></i></div>
     <div class="event-content user-removed-event"
         th:with="groupHref=@{/groups/{groupId}(groupId=${event.userGroup.getId()})},
         groupLink=${'&lt;a href='+ groupHref +'&gt;'+ event.userGroup.label +'&lt;/a&gt; '},

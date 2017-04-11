@@ -14,9 +14,9 @@
 <div class="col-md-12" layout:fragment="page">
 	<h1><th:block th:text="${project.label}"/>&nbsp;<small th:text="#{project.id}"/>&nbsp;<th:block  th:text="${project.getId()}"/></h1>
 	<div class="remote-hint" th:if="${project.isRemote()}" th:with="status=${project.getRemoteStatus()}">
-		<span><fa:icon type="remote" /> <span th:text="#{project.sync.source}">_Project source _</span>: <a href="#" th:href="@{/remote_api/{id}(id=${status.getApi().getId()})}" th:text="${status.getApi().getLabel()}">_api_</a></span>
+		<span><i class="fa fa-exchange fa-fw" aria-hidden="true"></i> <span th:text="#{project.sync.source}">_Project source _</span>: <a href="#" th:href="@{/remote_api/{id}(id=${status.getApi().getId()})}" th:text="${status.getApi().getLabel()}">_api_</a></span>
 		&nbsp;
-		<span><fa:icon type="pipelineState"/> <span th:text="#{project.sync.status}">_Status: _</span>: <span th:text="#{'project.sync.status.'+${status.getSyncStatus()}}">_api_</span></span>
+		<span><i class="fa fa-heartbeat fa-fw" aria-hidden="true"></i> <span th:text="#{project.sync.status}">_Status: _</span>: <span th:text="#{'project.sync.status.'+${status.getSyncStatus()}}">_api_</span></span>
 	</div>
 
 	<ul class="nav nav-tabs subnav" th:with="baseLink=${'/projects/' + project.getId()}">
@@ -26,10 +26,9 @@
 		<li th:classappend="${activeNav} == 'analyses' ? 'active'"><a href="" th:href="@{${baseLink} + '/analyses'}" th:text="#{project.nav.analysis}">[Analyses]</a></li>
 		<li th:class="${activeNav} == 'associated' ? 'active'"><a th:href="@{${baseLink} + '/associated'}" th:text="#{project.nav.associated}">[Associated]</a></li>
 		<li th:classappend="${activeNav} == 'metadata' ? 'active'"><a th:href="@{${baseLink} + '/metadata'}" th:text="#{project.nav.metadata}">[Metadata]</a></li>
-		<li th:classappend="${activeNav} == 'reference' ? 'active'"><a href="" th:href="@{${baseLink} + '/referenceFiles'}" th:text="#{project.nav.referenceFiles}">[References]</a></li>
 		<li th:classappend="${activeNav} == 'export' ? 'active'"><a href="" th:href="@{${baseLink} + '/export'}" th:text="#{project.nav.exports}">[Exports]</a></li>
 		<li th:classappend="${activeNav} == 'activity' ? 'active'"><a href="" th:href="@{${baseLink} + '/activity'}" th:text="#{project.nav.activity}">[Recent]</a></li>
-		<li th:classappend="${activeNav} == 'settings' ? 'active'" th:if="${manageMembers} or ${isAdmin}"><a href="" th:href="@{${baseLink} + '/settings'}" th:text="#{project.nav.settings}">[Settings]</a></li>
+		<li th:classappend="${activeNav} == 'settings' ? 'active'"><a href="" th:href="@{${baseLink} + '/settings'}" th:text="#{project.nav.settings}">[Settings]</a></li>
 	</ul>
 
 	<main layout:fragment="main">

@@ -136,14 +136,14 @@
                         <fieldset id="other-metadata">
                             <legend th:text="#{sample.metadata.other}">_Other Metadata_</legend>
                             <div class="row" id="metadata-fields">
-                                <div th:if="${metadata} != null">
-                                    <div th:each="entry : ${metadata.metadata}"  class="col-md-6 metadata-entry">
+                                <div th:unless="${#maps.isEmpty(sample.getMetadata())}">
+                                    <div th:each="entry : ${sample.getMetadata()}"  class="col-md-6 metadata-entry">
                                         <div class="form-group">
                                             <div class="input-group">
                                                 <input type="text" class="metadata-key form-control" required="required" th:value="${entry.key}"/>
                                                 <span class="input-group-btn">
                                                     <button class="btn btn-default delete-metadata" type="button">
-                                                        <fa:icon type="delete"/>
+                                                        <i class="fa fa-trash-o" aria-hidden="true"></i>
                                                     </button>
                                                 </span>
                                             </div>
@@ -155,7 +155,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <button type="button" class="btn btn-default" id="add-metadata">
-                                        <fa:icon type="create"/> <span th:text="#{sample.metadata.new}">_Add new term_</span>
+                                        <i class="fa fa-plus" aria-hidden="true"></i> <span th:text="#{sample.metadata.new}">_Add new term_</span>
                                     </button>
                                 </div>
                             </div>
@@ -176,7 +176,7 @@
                             <input type="text" class="metadata-key form-control" required="required"/>
                             <span class="input-group-btn">
                                 <button class="btn btn-default delete-metadata" type="button">
-                                    <fa:icon type="delete"/>
+                                    <i class="fa fa-trash-o" aria-hidden="true"></i>
                                 </button>
                             </span>
                         </div>

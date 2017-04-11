@@ -636,7 +636,7 @@ INSERT INTO `project_analysis_submission` (created_date, project_id, analysis_su
 INSERT INTO `workflow_named_parameters` (id, created_date, name, workflow_id) VALUES (1, now(), 'NML SNVPhyl', 'b7c8b437-3c41-485e-92e5-72b67e37959f');
 INSERT INTO `workflow_named_parameter_values` (named_parameters_id, named_parameter_value, named_parameter_name) VALUES (1, '-1', 'repeat-minimum-length');
 INSERT INTO `workflow_named_parameter_values` (named_parameters_id, named_parameter_value, named_parameter_name) VALUES (1, '-2', 'repeat-minimum-pid');
-INSERT INTO `workflow_named_parameter_values` (named_parameters_id, named_parameter_value, named_parameter_name) VALUES (1, '-3', 'alternative-allele-fraction');
+INSERT INTO `workflow_named_parameter_values` (named_parameters_id, named_parameter_value, named_parameter_name) VALUES (1, '-3', 'snv-abundance-ratio');
 INSERT INTO `workflow_named_parameter_values` (named_parameters_id, named_parameter_value, named_parameter_name) VALUES (1, '-6', 'minimum-read-coverage');
 
 -- analysis_submission_sequence_file_pair
@@ -723,3 +723,33 @@ INSERT INTO `metadata_field` (id, label, type) VALUES (9, "serotype", "text");
 INSERT INTO `metadata_field` (id, label, type) VALUES (10, "primaryPfge", "text");
 INSERT INTO `metadata_field` (id, label, type) VALUES (11, "phageType", "text");
 INSERT INTO `metadata_field` (id, label, type) VALUES (12, "id", "text");
+
+-- METADATA TEMPLATES
+INSERT INTO `metadata_template` (id, created_date, modified_date, name) VALUES (1, '2016-06-10 08:05:53', '2016-07-10 08:05:53', 'Test Date Template 01');
+INSERT INTO `metadata_template` (id, created_date, modified_date, name) VALUES (2, '2016-07-10 04:45:53', '2016-07-10 08:05:53', 'Special Pathogen Template');
+
+-- METADATA TEMPLATE METADATA FIELD
+-- METADATA TEMPLATE 1 FIELDS
+INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (1, 1);
+INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (1, 2);
+INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (1, 5);
+INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (1, 9);
+INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (1, 10);
+INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (1, 11);
+
+-- METADATA TEMPLATE 2 FIELDS
+INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (2, 1);
+INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (2, 2);
+INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (2, 3);
+INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (2, 5);
+INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (2, 8);
+INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (2, 11);
+INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (2, 12);
+
+-- PROJECT METADATA TEMPLATE
+INSERT INTO `project_metadata_template` (id, created_date, project_id, template_id) VALUES (1, '2016-06-10 08:05:53',4, 1);
+INSERT INTO `project_metadata_template` (id, created_date, project_id, template_id) VALUES (2, '2017-01-11 08:05:53',4, 2);
+
+INSERT INTO `metadata_entry` (id, value, type) VALUES (1, 'Jon', 'text'), (2, 'Doe', 'text'), (3, 'Winnipeg', 'text'), (4, 'Winnipeg Regional Health Authority', 'text'), (5, '1987-11-28', 'text'), (6, 'Coughing', 'text'), (7, '2015-10-15T10:16:42+00:00', 'text'), (8, 'Salmonella', 'text'), (9, 'XXX', 'text'), (10, 'ABC123', 'text'), (11, 'DEF456', 'text'), (12, '5', 'text'), (13, 'Damion', 'text'), (14, 'Dooley', 'text'), (15, 'Vancouver', 'text'), (16, 'BC Fraser Health Authority', 'text'), (17, '1966-01-13', 'text'), (18, 'Blurred vision', 'text'), (19, '2015-02-11T10:16:42+00:00', 'text'), (20, 'Salmonella enterica', 'text'), (21, 'SENXAI.0001', 'text'), (22, 'SENBNI.0017', 'text'), (23, 'DEF456', 'text'), (24, 'DT4b', 'text'), (25, 'Foo', 'text'), (26, 'Bar', 'text'), (27, 'Comox', 'text'), (28, 'BC Vancouver Island Health Authority', 'text'), (29, '1986-02-28', 'text'), (30, 'Diarrhea', 'text'), (31, '2015-06-04T10:16:42+00:00', 'text'), (32, 'Salmonella enterica', 'text'), (33, '', 'text'), (34, 'SENXAI.0038', 'text'), (35, 'SENBNI.0016', 'text'), (36, 'DT13', 'text');
+
+INSERT INTO `sample_metadata_entry` (sample_id, metadata_id, metadata_KEY) VALUES (51, 1, 'firstName'), (51, 2, 'lastName'), (51, 3, 'city'), (51, 4, 'healthAuthority'), (51, 5, 'birthDate'), (51, 6, 'firstSymptom'), (51, 7, 'onsetDate'), (51, 8, 'species'), (51, 9, 'serotype'), (51, 10, 'primaryPfge'), (51, 11, 'secondaryPfge'), (51, 12, 'phageType'), (52, 13, 'firstName'), (52, 14, 'lastName'), (52, 15, 'city'), (52, 16, 'healthAuthority'), (52, 17, 'birthDate'), (52, 18, 'firstSymptom'), (52, 19, 'onsetDate'), (52, 20, 'species'), (52, 21, 'serotype'), (52, 22, 'primaryPfge'), (52, 23, 'secondaryPfge'), (52, 24, 'phageType'), (53, 25, 'firstName'), (53, 26, 'lastName'), (53, 27, 'city'), (53, 28, 'healthAuthority'), (53, 29, 'birthDate'), (53, 30, 'firstSymptom'), (53, 31, 'onsetDate'), (53, 32, 'species'), (53, 33, 'serotype'), (53, 34, 'primaryPfge'), (53, 35, 'secondaryPfge'), (53, 36, 'phageType'); 

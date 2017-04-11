@@ -27,14 +27,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.github.dandelion.datatables.core.ajax.ColumnDef;
-import com.github.dandelion.datatables.core.ajax.DataSet;
-import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
-import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
-import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
@@ -46,7 +38,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataField;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -66,6 +58,14 @@ import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateServi
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
+
+import com.github.dandelion.datatables.core.ajax.ColumnDef;
+import com.github.dandelion.datatables.core.ajax.DataSet;
+import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
+import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
+import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for Analysis.
@@ -620,25 +620,27 @@ public class AnalysisController {
 		// Let's get a list of all the metadata available that is unique.
 		Set<String> terms = new HashSet<>();
 		for (Sample sample : samples) {
-			SampleMetadata sampleMetadata = sampleService.getMetadataForSample(sample);
-			if (sampleMetadata != null) {
-				Map<String, Object> metadata = sampleMetadata.getMetadata();
+			if (!sample.getMetadata().isEmpty()) {
+				Map<String, MetadataEntry> metadata = sample.getMetadata();
 				terms.addAll(metadata.keySet());
-			} else {
-				// Might as well add a new empty one if it is not there.
-				SampleMetadata newSampleMetadata = new SampleMetadata();
-				sampleService.saveSampleMetadaForSample(sample, newSampleMetadata);
 			}
 		}
 
 		// Get the metadata for the samples;
 		Map<String, Object> metadata = new HashMap<>();
 		for (Sample sample : samples) {
-			SampleMetadata sampleMetadata = sampleService.getMetadataForSample(sample);
-			Map<String, Object> data = sampleMetadata.getMetadata();
-			Map<String, Object> valuesMap = new HashMap<>();
+			Map<String, MetadataEntry> sampleMetadata = sample.getMetadata();
+			Map<String, MetadataEntry> valuesMap = new HashMap<>();
 			for (String term : terms) {
-				valuesMap.put(term, data.get(term));
+
+				MetadataEntry value = sampleMetadata.get(term);
+				if (value == null) {
+					// Not all samples will have the same metadata associated with it.  If a sample
+					// is missing one of the terms, just give it an empty string.
+					value = new MetadataEntry("", "text");
+				}
+
+				valuesMap.put(term, value);
 			}
 			metadata.put(sample.getLabel(), valuesMap);
 		}

@@ -1,0 +1,14 @@
+const angular = require('angular');
+import {MetadataModule} from './../metadata/metadata.module';
+import {PhylocanvasModule} from './../phylocanvas/phylocanvas.module';
+import {TemplateModule} from './../templates/template.module';
+import {AppComponent} from './app.component.js';
+
+export const AppModule = angular
+  .module('irida.vis.errors', [
+    MetadataModule,
+    PhylocanvasModule,
+    TemplateModule
+  ])
+  .component('appComponent', AppComponent)
+  .name;

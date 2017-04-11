@@ -15,7 +15,8 @@ const Select2Basic = () => {
   return {
     restrict: 'A',
     link($scope, $elm) {
-      $($elm).select2();
+      const field = $elm[0];
+      $(field).select2();
     }
   };
 };

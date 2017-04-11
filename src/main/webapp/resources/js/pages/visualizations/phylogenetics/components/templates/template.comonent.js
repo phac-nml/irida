@@ -1,16 +1,23 @@
-import {METADATA} from './../../constants';
+import {METADATA, TEMPLATES} from './../../constants';
 /**
  * Controller for the TemplateComponent
  * @param {object} $rootScope angular root scope
  * @param {object} TemplateService angular service
  */
 function controller($rootScope, TemplateService) {
-  // Get a list of templates that can be rendered
-  TemplateService
-    .getTemplates(this.templatesurl)
-    .then(templates => {
-      this.templates = templates;
-    });
+  this.$onInit = () => {  // Get a list of templates that can be rendered
+    this.templates = [];
+    TemplateService
+      .getTemplates(this.templatesurl)
+      .then(templates => {
+        this.templates = templates;
+      }, () => {
+        // This will be hit if some of the samples in this analysis
+        // are no longer in the project, therefore the analysis
+        // will need to be re-run without.
+        $rootScope.$broadcast(TEMPLATES.ERROR);
+      });
+  };
 
   this.templateChange = () => {
     if (this.selectedTemplate) {

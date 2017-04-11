@@ -27,12 +27,11 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataField;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleMetadata;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 @Controller
@@ -46,13 +45,12 @@ public class ProjectLineListController {
 
 	@Autowired
 	public ProjectLineListController(ProjectService projectService, SampleService sampleService,
-			MetadataTemplateService metadataTemplateService, MessageSource messageSource,
-			ProjectControllerUtils utils) {
+			MetadataTemplateService metadataTemplateService, ProjectControllerUtils utils, MessageSource messageSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.metadataTemplateService = metadataTemplateService;
-		this.messageSource = messageSource;
 		this.projectControllerUtils = utils;
+		this.messageSource = messageSource;
 	}
 
 	/**
@@ -95,9 +93,8 @@ public class ProjectLineListController {
 		for (Join<Project, Sample> join : samplesForProject) {
 			Sample sample = join.getObject();
 			Map<String, Object> fullMetadata = new HashMap<>();
-			SampleMetadata sampleMetadata = sampleService.getMetadataForSample(sample);
-			if (sampleMetadata != null) {
-				Map<String, Object> metadata = sampleMetadata.getMetadata();
+			if (!sample.getMetadata().isEmpty()) {
+				Map<String, MetadataEntry> metadata = sample.getMetadata();
 				for (String header : headers) {
 					/*
 					Since the id and the label are kept on the Sample not in the JSON,
@@ -108,7 +105,7 @@ public class ProjectLineListController {
 					} else if (header.equalsIgnoreCase("label")) {
 						fullMetadata.put("label", ImmutableMap.of("value", sample.getSampleName()));
 					} else {
-						fullMetadata.put(header, metadata.getOrDefault(header, ImmutableMap.of("value", "")));
+						fullMetadata.put(header, metadata.getOrDefault(header, new MetadataEntry("", "")));
 					}
 				}
 
@@ -187,8 +184,12 @@ public class ProjectLineListController {
 				// instead of creating a new one.
 				metadataField = metadataTemplateService.readMetadataField(Long.parseLong(field.get("identifier")));
 			} else {
-				metadataField = new MetadataField(label, field.get("type"));
-				metadataTemplateService.saveMetadataField(metadataField);
+				// Check to see if the field already exists
+				metadataField = metadataTemplateService.readMetadataFieldByLabel(label);
+				if (metadataField == null) {
+					metadataField = new MetadataField(label, field.get("type"));
+					metadataTemplateService.saveMetadataField(metadataField);
+				}
 			}
 			metadataFields.add(metadataField);
 		}
@@ -214,9 +215,8 @@ public class ProjectLineListController {
 		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(project);
 		for (Join<Project, Sample> join : samplesForProject) {
 			Sample sample = join.getObject();
-			SampleMetadata sampleMetadata = sampleService.getMetadataForSample(sample);
-			if (sampleMetadata != null) {
-				Map<String, Object> metadataFields = sampleMetadata.getMetadata();
+			if (! sample.getMetadata().isEmpty()) {
+				Map<String, MetadataEntry> metadataFields = sample.getMetadata();
 				fields.addAll(metadataFields.keySet());
 			}
 		}
@@ -245,11 +245,6 @@ public class ProjectLineListController {
 		Project project = projectService.read(projectId);
 		List<ProjectMetadataTemplateJoin> joins = metadataTemplateService.getMetadataTemplatesForProject(project);
 		List<MetadataTemplate> templates = new ArrayList<>();
-		// Add Template for all fields
-		MetadataTemplate allTemplate = new MetadataTemplate(
-				messageSource.getMessage("linelist.templates.all", new Object[] {}, locale), ImmutableList.of());
-		allTemplate.setId(0L);
-		templates.add(allTemplate);
 
 		for (ProjectMetadataTemplateJoin join : joins) {
 			templates.add(join.getObject());
@@ -269,22 +264,53 @@ public class ProjectLineListController {
 	 *
 	 * @return
 	 */
-	@RequestMapping(value = "/templates", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(
+			value = "/templates",
+			method = RequestMethod.POST
+	)
 	@ResponseBody
-	public MetadataTemplate saveMetadataTemplate(@PathVariable long projectId,
-			@RequestParam(value = "fields[]") List<String> fields, @RequestParam String name) {
+	public Map<String, Object> saveMetadataTemplate(@PathVariable long projectId, @RequestParam String name,
+			@RequestParam(value = "fields[]") List<String> fields, @RequestParam(required = false) Long templateId, Locale locale) {
 		Project project = projectService.read(projectId);
+
 		List<MetadataField> metadataFields = new ArrayList<>();
-		for (String field : fields) {
-			MetadataField metadataField = metadataTemplateService.readMetadataFieldByLabel(field);
+		for (String label : fields) {
+			// Check to see if this field already exists.
+			MetadataField metadataField = metadataTemplateService.readMetadataFieldByLabel(label);
+			// If it does not exist, create a new field.
 			if (metadataField == null) {
-				metadataField = new MetadataField(field, "text");
+				metadataField = new MetadataField(label, "text");
 				metadataTemplateService.saveMetadataField(metadataField);
 			}
 			metadataFields.add(metadataField);
 		}
-		MetadataTemplate template = new MetadataTemplate(name, metadataFields);
-		ProjectMetadataTemplateJoin join = metadataTemplateService.createMetadataTemplateInProject(template, project);
-		return join.getObject();
+		MetadataTemplate template;
+		String message;
+		// If the template already has an ID, it is an existing template, so just update it.
+		if (templateId != null) {
+			template = metadataTemplateService.read(templateId);
+			template.setFields(metadataFields);
+			metadataTemplateService.updateMetadataTemplateInProject(project, template);
+			message = messageSource.getMessage("linelist.create-template.update-success", new Object[]{name}, locale);
+		} else  {
+			template = new MetadataTemplate(name, metadataFields);
+			ProjectMetadataTemplateJoin join = metadataTemplateService.createMetadataTemplateInProject(template, project);
+			template = join.getObject();
+			message = messageSource.getMessage("linelist.create-template.success", new Object[]{name}, locale);
+		}
+		return ImmutableMap.of(
+				"template", template,
+				"message", message
+		);
+	}
+
+	@RequestMapping(value = "/templates/{templateId}", method = RequestMethod.DELETE)
+	@ResponseBody
+	public Map<String, String> deleteMetadataTemplate(@PathVariable Long projectId, @PathVariable Long templateId, Locale locale) {
+		Project project = projectService.read(projectId);
+		MetadataTemplate template = metadataTemplateService.read(templateId);
+		metadataTemplateService.deleteMetadataTemplateFromProject(project, templateId);
+		return ImmutableMap.of("message", messageSource.getMessage("linelist.create-template.delete-success",
+				new Object[] { template.getLabel(), project.getLabel() }, locale));
 	}
 }

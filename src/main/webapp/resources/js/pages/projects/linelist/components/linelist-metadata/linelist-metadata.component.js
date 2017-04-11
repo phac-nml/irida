@@ -56,16 +56,18 @@ showMetadataFieldSelectionsController.$inject = [
  * Controller for MetadataComponent. Handles displaying toggles
  * for hiding and showing metadata columns.
  *
+ * @param {object} $window angular window reference.
  * @param {object} $scope angular DOM scope reference.
  * @param {object} $aside Reference to the angular-aside instance
  * @param {object} $uibModal Reference to the angular-bootstrap modal instance
  * @param {object} MetadataTemplateService service for handling metadata templates
+ * @param {object} notifications IRIDA browser notification service.
  *
  * @description
  *
  */
-function MetadataController($scope, $aside, $uibModal,
-                            MetadataTemplateService) {
+function MetadataController($window, $scope, $aside, $uibModal,
+                            MetadataTemplateService, notifications) {
   const vm = this;
   let FIELD_ORDER;
   let FIELDS;
@@ -79,6 +81,14 @@ function MetadataController($scope, $aside, $uibModal,
   vm.$onInit = () => {
     MetadataTemplateService.query(templates => {
       this.templates = templates;
+      // Add a fake template so the user can see all the fields.
+      this.templates.unshift(
+        {
+          label: $window.PAGE.i18n.allFields,
+          identifier: 0,
+          fields: []
+        }
+      );
       this.selectedTemplate = this.templates[0];
     });
 
@@ -182,9 +192,15 @@ function MetadataController($scope, $aside, $uibModal,
     const newTemplate = new MetadataTemplateService();
     newTemplate.name = name;
     newTemplate.fields = fields;
-    newTemplate.$save();
-    vm.templates.push(newTemplate);
-    vm.selectedTemplate = newTemplate;
+    newTemplate.$save(response => {
+      const {template, message} = response;
+      vm.templates.push(template);
+      vm.selectedTemplate = template;
+      notifications.show({
+        msg: message,
+        type: 'success'
+      });
+    });
   }
 
   // Set up event listener for re-arranging the columns on the table.
@@ -197,10 +213,12 @@ function MetadataController($scope, $aside, $uibModal,
 }
 
 MetadataController.$inject = [
+  '$window',
   '$scope',
   '$aside',
   '$uibModal',
-  'MetadataTemplateService'
+  'SampleMetadataTemplateService',
+  'notifications'
 ];
 
 export const MetadataComponent = {

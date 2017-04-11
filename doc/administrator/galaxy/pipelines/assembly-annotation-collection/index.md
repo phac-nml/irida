@@ -9,16 +9,16 @@ Assembly and Annotation Collection
 
 This workflow can be used for assemblying and annotating many genomes in one submission.  The results from one submission will be packaged together into a single file.  The workflow uses the software [SPAdes][] and [Prokka][] for assembly and annotation of genomes as well as a few tools for filtering of data and generating assembly statistics.  The specific Galaxy tools are listed in the table below.
 
-| Tool Name                  | Tool Revision | Toolshed Installable Revision | Toolshed             |
-|:--------------------------:|:-------------:|:-----------------------------:|:--------------------:|
-| **flash**                  | 4287dd541327  | 0 (2015-05-05)                | [IRIDA Toolshed][]   |
-| **filter_spades_repeats**  | f9fc830fa47c  | 0 (2015-05-05)                | [IRIDA Toolshed][]   |
-| **assemblystats**          | 51b76a5d78a5  | 1 (2015-05-07)                | [IRIDA Toolshed][]   |
-| **bundle_collections**     | 7bc329e1ada4  | 0 (2015-05-20)                | [IRIDA Toolshed][]   |
-| **combine_assembly_stats** | c970d74729e9  | 0 (2015-05-20)                | [IRIDA Toolshed][]   |
-| **spades**                 | 21734680d921  | 14 (2015-02-27)               | [Galaxy Main Shed][] |
-| **prokka**                 | f5e44aad6498  | 7 (2015-10-01)                | [Galaxy Main Shed][] |
-| **regex_find_replace**     | 9ea374bb0350  | 0 (2014-03-29)                | [Galaxy Main Shed][] |
+| Tool Name                  | Owner    | Tool Revision | Toolshed Installable Revision | Toolshed             |
+|:--------------------------:|:--------:|:-------------:|:-----------------------------:|:--------------------:|
+| **flash**                  | irida    | 4287dd541327  | 0 (2015-05-05)                | [IRIDA Toolshed][]   |
+| **filter_spades_repeats**  | irida    | f9fc830fa47c  | 0 (2015-05-05)                | [IRIDA Toolshed][]   |
+| **assemblystats**          | irida    | 51b76a5d78a5  | 1 (2015-05-07)                | [IRIDA Toolshed][]   |
+| **bundle_collections**     | irida    | 7bc329e1ada4  | 0 (2015-05-20)                | [IRIDA Toolshed][]   |
+| **combine_assembly_stats** | irida    | c970d74729e9  | 0 (2015-05-20)                | [IRIDA Toolshed][]   |
+| **spades**                 | nml      | 35cb17bd8bf9  | 4 (2016-08-08)                | [Galaxy Main Shed][] |
+| **prokka**                 | crs4     | f5e44aad6498  | 7 (2015-10-01)                | [Galaxy Main Shed][] |
+| **regex_find_replace**     | jjohnson | 9ea374bb0350  | 0 (2014-03-29)                | [Galaxy Main Shed][] |
 
 To install these tools please proceed through the following steps.
 
