@@ -1,5 +1,5 @@
 const angular = require('angular');
-import {TemplateInputModule} from './components/templateInput/templateInput.module';
+import {CreateSampleMetadataTemplateModule} from './components/create-template-component/create-template.module';
 
 const app = angular.module('irida');
-app.requires.push(TemplateInputModule);
+app.requires.push(CreateSampleMetadataTemplateModule);

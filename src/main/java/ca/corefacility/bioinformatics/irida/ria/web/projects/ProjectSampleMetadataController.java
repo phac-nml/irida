@@ -41,11 +41,13 @@ import com.google.common.io.Files;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.MetadataImportFileTypeNotSupportedError;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataField;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 /**
@@ -60,13 +62,16 @@ public class ProjectSampleMetadataController {
 	private final ProjectControllerUtils projectControllerUtils;
 	private final ProjectService projectService;
 	private final SampleService sampleService;
+	private final MetadataTemplateService metadataTemplateService;
 
 	@Autowired
-	public ProjectSampleMetadataController(MessageSource messageSource, ProjectControllerUtils projectControllerUtils, ProjectService projectService, SampleService sampleService) {
+	public ProjectSampleMetadataController(MessageSource messageSource, ProjectControllerUtils projectControllerUtils,
+			ProjectService projectService, SampleService sampleService, MetadataTemplateService templateService) {
 		this.messageSource = messageSource;
 		this.projectControllerUtils = projectControllerUtils;
 		this.projectService = projectService;
 		this.sampleService = sampleService;
+		this.metadataTemplateService = templateService;
 	}
 
 	/**
@@ -83,14 +88,21 @@ public class ProjectSampleMetadataController {
 	 *
 	 * @return {@link String} path to the page
 	 */
-	@RequestMapping("/templates/new")
-	public String getCreateNewSampleMetadataTemplatePage(@PathVariable Long projectId, Model model, Principal principal,
+	@RequestMapping("/template")
+	public String getCreateNewSampleMetadataTemplatePage(@PathVariable Long projectId,
+			@RequestParam(required = false) Long templateId,
+			Model model, Principal principal,
 			Locale locale) {
 		// Set up the template information
 		Project project = projectService.read(projectId);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute("templates", projectControllerUtils.getTemplateNames(locale, project));
 		return "projects/project_samples_metadata_template";
+	}
+
+	@RequestMapping("/fields")
+	@ResponseBody
+	public List<MetadataField> getMetadataFieldsForProject(@RequestParam String query) {
+		return metadataTemplateService.getAllMetadataFieldsByQueryString(query);
 	}
 
 	/**

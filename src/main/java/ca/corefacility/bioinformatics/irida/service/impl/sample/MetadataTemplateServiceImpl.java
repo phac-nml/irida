@@ -90,4 +90,12 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 		return fieldRepository.save(field);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("permitAll()")
+	public List<MetadataField> getAllMetadataFieldsByQueryString(String query) {
+		return fieldRepository.findAllMetadataFieldsByLabelQuery(query);
+	}
 }

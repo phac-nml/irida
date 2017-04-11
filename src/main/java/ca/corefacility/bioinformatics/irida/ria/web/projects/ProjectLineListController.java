@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -40,14 +41,16 @@ public class ProjectLineListController {
 	private final SampleService sampleService;
 	private final MetadataTemplateService metadataTemplateService;
 	private final ProjectControllerUtils projectControllerUtils;
+	private final MessageSource messageSource;
 
 	@Autowired
 	public ProjectLineListController(ProjectService projectService, SampleService sampleService,
-			MetadataTemplateService metadataTemplateService, ProjectControllerUtils utils) {
+			MetadataTemplateService metadataTemplateService, ProjectControllerUtils utils, MessageSource messageSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.metadataTemplateService = metadataTemplateService;
 		this.projectControllerUtils = utils;
+		this.messageSource = messageSource;
 	}
 
 	/**
@@ -181,8 +184,12 @@ public class ProjectLineListController {
 				// instead of creating a new one.
 				metadataField = metadataTemplateService.readMetadataField(Long.parseLong(field.get("identifier")));
 			} else {
-				metadataField = new MetadataField(label, field.get("type"));
-				metadataTemplateService.saveMetadataField(metadataField);
+				// Check to see if the field already exists
+				metadataField = metadataTemplateService.readMetadataFieldByLabel(label);
+				if (metadataField == null) {
+					metadataField = new MetadataField(label, field.get("type"));
+					metadataTemplateService.saveMetadataField(metadataField);
+				}
 			}
 			metadataFields.add(metadataField);
 		}
@@ -257,24 +264,30 @@ public class ProjectLineListController {
 	 *
 	 * @return
 	 */
-	@RequestMapping(value = "/templates", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(
+			value = "/templates",
+			method = RequestMethod.POST
+	)
 	@ResponseBody
-	public MetadataTemplate saveMetadataTemplate(@PathVariable long projectId,
-			@RequestParam(value = "fields[]") List<String> fields, @RequestParam String name) {
+	public Map<String, Object> saveMetadataTemplate(@PathVariable long projectId, @RequestParam String name,
+			@RequestParam(value = "fields[]") List<String> fields, Locale locale) {
 		Project project = projectService.read(projectId);
 		List<MetadataField> metadataFields = new ArrayList<>();
-		for (String field : fields) {
+		for (String label : fields) {
 			// Check to see if this field already exists.
-			MetadataField metadataField = metadataTemplateService.readMetadataFieldByLabel(field);
+			MetadataField metadataField = metadataTemplateService.readMetadataFieldByLabel(label);
 			// If it does not exist, create a new field.
 			if (metadataField == null) {
-				metadataField = new MetadataField(field, "text");
+				metadataField = new MetadataField(label, "text");
 				metadataTemplateService.saveMetadataField(metadataField);
 			}
 			metadataFields.add(metadataField);
 		}
 		MetadataTemplate template = new MetadataTemplate(name, metadataFields);
 		ProjectMetadataTemplateJoin join = metadataTemplateService.createMetadataTemplateInProject(template, project);
-		return join.getObject();
+		return ImmutableMap.of(
+				"template", join.getObject(),
+				"message", messageSource.getMessage("linelist.create-template.success", new Object[]{name}, locale)
+		);
 	}
 }
