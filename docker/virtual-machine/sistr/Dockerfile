@@ -2,9 +2,9 @@
 #
 #
 
-FROM apetkau/galaxy-irida-16.10:0.15.0
+FROM phacnml/galaxy-irida-16.10:0.16.0
 
-MAINTAINER Aaron Petkau, aaron.petkau@phac-aspc.gc.ca
+LABEL maintainer "aaron.petkau@phac-aspc.gc.ca"
 
 RUN sed -i -e 's@^#conda_prefix.*@conda_prefix = /tool_deps/_conda@' /etc/galaxy/galaxy.ini && \
     sed -i -e 's@^#conda_ensure_channels@conda_ensure_channels@' /etc/galaxy/galaxy.ini && \

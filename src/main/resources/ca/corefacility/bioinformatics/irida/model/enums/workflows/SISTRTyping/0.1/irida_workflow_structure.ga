@@ -202,12 +202,12 @@
                 }
             }, 
             "tool_errors": null, 
-            "tool_id": "toolshed.g2.bx.psu.edu/repos/lionelguy/spades/spades/1.0", 
-            "tool_state": "{\"__page__\": 0, \"iontorrent\": \"\\\"False\\\"\", \"kmers\": \"\\\"21,33,55,77,99,127\\\"\", \"cov\": \"{\\\"state\\\": \\\"off\\\", \\\"__current_case__\\\": 0}\", \"__rerun_remap_job_id__\": null, \"nanopore\": \"[]\", \"libraries\": \"[{\\\"lib_type\\\": \\\"paired_end\\\", \\\"__index__\\\": 0, \\\"orientation\\\": \\\"fr\\\", \\\"files\\\": [{\\\"file_type\\\": {\\\"fastq_collection\\\": null, \\\"type\\\": \\\"paired-collection\\\", \\\"__current_case__\\\": 3}, \\\"__index__\\\": 0}]}, {\\\"lib_type\\\": \\\"paired_end\\\", \\\"__index__\\\": 1, \\\"orientation\\\": \\\"fr\\\", \\\"files\\\": [{\\\"file_type\\\": {\\\"type\\\": \\\"unpaired\\\", \\\"unpaired_reads\\\": null, \\\"__current_case__\\\": 2}, \\\"__index__\\\": 0}]}]\", \"onlyassembler\": \"\\\"False\\\"\", \"trustedcontigs\": \"[]\", \"pacbio\": \"[]\", \"sc\": \"\\\"False\\\"\", \"untrustedcontigs\": \"[]\", \"sanger\": \"[]\", \"careful\": \"\\\"True\\\"\"}", 
-            "tool_version": "1.0", 
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/spades/spades/1.4", 
+            "tool_state": "{\"__page__\": 0, \"iontorrent\": \"\\\"False\\\"\", \"cov\": \"{\\\"state\\\": \\\"off\\\", \\\"__current_case__\\\": 0}\", \"__rerun_remap_job_id__\": null, \"nanopore\": \"[]\", \"kmer_choice\": \"{\\\"auto_kmer_choice\\\": \\\"True\\\", \\\"__current_case__\\\": 1}\", \"libraries\": \"[{\\\"lib_type\\\": \\\"paired_end\\\", \\\"__index__\\\": 0, \\\"orientation\\\": \\\"fr\\\", \\\"files\\\": [{\\\"file_type\\\": {\\\"fastq_collection\\\": null, \\\"type\\\": \\\"paired-collection\\\", \\\"__current_case__\\\": 3}, \\\"__index__\\\": 0}]}, {\\\"lib_type\\\": \\\"paired_end\\\", \\\"__index__\\\": 1, \\\"orientation\\\": \\\"fr\\\", \\\"files\\\": [{\\\"file_type\\\": {\\\"type\\\": \\\"unpaired\\\", \\\"unpaired_reads\\\": null, \\\"__current_case__\\\": 2}, \\\"__index__\\\": 0}]}]\", \"onlyassembler\": \"\\\"False\\\"\", \"trustedcontigs\": \"[]\", \"pacbio\": \"[]\", \"sc\": \"\\\"False\\\"\", \"untrustedcontigs\": \"[]\", \"sanger\": \"[]\", \"careful\": \"\\\"True\\\"\"}", 
+            "tool_version": "1.4", 
             "type": "tool", 
             "user_outputs": [], 
-            "uuid": "6cedfafd-88e3-4ee5-a609-c6756809ca94"
+            "uuid": "463d6f38-aea5-450e-b64f-66a971397426"
         }, 
         "3": {
             "annotation": "", 
@@ -228,7 +228,7 @@
                 }
             ], 
             "position": {
-                "left": 1065, 
+                "left": 1031, 
                 "top": 200
             }, 
             "post_job_actions": {
@@ -285,7 +285,7 @@
                 }
             ], 
             "position": {
-                "left": 1370, 
+                "left": 1336, 
                 "top": 200
             }, 
             "post_job_actions": {
@@ -371,7 +371,7 @@
                 }
             ], 
             "position": {
-                "left": 1654, 
+                "left": 1620, 
                 "top": 200
             }, 
             "post_job_actions": {
@@ -455,7 +455,7 @@
                 }
             ], 
             "position": {
-                "left": 1654, 
+                "left": 1620, 
                 "top": 490
             }, 
             "post_job_actions": {
@@ -507,5 +507,5 @@
             "uuid": "f895c2af-57e5-4462-ae5e-4d8b5cc9c871"
         }
     }, 
-    "uuid": "a3ade8e6-baae-4758-9575-5080d6a64585"
+    "uuid": "39348cf5-c15b-42c6-823a-4d49c83ecfe3"
 }
