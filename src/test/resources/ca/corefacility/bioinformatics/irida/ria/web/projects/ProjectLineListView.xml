@@ -146,4 +146,16 @@
 
     <project_metadata_template id="1" created_date="2016-06-10 08:05:53" project_id="1" template_id="1" />
 
+    <metadata_entry id="1" value="Fred" type="text" />
+    <metadata_entry id="2" value="Johnson" type="text" />
+    <metadata_entry id="3" value="WRHA" type="text" />
+    <metadata_entry id="4" value="Sneezing" type="text" />
+    <metadata_entry id="5" value="AB-1001" type="text" />
+
+    <sample_metadata_entry sample_id="1" metadata_id="1"  metadata_KEY="firstName"/>
+    <sample_metadata_entry sample_id="1" metadata_id="2"  metadata_KEY="lastName"/>
+    <sample_metadata_entry sample_id="1" metadata_id="3"  metadata_KEY="healthAuthority"/>
+    <sample_metadata_entry sample_id="1" metadata_id="4"  metadata_KEY="firstSymptom"/>
+    <sample_metadata_entry sample_id="1" metadata_id="5"  metadata_KEY="serotype"/>
+
 </dataset>
