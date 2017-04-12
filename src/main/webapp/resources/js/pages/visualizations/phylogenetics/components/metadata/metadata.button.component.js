@@ -1,6 +1,27 @@
 const angular = require('angular');
 import {METADATA} from '../../constants';
 
+class MetadataAsideController {
+  constructor($uibModalInstance, parent) {
+    this.terms = parent.terms;
+    this.parent = parent;
+    this.modal = $uibModalInstance;
+  }
+
+  termSelectionChange() {
+    this.parent.handleTermVisibilityChange();
+  }
+
+  close() {
+    this.modal.dismiss();
+  }
+}
+
+MetadataAsideController.$inject = [
+  '$uibModalInstance',
+  'parent'
+];
+
 class MetadataButtonController {
   constructor($rootScope, $scope, $aside, MetadataService) {
     this.$rootScope = $rootScope;
@@ -68,15 +89,10 @@ class MetadataButtonController {
         placement: `left`,
         size: 'sm',
         controllerAs: '$ctrl',
-        controller(terms) {
-          this.termSelectionChange = term => {
-            parent.handleTermVisibilityChange(term);
-          };
-          this.terms = terms;
-        },
+        controller: MetadataAsideController,
         resolve: {
-          terms() {
-            return parent.terms;
+          parent() {
+            return parent;
           }
         }
       });
