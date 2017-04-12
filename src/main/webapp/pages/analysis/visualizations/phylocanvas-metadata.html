@@ -13,6 +13,21 @@
             font-size: 1.6rem!important;
             margin-top: 0!important;
         }
+        .metadata-aside {
+            height:100%;
+            position: relative;
+        }
+        .metadata-aside__btns {
+            position: absolute;
+            top: 0;
+            right: 0;
+            padding: 1em 1em 0 0;
+        }
+        .metadata-aside__switches {
+            height: 100%;
+            overflow-y: scroll;
+            padding-top: 55px;
+        }
     </style>
 </head>
 <body>
@@ -109,10 +124,18 @@
         </button>
     </script>
     <script type="text/ng-template" id="metadataAside.tmpl.html">
-        <metadata-component
-                terms="$ctrl.terms"
-                on-selection-change="$ctrl.termSelectionChange(term)">
-        </metadata-component>
+        <aside class="metadata-aside">
+            <div class="metadata-aside__btns text-right">
+                <button class="btn btn-default"
+                ng-click="$ctrl.close()">Close</button>
+            </div>
+            <div class="metadata-aside__switches">
+                <metadata-component
+                        terms="$ctrl.terms"
+                        on-selection-change="$ctrl.termSelectionChange(term)">
+                </metadata-component>
+            </div>
+        </aside>
     </script>
     <script src="/resources/js/build/visualizations-phylogenetics.bundle.js"
             th:src="@{/resources/js/build/visualizations-phylogenetics.bundle.js}"></script>

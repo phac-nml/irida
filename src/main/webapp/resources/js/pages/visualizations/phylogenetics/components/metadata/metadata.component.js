@@ -1,7 +1,4 @@
 class MetadataController {
-  constructor() {
-    console.log(this);
-  }
 }
 
 export const MetadataComponent = {
