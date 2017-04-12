@@ -24,7 +24,6 @@ class MetadataButtonController {
             METADATA.LOADED,
             {metadata: results.metadata}
           );
-          console.log(this);
         } else {
           this.$rootScope.$broadcast(METADATA.EMPTY);
         }
