@@ -21,8 +21,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.common.collect.ImmutableMap;
-
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -33,6 +31,8 @@ import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
+import com.google.common.collect.ImmutableMap;
 
 @Controller
 @RequestMapping("/projects/{projectId}/linelist")
@@ -270,8 +270,9 @@ public class ProjectLineListController {
 	)
 	@ResponseBody
 	public Map<String, Object> saveMetadataTemplate(@PathVariable long projectId, @RequestParam String name,
-			@RequestParam(value = "fields[]") List<String> fields, Locale locale) {
+			@RequestParam(value = "fields[]") List<String> fields, @RequestParam(required = false) Long templateId, Locale locale) {
 		Project project = projectService.read(projectId);
+
 		List<MetadataField> metadataFields = new ArrayList<>();
 		for (String label : fields) {
 			// Check to see if this field already exists.
@@ -283,11 +284,33 @@ public class ProjectLineListController {
 			}
 			metadataFields.add(metadataField);
 		}
-		MetadataTemplate template = new MetadataTemplate(name, metadataFields);
-		ProjectMetadataTemplateJoin join = metadataTemplateService.createMetadataTemplateInProject(template, project);
+		MetadataTemplate template;
+		String message;
+		// If the template already has an ID, it is an existing template, so just update it.
+		if (templateId != null) {
+			template = metadataTemplateService.read(templateId);
+			template.setFields(metadataFields);
+			metadataTemplateService.updateMetadataTemplateInProject(project, template);
+			message = messageSource.getMessage("linelist.create-template.update-success", new Object[]{name}, locale);
+		} else  {
+			template = new MetadataTemplate(name, metadataFields);
+			ProjectMetadataTemplateJoin join = metadataTemplateService.createMetadataTemplateInProject(template, project);
+			template = join.getObject();
+			message = messageSource.getMessage("linelist.create-template.success", new Object[]{name}, locale);
+		}
 		return ImmutableMap.of(
-				"template", join.getObject(),
-				"message", messageSource.getMessage("linelist.create-template.success", new Object[]{name}, locale)
+				"template", template,
+				"message", message
 		);
+	}
+
+	@RequestMapping(value = "/templates/{templateId}", method = RequestMethod.DELETE)
+	@ResponseBody
+	public Map<String, String> deleteMetadataTemplate(@PathVariable Long projectId, @PathVariable Long templateId, Locale locale) {
+		Project project = projectService.read(projectId);
+		MetadataTemplate template = metadataTemplateService.read(templateId);
+		metadataTemplateService.deleteMetadataTemplateFromProject(project, templateId);
+		return ImmutableMap.of("message", messageSource.getMessage("linelist.create-template.delete-success",
+				new Object[] { template.getLabel(), project.getLabel() }, locale));
 	}
 }

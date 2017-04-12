@@ -25,8 +25,10 @@ export function showValidation() {
       // Watch for changes to the input and apply the error if required.
       $scope.$watch(() => {
         return inputEl.value;
-      }, () => {
-        $elem.toggleClass('has-error', $formCtrl[elName].$invalid);
+      }, (newValue, oldValue) => {
+        if (oldValue !== newValue) {
+          $elem.toggleClass('has-error', $formCtrl[elName].$invalid);
+        }
       });
     }
   };

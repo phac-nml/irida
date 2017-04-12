@@ -24,6 +24,24 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	public ProjectMetadataTemplateJoin createMetadataTemplateInProject(MetadataTemplate template, Project project);
 
 	/**
+	 * Deleta a {@link MetadataTemplate} from a {@link Project}
+	 *
+	 * @param project
+	 * 		the {@link Project} to template lives in.
+	 * @param id
+	 * 		the {@link Long} identifier for a {@link MetadataTemplate}
+	 */
+	public void deleteMetadataTemplateFromProject(Project project, Long id);
+
+	/**
+	 * Update a {@link MetadataTemplate} within a {@link Project}
+ 	 * @param project {@link Project} the template belongs to.
+	 * @param metadataTemplate {@link MetadataTemplate}
+	 * @return {@link MetadataTemplate}
+	 */
+	public MetadataTemplate updateMetadataTemplateInProject(Project project, MetadataTemplate metadataTemplate);
+
+	/**
 	 * Get a list of {@link MetadataTemplate}s for a given {@link Project}
 	 * 
 	 * @param project
