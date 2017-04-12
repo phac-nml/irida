@@ -62,7 +62,7 @@
 
     <script type="text/ng-template" id="app-component.tmpl.html">
         <h1 th:text="#{visualization.phylogenomics.title}"></h1>
-        <div class="form-inline spaced-bottom">
+        <div class="form-inline spaced-bottom" ng-hide="$ctrl.loading || $ctrl.treeError || $ctrl.templateError">
             <div class="form-group">
                 <metadata-button></metadata-button>
             </div>
