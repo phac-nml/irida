@@ -35,7 +35,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataField;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
@@ -698,9 +698,9 @@ public class AnalysisController {
 	public Map<String, Object> getMetadataTemplateFields(
 			@RequestParam Long templateId){
 		MetadataTemplate template = metadataTemplateService.read(templateId);
-		List<MetadataField> metadataFields = template.getFields();
+		List<MetadataTemplateField> metadataFields = template.getFields();
 		List<String> fields = new ArrayList<>();
-		for (MetadataField metadataField : metadataFields) {
+		for (MetadataTemplateField metadataField : metadataFields) {
 			fields.add(metadataField.getLabel());
 		}
 		return ImmutableMap.of("fields", fields);

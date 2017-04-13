@@ -41,7 +41,7 @@ import com.google.common.io.Files;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.MetadataImportFileTypeNotSupportedError;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataField;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
@@ -101,7 +101,7 @@ public class ProjectSampleMetadataController {
 
 	@RequestMapping("/fields")
 	@ResponseBody
-	public List<MetadataField> getMetadataFieldsForProject(@RequestParam String query) {
+	public List<MetadataTemplateField> getMetadataFieldsForProject(@RequestParam String query) {
 		return metadataTemplateService.getAllMetadataFieldsByQueryString(query);
 	}
 
