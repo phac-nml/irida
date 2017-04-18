@@ -21,9 +21,9 @@ public interface MetadataFieldRepository extends IridaJpaRepository<MetadataTemp
 	 *
 	 * @return {@link MetadataTemplateField}
 	 */
-	@Query("from MetadataField m where m.label = ?1")
+	@Query("from MetadataTemplateField m where m.label = ?1")
 	public MetadataTemplateField findMetadataFieldByLabel(String label);
 
-	@Query("FROM MetadataField m where m.label LIKE %:query%")
+	@Query("FROM MetadataTemplateField m where m.label LIKE %:query%")
 	public List<MetadataTemplateField> findAllMetadataFieldsByLabelQuery(@Param("query") String query);
 }
