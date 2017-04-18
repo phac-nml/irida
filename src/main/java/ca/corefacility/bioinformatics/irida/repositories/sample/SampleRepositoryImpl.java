@@ -7,6 +7,9 @@ import javax.persistence.Query;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+/**
+ * Implementation of {@link SampleRepositoryCustom}
+ */
 public class SampleRepositoryImpl implements SampleRepositoryCustom {
 
 	private EntityManager entityManager;
@@ -16,6 +19,9 @@ public class SampleRepositoryImpl implements SampleRepositoryCustom {
 		this.entityManager = entityManager;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<String> getSampleMetadataKeys(String query) {
 		Query sqlQuery = entityManager.createNativeQuery(
