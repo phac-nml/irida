@@ -323,12 +323,15 @@
 		 * so that we can quickly roll back to default values for any
 		 * parameter set.
 		 */
-		var originalSettings = page.pipeline.parameters.map(function (params) {
-			return {
-				currentSettings: ng.copy(params),
-				defaultSettings: ng.copy(params)
-			}
-		});
+		var originalSettings = [];
+    if (page.pipeline.parameters) {
+      page.pipeline.parameters.map(function(params) {
+        return {
+          currentSettings: ng.copy(params),
+          defaultSettings: ng.copy(params)
+        }
+      });
+    }
 
 		var selectedParameters = originalSettings[0];
 
