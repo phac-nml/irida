@@ -8,6 +8,7 @@ Changes
 * [UI]: Removing commas (`,`) and replacing spaces with underscores (`_`) in download filenames as they confuse browsers. (0.15.1)
 * [Workflow]: The software **SPAdes** has been updated in all workflows to version 3.9.0.  This requires installing an updated `spades` tool in Galaxy.
 * [UI]: Fixed issue caused when trying to use the command line linker to export a large number of samples from a project.
+* [Developer]: Fixed issue caused when trying to create a new pipeline with no parameters.
 
 0.14.0 to 0.15.0
 ----------------
