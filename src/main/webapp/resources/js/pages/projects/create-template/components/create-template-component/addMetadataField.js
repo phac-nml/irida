@@ -31,7 +31,7 @@ class AddMetadataFieldController {
     $scope.$watch(() => {
       return this.field;
     }, (newValue, oldValue) => {
-      if (newValue.label !== oldValue.label) {
+      if (newValue !== oldValue) {
         this.modal.close(angular.copy(this.field));
       }
     });
@@ -67,14 +67,10 @@ class AddMetadataFieldController {
 
             // See if the query is in the list
             const found = availableFields
-              .filter(field => field.label === query);
+              .filter(field => field === query);
 
             if (found.length === 0) {
-              availableFields.push({
-                id: undefined,
-                label: query,
-                type: 'text'
-              });
+              availableFields.push(query);
             }
             this.list = availableFields;
           });
