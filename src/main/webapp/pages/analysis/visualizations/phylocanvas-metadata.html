@@ -78,14 +78,23 @@
     <script type="text/ng-template" id="app-component.tmpl.html">
         <h1 th:text="#{visualization.phylogenomics.title}"></h1>
         <div class="form-inline spaced-bottom" ng-hide="$ctrl.loading || $ctrl.treeError || $ctrl.templateError">
-            <div class="form-group">
-                <metadata-button></metadata-button>
-            </div>
-            <div class="form-group">
-                <template-component
-                        data:templatesurl="@{/analysis/ajax/{id}/metadata-templates(id=${submissionId})}"
-                        data:fieldsurl="@{/analysis/ajax/{id}/metadata-template-fields(id=${submissionId})}">
-                </template-component>
+            <div class="row">
+                <div class="col-md-8 col-sm-12">
+                    <div class="form-group">
+                        <metadata-button></metadata-button>
+                    </div>
+                    <div class="form-group">
+                        <template-component
+                                data:templatesurl="@{/analysis/ajax/{id}/metadata-templates(id=${submissionId})}"
+                                data:fieldsurl="@{/analysis/ajax/{id}/metadata-template-fields(id=${submissionId})}">
+                        </template-component>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-12 clearfix">
+                    <div class="btn-group pull-right">
+                        <export-svg-component></export-svg-component>
+                    </div>
+                </div>
             </div>
         </div>
         <section>
@@ -138,6 +147,15 @@
             </div>
         </aside>
     </script>
+
+    <script type="text/ng-template" id="export-svg-component.tmpl.html">
+        <button class="btn btn-default"
+                ng-click="$ctrl.exportSVG()">
+            <i class="fa fa-fw fa-file-code-o"></i>
+            <th:block th:text="#{visualization.button.export.svg}"/>
+        </button>
+    </script>
+
     <script src="/resources/js/build/visualizations-phylogenetics.bundle.js"
             th:src="@{/resources/js/build/visualizations-phylogenetics.bundle.js}"></script>
 </th:block>

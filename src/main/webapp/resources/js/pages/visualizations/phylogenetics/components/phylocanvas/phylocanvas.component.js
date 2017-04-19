@@ -1,5 +1,6 @@
 const angular = require('angular');
 import metadataPlugin from 'phylocanvas-plugin-metadata';
+import exportSVgPlugin from 'phylocanvas-plugin-export-svg';
 import {METADATA, TREE} from './../../constants';
 
 const PHYLOCANVAS_DIV = 'phylocanvas';
@@ -39,8 +40,9 @@ function phylocanvasController($window, $scope, $q, Phylocanvas,
   // Make the canvas fill the viewable window.
   setCanvasHeight($window);
 
-  // Initialize the metadata plugin.
+  // Initialize the plugins.
   Phylocanvas.plugin(metadataPlugin);
+  Phylocanvas.plugin(exportSVgPlugin);
 
   // Initialize phylocanvas.
   const tree = Phylocanvas
@@ -119,6 +121,17 @@ function phylocanvasController($window, $scope, $q, Phylocanvas,
     tree.metadata.columns = MetadataService
       .getSortedAndFilteredColumns(fields);
     tree.draw();
+  });
+
+  $scope.$on(TREE.EXPORT_SVG, () => {
+    const svg = tree.exportSVG.getSerialisedSVG();
+    const url = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+    const link = document.createElement('a');
+    link.href = url;
+    document.body.appendChild(link);
+    link.download = `tree-${Date.now()}.svg`;
+    link.click();
+    document.body.removeChild(link);
   });
 }
 
