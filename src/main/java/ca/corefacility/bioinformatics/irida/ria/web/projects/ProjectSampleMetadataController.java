@@ -41,13 +41,11 @@ import com.google.common.io.Files;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.MetadataImportFileTypeNotSupportedError;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 /**
@@ -62,16 +60,14 @@ public class ProjectSampleMetadataController {
 	private final ProjectControllerUtils projectControllerUtils;
 	private final ProjectService projectService;
 	private final SampleService sampleService;
-	private final MetadataTemplateService metadataTemplateService;
 
 	@Autowired
 	public ProjectSampleMetadataController(MessageSource messageSource, ProjectControllerUtils projectControllerUtils,
-			ProjectService projectService, SampleService sampleService, MetadataTemplateService templateService) {
+			ProjectService projectService, SampleService sampleService) {
 		this.messageSource = messageSource;
 		this.projectControllerUtils = projectControllerUtils;
 		this.projectService = projectService;
 		this.sampleService = sampleService;
-		this.metadataTemplateService = templateService;
 	}
 
 	/**
@@ -99,10 +95,17 @@ public class ProjectSampleMetadataController {
 		return "projects/project_samples_metadata_template";
 	}
 
+	/**
+	 * Search all Metadata keys available for adding to a template.
+	 * 
+	 * @param query
+	 *            the query to search for
+	 * @return a list of keys matching the query
+	 */
 	@RequestMapping("/fields")
 	@ResponseBody
-	public List<MetadataTemplateField> getMetadataFieldsForProject(@RequestParam String query) {
-		return metadataTemplateService.getAllMetadataFieldsByQueryString(query);
+	public List<String> getMetadataKeysForProject(@RequestParam String query) {
+		return sampleService.getMetadataKeys(query);
 	}
 
 	/**
