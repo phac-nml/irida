@@ -40,7 +40,7 @@ IRIDA has several different built-in pipelines for analyzing your data:
 
 1. [Assembling your sequencing data][assembly].
 2. [Whole-genome SNV Phylogeny][snvphyl].
-3. [*Salmonella in-silico* Typing][sistr].
+3. [*Salmonella in-silico* Typing (SISTR)][sistr].
 
 ### Getting your data out of IRIDA
 

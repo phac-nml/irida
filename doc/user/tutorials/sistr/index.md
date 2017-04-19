@@ -103,4 +103,4 @@ This will display the individual steps of this pipeline and the parameters used 
 [your-analyses-page.png]: images/your-analyses-page.png
 [sistr-results.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/sistr-results.png
 [sistr-provenance.png]: images/sistr-provenance.png
-[IRIDA SISTR Documentation]: todo/
+[IRIDA SISTR Documentation]: ../../user/sistr/
