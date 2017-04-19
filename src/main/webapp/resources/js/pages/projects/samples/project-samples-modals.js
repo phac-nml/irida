@@ -113,13 +113,29 @@
 
     function openLinkerModal(ids) {
       var modal = $uibModal.open({
-        templateUrl: page.urls.samples.linker + "?" + $.param({projectId: page.project.id, ids: ids}),
+        templateUrl: 'linker.tmpl.html',
         openedClass: 'linker-modal',
         controllerAs: "lCtrl",
-        controller: ["$uibModalInstance", function ($uibModalInstance) {
-          var vm = this;
-          vm.close = $uibModalInstance.close;
-        }]
+        controller: ["$window", "$uibModalInstance", "ids", function($window, $uibModalInstance, ids) {
+          var cmd = page.linker;
+          if (typeof ids !== 'undefined' && ids.length > 0) {
+            // Need to find out if all the samples are selected.
+            var all = $window.oTable_samplesTable.page.info().recordsTotal === ids.length;
+            if (!all) {
+              let samples = ' -s '; // Start adding sampels
+              samples += ids.join(' -s ');
+              cmd += samples;
+            }
+          }
+          this.cmd = cmd;
+
+          this.close = $uibModalInstance.close;
+        }],
+        resolve: {
+          ids: function() {
+            return ids;
+          }
+        }
       });
 
       // Set up copy to clipboard functionality.
