@@ -33,7 +33,7 @@ public class ProjectReferenceFilePage extends AbstractPage {
 	}
 
 	public static ProjectReferenceFilePage goTo(WebDriver driver, Long projectId) {
-		get(driver, "projects/" + projectId + "/referenceFiles");
+		get(driver, "projects/" + projectId + "/settings/referenceFiles");
 		waitForTime(500);
 		return PageFactory.initElements(driver, ProjectReferenceFilePage.class);
 	}
