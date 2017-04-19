@@ -9,4 +9,5 @@ module.exports = {
   'project-linelist': './resources/js/pages/projects/linelist/index.js',
   'create-metadata-template': './resources/js/pages/projects/create-template/index.js',
   'visualizations-phylogenetics': './resources/js/pages/visualizations/phylogenetics/index.js'
+  'projects-associated-edit': './resources/js/pages/projects/associated-projects/edit.module.js'
 };

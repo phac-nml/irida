@@ -19,7 +19,7 @@ public class AssociatedProjectPage extends AbstractPage {
 	}
 
 	public void getPage(Long id) {
-		String url = "/projects/" + id + "/associated";
+		String url = "/projects/" + id + "/settings/associated";
 		get(driver, url);
 	}
 
