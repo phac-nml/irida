@@ -69,8 +69,14 @@ class AddMetadataFieldController {
             const found = availableFields
               .filter(field => field === query);
 
+            // Mark fields that aren't new
+            availableFields.forEach(function(field, index) {
+              availableFields[index] = {label: field, new: false};
+            });
+
+            // if it's a new field, mark it
             if (found.length === 0) {
-              availableFields.push(query);
+              availableFields.push({label: query, new: true});
             }
             this.list = availableFields;
           });

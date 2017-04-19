@@ -160,7 +160,11 @@
                         refresh-delay="0"
                         minimum-input-length="2">
                     <div class="clearfix">
-                        <span class="pull-left">{{field}}</span>
+                        <span class="pull-left">{{field.label}} </span>
+                        <span ng-show="field.new === true"
+                              class="label label-warning pull-right"
+                              style="margin-top: 3px;"
+                              th:text="#{visualization.phylogenomics.new-field}">_NEW_</span>
                     </div>
                 </ui-select-choices>
             </ui-select>

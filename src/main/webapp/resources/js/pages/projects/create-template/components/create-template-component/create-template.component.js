@@ -67,7 +67,7 @@ class createTemplateController {
     this
       .addMetadataField(this.template.fields)
       .then(field => {
-        this.template.fields.push({label: field});
+        this.template.fields.push({label: field.label});
       });
   }
 
