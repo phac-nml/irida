@@ -485,7 +485,7 @@ public class AnalysisController {
 				
 				// verify file is proper json file
 				ObjectMapper mapper = new ObjectMapper();
-				List<Map<String,Object>> sistrResults = mapper.readValue(json, new TypeReference<List<Map<String,String>>>(){});
+				List<Map<String,Object>> sistrResults = mapper.readValue(json, new TypeReference<List<Map<String,Object>>>(){});
 				
 				if (sistrResults.size() > 0) {
 					// should only ever be one sample for these results

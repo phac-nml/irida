@@ -16,7 +16,7 @@ This workflow uses the software [sistr_cmd][] for typing of Salmonella genomes w
 | **assemblystats**         | irida    | 51b76a5d78a5  | 1 (2015-05-07)                | [IRIDA Toolshed][]   |
 | **spades**                | nml      | 35cb17bd8bf9  | 4 (2016-08-08)                | [Galaxy Main Shed][] |
 | **regex_find_replace**    | jjohnson | 9ea374bb0350  | 0 (2014-03-29)                | [Galaxy Main Shed][] |
-| **sistr_cmd**             | nml      | 9d7e381dfa5a  | 1 (2017-03-03)                | [Galaxy Main Shed][] |
+| **sistr_cmd**             | nml      | 13632190a0ff  | 2 (2017-04-20)                | [Galaxy Main Shed][] |
 
 To install these tools please proceed through the following steps.
 
@@ -55,7 +55,7 @@ If you are unable to upgrade Galaxy to take advantage of `conda`, then the follo
 2. Install the `sistr_cmd` dependency to it's own conda environment:
 
    ```bash
-  conda create -y --name sistr_cmd@0.3.4 sistr_cmd=0.3.4 
+  conda create -y --name sistr_cmd@0.3.6 sistr_cmd=0.3.6 
    ```
 
 3. Write a wrapper around the `sistr` command to load up the conda environment.  If conda is installed in the directory `~/miniconda2` this should look like the following:
@@ -64,7 +64,7 @@ If you are unable to upgrade Galaxy to take advantage of `conda`, then the follo
    #!/bin/bash
 
    export PATH=~/miniconda2/bin:$PATH
-   source activate sistr_cmd@0.3.4
+   source activate sistr_cmd@0.3.6
 
    sistr $@
    ```
@@ -90,7 +90,7 @@ If you are unable to upgrade Galaxy to take advantage of `conda`, then the follo
    ./bin/sistr --version
    ```
 
-   You should see `sistr_cmd 0.3.4` as output of the above command.
+   You should see `sistr_cmd 0.3.6` as output of the above command.
 
 ## Step 3: Install Galaxy Tools
 
