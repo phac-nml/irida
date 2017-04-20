@@ -34,6 +34,10 @@ The projects list provides a high-level overview of project details, including:
 * The date that the project was created in IRIDA,
 * The time that the project was last modified.
 
+To enter into a project click the **Name** of the project:
+
+![Project name button.](images/project-name-button.png)
+
 Filtering and Searching the Projects Table
 ------------------------------------------
 
@@ -70,40 +74,117 @@ Creating a new project
 
 {% include tutorials/common/creating-a-project.md %}
 
-Viewing project details
+Viewing project samples
 -----------------------
 
-To view project details, start from the [projects list](#viewing-existing-projects) and click on the **Name** of the project:
+The project samples page provides a view of the samples that belong to the project.  To view the samples for a project, click on the **Samples** tab on the project page:
 
-![Project name button.](images/project-name-button.png)
+![Project samples tab.](images/project-samples-tab.png)
 
-The project details page shows a summary of the project details and provides a view of the samples that belong to the project. You can find out more about managing samples in a project by navigating to the [managing samples](../samples) section.
+You can find out more about managing samples in a project by navigating to the [managing samples](../samples) section.
 
-![Project details panel.](images/project-details-details.png)
+![Project samples panel.](images/project-details-samples.png)
 
-More detailed project information can be found by clicking the tabs at the top of the project details page.
+Project analysis results
+------------------------
 
-Editing project details
------------------------
+To view the results of an analysis that has been shared with a project, click the `Analysis` tab at the top of the project page. 
 
-To edit project details, start by [viewing the project details](#viewing-project-details), then click on the "Metadata" tab:
+![Project analysis tab.](images/analysis-tab.png)
 
-![Project metadata tab.](images/project-metadata-tab.png)
+From this page you can view and monitor the progress of all analyses which have been shared with this project.  To view the results of an analysis click on the analysis name.  For more information on analysis results, see the [pipeline documentation page](../pipelines/#viewing-pipeline-results).
 
-On the project metadata page, click on the "Edit" button in the top, right-hand corner of the page:
+![Project analysis tab.](images/project-analysis-results.png)
+
+Project details
+---------------
+
+To view project details, click the **Details** tab on the project page:
+
+![Project details tab](images/project-details-tab.png) 
+
+This view will display basic information about the project such as:
+
+* Project name - The given name of the project which will show up in the projects table.
+* Project description - A general description of the project.
+* Project organism - The organism expected to be stored within this project.
+* Project Wiki URL - An external URL where users can go to view more details about the project.
+
+![Project details view](images/project-details-details.png) 
+
+To edit project details, from the project details page click on the "Edit" button:
 
 ![Project metadata edit button.](images/project-details-edit-button.png)
 
 The project details editing page provides the same form as when you [created the project](#creating-a-new-project), and all of the same descriptions apply. When you've finished editing the project details, you can click on the "Update" button at the bottom of the form.
 
-Project members
----------------
+Project NCBI Exports
+--------------------
 
-Project members are users who have permissions to view or edit project metadata. Project members can also view, download, and submit pipelines using sequencing data that's contained in a project. Project members can have two different roles: a project collaborator (*read-only* permissions), and a project manager (*read* and *modify* permissions).
+To view exports from this project to NCBI, click on the **NCBI Exports** tab.
 
-If you are a project **Manager**, you can add new members to the project. Start by clicking on the "Members" tab, above the [project details panel](#viewing-project-details):
+![Project exports tab](images/project-export-tab.png) 
+
+For more information on exporting to NCBI, see the [documentation on the samples page](../samples/#ncbi-upload).
+
+Viewing recent project activity
+-------------------------------
+
+Project data and metadata is changed over time. You can see a list of recent changes that have taken place by viewing the recent activity for a project.
+
+Starting from [viewing project details](#viewing-project-details), you can view recent project activity by clicking on the "Recent Activity" tab at the top of the projects page:
+
+![Project recent activities tab.](images/project-details-recent-activities-tab.png)
+
+Recent activities include adding or modifying project members and adding new samples to a project:
+
+![Project recent activities.](images/project-recent-activities.png)
+
+Managing project settings
+-------------------------
+
+If you are a manager on a project you can manage settings on individual projects.  These settings can be found in the **Settings** tab at the top of the project page.
+
+![Project settings tab.](images/project-settings-tab.png)
+
+### Processing
+
+Project processing settings can be found in the **Processing** tab in the project settings page.
+
+![Processing tab](images/project-settings-processing.png)
+
+#### Automated assemblies
+
+Data that is uploaded to a project in IRIDA can be automatically assembled using IRIDA's assembly and annotation pipeline.  This setting is enabled on a project-by-project basis and must be enabled by a project **manager**.
+
+To enable automated assemblies, check the *Automatically assemble data uploaded to project* box.  Any new data uploaded to the project will now be automatically assembled.
+
+![Automated assembly check](images/project-settings-automated-assembly.png)
+
+#### Project coverage
+
+IRIDA can calculate the coverage of uploaded sequencing data for a sample.  To enable this a genome size and expected coverage must be set for a project in the project settings page.
+
+* **Required Coverage** - The coverage expected by any sequencing data being uploaded to the project.
+* **Genome Size** - The size of the genome of the organism being targeted by the project.
+
+To edit coverage settings, click the `Edit` button.
+
+![Coverage Edit Button](images/project-settings-coverage-edit-button.png)
+
+You can then enter your coverage settings and click `Update`.
+
+![Coverage Update](images/project-settings-coverage-update.png) 
+
+When these options are set IRIDA will flag any samples which do not meet the expected coverage requirement in the [project/samples list](../samples/#viewing-samples-in-a-project).  It will also display the coverage for a sample when you [view sequence files for a sample](../samples/#viewing-sequence-files).
+
+### Project members
+
+Project member settings can be found in the **Members** tab in the project settings page.
 
 ![Project details members tab.]({{ site.baseurl }}/images/tutorials/common/projects/project-details-members-tab.png)
+
+Project members are users who have permissions to view or edit project metadata. Project members can also view, download, and submit pipelines using sequencing data that's contained in a project. Project members can have two different roles: a project collaborator (*read-only* permissions), and a project manager (*read* and *modify* permissions).  A user must be a **Manager** on a project to add or remove members.
 
 A project **Collaborator** will only be able to *view* the project members:
 
@@ -113,17 +194,21 @@ A project **Manager** will be able to *modify* the project members:
 
 ![Project members (as a manager).](images/project-members-manager.png)
 
-### Adding a project member
+Similar to project members, user groups can also be added to projects to manage collections of users.
 
-#### Adding an individual project member
+![Project details groups tab.]({{ site.baseurl }}/images/tutorials/common/projects/project-details-groups-tab.png)
+
+#### Adding a project member
+
+##### Adding an individual project member
 
 {% include tutorials/common/project-add-member.md %}
 
-#### Adding a group project member
+##### Adding a group project member
 
 {% include tutorials/common/project-add-member-group.md %}
 
-### Changing a project member role
+#### Changing a project member role
 
 You may want to change a project member role if you wish to remove permissions for an individual user account to modify project details, but still want to allow that user account to view the project data. You can only change a project member role if you have the **Manager** role on the project.
 
@@ -135,7 +220,7 @@ To change the role of a project member, click on the role drop-down menu of the 
 
 The project role is saved as soon as you make a selection -- you **do not** need to click a "Save" button.
 
-### Removing a user from a project
+#### Removing a user from a project
 
 You may want to completely remove all permissions for a user to access data in a project. To remove those permissions, you must remove the user account from the project members list.
 
@@ -151,35 +236,21 @@ When you click the remove button, you will be asked to confirm the project membe
 
 To confirm, click the "Ok" button.
 
-Project Analysis Results
-------------------------
-
-To view the results of an analysis that has been shared with a project, click the `Analysis` tab at the top of the project page. 
-
-![Project analysis tab.](images/analysis-tab.png)
-
-From this page you can view and monitor the progress of all analyses which have been shared with this project.  To view the results of an analysis click on the analysis name.  For more information on analysis results, see the [pipeline documentation page](../pipelines/#viewing-pipeline-results).
-
-![Project analysis tab.](images/project-analysis-results.png)
-
-Associated Projects
--------------------
+### Associated Projects
 
 Associated projects can be used to help manage related sample data across multiple projects.  Samples from associated projects can be viewed seamlessly with samples from the local project and used together in analysis pipelines.
 
-### Viewing associated projects
-
-Click the "Associated Projects" tab at the top of the project page.
+To view associated projects click the **Associated Projects** tab in the project settings page.
 
 ![Associated projects tab](images/associated-tab.png)
 
-The "Projects" list will display the projects associated with this project. The associated projects list will also display whether the project is on the local installation or if the project exists on a remote IRIDA installation.
+#### Viewing associated projects
 
-The "Remote APIs" section displays your connection status to remote IRIDA installations that have projects associated to this project.
+The "Associated Projects" list will display the projects associated with this project.  Projects in this view will be available in the ["Associated Projects" view on the project samples listing](../samples/#viewing-associated-samples).
 
 ![Associated projects list](images/associated-list.png)
 
-### Adding or removing associated projects
+#### Adding or removing associated projects
 
 Project Managers can add or remove associated projects for a project.  From the "Associated Projects" page, click the "Edit" button.
 
@@ -189,14 +260,11 @@ You will be presented with a list of all projects you have access to in the loca
 
 ![Edit local associated projects](images/associated-local.png)
 
-To add or remove an associated project from the API, click the "On/Off" switch next to the project name.
-
-Adding reference files to a project
------------------------------------
+### Reference files
 
 Reference files are required by at least one of the workflows that are installed in IRIDA by default. Reference files are stored on a project-by-project basis.
 
-Starting from [viewing project details](#viewing-project-details), you can add a reference file to a project by clicking on the "Reference Files" tab at the top of the projects page:
+You can view or add reference files by clicking on the "Reference Files" tab in the project settings page.
 
 ![Project details reference files tab.](images/project-details-reference-files-tab.png)
 
@@ -208,18 +276,16 @@ Reference files **must** be in `fasta` format. Files containing **ambiguous base
 
 Once you've uploaded a reference file, you can optionally download the reference file (useful if someone else uploaded the reference file for the project) by clicking on the <img src="images/download-icon.png" class="inline" alt="Download icon."> download icon in the list of reference files.
 
-Viewing recent project activity
--------------------------------
+### Remote project settings
 
-Project data and metadata is changed over time. You can see a list of recent changes that have taken place by viewing the recent activity for a project.
+Settings for remote synchronized projects can also be managed from the project settings page.  **Note:** these settings will only appear for synchronized projects, and will be available within the 'Remote' menu item.  
 
-Starting from [viewing project details](#viewing-project-details), you can view recent project activity by clicking on the "Recent Activity" tab at the top of the projects page:
+![Remote Project Settings](images/project-settings-sync.png)
 
-![Project recent activities tab.](images/project-details-recent-activities-tab.png)
-
-Recent activities include adding or modifying project members and adding new samples to a project:
-
-![Project recent activities.](images/project-recent-activities.png)
+* **Last Synchronization** - The time the project was last synchronized or checked for updates.  Click the **Sync Now** button to mark the project for synchronization before it's scheduled sync time. 
+* **Remote API** - Displays the remote IRIDA installation the project is hosted on and your connection status with that API.
+* **Synchronization Frequency** - How often the project will be synchronized.  You can update this setting here.
+* **Synchronization User** - The accout which will be used to request project updates from the remote IRIDA installation.  This user account must have access to the project on the remote IRIDA API in order for synchronization to proceed.  Click * **Become Synchronization User** to set this to be your user account.
 
 Synchronizing a remote project
 ------------------------------
@@ -267,49 +333,6 @@ The status section will be one of the following messages:
 * `Synchronized` - This project is up to date since the last project synchronization job has been run.
 * `Unauthorized` - The user who has created the synchronized project can no longer read the project on the host IRIDA installation.
 * `Error` - An error occurred during the last project synchronization job.
-* `Unsynchronized` - This project will no longer be synchronized.
-
-Managing project settings
--------------------------
-
-If you are a manager on a project you can manage settings on individual projects.  These settings can be found in the **Settings** tab at the top of the project page.
-
-![Project settings tab.](images/project-settings-tab.png)
-
-#### Automated assemblies
-
-Data that is uploaded to a project in IRIDA can be automatically assembled using IRIDA's assembly and annotation pipeline.  This setting is enabled on a project-by-project basis and must be enabled by a project **manager**.
-
-To enable automated assemblies, check the *Automatically assemble data uploaded to project* box.  Any new data uploaded to the project will now be automatically assembled.
-
-![Automated assembly check](images/project-settings-automated-assembly.png)
-
-#### Project coverage
-
-IRIDA can calculate the coverage of uploaded sequencing data for a sample.  To enable this a genome size and expected coverage must be set for a project, under the Project > Settings > Basic menu.
-
-* **Required Coverage** - The coverage expected by any sequencing data being uploaded to the project.
-* **Genome Size** - The size of the genome of the organism being targeted by the project.
-
-To edit coverage settings, click the `Edit` button.
-
-![Coverage Edit Button](images/project-settings-coverage-edit-button.png)
-
-You can then enter your coverage settings and click `Update`.
-
-![Coverage Update](images/project-settings-coverage-update.png) 
-
-When these options are set IRIDA will flag any samples which do not meet the expected coverage requirement in the [project/samples list](../samples/#viewing-samples-in-a-project).  It will also display the coverage for a sample when you [view sequence files for a sample](../samples/#viewing-sequence-files). 
-
-#### Remote project settings
-
-Settings for remote synchronized projects can also be managed from the project settings page.  These settings will only appear for synchronized projects, and will be available within the 'Remote' menu item.  
-
-![Automated assembly check](images/project-settings-sync.png)
-
-* **Last Synchronization** - The time the project was last synchronized or checked for updates.  Click the **Sync Now** button to mark the project for synchronization before it's scheduled sync time. 
-* **Remote API** - Displays the remote IRIDA installation the project is hosted on and your connection status with that API.
-* **Synchronization Frequency** - How often the project will be synchronized.  You can update this setting here.
-* **Synchronization User** - The accout which will be used to request project updates from the remote IRIDA installation.  This user account must have access to the project on the remote IRIDA API in order for synchronization to proceed.  Click **Become Synchronization User** to set this to be your user account.   
+* `Unsynchronized` - This project will no longer be synchronized.   
 
 <a href="../user-groups/">Previous: Managing user groups</a><a href="../samples/" style="float: right;">Next: Managing samples</a>
