@@ -413,6 +413,14 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	public List<QCEntry> getQCEntriesForSample(Sample sample) {
 		return qcEntryRepository.getQCEntriesForSample(sample);
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("permitAll()")
+	public List<String> getMetadataKeys(String query) {
+		return sampleRepository.getSampleMetadataKeys(query);
+	}
 
 	/**
 	 * Verify that the given sort properties array is not null or empty. If it

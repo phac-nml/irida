@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataField;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectMetadataTemplateJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataFieldRepository;
@@ -79,7 +79,7 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 
 	@PreAuthorize("permitAll()")
 	@Override
-	public MetadataField readMetadataField(Long id) {
+	public MetadataTemplateField readMetadataField(Long id) {
 		return fieldRepository.findOne(id);
 	}
 
@@ -88,13 +88,13 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 	 */
 	@PreAuthorize("permitAll()")
 	@Override
-	public MetadataField readMetadataFieldByLabel(String label) {
+	public MetadataTemplateField readMetadataFieldByLabel(String label) {
 		return fieldRepository.findMetadataFieldByLabel(label);
 	}
 
 	@PreAuthorize("permitAll()")
 	@Override
-	public MetadataField saveMetadataField(MetadataField field) {
+	public MetadataTemplateField saveMetadataField(MetadataTemplateField field) {
 		if (field.getId() != null) {
 			throw new IllegalArgumentException("Cannot save a MetadataField that has an ID");
 		}
@@ -107,7 +107,7 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 	 */
 	@Override
 	@PreAuthorize("permitAll()")
-	public List<MetadataField> getAllMetadataFieldsByQueryString(String query) {
+	public List<MetadataTemplateField> getAllMetadataFieldsByQueryString(String query) {
 		return fieldRepository.findAllMetadataFieldsByLabelQuery(query);
 	}
 }
