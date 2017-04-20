@@ -1,4 +1,4 @@
-To add an individual project member, click on the "Add Member" button, just below the project title:
+To add an individual project member, click on the "Add Member" button:
 
 ![Add project member button.]({{ site.baseurl }}/images/tutorials/common/projects/add-member-button.png)
 
