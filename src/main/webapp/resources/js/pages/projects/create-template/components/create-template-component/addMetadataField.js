@@ -11,7 +11,7 @@ function filterFields(tableFields, serverResults) {
   const serverFields = new Set(serverResults);
   tableFields.forEach(field => {
     for (let item of serverFields) {
-      if (angular.equals(item, field)) {
+      if (angular.equals(item, field.label)) {
         serverFields.delete(item);
         break;
       }

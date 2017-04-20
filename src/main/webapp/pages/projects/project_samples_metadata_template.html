@@ -170,8 +170,7 @@
             </ui-select>
             <div ng-show="model.fieldExists" class="spaced-top alert alert-info">
                 <strong><i class="fa fa-exclamation-triangle" aria-hidden="true"></i></strong>
-                <p th:text="#{visualization.phylogenomics.field-modal.existing-field-warning}">THIS FIELD ALREADY EXISTS
-                    IN THE TABEL</p>
+                <th:block th:text="#{visualization.phylogenomics.field-modal.existing-field-warning}"/>
             </div>
         </div>
     </script>
