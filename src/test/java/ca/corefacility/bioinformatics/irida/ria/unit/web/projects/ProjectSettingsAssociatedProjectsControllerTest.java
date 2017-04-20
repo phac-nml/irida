@@ -2,18 +2,17 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.projects;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort.Direction;
@@ -24,33 +23,34 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.AssociatedProjectsController;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectSettingsAssociatedProjectsController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteRelatedProjectService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
-public class AssociatedProjectControllerTest {
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+
+public class ProjectSettingsAssociatedProjectsControllerTest {
 	private static final String USER_NAME = "testme";
 
 	private ProjectService projectService;
-	private AssociatedProjectsController controller;
+	private ProjectSettingsAssociatedProjectsController controller;
 	private UserService userService;
 	private ProjectControllerUtils projectUtils;
 	private RemoteRelatedProjectService remoteRelatedProjectService;
 	private RemoteAPIService apiService;
 	private ProjectRemoteService projectRemoteService;
+	private MessageSource messageSource;
 
 	@Before
 	public void setUp() {
@@ -60,8 +60,9 @@ public class AssociatedProjectControllerTest {
 		apiService = mock(RemoteAPIService.class);
 		projectRemoteService = mock(ProjectRemoteService.class);
 		remoteRelatedProjectService = mock(RemoteRelatedProjectService.class);
-		controller = new AssociatedProjectsController(remoteRelatedProjectService, projectService, projectUtils,
-				userService, apiService, projectRemoteService);
+		messageSource = mock(MessageSource.class);
+		controller = new ProjectSettingsAssociatedProjectsController(remoteRelatedProjectService, projectService, projectUtils,
+				userService, apiService, projectRemoteService, messageSource);
 		
         // fake out the servlet response so that the URI builder will work.
         RequestAttributes ra = new ServletRequestAttributes(new MockHttpServletRequest());
@@ -209,9 +210,10 @@ public class AssociatedProjectControllerTest {
 
 		when(projectService.read(projectId)).thenReturn(p1);
 		when(projectService.read(associatedProjectId)).thenReturn(p2);
+		when(messageSource.getMessage("project.associated.added", new Object[]{}, Locale.US)).thenReturn("Success");
 
 		ImmutableMap.of("associatedProjectId", associatedProjectId);
-		controller.addAssociatedProject(projectId, associatedProjectId);
+		controller.addAssociatedProject(projectId, associatedProjectId, Locale.US);
 
 		verify(projectService).addRelatedProject(p1, p2);
 	}
@@ -225,8 +227,9 @@ public class AssociatedProjectControllerTest {
 
 		when(projectService.read(projectId)).thenReturn(p1);
 		when(projectService.read(associatedProjectId)).thenReturn(p2);
+		when(messageSource.getMessage("project.associated.removed", new Object[]{}, Locale.US)).thenReturn("Removed");
 
-		controller.removeAssociatedProject(projectId, associatedProjectId);
+		controller.removeAssociatedProject(projectId, associatedProjectId, Locale.US);
 
 		verify(projectService).removeRelatedProject(p1, p2);
 	}
@@ -243,7 +246,7 @@ public class AssociatedProjectControllerTest {
 
 		verify(apiService).findAll();
 
-		assertEquals(AssociatedProjectsController.EDIT_ASSOCIATED_PROJECTS_PAGE, editAssociatedProjectsForProject);
+		assertEquals("projects/settings/pages/associated_edit", editAssociatedProjectsForProject);
 	}
 
 	@Test
