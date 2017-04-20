@@ -11,7 +11,7 @@ function filterFields(tableFields, serverResults) {
   const serverFields = new Set(serverResults);
   tableFields.forEach(field => {
     for (let item of serverFields) {
-      if (angular.equals(item, field)) {
+      if (angular.equals(item, field.label)) {
         serverFields.delete(item);
         break;
       }
@@ -31,7 +31,7 @@ class AddMetadataFieldController {
     $scope.$watch(() => {
       return this.field;
     }, (newValue, oldValue) => {
-      if (newValue.label !== oldValue.label) {
+      if (newValue !== oldValue) {
         this.modal.close(angular.copy(this.field));
       }
     });
@@ -67,14 +67,16 @@ class AddMetadataFieldController {
 
             // See if the query is in the list
             const found = availableFields
-              .filter(field => field.label === query);
+              .filter(field => field === query);
 
+            // Mark fields that aren't new
+            availableFields.forEach(function(field, index) {
+              availableFields[index] = {label: field, new: false};
+            });
+
+            // if it's a new field, mark it
             if (found.length === 0) {
-              availableFields.push({
-                id: undefined,
-                label: query,
-                type: 'text'
-              });
+              availableFields.push({label: query, new: true});
             }
             this.list = availableFields;
           });
