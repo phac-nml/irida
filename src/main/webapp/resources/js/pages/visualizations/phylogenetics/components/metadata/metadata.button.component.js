@@ -69,6 +69,7 @@ class MetadataButtonController {
         templateUrl: `metadataAside.tmpl.html`,
         placement: `left`,
         size: 'sm',
+        openedClass: 'metadata-open',
         controllerAs: '$ctrl',
         controller: MetadataAsideController,
         resolve: {
