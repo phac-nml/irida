@@ -105,8 +105,8 @@ The results of predictions made through comparisons using the software [Mash][].
 
 * **Mash subspecies**: The subspecies identified by comparing the genome to the SISTR database.
 * **Mash serovar**: The serovar identified using Mash.
-* **Mash match** The number of X matching with Mash.
 * **Mash genome match**: The name of the closest matching genome in the SISTR database identified using Mash.
+* **Mash match distance** The Mash distance from the matching genome.
 
 ### Output Files
 
