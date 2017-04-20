@@ -80,6 +80,11 @@ Once the pipeline is complete, you will see the SISTR Typing results within your
 
 ![sistr-results.png][]
 
+Interpreting the Results
+========================
+
+For information on interpreting the SISTR results, please refer to the detailed [SISTR Report Documentation][].
+
 Viewing Provenance Information
 ==============================
 
@@ -104,3 +109,4 @@ This will display the individual steps of this pipeline and the parameters used 
 [sistr-results.png]: {{ site.baseurl }}/images/tutorials/common/pipelines/sistr-results.png
 [sistr-provenance.png]: images/sistr-provenance.png
 [IRIDA SISTR Documentation]: ../../user/sistr/
+[SISTR Report Documentation]: ../../user/sistr/#report
