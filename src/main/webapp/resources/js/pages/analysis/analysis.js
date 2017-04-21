@@ -171,15 +171,15 @@
         cgMLST_predictions['Subspecies'] = result['cgmlst_subspecies'];
         cgMLST_predictions['Matching genome name'] = result['cgmlst_genome_match'];
         cgMLST_predictions['Alleles matching genome'] = result['cgmlst_matching_alleles']+'/330';
-        cgMLST_predictions['Percent matching'] = parseFloat((1 - result['cgmlst_distance'])*100).toFixed(2);
+        cgMLST_predictions['Percent matching'] = parseFloat((1 - result['cgmlst_distance'])*100).toFixed(1)+"%";
         cgMLST_predictions['cgMLST Sequence Type'] = result['cgmlst_ST'];
   
         var mash_predictions = {};
-        var mash_predictions_order = ['Subspecies', 'Serovar', 'Matching genome', 'Percent matching'];
+        var mash_predictions_order = ['Subspecies', 'Serovar', 'Matching genome name', 'Percent matching'];
         mash_predictions['Subspecies'] = result['mash_subspecies'];
         mash_predictions['Serovar'] = result['mash_serovar'];
-        mash_predictions['Matching genome'] = result['mash_genome'];
-        mash_predictions['Percent matching'] = parseFloat((1 - result['mash_distance'])*100).toFixed(2);
+        mash_predictions['Matching genome name'] = result['mash_genome'];
+        mash_predictions['Percent matching'] = parseFloat((1 - result['mash_distance'])*100).toFixed(1)+"%";
   
         vm.sample_information = sample_information;
         vm.serotype_predictions = serotype_predictions;
