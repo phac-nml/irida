@@ -156,7 +156,7 @@
         sample_information['qc_messages'] = result['qc_messages'].split("|");
         sample_information['qc_pass'] = (result['qc_status'] == 'PASS');
 
-        var serotype_predictions_order = ['Serovar (overall)', 'Serovar (antigen)', 'Serovar (cgMLST)', 'Serogroup', 'H1', 'H2', 'O antigen'];
+        var serotype_predictions_order = ['Serovar (overall)', 'Serovar (antigen)', 'Serovar (cgMLST)', 'Serogroup', 'H1', 'H2', 'O-antigen'];
         var serotype_predictions = {};
         serotype_predictions['Serovar (overall)'] = result['serovar'];
         serotype_predictions['Serovar (antigen)'] = result['serovar_antigen'];
@@ -164,7 +164,7 @@
         serotype_predictions['Serogroup'] = result['serogroup'];
         serotype_predictions['H1'] = result['h1'];
         serotype_predictions['H2'] = result['h2'];
-        serotype_predictions['O antigen'] = result['o_antigen'];
+        serotype_predictions['O-antigen'] = result['o_antigen'];
   
         var cgMLST_predictions = {};
         var cgMLST_predictions_order = ['Subspecies', 'Matching genome name', 'Alleles matching genome', 'Percent matching', 'cgMLST Sequence Type'];
@@ -175,11 +175,11 @@
         cgMLST_predictions['cgMLST Sequence Type'] = result['cgmlst_ST'];
   
         var mash_predictions = {};
-        var mash_predictions_order = ['Subspecies', 'Serovar', 'Matching genome name', 'Percent matching'];
+        var mash_predictions_order = ['Subspecies', 'Serovar', 'Matching genome name', 'Percent shared k-mers'];
         mash_predictions['Subspecies'] = result['mash_subspecies'];
         mash_predictions['Serovar'] = result['mash_serovar'];
         mash_predictions['Matching genome name'] = result['mash_genome'];
-        mash_predictions['Percent matching'] = parseFloat((1 - result['mash_distance'])*100).toFixed(1)+"%";
+        mash_predictions['Percent shared k-mers'] = parseFloat((1 - result['mash_distance'])*100).toFixed(1)+"%";
   
         vm.sample_information = sample_information;
         vm.serotype_predictions = serotype_predictions;
