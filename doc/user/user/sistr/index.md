@@ -96,8 +96,8 @@ The results of additional predictions made using the SISTR cgMLST330 schema.
 
 * **Subspecies**: The subspecies identified by comparing the genome to the cgMLST database in SISTR.
 * **Matching genome name**: The name of the closest matching genome in the SISTR database.
-* **Alleles matching genome**: The number of loci with alleles that perfectly match the closest genome in the SISTR database (out of 330).
-* **Percent matching**: The percent of loci with alleles perfectly matching the closest genome (e.g., _100% * Alleles matching genome/330_).
+* **Alleles matching genome**: The number of alleles that have a sufficient match (non-missing, non-partial/truncated) to the closest genome in the SISTR database.
+* **Percent matching**: The percent of alleles perfectly matching the closest genome (e.g., _100% * Alleles matching genome/330_).
 * **cgMLST Sequence Type**: A SISTR Sequence Type number associated with the particular cgMLST profile. A sequence type will only be assigned when the full complement of 330 cgMLST genes are found (whether a perfect match or an imperfect but non-truncated match).
 
 #### 4. Mash
