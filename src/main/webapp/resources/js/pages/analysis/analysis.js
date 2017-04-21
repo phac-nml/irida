@@ -167,18 +167,19 @@
         serotype_predictions['O antigen'] = result['o_antigen'];
   
         var cgMLST_predictions = {};
-        var cgMLST_predictions_order = ['cgMLST subspecies', 'cgMLST matching alleles', 'cgMLST genome match', 'cgMLST ST'];
-        cgMLST_predictions['cgMLST subspecies'] = result['cgmlst_subspecies'];
-        cgMLST_predictions['cgMLST matching alleles'] = result['cgmlst_matching_alleles']+'/330';
-        cgMLST_predictions['cgMLST genome match'] = result['cgmlst_genome_match'];
-        cgMLST_predictions['cgMLST ST'] = result['cgmlst_ST'];
+        var cgMLST_predictions_order = ['Subspecies', 'Matching genome name', 'Alleles matching genome', 'Percent matching', 'cgMLST Sequence Type'];
+        cgMLST_predictions['Subspecies'] = result['cgmlst_subspecies'];
+        cgMLST_predictions['Matching genome name'] = result['cgmlst_genome_match'];
+        cgMLST_predictions['Alleles matching genome'] = result['cgmlst_matching_alleles']+'/330';
+        cgMLST_predictions['Percent matching'] = parseFloat((1 - result['cgmlst_distance'])*100).toFixed(2);
+        cgMLST_predictions['cgMLST Sequence Type'] = result['cgmlst_ST'];
   
         var mash_predictions = {};
-        var mash_predictions_order = ['Mash subspecies', 'Mash serovar', 'Mash genome match', 'Mash match distance'];
-        mash_predictions['Mash subspecies'] = result['mash_subspecies'];
-        mash_predictions['Mash serovar'] = result['mash_serovar'];
-        mash_predictions['Mash genome match'] = result['mash_genome'];
-        mash_predictions['Mash match distance'] = result['mash_distance'];
+        var mash_predictions_order = ['Subspecies', 'Serovar', 'Matching genome', 'Percent matching'];
+        mash_predictions['Subspecies'] = result['mash_subspecies'];
+        mash_predictions['Serovar'] = result['mash_serovar'];
+        mash_predictions['Matching genome'] = result['mash_genome'];
+        mash_predictions['Percent matching'] = parseFloat((1 - result['mash_distance'])*100).toFixed(2);
   
         vm.sample_information = sample_information;
         vm.serotype_predictions = serotype_predictions;
