@@ -20,7 +20,7 @@
 				toolId="irida.corefacility.ca/galaxy-shed/repos/irida/flash/FLASH/1.3.0"
 				parameterName="max_overlap" />
 		</parameter>
-		<parameter name="assembly-contig-min-length" defaultValue="1000">
+		<parameter name="assembly-contig-min-length" defaultValue="500">
 			<toolParameter
 				toolId="irida.corefacility.ca/galaxy-shed/repos/irida/filter_spades_repeats/filter_spades_repeat/1.0.0"
 				parameterName="len_cutoff" />
