@@ -38,10 +38,12 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.MetadataImportFileTypeNotSupportedError;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import com.google.common.base.Strings;
@@ -60,14 +62,16 @@ public class ProjectSampleMetadataController {
 	private final ProjectControllerUtils projectControllerUtils;
 	private final ProjectService projectService;
 	private final SampleService sampleService;
+	private final MetadataTemplateService templateService;
 
 	@Autowired
 	public ProjectSampleMetadataController(MessageSource messageSource, ProjectControllerUtils projectControllerUtils,
-			ProjectService projectService, SampleService sampleService) {
+			ProjectService projectService, SampleService sampleService, MetadataTemplateService metadataTemplateService) {
 		this.messageSource = messageSource;
 		this.projectControllerUtils = projectControllerUtils;
 		this.projectService = projectService;
 		this.sampleService = sampleService;
+		this.templateService = metadataTemplateService;
 	}
 
 	/**
@@ -319,11 +323,11 @@ public class ProjectSampleMetadataController {
 						String key = rowEntry.getKey();
 
 						// See if there is a MetadataField corresponding to this header.
-						MetadataField metadataField = metadataTemplateService.readMetadataFieldByLabel(key);
+						MetadataTemplateField metadataField = templateService.readMetadataFieldByLabel(key);
 						// If it does not exist actually create it.
 						if (metadataField == null) {
-							metadataField = new MetadataField(key, "text");
-							metadataTemplateService.saveMetadataField(metadataField);
+							metadataField = new MetadataTemplateField(key, "text");
+							templateService.saveMetadataField(metadataField);
 						}
 
 						// Create the metadata entry
