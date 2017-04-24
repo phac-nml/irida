@@ -4,5 +4,6 @@
  *  Webpack will then create the bundle in `resource/js/build/`
  */
 module.exports = {
-  app: './resources/js/app.js'
+  app: './resources/js/app.js',
+  'projects-associated-edit': './resources/js/pages/projects/associated-projects/edit.module.js'
 };

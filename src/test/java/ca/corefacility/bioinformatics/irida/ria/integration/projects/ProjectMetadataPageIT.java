@@ -17,7 +17,7 @@ import static org.junit.Assert.*;
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
 public class ProjectMetadataPageIT extends AbstractIridaUIITChromeDriver {
-	private final String PAGE_TITLE = "IRIDA Platform - project2 - Metadata";
+	private final String PAGE_TITLE = "IRIDA Platform - project2 - Details";
 	private final Long PROJECT_ID_AS_OWNER = 2L;
 	private final Long PROJECT_ID_AS_COLLABORATOR = 1L;
 	private final String PROJECT_NAME = "project2";
