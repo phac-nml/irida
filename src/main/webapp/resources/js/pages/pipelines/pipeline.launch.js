@@ -318,20 +318,26 @@
 	function ParameterService() {
 		var svc = this;
 
+		// Check to see if there are any parameters, if not put a default
+		if(page.pipeline.parameters.length === 0) {
+			page.pipeline.parameters.push({
+				id: "no_parameters",
+				label: "",
+				parameters: []
+			});
+    }
+
 		/**
 		 * Duplicated copy of the original set of parameters on the page
 		 * so that we can quickly roll back to default values for any
 		 * parameter set.
 		 */
-		var originalSettings = [];
-    if (page.pipeline.parameters) {
-      page.pipeline.parameters.map(function(params) {
-        return {
-          currentSettings: ng.copy(params),
-          defaultSettings: ng.copy(params)
-        }
-      });
-    }
+    var originalSettings = page.pipeline.parameters.map(function (params) {
+      return {
+        currentSettings: ng.copy(params),
+        defaultSettings: ng.copy(params)
+      }
+    });
 
 		var selectedParameters = originalSettings[0];
 
