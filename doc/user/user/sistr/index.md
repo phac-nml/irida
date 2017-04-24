@@ -60,6 +60,12 @@ A successfull SISTR run (with status of `PASS`) should produce the following pag
 
 ![sistr-results.png][]
 
+### Status of `WARNING`
+
+A SISTR run with a status of `WARNING` should produce the below output.
+
+![sistr-results-warning.png][]
+
 ### Status of `FAIL`
 
 An unsuccessfull SISTR run (with status of `FAIL`) should produce the following as output.
@@ -76,7 +82,7 @@ Basic information on the sample and quality of the SISTR results.
 
 * **Sample Name**: The name of the sample used within this analysis.
 * **Quality Control Status**: A value of `PASS` or `FAIL` depending on the quality of the input genome as determined by SISTR.
-* **Quality Control Details**: In the case of a status of `FAIL` the reasons why SISTR failed these results or a list of warnings.
+* **Quality Control Details**: In the case of a status of `WARNING` or `FAIL`, the particular reason why these results did not pass.
 
 #### 2. Serovar Predictions
 
@@ -134,4 +140,5 @@ More information on the interpretation of these files is available on the [sistr
 [sistr-typing-sample.png]: images/sistr-typing-sample.png
 [sistr-typing-status.png]: images/sistr-typing-status.png
 [sistr-results-fail.png]: images/sistr-results-fail.png
+[sistr-results-warning.png]: images/sistr-results-warning.png
 [IRIDA/SISTR Tutorial]: ../../tutorials/sistr/

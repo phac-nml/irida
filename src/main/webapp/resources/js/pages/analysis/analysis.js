@@ -155,6 +155,8 @@
         sample_information['qc_status'] = result['qc_status'];
         sample_information['qc_messages'] = result['qc_messages'].split("|");
         sample_information['qc_pass'] = (result['qc_status'] == 'PASS');
+        sample_information['qc_warning'] = (result['qc_status'] == 'WARNING');
+        sample_information['qc_fail'] = (result['qc_status'] == 'FAIL');
 
         var serotype_predictions_order = ['Serovar (overall)', 'Serovar (antigen)', 'Serovar (cgMLST)', 'Serogroup', 'H1', 'H2', 'O-antigen'];
         var serotype_predictions = {};
