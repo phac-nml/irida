@@ -27,7 +27,7 @@ import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 
 /**
- * Stores a collection of {@link MetadataField}s that will often used together
+ * Stores a collection of {@link MetadataTemplateField}s that will often used together
  */
 @Entity
 @Table(name = "metadata_template")
@@ -39,7 +39,7 @@ public class MetadataTemplate implements MutableIridaThing {
 	private Long id;
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	private List<MetadataField> fields;
+	private List<MetadataTemplateField> fields;
 
 	@NotNull
 	private String name;
@@ -60,7 +60,7 @@ public class MetadataTemplate implements MutableIridaThing {
 	public MetadataTemplate() {
 	}
 
-	public MetadataTemplate(String name, List<MetadataField> fields) {
+	public MetadataTemplate(String name, List<MetadataTemplateField> fields) {
 		this.name = name;
 		this.fields = fields;
 	}
@@ -75,11 +75,11 @@ public class MetadataTemplate implements MutableIridaThing {
 		return id;
 	}
 
-	public List<MetadataField> getFields() {
+	public List<MetadataTemplateField> getFields() {
 		return fields;
 	}
 
-	public void setFields(List<MetadataField> fields) {
+	public void setFields(List<MetadataTemplateField> fields) {
 		this.fields = fields;
 	}
 

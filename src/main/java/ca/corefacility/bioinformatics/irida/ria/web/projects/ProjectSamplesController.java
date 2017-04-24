@@ -5,15 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -44,14 +36,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.github.dandelion.datatables.core.ajax.DataSet;
-import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
-import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
-import com.github.dandelion.datatables.core.export.ExportUtils;
-import com.github.dandelion.datatables.core.export.ReservedFormat;
-import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
-import com.google.common.base.Strings;
-
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -69,6 +53,14 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
+import com.github.dandelion.datatables.core.ajax.DataSet;
+import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
+import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
+import com.github.dandelion.datatables.core.export.ExportUtils;
+import com.github.dandelion.datatables.core.export.ReservedFormat;
+import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
+import com.google.common.base.Strings;
 
 @Controller
 public class ProjectSamplesController {
@@ -142,6 +134,11 @@ public class ProjectSamplesController {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
 
+		// Add the linker command if available
+		if (LINKER_AVAILABLE) {
+			model.addAttribute("linker", LINKER_SCRIPT + " -p " + project.getId());
+		}
+
 		// Set up the template information
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 
@@ -176,30 +173,6 @@ public class ProjectSamplesController {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
 		return "projects/project_add_sample";
-	}
-
-	/**
-	 * Special method to add the correct linker script name to the modal template
-	 *
-	 * @param model
-	 * 		{@link Model}
-	 *
-	 * @return Location of the modal template
-	 */
-	@RequestMapping(value = "/projects/template/samples/linker", produces = MediaType.TEXT_HTML_VALUE)
-	public String getLinkerModal(@RequestParam Long projectId,
-			@RequestParam(name = "ids[]", required = false) List<Long> ids,
-			Model model) {
-		StringBuilder cmdStringBuilder = new StringBuilder();
-		cmdStringBuilder.append(LINKER_SCRIPT);
-		cmdStringBuilder.append(" -p ").append(projectId);
-		if (ids != null && ids.size() > 0) {
-			for (Long id : ids) {
-				cmdStringBuilder.append(" -s ").append(id);
-			}
-		}
-		model.addAttribute("cmd", cmdStringBuilder.toString());
-		return PROJECT_TEMPLATE_DIR + "linker.tmpl";
 	}
 
 	/**
