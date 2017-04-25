@@ -115,7 +115,7 @@
 					params['remotePaired'] = remotePaired;
 				}
 
-				if (_.keys(selectedParameters).length > 0) {
+				if (_.keys(selectedParameters).length > 0 && selectedParameters.id !== 'no_parameters') {
 					params['selectedParameters'] = selectedParameters;
 				}
 				params['name'] = name;
