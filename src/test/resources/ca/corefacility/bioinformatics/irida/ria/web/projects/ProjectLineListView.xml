@@ -170,16 +170,16 @@
     <sample_metadata_entry sample_id="1" metadata_id="4"  metadata_KEY="firstSymptom"/>
     <sample_metadata_entry sample_id="1" metadata_id="5"  metadata_KEY="serotype"/>
 
-    <sample_metadata_entry sample_id="2" metadata_id="1"  metadata_KEY="firstName"/>
-    <sample_metadata_entry sample_id="2" metadata_id="2"  metadata_KEY="lastName"/>
-    <sample_metadata_entry sample_id="2" metadata_id="3"  metadata_KEY="healthAuthority"/>
-    <sample_metadata_entry sample_id="2" metadata_id="4"  metadata_KEY="firstSymptom"/>
-    <sample_metadata_entry sample_id="2" metadata_id="5"  metadata_KEY="serotype"/>
+    <sample_metadata_entry sample_id="2" metadata_id="6"  metadata_KEY="firstName"/>
+    <sample_metadata_entry sample_id="2" metadata_id="7"  metadata_KEY="lastName"/>
+    <sample_metadata_entry sample_id="2" metadata_id="8"  metadata_KEY="healthAuthority"/>
+    <sample_metadata_entry sample_id="2" metadata_id="9"  metadata_KEY="firstSymptom"/>
+    <sample_metadata_entry sample_id="2" metadata_id="10"  metadata_KEY="serotype"/>
 
-    <sample_metadata_entry sample_id="3" metadata_id="1"  metadata_KEY="firstName"/>
-    <sample_metadata_entry sample_id="3" metadata_id="2"  metadata_KEY="lastName"/>
-    <sample_metadata_entry sample_id="3" metadata_id="3"  metadata_KEY="healthAuthority"/>
-    <sample_metadata_entry sample_id="3" metadata_id="4"  metadata_KEY="firstSymptom"/>
-    <sample_metadata_entry sample_id="3" metadata_id="5"  metadata_KEY="serotype"/>
+    <sample_metadata_entry sample_id="3" metadata_id="11"  metadata_KEY="firstName"/>
+    <sample_metadata_entry sample_id="3" metadata_id="12"  metadata_KEY="lastName"/>
+    <sample_metadata_entry sample_id="3" metadata_id="13"  metadata_KEY="healthAuthority"/>
+    <sample_metadata_entry sample_id="3" metadata_id="14"  metadata_KEY="firstSymptom"/>
+    <sample_metadata_entry sample_id="3" metadata_id="15"  metadata_KEY="serotype"/>
 
 </dataset>
