@@ -4,16 +4,8 @@
         layout:decorator="template/page">
 <head>
     <title th:text="#{visualization.phylogenomics.title}">Title</title>
-    <style>
-        canvas {
-            border: 1px solid rgb(176, 190, 197);
-            border-radius: .5rem;
-        }
-        h2 {
-            font-size: 1.6rem!important;
-            margin-top: 0!important;
-        }
-    </style>
+    <link rel="stylesheet" href="/resources/css/pages/phylocanvas-metadata.css"
+          th:href="@{/resources/css/pages/phylocanvas-metadata.css}"/>
 </head>
 <body>
 <div layout:fragment="page">
@@ -24,16 +16,14 @@
         <div class="spaced-bottom" id="phylocanvas"></div>
     </script>
     <script type="text/ng-template" id="metadata-component.tmpl.html">
-        <h2 th:text="#{visualization.phylogenomics.select-template-fields.label}">_Select Metadata Fields to Visualize_</h2>
-        <div class="well">
-            <div class="row">
-                <div class="col-md-4 col-sm-1" ng-repeat="term in $ctrl.terms">
-                    <button class="btn btn-default spaced-bottom btn-block"
-                            ng-model="term.selected" uib-btn-checkbox=""
-                            ng-change="$ctrl.getUpdateMetadata()" ng-bind="term.term">
-                    </button>
-                </div>
-            </div>
+        <div class="spaced-bottom"
+             ng-repeat="term in $ctrl.terms">
+            <input type="checkbox"
+                   bs-switch=""
+                   ng-model="term.selected"
+                   switch-label="{{term.term}}"
+                   switch-label-width="200"
+                   ng-change="$ctrl.onSelectionChange(term)"/>
         </div>
     </script>
     <script type="text/ng-template" id="template-component.tmpl.html">
@@ -60,6 +50,13 @@
 
     <script type="text/ng-template" id="app-component.tmpl.html">
         <h1 th:text="#{visualization.phylogenomics.title}"></h1>
+        <div class="btn-toolbar spaced-bottom" ng-hide="$ctrl.loading || $ctrl.treeError || $ctrl.templateError">
+            <div class="btn-group">
+                <metadata-button
+                        data:metadata-url="@{/analysis/ajax/{id}/metadata(id=${submissionId})}">
+                </metadata-button>
+            </div>
+        </div>
         <section>
             <div ng-show="$ctrl.metadataError &amp;&amp; !$ctrl.templateError" class="alert alert-danger">NO METADATA WARNING</div>
             <div ng-show="$ctrl.treeError" class="alert alert-danger">
@@ -91,11 +88,29 @@
                         data:templatesurl="@{/analysis/ajax/{id}/metadata-templates(id=${submissionId})}"
                         data:fieldsurl="@{/analysis/ajax/{id}/metadata-template-fields(id=${submissionId})}">
                 </template-component>
-                <metadata-component
-                        data:metadataurl="@{/analysis/ajax/{id}/metadata(id=${submissionId})}">
-                </metadata-component>
             </div>
         </section>
+    </script>
+
+    <script type="text/ng-template" id="metadataButton.tmpl.html">
+        <button class="btn btn-default"
+                ng-click="$ctrl.openMetadataAside()">
+            <i class="fa fa-toggle-on fa-fw"></i>&nbsp;Toggle Metadata
+        </button>
+    </script>
+    <script type="text/ng-template" id="metadataAside.tmpl.html">
+        <aside class="metadata-aside">
+            <div class="metadata-aside__btns text-right">
+                <button class="btn btn-default"
+                ng-click="$ctrl.close()">Close</button>
+            </div>
+            <div class="metadata-aside__switches">
+                <metadata-component
+                        terms="$ctrl.terms"
+                        on-selection-change="$ctrl.termSelectionChange(term)">
+                </metadata-component>
+            </div>
+        </aside>
     </script>
     <script src="/resources/js/build/visualizations-phylogenetics.bundle.js"
             th:src="@{/resources/js/build/visualizations-phylogenetics.bundle.js}"></script>
