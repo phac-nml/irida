@@ -116,23 +116,71 @@
 					<br/>
 					<h2 th:text="#{analysis.details.sistr.serovar}">_Serovar Prediction_</h2>
 					<table class="table table-bordered">
-						<tr ng-repeat="item in sistrCtrl.serotype_predictions_order">
-							<td width="30%"><strong ng-bind="item"></strong></td>
-							<td ng-bind="sistrCtrl.serotype_predictions[item]" style="word-wrap: break-word;"></td>
+						<tr>
+							<td width="30%"><strong th:text="#{analysis.details.sistr.serovar.overall}">_Serovar (overall)_</strong></td>
+							<td ng-bind="sistrCtrl.result['serovar']" style="word-wrap: break-word;"></td>
+						</tr>
+						<tr>
+							<td width="30%"><strong th:text="#{analysis.details.sistr.serovar.antigen}">_Serovar (antigen)_</strong></td>
+							<td ng-bind="sistrCtrl.result['serovar_antigen']" style="word-wrap: break-word;"></td>
+						</tr>
+						<tr>
+							<td width="30%"><strong th:text="#{analysis.details.sistr.serovar.cgmlst}">_Serovar (cgMLST)_</strong></td>
+							<td ng-bind="sistrCtrl.result['serovar_cgmlst']" style="word-wrap: break-word;"></td>
+						</tr>
+						<tr>
+							<td width="30%"><strong th:text="#{analysis.details.sistr.serovar.serogroup}">_Serogroup_</strong></td>
+							<td ng-bind="sistrCtrl.result['serogroup']" style="word-wrap: break-word;"></td>
+						</tr>
+						<tr>
+							<td width="30%"><strong th:text="#{analysis.details.sistr.serovar.h1}">_H1_</strong></td>
+							<td ng-bind="sistrCtrl.result['h1']" style="word-wrap: break-word;"></td>
+						</tr>
+						<tr>
+							<td width="30%"><strong th:text="#{analysis.details.sistr.serovar.h2}">_H2_</strong></td>
+							<td ng-bind="sistrCtrl.result['h2']" style="word-wrap: break-word;"></td>
+						</tr>
+						<tr>
+							<td width="30%"><strong th:text="#{analysis.details.sistr.serovar.o-antigen}">_O-antigen_</strong></td>
+							<td ng-bind="sistrCtrl.result['o_antigen']" style="word-wrap: break-word;"></td>
 						</tr>
 					</table>
 					<h2 th:text="#{analysis.details.sistr.cgmlst}">_cgMLST330_</h2>
 					<table class="table table-bordered">
-						<tr ng-repeat="item in sistrCtrl.cgMLST_predictions_order">
-							<td width="30%"><strong ng-bind="item"></strong></td>
-							<td ng-bind="sistrCtrl.cgMLST_predictions[item]" style="word-wrap: break-word;"></td>
+						<tr>
+							<td width="30%"><strong th:text="#{analysis.details.sistr.cgmlst.subspecies}">_Subspecies_</strong></td>
+							<td ng-bind="sistrCtrl.result['cgmlst_subspecies']" style="word-wrap: break-word;"></td>
+						</tr>
+						<tr>
+							<td width="30%"><strong th:text="#{analysis.details.sistr.cgmlst.genome.name}">_Matching genome name_</strong></td>
+							<td ng-bind="sistrCtrl.result['cgmlst_genome_match']" style="word-wrap: break-word;"></td>
+						</tr>
+						<tr>
+							<td width="30%"><strong th:text="#{analysis.details.sistr.cgmlst.alleles}">_Alleles matching genome_</strong></td>
+							<td ng-bind="sistrCtrl.cgMLST_predictions['matching_alleles']" style="word-wrap: break-word;"></td>
+						</tr>
+						<tr>
+							<td width="30%"><strong th:text="#{analysis.details.sistr.cgmlst.percent}">_Percent matching_</strong></td>
+							<td ng-bind="sistrCtrl.cgMLST_predictions['percent_matching']" style="word-wrap: break-word;"></td>
 						</tr>
 					</table>
 					<h2 th:text="#{analysis.details.sistr.mash}">_Mash_</h2>
 					<table class="table table-bordered">
-						<tr ng-repeat="item in sistrCtrl.mash_predictions_order">
-							<td width="30%"><strong ng-bind="item"></strong></td>
-							<td ng-bind="sistrCtrl.mash_predictions[item]" style="word-wrap: break-word;"></td>
+						<tr>
+							<td width="30%"><strong th:text="#{analysis.details.sistr.mash.subspecies}">_Subspecies_</strong></td>
+							<td ng-bind="sistrCtrl.result['mash_subspecies']" style="word-wrap: break-word;"></td>
+						</tr>
+						<tr>
+							<td width="30%"><strong th:text="#{analysis.details.sistr.mash.serovar}">_Serovar_</strong></td>
+							<td ng-bind="sistrCtrl.result['mash_serovar']" style="word-wrap: break-word;"></td>
+						</tr>
+						<tr>
+							<td width="30%"><strong th:text="#{analysis.details.sistr.mash.genome.name}">_Matching genome name_</strong></td>
+							<td ng-bind="sistrCtrl.result['mash_genome']" style="word-wrap: break-word;"></td>
+						</tr>
+						<tr>
+							<td width="30%"><strong th:text="#{analysis.details.sistr.mash.percent}">_Percent shared k-mers_</strong></td>
+							<td ng-bind="sistrCtrl.mash_predictions['percent_kmers']" style="word-wrap: break-word;"></td>
 						</tr>
 					</table>
 					<br/>
