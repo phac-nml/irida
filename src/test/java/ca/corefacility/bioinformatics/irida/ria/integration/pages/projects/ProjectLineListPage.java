@@ -6,6 +6,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -36,6 +37,16 @@ public class ProjectLineListPage extends ProjectPageBase {
 
 	@FindBy(id = "template-select")
 	private WebElement templateSelect;
+
+	@FindBy(id = "save-btn")
+	private WebElement saveBtn;
+
+	@FindBy(id = "template-name")
+	private WebElement templateNameInput;
+
+
+	@FindBy(id = "complete-save")
+	private WebElement completeSaveBtn;
 
 	public ProjectLineListPage(WebDriver driver) {
 		super(driver);
@@ -77,5 +88,14 @@ public class ProjectLineListPage extends ProjectPageBase {
 		Select select = new Select(templateSelect);
 		select.selectByVisibleText(templateName);
 		waitForDatatableAjax();
+	}
+
+	public void saveTemplate(String templateName) {
+		saveBtn.click();
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOf(templateNameInput));
+		templateNameInput.sendKeys(templateName);
+		wait.until(ExpectedConditions.elementToBeClickable(completeSaveBtn));
+		completeSaveBtn.click();
 	}
 }

@@ -77,7 +77,7 @@
                 </div>
             </div>
             <div class="btn-group">
-                <button class="btn btn-default" ng-click="$ctrl.saveTemplate()" ng-disabled="$ctrl.saving">
+                <button id="save-btn" class="btn btn-default" ng-click="$ctrl.saveTemplate()" ng-disabled="$ctrl.saving">
                     <i class="fa fa-save fa-fw" aria-hidden="true"></i>
                     <th:block
                             th:text="#{linelist.create-template.save-template}"/>
@@ -172,6 +172,7 @@
                     ng-click="$modal.cancel()">_Cancel_
             </button>
             <button ng-disabled="templateNameForm.$invalid"
+                    id="complete-save"
                     class="btn btn-default"
                     th:text="#{form.btn.save}"
                     ng-click="$modal.save()">_Save_

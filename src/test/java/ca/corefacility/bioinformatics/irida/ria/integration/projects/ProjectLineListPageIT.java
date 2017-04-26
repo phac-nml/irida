@@ -18,6 +18,8 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectLineListView.xml")
 public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
+	private final String TEMPLATE_1 = "Testing Template 1";
+	private final String TEMPLATE_NAME = "NEW_TEMPLATE_NAME";
 
 	@Before
 	public void init() {
@@ -41,7 +43,16 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Should have 2 less columns visible", initialCount - 2, page.getNumberTableColumns());
 
 		// Test selecting templates
-		page.selectTemplate("Testing Template 1");
-		assertEquals("Should have 2 less columns visible", 4, page.getNumberTableColumns());
+		page.selectTemplate(TEMPLATE_1);
+		assertEquals("Should have 4 columns visible", 4, page.getNumberTableColumns());
+
+		// Test saving a template
+		page.toggleColumn("firstName");
+		page.saveTemplate(TEMPLATE_NAME);
+		// Switch to a different template
+		page.selectTemplate(TEMPLATE_1);
+		assertEquals("Should have 4 columns visible", 4, page.getNumberTableColumns());
+		page.selectTemplate(TEMPLATE_NAME);
+		assertEquals("Should have 3 columns visible", 3, page.getNumberTableColumns());
 	}
 }
