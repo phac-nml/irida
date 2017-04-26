@@ -155,8 +155,10 @@
         sample_information['qc_status'] = result['qc_status'];
         sample_information['qc_messages'] = result['qc_messages'].split("|");
         sample_information['qc_pass'] = (result['qc_status'] == 'PASS');
+        sample_information['qc_warning'] = (result['qc_status'] == 'WARNING');
+        sample_information['qc_fail'] = (result['qc_status'] == 'FAIL');
 
-        var serotype_predictions_order = ['Serovar (overall)', 'Serovar (antigen)', 'Serovar (cgMLST)', 'Serogroup', 'H1', 'H2', 'O antigen'];
+        var serotype_predictions_order = ['Serovar (overall)', 'Serovar (antigen)', 'Serovar (cgMLST)', 'Serogroup', 'H1', 'H2', 'O-antigen'];
         var serotype_predictions = {};
         serotype_predictions['Serovar (overall)'] = result['serovar'];
         serotype_predictions['Serovar (antigen)'] = result['serovar_antigen'];
@@ -164,21 +166,22 @@
         serotype_predictions['Serogroup'] = result['serogroup'];
         serotype_predictions['H1'] = result['h1'];
         serotype_predictions['H2'] = result['h2'];
-        serotype_predictions['O antigen'] = result['o_antigen'];
+        serotype_predictions['O-antigen'] = result['o_antigen'];
   
         var cgMLST_predictions = {};
-        var cgMLST_predictions_order = ['cgMLST subspecies', 'cgMLST matching alleles', 'cgMLST genome match', 'cgMLST ST'];
-        cgMLST_predictions['cgMLST subspecies'] = result['cgmlst_subspecies'];
-        cgMLST_predictions['cgMLST matching alleles'] = result['cgmlst_matching_alleles']+'/330';
-        cgMLST_predictions['cgMLST genome match'] = result['cgmlst_genome_match'];
-        cgMLST_predictions['cgMLST ST'] = result['cgmlst_ST'];
+        var cgMLST_predictions_order = ['Subspecies', 'Matching genome name', 'Alleles matching genome', 'Percent matching', 'cgMLST Sequence Type'];
+        cgMLST_predictions['Subspecies'] = result['cgmlst_subspecies'];
+        cgMLST_predictions['Matching genome name'] = result['cgmlst_genome_match'];
+        cgMLST_predictions['Alleles matching genome'] = result['cgmlst_matching_alleles']+'/330';
+        cgMLST_predictions['Percent matching'] = parseFloat((1 - result['cgmlst_distance'])*100).toFixed(1)+"%";
+        cgMLST_predictions['cgMLST Sequence Type'] = result['cgmlst_ST'];
   
         var mash_predictions = {};
-        var mash_predictions_order = ['Mash subspecies', 'Mash serovar', 'Mash match', 'Mash genome match'];
-        mash_predictions['Mash subspecies'] = result['mash_subspecies'];
-        mash_predictions['Mash serovar'] = result['mash_serovar'];
-        mash_predictions['Mash match'] = result['mash_match'];
-        mash_predictions['Mash genome match'] = result['mash_genome'];
+        var mash_predictions_order = ['Subspecies', 'Serovar', 'Matching genome name', 'Percent shared k-mers'];
+        mash_predictions['Subspecies'] = result['mash_subspecies'];
+        mash_predictions['Serovar'] = result['mash_serovar'];
+        mash_predictions['Matching genome name'] = result['mash_genome'];
+        mash_predictions['Percent shared k-mers'] = parseFloat((1 - result['mash_distance'])*100).toFixed(1)+"%";
   
         vm.sample_information = sample_information;
         vm.serotype_predictions = serotype_predictions;

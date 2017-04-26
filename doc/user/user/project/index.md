@@ -153,13 +153,13 @@ Project processing settings can be found in the **Processing** tab in the projec
 
 ![Processing tab](images/project-settings-processing.png)
 
-#### Automated assemblies
+#### Automated pipelines
 
-Data that is uploaded to a project in IRIDA can be automatically assembled using IRIDA's assembly and annotation pipeline.  This setting is enabled on a project-by-project basis and must be enabled by a project **manager**.
+A project can be setup to automatically trigger the execution of a pipeline on upload of new data. The two pipelines available to be triggered are the [Assembly](../../tutorials/assembly/) pipeline (for bacterial genomes) and the [SISTR](../sistr/) pipeline (for typing of *Salmonella* genomes). This setting is enabled on a project-by-project basis and must be enabled by a project **manager**.
 
-To enable automated assemblies, check the *Automatically assemble data uploaded to project* box.  Any new data uploaded to the project will now be automatically assembled.
+To enable an automated pipeline, check the *Automatically assemble data uploaded to project* or *Automatically type data uploaded to the project with SISTR* boxes.  Any new data uploaded to the project will now trigger the execution of the selected pipelines.
 
-![Automated assembly check](images/project-settings-automated-assembly.png)
+![Automated pipelines check](images/project-settings-automated-pipelines.png)
 
 #### Project coverage
 
