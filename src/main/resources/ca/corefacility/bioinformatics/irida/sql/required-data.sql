@@ -719,7 +719,7 @@ INSERT INTO `metadata_field` (id, label, type) VALUES (5, "Genus", "date");
 INSERT INTO `metadata_field` (id, label, type) VALUES (6, "Serotype", "text");
 INSERT INTO `metadata_field` (id, label, type) VALUES (7, "onsetDate", "date");
 INSERT INTO `metadata_field` (id, label, type) VALUES (8, "species", "text");
-INSERT INTO `metadata_field` (id, label, type) VALUES (9, "serotype", "text");
+INSERT INTO `metadata_field` (id, label, type) VALUES (9, "firstname", "text");
 INSERT INTO `metadata_field` (id, label, type) VALUES (10, "primaryPfge", "text");
 INSERT INTO `metadata_field` (id, label, type) VALUES (11, "phageType", "text");
 INSERT INTO `metadata_field` (id, label, type) VALUES (12, "id", "text");
