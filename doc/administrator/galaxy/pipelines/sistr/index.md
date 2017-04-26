@@ -33,7 +33,7 @@ cpanm Time::Piece XML::Simple Data::Dumper
 
 ## Step 2.a: Conda dependenies (for Galaxy versions >= v16.01)
 
-The SISTR pipeline makes use of the [conda][] package manager and [bioconda][] channel to distribute some dependencies, particularly the [sistr_cmd][] software.  However, this requires a more recent version of Galaxy (minimum >= v16.01, although > v16.07 is recommended) to take advantage of automated installation of dependencies using conda.  Upgrading of Galaxy for IRIDA to a version >= 16.01 is possible, or a method to get SISTR to work with a Galaxy version < 16.01 is given in **Step 2.b**.
+The SISTR pipeline makes use of the [conda][] package manager and [bioconda][] channel to distribute some dependencies, particularly the [sistr_cmd][] software.  However, this requires a more recent version of Galaxy (minimum >= v16.01, although > v16.07 is recommended) to take advantage of automated installation of dependencies using conda.  It is recommended to upgrade Galaxy for IRIDA to a version >= 16.01, or a method to get SISTR to work with a Galaxy version < 16.01 is given in **Step 2.b**.
 
 If the Galaxy version supports conda, then you must verify that Galaxy is setup to use conda for dependency installation.  This will primarly involve setting `conda_prefix` to point to the PATH of conda in your `config/galaxy.ini` file and verifying that conda will be used for dependency management in the file `config/dependency_resolvers_conf.xml`.  More details can be found at <https://docs.galaxyproject.org/en/master/admin/conda_faq.html>.
 
