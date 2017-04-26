@@ -1,7 +1,53 @@
 const angular = require('angular');
 import {METADATA} from '../../constants';
 
+/**
+ * Controller for the side panel that displays
+ * all the possible metadata terms to toggle.
+ */
+class MetadataAsideController {
+  /**
+   * Constructor
+   * @param {object} $uibModalInstance  angular-ui modal instance.
+   * @param {object} parent parent controller.
+   */
+  constructor($uibModalInstance, parent) {
+    this.terms = parent.terms;
+    this.parent = parent;
+    this.modal = $uibModalInstance;
+  }
+
+  /**
+   * EventListener for changes to the visibility of a metadata term.
+   */
+  termSelectionChange() {
+    this.parent.handleTermVisibilityChange();
+  }
+
+  /**
+   * EventHandler for closing the sidebar.
+   */
+  close() {
+    this.modal.dismiss();
+  }
+}
+
+MetadataAsideController.$inject = [
+  '$uibModalInstance',
+  'parent'
+];
+
+/**
+ * Controller for the button to toggle the metadata side panel.
+ */
 class MetadataButtonController {
+  /**
+   * Constructor
+   * @param {object} $rootScope angular scope handler for the root of the application
+   * @param {object} $scope angular scope for current dom
+   * @param {object} $aside angular-aside object.
+   * @param {object} MetadataService for fetching metadata terms.
+   */
   constructor($rootScope, $scope, $aside, MetadataService) {
     this.$rootScope = $rootScope;
     this.MetadataService = MetadataService;
@@ -51,6 +97,9 @@ class MetadataButtonController {
     });
   }
 
+  /**
+   * EventHandler toggling metadata visibility.
+   */
   handleTermVisibilityChange() {
     const columns = this.terms
       .filter(term => term.selected)
@@ -58,6 +107,9 @@ class MetadataButtonController {
     this.$rootScope.$broadcast(METADATA.UPDATED, {columns});
   }
 
+  /**
+   * EventHandler for displaying the side panel.
+   */
   openMetadataAside() {
     const parent = this;
 
@@ -67,16 +119,12 @@ class MetadataButtonController {
         templateUrl: `metadataAside.tmpl.html`,
         placement: `left`,
         size: 'sm',
+        openedClass: 'metadata-open',
         controllerAs: '$ctrl',
-        controller(terms) {
-          this.termSelectionChange = term => {
-            parent.handleTermVisibilityChange(term);
-          };
-          this.terms = terms;
-        },
+        controller: MetadataAsideController,
         resolve: {
-          terms() {
-            return parent.terms;
+          parent() {
+            return parent;
           }
         }
       });
@@ -92,6 +140,9 @@ MetadataButtonController.$inject = [
 ];
 
 export const MetadataButton = {
+  bindings: {
+    metadataUrl: '@' // Pass in the metadata url from the UI.
+  },
   templateUrl: 'metadataButton.tmpl.html',
   controller: MetadataButtonController
 };

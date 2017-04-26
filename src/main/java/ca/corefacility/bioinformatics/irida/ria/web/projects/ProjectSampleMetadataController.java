@@ -62,7 +62,7 @@ public class ProjectSampleMetadataController {
 	private final ProjectControllerUtils projectControllerUtils;
 	private final ProjectService projectService;
 	private final SampleService sampleService;
-	private final MetadataTemplateService templateService;
+	private final MetadataTemplateService metadataTemplateService;
 
 	@Autowired
 	public ProjectSampleMetadataController(MessageSource messageSource, ProjectControllerUtils projectControllerUtils,
@@ -71,7 +71,7 @@ public class ProjectSampleMetadataController {
 		this.projectControllerUtils = projectControllerUtils;
 		this.projectService = projectService;
 		this.sampleService = sampleService;
-		this.templateService = metadataTemplateService;
+		this.metadataTemplateService = metadataTemplateService;
 	}
 
 	/**
@@ -312,31 +312,14 @@ public class ProjectSampleMetadataController {
 					Long id = Long.valueOf(row.get("identifier"));
 					Sample sample = sampleService.read(id);
 
-					// Get the current sample metadata
-					Map<String, MetadataEntry> sampleMetadata = sample.getMetadata();
-					if (sampleMetadata == null) {
-						sampleMetadata = new HashMap<>();
-					}
+					Map<String, MetadataEntry> newData = new HashMap<>();
 
 					// Need to overwrite duplicate keys
-					for (Entry<String, String> rowEntry : row.entrySet()) {
-						String key = rowEntry.getKey();
-
-						// See if there is a MetadataField corresponding to this header.
-						MetadataTemplateField metadataField = templateService.readMetadataFieldByLabel(key);
-						// If it does not exist actually create it.
-						if (metadataField == null) {
-							metadataField = new MetadataTemplateField(key, "text");
-							templateService.saveMetadataField(metadataField);
-						}
-
-						// Create the metadata entry
-						// NOTE: we are overwriting an currently save metadata for this field by doing this.
-						MetadataEntry entry = new MetadataEntry(rowEntry.getValue(), "text");
-						sampleMetadata.put(key, entry);
+					for (Entry<String, String> entry : row.entrySet()) {
+						newData.put(entry.getKey(), new MetadataEntry(entry.getValue(), "text"));
 					}
 
-					sample.mergeMetadata(sampleMetadata);
+					sample.mergeMetadata(newData);
 
 					// Save metadata back to the sample
 					sampleService.update(sample);

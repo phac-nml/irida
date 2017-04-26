@@ -5,16 +5,8 @@
         layout:decorator="template/page">
 <head>
     <title th:text="#{visualization.phylogenomics.title}">Title</title>
-    <style>
-        canvas {
-            border: 1px solid rgb(176, 190, 197);
-            border-radius: .5rem;
-        }
-        h2 {
-            font-size: 1.6rem!important;
-            margin-top: 0!important;
-        }
-    </style>
+    <link rel="stylesheet" href="/resources/css/pages/phylocanvas-metadata.css"
+          th:href="@{/resources/css/pages/phylocanvas-metadata.css}"/>
     <script th:inline="javascript">
         var PAGE = {
           urls: {
@@ -32,16 +24,14 @@
         <div class="spaced-bottom" id="phylocanvas"></div>
     </script>
     <script type="text/ng-template" id="metadata-component.tmpl.html">
-        <div style="padding: 1rem; height: 100%; overflow-y: scroll;">
-            <div class="spaced-bottom"
-                 ng-repeat="term in $ctrl.terms">
-                <input type="checkbox"
-                       bs-switch=""
-                       ng-model="term.selected"
-                       switch-label="{{term.term}}"
-                       switch-label-width="200"
-                       ng-change="$ctrl.onSelectionChange(term)"/>
-            </div>
+        <div class="spaced-bottom"
+             ng-repeat="term in $ctrl.terms">
+            <input type="checkbox"
+                   bs-switch=""
+                   ng-model="term.selected"
+                   switch-label="{{term.term}}"
+                   switch-label-width="200"
+                   ng-change="$ctrl.onSelectionChange(term)"/>
         </div>
     </script>
     <script type="text/ng-template" id="template-component.tmpl.html">
@@ -62,7 +52,7 @@
 
     <script type="text/ng-template" id="app-component.tmpl.html">
         <h1 th:text="#{visualization.phylogenomics.title}"></h1>
-        <div class="form-inline spaced-bottom">
+        <div class="form-inline spaced-bottom" ng-hide="$ctrl.loading || $ctrl.treeError || $ctrl.templateError">
             <div class="form-group">
                 <metadata-button></metadata-button>
             </div>
@@ -110,10 +100,18 @@
         </button>
     </script>
     <script type="text/ng-template" id="metadataAside.tmpl.html">
-        <metadata-component
-                terms="$ctrl.terms"
-                on-selection-change="$ctrl.termSelectionChange(term)">
-        </metadata-component>
+        <aside class="metadata-aside">
+            <div class="metadata-aside__btns text-right">
+                <button class="btn btn-default"
+                ng-click="$ctrl.close()">Close</button>
+            </div>
+            <div class="metadata-aside__switches">
+                <metadata-component
+                        terms="$ctrl.terms"
+                        on-selection-change="$ctrl.termSelectionChange(term)">
+                </metadata-component>
+            </div>
+        </aside>
     </script>
     <script src="/resources/js/build/visualizations-phylogenetics.bundle.js"
             th:src="@{/resources/js/build/visualizations-phylogenetics.bundle.js}"></script>

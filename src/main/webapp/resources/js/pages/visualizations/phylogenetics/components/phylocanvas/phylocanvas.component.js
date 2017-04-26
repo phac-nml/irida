@@ -119,6 +119,8 @@ function phylocanvasController($window, $scope, $q, Phylocanvas,
     tree.metadata.columns = MetadataService
       .getSortedAndFilteredColumns(fields);
     tree.draw();
+    tree.fitInPanel();
+    tree.draw();
   });
 }
 

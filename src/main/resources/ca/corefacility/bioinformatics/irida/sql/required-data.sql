@@ -711,12 +711,12 @@ INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VAL
 INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (19, now(), 6, 3);
 INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (20, now(), 6, 5);
 
-INSERT INTO `metadata_field` (id, label, type) VALUES (1, "firstName", "text");
-INSERT INTO `metadata_field` (id, label, type) VALUES (2, "lastName", "text");
-INSERT INTO `metadata_field` (id, label, type) VALUES (3, "city", "text");
-INSERT INTO `metadata_field` (id, label, type) VALUES (4, "healthAuthority", "text");
-INSERT INTO `metadata_field` (id, label, type) VALUES (5, "birthDate", "date");
-INSERT INTO `metadata_field` (id, label, type) VALUES (6, "firstSymptom", "text");
+INSERT INTO `metadata_field` (id, label, type) VALUES (1, "PFGE-XbaI-pattern", "text");
+INSERT INTO `metadata_field` (id, label, type) VALUES (2, "PFGE-BlnI-pattern", "text");
+INSERT INTO `metadata_field` (id, label, type) VALUES (3, "Province", "text");
+INSERT INTO `metadata_field` (id, label, type) VALUES (4, "SourceSite", "text");
+INSERT INTO `metadata_field` (id, label, type) VALUES (5, "Genus", "date");
+INSERT INTO `metadata_field` (id, label, type) VALUES (6, "Serotype", "text");
 INSERT INTO `metadata_field` (id, label, type) VALUES (7, "onsetDate", "date");
 INSERT INTO `metadata_field` (id, label, type) VALUES (8, "species", "text");
 INSERT INTO `metadata_field` (id, label, type) VALUES (9, "serotype", "text");
@@ -732,10 +732,10 @@ INSERT INTO `metadata_template` (id, created_date, modified_date, name) VALUES (
 -- METADATA TEMPLATE 1 FIELDS
 INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (1, 1);
 INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (1, 2);
+INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (1, 3);
+INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (1, 4);
 INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (1, 5);
-INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (1, 9);
-INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (1, 10);
-INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (1, 11);
+INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (1, 6);
 
 -- METADATA TEMPLATE 2 FIELDS
 INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (2, 1);
