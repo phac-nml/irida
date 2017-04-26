@@ -228,7 +228,7 @@
                 }
             ], 
             "position": {
-                "left": 1031, 
+                "left": 1065, 
                 "top": 200
             }, 
             "post_job_actions": {
@@ -285,7 +285,7 @@
                 }
             ], 
             "position": {
-                "left": 1336, 
+                "left": 1370, 
                 "top": 200
             }, 
             "post_job_actions": {
@@ -371,7 +371,7 @@
                 }
             ], 
             "position": {
-                "left": 1620, 
+                "left": 1654, 
                 "top": 200
             }, 
             "post_job_actions": {
@@ -455,7 +455,7 @@
                 }
             ], 
             "position": {
-                "left": 1620, 
+                "left": 1654, 
                 "top": 490
             }, 
             "post_job_actions": {
@@ -499,13 +499,13 @@
                 }
             }, 
             "tool_errors": null, 
-            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/sistr_cmd/sistr_cmd/0.3.4", 
-            "tool_state": "{\"input_fastas\": \"null\", \"no_cgmlst\": \"\\\"False\\\"\", \"use_full_cgmlst_db\": \"\\\"False\\\"\", \"__page__\": 0, \"output_format\": \"\\\"json\\\"\", \"keep_tmp\": \"\\\"False\\\"\", \"run_mash\": \"\\\"True\\\"\", \"qc\": \"\\\"True\\\"\", \"__rerun_remap_job_id__\": null, \"verbosity\": \"\\\"-vv\\\"\"}", 
-            "tool_version": "0.3.4", 
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/sistr_cmd/sistr_cmd/0.3.6", 
+            "tool_state": "{\"input_fastas\": \"null\", \"no_cgmlst\": \"\\\"False\\\"\", \"full_output\": \"\\\"True\\\"\", \"use_full_cgmlst_db\": \"\\\"True\\\"\", \"__page__\": 0, \"output_format\": \"\\\"json\\\"\", \"keep_tmp\": \"\\\"False\\\"\", \"run_mash\": \"\\\"True\\\"\", \"qc\": \"\\\"True\\\"\", \"__rerun_remap_job_id__\": null, \"report_blast_results\": \"\\\"False\\\"\", \"verbosity\": \"\\\"-vv\\\"\"}", 
+            "tool_version": "0.3.6", 
             "type": "tool", 
             "user_outputs": [], 
-            "uuid": "f895c2af-57e5-4462-ae5e-4d8b5cc9c871"
+            "uuid": "2ad0d205-27cf-46f1-be9c-a7ee2fcaf3ca"
         }
     }, 
-    "uuid": "39348cf5-c15b-42c6-823a-4d49c83ecfe3"
+    "uuid": "120014e2-7d54-4bde-b059-ea520f0211b5"
 }
