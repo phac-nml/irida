@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataField;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
@@ -148,11 +148,11 @@ public class ProjectLineListController {
 	 * @param templateId
 	 * 		{@link Long} identifier for a template
 	 *
-	 * @return {@link List} list of {@link MetadataField} for a template.
+	 * @return {@link List} list of {@link MetadataTemplateField} for a template.
 	 */
 	@RequestMapping("/upload/metadatafields")
 	@ResponseBody
-	public List<MetadataField> getMetadaFieldsForTemplate(@RequestParam Long templateId) {
+	public List<MetadataTemplateField> getMetadaFieldsForTemplate(@RequestParam Long templateId) {
 		MetadataTemplate template = metadataTemplateService.read(templateId);
 		return template.getFields();
 	}
@@ -174,11 +174,11 @@ public class ProjectLineListController {
 	public Map<String, Object> saveLinelistTemplate(@PathVariable Long projectId, @PathVariable String templateName,
 			@RequestBody List<Map<String, String>> fields) {
 		Project project = projectService.read(projectId);
-		List<MetadataField> metadataFields = new ArrayList<>();
+		List<MetadataTemplateField> metadataFields = new ArrayList<>();
 		for (Map<String, String> field : fields) {
 			String label = field.get("label");
 			// Label and identifier are default that are always in the list.
-			MetadataField metadataField;
+			MetadataTemplateField metadataField;
 			if (field.containsKey("identifier")) {
 				// Identifier would indicate an existing field.  Therefore we should use the existing field
 				// instead of creating a new one.
@@ -187,7 +187,7 @@ public class ProjectLineListController {
 				// Check to see if the field already exists
 				metadataField = metadataTemplateService.readMetadataFieldByLabel(label);
 				if (metadataField == null) {
-					metadataField = new MetadataField(label, field.get("type"));
+					metadataField = new MetadataTemplateField(label, field.get("type"));
 					metadataTemplateService.saveMetadataField(metadataField);
 				}
 			}
@@ -253,12 +253,12 @@ public class ProjectLineListController {
 	}
 
 	/**
-	 * Save a list a {@link MetadataField} as a {@link MetadataTemplate}
+	 * Save a list a {@link MetadataTemplateField} as a {@link MetadataTemplate}
 	 *
 	 * @param projectId
 	 * 		identifier for the current {@link Project}
 	 * @param fields
-	 * 		{@link List} of {@link String} names of {@link MetadataField}
+	 * 		{@link List} of {@link String} names of {@link MetadataTemplateField}
 	 * @param name
 	 * 		{@link String} name for the new template.
 	 *
@@ -273,13 +273,13 @@ public class ProjectLineListController {
 			@RequestParam(value = "fields[]") List<String> fields, @RequestParam(required = false) Long templateId, Locale locale) {
 		Project project = projectService.read(projectId);
 
-		List<MetadataField> metadataFields = new ArrayList<>();
+		List<MetadataTemplateField> metadataFields = new ArrayList<>();
 		for (String label : fields) {
 			// Check to see if this field already exists.
-			MetadataField metadataField = metadataTemplateService.readMetadataFieldByLabel(label);
+			MetadataTemplateField metadataField = metadataTemplateService.readMetadataFieldByLabel(label);
 			// If it does not exist, create a new field.
 			if (metadataField == null) {
-				metadataField = new MetadataField(label, "text");
+				metadataField = new MetadataTemplateField(label, "text");
 				metadataTemplateService.saveMetadataField(metadataField);
 			}
 			metadataFields.add(metadataField);

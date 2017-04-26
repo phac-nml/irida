@@ -84,9 +84,6 @@
                                     dnd-disable-if="$ctrl.template.fields.length &lt; 2"
                                     dnd-moved="$ctrl.template.fields.splice($index, 1)">
                                     <div class="field-label">{{field.label}}&nbsp;&nbsp;
-                                        <span class="label label-info"
-                                              ng-show="!field.id"
-                                              th:text="#{visualization.phylogenomics.new-field}">_NEW_FIELD_</span>
                                     </div>
                                     <div class="field-buttons">
                                         <div class="close" ng-click="$ctrl.removeField($index)">&times;</div>
@@ -156,7 +153,6 @@
             <p th:text="#{visualization.phylogenomics.field-modal.description}"></p>
             <ui-select ng-model="model.field" style="width: 100%" autofocus="">
                 <ui-select-match data:placeholder="#{visualization.phylogenomics.field-modal.input.placeholder}">
-                    {{model.field.label}}
                 </ui-select-match>
                 <ui-select-choices
                         repeat="field in model.list"
@@ -165,7 +161,7 @@
                         minimum-input-length="2">
                     <div class="clearfix">
                         <span class="pull-left">{{field.label}} </span>
-                        <span ng-hide="field.id"
+                        <span ng-show="field.new === true"
                               class="label label-warning pull-right"
                               style="margin-top: 3px;"
                               th:text="#{visualization.phylogenomics.new-field}">_NEW_</span>
@@ -174,8 +170,7 @@
             </ui-select>
             <div ng-show="model.fieldExists" class="spaced-top alert alert-info">
                 <strong><i class="fa fa-exclamation-triangle" aria-hidden="true"></i></strong>
-                <p th:text="#{visualization.phylogenomics.field-modal.existing-field-warning}">THIS FIELD ALREADY EXISTS
-                    IN THE TABEL</p>
+                <th:block th:text="#{visualization.phylogenomics.field-modal.existing-field-warning}"/>
             </div>
         </div>
     </script>

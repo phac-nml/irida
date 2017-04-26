@@ -18,7 +18,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Table(name = "metadata_field")
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-public class MetadataField {
+public class MetadataTemplateField {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -30,9 +30,9 @@ public class MetadataField {
 	@NotNull
 	private String type;
 
-	public MetadataField() {}
+	public MetadataTemplateField() {}
 
-	public MetadataField(String label, String type) {
+	public MetadataTemplateField(String label, String type) {
 		this.label = label;
 		this.type = type;
 	}

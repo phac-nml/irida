@@ -4,7 +4,7 @@ import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataField;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
@@ -50,35 +50,35 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	 */
 	public List<ProjectMetadataTemplateJoin> getMetadataTemplatesForProject(Project project);
 	
-	public MetadataField readMetadataField(Long id);
+	public MetadataTemplateField readMetadataField(Long id);
 
 	/**
-	 * Get a {@link MetadataField} by its {@link String} label
+	 * Get a {@link MetadataTemplateField} by its {@link String} label
 	 *
 	 * @param label
-	 * 		the {@link String} label for the {@link MetadataField}.
+	 * 		the {@link String} label for the {@link MetadataTemplateField}.
 	 *
-	 * @return {@link MetadataField}
+	 * @return {@link MetadataTemplateField}
 	 */
-	public MetadataField readMetadataFieldByLabel(String label);
+	public MetadataTemplateField readMetadataFieldByLabel(String label);
 
 	/**
 	 * Save a new metadata fields
 	 *
 	 * @param field
-	 * 		the {@link MetadataField} to save.
+	 * 		the {@link MetadataTemplateField} to save.
 	 *
-	 * @return the saved {@link MetadataField}
+	 * @return the saved {@link MetadataTemplateField}
 	 */
-	public MetadataField saveMetadataField(MetadataField field);
+	public MetadataTemplateField saveMetadataField(MetadataTemplateField field);
 
 	/**
-	 * Get a list of all {@link MetadataField}s that contain the query
+	 * Get a list of all {@link MetadataTemplateField}s that contain the query
 	 *
 	 * @param query
 	 * 		the {@link String} to search labels for.
 	 *
-	 * @return {@link List} of {@link MetadataField}
+	 * @return {@link List} of {@link MetadataTemplateField}
 	 */
-	public List<MetadataField> getAllMetadataFieldsByQueryString(String query);
+	public List<MetadataTemplateField> getAllMetadataFieldsByQueryString(String query);
 }
