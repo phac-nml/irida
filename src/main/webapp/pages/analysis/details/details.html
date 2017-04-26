@@ -163,6 +163,10 @@
 							<td width="30%"><strong th:text="#{analysis.details.sistr.cgmlst.percent}">_Percent matching_</strong></td>
 							<td ng-bind="sistrCtrl.cgMLST_predictions['percent_matching']" style="word-wrap: break-word;"></td>
 						</tr>
+						<tr>
+							<td width="30%"><strong th:text="#{analysis.details.sistr.cgmlst.st}">_cgMLST Sequence Type_</strong></td>
+							<td ng-bind="sistrCtrl.result['cgmlst_ST']" style="word-wrap: break-word;"></td>
+						</tr>
 					</table>
 					<h2 th:text="#{analysis.details.sistr.mash}">_Mash_</h2>
 					<table class="table table-bordered">
