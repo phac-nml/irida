@@ -5,31 +5,8 @@
         layout:decorator="template/page">
 <head>
     <title th:text="#{visualization.phylogenomics.title}">Title</title>
-    <style>
-        canvas {
-            border: 1px solid rgb(176, 190, 197);
-            border-radius: .5rem;
-        }
-        h2 {
-            font-size: 1.6rem!important;
-            margin-top: 0!important;
-        }
-        .metadata-aside {
-            height:100%;
-            position: relative;
-        }
-        .metadata-aside__btns {
-            position: absolute;
-            top: 0;
-            right: 0;
-            padding: 1em 1em 0 0;
-        }
-        .metadata-aside__switches {
-            height: 100%;
-            overflow-y: scroll;
-            padding-top: 55px;
-        }
-    </style>
+    <link rel="stylesheet" href="/resources/css/pages/phylocanvas-metadata.css"
+          th:href="@{/resources/css/pages/phylocanvas-metadata.css}"/>
     <script th:inline="javascript">
         var PAGE = {
           urls: {
@@ -47,16 +24,14 @@
         <div class="spaced-bottom" id="phylocanvas"></div>
     </script>
     <script type="text/ng-template" id="metadata-component.tmpl.html">
-        <div style="padding: 1rem; height: 100%; overflow-y: scroll;">
-            <div class="spaced-bottom"
-                 ng-repeat="term in $ctrl.terms">
-                <input type="checkbox"
-                       bs-switch=""
-                       ng-model="term.selected"
-                       switch-label="{{term.term}}"
-                       switch-label-width="200"
-                       ng-change="$ctrl.onSelectionChange(term)"/>
-            </div>
+        <div class="spaced-bottom"
+             ng-repeat="term in $ctrl.terms">
+            <input type="checkbox"
+                   bs-switch=""
+                   ng-model="term.selected"
+                   switch-label="{{term.term}}"
+                   switch-label-width="200"
+                   ng-change="$ctrl.onSelectionChange(term)"/>
         </div>
     </script>
     <script type="text/ng-template" id="template-component.tmpl.html">

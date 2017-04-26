@@ -37,7 +37,6 @@ import org.springframework.web.multipart.MultipartFile;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.MetadataImportFileTypeNotSupportedError;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataField;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
@@ -66,12 +65,12 @@ public class ProjectSampleMetadataController {
 
 	@Autowired
 	public ProjectSampleMetadataController(MessageSource messageSource, ProjectControllerUtils projectControllerUtils,
-			ProjectService projectService, SampleService sampleService, MetadataTemplateService templateService) {
+			ProjectService projectService, SampleService sampleService, MetadataTemplateService metadataTemplateService) {
 		this.messageSource = messageSource;
 		this.projectControllerUtils = projectControllerUtils;
 		this.projectService = projectService;
 		this.sampleService = sampleService;
-		this.metadataTemplateService = templateService;
+		this.metadataTemplateService = metadataTemplateService;
 	}
 
 	/**
@@ -99,10 +98,17 @@ public class ProjectSampleMetadataController {
 		return "projects/project_samples_metadata_template";
 	}
 
+	/**
+	 * Search all Metadata keys available for adding to a template.
+	 * 
+	 * @param query
+	 *            the query to search for
+	 * @return a list of keys matching the query
+	 */
 	@RequestMapping("/fields")
 	@ResponseBody
-	public List<MetadataField> getMetadataFieldsForProject(@RequestParam String query) {
-		return metadataTemplateService.getAllMetadataFieldsByQueryString(query);
+	public List<String> getMetadataKeysForProject(@RequestParam String query) {
+		return sampleService.getMetadataKeys(query);
 	}
 
 	/**
@@ -305,31 +311,14 @@ public class ProjectSampleMetadataController {
 					Long id = Long.valueOf(row.get("identifier"));
 					Sample sample = sampleService.read(id);
 
-					// Get the current sample metadata
-					Map<String, MetadataEntry> sampleMetadata = sample.getMetadata();
-					if (sampleMetadata == null) {
-						sampleMetadata = new HashMap<>();
-					}
+					Map<String, MetadataEntry> newData = new HashMap<>();
 
 					// Need to overwrite duplicate keys
-					for (Entry<String, String> rowEntry : row.entrySet()) {
-						String key = rowEntry.getKey();
-
-						// See if there is a MetadataField corresponding to this header.
-						MetadataField metadataField = metadataTemplateService.readMetadataFieldByLabel(key);
-						// If it does not exist actually create it.
-						if (metadataField == null) {
-							metadataField = new MetadataField(key, "text");
-							metadataTemplateService.saveMetadataField(metadataField);
-						}
-
-						// Create the metadata entry
-						// NOTE: we are overwriting an currently save metadata for this field by doing this.
-						MetadataEntry entry = new MetadataEntry(rowEntry.getValue(), "text");
-						sampleMetadata.put(key, entry);
+					for (Entry<String, String> entry : row.entrySet()) {
+						newData.put(entry.getKey(), new MetadataEntry(entry.getValue(), "text"));
 					}
 
-					sample.mergeMetadata(sampleMetadata);
+					sample.mergeMetadata(newData);
 
 					// Save metadata back to the sample
 					sampleService.update(sample);
