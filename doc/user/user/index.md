@@ -16,4 +16,5 @@ The user guide for IRIDA describes the major concepts of IRIDA and demonstrates 
 * [Managing user groups](user-groups/)
 * [Managing projects](project/)
 * [Managing samples](samples/)
+* [Managing sample metadata](sample-metadata/)
 * [Launching pipelines](pipelines/)
