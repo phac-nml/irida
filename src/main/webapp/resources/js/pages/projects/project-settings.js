@@ -64,16 +64,31 @@ var projectSettings = (function(page, notifications) {
     $("#becomeSyncUser").on('click', function(){
         updateSyncSettings({'changeUser': "true"});
     });
+
+    $("#confirm-deletion").on('change', function() {
+        toggleDeleteButton();
+    });
     
     $(document).ready(function(){
        var apiId = $("#connect-button").data("api-id");
        if(apiId != null){
         getApiStatus(apiId, "#api-status", "#connect-button", showConnectedActions);
        }
+
+       toggleDeleteButton();
     });
     
     function showConnectedActions(){
         $(".api-connected-action").show();
+    }
+
+    function toggleDeleteButton(){
+        if($("#confirm-deletion").is(":checked")) {
+            $("#submit-delete").prop('disabled', false);
+        }
+        else {
+            $("#submit-delete").prop('disabled', true);
+        }
     }
     
     function updateSyncSettings(params){
