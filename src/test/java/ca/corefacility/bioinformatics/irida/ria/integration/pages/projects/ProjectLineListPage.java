@@ -73,6 +73,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 
 	public void closeColumnVisibilityPanel() {
 		closeAsideBtn.click();
+		waitForTime(300); // Wait for animation to end.
 	}
 
 	public void toggleColumn(String buttonLabel) {
