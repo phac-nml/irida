@@ -120,6 +120,16 @@ public class ProjectSettingsController {
 		return "projects/settings/pages/delete";
 	}
 	
+	/**
+	 * Delete a project from the UI. Will redirect to user's projects page on
+	 * completion.
+	 * 
+	 * @param projectId
+	 *            the {@link Project} id to delete
+	 * @param confirm
+	 *            confirmation checkbox to delete
+	 * @return a redirect to the users's project page on completion.
+	 */
 	@RequestMapping(value = "/delete", method = RequestMethod.POST)
 	@PreAuthorize("hasPermission(#projectId, 'canManageLocalProjectSettings')")
 	public String deleteProject(@PathVariable Long projectId, @RequestParam(required=false, defaultValue="") String confirm) {
