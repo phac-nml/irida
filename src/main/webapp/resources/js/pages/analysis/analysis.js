@@ -158,37 +158,16 @@
         sample_information['qc_warning'] = (result['qc_status'] == 'WARNING');
         sample_information['qc_fail'] = (result['qc_status'] == 'FAIL');
 
-        var serotype_predictions_order = ['Serovar (overall)', 'Serovar (antigen)', 'Serovar (cgMLST)', 'Serogroup', 'H1', 'H2', 'O-antigen'];
-        var serotype_predictions = {};
-        serotype_predictions['Serovar (overall)'] = result['serovar'];
-        serotype_predictions['Serovar (antigen)'] = result['serovar_antigen'];
-        serotype_predictions['Serovar (cgMLST)'] = result['serovar_cgmlst'];
-        serotype_predictions['Serogroup'] = result['serogroup'];
-        serotype_predictions['H1'] = result['h1'];
-        serotype_predictions['H2'] = result['h2'];
-        serotype_predictions['O-antigen'] = result['o_antigen'];
-  
         var cgMLST_predictions = {};
-        var cgMLST_predictions_order = ['Subspecies', 'Matching genome name', 'Alleles matching genome', 'Percent matching', 'cgMLST Sequence Type'];
-        cgMLST_predictions['Subspecies'] = result['cgmlst_subspecies'];
-        cgMLST_predictions['Matching genome name'] = result['cgmlst_genome_match'];
-        cgMLST_predictions['Alleles matching genome'] = result['cgmlst_matching_alleles']+'/330';
-        cgMLST_predictions['Percent matching'] = parseFloat((1 - result['cgmlst_distance'])*100).toFixed(1)+"%";
-        cgMLST_predictions['cgMLST Sequence Type'] = result['cgmlst_ST'];
+        cgMLST_predictions['matching_alleles'] = result['cgmlst_matching_alleles']+'/330';
+        cgMLST_predictions['percent_matching'] = parseFloat((1 - result['cgmlst_distance'])*100).toFixed(1)+"%";
   
         var mash_predictions = {};
-        var mash_predictions_order = ['Subspecies', 'Serovar', 'Matching genome name', 'Percent shared k-mers'];
-        mash_predictions['Subspecies'] = result['mash_subspecies'];
-        mash_predictions['Serovar'] = result['mash_serovar'];
-        mash_predictions['Matching genome name'] = result['mash_genome'];
-        mash_predictions['Percent shared k-mers'] = parseFloat((1 - result['mash_distance'])*100).toFixed(1)+"%";
+        mash_predictions['percent_kmers'] = parseFloat((1 - result['mash_distance'])*100).toFixed(1)+"%";
   
+	vm.result = result;
         vm.sample_information = sample_information;
-        vm.serotype_predictions = serotype_predictions;
-        vm.serotype_predictions_order = serotype_predictions_order;
-        vm.cgMLST_predictions_order = cgMLST_predictions_order;
         vm.cgMLST_predictions = cgMLST_predictions;
-        vm.mash_predictions_order = mash_predictions_order;
         vm.mash_predictions = mash_predictions;
         vm.parse_results_error = result['parse_results_error'];
       }
