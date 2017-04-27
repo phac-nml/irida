@@ -33,4 +33,16 @@ Links to the upload page can be found:
 
 Uploading Excel Spreadsheet
 ===========================
+
+<strong style="background-color: rgba(240, 173, 78, 1.00); padding: 5px; font-weight: bold">Please not that this feature is still under development.</strong>
+
 ![Excel Spreadsheet Example](images/spreadsheet.png)
+
+Any excel spreadsheet containing metadata for samples in a project can be uploaded through the IRIDA web interface.  One of the column in the table __must__ correspond to the sample name within the project.  In this example spreadsheet, the `NLEP #` column is the sample name.
+
+![Demonstration of uploading Excel Spreadsheet](images/upload_bulk_metadata.gif)
+
+If there are sample names that do not correspond to samples in the project, they will be displayed in the `Rows not matching samples` tab.
+
+![Bad Samples Rows](images/bad_sample_rows.png)
+
