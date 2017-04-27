@@ -12,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import org.hibernate.envers.Audited;
+
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -29,6 +31,7 @@ import com.google.common.collect.Lists;
  */
 @Entity
 @Table(name = "ncbi_export_biosample")
+@Audited
 public class NcbiBioSampleFiles {
 
 	@Id
