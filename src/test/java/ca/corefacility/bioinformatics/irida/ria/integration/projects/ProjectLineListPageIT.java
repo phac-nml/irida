@@ -19,7 +19,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectLineListView.xml")
 public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 	private final String TEMPLATE_1 = "Testing Template 1";
-	private final String TEMPLATE_NAME = "NEW_TEMPLATE_NAME";
+	private final String TEMPLATE_NAME = "TESTER";
 
 	@Before
 	public void init() {
