@@ -10,6 +10,7 @@ Changes
 * [UI]: Fixed issue caused when trying to use the command line linker to export a large number of samples from a project.
 * [Developer]: Fixed issue caused when trying to create a new pipeline with no parameters.
 * [UI]: Moved "Members", "Groups", "Associated Projects", "Reference Files" to a new "Settings" tab in projects.
+* [UI]: Added ability for admins and project owners to delete a project.
 
 0.14.0 to 0.15.0
 ----------------
