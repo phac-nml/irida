@@ -76,6 +76,10 @@ public class Project extends IridaResourceSupport
 	@NotNull
 	@Column(name="assemble_uploads")
 	private boolean assembleUploads;
+	
+	@NotNull
+	@Column(name="sistr_typing_uploads")
+	private boolean sistrTypingUploads;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "project")
 	private List<ProjectUserJoin> users;
@@ -118,6 +122,7 @@ public class Project extends IridaResourceSupport
 
 	public Project() {
 		assembleUploads = false;
+		sistrTypingUploads = false;
 		createdDate = new Date();
 	}
 
@@ -254,5 +259,13 @@ public class Project extends IridaResourceSupport
 	
 	public void setRequiredCoverage(Integer requiredCoverage) {
 		this.requiredCoverage = requiredCoverage;
+	}
+
+	public boolean getSistrTypingUploads() {
+		return sistrTypingUploads;
+	}
+	
+	public void setSistrTypingUploads(boolean sistrTypingUploads) {
+		this.sistrTypingUploads = sistrTypingUploads;
 	}
 }
