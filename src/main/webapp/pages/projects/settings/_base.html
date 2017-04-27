@@ -41,7 +41,7 @@
                    th:classappend="${#strings.equalsIgnoreCase(page, 'remote') ? 'active' : ''}"
                    role="presentation"
                    th:text="#{project.settings.page.remote}">_Remote</a>
-                <a href=""
+                <a th:if="${manageMembers} or ${isAdmin}"
                    th:href="@{/projects/{id}/settings/delete(id=${project.getId()})}"
                    class="list-group-item"
                    th:classappend="${#strings.equalsIgnoreCase(page, 'delete') ? 'active' : ''}"
