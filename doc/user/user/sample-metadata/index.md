@@ -49,11 +49,17 @@ Before the metadata upload is completed, metadata that matches sample names and 
 
 ![Preview Upload](images/upload-preview.png)
 
+Metadata that has a matching sample name are listed in the table `Rows matcthings samples` with the number of matching samples.  Clicking on the `Save valid metadata` button will add the metadata to it's sample and redirect to the linelist page.
 
+![Upload Preview Success](images/upload-preview-success.png)
+
+Metadata that do not have matching sample names are listed in the table `Rows not matching samples` with the number of non-matching samples.  Currently nothing can be done about these.  Try to check the sample names and re-importing the spreadsheet.
+
+![Upload Preview Errors](images/upload-preview-errors.png)
+
+Example Upload
+==============
 
 ![Demonstration of uploading Excel Spreadsheet](images/upload_bulk_metadata.gif)
 
-If there are sample names that do not correspond to samples in the project, they will be displayed in the `Rows not matching samples` tab.
-
-![Bad Samples Rows](images/bad_sample_rows.png)
 
