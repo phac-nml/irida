@@ -81,6 +81,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 		for (WebElement btn : colVisBtns) {
 			if (btn.getText().equalsIgnoreCase(buttonLabel)) {
 				btn.click();
+				waitForTime(300);
 				break;
 			}
 		}
@@ -89,7 +90,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 	public void selectTemplate(String templateName) {
 		Select select = new Select(templateSelect);
 		select.selectByVisibleText(templateName);
-		waitForTime(500);
+		waitForTime(1000);
 	}
 
 	public void saveTemplate(String templateName) {
