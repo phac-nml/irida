@@ -8,6 +8,7 @@ const EMPTY_COLOUR = 'rgba(0,0,0,0)';
  *  { leaf-label: { templateMetadataField : { label, color} }}
  * @param {array} metadata list of metaterms for the samples.
  * @param {array} metadataFieldLabels list of metadata field labels
+ * @return {object} Map of metadata with colours for Phylocanvas to consume.
  */
 const formatMetadata = (metadata, metadataFieldLabels) => {
   const result = {};
@@ -22,14 +23,14 @@ const formatMetadata = (metadata, metadataFieldLabels) => {
 
       if (label === '') {
         // If the label is empty, then do not give it a colour.
-        result[label][field] = { label, colour: EMPTY_COLOUR };
+        result[label][field] = {label, colour: EMPTY_COLOUR};
       } else {
         // Find out if the field has already been assigned a colour
         // If not, get it a new one.
         colourMap[field] = colourMap[field] || {};
         colourMap[field][label] =
           colourMap[field][label] || getRandomColour();
-        result[label][field] = { label, colour: colourMap[field][label] };
+        result[label][field] = {label, colour: colourMap[field][label]};
       }
     });
   });
@@ -72,8 +73,9 @@ export class MetadataService {
   /**
    * Find the union between the terms defined in a template, and the terms available in
    * the metadata returned for the samples.
-   * @param {array} terms List of metadata_template_metadata_field associated with the
+   * @param {array} templateTerms List of metadata_template_metadata_field associated with the
    *                      currently selected template.
+   * @return {array} list of metadata terms to display in Phylocanvas
    */
   getSortedAndFilteredColumns(templateTerms) {
     if (templateTerms) {
