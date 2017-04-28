@@ -31,14 +31,25 @@ Links to the upload page can be found:
 2. On the `Project` > `Linelist` page:
 ![Bulk upload on project linelist page using link.](images/project_linelist_metadata_import_link.png)
 
-Uploading Excel Spreadsheet
-===========================
-
 <strong style="background-color: rgba(240, 173, 78, 1.00); padding: 5px; font-weight: bold">Please not that this feature is still under development.</strong>
 
 ![Excel Spreadsheet Example](images/spreadsheet.png)
 
 Any excel spreadsheet containing metadata for samples in a project can be uploaded through the IRIDA web interface.  One of the column in the table __must__ correspond to the sample name within the project.  In this example spreadsheet, the `NLEP #` column is the sample name.
+
+THe first step is to select the Excel file containing the data.  Either click on the square label `Click or drop Excel file containing metadata for samples in this project.` or drag and drop the file from your file browser.
+
+![Select spreadsheet](images/upload-selection.png)
+
+After uploading a spreadsheet, the column corresponding to the sample name must be selected.  After selecting the column heading, press the `Preivew metadata to be uploaded` button.
+
+![Select name column.](images/upload-column.png)
+
+Before the metadata upload is completed, metadata that matches sample names and ones that don't are presented.
+
+![Preview Upload](images/upload-preview.png)
+
+
 
 ![Demonstration of uploading Excel Spreadsheet](images/upload_bulk_metadata.gif)
 
