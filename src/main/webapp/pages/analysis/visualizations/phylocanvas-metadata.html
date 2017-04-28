@@ -1,60 +1,38 @@
 <!DOCTYPE html>
 <html
+        xmlns:th="http://www.thymeleaf.org"
         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
         layout:decorator="template/page">
 <head>
     <title th:text="#{visualization.phylogenomics.title}">Title</title>
     <link rel="stylesheet" href="/resources/css/pages/phylocanvas-metadata.css"
           th:href="@{/resources/css/pages/phylocanvas-metadata.css}"/>
+    <script th:inline="javascript">
+        var PAGE = {
+          urls: {
+            metadata: /*[[@{/analysis/ajax/{id}/metadata(id=${submissionId})}]]*/ ''
+          }
+        };
+    </script>
 </head>
 <body>
 <div layout:fragment="page">
     <app-component></app-component>
 </div>
 <th:block layout:fragment="scripts">
-    <script type="text/ng-template" id="phylocanvas.tmpl.html">
-        <div class="spaced-bottom" id="phylocanvas"></div>
-    </script>
-    <script type="text/ng-template" id="metadata-component.tmpl.html">
-        <div class="spaced-bottom"
-             ng-repeat="term in $ctrl.terms">
-            <input type="checkbox"
-                   bs-switch=""
-                   ng-model="term.selected"
-                   switch-label="{{term.term}}"
-                   switch-label-width="200"
-                   ng-change="$ctrl.onSelectionChange(term)"/>
-        </div>
-    </script>
-    <script type="text/ng-template" id="template-component.tmpl.html">
-        <div class="row spaced-bottom">
-            <div class="col-md-12">
-                <div ng-if="$ctrl.templates.length">
-                    <h2 aria-label="template-select" th:text="#{visualization.phylogenomics.select-template.label}">
-                        _Select a Template_</h2>
-                    <select name="template-select" id="template-select"
-                            class="form-control"
-                            ng-model="$ctrl.selectedTemplate"
-                            ng-change="$ctrl.templateChange()">
-                        <option value="" th:text="#{visualization.phylogenomics.select-template.all-field}">
-                            _ALL_FIELDS_
-                        </option>
-                        <option ng-repeat="template in $ctrl.templates"
-                                value="{{ template.id }}">{{ template.label }}
-                        </option>
-                    </select>
-                </div>
-            </div>
-        </div>
-    </script>
-
+    <!-- This is the main App -->
+    <!-- Script: resources/js/pages/visualizations/phylogenetics/components/app/app.component.js -->
     <script type="text/ng-template" id="app-component.tmpl.html">
         <h1 th:text="#{visualization.phylogenomics.title}"></h1>
-        <div class="btn-toolbar spaced-bottom" ng-hide="$ctrl.loading || $ctrl.treeError || $ctrl.templateError">
-            <div class="btn-group">
-                <metadata-button
-                        data:metadata-url="@{/analysis/ajax/{id}/metadata(id=${submissionId})}">
-                </metadata-button>
+        <div class="form-inline spaced-bottom" ng-hide="$ctrl.loading || $ctrl.treeError || $ctrl.templateError">
+            <div class="form-group">
+                <metadata-button></metadata-button>
+            </div>
+            <div class="form-group">
+                <template-component
+                        data:templatesurl="@{/analysis/ajax/{id}/metadata-templates(id=${submissionId})}"
+                        data:fieldsurl="@{/analysis/ajax/{id}/metadata-template-fields(id=${submissionId})}">
+                </template-component>
             </div>
         </div>
         <section>
@@ -65,10 +43,10 @@
             </div>
             <div ng-show="$ctrl.showEmptyMetadataWarning" class="alert alert-warning">
                 <strong><i class="fa fa-exclamation-triangle" aria-hidden="true"></i></strong>
-                <th:block th:text="#{visualization.phylogenomics.missing-metadata}"/>
-                <div class="close" ng-click="$ctrl.closeEmptyMetadataWarning()">
-                    <i class="fa fa-close" aria-hidden="true"></i>
-                </div>
+                <th:block th:text="#{visualization.phylogenomics.missing-metadata}"/><br/>
+                <button class="close" aria-label="Close" ng-click="$ctrl.closeEmptyMetadataWarning()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div ng-show="$ctrl.templateError" class="alert alert-danger">
                 <strong><i class="fa fa-exclamation-triangle" aria-hidden="true"></i></strong>
@@ -83,21 +61,56 @@
             <phylocanvas-component
                     data:newickurl="@{/analysis/ajax/{id}/newick(id=${submissionId})}">
             </phylocanvas-component>
-            <div ng-hide="$ctrl.metadataError || $ctrl.metadataEmpty">
-                <template-component
-                        data:templatesurl="@{/analysis/ajax/{id}/metadata-templates(id=${submissionId})}"
-                        data:fieldsurl="@{/analysis/ajax/{id}/metadata-template-fields(id=${submissionId})}">
-                </template-component>
-            </div>
         </section>
     </script>
 
+    <!-- Phylocanvas Component.  Loaded by app-component. -->
+    <!-- Script: resources/js/pages/visualizations/phylogenetics/components/phylocanvas/phylocanvas.module.js -->
+    <script type="text/ng-template" id="phylocanvas.tmpl.html">
+        <div class="spaced-bottom" id="phylocanvas"></div>
+    </script>
+    <script type="text/ng-template" id="metadata-component.tmpl.html">
+        <div class="spaced-bottom"
+             ng-repeat="term in $ctrl.terms">
+            <input type="checkbox"
+                   bs-switch=""
+                   ng-model="term.selected"
+                   switch-label="{{term.term}}"
+                   switch-label-width="200"
+                   ng-change="$ctrl.onSelectionChange(term)"/>
+        </div>
+    </script>
+
+    <!-- Template for metadata template dropdown -->
+    <!-- Script: /resources/js/pages/visualizations/phylogenetics/components/templates/template.module.js -->
+    <script type="text/ng-template" id="template-component.tmpl.html">
+        <label aria-label="template-select" th:text="#{visualization.phylogenomics.select-template.label}">
+            _Select a Template_</label>
+        <select name="template-select" id="template-select"
+                class="form-control"
+                ng-model="$ctrl.selectedTemplate"
+                ng-change="$ctrl.templateChange()">
+            <option value="" th:text="#{visualization.phylogenomics.select-template.all-field}">
+                _ALL_FIELDS_
+            </option>
+            <option ng-repeat="template in $ctrl.templates"
+                    value="{{ template.id }}">{{ template.label }}
+            </option>
+        </select>
+    </script>
+
+    <!-- Template for metadata button -->
+    <!-- Script: resources/js/pages/visualizations/phylogenetics/components/metadata/metadata.button.component.js  -->
     <script type="text/ng-template" id="metadataButton.tmpl.html">
-        <button class="btn btn-default"
+        <button class="btn btn-default" ng-disabled="$ctrl.terms.length === 0"
                 ng-click="$ctrl.openMetadataAside()">
-            <i class="fa fa-toggle-on fa-fw"></i>&nbsp;Toggle Metadata
+            <i class="fa fa-toggle-on fa-fw"></i>&nbsp;
+            <th:block th:text="#{visualization.phylogenomics.toggle-metadata}" />
         </button>
     </script>
+
+    <!-- Template for the aside where you can toggle metadata terms.  Loaded through the metadata-button -->
+    <!-- Script: resources/js/pages/visualizations/phylogenetics/components/metadata/metadata.component.js -->
     <script type="text/ng-template" id="metadataAside.tmpl.html">
         <aside class="metadata-aside">
             <div class="metadata-aside__btns text-right">
@@ -112,8 +125,9 @@
             </div>
         </aside>
     </script>
-    <script src="/resources/js/build/visualizations-phylogenetics.bundle.js"
-            th:src="@{/resources/js/build/visualizations-phylogenetics.bundle.js}"></script>
+    
+    <script src="/resources/resources/js/build/visualizations-phylogenetics.bundle.js"
+            th:src="@{/resources/resources/js/build/visualizations-phylogenetics.bundle.js}"></script>
 </th:block>
 </body>
 </html>

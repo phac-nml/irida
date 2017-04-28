@@ -34,10 +34,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.io.Files;
-
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.MetadataImportFileTypeNotSupportedError;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -46,7 +42,12 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.io.Files;
 
 /**
  * This class is designed to be used for bulk actions on {@link MetadataEntry}
@@ -307,9 +308,9 @@ public class ProjectSampleMetadataController {
 				try {
 					Long id = Long.valueOf(row.get("identifier"));
 					Sample sample = sampleService.read(id);
-					
+
 					Map<String, MetadataEntry> newData = new HashMap<>();
-					
+
 					// Need to overwrite duplicate keys
 					for (Entry<String, String> entry : row.entrySet()) {
 						newData.put(entry.getKey(), new MetadataEntry(entry.getValue(), "text"));

@@ -1,3 +1,4 @@
+const angular = require('angular');
 import {METADATA} from '../../constants';
 
 /**
@@ -43,41 +44,55 @@ class MetadataButtonController {
   /**
    * Constructor
    * @param {object} $rootScope angular scope handler for the root of the application
+   * @param {object} $scope angular scope for current dom
    * @param {object} $aside angular-aside object.
-   * @param {object} MetadataService for fetching metadata terms.
    */
-  constructor($rootScope, $aside, MetadataService) {
+  constructor($rootScope, $scope, $aside) {
     this.$rootScope = $rootScope;
-    this.MetadataService = MetadataService;
     this.$aside = $aside;
-  }
+    this.terms = [];
 
-  /**
-   * Initialization function.
-   */
-  $onInit() {
-    this.MetadataService
-      .getMetadata(this.metadataUrl)
-      .then(results => {
-        if (Object.keys(results.metadata).length &&
-          results.terms.length) {
-          // By default all terms are selected.
-          this.terms = results.terms.map(term => {
-            return ({
-              term,
-              selected: true
-            });
+    // Register listeners
+    $scope.$on(METADATA.TEMPLATE, (e, args) => {
+      const {fields} = args;
+      const existing = angular.copy(this.terms);
+      const newOrder = [];
+
+      if (fields) { // Add the visible fields in order
+        fields.forEach(field => {
+          const index = existing.findIndex(t => {
+            return t.term === field;
           });
-          this.$rootScope.$broadcast(
-            METADATA.LOADED,
-            {metadata: results.metadata}
-          );
-        } else {
-          this.$rootScope.$broadcast(METADATA.EMPTY);
-        }
-      }, () => {
-        this.$rootScope.$broadcast(METADATA.ERROR);
+          if (index >= 0) {
+            const item = existing.splice(index, 1)[0];
+            item.selected = true;
+            newOrder.push(item);
+          }
+        });
+      }
+
+      // Hide remainder of fields;
+      // typeof fields === 'undefined' would evaluate to try only for the show all fields option.
+      const showFields = typeof fields === 'undefined';
+      existing.forEach(term => {
+        term.selected = showFields;
+        newOrder.push(term);
       });
+
+      // Update the UI;
+      this.terms = newOrder;
+      this.handleTermVisibilityChange();
+    });
+
+    $scope.$on(METADATA.LOADED, (event, args) => {
+      const {terms} = args;
+      this.terms = terms.map(term => {
+        return ({
+          term,
+          selected: true
+        });
+      });
+    });
   }
 
   /**
@@ -117,8 +132,8 @@ class MetadataButtonController {
 
 MetadataButtonController.$inject = [
   '$rootScope',
-  '$aside',
-  'MetadataService'
+  '$scope',
+  '$aside'
 ];
 
 export const MetadataButton = {
