@@ -46,11 +46,9 @@ class MetadataButtonController {
    * @param {object} $rootScope angular scope handler for the root of the application
    * @param {object} $scope angular scope for current dom
    * @param {object} $aside angular-aside object.
-   * @param {object} MetadataService for fetching metadata terms.
    */
-  constructor($rootScope, $scope, $aside, MetadataService) {
+  constructor($rootScope, $scope, $aside) {
     this.$rootScope = $rootScope;
-    this.MetadataService = MetadataService;
     this.$aside = $aside;
     this.terms = [];
 
@@ -135,8 +133,7 @@ class MetadataButtonController {
 MetadataButtonController.$inject = [
   '$rootScope',
   '$scope',
-  '$aside',
-  'MetadataService'
+  '$aside'
 ];
 
 export const MetadataButton = {
