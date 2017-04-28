@@ -334,12 +334,13 @@ public class PipelineController extends BaseController {
 					}
 					parameters.add(ImmutableMap.of("id", p.getId(), "label", p.getLabel(), "parameters", namedParametersList));
 				}
-				model.addAttribute("parameters", parameters);
 				model.addAttribute("parameterModalTitle",
 						messageSource.getMessage("pipeline.parameters.modal-title." + workflowName, null, locale));
 			} else {
 				model.addAttribute("noParameters", messageSource.getMessage("pipeline.no-parameters", null, locale));
 			}
+			// Parameters should be added not matter what, even if they are empty.
+			model.addAttribute("parameters", parameters);
 
 			model.addAttribute("title",
 					messageSource.getMessage("pipeline.title." + description.getName(), null, locale));
