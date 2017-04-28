@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
 import java.util.List;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -73,7 +74,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 	public void closeColumnVisibilityPanel() {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		closeAsideBtn.click();
-		wait.until(ExpectedConditions.elementToBeClickable(saveBtn));
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".modal.in-remove-active")));
 	}
 
 	public void toggleColumn(String buttonLabel) {
