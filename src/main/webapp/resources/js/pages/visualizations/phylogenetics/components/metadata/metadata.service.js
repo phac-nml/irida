@@ -15,25 +15,31 @@ const formatMetadata = (metadata, metadataFieldLabels) => {
   const colourMap = {};
   const sampleNames = Object.keys(metadata);
 
-  sampleNames.forEach(name => {
-    const data = metadata[name];
-    result[name] = {};
-    metadataFieldLabels.forEach(field => {
-      const label = data[field].value;
+  for (const sampleName of sampleNames) {
+    const sampleMetadata = metadata[sampleName];
+    result[sampleName] = {};
+    for (const field of metadataFieldLabels) {
+      const metadataLabel = sampleMetadata[field].value;
 
-      if (label === '') {
-        // If the label is empty, then do not give it a colour.
-        result[label][field] = {label, colour: EMPTY_COLOUR};
-      } else {
+      if (metadataLabel) {
         // Find out if the field has already been assigned a colour
         // If not, get it a new one.
         colourMap[field] = colourMap[field] || {};
-        colourMap[field][label] =
-          colourMap[field][label] || getRandomColour();
-        result[label][field] = {label, colour: colourMap[field][label]};
+        colourMap[field][metadataLabel] =
+          colourMap[field][metadataLabel] || getRandomColour();
+        result[sampleName][field] = {
+          label: metadataLabel,
+          colour: colourMap[field][metadataLabel]
+        };
+      } else {
+        // If the label is empty, then do not give it a colour.
+        result[sampleName][field] = {
+          label: metadataLabel,
+          colour: EMPTY_COLOUR
+        };
       }
-    });
-  });
+    }
+  }
 
   // Add the reference blanks, without this, Phylocanvas will througha fit!
   const reference = {};
