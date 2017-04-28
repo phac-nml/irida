@@ -3,31 +3,40 @@ import {METADATA} from './../../constants';
 
 const EMPTY_COLOUR = 'rgba(0,0,0,0)';
 
-const formatMetadata = (metadata, terms) => {
+/**
+ * Format the metadata into an object that can be conssome by Phylocanvas.
+ *  { leaf-label: { templateMetadataField : { label, color} }}
+ * @param {array} metadata list of metaterms for the samples.
+ * @param {array} metadataFieldLabels list of metadata field labels
+ */
+const formatMetadata = (metadata, metadataFieldLabels) => {
   const result = {};
   const colourMap = {};
-  const ids = Object.keys(metadata);
+  const sampleNames = Object.keys(metadata);
 
-  ids.forEach(id => {
-    const data = metadata[id];
-    result[id] = {};
-    terms.forEach(term => {
-      const label = data[term].value;
+  sampleNames.forEach(name => {
+    const data = metadata[name];
+    result[name] = {};
+    metadataFieldLabels.forEach(field => {
+      const label = data[field].value;
 
       if (label === '') {
-        result[id][term] = {label, colour: EMPTY_COLOUR};
+        // If the label is empty, then do not give it a colour.
+        result[label][field] = { label, colour: EMPTY_COLOUR };
       } else {
-        colourMap[term] = colourMap[term] || {};
-        colourMap[term][label] =
-          colourMap[term][label] || getRandomColour();
-        result[id][term] = {label, colour: colourMap[term][label]};
+        // Find out if the field has already been assigned a colour
+        // If not, get it a new one.
+        colourMap[field] = colourMap[field] || {};
+        colourMap[field][label] =
+          colourMap[field][label] || getRandomColour();
+        result[label][field] = { label, colour: colourMap[field][label] };
       }
     });
   });
 
-  // Add the reference blanks
+  // Add the reference blanks, without this, Phylocanvas will througha fit!
   const reference = {};
-  terms.forEach(term => {
+  metadataFieldLabels.forEach(term => {
     reference[term] = {label: '', colour: EMPTY_COLOUR};
   });
   result.reference = reference;
@@ -60,9 +69,15 @@ export class MetadataService {
       });
   }
 
-  getSortedAndFilteredColumns(terms) {
-    if (terms) {
-      return terms.filter(term => {
+  /**
+   * Find the union between the terms defined in a template, and the terms available in
+   * the metadata returned for the samples.
+   * @param {array} terms List of metadata_template_metadata_field associated with the
+   *                      currently selected template.
+   */
+  getSortedAndFilteredColumns(templateTerms) {
+    if (templateTerms) {
+      return templateTerms.filter(term => {
         return this.terms.includes(term);
       });
     }
