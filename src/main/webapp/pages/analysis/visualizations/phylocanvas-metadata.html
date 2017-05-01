@@ -20,36 +20,8 @@
     <app-component></app-component>
 </div>
 <th:block layout:fragment="scripts">
-    <script type="text/ng-template" id="phylocanvas.tmpl.html">
-        <div class="spaced-bottom" id="phylocanvas"></div>
-    </script>
-    <script type="text/ng-template" id="metadata-component.tmpl.html">
-        <div class="spaced-bottom"
-             ng-repeat="term in $ctrl.terms">
-            <input type="checkbox"
-                   bs-switch=""
-                   ng-model="term.selected"
-                   switch-label="{{term.term}}"
-                   switch-label-width="200"
-                   ng-change="$ctrl.onSelectionChange(term)"/>
-        </div>
-    </script>
-    <script type="text/ng-template" id="template-component.tmpl.html">
-        <label aria-label="template-select" th:text="#{visualization.phylogenomics.select-template.label}">
-            _Select a Template_</label>
-        <select name="template-select" id="template-select"
-                class="form-control"
-                ng-model="$ctrl.selectedTemplate"
-                ng-change="$ctrl.templateChange()">
-            <option value="" th:text="#{visualization.phylogenomics.select-template.all-field}">
-                _ALL_FIELDS_
-            </option>
-            <option ng-repeat="template in $ctrl.templates"
-                    value="{{ template.id }}">{{ template.label }}
-            </option>
-        </select>
-    </script>
-
+    <!-- This is the main App -->
+    <!-- Script: resources/js/pages/visualizations/phylogenetics/components/app/app.component.js -->
     <script type="text/ng-template" id="app-component.tmpl.html">
         <h1 th:text="#{visualization.phylogenomics.title}"></h1>
         <div class="form-inline spaced-bottom" ng-hide="$ctrl.loading || $ctrl.treeError || $ctrl.templateError">
@@ -92,6 +64,43 @@
         </section>
     </script>
 
+    <!-- Phylocanvas Component.  Loaded by app-component. -->
+    <!-- Script: resources/js/pages/visualizations/phylogenetics/components/phylocanvas/phylocanvas.module.js -->
+    <script type="text/ng-template" id="phylocanvas.tmpl.html">
+        <div class="spaced-bottom" id="phylocanvas"></div>
+    </script>
+    <script type="text/ng-template" id="metadata-component.tmpl.html">
+        <div class="spaced-bottom"
+             ng-repeat="term in $ctrl.terms">
+            <input type="checkbox"
+                   bs-switch=""
+                   ng-model="term.selected"
+                   switch-label="{{term.term}}"
+                   switch-label-width="200"
+                   ng-change="$ctrl.onSelectionChange(term)"/>
+        </div>
+    </script>
+
+    <!-- Template for metadata template dropdown -->
+    <!-- Script: /resources/js/pages/visualizations/phylogenetics/components/templates/template.module.js -->
+    <script type="text/ng-template" id="template-component.tmpl.html">
+        <label aria-label="template-select" th:text="#{visualization.phylogenomics.select-template.label}">
+            _Select a Template_</label>
+        <select name="template-select" id="template-select"
+                class="form-control"
+                ng-model="$ctrl.selectedTemplate"
+                ng-change="$ctrl.templateChange()">
+            <option value="" th:text="#{visualization.phylogenomics.select-template.all-field}">
+                _ALL_FIELDS_
+            </option>
+            <option ng-repeat="template in $ctrl.templates"
+                    value="{{ template.id }}">{{ template.label }}
+            </option>
+        </select>
+    </script>
+
+    <!-- Template for metadata button -->
+    <!-- Script: resources/js/pages/visualizations/phylogenetics/components/metadata/metadata.button.component.js  -->
     <script type="text/ng-template" id="metadataButton.tmpl.html">
         <button class="btn btn-default" ng-disabled="$ctrl.terms.length === 0"
                 ng-click="$ctrl.openMetadataAside()">
@@ -99,6 +108,9 @@
             <th:block th:text="#{visualization.phylogenomics.toggle-metadata}" />
         </button>
     </script>
+
+    <!-- Template for the aside where you can toggle metadata terms.  Loaded through the metadata-button -->
+    <!-- Script: resources/js/pages/visualizations/phylogenetics/components/metadata/metadata.component.js -->
     <script type="text/ng-template" id="metadataAside.tmpl.html">
         <aside class="metadata-aside">
             <div class="metadata-aside__btns text-right">
@@ -113,6 +125,7 @@
             </div>
         </aside>
     </script>
+    
     <script src="/resources/js/build/visualizations-phylogenetics.bundle.js"
             th:src="@{/resources/js/build/visualizations-phylogenetics.bundle.js}"></script>
 </th:block>

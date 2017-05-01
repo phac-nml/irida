@@ -62,16 +62,14 @@ public class ProjectSampleMetadataController {
 	private final ProjectControllerUtils projectControllerUtils;
 	private final ProjectService projectService;
 	private final SampleService sampleService;
-	private final MetadataTemplateService metadataTemplateService;
 
 	@Autowired
 	public ProjectSampleMetadataController(MessageSource messageSource, ProjectControllerUtils projectControllerUtils,
-			ProjectService projectService, SampleService sampleService, MetadataTemplateService metadataTemplateService) {
+			ProjectService projectService, SampleService sampleService) {
 		this.messageSource = messageSource;
 		this.projectControllerUtils = projectControllerUtils;
 		this.projectService = projectService;
 		this.sampleService = sampleService;
-		this.metadataTemplateService = metadataTemplateService;
 	}
 
 	/**
