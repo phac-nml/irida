@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="sistr" author="aaron">
+		<createTable tableName="analysis_sistr_typing">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"
+					referencedTableName="analysis" referencedColumnNames="id"
+					foreignKeyName="FK_ANALYSIS_SISTR_TYPING_ANALYSIS" />
+			</column>
+		</createTable>
+
+		<addColumn tableName="sequencing_object">
+			<column name="sistr_typing" type="bigint(20)">
+			<constraints referencedTableName="analysis_submission"
+				referencedColumnNames="id" nullable="true" foreignKeyName="FK_SEQUENCING_OBJECT_SISTR" />
+			</column>
+		</addColumn>
+
+		<addColumn tableName="sequencing_object_AUD">
+			<column name="sistr_typing" type="bigint(20)" />
+		</addColumn>
+
+		<addColumn tableName="project">
+			<column name="sistr_typing_uploads" type="bit(1)" valueBoolean="false"
+				defaultValueBoolean="false">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+
+		<addColumn tableName="project_AUD">
+			<column name="sistr_typing_uploads" type="bit(1)" valueBoolean="false"/>
+		</addColumn>
+
+	</changeSet>
+
+</databaseChangeLog>

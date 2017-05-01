@@ -43,6 +43,15 @@
 
     
     /**
+     * Get the results from a SISTR analysis to preview in the browser.
+     */
+    svc.getSistrResults = function() {
+      return $http.get(page.URLS.sistr).then(function(result) {
+        return result.data;
+      });
+    }
+
+    /**
      * Exported function to call the server for information about the current analysis.
      * @param fn Callback function with how to handle the results.
      */
@@ -134,12 +143,49 @@
     vm.newick = page.NEWICK;
   }
 
+  function SistrController(analysisService) {
+    var vm = this;
+
+    analysisService.getSistrResults().then(function(result) {
+      if (result['parse_results_error']) {
+        vm.parse_results_error = true;
+      } else {
+        var sample_information = {};
+        sample_information['name'] = result['sample_name'];
+        sample_information['qc_status'] = result['qc_status'];
+        sample_information['qc_messages'] = result['qc_messages'].split("|");
+        sample_information['qc_pass'] = (result['qc_status'] == 'PASS');
+        sample_information['qc_warning'] = (result['qc_status'] == 'WARNING');
+        sample_information['qc_fail'] = (result['qc_status'] == 'FAIL');
+
+        var cgMLST_predictions = {};
+        cgMLST_predictions['matching_alleles'] = result['cgmlst_matching_alleles']+'/330';
+        cgMLST_predictions['percent_matching'] = parseFloat((1 - result['cgmlst_distance'])*100).toFixed(1)+"%";
+  
+        var mash_predictions = {};
+        mash_predictions['percent_kmers'] = parseFloat((1 - result['mash_distance'])*100).toFixed(1)+"%";
+  
+	vm.result = result;
+        vm.sample_information = sample_information;
+        vm.cgMLST_predictions = cgMLST_predictions;
+        vm.mash_predictions = mash_predictions;
+        vm.parse_results_error = result['parse_results_error'];
+      }
+    });
+  }
+
   angular.module('irida.analysis', ['ui.router', 'subnav', 'phylocanvas'])
     .config(['$stateProvider', function ($stateProvider) {
       $stateProvider
         .state("preview", {
           url        : "/preview",
           templateUrl: "preview.html"
+        })
+        .state("sistr", {
+          url: "/sistr",
+          templateUrl: "sistr.html",
+          controllerAs: "sistrCtrl",
+          controller: ["AnalysisService", SistrController]
         })
         .state("inputs", {
           url        : "/inputs",
