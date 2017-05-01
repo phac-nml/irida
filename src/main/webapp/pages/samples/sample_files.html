@@ -115,6 +115,18 @@
 							<span th:text="#{'analysis.state.' + ${pair.getAutomatedAssembly().getAnalysisState()}}"></span>
 						</td>
 					</tr>
+					<tr class="paired_end paired_end__sistr_typing" th:if="${pair.getSistrTyping()}">
+						<td class="td_icon">
+							<i data:uib-tooltip="#{sf.tooltip.sistr}" class="fa fa-align-right"/>
+						</td>
+						<td>
+							<a href="#" th:href="@{/analysis/{id}(id=${pair.getSistrTyping().getId()})}" class="btn btn-default btn-sm file-name" th:text="#{samples.files.sistr}">_SISTR_</a>
+						</td>
+						<td colspan="3">
+							<span th:text="#{samples.files.sistr.status}">_Status_</span>
+							<span th:text="#{'analysis.state.' + ${pair.getSistrTyping().getAnalysisState()}}"></span>
+						</td>
+					</tr>
 					<th:block th:if="${not #lists.isEmpty(pair.getQcEntries())}">
 						<tr class="paired_end file__qc" th:each="qc : ${pair.getQcEntries()}">
 							<td class="td_icon qc_icon">

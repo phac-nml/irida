@@ -1166,3 +1166,15 @@ To access the file contents of each analysis output, use an `Accept` header of `
 | `outputFile/annotations-stats` | Annotation statistics from Prokka. |
 | `outputFile/annotations-log` | Log file produced by Prokka on `STDOUT`. |
 | `outputFile/annotations-error` | Log file produced by Prokka on `STDERR`. |
+
+##### SISTR Typing links
+{:.no_toc}
+
+| Name | Description |
+|------|-------------|
+| `outputFile/sistr-cgmlst` | The cgMLST alleleic profile for the genome. |
+| `outputFile/assembly-stats` | Some basic statistics on the *de novo* assembly used by SISTR. |
+| `outputFile/sistr-alleles` | A file containing details on each of the allele calls. |
+| `outputFile/assembly` | The set of contigs generated from the *de novo* assembly and used by SISTR. |
+| `outputFile/sistr-predictions` | The SISTR prediction results used to generate the SISTR report. |
+| `outputFile/sistr-novel-alleles` | A list of any novel alleles that were detected by SISTR.

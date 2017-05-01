@@ -244,6 +244,40 @@ public class ProjectSettingsController {
 
 		return ImmutableMap.of("result", message);
 	}
+	
+	/**
+	 * Update the project sistr setting for the {@link Project}
+	 *
+	 * @param projectId
+	 *            the ID of a {@link Project}
+	 * @param sistr
+	 *            Whether or not to do automated sistr typing.
+	 * @param model
+	 *            Model for the view
+	 * @return success message if successful
+	 */
+	@RequestMapping(value = "/sistr", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, String> updateSistrSetting(@PathVariable Long projectId, @RequestParam boolean sistr,
+			final Model model, Locale locale) {
+		Project read = projectService.read(projectId);
+
+		Map<String, Object> updates = new HashMap<>();
+		updates.put("sistrTypingUploads", sistr);
+
+		projectService.updateProjectSettings(read, updates);
+
+		String message = null;
+		if (sistr) {
+			message = messageSource.getMessage("project.settings.notifications.sistr.enabled",
+					new Object[] { read.getLabel() }, locale);
+		} else {
+			message = messageSource.getMessage("project.settings.notifications.sistr.disabled",
+					new Object[] { read.getLabel() }, locale);
+		}
+
+		return ImmutableMap.of("result", message);
+	}
 
 	/**
 	 * Update the coverage QC setting of a {@link Project}
