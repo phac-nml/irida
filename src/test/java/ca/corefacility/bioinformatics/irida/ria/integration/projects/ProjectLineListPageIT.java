@@ -41,20 +41,25 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 		page.toggleColumn("healthAuthority");
 		page.closeColumnVisibilityPanel();
 		assertEquals("Should have 2 less columns visible", initialCount - 2, page.getNumberTableColumns());
+	}
+
+	@Test
+	public void testTemplates() {
+		ProjectLineListPage page = ProjectLineListPage.goToPage(driver(), 1);
 
 		// Test selecting templates
 		page.selectTemplate(TEMPLATE_1);
-		assertEquals("Should have 4 columns visible", 4, page.getNumberTableColumns());
+		assertEquals("Should have 4 columns visible", 3, page.getNumberTableColumns());
 
 		// Test saving a template
 		page.openColumnVisibilityPanel();
-		page.toggleColumn("firstName");
+		page.toggleColumn("firstSymptom");
 		page.closeColumnVisibilityPanel();
 		page.saveTemplate(TEMPLATE_NAME);
 		// Switch to a different template
 		page.selectTemplate(TEMPLATE_1);
-		assertEquals("Should have 4 columns visible", 4, page.getNumberTableColumns());
+		assertEquals("Should have 4 columns visible", 3, page.getNumberTableColumns());
 		page.selectTemplate(TEMPLATE_NAME);
-		assertEquals("Should have 3 columns visible", 3, page.getNumberTableColumns());
+		assertEquals("Should have 3 columns visible", 4, page.getNumberTableColumns());
 	}
 }

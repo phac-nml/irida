@@ -141,7 +141,6 @@
 
     <metadata_template_metadata_field metadata_template_id="1" fields_id="1"/>
     <metadata_template_metadata_field metadata_template_id="1" fields_id="2"/>
-    <metadata_template_metadata_field metadata_template_id="1" fields_id="4"/>
     <metadata_template_metadata_field metadata_template_id="1" fields_id="5"/>
 
     <project_metadata_template id="1" created_date="2016-06-10 08:05:53" project_id="1" template_id="1" />
