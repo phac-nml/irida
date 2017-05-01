@@ -98,6 +98,19 @@
         <div dt:confType="extrajs" dt:bundles="project-samples-angular" dt:placeholder="before_start_document_ready"/>
         <div dt:confType="callback" dt:type="createdrow" dt:function="datatables-utils#datatable.projectRowCreated"></div>
     </div>
+
+    <table id="new-samples-table" class="table table-bordered table-striped">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Organism</th>
+            <th>Project</th>
+            <th>Created</th>
+            <th>Modified</th>
+        </tr>
+        </thead>
+    </table>
+
     <table class="selectable" id="samplesTable" dt:table="true" dt:url="@{/projects/{id}/ajax/samples(id=${project.getId()})}" dt:ajaxParams="sample-ajax-params#samplesAjaxParams">
         <thead>
         <tr>
@@ -402,5 +415,21 @@
             </div>
         </div>
 </script>
+
+    <script th:inline="javascript">
+      console.log("hello there");
+      $('#new-samples-table').DataTable({
+        'processing': true,
+        'serverSide': true,
+        'ajax': /*[[@{/ajax/projects/{id}/samples(id=${project.getId()})}]]*/ 'scripts/server_processing.php',
+        "columns": [
+          { "data": "sampleName" },
+          { "data": "organism" },
+          { "data": "projectName" },
+          { "data": "createdDate" },
+          { "data": "modifiedDate" },
+        ]
+      });
+    </script>
 </th:block>
 </html>
