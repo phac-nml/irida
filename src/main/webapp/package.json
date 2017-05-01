@@ -53,6 +53,8 @@
     "gulp-notify": "^2.2.0",
     "gulp-sass": "^2.1.1",
     "gulp-sourcemaps": "^1.6.0",
+    "phylocanvas": "^2.8.1",
+    "phylocanvas-plugin-export-svg": "^1.0.0",
     "run-sequence": "^1.2.2",
     "style-loader": "^0.13.1",
     "ui-select": "^0.19.6",

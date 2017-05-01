@@ -9,7 +9,8 @@ export const METADATA = {
 
 export const TREE = {
   NOT_LOADED: 'tree.notLoaded',
-  COMPLETED: 'tree.completed'
+  COMPLETED: 'tree.completed',
+  EXPORT_SVG: 'tree.export.svg'
 };
 
 export const TEMPLATES = {

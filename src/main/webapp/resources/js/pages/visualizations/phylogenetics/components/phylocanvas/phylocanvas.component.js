@@ -1,10 +1,14 @@
 const angular = require('angular');
 import metadataPlugin from 'phylocanvas-plugin-metadata';
+import exportSVgPlugin from 'phylocanvas-plugin-export-svg';
 import {METADATA, TREE} from './../../constants';
 
 const PHYLOCANVAS_DIV = 'phylocanvas';
 const BOTTOM_PADDING = 180;
 
+/*
+  Initial settings for displaying the metadata.
+ */
 const metadataFormat = {
   showHeaders: true,
   showLabels: true,
@@ -20,6 +24,10 @@ const metadataFormat = {
   lineWidth: 1
 };
 
+/**
+ * Updates th size of the canvas to be the size of the available space in teh window.
+ * @param {object} $window angular window object.
+ */
 const setCanvasHeight = $window => {
   const canvas = document.querySelector(`#${PHYLOCANVAS_DIV}`);
   canvas.style.height = `${$window.innerHeight - BOTTOM_PADDING}px`;
@@ -39,8 +47,9 @@ function phylocanvasController($window, $scope, $q, Phylocanvas,
   // Make the canvas fill the viewable window.
   setCanvasHeight($window);
 
-  // Initialize the metadata plugin.
+  // Initialize the plugins.
   Phylocanvas.plugin(metadataPlugin);
+  Phylocanvas.plugin(exportSVgPlugin);
 
   // Initialize phylocanvas.
   const tree = Phylocanvas
@@ -114,6 +123,10 @@ function phylocanvasController($window, $scope, $q, Phylocanvas,
     metadataPromise.resolve();
   });
 
+  /**
+   * Lister for when a metadata template is applied.
+   * This forces phylocanvas to updates the metadata fields displayed.
+   */
   $scope.$on(METADATA.TEMPLATE, (event, args) => {
     const {fields} = args;
     tree.metadata.columns = MetadataService
@@ -121,6 +134,20 @@ function phylocanvasController($window, $scope, $q, Phylocanvas,
     tree.draw();
     tree.fitInPanel();
     tree.draw();
+  });
+
+  /**
+   * Listener for notification to export the phylocanvas image as an SVG.
+   */
+  $scope.$on(TREE.EXPORT_SVG, () => {
+    const svg = tree.exportSVG.getSerialisedSVG();
+    const url = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+    const link = document.createElement('a');
+    link.href = url;
+    document.body.appendChild(link);
+    link.download = `tree-${Date.now()}.svg`;
+    link.click();
+    document.body.removeChild(link);
   });
 }
 
