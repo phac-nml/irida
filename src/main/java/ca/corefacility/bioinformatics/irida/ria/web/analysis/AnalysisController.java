@@ -1,9 +1,24 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.Principal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
@@ -27,6 +42,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.dandelion.datatables.core.ajax.ColumnDef;
+import com.github.dandelion.datatables.core.ajax.DataSet;
+import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
+import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
+import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
@@ -35,8 +62,8 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
@@ -46,6 +73,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisSISTRTyping;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
@@ -59,14 +87,6 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
-import com.github.dandelion.datatables.core.ajax.ColumnDef;
-import com.github.dandelion.datatables.core.ajax.DataSet;
-import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
-import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
-import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-
 /**
  * Controller for Analysis.
  */
@@ -75,7 +95,8 @@ import com.google.common.collect.ImmutableMap;
 public class AnalysisController {
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisController.class);
 	// PAGES
-	public static final Map<AnalysisType, String> PREVIEWS = ImmutableMap.of(AnalysisType.PHYLOGENOMICS, "tree");
+	public static final Map<AnalysisType, String> PREVIEWS = ImmutableMap
+			.of(AnalysisType.PHYLOGENOMICS, "tree", AnalysisType.SISTR_TYPING, "sistr");
 	private static final String BASE = "analysis/";
 	public static final String PAGE_DETAILS_DIRECTORY = BASE + "details/";
 	public static final String PREVIEW_UNAVAILABLE = PAGE_DETAILS_DIRECTORY + "unavailable";
@@ -88,10 +109,10 @@ public class AnalysisController {
 	private IridaWorkflowsService workflowsService;
 	private MessageSource messageSource;
 	private UserService userService;
-	private SampleService sampleService;
-	private MetadataTemplateService metadataTemplateService;
 	private ProjectService projectService;
 	private UpdateAnalysisSubmissionPermission updateAnalysisPermission;
+	private SampleService sampleService;
+	private MetadataTemplateService metadataTemplateService;
 
 	@Autowired
 	public AnalysisController(AnalysisSubmissionService analysisSubmissionService,
@@ -103,7 +124,6 @@ public class AnalysisController {
 		this.workflowsService = iridaWorkflowsService;
 		this.messageSource = messageSource;
 		this.userService = userService;
-		this.projectService = projectService;
 		this.updateAnalysisPermission = updateAnalysisPermission;
 		this.sampleService = sampleService;
 		this.projectService = projectService;
@@ -194,8 +214,8 @@ public class AnalysisController {
 		// Check if user can update analysis
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		model.addAttribute("updatePermission", updateAnalysisPermission.isAllowed(authentication, submission));
-
-
+		
+		
 		// Get the number of files currently being mirrored
 		int mirroringCount = remoteFilesPaired.stream().mapToInt(p -> p.isMirrored() ? 0 : 1).sum();
 		model.addAttribute("mirroringCount", mirroringCount);
@@ -214,6 +234,8 @@ public class AnalysisController {
 			if (submission.getAnalysisState().equals(AnalysisState.COMPLETED)) {
 				if (analysisType.equals(AnalysisType.PHYLOGENOMICS)) {
 					tree(submission, model);
+				} else if (analysisType.equals(AnalysisType.SISTR_TYPING)) {
+					model.addAttribute("sistr", true);
 				}
 			}
 
@@ -223,10 +245,10 @@ public class AnalysisController {
 
 		return viewName;
 	}
-
+	
 	/**
 	 * Get the status of projects that can be shared with the given analysis
-	 *
+	 * 
 	 * @param submissionId
 	 *            the {@link AnalysisSubmission} id
 	 * @return a list of {@link SharedProjectResponse}
@@ -252,7 +274,7 @@ public class AnalysisController {
 		// Create response for shared projects
 		projectResponses.addAll(projectsInAnalysis.stream().filter(p -> !projectsShared.contains(p))
 				.map(p -> new SharedProjectResponse(p, false)).collect(Collectors.toList()));
-
+		
 		projectResponses.sort(new Comparator<SharedProjectResponse>() {
 
 			@Override
@@ -263,11 +285,11 @@ public class AnalysisController {
 
 		return projectResponses;
 	}
-
+	
 	/**
 	 * Update the share status of a given {@link AnalysisSubmission} for a given
 	 * {@link Project}
-	 *
+	 * 
 	 * @param submissionId
 	 *            the {@link AnalysisSubmission} id to share/unshare
 	 * @param projectId
@@ -286,13 +308,13 @@ public class AnalysisController {
 		String message = "";
 		if (shareStatus) {
 			analysisSubmissionService.shareAnalysisSubmissionWithProject(submission, project);
-
+			
 			message = messageSource.getMessage("analysis.details.share.enable", new Object[] { project.getLabel() }, locale);
 		} else {
 			analysisSubmissionService.removeAnalysisProjectShare(submission, project);
 			message = messageSource.getMessage("analysis.details.share.remove", new Object[] { project.getLabel() }, locale);
 		}
-
+		
 		return ImmutableMap.of("result", "success", "message", message);
 	}
 
@@ -435,7 +457,7 @@ public class AnalysisController {
 
 		return DatatablesResponse.build(dataSet, criterias);
 	}
-
+	
 	@RequestMapping("/ajax/project/{projectId}/list")
 	@ResponseBody
 	public DatatablesResponse<AnalysisTableResponse> getSubmissionsForProject(
@@ -444,7 +466,7 @@ public class AnalysisController {
 			ExecutionManagerException {
 
 		Project project = projectService.read(projectId);
-
+		
 		int currentPage = DatatablesUtils.getCurrentPage(criterias);
 		Map<String, Object> sortProps = DatatablesUtils.getSortProperties(criterias);
 		String searchString = criterias.getSearch();
@@ -465,6 +487,58 @@ public class AnalysisController {
 				submissions.getTotalElements());
 
 		return DatatablesResponse.build(dataSet, criterias);
+	}
+
+	@SuppressWarnings("resource")
+	@RequestMapping("/ajax/sistr/{id}") @ResponseBody public Map<String,Object> getSistrAnalysis(@PathVariable Long id) {
+		AnalysisSubmission submission = analysisSubmissionService.read(id);
+		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubimssion(submission);
+		Map<String,Object> result = ImmutableMap.of("parse_results_error", true);
+		
+		// Get details about the workflow
+		UUID workflowUUID = submission.getWorkflowId();
+		IridaWorkflow iridaWorkflow;
+		try {
+			iridaWorkflow = workflowsService.getIridaWorkflow(workflowUUID);
+		} catch (IridaWorkflowNotFoundException e) {
+			logger.error("Error finding workflow, ", e);
+			throw new EntityNotFoundException("Couldn't find workflow for submission " + submission.getId(), e);
+		}
+		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription().getAnalysisType();
+		if (analysisType.equals(AnalysisType.SISTR_TYPING)) {
+			AnalysisSISTRTyping analysis = (AnalysisSISTRTyping) submission.getAnalysis();
+			Path path = analysis.getSISTRResults().getFile();
+			try {
+				String json = new Scanner(new BufferedReader(new FileReader(path.toFile()))).useDelimiter("\\Z").next();
+				
+				// verify file is proper json file
+				ObjectMapper mapper = new ObjectMapper();
+				List<Map<String,Object>> sistrResults = mapper.readValue(json, new TypeReference<List<Map<String,Object>>>(){});
+				
+				if (sistrResults.size() > 0) {
+					// should only ever be one sample for these results
+					if (samples.size() == 1) {
+						Sample sample = samples.iterator().next();
+						result = sistrResults.get(0);
+						
+						result.put("parse_results_error", false);
+						
+						result.put("sample_name", sample.getSampleName());
+					} else {
+						logger.error("Invalid number of associated samles for submission " + submission);
+					}
+				} else {
+					logger.error("SISTR results for file [" + path + "] are not correctly formatted");
+				}
+			} catch (FileNotFoundException e) {
+				logger.error("File [" + path + "] not found",e);
+			} catch (JsonParseException | JsonMappingException e) {
+				logger.error("Error attempting to parse file [" + path + "] as JSON",e);
+			} catch (IOException e) {
+				logger.error("Error reading file [" + path + "]", e);
+			}
+		}
+		return result;
 	}
 
 	/**
@@ -773,7 +847,7 @@ public class AnalysisController {
 						.getId());
 				this.percentComplete = Float.toString(percentComplete);
 			}
-
+			
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			updatePermission = updateAnalysisPermission.isAllowed(authentication, submission);
 		}
@@ -813,12 +887,12 @@ public class AnalysisController {
 		public Date getCreatedDate() {
 			return createdDate;
 		}
-
+		
 		public boolean getUpdatePermission() {
 			return updatePermission;
 		}
 	}
-
+	
 	/**
 	 * Response object storing a project and whether or not it's shared with a
 	 * given {@link AnalysisSubmission}
