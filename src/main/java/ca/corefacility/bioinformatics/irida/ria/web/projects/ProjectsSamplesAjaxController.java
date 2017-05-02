@@ -8,7 +8,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -16,8 +15,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DatatablesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.ProjectSampleModel;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -38,7 +38,7 @@ public class ProjectsSamplesAjaxController {
 
 	@RequestMapping("")
 	@ResponseBody
-	public DatatablesResponse getSamplesForProject(@PathVariable Long projectId, @RequestParam int draw, @RequestParam int start, @RequestParam int length, @RequestBody DatatablesRequest request) {
+	public DatatablesResponse getSamplesForProject(@PathVariable Long projectId, @RequestParam int draw, @RequestParam int start, @RequestParam int length, @DatatablesRequest DatatablesParams DatatablesParams) {
 		Project project = projectService.read(projectId);
 		int currentPage = (int) Math.floor(start / length);
 		List projects = ImmutableList.of(project);
