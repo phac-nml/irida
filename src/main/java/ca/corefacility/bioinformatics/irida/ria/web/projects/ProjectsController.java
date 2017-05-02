@@ -340,13 +340,15 @@ public class ProjectsController {
 			@RequestParam(required = false, defaultValue = "") String organism,
 			@RequestParam(required = false, defaultValue = "") String projectDescription,
 			@RequestParam(required = false, defaultValue = "") String remoteURL,
-			@RequestParam(required = false, defaultValue = "false") boolean assemble) {
+			@RequestParam(required = false, defaultValue = "false") boolean assemble,
+			@RequestParam(required = false, defaultValue = "false") boolean sistr) {
 
 		Project p = new Project(name);
 		p.setOrganism(organism);
 		p.setProjectDescription(projectDescription);
 		p.setRemoteURL(remoteURL);
 		p.setAssembleUploads(assemble);
+		p.setSistrTypingUploads(sistr);
 
 		Project project;
 		try {

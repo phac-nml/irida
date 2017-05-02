@@ -20,6 +20,27 @@ var projectSettings = (function(page, notifications) {
         });
     });
 
+    $("#sistr").change(function(){
+        var checkbox = $(this);
+        var sistr = checkbox.is(":checked");
+        
+        $.ajax({
+            url: page.urls.sistr,
+            type: 'POST',
+            data: {
+                'sistr': sistr
+            }, 
+            statusCode : {
+                200 : function(response){
+                    notifications.show({'msg': response.result});
+                }
+            },
+            fail : function(){
+                notifications.show({'msg': page.i18n.error, type:"error"});
+            }
+        });
+    });
+
     $("#coverage-save").on("click", function() {
         var genomeSize = $("#genome-size").val();
         var requiredCoverage = $("#required-coverage").val();

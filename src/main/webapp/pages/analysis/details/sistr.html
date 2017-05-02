@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="analysis/details/details">
+
+<head>
+    <title th:text="#{analysis.page.title} + ' - '+ ${analysisSubmission.getId()} + ' - ' + ${workflowName}">dsf</title>
+</head>
+<body>
+<div layout:fragment="previewContent">
+    <h1>Hello Jello</h1>
+</div>
+
+<th:block th:if="${preview}" layout:fragment="previewScripts">
+</th:block>
+</body>
+
+</html>

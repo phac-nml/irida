@@ -198,10 +198,11 @@ Sequencing runs cannot be created by a user. Instead, a sequencing run is create
 
 An analysis contains the results of running a pipeline on a collection of samples in IRIDA. An analysis cannot be created manually by a user. Instead, an analysis is created automatically by IRIDA on pipeline submission and completion.
 
-IRIDA currently has two types of analysis that can be created:
+IRIDA currently has multiple types of analysis that can be created:
 
 1. SNVPhyl, and
 2. Assembly and annotation.
+3. Salmonella *in silico* typing (SISTR).
 
 Each specific type of analysis may have analysis-specific properties, but an analysis will have *at least* the following properties:
 

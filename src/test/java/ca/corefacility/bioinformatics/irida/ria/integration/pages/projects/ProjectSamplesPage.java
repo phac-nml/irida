@@ -209,6 +209,10 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("download-btn")));
 	}
 
+	public boolean isSampleToolsAvailable() {
+		return driver.findElements(By.id("sample-tools")).size() > 0;
+	}
+
 	public boolean isDownloadBtnEnabled() {
 		return !downloadBtn.getAttribute("class").contains("disabled");
 	}
