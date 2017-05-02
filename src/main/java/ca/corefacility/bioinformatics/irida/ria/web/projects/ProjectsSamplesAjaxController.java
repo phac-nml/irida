@@ -38,7 +38,7 @@ public class ProjectsSamplesAjaxController {
 
 	@RequestMapping("")
 	@ResponseBody
-	public DatatablesResponse getSamplesForProject(@PathVariable Long projectId, @RequestParam int draw, @RequestParam int start, @RequestParam int length, @DatatablesRequest DatatablesParams DatatablesParams) {
+	public DatatablesResponse getSamplesForProject(@PathVariable Long projectId, @RequestParam int draw, @RequestParam int start, @RequestParam int length, @DatatablesRequest DatatablesParams datatablesParams) {
 		Project project = projectService.read(projectId);
 		int currentPage = (int) Math.floor(start / length);
 		List projects = ImmutableList.of(project);
