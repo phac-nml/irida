@@ -3,6 +3,8 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,10 +14,13 @@ import org.springframework.scheduling.support.CronSequenceGenerator;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.ProjectEventEmailScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.ProjectEventService;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 /**
@@ -33,15 +38,18 @@ public class ProjectEventEmailScheduledTaskImpl implements ProjectEventEmailSche
 
 	EmailController emailController;
 
+	ProjectService projectService;
+
 	@Value("${irida.scheduled.subscription.cron}")
 	private String scheduledCronString = "0 0 0 * * *";
 
 	@Autowired
 	public ProjectEventEmailScheduledTaskImpl(UserService userService, ProjectEventService eventService,
-			EmailController emailController) {
+			ProjectService projectService, EmailController emailController) {
 		super();
 		this.userService = userService;
 		this.eventService = eventService;
+		this.projectService = projectService;
 		this.emailController = emailController;
 	}
 
@@ -62,6 +70,16 @@ public class ProjectEventEmailScheduledTaskImpl implements ProjectEventEmailSche
 				logger.trace("Checking for events for user " + user.getUsername());
 				List<ProjectEvent> eventsToEmailToUser = eventService.getEventsForUserAfterDate(user, lastTime);
 
+				// Get the set of projects the user is subscribed to
+				Set<Project> projectsWithSubscription = projectService.getProjectsForUser(user).stream().filter(j -> {
+					ProjectUserJoin puj = (ProjectUserJoin) j;
+					return puj.isEmailSubscription();
+				}).map(j -> j.getSubject()).collect(Collectors.toSet());
+
+				// filter the events to ensure the user is subscribed
+				eventsToEmailToUser = eventsToEmailToUser.stream()
+						.filter(e -> projectsWithSubscription.contains(e.getProject())).collect(Collectors.toList());
+
 				if (!eventsToEmailToUser.isEmpty()) {
 					logger.trace("Sending subscription email to " + user.getUsername() + " with "
 							+ eventsToEmailToUser.size() + " events");
@@ -80,7 +98,7 @@ public class ProjectEventEmailScheduledTaskImpl implements ProjectEventEmailSche
 
 		return new Date(timeInMillis - difference);
 	}
-	
+
 	public String getScheduledCronString() {
 		return scheduledCronString;
 	}
