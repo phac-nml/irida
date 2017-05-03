@@ -5,11 +5,9 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -38,16 +36,21 @@ public class ProjectsSamplesAjaxController {
 
 	@RequestMapping("")
 	@ResponseBody
-	public DatatablesResponse getSamplesForProject(@PathVariable Long projectId, @RequestParam int draw, @RequestParam int start, @RequestParam int length, @DatatablesRequest DatatablesParams datatablesParams) {
+	public DatatablesResponse getSamplesForProject(@PathVariable Long projectId,
+			@DatatablesRequest DatatablesParams datatablesParams) {
 		Project project = projectService.read(projectId);
-		int currentPage = (int) Math.floor(start / length);
 		List projects = ImmutableList.of(project);
-		final Page<ProjectSampleJoin> page = sampleService.getFilteredSamplesForProjects(projects, ImmutableList.of(), null, null, null, null, null, currentPage, 10, Sort.Direction.ASC, "sample.sampleName");
+
+		String sortColumn = "sample." + datatablesParams.getSortColumn();
+		final Page<ProjectSampleJoin> page = sampleService
+				.getFilteredSamplesForProjects(projects, ImmutableList.of(), null, datatablesParams.getSearchValue(),
+						null, null, null, datatablesParams.getCurrentPage(), datatablesParams.getLength(),
+						datatablesParams.getSortDirection(), sortColumn);
 
 		// Create a more usable Map of the sample data.
-		List<Object> models = page.getContent().stream().map(j -> buildProjectSampleModel(j))
+		List<Object> data = page.getContent().stream().map(j -> buildProjectSampleModel(j))
 				.collect(Collectors.toList());
-		return new DatatablesResponse(draw, page.getTotalElements(), page.getTotalElements(), models);
+		return new DatatablesResponse(datatablesParams, page, data);
 	}
 
 	private ProjectSampleModel buildProjectSampleModel(ProjectSampleJoin sso) {

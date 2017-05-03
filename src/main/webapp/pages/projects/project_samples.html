@@ -424,18 +424,34 @@
 </script>
 
     <script th:inline="javascript">
-      console.log("hello there");
+      function renderer(data, type, full, meta) {
+        console.log(data, type, full, meta);
+
+        var date = new Date(data);
+        if (moment.isDate(date)) {
+          return '<span data-toggle="tooltip" data-placement="right" title="' + data + '">'
+            + moment(date, 'YYYY mmm ddd').fromNow()
+            + '</span>';
+        }
+        return data;
+      }
       $('#new-samples-table').DataTable({
         'processing': true,
         'serverSide': true,
+        stateSave: true,
         'ajax': /*[[@{/ajax/projects/{id}/samples(id=${project.getId()})}]]*/ 'scripts/server_processing.php',
         "columns": [
           { "data": "sampleName" },
           { "data": "organism" },
           { "data": "projectName" },
-          { "data": "createdDate" },
-          { "data": "modifiedDate" },
-        ]
+          { 'data': 'createdDate', render: renderer },
+          { 'data': 'modifiedDate', render: renderer },
+        ],
+        drawCallback: function() {
+          $('[data-toggle="tooltip"]').tooltip({
+            container : 'body'
+          });
+        }
       });
     </script>
 </th:block>

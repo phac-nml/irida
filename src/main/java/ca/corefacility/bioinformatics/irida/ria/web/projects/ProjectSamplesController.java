@@ -47,19 +47,17 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.ProjectSamplesDatatableUtils;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DatatablesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.export.ProjectSamplesTableExport;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.ProjectSampleModel;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
-import com.github.dandelion.datatables.core.ajax.DataSet;
-import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
-import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
 import com.github.dandelion.datatables.core.export.ExportUtils;
 import com.github.dandelion.datatables.core.export.ReservedFormat;
-import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
 import com.google.common.base.Strings;
 
 @Controller
@@ -396,8 +394,8 @@ public class ProjectSamplesController {
 	 */
 	@RequestMapping(value = "/projects/{projectId}/ajax/samples", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
 	@ResponseBody
-	public DatatablesResponse<ProjectSampleModel> getProjectSamples(@PathVariable Long projectId,
-			@DatatablesParams DatatablesCriterias criterias,
+	public ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesResponse getProjectSamples(@PathVariable Long projectId,
+			@DatatablesRequest ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesParams params,
 			@RequestParam(required = false, defaultValue = "") List<String> sampleNames,
 			@RequestParam(required = false, defaultValue = "") List<Long> associated,
 			@RequestParam(required = false, defaultValue = "") String name,
@@ -413,19 +411,16 @@ public class ProjectSamplesController {
 		projects.add(projectService.read(projectId));
 
 		// Convert the criterias into a more usable format.
-		ProjectSamplesDatatableUtils utils = new ProjectSamplesDatatableUtils(criterias, name, minDate, endDate);
+		ProjectSamplesDatatableUtils utils = new ProjectSamplesDatatableUtils(params, name, minDate, endDate);
 
 		final Page<ProjectSampleJoin> page = sampleService.getFilteredSamplesForProjects(projects, sampleNames, name, utils.getSearch(), organism,
 				utils.getMinDate(), utils.getEndDate(), utils.getCurrentPage(), utils.getPageSize(),
 				utils.getSortDirection(), utils.getSortProperty());
 
 		// Create a more usable Map of the sample data.
-		List<ProjectSampleModel> models = page.getContent().stream().map(j -> buildProjectSampleModel(j))
+		List<Object> models = page.getContent().stream().map(j -> buildProjectSampleModel(j))
 				.collect(Collectors.toList());
-
-		DataSet<ProjectSampleModel> dataSet = new DataSet<>(models, page.getTotalElements(),
-				page.getTotalElements());
-		return DatatablesResponse.build(dataSet, criterias);
+		return new ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesResponse(params, page, models);
 	}
 
 	/**
@@ -912,8 +907,8 @@ public class ProjectSamplesController {
 	 * 		the id for the {@link Project} the current project.
 	 * @param type
 	 * 		Type of file to export, must be from {@link ReservedFormat}
-	 * @param criterias
-	 * 		{@link DatatablesCriterias}
+	 * @param params
+	 * 		{@link DatatablesParams}
 	 * @param sampleNames
 	 * 		{@link List} of {@link Sample} names to export. Not required.
 	 * @param associated
@@ -933,7 +928,7 @@ public class ProjectSamplesController {
 	public void exportProjectSamplesTable(
 			@PathVariable Long projectId,
 			@RequestParam(value = "dtf") String type,
-			@DatatablesParams DatatablesCriterias criterias,
+			@DatatablesRequest DatatablesParams params,
 			@RequestParam(required = false, defaultValue = "") List<String> sampleNames,
 			@RequestParam(required = false, defaultValue = "") List<Long> associated,
 			@RequestParam(required = false, defaultValue = "") String name,
@@ -952,7 +947,7 @@ public class ProjectSamplesController {
 		}
 		projects.add(project);
 
-		ProjectSamplesDatatableUtils utils = new ProjectSamplesDatatableUtils(criterias, name, minDate, endDate);
+		ProjectSamplesDatatableUtils utils = new ProjectSamplesDatatableUtils(params, name, minDate, endDate);
 
 		final Page<ProjectSampleJoin> page = sampleService.getFilteredSamplesForProjects(projects, sampleNames, name, utils.getSearch(),
 				organism, utils.getMinDate(), utils.getEndDate(), 0, Integer.MAX_VALUE,

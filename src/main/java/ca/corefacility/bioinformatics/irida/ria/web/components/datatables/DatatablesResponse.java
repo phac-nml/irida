@@ -2,21 +2,23 @@ package ca.corefacility.bioinformatics.irida.ria.web.components.datatables;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+
 public class DatatablesResponse {
-	private int draw;
+	private DatatablesParams datatablesParams;
 	private Long recordsTotal;
 	private Long recordsFiltered;
 	private List<Object> data;
 
-	public DatatablesResponse(int draw, long recordsTotal, long recordsFiltered, List<Object> data) {
-		this.draw = draw;
-		this.recordsTotal = recordsTotal;
-		this.recordsFiltered = recordsFiltered;
+	public DatatablesResponse(DatatablesParams datatablesParams, Page<?> page, List<Object> data) {
+		this.datatablesParams = datatablesParams;
+		this.recordsTotal = page.getTotalElements();
+		this.recordsFiltered = page.getTotalElements();
 		this.data = data;
 	}
 
 	public int getDraw() {
-		return draw;
+		return datatablesParams.getDraw();
 	}
 
 	public long getRecordsTotal() {
