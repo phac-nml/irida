@@ -59,23 +59,23 @@ public class RESTSampleMetadataController {
 			@RequestBody Map<String, MetadataEntry> metadataMap) {
 		Sample s = sampleService.read(sampleId);
 
-		Map<MetadataTemplateField, MetadataEntry> metadata = new HashMap<>();
-		metadataMap.entrySet().forEach(e -> {
-
-			// get the metadatatemplatefield if it exists
-			MetadataTemplateField field = metadataTemplateService.readMetadataFieldByLabel(e.getKey());
-
-			// if not, create a new one
-			if (field == null) {
-				field = new MetadataTemplateField(e.getKey(), "text");
-				field = metadataTemplateService.saveMetadataField(field);
-				logger.trace("creating new template field: " + e.getKey());
-			}
-
-			metadata.put(field, e.getValue());
-		});
+		Map<MetadataTemplateField, MetadataEntry> metadata = metadataTemplateService.getMetadataMap(metadataMap);
 
 		s.setMetadata(metadata);
+
+		sampleService.update(s);
+
+		return getSampleMetadata(sampleId);
+	}
+
+	@RequestMapping(value = "/api/samples/{sampleId}/metadata", method = RequestMethod.PUT)
+	public ModelMap addSampleMetadata(@PathVariable Long sampleId,
+			@RequestBody Map<String, MetadataEntry> metadataMap) {
+		Sample s = sampleService.read(sampleId);
+
+		Map<MetadataTemplateField, MetadataEntry> metadata = metadataTemplateService.getMetadataMap(metadataMap);
+
+		s.mergeMetadata(metadata);
 
 		sampleService.update(s);
 
