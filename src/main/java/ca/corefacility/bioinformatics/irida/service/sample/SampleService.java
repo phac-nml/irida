@@ -216,21 +216,19 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * 		{@link Integer} the current page the table is on.
 	 * @param pageSize
 	 * 		{@link Integer} the number of {@link ProjectSampleJoin} in the {@link Page}.
-	 * @param direction
-	 * 		{@link Sort.Direction} the direction of the sort for the {@link Page}.
-	 * @param sortProperty
-	 * 		{@link String} the attribute of the {@link ProjectSampleJoin} to sort by.
+	 * @param sort
+	 * 		{@link Sort} chained sort definitions to sort page by.
 	 *
-	 * @return
+	 * @return a {@link Page} of {@link ProjectSampleJoin} that are filtered and sorted.
 	 */
 	public Page<ProjectSampleJoin> getFilteredSamplesForProjects(List<Project> projects, List<String> sampleNames,
 			String sampleName, String searchTerm, String organism,
-			Date minDate, Date maxDate, int currentPage, int pageSize, Sort.Direction direction, String sortProperty);
-	
+			Date minDate, Date maxDate, int currentPage, int pageSize, Sort sort);
+
 	/**
 	 * Get a list of all {@link Sample}s associated with a given
 	 * {@link AnalysisSubmission}
-	 * 
+	 *
 	 * @param submission
 	 *            the {@link AnalysisSubmission}
 	 * @return a Collection of {@link Sample}
@@ -246,5 +244,5 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @return a list of {@link QCEntry}
 	 */
 	public List<QCEntry> getQCEntriesForSample(Sample sample);
-	
+
 }
