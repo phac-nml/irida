@@ -57,9 +57,31 @@ Metadata that do not have matching sample names are listed in the table `Rows no
 
 ![Upload Preview Errors](images/upload-preview-errors.png)
 
-Example Upload
-==============
+### Example Upload
 
 ![Demonstration of uploading Excel Spreadsheet](images/upload_bulk_metadata.gif)
 
+Project Metadata Line List
+--------------------------
 
+Line lists are tables that summarize the available metadata for samples within a project.  All samples **that have metadata added to them** will be included in this table.
+
+![Basic Line List](images/linelist_base.png)
+
+### Reorder Columns
+
+To make it easier to see related information, columns can be re-ordered by dragging the the column header to the required position.
+
+![Line List Reorder](images/linelist_reorder.gif)
+
+### Toggle Metadata Columns
+
+Some columns might not have information that is useful in a particular analysis.  You can toggle any metadata field by clicking the `Toggle Metadata Columns` button, which will open a side panel where metadata fields can be toggled on and off.  The one catch is that the first column cannot be toggled off directly.  If that field needs to be hidden, drag it to a different column and then toggle the field.
+
+![Line List Metadata Toggle](images/linelist_metadata_toggle.gif)
+
+### Saving Column Order and Visible Metadata
+
+Updating the column order and which metadata is visible can be saved as a **Template** so that the next time the line list is viewed the same settings can be applied quickly.  Click the `Save Template` button which will open a dialog window.  Add a name for the template (this cannot match the name of another template within the project).
+
+![Save Template Dialog](images/linelist_save_template.png)
