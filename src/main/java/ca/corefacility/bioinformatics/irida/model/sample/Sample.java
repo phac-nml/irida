@@ -1,14 +1,11 @@
 package ca.corefacility.bioinformatics.irida.model.sample;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -33,7 +30,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.google.common.collect.Sets;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
@@ -317,6 +314,7 @@ public class Sample extends IridaResourceSupport
 		this.remoteStatus = status;
 	}
 
+	@JsonIgnore
 	public Map<MetadataTemplateField, MetadataEntry> getMetadata() {
 		return metadata;
 	}
@@ -329,6 +327,7 @@ public class Sample extends IridaResourceSupport
 	 * @param inputMetadata
 	 *            the collection of {@link MetadataEntry}s
 	 */
+	@JsonIgnore
 	public void setMetadata(Map<MetadataTemplateField, MetadataEntry> inputMetadata) {
 		this.metadata = inputMetadata;
 	}
