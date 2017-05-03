@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.web.controller.api.samples;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -31,6 +30,7 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProj
 public class RESTSampleMetadataController {
 	private static final Logger logger = LoggerFactory.getLogger(RESTSampleMetadataController.class);
 
+	public static final String METADATA_REL = "sample/metadata";
 	public static final String SAMPLE_REL = "sample";
 
 	private SampleService sampleService;
@@ -84,8 +84,8 @@ public class RESTSampleMetadataController {
 
 	private SampleMetadataResponse buildSampleMetadataResponse(final Sample s) {
 		SampleMetadataResponse response = new SampleMetadataResponse(s);
+		response.add(linkTo(methodOn(RESTSampleMetadataController.class).getSampleMetadata(s.getId())).withSelfRel());
 		response.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(s.getId())).withRel(SAMPLE_REL));
-
 		return response;
 	}
 
