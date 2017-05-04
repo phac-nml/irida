@@ -36,3 +36,9 @@ If the template name is too short a warning is displayed:
 To add a metadata field to the template click on the `Add Metadata Field` button, which will open up a dialog window.
 
 ![Metadata field button](images/metadata_field_btn.png)
+
+// ADD FIELDS HERE.
+
+## Modifying existing metadata templates
+
+From the Sample Metadata Template page within project settings, click on the name of the template you want to modify.
