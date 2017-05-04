@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.sample;
 
+import java.util.Objects;
+
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
@@ -30,7 +32,8 @@ public class MetadataTemplateField {
 	@NotNull
 	private String type;
 
-	public MetadataTemplateField() {}
+	public MetadataTemplateField() {
+	}
 
 	public MetadataTemplateField(String label, String type) {
 		this.label = label;
@@ -55,5 +58,25 @@ public class MetadataTemplateField {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	@Override
+	public String toString() {
+		return label;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(label.toLowerCase(), type);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof MetadataTemplateField) {
+			MetadataTemplateField other = (MetadataTemplateField) obj;
+
+			return Objects.equals(label.toLowerCase(), other.label.toLowerCase()) && Objects.equals(type, other.type);
+		}
+		return false;
 	}
 }

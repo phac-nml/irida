@@ -44,8 +44,10 @@
 					referencedColumnNames="id" referencedTableName="metadata_entry"
 					unique="true" uniqueConstraintName="UK_SAMPLE_METADATA_ENTRY" />
 			</column>
-			<column name="metadata_KEY" type="varchar(255)">
-				<constraints nullable="false" primaryKey="true" />
+			<column name="metadata_KEY" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true"
+					foreignKeyName="FK_SAMPLE_METADATA_ENTRY_METADATA_FIELD"
+					referencedColumnNames="id" referencedTableName="metadata_field" />
 			</column>
 		</createTable>
 

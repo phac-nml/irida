@@ -27,19 +27,16 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectSamplesPageIT.class);
 
-	@Before
-	public void init() {
-		LoginPage.loginAsManager(driver());
-	}
-
 	@Test(expected = AssertionError.class)
 	public void testGoingToInvalidPage() {
+		LoginPage.loginAsManager(driver());
 		logger.debug("Testing going to an invalid sample id");
 		ProjectSamplesPage.gotToPage(driver(), 100);
 	}
 
 	@Test
 	public void testPageSetUp() {
+		LoginPage.loginAsManager(driver());
 		logger.info("Testing page set up for: Project Samples");
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 
@@ -48,7 +45,15 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	public void testToolbarButtons() {
+	public void testToolbarButtonsAsCollaborator() {
+		LoginPage.loginAsUser(driver());
+		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
+		assertFalse("Sample Tools should be hidden from a collaborator", page.isSampleToolsAvailable());
+	}
+
+	@Test
+	public void testToolbarButtonsAsManager() {
+		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 
 		// Test set up with no sample selected
@@ -87,6 +92,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
 	public void testPaging() {
+		LoginPage.loginAsManager(driver());
 		logger.info("Testing paging for: Project Samples");
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 
@@ -97,6 +103,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
 	public void testAssociatedProjects() {
+		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 		assertEquals("Should be displaying 21 samples", "Showing 1 to 10 of 21 entries", page.getTableInfo());
 		page.displayAssociatedProject();
@@ -105,6 +112,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
 	public void testSampleSelection() {
+		LoginPage.loginAsManager(driver());
 		logger.info("Testing sample selection for: Project Samples");
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 		assertEquals("Should be 0 selected samples", "No samples selected", page.getSelectedInfoText());
@@ -134,6 +142,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
 	public void testAddSamplesToCart() {
+		LoginPage.loginAsManager(driver());
 		logger.info("Testing adding samples to the global cart.");
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 		page.selectSample(0);
@@ -147,6 +156,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
 	public void testMergeSamples() {
+		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 		// Select some samples
 		page.selectSample(0);
@@ -171,6 +181,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
 	public void testCopySamples() {
+		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 		page.selectSample(0);
 		page.selectSample(1);
@@ -189,6 +200,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
 	public void testMoveSamples() {
+		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 		assertEquals("Should be displaying 21 samples", "Showing 1 to 10 of 21 entries", page.getTableInfo());
 		List<String> movedNames = page.getSampleNamesOnPage().subList(2, 3);
@@ -208,6 +220,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
 	public void testRemoveSamplesFromProject() {
+		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 
 		// Select some samples
@@ -224,6 +237,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
 	public void testFilteringSamplesByProperties() {
+		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 		assertEquals("Should have 21 projects displayed", "Showing 1 to 10 of 21 entries", page.getTableInfo());
 		page.filterByName("5");
@@ -246,6 +260,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
 	public void testFilteringWithDates() {
+		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 		page.filterByDateRange("07/06/2015", "07/09/2015");
 		assertEquals("Should ignore case when filtering", "Showing 1 to 4 of 4 entries", page.getTableInfo());
@@ -257,6 +272,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
 	public void testCartFunctionality() {
+		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 
 		// Select some samples
@@ -274,6 +290,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
 	public void testLinkerFunctionalityForProject() {
+		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 
 		assertEquals("Should display the correct linker for entire project", "ngsArchive.pl -p 1",
@@ -282,6 +299,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
 	public void testLinkerFunctionalityForSamples() {
+		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 
 		// Select some samples

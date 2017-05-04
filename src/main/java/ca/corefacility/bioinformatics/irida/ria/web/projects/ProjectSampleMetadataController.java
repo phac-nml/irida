@@ -38,6 +38,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.MetadataImportFileTypeNotSupportedError;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
@@ -61,14 +62,16 @@ public class ProjectSampleMetadataController {
 	private final ProjectControllerUtils projectControllerUtils;
 	private final ProjectService projectService;
 	private final SampleService sampleService;
+	private final MetadataTemplateService metadataTemplateService;
 
 	@Autowired
 	public ProjectSampleMetadataController(MessageSource messageSource, ProjectControllerUtils projectControllerUtils,
-			ProjectService projectService, SampleService sampleService) {
+			ProjectService projectService, SampleService sampleService, MetadataTemplateService metadataTemplateService) {
 		this.messageSource = messageSource;
 		this.projectControllerUtils = projectControllerUtils;
 		this.projectService = projectService;
 		this.sampleService = sampleService;
+		this.metadataTemplateService = metadataTemplateService;
 	}
 
 	/**
@@ -309,11 +312,17 @@ public class ProjectSampleMetadataController {
 					Long id = Long.valueOf(row.get("identifier"));
 					Sample sample = sampleService.read(id);
 
-					Map<String, MetadataEntry> newData = new HashMap<>();
+					Map<MetadataTemplateField, MetadataEntry> newData = new HashMap<>();
 
 					// Need to overwrite duplicate keys
 					for (Entry<String, String> entry : row.entrySet()) {
-						newData.put(entry.getKey(), new MetadataEntry(entry.getValue(), "text"));
+						MetadataTemplateField key = metadataTemplateService.readMetadataFieldByLabel(entry.getKey());
+						
+						if(key == null){
+							key = metadataTemplateService.saveMetadataField(new MetadataTemplateField(entry.getKey(), "text"));
+						}
+						
+						newData.put(key, new MetadataEntry(entry.getValue(), "text"));
 					}
 
 					sample.mergeMetadata(newData);
