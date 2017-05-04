@@ -1,14 +1,11 @@
 package ca.corefacility.bioinformatics.irida.model.sample;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -33,7 +30,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.google.common.collect.Sets;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
@@ -144,7 +141,7 @@ public class Sample extends IridaResourceSupport
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@MapKeyColumn(name = "metadata_KEY")
-	private Map<String, MetadataEntry> metadata;
+	private Map<MetadataTemplateField, MetadataEntry> metadata;
 
 	public Sample() {
 		createdDate = new Date();
@@ -317,7 +314,8 @@ public class Sample extends IridaResourceSupport
 		this.remoteStatus = status;
 	}
 
-	public Map<String, MetadataEntry> getMetadata() {
+	@JsonIgnore
+	public Map<MetadataTemplateField, MetadataEntry> getMetadata() {
 		return metadata;
 	}
 
@@ -329,25 +327,8 @@ public class Sample extends IridaResourceSupport
 	 * @param inputMetadata
 	 *            the collection of {@link MetadataEntry}s
 	 */
-	public void setMetadata(Map<String, MetadataEntry> inputMetadata) {
-		// checking for duplicate keys ignoring case
-
-		// reducing to lower case
-		List<String> smalls = inputMetadata.keySet().stream().map(String::toLowerCase).collect(Collectors.toList());
-
-		// getting unique keys
-		Set<String> unique = Sets.newHashSet(smalls);
-
-		// looping unique set to check for collisions in the lower case names
-		Set<String> collisionSet = unique.stream().filter(k -> Collections.frequency(smalls, k) > 1)
-				.collect(Collectors.toSet());
-
-		// if there are collisions throw error
-		if (!collisionSet.isEmpty()) {
-			String collisions = collisionSet.stream().collect(Collectors.joining(", "));
-			throw new IllegalArgumentException("Duplicate metadata keys cannot be used: " + collisions);
-		}
-
+	@JsonIgnore
+	public void setMetadata(Map<MetadataTemplateField, MetadataEntry> inputMetadata) {
 		this.metadata = inputMetadata;
 	}
 	
@@ -358,24 +339,16 @@ public class Sample extends IridaResourceSupport
 	 * @param inputMetadata
 	 *            the metadata to merge into the sample
 	 */
-	public void mergeMetadata(Map<String, MetadataEntry> inputMetadata) {
-		// reducing existing to lower case for comparison
-		Map<String, MetadataEntry> smalls = new HashMap<>();
-
-		metadata.keySet().forEach(k -> {
-			String lowerCaseKey = k.toLowerCase();
-			smalls.put(lowerCaseKey, metadata.get(k));
-		});
-
+	public void mergeMetadata(Map<MetadataTemplateField, MetadataEntry> inputMetadata) {
 		// loop through entry set and see if it already exists
-		for (Entry<String, MetadataEntry> entry : inputMetadata.entrySet()) {
+		for (Entry<MetadataTemplateField, MetadataEntry> entry : inputMetadata.entrySet()) {
 
 			// if the value isn't empty
 			if (!entry.getValue().getValue().isEmpty()) {
 
 				// if the key is found, replace the entry
-				if (smalls.containsKey(entry.getKey().toLowerCase())) {
-					MetadataEntry metadataEntry = smalls.get(entry.getKey().toLowerCase());
+				if (metadata.containsKey(entry.getKey())) {
+					MetadataEntry metadataEntry = metadata.get(entry.getKey());
 					metadataEntry.setValue(entry.getValue().getValue());
 				} else {
 					// otherwise add the new entry

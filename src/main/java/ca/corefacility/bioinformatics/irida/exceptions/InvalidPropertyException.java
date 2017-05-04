@@ -24,6 +24,11 @@ public class InvalidPropertyException extends RuntimeException {
         this.affectedClass = affectedClass;
     }
 	
+	public InvalidPropertyException(String message,Class<? extends Object> affectedClass, Throwable cause) {
+        super(message, cause);
+        this.affectedClass = affectedClass;
+    }
+	
 	public InvalidPropertyException(String message) {
         super(message);
     }
