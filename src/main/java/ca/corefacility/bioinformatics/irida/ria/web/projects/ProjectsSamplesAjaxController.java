@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.ProjectSamplesDatatableUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DatatablesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.ProjectSampleModel;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -39,16 +41,18 @@ public class ProjectsSamplesAjaxController {
 	public DatatablesResponse getSamplesForProject(@PathVariable Long projectId,
 			@DatatablesRequest DatatablesParams datatablesParams) {
 		Project project = projectService.read(projectId);
-		List projects = ImmutableList.of(project);
+		List<Project> projects = ImmutableList.of(project);
+		List<String> sampleNames = ImmutableList.of();
 
-		String sortColumn = "sample." + datatablesParams.getSortColumn();
+		ProjectSamplesDatatableUtils utils = new ProjectSamplesDatatableUtils(datatablesParams, datatablesParams.getSortColumn(), null, null);
+		Sort sort = new Sort(utils.getSortDirection(), utils.getSortProperty());
 		final Page<ProjectSampleJoin> page = sampleService
-				.getFilteredSamplesForProjects(projects, ImmutableList.of(), null, datatablesParams.getSearchValue(),
+				.getFilteredSamplesForProjects(projects, sampleNames, null, datatablesParams.getSearchValue(),
 						null, null, null, datatablesParams.getCurrentPage(), datatablesParams.getLength(),
-						datatablesParams.getSortDirection(), sortColumn);
+						sort);
 
 		// Create a more usable Map of the sample data.
-		List<Object> data = page.getContent().stream().map(j -> buildProjectSampleModel(j))
+		List<Object> data = page.getContent().stream().map(this::buildProjectSampleModel)
 				.collect(Collectors.toList());
 		return new DatatablesResponse(datatablesParams, page, data);
 	}
