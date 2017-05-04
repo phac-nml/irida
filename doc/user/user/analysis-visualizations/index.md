@@ -23,5 +23,22 @@ To get to the advanced visualization page, there is a button in the left sidebar
 
 ![Link to advanced analysis on analysis results page](images/viz_link.png)
 
+#### Using Sample Metadata Field Templates
 
+[Sample Metadata Templates](../sample-metadata-templates/) can be used to update which metadata fields are displayed in the visualization.  When the page is loaded the default template is presented, all metadata fields are shown.  A different template can be selected from the template selection as demonstrated below.  This will update the view with the desired metadata fields in the proper order.
 
+![Demonstration of applying Sample Metadata Templates to the visualization](images/template_selection.gif)
+
+#### Toggling Sample Metadata Fields
+
+Individual Metadata Fields can be displayed or hidden by clicking `Toggle Metadata` button, which will open a side panel displaying the toggles for all the fields.  Toggling a field will instantly update the diagram.
+
+![Toggle metadata fields](images/toggle_metadata.gif)
+
+#### Export to SVG
+
+To export a copy of the visualization into SVG format, simply click on the `Export SVG` button in the upper right.
+
+![Export SVG](images/export_svg.png)
+
+This svg file can be opened in most external imaging software (except Adobe Illustrator for Mac).
