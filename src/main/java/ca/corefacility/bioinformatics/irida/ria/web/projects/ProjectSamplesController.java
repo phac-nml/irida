@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.format.Formatter;
 import org.springframework.format.datetime.DateFormatter;
@@ -413,9 +414,10 @@ public class ProjectSamplesController {
 		// Convert the criterias into a more usable format.
 		ProjectSamplesDatatableUtils utils = new ProjectSamplesDatatableUtils(params, name, minDate, endDate);
 
+		Sort sort = new Sort(utils.getSortDirection(), utils.getSortProperty());
+
 		final Page<ProjectSampleJoin> page = sampleService.getFilteredSamplesForProjects(projects, sampleNames, name, utils.getSearch(), organism,
-				utils.getMinDate(), utils.getEndDate(), utils.getCurrentPage(), utils.getPageSize(),
-				utils.getSortDirection(), utils.getSortProperty());
+				utils.getMinDate(), utils.getEndDate(), utils.getCurrentPage(), utils.getPageSize(), sort);
 
 		// Create a more usable Map of the sample data.
 		List<Object> models = page.getContent().stream().map(j -> buildProjectSampleModel(j))
@@ -475,10 +477,11 @@ public class ProjectSamplesController {
 			lastDate = new Date(Long.parseLong(endDate));
 		}
 
+		Sort sort = new Sort(Direction.ASC, "id");
 		final Page<ProjectSampleJoin> page = sampleService
 				.getFilteredSamplesForProjects(projects, sampleNames, name,
 						search, organism, firstDate, lastDate, 0, Integer.MAX_VALUE,
-						Direction.ASC, "id");
+						sort);
 
 		// Converting everything to a string for consumption by the UI.
 		Map<String, List<String>> result = new HashMap<>();
@@ -949,9 +952,10 @@ public class ProjectSamplesController {
 
 		ProjectSamplesDatatableUtils utils = new ProjectSamplesDatatableUtils(params, name, minDate, endDate);
 
+		Sort sort = new Sort(utils.getSortDirection(), utils.getSortProperty());
 		final Page<ProjectSampleJoin> page = sampleService.getFilteredSamplesForProjects(projects, sampleNames, name, utils.getSearch(),
 				organism, utils.getMinDate(), utils.getEndDate(), 0, Integer.MAX_VALUE,
-				utils.getSortDirection(), utils.getSortProperty());
+				sort);
 
 		if (page != null) {
 			ProjectSamplesTableExport tableExport = new ProjectSamplesTableExport(type, project.getName() + "_samples", messageSource, locale);
