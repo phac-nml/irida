@@ -14,14 +14,14 @@ Samples metadata templates can be created, modified, or deleted within project s
 
 ### Creating a metadata template
 
-To create a metadata template, click on the`Create New TEmplate` link in the top right corner of the page.
+To create a metadata template, click on the`Create New Template` link in the top right corner of the page.
 
 ![Create template link](images/create_template_link.png)
 
 Every template required 2 items:
 
 1. Template name.
-    - Names must be at least 5 characters long.
+    - Name must be at least 5 characters long.
     - Name cannot already be used as a template name within the current project.
 1. At least one metadata field.
 

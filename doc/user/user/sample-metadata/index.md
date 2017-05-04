@@ -96,8 +96,8 @@ A warning is displayed if the name given for the template is already used in the
 
 ![Save Template Dialog name already used](images/linelist_save_name_already_used.png)
 
-After a unique name with more than 5 letters is given the `Save` button will become enabled.  Clicking it will save the template to the project.
+After a unique name with more than 5 letters is provided the `Save` button will become enabled.  Clicking it will save the template to the project.
 
-![Save Template Full Vidwo](images/linelist_save_full.gif)
+![Save Template Full Video](images/linelist_save_full.gif)
 
-After a template is created the can me modified and deleted under [Project Settings > Sample Metadata Templates](../sample-metadata-templates)
+After a template is created it can me modified or deleted under [Project Settings > Sample Metadata Templates](../sample-metadata-templates)
