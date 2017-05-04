@@ -16,7 +16,7 @@ import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
  * A repository for storing Sample objects
  * 
  */
-public interface SampleRepository extends IridaJpaRepository<Sample, Long>, SampleRepositoryCustom{
+public interface SampleRepository extends IridaJpaRepository<Sample, Long> {
 	/**
 	 * Get a {@link Sample} with the given string sample identifier from a
 	 * specific project.

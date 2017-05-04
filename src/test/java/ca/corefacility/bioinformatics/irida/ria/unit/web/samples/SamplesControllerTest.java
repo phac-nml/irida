@@ -53,6 +53,7 @@ import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplesController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
@@ -73,6 +74,7 @@ public class SamplesControllerTest {
 	private UserService userService;
 	private ProjectService projectService;
 	private SequencingObjectService sequencingObjectService;
+	private MetadataTemplateService metadataTemplateService;
 	private MessageSource messageSource;
 
 	@Before
@@ -81,8 +83,9 @@ public class SamplesControllerTest {
 		userService = mock(UserService.class);
 		projectService = mock(ProjectService.class);
 		sequencingObjectService = mock(SequencingObjectService.class);
+		metadataTemplateService = mock(MetadataTemplateService.class);
 		messageSource = mock(MessageSource.class);
-		controller = new SamplesController(sampleService, userService, projectService, sequencingObjectService,
+		controller = new SamplesController(sampleService, userService, projectService, sequencingObjectService, metadataTemplateService,
 				messageSource);
 	}
 
