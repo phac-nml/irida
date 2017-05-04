@@ -415,14 +415,6 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	}
 	
 	/**
-	 * {@inheritDoc}
-	 */
-	@PreAuthorize("permitAll()")
-	public List<String> getMetadataKeys(String query) {
-		return sampleRepository.getSampleMetadataKeys(query);
-	}
-
-	/**
 	 * Verify that the given sort properties array is not null or empty. If it
 	 * is, give a default sort property.
 	 * 
