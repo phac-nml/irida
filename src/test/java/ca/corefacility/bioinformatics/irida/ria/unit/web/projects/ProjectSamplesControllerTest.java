@@ -21,12 +21,14 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -36,6 +38,9 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesParams;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.ProjectSampleModel;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectSamplesController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -295,30 +300,25 @@ public class ProjectSamplesControllerTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetAjaxProjectSampleModels() {
-//		Sample sample = TestDataFactory.constructSample();
-//		when(projectService.read(anyLong())).thenReturn(project);
-//		when(sampleService.getSamplesForProject(any(Project.class))).thenReturn(ImmutableList.of(
-//				new ProjectSampleJoin(project, sample)
-//		));
-//
-//		when(sampleService
-//				.getFilteredSamplesForProjects(any(List.class), any(List.class), any(String.class), any(String.class), any(String.class), any(Date.class), any(Date.class),
-//						any(Integer.class), any(Integer.class), any(
-								//Sort.class)))
-//				.thenReturn(TestDataFactory.getPageOfProjectSampleJoin());
-//		DatatablesCriterias criterias = mock(DatatablesCriterias.class);
-//
-//		ColumnDef columnDef = new ColumnDef();
-//		columnDef.setSortDirection(ColumnDef.SortDirection.ASC);
-//		columnDef.setName("sample.sampleName");
-//		when(criterias.getSortedColumnDefs()).thenReturn(ImmutableList.of(columnDef));
-//
-//		DatatablesResponse<ProjectSampleModel> response = controller
-//				.getProjectSamples(1L, criterias, ImmutableList.of(), ImmutableList.of(), null, null, null, null);
-//		List<ProjectSampleModel> data = response.getData();
-//		assertEquals("Has the correct number of samples", 1, data.size());
-//		ProjectSampleModel sampleData = data.get(0);
-//		assertEquals("Has the correct sample", "Joined Sample", sampleData.getSampleName());
+		Sample sample = TestDataFactory.constructSample();
+		when(projectService.read(anyLong())).thenReturn(project);
+		when(sampleService.getSamplesForProject(any(Project.class))).thenReturn(ImmutableList.of(
+				new ProjectSampleJoin(project, sample)
+		));
+
+		when(sampleService
+				.getFilteredSamplesForProjects(any(List.class), any(List.class), any(String.class), any(String.class), any(String.class), any(Date.class), any(Date.class),
+						any(Integer.class), any(Integer.class), any(
+								Sort.class)))
+				.thenReturn(TestDataFactory.getPageOfProjectSampleJoin());
+		DatatablesParams params = mock(DatatablesParams.class);
+		when(params.getSortColumn()).thenReturn("sampleName");
+		DatatablesResponse response = controller
+				.getProjectSamples(1L, params, ImmutableList.of(), ImmutableList.of(), null, null, null, null);
+		List<Object> data = response.getData();
+		assertEquals("Has the correct number of samples", 1, data.size());
+		ProjectSampleModel sampleData = (ProjectSampleModel) data.get(0);
+		assertEquals("Has the correct sample", "Joined Sample", sampleData.getSampleName());
 
 	}
 
