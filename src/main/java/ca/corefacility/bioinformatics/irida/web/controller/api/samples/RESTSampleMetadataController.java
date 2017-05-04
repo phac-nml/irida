@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
@@ -83,7 +83,7 @@ public class RESTSampleMetadataController {
 	}
 
 	private SampleMetadataResponse buildSampleMetadataResponse(final Sample s) {
-		SampleMetadataResponse response = new SampleMetadataResponse(s);
+		SampleMetadataResponse response = new SampleMetadataResponse(s.getMetadata());
 		response.add(linkTo(methodOn(RESTSampleMetadataController.class).getSampleMetadata(s.getId())).withSelfRel());
 		response.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(s.getId())).withRel(SAMPLE_REL));
 		return response;
@@ -93,15 +93,20 @@ public class RESTSampleMetadataController {
 	 * Response class so we can add links to sample metadata
 	 */
 	private class SampleMetadataResponse extends IridaResourceSupport {
-		Sample sample;
+		Map<MetadataTemplateField, MetadataEntry> metadata;
 
-		public SampleMetadataResponse(Sample sample) {
-			this.sample = sample;
+		public SampleMetadataResponse(Map<MetadataTemplateField, MetadataEntry> metadata) {
+			this.metadata = metadata;
 		}
 
-		@JsonAnyGetter
+		@JsonProperty
 		public Map<MetadataTemplateField, MetadataEntry> getMetadata() {
-			return sample.getMetadata();
+			return metadata;
+		}
+		
+		@JsonProperty
+		public void setMetadata(Map<MetadataTemplateField, MetadataEntry> metadata) {
+			this.metadata = metadata;
 		}
 	}
 }
