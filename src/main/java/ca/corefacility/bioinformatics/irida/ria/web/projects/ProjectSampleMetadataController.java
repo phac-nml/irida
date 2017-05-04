@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpSession;
 
@@ -109,7 +110,8 @@ public class ProjectSampleMetadataController {
 	@RequestMapping("/fields")
 	@ResponseBody
 	public List<String> getMetadataKeysForProject(@RequestParam String query) {
-		return sampleService.getMetadataKeys(query);
+		return metadataTemplateService.getAllMetadataFieldsByQueryString(query).stream()
+				.map(MetadataTemplateField::getLabel).collect(Collectors.toList());
 	}
 
 	/**
