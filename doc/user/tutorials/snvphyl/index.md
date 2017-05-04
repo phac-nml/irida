@@ -117,3 +117,8 @@ This will display the individual steps of this pipeline and the parameters used 
 [SNVPhyl Output Guide]: http://snvphyl.readthedocs.io/en/latest/user/output/
 [snvphyl-results.png]: images/snvphyl-results.png
 [snvphyl-provenance.png]: images/snvphyl-provenance.png
+
+Advanced SNVPHyl Visualizations
+===============================
+
+SNVPHyl Analyses can be combined with metadata from the sample the were run to get a more complete picture.  For more information see  [Advanced Visualizations]({{ site.baseurl }}/user/user/analysis-visualizations).
