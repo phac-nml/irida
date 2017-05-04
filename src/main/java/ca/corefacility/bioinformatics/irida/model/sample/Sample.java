@@ -171,7 +171,8 @@ public class Sample extends IridaResourceSupport
 					&& Objects.equals(collectionDate, sample.collectionDate)
 					&& Objects.equals(geographicLocationName, sample.geographicLocationName)
 					&& Objects.equals(isolationSource, sample.isolationSource)
-					&& Objects.equals(latitude, sample.latitude) && Objects.equals(longitude, sample.longitude);
+					&& Objects.equals(latitude, sample.latitude) && Objects.equals(longitude, sample.longitude)
+					&& Objects.equals(metadata, sample.metadata);
 		}
 
 		return false;
@@ -180,7 +181,7 @@ public class Sample extends IridaResourceSupport
 	@Override
 	public int hashCode() {
 		return Objects.hash(id, createdDate, modifiedDate, sampleName, description, organism, isolate, strain,
-				collectedBy, collectionDate, geographicLocationName, isolationSource, latitude, longitude);
+				collectedBy, collectionDate, geographicLocationName, isolationSource, latitude, longitude, metadata);
 	}
 
 	@Override
