@@ -85,3 +85,19 @@ Some columns might not have information that is useful in a particular analysis.
 Updating the column order and which metadata is visible can be saved as a **Template** so that the next time the line list is viewed the same settings can be applied quickly.  Click the `Save Template` button which will open a dialog window.  Add a name for the template (this cannot match the name of another template within the project).
 
 ![Save Template Dialog](images/linelist_save_template.png)
+
+The name given to the template should be descriptive and must be more than 5 letters.  The name must also not be used for another template within the project.
+
+A warning is displayed if the name given for the template is too short:
+
+![Save Template Dialog with too short of name](images/save_too_short.png)
+
+A warning is displayed if the name given for the template is already used in the project:
+
+![Save Template Dialog name already used](images/linelist_save_name_already_used.png)
+
+After a unique name with more than 5 letters is given the `Save` button will become enabled.  Clicking it will save the template to the project.
+
+![Save Template Full Vidwo](images/linelist_save_full.gif)
+
+After a template is created the can me modified and deleted under [Project Settings > Sample Metadata Templates](../sample-metadata-templates)
