@@ -14,6 +14,7 @@ Changes
 * [UI]: Moved "Members", "Groups", "Associated Projects", "Reference Files" to a new "Settings" tab in projects.
 * [UI]: Fixed bug where collaborators on a project had access to the sample tools. These buttons are now hidden from collaborators.
 * [UI]: Fixed bug with email subscriptions where users were emailed events from all their projects if they were subscribed to one.
+* [Developer]: Updated how project samples ajax controller handles datatables column sort functionality.
 
 0.14.0 to 0.15.0
 ----------------
