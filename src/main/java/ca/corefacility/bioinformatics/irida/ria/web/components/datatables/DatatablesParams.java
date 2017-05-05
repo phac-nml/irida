@@ -48,21 +48,6 @@ public class DatatablesParams {
 	}
 
 	private static Sort getColumnSortData(HttpServletRequest request, List<DatatablesColumnDef> columnDefs) {
-		//		// Will always have a 0 index since each table has a default sort.
-		//		Sort sort = generateSortFromRequest(request, 0, columnDefs.get(0).getColumnName());
-		//		// TODO: this is wrong, needs to be more like how columndefs are created.
-		//		for(int i = 1; i < columnDefs.size(); i++) {
-		//			DatatablesColumnDef columnDef = columnDefs.get(i);
-		//			if (columnDef.isOrderable()) {
-		//				Sort anotherSort = generateSortFromRequest(request, i, columnDef.getColumnName());
-		//				if (anotherSort != null) {
-		//					assert sort != null;
-		//					sort.and(anotherSort);
-		//				}
-		//			}
-		//		}
-		//		return sort;
-		// 0 is the placeholder because this MUST exist for a datatable.  All have at least 1 sort.
 		String orderColumnPattern = "order[0][column]";
 		String orderDirectionPattern = "order[0][dir]";
 		int columnNumber = Integer.parseInt(request.getParameter(orderColumnPattern));
