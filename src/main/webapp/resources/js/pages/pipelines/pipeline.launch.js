@@ -135,7 +135,8 @@
 						"Content-Type": "application/json"
 					}
 				})
-          .then(function(data) {
+          .then(function(response) {
+          	var data = response.data;
 						if (data.success) {
 							vm.success = true;
 						}
