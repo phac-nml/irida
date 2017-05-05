@@ -4,8 +4,6 @@ import java.util.Date;
 
 import org.springframework.data.domain.Sort;
 
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.ProjectSampleModel;
-
 import com.google.common.base.Strings;
 
 /**
@@ -16,8 +14,7 @@ import com.google.common.base.Strings;
 public class ProjectSamplesDatatableUtils extends DatatablesUtils {
 	final int currentPage;
 	final int pageSize;
-	final Sort.Direction sortDirection;
-	final String sortName;
+	final Sort sort;
 	final String search;
 	final String name;
 	final Date minDate;
@@ -30,8 +27,7 @@ public class ProjectSamplesDatatableUtils extends DatatablesUtils {
 		this.name = Strings.isNullOrEmpty(name) ? null : name;
 		this.minDate = minDate == null ? null : new Date(minDate);
 		this.endDate = endDate == null ? null : new Date(endDate);
-		this.sortDirection = params.getSortDirection();
-		this.sortName = ProjectSampleModel.generateSortName(params.getSortColumn());
+		this.sort = params.getSort();
 	}
 
 	public int getCurrentPage() {
@@ -42,12 +38,8 @@ public class ProjectSamplesDatatableUtils extends DatatablesUtils {
 		return pageSize;
 	}
 
-	public Sort.Direction getSortDirection() {
-		return sortDirection;
-	}
-
-	public String getSortProperty() {
-		return sortName;
+	public Sort getSort() {
+		return sort;
 	}
 
 	public String getSearch() {

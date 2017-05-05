@@ -63,21 +63,15 @@ import com.google.common.base.Strings;
 
 @Controller
 public class ProjectSamplesController {
-	// From configuration.properties
-	private @Value("${ngsarchive.linker.available}") Boolean LINKER_AVAILABLE;
-	private @Value("${ngsarchive.linker.script}") String LINKER_SCRIPT;
-
+	public static final String PROJECT_NAME_PROPERTY = "name";
 	// Sub Navigation Strings
 	private static final String ACTIVE_NAV = "activeNav";
 	private static final String ACTIVE_NAV_SAMPLES = "samples";
-
-	public static final String PROJECT_NAME_PROPERTY = "name";
-
-	// private static final String ACTIVE_NAV_ANALYSIS = "analysis";
-
 	// Page Names
 	private static final String PROJECTS_DIR = "projects/";
 	public static final String PROJECT_TEMPLATE_DIR = PROJECTS_DIR + "templates/";
+
+	// private static final String ACTIVE_NAV_ANALYSIS = "analysis";
 	public static final String LIST_PROJECTS_PAGE = PROJECTS_DIR + "projects";
 	public static final String PROJECT_MEMBERS_PAGE = PROJECTS_DIR + "project_members";
 	public static final String SPECIFIC_PROJECT_PAGE = PROJECTS_DIR + "project_details";
@@ -86,19 +80,20 @@ public class ProjectSamplesController {
 	public static final String PROJECT_METADATA_EDIT_PAGE = PROJECTS_DIR + "project_metadata_edit";
 	public static final String PROJECT_SAMPLES_PAGE = PROJECTS_DIR + "project_samples";
 	private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
-
 	// Services
 	private final ProjectService projectService;
 	private final SampleService sampleService;
 	private final ProjectControllerUtils projectControllerUtils;
 	private final SequencingObjectService sequencingObjectService;
-	private MessageSource messageSource;
-
 	/*
 	 * Converters
 	 */
 	Formatter<Date> dateFormatter;
 	FileSizeConverter fileSizeConverter;
+	// From configuration.properties
+	private @Value("${ngsarchive.linker.available}") Boolean LINKER_AVAILABLE;
+	private @Value("${ngsarchive.linker.script}") String LINKER_SCRIPT;
+	private MessageSource messageSource;
 
 	@Autowired
 	public ProjectSamplesController(ProjectService projectService, SampleService sampleService,
@@ -414,13 +409,13 @@ public class ProjectSamplesController {
 		// Convert the criterias into a more usable format.
 		ProjectSamplesDatatableUtils utils = new ProjectSamplesDatatableUtils(params, name, minDate, endDate);
 
-		Sort sort = new Sort(utils.getSortDirection(), utils.getSortProperty());
-
-		final Page<ProjectSampleJoin> page = sampleService.getFilteredSamplesForProjects(projects, sampleNames, name, utils.getSearch(), organism,
-				utils.getMinDate(), utils.getEndDate(), utils.getCurrentPage(), utils.getPageSize(), sort);
+		final Page<ProjectSampleJoin> page = sampleService
+				.getFilteredSamplesForProjects(projects, sampleNames, name, params.getSearchValue(), organism,
+						utils.getMinDate(), utils.getEndDate(), params.getCurrentPage(), params.getLength(),
+						params.getSort());
 
 		// Create a more usable Map of the sample data.
-		List<Object> models = page.getContent().stream().map(j -> buildProjectSampleModel(j))
+		List<Object> models = page.getContent().stream().map(this::buildProjectSampleModel)
 				.collect(Collectors.toList());
 		return new ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesResponse(params, page, models);
 	}
@@ -952,10 +947,8 @@ public class ProjectSamplesController {
 
 		ProjectSamplesDatatableUtils utils = new ProjectSamplesDatatableUtils(params, name, minDate, endDate);
 
-		Sort sort = new Sort(utils.getSortDirection(), utils.getSortProperty());
 		final Page<ProjectSampleJoin> page = sampleService.getFilteredSamplesForProjects(projects, sampleNames, name, utils.getSearch(),
-				organism, utils.getMinDate(), utils.getEndDate(), 0, Integer.MAX_VALUE,
-				sort);
+				organism, utils.getMinDate(), utils.getEndDate(), 0, Integer.MAX_VALUE, params.getSort());
 
 		if (page != null) {
 			ProjectSamplesTableExport tableExport = new ProjectSamplesTableExport(type, project.getName() + "_samples", messageSource, locale);

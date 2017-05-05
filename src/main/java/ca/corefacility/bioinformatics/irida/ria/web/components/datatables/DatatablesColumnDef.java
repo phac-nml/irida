@@ -17,12 +17,10 @@ public class DatatablesColumnDef {
 	private String searchTo;
 	private Sort.Direction sortDirection;
 
-	private DatatablesColumnDef(String name) {
+	private DatatablesColumnDef(String name, boolean searchable, boolean orderable) {
 		this.name = name;
-	}
-
-	public String getColumnName() {
-		return name;
+		this.searchable = searchable;
+		this.orderable = orderable;
 	}
 
 	public static DatatablesColumnDef createColumnDefinition(Integer column, HttpServletRequest request) {
@@ -31,8 +29,20 @@ public class DatatablesColumnDef {
 		if (Strings.isNullOrEmpty(name)) {
 			name = request.getParameter(prefix + "[data]");
 		}
-//		Boolean orderable = Boolean.valueOf(request.getParameter(prefix + "[orderable]"));
-//		Boolean searchable = Boolean.valueOf(request.getParameter(prefix + "[searchable]"));
-		return new DatatablesColumnDef(name);
+		boolean searchable = Boolean.parseBoolean(request.getParameter(prefix + "[searchable]"));
+		boolean orderable = Boolean.parseBoolean(request.getParameter(prefix + "[orderable]"));
+		return new DatatablesColumnDef(name, searchable, orderable);
+	}
+
+	public String getColumnName() {
+		return name;
+	}
+
+	public boolean isOrderable() {
+		return orderable;
+	}
+
+	public boolean isSearchable() {
+		return searchable;
 	}
 }

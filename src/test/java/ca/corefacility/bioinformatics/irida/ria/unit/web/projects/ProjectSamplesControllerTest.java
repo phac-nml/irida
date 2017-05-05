@@ -52,14 +52,13 @@ import com.google.common.collect.Lists;
 
 public class ProjectSamplesControllerTest {
 	public static final String PROJECT_ORGANISM = "E. coli";
+	public static final String FILE_PATH = "src/test/resources/files/test_file.fastq";
 	private static final String USER_NAME = "testme";
 	private static final User user = new User(USER_NAME, null, null, null, null, null);
 	private static final String PROJECT_NAME = "test_project";
 	private static final Long PROJECT_ID = 1L;
 	private static final Long PROJECT_MODIFIED_DATE = 1403723706L;
 	private static Project project = null;
-	public static final String FILE_PATH = "src/test/resources/files/test_file.fastq";
-
 	// Services
 	private ProjectService projectService;
 	private ProjectSamplesController controller;
@@ -312,7 +311,7 @@ public class ProjectSamplesControllerTest {
 								Sort.class)))
 				.thenReturn(TestDataFactory.getPageOfProjectSampleJoin());
 		DatatablesParams params = mock(DatatablesParams.class);
-		when(params.getSortColumn()).thenReturn("sampleName");
+		when(params.getSort()).thenReturn(new Sort(Direction.ASC, "sample.sampleName"));
 		DatatablesResponse response = controller
 				.getProjectSamples(1L, params, ImmutableList.of(), ImmutableList.of(), null, null, null, null);
 		List<Object> data = response.getData();
