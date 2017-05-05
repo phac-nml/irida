@@ -4,6 +4,13 @@ Upgrading
 This document summarizes the environmental changes that need to be made when
 upgrading IRIDA that cannot be automated.
 
+0.15.0 to 0.16.0
+----------------
+
+* This upgrade makes schema changes to the databases and cannot be parallel deployed.  Servlet container must be stopped before deploying the new `war` file.
+* A new pipeline (SISTR) has been added and requires installation of additional tools and dependencies in Galaxy.  Please see <http://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/sistr/>.
+* The **SPAdes** tool has been updated to <https://toolshed.g2.bx.psu.edu/view/nml/spades/35cb17bd8bf9>, please update this tool in Galaxy. See <http://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/assembly-annotation/> for more details on upgrading.
+
 0.14.0 to 0.15.0
 ----------------
 * A new version of SNVPhyl should be installed in Galaxy (version 1.0.1).  You must install the repository `suite_snvphyl_1_0_1` with revision `4841b7148c44` from the [IRIDA Main Toolshed](https://irida.corefacility.ca/galaxy-shed/view/nml/suite_snvphyl_1_0_1/4841b7148c44).  Please see <https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/phylogenomics/#irida-whole-genome-phylogenomics> for more information.

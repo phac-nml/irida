@@ -34,7 +34,6 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.thymeleaf.cache.StandardCacheManager;
 import org.thymeleaf.dialect.IDialect;
-import org.thymeleaf.extras.conditionalcomments.dialect.ConditionalCommentsDialect;
 import org.thymeleaf.extras.springsecurity3.dialect.SpringSecurityDialect;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
@@ -45,7 +44,6 @@ import ca.corefacility.bioinformatics.irida.config.services.WebEmailConfig;
 import ca.corefacility.bioinformatics.irida.ria.config.AnalyticsHandlerInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.BreadCrumbInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
-import ca.corefacility.bioinformatics.irida.ria.dialects.FontAwesomeDialect;
 
 import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesCriteriasMethodArgumentResolver;
 import com.github.dandelion.datatables.thymeleaf.dialect.DataTablesDialect;
@@ -53,6 +51,7 @@ import com.github.dandelion.thymeleaf.dialect.DandelionDialect;
 import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
+
 import nz.net.ultraq.thymeleaf.LayoutDialect;
 
 /**
@@ -224,11 +223,9 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 		Set<IDialect> dialects = new HashSet<>();
 		dialects.add(new SpringSecurityDialect());
 		dialects.add(new LayoutDialect());
-		dialects.add(new ConditionalCommentsDialect());
 		dialects.add(new DataAttributeDialect());
 		dialects.add(new DandelionDialect());
 		dialects.add(new DataTablesDialect());
-		dialects.add(new FontAwesomeDialect());
 		return dialects;
 	}
 

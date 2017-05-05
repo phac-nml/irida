@@ -4,7 +4,7 @@
   /**
    * Handles all AngularUI modal opening functionality
    * @param $uibModal
-   * @returns {{openMergeModal: openMergeModal, openAssociatedProjectsModal: openAssociatedProjectsModal}}
+   * @returns {object}
    */
   function modalService($uibModal) {
 
@@ -100,24 +100,6 @@
       }).result;
     }
 
-    /**
-     * Open the modal to display/hide associated projects
-     * @param currentlyDisplayed
-     * @returns {*}
-     */
-    function openAssociatedProjectsModal(currentlyDisplayed) {
-      return $uibModal.open({
-        templateUrl: "associated-projects.modal.html",
-        controllerAs: "associatedProjectsCtrl",
-        controller: "AssociatedProjectsModalController",
-        resolve: {
-          display: function () {
-            return currentlyDisplayed;
-          }
-        }
-      }).result;
-    }
-
     function openFilterModal() {
       var ids = page.ajaxParam.associated || [];
       ids.unshift(page.project.id);
@@ -131,13 +113,29 @@
 
     function openLinkerModal(ids) {
       var modal = $uibModal.open({
-        templateUrl: page.urls.samples.linker + "?" + $.param({projectId: page.project.id, ids: ids}),
+        templateUrl: 'linker.tmpl.html',
         openedClass: 'linker-modal',
         controllerAs: "lCtrl",
-        controller: ["$uibModalInstance", function ($uibModalInstance) {
-          var vm = this;
-          vm.close = $uibModalInstance.close;
-        }]
+        controller: ["$window", "$uibModalInstance", "ids", function($window, $uibModalInstance, ids) {
+          var cmd = page.linker;
+          if (typeof ids !== 'undefined' && ids.length > 0) {
+            // Need to find out if all the samples are selected.
+            var all = $window.oTable_samplesTable.page.info().recordsTotal === ids.length;
+            if (!all) {
+              let samples = ' -s '; // Start adding sampels
+              samples += ids.join(' -s ');
+              cmd += samples;
+            }
+          }
+          this.cmd = cmd;
+
+          this.close = $uibModalInstance.close;
+        }],
+        resolve: {
+          ids: function() {
+            return ids;
+          }
+        }
       });
 
       // Set up copy to clipboard functionality.
@@ -176,54 +174,8 @@
       openCopyModal              : openCopyModal,
       openRemoveModal            : openRemoveModal,
       openMergeModal             : openMergeModal,
-      openAssociatedProjectsModal: openAssociatedProjectsModal,
       openLinkerModal            : openLinkerModal,
       openGalaxyModal            : openGalaxyModal
-    };
-  }
-
-  /**
-   * Controller for handling interaction with the associated projects display modal
-   * @param $uibModalInstance - AngularUI modal instance
-   * @param associatedProjectsService
-   * @param display - Projects to display
-   * @constructor
-   */
-  function AssociatedProjectsModalCtrl($uibModalInstance, associatedProjectsService, display) {
-    var vm = this;
-    vm.projects = {};
-    vm.display = ng.copy(display);
-    vm.local = {};
-
-    // Get the local project
-    associatedProjectsService.getLocal().then(function (result) {
-      // Check to see if they are already displayed.
-      vm.projects.local = [];
-      result.data.forEach(function(item) {
-        var project = new Project(item);
-        project.selected = vm.display.local.indexOf(project.getId()) > -1;
-        vm.projects.local.push(project);
-      });
-    });
-
-    vm.rowClick = function($event) {
-      $event.stopPropagation();
-    };
-
-    vm.close = function () {
-      $uibModalInstance.dismiss();
-    };
-
-    vm.showProjects = function () {
-      // Just want the ids
-      vm.display.local = [];
-      vm.projects.local.forEach(function (project) {
-        if (project.selected) {
-          vm.display.local.push(project.getId());
-        }
-      });
-
-      $uibModalInstance.close(vm.display);
     };
   }
 
@@ -353,7 +305,6 @@
     .factory("modalService", ["$uibModal", modalService])
     .service("FilterStateService", ["$rootScope", FilterStateService])
     .directive("selectInput", selectInput)
-    .controller("AssociatedProjectsModalController", ["$uibModalInstance", "AssociatedProjectsService", "display", AssociatedProjectsModalCtrl])
     .controller("MergeController", ["$uibModalInstance", "samples", MergeModalController])
     .controller("FilterModalController", ["$uibModalInstance", "FilterStateService", FilterModalController])
   ;

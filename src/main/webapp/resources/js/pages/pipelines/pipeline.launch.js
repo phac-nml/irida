@@ -115,7 +115,7 @@
 					params['remotePaired'] = remotePaired;
 				}
 
-				if (_.keys(selectedParameters).length > 0) {
+				if (_.keys(selectedParameters).length > 0 && selectedParameters.id !== 'no_parameters') {
 					params['selectedParameters'] = selectedParameters;
 				}
 				params['name'] = name;
@@ -135,7 +135,8 @@
 						"Content-Type": "application/json"
 					}
 				})
-					.success(function (data) {
+          .then(function(response) {
+          	var data = response.data;
 						if (data.success) {
 							vm.success = true;
 						}
@@ -283,7 +284,7 @@
 				},
 				transformRequest: undefined,
 				data            : JSON.stringify(parametersToSave)
-			}).success(function (data) {
+      }).then(function(data) {
 				$uibModalInstance.dismiss();
 				// on success, we can re-use the selected parameters in
 				// this controller; update the id and label, then append
@@ -318,17 +319,26 @@
 	function ParameterService() {
 		var svc = this;
 
+		// Check to see if there are any parameters, if not put a default
+		if(page.pipeline.parameters.length === 0) {
+			page.pipeline.parameters.push({
+				id: "no_parameters",
+				label: "",
+				parameters: []
+			});
+    }
+
 		/**
 		 * Duplicated copy of the original set of parameters on the page
 		 * so that we can quickly roll back to default values for any
 		 * parameter set.
 		 */
-		var originalSettings = page.pipeline.parameters.map(function (params) {
-			return {
-				currentSettings: ng.copy(params),
-				defaultSettings: ng.copy(params)
-			}
-		});
+    var originalSettings = page.pipeline.parameters.map(function (params) {
+      return {
+        currentSettings: ng.copy(params),
+        defaultSettings: ng.copy(params)
+      }
+    });
 
 		var selectedParameters = originalSettings[0];
 
@@ -385,9 +395,9 @@
 		svc.resetCurrentSelection = function () {
 			selectedParameters.currentSettings = ng.copy(selectedParameters.defaultSettings);
 		}
-	};
+  }
 
-	function FileUploadCtrl($rootScope, Upload) {
+  function FileUploadCtrl($rootScope, Upload) {
 	    var vm = this;
 	    
 	    vm.referenceUploadStarted = false;
@@ -400,7 +410,7 @@
 		    		file: files[0]
 		    	}).progress(function (evt) {
 		    		vm.progress = parseInt(100.0 * evt.loaded / evt.total);
-		    	}).success(function(response) {
+          }).then(function(response) {
 		    		vm.uploaded = {
 		        			id: response["uploaded-file-id"],
 		        			name: response["uploaded-file-name"]
@@ -414,9 +424,9 @@
 		    	});
 	    	}
 	    };
-	  };
+  }
 
-	ng.module('irida.pipelines', ['irida.cart', 'ngFileUpload'])
+  ng.module('irida.pipelines', ['irida.cart', 'ngFileUpload'])
 		.controller('PipelineController', ['$rootScope', '$http', 'CartService', 'notifications', 'ParameterService', PipelineController])
 		.controller('ParameterModalController', ["$uibModal", ParameterModalController])
 		.controller('ParameterController', ['$rootScope', '$http', '$uibModalInstance', 'ParameterService', ParameterController])

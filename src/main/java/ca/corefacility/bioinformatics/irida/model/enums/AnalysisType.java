@@ -16,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisAssemblyAnnotation;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisAssemblyAnnotationCollection;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisSISTRTyping;
 
 /**
  * Defines a specific type of an analysis.
@@ -31,6 +32,12 @@ public enum AnalysisType {
 	@XmlEnumValue("phylogenomics")
 	PHYLOGENOMICS("phylogenomics", AnalysisPhylogenomicsPipeline.class),
 
+	/**
+	 * SISTR Typing.
+	 */
+	@XmlEnumValue("sistr-typing")
+	SISTR_TYPING("sistr-typing", AnalysisSISTRTyping.class),
+	
 	/**
 	 * An assembly and annotation analysis type on a single sample.
 	 */

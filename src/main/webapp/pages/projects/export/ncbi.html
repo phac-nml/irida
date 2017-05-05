@@ -44,7 +44,7 @@
             <div class="input-group" ng-controller="DatePickerControl as picker">
               <input type="text" id="release_date" class="form-control" datepicker-popup="yyyy-MM-dd" ng-model="picker.dt" is-open="picker.opened" ng-required="true" close-text="Close" required="required" />
               <span class="input-group-btn">
-              <button type="button" class="btn btn-default" ng-click="picker.open($event)"><fa:icon type="date" /></button>
+              <button type="button" class="btn btn-default" ng-click="picker.open($event)"><i class="fa fa-calendar" aria-hidden="true"></i></button>
             </span>
             </div>
             <p class="help-block" th:text="#{project.export.release_date.description}">_When data will be released_</p>
@@ -62,37 +62,37 @@
               <th>
                 <label th:text="#{project.export.biosample.title}">_BioSample ID_</label>
                 <a data-toggle="modal" data-target="#bioSampleHelp"
-                  href="#bioSampleHelp"><fa:icon type="question-circle"/></a>
+                  href="#bioSampleHelp"><i class="fa fa-question-circle fa-fw" aria-hidden="true"></i></a>
               </th>
               <th>
                 <label th:text="#{project.export.library_name.title}">_Library Name_</label>
                 <a data-toggle="modal" data-target="#libraryNameHelp"
-                  href="#libraryNameHelp"><fa:icon type="question-circle"/></a>
+                  href="#libraryNameHelp"><i class="fa fa-question-circle fa-fw" aria-hidden="true"></i></a>
               </th>
               <th>
                 <label th:text="#{project.export.library_strategy.title}">_Library Strategy_</label>
                 <a data-toggle="modal" data-target="#strategyHelp"
-                  href="#strategyHelp"><fa:icon type="question-circle"/></a>
+                  href="#strategyHelp"><i class="fa fa-question-circle fa-fw" aria-hidden="true"></i></a>
               </th>
               <th>
                 <label th:text="#{project.export.library_source.title}">_Library Source_</label>
                 <a data-toggle="modal" data-target="#sourceHelp"
-                  href="#sourceHelp"><fa:icon type="question-circle"/></a>
+                  href="#sourceHelp"><i class="fa fa-question-circle fa-fw" aria-hidden="true"></i></a>
               </th>
               <th>
                 <label th:text="#{project.export.library_construction_protocol.title}">_Library Construction Protocol_</label>
                 <a data-toggle="modal" data-target="#constructionHelp"
-                  href="#constructionHelp"><fa:icon type="question-circle"/></a>
+                  href="#constructionHelp"><i class="fa fa-question-circle fa-fw" aria-hidden="true"></i></a>
               </th>
               <th>
                 <label th:text="#{project.export.instrument_model.title}">_Instrument Model_</label>
                 <a data-toggle="modal" data-target="#modelHelp"
-                  href="#modelHelp"><fa:icon type="question-circle"/></a>
+                  href="#modelHelp"><i class="fa fa-question-circle fa-fw" aria-hidden="true"></i></a>
               </th>
               <th>
                 <label th:text="#{project.export.library_selection.title}">_Library Selection_</label>
                 <a data-toggle="modal" data-target="#selectionHelp"
-                  href="#selectionHelp"><fa:icon type="question-circle"/></a>
+                  href="#selectionHelp"><i class="fa fa-question-circle fa-fw" aria-hidden="true"></i></a>
               </th>
             </thead>
             <tbody>
@@ -101,7 +101,7 @@
                 <tr class="sample-container" th:attr="data-sample=${sample.id}" th:if="${hasPaired or hasSingles}">
                   <td>
                     <a class="sample-name" href="#" th:href="@{/projects/{id}/samples/{sid}(id=${project.getId()},sid=${sample.id})}" th:text="${sample.name}"></a>
-                    <button type="button" data:uib-tooltip="#{form.btn.remove}" class="btn btn-danger btn-xs remove-button"><fa:icon type="remove"/></button>
+                    <button type="button" data:uib-tooltip="#{form.btn.remove}" class="btn btn-danger btn-xs remove-button"><i class="fa fa-times fa-fw" aria-hidden="true"></i></button>
                   </td>
                   <td>
                     <input class="form-control bioSample" name="bioSample" required="required" />
@@ -116,7 +116,7 @@
                       </select>
                       <div class="input-group-addon">
                         <a class="apply-all" data-type="library_strategy" href="#">
-                          <fa:icon type="apply-all"/>
+                          <i class="fa fa-sort fa-fw" aria-hidden="true"></i>
                         </a>
                       </div>
                     </div>
@@ -128,7 +128,7 @@
                       </select>
                       <div class="input-group-addon">
                         <a class="apply-all" data-type="library_source" href="#">
-                          <fa:icon type="apply-all"/>
+                          <i class="fa fa-sort fa-fw" aria-hidden="true"></i>
                         </a>
                       </div>
                     </div>
@@ -138,7 +138,7 @@
                       <input class="form-control library_construction_protocol" name="library_construction_protocol" required="required" />
                       <div class="input-group-addon">
                         <a class="apply-all" data-type="library_construction_protocol" href="#">
-                          <fa:icon type="apply-all"/>
+                          <i class="fa fa-sort fa-fw" aria-hidden="true"></i>
                         </a>
                       </div>
                     </div>
@@ -150,7 +150,7 @@
                       </select>
                       <div class="input-group-addon">
                         <a class="apply-all" data-type="instrument_model" href="#">
-                          <fa:icon type="apply-all"/>
+                          <i class="fa fa-sort fa-fw" aria-hidden="true"></i>
                         </a>
                       </div>
                     </div>
@@ -162,7 +162,7 @@
                       </select>
                       <div class="input-group-addon">
                         <a class="apply-all" data-type="library_selection" href="#">
-                          <fa:icon type="apply-all"/>
+                          <i class="fa fa-sort fa-fw" aria-hidden="true"></i>
                         </a>
                       </div>
                     </div>

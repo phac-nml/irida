@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.common.collect.ImmutableMap;
-
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
@@ -27,6 +25,8 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
+import com.google.common.collect.ImmutableMap;
+
 @Controller
 @RequestMapping("/projects/{projectId}/settings")
 public class ProjectSettingsController {
@@ -35,6 +35,8 @@ public class ProjectSettingsController {
 	private final ProjectService projectService;
 	private final ProjectRemoteService projectRemoteService;
 	private final UserService userService;
+
+	public static final String ACTIVE_NAV_SETTINGS = "settings";
 
 	@Autowired
 	public ProjectSettingsController(MessageSource messageSource, ProjectControllerUtils projectControllerUtils,
@@ -47,7 +49,7 @@ public class ProjectSettingsController {
 	}
 
 	/**
-	 * Request for a {@link Project} settings page
+	 * Request for a {@link Project} basic settings page
 	 *
 	 * @param projectId
 	 *            the ID of the {@link Project} to read
@@ -55,17 +57,43 @@ public class ProjectSettingsController {
 	 *            Model for the view
 	 * @param principal
 	 *            Logged in user
+	 *
 	 * @return name of the project settings page
 	 */
 	@RequestMapping("")
-	@PreAuthorize("hasPermission(#projectId, 'canManageLocalProjectSettings')")
-	public String getProjectSettingsPage(@PathVariable Long projectId, final Model model, final Principal principal) {
+	public String getProjectSettingsBasicPage(@PathVariable Long projectId, final Model model,
+			final Principal principal) {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
+		model.addAttribute(ProjectsController.ACTIVE_NAV, ACTIVE_NAV_SETTINGS);
+		model.addAttribute("page", "basic");
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+		return "projects/settings/pages/basic";
+	}
+
+	/**
+	 * Request for a {@link Project} remote settings page
+	 *
+	 * @param projectId
+	 *            the ID of the {@link Project} to read
+	 * @param model
+	 *            Model for the view
+	 * @param principal
+	 *            Logged in user
+	 *
+	 * @return name of the project remote settings page
+	 */
+	@RequestMapping("/remote")
+	@PreAuthorize("hasPermission(#projectId, 'canManageLocalProjectSettings')")
+	public String getProjectSettingsRemotePage(@PathVariable Long projectId, final Model model,
+			final Principal principal) {
+		Project project = projectService.read(projectId);
+		model.addAttribute("project", project);
+		model.addAttribute(ProjectsController.ACTIVE_NAV, ACTIVE_NAV_SETTINGS);
+		model.addAttribute("page", "remote");
 		model.addAttribute("frequencies", ProjectSyncFrequency.values());
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute("activeNave", "settings");
-		return "projects/project_settings";
+		return "projects/settings/pages/remote";
 	}
 
 	/**
@@ -84,6 +112,7 @@ public class ProjectSettingsController {
 	 *            The current logged in user
 	 * @param locale
 	 *            user's locale
+	 *
 	 * @return result message if successful
 	 */
 	@RequestMapping(value = "/sync", method = RequestMethod.POST)
@@ -120,6 +149,7 @@ public class ProjectSettingsController {
 				User user = userService.getUserByUsername(principal.getName());
 				remoteStatus.setReadBy(user);
 				updates.put("remoteStatus", remoteStatus);
+
 				message = messageSource.getMessage("project.settings.notifications.sync.userchange", new Object[] {},
 						locale);
 			} catch (Exception ex) {
@@ -149,6 +179,7 @@ public class ProjectSettingsController {
 	 *            Whether or not to do automated assemblies
 	 * @param model
 	 *            Model for the view
+	 *
 	 * @return success message if successful
 	 */
 	@RequestMapping(value = "/assemble", method = RequestMethod.POST)
@@ -173,10 +204,44 @@ public class ProjectSettingsController {
 
 		return ImmutableMap.of("result", message);
 	}
+	
+	/**
+	 * Update the project sistr setting for the {@link Project}
+	 *
+	 * @param projectId
+	 *            the ID of a {@link Project}
+	 * @param sistr
+	 *            Whether or not to do automated sistr typing.
+	 * @param model
+	 *            Model for the view
+	 * @return success message if successful
+	 */
+	@RequestMapping(value = "/sistr", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, String> updateSistrSetting(@PathVariable Long projectId, @RequestParam boolean sistr,
+			final Model model, Locale locale) {
+		Project read = projectService.read(projectId);
+
+		Map<String, Object> updates = new HashMap<>();
+		updates.put("sistrTypingUploads", sistr);
+
+		projectService.updateProjectSettings(read, updates);
+
+		String message = null;
+		if (sistr) {
+			message = messageSource.getMessage("project.settings.notifications.sistr.enabled",
+					new Object[] { read.getLabel() }, locale);
+		} else {
+			message = messageSource.getMessage("project.settings.notifications.sistr.disabled",
+					new Object[] { read.getLabel() }, locale);
+		}
+
+		return ImmutableMap.of("result", message);
+	}
 
 	/**
 	 * Update the coverage QC setting of a {@link Project}
-	 * 
+	 *
 	 * @param projectId
 	 *            the ID of a {@link Project}
 	 * @param genomeSize
@@ -185,7 +250,7 @@ public class ProjectSettingsController {
 	 *            coverage needed for qc to pass
 	 * @param locale
 	 *            locale of the user
-	 * 
+	 *
 	 * @return success message if successful
 	 */
 	@RequestMapping(value = "/coverage", method = RequestMethod.POST)

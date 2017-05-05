@@ -4,7 +4,7 @@
 	<groupId>ca.corefacility.bioinformatics</groupId>
 	<artifactId>irida</artifactId>
 	<packaging>war</packaging>
-	<version>0.15.1</version>
+	<version>0.16.0-SNAPSHOT</version>
 	<name>irida</name>
 	<url>http://www.irida.ca</url>
 
@@ -330,11 +330,6 @@
 			<groupId>nz.net.ultraq.thymeleaf</groupId>
 			<artifactId>thymeleaf-layout-dialect</artifactId>
 			<version>${thymeleaf-layout-dialect.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.thymeleaf.extras</groupId>
-			<artifactId>thymeleaf-extras-conditionalcomments</artifactId>
-			<version>${thymeleaf.extras.conditionalcomments.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.dandelion</groupId>
@@ -1058,7 +1053,6 @@
 		<selenium-chrome-driver.version>2.48.2</selenium-chrome-driver.version>
 		<attoparser.version>1.3</attoparser.version>
 		<thymeleaf.extras.springsecurity3.version>2.1.1.RELEASE</thymeleaf.extras.springsecurity3.version>
-		<thymeleaf.extras.conditionalcomments.version>2.1.1.RELEASE</thymeleaf.extras.conditionalcomments.version>
 		<javax.interceptor-api.version>3.1</javax.interceptor-api.version>
 		<powermock.version>1.6.2</powermock.version>
 		<mockftpserver.version>2.6</mockftpserver.version>

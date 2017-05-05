@@ -209,6 +209,10 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("download-btn")));
 	}
 
+	public boolean isSampleToolsAvailable() {
+		return driver.findElements(By.id("sample-tools")).size() > 0;
+	}
+
 	public boolean isDownloadBtnEnabled() {
 		return !downloadBtn.getAttribute("class").contains("disabled");
 	}
@@ -308,7 +312,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		newMergeNameInput.sendKeys(newName);
 		// This wait is for 350 ms because there is a debounce of 300 ms on the input field in which
 		// time the AngularJS model on the input does not update - prevents flickering of input error warnings.
-		waitForTime(350);
+		waitForTime(400);
 		mergeBtnOK.click();
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("merge-modal")));
 	}
