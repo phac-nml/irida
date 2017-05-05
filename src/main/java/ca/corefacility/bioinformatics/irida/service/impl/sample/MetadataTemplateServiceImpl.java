@@ -1,6 +1,8 @@
 package ca.corefacility.bioinformatics.irida.service.impl.sample;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.transaction.Transactional;
 import javax.validation.Validator;
@@ -13,6 +15,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectMetadataTemplateJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataFieldRepository;
@@ -109,5 +112,27 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 	@PreAuthorize("permitAll()")
 	public List<MetadataTemplateField> getAllMetadataFieldsByQueryString(String query) {
 		return fieldRepository.findAllMetadataFieldsByLabelQuery(query);
+	}
+
+	@Override
+	@Transactional
+	@PreAuthorize("permitAll()")
+	public Map<MetadataTemplateField, MetadataEntry> getMetadataMap(Map<String, MetadataEntry> metadataMap) {
+		Map<MetadataTemplateField, MetadataEntry> metadata = new HashMap<>();
+		metadataMap.entrySet().forEach(e -> {
+
+			// get the metadatatemplatefield if it exists
+			MetadataTemplateField field = readMetadataFieldByLabel(e.getKey());
+
+			// if not, create a new one
+			if (field == null) {
+				field = new MetadataTemplateField(e.getKey(), "text");
+				field = saveMetadataField(field);
+			}
+
+			metadata.put(field, e.getValue());
+		});
+
+		return metadata;
 	}
 }

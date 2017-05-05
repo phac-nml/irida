@@ -19,6 +19,7 @@ import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
@@ -44,6 +45,7 @@ public class SampleRemoteServiceImpl extends RemoteServiceImpl<Sample> implement
 
 	public static final String FILE_SAMPLE_REL = "sample";
 
+	private final SampleRemoteRepository sampleRemoteRepository;
 	private final SequenceFilePairRemoteRepository pairRemoteRepository;
 	private final SingleEndSequenceFileRemoteRepository unpairedRemoteRepository;
 
@@ -52,6 +54,7 @@ public class SampleRemoteServiceImpl extends RemoteServiceImpl<Sample> implement
 			SequenceFilePairRemoteRepository pairRemoteRepository,
 			SingleEndSequenceFileRemoteRepository unpairedRemoteRepository, RemoteAPIRepository apiRepository) {
 		super(sampleRemoteRepository, apiRepository);
+		this.sampleRemoteRepository = sampleRemoteRepository;
 		this.pairRemoteRepository = pairRemoteRepository;
 		this.unpairedRemoteRepository = unpairedRemoteRepository;
 	}
@@ -103,8 +106,8 @@ public class SampleRemoteServiceImpl extends RemoteServiceImpl<Sample> implement
 
 			if (map.containsKey(sample)) {
 				IridaSequenceFilePair original = map.get(sample);
-				throw new DuplicateSampleException("Files " + file + ", " + original + " have the same sample "
-						+ sample);
+				throw new DuplicateSampleException(
+						"Files " + file + ", " + original + " have the same sample " + sample);
 			} else {
 				map.put(sample, file);
 			}
@@ -113,6 +116,9 @@ public class SampleRemoteServiceImpl extends RemoteServiceImpl<Sample> implement
 		return map;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Map<Sample, IridaSingleEndSequenceFile> getUniqueSamplesForSingleEndSequenceFileSnapshots(
 			Collection<SingleEndSequenceFileSnapshot> files) {
@@ -128,14 +134,21 @@ public class SampleRemoteServiceImpl extends RemoteServiceImpl<Sample> implement
 
 			if (map.containsKey(sample)) {
 				IridaSingleEndSequenceFile original = map.get(sample);
-				throw new DuplicateSampleException("Files " + file + ", " + original + " have the same sample "
-						+ sample);
+				throw new DuplicateSampleException(
+						"Files " + file + ", " + original + " have the same sample " + sample);
 			} else {
 				map.put(sample, file);
 			}
 		}
 
 		return map;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public Map<String, MetadataEntry> getSampleMetadata(Sample sample) {
+		return sampleRemoteRepository.getSampleMetadata(sample);
 	}
 
 }
