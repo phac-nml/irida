@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -94,7 +95,13 @@ public class ProjectLineListController {
 			Sample sample = join.getObject();
 			Map<String, Object> fullMetadata = new HashMap<>();
 			if (!sample.getMetadata().isEmpty()) {
-				Map<String, MetadataEntry> metadata = sample.getMetadata();
+				Map<MetadataTemplateField, MetadataEntry> metadata = sample.getMetadata();
+				
+				Map<String,MetadataEntry> stringMetadata = new HashMap<>();
+				metadata.entrySet().forEach(e -> {
+					stringMetadata.put(e.getKey().getLabel(), e.getValue());
+				});
+				
 				for (String header : headers) {
 					/*
 					Since the id and the label are kept on the Sample not in the JSON,
@@ -105,7 +112,7 @@ public class ProjectLineListController {
 					} else if (header.equalsIgnoreCase("label")) {
 						fullMetadata.put("label", ImmutableMap.of("value", sample.getSampleName()));
 					} else {
-						fullMetadata.put(header, metadata.getOrDefault(header, new MetadataEntry("", "")));
+						fullMetadata.put(header, stringMetadata.getOrDefault(header, new MetadataEntry("", "")));
 					}
 				}
 
@@ -216,8 +223,11 @@ public class ProjectLineListController {
 		for (Join<Project, Sample> join : samplesForProject) {
 			Sample sample = join.getObject();
 			if (! sample.getMetadata().isEmpty()) {
-				Map<String, MetadataEntry> metadataFields = sample.getMetadata();
-				fields.addAll(metadataFields.keySet());
+				Map<MetadataTemplateField, MetadataEntry> metadataFields = sample.getMetadata();
+				
+				//add the template keys to the field list
+				fields.addAll(metadataFields.keySet().stream().map(MetadataTemplateField::getLabel)
+						.collect(Collectors.toSet()));
 			}
 		}
 		List<String> fieldList = new ArrayList<>(fields);

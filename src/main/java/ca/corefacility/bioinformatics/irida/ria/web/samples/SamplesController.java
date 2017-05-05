@@ -47,6 +47,7 @@ import com.google.common.collect.ImmutableMap;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry.QCEntryStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -61,6 +62,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
@@ -110,16 +112,18 @@ public class SamplesController extends BaseController {
 	private final UserService userService;
 
 	private final SequencingObjectService sequencingObjectService;
+	private final MetadataTemplateService metadataTemplateService;
 
-	private final MessageSource messageSource;
+	private final MessageSource messageSource;	
 
 	@Autowired
 	public SamplesController(SampleService sampleService, UserService userService, ProjectService projectService,
-			SequencingObjectService sequencingObjectService, MessageSource messageSource) {
+			SequencingObjectService sequencingObjectService, MetadataTemplateService metadataTemplateService, MessageSource messageSource) {
 		this.sampleService = sampleService;
 		this.userService = userService;
 		this.projectService = projectService;
 		this.sequencingObjectService = sequencingObjectService;
+		this.metadataTemplateService = metadataTemplateService;
 		this.messageSource = messageSource;
 	}
 
@@ -194,8 +198,6 @@ public class SamplesController extends BaseController {
 			HttpServletRequest request) {
 		logger.debug("Updating sample [" + sampleId + "]");
 		
-		Sample sample = sampleService.read(sampleId);
-
 		Map<String, Object> updatedValues = new HashMap<>();
 		for (String field : FIELDS) {
 			String fieldValue = params.get(field);
@@ -223,11 +225,10 @@ public class SamplesController extends BaseController {
 			} catch (IOException e) {
 				throw new IllegalArgumentException("Could not map metadata to sample object", e);
 			}
-
-			//setting metadata here for validation
-			sample.setMetadata(metadataMap);
 			
-			updatedValues.put("metadata", metadataMap);
+			Map<MetadataTemplateField, MetadataEntry> metadata = metadataTemplateService.getMetadataMap(metadataMap);
+			
+			updatedValues.put("metadata", metadata);
 		}
 
 		if (updatedValues.size() > 0) {

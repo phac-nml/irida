@@ -83,7 +83,7 @@
                             th:text="#{linelist.create-template.save-template}"/>
                 </button>
             </div>
-            <div class="btn-group pull-right">
+            <div th:if="${isOwner || isAdmin}" class="btn-group pull-right">
                 <a class="btn btn-link"
                    th:href="@{/projects/{id}/sample-metadata/upload(id=${project.getId()})}">
                     <i class="fa fa-upload fw" aria-hidden="true"></i>&nbsp;<span
@@ -92,43 +92,33 @@
         </div>
     </script>
     <script type="text/ng-template" id="metadata.aside.tmpl">
-        <div class="row">
-            <div class="col-md-12 clearfix">
-                <button id="close-aside-btn" class="btn-icon pull-right" ng-click="$ctrl.close()"><i class="fa fa-fw fa-times-circle-o fa-2x pull-right" aria-hidden="true"></i></button>
+        <aside class="metadata-aside">
+            <div class="metadata-aside__btns text-right">
+                <button id="close-aside-btn" class="btn btn-default"
+                        ng-click="$ctrl.close()">Close</button>
             </div>
-        </div>
-        <div class="row" style="height: 100%;">
-            <div class="col-md-12">
-                <div class="row">
+            <div class="metadata-aside__switches">
+                <div class="row spaced-bottom"
+                     ng-repeat="field in $ctrl.fields track by $index">
                     <div class="col-sm-12">
-                        <Label th:text="#{linelist.columns.select-metadata.label}">
-                            _Select metadata columns to display_</Label>
-                    </div>
-                </div>
-                <div class="col-md-12 scroll-col">
-                    <div class="row spaced-bottom"
-                         ng-repeat="field in $ctrl.fields track by $index">
-                        <div class="col-sm-12">
-                            <input type="checkbox"
-                                   bs-switch=""
-                                   switch-size="small"
-                                   switch-on-color="success"
-                                   ng-model="field.visible"
-                                   ng-change="$ctrl.toggleColumn(field)"
-                                   switch-label-width="200"
-                                   switch-label="{{ field.label }}"
-                                   switch-readonly="{{ $index === 0 }}"
-                            />
-                            <div ng-if="$index === 0">
-                                <small class="text-info" th:text="#{linelist.columns.first-warning}">
+                        <input type="checkbox"
+                               bs-switch=""
+                               switch-size="small"
+                               ng-model="field.visible"
+                               ng-change="$ctrl.toggleColumn(field)"
+                               switch-label-width="200"
+                               switch-label="{{ field.label }}"
+                               switch-readonly="{{ $index === 0 }}"
+                        />
+                        <div ng-if="$index === 0">
+                            <small class="text-info" th:text="#{linelist.columns.first-warning}">
                                 _First column can not be hidden._
-                                </small>
-                            </div>
+                            </small>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </aside>
     </script>
 
     <script type="text/ng-template" id="save-template.tmpl.html">

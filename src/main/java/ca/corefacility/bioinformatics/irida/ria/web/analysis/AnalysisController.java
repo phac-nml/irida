@@ -197,6 +197,7 @@ public class AnalysisController {
 
 		// Get the name of the workflow
 		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription().getAnalysisType();
+		model.addAttribute("analysisType", analysisType);
 		String viewName = getViewForAnalysisType(analysisType);
 		String workflowName = messageSource.getMessage("workflow." + analysisType.toString() + ".title", null, locale);
 		model.addAttribute("workflowName", workflowName);
@@ -695,19 +696,25 @@ public class AnalysisController {
 		Set<String> terms = new HashSet<>();
 		for (Sample sample : samples) {
 			if (!sample.getMetadata().isEmpty()) {
-				Map<String, MetadataEntry> metadata = sample.getMetadata();
-				terms.addAll(metadata.keySet());
+				Map<MetadataTemplateField, MetadataEntry> metadata = sample.getMetadata();
+				terms.addAll(
+						metadata.keySet().stream().map(MetadataTemplateField::getLabel).collect(Collectors.toSet()));
 			}
 		}
 
 		// Get the metadata for the samples;
 		Map<String, Object> metadata = new HashMap<>();
 		for (Sample sample : samples) {
-			Map<String, MetadataEntry> sampleMetadata = sample.getMetadata();
+			Map<MetadataTemplateField, MetadataEntry> sampleMetadata = sample.getMetadata();
+			Map<String,MetadataEntry> stringMetadata = new HashMap<>();
+			sampleMetadata.entrySet().forEach(e -> {
+				stringMetadata.put(e.getKey().getLabel(), e.getValue());
+			});
+			
 			Map<String, MetadataEntry> valuesMap = new HashMap<>();
 			for (String term : terms) {
 
-				MetadataEntry value = sampleMetadata.get(term);
+				MetadataEntry value = stringMetadata.get(term);
 				if (value == null) {
 					// Not all samples will have the same metadata associated with it.  If a sample
 					// is missing one of the terms, just give it an empty string.

@@ -246,14 +246,5 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @return a list of {@link QCEntry}
 	 */
 	public List<QCEntry> getQCEntriesForSample(Sample sample);
-	
-	/**
-	 * Get all metadata keys in the database for a given query
-	 * 
-	 * @param query
-	 *            the query to search
-	 * @return a list of metadata keys
-	 */
-	public List<String> getMetadataKeys(String query);
-	
+
 }

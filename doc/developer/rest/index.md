@@ -506,6 +506,7 @@ An individual sample contains the metadata associated with an isolate. The sampl
 | `project/sample` | A link to the relationship between the project and sample.  To remove a sample from a project, `DELETE` this resource. |
 | `sample/sequenceFiles/pairs` | A link to the collection of paired-end sequence files in this sample.  Note: These resources will overlap  with the files listed in `sample/sequenceFiles`. |
 | `sample/sequenceFiles/unpaired` | A link to the collection of unpaired sequence files in this sample. Note: These resources will overlap  with the files listed in `sample/sequenceFiles`. |
+| `sample/metadata`| A link to the metadata associated with the sample. |
 
 ##### Properties
 {:.no_toc}
@@ -588,6 +589,58 @@ An individual sample contains the metadata associated with an isolate. The sampl
   }
 
 ```
+
+#### Sample Metadata
+{:.no_toc}
+
+Sample metadata is unstructured metadata that has been associated with the sample.
+
+##### Links
+{:.no_toc}
+
+| Name | Description |
+|------|-------------|
+| `self` | A link to this sample metadata. |
+| `sample` | A link back to the sample owning this metadata. |
+
+
+##### Example Response
+{:.no_toc}
+
+
+```javascript
+{
+  "resource" : {
+    "metadata" : {
+      "SourceSite" : {
+        "value" : "Stool",
+        "type" : "text"
+      },
+      "Serotype" : {
+        "value" : "Infantis",
+        "type" : "text"
+      },
+      "PatientSex" : {
+        "value" : "FEMALE",
+        "type" : "text"
+      },
+      "Genus" : {
+        "value" : "Salmonella",
+        "type" : "text"
+      }
+    },
+    "links" : [ {
+      "rel" : "self",
+      "href" : "http://localhost:8080/api/samples/3/metadata"
+    }, {
+      "rel" : "sample",
+      "href" : "http://localhost:8080/api/samples/3"
+    } ]
+  }
+}
+
+```
+
 
 ### Sequence Files
 

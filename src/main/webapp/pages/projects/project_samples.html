@@ -175,58 +175,65 @@
                     </ul>
                 </div>
                 <div style="display: inline-block;" ng-controller="ToolsController as toolsCtrl">
-                    <div style="display: inline-block;" uib-dropdown="" >
-                        <button id="sample-tools" class="btn btn-default btn-sm" uib-dropdown-toggle="" type="button">
-                        <th:block th:text="#{project.samples.nav.sample-tools}"></th:block>&nbsp;
-                            <i class="fa fa-caret-down fa-fw" aria-hidden="true"></i>
-                    </button>
-                    <ul id="sample-tools-dropdown" class="dropdown-menu" uib-dropdown-menu="" role="menu">
-                        <li id="mergeBtn" ng-class="{disabled: toolsCtrl.disabled.lessThanTwo || toolsCtrl.disabled.hasAssociated}"
-                            tooltip-enable="toolsCtrl.disabled.lessThanTwo || toolsCtrl.disabled.hasAssociated"
-                            uib-tooltip-template="'merge.msg.tmpl'">
-                            <a href="#" ng-click="toolsCtrl.merge()">
-                                <i class="fa fa-compress fa-fw" aria-hidden="true"></i> &nbsp;
-                                <th:block th:text="#{project.samples.nav.merge}">Merge</th:block>
-                            </a>
-                        </li>
-                        <li id="copyBtn" ng-class="{disabled: toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated}"
-                            tooltip-enable="toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated"
-                            uib-tooltip-template="'copy.msg.tmpl'">
-                            <a href="#" ng-click="toolsCtrl.copy()">
-                                <i class="fa fa-files-o fa-fw" aria-hidden="true"></i>&nbsp;
-                                <th:block th:text="#{project.samples.nav.copy}">_COPY_</th:block>
-                            </a>
-                        </li>
-                        <li id="moveBtn" ng-class="{disabled: toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated}"
-                            tooltip-enable="toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated"
-                            uib-tooltip-template="'move.msg.tmpl'">
-                            <a href="#" ng-click="toolsCtrl.move()">
-                                <i class="fa fa-truck fa-fw" aria-hidden="true"></i>&nbsp;
-                                <th:block th:text="#{project.samples.nav.move}">_MOVE_</th:block>
-                            </a>
-                        </li>
-                        <li id="removeBtn" ng-class="{disabled: toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated}"
-                            tooltip-enable="toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated"
-                            uib-tooltip-template="'remove.msg.tmpl'">
-                            <a href="#" ng-click="toolsCtrl.remove()">
-                                <i class="fa fa-trash fa-fw" aria-hidden="true"></i>&nbsp;
-                                <th:block th:text="#{project.samples.nav.remove}">_MOVE_</th:block>
-                            </a>
-                        </li>
-                        <li role="separator" class="divider"></li>
-                        <li>
-                            <a th:href="@{/projects/{id}/sample-metadata/upload(id=${project.getId()})}">
+                    <th:block th:if="${isOwner || isAdmin}">
+                        <div style="display: inline-block;" uib-dropdown="">
+                            <button id="sample-tools" class="btn btn-default btn-sm" uib-dropdown-toggle=""
+                                    type="button">
+                                <th:block th:text="#{project.samples.nav.sample-tools}"></th:block>&nbsp;
+                                <i class="fa fa-caret-down fa-fw" aria-hidden="true"></i>
+                            </button>
+                            <ul id="sample-tools-dropdown" class="dropdown-menu" uib-dropdown-menu="" role="menu">
+                                <li id="mergeBtn"
+                                    ng-class="{disabled: toolsCtrl.disabled.lessThanTwo || toolsCtrl.disabled.hasAssociated}"
+                                    tooltip-enable="toolsCtrl.disabled.lessThanTwo || toolsCtrl.disabled.hasAssociated"
+                                    uib-tooltip-template="'merge.msg.tmpl'">
+                                    <a href="#" ng-click="toolsCtrl.merge()">
+                                        <i class="fa fa-compress fa-fw" aria-hidden="true"></i> &nbsp;
+                                        <th:block th:text="#{project.samples.nav.merge}">Merge</th:block>
+                                    </a>
+                                </li>
+                                <li id="copyBtn"
+                                    ng-class="{disabled: toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated}"
+                                    tooltip-enable="toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated"
+                                    uib-tooltip-template="'copy.msg.tmpl'">
+                                    <a href="#" ng-click="toolsCtrl.copy()">
+                                        <i class="fa fa-files-o fa-fw" aria-hidden="true"></i>&nbsp;
+                                        <th:block th:text="#{project.samples.nav.copy}">_COPY_</th:block>
+                                    </a>
+                                </li>
+                                <li id="moveBtn"
+                                    ng-class="{disabled: toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated}"
+                                    tooltip-enable="toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated"
+                                    uib-tooltip-template="'move.msg.tmpl'">
+                                    <a href="#" ng-click="toolsCtrl.move()">
+                                        <i class="fa fa-truck fa-fw" aria-hidden="true"></i>&nbsp;
+                                        <th:block th:text="#{project.samples.nav.move}">_MOVE_</th:block>
+                                    </a>
+                                </li>
+                                <li id="removeBtn"
+                                    ng-class="{disabled: toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated}"
+                                    tooltip-enable="toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated"
+                                    uib-tooltip-template="'remove.msg.tmpl'">
+                                    <a href="#" ng-click="toolsCtrl.remove()">
+                                        <i class="fa fa-trash fa-fw" aria-hidden="true"></i>&nbsp;
+                                        <th:block th:text="#{project.samples.nav.remove}">_MOVE_</th:block>
+                                    </a>
+                                </li>
+                                <li role="separator" class="divider"></li>
+                                <li>
+                                    <a th:href="@{/projects/{id}/sample-metadata/upload(id=${project.getId()})}">
                                 <i class="fa fa-upload" aria-hidden="true"></i>&nbsp;
                                 <th:block th:text="#{project.nav.samples.import-metadata}"/>
                             </a></li>
                         <li role="separator" class="divider"></li>
                         <li>
                             <a th:href="@{/projects/{id}/samples/new(id=${project.getId()})}">
-                                <i class="fa fa-plus fa-fw" aria-hidden="true"></i>&nbsp;
-                                <th:block th:text="#{project.samples.nav.new}"/>
-                            </a></li>
-                    </ul>
-                    </div>
+                                        <i class="fa fa-plus fa-fw" aria-hidden="true"></i>&nbsp;
+                                        <th:block th:text="#{project.samples.nav.new}"/>
+                                    </a></li>
+                            </ul>
+                        </div>
+                    </th:block>
                     <div style="display: inline-block;" uib-dropdown="">
                         <button id="export-samples-btn" class="btn btn-default btn-sm" uib-dropdown-toggle="">
                             <th:block th:text="#{project.samples.export.label}" />&nbsp;
