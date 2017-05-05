@@ -72,18 +72,6 @@ public class DatatablesParams {
 		return new Sort(sortOrder);
 	}
 
-	private static Sort generateSortFromRequest(HttpServletRequest request, int id, String label) {
-		String directionString = "order[{id}][dir]";
-		String paramDirection = request.getParameter(directionString.replace("{id}", id + ""));
-
-		// IF both parameters are not present return nothing.
-		if (Strings.isNullOrEmpty(paramDirection)) {
-			return null;
-		}
-
-		return new Sort(getSortDirectionFromString(paramDirection), label);
-	}
-
 	private static Sort.Direction getSortDirectionFromString(String direction) {
 		return direction.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
 	}
