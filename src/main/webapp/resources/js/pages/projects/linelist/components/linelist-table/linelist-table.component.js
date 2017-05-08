@@ -33,17 +33,24 @@ function controller($scope,
     .withColReorder()
     .withColReorderCallback(function() {
       $ctrl.parent.columnReorder(this.fnOrder());
-    })
-    ;
+    });
 
     $ctrl.dtColumns = $ctrl.fields
       .map(header => {
         const col = DTColumnBuilder
           .newColumn(header)
           .withTitle(header)
-          .renderWith(data => {
+          .renderWith((data, type, full) => {
             // This is where any custom rendering logic should go.
             // example formatting date columns.
+            if (header === 'label' &&
+              full.hasOwnProperty('id') && full.hasOwnProperty('label')) {
+              return `
+<a class="btn btn-link" 
+   href="${window.PAGE.urls.sample}${full.id.value}">${data.value}</a>
+`;
+            }
+
             return data.value;
           });
         col.visible = true;
