@@ -47,7 +47,7 @@ function controller($scope,
               full.hasOwnProperty('id') && full.hasOwnProperty('label')) {
               return `
 <a class="btn btn-link" 
-   href="${window.PAGE.urls.sample}${full.id.value}">${data.value}</a>
+   href="${window.PAGE.urls.sample}${full.id.value}/details">${data.value}</a>
 `;
             }
 
