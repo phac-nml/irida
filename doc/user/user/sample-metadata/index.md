@@ -76,9 +76,17 @@ To make it easier to see related information, columns can be re-ordered by dragg
 
 ### Toggle Metadata Columns
 
-Some columns might not have information that is useful in a particular analysis.  You can toggle any metadata field by clicking the `Toggle Metadata Columns` button, which will open a side panel where metadata fields can be toggled on and off.  The one catch is that the first column cannot be toggled off directly.  If that field needs to be hidden, drag it to a different column and then toggle the field.
+Some columns might not have information that is useful in a particular analysis.  You can toggle any metadata field by clicking the `Toggle Metadata Columns` button, which will open a side panel where metadata fields can be toggled on and off.
 
-![Line List Metadata Toggle](images/linelist_metadata_toggle.gif)
+![Line List Metadata Toggle](images/toggle_metadata_button.png)
+
+The one catch is that the first column cannot be toggled off directly.  If that field needs to be hidden, drag it to a different column and then toggle the field.
+
+![Toggling metadata column](images/toggle_metadata_panel.png)
+
+Once all the column visibility has been set, click the close button at the top of the side panel to hide these options.
+
+![Closing metadata panel by clicking 'close' button](images/metadata_panel_close.png)
 
 ### Saving Column Order and Visible Metadata
 
