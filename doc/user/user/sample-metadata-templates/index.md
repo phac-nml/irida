@@ -25,13 +25,7 @@ Every template required 2 items:
     - Name cannot already be used as a template name within the current project.
 1. At least one metadata field.
 
-If the template name selected already exists in the current project a warning is displayed:
-
-![Template name warning](images/template_name_warning.png)
-
-If the template name is too short a warning is displayed:
-
-![Template name warning too short](images/tamplate_name_too_short.png)
+If the template name selected already exists in the current project or the name in lot long enough a warning is displayed.
 
 To add a metadata field to the template click on the `Add Metadata Field` button, which will open up a dialog window.
 
