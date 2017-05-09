@@ -90,7 +90,7 @@
               <th:block th:text="#{form.download-files}">Download Files</th:block>
             </button>
           </div>
-          <div class="sidebar__item">
+          <div th:if="${#strings.equals(analysisType, 'phylogenomics')}" class="sidebar__item">
             <a th:href="@{/analysis/{id}/advanced-phylo(id=${analysisSubmission.getId()})}"
                class="btn btn-success btn-block"
                th:text="#{analysis.details.view-advanced}">_View Advanced Visualization_

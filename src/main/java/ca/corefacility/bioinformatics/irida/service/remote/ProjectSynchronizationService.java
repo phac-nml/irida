@@ -25,8 +25,10 @@ import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -34,6 +36,7 @@ import ca.corefacility.bioinformatics.irida.security.ProjectSynchronizationAuthe
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 /**
@@ -48,6 +51,7 @@ public class ProjectSynchronizationService {
 	private ProjectService projectService;
 	private SampleService sampleService;
 	private SequencingObjectService objectService;
+	private MetadataTemplateService metadataTemplateService;
 
 	private ProjectRemoteService projectRemoteService;
 	private SampleRemoteService sampleRemoteService;
@@ -57,13 +61,14 @@ public class ProjectSynchronizationService {
 
 	@Autowired
 	public ProjectSynchronizationService(ProjectService projectService, SampleService sampleService,
-			SequencingObjectService objectService, ProjectRemoteService projectRemoteService,
+			SequencingObjectService objectService, MetadataTemplateService metadataTemplateService, ProjectRemoteService projectRemoteService,
 			SampleRemoteService sampleRemoteService, SingleEndSequenceFileRemoteService singleEndRemoteService,
 			SequenceFilePairRemoteService pairRemoteService, RemoteAPITokenService tokenService) {
 
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.objectService = objectService;
+		this.metadataTemplateService = metadataTemplateService;
 		this.projectRemoteService = projectRemoteService;
 		this.sampleRemoteService = sampleRemoteService;
 		this.singleEndRemoteService = singleEndRemoteService;
@@ -199,6 +204,7 @@ public class ProjectSynchronizationService {
 
 		for (Sample s : readSamplesForProject) {
 			s.setId(null);
+			s = syncSampleMetadata(s);
 			syncSample(s, project, samplesByUrl);
 		}
 
@@ -287,6 +293,14 @@ public class ProjectSynchronizationService {
 		}
 		
 		sampleService.update(localSample);
+	}
+	
+	public Sample syncSampleMetadata(Sample sample){
+		Map<String, MetadataEntry> sampleMetadata = sampleRemoteService.getSampleMetadata(sample);
+		Map<MetadataTemplateField, MetadataEntry> metadata = metadataTemplateService.getMetadataMap(sampleMetadata);
+		sample.setMetadata(metadata);
+		
+		return sample;
 	}
 
 	/**

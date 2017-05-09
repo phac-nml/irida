@@ -9,7 +9,9 @@ import org.springframework.data.domain.Page;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFileSnapshot;
 
@@ -42,9 +44,10 @@ public interface SampleRemoteService extends RemoteService<Sample> {
 	 * @return A Page of {@link Sample}s
 	 */
 	public Page<Sample> searchSamplesForProject(Project project, String search, int page, int size);
-	
+
 	/**
-	 * Get the {@link Sample}s for the given {@link SingleEndSequenceFileSnapshot}s
+	 * Get the {@link Sample}s for the given
+	 * {@link SingleEndSequenceFileSnapshot}s
 	 * 
 	 * @param files
 	 *            The {@link SingleEndSequenceFileSnapshot}s to get samples for
@@ -65,4 +68,15 @@ public interface SampleRemoteService extends RemoteService<Sample> {
 	 */
 	public Map<Sample, IridaSequenceFilePair> getUniqueSamplesforSequenceFilePairSnapshots(
 			Collection<SequenceFilePairSnapshot> files);
+
+	/**
+	 * Get the {@link Sample} metadata for a remote sample
+	 * 
+	 * @param sample
+	 *            the sample to get metadata for
+	 * @return a map of String to {@link MetadataEntry}. Before saving the
+	 *         String component must be converted to
+	 *         {@link MetadataTemplateField}
+	 */
+	public Map<String, MetadataEntry> getSampleMetadata(Sample sample);
 }
