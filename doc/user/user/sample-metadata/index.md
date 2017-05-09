@@ -64,7 +64,7 @@ Metadata that do not have matching sample names are listed in the table `Rows no
 Project Metadata Line List
 --------------------------
 
-Line lists are tables that summarize the available metadata for samples within a project.  All samples **that have do not have associated metadata** will not be shown in this table.
+Line lists are tables that summarize the available metadata for samples within a project.  Only samples **that have associated metadata** will not be shown in this table.
 
 ![Basic Line List](images/linelist_base.png)
 
