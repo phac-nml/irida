@@ -47,7 +47,7 @@ A field can be removed from the template by clicking on the &times; button at th
 
 Once the template is ready, click the `Save Template Button`, this saves the template.  You will know the template is saved when a `Template ID` is displayed at the top of the page, and there is an option to delete the template at the bottom of the page.
 
-![Template saved](images/template_saved.png)
+![Save Template](images/save_template.png)
 
 ## Modifying existing metadata templates
 
