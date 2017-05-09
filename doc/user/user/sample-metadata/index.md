@@ -96,13 +96,7 @@ Updating the column order and which metadata is visible can be saved as a **Temp
 
 The name given to the template should be descriptive and must be more than 5 letters.  The name must also not be used for another template within the project.
 
-A warning is displayed if the name given for the template is too short:
-
-![Save Template Dialog with too short of name](images/save_too_short.png)
-
-A warning is displayed if the name given for the template is already used in the project:
-
-![Save Template Dialog name already used](images/linelist_save_name_already_used.png)
+A warning is displayed if the name given for the template is too short or if the name is already used for a template within the current project.
 
 After a unique name with more than 5 letters is provided the `Save` button will become enabled.  Clicking it will save the template to the project.
 
