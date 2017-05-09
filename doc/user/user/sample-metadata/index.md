@@ -80,7 +80,7 @@ Some columns might not have information that is useful in a particular analysis.
 
 ![Line List Metadata Toggle](images/toggle_metadata_button.png)
 
-The one catch is that the first column cannot be toggled off directly.  If that field needs to be hidden, drag it to a different column and then toggle the field.
+**Note:** the first column cannot be toggled off directly.  If that field needs to be hidden, drag it to a different column and then toggle the field.
 
 ![Toggling metadata column](images/toggle_metadata_panel.png)
 
