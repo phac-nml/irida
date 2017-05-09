@@ -43,8 +43,6 @@ A metadata field might already exist within this project.  As you type, existing
 
 When entering the name of a metadata field, options will be presented to either used an existing metadata field or create a new field (see image above).  To select the field that you want, just type the full name and press `enter` or select the option from the drop down.
 
-![Selecting metadata fields](images/select_metadata_fields.gif)
-
 Once fields have been added they can be rearranged by dragging and dropping to their required location.  This is good when related fields should be next to each other.
 
 ![Drag and drop metadata fields](images/drag_and_drop.gif)
