@@ -53,6 +53,8 @@ Once the template is ready, click the `Save Template Button`, this saves the tem
 
 From the Sample Metadata Template page within project settings, click on the name of the template you want to modify.  Fields can be modified as explained in the above section on creating a template.
 
+![Setting Metadata Templates Page](images/settings_metadata_templates.png)
+
 ## Deleting metadata templates
 
 Clicking on the delete template button will open a warning about deleting the template.  Clicking the `Delete this template` button in the modal will delete this template **this cannot be undone**.
