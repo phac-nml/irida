@@ -63,6 +63,6 @@ From the Sample Metadata Template page within project settings, click on the nam
 
 ## Deleting metadata templates
 
-Clicking on the delete template button will open a warning about deleting the template.  Clicking the `Delete this template` button in the modal will delete this template <strong style="padding: 0 4px; background-color: rgba(252, 248, 227, 1.00); font-weight: bold;">this cannot be undone</strong>.
+Clicking on the delete template button will open a warning about deleting the template.  Clicking the `Delete this template` button in the modal will delete this template **this cannot be undone**.
 
 ![Delete Template](images/delete_template.gif)
