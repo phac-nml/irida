@@ -100,6 +100,5 @@ A warning is displayed if the name given for the template is too short or if the
 
 After a unique name with more than 5 letters is provided the `Save` button will become enabled.  Clicking it will save the template to the project.
 
-![Save Template Full Video](images/linelist_save_full.gif)
 
 After a template is created it can me modified or deleted under [Project Settings > Sample Metadata Templates](../sample-metadata-templates)
