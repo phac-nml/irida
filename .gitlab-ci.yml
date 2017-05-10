@@ -1,10 +1,18 @@
+services:
+  - mysql:latest
 
 stages:
   - build
   - test
 
+variables:
+  MYSQL_DATABASE: irida_test
+  MYSQL_ROOT_PASSWORD: test
+
+
 before_script:
-  - echo 'drop database if exists irida_test; create database irida_test' | mysql -u test -ptest
+  - echo 'drop database if exists irida_test; create database irida_test' | mysql -u root -ptest
+  - echo "CREATE USER 'test'@'localhost' IDENTIFIED BY 'test'; GRANT ALL PRIVILEGES ON irida_test.* to 'test'@'localhost';" | mysql -u root -ptest
   - pushd lib
   - ./install-libs.sh
   - popd
@@ -12,24 +20,25 @@ before_script:
 
 service_job:
 #running service layer tests
+  image: maven:3.5.0-jdk8
   script:
   - mvn clean verify -Pservice_testing
   stage: test
-ui_job:
-#running ui tests
-  script:
-  - xvfb-run --auto-servernum --server-num=1 mvn clean verify -Pui_testing -Dwebdriver.chrome.driver=./src/main/webapp/node_modules/chromedriver/lib/chromedriver/chromedriver
-  stage: test
-rest_job:
-#running rest api tests
-  script:
-  - mvn clean verify -Prest_testing
-  stage: test
-galaxy_job:
-#lastly, run all tests involving Galaxy
-  script:
-  - "scripts/galaxy-docker.sh"
-  stage: test
+#ui_job:
+##running ui tests
+#  script:
+#  - xvfb-run --auto-servernum --server-num=1 mvn clean verify -Pui_testing -Dwebdriver.chrome.driver=./src/main/webapp/node_modules/chromedriver/lib/chromedriver/chromedriver
+#  stage: test
+#rest_job:
+##running rest api tests
+#  script:
+#  - mvn clean verify -Prest_testing
+#  stage: test
+#galaxy_job:
+##lastly, run all tests involving Galaxy
+#  script:
+#  - "scripts/galaxy-docker.sh"
+#  stage: test
 build-docs_job:
   script: "scripts/build-docs.sh"
   stage: build
