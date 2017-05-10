@@ -32,9 +32,7 @@ saveTemplateController.$inject = [
  * @param {array} fields metadata fields
  * @param {function} toggleColumnVisibility call to toggle the column within the Datatables.
  */
-function showMetadataFieldSelectionsController($uibModalInstance,
-                                               fields,
-                                               toggleColumnVisibility) {
+function showMetadataFieldSelectionsController($uibModalInstance,fields, toggleColumnVisibility) {
   this.fields = fields;
 
   this.toggleColumn = column => {

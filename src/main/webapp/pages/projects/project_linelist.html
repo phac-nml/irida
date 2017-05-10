@@ -8,7 +8,8 @@
     <script th:inline="javascript">
       var PAGE = {
         urls: {
-          templates: /*[[@{/projects/{id}/linelist/templates/:id(id=${project.getId()})}]]*/ ''
+          templates: /*[[@{/projects/{id}/linelist/templates/:id(id=${project.getId()})}]]*/ '',
+          sample: /*[[@{/samples/}]]*/ ''
         },
         i18n: {
           allFields: /*[[#{linelist.templates.all}]]*/ 'All Fields'
@@ -125,7 +126,7 @@
         <div class="modal-header">
             <h3 class="modal-title" th:text="#{linelist.create-template.saving.modal.title}">_Save_Template_As_</h3>
         </div>
-        <div class="modal-body metadata-aside">
+        <div class="modal-body">
             <form name="templateNameForm">
                 <div class="form-group"
                      ng-class="{'has-error': !templateNameForm.templateName.$pristine &amp;&amp; !templateNameForm.templateName.$valid}">
