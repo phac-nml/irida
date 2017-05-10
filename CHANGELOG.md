@@ -1,6 +1,10 @@
 Changes
 =======
 
+0.16.0 to 0.17.0
+----------------
+* [UI]: Added ability for admins and project owners to delete a project.
+
 0.15.0 to 0.16.0
 ----------------
 * [Developer]: Upgraded to AngularJS 1.6.2 <https://github.com/angular/angular.js/blob/master/CHANGELOG.md>
@@ -12,7 +16,6 @@ Changes
 * [Developer]: Fixed issue caused when trying to create a new pipeline with no parameters.
 * [UI]: Moved "Members", "Groups", "Associated Projects", "Reference Files" to a new "Settings" tab in projects.
 * [UI]: Fixed bug where collaborators on a project had access to the sample tools. These buttons are now hidden from collaborators.
-* [UI]: Added ability for admins and project owners to delete a project.
 
 0.14.0 to 0.15.0
 ----------------
