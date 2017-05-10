@@ -57,9 +57,48 @@ Metadata that do not have matching sample names are listed in the table `Rows no
 
 ![Upload Preview Errors](images/upload-preview-errors.png)
 
-Example Upload
-==============
+### Example Upload
 
 ![Demonstration of uploading Excel Spreadsheet](images/upload_bulk_metadata.gif)
 
+Project Metadata Line List
+--------------------------
 
+Line lists are tables that summarize the available metadata for samples within a project.  Only samples **that have associated metadata** will not be shown in this table.
+
+![Basic Line List](images/linelist_base.png)
+
+### Reorder Columns
+
+To make it easier to see related information, columns can be re-ordered by dragging the the column header to the required position.
+
+![Line List Reorder](images/linelist_reorder.gif)
+
+### Toggle Metadata Columns
+
+Some columns might not have information that is useful in a particular analysis.  You can toggle any metadata field by clicking the `Toggle Metadata Columns` button, which will open a side panel where metadata fields can be toggled on and off.
+
+![Line List Metadata Toggle](images/toggle_metadata_button.png)
+
+**Note:** the first column cannot be toggled off directly.  If that field needs to be hidden, drag it to a different column and then toggle the field.
+
+![Toggling metadata column](images/toggle_metadata_panel.png)
+
+Once all the column visibility has been set, click the close button at the top of the side panel to hide these options.
+
+![Closing metadata panel by clicking 'close' button](images/metadata_panel_close.png)
+
+### Saving Column Order and Visible Metadata
+
+Updating the column order and which metadata is visible can be saved as a **Template** so that the next time the line list is viewed the same settings can be applied quickly.  Click the `Save Template` button which will open a dialog window.  Add a name for the template (this cannot match the name of another template within the project).
+
+![Save Template Dialog](images/linelist_save_template.png)
+
+The name given to the template should be descriptive and must be more than 5 letters.  The name must also not be used for another template within the project.
+
+A warning is displayed if the name given for the template is too short or if the name is already used for a template within the current project.
+
+After a unique name with more than 5 letters is provided the `Save` button will become enabled.  Clicking it will save the template to the project.
+
+
+After a template is created it can me modified or deleted under [Project Settings > Sample Metadata Templates](../sample-metadata-templates)
