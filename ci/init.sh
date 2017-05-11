@@ -5,4 +5,5 @@ pushd lib
 ./install-libs.sh
 popd
 
-apt install xvfb
+apt-get update -qyy
+apt-get install -qyy xvfb
