@@ -28,7 +28,6 @@
                 projects: {
                   available: /*[[@{/projects/{id}/ajax/samples/available_projects(id=${project.getId()})}]]*/ ''
                 },
-                sample: /*[[@{/projects/{id}/samples/(id=${project.getId()})}]]*/ '' ,
                 samples: {
                     project: /*[[@{/projects/{id}/ajax/samples(id=${project.getId()})}]]*/ '',
                     local: /*[[@{'/projects/{id}/ajax/samples'}]]*/ '',
@@ -99,18 +98,6 @@
         <div dt:confType="extrajs" dt:bundles="project-samples-angular" dt:placeholder="before_start_document_ready"/>
         <div dt:confType="callback" dt:type="createdrow" dt:function="datatables-utils#datatable.projectRowCreated"></div>
     </div>
-
-    <table id="new-samples-table" class="table table-bordered table-striped">
-        <thead>
-        <tr>
-            <th data-name="sample.sampleName">Name</th>
-            <th data-name="sample.organism">Organism</th>
-            <th data-name="project.name">Project</th>
-            <th>Created</th>
-            <th data-name="sample.modifiedDate">Modified</th>
-        </tr>
-        </thead>
-    </table>
 
     <table class="selectable" id="samplesTable" dt:table="true" dt:url="@{/projects/{id}/ajax/samples(id=${project.getId()})}" dt:ajaxParams="sample-ajax-params#samplesAjaxParams">
         <thead>
@@ -427,41 +414,5 @@
             </div>
         </div>
 </script>
-
-    <script th:inline="javascript">
-      function renderer(data, type, full, meta) {
-        var date = new Date(data);
-        if (moment.isDate(date)) {
-          return '<span data-toggle="tooltip" data-placement="right" title="' + data + '">'
-            + moment(date, 'YYYY mmm ddd').fromNow()
-            + '</span>';
-        }
-        return data;
-      }
-
-      function sampleNameRenderer(data, tupe, full) {
-        console.log(full);
-        return `<a href="${window.PAGE.urls.sample}${full.id}">${data}</a>`
-      }
-
-      $('#new-samples-table').DataTable({
-        'processing': true,
-        'serverSide': true,
-        stateSave: true,
-        'ajax': /*[[@{/projects/{id}/ajax/samples(id=${project.getId()})}]]*/ 'scripts/server_processing.php',
-        "columns": [
-          { data: "sampleName", render: sampleNameRenderer },
-          { data: "organism" },
-          { data: "projectName" },
-          { data: 'createdDate', render: renderer },
-          { data: 'modifiedDate', render: renderer },
-        ],
-        drawCallback: function() {
-          $('[data-toggle="tooltip"]').tooltip({
-            container : 'body'
-          });
-        }
-      });
-    </script>
 </th:block>
 </html>
