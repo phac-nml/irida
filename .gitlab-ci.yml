@@ -19,7 +19,7 @@ service_job:
   - docker
   image: maven:3.5.0-jdk-8
   script:
-  - mvn clean verify -Pservice_testing -Djdbc.username=root
+  - mvn clean verify -Pservice_testing -Djdbc.username=root -Djdbc.url=jdbc:mysql://mysql:3306/irida_test
   stage: test
 #ui_job:
 ##running ui tests
