@@ -2,8 +2,8 @@ services:
   - mariadb:10.0
 
 stages:
-  - build
   - test
+  #- build
 
 variables:
   MYSQL_DATABASE: irida_test
@@ -41,12 +41,12 @@ service_job:
 #  script:
 #  - "scripts/galaxy-docker.sh"
 #  stage: test
-build-docs_job:
-  tags:
-  - docker
-  image: maven:3.5.0-jdk-8
-  script: "scripts/build-docs.sh"
-  stage: build
+#build-docs_job:
+#  tags:
+#  - docker
+#  image: maven:3.5.0-jdk-8
+#  script: "scripts/build-docs.sh"
+#  stage: build
 cache:
   untracked: true
   paths:
