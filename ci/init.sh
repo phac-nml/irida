@@ -6,4 +6,4 @@ pushd lib
 popd
 
 apt-get update -qyy
-apt-get install -qyy xvfb chromium-browser
+apt-get install -qyy xvfb chromium
