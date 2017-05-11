@@ -24,15 +24,19 @@ service_job:
   script:
   - mvn clean verify -Pservice_testing -Djdbc.url=$JDBC_URL
   stage: test
-#ui_job:
-##running ui tests
-#  script:
-#  - xvfb-run --auto-servernum --server-num=1 mvn clean verify -Pui_testing -Dwebdriver.chrome.driver=./src/main/webapp/node_modules/chromedriver/lib/chromedriver/chromedriver
-#  stage: test
+ui_job:
+#running ui tests
+  tags:
+  - docker
+  image: maven:3.5.0-jdk-8
+  script:
+  - xvfb-run --auto-servernum --server-num=1 mvn clean verify -Pui_testing -Dwebdriver.chrome.driver=./src/main/webapp/node_modules/chromedriver/lib/chromedriver/chromedriver -Djdbc.url=$JDBC_URL
+  stage: test
 rest_job:
 #running rest api tests
   tags:
   - docker
+  image: maven:3.5.0-jdk-8
   script:
   - mvn clean verify -Prest_testing -Djdbc.url=$JDBC_URL
   stage: test
