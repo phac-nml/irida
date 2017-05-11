@@ -20,6 +20,8 @@ before_script:
 
 service_job:
 #running service layer tests
+  tags:
+  - docker
   image: maven:3.5.0-jdk8
   script:
   - mvn clean verify -Pservice_testing
