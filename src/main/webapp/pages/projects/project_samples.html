@@ -28,6 +28,7 @@
                 projects: {
                   available: /*[[@{/projects/{id}/ajax/samples/available_projects(id=${project.getId()})}]]*/ ''
                 },
+                sample: /*[[@{/projects/{id}/samples/(id=${project.getId()})}]]*/ '' ,
                 samples: {
                     project: /*[[@{/projects/{id}/ajax/samples(id=${project.getId()})}]]*/ '',
                     local: /*[[@{'/projects/{id}/ajax/samples'}]]*/ '',
@@ -429,8 +430,6 @@
 
     <script th:inline="javascript">
       function renderer(data, type, full, meta) {
-        console.log(data, type, full, meta);
-
         var date = new Date(data);
         if (moment.isDate(date)) {
           return '<span data-toggle="tooltip" data-placement="right" title="' + data + '">'
@@ -439,17 +438,23 @@
         }
         return data;
       }
+
+      function sampleNameRenderer(data, tupe, full) {
+        console.log(full);
+        return `<a href="${window.PAGE.urls.sample}${full.id}">${data}</a>`
+      }
+
       $('#new-samples-table').DataTable({
         'processing': true,
         'serverSide': true,
         stateSave: true,
-        'ajax': /*[[@{/ajax/projects/{id}/samples(id=${project.getId()})}]]*/ 'scripts/server_processing.php',
+        'ajax': /*[[@{/projects/{id}/ajax/samples(id=${project.getId()})}]]*/ 'scripts/server_processing.php',
         "columns": [
-          { "data": "sampleName" },
-          { "data": "organism" },
-          { "data": "projectName" },
-          { 'data': 'createdDate', render: renderer },
-          { 'data': 'modifiedDate', render: renderer },
+          { data: "sampleName", render: sampleNameRenderer },
+          { data: "organism" },
+          { data: "projectName" },
+          { data: 'createdDate', render: renderer },
+          { data: 'modifiedDate', render: renderer },
         ],
         drawCallback: function() {
           $('[data-toggle="tooltip"]').tooltip({
