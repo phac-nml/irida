@@ -17,6 +17,7 @@ The user guide for IRIDA describes the major concepts of IRIDA and demonstrates 
 * [Managing projects](project/)
 * [Managing samples](samples/)
 * [Managing sample metadata](sample-metadata/)
+* [Managing sample metadata templates](sample-metadata-templates/)
 * [Launching pipelines](pipelines/)
 * [Using the SISTR pipeline](sistr/)
 * [Analysis Visualizations](analysis-visualizations/)

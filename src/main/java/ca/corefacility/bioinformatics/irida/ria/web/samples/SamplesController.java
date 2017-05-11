@@ -226,21 +226,7 @@ public class SamplesController extends BaseController {
 				throw new IllegalArgumentException("Could not map metadata to sample object", e);
 			}
 			
-			Map<MetadataTemplateField, MetadataEntry> metadata = new HashMap<>();
-			metadataMap.entrySet().forEach(e -> {
-				
-				//get the metadatatemplatefield if it exists
-				MetadataTemplateField field = metadataTemplateService.readMetadataFieldByLabel(e.getKey());
-				
-				//if not, create a new one
-				if(field == null){
-					field = new MetadataTemplateField(e.getKey(), "text");
-					field = metadataTemplateService.saveMetadataField(field);
-					logger.trace("creating new template field: " + e.getKey());
-				}
-				
-				metadata.put(field, e.getValue());
-			});
+			Map<MetadataTemplateField, MetadataEntry> metadata = metadataTemplateService.getMetadataMap(metadataMap);
 			
 			updatedValues.put("metadata", metadata);
 		}
