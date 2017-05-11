@@ -163,22 +163,22 @@
     <metadata_entry id="14" value="bloody stool" type="text" />
     <metadata_entry id="15" value="AB-1003" type="text" />
 
-    <sample_metadata_entry sample_id="1" metadata_id="1"  metadata_KEY="firstName"/>
-    <sample_metadata_entry sample_id="1" metadata_id="2"  metadata_KEY="lastName"/>
-    <sample_metadata_entry sample_id="1" metadata_id="3"  metadata_KEY="healthAuthority"/>
-    <sample_metadata_entry sample_id="1" metadata_id="4"  metadata_KEY="firstSymptom"/>
-    <sample_metadata_entry sample_id="1" metadata_id="5"  metadata_KEY="serotype"/>
+    <sample_metadata_entry sample_id="1" metadata_id="1"  metadata_KEY="1"/>
+    <sample_metadata_entry sample_id="1" metadata_id="2"  metadata_KEY="2"/>
+    <sample_metadata_entry sample_id="1" metadata_id="3"  metadata_KEY="3"/>
+    <sample_metadata_entry sample_id="1" metadata_id="4"  metadata_KEY="4"/>
+    <sample_metadata_entry sample_id="1" metadata_id="5"  metadata_KEY="5"/>
 
-    <sample_metadata_entry sample_id="2" metadata_id="6"  metadata_KEY="firstName"/>
-    <sample_metadata_entry sample_id="2" metadata_id="7"  metadata_KEY="lastName"/>
-    <sample_metadata_entry sample_id="2" metadata_id="8"  metadata_KEY="healthAuthority"/>
-    <sample_metadata_entry sample_id="2" metadata_id="9"  metadata_KEY="firstSymptom"/>
-    <sample_metadata_entry sample_id="2" metadata_id="10"  metadata_KEY="serotype"/>
+    <sample_metadata_entry sample_id="2" metadata_id="6"  metadata_KEY="1"/>
+    <sample_metadata_entry sample_id="2" metadata_id="7"  metadata_KEY="2"/>
+    <sample_metadata_entry sample_id="2" metadata_id="8"  metadata_KEY="3"/>
+    <sample_metadata_entry sample_id="2" metadata_id="9"  metadata_KEY="4"/>
+    <sample_metadata_entry sample_id="2" metadata_id="10"  metadata_KEY="5"/>
 
-    <sample_metadata_entry sample_id="3" metadata_id="11"  metadata_KEY="firstName"/>
-    <sample_metadata_entry sample_id="3" metadata_id="12"  metadata_KEY="lastName"/>
-    <sample_metadata_entry sample_id="3" metadata_id="13"  metadata_KEY="healthAuthority"/>
-    <sample_metadata_entry sample_id="3" metadata_id="14"  metadata_KEY="firstSymptom"/>
-    <sample_metadata_entry sample_id="3" metadata_id="15"  metadata_KEY="serotype"/>
+    <sample_metadata_entry sample_id="3" metadata_id="11"  metadata_KEY="1"/>
+    <sample_metadata_entry sample_id="3" metadata_id="12"  metadata_KEY="2"/>
+    <sample_metadata_entry sample_id="3" metadata_id="13"  metadata_KEY="3"/>
+    <sample_metadata_entry sample_id="3" metadata_id="14"  metadata_KEY="4"/>
+    <sample_metadata_entry sample_id="3" metadata_id="15"  metadata_KEY="5"/>
 
 </dataset>
