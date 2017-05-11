@@ -11,10 +11,7 @@ variables:
 
 
 before_script:
-  - echo '{ "allow_root": true }' >/root/.bowerrc
-  - pushd lib
-  - ./install-libs.sh
-  - popd
+  - ci/init.sh
 
 service_job:
 #running service layer tests
