@@ -16,6 +16,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -390,8 +391,8 @@ public class ProjectSamplesController {
 	 */
 	@RequestMapping(value = "/projects/{projectId}/ajax/samples", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
 	@ResponseBody
-	public ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesResponse getProjectSamples(@PathVariable Long projectId,
-			@DatatablesRequest ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesParams params,
+	public DatatablesResponse getProjectSamples(@PathVariable Long projectId,
+			@DatatablesRequest DatatablesParams params,
 			@RequestParam(required = false, defaultValue = "") List<String> sampleNames,
 			@RequestParam(required = false, defaultValue = "") List<Long> associated,
 			@RequestParam(required = false, defaultValue = "") String name,
