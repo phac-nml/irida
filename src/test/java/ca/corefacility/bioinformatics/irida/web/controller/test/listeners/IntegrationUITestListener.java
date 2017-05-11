@@ -6,6 +6,7 @@ import org.junit.runner.notification.RunListener;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +47,9 @@ public class IntegrationUITestListener extends RunListener {
 	}
 
 	public static void startWebDriver() {
-		driver = new ChromeDriver();
+		ChromeOptions options = new ChromeOptions();
+        options.addArguments("--no-sandbox");
+		driver = new ChromeDriver(options);
 		driver.manage().window().setSize(new Dimension(1400, 900));
 		driver.manage().timeouts().implicitlyWait(DRIVER_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
 	}
