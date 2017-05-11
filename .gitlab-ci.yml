@@ -29,7 +29,7 @@ service_job:
 #  script:
 #  - xvfb-run --auto-servernum --server-num=1 mvn clean verify -Pui_testing -Dwebdriver.chrome.driver=./src/main/webapp/node_modules/chromedriver/lib/chromedriver/chromedriver
 #  stage: test
-#rest_job:
+rest_job:
 #running rest api tests
   tags:
   - docker
