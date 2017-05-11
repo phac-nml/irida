@@ -1,6 +1,10 @@
 Changes
 =======
 
+0.16.0 to 0.17.0
+----------------
+* [Developer]: Updated how project samples ajax controller handles datatables column sort functionality.
+
 0.15.0 to 0.16.0
 ----------------
 * [Developer]: Upgraded to AngularJS 1.6.2 <https://github.com/angular/angular.js/blob/master/CHANGELOG.md>
