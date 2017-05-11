@@ -20,7 +20,7 @@ service_job:
   - docker
   image: maven:3.5.0-jdk-8
   script:
-  - mvn clean verify -Pservice_testing -Djdbc.url=jdbc:mariadb://mysql:3306/irida_test
+  - mvn clean verify -Pservice_testing -Djdbc.url=jdbc:mysql://mariadb:3306/irida_test
   stage: test
 #ui_job:
 ##running ui tests
