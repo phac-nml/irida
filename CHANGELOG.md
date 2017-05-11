@@ -8,10 +8,12 @@ Changes
 * [Workflow]: Added version 0.1 of a pipeline for Salmonella typing (SISTR) using the [sistr_cmd](https://github.com/peterk87/sistr_cmd).
 * [UI]: Removing commas (`,`) and replacing spaces with underscores (`_`) in download filenames as they confuse browsers. (0.15.1)
 * [Workflow]: The software **SPAdes** has been updated in all workflows to version 3.9.0.  This requires installing an updated `spades` tool in Galaxy.
+* [Workflow]: The parameters to **Prokka** were changed to avoid crashing when a contig (and so sample) name was too long.
 * [UI]: Fixed issue caused when trying to use the command line linker to export a large number of samples from a project.
 * [Developer]: Fixed issue caused when trying to create a new pipeline with no parameters.
 * [UI]: Moved "Members", "Groups", "Associated Projects", "Reference Files" to a new "Settings" tab in projects.
 * [UI]: Fixed bug where collaborators on a project had access to the sample tools. These buttons are now hidden from collaborators.
+* [UI]: Fixed bug with email subscriptions where users were emailed events from all their projects if they were subscribed to one.
 * [Developer]: Removed `thymeleaf-extras-conditionalcomments`. Not used anymore.
 
 0.14.0 to 0.15.0
