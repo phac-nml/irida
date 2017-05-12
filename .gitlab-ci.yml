@@ -10,6 +10,7 @@ before_script:
   - ./install-libs.sh
   - popd
   - rm -rf /tmp/irida/*
+  - rm -rf src/main/webapp/node_modules
 
 service_job:
 #running service layer tests
