@@ -38,7 +38,9 @@
     <script type="text/ng-template" id="metadata.button.tmpl">
         <div class="btn-toolbar spaced-bottom clearfix" role="toolbar">
             <div class="btn-group pull-left" role="group">
-                <button class="btn btn-default" ng-click="$ctrl.showMetadataTemplator()">
+                <button id="col-vis-btn"
+                        class="btn btn-default"
+                        ng-click="$ctrl.showMetadataTemplator()">
                     <i class="fa fa-list fa-fw" aria-hidden="true"></i>
                     <th:block
                             th:text="#{linelist.datatable.column-select.button}"/>
@@ -59,7 +61,7 @@
                 </div>
             </div>
             <div class="btn-group">
-                <button class="btn btn-default" ng-click="$ctrl.saveTemplate()" ng-disabled="$ctrl.saving">
+                <button id="save-btn" class="btn btn-default" ng-click="$ctrl.saveTemplate()" ng-disabled="$ctrl.saving">
                     <i class="fa fa-save fa-fw" aria-hidden="true"></i>
                     <th:block
                             th:text="#{linelist.create-template.save-template}"/>
@@ -144,6 +146,7 @@
                     ng-click="$modal.cancel()">_Cancel_
             </button>
             <button ng-disabled="templateNameForm.$invalid"
+                    id="complete-save"
                     class="btn btn-default"
                     th:text="#{form.btn.save}"
                     ng-click="$modal.save()">_Save_

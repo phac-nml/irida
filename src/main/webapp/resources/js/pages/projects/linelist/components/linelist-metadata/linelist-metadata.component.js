@@ -28,12 +28,12 @@ saveTemplateController.$inject = [
 /**
  * Controller for the ng-aside that allows the user to select
  * visible metadata fields
- * @param {object} $uibModalInstance angular-ui modal instance.
+ * @param {object} $uibModalInstance angular UI modal instance.
  * @param {array} fields metadata fields
  * @param {function} toggleColumnVisibility call to toggle the column within the Datatables.
  */
-function showMetadataFieldSelectionsController($uibModalInstance, fields,
-                                               toggleColumnVisibility) {
+function showMetadataFieldSelectionsController($uibModalInstance,
+                                               fields, toggleColumnVisibility) {
   this.fields = fields;
 
   this.toggleColumn = column => {
