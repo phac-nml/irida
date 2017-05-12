@@ -38,6 +38,18 @@ public class CreateRemoteAPIPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
+	public void testCreateClientWithSpacesInClientID() {
+		page.createRemoteAPIWithDetails("new name", "http://newuri", "newClient ", "newSecret");
+		assertFalse("client should not have been created", page.checkSuccess());
+	}
+
+	@Test
+	public void testCreateClientWithSpacesInClientSecret() {
+		page.createRemoteAPIWithDetails("new name", "http://newuri", "newClient", "newSecret ");
+		assertFalse("client should not have been created", page.checkSuccess());
+	}
+
+	@Test
 	public void testAndConnectToClient() {
 		String applicationPort = page.getApplicationPort();
 		String url = "http://localhost:" + applicationPort + "/api";
