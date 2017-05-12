@@ -70,7 +70,7 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER', 'ROLE_USER')")
+	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER', 'ROLE_USER', 'ROLE_TECHNICIAN')")
 	public SequencingRun read(Long id) {
 		return super.read(id);
 	}
@@ -79,8 +79,8 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER', 'ROLE_USER')")
-	@PostFilter("hasPermission(filterObject, 'canUpdateSequencingRun')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER', 'ROLE_USER', 'ROLE_TECHNICIAN')")
+	@PostFilter("hasPermission(filterObject, 'canReadSequencingRun')")
 	public Iterable<SequencingRun> findAll() {
 		return super.findAll();
 	}
@@ -200,7 +200,7 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER', 'ROLE_TECHNICIAN')")
 	public Page<SequencingRun> list(int page, int size, Direction order, String... sortProperties)
 			throws IllegalArgumentException {
 		return super.list(page, size, order, sortProperties);

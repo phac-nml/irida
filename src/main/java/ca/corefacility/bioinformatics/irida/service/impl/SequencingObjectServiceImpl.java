@@ -184,7 +184,7 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER', 'ROLE_TECHNICIAN')")
 	public Set<SequencingObject> getSequencingObjectsForSequencingRun(SequencingRun sequencingRun) {
 		return repository.findSequencingObjectsForSequencingRun(sequencingRun);
 	}
