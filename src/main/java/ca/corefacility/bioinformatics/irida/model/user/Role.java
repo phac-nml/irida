@@ -21,7 +21,7 @@ public class Role implements Comparable<Role>, GrantedAuthority {
 	private static final long serialVersionUID = 7595149386708058927L;
 
 	/**
-	 * Constant reference for administrative role.
+	 * Constant reference for anonymous role.
 	 */
 	public static final Role ROLE_ANONYMOUS = new Role("ROLE_ANONYMOUS");
 
@@ -43,6 +43,11 @@ public class Role implements Comparable<Role>, GrantedAuthority {
 	 * Constant reference for the sequencer role.
 	 */
 	public static final Role ROLE_SEQUENCER = new Role("ROLE_SEQUENCER");
+	
+	/**
+	 * Constant reference for technician role.
+	 */
+	public static final Role ROLE_TECHNICIAN = new Role("ROLE_TECHNICIAN");
 
 	@Id
 	private String name;
