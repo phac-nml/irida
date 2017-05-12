@@ -17,6 +17,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.URL;
@@ -56,10 +57,12 @@ public class RemoteAPI implements Comparable<RemoteAPI>, MutableIridaThing {
 
 	@NotNull
 	@Column(name = "clientId")
+	@Pattern(regexp = "[^\\s]+", message="{remoteapi.details.nospace}")
 	private String clientId;
 
 	@NotNull
 	@Column(name = "clientSecret")
+	@Pattern(regexp = "[^\\s]+", message="{remoteapi.details.nospace}")
 	private String clientSecret;
 
 	@OneToMany(mappedBy = "remoteApi", cascade = CascadeType.REMOVE)
