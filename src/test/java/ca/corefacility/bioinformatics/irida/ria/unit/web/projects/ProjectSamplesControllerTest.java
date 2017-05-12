@@ -4,24 +4,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -34,12 +24,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.mock.web.MockHttpServletResponse;
-
-import com.github.dandelion.datatables.core.ajax.ColumnDef;
-import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
-import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -60,6 +44,12 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectSamplesContr
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
+import com.github.dandelion.datatables.core.ajax.ColumnDef;
+import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
+import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 public class ProjectSamplesControllerTest {
 	public static final String PROJECT_ORGANISM = "E. coli";
@@ -319,8 +309,7 @@ public class ProjectSamplesControllerTest {
 
 		when(sampleService
 				.getFilteredSamplesForProjects(any(List.class), any(List.class), any(String.class), any(String.class), any(String.class), any(Date.class), any(Date.class),
-						any(Integer.class), any(Integer.class), any(
-								Sort.Direction.class), any(String.class)))
+						any(Integer.class), any(Integer.class), any(Sort.class)))
 				.thenReturn(TestDataFactory.getPageOfProjectSampleJoin());
 		DatatablesCriterias criterias = mock(DatatablesCriterias.class);
 
