@@ -39,6 +39,10 @@ Individual metadata field by clicking on the field label in the side panel.
 
 ![Toggle metadata field](images/toggle_metadatafield.png)
 
+After selecting 'PFGE-BlnI-pattern' the toggle is set to off and the metadata column is removed from the image.
+
+![Result of removing 'PFGE-BlnI-pattern'](images/toggle_metadatafield_after.png)
+
 #### Export to SVG
 
 To export a copy of the visualization into SVG format, simply click on the `Export SVG` button in the upper right.
