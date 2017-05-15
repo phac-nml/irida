@@ -49,7 +49,7 @@ public class AbstractIridaUIITChromeDriver {
     public static final int DRIVER_TIMEOUT_IN_SECONDS = IntegrationUITestListener.DRIVER_TIMEOUT_IN_SECONDS;
 
     private static boolean isSingleTest = false;
-    
+
     @Rule
     public ScreenshotOnFailureWatcher watcher = new ScreenshotOnFailureWatcher();
 
@@ -99,7 +99,7 @@ public class AbstractIridaUIITChromeDriver {
         return IntegrationUITestListener.driver();
 
     }
-    
+
     /**
      * Simple test watcher for taking screenshots of the browser on failure.
      *
@@ -107,7 +107,7 @@ public class AbstractIridaUIITChromeDriver {
     private static class ScreenshotOnFailureWatcher extends TestWatcher {
 
     	private static final Logger logger = LoggerFactory.getLogger(ScreenshotOnFailureWatcher.class);
-    	
+
     	/**
     	 * {@inheritDoc}
     	 */
@@ -115,9 +115,9 @@ public class AbstractIridaUIITChromeDriver {
     	protected void failed(final Throwable t, final Description description) {
 			logger.debug("Handling exception of type [" + t.getClass() + "], taking screenshot: " + t.getMessage(), t);
     		final TakesScreenshot takesScreenshot = (TakesScreenshot) driver();
-    		
+
     		final Path screenshot = Paths.get(takesScreenshot.getScreenshotAs(OutputType.FILE).toURI());
-    		
+
     		try {
 				final Path destination = Files.createTempFile(
 						"irida-" + description.getTestClass().getSimpleName() + "#" + description.getMethodName(),

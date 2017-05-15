@@ -87,8 +87,8 @@
 	<qc_entry />
 
 	<metadata_entry/>
-	<sample_metadata_entry/>
 	<metadata_field/>
+	<sample_metadata_entry/>
 	<metadata_template/>
 	<metadata_template_metadata_field/>
 	<project_metadata_template/>

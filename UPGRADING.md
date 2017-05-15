@@ -9,6 +9,7 @@ upgrading IRIDA that cannot be automated.
 
 * This upgrade makes schema changes to the databases and cannot be parallel deployed.  Servlet container must be stopped before deploying the new `war` file.
 * A new pipeline (SISTR) has been added and requires installation of additional tools and dependencies in Galaxy.  Please see <http://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/sistr/>.
+* The **SPAdes** tool has been updated to <https://toolshed.g2.bx.psu.edu/view/nml/spades/35cb17bd8bf9>, please update this tool in Galaxy. See <http://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/assembly-annotation/> for more details on upgrading.
 
 0.14.0 to 0.15.0
 ----------------
