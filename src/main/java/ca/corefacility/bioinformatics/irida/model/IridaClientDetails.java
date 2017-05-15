@@ -27,6 +27,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.hibernate.envers.Audited;
@@ -64,6 +65,7 @@ public class IridaClientDetails implements ClientDetails, MutableIridaThing {
 	private Long id;
 
 	@NotNull
+	@Pattern(regexp = "[^\\s]+", message="{remoteapi.details.nospace}")
 	private String clientId;
 
 	@NotNull
