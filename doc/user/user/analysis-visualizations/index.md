@@ -27,13 +27,17 @@ To get to the advanced visualization page, there is a button in the left sidebar
 
 [Sample Metadata Templates](../sample-metadata-templates/) can be used to update which metadata fields are displayed in the visualization.  When the page is loaded the default template is presented, all metadata fields are shown.  A different template can be selected from the template selection as demonstrated below.  This will update the view with the desired metadata fields in the proper order.
 
-![Demonstration of applying Sample Metadata Templates to the visualization](images/template_selection.gif)
+![Demonstration of applying Sample Metadata Templates to the visualization](images/template_selection.png)
 
 #### Toggling Sample Metadata Fields
 
-Individual Metadata Fields can be displayed or hidden by clicking `Toggle Metadata` button, which will open a side panel displaying the toggles for all the fields.  Toggling a field will instantly update the diagram.
+Individual Metadata Fields can be displayed or hidden by clicking `Toggle Metadata` button, which will open a side panel displaying the toggles for all the fields.  
 
-![Toggle metadata fields](images/toggle_metadata.gif)
+![Open metadata selection btn](images/toggle_metadata_button.png)
+
+Individual metadata field by clicking on the field label in the side panel.
+
+![Toggle metadata field](images/toggle_metadatafield.png)
 
 #### Export to SVG
 
