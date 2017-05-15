@@ -40,7 +40,21 @@ public class ProjectsPage extends AbstractPage {
 
 	public int projectsTableSize() {
 		logger.trace("Getting table size");
-		return driver.findElements(By.cssSelector("#projectsTable tbody tr")).size();
+
+		List<WebElement> projectList = driver.findElements(By.cssSelector("#projectsTable tbody tr"));
+
+		int size = projectList.size();
+
+		// exclude the "no projects" row if it's empty
+		if (size == 1) {
+			WebElement next = projectList.iterator().next();
+			if (next.findElement(By.cssSelector("td")).getAttribute("class").contains("dataTables_empty")) {
+				logger.trace("Removing no projects found row");
+				size--;
+			}
+		}
+
+		return size;
 	}
 
 	public void gotoProjectPage(int row) {

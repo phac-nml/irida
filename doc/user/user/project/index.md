@@ -335,4 +335,15 @@ The status section will be one of the following messages:
 * `Error` - An error occurred during the last project synchronization job.
 * `Unsynchronized` - This project will no longer be synchronized.   
 
+Deleting a project
+------------------
+
+Projects can be deleted from the **Delete Project** tab in the settings panel.
+
+![Delete project tab](images/delete-project-tab.png)
+
+To delete a project, first read and understand the warning on the deletion page.  **Deleting a project is a permanent action!  Deleted projects and samples may not be able to be recovered.**  If you are sure you want to delete the project, check the confirmation box, then click **Delete Project**.  Once the project has been successfully deleted you will be redirected to your list of projects.
+
+![Delete project](images/delete-project.png)
+
 <a href="../user-groups/">Previous: Managing user groups</a><a href="../samples/" style="float: right;">Next: Managing samples</a>
