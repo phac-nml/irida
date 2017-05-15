@@ -5,6 +5,10 @@ Changes
 ----------------
 * [Developer]: Updated how project samples ajax controller handles datatables column sort functionality.
 * [UI]: Disallow spaces in Remote API and Client Details creation.
+* [UI]: New Line List page for displaying sample metadata for all samples within a project.
+* [UI]: New upload excel spreadsheet of metadata for samples within a project.
+* [UI]: New project sample metadata templates.
+* [UI]: New advanced phylogenetic tree with metadata visualization.
 
 0.15.0 to 0.16.0
 ----------------
