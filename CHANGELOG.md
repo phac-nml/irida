@@ -5,6 +5,7 @@ Changes
 ----------------
 * [Developer]: Updated how project samples ajax controller handles datatables column sort functionality.
 * [UI]: Disallow spaces in Remote API and Client Details creation.
+* [UI]: Added ability for admins and project owners to delete a project.
 * [UI]: New Line List page for displaying sample metadata for all samples within a project.
 * [UI]: New upload excel spreadsheet of metadata for samples within a project.
 * [UI]: New project sample metadata templates.

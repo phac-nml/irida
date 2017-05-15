@@ -93,7 +93,7 @@
 	<metadata_template_metadata_field/>
 	<project_metadata_template/>
 
-	<!-- All auditing table references *only* refer to the Revisions table, 
+	<!-- All auditing table references *only* refer to the Revisions table,
 		so they can all be listed in an arbitrary order *after* the Revisions table. -->
 	<Revisions />
 	<project_user_AUD />
@@ -147,4 +147,9 @@
 	<project_analysis_submission_AUD/>
 	<metadata_entry_AUD/>
 	<sample_metadata_entry_AUD/>
+	<ncbi_export_submission_AUD/>
+	<ncbi_export_biosample_AUD/>
+	<ncbi_export_submission_biosample_AUD/>
+	<ncbi_export_biosample_sequence_file_single_end_AUD/>
+	<ncbi_export_biosample_sequence_file_pair_AUD/>
 </dataset>

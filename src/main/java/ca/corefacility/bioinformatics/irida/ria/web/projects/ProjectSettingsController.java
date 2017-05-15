@@ -103,6 +103,52 @@ public class ProjectSettingsController {
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		return "projects/settings/pages/remote";
 	}
+	
+	/**
+	 * Request for a {@link Project} deletion page
+	 *
+	 * @param projectId
+	 *            the ID of the {@link Project} to read
+	 * @param model
+	 *            Model for the view
+	 * @param principal
+	 *            Logged in user
+	 *
+	 * @return name of the project deletion page
+	 */
+	@RequestMapping("/delete")
+	@PreAuthorize("hasPermission(#projectId, 'canManageLocalProjectSettings')")
+	public String getProjctDeletionPage(@PathVariable Long projectId, final Model model,
+			final Principal principal) {
+		Project project = projectService.read(projectId);
+		model.addAttribute("project", project);
+		model.addAttribute(ProjectsController.ACTIVE_NAV, ACTIVE_NAV_SETTINGS);
+		model.addAttribute("page", "delete");
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+		return "projects/settings/pages/delete";
+	}
+	
+	/**
+	 * Delete a project from the UI. Will redirect to user's projects page on
+	 * completion.
+	 * 
+	 * @param projectId
+	 *            the {@link Project} id to delete
+	 * @param confirm
+	 *            confirmation checkbox to delete
+	 * @return a redirect to the users's project page on completion.
+	 */
+	@RequestMapping(value = "/delete", method = RequestMethod.POST)
+	@PreAuthorize("hasPermission(#projectId, 'canManageLocalProjectSettings')")
+	public String deleteProject(@PathVariable Long projectId, @RequestParam(required=false, defaultValue="") String confirm) {
+		if(confirm.equals("true")){
+			projectService.delete(projectId);
+			
+			return "redirect:/projects";
+		}
+		
+		return "redirect: /projects/" + projectId + "/settings/delete";
+	}
 
 	/**
 	 * Request for a {@link Project} remote settings page

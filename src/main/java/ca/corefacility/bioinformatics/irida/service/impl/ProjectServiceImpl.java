@@ -246,7 +246,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#id, 'isProjectOwner')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#id, 'canManageLocalProjectSettings')")
 	public void delete(final Long id) {
 		super.delete(id);
 	}

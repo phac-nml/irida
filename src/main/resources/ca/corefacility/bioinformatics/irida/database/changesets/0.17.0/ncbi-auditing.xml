@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="ncbi-auditing" author="tom">
+
+		<createTable tableName="ncbi_export_submission_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="created_date" type="datetime" />
+			<column name="modified_date" type="datetime" />
+			<column name="project_id" type="bigint(20)" />
+			<column name="submitter" type="bigint(20)" />
+			<column name="upload_state" type="varchar(255)" />
+			<column name="bio_project_id" type="varchar(255)" />
+			<column name="namespace" type="varchar(255)" />
+			<column name="release_date" type="date" />
+			<column name="directory_path" type="varchar(255)" />
+			<column name="organization" type="varchar(255)" />
+			<column name="REV" type="int(11))">
+				<constraints primaryKey="true" foreignKeyName="FK_NCBI_SUBMISSION_AUD"
+					referencedColumnNames="id" referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+		</createTable>
+
+		<createTable tableName="ncbi_export_biosample_AUD">
+			<column name="id" type="varchar(255)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="bioSample" type="varchar(255)" />
+			<column name="instrument_model" type="varchar(255)" />
+			<column name="library_name" type="varchar(255)" />
+			<column name="library_selection" type="varchar(255)" />
+			<column name="library_source" type="varchar(255)" />
+			<column name="library_strategy" type="varchar(255)" />
+			<column name="library_construction_protocol" type="varchar(255)" />
+			<column name="accession" type="varchar(255)" />
+			<column name="submission_status" type="varchar(255)" />
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" referencedColumnNames="id"
+					referencedTableName="Revisions" foreignKeyName="FK_EXPORT_BIOSAMPLE_AUD" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+		</createTable>
+
+		<createTable tableName="ncbi_export_submission_biosample_AUD">
+			<column name="ncbi_export_submission_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="bioSampleFiles_id" type="varchar(255)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true"
+					foreignKeyName="FK_NCBI_SUBMISSION_BIOSAMPLE_AUD"
+					referencedColumnNames="id" referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+		</createTable>
+
+		<createTable tableName="ncbi_export_biosample_sequence_file_pair_AUD">
+			<column name="ncbi_export_biosample_id" type="varchar(255)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+
+			<column name="pairs_id" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" foreignKeyName="FK_NCBI_SUBMISSION_PAIR_AUD"
+					referencedColumnNames="id" referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+		</createTable>
+
+		<createTable tableName="ncbi_export_biosample_sequence_file_single_end_AUD">
+			<column name="ncbi_export_biosample_id" type="varchar(255)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+
+			<column name="files_id" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="REV" type="int(11))">
+				<constraints primaryKey="true" foreignKeyName="FK_NCBI_SUBMISSION_SINGLE_AUD"
+					referencedColumnNames="id" referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+		</createTable>
+	</changeSet>
+</databaseChangeLog>

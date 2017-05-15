@@ -48,6 +48,11 @@
                    th:text="#{project.settings.metadata-templates}">
                     _Metadata Templates_
                 </a>
+                <a th:if="${manageMembers} or ${isAdmin}"
+                   th:href="@{/projects/{id}/settings/delete(id=${project.getId()})}"
+                   class="list-group-item"
+                   th:classappend="${#strings.equalsIgnoreCase(page, 'delete') ? 'active' : ''}"
+                   th:text="#{project.settings.page.delete}">_Delete Project_</a>
             </div>
         </div>
         <div class="col-md-10">
