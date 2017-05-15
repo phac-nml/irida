@@ -154,6 +154,14 @@ public class SequencingRunServiceImplIT {
 		SequencingRun returned = miseqRunService.create(mr);
 		assertNotNull("Created run was not assigned an ID.", returned.getId());
 	}
+	
+	@Test
+	@WithMockUser(username = "tech", password = "password1", roles = "TECHNICIAN")
+	public void testReadMiseqRunAsTech() {
+		SequencingRun mr = miseqRunService.read(1L);
+		assertNotNull("Created run was not assigned an ID.", mr.getId());
+	}
+
 
 	@Test
 	@WithMockUser(username = "sequencer", password = "password1", roles = "SEQUENCER")
@@ -173,6 +181,15 @@ public class SequencingRunServiceImplIT {
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "user", password = "password1", roles = "USER")
 	public void testUpdateMiseqRunAsUserFail() {
+		// run 2 is not owned by "user"
+		SequencingRun mr = miseqRunService.read(2L);
+		mr.setDescription("different description");
+		miseqRunService.update(mr);
+	}
+	
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "tech", password = "password1", roles = "TECHNICIAN")
+	public void testUpdateMiseqRunAsTechFail() {
 		// run 2 is not owned by "user"
 		SequencingRun mr = miseqRunService.read(2L);
 		mr.setDescription("different description");
@@ -224,6 +241,15 @@ public class SequencingRunServiceImplIT {
 
 		List<SequencingRun> runs = Lists.newArrayList(findAll);
 		assertEquals("user should be able to see all 5 runs", 5, runs.size());
+	}
+	
+	@Test
+	@WithMockUser(username = "tech", password = "password1", roles = "TECHNICIAN")
+	public void testFindAllTech() {
+		Iterable<SequencingRun> findAll = miseqRunService.findAll();
+
+		List<SequencingRun> runs = Lists.newArrayList(findAll);
+		assertEquals("technician should be able to see all 5 runs", 5, runs.size());
 	}
 
 	@Test
