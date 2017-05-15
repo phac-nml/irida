@@ -41,5 +41,11 @@ public class CreateClientPageIT extends AbstractIridaUIITChromeDriver {
 		page.createClientWithDetails("testClient", "password", false, false);
 		assertFalse(page.checkSuccess());
 	}
+	
+	@Test
+	public void testCreateClientWithSpace() {
+		page.createClientWithDetails("newClient ", "password", true, false);
+		assertFalse("should have failed due to space", page.checkSuccess());
+	}
 
 }
