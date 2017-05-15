@@ -4,6 +4,7 @@ Changes
 0.16.0 to 0.17.0
 ----------------
 * [Developer]: Updated how project samples ajax controller handles datatables column sort functionality.
+* [UI]: Disallow spaces in Remote API and Client Details creation.
 * [UI]: Added `Technician` system role which allows technicians to view results of all sequencing runs in the system.
 
 0.15.0 to 0.16.0
