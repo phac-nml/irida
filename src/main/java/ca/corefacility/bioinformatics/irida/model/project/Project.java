@@ -112,7 +112,6 @@ public class Project extends IridaResourceSupport
 	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "project")
 	private List<ProjectAnalysisSubmissionJoin> analysisSubmissions;
 	
-	@NotAudited
 	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "project")
 	private List<NcbiExportSubmission> ncbiSubmissions;
 
