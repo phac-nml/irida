@@ -5,6 +5,7 @@ Changes
 ----------------
 * [Developer]: Updated how project samples ajax controller handles datatables column sort functionality.
 * [UI]: Disallow spaces in Remote API and Client Details creation.
+* [UI]: Added ability for admins and project owners to delete a project.
 
 0.15.0 to 0.16.0
 ----------------
