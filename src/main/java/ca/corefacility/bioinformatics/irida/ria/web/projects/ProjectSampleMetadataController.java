@@ -188,6 +188,7 @@ public class ProjectSampleMetadataController {
 				Iterator<Cell> cellIterator = row.cellIterator();
 				while (cellIterator.hasNext() && headerCounter < headers.size()) {
 					Cell cell = cellIterator.next();
+					cell.setCellType(Cell.CELL_TYPE_STRING);
 					String cellValue = cell.getStringCellValue().trim();
 					String header = headers.get(headerCounter).trim();
 					rowMap.put(header, cellValue);
