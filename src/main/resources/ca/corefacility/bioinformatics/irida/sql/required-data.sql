@@ -2,6 +2,7 @@ INSERT INTO system_role (`name`,`description`) VALUES ('ROLE_USER','A basic user
 INSERT INTO system_role (`name`,`description`) VALUES ('ROLE_ADMIN','An administrative user in the system.');
 INSERT INTO system_role (`name`,`description`) VALUES ('ROLE_MANAGER','A manager role in the system.');
 INSERT INTO system_role (`name`,`description`) VALUES ('ROLE_SEQUENCER','A sequencer role in the system.');
+INSERT INTO system_role (`name`,`description`) VALUES ('ROLE_TECHNICIAN','A sequencing technician.');
 
 -- user account required for integration tests
 INSERT INTO user (`createdDate`, `modifiedDate`, `email`, `firstName`, `lastName`, `locale`, `password`, `phoneNumber`, `username`, `enabled`, `system_role`, `credentialsNonExpired`) VALUES (now(), now() , 'franklin.bristow@phac-aspc.gc.ca', 'Franklin', 'Bristow', 'en', '$2a$10$yvzFLxWA9m2wNQmHpJtWT.MRZv8qV8Mo3EMB6HTkDnUbi9aBrbWWW', '7029', 'fbristow', 1, 'ROLE_USER', 1);

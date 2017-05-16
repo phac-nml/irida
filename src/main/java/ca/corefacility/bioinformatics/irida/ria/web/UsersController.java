@@ -85,7 +85,7 @@ public class UsersController {
 			"firstName", "email", "systemRole", "createdDate", "modifiedDate");
 
 	private final List<Role> adminAllowedRoles = Lists.newArrayList(Role.ROLE_ADMIN, Role.ROLE_MANAGER, Role.ROLE_USER,
-			Role.ROLE_SEQUENCER);
+			Role.ROLE_TECHNICIAN, Role.ROLE_SEQUENCER);
 
 	private final MessageSource messageSource;
 
