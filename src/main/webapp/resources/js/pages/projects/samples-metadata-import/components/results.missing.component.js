@@ -12,13 +12,13 @@ import {dom, formatBasicHeaders} from '../../../../utilities/datatables.utilitie
 const resultsMissingComponent = {
   templateUrl: 'results.missing.component.tmpl.html',
   bindings: {
-    rows: '=',
-    headers: '='
+    rows: '='
   },
   controller() {
     this.$onInit = () => {
       if (this.rows.length > 0) {
-        const columns = formatBasicHeaders(this.headers);
+        const headers = Object.keys(this.rows[0]);
+        const columns = formatBasicHeaders(headers);
         $('#missing-table').DataTable({
           dom,
           scrollX: true,

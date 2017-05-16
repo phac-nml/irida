@@ -269,7 +269,8 @@ public class ProjectSampleMetadataController {
 				String sampleName = row.get(sampleNameColumn);
 				try {
 					Sample sample = sampleService.getSampleBySampleName(project, sampleName);
-					row.put("identifier", String.valueOf(sample.getId()));
+					row.put("id", String.valueOf(sample.getId()));
+					row.remove(sampleNameColumn); // Remove column corresponding to the sample name since it is not needed
 					found.add(row);
 				} catch (EntityNotFoundException e) {
 					missing.add(row);
