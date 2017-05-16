@@ -195,6 +195,14 @@ public class SequencingRunServiceImplIT {
 		mr.setDescription("different description");
 		miseqRunService.update(mr);
 	}
+	
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "tech", password = "password1", roles = "TECHNICIAN")
+	public void testDeleteMiseqRunAsTechFail() {
+		// run 2 is not owned by "user"
+		SequencingRun mr = miseqRunService.read(2L);
+		miseqRunService.delete(mr.getId());
+	}
 
 	@Test
 	@WithMockUser(username = "user", password = "password1", roles = "USER")
