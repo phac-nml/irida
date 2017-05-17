@@ -6,6 +6,9 @@ import org.springframework.data.domain.Sort;
 
 import com.google.common.base.Strings;
 
+/**
+ * Responsible for extracting and representing DataTables Columns
+ */
 public class DatatablesColumnDef {
 	private String name;
 	private boolean orderable;
