@@ -313,7 +313,7 @@ public class ProjectSampleMetadataController {
 			List<String> errorList = new ArrayList<>();
 			for (Map<String, String> row : found) {
 				try {
-					Long id = Long.valueOf(row.get("identifier"));
+					Long id = Long.valueOf(row.get("id"));
 					Sample sample = sampleService.read(id);
 
 					Map<MetadataTemplateField, MetadataEntry> newData = new HashMap<>();
