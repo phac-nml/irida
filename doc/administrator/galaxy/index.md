@@ -83,19 +83,34 @@ Dependency Installation
 
 The installation and setup of Galaxy requires a number of dependency software to be installed.  To install this software on CentOS (>= 6.6) please run:
 
-	yum install mercurial pwgen python zlib-devel ncurses-devel tcsh
+	yum install mercurial pwgen python zlib-devel ncurses-devel tcsh git
 
 The following dependencies are required for running or building some of the tools.
 
 	yum groupinstall "Development tools"
 	yum install db4-devel expat-devel java
 
-These instructions will walk through installing [PerlBrew][] for managing Perl and dependencies.  If you do not wish to install PerlBrew, you will have to, at minimum, install Perl and [App::cpanminus][].
+### Conda Installation
 
-Galaxy Database Setup
----------------------
+Galaxy makes use of [conda][] for dependency installation of tools.  Conda can also be used to manage Galaxy software dependencies.  The easiest way to install conda is by downloading and installing [miniconda][].  E.g.,
 
-For using Galaxy with IRIDA, we need to setup a specific database for Galaxy to record information.  Both [PostgreSQL][] and [MySQL][] are supported.  Please refer to the [Galaxy Database Setup][] guide for more details.
+```bash
+wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
+bash Miniconda3-latest-Linux-x86_64.sh
+```
+
+This should default to installing conda under `~/miniconda3`.  For the remainder of these instructions we will assume conda is installed in this location, and that conda is available on `PATH`.
+
+*Note: conda requires the `bash` shell to fuction properly. To see which shell you are using you can run `echo $SHELL`.*
+
+### Conda Galaxy Environment
+
+Galaxy requies a number of dependencies to be installed before it is run.  The easiest way to install these dependencies is through a conda environment.  Please create the initial environment and activate like so:
+
+```bash
+conda create --name galaxy python=2.7
+source activate galaxy
+```
 
 Galaxy Software Installation
 ----------------------------
@@ -107,63 +122,78 @@ This describes installing the main Galaxy software.  Most of the installation do
 Please run the following commands to download and build Galaxy.
 
 ```bash
-cd $GALAXY_BASE_DIR
-curl -O https://bitbucket.org/apetkau/galaxy-dist/get/b065a7a.tar.gz
-tar xf b065a7a.tar.gz
-mv apetkau-galaxy-dist-b065a7a422d7 $GALAXY_ROOT_DIR
-cd $GALAXY_ROOT_DIR
+git clone https://github.com/galaxyproject/galaxy.git && cd galaxy
+git checkout release_17.01
 
-sh scripts/common_startup.sh 2>&1 | tee common_startup.log # Common startup tasks
-cp $GALAXY_ROOT_DIR/config/galaxy.ini.sample $GALAXY_ROOT_DIR/config/galaxy.ini
-
-mkdir $GALAXY_BASE_DIR/shed_tools # directory for installing tool shed tools
-mkdir $GALAXY_BASE_DIR/tool_dependencies # directory for installing dependency binaries for tools
-cp $GALAXY_ROOT_DIR/config/tool_sheds_conf.xml.sample $GALAXY_ROOT_DIR/config/tool_sheds_conf.xml
+# Runs Galaxy
+./run.sh
 ```
 
-We are using the specific Galaxy version located at <https://bitbucket.org/apetkau/galaxy-dist/commits/b065a7a422d72c5436ba62bfc6d831a9df82a79f> which is based off of Galaxy version **15.03.1** but includes one performance improvement for larger workflows.  The Galaxy version **15.03.1** should work as well but later versions of Galaxy have made changes to the API which require modifications to IRIDA to be fully supported.  We plan to integrate these changes and update the supported Galaxy instance shortly.
+On first execution, Galaxy will setup it's dependencies and other necessary files. However, there are a few files that will need to be modified for functionality with IRIDA.
 
-### Step 2: Create Galaxy Environment File
+```bash
+# We assume you are in the galaxy/ directory.
+cp config/galaxy.ini.sample config/galaxy.ini
+cp config/tool_sheds_conf.xml.sample config/tool_sheds_conf.xml
+```
 
-Some specific environment variables often need to be set for Galaxy and any of the tools running under Galaxy.  These can be configured in a special file `env.sh` which can be passed to Galaxy on startup and will be loaded by Galaxy and the tools.  Please create this file now by running.
+### Step 2: Galaxy Database Setup
 
-	touch $GALAXY_ENV
+By default, Galaxy uses [SQLite][] for a database, but this is not sufficient for the larger workflows used by IRIDA.  We would recommend using [PostgreSQL][] or [MySQL][].  You will have to modify the property `database_connection` in the file `config/galaxy.ini` to point to your database. Please refer to the [Galaxy Database Setup][] guide for more details. 
 
+### Step 3: Create Galaxy Environment Files
+
+#### Galaxy web server environment
+
+In order to make sure Galaxy uses the dependencies set up with conda, we need to make sure this environment is activated before Galaxy is run.  This can be accomplished by adding the following to the file `config/local_env.sh`.
+
+```bash
+export PATH=~/miniconda3:$PATH
+source activate galaxy
+```
+
+Additionally, please change the shell used by Galaxy from `sh` to `bash`.  That is change `#!/bin/sh` to `#!/bin/bash` in the file `run.sh`.
+
+#### Tool environments
+
+Additionally, some Python dependencies and additional dependencies may be required by Galaxy on execution of tools.  This can be accomplished by creating another file `env.sh` and activating the conda **galaxy** environment here.  E.g.:
+
+```bash
+export PATH=~/miniconda3:$PATH
+source activate galaxy
+```
 Other steps will specify when you need to add setup instructions to this file.
 
-### Step 3: Modify configuration file
+### Step 4: Modify configuration file
 
-The main Galaxy configuration file is located in `$GALAXY_ROOT_DIR/config/galaxy.ini`.  Please make the following changes to this file.  More information on this configuration file can be found at [Running Galaxy in a production environment][].
+The main Galaxy configuration file is located in `config/galaxy.ini`.  Please make the following changes to this file.  More information on this configuration file can be found at [Running Galaxy in a production environment][].
 
 1. Modify the address that Galaxy should listen on for incoming connections to allow for connections external to the Galaxy server.
    * Change `#host = 127.0.0.1` to `host = 0.0.0.0`. (`0.0.0.0` listens on all interfaces and addresses)
-2. Modify the port that Galaxy listens on so there are no conflicts with Tomcat.
+2. Modify the port that Galaxy listens on so there are no conflicts with Tomcat (or other software).
     * Change `#port = 8080` to `port = 9090`.
 3. Modify the Galaxy database connection string to connect to your specific database.
    * `database_connection = postgresql://galaxy:password@localhost/galaxy` (use a MySQL connection string if using MySQL or MariaDB)
 4. The below is necessary to allow direct linking of files in Galaxy to the IRIDA file locations.
    * Change `#allow_library_path_paste = False` to `allow_library_path_paste = True`.
-5. Give the `$GALAXY_ADMIN_USER` and `$GALAXY_WORKFLOW_USER` users in Galaxy admin privileges (necessary for running workflows on linked files within Galaxy).
-   * Change `#admin_users = None` to `admin_users = $GALAXY_ADMIN_USER,$GALAXY_WORKFLOW_USER`.
-6. Disable developer settings (from [Galaxy Disable Developer Settings][]).
+5. Give the Galaxy admin and workflow users admin privileges (necessary for running workflows on linked files within Galaxy).
+   * Change `#admin_users = None` to `admin_users = admin@localhost.localdomain,workflow@localhost.localdomain`.
+6. Disable developer settings if enabled (from [Galaxy Disable Developer Settings][]).
    * Change `debug = True` to `debug = False`.
    * Change `use_interactive = True` to `use_interactive = False`.
-   * Make sure `filter-with = gzip` is disabled.
-7. Set directory for installing tools in Galaxy.
-   * Change `#tool_dependency_dir = None` to `tool_dependency_dir = $GALAXY_BASE_DIR/tool_dependencies`
-   * Uncomment `#tool_sheds_config_file = config/tool_sheds_conf.xml`.
+   * Make sure `filter-with = gzip` is disabled. (###why?)
 8. Set the Galaxy id_secret for encoding database ids.
    * Change `#id_secret = USING THE DEFAULT IS NOT SECURE!` to `id_secret = some secure password`
       * The command `pwgen --secure -N 1 56` may be useful for picking a hard-to-guess key.
       * ***Note: Once this key is set, please do not change it.  This key is used to translate database ids in Galaxy to API ids used by IRIDA to access datasets, histories, and workflows.  IRIDA does store some of these API ids internally for debugging and tracking purposes and changing this value will render any of the API ids stored in IRIDA useless.***
-9. Setup the Galaxy environment file `$GALAXY_ENV`.  This file is read by Galaxy to setup the environment for each tool.
-   * Change `#environment_setup_file = None` to `environment_setup_file = $GALAXY_ENV`
+9. Setup the Galaxy environment file `env.sh`.  This file is read by Galaxy to setup the environment for each tool.
+   * Change `#environment_setup_file = None` to `environment_setup_file = env.sh`
 
 ### Step 4: Start up Galaxy
 
 Verify that Galaxy can start by running:
 
-	stdbuf -o 0 sh run.sh 2>&1 | tee run.sh.log # Builds Galaxy
+	stdbuf -o 0 sh run.sh 2>&1 | tee run.sh.log # Re-starts Galaxy and builds new database
 
 This will attempt to build the Galaxy database and start up Galaxy on <http://127.0.0.1:9090>.
 
@@ -371,3 +401,5 @@ For more information please see the [Purging Histories and Datasets][] document.
 [Purging Histories and Datasets]: https://wiki.galaxyproject.org/Admin/Config/Performance/Purge%20Histories%20and%20Datasets
 [PerlBrew]: http://perlbrew.pl/
 [App::cpanminus]: http://search.cpan.org/~miyagawa/App-cpanminus-1.7027/lib/App/cpanminus.pm
+[conda]: https://conda.io/docs/
+[miniconda]: https://conda.io/miniconda.html
