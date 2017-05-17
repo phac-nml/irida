@@ -7,6 +7,7 @@ Changes
 * [UI]: Disallow spaces in Remote API and Client Details creation.
 * [UI]: Added ability for admins and project owners to delete a project.
 * [UI]: Added `Technician` system role which allows technicians to view results of all sequencing runs in the system.
+* [Developer]: Fixed permissions for NCBI submission uploads failing with Access Denied error. (0.16.1)
 * [Developer]: Removed `Dandelion` dependencies from the dashboard page.
 * [Developer]: Removed `Dandelion` dependencies from the projects listing page.
 

@@ -99,5 +99,14 @@ public class NcbiExportSubmissionServiceImpl extends CRUDServiceImpl<Long, NcbiE
 			throws IllegalArgumentException {
 		return super.list(page, size, order, sortProperties);
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@Override
+	public NcbiExportSubmission update(NcbiExportSubmission object) {
+		return super.update(object);
+	}
 
 }
