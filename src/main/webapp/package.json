@@ -18,6 +18,8 @@
     "browser-sync": "^2.11.1",
     "chromedriver": "2.24.1",
     "css-loader": "^0.26.2",
+    "datatables.net": "^1.10.15",
+    "datatables.net-bs": "^1.10.15",
     "eslint": "^3.4.0",
     "eslint-config-google": "^0.6.0",
     "eslint-friendly-formatter": "^2.0.6",
