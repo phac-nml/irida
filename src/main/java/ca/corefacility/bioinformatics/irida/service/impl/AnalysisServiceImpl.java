@@ -60,7 +60,7 @@ public class AnalysisServiceImpl extends CRUDServiceImpl<Long, Analysis> impleme
 	/**
 	 * {@inheritDoc}
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#object, 'canReadSequencingObject')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TECHNICIAN') or hasPermission(#object, 'canReadSequencingObject')")
 	@Override
 	public AnalysisFastQC getFastQCAnalysisForSequenceFile(SequencingObject object, Long fileId) {
 		SequenceFile fileWithId = object.getFileWithId(fileId);
