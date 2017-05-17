@@ -22,6 +22,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 
+import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -42,6 +43,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 @Entity
 @Table(name = "ncbi_export_submission")
 @EntityListeners(AuditingEntityListener.class)
+@Audited
 public class NcbiExportSubmission implements MutableIridaThing {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

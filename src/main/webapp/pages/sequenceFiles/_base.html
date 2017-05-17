@@ -15,12 +15,6 @@
                 <span th:text="#{sf.subnav.overrepresented}"></span>&nbsp;<span class="badge" th:text="${#lists.size(fastQC.overrepresentedSequences)}"></span></a>
             </li>
         </ul>
-        <div class="navbar-right">
-                <button id="fileDownload" class="btn btn-default navbar-btn"><span
-                    class="glyphicon glyphicon-download-alt"></span>&nbsp;<span
-                    th:text="#{form.download}">Download</span>
-                </button>
-        </div>
     </div>
 </nav>
 <div layout:fragment="page" ddl:bundle-includes="sequence-files">
