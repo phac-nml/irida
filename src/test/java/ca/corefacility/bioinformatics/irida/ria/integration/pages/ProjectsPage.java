@@ -1,13 +1,13 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages;
 
+import java.util.List;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 /**
  * <p>
@@ -75,13 +75,6 @@ public class ProjectsPage extends AbstractPage {
 					final String ariaSort = th.getAttribute("aria-sort");
 					return ariaSort!= null && !ariaSort.equals(originalSortOrder);
 				});
-	}
-
-	public void clearFilters() {
-		WebElement clearBtn = driver.findElement(By.id("clearFilterBtn"));
-		waitForElementToBeClickable(clearBtn);
-		clearBtn.click();
-		waitForElementInvisible(By.className("projectsTable_processing"));
 	}
 
 	public void filterByName(String name) {
