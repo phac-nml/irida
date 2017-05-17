@@ -1,44 +1,46 @@
-/*exported projectsTable*/
-/*global oTable_projectsTable */
+function downloadItem({format = 'xlsx'}) {
+  const url = `${window.PAGE.urls.export}&dtf=${format}`;
+  const anchor = document.createElement('a');
+  anchor.style.display='none';
+  anchor.href = url;
+  anchor.click();
+}
 
-var projectsTable = (function (tl) {
-  /**
-   * Create a link button to the IRIDA thing
-   *
-   * @param {Object} data column data
-   * @param {String} type type of data
-   * @param {Object} full full object for the row.
-   * @returns {String} either a anchor dom element to the project or just the name of the project.
-   */
-  function createItemButton(data, type, full) {
-    if (tl && tl.BASE_URL) {
-      var html = '<a class="item-link" title="' + data + '" href="' + tl.BASE_URL + 'projects/' + full.id + '"><span class="cell-width-200">' + data + '</span></a>';
-      if(full.remote == true){
-        html = html + '&nbsp;<i class="fa fa-exchange" aria-hidden="true"></i>';
+if (typeof window.PAGE === 'object') {
+  const table = $('#projects').DataTable({
+    dom: `<".row"<".col-md-8.buttons"B><".col-md-4"f>>rt<".row"<".col-md-3"l><".col-md-6"p><".col-md-3"i>>`,
+    buttons: [
+      {
+        extend: 'collection',
+        text: '<i class="fa fa-download" aria-hidden="true"></i> Export&nbsp;&nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>',
+        buttons: window.buttons.map(button => ({
+          text: button.name,
+          action() {
+            downloadItem({format: button.format});
+          }
+        }))
       }
-      return html;
-    } else {
-      return data;
-    }
-  }
-
-  return {
-    createItemButton: createItemButton
-  };
-})(window.TL);
-
-(function ($) {
-  $(function () {
-    var $filterBtn = $('#filterProjectsBtn');
-
-    $filterBtn.on('click', function () {
-      oTable_projectsTable.ajax.reload();
-    });
-
-    $('#filterForm').on('keydown', function (e) {
-      if (e.which === 13) {
-        $filterBtn.click();
-      }
-    });
+    ],
+    processing: true,
+    serverSide: true,
+    ajax: window.PAGE.urls.projects,
+    order: [[5, "desc"]],
+    columnDefs: [
+      {
+        targets: [1],
+        render: function(data, type, full) {
+          return `<a class="btn btn-link" href="${full.id}">${data}</a>`;
+        },
+      },
+      {
+        targets: [4, 5],
+        render: function(data) {
+          return `<span data-toggle="tooltip" data-placement="top" title="${moment(data)}" data-livestamp="${moment(data).unix()}"><i class="fa fa-spinner fa-pulse fa-fw"></i></span>`
+        },
+      },
+    ],
+    createdRow: function(row) {
+      $(row).tooltip({selector: '[data-toggle="tooltip"]'});
+    },
   });
-})(window.jQuery);
+}
