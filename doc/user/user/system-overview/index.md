@@ -62,9 +62,10 @@ Phone numbers must be at least 4 characters long, but are otherwise not validate
 User accounts in IRIDA can be assigned a system role that gives them certain privileges. IRIDA currently has 4 types of user account roles:
 
 1. User
-2. Manager
-3. Administrator
-4. Sequencer
+2. Technician
+3. Manager
+4. Administrator
+5. Sequencer
 
 ##### User
 
@@ -73,6 +74,10 @@ User accounts with the `user` role are permitted to:
 1. Create new projects,
 2. Manage the projects created by that user account,
 3. View data on the projects that they participate in.
+
+##### Technician
+
+User accounts with the `technician` role have all of the same permissions as a user account with the `user` role, and also have the permission to view all sequencing runs on the system.
 
 ##### Manager
 

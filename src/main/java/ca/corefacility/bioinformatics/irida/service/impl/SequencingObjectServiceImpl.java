@@ -72,7 +72,7 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 	/**
 	 * {@inheritDoc}
 	 */
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SEQUENCER') or hasPermission(#id, 'canReadSequencingObject')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SEQUENCER', 'ROLE_TECHNICIAN') or hasPermission(#id, 'canReadSequencingObject')")
 	@Override
 	public SequencingObject read(Long id) throws EntityNotFoundException {
 		return super.read(id);
@@ -184,7 +184,7 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER', 'ROLE_TECHNICIAN')")
 	public Set<SequencingObject> getSequencingObjectsForSequencingRun(SequencingRun sequencingRun) {
 		return repository.findSequencingObjectsForSequencingRun(sequencingRun);
 	}
