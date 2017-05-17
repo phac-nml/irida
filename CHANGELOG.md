@@ -1,6 +1,10 @@
 Changes
 =======
 
+0.16.0 to 0.17.0
+----------------
+* [Developer]: Fixed permissions for NCBI submission uploads failing with Access Denied error. (0.16.1)
+
 0.15.0 to 0.16.0
 ----------------
 * [Developer]: Upgraded to AngularJS 1.6.2 <https://github.com/angular/angular.js/blob/master/CHANGELOG.md>
