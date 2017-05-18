@@ -78,17 +78,19 @@ public class ProjectsPage extends AbstractPage {
 	}
 
 	public void filterByName(String name) {
-		openFilters();
-		WebElement input = waitForElementVisible(By.id("nameFilter"));
-		input.sendKeys(name);
-		submitFilter("nameFilterClear");
+//		openFilters();
+		//		WebElement input = waitForElementVisible(By.id("nameFilter"));
+		//		input.sendKeys(name);
+		//		submitFilter("nameFilterClear");
+		doSearch(name);
 	}
 
 	public void filterByOrganism(String organism) {
-		openFilters();
-		WebElement input = driver.findElement(By.id("organismFilter"));
-		input.sendKeys(organism);
-		submitFilter("organismFilterClear");
+//		openFilters();
+//		WebElement input = driver.findElement(By.id("organismFilter"));
+//		input.sendKeys(organism);
+//		submitFilter("organismFilterClear");
+		doSearch(organism);
 	}
 
 	private void openFilters() {
