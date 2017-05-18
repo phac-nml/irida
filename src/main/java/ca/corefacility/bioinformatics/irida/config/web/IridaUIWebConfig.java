@@ -44,7 +44,7 @@ import ca.corefacility.bioinformatics.irida.config.services.WebEmailConfig;
 import ca.corefacility.bioinformatics.irida.ria.config.AnalyticsHandlerInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.BreadCrumbInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DatatablesRequestResolver;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequestResolver;
 
 import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesCriteriasMethodArgumentResolver;
 import com.github.dandelion.datatables.thymeleaf.dialect.DataTablesDialect;
@@ -212,7 +212,7 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 	 * {@inheritDoc}
 	 */
 	@Override public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-		argumentResolvers.add(new DatatablesRequestResolver());
+		argumentResolvers.add(new DataTablesRequestResolver());
 		argumentResolvers.add(new DatatablesCriteriasMethodArgumentResolver());
 	}
 

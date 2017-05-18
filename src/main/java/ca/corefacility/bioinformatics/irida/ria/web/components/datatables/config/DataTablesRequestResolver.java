@@ -11,9 +11,9 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 
 /**
- * Created by josh on 2017-05-01.
+ * Request resolver for {@link DataTablesParams}
  */
-public class DatatablesRequestResolver implements HandlerMethodArgumentResolver {
+public class DataTablesRequestResolver implements HandlerMethodArgumentResolver {
 	@Override
 	public boolean supportsParameter(MethodParameter parameter) {
 		DataTablesRequest dataTablesRequest = parameter.getParameterAnnotation(DataTablesRequest.class);
