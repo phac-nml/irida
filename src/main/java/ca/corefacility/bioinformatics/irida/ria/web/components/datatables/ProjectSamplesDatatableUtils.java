@@ -8,7 +8,7 @@ import com.google.common.base.Strings;
 
 /**
  * This is a utilities class for the Projects Samples Datatable.
- * The purpose is to change the {@link DatatablesParams} into a more
+ * The purpose is to change the {@link DataTablesParams} into a more
  * usable form for a project.
  */
 public class ProjectSamplesDatatableUtils extends DatatablesUtils {
@@ -20,7 +20,7 @@ public class ProjectSamplesDatatableUtils extends DatatablesUtils {
 	final Date minDate;
 	final Date endDate;
 
-	public ProjectSamplesDatatableUtils(DatatablesParams params, String name, Long minDate, Long endDate) {
+	public ProjectSamplesDatatableUtils(DataTablesParams params, String name, Long minDate, Long endDate) {
 		this.currentPage = params.getCurrentPage();
 		this.pageSize = params.getLength();
 		this.search = params.getSearchValue();

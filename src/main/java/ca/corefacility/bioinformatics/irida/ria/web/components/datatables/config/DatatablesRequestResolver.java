@@ -8,7 +8,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesParams;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 
 /**
  * Created by josh on 2017-05-01.
@@ -16,9 +16,9 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.Datata
 public class DatatablesRequestResolver implements HandlerMethodArgumentResolver {
 	@Override
 	public boolean supportsParameter(MethodParameter parameter) {
-		DatatablesRequest datatablesRequest = parameter.getParameterAnnotation(DatatablesRequest.class);
-		if (datatablesRequest != null) {
-			if (DatatablesParams.class.isAssignableFrom(parameter.getParameterType())) {
+		DataTablesRequest dataTablesRequest = parameter.getParameterAnnotation(DataTablesRequest.class);
+		if (dataTablesRequest != null) {
+			if (DataTablesParams.class.isAssignableFrom(parameter.getParameterType())) {
 				return true;
 			}
 		}
@@ -29,6 +29,6 @@ public class DatatablesRequestResolver implements HandlerMethodArgumentResolver 
 	public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
 			NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
 		HttpServletRequest servletRequest = (HttpServletRequest) webRequest.getNativeRequest();
-		return DatatablesParams.parseDatatablesParams(servletRequest);
+		return DataTablesParams.parseDatatablesParams(servletRequest);
 	}
 }

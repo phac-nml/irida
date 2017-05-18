@@ -15,6 +15,7 @@ import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -38,8 +39,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesParams;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.ProjectSampleModel;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectSamplesController;
@@ -310,9 +310,9 @@ public class ProjectSamplesControllerTest {
 						any(Integer.class), any(Integer.class), any(
 								Sort.class)))
 				.thenReturn(TestDataFactory.getPageOfProjectSampleJoin());
-		DatatablesParams params = mock(DatatablesParams.class);
+		DataTablesParams params = mock(DataTablesParams.class);
 		when(params.getSort()).thenReturn(new Sort(Direction.ASC, "sample.sampleName"));
-		DatatablesResponse response = controller
+		DataTablesResponse response = controller
 				.getProjectSamples(1L, params, ImmutableList.of(), ImmutableList.of(), null, null, null, null);
 		List<Object> data = response.getData();
 		assertEquals("Has the correct number of samples", 1, data.size());

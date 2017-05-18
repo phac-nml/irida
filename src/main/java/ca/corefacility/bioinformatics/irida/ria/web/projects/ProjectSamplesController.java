@@ -16,7 +16,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,9 +49,9 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesParams;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.ProjectSamplesDatatableUtils;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DatatablesRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.export.ProjectSamplesTableExport;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.ProjectSampleModel;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -391,8 +391,8 @@ public class ProjectSamplesController {
 	 */
 	@RequestMapping(value = "/projects/{projectId}/ajax/samples", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
 	@ResponseBody
-	public DatatablesResponse getProjectSamples(@PathVariable Long projectId,
-			@DatatablesRequest DatatablesParams params,
+	public DataTablesResponse getProjectSamples(@PathVariable Long projectId,
+			@DataTablesRequest DataTablesParams params,
 			@RequestParam(required = false, defaultValue = "") List<String> sampleNames,
 			@RequestParam(required = false, defaultValue = "") List<Long> associated,
 			@RequestParam(required = false, defaultValue = "") String name,
@@ -418,7 +418,7 @@ public class ProjectSamplesController {
 		// Create a more usable Map of the sample data.
 		List<Object> models = page.getContent().stream().map(this::buildProjectSampleModel)
 				.collect(Collectors.toList());
-		return new ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesResponse(params, page, models);
+		return new DataTablesResponse(params, page, models);
 	}
 
 	/**
@@ -907,7 +907,7 @@ public class ProjectSamplesController {
 	 * @param type
 	 * 		Type of file to export, must be from {@link ReservedFormat}
 	 * @param params
-	 * 		{@link DatatablesParams}
+	 * 		{@link DataTablesParams}
 	 * @param sampleNames
 	 * 		{@link List} of {@link Sample} names to export. Not required.
 	 * @param associated
@@ -927,7 +927,7 @@ public class ProjectSamplesController {
 	public void exportProjectSamplesTable(
 			@PathVariable Long projectId,
 			@RequestParam(value = "dtf") String type,
-			@DatatablesRequest DatatablesParams params,
+			@DataTablesRequest DataTablesParams params,
 			@RequestParam(required = false, defaultValue = "") List<String> sampleNames,
 			@RequestParam(required = false, defaultValue = "") List<Long> associated,
 			@RequestParam(required = false, defaultValue = "") String name,
