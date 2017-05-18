@@ -67,12 +67,12 @@ public class ProjectsPage extends AbstractPage {
 
 	public void clickProjectNameHeader() {
 		// Sorting row is the second one
-		WebElement th = driver.findElements(By.cssSelector("#projects th")).get(1);
-		final String originalSortOrder = th.getAttribute("aria-sort");
-		th.findElement(By.className("header-name")).click();
+		WebElement th = driver.findElement(By.cssSelector("[data-data='name']"));
+		final String originalSortOrder = th.getAttribute("class");
+		th.click();
 		new WebDriverWait(driver, TIME_OUT_IN_SECONDS).until(
 				(org.openqa.selenium.support.ui.ExpectedCondition<Boolean>) input -> {
-					final String ariaSort = th.getAttribute("aria-sort");
+					final String ariaSort = th.getAttribute("class");
 					return ariaSort!= null && !ariaSort.equals(originalSortOrder);
 				});
 	}
