@@ -930,7 +930,7 @@ public class ProjectSamplesController {
 			@RequestParam(required = false, defaultValue = "") String name,
 			@RequestParam(required = false, defaultValue = "") String organism,
 			@RequestParam(value = "minDate", required = false, defaultValue = "") Long startDateSearch,
-			@RequestParam(value = "maxDate", required = false, defaultValue = "") Long endDateSearch,
+			@RequestParam(value = "endDate", required = false, defaultValue = "") Long endDateSearch,
 			HttpServletRequest request,
 			HttpServletResponse response,
 			Locale locale) {
