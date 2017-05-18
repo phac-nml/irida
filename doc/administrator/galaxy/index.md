@@ -188,8 +188,11 @@ The main Galaxy configuration file is located in `config/galaxy.ini`.  Please ma
       * ***Note: Once this key is set, please do not change it.  This key is used to translate database ids in Galaxy to API ids used by IRIDA to access datasets, histories, and workflows.  IRIDA does store some of these API ids internally for debugging and tracking purposes and changing this value will render any of the API ids stored in IRIDA useless.***
 9. Setup the Galaxy environment file `env.sh`.  This file is read by Galaxy to setup the environment for each tool.
    * Change `#environment_setup_file = None` to `environment_setup_file = env.sh`
+10. Setup Conda for installing tool dependencies.
+   * Set `conda_prefix = /home/galaxy-irida/miniconda3`, or wherever conda is installed for Galaxy.
+   * Set `conda_ensure_channels = iuc,bioconda,r,defaults,conda-forge`.
 
-### Step 4: Start up Galaxy
+### Step 5: Start up Galaxy
 
 Verify that Galaxy can start by running:
 
@@ -210,45 +213,46 @@ Once complete, Galaxy can be killed by pressing `CTRL+C`.
 
 **Do not proceed if Galaxy does not start.**
 
-### Step 5: Configure Galaxy as a service
+### Step 6: Configure Galaxy as a service
 
-An example script [scripts/galaxy][] has been provided with this documentation in order to configure Galaxy as a service which starts at boot time.
+Example scripts to configure Galaxy as a service can be found in the `contrib/` directory of Galaxy. Additional details can be found in the [Galaxy documentation][galaxy-production].  This guide assumes a Redhat distribution so we will be working with `contrib/galaxy.fedora-init`, but scripts for other systems are available.
 
-The provided startup script uses a default system user named `galaxy-irida` to run Galaxy. You should either modify the default user, or create a `galaxy-irida` system user:
+1. Create a non-root user for Galaxy.
 
-```bash
-useradd --no-create-home --system galaxy-irida
-chown -R galaxy-irida $GALAXY_BASE_DIR
-```
+   ```bash
+   useradd --no-create-home --system galaxy-irida
+   chown -R galaxy-irida $GALAXY_BASE_DIR
+   ```
 
-Please make any necessary changes to this script and do the following:
+2. Copy the startup script to the appropriate location.
 
-```bash
-sudo cp galaxy /etc/init.d/galaxy
-sudo chkconfig galaxy on
-sudo service galaxy start
-sudo service galaxy status
-```
+   ```bash
+   cp contrib/galaxy.fedora-init /etc/init.d/galaxy
+   ```
 
-The main changes you will need to make to this file are modifying some of the environment variables specific to your Galaxy installation.  These include:
+3. Make necessary modifications to variables in `/etc/init.d/galaxy` (user to run Galaxy, etc). For example:
 
-```bash
-GALAXY_USER=galaxy-irida
-GALAXY_BASE_DIR=$GALAXY_BASE_DIR
-GALAXY_ENV=$GALAXY_BASE_DIR/env.sh
-GALAXY_ROOT_DIR=$GALAXY_BASE_DIR/galaxy-dist
-GALAXY_RUN=$GALAXY_ROOT_DIR/run.sh
-```
+   ```
+   SERVICE_NAME="galaxy"
+   RUN_AS="galaxy-irida"
+   RUN_IN="/home/galaxy-irida/galaxy"
+   ```
 
-For more details, please refer to the [Running Galaxy in a production environment][] documentation.
+4. Enable Galaxy as a service.
 
-### Step 6: Configure Galaxy Jobs Scheduler
+   ```bash
+   chkconfig galaxy on
+   service galaxy start
+   service galaxy status
+   ```
+
+### Step 7: Configure Galaxy Jobs Scheduler
 
 The default job configuration is fine for running Galaxy on a single server or for evaluation purposes.  This will default to running all jobs on the local machine and limit to 4 jobs at any given time.
 
 For more complicated job scheduling, please refer to the [Galaxy Job Config][] documentation.
 
-### Step 7: Test out Galaxy
+### Step 8: Test out Galaxy
 
 Once these steps are done, you should be able to connect to Galaxy by going to <http://galaxy-server-name:9090>.  If this works, please move on to the next step.  If this does not work, then please check the log file `$GALAXY_ROOT_DIR/main.log` for more details.
 
@@ -259,11 +263,11 @@ Once Galaxy is up and running, there are a few steps needed in order to configur
 
 ### Step 1: Create Galaxy Accounts
 
-To create the accounts in Galaxy for administration and workflow execution please log into Galaxy and go to **User > Register**.  Please use the same e-mail addresses as configured previously, `$GALAXY_ADMIN_USER` and `$GALAXY_WORKFLOW_USER`.  `$GALAXY_ADMIN_USER` can be used to perform the administrative tasks whereas `$GALAXY_WORKFLOW_USER` can be used to run workflows within Galaxy.
+To create the accounts in Galaxy for administration and workflow execution please log into Galaxy and go to **User > Register**.  Please use the same e-mail addresses as configured previously for the **admin-user** and **workflow-user**. You can configure to use only one account, admin-user, if you choose.
 
 ### Step 2: Generate Workflow API Key
 
-Please log in as the `$GALAXY_WORKFLOW_USER` and go to **User > API Keys** and click on **Generate a new key now**.  This will generate an API key for the user which is used by IRIDA to interact with Galaxy.  Please make note of this key for later when configuring IRIDA.
+Please log in as the **workflow-user** and go to **User > Preferences > Manage API Key** and click on **Create a new key now**.  This will generate an API key for the user which is used by IRIDA to interact with Galaxy.  Please make note of this key for later when configuring IRIDA.
 
 Galaxy Environment Setup
 ------------------------
@@ -275,7 +279,7 @@ Galaxy Tools Installation
 
 ### Step 1: Configure External Toolsheds
 
-The workflows used by IRIDA make use of external tools that can be installed using a [Galaxy Toolshed][].  The two toolsheds used by IRIDA are the [Main Galaxy Toolshed][] and the [IRIDA Toolshed][].  These are configured in the file `$GALAXY_ROOT_DIR/config/tool_sheds_conf.xml`.  Please open up this file and replace with the following:
+The workflows used by IRIDA make use of external tools that can be installed using a [Galaxy Toolshed][].  The two toolsheds used by IRIDA are the [Main Galaxy Toolshed][] and the [IRIDA Toolshed][].  These are configured in the file `config/tool_sheds_conf.xml`.  Please open up this file and replace with the following:
 
 ```xml
 <?xml version="1.0"?>
@@ -289,7 +293,25 @@ Now, re-start Galaxy with `sudo service galaxy restart`.  If you log into Galaxy
 
 ### Step 2: Install Pipeline Tools
 
-The main pipelines included with IRIDA each require a specific set of tools to be installed in Galaxy.  Please refer to the documentation below for specific instructions on these workflows.
+#### Automated installation of tools
+
+An automated script (`install_tool_shed_tools.py`) to install all necessary tools (in `tools-list.yml`) for the different pipelines to run in Galaxy is provided with the `irida-[version].zip` download. This can be found on the [IRIDA releases][] page.  Instructions can be accessed at [Automated tools install][].
+
+To run this script, please do the following:
+
+```
+# Installs dependency modules for script
+pip install -r install-tools-requirements.txt
+
+# Do installation of Galaxy tools
+python install_tool_shed_tools.py --toolsfile tools-list.yml --galaxy [http://url-to-galaxy] --apikey [api key]
+```
+
+You may want to monitor the Galaxy log file in `paster.log` as the installation is proceeding.  This may take a while to download, build, and install all tools.
+
+# Manual installation of tools
+
+Alternatively, the necessary tools can be installed manually through the following instructions specific to each pipeline in IRIDA:
 
 * [SNVPhyl Whole Genome Phylogeny][]
 * [Assembly and Annotation][]
@@ -300,7 +322,7 @@ Each of these will step through installing the necessary tools in IRIDA.  These 
 
 ![galaxy-installed-repositories.jpg][]
 
-All tools are installed in the directory `$GALAXY_BASE_DIR/shed_tools` with binary dependencies installed in `$GALAXY_BASE_DIR/tool_dependencies`.  Monitoring the install process of each tool can be done by monitoring the main Galaxy log file `$GALAXY_BASE_DIR/main.log`.
+All tools are installed in the directory `shed_tools` with binary dependencies installed in `tool_dependencies`.  Monitoring the install process of each tool can be done by monitoring the main Galaxy log file `paster.log`.
 
 Link up Galaxy with IRIDA
 -------------------------
@@ -403,3 +425,6 @@ For more information please see the [Purging Histories and Datasets][] document.
 [App::cpanminus]: http://search.cpan.org/~miyagawa/App-cpanminus-1.7027/lib/App/cpanminus.pm
 [conda]: https://conda.io/docs/
 [miniconda]: https://conda.io/miniconda.html
+[galaxy-production]: https://galaxyproject.org/admin/config/performance/production-server/#groundwork-for-scalability
+[Automated tools install]: https://github.com/phac-nml/irida/tree/development/packaging#automated-processupgrading
+[IRIDA releases]: https://github.com/phac-nml/irida/releases
