@@ -393,7 +393,7 @@ public class ProjectSamplesController {
 			@DataTablesRequest DataTablesParams params,
 			@RequestParam(required = false, defaultValue = "") List<String> sampleNames,
 			@RequestParam(required = false, defaultValue = "") List<Long> associated,
-			@RequestParam(required = false, defaultValue = "") String sampleNameSearch,
+			@RequestParam(value = "name", required = false, defaultValue = "") String sampleNameSearch,
 			@RequestParam(required = false, defaultValue = "") String organismSearch,
 			@RequestParam(value = "minDate", required = false, defaultValue = "") Long startDateSearch,
 			@RequestParam(value = "maxDate", required = false, defaultValue = "") Long endDateSearch) {
