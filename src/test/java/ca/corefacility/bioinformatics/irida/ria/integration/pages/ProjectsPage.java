@@ -35,13 +35,13 @@ public class ProjectsPage extends AbstractPage {
 	private void loadPage(String url) {
 		get(driver, url);
 		waitForTime(100);
-		waitForElementVisible(By.cssSelector("#projectsTable tbody tr"));
+		waitForElementVisible(By.cssSelector("#projects tbody tr"));
 	}
 
-	public int projectsTableSize() {
+	public int projectsSize() {
 		logger.trace("Getting table size");
 
-		List<WebElement> projectList = driver.findElements(By.cssSelector("#projectsTable tbody tr"));
+		List<WebElement> projectList = driver.findElements(By.cssSelector("#projects tbody tr"));
 
 		int size = projectList.size();
 
@@ -58,16 +58,16 @@ public class ProjectsPage extends AbstractPage {
 	}
 
 	public void gotoProjectPage(int row) {
-		submitAndWait(driver.findElements(By.cssSelector("#projectsTable .item-link")).get(row));
+		submitAndWait(driver.findElements(By.cssSelector("#projects .item-link")).get(row));
 	}
 
 	public List<WebElement> getProjectColumn() {
-		return driver.findElements(By.cssSelector("#projectsTable tbody td:nth-child(2)"));
+		return driver.findElements(By.cssSelector("#projects tbody td:nth-child(2)"));
 	}
 
 	public void clickProjectNameHeader() {
 		// Sorting row is the second one
-		WebElement th = driver.findElements(By.cssSelector("#projectsTable th")).get(1);
+		WebElement th = driver.findElements(By.cssSelector("#projects th")).get(1);
 		final String originalSortOrder = th.getAttribute("aria-sort");
 		th.findElement(By.className("header-name")).click();
 		new WebDriverWait(driver, TIME_OUT_IN_SECONDS).until(
@@ -102,8 +102,8 @@ public class ProjectsPage extends AbstractPage {
 	}
 
 	public void doSearch(String term) {
-		driver.findElement(By.cssSelector("#projectsTable_filter input")).sendKeys(term);
-		waitForElementInvisible(By.className("projectsTable_processing"));
+		driver.findElement(By.cssSelector("#projects_filter input")).sendKeys(term);
+		waitForElementInvisible(By.className("projects_processing"));
 	}
 
 	public void clickLinkToProject(int row) {

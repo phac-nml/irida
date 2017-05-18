@@ -1,8 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.util.List;
 
 import org.junit.Before;
@@ -14,8 +11,10 @@ import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChr
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
-
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * <p> Integration test to ensure that the Projects Page. </p>
@@ -39,7 +38,7 @@ public class ProjectsPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Ensure buttons are created and direct to the write project.
 		projectsPage.gotoProjectPage(1);
-		assertTrue("Should be on specific project page", driver().findElement(By.id("samplesTable")).isDisplayed());
+		assertTrue("Should be on specific project page", driver().findElement(By.id("projects")).isDisplayed());
 	}
 
 	@Test
