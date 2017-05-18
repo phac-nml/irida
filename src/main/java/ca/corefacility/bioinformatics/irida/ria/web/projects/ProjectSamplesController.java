@@ -396,7 +396,7 @@ public class ProjectSamplesController {
 			@RequestParam(value = "name", required = false, defaultValue = "") String sampleNameSearch,
 			@RequestParam(required = false, defaultValue = "") String organismSearch,
 			@RequestParam(value = "minDate", required = false, defaultValue = "") Long startDateSearch,
-			@RequestParam(value = "maxDate", required = false, defaultValue = "") Long endDateSearch) {
+			@RequestParam(value = "endDate", required = false, defaultValue = "") Long endDateSearch) {
 		List<Project> projects = new ArrayList<>();
 		// Check to see if any associated projects need to be added to the query.
 		if (!associated.isEmpty()) {
