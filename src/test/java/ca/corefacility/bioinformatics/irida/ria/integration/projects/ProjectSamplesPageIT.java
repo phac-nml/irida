@@ -1,12 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,8 +9,9 @@ import org.slf4j.LoggerFactory;
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
-
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+
+import static org.junit.Assert.*;
 
 /**
  * <p>
@@ -262,7 +258,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	public void testFilteringWithDates() {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
-		page.filterByDateRange("07/06/2015", "07/09/2015");
+		page.filterByDateRange("1436158800000", "1436418000000");
 		assertEquals("Should ignore case when filtering", "Showing 1 to 4 of 4 entries", page.getTableInfo());
 
 		// Test clearing the filters
