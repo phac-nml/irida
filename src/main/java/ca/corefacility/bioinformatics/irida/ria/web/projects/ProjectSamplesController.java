@@ -16,7 +16,6 @@ import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,14 +49,13 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJ
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.ProjectSamplesDatatableUtils;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.export.ProjectSamplesTableExport;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.ProjectSampleModel;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-
 import com.github.dandelion.datatables.core.export.ExportUtils;
 import com.github.dandelion.datatables.core.export.ReservedFormat;
 import com.google.common.base.Strings;
@@ -395,10 +393,10 @@ public class ProjectSamplesController {
 			@DataTablesRequest DataTablesParams params,
 			@RequestParam(required = false, defaultValue = "") List<String> sampleNames,
 			@RequestParam(required = false, defaultValue = "") List<Long> associated,
-			@RequestParam(required = false, defaultValue = "") String name,
-			@RequestParam(required = false, defaultValue = "") String organism,
-			@RequestParam(required = false, defaultValue = "") Long minDate,
-			@RequestParam(required = false, defaultValue = "") Long endDate) {
+			@RequestParam(required = false, defaultValue = "") String sampleNameSearch,
+			@RequestParam(required = false, defaultValue = "") String organismSearch,
+			@RequestParam(value = "minDate", required = false, defaultValue = "") Long startDateSearch,
+			@RequestParam(value = "maxDate", required = false, defaultValue = "") Long endDateSearch) {
 		List<Project> projects = new ArrayList<>();
 		// Check to see if any associated projects need to be added to the query.
 		if (!associated.isEmpty()) {
@@ -407,12 +405,11 @@ public class ProjectSamplesController {
 		// This project is always in the query.
 		projects.add(projectService.read(projectId));
 
-		// Convert the criterias into a more usable format.
-		ProjectSamplesDatatableUtils utils = new ProjectSamplesDatatableUtils(params, name, minDate, endDate);
-
+		Date minDate = startDateSearch == null ? null : new Date(startDateSearch);
+		Date maxDate = endDateSearch == null ? null : new Date(endDateSearch);
 		final Page<ProjectSampleJoin> page = sampleService
-				.getFilteredSamplesForProjects(projects, sampleNames, name, params.getSearchValue(), organism,
-						utils.getMinDate(), utils.getEndDate(), params.getCurrentPage(), params.getLength(),
+				.getFilteredSamplesForProjects(projects, sampleNames, sampleNameSearch, params.getSearchValue(),
+						organismSearch, minDate, maxDate, params.getCurrentPage(), params.getLength(),
 						params.getSort());
 
 		// Create a more usable Map of the sample data.
@@ -914,9 +911,9 @@ public class ProjectSamplesController {
 	 * 		{@link List} of ids for associated {@link Project}. Not Required.
 	 * @param name
 	 * 		Filter value for filtering on the name of a {@link Sample}. Not Required.
-	 * @param minDate
+	 * @param startDateSearch
 	 * 		Filter value for the minimum date the {@link Sample} was modified.  Not Required.
-	 * @param endDate
+	 * @param endDateSearch
 	 * 		Filter value for the maximum date the {@link Sample} was modified.  Not Required.
 	 * @param request
 	 * 		{@link HttpServletRequest}
@@ -932,8 +929,8 @@ public class ProjectSamplesController {
 			@RequestParam(required = false, defaultValue = "") List<Long> associated,
 			@RequestParam(required = false, defaultValue = "") String name,
 			@RequestParam(required = false, defaultValue = "") String organism,
-			@RequestParam(required = false, defaultValue = "") Long minDate,
-			@RequestParam(required = false, defaultValue = "") Long endDate,
+			@RequestParam(value = "minDate", required = false, defaultValue = "") Long startDateSearch,
+			@RequestParam(value = "maxDate", required = false, defaultValue = "") Long endDateSearch,
 			HttpServletRequest request,
 			HttpServletResponse response,
 			Locale locale) {
@@ -946,10 +943,11 @@ public class ProjectSamplesController {
 		}
 		projects.add(project);
 
-		ProjectSamplesDatatableUtils utils = new ProjectSamplesDatatableUtils(params, name, minDate, endDate);
-
-		final Page<ProjectSampleJoin> page = sampleService.getFilteredSamplesForProjects(projects, sampleNames, name, utils.getSearch(),
-				organism, utils.getMinDate(), utils.getEndDate(), 0, Integer.MAX_VALUE, params.getSort());
+		Date minDate = startDateSearch == null ? null : new Date(startDateSearch);
+		Date maxDate = endDateSearch == null ? null : new Date(endDateSearch);
+		final Page<ProjectSampleJoin> page = sampleService
+				.getFilteredSamplesForProjects(projects, sampleNames, name, params.getSearchValue(), organism, minDate,
+						maxDate, 0, Integer.MAX_VALUE, params.getSort());
 
 		if (page != null) {
 			ProjectSamplesTableExport tableExport = new ProjectSamplesTableExport(type, project.getName() + "_samples", messageSource, locale);
