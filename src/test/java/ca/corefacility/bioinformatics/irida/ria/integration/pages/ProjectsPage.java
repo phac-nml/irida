@@ -38,7 +38,7 @@ public class ProjectsPage extends AbstractPage {
 		waitForElementVisible(By.cssSelector("#projects tbody tr"));
 	}
 
-	public int projectsSize() {
+	public int projectsTableSize() {
 		logger.trace("Getting table size");
 
 		List<WebElement> projectList = driver.findElements(By.cssSelector("#projects tbody tr"));
