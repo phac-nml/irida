@@ -39,7 +39,7 @@ import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
  */
 @Controller
 @RequestMapping("/sequencingRuns")
-@PreAuthorize("hasRole('ROLE_ADMIN')")
+@PreAuthorize("hasAnyRole('ROLE_ADMIN, ROLE_TECHNICIAN')")
 public class SequencingRunController {
 
 	public static final String LIST_VIEW = "sequencingRuns/list";

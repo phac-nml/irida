@@ -6,7 +6,7 @@ description: "A guide on using the SISTR Pipeline."
 
 # Using the SISTR Pipeline
 
-This guide describes how to make use of the [*Salmonella in-silico* Typing Resource][sistr-web] (SISTR) pipeline within IRIDA. This pipeline enables the identification of the serovar and cgMLST types for *Salmonealla* whole genome sequencing (WGS) data through comparisons with a large database (10,000+) of *Salmonella* genomes within [NCBI][].
+This guide describes how to make use of the [*Salmonella in-silico* Typing Resource][sistr-web] (SISTR) pipeline within IRIDA. This pipeline enables the identification of the serovar and cgMLST types for *Salmonella* whole genome sequencing (WGS) data through comparisons with a large database (10,000+) of *Salmonella* genomes within [NCBI][].
 
 * TOC
 {:toc}
