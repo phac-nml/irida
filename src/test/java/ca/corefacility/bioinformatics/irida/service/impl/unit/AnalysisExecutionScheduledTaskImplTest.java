@@ -113,6 +113,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.NEW)).thenReturn(
 				Arrays.asList(analysisSubmission));
+		when(analysisExecutionService.getCapacity()).thenReturn(1);
 
 		analysisExecutionScheduledTask.prepareAnalyses();
 
