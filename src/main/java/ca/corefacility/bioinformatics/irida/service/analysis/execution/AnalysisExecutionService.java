@@ -7,7 +7,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -20,7 +19,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 public interface AnalysisExecutionService {
 
 	/**
-	 * Downloads any required {@link SequenceFileSnapshot}s for the given
+	 * Downloads any required remote files for the given
 	 * {@link AnalysisSubmission}.
 	 * 
 	 * @param analysisSubmission
