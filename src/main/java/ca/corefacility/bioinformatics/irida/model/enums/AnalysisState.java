@@ -23,18 +23,6 @@ public enum AnalysisState {
 	NEW("NEW"),
 
 	/**
-	 * Occurs when an analysis is downloading remote files
-	 */
-	@Deprecated
-	DOWNLOADING("DOWNLOADING"),
-
-	/**
-	 * Occurs when an analysis has completed downloading remote files
-	 */
-	@Deprecated
-	FINISHED_DOWNLOADING("FINISHED_DOWNLOADING"),
-
-	/**
 	 * Occurs when an analysis is starting to be submitted.
 	 */
 	PREPARING("PREPARING"),
@@ -112,8 +100,7 @@ public enum AnalysisState {
 	 * @return a List of {@link AnalysisState}
 	 */
 	public static List<AnalysisState> getRunningStates() {
-		return Lists.newArrayList(DOWNLOADING, FINISHED_DOWNLOADING, PREPARING, PREPARED, SUBMITTING, RUNNING,
-				FINISHED_RUNNING, COMPLETING);
+		return Lists.newArrayList(PREPARING, PREPARED, SUBMITTING, RUNNING, FINISHED_RUNNING, COMPLETING);
 	}
 
 	/**
