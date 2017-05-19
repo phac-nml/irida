@@ -114,8 +114,6 @@ public class AnalysisSubmissionCleanupServiceImplIT {
 				.getAnalysisState());
 		assertEquals("Analysis submission state has changed", AnalysisState.ERROR, analysisSubmissionRepository.findOne(9L)
 				.getAnalysisState());
-		assertEquals("Analysis submission state has changed", AnalysisState.FINISHED_DOWNLOADING, analysisSubmissionRepository.findOne(11L)
-				.getAnalysisState());
 
 		try {
 			analysisSubmissionCleanupService.switchInconsistentSubmissionsToError();
@@ -153,8 +151,6 @@ public class AnalysisSubmissionCleanupServiceImplIT {
 		assertEquals("Analysis submission state has changed", AnalysisState.COMPLETED, analysisSubmissionRepository.findOne(8L)
 				.getAnalysisState());
 		assertEquals("Analysis submission state has changed", AnalysisState.ERROR, analysisSubmissionRepository.findOne(9L)
-				.getAnalysisState());
-		assertEquals("Analysis submission state has changed", AnalysisState.FINISHED_DOWNLOADING, analysisSubmissionRepository.findOne(11L)
 				.getAnalysisState());
 	}
 	
