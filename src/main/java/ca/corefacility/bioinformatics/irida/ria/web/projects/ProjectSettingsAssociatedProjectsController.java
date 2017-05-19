@@ -289,31 +289,6 @@ public class ProjectSettingsAssociatedProjectsController {
 	}
 
 	/**
-	 * Add a {@link RemoteRelatedProject} to the current {@link Project}
-	 *
-	 * @param projectId
-	 * 		The ID of the owning project
-	 * @param projectUrl
-	 * 		The URL of the remote {@link Project}
-	 *
-	 * @return a Map representation of the status of adding the associated project.
-	 */
-	@RequestMapping(value = "/remote", method = RequestMethod.POST)
-	@ResponseBody
-	public Map<String, String> addRemoteAssociatedProject(@PathVariable Long projectId,
-			@RequestParam String projectUrl) {
-		Project project = projectService.read(projectId);
-		Project readResource = projectRemoteService.read(projectUrl);
-
-		Link selfLink = readResource.getLink(Link.REL_SELF);
-		RemoteRelatedProject remoteRelatedProject = new RemoteRelatedProject(project, readResource.getRemoteAPI(),
-				selfLink.getHref());
-		remoteRelatedProjectService.create(remoteRelatedProject);
-
-		return ImmutableMap.of("result", "success");
-	}
-
-	/**
 	 * Delete a remote associated project from a project
 	 *
 	 * @param projectId
