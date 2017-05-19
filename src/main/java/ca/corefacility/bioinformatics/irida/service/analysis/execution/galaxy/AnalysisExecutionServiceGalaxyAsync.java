@@ -90,6 +90,8 @@ public class AnalysisExecutionServiceGalaxyAsync {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkNotNull(analysisSubmission.getId(), "analysisSubmission id is null");
 
+		//TODO: Delete this method
+		
 		// once complete update the state
 		analysisSubmission.setAnalysisState(AnalysisState.FINISHED_DOWNLOADING);
 		AnalysisSubmission analysisPrepared = analysisSubmissionService.update(analysisSubmission);

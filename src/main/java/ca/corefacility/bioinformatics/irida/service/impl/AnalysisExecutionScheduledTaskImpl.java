@@ -72,6 +72,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	 * {@inheritDoc}
 	 */
 	@Override
+	@Deprecated
 	public Set<Future<AnalysisSubmission>> downloadFiles() {
 		synchronized (downloadFilesLock) {
 			logger.trace("Running downloadFiles");

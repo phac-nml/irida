@@ -70,6 +70,7 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 	 * {@inheritDoc}
 	 */
 	@Override
+	@Deprecated
 	public Future<AnalysisSubmission> downloadSubmissionFiles(AnalysisSubmission analysisSubmission) {
 		checkArgument(AnalysisState.NEW.equals(analysisSubmission.getAnalysisState()), "analysis state should be "
 				+ AnalysisState.NEW);
@@ -77,6 +78,8 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 		analysisSubmission.setAnalysisState(AnalysisState.DOWNLOADING);
 		AnalysisSubmission preparingAnalysis = analysisSubmissionService.update(analysisSubmission);
 
+		//TODO: Delete this method.  The check for new submissions should go to prepareSubmission
+		
 		return analysisExecutionServiceGalaxyAsync.downloadFilesForSubmission(preparingAnalysis);
 	}
 
