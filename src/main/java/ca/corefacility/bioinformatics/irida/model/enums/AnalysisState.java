@@ -31,6 +31,7 @@ public enum AnalysisState {
 	/**
 	 * Occurs when an analysis has completed downloading remote files
 	 */
+	@Deprecated
 	FINISHED_DOWNLOADING("FINISHED_DOWNLOADING"),
 
 	/**

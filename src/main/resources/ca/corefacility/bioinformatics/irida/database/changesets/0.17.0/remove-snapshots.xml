@@ -8,7 +8,7 @@
 	<changeSet id="remove-snapshots" author="tom">
 		<sql>
 			update analysis_submission set analysis_state="ERROR" where
-			analysis_state="DOWNLOADING";
+			analysis_state="DOWNLOADING" OR analysis_state="FINISHED_DOWNLOADING";
 		</sql>
 	</changeSet>
 </databaseChangeLog>
