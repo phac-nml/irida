@@ -68,7 +68,7 @@ public class AnalysisCollectionServiceGalaxy {
 	 * @throws ExecutionManagerException
 	 *             If there was an error uploading the files.
 	 */
-	public CollectionResponse uploadSequenceFilesSingleEnd(Map<Sample, IridaSingleEndSequenceFile> sampleSequenceFiles,
+	public CollectionResponse uploadSequenceFilesSingleEnd(Map<Sample, ? extends IridaSingleEndSequenceFile> sampleSequenceFiles,
 			History workflowHistory, Library workflowLibrary) throws ExecutionManagerException {
 
 		CollectionDescription description = new CollectionDescription();
@@ -119,7 +119,7 @@ public class AnalysisCollectionServiceGalaxy {
 	 * @throws ExecutionManagerException
 	 *             If there was an error uploading the files.
 	 */
-	public CollectionResponse uploadSequenceFilesPaired(Map<Sample, IridaSequenceFilePair> sampleSequenceFilesPaired,
+	public CollectionResponse uploadSequenceFilesPaired(Map<Sample, ? extends IridaSequenceFilePair> sampleSequenceFilesPaired,
 			History workflowHistory, Library workflowLibrary) throws ExecutionManagerException {
 
 		CollectionDescription description = new CollectionDescription();
