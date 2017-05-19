@@ -259,7 +259,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 	@Test
 	public void testPrepareSubmissionSuccess() throws InterruptedException, ExecutionManagerException, IOException,
 			NoSuchValueException, ExecutionException, IridaWorkflowNotFoundException {
-		analysisSubmission.setAnalysisState(AnalysisState.FINISHED_DOWNLOADING);
+		analysisSubmission.setAnalysisState(AnalysisState.NEW);
 		
 		when(analysisSubmissionService.update(analysisSubmission)).thenReturn(analysisPreparing);
 		when(analysisSubmissionService.update(analysisPreparing)).thenReturn(analysisPrepared);
@@ -292,7 +292,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 
 		when(analysisSubmissionService.update(analysisSubmission)).thenReturn(analysisPreparing);
 
-		analysisSubmission.setAnalysisState(AnalysisState.FINISHED_DOWNLOADING);
+		analysisSubmission.setAnalysisState(AnalysisState.NEW);
 		Future<AnalysisSubmission> preparedAnalysisFuture = workflowManagement.prepareSubmission(analysisSubmission);
 
 		ArgumentCaptor<AnalysisSubmission> captor = ArgumentCaptor.forClass(AnalysisSubmission.class);
@@ -321,7 +321,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 		when(analysisWorkspaceService.prepareAnalysisWorkspace(any(AnalysisSubmission.class))).thenThrow(
 				new ExecutionManagerException());
 
-		analysisSubmission.setAnalysisState(AnalysisState.FINISHED_DOWNLOADING);
+		analysisSubmission.setAnalysisState(AnalysisState.NEW);
 
 		when(analysisSubmissionService.update(analysisSubmission)).thenReturn(analysisPreparing);
 
