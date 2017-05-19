@@ -1,18 +1,34 @@
+/* eslint new-cap: ["error", { "capIsNewExceptions": ["DataTable"] }]*/
+const $ = require('jquery');
+const moment = require('moment');
+
+/**
+ * Download table in specified format.
+ * @param {string} format format of downloaded doc.
+ */
 function downloadItem({format = 'xlsx'}) {
   const url = `${window.PAGE.urls.export}&dtf=${format}`;
   const anchor = document.createElement('a');
-  anchor.style.display='none';
+  anchor.style.display = 'none';
   anchor.href = url;
   anchor.click();
 }
 
 if (typeof window.PAGE === 'object') {
-  const table = $('#projects').DataTable({
-    dom: `<".row"<".col-md-8.buttons"B><".col-md-4"f>>rt<".row"<".col-md-3"l><".col-md-6"p><".col-md-3"i>>`,
+  $('#projects').DataTable({
+    dom: `
+    <".row"
+      <".col-md-8.buttons"B><".col-md-4"f>>
+    rt
+    <".row"<".col-md-3"l><".col-md-6"p><".col-md-3"i>>`,
     buttons: [
       {
         extend: 'collection',
-        text: '<i class="fa fa-download" aria-hidden="true"></i> Export&nbsp;&nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>',
+        text: `
+<i class="fa fa-download" aria-hidden="true"></i>
+    &nbsp;${window.PAGE.i18n.exportBtn}&nbsp;&nbsp;
+    <i class="fa fa-caret-down" aria-hidden="true">
+</i>`,
         buttons: window.buttons.map(button => ({
           text: button.name,
           action() {
@@ -29,18 +45,25 @@ if (typeof window.PAGE === 'object') {
       {
         targets: [1],
         render: function(data, type, full) {
-          return `<a class="btn btn-link" href="${full.id}">${data}</a>`;
-        },
+          return `
+<a class="btn btn-link" href="${window.PAGE.urls.project}${full.id}">${data}</a>
+`;
+        }
       },
       {
         targets: [4, 5],
         render: function(data) {
-          return `<span data-toggle="tooltip" data-placement="top" title="${moment(data)}" data-livestamp="${moment(data).unix()}"><i class="fa fa-spinner fa-pulse fa-fw"></i></span>`
-        },
-      },
+          return `
+<span data-toggle="tooltip" data-placement="top" 
+      title="${moment(data)}" data-livestamp="${moment(data).unix()}">
+      <i class="fa fa-spinner fa-pulse fa-fw"></i>
+</span>
+`;
+        }
+      }
     ],
     createdRow: function(row) {
       $(row).tooltip({selector: '[data-toggle="tooltip"]'});
-    },
+    }
   });
 }

@@ -17,8 +17,12 @@
     </style>
     <script th:inline="javascript">
       var PAGE = {
+        i18n: {
+          exportBtn: /*[[#{projects.export}]]*/ '_EXPORT_'
+        },
         urls: {
           projects: /*[[@{${ajaxURL}}]]*/ '',
+          project: /*[[@{/projects/}]]*/ '',
           export: /*[[@{/projects/ajax/export(admin=${isAdmin})}]]*/ '',
         },
       };
@@ -61,8 +65,8 @@
             th:src="@{/node_modules/datatables.net-buttons-bs/js/buttons.bootstrap.js}"></script>
     <script src="/resources/bower_components/livestampjs/livestamp.min.js"
             th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}"></script>
-    <script src="/resources/js/pages/projects/projects.js"
-            th:src="@{/resources/js/pages/projects/projects.js}"></script>
+    <script src="/resources/js/build/projects.bundle.js"
+            th:src="@{/resources/js/build/projects.bundle.js}"></script>
 </th:block>
 </body>
 </html>

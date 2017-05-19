@@ -5,5 +5,6 @@
  */
 module.exports = {
   app: './resources/js/app.js',
+  projects: './resources/js/pages/projects/projects.js',
   'projects-associated-edit': './resources/js/pages/projects/associated-projects/edit.module.js'
 };
