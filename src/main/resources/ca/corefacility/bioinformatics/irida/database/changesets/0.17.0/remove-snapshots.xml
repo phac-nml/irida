@@ -8,7 +8,27 @@
 	<changeSet id="remove-snapshots" author="tom">
 		<sql>
 			update analysis_submission set analysis_state="ERROR" where
-			analysis_state="DOWNLOADING" OR analysis_state="FINISHED_DOWNLOADING";
+			analysis_state="DOWNLOADING" OR
+			analysis_state="FINISHED_DOWNLOADING";
 		</sql>
+
+		<dropTable tableName="remote_sequence_file_pair" />
+		<dropTable tableName="remote_sequence_file_pair_files" />
+		<dropTable tableName="remote_sequence_file_pair_files_AUD" />
+		<dropTable tableName="remote_sequence_file_pair_AUD" />
+		<dropTable tableName="remote_sequence_file"/>
+		<dropTable tableName="remote_sequence_file_AUD"/>
+		<dropTable tableName="remote_sequence_file_properties"/>
+		<dropTable tableName="remote_sequence_file_properties_AUD"/>
+		<dropTable tableName="remote_sequence_file_single"/>
+		<dropTable tableName="remote_sequence_file_single_AUD"/>
+		
+		<dropTable tableName="analysis_submission_remote_file_pair"/>
+		<dropTable tableName="analysis_submission_remote_file_pair_AUD"/>
+		<dropTable tableName="analysis_submission_remote_file_single"/>
+		<dropTable tableName="analysis_submission_remote_file_single_AUD"/>
+		
+		<dropTable tableName="remote_related_project"/>
+		<dropTable tableName="remote_related_project_AUD"/>
 	</changeSet>
 </databaseChangeLog>
