@@ -93,7 +93,7 @@ public class ProjectsPage extends AbstractPage {
 	}
 
 	public void clickLinkToProject(int row) {
-		List<WebElement> links = (List<WebElement>) waitForElementsVisible(By.className("btn-link"));
+		List<WebElement> links = (List<WebElement>) waitForElementsVisible(By.cssSelector("#projects .btn-link"));
 		submitAndWait(links.get(row));
 	}
 }
