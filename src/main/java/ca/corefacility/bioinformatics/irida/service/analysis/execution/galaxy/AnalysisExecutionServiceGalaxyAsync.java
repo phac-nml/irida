@@ -74,30 +74,6 @@ public class AnalysisExecutionServiceGalaxyAsync {
 		this.workspaceService = workspaceService;
 		this.iridaWorkflowsService = iridaWorkflowsService;
 	}
-	
-	/**
-	 * Download the remote files for an {@link AnalysisSubmission}.
-	 * 
-	 * @param analysisSubmission
-	 *            The {@link AnalysisSubmission} to get files for.
-	 * @return A Future {@link AnalysisSubmission} with the files locally
-	 *         mirrored
-	 */
-	@Transactional
-	@RunAsUser("#analysisSubmission.getSubmitter()")
-	@Deprecated
-	public Future<AnalysisSubmission> downloadFilesForSubmission(final AnalysisSubmission analysisSubmission) {
-		checkNotNull(analysisSubmission, "analysisSubmission is null");
-		checkNotNull(analysisSubmission.getId(), "analysisSubmission id is null");
-
-		//TODO: Delete this method
-		
-		// once complete update the state
-		analysisSubmission.setAnalysisState(AnalysisState.FINISHED_DOWNLOADING);
-		AnalysisSubmission analysisPrepared = analysisSubmissionService.update(analysisSubmission);
-
-		return new AsyncResult<>(analysisPrepared);
-	}
 
 	/**
 	 * Prepares the given {@link AnalysisSubmission} to be executed within an
