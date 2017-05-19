@@ -46,7 +46,6 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Files;
@@ -267,6 +266,8 @@ public class ProjectSampleMetadataController {
 			// Get the metadata out of the table.
 			for (Map<String, String> row : rows) {
 				try {
+					// If this throws an error than the sample does not exist.
+					sampleService.getSampleBySampleName(project, row.get(sampleNameColumn));
 					found.add(row);
 				} catch (EntityNotFoundException e) {
 					missing.add(row);
