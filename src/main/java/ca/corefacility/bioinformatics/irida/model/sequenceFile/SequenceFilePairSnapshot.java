@@ -39,6 +39,7 @@ import ca.corefacility.bioinformatics.irida.model.irida.IridaSnapshot;
 @Table(name = "remote_sequence_file_pair")
 @EntityListeners(AuditingEntityListener.class)
 @Audited
+@Deprecated
 public class SequenceFilePairSnapshot implements IridaSequenceFilePair, IridaThing, IridaSnapshot {
 
 	@Id

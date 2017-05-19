@@ -47,6 +47,7 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSu
 @Table(name = "remote_sequence_file")
 @EntityListeners({AuditingEntityListener.class, RelativePathTranslatorListener.class})
 @Audited
+@Deprecated
 public class SequenceFileSnapshot implements IridaSequenceFile, MutableIridaThing, IridaSnapshot, VersionedFileFields<Long> {
 
 	private static final Logger logger = LoggerFactory.getLogger(SequenceFileSnapshot.class);
