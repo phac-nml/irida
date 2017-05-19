@@ -80,7 +80,6 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	// @formatter:off
 	public static final Map<AnalysisState,Float> STATE_PERCENTAGE = ImmutableMap.<AnalysisState,Float>builder().
 			put(AnalysisState.NEW,                  0.0f).
-			put(AnalysisState.DOWNLOADING,          5.0f).
 			put(AnalysisState.FINISHED_DOWNLOADING, 10.0f).
 			put(AnalysisState.PREPARING,            10.0f).
 			put(AnalysisState.PREPARED,             11.0f).
@@ -504,7 +503,6 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 
 		switch (analysisState) {
 		case NEW:
-		case DOWNLOADING:
 		case FINISHED_DOWNLOADING:
 		case PREPARING:
 		case PREPARED:
