@@ -4,7 +4,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.IOException;
-import java.util.Set;
 import java.util.concurrent.Future;
 
 import org.slf4j.Logger;
@@ -21,9 +20,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisType
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFileSnapshot;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.PreparedWorkflowGalaxy;
@@ -35,7 +31,6 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.analysis.annotations.RunAsUser;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
-import ca.corefacility.bioinformatics.irida.service.snapshot.SequenceFileSnapshotService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 /**
@@ -53,7 +48,6 @@ public class AnalysisExecutionServiceGalaxyAsync {
 	private final AnalysisWorkspaceServiceGalaxy workspaceService;
 	private final GalaxyWorkflowService galaxyWorkflowService;
 	private final IridaWorkflowsService iridaWorkflowsService;
-	private final SequenceFileSnapshotService sequenceFileSnapshotService;
 
 	/**
 	 * Builds a new {@link AnalysisExecutionServiceGalaxyAsync} with the given
@@ -69,21 +63,16 @@ public class AnalysisExecutionServiceGalaxyAsync {
 	 *            A service for a workflow workspace.
 	 * @param iridaWorkflowsService
 	 *            A service for loading up {@link IridaWorkflow}s.
-	 * @param sequenceFileSnapshotService
-	 *            A service for storing and retrieving local
-	 *            {@link SequenceFileSnapshot}s
 	 */
 	@Autowired
 	public AnalysisExecutionServiceGalaxyAsync(AnalysisSubmissionService analysisSubmissionService,
 			AnalysisService analysisService, GalaxyWorkflowService galaxyWorkflowService,
-			AnalysisWorkspaceServiceGalaxy workspaceService, IridaWorkflowsService iridaWorkflowsService,
-			SequenceFileSnapshotService sequenceFileSnapshotService) {
+			AnalysisWorkspaceServiceGalaxy workspaceService, IridaWorkflowsService iridaWorkflowsService) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.analysisService = analysisService;
 		this.galaxyWorkflowService = galaxyWorkflowService;
 		this.workspaceService = workspaceService;
 		this.iridaWorkflowsService = iridaWorkflowsService;
-		this.sequenceFileSnapshotService = sequenceFileSnapshotService;
 	}
 	
 	/**
@@ -96,22 +85,10 @@ public class AnalysisExecutionServiceGalaxyAsync {
 	 */
 	@Transactional
 	@RunAsUser("#analysisSubmission.getSubmitter()")
+	@Deprecated
 	public Future<AnalysisSubmission> downloadFilesForSubmission(final AnalysisSubmission analysisSubmission) {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkNotNull(analysisSubmission.getId(), "analysisSubmission id is null");
-
-		// Get all the remote paired files and save them locally
-		Set<SequenceFilePairSnapshot> remoteFilesPaired = analysisSubmission.getRemoteFilesPaired();
-		for (SequenceFilePairSnapshot pair : remoteFilesPaired) {
-			for (SequenceFileSnapshot file : pair.getFiles()) {
-				sequenceFileSnapshotService.mirrorFileContent(file);
-			}
-		}
-
-		// Get all the individual files and save them locally
-		for (SingleEndSequenceFileSnapshot file : analysisSubmission.getRemoteFilesSingle()) {
-			sequenceFileSnapshotService.mirrorFileContent(file.getSequenceFile());
-		}
 
 		// once complete update the state
 		analysisSubmission.setAnalysisState(AnalysisState.FINISHED_DOWNLOADING);
