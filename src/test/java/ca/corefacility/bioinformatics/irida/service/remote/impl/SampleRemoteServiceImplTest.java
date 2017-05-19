@@ -14,6 +14,7 @@ import org.springframework.hateoas.Link;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.repositories.RemoteAPIRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.SampleRemoteRepository;
@@ -44,10 +45,10 @@ public class SampleRemoteServiceImplTest {
 		Project project = new Project();
 		project.add(new Link(samplesHref, SampleRemoteServiceImpl.PROJECT_SAMPLES_REL));
 		RemoteAPI api = new RemoteAPI();
-		project.setRemoteAPI(api);
+		project.setRemoteStatus(new RemoteStatus("http://nowhere", api));
 
 		Sample remoteSample = new Sample();
-		remoteSample.setRemoteAPI(api);
+		remoteSample.setRemoteStatus(new RemoteStatus("http://nowhere", api));
 		List<Sample> samples = Lists.newArrayList(remoteSample);
 
 		when(sampleRemoteRepository.list(samplesHref, api)).thenReturn(samples);
@@ -64,7 +65,7 @@ public class SampleRemoteServiceImplTest {
 		Project project = new Project();
 		project.add(new Link(samplesHref, SampleRemoteServiceImpl.PROJECT_SAMPLES_REL));
 		RemoteAPI api = new RemoteAPI();
-		project.setRemoteAPI(api);
+		project.setRemoteStatus(new RemoteStatus("http://nowhere", api));
 
 		String searchString = "1";
 		int page = 0;
@@ -94,7 +95,7 @@ public class SampleRemoteServiceImplTest {
 		Project project = new Project();
 		project.add(new Link(samplesHref, SampleRemoteServiceImpl.PROJECT_SAMPLES_REL));
 		RemoteAPI api = new RemoteAPI();
-		project.setRemoteAPI(api);
+		project.setRemoteStatus(new RemoteStatus("http://nowhere", api));
 
 		String searchString = "";
 		int page = 0;
