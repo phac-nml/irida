@@ -10,6 +10,7 @@ import ca.corefacility.bioinformatics.irida.service.CRUDService;
 /**
  * Service for storing and retreving {@link SingleEndSequenceFileSnapshot}s
  */
+@Deprecated
 public interface SingleEndSequenceFileSnapshotService extends CRUDService<Long, SingleEndSequenceFileSnapshot> {
 	/**
 	 * Mirror the metadata for a {@link SingleEndSequenceFile} locally and

@@ -12,6 +12,7 @@ import ca.corefacility.bioinformatics.irida.service.CRUDService;
  * 
  * @see SequenceFileSnapshot
  */
+@Deprecated
 public interface SequenceFilePairSnapshotService extends CRUDService<Long, SequenceFilePairSnapshot> {
 	/**
 	 * Mirror the metadata for a {@link SequenceFilePair} locally and return a
