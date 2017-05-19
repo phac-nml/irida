@@ -255,7 +255,7 @@ public class ProjectSampleMetadataController {
 		SampleMetadataStorage stored = (SampleMetadataStorage) session.getAttribute("pm-" + projectId);
 
 		if (stored != null) {
-			stored.saveSampleNameColumn(sampleNameColumn);
+			stored.setSampleNameColumn(sampleNameColumn);
 			Project project = projectService.read(projectId);
 			List<Map<String, String>> rows = stored.getRows();
 
@@ -266,12 +266,9 @@ public class ProjectSampleMetadataController {
 
 			// Get the metadata out of the table.
 			for (Map<String, String> row : rows) {
-				// Lets try to get a sample
-				String sampleName = row.get(sampleNameColumn);
 				try {
-					Sample sample = sampleService.getSampleBySampleName(project, sampleName);
-					row.put("id", String.valueOf(sample.getId()));
-					row.remove(sampleNameColumn); // Remove column corresponding to the sample name since it is not needed
+					// If this throws an error than the sample does not exist.
+					sampleService.getSampleBySampleName(project, row.get(sampleNameColumn));
 					found.add(row);
 				} catch (EntityNotFoundException e) {
 					missing.add(row);
@@ -302,6 +299,7 @@ public class ProjectSampleMetadataController {
 	public Map<String, Object> saveProjectSampleMetadata(Locale locale, HttpSession session,
 			@PathVariable long projectId) {
 		Map<String, Object> errors = new HashMap<>();
+		Project project = projectService.read(projectId);
 
 		SampleMetadataStorage stored = (SampleMetadataStorage) session.getAttribute("pm-" + projectId);
 		if (stored == null) {
@@ -309,15 +307,18 @@ public class ProjectSampleMetadataController {
 		}
 
 		List<Sample> samplesToUpdate = new ArrayList<>();
-		
+
 		List<Map<String, String>> found = stored.getFound();
 		if (found != null) {
+			// Lets try to get a sample
+			String sampleNameColumn = stored.getSampleNameColumn();
 			List<String> errorList = new ArrayList<>();
 			try {
 				for (Map<String, String> row : found) {
 
-					Long id = Long.valueOf(row.get("id"));
-					Sample sample = sampleService.read(id);
+					String name = row.get(sampleNameColumn);
+					Sample sample = sampleService.getSampleBySampleName(project, name);
+					row.remove(sampleNameColumn);
 
 					Map<MetadataTemplateField, MetadataEntry> newData = new HashMap<>();
 
