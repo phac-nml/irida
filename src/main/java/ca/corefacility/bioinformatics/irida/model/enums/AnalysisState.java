@@ -25,6 +25,7 @@ public enum AnalysisState {
 	/**
 	 * Occurs when an analysis is downloading remote files
 	 */
+	@Deprecated
 	DOWNLOADING("DOWNLOADING"),
 
 	/**
