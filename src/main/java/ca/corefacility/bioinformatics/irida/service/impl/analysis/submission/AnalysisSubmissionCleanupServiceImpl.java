@@ -32,7 +32,6 @@ public class AnalysisSubmissionCleanupServiceImpl implements AnalysisSubmissionC
 	 * one of these states, would need to be switched to an
 	 * {@link AnalysisSubmission.ERROR} state.
 	 */
-	@SuppressWarnings("deprecation")
 	private static final Set<AnalysisState> inconsistentStates = ImmutableSet.of(AnalysisState.PREPARING, AnalysisState.SUBMITTING, AnalysisState.COMPLETING);
 	
 	private static boolean ranSwitchInconsistentSubmissionsToError = false;
