@@ -19,6 +19,11 @@ To install these tools, please proceed through the following steps.
 
 SNVPhyl relies on `ncurses` version **2.9** which requires [GCC][] version **4.9** or **less** to build.  Please verify you have the correct version of GCC by running `gcc --version`.  If you have a more recent version installed please install version **4.9** before proceeding.  Alternativly, please verify that `ncurses` is installed on your system before installing SNVPhyl.
 
+```
+source activate galaxy
+conda install samtools
+```
+
 ## Step 2: Install Perl Modules
 
 Some Perl modules are required to be installed before the tools are installed.  In particular, the module `Readonly` needs to be installed.  This can by installed by running:
