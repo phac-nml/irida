@@ -139,6 +139,7 @@ public class CartController {
 	 * 
 	 * @return The cart map of remote samples
 	 */
+	@Deprecated
 	public Map<String, Sample> getRemoteSelected() {
 		return remoteSelected;
 	}
@@ -194,6 +195,7 @@ public class CartController {
 	 */
 	@RequestMapping(value = "/add/samples/remote", method = RequestMethod.POST)
 	@ResponseBody
+	@Deprecated
 	public Map<String, Object> addRemoteSample(@RequestParam String sampleURL) {
 		Sample read = sampleRemoteService.read(sampleURL);
 		remoteSelected.put(read.getLink(Link.REL_SELF).getHref(), read);
