@@ -417,7 +417,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	/**
 	 * {@inheritDoc}
 	 */
-	@PreAuthorize("hasPermission(#samples, 'canUpdateSample')")
+	@PreAuthorize("hasPermission(#objects, 'canUpdateSample')")
 	@Override
 	public List<Sample> updateMultiple(Collection<Sample> objects) {
 		return super.updateMultiple(objects);
