@@ -63,7 +63,7 @@ public class SampleRemoteServiceImpl extends RemoteServiceImpl<Sample> implement
 	public List<Sample> getSamplesForProject(Project project) {
 		Link link = project.getLink(PROJECT_SAMPLES_REL);
 		String samplesHref = link.getHref();
-		return list(samplesHref, project.getRemoteAPI());
+		return list(samplesHref, project.getRemoteStatus().getApi());
 	}
 
 	/**
