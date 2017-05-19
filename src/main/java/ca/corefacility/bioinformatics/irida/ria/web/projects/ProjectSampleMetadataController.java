@@ -308,11 +308,14 @@ public class ProjectSampleMetadataController {
 			errors.put("stored-error", true);
 		}
 
+		List<Sample> samplesToUpdate = new ArrayList<>();
+		
 		List<Map<String, String>> found = stored.getFound();
 		if (found != null) {
 			List<String> errorList = new ArrayList<>();
-			for (Map<String, String> row : found) {
-				try {
+			try {
+				for (Map<String, String> row : found) {
+
 					Long id = Long.valueOf(row.get("id"));
 					Sample sample = sampleService.read(id);
 
@@ -321,24 +324,30 @@ public class ProjectSampleMetadataController {
 					// Need to overwrite duplicate keys
 					for (Entry<String, String> entry : row.entrySet()) {
 						MetadataTemplateField key = metadataTemplateService.readMetadataFieldByLabel(entry.getKey());
-						
-						if(key == null){
-							key = metadataTemplateService.saveMetadataField(new MetadataTemplateField(entry.getKey(), "text"));
+
+						if (key == null) {
+							key = metadataTemplateService
+									.saveMetadataField(new MetadataTemplateField(entry.getKey(), "text"));
 						}
-						
+
 						newData.put(key, new MetadataEntry(entry.getValue(), "text"));
 					}
 
 					sample.mergeMetadata(newData);
 
 					// Save metadata back to the sample
-					sampleService.update(sample);
-				} catch (EntityNotFoundException e) {
-					// This really should not happen, but hey, you never know!
-					errorList.add(messageSource.getMessage("metadata.results.save.sample-not-found",
-							new Object[] { row.get(stored.getSampleNameColumn()) }, locale));
+
+					samplesToUpdate.add(sample);
+
 				}
+
+				sampleService.updateMultiple(samplesToUpdate);
+			} catch (EntityNotFoundException e) {
+				// This really should not happen, but hey, you never know!
+				errorList.add(messageSource.getMessage("metadata.results.save.sample-not-found",
+						new Object[] { e.getMessage() }, locale));
 			}
+
 			if (errorList.size() > 0) {
 				errors.put("save-errors", errorList);
 			}

@@ -93,7 +93,7 @@ public class CRUDServiceImplTest {
 	}
 
 	@Test
-	public void testUpdate() throws InterruptedException {
+	public void testUpdateFields() throws InterruptedException {
 		IdentifiableTestEntity before = new IdentifiableTestEntity();
 		before.setNonNull("Definitely not null.");
 		before.setIntegerValue(Integer.MIN_VALUE);
@@ -116,6 +116,31 @@ public class CRUDServiceImplTest {
 
 		IdentifiableTestEntity captured = pageArgument.getValue();
 		assertEquals(newNonNull, captured.getNonNull());
+	}
+	
+	@Test
+	public void testUpdateMultiple() {
+		IdentifiableTestEntity ent1 = new IdentifiableTestEntity();
+		ent1.setNonNull("Definitely not null.");
+		ent1.setIntegerValue(Integer.MIN_VALUE);
+		ent1.setLabel("label");
+		Long id = 1L;
+		ent1.setId(id);
+
+		IdentifiableTestEntity ent2 = new IdentifiableTestEntity();
+		ent2.setNonNull("Another entity");
+		ent2.setIntegerValue(Integer.MAX_VALUE);
+		ent2.setLabel("label");
+		Long id2 = 2L;
+		ent2.setId(id);
+
+		when(crudRepository.exists(id)).thenReturn(true);
+		when(crudRepository.exists(id2)).thenReturn(true);
+
+		crudService.updateMultiple(Lists.newArrayList(ent1, ent2));
+
+		verify(crudRepository).save(ent1);
+		verify(crudRepository).save(ent2);
 	}
 
 	@Test(expected = EntityNotFoundException.class)
