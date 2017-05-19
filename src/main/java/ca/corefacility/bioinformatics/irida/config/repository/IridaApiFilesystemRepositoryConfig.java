@@ -32,8 +32,7 @@ public class IridaApiFilesystemRepositoryConfig {
 	@Bean
 	public RelativePathTranslatorListener relativePathTranslatorListener(final @Qualifier("referenceFileBaseDirectory") Path referenceFileBaseDirectory, 
 			final @Qualifier("sequenceFileBaseDirectory") Path sequenceFileBaseDirectory,
-			final @Qualifier("outputFileBaseDirectory") Path outputFileBaseDirectory,
-			final @Qualifier("snapshotFileBaseDirectory") Path snapshotFileBaseDirectory) {
+			final @Qualifier("outputFileBaseDirectory") Path outputFileBaseDirectory) {
 		RelativePathTranslatorListener.addBaseDirectory(SequenceFile.class, sequenceFileBaseDirectory);
 		RelativePathTranslatorListener.addBaseDirectory(ReferenceFile.class, referenceFileBaseDirectory);
 		RelativePathTranslatorListener.addBaseDirectory(AnalysisOutputFile.class, outputFileBaseDirectory);
