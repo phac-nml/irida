@@ -13,7 +13,7 @@ public class SampleMetadataStorage {
 	private List<Map<String, String>> found;
 	private List<Map<String, String>> missing;
 
-	public void saveSampleNameColumn(String sampleColumnName) {
+	public void setSampleNameColumn(String sampleColumnName) {
 		this.sampleNameColumn = sampleColumnName;
 	}
 
