@@ -397,8 +397,6 @@ public class PipelineController extends BaseController {
 	@RequestMapping(value = "/ajax/start/{pipelineId}", method = RequestMethod.POST)
 	public @ResponseBody Map<String, Object> ajaxStartPipeline(Locale locale, @PathVariable UUID pipelineId,
 			@RequestParam(required = false) List<Long> single, @RequestParam(required = false) List<Long> paired,
-			@RequestParam(required = false) List<String> remoteSingle,
-			@RequestParam(required = false) List<String> remotePaired,
 			@RequestParam(required = false) Map<String, String> parameters, @RequestParam(required = false) Long ref,
 			@RequestParam String name, @RequestParam(name = "description", required = false) String analysisDescription,
 			@RequestParam(required = false) List<Long> sharedProjects) {
@@ -451,27 +449,6 @@ public class PipelineController extends BaseController {
 				
 				// Check the pair files for duplicates in a sample, throws SampleAnalysisDuplicateException
 				sequencingObjectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(sequenceFilePairs));
-			}
-			
-			
-			// Get a list of the remote files to submit
-			List<SingleEndSequenceFileSnapshot> remoteSingleFiles = new ArrayList<>();
-			List<SequenceFilePairSnapshot> remotePairFiles = new ArrayList<>();
-			
-			if(remoteSingle != null){
-				logger.debug("Mirroring" + remoteSingle.size() + " single files.");
-				remoteSingleFiles = remoteSingle.stream().map((u) -> {
-					SingleEndSequenceFile read = sequenceFileSingleRemoteService.read(u);
-					return singleEndSequenceFileSnapshotService.mirrorFile(read);
-				}).collect(Collectors.toList());
-			}
-			
-			if(remotePaired != null){
-				logger.debug("Mirroring" + remotePaired.size() + " pairs.");
-				remotePairFiles = remotePaired.stream().map((u) -> {
-					SequenceFilePair pair = sequenceFilePairRemoteService.read(u);
-					return remoteSequenceFilePairService.mirrorPair(pair);
-				}).collect(Collectors.toList());
 			}
 
 			// Get the pipeline parameters

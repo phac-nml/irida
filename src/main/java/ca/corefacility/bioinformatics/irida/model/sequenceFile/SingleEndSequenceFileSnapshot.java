@@ -34,6 +34,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name = "remote_sequence_file_single")
 @EntityListeners(AuditingEntityListener.class)
 @Audited
+@Deprecated
 public class SingleEndSequenceFileSnapshot implements IridaSingleEndSequenceFile, IridaThing, IridaSnapshot {
 
 	@Id
