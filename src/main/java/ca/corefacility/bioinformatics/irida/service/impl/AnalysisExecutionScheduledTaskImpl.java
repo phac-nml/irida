@@ -35,7 +35,6 @@ import com.google.common.collect.Sets;
  */
 public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionScheduledTask {
 	
-	private Object downloadFilesLock = new Object();
 	private Object prepareAnalysesLock = new Object();
 	private Object executeAnalysesLock = new Object();
 	private Object monitorRunningAnalysesLock = new Object();
