@@ -4,6 +4,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnaps
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
+@Deprecated
 public interface SequenceFileSnapshotService extends CRUDService<Long, SequenceFileSnapshot> {
 
 	/**
