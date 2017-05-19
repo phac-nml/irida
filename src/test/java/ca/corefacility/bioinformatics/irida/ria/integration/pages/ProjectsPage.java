@@ -58,7 +58,7 @@ public class ProjectsPage extends AbstractPage {
 	}
 
 	public void gotoProjectPage(int row) {
-		submitAndWait(driver.findElements(By.cssSelector("#projects .item-link")).get(row));
+		submitAndWait(driver.findElements(By.cssSelector("#projects .btn-link")).get(row));
 	}
 
 	public List<WebElement> getProjectColumn() {
@@ -78,18 +78,10 @@ public class ProjectsPage extends AbstractPage {
 	}
 
 	public void filterByName(String name) {
-//		openFilters();
-		//		WebElement input = waitForElementVisible(By.id("nameFilter"));
-		//		input.sendKeys(name);
-		//		submitFilter("nameFilterClear");
 		doSearch(name);
 	}
 
 	public void filterByOrganism(String organism) {
-//		openFilters();
-//		WebElement input = driver.findElement(By.id("organismFilter"));
-//		input.sendKeys(organism);
-//		submitFilter("organismFilterClear");
 		doSearch(organism);
 	}
 
@@ -109,7 +101,7 @@ public class ProjectsPage extends AbstractPage {
 	}
 
 	public void clickLinkToProject(int row) {
-		List<WebElement> links = (List<WebElement>) waitForElementsVisible(By.className("item-link"));
+		List<WebElement> links = (List<WebElement>) waitForElementsVisible(By.className("btn-link"));
 		submitAndWait(links.get(row));
 	}
 }
