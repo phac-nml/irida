@@ -98,16 +98,6 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	 */
 	@Value("${irida.analysis.cleanup.days}")
 	private Double daysToCleanup;
-	
-	/**
-	 * Cycle through any newly created submissions and download any required
-	 * remote files
-	 */
-	@Deprecated
-	@Scheduled(initialDelay = 1000, fixedDelay = ANALYSIS_EXECUTION_TASK_RATE)
-	public void downloadFiles() {
-		analysisExecutionScheduledTask().downloadFiles();
-	}
 
 	/**
 	 * Cycle through any submissions and prepare them for execution.

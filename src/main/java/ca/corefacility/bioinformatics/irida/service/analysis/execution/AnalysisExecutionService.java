@@ -17,16 +17,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
  * 
  */
 public interface AnalysisExecutionService {
-
-	/**
-	 * Downloads any required remote files for the given
-	 * {@link AnalysisSubmission}.
-	 * 
-	 * @param analysisSubmission
-	 *            the {@link AnalysisSubmission} to get files for
-	 * @return A Future of the {@link AnalysisSubmission}
-	 */
-	public Future<AnalysisSubmission> downloadSubmissionFiles(AnalysisSubmission analysisSubmission);
 	
 	/**
 	 * Prepares the given {@link AnalysisSubmission} to be executed within an
