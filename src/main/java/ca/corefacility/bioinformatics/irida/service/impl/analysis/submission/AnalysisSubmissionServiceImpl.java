@@ -44,10 +44,8 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFileSnapshot;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
@@ -348,15 +346,12 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public Collection<AnalysisSubmission> createSingleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
-			List<SingleEndSequenceFileSnapshot> remoteFiles, List<SequenceFilePairSnapshot> remotePairs,
 			Map<String, String> params, IridaWorkflowNamedParameters namedParameters, String name,
 			String analysisDescription, List<Project> projectsToShare) {
 		final Collection<AnalysisSubmission> createdSubmissions = new HashSet<AnalysisSubmission>();
 		// Single end reads
 		IridaWorkflowDescription description = workflow.getWorkflowDescription();
-		
-		
-		
+			
 		if (description.acceptsSingleSequenceFiles()) {
 			final Map<Sample, SingleEndSequenceFile> samplesMap = sequencingObjectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(sequenceFiles));
 			for (final Sample s : samplesMap.keySet()) {
@@ -387,39 +382,6 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 
 				// Create the submission
 				createdSubmissions.add(create(builder.build()));
-			}
-
-			if (!remoteFiles.isEmpty()) {
-				for (SingleEndSequenceFileSnapshot file : remoteFiles) {
-					AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
-					builder.name(name + "_" + file.getId());
-					builder.remoteFilesSingle(ImmutableSet.of(file));
-
-					// Add reference file
-					if (ref != null && description.requiresReference()) {
-						// Note: This cannot be empty if through the UI if the
-						// pipeline required a reference file.
-						ReferenceFile referenceFile = referenceFileRepository.findOne(ref);
-						builder.referenceFile(referenceFile);
-					}
-
-					if (description.acceptsParameters()) {
-						if (namedParameters != null) {
-							builder.withNamedParameters(namedParameters);
-						} else {
-							if (!params.isEmpty()) {
-								// Note: This cannot be empty if through the UI
-								// if
-								// the pipeline required params.
-								builder.inputParameters(params);
-							}
-						}
-					}
-
-					// Create the submission
-					createdSubmissions.add(create(builder.build()));
-				}
-
 			}
 			
 		}
@@ -458,43 +420,6 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 				// Create the submission
 				createdSubmissions.add(create(builder.build()));
 			}
-			
-			if (!remotePairs.isEmpty()) {
-				for (SequenceFilePairSnapshot pair : remotePairs) {
-					AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
-					builder.name(name + "_" + pair.getId());
-					builder.remoteFilesPaired(ImmutableSet.of(pair));
-
-					// Add reference file
-					if (ref != null && description.requiresReference()) {
-						// Note: This cannot be empty if through the UI if the
-						// pipeline required a reference file.
-						ReferenceFile referenceFile = referenceFileRepository.findOne(ref);
-						builder.referenceFile(referenceFile);
-					}
-
-					if (description.acceptsParameters()) {
-						if (namedParameters != null) {
-							builder.withNamedParameters(namedParameters);
-						} else {
-							if (!params.isEmpty()) {
-								// Note: This cannot be empty if through the UI
-								// if
-								// the pipeline required params.
-								builder.inputParameters(params);
-							}
-						}
-					}
-
-					// Add description to submission, can be null
-					builder.analysisDescription(analysisDescription);
-
-
-					// Create the submission
-					createdSubmissions.add(create(builder.build()));
-				}
-
-			}
 		}
 		
 		// Share with the required projects
@@ -514,7 +439,6 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public AnalysisSubmission createMultipleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
-			List<SingleEndSequenceFileSnapshot> remoteFiles, List<SequenceFilePairSnapshot> remotePairs,
 			Map<String, String> params, IridaWorkflowNamedParameters namedParameters, String name,
 			String newAnalysisDescription, List<Project> projectsToShare) {
 		AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
@@ -532,11 +456,6 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 			if (!sequenceFiles.isEmpty()) {
 				builder.inputFilesSingleEnd(Sets.newHashSet(sequenceFiles));
 			}
-
-			// add remote files
-			if (!remoteFiles.isEmpty()) {
-				builder.remoteFilesSingle(new HashSet<>(remoteFiles));
-			}
 		}
 
 		// Add any paired end sequencing files.
@@ -545,12 +464,6 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 			{
 				builder.inputFilesPaired(Sets.newHashSet(sequenceFilePairs));
 			}
-			
-			// add remote files
-			if (!remotePairs.isEmpty()) {
-				builder.remoteFilesPaired(new HashSet<>(remotePairs));
-			}
-
 		}
 
 		if (description.acceptsParameters()) {

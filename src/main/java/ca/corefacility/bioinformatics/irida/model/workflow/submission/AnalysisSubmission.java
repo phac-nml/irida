@@ -609,6 +609,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 		 *            Single ended {@link SequenceFileSnapshot}s
 		 * @return A {@link Builder}
 		 */
+		@Deprecated
 		public Builder remoteFilesSingle(Set<SingleEndSequenceFileSnapshot> remoteFilesSingle) {
 			checkNotNull(remoteFilesSingle, "remoteFilesSingle is null");
 			checkArgument(!remoteFilesSingle.isEmpty(), "remoteFilesSingle is empty");
@@ -624,6 +625,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 		 *            The remote paired files
 		 * @return A {@link Builder}
 		 */
+		@Deprecated
 		public Builder remoteFilesPaired(Set<SequenceFilePairSnapshot> remoteFilesPaired) {
 			checkNotNull(remoteFilesPaired, "remoteFilesPaired is null");
 			checkArgument(!remoteFilesPaired.isEmpty(), "remoteFilesPaired is empty");
