@@ -97,6 +97,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 		saveBtn.click();
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(ExpectedConditions.visibilityOf(templateNameInput));
+		waitForTime(1000);
 		templateNameInput.sendKeys(templateName);
 		wait.until(ExpectedConditions.elementToBeClickable(completeSaveBtn));
 		completeSaveBtn.click();
