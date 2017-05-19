@@ -8,11 +8,11 @@
 <th:block layout:fragment="settings-content">
     <div class="clearfix spaced-bottom">
         <h2 class="h2-muted pull-left" th:text="#{project.settings.metadata-templates}">_Sample Metadata Templates_</h2>
-        <a href="#"
+        <a href="#" id="create-template-btn"
            th:href="@{/projects/{id}/sample-metadata/template(id=${project.getId()})}"
            class="btn btn-link pull-right" th:text="#{project.settings.metadata-templates.new}">Create New Template</a>
     </div>
-    <table class="table table-border table-striped">
+    <table id="template-table" class="table table-border table-striped">
         <thead>
         <tr>
             <th th:text="#{project.settings.metadata-templates.table.template-name}">Template Name</th>
