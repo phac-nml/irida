@@ -22,20 +22,12 @@ To install these tools please proceed through the following steps.
 
 ## Step 1: Install Dependencies
 
-Some of these tools require additional dependencies to be installed.  For a cluster environment please make sure these are available on all cluster nodes by installing to a shared directory.
-
-1. [Java][]:  Please download and install [Java][] version 1.6+ or make sure it is available in your execution environment.
-2. [gnuplot][]: Please download and install [gnuplot][] or make sure this is available in your execution environment.
-3. **Perl Modules**: Please download and install dependency Perl modules with the command.
+Some of these tools require additional dependencies to be installed.  For a cluster environment please make sure these are available on all cluster nodes by installing to a shared directory. This can be done with conda (assuming Galaxy is configured to load up the environment `galaxy` for each tool execution, that is in `env.sh`).
 
 ```bash
-cpanm Time::Piece XML::Simple Data::Dumper
-```
-
-In addition, [BioPerl][] version 1.6.901 must be installed.  Please run the following command to install.
-
-```bash
-cpanm https://cpan.metacpan.org/authors/id/C/CJ/CJFIELDS/BioPerl-1.6.901.tar.gz
+source activate galaxy
+conda install perl-xml-simple perl-time-piece perl-bioperl openjdk gnuplot libjpeg-turbo
+source deactivate
 ```
 
 ## Step 2: Install Galaxy Tools

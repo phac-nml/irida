@@ -318,11 +318,11 @@ Alternatively, the necessary tools can be installed manually through the followi
 * [Assembly and Annotation Collection][]
 * [SISTR Salmonella Typing][]
 
-Each of these will step through installing the necessary tools in IRIDA.  These steps will involve going to Galaxy, navigating to **Admin > Search and browse tool sheds**, finding the appropriate tool and installing.  On completion, you should be able to go to **Admin > Manage installed tool shed repositories** to check the status of each tool.  For a successfull install, you should see a status of `Installed`.  If there is an error, you can click on each tool for more details.
+Each of these will step through installing the necessary tools in IRIDA.  These steps will involve going to Galaxy, navigating to **Admin > Search tool sheds**, finding the appropriate tool and installing.  On completion, you should be able to go to **Admin > Manage installed tools** to check the status of each tool.  For a successfull install, you should see a status of `Installed`.  If there is an error, you can click on each tool for more details.
 
 ![galaxy-installed-repositories.jpg][]
 
-All tools are installed in the directory `shed_tools` with binary dependencies installed in `tool_dependencies`.  Monitoring the install process of each tool can be done by monitoring the main Galaxy log file `paster.log`.
+All tools are installed in the directory `shed_tools` with binary dependencies installed in `tool_dependencies`.  Monitoring the install process of each tool can be done by monitoring the main Galaxy log file `main.log`.
 
 Link up Galaxy with IRIDA
 -------------------------
@@ -337,7 +337,7 @@ Follow the instructions to [install and configure the IRIDA web interface](../we
 
 Once you have configured IRIDA to connect to Galaxy you can attempt to execute a workflow by adding some data to your cart, selecting  **Pipelines** from the main menu, then selecting a particular pipeline.  You will have to have some data uploaded into IRIDA before testing.  Currently all workflows assume you are using paired-end sequence reads.
 
-Each workflow in IRIDA is run using Galaxy, and it's possible to monitor the status of a workflow or debug a workflow through Galaxy.  To do this, please log into Galaxy as the `$GALAXY_WORKFLOW_USER` and click on the **History Options** icon ![history-options-icon][] in the top-right of the **History** panel to view a list of saved histories.  You should see these histories being populated as you execute new workflows in IRIDA.
+Each workflow in IRIDA is run using Galaxy, and it's possible to monitor the status of a workflow or debug a workflow through Galaxy.  To do this, please log into Galaxy as the **workflow-user** and click on the **History Options** icon ![history-options-icon][] in the top-right of the **History** panel to view a list of saved histories.  You should see these histories being populated as you execute new workflows in IRIDA.
 
 ![saved-histories.jpg][]
 
