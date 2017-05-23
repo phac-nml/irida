@@ -7,14 +7,40 @@ import com.google.common.base.Strings;
 
 /**
  * Responsible for extracting and representing DataTables Columns
+ *
+ * <p><table>
+ *     <tr>
+ *         <td>columns[n][data]</td>
+ *         <td>Column's data source</td>
+ *         <td>https://datatables.net/reference/option/columns.data</td>
+ *     </tr>
+ *     <tr>
+ *         <td>columns[n][name]</td>
+ *         <td>Column's name</td>
+ *         <td>https://datatables.net/reference/option/columns.name</td>
+ *     </tr>
+ *     <tr>
+ *         <td>columns[n][searchable]</td>
+ *         <td>Flag to indicate if this column is globally searchable (true) or not (false)</td>
+ *         <td></td>
+ *     </tr>
+ *     <tr>
+ *         <td>columns[n][orderable]</td>
+ *         <td>Flag to indicate if this column is orderable (true) or not (false)</td>
+ *         <td></td>
+ *     </tr>
+ *     <tr>
+ *         <td>columns[n][search][value]</td>
+ *         <td>Search value to apply to this specific column.</td>
+ *         <td></td>
+ *     </tr>
+ *     <tr>
+ *         <td>columns[n][search][regex]</td>
+ *         <td>Flag to indicate if the search term for this column should be treated as regular expression (true) or not (false)</td>
+ *         <td></td>
+ *     </tr>
+ * </table></p>
  * @see <a href="https://datatables.net/manual/server-side">Server-side processing</a>
- * 	columns[n][data]:0					- Column's data source (https://datatables.net/reference/option/columns.data)
- *  columns[n][name]:					- Column's name (https://datatables.net/reference/option/columns.name)
- *  columns[n][searchable]:true			- Flag to indicate if this column is globally searchable (true) or not (false).
- *  columns[n][orderable]:false			- Flag to indicate if this column is orderable (true) or not (false).
- *  columns[n][search][value]:			- Search value to apply to this specific column.
- *  columns[n][search][regex]:false 	- Flag to indicate if the search term for this column should be treated as
- *  									  regular expression (true) or not (false).
  */
 public class DataTablesColumnDefinitions {
 	private String name;
