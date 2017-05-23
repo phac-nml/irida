@@ -13,12 +13,6 @@ import static org.junit.Assert.*;
 public class ProjectMetadataTemplateIT extends AbstractIridaUIITChromeDriver {
 	private final int PROJECT_ID = 1;
 
-	@Test(expected = AssertionError.class)
-	public void testCreateTemplateAsUser() {
-		LoginPage.loginAsUser(driver());
-		ProjectSettingsMetadataTemplatesPage.goToPage(driver(), PROJECT_ID);
-	}
-
 	@Test
 	public void testCreateTemplateAsManager() {
 		LoginPage.loginAsManager(driver());
