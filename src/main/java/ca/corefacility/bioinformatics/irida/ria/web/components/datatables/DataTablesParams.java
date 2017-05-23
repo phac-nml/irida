@@ -23,10 +23,10 @@ import com.google.common.base.Strings;
  *                         from server-side processing requests are drawn in sequence by DataTables.
  * start                 - Paging first record indicator. This is the start point in the current
  *                         data set (0 index based - i.e. 0 is the first record).
- * length:10             - Number of records that the table can display in the current draw.
- * search[value]:        - Global search value. To be applied to all columns which have
+ * length                - Number of records that the table can display in the current draw.
+ * search[value]         - Global search value. To be applied to all columns which have
  *                         searchable as true.
- * search[regex]:false   - true if the global filter should be treated as a regular expression for
+ * search[regex]         - true if the global filter should be treated as a regular expression for
  *                         advanced searching, false otherwise.
  * </pre>
  *
@@ -121,7 +121,7 @@ public class DataTablesParams {
 	 *
 	 * @param request
 	 * 		{@link HttpServletRequest} current {@link DataTablesParams} request.
-	 * @return {@link List} of {@link DataTablesColumnDefinitions}
+	 * @return {@link List} of {@link DataTablesColumnDefinitions}p
 	 */
 	private static List<DataTablesColumnDefinitions> getColumnDefinitions(HttpServletRequest request) {
 		Enumeration<String> parameterNames = request.getParameterNames();

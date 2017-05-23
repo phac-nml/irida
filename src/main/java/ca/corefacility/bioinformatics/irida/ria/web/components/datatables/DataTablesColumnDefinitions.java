@@ -8,13 +8,13 @@ import com.google.common.base.Strings;
 /**
  * Responsible for extracting and representing DataTables Columns
  * <pre>
- * 	columns[n][data]:0					- Column's data source (https://datatables.net/reference/option/columns.data)
- *  columns[n][name]:					- Column's name (https://datatables.net/reference/option/columns.name)
- *  columns[n][searchable]:true			- Flag to indicate if this column is globally searchable (true) or not (false).
- *  columns[n][orderable]:false			- Flag to indicate if this column is orderable (true) or not (false).
- *  columns[n][search][value]:			- Search value to apply to this specific column.
- *  columns[n][search][regex]:false 	- Flag to indicate if the search term for this column should be treated as
- *  									  regular expression (true) or not (false).
+ *  columns[n][data]            - Column's data source (https://datatables.net/reference/option/columns.data)
+ *  columns[n][name]            - Column's name (https://datatables.net/reference/option/columns.name)
+ *  columns[n][searchable]      - Flag to indicate if this column is globally searchable (true) or not (false).
+ *  columns[n][orderable]       - Flag to indicate if this column is orderable (true) or not (false).
+ *  columns[n][search][value]   - Search value to apply to this specific column.
+ *  columns[n][search][regex]   - Flag to indicate if the search term for this column should be treated as
+ *                                regular expression (true) or not (false).
  * </pre>
  *
  * @see <a href="https://datatables.net/manual/server-side">Server-side processing</a>
