@@ -101,9 +101,6 @@ public class Project extends IridaResourceSupport
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "project")
 	private List<ProjectReferenceFileJoin> referenceFiles;
-
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "localProject")
-	private List<RemoteRelatedProject> remoteRelatedProjects;
 	
 	@NotAudited
 	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy = "project")
