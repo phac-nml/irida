@@ -29,6 +29,6 @@ public class DataTablesRequestResolver implements HandlerMethodArgumentResolver 
 	public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
 			NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
 		HttpServletRequest servletRequest = (HttpServletRequest) webRequest.getNativeRequest();
-		return DataTablesParams.parseDatatablesParams(servletRequest);
+		return DataTablesParams.parseDataTablesParams(servletRequest);
 	}
 }

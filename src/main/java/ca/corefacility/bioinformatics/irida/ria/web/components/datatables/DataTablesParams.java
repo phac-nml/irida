@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Sort;
 
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
+
 import com.google.common.base.Strings;
 
 /**
@@ -33,6 +34,10 @@ import com.google.common.base.Strings;
  * @see <a href="https://datatables.net/manual/server-side">Server Side</a>
  */
 public class DataTablesParams {
+	// This is used to match DataTables columns parameter
+	// 	e.g. columns[1][name]
+	//		 - matching at 1 ==> column number
+	//       - matching at 2 ==> which data item (name, seachable, orderable, data)
 	private static Pattern columnsPattern = Pattern.compile("columns\\[([0-9]*)?\\]\\[([a-z]*)?\\]");
 
 	private Integer start;
@@ -59,7 +64,7 @@ public class DataTablesParams {
 	 * 		{@link HttpServletRequest} request containing {@link DataTablesParams}
 	 * @return {@link DataTablesParams}
 	 */
-	public static DataTablesParams parseDatatablesParams(HttpServletRequest request) {
+	public static DataTablesParams parseDataTablesParams(HttpServletRequest request) {
 		Integer start = Integer.valueOf(request.getParameter("start"));
 		Integer length = Integer.valueOf(request.getParameter("length"));
 		Integer draw = Integer.valueOf(request.getParameter("draw"));
