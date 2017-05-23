@@ -45,14 +45,12 @@ import ca.corefacility.bioinformatics.irida.ria.config.AnalyticsHandlerIntercept
 import ca.corefacility.bioinformatics.irida.ria.config.BreadCrumbInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequestResolver;
-
 import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesCriteriasMethodArgumentResolver;
 import com.github.dandelion.datatables.thymeleaf.dialect.DataTablesDialect;
 import com.github.dandelion.thymeleaf.dialect.DandelionDialect;
 import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
-
 import nz.net.ultraq.thymeleaf.LayoutDialect;
 
 /**
@@ -213,6 +211,7 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 	 */
 	@Override public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
 		argumentResolvers.add(new DataTablesRequestResolver());
+		// TODO: (Josh: 2017-05-23) Remove DatatablesCriteriasMethodArgumentResolver once Dandelion is removed from project.
 		argumentResolvers.add(new DatatablesCriteriasMethodArgumentResolver());
 	}
 
@@ -226,6 +225,7 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 		dialects.add(new SpringSecurityDialect());
 		dialects.add(new LayoutDialect());
 		dialects.add(new DataAttributeDialect());
+		// TODO: (Josh: 2017-05-23) Remove these after all Dandelion removed from project.
 		dialects.add(new DandelionDialect());
 		dialects.add(new DataTablesDialect());
 		return dialects;
