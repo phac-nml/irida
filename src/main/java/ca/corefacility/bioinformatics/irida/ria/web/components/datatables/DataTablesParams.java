@@ -10,22 +10,27 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.data.domain.Sort;
+
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
 import com.google.common.base.Strings;
-import org.springframework.data.domain.Sort;
 
 /**
  * Represents all parameters within a DataTables request.
- * See https://datatables.net/manual/server-side
- * draw:0									- Draw counter. This is used by DataTables to ensure that the Ajax returns
- * from server-side processing requests are drawn in sequence by DataTables.
- * start:0									- Paging first record indicator. This is the start point in the current
- * data set (0 index based - i.e. 0 is the first record).
- * length:10								- Number of records that the table can display in the current draw.
- * search[value]:							- Global search value. To be applied to all columns which have
- * searchable as true.
- * search[regex]:false						- true if the global filter should be treated as a regular expression for
- * advanced searching, false otherwise.
+ * <p>
+ * <pre>
+ * draw                  - Draw counter. This is used by DataTables to ensure that the Ajax returns
+ *                         from server-side processing requests are drawn in sequence by DataTables.
+ * start                 - Paging first record indicator. This is the start point in the current
+ *                         data set (0 index based - i.e. 0 is the first record).
+ * length:10             - Number of records that the table can display in the current draw.
+ * search[value]:        - Global search value. To be applied to all columns which have
+ *                         searchable as true.
+ * search[regex]:false   - true if the global filter should be treated as a regular expression for
+ *                         advanced searching, false otherwise.
+ * </pre>
+ *
+ * @see <a href="https://datatables.net/manual/server-side">Server Side</a>
  */
 public class DataTablesParams {
 	private static Pattern columnsPattern = Pattern.compile("columns\\[([0-9]*)?\\]\\[([a-z]*)?\\]");

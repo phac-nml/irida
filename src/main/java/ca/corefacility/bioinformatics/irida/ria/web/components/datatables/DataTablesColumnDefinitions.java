@@ -2,13 +2,14 @@ package ca.corefacility.bioinformatics.irida.ria.web.components.datatables;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.data.domain.Sort;
+
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
 import com.google.common.base.Strings;
-import org.springframework.data.domain.Sort;
 
 /**
  * Responsible for extracting and representing DataTables Columns
- * @see <a href="https://datatables.net/manual/server-side">Server-side processing</a>
+ * <pre>
  * 	columns[n][data]:0					- Column's data source (https://datatables.net/reference/option/columns.data)
  *  columns[n][name]:					- Column's name (https://datatables.net/reference/option/columns.name)
  *  columns[n][searchable]:true			- Flag to indicate if this column is globally searchable (true) or not (false).
@@ -16,6 +17,9 @@ import org.springframework.data.domain.Sort;
  *  columns[n][search][value]:			- Search value to apply to this specific column.
  *  columns[n][search][regex]:false 	- Flag to indicate if the search term for this column should be treated as
  *  									  regular expression (true) or not (false).
+ * </pre>
+ *
+ * @see <a href="https://datatables.net/manual/server-side">Server-side processing</a>
  */
 public class DataTablesColumnDefinitions {
 	private String name;
@@ -41,6 +45,7 @@ public class DataTablesColumnDefinitions {
 	 * 		{@link Integer} index for the current column.
 	 * @param request
 	 * 		{@link HttpServletRequest} current server request, containing a {@link DataTablesRequest}
+	 *
 	 * @return {@link DataTablesColumnDefinitions} definition for the column at the index.
 	 */
 	static DataTablesColumnDefinitions createColumnDefinition(Integer index, HttpServletRequest request) {
