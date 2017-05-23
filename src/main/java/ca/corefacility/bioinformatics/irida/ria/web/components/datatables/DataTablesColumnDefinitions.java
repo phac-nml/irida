@@ -7,39 +7,41 @@ import com.google.common.base.Strings;
 
 /**
  * Responsible for extracting and representing DataTables Columns
- *
+ * <p>
+ * <p>DataTables column parameters:</p>
  * <p><table>
- *     <tr>
- *         <td>columns[n][data]</td>
- *         <td>Column's data source</td>
- *         <td>https://datatables.net/reference/option/columns.data</td>
- *     </tr>
- *     <tr>
- *         <td>columns[n][name]</td>
- *         <td>Column's name</td>
- *         <td>https://datatables.net/reference/option/columns.name</td>
- *     </tr>
- *     <tr>
- *         <td>columns[n][searchable]</td>
- *         <td>Flag to indicate if this column is globally searchable (true) or not (false)</td>
- *         <td></td>
- *     </tr>
- *     <tr>
- *         <td>columns[n][orderable]</td>
- *         <td>Flag to indicate if this column is orderable (true) or not (false)</td>
- *         <td></td>
- *     </tr>
- *     <tr>
- *         <td>columns[n][search][value]</td>
- *         <td>Search value to apply to this specific column.</td>
- *         <td></td>
- *     </tr>
- *     <tr>
- *         <td>columns[n][search][regex]</td>
- *         <td>Flag to indicate if the search term for this column should be treated as regular expression (true) or not (false)</td>
- *         <td></td>
- *     </tr>
+ * <tr>
+ * <td>columns[n][data]</td>
+ * <td>Column's data source</td>
+ * <td>https://datatables.net/reference/option/columns.data</td>
+ * </tr>
+ * <tr>
+ * <td>columns[n][name]</td>
+ * <td>Column's name</td>
+ * <td>https://datatables.net/reference/option/columns.name</td>
+ * </tr>
+ * <tr>
+ * <td>columns[n][searchable]</td>
+ * <td>Flag to indicate if this column is globally searchable (true) or not (false)</td>
+ * <td></td>
+ * </tr>
+ * <tr>
+ * <td>columns[n][orderable]</td>
+ * <td>Flag to indicate if this column is orderable (true) or not (false)</td>
+ * <td></td>
+ * </tr>
+ * <tr>
+ * <td>columns[n][search][value]</td>
+ * <td>Search value to apply to this specific column.</td>
+ * <td></td>
+ * </tr>
+ * <tr>
+ * <td>columns[n][search][regex]</td>
+ * <td>Flag to indicate if the search term for this column should be treated as regular expression (true) or not (false)</td>
+ * <td></td>
+ * </tr>
  * </table></p>
+ *
  * @see <a href="https://datatables.net/manual/server-side">Server-side processing</a>
  */
 public class DataTablesColumnDefinitions {
@@ -60,6 +62,7 @@ public class DataTablesColumnDefinitions {
 	 * 		{@link Integer} index for the current column.
 	 * @param request
 	 * 		{@link HttpServletRequest} current server request, containing a {@link DataTablesRequest}
+	 *
 	 * @return {@link DataTablesColumnDefinitions} definition for the column at the index.
 	 */
 	static DataTablesColumnDefinitions createColumnDefinition(Integer index, HttpServletRequest request) {
