@@ -29,7 +29,7 @@ public class ProjectMetadataTemplatePage extends AbstractPage {
 	}
 
 	public static ProjectMetadataTemplatePage getPage(WebDriver driver) {
-		return PageFactory.initElements(driver, ProjectMetadataTemplatePage);
+		return PageFactory.initElements(driver, ProjectMetadataTemplatePage.class);
 	}
 
 	public void setTemplateName(String name) {
