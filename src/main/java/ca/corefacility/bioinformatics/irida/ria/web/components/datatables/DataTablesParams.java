@@ -86,7 +86,8 @@ public class DataTablesParams {
 		String directionString = request.getParameter(orderDirectionPattern);
 
 		List<Sort.Order> sortOrder = new ArrayList<>();
-		sortOrder.add(new Sort.Order(getSortDirectionFromString(directionString), columnDefinitions.get(columnNumber).getColumnName()));
+		sortOrder.add(new Sort.Order(getSortDirectionFromString(directionString),
+				columnDefinitions.get(columnNumber).getColumnName()));
 
 		boolean notDone = true;
 		for (int i = 1; notDone; i++) {
