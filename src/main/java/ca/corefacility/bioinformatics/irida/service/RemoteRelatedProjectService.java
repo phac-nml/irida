@@ -11,6 +11,7 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
  * 
  *
  */
+@Deprecated
 public interface RemoteRelatedProjectService extends CRUDService<Long, RemoteRelatedProject> {
 	/**
 	 * Get the {@link RemoteRelatedProject}s for a {@link Project}
