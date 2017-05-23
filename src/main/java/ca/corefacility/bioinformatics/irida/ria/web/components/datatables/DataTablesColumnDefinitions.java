@@ -4,7 +4,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
 import com.google.common.base.Strings;
-import org.springframework.data.domain.Sort;
 
 /**
  * Responsible for extracting and representing DataTables Columns
@@ -21,12 +20,6 @@ public class DataTablesColumnDefinitions {
 	private String name;
 	private boolean orderable;
 	private boolean searchable;
-	private boolean filtered;
-	private String regex;
-	private String search;
-	private String searchFrom;
-	private String searchTo;
-	private Sort.Direction sortDirection;
 
 	private DataTablesColumnDefinitions(String name, boolean searchable, boolean orderable) {
 		this.name = name;
