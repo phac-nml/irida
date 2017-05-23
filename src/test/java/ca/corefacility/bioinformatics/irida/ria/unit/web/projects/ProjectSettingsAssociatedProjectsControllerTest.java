@@ -27,7 +27,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
-import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
@@ -35,7 +34,6 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectSettingsAssociatedProjectsController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 public class ProjectSettingsAssociatedProjectsControllerTest {
@@ -45,7 +43,6 @@ public class ProjectSettingsAssociatedProjectsControllerTest {
 	private ProjectSettingsAssociatedProjectsController controller;
 	private UserService userService;
 	private ProjectControllerUtils projectUtils;
-	private RemoteAPIService apiService;
 	private MessageSource messageSource;
 
 	@Before
@@ -53,10 +50,9 @@ public class ProjectSettingsAssociatedProjectsControllerTest {
 		projectService = mock(ProjectService.class);
 		userService = mock(UserService.class);
 		projectUtils = mock(ProjectControllerUtils.class);
-		apiService = mock(RemoteAPIService.class);
 		messageSource = mock(MessageSource.class);
 		controller = new ProjectSettingsAssociatedProjectsController(projectService, projectUtils, userService,
-				apiService, messageSource);
+				messageSource);
 		
         // fake out the servlet response so that the URI builder will work.
         RequestAttributes ra = new ServletRequestAttributes(new MockHttpServletRequest());
@@ -228,11 +224,8 @@ public class ProjectSettingsAssociatedProjectsControllerTest {
 		ExtendedModelMap model = new ExtendedModelMap();
 		Principal principal = () -> USER_NAME;
 
-		when(apiService.findAll()).thenReturn(Lists.newArrayList(new RemoteAPI()));
 		String editAssociatedProjectsForProject = controller.editAssociatedProjectsForProject(projectId, model,
 				principal);
-
-		verify(apiService).findAll();
 
 		assertEquals("projects/settings/pages/associated_edit", editAssociatedProjectsForProject);
 	}

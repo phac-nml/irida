@@ -32,14 +32,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
-import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 @Controller
@@ -55,7 +53,6 @@ public class ProjectSettingsAssociatedProjectsController {
 
 	private final ProjectService projectService;
 	private final ProjectControllerUtils projectControllerUtils;
-	private final RemoteAPIService apiService;
 	private final UserService userService;
 	private final MessageSource messageSource;
 
@@ -63,13 +60,11 @@ public class ProjectSettingsAssociatedProjectsController {
 
 	@Autowired
 	public ProjectSettingsAssociatedProjectsController(ProjectService projectService,
-			ProjectControllerUtils projectControllerUtils, UserService userService, RemoteAPIService apiService,
-			MessageSource messageSource) {
+			ProjectControllerUtils projectControllerUtils, UserService userService, MessageSource messageSource) {
 
 		this.projectService = projectService;
 		this.projectControllerUtils = projectControllerUtils;
 		this.userService = userService;
-		this.apiService = apiService;
 		this.messageSource = messageSource;
 		dateFormatter = new DateFormatter();
 	}
@@ -190,9 +185,6 @@ public class ProjectSettingsAssociatedProjectsController {
 	public String editAssociatedProjectsForProject(@PathVariable Long projectId, Model model, Principal principal) {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
-
-		Iterable<RemoteAPI> remoteApis = apiService.findAll();
-		model.addAttribute("apis", remoteApis);
 
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		model.addAttribute(ProjectsController.ACTIVE_NAV, ProjectSettingsController.ACTIVE_NAV_SETTINGS);
