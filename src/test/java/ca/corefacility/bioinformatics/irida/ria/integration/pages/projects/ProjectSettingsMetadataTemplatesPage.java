@@ -32,9 +32,9 @@ public class ProjectSettingsMetadataTemplatesPage extends AbstractPage {
 	}
 
 	public void createNewTemplate() {
-		createTemplateBtn.click();
-		String previousURL = driver.getCurrentUrl();
 		WebDriverWait wait = new WebDriverWait(driver, 10);
+		String previousURL = driver.getCurrentUrl();
+		createTemplateBtn.click();
 		wait.until((ExpectedCondition<Boolean>) input -> (!driver.getCurrentUrl().equals(previousURL)));
 	}
 }
