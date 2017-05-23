@@ -53,9 +53,10 @@ if (typeof window.PAGE === 'object') {
       {
         targets: [4, 5],
         render: function(data) {
+          const date = moment(data);
           return `
 <span data-toggle="tooltip" data-placement="top" 
-      title="${moment(data)}" data-livestamp="${moment(data).unix()}">
+      title="${date.toISOString()}" data-livestamp="${date.unix()}">
       <i class="fa fa-spinner fa-pulse fa-fw"></i>
 </span>
 `;
