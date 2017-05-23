@@ -55,9 +55,10 @@
                                        th:text="#{linelist.create-template.templateName.required}">_This is a required
                                         field_</p>
                                     <p class="label label-danger" ng-message="minlength"
+                                    <p class="label label-danger" ng-message="minlength"
                                        th:text="#{linelist.create-template.templateName.minlength}">_Templage name must
-                                        be 5
-                                        letters long_</p>
+                                                                                                    be 5
+                                                                                                    letters long_</p>
                                     <p class="label label-danger" ng-message="unique"
                                        th:text="#{linelist.create-template.saving.error.unique}">
                                         This field already exists.
@@ -69,7 +70,7 @@
                     <hr/>
                     <div class="row spaced-bottom">
                         <div class="col-md-12">
-                            <button class="btn btn-default"
+                            <button id="add-field-btn" class="btn btn-default"
                                     ng-click="$ctrl.addNewField()"
                                     th:text="#{visualization.phylogenomics.add-new-field.btn}">_ADD_NEW_FIELD_
                             </button>
