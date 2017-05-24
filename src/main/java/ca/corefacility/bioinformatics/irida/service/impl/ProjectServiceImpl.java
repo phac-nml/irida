@@ -408,8 +408,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Transactional
 	@LaunchesProjectEvent(SampleAddedProjectEvent.class)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or ( hasPermission(#source, 'isProjectOwner') and hasPermission(#destination, 'isProjectOwner'))")
-	public ProjectSampleJoin moveSampleBetweenProjects(Project source, Project destination, Sample sample) {
-		ProjectSampleJoin join = addSampleToProject(destination, sample, true);
+	public ProjectSampleJoin moveSampleBetweenProjects(Project source, Project destination, Sample sample, boolean owner) {
+		ProjectSampleJoin join = addSampleToProject(destination, sample, owner);
 		removeSampleFromProject(source, sample);
 
 		return join;
