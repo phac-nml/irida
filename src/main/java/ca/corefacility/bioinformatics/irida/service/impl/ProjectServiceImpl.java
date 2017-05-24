@@ -367,7 +367,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	@Transactional
 	@LaunchesProjectEvent(SampleAddedProjectEvent.class)
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or (hasPermission(#project, 'isProjectOwner') and hasPermission(#sample, 'canUpdateSample'))")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or (hasPermission(#project, 'isProjectOwner'))")
 	public ProjectSampleJoin addSampleToProject(Project project, Sample sample, boolean owner) {
 		logger.trace("Adding sample to project.");
 
@@ -407,7 +407,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	@Transactional
 	@LaunchesProjectEvent(SampleAddedProjectEvent.class)
-	@PreAuthorize("hasRole('ROLE_ADMIN') or ( hasPermission(#source, 'isProjectOwner') and hasPermission(#destination, 'isProjectOwner') and hasPermission(#sample, 'canUpdateSample'))")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or ( hasPermission(#source, 'isProjectOwner') and hasPermission(#destination, 'isProjectOwner'))")
 	public ProjectSampleJoin moveSampleBetweenProjects(Project source, Project destination, Sample sample) {
 		ProjectSampleJoin join = addSampleToProject(destination, sample, true);
 		removeSampleFromProject(source, sample);
