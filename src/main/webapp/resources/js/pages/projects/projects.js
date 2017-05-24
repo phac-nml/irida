@@ -1,6 +1,10 @@
 /* eslint new-cap: ["error", { "capIsNewExceptions": ["DataTable"] }]*/
 const $ = require('jquery');
 const moment = require('moment');
+require('kuende-livestamp');
+require('./../../vendor/datatables/datatables');
+require('./../../vendor/datatables/datatables-buttons');
+require('./../../../css/components/datatables-custom.css');
 
 const COLUMNS = {
   ID: 0,
