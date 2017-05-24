@@ -63,12 +63,6 @@ public class UpdateSamplePermission extends BasePermission<Sample, Long> {
 	 */
 	@Override
 	protected boolean customPermissionAllowed(final Authentication authentication, final Sample targetDomainObject) {
-		// If the sample id is null, it's a new sample. Allow the update
-		if (targetDomainObject.getId() == null) {
-			logger.trace("Fast-passing sample as it has no ID.  It's a new sample and should be allowed.");
-			return true;
-		}
-
 		final List<Join<Project, Sample>> projects = projectSampleJoinRepository
 				.getProjectForSample(targetDomainObject);
 
