@@ -324,9 +324,9 @@ public class ProjectSamplesController {
 		List<Sample> lockedSamples = new ArrayList<>();
 
 		ids.stream().map(i -> sampleService.getSampleForProject(project, i)).forEach(j -> {
-			if (j.isOwner()) {
-				samples.add(j.getObject());
-			} else {
+			samples.add(j.getObject());
+
+			if (!j.isOwner()) {
 				lockedSamples.add(j.getObject());
 			}
 		});

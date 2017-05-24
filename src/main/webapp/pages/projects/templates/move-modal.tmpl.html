@@ -28,7 +28,7 @@
 			</script>
 		</th:block>
 		<div class="alert alert-warning" th:if="${#lists.size(lockedSamples) > 0}">
-			<h4>_The following samples will not be moved as they cannot be modified in this project_</h4>
+			<h4>_The following samples will be read only as this project does not have modification access_</h4>
 			<ol class="start">
 				<li th:each="sample : ${lockedSamples}" th:text="${sample.sampleName}"></li>
 			</ol>
