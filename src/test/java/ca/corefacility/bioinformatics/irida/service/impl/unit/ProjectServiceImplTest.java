@@ -134,7 +134,7 @@ public class ProjectServiceImplTest {
 
 		when(psjRepository.save(join)).thenReturn(join);
 
-		Join<Project, Sample> rel = projectService.addSampleToProject(p, s);
+		Join<Project, Sample> rel = projectService.addSampleToProject(p, s, true);
 
 		verify(psjRepository).save(join);
 		verify(sampleRepository).getSampleBySampleName(p, s.getSampleName());
@@ -183,7 +183,7 @@ public class ProjectServiceImplTest {
 		when(validator.validate(s)).thenReturn(noViolations);
 		when(sampleRepository.save(s)).thenReturn(s);
 
-		projectService.addSampleToProject(p, s);
+		projectService.addSampleToProject(p, s, true);
 
 		verify(sampleRepository).save(s);
 		verify(psjRepository).save(new ProjectSampleJoin(p, s));
@@ -200,7 +200,7 @@ public class ProjectServiceImplTest {
 
 		when(validator.validate(s)).thenReturn(violations);
 
-		projectService.addSampleToProject(p, s);
+		projectService.addSampleToProject(p, s, true);
 
 		verifyZeroInteractions(sampleRepository, psjRepository);
 	}
@@ -217,7 +217,7 @@ public class ProjectServiceImplTest {
 		when(psjRepository.save(any(ProjectSampleJoin.class))).thenThrow(
 				new DataIntegrityViolationException("duplicate"));
 
-		projectService.addSampleToProject(p, s);
+		projectService.addSampleToProject(p, s, true);
 
 		verify(sampleRepository).save(s);
 	}
@@ -231,7 +231,7 @@ public class ProjectServiceImplTest {
 
 		when(sampleRepository.getSampleBySampleName(p, s.getSampleName())).thenReturn(otherSample);
 
-		projectService.addSampleToProject(p, s);
+		projectService.addSampleToProject(p, s, true);
 	}
 
 	@SuppressWarnings("unchecked")

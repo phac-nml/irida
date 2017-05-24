@@ -135,7 +135,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 *
 	 * @return a reference to the relationship resource created between the two entities.
 	 */
-	public Join<Project, Sample> addSampleToProject(Project project, Sample sample);
+	public Join<Project, Sample> addSampleToProject(Project project, Sample sample, boolean owner);
 	
 	
 	/**

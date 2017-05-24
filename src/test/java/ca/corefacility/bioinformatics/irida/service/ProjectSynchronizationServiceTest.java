@@ -136,7 +136,7 @@ public class ProjectSynchronizationServiceTest {
 		
 		syncService.syncSample(sample, expired, Maps.newHashMap());
 		
-		verify(projectService).addSampleToProject(expired, sample);
+		verify(projectService).addSampleToProject(expired, sample, true);
 		
 		assertEquals(SyncStatus.SYNCHRONIZED,sample.getRemoteStatus().getSyncStatus());
 	}
@@ -154,7 +154,7 @@ public class ProjectSynchronizationServiceTest {
 		
 		syncService.syncSample(sample, expired, ImmutableMap.of("http://sample",existingSample));
 		
-		verify(projectService,times(0)).addSampleToProject(expired, sample);
+		verify(projectService,times(0)).addSampleToProject(expired, sample, true);
 		verify(sampleService,times(2)).update(any(Sample.class));
 	}
 	

@@ -575,7 +575,8 @@ public class ProjectSamplesController {
 				if (remove) {
 					projectService.moveSampleBetweenProjects(originalProject, newProject, sample);
 				} else {
-					projectService.addSampleToProject(newProject, sample);
+					//TODO: add owner flag
+					projectService.addSampleToProject(newProject, sample, true);
 				}
 
 				logger.trace("Copied sample " + sampleId + " to project " + newProjectId);
@@ -894,7 +895,7 @@ public class ProjectSamplesController {
 		// try to add the sample to the project
 		Join<Project, Sample> addSampleToProject = null;
 		try {
-			addSampleToProject = projectService.addSampleToProject(project, sample);
+			addSampleToProject = projectService.addSampleToProject(project, sample, true);
 			Long sampleId = addSampleToProject.getObject().getId();
 			responseBody.put("sampleId", sampleId);
 			response.setStatus(HttpStatus.CREATED.value());

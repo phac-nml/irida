@@ -327,7 +327,7 @@ public class ProjectServiceImplIT {
 		Sample s = sampleService.read(1L);
 		Project p = projectService.read(1L);
 
-		Join<Project, Sample> join = projectService.addSampleToProject(p, s);
+		Join<Project, Sample> join = projectService.addSampleToProject(p, s, true);
 		assertEquals("Project should equal original project.", p, join.getSubject());
 		assertEquals("Sample should equal orginal sample.", s, join.getObject());
 
@@ -341,8 +341,8 @@ public class ProjectServiceImplIT {
 		Sample s = sampleService.read(1L);
 		Project p = projectService.read(1L);
 
-		projectService.addSampleToProject(p, s);
-		projectService.addSampleToProject(p, s);
+		projectService.addSampleToProject(p, s, true);
+		projectService.addSampleToProject(p, s, true);
 	}
 
 	@Test(expected = EntityExistsException.class)
@@ -351,11 +351,11 @@ public class ProjectServiceImplIT {
 		Sample s = sampleService.read(1L);
 		Project p = projectService.read(1L);
 
-		projectService.addSampleToProject(p, s);
+		projectService.addSampleToProject(p, s, true);
 
 		Sample otherSample = new Sample(s.getSampleName());
 
-		projectService.addSampleToProject(p, otherSample);
+		projectService.addSampleToProject(p, otherSample, true);
 
 		// if 2 exist with the same id, this call will fail
 		Sample sampleBySequencerSampleId = sampleService.getSampleBySampleName(p,
@@ -409,7 +409,7 @@ public class ProjectServiceImplIT {
 		Project p = projectService.read(1L);
 		Sample s = s();
 
-		Join<Project, Sample> join = projectService.addSampleToProject(p, s);
+		Join<Project, Sample> join = projectService.addSampleToProject(p, s, true);
 		assertNotNull("Join should not be empty.", join);
 		assertEquals("Wrong project in join.", p, join.getSubject());
 		assertEquals("Wrong sample in join.", s, join.getObject());

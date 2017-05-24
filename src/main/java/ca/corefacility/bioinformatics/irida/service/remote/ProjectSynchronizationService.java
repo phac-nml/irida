@@ -238,7 +238,7 @@ public class ProjectSynchronizationService {
 			// if the sample doesn't already exist create it
 			sample.getRemoteStatus().setSyncStatus(SyncStatus.UPDATING);
 			localSample = sampleService.create(sample);
-			projectService.addSampleToProject(project, sample);
+			projectService.addSampleToProject(project, sample, true);
 		}
 
 		// get the local files and organize by their url

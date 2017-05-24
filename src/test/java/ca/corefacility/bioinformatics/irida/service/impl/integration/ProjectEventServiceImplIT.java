@@ -129,7 +129,7 @@ public class ProjectEventServiceImplIT {
 
 		Sample sample = sampleService.read(2L);
 
-		projectService.addSampleToProject(project, sample);
+		projectService.addSampleToProject(project, sample, true);
 
 		Page<ProjectEvent> eventsForProject = projectEventService.getEventsForProject(project, new PageRequest(0, 10));
 
@@ -150,7 +150,7 @@ public class ProjectEventServiceImplIT {
 		Sample sample = sampleService.read(1L);
 
 		try {
-			projectService.addSampleToProject(project, sample);
+			projectService.addSampleToProject(project, sample, true);
 			fail("EntityExistsException should have been thrown");
 		} catch (EntityExistsException ex) {
 			// it's all good

@@ -161,8 +161,8 @@ public class ProjectSamplesControllerTest {
 		for (Long x : sampleIds) {
 			verify(sampleService).read(x);
 		}
-		verify(projectService).addSampleToProject(newProject, s2);
-		verify(projectService).addSampleToProject(newProject, s3);
+		verify(projectService).addSampleToProject(newProject, s2, true);
+		verify(projectService).addSampleToProject(newProject, s3, true);
 		verify(projectService, times(0)).removeSampleFromProject(any(Project.class), any(Sample.class));
 	}
 
@@ -181,7 +181,7 @@ public class ProjectSamplesControllerTest {
 		when(projectService.read(newProjectId)).thenReturn(newProject);
 		when(sampleService.read(2L)).thenReturn(s2);
 		when(sampleService.read(3L)).thenReturn(s3);
-		when(projectService.addSampleToProject(newProject, s3)).thenThrow(
+		when(projectService.addSampleToProject(newProject, s3, true)).thenThrow(
 				new EntityExistsException("that sample exists in the project"));
 
 		Map<String, Object> copySampleToProject = controller.copySampleToProject(projectId, sampleIds, newProjectId,
@@ -194,8 +194,8 @@ public class ProjectSamplesControllerTest {
 		for (Long x : sampleIds) {
 			verify(sampleService).read(x);
 		}
-		verify(projectService).addSampleToProject(newProject, s2);
-		verify(projectService).addSampleToProject(newProject, s3);
+		verify(projectService).addSampleToProject(newProject, s2, true);
+		verify(projectService).addSampleToProject(newProject, s3, true);
 		verify(projectService, times(0)).removeSampleFromProject(any(Project.class), any(Sample.class));
 	}
 
@@ -204,7 +204,7 @@ public class ProjectSamplesControllerTest {
 		Project project1 = getProject();
 		Sample sample = new Sample("test");
 		sample.setId(1L);
-		projectService.addSampleToProject(project1, sample);
+		projectService.addSampleToProject(project1, sample, true);
 		List<Long> idList = new ArrayList<>();
 		idList.add(1L);
 		when(projectService.read(PROJECT_ID)).thenReturn(project1);

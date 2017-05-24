@@ -368,7 +368,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Transactional
 	@LaunchesProjectEvent(SampleAddedProjectEvent.class)
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or (hasPermission(#project, 'isProjectOwner') and hasPermission(#sample, 'canUpdateSample'))")
-	public ProjectSampleJoin addSampleToProject(Project project, Sample sample) {
+	public ProjectSampleJoin addSampleToProject(Project project, Sample sample, boolean owner) {
 		logger.trace("Adding sample to project.");
 
 		// Check to ensure a sample with this sequencer id doesn't exist in this
@@ -391,7 +391,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			}
 		}
 
-		ProjectSampleJoin join = new ProjectSampleJoin(project, sample);
+		ProjectSampleJoin join = new ProjectSampleJoin(project, sample, owner);
 
 		try {
 			return psjRepository.save(join);
@@ -409,7 +409,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@LaunchesProjectEvent(SampleAddedProjectEvent.class)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or ( hasPermission(#source, 'isProjectOwner') and hasPermission(#destination, 'isProjectOwner') and hasPermission(#sample, 'canUpdateSample'))")
 	public ProjectSampleJoin moveSampleBetweenProjects(Project source, Project destination, Sample sample) {
-		ProjectSampleJoin join = addSampleToProject(destination, sample);
+		ProjectSampleJoin join = addSampleToProject(destination, sample, true);
 		removeSampleFromProject(source, sample);
 
 		return join;
