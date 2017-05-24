@@ -3,6 +3,7 @@ const $ = require('jquery');
 const moment = require('moment');
 require('timeago');
 require('./../../vendor/datatables/datatables');
+require('./../../vendor/datatables/datatables-buttons');
 
 // Initialize timeago
 
@@ -35,7 +36,6 @@ if (typeof window.PAGE === 'object') {
 rt
 <".row"<".col-md-3"l><".col-md-6"p><".col-md-3"i>>`,
     buttons: [
-      // Set up the export buttons (part of DataTables std buttons);
       {
         extend: 'collection',
         text: `
