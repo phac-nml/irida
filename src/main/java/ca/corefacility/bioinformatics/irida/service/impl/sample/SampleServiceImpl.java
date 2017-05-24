@@ -158,7 +158,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	
 	@Override
 	@Transactional(readOnly = true)
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SEQUENCER') or (hasPermission(#project, 'canReadProject') and hasPermission(#sampleId 'canReadSample'))")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SEQUENCER') or (hasPermission(#project, 'canReadProject') and hasPermission(#sampleId, 'canReadSample'))")
 	public ProjectSampleJoin getSampleForProject(Project project, Long sampleId) {
 		Sample sample = read(sampleId);
 		ProjectSampleJoin join = psjRepository.readSampleForProject(project, sample);
