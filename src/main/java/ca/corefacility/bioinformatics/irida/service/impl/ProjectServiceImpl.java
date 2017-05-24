@@ -367,7 +367,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	@Transactional
 	@LaunchesProjectEvent(SampleAddedProjectEvent.class)
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#project, 'isProjectOwner')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or (hasPermission(#project, 'isProjectOwner') and hasPermission(#sample, 'canUpdateSample'))")
 	public ProjectSampleJoin addSampleToProject(Project project, Sample sample) {
 		logger.trace("Adding sample to project.");
 
