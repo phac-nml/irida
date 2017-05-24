@@ -38,6 +38,11 @@
 			<label th:if="${total>1}" th:text="#{project.samples.modal.copy.select-label-plural}"/>
 			<input select2="" select2-fn="copyModalCtrl.generateSelect2()" data:url="@{/projects/{id}/ajax/samples/available_projects(id=${projectId})}" id="projectsSelect" class="form-control" ng-model="copyModalCtrl.project" />
 		</div>
+		<div class="form-group">
+			<div class="checkbox">
+  				<label><input type="checkbox" value="true" id="giveOwner" ng-model="copyModalCtrl.giveOwner"/>_Allow modification in new project_</label>
+			</div>
+		</div>
 	</div>
 	<div class="modal-footer">
 		<button class="btn btn-default" th:text="#{form.btn.cancel}" ng-click="copyModalCtrl.cancel()"></button>
