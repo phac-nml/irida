@@ -175,7 +175,7 @@ public class ProjectSamplesControllerTest {
 		// mock out the service calls
 		when(projectService.read(p.getId())).thenReturn(p);
 		when(sampleService.read(s.getId())).thenReturn(s);
-		when(sampleService.getSampleForProject(p, s.getId())).thenReturn(s);
+		when(sampleService.getSampleForProject(p, s.getId())).thenReturn(new ProjectSampleJoin(p,s,true));
 
 		ModelMap modelMap = controller.getProjectSample(p.getId(), s.getId());
 

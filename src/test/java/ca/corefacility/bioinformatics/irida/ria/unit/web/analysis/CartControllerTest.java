@@ -228,7 +228,7 @@ public class CartControllerTest {
 			Sample sample = new Sample("sample" + id);
 			sample.setId(id);
 			samples.add(sample);
-			when(sampleService.getSampleForProject(project, id)).thenReturn(sample);
+			when(sampleService.getSampleForProject(project, id)).thenReturn(new ProjectSampleJoin(project,sample, true));
 		}
 	}
 }

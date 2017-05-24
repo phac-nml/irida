@@ -161,7 +161,7 @@ public class SampleServiceImplIT {
 		Long sampleID = 2L;
 		Long projectID = 1L;
 		Project p = projectService.read(projectID);
-		Sample s = sampleService.getSampleForProject(p, sampleID);
+		Sample s = sampleService.getSampleForProject(p, sampleID).getObject();
 
 		assertNotNull("Sample was not populated.", s);
 		assertEquals("Wrong external id.", sampleID, s.getId());

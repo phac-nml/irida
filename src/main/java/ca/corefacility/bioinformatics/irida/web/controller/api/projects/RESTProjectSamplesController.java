@@ -231,7 +231,7 @@ public class RESTProjectSamplesController {
 	public ModelMap getProjectSample(@PathVariable Long projectId, @PathVariable Long sampleId) {
 		// read project/sample to verify sample exists in project
 		Project project = projectService.read(projectId);
-		Sample s = sampleService.getSampleForProject(project, sampleId);
+		Sample s = sampleService.getSampleForProject(project, sampleId).getObject();
 
 		ModelMap modelMap = new ModelMap();
 

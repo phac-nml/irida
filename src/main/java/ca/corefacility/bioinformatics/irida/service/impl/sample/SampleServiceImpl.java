@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -156,21 +155,18 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	public Sample update(Sample object) {
 		return super.update(object);
 	}
-
-	/**
-	 * {@inheritDoc}
-	 */
+	
 	@Override
 	@Transactional(readOnly = true)
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SEQUENCER') or hasPermission(#project, 'canReadProject')")
-	public Sample getSampleForProject(Project project, Long identifier) throws EntityNotFoundException {
-		Optional<Sample> sample = psjRepository.getSamplesForProject(project).stream().map(j -> j.getObject())
-				.filter(s -> s.getId().equals(identifier)).findFirst();
-		if (sample.isPresent()) {
-			return sample.get();
-		} else {
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SEQUENCER') or (hasPermission(#project, 'canReadProject') and hasPermission(#sampleId 'canReadSample'))")
+	public ProjectSampleJoin getSampleForProject(Project project, Long sampleId) {
+		Sample sample = read(sampleId);
+		ProjectSampleJoin join = psjRepository.readSampleForProject(project, sample);
+		if (join == null) {
 			throw new EntityNotFoundException("Join between the project and this identifier doesn't exist");
+
 		}
+		return join;
 	}
 	
 	/**

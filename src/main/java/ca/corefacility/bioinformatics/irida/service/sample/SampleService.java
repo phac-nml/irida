@@ -39,12 +39,12 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *            the {@link Project} to get the {@link Sample} for.
 	 * @param identifier
 	 *            the identifier of the {@link Sample}
-	 * @return the {@link Sample} as requested
+	 * @return the {@link ProjectSampleJoin} describing the relationship between projet and sample
 	 * @throws EntityNotFoundException
 	 *             if no relationship exists between {@link Sample} and
 	 *             {@link Project}.
 	 */
-	public Sample getSampleForProject(Project project, Long identifier) throws EntityNotFoundException;
+	public ProjectSampleJoin getSampleForProject(Project project, Long identifier) throws EntityNotFoundException;
 	
 	/**
 	 * Find a {@link Sample} assocaited with a {@link SequencingObject}
@@ -64,6 +64,8 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @return the collection of samples for the {@link Project}.
 	 */
 	public List<Join<Project, Sample>> getSamplesForProject(Project project);
+	
+	//public ProjectSampleJoin readSampleJoinForProject(Project project, Long sampleId);
 	
 	/**
 	 * Get a list of the organism fields stored for all {@link Sample}s in a
