@@ -2,6 +2,8 @@ package ca.corefacility.bioinformatics.irida.security.permissions;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -21,6 +23,7 @@ import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository
  */
 @Component
 public class UpdateSamplePermission extends BasePermission<Sample, Long> {
+	private static final Logger logger = LoggerFactory.getLogger(UpdateSamplePermission.class);
 
 	private static final String PERMISSION_PROVIDED = "canUpdateSample";
 
@@ -60,6 +63,12 @@ public class UpdateSamplePermission extends BasePermission<Sample, Long> {
 	 */
 	@Override
 	protected boolean customPermissionAllowed(final Authentication authentication, final Sample targetDomainObject) {
+		// If the sample id is null, it's a new sample. Allow the update
+		if (targetDomainObject.getId() == null) {
+			logger.trace("Fast-passing sample as it has no ID.  It's a new sample and should be allowed.");
+			return true;
+		}
+
 		final List<Join<Project, Sample>> projects = projectSampleJoinRepository
 				.getProjectForSample(targetDomainObject);
 
