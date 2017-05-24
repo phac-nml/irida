@@ -304,7 +304,7 @@ public class ProjectSamplesControllerTest {
 		Sample sample = TestDataFactory.constructSample();
 		when(projectService.read(anyLong())).thenReturn(project);
 		when(sampleService.getSamplesForProject(any(Project.class))).thenReturn(ImmutableList.of(
-				new ProjectSampleJoin(project, sample)
+				new ProjectSampleJoin(project, sample, true)
 		));
 
 		when(sampleService

@@ -63,7 +63,7 @@ public class ReadSequencingObjectPermissionTest {
 		Project p = new Project();
 		Sample s = new Sample();
 		List<Join<Project, Sample>> projectSampleList = new ArrayList<>();
-		projectSampleList.add(new ProjectSampleJoin(p, s));
+		projectSampleList.add(new ProjectSampleJoin(p, s, true));
 
 		SingleEndSequenceFile sf = new SingleEndSequenceFile(null);
 
@@ -89,7 +89,7 @@ public class ReadSequencingObjectPermissionTest {
 		Project p = new Project();
 		Sample s = new Sample();
 		List<Join<Project, Sample>> projectSampleList = new ArrayList<>();
-		projectSampleList.add(new ProjectSampleJoin(p, s));
+		projectSampleList.add(new ProjectSampleJoin(p, s, true));
 
 		SingleEndSequenceFile sf = new SingleEndSequenceFile(null);
 		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(s, sf);

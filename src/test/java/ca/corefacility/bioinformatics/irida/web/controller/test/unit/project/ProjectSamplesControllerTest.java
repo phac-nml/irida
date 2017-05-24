@@ -62,7 +62,7 @@ public class ProjectSamplesControllerTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
         Sample s = TestDataFactory.constructSample();
         Project p = TestDataFactory.constructProject();
-		Join<Project, Sample> r = new ProjectSampleJoin(p, s);
+		Join<Project, Sample> r = new ProjectSampleJoin(p, s, true);
 		
 		when(projectService.read(p.getId())).thenReturn(p);
 		when(projectService.addSampleToProject(p, s, true)).thenReturn(r);
@@ -129,7 +129,7 @@ public class ProjectSamplesControllerTest {
 	public void testGetProjectSamples() {
 		Project p = TestDataFactory.constructProject();
 		Sample s = TestDataFactory.constructSample();
-		Join<Project, Sample> r = new ProjectSampleJoin(p, s);
+		Join<Project, Sample> r = new ProjectSampleJoin(p, s, true);
 
 		@SuppressWarnings("unchecked")
 		List<Join<Project, Sample>> relationships = Lists.newArrayList(r);
@@ -230,7 +230,7 @@ public class ProjectSamplesControllerTest {
 	public void testCopySampleToProject() {
 		final Project p = TestDataFactory.constructProject();
 		final Sample s = TestDataFactory.constructSample();
-		final ProjectSampleJoin r = new ProjectSampleJoin(p,s);
+		final ProjectSampleJoin r = new ProjectSampleJoin(p,s, true);
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		when(projectService.read(p.getId())).thenReturn(p);
 		when(sampleService.read(s.getId())).thenReturn(s);

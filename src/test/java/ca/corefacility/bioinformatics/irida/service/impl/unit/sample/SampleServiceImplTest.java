@@ -81,7 +81,7 @@ public class SampleServiceImplTest {
 		Sample s = new Sample();
 		s.setId(2222L);
 
-		ProjectSampleJoin join = new ProjectSampleJoin(p, s);
+		ProjectSampleJoin join = new ProjectSampleJoin(p, s, true);
 		List<Join<Project, Sample>> joins = new ArrayList<>();
 		joins.add(join);
 		when(psjRepository.getSamplesForProject(p)).thenReturn(joins);
@@ -135,7 +135,7 @@ public class SampleServiceImplTest {
 			toMerge_sf[p] = sf(i + 2);
 			toMerge_so[p] = so(i + 2);
 			s_so_joins[p] = new SampleSequencingObjectJoin(s, toMerge_so[p]);
-			p_s_joins[p] = new ProjectSampleJoin(project, toMerge[p]);
+			p_s_joins[p] = new ProjectSampleJoin(project, toMerge[p], true);
 
 			List<Join<Project, Sample>> projectSampleJoins = new ArrayList<>();
 			projectSampleJoins.add(p_s_joins[p]);
@@ -157,7 +157,7 @@ public class SampleServiceImplTest {
 			when(psjRepository.readSampleForProject(project, toMerge[p])).thenReturn(p_s_joins[p]);
 		}
 		List<Join<Project, Sample>> joins = new ArrayList<>();
-		joins.add(new ProjectSampleJoin(project, s));
+		joins.add(new ProjectSampleJoin(project, s, true));
 		when(psjRepository.getProjectForSample(s)).thenReturn(joins);
 
 		Sample saved = sampleService.mergeSamples(project, s, toMerge);
@@ -188,9 +188,9 @@ public class SampleServiceImplTest {
 		p2.setName("project 2");
 
 		List<Join<Project, Sample>> p1_s1 = new ArrayList<>();
-		p1_s1.add(new ProjectSampleJoin(p1, s1));
+		p1_s1.add(new ProjectSampleJoin(p1, s1, true));
 		List<Join<Project, Sample>> p2_s2 = new ArrayList<>();
-		p2_s2.add(new ProjectSampleJoin(p2, s2));
+		p2_s2.add(new ProjectSampleJoin(p2, s2, true));
 
 		when(psjRepository.getProjectForSample(s1)).thenReturn(p1_s1);
 		when(psjRepository.getProjectForSample(s2)).thenReturn(p2_s2);

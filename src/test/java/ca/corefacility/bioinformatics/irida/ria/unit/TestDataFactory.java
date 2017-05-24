@@ -192,7 +192,7 @@ public class TestDataFactory {
 		Sample sample = constructSample();
 		Project project = constructProject();
 		for (int i = 0; i < 10; i++) {
-			list.add(new ProjectSampleJoin(project, sample));
+			list.add(new ProjectSampleJoin(project, sample, true));
 		}
 		return list;
 	}
@@ -233,7 +233,7 @@ public class TestDataFactory {
 				project.setId(1L);
 				Sample sample = new Sample("Joined Sample");
 				sample.setId(23L);
-				ProjectSampleJoin join = new ProjectSampleJoin(project, sample);
+				ProjectSampleJoin join = new ProjectSampleJoin(project, sample, true);
 				return ImmutableList.of(
 					join
 				);

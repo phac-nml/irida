@@ -50,7 +50,7 @@ public class UpdateSamplePermissionTest {
 		final Sample s = new Sample();
 
 		when(projectSampleJoinRepository.getProjectForSample(s)).thenReturn(
-				ImmutableList.of(new ProjectSampleJoin(p1, s), new ProjectSampleJoin(p2, s)));
+				ImmutableList.of(new ProjectSampleJoin(p1, s, true), new ProjectSampleJoin(p2, s, true)));
 		when(projectOwnerPermission.isAllowed(auth, p1)).thenReturn(true);
 		when(projectOwnerPermission.isAllowed(auth, p2)).thenReturn(true);
 
@@ -64,7 +64,7 @@ public class UpdateSamplePermissionTest {
 		final Sample s = new Sample();
 
 		when(projectSampleJoinRepository.getProjectForSample(s)).thenReturn(
-				ImmutableList.of(new ProjectSampleJoin(p1, s), new ProjectSampleJoin(p2, s)));
+				ImmutableList.of(new ProjectSampleJoin(p1, s, true), new ProjectSampleJoin(p2, s, true)));
 		when(projectOwnerPermission.isAllowed(auth, p1)).thenReturn(false);
 		when(projectOwnerPermission.isAllowed(auth, p2)).thenReturn(true);
 
@@ -78,7 +78,7 @@ public class UpdateSamplePermissionTest {
 		final Sample s = new Sample();
 
 		when(projectSampleJoinRepository.getProjectForSample(s)).thenReturn(
-				ImmutableList.of(new ProjectSampleJoin(p1, s), new ProjectSampleJoin(p2, s)));
+				ImmutableList.of(new ProjectSampleJoin(p1, s, true), new ProjectSampleJoin(p2, s, true)));
 		when(projectOwnerPermission.isAllowed(auth, p1)).thenReturn(false);
 		when(projectOwnerPermission.isAllowed(auth, p2)).thenReturn(false);
 

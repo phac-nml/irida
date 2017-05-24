@@ -61,12 +61,6 @@ public class ProjectSampleJoin implements Join<Project, Sample> {
 		owner = true;
 	}
 
-	public ProjectSampleJoin(Project subject, Sample object) {
-		this();
-		this.project = subject;
-		this.sample = object;
-	}
-	
 	public ProjectSampleJoin(Project subject, Sample object, boolean owner) {
 		this();
 		this.project = subject;
@@ -111,11 +105,11 @@ public class ProjectSampleJoin implements Join<Project, Sample> {
 	public Date getCreatedDate() {
 		return createdDate;
 	}
-	
+
 	public boolean isOwner() {
 		return owner;
 	}
-	
+
 	public void setOwner(boolean owner) {
 		this.owner = owner;
 	}
