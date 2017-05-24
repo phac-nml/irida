@@ -572,7 +572,8 @@ public class ProjectSamplesController {
 	@ResponseBody
 	public Map<String, Object> copySampleToProject(@PathVariable Long projectId,
 			@RequestParam(value = "sampleIds[]") List<Long> sampleIds, @RequestParam Long newProjectId,
-			@RequestParam(required = false) boolean remove, Locale locale) {
+			@RequestParam(required = false) boolean remove,
+			@RequestParam(required = false, defaultValue = "false") boolean giveOwner, Locale locale) {
 		Project originalProject = projectService.read(projectId);
 		Project newProject = projectService.read(newProjectId);
 
@@ -581,14 +582,22 @@ public class ProjectSamplesController {
 		List<Sample> successful = new ArrayList<>();
 
 		for (Long sampleId : sampleIds) {
-			Sample sample = sampleService.read(sampleId);
+			ProjectSampleJoin sampleForProject = sampleService.getSampleForProject(originalProject, sampleId);
+			Sample sample = sampleForProject.getObject();
 			try {
-
+				
+				boolean owner = giveOwner;
+				
+				// if the project is not an owner, it cannot give ownership
+				if (!sampleForProject.isOwner()) {
+					owner = false;
+				}
+				
 				if (remove) {
-					projectService.moveSampleBetweenProjects(originalProject, newProject, sample);
+					projectService.moveSampleBetweenProjects(originalProject, newProject, sample, owner);
 				} else {
 					//TODO: add owner flag
-					projectService.addSampleToProject(newProject, sample, true);
+					projectService.addSampleToProject(newProject, sample, owner);
 				}
 
 				logger.trace("Copied sample " + sampleId + " to project " + newProjectId);

@@ -122,7 +122,7 @@ public class ProjectSamplesControllerTest {
 		when(sampleService.read(3L)).thenReturn(s3);
 
 		Map<String, Object> result = controller.copySampleToProject(projectId, sampleIds, newProjectId,
-				removeFromOriginal, Locale.US);
+				removeFromOriginal, true, Locale.US);
 
 		assertTrue(result.containsKey("result"));
 		assertTrue(result.containsKey("message"));
@@ -133,8 +133,8 @@ public class ProjectSamplesControllerTest {
 			verify(sampleService).read(x);
 		}
 
-		verify(projectService).moveSampleBetweenProjects(oldProject, newProject, s2);
-		verify(projectService).moveSampleBetweenProjects(oldProject, newProject, s3);
+		verify(projectService).moveSampleBetweenProjects(oldProject, newProject, s2, true);
+		verify(projectService).moveSampleBetweenProjects(oldProject, newProject, s3, true);
 	}
 
 	@Test
@@ -154,7 +154,7 @@ public class ProjectSamplesControllerTest {
 		when(sampleService.read(3L)).thenReturn(s3);
 
 		controller.copySampleToProject(projectId, sampleIds, newProjectId,
-				removeFromOriginal, Locale.US);
+				removeFromOriginal, true, Locale.US);
 
 		verify(projectService).read(projectId);
 		verify(projectService).read(newProjectId);
@@ -185,7 +185,7 @@ public class ProjectSamplesControllerTest {
 				new EntityExistsException("that sample exists in the project"));
 
 		Map<String, Object> copySampleToProject = controller.copySampleToProject(projectId, sampleIds, newProjectId,
-				removeFromOriginal, Locale.US);
+				removeFromOriginal, true, Locale.US);
 
 		assertTrue(copySampleToProject.containsKey("warnings"));
 
