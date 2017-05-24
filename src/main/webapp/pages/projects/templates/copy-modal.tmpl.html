@@ -27,6 +27,12 @@
 			</div>
 		</script>
 		</th:block>
+		<div class="alert alert-warning" th:if="${#lists.size(lockedSamples) > 0}">
+			<h4>_The following samples will not be copied as they cannot be modified in this project_</h4>
+			<ol class="start">
+				<li th:each="sample : ${lockedSamples}" th:text="${sample.sampleName}"></li>
+			</ol>
+		</div>
 		<div class="form-group">
 			<label th:if="${total==1}" th:text="#{project.samples.modal.copy.select-label-singular}"/>
 			<label th:if="${total>1}" th:text="#{project.samples.modal.copy.select-label-plural}"/>

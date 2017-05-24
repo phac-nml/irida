@@ -62,6 +62,7 @@ import com.github.dandelion.datatables.core.export.ExportUtils;
 import com.github.dandelion.datatables.core.export.ReservedFormat;
 import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 @Controller
 public class ProjectSamplesController {
@@ -249,7 +250,7 @@ public class ProjectSamplesController {
 	@RequestMapping("/projects/templates/copy-modal")
 	public String getCopySamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, @RequestParam Long projectId,
 			Model model) {
-		model.addAllAttributes(generateCopyMoveSamplesContent(ids));
+		model.addAllAttributes(generateCopyMoveSamplesContent(projectId, ids));
 		model.addAttribute("projectId", projectId);
 		return PROJECT_TEMPLATE_DIR + "copy-modal.tmpl";
 	}
@@ -302,7 +303,7 @@ public class ProjectSamplesController {
 	@RequestMapping("/projects/templates/move-modal")
 	public String getMoveSamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, @RequestParam Long projectId,
 			Model model) {
-		model.addAllAttributes(generateCopyMoveSamplesContent(ids));
+		model.addAllAttributes(generateCopyMoveSamplesContent(projectId, ids));
 		model.addAttribute("projectId", projectId);
 		return PROJECT_TEMPLATE_DIR + "move-modal.tmpl";
 	}
@@ -315,10 +316,20 @@ public class ProjectSamplesController {
 	 *
 	 * @return
 	 */
-	public Map<String, List<Sample>> generateCopyMoveSamplesContent(List<Long> ids) {
+	private Map<String, List<Sample>> generateCopyMoveSamplesContent(Long projectId, List<Long> ids) {
 		Map<String, List<Sample>> model = new HashMap<>();
-		List<Sample> samples = (List<Sample>) sampleService.readMultiple(ids);
+		Project project = projectService.read(projectId);
+		List<Sample> samples = new ArrayList<>();
 		List<Sample> extraSamples = new ArrayList<>();
+		List<Sample> lockedSamples = new ArrayList<>();
+
+		ids.stream().map(i -> sampleService.getSampleForProject(project, i)).forEach(j -> {
+			if (j.isOwner()) {
+				samples.add(j.getObject());
+			} else {
+				lockedSamples.add(j.getObject());
+			}
+		});
 
 		// Only initially need to display the first 10 samples.
 		int end = samples.size();
@@ -329,6 +340,7 @@ public class ProjectSamplesController {
 
 		model.put("samples", samples.subList(0, end));
 		model.put("extraSamples", extraSamples);
+		model.put("lockedSamples", lockedSamples);
 		return model;
 	}
 
