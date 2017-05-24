@@ -1,8 +1,10 @@
 /* eslint new-cap: ["error", { "capIsNewExceptions": ["DataTable"] }]*/
 const $ = require('jquery');
 const moment = require('moment');
-require('kuende-livestamp');
+require('timeago');
 require('./../../vendor/datatables/datatables');
+
+// Initialize timeago
 
 const COLUMNS = {
   ID: 0,
@@ -68,16 +70,15 @@ rt
         render: function(data) {
           const date = moment(data);
           return `
-<span data-toggle="tooltip" data-placement="top" 
-      title="${date.toISOString()}" data-livestamp="${date.unix()}">
-      <i class="fa fa-spinner fa-pulse fa-fw"></i>
-</span>
+<time data-toggle="tooltip" data-placement="top" 
+      title="${date.toISOString()}">${$.timeago(date.toISOString())}</time>
 `;
         }
       }
     ],
     createdRow: function(row) {
-      $(row).tooltip({selector: '[data-toggle="tooltip"]'});
+      const $row = $(row);
+      $row.tooltip({selector: '[data-toggle="tooltip"]'});
     }
   });
 }
