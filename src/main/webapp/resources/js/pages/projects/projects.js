@@ -2,6 +2,15 @@
 const $ = require('jquery');
 const moment = require('moment');
 
+const COLUMNS = {
+  ID: 0,
+  NAME: 1,
+  ORGANISM: 2,
+  SAMPLES: 3,
+  CREATED: 4,
+  MODIFIED: 5
+};
+
 /**
  * Download table in specified format.
  * @param {string} format format of downloaded doc.
@@ -17,11 +26,12 @@ function downloadItem({format = 'xlsx'}) {
 if (typeof window.PAGE === 'object') {
   $('#projects').DataTable({
     dom: `
-    <".row"
-      <".col-md-8.buttons"B><".col-md-4"f>>
-    rt
-    <".row"<".col-md-3"l><".col-md-6"p><".col-md-3"i>>`,
+<".row"
+  <".col-md-8.buttons"B><".col-md-4"f>>
+rt
+<".row"<".col-md-3"l><".col-md-6"p><".col-md-3"i>>`,
     buttons: [
+      // Set up the export buttons (part of DataTables std buttons);
       {
         extend: 'collection',
         text: `
@@ -29,7 +39,8 @@ if (typeof window.PAGE === 'object') {
     &nbsp;${window.PAGE.i18n.exportBtn}&nbsp;&nbsp;
     <i class="fa fa-caret-down" aria-hidden="true">
 </i>`,
-        buttons: window.buttons.map(button => ({
+        // The buttons are loaded onto the PAGE variable.
+        buttons: window.PAGE.buttons.map(button => ({
           text: button.name,
           action() {
             downloadItem({format: button.format});
@@ -40,10 +51,10 @@ if (typeof window.PAGE === 'object') {
     processing: true,
     serverSide: true,
     ajax: window.PAGE.urls.projects,
-    order: [[5, "desc"]],
+    order: [[COLUMNS.MODIFIED, "desc"]],
     columnDefs: [
       {
-        targets: [1],
+        targets: [COLUMNS.NAME],
         render: function(data, type, full) {
           return `
 <a class="btn btn-link" href="${window.PAGE.urls.project}${full.id}">${data}</a>
@@ -51,7 +62,7 @@ if (typeof window.PAGE === 'object') {
         }
       },
       {
-        targets: [4, 5],
+        targets: [COLUMNS.CREATED, COLUMNS.MODIFIED],
         render: function(data) {
           const date = moment(data);
           return `

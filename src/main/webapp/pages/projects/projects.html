@@ -25,6 +25,7 @@
           project: /*[[@{/projects/}]]*/ '',
           export: /*[[@{/projects/ajax/export(admin=${isAdmin})}]]*/ '',
         },
+        buttons: /*[[${exportTypes}]]*/ []
       };
     </script>
 </head>
@@ -51,10 +52,6 @@
 </div>
 
 <th:block layout:fragment="scripts">
-    <script th:inline="javascript">
-      var buttons = /*[[${exportTypes}]]*/ [];
-    </script>
-
     <script src="/node_modules/datatables.net/js/jquery.dataTables.js"
             th:src="@{/node_modules/datatables.net/js/jquery.dataTables.js}"></script>
     <script src="/node_modules/datatables.net-bs/js/dataTables.bootstrap.js"
