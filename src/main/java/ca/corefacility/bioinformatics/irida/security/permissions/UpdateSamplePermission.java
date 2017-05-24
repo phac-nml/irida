@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -69,10 +70,13 @@ public class UpdateSamplePermission extends BasePermission<Sample, Long> {
 				.anyMatch(g -> g.getAuthority().equals(Role.ROLE_SEQUENCER.getAuthority()))) {
 			return true;
 		}
-		
-		return projects.stream().anyMatch(p -> projectOwnerPermission.isAllowed(authentication, p.getSubject()));
+
+		return projects.stream().anyMatch(p -> {
+			ProjectSampleJoin j = (ProjectSampleJoin) p;
+			return projectOwnerPermission.isAllowed(authentication, j.getSubject()) && j.isOwner();
+		});
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
