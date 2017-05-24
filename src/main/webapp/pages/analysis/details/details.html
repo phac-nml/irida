@@ -193,7 +193,7 @@
 				</div>
 			</script>
 
-			<script type="text/ng-template" id="inputs.html" th:with="fileCount = ${#lists.size(paired_end)">
+			<script type="text/ng-template" id="inputs.html" th:with="fileCount = ${#lists.size(paired_end)}">
 				<th:block th:if="${referenceFile}">
 					<h2 th:text="#{analysis.details.reference}"></h2>
 					<span th:text="${referenceFile.label}"></span>
