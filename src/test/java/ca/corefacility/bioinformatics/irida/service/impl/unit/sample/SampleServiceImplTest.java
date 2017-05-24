@@ -82,13 +82,13 @@ public class SampleServiceImplTest {
 		s.setId(2222L);
 
 		ProjectSampleJoin join = new ProjectSampleJoin(p, s, true);
-		List<Join<Project, Sample>> joins = new ArrayList<>();
-		joins.add(join);
-		when(psjRepository.getSamplesForProject(p)).thenReturn(joins);
+
+		when(sampleRepository.findOne(s.getId())).thenReturn(s);
+		when(psjRepository.readSampleForProject(p, s)).thenReturn(join);
 
 		sampleService.getSampleForProject(p, s.getId());
 
-		verify(psjRepository).getSamplesForProject(p);
+		verify(psjRepository).readSampleForProject(p, s);
 	}
 
 	@Test
