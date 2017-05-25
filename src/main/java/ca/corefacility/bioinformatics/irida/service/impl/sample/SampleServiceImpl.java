@@ -237,6 +237,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	@Transactional
 	@PreAuthorize("hasPermission(#project, 'isProjectOwner') and hasPermission(#mergeInto, 'canUpdateSample') and hasPermission(#toMerge, 'canUpdateSample')")
 	public Sample mergeSamples(Project project, Sample mergeInto, Collection<Sample> toMerge) {

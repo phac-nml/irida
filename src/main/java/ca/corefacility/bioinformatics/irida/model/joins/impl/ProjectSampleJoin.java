@@ -54,6 +54,7 @@ public class ProjectSampleJoin implements Join<Project, Sample> {
 	private final Date createdDate;
 
 	@Column(name = "owner")
+	@NotNull
 	private boolean owner;
 
 	public ProjectSampleJoin() {
