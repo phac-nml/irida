@@ -6,16 +6,15 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
-
-import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 /**
  * <p>
@@ -188,7 +187,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		List<String> names = page.getSampleNamesOnPage().subList(0, 1);
 		String newProjectName = "project4";
-		page.copySamples(newProjectName);
+		page.copySamples(newProjectName, true);
 
 		ProjectSamplesPage newPage = ProjectSamplesPage.gotToPage(driver(), 4);
 		List<String> newNames = newPage.getSampleNamesOnPage().subList(0, 1);
@@ -196,6 +195,29 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		for(int i = 0; i == names.size(); i++) {
 			assertEquals("Should have the same samples since they were copied", names.get(i), newNames.get(i));
 		}
+		
+		assertEquals("should be 1 locked sample", 1, page.getLockedSampleNames().size());
+	}
+	
+	@Test
+	public void testCopySamplesLocked() {
+		LoginPage.loginAsManager(driver());
+		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
+		page.selectSample(0);
+		page.selectSample(1);
+
+		List<String> names = page.getSampleNamesOnPage().subList(0, 1);
+		String newProjectName = "project4";
+		page.copySamples(newProjectName, false);
+
+		ProjectSamplesPage newPage = ProjectSamplesPage.gotToPage(driver(), 4);
+		List<String> newNames = newPage.getSampleNamesOnPage().subList(0, 1);
+
+		for (int i = 0; i == names.size(); i++) {
+			assertEquals("Should have the same samples since they were copied", names.get(i), newNames.get(i));
+		}
+
+		assertEquals("should be 2 locked samples", 2, page.getLockedSampleNames().size());
 	}
 
 	@Test
