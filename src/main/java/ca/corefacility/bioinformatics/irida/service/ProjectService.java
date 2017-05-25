@@ -153,6 +153,22 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 */
 	public ProjectSampleJoin moveSampleBetweenProjects(Project source, Project destination, Sample sample, boolean owner);
 	
+	/**
+	 * Copy or move a list of {@link Sample} between 2 {@link Project}
+	 * 
+	 * @param source
+	 *            the source {@link Project}
+	 * @param destination
+	 *            the {@link Project} being copied to
+	 * @param samples
+	 *            a collection of {@link Sample}
+	 * @param move
+	 *            boolean whether to move or copy. true for move
+	 * @param giveOwner
+	 *            whether to give ownership rights to the destination
+	 *            {@link Project}
+	 * @return a list of new {@link ProjectSampleJoin}
+	 */
 	public List<ProjectSampleJoin> copyOrMoveSamples(Project source, Project destination, Collection<Sample> samples,
 			boolean move, boolean giveOwner);
 

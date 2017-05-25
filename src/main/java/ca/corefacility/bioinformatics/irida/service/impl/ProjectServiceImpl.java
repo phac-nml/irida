@@ -414,7 +414,10 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 
 		return join;
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@Transactional
 	@LaunchesProjectEvent(SampleAddedProjectEvent.class)
@@ -432,6 +435,10 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			// if the project is not an owner, it cannot give ownership
 			if (!sampleForProject.isOwner()) {
 				owner = false;
+				logger.warn(
+						"Warning: attempted to give ownership rights where project did not already have ownership rights -- source: "
+								+ source.getId() + " destination: " + destination.getId() + " sample: "
+								+ sample.getId());
 			}
 
 			ProjectSampleJoin newJoin;
