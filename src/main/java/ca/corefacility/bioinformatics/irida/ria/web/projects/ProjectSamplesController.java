@@ -52,6 +52,7 @@ import com.github.dandelion.datatables.core.export.ExportUtils;
 import com.github.dandelion.datatables.core.export.ReservedFormat;
 import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -586,35 +587,21 @@ public class ProjectSamplesController {
 
 		Map<String, Object> response = new HashMap<>();
 		List<String> warnings = new ArrayList<>();
-		List<Sample> successful = new ArrayList<>();
 
-		for (Long sampleId : sampleIds) {
-			ProjectSampleJoin sampleForProject = sampleService.getSampleForProject(originalProject, sampleId);
-			Sample sample = sampleForProject.getObject();
-			try {
-				
-				boolean owner = giveOwner;
-				
-				// if the project is not an owner, it cannot give ownership
-				if (!sampleForProject.isOwner()) {
-					owner = false;
-				}
-				
-				if (remove) {
-					projectService.moveSampleBetweenProjects(originalProject, newProject, sample, owner);
-				} else {
-					projectService.addSampleToProject(newProject, sample, owner);
-				}
+		Iterable<Sample> samples = sampleService.readMultiple(sampleIds);
 
-				logger.trace("Copied sample " + sampleId + " to project " + newProjectId);
-				successful.add(sample);
-			} catch (EntityExistsException ex) {
-				logger.warn("Attempted to add sample " + sampleId + " to project " + newProjectId
-						+ " where it already exists.");
-				String msg = remove ? "project.samples.move.sample-exists" : "project.samples.copy.sample-exists";
-				warnings.add(messageSource.getMessage(msg,
-						new Object[] { sample.getSampleName(), newProject.getName() }, locale));
-			}
+		List<ProjectSampleJoin> successful = new ArrayList<>();
+		try {
+
+			successful = projectService.copyOrMoveSamples(originalProject, newProject, Lists.newArrayList(samples),
+					remove, giveOwner);
+
+		} catch (EntityExistsException ex) {
+			logger.warn("Attempted to add sample " + ex.getFieldName() + " to project " + newProjectId
+					+ " where it already exists.");
+			String msg = remove ? "project.samples.move.sample-exists" : "project.samples.copy.sample-exists";
+			warnings.add(
+					messageSource.getMessage(msg, new Object[] { ex.getFieldName(), newProject.getName() }, locale));
 		}
 
 		if (!warnings.isEmpty() || successful.size() == 0) {
@@ -627,30 +614,22 @@ public class ProjectSamplesController {
 		// 2. Only one sample moved
 		if (successful.size() == 1) {
 			if (remove) {
-				response.put(
-						"message",
-						messageSource.getMessage("project.samples.move-single-success-message", new Object[] {
-								successful.get(0).getSampleName(), newProject.getName() }, locale));
+				response.put("message", messageSource.getMessage("project.samples.move-single-success-message",
+						new Object[] { successful.get(0).getObject().getSampleName(), newProject.getName() }, locale));
 			} else {
-				response.put(
-						"message",
-						messageSource.getMessage("project.samples.copy-single-success-message", new Object[] {
-								successful.get(0).getSampleName(), newProject.getName() }, locale));
+				response.put("message", messageSource.getMessage("project.samples.copy-single-success-message",
+						new Object[] { successful.get(0).getObject().getSampleName(), newProject.getName() }, locale));
 			}
 		}
 		// 3. Multiple samples copied
 		// 4. Multiple samples moved
 		else if (successful.size() > 1) {
 			if (remove) {
-				response.put(
-						"message",
-						messageSource.getMessage("project.samples.move-multiple-success-message", new Object[] {
-								successful.size(), newProject.getName() }, locale));
+				response.put("message", messageSource.getMessage("project.samples.move-multiple-success-message",
+						new Object[] { successful.size(), newProject.getName() }, locale));
 			} else {
-				response.put(
-						"message",
-						messageSource.getMessage("project.samples.copy-multiple-success-message", new Object[] {
-								successful.size(), newProject.getName() }, locale));
+				response.put("message", messageSource.getMessage("project.samples.copy-multiple-success-message",
+						new Object[] { successful.size(), newProject.getName() }, locale));
 			}
 		}
 

@@ -414,6 +414,41 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 
 		return join;
 	}
+	
+	@Override
+	@Transactional
+	@LaunchesProjectEvent(SampleAddedProjectEvent.class)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or ( hasPermission(#source, 'isProjectOwner') and hasPermission(#destination, 'isProjectOwner') and hasPermission(#samples, 'canReadSample'))")
+	public List<ProjectSampleJoin> copyOrMoveSamples(Project source, Project destination, Collection<Sample> samples,
+			boolean move, boolean giveOwner) {
+		
+		List<ProjectSampleJoin> newJoins = new ArrayList<>();
+		
+		for (Sample sample : samples) {
+			ProjectSampleJoin sampleForProject = psjRepository.readSampleForProject(source, sample);
+
+			boolean owner = giveOwner;
+
+			// if the project is not an owner, it cannot give ownership
+			if (!sampleForProject.isOwner()) {
+				owner = false;
+			}
+
+			ProjectSampleJoin newJoin;
+			if (move) {
+				newJoin = moveSampleBetweenProjects(source, destination, sample, owner);
+			} else {
+				newJoin = addSampleToProject(destination, sample, owner);
+			}
+
+			logger.debug("Copied sample " + sample.getId() + " to project " + destination.getId());
+			
+			newJoins.add(newJoin);
+
+		}
+
+		return newJoins;
+	}
 
 	/**
 	 * {@inheritDoc}

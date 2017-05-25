@@ -113,4 +113,9 @@ public class ProjectSampleJoin implements Join<Project, Sample> {
 	public void setOwner(boolean owner) {
 		this.owner = owner;
 	}
+	
+	@Override
+	public String toString() {
+		return "Project: " + project.getName() + " Sample: " + sample.getSampleName();
+	}
 }
