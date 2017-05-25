@@ -6,6 +6,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
@@ -18,6 +20,7 @@ public class ProjectMetadataTemplatePage extends AbstractPage {
 	@FindBy(className = "ui-select-toggle") private WebElement fieldSelectToggle;
 	@FindBy(css = "input[type='search']") private WebElement fieldSearchInput;
 	@FindBy(css = ".ui-select-choices li") private List<WebElement> fieldSearchChoices;
+	@FindBy(className = "field-label") private List<WebElement> templateFieldLabels;
 
 	public ProjectMetadataTemplatePage(WebDriver driver) {
 		super(driver);
@@ -39,5 +42,21 @@ public class ProjectMetadataTemplatePage extends AbstractPage {
 
 	public boolean isSaveButtonEnabled() {
 		return saveTemplateButton.isEnabled();
+	}
+
+	public void addMetadataField(String field) {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		addFieldButton.click();
+		wait.until(ExpectedConditions.visibilityOf(fieldSelectToggle));
+		fieldSelectToggle.click();
+		wait.until(ExpectedConditions.elementSelectionStateToBe(fieldSearchInput, true));
+		fieldSearchInput.sendKeys(field);
+		wait.until(ExpectedConditions.visibilityOfAllElements(fieldSearchChoices));
+		fieldSearchChoices.get(0).click();
+		wait.until(ExpectedConditions.visibilityOfAllElements(templateFieldLabels));
+	}
+
+	public int getNumberOfTemplateFields() {
+		return templateFieldLabels.size();
 	}
 }

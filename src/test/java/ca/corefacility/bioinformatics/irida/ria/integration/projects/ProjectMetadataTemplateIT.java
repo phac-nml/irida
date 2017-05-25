@@ -31,5 +31,8 @@ public class ProjectMetadataTemplateIT extends AbstractIridaUIITChromeDriver {
 		ProjectMetadataTemplatePage page = ProjectMetadataTemplatePage.goToPage(driver(), PROJECT_ID);
 		page.setTemplateName(templateName);
 		assertFalse("Save button should not be enabled with only a template name.", page.isSaveButtonEnabled());
+
+		page.addMetadataField("Test Field");
+		assertEquals("Should be 1 metadata field on the page.", 1, page.getNumberOfTemplateFields());
 	}
 }
