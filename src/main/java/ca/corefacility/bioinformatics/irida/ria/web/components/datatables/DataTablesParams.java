@@ -44,16 +44,13 @@ public class DataTablesParams {
 	private Integer length;
 	private Integer draw;
 	private String searchValue;
-	private List<DataTablesColumnDefinitions> dataTablesColumnDefinitions;
 	private Sort sort;
 
-	private DataTablesParams(Integer start, Integer length, Integer draw, String searchValue,
-			List<DataTablesColumnDefinitions> dataTablesColumnDefinitions, Sort sort) {
+	private DataTablesParams(Integer start, Integer length, Integer draw, String searchValue, Sort sort) {
 		this.start = start;
 		this.length = length;
 		this.draw = draw;
 		this.searchValue = searchValue;
-		this.dataTablesColumnDefinitions = dataTablesColumnDefinitions;
 		this.sort = sort;
 	}
 
@@ -71,7 +68,7 @@ public class DataTablesParams {
 		String searchValue = request.getParameter("search[value]");
 		List<DataTablesColumnDefinitions> dataTablesColumnDefinitions = getColumnDefinitions(request);
 		Sort sort = getColumnSortData(request, dataTablesColumnDefinitions);
-		return new DataTablesParams(start, length, draw, searchValue, dataTablesColumnDefinitions, sort);
+		return new DataTablesParams(start, length, draw, searchValue, sort);
 	}
 
 	/**
