@@ -724,11 +724,7 @@ public class ProjectSamplesController {
 		}
 
 		// Create an update map
-		Sample[] mergeSamples = new Sample[sampleIds.size()];
-		int count = 0;
-		for (Long sampleId : sampleIds) {
-			mergeSamples[count++] = sampleService.read(sampleId);
-		}
+		List<Sample> mergeSamples = sampleIds.stream().map(sampleService::read).collect(Collectors.toList());
 
 		// Merge the samples
 		sampleService.mergeSamples(project, mergeIntoSample, mergeSamples);

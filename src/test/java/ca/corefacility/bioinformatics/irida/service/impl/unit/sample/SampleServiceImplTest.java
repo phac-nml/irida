@@ -128,10 +128,13 @@ public class SampleServiceImplTest {
 		SampleSequencingObjectJoin[] s_so_joins = new SampleSequencingObjectJoin[SIZE];
 		SampleSequencingObjectJoin[] s_so_original = new SampleSequencingObjectJoin[SIZE];
 		ProjectSampleJoin[] p_s_joins = new ProjectSampleJoin[SIZE];
+		
+		List<Sample> mergeSamples = new ArrayList<>();
 
 		for (long i = 0; i < SIZE; i++) {
 			int p = (int) i;
 			toMerge[p] = s(i + 2);
+			mergeSamples.add(toMerge[p]);
 			toMerge_sf[p] = sf(i + 2);
 			toMerge_so[p] = so(i + 2);
 			s_so_joins[p] = new SampleSequencingObjectJoin(s, toMerge_so[p]);
@@ -160,7 +163,7 @@ public class SampleServiceImplTest {
 		joins.add(new ProjectSampleJoin(project, s, true));
 		when(psjRepository.getProjectForSample(s)).thenReturn(joins);
 
-		Sample saved = sampleService.mergeSamples(project, s, toMerge);
+		Sample saved = sampleService.mergeSamples(project, s, mergeSamples);
 
 		verify(psjRepository).getProjectForSample(s);
 		for (int i = 0; i < SIZE; i++) {
@@ -196,7 +199,7 @@ public class SampleServiceImplTest {
 		when(psjRepository.getProjectForSample(s2)).thenReturn(p2_s2);
 
 		try {
-			sampleService.mergeSamples(p1, s1, s2);
+			sampleService.mergeSamples(p1, s1, Lists.newArrayList(s2));
 			fail("Samples from different projects were allowed to be merged.");
 		} catch (IllegalArgumentException e) {
 		} catch (Exception e) {

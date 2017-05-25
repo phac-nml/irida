@@ -29,6 +29,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
@@ -93,7 +94,8 @@ public class SampleServiceImplIT {
 		Sample mergeInto = sampleService.read(1L);
 		Project p = projectService.read(1L);
 
-		Sample merged = sampleService.mergeSamples(p, mergeInto, sampleService.read(2L), sampleService.read(3L));
+		Sample merged = sampleService.mergeSamples(p, mergeInto,
+				Lists.newArrayList(sampleService.read(2L), sampleService.read(3L)));
 
 		assertEquals("Merged sample should be same as mergeInto.", mergeInto, merged);
 
@@ -115,7 +117,7 @@ public class SampleServiceImplIT {
 	public void testMergeSampleReject() {
 		Sample mergeInto = sampleService.read(1L);
 		Project p = projectService.read(1L);
-		sampleService.mergeSamples(p, mergeInto, sampleService.read(4L));
+		sampleService.mergeSamples(p, mergeInto, Lists.newArrayList(sampleService.read(4L)));
 	}
 
 	@Test

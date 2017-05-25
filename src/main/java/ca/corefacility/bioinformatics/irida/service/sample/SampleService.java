@@ -147,7 +147,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @return the completely merged {@link Sample} (the persisted version of
 	 *         <code>mergeInto</code>).
 	 */
-	public Sample mergeSamples(Project p, Sample mergeInto, Sample... toMerge);
+	public Sample mergeSamples(Project p, Sample mergeInto, Collection<Sample> toMerge);
 
 	/**
 	 * Given a sample gets the total number of bases in all sequence files in

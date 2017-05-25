@@ -238,8 +238,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@inheritDoc}
 	 */
 	@Transactional
-	@PreAuthorize("hasPermission(#project, 'isProjectOwner')")
-	public Sample mergeSamples(Project project, Sample mergeInto, Sample... toMerge) {
+	@PreAuthorize("hasPermission(#project, 'isProjectOwner') and hasPermission(#mergeInto, 'canUpdateSample') and hasPermission(#toMerge, 'canUpdateSample')")
+	public Sample mergeSamples(Project project, Sample mergeInto, Collection<Sample> toMerge) {
 		// confirm that all samples are part of the same project:
 		confirmProjectSampleJoin(project, mergeInto);
 
