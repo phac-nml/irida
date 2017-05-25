@@ -68,6 +68,7 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeCon
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.ProjectSamplesDatatableUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.export.ProjectSamplesTableExport;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.ProjectSampleModel;
+import ca.corefacility.bioinformatics.irida.security.permissions.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -238,10 +239,25 @@ public class ProjectSamplesController {
 	 *
 	 * @return
 	 */
-	@RequestMapping("/projects/templates/merge-modal")
-	public String getMergeSamplesInProjectModal(@RequestParam(name = "sampleIds[]") List<Long> ids, Model model) {
-		List<Sample> samples = (List<Sample>) sampleService.readMultiple(ids);
+	@RequestMapping("/projects/{projectId}/templates/merge-modal")
+	public String getMergeSamplesInProjectModal(@PathVariable Long projectId, @RequestParam(name = "sampleIds[]") List<Long> ids, Model model) {
+		Project project = projectService.read(projectId);
+		List<Sample> samples = new ArrayList<>();
+		List<Sample> locked = new ArrayList<>();
+
+		//check for locked samples
+		ids.stream().forEach(i -> {
+			ProjectSampleJoin join = sampleService.getSampleForProject(project, i);
+			samples.add(join.getObject());
+
+			if (!join.isOwner()) {
+				locked.add(join.getObject());
+			}
+		});
+
 		model.addAttribute("samples", samples);
+		model.addAttribute("locked", locked);
+
 		return PROJECT_TEMPLATE_DIR + "merge-modal.tmpl";
 	}
 
