@@ -56,12 +56,17 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
 import com.github.dandelion.datatables.core.export.ExportUtils;
 import com.github.dandelion.datatables.core.export.ReservedFormat;
 import com.google.common.base.Strings;
 
 @Controller
 public class ProjectSamplesController {
+	// From configuration.properties
+	private @Value("${ngsarchive.linker.available}") Boolean LINKER_AVAILABLE;
+	private @Value("${ngsarchive.linker.script}") String LINKER_SCRIPT;
+
 	public static final String PROJECT_NAME_PROPERTY = "name";
 	// Sub Navigation Strings
 	private static final String ACTIVE_NAV = "activeNav";
@@ -70,7 +75,6 @@ public class ProjectSamplesController {
 	private static final String PROJECTS_DIR = "projects/";
 	public static final String PROJECT_TEMPLATE_DIR = PROJECTS_DIR + "templates/";
 
-	// private static final String ACTIVE_NAV_ANALYSIS = "analysis";
 	public static final String LIST_PROJECTS_PAGE = PROJECTS_DIR + "projects";
 	public static final String PROJECT_MEMBERS_PAGE = PROJECTS_DIR + "project_members";
 	public static final String SPECIFIC_PROJECT_PAGE = PROJECTS_DIR + "project_details";
@@ -89,9 +93,6 @@ public class ProjectSamplesController {
 	 */
 	Formatter<Date> dateFormatter;
 	FileSizeConverter fileSizeConverter;
-	// From configuration.properties
-	private @Value("${ngsarchive.linker.available}") Boolean LINKER_AVAILABLE;
-	private @Value("${ngsarchive.linker.script}") String LINKER_SCRIPT;
 	private MessageSource messageSource;
 
 	@Autowired
