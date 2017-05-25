@@ -21,7 +21,7 @@ public class ProjectMetadataTemplatePage extends AbstractPage {
 	@FindBy(id = "save-template-btn") private WebElement saveTemplateButton;
 	@FindBy(id = "add-field-btn") private WebElement addFieldButton;
 	@FindBy(className = "ui-select-toggle") private WebElement fieldSelectToggle;
-	@FindBy(css = "input[type='search']") private WebElement fieldSearchInput;
+	@FindBy(css = "input.ui-select-search") private WebElement fieldSearchInput;
 	@FindBy(css = ".ui-select-choices li") private List<WebElement> fieldSearchChoices;
 	@FindBy(className = "field-label") private List<WebElement> templateFieldLabels;
 
