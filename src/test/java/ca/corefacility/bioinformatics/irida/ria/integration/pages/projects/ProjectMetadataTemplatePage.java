@@ -51,7 +51,10 @@ public class ProjectMetadataTemplatePage extends AbstractPage {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		addFieldButton.click();
 		wait.until(ExpectedConditions.visibilityOf(fieldSelectToggle));
-		logger.debug("---> TOGGLED SELECT FIELD");
+		fieldSelectToggle.click();
+		logger.debug("---> CLICKED TO GET INPUT FIELD");
+		wait.until(ExpectedConditions.visibilityOf(fieldSearchInput));
+		logger.debug("---> GOT INPUT FIELD, SENDING SEARCH VALUE");
 		fieldSearchInput.sendKeys(field);
 		wait.until(ExpectedConditions.visibilityOfAllElements(fieldSearchChoices));
 		logger.debug("---> SENT FIELD NAME TO INPUT");
