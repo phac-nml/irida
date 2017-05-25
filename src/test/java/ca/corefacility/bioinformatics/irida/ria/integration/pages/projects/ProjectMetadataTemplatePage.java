@@ -8,10 +8,13 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 public class ProjectMetadataTemplatePage extends AbstractPage {
+	private static final Logger logger = LoggerFactory.getLogger(ProjectMetadataTemplatePage.class);
 	private static final String RELAIVE_URL = "projects/{id}/sample-metadata/template";
 
 	@FindBy(id = "template-name") private WebElement templateNameInput;
@@ -48,12 +51,13 @@ public class ProjectMetadataTemplatePage extends AbstractPage {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		addFieldButton.click();
 		wait.until(ExpectedConditions.visibilityOf(fieldSelectToggle));
-		fieldSelectToggle.click();
-		wait.until(ExpectedConditions.elementSelectionStateToBe(fieldSearchInput, true));
+		logger.debug("---> TOGGLED SELECT FIELD");
 		fieldSearchInput.sendKeys(field);
 		wait.until(ExpectedConditions.visibilityOfAllElements(fieldSearchChoices));
+		logger.debug("---> SENT FIELD NAME TO INPUT");
 		fieldSearchChoices.get(0).click();
 		wait.until(ExpectedConditions.visibilityOfAllElements(templateFieldLabels));
+		logger.debug("---> SELECTED FIRST FIELD");
 	}
 
 	public int getNumberOfTemplateFields() {
