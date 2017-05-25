@@ -5,8 +5,7 @@ require('timeago');
 require('./../../vendor/datatables/datatables');
 require('./../../vendor/datatables/datatables-buttons');
 
-// Initialize timeago
-
+// Column look-ups for quick referencing
 const COLUMNS = {
   ID: 0,
   NAME: 1,
@@ -35,6 +34,8 @@ if (typeof window.PAGE === 'object') {
   <".col-md-8.buttons"B><".col-md-4"f>>
 rt
 <".row"<".col-md-3"l><".col-md-6"p><".col-md-3"i>>`,
+    // Set up the export buttons.
+    // These are loaded through the PAGE object.
     buttons: [
       {
         extend: 'collection',
