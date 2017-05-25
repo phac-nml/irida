@@ -358,11 +358,7 @@ var datatable = (function(moment, tl, page) {
       return data;
     }
     else {
-      var line = "<a data-sampleId='" + full.id + "' data-projectId='" + full.projectId + "' class='btn btn-link sample-label' href='" + tl.BASE_URL + "projects/" + full.projectId + "/samples/" + full.id + "/sequenceFiles'>" + data + "</a>";
-      if (!full.owner) {
-        line += " <i class=\"fa fa-lock\"></i>";
-      }
-      return line;
+      return "<a data-sampleId='" + full.id + "' data-projectId='" + full.projectId + "' class='btn btn-link sample-label' href='" + tl.BASE_URL + "projects/" + full.projectId + "/samples/" + full.id + "/sequenceFiles'>" + data + "</a>";
     }
   }
 
@@ -469,6 +465,10 @@ var datatable = (function(moment, tl, page) {
 
     if (badQc) {
       row.classList.add("row-warning");
+    }
+
+    if (!item.owner) {
+      row.classList.add("locked-sample");
     }
     
   }
