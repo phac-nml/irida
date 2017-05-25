@@ -170,44 +170,17 @@ This will clean up any **deleted** files every day at 2:00 am.  Log files will b
 
 For more information please see the [Purging Histories and Datasets][] document.  ***Note: the metadata about each analysis will still be stored and available in Galaxy, but the data file contents will be permanently removed.***
 
-[Galaxy]: https://wiki.galaxyproject.org/FrontPage
-[integration-galaxy]: #integration-with-an-existing-galaxy
-[setup-new-galaxy]: #installation-overview
 [conda with Galaxy]: https://docs.galaxyproject.org/en/master/admin/conda_faq.html
 [Conda]: https://conda.io/miniconda.html
-[irida-galaxy.jpg]: images/irida-galaxy.jpg
-[Galaxy API]: https://wiki.galaxyproject.org/Learn/API
-[GetGalaxy]: https://wiki.galaxyproject.org/Admin/GetGalaxy
-[Galaxy Cluster Setup]: cluster/
-[Galaxy Environment Setup]: environment/
-[Running Galaxy in a production environment]: https://wiki.galaxyproject.org/Admin/Config/Performance/ProductionServer
-[Galaxy Disable Developer Settings]: https://wiki.galaxyproject.org/Admin/Config/Performance/ProductionServer#Disable_the_developer_settings
-[Galaxy Database Setup]: https://wiki.galaxyproject.org/Admin/Config/Performance/ProductionServer#Switching_to_a_database_server
-[MySQL]: http://www.mysql.com/
 [PostgreSQL]: http://www.postgresql.org/
-[Galaxy Cluster]: https://wiki.galaxyproject.org/Admin/Config/Performance/Cluster
-[Galaxy News Page]: https://wiki.galaxyproject.org/News
-[Bitbucket]: https://bitbucket.org/galaxy/galaxy-dist/commits/all
 [IRIDA Toolshed]: https://irida.corefacility.ca/galaxy-shed
 [Main Galaxy Toolshed]: https://toolshed.g2.bx.psu.edu/
 [Galaxy Toolshed]: https://wiki.galaxyproject.org/ToolShed
-[Galaxy Toolsheds]: https://wiki.galaxyproject.org/ToolShed
-[Installing Repositories to Galaxy]: https://wiki.galaxyproject.org/InstallingRepositoriesToGalaxy
 [SNVPhyl Whole Genome Phylogeny]: pipelines/phylogenomics/
 [SISTR Salmonella Typing]: pipelines/sistr/
 [Assembly and Annotation]: pipelines/assembly-annotation/
 [Assembly and Annotation Collection]: pipelines/assembly-annotation-collection/
-[Galaxy Job Config]: https://wiki.galaxyproject.org/Admin/Config/Jobs
-[saved-histories.jpg]: images/saved-histories.jpg
-[scripts/galaxy]: scripts/galaxy
-[galaxy-installed-repositories.jpg]: images/galaxy-installed-repositories.jpg
-[history-options-icon]: images/history-options-icon.jpg
 [Purging Histories and Datasets]: https://wiki.galaxyproject.org/Admin/Config/Performance/Purge%20Histories%20and%20Datasets
-[PerlBrew]: http://perlbrew.pl/
-[App::cpanminus]: http://search.cpan.org/~miyagawa/App-cpanminus-1.7027/lib/App/cpanminus.pm
-[conda]: https://conda.io/docs/
-[miniconda]: https://conda.io/miniconda.html
-[galaxy-production]: https://galaxyproject.org/admin/config/performance/production-server/#groundwork-for-scalability
 [Automated tools install]: https://github.com/phac-nml/irida/tree/development/packaging#automated-processupgrading
 [IRIDA releases]: https://github.com/phac-nml/irida/releases
 [PostgreSQL]: https://www.postgresql.org/
