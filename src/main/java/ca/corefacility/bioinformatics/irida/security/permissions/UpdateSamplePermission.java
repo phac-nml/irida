@@ -2,8 +2,6 @@ package ca.corefacility.bioinformatics.irida.security.permissions;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -23,8 +21,6 @@ import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository
  */
 @Component
 public class UpdateSamplePermission extends BasePermission<Sample, Long> {
-	private static final Logger logger = LoggerFactory.getLogger(UpdateSamplePermission.class);
-
 	private static final String PERMISSION_PROVIDED = "canUpdateSample";
 
 	private final ProjectSampleJoinRepository projectSampleJoinRepository;
