@@ -4,6 +4,7 @@ Changes
 0.16.0 to 0.17.0
 ----------------
 * [Developer]: Fixed permissions for NCBI submission uploads failing with Access Denied error. (0.16.1)
+* [UI]: Fixed bug causing reference file uploads to fail when launching a pipeline. (0.16.2)
 
 0.15.0 to 0.16.0
 ----------------
