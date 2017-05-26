@@ -12,4 +12,8 @@ In the dialog that appears you will be presented with a list of the samples that
 
 When you click on the drop-down box to select a project, you can either visually find the project that you want, or you can filter the projects by their name by typing into the text field.
 
+After selecting the project to copy samples to, you may select whether users on the new project should have modification access to those samples.  If users on the new project should not be able to modify the samples, uncheck the `Allow modification access to samples in the new project` box.  If you have selected samples that are non-modifiable in your current project, you will be shown a warning that the samples you are copying will be non-modifiable regardless of the option you select.
+
+![Locked Sample.]({{ site.baseurl }}/images/tutorials/common/samples/copy-samples-locked.png)
+
 Once you've selected the project that you want to copy the samples to, click on the "Copy Samples" button.

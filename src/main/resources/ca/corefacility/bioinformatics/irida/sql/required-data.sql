@@ -278,7 +278,7 @@ INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`, `owner`) V
 INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`, `owner`) VALUES ('2014-07-30 08:24:57', 4, 48, 1);
 INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`, `owner`) VALUES ('2014-07-30 08:24:58', 4, 49, 1);
 INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`, `owner`) VALUES ('2014-07-30 08:24:59', 4, 50, 1);
-INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`, `owner`) VALUES ('2014-07-30 08:25:59', 4, 51, 1);
+INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`, `owner`) VALUES ('2014-07-30 08:25:59', 4, 51, 0);
 INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`, `owner`) VALUES ('2014-07-30 08:26:59', 4, 52, 1);
 INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`, `owner`) VALUES ('2014-07-30 08:27:59', 4, 53, 1);
 INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`, `owner`) VALUES ('2014-07-30 08:26:59', 5, 52, 1);
