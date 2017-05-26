@@ -28,7 +28,7 @@
 		</script>
 		</th:block>
 		<div class="alert alert-warning" th:if="${#lists.size(lockedSamples) > 0}">
-			<h4>_The following samples will be read only as this project does not have modification access_</h4>
+			<h4 th:text="#{project.samples.modal.copy.locked}">_The following samples will be read only as this project does not have modification access_</h4>
 			<ol class="start">
 				<li th:each="sample : ${lockedSamples}" th:text="${sample.sampleName}"></li>
 			</ol>
@@ -40,7 +40,7 @@
 		</div>
 		<div class="form-group">
 			<div class="checkbox">
-  				<label><input type="checkbox" value="true" id="giveOwner" ng-model="copyModalCtrl.giveOwner"/>_Allow modification in new project_</label>
+  				<label><input type="checkbox" value="true" id="giveOwner" ng-model="copyModalCtrl.giveOwner"/ th:text="#{project.samples.modal.copy.lock-copied}">_Allow modification in new project_</label>
 			</div>
 		</div>
 	</div>

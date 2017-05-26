@@ -41,7 +41,7 @@
 		<div th:if="${#lists.size(locked) > 0}">
 			<div class="alert alert-warning">
 				<strong><i class="fa fa-exclamation-triangle fa-fw" aria-hidden="true"></i></strong>
-				<span>_Cannot merge samples as the following samples are locked in this project:_</span>
+				<span th:text="#{project.samples.modal.locked}">_Cannot merge samples as the following samples are locked in this project:_</span>
 				<ol class="start">
 					<li th:each="sample : ${locked}" th:text="${sample.sampleName}"></li>
 				</ol>
