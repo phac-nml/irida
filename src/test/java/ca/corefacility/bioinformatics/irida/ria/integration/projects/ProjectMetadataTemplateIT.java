@@ -36,7 +36,7 @@ public class ProjectMetadataTemplateIT extends AbstractIridaUIITChromeDriver {
 		page.addMetadataField("Test Field");
 		assertEquals("Should be 1 metadata field on the page.", 1, page.getNumberOfTemplateFields());
 		assertTrue("Save template button should be enabled if there is a template name and at least 1 field", page.isSaveButtonEnabled());
-		page.addMetadataField("PFGE-XbaI-patter");
+		page.addMetadataField("Something");
 		assertEquals("Should be 2 metadata fields on the page", 2, page.getNumberOfTemplateFields());
 
 		page.saveTemplate();
