@@ -84,4 +84,16 @@ public class UpdateSamplePermissionTest {
 
 		assertTrue("Permission to update sample should be given.", updateSamplePermission.isAllowed(auth, s));
 	}
+	
+	@Test
+	public void testRejectPermissionNotOwner(){
+		final Project p1 = new Project();
+		final Sample s = new Sample();
+
+		when(projectSampleJoinRepository.getProjectForSample(s)).thenReturn(
+				ImmutableList.of(new ProjectSampleJoin(p1, s, false)));
+		when(projectOwnerPermission.isAllowed(auth, p1)).thenReturn(true);
+
+		assertTrue("Permission to update sample should not be given.", updateSamplePermission.isAllowed(auth, s));
+	}
 }
