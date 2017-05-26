@@ -101,56 +101,7 @@ In order to connect IRIDA to this Galaxy instance you will need to modify the pa
 
 Once you have configured IRIDA to connect to Galaxy you can attempt to execute a workflow by adding some data to your cart, selecting  **Pipelines** from the main menu, then selecting a particular pipeline.  You will have to have some data uploaded into IRIDA before testing.  An example set of data can be found at [irida-sample-data.zip][].  Currently all workflows assume you are using paired-end sequence reads.
 
-Configure Galaxy Data Cleanup
------------------------------
-
-IRIDA stores and manages both the input files to an analysis workflow as well as the output files and provenance information from a workflow run through Galaxy.  In the process of running an analysis, many intermediate files are produced by Galaxy (SAM/BAM files, log files, etc), as well as intermediate data structures (Galaxy Data Libraries for storing input files to Galaxy, and the workflow uploaded to Galaxy).  These additional files and data structures are not stored or used by IRIDA following the completion of an analysis.
-
-By default IRIDA will **not** remove any of the data generated and stored in Galaxy.  This provides additional resources beyond the output files and provenance information stored by IRIDA for each analysis.
-
-However, some of the files produced by Galaxy can be quite large and may quickly fill up the storage capacity of the Galaxy server.  IRIDA can be instructed to clean up this data after a period of time by adjusting the parameter `irida.analysis.cleanup.days` in the main IRIDA configuration file `/etc/irida/irida.conf`.  This controls the number of days before IRIDA will remove analysis files from Galaxy.  This can be used to reduce the storage requirements for each analysis at the expense of not having any intermediate analysis files available.
-
-Once the parameter `irida.analysis.cleanup.days` is set, IRIDA will periodically (once every hour) check for any analyses that have expired and clean up the necessary files in Galaxy.  However, these files will only be marked as **deleted** in Galaxy, not permanently removed.  To permanently remove these files, please do the following:
-
-### Step 1: Create a Galaxy Cleanup script
-
-The following is an example script that can be used to clean up **deleted** files in Galaxy.  Please save this script to `$GALAXY_ROOT_DIR/galaxy_cleanup.sh`, make executable with `chmod u+x $GALAXY_ROOT_DIR/galaxy_cleanup.sh`, and then make any necessary modifications to the variables.  In particular, please set `$GALAXY_ROOT_DIR` and modify `$DAYS_TO_KEEP` which defines the number of days since last access a deleted file in Galaxy will continue to exist before being removed from the file system.
-
-```bash
-#!/bin/sh
-
-GALAXY_ROOT_DIR=/path/to/galaxy-dist
-GALAXY_CONFIG=$GALAXY_ROOT_DIR/config/galaxy.ini
-CLEANUP_LOG=$GALAXY_ROOT_DIR/galaxy_cleanup.log
-DAYS_TO_KEEP=0
-
-cd $GALAXY_ROOT_DIR
-
-echo -e "\nBegin cleanup at `date`" >> $CLEANUP_LOG
-echo -e "Begin delete useless histories" >> $CLEANUP_LOG
-python scripts/cleanup_datasets/cleanup_datasets.py $GALAXY_CONFIG -d $DAYS_TO_KEEP -1 -r >> $CLEANUP_LOG
-echo -e "\nBegin purge deleted histories" >> $CLEANUP_LOG
-python scripts/cleanup_datasets/cleanup_datasets.py $GALAXY_CONFIG -d $DAYS_TO_KEEP -2 -r >> $CLEANUP_LOG
-echo -e "\nBegin purge deleted datasets" >> $CLEANUP_LOG
-python scripts/cleanup_datasets/cleanup_datasets.py $GALAXY_CONFIG -d $DAYS_TO_KEEP -3 -r >> $CLEANUP_LOG
-echo -e "\nBegin purge deleted libraries" >> $CLEANUP_LOG
-python scripts/cleanup_datasets/cleanup_datasets.py $GALAXY_CONFIG -d $DAYS_TO_KEEP -4 -r >> $CLEANUP_LOG
-echo -e "\nBegin purge deleted library folders" >> $CLEANUP_LOG
-python scripts/cleanup_datasets/cleanup_datasets.py $GALAXY_CONFIG -d $DAYS_TO_KEEP -5 -r >> $CLEANUP_LOG
-echo -e "\nEnd cleanup at `date`" >> $CLEANUP_LOG
-```
-
-### Step 2: Schedule script to run using cron
-
-Once this script is installed, it can be scheduled to run periodically by adding a cron job for the Galaxy user.  To do this, please run `crontab -e` and past the following line (replacing `$GALAXY_ROOT_DIR` with the proper directory):
-
-```
-0 2 * * * $GALAXY_ROOT_DIR/galaxy_cleanup.sh
-```
-
-This will clean up any **deleted** files every day at 2:00 am.  Log files will be stored in `$GALAXY_ROOT_DIR/galaxy_cleanup.log`.
-
-For more information please see the [Purging Histories and Datasets][] document.  ***Note: the metadata about each analysis will still be stored and available in Galaxy, but the data file contents will be permanently removed.***
+{% include galaxy/cleanup.md %}
 
 [conda with Galaxy]: https://docs.galaxyproject.org/en/master/admin/conda_faq.html
 [Conda]: https://conda.io/miniconda.html
@@ -162,7 +113,7 @@ For more information please see the [Purging Histories and Datasets][] document.
 [SISTR Salmonella Typing]: pipelines/sistr/
 [Assembly and Annotation]: pipelines/assembly-annotation/
 [Assembly and Annotation Collection]: pipelines/assembly-annotation-collection/
-[Purging Histories and Datasets]: https://wiki.galaxyproject.org/Admin/Config/Performance/Purge%20Histories%20and%20Datasets
+[Purging Histories and Datasets]: https://galaxyproject.org/admin/config/performance/purge-histories-and-datasets/
 [Automated tools install]: https://github.com/phac-nml/irida/tree/development/packaging#automated-processupgrading
 [IRIDA releases]: https://github.com/phac-nml/irida/releases
 [PostgreSQL]: https://www.postgresql.org/
