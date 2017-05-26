@@ -40,7 +40,7 @@ public class ProjectMetadataTemplateIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Should be 2 metadata fields on the page", 2, page.getNumberOfTemplateFields());
 
 		page.saveTemplate();
-		ProjectSettingsMetadataTemplatesPage page = ProjectSettingsMetadataTemplatesPage.goToPage(driver(), PROJECT_ID);
-		assertEquals("Should be two template on the Metadata Template List page", 2, page.getNumberOfTemplatesInProject());
+		ProjectSettingsMetadataTemplatesPage settingsMetadataTemplatesPage = ProjectSettingsMetadataTemplatesPage.goToPage(driver(), PROJECT_ID);
+		assertEquals("Should be two template on the Metadata Template List page", 2, settingsMetadataTemplatesPage.getNumberOfTemplatesInProject());
 	}
 }
