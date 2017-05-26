@@ -104,6 +104,10 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 					logger.trace("Setting ABSOLUTE path to [" + absolutePath.toString() + "] from relative path ["
 							+ source.toString() + "]");
 				}
+				else{
+					throw new IllegalArgumentException(
+							"Cannot translate path to base directory " + directoryForType + " for file: " + source);
+				}
 			}
 		}
 		
