@@ -9,6 +9,7 @@ Changes
 * [UI]: Added `Technician` system role which allows technicians to view results of all sequencing runs in the system.
 * [Developer]: Fixed permissions for NCBI submission uploads failing with Access Denied error. (0.16.1)
 * [UI]: Fixed bug causing reference file uploads to fail when launching a pipeline. (0.16.2)
+* [UI]: Fix bug where notifications were not being displayed when samples where copied between files.
 
 0.15.0 to 0.16.0
 ----------------
