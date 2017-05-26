@@ -24,6 +24,7 @@ public class ProjectMetadataTemplatePage extends AbstractPage {
 	@FindBy(css = "input.ui-select-search") private WebElement fieldSearchInput;
 	@FindBy(css = ".ui-select-choices li") private List<WebElement> fieldSearchChoices;
 	@FindBy(className = "field-label") private List<WebElement> templateFieldLabels;
+	@FindBy(id = "template-id") private WebElement templateIdentifier;
 
 	public ProjectMetadataTemplatePage(WebDriver driver) {
 		super(driver);
@@ -52,18 +53,20 @@ public class ProjectMetadataTemplatePage extends AbstractPage {
 		addFieldButton.click();
 		wait.until(ExpectedConditions.visibilityOf(fieldSelectToggle));
 		fieldSelectToggle.click();
-		logger.debug("---> CLICKED TO GET INPUT FIELD");
 		wait.until(ExpectedConditions.visibilityOf(fieldSearchInput));
-		logger.debug("---> GOT INPUT FIELD, SENDING SEARCH VALUE");
 		fieldSearchInput.sendKeys(field);
 		wait.until(ExpectedConditions.visibilityOfAllElements(fieldSearchChoices));
-		logger.debug("---> SENT FIELD NAME TO INPUT");
 		fieldSearchChoices.get(0).click();
 		wait.until(ExpectedConditions.visibilityOfAllElements(templateFieldLabels));
-		logger.debug("---> SELECTED FIRST FIELD");
 	}
 
 	public int getNumberOfTemplateFields() {
 		return templateFieldLabels.size();
+	}
+
+	public void saveTemplate() {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		saveTemplateButton.click();
+		wait.until(ExpectedConditions.visibilityOf(templateIdentifier));
 	}
 }

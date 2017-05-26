@@ -37,7 +37,7 @@
                                         <th:block th:text="#{linelist.create-template.name}"/>
                                     </label>
                                     <span class="text-muted pull-right" ng-show="$ctrl.template.identifier">
-                                        <strong><th:block th:text="#{linelist.template.identifier}"/>:</strong> {{$ctrl.template.identifier}}
+                                        <strong><th:block th:text="#{linelist.template.identifier}"/>:</strong> <span id="template-id">{{$ctrl.template.identifier}}</span>
                                     </span>
                                 </div>
                                 <input id="template-name"
