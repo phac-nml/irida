@@ -11,7 +11,7 @@ Once the parameter `irida.analysis.cleanup.days` is set, IRIDA will periodically
 
 ### Step 1: Create a Galaxy Cleanup script
 
-The following is an example script that can be used to clean up **deleted** files in Galaxy.  Please save this script to `$GALAXY_ROOT_DIR/galaxy_cleanup.sh`, make executable with `chmod u+x $GALAXY_ROOT_DIR/galaxy_cleanup.sh`, and then make any necessary modifications to the variables.  In particular, please set `$GALAXY_ROOT_DIR` and `$CONDA_ROOT` to point to the `galaxy/` directory, and the `~/miniconda3` directory. We assume the conda installation has an environment **galaxy** containing dependencies needed for starting Galaxy.  Modify this as appropriate (e.g., if you use a Galaxy virtual environment instead).
+The following is an example script that can be used to clean up **deleted** files in Galaxy.  Please save this script to `galaxy/galaxy_cleanup.sh`, make executable with `chmod u+x galaxy/galaxy_cleanup.sh`, and then make any necessary modifications to the variables.  In particular, please set `$GALAXY_ROOT_DIR` and `$CONDA_ROOT` to point to the `galaxy/` directory, and the `~/miniconda3` directory. We assume the conda installation has an environment **galaxy** containing dependencies needed for starting Galaxy.  Modify this as appropriate (e.g., if you use a Galaxy virtual environment instead).
 
 ```bash
 #!/bin/bash
@@ -48,7 +48,7 @@ sh scripts/cleanup_datasets/purge_datasets.sh 2>&1 >> $CLEANUP_LOG
 echo -e "\nEnd cleanup at `date`" >> $CLEANUP_LOG
 ```
 
-The particular cleanup scripts (e.g., `scripts/cleanup_datasets/delete_userless_histories.sh` default to removing only items > 10 days old. If you wish to adjust this time, please modify the `-d 10` parameter within these scripts).
+The particular cleanup scripts (e.g., `scripts/cleanup_datasets/delete_userless_histories.sh`) default to removing only items > 10 days old. If you wish to adjust this time, please modify the `-d 10` parameter within these scripts.
 
 ### Step 2: Schedule script to run using cron
 
@@ -58,6 +58,6 @@ Once this script is installed, it can be scheduled to run periodically by adding
 0 2 * * * galaxy/galaxy_cleanup.sh
 ```
 
-This will clean up any **deleted** files every day at 2:00 am.  Log files will be stored in `$GALAXY_ROOT_DIR/galaxy_cleanup.log`.
+This will clean up any **deleted** files every day at 2:00 am.  Log files will be stored in `galaxy/galaxy_cleanup.log` and `galaxy/cleanup_datasets/*.log`.
 
 For more information please see the [Purging Histories and Datasets](https://galaxyproject.org/admin/config/performance/purge-histories-and-datasets/) document.  ***Note: the metadata about each analysis will still be stored and available in Galaxy, but the data file contents will be permanently removed.***
