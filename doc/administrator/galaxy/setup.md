@@ -106,7 +106,6 @@ Once Galaxy is downloaded additional modifications will be needed to configure G
 # We assume you are in the galaxy/ directory.
 cp config/galaxy.ini.sample config/galaxy.ini
 cp config/tool_sheds_conf.xml.sample config/tool_sheds_conf.xml
-cp config/dependency_resolvers_conf.xml.sample config/dependency_resolvers_conf.xml
 ```
 
 ### Step 2: Galaxy Database Setup
@@ -258,20 +257,6 @@ The workflows used by IRIDA make use of external tools that can be installed usi
 </tool_sheds>
 ```
 
-Additionally, Galaxy allows for multiple methods to install the necessary dependencies for individual tools.  These are controlled in the file `config/dependency_resolvers_conf.xml` and additional details can be found in the [Galaxy Dependency Resolvers][] documentation.  We would recommend changing this file to make the `conda` resolvers the default.  This can be accomplished by moving all the `<conda/>` entries in this file to the top.  E.g.,
-
-```xml
-<dependency_resolvers>
-  <conda />
-  <conda versionless="true" />
-
-  <tool_shed_packages />
-
-  <galaxy_packages />
-  <galaxy_packages versionless="true" />
-</dependency_resolvers>
-```
-
 Now, re-start Galaxy with `service galaxy restart`.  If you log into Galaxy as the admin user and click on **Admin** in the top menu, then **Search Tool Shed**. In the menu at the left you should see the two configured toolsheds listed.
 
 ### Step 2: Install Pipeline Tools
@@ -403,5 +388,4 @@ For more information please see the [Purging Histories and Datasets][] document.
 [galaxy-production]: https://galaxyproject.org/admin/config/performance/production-server/#groundwork-for-scalability
 [Automated tools install]: https://github.com/phac-nml/irida/tree/development/packaging#automated-processupgrading
 [IRIDA releases]: https://github.com/phac-nml/irida/releases
-[Galaxy Dependency Resolvers]: https://docs.galaxyproject.org/en/master/admin/dependency_resolvers.html
 [SQLite]: https://www.sqlite.org/

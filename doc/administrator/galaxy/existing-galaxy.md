@@ -44,24 +44,6 @@ The following is a list of other necessary configuration settings within the fil
    * Set `conda_prefix = /home/galaxy-irida/miniconda3`, or wherever conda is installed for Galaxy.
    * Set `conda_ensure_channels = iuc,bioconda,r,defaults,conda-forge`.
 
-### Settings in `config/dependency_resolvers_conf.xml`
-
-It is also recommended to change the default order in `config/dependency_resolvers_conf.xml` (you may have to copy from the file `dependency_resolvers_conf.xml.sample` first) to attempt to install tools via conda first before using the older tool_shed_packages method.  E.g.,
-
-```xml
-<dependency_resolvers>
-  <conda />
-  <conda versionless="true" />
-
-  <tool_shed_packages />
-
-  <galaxy_packages />
-  <galaxy_packages versionless="true" />
-</dependency_resolvers>
-```
-
-This avoids building some tools/dependencies from source (which comes with the increased chance of failure due to missing build dependencies).
-
 ### Build dependencies
 
 Even by defaulting to using conda, some tools will need to be built from source, and so require the standard Linux build environment to be installed. For CentOS this will include the following packages:
