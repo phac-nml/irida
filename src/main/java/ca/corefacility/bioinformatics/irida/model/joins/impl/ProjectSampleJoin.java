@@ -107,6 +107,11 @@ public class ProjectSampleJoin implements Join<Project, Sample> {
 		return createdDate;
 	}
 
+	/**
+	 * Whether the {@link Project} has modification rights to the {@link Sample}
+	 * 
+	 * @return true if the {@link Project} owns the {@link Sample}
+	 */
 	public boolean isOwner() {
 		return owner;
 	}
@@ -114,7 +119,7 @@ public class ProjectSampleJoin implements Join<Project, Sample> {
 	public void setOwner(boolean owner) {
 		this.owner = owner;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "Project: " + project.getName() + " Sample: " + sample.getSampleName();
