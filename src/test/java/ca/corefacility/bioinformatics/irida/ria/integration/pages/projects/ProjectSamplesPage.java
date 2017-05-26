@@ -327,19 +327,15 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		WebDriverWait wait = openToolsDropdownAndWait();
 		wait.until(ExpectedConditions.visibilityOf(copyBtn));
 		
-		if(!owner){
-			giveOwnerBtn.click();
-		}
-		
 		copyBtn.click();
-		copyMoveSamples(project);
+		copyMoveSamples(project, owner);
 	}
 
 	public void moveSamples(String projectNum) {
 		WebDriverWait wait = openToolsDropdownAndWait();
 		wait.until(ExpectedConditions.visibilityOf(moveBtn));
 		moveBtn.click();
-		copyMoveSamples(projectNum);
+		copyMoveSamples(projectNum, true);
 	}
 
 	public void filterByName(String name) {
@@ -438,10 +434,15 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.not(ExpectedConditions.visibilityOf(select2Results)));
 	}
 
-	private void copyMoveSamples(String project) {
+	private void copyMoveSamples(String project, boolean owner) {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(ExpectedConditions.visibilityOf(copySamplesModal));
 		enterSelect2Value(project);
+		
+		if(!owner){
+			giveOwnerBtn.click();
+		}
+		
 		wait.until(ExpectedConditions.elementToBeClickable(copyModalConfirmBtn));
 		copyModalConfirmBtn.click();
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("copy-modal")));
