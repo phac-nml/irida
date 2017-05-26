@@ -27,6 +27,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -56,6 +58,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
+import ca.corefacility.bioinformatics.irida.security.permissions.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -107,16 +110,20 @@ public class SamplesController extends BaseController {
 	private final UserService userService;
 
 	private final SequencingObjectService sequencingObjectService;
+	
+	private final UpdateSamplePermission updateSamplePermission;
 
 	private final MessageSource messageSource;
 
 	@Autowired
 	public SamplesController(SampleService sampleService, UserService userService, ProjectService projectService,
-			SequencingObjectService sequencingObjectService, MessageSource messageSource) {
+			SequencingObjectService sequencingObjectService, UpdateSamplePermission updateSamplePermission,
+			MessageSource messageSource) {
 		this.sampleService = sampleService;
 		this.userService = userService;
 		this.projectService = projectService;
 		this.sequencingObjectService = sequencingObjectService;
+		this.updateSamplePermission = updateSamplePermission;
 		this.messageSource = messageSource;
 	}
 
@@ -134,12 +141,12 @@ public class SamplesController extends BaseController {
 	 * @return The name of the page.
 	 */
 	@RequestMapping(value = { "/samples/{sampleId}/details", "/projects/{projectId}/samples/{sampleId}/details" })
-	public String getSampleSpecificPage(final Model model, @PathVariable Long sampleId, Principal principal) {
+	public String getSampleSpecificPage(final Model model, @PathVariable Long sampleId) {
 		logger.debug("Getting sample page for sample [" + sampleId + "]");
 		Sample sample = sampleService.read(sampleId);
 		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
 		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_DETAILS);
-		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isProjectManagerForSample(sample, principal));
+		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isProjectManagerForSample(sample));
 		return SAMPLE_PAGE;
 	}
 
@@ -233,8 +240,7 @@ public class SamplesController extends BaseController {
 	 * @return a Map representing all files (pairs and singles) for the sample.
 	 */
 	@RequestMapping(value = { "/projects/{projectId}/samples/{sampleId}/sequenceFiles" })
-	public String getSampleFiles(final Model model, @PathVariable Long projectId, @PathVariable Long sampleId,
-			Principal principal) {
+	public String getSampleFiles(final Model model, @PathVariable Long projectId, @PathVariable Long sampleId) {
 		Sample sample = sampleService.read(sampleId);
 		model.addAttribute("sampleId", sampleId);
 
@@ -266,7 +272,7 @@ public class SamplesController extends BaseController {
 		model.addAttribute("single_end", singleFileJoins);
 
 		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
-		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isProjectManagerForSample(sample, principal));
+		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isProjectManagerForSample(sample));
 		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_FILES);
 		return SAMPLE_FILES_PAGE;
 	}
@@ -283,8 +289,8 @@ public class SamplesController extends BaseController {
 	 * @return a Map representing all files (pairs and singles) for the sample.
 	 */
 	@RequestMapping("/samples/{sampleId}/sequenceFiles")
-	public String getSampleFilesWithoutProject(final Model model, @PathVariable Long sampleId, Principal principal) {
-		return getSampleFiles(model, null, sampleId, principal);
+	public String getSampleFilesWithoutProject(final Model model, @PathVariable Long sampleId) {
+		return getSampleFiles(model, null, sampleId);
 	}
 
 	/**
@@ -483,24 +489,9 @@ public class SamplesController extends BaseController {
 	 *            The currently logged in principal
 	 * @return true/false if they have management permissions for the sample
 	 */
-	private boolean isProjectManagerForSample(Sample sample, Principal principal) {
-		User userByUsername = userService.getUserByUsername(principal.getName());
+	private boolean isProjectManagerForSample(Sample sample) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-		// if the sample is remote nobody should be able to edit
-		if (sample.isRemote()) {
-			return false;
-		}
-
-		if (userByUsername.getSystemRole().equals(Role.ROLE_ADMIN)) {
-			return true;
-		}
-
-		List<Join<Project, Sample>> projectsForSample = projectService.getProjectsForSample(sample);
-		for (Join<Project, Sample> join : projectsForSample) {
-			if (projectService.userHasProjectRole(userByUsername, join.getSubject(), ProjectRole.PROJECT_OWNER)) {
-				return true;
-			}
-		}
-		return false;
+		return updateSamplePermission.isAllowed(authentication, sample);
 	}
 }
