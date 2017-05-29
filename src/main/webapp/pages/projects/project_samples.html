@@ -98,6 +98,7 @@
         <div dt:confType="extrajs" dt:bundles="project-samples-angular" dt:placeholder="before_start_document_ready"/>
         <div dt:confType="callback" dt:type="createdrow" dt:function="datatables-utils#datatable.projectRowCreated"></div>
     </div>
+
     <table class="selectable" id="samplesTable" dt:table="true" dt:url="@{/projects/{id}/ajax/samples(id=${project.getId()})}" dt:ajaxParams="sample-ajax-params#samplesAjaxParams">
         <thead>
         <tr>
@@ -125,12 +126,16 @@
                     </ul>
                 </div>
             </th>
-            <th dt:property="sampleName" th:text="#{project.samples.table.name}" dt:renderFunction="datatables-utils#datatable.formatSampleLink"></th>
-            <th dt:property="organism" th:text="#{project.samples.table.organism}" dt:renderFunction="datatables-utils#datatable.forceContentSize"></th>
-            <th dt:property="projectName" th:text="#{project.samples.table.project}" dt:renderFunction="datatables-utils#datatable.highlightAssociatedProjectRows"></th>
+            <th data-name="sample.sampleName" dt:property="sampleName" th:text="#{project.samples.table.name}"
+                dt:renderFunction="datatables-utils#datatable.formatSampleLink"></th>
+            <th data-name="sample.organism" dt:property="organism" th:text="#{project.samples.table.organism}"
+                dt:renderFunction="datatables-utils#datatable.forceContentSize"></th>
+            <th data-name="project.name" dt:property="projectName" th:text="#{project.samples.table.project}"
+                dt:renderFunction="datatables-utils#datatable.highlightAssociatedProjectRows"></th>
             <th width="120px" dt:property="createdDate" dt:sortType="natural" th:text="#{project.samples.table.created}"
                 dt:renderFunction="datatables-utils#datatable.formatDate"></th>
-            <th width="160px" dt:property="modifiedDate" dt:sortType="natural" dt:sortInitDirection="desc" th:text="#{project.samples.table.modified}"
+            <th data-name="sample.modifiedDate" width="160px" dt:property="modifiedDate" dt:sortType="natural"
+                dt:sortInitDirection="desc" th:text="#{project.samples.table.modified}"
                 dt:renderFunction="datatables-utils#datatable.formatDateWithTime"></th>
         </tr>
         </thead>
