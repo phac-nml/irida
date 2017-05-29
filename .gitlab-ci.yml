@@ -14,7 +14,9 @@ variables:
 
 
 before_script:
-  - ci/init.sh
+  - pushd lib
+  - ./install-libs.sh
+  - popd
 
 service_job:
 #running service layer tests
