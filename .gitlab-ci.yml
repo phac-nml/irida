@@ -22,7 +22,7 @@ service_job:
 #running service layer tests
   tags:
   - docker
-  image: irida-testing:latest
+  image: docker.corefacility.ca:5000/irida-testing:latest
   script:
   - mvn clean verify -Pservice_testing -Djdbc.url=$JDBC_URL
   stage: test
