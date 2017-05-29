@@ -1490,24 +1490,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 	}
 
 	/**
-	 * Tests out cleaning up a new analysis and failing.
-	 * 
-	 * @throws Exception
-	 */
-	@Test(expected = IllegalArgumentException.class)
-	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testCleanupNewAnalysisError() throws Exception {
-		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
-				sequenceFilePath, referenceFilePath, iridaTestAnalysisWorkflowId);
-
-		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
-				.prepareSubmission(analysisSubmission);
-		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
-
-		analysisExecutionService.cleanupSubmission(analysisSubmitted);
-	}
-
-	/**
 	 * Tests out cleaning up an analysis that's already been cleaned and
 	 * failing.
 	 * 
