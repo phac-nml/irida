@@ -48,7 +48,9 @@ public class IntegrationUITestListener extends RunListener {
 
 	public static void startWebDriver() {
 		ChromeOptions options = new ChromeOptions();
-        options.addArguments("--no-sandbox");
+		if(System.getenv("irida.it.no-sandbox").equals("true")){
+			options.addArguments("--no-sandbox");
+		}
 		driver = new ChromeDriver(options);
 		driver.manage().window().setSize(new Dimension(1400, 900));
 		driver.manage().timeouts().implicitlyWait(DRIVER_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
