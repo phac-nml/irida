@@ -77,23 +77,23 @@
 	<analysis_assemblyannotation id="4" />
 
 	<sequence_file id="1" created_date="2013-07-18 14:20:19.0"
-		file_path="sequenceFile1" fastqc_analysis_id="1" />
+		file_path="/sequenceFile1" fastqc_analysis_id="1" />
 	<sequence_file id="2" created_date="2013-07-18 14:20:19.0"
-		file_path="sequenceFile2" />
+		file_path="/sequenceFile2" />
 	<sequence_file id="3" created_date="2013-07-18 14:20:19.0"
-		file_path="sequenceFile3" />
+		file_path="/sequenceFile3" />
 	<sequence_file id="4" created_date="2013-07-18 14:20:19.0"
-		file_path="sequenceFile4" />
+		file_path="/sequenceFile4" />
 	<sequence_file id="5" created_date="2013-07-18 14:20:19.0"
-		file_path="sequenceFile5" />
+		file_path="/sequenceFile5" />
 	<sequence_file id="6" created_date="2013-07-18 14:20:19.0"
-		file_path="sequenceFile6" />
+		file_path="/sequenceFile6" />
 	<sequence_file id="7" created_date="2013-07-18 14:20:19.0"
-		file_path="sequenceFile7" />
+		file_path="/sequenceFile7" />
 	<sequence_file id="8" created_date="2013-07-18 14:20:19.0"
-		file_path="sequenceFile8" />
+		file_path="/sequenceFile8" />
 	<sequence_file id="9" created_date="2013-07-18 14:20:19.0"
-		file_path="sequenceFile9" />
+		file_path="/sequenceFile9" />
 
 	<sequencing_object id="1" created_date="2013-07-18 14:20:19.0"/>
 	<sequencing_object id="2" created_date="2013-07-18 14:20:19.0"/>

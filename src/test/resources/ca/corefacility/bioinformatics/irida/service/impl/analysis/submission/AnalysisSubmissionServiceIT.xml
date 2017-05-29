@@ -25,7 +25,7 @@
                     fileRevisionNumber="1"/>
 
 	<sequence_file id="1" created_date="2013-07-18 14:20:19.0"
-		modified_date="2013-07-18 14:20:19.0" file_path="tmp/file.fastq"
+		modified_date="2013-07-18 14:20:19.0" file_path="/tmp/file.fastq"
 		file_revision_number="1" />
 
 	<sequencing_object id="1" created_date="2013-07-18 14:20:19.0"

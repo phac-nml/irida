@@ -43,19 +43,19 @@
 	<miseq_run id="4" workflow="Test workflow"/>
 	<miseq_run id="5" workflow="Test workflow"/>
 
-	<sequence_file id="1" file_path="FileThatMayNotExist"
+	<sequence_file id="1" file_path="/FileThatMayNotExist"
 		created_date="2013-07-18 14:20:19.0" file_revision_number="1"/>
-	<sequence_file id="2" file_path="FileThatMayNotExist1"
+	<sequence_file id="2" file_path="/FileThatMayNotExist1"
 		created_date="2013-07-18 14:20:19.0" file_revision_number="1"/>
-	<sequence_file id="3" file_path="FileThatMayNotExist2"
+	<sequence_file id="3" file_path="/FileThatMayNotExist2"
 		created_date="2013-07-18 14:20:19.0" file_revision_number="1"/>
-	<sequence_file id="4" file_path="FileThatMayNotExist3"
+	<sequence_file id="4" file_path="/FileThatMayNotExist3"
 		created_date="2013-07-18 14:20:19.0" file_revision_number="1"/>
-	<sequence_file id="5" file_path="FileThatMayNotExist4"
+	<sequence_file id="5" file_path="/FileThatMayNotExist4"
         created_date="2013-07-18 14:20:19.0" file_revision_number="1"/>
-    <sequence_file id="6" file_path="FileThatMayNotExist5"
+    <sequence_file id="6" file_path="/FileThatMayNotExist5"
         created_date="2013-07-18 14:20:19.0" file_revision_number="1"/>
-    <sequence_file id="7" file_path="FileThatMayNotExist6"
+    <sequence_file id="7" file_path="/FileThatMayNotExist6"
         created_date="2013-07-18 14:20:19.0" file_revision_number="1"/>
 
 	<sequencing_object id="1" created_date="2013-07-18 14:20:19.0"
