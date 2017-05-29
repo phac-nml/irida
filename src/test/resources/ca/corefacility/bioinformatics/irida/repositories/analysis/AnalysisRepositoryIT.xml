@@ -44,19 +44,19 @@
 		perSequenceQualityScoreChart="x" totalBases="1000" totalSequences="4" />
 
 	<sequence_file id="1" created_date="2013-07-18 14:20:19.0"
-	modified_date="2013-07-18 14:20:19.0" file_path="/tmp/file.fastq"
+	modified_date="2013-07-18 14:20:19.0" file_path="tmp/file.fastq"
 	file_revision_number="1" fastqc_analysis_id="1" />
 
 	<sequence_file id="2" created_date="2013-07-18 14:20:19.0"
-		modified_date="2013-07-18 14:20:19.0" file_path="/tmp/file.fastq2"
+		modified_date="2013-07-18 14:20:19.0" file_path="tmp/file.fastq2"
 		file_revision_number="1" fastqc_analysis_id="2" />
 
 	<sequence_file id="3" created_date="2013-07-18 14:20:19.0"
-		modified_date="2013-07-18 14:20:19.0" file_path="/tmp/file.fastq3"
+		modified_date="2013-07-18 14:20:19.0" file_path="tmp/file.fastq3"
 		file_revision_number="1" />
 
 	<sequence_file id="4" created_date="2013-07-18 14:20:19.0"
-		modified_date="2013-07-18 14:20:19.0" file_path="/tmp/file.fastq4"
+		modified_date="2013-07-18 14:20:19.0" file_path="tmp/file.fastq4"
 		file_revision_number="1" />
 
 	<sequencing_object id="1" created_date="2013-07-18 14:20:19.0"

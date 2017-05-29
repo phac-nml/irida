@@ -42,11 +42,11 @@
 		client_details_id="1" resource_id="NmlIrida" />
 
 	<sequence_file id="1" created_date="2013-07-18 14:20:19.0"
-		file_path="/sequenceFile1" />
+		file_path="sequenceFile1" />
 	<sequence_file id="2" created_date="2013-07-18 14:20:19.0"
-		file_path="/sequenceFile2_01_L001_R1_001.fastq.gz" />
+		file_path="sequenceFile2_01_L001_R1_001.fastq.gz" />
 	<sequence_file id="3" created_date="2013-07-18 14:20:19.0"
-		file_path="/sequenceFile2_01_L001_R2_001.fastq.gz" />
+		file_path="sequenceFile2_01_L001_R2_001.fastq.gz" />
 
 	<sequencing_object id="1" created_date="2013-07-18 14:20:19.0" />
 	<sequencing_object id="2" created_date="2013-07-18 14:20:19.0" />
