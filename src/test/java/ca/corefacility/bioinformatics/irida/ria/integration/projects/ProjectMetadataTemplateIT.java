@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 
@@ -36,8 +34,6 @@ public class ProjectMetadataTemplateIT extends AbstractIridaUIITChromeDriver {
 		page.addMetadataField("Test Field");
 		assertEquals("Should be 1 metadata field on the page.", 1, page.getNumberOfTemplateFields());
 		assertTrue("Save template button should be enabled if there is a template name and at least 1 field", page.isSaveButtonEnabled());
-		page.addMetadataField("Something");
-		assertEquals("Should be 2 metadata fields on the page", 2, page.getNumberOfTemplateFields());
 
 		page.saveTemplate();
 		ProjectSettingsMetadataTemplatesPage settingsMetadataTemplatesPage = ProjectSettingsMetadataTemplatesPage.goToPage(driver(), PROJECT_ID);
