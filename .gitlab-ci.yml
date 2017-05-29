@@ -32,7 +32,7 @@ ui_job:
   - docker
   image: docker.corefacility.ca:5000/irida-testing:latest
   script:
-  - xvfb-run --auto-servernum --server-num=1 mvn clean verify -Pui_testing -Dwebdriver.chrome.driver=./src/main/webapp/node_modules/chromedriver/lib/chromedriver/chromedriver -Dirida.it.nosandbox=true -Djdbc.url=$JDBC_URL 
+  - xvfb-run --auto-servernum --server-num=1 mvn clean verify -Pui_testing -Dwebdriver.chrome.driver=./src/main/webapp/node_modules/chromedriver/lib/chromedriver/chromedriver -Djdbc.url=$JDBC_URL 
   stage: test
 #rest_job:
 #running rest api tests
