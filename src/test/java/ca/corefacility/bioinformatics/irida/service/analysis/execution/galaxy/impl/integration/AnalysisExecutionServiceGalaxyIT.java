@@ -214,7 +214,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 	public void testGetWorkflowStatusFail() throws InterruptedException, NoSuchValueException,
 			IridaWorkflowNotFoundException, ExecutionManagerException, IOException, ExecutionException {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
-				sequenceFilePath, referenceFilePath, validIridaWorkflowId, AnalysisState.PREPARED);
+				sequenceFilePath, referenceFilePath, validIridaWorkflowId, AnalysisState.NEW);
 		
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
