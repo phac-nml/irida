@@ -159,7 +159,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 		// Select some samples
 		page.selectSample(0);
-		page.selectSample(3);
+		page.selectSample(2);
 		assertEquals("Should be 2 selected samples", "2 samples selected", page.getSelectedInfoText());
 
 		// Merge these samples with the original name
@@ -167,11 +167,11 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.mergeSamplesWithOriginalName();
 		List<String> mergeNames = page.getSampleNamesOnPage().subList(0, 2);
 		assertEquals("Should still the first samples name", originalNames.get(0), mergeNames.get(0));
-		assertFalse("Should have different sample second since it was merged", originalNames.get(3).equals(mergeNames.get(3)));
+		assertFalse("Should have different sample second since it was merged", originalNames.get(2).equals(mergeNames.get(2)));
 
 		// Merge with a new name
 		page.selectSample(0);
-		page.selectSample(3);
+		page.selectSample(2);
 		String newSampleName = "NEW_NAME";
 		page.mergeSamplesWithNewName(newSampleName);
 		String name = page.getSampleNamesOnPage().get(0);
