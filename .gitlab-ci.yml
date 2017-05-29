@@ -26,7 +26,7 @@ service_job:
   script:
   - mvn clean verify -Pservice_testing -Djdbc.url=$JDBC_URL
   stage: test
-ui_job:
+#ui_job:
 #running ui tests
 #  tags:
 #  - docker
