@@ -1,10 +1,9 @@
 services:
   - mariadb:10.0
-  - apetkau/galaxy-irida-16.10-it:0.1
 
 stages:
+  - build
   - test
-  #- build
 
 variables:
   MYSQL_DATABASE: irida_test
@@ -20,44 +19,47 @@ before_script:
   - ./install-libs.sh
   - popd
 
-#service_job:
+service_job:
 #running service layer tests
-#  tags:
-#  - docker
-#  image: docker.corefacility.ca:5000/irida-testing:latest
-#  script:
-#  - mvn clean verify -Pservice_testing -Djdbc.url=$JDBC_URL
-#  stage: test
-#ui_job:
-#running ui tests
-#  tags:
-#  - docker
-#  image: docker.corefacility.ca:5000/irida-testing:latest
-#  script:
-#  - xvfb-run --auto-servernum --server-num=1 mvn clean verify -Pui_testing -Dwebdriver.chrome.driver=./src/main/webapp/node_modules/chromedriver/lib/chromedriver/chromedriver -Djdbc.url=$JDBC_URL -Dirida.it.nosandbox=true 
-#  stage: test
-#rest_job:
-#running rest api tests
-#  tags:
-#  - docker
-#  image: docker.corefacility.ca:5000/irida-testing:latest
-#  script:
-#  - mvn clean verify -Prest_testing -Djdbc.url=$JDBC_URL
-#  stage: test
-galaxy_job:
-##lastly, run all tests involving Galaxy
   tags:
   - docker
   image: docker.corefacility.ca:5000/irida-testing:latest
   script:
+  - mvn clean verify -Pservice_testing -Djdbc.url=$JDBC_URL
+  stage: test
+ui_job:
+#running ui tests
+  tags:
+  - docker
+  image: docker.corefacility.ca:5000/irida-testing:latest
+  script:
+  - xvfb-run --auto-servernum --server-num=1 mvn clean verify -Pui_testing -Dwebdriver.chrome.driver=./src/main/webapp/node_modules/chromedriver/lib/chromedriver/chromedriver -Djdbc.url=$JDBC_URL -Dirida.it.nosandbox=true 
+  stage: test
+rest_job:
+#running rest api tests
+  tags:
+  - docker
+  image: docker.corefacility.ca:5000/irida-testing:latest
+  script:
+  - mvn clean verify -Prest_testing -Djdbc.url=$JDBC_URL
+  stage: test
+galaxy_job:
+#lastly, run all tests involving Galaxy
+  tags:
+  - docker
+  image: docker.corefacility.ca:5000/irida-testing:latest
+  services:
+    - mariadb:10.0
+    - apetkau/galaxy-irida-16.10-it:0.1
+  script:
   - mvn clean verify -B -Pgalaxy_testing -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY
   stage: test
-#build-docs_job:
-#  tags:
-#  - docker
-#  image: maven:3.5.0-jdk-8
-#  script: "scripts/build-docs.sh"
-#  stage: build
+build-docs_job:
+  tags:
+  - docker
+  image: docker.corefacility.ca:5000/irida-testing:latest
+  script: mvn clean site
+  stage: build
 cache:
   untracked: true
   paths:
