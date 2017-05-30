@@ -49,8 +49,11 @@ public class IntegrationUITestListener extends RunListener {
 	public static void startWebDriver() {
 		ChromeOptions options = new ChromeOptions();
 		
-		logger.debug("NO SANDBOX MODE");
-		options.addArguments("--no-sandbox");
+		String noSandbox = System.getProperty("irida.it.nosandbox");
+		if (noSandbox != null && noSandbox.equals("true")) {
+			logger.debug("NO SANDBOX MODE");
+			options.addArguments("--no-sandbox");
+		}
 		
 		driver = new ChromeDriver(options);
 		driver.manage().window().setSize(new Dimension(1400, 900));
