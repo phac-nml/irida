@@ -12,14 +12,13 @@ variables:
   MYSQL_USER: test
   MYSQL_PASSWORD: test
   JDBC_URL: jdbc:mysql://mariadb:3306/irida_test
+  TMP_DIRECTORY: /builds/irida
 
 
 before_script:
   - pushd lib
   - ./install-libs.sh
   - popd
-  - ls -lha /tmp/irida/
-  - rm -rf /tmp/irida/*
 
 #service_job:
 #running service layer tests
@@ -51,7 +50,7 @@ galaxy_job:
   - docker
   image: docker.corefacility.ca:5000/irida-testing:latest
   script:
-  - mvn clean verify -B -Pgalaxy_testing -Djdbc.url=$JDBC_URL
+  - mvn clean verify -B -Pgalaxy_testing -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY
   stage: test
 #build-docs_job:
 #  tags:
