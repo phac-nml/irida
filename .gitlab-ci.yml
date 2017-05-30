@@ -18,7 +18,8 @@ before_script:
   - pushd lib
   - ./install-libs.sh
   - popd
-  - rm -rf /tmp/irida/*
+  - rm -rf /tmp/irida/
+  - mkdir /tmp/irida
 
 #service_job:
 #running service layer tests
@@ -50,7 +51,7 @@ galaxy_job:
   - docker
   image: docker.corefacility.ca:5000/irida-testing:latest
   script:
-  - mvn clean verify -Pgalaxy_testing -Djdbc.url=$JDBC_URL
+  - mvn clean verify -B -Pgalaxy_testing -Djdbc.url=$JDBC_URL
   stage: test
 #build-docs_job:
 #  tags:
