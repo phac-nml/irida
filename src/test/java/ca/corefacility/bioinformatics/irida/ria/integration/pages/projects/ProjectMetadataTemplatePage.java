@@ -66,6 +66,7 @@ public class ProjectMetadataTemplatePage extends AbstractPage {
 
 	public void saveTemplate() {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
+		waitForTime(1000);
 		saveTemplateButton.click();
 		wait.until(ExpectedConditions.visibilityOf(templateIdentifier));
 	}
