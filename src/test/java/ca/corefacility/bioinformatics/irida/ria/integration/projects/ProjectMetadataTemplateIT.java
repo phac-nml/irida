@@ -14,6 +14,8 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectMetadataTemplateView.xml")
 public class ProjectMetadataTemplateIT extends AbstractIridaUIITChromeDriver {
 	private final int PROJECT_ID = 1;
+	private final int TEMPLATE_ID = 1;
+	private final int NEW_TEMPLATE = -1;
 
 	@Test
 	public void testCreateTemplateAsManager() {
@@ -27,7 +29,7 @@ public class ProjectMetadataTemplateIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsManager(driver());
 
 		String templateName = "TEMP NAME";
-		ProjectMetadataTemplatePage page = ProjectMetadataTemplatePage.goToPage(driver(), PROJECT_ID);
+		ProjectMetadataTemplatePage page = ProjectMetadataTemplatePage.goToPage(driver(), PROJECT_ID, NEW_TEMPLATE);
 		page.setTemplateName(templateName);
 		assertFalse("Save button should not be enabled with only a template name.", page.isSaveButtonEnabled());
 
@@ -38,5 +40,29 @@ public class ProjectMetadataTemplateIT extends AbstractIridaUIITChromeDriver {
 		page.saveTemplate();
 		ProjectSettingsMetadataTemplatesPage settingsMetadataTemplatesPage = ProjectSettingsMetadataTemplatesPage.goToPage(driver(), PROJECT_ID);
 		assertEquals("Should be two template on the Metadata Template List page", 2, settingsMetadataTemplatesPage.getNumberOfTemplatesInProject());
+	}
+
+	@Test
+	public void testModifyExistingTemplate() {
+		LoginPage.loginAsManager(driver());
+		ProjectMetadataTemplatePage page = ProjectMetadataTemplatePage.goToPage(driver(), PROJECT_ID, TEMPLATE_ID);
+
+		String currentTemplateName = page.getTemplateName();
+		int currentNumTemplateFields = page.getNumberOfTemplateFields();
+
+		// Remove  1 field
+		page.removeTemplateFieldByIndex(1);
+		assertEquals("Should be 1 less field", currentNumTemplateFields - 1, page.getNumberOfTemplateFields());
+
+		// Change the template name
+		String newTemplateName = currentTemplateName + "-new";
+		page.setTemplateName(newTemplateName);
+		assertFalse("Should have an updated template name", currentTemplateName.equalsIgnoreCase(page.getTemplateName()));
+
+		page.saveTemplate();
+		// Make sure the template was saved correctly
+		driver().navigate().refresh();
+		assertEquals("Should be 1 less field", currentNumTemplateFields - 1, page.getNumberOfTemplateFields());
+		assertEquals("Template name should be updated", newTemplateName, page.getTemplateName());
 	}
 }

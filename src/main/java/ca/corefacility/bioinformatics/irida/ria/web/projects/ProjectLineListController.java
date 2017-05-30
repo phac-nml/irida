@@ -25,8 +25,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -182,6 +182,7 @@ public class ProjectLineListController {
 			@RequestBody List<Map<String, String>> fields) {
 		Project project = projectService.read(projectId);
 		List<MetadataTemplateField> metadataFields = new ArrayList<>();
+
 		for (Map<String, String> field : fields) {
 			String label = field.get("label");
 			// Label and identifier are default that are always in the list.
@@ -300,6 +301,7 @@ public class ProjectLineListController {
 		if (templateId != null) {
 			template = metadataTemplateService.read(templateId);
 			template.setFields(metadataFields);
+			template.setName(name);
 			metadataTemplateService.updateMetadataTemplateInProject(project, template);
 			message = messageSource.getMessage("linelist.create-template.update-success", new Object[]{name}, locale);
 		} else  {
