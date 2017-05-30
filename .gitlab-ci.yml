@@ -25,7 +25,7 @@ service_job:
   - docker
   image: docker.corefacility.ca:5000/irida-testing:latest
   script:
-  - mvn clean verify -Pservice_testing -Djdbc.url=$JDBC_URL
+  - mvn clean verify -B -Pservice_testing -Djdbc.url=$JDBC_URL
   stage: test
 ui_job:
 #running ui tests
@@ -33,7 +33,7 @@ ui_job:
   - docker
   image: docker.corefacility.ca:5000/irida-testing:latest
   script:
-  - xvfb-run --auto-servernum --server-num=1 mvn clean verify -Pui_testing -Dwebdriver.chrome.driver=./src/main/webapp/node_modules/chromedriver/lib/chromedriver/chromedriver -Djdbc.url=$JDBC_URL -Dirida.it.nosandbox=true 
+  - xvfb-run --auto-servernum --server-num=1 mvn clean verify -B -Pui_testing -Dwebdriver.chrome.driver=./src/main/webapp/node_modules/chromedriver/lib/chromedriver/chromedriver -Djdbc.url=$JDBC_URL -Dirida.it.nosandbox=true 
   stage: test
 rest_job:
 #running rest api tests
@@ -41,7 +41,7 @@ rest_job:
   - docker
   image: docker.corefacility.ca:5000/irida-testing:latest
   script:
-  - mvn clean verify -Prest_testing -Djdbc.url=$JDBC_URL
+  - mvn clean verify -Prest_testing -B -Djdbc.url=$JDBC_URL
   stage: test
 galaxy_job:
 #lastly, run all tests involving Galaxy
@@ -58,7 +58,7 @@ build-docs_job:
   tags:
   - docker
   image: docker.corefacility.ca:5000/irida-testing:latest
-  script: mvn clean site
+  script: mvn clean site -B
   stage: build
 cache:
   untracked: true
