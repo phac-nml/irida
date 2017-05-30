@@ -18,7 +18,8 @@ before_script:
   - pushd lib
   - ./install-libs.sh
   - popd
-  - rm -r /tmp/irida/*
+  - ls -lha /tmp/irida/
+  - rm -rf /tmp/irida/*
 
 #service_job:
 #running service layer tests
