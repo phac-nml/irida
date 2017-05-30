@@ -46,7 +46,7 @@ public class DataTablesParams {
 	private String searchValue;
 	private Sort sort;
 
-	private DataTablesParams(Integer start, Integer length, Integer draw, String searchValue, Sort sort) {
+	public DataTablesParams(Integer start, Integer length, Integer draw, String searchValue, Sort sort) {
 		this.start = start;
 		this.length = length;
 		this.draw = draw;
