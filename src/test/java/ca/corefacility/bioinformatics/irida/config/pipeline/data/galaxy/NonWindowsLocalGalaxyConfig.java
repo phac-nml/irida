@@ -32,7 +32,7 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 
 	private static final int largestPort = 65535;
 
-	private static final int dockerGalaxyPort = 48888;
+	private static final int dockerGalaxyPort = 80;
 	/**
 	 * Builds a new LocalGalaxy allowing for connecting with a running Galaxy instance.
 	 * @return  A LocalGalaxy with information about the running Galaxy instance.
@@ -69,7 +69,7 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 
 		logger.debug("Setting Docker Galaxy ports");
 		int galaxyPort = dockerGalaxyPort;
-		URL galaxyURL = new URL("http://localhost:" + galaxyPort + "/");
+		URL galaxyURL = new URL("http://apetkau__galaxy-irida-16.10-it:" + galaxyPort + "/");
 		localGalaxy.setGalaxyURL(galaxyURL);
 
 		// set wrong port to something Galaxy is not running on
@@ -77,7 +77,7 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 		if (wrongPort > largestPort) {
 			wrongPort = galaxyPort - 1;
 		}
-		URL wrongGalaxyURL = new URL("http://localhost:" + wrongPort + "/");
+		URL wrongGalaxyURL = new URL("http://apetkau__galaxy-irida-16.10-it:" + wrongPort + "/");
 		localGalaxy.setInvalidGalaxyURL(wrongGalaxyURL);
 
 		// setup another port for running tests on
@@ -85,7 +85,7 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 		if (wrongPort2 > largestPort) {
 			wrongPort2 = galaxyPort - 2;
 		}
-		URL wrongGalaxyURL2 = new URL("http://localhost:" + wrongPort2 + "/");
+		URL wrongGalaxyURL2 = new URL("http://apetkau__galaxy-irida-16.10-it:" + wrongPort2 + "/");
 		localGalaxy.setTestGalaxyURL(wrongGalaxyURL2);
 	}
 }

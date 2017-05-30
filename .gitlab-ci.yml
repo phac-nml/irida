@@ -1,5 +1,6 @@
 services:
   - mariadb:10.0
+  - apetkau/galaxy-irida-16.10-it:0.1
 
 stages:
   - test
@@ -35,19 +36,22 @@ before_script:
 #  script:
 #  - xvfb-run --auto-servernum --server-num=1 mvn clean verify -Pui_testing -Dwebdriver.chrome.driver=./src/main/webapp/node_modules/chromedriver/lib/chromedriver/chromedriver -Djdbc.url=$JDBC_URL -Dirida.it.nosandbox=true 
 #  stage: test
-rest_job:
+#rest_job:
 #running rest api tests
+#  tags:
+#  - docker
+#  image: docker.corefacility.ca:5000/irida-testing:latest
+#  script:
+#  - mvn clean verify -Prest_testing -Djdbc.url=$JDBC_URL
+#  stage: test
+galaxy_job:
+##lastly, run all tests involving Galaxy
   tags:
   - docker
   image: docker.corefacility.ca:5000/irida-testing:latest
   script:
-  - mvn clean verify -Prest_testing -Djdbc.url=$JDBC_URL
+  - mvn clean verify -Pgalaxy_testing -Djdbc.url=$JDBC_URL
   stage: test
-#galaxy_job:
-##lastly, run all tests involving Galaxy
-#  script:
-#  - "scripts/galaxy-docker.sh"
-#  stage: test
 #build-docs_job:
 #  tags:
 #  - docker
