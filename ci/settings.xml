@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!-- This file is used to move the default maven repository directory in the irida-testing docker image.  This is moved because the base maven docker image mounts /root/.m2 as a docker volume which is cleared on every container startup, so any pre-caching of maven dependencies end up deleted. -->
 
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
