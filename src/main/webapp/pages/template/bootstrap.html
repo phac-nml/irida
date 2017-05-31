@@ -104,13 +104,13 @@
 				</li>
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
-				<li sec:authorize="hasRole('ROLE_ADMIN')" class="uib-dropdown" uib-dropdown="">
+				<li sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_TECHNICIAN')" class="uib-dropdown" uib-dropdown="">
 					<a href="#" class="uib-dropdown-toggle" data-toggle="uib-dropdown" uib-dropdown-toggle="">
 						<span th:text="#{nav.main.admin}">Admin</span>
 						<span class="caret"></span>
 					</a>
 					<ul class="uib-dropdown-menu" role="menu">
-						<li role="menuitem">
+						<li sec:authorize="hasRole('ROLE_ADMIN')" role="menuitem">
 							<a href="#" th:href="@{/clients}" th:text="#{nav.main.clients}">
 								_Clients_
 							</a>
@@ -120,32 +120,16 @@
 								_Sequencing Runs_
 							</a>
 						</li>
-            <li role="menuitem">
+            			<li sec:authorize="hasRole('ROLE_ADMIN')" role="menuitem">
 							<a href="#" th:href="@{/export/ncbi}" th:text="#{nav.main.ncbi-uploads}">
 								_NCBI Exports_
 							</a>
 						</li>
-						<li role="menuitem">
+						<li sec:authorize="hasRole('ROLE_ADMIN')" role="menuitem">
 							<a href="#" th:href="@{/announcements/admin}" th:text="#{nav.main.announcement}">Announcements</a>
 						</li>
 					</ul>
 				</li>
-				<!--<li class="uib-dropdown" uib-dropdown="">-->
-					<!--<a href="#" class="uib-dropdown-toggle" data-toggle="uib-dropdown" uib-dropdown-toggle="">-->
-						<!--<span th:text="#{nav.main.settings}">Account</span>-->
-						<!--<span class="caret"></span>-->
-					<!--</a>-->
-					<!--<ul class="uib-dropdown-menu" role="menu">-->
-                        <!--&lt;!&ndash;/* TODO: Re-enable for federated data-->
-						<!--<li>-->
-							<!--<a href="#" th:href="@{/remote_api}" th:text="#{nav.main.remoteapis}">-->
-								<!--Remote API Status-->
-							<!--</a>-->
-						<!--</li>-->
-						<!--<li class="divider"></li>-->
-                        <!--*/&ndash;&gt;-->
-					<!--</ul>-->
-				<!--</li>-->
 				<li uib-dropdown="">
 					<a href="#" class="uib-dropdown-toggle" data-toggle="uib-dropdown"
 					   uib-dropdown-toggle="">
