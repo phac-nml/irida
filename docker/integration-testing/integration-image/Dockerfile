@@ -14,7 +14,7 @@ RUN cd irida/lib; ./install-libs.sh; cd ..; mvn dependency:copy-dependencies
 
 RUN apt update
 
-RUN apt install -qyy xvfb build-essential rubygems ruby-dev git
+RUN apt install -qyy xvfb build-essential rubygems ruby-dev git mysql-client
 
 RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 
