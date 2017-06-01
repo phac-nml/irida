@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.web.projects;
+package ca.corefacility.bioinformatics.irida.ria.web.projects.metadata;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpSession;
 
+import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
