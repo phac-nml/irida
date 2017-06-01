@@ -163,7 +163,7 @@
         cgMLST_predictions['percent_matching'] = parseFloat((1 - result['cgmlst_distance'])*100).toFixed(1)+"%";
   
         var mash_predictions = {};
-        mash_predictions['percent_kmers'] = parseFloat((1 - result['mash_distance'])*100).toFixed(1)+"%";
+        mash_predictions['distance'] = result['mash_distance'];
   
 	vm.result = result;
         vm.sample_information = sample_information;

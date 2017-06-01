@@ -113,7 +113,7 @@ The results of predictions made through comparisons using the software [Mash][].
 * **Subspecies**: The subspecies identified by comparing the genome to the SISTR database.
 * **Serovar**: The serovar identified using Mash.
 * **Matching genome name**: The name of the closest matching genome in the SISTR database identified using Mash.
-* **Percent shared k-mers**: The (approximate) percent of shared *k*-mers to the closest genome detected with Mash (_100% * [1 - mash distance]_).
+* **Mash distance**: The Mash distance to the closest matching genome. This approximates the mutation rate.
 
 ### Output Files
 
