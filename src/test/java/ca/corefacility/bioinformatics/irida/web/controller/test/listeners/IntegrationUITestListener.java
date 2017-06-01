@@ -49,9 +49,13 @@ public class IntegrationUITestListener extends RunListener {
 	public static void startWebDriver() {
 		ChromeOptions options = new ChromeOptions();
 		
+		/*
+		 * Run chrome in no sandbox mode. Only use this option for running tests
+		 * in docker containers.
+		 */
 		String noSandbox = System.getProperty("irida.it.nosandbox");
 		if (noSandbox != null && noSandbox.equals("true")) {
-			logger.debug("NO SANDBOX MODE");
+			logger.warn("Running Chrome in no sandbox mode");
 			options.addArguments("--no-sandbox");
 		}
 		

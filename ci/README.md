@@ -49,3 +49,9 @@ check_interval = 0
   [runners.cache]
 
 ```
+
+Parameters
+----------
+
+* irida.it.rootdirectory: Root directory to store test data files.
+* irida.it.nosandbox: Run Chrome in no sandbox mode for integration tests (WARNING: This mode is unsafe for running on your desktop.  Only use this mode for running in docker).
