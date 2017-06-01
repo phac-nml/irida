@@ -359,8 +359,7 @@ public class CartController {
 	}
 
 	/**
-	 * Get the number of samples contained in the cart. This count includes the
-	 * remote samples
+	 * Get the number of samples contained in the cart.
 	 *
 	 * @return {@link Integer} number of samples in the cart.
 	 */
