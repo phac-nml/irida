@@ -10,6 +10,7 @@ Changes
 * [Developer]: Fixed permissions for NCBI submission uploads failing with Access Denied error. (0.16.1)
 * [UI]: Fixed bug causing reference file uploads to fail when launching a pipeline. (0.16.2)
 * [UI]: In SISTR report, changed incorrect label **Percent shared k-mers** to **Mash distance** and report the mash distance instead of converting to percent.
+* [Developer]: Changed gitlab CI builds to run with Docker.  See `ci/README.md` for more information.
 
 0.15.0 to 0.16.0
 ----------------
