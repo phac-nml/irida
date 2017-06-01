@@ -84,6 +84,13 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 			int capacity = analysisExecutionService.getCapacity();
 			if (capacity > 0) {
 
+				if (capacity < analysisSubmissions.size()) {
+					logger.debug("Attempting to submit more jobs than capacity, list will be trimmed: "
+							+ analysisSubmissions.size() + "=>" + capacity);
+					// only submit up to capacity
+					analysisSubmissions = analysisSubmissions.subList(0, capacity);
+				}
+
 				for (AnalysisSubmission analysisSubmission : analysisSubmissions) {
 					logger.debug("Preparing " + analysisSubmission);
 
