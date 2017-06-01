@@ -6,11 +6,11 @@ stages:
   - test
 
 variables:
-  MYSQL_DATABASE: irida_test
+  MYSQL_DATABASE: $CI_JOB_ID
   MYSQL_ROOT_PASSWORD: test
   MYSQL_USER: test
   MYSQL_PASSWORD: test
-  JDBC_URL: jdbc:mysql://mariadb:3306/irida_test
+  JDBC_URL: jdbc:mysql://mariadb:3306/$MYSQL_DATABASE
   TMP_DIRECTORY: /builds/irida
 
 
