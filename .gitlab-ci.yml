@@ -15,7 +15,7 @@ variables:
 
 
 before_script:
-  - mysql -u$MYSQL_USER -p$MYSQL_PASSWORD -hmariadb $MYSQL_DATABASE < ci/irida_0.16.0.sql
+  - mysql -u$MYSQL_USER -p$MYSQL_PASSWORD -hmariadb $MYSQL_DATABASE < ci/irida_latest.sql
   - pushd lib
   - ./install-libs.sh
   - popd
