@@ -12,11 +12,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpSession;
 
-import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -44,6 +42,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -99,20 +98,6 @@ public class ProjectSampleMetadataController {
 		Project project = projectService.read(projectId);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		return "projects/project_samples_metadata_template";
-	}
-
-	/**
-	 * Search all Metadata keys available for adding to a template.
-	 * 
-	 * @param query
-	 *            the query to search for
-	 * @return a list of keys matching the query
-	 */
-	@RequestMapping("/fields")
-	@ResponseBody
-	public List<String> getMetadataKeysForProject(@RequestParam String query) {
-		return metadataTemplateService.getAllMetadataFieldsByQueryString(query).stream()
-				.map(MetadataTemplateField::getLabel).collect(Collectors.toList());
 	}
 
 	/**

@@ -12,32 +12,80 @@
           success: "Metadata template  successfully created."
         },
         urls: {
-          templates: /*[[@{/projects/{id}/linelist/templates/:id(id=${project.getId()})}]]*/ '',
-          fields: /*[[@{/projects/{id}/sample-metadata/fields(id=${project.getId()})}]]*/ ''
+//          templates: /*[[@{/projects/{id}/linelist/templates/:id(id=${project.getId()})}]]*/ '',
+          fields: /*[[@{/projects/{id}/metadata-templates/fields(id=${project.getId()})}]]*/ ''
         }
       };
     </script>
 </head>
 <body>
 <main layout:fragment="main">
-    <form action="#" th:object="${template}" th:action="@{/projects/{id}/metadata-templates/save(id=${project.id})}" method="post">
-        <input type="hidden" th:field="*{id}"/>
-        <div class="form-group">
-            <label for="template-name">TEMPLATE NAME</label>
-            <input id="template-name" type="text" class="form-control" th:field="*{name}"/>
+    <h1 class="spaced-bottom" th:text="#{linelist.create-template.title}"></h1>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <form id="template-form" th:object="${template}"
+                  th:action="@{/projects/{id}/metadata-templates/save(id=${project.id})}" method="post">
+                <input type="hidden" th:field="*{id}"/>
+                <div class="form-group">
+                    <label for="template-name" class="control-label" th:text="#{linelist.create-template.name}">TEMPLATE
+                        NAME</label>
+                    <input id="template-name" type="text" class="form-control" th:field="*{name}"
+                           minlength="5" required="required"
+                           data:msg-minlength="#{linelist.create-template.templateName.minlength}"/>
+                </div>
+                <hr/>
+                <div class="row spaced-bottom">
+                    <div class="col-md-8">
+                        <label th:text="#{linelist.create-template.template-fields}">METADATA_FIELDS</label>
+                    </div>
+                    <div class="col-md-4 text-right">
+                        <button type="button" class="btn btn-default"
+                                data-toggle="modal" data-target="#add-field-modal"
+                                th:text="#{visualization.phylogenomics.add-new-field.btn}">ADD
+                            FIELD
+                        </button>
+                    </div>
+                </div>
+                <div id="field-count-warning" class="spaced-top spaced-bottom alert alert-danger hidden">
+                    <strong th:text="#{linelist.create-template.required-fields}">Must have at least 1 template field</strong>
+                </div>
+                <ul class="list-group template-fields">
+                    <li class="list-group-item template-field" th:each="field : *{fields}">
+                        <i class="fa fa-bars" aria-hidden="true"></i>&nbsp;
+                        <th:block th:text="${field}"/>
+                        <input class="field-names" name="fields" type="hidden" th:value="${field}"/>
+                        <span class="close field-remove pull-right">&times;</span>
+                    </li>
+                </ul>
+                <button id="save-btn" class="btn btn-primary" type="submit"
+                        th:text="#{linelist.create-template.save-template}">SAVE ME
+                </button>
+            </form>
         </div>
-        <div class="form-group" th:each="field : *{fields}">
-            <div class="checkbox">
-                <label>
-                    <input type="checkbox" name="fields" th:value="${field}"/>
-                    <th:block th:text="${field}"/>
-                </label>
+    </div>
+
+    <div class="modal modal-fade" id="add-field-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" th:text="#{visualization.phylogenomics.field-modal.title}"></h4>
+                </div>
+                <div class="modal-body">
+                    <label for="field-select" th:text="#{visualization.phylogenomics.field-modal.description}"></label>
+                    <select class="form-control" id="field-select"></select>
+                    <div ng-show="model.fieldExists" class="spaced-top alert alert-info">
+                        <strong><i class="fa fa-exclamation-triangle" aria-hidden="true"></i></strong>
+                        <th:block th:text="#{visualization.phylogenomics.field-modal.existing-field-warning}"/>
+                    </div>
+                </div>
             </div>
         </div>
-        <button class="btn btn-primary" type="submit">SAVE</button>
-    </form>
-    <create-template></create-template>
+    </div>
 </main>
+
+
 <th:block layout:fragment="scripts">
     <script type="text/ng-template" id="create-template.tmpl.html">
         <form name="$ctrl.createTemplateForm" novalidate="">
@@ -53,7 +101,8 @@
                                         <th:block th:text="#{linelist.create-template.name}"/>
                                     </label>
                                     <span class="text-muted pull-right" ng-show="$ctrl.template.identifier">
-                                        <strong><th:block th:text="#{linelist.template.identifier}"/>:</strong> <span id="template-id">{{$ctrl.template.identifier}}</span>
+                                        <strong><th:block th:text="#{linelist.template.identifier}"/>:</strong> <span
+                                            id="template-id">{{$ctrl.template.identifier}}</span>
                                     </span>
                                 </div>
                                 <input id="template-name"
@@ -72,8 +121,8 @@
                                         field_</p>
                                     <p class="label label-danger" ng-message="minlength"
                                        th:text="#{linelist.create-template.templateName.minlength}">_Templage name must
-                                                                                                    be 5
-                                                                                                    letters long_</p>
+                                        be 5
+                                        letters long_</p>
                                     <p class="label label-danger" ng-message="unique"
                                        th:text="#{linelist.create-template.saving.error.unique}">
                                         This field already exists.
@@ -102,7 +151,8 @@
                                     <div class="field-label">{{field.label}}&nbsp;&nbsp;
                                     </div>
                                     <div class="field-buttons">
-                                        <div class="close field-remove" ng-click="$ctrl.removeField($index)">&times;</div>
+                                        <div class="close field-remove" ng-click="$ctrl.removeField($index)">&times;
+                                        </div>
                                     </div>
                                 </li>
                             </ul>
@@ -110,17 +160,20 @@
                         <div class="col-md-12" ng-show="$ctrl.template.identifier">
                             <div class="panel panel-default">
                                 <div class="panel-heading">
-                                    <th:block th:text="#{linelist.create-template.settings}" />
+                                    <th:block th:text="#{linelist.create-template.settings}"/>
                                 </div>
                                 <div class="panel-body">
                                     <div class="row">
                                         <div class="col-md-8">
-                                            <strong th:text="#{linelist.create-template.delete}">Delete this template</strong>
-                                            <p th:text="#{linelist.create-template.delete-warning}">Once you delete a template, there is no going back. Please be certain.</p>
+                                            <strong th:text="#{linelist.create-template.delete}">Delete this
+                                                template</strong>
+                                            <p th:text="#{linelist.create-template.delete-warning}">Once you delete a
+                                                template, there is no going back. Please be certain.</p>
                                         </div>
                                         <div class="col-md-4 text-right">
                                             <button class="btn btn-danger" ng-click="$ctrl.removeTemplate()">
-                                                <i class="fa fa-trash" aria-hidden="true"></i> <th:block th:text="#{linelist.create-template.delete}" />
+                                                <i class="fa fa-trash" aria-hidden="true"></i>
+                                                <th:block th:text="#{linelist.create-template.delete}"/>
                                             </button>
                                         </div>
                                     </div>
@@ -156,52 +209,21 @@
             </div>
         </form>
     </script>
-    <script type="text/ng-template" id="addMetadataField.tmpl.html">
-        <div class="modal-header">
-            <h3 class="modal-title" th:text="#{visualization.phylogenomics.field-modal.title}">
-                _ADD_METADATA_FIELD_
-                <div class="close" ng-click="model.close()">
-                    <i class="fa fa-times" aria-hidden="true"></i>
-                </div>
-            </h3>
-        </div>
-        <div class="modal-body">
-            <p th:text="#{visualization.phylogenomics.field-modal.description}"></p>
-            <ui-select ng-model="model.field" style="width: 100%" autofocus="">
-                <ui-select-match data:placeholder="#{visualization.phylogenomics.field-modal.input.placeholder}">
-                </ui-select-match>
-                <ui-select-choices
-                        repeat="field in model.list"
-                        refresh="model.queryName($select.search)"
-                        refresh-delay="0"
-                        minimum-input-length="2">
-                    <div class="clearfix">
-                        <span class="pull-left">{{field.label}} </span>
-                        <span ng-show="field.new === true"
-                              class="label label-warning pull-right"
-                              style="margin-top: 3px;"
-                              th:text="#{visualization.phylogenomics.new-field}">_NEW_</span>
-                    </div>
-                </ui-select-choices>
-            </ui-select>
-            <div ng-show="model.fieldExists" class="spaced-top alert alert-info">
-                <strong><i class="fa fa-exclamation-triangle" aria-hidden="true"></i></strong>
-                <th:block th:text="#{visualization.phylogenomics.field-modal.existing-field-warning}"/>
-            </div>
-        </div>
-    </script>
+
 
     <script type="text/ng-template" id="deleteTemplate.tmpl.html">
         <div class="modal-header"
              style="background-color: rgba(217, 83, 79, 1.00); color: white; border-radius: 4px 4px 0 0;">
             <h3 class="modal-title">
                 <i class="fa fa-trash-o"></i>
-                <th:block th:text="#{linelist.create-template.delete-confirm}" />
+                <th:block th:text="#{linelist.create-template.delete-confirm}"/>
                 <div class="close" ng-click="modal.dismiss()"></div>
             </h3>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-danger" ng-click="modal.confirm()" th:text="#{linelist.create-template.delete}">_Delete Tempate_</button>
+            <button class="btn btn-danger" ng-click="modal.confirm()" th:text="#{linelist.create-template.delete}">
+                _Delete Tempate_
+            </button>
         </div>
     </script>
     <script src="/resources/js/build/create-metadata-template.bundle.js"
