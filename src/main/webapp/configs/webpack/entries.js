@@ -7,7 +7,7 @@ module.exports = {
   app: './resources/js/app.js',
   'samples-metadata-import': './resources/js/pages/projects/samples-metadata-import/index.js',
   'project-linelist': './resources/js/pages/projects/linelist/index.js',
-  'create-metadata-template': './resources/js/pages/projects/create-template/create-metadata-template.js',
+  'create-metadata-template': './resources/js/pages/projects/metadata-template/create-metadata-template.js',
   'visualizations-phylogenetics': './resources/js/pages/visualizations/phylogenetics/index.js',
   'projects-associated-edit': './resources/js/pages/projects/associated-projects/edit.module.js'
 };
