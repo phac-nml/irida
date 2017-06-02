@@ -1,38 +1,65 @@
+services:
+  - mariadb:10.0
 
 stages:
   - build
   - test
 
+variables:
+  MYSQL_DATABASE: irida_test
+  MYSQL_ROOT_PASSWORD: test
+  MYSQL_USER: test
+  MYSQL_PASSWORD: test
+  JDBC_URL: jdbc:mysql://mariadb:3306/irida_test
+  TMP_DIRECTORY: /builds/irida
+
+
 before_script:
-  - echo 'drop database if exists irida_test; create database irida_test' | mysql -u test -ptest
+  - mysql -u$MYSQL_USER -p$MYSQL_PASSWORD -hmariadb $MYSQL_DATABASE < ci/irida_latest.sql
   - pushd lib
   - ./install-libs.sh
   - popd
-  - rm -rf /tmp/irida/*
-  - rm -rf src/main/webapp/node_modules
 
 service_job:
 #running service layer tests
+  tags:
+  - docker
+  image: docker.corefacility.ca:5000/irida-testing:latest
   script:
-  - mvn clean verify -Pservice_testing
+  - mvn clean verify -B -Pservice_testing -Djdbc.url=$JDBC_URL
   stage: test
 ui_job:
 #running ui tests
+  tags:
+  - docker
+  image: docker.corefacility.ca:5000/irida-testing:latest
   script:
-  - xvfb-run --auto-servernum --server-num=1 mvn clean verify -Pui_testing -Dwebdriver.chrome.driver=./src/main/webapp/node_modules/chromedriver/lib/chromedriver/chromedriver
+  - xvfb-run --auto-servernum --server-num=1 mvn clean verify -B -Pui_testing -Dwebdriver.chrome.driver=./src/main/webapp/node_modules/chromedriver/lib/chromedriver/chromedriver -Djdbc.url=$JDBC_URL -Dirida.it.nosandbox=true 
   stage: test
 rest_job:
 #running rest api tests
+  tags:
+  - docker
+  image: docker.corefacility.ca:5000/irida-testing:latest
   script:
-  - mvn clean verify -Prest_testing
+  - mvn clean verify -Prest_testing -B -Djdbc.url=$JDBC_URL
   stage: test
 galaxy_job:
 #lastly, run all tests involving Galaxy
+  tags:
+  - docker
+  image: docker.corefacility.ca:5000/irida-testing:latest
+  services:
+    - mariadb:10.0
+    - apetkau/galaxy-irida-16.10-it:0.1
   script:
-  - "scripts/galaxy-docker.sh"
+  - mvn clean verify -B -Pgalaxy_testing -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY
   stage: test
 build-docs_job:
-  script: "scripts/build-docs.sh"
+  tags:
+  - docker
+  image: docker.corefacility.ca:5000/irida-testing:latest
+  script: mvn clean site -B
   stage: build
 cache:
   untracked: true

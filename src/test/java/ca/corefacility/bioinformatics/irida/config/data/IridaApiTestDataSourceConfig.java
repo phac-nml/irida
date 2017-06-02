@@ -51,7 +51,19 @@ public class IridaApiTestDataSourceConfig implements DataConfig {
 	 */
 	@Bean(name = "rootTempDirectory")
 	public Path rootTempDirectory() {
-		return Paths.get("/tmp/irida");
+		
+		String rootTempDirectory = "/tmp/irida";
+		
+		/*
+		 * Set irida.it.rootdirectory property to change root test file
+		 * directory
+		 */
+		String configuredRoot = System.getProperty("irida.it.rootdirectory");
+		if(configuredRoot != null){
+			rootTempDirectory = configuredRoot;
+		}
+		
+		return Paths.get(rootTempDirectory);
 	}
 
 	@Bean
