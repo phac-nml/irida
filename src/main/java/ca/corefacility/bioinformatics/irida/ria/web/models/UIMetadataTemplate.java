@@ -6,12 +6,18 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * User interface model for a {@link MetadataTemplate}
+ * This is required for creating a new {@link MetadataTemplate} since the UI create new {@link MetadataTemplateField}
+ * only lists {@link String} representations of them.
+ */
 public class UIMetadataTemplate {
     private Long id;
     private String name;
     private List<String> fields;
 
-    public UIMetadataTemplate() {}
+    public UIMetadataTemplate() {
+    }
 
     public UIMetadataTemplate(MetadataTemplate metadataTemplate) {
         this.id = metadataTemplate.getId();
