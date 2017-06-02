@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
@@ -163,11 +164,14 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Should be 2 selected samples", "2 samples selected", page.getSelectedInfoText());
 
 		// Merge these samples with the original name
-		List<String> originalNames = page.getSampleNamesOnPage().subList(0, 2); // Only need the first two
+		List<String> originalNames = Lists.newArrayList(page.getSampleNamesOnPage().get(0),
+				page.getSampleNamesOnPage().get(2));
 		page.mergeSamplesWithOriginalName();
-		List<String> mergeNames = page.getSampleNamesOnPage().subList(0, 2);
+		List<String> mergeNames = Lists.newArrayList(page.getSampleNamesOnPage().get(0),
+				page.getSampleNamesOnPage().get(2));
 		assertEquals("Should still the first samples name", originalNames.get(0), mergeNames.get(0));
-		assertFalse("Should have different sample second since it was merged", originalNames.get(1).equals(mergeNames.get(1)));
+		assertFalse("Should have different sample second since it was merged",
+				originalNames.get(1).equals(mergeNames.get(1)));
 
 		// Merge with a new name
 		page.selectSample(0);
