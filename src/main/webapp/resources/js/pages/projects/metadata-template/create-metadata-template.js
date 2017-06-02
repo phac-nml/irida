@@ -71,7 +71,7 @@ function checkFieldsState() {
  */
 function createNewListGroupItem(field) {
   return (`
-<li class="list-group-item">
+<li class="list-group-item template-field">
   <i class="fa fa-bars" aria-hidden="true"></i>&nbsp;
   ${field}
   <input class="field-names" name="fields" type="hidden" value="${field}"/>
@@ -88,6 +88,7 @@ function addNewField(field) {
   const li = createNewListGroupItem(field);
   $('.template-fields').append(li);
   checkFieldsState();
+  setSubmitBtnState();
 }
 
 /**
@@ -155,11 +156,14 @@ $('#add-field-modal')
         const value = $(this).val();
         existingFields.add(value);
         addNewField(value);
+
         // Reset Select2
         fieldSelect2.val(null).trigger('change');
         fieldSelect2.select2('destroy');
         modal.modal('hide');
       });
+
+    fieldSelect2.select2('open');
   });
 
 // ****************************************************************************
