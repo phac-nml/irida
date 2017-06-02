@@ -8,6 +8,7 @@ upgrading IRIDA that cannot be automated.
 ----------------
 
 * This upgrade makes schema changes to the databases and cannot be parallel deployed.  Servlet container must be stopped before deploying the new `war` file.  Note this upgrade removes a number of deprecated database tables such as `remote_related_proejct` and `remote_sequence_file`.  While these tables were likely empty it is **strongly** recommended you back up your database before this upgrade.
+* Remove `snapshot.file.base.directory` entry from `/etc/irida/irida.conf`.  This directory is no longer used.  If the directory pointed to by this config entry is empty it may be safely removed.
 
 
 0.15.0 to 0.16.0

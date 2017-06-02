@@ -65,7 +65,6 @@ The main configuration parameters you will need to change are:
   * `sequence.file.base.directory=/opt/irida/data/sequence` - Sequence files managed by IRIDA.
   * `reference.file.base.directory=/opt/irida/data/reference` - Reference files assigned to projects in IRIDA.
   * `output.file.base.directory=/opt/irida/data/output` - Results of analysis pipelines.
-  * `snapshot.file.base.directory=/opt/irida/data/snapshot` - Sequence files transferred from remote IRIDA installations.
 2. **Threads used for file processing (FastQC, GZip, etc):**
   * `file.processing.core.size=4` - The initial number of threads available for file processing.
   * `file.processing.max.size=8` - The maximum number of available threads for file processing.  This number should not exceed the configured maximum number of JDBC threads.
