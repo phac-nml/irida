@@ -19,7 +19,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.metadata.domain.Template;
+import ca.corefacility.bioinformatics.irida.ria.web.models.UIMetadataTemplate;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 
@@ -39,16 +39,33 @@ public class ProjectSamplesMetadataTemplateController {
         this.metadataTemplateService = metadataTemplateService;
     }
 
+    /**
+     * Get the page to create a new {@link MetadataTemplate}
+     *
+     * @param projectId {@link Long} identifier for a {@link Project}
+     * @param model     {@link Model} spring page model
+     * @param principal {@link Principal} currently logged in user
+     * @return {@link String} path to the new template page
+     */
     @RequestMapping("/new")
     public String getMetadataTemplateListPage(@PathVariable Long projectId,
                                               Model model,
                                               Principal principal) {
         Project project = projectService.read(projectId);
-        model.addAttribute("template", new Template());
+        model.addAttribute("template", new UIMetadataTemplate());
         projectControllerUtils.getProjectTemplateDetails(model, principal, project);
         return "projects/project_samples_metadata_template";
     }
 
+    /**
+     * Get a the page for a specific {@link MetadataTemplate}
+     *
+     * @param projectId  {@link Long} identifier for a {@link Project}
+     * @param templateId {@link Long} identifier for a {@link MetadataTemplate}
+     * @param principal  {@link Principal} currently logged in user
+     * @param model      {@link Model} spring page model
+     * @return {@link String} path to template page
+     */
     @RequestMapping("/{templateId}")
     public String getMetadataTemplatePage(@PathVariable Long projectId,
                                           @PathVariable Long templateId,
@@ -57,20 +74,20 @@ public class ProjectSamplesMetadataTemplateController {
         Project project = projectService.read(projectId);
         projectControllerUtils.getProjectTemplateDetails(model, principal, project);
         MetadataTemplate metadataTemplate = metadataTemplateService.read(templateId);
-        Template template = new Template();
-        template.setId(metadataTemplate.getId());
-        template.setName(metadataTemplate.getName());
-        List<String> fields = new ArrayList<>();
-        for (MetadataTemplateField field : metadataTemplate.getFields()) {
-            fields.add(field.getLabel());
-        }
-        template.setFields(fields);
+        UIMetadataTemplate template = new UIMetadataTemplate(metadataTemplate);
         model.addAttribute("template", template);
         return "projects/project_samples_metadata_template";
     }
 
+    /**
+     * Save or update a {@link MetadataTemplate} within a {@link Project}
+     *
+     * @param projectId  {@link Long} identifier for a {@link Project}
+     * @param templateId {@link Long} identifier for a {@link MetadataTemplate}
+     * @return {@link String} redirects to the template page.
+     */
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public String saveMetadataTemplate(@PathVariable Long projectId, Template template) {
+    public String saveMetadataTemplate(@PathVariable Long projectId, UIMetadataTemplate template) {
         Project project = projectService.read(projectId);
         List<MetadataTemplateField> metadataFields = new ArrayList<>();
         for (String field : template.getFields()) {
@@ -96,6 +113,20 @@ public class ProjectSamplesMetadataTemplateController {
         return "redirect:/projects/" + projectId + "/metadata-templates/" + metadataTemplate.getId();
     }
 
+    /**
+     * Delete a {@link MetadataTemplate} within a {@link Project}
+     *
+     * @param projectId  {@link Long} identifier for a {@link Project}
+     * @param templateId {@link Long} identifier for a {@link MetadataTemplate}
+     * @return {@link String} redirects to project > settings > metadata templates
+     */
+    @RequestMapping(value = "/delete/{templateId}", method = RequestMethod.POST)
+    public String deleteMetadataTemplate(@PathVariable Long projectId, @PathVariable Long templateId) {
+        Project project = projectService.read(projectId);
+        metadataTemplateService.deleteMetadataTemplateFromProject(project, templateId);
+        return "redirect:/projects/" + projectId + "/settings/metadata-templates";
+    }
+
 
     // *************************************************************************
     // AJAX METHODS                                                            *
@@ -104,8 +135,7 @@ public class ProjectSamplesMetadataTemplateController {
     /**
      * Search all Metadata keys available for adding to a template.
      *
-     * @param query
-     *            the query to search for
+     * @param query the query to search for
      * @return a list of keys matching the query
      */
     @RequestMapping("/fields")

@@ -162,6 +162,14 @@ $('#add-field-modal')
       });
   });
 
+// ****************************************************************************
+// Set up Delete Template
+// ****************************************************************************
+$('#delete-checkbox')
+  .on('change', function() {
+    $('#delete-template-btn').prop('disabled', !this.checked);
+  });
+
 // Force validation on load
 form.validate().form();
 checkFieldsState();

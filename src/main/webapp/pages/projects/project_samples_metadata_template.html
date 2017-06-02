@@ -8,11 +8,7 @@
           th:href="@{/resources/css/pages/create-linelist-template.css}"/>
     <script th:inline="javascript">
       var PAGE = {
-        i18n: {
-          success: "Metadata template  successfully created."
-        },
         urls: {
-//          templates: /*[[@{/projects/{id}/linelist/templates/:id(id=${project.getId()})}]]*/ '',
           fields: /*[[@{/projects/{id}/metadata-templates/fields(id=${project.getId()})}]]*/ ''
         }
       };
@@ -20,9 +16,9 @@
 </head>
 <body>
 <main layout:fragment="main">
-    <h1 class="spaced-bottom" th:text="#{linelist.create-template.title}"></h1>
-    <div class="panel panel-default">
-        <div class="panel-body">
+    <h2 class="h2-muted spaced-bottom" th:text="#{linelist.create-template.title}"></h2>
+    <div class="row spaced-bottom">
+        <div class="col-md-12">
             <form id="template-form" th:object="${template}"
                   th:action="@{/projects/{id}/metadata-templates/save(id=${project.id})}" method="post">
                 <input type="hidden" th:field="*{id}"/>
@@ -47,7 +43,8 @@
                     </div>
                 </div>
                 <div id="field-count-warning" class="spaced-top spaced-bottom alert alert-danger hidden">
-                    <strong th:text="#{linelist.create-template.required-fields}">Must have at least 1 template field</strong>
+                    <strong th:text="#{linelist.create-template.required-fields}">Must have at least 1 template
+                        field</strong>
                 </div>
                 <ul class="list-group template-fields">
                     <li class="list-group-item template-field" th:each="field : *{fields}">
@@ -63,6 +60,33 @@
             </form>
         </div>
     </div>
+
+    <div class="panel panel-default" th:if="${template.id}">
+        <div class="panel-heading">
+            <th:block th:text="#{linelist.create-template.settings}"/>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <strong th:text="#{linelist.create-template.delete}">Delete this
+                        template</strong>
+                    <p th:text="#{linelist.create-template.delete-warning}">Once you delete a
+                        template, there is no going back. Please be certain.</p>
+                </div>
+                <div class="col-md-4 text-right">
+                 <form method="post" th:action="@{/projects/{id}/metadata-templates/delete/{templateId}(id=${project.id},templateId=${template.id})}">   <div class="checkbox">
+                        <label for="delete-checkbox">
+                            <input type="checkbox" id="delete-checkbox"/> Confirm template deletion
+                        </label></div>
+                    <button id="delete-template-btn" class="btn btn-danger" disabled="disabled">
+                        <i class="fa fa-trash" aria-hidden="true"></i>
+                        <th:block th:text="#{linelist.create-template.delete}"/>
+                    </button></form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <div class="modal modal-fade" id="add-field-modal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
@@ -158,27 +182,7 @@
                             </ul>
                         </div>
                         <div class="col-md-12" ng-show="$ctrl.template.identifier">
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <th:block th:text="#{linelist.create-template.settings}"/>
-                                </div>
-                                <div class="panel-body">
-                                    <div class="row">
-                                        <div class="col-md-8">
-                                            <strong th:text="#{linelist.create-template.delete}">Delete this
-                                                template</strong>
-                                            <p th:text="#{linelist.create-template.delete-warning}">Once you delete a
-                                                template, there is no going back. Please be certain.</p>
-                                        </div>
-                                        <div class="col-md-4 text-right">
-                                            <button class="btn btn-danger" ng-click="$ctrl.removeTemplate()">
-                                                <i class="fa fa-trash" aria-hidden="true"></i>
-                                                <th:block th:text="#{linelist.create-template.delete}"/>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+
                         </div>
                     </div>
                 </div>
