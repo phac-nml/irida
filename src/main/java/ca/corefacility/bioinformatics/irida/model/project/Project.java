@@ -38,7 +38,6 @@ import ca.corefacility.bioinformatics.irida.model.irida.IridaProject;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
-import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
@@ -101,9 +100,6 @@ public class Project extends IridaResourceSupport
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "project")
 	private List<ProjectReferenceFileJoin> referenceFiles;
-
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "localProject")
-	private List<RemoteRelatedProject> remoteRelatedProjects;
 	
 	@NotAudited
 	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy = "project")

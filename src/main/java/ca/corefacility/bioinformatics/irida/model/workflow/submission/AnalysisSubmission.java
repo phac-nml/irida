@@ -47,6 +47,11 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+
 import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
@@ -54,17 +59,9 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFileSnapshot;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 /**
  * Defines a submission to an AnalysisService for executing a remote workflow.
@@ -127,14 +124,6 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinTable(name = "analysis_submission_sequence_file_pair", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "sequence_file_pair_id", nullable = false))
 	private Set<SequenceFilePair> inputFilesPaired;
-
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinTable(name = "analysis_submission_remote_file_single", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "remote_file_id", nullable = false))
-	private Set<SingleEndSequenceFileSnapshot> remoteFilesSingle;
-
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinTable(name = "analysis_submission_remote_file_pair", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "remote_file_pair_id", nullable = false))
-	private Set<SequenceFilePairSnapshot> remoteFilesPaired;
 
 	@ElementCollection(fetch = FetchType.EAGER)
 	@MapKeyColumn(name = "name", nullable = false)
@@ -204,8 +193,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 		this();
 		checkNotNull(builder.workflowId, "workflowId is null");
 
-		checkArgument(builder.inputFilesSingleEnd != null || builder.inputFilesPaired != null
-				|| builder.remoteFilesSingle != null || builder.remoteFilesPaired != null,
+		checkArgument(builder.inputFilesSingleEnd != null || builder.inputFilesPaired != null,
 				"all input file collections are null.  You must supply at least one set of input files");
 
 		this.name = (builder.name != null) ? builder.name : "Unknown";
@@ -216,8 +204,6 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 		this.referenceFile = builder.referenceFile;
 		this.workflowId = builder.workflowId;
 		this.namedParameters = builder.namedParameters;
-		this.remoteFilesSingle = (builder.remoteFilesSingle != null) ? builder.remoteFilesSingle : Sets.newHashSet();
-		this.remoteFilesPaired = (builder.remoteFilesPaired != null) ? builder.remoteFilesPaired : Sets.newHashSet();
 		this.analysisDescription = (builder.analysisDescription);
 	}
 
@@ -269,25 +255,6 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	@JsonIgnore
 	public Set<SequenceFilePair> getPairedInputFiles() {
 		return inputFilesPaired;
-	}
-
-	/**
-	 * Gets the set of {@link SequenceFilePairSnapshot} submitted for this
-	 * analysis
-	 * 
-	 * @return set of {@link SequenceFilePairSnapshot}
-	 */
-	public Set<SequenceFilePairSnapshot> getRemoteFilesPaired() {
-		return remoteFilesPaired;
-	}
-
-	/**
-	 * Gets the set of {@link SequenceFileSnapshot} submitted for this analysis
-	 * 
-	 * @return set of {@link SequenceFileSnapshot}
-	 */
-	public Set<SingleEndSequenceFileSnapshot> getRemoteFilesSingle() {
-		return remoteFilesSingle;
 	}
 
 	/**
@@ -538,8 +505,6 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 		private String name;
 		private Set<SingleEndSequenceFile> inputFilesSingleEnd;
 		private Set<SequenceFilePair> inputFilesPaired;
-		private Set<SingleEndSequenceFileSnapshot> remoteFilesSingle;
-		private Set<SequenceFilePairSnapshot> remoteFilesPaired;
 		private ReferenceFile referenceFile;
 		private UUID workflowId;
 		private Map<String, String> inputParameters;
@@ -599,36 +564,6 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 			checkArgument(!inputFilesPaired.isEmpty(), "inputFilesPaired is empty");
 
 			this.inputFilesPaired = inputFilesPaired;
-			return this;
-		}
-
-		/**
-		 * Sets the remoteFilesSingle for this submission
-		 * 
-		 * @param remoteFilesSingle
-		 *            Single ended {@link SequenceFileSnapshot}s
-		 * @return A {@link Builder}
-		 */
-		public Builder remoteFilesSingle(Set<SingleEndSequenceFileSnapshot> remoteFilesSingle) {
-			checkNotNull(remoteFilesSingle, "remoteFilesSingle is null");
-			checkArgument(!remoteFilesSingle.isEmpty(), "remoteFilesSingle is empty");
-
-			this.remoteFilesSingle = remoteFilesSingle;
-			return this;
-		}
-
-		/**
-		 * Sets the remoteFilesPaired for this submission
-		 * 
-		 * @param remoteFilesPaired
-		 *            The remote paired files
-		 * @return A {@link Builder}
-		 */
-		public Builder remoteFilesPaired(Set<SequenceFilePairSnapshot> remoteFilesPaired) {
-			checkNotNull(remoteFilesPaired, "remoteFilesPaired is null");
-			checkArgument(!remoteFilesPaired.isEmpty(), "remoteFilesPaired is empty");
-
-			this.remoteFilesPaired = remoteFilesPaired;
 			return this;
 		}
 
@@ -714,8 +649,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 		}
 
 		public AnalysisSubmission build() {
-			checkArgument(inputFilesSingleEnd != null || inputFilesPaired != null || remoteFilesSingle != null
-					|| remoteFilesPaired != null,
+			checkArgument(inputFilesSingleEnd != null || inputFilesPaired != null,
 					"all input file collections are null.  You must supply at least one set of input files");
 
 			return new AnalysisSubmission(this);

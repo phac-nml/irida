@@ -23,6 +23,10 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import com.github.jmchilton.blend4j.galaxy.beans.HistoryDeleteResponse;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+
 import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
@@ -53,12 +57,7 @@ import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.An
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsync;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyCleanupAsync;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
-import ca.corefacility.bioinformatics.irida.service.snapshot.SequenceFileSnapshotService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
-
-import com.github.jmchilton.blend4j.galaxy.beans.HistoryDeleteResponse;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 /**
  * Tests out an execution service for Galaxy analyses.
@@ -79,8 +78,6 @@ public class AnalysisExecutionServiceGalaxyTest {
 	private GalaxyLibrariesService galaxyLibrariesService;
 	@Mock
 	private AnalysisWorkspaceServiceGalaxy analysisWorkspaceService;
-	@Mock
-	private SequenceFileSnapshotService sequenceFileSnapshotService;
 	@Mock
 	private Analysis analysisResults;
 	@Mock
@@ -149,7 +146,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 
 		AnalysisExecutionServiceGalaxyAsync workflowManagementAsync = new AnalysisExecutionServiceGalaxyAsync(
 				analysisSubmissionService, analysisService, galaxyWorkflowService, analysisWorkspaceService,
-				iridaWorkflowsService,sequenceFileSnapshotService);
+				iridaWorkflowsService);
 		AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionServiceGalaxyCleanupAsync = new AnalysisExecutionServiceGalaxyCleanupAsync(
 				analysisSubmissionService, galaxyWorkflowService, galaxyHistoriesService, galaxyLibrariesService);
 		workflowManagement = new AnalysisExecutionServiceGalaxy(analysisSubmissionService, galaxyHistoriesService,
@@ -262,7 +259,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 	@Test
 	public void testPrepareSubmissionSuccess() throws InterruptedException, ExecutionManagerException, IOException,
 			NoSuchValueException, ExecutionException, IridaWorkflowNotFoundException {
-		analysisSubmission.setAnalysisState(AnalysisState.FINISHED_DOWNLOADING);
+		analysisSubmission.setAnalysisState(AnalysisState.NEW);
 		
 		when(analysisSubmissionService.update(analysisSubmission)).thenReturn(analysisPreparing);
 		when(analysisSubmissionService.update(analysisPreparing)).thenReturn(analysisPrepared);
@@ -295,7 +292,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 
 		when(analysisSubmissionService.update(analysisSubmission)).thenReturn(analysisPreparing);
 
-		analysisSubmission.setAnalysisState(AnalysisState.FINISHED_DOWNLOADING);
+		analysisSubmission.setAnalysisState(AnalysisState.NEW);
 		Future<AnalysisSubmission> preparedAnalysisFuture = workflowManagement.prepareSubmission(analysisSubmission);
 
 		ArgumentCaptor<AnalysisSubmission> captor = ArgumentCaptor.forClass(AnalysisSubmission.class);
@@ -324,7 +321,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 		when(analysisWorkspaceService.prepareAnalysisWorkspace(any(AnalysisSubmission.class))).thenThrow(
 				new ExecutionManagerException());
 
-		analysisSubmission.setAnalysisState(AnalysisState.FINISHED_DOWNLOADING);
+		analysisSubmission.setAnalysisState(AnalysisState.NEW);
 
 		when(analysisSubmissionService.update(analysisSubmission)).thenReturn(analysisPreparing);
 

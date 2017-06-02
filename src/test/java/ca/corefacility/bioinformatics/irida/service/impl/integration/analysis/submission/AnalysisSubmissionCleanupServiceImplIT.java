@@ -92,14 +92,12 @@ public class AnalysisSubmissionCleanupServiceImplIT {
 	public void testSwitchInconsistentSubmissionsToErrorAutwiredSuccess() {
 		int analysisSubmissionsChanged = analysisSubmissionCleanupService.switchInconsistentSubmissionsToError();
 
-		assertEquals("Switched invalid number of submissions", 4, analysisSubmissionsChanged);
+		assertEquals("Switched invalid number of submissions", 3, analysisSubmissionsChanged);
 		assertEquals("Did not switch SUBMITTING to ERROR", AnalysisState.ERROR, analysisSubmissionRepository.findOne(1L)
 				.getAnalysisState());
 		assertEquals("Did not switch PREPARING to ERROR", AnalysisState.ERROR, analysisSubmissionRepository.findOne(2L)
 				.getAnalysisState());
 		assertEquals("Did not switch COMPLETING to ERROR", AnalysisState.ERROR, analysisSubmissionRepository.findOne(3L)
-				.getAnalysisState());
-		assertEquals("Did not switch DOWNLOADING to ERROR", AnalysisState.ERROR, analysisSubmissionRepository.findOne(10L)
 				.getAnalysisState());
 
 		// make sure no other submissions have changed
@@ -113,8 +111,6 @@ public class AnalysisSubmissionCleanupServiceImplIT {
 		assertEquals("Analysis submission state has changed", AnalysisState.COMPLETED, analysisSubmissionRepository.findOne(8L)
 				.getAnalysisState());
 		assertEquals("Analysis submission state has changed", AnalysisState.ERROR, analysisSubmissionRepository.findOne(9L)
-				.getAnalysisState());
-		assertEquals("Analysis submission state has changed", AnalysisState.FINISHED_DOWNLOADING, analysisSubmissionRepository.findOne(11L)
 				.getAnalysisState());
 
 		try {
@@ -132,14 +128,12 @@ public class AnalysisSubmissionCleanupServiceImplIT {
 	public void testSwitchInconsistentSubmissionsToErrorLocalSuccess() {
 		int analysisSubmissionsChanged = analysisSubmissionCleanupServiceLocal.switchInconsistentSubmissionsToError();
 
-		assertEquals("Switched invalid number of submissions", 4, analysisSubmissionsChanged);
+		assertEquals("Switched invalid number of submissions", 3, analysisSubmissionsChanged);
 		assertEquals("Did not switch SUBMITTING to ERROR", AnalysisState.ERROR, analysisSubmissionRepository.findOne(1L)
 				.getAnalysisState());
 		assertEquals("Did not switch PREPARING to ERROR", AnalysisState.ERROR, analysisSubmissionRepository.findOne(2L)
 				.getAnalysisState());
 		assertEquals("Did not switch COMPLETING to ERROR", AnalysisState.ERROR, analysisSubmissionRepository.findOne(3L)
-				.getAnalysisState());
-		assertEquals("Did not switch DOWNLOADING to ERROR", AnalysisState.ERROR, analysisSubmissionRepository.findOne(10L)
 				.getAnalysisState());
 
 		// make sure no other submissions have changed
@@ -153,8 +147,6 @@ public class AnalysisSubmissionCleanupServiceImplIT {
 		assertEquals("Analysis submission state has changed", AnalysisState.COMPLETED, analysisSubmissionRepository.findOne(8L)
 				.getAnalysisState());
 		assertEquals("Analysis submission state has changed", AnalysisState.ERROR, analysisSubmissionRepository.findOne(9L)
-				.getAnalysisState());
-		assertEquals("Analysis submission state has changed", AnalysisState.FINISHED_DOWNLOADING, analysisSubmissionRepository.findOne(11L)
 				.getAnalysisState());
 	}
 	

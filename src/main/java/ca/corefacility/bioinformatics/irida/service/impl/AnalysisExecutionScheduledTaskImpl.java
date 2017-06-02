@@ -35,7 +35,6 @@ import com.google.common.collect.Sets;
  */
 public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionScheduledTask {
 	
-	private Object downloadFilesLock = new Object();
 	private Object prepareAnalysesLock = new Object();
 	private Object executeAnalysesLock = new Object();
 	private Object monitorRunningAnalysesLock = new Object();
@@ -72,17 +71,18 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Set<Future<AnalysisSubmission>> downloadFiles() {
-		synchronized (downloadFilesLock) {
-			logger.trace("Running downloadFiles");
+	public Set<Future<AnalysisSubmission>> prepareAnalyses() {
+		synchronized (prepareAnalysesLock) {
+			logger.trace("Running prepareAnalyses");
+
+			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
+					.findByAnalysisState(AnalysisState.NEW);
 
 			Set<Future<AnalysisSubmission>> submissions = Sets.newHashSet();
 
 			// check to see if execution service wants any more jobs
 			int capacity = analysisExecutionService.getCapacity();
 			if (capacity > 0) {
-				List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
-						.findByAnalysisState(AnalysisState.NEW);
 
 				if (capacity < analysisSubmissions.size()) {
 					logger.debug("Attempting to submit more jobs than capacity, list will be trimmed: "
@@ -91,40 +91,19 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 					analysisSubmissions = analysisSubmissions.subList(0, capacity);
 				}
 
-				for (AnalysisSubmission submission : analysisSubmissions) {
-					submissions.add(analysisExecutionService.downloadSubmissionFiles(submission));
+				for (AnalysisSubmission analysisSubmission : analysisSubmissions) {
+					logger.debug("Preparing " + analysisSubmission);
+
+					try {
+						submissions.add(analysisExecutionService.prepareSubmission(analysisSubmission));
+					} catch (ExecutionManagerException | IridaWorkflowNotFoundException | IOException e) {
+						logger.error("Error preparing submission " + analysisSubmission, e);
+					}
 				}
 			} else {
 				logger.trace("AnalysisExecutionService at max capacity.  No jobs updated.");
 			}
 
-			return submissions;
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Set<Future<AnalysisSubmission>> prepareAnalyses() {
-		synchronized(prepareAnalysesLock) {
-			logger.trace("Running prepareAnalyses");
-			
-			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
-					.findByAnalysisState(AnalysisState.FINISHED_DOWNLOADING);
-	
-			Set<Future<AnalysisSubmission>> submissions = Sets.newHashSet();
-	
-			for (AnalysisSubmission analysisSubmission : analysisSubmissions) {
-				logger.debug("Preparing " + analysisSubmission);
-	
-				try {
-					submissions.add(analysisExecutionService.prepareSubmission(analysisSubmission));
-				} catch (ExecutionManagerException | IridaWorkflowNotFoundException | IOException e) {
-					logger.error("Error preparing submission " + analysisSubmission, e);
-				}
-			}
-	
 			return submissions;
 		}
 	}

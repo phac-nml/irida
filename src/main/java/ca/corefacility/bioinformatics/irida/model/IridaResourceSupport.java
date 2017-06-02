@@ -25,8 +25,6 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 public class IridaResourceSupport {
 	private final List<Link> links;
 
-	private RemoteAPI remoteAPI;
-
 	public IridaResourceSupport() {
 		this.links = new ArrayList<Link>();
 	}
@@ -144,17 +142,6 @@ public class IridaResourceSupport {
 	@Override
 	public int hashCode() {
 		return this.links.hashCode();
-	}
-
-	@Deprecated
-	@JsonIgnore
-	public RemoteAPI getRemoteAPI() {
-		return remoteAPI;
-	}
-
-	@Deprecated
-	public void setRemoteAPI(RemoteAPI remoteAPI) {
-		this.remoteAPI = remoteAPI;
 	}
 
 	/**
