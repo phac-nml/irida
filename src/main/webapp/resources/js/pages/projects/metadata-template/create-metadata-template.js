@@ -154,12 +154,13 @@ $('#add-field-modal')
       })
       .on('select2:select', function() {
         const value = $(this).val();
-        existingFields.add(value);
-        addNewField(value);
+        if (value) {
+          existingFields.add(value);
+          addNewField(value);
+        }
 
         // Reset Select2
         fieldSelect2.val(null).trigger('change');
-        fieldSelect2.select2('destroy');
         modal.modal('hide');
       });
 
