@@ -8,7 +8,7 @@ Changes
 * [UI]: Added ability for admins and project owners to delete a project.
 * [UI]: Added `Technician` system role which allows technicians to view results of all sequencing runs in the system.
 * [Developer]: Fixed permissions for NCBI submission uploads failing with Access Denied error. (0.16.1)
-* [Developer]: Removed deprecated `RemoteRelatedProject` and `*Snapshot` classes and all associated services, repositories, and web features.
+* [Developer]: Removed deprecated `RemoteRelatedProject` and `*Snapshot` classes and all associated services, repositories, and web features.  Note this feature will remove some tables from the databse such as `remote_related_project` and `remote_sequence_file`.  While these were likely unused it is **strongly** recommended to backup your database before this upgrade.
 
 0.15.0 to 0.16.0
 ----------------
