@@ -402,27 +402,28 @@
 	    
 	    vm.referenceUploadStarted = false;
 
-	    vm.upload = function (files) {	    	
-	    	if (files && files.length > 0) {
-	    		vm.referenceUploadStarted = true;
-		    	Upload.upload({
-		    		url: page.urls.upload,
-		    		file: files[0]
-		    	}).progress(function (evt) {
-		    		vm.progress = parseInt(100.0 * evt.loaded / evt.total);
-          }).then(function(response) {
-		    		vm.uploaded = {
-		        			id: response["uploaded-file-id"],
-		        			name: response["uploaded-file-name"]
-		        	};
-		    		vm.uploadError = false;
-		        	$rootScope.$emit('REFERENCE_FILE_UPLOADED', vm.uploaded);
-		        	vm.referenceUploadStarted = false;
-		    	}).error(function(response) {
-		    		vm.uploadError = response.error;
-		    		vm.referenceUploadStarted = false;
-		    	});
-	    	}
+	    vm.upload = function(files) {
+	      if (files && files.length > 0) {
+	        vm.referenceUploadStarted = true;
+	        Upload.upload({
+	          url: page.urls.upload,
+	          file: files[0]
+	        }).progress(function(evt) {
+	          vm.progress = parseInt(100.0 * evt.loaded / evt.total);
+	        }).then(function(response) {
+	          var data = response.data;
+	          vm.uploaded = {
+	            id: data["uploaded-file-id"],
+	            name: data["uploaded-file-name"]
+	          };
+	          vm.uploadError = false;
+	          $rootScope.$emit('REFERENCE_FILE_UPLOADED', vm.uploaded);
+	          vm.referenceUploadStarted = false;
+	        }, function(response) {
+	          vm.referenceUploadStarted = false;
+	          window.notifications.show({msg: response.data.error, type: 'error'});
+	        });
+	      }
 	    };
   }
 
