@@ -7,6 +7,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Proje
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
@@ -33,6 +34,10 @@ public class ProjectsPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void confirmTablePopulatedByProjects() {
 		assertEquals("Projects table should be populated by 7 projects", 7, projectsPage.projectsTableSize());
+
+		// Ensure buttons are created and direct to the write project.
+		projectsPage.gotoProjectPage(1);
+		assertTrue("Should be on specific project page", driver().findElement(By.id("samplesTable")).isDisplayed());
 	}
 
 	@Test
