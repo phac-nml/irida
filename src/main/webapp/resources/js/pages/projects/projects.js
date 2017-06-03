@@ -69,6 +69,8 @@ rt
       {
         targets: [COLUMNS.CREATED, COLUMNS.MODIFIED],
         render: function(data) {
+          // Format the time (using timeago.js) to get the amount of time
+          // since the event occurred.
           const date = moment(data);
           return `
 <time data-toggle="tooltip" data-placement="top" 
