@@ -1,30 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.projects;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
-
-import java.io.IOException;
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpSession;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.context.MessageSource;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.ui.ExtendedModelMap;
-import org.springframework.ui.Model;
-
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
@@ -44,9 +19,25 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.util.TreeNode;
-
-import com.github.dandelion.datatables.core.ajax.ColumnDef;
 import com.google.common.collect.Lists;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.ui.ExtendedModelMap;
+import org.springframework.ui.Model;
+
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.security.Principal;
+import java.util.*;
+
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit test for {@link }
@@ -271,41 +262,6 @@ public class ProjectsControllerTest {
 	private List<Join<Project, User>> getUsersForProjectByRole() {
 		List<Join<Project, User>> list = new ArrayList<>();
 		list.add(new ProjectUserJoin(getProject(), user, ProjectRole.PROJECT_OWNER));
-		return list;
-	}
-
-	private List<ColumnDef> getColumnDefs() {
-		List<ColumnDef> list = new ArrayList<>();
-
-		// 0. identifier
-		ColumnDef def0 = new ColumnDef();
-		def0.setFiltered(false);
-		def0.setName("identifier");
-		list.add(def0);
-
-		// 1. name
-		ColumnDef def1 = new ColumnDef();
-		def1.setFiltered(false);
-		def1.setName("name");
-		list.add(def1);
-
-		// 2. organism
-		ColumnDef def2 = new ColumnDef();
-		def2.setFiltered(false);
-		def2.setName("organism");
-		list.add(def2);
-
-		return list;
-	}
-
-	private List<ColumnDef> getSortedColumnDefs() {
-		List<ColumnDef> list = new ArrayList<>();
-
-		ColumnDef def = new ColumnDef();
-		def.setSortDirection(ColumnDef.SortDirection.ASC);
-		def.setName("name");
-		list.add(def);
-
 		return list;
 	}
 
