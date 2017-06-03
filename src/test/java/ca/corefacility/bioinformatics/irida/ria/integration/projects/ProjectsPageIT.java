@@ -53,7 +53,7 @@ public class ProjectsPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
 	public void testAdvancedFilters() {
-		projectsPage.filterByOrganism("coli");
+		projectsPage.doSearch("coli");
 		assertEquals("Projects table should be populated by 4 projects after applying filter", 4,
 				projectsPage.projectsTableSize());
 
@@ -62,7 +62,7 @@ public class ProjectsPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Projects table should be populated by 1 project after applying filter", 1,
 				projectsPage.projectsTableSize());
 
-		projectsPage.filterByName("3");
+		projectsPage.doSearch("3");
 		assertEquals("Projects table should be populated by 1 projects after applying filter", 1, projectsPage.projectsTableSize());
 	}
 
