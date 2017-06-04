@@ -29,6 +29,10 @@ function downloadItem({format = 'xlsx'}) {
 
 if (typeof window.PAGE === 'object') {
   $('#projects').DataTable({
+    // Table layout
+    // Buttons / Filter
+    // Table
+    // Length / Paging / Info
     dom: `
 <".row"
   <".col-md-8.buttons"B><".col-md-4"f>>
