@@ -6,9 +6,6 @@
     <title th:text="#{projects.title}">List of Projects</title>
     <script th:inline="javascript">
       var PAGE = {
-        i18n: {
-          exportBtn: /*[[#{projects.export}]]*/ '_EXPORT_'
-        },
         urls: {
           projects: /*[[@{${ajaxURL}}]]*/ '',
           project: /*[[@{/projects/}]]*/ '',
@@ -38,6 +35,13 @@
             </thead>
         </table>
     </main>
+
+    <div class="hidden" id="export-btn-text">
+        <i class="fa fa-download" aria-hidden="true"></i>
+        &nbsp;<th:block th:text="#{projects.export}"/>
+        <i class="fa fa-caret-down" aria-hidden="true">
+        </i>
+    </div>
 </div>
 
 <th:block layout:fragment="scripts">

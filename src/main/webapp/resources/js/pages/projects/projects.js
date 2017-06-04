@@ -39,11 +39,9 @@ rt
     buttons: [
       {
         extend: 'collection',
-        text: `
-<i class="fa fa-download" aria-hidden="true"></i>
-    &nbsp;${window.PAGE.i18n.exportBtn}&nbsp;&nbsp;
-    <i class="fa fa-caret-down" aria-hidden="true">
-</i>`,
+        text() {
+          return document.querySelector('#export-btn-text').innerHTML;
+        },
         // The buttons are loaded onto the PAGE variable.
         buttons: window.PAGE.buttons.map(button => ({
           text: button.name,
