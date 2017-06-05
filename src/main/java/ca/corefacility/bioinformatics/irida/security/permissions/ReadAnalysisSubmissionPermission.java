@@ -102,14 +102,33 @@ public class ReadAnalysisSubmissionPermission extends BasePermission<AnalysisSub
 
 		/*
 		 * If the user isn't set it might be an automated submission. Check if
-		 * this analysis is the auto assembly for a file and if they can read
-		 * the file
+		 * this analysis is the auto assembly or sistr for a file and if they
+		 * can read the file
 		 */
 		Set<SequenceFilePair> pairedInputFiles = analysisSubmission.getPairedInputFiles();
 
-		boolean anyMatch = pairedInputFiles.stream().filter(o -> o.getAutomatedAssembly().equals(analysisSubmission))
-				.anyMatch(p -> seqObjectPermission.customPermissionAllowed(authentication, p));
+		boolean anyMatch = pairedInputFiles.stream().filter(o -> {
+			AnalysisSubmission s = o.getAutomatedAssembly();
+			if (s != null) {
+				return s.equals(analysisSubmission);
+			}
+			return false;
+		}).anyMatch(p -> seqObjectPermission.customPermissionAllowed(authentication, p));
 
+		if (anyMatch) {
+			logger.trace("Permission GRANTED for [" + authentication + "] on analysis submission ["
+					+ analysisSubmission + "]");
+			return true;
+		}
+		
+		anyMatch = pairedInputFiles.stream().filter(o -> {
+			AnalysisSubmission s = o.getSistrTyping();
+			if (s != null) {
+				return s.equals(analysisSubmission);
+			}
+			return false;
+		}).anyMatch(p -> seqObjectPermission.customPermissionAllowed(authentication, p));
+		
 		if (anyMatch) {
 			logger.trace("Permission GRANTED for [" + authentication + "] on analysis submission ["
 					+ analysisSubmission + "]");
