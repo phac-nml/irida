@@ -12,7 +12,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models
 /**
  * DataTables response object for ProjectSamples Table.
  */
-public class DTProjectSamples extends DataTablesResponseModel {
+public class DTProjectSamples implements DataTablesResponseModel {
 	private Long id;
 	private String sampleName;
 	private String organism;
@@ -22,7 +22,6 @@ public class DTProjectSamples extends DataTablesResponseModel {
 	private List<QCEntry> qcEntries;
 
 	public DTProjectSamples(ProjectSampleJoin projectSampleJoin, List<QCEntry> qcEntries) {
-		super(projectSampleJoin.getObject());
 		Project project = projectSampleJoin.getSubject();
 		Sample sample = projectSampleJoin.getObject();
 
