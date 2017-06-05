@@ -25,7 +25,9 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
@@ -38,9 +40,6 @@ import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionSchedu
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.CleanupAnalysisSubmissionConditionAge;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectSynchronizationService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 /**
  * Config for only activating scheduled tasks in certain profiles.
@@ -99,15 +98,6 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	 */
 	@Value("${irida.analysis.cleanup.days}")
 	private Double daysToCleanup;
-	
-	/**
-	 * Cycle through any newly created submissions and download any required
-	 * {@link SequenceFileSnapshot}s.
-	 */
-	@Scheduled(initialDelay = 1000, fixedDelay = ANALYSIS_EXECUTION_TASK_RATE)
-	public void downloadFiles() {
-		analysisExecutionScheduledTask().downloadFiles();
-	}
 
 	/**
 	 * Cycle through any submissions and prepare them for execution.
