@@ -5,6 +5,7 @@ Changes
 ----------------
 * [Developer]: Fixed permissions for NCBI submission uploads failing with Access Denied error. (0.16.1)
 * [UI]: Fixed bug causing reference file uploads to fail when launching a pipeline. (0.16.2)
+* [UI]: Fixed bug with permission not allowing users to view automated SISTR results. (0.16.3)
 
 0.15.0 to 0.16.0
 ----------------
