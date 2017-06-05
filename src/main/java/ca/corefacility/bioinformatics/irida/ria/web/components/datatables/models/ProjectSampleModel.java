@@ -44,14 +44,6 @@ public class ProjectSampleModel extends AbstractExportModel {
 		this.qcEntries = qcEntries;
 	}
 
-	public static String generateSortName(String name) {
-		if (name.equals("projectName")) {
-			return "project.name";
-		} else {
-			return "sample." + name;
-		}
-	}
-
 	public String getId() {
 		return checkNullId(sample.getId());
 	}
