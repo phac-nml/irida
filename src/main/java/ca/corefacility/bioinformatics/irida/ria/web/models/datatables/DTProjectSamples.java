@@ -14,6 +14,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models
  */
 public class DTProjectSamples implements DataTablesResponseModel {
 	private Long id;
+	private Long projectId;
 	private String sampleName;
 	private String organism;
 	private String projectName;
@@ -29,13 +30,14 @@ public class DTProjectSamples implements DataTablesResponseModel {
 		this.sampleName = sample.getSampleName();
 		this.organism = sample.getOrganism();
 		this.projectName = project.getName();
+		this.projectId = project.getId();
 		this.createdDate = sample.getCreatedDate();
 		this.modifiedDate = sample.getModifiedDate();
 		this.qcEntries = qcEntries;
 	}
 
 	public Long getId() {
-		return id;
+		return this.id;
 	}
 
 	public String getSampleName() {
@@ -44,6 +46,10 @@ public class DTProjectSamples implements DataTablesResponseModel {
 
 	public String getOrganism() {
 		return organism;
+	}
+
+	public Long getProjectId() {
+		return projectId;
 	}
 
 	public String getProjectName() {
