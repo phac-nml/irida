@@ -12,6 +12,7 @@ Changes
 * [UI]: In SISTR report, changed incorrect label **Percent shared k-mers** to **Mash distance** and report the mash distance instead of converting to percent.
 * [Developer]: Changed gitlab CI builds to run with Docker.  See `ci/README.md` for more information.
 * [Developer]: Removed deprecated `RemoteRelatedProject` and `*Snapshot` classes and all associated services, repositories, and web features.  Note this feature will remove some tables from the databse such as `remote_related_project` and `remote_sequence_file`.  While these were likely unused it is **strongly** recommended to backup your database before this upgrade.
+* [UI]: Fixed bug with permission not allowing users to view automated SISTR results. (0.16.3)
 
 0.15.0 to 0.16.0
 ----------------

@@ -30,7 +30,8 @@
             </div>
             <div class="checkbox">
                 <label>
-                    <input id="sistr" type="checkbox" value="sistr" th:checked="${project.sistrTypingUploads}"/>
+                    <input id="sistr" type="checkbox" value="sistr" th:checked="${project.sistrTypingUploads}"
+                          th:disabled="not ${manageMembers}"/>
                     <span th:text="#{project.settings.sistr.control}">_Automatically type uploads with SISTR_</span>
                 </label>
             </div>
