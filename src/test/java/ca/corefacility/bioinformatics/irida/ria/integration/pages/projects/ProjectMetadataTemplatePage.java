@@ -9,13 +9,10 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public class ProjectMetadataTemplatePage extends AbstractPage {
-	private static final Logger logger = LoggerFactory.getLogger(ProjectMetadataTemplatePage.class);
 	private static final String RELAIVE_URL = "projects/{id}/metadata-templates/";
 
 	@FindBy(id = "template-name") private WebElement templateNameInput;
