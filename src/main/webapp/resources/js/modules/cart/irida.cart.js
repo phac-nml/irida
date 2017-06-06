@@ -5,7 +5,6 @@
     var vm = this;
     vm.show = false;
     vm.projects = [];
-    vm.remote = [];
     vm.count = 0;
     vm.collapsed = {};
     vm.term = '';
@@ -19,7 +18,6 @@
         .then(function (data) {
           vm.count = 0;
           vm.projects = data.projects;
-          vm.remote = data.remote;
           _.each(vm.projects, function (p) {
             vm.count += p.samples.length;
             // Sort the samples by created date.
@@ -30,16 +28,8 @@
               vm.collapsed[p.id] = true;
             }
           });
-          vm.count += vm.getRemoteCount();
-          if (collapse) {
-            vm.collapsed.remote = true;
-          }
         });
     }
-
-    vm.getRemoteCount = function () {
-      return Object.keys(vm.remote).length;
-    };
 
     getCart(true);
   }
@@ -57,14 +47,6 @@
 
     vm.removeProject = function (projectId) {
       CartService.removeProject(projectId);
-    };
-
-    vm.removeRemoteSamples = function () {
-      CartService.removeRemoteSamples();
-    };
-
-    vm.removeRemoteSample = function (sampleUrl) {
-      CartService.removeRemoteSample(sampleUrl);
     };
 
     vm.removeSample = function (projectId, sampleId) {
@@ -115,8 +97,6 @@
       urls = {
         all: TL.BASE_URL + 'cart',
         add: TL.BASE_URL + 'cart/add/samples',
-        addRemote: TL.BASE_URL + 'cart/add/samples/remote',
-        removeRemote: TL.BASE_URL + 'cart/remove/samples/remote',
         project: TL.BASE_URL + 'cart/project/'
       };
 
@@ -124,7 +104,7 @@
       return $http.get(urls.all)
         .then(function (response) {
           if (response.data) {
-            return {projects: response.data.projects, remote: response.data.remote};
+            return {projects: response.data.projects};
           } else {
             return [];
           }
@@ -177,18 +157,6 @@
 
     svc.removeSample = function (projectId, sampleId) {
       return $http.delete(urls.project + projectId + '/samples/' + sampleId).then(function () {
-        scope.$broadcast('cart.update', {});
-      });
-    };
-
-    svc.removeRemoteSamples = function () {
-      return $http.delete(urls.removeRemote).then(function () {
-        scope.$broadcast('cart.update', {});
-      });
-    };
-
-    svc.removeRemoteSample = function (sampleURL) {
-      return $http.post(urls.removeRemote, {sampleURL: sampleURL}).then(function () {
         scope.$broadcast('cart.update', {});
       });
     };

@@ -68,7 +68,6 @@ public abstract class RemoteRepositoryImpl<Type extends IridaResourceSupport> im
 				objectTypeReference);
 
 		Type resource = exchange.getBody().getResource();
-		resource.setRemoteAPI(remoteAPI);
 
 		resource = setRemoteStatus(resource, remoteAPI);
 		return resource;
@@ -85,8 +84,6 @@ public abstract class RemoteRepositoryImpl<Type extends IridaResourceSupport> im
 
 		List<Type> resources = exchange.getBody().getResource().getResources();
 		for (Type r : resources) {
-			r.setRemoteAPI(remoteAPI);
-
 			r = setRemoteStatus(r, remoteAPI);
 		}
 		return resources;

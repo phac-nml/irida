@@ -167,7 +167,7 @@ Example.  If my file contained and additional sample name `12-4598_a`  which doe
 Viewing associated samples
 --------------------------
 
-You can quickly create an aggregated view of all of the samples in this project with all of the samples from both local and remote associated projects. To view associated samples, click the "Associated Projects" button.  All projects associated with the current project will be displayed here.  Select the projects you would also like to see in the view. Project managers may choose which samples will appear here by [adding or removing associated projects](../../user/project/#associated-projects).
+You can quickly create an aggregated view of all of the samples in this project with all of the samples from both local and associated projects. To view associated samples, click the "Associated Projects" button.  All projects associated with the current project will be displayed here.  Select the projects you would also like to see in the view. Project managers may choose which samples will appear here by [adding or removing associated projects](../../user/project/#associated-projects).
 
 ![Sample type selector](images/display-sample-type.png)
 

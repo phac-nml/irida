@@ -14,7 +14,14 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
+import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
+import com.github.jmchilton.blend4j.galaxy.beans.History;
+import com.github.jmchilton.blend4j.galaxy.beans.Library;
+import com.github.jmchilton.blend4j.galaxy.beans.WorkflowDetails;
+import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
+import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
+import com.google.common.collect.Maps;
+
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerDownloadException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
@@ -24,8 +31,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.SampleAnalysisDuplicateEx
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
-import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.irida.IridaSingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
@@ -50,14 +55,6 @@ import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisW
 import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
-import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
-import com.github.jmchilton.blend4j.galaxy.beans.History;
-import com.github.jmchilton.blend4j.galaxy.beans.Library;
-import com.github.jmchilton.blend4j.galaxy.beans.WorkflowDetails;
-import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
-import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
-import com.google.common.collect.Maps;
-
 /**
  * A service for performing tasks for analysis in Galaxy.
  * 
@@ -78,8 +75,6 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 
 	private AnalysisParameterServiceGalaxy analysisParameterServiceGalaxy;
 	
-	private SampleRemoteService sampleRemoteService;
-
 	private GalaxyLibrariesService galaxyLibrariesService;
 	
 	private SequencingObjectService sequencingObjectService;
@@ -103,8 +98,6 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	 *            The service for provenance information.
 	 * @param analysisParameterServiceGalaxy
 	 *            A service for setting up parameters in Galaxy.
-	 * @param sampleRemoteService
-	 *            A service for handling {@link Sample}s from remote services
 	 * @param sequencingObjectService
 	 *            A service for reading {@link SequencingObject}s
 	 */
@@ -122,7 +115,6 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		this.analysisCollectionServiceGalaxy = analysisCollectionServiceGalaxy;
 		this.analysisProvenanceServiceGalaxy = analysisProvenanceServiceGalaxy;
 		this.analysisParameterServiceGalaxy = analysisParameterServiceGalaxy;
-		this.sampleRemoteService = sampleRemoteService;
 		this.sequencingObjectService = sequencingObjectService;
 	}
 
@@ -184,8 +176,9 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		checkNotNull(analysisSubmission.getInputFilesSingleEnd(), "inputFiles are null");
 		checkNotNull(analysisSubmission.getWorkflowId(), "workflowId is null");
 		checkNotNull(analysisSubmission.getRemoteWorkflowId(), "remoteWorkflowId is null");
-		checkArgument(!(analysisSubmission.getInputFilesSingleEnd().isEmpty()
-				&& analysisSubmission.getPairedInputFiles().isEmpty() && analysisSubmission.getRemoteFilesSingle().isEmpty() && analysisSubmission.getRemoteFilesPaired().isEmpty()),
+		checkArgument(
+				!(analysisSubmission.getInputFilesSingleEnd().isEmpty()
+						&& analysisSubmission.getPairedInputFiles().isEmpty()),
 				"no single or paired sequence files passed to submission " + analysisSubmission
 						+ " . At least one type of file must be available");
 
@@ -213,41 +206,15 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		History workflowHistory = galaxyHistoriesService.findById(analysisSubmission.getRemoteAnalysisId());
 		Library workflowLibrary = galaxyLibrariesService.buildEmptyLibrary(new GalaxyProjectName(temporaryLibraryName));
 
-		
-		Map<Sample, SingleEndSequenceFile> uniqueSingleEndFiles = sequencingObjectService
+		// get unique files for pairs and single files
+		Map<Sample, SingleEndSequenceFile> singleFiles = sequencingObjectService
 				.getUniqueSamplesForSequencingObjects(analysisSubmission.getInputFilesSingleEnd());
 
-		Map<Sample, SequenceFilePair> sampleSequenceFilesPaired = sequencingObjectService
+		Map<Sample, SequenceFilePair> pairedFiles = sequencingObjectService
 				.getUniqueSamplesForSequencingObjects(analysisSubmission.getPairedInputFiles());
-
-		Map<Sample, IridaSingleEndSequenceFile> singleFiles = sampleRemoteService
-				.getUniqueSamplesForSingleEndSequenceFileSnapshots(analysisSubmission.getRemoteFilesSingle());
-
-		Map<Sample, IridaSequenceFilePair> pairedFiles = sampleRemoteService
-				.getUniqueSamplesforSequenceFilePairSnapshots(analysisSubmission.getRemoteFilesPaired());
 		
-		// merge local and remote
-		for(Sample s : uniqueSingleEndFiles.keySet()){
-			/*
-			 * This check is being done to ensure local and remote samples do
-			 * not have the same name. If the sample name is duplicated between
-			 * samples it will cause some pipelines that rely on the sample name
-			 * to fail.
-			 */
-			if(singleFiles.containsKey(s)){
-				throw new DuplicateSampleException("sample is duplicated between local and remote files");
-			}
-			singleFiles.put(s, uniqueSingleEndFiles.get(s));
-		}
-		
-		for(Sample s : sampleSequenceFilesPaired.keySet()){
-			if(pairedFiles.containsKey(s)){
-				throw new DuplicateSampleException("sample is duplicated between local and remote files");
-			}
-			pairedFiles.put(s, sampleSequenceFilesPaired.get(s));
-		}
-
-		if (samplesInCommon(uniqueSingleEndFiles, sampleSequenceFilesPaired)) {
+		// check that there aren't common sample names between single and paired
+		if (samplesInCommon(singleFiles, pairedFiles)) {
 			throw new SampleAnalysisDuplicateException("Single and paired input files share a common sample for submission "
 					+ analysisSubmission);
 		}

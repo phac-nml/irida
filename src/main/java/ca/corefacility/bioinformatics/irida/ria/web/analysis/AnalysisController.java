@@ -41,6 +41,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.dandelion.datatables.core.ajax.ColumnDef;
+import com.github.dandelion.datatables.core.ajax.DataSet;
+import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
+import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
+import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
@@ -50,7 +62,6 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
@@ -68,18 +79,6 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.dandelion.datatables.core.ajax.ColumnDef;
-import com.github.dandelion.datatables.core.ajax.DataSet;
-import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
-import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
-import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for Analysis.
@@ -197,18 +196,9 @@ public class AnalysisController {
 		Set<SequenceFilePair> inputFilePairs = submission.getPairedInputFiles();
 		model.addAttribute("paired_end", inputFilePairs);
 		
-		// - Remote
-		Set<SequenceFilePairSnapshot> remoteFilesPaired = submission.getRemoteFilesPaired();
-		model.addAttribute("remote_paired", remoteFilesPaired);
-		
 		// Check if user can update analysis
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		model.addAttribute("updatePermission", updateAnalysisPermission.isAllowed(authentication, submission));
-		
-		
-		// Get the number of files currently being mirrored
-		int mirroringCount = remoteFilesPaired.stream().mapToInt(p -> p.isMirrored() ? 0 : 1).sum();
-		model.addAttribute("mirroringCount", mirroringCount);
 		
 		if (iridaWorkflow.getWorkflowDescription().requiresReference() && submission.getReferenceFile().isPresent()) {
 			logger.debug("Adding reference file to page for submission with id [" + submission.getId() + "].");
