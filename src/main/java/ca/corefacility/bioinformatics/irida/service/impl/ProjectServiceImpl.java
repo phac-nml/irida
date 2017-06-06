@@ -602,7 +602,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			final Integer count, final Sort sort) {
 		final UserDetails loggedInDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		final User loggedIn = userRepository.loadUserByUsername(loggedInDetails.getUsername());
-		final PageRequest pr = new PageRequest(page, count, sort);
+		final PageRequest pr = new PageRequest(page, count, getOrDefaultSort(sort));
 		return projectRepository.findAll(searchForProjects(search, null, null, loggedIn), pr);
 	}
 	
@@ -696,6 +696,21 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		} else {
 			return sortProperties;
 		}
+	}
+
+	/**
+	 * If the {@link Sort} is null create a default {@link Sort} for the data.
+	 *
+	 * @param sort
+	 * 		{@link Sort} for the data
+	 *
+	 * @return the create {@link Sort} if none was defined, otherwise just return the original {@link Sort}
+	 */
+	private static final Sort getOrDefaultSort(Sort sort) {
+		if (sort == null) {
+			sort = new Sort(Direction.ASC, CREATED_DATE_SORT_PROPERTY);
+		}
+		return sort;
 	}
 	
 	/**
