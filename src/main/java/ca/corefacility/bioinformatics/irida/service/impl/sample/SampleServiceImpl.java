@@ -415,6 +415,15 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	}
 	
 	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasPermission(#objects, 'canUpdateSample')")
+	@Override
+	public List<Sample> updateMultiple(Collection<Sample> objects) {
+		return super.updateMultiple(objects);
+	}
+	
+	/**
 	 * Verify that the given sort properties array is not null or empty. If it
 	 * is, give a default sort property.
 	 * 
