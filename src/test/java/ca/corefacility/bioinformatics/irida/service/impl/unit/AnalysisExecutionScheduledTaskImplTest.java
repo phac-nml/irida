@@ -109,10 +109,11 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	@Test
 	public void testPrepareAnalysesSuccess() throws ExecutionManagerException, IridaWorkflowNotFoundException,
 			IOException {
-		analysisSubmission.setAnalysisState(AnalysisState.FINISHED_DOWNLOADING);
+		analysisSubmission.setAnalysisState(AnalysisState.NEW);
 
-		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.FINISHED_DOWNLOADING)).thenReturn(
+		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.NEW)).thenReturn(
 				Arrays.asList(analysisSubmission));
+		when(analysisExecutionService.getCapacity()).thenReturn(1);
 
 		analysisExecutionScheduledTask.prepareAnalyses();
 

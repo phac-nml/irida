@@ -15,7 +15,6 @@ import org.springframework.context.annotation.Profile;
 
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFileSnapshot;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl.RelativePathTranslatorListener;
 
@@ -29,18 +28,14 @@ public class IridaApiFilesystemRepositoryConfig {
 	private @Value("${reference.file.base.directory}") String referenceFileBaseDirectory;
 
 	private @Value("${output.file.base.directory}") String outputFileBaseDirectory;
-
-	private @Value("${snapshot.file.base.directory}") String snapshotFileBaseDirectory;
 	
 	@Bean
 	public RelativePathTranslatorListener relativePathTranslatorListener(final @Qualifier("referenceFileBaseDirectory") Path referenceFileBaseDirectory, 
 			final @Qualifier("sequenceFileBaseDirectory") Path sequenceFileBaseDirectory,
-			final @Qualifier("outputFileBaseDirectory") Path outputFileBaseDirectory,
-			final @Qualifier("snapshotFileBaseDirectory") Path snapshotFileBaseDirectory) {
+			final @Qualifier("outputFileBaseDirectory") Path outputFileBaseDirectory) {
 		RelativePathTranslatorListener.addBaseDirectory(SequenceFile.class, sequenceFileBaseDirectory);
 		RelativePathTranslatorListener.addBaseDirectory(ReferenceFile.class, referenceFileBaseDirectory);
 		RelativePathTranslatorListener.addBaseDirectory(AnalysisOutputFile.class, outputFileBaseDirectory);
-		RelativePathTranslatorListener.addBaseDirectory(SequenceFileSnapshot.class, snapshotFileBaseDirectory);
 		return new RelativePathTranslatorListener();
 	}
 
@@ -62,12 +57,6 @@ public class IridaApiFilesystemRepositoryConfig {
 		return getExistingPathOrThrow(outputFileBaseDirectory);
 	}
 
-	@Profile("prod")
-	@Bean(name = "snapshotFileBaseDirectory")
-	public Path snapshotFileBaseDirectoryProd() {
-		return getExistingPathOrThrow(snapshotFileBaseDirectory);
-	}
-
 	@Profile({ "dev", "it", "test" })
 	@Bean(name = "referenceFileBaseDirectory")
 	public Path referenceFileBaseDirectory() throws IOException {
@@ -84,12 +73,6 @@ public class IridaApiFilesystemRepositoryConfig {
 	@Bean(name = "outputFileBaseDirectory")
 	public Path outputFileBaseDirectory() throws IOException {
 		return configureDirectory(outputFileBaseDirectory, "output-file-dev");
-	}
-
-	@Profile({ "dev", "it", "test" })
-	@Bean(name = "snapshotFileBaseDirectory")
-	public Path snapshotFileBaseDirectory() throws IOException {
-		return configureDirectory(snapshotFileBaseDirectory, "snapshot-file-dev");
 	}
 	
 	private Path getExistingPathOrThrow(String directory) {
