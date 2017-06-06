@@ -59,6 +59,8 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeCon
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProject;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
@@ -509,7 +511,7 @@ public class ProjectsController {
 		final Page<Project> page = projectService
 				.findProjectsForUser(params.getSearchValue(), params.getCurrentPage(), params.getLength(),
 						params.getSort());
-		List<Object> projects = page.getContent().stream().map(this::createProjectMap).collect(Collectors.toList());
+		List<DataTablesResponseModel> projects = page.getContent().stream().map(this::createDataTablesProject).collect(Collectors.toList());
 		return new DataTablesResponse(params, page, projects);
 	}
 
@@ -527,7 +529,7 @@ public class ProjectsController {
 		final Page<Project> page = projectService
 				.findAllProjects(params.getSearchValue(), params.getCurrentPage(), params.getLength(),
 						params.getSort());
-		List<Object> projects = page.getContent().stream().map(this::createProjectMap).collect(Collectors.toList());
+		List<DataTablesResponseModel> projects = page.getContent().stream().map(this::createDataTablesProject).collect(Collectors.toList());
 		return new DataTablesResponse(params, page, projects);
 	}
 
@@ -605,6 +607,22 @@ public class ProjectsController {
 		ExportUtils.renderExport(table, exportConf, response);
 	}
 
+	// TODO: Remove when removing Dandelion Export
+	private Map<String, Object> createProjectMap(Project project) {
+		Map<String, Object> map = new HashMap<>();
+
+		map.put("id", project.getId());
+		map.put("name", project.getName());
+		map.put("description", Strings.isNullOrEmpty(project.getProjectDescription()) ? "" : project.getProjectDescription());
+		map.put("organism", Strings.isNullOrEmpty(project.getOrganism()) ? "" : project.getOrganism());
+		map.put("samples", sampleService.getNumberOfSamplesForProject(project));
+		map.put("createdDate", project.getCreatedDate());
+		map.put("modifiedDate", project.getModifiedDate());
+		map.put("remote", project.isRemote());
+
+		return map;
+	}
+
 	/**
 	 * Changes a {@link ConstraintViolationException} to a usable map of strings for displaing in the UI.
 	 *
@@ -664,26 +682,15 @@ public class ProjectsController {
 	}
 
 	/**
-	 * Extract the details of the a {@link Project} into a {@link Map} which is consumable by the UI
+	 * Extract the details of the a {@link Project} into a {@link DTProject} which is consumable by the UI
 	 *
 	 * @param project
 	 * 		{@link Project}
 	 *
-	 * @return {@link Map}
+	 * @return {@link DTProject}
 	 */
-	public Map<String, Object> createProjectMap(Project project) {
-		Map<String, Object> map = new HashMap<>();
-
-		map.put("id", project.getId());
-		map.put("name", project.getName());
-		map.put("description", Strings.isNullOrEmpty(project.getProjectDescription()) ? "" : project.getProjectDescription());
-		map.put("organism", Strings.isNullOrEmpty(project.getOrganism()) ? "" : project.getOrganism());
-		map.put("samples", sampleService.getNumberOfSamplesForProject(project));
-		map.put("createdDate", project.getCreatedDate());
-		map.put("modifiedDate", project.getModifiedDate());
-		map.put("remote", project.isRemote());
-
-		return map;
+	private DTProject createDataTablesProject(Project project) {
+		return new DTProject(project, sampleService.getNumberOfSamplesForProject(project));
 	}
 
 	/**
