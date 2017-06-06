@@ -67,7 +67,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
@@ -208,18 +207,9 @@ public class AnalysisController {
 		Set<SequenceFilePair> inputFilePairs = submission.getPairedInputFiles();
 		model.addAttribute("paired_end", inputFilePairs);
 		
-		// - Remote
-		Set<SequenceFilePairSnapshot> remoteFilesPaired = submission.getRemoteFilesPaired();
-		model.addAttribute("remote_paired", remoteFilesPaired);
-		
 		// Check if user can update analysis
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		model.addAttribute("updatePermission", updateAnalysisPermission.isAllowed(authentication, submission));
-		
-		
-		// Get the number of files currently being mirrored
-		int mirroringCount = remoteFilesPaired.stream().mapToInt(p -> p.isMirrored() ? 0 : 1).sum();
-		model.addAttribute("mirroringCount", mirroringCount);
 		
 		if (iridaWorkflow.getWorkflowDescription().requiresReference() && submission.getReferenceFile().isPresent()) {
 			logger.debug("Adding reference file to page for submission with id [" + submission.getId() + "].");

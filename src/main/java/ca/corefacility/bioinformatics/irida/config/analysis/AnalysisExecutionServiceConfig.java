@@ -7,6 +7,9 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.EnableAsync;
 
+import com.github.jmchilton.blend4j.galaxy.JobsClient;
+import com.github.jmchilton.blend4j.galaxy.ToolsClient;
+
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
@@ -23,11 +26,7 @@ import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.An
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisProvenanceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
-import ca.corefacility.bioinformatics.irida.service.snapshot.SequenceFileSnapshotService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
-
-import com.github.jmchilton.blend4j.galaxy.JobsClient;
-import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 
 /**
  * Configuration for an AnalysisExecutionService class.
@@ -65,9 +64,6 @@ public class AnalysisExecutionServiceConfig {
 	
 	@Autowired
 	private GalaxyWorkflowService galaxyWorkflowService;
-	
-	@Autowired
-	private SequenceFileSnapshotService sequenceFileSnapshotService;
 		
 	@Autowired
 	SampleRemoteService sampleRemoteService;
@@ -92,7 +88,7 @@ public class AnalysisExecutionServiceConfig {
 	@Bean
 	public AnalysisExecutionServiceGalaxyAsync analysisExecutionServiceGalaxyAsync() {
 		return new AnalysisExecutionServiceGalaxyAsync(analysisSubmissionService, analysisService,
-				galaxyWorkflowService, analysisWorkspaceService(), iridaWorkflowsService, sequenceFileSnapshotService);
+				galaxyWorkflowService, analysisWorkspaceService(), iridaWorkflowsService);
 	}
 	
 	@Lazy

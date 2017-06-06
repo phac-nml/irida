@@ -30,7 +30,6 @@ public class AbsoluteToRelativePaths implements CustomSqlChange {
 	private Path sequenceFileDirectory;
 	private Path referenceFileDirectory;
 	private Path outputFileDirectory;
-	private Path snapshotFileDirectory;
 
 	private DataSource dataSource;
 
@@ -60,7 +59,6 @@ public class AbsoluteToRelativePaths implements CustomSqlChange {
 			this.sequenceFileDirectory = applicationContext.getBean("sequenceFileBaseDirectory", Path.class);
 			this.referenceFileDirectory = applicationContext.getBean("referenceFileBaseDirectory", Path.class);
 			this.outputFileDirectory = applicationContext.getBean("outputFileBaseDirectory", Path.class);
-			this.snapshotFileDirectory = applicationContext.getBean("snapshotFileBaseDirectory", Path.class);
 
 			this.dataSource = applicationContext.getBean(DataSource.class);
 		} else {
@@ -163,38 +161,6 @@ public class AbsoluteToRelativePaths implements CustomSqlChange {
 
 		// No AUD table for analysis_output_file as they're immutable
 
-		// check remote sequence files
-		jdbcTemplate.query("select id, file_path from remote_sequence_file WHERE file_path IS NOT NULL",
-				new RowCallbackHandler() {
-					@Override
-					public void processRow(ResultSet rs) throws SQLException {
-						Long id = rs.getLong(1);
-						Path path = Paths.get(rs.getString(2));
-						if (!path.startsWith(snapshotFileDirectory)) {
-							validationErrors.addError("Sequence file snapshot with id [" + id + "] with path [" + path
-									+ "] is not under path specified in /etc/irida/irida.conf ["
-									+ snapshotFileDirectory.toString()
-									+ "]; please confirm that you've specified the correct directory in /etc/irida/irida.conf.");
-						}
-					}
-				});
-
-		// check remote sequence file audit records
-		jdbcTemplate.query("select id, file_path from remote_sequence_file_AUD WHERE file_path IS NOT NULL",
-				new RowCallbackHandler() {
-					@Override
-					public void processRow(ResultSet rs) throws SQLException {
-						Long id = rs.getLong(1);
-						Path path = Paths.get(rs.getString(2));
-						if (!path.startsWith(snapshotFileDirectory)) {
-							validationErrors.addError("Sequence file snapshot with id [" + id + "] with path [" + path
-									+ "] is not under path specified in /etc/irida/irida.conf ["
-									+ snapshotFileDirectory.toString()
-									+ "]; please confirm that you've specified the correct directory in /etc/irida/irida.conf.");
-						}
-					}
-				});
-
 		return validationErrors;
 	}
 
@@ -217,7 +183,6 @@ public class AbsoluteToRelativePaths implements CustomSqlChange {
 		final String sequenceFileDirectoryPath = appendPathSeparator(this.sequenceFileDirectory.toString());
 		final String referenceFileDirectoryPath = appendPathSeparator(this.referenceFileDirectory.toString());
 		final String outputFileDirectoryPath = appendPathSeparator(this.outputFileDirectory.toString());
-		final String snapshotFileDirectoryPath = appendPathSeparator(this.snapshotFileDirectory.toString());
 
 		return new SqlStatement[] {
 				new RawSqlStatement(String.format(
@@ -234,13 +199,7 @@ public class AbsoluteToRelativePaths implements CustomSqlChange {
 						referenceFileDirectoryPath)),
 				new RawSqlStatement(String.format(
 						"update analysis_output_file set file_path = replace(file_path, '%s', '') WHERE file_path IS NOT NULL",
-						outputFileDirectoryPath)),
-				new RawSqlStatement(String.format(
-						"update remote_sequence_file set file_path = replace(file_path, '%s', '') WHERE file_path IS NOT NULL",
-						snapshotFileDirectoryPath)),
-				new RawSqlStatement(String.format(
-						"update remote_sequence_file_AUD set file_path = replace(file_path, '%s', '') WHERE file_path IS NOT NULL",
-						snapshotFileDirectoryPath)) };
+						outputFileDirectoryPath)) };
 	}
 
 	// make sure that we've got trailing path separators so that the paths in

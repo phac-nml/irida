@@ -47,7 +47,6 @@
 	<password_reset />
 	
 	<remote_api_token />
-	<remote_related_project />
 	<project_user />
 	<project_sample />
 	<project_referencefile />
@@ -65,14 +64,6 @@
 	
 	<analysis_submission_sequence_file_single_end />
 	<analysis_submission_sequence_file_pair />
-	<remote_sequence_file />
-	<remote_sequence_file_properties />
-	
-	<remote_sequence_file_pair />
-	<remote_sequence_file_pair_files />
-	
-	<analysis_submission_remote_file_single />
-	<analysis_submission_remote_file_pair />
 	
 	<ncbi_export_submission/>
 	<ncbi_export_biosample/>
@@ -123,17 +114,10 @@
 	<client_details_AUD />
 	<project_referencefile_AUD />
 	<reference_file_AUD />
-	<remote_related_project_AUD />
 	<sequencing_object_AUD />
 	<sequence_file_single_end_AUD />
 	<sequence_file_pair_AUD />
 	<sequence_file_pair_files_AUD />
-	<remote_sequence_file_AUD />
-	<remote_sequence_file_properties_AUD />
-	<remote_sequence_file_pair_AUD />
-	<remote_sequence_file_pair_files_AUD />
-	<analysis_submission_remote_file_single_AUD />
-	<analysis_submission_remote_file_pair_AUD />
 	<user_group_AUD/>
 	<user_group_member_AUD/>
 	<user_group_project_AUD/>

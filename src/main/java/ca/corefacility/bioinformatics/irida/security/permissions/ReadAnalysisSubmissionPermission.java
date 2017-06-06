@@ -75,25 +75,26 @@ public class ReadAnalysisSubmissionPermission extends BasePermission<AnalysisSub
 	 */
 	@Override
 	protected boolean customPermissionAllowed(Authentication authentication, AnalysisSubmission analysisSubmission) {
-		logger.trace("Testing permission for [" + authentication + "] on analysis submission [" + analysisSubmission
-				+ "]");
+		logger.trace(
+				"Testing permission for [" + authentication + "] on analysis submission [" + analysisSubmission + "]");
 		User u = userRepository.loadUserByUsername(authentication.getName());
 
 		if (analysisSubmission.getSubmitter().equals(u)) {
-			logger.trace("Permission GRANTED for [" + authentication + "] on analysis submission ["
-					+ analysisSubmission + "]");
+			logger.trace("Permission GRANTED for [" + authentication + "] on analysis submission [" + analysisSubmission
+					+ "]");
 			return true;
 		}
-		
+
 		/*
 		 * If the user isn't set it might be shared to a project they have
-		 * access to.  Check the shared projects.
+		 * access to. Check the shared projects.
 		 */
-		
-		List<ProjectAnalysisSubmissionJoin> projectsForSubmission = pasRepository.getProjectsForSubmission(analysisSubmission);
+
+		List<ProjectAnalysisSubmissionJoin> projectsForSubmission = pasRepository
+				.getProjectsForSubmission(analysisSubmission);
 		boolean canReadProject = projectsForSubmission.stream()
 				.anyMatch(p -> readProjectPermission.customPermissionAllowed(authentication, p.getSubject()));
-		
+
 		if (canReadProject) {
 			logger.trace("Permission GRANTED for [" + authentication + "] on analysis submission [" + analysisSubmission
 					+ "]");
@@ -102,22 +103,37 @@ public class ReadAnalysisSubmissionPermission extends BasePermission<AnalysisSub
 
 		/*
 		 * If the user isn't set it might be an automated submission. Check if
-		 * this analysis is the auto assembly for a file and if they can read
-		 * the file
+		 * this analysis is the auto assembly or sistr for a file and if they
+		 * can read the file
 		 */
 		Set<SequenceFilePair> pairedInputFiles = analysisSubmission.getPairedInputFiles();
 
-		boolean anyMatch = pairedInputFiles.stream().filter(o -> o.getAutomatedAssembly().equals(analysisSubmission))
-				.anyMatch(p -> seqObjectPermission.customPermissionAllowed(authentication, p));
+		boolean anyMatch = pairedInputFiles.stream().filter(o -> {
+			AnalysisSubmission a = o.getAutomatedAssembly();
+			AnalysisSubmission s = o.getSistrTyping();
+
+			// check auto assembly
+			boolean allowed = false;
+			if (a != null) {
+				allowed = a.equals(analysisSubmission);
+			}
+
+			// if not check sistr
+			if (!allowed && s != null) {
+				allowed = s.equals(analysisSubmission);
+			}
+
+			return allowed;
+		}).anyMatch(p -> seqObjectPermission.customPermissionAllowed(authentication, p));
 
 		if (anyMatch) {
-			logger.trace("Permission GRANTED for [" + authentication + "] on analysis submission ["
-					+ analysisSubmission + "]");
+			logger.trace("Permission GRANTED for [" + authentication + "] on analysis submission [" + analysisSubmission
+					+ "]");
 			return true;
 		}
 
-		logger.trace("Permission DENIED for [" + authentication + "] on analysis submission [" + analysisSubmission
-				+ "]");
+		logger.trace(
+				"Permission DENIED for [" + authentication + "] on analysis submission [" + analysisSubmission + "]");
 		return false;
 	}
 }
