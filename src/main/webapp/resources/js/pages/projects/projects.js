@@ -6,14 +6,14 @@ require('./../../vendor/datatables/datatables');
 require('./../../vendor/datatables/datatables-buttons');
 
 // Column look-ups for quick referencing
-const COLUMNS = {
-  ID: 0,
-  NAME: 1,
-  ORGANISM: 2,
-  SAMPLES: 3,
-  CREATED: 4,
-  MODIFIED: 5
-};
+const COLUMNS = (() => {
+  const columns = {};
+  $('thead th').each((index, elm) => {
+    const data = $(elm).data('data').toUpperCase();
+    columns[data] = index;
+  });
+  return columns;
+})();
 
 /**
  * Download table in specified format.
@@ -58,7 +58,7 @@ rt
     processing: true,
     serverSide: true,
     ajax: window.PAGE.urls.projects,
-    order: [[COLUMNS.MODIFIED, "desc"]],
+    order: [[COLUMNS.MODIFIEDDATE, "desc"]],
     columnDefs: [
       {
         targets: [COLUMNS.NAME],
@@ -69,7 +69,7 @@ rt
         }
       },
       {
-        targets: [COLUMNS.CREATED, COLUMNS.MODIFIED],
+        targets: [COLUMNS.CREATEDDATE, COLUMNS.MODIFIEDDATE],
         render: function(data) {
           // Format the time (using timeago.js) to get the amount of time
           // since the event occurred.
