@@ -52,7 +52,9 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTa
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.export.ProjectSamplesTableExport;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.ProjectSampleModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProjectSamples;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -413,9 +415,10 @@ public class ProjectSamplesController {
 						organismSearch, minDate, maxDate, params.getCurrentPage(), params.getLength(),
 						params.getSort());
 
-		// Create a more usable Map of the sample data.
-		List<Object> models = page.getContent().stream().map(this::buildProjectSampleModel)
-				.collect(Collectors.toList());
+		// Create DataTables representation of the page.
+		List<DataTablesResponseModel> models = new ArrayList<>();
+		models.addAll(page.getContent().stream().map(this::buildProjectSamplDataTablesModel)
+				.collect(Collectors.toList()));
 		return new DataTablesResponse(params, page, models);
 	}
 
@@ -427,14 +430,14 @@ public class ProjectSamplesController {
 	 *            {@link ProjectSampleModel} from
 	 * @return a newly constructed {@link ProjectSampleModel}
 	 */
-	private ProjectSampleModel buildProjectSampleModel(ProjectSampleJoin sso) {
+	private DTProjectSamples buildProjectSamplDataTablesModel(ProjectSampleJoin sso) {
 		Project p = sso.getSubject();
 		
 		List<QCEntry> qcEntriesForSample = sampleService.getQCEntriesForSample(sso.getObject());
 		
 		//add the project settings for the qc entries
 		qcEntriesForSample.forEach(q -> q.addProjectSettings(p));
-		return new ProjectSampleModel(sso, qcEntriesForSample);
+		return new DTProjectSamples(sso, qcEntriesForSample);
 	}
 
 	/**
