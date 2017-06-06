@@ -1,21 +1,18 @@
-package ca.corefacility.bioinformatics.irida.ria.web.projects;
+package ca.corefacility.bioinformatics.irida.ria.web.projects.metadata;
 
-import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
-
-import javax.servlet.http.HttpSession;
-
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.MetadataImportFileTypeNotSupportedError;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.io.Files;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -28,28 +25,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.MetadataImportFileTypeNotSupportedError;
-import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
-import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
-import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.io.Files;
+import javax.servlet.http.HttpSession;
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * This class is designed to be used for bulk actions on {@link MetadataEntry}
@@ -60,58 +45,18 @@ import com.google.common.io.Files;
 public class ProjectSampleMetadataController {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectSampleMetadataController.class);
 	private final MessageSource messageSource;
-	private final ProjectControllerUtils projectControllerUtils;
 	private final ProjectService projectService;
 	private final SampleService sampleService;
 	private final MetadataTemplateService metadataTemplateService;
 
 	@Autowired
-	public ProjectSampleMetadataController(MessageSource messageSource, ProjectControllerUtils projectControllerUtils,
-			ProjectService projectService, SampleService sampleService, MetadataTemplateService metadataTemplateService) {
+	public ProjectSampleMetadataController(MessageSource messageSource,
+			ProjectService projectService, SampleService sampleService,
+										   MetadataTemplateService metadataTemplateService) {
 		this.messageSource = messageSource;
-		this.projectControllerUtils = projectControllerUtils;
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.metadataTemplateService = metadataTemplateService;
-	}
-
-	/**
-	 * Get the page to create a new {@link MetadataTemplate}
-	 *
-	 * @param projectId
-	 * 		the {@link Long} identifier for the current project
-	 * @param model
-	 * 		{@link Model}
-	 * @param principal
-	 * 		{@link Principal} currently logged in user
-	 * @param locale
-	 * 		{@link Locale} of the logged in user.
-	 *
-	 * @return {@link String} path to the page
-	 */
-	@RequestMapping("/template")
-	public String getCreateNewSampleMetadataTemplatePage(@PathVariable Long projectId,
-			@RequestParam(required = false) Long templateId,
-			Model model, Principal principal,
-			Locale locale) {
-		// Set up the template information
-		Project project = projectService.read(projectId);
-		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		return "projects/project_samples_metadata_template";
-	}
-
-	/**
-	 * Search all Metadata keys available for adding to a template.
-	 * 
-	 * @param query
-	 *            the query to search for
-	 * @return a list of keys matching the query
-	 */
-	@RequestMapping("/fields")
-	@ResponseBody
-	public List<String> getMetadataKeysForProject(@RequestParam String query) {
-		return metadataTemplateService.getAllMetadataFieldsByQueryString(query).stream()
-				.map(MetadataTemplateField::getLabel).collect(Collectors.toList());
 	}
 
 	/**

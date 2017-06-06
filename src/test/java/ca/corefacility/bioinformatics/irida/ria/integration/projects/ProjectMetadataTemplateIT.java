@@ -12,8 +12,8 @@ import static org.junit.Assert.*;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectMetadataTemplateView.xml")
 public class ProjectMetadataTemplateIT extends AbstractIridaUIITChromeDriver {
 	private final int PROJECT_ID = 1;
-	private final int TEMPLATE_ID = 1;
-	private final int NEW_TEMPLATE = -1;
+	private final String TEMPLATE_ID = "1";
+	private final String NEW_TEMPLATE = "new";
 
 	@Test
 	public void testSettingsMetadataPage() {

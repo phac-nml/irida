@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
-import java.util.List;
-
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -10,21 +9,16 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+import java.util.List;
 
 public class ProjectMetadataTemplatePage extends AbstractPage {
-	private static final Logger logger = LoggerFactory.getLogger(ProjectMetadataTemplatePage.class);
-	private static final String RELAIVE_URL = "projects/{id}/sample-metadata/template";
+	private static final String RELAIVE_URL = "projects/{id}/metadata-templates/";
 
 	@FindBy(id = "template-name") private WebElement templateNameInput;
-	@FindBy(id = "save-template-btn") private WebElement saveTemplateButton;
+	@FindBy(id = "save-btn") private WebElement saveTemplateButton;
 	@FindBy(id = "add-field-btn") private WebElement addFieldButton;
-	@FindBy(className = "ui-select-toggle") private WebElement fieldSelectToggle;
-	@FindBy(css = "input.ui-select-search") private WebElement fieldSearchInput;
-	@FindBy(css = ".ui-select-choices li") private List<WebElement> fieldSearchChoices;
+	@FindBy(className = "select2-search__field") private WebElement fieldSearchInput;
 	@FindBy(className = "template-field") private List<WebElement> templateFieldItems;
 	@FindBy(id = "template-id") private WebElement templateIdentifier;
 
@@ -32,12 +26,9 @@ public class ProjectMetadataTemplatePage extends AbstractPage {
 		super(driver);
 	}
 
-	public static ProjectMetadataTemplatePage goToPage(WebDriver driver, int projectId, int templateId) {
+	public static ProjectMetadataTemplatePage goToPage(WebDriver driver, int projectId, String pageName) {
 		String url = RELAIVE_URL.replace("{id}", String.valueOf(projectId));
-		if (templateId > 0) {
-			url += "?templateId=" + templateId;
-		}
-		get(driver, url);
+		get(driver, url + pageName);
 		return PageFactory.initElements(driver, ProjectMetadataTemplatePage.class);
 	}
 
@@ -62,13 +53,10 @@ public class ProjectMetadataTemplatePage extends AbstractPage {
 	public void addMetadataField(String field) {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		addFieldButton.click();
-		wait.until(ExpectedConditions.visibilityOf(fieldSelectToggle));
-		fieldSelectToggle.click();
-		wait.until(ExpectedConditions.visibilityOf(fieldSearchInput));
 		fieldSearchInput.sendKeys(field);
-		wait.until(ExpectedConditions.visibilityOfAllElements(fieldSearchChoices));
-		fieldSearchChoices.get(0).click();
-		wait.until(ExpectedConditions.visibilityOfAllElements(templateFieldItems));
+		waitForTime(500);
+		fieldSearchInput.sendKeys(Keys.ENTER);
+		waitForTime(1000);
 	}
 
 	public int getNumberOfTemplateFields() {
@@ -86,6 +74,6 @@ public class ProjectMetadataTemplatePage extends AbstractPage {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		waitForTime(1000);
 		saveTemplateButton.click();
-		wait.until(ExpectedConditions.visibilityOf(templateIdentifier));
+		wait.until(ExpectedConditions.urlMatches("metadata-templates/\\d+"));
 	}
 }
