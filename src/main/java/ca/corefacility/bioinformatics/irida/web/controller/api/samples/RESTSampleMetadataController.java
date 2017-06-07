@@ -26,6 +26,10 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
 
+/**
+ * REST controller to handle storing and retrieving metadata from a
+ * {@link Sample}
+ */
 @Controller
 public class RESTSampleMetadataController {
 	private static final Logger logger = LoggerFactory.getLogger(RESTSampleMetadataController.class);
@@ -42,6 +46,13 @@ public class RESTSampleMetadataController {
 		this.metadataTemplateService = metadataTemplateService;
 	}
 
+	/**
+	 * Get the metadata for a given {@link Sample}
+	 * 
+	 * @param sampleId
+	 *            the id of the {@link Sample} to get metadata for
+	 * @return the metadata for the sample
+	 */
 	@RequestMapping(value = "/api/samples/{sampleId}/metadata", method = RequestMethod.GET)
 	public ModelMap getSampleMetadata(@PathVariable Long sampleId) {
 		logger.trace("Getting sample metadata for " + sampleId);
@@ -54,6 +65,16 @@ public class RESTSampleMetadataController {
 		return modelMap;
 	}
 
+	/**
+	 * Save new metadata for a {@link Sample}. Note this will overwrite the
+	 * existing metadata
+	 * 
+	 * @param sampleId
+	 *            the id of the {@link Sample} to save new metadata
+	 * @param metadataMap
+	 *            the metadata to save to the {@link Sample}
+	 * @return the updated {@link Sample}
+	 */
 	@RequestMapping(value = "/api/samples/{sampleId}/metadata", method = RequestMethod.POST)
 	public ModelMap saveSampleMetadata(@PathVariable Long sampleId,
 			@RequestBody Map<String, MetadataEntry> metadataMap) {
@@ -68,6 +89,16 @@ public class RESTSampleMetadataController {
 		return getSampleMetadata(sampleId);
 	}
 
+	/**
+	 * Add select new metadata fields to the {@link Sample}. Note this will only
+	 * overwrite duplicate terms. Existing metadata will not be affected.
+	 * 
+	 * @param sampleId
+	 *            the {@link Sample} to add metadata to
+	 * @param metadataMap
+	 *            the new metadata
+	 * @return the updated {@link Sample}
+	 */
 	@RequestMapping(value = "/api/samples/{sampleId}/metadata", method = RequestMethod.PUT)
 	public ModelMap addSampleMetadata(@PathVariable Long sampleId,
 			@RequestBody Map<String, MetadataEntry> metadataMap) {
@@ -82,6 +113,13 @@ public class RESTSampleMetadataController {
 		return getSampleMetadata(sampleId);
 	}
 
+	/**
+	 * Build a {@link SampleMetadataResponse} object
+	 * 
+	 * @param s
+	 *            the {@link Sample} to build the object from
+	 * @return a constructed {@link SampleMetadataResponse}
+	 */
 	private SampleMetadataResponse buildSampleMetadataResponse(final Sample s) {
 		SampleMetadataResponse response = new SampleMetadataResponse(s.getMetadata());
 		response.add(linkTo(methodOn(RESTSampleMetadataController.class).getSampleMetadata(s.getId())).withSelfRel());
@@ -103,7 +141,7 @@ public class RESTSampleMetadataController {
 		public Map<MetadataTemplateField, MetadataEntry> getMetadata() {
 			return metadata;
 		}
-		
+
 		@JsonProperty
 		public void setMetadata(Map<MetadataTemplateField, MetadataEntry> metadata) {
 			this.metadata = metadata;
