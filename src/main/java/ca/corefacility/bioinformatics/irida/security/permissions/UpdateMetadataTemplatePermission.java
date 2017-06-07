@@ -12,19 +12,19 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectMe
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataTemplateRepository;
 
 /**
- * Permission for reading {@link MetadataTemplate}
+ * Permission for updating a {@link MetadataTemplate}
  */
 @Component
-public class ReadMetadataTemplatePermission extends BasePermission<MetadataTemplate, Long> {
+public class UpdateMetadataTemplatePermission extends BasePermission<MetadataTemplate, Long> {
 
-	public static final String PERMISSION_PROVIDED = "canReadMetadataTemplate";
+	public static final String PERMISSION_PROVIDED = "canUpdateMetadataTemplate";
 
-	private ReadProjectPermission projectPermission;
+	private ModifyProjectPermission projectPermission;
 	private ProjectMetadataTemplateJoinRepository pmRepository;
 
 	@Autowired
-	public ReadMetadataTemplatePermission(MetadataTemplateRepository repository,
-			ProjectMetadataTemplateJoinRepository pmRepository, ReadProjectPermission projectPermission) {
+	public UpdateMetadataTemplatePermission(MetadataTemplateRepository repository,
+			ProjectMetadataTemplateJoinRepository pmRepository, ModifyProjectPermission projectPermission) {
 		super(MetadataTemplate.class, Long.class, repository);
 		this.projectPermission = projectPermission;
 		this.pmRepository = pmRepository;
