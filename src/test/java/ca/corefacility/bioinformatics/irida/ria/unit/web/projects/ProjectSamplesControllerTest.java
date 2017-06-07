@@ -15,7 +15,6 @@ import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -40,7 +39,9 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.ProjectSampleModel;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProjectSamples;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectSamplesController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -314,9 +315,9 @@ public class ProjectSamplesControllerTest {
 		when(params.getSort()).thenReturn(new Sort(Direction.ASC, "sample.sampleName"));
 		DataTablesResponse response = controller
 				.getProjectSamples(1L, params, ImmutableList.of(), ImmutableList.of(), null, null, null, null);
-		List<Object> data = response.getData();
+		List<DataTablesResponseModel> data = response.getData();
 		assertEquals("Has the correct number of samples", 1, data.size());
-		ProjectSampleModel sampleData = (ProjectSampleModel) data.get(0);
+		DTProjectSamples sampleData = (DTProjectSamples) data.get(0);
 		assertEquals("Has the correct sample", "Joined Sample", sampleData.getSampleName());
 
 	}
