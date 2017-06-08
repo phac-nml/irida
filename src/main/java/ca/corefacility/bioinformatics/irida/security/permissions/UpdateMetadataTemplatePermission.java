@@ -19,12 +19,12 @@ public class UpdateMetadataTemplatePermission extends BasePermission<MetadataTem
 
 	public static final String PERMISSION_PROVIDED = "canUpdateMetadataTemplate";
 
-	private ModifyProjectPermission projectPermission;
+	private ManageLocalProjectSettingsPermission projectPermission;
 	private ProjectMetadataTemplateJoinRepository pmRepository;
 
 	@Autowired
 	public UpdateMetadataTemplatePermission(MetadataTemplateRepository repository,
-			ProjectMetadataTemplateJoinRepository pmRepository, ModifyProjectPermission projectPermission) {
+			ProjectMetadataTemplateJoinRepository pmRepository, ManageLocalProjectSettingsPermission projectPermission) {
 		super(MetadataTemplate.class, Long.class, repository);
 		this.projectPermission = projectPermission;
 		this.pmRepository = pmRepository;
