@@ -304,6 +304,14 @@ public class ProjectLineListController {
 		);
 	}
 
+	/**
+	 * Ajax request handler for deleting a specific {@link MetadataTemplate}
+	 *
+	 * @param projectId  {@link Long} identifier for a {@link Project}
+	 * @param templateId {@link Long} identifier for a {@link MetadataTemplate}
+	 * @param locale     {@link Locale}
+	 * @return {@link Map} of success message.
+	 */
 	@RequestMapping(value = "/templates/{templateId}", method = RequestMethod.DELETE)
 	@ResponseBody
 	public Map<String, String> deleteMetadataTemplate(@PathVariable Long projectId, @PathVariable Long templateId, Locale locale) {

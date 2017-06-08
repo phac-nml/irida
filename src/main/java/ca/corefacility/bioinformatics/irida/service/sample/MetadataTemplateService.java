@@ -1,14 +1,14 @@
 package ca.corefacility.bioinformatics.irida.service.sample;
 
-import java.util.List;
-import java.util.Map;
-
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Service for managing {@link MetadataTemplate}s and related {@link Project}s
@@ -52,7 +52,13 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	 * @return a list of {@link ProjectMetadataTemplateJoin}
 	 */
 	public List<ProjectMetadataTemplateJoin> getMetadataTemplatesForProject(Project project);
-	
+
+	/**
+	 * Get a {@link MetadataTemplateField} by its {@link Long} identifier
+	 *
+	 * @param id {@link Long} identifier for a {@link MetadataTemplateField}
+	 * @return {@link MetadataTemplateField}
+	 */
 	public MetadataTemplateField readMetadataField(Long id);
 
 	/**
