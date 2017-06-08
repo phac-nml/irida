@@ -61,9 +61,3 @@ build-docs_job:
   image: docker.corefacility.ca:5000/irida-testing:latest
   script: mvn clean site -B
   stage: build
-#cache:
-#  untracked: true
-#  paths:
-#    - src/main/webapp/node
-#    - src/main/webapp/node_modules
-#    - src/main/webapp/resources/bower_components
