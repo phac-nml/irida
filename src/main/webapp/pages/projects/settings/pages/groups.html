@@ -18,8 +18,7 @@
           'removeMember': /*[[@{/projects/{id}/settings/groups/(id=${project.getId()})}]]*/ '/projects/1/members/2',
           'usersSelection': /*[[@{/projects/{id}/settings/ajax/availablegroupmembers(id=${project.getId()})}]]*/ '/projects/1/ajax/availablemembers',
           'updateRole': /*[[@{/projects/{id}/settings/groups/editrole/(id=${project.getId()})}]]*/ '/projects/1/members'
-        },
-        canAdminister: /*[[${isAdmin} or ${manageMembers}]]*/ false
+        }
       };
     </script>
 </head>
@@ -44,9 +43,10 @@
                 <thead>
                 <tr role="row">
                     <th dt:property="object.name" dt:searchable="true" th:text="#{project.table.collaborator.name}" dt:renderFunction="project-members#projectMembersTable.memberNameLinkRow"></th>
-                    <th dt:property="projectRole" th:text="#{project.table.collaborator.role}" dt:renderFunction="project-members#projectMembersTable.renderGroupRole"></th>
+                    <th dt:property="projectRole" th:if="${isAdmin} or ${manageMembers}" th:text="#{project.table.collaborator.role}" dt:renderFunction="project-members#projectMembersTable.renderGroupRole"></th>
+                    <th dt:property="projectRole" th:if="not (${isAdmin} or ${manageMembers})" th:text="#{project.table.collaborator.role}" dt:renderFunction="project-members#projectMembersTable.renderGroupRoleAsText"></th>
                     <th width="150px" dt:property="createdDate" th:text="#{project.table.collaborator.since}" dt:renderFunction="datatables-utils#datatable.formatDate"></th>
-                    <th width="50px" th:if="${isAdmin} or ${isOwner}" dt:sortable="false" dt:renderFunction="project-members#projectMembersTable.removeMemberButton"></th>
+                    <th width="50px" th:if="${isAdmin} or ${manageMembers}" dt:sortable="false" dt:renderFunction="project-members#projectMembersTable.removeMemberButton"></th>
                 </tr>
                 </thead>
             </table>

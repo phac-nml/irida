@@ -1,14 +1,10 @@
 var projectMembersTable = (function(page, notifications) {
 	function renderGroupRole(data, type, full) {
-    if (page.canAdminister) {
-      var select = '<select id="' + full.object.identifier + '-role-select" class="form-control input-full project-role-select">';
-      select += '<option value="PROJECT_USER" ' + (data == 'PROJECT_USER' ? 'selected="selected"' : '') + '>' + page.i18n.PROJECT_USER + '</option>';
-      select += '<option value="PROJECT_OWNER" ' + (data == 'PROJECT_OWNER' ? 'selected="selected"' : '') + '>' + page.i18n.PROJECT_OWNER + '</option>';
-      select += '</select>';
-      return select;
-    } else {
-    	return (data === 'PROJECT_USER' ? page.i18n.PROJECT_USER : page.i18n.PROJECT_OWNER);
-		}
+    var select = '<select id="' + full.object.identifier + '-role-select" class="form-control input-full project-role-select">';
+    select += '<option value="PROJECT_USER" ' + (data == 'PROJECT_USER' ? 'selected="selected"' : '') + '>' + page.i18n.PROJECT_USER + '</option>';
+    select += '<option value="PROJECT_OWNER" ' + (data == 'PROJECT_OWNER' ? 'selected="selected"' : '') + '>' + page.i18n.PROJECT_OWNER + '</option>';
+    select += '</select>';
+    return select;
 	};
 	
 	function renderGroupRoleAsText(data, type, full) {
