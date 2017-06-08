@@ -55,7 +55,6 @@ rt
         }))
       }
     ],
-    stateSave: true,
     processing: true,
     serverSide: true,
     ajax: window.PAGE.urls.projects,
