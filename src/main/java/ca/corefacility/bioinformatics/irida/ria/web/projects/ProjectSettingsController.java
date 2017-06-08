@@ -163,7 +163,6 @@ public class ProjectSettingsController {
 	 * @return name of the project remote settings page
 	 */
 	@RequestMapping("/metadata-templates")
-	@PreAuthorize("hasPermission(#projectId, 'canManageLocalProjectSettings')")
 	public String getSampleMetadataTemplatesPage(@PathVariable Long projectId, final Model model,
 			final Principal principal) {
 		Project project = projectService.read(projectId);

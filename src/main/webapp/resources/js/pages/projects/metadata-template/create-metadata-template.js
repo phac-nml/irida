@@ -36,7 +36,10 @@ form
   .on('keyup blur', setSubmitBtnState);
 
 const list = document.querySelector('.template-fields');
-Sortable.create(list);
+
+if (window.PAGE.isOwner) {
+  Sortable.create(list);
+}
 
 // ****************************************************************************
 // Current Fields

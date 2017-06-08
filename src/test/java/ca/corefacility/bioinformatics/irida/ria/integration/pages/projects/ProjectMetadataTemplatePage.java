@@ -14,9 +14,11 @@ import java.util.List;
 
 public class ProjectMetadataTemplatePage extends AbstractPage {
 	private static final String RELAIVE_URL = "projects/{id}/metadata-templates/";
+	
+	private static final String SAVE_BTN = "save-btn";
 
 	@FindBy(id = "template-name") private WebElement templateNameInput;
-	@FindBy(id = "save-btn") private WebElement saveTemplateButton;
+	@FindBy(id = SAVE_BTN) private WebElement saveTemplateButton;
 	@FindBy(id = "add-field-btn") private WebElement addFieldButton;
 	@FindBy(className = "select2-search__field") private WebElement fieldSearchInput;
 	@FindBy(className = "template-field") private List<WebElement> templateFieldItems;
@@ -49,9 +51,14 @@ public class ProjectMetadataTemplatePage extends AbstractPage {
 	public boolean isSaveButtonEnabled() {
 		return saveTemplateButton.isEnabled();
 	}
+	
+	public boolean isSaveButtonVisible() {
+		List<WebElement> findElements = driver.findElements(By.id(SAVE_BTN));
+		return !findElements.isEmpty();
+	}
 
 	public void addMetadataField(String field) {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		new WebDriverWait(driver, 10);
 		addFieldButton.click();
 		fieldSearchInput.sendKeys(field);
 		waitForTime(500);

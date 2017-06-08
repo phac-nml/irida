@@ -29,19 +29,20 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	 * Deleta a {@link MetadataTemplate} from a {@link Project}
 	 *
 	 * @param project
-	 * 		the {@link Project} to template lives in.
+	 *            the {@link Project} to template lives in.
 	 * @param id
-	 * 		the {@link Long} identifier for a {@link MetadataTemplate}
+	 *            the {@link Long} identifier for a {@link MetadataTemplate}
 	 */
 	public void deleteMetadataTemplateFromProject(Project project, Long id);
 
 	/**
 	 * Update a {@link MetadataTemplate} within a {@link Project}
- 	 * @param project {@link Project} the template belongs to.
-	 * @param metadataTemplate {@link MetadataTemplate}
+	 * 
+	 * @param metadataTemplate
+	 *            {@link MetadataTemplate}
 	 * @return {@link MetadataTemplate}
 	 */
-	public MetadataTemplate updateMetadataTemplateInProject(Project project, MetadataTemplate metadataTemplate);
+	public MetadataTemplate updateMetadataTemplateInProject(MetadataTemplate metadataTemplate);
 
 	/**
 	 * Get a list of {@link MetadataTemplate}s for a given {@link Project}
@@ -55,7 +56,8 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	/**
 	 * Get a {@link MetadataTemplateField} by its {@link Long} identifier
 	 *
-	 * @param id {@link Long} identifier for a {@link MetadataTemplateField}
+	 * @param id
+	 *            {@link Long} identifier for a {@link MetadataTemplateField}
 	 * @return {@link MetadataTemplateField}
 	 */
 	public MetadataTemplateField readMetadataField(Long id);
@@ -64,7 +66,8 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	 * Get a {@link MetadataTemplateField} by its {@link String} label
 	 *
 	 * @param label
-	 * 		the {@link String} label for the {@link MetadataTemplateField}.
+	 *            the {@link String} label for the
+	 *            {@link MetadataTemplateField}.
 	 *
 	 * @return {@link MetadataTemplateField}
 	 */
@@ -74,7 +77,7 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	 * Save a new metadata fields
 	 *
 	 * @param field
-	 * 		the {@link MetadataTemplateField} to save.
+	 *            the {@link MetadataTemplateField} to save.
 	 *
 	 * @return the saved {@link MetadataTemplateField}
 	 */
@@ -84,11 +87,11 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	 * Get a list of all {@link MetadataTemplateField}s that contain the query
 	 *
 	 * @param query
-	 * 		the {@link String} to search labels for.
+	 *            the {@link String} to search labels for.
 	 *
 	 * @return {@link List} of {@link MetadataTemplateField}
 	 */
 	public List<MetadataTemplateField> getAllMetadataFieldsByQueryString(String query);
-	
+
 	public Map<MetadataTemplateField, MetadataEntry> getMetadataMap(Map<String, MetadataEntry> metadata);
 }

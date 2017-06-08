@@ -1,5 +1,16 @@
 package ca.corefacility.bioinformatics.irida.service.impl.sample;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.transaction.Transactional;
+import javax.validation.Validator;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Service;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -11,16 +22,10 @@ import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataFieldRep
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataTemplateRepository;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
-import javax.validation.Validator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+/**
+ * Service for storing and reading {@link MetadataTemplate}s
+ */
 @Service
 public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataTemplate>
 		implements MetadataTemplateService {
@@ -38,27 +43,27 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 	}
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
 	 */
-	@PreAuthorize("permitAll()")
+	@PreAuthorize("hasPermission(#id, 'canReadMetadataTemplate')")
 	@Override
 	public MetadataTemplate read(Long id) throws EntityNotFoundException {
 		return super.read(id);
 	}
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
 	 */
-	@PreAuthorize("hasPermission(#project, 'isProjectOwner') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#template, 'canUpdateMetadataTemplate')")
 	@Override
-	public MetadataTemplate updateMetadataTemplateInProject(Project project, MetadataTemplate template) {
+	public MetadataTemplate updateMetadataTemplateInProject(MetadataTemplate template) {
 		return super.update(template);
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	@PreAuthorize("hasPermission(#project, 'isProjectOwner') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#id, 'canUpdateMetadataTemplate')")
 	@Override
 	public void deleteMetadataTemplateFromProject(Project project, Long id) throws EntityNotFoundException {
 		super.delete(id);
@@ -87,9 +92,6 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 		return pmtRepository.getMetadataTemplatesForProject(project);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	@PreAuthorize("permitAll()")
 	@Override
 	public MetadataTemplateField readMetadataField(Long id) {
@@ -105,9 +107,6 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 		return fieldRepository.findMetadataFieldByLabel(label);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	@PreAuthorize("permitAll()")
 	@Override
 	public MetadataTemplateField saveMetadataField(MetadataTemplateField field) {
@@ -127,9 +126,6 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 		return fieldRepository.findAllMetadataFieldsByLabelQuery(query);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	@Override
 	@Transactional
 	@PreAuthorize("permitAll()")
