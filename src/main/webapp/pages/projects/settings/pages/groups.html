@@ -19,7 +19,7 @@
           'usersSelection': /*[[@{/projects/{id}/settings/ajax/availablegroupmembers(id=${project.getId()})}]]*/ '/projects/1/ajax/availablemembers',
           'updateRole': /*[[@{/projects/{id}/settings/groups/editrole/(id=${project.getId()})}]]*/ '/projects/1/members'
         },
-        canAdminister: /*[[${isAdmin} or ${isOwner}]]*/ false
+        canAdminister: /*[[${isAdmin} or ${manageMembers}]]*/ false
       };
     </script>
 </head>
