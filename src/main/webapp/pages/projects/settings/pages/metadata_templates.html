@@ -9,7 +9,7 @@
     <div class="clearfix spaced-bottom">
         <h2 class="h2-muted pull-left" th:text="#{project.settings.metadata-templates}">_Sample Metadata Templates_</h2>
         <a href="#" id="create-template-btn"
-           th:href="@{/projects/{id}/metadata-templates/new(id=${project.getId()})}"
+           th:href="@{/projects/{id}/metadata-templates/new(id=${project.getId()})}" th:if="${isOwner}"
            class="btn btn-link pull-right" th:text="#{project.settings.metadata-templates.new}">Create New Template</a>
     </div>
     <table id="template-table" class="table table-border table-striped">
