@@ -1,40 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.projects;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.anyVararg;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpSession;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.context.MessageSource;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.ui.ExtendedModelMap;
-import org.springframework.ui.Model;
-
-import com.github.dandelion.datatables.core.ajax.ColumnDef;
-import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
-import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
-import com.google.common.collect.Lists;
-
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
@@ -42,6 +7,8 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -52,6 +19,25 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.util.TreeNode;
+import com.google.common.collect.Lists;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.ui.ExtendedModelMap;
+import org.springframework.ui.Model;
+
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.security.Principal;
+import java.util.*;
+
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit test for {@link }
@@ -103,39 +89,29 @@ public class ProjectsControllerTest {
 
 	@Test
 	public void testGetAjaxProjectList() {
-		Principal principal = () -> USER_NAME;
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
 
 		Page<Project> page = getProjectUserJoinPage(user);
-		when(projectService.findProjectsForUser(any(String.class), any(String.class), any(String.class), any(Integer.class), any(Integer.class),
-				any(Sort.Direction.class), anyVararg())).thenReturn(page);
+		when(projectService.findProjectsForUser(any(String.class), any(Integer.class), any(Integer.class),
+				any(Sort.class))).thenReturn(page);
 		when(sampleService.getSamplesForProject(any(Project.class)))
 				.thenReturn(TestDataFactory.constructListJoinProjectSample());
 
-		DatatablesCriterias criterias = mock(DatatablesCriterias.class);
-		when(criterias.getColumnDefs()).thenReturn(getColumnDefs());
-		when(criterias.getSortedColumnDefs()).thenReturn(getSortedColumnDefs());
-		when(criterias.getLength()).thenReturn(10);
-
-		DatatablesResponse<Map<String, Object>> result = controller.getAjaxProjectList(criterias, principal);
-		testGetAnyAjaxProjectListResult(result.getData(), 10);
+		DataTablesParams params = new DataTablesParams(0, 10, 1, "", new Sort(Sort.Direction.ASC, "modifiedDate"));
+		DataTablesResponse response = controller.getAjaxProjectList(params);
+		assertEquals("Should have 10 data elements, since page size is 10", 10, response.getData().size());
 	}
 
 	@Test
 	public void testGetAjaxAdminProjectsList() {
-		when(projectService.findAllProjects(any(String.class), any(String.class), any(String.class), any(Integer.class),
-				any(Integer.class), any(Sort.Direction.class), anyVararg())).thenReturn(getProjectPage());
+		when(projectService.findAllProjects(any(String.class), any(Integer.class),
+				any(Integer.class), any(Sort.class))).thenReturn(getProjectPage());
 		when(sampleService.getSamplesForProject(any(Project.class))).thenReturn(TestDataFactory.constructListJoinProjectSample());
 
-		DatatablesCriterias criterias = mock(DatatablesCriterias.class);
-		when(criterias.getColumnDefs()).thenReturn(getColumnDefs());
-		when(criterias.getSortedColumnDefs()).thenReturn(getSortedColumnDefs());
-		when(criterias.getLength()).thenReturn(10);
 
-
-		DatatablesResponse<Map<String, Object>> result = controller.getAjaxAdminProjectsList(criterias);
-
-		testGetAnyAjaxProjectListResult(result.getData(), 10);
+		DataTablesParams params = new DataTablesParams(0, 10, 1, "", new Sort(Sort.Direction.ASC, "modifiedDate"));
+		DataTablesResponse response = controller.getAjaxAdminProjectsList(params);
+		assertEquals("Should have 10 data elements, since page size is 10", 10, response.getData().size());
 	}
 
 	@Test
@@ -286,54 +262,6 @@ public class ProjectsControllerTest {
 	private List<Join<Project, User>> getUsersForProjectByRole() {
 		List<Join<Project, User>> list = new ArrayList<>();
 		list.add(new ProjectUserJoin(getProject(), user, ProjectRole.PROJECT_OWNER));
-		return list;
-	}
-
-	private void testGetAnyAjaxProjectListResult(List<Map<String, Object>> result, int expectedSize) {
-		assertEquals("Should be 10 items in the list", expectedSize, result.size());
-
-		for (Map<String, Object> map : result) {
-			assertTrue("Should have key 'id'", map.containsKey("id"));
-			assertTrue("Should have key 'name'", map.containsKey("name"));
-			assertTrue("Should have key 'organism'", map.containsKey("organism"));
-			assertTrue("Should have key 'samples'", map.containsKey("samples"));
-			assertTrue("Should have key 'createdDate'", map.containsKey("createdDate"));
-			assertTrue("Should have key 'modifiedDate'", map.containsKey("modifiedDate"));
-		}
-	}
-
-	private List<ColumnDef> getColumnDefs() {
-		List<ColumnDef> list = new ArrayList<>();
-
-		// 0. identifier
-		ColumnDef def0 = new ColumnDef();
-		def0.setFiltered(false);
-		def0.setName("identifier");
-		list.add(def0);
-
-		// 1. name
-		ColumnDef def1 = new ColumnDef();
-		def1.setFiltered(false);
-		def1.setName("name");
-		list.add(def1);
-
-		// 2. organism
-		ColumnDef def2 = new ColumnDef();
-		def2.setFiltered(false);
-		def2.setName("organism");
-		list.add(def2);
-
-		return list;
-	}
-
-	private List<ColumnDef> getSortedColumnDefs() {
-		List<ColumnDef> list = new ArrayList<>();
-
-		ColumnDef def = new ColumnDef();
-		def.setSortDirection(ColumnDef.SortDirection.ASC);
-		def.setName("name");
-		list.add(def);
-
 		return list;
 	}
 

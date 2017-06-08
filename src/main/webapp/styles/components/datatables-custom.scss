@@ -88,16 +88,7 @@ table.selectable tbody tr.selected td {
   }
 }
 
-// Prevents table from overflowing the panel box that wraps it.
-//.dataTables_wrapper {
-//  .panel {
-//    overflow: hidden;
-//  }
-//}
-
-//@media (max-width: 1200px) {
-//  .dataTables_wrapper .table-wrapper {
-//    overflow: auto;
-//  }
-//}
+.dt-date {
+  width: 100px;
+}
 

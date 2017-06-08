@@ -82,6 +82,8 @@ gulp.task('watch', function() {
 	gulp.watch('./resource/js/dev/**/*.js', ['webpack']).on('change', browserSync.reload);
 });
 
-gulp.task('start', ['sass:prod', 'webpack']);
+gulp.task('start', ['sass:prod'], function () {
+  gulp.start('webpack');
+});
 
 gulp.task('default', ['serve', 'watch']);

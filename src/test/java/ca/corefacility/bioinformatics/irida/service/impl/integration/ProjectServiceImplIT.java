@@ -1,11 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -37,13 +32,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
@@ -69,6 +57,13 @@ import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
@@ -116,56 +111,29 @@ public class ProjectServiceImplIT {
 	
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
-	public void testGetPagedProjectsForAdminWithFiltersAndGlobalSearch() {
-		final Page<Project> projects = projectService.findAllProjects("project", "", "liste", 0, 10, Sort.Direction.ASC, "id");
-		
-		assertEquals("Admin should have 8 projects for filter", 8, projects.getNumberOfElements());
-	}
-	
-	@Test
-	@WithMockUser(username = "admin", roles = "ADMIN")
-	public void testGetPagedProjectsForAdminWithFilters() {
-		final Page<Project> projects = projectService.findAllProjects("", "", "liste", 0, 10, Sort.Direction.ASC, "id");
-		
-		assertEquals("Admin should have 8 projects for filter", 8, projects.getNumberOfElements());
-	}
-	
-	@Test
-	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testGetPagedProjectsForAdminWithGlobalSearch() {
-		final Page<Project> projects = projectService.findAllProjects("proj", "", "", 0, 10, Sort.Direction.ASC,
-				"id");
+		final Page<Project> projects = projectService.findAllProjects("proj", 0, 10, new Sort(Direction.ASC, "id"));
 		assertEquals("Admin should have 9 projects for filter", 9, projects.getNumberOfElements());
-		
-		final Page<Project> listeriaProjects = projectService.findAllProjects("lister", "", "", 0, 10,
-				Sort.Direction.ASC, "id");
+
+		final Page<Project> listeriaProjects = projectService
+				.findAllProjects("lister", 0, 10, new Sort(Direction.ASC, "id"));
 		assertEquals("Admin should have 9 projects for filter.", 9, listeriaProjects.getNumberOfElements());
 	}
 	
 	@Test
 	@WithMockUser(username = "groupuser", roles = "USER")
-	public void testGetPagedProjectsForUserWithFilters() {
-		final Page<Project> projects = projectService.findProjectsForUser("", "", "liste", 0, 10, Sort.Direction.ASC, "id");
-		
-		assertEquals("User should have 2 projects for filter", 2, projects.getNumberOfElements());
-	}
-	
-	@Test
-	@WithMockUser(username = "groupuser", roles = "USER")
 	public void testGetPagedProjectsForUserWithGlobalSearch() {
-		final Page<Project> projects = projectService.findProjectsForUser("proj", "", "", 0, 10, Sort.Direction.ASC,
-				"id");
+		final Page<Project> projects = projectService.findProjectsForUser("proj", 0, 10, new Sort(Direction.ASC, "id"));
 		assertEquals("User should have 3 projects for filter", 3, projects.getNumberOfElements());
 		
-		final Page<Project> listeriaProjects = projectService.findProjectsForUser("lister", "", "", 0, 10,
-				Sort.Direction.ASC, "id");
+		final Page<Project> listeriaProjects = projectService.findProjectsForUser("lister",  0, 10, new Sort(Direction.ASC, "id"));
 		assertEquals("User should have 3 projects for filter.", 3, listeriaProjects.getNumberOfElements());
 	}
 	
 	@Test
 	@WithMockUser(username = "groupuser", roles = "USER")
 	public void testGetPagedProjectsForUser() {
-		final Page<Project> projects = projectService.findProjectsForUser("", "", "", 0, 10, Sort.Direction.ASC, "id");
+		final Page<Project> projects = projectService.findProjectsForUser("",  0, 10, new Sort(Direction.ASC, "id"));
 		
 		assertEquals("User should have 4 projects, two user two group.", 4, projects.getNumberOfElements());
 	}
@@ -443,15 +411,15 @@ public class ProjectServiceImplIT {
 	@WithMockUser(username = "user1", password = "password1", roles = "USER")
 	public void testSearchProjectsForUser() {
 		// test searches
-		Page<Project> searchPagedProjectsForUser = projectService.findProjectsForUser("2", "", "", 0, 10, Direction.ASC);
+		Page<Project> searchPagedProjectsForUser = projectService.findProjectsForUser("2", 0, 10, new Sort(Direction.ASC, "name"));
 		assertEquals(1, searchPagedProjectsForUser.getTotalElements());
 
-		searchPagedProjectsForUser = projectService.findProjectsForUser("project", "", "", 0, 10, Direction.ASC);
+		searchPagedProjectsForUser = projectService.findProjectsForUser("project", 0, 10, new Sort(Direction.ASC, "name"));
 		assertEquals(2, searchPagedProjectsForUser.getTotalElements());
 
 		// test sorting
-		searchPagedProjectsForUser = projectService.findProjectsForUser("project", "", "", 0, 10, Direction.ASC, "name");
-		final Page<Project> searchDesc = projectService.findProjectsForUser("project", "", "", 0, 10, Direction.DESC, "name");
+		searchPagedProjectsForUser = projectService.findProjectsForUser("project", 0, 10, new Sort(Direction.ASC, "name"));
+		final Page<Project> searchDesc = projectService.findProjectsForUser("project", 0, 10, new Sort(Direction.DESC, "name"));
 		assertEquals(2, searchPagedProjectsForUser.getTotalElements());
 
 		List<Project> reversed = Lists.reverse(searchDesc.getContent());
@@ -470,13 +438,13 @@ public class ProjectServiceImplIT {
 	@WithMockUser(username = "user1", password = "password1", roles = "ADMIN")
 	public void testSearchProjects() {
 		// search for a number
-		final Page<Project> searchFor2 = projectService.findAllProjects("2", "", "", 0, 10, Direction.ASC, "name");
+		final Page<Project> searchFor2 = projectService.findAllProjects("2", 0, 10, new Sort(Direction.ASC, "name"));
 		assertEquals(2, searchFor2.getTotalElements());
 		Project next = searchFor2.iterator().next();
 		assertTrue(next.getName().contains("2"));
 
 		// search descending
-		final Page<Project> searchDesc = projectService.findAllProjects("2", "", "", 0, 10, Direction.DESC, "name");
+		final Page<Project> searchDesc = projectService.findAllProjects("2", 0, 10, new Sort(Direction.DESC, "name"));
 		List<Project> reversed = Lists.reverse(searchDesc.getContent());
 		List<Project> forward = searchFor2.getContent();
 		assertEquals(reversed.size(), forward.size());

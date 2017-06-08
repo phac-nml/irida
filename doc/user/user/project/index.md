@@ -38,8 +38,8 @@ To enter into a project click the **Name** of the project:
 
 ![Project name button.](images/project-name-button.png)
 
-Filtering and Searching the Projects Table
-------------------------------------------
+Searching the Projects Table
+----------------------------
 
 There are two ways to find a specific project in the projects table - filtering and searching.
 
@@ -49,25 +49,9 @@ There are two ways to find a specific project in the projects table - filtering 
 
 Search is always available in the text field directly above and to the right of the table.  This search across the project's id, name, and organism.
 
+Example searching the projects table for `O157` results in 2 items.
+
 ![Projects search by out](images/projects-search-outbreak.png)
-
-### Filtering
-
-![Button to open the projects filter modal.](images/project-filter-btn.png)
-
-Pressing the Filter button opens a dialogue that allows you to filter on specific items within the project - the name and the organism.  Each filter only applies to its specific part of a project.
-
-![Projects Filtering Modal](images/projects-filter-modal.png)
-
-Example: filtering the name by "outbreak" and organism by "listeria" gives the following results:
-
-![Result of filtering projects by name using outbreak](images/projects-filter-name-outbreak.png)
-
-You can see which filters are currently applied to the table under the filter button:
-
-![List of applied filters](images/projects-applied-filters.png)
-
-Clicking on the filters will clear that specific filter.
 
 Creating a new project
 ----------------------

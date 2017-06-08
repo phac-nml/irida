@@ -26,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 import org.springframework.format.Formatter;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.HttpStatus;
@@ -41,21 +40,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.github.dandelion.datatables.core.ajax.DataSet;
-import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
-import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
-import com.github.dandelion.datatables.core.export.CsvExport;
-import com.github.dandelion.datatables.core.export.ExportConf;
-import com.github.dandelion.datatables.core.export.ExportUtils;
-import com.github.dandelion.datatables.core.export.HtmlTableBuilder;
-import com.github.dandelion.datatables.core.export.ReservedFormat;
-import com.github.dandelion.datatables.core.html.HtmlTable;
-import com.github.dandelion.datatables.extras.export.poi.XlsxExport;
-import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.config.web.IridaRestApiWebConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -72,7 +56,11 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.ProjectsDatatableUtils;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProject;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
@@ -81,6 +69,17 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.util.TreeNode;
+
+import com.github.dandelion.datatables.core.export.CsvExport;
+import com.github.dandelion.datatables.core.export.ExportConf;
+import com.github.dandelion.datatables.core.export.ExportUtils;
+import com.github.dandelion.datatables.core.export.HtmlTableBuilder;
+import com.github.dandelion.datatables.core.export.ReservedFormat;
+import com.github.dandelion.datatables.core.html.HtmlTable;
+import com.github.dandelion.datatables.extras.export.poi.XlsxExport;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for project related views
@@ -117,7 +116,7 @@ public class ProjectsController {
 	private final ProjectRemoteService projectRemoteService;
 	private RemoteAPIService remoteApiService;
 	private IridaWorkflowsService workflowsService;
-	
+
 	@Value("${file.upload.max_size}")
 	private final Long MAX_UPLOAD_SIZE = IridaRestApiWebConfig.UNLIMITED_UPLOAD_SIZE;
 
@@ -242,33 +241,33 @@ public class ProjectsController {
 		}
 		return CREATE_NEW_PROJECT_PAGE;
 	}
-	
+
 	/**
 	 * Get the page to synchronize remote projects
-	 * 
+	 *
 	 * @param model
 	 *            Model to render for view
 	 * @return Name of the project sync page
 	 */
 	@RequestMapping(value = "/projects/synchronize", method = RequestMethod.GET)
 	public String getSynchronizeProjectPage(final Model model) {
-		
+
 		Iterable<RemoteAPI> apis = remoteApiService.findAll();
 		model.addAttribute("apis",apis);
 		model.addAttribute("frequencies", ProjectSyncFrequency.values());
 		model.addAttribute("defaultFrequency", ProjectSyncFrequency.WEEKLY);
-		
+
 		if (!model.containsAttribute("errors")) {
 			model.addAttribute("errors", new HashMap<>());
 		}
-		
+
 		return SYNC_NEW_PROJECT_PAGE;
 	}
 
 	/**
 	 * Get a {@link Project} from a remote api and mark it to be synchronized in
 	 * this IRIDA installation
-	 * 
+	 *
 	 * @param url
 	 *            the URL of the remote project
 	 * @return Redirect to the new project. If an oauth exception occurs it will
@@ -298,11 +297,11 @@ public class ProjectsController {
 			return getSynchronizeProjectPage(model);
 		}
 	}
-	
+
 	/**
 	 * List all the {@link Project}s that can be read for a user from a given
 	 * {@link RemoteAPI}
-	 * 
+	 *
 	 * @param apiId
 	 *            the local ID of the {@link RemoteAPI}
 	 * @return a List of {@link Project}s
@@ -383,10 +382,10 @@ public class ProjectsController {
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_METADATA);
 		return PROJECT_METADATA_PAGE;
 	}
-	
+
 	/**
 	 * Get the page for analyses shared with a given {@link Project}
-	 * 
+	 *
 	 * @param projectId
 	 *            the ID of the {@link Project}
 	 * @param principal
@@ -454,14 +453,14 @@ public class ProjectsController {
 		if (!Strings.isNullOrEmpty(remoteURL)) {
 			project.setRemoteURL(remoteURL);
 		}
-		
+
 		try {
 			projectService.update(project);
 		} catch (ConstraintViolationException ex) {
 			model.addAttribute("errors", getErrorsFromViolationException(ex));
 			return getProjectMetadataEditPage(model, principal, projectId);
 		}
-		
+
 		return "redirect:/projects/" + projectId + "/metadata";
 	}
 
@@ -499,68 +498,39 @@ public class ProjectsController {
 	}
 
 	/**
-	 * User mapping to get a list of all project they are on.
+	 *  User mapping to get a list of all project they are on.
 	 *
-	 * @param criterias
-	 * 		the search criteria to apply
-	 * @param principal
-	 * 		{@link Principal} currently logged in user.
+	 * @param params
+	 * 		{@link DataTablesParams} passed from the UI DataTables instance.
 	 *
-	 * @return {@link List} of project {@link Map}
+	 * @return {@link DataTablesResponse}
 	 */
 	@RequestMapping("/projects/ajax/list")
 	@ResponseBody
-	public DatatablesResponse<Map<String, Object>> getAjaxProjectList(@DatatablesParams DatatablesCriterias criterias,
-			final Principal principal) {
-		final String search = criterias.getSearch();
-		final Map<String, String> searchMap = ProjectsDatatableUtils.generateSearchMap(criterias.getColumnDefs());
-
-		final String organismName = searchMap.getOrDefault("organism", "");
-		final String projectName = searchMap.getOrDefault("name", "");
-
-		final Map<String, Object> sortProperties = ProjectsDatatableUtils.getSortProperties(criterias);
-		final Integer currentPage = ProjectsDatatableUtils.getCurrentPage(criterias);
-		final Sort.Direction direction = (Sort.Direction) sortProperties.get("direction");
-		final String sortName = sortProperties.get("sort_string").toString();
-
-		final Page<Project> page = projectService.findProjectsForUser(search, projectName, organismName, currentPage,
-				criterias.getLength(), direction, sortName);
-		List<Map<String, Object>> projects = new ArrayList<>(page.getSize());
-		projects.addAll(page.getContent().stream().map(join -> createProjectMap(join))
-				.collect(Collectors.toList()));
-		DataSet<Map<String, Object>> dataSet = new DataSet<>(projects, page.getTotalElements(),
-				page.getTotalElements());
-		return DatatablesResponse.build(dataSet, criterias);
+	public DataTablesResponse getAjaxProjectList(@DataTablesRequest DataTablesParams params) {
+		final Page<Project> page = projectService
+				.findProjectsForUser(params.getSearchValue(), params.getCurrentPage(), params.getLength(),
+						params.getSort());
+		List<DataTablesResponseModel> projects = page.getContent().stream().map(this::createDataTablesProject).collect(Collectors.toList());
+		return new DataTablesResponse(params, page, projects);
 	}
 
 	/**
 	 * Admin mapping to get a list of all project they are on.
 	 *
-	 * @param criterias
-	 * 			the search criteria to apply
-	 * @return {@link List} of project {@link Map}
+	 * @param params
+	 * 		{@link DataTablesParams} passed from the UI DataTables instance.
+	 *
+	 * @return {@link DataTablesResponse}
 	 */
 	@RequestMapping("/projects/admin/ajax/list")
 	@ResponseBody
-	public DatatablesResponse<Map<String, Object>> getAjaxAdminProjectsList(
-			@DatatablesParams DatatablesCriterias criterias) {
-		final String search = criterias.getSearch();
-		final Map<String, String> searchMap = ProjectsDatatableUtils.generateSearchMap(criterias.getColumnDefs());
-		final String organismName = searchMap.getOrDefault("organism", "");
-		final String projectName = searchMap.getOrDefault("name", "");
-		
-		Map<String, Object> sortProperties = ProjectsDatatableUtils.getSortProperties(criterias);
-		final Integer currentPage = ProjectsDatatableUtils.getCurrentPage(criterias);
-		final Sort.Direction direction = (Sort.Direction) sortProperties.get("direction");
-		final String sortName = sortProperties.get("sort_string").toString();
-
-		final Page<Project> page = projectService.findAllProjects(search, projectName, organismName, currentPage,
-				criterias.getLength(), direction, sortName);
-		List<Map<String, Object>> projects = new ArrayList<>(page.getSize());
-		projects.addAll(page.getContent().stream().map(this::createProjectMap).collect(Collectors.toList()));
-		DataSet<Map<String, Object>> dataSet = new DataSet<>(projects, page.getTotalElements(),
-				page.getTotalElements());
-		return DatatablesResponse.build(dataSet, criterias);
+	public DataTablesResponse getAjaxAdminProjectsList(@DataTablesRequest DataTablesParams params) {
+		final Page<Project> page = projectService
+				.findAllProjects(params.getSearchValue(), params.getCurrentPage(), params.getLength(),
+						params.getSort());
+		List<DataTablesResponseModel> projects = page.getContent().stream().map(this::createDataTablesProject).collect(Collectors.toList());
+		return new DataTablesResponse(params, page, projects);
 	}
 
 	/**
@@ -637,6 +607,22 @@ public class ProjectsController {
 		ExportUtils.renderExport(table, exportConf, response);
 	}
 
+	// TODO: Remove when removing Dandelion Export
+	private Map<String, Object> createProjectMap(Project project) {
+		Map<String, Object> map = new HashMap<>();
+
+		map.put("id", project.getId());
+		map.put("name", project.getName());
+		map.put("description", Strings.isNullOrEmpty(project.getProjectDescription()) ? "" : project.getProjectDescription());
+		map.put("organism", Strings.isNullOrEmpty(project.getOrganism()) ? "" : project.getOrganism());
+		map.put("samples", sampleService.getNumberOfSamplesForProject(project));
+		map.put("createdDate", project.getCreatedDate());
+		map.put("modifiedDate", project.getModifiedDate());
+		map.put("remote", project.isRemote());
+
+		return map;
+	}
+
 	/**
 	 * Changes a {@link ConstraintViolationException} to a usable map of strings for displaing in the UI.
 	 *
@@ -696,28 +682,17 @@ public class ProjectsController {
 	}
 
 	/**
-	 * Extract the details of the a {@link Project} into a {@link Map} which is consumable by the UI
+	 * Extract the details of the a {@link Project} into a {@link DTProject} which is consumable by the UI
 	 *
 	 * @param project
 	 * 		{@link Project}
 	 *
-	 * @return {@link Map}
+	 * @return {@link DTProject}
 	 */
-	public Map<String, Object> createProjectMap(Project project) {
-		Map<String, Object> map = new HashMap<>();
-
-		map.put("id", project.getId());
-		map.put("name", project.getName());
-		map.put("description", Strings.isNullOrEmpty(project.getProjectDescription()) ? "" : project.getProjectDescription());
-		map.put("organism", Strings.isNullOrEmpty(project.getOrganism()) ? "" : project.getOrganism());
-		map.put("samples", sampleService.getNumberOfSamplesForProject(project));
-		map.put("createdDate", project.getCreatedDate());
-		map.put("modifiedDate", project.getModifiedDate());
-		map.put("remote", project.isRemote());
-
-		return map;
+	private DTProject createDataTablesProject(Project project) {
+		return new DTProject(project, sampleService.getNumberOfSamplesForProject(project));
 	}
-	
+
 	/**
 	 * Response class for a {@link Project} and its {@link RemoteStatus}
 	 */

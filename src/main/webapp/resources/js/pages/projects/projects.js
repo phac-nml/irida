@@ -1,44 +1,89 @@
-/*exported projectsTable*/
-/*global oTable_projectsTable */
+/* eslint new-cap: ["error", { "capIsNewExceptions": ["DataTable"] }]*/
+const $ = require('jquery');
+const moment = require('moment');
+require('timeago');
+require('./../../vendor/datatables/datatables');
+require('./../../vendor/datatables/datatables-buttons');
 
-var projectsTable = (function (tl) {
-  /**
-   * Create a link button to the IRIDA thing
-   *
-   * @param {Object} data column data
-   * @param {String} type type of data
-   * @param {Object} full full object for the row.
-   * @returns {String} either a anchor dom element to the project or just the name of the project.
-   */
-  function createItemButton(data, type, full) {
-    if (tl && tl.BASE_URL) {
-      var html = '<a class="item-link" title="' + data + '" href="' + tl.BASE_URL + 'projects/' + full.id + '"><span class="cell-width-200">' + data + '</span></a>';
-      if(full.remote == true){
-        html = html + '&nbsp;<i class="fa fa-exchange" aria-hidden="true"></i>';
-      }
-      return html;
-    } else {
-      return data;
-    }
-  }
-
-  return {
-    createItemButton: createItemButton
-  };
-})(window.TL);
-
-(function ($) {
-  $(function () {
-    var $filterBtn = $('#filterProjectsBtn');
-
-    $filterBtn.on('click', function () {
-      oTable_projectsTable.ajax.reload();
-    });
-
-    $('#filterForm').on('keydown', function (e) {
-      if (e.which === 13) {
-        $filterBtn.click();
-      }
-    });
+// Column look-ups for quick referencing
+const COLUMNS = (() => {
+  const columns = {};
+  $('thead th').each((index, elm) => {
+    const data = $(elm).data('data').toUpperCase();
+    columns[data] = index;
   });
-})(window.jQuery);
+  return columns;
+})();
+
+/**
+ * Download table in specified format.
+ * @param {string} format format of downloaded doc.
+ */
+function downloadItem({format = 'xlsx'}) {
+  const url = `${window.PAGE.urls.export}&dtf=${format}`;
+  const anchor = document.createElement('a');
+  anchor.style.display = 'none';
+  anchor.href = url;
+  anchor.click();
+}
+
+if (typeof window.PAGE === 'object') {
+  $('#projects').DataTable({
+    // Table layout
+    // Buttons / Filter
+    // Table
+    // Length / Paging / Info
+    dom: `
+<".row"
+  <".col-md-8.buttons"B><".col-md-4"f>>
+rt
+<".row"<".col-md-3"l><".col-md-6"p><".col-md-3"i>>`,
+    // Set up the export buttons.
+    // These are loaded through the PAGE object.
+    buttons: [
+      {
+        extend: 'collection',
+        text() {
+          return document.querySelector('#export-btn-text').innerHTML;
+        },
+        // The buttons are loaded onto the PAGE variable.
+        buttons: window.PAGE.buttons.map(button => ({
+          text: button.name,
+          action() {
+            downloadItem({format: button.format});
+          }
+        }))
+      }
+    ],
+    processing: true,
+    serverSide: true,
+    ajax: window.PAGE.urls.projects,
+    order: [[COLUMNS.MODIFIEDDATE, "desc"]],
+    columnDefs: [
+      {
+        targets: [COLUMNS.NAME],
+        render: function(data, type, full) {
+          return `
+<a class="btn btn-link" href="${window.PAGE.urls.project}${full.id}">${data}</a>
+`;
+        }
+      },
+      {
+        targets: [COLUMNS.CREATEDDATE, COLUMNS.MODIFIEDDATE],
+        render: function(data) {
+          // Format the time (using timeago.js) to get the amount of time
+          // since the event occurred.
+          const date = moment(data);
+          return `
+<time data-toggle="tooltip" data-placement="top" 
+      title="${date.toISOString()}">${$.timeago(date.toISOString())}</time>
+`;
+        }
+      }
+    ],
+    createdRow: function(row) {
+      const $row = $(row);
+      $row.tooltip({selector: '[data-toggle="tooltip"]'});
+    }
+  });
+}
