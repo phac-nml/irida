@@ -10,7 +10,8 @@
       var PAGE = {
         urls: {
           fields: /*[[@{/projects/{id}/metadata-templates/fields(id=${project.getId()})}]]*/ ''
-        }
+        },
+        isOwner: /*[[${isOwner}]]*/ false
       };
     </script>
 </head>
@@ -26,7 +27,7 @@
                     <label for="template-name" class="control-label" th:text="#{linelist.create-template.name}">TEMPLATE
                         NAME</label>
                     <input id="template-name" type="text" class="form-control" th:field="*{name}"
-                           minlength="5" required="required"
+                           minlength="5" required="required" th:disabled="!${isOwner}"
                            data:msg-minlength="#{linelist.create-template.templateName.minlength}"/>
                 </div>
                 <hr/>
@@ -37,7 +38,8 @@
                     <div class="col-md-4 text-right">
                         <button id="add-field-btn" type="button" class="btn btn-default"
                                 data-toggle="modal" data-target="#add-field-modal"
-                                th:text="#{visualization.phylogenomics.add-new-field.btn}">ADD
+                                th:text="#{visualization.phylogenomics.add-new-field.btn}"
+                                th:if="${isOwner}">ADD
                             FIELD
                         </button>
                     </div>
@@ -47,21 +49,22 @@
                         field</strong>
                 </div>
                 <ul class="list-group template-fields">
-                    <li class="list-group-item template-field" th:each="field : *{fields}">
-                        <i class="fa fa-bars" aria-hidden="true"></i>&nbsp;
+                    <li class="list-group-item" th:classappend="${isOwner} ? template-field" th:each="field : *{fields}">
+                        <i class="fa fa-bars" aria-hidden="true" th:if="${isOwner}"></i>&nbsp;
                         <th:block th:text="${field}"/>
                         <input class="field-names" name="fields" type="hidden" th:value="${field}"/>
-                        <span class="close field-remove pull-right">&times;</span>
+                        <span class="close field-remove pull-right" th:if="${isOwner}">&times;</span>
                     </li>
                 </ul>
                 <button id="save-btn" class="btn btn-primary" type="submit"
-                        th:text="#{linelist.create-template.save-template}">SAVE ME
+                        th:text="#{linelist.create-template.save-template}"
+                        th:if="${isOwner}">SAVE ME
                 </button>
             </form>
         </div>
     </div>
 
-    <div class="panel panel-default" th:if="${template.id}">
+    <div class="panel panel-default" th:if="${template.id} and ${isOwner}">
         <div class="panel-heading">
             <th:block th:text="#{linelist.create-template.settings}"/>
         </div>
