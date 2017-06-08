@@ -23,6 +23,9 @@ import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataTemplate
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 
+/**
+ * Service for storing and reading {@link MetadataTemplate}s
+ */
 @Service
 public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataTemplate>
 		implements MetadataTemplateService {
@@ -39,19 +42,25 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 		this.fieldRepository = fieldRepository;
 	}
 
-	@PreAuthorize("permitAll()")
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasPermission(#id, 'canReadMetadataTemplate')")
 	@Override
 	public MetadataTemplate read(Long id) throws EntityNotFoundException {
 		return super.read(id);
 	}
 
-	@PreAuthorize("hasPermission(#project, 'isProjectOwner') or hasRole('ROLE_ADMIN')")
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasPermission(#template, 'canUpdateMetadataTemplate')")
 	@Override
 	public MetadataTemplate updateMetadataTemplateInProject(Project project, MetadataTemplate template) {
 		return super.update(template);
 	}
 
-	@PreAuthorize("hasPermission(#project, 'isProjectOwner') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#id, 'canUpdateMetadataTemplate')")
 	@Override
 	public void deleteMetadataTemplateFromProject(Project project, Long id) throws EntityNotFoundException {
 		super.delete(id);
