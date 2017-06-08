@@ -49,9 +49,13 @@ public class ProjectMetadataTemplatePage extends AbstractPage {
 	public boolean isSaveButtonEnabled() {
 		return saveTemplateButton.isEnabled();
 	}
+	
+	public boolean isSaveButtonVisible(){
+		return saveTemplateButton.isDisplayed();
+	}
 
 	public void addMetadataField(String field) {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		new WebDriverWait(driver, 10);
 		addFieldButton.click();
 		fieldSearchInput.sendKeys(field);
 		waitForTime(500);

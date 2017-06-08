@@ -49,7 +49,7 @@
                         field</strong>
                 </div>
                 <ul class="list-group template-fields">
-                    <li class="list-group-item" th:classappend="${isOwner} ? template-field" th:each="field : *{fields}">
+                    <li class="list-group-item template-field" th:classappend="${isOwner} ? template-field-draggable" th:each="field : *{fields}">
                         <i class="fa fa-bars" aria-hidden="true" th:if="${isOwner}"></i>&nbsp;
                         <th:block th:text="${field}"/>
                         <input class="field-names" name="fields" type="hidden" th:value="${field}"/>
