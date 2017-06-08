@@ -56,7 +56,7 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 	 */
 	@PreAuthorize("hasPermission(#template, 'canUpdateMetadataTemplate')")
 	@Override
-	public MetadataTemplate updateMetadataTemplateInProject(Project project, MetadataTemplate template) {
+	public MetadataTemplate updateMetadataTemplateInProject(MetadataTemplate template) {
 		return super.update(template);
 	}
 

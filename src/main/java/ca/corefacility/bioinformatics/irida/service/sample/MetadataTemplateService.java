@@ -37,11 +37,12 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 
 	/**
 	 * Update a {@link MetadataTemplate} within a {@link Project}
- 	 * @param project {@link Project} the template belongs to.
-	 * @param metadataTemplate {@link MetadataTemplate}
+	 * 
+	 * @param metadataTemplate
+	 *            {@link MetadataTemplate}
 	 * @return {@link MetadataTemplate}
 	 */
-	public MetadataTemplate updateMetadataTemplateInProject(Project project, MetadataTemplate metadataTemplate);
+	public MetadataTemplate updateMetadataTemplateInProject(MetadataTemplate metadataTemplate);
 
 	/**
 	 * Get a list of {@link MetadataTemplate}s for a given {@link Project}

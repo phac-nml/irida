@@ -103,7 +103,7 @@ public class ProjectSamplesMetadataTemplateController {
             metadataTemplate = metadataTemplateService.read(template.getId());
             metadataTemplate.setName(template.getName());
             metadataTemplate.setFields(metadataFields);
-            metadataTemplateService.updateMetadataTemplateInProject(project, metadataTemplate);
+            metadataTemplateService.updateMetadataTemplateInProject(metadataTemplate);
         } else {
             ProjectMetadataTemplateJoin projectMetadataTemplateJoin = metadataTemplateService
                     .createMetadataTemplateInProject(new MetadataTemplate(template.getName(), metadataFields), project);

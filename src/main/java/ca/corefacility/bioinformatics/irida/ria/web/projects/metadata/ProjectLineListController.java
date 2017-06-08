@@ -290,7 +290,7 @@ public class ProjectLineListController {
 			template = metadataTemplateService.read(templateId);
 			template.setFields(metadataFields);
 			template.setName(name);
-			metadataTemplateService.updateMetadataTemplateInProject(project, template);
+			metadataTemplateService.updateMetadataTemplateInProject(template);
 			message = messageSource.getMessage("linelist.create-template.update-success", new Object[]{name}, locale);
 		} else  {
 			template = new MetadataTemplate(name, metadataFields);
