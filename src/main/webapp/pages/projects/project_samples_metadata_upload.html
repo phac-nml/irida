@@ -15,6 +15,10 @@
     <section ui-view=""></section>
     <script type="text/ng-template" id="upload.component.tmpl.html">
         <p class="lead spaced-bottom" th:text="#{metadata.upload.component.intro}"></p>
+        <div ng-show="$ctrl.errors" class="alert alert-danger">
+            <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>&nbsp;
+            <b><th:block th:text="#{metadata.upload.errors.repeating-headers}"/>: {{$ctrl.errors}}</b>
+        </div>
         <div class="alert alert-info">
             <p th:utext="#{metadata.upload.component.text}"></p>
             <br/>

@@ -5,7 +5,10 @@ require('style!./../../../../../css/components/ngFileUpload.css');
  */
 const metadataUploader = {
   templateUrl: 'upload.component.tmpl.html',
-  controller($state, sampleMetadataService) {
+  controller($state, $stateParams, sampleMetadataService) {
+    // Display any errors if they were sent.
+    this.errors = $stateParams.errors;
+
     this.uploadFiles = function(files) {
       sampleMetadataService.uploadMetadata(files[0])
         .then(() => {

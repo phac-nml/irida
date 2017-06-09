@@ -12,7 +12,10 @@ export const states = ($stateProvider, $urlRouterProvider) => {
     .state({
       name: 'upload',
       url: '/upload',
-      component: 'metadataUploader'
+      component: 'metadataUploader',
+      params: {
+        errors: null
+      }
     })
     .state({
       name: 'sampleId',
