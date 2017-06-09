@@ -20,7 +20,7 @@ const saveMetadata = {
   bindings: {
     url: '@',
     label: '@',
-\  },
+  },
   template,
   controller($window, sampleMetadataService, notifications) {
     this.saveMetadata = () => {
