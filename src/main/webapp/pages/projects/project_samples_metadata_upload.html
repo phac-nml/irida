@@ -22,6 +22,12 @@
             <th:block th:text="#{metadata.upload.errors.repeating-headers}"/>
             : {{$ctrl.errors}}
         </div>
+        <div ng-show="$ctrl.badFile" class="alert alert-danger">
+            <b><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>&nbsp;
+                <th:block th:text="#{metadata.upload.component.error.bad-file.title}"/>
+            </b>
+            <p th:text="#{metadata.upload.component.error.bad-file.body}"></p>
+        </div>
         <div class="alert alert-info">
             <p th:utext="#{metadata.upload.component.text}"></p>
             <br/>

@@ -14,7 +14,7 @@ const metadataUploader = {
         .then(() => {
           $state.go('sampleId');
         }, () => {
-
+          this.badFile = true;
         });
     };
   }
