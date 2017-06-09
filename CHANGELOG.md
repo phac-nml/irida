@@ -19,6 +19,7 @@ Changes
 * [UI]: New upload excel spreadsheet of metadata for samples within a project.
 * [UI]: New project sample metadata templates.
 * [UI]: New advanced phylogenetic tree with metadata visualization.
+* [UI]: Fixed bug where a project collaborator could try to change the role of a group.
 
 0.15.0 to 0.16.0
 ----------------
