@@ -13,6 +13,8 @@ const metadataUploader = {
       sampleMetadataService.uploadMetadata(files[0])
         .then(() => {
           $state.go('sampleId');
+        }, () => {
+
         });
     };
   }
