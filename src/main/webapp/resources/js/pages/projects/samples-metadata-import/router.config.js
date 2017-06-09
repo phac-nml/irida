@@ -1,6 +1,23 @@
 /**
  * @file Configuration file for ui.router.
  */
+/**
+ * Make sure that all rows have the appropriate keys.
+ * @param {array} headers rows header
+ * @param {array} rows in table
+ * @return {array} of rows with proper values
+ */
+function formatResults(headers, rows) {
+  const _rows = Object.assign(rows);
+  for (const row of _rows) {
+    for (const header of headers) {
+      if (!row.hasOwnProperty(header)) {
+        row[header] = '';
+      }
+    }
+  }
+  return _rows;
+}
 
 /**
  *  Configuration for ui.router on the Sample Metadata Import Page
@@ -44,7 +61,7 @@ export const states = ($stateProvider, $urlRouterProvider) => {
       component: 'resultsFoundComponent',
       resolve: {
         rows(data) {
-          return data.found;
+          return formatResults(data.headers, data.found);
         },
         headers(data) {
           return data.headers;
@@ -57,7 +74,7 @@ export const states = ($stateProvider, $urlRouterProvider) => {
       component: 'resultsMissingComponent',
       resolve: {
         rows(data) {
-          return data.missing;
+          return formatResults(data.headers, data.missing);
         },
         headers(data) {
           return data.headers;
