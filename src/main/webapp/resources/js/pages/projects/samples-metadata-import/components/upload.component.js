@@ -12,9 +12,13 @@ const metadataUploader = {
     this.uploadFiles = function(files) {
       sampleMetadataService.uploadMetadata(files[0])
         .then(() => {
+          // If the response is 'success' go to the next stage
+          // to select which column is the sample name
           $state.go('sampleId');
         }, () => {
-
+          // If the response is 'error' stay on this stage
+          // display the file warning message.
+          this.badFile = true;
         });
     };
   }
