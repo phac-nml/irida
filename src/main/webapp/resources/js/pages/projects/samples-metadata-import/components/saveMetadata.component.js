@@ -2,19 +2,29 @@
  * @file AngularJS component for handling saving valid metadata to the server.
  */
 const template = `
-<button class="btn btn-success pull-right" ng-click="$ctrl.saveMetadata()">
-  <span class="fa fa-floppy-o" aria-hidden="true"></span>&nbsp;
-  {{ $ctrl.label }}
+<span class="pull-right"> 
+  <button ng-hide="$ctrl.saving" 
+          class="btn btn-success" 
+          ng-click="$ctrl.saveMetadata()">
+    <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp;
+    {{ $ctrl.label }}
+  </button>
+  <button ng-show="$ctrl.saving"
+          disabled="disabled"
+          class="btn btn-success">
+     <i class="fa fa-circle-o-notch fa-spin fa-fw" aria-hidden="true"></i>&nbsp;
 </button>
+</span>
 `;
 const saveMetadata = {
   bindings: {
     url: '@',
-    label: '@'
-  },
+    label: '@',
+\  },
   template,
   controller($window, sampleMetadataService, notifications) {
     this.saveMetadata = () => {
+      this.saving = true;
       sampleMetadataService
         .saveMetadata()
         .then(response => {
@@ -30,6 +40,7 @@ const saveMetadata = {
               notifications.show({msg, type: 'error'});
             });
           }
+          this.saving = false;
         });
     };
   }
