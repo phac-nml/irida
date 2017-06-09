@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Scope;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.format.Formatter;
@@ -69,9 +71,11 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.CartController;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.ProjectsDatatableUtils;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
@@ -86,6 +90,7 @@ import ca.corefacility.bioinformatics.irida.util.TreeNode;
  * Controller for project related views
  */
 @Controller
+@Scope("session")
 public class ProjectsController {
 	// Sub Navigation Strings
 	public static final String ACTIVE_NAV = "activeNav";
@@ -117,6 +122,7 @@ public class ProjectsController {
 	private final ProjectRemoteService projectRemoteService;
 	private RemoteAPIService remoteApiService;
 	private IridaWorkflowsService workflowsService;
+	private final CartController cartController;
 	
 	@Value("${file.upload.max_size}")
 	private final Long MAX_UPLOAD_SIZE = IridaRestApiWebConfig.UNLIMITED_UPLOAD_SIZE;
@@ -142,7 +148,7 @@ public class ProjectsController {
 	@Autowired
 	public ProjectsController(ProjectService projectService, SampleService sampleService, UserService userService,
 			ProjectRemoteService projectRemoteService, ProjectControllerUtils projectControllerUtils,
-			TaxonomyService taxonomyService, RemoteAPIService remoteApiService, IridaWorkflowsService workflowsService,
+			TaxonomyService taxonomyService, RemoteAPIService remoteApiService, IridaWorkflowsService workflowsService, CartController cartController,
 			MessageSource messageSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
@@ -154,6 +160,7 @@ public class ProjectsController {
 		this.messageSource = messageSource;
 		this.remoteApiService = remoteApiService;
 		this.workflowsService = workflowsService;
+		this.cartController = cartController;
 		this.fileSizeConverter = new FileSizeConverter();
 	}
 
@@ -332,6 +339,10 @@ public class ProjectsController {
 	 *            URL for the project wiki
 	 * @param assemble
 	 *            Enable or disable automated assemblies
+	 * @param sistr
+	 *            Run automated SISTR analyses on newly uploaded samples
+	 * @param useCartSamples
+	 *            add all samples in the cart to the project
 	 *
 	 * @return The name of the add users to project page
 	 */
@@ -341,7 +352,8 @@ public class ProjectsController {
 			@RequestParam(required = false, defaultValue = "") String projectDescription,
 			@RequestParam(required = false, defaultValue = "") String remoteURL,
 			@RequestParam(required = false, defaultValue = "false") boolean assemble,
-			@RequestParam(required = false, defaultValue = "false") boolean sistr) {
+			@RequestParam(required = false, defaultValue = "false") boolean sistr,
+			@RequestParam(required = false, defaultValue = "false") boolean useCartSamples) {
 
 		Project p = new Project(name);
 		p.setOrganism(organism);
@@ -351,8 +363,18 @@ public class ProjectsController {
 		p.setSistrTypingUploads(sistr);
 
 		Project project;
+
 		try {
-			project = projectService.create(p);
+			if (useCartSamples) {
+				Map<Project, Set<Sample>> selected = cartController.getSelected();
+
+				List<Long> sampleIds = selected.entrySet().stream()
+						.flatMap(e -> e.getValue().stream().map(i -> i.getId())).collect(Collectors.toList());
+
+				project = projectService.createProjectWithSamples(p, sampleIds);
+			} else {
+				project = projectService.create(p);
+			}
 		} catch (ConstraintViolationException e) {
 			model.addAttribute("errors", getErrorsFromViolationException(e));
 			model.addAttribute("project", p);

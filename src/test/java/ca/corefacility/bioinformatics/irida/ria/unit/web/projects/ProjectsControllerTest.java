@@ -42,6 +42,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.CartController;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -75,6 +76,7 @@ public class ProjectsControllerTest {
 	private RemoteAPIService remoteApiService;
 	private TaxonomyService taxonomyService;
 	private IridaWorkflowsService workflowsService;
+	private CartController cartController;
 	private MessageSource messageSource;
 
 	@Before
@@ -83,11 +85,12 @@ public class ProjectsControllerTest {
 		sampleService = mock(SampleService.class);
 		userService = mock(UserService.class);
 		projectRemoteService = mock(ProjectRemoteService.class);
+		cartController = mock(CartController.class);
 		taxonomyService = mock(TaxonomyService.class);
 		projectUtils = mock(ProjectControllerUtils.class);
 		messageSource = mock(MessageSource.class);
 		controller = new ProjectsController(projectService, sampleService, userService, projectRemoteService,
-				projectUtils, taxonomyService, remoteApiService, workflowsService, messageSource);
+				projectUtils, taxonomyService, remoteApiService, workflowsService, cartController, messageSource);
 		user.setId(1L);
 
 		mockSidebarInfo();
@@ -172,7 +175,7 @@ public class ProjectsControllerTest {
 		// Test creating project
 		when(projectService.create(any(Project.class))).thenReturn(project);
 		when(projectService.update(any(Project.class))).thenReturn(project);
-		String page = controller.createNewProject(model, projectName, "", "", "", false, false);
+		String page = controller.createNewProject(model, projectName, "", "", "", false, false, false);
 		assertEquals("Returns the correct redirect to the collaborators page", "redirect:/projects/" + projectId
 				+ "/metadata", page);
 	}
