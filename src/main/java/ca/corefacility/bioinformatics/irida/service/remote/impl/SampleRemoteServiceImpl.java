@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.remote.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
@@ -8,10 +9,9 @@ import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.repositories.RemoteAPIRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.SampleRemoteRepository;
-import ca.corefacility.bioinformatics.irida.repositories.remote.SequenceFilePairRemoteRepository;
-import ca.corefacility.bioinformatics.irida.repositories.remote.SingleEndSequenceFileRemoteRepository;
 import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
 
 /**
@@ -27,12 +27,12 @@ public class SampleRemoteServiceImpl extends RemoteServiceImpl<Sample> implement
 
 	public static final String FILE_SAMPLE_REL = "sample";
 
+	private final SampleRemoteRepository sampleRemoteRepository;
 
 	@Autowired
-	public SampleRemoteServiceImpl(SampleRemoteRepository sampleRemoteRepository,
-			SequenceFilePairRemoteRepository pairRemoteRepository,
-			SingleEndSequenceFileRemoteRepository unpairedRemoteRepository, RemoteAPIRepository apiRepository) {
+	public SampleRemoteServiceImpl(SampleRemoteRepository sampleRemoteRepository, RemoteAPIRepository apiRepository) {
 		super(sampleRemoteRepository, apiRepository);
+		this.sampleRemoteRepository = sampleRemoteRepository;
 	}
 
 	/**
@@ -44,4 +44,12 @@ public class SampleRemoteServiceImpl extends RemoteServiceImpl<Sample> implement
 		String samplesHref = link.getHref();
 		return list(samplesHref, project.getRemoteStatus().getApi());
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public Map<String, MetadataEntry> getSampleMetadata(Sample sample) {
+		return sampleRemoteRepository.getSampleMetadata(sample);
+	}
+
 }

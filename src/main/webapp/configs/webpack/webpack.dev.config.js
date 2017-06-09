@@ -2,6 +2,7 @@ let entries = require("./entries.js");
 
 module.exports = {
   entry: entries,
+  devtool: 'source-maps',
   module: {
     loaders: [
       {

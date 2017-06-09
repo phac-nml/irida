@@ -45,8 +45,6 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 @Scope("session")
 public class ProjectSettingsAssociatedProjectsController {
 
-	private static final String ACTIVE_NAV = "activeNav";
-	private static final String ACTIVE_NAV_ASSOCIATED_PROJECTS = "associated";
 	public static final String ASSOCIATED_PROJECTS_PAGE = ProjectsController.PROJECTS_DIR + "associated_projects";
 	public static final String EDIT_ASSOCIATED_PROJECTS_PAGE =
 			ProjectsController.PROJECTS_DIR + "associated_projects_edit";

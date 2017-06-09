@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -59,8 +60,12 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundExce
 import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
@@ -76,6 +81,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.Datata
 import ca.corefacility.bioinformatics.irida.security.permissions.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -103,20 +109,24 @@ public class AnalysisController {
 	private MessageSource messageSource;
 	private UserService userService;
 	private ProjectService projectService;
-	private SampleService sampleService;
 	private UpdateAnalysisSubmissionPermission updateAnalysisPermission;
+	private SampleService sampleService;
+	private MetadataTemplateService metadataTemplateService;
 
 	@Autowired
 	public AnalysisController(AnalysisSubmissionService analysisSubmissionService,
-			IridaWorkflowsService iridaWorkflowsService, UserService userService, ProjectService projectService, UpdateAnalysisSubmissionPermission updateAnalysisPermission,
-			SampleService sampleService, MessageSource messageSource) {
+			IridaWorkflowsService iridaWorkflowsService, UserService userService,
+			SampleService sampleService, ProjectService projectService,
+			UpdateAnalysisSubmissionPermission updateAnalysisPermission,
+			MetadataTemplateService metadataTemplateService, MessageSource messageSource) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
 		this.messageSource = messageSource;
 		this.userService = userService;
-		this.projectService = projectService;
-		this.sampleService = sampleService;
 		this.updateAnalysisPermission = updateAnalysisPermission;
+		this.sampleService = sampleService;
+		this.projectService = projectService;
+		this.metadataTemplateService = metadataTemplateService;
 	}
 
 	// ************************************************************************************************
@@ -186,6 +196,7 @@ public class AnalysisController {
 
 		// Get the name of the workflow
 		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription().getAnalysisType();
+		model.addAttribute("analysisType", analysisType);
 		String viewName = getViewForAnalysisType(analysisType);
 		String workflowName = messageSource.getMessage("workflow." + analysisType.toString() + ".title", null, locale);
 		model.addAttribute("workflowName", workflowName);
@@ -298,7 +309,25 @@ public class AnalysisController {
 		return ImmutableMap.of("result", "success", "message", message);
 	}
 
-	
+	/**
+	 * Get the page for viewing advanced phylogenetic visualization
+	 *
+	 * @param submissionId
+	 * 		{@link Long} identifier for an {@link AnalysisSubmission}
+	 * @param model
+	 * 		{@link Model}
+	 *
+	 * @return {@link String} path to the page template.
+	 */
+	@RequestMapping("/{submissionId}/advanced-phylo")
+	public String getAdvancedPhylogeneticVisualizationPage(
+			@PathVariable Long submissionId, Model model){
+
+		model.addAttribute("submissionId", submissionId);
+		return BASE + "visualizations/phylocanvas-metadata";
+	}
+
+
 	// ************************************************************************************************
 	// Analysis view setup
 	// ************************************************************************************************
@@ -616,6 +645,136 @@ public class AnalysisController {
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * Get a newick file associated with a specific {@link AnalysisSubmission}.
+	 *
+	 * @param submissionId
+	 * 		{@link Long} id for an {@link AnalysisSubmission}
+	 *
+	 * @return {@link Map} containing the newick file contents.
+	 * @throws IOException
+	 * 		{@link IOException} if the newick file is not found
+	 */
+	@RequestMapping("/ajax/{submissionId}/newick")
+	@ResponseBody
+	public Map<String, Object> getNewickForAnalysis(@PathVariable Long submissionId) throws IOException {
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+		AnalysisPhylogenomicsPipeline analysis = (AnalysisPhylogenomicsPipeline) submission.getAnalysis();
+		AnalysisOutputFile file = analysis.getPhylogeneticTree();
+		List<String> lines = Files.readAllLines(file.getFile());
+		return ImmutableMap.of("newick", lines.get(0));
+	}
+
+	/**
+	 * Get the metadata associated with a template for an analysis.
+	 *
+	 * @param submissionId
+	 * 		{@link Long} identifier for the {@link AnalysisSubmission}
+	 *
+	 * @return {@link Map}
+	 */
+	@RequestMapping("/ajax/{submissionId}/metadata")
+	@ResponseBody
+	public Map<String, Object> getMetadataForAnalysisSamples(
+			@PathVariable Long submissionId) {
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubimssion(submission);
+
+		// Let's get a list of all the metadata available that is unique.
+		Set<String> terms = new HashSet<>();
+		for (Sample sample : samples) {
+			if (!sample.getMetadata().isEmpty()) {
+				Map<MetadataTemplateField, MetadataEntry> metadata = sample.getMetadata();
+				terms.addAll(
+						metadata.keySet().stream().map(MetadataTemplateField::getLabel).collect(Collectors.toSet()));
+			}
+		}
+
+		// Get the metadata for the samples;
+		Map<String, Object> metadata = new HashMap<>();
+		for (Sample sample : samples) {
+			Map<MetadataTemplateField, MetadataEntry> sampleMetadata = sample.getMetadata();
+			Map<String,MetadataEntry> stringMetadata = new HashMap<>();
+			sampleMetadata.entrySet().forEach(e -> {
+				stringMetadata.put(e.getKey().getLabel(), e.getValue());
+			});
+			
+			Map<String, MetadataEntry> valuesMap = new HashMap<>();
+			for (String term : terms) {
+
+				MetadataEntry value = stringMetadata.get(term);
+				if (value == null) {
+					// Not all samples will have the same metadata associated with it.  If a sample
+					// is missing one of the terms, just give it an empty string.
+					value = new MetadataEntry("", "text");
+				}
+
+				valuesMap.put(term, value);
+			}
+			metadata.put(sample.getLabel(), valuesMap);
+		}
+
+		return ImmutableMap.of(
+				"terms", terms,
+				"metadata", metadata
+		);
+	}
+
+	/**
+	 * Get a list of all {@link MetadataTemplate}s for the {@link AnalysisSubmission}
+	 * 
+	 * @param submissionId id of the {@link AnalysisSubmission}
+	 * @return a map of {@link MetadataTemplate}s
+	 */
+	@RequestMapping("/ajax/{submissionId}/metadata-templates")
+	@ResponseBody
+	public Map<String, Object> getMetadataTemplatesForAnalysis(@PathVariable Long submissionId) {
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+		List<Project> projectsUsedInAnalysisSubmission = projectService.getProjectsUsedInAnalysisSubmission(submission);
+
+		Set<Long> projectIds = new HashSet<>();
+		Set<Map<String, Object>> templates = new HashSet<>();
+
+		for (Project project : projectsUsedInAnalysisSubmission) {
+			if (!projectIds.contains(project.getId())) {
+				projectIds.add(project.getId());
+
+				// Get the templates for the project
+				List<ProjectMetadataTemplateJoin> templateList = metadataTemplateService
+						.getMetadataTemplatesForProject(project);
+				for (ProjectMetadataTemplateJoin projectMetadataTemplateJoin : templateList) {
+					MetadataTemplate metadataTemplate = projectMetadataTemplateJoin.getObject();
+					Map<String, Object> templateMap = ImmutableMap.of("label", metadataTemplate.getLabel(), "id",
+							metadataTemplate.getId());
+					templates.add(templateMap);
+				}
+			}
+		}
+
+		return ImmutableMap.of("templates", templates);
+	}
+
+	/**
+	 * Generates a list of metadata fields for a five template.
+	 *
+	 * @param templateId
+	 * 		{@link Long} id for the {@link MetadataTemplate} that the fields are required.
+	 *
+	 * @return {@link Map}
+	 */
+	@RequestMapping("/ajax/{submissionId}/metadata-template-fields")
+	@ResponseBody
+	public Map<String, Object> getMetadataTemplateFields(
+			@RequestParam Long templateId){
+		MetadataTemplate template = metadataTemplateService.read(templateId);
+		List<MetadataTemplateField> metadataFields = template.getFields();
+		List<String> fields = new ArrayList<>();
+		for (MetadataTemplateField metadataField : metadataFields) {
+			fields.add(metadataField.getLabel());
+		}
+		return ImmutableMap.of("fields", fields);
 	}
 
 	/**

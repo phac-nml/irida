@@ -10,7 +10,7 @@
 <main layout:fragment="main">
     <div class="row">
         <div class="col-md-12 wb-frmvld">
-            <form role="form" action="edit" method="post">
+            <form id="edit-form" role="form" action="edit" method="post" ddl:bundle-includes="sample-edit">
                 <div class="panel panel-info">
                     <div class="panel-heading">
                         <b class="panel-title" th:text="#{samples.edit.page-title(${sample.getLabel()})}">__TITLE__</b>
@@ -133,6 +133,35 @@
                                 </div>
                             </div>
                         </fieldset>
+                        <fieldset id="other-metadata">
+                            <legend th:text="#{sample.metadata.other}">_Other Metadata_</legend>
+                            <div class="row" id="metadata-fields">
+                                <div th:unless="${#maps.isEmpty(sample.getMetadata())}">
+                                    <div th:each="entry : ${sample.getMetadata()}"  class="col-md-6 metadata-entry">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <input type="text" class="metadata-key form-control" required="required" th:value="${entry.key}"/>
+                                                <span class="input-group-btn">
+                                                    <button class="btn btn-default delete-metadata" type="button">
+                                                        <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                                    </button>
+                                                </span>
+                                            </div>
+                                            <input type="text" class="metadata-value form-control" th:value="${entry.value.value}"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <button type="button" class="btn btn-default" id="add-metadata">
+                                        <i class="fa fa-plus" aria-hidden="true"></i> <span th:text="#{sample.metadata.new}">_Add new term_</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </fieldset>
+                        
+                        <input class="hidden" type="text" id="metadata" name="metadata"/>
                     </div>
                     <div class="panel-footer text-right">
                         <a href="details" class="btn btn-default" th:text="#{form.btn.cancel}">Cancel</a>
@@ -140,6 +169,21 @@
                     </div>
                 </div>
             </form>
+            <div class="hidden">
+                <div id="metadata-template" class="col-md-6 metadata-entry">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input type="text" class="metadata-key form-control" required="required"/>
+                            <span class="input-group-btn">
+                                <button class="btn btn-default delete-metadata" type="button">
+                                    <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                </button>
+                            </span>
+                        </div>
+                        <input type="text" class="metadata-value form-control"/>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </main>

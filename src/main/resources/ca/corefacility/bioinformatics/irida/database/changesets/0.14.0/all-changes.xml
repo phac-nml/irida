@@ -5,6 +5,7 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 	<include file="sequencing-run-by-user.xml" relativeToChangelogFile="true" />
+	<include file="metadata-templates.xml" relativeToChangelogFile="true" />
 	<include file="analysis-project-share.xml" relativeToChangelogFile="true" />
 
 </databaseChangeLog>
