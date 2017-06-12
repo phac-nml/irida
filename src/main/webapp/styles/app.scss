@@ -114,6 +114,15 @@ input[type="search"] {
   text-align: left!important;
 }
 
+// Defaults spacing for the bottom of elements.
+.spaced-bottom {
+  margin-bottom: 1rem;
+}
+
+.spaced-top {
+  margin-top: 1rem;
+}
+
 // Use for ordered lists that require continued numbering.
 
 ol.start {

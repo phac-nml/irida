@@ -54,8 +54,8 @@ import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplesController;
 import ca.corefacility.bioinformatics.irida.security.permissions.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 /**
  */
@@ -68,22 +68,22 @@ public class SamplesControllerTest {
 	// Services
 	private SamplesController controller;
 	private SampleService sampleService;
-	private UserService userService;
 	private ProjectService projectService;
 	private SequencingObjectService sequencingObjectService;
 	private UpdateSamplePermission updateSamplePermission;
+	private MetadataTemplateService metadataTemplateService;
 	private MessageSource messageSource;
 
 	@Before
 	public void setUp() {
 		sampleService = mock(SampleService.class);
-		userService = mock(UserService.class);
-		projectService = mock(ProjectService.class);
 		sequencingObjectService = mock(SequencingObjectService.class);
+		projectService = mock(ProjectService.class);
+		metadataTemplateService = mock(MetadataTemplateService.class);
 		messageSource = mock(MessageSource.class);
 		updateSamplePermission = mock(UpdateSamplePermission.class);
-		controller = new SamplesController(sampleService, userService, projectService, sequencingObjectService,
-				updateSamplePermission, messageSource);
+		controller = new SamplesController(sampleService, projectService, sequencingObjectService,
+				updateSamplePermission, metadataTemplateService, messageSource);
 	}
 
 	// ************************************************************************************************
@@ -128,7 +128,7 @@ public class SamplesControllerTest {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.setAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE,
 				"/projects/5/samples/" + sample.getId() + "/edit");
-		String result = controller.updateSample(model, sample.getId(), null, update, request);
+		String result = controller.updateSample(model, sample.getId(), null, null, update, request);
 		assertTrue("Returns the correct redirect", result.contains(sample.getId() + "/details"));
 		assertTrue("Should be a redirect response.", result.startsWith("redirect:"));
 		assertFalse("Redirect should **not** contain the context path.", result.contains(contextPath));

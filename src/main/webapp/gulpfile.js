@@ -6,6 +6,7 @@ var sourcemaps = require('gulp-sourcemaps');
 var autoprefixer = require('gulp-autoprefixer');
 var notify = require('gulp-notify');
 var browserSync = require('browser-sync').create();
+var runSequence = require('run-sequence');
 
 // WEBPACK
 let webpack = require('webpack-stream');
@@ -82,6 +83,8 @@ gulp.task('watch', function() {
 	gulp.watch('./resource/js/dev/**/*.js', ['webpack']).on('change', browserSync.reload);
 });
 
-gulp.task('start', ['sass:prod', 'webpack']);
+gulp.task('start', function() {
+	runSequence('sass:prod', 'webpack');
+});
 
 gulp.task('default', ['serve', 'watch']);

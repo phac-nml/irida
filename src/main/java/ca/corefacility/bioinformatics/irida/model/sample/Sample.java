@@ -1,7 +1,10 @@
 package ca.corefacility.bioinformatics.irida.model.sample;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
@@ -13,6 +16,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -26,6 +30,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.event.SampleAddedProjectEvent;
@@ -33,6 +39,7 @@ import ca.corefacility.bioinformatics.irida.model.irida.IridaSample;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 
 /**
  * A biological sample. Each sample may correspond to many files.
@@ -132,8 +139,13 @@ public class Sample extends IridaResourceSupport
 	@JoinColumn(name = "remote_status")
 	private RemoteStatus remoteStatus;
 
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@MapKeyColumn(name = "metadata_KEY")
+	private Map<MetadataTemplateField, MetadataEntry> metadata;
+
 	public Sample() {
 		createdDate = new Date();
+		metadata = new HashMap<>();
 	}
 
 	/**
@@ -159,7 +171,8 @@ public class Sample extends IridaResourceSupport
 					&& Objects.equals(collectionDate, sample.collectionDate)
 					&& Objects.equals(geographicLocationName, sample.geographicLocationName)
 					&& Objects.equals(isolationSource, sample.isolationSource)
-					&& Objects.equals(latitude, sample.latitude) && Objects.equals(longitude, sample.longitude);
+					&& Objects.equals(latitude, sample.latitude) && Objects.equals(longitude, sample.longitude)
+					&& Objects.equals(metadata, sample.metadata);
 		}
 
 		return false;
@@ -168,7 +181,7 @@ public class Sample extends IridaResourceSupport
 	@Override
 	public int hashCode() {
 		return Objects.hash(id, createdDate, modifiedDate, sampleName, description, organism, isolate, strain,
-				collectedBy, collectionDate, geographicLocationName, isolationSource, latitude, longitude);
+				collectedBy, collectionDate, geographicLocationName, isolationSource, latitude, longitude, metadata);
 	}
 
 	@Override
@@ -300,5 +313,49 @@ public class Sample extends IridaResourceSupport
 	@Override
 	public void setRemoteStatus(RemoteStatus status) {
 		this.remoteStatus = status;
+	}
+
+	@JsonIgnore
+	public Map<MetadataTemplateField, MetadataEntry> getMetadata() {
+		return metadata;
+	}
+
+	
+	/**
+	 * Set the {@link MetadataEntry} collection for the sample. Note duplicate
+	 * keys cannot be used (ignoring case)
+	 * 
+	 * @param inputMetadata
+	 *            the collection of {@link MetadataEntry}s
+	 */
+	@JsonIgnore
+	public void setMetadata(Map<MetadataTemplateField, MetadataEntry> inputMetadata) {
+		this.metadata = inputMetadata;
+	}
+	
+	/**
+	 * Merge {@link MetadataEntry} into the sample's existing metadata collection. Duplicate
+	 * keys will be overwritten.
+	 * 
+	 * @param inputMetadata
+	 *            the metadata to merge into the sample
+	 */
+	public void mergeMetadata(Map<MetadataTemplateField, MetadataEntry> inputMetadata) {
+		// loop through entry set and see if it already exists
+		for (Entry<MetadataTemplateField, MetadataEntry> entry : inputMetadata.entrySet()) {
+
+			// if the value isn't empty
+			if (!entry.getValue().getValue().isEmpty()) {
+
+				// if the key is found, replace the entry
+				if (metadata.containsKey(entry.getKey())) {
+					MetadataEntry metadataEntry = metadata.get(entry.getKey());
+					metadataEntry.setValue(entry.getValue().getValue());
+				} else {
+					// otherwise add the new entry
+					metadata.put(entry.getKey(), entry.getValue());
+				}
+			}
+		}
 	}
 }

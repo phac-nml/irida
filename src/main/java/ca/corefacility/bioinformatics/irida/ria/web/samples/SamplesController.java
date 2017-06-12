@@ -6,7 +6,6 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -40,29 +39,31 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry.QCEntryStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
-import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.security.permissions.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
 
 /**
@@ -107,23 +108,23 @@ public class SamplesController extends BaseController {
 	private final SampleService sampleService;
 
 	private final ProjectService projectService;
-	private final UserService userService;
 
 	private final SequencingObjectService sequencingObjectService;
-	
+	private final MetadataTemplateService metadataTemplateService;
+
 	private final UpdateSamplePermission updateSamplePermission;
 
 	private final MessageSource messageSource;
 
 	@Autowired
-	public SamplesController(SampleService sampleService, UserService userService, ProjectService projectService,
+	public SamplesController(SampleService sampleService, ProjectService projectService,
 			SequencingObjectService sequencingObjectService, UpdateSamplePermission updateSamplePermission,
-			MessageSource messageSource) {
+			MetadataTemplateService metadataTemplateService, MessageSource messageSource) {
 		this.sampleService = sampleService;
-		this.userService = userService;
 		this.projectService = projectService;
 		this.sequencingObjectService = sequencingObjectService;
 		this.updateSamplePermission = updateSamplePermission;
+		this.metadataTemplateService = metadataTemplateService;
 		this.messageSource = messageSource;
 	}
 
@@ -181,6 +182,9 @@ public class SamplesController extends BaseController {
 	 *            The id for the sample
 	 * @param collectionDate
 	 *            Date the sample was collected (Optional)
+	 * @param metadataString
+	 *            A JSON string representation of the {@link MetadataEntry} to
+	 *            set on the sample
 	 * @param params
 	 *            Map of fields to update. See FIELDS.
 	 * @param request
@@ -191,8 +195,10 @@ public class SamplesController extends BaseController {
 			"/projects/{projectId}/samples/{sampleId}/edit" }, method = RequestMethod.POST)
 	public String updateSample(final Model model, @PathVariable Long sampleId,
 			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date collectionDate,
-			@RequestParam Map<String, String> params, HttpServletRequest request) {
+			@RequestParam(name = "metadata") String metadataString, @RequestParam Map<String, String> params,
+			HttpServletRequest request) {
 		logger.debug("Updating sample [" + sampleId + "]");
+		
 		Map<String, Object> updatedValues = new HashMap<>();
 		for (String field : FIELDS) {
 			String fieldValue = params.get(field);
@@ -206,6 +212,25 @@ public class SamplesController extends BaseController {
 			updatedValues.put(COLLECTION_DATE, collectionDate);
 			model.addAttribute(COLLECTION_DATE, collectionDate);
 		}
+
+		/**
+		 * If there's sample metadata to add, add it here.
+		 */
+		Map<String, MetadataEntry> metadataMap;
+		if (!Strings.isNullOrEmpty(metadataString)) {
+			ObjectMapper mapper = new ObjectMapper();
+			try {
+				metadataMap = mapper.readValue(metadataString, new TypeReference<Map<String, MetadataEntry>>() {
+				});
+			} catch (IOException e) {
+				throw new IllegalArgumentException("Could not map metadata to sample object", e);
+			}
+
+		} else {
+			metadataMap = new HashMap<>();
+		}
+		Map<MetadataTemplateField, MetadataEntry> metadata = metadataTemplateService.getMetadataMap(metadataMap);
+		updatedValues.put("metadata", metadata);
 
 		if (updatedValues.size() > 0) {
 			try {

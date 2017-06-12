@@ -404,6 +404,19 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	public List<ProjectAnalysisSubmissionJoin> getProjectsForAnalysisSubmission(AnalysisSubmission submission);
 	
 	/**
+	 * Get all {@link Project}s that have data used within an
+	 * {@link AnalysisSubmission}. Note that this differs from
+	 * {@link ProjectService#getProjectsForAnalysisSubmission(AnalysisSubmission)}
+	 * where that method only returns projects which the
+	 * {@link AnalysisSubmission} is explicitly shared with.
+	 * 
+	 * @param submission
+	 *            the {@link AnalysisSubmission} to get {@link Project}s for
+	 * @return a list of {@link Project}s
+	 */
+	public List<Project> getProjectsUsedInAnalysisSubmission(AnalysisSubmission submission);
+	
+	/**
 	 * Update select {@link Project} settings
 	 * @param project the project to update
 	 * @param updates a map of fields to update

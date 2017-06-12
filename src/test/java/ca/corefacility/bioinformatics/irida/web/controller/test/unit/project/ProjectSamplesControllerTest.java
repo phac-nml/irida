@@ -34,6 +34,7 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectsController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleMetadataController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFactory;
 
@@ -159,7 +160,8 @@ public class ProjectSamplesControllerTest {
 		Set<String> rels = Sets.newHashSet(Link.REL_SELF, RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES,
 				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_PAIRS,
 				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_UNPAIRED,
-				RESTProjectSamplesController.REL_PROJECT, RESTProjectSamplesController.REL_PROJECT_SAMPLE);
+				RESTProjectSamplesController.REL_PROJECT, RESTProjectSamplesController.REL_PROJECT_SAMPLE,
+				RESTSampleMetadataController.METADATA_REL);
 		for (Link link : links) {
 			assertTrue("rels should contain link [" + link + "]", rels.contains(link.getRel()));
 			assertNotNull("rels should remove link [" + link + "]", rels.remove(link.getRel()));
