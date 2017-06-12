@@ -29,11 +29,6 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
-import ca.corefacility.bioinformatics.irida.service.remote.SequenceFilePairRemoteService;
-import ca.corefacility.bioinformatics.irida.service.remote.SingleEndSequenceFileRemoteService;
-import ca.corefacility.bioinformatics.irida.service.snapshot.SequenceFilePairSnapshotService;
-import ca.corefacility.bioinformatics.irida.service.snapshot.SequenceFileSnapshotService;
-import ca.corefacility.bioinformatics.irida.service.snapshot.SingleEndSequenceFileSnapshotService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
@@ -53,15 +48,9 @@ public class PipelineControllerTest {
 	private UserService userService;
 	private MessageSource messageSource;
 	private CartController cartController;
-	private SingleEndSequenceFileRemoteService singleEndSequenceFileRemoteService;
-	private SequenceFilePairRemoteService sequenceFilePairRemoteService;
 	// Controller to test
 	private PipelineController controller;
 	private WorkflowNamedParametersService namedParameterService;
-
-	SequenceFileSnapshotService remoteSequenceFileService;
-	SequenceFilePairSnapshotService remoteSequenceFilePairService;
-	SingleEndSequenceFileSnapshotService remoteSequenceFileSingleService;
 
 	@Before
 	public void setUp() {
@@ -76,9 +65,7 @@ public class PipelineControllerTest {
 		namedParameterService = mock(WorkflowNamedParametersService.class);
 
 		controller = new PipelineController(sequencingObjectService, referenceFileService, analysisSubmissionService,
-				workflowsService, projectService, userService, cartController, messageSource, namedParameterService,
-				sequenceFilePairRemoteService, singleEndSequenceFileRemoteService, remoteSequenceFilePairService,
-				remoteSequenceFileSingleService);
+				workflowsService, projectService, userService, cartController, messageSource, namedParameterService);
 		when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 	}
 

@@ -31,6 +31,7 @@ import ca.corefacility.bioinformatics.irida.service.remote.ProjectSynchronizatio
 import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
 import ca.corefacility.bioinformatics.irida.service.remote.SequenceFilePairRemoteService;
 import ca.corefacility.bioinformatics.irida.service.remote.SingleEndSequenceFileRemoteService;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 public class ProjectSynchronizationServiceTest {
@@ -41,6 +42,8 @@ public class ProjectSynchronizationServiceTest {
 	private SampleService sampleService;
 	@Mock
 	private SequencingObjectService objectService;
+	@Mock
+	private MetadataTemplateService metadataTemplateService;
 	@Mock
 	private ProjectRemoteService projectRemoteService;
 	@Mock
@@ -64,7 +67,8 @@ public class ProjectSynchronizationServiceTest {
 		MockitoAnnotations.initMocks(this);
 
 		syncService = new ProjectSynchronizationService(projectService, sampleService, objectService,
-				projectRemoteService, sampleRemoteService, singleEndRemoteService, pairRemoteService, tokenService);
+				metadataTemplateService, projectRemoteService, sampleRemoteService, singleEndRemoteService,
+				pairRemoteService, tokenService);
 
 		api = new RemoteAPI();
 		expired = new Project();

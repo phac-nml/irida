@@ -44,18 +44,19 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 		this.entityManager = entityManager;
 		this.baseDirectory = baseDirectory;
 	}
-	
+
 	/**
-	 * A JPA event listener to translate the relative paths stored in the database to
-	 * absolute paths so that everyone after the repository knows where the file is
-	 * actually stored. 
+	 * A JPA event listener to translate the relative paths stored in the
+	 * database to absolute paths so that everyone after the repository knows
+	 * where the file is actually stored.
 	 */
 	public static class RelativePathTranslatorListener {
 		private static final Logger logger = LoggerFactory.getLogger(RelativePathTranslatorListener.class);
-		
+
 		private static final Map<Class<?>, Path> baseDirectories = new ConcurrentHashMap<>();
-		
+
 		private static final Predicate<Field> pathFilter = f -> f.getType().equals(Path.class);
+
 		/**
 		 * Get a collection of fields that have type Path.
 		 * 
@@ -66,11 +67,11 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 		private static Set<Field> findPathFields(final Class<?> type) {
 			return Arrays.stream(type.getDeclaredFields()).filter(pathFilter).collect(Collectors.toSet());
 		}
-		
+
 		public static void addBaseDirectory(final Class<?> c, final Path p) {
 			baseDirectories.put(c, p);
 		}
-		
+
 		/**
 		 * Whenever a {@link VersionedFileFields} is loaded from the database,
 		 * we need to translate it's path from a relative path to an absolute
@@ -88,7 +89,8 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 			// find any members that are of type Path:
 			final Set<Field> pathFields = findPathFields(fileSystemEntity.getClass());
 
-			// for every member that's a path, make it an absolute path based on the
+			// for every member that's a path, make it an absolute path based on
+			// the
 			// base directory
 			for (final Field field : pathFields) {
 				ReflectionUtils.makeAccessible(field);
@@ -103,10 +105,12 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 					ReflectionUtils.setField(field, fileSystemEntity, absolutePath);
 					logger.trace("Setting ABSOLUTE path to [" + absolutePath.toString() + "] from relative path ["
 							+ source.toString() + "]");
+				} else {
+					logger.trace("Not translating file path for file: " + source);
 				}
 			}
 		}
-		
+
 		/**
 		 * Before persisting a {@link VersionedFileFields} to the database, we
 		 * need to translate it to a relative path by stripping the storage
@@ -118,12 +122,13 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 		@PreUpdate
 		public void relativePath(final VersionedFileFields<Long> fileSystemEntity) {
 			logger.trace("In pre-update, going to translate to relative path.");
-			
+
 			final Path directoryForType = baseDirectories.get(fileSystemEntity.getClass());
 			// find any members that are of type Path:
 			final Set<Field> pathFields = findPathFields(fileSystemEntity.getClass());
 
-			// for every member that's a path, make it a relative path based on the
+			// for every member that's a path, make it a relative path based on
+			// the
 			// base directory
 			for (final Field field : pathFields) {
 				ReflectionUtils.makeAccessible(field);

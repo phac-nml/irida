@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Map;
 
 import javax.validation.ConstraintViolationException;
@@ -107,6 +108,20 @@ public interface CRUDService<IdentifierType extends Serializable, Type extends T
 	 *             if the entity being updated contains constraint violations
 	 */
 	public Type update(Type object) throws EntityNotFoundException, ConstraintViolationException;
+	
+	/**
+	 * Update multiple objects at once
+	 * 
+	 * @param objects
+	 *            the objects to update
+	 * @return the updated objects
+	 * @throws EntityNotFoundException
+	 *             if an entity being updated is not found in the database
+	 * @throws ConstraintViolationException
+	 *             if an entity being updated contains constraint violations
+	 */
+	public Collection<Type> updateMultiple(Collection<Type> objects)
+			throws EntityNotFoundException, ConstraintViolationException;
 
 	/**
 	 * Delete the object with the specified identifier from the database.

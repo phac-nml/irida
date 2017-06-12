@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 import ca.corefacility.bioinformatics.irida.repositories.RemoteAPIRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.ProjectRemoteRepository;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
@@ -35,20 +34,6 @@ public class ProjectRemoteServiceImpl extends RemoteServiceImpl<Project> impleme
 	@Autowired
 	public ProjectRemoteServiceImpl(ProjectRemoteRepository repository, RemoteAPIRepository apiRepository) {
 		super(repository, apiRepository);
-	}
-
-	/**
-	 * Read a {@link Project} for a given {@link RemoteRelatedProject} reference
-	 * 
-	 * @param project
-	 *            The {@link RemoteRelatedProject} to read
-	 * @return a {@link Project}
-	 */
-	public Project read(RemoteRelatedProject project) {
-		String remoteProjectURI = project.getRemoteProjectURI();
-		RemoteAPI remoteAPI = project.getRemoteAPI();
-
-		return super.read(remoteProjectURI, remoteAPI);
 	}
 
 	/**

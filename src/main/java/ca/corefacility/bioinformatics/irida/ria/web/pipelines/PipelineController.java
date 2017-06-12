@@ -26,6 +26,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
 import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
@@ -37,10 +43,8 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePairSnapshot;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFileSnapshot;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
@@ -54,19 +58,9 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
-import ca.corefacility.bioinformatics.irida.service.remote.SequenceFilePairRemoteService;
-import ca.corefacility.bioinformatics.irida.service.remote.SingleEndSequenceFileRemoteService;
-import ca.corefacility.bioinformatics.irida.service.snapshot.SequenceFilePairSnapshotService;
-import ca.corefacility.bioinformatics.irida.service.snapshot.SingleEndSequenceFileSnapshotService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 /**
  * Controller for pipeline related views
@@ -105,12 +99,6 @@ public class PipelineController extends BaseController {
 	private MessageSource messageSource;
 	private final WorkflowNamedParametersService namedParameterService;
 	
-	private SingleEndSequenceFileRemoteService sequenceFileSingleRemoteService;
-	private SequenceFilePairRemoteService sequenceFilePairRemoteService;
-	
-	private SequenceFilePairSnapshotService remoteSequenceFilePairService;
-	private SingleEndSequenceFileSnapshotService singleEndSequenceFileSnapshotService;
-	
 	/*
 	 * CONTROLLERS
 	 */
@@ -121,11 +109,7 @@ public class PipelineController extends BaseController {
 			ReferenceFileService referenceFileService, AnalysisSubmissionService analysisSubmissionService,
 			IridaWorkflowsService iridaWorkflowsService, ProjectService projectService, UserService userService,
 			CartController cartController, MessageSource messageSource,
-			final WorkflowNamedParametersService namedParameterService,
-			SequenceFilePairRemoteService sequenceFilePairRemoteService,
-			SingleEndSequenceFileRemoteService sequenceFileSingleRemoteService,
-			SequenceFilePairSnapshotService remoteSequenceFilePairService,
-			SingleEndSequenceFileSnapshotService singleEndSequenceFileSnapshotService) {
+			final WorkflowNamedParametersService namedParameterService) {
 		this.sequencingObjectService = sequencingObjectService;
 		this.referenceFileService = referenceFileService;
 		this.analysisSubmissionService = analysisSubmissionService;
@@ -135,11 +119,6 @@ public class PipelineController extends BaseController {
 		this.cartController = cartController;
 		this.messageSource = messageSource;
 		this.namedParameterService = namedParameterService;
-		this.sequenceFilePairRemoteService = sequenceFilePairRemoteService;
-		this.remoteSequenceFilePairService = remoteSequenceFilePairService;
-		this.sequenceFileSingleRemoteService = sequenceFileSingleRemoteService;
-		this.singleEndSequenceFileSnapshotService = singleEndSequenceFileSnapshotService;
-
 	}
 
 	/**
@@ -203,9 +182,8 @@ public class PipelineController extends BaseController {
 		String response = URL_EMPTY_CART_REDIRECT;
 
 		Map<Project, Set<Sample>> cartMap = cartController.getSelected();
-		Map<String, Sample> remoteSelected = cartController.getRemoteSelected();
 		// Cannot run a pipeline on an empty cart!
-		if (!cartMap.isEmpty() || !remoteSelected.isEmpty()) {
+		if (!cartMap.isEmpty()) {
 
 			IridaWorkflow flow = null;
 			try {
@@ -277,33 +255,6 @@ public class PipelineController extends BaseController {
 				projectMap.put("samples", sampleList);
 				projectList.add(projectMap);
 			}
-			
-			/*
-			 * Add remote samples
-			 */
-			List<Map<String, Object>> remoteSamples = new ArrayList<>();
-			logger.trace("Getting remote files for samples in cart");
-			for(String url : remoteSelected.keySet()){
-				Sample sample = remoteSelected.get(url);
-				Map<String, Object> sampleMap = new HashMap<>();
-				sampleMap.put("name", sample.getLabel());
-				sampleMap.put("id", sample.getSelfHref());
-				Map<String, List<? extends Object>> files = new HashMap<>();
-				
-				if (description.acceptsPairedSequenceFiles()) {
-					logger.trace("Getting remote pairs for sample " + url);
-					files.put("paired_end", sequenceFilePairRemoteService.getSequenceFilePairsForSample(sample));
-				}
-				
-				if (description.acceptsSingleSequenceFiles()) {
-					logger.trace("Getting remote single files for sample " + url);
-					files.put("single_end", sequenceFileSingleRemoteService.getUnpairedFilesForSample(sample));
-				}
-				
-				sampleMap.put("files", files);
-				remoteSamples.add(sampleMap);
-			}
-			
 
 			// Need to add the pipeline parameters
 			final List<IridaWorkflowParameter> defaultWorkflowParameters = flow.getWorkflowDescription().getParameters();
@@ -352,7 +303,6 @@ public class PipelineController extends BaseController {
 			model.addAttribute("referenceRequired", description.requiresReference());
 			model.addAttribute("addRefProjects", addRefList);
 			model.addAttribute("projects", projectList);
-			model.addAttribute("remoteSamples", remoteSamples);
 			response = URL_GENERIC_PIPELINE;
 		}
 
@@ -374,10 +324,6 @@ public class PipelineController extends BaseController {
 	 *            a list of {@link SequenceFile} id's
 	 * @param paired
 	 *            a list of {@link SequenceFilePair} id's
-	 * @param remoteSingle
-	 *            a list of remote {@link SequenceFile} URLs
-	 * @param remotePaired
-	 *            A list of remote {@link SequenceFilePair} URLs
 	 * @param parameters
 	 *            TODO: This is a hack! Update when fixing issue #100
 	 *            {@link Map} of ALL parameters passed. Only want the 'paras'
@@ -397,8 +343,6 @@ public class PipelineController extends BaseController {
 	@RequestMapping(value = "/ajax/start/{pipelineId}", method = RequestMethod.POST)
 	public @ResponseBody Map<String, Object> ajaxStartPipeline(Locale locale, @PathVariable UUID pipelineId,
 			@RequestParam(required = false) List<Long> single, @RequestParam(required = false) List<Long> paired,
-			@RequestParam(required = false) List<String> remoteSingle,
-			@RequestParam(required = false) List<String> remotePaired,
 			@RequestParam(required = false) Map<String, String> parameters, @RequestParam(required = false) Long ref,
 			@RequestParam String name, @RequestParam(name = "description", required = false) String analysisDescription,
 			@RequestParam(required = false) List<Long> sharedProjects) {
@@ -452,27 +396,6 @@ public class PipelineController extends BaseController {
 				// Check the pair files for duplicates in a sample, throws SampleAnalysisDuplicateException
 				sequencingObjectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(sequenceFilePairs));
 			}
-			
-			
-			// Get a list of the remote files to submit
-			List<SingleEndSequenceFileSnapshot> remoteSingleFiles = new ArrayList<>();
-			List<SequenceFilePairSnapshot> remotePairFiles = new ArrayList<>();
-			
-			if(remoteSingle != null){
-				logger.debug("Mirroring" + remoteSingle.size() + " single files.");
-				remoteSingleFiles = remoteSingle.stream().map((u) -> {
-					SingleEndSequenceFile read = sequenceFileSingleRemoteService.read(u);
-					return singleEndSequenceFileSnapshotService.mirrorFile(read);
-				}).collect(Collectors.toList());
-			}
-			
-			if(remotePaired != null){
-				logger.debug("Mirroring" + remotePaired.size() + " pairs.");
-				remotePairFiles = remotePaired.stream().map((u) -> {
-					SequenceFilePair pair = sequenceFilePairRemoteService.read(u);
-					return remoteSequenceFilePairService.mirrorPair(pair);
-				}).collect(Collectors.toList());
-			}
 
 			// Get the pipeline parameters
 			Map<String, String> params = new HashMap<>();
@@ -508,10 +431,10 @@ public class PipelineController extends BaseController {
 			}
 
 			if (description.getInputs().requiresSingleSample()) {
-				analysisSubmissionService.createSingleSampleSubmission(flow, ref, singleEndFiles, sequenceFilePairs, remoteSingleFiles, remotePairFiles,
+				analysisSubmissionService.createSingleSampleSubmission(flow, ref, singleEndFiles, sequenceFilePairs,
 						params, namedParameters, name, analysisDescription, projectsToShare);
 			} else {
-				analysisSubmissionService.createMultipleSampleSubmission(flow, ref, singleEndFiles, sequenceFilePairs, remoteSingleFiles, remotePairFiles,
+				analysisSubmissionService.createMultipleSampleSubmission(flow, ref, singleEndFiles, sequenceFilePairs,
 						params, namedParameters, name, analysisDescription, projectsToShare);
 			}
 

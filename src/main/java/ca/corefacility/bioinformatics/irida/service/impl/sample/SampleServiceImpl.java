@@ -75,11 +75,12 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	private SampleSequencingObjectJoinRepository ssoRepository;
 	
 	private QCEntryRepository qcEntryRepository;
-	
+
 	/**
 	 * Reference to {@link AnalysisRepository}.
 	 */
 	private final AnalysisRepository analysisRepository;
+
 
 	/**
 	 * Constructor.
@@ -402,7 +403,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 				.collect(Collectors.toSet());
 		return samples;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -412,7 +413,16 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	public List<QCEntry> getQCEntriesForSample(Sample sample) {
 		return qcEntryRepository.getQCEntriesForSample(sample);
 	}
-
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasPermission(#objects, 'canUpdateSample')")
+	@Override
+	public List<Sample> updateMultiple(Collection<Sample> objects) {
+		return super.updateMultiple(objects);
+	}
+	
 	/**
 	 * Verify that the given sort properties array is not null or empty. If it
 	 * is, give a default sort property.

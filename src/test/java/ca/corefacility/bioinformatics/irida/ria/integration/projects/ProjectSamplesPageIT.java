@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
+import static org.junit.Assert.*;
+
 import java.util.List;
 
 import org.junit.Test;
@@ -9,9 +11,8 @@ import org.slf4j.LoggerFactory;
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
 
-import static org.junit.Assert.*;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 /**
  * <p>

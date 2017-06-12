@@ -19,6 +19,8 @@ import javax.validation.ValidatorFactory;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.common.collect.Lists;
+
 import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -37,8 +39,6 @@ import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepositor
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.service.impl.sample.SampleServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-
-import com.google.common.collect.Lists;
 
 /**
  * Unit tests for {@link SampleServiceImpl}.
@@ -66,7 +66,7 @@ public class SampleServiceImplTest {
 		analysisRepository = mock(AnalysisRepository.class);
 		ssoRepository = mock(SampleSequencingObjectJoinRepository.class);
 		qcEntryRepository = mock(QCEntryRepository.class);
-		
+
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		validator = factory.getValidator();
 		sampleService = new SampleServiceImpl(sampleRepository, psjRepository, analysisRepository,

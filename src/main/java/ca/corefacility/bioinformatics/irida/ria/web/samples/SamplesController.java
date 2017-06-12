@@ -1,54 +1,14 @@
 package ca.corefacility.bioinformatics.irida.ria.web.samples;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.ConstraintViolationException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.HandlerMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry.QCEntryStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
@@ -58,9 +18,39 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.HandlerMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.ConstraintViolationException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.Principal;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 /**
  * Controller for all sample related views
@@ -107,16 +97,18 @@ public class SamplesController extends BaseController {
 	private final UserService userService;
 
 	private final SequencingObjectService sequencingObjectService;
+	private final MetadataTemplateService metadataTemplateService;
 
-	private final MessageSource messageSource;
+	private final MessageSource messageSource;	
 
 	@Autowired
 	public SamplesController(SampleService sampleService, UserService userService, ProjectService projectService,
-			SequencingObjectService sequencingObjectService, MessageSource messageSource) {
+			SequencingObjectService sequencingObjectService, MetadataTemplateService metadataTemplateService, MessageSource messageSource) {
 		this.sampleService = sampleService;
 		this.userService = userService;
 		this.projectService = projectService;
 		this.sequencingObjectService = sequencingObjectService;
+		this.metadataTemplateService = metadataTemplateService;
 		this.messageSource = messageSource;
 	}
 
@@ -174,6 +166,9 @@ public class SamplesController extends BaseController {
 	 *            The id for the sample
 	 * @param collectionDate
 	 *            Date the sample was collected (Optional)
+	 * @param metadataString
+	 *            A JSON string representation of the {@link MetadataEntry} to
+	 *            set on the sample
 	 * @param params
 	 *            Map of fields to update. See FIELDS.
 	 * @param request
@@ -184,8 +179,10 @@ public class SamplesController extends BaseController {
 			"/projects/{projectId}/samples/{sampleId}/edit" }, method = RequestMethod.POST)
 	public String updateSample(final Model model, @PathVariable Long sampleId,
 			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date collectionDate,
-			@RequestParam Map<String, String> params, HttpServletRequest request) {
+			@RequestParam(name = "metadata") String metadataString, @RequestParam Map<String, String> params,
+			HttpServletRequest request) {
 		logger.debug("Updating sample [" + sampleId + "]");
+		
 		Map<String, Object> updatedValues = new HashMap<>();
 		for (String field : FIELDS) {
 			String fieldValue = params.get(field);
@@ -200,6 +197,25 @@ public class SamplesController extends BaseController {
 			model.addAttribute(COLLECTION_DATE, collectionDate);
 		}
 
+		/**
+		 * If there's sample metadata to add, add it here.
+		 */
+		Map<String, MetadataEntry> metadataMap;
+		if (!Strings.isNullOrEmpty(metadataString)) {
+			ObjectMapper mapper = new ObjectMapper();
+			try {
+				metadataMap = mapper.readValue(metadataString, new TypeReference<Map<String, MetadataEntry>>() {
+				});
+			} catch (IOException e) {
+				throw new IllegalArgumentException("Could not map metadata to sample object", e);
+			}
+
+		} else {
+			metadataMap = new HashMap<>();
+		}
+		Map<MetadataTemplateField, MetadataEntry> metadata = metadataTemplateService.getMetadataMap(metadataMap);
+		updatedValues.put("metadata", metadata);
+
 		if (updatedValues.size() > 0) {
 			try {
 				sampleService.updateFields(sampleId, updatedValues);
@@ -208,6 +224,7 @@ public class SamplesController extends BaseController {
 				return getEditSampleSpecificPage(model, sampleId);
 			}
 		}
+
 
 		// this used to read request.getURI(), but request.getURI() includes the
 		// context path. When issuing a redirect: return, the redirect: string

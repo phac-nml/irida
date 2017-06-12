@@ -60,7 +60,9 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
@@ -679,6 +681,23 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@PostFilter("hasPermission(filterObject.subject, 'canReadProject')")
 	public List<ProjectAnalysisSubmissionJoin> getProjectsForAnalysisSubmission(AnalysisSubmission submission) {
 		return pasRepository.getProjectsForSubmission(submission);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasPermission(#submission, 'canReadAnalysisSubmission')")
+	@PostFilter("hasPermission(filterObject, 'canReadProject')")
+	@Override
+	public List<Project> getProjectsUsedInAnalysisSubmission(AnalysisSubmission submission) {
+		Set<SequenceFilePair> inputFilePairs = submission.getPairedInputFiles();
+		Set<SingleEndSequenceFile> inputFileSingle = submission.getInputFilesSingleEnd();
+
+		// get available projects
+		Set<Project> projectsInAnalysis = getProjectsForSequencingObjects(inputFilePairs);
+		projectsInAnalysis.addAll(getProjectsForSequencingObjects(inputFileSingle));
+
+		return Lists.newArrayList(projectsInAnalysis);
 	}
 
 	/**

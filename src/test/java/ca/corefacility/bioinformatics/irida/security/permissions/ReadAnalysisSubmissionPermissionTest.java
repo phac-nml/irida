@@ -203,6 +203,41 @@ public class ReadAnalysisSubmissionPermissionTest {
 		verify(analysisSubmissionRepository).findOne(1L);
 		verify(seqObjectPermission).customPermissionAllowed(auth, pair);
 	}
+	
+	@Test
+	public void testPermitSISTR() {
+		String username = "aaron";
+		User u = new User();
+		u.setUsername(username);
+		Authentication auth = new UsernamePasswordAuthenticationToken("aaron", "password1");
+
+		Project p = new Project();
+
+		SequenceFilePair pair = new SequenceFilePair();
+
+		AnalysisSubmission analysisSubmission = AnalysisSubmission.builder(workflowId).name("test")
+				.inputFilesPaired(ImmutableSet.of(pair)).referenceFile(referenceFile).build();
+		analysisSubmission.setSubmitter(new User());
+		pair.setSistrTyping(analysisSubmission);
+
+		/*
+		 * testing that analysis is shared with a project that user isn't a part
+		 * of
+		 */
+		when(pasRepository.getProjectsForSubmission(analysisSubmission))
+				.thenReturn(ImmutableList.of(new ProjectAnalysisSubmissionJoin(p, analysisSubmission)));
+		when(readProjectPermission.customPermissionAllowed(auth, p)).thenReturn(false);
+
+		when(userRepository.loadUserByUsername(username)).thenReturn(u);
+		when(analysisSubmissionRepository.findOne(1L)).thenReturn(analysisSubmission);
+		when(seqObjectPermission.customPermissionAllowed(auth, pair)).thenReturn(true);
+
+		assertTrue("permission should be granted.", readAnalysisSubmissionPermission.isAllowed(auth, 1L));
+
+		verify(userRepository).loadUserByUsername(username);
+		verify(analysisSubmissionRepository).findOne(1L);
+		verify(seqObjectPermission).customPermissionAllowed(auth, pair);
+	}
 
 	@Test
 	public void testPermitProjectShare() {

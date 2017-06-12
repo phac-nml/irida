@@ -51,8 +51,6 @@
 			single       = [],
 			// Holds all the ids for the selected paired-end
 			paired       = [],
-			remoteSingle = [],
-			remotePaired = [],
 			// User-written description of the analysis
 			description = ng.element('#analysis-description').val(),
 			// Projects to share results with
@@ -67,21 +65,12 @@
 				// Get a list of paired and single end files to run.
 				_.forEach(radioBtns, function (c) {
 					c = $(c);
-					if (c.hasClass("remote")) {
-						if (c.attr('data-type') === 'single_end') {
-							remoteSingle.push(c.val());
-						}
-						else {
-							remotePaired.push(c.val());
-						}
+
+					if (c.attr('data-type') === 'single_end') {
+						single.push(Number(c.val()));
 					}
 					else {
-						if (c.attr('data-type') === 'single_end') {
-							single.push(Number(c.val()));
-						}
-						else {
-							paired.push(Number(c.val()));
-						}
+						paired.push(Number(c.val()));
 					}
 				});
 
@@ -106,13 +95,6 @@
 				}
 				if (paired.length > 0) {
 					params['paired'] = paired;
-				}
-
-				if (remoteSingle.length > 0) {
-					params['remoteSingle'] = remoteSingle;
-				}
-				if (remotePaired.length > 0) {
-					params['remotePaired'] = remotePaired;
 				}
 
 				if (_.keys(selectedParameters).length > 0 && selectedParameters.id !== 'no_parameters') {
@@ -164,22 +146,6 @@
 		vm.removeSample = function (projectId, sampleId) {
 			CartService.removeSample(projectId, sampleId).then(function () {
 				ng.element('#sample-' + sampleId).remove();
-				if (ng.element('.sample-container').length === 0) {
-					location.reload();
-				}
-			});
-		};
-
-		/**
-		 * Remove a sample from the pipeline to be run.
-		 *
-		 * @param projectId the project id of the sample to remove
-		 * @param sampleId the sample if to remove
-		 */
-		vm.removeRemoteSample = function (sampleId) {
-			CartService.removeRemoteSample(sampleId).then(function () {
-				//need funky selection style here because css selectors don't like slashes
-				ng.element("[id*='remote-sample-" + sampleId + "']").remove();
 				if (ng.element('.sample-container').length === 0) {
 					location.reload();
 				}
@@ -402,27 +368,28 @@
 	    
 	    vm.referenceUploadStarted = false;
 
-	    vm.upload = function (files) {	    	
-	    	if (files && files.length > 0) {
-	    		vm.referenceUploadStarted = true;
-		    	Upload.upload({
-		    		url: page.urls.upload,
-		    		file: files[0]
-		    	}).progress(function (evt) {
-		    		vm.progress = parseInt(100.0 * evt.loaded / evt.total);
-          }).then(function(response) {
-		    		vm.uploaded = {
-		        			id: response["uploaded-file-id"],
-		        			name: response["uploaded-file-name"]
-		        	};
-		    		vm.uploadError = false;
-		        	$rootScope.$emit('REFERENCE_FILE_UPLOADED', vm.uploaded);
-		        	vm.referenceUploadStarted = false;
-		    	}).error(function(response) {
-		    		vm.uploadError = response.error;
-		    		vm.referenceUploadStarted = false;
-		    	});
-	    	}
+	    vm.upload = function(files) {
+	      if (files && files.length > 0) {
+	        vm.referenceUploadStarted = true;
+	        Upload.upload({
+	          url: page.urls.upload,
+	          file: files[0]
+	        }).progress(function(evt) {
+	          vm.progress = parseInt(100.0 * evt.loaded / evt.total);
+	        }).then(function(response) {
+	          var data = response.data;
+	          vm.uploaded = {
+	            id: data["uploaded-file-id"],
+	            name: data["uploaded-file-name"]
+	          };
+	          vm.uploadError = false;
+	          $rootScope.$emit('REFERENCE_FILE_UPLOADED', vm.uploaded);
+	          vm.referenceUploadStarted = false;
+	        }, function(response) {
+	          vm.referenceUploadStarted = false;
+	          window.notifications.show({msg: response.data.error, type: 'error'});
+	        });
+	      }
 	    };
   }
 

@@ -8,6 +8,18 @@ Changes
 * [UI]: Added ability for admins and project owners to delete a project.
 * [UI]: Added `Technician` system role which allows technicians to view results of all sequencing runs in the system.
 * [Developer]: Fixed permissions for NCBI submission uploads failing with Access Denied error. (0.16.1)
+* [Developer]: Removed `thymeleaf-extras-conditionalcomments`. Not used anymore.
+* [UI]: Fixed bug causing reference file uploads to fail when launching a pipeline. (0.16.2)
+* [UI]: In SISTR report, changed incorrect label **Percent shared k-mers** to **Mash distance** and report the mash distance instead of converting to percent.
+* [Developer]: Changed gitlab CI builds to run with Docker.  See `ci/README.md` for more information.
+* [Developer]: Removed deprecated `RemoteRelatedProject` and `*Snapshot` classes and all associated services, repositories, and web features.  Note this feature will remove some tables from the databse such as `remote_related_project` and `remote_sequence_file`.  While these were likely unused it is **strongly** recommended to backup your database before this upgrade.
+* [UI]: Fixed bug with permission not allowing users to view automated SISTR results. (0.16.3)
+* [Developer]: Fixed permissions for NCBI submission uploads failing with Access Denied error. (0.16.1)
+* [UI]: New Line List page for displaying sample metadata for all samples within a project.
+* [UI]: New upload excel spreadsheet of metadata for samples within a project.
+* [UI]: New project sample metadata templates.
+* [UI]: New advanced phylogenetic tree with metadata visualization.
+* [UI]: Fixed bug where a project collaborator could try to change the role of a group.
 * [Developer]: Removed `Dandelion` dependencies from the dashboard & projects listing pages.
 * [Developer]: Created new DataTables reqest handler to enable removing Dandelion DataTables.
 

@@ -14,6 +14,7 @@ import org.springframework.hateoas.Link;
 import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
@@ -42,7 +43,7 @@ public class SingleEndSequenceFileRemoteServiceImplTest {
 		Sample sample = new Sample();
 		sample.add(new Link(seqFilesHref, SingleEndSequenceFileRemoteServiceImpl.SAMPLE_SEQENCE_FILE_UNPAIRED_REL));
 
-		sample.setRemoteAPI(api);
+		sample.setRemoteStatus(new RemoteStatus("http://nowhere", api));
 
 		List<SingleEndSequenceFile> filesList = Lists.newArrayList(new SingleEndSequenceFile(new SequenceFile()));
 
