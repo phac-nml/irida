@@ -19,23 +19,19 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.repositories.RemoteAPIRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.SampleRemoteRepository;
-import ca.corefacility.bioinformatics.irida.repositories.remote.SequenceFilePairRemoteRepository;
-import ca.corefacility.bioinformatics.irida.repositories.remote.SingleEndSequenceFileRemoteRepository;
 import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
 
 public class SampleRemoteServiceImplTest {
 	private SampleRemoteService sampleRemoteService;
 	private SampleRemoteRepository sampleRemoteRepository;
 	private RemoteAPIRepository apiRepo;
-	private SequenceFilePairRemoteRepository pairRemoteRepository;
-	private SingleEndSequenceFileRemoteRepository unpairedRemoteRepository;
 
 	@Before
 	public void setUp() {
 		sampleRemoteRepository = mock(SampleRemoteRepository.class);
 		apiRepo = mock(RemoteAPIRepository.class);
-		sampleRemoteService = new SampleRemoteServiceImpl(sampleRemoteRepository, pairRemoteRepository,
-				unpairedRemoteRepository, apiRepo);
+		sampleRemoteService = new SampleRemoteServiceImpl(sampleRemoteRepository, 
+				 apiRepo);
 	}
 
 	@Test

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="metadata-entry" author="tom">
+
+		<createTable tableName="metadata_entry">
+			<column name="id" autoIncrement="true" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="type" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="value" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createTable tableName="metadata_entry_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" referencedColumnNames="id"
+					referencedTableName="Revisions" foreignKeyName="FK_METADATA_ENTRY_AUD" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="type" type="varchar(255)" />
+			<column name="value" type="varchar(255)" />
+		</createTable>
+
+		<createTable tableName="sample_metadata_entry">
+			<column name="sample_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_SAMPLE_METADATA_ENTRY" referencedColumnNames="id"
+					referencedTableName="sample" />
+			</column>
+			<column name="metadata_id" type="bigint(20)">
+				<constraints nullable="false"
+					foreignKeyName="FK_SAMPLE_METADATA_ENTRY_METADATA"
+					referencedColumnNames="id" referencedTableName="metadata_entry"
+					unique="true" uniqueConstraintName="UK_SAMPLE_METADATA_ENTRY" />
+			</column>
+			<column name="metadata_KEY" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true"
+					foreignKeyName="FK_SAMPLE_METADATA_ENTRY_METADATA_FIELD"
+					referencedColumnNames="id" referencedTableName="metadata_field" />
+			</column>
+		</createTable>
+
+		<createTable tableName="sample_metadata_entry_AUD">
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" referencedColumnNames="id"
+					referencedTableName="Revisions" foreignKeyName="FK_SAMPLE_METADATA_ENTRY_AUD" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="sample_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="metadata_id" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="metadata_KEY" type="varchar(255)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+		</createTable>
+
+	</changeSet>
+</databaseChangeLog>

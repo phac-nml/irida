@@ -1,9 +1,12 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -154,7 +157,7 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 				DirectFieldAccessor dfa = new DirectFieldAccessor(instance);
 				dfa.setPropertyValue(key, value);
 			} catch (IllegalArgumentException | NotWritablePropertyException | TypeMismatchException e) {
-				throw new InvalidPropertyException("Unable to access field [" + key + "]", valueType);
+				throw new InvalidPropertyException("Unable to access field [" + key + "]", valueType, e);
 			}
 		}
 
@@ -205,6 +208,15 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 		}
 
 		return repository.save(object);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public List<ValueType> updateMultiple(Collection<ValueType> objects) {
+		return objects.stream().map(s -> update(s)).collect(Collectors.toList());
 	}
 
 	/**

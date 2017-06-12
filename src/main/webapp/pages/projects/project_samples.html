@@ -98,7 +98,7 @@
         <div dt:confType="extrajs" dt:bundles="project-samples-angular" dt:placeholder="before_start_document_ready"/>
         <div dt:confType="callback" dt:type="createdrow" dt:function="datatables-utils#datatable.projectRowCreated"></div>
     </div>
-    <table class="selectable" id="samplesTable" dt:table="true" dt:url="@{/projects/{id}/ajax/samples(id=${project.getId()})}" dt:ajaxParams="sample-ajax-params#samplesAjaxParams">
+    <table class="selectable" id="samplesTable" dt:table="true" dt:stateSave="true" dt:url="@{/projects/{id}/ajax/samples(id=${project.getId()})}" dt:ajaxParams="sample-ajax-params#samplesAjaxParams">
         <thead>
         <tr>
             <th dt:sortable="false" width="70px" dt:renderFunction="datatables-utils#datatable.formatCheckbox">
@@ -221,7 +221,13 @@
                                 </li>
                                 <li role="separator" class="divider"></li>
                                 <li>
-                                    <a th:href="@{/projects/{id}/samples/new(id=${project.getId()})}">
+                                    <a th:href="@{/projects/{id}/sample-metadata/upload(id=${project.getId()})}">
+                                <i class="fa fa-upload" aria-hidden="true"></i>&nbsp;
+                                <th:block th:text="#{project.nav.samples.import-metadata}"/>
+                            </a></li>
+                        <li role="separator" class="divider"></li>
+                        <li>
+                            <a th:href="@{/projects/{id}/samples/new(id=${project.getId()})}">
                                         <i class="fa fa-plus fa-fw" aria-hidden="true"></i>&nbsp;
                                         <th:block th:text="#{project.samples.nav.new}"/>
                                     </a></li>
