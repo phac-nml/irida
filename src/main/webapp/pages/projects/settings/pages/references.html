@@ -19,7 +19,7 @@
     </script>
 </head>
 <body>
-<div layout:fragment="settings-content" ddl:bundle-includes="project-reference-files" th:with="owner=(${isOwner} or ${isAdmin})">
+<div layout:fragment="settings-content" th:with="owner=(${isOwner} or ${isAdmin})">
     <div class="row">
         <div class="col-md-12 clearfix">
 				<span class="pull-right" th:if="${owner}" ng-controller="FileUploadCtrl as upload">
@@ -100,6 +100,7 @@
             </div>
         </div>
     </script>
+    <script th:src="@{/resources/js/build/project-reference-files.bundle.js}"></script>
 </th:block>
 </body>
 </html>

@@ -1,183 +1,157 @@
+import {download, convertFileSize} from '../../utilities/file.utilities';
+
+const angular = require('angular');
+require('ng-file-upload');
+
+const UPLOAD_ERROR = 'upload_error';
+const UPLOAD_EVENT = 'FILE_UPLOAD_EVENT';
+const UPLOAD_COMPLETE_EVENT = 'FILE_UPLOAD_COMPLETE_EVENT';
+
 /**
- * Use for uploading and downloading files through the UI.
- * Ensure to include the templates:
- *    <div th:replace="templates/_file.utils :: upload-progress"></div>
- *    <div th:replace="templates/_file.utils :: upload-error"></div>
+ * Services to call API for SequenceFile
+ * @param {object} $rootScope angular root scope for all DOM
+ * @param {object} $q angular promise object
+ * @param {object} upload angular FileUpload object
+ * @return {object} of available functions
+ * @constructor
  */
-(function (angular){
-  'use strict';
-  var UPLOAD_ERROR = 'upload_error',
-    UPLOAD_EVENT = 'FILE_UPLOAD_EVENT',
-    UPLOAD_COMPLETE_EVENT = 'FILE_UPLOAD_COMPLETE_EVENT';
+function FileService($rootScope, $q, upload) {
+  return {
+    download: download,
+    upload: uploadFiles,
+    uploadBulk: uploadBulkFiles
+  };
 
   /**
-   * Services to call API for SequenceFile
-   * @param $rootScope
-   * @param upload
-   * @returns {{download: download, upload: uploadFiles}}
-   * @constructor
+   * Uploads list of files
+   * @param {string} url Url to upload files to.
+   * @param {list} files Array of files.
+   * @return {object} promise of the upload.
    */
-  function FileService($rootScope, $q, $log, upload) {
-    return {
-      download: download,
-      upload: uploadFiles,
-      uploadBulk: uploadBulkFiles
-    };
+  function uploadFiles(url, files) {
+    const defer = $q.defer();
+    const promises = [];
 
-    /**
-     * Creates a new iFrame to download a file into.
-     * @param id Id for the sequenceFile to download
-     */
-    function download(url) {
-      var iframe = document.createElement('iframe');
-      iframe.src = url;
-      iframe.style.display = 'none';
-      document.body.appendChild(iframe);
-    }
-
-    /**
-     * Uploads list of files
-     * @param url Url to upload files to.
-     * @param files Array of files.
-     */
-    function uploadFiles(url, files) {
-      var defer = $q.defer();
-      var promises = [];
-
-      files.forEach(function (file) {
-        var currentUpload = upload.upload({
-          url: url,
-          file: file
-        }).then(function(response) {
-          $rootScope.$broadcast(UPLOAD_COMPLETE_EVENT);
-          defer.resolve(response);
-        }, function(data) {
-          $rootScope.$broadcast(UPLOAD_ERROR, data["error_message"]);
-          defer.reject("Error uploading file");
-        });
-        $rootScope.$broadcast(UPLOAD_EVENT, {
-          file: file,
-          progress: currentUpload.progress,
-          count: files.length
-        });
-
-        promises.push(currentUpload);
-      });
-
-      $q.all(promises);
-
-      return defer.promise;
-    }
-
-    /**
-     * Uploads list of files in one request
-     * @param url Url to upload files to.
-     * @param files Array of files.
-     */
-    function uploadBulkFiles(url, files) {
-      var defer = $q.defer();
-
-      upload.upload({
+    for (const file of files) {
+      const currentUpload = upload.upload({
         url: url,
-        file: files
-      }).then(function() {
-        defer.resolve();
+        file: file
+      }).then(function(response) {
+        $rootScope.$broadcast(UPLOAD_COMPLETE_EVENT);
+        defer.resolve(response);
       }, function(data) {
-        $rootScope.$broadcast(UPLOAD_ERROR, data["error_message"]);
-        defer.reject("Error uploading file");
+        $rootScope.$broadcast(UPLOAD_ERROR, data.error_message);
+        defer.reject('Error uploading file');
+      });
+      $rootScope.$broadcast(UPLOAD_EVENT, {
+        file: file,
+        progress: currentUpload.progress,
+        count: files.length
       });
 
-      return defer.promise;
+      promises.push(currentUpload);
     }
+
+    $q.all(promises);
+
+    return defer.promise;
   }
 
   /**
-   * Directive to show error message if files fail to upload.
-   * @returns {{restrict: string, templateUrl: string, controllerAs: string, controller: *[]}}
+   * Uploads list of files in one request
+   * @param {string} url Url to upload files to.
+   * @param {list} files Array of files.
+   * @return {object} promise of the upload.
    */
-  function uploadError() {
-    return {
-      restrict: 'E',
-      templateUrl: '/upload-error.html',
-      controller: ['$scope', function($scope) {
-        $scope.hasError = false;
-        $scope.$on(UPLOAD_ERROR, function(event, reason) {
-          $scope.errorMessage = reason;
-          $scope.hasError = true;
+  function uploadBulkFiles(url, files) {
+    const defer = $q.defer();
+
+    upload.upload({
+      url: url,
+      file: files
+    }).then(function() {
+      defer.resolve();
+    }, function(data) {
+      $rootScope.$broadcast(UPLOAD_ERROR, data.error_message);
+      defer.reject('Error uploading file');
+    });
+
+    return defer.promise;
+  }
+}
+
+/**
+ * Directive to show error message if files fail to upload.
+ * @return {object} angular directive for upload errors.
+ */
+function uploadError() {
+  return {
+    restrict: 'E',
+    templateUrl: '/upload-error.html',
+    controller: ['$scope', function($scope) {
+      $scope.hasError = false;
+      $scope.$on(UPLOAD_ERROR, function(event, reason) {
+        $scope.errorMessage = reason;
+        $scope.hasError = true;
+      });
+    }]
+  };
+}
+
+/**
+ * Directive to show the percent complete of a list of files being uploaded.
+ * @return {object} angular directive for upload progress.
+ */
+function fileUploadProgress() {
+  return {
+    restrict: 'E',
+    require: '^filesUploading',
+    templateUrl: '/files-upload-progress.html',
+    controller: ['$scope', function($scope) {
+      $scope.files = [];
+      $scope.upload = null;
+
+      $scope.$on('NEW_UPLOAD', function() {
+        $scope.closeProgress();
+      });
+
+      $scope.$on(UPLOAD_EVENT, function(evt, args) {
+        var file = {};
+        $scope.count = args.count;
+        args.progress(function(evt) {
+          file.progress = parseInt(100.0 * evt.loaded / evt.total, 0);
+          file.filename = evt.config.file.name;
         });
-      }]
-    };
-  }
+        $scope.files.push(file);
+        $scope.uploading = true;
+      });
 
-  /**
-   * Directive to show the percent complete of a list of files being uploaded.
-   * @returns {{restrict: string, require: string, templateUrl: string, controller: *[]}}
-   */
-  function fileUploadProgress() {
-    return {
-      restrict: 'E',
-      require: '^filesUploading',
-      templateUrl: '/files-upload-progress.html',
-      controller: ['$scope', function($scope) {
+      $scope.$on(UPLOAD_ERROR, function() {
+        $scope.uploading = false;
+      });
+
+      $scope.$on(UPLOAD_COMPLETE_EVENT, function() {
+        $scope.uploading = false;
+      });
+
+      $scope.closeProgress = function() {
         $scope.files = [];
-        $scope.upload = null;
+        $scope.uploading = false;
+      };
+    }]
+  };
+}
 
-        $scope.$on('NEW_UPLOAD', function () {
-          $scope.closeProgress();
-        });
+/**
+ * Filter for formatting the files size.
+ * @return {function} filter for file size
+ */
+function humanReadableBytes() {
+  return convertFileSize;
+}
 
-        $scope.$on(UPLOAD_EVENT, function (evt, args) {
-          var file = {};
-          $scope.count = args.count;
-          args.progress(function (evt) {
-            file.progress = parseInt(100.0 * evt.loaded / evt.total);
-            file.filename = evt.config.file.name;
-          });
-          $scope.files.push(file);
-          $scope.uploading = true;
-        });
-
-        $scope.$on(UPLOAD_ERROR, function() {
-          $scope.uploading = false;
-        });
-        
-        $scope.$on(UPLOAD_COMPLETE_EVENT, function() {
-        	$scope.uploading = false;
-        });
-
-        $scope.closeProgress = function () {
-          $scope.files = [];
-          $scope.uploading = false;
-        };
-      }]
-    };
-  }
-
-  /**
-   * Filter for formatting the files size.
-   * @returns {Function}
-   */
-  function humanReadableBytes() {
-    return function(bytes) {
-      if (isNaN(parseFloat(bytes)) || !isFinite(bytes)) {return bytes;}
-      var thresh = 1024;
-      if (Math.abs(bytes) < thresh) {
-        return bytes + ' B';
-      }
-      var units = ['kB', 'MB', 'GB'];
-      var u = -1;
-      do {
-        bytes /= thresh;
-        ++u;
-      } while (Math.abs(bytes) >= thresh && u < units.length - 1);
-      return bytes.toFixed(1) + ' ' + units[u];
-    };
-  }
-
-  angular.module('file.utils', ['ngFileUpload'])
-    .factory('FileService', ['$rootScope', '$q', '$log', 'Upload', FileService])
-    .filter('humanReadableBytes', [humanReadableBytes])
-    .directive('fileUploadProgress', [fileUploadProgress])
-    .directive('uploadError', [uploadError])
-  ;
-})(window.angular);
+angular.module('file.utils', ['ngFileUpload'])
+  .factory('FileService', ['$rootScope', '$q', 'Upload', FileService])
+  .filter('humanReadableBytes', [humanReadableBytes])
+  .directive('fileUploadProgress', [fileUploadProgress])
+  .directive('uploadError', [uploadError]);

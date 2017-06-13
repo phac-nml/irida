@@ -1,4 +1,5 @@
 const angular = require('angular');
+require('./../../modules/utilities/file.utils');
 require('./../../../css/pages/sample_files.css');
 
 /**
