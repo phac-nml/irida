@@ -398,9 +398,9 @@ public class SamplesController extends BaseController {
 	 * @throws IOException
 	 *             on upload failure
 	 */
-	@RequestMapping(value = { "/samples/{sampleId}/sequenceFiles/upload" })
+	@RequestMapping(value = { "/samples/{sampleId}/sequenceFiles/upload" }, method = RequestMethod.POST)
 	public void uploadSequenceFiles(@PathVariable Long sampleId,
-			@RequestParam(value = "file") List<MultipartFile> files, HttpServletResponse response) throws IOException {
+			@RequestParam(value = "files") List<MultipartFile> files, HttpServletResponse response) throws IOException {
 		Sample sample = sampleService.read(sampleId);
 
 		final Map<String, List<MultipartFile>> pairedFiles = SamplePairer.getPairedFiles(files);

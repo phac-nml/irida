@@ -38,7 +38,6 @@ function FileController(fileService, $uibModal) {
    * @param {long} id Id for the sequenceFile to download
    */
   this.download = function(objectId, id) {
-    // const url = TL.BASE_URL + 'sequenceFiles/download/' + objectId + '/file/' + id;
     const url = window.PAGE.URLS.sequenceFile
       .replace('OBJECT_ID', objectId)
       .replace('FILE_ID', id);
@@ -94,7 +93,10 @@ function FileUploadController(Upload, $timeout, $window, $uibModal) {
 
     fileUpload = Upload.upload({
       url: $window.PAGE.URLS.upload,
-      file: files
+      data: {
+        files: files
+      },
+      arrayKey: ''
     }).then(function() {
       $window.onbeforeunload = undefined;
       $timeout(function() {
