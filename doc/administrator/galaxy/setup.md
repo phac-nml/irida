@@ -284,7 +284,7 @@ python install_tool_shed_tools.py --toolsfile tools-list.yml --galaxy [http://ur
 
 You may want to monitor the Galaxy log file in `paster.log` as the installation is proceeding.  This may take a while to download, build, and install all tools.
 
-*Note: please make sure to also follow instructions for manually updating `tbl2asn` for prokka.  These can be found at [updating tbl2asn][].*
+*Note: please make sure to check if `tbl2asn` requires updating. You can read more about this issue in our [FAQ](../faq/#tbl2asn-out-of-date).*
 
 #### Manual installation of tools
 

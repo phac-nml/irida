@@ -85,6 +85,8 @@ python install_tool_shed_tools.py --toolsfile tools-list.yml --galaxy [http://ur
 
 You may want to monitor the Galaxy log file as the installation is proceeding.  This may take a while to download, build, and install all tools.
 
+*Note: please make sure to check if `tbl2asn` requires updating. You can read more about this issue in our [FAQ](../faq/#tbl2asn-out-of-date).*
+
 #### Manual installation of tools
 
 Alternatively, the necessary tools can be installed manually through the following instructions specific to each pipeline in IRIDA:
