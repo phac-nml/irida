@@ -284,6 +284,8 @@ python install_tool_shed_tools.py --toolsfile tools-list.yml --galaxy [http://ur
 
 You may want to monitor the Galaxy log file in `paster.log` as the installation is proceeding.  This may take a while to download, build, and install all tools.
 
+*Note: please make sure to also follow instructions for manually updating `tbl2asn` for prokka.  These can be found at [updating tbl2asn][].*
+
 #### Manual installation of tools
 
 Alternatively, the necessary tools can be installed manually through the following instructions specific to each pipeline in IRIDA:
@@ -346,3 +348,4 @@ Each workflow in IRIDA is run using Galaxy, and it's possible to monitor the sta
 [Automated tools install]: https://github.com/phac-nml/irida/tree/development/packaging#automated-processupgrading
 [IRIDA releases]: https://github.com/phac-nml/irida/releases
 [SQLite]: https://www.sqlite.org/
+[updating tbl2asn]: pipelines/assembly-annotation/#updating-tbl2asn
