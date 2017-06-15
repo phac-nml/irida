@@ -123,7 +123,7 @@ database_connection = postgresql://galaxy_user:password@localhost/galaxy_irida
 In order to make sure Galaxy uses the dependencies set up with conda, we need to make sure this environment is activated before Galaxy is run.  This can be accomplished by adding the following code to a file called `config/local_env.sh` (this file may not exist yet).
 
 ```bash
-export PATH=~/miniconda3:$PATH
+export PATH=~/miniconda3/bin:$PATH
 source activate galaxy
 ```
 
@@ -134,7 +134,7 @@ Additionally, please change the shell used by Galaxy from `sh` to `bash` if nece
 Additionally, some Python dependencies and additional dependencies may be required by Galaxy on execution of tools.  This can be accomplished by creating another file `env.sh` and activating the conda **galaxy** environment here.  E.g.:
 
 ```bash
-export PATH=~/miniconda3:$PATH
+export PATH=~/miniconda3/bin:$PATH
 source activate galaxy
 ```
 Other steps will specify when you need to add setup instructions to this file.
@@ -164,6 +164,13 @@ The main Galaxy configuration file is located in `config/galaxy.ini`.  Please ma
 8. Setup Conda for installing tool dependencies.
    * Set `conda_prefix = /home/galaxy-irida/miniconda3`, or wherever conda is installed for Galaxy.
    * Set `conda_ensure_channels = iuc,bioconda,r,defaults,conda-forge`.
+9. Set the directory to install tool dependencies.
+   * Set `#tool_dependency_dir = database/dependencies` to `tool_dependency_dir = database/dependencies` (uncomment).
+   * You may also need to create the directory `database/dependencies` too.  E.g.,
+
+      ```
+      mkdir database/dependencies
+      ```
 
 ### Step 5: Start up Galaxy
 
@@ -190,7 +197,7 @@ Once complete, Galaxy can be killed by pressing `CTRL+C`.
 
 Example scripts to configure Galaxy as a service can be found in the `contrib/` directory of Galaxy. Additional details can be found in the [Galaxy documentation][galaxy-production].  This guide assumes a Redhat distribution so we will be working with `contrib/galaxy.fedora-init`, but scripts for other systems are available.
 
-1. Create a non-root user for Galaxy.
+1. If not already configured, create a non-root user for Galaxy.
 
    ```bash
    useradd --no-create-home --system galaxy-irida
