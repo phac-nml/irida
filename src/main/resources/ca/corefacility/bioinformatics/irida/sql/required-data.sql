@@ -645,8 +645,8 @@ INSERT INTO `analysis_submission` (analysis_state, name, created_date, analysis_
 INSERT INTO `analysis_submission` (analysis_state, name, created_date, analysis_id, workflow_id, submitter, analysis_cleaned_state) VALUES ('PREPARING', 'Analysis-98', '2014-02-06 10:01:02', 13, 'b7c8b437-3c41-485e-92e5-72b67e37959f', 1, 'NOT_CLEANED');
 INSERT INTO `analysis_submission` (analysis_state, name, created_date, analysis_id, workflow_id, submitter, analysis_cleaned_state) VALUES ('PREPARING', 'Analysis-99', '2014-02-06 10:01:02', 13, 'b7c8b437-3c41-485e-92e5-72b67e37959f', 1, 'NOT_CLEANED');
 INSERT INTO `analysis_submission` (analysis_state, name, created_date, analysis_id, workflow_id, submitter, analysis_cleaned_state) VALUES ('PREPARING', 'Analysis-100', '2014-02-06 10:01:02', 13, 'b7c8b437-3c41-485e-92e5-72b67e37959f', 1, 'NOT_CLEANED');
-INSERT INTO `analysis_submission` (analysis_state, name, created_date, analysis_id, workflow_id, submitter, analysis_cleaned_state) VALUES ('COMPLETED', 'SISTR PASS 101', '2014-02-06 10:01:02', 14, 'e559af58-a560-4bbd-997e-808bfbe026e2', 1, 'NOT_CLEANED');
-INSERT INTO `analysis_submission` (analysis_state, name, created_date, analysis_id, workflow_id, submitter, analysis_cleaned_state) VALUES ('COMPLETED', 'SISTR FAIL 102', '2014-02-06 10:01:02', 15, 'e559af58-a560-4bbd-997e-808bfbe026e2', 1, 'NOT_CLEANED');
+INSERT INTO `analysis_submission` (analysis_state, name, created_date, analysis_id, workflow_id, submitter, analysis_cleaned_state) VALUES ('COMPLETED', 'SISTR PASS 101', '2014-02-06 10:01:02', 14, 'e8f9cc61-3264-48c6-81d9-02d9e84bccc7', 1, 'NOT_CLEANED');
+INSERT INTO `analysis_submission` (analysis_state, name, created_date, analysis_id, workflow_id, submitter, analysis_cleaned_state) VALUES ('COMPLETED', 'SISTR FAIL 102', '2014-02-06 10:01:02', 15, 'e8f9cc61-3264-48c6-81d9-02d9e84bccc7', 1, 'NOT_CLEANED');
 
 INSERT INTO `project_analysis_submission` (created_date, project_id, analysis_submission_id) VALUES (now(), 4, 1),(now(), 4, 2),(now(), 4, 3),(now(), 4, 4),(now(), 4, 5), (now(), 4, 13);
 
