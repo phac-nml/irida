@@ -84,6 +84,15 @@
 
                             <div class="col-md-12">
                                 <div class="checkbox">
+                                    <label for="useCartSamples">
+                                        <input type="checkbox" id="useCartSamples" name="useCartSamples" value="true" th:checked="${useCartSamples}"/>
+                                        <span th:text="#{projects.create.settings.cart}">_Use samples from cart_</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-12">
+                                <div class="checkbox">
                                     <label for="assemble">
                                         <input type="checkbox" id="assemble" name="assemble" value="true"/>
                                         <span th:text="#{projects.create.settings.assemble}">_Assemble_</span>

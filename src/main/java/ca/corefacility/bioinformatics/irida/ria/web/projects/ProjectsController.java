@@ -237,13 +237,20 @@ public class ProjectsController {
 	/**
 	 * Gets the name of the template for the new project page
 	 *
+	 * @param useCartSamples
+	 *            Whether or not to use the samples in the cart when creating
+	 *            the project
 	 * @param model
-	 * 		{@link Model}
+	 *            {@link Model}
 	 *
 	 * @return The name of the create new project page
 	 */
 	@RequestMapping(value = "/projects/new", method = RequestMethod.GET)
-	public String getCreateProjectPage(final Model model) {
+	public String getCreateProjectPage(
+			@RequestParam(name = "cart", required = false, defaultValue = "false") boolean useCartSamples,
+			final Model model) {
+		model.addAttribute("useCartSamples", useCartSamples);
+		
 		if (!model.containsAttribute("errors")) {
 			model.addAttribute("errors", new HashMap<>());
 		}
@@ -378,7 +385,7 @@ public class ProjectsController {
 		} catch (ConstraintViolationException e) {
 			model.addAttribute("errors", getErrorsFromViolationException(e));
 			model.addAttribute("project", p);
-			return getCreateProjectPage(model);
+			return getCreateProjectPage(useCartSamples, model);
 		}
 
 		return "redirect:/projects/" + project.getId() + "/metadata";

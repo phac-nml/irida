@@ -160,7 +160,7 @@ public class ProjectsControllerTest {
 	@Test
 	public void testGetCreateProjectPage() {
 		Model model = new ExtendedModelMap();
-		String page = controller.getCreateProjectPage(model);
+		String page = controller.getCreateProjectPage(false, model);
 		assertEquals("Reruns the correct New Project Page", "projects/project_new", page);
 		assertTrue("Model now has and error attribute", model.containsAttribute("errors"));
 	}
