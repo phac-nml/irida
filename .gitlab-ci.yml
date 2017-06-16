@@ -53,7 +53,7 @@ galaxy_job:
     - mariadb:10.0
     - apetkau/galaxy-irida-16.10-it:0.1
   script:
-  - mvn clean verify -B -Pgalaxy_testing -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY
+  - mvn clean verify -B -Pgalaxy_testing -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dsequence.file.base.directory=$TMP_DIRECTORY/sequence-files -Dreference.file.base.directory=$TMP_DIRECTORY/reference-files -Doutput.file.base.directory=$TMP_DIRECTORY/output-files
   stage: test
 build-docs_job:
   tags:
