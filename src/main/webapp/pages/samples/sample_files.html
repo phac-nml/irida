@@ -190,18 +190,18 @@
 <th:block layout:fragment="scripts" th:inline="javascript">
 	<script type="text/ng-template" id="/upload-error.html">
 		<div class="modal-header">
-			<h2>
+			<h4 class="modal-title">
 				<i class="fa fa-exclamation-triangle fa-fw" aria-hidden="true"></i>
-				&nbsp;&nbsp;
-				<th:block th:text="#{project.samples.files.error.title}"></th:block>
-			</h2>
+				&nbsp;
+				<th:block th:text="#{project.samples.files.error.title}"/>
+			</h4>
 		</div>
 		<div class="modal-body">
-			<h3>
+			<p>
 				<ng-pluralize count="rejectModalCtrl.rejects.length"
 							  th:attr="when='{\'1\' : \'' + #{project.samples.files.error.bad-files.single} + '\', \'other\': \'' + #{project.samples.files.error.bad-files.plural} + '\'}'">
 				</ng-pluralize>
-			</h3>
+			</p>
 			<alert type="danger">
 				<div ng-repeat="file in rejectModalCtrl.rejects">
 					<strong class="bad-file-name">{{file.name}}</strong>

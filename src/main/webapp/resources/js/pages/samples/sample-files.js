@@ -118,37 +118,51 @@ function FileUploadController(Upload, $timeout, $window, $uibModal) {
     });
   }
 
-  vm.uploadFiles = function($files, $event, $rejectedFiles) {
-    if ($files.length === 0 && $rejectedFiles.length === 0) {
+  vm.uploadFiles = function($files) {
+    console.log(arguments);
+
+    if ($files.length === 0) {
       return;
     }
 
-    if ($rejectedFiles && $rejectedFiles.length > 0) {
+    // Check to make sure the files are the right format.
+    const fastqregex = /\.fastq(\/gz)?/;
+    const goodFiles = [];
+    const badFiles = [];
+    for (const file of $files) {
+      if (file.name.match(fastqregex) === null) {
+        badFiles.push(file);
+      } else {
+        goodFiles.push(file);
+      }
+    }
+
+    if (badFiles.length > 0) {
       $uibModal.open({
         animation: true,
         templateUrl: '/upload-error.html',
         controllerAs: 'rejectModalCtrl',
-        controller: ['$uibModalInstance', 'rejects', 'files', function($uibModalInstance, rejects, files) {
-          var vm = this;
-          vm.rejects = rejects;
-          vm.good = files;
+        controller: ['$uibModalInstance', function($uibModalInstance) {
+          const vm = this;
+          vm.rejects = badFiles;
+          vm.good = goodFiles;
 
           vm.cancel = function() {
             $uibModalInstance.dismiss();
           };
 
           vm.finish = function() {
-            $uibModalInstance.close(files.filter(file => {
+            $uibModalInstance.close(goodFiles.filter(file => {
               return file.selected;
             }));
           };
         }],
         resolve: {
           rejects: function() {
-            return $rejectedFiles;
+            return badFiles;
           },
           files: function() {
-            return $files;
+            return goodFiles;
           }
         }
       }).result.then(function(files) {
