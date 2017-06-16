@@ -99,7 +99,7 @@ public class IridaApiTestDataSourceConfig implements DataConfig {
 	public Path referenceFileBaseDirectory() throws IOException {
 		Path b = Files.createTempDirectory(rootTempDirectory(), "irida-reference-file-dir",
 				PosixFilePermissions.asFileAttribute(permissions));
-		logger.info("Created directory for sequence files at [" + b.toString() + "] for integration test");
+		logger.info("Created directory for reference files at [" + b.toString() + "] for integration test");
 		baseDirectory.add(b);
 		return b;
 	}
