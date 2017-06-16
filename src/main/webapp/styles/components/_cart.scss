@@ -115,7 +115,11 @@ $cart-width: 400px;
   }
 }
 
-.cart-control-bottom .btn {
+.cart-control-bottom .action {
   width: 120px;
   white-space: normal!important;
+}
+
+.cart-control-bottom .btn {
+  height: 55px;
 }
