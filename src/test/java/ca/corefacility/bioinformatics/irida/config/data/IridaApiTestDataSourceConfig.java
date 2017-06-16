@@ -103,4 +103,13 @@ public class IridaApiTestDataSourceConfig implements DataConfig {
 		baseDirectory.add(b);
 		return b;
 	}
+	
+	@Bean(name = "outputFileBaseDirectory")
+	public Path outputFileBaseDirectory() throws IOException {
+		Path b = Files.createTempDirectory(rootTempDirectory(), "irida-output-file-dir",
+				PosixFilePermissions.asFileAttribute(permissions));
+		logger.info("Created directory for output files at [" + b.toString() + "] for integration test");
+		baseDirectory.add(b);
+		return b;
+	}
 }
