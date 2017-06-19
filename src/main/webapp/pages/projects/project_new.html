@@ -82,12 +82,22 @@
                     <div class="form-group">
                             <label class="control-label" th:text="#{projects.create.settings}">_Settings_</label>
 
-                            <div class="col-md-12">
+                            <div class="col-md-12" th:with="allSamples = ${#lists.size(allowedSamples) + #lists.size(disallowedSamples)}">
                                 <div class="checkbox">
                                     <label for="useCartSamples">
-                                        <input type="checkbox" id="useCartSamples" name="useCartSamples" value="true" th:checked="${useCartSamples}"/>
+                                        <input type="checkbox" id="useCartSamples" name="useCartSamples" value="true" th:checked="${useCartSamples}" th:disabled="${allSamples} == 0"/>
                                         <span th:text="#{projects.create.settings.cart}">_Use samples from cart_</span>
                                     </label>
+                                </div>
+
+                                <div id="cartAlert" class="alert alert-info" th:if="${allSamples > 0}">
+                                    <p th:text="#{projects.create.settings.cart.allowed(${#lists.size(allowedSamples)})}">_This will add 1 sample(s)_</p>
+                                    <p th:if="${#lists.size(disallowedSamples) > 0}">
+                                        <span th:text="#{projects.create.settings.cart.disallowed}">_The following samples cannot be added_</span>
+                                        <ul>
+                                            <li th:each="sample : ${disallowedSamples}" th:text="${sample.sampleName}">_sample_</li>
+                                        </ul>
+                                    </p>
                                 </div>
                             </div>
                             
@@ -160,6 +170,22 @@
             $("#new-organism-warning").hide();
           }
         }).select2('val', /*[[${project} ? ${project.getOrganism()} : '']]*/ '');
+
+        $("#useCartSamples").change(function(){
+            if($(this).prop('checked')){
+                $("#cartAlert").show(100);
+            }
+            else{
+                $("#cartAlert").hide(100);
+            }
+        });
+
+        if($("#useCartSamples").prop('checked')){
+            $("#cartAlert").show();
+        }
+        else{
+            $("#cartAlert").hide();
+        }
 
         (function() {
             "use strict";

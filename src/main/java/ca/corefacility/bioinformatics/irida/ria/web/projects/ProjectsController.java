@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -35,6 +36,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -77,6 +80,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.CartController;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.ProjectsDatatableUtils;
+import ca.corefacility.bioinformatics.irida.security.permissions.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
@@ -120,9 +124,10 @@ public class ProjectsController {
 	private final TaxonomyService taxonomyService;
 	private final MessageSource messageSource;
 	private final ProjectRemoteService projectRemoteService;
-	private RemoteAPIService remoteApiService;
-	private IridaWorkflowsService workflowsService;
+	private final RemoteAPIService remoteApiService;
+	private final IridaWorkflowsService workflowsService;
 	private final CartController cartController;
+	private final UpdateSamplePermission updateSamplePermission;
 	
 	@Value("${file.upload.max_size}")
 	private final Long MAX_UPLOAD_SIZE = IridaRestApiWebConfig.UNLIMITED_UPLOAD_SIZE;
@@ -148,8 +153,8 @@ public class ProjectsController {
 	@Autowired
 	public ProjectsController(ProjectService projectService, SampleService sampleService, UserService userService,
 			ProjectRemoteService projectRemoteService, ProjectControllerUtils projectControllerUtils,
-			TaxonomyService taxonomyService, RemoteAPIService remoteApiService, IridaWorkflowsService workflowsService, CartController cartController,
-			MessageSource messageSource) {
+			TaxonomyService taxonomyService, RemoteAPIService remoteApiService, IridaWorkflowsService workflowsService,
+			CartController cartController, UpdateSamplePermission updateSamplePermission, MessageSource messageSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.userService = userService;
@@ -162,6 +167,7 @@ public class ProjectsController {
 		this.workflowsService = workflowsService;
 		this.cartController = cartController;
 		this.fileSizeConverter = new FileSizeConverter();
+		this.updateSamplePermission = updateSamplePermission;
 	}
 
 	/**
@@ -250,6 +256,25 @@ public class ProjectsController {
 			@RequestParam(name = "cart", required = false, defaultValue = "false") boolean useCartSamples,
 			final Model model) {
 		model.addAttribute("useCartSamples", useCartSamples);
+		
+		Map<Project, Set<Sample>> selected = cartController.getSelected();
+
+		// Check which samples they can modify
+		Set<Sample> allowed = new HashSet<>();
+		Set<Sample> disallowed = new HashSet<>();
+
+		selected.values().forEach(set -> {
+			set.stream().forEach(s -> {
+				if (canModifySample(s)) {
+					allowed.add(s);
+				} else {
+					disallowed.add(s);
+				}
+			});
+		});
+
+		model.addAttribute("allowedSamples", allowed);
+		model.addAttribute("disallowedSamples", disallowed);
 		
 		if (!model.containsAttribute("errors")) {
 			model.addAttribute("errors", new HashMap<>());
@@ -375,8 +400,9 @@ public class ProjectsController {
 			if (useCartSamples) {
 				Map<Project, Set<Sample>> selected = cartController.getSelected();
 
-				List<Long> sampleIds = selected.entrySet().stream()
-						.flatMap(e -> e.getValue().stream().map(i -> i.getId())).collect(Collectors.toList());
+				List<Long> sampleIds = selected.entrySet().stream().flatMap(e -> e.getValue().stream().filter(s -> {
+					return canModifySample(s);
+				}).map(i -> i.getId())).collect(Collectors.toList());
 
 				project = projectService.createProjectWithSamples(p, sampleIds);
 			} else {
@@ -688,6 +714,19 @@ public class ProjectsController {
 	@ResponseBody
 	public ResponseEntity<String> roleChangeErrorHandler(Exception ex) {
 		return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
+	}
+	
+	/**
+	 * Test whether the logged in user can modify a {@link Sample}
+	 * 
+	 * @param sample
+	 *            the {@link Sample} to check
+	 * @return true if they can modify
+	 */
+	private boolean canModifySample(Sample sample) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		
+		return updateSamplePermission.isAllowed(authentication, sample);
 	}
 
 	/**

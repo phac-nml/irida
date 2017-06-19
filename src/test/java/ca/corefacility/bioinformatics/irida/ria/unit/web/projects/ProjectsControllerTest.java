@@ -45,6 +45,7 @@ import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.CartController;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
+import ca.corefacility.bioinformatics.irida.security.permissions.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
@@ -77,6 +78,7 @@ public class ProjectsControllerTest {
 	private TaxonomyService taxonomyService;
 	private IridaWorkflowsService workflowsService;
 	private CartController cartController;
+	private UpdateSamplePermission updateSamplePermission;
 	private MessageSource messageSource;
 
 	@Before
@@ -88,9 +90,11 @@ public class ProjectsControllerTest {
 		cartController = mock(CartController.class);
 		taxonomyService = mock(TaxonomyService.class);
 		projectUtils = mock(ProjectControllerUtils.class);
+		updateSamplePermission = mock(UpdateSamplePermission.class);
 		messageSource = mock(MessageSource.class);
 		controller = new ProjectsController(projectService, sampleService, userService, projectRemoteService,
-				projectUtils, taxonomyService, remoteApiService, workflowsService, cartController, messageSource);
+				projectUtils, taxonomyService, remoteApiService, workflowsService, cartController,
+				updateSamplePermission, messageSource);
 		user.setId(1L);
 
 		mockSidebarInfo();
