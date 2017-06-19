@@ -29,7 +29,7 @@ Then the command [tbl2asn](//www.ncbi.nlm.nih.gov/genbank/tbl2asn2/) may need to
 
     Where **galaxy/database/dependencies** is the location of all the installed Galaxy tool dependencies.
 
-## 1. SPAdes Python version 3.6 not supported.
+## 2. SPAdes Python version 3.6 not supported.
 
 If you get a message like the following for SPAdes in Galaxy.
 
@@ -47,7 +47,7 @@ conda install python=3.5
 
 Please run `conda info --envs` to see the exact name of the SPAdes conda environment.
 
-## 2. Can't locate `Bio/SeqIO.pm`
+## 3. Can't locate `Bio/SeqIO.pm`
 
 If a message like the following appears for Galaxy tools.
 

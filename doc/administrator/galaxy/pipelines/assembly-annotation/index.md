@@ -40,14 +40,7 @@ The install progress can be checked by monitoring the Galaxy log file `$GALAXY_B
 
 ### Updating `tbl2asn`
 
-The assembly workflow makes use of the software [Prokka][] for genome annotation.  Prokka makes use of [tbl2asn][], which has been programmed to stop working after 1 year from being built.  The next date of expiry will be **March 31, 2016**.  After this date, `tbl2asn` will have to be updated before the assembly workflow can be run.  A quick way to update `tbl2asn` is the following.
-
-1. Download the new `tbl2asn` binary from <ftp://ftp.ncbi.nih.gov/toolbox/ncbi_tools/converters/by_program/tbl2asn/>.
-2. Copy the binary over the previously installed locations in Galaxy.  These can be found with the command:
-
-        find tool_dependencies/ -wholename '*f5e44aad6498/*tbl2asn' -or -wholename '*package_tbl2asn_24_3/*tbl2asn'
-
-    Where **tool_dependencies/** is the location of all the installed Galaxy tool dependencies.
+The assembly workflow makes use of the software [Prokka][] for genome annotation.  Prokka makes use of [tbl2asn][], which has been programmed to stop working after 1 year from being built.  The version of `tbl2asn` installed by default may have to be update. Please see our [FAQ][] for more details.
 
 ## Step 3: Testing Pipeline
 
@@ -88,3 +81,4 @@ If everything was successfull then all dependencies for this pipeline have been 
 [dataset-pair-screen]: ../test/assembly-annotation/images/dataset-pair-screen.jpg
 [workflow-success]: ../test/assembly-annotation/images/workflow-success.png
 [view-details-icon]: ../test/snvphyl/images/view-details-icon.jpg
+[FAQ]: ../../../faq/#tbl2asn-out-of-date

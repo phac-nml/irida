@@ -13,21 +13,10 @@ This document describes the necessary steps for installing and integrating [Gala
 * this comment becomes the table of contents.
 {:toc}
 
-IRIDA Galaxy Architecture
--------------------------
-
-The overall architecture of IRIDA and Galaxy is as follows:
-
-![irida-galaxy.jpg][]
-
-1. IRIDA manages all input files for a workflow.  This includes sequencing reads, reference files, and the Galaxy workflow definition file.  On execution of a workflow, references to these files are sent to a Galaxy instance using the [Galaxy API][].  It is assumed that these files exist on a file system shared between IRIDA and Galaxy.
-2. All tools used by a workflow are assumed to have been installed in Galaxy during the setup of IRIDA.  The Galaxy workflow is uploaded to Galaxy and the necessary tools are executed by Galaxy.  The default setup is to use the same machine for both the Galaxy Web/API and for execution of jobs.  For more advanced setup please refer to the [Galaxy Cluster Setup][] document.
-3. Once the workflow execution is complete, a copy of the results are downloaded into IRIDA and stored in the shared filesystem.
-
 The following must be set up before proceeding with the installation.
 
 1. A machine that has been set up to install Galaxy.  This could be the same machine as the IRIDA web interface, or (recommended) a separate machine.
-2. A shared filesystem has been set up between IRIDA and Galaxy.  If Galaxy will be submitting to a cluster this filesystem must also be shared with the cluster.  The [Galaxy Cluster Setup][] document describes this in more detail.
+2. A shared filesystem has been set up between IRIDA and Galaxy.  If Galaxy will be submitting to a cluster this filesystem must also be shared with the cluster.
 
 Installation Overview
 ---------------------
@@ -321,10 +310,7 @@ Each workflow in IRIDA is run using Galaxy, and it's possible to monitor the sta
 {% include galaxy/cleanup.md %}
 
 [Galaxy]: https://wiki.galaxyproject.org/FrontPage
-[irida-galaxy.jpg]: images/irida-galaxy.jpg
-[Galaxy API]: https://wiki.galaxyproject.org/Learn/API
 [GetGalaxy]: https://wiki.galaxyproject.org/Admin/GetGalaxy
-[Galaxy Cluster Setup]: cluster/
 [Running Galaxy in a production environment]: https://wiki.galaxyproject.org/Admin/Config/Performance/ProductionServer
 [Galaxy Disable Developer Settings]: https://wiki.galaxyproject.org/Admin/Config/Performance/ProductionServer#Disable_the_developer_settings
 [Galaxy Database Setup]: https://wiki.galaxyproject.org/Admin/Config/Performance/ProductionServer#Switching_to_a_database_server
