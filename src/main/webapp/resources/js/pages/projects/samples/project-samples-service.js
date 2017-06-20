@@ -92,7 +92,7 @@
     function _copyMoveSamples(params) {
       return post(page.urls.samples.copy, params)
         .then(function(result) {
-          showCopyRemoveErrors(result);
+          showCopyRemoveErrors(result.data);
         });
     }
 

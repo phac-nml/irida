@@ -20,6 +20,7 @@ Changes
 * [UI]: New project sample metadata templates.
 * [UI]: New advanced phylogenetic tree with metadata visualization.
 * [UI]: Fixed bug where a project collaborator could try to change the role of a group.
+* [UI]: Fix bug where notifications were not being displayed when samples where copied between projects.
 * [Developer]: Removed `Dandelion` dependencies from the dashboard & projects listing pages.
 * [Developer]: Created new DataTables reqest handler to enable removing Dandelion DataTables.
 
