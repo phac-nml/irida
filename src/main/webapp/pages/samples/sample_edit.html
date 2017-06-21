@@ -5,12 +5,13 @@
 <head lang="en">
     <meta charset="UTF-8"/>
     <title th:text="#{samples.edit.title(${sample.label})}">THIS IS SOMETHING WRONG</title>
+    <link rel="stylesheet" th:href="@{/resources/css/pages/sample_edit.css}" />
 </head>
 <body>
 <main layout:fragment="main">
     <div class="row">
         <div class="col-md-12 wb-frmvld">
-            <form id="edit-form" role="form" action="edit" method="post" ddl:bundle-includes="sample-edit">
+            <form id="edit-form" role="form" action="edit" method="post">
                 <div class="panel panel-info">
                     <div class="panel-heading">
                         <b class="panel-title" th:text="#{samples.edit.page-title(${sample.getLabel()})}">__TITLE__</b>
@@ -187,5 +188,9 @@
         </div>
     </div>
 </main>
+
+<th:block layout:fragment="scripts">
+    <script th:src="@{/resources/js/pages/samples/edit.js}"></script>
+</th:block>
 </body>
 </html>
