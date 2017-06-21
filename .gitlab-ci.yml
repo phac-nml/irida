@@ -48,6 +48,7 @@ galaxy_job:
 #lastly, run all tests involving Galaxy
   tags:
   - docker
+  - galaxy
   image: docker.corefacility.ca:5000/irida-testing:latest
   services:
     - mariadb:10.0
