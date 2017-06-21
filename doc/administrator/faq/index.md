@@ -64,3 +64,8 @@ source activate __perl@_uv_
 conda install perl-bioperl
 ```
 
+## 4. Installing conda dependencies in Galaxy versions < v16.01
+
+IRIDA uses Galaxy versions >= v16.01 in order to take advantage of [conda dependency installation](https://docs.galaxyproject.org/en/master/admin/conda_faq.html).  However, it is still possible to integrate IRIDA with Galaxy versions < v16.01 with a bit of manual work to get the proper dependencies loaded up.
+
+
