@@ -71,13 +71,13 @@ If you are unable to upgrade Galaxy to take advantage of `conda`, then the follo
 
    Save this file with the name `sistr`.
 
-4. Copy `sistr` to a directory loaded up by the [Galaxy environment](../../#galaxy-environment-setup).  For example, if `$GALAXY_ENV` is `~/env.sh` and contains the following:
+4. Copy `sistr` to a directory loaded up by the [Galaxy environment](../../setup#tool-environments).  For example, if the file `galaxy/env.sh` exists and contains the following:
 
    ```bash
    export PATH=~/bin:$PATH
    ```
 
-   Then, copy `sistr` to `~/bin` and make executable.
+   Then, copy `sistr` to `~/bin` and make executable.  Otherwise, adjust `env.sh` as necessary to put `sistr` on the `PATH`.
 
    ```bash
    cp sistr ~/bin
