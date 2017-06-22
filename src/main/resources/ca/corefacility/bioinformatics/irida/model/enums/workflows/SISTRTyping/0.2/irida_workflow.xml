@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<iridaWorkflow>
+	<id>e8f9cc61-3264-48c6-81d9-02d9e84bccc7</id>
+	<name>SISTRTyping</name>
+	<version>0.2</version>
+	<analysisType>sistr-typing</analysisType>
+	<inputs>
+		<sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
+		<requiresSingleSample>true</requiresSingleSample>
+	</inputs>
+	<parameters>
+		<parameter name="read-merge-min-overlap" defaultValue="20">
+			<toolParameter
+				toolId="irida.corefacility.ca/galaxy-shed/repos/irida/flash/FLASH/1.3.0"
+				parameterName="min_overlap" />
+		</parameter>
+		<parameter name="read-merge-max-overlap" defaultValue="300">
+			<toolParameter
+				toolId="irida.corefacility.ca/galaxy-shed/repos/irida/flash/FLASH/1.3.0"
+				parameterName="max_overlap" />
+		</parameter>
+		<parameter name="assembly-contig-min-length" defaultValue="500">
+			<toolParameter
+				toolId="irida.corefacility.ca/galaxy-shed/repos/irida/filter_spades_repeats/filter_spades_repeat/1.0.0"
+				parameterName="len_cutoff" />
+		</parameter>
+		<parameter name="assembly-contig-min-coverage-ratio"
+			defaultValue="0.33">
+			<toolParameter
+				toolId="irida.corefacility.ca/galaxy-shed/repos/irida/filter_spades_repeats/filter_spades_repeat/1.0.0"
+				parameterName="cov_cutoff" />
+		</parameter>
+		<parameter name="assembly-contig-min-repeat-coverage-ratio"
+			defaultValue="1.75">
+			<toolParameter
+				toolId="irida.corefacility.ca/galaxy-shed/repos/irida/filter_spades_repeats/filter_spades_repeat/1.0.0"
+				parameterName="rep_cutoff" />
+		</parameter>
+		<parameter name="assembly-contig-min-length-coverage-calculation"
+			defaultValue="5000">
+			<toolParameter
+				toolId="irida.corefacility.ca/galaxy-shed/repos/irida/filter_spades_repeats/filter_spades_repeat/1.0.0"
+				parameterName="cov_len_cutoff" />
+		</parameter>
+	</parameters>
+	<outputs>
+		<output name="sistr-predictions" fileName="sistr-predictions.json" />
+		<output name="sistr-cgmlst" fileName="sistr-cgmlst-profiles.csv" />
+		<output name="sistr-novel-alleles" fileName="sistr-novel-alleles.fasta" />
+		<output name="sistr-alleles" fileName="sistr-alleles-out.json" />
+		<output name="assembly" fileName="contigs-with-repeats.fasta" />
+		<output name="assembly-stats" fileName="assembly-stats-with-repeats.txt" />
+	</outputs>
+	<toolRepositories>
+		<repository>
+			<name>flash</name>
+			<owner>irida</owner>
+			<url>https://irida.corefacility.ca/galaxy-shed</url>
+			<revision>4287dd541327</revision>
+		</repository>
+		<repository>
+			<name>filter_spades_repeats</name>
+			<owner>irida</owner>
+			<url>https://irida.corefacility.ca/galaxy-shed</url>
+			<revision>f9fc830fa47c</revision>
+		</repository>
+		<repository>
+			<name>assemblystats</name>
+			<owner>irida</owner>
+			<url>https://irida.corefacility.ca/galaxy-shed</url>
+			<revision>51b76a5d78a5</revision>
+		</repository>
+		<repository>
+			<name>spades</name>
+			<owner>nml</owner>
+			<url>http://toolshed.g2.bx.psu.edu/</url>
+			<revision>35cb17bd8bf9</revision>
+		</repository>
+		<repository>
+			<name>regex_find_replace</name>
+			<owner>jjohnson</owner>
+			<url>http://toolshed.g2.bx.psu.edu/</url>
+			<revision>9ea374bb0350</revision>
+		</repository>
+		<repository>
+			<name>sistr_cmd</name>
+			<owner>nml</owner>
+			<url>https://toolshed.g2.bx.psu.edu/</url>
+			<revision>5c8ff92e38a9</revision>
+		</repository>
+	</toolRepositories>
+</iridaWorkflow>

@@ -26,7 +26,7 @@ service_job:
   - docker
   image: docker.corefacility.ca:5000/irida-testing:latest
   script:
-  - mvn clean verify -B -Pservice_testing -Djdbc.url=$JDBC_URL
+  - mvn clean verify -B -Pservice_testing -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY
   stage: test
 ui_job:
 #running ui tests
@@ -34,7 +34,7 @@ ui_job:
   - docker
   image: docker.corefacility.ca:5000/irida-testing:latest
   script:
-  - xvfb-run --auto-servernum --server-num=1 mvn clean verify -B -Pui_testing -Dwebdriver.chrome.driver=./src/main/webapp/node_modules/chromedriver/lib/chromedriver/chromedriver -Djdbc.url=$JDBC_URL -Dirida.it.nosandbox=true 
+  - xvfb-run --auto-servernum --server-num=1 mvn clean verify -B -Pui_testing -Dwebdriver.chrome.driver=./src/main/webapp/node_modules/chromedriver/lib/chromedriver/chromedriver -Djdbc.url=$JDBC_URL -Dirida.it.nosandbox=true -Dirida.it.rootdirectory=$TMP_DIRECTORY
   stage: test
 rest_job:
 #running rest api tests
@@ -42,7 +42,7 @@ rest_job:
   - docker
   image: docker.corefacility.ca:5000/irida-testing:latest
   script:
-  - mvn clean verify -Prest_testing -B -Djdbc.url=$JDBC_URL
+  - mvn clean verify -Prest_testing -B -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY
   stage: test
 galaxy_job:
 #lastly, run all tests involving Galaxy
@@ -51,7 +51,7 @@ galaxy_job:
   image: docker.corefacility.ca:5000/irida-testing:latest
   services:
     - mariadb:10.0
-    - apetkau/galaxy-irida-16.10-it:0.1
+    - phacnml/galaxy-irida-17.01:0.17.0-it
   script:
   - mvn clean verify -B -Pgalaxy_testing -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY
   stage: test
