@@ -1,22 +1,33 @@
 ---
 layout: default
-search_title: "Galaxy Setup"
+search_title: "Setup of Galaxy for IRIDA"
 description: "Galaxy install guide"
 ---
 
-Galaxy Setup
-============
+Setup of Galaxy for IRIDA
+=========================
 {:.no_toc}
 
-This document describes the necessary steps for the integration of [Galaxy][] with IRIDA as well as using Galaxy and [Galaxy ToolSheds][] to install workflows.  This is broken up into two sections:
+These instructions describe the necessary steps for the integration of [Galaxy][] with IRIDA as well as using Galaxy and [Galaxy ToolSheds][] to install workflows.
+
+Requirements
+------------
+
+Before proceeding with the integration of Galaxy and IRIDA, the following requirements need to be met.
+
+1. [Galaxy version >= **v16.01**][galaxy-versions] is required as IRIDA makes use of [conda with Galaxy][].  Earlier versions were supported previously, but are being phased out as more required tools are released under conda.  A method to get newer conda-based tools to work with older Galaxy versions is described in our [FAQ][faq-conda].
+2. The filesystem is shared between the machines serving IRIDA and Galaxy under the same paths (e.g., `/path/to/irida-data` on the IRIDA server is available as `/path/to/irida-data` on the Galaxy server).
+
+Instructions
+------------
 
 1. [Integration with existing Galaxy][integration-galaxy]: If you already have a Galaxy instance installed, this will describe the necessary changes to the configuration needed in order for IRIDA to communicate with Galaxy and exsiting workflows.
 2. [Setup of a new Galaxy instance][setup-new-galaxy]: If you do not have a Galaxy instance installed, this will walk through the general procedure of setting up a new Galaxy instance.
 
 If you encounter errors while installing Galaxy you may want to look over the [IRIDA/Galaxy FAQ][].
 
-IRIDA Galaxy Architecture
-=========================
+Architecture
+------------
 
 The overall architecture of IRIDA and Galaxy is as follows:
 
@@ -26,10 +37,14 @@ The overall architecture of IRIDA and Galaxy is as follows:
 2. All tools used by a workflow are assumed to have been installed in Galaxy during the setup of IRIDA.  The Galaxy workflow is uploaded to Galaxy and the necessary tools are executed by Galaxy.  Galaxy can be setup to either execute tools on a local machine, or submit jobs to a cluster.
 3. Once the workflow execution is complete, a copy of the results are downloaded into IRIDA and stored in the shared filesystem.
 
-[Galaxy]: https://wiki.galaxyproject.org/FrontPage
+[irida-galaxy.jpg]: images/irida-galaxy.jpg
 [Galaxy API]: https://wiki.galaxyproject.org/Learn/API
+[Galaxy]: https://wiki.galaxyproject.org/FrontPage
 [integration-galaxy]: existing-galaxy
 [setup-new-galaxy]: setup
 [Galaxy Toolsheds]: https://wiki.galaxyproject.org/ToolShed
 [IRIDA/Galaxy FAQ]: ../faq
-[irida-galaxy.jpg]: images/irida-galaxy.jpg
+[conda with Galaxy]: https://docs.galaxyproject.org/en/master/admin/conda_faq.html
+[IRIDA Galaxy Architecture]: galaxy-architecture/
+[galaxy-versions]: https://docs.galaxyproject.org/en/master/releases/index.html
+[faq-conda]: ../faq/#installing-conda-dependencies-in-galaxy-versions--v1601
