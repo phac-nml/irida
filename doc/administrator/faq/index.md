@@ -66,6 +66,65 @@ conda install perl-bioperl
 
 ## 4. Installing conda dependencies in Galaxy versions < v16.01
 
-IRIDA uses Galaxy versions >= v16.01 in order to take advantage of [conda dependency installation](https://docs.galaxyproject.org/en/master/admin/conda_faq.html).  However, it is still possible to integrate IRIDA with Galaxy versions < v16.01 with a bit of manual work to get the proper dependencies loaded up.
+IRIDA uses Galaxy versions >= v16.01 in order to take advantage of [conda dependency installation](https://docs.galaxyproject.org/en/master/admin/conda_faq.html).  However, it is still possible to integrate IRIDA with Galaxy versions < v16.01 with a bit of manual work to get the proper dependencies loaded up.  This involves loading up the necessary environment variables from a file, `galaxy/env.sh`, which is sourced before each tool is run.  The location of this file defaults to `galaxy/env.sh`, but can be changed with the **environment_setup_file** parameter in the Galaxy configuration file `galaxy/conf/galaxy.ini`.
 
+An example of setting up the `sistr_cmd` dependency using this method is given below.  Please modify these steps for the particular tools in question (by e.g., installing different commands with conda, or adding appropriate binaries to the `PATH`).
 
+### Step 1: Install `conda`
+
+If `conda` is not already installed, please download and install <https://conda.io/miniconda.html>. Make sure to add the appropriate channels for installing software from bioconda:
+
+```bash
+conda config --add channels conda-forge
+conda config --add channels defaults
+conda config --add channels r
+conda config --add channels bioconda
+```
+
+### Step 2: Install `sistr_cmd`
+
+Install the `sistr_cmd` dependency to it's own conda environment:
+
+```bash
+conda create -y --name sistr_cmd@1.0.2 sistr_cmd=1.0.2
+```
+
+### Step 3: Write a wrapper around `sistr`
+
+Write a wrapper around the `sistr` command to load up the conda environment.  If conda is installed in the directory `~/miniconda3` this should look like the following:
+
+```bash
+#!/bin/bash
+
+export PATH=~/miniconda3/bin:$PATH
+source activate sistr_cmd@1.0.2
+
+sistr $@
+```
+
+Save this file with the name `sistr`.
+
+### Step 4: Load up `sistr` wrapper during tool execution
+
+Copy `sistr` to a directory loaded up by the `galaxy/env.sh` file.  For example, if this file contains the following:
+
+```bash
+export PATH=~/bin:$PATH
+```
+
+Then, copy `sistr` to `~/bin` and make executable.  Otherwise, adjust `env.sh` as necessary to put `sistr` on the `PATH`.
+
+```bash
+cp sistr ~/bin
+chmod +x ~/bin/sistr
+```
+
+### Step 5: Test `sistr`
+
+You can test out `sistr` by running as follows:
+
+```bash
+./bin/sistr --version
+```
+
+You should see `sistr_cmd 1.0.2` as output of the above command.
