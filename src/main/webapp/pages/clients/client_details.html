@@ -20,7 +20,7 @@
     </script>
 </head>
 <body>
-<main layout:fragment="page" ddl:bundle-includes="client_details">
+<main layout:fragment="page">
     <h1 th:text="${client.clientId}">_Name_</h1>
     <div class="row mrgn-tp-lg">
     	<!-- User details -->
@@ -145,5 +145,9 @@
            </form>
        </section>
 </main>
+
+<th:block layout:fragment="page-scripts">
+    <script th:src="@{/resources/js/pages/clients/client_details.js}"></script>
+</th:block>
 </body>
 </html>
