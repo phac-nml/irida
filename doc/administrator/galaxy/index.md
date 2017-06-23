@@ -18,8 +18,35 @@ Before proceeding with the integration of Galaxy and IRIDA, the following requir
 1. [Galaxy version >= **v16.01**][galaxy-versions] is required as IRIDA makes use of [conda with Galaxy][].  Earlier versions were supported previously, but are being phased out as more required tools are released under conda.  A method to get newer conda-based tools to work with older Galaxy versions is described in our [FAQ][faq-conda].
 2. The filesystem is shared between the machines serving IRIDA and Galaxy under the same paths (e.g., `/path/to/irida-data` on the IRIDA server is available as `/path/to/irida-data` on the Galaxy server).
 
-Instructions
-------------
+Quick Start
+-----------
+
+The easiest way to get Galaxy up and running for use with IRIDA is to use a custom-built [Docker][] image.  To start this image, please do the following:
+
+```bash
+# (Optional) Install Docker
+curl -sSL https://get.docker.com/ | sh
+
+# Run IRIDA/Galaxy docker
+docker run -d -p 48888:80 -v /path/to/irida/data:/path/to/irida/data phacnml/galaxy-irida-17.01
+```
+
+Where `48888` is the port on your local system where Galaxy should be accessible, and `/path/to/irida/data` should point to the location where the sequencing data for IRIDA is stored (e.g., the parent directory of `sequence.file.base.directory` in `/etc/irida/irida.conf`).
+
+Now, modify `/etc/irida/irida.conf` to add the below connection details to Galaxy:
+
+```
+galaxy.execution.url=http://localhost:48888
+galaxy.execution.apiKey=admin
+galaxy.execution.email=admin@galaxy.org
+```
+
+Now restart IRIDA and test out a pipeline.
+
+Detailed Instructions
+---------------------
+
+For more detailed instructions on installing Galaxy please refer to the following.
 
 1. [Integration with existing Galaxy][integration-galaxy]: If you already have a Galaxy instance installed, this will describe the necessary changes to the configuration needed in order for IRIDA to communicate with Galaxy and exsiting workflows.
 2. [Setup of a new Galaxy instance][setup-new-galaxy]: If you do not have a Galaxy instance installed, this will walk through the general procedure of setting up a new Galaxy instance.
@@ -37,6 +64,7 @@ The overall architecture of IRIDA and Galaxy is as follows:
 2. All tools used by a workflow are assumed to have been installed in Galaxy during the setup of IRIDA.  The Galaxy workflow is uploaded to Galaxy and the necessary tools are executed by Galaxy.  Galaxy can be setup to either execute tools on a local machine, or submit jobs to a cluster.
 3. Once the workflow execution is complete, a copy of the results are downloaded into IRIDA and stored in the shared filesystem.
 
+[Docker]: https://www.docker.com/
 [irida-galaxy.jpg]: images/irida-galaxy.jpg
 [Galaxy API]: https://wiki.galaxyproject.org/Learn/API
 [Galaxy]: https://wiki.galaxyproject.org/FrontPage
