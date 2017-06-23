@@ -11,13 +11,6 @@
                 "ignoreStrings": true,
                 "ignoreComments": true
             }
-        ],
-        "quotes": [
-            "warn",
-            "single",
-            {
-                "allowTemplateLiterals": true
-            }
         ]
     }
 }
