@@ -20,15 +20,34 @@ The following describes the procedures needed to get IRIDA setup with an existin
 * This comment becomes the table of contents.
 {:toc}
 
-Setup of a Galaxy user and API key
-----------------------------------
+Dependencies
+------------
 
-As IRIDA communicates with Galaxy through the [API][galaxy-api] it is necessary to setup a Galaxy API key which will be used by IRIDA. It is recommended (though not required) to use a separate user for this purpose.
+Some tools will need to be built from source, and so require the standard Linux build environment to be installed on the Galaxy server. For CentOS this will include the following packages:
 
-This user must also have Galaxy admin privileges in order to allow IRIDA to link directly to the sequence files when sharing with Galaxy (avoids creating copies of fastq files each time a workflow is run). Admin privileges can be assigned by adding the user's email to `admin_users` in the configuration file `config/galaxy.ini`.
+```bash
+yum groupinstall "Development tools"
+yum install mercurial zlib-devel ncurses-devel tcsh git db4-devel expat-devel java
+```
 
-Other configuration settings
-----------------------------
+Additionally, some tools assume certain dependencies are installed on the machines where the tools are to be run and do not install these dependencies automatically.  To handle these cases, we create a specific conda environment which is loaded up each time a tool is run (via the `env.sh` file).  Assuming [conda is installed][Conda] these dependencies can be installed into a conda environment, **galaxy**, with:
+
+```bash
+conda create --name galaxy samtools perl-xml-simple perl-time-piece perl-bioperl openjdk gnuplot libjpeg-turbo
+```
+
+To load up this conda environment before each tool is run, please add the following to the `galaxy/env.sh` file:
+
+```
+source activate galaxy
+```
+
+Some Galaxy tool installation instructions for IRIDA may require the installation of additional dependencies which can be added to this conda **galaxy** environment.
+
+*Note: the location of `galaxy/env.sh` is defined by the property `environment_setup_file` in `config/galaxy.ini`.*
+
+Configuration settings
+-----------------------
 
 ### Settings in `config/galaxy.ini`
 
@@ -40,21 +59,20 @@ The following is a list of other necessary configuration settings within the fil
    * Change `#id_secret = USING THE DEFAULT IS NOT SECURE!` to `id_secret = some secure password`
       * The command `pwgen --secure -N 1 56` may be useful for picking a hard-to-guess key.
       * ***Note: Once this key is set, please do not change it.  This key is used to translate database ids in Galaxy to API ids used by IRIDA to access datasets, histories, and workflows.  IRIDA does store some of these API ids internally for debugging and tracking purposes and changing this value will render any of the API ids stored in IRIDA useless.***
-3. Setup [Conda][] for installing tool dependencies. E.g.,
+3. Setup [Conda][] for installing tool dependencies via Galaxy's automated dependency management system. E.g.,
    * Set `conda_prefix = /home/galaxy-irida/miniconda3`, or wherever conda is installed for Galaxy.
    * Set `conda_ensure_channels = iuc,bioconda,r,defaults,conda-forge`.
+4. Add Galaxy/IRIDA user to `admin_users` list (see below).
 
-### Build dependencies
+Setup of a Galaxy user and API key
+----------------------------------
 
-Even by defaulting to using conda, some tools will need to be built from source, and so require the standard Linux build environment to be installed on the Galaxy server. For CentOS this will include the following packages:
+As IRIDA communicates with Galaxy through the [API][galaxy-api] it is necessary to setup a Galaxy API key which will be used by IRIDA. It is recommended (though not required) to use a separate user for this purpose.
 
-```bash
-yum groupinstall "Development tools"
-yum install mercurial zlib-devel ncurses-devel tcsh git db4-devel expat-devel java
-```
+This user must also have Galaxy admin privileges in order to allow IRIDA to link directly to the sequence files when sharing with Galaxy (avoids creating copies of fastq files each time a workflow is run). Admin privileges can be assigned by adding the user's email to `admin_users` in the configuration file `config/galaxy.ini`.
 
-Required tools in Galaxy
-------------------------
+Setup IRIDA tools in Galaxy
+---------------------------
 
 ### Step 1: Configure External Toolsheds
 
@@ -85,7 +103,7 @@ python install_tool_shed_tools.py --toolsfile tools-list.yml --galaxy [http://ur
 
 You may want to monitor the Galaxy log file as the installation is proceeding.  This may take a while to download, build, and install all tools.
 
-*Note: please make sure to check if `tbl2asn` requires updating. You can read more about this issue in our [FAQ](../faq/#tbl2asn-out-of-date).*
+*Note: please make sure to check if `tbl2asn` requires updating. You can read more about this issue in our [FAQ](../faq/#tbl2asn-out-of-date). Also please take a look through the __Manual installation of tools__ instructions to see if there are any additional dependencies you may need to install.  These can be added to the conda __galaxy__ environment setup previously.*
 
 #### Manual installation of tools
 

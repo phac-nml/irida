@@ -22,26 +22,17 @@ To install these tools please proceed through the following steps.
 
 ## Step 1: Install Dependencies
 
-Some of these tools require additional dependencies to be installed.  For a cluster environment please make sure these are available on all cluster nodes by installing to a shared directory.
-
-1. [gnuplot][]: Please download and install [gnuplot][] or make sure this is available in your execution environment.
-2. **Perl Modules**: Please download and install dependency Perl modules with the command.
+Some of these tools require additional dependencies to be installed.  For a cluster environment please make sure these are available on all cluster nodes by installing to a shared directory. This can be done with conda (assuming Galaxy is configured to load up the environment `galaxy` for each tool execution, that is in `env.sh`).
 
 ```bash
-cpanm Time::Piece XML::Simple Data::Dumper
+source activate galaxy
+conda install perl-xml-simple perl-time-piece perl-data-dumper
+source deactivate
 ```
 
-## Step 2.a: Conda dependenies (for Galaxy versions >= v16.01)
+## Step 2: Galaxy Conda Setup
 
-The SISTR pipeline makes use of the [conda][] package manager and [bioconda][] channel to distribute some dependencies, particularly the [sistr_cmd][] software.  However, this requires a more recent version of Galaxy (minimum >= v16.01, although > v16.07 is recommended) to take advantage of automated installation of dependencies using conda.  It is recommended to upgrade Galaxy for IRIDA to a version >= 16.01, or a method to get SISTR to work with a Galaxy version < 16.01 is given in **Step 2.b**.
-
-If the Galaxy version supports conda, then you must verify that Galaxy is setup to use conda for dependency installation.  This will primarly involve setting `conda_prefix` to point to the PATH of conda in your `galaxy/config/galaxy.ini` file and verifying that conda will be used for dependency management in the file `galaxy/config/dependency_resolvers_conf.xml`.  More details can be found at <https://docs.galaxyproject.org/en/master/admin/conda_faq.html>.
-
-If conda is setup with your instance of Galaxy, please proceed to **Step 3**.  Otherwise, proceed to **Step 2.b**.
-
-## Step 2.b: Conda dependenies (for Galaxy versions < v16.01)
-
-If you are unable to upgrade Galaxy to take advantage of `conda`, then please refer to the [FAQ/Conda dependencies][] for an alternative method of setting up SISTR.
+Galaxy makes use of [Conda][conda] to automatically install some dependencies for SISTR.  Please verify that the version of Galaxy is >= 16.01 and has been setup to use conda (by modifying the appropriate configuration settings, see [here][galaxy-config] for additional details).  A method to get SISTR to work with a Galaxy version < 16.01 is available in [FAQ/Conda dependencies][].
 
 ## Step 3: Install Galaxy Tools
 
@@ -73,6 +64,7 @@ A Galaxy workflow and some test data has been included with this documentation t
 If everything was successfull then all dependencies for this pipeline have been properly installed.
 
 [SPAdes]: http://bioinf.spbau.ru/spades
+[galaxy-config]: ../../setup#step-4-modify-configuration-file
 [Galaxy Main Shed]: http://toolshed.g2.bx.psu.edu/
 [IRIDA Toolshed]: https://irida.corefacility.ca/galaxy-shed
 [gnuplot]: http://www.gnuplot.info/
