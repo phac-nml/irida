@@ -59,6 +59,7 @@
     "node-sass": "^4.5.3",
     "phylocanvas": "^2.8.1",
     "phylocanvas-plugin-export-svg": "^1.0.0",
+    "prettier": "^1.4.4",
     "run-sequence": "^1.2.2",
     "style-loader": "^0.13.1",
     "ui-select": "^0.19.6",
