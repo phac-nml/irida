@@ -60,6 +60,11 @@
                 </button>
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-12">
+                <h4 th:text="#{metadata.header.description}">_Select which column maps to the sample ID in IRIDA_</h4>
+            </div>
+        </div>
         <ul class="list-group">
             <li class="list-group-item" ng-repeat="header in $ctrl.headers">
                 <header-item header="header"></header-item>
