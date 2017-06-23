@@ -23,9 +23,9 @@ The following describes the procedures needed to get IRIDA setup with an existin
 Setup of a Galaxy user and API key
 ----------------------------------
 
-As IRIDA communicates with Galaxy through the API it is necessary to setup a Galaxy API key which will be used by IRIDA. It is recommended (though not required) to use a separate user for this purpose.
+As IRIDA communicates with Galaxy through the [API][galaxy-api] it is necessary to setup a Galaxy API key which will be used by IRIDA. It is recommended (though not required) to use a separate user for this purpose.
 
-This user must also have Galaxy admin privileges in order to allow IRIDA to link directly to the sequence files when sharing with Galaxy (avoids creating copies of fastq files each time a workflow is run). Admin privileges can be assigned by modifying the Galaxy configuration file `config/galaxy.ini` and adding the user's email to `admin_users`.
+This user must also have Galaxy admin privileges in order to allow IRIDA to link directly to the sequence files when sharing with Galaxy (avoids creating copies of fastq files each time a workflow is run). Admin privileges can be assigned by adding the user's email to `admin_users` in the configuration file `config/galaxy.ini`.
 
 Other configuration settings
 ----------------------------
@@ -46,7 +46,7 @@ The following is a list of other necessary configuration settings within the fil
 
 ### Build dependencies
 
-Even by defaulting to using conda, some tools will need to be built from source, and so require the standard Linux build environment to be installed. For CentOS this will include the following packages:
+Even by defaulting to using conda, some tools will need to be built from source, and so require the standard Linux build environment to be installed on the Galaxy server. For CentOS this will include the following packages:
 
 ```bash
 yum groupinstall "Development tools"
@@ -71,7 +71,7 @@ The workflows used by IRIDA make use of external tools that can be installed usi
 
 #### Automated installation of tools
 
-An automated script (`install_tool_shed_tools.py`) to install all necessary tools for the different pipelines to run in Galaxy is provided with the `irida-[version].zip` download. This can be found on the [IRIDA releases][] page.  Instructions can be accessed at [Automated tools install][].
+An automated script (`install_tool_shed_tools.py`) to install all necessary tools for the different pipelines to run in Galaxy is provided with the `irida-[version].zip` download. This can be found on the [IRIDA releases][] page.  Instructions can be accessed on the [Automated tools install][] page.
 
 To run this script, please do the following:
 
@@ -107,6 +107,7 @@ Once you have configured IRIDA to connect to Galaxy you can attempt to execute a
 
 [conda with Galaxy]: https://docs.galaxyproject.org/en/master/admin/conda_faq.html
 [Conda]: https://conda.io/miniconda.html
+[galaxy-api]: https://wiki.galaxyproject.org/Learn/API
 [PostgreSQL]: http://www.postgresql.org/
 [IRIDA Toolshed]: https://irida.corefacility.ca/galaxy-shed
 [Main Galaxy Toolshed]: https://toolshed.g2.bx.psu.edu/
