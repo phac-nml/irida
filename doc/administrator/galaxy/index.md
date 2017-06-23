@@ -25,23 +25,21 @@ The easiest way to get Galaxy up and running for use with IRIDA is to use a cust
 
 ```bash
 # (Optional) Install Docker
-curl -sSL https://get.docker.com/ | sh
+# curl -sSL https://get.docker.com/ | sh
 
 # Run IRIDA/Galaxy docker
 docker run -d -p 48888:80 -v /path/to/irida/data:/path/to/irida/data phacnml/galaxy-irida-17.01
 ```
 
-Where `48888` is the port on your local system where Galaxy should be accessible, and `/path/to/irida/data` should point to the location where the sequencing data for IRIDA is stored (e.g., the parent directory of `sequence.file.base.directory` in `/etc/irida/irida.conf`).
+Where `48888` is the port on your local system where Galaxy should be accessible, and `/path/to/irida/data` should point to the location where the sequencing data for IRIDA is stored (i.e., the parent directory of `{sequence,reference,output}.file.base.directory` in [/etc/irida/irida.conf][irida-conf]).
 
-Now, modify `/etc/irida/irida.conf` to add the below connection details to Galaxy:
+Now proceed to installing the [IRIDA web interface][irida-web], making sure to set the following Galaxy connection parameters in `/etc/irida/irida.conf`.
 
 ```
 galaxy.execution.url=http://localhost:48888
 galaxy.execution.apiKey=admin
 galaxy.execution.email=admin@galaxy.org
 ```
-
-Now restart IRIDA and test out a pipeline.
 
 Detailed Instructions
 ---------------------
@@ -76,3 +74,5 @@ The overall architecture of IRIDA and Galaxy is as follows:
 [IRIDA Galaxy Architecture]: galaxy-architecture/
 [galaxy-versions]: https://docs.galaxyproject.org/en/master/releases/index.html
 [faq-conda]: ../faq/#installing-conda-dependencies-in-galaxy-versions--v1601
+[irida-conf]: ../web/#core-configuration
+[irida-web]: ../web/
