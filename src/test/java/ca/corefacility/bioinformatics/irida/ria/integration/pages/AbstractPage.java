@@ -235,4 +235,17 @@ public class AbstractPage {
 		});
 	}
 
+	/**
+	 * Selenium is having issues sending complete sequences of strings to the UI.
+	 * Sending one at a time might help.  See thread: https://github.com/angular/protractor/issues/698
+	 * @param keys {@link String} value to send to the input
+	 * @param inputElement {@link WebElement} input the send string to.
+	 */
+	protected void sendInputTextSlowly(String keys, WebElement inputElement) {
+		for(int i = 0; i < keys.length(); i++) {
+			String key = String.valueOf(keys.charAt(i));
+			inputElement.sendKeys(key);
+			waitForTime(200);
+		}
+	}
 }
