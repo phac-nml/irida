@@ -1,5 +1,5 @@
-const angular = require('angular');
-require('angular-resource');
+import 'angular';
+import 'angular-resource';
 import {metadataTemplateName} from './directives/metadataTemplateName';
 import {SampleMetadataTemplateService} from './services/sample-metadata-template.service';
 

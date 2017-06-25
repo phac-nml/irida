@@ -1,8 +1,8 @@
-const angular = require('angular');
-const $ = require('jquery');
-const union = require('lodash/union');
+import $ from 'jquery';
+import angular from 'angular';
+import _ from 'lodash';
 
-let deps = union(window.dependencies || [], [
+const deps = _.union(window.dependencies || [], [
   'ngAria',
   'ngAnimate',
   'ui.bootstrap',
