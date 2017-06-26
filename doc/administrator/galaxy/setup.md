@@ -10,26 +10,13 @@ Setup of a new Galaxy instance
 
 This document describes the necessary steps for installing and integrating [Galaxy][] with IRIDA as well as using Galaxy and [Galaxy Toolsheds][] to install workflows.
 
-* this comment becomes the table of contents.
-{:toc}
-
 The following must be set up before proceeding with the installation.
 
 1. A machine that has been set up to install Galaxy.  This could be the same machine as the IRIDA web interface, or (recommended) a separate machine.
-2. A shared filesystem has been set up between IRIDA and Galaxy.  If Galaxy will be submitting to a cluster this filesystem must also be shared with the cluster.
+2. A shared filesystem has been set up between IRIDA and Galaxy.  If Galaxy will be submitting to a compute cluster this filesystem must also be shared with the cluster.
 
-Installation Overview
----------------------
-
-The main steps needed to install and integrate Galaxy with IRIDA are as follows.
-
-* Dependency Installation
-* Galaxy Database Setup
-* Galaxy Software Installation
-* Configure Galaxy
-* Galaxy Tools Installation
-* Link up Galaxy with IRIDA
-* Configure Galaxy Data Cleanup
+* this comment becomes the table of contents.
+{:toc}
 
 Dependency Installation
 -----------------------
@@ -52,7 +39,7 @@ wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
 bash Miniconda3-latest-Linux-x86_64.sh
 ```
 
-This should default to installing conda under `~/miniconda3`.  For the remainder of these instructions we will assume conda is installed in this location, and that conda is available on `PATH`.
+This should default to installing conda under `~/miniconda3`.  For the remainder of these instructions we will assume conda is installed in this location, and that conda is available on your `PATH`.
 
 *Note: conda requires the `bash` shell to fuction properly. To see which shell you are using you can run `echo $SHELL`. Also note that on some systems `/bin/sh` is simply a link to `/bin/bash`.*
 
@@ -78,7 +65,7 @@ conda install perl-xml-simple perl-time-piece perl-bioperl openjdk gnuplot libjp
 Galaxy Software Installation
 ----------------------------
 
-This describes installing the main Galaxy software.  Most of the installation documentation for Galaxy can be found at [GetGalaxy][].  In brief, these steps involve the following.
+This describes installing the main Galaxy software.  These instructions assume you are installing Galaxy version **v17.01**.  Older versions will also work, but any version < **v16.01** will require special modifications for some tools (see our [FAQ](../faq/#installing-conda-dependencies-in-galaxy-versions--v1601)). Newer versions should also work, but have not been thoroughly tested with IRIDA yet. Most of the installation documentation for Galaxy can be found at [GetGalaxy][].  In brief, these steps involve the following.
 
 ### Step 1: Download Galaxy
 
@@ -89,7 +76,7 @@ git clone https://github.com/galaxyproject/galaxy.git && cd galaxy
 git checkout release_17.01
 ```
 
-Once Galaxy is downloaded additional modifications will be needed to configure Galaxy.  Please copy the configuration files from the sample configuration files like below before modifying:
+Once Galaxy is downloaded some additional modifications will be needed to configure Galaxy.  Please copy the configuration files from the sample configuration files like below before modifying:
 
 ```bash
 # We assume you are in the galaxy/ directory.
@@ -126,7 +113,7 @@ Additionally, some Python dependencies and additional dependencies may be requir
 export PATH=~/miniconda3/bin:$PATH
 source activate galaxy
 ```
-Other steps will specify when you need to add setup instructions to this file.
+Other steps will specify when you need to add additional instructions to this file.
 
 ### Step 4: Modify configuration file
 
@@ -138,7 +125,7 @@ The main Galaxy configuration file is located in `config/galaxy.ini`.  Please ma
     * E.g., change `#port = 8080` to `port = [some other port]`.
 3. The below is necessary to allow direct linking of files in Galaxy to the IRIDA file locations.
    * Change `#allow_library_path_paste = False` to `allow_library_path_paste = True`.
-4. Give the Galaxy **admin** and **workflow** users admin privileges (necessary for running workflows on linked files within Galaxy).
+4. Give the Galaxy **admin** and **workflow** users admin privileges (necessary for running workflows on linked files within Galaxy, see [create galaxy accounts](#step-1-create-galaxy-accounts)).
    * Change `#admin_users = None` to `admin_users = admin@localhost.localdomain,workflow@localhost.localdomain` (or whatever other users you wish to use).
 5. Disable developer settings if enabled (from [Galaxy Disable Developer Settings][]).
    * Change `debug = True` to `debug = False`.
@@ -165,7 +152,8 @@ The main Galaxy configuration file is located in `config/galaxy.ini`.  Please ma
 
 Verify that Galaxy can start by running:
 
-	stdbuf -o 0 sh run.sh 2>&1 | tee run.sh.log # Re-starts Galaxy and builds new database
+	# Starts Galaxy and builds new database
+	stdbuf -o 0 sh run.sh 2>&1 | tee run.sh.log
 
 This will attempt to build the Galaxy database and start up Galaxy on <http://127.0.0.1:9090>.
 
@@ -288,7 +276,7 @@ Each of these will step through installing the necessary tools in IRIDA.  These 
 
 ![galaxy-installed-repositories.jpg][]
 
-All tools are, by default, installed in the directory `galaxy/../shed_tools` with binary dependencies installed in `galaxy/database/dependencies`.  Monitoring the install process of each tool can be done by monitoring the main Galaxy log file `main.log`.
+All tools are, by default, installed in the directory `galaxy/../shed_tools` with binary dependencies installed in `galaxy/database/dependencies`.  Monitoring the install process of each tool can be done by monitoring the main Galaxy log file `paster.log`.
 
 Link up Galaxy with IRIDA
 -------------------------
@@ -312,8 +300,8 @@ Each workflow in IRIDA is run using Galaxy, and it's possible to monitor the sta
 [Galaxy]: https://wiki.galaxyproject.org/FrontPage
 [GetGalaxy]: https://wiki.galaxyproject.org/Admin/GetGalaxy
 [Running Galaxy in a production environment]: https://wiki.galaxyproject.org/Admin/Config/Performance/ProductionServer
-[Galaxy Disable Developer Settings]: https://wiki.galaxyproject.org/Admin/Config/Performance/ProductionServer#Disable_the_developer_settings
-[Galaxy Database Setup]: https://wiki.galaxyproject.org/Admin/Config/Performance/ProductionServer#Switching_to_a_database_server
+[Galaxy Disable Developer Settings]: https://wiki.galaxyproject.org/Admin/Config/Performance/ProductionServer#disable-the-developer-settings
+[Galaxy Database Setup]: https://wiki.galaxyproject.org/Admin/Config/Performance/ProductionServer#switching-to-a-database-server
 [MySQL]: http://www.mysql.com/
 [PostgreSQL]: http://www.postgresql.org/
 [IRIDA Toolshed]: https://irida.corefacility.ca/galaxy-shed

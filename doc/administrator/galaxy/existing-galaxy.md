@@ -30,7 +30,7 @@ yum groupinstall "Development tools"
 yum install mercurial zlib-devel ncurses-devel tcsh git db4-devel expat-devel java
 ```
 
-Additionally, some tools assume certain dependencies are installed on the machines where the tools are to be run and do not install these dependencies automatically.  To handle these cases, we create a specific conda environment which is loaded up each time a tool is run (via the `env.sh` file).  Assuming [conda is installed][Conda] these dependencies can be installed into a conda environment, **galaxy**, with:
+Additionally, some tools assume certain dependencies are installed on the machines where the tools are to be run and do not install these dependencies automatically.  To handle these cases, you can create a specific conda environment which is loaded up each time a tool is run (via the `env.sh` file).  Assuming [conda is installed][Conda] these dependencies can be installed into a conda environment, **galaxy**, with:
 
 ```bash
 conda create --name galaxy samtools perl-xml-simple perl-time-piece perl-bioperl openjdk gnuplot libjpeg-turbo
@@ -53,7 +53,7 @@ Configuration settings
 
 The following is a list of other necessary configuration settings within the file `config/galaxy.ini` for IRIDA to function with Galaxy.
 
-1. Change `allow_library_path_paste` to allow direct linking of files in Galaxy to the IRIDA file locations. E.g.,
+1. Change `allow_library_path_paste` to allow direct linking of files in Galaxy to the IRIDA file locations (as opposed to making copies). E.g.,
    * Change `#allow_library_path_paste = False` to `allow_library_path_paste = True`.
 2. Set the Galaxy `id_secret` for encoding database ids. E.g.,
    * Change `#id_secret = USING THE DEFAULT IS NOT SECURE!` to `id_secret = some secure password`
@@ -91,7 +91,7 @@ The workflows used by IRIDA make use of external tools that can be installed usi
 
 An automated script (`install_tool_shed_tools.py`) to install all necessary tools for the different pipelines to run in Galaxy is provided with the `irida-[version].zip` download. This can be found on the [IRIDA releases][] page.  Instructions can be accessed on the [Automated tools install][] page.
 
-To run this script, please do the following:
+To run this script, please do the following (replacing **url-to-galaxy** and **api key** with appropriate values for your Galaxy instance).
 
 ```
 # Installs dependency modules for script
@@ -101,7 +101,7 @@ pip install -r install-tools-requirements.txt
 python install_tool_shed_tools.py --toolsfile tools-list.yml --galaxy [http://url-to-galaxy] --apikey [api key]
 ```
 
-You may want to monitor the Galaxy log file as the installation is proceeding.  This may take a while to download, build, and install all tools.
+You may want to monitor the Galaxy log files (e.g., `galaxy/*.log`) as the installation is proceeding.  This may take a while to download, build, and install all tools.
 
 *Note: please make sure to check if `tbl2asn` requires updating. You can read more about this issue in our [FAQ](../faq/#tbl2asn-out-of-date). Also please take a look through the __Manual installation of tools__ instructions to see if there are any additional dependencies you may need to install.  These can be added to the conda __galaxy__ environment setup previously.*
 
@@ -117,7 +117,7 @@ Alternatively, the necessary tools can be installed manually through the followi
 Link up Galaxy with IRIDA
 -------------------------
 
-In order to connect IRIDA to this Galaxy instance you will need to modify the parameters **galaxy.execution.url**, **galaxy.execution.email**, and **galaxy.execution.apikey** in the file `/etc/irida/irida.conf` and restart IRIDA. Additional details for configuring IRIDA can be found in instructions to [install and configure the IRIDA web interface](../web).
+In order to connect IRIDA to this Galaxy instance you will need to modify the parameters **galaxy.execution.url**, **galaxy.execution.email**, and **galaxy.execution.apikey** in the file `/etc/irida/irida.conf` and restart IRIDA. Additional details for configuring IRIDA can be found in the instructions to [install and configure the IRIDA web interface](../web).
 
 Once you have configured IRIDA to connect to Galaxy you can attempt to execute a workflow by adding some data to your cart, selecting  **Pipelines** from the main menu, then selecting a particular pipeline.  You will have to have some data uploaded into IRIDA before testing.  An example set of data can be found at [irida-sample-data.zip][].  Currently all workflows assume you are using paired-end sequence reads.
 
