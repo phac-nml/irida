@@ -51,7 +51,7 @@ galaxy_job:
   image: docker.corefacility.ca:5000/irida-testing:latest
   services:
     - mariadb:10.0
-    - apetkau/galaxy-irida-16.10-it:0.1
+    - phacnml/galaxy-irida-17.01:0.17.0-it
   script:
   - mvn clean verify -B -Pgalaxy_testing -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY
   stage: test

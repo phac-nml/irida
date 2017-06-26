@@ -1,12 +1,10 @@
-# Galaxy - Irida Integration Testing Image
-#
-#
+# Galaxy - IRIDA Integration Testing Image
 
-FROM apetkau/snvphyl-galaxy-1.0.1
+FROM phacnml/galaxy-irida-17.01:base 
 
-MAINTAINER Aaron Petkau, aaron.petkau@gmail.com
+Label maintainer Aaron Petkau, aaron.petkau@phac-aspc.gc.ca
 
-ENV GALAXY_CONFIG_BRAND Irida Integration Testing
+ENV GALAXY_CONFIG_BRAND IRIDA Integration Testing (17.01)
 
 WORKDIR /galaxy-central
 
@@ -16,9 +14,7 @@ ENV GALAXY_TEST_TOOL_CONF /galaxy-central/config/tool_conf.xml.sample
 ADD ./galaxy/tool_conf_irida.xml /galaxy-central/config/tool_conf.xml.sample
 ADD ./galaxy/tool_sheds_conf.xml /etc/galaxy/tool_sheds_conf.xml
 
-RUN sed -i -e 's/#admin_users = None/admin_users = admin@galaxy.org,workflowUser@irida.corefacility.ca/' /etc/galaxy/galaxy.ini
-RUN sed -i -e 's/#allow_library_path_paste = False/allow_library_path_paste = True/' /etc/galaxy/galaxy.ini
-RUN sed -i -e 's/force_beta_workflow_scheduled_for_collections=True/force_beta_workflow_scheduled_for_collections=False/' /etc/galaxy/galaxy.ini
+RUN sed -i -e 's/#admin_users = .*/admin_users = admin@galaxy.org,workflowUser@irida.corefacility.ca/' /etc/galaxy/galaxy.ini
 
 # Add custom Irida tools to Galaxy
 ADD ./galaxy/assembly_annotation_pipeline_outputs.xml /galaxy-central/tools/irida/assembly_annotation_pipeline_outputs.xml
