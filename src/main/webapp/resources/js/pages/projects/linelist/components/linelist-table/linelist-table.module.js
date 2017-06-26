@@ -1,6 +1,7 @@
 import angular from 'angular';
 import 'DataTables/datatables.js';
 import 'DataTables/datatables-scroller.js';
+import 'DataTables/datatables-colreorder.js';
 
 import datatables from 'angular-datatables';
 import datatablesScroller from 'angular-datatables/dist/plugins/scroller/angular-datatables.scroller.min.js';
