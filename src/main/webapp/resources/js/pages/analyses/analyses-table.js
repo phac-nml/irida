@@ -1,4 +1,4 @@
-require('./../../../css/pages/analyses-list.css');
+import './../../../css/pages/analyses-list.css';
 import {deleteAnalysis} from '../analysis/analysis-service';
 import {
   activateTooltips,
@@ -12,8 +12,8 @@ import {
   getHumanizedDate
 } from './../../vendor/datatables/datatables-utilities';
 
-const $ = require('jquery');
-require('./../../vendor/datatables/datatables');
+import $ from 'jquery';
+import './../../vendor/datatables/datatables';
 const COLUMNS = generateColumnOrderInfo();
 
 /**
