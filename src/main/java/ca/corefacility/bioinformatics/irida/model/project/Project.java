@@ -123,7 +123,7 @@ public class Project extends IridaResourceSupport
 	
 	@Min(1)
 	@Column(name = "required_coverage", nullable = true)
-	private Integer requiredCoverage;
+	private Integer minimumCoverage;
 	
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "remote_status")
@@ -266,12 +266,12 @@ public class Project extends IridaResourceSupport
 		this.genomeSize = genomeSize;
 	}
 	
-	public Integer getRequiredCoverage() {
-		return requiredCoverage;
+	public Integer getMinimumCoverage() {
+		return minimumCoverage;
 	}
 	
-	public void setRequiredCoverage(Integer requiredCoverage) {
-		this.requiredCoverage = requiredCoverage;
+	public void setMinimumCoverage(Integer minimumCoverage) {
+		this.minimumCoverage = minimumCoverage;
 	}
 
 	public boolean getSistrTypingUploads() {

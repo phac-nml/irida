@@ -68,13 +68,13 @@ public class CoverageQCEntry extends QCEntry {
 	 * {@inheritDoc}
 	 */
 	public QCEntryStatus getStatus() {
-		if (project == null || project.getGenomeSize() == null || project.getRequiredCoverage() == null) {
+		if (project == null || project.getGenomeSize() == null || project.getMinimumCoverage() == null) {
 			return QCEntryStatus.UNAVAILABLE;
 		}
 
 		int coverage = calculateCoverage();
 
-		if (coverage >= project.getRequiredCoverage()) {
+		if (coverage >= project.getMinimumCoverage()) {
 			return QCEntryStatus.POSITIVE;
 		} else {
 			return QCEntryStatus.NEGATIVE;
