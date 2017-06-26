@@ -85,7 +85,7 @@
 				</ul>
 				<div class="cart-control-bottom btn-toolbar">
 					<div class="btn-group pull-right">
-						<a id="go-to-pipeline-btn" href="#" th:href="@{/pipelines}" class="btn btn-primary action" ng-cloak="" th:text="#{cart.btn.run}">Run Pipeline</a>
+						<a id="go-to-pipeline-btn" href="#" th:href="@{/pipelines}" class="btn btn-primary cart-action" ng-cloak="" th:text="#{cart.btn.run}">Run Pipeline</a>
 						<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 							<span class="caret"></span>
   						</button>
@@ -95,7 +95,7 @@
 					</div>
 					
 					<a th:if="${galaxyCallback}" id="go-to-galaxy-export-btn" href="#" ng-click="cartCtrl.exportToGalaxy(); cart.show=false"
-					        class="btn btn-primary pull-right action" th:text="#{cart.btn.export}">Export to Galaxy</a>
+					        class="btn btn-primary pull-right cart-action" th:text="#{cart.btn.export}">Export to Galaxy</a>
 				</div>
 			</section>
 		</aside>
