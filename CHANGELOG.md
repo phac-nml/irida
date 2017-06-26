@@ -4,7 +4,7 @@ Changes
 0.17.0 to 0.18.0
 ----------------
 * [Developer]: Removed old javascript build configuration files.
-* [Developer]: Cleaned up current webpack file.
+* [Developer]: Cleaned up javascript imports (removed all `require` statements).
 
 0.16.0 to 0.17.0
 ----------------
