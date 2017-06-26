@@ -41,6 +41,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -361,40 +362,16 @@ public class ProjectsController {
 	 *
 	 * @param model
 	 *            {@link Model}
-	 * @param name
-	 *            String name of the project
-	 * @param organism
-	 *            Organism name
-	 * @param projectDescription
-	 *            Brief description of the project
-	 * @param remoteURL
-	 *            URL for the project wiki
-	 * @param assemble
-	 *            Enable or disable automated assemblies
-	 * @param sistr
-	 *            Run automated SISTR analyses on newly uploaded samples
+	 * @param project
+	 *            the {@link Project} to create
 	 * @param useCartSamples
 	 *            add all samples in the cart to the project
 	 *
 	 * @return The name of the add users to project page
 	 */
 	@RequestMapping(value = "/projects/new", method = RequestMethod.POST)
-	public String createNewProject(final Model model, @RequestParam(required = false, defaultValue = "") String name,
-			@RequestParam(required = false, defaultValue = "") String organism,
-			@RequestParam(required = false, defaultValue = "") String projectDescription,
-			@RequestParam(required = false, defaultValue = "") String remoteURL,
-			@RequestParam(required = false, defaultValue = "false") boolean assemble,
-			@RequestParam(required = false, defaultValue = "false") boolean sistr,
+	public String createNewProject(final Model model, @ModelAttribute Project project,
 			@RequestParam(required = false, defaultValue = "false") boolean useCartSamples) {
-
-		Project p = new Project(name);
-		p.setOrganism(organism);
-		p.setProjectDescription(projectDescription);
-		p.setRemoteURL(remoteURL);
-		p.setAssembleUploads(assemble);
-		p.setSistrTypingUploads(sistr);
-
-		Project project;
 
 		try {
 			if (useCartSamples) {
@@ -404,13 +381,13 @@ public class ProjectsController {
 					return canModifySample(s);
 				}).map(i -> i.getId())).collect(Collectors.toList());
 
-				project = projectService.createProjectWithSamples(p, sampleIds);
+				project = projectService.createProjectWithSamples(project, sampleIds);
 			} else {
-				project = projectService.create(p);
+				project = projectService.create(project);
 			}
 		} catch (ConstraintViolationException e) {
 			model.addAttribute("errors", getErrorsFromViolationException(e));
-			model.addAttribute("project", p);
+			model.addAttribute("project", project);
 			return getCreateProjectPage(useCartSamples, model);
 		}
 
