@@ -8,9 +8,9 @@
             <th data-data="analysisState" th:text="#{analyses.state}">_State_</th>
             <th data-data="name" style="max-width: 100px;" width="100px" th:text="#{analyses.analysis-name}">_Name_</th>
             <th data-data="workflowId" th:text="#{analyses.type}">_Workflow_</th>
-            <th data-data="submitter.label" th:text="#{analyses.submitter}">_Submitter_</th>
+            <th data-data="submitter.label" data-orderable="false" th:text="#{analyses.submitter}">_Submitter_</th>
             <th data-data="createdDate" width="150px" th:text="#{analysis.date-created}">_Created Date_</th>
-            <th data-data="duration" width="100px" th:text="#{analysis.duration}">_Duration_</th>
+            <th data-data="duration" data-orderable="false" width="100px" th:text="#{analysis.duration}">_Duration_</th>
             <th data-data="buttons"></th>
         </tr>
         </thead>
@@ -47,7 +47,7 @@
                             <input autofocus="autofocus" type="text" id="nameFilter" name="name" class="form-control"/>
                         </div>
                         <div class="form-group">
-                            <label th:text="#{analysis.filter.state}">_Analysis State_</label>
+                            <label for="analysisStateFilter" th:text="#{analysis.filter.state}">_Analysis State_</label>
                             <select id="analysisStateFilter" name="analysisState" class="form-control">
                                 <option value="" th:text="#{analysis.filter.select.all}">_Select_</option>
                                 <option th:each="state : ${states}" th:value="${state}"
@@ -103,14 +103,14 @@
 <th:block th:fragment="scripts">
     <script th:inline="javascript">
       var PAGE = {
-        'URLS': {
-          analyses: /*[[@{${ajaxURL}}]]*/ '',
-          analysis: /*[[@{/analysis/}]]*/ '',
-          'download': /*[[@{/analysis/ajax/download/}]]*/ '/analysis/ajax/download/',
-          'deleteUrl': /*[[@{/analysis/ajax/delete/}]]*/ '/analysis/ajax/delete/'
+        URLS: {
+          analyses: /*[[@{${ajaxURL}}]]*/ "",
+          analysis: /*[[@{/analysis/}]]*/ "",
+          download: /*[[@{/analysis/ajax/download/}]]*/ "",
+          deleteUrl: /*[[@{/analysis/ajax/delete/}]]*/ ""
         },
-        'i18n': {
-          'unexpectedDeleteError': /*[[#{analysis.delete.unexpected.exception}]]*/ 'An unexpected error occurred while deleting your analysis.'
+        i18n: {
+          unexpectedDeleteError: /*[[#{analysis.delete.unexpected.exception}]]*/ ""
         }
       };
     </script>

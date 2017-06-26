@@ -120,10 +120,8 @@ const table = $('#analyses').DataTable({
  */
 function setFilterState(name, state, workflow) {
   table.column(COLUMNS.NAME).search(name);
-
-  table.column(COLUMNS.STATE).search(state);
-
-  table.column(COLUMNS.TYPE).search(workflow).draw();
+  table.column(COLUMNS.ANALYSIS_STATE).search(state);
+  table.column(COLUMNS.WORKFLOW_ID).search(workflow).draw();
 }
 
 // Set up the delete modal
@@ -164,7 +162,7 @@ $('#filterModal')
   .on('shown.bs.modal', () => {
     nameFilter.value = table.column(COLUMNS.NAME).search();
     stateFilter.value = table.column(COLUMNS.STATE).search();
-    workflowFilter.value = table.column(COLUMNS.TYPE).search();
+    workflowFilter.value = table.column(COLUMNS.WORKFLOW_ID).search();
     nameFilter.focus();
   })
   .on('show.bs.modal', function() {
