@@ -6,7 +6,7 @@
     <title th:text="#{analyses.user.page-title}">_Analyses_</title>
 </head>
 <body>
-<div layout:fragment="page">
+<div class="col-md-12" layout:fragment="page">
     <h1 th:text="#{${userList} ? 'analyses.user.page-title' : 'analyses.admin.page-title'}">_Analyses_</h1>
     <th:block th:replace="analyses/analyses-table :: table"/>
 </div>

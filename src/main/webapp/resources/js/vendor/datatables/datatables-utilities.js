@@ -91,10 +91,9 @@ export function createDeleteBtn(data = {}) {
  */
 export function createButtonCell(buttons = []) {
   if (buttons.length) {
-    const wrapper = $(`<div><div 
-            style="min-width: ${30 * buttons.length}px;">
-            <div class="btn-group btn-group-xs pull-right"></div>
-         </div></div>`);
+    const wrapper = $(`<div>
+<div class="btn-group btn-group-xs pull-right" style="display: flex;"></div>
+</div>`);
     const btns = wrapper.find('.btn-group');
     for (const btn of buttons) {
       btns.append(btn);
