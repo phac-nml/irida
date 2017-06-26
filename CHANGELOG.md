@@ -1,6 +1,10 @@
 Changes
 =======
 
+0.17.0 to 0.18.0
+----------------
+* [UI]: Removed phylocanvas context menu from analysis > details page.
+
 0.16.0 to 0.17.0
 ----------------
 * [Developer]: Updated how project samples ajax controller handles datatables column sort functionality.
