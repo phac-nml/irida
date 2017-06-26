@@ -11,5 +11,6 @@ module.exports = {
   'create-metadata-template': './resources/js/pages/projects/metadata-template/create-metadata-template.js',
   'visualizations-phylogenetics': './resources/js/pages/visualizations/phylogenetics/index.js',
   'projects-associated-edit': './resources/js/pages/projects/associated-projects/edit.module.js',
-  'analyses-table': './resources/js/pages/analyses/analyses-table.js'
+  'analyses-table': './resources/js/pages/analyses/analyses-table.js',
+  'clients-list': './resources/js/pages/clients/clients-list.js'
 };

@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.ClientRegistrationException;
@@ -44,4 +47,20 @@ public interface IridaClientDetailsService extends ClientDetailsService, CRUDSer
 	 * @return number of tokens defined for the client.
 	 */
 	public int countActiveTokensForClient(IridaClientDetails client);
+
+	/**
+	 * Get a {@link Page} of {@link ClientDetails} base on a {@link IridaClientDetails}
+	 *
+	 * @param specification
+	 * 		{@link IridaClientDetails} {@link Specification}
+	 * @param page
+	 * 		{@link Integer} current page of table
+	 * @param size
+	 * 		{@link Integer} current length of table page
+	 * @param sort
+	 * 		{@link Sort}
+	 *
+	 * @return {@link Page} of {@link IridaClientDetails}
+	 */
+	public Page<IridaClientDetails> search(Specification<IridaClientDetails> specification, int page, int size, Sort sort);
 }

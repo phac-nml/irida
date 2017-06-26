@@ -28,7 +28,8 @@
     "phylocanvas-plugin-metadata": "^2.0.1",
     "select2": "^4.0.3",
     "select2-bootstrap-theme": "0.1.0-beta.9",
-    "sortablejs": "^1.5.1"
+    "sortablejs": "^1.5.1",
+    "timeago": "^1.5.4"
   },
   "devDependencies": {
     "angular-bootstrap-switch": "^0.5.1",
@@ -55,12 +56,11 @@
     "gulp-notify": "^2.2.0",
     "gulp-sass": "^2.1.1",
     "gulp-sourcemaps": "^1.6.0",
-    "style-loader": "^0.13.2",
-    "timeago": "^1.5.4",
     "node-sass": "^4.5.3",
     "phylocanvas": "^2.8.1",
     "phylocanvas-plugin-export-svg": "^1.0.0",
     "run-sequence": "^1.2.2",
+    "style-loader": "^0.13.2",
     "ui-select": "^0.19.6",
     "webpack-stream": "^3.2.0"
   },

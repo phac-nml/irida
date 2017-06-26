@@ -7,7 +7,7 @@ import {
   createDownloadLink,
   createItemLink,
   dom,
-  formatDateDOM,
+  formatDateFromNowDOM,
   generateColumnOrderInfo,
   getHumanizedDate
 } from './../../vendor/datatables/datatables-utilities';
@@ -73,7 +73,7 @@ const table = $('#analyses').DataTable({
     {
       targets: [COLUMNS.CREATED_DATE],
       render: function(data) {
-        return formatDateDOM({data});
+        return formatDateFromNowDOM({data});
       }
     },
     {

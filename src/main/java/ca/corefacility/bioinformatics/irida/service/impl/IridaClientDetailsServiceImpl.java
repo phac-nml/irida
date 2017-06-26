@@ -7,6 +7,8 @@ import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -53,6 +55,14 @@ public class IridaClientDetailsServiceImpl extends CRUDServiceImpl<Long, IridaCl
 	public Page<IridaClientDetails> search(Specification<IridaClientDetails> specification, int page, int size,
 			Direction order, String... sortProperties) {
 		return super.search(specification, page, size, order, sortProperties);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Page<IridaClientDetails> search(Specification<IridaClientDetails> specification, int page, int size, Sort sort) {
+		return repository.findAll(specification, new PageRequest(page, size, sort));
 	}
 
 	/**
