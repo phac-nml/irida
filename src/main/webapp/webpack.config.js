@@ -3,19 +3,19 @@ let entries = require("./configs/webpack/entries.js");
 
 module.exports = {
   entry: entries,
-  devtool: 'source-maps',
+  devtool: "source-maps",
   module: {
     loaders: [
       {
         test: /.js?$/,
-        loader: 'babel-loader',
+        loader: "babel-loader",
         exclude: /node_modules/,
         query: {
-          presets: ['es2015', 'stage-0']
+          presets: ["es2015", "stage-0"]
         }
       },
       { test: /\.css$/, loader: "style-loader!css-loader" },
-      {test: /\.js$/, loader: 'eslint-loader', exclude: /node_modules/}
+      { test: /\.js$/, loader: "eslint-loader", exclude: /node_modules/ }
     ]
   },
   externals: {
@@ -36,6 +36,6 @@ module.exports = {
     configFile: './.eslintrc.json'
   },
   output: {
-    filename: '[name].bundle.js'
+    filename: "[name].bundle.js"
   }
 };
