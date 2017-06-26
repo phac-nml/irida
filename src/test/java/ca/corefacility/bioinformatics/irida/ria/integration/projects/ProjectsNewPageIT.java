@@ -4,6 +4,8 @@ import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChr
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectsNewPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectMetadataPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
+
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,6 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.*;
+
+import java.util.List;
 
 /**
  * <p>
@@ -33,7 +37,8 @@ public class ProjectsNewPageIT extends AbstractIridaUIITChromeDriver {
 	public void testCreateNewProjectForm() {
 		logger.debug("Testing: CreateNewProjectFrom");
 		page.goToPage();
-		assertEquals("Should have the correct page title", "IRIDA Platform - Create a New Project", driver().getTitle());
+		assertEquals("Should have the correct page title", "IRIDA Platform - Create a New Project",
+				driver().getTitle());
 
 		// Start with just submitting the empty form
 		page.submitForm("", "", "", "");
@@ -69,5 +74,31 @@ public class ProjectsNewPageIT extends AbstractIridaUIITChromeDriver {
 
 		page.setOrganism(ProjectsNewPage.EXISTING_TAXA);
 		assertFalse("warning should not be displayed", page.isNewOrganismWarningDisplayed());
+	}
+
+	@Test
+	public void testProjectFromCart() {
+		// get samples from original project and add to cart
+		ProjectSamplesPage samplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
+		List<String> originalSamples = samplesPage.getSampleNamesOnPage();
+		samplesPage.selectAllSamples();
+		samplesPage.addSelectedSamplesToCart();
+
+		// create project
+		page.goToPageWithCart();
+		page.setName("newProjectWithSamples");
+		page.clickSubmit();
+
+		ProjectMetadataPage metadataPage = new ProjectMetadataPage(driver());
+		assertTrue("Should be on metadata page which has edit buttong", metadataPage.hasEditButton());
+		Long projectId = metadataPage.getProjectId();
+
+		// check if samples match
+		samplesPage = ProjectSamplesPage.gotToPage(driver(), projectId.intValue());
+
+		List<String> sampleNames = samplesPage.getSampleNamesOnPage();
+		assertFalse("Should have samples", sampleNames.isEmpty());
+
+		assertEquals("should have the same samples as the other project", originalSamples, sampleNames);
 	}
 }
