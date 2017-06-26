@@ -82,7 +82,7 @@
                     <div class="form-group">
                             <label class="control-label" th:text="#{projects.create.settings}">_Settings_</label>
 
-                            <div class="col-md-12" th:with="allSamples = ${#lists.size(allowedSamples) + #lists.size(disallowedSamples)}">
+                            <th:block class="col-md-12" th:with="allSamples = ${#lists.size(allowedSamples) + #lists.size(disallowedSamples)}">
                                 <div class="checkbox">
                                     <label for="useCartSamples">
                                         <input type="checkbox" id="useCartSamples" name="useCartSamples" value="true" th:checked="${useCartSamples}" th:disabled="${allSamples} == 0"/>
@@ -99,24 +99,20 @@
                                         </ul>
                                     </p>
                                 </div>
-                            </div>
+                            </th:block>
                             
-                            <div class="col-md-12">
                                 <div class="checkbox">
                                     <label for="assemble">
                                         <input type="checkbox" id="assemble" name="assemble" value="true"/>
                                         <span th:text="#{projects.create.settings.assemble}">_Assemble_</span>
                                     </label>
                                 </div>
-                            </div>
-                            <div class="col-md-12">
                                 <div class="checkbox">
                                     <label for="sistr">
                                         <input type="checkbox" id="sistr" name="sistr" value="true"/>
                                         <span th:text="#{projects.create.settings.sistr}">_SISTR_</span>
                                     </label>
                                 </div>
-                            </div>
                         </div>
                 </div>
                 <div class="panel-footer text-right">
