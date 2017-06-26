@@ -10,5 +10,6 @@ module.exports = {
   'project-linelist': './resources/js/pages/projects/linelist/index.js',
   'create-metadata-template': './resources/js/pages/projects/metadata-template/create-metadata-template.js',
   'visualizations-phylogenetics': './resources/js/pages/visualizations/phylogenetics/index.js',
-  'projects-associated-edit': './resources/js/pages/projects/associated-projects/edit.module.js'
+  'projects-associated-edit': './resources/js/pages/projects/associated-projects/edit.module.js',
+  'analyses-table': './resources/js/pages/analyses/analyses-table.js'
 };
