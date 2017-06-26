@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="remote_apis/_base">
+      layout:decorator="template/page">
 <head>
     <title th:text="#{remoteapi.details.title(${remoteApi.name})}">_REMOTE API PAGE_</title>
 </head>
 <body>
 
-<main layout:fragment="main">
+<main class="col-md-12" layout:fragment="page">
     <div class="row mrgn-tp-lg">
     	<h1 th:text="${remoteApi.name}">_Api Name_</h1>
     	<div class="col-md-6">
