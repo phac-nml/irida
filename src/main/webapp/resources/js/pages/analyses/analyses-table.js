@@ -87,7 +87,7 @@ const table = $('#analyses').DataTable({
       sortable: false,
       render(data, type, full) {
         const buttons = [];
-        if (full.submission.analysisState === 'COMPLETED') {
+        if ((full.submission.analysisState).localeCompare('COMPLETED')) {
           const anchor = createDownloadLink({
             url: `${window.PAGE.URLS.download}${full.id}`,
             title: `${full.name}.zip`
