@@ -122,7 +122,7 @@ public class Project extends IridaResourceSupport
 	private Long genomeSize;
 	
 	@Min(1)
-	@Column(name = "required_coverage", nullable = true)
+	@Column(name = "minimum_coverage", nullable = true)
 	private Integer minimumCoverage;
 	
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
