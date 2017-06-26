@@ -8,17 +8,25 @@
 <body>
 
 <th:block th:fragment="analysis-table">
-    <script th:inline="javascript">
-  		var PAGE = {
-  			"URLS": {
-  				"download": /*[[@{/analysis/ajax/download/}]]*/ "/analysis/ajax/download/",
-  				"deleteUrl": /*[[@{/analysis/ajax/delete/}]]*/ "/analysis/ajax/delete/"
-  			},
-  			"i18n": {
-  				"unexpectedDeleteError": /*[[#{analysis.delete.unexpected.exception}]]*/ "An unexpected error occurred while deleting your analysis."
-  			}
-  		};
-  	</script>
+
+    <table id="analyses" cellspacing="0" width="100%">
+        <thead>
+        <tr>
+            <th dt:property="analysisState" dt:renderFunction="analyses-list#analysesTable.displayProgress" th:text="#{analyses.state}">_State_</th>
+            <th dt:property="name" dt:renderFunction="analyses-list#analysesTable.createLinkButton" th:text="#{analyses.analysis-name}">_Name_</th>
+            <th dt:property="workflowId" th:text="#{analyses.type}">_Workflow_</th>
+            <th dt:property="submitter.label" dt:sortable="false" th:text="#{analyses.submitter}">_Submitter_</th>
+            <th dt:property="createdDate" width="150px" dt:sortType="natural" dt:sortInitDirection="desc"
+                dt:renderFunction="datatables-utils#datatable.formatDate" th:text="#{analysis.date-created}">_Created Date_</th>
+            <th dt:property="duration" dt:sortable="false" dt:renderFunction="analyses-list#analysesTable.getHumanTime" th:text="#{analysis.duration}">_Duration_</th>
+            <th width="50px" dt:sortable="false" dt:renderFunction="analyses-list#analysesTable.downloadLink"></th>
+        </tr>
+        </thead>
+    </table>
+
+    <br/>
+    <hr/>
+    <br/>
     <div ddl:bundle-includes="analyses-list" ddl:asset-css-excludes="jquery.datatables">
         <div dt:conf="analysisTable">
         <div dt:confType="extrajs" dt:bundles="analysis-table" dt:placeholder="before_end_document_ready" />
