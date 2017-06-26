@@ -1,4 +1,5 @@
-let entries = require("./entries.js");
+const path = require("path");
+let entries = require("./configs/webpack/entries.js");
 
 module.exports = {
   entry: entries,
@@ -21,7 +22,18 @@ module.exports = {
     // require('jquery') is external and available
     //  on the global var jQuery
     jquery: "jQuery",
-    angular: "angular"
+    angular: "angular",
+    lodash: "_"
+  },
+  resolve: {
+    alias: {
+      DataTables: path.resolve(__dirname, "resources/js/vendor/datatables/"),
+      plugins: path.resolve(__dirname, "resources/js/vendor/plugins/"),
+      css: path.resolve(__dirname, "resources/css/")
+    }
+  },
+  eslint: {
+    configFile: "./.eslintrc.js"
   },
   output: {
     filename: "[name].bundle.js"

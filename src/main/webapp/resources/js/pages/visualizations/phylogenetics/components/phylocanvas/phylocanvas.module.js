@@ -1,4 +1,4 @@
-const angular = require('angular');
+import angular from 'angular';
 import Phylocanvas from 'phylocanvas';
 import {PhylocanvasComponent} from './phylocanvas.component';
 import {PhylocanvasService} from './phylocanvas.service';

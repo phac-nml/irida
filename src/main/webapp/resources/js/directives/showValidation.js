@@ -1,4 +1,4 @@
-const angular = require('angular');
+import angular from 'angular';
 
 /**
  * Angular Directive to display errors on an input field.
