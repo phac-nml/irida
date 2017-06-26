@@ -172,19 +172,18 @@
         }).select2('val', /*[[${project} ? ${project.getOrganism()} : '']]*/ '');
 
         $("#useCartSamples").change(function(){
-            if($(this).prop('checked')){
-                $("#cartAlert").show(100);
-            }
-            else{
-                $("#cartAlert").hide(100);
-            }
+            showHideCart(100);
         });
 
-        if($("#useCartSamples").prop('checked')){
-            $("#cartAlert").show();
-        }
-        else{
-            $("#cartAlert").hide();
+        showHideCart(0);
+
+        function showHideCart(time) {
+            if($("#useCartSamples").prop('checked')){
+                $("#cartAlert").show(time);
+            }
+            else{
+                $("#cartAlert").hide(time);
+            }
         }
 
         (function() {
