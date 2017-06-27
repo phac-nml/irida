@@ -1,5 +1,6 @@
 import "css/pages/analyses-list.css";
 import "DataTables/datatables";
+import $ from "jquery";
 import {
   activateTooltips,
   createButtonCell,
@@ -7,12 +8,9 @@ import {
   createDownloadLink,
   createItemLink,
   dom,
-  formatDateDOM,
-  generateColumnOrderInfo,
-  getHumanizedDuration
-} from "DataTables/datatables-utilities";
-
-import $ from "jquery";
+  generateColumnOrderInfo
+} from "Utilities/datatables-utilities";
+import {formatDateDOM, getHumanizedDuration} from "Utilities/date-utilities";
 import {deleteAnalysis} from "../analysis/analysis-service";
 
 const COLUMNS = generateColumnOrderInfo();
