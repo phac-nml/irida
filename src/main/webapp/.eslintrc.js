@@ -12,6 +12,6 @@ module.exports = {
         ignoreStrings: true,
         ignoreComments: true
       }
-    ]
+    ],
   }
 };
