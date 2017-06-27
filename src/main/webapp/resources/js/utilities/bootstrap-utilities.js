@@ -12,6 +12,6 @@
 export function addTooltip({dom, placement = "top", title}) {
   dom.dataset.toggle = "tooltip";
   dom.dataset.placement = placement;
-  dom.title = title;
+  dom.title = title || dom.title;
   return dom.outerHTML;
 }
