@@ -1,6 +1,11 @@
 Changes
 =======
 
+0.17.0 to 0.18.0
+----------------
+* [Developer]: Removed old javascript build configuration files.
+* [Developer]: Cleaned up javascript imports (removed all `require` statements).
+
 0.16.0 to 0.17.0
 ----------------
 * [Developer]: Updated how project samples ajax controller handles datatables column sort functionality.

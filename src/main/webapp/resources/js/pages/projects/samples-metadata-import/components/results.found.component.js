@@ -3,10 +3,8 @@
  * @file AngularJS Component for display rows from the metadata file that match
  * Sample names on the server.
  */
-const $ = require('jquery');
-require('datatables.net');
-require('datatables-bootstrap3-plugin');
-require('style!datatables-bootstrap3-plugin/media/css/datatables-bootstrap3.css');
+import $ from 'jquery';
+import 'DataTables/datatables.js';
 import {dom, formatBasicHeaders} from '../../../../utilities/datatables.utilities';
 
 const resultsFoundComponent = {
