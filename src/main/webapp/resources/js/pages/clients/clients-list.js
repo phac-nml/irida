@@ -1,12 +1,7 @@
+import "DataTables/datatables";
 import $ from "jquery";
-import "./../../vendor/datatables/datatables";
-import {
-  activateTooltips,
-  createItemLink,
-  dom,
-  formatDateDOM,
-  generateColumnOrderInfo
-} from "./../../vendor/datatables/datatables-utilities";
+import {activateTooltips, createItemLink, dom, generateColumnOrderInfo} from "Utilities/datatables-utilities";
+import {formatDateDOM} from "Utilities/date-utilities";
 
 const COLUMNS = generateColumnOrderInfo();
 
