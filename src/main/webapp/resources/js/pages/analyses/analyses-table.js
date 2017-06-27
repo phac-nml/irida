@@ -7,6 +7,7 @@ import {
   createDeleteBtn,
   createDownloadLink,
   createItemLink,
+  createRestrictedWidthContent,
   dom,
   generateColumnOrderInfo
 } from "Utilities/datatables-utilities";
@@ -14,6 +15,7 @@ import {formatDateDOM, getHumanizedDuration} from "Utilities/date-utilities";
 import {deleteAnalysis} from "../analysis/analysis-service";
 
 const COLUMNS = generateColumnOrderInfo();
+console.log(COLUMNS);
 
 /**
  * Create the state cell for the table.  This includes both the
@@ -61,7 +63,7 @@ const table = $('#analyses').DataTable({
       }
     },
     {
-      targets: [COLUMNS.NAME],
+      targets: COLUMNS.NAME,
       render(data, type, full) {
         return createItemLink({
           url: `${window.PAGE.URLS.analysis}${full.id}`,
@@ -70,8 +72,14 @@ const table = $('#analyses').DataTable({
       }
     },
     {
+      targets: COLUMNS.WORKFLOW_ID,
+      render(data) {
+        return createRestrictedWidthContent({text: data});
+      }
+    },
+    {
       targets: [COLUMNS.CREATED_DATE],
-      render: function(data) {
+      render(data) {
         return formatDateDOM({data});
       }
     },
@@ -82,8 +90,9 @@ const table = $('#analyses').DataTable({
       }
     },
     {
-      targets: [COLUMNS.BUTTONS],
+      targets: COLUMNS.BUTTONS,
       sortable: false,
+      width: 200,
       render(data, type, full) {
         const buttons = [];
         if ((full.submission.analysisState).localeCompare('COMPLETED') === 0) {
