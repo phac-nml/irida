@@ -29,7 +29,8 @@
     "phylocanvas-plugin-metadata": "^2.0.1",
     "select2": "^4.0.3",
     "select2-bootstrap-theme": "0.1.0-beta.9",
-    "sortablejs": "^1.5.1"
+    "sortablejs": "^1.5.1",
+    "timeago": "^1.5.4"
   },
   "devDependencies": {
     "angular-bootstrap-switch": "^0.5.1",
