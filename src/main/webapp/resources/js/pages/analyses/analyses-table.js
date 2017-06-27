@@ -1,5 +1,6 @@
-import 'css/pages/analyses-list.css';
-import {deleteAnalysis} from '../analysis/analysis-service';
+import "css/pages/analyses-list.css";
+import "DataTables/datatables";
+import $ from "jquery";
 import {
   activateTooltips,
   createButtonCell,
@@ -7,13 +8,11 @@ import {
   createDownloadLink,
   createItemLink,
   dom,
-  formatDateDOM,
-  generateColumnOrderInfo,
-  getHumanizedDate
-} from 'DataTables/datatables-utilities';
+  generateColumnOrderInfo
+} from "Utilities/datatables-utilities";
+import {formatDateDOM, getHumanizedDuration} from "Utilities/date-utilities";
+import {deleteAnalysis} from "../analysis/analysis-service";
 
-import $ from 'jquery';
-import 'DataTables/datatables';
 const COLUMNS = generateColumnOrderInfo();
 
 /**
@@ -79,7 +78,7 @@ const table = $('#analyses').DataTable({
     {
       targets: [COLUMNS.DURATION],
       render(data) {
-        return getHumanizedDate({date: data});
+        return getHumanizedDuration({date: data});
       }
     },
     {
