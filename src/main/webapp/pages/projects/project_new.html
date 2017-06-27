@@ -90,14 +90,11 @@
                                     </label>
                                 </div>
 
-                                <div id="cartAlert" class="alert alert-info" th:if="${allSamples > 0}">
-                                    <p th:text="#{projects.create.settings.cart.allowed(${#lists.size(allowedSamples)})}">_This will add 1 sample(s)_</p>
-                                    <p th:if="${#lists.size(disallowedSamples) > 0}">
-                                        <span th:text="#{projects.create.settings.cart.disallowed}">_The following samples cannot be added_</span>
-                                        <ul>
-                                            <li th:each="sample : ${disallowedSamples}" th:text="${sample.sampleName}">_sample_</li>
-                                        </ul>
-                                    </p>
+                                <div id="cartAlert" class="alert alert-warning" th:if="${#lists.size(disallowedSamples) > 0}">
+                                    <span th:text="#{projects.create.settings.cart.disallowed}">_The following samples cannot be added_</span>
+                                    <ul>
+                                        <li th:each="sample : ${disallowedSamples}" th:text="${sample.sampleName}">_sample_</li>
+                                    </ul>
                                 </div>
                             </th:block>
                             
