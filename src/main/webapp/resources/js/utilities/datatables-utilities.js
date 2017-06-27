@@ -1,6 +1,7 @@
 const $ = require("jquery");
 const _ = require("lodash");
 import {addTooltip} from "./bootstrap-utilities";
+import {createIcon, ICONS} from "./fontawesome-utilities";
 
 /*
 <div class="row">
@@ -44,9 +45,10 @@ export function createDownloadLink({url, title}) {
   anchor.classList.add("btn", "btn-default", "download-btn");
   anchor.download = title;
   anchor.setAttribute("href", url);
-  anchor.innerHTML = `<i class="fa fa-download fa-fw"
-               data-toggle="tooltip" data-placement="top"
-               title="Download"></i>`;
+
+  const icon = createIcon({icon: ICONS.download, fixed: true});
+  addTooltip({dom: icon, title: "Download"});
+  anchor.innerHTML = icon.outerHTML;
   return anchor;
 }
 
@@ -60,9 +62,10 @@ export function createDeleteBtn(data = {}) {
   btn.classList.add("btn", "btn-default", "remove-btn");
   // Add any required data attributes.
   Object.assign(btn.dataset, data);
-  btn.innerHTML = `<i class="fa fa-trash fa-fw" 
-            data-toggle="tooltip" data-placement="top"
-            title="Delete"></i>`;
+
+  const icon = createIcon({icon: ICONS.trash, fixed: true});
+  addTooltip({dom: icon, title: "Delete"});
+  btn.innerHTML = icon.outerHTML;
   return btn;
 }
 
