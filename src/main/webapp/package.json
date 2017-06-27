@@ -19,6 +19,7 @@
     "datatables.net-scroller": "^1.4.2",
     "datatables.net-scroller-bs": "^1.4.2",
     "install": "^0.8.1",
+    "jquery": "^3.2.1",
     "jquery-validation": "^1.16.0",
     "lodash": "^4.15.0",
     "ng-file-upload": "^12.2.12",
@@ -28,8 +29,7 @@
     "phylocanvas-plugin-metadata": "^2.0.1",
     "select2": "^4.0.3",
     "select2-bootstrap-theme": "0.1.0-beta.9",
-    "sortablejs": "^1.5.1",
-    "timeago": "^1.5.4"
+    "sortablejs": "^1.5.1"
   },
   "devDependencies": {
     "angular-bootstrap-switch": "^0.5.1",
@@ -56,9 +56,11 @@
     "gulp-notify": "^2.2.0",
     "gulp-sass": "^2.1.1",
     "gulp-sourcemaps": "^1.6.0",
+    "style-loader": "^0.13.2",
     "node-sass": "^4.5.3",
     "phylocanvas": "^2.8.1",
     "phylocanvas-plugin-export-svg": "^1.0.0",
+    "prettier": "^1.4.4",
     "run-sequence": "^1.2.2",
     "style-loader": "^0.13.2",
     "ui-select": "^0.19.6",

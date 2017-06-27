@@ -1,20 +1,21 @@
-import './../../../css/pages/analyses-list.css';
-import {deleteAnalysis} from '../analysis/analysis-service';
+import "css/pages/analyses-list.css";
+import "DataTables/datatables";
+import $ from "jquery";
 import {
   activateTooltips,
   createButtonCell,
   createDeleteBtn,
   createDownloadLink,
   createItemLink,
+  createRestrictedWidthContent,
   dom,
-  formatDateFromNowDOM,
-  generateColumnOrderInfo,
-  getHumanizedDate
-} from './../../vendor/datatables/datatables-utilities';
+  generateColumnOrderInfo
+} from "Utilities/datatables-utilities";
+import {formatDateDOM, getHumanizedDuration} from "Utilities/date-utilities";
+import {deleteAnalysis} from "../analysis/analysis-service";
 
-import $ from 'jquery';
-import './../../vendor/datatables/datatables';
 const COLUMNS = generateColumnOrderInfo();
+console.log(COLUMNS);
 
 /**
  * Create the state cell for the table.  This includes both the
@@ -62,7 +63,7 @@ const table = $('#analyses').DataTable({
       }
     },
     {
-      targets: [COLUMNS.NAME],
+      targets: COLUMNS.NAME,
       render(data, type, full) {
         return createItemLink({
           url: `${window.PAGE.URLS.analysis}${full.id}`,
@@ -71,20 +72,27 @@ const table = $('#analyses').DataTable({
       }
     },
     {
+      targets: COLUMNS.WORKFLOW_ID,
+      render(data) {
+        return createRestrictedWidthContent({text: data});
+      }
+    },
+    {
       targets: [COLUMNS.CREATED_DATE],
-      render: function(data) {
-        return formatDateFromNowDOM({data});
+      render(data) {
+        return formatDateDOM({data});
       }
     },
     {
       targets: [COLUMNS.DURATION],
       render(data) {
-        return getHumanizedDate({date: data});
+        return getHumanizedDuration({date: data});
       }
     },
     {
-      targets: [COLUMNS.BUTTONS],
+      targets: COLUMNS.BUTTONS,
       sortable: false,
+      width: 200,
       render(data, type, full) {
         const buttons = [];
         if ((full.submission.analysisState).localeCompare('COMPLETED') === 0) {

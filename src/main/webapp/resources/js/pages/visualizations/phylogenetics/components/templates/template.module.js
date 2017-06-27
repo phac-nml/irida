@@ -1,4 +1,4 @@
-const angular = require('angular');
+import angular from 'angular';
 import {TemplateComponent} from './template.comonent';
 import {TemplateService} from './template.service';
 

@@ -1,8 +1,6 @@
-const $ = require('jquery');
-const angular = require('angular');
-require('select2');
-require('style!select2/dist/css/select2.min.css');
-require('style!select2-bootstrap-theme/dist/select2-bootstrap.min.css');
+import $ from 'jquery';
+import angular from 'angular';
+import 'plugins/jquery/select2.js';
 
 /*
  * Turns a pre-populated select input into a select2.
