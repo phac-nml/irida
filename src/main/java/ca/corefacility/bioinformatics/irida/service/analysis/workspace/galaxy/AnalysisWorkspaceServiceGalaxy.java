@@ -345,8 +345,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 			throws IridaWorkflowAnalysisLabelException {
 		String labelPrefix = "";
 
-		if (iridaWorkflow.getWorkflowDescription().acceptsSingleSequenceFiles()
-				&& analysisSubmission.getPairedInputFiles().size() == 1) {
+		if (iridaWorkflow.getWorkflowDescription().getInputs().requiresSingleSample()) {
 			Set<Sample> samples = Sets.newHashSet();
 			samples.addAll(sequencingObjectService
 					.getUniqueSamplesForSequencingObjects(analysisSubmission.getInputFilesSingleEnd()).keySet());
