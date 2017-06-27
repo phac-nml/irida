@@ -63,7 +63,7 @@ public class ProjectsNewPageIT extends AbstractIridaUIITChromeDriver {
 		page.clickSubmit();
 
 		ProjectMetadataPage metadataPage = new ProjectMetadataPage(driver());
-		assertTrue("Should be on metadata page which has edit buttong", metadataPage.hasEditButton());
+		assertTrue("Should be on metadata page which has edit button", metadataPage.hasEditButton());
 	}
 
 	@Test
