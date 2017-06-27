@@ -9,7 +9,7 @@ var browserSync = require('browser-sync').create();
 
 // WEBPACK
 let webpack = require('webpack-stream');
-let webpackDevConfig = require('./configs/webpack/webpack.dev.config.js');
+let webpackDevConfig = require('./webpack.config.js');
 
 var scss = {
 	files : "./styles/**/*.scss",

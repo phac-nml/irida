@@ -1,15 +1,11 @@
-const angular = require('angular');
-require('datatables.net');
-const datatables = require('angular-datatables');
-const datatablesScroller = require('angular-datatables/dist/plugins/scroller/angular-datatables.scroller.min.js');
-const datatablesColReorder = require('angular-datatables/dist/plugins/colreorder/angular-datatables.colreorder.min.js');
+import angular from 'angular';
+import 'DataTables/datatables.js';
+import 'DataTables/datatables-scroller.js';
+import 'DataTables/datatables-colreorder.js';
 
-require('datatables-bootstrap3-plugin');
-require('datatables.net-scroller');
-require('datatables.net-colreorder');
-require('style!datatables-bootstrap3-plugin/media/css/datatables-bootstrap3.css');
-require('style!datatables.net-scroller-bs/css/scroller.bootstrap.css');
-require('style!datatables.net-colreorder-bs/css/colReorder.bootstrap.css');
+import datatables from 'angular-datatables';
+import datatablesScroller from 'angular-datatables/dist/plugins/scroller/angular-datatables.scroller.min.js';
+import datatablesColReorder from 'angular-datatables/dist/plugins/colreorder/angular-datatables.colreorder.min.js';
 
 import {LinelistService} from '../../services/linelist.service';
 import {TableComponent} from './linelist-table.component';

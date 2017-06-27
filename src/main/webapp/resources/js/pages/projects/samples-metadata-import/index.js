@@ -1,4 +1,4 @@
-const angular = require('angular');
+import angular from 'angular';
 import uiRouter from 'angular-ui-router';
 import ngFileUpload from 'ng-file-upload';
 import {states} from './router.config';
