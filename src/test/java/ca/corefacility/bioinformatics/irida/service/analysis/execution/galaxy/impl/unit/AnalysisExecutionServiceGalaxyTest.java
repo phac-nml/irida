@@ -30,6 +30,7 @@ import com.google.common.collect.Sets;
 import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisLabelException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
@@ -121,10 +122,11 @@ public class AnalysisExecutionServiceGalaxyTest {
 	 * @throws ExecutionManagerException
 	 * @throws NoSuchValueException
 	 * @throws IridaWorkflowAnalysisTypeException 
+	 * @throws IridaWorkflowAnalysisLabelException 
 	 */
 	@Before
 	public void setup() throws IridaWorkflowNotFoundException, IOException, ExecutionManagerException,
-			NoSuchValueException, IridaWorkflowAnalysisTypeException, AnalysisAlreadySetException {
+			NoSuchValueException, IridaWorkflowAnalysisTypeException, AnalysisAlreadySetException, IridaWorkflowAnalysisLabelException {
 		MockitoAnnotations.initMocks(this);
 
 		String submissionName = "name";
@@ -466,10 +468,11 @@ public class AnalysisExecutionServiceGalaxyTest {
 	 * @throws ExecutionException
 	 * @throws InterruptedException
 	 * @throws IridaWorkflowAnalysisTypeException 
+	 * @throws IridaWorkflowAnalysisLabelException 
 	 */
 	@Test
 	public void testTransferAnalysisResultsSuccess() throws ExecutionManagerException, IOException,
-			IridaWorkflowNotFoundException, InterruptedException, ExecutionException, IridaWorkflowAnalysisTypeException {
+			IridaWorkflowNotFoundException, InterruptedException, ExecutionException, IridaWorkflowAnalysisTypeException, IridaWorkflowAnalysisLabelException {
 		when(analysisSubmissionService.exists(INTERNAL_ANALYSIS_ID)).thenReturn(true);
 		when(analysisSubmissionService.update(analysisFinishedRunning)).thenReturn(analysisCompleting);
 		when(analysisSubmissionService.update(analysisCompleting)).thenReturn(analysisCompleted);
@@ -493,10 +496,11 @@ public class AnalysisExecutionServiceGalaxyTest {
 	 * @throws ExecutionException
 	 * @throws InterruptedException
 	 * @throws IridaWorkflowAnalysisTypeException 
+	 * @throws IridaWorkflowAnalysisLabelException 
 	 */
 	@Test(expected = ExecutionManagerException.class)
 	public void testTransferAnalysisResultsFail() throws ExecutionManagerException, IOException,
-			IridaWorkflowNotFoundException, InterruptedException, ExecutionException, IridaWorkflowAnalysisTypeException {
+			IridaWorkflowNotFoundException, InterruptedException, ExecutionException, IridaWorkflowAnalysisTypeException, IridaWorkflowAnalysisLabelException {
 		when(analysisSubmissionService.exists(INTERNAL_ANALYSIS_ID)).thenReturn(true);
 		when(analysisWorkspaceService.getAnalysisResults(analysisCompleting)).thenThrow(
 				new ExecutionManagerException());
@@ -518,10 +522,11 @@ public class AnalysisExecutionServiceGalaxyTest {
 	 * @throws ExecutionException
 	 * @throws InterruptedException
 	 * @throws IridaWorkflowAnalysisTypeException 
+	 * @throws IridaWorkflowAnalysisLabelException 
 	 */
 	@Test(expected = NullPointerException.class)
 	public void testTransferAnalysisResultsFailNotSubmittedNullId() throws ExecutionManagerException, IOException,
-			IridaWorkflowNotFoundException, InterruptedException, ExecutionException, IridaWorkflowAnalysisTypeException {
+			IridaWorkflowNotFoundException, InterruptedException, ExecutionException, IridaWorkflowAnalysisTypeException, IridaWorkflowAnalysisLabelException {
 		when(analysisSubmissionService.exists(INTERNAL_ANALYSIS_ID)).thenReturn(true);
 		analysisCompleting.setRemoteAnalysisId(null);
 
@@ -537,10 +542,11 @@ public class AnalysisExecutionServiceGalaxyTest {
 	 * @throws IOException
 	 * @throws IridaWorkflowNotFoundException
 	 * @throws IridaWorkflowAnalysisTypeException
+	 * @throws IridaWorkflowAnalysisLabelException 
 	 */
 	@Test(expected = EntityNotFoundException.class)
 	public void testTransferAnalysisResultsFailAnalysisIdInvalid() throws ExecutionManagerException, IOException,
-			IridaWorkflowNotFoundException, IridaWorkflowAnalysisTypeException {
+			IridaWorkflowNotFoundException, IridaWorkflowAnalysisTypeException, IridaWorkflowAnalysisLabelException {
 		analysisSubmission.setRemoteAnalysisId(ANALYSIS_ID);
 		analysisSubmission.setAnalysisState(AnalysisState.FINISHED_RUNNING);
 		when(analysisSubmissionService.exists(INTERNAL_ANALYSIS_ID)).thenReturn(false);

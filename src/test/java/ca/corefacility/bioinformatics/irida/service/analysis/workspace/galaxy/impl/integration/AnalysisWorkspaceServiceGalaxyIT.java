@@ -58,6 +58,7 @@ import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisLabelException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
@@ -816,12 +817,13 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 * @throws IOException
 	 * @throws IridaWorkflowAnalysisTypeException
 	 * @throws TimeoutException
+	 * @throws IridaWorkflowAnalysisLabelException 
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testGetAnalysisResultsTestAnalysisSingleSuccess() throws InterruptedException,
 			ExecutionManagerException, IridaWorkflowNotFoundException, IOException, IridaWorkflowAnalysisTypeException,
-			TimeoutException {
+			TimeoutException, IridaWorkflowAnalysisLabelException {
 
 		History history = new History();
 		history.setName("testGetAnalysisResultsTestAnalysisSingleSuccess");
@@ -876,12 +878,13 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 * @throws IOException
 	 * @throws IridaWorkflowAnalysisTypeException
 	 * @throws TimeoutException
+	 * @throws IridaWorkflowAnalysisLabelException 
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testGetAnalysisResultsTestAnalysisPairedSuccess() throws InterruptedException,
 			ExecutionManagerException, IridaWorkflowNotFoundException, IOException, IridaWorkflowAnalysisTypeException,
-			TimeoutException {
+			TimeoutException, IridaWorkflowAnalysisLabelException {
 
 		History history = new History();
 		history.setName("testGetAnalysisResultsTestAnalysisPairedSuccess");
@@ -943,12 +946,13 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 * @throws IOException
 	 * @throws IridaWorkflowAnalysisTypeException
 	 * @throws TimeoutException
+	 * @throws IridaWorkflowAnalysisLabelException 
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testGetAnalysisResultsTestAnalysisSinglePairedSuccess() throws InterruptedException,
 			ExecutionManagerException, IridaWorkflowNotFoundException, IOException, IridaWorkflowAnalysisTypeException,
-			TimeoutException {
+			TimeoutException, IridaWorkflowAnalysisLabelException {
 
 		History history = new History();
 		history.setName("testGetAnalysisResultsTestAnalysisSinglePairedSuccess");
@@ -1012,11 +1016,12 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 * @throws IOException
 	 * @throws IridaWorkflowAnalysisTypeException
 	 * @throws TimeoutException
+	 * @throws IridaWorkflowAnalysisLabelException 
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testGetAnalysisResultsPhylogenomicsSuccess() throws InterruptedException, ExecutionManagerException,
-			IridaWorkflowNotFoundException, IOException, IridaWorkflowAnalysisTypeException, TimeoutException {
+			IridaWorkflowNotFoundException, IOException, IridaWorkflowAnalysisTypeException, TimeoutException, IridaWorkflowAnalysisLabelException {
 
 		History history = new History();
 		history.setName("testGetAnalysisResultsPhylogenomicsSuccess");
@@ -1068,11 +1073,12 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 * @throws IOException
 	 * @throws IridaWorkflowAnalysisTypeException
 	 * @throws TimeoutException
+	 * @throws IridaWorkflowAnalysisLabelException 
 	 */
 	@Test(expected = GalaxyDatasetNotFoundException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testGetAnalysisResultsTestAnalysisFail() throws InterruptedException, ExecutionManagerException,
-			IridaWorkflowNotFoundException, IOException, IridaWorkflowAnalysisTypeException, TimeoutException {
+			IridaWorkflowNotFoundException, IOException, IridaWorkflowAnalysisTypeException, TimeoutException, IridaWorkflowAnalysisLabelException {
 
 		History history = new History();
 		history.setName("testGetAnalysisResultsTestAnalysisFail");

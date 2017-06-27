@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisLabelException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
@@ -178,11 +179,14 @@ public class AnalysisExecutionServiceGalaxyAsync {
 	 *             execution manager.
 	 * @throws IridaWorkflowAnalysisTypeException
 	 *             If there was an issue building an {@link Analysis} object.
+	 * @throws IridaWorkflowAnalysisLabelException
+	 *             If there was an issue defining a label for analysis output
+	 *             files.
 	 */
 	@Transactional
 	public Future<AnalysisSubmission> transferAnalysisResults(AnalysisSubmission submittedAnalysis)
 			throws ExecutionManagerException, IOException, IridaWorkflowNotFoundException,
-			IridaWorkflowAnalysisTypeException {
+			IridaWorkflowAnalysisTypeException, IridaWorkflowAnalysisLabelException {
 		checkNotNull(submittedAnalysis, "submittedAnalysis is null");
 		checkNotNull(submittedAnalysis.getRemoteAnalysisId(), "remoteAnalysisId is null");
 		if (!analysisSubmissionService.exists(submittedAnalysis.getId())) {
@@ -196,13 +200,12 @@ public class AnalysisExecutionServiceGalaxyAsync {
 		Analysis savedAnalysis = analysisService.create(analysisResults);
 
 		submittedAnalysis.setAnalysisState(AnalysisState.COMPLETED);
-		try{
+		try {
 			submittedAnalysis.setAnalysis(savedAnalysis);
-		}
-		catch(AnalysisAlreadySetException e){
+		} catch (AnalysisAlreadySetException e) {
 			throw new ExecutionManagerException("Analysis already set", e);
 		}
-		
+
 		AnalysisSubmission completedSubmission = analysisSubmissionService.update(submittedAnalysis);
 
 		return new AsyncResult<>(completedSubmission);

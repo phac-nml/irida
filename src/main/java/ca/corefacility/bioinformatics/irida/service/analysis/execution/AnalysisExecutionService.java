@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.concurrent.Future;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisLabelException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
@@ -84,10 +85,13 @@ public interface AnalysisExecutionService {
 	 *             execution manager.
 	 * @throws IridaWorkflowAnalysisTypeException
 	 *             If there was an issue building an {@link Analysis} object.
+	 * @throws IridaWorkflowAnalysisLabelException
+	 *             If there was an issue defining a label for analysis output
+	 *             files.
 	 */
 	public Future<AnalysisSubmission> transferAnalysisResults(AnalysisSubmission submittedAnalysis)
 			throws ExecutionManagerException, IridaWorkflowNotFoundException, IOException,
-			IridaWorkflowAnalysisTypeException;
+			IridaWorkflowAnalysisTypeException, IridaWorkflowAnalysisLabelException;
 
 	/**
 	 * Cleans up any intermediate files in the execution manager for this

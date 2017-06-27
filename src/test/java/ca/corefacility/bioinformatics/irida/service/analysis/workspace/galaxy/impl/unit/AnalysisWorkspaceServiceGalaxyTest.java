@@ -26,6 +26,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisLabelException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
@@ -135,9 +136,9 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	private SequenceFile sFileB;
 	private SequenceFile sFileC;
 	
-	SingleEndSequenceFile sObjA;
-	SingleEndSequenceFile sObjB;
-	SingleEndSequenceFile sObjC;
+	private SingleEndSequenceFile sObjA;
+	private SingleEndSequenceFile sObjB;
+	private SingleEndSequenceFile sObjC;
 
 	private Dataset output1Dataset;
 	private Dataset output2Dataset;
@@ -154,12 +155,13 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	private Map<Sample, SequenceFilePair> sampleSequenceFilePairMap;
 	private Map<Sample, SequenceFilePair> sampleSequenceFilePairMapSampleA;
 	private SequenceFilePair sequenceFilePair;
-	SingleEndSequenceFile singleEndSequenceFile;
+	private SingleEndSequenceFile singleEndSequenceFile;
 
 	private CollectionResponse collectionResponseSingle;
 	private CollectionResponse collectionResponsePaired;
 	
 	private Set<SingleEndSequenceFile> singleInputFiles;
+	private Set<SequenceFilePair> pairedInputFiles;
 
 	/**
 	 * Sets up variables for testing.
@@ -235,7 +237,8 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		collectionResponsePaired = new CollectionResponse();
 		collectionResponsePaired.setId(COLLECTION_PAIRED_ID);
 		
-		singleInputFiles = Sets.newHashSet(new SingleEndSequenceFile(new SequenceFile()));
+		singleInputFiles = Sets.newHashSet(singleEndSequenceFile);
+		pairedInputFiles = Sets.newHashSet(sequenceFilePair);
 	}
 
 	private Path createTempFile(String prefix, String suffix) throws IOException {
@@ -719,16 +722,17 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	}
 
 	/**
-	 * Tests successfully getting analysis results from Galaxy.
+	 * Tests successfully getting analysis results from Galaxy with single end input files.
 	 * 
 	 * @throws IridaWorkflowNotFoundException
 	 * @throws IOException
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowAnalysisTypeException
+	 * @throws IridaWorkflowAnalysisLabelException
 	 */
 	@Test
-	public void testGetAnalysisResultsSuccess() throws IridaWorkflowNotFoundException,
-			IridaWorkflowAnalysisTypeException, ExecutionManagerException, IOException {
+	public void testGetAnalysisResultsSuccessSingleEnd() throws IridaWorkflowNotFoundException,
+			IridaWorkflowAnalysisTypeException, ExecutionManagerException, IOException, IridaWorkflowAnalysisLabelException {
 		submission = AnalysisSubmission.builder(workflowId)
 				.name("my analysis")
 				.inputFilesSingleEnd(singleInputFiles)
@@ -740,6 +744,11 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		when(iridaWorkflowsService.getIridaWorkflow(workflowId)).thenReturn(iridaWorkflowSingle);
 		when(galaxyHistoriesService.getDatasetForFileInHistory(output1Filename, HISTORY_ID)).thenReturn(output1Dataset);
 		when(galaxyHistoriesService.getDatasetForFileInHistory(output2Filename, HISTORY_ID)).thenReturn(output2Dataset);
+		
+		when(sequencingObjectService.getUniqueSamplesForSequencingObjects(submission.getInputFilesSingleEnd())).thenReturn(
+				sampleSingleSequenceFileMap);
+		when(sequencingObjectService.getUniqueSamplesForSequencingObjects(submission.getPairedInputFiles())).thenReturn(
+				ImmutableMap.of());
 
 		Analysis analysis = workflowPreparation.getAnalysisResults(submission);
 
@@ -747,11 +756,169 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		assertEquals("invalid number of output files", 2, analysis.getAnalysisOutputFiles().size());
 		assertEquals("missing output file for analysis", Paths.get("output1.txt"),
 				analysis.getAnalysisOutputFile("output1").getFile().getFileName());
-		assertEquals("missing output file for analysis", Paths.get("output2.txt"),
-				analysis.getAnalysisOutputFile("output2").getFile().getFileName());
+		assertEquals("missing label for analysis output file", "SampleA-output1.txt",
+				analysis.getAnalysisOutputFile("output1").getLabel());
+		assertEquals("missing output file for analysis", "SampleA-output2.txt",
+				analysis.getAnalysisOutputFile("output2").getLabel());
 
 		verify(galaxyHistoriesService).getDatasetForFileInHistory("output1.txt", HISTORY_ID);
 		verify(galaxyHistoriesService).getDatasetForFileInHistory("output2.txt", HISTORY_ID);
+	}
+	
+	/**
+	 * Tests successfully getting analysis results from Galaxy with paired end input files.
+	 * 
+	 * @throws IridaWorkflowNotFoundException
+	 * @throws IOException
+	 * @throws ExecutionManagerException
+	 * @throws IridaWorkflowAnalysisTypeException
+	 * @throws IridaWorkflowAnalysisLabelException
+	 */
+	@Test
+	public void testGetAnalysisResultsSuccessPairedEnd() throws IridaWorkflowNotFoundException,
+			IridaWorkflowAnalysisTypeException, ExecutionManagerException, IOException, IridaWorkflowAnalysisLabelException {
+		submission = AnalysisSubmission.builder(workflowId)
+				.name("my analysis")
+				.inputFilesPaired(pairedInputFiles)
+				.referenceFile(referenceFile)
+				.build();
+		submission.setRemoteWorkflowId(WORKFLOW_ID);
+		submission.setRemoteAnalysisId(HISTORY_ID);
+
+		when(iridaWorkflowsService.getIridaWorkflow(workflowId)).thenReturn(iridaWorkflowSingle);
+		when(galaxyHistoriesService.getDatasetForFileInHistory(output1Filename, HISTORY_ID)).thenReturn(output1Dataset);
+		when(galaxyHistoriesService.getDatasetForFileInHistory(output2Filename, HISTORY_ID)).thenReturn(output2Dataset);
+		
+		when(sequencingObjectService.getUniqueSamplesForSequencingObjects(submission.getInputFilesSingleEnd())).thenReturn(
+				ImmutableMap.of());
+		when(sequencingObjectService.getUniqueSamplesForSequencingObjects(submission.getPairedInputFiles())).thenReturn(
+				sampleSequenceFilePairMap);
+
+		Analysis analysis = workflowPreparation.getAnalysisResults(submission);
+
+		assertNotNull("analysis is not valid", analysis);
+		assertEquals("invalid number of output files", 2, analysis.getAnalysisOutputFiles().size());
+		assertEquals("missing output file for analysis", Paths.get("output1.txt"),
+				analysis.getAnalysisOutputFile("output1").getFile().getFileName());
+		assertEquals("missing label for analysis output file", "SampleB-output1.txt",
+				analysis.getAnalysisOutputFile("output1").getLabel());
+		assertEquals("missing output file for analysis", "SampleB-output2.txt",
+				analysis.getAnalysisOutputFile("output2").getLabel());
+
+		verify(galaxyHistoriesService).getDatasetForFileInHistory("output1.txt", HISTORY_ID);
+		verify(galaxyHistoriesService).getDatasetForFileInHistory("output2.txt", HISTORY_ID);
+	}
+	
+	/**
+	 * Tests successfully getting analysis results from Galaxy with single/paired end input files.
+	 * 
+	 * @throws IridaWorkflowNotFoundException
+	 * @throws IOException
+	 * @throws ExecutionManagerException
+	 * @throws IridaWorkflowAnalysisTypeException
+	 * @throws IridaWorkflowAnalysisLabelException
+	 */
+	@Test
+	public void testGetAnalysisResultsSuccessSinglePairedEnd() throws IridaWorkflowNotFoundException,
+			IridaWorkflowAnalysisTypeException, ExecutionManagerException, IOException, IridaWorkflowAnalysisLabelException {
+		submission = AnalysisSubmission.builder(workflowId)
+				.name("my analysis")
+				.inputFilesSingleEnd(singleInputFiles)
+				.inputFilesPaired(pairedInputFiles)
+				.referenceFile(referenceFile)
+				.build();
+		submission.setRemoteWorkflowId(WORKFLOW_ID);
+		submission.setRemoteAnalysisId(HISTORY_ID);
+
+		when(iridaWorkflowsService.getIridaWorkflow(workflowId)).thenReturn(iridaWorkflowSingle);
+		when(galaxyHistoriesService.getDatasetForFileInHistory(output1Filename, HISTORY_ID)).thenReturn(output1Dataset);
+		when(galaxyHistoriesService.getDatasetForFileInHistory(output2Filename, HISTORY_ID)).thenReturn(output2Dataset);
+		
+		when(sequencingObjectService.getUniqueSamplesForSequencingObjects(submission.getInputFilesSingleEnd())).thenReturn(
+				sampleSingleSequenceFileMap);
+		when(sequencingObjectService.getUniqueSamplesForSequencingObjects(submission.getPairedInputFiles())).thenReturn(
+				sampleSequenceFilePairMap);
+
+		Analysis analysis = workflowPreparation.getAnalysisResults(submission);
+
+		assertNotNull("analysis is not valid", analysis);
+		assertEquals("invalid number of output files", 2, analysis.getAnalysisOutputFiles().size());
+		assertEquals("missing output file for analysis", Paths.get("output1.txt"),
+				analysis.getAnalysisOutputFile("output1").getFile().getFileName());
+		
+		// labels should now not have sample associated with them.
+		assertEquals("missing label for analysis output file", "output1.txt",
+				analysis.getAnalysisOutputFile("output1").getLabel());
+		assertEquals("missing output file for analysis", "output2.txt",
+				analysis.getAnalysisOutputFile("output2").getLabel());
+
+		verify(galaxyHistoriesService).getDatasetForFileInHistory("output1.txt", HISTORY_ID);
+		verify(galaxyHistoriesService).getDatasetForFileInHistory("output2.txt", HISTORY_ID);
+	}
+	
+	/**
+	 * Tests failing to get analysis results from Galaxy where there's single/paired end input files associated with submission
+	 * (even though it wasn't set up that way).
+	 * 
+	 * @throws IridaWorkflowNotFoundException
+	 * @throws IOException
+	 * @throws ExecutionManagerException
+	 * @throws IridaWorkflowAnalysisTypeException
+	 * @throws IridaWorkflowAnalysisLabelException
+	 */
+	@Test(expected=IridaWorkflowAnalysisLabelException.class)
+	public void testGetAnalysisResultsFailSinglePairedEnd() throws IridaWorkflowNotFoundException,
+			IridaWorkflowAnalysisTypeException, ExecutionManagerException, IOException, IridaWorkflowAnalysisLabelException {
+		submission = AnalysisSubmission.builder(workflowId)
+				.name("my analysis")
+				.inputFilesPaired(pairedInputFiles)
+				.referenceFile(referenceFile)
+				.build();
+		submission.setRemoteWorkflowId(WORKFLOW_ID);
+		submission.setRemoteAnalysisId(HISTORY_ID);
+
+		when(iridaWorkflowsService.getIridaWorkflow(workflowId)).thenReturn(iridaWorkflowSingle);
+		when(galaxyHistoriesService.getDatasetForFileInHistory(output1Filename, HISTORY_ID)).thenReturn(output1Dataset);
+		when(galaxyHistoriesService.getDatasetForFileInHistory(output2Filename, HISTORY_ID)).thenReturn(output2Dataset);
+		
+		when(sequencingObjectService.getUniqueSamplesForSequencingObjects(submission.getInputFilesSingleEnd())).thenReturn(
+				sampleSingleSequenceFileMap);
+		when(sequencingObjectService.getUniqueSamplesForSequencingObjects(submission.getPairedInputFiles())).thenReturn(
+				sampleSequenceFilePairMap);
+
+		workflowPreparation.getAnalysisResults(submission);
+	}
+	
+	/**
+	 * Tests failing to get analysis results from Galaxy where there's no sample associated with the sequence files.
+	 * 
+	 * @throws IridaWorkflowNotFoundException
+	 * @throws IOException
+	 * @throws ExecutionManagerException
+	 * @throws IridaWorkflowAnalysisTypeException
+	 * @throws IridaWorkflowAnalysisLabelException
+	 */
+	@Test(expected=IridaWorkflowAnalysisLabelException.class)
+	public void testGetAnalysisResultsFailNoSample() throws IridaWorkflowNotFoundException,
+			IridaWorkflowAnalysisTypeException, ExecutionManagerException, IOException, IridaWorkflowAnalysisLabelException {
+		submission = AnalysisSubmission.builder(workflowId)
+				.name("my analysis")
+				.inputFilesPaired(pairedInputFiles)
+				.referenceFile(referenceFile)
+				.build();
+		submission.setRemoteWorkflowId(WORKFLOW_ID);
+		submission.setRemoteAnalysisId(HISTORY_ID);
+
+		when(iridaWorkflowsService.getIridaWorkflow(workflowId)).thenReturn(iridaWorkflowSingle);
+		when(galaxyHistoriesService.getDatasetForFileInHistory(output1Filename, HISTORY_ID)).thenReturn(output1Dataset);
+		when(galaxyHistoriesService.getDatasetForFileInHistory(output2Filename, HISTORY_ID)).thenReturn(output2Dataset);
+		
+		when(sequencingObjectService.getUniqueSamplesForSequencingObjects(submission.getInputFilesSingleEnd())).thenReturn(
+				ImmutableMap.of());
+		when(sequencingObjectService.getUniqueSamplesForSequencingObjects(submission.getPairedInputFiles())).thenReturn(
+				ImmutableMap.of());
+
+		workflowPreparation.getAnalysisResults(submission);
 	}
 
 	/**
@@ -762,10 +929,11 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	 * @throws IOException
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowAnalysisTypeException
+	 * @throws IridaWorkflowAnalysisLabelException
 	 */
 	@Test(expected = GalaxyDatasetException.class)
 	public void testGetAnalysisResultsFail() throws IridaWorkflowNotFoundException, IridaWorkflowAnalysisTypeException,
-			ExecutionManagerException, IOException {
+			ExecutionManagerException, IOException, IridaWorkflowAnalysisLabelException {
 		submission = AnalysisSubmission.builder(workflowId)
 				.name("my analysis")
 				.inputFilesSingleEnd(singleInputFiles)

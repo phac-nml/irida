@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.AsyncResult;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisLabelException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
@@ -171,24 +172,24 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	 */
 	@Override
 	public Set<Future<AnalysisSubmission>> transferAnalysesResults() {
-		synchronized(transferAnalysesResultsLock) {
+		synchronized (transferAnalysesResultsLock) {
 			logger.trace("Running transferAnalysesResults");
-			
+
 			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
 					.findByAnalysisState(AnalysisState.FINISHED_RUNNING);
-	
+
 			Set<Future<AnalysisSubmission>> submissions = Sets.newHashSet();
-	
+
 			for (AnalysisSubmission analysisSubmission : analysisSubmissions) {
 				logger.debug("Transferring results for " + analysisSubmission);
-	
+
 				try {
 					submissions.add(analysisExecutionService.transferAnalysisResults(analysisSubmission));
-				} catch (ExecutionManagerException | IridaWorkflowNotFoundException | IOException | IridaWorkflowAnalysisTypeException e) {
+				} catch (ExecutionManagerException | IOException | IridaWorkflowException e) {
 					logger.error("Error transferring submission " + analysisSubmission, e);
 				}
 			}
-	
+
 			return submissions;
 		}
 	}
