@@ -1,4 +1,4 @@
-const angular = require('angular');
+import angular from 'angular';
 import metadataPlugin from 'phylocanvas-plugin-metadata';
 import exportSVgPlugin from 'phylocanvas-plugin-export-svg';
 import {METADATA, TREE} from './../../constants';
