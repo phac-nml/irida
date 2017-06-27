@@ -1,34 +1,31 @@
-/* eslint new-cap: ["error", { "capIsNewExceptions": ["DataTable"] }]*/
-const $ = require('jquery');
-const moment = require('moment');
-require('timeago');
-require('./../../vendor/datatables/datatables');
-require('./../../vendor/datatables/datatables-buttons');
+import $ from "jquery";
+import 'DataTables/datatables';
+import 'DataTables/datatables-buttons';
 
 // Column look-ups for quick referencing
 const COLUMNS = (() => {
   const columns = {};
-  $('thead th').each((index, elm) => {
-    const data = $(elm).data('data').toUpperCase();
+  $("thead th").each((index, elm) => {
+    const data = $(elm).data("data").toUpperCase();
     columns[data] = index;
   });
   return columns;
 })();
 
 /**
- * Download table in specified format.
+ * Download table in specified format.f
  * @param {string} format format of downloaded doc.
  */
-function downloadItem({format = 'xlsx'}) {
+function downloadItem({format = "xlsx"}) {
   const url = `${window.PAGE.urls.export}&dtf=${format}`;
-  const anchor = document.createElement('a');
-  anchor.style.display = 'none';
+  const anchor = document.createElement("a");
+  anchor.style.display = "none";
   anchor.href = url;
   anchor.click();
 }
 
-if (typeof window.PAGE === 'object') {
-  $('#projects').DataTable({
+if (typeof window.PAGE === "object") {
+  $("#projects").DataTable({
     // Table layout
     // Buttons / Filter
     // Table
@@ -42,9 +39,9 @@ rt
     // These are loaded through the PAGE object.
     buttons: [
       {
-        extend: 'collection',
+        extend: "collection",
         text() {
-          return document.querySelector('#export-btn-text').innerHTML;
+          return document.querySelector("#export-btn-text").innerHTML;
         },
         // The buttons are loaded onto the PAGE variable.
         buttons: window.PAGE.buttons.map(button => ({
@@ -83,7 +80,7 @@ rt
     ],
     createdRow: function(row) {
       const $row = $(row);
-      $row.tooltip({selector: '[data-toggle="tooltip"]'});
+      $row.tooltip({selector: "[data-toggle=\"tooltip\"]"});
     }
   });
 }
