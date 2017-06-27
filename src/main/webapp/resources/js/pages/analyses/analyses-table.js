@@ -15,7 +15,6 @@ import {formatDateDOM, getHumanizedDuration} from "Utilities/date-utilities";
 import {deleteAnalysis} from "../analysis/analysis-service";
 
 const COLUMNS = generateColumnOrderInfo();
-console.log(COLUMNS);
 
 /**
  * Create the state cell for the table.  This includes both the
