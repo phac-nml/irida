@@ -1,7 +1,6 @@
 const $ = require('jquery');
 const _ = require('lodash');
 const moment = require('moment');
-require('timeago');
 
 /*
 <div class="row">
@@ -28,11 +27,11 @@ require('timeago');
 */
 export const dom = `
 <".row"
-  <".col-md-6.col-sm-12.buttons"B><"#dt-filters.col-md-6.col-sm-12"f>>
-<".dt-table-wrapper"rt>
-<".row"
-  <".col-md-3.col-sm-12"l>
-  <".col-md-6.col-sm-12"p><".col-md-3.col-sm-12"i>>`;
+  <"col-md-6 col-sm-12 buttons"B><"#dt-filters.col-md-6 col-sm-12"f>>
+<"dt-table-wrapper"rt>
+<"row"
+  <"col-md-3 col-sm-12"l>
+  <" col-md-6 col-sm-12"p><"col-md-3 col-sm-12 text-right"i>>`;
 
 /**
  * Create a DOM element that contains a "time since" string.  If it is not a valid
@@ -40,13 +39,37 @@ export const dom = `
  * @param {string} data date to add to the string
  * @return {*} formatted date DOM or the initial value
  */
-export function formatDateDOM({data}) {
+export function formatDateFromNowDOM({data}) {
   if (moment.isDate(new Date(data))) {
     const date = moment(new Date(data));
     return `
 <time data-toggle="tooltip" data-placement="top" 
-      title="${date.toISOString()}">${$.timeago(date.toISOString())}</time>
+      title="${date.format("LLL")}">${date.fromNow()}</time>
   `;
+  }
+  return data;
+}
+
+/**
+ * Generate the a human readable form from milliseconds.
+ * @param {string} date to format
+ * @return {string} humanized version of the date
+ */
+export function getHumanizedDuration({date}) {
+  return moment.duration(date).humanize();
+}
+
+/**
+ * Create a DOM element with an actual date.
+ * @param {string} data date to format
+ * @return {*} formatted date DOM of the initial value.
+ */
+export function formatDateDOM({data}) {
+  if (moment.isDate(new Date(data))) {
+    const date = moment(new Date(data));
+    return `
+<time>${date.format("LLL")}</time>    
+`;
   }
   return data;
 }
@@ -116,15 +139,6 @@ export function createItemLink({url, label} = {}) {
   `;
   }
   return label || '';
-}
-
-/**
- * Generate the a human readable form from a date.
- * @param {string} date to format
- * @return {string} humanized version of the date
- */
-export function getHumanizedDate({date}) {
-  return moment.duration(date).humanize();
 }
 
 /**
