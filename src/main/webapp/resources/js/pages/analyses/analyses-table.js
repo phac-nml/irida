@@ -1,4 +1,4 @@
-import './../../../css/pages/analyses-list.css';
+import 'css/pages/analyses-list.css';
 import {deleteAnalysis} from '../analysis/analysis-service';
 import {
   activateTooltips,
@@ -10,10 +10,10 @@ import {
   formatDateDOM,
   generateColumnOrderInfo,
   getHumanizedDate
-} from './../../vendor/datatables/datatables-utilities';
+} from 'DataTables/datatables-utilities';
 
 import $ from 'jquery';
-import './../../vendor/datatables/datatables';
+import 'DataTables/datatables';
 const COLUMNS = generateColumnOrderInfo();
 
 /**
