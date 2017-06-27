@@ -1,16 +1,11 @@
+import "DataTables/datatables";
+import "DataTables/datatables-buttons";
 import $ from "jquery";
-import 'DataTables/datatables';
-import 'DataTables/datatables-buttons';
+import {formatDateDOM} from "Utilities/date-utilities";
+import {createItemLink, generateColumnOrderInfo, dom} from "Utilities/datatables-utilities";
 
 // Column look-ups for quick referencing
-const COLUMNS = (() => {
-  const columns = {};
-  $("thead th").each((index, elm) => {
-    const data = $(elm).data("data").toUpperCase();
-    columns[data] = index;
-  });
-  return columns;
-})();
+const COLUMNS = generateColumnOrderInfo();
 
 /**
  * Download table in specified format.f
@@ -26,15 +21,7 @@ function downloadItem({format = "xlsx"}) {
 
 if (typeof window.PAGE === "object") {
   $("#projects").DataTable({
-    // Table layout
-    // Buttons / Filter
-    // Table
-    // Length / Paging / Info
-    dom: `
-<".row"
-  <".col-md-8.buttons"B><".col-md-4"f>>
-rt
-<".row"<".col-md-3"l><".col-md-6"p><".col-md-3"i>>`,
+    dom,
     // Set up the export buttons.
     // These are loaded through the PAGE object.
     buttons: [
@@ -55,26 +42,21 @@ rt
     processing: true,
     serverSide: true,
     ajax: window.PAGE.urls.projects,
-    order: [[COLUMNS.MODIFIEDDATE, "desc"]],
+    order: [[COLUMNS.MODIFIED_DATE, "desc"]],
     columnDefs: [
       {
         targets: [COLUMNS.NAME],
-        render: function(data, type, full) {
-          return `
-<a class="btn btn-link" href="${window.PAGE.urls.project}${full.id}">${data}</a>
-`;
+        render(data, type, full) {
+          return createItemLink({
+            url: `${window.PAGE.urls.project}${full.id}`,
+            label: data
+          });
         }
       },
       {
-        targets: [COLUMNS.CREATEDDATE, COLUMNS.MODIFIEDDATE],
-        render: function(data) {
-          // Format the time (using timeago.js) to get the amount of time
-          // since the event occurred.
-          const date = moment(data);
-          return `
-<time data-toggle="tooltip" data-placement="top" 
-      title="${date.toISOString()}">${$.timeago(date.toISOString())}</time>
-`;
+        targets: [COLUMNS.CREATED_DATE, COLUMNS.MODIFIED_DATE],
+        render(data) {
+          return formatDateDOM({data});
         }
       }
     ],
