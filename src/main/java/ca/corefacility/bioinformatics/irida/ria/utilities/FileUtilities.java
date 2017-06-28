@@ -41,7 +41,7 @@ public class FileUtilities {
 	 * @throws IOException
 	 *             if the file cannot be read from the filesystem.
 	 */
-	public static void createAnalysisOutputFileZippedResponse(HttpServletResponse response, String fileName, String filePrefix,
+	public static void createAnalysisOutputFileZippedResponse(HttpServletResponse response, String fileName,
 			Set<AnalysisOutputFile> files) throws IOException {
 		/*
 		 * Replacing spaces and commas as they cause issues with
@@ -68,7 +68,6 @@ public class FileUtilities {
 				// 1) Build a folder/file name
 				fileName = formatName(fileName);
 				StringBuilder zipEntryName = new StringBuilder(fileName);
-				zipEntryName.append("/").append(filePrefix + '-' + file.getFile().getFileName().toString());
 
 				// 2) Tell the zip stream that we are starting a new entry in
 				// the archive.
