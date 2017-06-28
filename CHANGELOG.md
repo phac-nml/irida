@@ -5,6 +5,7 @@ Changes
 ----------------
 * [Developer]: Removed old javascript build configuration files.
 * [Developer]: Cleaned up javascript imports (removed all `require` statements).
+* [UI]: Removed phylocanvas context menu from analysis > details page.
 
 0.16.0 to 0.17.0
 ----------------
