@@ -38,4 +38,8 @@ public class ProjectMetadataPage extends AbstractPage {
 	public boolean hasEditButton() {
 		return driver.findElements(By.id("edit-metadata")).size() > 0;
 	}
+	
+	public Long getProjectId(){
+		return Long.parseLong(driver.findElement(By.id("projectIdDisplay")).getText());
+	}
 }
