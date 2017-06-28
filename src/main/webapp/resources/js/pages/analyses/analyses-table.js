@@ -11,7 +11,7 @@ import {
   dom,
   generateColumnOrderInfo
 } from "Utilities/datatables-utilities";
-import {formatDateDOM, getHumanizedDuration} from "Utilities/date-utilities";
+import {formatDate, getHumanizedDuration} from "Utilities/date-utilities";
 import {deleteAnalysis} from "../analysis/analysis-service";
 
 const COLUMNS = generateColumnOrderInfo();
@@ -79,7 +79,8 @@ const table = $('#analyses').DataTable({
     {
       targets: [COLUMNS.CREATED_DATE],
       render(data) {
-        return formatDateDOM({data});
+        const date = formatDate({date: data});
+        return `<time>${date}</time>`;
       }
     },
     {

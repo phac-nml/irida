@@ -11,13 +11,8 @@ export const ICONS = {
  * Create a font-awesome icon within an `i` DOM element
  * @param {string} icon to display
  * @param {boolean} fixed width
- * @return {Element} icon element
+ * @return {string} icon element
  */
 export function createIcon({icon = "", fixed = false}) {
-  const i = document.createElement("i");
-  i.classList.add("fa", icon);
-  if (fixed) {
-    i.classList.add("fa-fw");
-  }
-  return i;
+  return `<i class="fa ${icon}${fixed ? ' fa-fw' : ''}"></i>`;
 }
