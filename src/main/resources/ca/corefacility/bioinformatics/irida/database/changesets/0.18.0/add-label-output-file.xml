@@ -12,6 +12,19 @@
 			</column>
 		</addColumn>
 
+		<!-- Append sample name onto analysis output files from submissions corresponding to a single sample -->
+<!--UPDATE analysis_output_file aof INNER JOIN TEMP_0_18_0_output_file_sample_name tssn ON tssn.analysis_output_file_id = aof.id SET aof.label = CONCAT(tssn.sampleName,'-',REGEXP_REPLACE(aof.file_path,'^[[:digit:]]+/[[:digit:]]+/',''));-->
+		<sql>
+CREATE TEMPORARY TABLE TEMP_0_18_0_analysis_submission_sample_name AS (SELECT aspe.analysis_submission_id, s.sampleName FROM analysis_submission_sequence_file_pair aspe INNER JOIN sample_sequencingobject sso ON aspe.sequence_file_pair_id = sso.sequencingobject_id INNER JOIN sample s ON s.id = sso.sample_id GROUP BY aspe.analysis_submission_id HAVING COUNT(*) = 1);
+
+INSERT INTO TEMP_0_18_0_analysis_submission_sample_name SELECT asse.analysis_submission_id, s.sampleName FROM analysis_submission_sequence_file_single_end asse INNER JOIN sample_sequencingobject sso ON asse.sequencing_object_id = sso.sequencingobject_id INNER JOIN sample s ON s.id = sso.sample_id GROUP BY asse.analysis_submission_id HAVING COUNT(*) = 1;
+
+CREATE TEMPORARY TABLE TEMP_0_18_0_output_file_sample_name AS (SELECT aof.id AS analysis_output_file_id, tssn.sampleName FROM analysis_output_file_map aofm INNER JOIN analysis_output_file aof ON aofm.analysisOutputFilesMap_id = aof.id INNER JOIN analysis_submission s ON aofm.analysis_id = s.analysis_id INNER JOIN TEMP_0_18_0_analysis_submission_sample_name tssn ON s.id = tssn.analysis_submission_id);
+
+UPDATE analysis_output_file SET label = REGEXP_REPLACE(file_path,'^[[:digit:]]+/[[:digit:]]+/','');
+UPDATE analysis_output_file aof INNER JOIN TEMP_0_18_0_output_file_sample_name tssn ON tssn.analysis_output_file_id = aof.id SET aof.label = CONCAT(tssn.sampleName,'-',REGEXP_REPLACE(aof.file_path,'^[[:digit:]]+/[[:digit:]]+/',''));
+		</sql>
+
 	</changeSet>
 
 </databaseChangeLog>
