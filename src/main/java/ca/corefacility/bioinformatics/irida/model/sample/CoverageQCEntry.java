@@ -74,7 +74,7 @@ public class CoverageQCEntry extends QCEntry {
 
 		int coverage = calculateCoverage();
 
-		if (coverage >= project.getMinimumCoverage()) {
+		if (coverage >= project.getMinimumCoverage() && coverage <= project.getMaximumCoverage()) {
 			return QCEntryStatus.POSITIVE;
 		} else {
 			return QCEntryStatus.NEGATIVE;
