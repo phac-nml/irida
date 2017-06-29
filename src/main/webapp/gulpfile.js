@@ -33,15 +33,6 @@ var autoprefixerOptions = {
 	browsers: ['last 2 versions', '> 5%', 'Firefox ESR']
 };
 
-gulp.task('lint', function () {
-	return gulp
-		.src(javascript.files)
-		.pipe(cache('linting'))
-		.pipe(eslint())
-		.pipe(eslint.format())
-		.pipe(eslint.failOnError());
-});
-
 gulp.task('webpack', function() {
   return gulp
 		.src("./resources/js/dev/*.js")

@@ -1,16 +1,9 @@
 module.exports = {
-  extends: "google",
-  installedESLint: true,
+  plugins: ["prettier"],
   env: {
     browser: true
   },
   rules: {
-    "max-len": [
-      "error",
-      {
-        ignoreStrings: true,
-        ignoreComments: true
-      }
-    ]
+    "prettier/prettier": "error"
   }
 };
