@@ -4,10 +4,11 @@
 
 /**
  * Add a bootstrap tooltip to a DOM element
- * @param {object} dom element to add tooltip to.
+ * NOTE: This method cannot be tested.
+ * @param {Element} dom element to add tooltip to.
  * @param {string} placement defaults to top
  * @param  {string} title to add to dom
- * @return {string} formatted DOM element
+ * @return {Element} formatted DOM element
  */
 export function addTooltip({dom, placement = 'top', title}) {
   // Check to see the dom is a true DOM element of just a string.
@@ -19,5 +20,5 @@ export function addTooltip({dom, placement = 'top', title}) {
   dom.dataset.toggle = 'tooltip';
   dom.dataset.placement = placement;
   dom.title = title || dom.title;
-  return dom.outerHTML;
+  return dom;
 }

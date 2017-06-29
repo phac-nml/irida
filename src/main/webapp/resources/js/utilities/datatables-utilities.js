@@ -1,7 +1,7 @@
-import $ from 'jquery';
-import _ from 'lodash';
-import {addTooltip} from './bootstrap-utilities';
-import {createIcon, ICONS} from './fontawesome-utilities';
+import $ from "jquery";
+import _ from "lodash";
+import {addTooltip} from "./bootstrap-utilities";
+import {createIcon, ICONS} from "./fontawesome-utilities";
 
 /*
 <div class="row">
@@ -60,8 +60,8 @@ export function createDownloadLink({url, title}) {
   anchor.setAttribute("href", url);
 
   const icon = createIcon({icon: ICONS.download, fixed: true});
-  addTooltip({dom: icon, title: "Download"});
-  anchor.append(icon);
+  const tooltiped = addTooltip({dom: icon, title: "Download"});
+  anchor.append(tooltiped);
   return anchor;
 }
 
@@ -77,8 +77,8 @@ export function createDeleteBtn(data = {}) {
   Object.assign(btn.dataset, data);
 
   const icon = createIcon({icon: ICONS.trash, fixed: true});
-  addTooltip({dom: icon, title: "Delete"});
-  btn.append(icon);
+  const tooltiped = addTooltip({dom: icon, title: "Delete"});
+  btn.append(tooltiped);
   return btn;
 }
 
@@ -134,7 +134,7 @@ export function generateColumnOrderInfo() {
  * if too long.
  * @param {string} text content
  * @param  {number} width for the column
- * @return {string} formatted DOM as text
+ * @return {Element} formatted DOM as text
  */
 export function createRestrictedWidthContent({text, width = 150}) {
   const dom = document.createElement("div");

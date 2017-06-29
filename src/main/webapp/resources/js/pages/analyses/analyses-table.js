@@ -1,6 +1,6 @@
-import 'css/pages/analyses-list.css';
-import 'DataTables/datatables';
-import $ from 'jquery';
+import "css/pages/analyses-list.css";
+import "DataTables/datatables";
+import $ from "jquery";
 import {
   createButtonCell,
   createDeleteBtn,
@@ -9,9 +9,9 @@ import {
   createRestrictedWidthContent,
   generateColumnOrderInfo,
   tableConfig
-} from 'Utilities/datatables-utilities';
-import {formatDate, getHumanizedDuration} from 'Utilities/date-utilities';
-import {deleteAnalysis} from '../analysis/analysis-service';
+} from "Utilities/datatables-utilities";
+import {formatDate, getHumanizedDuration} from "Utilities/date-utilities";
+import {deleteAnalysis} from "../analysis/analysis-service";
 
 const COLUMNS = generateColumnOrderInfo();
 
@@ -69,7 +69,7 @@ const config = Object.assign(tableConfig, {
     {
       targets: COLUMNS.WORKFLOW_ID,
       render(data) {
-        return createRestrictedWidthContent({text: data});
+        return createRestrictedWidthContent({text: data}).outerHTML;
       }
     },
     {
