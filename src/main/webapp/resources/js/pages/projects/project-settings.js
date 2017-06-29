@@ -43,20 +43,23 @@ var projectSettings = (function(page, notifications) {
 
     $("#coverage-save").on("click", function() {
         var genomeSize = $("#genome-size").val();
-        var requiredCoverage = $("#required-coverage").val();
+        var minimumCoverage = $("#minimum-coverage").val();
+        var maximumCoverage = $("#maximum-coverage").val();
 
         $.ajax({
             url: page.urls.coverage,
             type: 'POST',
             data: {
                 genomeSize: genomeSize,
-                minimumCoverage: requiredCoverage
+                minimumCoverage: minimumCoverage,
+                maximumCoverage: maximumCoverage
             }, 
             statusCode : {
                 200 : function(response){
                     notifications.show({'msg': response.result});
                     
-                    $("#required-coverage-display").html(requiredCoverage + "x");
+                    $("#minimum-coverage-display").html(minimumCoverage + "x");
+                    $("#maximum-coverage-display").html(maximumCoverage + "x");
                     $("#genome-size-display").html(genomeSize + "bp");
 
                     $(".edit-coverage").toggle();
