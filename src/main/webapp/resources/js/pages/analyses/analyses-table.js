@@ -2,15 +2,15 @@ import "css/pages/analyses-list.css";
 import "DataTables/datatables";
 import $ from "jquery";
 import {
-  activateTooltips,
   createButtonCell,
   createDeleteBtn,
   createDownloadLink,
   createItemLink,
-  dom,
-  generateColumnOrderInfo
+  createRestrictedWidthContent,
+  generateColumnOrderInfo,
+  tableConfig
 } from "Utilities/datatables-utilities";
-import {formatDateDOM, getHumanizedDuration} from "Utilities/date-utilities";
+import {formatDate, getHumanizedDuration} from "Utilities/date-utilities";
 import {deleteAnalysis} from "../analysis/analysis-service";
 
 const COLUMNS = generateColumnOrderInfo();
@@ -47,11 +47,8 @@ ${full.analysisState}
 </div>`;
 }
 
-const table = $('#analyses').DataTable({
-  processing: true,
-  serverSide: true,
+const config = Object.assign(tableConfig, {
   ajax: window.PAGE.URLS.analyses,
-  dom,
   order: [[COLUMNS.CREATED_DATE, 'desc']],
   columnDefs: [
     {
@@ -61,7 +58,7 @@ const table = $('#analyses').DataTable({
       }
     },
     {
-      targets: [COLUMNS.NAME],
+      targets: COLUMNS.NAME,
       render(data, type, full) {
         return createItemLink({
           url: `${window.PAGE.URLS.analysis}${full.id}`,
@@ -70,9 +67,16 @@ const table = $('#analyses').DataTable({
       }
     },
     {
+      targets: COLUMNS.WORKFLOW_ID,
+      render(data) {
+        return createRestrictedWidthContent({text: data}).outerHTML;
+      }
+    },
+    {
       targets: [COLUMNS.CREATED_DATE],
-      render: function(data) {
-        return formatDateDOM({data});
+      render(data) {
+        const date = formatDate({date: data});
+        return `<time>${date}</time>`;
       }
     },
     {
@@ -82,8 +86,9 @@ const table = $('#analyses').DataTable({
       }
     },
     {
-      targets: [COLUMNS.BUTTONS],
+      targets: COLUMNS.BUTTONS,
       sortable: false,
+      width: 200,
       render(data, type, full) {
         const buttons = [];
         if ((full.submission.analysisState).localeCompare('COMPLETED') === 0) {
@@ -105,11 +110,10 @@ const table = $('#analyses').DataTable({
         return createButtonCell(buttons);
       }
     }
-  ],
-  createdRow(row, full) {
-    activateTooltips(row);
-  }
+  ]
 });
+
+const table = $('#analyses').DataTable(config);
 
 /**
  * Set the state for the Analyses table filters.

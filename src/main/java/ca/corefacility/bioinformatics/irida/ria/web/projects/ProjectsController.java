@@ -4,13 +4,7 @@ import java.io.IOException;
 import java.security.Principal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
@@ -25,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Scope;
 import org.springframework.data.domain.Page;
 import org.springframework.format.Formatter;
 import org.springframework.format.datetime.DateFormatter;
@@ -32,14 +27,28 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.github.dandelion.datatables.core.export.CsvExport;
+import com.github.dandelion.datatables.core.export.ExportConf;
+import com.github.dandelion.datatables.core.export.ExportUtils;
+import com.github.dandelion.datatables.core.export.HtmlTableBuilder;
+import com.github.dandelion.datatables.core.export.ReservedFormat;
+import com.github.dandelion.datatables.core.html.HtmlTable;
+import com.github.dandelion.datatables.extras.export.poi.XlsxExport;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.config.web.IridaRestApiWebConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -53,14 +62,17 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.CartController;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProject;
+import ca.corefacility.bioinformatics.irida.security.permissions.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
@@ -70,21 +82,11 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.util.TreeNode;
 
-import com.github.dandelion.datatables.core.export.CsvExport;
-import com.github.dandelion.datatables.core.export.ExportConf;
-import com.github.dandelion.datatables.core.export.ExportUtils;
-import com.github.dandelion.datatables.core.export.HtmlTableBuilder;
-import com.github.dandelion.datatables.core.export.ReservedFormat;
-import com.github.dandelion.datatables.core.html.HtmlTable;
-import com.github.dandelion.datatables.extras.export.poi.XlsxExport;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-
 /**
  * Controller for project related views
  */
 @Controller
+@Scope("session")
 public class ProjectsController {
 	// Sub Navigation Strings
 	public static final String ACTIVE_NAV = "activeNav";
@@ -114,9 +116,10 @@ public class ProjectsController {
 	private final TaxonomyService taxonomyService;
 	private final MessageSource messageSource;
 	private final ProjectRemoteService projectRemoteService;
-	private RemoteAPIService remoteApiService;
-	private IridaWorkflowsService workflowsService;
-
+	private final RemoteAPIService remoteApiService;
+	private final IridaWorkflowsService workflowsService;
+	private final CartController cartController;
+	private final UpdateSamplePermission updateSamplePermission;
 	@Value("${file.upload.max_size}")
 	private final Long MAX_UPLOAD_SIZE = IridaRestApiWebConfig.UNLIMITED_UPLOAD_SIZE;
 
@@ -142,7 +145,7 @@ public class ProjectsController {
 	public ProjectsController(ProjectService projectService, SampleService sampleService, UserService userService,
 			ProjectRemoteService projectRemoteService, ProjectControllerUtils projectControllerUtils,
 			TaxonomyService taxonomyService, RemoteAPIService remoteApiService, IridaWorkflowsService workflowsService,
-			MessageSource messageSource) {
+			CartController cartController, UpdateSamplePermission updateSamplePermission, MessageSource messageSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.userService = userService;
@@ -153,7 +156,9 @@ public class ProjectsController {
 		this.messageSource = messageSource;
 		this.remoteApiService = remoteApiService;
 		this.workflowsService = workflowsService;
+		this.cartController = cartController;
 		this.fileSizeConverter = new FileSizeConverter();
+		this.updateSamplePermission = updateSamplePermission;
 	}
 
 	/**
@@ -229,13 +234,39 @@ public class ProjectsController {
 	/**
 	 * Gets the name of the template for the new project page
 	 *
+	 * @param useCartSamples
+	 *            Whether or not to use the samples in the cart when creating
+	 *            the project
 	 * @param model
-	 * 		{@link Model}
+	 *            {@link Model}
 	 *
 	 * @return The name of the create new project page
 	 */
 	@RequestMapping(value = "/projects/new", method = RequestMethod.GET)
-	public String getCreateProjectPage(final Model model) {
+	public String getCreateProjectPage(
+			@RequestParam(name = "cart", required = false, defaultValue = "false") boolean useCartSamples,
+			final Model model) {
+		model.addAttribute("useCartSamples", useCartSamples);
+
+		Map<Project, Set<Sample>> selected = cartController.getSelected();
+
+		// Check which samples they can modify
+		Set<Sample> allowed = new HashSet<>();
+		Set<Sample> disallowed = new HashSet<>();
+
+		selected.values().forEach(set -> {
+			set.stream().forEach(s -> {
+				if (canModifySample(s)) {
+					allowed.add(s);
+				} else {
+					disallowed.add(s);
+				}
+			});
+		});
+
+		model.addAttribute("allowedSamples", allowed);
+		model.addAttribute("disallowedSamples", disallowed);
+
 		if (!model.containsAttribute("errors")) {
 			model.addAttribute("errors", new HashMap<>());
 		}
@@ -321,41 +352,33 @@ public class ProjectsController {
 	 *
 	 * @param model
 	 *            {@link Model}
-	 * @param name
-	 *            String name of the project
-	 * @param organism
-	 *            Organism name
-	 * @param projectDescription
-	 *            Brief description of the project
-	 * @param remoteURL
-	 *            URL for the project wiki
-	 * @param assemble
-	 *            Enable or disable automated assemblies
+	 * @param project
+	 *            the {@link Project} to create
+	 * @param useCartSamples
+	 *            add all samples in the cart to the project
 	 *
 	 * @return The name of the add users to project page
 	 */
 	@RequestMapping(value = "/projects/new", method = RequestMethod.POST)
-	public String createNewProject(final Model model, @RequestParam(required = false, defaultValue = "") String name,
-			@RequestParam(required = false, defaultValue = "") String organism,
-			@RequestParam(required = false, defaultValue = "") String projectDescription,
-			@RequestParam(required = false, defaultValue = "") String remoteURL,
-			@RequestParam(required = false, defaultValue = "false") boolean assemble,
-			@RequestParam(required = false, defaultValue = "false") boolean sistr) {
+	public String createNewProject(final Model model, @ModelAttribute Project project,
+			@RequestParam(required = false, defaultValue = "false") boolean useCartSamples) {
 
-		Project p = new Project(name);
-		p.setOrganism(organism);
-		p.setProjectDescription(projectDescription);
-		p.setRemoteURL(remoteURL);
-		p.setAssembleUploads(assemble);
-		p.setSistrTypingUploads(sistr);
-
-		Project project;
 		try {
-			project = projectService.create(p);
+			if (useCartSamples) {
+				Map<Project, Set<Sample>> selected = cartController.getSelected();
+
+				List<Long> sampleIds = selected.entrySet().stream().flatMap(e -> e.getValue().stream().filter(s -> {
+					return canModifySample(s);
+				}).map(i -> i.getId())).collect(Collectors.toList());
+
+				project = projectService.createProjectWithSamples(project, sampleIds);
+			} else {
+				project = projectService.create(project);
+			}
 		} catch (ConstraintViolationException e) {
 			model.addAttribute("errors", getErrorsFromViolationException(e));
-			model.addAttribute("project", p);
-			return getCreateProjectPage(model);
+			model.addAttribute("project", project);
+			return getCreateProjectPage(useCartSamples, model);
 		}
 
 		return "redirect:/projects/" + project.getId() + "/metadata";
@@ -645,6 +668,19 @@ public class ProjectsController {
 	@ResponseBody
 	public ResponseEntity<String> roleChangeErrorHandler(Exception ex) {
 		return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
+	}
+
+	/**
+	 * Test whether the logged in user can modify a {@link Sample}
+	 *
+	 * @param sample
+	 *            the {@link Sample} to check
+	 * @return true if they can modify
+	 */
+	private boolean canModifySample(Sample sample) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+		return updateSamplePermission.isAllowed(authentication, sample);
 	}
 
 	/**
