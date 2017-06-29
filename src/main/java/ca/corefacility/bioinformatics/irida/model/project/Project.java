@@ -121,11 +121,11 @@ public class Project extends IridaResourceSupport
 	@Column(name = "genome_size", nullable = true)
 	private Long genomeSize;
 	
-	@Min(1)
+	@Min(0)
 	@Column(name = "minimum_coverage", nullable = true)
 	private Integer minimumCoverage;
 	
-	@Min(1)
+	@Min(0)
 	@Column(name = "maximum_coverage", nullable = true)
 	private Integer maximumCoverage;
 	
