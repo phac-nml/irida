@@ -1,7 +1,7 @@
-import $ from "jquery";
-import _ from "lodash";
-import {addTooltip} from "./bootstrap-utilities";
-import {createIcon, ICONS} from "./fontawesome-utilities";
+import $ from 'jquery';
+import _ from 'lodash';
+import {addTooltip} from './bootstrap-utilities';
+import {createIcon, ICONS} from './fontawesome-utilities';
 
 /*
 <div class="row">
@@ -26,13 +26,26 @@ import {createIcon, ICONS} from "./fontawesome-utilities";
   </div>
 </div>
 */
-export const dom = `
+const dom = `
 <".row"
   <"col-md-6 col-sm-12 buttons"B><"#dt-filters.col-md-6 col-sm-12"f>>
 <"dt-table-wrapper"rt>
 <"row"
   <"col-md-3 col-sm-12"l>
   <" col-md-6 col-sm-12"p><"col-md-3 col-sm-12 text-right"i>>`;
+
+/**
+ * Default DataTables configuration object.  Anything can be overwritten,
+ * but this will provide a baseline for all DataTables.
+ */
+export const tableConfig = {
+  dom,
+  processing: true,
+  serverSide: true,
+  createdRow(row) {
+    $(row).tooltip({selector: "[data-toggle='tooltip']"});
+  }
+};
 
 /**
  * Create a button to download a file.
@@ -48,7 +61,7 @@ export function createDownloadLink({url, title}) {
 
   const icon = createIcon({icon: ICONS.download, fixed: true});
   addTooltip({dom: icon, title: "Download"});
-  anchor.innerHTML = icon.outerHTML;
+  anchor.append(icon);
   return anchor;
 }
 
@@ -65,7 +78,7 @@ export function createDeleteBtn(data = {}) {
 
   const icon = createIcon({icon: ICONS.trash, fixed: true});
   addTooltip({dom: icon, title: "Delete"});
-  btn.innerHTML = icon.outerHTML;
+  btn.append(icon);
   return btn;
 }
 
@@ -129,12 +142,4 @@ export function createRestrictedWidthContent({text, width = 150}) {
   dom.style.width = `${width}px`;
   dom.innerText = text;
   return addTooltip({dom, title: text});
-}
-
-/**
- * Activate any tooltips on a table row.
- * @param {object} row DOM for a TR
- */
-export function activateTooltips(row) {
-  $(row).tooltip({selector: "[data-toggle=\"tooltip\"]"});
 }
