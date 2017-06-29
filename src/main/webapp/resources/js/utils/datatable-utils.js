@@ -407,8 +407,10 @@ var datatable = (function(moment, tl, page) {
     var outer = document.createElement("div");
     var div = document.createElement("div");
     div.classList.add("project-label");
-    var text = document.createTextNode(data);
-    div.appendChild(text);
+    var link = document.createElement("a");
+    link.href = tl.BASE_URL + "projects/" + full.projectId;
+    link.text = data;
+    div.appendChild(link);
 
     var colour = projectColourer.getColour(full.projectName);
     div.style.borderColor = colour;

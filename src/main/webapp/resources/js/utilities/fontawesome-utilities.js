@@ -14,10 +14,8 @@ export const ICONS = {
  * @return {Element} icon element
  */
 export function createIcon({icon = "", fixed = false}) {
-  const i = document.createElement("i");
-  i.classList.add("fa", icon);
-  if (fixed) {
-    i.classList.add("fa-fw");
-  }
-  return i;
+  const i = `<i class="fa ${icon}${fixed ? ' fa-fw' : ''}"></i>`;
+  const div = document.createElement('div');
+  div.innerHTML = i;
+  return div.childNodes[0];
 }

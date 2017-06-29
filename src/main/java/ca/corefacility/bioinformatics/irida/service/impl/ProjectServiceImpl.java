@@ -682,7 +682,25 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	public List<ProjectAnalysisSubmissionJoin> getProjectsForAnalysisSubmission(AnalysisSubmission submission) {
 		return pasRepository.getProjectsForSubmission(submission);
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Transactional
+	@PreAuthorize("hasPermission(#sampleIds, 'canUpdateSample')")
+	@Override
+	public Project createProjectWithSamples(Project project, List<Long> sampleIds) {
+
+		Project created = create(project);
+
+		sampleIds.forEach(sid -> {
+			Sample s = sampleRepository.findOne(sid);
+			addSampleToProject(project, s);
+		});
+
+		return created;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */

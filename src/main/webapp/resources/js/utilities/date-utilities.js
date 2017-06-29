@@ -1,25 +1,22 @@
-const moment = require('moment');
+import moment from "moment";
 
 /**
- * Create a DOM element that contains a "time since" string.  If it is not a valid
- * date that is passed, it will return the original value.
- * @param {string} data date to add to the string
- * @return {*} formatted date DOM or the initial value
+ * Get how much time has passed since a certain date.
+ * @param {Number} now current
+ * @param {Number} date event occurred
+ * @return {string} formatted time since.
  */
-export function formatDateFromNowDOM({data}) {
-  if (moment.isDate(new Date(data))) {
-    const date = moment(new Date(data));
-    return `
-<time data-toggle="tooltip" data-placement="top" 
-      title="${date.format("LLL")}">${date.fromNow()}</time>
-  `;
+export function formatTimeForNow({now, date}) {
+  const dNow = new Date(now);
+  const dDate = new Date(date);
+  if (moment.isDate(dNow) && moment.isDate(dDate)) {
+    return moment(dDate).from(moment(dNow));
   }
-  return data;
 }
 
 /**
  * Generate the a human readable form from milliseconds.
- * @param {string} date to format
+ * @param {Number} date to format
  * @return {string} humanized version of the date
  */
 export function getHumanizedDuration({date}) {
@@ -27,16 +24,14 @@ export function getHumanizedDuration({date}) {
 }
 
 /**
- * Create a DOM element with an actual date.
- * @param {string} data date to format
- * @return {*} formatted date DOM of the initial value.
+ * Format unix timestamp as human readable string.
+ * @param  {Number} date unix timestamp
+ * @return {string} formatted date
  */
-export function formatDateDOM({data}) {
-  if (moment.isDate(new Date(data))) {
-    const date = moment(new Date(data));
-    return `
-<time>${date.format("LLL")}</time>    
-`;
+export function formatDate({date}) {
+  const t = new Date(date);
+  if (moment.isDate(t)) {
+    return moment(t).format(window.TL.date.moment.full);
   }
-  return data;
+  return "";
 }

@@ -1,5 +1,5 @@
-const $ = require("jquery");
-const _ = require("lodash");
+import $ from "jquery";
+import _ from "lodash";
 import {addTooltip} from "./bootstrap-utilities";
 import {createIcon, ICONS} from "./fontawesome-utilities";
 
@@ -26,13 +26,26 @@ import {createIcon, ICONS} from "./fontawesome-utilities";
   </div>
 </div>
 */
-export const dom = `
+const dom = `
 <".row"
   <"col-md-6 col-sm-12 buttons"B><"#dt-filters.col-md-6 col-sm-12"f>>
 <"dt-table-wrapper"rt>
 <"row"
   <"col-md-3 col-sm-12"l>
   <" col-md-6 col-sm-12"p><"col-md-3 col-sm-12 text-right"i>>`;
+
+/**
+ * Default DataTables configuration object.  Anything can be overwritten,
+ * but this will provide a baseline for all DataTables.
+ */
+export const tableConfig = {
+  dom,
+  processing: true,
+  serverSide: true,
+  createdRow(row) {
+    $(row).tooltip({selector: "[data-toggle='tooltip']"});
+  }
+};
 
 /**
  * Create a button to download a file.
@@ -47,8 +60,8 @@ export function createDownloadLink({url, title}) {
   anchor.setAttribute("href", url);
 
   const icon = createIcon({icon: ICONS.download, fixed: true});
-  addTooltip({dom: icon, title: "Download"});
-  anchor.innerHTML = icon.outerHTML;
+  const tooltiped = addTooltip({dom: icon, title: "Download"});
+  anchor.append(tooltiped);
   return anchor;
 }
 
@@ -64,8 +77,8 @@ export function createDeleteBtn(data = {}) {
   Object.assign(btn.dataset, data);
 
   const icon = createIcon({icon: ICONS.trash, fixed: true});
-  addTooltip({dom: icon, title: "Delete"});
-  btn.innerHTML = icon.outerHTML;
+  const tooltiped = addTooltip({dom: icon, title: "Delete"});
+  btn.append(tooltiped);
   return btn;
 }
 
@@ -121,7 +134,7 @@ export function generateColumnOrderInfo() {
  * if too long.
  * @param {string} text content
  * @param  {number} width for the column
- * @return {string} formatted DOM as text
+ * @return {Element} formatted DOM as text
  */
 export function createRestrictedWidthContent({text, width = 150}) {
   const dom = document.createElement("div");
@@ -129,12 +142,4 @@ export function createRestrictedWidthContent({text, width = 150}) {
   dom.style.width = `${width}px`;
   dom.innerText = text;
   return addTooltip({dom, title: text});
-}
-
-/**
- * Activate any tooltips on a table row.
- * @param {object} row DOM for a TR
- */
-export function activateTooltips(row) {
-  $(row).tooltip({selector: "[data-toggle=\"tooltip\"]"});
 }

@@ -2,16 +2,15 @@ import "css/pages/analyses-list.css";
 import "DataTables/datatables";
 import $ from "jquery";
 import {
-  activateTooltips,
   createButtonCell,
   createDeleteBtn,
   createDownloadLink,
   createItemLink,
   createRestrictedWidthContent,
-  dom,
-  generateColumnOrderInfo
+  generateColumnOrderInfo,
+  tableConfig
 } from "Utilities/datatables-utilities";
-import {formatDateDOM, getHumanizedDuration} from "Utilities/date-utilities";
+import {formatDate, getHumanizedDuration} from "Utilities/date-utilities";
 import {deleteAnalysis} from "../analysis/analysis-service";
 
 const COLUMNS = generateColumnOrderInfo();
@@ -48,11 +47,8 @@ ${full.analysisState}
 </div>`;
 }
 
-const table = $('#analyses').DataTable({
-  processing: true,
-  serverSide: true,
+const config = Object.assign(tableConfig, {
   ajax: window.PAGE.URLS.analyses,
-  dom,
   order: [[COLUMNS.CREATED_DATE, 'desc']],
   columnDefs: [
     {
@@ -73,13 +69,14 @@ const table = $('#analyses').DataTable({
     {
       targets: COLUMNS.WORKFLOW_ID,
       render(data) {
-        return createRestrictedWidthContent({text: data});
+        return createRestrictedWidthContent({text: data}).outerHTML;
       }
     },
     {
       targets: [COLUMNS.CREATED_DATE],
       render(data) {
-        return formatDateDOM({data});
+        const date = formatDate({date: data});
+        return `<time>${date}</time>`;
       }
     },
     {
@@ -113,11 +110,10 @@ const table = $('#analyses').DataTable({
         return createButtonCell(buttons);
       }
     }
-  ],
-  createdRow(row, full) {
-    activateTooltips(row);
-  }
+  ]
 });
+
+const table = $('#analyses').DataTable(config);
 
 /**
  * Set the state for the Analyses table filters.
