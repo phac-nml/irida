@@ -56,11 +56,20 @@
             <div class="form-group">
                 <div id="display-coverage" class="row edit-coverage">
                     <div class="col-md-3">
-                        <label for="required-coverage-display" th:text="#{project.settings.coverage.required_coverage}">_Required
+                        <label for="minimum-coverage-display" th:text="#{project.settings.coverage.minimum_coverage}">_Required
                             Coverage_</label>
-                        <span id="required-coverage-display" th:if="${project.minimumCoverage != NULL}"
+                        <span id="minimum-coverage-display" th:if="${project.minimumCoverage != NULL}"
                               th:text="${project.minimumCoverage} + 'x'"></span>
-                        <span id="required-coverage-display" th:if="${project.minimumCoverage == NULL}"
+                        <span id="minimum-coverage-display" th:if="${project.minimumCoverage == NULL}"
+                              th:text="#{project.settings.notset}">N/A</span>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="maximum-coverage-display" th:text="#{project.settings.coverage.maximum_coverage}">_Required
+                            Coverage_</label>
+                        <span id="maximum-coverage-display" th:if="${project.maximumCoverage != NULL}"
+                              th:text="${project.maximumCoverage} + 'x'"></span>
+                        <span id="maximum-coverage-display" th:if="${project.maximumCoverage == NULL}"
                               th:text="#{project.settings.notset}">N/A</span>
                     </div>
 
@@ -75,11 +84,21 @@
                 </div>
                 <div id="edit-coverage" class="form row edit-coverage" style="display: none">
                     <div class="col-md-3">
-                        <label for="required-coverage" th:text="#{project.settings.coverage.required_coverage}">_Required
+                        <label for="minimum-coverage" th:text="#{project.settings.coverage.minimum_coverage}">_Min
                             Coverage_</label>
                         <div class="input-group">
-                            <input class="form-control" type="text" id="required-coverage"
+                            <input class="form-control" type="text" id="minimum-coverage"
                                    th:value="${project.minimumCoverage}"/>
+                            <div class="input-group-addon">x</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="maximum-coverage" th:text="#{project.settings.coverage.maximum_coverage}">_Max
+                            Coverage_</label>
+                        <div class="input-group">
+                            <input class="form-control" type="text" id="maximum-coverage"
+                                   th:value="${project.maximumCoverage}"/>
                             <div class="input-group-addon">x</div>
                         </div>
                     </div>
