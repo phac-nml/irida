@@ -11,8 +11,11 @@ export const ICONS = {
  * Create a font-awesome icon within an `i` DOM element
  * @param {string} icon to display
  * @param {boolean} fixed width
- * @return {string} icon element
+ * @return {Element} icon element
  */
 export function createIcon({icon = "", fixed = false}) {
-  return `<i class="fa ${icon}${fixed ? ' fa-fw' : ''}"></i>`;
+  const i = `<i class="fa ${icon}${fixed ? ' fa-fw' : ''}"></i>`;
+  const div = document.createElement('div');
+  div.innerHTML = i;
+  return div.childNodes[0];
 }

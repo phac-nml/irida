@@ -45,6 +45,7 @@
     "babel-preset-stage-0": "^6.5.0",
     "bootstrap-switch": "^3.3.4",
     "bower": "^1.7.7",
+    "browser-env": "^2.0.31",
     "browser-sync": "^2.11.1",
     "chromedriver": "2.24.1",
     "css-loader": "^0.25.0",
@@ -71,10 +72,15 @@
     "webpack-stream": "^3.2.0"
   },
   "ava": {
-    "require": ["babel-register"]
+    "require": [
+      "babel-register",
+      "./configs/helpers/setup-browser-env.js"
+    ]
   },
   "babel": {
-    "presets": ["@ava/stage-4"]
+    "presets": [
+      "@ava/stage-4"
+    ]
   },
   "engines": {
     "node": ">=0.10.0"
