@@ -1,4 +1,4 @@
-const angular = require('angular');
+import angular from 'angular';
 import {LinelistTable} from './components/linelist-table/linelist-table.module';
 import {Linelist} from './linelist.component';
 import {LinelistService} from './services/linelist.service';

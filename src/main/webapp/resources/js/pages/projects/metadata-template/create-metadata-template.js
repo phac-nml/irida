@@ -1,9 +1,7 @@
-const Sortable = require('sortablejs');
-const $ = require('jquery');
-require('select2');
-require('select2/dist/css/select2.css');
-require('select2-bootstrap-theme/dist/select2-bootstrap.css');
-require('jquery-validation');
+import $ from 'jquery';
+import Sortable from 'sortablejs';
+import 'plugins/jquery/select2';
+import 'jquery-validation';
 
 // ****************************************************************************
 // FORM VALIDATION - uses jquery-validation plugin
