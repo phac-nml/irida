@@ -50,7 +50,7 @@ var projectSettings = (function(page, notifications) {
             type: 'POST',
             data: {
                 genomeSize: genomeSize,
-                requiredCoverage: requiredCoverage
+                minimumCoverage: requiredCoverage
             }, 
             statusCode : {
                 200 : function(response){

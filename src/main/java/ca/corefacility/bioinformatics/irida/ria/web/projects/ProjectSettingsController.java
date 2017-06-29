@@ -331,8 +331,8 @@ public class ProjectSettingsController {
 	 *            the ID of a {@link Project}
 	 * @param genomeSize
 	 *            the genomeSize to set for the project
-	 * @param requiredCoverage
-	 *            coverage needed for qc to pass
+	 * @param minimumCoverage
+	 *            minimum coverage needed for qc to pass
 	 * @param locale
 	 *            locale of the user
 	 *
@@ -341,11 +341,11 @@ public class ProjectSettingsController {
 	@RequestMapping(value = "/coverage", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, String> updateCoverageSetting(@PathVariable Long projectId, @RequestParam Long genomeSize,
-			@RequestParam Integer requiredCoverage, Locale locale) {
+			@RequestParam Integer minimumCoverage, Locale locale) {
 		Project read = projectService.read(projectId);
 
 		Map<String, Object> updates = new HashMap<>();
-		updates.put("requiredCoverage", requiredCoverage);
+		updates.put("minimumCoverage", minimumCoverage);
 		updates.put("genomeSize", genomeSize);
 
 		projectService.updateProjectSettings(read, updates);

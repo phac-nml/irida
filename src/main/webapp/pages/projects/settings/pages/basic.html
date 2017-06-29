@@ -58,9 +58,9 @@
                     <div class="col-md-3">
                         <label for="required-coverage-display" th:text="#{project.settings.coverage.required_coverage}">_Required
                             Coverage_</label>
-                        <span id="required-coverage-display" th:if="${project.requiredCoverage != NULL}"
-                              th:text="${project.requiredCoverage} + 'x'"></span>
-                        <span id="required-coverage-display" th:if="${project.requiredCoverage == NULL}"
+                        <span id="required-coverage-display" th:if="${project.minimumCoverage != NULL}"
+                              th:text="${project.minimumCoverage} + 'x'"></span>
+                        <span id="required-coverage-display" th:if="${project.minimumCoverage == NULL}"
                               th:text="#{project.settings.notset}">N/A</span>
                     </div>
 
@@ -79,7 +79,7 @@
                             Coverage_</label>
                         <div class="input-group">
                             <input class="form-control" type="text" id="required-coverage"
-                                   th:value="${project.requiredCoverage}"/>
+                                   th:value="${project.minimumCoverage}"/>
                             <div class="input-group-addon">x</div>
                         </div>
                     </div>
