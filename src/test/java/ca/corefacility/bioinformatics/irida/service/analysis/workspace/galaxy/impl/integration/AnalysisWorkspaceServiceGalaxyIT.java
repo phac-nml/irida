@@ -1157,7 +1157,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		assertEquals("the analysis results output file has an invalid name", Paths.get(OUTPUT2_NAME), analysis
 				.getAnalysisOutputFile(OUTPUT2_KEY).getFile().getFileName());
 		assertEquals("the analysis results output file has an invalid label", Paths.get(OUTPUT2_NAME).getFileName().toString(), analysis
-				.getAnalysisOutputFile(OUTPUT1_KEY).getLabel());
+				.getAnalysisOutputFile(OUTPUT2_KEY).getLabel());
 	}
 
 	/**

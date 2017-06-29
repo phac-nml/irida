@@ -365,6 +365,10 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 			} else {
 				labelPrefix += sampleNames.iterator().next() + "-";
 			}
+		} else {
+			logger.trace("IRIDA workflow " + iridaWorkflow
+					+ " supports multiple samples.  Will not append sample name(s) for submission "
+					+ analysisSubmission);
 		}
 
 		return labelPrefix;
