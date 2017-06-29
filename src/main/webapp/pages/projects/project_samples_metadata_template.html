@@ -17,7 +17,12 @@
 </head>
 <body>
 <main layout:fragment="main">
-    <h2 class="h2-muted spaced-bottom" th:text="#{linelist.create-template.title}"></h2>
+    <div class="clearfix">
+        <h2 class="h2-muted spaced-bottom pull-left" th:text="#{linelist.create-template.title}"></h2>
+        <a class="btn btn-default btn-sm pull-right"
+           th:href="@{/projects/{id}/metadata-templates/{templateId}/excel(id=${project.getId()}, templateId=${template.getId()})}">
+            <i class="fa fa-fw fa-download"></i>&nbsp;<th:block th:text="#{form.download}"/></a>
+    </div>
     <div class="row spaced-bottom">
         <div class="col-md-12">
             <form id="template-form" th:object="${template}"

@@ -1,5 +1,27 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects.metadata;
 
+import java.io.IOException;
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
@@ -8,15 +30,8 @@ import ca.corefacility.bioinformatics.irida.ria.web.models.UIMetadataTemplate;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import sun.rmi.transport.proxy.HttpOutputStream;
 
 @Controller
 @RequestMapping("/projects/{projectId}/metadata-templates")
@@ -126,6 +141,41 @@ public class ProjectSamplesMetadataTemplateController {
         return "redirect:/projects/" + projectId + "/settings/metadata-templates";
     }
 
+    /**
+     * Download a {@link MetadataTemplate} as and Excel file.
+     *
+     * @param templateId
+     * 		{@link Long} identifier for a {@link MetadataTemplate}
+     * @param response
+     * 		{@link HttpServletResponse}
+     *
+     * @throws IOException
+     * 		thrown if {@link HttpOutputStream} cannot be used.
+     */
+    @RequestMapping(value = "/{templateId}/excel")
+    public void downloadTemplate(@PathVariable Long templateId, HttpServletResponse response) throws IOException {
+        MetadataTemplate template = metadataTemplateService.read(templateId);
+        List<MetadataTemplateField> fields = template.getFields();
+        List<String> headers = fields.stream().map(MetadataTemplateField::getLabel).collect(Collectors.toList());
+        String label = template.getLabel().replace(" ", "_");
+        //Blank workbook
+        HSSFWorkbook workbook = new HSSFWorkbook();
+
+        //Create a blank sheet
+        HSSFSheet worksheet = workbook.createSheet(label);
+
+        // Write the headers
+        HSSFRow headerRow = worksheet.createRow(0);
+        for (int i = 0; i < headers.size(); i++) {
+            HSSFCell cell = headerRow.createCell(i);
+            cell.setCellValue(headers.get(i));
+        }
+
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + label + ".xls\"");
+        ServletOutputStream stream = response.getOutputStream();
+        workbook.write(stream);
+        stream.flush();
+    }
 
     // *************************************************************************
     // AJAX METHODS                                                            *
