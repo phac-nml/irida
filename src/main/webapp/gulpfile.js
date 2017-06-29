@@ -1,10 +1,8 @@
 var gulp = require('gulp');
 var cache = require('gulp-cached');
-var eslint = require('gulp-eslint');
 var sass = require('gulp-sass');
 var sourcemaps = require('gulp-sourcemaps');
 var autoprefixer = require('gulp-autoprefixer');
-var notify = require('gulp-notify');
 var browserSync = require('browser-sync').create();
 var runSequence = require('run-sequence');
 
@@ -46,8 +44,7 @@ gulp.task('sass', function () {
 		.pipe(cache('scss'))
 		.pipe(sass(scss.dev).on("error", sass.logError))
 		.pipe(sourcemaps.write())
-		.pipe(gulp.dest(scss.output))
-		.pipe(notify({message: "SCSS complete"}));
+		.pipe(gulp.dest(scss.output));
 });
 
 gulp.task('sass:prod', function () {
