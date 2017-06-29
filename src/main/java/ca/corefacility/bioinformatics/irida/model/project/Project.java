@@ -125,6 +125,10 @@ public class Project extends IridaResourceSupport
 	@Column(name = "minimum_coverage", nullable = true)
 	private Integer minimumCoverage;
 	
+	@Min(1)
+	@Column(name = "maximum_coverage", nullable = true)
+	private Integer maximumCoverage;
+	
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "remote_status")
 	private RemoteStatus remoteStatus;
@@ -272,6 +276,14 @@ public class Project extends IridaResourceSupport
 	
 	public void setMinimumCoverage(Integer minimumCoverage) {
 		this.minimumCoverage = minimumCoverage;
+	}
+	
+	public Integer getMaximumCoverage() {
+		return maximumCoverage;
+	}
+	
+	public void setMaximumCoverage(Integer maximumCoverage) {
+		this.maximumCoverage = maximumCoverage;
 	}
 
 	public boolean getSistrTypingUploads() {
