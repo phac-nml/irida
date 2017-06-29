@@ -1,16 +1,12 @@
 import "DataTables/datatables";
 import $ from "jquery";
-import {activateTooltips, createItemLink, dom, generateColumnOrderInfo} from "Utilities/datatables-utilities";
-import {formatDateDOM} from "Utilities/date-utilities";
+import {createItemLink, generateColumnOrderInfo, tableConfig} from "Utilities/datatables-utilities";
+import {formatDate} from "Utilities/date-utilities";
 
 const COLUMNS = generateColumnOrderInfo();
 
 const $table = $("#clientsTable");
-
-$table.DataTable({
-  dom,
-  processing: true,
-  serverSide: true,
+const config = Object.assign(tableConfig, {
   ajax: $table.data("url"),
   order: [[COLUMNS.CLIENT_ID, "desc"]],
   columnDefs: [
@@ -30,14 +26,14 @@ $table.DataTable({
     {
       targets: COLUMNS.CREATED_DATE,
       render(data) {
-        return formatDateDOM({data});
+        const date = formatDate({date: data});
+        return `<time>${date}</time>`;
       }
     }
-  ],
-  createdRow(row) {
-    activateTooltips(row);
-  }
+  ]
 });
+
+$table.DataTable(config);
 
 $(document).ready(() => {
   const $addLink = $('#add-link');
