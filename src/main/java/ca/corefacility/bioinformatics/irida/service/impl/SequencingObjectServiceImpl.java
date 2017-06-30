@@ -169,13 +169,14 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 			SampleSequencingObjectJoin join = ssoRepository.getSampleForSequencingObject(filePair);
 
 			if (join == null) {
-				throw new EntityExistsException("No sample associated with sequence file " + filePair);
+				throw new EntityExistsException("No sample associated with sequence file " + filePair.getClass()
+						+ "[id=" + filePair.getId() + "]");
 			} else {
 				Sample sample = join.getSubject();
 				if (sequenceFilePairsSampleMap.containsKey(sample)) {
 					SequencingObject previousPair = sequenceFilePairsSampleMap.get(sample);
-					throw new DuplicateSampleException("Sequence file pairs " + pair1 + ", " + previousPair
-							+ " have the same sample " + sample);
+					throw new DuplicateSampleException(
+							"Sequence file pairs " + pair1 + ", " + previousPair + " have the same sample " + sample);
 				} else {
 					sequenceFilePairsSampleMap.put(sample, filePair);
 				}

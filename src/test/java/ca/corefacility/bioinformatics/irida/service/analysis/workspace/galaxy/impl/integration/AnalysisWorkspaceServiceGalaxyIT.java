@@ -85,6 +85,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.U
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 /**
@@ -115,6 +116,9 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 	@Autowired
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
+	
+	@Autowired
+	private SampleService sampleService;
 
 	@Autowired
 	@Qualifier("rootTempDirectory")
@@ -1082,6 +1086,74 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		assertEquals("the analysis results output file has an invalid name", Paths.get(OUTPUT2_NAME), analysis
 				.getAnalysisOutputFile(OUTPUT2_KEY).getFile().getFileName());
 		assertEquals("the analysis results output file has an invalid label", SAMPLE1_NAME + "-" + Paths.get(OUTPUT2_NAME), analysis
+				.getAnalysisOutputFile(OUTPUT2_KEY).getLabel());
+	}
+	
+	/**
+	 * Tests out successfully getting results for an analysis (TestAnalysis)
+	 * when sequencing objects are present, but the sample was deleted while pipeline was running.
+	 * 
+	 * @throws InterruptedException
+	 * @throws ExecutionManagerException
+	 * @throws IridaWorkflowNotFoundException
+	 * @throws IOException
+	 * @throws IridaWorkflowAnalysisTypeException
+	 * @throws TimeoutException
+	 * @throws IridaWorkflowAnalysisLabelException 
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testGetAnalysisResultsTestAnalysisDeleteSampleRunningSuccess() throws InterruptedException,
+			ExecutionManagerException, IridaWorkflowNotFoundException, IOException, IridaWorkflowAnalysisTypeException,
+			TimeoutException, IridaWorkflowAnalysisLabelException {
+
+		History history = new History();
+		history.setName("testGetAnalysisResultsTestAnalysisDeleteSampleRunningSuccess");
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient();
+		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceAdmin().getWorkflowsClient();
+		ToolsClient toolsClient = localGalaxy.getGalaxyInstanceAdmin().getToolsClient();
+
+		History createdHistory = historiesClient.create(history);
+
+		// upload test outputs
+		uploadFileToHistory(sequenceFilePathA, OUTPUT1_NAME, createdHistory.getId(), toolsClient);
+		uploadFileToHistory(sequenceFilePathA, OUTPUT2_NAME, createdHistory.getId(), toolsClient);
+
+		// wait for history
+		Util.waitUntilHistoryComplete(createdHistory.getId(), galaxyHistoriesService, 60);
+
+		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdPairedSingleSample);
+		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
+		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		List<Path> paths1 = new ArrayList<>();
+		paths1.add(sequenceFilePathA);
+		List<Path> paths2 = new ArrayList<>();
+		paths2.add(sequenceFilePath2A);
+
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
+				paths1, paths2, referenceFilePath, validWorkflowIdPairedSingleSample);
+		
+		sampleService.delete(1L);
+		assertTrue(!sampleService.exists(1L));
+
+		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
+		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
+		analysisSubmission.setAnalysisState(AnalysisState.COMPLETING);
+		analysisSubmissionRepository.save(analysisSubmission);
+
+		Analysis analysis = analysisWorkspaceService.getAnalysisResults(analysisSubmission);
+		assertNotNull("the analysis results were not properly created", analysis);
+		assertEquals("the Analysis results class is invalid", Analysis.class, analysis.getClass());
+		assertEquals("the analysis results has an invalid number of output files", 2, analysis.getAnalysisOutputFiles()
+				.size());
+		assertEquals("the analysis results output file has an invalid name", Paths.get(OUTPUT1_NAME), analysis
+				.getAnalysisOutputFile(OUTPUT1_KEY).getFile().getFileName());
+		assertEquals("the analysis results output file has an invalid label", Paths.get(OUTPUT1_NAME), analysis
+				.getAnalysisOutputFile(OUTPUT1_KEY).getLabel());
+		assertEquals("the analysis results output file has an invalid name", Paths.get(OUTPUT2_NAME), analysis
+				.getAnalysisOutputFile(OUTPUT2_KEY).getFile().getFileName());
+		assertEquals("the analysis results output file has an invalid label", Paths.get(OUTPUT2_NAME), analysis
 				.getAnalysisOutputFile(OUTPUT2_KEY).getLabel());
 	}
 

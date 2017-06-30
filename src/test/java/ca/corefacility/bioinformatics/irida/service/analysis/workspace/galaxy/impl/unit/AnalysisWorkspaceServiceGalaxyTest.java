@@ -831,8 +831,9 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	}
 
 	/**
-	 * Tests failing to get analysis results from Galaxy where there's multiple
-	 * samples but workflow should have only accepted single sample.
+	 * Tests successfully getting analysis results from Galaxy where there's
+	 * multiple samples but workflow should have only accepted single sample (no
+	 * label on name).
 	 * 
 	 * @throws IridaWorkflowNotFoundException
 	 * @throws IOException
@@ -840,8 +841,8 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	 * @throws IridaWorkflowAnalysisTypeException
 	 * @throws IridaWorkflowAnalysisLabelException
 	 */
-	@Test(expected = IridaWorkflowAnalysisLabelException.class)
-	public void testGetAnalysisResultsFailMultiSample()
+	@Test
+	public void testGetAnalysisResultsSuccessMultiSample()
 			throws IridaWorkflowNotFoundException, IridaWorkflowAnalysisTypeException, ExecutionManagerException,
 			IOException, IridaWorkflowAnalysisLabelException {
 		submission = AnalysisSubmission.builder(workflowId).name("my analysis").inputFilesPaired(pairedInputFiles)
@@ -858,12 +859,27 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		when(sequencingObjectService.getUniqueSamplesForSequencingObjects(submission.getPairedInputFiles()))
 				.thenReturn(sampleSequenceFilePairMap);
 
-		workflowPreparation.getAnalysisResults(submission);
+		Analysis analysis = workflowPreparation.getAnalysisResults(submission);
+
+		assertNotNull("analysis is not valid", analysis);
+		assertEquals("invalid number of output files", 2, analysis.getAnalysisOutputFiles().size());
+		assertEquals("missing output file for analysis", Paths.get("output1.txt"),
+				analysis.getAnalysisOutputFile("output1").getFile().getFileName());
+
+		// labels should now not have sample associated with them.
+		assertEquals("missing label for analysis output file", "output1.txt",
+				analysis.getAnalysisOutputFile("output1").getLabel());
+		assertEquals("missing output file for analysis", "output2.txt",
+				analysis.getAnalysisOutputFile("output2").getLabel());
+
+		verify(galaxyHistoriesService).getDatasetForFileInHistory("output1.txt", HISTORY_ID);
+		verify(galaxyHistoriesService).getDatasetForFileInHistory("output2.txt", HISTORY_ID);
 	}
 
 	/**
-	 * Tests failing to get analysis results from Galaxy where there's no sample
-	 * associated with the sequence files.
+	 * Tests successfully getting analysis results from Galaxy where there's no
+	 * sample associated with the sequence files (no label is prefixed to output
+	 * file name).
 	 * 
 	 * @throws IridaWorkflowNotFoundException
 	 * @throws IOException
@@ -871,8 +887,8 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	 * @throws IridaWorkflowAnalysisTypeException
 	 * @throws IridaWorkflowAnalysisLabelException
 	 */
-	@Test(expected = IridaWorkflowAnalysisLabelException.class)
-	public void testGetAnalysisResultsFailNoSample()
+	@Test
+	public void testGetAnalysisResultsSuccessNoSample()
 			throws IridaWorkflowNotFoundException, IridaWorkflowAnalysisTypeException, ExecutionManagerException,
 			IOException, IridaWorkflowAnalysisLabelException {
 		submission = AnalysisSubmission.builder(workflowId).name("my analysis").inputFilesPaired(pairedInputFiles)
@@ -889,7 +905,21 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		when(sequencingObjectService.getUniqueSamplesForSequencingObjects(submission.getPairedInputFiles()))
 				.thenReturn(ImmutableMap.of());
 
-		workflowPreparation.getAnalysisResults(submission);
+		Analysis analysis = workflowPreparation.getAnalysisResults(submission);
+
+		assertNotNull("analysis is not valid", analysis);
+		assertEquals("invalid number of output files", 2, analysis.getAnalysisOutputFiles().size());
+		assertEquals("missing output file for analysis", Paths.get("output1.txt"),
+				analysis.getAnalysisOutputFile("output1").getFile().getFileName());
+
+		// labels should now not have sample associated with them.
+		assertEquals("missing label for analysis output file", "output1.txt",
+				analysis.getAnalysisOutputFile("output1").getLabel());
+		assertEquals("missing output file for analysis", "output2.txt",
+				analysis.getAnalysisOutputFile("output2").getLabel());
+
+		verify(galaxyHistoriesService).getDatasetForFileInHistory("output1.txt", HISTORY_ID);
+		verify(galaxyHistoriesService).getDatasetForFileInHistory("output2.txt", HISTORY_ID);
 	}
 
 	/**
