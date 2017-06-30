@@ -12,5 +12,13 @@
 
 		<renameColumn columnDataType="int(11)" newColumnName="minimum_coverage"
 			oldColumnName="required_coverage" tableName="project_AUD" />
+
+		<addColumn tableName="project">
+			<column name="maximum_coverage" type="int(11)" />
+		</addColumn>
+
+		<addColumn tableName="project_AUD">
+			<column name="maximum_coverage" type="int(11)" />
+		</addColumn>
 	</changeSet>
 </databaseChangeLog>
