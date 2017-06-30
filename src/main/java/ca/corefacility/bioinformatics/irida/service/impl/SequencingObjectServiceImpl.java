@@ -8,6 +8,8 @@ import java.util.Set;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.task.TaskExecutor;
@@ -49,7 +51,7 @@ import ca.corefacility.bioinformatics.irida.service.impl.processor.SequenceFileP
 @Service
 public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, SequencingObject> implements
 		SequencingObjectService {
-
+	
 	private final SampleSequencingObjectJoinRepository ssoRepository;
 	private final SequenceFileRepository sequenceFileRepository;
 	private TaskExecutor fileProcessingChainExecutor;
@@ -166,13 +168,17 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 
 			SampleSequencingObjectJoin join = ssoRepository.getSampleForSequencingObject(filePair);
 
-			Sample sample = join.getSubject();
-			if (sequenceFilePairsSampleMap.containsKey(sample)) {
-				SequencingObject previousPair = sequenceFilePairsSampleMap.get(sample);
-				throw new DuplicateSampleException("Sequence file pairs " + pair1 + ", " + previousPair
-						+ " have the same sample " + sample);
+			if (join == null) {
+				throw new EntityExistsException("No sample associated with sequence file " + filePair);
 			} else {
-				sequenceFilePairsSampleMap.put(sample, filePair);
+				Sample sample = join.getSubject();
+				if (sequenceFilePairsSampleMap.containsKey(sample)) {
+					SequencingObject previousPair = sequenceFilePairsSampleMap.get(sample);
+					throw new DuplicateSampleException("Sequence file pairs " + pair1 + ", " + previousPair
+							+ " have the same sample " + sample);
+				} else {
+					sequenceFilePairsSampleMap.put(sample, filePair);
+				}
 			}
 		}
 

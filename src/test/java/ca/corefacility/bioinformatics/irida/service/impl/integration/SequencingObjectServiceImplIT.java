@@ -14,6 +14,7 @@ import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.zip.GZIPOutputStream;
 
@@ -46,6 +47,8 @@ import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.CoverageQCEntry;
@@ -457,5 +460,49 @@ public class SequencingObjectServiceImplIT {
 		qcEntry.addProjectSettings(project);
 		assertTrue("should be coverage entry", qcEntry instanceof CoverageQCEntry);
 		assertEquals("qc should have failed", QCEntryStatus.NEGATIVE, qcEntry.getStatus());
+	}
+	
+	/**
+	 * Tests to make sure we get a properly constructed map of samples to sequencing objects.
+	 */
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testGetUniqueSamplesForSequencingObjectsSuccess() {
+		SequencingObject s1 = objectService.read(1L);
+		SequencingObject s2 = objectService.read(2L);
+		
+		Sample sa1 = sampleService.read(1L);
+		Sample sa2 = sampleService.read(2L);
+		
+		Map<Sample, SequencingObject> sampleMap = objectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(s1,s2));
+		assertEquals("Incorrect number of results returned in sample map", 2, sampleMap.size());
+		assertEquals("Incorrect sequencing object mapped to sample", s2.getId(), sampleMap.get(sa1).getId());
+		assertEquals("Incorrect sequencing object mapped to sample", s1.getId(), sampleMap.get(sa2).getId());
+	}
+	
+	/**
+	 * Tests failure when a sample for one sequencing object does not exist.
+	 */
+	@Test(expected=EntityNotFoundException.class)
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testGetUniqueSamplesForSequencingObjectsFailNoSample() {
+		SequencingObject s1 = objectService.read(1L);
+		SequencingObject s2 = objectService.read(2L);
+		
+		sampleService.delete(1L);
+		
+		objectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(s1,s2));
+	}
+	
+	/**
+	 * Tests failure for duplicate samples in sequencing objects.
+	 */
+	@Test(expected=DuplicateSampleException.class)
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testGetUniqueSamplesForSequencingObjectsFailDuplicateSample() {
+		SequencingObject s2 = objectService.read(2L);
+		SequencingObject s4 = objectService.read(4L);
+				
+		objectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(s2,s4));
 	}
 }
