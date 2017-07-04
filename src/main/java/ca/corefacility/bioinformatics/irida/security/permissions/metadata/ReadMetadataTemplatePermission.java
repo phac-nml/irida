@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.security.permissions;
+package ca.corefacility.bioinformatics.irida.security.permissions.metadata;
 
 import java.util.List;
 
@@ -10,6 +10,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemp
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectMetadataTemplateJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataTemplateRepository;
+import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ReadProjectPermission;
 
 /**
