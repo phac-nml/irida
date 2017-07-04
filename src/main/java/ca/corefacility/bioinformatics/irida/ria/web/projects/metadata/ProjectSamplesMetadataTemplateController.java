@@ -9,10 +9,10 @@ import java.util.stream.Collectors;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -167,15 +167,15 @@ public class ProjectSamplesMetadataTemplateController {
 		List<String> headers = fields.stream().map(MetadataTemplateField::getLabel).collect(Collectors.toList());
 		String label = template.getLabel().replace(" ", "_");
 		//Blank workbook
-		HSSFWorkbook workbook = new HSSFWorkbook();
+		XSSFWorkbook workbook = new XSSFWorkbook();
 
 		//Create a blank sheet
-		HSSFSheet worksheet = workbook.createSheet(label);
+		XSSFSheet worksheet = workbook.createSheet(label);
 
 		// Write the headers
-		HSSFRow headerRow = worksheet.createRow(0);
+		XSSFRow headerRow = worksheet.createRow(0);
 		for (int i = 0; i < headers.size(); i++) {
-			HSSFCell cell = headerRow.createCell(i);
+			XSSFCell cell = headerRow.createCell(i);
 			cell.setCellValue(headers.get(i));
 		}
 
