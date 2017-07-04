@@ -1,5 +1,3 @@
-import {download} from '../../utilities/file.utilities';
-
 const angular = require('angular');
 require('./../../modules/utilities/file.utils');
 
@@ -44,8 +42,6 @@ function ProjectFileService($rootScope, $http) {
 function ReferenceFileService($rootScope, $uibModal, $http, notifications) {
   'use strict';
   const svc = this;
-
-  svc.download = download;
 
   svc.deleteFile = function(file) {
     const modalInstance = $uibModal.open({
@@ -109,10 +105,6 @@ function FilesCtrl(ProjectFileService, projectFilesService) {
       rowClass = 'success';
     }
     return rowClass;
-  };
-
-  this.download = function(id) {
-    projectFilesService.download(id);
   };
 
   this.deleteFile = function(file) {

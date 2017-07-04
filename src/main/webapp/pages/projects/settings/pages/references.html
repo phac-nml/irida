@@ -61,9 +61,12 @@
                     <td>{{file.createdDate | date:'mediumDate'}}</td>
                     <td>
                         <div class="btn-toolbar pull-right">
-                            <button ng-show="file.size > 0" class="btn btn-xs btn-default" ng-click="table.download(file.id)" data:uib-tooltip="#{form.download}">
+                            <a ng-show="file.size > 0" class="btn btn-xs btn-default" download="{{file.id}}"
+                               th:with="url=@{/referenceFiles/download/}"
+                               data:ng-href="${url} + '{{file.id}}'"
+                               data:uib-tooltip="#{form.download}">
                                 <span class="fa fa-fw fa-download"></span> <span class="sr-only" th:text="#{form.download}"></span>
-                            </button>
+                            </a>
                             <button th:if="${isOwner} or ${isAdmin}" class="btn btn-xs btn-default removeBtn" ng-click="table.deleteFile(file)" data:uib-tooltip="#{form.btn.remove}">
                                 <span class="fa fa-fw fa-trash"></span> <span class="sr-only" th:text="#{form.btn.remove}"></span>
                             </button>
@@ -73,6 +76,7 @@
                 </tbody>
             </table>
         </section>
+
     </div>
 </div>
 <th:block layout:fragment="scripts"  th:inline="javascript">
