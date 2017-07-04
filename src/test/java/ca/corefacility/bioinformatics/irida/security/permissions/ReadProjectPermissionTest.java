@@ -31,6 +31,7 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUs
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.UserGroupProjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserGroupJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
+import ca.corefacility.bioinformatics.irida.security.permissions.project.ReadProjectPermission;
 
 import com.google.common.collect.ImmutableList;
 

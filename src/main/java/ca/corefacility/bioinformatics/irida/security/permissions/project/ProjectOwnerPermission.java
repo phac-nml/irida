@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.security.permissions;
+package ca.corefacility.bioinformatics.irida.security.permissions.project;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

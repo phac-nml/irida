@@ -16,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAna
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.ProjectAnalysisSubmissionJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
+import ca.corefacility.bioinformatics.irida.security.permissions.project.ReadProjectPermission;
 
 /**
  * Confirms if a {@link User} can read a {@link AnalysisSubmission}.

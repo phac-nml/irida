@@ -8,6 +8,7 @@ import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.NcbiExportSubmissionRepository;
+import ca.corefacility.bioinformatics.irida.security.permissions.project.ReadProjectPermission;
 
 /**
  * Whether or not a {@link User} can read a given {@link NcbiExportSubmission}

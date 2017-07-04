@@ -26,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.project.UserGroup
 import ca.corefacility.bioinformatics.irida.repositories.user.UserGroupJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.security.ProjectSynchronizationAuthenticationToken;
+import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
 
 public class ProjectOwnerPermissionTest {
 
