@@ -64,7 +64,7 @@
 
 	<analysis_output_file id="1" created_date="2014-03-06 10:01:02"
 		execution_manager_file_id="123-456-789" file_path="src/test/resources/files/snp_tree.tree"
-		tool_execution_id="2" />
+		tool_execution_id="2" label=''/>
 
 	<analysis_output_file_map analysis_id="1"
 		analysisOutputFilesMap_id="1" analysis_output_file_key="tree" />

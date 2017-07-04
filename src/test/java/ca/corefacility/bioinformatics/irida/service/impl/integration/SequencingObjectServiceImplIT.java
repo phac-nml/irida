@@ -65,6 +65,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
+import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
@@ -98,6 +99,9 @@ public class SequencingObjectServiceImplIT {
 
 	@Autowired
 	private SampleService sampleService;
+	
+	@Autowired
+	private SampleRepository sampleRepository;
 
 	@Autowired
 	private SequencingObjectService objectService;
@@ -489,7 +493,7 @@ public class SequencingObjectServiceImplIT {
 		SequencingObject s1 = objectService.read(1L);
 		SequencingObject s2 = objectService.read(2L);
 		
-		sampleService.delete(1L);
+		sampleRepository.delete(1L);
 		
 		objectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(s1,s2));
 	}
@@ -500,9 +504,9 @@ public class SequencingObjectServiceImplIT {
 	@Test(expected=DuplicateSampleException.class)
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testGetUniqueSamplesForSequencingObjectsFailDuplicateSample() {
-		SequencingObject s2 = objectService.read(2L);
+		SequencingObject s1 = objectService.read(1L);
 		SequencingObject s4 = objectService.read(4L);
 				
-		objectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(s2,s4));
+		objectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(s1,s4));
 	}
 }
