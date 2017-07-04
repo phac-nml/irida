@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.security.permissions;
+package ca.corefacility.bioinformatics.irida.security.permissions.files;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +11,7 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.SequencingRunRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
+import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
 
 /**
  * Permission allowing a user to read a {@link SequencingRun}

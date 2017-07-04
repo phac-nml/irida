@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.security.permissions;
+package ca.corefacility.bioinformatics.irida.security.permissions.files;
 
 import java.util.List;
 
@@ -11,28 +11,28 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectReferenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
-import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
+import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
+import ca.corefacility.bioinformatics.irida.security.permissions.project.ReadProjectPermission;
 
 /**
- * Confirms that the authenticated user is allowed to modify a reference file.
+ * Permission testing if a given user can read a given reference file.
  * 
- * 
+ *
  */
 @Component
-public class UpdateReferenceFilePermission extends BasePermission<ReferenceFile, Long> {
+public class ReadReferenceFilePermission extends BasePermission<ReferenceFile, Long> {
 
-	public static final String PERMISSION_PROVIDED = "canUpdateReferenceFile";
+	public static final String PERMISSION_PROVIDED = "canReadReferenceFile";
 
+	private final ReadProjectPermission readProjectPermission;
 	private final ProjectReferenceFileJoinRepository prfRepository;
-	private final ProjectOwnerPermission projectOwnerPermission;
 
 	@Autowired
-	public UpdateReferenceFilePermission(final ReferenceFileRepository referenceFileRepository,
-			final ProjectReferenceFileJoinRepository prfRepository,
-			final ProjectOwnerPermission projectOwnerPermission) {
+	public ReadReferenceFilePermission(final ReferenceFileRepository referenceFileRepository,
+			final ProjectReferenceFileJoinRepository prfRepository, final ReadProjectPermission readProjectPermission) {
 		super(ReferenceFile.class, Long.class, referenceFileRepository);
 		this.prfRepository = prfRepository;
-		this.projectOwnerPermission = projectOwnerPermission;
+		this.readProjectPermission = readProjectPermission;
 	}
 
 	@Override
@@ -50,7 +50,6 @@ public class UpdateReferenceFilePermission extends BasePermission<ReferenceFile,
 				.findProjectsForReferenceFile(targetDomainObject);
 
 		return findProjectsForReferenceFile.stream()
-				.anyMatch(j -> projectOwnerPermission.isAllowed(authentication, j.getSubject()));
+				.anyMatch(j -> readProjectPermission.isAllowed(authentication, j.getSubject()));
 	}
-
 }
