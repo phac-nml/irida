@@ -875,11 +875,11 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 				.size());
 		assertEquals("the analysis results output file has an invalid name", Paths.get(OUTPUT1_NAME), analysis
 				.getAnalysisOutputFile(OUTPUT1_KEY).getFile().getFileName());
-		assertEquals("the analysis results output file has an invalid label", Paths.get(OUTPUT1_NAME).getFileName().toString(), analysis
+		assertEquals("the analysis results output file has an invalid label", OUTPUT1_NAME, analysis
 				.getAnalysisOutputFile(OUTPUT1_KEY).getLabel());
 		assertEquals("the analysis results output file has an invalid name", Paths.get(OUTPUT2_NAME), analysis
 				.getAnalysisOutputFile(OUTPUT2_KEY).getFile().getFileName());
-		assertEquals("the analysis results output file has an invalid label", Paths.get(OUTPUT2_NAME).getFileName().toString(), analysis
+		assertEquals("the analysis results output file has an invalid label", OUTPUT2_NAME, analysis
 				.getAnalysisOutputFile(OUTPUT2_KEY).getLabel());
 	}
 	
@@ -939,11 +939,11 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 				.size());
 		assertEquals("the analysis results output file has an invalid name", Paths.get(OUTPUT1_NAME), analysis
 				.getAnalysisOutputFile(OUTPUT1_KEY).getFile().getFileName());
-		assertEquals("the analysis results output file has an invalid label", SAMPLE1_NAME + '-' + Paths.get(OUTPUT1_NAME), analysis
+		assertEquals("the analysis results output file has an invalid label", SAMPLE1_NAME + '-' + OUTPUT1_NAME, analysis
 				.getAnalysisOutputFile(OUTPUT1_KEY).getLabel());
 		assertEquals("the analysis results output file has an invalid name", Paths.get(OUTPUT2_NAME), analysis
 				.getAnalysisOutputFile(OUTPUT2_KEY).getFile().getFileName());
-		assertEquals("the analysis results output file has an invalid label", SAMPLE1_NAME + '-' + Paths.get(OUTPUT2_NAME), analysis
+		assertEquals("the analysis results output file has an invalid label", SAMPLE1_NAME + '-' + OUTPUT2_NAME, analysis
 				.getAnalysisOutputFile(OUTPUT2_KEY).getLabel());
 	}
 
@@ -1010,11 +1010,11 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 				.size());
 		assertEquals("the analysis results output file has an invalid name", Paths.get(OUTPUT1_NAME), analysis
 				.getAnalysisOutputFile(OUTPUT1_KEY).getFile().getFileName());
-		assertEquals("the analysis results output file has an invalid label", Paths.get(OUTPUT1_NAME).getFileName().toString(), analysis
+		assertEquals("the analysis results output file has an invalid label", OUTPUT1_NAME, analysis
 				.getAnalysisOutputFile(OUTPUT1_KEY).getLabel());
 		assertEquals("the analysis results output file has an invalid name", Paths.get(OUTPUT2_NAME), analysis
 				.getAnalysisOutputFile(OUTPUT2_KEY).getFile().getFileName());
-		assertEquals("the analysis results output file has an invalid label", Paths.get(OUTPUT2_NAME).getFileName().toString(), analysis
+		assertEquals("the analysis results output file has an invalid label", OUTPUT2_NAME, analysis
 				.getAnalysisOutputFile(OUTPUT2_KEY).getLabel());
 	}
 	
@@ -1081,11 +1081,11 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 				.size());
 		assertEquals("the analysis results output file has an invalid name", Paths.get(OUTPUT1_NAME), analysis
 				.getAnalysisOutputFile(OUTPUT1_KEY).getFile().getFileName());
-		assertEquals("the analysis results output file has an invalid label", SAMPLE1_NAME + "-" + Paths.get(OUTPUT1_NAME), analysis
+		assertEquals("the analysis results output file has an invalid label", SAMPLE1_NAME + "-" + OUTPUT1_NAME, analysis
 				.getAnalysisOutputFile(OUTPUT1_KEY).getLabel());
 		assertEquals("the analysis results output file has an invalid name", Paths.get(OUTPUT2_NAME), analysis
 				.getAnalysisOutputFile(OUTPUT2_KEY).getFile().getFileName());
-		assertEquals("the analysis results output file has an invalid label", SAMPLE1_NAME + "-" + Paths.get(OUTPUT2_NAME), analysis
+		assertEquals("the analysis results output file has an invalid label", SAMPLE1_NAME + "-" + OUTPUT2_NAME, analysis
 				.getAnalysisOutputFile(OUTPUT2_KEY).getLabel());
 	}
 	
@@ -1148,11 +1148,11 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 				.size());
 		assertEquals("the analysis results output file has an invalid name", Paths.get(OUTPUT1_NAME), analysis
 				.getAnalysisOutputFile(OUTPUT1_KEY).getFile().getFileName());
-		assertEquals("the analysis results output file has an invalid label", Paths.get(OUTPUT1_NAME), analysis
+		assertEquals("the analysis results output file has an invalid label", OUTPUT1_NAME, analysis
 				.getAnalysisOutputFile(OUTPUT1_KEY).getLabel());
 		assertEquals("the analysis results output file has an invalid name", Paths.get(OUTPUT2_NAME), analysis
 				.getAnalysisOutputFile(OUTPUT2_KEY).getFile().getFileName());
-		assertEquals("the analysis results output file has an invalid label", Paths.get(OUTPUT2_NAME), analysis
+		assertEquals("the analysis results output file has an invalid label", OUTPUT2_NAME, analysis
 				.getAnalysisOutputFile(OUTPUT2_KEY).getLabel());
 	}
 
@@ -1222,11 +1222,11 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 				.size());
 		assertEquals("the analysis results output file has an invalid name", Paths.get(OUTPUT1_NAME), analysis
 				.getAnalysisOutputFile(OUTPUT1_KEY).getFile().getFileName());
-		assertEquals("the analysis results output file has an invalid label", Paths.get(OUTPUT1_NAME).getFileName().toString(), analysis
+		assertEquals("the analysis results output file has an invalid label", OUTPUT1_NAME, analysis
 				.getAnalysisOutputFile(OUTPUT1_KEY).getLabel());
 		assertEquals("the analysis results output file has an invalid name", Paths.get(OUTPUT2_NAME), analysis
 				.getAnalysisOutputFile(OUTPUT2_KEY).getFile().getFileName());
-		assertEquals("the analysis results output file has an invalid label", Paths.get(OUTPUT2_NAME).getFileName().toString(), analysis
+		assertEquals("the analysis results output file has an invalid label", OUTPUT2_NAME, analysis
 				.getAnalysisOutputFile(OUTPUT2_KEY).getLabel());
 	}
 
@@ -1280,15 +1280,15 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 				.size());
 		assertEquals("the analysis results output file has an invalid name", Paths.get(TABLE_NAME), analysis
 				.getAnalysisOutputFile(TABLE_KEY).getFile().getFileName());
-		assertEquals("the analysis results output file has an invalid label", Paths.get(TABLE_NAME).getFileName().toString(), analysis
+		assertEquals("the analysis results output file has an invalid label", TABLE_NAME, analysis
 				.getAnalysisOutputFile(TABLE_KEY).getLabel());
 		assertEquals("the analysis results output file has an invalid name", Paths.get(MATRIX_NAME), analysis
 				.getAnalysisOutputFile(MATRIX_KEY).getFile().getFileName());
-		assertEquals("the analysis results output file has an invalid label", Paths.get(MATRIX_NAME).getFileName().toString(), analysis
+		assertEquals("the analysis results output file has an invalid label", MATRIX_NAME, analysis
 				.getAnalysisOutputFile(MATRIX_KEY).getLabel());
 		assertEquals("the analysis results output file has an invalid name", Paths.get(TREE_NAME), analysis
 				.getAnalysisOutputFile(TREE_KEY).getFile().getFileName());
-		assertEquals("the analysis results output file has an invalid label", Paths.get(TREE_NAME).getFileName().toString(), analysis
+		assertEquals("the analysis results output file has an invalid label", TREE_NAME, analysis
 				.getAnalysisOutputFile(TREE_KEY).getLabel());
 	}
 
