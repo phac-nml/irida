@@ -63,7 +63,7 @@ Clicking on the delete template button will open a warning about deleting the te
 
 ## Downloading metadata templates
 
-An existing template can be downloaded direction on the Settings page by clicking on the <i class="fa fa-download fa-fw"></i> button on the right side of the table row.  This will download an excel file containing a header row with all the metadata fields in the template.
+An existing template can be downloaded directly on the Settings page by clicking on the <i class="fa fa-download fa-fw"></i> button on the right side of the table row.  This will download an excel file containing a header row with all the metadata fields in the template.
 
 ![Download template](images/download_buttons.png)
 
