@@ -167,7 +167,7 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 			SampleSequencingObjectJoin join = ssoRepository.getSampleForSequencingObject(seqObj);
 
 			if (join == null) {
-				throw new EntityExistsException("No sample associated with sequence file " + seqObj.getClass()
+				throw new EntityNotFoundException("No sample associated with sequence file " + seqObj.getClass()
 						+ "[id=" + seqObj.getId() + "]");
 			} else {
 				Sample sample = join.getSubject();
