@@ -1,5 +1,5 @@
-const angular = require('angular');
-require('./../../modules/utilities/file.utils');
+import angular from 'angular';
+import './../../modules/utilities/file.utils';
 
 /**
  * Angular service for project files.

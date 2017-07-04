@@ -1,4 +1,4 @@
-import {download, convertFileSize} from '../../utilities/file.utilities';
+import {convertFileSize, download} from '../../utilities/file.utilities';
 
 const angular = require('angular');
 require('ng-file-upload');
@@ -118,10 +118,12 @@ function fileUploadProgress() {
       $scope.$on(UPLOAD_EVENT, function(evt, args) {
         var file = {};
         $scope.count = args.count;
-        args.progress(function(evt) {
-          file.progress = parseInt(100.0 * evt.loaded / evt.total, 0);
-          file.filename = evt.config.file.name;
-        });
+        if (args.progress) {
+          args.progress(function(evt) {
+            file.progress = parseInt(100.0 * evt.loaded / evt.total, 0);
+            file.filename = evt.config.file.name;
+          });
+        }
         $scope.files.push(file);
         $scope.uploading = true;
       });
