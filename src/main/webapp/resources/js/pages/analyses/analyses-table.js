@@ -1,6 +1,6 @@
-import "css/pages/analyses-list.css";
-import "DataTables/datatables";
-import $ from "jquery";
+import 'css/pages/analyses-list.css';
+import 'DataTables/datatables';
+import $ from 'jquery';
 import {
   createButtonCell,
   createDeleteBtn,
@@ -9,9 +9,9 @@ import {
   createRestrictedWidthContent,
   generateColumnOrderInfo,
   tableConfig
-} from "Utilities/datatables-utilities";
-import {formatDate, getHumanizedDuration} from "Utilities/date-utilities";
-import {deleteAnalysis} from "../analysis/analysis-service";
+} from 'Utilities/datatables-utilities';
+import {formatDate, getHumanizedDuration} from 'Utilities/date-utilities';
+import {deleteAnalysis} from '../analysis/analysis-service';
 
 const COLUMNS = generateColumnOrderInfo();
 
@@ -164,7 +164,7 @@ const workflowFilter = document.querySelector('#workflowIdFilter');
 $('#filterModal')
   .on('shown.bs.modal', () => {
     nameFilter.value = table.column(COLUMNS.NAME).search();
-    stateFilter.value = table.column(COLUMNS.STATE).search();
+    stateFilter.value = table.column(COLUMNS.ANALYSIS_STATE).search();
     workflowFilter.value = table.column(COLUMNS.WORKFLOW_ID).search();
     nameFilter.focus();
   })
