@@ -21,7 +21,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
-import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisLabelException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
@@ -332,11 +331,10 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	 * @throws IOException
 	 * @throws IridaWorkflowNotFoundException
 	 * @throws IridaWorkflowAnalysisTypeException 
-	 * @throws IridaWorkflowAnalysisLabelException 
 	 */
 	@Test
 	public void testTransferAnalysesResultsSuccess() throws ExecutionManagerException, IOException,
-			IridaWorkflowNotFoundException, IridaWorkflowAnalysisTypeException, IridaWorkflowAnalysisLabelException {
+			IridaWorkflowNotFoundException, IridaWorkflowAnalysisTypeException {
 		analysisSubmission.setAnalysisState(AnalysisState.FINISHED_RUNNING);
 
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.FINISHED_RUNNING)).thenReturn(
@@ -354,11 +352,10 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	 * @throws IOException
 	 * @throws IridaWorkflowNotFoundException
 	 * @throws IridaWorkflowAnalysisTypeException 
-	 * @throws IridaWorkflowAnalysisLabelException 
 	 */
 	@Test
 	public void testTransferAnalysesResultsNoAnalyses() throws ExecutionManagerException, IOException,
-			IridaWorkflowNotFoundException, IridaWorkflowAnalysisTypeException, IridaWorkflowAnalysisLabelException {
+			IridaWorkflowNotFoundException, IridaWorkflowAnalysisTypeException {
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.FINISHED_RUNNING)).thenReturn(
 				new ArrayList<AnalysisSubmission>());
 

@@ -26,7 +26,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
-import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisLabelException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
@@ -705,12 +704,11 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	 * @throws IOException
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowAnalysisTypeException
-	 * @throws IridaWorkflowAnalysisLabelException
 	 */
 	@Test
 	public void testGetAnalysisResultsSuccessSingleEnd()
 			throws IridaWorkflowNotFoundException, IridaWorkflowAnalysisTypeException, ExecutionManagerException,
-			IOException, IridaWorkflowAnalysisLabelException {
+			IOException {
 		submission = AnalysisSubmission.builder(workflowId).name("my analysis").inputFilesSingleEnd(singleInputFiles)
 				.referenceFile(referenceFile).build();
 		submission.setRemoteWorkflowId(WORKFLOW_ID);
@@ -748,12 +746,11 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	 * @throws IOException
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowAnalysisTypeException
-	 * @throws IridaWorkflowAnalysisLabelException
 	 */
 	@Test
 	public void testGetAnalysisResultsSuccessPairedEnd()
 			throws IridaWorkflowNotFoundException, IridaWorkflowAnalysisTypeException, ExecutionManagerException,
-			IOException, IridaWorkflowAnalysisLabelException {
+			IOException {
 		submission = AnalysisSubmission.builder(workflowId).name("my analysis").inputFilesPaired(pairedInputFiles)
 				.referenceFile(referenceFile).build();
 		submission.setRemoteWorkflowId(WORKFLOW_ID);
@@ -791,12 +788,11 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	 * @throws IOException
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowAnalysisTypeException
-	 * @throws IridaWorkflowAnalysisLabelException
 	 */
 	@Test
 	public void testGetAnalysisResultsSuccessSinglePairedEnd()
 			throws IridaWorkflowNotFoundException, IridaWorkflowAnalysisTypeException, ExecutionManagerException,
-			IOException, IridaWorkflowAnalysisLabelException {
+			IOException {
 		submission = AnalysisSubmission.builder(workflowIdMultiSamples).name("my analysis")
 				.inputFilesSingleEnd(singleInputFiles).inputFilesPaired(pairedInputFiles).referenceFile(referenceFile)
 				.build();
@@ -839,12 +835,11 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	 * @throws IOException
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowAnalysisTypeException
-	 * @throws IridaWorkflowAnalysisLabelException
 	 */
 	@Test
 	public void testGetAnalysisResultsSuccessMultiSample()
 			throws IridaWorkflowNotFoundException, IridaWorkflowAnalysisTypeException, ExecutionManagerException,
-			IOException, IridaWorkflowAnalysisLabelException {
+			IOException {
 		submission = AnalysisSubmission.builder(workflowId).name("my analysis").inputFilesPaired(pairedInputFiles)
 				.referenceFile(referenceFile).build();
 		submission.setRemoteWorkflowId(WORKFLOW_ID);
@@ -885,12 +880,11 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	 * @throws IOException
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowAnalysisTypeException
-	 * @throws IridaWorkflowAnalysisLabelException
 	 */
 	@Test
 	public void testGetAnalysisResultsSuccessNoSample()
 			throws IridaWorkflowNotFoundException, IridaWorkflowAnalysisTypeException, ExecutionManagerException,
-			IOException, IridaWorkflowAnalysisLabelException {
+			IOException {
 		submission = AnalysisSubmission.builder(workflowId).name("my analysis").inputFilesPaired(pairedInputFiles)
 				.referenceFile(referenceFile).build();
 		submission.setRemoteWorkflowId(WORKFLOW_ID);
@@ -930,11 +924,10 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	 * @throws IOException
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowAnalysisTypeException
-	 * @throws IridaWorkflowAnalysisLabelException
 	 */
 	@Test(expected = GalaxyDatasetException.class)
 	public void testGetAnalysisResultsFail() throws IridaWorkflowNotFoundException, IridaWorkflowAnalysisTypeException,
-			ExecutionManagerException, IOException, IridaWorkflowAnalysisLabelException {
+			ExecutionManagerException, IOException {
 		submission = AnalysisSubmission.builder(workflowId).name("my analysis").inputFilesSingleEnd(singleInputFiles)
 				.referenceFile(referenceFile).build();
 		submission.setRemoteWorkflowId(WORKFLOW_ID);

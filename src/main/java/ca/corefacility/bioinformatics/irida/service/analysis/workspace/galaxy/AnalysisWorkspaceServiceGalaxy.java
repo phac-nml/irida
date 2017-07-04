@@ -28,7 +28,6 @@ import com.google.common.collect.Sets;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerDownloadException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
-import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisLabelException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
@@ -340,12 +339,8 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	 *            The {@link IridaWorkflow}.
 	 * @return The label prefix (sample name) if this workflow operates only on
 	 *         a single sample, otherwise an empty String.
-	 * @throws IridaWorkflowAnalysisLabelException
-	 *             If there is inconsistencies corresponding input sequence
-	 *             files with samples.
 	 */
-	private String getLabelPrefix(AnalysisSubmission analysisSubmission, IridaWorkflow iridaWorkflow)
-			throws IridaWorkflowAnalysisLabelException {
+	private String getLabelPrefix(AnalysisSubmission analysisSubmission, IridaWorkflow iridaWorkflow) {
 		String labelPrefix = "";
 
 		if (iridaWorkflow.getWorkflowDescription().getInputs().requiresSingleSample()) {
@@ -390,7 +385,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	@Override
 	public Analysis getAnalysisResults(AnalysisSubmission analysisSubmission)
 			throws ExecutionManagerException, IridaWorkflowNotFoundException, IOException,
-			IridaWorkflowAnalysisTypeException, IridaWorkflowAnalysisLabelException {
+			IridaWorkflowAnalysisTypeException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkNotNull(analysisSubmission.getInputFilesSingleEnd(), "input sequence files is null");
 		checkNotNull(analysisSubmission.getWorkflowId(), "workflowId is null");
