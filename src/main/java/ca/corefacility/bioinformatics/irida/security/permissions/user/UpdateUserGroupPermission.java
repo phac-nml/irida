@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.security.permissions;
+package ca.corefacility.bioinformatics.irida.security.permissions.user;
 
 import java.util.Optional;
 
@@ -15,6 +15,7 @@ import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin.UserG
 import ca.corefacility.bioinformatics.irida.repositories.user.UserGroupJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserGroupRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
+import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
 
 /**
  * Confirms that the authenticated user is allowed to modify a user group.

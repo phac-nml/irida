@@ -19,6 +19,7 @@ import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin.UserG
 import ca.corefacility.bioinformatics.irida.repositories.user.UserGroupJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserGroupRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
+import ca.corefacility.bioinformatics.irida.security.permissions.user.UpdateUserGroupPermission;
 
 /**
  * Tests for {@link UpdateUserGroupPermission}.
