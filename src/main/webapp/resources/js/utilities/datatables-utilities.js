@@ -1,7 +1,7 @@
-import $ from "jquery";
-import _ from "lodash";
-import {addTooltip} from "./bootstrap-utilities";
-import {createIcon, ICONS} from "./fontawesome-utilities";
+import $ from 'jquery';
+import _ from 'lodash';
+import {addTooltip} from './bootstrap-utilities';
+import {createIcon, ICONS} from './fontawesome-utilities';
 
 /*
 <div class="row">
@@ -29,6 +29,9 @@ import {createIcon, ICONS} from "./fontawesome-utilities";
 const dom = `
 <".row"
   <"col-md-6 col-sm-12 buttons"B><"#dt-filters.col-md-6 col-sm-12"f>>
+  <".row"
+    <".col-md-12">
+  >
 <"dt-table-wrapper"rt>
 <"row"
   <"col-md-3 col-sm-12"l>
