@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.security.permissions;
+package ca.corefacility.bioinformatics.irida.security.permissions.analysis;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.verify;

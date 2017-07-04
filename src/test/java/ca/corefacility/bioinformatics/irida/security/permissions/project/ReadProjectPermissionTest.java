@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.security.permissions;
+package ca.corefacility.bioinformatics.irida.security.permissions.project;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
