@@ -179,7 +179,7 @@ public class ProjectSamplesMetadataTemplateController {
 			cell.setCellValue(headers.get(i));
 		}
 
-		response.setHeader("Content-Disposition", "attachment; filename=\"" + label + ".xls\"");
+		response.setHeader("Content-Disposition", "attachment; filename=\"" + label + ".xlsx\"");
 		ServletOutputStream stream = response.getOutputStream();
 		workbook.write(stream);
 		stream.flush();
