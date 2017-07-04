@@ -82,6 +82,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrari
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.Util;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -118,6 +119,9 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	
 	@Autowired
 	private SampleService sampleService;
+	
+	@Autowired
+	private SampleRepository sampleRepository;
 
 	@Autowired
 	@Qualifier("rootTempDirectory")
@@ -1129,7 +1133,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
 				paths1, paths2, referenceFilePath, validWorkflowIdPairedSingleSample);
 		
-		sampleService.delete(1L);
+		sampleRepository.delete(1L);
 		assertTrue(!sampleService.exists(1L));
 
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
