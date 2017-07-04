@@ -39,16 +39,6 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	public AnalysisState getStateForAnalysisSubmission(Long analysisSubmissionId) throws EntityNotFoundException;
 	
 	/**
-	 * Gives a set of all the {@link Sample} names corresponding to
-	 * {@link SequenceFile}s that were used as input to this submission.
-	 * 
-	 * @param analysisSubmission
-	 *            The submission in question.
-	 * @return A set of the names of samples used as input for this submission.
-	 */
-	public Set<String> getInputSampleNamesForAnalysisSubmission(AnalysisSubmission analysisSubmission);
-	
-	/**
 	 * Gets a {@link Set} of {@link AnalysisSubmission}s for a {@link User}.
 	 * 
 	 * @param user

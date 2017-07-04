@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
@@ -324,19 +323,6 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		checkNotNull(user, "user is null");
 
 		return analysisSubmissionRepository.findBySubmitter(user);
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#analysisSubmission.id, 'canReadAnalysisSubmission')")
-	public Set<String> getInputSampleNamesForAnalysisSubmission(AnalysisSubmission analysisSubmission) {
-		Set<Sample> samples = Sets.newHashSet();
-		samples.addAll(sequencingObjectService.getUniqueSamplesForSequencingObjects(analysisSubmission.getInputFilesSingleEnd()).keySet());
-		samples.addAll(sequencingObjectService.getUniqueSamplesForSequencingObjects(analysisSubmission.getPairedInputFiles()).keySet());
-		
-		return samples.stream().map(Sample::getSampleName).collect(Collectors.toSet());
 	}
 
 	/**

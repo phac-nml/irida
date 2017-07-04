@@ -121,7 +121,6 @@ public class AnalysisExecutionServiceGalaxyTest {
 	 * @throws ExecutionManagerException
 	 * @throws NoSuchValueException
 	 * @throws IridaWorkflowAnalysisTypeException 
-	 * @throws IridaWorkflowAnalysisLabelException 
 	 */
 	@Before
 	public void setup() throws IridaWorkflowNotFoundException, IOException, ExecutionManagerException,
