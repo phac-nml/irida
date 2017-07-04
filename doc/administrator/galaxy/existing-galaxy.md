@@ -10,7 +10,7 @@ Integration with an existing Galaxy
 
 IRIDA can be setup to use an existing Galaxy installation assuming a few conditions are met:
 
-1. Galaxy version >= **16.01** is required as IRIDA makes use of [conda with Galaxy][].  A method to get newer conda-based tools to work with older Galaxy versions is described in our [FAQ][faq-conda].
+1. Galaxy version >= **16.01** is required as IRIDA makes use of [conda with Galaxy][].  A method to get newer conda-based tools to work with older Galaxy versions is described in our [FAQ][faq-conda], however this option will not be supported and is not recommended.
 2. The filesystem is shared between the machines serving IRIDA and Galaxy under the same paths (e.g., `/path/to/irida-data` on IRIDA is available as `/path/to/irida-data` on the Galaxy server).
 3. Galaxy is setup to use [PostgreSQL][] or [MySQL/MariaDB][] as it's database.  The default installation uses SQLite, but this is insufficient for the complex workflows used by IRIDA.
 4. Some modifications to the configuration settings (see below) are made to enable IRIDA to communicate with Galaxy.

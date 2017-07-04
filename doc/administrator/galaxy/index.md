@@ -15,7 +15,7 @@ Requirements
 
 Before proceeding with the integration of Galaxy and IRIDA, the following requirements need to be met.
 
-1. [Galaxy version >= **v16.01**][galaxy-versions] is required as IRIDA makes use of [conda with Galaxy][].  Earlier versions were supported previously, but are being phased out as more required tools are released under conda.  A method to get newer conda-based tools to work with older Galaxy versions is described in our [FAQ][faq-conda].
+1. [Galaxy version >= **v16.01**][galaxy-versions] is required as IRIDA makes use of [conda with Galaxy][].  Earlier versions were supported previously, but are being phased out as more required tools are released under conda.  A method to get newer conda-based tools to work with older Galaxy versions is described in our [FAQ][faq-conda], however this option will not be supported and is not recommended.
 2. The filesystem is shared between the machines serving IRIDA and Galaxy under the same paths (e.g., `/path/to/irida-data` on the IRIDA server is available as `/path/to/irida-data` on the Galaxy server).
 
 Quick Start
