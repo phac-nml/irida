@@ -159,29 +159,29 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 	@Override
 	public <T extends SequencingObject> Map<Sample, T> getUniqueSamplesForSequencingObjects(Set<T> sequenceFiles)
 			throws DuplicateSampleException {
-		Map<Sample, T> sequenceFilePairsSampleMap = new HashMap<>();
+		Map<Sample, T> sequenceFilesSampleMap = new HashMap<>();
 
-		for (T filePair : sequenceFiles) {
-			SequenceFile pair1 = filePair.getFiles().iterator().next();
+		for (T seqObj : sequenceFiles) {
+			SequenceFile file = seqObj.getFiles().iterator().next();
 
-			SampleSequencingObjectJoin join = ssoRepository.getSampleForSequencingObject(filePair);
+			SampleSequencingObjectJoin join = ssoRepository.getSampleForSequencingObject(seqObj);
 
 			if (join == null) {
-				throw new EntityExistsException("No sample associated with sequence file " + filePair.getClass()
-						+ "[id=" + filePair.getId() + "]");
+				throw new EntityExistsException("No sample associated with sequence file " + seqObj.getClass()
+						+ "[id=" + seqObj.getId() + "]");
 			} else {
 				Sample sample = join.getSubject();
-				if (sequenceFilePairsSampleMap.containsKey(sample)) {
-					SequencingObject previousPair = sequenceFilePairsSampleMap.get(sample);
+				if (sequenceFilesSampleMap.containsKey(sample)) {
+					SequencingObject previousFile = sequenceFilesSampleMap.get(sample);
 					throw new DuplicateSampleException(
-							"Sequence file pairs " + pair1 + ", " + previousPair + " have the same sample " + sample);
+							"Sequence files " + file + ", " + previousFile + " have the same sample " + sample);
 				} else {
-					sequenceFilePairsSampleMap.put(sample, filePair);
+					sequenceFilesSampleMap.put(sample, seqObj);
 				}
 			}
 		}
 
-		return sequenceFilePairsSampleMap;
+		return sequenceFilesSampleMap;
 	}
 
 	/**
