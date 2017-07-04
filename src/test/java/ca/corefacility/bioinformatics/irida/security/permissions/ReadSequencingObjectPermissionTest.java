@@ -32,6 +32,7 @@ import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ReadProjectPermission;
+import ca.corefacility.bioinformatics.irida.security.permissions.sample.ReadSamplePermission;
 
 /**
  * Testing the permission for {@link ReadSequencingObjectPermission}
