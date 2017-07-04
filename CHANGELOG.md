@@ -7,6 +7,7 @@ Changes
 * [Developer]: Cleaned up javascript imports (removed all `require` statements).
 * [UI]: Removed phylocanvas context menu from analysis > details page.
 * [UI]: Added buttons on the project settings page, and metadata template page to download an excel template.
+* [Developer]: Reorganized permissions classes into subpackages.
 
 0.16.0 to 0.17.0
 ----------------
