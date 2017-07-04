@@ -24,40 +24,25 @@ To install these tools please proceed through the following steps.
 
 ## Step 1: Install Dependencies
 
-Some of these tools require additional dependencies to be installed.  For a cluster environment please make sure these are available on all cluster nodes by installing to a shared directory.
-
-1. [Java][]:  Please download and install [Java][] version 1.6+ or make sure it is available in your execution environment.
-2. [gnuplot][]: Please download and install [gnuplot][] or make sure this is available in your execution environment.
-2. **Perl Modules**: Please download and install dependency Perl modules with the command.
+Some of these tools require additional dependencies to be installed.  For a cluster environment please make sure these are available on all cluster nodes by installing to a shared directory. This can be done with conda (assuming Galaxy is configured to load up the environment `galaxy` for each tool execution using the `env.sh` file).
 
 ```bash
-cpanm Time::Piece XML::Simple Data::Dumper
-```
-
-In addition, [BioPerl][] version 1.6.901 must be installed.  Please run the following command to install.
-
-```bash
-cpanm https://cpan.metacpan.org/authors/id/C/CJ/CJFIELDS/BioPerl-1.6.901.tar.gz
+source activate galaxy
+conda install perl-xml-simple perl-time-piece perl-bioperl perl-data-dumper openjdk gnuplot libjpeg-turbo
+source deactivate
 ```
 
 ## Step 2: Install Galaxy Tools
 
 Please install all the Galaxy tools in the table above by logging into Galaxy, navigating to **Admin > Search and browse tool sheds**, searching for the appropriate **Tool Name** and installing the appropriate **Toolshed Installable Revision**.
 
-The install progress can be checked by monitoring the Galaxy log file `$GALAXY_BASE_DIR/main.log`.  On completion you should see a message of `Installed` next to the tool when going to **Admin > Manage installed tool shed repositories**.
+The install progress can be checked by monitoring the Galaxy log files `galaxy/*.log`.  On completion you should see a message of `Installed` next to the tool when going to **Admin > Manage installed tool shed repositories**.
 
 **Note**: Prokka downloads several large databases and may take some time to install.
 
 ### Updating `tbl2asn`
 
-The assembly workflow makes use of the software [Prokka][] for genome annotation.  Prokka makes use of [tbl2asn][], which has been programmed to stop working after 1 year from being built.  The next date of expiry will be **March 31, 2016**.  After this date, `tbl2asn` will have to be updated before the assembly workflow can be run.  A quick way to update `tbl2asn` is the following.
-
-1. Download the new `tbl2asn` binary from <ftp://ftp.ncbi.nih.gov/toolbox/ncbi_tools/converters/by_program/tbl2asn/>.
-2. Copy the binary over the previously installed locations in Galaxy.  These can be found with the command:
-
-        find tool_dependencies/ -wholename '*f5e44aad6498/*tbl2asn' -or -wholename '*package_tbl2asn_24_3/*tbl2asn'
-
-    Where **tool_dependencies/** is the location of all the installed Galaxy tool dependencies.
+The assembly workflow makes use of the software [Prokka][] for genome annotation.  Prokka makes use of [tbl2asn][], which has been programmed to stop working after 1 year from being built. The version of `tbl2asn` installed by default may have to be updated. Please see our [FAQ][] for more details. 
 
 ## Step 3: Testing Pipeline
 
@@ -98,3 +83,4 @@ If everything was successfull then all dependencies for this pipeline have been 
 [dataset-pair-screen]: ../test/assembly-annotation/images/dataset-pair-screen.jpg
 [workflow-success]: ../test/assembly-annotation/images/workflow-success.png
 [view-details-icon]: ../test/snvphyl/images/view-details-icon.jpg
+[FAQ]: ../../../faq/#tbl2asn-out-of-date

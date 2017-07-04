@@ -22,81 +22,23 @@ To install these tools please proceed through the following steps.
 
 ## Step 1: Install Dependencies
 
-Some of these tools require additional dependencies to be installed.  For a cluster environment please make sure these are available on all cluster nodes by installing to a shared directory.
-
-1. [gnuplot][]: Please download and install [gnuplot][] or make sure this is available in your execution environment.
-2. **Perl Modules**: Please download and install dependency Perl modules with the command.
+Some of these tools require additional dependencies to be installed.  For a cluster environment please make sure these are available on all cluster nodes by installing to a shared directory. This can be done with conda (assuming Galaxy is configured to load up the environment `galaxy` for each tool execution using the `env.sh` file).
 
 ```bash
-cpanm Time::Piece XML::Simple Data::Dumper
+source activate galaxy
+conda install perl-xml-simple perl-time-piece perl-data-dumper
+source deactivate
 ```
 
-## Step 2.a: Conda dependenies (for Galaxy versions >= v16.01)
+## Step 2: Galaxy Conda Setup
 
-The SISTR pipeline makes use of the [conda][] package manager and [bioconda][] channel to distribute some dependencies, particularly the [sistr_cmd][] software.  However, this requires a more recent version of Galaxy (minimum >= v16.01, although > v16.07 is recommended) to take advantage of automated installation of dependencies using conda.  It is recommended to upgrade Galaxy for IRIDA to a version >= 16.01, or a method to get SISTR to work with a Galaxy version < 16.01 is given in **Step 2.b**.
-
-If the Galaxy version supports conda, then you must verify that Galaxy is setup to use conda for dependency installation.  This will primarly involve setting `conda_prefix` to point to the PATH of conda in your `config/galaxy.ini` file and verifying that conda will be used for dependency management in the file `config/dependency_resolvers_conf.xml`.  More details can be found at <https://docs.galaxyproject.org/en/master/admin/conda_faq.html>.
-
-If conda is setup with your instance of Galaxy, please proceed to **Step 3**.  Otherwise, proceed to **Step 2.b**.
-
-## Step 2.b: Conda dependenies (for Galaxy versions < v16.01)
-
-If you are unable to upgrade Galaxy to take advantage of `conda`, then the following steps can be taken to get the `sistr_cmd` dependency working with an older version of Galaxy (by writing a wrapper to load up dependencies for `sistr_cmd` via conda).
-
-1. If `conda` is not already installed, please download and install <https://conda.io/miniconda.html>. Make sure to add the appropriate channels for installing software from bioconda:
-
-   ```bash
-   conda config --add channels conda-forge
-   conda config --add channels defaults
-   conda config --add channels r
-   conda config --add channels bioconda
-   ```
-
-2. Install the `sistr_cmd` dependency to it's own conda environment:
-
-   ```bash
-  conda create -y --name sistr_cmd@1.0.2 sistr_cmd=1.0.2
-   ```
-
-3. Write a wrapper around the `sistr` command to load up the conda environment.  If conda is installed in the directory `~/miniconda2` this should look like the following:
-
-   ```bash
-   #!/bin/bash
-
-   export PATH=~/miniconda2/bin:$PATH
-   source activate sistr_cmd@1.0.2
-
-   sistr $@
-   ```
-
-   Save this file with the name `sistr`.
-
-4. Copy `sistr` to a directory loaded up by the [Galaxy environment](../../#galaxy-environment-setup).  For example, if `$GALAXY_ENV` is `~/env.sh` and contains the following:
-
-   ```bash
-   export PATH=~/bin:$PATH
-   ```
-
-   Then, copy `sistr` to `~/bin` and make executable.
-
-   ```bash
-   cp sistr ~/bin
-   chmod +x ~/bin/sistr
-   ```
-
-5. Test `sistr`.  You can test out `sistr` by running as follows:
-
-   ```bash
-   ./bin/sistr --version
-   ```
-
-   You should see `sistr_cmd 1.0.2` as output of the above command.
+Galaxy makes use of [Conda][conda] to automatically install some dependencies for SISTR.  Please verify that the version of Galaxy is >= v16.01 and has been setup to use conda (by modifying the appropriate configuration settings, see [here][galaxy-config] for additional details).  A method to get SISTR to work with a Galaxy version < v16.01 is available in [FAQ/Conda dependencies][].
 
 ## Step 3: Install Galaxy Tools
 
 Please install all the Galaxy tools in the table above by logging into Galaxy, navigating to **Admin > Search and browse tool sheds**, searching for the appropriate **Tool Name** and installing the appropriate **Toolshed Installable Revision**.
 
-The install progress can be checked by monitoring the Galaxy log file `$GALAXY_BASE_DIR/main.log`.  On completion you should see a message of `Installed` next to the tool when going to **Admin > Manage installed tool shed repositories**.
+The install progress can be checked by monitoring the Galaxy log files `galaxy/*.log`.  On completion you should see a message of `Installed` next to the tool when going to **Admin > Manage installed tool shed repositories**.
 
 ## Step 4: Testing Pipeline
 
@@ -122,6 +64,7 @@ A Galaxy workflow and some test data has been included with this documentation t
 If everything was successfull then all dependencies for this pipeline have been properly installed.
 
 [SPAdes]: http://bioinf.spbau.ru/spades
+[galaxy-config]: ../../setup#step-4-modify-configuration-file
 [Galaxy Main Shed]: http://toolshed.g2.bx.psu.edu/
 [IRIDA Toolshed]: https://irida.corefacility.ca/galaxy-shed
 [gnuplot]: http://www.gnuplot.info/
@@ -136,3 +79,4 @@ If everything was successfull then all dependencies for this pipeline have been 
 [conda]: https://conda.io/docs/intro.html
 [bioconda]: https://bioconda.github.io/
 [sistr_cmd]: https://github.com/peterk87/sistr_cmd
+[FAQ/Conda dependencies]: ../../../faq#installing-conda-dependencies-in-galaxy-versions--v1601
