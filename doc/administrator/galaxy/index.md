@@ -48,6 +48,7 @@ For more detailed instructions on installing Galaxy please refer to the followin
 
 1. [Integration with existing Galaxy][integration-galaxy]: If you already have a Galaxy instance installed, this will describe the necessary changes to the configuration needed in order for IRIDA to communicate with Galaxy.
 2. [Setup of a new Galaxy instance][setup-new-galaxy]: If you do not have a Galaxy instance installed, this will walk through the general procedure of setting up a new Galaxy instance.
+3. [Automated Cleanup of Galaxy files][galaxy-cleanup]: Many intermediate files are produced when executing an IRIDA workflow in Galaxy. These instructions destribe setting up automated cleanup of these files.
 
 If you encounter errors while installing Galaxy you may want to look over the [IRIDA/Galaxy FAQ][].
 
@@ -76,3 +77,4 @@ The overall architecture of IRIDA and Galaxy is as follows:
 [faq-conda]: ../faq/#installing-conda-dependencies-in-galaxy-versions--v1601
 [irida-conf]: ../web/#core-configuration
 [irida-web]: ../web/
+[galaxy-cleanup]: cleanup/

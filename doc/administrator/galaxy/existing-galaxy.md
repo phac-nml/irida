@@ -121,8 +121,6 @@ In order to connect IRIDA to this Galaxy instance you will need to modify the pa
 
 Once you have configured IRIDA to connect to Galaxy you can attempt to execute a workflow by adding some data to your cart, selecting  **Pipelines** from the main menu, then selecting a particular pipeline.  You will have to have some data uploaded into IRIDA before testing.  An example set of data can be found at [irida-sample-data.zip][].  Currently all workflows assume you are using paired-end sequence reads.
 
-{% include galaxy/cleanup.md %}
-
 [conda with Galaxy]: https://docs.galaxyproject.org/en/master/admin/conda_faq.html
 [Conda]: https://conda.io/miniconda.html
 [galaxy-api]: https://wiki.galaxyproject.org/Learn/API

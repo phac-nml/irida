@@ -295,8 +295,6 @@ Each workflow in IRIDA is run using Galaxy, and it's possible to monitor the sta
 
 ![saved-histories.jpg][]
 
-{% include galaxy/cleanup.md %}
-
 [Galaxy]: https://wiki.galaxyproject.org/FrontPage
 [GetGalaxy]: https://wiki.galaxyproject.org/Admin/GetGalaxy
 [Running Galaxy in a production environment]: https://wiki.galaxyproject.org/Admin/Config/Performance/ProductionServer

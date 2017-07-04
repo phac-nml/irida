@@ -1,5 +1,10 @@
-Configure Galaxy Data Cleanup
------------------------------
+---
+layout: default
+search_title: "Automated Cleanup of Galaxy files"
+description: "Automated Cleanup of Galaxy files"
+---
+
+# Automated Galaxy Data Cleanup
 
 IRIDA stores and manages both the input files to an analysis workflow as well as the output files and provenance information from a workflow run through Galaxy.  In the process of running an analysis, many intermediate files are produced by Galaxy (SAM/BAM files, log files, etc), as well as intermediate data structures (Galaxy Data Libraries for storing input files to Galaxy, and the workflow uploaded to Galaxy).  These additional files and data structures are not stored or used by IRIDA following the completion of an analysis.
 
@@ -9,7 +14,7 @@ However, some of the files produced by Galaxy can be quite large and may quickly
 
 Once the parameter `irida.analysis.cleanup.days` is set, IRIDA will periodically (once every hour) check for any analyses that have expired and clean up the necessary files in Galaxy.  However, these files will only be marked as **deleted** in Galaxy, not permanently removed.  To permanently remove these files, please do the following:
 
-### Step 1: Create a Galaxy Cleanup script
+## Step 1: Create a Galaxy Cleanup script
 
 The following is an example script that can be used to clean up **deleted** files in Galaxy.  Please save this script to `galaxy/galaxy_cleanup.sh`, make executable with `chmod u+x galaxy/galaxy_cleanup.sh`, and then make any necessary modifications to the variables.  In particular, please set `$GALAXY_ROOT_DIR` and `$CONDA_ROOT` to point to the `galaxy/` directory, and the `~/miniconda3` directory. We assume the conda installation has an environment **galaxy** containing dependencies needed for starting Galaxy.  Modify this as appropriate (e.g., if you use a Galaxy virtual environment instead).
 
@@ -50,7 +55,7 @@ echo -e "\nEnd cleanup at `date`" >> $CLEANUP_LOG
 
 The particular cleanup scripts (e.g., `scripts/cleanup_datasets/delete_userless_histories.sh`) default to removing only items > 10 days old. If you wish to adjust this time, please modify the `-d 10` parameter within these scripts.
 
-### Step 2: Schedule script to run using cron
+## Step 2: Schedule script to run using cron
 
 Once this script is installed, it can be scheduled to run periodically by adding a cron job for the Galaxy user.  To do this, please run `crontab -e` and past the following line (replacing `galaxy/` with the proper directory):
 
