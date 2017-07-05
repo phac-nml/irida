@@ -169,6 +169,7 @@ function FileUploadController(Upload, $timeout, $window, $uibModal) {
 }
 
 angular.module('irida.sample.files', [
+  'file.utils',
   'ngAnimate',
   'ui.bootstrap',
   'ngFileUpload'
