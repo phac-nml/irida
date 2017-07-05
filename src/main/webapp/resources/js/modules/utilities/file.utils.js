@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import {convertFileSize, download} from '../../utilities/file.utilities';
 
 const angular = require('angular');
@@ -5,6 +6,7 @@ require('ng-file-upload');
 
 const UPLOAD_ERROR = 'upload_error';
 const UPLOAD_EVENT = 'FILE_UPLOAD_EVENT';
+const UPLOAD_PROGRESS = 'FILE_PROGRESS';
 const UPLOAD_COMPLETE_EVENT = 'FILE_UPLOAD_COMPLETE_EVENT';
 
 /**
@@ -34,18 +36,23 @@ function FileService($rootScope, $q, upload) {
 
     for (const file of files) {
       const currentUpload = upload.upload({
-        url: url,
-        file: file
+        url,
+        file
       }).then(function(response) {
         $rootScope.$broadcast(UPLOAD_COMPLETE_EVENT);
         defer.resolve(response);
       }, function(data) {
         $rootScope.$broadcast(UPLOAD_ERROR, data.error_message);
         defer.reject('Error uploading file');
+      }, function(evt) {
+        // Progress handled here
+        $rootScope.$broadcast(UPLOAD_PROGRESS, {
+          file: file.name,
+          progress: parseInt(100.0 * evt.loaded / evt.total, 10)
+        });
       });
       $rootScope.$broadcast(UPLOAD_EVENT, {
         file: file,
-        progress: currentUpload.progress,
         count: files.length
       });
 
@@ -115,15 +122,20 @@ function fileUploadProgress() {
         $scope.closeProgress();
       });
 
-      $scope.$on(UPLOAD_EVENT, function(evt, args) {
-        var file = {};
-        $scope.count = args.count;
-        if (args.progress) {
-          args.progress(function(evt) {
-            file.progress = parseInt(100.0 * evt.loaded / evt.total, 0);
-            file.filename = evt.config.file.name;
-          });
+      $scope.$on(UPLOAD_PROGRESS, function(evt, args) {
+        // Find the upload
+        const upload = _.find($scope.files, ['filename', args.file]);
+        if (upload) {
+          upload.progress = args.progress;
         }
+      });
+
+      $scope.$on(UPLOAD_EVENT, function(evt, args) {
+        var file = {
+          progress: 0,
+          filename: args.file.name
+        };
+        $scope.count = args.count;
         $scope.files.push(file);
         $scope.uploading = true;
       });
