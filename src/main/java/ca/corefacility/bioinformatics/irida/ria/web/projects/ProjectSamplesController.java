@@ -238,7 +238,7 @@ public class ProjectSamplesController {
 	 *
 	 * @return
 	 */
-	@RequestMapping("/projects/{projectId}/templates/merge-modal")
+	@RequestMapping(value = "/projects/{projectId}/templates/merge-modal", produces = MediaType.TEXT_HTML_VALUE)
 	public String getMergeSamplesInProjectModal(@PathVariable Long projectId, @RequestParam(name = "sampleIds[]") List<Long> ids, Model model) {
 		Project project = projectService.read(projectId);
 		List<Sample> samples = new ArrayList<>();
@@ -317,7 +317,7 @@ public class ProjectSamplesController {
 	 * Create a modal dialog to move samples to another project.
 	 *
 	 * @param ids
-	 * 		{@link List} List of {@link Long} identifiers for {@link Sample} to merge.
+	 * 		{@link List} List of {@link Long} identifiers for {@link Sample} to move.
 	 * @param model
 	 * 		{@link Model}
 	 *
