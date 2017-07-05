@@ -1,6 +1,14 @@
 Changes
 =======
 
+0.17.0 to 0.18.0
+----------------
+* [Developer]: Removed old javascript build configuration files.
+* [Developer]: Cleaned up javascript imports (removed all `require` statements).
+* [UI]: Removed phylocanvas context menu from analysis > details page.
+* [UI]: Added buttons on the project settings page, and metadata template page to download an excel template.
+* [Developer]: Reorganized permissions classes into subpackages.
+
 0.16.0 to 0.17.0
 ----------------
 * [Developer]: Updated how project samples ajax controller handles datatables column sort functionality.
@@ -20,6 +28,8 @@ Changes
 * [UI]: New project sample metadata templates.
 * [UI]: New advanced phylogenetic tree with metadata visualization.
 * [UI]: Fixed bug where a project collaborator could try to change the role of a group.
+* [UI]: Fix bug where notifications were not being displayed when samples where copied between projects.
+* [Workflow]: The SISTR pipeline has been upgraded to use `sistr_cmd` version 1.0.2.
 
 0.15.0 to 0.16.0
 ----------------

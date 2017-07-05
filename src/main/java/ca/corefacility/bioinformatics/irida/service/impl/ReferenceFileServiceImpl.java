@@ -17,9 +17,9 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectReferenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
-import ca.corefacility.bioinformatics.irida.security.permissions.ReadProjectPermission;
-import ca.corefacility.bioinformatics.irida.security.permissions.ReadReferenceFilePermission;
-import ca.corefacility.bioinformatics.irida.security.permissions.UpdateReferenceFilePermission;
+import ca.corefacility.bioinformatics.irida.security.permissions.files.ReadReferenceFilePermission;
+import ca.corefacility.bioinformatics.irida.security.permissions.files.UpdateReferenceFilePermission;
+import ca.corefacility.bioinformatics.irida.security.permissions.project.ReadProjectPermission;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 
 /**

@@ -1,5 +1,4 @@
-const angular = require('angular');
-
+import angular from 'angular';
 import {LinelistModule} from './linelist.module';
 
 const app = angular.module('irida');

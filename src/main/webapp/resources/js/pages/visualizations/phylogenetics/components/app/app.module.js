@@ -1,4 +1,4 @@
-const angular = require('angular');
+import angular from 'angular';
 import {MetadataModule} from './../metadata/metadata.module';
 import {PhylocanvasModule} from './../phylocanvas/phylocanvas.module';
 import {TemplateModule} from './../templates/template.module';

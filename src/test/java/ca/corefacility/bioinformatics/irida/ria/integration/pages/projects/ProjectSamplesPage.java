@@ -188,6 +188,8 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	public static ProjectSamplesPage gotToPage(WebDriver driver, int projectId) {
 		get(driver, RELATIVE_URL + projectId);
+		// Wait for full page to get loaded
+		waitForTime(800);
 		return PageFactory.initElements(driver, ProjectSamplesPage.class);
 	}
 
@@ -277,6 +279,8 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	public void selectSampleWithShift(int row) {
 		Actions actions = new Actions(driver);
 		actions.keyDown(Keys.SHIFT).click(tableRows.get(row)).perform();
+		// Sometimes, that shift key never gets lifted!
+		actions.keyUp(Keys.SHIFT).perform();
 	}
 
 	public void addSelectedSamplesToCart() {
@@ -284,6 +288,9 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		// Make sure the item were added to the cart.
 		waitForElementVisible(
 				By.cssSelector("#cart-count"));
+		// If the cart count is already visible this can go too fast,
+		// wait for the cart to fully update it's total.
+		waitForTime(500);
 	}
 
 	public void mergeSamplesWithOriginalName() {
@@ -344,9 +351,11 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.visibilityOf(filterModal));
 		WebElement nameInput = filterModal.findElement(By.id("name"));
 		nameInput.clear();
-		nameInput.sendKeys(name);
+		sendInputTextSlowly(name, nameInput);
 		filterModal.findElement(By.id("doFilterBtn")).click();
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("filter-modal")));
+		// Ensure that modal fully closed.
+		waitForTime(300);
 	}
 
 	public void filterByDateRange(String start, String end) {
@@ -360,11 +369,11 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		builder.moveToElement(daterangepickerStart, 100, 0).click().build().perform();
 
 		daterangepickerStart.clear();
-		daterangepickerStart.sendKeys(start);
+		sendInputTextSlowly(start, daterangepickerStart);
 
 		builder.moveToElement(daterangepickerEnd, 100, 10).click().build().perform();
 		daterangepickerEnd.clear();
-		daterangepickerEnd.sendKeys(end);
+		sendInputTextSlowly(end, daterangepickerEnd);
 		applyDateRangeBtn.click();
 
 		filterModal.findElement(By.id("doFilterBtn")).click();
@@ -373,6 +382,8 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	public void clearFilter() {
 		clearFilterBtn.click();
+		// Give some time for the filters to properly clear.
+		waitForTime(500);
 	}
 
 	public List<String> getSampleNamesOnPage() {
@@ -397,6 +408,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("selection-all")));
 		selectionAll.click();
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("selection-all")));
+		waitForTime(500);
 	}
 
 	public void deselectAllSamples() {
@@ -425,7 +437,9 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	private void enterSelect2Value(String value) {
 		select2Opener.click();
-		select2Input.sendKeys(value);
+		// Wait for select2 to be open properly.
+		waitForTime(500);
+		sendInputTextSlowly(value, select2Input);
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		// Wait needed to allow select2 to populate.
 		waitForTime(500);

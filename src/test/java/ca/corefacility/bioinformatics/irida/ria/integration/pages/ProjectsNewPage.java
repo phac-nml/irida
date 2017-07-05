@@ -27,6 +27,10 @@ public class ProjectsNewPage extends AbstractPage {
 	public void goToPage() {
 		driver.get(PROJECT_NEW_URL);
 	}
+	
+	public void goToPageWithCart() {
+		driver.get(PROJECT_NEW_URL + "?cart=true");
+	}
 
 	public void submitForm(String name, String organism, String wiki, String description) {
 		setName(name);

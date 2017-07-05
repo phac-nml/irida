@@ -80,7 +80,7 @@ public class CartController {
 	 *            The {@link Project} ID
 	 * @return the name of the galaxy export modal dialog page
 	 */
-	@RequestMapping("/template/galaxy/project/{projectId}")
+	@RequestMapping(value = "/template/galaxy/project/{projectId}", produces = MediaType.TEXT_HTML_VALUE)
 	public String getGalaxyModal(Model model, Principal principal,@PathVariable Long projectId ) {
 		model.addAttribute("email", userService.getUserByUsername(principal.getName()).getEmail());
 		model.addAttribute("name", projectService.read(projectId).getName() + "-" + principal.getName());
