@@ -56,7 +56,7 @@
 
             <div class="form-group">
                 <div id="display-coverage" class="row edit-coverage">
-                    <div class="col-md-3">
+                    <div class="col-md-12">
                         <label for="minimum-coverage-display" th:text="#{project.settings.coverage.minimum_coverage}">_Required
                             Coverage_</label>
                         <span id="minimum-coverage-display" th:if="${project.minimumCoverage != NULL}"
@@ -65,7 +65,7 @@
                               th:text="#{project.settings.notset}">N/A</span>
                     </div>
 
-                    <div class="col-md-3">
+                    <div class="col-md-12">
                         <label for="maximum-coverage-display" th:text="#{project.settings.coverage.maximum_coverage}">_Required
                             Coverage_</label>
                         <span id="maximum-coverage-display" th:if="${project.maximumCoverage != NULL}"
@@ -74,7 +74,7 @@
                               th:text="#{project.settings.notset}">N/A</span>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-12">
                         <label for="genome-size-display" th:text="#{project.settings.coverage.genome_size}">_Genome
                             Size_</label>
                         <span id="genome-size-display" th:if="${project.genomeSize != NULL}"
@@ -84,7 +84,7 @@
                     </div>
                 </div>
                 <div id="edit-coverage" class="form row edit-coverage" style="display: none">
-                    <div class="col-md-3">
+                    <div class="col-md-12">
                         <label for="minimum-coverage" th:text="#{project.settings.coverage.minimum_coverage}">_Min
                             Coverage_</label>
                         <div class="input-group">
@@ -94,7 +94,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-3">
+                    <div class="col-md-12">
                         <label for="maximum-coverage" th:text="#{project.settings.coverage.maximum_coverage}">_Max
                             Coverage_</label>
                         <div class="input-group">
@@ -104,7 +104,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-12">
                         <label for="genome-size" th:text="#{project.settings.coverage.genome_size}">_Genome
                             Size_</label>
                         <div class="input-group">
