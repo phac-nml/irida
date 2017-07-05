@@ -25,7 +25,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionR
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerDownloadException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
@@ -365,8 +365,8 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 				} else {
 					labelPrefix += sampleNames.iterator().next() + "-";
 				}
-			} catch (EntityExistsException e) {
-				logger.warn("Got EntityExistsException when attempting to read sample names for submission "
+			} catch (EntityNotFoundException e) {
+				logger.warn("Got exception when attempting to read sample names for submission "
 						+ analysisSubmission + " for adding to output file label", e);
 
 			}
