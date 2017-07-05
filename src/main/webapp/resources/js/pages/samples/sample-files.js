@@ -26,24 +26,10 @@ function FileDeletionController($uibModalInstance, id, label) {
 /**
  * Controller for the Buttons in the list of sequence files.
  *
- * @param {Object} fileService Service for API calls for sequenceFiles
  * @param {Object} $uibModal Angular modal
  * @constructor
  */
-function FileController(fileService, $uibModal) {
-  /**
-   * Click handler for the download button for a sequenceFile
-   *
-   * @param {long} objectId Id for the sample?
-   * @param {long} id Id for the sequenceFile to download
-   */
-  this.download = function(objectId, id) {
-    const url = window.PAGE.URLS.sequenceFile
-      .replace('OBJECT_ID', objectId)
-      .replace('FILE_ID', id);
-    fileService.download(url);
-  };
-
+function FileController($uibModal) {
   /**
    * Click handler for the delete button for a sequenceFile
    *  Displays a confirmation modal
@@ -182,13 +168,15 @@ function FileUploadController(Upload, $timeout, $window, $uibModal) {
   };
 }
 
-angular.module('irida.sample.files', ['ngAnimate', 'ui.bootstrap',
-  'file.utils', 'ngFileUpload'
+angular.module('irida.sample.files', [
+  'ngAnimate',
+  'ui.bootstrap',
+  'ngFileUpload'
 ])
   .controller('FileUploadController', ['Upload', '$timeout', '$window',
     '$uibModal', FileUploadController
   ])
-  .controller('FileController', ['FileService', '$uibModal', FileController])
+  .controller('FileController', ['$uibModal', FileController])
   .controller('FileDeletionController', ['$uibModalInstance', 'id', 'label',
     FileDeletionController
   ]);
