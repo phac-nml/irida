@@ -30,7 +30,7 @@ const dom = `
 <".row"
   <"col-md-6 col-sm-12 buttons"B><"#dt-filters.col-md-6 col-sm-12"f>>
   <".row"
-    <"col-md-12 filter-tags">
+    <"col-md-12 filter-tags"<"filter-tags__space">>
   >
 <"dt-table-wrapper"rt>
 <"row"
@@ -147,18 +147,37 @@ export function createRestrictedWidthContent({text, width = 150}) {
   return addTooltip({dom, title: text});
 }
 
-export function createFilterTag({text, handler}) {
-  console.log(text);
+/**
+ * Create a filter tag on the datatable
+ * @param {string} text value searched
+ * @param {string} type field searched
+ * @param {function} handler what to do when button is clicked
+ */
+export function createFilterTag({text, type, handler}) {
+  const remove = elm => {
+    $(elm)
+      .off('click')
+      .remove();
+  };
   const $filterTags = $('.filter-tags');
-  const tag = `
-<button class="btn btn-default btn-xs filter-tags__tag">
-    ${text}
-</button>`;
-  const btn = $(tag);
-  btn.on('click', () => {
-    // Remove tag
 
-    handler();
-  });
-  $filterTags.append(btn);
+  // Check to see if that button already exists.
+  const btn = $filterTags.find(`[data-type="${type}"]`);
+  if (btn) {
+    remove(btn);
+  }
+
+  if (text) {
+    const tag = `
+  <button data-type="${type}" class="btn btn-default btn-xs filter-tags__tag">
+      <b>${type}</b> : ${text}
+  </button>`;
+    const $tag = $(tag);
+    $tag.on('click', function() {
+      // Remove tag
+      remove(this);
+      handler();
+    });
+    $filterTags.append($tag);
+  }
 }

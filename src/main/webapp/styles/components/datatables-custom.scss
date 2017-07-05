@@ -122,3 +122,17 @@ table.selectable tbody tr.selected td {
   margin: 0!important;
 }
 
+// Filter Row - updated tables
+.filter-tags {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.filter-tags__space {
+  display: flex;
+}
+
+.filter-tags__tag {
+  margin-left: 4px;
+}
+
