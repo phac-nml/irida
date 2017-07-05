@@ -12,7 +12,7 @@
 			</column>
 		</addColumn>
 
-		<!-- Append sample name onto analysis output files from submissions corresponding to a single sample -->
+		<!-- Fill in the newly added `label` field for `analysis_output_file` using the output file name and the sample name if necessary. -->
 		<sql>
 			/* Link up analysis submission to input sample names (via sequencing files). */
 			/* Ignore analysis submissions where workflows supported multiple input files */
