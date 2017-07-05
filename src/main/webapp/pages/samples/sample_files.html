@@ -89,10 +89,11 @@
 								        data:ng-click="${'fileCtrl.deleteFile(' + pair.id + ', &#39;'' + pair.getLabel() +'&#39;')'}">
 									<span class="fa fa-fw fa-trash"></span>
 								</button>
-                                <button class="btn btn-default"
-								        data:ng-click="${'fileCtrl.download(' + pair.getId() + ', ' + file.getId() + ')'}">
+								<a class="btn btn-default btn-sm"
+									 th:attr="download=${file.getLabel()}"
+									 th:href="@{/sequenceFiles/download/{objectId}/file/{fileId}(objectId=${pair.id}, fileId=${file.getId()})}">
 									<span class="fa fa-fw fa-download"></span>
-								</button>
+								</a>
 							</div>
 						</td>
 					</tr>
@@ -100,10 +101,11 @@
 						<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${pair},file=${file},icon='reverse',relative='true')"></td>
 						<td>
 							<div class="btn-group btn-group-sm pull-right" role="group">
-								<button class="btn btn-default"
-								        data:ng-click="${'fileCtrl.download(' + pair.getId() + ', ' + file.getId() + ')'}">
+								<a class="btn btn-default btn-sm"
+									 th:attr="download=${file.getLabel()}"
+									 th:href="@{/sequenceFiles/download/{objectId}/file/{fileId}(objectId=${pair.id}, fileId=${file.getId()})}">
 									<span class="fa fa-fw fa-download"></span>
-								</button>
+								</a>
 							</div>
 						</td>
 					</tr>
@@ -158,10 +160,12 @@
 										data:ng-click="${'fileCtrl.deleteFile(' + fId + ')'}">
 									<span class="fa fa-fw fa-trash"></span>
 								</button>
-								<button class="btn btn-default"
-										data:ng-click="${'fileCtrl.download(' + file.getId() + ', ' + + file.getSequenceFile().getId() + ')'}">
+
+								<a class="btn btn-default btn-sm"
+									 th:attr="download=${file.getLabel()}"
+									 th:href="@{/sequenceFiles/download/{objectId}/file/{fileId}(objectId=${file.getId()}, fileId=${file.getSequenceFile().getId()})}">
 									<span class="fa fa-fw fa-download"></span>
-								</button>
+								</a>
 
 							</div>
 						</td>
