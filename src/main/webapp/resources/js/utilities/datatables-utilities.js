@@ -30,7 +30,7 @@ const dom = `
 <".row"
   <"col-md-6 col-sm-12 buttons"B><"#dt-filters.col-md-6 col-sm-12"f>>
   <".row"
-    <".col-md-12">
+    <"col-md-12 filter-tags">
   >
 <"dt-table-wrapper"rt>
 <"row"
@@ -145,4 +145,20 @@ export function createRestrictedWidthContent({text, width = 150}) {
   dom.style.width = `${width}px`;
   dom.innerText = text;
   return addTooltip({dom, title: text});
+}
+
+export function createFilterTag({text, handler}) {
+  console.log(text);
+  const $filterTags = $('.filter-tags');
+  const tag = `
+<button class="btn btn-default btn-xs filter-tags__tag">
+    ${text}
+</button>`;
+  const btn = $(tag);
+  btn.on('click', () => {
+    // Remove tag
+
+    handler();
+  });
+  $filterTags.append(btn);
 }

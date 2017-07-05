@@ -5,6 +5,7 @@ import {
   createButtonCell,
   createDeleteBtn,
   createDownloadLink,
+  createFilterTag,
   createItemLink,
   createRestrictedWidthContent,
   generateColumnOrderInfo,
@@ -122,7 +123,15 @@ const table = $('#analyses').DataTable(config);
  * @param {string} workflow identifier
  */
 function setFilterState(name, state, workflow) {
-  table.column(COLUMNS.NAME).search(name);
+  if (name) {
+    table.column(COLUMNS.NAME).search(name);
+    createFilterTag({
+      text: name,
+      handler() {
+        console.log('HANDLED');
+      }
+    });
+  }
   table.column(COLUMNS.ANALYSIS_STATE).search(state);
   table.column(COLUMNS.WORKFLOW_ID).search(workflow).draw();
 }
