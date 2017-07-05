@@ -166,7 +166,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		final ToolExecution toolExecution = analysisProvenanceServiceGalaxy.buildToolExecutionForOutputFile(analysisId,
 				fileName);
 
-		AnalysisOutputFile analysisOutputFile = new AnalysisOutputFile(outputFile, labelPrefix + fileName, datasetId,
+		AnalysisOutputFile analysisOutputFile = new AnalysisOutputFile(outputFile, labelPrefix, datasetId,
 				toolExecution);
 
 		return analysisOutputFile;
@@ -341,7 +341,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	 *         a single sample, otherwise an empty String.
 	 */
 	private String getLabelPrefix(AnalysisSubmission analysisSubmission, IridaWorkflow iridaWorkflow) {
-		String labelPrefix = "";
+		String labelPrefix = null;
 
 		if (iridaWorkflow.getWorkflowDescription().getInputs().requiresSingleSample()) {
 
@@ -363,7 +363,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 							"Cannot define sample name prefix for output files. Input sequence files for analysis submission "
 									+ analysisSubmission + " have multiple associated samples.");
 				} else {
-					labelPrefix += sampleNames.iterator().next() + "-";
+					labelPrefix = sampleNames.iterator().next();
 				}
 			} catch (EntityNotFoundException e) {
 				logger.warn("Got exception when attempting to read sample names for submission "

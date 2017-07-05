@@ -60,9 +60,8 @@ public class AnalysisOutputFile extends IridaResourceSupport implements IridaThi
 	@JoinColumn(name = "tool_execution_id")
 	private final ToolExecution createdByTool;
 	
-	@NotNull
-	@Column(name = "label")
-	private final String label;
+	@Column(name = "label_prefix")
+	private final String labelPrefix;
 
 	/**
 	 * for hibernate
@@ -74,7 +73,7 @@ public class AnalysisOutputFile extends IridaResourceSupport implements IridaThi
 		this.file = null;
 		this.executionManagerFileId = null;
 		this.createdByTool = null;
-		this.label = null;
+		this.labelPrefix = null;
 	}
 
 	/**
@@ -82,22 +81,22 @@ public class AnalysisOutputFile extends IridaResourceSupport implements IridaThi
 	 * 
 	 * @param file
 	 *            the file that this resource owns.
-	 * @param label
-	 *            the label to use for this file.
+	 * @param labelPrefix
+	 *            the label prefix to use for this file.
 	 * @param executionManagerFileId
 	 *            the identifier for this file in the execution manager that it
 	 *            was created by.
 	 * @param createdByTool
 	 *            the tools that were used to create the file.
 	 */
-	public AnalysisOutputFile(final Path file, final String label, final String executionManagerFileId,
+	public AnalysisOutputFile(final Path file, final String labelPrefix, final String executionManagerFileId,
 			final ToolExecution createdByTool) {
 		this.id = null;
 		this.createdDate = new Date();
 		this.file = file;
 		this.executionManagerFileId = executionManagerFileId;
 		this.createdByTool = createdByTool;
-		this.label = label;
+		this.labelPrefix = labelPrefix;
 	}
 
 	@Override
@@ -130,7 +129,7 @@ public class AnalysisOutputFile extends IridaResourceSupport implements IridaThi
 
 	@Override
 	public String getLabel() {
-		return label;
+		return (labelPrefix == null) ? file.toFile().getName() : labelPrefix + '-' + file.toFile().getName();
 	}
 
 	@Override
