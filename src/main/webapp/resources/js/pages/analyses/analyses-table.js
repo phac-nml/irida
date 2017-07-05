@@ -1,17 +1,18 @@
-import "css/pages/analyses-list.css";
-import "DataTables/datatables";
-import $ from "jquery";
+import 'css/pages/analyses-list.css';
+import 'DataTables/datatables';
+import $ from 'jquery';
 import {
   createButtonCell,
   createDeleteBtn,
   createDownloadLink,
+  createFilterTag,
   createItemLink,
   createRestrictedWidthContent,
   generateColumnOrderInfo,
   tableConfig
-} from "Utilities/datatables-utilities";
-import {formatDate, getHumanizedDuration} from "Utilities/date-utilities";
-import {deleteAnalysis} from "../analysis/analysis-service";
+} from 'Utilities/datatables-utilities';
+import {formatDate, getHumanizedDuration} from 'Utilities/date-utilities';
+import {deleteAnalysis} from '../analysis/analysis-service';
 
 const COLUMNS = generateColumnOrderInfo();
 
@@ -122,9 +123,57 @@ const table = $('#analyses').DataTable(config);
  * @param {string} workflow identifier
  */
 function setFilterState(name, state, workflow) {
-  table.column(COLUMNS.NAME).search(name);
-  table.column(COLUMNS.ANALYSIS_STATE).search(state);
-  table.column(COLUMNS.WORKFLOW_ID).search(workflow).draw();
+  // WORKFLOW: Need to get the internationalized value
+  const workflowValue = () => {
+    const filter = document.querySelector('#workflowIdFilter');
+    const index = filter.selectedIndex;
+    if (index > 0) {
+      return filter.options[index].text;
+    }
+    return '';
+  };
+  const workflowColumn = table.column(COLUMNS.WORKFLOW_ID);
+  workflowColumn.search(workflow);
+  createFilterTag({
+    text: workflowValue(),
+    type: workflowColumn.header().innerText,
+    handler() {
+      workflowColumn.search('').draw();
+    }
+  });
+
+  // STATE: Need to get the internationalized value
+  const stateValue = () => {
+    const stateFilter = document.querySelector('#analysisStateFilter');
+    const index = stateFilter.selectedIndex;
+    if (index > 0) {
+      return stateFilter.options[index].text;
+    }
+    return '';
+  };
+  const stateColumn = table.column(COLUMNS.ANALYSIS_STATE);
+  stateColumn.search(state);
+  createFilterTag({
+    text: stateValue(),
+    type: stateColumn.header().innerText,
+    handler() {
+      stateColumn.search('').draw();
+    }
+  });
+
+  // NAME
+  const nameColumn = table.column(COLUMNS.NAME);
+  nameColumn.search(name);
+  createFilterTag({
+    text: name,
+    type: nameColumn.header().innerText,
+    handler() {
+      nameColumn.search('').draw();
+    }
+  });
+
+  // Get the filtered data
+  table.draw(false);
 }
 
 // Set up the delete modal
@@ -152,10 +201,11 @@ $('#deleteConfirmModal')
   });
 
 // Set up clear filters button
-document.querySelector('#clear-filters').addEventListener('click', () => {
-  table.search('');
-  setFilterState('', '', '');
-});
+document.querySelector('#clear-filters')
+  .addEventListener('click', () => {
+    table.search('');
+    setFilterState('', '', '');
+  });
 
 // Set up the filter modal
 const nameFilter = document.querySelector('#nameFilter');
@@ -164,7 +214,7 @@ const workflowFilter = document.querySelector('#workflowIdFilter');
 $('#filterModal')
   .on('shown.bs.modal', () => {
     nameFilter.value = table.column(COLUMNS.NAME).search();
-    stateFilter.value = table.column(COLUMNS.STATE).search();
+    stateFilter.value = table.column(COLUMNS.ANALYSIS_STATE).search();
     workflowFilter.value = table.column(COLUMNS.WORKFLOW_ID).search();
     nameFilter.focus();
   })

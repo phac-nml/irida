@@ -1,7 +1,7 @@
-import $ from "jquery";
-import _ from "lodash";
-import {addTooltip} from "./bootstrap-utilities";
-import {createIcon, ICONS} from "./fontawesome-utilities";
+import $ from 'jquery';
+import _ from 'lodash';
+import {addTooltip} from './bootstrap-utilities';
+import {createIcon, ICONS} from './fontawesome-utilities';
 
 /*
 <div class="row">
@@ -29,6 +29,9 @@ import {createIcon, ICONS} from "./fontawesome-utilities";
 const dom = `
 <".row"
   <"col-md-6 col-sm-12 buttons"B><"#dt-filters.col-md-6 col-sm-12"f>>
+  <".row"
+    <"col-md-12 filter-tags"<"filter-tags__space">>
+  >
 <"dt-table-wrapper"rt>
 <"row"
   <"col-md-3 col-sm-12"l>
@@ -142,4 +145,39 @@ export function createRestrictedWidthContent({text, width = 150}) {
   dom.style.width = `${width}px`;
   dom.innerText = text;
   return addTooltip({dom, title: text});
+}
+
+/**
+ * Create a filter tag on the datatable
+ * @param {string} text value searched
+ * @param {string} type field searched
+ * @param {function} handler what to do when button is clicked
+ */
+export function createFilterTag({text, type, handler}) {
+  const remove = elm => {
+    $(elm)
+      .off('click')
+      .remove();
+  };
+  const $filterTags = $('.filter-tags');
+
+  // Check to see if that button already exists.
+  const btn = $filterTags.find(`[data-type="${type}"]`);
+  if (btn) {
+    remove(btn);
+  }
+
+  if (text) {
+    const tag = `
+  <button data-type="${type}" class="btn btn-default btn-xs filter-tags__tag">
+      <b>${type}</b> : ${text}
+  </button>`;
+    const $tag = $(tag);
+    $tag.on('click', function() {
+      // Remove tag
+      remove(this);
+      handler();
+    });
+    $filterTags.append($tag);
+  }
 }
