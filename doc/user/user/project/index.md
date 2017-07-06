@@ -165,7 +165,8 @@ To enable an automated pipeline, check the *Automatically assemble data uploaded
 
 IRIDA can calculate the coverage of uploaded sequencing data for a sample.  To enable this a genome size and expected coverage must be set for a project in the project settings page.
 
-* **Required Coverage** - The coverage expected by any sequencing data being uploaded to the project.
+* **Minimum Coverage** - The minimum coverage expected by any sequencing data being uploaded to the project.
+* **Maximum Coverage** - The maximum coverage expected by any sequencing data being uploaded to the project.
 * **Genome Size** - The size of the genome of the organism being targeted by the project.
 
 To edit coverage settings, click the `Edit` button.
