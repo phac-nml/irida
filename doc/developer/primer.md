@@ -86,6 +86,26 @@ This will create the `.war` and `.zip` files for IRIDA release under the `target
 
 Jekyll
 
+IRIDA Codebase
+--------------
+
+IRIDA is organized as a fairly classic Java web application.  All files are found under the `ca.corefacility.bioinformatics.irida` package root.
+
+* `config` - Configuration classes.  All Spring application config, web config, Maven config, and scheduled task configuration can be found here.
+* `database.changesets` - Java Liquibase changesets.  See more about our liquibase usage in the [Database Updates section](#database_updates).
+* `events` - Classes here handle the `ProjectEvent` structure in IRIDA.  These are the messages you can find on the IRIDA dashboard and project recent activity pages.
+* `exceptions` - Java `Exception` classes written for IRIDA.
+* `model` - IRIDA uses MVC.  These are the model classes.
+* `pipeline.upload` - Classes used to communicate workflows, libraries, and histories to Galaxy.
+* `processing` - IRIDA's file processing chain.  This contains classes used when processing files uploaded to IRIDA such as unzipping, FastQC, and quality control.
+* `repositories` - Repositories used for communicating with IRIDA's database.  These classes generally use [Spring Data JPA][] for communicating with the database.
+* `ria` - "Rich Internet Application", this is where the controller code and all Java code for the web interface is found.
+* `security` - IRIDA's security layer.  You'll mostly find [Spring Security][]  classes within.  See more in the [security](#security) section.
+* `service` - IRIDA's service layer.  Here you'll find the business logic for reading, saving, and manipulating data.
+* `util` - General utility classes.  These are generally developer tools that don't fit anywhere else in the class structure.
+* `validators` - Validation classes used to verify data being saved in the database is correct.
+* `web` - IRIDA's REST API.
+
 Building new features
 ---------------------
 
@@ -146,26 +166,6 @@ Example workflow:
 #### Performing a release
 
 http://gitlab-irida.corefacility.ca/snippets/30
-
-IRIDA Codebase
---------------
-
-IRIDA is organized as a fairly classic Java web application.  All files are found under the `ca.corefacility.bioinformatics.irida` package root.
-
-* `config` - Configuration classes.  All Spring application config, web config, Maven config, and scheduled task configuration can be found here.
-* `database.changesets` - Java Liquibase changesets.  See more about our liquibase usage in the [Database Updates section](#database_updates).
-* `events` - Classes here handle the `ProjectEvent` structure in IRIDA.  These are the messages you can find on the IRIDA dashboard and project recent activity pages.
-* `exceptions` - Java `Exception` classes written for IRIDA.
-* `model` - IRIDA uses MVC.  These are the model classes.
-* `pipeline.upload` - Classes used to communicate workflows, libraries, and histories to Galaxy.
-* `processing` - IRIDA's file processing chain.  This contains classes used when processing files uploaded to IRIDA such as unzipping, FastQC, and quality control.
-* `repositories` - Repositories used for communicating with IRIDA's database.  These classes generally use [Spring Data JPA][] for communicating with the database.
-* `ria` - "Rich Internet Application", this is where the controller code and all Java code for the web interface is found.
-* `security` - IRIDA's security layer.  You'll mostly find [Spring Security][]  classes within.  See more in the [security](#security) section.
-* `service` - IRIDA's service layer.  Here you'll find the business logic for reading, saving, and manipulating data.
-* `util` - General utility classes.  These are generally developer tools that don't fit anywhere else in the class structure.
-* `validators` - Validation classes used to verify data being saved in the database is correct.
-* `web` - IRIDA's REST API.
 
 
 
