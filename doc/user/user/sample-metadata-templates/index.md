@@ -12,7 +12,7 @@ Samples metadata templates can be created, modified, or deleted within project s
 
 ![Link to metadata templates](images/sample_metadata_template_settings_link.png)
 
-### Creating a metadata template
+## Creating a metadata template
 
 To create a metadata template, click on the`Create New Template` link in the top right corner of the page.
 
@@ -60,3 +60,13 @@ From the Sample Metadata Template page within project settings, click on the nam
 Clicking on the delete template button will open a warning about deleting the template.  Clicking the `Delete this template` button in the modal will delete this template **this cannot be undone**.
 
 ![Delete Template](images/delete_template_btn.png)
+
+## Downloading metadata templates
+
+An existing template can be downloaded directly on the Settings page by clicking on the <i class="fa fa-download fa-fw"></i> button on the right side of the table row.  This will download an excel file containing a header row with all the metadata fields in the template.
+
+![Download template](images/download_buttons.png)
+
+Templates can also be downloaded on their individual details page by clicking on the <i class="fa fa-download fa-fw"></i> button at the top of the page.
+
+![Download template](images/download_button_page.png)
