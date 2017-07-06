@@ -411,7 +411,7 @@ public class SequencingObjectServiceImplIT {
 	public void testCoverage() throws IOException, InterruptedException {
 		Project project = projectService.read(1L);
 		project.setGenomeSize(3L);
-		project.setRequiredCoverage(2);
+		project.setMinimumCoverage(2);
 
 		project = projectService.update(project);
 
@@ -445,7 +445,7 @@ public class SequencingObjectServiceImplIT {
 		assertEquals("qc should have passed", QCEntryStatus.POSITIVE, qcEntry.getStatus());
 		assertEquals("should be 6x coverage", "6x", qcEntry.getMessage());
 
-		project.setRequiredCoverage(10);
+		project.setMinimumCoverage(10);
 		project = projectService.update(project);
 
 		// Wait 5 seconds. file processing should have run by then.
