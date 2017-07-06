@@ -29,6 +29,7 @@ const config = Object.assign(tableConfig, {
   buttons: [
     {
       extend: "collection",
+      className: "btn-sm",
       text() {
         return document.querySelector("#export-btn-text").innerHTML;
       },
