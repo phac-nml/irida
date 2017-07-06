@@ -15,7 +15,6 @@ module.exports = {
         }
       },
       { test: /\.css$/, loader: "style-loader!css-loader" },
-      { test: /\.js$/, loader: "eslint-loader", exclude: /node_modules/ }
     ]
   },
   externals: {
@@ -33,9 +32,6 @@ module.exports = {
       Utilities: path.resolve(__dirname, 'resources/js/utilities/'),
       css: path.resolve(__dirname, "resources/css/")
     }
-  },
-  eslint: {
-    configFile: "./.eslintrc.js"
   },
   output: {
     filename: "[name].bundle.js"

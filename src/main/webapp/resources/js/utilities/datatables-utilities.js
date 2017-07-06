@@ -1,7 +1,7 @@
 import $ from "jquery";
 import _ from "lodash";
-import {addTooltip} from "./bootstrap-utilities";
-import {createIcon, ICONS} from "./fontawesome-utilities";
+import { addTooltip } from "./bootstrap-utilities";
+import { createIcon, ICONS } from "./fontawesome-utilities";
 
 /*
 <div class="row">
@@ -29,6 +29,9 @@ import {createIcon, ICONS} from "./fontawesome-utilities";
 const dom = `
 <".row"
   <"col-md-6 col-sm-12 buttons"B><"#dt-filters.col-md-6 col-sm-12"f>>
+  <".row"
+    <"col-md-12 filter-tags"<"filter-tags__space">>
+  >
 <"dt-table-wrapper"rt>
 <"row"
   <"col-md-3 col-sm-12"l>
@@ -43,7 +46,7 @@ export const tableConfig = {
   processing: true,
   serverSide: true,
   createdRow(row) {
-    $(row).tooltip({selector: "[data-toggle='tooltip']"});
+    $(row).tooltip({ selector: "[data-toggle='tooltip']" });
   }
 };
 
@@ -53,14 +56,14 @@ export const tableConfig = {
  * @param {title} title to label the download by.
  * @return {object} DOM anchor element for download.
  */
-export function createDownloadLink({url, title}) {
+export function createDownloadLink({ url, title }) {
   const anchor = document.createElement("a");
   anchor.classList.add("btn", "btn-default", "download-btn");
   anchor.download = title;
   anchor.setAttribute("href", url);
 
-  const icon = createIcon({icon: ICONS.download, fixed: true});
-  const tooltiped = addTooltip({dom: icon, title: "Download"});
+  const icon = createIcon({ icon: ICONS.download, fixed: true });
+  const tooltiped = addTooltip({ dom: icon, title: "Download" });
   anchor.append(tooltiped);
   return anchor;
 }
@@ -76,8 +79,8 @@ export function createDeleteBtn(data = {}) {
   // Add any required data attributes.
   Object.assign(btn.dataset, data);
 
-  const icon = createIcon({icon: ICONS.trash, fixed: true});
-  const tooltiped = addTooltip({dom: icon, title: "Delete"});
+  const icon = createIcon({ icon: ICONS.trash, fixed: true });
+  const tooltiped = addTooltip({ dom: icon, title: "Delete" });
   btn.append(tooltiped);
   return btn;
 }
@@ -107,7 +110,7 @@ export function createButtonCell(buttons = []) {
  * @param {string} label label for the item
  * @return {*} anchor element containing link.
  */
-export function createItemLink({url, label} = {}) {
+export function createItemLink({ url, label } = {}) {
   if (typeof url !== "undefined" && typeof label !== "undefined") {
     return `
   <a class="btn btn-link wrap-cell" href="${url}">${label}</a>
@@ -136,10 +139,43 @@ export function generateColumnOrderInfo() {
  * @param  {number} width for the column
  * @return {Element} formatted DOM as text
  */
-export function createRestrictedWidthContent({text, width = 150}) {
+export function createRestrictedWidthContent({ text, width = 150 }) {
   const dom = document.createElement("div");
   dom.classList.add("cell-restricted");
   dom.style.width = `${width}px`;
   dom.innerText = text;
-  return addTooltip({dom, title: text});
+  return addTooltip({ dom, title: text });
+}
+
+/**
+ * Create a filter tag on the datatable
+ * @param {string} text value searched
+ * @param {string} type field searched
+ * @param {function} handler what to do when button is clicked
+ */
+export function createFilterTag({ text, type, handler }) {
+  const remove = elm => {
+    $(elm).off("click").remove();
+  };
+  const $filterTags = $(".filter-tags");
+
+  // Check to see if that button already exists.
+  const btn = $filterTags.find(`[data-type="${type}"]`);
+  if (btn) {
+    remove(btn);
+  }
+
+  if (text) {
+    const tag = `
+  <button data-type="${type}" class="btn btn-default btn-xs filter-tags__tag">
+      <b>${type}</b> : ${text}
+  </button>`;
+    const $tag = $(tag);
+    $tag.on("click", function() {
+      // Remove tag
+      remove(this);
+      handler();
+    });
+    $filterTags.append($tag);
+  }
 }

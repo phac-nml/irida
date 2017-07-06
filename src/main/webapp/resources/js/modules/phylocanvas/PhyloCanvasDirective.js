@@ -45,6 +45,7 @@
 
           phylo = new PhyloCanvas.Tree("phylocanvas", attrs.config);
           phylo.setTreeType(scope.shape);
+          phylo.contextMenu = false;
           phylo.load(attrs.newick);
         },
         controller: ['$scope', function($scope) {

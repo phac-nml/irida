@@ -1,17 +1,14 @@
 module.exports = {
-  extends: "google",
-  installedESLint: true,
+  plugins: ["prettier"],
+  parserOptions: {
+    ecmaVersion: 6,
+    sourceType: "module"
+  },
   env: {
-    browser: true
+    browser: true,
+    node: true
   },
   rules: {
-    "new-cap": ["error", { capIsNewExceptions: ["DataTable"] }],
-    "max-len": [
-      "error",
-      {
-        ignoreStrings: true,
-        ignoreComments: true
-      }
-    ],
+    "prettier/prettier": "error"
   }
 };
