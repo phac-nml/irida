@@ -72,7 +72,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTa
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProject;
-import ca.corefacility.bioinformatics.irida.security.permissions.UpdateSamplePermission;
+import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
@@ -120,6 +120,7 @@ public class ProjectsController {
 	private final IridaWorkflowsService workflowsService;
 	private final CartController cartController;
 	private final UpdateSamplePermission updateSamplePermission;
+
 	@Value("${file.upload.max_size}")
 	private final Long MAX_UPLOAD_SIZE = IridaRestApiWebConfig.UNLIMITED_UPLOAD_SIZE;
 

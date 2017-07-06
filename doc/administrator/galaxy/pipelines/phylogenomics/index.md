@@ -15,25 +15,22 @@ IRIDA uses the software [SNVPhyl][] for constructing whole genome phylogenies.  
 
 To install these tools, please proceed through the following steps.
 
-## Step 1: Install Build Dependencies
+## Step 1: Install Dependencies
 
-SNVPhyl relies on `ncurses` version **2.9** which requires [GCC][] version **4.9** or **less** to build.  Please verify you have the correct version of GCC by running `gcc --version`.  If you have a more recent version installed please install version **4.9** before proceeding.  Alternativly, please verify that `ncurses` is installed on your system before installing SNVPhyl.
-
-## Step 2: Install Perl Modules
-
-Some Perl modules are required to be installed before the tools are installed.  In particular, the module `Readonly` needs to be installed.  This can by installed by running:
+Some of these tools require additional dependencies to be installed.  For a cluster environment please make sure these are available on all cluster nodes by installing to a shared directory. This can be done with conda (assuming Galaxy is configured to load up the environment `galaxy` for each tool execution using the `env.sh` file).
 
 ```
-cpanm Readonly
+source activate galaxy
+conda install ncurses perl-readonly
 ```
 
-## Step 3: Install Galaxy Tools
+## Step 2: Install Galaxy Tools
 
 Please install all the Galaxy tools in the table above by logging into Galaxy, navigating to **Admin > Search and browse tool sheds**, searching for the appropriate **Tool Name** and installing the appropriate **Toolshed Installable Revision**.
 
-The install progress can be monitored in the Galaxy log file `$GALAXY_BASE_DIR/main.log`.  On completion you should see a message of `Installed` next to the tool when going to **Admin > Manage installed tool shed repositories**.
+The install progress can be monitored in the Galaxy log files `galaxy/*.log`.  On completion you should see a message of `Installed` next to the tool when going to **Admin > Manage installed tool shed repositories**.
 
-## Step 4: Testing Pipeline
+## Step 3: Testing Pipeline
 
 A Galaxy workflow and some test data has been included with this documentation to verify that all tools are installed correctly.  To test this pipeline, please proceed through the following steps.
 
