@@ -1,7 +1,7 @@
 import $ from "jquery";
 import _ from "lodash";
-import { addTooltip } from "./bootstrap-utilities";
-import { createIcon, ICONS } from "./fontawesome-utilities";
+import {addTooltip} from "./bootstrap-utilities";
+import {createIcon, ICONS} from "./fontawesome-utilities";
 
 /*
 <div class="row">
@@ -168,7 +168,7 @@ export function createFilterTag({ text, type, handler }) {
   if (text) {
     const tag = `
   <button data-type="${type}" class="btn btn-default btn-xs filter-tags__tag">
-      <b>${type}</b> : ${text}
+      <b>${type}</b> : ${text} ${createIcon({icon: ICONS.remove, fixed: true}).outerHTML}
   </button>`;
     const $tag = $(tag);
     $tag.on("click", function() {
