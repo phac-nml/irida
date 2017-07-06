@@ -6,7 +6,7 @@ Important links
 * IRIDA GitHub - https://github.com/phac-nml/irida
 * IRIDA GitLab - http://gitlab-irida.corefacility.ca/ (only accessable from NML network)
 * Documentation site - https://irida.corefacility.ca/documentation/
-* Public website - https://irida.ca
+* Public information website - https://irida.ca
 
 Languages and Libraries
 -----------------------
@@ -59,6 +59,28 @@ bash install-libs.sh
 
 Running and building IRIDA
 --------------------------
+
+#### Spring profiles
+
+Spring allows us to set profiles in the application that can be used to set up certain services for running in different environments.  IRIDA has the following profiles:
+
+* `prod` - Production mode.  
+  * Hibernate will not be allowed to make changes.  
+  * Database will be managed by Liquibase.  
+  * Attempt to connect to Galaxy to run workflows
+  * Run all scheduled tasks such as NCBI uploads, data synchronization, etc.
+* `dev` - Development mode.  
+  * Hibernate to attempt to update the IRIDA database as you make code changes.
+  * No galaxy connection.
+  * No scheduled tasks.
+* `it` - Integration test.
+  * Liquibase used for database setup, but should only be used for integration testing.
+* `test` - This profile is generally used when testing connecting to Galaxy.
+
+When running IRIDA from the command line, a profile can be set by adding the following parameter:
+```bash
+-Dspring.profiles.active=YOURPROFILE
+```
 
 #### Running a development server
 
