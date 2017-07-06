@@ -89,12 +89,20 @@ Jekyll
 Building new features
 ---------------------
 
+### Informing users of changes
+
 When adding new features we have a couple places we need to inform our users.  First is the `CHANGELOG.md` file found in the root of the project.  If you've added a feature, fixed a bug, or made any changes worthwhile of telling IRIDA users, other IRIDA developers, or administrators they should be mentioned here.  Next is the `UPGRADING.md` guide.  This file is used to to inform IRIDA system admins what steps need to be taken when upgrading from one version of IRIDA to another.  For example if you add anything to a configuration file, if there are changes which require an upgrade to the database, a workflow, or any dependencies, it should be mentioned here.
 
-Database Updates
-----------------
+#### Database Updates
 
-Liquibase
+While in development we use Hibernate to manage our database changes, in production we use [Liquibase][]. 
+Liquibase allows you to specify changesets to a database in incremental, database agnostic XML files.  In practice IRIDA requires MariaDB or MySQL, but it's still worthwhile to use a tool to properly manage the updates.  Liquibase ensures that all changes to the database are performed in the correct order, and manages this by keeping track of a hashcode of the last applied changeset.  When IRIDA is started, liquibase runs first to check if there are new changesets to be applied, and also that the current state of the database is in the format that IRIDA will be expecting.
+
+When we're doing development and running IRIDA in the `dev` Spring profile you can directly make changes to the model classes and those changes will be reflected into the database.  Before creating a merge request you should add any changes that are made to the database to a new changeset XML file and test that the database is correctly built in the `prod` Spring profile.  It's also worthwhile to take a dump of a production IRIDA database and ensure that your Liquibase upgrade correctly migrates any data to your new format.
+
+You can find the existing Liquibase changeset files in `/src/manin/resounces/ca/corefacility/bioinformatics/irida/database/changesets`.
+
+Sometimes database changes are too complex to be able to use Liquibase XML files.  Conveniently Liquibase also allows you to apply change sets using Java code.  This mode is not recommended to use very often as you don't get some of the same change management features, but it's useful when you have a difficult migration.  If you need to use a change set written in Java, place it under the `ca.corefacility.bioinformatics.irida.database.changesets` package.
 
 Version control
 ---------------
@@ -145,7 +153,7 @@ IRIDA Codebase
 IRIDA is organized as a fairly classic Java web application.  All files are found under the `ca.corefacility.bioinformatics.irida` package root.
 
 * `config` - Configuration classes.  All Spring application config, web config, Maven config, and scheduled task configuration can be found here.
-* `database.changesets` - Java liquibase changesets.  See more about our liquibase usage in the [liquibase section](#liquibase).
+* `database.changesets` - Java Liquibase changesets.  See more about our liquibase usage in the [Database Updates section](#database_updates).
 * `events` - Classes here handle the `ProjectEvent` structure in IRIDA.  These are the messages you can find on the IRIDA dashboard and project recent activity pages.
 * `exceptions` - Java `Exception` classes written for IRIDA.
 * `model` - IRIDA uses MVC.  These are the model classes.
@@ -165,3 +173,4 @@ IRIDA is organized as a fairly classic Java web application.  All files are foun
 [GitLab]: (http://gitlab-irida.corefacility.ca/)
 [Spring Data JPA]: (http://projects.spring.io/spring-data-jpa/)
 [Spring Security]: (https://projects.spring.io/spring-security/)
+[Liquibase]: (http://www.liquibase.org/documentation/)
