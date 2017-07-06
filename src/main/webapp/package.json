@@ -61,7 +61,6 @@
     "gulp-notify": "^2.2.0",
     "gulp-sass": "^2.1.1",
     "gulp-sourcemaps": "^1.6.0",
-    "jest": "^20.0.4",
     "node-sass": "^4.5.3",
     "phylocanvas": "^2.8.1",
     "phylocanvas-plugin-export-svg": "^1.0.0",
@@ -75,14 +74,5 @@
   },
   "engines": {
     "node": ">=0.10.0"
-  },
-  "jest": {
-    "browser": true,
-    "verbose": true,
-    "roots": ["./resources/js/"]
-  },
-  "scripts": {
-    "test": "jest",
-    "test:watch": "jest --watch --verbose"
   }
 }
