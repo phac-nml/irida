@@ -3,8 +3,8 @@
  */
 
 export const ICONS = {
-  download: "fa-download",  // Downloading,
-  trash: "fa-trash"         // Deleting
+  download: "fa-download", // Downloading,
+  trash: "fa-trash" // Deleting
 };
 
 /**
@@ -13,9 +13,9 @@ export const ICONS = {
  * @param {boolean} fixed width
  * @return {Element} icon element
  */
-export function createIcon({icon = "", fixed = false}) {
-  const i = `<i class="fa ${icon}${fixed ? ' fa-fw' : ''}"></i>`;
-  const div = document.createElement('div');
+export function createIcon({ icon = "", fixed = false }) {
+  const i = `<i class="fa ${icon}${fixed ? " fa-fw" : ""}"></i>`;
+  const div = document.createElement("div");
   div.innerHTML = i;
   return div.childNodes[0];
 }

@@ -1,6 +1,6 @@
-import 'css/pages/analyses-list.css';
-import 'DataTables/datatables';
-import $ from 'jquery';
+import "css/pages/analyses-list.css";
+import "DataTables/datatables";
+import $ from "jquery";
 import {
   createButtonCell,
   createDeleteBtn,
@@ -10,9 +10,9 @@ import {
   createRestrictedWidthContent,
   generateColumnOrderInfo,
   tableConfig
-} from 'Utilities/datatables-utilities';
-import {formatDate, getHumanizedDuration} from 'Utilities/date-utilities';
-import {deleteAnalysis} from '../analysis/analysis-service';
+} from "Utilities/datatables-utilities";
+import { formatDate, getHumanizedDuration } from "Utilities/date-utilities";
+import { deleteAnalysis } from "../analysis/analysis-service";
 
 const COLUMNS = generateColumnOrderInfo();
 
@@ -24,17 +24,17 @@ const COLUMNS = generateColumnOrderInfo();
  */
 function createState(full) {
   const stateClasses = {
-    COMPLETED: 'progress-bar-success',
-    ERROR: 'progress-bar-danger'
+    COMPLETED: "progress-bar-success",
+    ERROR: "progress-bar-danger"
   };
 
-  let stateClass = '';
+  let stateClass = "";
   if (stateClasses[full.submission.analysisState] !== null) {
     stateClass = stateClasses[full.submission.analysisState];
   }
 
   let percent = full.percentComplete;
-  if (full.submission.analysisState === 'ERROR') {
+  if (full.submission.analysisState === "ERROR") {
     percent = 100;
   }
   return `
@@ -50,7 +50,7 @@ ${full.analysisState}
 
 const config = Object.assign(tableConfig, {
   ajax: window.PAGE.URLS.analyses,
-  order: [[COLUMNS.CREATED_DATE, 'desc']],
+  order: [[COLUMNS.CREATED_DATE, "desc"]],
   columnDefs: [
     {
       targets: [COLUMNS.ANALYSIS_STATE],
@@ -70,20 +70,20 @@ const config = Object.assign(tableConfig, {
     {
       targets: COLUMNS.WORKFLOW_ID,
       render(data) {
-        return createRestrictedWidthContent({text: data}).outerHTML;
+        return createRestrictedWidthContent({ text: data }).outerHTML;
       }
     },
     {
       targets: [COLUMNS.CREATED_DATE],
       render(data) {
-        const date = formatDate({date: data});
+        const date = formatDate({ date: data });
         return `<time>${date}</time>`;
       }
     },
     {
       targets: [COLUMNS.DURATION],
       render(data) {
-        return getHumanizedDuration({date: data});
+        return getHumanizedDuration({ date: data });
       }
     },
     {
@@ -92,7 +92,7 @@ const config = Object.assign(tableConfig, {
       width: 200,
       render(data, type, full) {
         const buttons = [];
-        if ((full.submission.analysisState).localeCompare('COMPLETED') === 0) {
+        if (full.submission.analysisState.localeCompare("COMPLETED") === 0) {
           const anchor = createDownloadLink({
             url: `${window.PAGE.URLS.download}${full.id}`,
             title: `${full.name}.zip`
@@ -103,8 +103,8 @@ const config = Object.assign(tableConfig, {
           const removeBtn = createDeleteBtn({
             id: full.id,
             name: full.name,
-            toggle: 'modal',
-            target: '#deleteConfirmModal'
+            toggle: "modal",
+            target: "#deleteConfirmModal"
           });
           buttons.push(removeBtn);
         }
@@ -114,7 +114,7 @@ const config = Object.assign(tableConfig, {
   ]
 });
 
-const table = $('#analyses').DataTable(config);
+const table = $("#analyses").DataTable(config);
 
 /**
  * Set the state for the Analyses table filters.
@@ -125,12 +125,12 @@ const table = $('#analyses').DataTable(config);
 function setFilterState(name, state, workflow) {
   // WORKFLOW: Need to get the internationalized value
   const workflowValue = () => {
-    const filter = document.querySelector('#workflowIdFilter');
+    const filter = document.querySelector("#workflowIdFilter");
     const index = filter.selectedIndex;
     if (index > 0) {
       return filter.options[index].text;
     }
-    return '';
+    return "";
   };
   const workflowColumn = table.column(COLUMNS.WORKFLOW_ID);
   workflowColumn.search(workflow);
@@ -138,18 +138,18 @@ function setFilterState(name, state, workflow) {
     text: workflowValue(),
     type: workflowColumn.header().innerText,
     handler() {
-      workflowColumn.search('').draw();
+      workflowColumn.search("").draw();
     }
   });
 
   // STATE: Need to get the internationalized value
   const stateValue = () => {
-    const stateFilter = document.querySelector('#analysisStateFilter');
+    const stateFilter = document.querySelector("#analysisStateFilter");
     const index = stateFilter.selectedIndex;
     if (index > 0) {
       return stateFilter.options[index].text;
     }
-    return '';
+    return "";
   };
   const stateColumn = table.column(COLUMNS.ANALYSIS_STATE);
   stateColumn.search(state);
@@ -157,7 +157,7 @@ function setFilterState(name, state, workflow) {
     text: stateValue(),
     type: stateColumn.header().innerText,
     handler() {
-      stateColumn.search('').draw();
+      stateColumn.search("").draw();
     }
   });
 
@@ -168,7 +168,7 @@ function setFilterState(name, state, workflow) {
     text: name,
     type: nameColumn.header().innerText,
     handler() {
-      nameColumn.search('').draw();
+      nameColumn.search("").draw();
     }
   });
 
@@ -177,23 +177,23 @@ function setFilterState(name, state, workflow) {
 }
 
 // Set up the delete modal
-$('#deleteConfirmModal')
-  .on('shown.bs.modal', () => {
-    document.querySelector('#delete-analysis-button').focus();
+$("#deleteConfirmModal")
+  .on("shown.bs.modal", () => {
+    document.querySelector("#delete-analysis-button").focus();
   })
-  .on('show.bs.modal', function(e) {
+  .on("show.bs.modal", function(e) {
     const button = $(e.relatedTarget); // The button that triggered the modal.
 
-    $(this).find('#delete-analysis-button').off('click').on('click', () => {
-      deleteAnalysis({id: button.data('id')}).then(
+    $(this).find("#delete-analysis-button").off("click").on("click", () => {
+      deleteAnalysis({ id: button.data("id") }).then(
         result => {
-          window.notifications.show({msg: result.result});
+          window.notifications.show({ msg: result.result });
           table.ajax.reload();
         },
         () => {
           window.notifications.show({
             msg: window.PAGE.i18n.unexpectedDeleteError,
-            type: 'error'
+            type: "error"
           });
         }
       );
@@ -201,27 +201,26 @@ $('#deleteConfirmModal')
   });
 
 // Set up clear filters button
-document.querySelector('#clear-filters')
-  .addEventListener('click', () => {
-    table.search('');
-    setFilterState('', '', '');
-  });
+document.querySelector("#clear-filters").addEventListener("click", () => {
+  table.search("");
+  setFilterState("", "", "");
+});
 
 // Set up the filter modal
-const nameFilter = document.querySelector('#nameFilter');
-const stateFilter = document.querySelector('#analysisStateFilter');
-const workflowFilter = document.querySelector('#workflowIdFilter');
-$('#filterModal')
-  .on('shown.bs.modal', () => {
+const nameFilter = document.querySelector("#nameFilter");
+const stateFilter = document.querySelector("#analysisStateFilter");
+const workflowFilter = document.querySelector("#workflowIdFilter");
+$("#filterModal")
+  .on("shown.bs.modal", () => {
     nameFilter.value = table.column(COLUMNS.NAME).search();
     stateFilter.value = table.column(COLUMNS.ANALYSIS_STATE).search();
     workflowFilter.value = table.column(COLUMNS.WORKFLOW_ID).search();
     nameFilter.focus();
   })
-  .on('show.bs.modal', function() {
+  .on("show.bs.modal", function() {
     // When the filter modal is opened, set up the click
     // handlers for all filter properties.
-    $(this).find('#filterAnalysesBtn').off('click').on('click', () => {
+    $(this).find("#filterAnalysesBtn").off("click").on("click", () => {
       const name = nameFilter.value;
       const state = stateFilter.value;
       const workflow = workflowFilter.value;
@@ -234,12 +233,10 @@ $('#filterModal')
  * has been initialized.
  */
 (function createFilterButton() {
-  const $wrapper = $('#filterBtnWrapper');
-  const $btn = $wrapper.find('.btn-toolbar');
+  const $wrapper = $("#filterBtnWrapper");
+  const $btn = $wrapper.find(".btn-toolbar");
   $(document).remove($wrapper);
 
   // Adjust the default search field;
-  $('#analyses_filter')
-    .parent()
-    .append($btn);
+  $("#analyses_filter").parent().append($btn);
 })();
