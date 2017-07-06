@@ -68,17 +68,29 @@ public class CoverageQCEntry extends QCEntry {
 	 * {@inheritDoc}
 	 */
 	public QCEntryStatus getStatus() {
-		if (project == null || project.getGenomeSize() == null || project.getRequiredCoverage() == null) {
+		if (project == null || project.getGenomeSize() == null
+				|| (project.getMinimumCoverage() == null && project.getMaximumCoverage() == null)) {
 			return QCEntryStatus.UNAVAILABLE;
 		}
 
 		int coverage = calculateCoverage();
 
-		if (coverage >= project.getRequiredCoverage()) {
-			return QCEntryStatus.POSITIVE;
-		} else {
-			return QCEntryStatus.NEGATIVE;
+		QCEntryStatus status = QCEntryStatus.POSITIVE;
+
+		Integer minimumCoverage = project.getMinimumCoverage();
+		Integer maximumCoverage = project.getMaximumCoverage();
+
+		// if minimum is set, check if coverage is over it
+		if (minimumCoverage != null && coverage < minimumCoverage) {
+			status = QCEntryStatus.NEGATIVE;
 		}
+
+		// if maximum is set, check if coverage is over it
+		if(maximumCoverage != null && coverage > maximumCoverage){
+			status = QCEntryStatus.NEGATIVE;
+		}
+
+		return status;
 	}
 
 	private int calculateCoverage() {
