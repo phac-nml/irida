@@ -47,7 +47,7 @@ public class CoverageFileProcessorTest {
 	public void testGoodCoverage() {
 		Project p = new Project();
 		p.setGenomeSize(100L);
-		p.setRequiredCoverage(2);
+		p.setMinimumCoverage(2);
 		SequenceFile file = new SequenceFile();
 		SequencingObject o = new SingleEndSequenceFile(file);
 		Long fileId = 1L;
@@ -76,7 +76,7 @@ public class CoverageFileProcessorTest {
 	public void testBadCoverage() {
 		Project p = new Project();
 		p.setGenomeSize(100L);
-		p.setRequiredCoverage(5);
+		p.setMinimumCoverage(5);
 		SequenceFile file = new SequenceFile();
 		SequencingObject o = new SingleEndSequenceFile(file);
 		Long fileId = 1L;
@@ -105,7 +105,7 @@ public class CoverageFileProcessorTest {
 	public void testRemoveExistingEntry() {
 		Project p = new Project();
 		p.setGenomeSize(100L);
-		p.setRequiredCoverage(2);
+		p.setMinimumCoverage(2);
 		SequenceFile file = new SequenceFile();
 		SequencingObject o = new SingleEndSequenceFile(file);
 		Long fileId = 1L;
