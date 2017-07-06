@@ -6,7 +6,7 @@ import moment from "moment";
  * @param {Number} date event occurred
  * @return {string} formatted time since.
  */
-export function formatTimeForNow({now, date}) {
+export function formatTimeForNow({ now, date }) {
   const dNow = new Date(now);
   const dDate = new Date(date);
   if (moment.isDate(dNow) && moment.isDate(dDate)) {
@@ -19,7 +19,7 @@ export function formatTimeForNow({now, date}) {
  * @param {Number} date to format
  * @return {string} humanized version of the date
  */
-export function getHumanizedDuration({date}) {
+export function getHumanizedDuration({ date }) {
   return moment.duration(date).humanize();
 }
 
@@ -28,7 +28,7 @@ export function getHumanizedDuration({date}) {
  * @param  {Number} date unix timestamp
  * @return {string} formatted date
  */
-export function formatDate({date}) {
+export function formatDate({ date }) {
   const t = new Date(date);
   if (moment.isDate(t)) {
     return moment(t).format("LLL");

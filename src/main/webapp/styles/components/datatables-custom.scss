@@ -8,7 +8,7 @@
 }
 
 .filter-row {
-  margin-bottom: 5px!important;
+  margin-bottom: 5px !important;
 }
 
 .table-selectable tbody tr {
@@ -38,11 +38,11 @@
 
 .dataTables_scroll, .table-wrapper {
   border: 1px solid #DDDDDD;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.18);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.18);
 }
 
 .dataTables_scroll table.table {
-  margin-top: 0!important;
+  margin-top: 0 !important;
 }
 
 .dataTable {
@@ -68,14 +68,12 @@
   }
 }
 
-
 table.selectable tbody tr:hover {
   cursor: pointer;
 }
 
-
 table.selectable tbody tr.selected td {
-  background-color: #d9edf7!important;
+  background-color: #d9edf7 !important;
 }
 
 .dataTables_wrapper .selected-counts {
@@ -104,7 +102,7 @@ table.selectable tbody tr.selected td {
 // New custom wrapper for updated tables
 // This is set in JS in datatable-utilities.js#dom
 .dt-table-wrapper {
-  box-shadow: 0 2px 4px rgba(0,0,0,0.18);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.18);
   margin-bottom: 10px;
 }
 
@@ -119,7 +117,7 @@ table.selectable tbody tr.selected td {
 }
 
 .dt-filter-btns {
-  margin: 0!important;
+  margin: 0 !important;
 }
 
 // Filter Row - updated tables
@@ -135,4 +133,3 @@ table.selectable tbody tr.selected td {
 .filter-tags__tag {
   margin-left: 4px;
 }
-
