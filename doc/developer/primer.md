@@ -106,7 +106,23 @@ This will create the `.war` and `.zip` files for IRIDA release under the `target
 
 #### Building IRIDA documentation
 
-Jekyll
+IRIDA documentation can be found in the `doc/` directory in the IRIDA root directory.  IRIDA's documentation is built using [Jekyll][].  Jekyll allows us to write documentation in Markdown format and it will convert the pages to HTML for releasing to the web.  The documentation at http://irida.corefacility.ca/documentation is all generated using this tool.
+
+To test any documentation changes, you can `cd` into the `doc/` directory and run the following command:
+
+```
+jekyll serve
+```
+
+This command will read the `_config.yml` file in the directory for configuration settings, then serve the built documentation at http://localhost:4000.  As you make changes to documentation files it will automatically regenerate the documentation and reload its webserver.
+
+To build the documentation for release, you can run the following:
+
+```bash
+mvn clean site
+```
+
+This will build the documentation HTML files into `doc/_site`.  That directory can be placed onto a web server for release.
 
 IRIDA Codebase
 --------------
@@ -196,3 +212,4 @@ http://gitlab-irida.corefacility.ca/snippets/30
 [Spring Data JPA]: (http://projects.spring.io/spring-data-jpa/)
 [Spring Security]: (https://projects.spring.io/spring-security/)
 [Liquibase]: (http://www.liquibase.org/documentation/)
+[Jekyll]: (http://jekyllrb.com/docs/home/)
