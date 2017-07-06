@@ -82,11 +82,14 @@ mvn clean package -DskipTests
 
 This will create the `.war` and `.zip` files for IRIDA release under the `target/` directory.
 
-#### Building IRIDA docuementation
+#### Building IRIDA documentation
+
+Jekyll
 
 Building new features
 ---------------------
-CHANGELOG, UPGRADING
+
+When adding new features we have a couple places we need to inform our users.  First is the `CHANGELOG.md` file found in the root of the project.  If you've added a feature, fixed a bug, or made any changes worthwhile of telling IRIDA users, other IRIDA developers, or administrators they should be mentioned here.  Next is the `UPGRADING.md` guide.  This file is used to to inform IRIDA system admins what steps need to be taken when upgrading from one version of IRIDA to another.  For example if you add anything to a configuration file, if there are changes which require an upgrade to the database, a workflow, or any dependencies, it should be mentioned here.
 
 Database Updates
 ----------------
@@ -131,6 +134,10 @@ Once the tag has been pushed, the tag should have been automatically created on 
 Example workflow:
 
 ![Git workflow](images/git-flow.png)
+
+#### Performing a release
+
+http://gitlab-irida.corefacility.ca/snippets/30
 
 IRIDA Codebase
 --------------
