@@ -2,7 +2,9 @@
   "name": "irida-ui",
   "version": "1.0.0",
   "scripts": {
-    "lint:js": "eslint"
+    "lint:js": "eslint",
+    "build": "gulp webpack",
+    "sass": "gulp sass"
   },
   "dependencies": {
     "angular": "1.6.2",

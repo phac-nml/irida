@@ -4,7 +4,8 @@
 
 export const ICONS = {
   download: "fa-download", // Downloading,
-  trash: "fa-trash" // Deleting
+  trash: "fa-trash", // Deleting
+  remove: "fa-times" // Removing
 };
 
 /**
