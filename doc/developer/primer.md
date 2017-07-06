@@ -203,8 +203,7 @@ Example workflow:
 
 #### Performing a release
 
-http://gitlab-irida.corefacility.ca/snippets/30
-
+After building a new `master` branch and releasing a tag, it is time to release a new version of IRIDA on its production servers.  To see more about the IRIDA release plan, see the following [GitLab][] snippet: http://gitlab-irida.corefacility.ca/snippets/30
 
 
 [GitHub]: (https://github.com/phac-nml/irida)
