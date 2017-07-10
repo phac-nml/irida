@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="add-label-output-file" author="aaron">
+		<addColumn tableName="analysis_output_file">
+			<column name="label_prefix" type="VARCHAR(255)">
+				<constraints nullable="true"/>
+			</column>
+		</addColumn>
+
+		<!-- Fill in the newly added `label` field for `analysis_output_file` using the output file name and the sample name if necessary. -->
+		<sql>
+			/* Link up analysis submission to input sample names (via sequencing files). */
+			/* Ignore analysis submissions where workflows supported multiple input files */
+			/* We also ignore single-end analyses as no supporting workflows are implemented in IRIDA */
+			UPDATE analysis_output_file aof
+				INNER JOIN analysis_output_file_map aofm ON aofm.analysisOutputFilesMap_id = aof.id
+				INNER JOIN analysis_submission sub ON aofm.analysis_id = sub.analysis_id
+				INNER JOIN analysis_submission_sequence_file_pair aspe ON sub.id = aspe.analysis_submission_id
+				INNER JOIN sample_sequencingobject sso ON aspe.sequence_file_pair_id = sso.sequencingobject_id
+				INNER JOIN sample s ON s.id = sso.sample_id
+
+				SET aof.label_prefix = s.sampleName
+
+				WHERE sub.workflow_id IN ('bac44f4b-46f9-4393-b247-de11a751410e','564a02d7-0cd8-4328-9090-dab1cff1b3f7','f73cbfd2-5478-4c19-95f9-690f3712f84d',
+					'87186c71-5c8a-4027-a9d9-b29850cebdb3','e559af58-a560-4bbd-997e-808bfbe026e2','e8f9cc61-3264-48c6-81d9-02d9e84bccc7');
+		</sql>
+
+	</changeSet>
+
+</databaseChangeLog>

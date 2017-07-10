@@ -49,7 +49,7 @@ import ca.corefacility.bioinformatics.irida.service.impl.processor.SequenceFileP
 @Service
 public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, SequencingObject> implements
 		SequencingObjectService {
-
+	
 	private final SampleSequencingObjectJoinRepository ssoRepository;
 	private final SequenceFileRepository sequenceFileRepository;
 	private TaskExecutor fileProcessingChainExecutor;
@@ -159,24 +159,29 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 	@Override
 	public <T extends SequencingObject> Map<Sample, T> getUniqueSamplesForSequencingObjects(Set<T> sequenceFiles)
 			throws DuplicateSampleException {
-		Map<Sample, T> sequenceFilePairsSampleMap = new HashMap<>();
+		Map<Sample, T> sequenceFilesSampleMap = new HashMap<>();
 
-		for (T filePair : sequenceFiles) {
-			SequenceFile pair1 = filePair.getFiles().iterator().next();
+		for (T seqObj : sequenceFiles) {
+			SequenceFile file = seqObj.getFiles().iterator().next();
 
-			SampleSequencingObjectJoin join = ssoRepository.getSampleForSequencingObject(filePair);
+			SampleSequencingObjectJoin join = ssoRepository.getSampleForSequencingObject(seqObj);
 
-			Sample sample = join.getSubject();
-			if (sequenceFilePairsSampleMap.containsKey(sample)) {
-				SequencingObject previousPair = sequenceFilePairsSampleMap.get(sample);
-				throw new DuplicateSampleException("Sequence file pairs " + pair1 + ", " + previousPair
-						+ " have the same sample " + sample);
+			if (join == null) {
+				throw new EntityNotFoundException("No sample associated with sequence file " + seqObj.getClass()
+						+ "[id=" + seqObj.getId() + "]");
 			} else {
-				sequenceFilePairsSampleMap.put(sample, filePair);
+				Sample sample = join.getSubject();
+				if (sequenceFilesSampleMap.containsKey(sample)) {
+					SequencingObject previousFile = sequenceFilesSampleMap.get(sample);
+					throw new DuplicateSampleException(
+							"Sequence files " + file + ", " + previousFile + " have the same sample " + sample);
+				} else {
+					sequenceFilesSampleMap.put(sample, seqObj);
+				}
 			}
 		}
 
-		return sequenceFilePairsSampleMap;
+		return sequenceFilesSampleMap;
 	}
 
 	/**
