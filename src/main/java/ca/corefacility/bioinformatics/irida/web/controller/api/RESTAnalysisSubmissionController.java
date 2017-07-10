@@ -30,8 +30,10 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisAssemblyAnnotation;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisAssemblyAnnotationCollection;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisSISTRTyping;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -62,8 +64,12 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	public static final String INPUT_FILES_PAIRED_REL = "input/paired";
 
 	// available analysis types to filter for
-	public static Map<String, Class<? extends Analysis>> ANALYSIS_TYPES = ImmutableMap.of("phylogenomics",
-			AnalysisPhylogenomicsPipeline.class, "assembly", AnalysisAssemblyAnnotation.class);
+	public static Map<String, Class<? extends Analysis>> ANALYSIS_TYPES = 
+			ImmutableMap.<String, Class<? extends Analysis>>builder().
+							put("phylogenomics", AnalysisPhylogenomicsPipeline.class).
+							put("assembly", AnalysisAssemblyAnnotation.class).
+							put("assembly-collection", AnalysisAssemblyAnnotationCollection.class).
+							put("sistr", AnalysisSISTRTyping.class).build();
 
 	@Autowired
 	public RESTAnalysisSubmissionController(AnalysisSubmissionService analysisSubmissionService,
