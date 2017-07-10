@@ -9,6 +9,7 @@ Changes
 * [UI]: Added buttons on the project settings page, and metadata template page to download an excel template.
 * [Developer]: Reorganized permissions classes into subpackages.
 * [UI]: Added maximum coverage quality control option.
+* [UI]: Allowing admins to delete synchronized data so it will be resynchronized if there was a problem. Note any changes made to synchronized samples will be overwritten on the next sync job.  (0.17.1)
 
 0.16.0 to 0.17.0
 ----------------
