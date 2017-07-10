@@ -119,16 +119,6 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	private String remoteWorkflowId;
 	
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinTable(name = "analysis_submission_sequence_file_single_end", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "sequencing_object_id", nullable = false))
-	@Deprecated
-	private Set<SingleEndSequenceFile> inputFilesSingleEnd;
-
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinTable(name = "analysis_submission_sequence_file_pair", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "sequence_file_pair_id", nullable = false))
-	@Deprecated
-	private Set<SequenceFilePair> inputFilesPaired;
-	
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinTable(name = "analysis_submission_sequencing_object", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "sequencing_object_id", nullable = false))
 	private Set<SequencingObject> inputFiles;
 
@@ -517,8 +507,6 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	 */
 	public static class Builder {
 		private String name;
-		private Set<SingleEndSequenceFile> inputFilesSingleEnd;
-		private Set<SequenceFilePair> inputFilesPaired;
 		private Set<SequencingObject> inputFiles;
 		private ReferenceFile referenceFile;
 		private UUID workflowId;
@@ -550,21 +538,6 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 			checkNotNull(name, "name is null");
 
 			this.name = name;
-			return this;
-		}
-
-		/**
-		 * Sets this {@link SingleEndSequenceFile}s for this submission
-		 * 
-		 * @param inputFilesSingleEnd
-		 *            {@link SingleEndSequenceFile}s for this submission
-		 * @return a {@link Builder}
-		 */
-		@Deprecated
-		public Builder inputFilesSingleEnd(Set<SingleEndSequenceFile> inputFilesSingleEnd) {
-			checkNotNull(inputFilesSingleEnd);
-			checkArgument(!inputFilesSingleEnd.isEmpty());
-			this.inputFilesSingleEnd = inputFilesSingleEnd;
 			return this;
 		}
 
@@ -716,9 +689,9 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(name, workflowId, remoteAnalysisId, remoteInputDataId, remoteWorkflowId, inputFilesSingleEnd,
-				inputFilesPaired, createdDate, modifiedDate, analysisState, analysisCleanedState, analysis,
-				referenceFile, namedParameters, submitter);
+		return Objects.hash(name, workflowId, remoteAnalysisId, remoteInputDataId, remoteWorkflowId, inputFiles,
+				createdDate, modifiedDate, analysisState, analysisCleanedState, analysis, referenceFile,
+				namedParameters, submitter);
 	}
 
 	@Override
@@ -729,9 +702,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 					&& Objects.equals(name, p.name) && Objects.equals(workflowId, p.workflowId)
 					&& Objects.equals(remoteAnalysisId, p.remoteAnalysisId)
 					&& Objects.equals(remoteInputDataId, p.remoteInputDataId)
-					&& Objects.equals(remoteWorkflowId, p.remoteWorkflowId)
-					&& Objects.equals(inputFilesSingleEnd, p.inputFilesSingleEnd)
-					&& Objects.equals(inputFilesPaired, p.inputFilesPaired)
+					&& Objects.equals(remoteWorkflowId, p.remoteWorkflowId) && Objects.equals(inputFiles, p.inputFiles)
 					&& Objects.equals(analysisState, p.analysisState)
 					&& Objects.equals(analysisCleanedState, p.analysisCleanedState)
 					&& Objects.equals(referenceFile, p.referenceFile)
