@@ -51,7 +51,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
@@ -201,12 +200,11 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 		this();
 		checkNotNull(builder.workflowId, "workflowId is null");
 
-		checkArgument(builder.inputFilesSingleEnd != null || builder.inputFilesPaired != null,
-				"all input file collections are null.  You must supply at least one set of input files");
+		checkArgument(builder.inputFiles != null,
+				"input file collection is null.  You must supply at least one set of input files");
 
 		this.name = (builder.name != null) ? builder.name : "Unknown";
-		this.inputFilesSingleEnd = (builder.inputFilesSingleEnd != null) ? builder.inputFilesSingleEnd : Sets.newHashSet();
-		this.inputFilesPaired = (builder.inputFilesPaired != null) ? builder.inputFilesPaired : Sets.newHashSet();
+		this.inputFiles = builder.inputFiles;
 		this.inputParameters = (builder.inputParameters != null) ? ImmutableMap.copyOf(builder.inputParameters)
 				: ImmutableMap.of();
 		this.referenceFile = builder.referenceFile;
@@ -521,6 +519,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 		private String name;
 		private Set<SingleEndSequenceFile> inputFilesSingleEnd;
 		private Set<SequenceFilePair> inputFilesPaired;
+		private Set<SequencingObject> inputFiles;
 		private ReferenceFile referenceFile;
 		private UUID workflowId;
 		private Map<String, String> inputParameters;
@@ -561,6 +560,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 		 *            {@link SingleEndSequenceFile}s for this submission
 		 * @return a {@link Builder}
 		 */
+		@Deprecated
 		public Builder inputFilesSingleEnd(Set<SingleEndSequenceFile> inputFilesSingleEnd) {
 			checkNotNull(inputFilesSingleEnd);
 			checkArgument(!inputFilesSingleEnd.isEmpty());
@@ -571,15 +571,15 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 		/**
 		 * Sets the inputFilesPaired for this submission.
 		 * 
-		 * @param inputFilesPaired
+		 * @param inputFiles
 		 *            The inputFilesPaired for this submission.
 		 * @return A {@link Builder}.
 		 */
-		public Builder inputFilesPaired(Set<SequenceFilePair> inputFilesPaired) {
-			checkNotNull(inputFilesPaired, "inputFilesPaired is null");
-			checkArgument(!inputFilesPaired.isEmpty(), "inputFilesPaired is empty");
+		public Builder inputFiles(Set<SequencingObject> inputFiles) {
+			checkNotNull(inputFiles, "inputFiles is null");
+			checkArgument(!inputFiles.isEmpty(), "inputFiles is empty");
 
-			this.inputFilesPaired = inputFilesPaired;
+			this.inputFiles = inputFiles;
 			return this;
 		}
 
@@ -665,8 +665,8 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 		}
 
 		public AnalysisSubmission build() {
-			checkArgument(inputFilesSingleEnd != null || inputFilesPaired != null,
-					"all input file collections are null.  You must supply at least one set of input files");
+			checkArgument(inputFiles != null,
+					"input file collection is null.  You must supply at least one set of input files");
 
 			return new AnalysisSubmission(this);
 		}
