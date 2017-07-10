@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
@@ -59,6 +60,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
@@ -119,11 +121,17 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinTable(name = "analysis_submission_sequence_file_single_end", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "sequencing_object_id", nullable = false))
+	@Deprecated
 	private Set<SingleEndSequenceFile> inputFilesSingleEnd;
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinTable(name = "analysis_submission_sequence_file_pair", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "sequence_file_pair_id", nullable = false))
+	@Deprecated
 	private Set<SequenceFilePair> inputFilesPaired;
+	
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@JoinTable(name = "analysis_submission_sequencing_object", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "sequencing_object_id", nullable = false))
+	private Set<SequencingObject> inputFiles;
 
 	@ElementCollection(fetch = FetchType.EAGER)
 	@MapKeyColumn(name = "name", nullable = false)
@@ -244,7 +252,11 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	 */	
 	@JsonIgnore
 	public Set<SingleEndSequenceFile> getInputFilesSingleEnd() {
-		return inputFilesSingleEnd;
+		return inputFiles.stream().filter(f -> {
+			return f instanceof SingleEndSequenceFile;
+		}).map(f -> {
+			return (SingleEndSequenceFile) f;
+		}).collect(Collectors.toSet());
 	}
 
 	/**
@@ -254,7 +266,11 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	 */
 	@JsonIgnore
 	public Set<SequenceFilePair> getPairedInputFiles() {
-		return inputFilesPaired;
+		return inputFiles.stream().filter(f -> {
+			return f instanceof SequenceFilePair;
+		}).map(f -> {
+			return (SequenceFilePair) f;
+		}).collect(Collectors.toSet());
 	}
 
 	/**
