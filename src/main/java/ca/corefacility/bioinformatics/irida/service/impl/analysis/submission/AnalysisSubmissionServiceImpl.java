@@ -351,12 +351,13 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		IridaWorkflowDescription description = workflow.getWorkflowDescription();
 			
 		if (description.acceptsSingleSequenceFiles()) {
-			final Map<Sample, SingleEndSequenceFile> samplesMap = sequencingObjectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(sequenceFiles));
+			final Map<Sample, SingleEndSequenceFile> samplesMap = sequencingObjectService
+					.getUniqueSamplesForSequencingObjects(Sets.newHashSet(sequenceFiles));
 			for (final Sample s : samplesMap.keySet()) {
 				// Build the analysis submission
 				AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
 				builder.name(name + "_" + s.getSampleName());
-				builder.inputFilesSingleEnd(ImmutableSet.of(samplesMap.get(s)));
+				builder.inputFiles(ImmutableSet.of(samplesMap.get(s)));
 
 				// Add reference file
 				if (ref != null && description.requiresReference()) {
@@ -392,7 +393,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 				// Build the analysis submission
 				AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
 				builder.name(name + "_" + s.getSampleName());
-				builder.inputFilesPaired(ImmutableSet.of(samplesMap.get(s)));
+				builder.inputFiles(ImmutableSet.of(samplesMap.get(s)));
 
 				// Add reference file
 				if (ref != null && description.requiresReference()) {
@@ -452,7 +453,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		// Add any single end sequencing files.
 		if (description.acceptsSingleSequenceFiles()) {
 			if (!sequenceFiles.isEmpty()) {
-				builder.inputFilesSingleEnd(Sets.newHashSet(sequenceFiles));
+				builder.inputFiles(Sets.newHashSet(sequenceFiles));
 			}
 		}
 
@@ -460,7 +461,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		if (description.acceptsPairedSequenceFiles()) {
 			if (!sequenceFilePairs.isEmpty())
 			{
-				builder.inputFilesPaired(Sets.newHashSet(sequenceFilePairs));
+				builder.inputFiles(Sets.newHashSet(sequenceFilePairs));
 			}
 		}
 

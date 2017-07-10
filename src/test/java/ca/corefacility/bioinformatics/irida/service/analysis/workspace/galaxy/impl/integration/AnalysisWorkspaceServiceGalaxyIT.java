@@ -69,6 +69,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFo
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
@@ -145,7 +146,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	private List<Path> pairSequenceFiles1AB;
 	private List<Path> pairSequenceFiles2AB;
 
-	private Set<SingleEndSequenceFile> singleFileSet;
+	private Set<SequencingObject> singleFileSet;
 
 	private static final UUID validWorkflowIdSingle = UUID.fromString("739f29ea-ae82-48b9-8914-3d2931405db6");
 	private static final UUID validWorkflowIdPaired = UUID.fromString("ec93b50d-c9dd-4000-98fc-4a70d46ddd36");
@@ -238,7 +239,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	public void testPrepareAnalysisWorkspaceSuccess() throws IridaWorkflowNotFoundException, ExecutionManagerException {
 		AnalysisSubmission submission = AnalysisSubmission.builder(validWorkflowIdSingle)
 				.name("Name")
-				.inputFilesSingleEnd(singleFileSet)
+				.inputFiles(singleFileSet)
 				.build();
 		assertNotNull("preparing an analysis workspace should not return null",
 				analysisWorkspaceService.prepareAnalysisWorkspace(submission));
@@ -254,7 +255,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	public void testPrepareAnalysisWorkspaceFail() throws IridaWorkflowNotFoundException, ExecutionManagerException {
 		AnalysisSubmission submission = AnalysisSubmission.builder(validWorkflowIdSingle)
 				.name("Name")
-				.inputFilesSingleEnd(singleFileSet)
+				.inputFiles(singleFileSet)
 				.build();
 		submission.setRemoteAnalysisId("1");
 		analysisWorkspaceService.prepareAnalysisWorkspace(submission);
