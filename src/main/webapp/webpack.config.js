@@ -29,6 +29,7 @@ module.exports = {
     alias: {
       DataTables: path.resolve(__dirname, "resources/js/vendor/datatables/"),
       plugins: path.resolve(__dirname, "resources/js/vendor/plugins/"),
+      Utilities: path.resolve(__dirname, 'resources/js/utilities/'),
       css: path.resolve(__dirname, "resources/css/")
     }
   },
