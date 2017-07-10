@@ -11,9 +11,13 @@ import {
   generateColumnOrderInfo,
   tableConfig
 } from "Utilities/datatables-utilities";
-import { formatDate, getHumanizedDuration } from "Utilities/date-utilities";
-import { deleteAnalysis } from "../analysis/analysis-service";
+import {formatDate, getHumanizedDuration} from "Utilities/date-utilities";
+import {deleteAnalysis} from "../analysis/analysis-service";
 
+/*
+Get the table headers and create a look up table for them.
+This give the row name in snake case and its index.
+ */
 const COLUMNS = generateColumnOrderInfo();
 
 /**
@@ -51,13 +55,16 @@ ${full.analysisState}
 const config = Object.assign(tableConfig, {
   ajax: window.PAGE.URLS.analyses,
   order: [[COLUMNS.CREATED_DATE, "desc"]],
+  // Define how the columns should be rendered.
   columnDefs: [
+    // Analysis state needs to be displayed with progress bars.
     {
       targets: [COLUMNS.ANALYSIS_STATE],
       render(data, type, full) {
         return createState(full);
       }
     },
+    // Use the analysis name column as a link the the full analysis.
     {
       targets: COLUMNS.NAME,
       render(data, type, full) {
@@ -67,12 +74,15 @@ const config = Object.assign(tableConfig, {
         });
       }
     },
+    // Fork flow name are too long and will not fit properly into the column.
+    // Restrict the cell width.  This adds a tooltip automatically.
     {
       targets: COLUMNS.WORKFLOW_ID,
       render(data) {
         return createRestrictedWidthContent({ text: data }).outerHTML;
       }
     },
+    // Dates need to all be formatted properly.
     {
       targets: [COLUMNS.CREATED_DATE],
       render(data) {
@@ -92,6 +102,8 @@ const config = Object.assign(tableConfig, {
       width: 200,
       render(data, type, full) {
         const buttons = [];
+        // If the submission is completed, then it can be downloaded, created a link
+        // to download it.
         if (full.submission.analysisState.localeCompare("COMPLETED") === 0) {
           const anchor = createDownloadLink({
             url: `${window.PAGE.URLS.download}${full.id}`,
@@ -99,12 +111,13 @@ const config = Object.assign(tableConfig, {
           });
           buttons.push(anchor);
         }
+        // If the user has permission to delete the submission add a button to delete it.
         if (full.updatePermission) {
           const removeBtn = createDeleteBtn({
             id: full.id,
             name: full.name,
             toggle: "modal",
-            target: "#deleteConfirmModal"
+            target: "#deleteConfirmModal" // Id for the modal to confirm the deletion.
           });
           buttons.push(removeBtn);
         }
@@ -113,7 +126,9 @@ const config = Object.assign(tableConfig, {
     }
   ]
 });
-
+/*
+Initialize the DataTable
+ */
 const table = $("#analyses").DataTable(config);
 
 /**
