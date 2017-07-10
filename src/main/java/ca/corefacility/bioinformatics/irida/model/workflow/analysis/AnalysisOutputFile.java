@@ -19,6 +19,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import com.google.common.base.Strings;
+
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
@@ -129,7 +131,7 @@ public class AnalysisOutputFile extends IridaResourceSupport implements IridaThi
 
 	@Override
 	public String getLabel() {
-		return (labelPrefix == null) ? file.toFile().getName() : labelPrefix + '-' + file.toFile().getName();
+		return Strings.isNullOrEmpty(labelPrefix) ? file.toFile().getName() : labelPrefix + '-' + file.toFile().getName();
 	}
 
 	@Override
