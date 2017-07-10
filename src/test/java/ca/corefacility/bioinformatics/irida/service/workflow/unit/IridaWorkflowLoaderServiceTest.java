@@ -82,7 +82,7 @@ public class IridaWorkflowLoaderServiceTest {
 	@Test(expected = IridaWorkflowLoadException.class)
 	public void testLoadWorkflowDescriptionFail() throws XmlMappingException, IOException, IridaWorkflowLoadException {
 		IridaWorkflowDescription description = IridaWorkflowTestBuilder.buildTestDescription(iridaWorkflowId, "name",
-				"version", null, IridaWorkflowTestBuilder.Input.SINGLE, "reference");
+				"version", null, IridaWorkflowTestBuilder.Input.SINGLE, "reference", true);
 		when(workflowDescriptionUnmarshellar.unmarshal(any(Source.class))).thenReturn(description);
 
 		iridaWorkflowLoaderService.loadWorkflowDescription(workflowDescriptionPath);
