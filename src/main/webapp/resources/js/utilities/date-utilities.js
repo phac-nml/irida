@@ -31,7 +31,7 @@ export function getHumanizedDuration({ date }) {
 export function formatDate({ date }) {
   const t = new Date(date);
   if (moment.isDate(t)) {
-    return moment(t).format("LLL");
+    return moment(t).format("lll");
   }
   return "";
 }
