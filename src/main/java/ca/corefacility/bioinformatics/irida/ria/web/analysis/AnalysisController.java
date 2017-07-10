@@ -610,6 +610,7 @@ public class AnalysisController {
 	public void getAjaxDownloadAnalysisSubmission(@PathVariable Long analysisSubmissionId, HttpServletResponse response)
 			throws IOException {
 		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(analysisSubmissionId);
+		
 		Analysis analysis = analysisSubmission.getAnalysis();
 		Set<AnalysisOutputFile> files = analysis.getAnalysisOutputFiles();
 		FileUtilities.createAnalysisOutputFileZippedResponse(response, analysisSubmission.getName(), files);

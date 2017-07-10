@@ -509,11 +509,11 @@ INSERT INTO `tool_execution_prev_steps` (tool_execution_id, tool_execution_prev_
 INSERT INTO `tool_execution_prev_steps` (tool_execution_id, tool_execution_prev_id) VALUES (6, 8);
 
 -- analysis_output_file
-INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, tool_execution_id) VALUES (1, '2014-08-06 10:01:02', 'Whole Genome Phylogenomics Pipeline', '/tmp/analysis-files/phylogeneticTree.newick', 1);
-INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, tool_execution_id) VALUES (2, '2014-08-06 10:01:02', 'Whole Genome Phylogenomics Pipeline', '/tmp/analysis-files/snpMatrix.tsv', 2);
-INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, tool_execution_id) VALUES (3, '2014-08-06 10:01:02', 'Whole Genome Phylogenomics Pipeline', '/tmp/analysis-files/snpTable.tsv', 3);
-INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, tool_execution_id) VALUES (4, '2014-08-06 10:01:02', 'SISTR Pipeline PASS', '/tmp/analysis-files/sistr-predictions-pass.json', 9);
-INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, tool_execution_id) VALUES (5, '2014-08-06 10:01:02', 'SISTR Pipeline FAIL', '/tmp/analysis-files/sistr-predictions-fail.json', 10);
+INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, tool_execution_id, label_prefix) VALUES (1, '2014-08-06 10:01:02', 'Whole Genome Phylogenomics Pipeline', '/tmp/analysis-files/phylogeneticTree.newick', 1, NULL);
+INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, tool_execution_id, label_prefix) VALUES (2, '2014-08-06 10:01:02', 'Whole Genome Phylogenomics Pipeline', '/tmp/analysis-files/snpMatrix.tsv', 2, NULL);
+INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, tool_execution_id, label_prefix) VALUES (3, '2014-08-06 10:01:02', 'Whole Genome Phylogenomics Pipeline', '/tmp/analysis-files/snpTable.tsv', 3, NULL);
+INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, tool_execution_id, label_prefix) VALUES (4, '2014-08-06 10:01:02', 'SISTR Pipeline PASS', '/tmp/analysis-files/sistr-predictions-pass.json', 9, NULL);
+INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, tool_execution_id, label_prefix) VALUES (5, '2014-08-06 10:01:02', 'SISTR Pipeline FAIL', '/tmp/analysis-files/sistr-predictions-fail.json', 10, NULL);
 
 -- analysis_output_file_map
 INSERT INTO `analysis_output_file_map` (analysis_id, analysisOutputFilesMap_id, analysis_output_file_key) VALUES (13, 1, 'tree');

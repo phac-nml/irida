@@ -6,6 +6,7 @@ Changes
 * [Developer]: Removed old javascript build configuration files.
 * [Developer]: Cleaned up javascript imports (removed all `require` statements).
 * [UI]: Removed phylocanvas context menu from analysis > details page.
+* [Workflow]: Made workflows applying to a single sample to include sample name in all output files. Updated previous output files in database to also include sample name if corresponding workflow used only a single sample.
 * [UI]: Added buttons on the project settings page, and metadata template page to download an excel template.
 * [Developer]: Reorganized permissions classes into subpackages.
 * [UI]: Added maximum coverage quality control option.
