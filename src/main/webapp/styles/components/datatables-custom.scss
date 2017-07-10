@@ -1,15 +1,14 @@
-.cell-width-200 {
+// Use for cells with long content that need to be shortened.
+.cell-restricted {
   text-align: left;
-  width: 200px !important;
   wrap: nowrap;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 14px;
 }
 
 .filter-row {
-  margin-bottom: 5px!important;
+  margin-bottom: 5px !important;
 }
 
 .table-selectable tbody tr {
@@ -39,11 +38,11 @@
 
 .dataTables_scroll, .table-wrapper {
   border: 1px solid #DDDDDD;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.18);
 }
 
 .dataTables_scroll table.table {
-  margin-top: 0!important;
+  margin-top: 0 !important;
 }
 
 .dataTable {
@@ -69,14 +68,12 @@
   }
 }
 
-
 table.selectable tbody tr:hover {
   cursor: pointer;
 }
 
-
 table.selectable tbody tr.selected td {
-  background-color: #d9edf7!important;
+  background-color: #d9edf7 !important;
 }
 
 .dataTables_wrapper .selected-counts {
@@ -102,3 +99,37 @@ table.selectable tbody tr.selected td {
   width: 100px;
 }
 
+// New custom wrapper for updated tables
+// This is set in JS in datatable-utilities.js#dom
+.dt-table-wrapper {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.18);
+  margin-bottom: 10px;
+}
+
+// Set up the filter to be pulled to the right and accept flex box
+#dt-filters {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.dataTables_filter {
+  display: inline-block;
+}
+
+.dt-filter-btns {
+  margin: 0 !important;
+}
+
+// Filter Row - updated tables
+.filter-tags {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.filter-tags__space {
+  display: flex;
+}
+
+.filter-tags__tag {
+  margin-left: 4px;
+}
