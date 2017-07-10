@@ -3,11 +3,11 @@ import "DataTables/datatables-buttons";
 import $ from "jquery";
 import {
   createItemLink,
-  generateColumnOrderInfo,
   createRestrictedWidthContent,
+  generateColumnOrderInfo,
   tableConfig
 } from "Utilities/datatables-utilities";
-import { formatDate } from "Utilities/date-utilities";
+import {formatDate} from "Utilities/date-utilities";
 
 // Column look-ups for quick referencing
 const COLUMNS = generateColumnOrderInfo();
@@ -34,6 +34,8 @@ const config = Object.assign(tableConfig, {
         return document.querySelector("#export-btn-text").innerHTML;
       },
       // The buttons are loaded onto the PAGE variable.
+      // These are for exporting the table to either
+      // csv or excel.
       buttons: window.PAGE.buttons.map(button => ({
         text: button.name,
         action() {
@@ -48,6 +50,7 @@ const config = Object.assign(tableConfig, {
     {
       targets: [COLUMNS.NAME],
       render(data, type, full) {
+        // Render the name as a link to the actual project.
         return createItemLink({
           url: `${window.PAGE.urls.project}${full.id}`,
           label: data
@@ -57,12 +60,14 @@ const config = Object.assign(tableConfig, {
     {
       targets: COLUMNS.ORGANISM,
       render(data) {
+        // Organism names can be long, let's restrict it to 250px.
         return createRestrictedWidthContent({
           text: data,
           width: 250
         }).outerHTML;
       }
     },
+    // Format all dates to standate date for the systme.
     {
       targets: [COLUMNS.CREATED_DATE, COLUMNS.MODIFIED_DATE],
       render(data) {
