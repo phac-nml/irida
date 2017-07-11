@@ -1056,6 +1056,8 @@ If your client needs to know about the specific types of outputs available to it
 | `self` | A link to the collection of analysis submissions for this user. |
 | `analysisSubmissions/phylogenomics` | A link to the collection of phylogenomics analysis that this user has submitted. |
 | `analysisSubmissions/assembly` | A link to the collection of assembly and annotation analysis that this user has submitted. |
+| `analysisSubmissions/assembly-collection` | A link to the collection of assembly and annotation collection analysis that this user has submitted. |
+| `analysisSubmissions/sistr` | A link to the collection of SISTR Typing analysis that this user has submitted. |
 
 ##### Example response
 {:.no_toc}
