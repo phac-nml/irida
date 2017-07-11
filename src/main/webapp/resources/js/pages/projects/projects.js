@@ -3,17 +3,20 @@ import "DataTables/datatables-buttons";
 import $ from "jquery";
 import {
   createItemLink,
-  createRestrictedWidthContent,
   generateColumnOrderInfo,
-  tableConfig
-} from "Utilities/datatables-utilities";
-import {formatDate} from "Utilities/date-utilities";
+  tableConfig,
+  wrapCellContents
+} from "./../../utilities/datatables-utilities";
+import { formatDate } from "./../../utilities/date-utilities";
 
-// Column look-ups for quick referencing
+/*
+Get the table headers and create a look up table for them.
+This give the row name in snake case and its index.
+ */
 const COLUMNS = generateColumnOrderInfo();
 
 /**
- * Download table in specified format.f
+ * Download table in specified format.
  * @param {string} format format of downloaded doc.
  */
 function downloadItem({ format = "xlsx" }) {
@@ -25,6 +28,7 @@ function downloadItem({ format = "xlsx" }) {
 }
 
 const config = Object.assign(tableConfig, {
+  ajax: window.PAGE.urls.projects,
   // These are loaded through the PAGE object.
   buttons: [
     {
@@ -44,7 +48,6 @@ const config = Object.assign(tableConfig, {
       }))
     }
   ],
-  ajax: window.PAGE.urls.projects,
   order: [[COLUMNS.MODIFIED_DATE, "desc"]],
   columnDefs: [
     {
@@ -53,18 +56,15 @@ const config = Object.assign(tableConfig, {
         // Render the name as a link to the actual project.
         return createItemLink({
           url: `${window.PAGE.urls.project}${full.id}`,
-          label: data
+          label: data,
+          width: "200px"
         });
       }
     },
     {
       targets: COLUMNS.ORGANISM,
       render(data) {
-        // Organism names can be long, let's restrict it to 250px.
-        return createRestrictedWidthContent({
-          text: data,
-          width: 250
-        }).outerHTML;
+        return wrapCellContents({ text: data });
       }
     },
     // Format all dates to standate date for the systme.
