@@ -133,3 +133,9 @@ table.selectable tbody tr.selected td {
 .filter-tags__tag {
   margin-left: 4px;
 }
+
+.dt-wrap-cell {
+  white-space: pre-wrap;
+  word-break: break-all;
+  word-wrap: break-word;
+}

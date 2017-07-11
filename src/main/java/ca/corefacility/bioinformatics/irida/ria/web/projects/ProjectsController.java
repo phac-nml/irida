@@ -1,6 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.security.Principal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -8,12 +10,17 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,13 +46,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.github.dandelion.datatables.core.export.CsvExport;
-import com.github.dandelion.datatables.core.export.ExportConf;
-import com.github.dandelion.datatables.core.export.ExportUtils;
-import com.github.dandelion.datatables.core.export.HtmlTableBuilder;
-import com.github.dandelion.datatables.core.export.ReservedFormat;
-import com.github.dandelion.datatables.core.html.HtmlTable;
-import com.github.dandelion.datatables.extras.export.poi.XlsxExport;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -136,8 +136,7 @@ public class ProjectsController {
 
 	// CONSTANTS
 	private final List<Map<String, String>> EXPORT_TYPES = ImmutableList.of(
-			ImmutableMap.of("format", ReservedFormat.XLSX, "name", "Excel"),
-			ImmutableMap.of("format", ReservedFormat.CSV, "name", "CSV")
+			ImmutableMap.of("format", "xlsx", "name", "Excel"), ImmutableMap.of("format", "csv", "name", "CSV")
 	);
 
 
@@ -558,93 +557,137 @@ public class ProjectsController {
 	}
 
 	/**
-	 * Get a listing of all project available to current user.
+	 * Export Projects table as either an excel file or CSV
 	 *
 	 * @param type
-	 * 		{@link String} Type of export.  See {@link ReservedFormat}
+	 * 		of file to export (csv or excel)
 	 * @param isAdmin
-	 * 		{@link Boolean} If the current user is viewing the admin section
-	 * @param request
-	 * 		{@link HttpServletRequest}
+	 * 		if the currently logged in user is an administrator
 	 * @param response
 	 * 		{@link HttpServletResponse}
+	 * @param principal
+	 * 		{@link Principal}
 	 * @param locale
-	 * 		{@link Locale} Current users locale
+	 * 		{@link Locale}
 	 *
 	 * @throws IOException
+	 * 		thrown if cannot open the {@link HttpServletResponse} {@link OutputStream}
 	 */
 	@RequestMapping("/projects/ajax/export")
-	public void exportProjectsTableAsExcel(@RequestParam(value = "dtf") String type,
-			@RequestParam(required = false, defaultValue = "false", value = "admin") Boolean isAdmin, HttpServletRequest request,
+	public void exportProjectsToFile(@RequestParam(value = "dtf") String type,
+			@RequestParam(required = false, defaultValue = "false", value = "admin") Boolean isAdmin,
 			HttpServletResponse response, Principal principal, Locale locale) throws IOException {
 		List<Project> projects;
-
 		// If viewing the admin projects page give the user all the projects.
 		if (isAdmin) {
 			projects = (List<Project>) projectService.findAll();
 		}
 		// If on the users projects page, give the user their projects.
 		else {
-			projects = new ArrayList<>();
 			User user = userService.getUserByUsername(principal.getName());
-			List<Join<Project, User>> projectsForUser = projectService.getProjectsForUser(user);
-			for(Join<Project, User> join : projectsForUser) {
-				projects.add(join.getSubject());
-			}
+			projects = projectService.getProjectsForUser(user).stream().map(Join::getSubject)
+					.collect(Collectors.toList());
 		}
 
-		List<Map<String, Object>> projectMap = projects.stream().map(this::createProjectMap)
+		List<DTProject> dtProjects = projects.stream().map(this::createDataTablesProject).collect(Collectors.toList());
+		List<String> headers = ImmutableList.of("id", "name", "organism", "samples", "created", "modified").stream()
+				.map(h -> messageSource.getMessage("projects.table." + h, new Object[] {}, locale))
 				.collect(Collectors.toList());
 
-		// Build export configuration
-		ExportConf exportConf;
-		if (type.equals(ReservedFormat.XLSX)) {
-			exportConf = new ExportConf.Builder(ReservedFormat.XLSX)
-					.header(true)
-					.exportClass(new XlsxExport())
-					.build();
-		} else {
-			exportConf = new ExportConf.Builder(ReservedFormat.CSV)
-					.header(true)
-					.exportClass(new CsvExport())
-					.build();
-		}
-
-		// Format the file name based on ISO standard date format.
+		// Create the filename
 		Date date = new Date();
-		DateFormat dateFormat = new SimpleDateFormat(
+		DateFormat fileDateFormat = new SimpleDateFormat(
 				messageSource.getMessage("date.iso-8601", null, locale));
-		exportConf.setFileName("IRIDA_projects_" + dateFormat.format(date));
+		String filename = "IRIDA_projects_" + fileDateFormat.format(date);
 
-		// Build the table to export
-		HtmlTable table = new HtmlTableBuilder<Map<String, Object>>()
-				.newBuilder("projects", projectMap, request, exportConf)
-				.column().fillWithProperty("id").title("ID")
-				.column().fillWithProperty("name").title("Name")
-				.column().fillWithProperty("description").title("Description")
-				.column().fillWithProperty("organism").title("Organism")
-				.column().fillWithProperty("samples").title("Samples")
-				.column().fillWithProperty("createdDate").title("Created Date")
-				.column().fillWithProperty("modifiedDate").title("Modified Date")
-				.build();
-
-		ExportUtils.renderExport(table, exportConf, response);
+		response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "." + type + "\"");
+		if (type.equals("xlsx")) {
+			writeProjectsToExcelFile(headers, dtProjects, locale, response);
+		} else if (type.equals("csv")) {
+			writeProjectsToCsvFile(headers, dtProjects, locale, response);
+		}
 	}
 
-	// TODO: Remove when removing Dandelion Export
-	private Map<String, Object> createProjectMap(Project project) {
-		Map<String, Object> map = new HashMap<>();
+	/**
+	 * Write the projects as a CSV file
+	 *
+	 * @param headers
+	 * 		{@link List} for {@link String} headers for the information.
+	 * @param projects
+	 * 		{@link List} of {@link DTProject} to export
+	 * @param locale
+	 * 		{@link Locale}
+	 * @param response
+	 * 		{@link HttpServletResponse}
+	 *
+	 * @throws IOException
+	 * 		Thrown if cannot get the {@link PrintWriter} for the response
+	 */
+	private void writeProjectsToCsvFile(List<String> headers, List<DTProject> projects, Locale locale,
+			HttpServletResponse response) throws IOException {
+		PrintWriter writer = response.getWriter();
+		CSVPrinter printer = new CSVPrinter(writer, CSVFormat.DEFAULT.withRecordSeparator(System.lineSeparator()));
+		printer.printRecord(headers);
 
-		map.put("id", project.getId());
-		map.put("name", project.getName());
-		map.put("description", Strings.isNullOrEmpty(project.getProjectDescription()) ? "" : project.getProjectDescription());
-		map.put("organism", Strings.isNullOrEmpty(project.getOrganism()) ? "" : project.getOrganism());
-		map.put("samples", sampleService.getNumberOfSamplesForProject(project));
-		map.put("createdDate", project.getCreatedDate());
-		map.put("modifiedDate", project.getModifiedDate());
-		map.put("remote", project.isRemote());
+		DateFormat dateFormat = new SimpleDateFormat(messageSource.getMessage("locale.date.long", null, locale));
+		for (DTProject p : projects) {
+			List<String> record = new ArrayList<>();
+			record.add(String.valueOf(p.getId()));
+			record.add(p.getName());
+			record.add(p.getOrganism());
+			record.add(String.valueOf(p.getSamples()));
+			record.add(dateFormat.format(p.getCreatedDate()));
+			record.add(dateFormat.format(p.getModifiedDate()));
+			printer.printRecord(record);
+		}
+		printer.flush();
+	}
 
-		return map;
+	/**
+	 * Write the projects as a Excel file
+	 *
+	 * @param headers
+	 * 		{@link List} for {@link String} headers for the information.
+	 * @param projects
+	 * 		{@link List} of {@link DTProject} to export
+	 * @param locale
+	 * 		{@link Locale}
+	 * @param response
+	 * 		{@link HttpServletResponse}
+	 *
+	 * @throws IOException
+	 * 		Thrown if cannot get the {@link OutputStream} for the response
+	 */
+	private void writeProjectsToExcelFile(List<String> headers, List<DTProject> projects, Locale locale,
+			HttpServletResponse response) throws IOException {
+		XSSFWorkbook workbook = new XSSFWorkbook();
+		XSSFSheet sheet = workbook.createSheet();
+		int rowCount = 0;
+
+		// Create the headers
+		Row headerRow = sheet.createRow(rowCount++);
+		for (int cellCount = 0; cellCount < headers.size(); cellCount++) {
+			Cell cell = headerRow.createCell(cellCount);
+			cell.setCellValue(headers.get(cellCount));
+		}
+
+		// Create the rest of the sheet
+		DateFormat dateFormat = new SimpleDateFormat(messageSource.getMessage("locale.date.long", null, locale));
+		for (DTProject p : projects) {
+			Row row = sheet.createRow(rowCount++);
+			int cellCount = 0;
+			row.createCell(cellCount++).setCellValue(String.valueOf(p.getId()));
+			row.createCell(cellCount++).setCellValue(p.getName());
+			row.createCell(cellCount++).setCellValue(p.getOrganism());
+			row.createCell(cellCount++).setCellValue(String.valueOf(p.getSamples()));
+			row.createCell(cellCount++).setCellValue(dateFormat.format(p.getCreatedDate()));
+			row.createCell(cellCount).setCellValue(dateFormat.format(p.getModifiedDate()));
+		}
+
+		// Write the file
+		OutputStream stream = response.getOutputStream();
+		workbook.write(stream);
+		stream.flush();
 	}
 
 	/**
