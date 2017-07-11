@@ -12,6 +12,7 @@ Changes
 * [UI]: Added maximum coverage quality control option.
 * [UI]: Allowing admins to delete synchronized data so it will be resynchronized if there was a problem. Note any changes made to synchronized samples will be overwritten on the next sync job.  (0.17.1)
 * [Developer]: Checking if single end files have been synchronized to stop duplication.
+* [Developer]: Changed relationship of sequence files to a single collection in AnalysisSubmission instead of a collection for each file type.
 
 0.16.0 to 0.17.0
 ----------------

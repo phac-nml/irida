@@ -25,9 +25,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.SequencingRunRepository;
@@ -136,15 +134,9 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 				referencedSamples.add(sampleForSequencingObject.getSubject());
 			}
 
-			Set<AnalysisSubmission> submissions = new HashSet<>();
-			// Get the analysis submissions this file is included in
-			if (sequencingObject instanceof SequenceFilePair) {
-				submissions = submissionRepository
-						.findAnalysisSubmissionForSequenceFilePair((SequenceFilePair) sequencingObject);
-			} else if (sequencingObject instanceof SingleEndSequenceFile) {
-				submissions = submissionRepository
-						.findAnalysisSubmissionForSequenceFile((SingleEndSequenceFile) sequencingObject);
-			}
+			//Get the analysis submissions this file is included in
+			Set<AnalysisSubmission> submissions = submissionRepository
+					.findAnalysisSubmissionsForSequecingObject(sequencingObject);
 
 			// If there are no submissions, we can delete the pair and file
 			if (submissions.isEmpty()) {
