@@ -7,5 +7,4 @@
 	<include file="ncbi-auditing.xml" relativeToChangelogFile="true" />
 	<include file="technician-role.xml" relativeToChangelogFile="true" />
 	<include file="remove-snapshots.xml" relativeToChangelogFile="true" />
-	<include file="sample-owner.xml" relativeToChangelogFile="true" />
 </databaseChangeLog>
