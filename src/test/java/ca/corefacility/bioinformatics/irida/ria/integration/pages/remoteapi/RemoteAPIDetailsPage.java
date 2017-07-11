@@ -102,8 +102,8 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 		do {
 			try {
 				WebElement el = driver.findElement(By.tagName("h1"));
-				if (el.getText().equals("Remote Connection Status")) {
-					logger.debug("Succesfully loaded client list page");
+				if (el.getText().equals("Remote IRIDA Connections")) {
+					logger.debug("Successfully loaded client list page");
 					waitForAjax();
 					logger.debug("Table loaded");
 					List<WebElement> findElements = driver.findElements(By.className("remoteApiCol"));
