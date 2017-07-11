@@ -196,13 +196,12 @@ public class AnalysisExecutionServiceGalaxyAsync {
 		Analysis savedAnalysis = analysisService.create(analysisResults);
 
 		submittedAnalysis.setAnalysisState(AnalysisState.COMPLETED);
-		try{
+		try {
 			submittedAnalysis.setAnalysis(savedAnalysis);
-		}
-		catch(AnalysisAlreadySetException e){
+		} catch (AnalysisAlreadySetException e) {
 			throw new ExecutionManagerException("Analysis already set", e);
 		}
-		
+
 		AnalysisSubmission completedSubmission = analysisSubmissionService.update(submittedAnalysis);
 
 		return new AsyncResult<>(completedSubmission);

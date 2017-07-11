@@ -267,6 +267,6 @@ public class AnalysisProvenanceServiceGalaxyTest {
 	}
 
 	private String analysisOutputFile() {
-		return new AnalysisOutputFile(Paths.get("/" + FILENAME), "", null).getFile().getFileName().toString();
+		return new AnalysisOutputFile(Paths.get("/" + FILENAME), "", "", null).getFile().getFileName().toString();
 	}
 }

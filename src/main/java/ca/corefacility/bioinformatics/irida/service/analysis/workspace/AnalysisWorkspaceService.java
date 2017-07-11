@@ -62,6 +62,7 @@ public interface AnalysisWorkspaceService {
 	 * @throws IridaWorkflowAnalysisTypeException
 	 *             If there was an issue building an {@link Analysis} object.
 	 */
-	public Analysis getAnalysisResults(AnalysisSubmission analysisSubmission) throws ExecutionManagerException,
-			IridaWorkflowNotFoundException, IOException, IridaWorkflowAnalysisTypeException;
+	public Analysis getAnalysisResults(AnalysisSubmission analysisSubmission)
+			throws ExecutionManagerException, IridaWorkflowNotFoundException, IOException,
+			IridaWorkflowAnalysisTypeException;
 }
