@@ -138,17 +138,23 @@ The complete test suite sets up a temporary instance of Galaxy for verifying int
 Front End Development Setup
 ---------------------------
 
-To simplify linting and compiling `*.js` and `*.scss` [Gulp](http://gulpjs.com) tasks have been setup.  By default, when maven is run all `*.scss` files will be compiled into compressed `css` files.
-
 From within `src/main/webapp/`:
 
 You will need to run `npm install` to install all dependencies required to run the following from the command line.
 
-Other gulp tasks:
+Tasks
+=====
 
-* `gulp lint` - [eslint](http://eslint.org) all JavaScript files in the project.
-* `gulp sass` - compile all `.scss` files into `.css` files, with sourcemaps.
-* `gulp` - Runs [browser-sync](https://www.browsersync.io).  Automatically lints and compiles JavaScript and SCSS files when they change, and injects them into the browser.
+* `npm run sass` - compile all `.scss` files into `.css` files, with sourcemaps.
+* `npm run build` - compile all es6 files to es2015.
+* `npm run lint:js [filename]` - lint a specific file.
+
+JavaScript and SCSS Code Formatting and Linting
+===============================================
+
+IRIDA JavaScript follows the [Prettier](https://github.com/prettier/prettier) format guideline and is enforced using `eslint-plugin-prettier` (see below for enabling eslint in IntelliJ and VS Code).
+
+There is good [editor integration for Prettier formatting](https://github.com/prettier/prettier#editor-integration)
 
 ### IntelliJ IDEA Setup
 
@@ -157,7 +163,7 @@ To enable eslinting (JavaScript linting) in IntelliJ, open the preferences panel
 * Check the "Enable" checkbox.
 * Node interpreter should be you system node by default.
 * ESLint package is the `eslint` within the projects `node_modules` directory.
-* Configuration file is the `src/main/webapp/.eslintrc.json`. 
+* Configuration file is the `src/main/webapp/.eslintrc.js`. 
 
 <video controls="controls" style="width: 960px">
     <source src="images/intellij-eslint.mp4" type="video/mp4" />

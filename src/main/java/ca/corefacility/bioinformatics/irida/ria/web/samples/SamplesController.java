@@ -241,6 +241,7 @@ public class SamplesController extends BaseController {
 			}
 		}
 
+
 		// this used to read request.getURI(), but request.getURI() includes the
 		// context path. When issuing a redirect: return, the redirect: string
 		// should **not** contain the context path.

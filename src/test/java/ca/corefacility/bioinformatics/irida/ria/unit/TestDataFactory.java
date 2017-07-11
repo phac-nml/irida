@@ -141,7 +141,7 @@ public class TestDataFactory {
 	private static AnalysisOutputFile constructAnalysisOutputFile(String name) {
 		ToolExecution toolExecution = new ToolExecution(1L, null, "testTool", "0.0.12", "executionManagersId",
 				ImmutableMap.of());
-		final AnalysisOutputFile of = new AnalysisOutputFile(Paths.get(FAKE_FILE_PATH.replace("{name}", name)), FAKE_EXECUTION_MANAGER_ID,
+		final AnalysisOutputFile of = new AnalysisOutputFile(Paths.get(FAKE_FILE_PATH.replace("{name}", name)), "", FAKE_EXECUTION_MANAGER_ID,
 				toolExecution);
 		final DirectFieldAccessor dfa = new DirectFieldAccessor(of);
 		dfa.setPropertyValue("id", 1L);

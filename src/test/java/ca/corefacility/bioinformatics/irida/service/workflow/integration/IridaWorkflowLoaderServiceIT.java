@@ -336,7 +336,7 @@ public class IridaWorkflowLoaderServiceIT {
 		Set<String> workflowNamesSet = new HashSet<>();
 		Set<String> workflowVersionsSet = new HashSet<>();
 
-		assertEquals(10, iridaWorkflowsFromFile.size());
+		assertEquals(11, iridaWorkflowsFromFile.size());
 		
 		for (IridaWorkflow workflow : iridaWorkflowsFromFile) {
 			workflowNamesSet.add(workflow.getWorkflowDescription().getName());
@@ -346,7 +346,7 @@ public class IridaWorkflowLoaderServiceIT {
 		assertEquals("irida workflow names are invalid", Sets.newHashSet("TestWorkflow"), workflowNamesSet);
 		Set<String> validVersionNumbers = Sets.newHashSet("1.0", "2.0", "1.0-invalid", "2.0-missing-output",
 				"1.0-paired", "1.0-single-paired", "1.0-requires-single-sample", "1.0-requires-single-sample-unset",
-				"1.0-not-requires-single-sample", "1.0-invalid-requires-single-sample");
+				"1.0-not-requires-single-sample", "1.0-invalid-requires-single-sample", "1.0-paired-end-single-sample");
 		assertEquals("irida workflow versions are invalid", validVersionNumbers, workflowVersionsSet);
 	}
 

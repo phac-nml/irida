@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.common.collect.ImmutableMap;
+
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
@@ -29,8 +31,6 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-
-import com.google.common.collect.ImmutableMap;
 
 @Controller
 @RequestMapping("/projects/{projectId}/settings")
@@ -331,8 +331,10 @@ public class ProjectSettingsController {
 	 *            the ID of a {@link Project}
 	 * @param genomeSize
 	 *            the genomeSize to set for the project
-	 * @param requiredCoverage
-	 *            coverage needed for qc to pass
+	 * @param minimumCoverage
+	 *            minimum coverage needed for qc to pass
+	 * @param maximumCoverage
+	 *            maximum coverage needed for QC to pass
 	 * @param locale
 	 *            locale of the user
 	 *
@@ -341,11 +343,21 @@ public class ProjectSettingsController {
 	@RequestMapping(value = "/coverage", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, String> updateCoverageSetting(@PathVariable Long projectId, @RequestParam Long genomeSize,
-			@RequestParam Integer requiredCoverage, Locale locale) {
+			@RequestParam(defaultValue = "0") Integer minimumCoverage,
+			@RequestParam(defaultValue = "0") Integer maximumCoverage, 
+			Locale locale) {
 		Project read = projectService.read(projectId);
 
+		if (minimumCoverage == 0) {
+			minimumCoverage = null;
+		}
+		if (maximumCoverage == 0) {
+			maximumCoverage = null;
+		}
+		
 		Map<String, Object> updates = new HashMap<>();
-		updates.put("requiredCoverage", requiredCoverage);
+		updates.put("minimumCoverage", minimumCoverage);
+		updates.put("maximumCoverage", maximumCoverage);
 		updates.put("genomeSize", genomeSize);
 
 		projectService.updateProjectSettings(read, updates);
