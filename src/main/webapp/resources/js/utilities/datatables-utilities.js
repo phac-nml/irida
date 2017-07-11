@@ -108,13 +108,19 @@ export function createButtonCell(buttons = []) {
  * Create an anchor tag to link to an item.
  * @param {string} url to find the item at
  * @param {string} label label for the item
+ * @param {string} width width for the button
  * @return {*} anchor element containing link.
  */
-export function createItemLink({ url, label } = {}) {
+export function createItemLink({ url, label, width = "160px" }) {
   if (typeof url !== "undefined" && typeof label !== "undefined") {
-    return `
-  <a class="btn btn-link wrap-cell" href="${url}">${label}</a>
-  `;
+    const link = document.createElement("a");
+    link.classList.add("btn", "btn-link", "dt-wrap-cell");
+    link.style.width = width;
+    link.style.textAlign = "left";
+    link.href = url;
+    link.innerText = label;
+
+    return link.outerHTML;
   }
   return label || "";
 }
@@ -148,6 +154,20 @@ export function createRestrictedWidthContent({ text, width = 150 }) {
 }
 
 /**
+ * Wrap the contents of a cell in a div that will force wrapping at the desired width.
+ * @param {string} text to put in cell
+ * @param {string} width desired (e.g. '100px' or '50em')
+ * @return {string} formatted DOM as text
+ */
+export function wrapCellContents({ text, width = "250px" }) {
+  const div = document.createElement("div");
+  div.classList.add("dt-wrap-cell");
+  div.style.width = width;
+  div.innerHTML = text;
+  return div.outerHTML;
+}
+
+/**
  * Create a filter tag on the datatable
  * @param {string} text value searched
  * @param {string} type field searched
@@ -168,7 +188,8 @@ export function createFilterTag({ text, type, handler }) {
   if (text) {
     const tag = `
   <button data-type="${type}" class="btn btn-default btn-xs filter-tags__tag">
-      <b>${type}</b> : ${text} ${createIcon({icon: ICONS.remove, fixed: true}).outerHTML}
+      <b>${type}</b> : ${text} ${createIcon({ icon: ICONS.remove, fixed: true })
+      .outerHTML}
   </button>`;
     const $tag = $(tag);
     $tag.on("click", function() {
