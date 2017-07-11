@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.repositories.analysis.submission;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -237,6 +238,53 @@ public class AnalysisSubmissionRepositoryIT {
 		assertEquals(Sets.newHashSet(sequenceFilePair), savedSubmission.getPairedInputFiles());
 		assertEquals(referenceFile, savedSubmission.getReferenceFile().get());
 	}
+	
+	/**
+	 * Tests creating an analysis with both single and paired files and a
+	 * reference genome.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testCreateAnalysisSingleAndPairedAndReference() {
+		AnalysisSubmission analysisSubmissionPaired = AnalysisSubmission.builder(workflowId).name("submission paired 1")
+				.inputFiles(Sets.newHashSet(sequenceFilePair, singleEndFile)).referenceFile(referenceFile).build();
+		analysisSubmissionPaired.setSubmitter(submitter1);
+		AnalysisSubmission savedSubmission = analysisSubmissionRepository.save(analysisSubmissionPaired);
+
+		assertTrue("should have single end file in collection",
+				savedSubmission.getInputFilesSingleEnd().contains(singleEndFile));
+		assertEquals("should have 1 single file", 1, savedSubmission.getInputFilesSingleEnd().size());
+
+		assertTrue("should have pair file in collection",
+				savedSubmission.getPairedInputFiles().contains(sequenceFilePair));
+		assertEquals("should have 1 paired file", 1, savedSubmission.getPairedInputFiles().size());
+
+		assertEquals(referenceFile, savedSubmission.getReferenceFile().get());
+	}
+
+	/**
+	 * Tests creating an analysis with both single and paired files and no
+	 * reference genome.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testCreateAnalysisSingleAndPaired() {
+		AnalysisSubmission analysisSubmissionPaired = AnalysisSubmission.builder(workflowId).name("submission paired 1")
+				.inputFiles(Sets.newHashSet(sequenceFilePair, singleEndFile)).build();
+		analysisSubmissionPaired.setSubmitter(submitter1);
+		AnalysisSubmission savedSubmission = analysisSubmissionRepository.save(analysisSubmissionPaired);
+
+		assertTrue("should have single end file in collection",
+				savedSubmission.getInputFilesSingleEnd().contains(singleEndFile));
+		assertEquals("should have 1 single file", 1, savedSubmission.getInputFilesSingleEnd().size());
+
+		assertTrue("should have pair file in collection",
+				savedSubmission.getPairedInputFiles().contains(sequenceFilePair));
+		assertEquals("should have 1 paired file", 1, savedSubmission.getPairedInputFiles().size());
+
+		assertFalse(savedSubmission.getReferenceFile().isPresent());
+	}
+
 
 	/**
 	 * Tests creating an analysis with no set submitter and failing.
