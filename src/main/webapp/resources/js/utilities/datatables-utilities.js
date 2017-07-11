@@ -108,13 +108,19 @@ export function createButtonCell(buttons = []) {
  * Create an anchor tag to link to an item.
  * @param {string} url to find the item at
  * @param {string} label label for the item
+ * @param {string} width width for the button
  * @return {*} anchor element containing link.
  */
-export function createItemLink({ url, label } = {}) {
+export function createItemLink({ url, label, width = "160px" }) {
   if (typeof url !== "undefined" && typeof label !== "undefined") {
-    return `
-  <a class="btn btn-link wrap-cell" href="${url}">${label}</a>
-  `;
+    const link = document.createElement("a");
+    link.classList.add("btn", "btn-link", "dt-wrap-cell");
+    link.style.width = width;
+    link.style.textAlign = "left";
+    link.href = url;
+    link.innerText = label;
+
+    return link.outerHTML;
   }
   return label || "";
 }
@@ -145,6 +151,14 @@ export function createRestrictedWidthContent({ text, width = 150 }) {
   dom.style.width = `${width}px`;
   dom.innerText = text;
   return addTooltip({ dom, title: text });
+}
+
+export function wrapCellContents({text, width = "250px"}) {
+  const div = document.createElement("div");
+  div.classList.add("dt-wrap-cell");
+  div.style.width = width;
+  div.innerHTML = text;
+  return div.outerHTML;
 }
 
 /**
