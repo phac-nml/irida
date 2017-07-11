@@ -72,10 +72,13 @@ public class UpdateSamplePermission extends BasePermission<Sample, Long> {
 			return true;
 		}
 
+		/*
+		 * Checking if user is manager on the project and if the current project
+		 * owns the sample.
+		 */
 		return projects.stream().anyMatch(p -> {
 			ProjectSampleJoin j = (ProjectSampleJoin) p;
 			return projectOwnerPermission.isAllowed(authentication, j.getSubject()) && j.isOwner();
 		});
 	}
-	
 }
