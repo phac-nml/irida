@@ -67,7 +67,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
@@ -255,7 +254,8 @@ public class AnalysisController {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		// Input files
 		// - Paired
-		Set<SequenceFilePair> inputFilePairs = submission.getPairedInputFiles();
+		Set<SequenceFilePair> inputFilePairs = sequencingObjectService
+				.getSequencingObjectsOfTypeForAnalysisSubmission(submission, SequenceFilePair.class);
 
 		// get projects already shared with submission
 		Set<Project> projectsShared = projectService.getProjectsForAnalysisSubmission(submission).stream()
