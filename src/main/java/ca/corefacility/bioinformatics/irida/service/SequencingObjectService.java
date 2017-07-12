@@ -111,4 +111,19 @@ public interface SequencingObjectService extends CRUDService<Long, SequencingObj
 	 * @return the associated {@link SequencingObject}s
 	 */
 	public Set<SequencingObject> getSequencingObjectsForAnalysisSubmission(AnalysisSubmission submission);
+	
+	/**
+	 * Get all {@link SequencingObject}s of a given type associated with an
+	 * {@link AnalysisSubmission}
+	 * 
+	 * @param submission
+	 *            the {@link AnalysisSubmission}
+	 * @param type
+	 *            the class type of {@link SequencingObject} to return
+	 * @return a set of the requested type
+	 * 
+	 * @param <Type>
+	 *            a class type extending {@link SequencingObject}
+	 */
+	public <Type extends SequencingObject> Set<Type> getSequencingObjectsOfTypeForAnalysisSubmission(AnalysisSubmission submission, Class<Type> type);
 }
