@@ -117,8 +117,8 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	 */
 	@Column(name = "remote_workflow_id")
 	private String remoteWorkflowId;
-	
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
 	@JoinTable(name = "analysis_submission_sequencing_object", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "sequencing_object_id", nullable = false))
 	private Set<SequencingObject> inputFiles;
 
