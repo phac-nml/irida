@@ -239,6 +239,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	 * @return The set of single-end input sequence files.
 	 */	
 	@JsonIgnore
+	@Deprecated
 	public Set<SingleEndSequenceFile> getInputFilesSingleEnd() {
 		return inputFiles.stream().filter(f -> {
 			return f instanceof SingleEndSequenceFile;
@@ -253,6 +254,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	 * @return The set of paired-end input sequence files.
 	 */
 	@JsonIgnore
+	@Deprecated
 	public Set<SequenceFilePair> getPairedInputFiles() {
 		return inputFiles.stream().filter(f -> {
 			return f instanceof SequenceFilePair;
