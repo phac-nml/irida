@@ -206,14 +206,10 @@ public class AnalysisController {
 		model.addAttribute("workflowName", workflowName);
 		model.addAttribute("version", iridaWorkflow.getWorkflowDescription().getVersion());
 
-		Set<SequencingObject> sequencingObjects = sequencingObjectService
-				.getSequencingObjectsForAnalysisSubmission(submission);
-
 		// Input files
 		// - Paired
-		Set<SequencingObject> inputFilePairs = sequencingObjects.stream().filter(f -> {
-			return f instanceof SequenceFilePair;
-		}).collect(Collectors.toSet());
+		Set<SequenceFilePair> inputFilePairs = sequencingObjectService
+				.getSequencingObjectsOfTypeForAnalysisSubmission(submission, SequenceFilePair.class);
 		model.addAttribute("paired_end", inputFilePairs);
 
 		// Check if user can update analysis
