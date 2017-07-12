@@ -388,7 +388,7 @@ public class AnalysisSubmissionServiceImplIT {
 		SingleEndSequenceFile sequencingObject = (SingleEndSequenceFile) sequencingObjectRepository.findOne(1L);
 
 		AnalysisSubmission submission = AnalysisSubmission.builder(workflowId).name("test")
-				.inputFilesSingleEnd(Sets.newHashSet(sequencingObject)).build();
+				.inputFiles(Sets.newHashSet(sequencingObject)).build();
 		AnalysisSubmission createdSubmission = analysisSubmissionService.create(submission);
 		assertNotNull("Submission should have been created", createdSubmission);
 		assertEquals("submitter should be set properly", Long.valueOf(1L), createdSubmission.getSubmitter().getId());
@@ -403,7 +403,7 @@ public class AnalysisSubmissionServiceImplIT {
 		SingleEndSequenceFile sequencingObject = (SingleEndSequenceFile) sequencingObjectRepository.findOne(1L);
 
 		AnalysisSubmission submission = AnalysisSubmission.builder(workflowId).name("test")
-				.inputFilesSingleEnd(Sets.newHashSet(sequencingObject)).build();
+				.inputFiles(Sets.newHashSet(sequencingObject)).build();
 		AnalysisSubmission createdSubmission = analysisSubmissionService.create(submission);
 		assertNotNull("Submission should have been created", createdSubmission);
 		assertEquals("submitter should be set properly", Long.valueOf(2L), createdSubmission.getSubmitter().getId());
@@ -506,7 +506,7 @@ public class AnalysisSubmissionServiceImplIT {
 		final IridaWorkflowNamedParameters params = new IridaWorkflowNamedParameters("named parameters.", workflowId,
 				ImmutableMap.of("named", "parameter"));
 		final AnalysisSubmission submission = AnalysisSubmission.builder(workflowId)
-				.inputFilesSingleEnd(Sets.newHashSet(sequencingObject)).withNamedParameters(params).build();
+				.inputFiles(Sets.newHashSet(sequencingObject)).withNamedParameters(params).build();
 		analysisSubmissionService.create(submission);
 	}
 
@@ -516,7 +516,7 @@ public class AnalysisSubmissionServiceImplIT {
 		final SingleEndSequenceFile sequencingObject = (SingleEndSequenceFile) sequencingObjectRepository.findOne(1L);
 		final IridaWorkflowNamedParameters params = parametersRepository.findOne(1L);
 		final AnalysisSubmission submission = AnalysisSubmission.builder(workflowId)
-				.inputFilesSingleEnd(Sets.newHashSet(sequencingObject)).withNamedParameters(params).build();
+				.inputFiles(Sets.newHashSet(sequencingObject)).withNamedParameters(params).build();
 		analysisSubmissionService.create(submission);
 
 		assertNotNull("Should have saved and created an id for the submission", submission.getId());

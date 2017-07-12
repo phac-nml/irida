@@ -39,6 +39,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowUploadExce
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
@@ -128,21 +129,21 @@ public class AnalysisExecutionServiceGalaxyTest {
 		MockitoAnnotations.initMocks(this);
 
 		String submissionName = "name";
-		Set<SingleEndSequenceFile> submissionInputFiles = Sets.newHashSet(new SingleEndSequenceFile(new SequenceFile()));
+		Set<SequencingObject> submissionInputFiles = Sets.newHashSet(new SingleEndSequenceFile(new SequenceFile()));
 
-		analysisSubmission = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName + "intial").inputFilesSingleEnd(submissionInputFiles).build();
-		analysisPreparing = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName + "preparing").inputFilesSingleEnd(submissionInputFiles).build();
-		analysisPrepared = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName + "prepared").inputFilesSingleEnd(submissionInputFiles).build();
-		analysisSubmitting = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName + "submitting").inputFilesSingleEnd(submissionInputFiles).build();
-		analysisRunning = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName + "running").inputFilesSingleEnd(submissionInputFiles).build();
-		analysisFinishedRunning = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName + "finishedrunning").inputFilesSingleEnd(submissionInputFiles).build();
-		analysisCompleting = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName + "completing").inputFilesSingleEnd(submissionInputFiles).build();
-		analysisCompleted = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName + "completed").inputFilesSingleEnd(submissionInputFiles).build();
-		analysisCompletedCleaning = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName + "cleaning").inputFilesSingleEnd(submissionInputFiles).build();
-		analysisCompletedCleaned = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName + "cleaned").inputFilesSingleEnd(submissionInputFiles).build();
-		analysisError = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName + "error").inputFilesSingleEnd(submissionInputFiles).build();
-		analysisErrorCleaning = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName + "errorcleaning").inputFilesSingleEnd(submissionInputFiles).build();
-		analysisErrorCleaned = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName + "errorcleaned").inputFilesSingleEnd(submissionInputFiles).build();
+		analysisSubmission = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName + "intial").inputFiles(submissionInputFiles).build();
+		analysisPreparing = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName + "preparing").inputFiles(submissionInputFiles).build();
+		analysisPrepared = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName + "prepared").inputFiles(submissionInputFiles).build();
+		analysisSubmitting = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName + "submitting").inputFiles(submissionInputFiles).build();
+		analysisRunning = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName + "running").inputFiles(submissionInputFiles).build();
+		analysisFinishedRunning = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName + "finishedrunning").inputFiles(submissionInputFiles).build();
+		analysisCompleting = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName + "completing").inputFiles(submissionInputFiles).build();
+		analysisCompleted = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName + "completed").inputFiles(submissionInputFiles).build();
+		analysisCompletedCleaning = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName + "cleaning").inputFiles(submissionInputFiles).build();
+		analysisCompletedCleaned = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName + "cleaned").inputFiles(submissionInputFiles).build();
+		analysisError = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName + "error").inputFiles(submissionInputFiles).build();
+		analysisErrorCleaning = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName + "errorcleaning").inputFiles(submissionInputFiles).build();
+		analysisErrorCleaned = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName + "errorcleaned").inputFiles(submissionInputFiles).build();
 
 		AnalysisExecutionServiceGalaxyAsync workflowManagementAsync = new AnalysisExecutionServiceGalaxyAsync(
 				analysisSubmissionService, analysisService, galaxyWorkflowService, analysisWorkspaceService,

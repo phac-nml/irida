@@ -148,11 +148,11 @@
 		remote_analysis_id="1" analysis_state="SUBMITTING" created_date="2013-07-18 14:20:19.0"
 		workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="1"
 		analysis_cleaned_state="NOT_CLEANED" />
-		
-	<analysis_submission_sequence_file_pair
-	analysis_submission_id="1" sequence_file_pair_id="1" />
-	<analysis_submission_sequence_file_pair
-		analysis_submission_id="1" sequence_file_pair_id="2" />
+
+	<analysis_submission_sequencing_object
+		analysis_submission_id="1" sequencing_object_id="1" />
+	<analysis_submission_sequencing_object
+		analysis_submission_id="1" sequencing_object_id="2" />
 
 	<qc_entry id="1" created_date="2013-07-18 14:20:19.0"
 		sequencingObject_id="4" DTYPE="FileProcessorErrorQCEntry"/>
