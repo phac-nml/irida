@@ -33,6 +33,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
@@ -218,6 +219,15 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 			throws ConstraintViolationException, EntityExistsException, InvalidPropertyException {
 
 		return super.updateFields(id, ImmutableMap.of("remoteStatus", remoteStatus));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasPermission(#submission, 'canReadAnalysisSubmission')")
+	public Set<SequencingObject> getSequencingObjectsForAnalysisSubmission(AnalysisSubmission submission) {
+		return repository.findSequencingObjectsForAnalysisSubmission(submission);
 	}
 
 }
