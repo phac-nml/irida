@@ -37,6 +37,7 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSa
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.service.impl.sample.SampleServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
@@ -52,6 +53,7 @@ public class SampleServiceImplTest {
 	private AnalysisRepository analysisRepository;
 	private SampleSequencingObjectJoinRepository ssoRepository;
 	private QCEntryRepository qcEntryRepository;
+	private SequencingObjectRepository sequencingObjectRepository;
 	private Validator validator;
 
 	/**
@@ -66,11 +68,12 @@ public class SampleServiceImplTest {
 		analysisRepository = mock(AnalysisRepository.class);
 		ssoRepository = mock(SampleSequencingObjectJoinRepository.class);
 		qcEntryRepository = mock(QCEntryRepository.class);
+		sequencingObjectRepository = mock(SequencingObjectRepository.class);
 
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		validator = factory.getValidator();
 		sampleService = new SampleServiceImpl(sampleRepository, psjRepository, analysisRepository,
-				ssoRepository, qcEntryRepository, validator);
+				ssoRepository, qcEntryRepository, sequencingObjectRepository, validator);
 
 	}
 
