@@ -261,8 +261,6 @@ public class SamplesController extends BaseController {
 	 *            the id of the {@link Project} the sample is in
 	 * @param sampleId
 	 *            Sample id
-	 * @param principal
-	 *            a reference to the logged in user.
 	 * @return a Map representing all files (pairs and singles) for the sample.
 	 */
 	@RequestMapping(value = { "/projects/{projectId}/samples/{sampleId}/sequenceFiles" })
@@ -310,8 +308,6 @@ public class SamplesController extends BaseController {
 	 *            Spring {@link Model}
 	 * @param sampleId
 	 *            Sample id
-	 * @param principal
-	 *            a reference to the logged in user.
 	 * @return a Map representing all files (pairs and singles) for the sample.
 	 */
 	@RequestMapping("/samples/{sampleId}/sequenceFiles")
@@ -511,8 +507,6 @@ public class SamplesController extends BaseController {
 	 *
 	 * @param sample
 	 *            The sample to test
-	 * @param principal
-	 *            The currently logged in principal
 	 * @return true/false if they have management permissions for the sample
 	 */
 	private boolean isProjectManagerForSample(Sample sample) {
