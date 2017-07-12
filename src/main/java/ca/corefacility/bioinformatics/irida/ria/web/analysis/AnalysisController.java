@@ -67,6 +67,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
@@ -81,6 +82,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.Datata
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -112,13 +114,14 @@ public class AnalysisController {
 	private UpdateAnalysisSubmissionPermission updateAnalysisPermission;
 	private SampleService sampleService;
 	private MetadataTemplateService metadataTemplateService;
+	private SequencingObjectService sequencingObjectService;
 
 	@Autowired
 	public AnalysisController(AnalysisSubmissionService analysisSubmissionService,
-			IridaWorkflowsService iridaWorkflowsService, UserService userService,
-			SampleService sampleService, ProjectService projectService,
-			UpdateAnalysisSubmissionPermission updateAnalysisPermission,
-			MetadataTemplateService metadataTemplateService, MessageSource messageSource) {
+			IridaWorkflowsService iridaWorkflowsService, UserService userService, SampleService sampleService,
+			ProjectService projectService, UpdateAnalysisSubmissionPermission updateAnalysisPermission,
+			MetadataTemplateService metadataTemplateService, SequencingObjectService sequencingObjectService,
+			MessageSource messageSource) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
 		this.messageSource = messageSource;
@@ -127,6 +130,7 @@ public class AnalysisController {
 		this.sampleService = sampleService;
 		this.projectService = projectService;
 		this.metadataTemplateService = metadataTemplateService;
+		this.sequencingObjectService = sequencingObjectService;
 	}
 
 	// ************************************************************************************************
@@ -202,15 +206,20 @@ public class AnalysisController {
 		model.addAttribute("workflowName", workflowName);
 		model.addAttribute("version", iridaWorkflow.getWorkflowDescription().getVersion());
 
+		Set<SequencingObject> sequencingObjects = sequencingObjectService
+				.getSequencingObjectsForAnalysisSubmission(submission);
+
 		// Input files
 		// - Paired
-		Set<SequenceFilePair> inputFilePairs = submission.getPairedInputFiles();
+		Set<SequencingObject> inputFilePairs = sequencingObjects.stream().filter(f -> {
+			return f instanceof SequenceFilePair;
+		}).collect(Collectors.toSet());
 		model.addAttribute("paired_end", inputFilePairs);
-		
+
 		// Check if user can update analysis
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		model.addAttribute("updatePermission", updateAnalysisPermission.isAllowed(authentication, submission));
-		
+
 		if (iridaWorkflow.getWorkflowDescription().requiresReference() && submission.getReferenceFile().isPresent()) {
 			logger.debug("Adding reference file to page for submission with id [" + submission.getId() + "].");
 			model.addAttribute("referenceFile", submission.getReferenceFile().get());
