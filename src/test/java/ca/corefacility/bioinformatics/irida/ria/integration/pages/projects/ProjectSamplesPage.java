@@ -453,7 +453,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.visibilityOf(copySamplesModal));
 		enterSelect2Value(project);
 		
-		if(!owner){
+		if(owner){
 			giveOwnerBtn.click();
 		}
 		
