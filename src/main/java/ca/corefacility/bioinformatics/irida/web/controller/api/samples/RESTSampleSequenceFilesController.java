@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
@@ -34,6 +35,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
@@ -41,6 +43,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.SequenceFileResource;
+import ca.corefacility.bioinformatics.irida.web.controller.api.RESTAnalysisSubmissionController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
 
@@ -99,6 +102,12 @@ public class RESTSampleSequenceFilesController {
 	 */
 	public static final String REL_PAIR_FORWARD = "pair/forward";
 	public static final String REL_PAIR_REVERSE = "pair/reverse";
+	
+	/**
+	 * rel for automated analyses associated with sequencing object
+	 */
+	public static final String REL_AUTOMATED_ASSEMBLY = "analysis/assembly";
+	public static final String REL_SISTR_TYPING = "analysis/sistr";
 
 	/**
 	 * The key used in the request to add an existing {@link SequenceFile} to a
@@ -314,6 +323,22 @@ public class RESTSampleSequenceFilesController {
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, file);
 
 		return modelMap;
+	}
+	
+	
+	@RequestMapping("/api/samples/{sampleId}/{objectType}/{objectId}/sistr")
+	public ModelMap readSistrTypingForSequencingObject(@PathVariable Long sampleId, @PathVariable String objectType, @PathVariable Long objectId) {
+		ModelMap map = new ModelMap();
+		
+		Sample sample = sampleService.read(sampleId);
+		SequencingObject sequencingObject = sequencingObjectService.readSequencingObjectForSample(sample, objectId);
+		
+		AnalysisSubmission sistrTyping = sequencingObject.getSistrTyping();
+		if (sistrTyping != null) {
+			map.addAttribute(RESTGenericController.RESOURCE_NAME, sistrTyping);
+		}
+		
+		return map;
 	}
 	
 	/**
@@ -636,6 +661,17 @@ public class RESTSampleSequenceFilesController {
 							objectType, sequencingObject.getId(), file.getId())).withSelfRel());
 		}
 
+//		AnalysisSubmission automatedAssembly = sequencingObject.getAutomatedAssembly();
+//		if (automatedAssembly != null) {
+//			sequencingObject
+//					.add(linkTo(methodOn(RESTAnalysisSubmissionController.class).getAnalysisSubmissionMinimal(automatedAssembly.getId()))
+//							.withRel(REL_AUTOMATED_ASSEMBLY));
+//		}
+
+		sequencingObject
+					.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).readSistrTypingForSequencingObject(sampleId, objectType, sequencingObject.getId()))
+							.withRel(REL_SISTR_TYPING));
+		
 		// if it's a pair, add forward/reverse links
 		if (sequencingObject instanceof SequenceFilePair) {
 			sequencingObject = (T) addSequenceFilePairLinks((SequenceFilePair) sequencingObject, sampleId);
