@@ -103,7 +103,7 @@ python install_tool_shed_tools.py --toolsfile tools-list.yml --galaxy [http://ur
 
 You may want to monitor the Galaxy log files (e.g., `galaxy/*.log`) as the installation is proceeding.  This may take a while to download, build, and install all tools.
 
-*Note: please make sure to check if `tbl2asn` requires updating. You can read more about this issue in our [FAQ](../faq/#tbl2asn-out-of-date). Also please take a look through the __Manual installation of tools__ instructions to see if there are any additional dependencies you may need to install.  These can be added to the conda __galaxy__ environment setup previously.*
+*Note: please make sure to check if `tbl2asn` requires updating. You can read more about this issue in our [FAQ][faq-tbl2asn]. Also please take a look through the __Manual installation of tools__ instructions to see if there are any additional dependencies you may need to install.  These can be added to the conda __galaxy__ environment setup previously.*
 
 #### Manual installation of tools
 
@@ -117,7 +117,7 @@ Alternatively, the necessary tools can be installed manually through the followi
 Link up Galaxy with IRIDA
 -------------------------
 
-In order to connect IRIDA to this Galaxy instance you will need to modify the parameters **galaxy.execution.url**, **galaxy.execution.email**, and **galaxy.execution.apikey** in the file `/etc/irida/irida.conf` and restart IRIDA. Additional details for configuring IRIDA can be found in the instructions to [install and configure the IRIDA web interface](../web).
+In order to connect IRIDA to this Galaxy instance you will need to modify the parameters **galaxy.execution.url**, **galaxy.execution.email**, and **galaxy.execution.apikey** in the file `/etc/irida/irida.conf` and restart IRIDA. Additional details for configuring IRIDA can be found in the instructions to [install and configure the IRIDA web interface][web].
 
 Once you have configured IRIDA to connect to Galaxy you can attempt to execute a workflow by adding some data to your cart, selecting  **Pipelines** from the main menu, then selecting a particular pipeline.  You will have to have some data uploaded into IRIDA before testing.  An example set of data can be found at [irida-sample-data.zip][].  Currently all workflows assume you are using paired-end sequence reads.
 
@@ -138,4 +138,6 @@ Once you have configured IRIDA to connect to Galaxy you can attempt to execute a
 [PostgreSQL]: https://www.postgresql.org/
 [MySQL/MariaDB]: https://mariadb.org/
 [irida-sample-data.zip]: https://irida.corefacility.ca/downloads/data/irida-sample-data.zip
-[faq-conda]: ../faq/#installing-conda-dependencies-in-galaxy-versions--v1601
+[faq-conda]: ../../faq/#installing-conda-dependencies-in-galaxy-versions--v1601
+[faq-tbl2asn]: ../../faq/#tbl2asn-out-of-date
+[web]: ../../web

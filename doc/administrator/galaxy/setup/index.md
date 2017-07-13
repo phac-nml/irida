@@ -65,7 +65,7 @@ conda install perl-xml-simple perl-time-piece perl-bioperl openjdk gnuplot libjp
 Galaxy Software Installation
 ----------------------------
 
-This describes installing the main Galaxy software.  These instructions assume you are installing Galaxy version **v17.01**.  Older versions will also work, but any version < **v16.01** will require special modifications for some tools (see our [FAQ](../faq/#installing-conda-dependencies-in-galaxy-versions--v1601)). Newer versions should also work, but have not been thoroughly tested with IRIDA yet. Most of the installation documentation for Galaxy can be found at [GetGalaxy][].  In brief, these steps involve the following.
+This describes installing the main Galaxy software.  These instructions assume you are installing Galaxy version **v17.01**.  Older versions will also work, but any version < **v16.01** will require special modifications for some tools (see our [FAQ][faq-conda]). Newer versions should also work, but have not been thoroughly tested with IRIDA yet. Most of the installation documentation for Galaxy can be found at [GetGalaxy][].  In brief, these steps involve the following.
 
 ### Step 1: Download Galaxy
 
@@ -261,7 +261,7 @@ python install_tool_shed_tools.py --toolsfile tools-list.yml --galaxy [http://ur
 
 You may want to monitor the Galaxy log file in `paster.log` as the installation is proceeding.  This may take a while to download, build, and install all tools.
 
-*Note: please make sure to check if `tbl2asn` requires updating. You can read more about this issue in our [FAQ](../faq/#tbl2asn-out-of-date).*
+*Note: please make sure to check if `tbl2asn` requires updating. You can read more about this issue in our [FAQ][faq-tbl2asn].*
 
 #### Manual installation of tools
 
@@ -285,7 +285,7 @@ In order to link up Galaxy with IRIDA please proceed through the following steps
 
 ### Step 1: Install and configure the IRIDA web interface
 
-Follow the instructions to [install and configure the IRIDA web interface](../web).  In particular, you will need to modify the parameters **galaxy.execution.url**, **galaxy.execution.email**, and **galaxy.execution.dataStorage** in the file `/etc/irida/irida.conf`.
+Follow the instructions to [install and configure the IRIDA web interface][web].  In particular, you will need to modify the parameters **galaxy.execution.url**, **galaxy.execution.email**, and **galaxy.execution.dataStorage** in the file `/etc/irida/irida.conf`.
 
 ### Step 2: Test and monitor workflows
 
@@ -307,17 +307,20 @@ Each workflow in IRIDA is run using Galaxy, and it's possible to monitor the sta
 [Galaxy Toolshed]: https://wiki.galaxyproject.org/ToolShed
 [Galaxy Toolsheds]: https://wiki.galaxyproject.org/ToolShed
 [SNVPhyl Whole Genome Phylogeny]: pipelines/phylogenomics/
-[SISTR Salmonella Typing]: pipelines/sistr/
-[Assembly and Annotation]: pipelines/assembly-annotation/
-[Assembly and Annotation Collection]: pipelines/assembly-annotation-collection/
+[SISTR Salmonella Typing]: ../pipelines/sistr/
+[Assembly and Annotation]: ../pipelines/assembly-annotation/
+[Assembly and Annotation Collection]: ../pipelines/assembly-annotation-collection/
 [Galaxy Job Config]: https://wiki.galaxyproject.org/Admin/Config/Jobs
-[saved-histories.jpg]: images/saved-histories.jpg
-[galaxy-installed-repositories.jpg]: images/galaxy-installed-repositories.jpg
-[history-options-icon]: images/history-options-icon.jpg
+[saved-histories.jpg]: ../images/saved-histories.jpg
+[galaxy-installed-repositories.jpg]: ../images/galaxy-installed-repositories.jpg
+[history-options-icon]: ../images/history-options-icon.jpg
 [conda]: https://conda.io/docs/
 [miniconda]: https://conda.io/miniconda.html
 [galaxy-production]: https://galaxyproject.org/admin/config/performance/production-server/#groundwork-for-scalability
 [Automated tools install]: https://github.com/phac-nml/irida/tree/development/packaging#automated-processupgrading
 [IRIDA releases]: https://github.com/phac-nml/irida/releases
 [SQLite]: https://www.sqlite.org/
-[updating tbl2asn]: pipelines/assembly-annotation/#updating-tbl2asn
+[updating tbl2asn]: ../pipelines/assembly-annotation/#updating-tbl2asn
+[faq-conda]: ../../faq/#installing-conda-dependencies-in-galaxy-versions--v1601
+[faq-tbl2asn]: ../../faq/#tbl2asn-out-of-date
+[web]: ../../web
