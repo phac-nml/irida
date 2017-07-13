@@ -691,9 +691,8 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(name, workflowId, remoteAnalysisId, remoteInputDataId, remoteWorkflowId, inputFiles,
-				createdDate, modifiedDate, analysisState, analysisCleanedState, analysis, referenceFile,
-				namedParameters, submitter);
+		return Objects.hash(name, workflowId, remoteAnalysisId, remoteInputDataId, remoteWorkflowId, createdDate,
+				modifiedDate, analysisState, analysisCleanedState, analysis, referenceFile, namedParameters, submitter);
 	}
 
 	@Override
@@ -704,7 +703,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 					&& Objects.equals(name, p.name) && Objects.equals(workflowId, p.workflowId)
 					&& Objects.equals(remoteAnalysisId, p.remoteAnalysisId)
 					&& Objects.equals(remoteInputDataId, p.remoteInputDataId)
-					&& Objects.equals(remoteWorkflowId, p.remoteWorkflowId) && Objects.equals(inputFiles, p.inputFiles)
+					&& Objects.equals(remoteWorkflowId, p.remoteWorkflowId)
 					&& Objects.equals(analysisState, p.analysisState)
 					&& Objects.equals(analysisCleanedState, p.analysisCleanedState)
 					&& Objects.equals(referenceFile, p.referenceFile)
