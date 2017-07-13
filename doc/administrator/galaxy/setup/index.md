@@ -306,7 +306,7 @@ Each workflow in IRIDA is run using Galaxy, and it's possible to monitor the sta
 [Main Galaxy Toolshed]: https://toolshed.g2.bx.psu.edu/
 [Galaxy Toolshed]: https://wiki.galaxyproject.org/ToolShed
 [Galaxy Toolsheds]: https://wiki.galaxyproject.org/ToolShed
-[SNVPhyl Whole Genome Phylogeny]: pipelines/phylogenomics/
+[SNVPhyl Whole Genome Phylogeny]: ../pipelines/phylogenomics/
 [SISTR Salmonella Typing]: ../pipelines/sistr/
 [Assembly and Annotation]: ../pipelines/assembly-annotation/
 [Assembly and Annotation Collection]: ../pipelines/assembly-annotation-collection/

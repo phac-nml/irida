@@ -128,10 +128,10 @@ Once you have configured IRIDA to connect to Galaxy you can attempt to execute a
 [IRIDA Toolshed]: https://irida.corefacility.ca/galaxy-shed
 [Main Galaxy Toolshed]: https://toolshed.g2.bx.psu.edu/
 [Galaxy Toolshed]: https://wiki.galaxyproject.org/ToolShed
-[SNVPhyl Whole Genome Phylogeny]: pipelines/phylogenomics/
-[SISTR Salmonella Typing]: pipelines/sistr/
-[Assembly and Annotation]: pipelines/assembly-annotation/
-[Assembly and Annotation Collection]: pipelines/assembly-annotation-collection/
+[SNVPhyl Whole Genome Phylogeny]: ../pipelines/phylogenomics/
+[SISTR Salmonella Typing]: ../pipelines/sistr/
+[Assembly and Annotation]: ../pipelines/assembly-annotation/
+[Assembly and Annotation Collection]: ../pipelines/assembly-annotation-collection/
 [Purging Histories and Datasets]: https://galaxyproject.org/admin/config/performance/purge-histories-and-datasets/
 [Automated tools install]: https://github.com/phac-nml/irida/tree/development/packaging#automated-processupgrading
 [IRIDA releases]: https://github.com/phac-nml/irida/releases
