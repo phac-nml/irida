@@ -236,11 +236,11 @@ public class RESTProjectSamplesControllerTest {
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		when(projectService.read(p.getId())).thenReturn(p);
 		when(sampleService.read(s.getId())).thenReturn(s);
-		when(projectService.addSampleToProject(p, s, true)).thenReturn(r);
+		when(projectService.addSampleToProject(p, s, false)).thenReturn(r);
 		ModelMap modelMap = controller
 				.copySampleToProject(p.getId(), Lists.newArrayList(s.getId()), response);
 		
-		verify(projectService).addSampleToProject(p, s, true);
+		verify(projectService).addSampleToProject(p, s, false);
 		assertEquals("response should have CREATED status", HttpStatus.CREATED.value(), response.getStatus());
 		final String location = response.getHeader(HttpHeaders.LOCATION);
 		assertEquals("location should include sample and project IDs", "http://localhost/api/projects/" + p.getId()
@@ -283,7 +283,7 @@ public class RESTProjectSamplesControllerTest {
 		when(projectService.read(p.getId())).thenReturn(p);
 		when(sampleService.read(s.getId())).thenReturn(s);
 
-		when(projectService.addSampleToProject(p, s, true)).thenThrow(new EntityExistsException("sample already exists!"));
+		when(projectService.addSampleToProject(p, s, false)).thenThrow(new EntityExistsException("sample already exists!"));
 
 		controller.copySampleToProject(p.getId(), Lists.newArrayList(s.getId()),new MockHttpServletResponse());
 	}
