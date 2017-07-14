@@ -423,35 +423,25 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	@Transactional
 	@LaunchesProjectEvent(SampleAddedProjectEvent.class)
-	@PreAuthorize("hasRole('ROLE_ADMIN') or ( hasPermission(#source, 'isProjectOwner') and hasPermission(#destination, 'isProjectOwner') and hasPermission(#samples, 'canReadSample'))")
+	@PreAuthorize("hasPermission(#source, 'isProjectOwner') " + "and hasPermission(#destination, 'isProjectOwner') "
+			+ "and hasPermission(#samples, 'canReadSample') "
+			+ "and ((not #giveOwner) or hasPermission(#samples, 'canUpdateSample') )")
 	public List<ProjectSampleJoin> copyOrMoveSamples(Project source, Project destination, Collection<Sample> samples,
 			boolean move, boolean giveOwner) {
-		
+
 		List<ProjectSampleJoin> newJoins = new ArrayList<>();
-		
+
 		for (Sample sample : samples) {
-			ProjectSampleJoin sampleForProject = psjRepository.readSampleForProject(source, sample);
-
-			boolean owner = giveOwner;
-
-			// if the project is not an owner, it cannot give ownership
-			if (!sampleForProject.isOwner()) {
-				owner = false;
-				logger.warn(
-						"Warning: attempted to give ownership rights where project did not already have ownership rights -- source: "
-								+ source.getId() + " destination: " + destination.getId() + " sample: "
-								+ sample.getId());
-			}
 
 			ProjectSampleJoin newJoin;
 			if (move) {
-				newJoin = moveSampleBetweenProjects(source, destination, sample, owner);
+				newJoin = moveSampleBetweenProjects(source, destination, sample, giveOwner);
 			} else {
-				newJoin = addSampleToProject(destination, sample, owner);
+				newJoin = addSampleToProject(destination, sample, giveOwner);
 			}
 
-			logger.debug("Copied sample " + sample.getId() + " to project " + destination.getId());
-			
+			logger.trace("Copied sample " + sample.getId() + " to project " + destination.getId());
+
 			newJoins.add(newJoin);
 
 		}
