@@ -157,6 +157,9 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		return super.update(object);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@Transactional(readOnly = true)
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SEQUENCER') or (hasPermission(#project, 'canReadProject') and hasPermission(#sampleId, 'canReadSample'))")
@@ -262,7 +265,18 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		return mergeInto;
 	}
 
-	private void confirmProjectSampleJoin(Project project, Sample sample) {
+	/**
+	 * Confirm that a {@link ProjectSampleJoin} exists between the given
+	 * {@link Project} and {@link Sample}.
+	 * 
+	 * @param project
+	 *            the {@link Project} to check
+	 * @param sample
+	 *            the {@link Sample} to check
+	 * @throws IllegalArgumentException
+	 *             if join does not exist
+	 */
+	private void confirmProjectSampleJoin(Project project, Sample sample) throws IllegalArgumentException{
 		Set<Project> projects = new HashSet<>();
 		List<Join<Project, Sample>> sampleProjects = psjRepository.getProjectForSample(sample);
 		for (Join<Project, Sample> p : sampleProjects) {
