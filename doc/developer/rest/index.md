@@ -658,6 +658,8 @@ The sample will also contain a [list of paired-end sequence files](#sequence-fil
 |------|-------------|
 | `self` | A link to this collection of sequence files. |
 | `sample` | A link back to the sample that owns this sequence file collection. |
+| `analysis/sistr` | A link to an automated SISTR Typing analysis for these files, if such an analysis exists. |
+| `analysis/assembly` | A link to an automated assembly analysis for these files, if such an analysis exists. |
 
 ##### Example response
 {:.no_toc}
@@ -690,7 +692,14 @@ The sample will also contain a [list of paired-end sequence files](#sequence-fil
   }, {
     "rel" : "sample",
     "href" : "http://localhost:8080/api/samples/51"
-  } ]
+  }, {
+    "rel" : "analysis/sistr",
+    "href" : "http://localhost:8080/api/analysisSubmissions/11"
+  }, {
+    "rel" : "analysis/assembly",
+    "href" : "http://localhost:8080/api/analysisSubmissions/12"
+  ] }
+ ]
   }
 
 ```
