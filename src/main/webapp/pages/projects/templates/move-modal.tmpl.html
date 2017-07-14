@@ -28,7 +28,7 @@
 			</script>
 		</th:block>
 		<div class="alert alert-warning" th:if="${#lists.size(lockedSamples) > 0}">
-			<span th:text="#{project.samples.modal.copy.locked}">_The following samples will be read only as this project does not have modification access_</span>
+			<span th:text="#{project.samples.modal.move.locked}">_The following samples will be read only as this project does not have modification access_</span>
 			<input type="hidden" value="false" id="giveOwner" ng-model="copyModalCtrl.giveOwner"/>
 		</div>
 		<div class="form-group" th:if="${#lists.size(lockedSamples) == 0}">
