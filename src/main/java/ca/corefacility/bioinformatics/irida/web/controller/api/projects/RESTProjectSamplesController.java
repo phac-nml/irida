@@ -98,7 +98,7 @@ public class RESTProjectSamplesController {
 				sampleIds.size());
 		for (final long sampleId : sampleIds) {
 			Sample sample = sampleService.read(sampleId);
-			Join<Project, Sample> r = projectService.addSampleToProject(p, sample, true);
+			Join<Project, Sample> r = projectService.addSampleToProject(p, sample, false);
 			LabelledRelationshipResource<Project, Sample> resource = new LabelledRelationshipResource<Project, Sample>(
 					r.getLabel(), r);
 			// add a labeled relationship resource to the resource collection
