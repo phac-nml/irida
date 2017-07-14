@@ -790,7 +790,7 @@ public class ProjectServiceImplIT {
 	@Test
 	@WithMockUser(username = "user1", roles = "USER")
 	public void testCopyLockedSamplesWithoutOwner() {
-		Project source = projectService.read(3L);
+		Project source = projectService.read(2L);
 		Project destination = projectService.read(10L);
 
 		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(source);
@@ -810,7 +810,7 @@ public class ProjectServiceImplIT {
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "user1", roles = "USER")
 	public void testCopyLockedSamplesWithOwnerFail() {
-		Project source = projectService.read(3L);
+		Project source = projectService.read(2L);
 		Project destination = projectService.read(10L);
 
 		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(source);
