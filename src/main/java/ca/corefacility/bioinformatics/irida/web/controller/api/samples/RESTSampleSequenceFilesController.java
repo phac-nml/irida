@@ -327,17 +327,32 @@ public class RESTSampleSequenceFilesController {
 	
 	
 	@RequestMapping("/api/samples/{sampleId}/{objectType}/{objectId}/sistr")
-	public ModelMap readSistrTypingForSequencingObject(@PathVariable Long sampleId, @PathVariable String objectType, @PathVariable Long objectId) {
+	public ModelMap readSistrTypingForSequencingObject(@PathVariable Long sampleId, @PathVariable String objectType,
+			@PathVariable Long objectId) {
 		ModelMap map = new ModelMap();
-		
+
 		Sample sample = sampleService.read(sampleId);
 		SequencingObject sequencingObject = sequencingObjectService.readSequencingObjectForSample(sample, objectId);
-		
+
 		AnalysisSubmission sistrTyping = sequencingObject.getSistrTyping();
 		if (sistrTyping != null) {
+
+			sistrTyping.add(linkTo(methodOn(RESTSampleSequenceFilesController.class)
+					.readSistrTypingForSequencingObject(sampleId, objectType, sistrTyping.getId())).withSelfRel());
+
+			sistrTyping.add(linkTo(methodOn(RESTAnalysisSubmissionController.class).getResource(sistrTyping.getId()))
+					.withRel("submission"));
+
+			if (AnalysisState.COMPLETED.equals(sistrTyping.getAnalysisState())) {
+
+				sistrTyping.add(linkTo(methodOn(RESTAnalysisSubmissionController.class)
+						.getAnalysisForSubmission(sistrTyping.getId()))
+								.withRel(RESTAnalysisSubmissionController.ANALYSIS_REL));
+			}
+
 			map.addAttribute(RESTGenericController.RESOURCE_NAME, sistrTyping);
 		}
-		
+
 		return map;
 	}
 	
