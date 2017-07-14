@@ -579,15 +579,18 @@ public class ProjectSamplesController {
 	 * Copy or move samples from one project to another
 	 *
 	 * @param projectId
-	 * 		The original project id
+	 *            The original project id
 	 * @param sampleIds
-	 * 		the sample identifiers to copy
+	 *            the sample identifiers to copy
 	 * @param newProjectId
-	 * 		The new project id
+	 *            The new project id
 	 * @param remove
-	 * 		true/false whether to remove the samples from the original project
+	 *            true/false whether to remove the samples from the original
+	 *            project
+	 * @param giveOwner
+	 *            whether to give ownership of the sample to the new project
 	 * @param locale
-	 * 		the locale specified by the browser.
+	 *            the locale specified by the browser.
 	 *
 	 * @return A list of warnings
 	 */
