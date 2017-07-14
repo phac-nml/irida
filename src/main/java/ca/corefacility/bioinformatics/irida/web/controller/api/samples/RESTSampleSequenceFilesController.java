@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
@@ -323,37 +322,6 @@ public class RESTSampleSequenceFilesController {
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, file);
 
 		return modelMap;
-	}
-	
-	
-	@RequestMapping("/api/samples/{sampleId}/{objectType}/{objectId}/sistr")
-	public ModelMap readSistrTypingForSequencingObject(@PathVariable Long sampleId, @PathVariable String objectType,
-			@PathVariable Long objectId) {
-		ModelMap map = new ModelMap();
-
-		Sample sample = sampleService.read(sampleId);
-		SequencingObject sequencingObject = sequencingObjectService.readSequencingObjectForSample(sample, objectId);
-
-		AnalysisSubmission sistrTyping = sequencingObject.getSistrTyping();
-		if (sistrTyping != null) {
-
-			sistrTyping.add(linkTo(methodOn(RESTSampleSequenceFilesController.class)
-					.readSistrTypingForSequencingObject(sampleId, objectType, sistrTyping.getId())).withSelfRel());
-
-			sistrTyping.add(linkTo(methodOn(RESTAnalysisSubmissionController.class).getResource(sistrTyping.getId()))
-					.withRel("submission"));
-
-			if (AnalysisState.COMPLETED.equals(sistrTyping.getAnalysisState())) {
-
-				sistrTyping.add(linkTo(methodOn(RESTAnalysisSubmissionController.class)
-						.getAnalysisForSubmission(sistrTyping.getId()))
-								.withRel(RESTAnalysisSubmissionController.ANALYSIS_REL));
-			}
-
-			map.addAttribute(RESTGenericController.RESOURCE_NAME, sistrTyping);
-		}
-
-		return map;
 	}
 	
 	/**
@@ -676,16 +644,19 @@ public class RESTSampleSequenceFilesController {
 							objectType, sequencingObject.getId(), file.getId())).withSelfRel());
 		}
 
-//		AnalysisSubmission automatedAssembly = sequencingObject.getAutomatedAssembly();
-//		if (automatedAssembly != null) {
-//			sequencingObject
-//					.add(linkTo(methodOn(RESTAnalysisSubmissionController.class).getAnalysisSubmissionMinimal(automatedAssembly.getId()))
-//							.withRel(REL_AUTOMATED_ASSEMBLY));
-//		}
+		AnalysisSubmission automatedAssembly = sequencingObject.getAutomatedAssembly();
+		if (automatedAssembly != null) {
+			sequencingObject
+					.add(linkTo(methodOn(RESTAnalysisSubmissionController.class).getResource(automatedAssembly.getId()))
+							.withRel(REL_AUTOMATED_ASSEMBLY));
+		}
 
-		sequencingObject
-					.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).readSistrTypingForSequencingObject(sampleId, objectType, sequencingObject.getId()))
+		AnalysisSubmission sistrTyping = sequencingObject.getSistrTyping();
+		if (sistrTyping != null) {
+			sequencingObject
+					.add(linkTo(methodOn(RESTAnalysisSubmissionController.class).getResource(sistrTyping.getId()))
 							.withRel(REL_SISTR_TYPING));
+		}
 		
 		// if it's a pair, add forward/reverse links
 		if (sequencingObject instanceof SequenceFilePair) {
