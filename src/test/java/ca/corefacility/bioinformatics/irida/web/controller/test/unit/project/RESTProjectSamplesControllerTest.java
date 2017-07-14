@@ -46,7 +46,7 @@ import com.google.common.net.HttpHeaders;
 /**
  * Tests for {@link RESTProjectSamplesController}.
  */
-public class ProjectSamplesControllerTest {
+public class RESTProjectSamplesControllerTest {
 	private RESTProjectSamplesController controller;
 	private ProjectService projectService;
 	private SampleService sampleService;
