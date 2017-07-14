@@ -216,7 +216,7 @@ public class SampleSequenceFilesIT {
 		String sequenceFilePairsUri = from(sampleBody).getString(
 				"resource.links.find{it.rel == '" + pairsRel + "'}.href");
 
-		asUser().expect().statusCode(HttpStatus.OK.value()).and().body("resource.resources[0].files", hasSize(3))
+		asUser().expect().statusCode(HttpStatus.OK.value()).and().body("resource.resources[0].files", hasSize(4))
 				.when().get(sequenceFilePairsUri);
 	}
 
@@ -250,7 +250,7 @@ public class SampleSequenceFilesIT {
 
 	@Test
 	public void testReadSequenceFilesAssemblyAnalysis() {
-		String sequenceFilePairUri = ITestSystemProperties.BASE_URL + "/api/samples/1/pairs/3";
+		String sequenceFilePairUri = ITestSystemProperties.BASE_URL + "/api/samples/1/pairs/4";
 
 		Response response = asUser().expect().statusCode(HttpStatus.OK.value()).when().get(sequenceFilePairUri);
 		assertEquals("Assembly results were not found", ITestSystemProperties.BASE_URL + "/api/analysisSubmission/2",
@@ -262,7 +262,7 @@ public class SampleSequenceFilesIT {
 
 	@Test
 	public void testReadSequenceFilesSISTRAnalysis() {
-		String sequenceFilePairUri = ITestSystemProperties.BASE_URL + "/api/samples/1/pairs/2";
+		String sequenceFilePairUri = ITestSystemProperties.BASE_URL + "/api/samples/1/pairs/1";
 
 		Response response = asUser().expect().statusCode(HttpStatus.OK.value()).when().get(sequenceFilePairUri);
 		assertEquals("Assembly results were found where none should exist",
