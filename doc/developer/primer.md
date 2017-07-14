@@ -133,7 +133,7 @@ IRIDA is organized as a fairly classic Java web application.  All files are foun
 * `database.changesets` - Java Liquibase changesets.  See more about our liquibase usage in the [Database Updates section](#database_updates).
 * `events` - Classes here handle the `ProjectEvent` structure in IRIDA.  These are the messages you can find on the IRIDA dashboard and project recent activity pages.
 * `exceptions` - Java `Exception` classes written for IRIDA.
-* `model` - IRIDA uses MVC.  These are the model classes.
+* `model` - IRIDA uses MVC.  These are the model classes which are persisted into the database using [Spring Data JPA][] and Hibernate.
 * `pipeline.upload` - Classes used to communicate workflows, libraries, and histories to Galaxy.
 * `processing` - IRIDA's file processing chain.  This contains classes used when processing files uploaded to IRIDA such as unzipping, FastQC, and quality control.
 * `repositories` - Repositories used for communicating with IRIDA's database.  These classes generally use [Spring Data JPA][] for communicating with the database.
@@ -154,9 +154,10 @@ When adding new features we have a couple places we need to inform our users.  F
 #### Database Updates
 
 While in development we use Hibernate to manage our database changes, in production we use [Liquibase][]. 
+
 Liquibase allows you to specify changesets to a database in incremental, database agnostic XML files.  In practice IRIDA requires MariaDB or MySQL, but it's still worthwhile to use a tool to properly manage the updates.  Liquibase ensures that all changes to the database are performed in the correct order, and manages this by keeping track of a hashcode of the last applied changeset.  When IRIDA is started, liquibase runs first to check if there are new changesets to be applied, and also that the current state of the database is in the format that IRIDA will be expecting.
 
-When we're doing development and running IRIDA in the `dev` Spring profile you can directly make changes to the model classes and those changes will be reflected into the database.  Before creating a merge request you should add any changes that are made to the database to a new changeset XML file and test that the database is correctly built in the `prod` Spring profile.  It's also worthwhile to take a dump of a production IRIDA database and ensure that your Liquibase upgrade correctly migrates any data to your new format.
+When we're doing development, Liquibase is generally not used.  Instead we generally rely on Hibernate's HBM2DDL module which allows us to directly make changes to the model classes and those changes will be reflected into the database.This can be enabled by running IRIDA in the `dev` Spring profile.  Additionally when running in the `dev` profile example data from `src/main/resounrces/ca/corefacility/bioinformatics/irida/sql` will be loaded into the database for test purpose.  Since HBM2DDL is not to be used in production environments, before creating a merge request you should add any changes that are made to the database to a new changeset XML file and test that the database is correctly built in the `prod` Spring profile.  It's also worthwhile to take a dump of a production IRIDA database and ensure that your Liquibase upgrade correctly migrates any data to your new format.
 
 You can find the existing Liquibase changeset files in `/src/manin/resounces/ca/corefacility/bioinformatics/irida/database/changesets`.
 
@@ -165,7 +166,7 @@ Sometimes database changes are too complex to be able to use Liquibase XML files
 Version control
 ---------------
 
-The IRIDA project uses Git, [GitLab][], and [GitHub][] for verison control purposes.  The main development server used is the NML's [GitLab][] site.  We use an internal repository so that we have greater control over how the code is managed, greater control over the testing servers, and allows us to have private conversations about issues.  Once a feature is pushed to the *development* or *master* branches of the project, it is automatically mirrored to our [GitHub][] site to give access ot public users.
+The IRIDA project uses Git, [GitLab][], and [GitHub][] for version control purposes.  The main development server used is the NML's [GitLab][] site.  We use an internal repository so that we have greater control over how the code is managed, greater control over the testing servers, and allows us to have private conversations about issues.  Once a feature is pushed to the *development* or *master* branches of the project, it is automatically mirrored to our [GitHub][] site to give access ot public users.
 
 External collaborators are welcomed to develop new features and should submit pull requests on IRIDA's [GitHub][] page.
 
@@ -200,6 +201,14 @@ Once the tag has been pushed, the tag should have been automatically created on 
 Example workflow:
 
 ![Git workflow](images/git-flow.png)
+
+#### Merge requests
+
+Code is not to be merged into the *development* or *master* branches by the developer who wrote the code.  Instead a merge request should be made on [GitLab][] and assigned to another developer on the project.  The reviewer should look over the code for issues, and anything that needs to be fixed should be mentioned in a comment in the merge request.  Once an issue has been fixed, the developer should push the changes to the merge request branch and mention the commit id in the comment so the reviewer can track the changes.
+
+If a merge request is a fix for an issue that is being tracked in [GitLab][], the developer should mention the issue number in the merge request with the format `Fixes #1234` so that the merge request will be linked to the issue and it will be automatically closed once the merge is complete.
+
+When the reviewer is satisfied with the state of the branch to be merged, they should merge it into the *development* branch in [GitLab][] to close the request.
 
 #### Performing a release
 
