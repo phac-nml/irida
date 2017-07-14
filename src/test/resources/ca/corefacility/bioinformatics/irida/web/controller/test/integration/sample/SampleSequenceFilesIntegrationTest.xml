@@ -52,13 +52,13 @@
 	<sequence_file id="1" created_date="2013-07-18 14:20:19.0"
 		file_path="/sequenceFile1" />
 	<sequence_file id="2" created_date="2013-07-18 14:20:19.0"
-		file_path="/sequenceFile2_01_L001_R1_001.fastq.gz" />
+		file_path="/sequenceFile3" />
 	<sequence_file id="3" created_date="2013-07-18 14:20:19.0"
-		file_path="/sequenceFile2_01_L001_R2_001.fastq.gz" />
+		file_path="/sequenceFile4" />
 	<sequence_file id="4" created_date="2013-07-18 14:20:19.0"
-		file_path="/sequenceFile2_01_L001_R2_001.fastq.gz" />
+		file_path="/sequenceFile5" />
 	<sequence_file id="5" created_date="2013-07-18 14:20:19.0"
-		file_path="/sequenceFile2_01_L001_R2_001.fastq.gz" />
+		file_path="/sequenceFile6" />
 
 	<sequencing_object id="1" created_date="2013-07-18 14:20:19.0" sistr_typing="1" />
 	<sequencing_object id="2" created_date="2013-07-18 14:20:19.0" automated_assembly="2" />
