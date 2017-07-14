@@ -9,6 +9,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -215,7 +216,7 @@ public class SampleSequenceFilesIT {
 		String sequenceFilePairsUri = from(sampleBody).getString(
 				"resource.links.find{it.rel == '" + pairsRel + "'}.href");
 
-		asUser().expect().statusCode(HttpStatus.OK.value()).and().body("resource.resources[0].files", hasSize(2))
+		asUser().expect().statusCode(HttpStatus.OK.value()).and().body("resource.resources[0].files", hasSize(3))
 				.when().get(sequenceFilePairsUri);
 	}
 
@@ -233,6 +234,43 @@ public class SampleSequenceFilesIT {
 				.body("resource.fileName", equalTo("sequenceFile2_01_L001_R1_001.fastq.gz")).when().get(forwardLink);
 		asUser().expect().statusCode(HttpStatus.OK.value()).and()
 				.body("resource.fileName", equalTo("sequenceFile2_01_L001_R2_001.fastq.gz")).when().get(reverseLink);
+	}
+	
+	@Test
+	public void testReadSequenceFilesNoAnalysis() {
+		String sequenceFilePairUri = ITestSystemProperties.BASE_URL + "/api/samples/1/pairs/3";
+
+		Response response = asUser().expect().statusCode(HttpStatus.OK.value()).when().get(sequenceFilePairUri);
+		assertNull("Assembly results were found where none should exist",
+				response.jsonPath().getString("resource.links.find{it.rel=='"
+						+ RESTSampleSequenceFilesController.REL_AUTOMATED_ASSEMBLY + "'}.href"));
+		assertNull("SISTR results were found where none should exist", response.jsonPath().getString(
+				"resource.links.find{it.rel=='" + RESTSampleSequenceFilesController.REL_SISTR_TYPING + "'}.href"));
+	}
+
+	@Test
+	public void testReadSequenceFilesAssemblyAnalysis() {
+		String sequenceFilePairUri = ITestSystemProperties.BASE_URL + "/api/samples/1/pairs/3";
+
+		Response response = asUser().expect().statusCode(HttpStatus.OK.value()).when().get(sequenceFilePairUri);
+		assertEquals("Assembly results were not found", ITestSystemProperties.BASE_URL + "/api/analysisSubmission/2",
+				response.jsonPath().getString("resource.links.find{it.rel=='"
+						+ RESTSampleSequenceFilesController.REL_AUTOMATED_ASSEMBLY + "'}.href"));
+		assertNull("SISTR results were found where none should exist", response.jsonPath().getString(
+				"resource.links.find{it.rel=='" + RESTSampleSequenceFilesController.REL_SISTR_TYPING + "'}.href"));
+	}
+
+	@Test
+	public void testReadSequenceFilesSISTRAnalysis() {
+		String sequenceFilePairUri = ITestSystemProperties.BASE_URL + "/api/samples/1/pairs/2";
+
+		Response response = asUser().expect().statusCode(HttpStatus.OK.value()).when().get(sequenceFilePairUri);
+		assertEquals("Assembly results were found where none should exist",
+				response.jsonPath().getString("resource.links.find{it.rel=='"
+						+ RESTSampleSequenceFilesController.REL_AUTOMATED_ASSEMBLY + "'}.href"));
+		assertEquals("SISTR results were not found", ITestSystemProperties.BASE_URL + "/api/analysisSubmission/2",
+				response.jsonPath().getString("resource.links.find{it.rel=='"
+						+ RESTSampleSequenceFilesController.REL_SISTR_TYPING + "'}.href"));
 	}
 
 	@Test
