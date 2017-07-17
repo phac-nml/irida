@@ -30,11 +30,11 @@
 		email_subscription="false" />
 
 	<analysis_submission id="1" name="sistr"
-		workflow_id="1" analysis_state="NEW" created_date="2013-07-18 14:20:19.0"
+		workflow_id="739f29ea-ae82-48b9-8914-3d2931405db6" analysis_state="NEW" created_date="2013-07-18 14:20:19.0"
 		submitter="1" analysis_cleaned_state="NOT_CLEANED" />
 
 	<analysis_submission id="2" name="assembly"
-		workflow_id="2" analysis_state="NEW" created_date="2013-07-18 14:20:19.0"
+		workflow_id="739f29ea-ae82-48b9-8914-3d2931405db6" analysis_state="NEW" created_date="2013-07-18 14:20:19.0"
 		submitter="1" analysis_cleaned_state="NOT_CLEANED" />
 
 	<client_details id="1" clientId="testClient"
