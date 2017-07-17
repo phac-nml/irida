@@ -189,7 +189,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		List<String> names = page.getSampleNamesOnPage().subList(0, 1);
 		String newProjectName = "project4";
-		page.copySamples(newProjectName, true);
+		page.copySamples(newProjectName, false);
 
 		ProjectSamplesPage newPage = ProjectSamplesPage.gotToPage(driver(), 4);
 		List<String> newNames = newPage.getSampleNamesOnPage().subList(0, 1);
@@ -198,7 +198,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 			assertEquals("Should have the same samples since they were copied", names.get(i), newNames.get(i));
 		}
 		
-		assertEquals("should be 1 locked sample", 1, page.getLockedSampleNames().size());
+		assertEquals("should be 2 locked samples", 2, page.getLockedSampleNames().size());
 	}
 	
 	@Test
