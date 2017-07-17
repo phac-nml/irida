@@ -319,7 +319,7 @@ public class ProjectServiceImplIT {
 
 		Collection<Join<Project, User>> projects = projectService.getProjectsForUser(u);
 
-		assertEquals("User should have 2 projects.", 2, projects.size());
+		assertEquals("User should have 3 projects.", 3, projects.size());
 		assertEquals("User should be on project 2.", Long.valueOf(2L), projects.iterator().next().getSubject().getId());
 	}
 
@@ -375,7 +375,7 @@ public class ProjectServiceImplIT {
 		projectService.removeSampleFromProject(p2, s);
 		projectService.removeSampleFromProject(p3, s);
 
-		Collection<Join<Project, Sample>> samples = sampleService.getSamplesForProject(p2);
+		Collection<Join<Project, Sample>> samples = sampleService.getSamplesForProject(p3);
 		assertTrue("No samples should be assigned to project.", samples.isEmpty());
 		assertFalse("sample should be deleted because it was detached", sampleService.exists(s.getId()));
 	}
@@ -384,9 +384,10 @@ public class ProjectServiceImplIT {
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testRemoveSamplesFromProject() {
 		Sample s1 = sampleService.read(1L);
+		Sample s2 = sampleService.read(2L);
 		Project p = projectService.read(2L);
 
-		projectService.removeSamplesFromProject(p, ImmutableList.of(s1));
+		projectService.removeSamplesFromProject(p, ImmutableList.of(s1, s2));
 
 		Collection<Join<Project, Sample>> samples = sampleService.getSamplesForProject(p);
 		assertTrue("No samples should be assigned to project.", samples.isEmpty());
@@ -449,7 +450,7 @@ public class ProjectServiceImplIT {
 		assertEquals(1, searchPagedProjectsForUser.getTotalElements());
 
 		searchPagedProjectsForUser = projectService.findProjectsForUser("project", "", "", 0, 10, Direction.ASC);
-		assertEquals(3, searchPagedProjectsForUser.getTotalElements());
+		assertEquals(2, searchPagedProjectsForUser.getTotalElements());
 
 		// test sorting
 		searchPagedProjectsForUser = projectService.findProjectsForUser("project", "", "", 0, 10, Direction.ASC, "name");
@@ -753,10 +754,9 @@ public class ProjectServiceImplIT {
 	public void testCopySamplesWithOwner(){
 		Project source = projectService.read(2L);
 		Project destination = projectService.read(10L);
-		
-		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(source);
-		
-		Set<Sample> samples = samplesForProject.stream().map(j -> j.getObject()).collect(Collectors.toSet());
+				
+		Sample sample1 = sampleService.read(1L);
+		Set<Sample> samples = Sets.newHashSet(sample1);
 		
 		List<ProjectSampleJoin> copiedSamples = projectService.copyOrMoveSamples(source, destination, samples, false, true);
 		
