@@ -52,9 +52,9 @@
 	<sequence_file id="1" created_date="2013-07-18 14:20:19.0"
 		file_path="/sequenceFile1" />
 	<sequence_file id="2" created_date="2013-07-18 14:20:19.0"
-		file_path="/sequenceFile2" />
+		file_path="/sequenceFile2_01_L001_R1_001.fastq.gz" />
 	<sequence_file id="3" created_date="2013-07-18 14:20:19.0"
-		file_path="/sequenceFile3" />
+		file_path="sequenceFile2_01_L001_R2_001.fastq.gz" />
 	<sequence_file id="4" created_date="2013-07-18 14:20:19.0"
 		file_path="/sequenceFile4" />
 	<sequence_file id="5" created_date="2013-07-18 14:20:19.0"
