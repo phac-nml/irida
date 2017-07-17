@@ -10,7 +10,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
@@ -58,9 +57,7 @@ import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 
@@ -231,36 +228,6 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	@JsonIgnore
 	public String getRemoteAnalysisId() {
 		return remoteAnalysisId;
-	}
-
-	/**
-	 * Gets the set of single-end input sequence files.
-	 * 
-	 * @return The set of single-end input sequence files.
-	 */	
-	@JsonIgnore
-	@Deprecated
-	public Set<SingleEndSequenceFile> getInputFilesSingleEnd() {
-		return inputFiles.stream().filter(f -> {
-			return f instanceof SingleEndSequenceFile;
-		}).map(f -> {
-			return (SingleEndSequenceFile) f;
-		}).collect(Collectors.toSet());
-	}
-
-	/**
-	 * Gets the set of paired-end input sequence files.
-	 * 
-	 * @return The set of paired-end input sequence files.
-	 */
-	@JsonIgnore
-	@Deprecated
-	public Set<SequenceFilePair> getPairedInputFiles() {
-		return inputFiles.stream().filter(f -> {
-			return f instanceof SequenceFilePair;
-		}).map(f -> {
-			return (SequenceFilePair) f;
-		}).collect(Collectors.toSet());
 	}
 
 	/**
