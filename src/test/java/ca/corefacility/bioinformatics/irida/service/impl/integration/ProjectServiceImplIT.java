@@ -455,7 +455,7 @@ public class ProjectServiceImplIT {
 		// test sorting
 		searchPagedProjectsForUser = projectService.findProjectsForUser("project", "", "", 0, 10, Direction.ASC, "name");
 		final Page<Project> searchDesc = projectService.findProjectsForUser("project", "", "", 0, 10, Direction.DESC, "name");
-		assertEquals(3, searchPagedProjectsForUser.getTotalElements());
+		assertEquals(2, searchPagedProjectsForUser.getTotalElements());
 
 		List<Project> reversed = Lists.reverse(searchDesc.getContent());
 		List<Project> forward = searchPagedProjectsForUser.getContent();
