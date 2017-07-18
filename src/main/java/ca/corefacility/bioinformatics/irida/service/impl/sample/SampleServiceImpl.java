@@ -96,6 +96,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 *            the analysis repository.
 	 * @param ssoRepository
 	 *            The {@link SampleSequencingObjectJoin} repository
+	 * @param sequencingObjectRepository
+	 *            the {@link SequencingObject} repository
 	 * @param qcEntryRepository
 	 *            a repository for storing and reading {@link QCEntry}
 	 * @param validator
