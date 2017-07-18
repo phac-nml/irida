@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.processing.concatenate.impl;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -19,6 +18,9 @@ import ca.corefacility.bioinformatics.irida.processing.concatenate.SequencingObj
 
 public class SequenceFilePairConcatenator implements SequencingObjectConcatenator<SequenceFilePair> {
 
+	public SequenceFilePairConcatenator(){
+	}
+	
 	@Override
 	public SequenceFilePair concatenateFiles(Set<? extends SequencingObject> toConcatenate)
 			throws ConcatenateException {
