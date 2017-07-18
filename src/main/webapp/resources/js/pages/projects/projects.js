@@ -1,89 +1,81 @@
-/* eslint new-cap: ["error", { "capIsNewExceptions": ["DataTable"] }]*/
-const $ = require('jquery');
-const moment = require('moment');
-require('timeago');
-require('./../../vendor/datatables/datatables');
-require('./../../vendor/datatables/datatables-buttons');
+import "DataTables/datatables";
+import "DataTables/datatables-buttons";
+import $ from "jquery";
+import {
+  createItemLink,
+  generateColumnOrderInfo,
+  tableConfig,
+  wrapCellContents
+} from "./../../utilities/datatables-utilities";
+import { formatDate } from "./../../utilities/date-utilities";
 
-// Column look-ups for quick referencing
-const COLUMNS = (() => {
-  const columns = {};
-  $('thead th').each((index, elm) => {
-    const data = $(elm).data('data').toUpperCase();
-    columns[data] = index;
-  });
-  return columns;
-})();
+/*
+Get the table headers and create a look up table for them.
+This give the row name in snake case and its index.
+ */
+const COLUMNS = generateColumnOrderInfo();
 
 /**
  * Download table in specified format.
  * @param {string} format format of downloaded doc.
  */
-function downloadItem({format = 'xlsx'}) {
+function downloadItem({ format = "xlsx" }) {
   const url = `${window.PAGE.urls.export}&dtf=${format}`;
-  const anchor = document.createElement('a');
-  anchor.style.display = 'none';
+  const anchor = document.createElement("a");
+  anchor.style.display = "none";
   anchor.href = url;
   anchor.click();
 }
 
-if (typeof window.PAGE === 'object') {
-  $('#projects').DataTable({
-    // Table layout
-    // Buttons / Filter
-    // Table
-    // Length / Paging / Info
-    dom: `
-<".row"
-  <".col-md-8.buttons"B><".col-md-4"f>>
-rt
-<".row"<".col-md-3"l><".col-md-6"p><".col-md-3"i>>`,
-    // Set up the export buttons.
-    // These are loaded through the PAGE object.
-    buttons: [
-      {
-        extend: 'collection',
-        text() {
-          return document.querySelector('#export-btn-text').innerHTML;
-        },
-        // The buttons are loaded onto the PAGE variable.
-        buttons: window.PAGE.buttons.map(button => ({
-          text: button.name,
-          action() {
-            downloadItem({format: button.format});
-          }
-        }))
-      }
-    ],
-    processing: true,
-    serverSide: true,
-    ajax: window.PAGE.urls.projects,
-    order: [[COLUMNS.MODIFIEDDATE, "desc"]],
-    columnDefs: [
-      {
-        targets: [COLUMNS.NAME],
-        render: function(data, type, full) {
-          return `
-<a class="btn btn-link" href="${window.PAGE.urls.project}${full.id}">${data}</a>
-`;
-        }
+const config = Object.assign(tableConfig, {
+  ajax: window.PAGE.urls.projects,
+  // These are loaded through the PAGE object.
+  buttons: [
+    {
+      extend: "collection",
+      className: "btn-sm",
+      text() {
+        return document.querySelector("#export-btn-text").innerHTML;
       },
-      {
-        targets: [COLUMNS.CREATEDDATE, COLUMNS.MODIFIEDDATE],
-        render: function(data) {
-          // Format the time (using timeago.js) to get the amount of time
-          // since the event occurred.
-          const date = moment(data);
-          return `
-<time data-toggle="tooltip" data-placement="top" 
-      title="${date.toISOString()}">${$.timeago(date.toISOString())}</time>
-`;
+      // The buttons are loaded onto the PAGE variable.
+      // These are for exporting the table to either
+      // csv or excel.
+      buttons: window.PAGE.buttons.map(button => ({
+        text: button.name,
+        action() {
+          downloadItem({ format: button.format });
         }
-      }
-    ],
-    createdRow: function(row) {
-      const $row = $(row);
-      $row.tooltip({selector: '[data-toggle="tooltip"]'});
+      }))
     }
-  });
-}
+  ],
+  order: [[COLUMNS.MODIFIED_DATE, "desc"]],
+  columnDefs: [
+    {
+      targets: [COLUMNS.NAME],
+      render(data, type, full) {
+        // Render the name as a link to the actual project.
+        return createItemLink({
+          url: `${window.PAGE.urls.project}${full.id}`,
+          label: data,
+          width: "200px"
+        });
+      }
+    },
+    {
+      targets: COLUMNS.ORGANISM,
+      render(data) {
+        return wrapCellContents({ text: data });
+      }
+    },
+    // Format all dates to standate date for the systme.
+    {
+      targets: [COLUMNS.CREATED_DATE, COLUMNS.MODIFIED_DATE],
+      render(data) {
+        const date = formatDate({ date: data });
+        return `<time>${date}</time>`;
+      }
+    }
+  ]
+});
+
+$("#projects").DataTable(config);
