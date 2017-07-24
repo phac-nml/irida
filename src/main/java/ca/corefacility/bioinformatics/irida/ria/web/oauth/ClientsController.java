@@ -58,11 +58,6 @@ public class ClientsController extends BaseController {
 	private final IridaClientDetailsService clientDetailsService;
 	private final MessageSource messageSource;
 
-	private final String SORT_BY_ID = "id";
-	private final List<String> SORT_COLUMNS = Lists.newArrayList(SORT_BY_ID, "clientId", "authorizedGrantTypes",
-			"createdDate");
-	private static final String SORT_ASCENDING = "asc";
-
 	private final List<String> AVAILABLE_GRANTS = Lists.newArrayList("password", "authorization_code");
 
 	private final List<Integer> AVAILABLE_TOKEN_VALIDITY = Lists.newArrayList(
@@ -258,7 +253,7 @@ public class ClientsController extends BaseController {
 		readClient.setAutoApprovableScopes(autoScopes);
 		
 		if (!Strings.isNullOrEmpty(new_secret)) {
-			String clientSecret = generateClientSecret();;
+			String clientSecret = generateClientSecret();
 			readClient.setClientSecret(clientSecret);
 		}
 		
@@ -369,7 +364,7 @@ public class ClientsController extends BaseController {
 		
 		
 
-		String responsePage = null;
+		String responsePage;
 		try {
 			IridaClientDetails create = clientDetailsService.create(client);
 			responsePage = "redirect:/clients/" + create.getId();
@@ -444,7 +439,7 @@ public class ClientsController extends BaseController {
 
 		// 4. Create 5 random.
 		int c = 'A';
-		int rand = 0;
+		int rand;
 		for (int i = 0; i < RANDOM_LENGTH; i++) {
 			rand = random.nextInt(3);
 			switch (rand) {
