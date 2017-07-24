@@ -50,11 +50,11 @@
     <sample id="5" createdDate="2013-07-18 14:20:19.0" description="description5"
              sampleName="sample5" />
 
-    <project_sample id="1" project_id="1" sample_id="1" createdDate="2013-07-10 14:20:19.0" />
-    <project_sample id="2" project_id="1" sample_id="2" createdDate="2013-07-12 14:20:19.0" />
-    <project_sample id="3" project_id="1" sample_id="3" createdDate="2013-07-14 14:20:19.0" />
-    <project_sample id="4" project_id="1" sample_id="4" createdDate="2013-07-16 14:20:19.0" />
-    <project_sample id="5" project_id="1" sample_id="5" createdDate="2013-07-18 14:20:19.0" />
+    <project_sample id="1" project_id="1" sample_id="1" createdDate="2013-07-10 14:20:19.0" owner="true" />
+    <project_sample id="2" project_id="1" sample_id="2" createdDate="2013-07-12 14:20:19.0" owner="true" />
+    <project_sample id="3" project_id="1" sample_id="3" createdDate="2013-07-14 14:20:19.0" owner="true" />
+    <project_sample id="4" project_id="1" sample_id="4" createdDate="2013-07-16 14:20:19.0" owner="true" />
+    <project_sample id="5" project_id="1" sample_id="5" createdDate="2013-07-18 14:20:19.0" owner="true" />
 
 	<overrepresented_sequence id="1" createdDate='2014-07-30 08:24:36' overrepresentedSequenceCount='1' percentage="25.00" possibleSource="No Hit" sequence='CTTCTAAATCACGCTGATGCAAAGAACTGATAAAACAATTGTGATTTTCT'/>
 	<overrepresented_sequence id="2" createdDate='2014-07-30 08:24:36' overrepresentedSequenceCount='1' percentage="25.00" possibleSource="No Hit" sequence='CTTCTAAATCACGCTGATGCAAAGAACTGATAAAACAATTGTGATTTTCT'/>

@@ -58,7 +58,7 @@ public class ProjectEventHandlerTest {
 		Class<? extends ProjectEvent> clazz = SampleAddedProjectEvent.class;
 		Project project = new Project();
 		Sample sample = new Sample();
-		ProjectSampleJoin returnValue = new ProjectSampleJoin(project, sample);
+		ProjectSampleJoin returnValue = new ProjectSampleJoin(project, sample, true);
 		Object[] args = { project, sample };
 		MethodEvent methodEvent = new MethodEvent(clazz, returnValue, args);
 
@@ -126,7 +126,7 @@ public class ProjectEventHandlerTest {
 		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(sample, seqObj);
 
 		when(psjRepository.getProjectForSample(sample)).thenReturn(
-				Lists.newArrayList(new ProjectSampleJoin(project, sample)));
+				Lists.newArrayList(new ProjectSampleJoin(project, sample, true)));
 
 		when(eventRepository.save(any(ProjectEvent.class))).thenReturn(
 				new DataAddedToSampleProjectEvent(project, sample));
@@ -158,7 +158,7 @@ public class ProjectEventHandlerTest {
 		SampleSequencingObjectJoin join2 = new SampleSequencingObjectJoin(sample, seqObj2);
 
 		when(psjRepository.getProjectForSample(sample)).thenReturn(
-				Lists.newArrayList(new ProjectSampleJoin(project, sample)));
+				Lists.newArrayList(new ProjectSampleJoin(project, sample, true)));
 
 		when(eventRepository.save(any(ProjectEvent.class))).thenReturn(
 				new DataAddedToSampleProjectEvent(project, sample));
@@ -189,7 +189,7 @@ public class ProjectEventHandlerTest {
 		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(sample, seqObj);
 
 		when(psjRepository.getProjectForSample(sample)).thenReturn(
-				Lists.newArrayList(new ProjectSampleJoin(project, sample), new ProjectSampleJoin(project2, sample)));
+				Lists.newArrayList(new ProjectSampleJoin(project, sample, true), new ProjectSampleJoin(project2, sample, true)));
 
 		when(eventRepository.save(any(ProjectEvent.class))).thenReturn(
 				new DataAddedToSampleProjectEvent(project, sample));
