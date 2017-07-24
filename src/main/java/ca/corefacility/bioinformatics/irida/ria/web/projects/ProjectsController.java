@@ -626,21 +626,22 @@ public class ProjectsController {
 	private void writeProjectsToCsvFile(List<String> headers, List<DTProject> projects, Locale locale,
 			HttpServletResponse response) throws IOException {
 		PrintWriter writer = response.getWriter();
-		CSVPrinter printer = new CSVPrinter(writer, CSVFormat.DEFAULT.withRecordSeparator(System.lineSeparator()));
-		printer.printRecord(headers);
+		try(CSVPrinter printer = new CSVPrinter(writer, CSVFormat.DEFAULT.withRecordSeparator(System.lineSeparator()))) {
+			printer.printRecord(headers);
 
-		DateFormat dateFormat = new SimpleDateFormat(messageSource.getMessage("locale.date.long", null, locale));
-		for (DTProject p : projects) {
-			List<String> record = new ArrayList<>();
-			record.add(String.valueOf(p.getId()));
-			record.add(p.getName());
-			record.add(p.getOrganism());
-			record.add(String.valueOf(p.getSamples()));
-			record.add(dateFormat.format(p.getCreatedDate()));
-			record.add(dateFormat.format(p.getModifiedDate()));
-			printer.printRecord(record);
+			DateFormat dateFormat = new SimpleDateFormat(messageSource.getMessage("locale.date.long", null, locale));
+			for (DTProject p : projects) {
+				List<String> record = new ArrayList<>();
+				record.add(String.valueOf(p.getId()));
+				record.add(p.getName());
+				record.add(p.getOrganism());
+				record.add(String.valueOf(p.getSamples()));
+				record.add(dateFormat.format(p.getCreatedDate()));
+				record.add(dateFormat.format(p.getModifiedDate()));
+				printer.printRecord(record);
+			}
+			printer.flush();
 		}
-		printer.flush();
 	}
 
 	/**
