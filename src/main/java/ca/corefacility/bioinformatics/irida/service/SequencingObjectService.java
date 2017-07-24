@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
@@ -100,4 +101,19 @@ public interface SequencingObjectService extends CRUDService<Long, SequencingObj
 	 * @return the updated {@link SequencingObject}
 	 */
 	public SequencingObject updateRemoteStatus(Long id, RemoteStatus remoteStatus);
+	
+	/**
+	 * Concatenate a collection of {@link SequencingObject}s and save back to a
+	 * {@link Sample}
+	 * 
+	 * @param toJoin
+	 *            the {@link SequencingObject}s to concatenate
+	 * @param targetSample
+	 *            the {@link Sample} to save to
+	 * @return the new {@link SampleSequencingObjectJoin}
+	 * @throws ConcatenateException
+	 *             if there was an error concatenating the sequences
+	 */
+	public SampleSequencingObjectJoin concatenateSequences(Set<SequencingObject> toJoin, Sample targetSample)
+			throws ConcatenateException;
 }

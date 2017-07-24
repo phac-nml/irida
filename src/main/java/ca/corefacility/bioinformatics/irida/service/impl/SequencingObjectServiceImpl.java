@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.events.annotations.LaunchesProjectEvent;
+import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -34,6 +35,8 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
+import ca.corefacility.bioinformatics.irida.processing.concatenate.SequencingObjectConcatenator;
+import ca.corefacility.bioinformatics.irida.processing.concatenate.SequencingObjectConcatenatorFactory;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
@@ -212,6 +215,9 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 		return super.exists(id);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadSequencingObject')")
 	public SequencingObject updateRemoteStatus(Long id, RemoteStatus remoteStatus)
@@ -220,4 +226,20 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 		return super.updateFields(id, ImmutableMap.of("remoteStatus", remoteStatus));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasPermission(#toJoin, 'canReadSequencingObject') and hasPermission(#targetSample, 'canUpdateSample')")
+	@Transactional
+	public SampleSequencingObjectJoin concatenateSequences(Set<SequencingObject> toJoin, Sample targetSample)
+			throws ConcatenateException {
+
+		SequencingObjectConcatenator<? extends SequencingObject> concatenator = SequencingObjectConcatenatorFactory
+				.getConcatenator(toJoin.iterator().next().getClass());
+
+		SequencingObject concatenated = concatenator.concatenateFiles(toJoin);
+
+		return createSequencingObjectInSample(concatenated, targetSample);
+	}
 }
