@@ -112,9 +112,9 @@
     <analysis_submission id="3" analysis_state="ERROR" created_date="2013-10-06 10:01:02"
                          name="My Submitted Submission" workflow_id="b7c8b437-3c41-485e-92e5-72b67e37959f" submitter="4" analysis_cleaned_state="NOT_CLEANED"/>
 	
-	<analysis_submission_sequence_file_pair analysis_submission_id="1" sequence_file_pair_id="1" />
-	<analysis_submission_sequence_file_pair analysis_submission_id="2" sequence_file_pair_id="1" />
-	<analysis_submission_sequence_file_pair analysis_submission_id="3" sequence_file_pair_id="1" />
+	<analysis_submission_sequencing_object analysis_submission_id="1" sequencing_object_id="1" />
+	<analysis_submission_sequencing_object analysis_submission_id="2" sequencing_object_id="1" />
+	<analysis_submission_sequencing_object analysis_submission_id="3" sequencing_object_id="1" />
 		
 	<project_analysis_submission id="1" project_id="1" analysis_submission_id="1" created_date="2013-07-18 14:20:19.0"/>
 	<project_analysis_submission id="2" project_id="1" analysis_submission_id="2" created_date="2013-07-18 14:20:19.0"/>
