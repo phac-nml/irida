@@ -577,6 +577,12 @@ public class ProjectsController {
 	public void exportProjectsToFile(@RequestParam(value = "dtf") String type,
 			@RequestParam(required = false, defaultValue = "false", value = "admin") Boolean isAdmin,
 			HttpServletResponse response, Principal principal, Locale locale) throws IOException {
+		// Let's make sure the export type is set properly
+		if (!(type.equalsIgnoreCase("xlsx") || type.equalsIgnoreCase("csv"))) {
+			throw new IllegalArgumentException(
+					"No file type sent for downloading all projects.  Expecting parameter 'dtf=' xlsx or csv");
+		}
+
 		List<Project> projects;
 		// If viewing the admin projects page give the user all the projects.
 		if (isAdmin) {
@@ -603,10 +609,8 @@ public class ProjectsController {
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "." + type + "\"");
 		if (type.equals("xlsx")) {
 			writeProjectsToExcelFile(headers, dtProjects, locale, response);
-		} else if (type.equals("csv")) {
-			writeProjectsToCsvFile(headers, dtProjects, locale, response);
 		} else {
-			throw new IllegalArgumentException("No file type sent for downloading all projects.  Expecting parameter 'dtf=' xlsx or csv");
+			writeProjectsToCsvFile(headers, dtProjects, locale, response);
 		}
 	}
 
