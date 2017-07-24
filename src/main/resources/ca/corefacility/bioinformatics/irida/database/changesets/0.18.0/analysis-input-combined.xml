@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="analysis-input-combined" author="tom">
+
+		<createTable tableName="analysis_submission_sequencing_object">
+			<column name="analysis_submission_id" type="bigint(20)">
+				<constraints referencedTableName="analysis_submission"
+					referencedColumnNames="id" foreignKeyName="FK_ANALYSIS_SUBMISSION_SEQOBJECT"
+					nullable="false" />
+			</column>
+
+			<column name="sequencing_object_id" type="bigint(20)">
+				<constraints referencedTableName="sequencing_object"
+					referencedColumnNames="id" foreignKeyName="FK_SEQOBJECT_ANALYSIS_SUBMISSION"
+					nullable="false" />
+			</column>
+		</createTable>
+
+		<createTable tableName="analysis_submission_sequencing_object_AUD">
+			<column name="analysis_submission_id" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+
+			<column name="sequencing_object_id" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" referencedColumnNames="id"
+					referencedTableName="Revisions" foreignKeyName="FK_ANALYSIS_SEQOBJECT_AUD" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+		</createTable>
+
+		<sql>
+			INSERT INTO analysis_submission_sequencing_object
+			(analysis_submission_id,
+			sequencing_object_id) SELECT
+			analysis_submission_id,
+			sequence_file_pair_id FROM
+			analysis_submission_sequence_file_pair;
+
+			INSERT INTO
+			analysis_submission_sequencing_object (analysis_submission_id,
+			sequencing_object_id) SELECT analysis_submission_id,
+			sequencing_object_id FROM
+			analysis_submission_sequence_file_single_end;
+
+			INSERT INTO
+			analysis_submission_sequencing_object_AUD (REV, REVTYPE,
+			analysis_submission_id, sequencing_object_id) SELECT REV, REVTYPE,
+			analysis_submission_id, sequence_file_pair_id FROM
+			analysis_submission_sequence_file_pair_AUD;
+
+			INSERT INTO
+			analysis_submission_sequencing_object_AUD (REV, REVTYPE,
+			analysis_submission_id, sequencing_object_id) SELECT REV, REVTYPE,
+			analysis_submission_id, sequencing_object_id FROM
+			analysis_submission_sequence_file_single_end_AUD;
+		</sql>
+
+		<dropTable tableName="analysis_submission_sequence_file_pair" />
+		<dropTable tableName="analysis_submission_sequence_file_single_end" />
+
+		<dropTable tableName="analysis_submission_sequence_file_pair_AUD" />
+		<dropTable tableName="analysis_submission_sequence_file_single_end_AUD" />
+	</changeSet>
+</databaseChangeLog>

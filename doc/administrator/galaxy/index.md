@@ -67,12 +67,11 @@ The overall architecture of IRIDA and Galaxy is as follows:
 [irida-galaxy.jpg]: images/irida-galaxy.jpg
 [Galaxy API]: https://wiki.galaxyproject.org/Learn/API
 [Galaxy]: https://wiki.galaxyproject.org/FrontPage
-[integration-galaxy]: existing-galaxy
-[setup-new-galaxy]: setup
+[integration-galaxy]: existing-galaxy/
+[setup-new-galaxy]: setup/
 [Galaxy Toolsheds]: https://wiki.galaxyproject.org/ToolShed
 [IRIDA/Galaxy FAQ]: ../faq
 [conda with Galaxy]: https://docs.galaxyproject.org/en/master/admin/conda_faq.html
-[IRIDA Galaxy Architecture]: galaxy-architecture/
 [galaxy-versions]: https://docs.galaxyproject.org/en/master/releases/index.html
 [faq-conda]: ../faq/#installing-conda-dependencies-in-galaxy-versions--v1601
 [irida-conf]: ../web/#core-configuration

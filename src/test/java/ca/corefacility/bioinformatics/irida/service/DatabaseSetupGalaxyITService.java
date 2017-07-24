@@ -148,7 +148,7 @@ public class DatabaseSetupGalaxyITService {
 		ReferenceFile referenceFile = referenceFileRepository.save(new ReferenceFile(referenceFilePath));
 
 		AnalysisSubmission submission = AnalysisSubmission.builder(iridaWorkflowId).name("my analysis")
-				.inputFilesSingleEnd(Sets.newHashSet(sequencingObject)).referenceFile(referenceFile).build();
+				.inputFiles(Sets.newHashSet(sequencingObject)).referenceFile(referenceFile).build();
 
 		submission.setAnalysisState(state);
 
@@ -191,7 +191,7 @@ public class DatabaseSetupGalaxyITService {
 
 		AnalysisSubmission submission = AnalysisSubmission.builder(iridaWorkflowId)
 				.name("paired analysis")
-				.inputFilesPaired(Sets.newHashSet(settledFiles))
+				.inputFiles(Sets.newHashSet(settledFiles))
 				.referenceFile(referenceFile)
 				.build();
 		analysisSubmissionService.create(submission);
@@ -260,7 +260,7 @@ public class DatabaseSetupGalaxyITService {
 		ReferenceFile referenceFile = referenceFileRepository.save(new ReferenceFile(referenceFilePath));
 
 		AnalysisSubmission submission = AnalysisSubmission.builder(iridaWorkflowId).name("paired analysis")
-				.inputFilesPaired(Sets.newHashSet(sequenceFilePairs)).referenceFile(referenceFile)
+				.inputFiles(Sets.newHashSet(sequenceFilePairs)).referenceFile(referenceFile)
 				.inputParameters(parameters).build();
 		submission.setAnalysisState(state);
 
@@ -294,7 +294,7 @@ public class DatabaseSetupGalaxyITService {
 
 		AnalysisSubmission submission = AnalysisSubmission.builder(iridaWorkflowId)
 				.name("paired analysis")
-				.inputFilesPaired(Sets.newHashSet(sequenceFilePairs))
+				.inputFiles(Sets.newHashSet(sequenceFilePairs))
 				.build(); 
 		analysisSubmissionService.create(submission);
 
@@ -314,14 +314,14 @@ public class DatabaseSetupGalaxyITService {
 	 * @return An {@link AnalysisSubmission} which has been saved to the
 	 *         database.
 	 */
-	public AnalysisSubmission setupPairSubmissionInDatabase(Set<SequenceFilePair> sequenceFilePairs,
+	public AnalysisSubmission setupPairSubmissionInDatabase(Set<SequencingObject> sequenceFilePairs,
 			Path referenceFilePath, UUID iridaWorkflowId) {
 
 		ReferenceFile referenceFile = referenceFileRepository.save(new ReferenceFile(referenceFilePath));
 
 		AnalysisSubmission submission = AnalysisSubmission.builder(iridaWorkflowId)
 				.name("paired analysis")
-				.inputFilesPaired(sequenceFilePairs)
+				.inputFiles(sequenceFilePairs)
 				.referenceFile(referenceFile)
 				.build(); 
 		analysisSubmissionService.create(submission);
@@ -344,13 +344,13 @@ public class DatabaseSetupGalaxyITService {
 	 * @return An {@link AnalysisSubmission} which has been saved to the
 	 *         database.
 	 */
-	public AnalysisSubmission setupPairSubmissionInDatabase(Set<SequenceFilePair> sequenceFilePairs,
+	public AnalysisSubmission setupPairSubmissionInDatabase(Set<SequencingObject> sequenceFilePairs,
 			Path referenceFilePath, Map<String, String> parameters, UUID iridaWorkflowId) {
 
 		ReferenceFile referenceFile = referenceFileRepository.save(new ReferenceFile(referenceFilePath));
 
 		AnalysisSubmission submission = AnalysisSubmission.builder(iridaWorkflowId).name("paired analysis")
-				.inputFilesPaired(sequenceFilePairs).referenceFile(referenceFile).inputParameters(parameters).build();
+				.inputFiles(sequenceFilePairs).referenceFile(referenceFile).inputParameters(parameters).build();
 		analysisSubmissionService.create(submission);
 
 		return analysisSubmissionRepository.findOne(submission.getId());
@@ -419,13 +419,15 @@ public class DatabaseSetupGalaxyITService {
 		
 		List<SequenceFilePair> sequenceFilePairs = setupSampleSequenceFileInDatabase(sampleIdPaired,
 				sequenceFilePaths1, sequenceFilePaths2);
+		
+		Set<SequencingObject> inputs = Sets.newHashSet(sequenceFilePairs);
+		inputs.add(singleEndFile);
 
 		ReferenceFile referenceFile = referenceFileRepository.save(new ReferenceFile(referenceFilePath));
 
 		AnalysisSubmission submission = AnalysisSubmission.builder(iridaWorkflowId)
 				.name("paired analysis")
-				.inputFilesSingleEnd(Sets.newHashSet(singleEndFile))
-				.inputFilesPaired(Sets.newHashSet(sequenceFilePairs))
+				.inputFiles(inputs)
 				.referenceFile(referenceFile)
 				.build(); 
 		analysisSubmissionService.create(submission);
@@ -448,13 +450,13 @@ public class DatabaseSetupGalaxyITService {
 	 * @return An AnalysisSubmissionPhylogenomics which has been saved to the
 	 *         database.
 	 */
-	public AnalysisSubmission setupSubmissionInDatabase(long sampleId, Set<SingleEndSequenceFile> sequenceFileSet,
+	public AnalysisSubmission setupSubmissionInDatabase(long sampleId, Set<SequencingObject> sequenceFileSet,
 			Path referenceFilePath, UUID iridaWorkflowId) {
 
 		ReferenceFile referenceFile = referenceFileRepository.save(new ReferenceFile(referenceFilePath));
 
 		AnalysisSubmission submission = AnalysisSubmission.builder(iridaWorkflowId).name("my analysis")
-				.inputFilesSingleEnd(sequenceFileSet).referenceFile(referenceFile).build();
+				.inputFiles(sequenceFileSet).referenceFile(referenceFile).build();
 		analysisSubmissionService.create(submission);
 
 		return analysisSubmissionRepository.findOne(submission.getId());

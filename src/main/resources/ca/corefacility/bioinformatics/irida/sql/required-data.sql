@@ -509,11 +509,11 @@ INSERT INTO `tool_execution_prev_steps` (tool_execution_id, tool_execution_prev_
 INSERT INTO `tool_execution_prev_steps` (tool_execution_id, tool_execution_prev_id) VALUES (6, 8);
 
 -- analysis_output_file
-INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, tool_execution_id) VALUES (1, '2014-08-06 10:01:02', 'Whole Genome Phylogenomics Pipeline', '/tmp/analysis-files/phylogeneticTree.newick', 1);
-INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, tool_execution_id) VALUES (2, '2014-08-06 10:01:02', 'Whole Genome Phylogenomics Pipeline', '/tmp/analysis-files/snpMatrix.tsv', 2);
-INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, tool_execution_id) VALUES (3, '2014-08-06 10:01:02', 'Whole Genome Phylogenomics Pipeline', '/tmp/analysis-files/snpTable.tsv', 3);
-INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, tool_execution_id) VALUES (4, '2014-08-06 10:01:02', 'SISTR Pipeline PASS', '/tmp/analysis-files/sistr-predictions-pass.json', 9);
-INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, tool_execution_id) VALUES (5, '2014-08-06 10:01:02', 'SISTR Pipeline FAIL', '/tmp/analysis-files/sistr-predictions-fail.json', 10);
+INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, tool_execution_id, label_prefix) VALUES (1, '2014-08-06 10:01:02', 'Whole Genome Phylogenomics Pipeline', '/tmp/analysis-files/phylogeneticTree.newick', 1, NULL);
+INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, tool_execution_id, label_prefix) VALUES (2, '2014-08-06 10:01:02', 'Whole Genome Phylogenomics Pipeline', '/tmp/analysis-files/snpMatrix.tsv', 2, NULL);
+INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, tool_execution_id, label_prefix) VALUES (3, '2014-08-06 10:01:02', 'Whole Genome Phylogenomics Pipeline', '/tmp/analysis-files/snpTable.tsv', 3, NULL);
+INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, tool_execution_id, label_prefix) VALUES (4, '2014-08-06 10:01:02', 'SISTR Pipeline PASS', '/tmp/analysis-files/sistr-predictions-pass.json', 9, NULL);
+INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, tool_execution_id, label_prefix) VALUES (5, '2014-08-06 10:01:02', 'SISTR Pipeline FAIL', '/tmp/analysis-files/sistr-predictions-fail.json', 10, NULL);
 
 -- analysis_output_file_map
 INSERT INTO `analysis_output_file_map` (analysis_id, analysisOutputFilesMap_id, analysis_output_file_key) VALUES (13, 1, 'tree');
@@ -657,22 +657,22 @@ INSERT INTO `workflow_named_parameter_values` (named_parameters_id, named_parame
 INSERT INTO `workflow_named_parameter_values` (named_parameters_id, named_parameter_value, named_parameter_name) VALUES (1, '-6', 'minimum-read-coverage');
 
 -- analysis_submission_sequence_file_pair
-INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 11);
-INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 12);
-INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 13);
-INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 14);
-INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 15);
-INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 16);
-INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 17);
-INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 18);
-INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 19);
-INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 20);
-INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 21);
-INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 22);
-INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 23);
-INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 24);
-INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (100 ,1);
-INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (101 ,2);
+INSERT INTO `analysis_submission_sequencing_object` (analysis_submission_id, sequencing_object_id) VALUES (13, 11);
+INSERT INTO `analysis_submission_sequencing_object` (analysis_submission_id, sequencing_object_id) VALUES (13, 12);
+INSERT INTO `analysis_submission_sequencing_object` (analysis_submission_id, sequencing_object_id) VALUES (13, 13);
+INSERT INTO `analysis_submission_sequencing_object` (analysis_submission_id, sequencing_object_id) VALUES (13, 14);
+INSERT INTO `analysis_submission_sequencing_object` (analysis_submission_id, sequencing_object_id) VALUES (13, 15);
+INSERT INTO `analysis_submission_sequencing_object` (analysis_submission_id, sequencing_object_id) VALUES (13, 16);
+INSERT INTO `analysis_submission_sequencing_object` (analysis_submission_id, sequencing_object_id) VALUES (13, 17);
+INSERT INTO `analysis_submission_sequencing_object` (analysis_submission_id, sequencing_object_id) VALUES (13, 18);
+INSERT INTO `analysis_submission_sequencing_object` (analysis_submission_id, sequencing_object_id) VALUES (13, 19);
+INSERT INTO `analysis_submission_sequencing_object` (analysis_submission_id, sequencing_object_id) VALUES (13, 20);
+INSERT INTO `analysis_submission_sequencing_object` (analysis_submission_id, sequencing_object_id) VALUES (13, 21);
+INSERT INTO `analysis_submission_sequencing_object` (analysis_submission_id, sequencing_object_id) VALUES (13, 22);
+INSERT INTO `analysis_submission_sequencing_object` (analysis_submission_id, sequencing_object_id) VALUES (13, 23);
+INSERT INTO `analysis_submission_sequencing_object` (analysis_submission_id, sequencing_object_id) VALUES (13, 24);
+INSERT INTO `analysis_submission_sequencing_object` (analysis_submission_id, sequencing_object_id) VALUES (100 ,1);
+INSERT INTO `analysis_submission_sequencing_object` (analysis_submission_id, sequencing_object_id) VALUES (101 ,2);
 
 INSERT INTO `project_event` (created_date, role, project_id, user_id, sample_id, DTYPE) values (now(), 'PROJECT_OWNER', 1, 2, NULL, 'UserRoleSetProjectEvent');
 INSERT INTO `project_event` (created_date, role, project_id, user_id, sample_id, DTYPE) values (now(), 'PROJECT_USER', 3, 2, NULL, 'UserRoleSetProjectEvent');

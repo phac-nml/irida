@@ -20,6 +20,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import com.google.common.collect.Sets;
+
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
@@ -27,7 +29,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundExce
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
@@ -40,8 +42,6 @@ import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCon
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.CleanupAnalysisSubmissionConditionAge;
-
-import com.google.common.collect.Sets;
 
 /**
  * Tests out scheduling analysis tasks.
@@ -58,7 +58,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	private AnalysisExecutionService analysisExecutionService;
 
 	@Mock
-	private Set<SingleEndSequenceFile> sequenceFiles;
+	private Set<SequencingObject> sequenceFiles;
 
 	@Mock
 	private ReferenceFile referenceFile;
@@ -92,7 +92,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		analysisSubmission = AnalysisSubmission.builder(workflowId)
 				.name("my analysis")
-				.inputFilesSingleEnd(sequenceFiles)
+				.inputFiles(sequenceFiles)
 				.referenceFile(referenceFile)
 				.build();
 		analysisSubmission.setId(INTERNAL_ID);

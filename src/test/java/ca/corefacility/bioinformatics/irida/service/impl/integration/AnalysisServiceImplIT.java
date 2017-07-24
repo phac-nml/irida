@@ -67,9 +67,9 @@ public class AnalysisServiceImplIT {
 		ToolExecution toolExecutionTable = new ToolExecution(null, "ls", "1.0", "executionManagerId", params, "/bin/ls -lrth");
 		ToolExecution toolExecutionMatrix = new ToolExecution(null, "ls", "1.0", "executionManagerId", params, "/bin/ls -lrth");
 
-		AnalysisOutputFile tree = new AnalysisOutputFile(treePath, "internal-galaxy-tree-identifier", toolExecutionTree);
-		AnalysisOutputFile table = new AnalysisOutputFile(tablePath, "internal-galaxy-table-identifier", toolExecutionTable);
-		AnalysisOutputFile matrix = new AnalysisOutputFile(matrixPath, "internal-galaxy-matrix-identifier", toolExecutionMatrix);
+		AnalysisOutputFile tree = new AnalysisOutputFile(treePath, "internal-galaxy-tree-identifier", "", toolExecutionTree);
+		AnalysisOutputFile table = new AnalysisOutputFile(tablePath, "internal-galaxy-table-identifier", "", toolExecutionTable);
+		AnalysisOutputFile matrix = new AnalysisOutputFile(matrixPath, "internal-galaxy-matrix-identifier", "", toolExecutionMatrix);
 		Map<String, AnalysisOutputFile> analysisOutputFiles = new ImmutableMap.Builder<String, AnalysisOutputFile>()
 				.put("tree", tree).put("matrix", matrix).put("table", table).build();
 		AnalysisPhylogenomicsPipeline pipeline = new AnalysisPhylogenomicsPipeline(EXECUTION_MANAGER_ID,

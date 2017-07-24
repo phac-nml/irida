@@ -68,7 +68,7 @@ public class FileUtilities {
 				// 1) Build a folder/file name
 				fileName = formatName(fileName);
 				StringBuilder zipEntryName = new StringBuilder(fileName);
-				zipEntryName.append("/").append(file.getFile().getFileName().toString());
+				zipEntryName.append("/").append(file.getLabel());
 
 				// 2) Tell the zip stream that we are starting a new entry in
 				// the archive.
