@@ -10,7 +10,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
 
 /**
- * DataTables response object for ProjectSamples Table.
+ * DataTables response object for {@link ProjectSampleJoin}
  */
 public class DTProjectSamples implements DataTablesResponseModel {
 	private Long id;

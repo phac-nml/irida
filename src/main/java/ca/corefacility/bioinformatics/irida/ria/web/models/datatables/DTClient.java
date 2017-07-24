@@ -7,6 +7,9 @@ import org.springframework.util.StringUtils;
 import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
 
+/**
+ * DataTables response object for a @{link IridaClientDetails}
+ */
 public class DTClient implements DataTablesResponseModel {
 	private Long id;
 	private String clientId;

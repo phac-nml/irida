@@ -5,6 +5,9 @@ import java.util.Date;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
 
+/**
+ * User interface model for DataTables for {@link Project}
+ */
 public class DTProject implements DataTablesResponseModel {
 	private Long id;
 	private String name;
