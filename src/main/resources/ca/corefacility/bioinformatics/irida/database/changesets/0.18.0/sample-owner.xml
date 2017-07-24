@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="sample-owner" author="tom">
+		<addColumn tableName="project_sample">
+			<column name="owner" type="bit(1)" defaultValue="1">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+
+		<addColumn tableName="project_sample_AUD">
+			<column name="owner" type="bit(1)" defaultValue="1" />
+		</addColumn>
+
+	</changeSet>
+</databaseChangeLog>

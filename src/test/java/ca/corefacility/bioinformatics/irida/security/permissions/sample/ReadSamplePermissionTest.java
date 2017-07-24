@@ -61,7 +61,7 @@ public class ReadSamplePermissionTest {
 		List<Join<Project, User>> projectUsers = new ArrayList<>();
 		projectUsers.add(new ProjectUserJoin(p, u,ProjectRole.PROJECT_USER));
 		List<Join<Project, Sample>> projectSampleList = new ArrayList<>();
-		projectSampleList.add(new ProjectSampleJoin(p, s));
+		projectSampleList.add(new ProjectSampleJoin(p, s, true));
 
 		when(psjRepository.getProjectForSample(s)).thenReturn(projectSampleList);
 		when(sampleRepository.findOne(1L)).thenReturn(s);
@@ -86,7 +86,7 @@ public class ReadSamplePermissionTest {
 		List<Join<Project, User>> projectUsers = new ArrayList<>();
 		projectUsers.add(new ProjectUserJoin(p, u,ProjectRole.PROJECT_USER));
 		List<Join<Project, Sample>> projectSampleList = new ArrayList<>();
-		projectSampleList.add(new ProjectSampleJoin(p, s));
+		projectSampleList.add(new ProjectSampleJoin(p, s, true));
 
 		when(psjRepository.getProjectForSample(s)).thenReturn(projectSampleList);
 		when(sampleRepository.findOne(1L)).thenReturn(s);
@@ -109,7 +109,7 @@ public class ReadSamplePermissionTest {
 		Project p = new Project();
 		Sample s = new Sample();
 		List<Join<Project, Sample>> projectSampleList = new ArrayList<>();
-		projectSampleList.add(new ProjectSampleJoin(p, s));
+		projectSampleList.add(new ProjectSampleJoin(p, s, true));
 		List<Join<Project, User>> projectUsers = new ArrayList<>();
 		projectUsers.add(new ProjectUserJoin(p, new User(),ProjectRole.PROJECT_USER));
 

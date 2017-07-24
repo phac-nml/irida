@@ -98,6 +98,19 @@ table.selectable tbody tr.selected td {
   }
 }
 
+.locked-sample {
+  a.sample-label {
+    position: relative;
+    &:after {
+      font-family: FontAwesome;
+      content: "\f023";
+      color: #000000;
+      position: absolute;
+      left: -20px;
+    }
+  }
+}
+
 // Prevents table from overflowing the panel box that wraps it.
 //.dataTables_wrapper {
 //  .panel {

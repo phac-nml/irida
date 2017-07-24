@@ -5,7 +5,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.Principal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -37,6 +45,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.github.dandelion.datatables.core.ajax.DataSet;
+import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
+import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
+import com.github.dandelion.datatables.core.export.ExportUtils;
+import com.github.dandelion.datatables.core.export.ReservedFormat;
+import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -54,14 +71,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-
-import com.github.dandelion.datatables.core.ajax.DataSet;
-import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
-import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
-import com.github.dandelion.datatables.core.export.ExportUtils;
-import com.github.dandelion.datatables.core.export.ReservedFormat;
-import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
-import com.google.common.base.Strings;
 
 @Controller
 public class ProjectSamplesController {
@@ -229,10 +238,25 @@ public class ProjectSamplesController {
 	 *
 	 * @return
 	 */
-	@RequestMapping(value = "/projects/templates/merge-modal", produces = MediaType.TEXT_HTML_VALUE)
-	public String getMergeSamplesInProjectModal(@RequestParam(name = "sampleIds[]") List<Long> ids, Model model) {
-		List<Sample> samples = (List<Sample>) sampleService.readMultiple(ids);
+	@RequestMapping(value = "/projects/{projectId}/templates/merge-modal", produces = MediaType.TEXT_HTML_VALUE)
+	public String getMergeSamplesInProjectModal(@PathVariable Long projectId, @RequestParam(name = "sampleIds[]") List<Long> ids, Model model) {
+		Project project = projectService.read(projectId);
+		List<Sample> samples = new ArrayList<>();
+		List<Sample> locked = new ArrayList<>();
+
+		//check for locked samples
+		ids.stream().forEach(i -> {
+			ProjectSampleJoin join = sampleService.getSampleForProject(project, i);
+			samples.add(join.getObject());
+
+			if (!join.isOwner()) {
+				locked.add(join.getObject());
+			}
+		});
+
 		model.addAttribute("samples", samples);
+		model.addAttribute("locked", locked);
+
 		return PROJECT_TEMPLATE_DIR + "merge-modal.tmpl";
 	}
 
@@ -249,7 +273,7 @@ public class ProjectSamplesController {
 	@RequestMapping(value = "/projects/templates/copy-modal", produces = MediaType.TEXT_HTML_VALUE)
 	public String getCopySamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, @RequestParam Long projectId,
 			Model model) {
-		model.addAllAttributes(generateCopyMoveSamplesContent(ids));
+		model.addAllAttributes(generateCopyMoveSamplesContent(projectId, ids));
 		model.addAttribute("projectId", projectId);
 		return PROJECT_TEMPLATE_DIR + "copy-modal.tmpl";
 	}
@@ -293,7 +317,7 @@ public class ProjectSamplesController {
 	 * Create a modal dialog to move samples to another project.
 	 *
 	 * @param ids
-	 * 		{@link List} List of {@link Long} identifiers for {@link Sample} to merge.
+	 * 		{@link List} List of {@link Long} identifiers for {@link Sample} to move.
 	 * @param model
 	 * 		{@link Model}
 	 *
@@ -302,7 +326,7 @@ public class ProjectSamplesController {
 	@RequestMapping(value = "/projects/templates/move-modal", produces = MediaType.TEXT_HTML_VALUE)
 	public String getMoveSamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, @RequestParam Long projectId,
 			Model model) {
-		model.addAllAttributes(generateCopyMoveSamplesContent(ids));
+		model.addAllAttributes(generateCopyMoveSamplesContent(projectId, ids));
 		model.addAttribute("projectId", projectId);
 		return PROJECT_TEMPLATE_DIR + "move-modal.tmpl";
 	}
@@ -315,10 +339,20 @@ public class ProjectSamplesController {
 	 *
 	 * @return
 	 */
-	public Map<String, List<Sample>> generateCopyMoveSamplesContent(List<Long> ids) {
+	private Map<String, List<Sample>> generateCopyMoveSamplesContent(Long projectId, List<Long> ids) {
 		Map<String, List<Sample>> model = new HashMap<>();
-		List<Sample> samples = (List<Sample>) sampleService.readMultiple(ids);
+		Project project = projectService.read(projectId);
+		List<Sample> samples = new ArrayList<>();
 		List<Sample> extraSamples = new ArrayList<>();
+		List<Sample> lockedSamples = new ArrayList<>();
+
+		ids.stream().map(i -> sampleService.getSampleForProject(project, i)).forEach(j -> {
+			samples.add(j.getObject());
+
+			if (!j.isOwner()) {
+				lockedSamples.add(j.getObject());
+			}
+		});
 
 		// Only initially need to display the first 10 samples.
 		int end = samples.size();
@@ -329,6 +363,7 @@ public class ProjectSamplesController {
 
 		model.put("samples", samples.subList(0, end));
 		model.put("extraSamples", extraSamples);
+		model.put("lockedSamples", lockedSamples);
 		return model;
 	}
 
@@ -544,15 +579,18 @@ public class ProjectSamplesController {
 	 * Copy or move samples from one project to another
 	 *
 	 * @param projectId
-	 * 		The original project id
+	 *            The original project id
 	 * @param sampleIds
-	 * 		the sample identifiers to copy
+	 *            the sample identifiers to copy
 	 * @param newProjectId
-	 * 		The new project id
+	 *            The new project id
 	 * @param remove
-	 * 		true/false whether to remove the samples from the original project
+	 *            true/false whether to remove the samples from the original
+	 *            project
+	 * @param giveOwner
+	 *            whether to give ownership of the sample to the new project
 	 * @param locale
-	 * 		the locale specified by the browser.
+	 *            the locale specified by the browser.
 	 *
 	 * @return A list of warnings
 	 */
@@ -560,33 +598,28 @@ public class ProjectSamplesController {
 	@ResponseBody
 	public Map<String, Object> copySampleToProject(@PathVariable Long projectId,
 			@RequestParam(value = "sampleIds[]") List<Long> sampleIds, @RequestParam Long newProjectId,
-			@RequestParam(required = false) boolean remove, Locale locale) {
+			@RequestParam(required = false) boolean remove,
+			@RequestParam(required = false, defaultValue = "false") boolean giveOwner, Locale locale) {
 		Project originalProject = projectService.read(projectId);
 		Project newProject = projectService.read(newProjectId);
 
 		Map<String, Object> response = new HashMap<>();
 		List<String> warnings = new ArrayList<>();
-		List<Sample> successful = new ArrayList<>();
 
-		for (Long sampleId : sampleIds) {
-			Sample sample = sampleService.read(sampleId);
-			try {
+		Iterable<Sample> samples = sampleService.readMultiple(sampleIds);
 
-				if (remove) {
-					projectService.moveSampleBetweenProjects(originalProject, newProject, sample);
-				} else {
-					projectService.addSampleToProject(newProject, sample);
-				}
+		List<ProjectSampleJoin> successful = new ArrayList<>();
+		try {
 
-				logger.trace("Copied sample " + sampleId + " to project " + newProjectId);
-				successful.add(sample);
-			} catch (EntityExistsException ex) {
-				logger.warn("Attempted to add sample " + sampleId + " to project " + newProjectId
-						+ " where it already exists.");
-				String msg = remove ? "project.samples.move.sample-exists" : "project.samples.copy.sample-exists";
-				warnings.add(messageSource.getMessage(msg,
-						new Object[] { sample.getSampleName(), newProject.getName() }, locale));
-			}
+			successful = projectService.copyOrMoveSamples(originalProject, newProject, Lists.newArrayList(samples),
+					remove, giveOwner);
+
+		} catch (EntityExistsException ex) {
+			logger.warn("Attempted to add sample " + ex.getFieldName() + " to project " + newProjectId
+					+ " where it already exists.");
+			String msg = remove ? "project.samples.move.sample-exists" : "project.samples.copy.sample-exists";
+			warnings.add(
+					messageSource.getMessage(msg, new Object[] { ex.getFieldName(), newProject.getName() }, locale));
 		}
 
 		if (!warnings.isEmpty() || successful.size() == 0) {
@@ -599,30 +632,22 @@ public class ProjectSamplesController {
 		// 2. Only one sample moved
 		if (successful.size() == 1) {
 			if (remove) {
-				response.put(
-						"message",
-						messageSource.getMessage("project.samples.move-single-success-message", new Object[] {
-								successful.get(0).getSampleName(), newProject.getName() }, locale));
+				response.put("message", messageSource.getMessage("project.samples.move-single-success-message",
+						new Object[] { successful.get(0).getObject().getSampleName(), newProject.getName() }, locale));
 			} else {
-				response.put(
-						"message",
-						messageSource.getMessage("project.samples.copy-single-success-message", new Object[] {
-								successful.get(0).getSampleName(), newProject.getName() }, locale));
+				response.put("message", messageSource.getMessage("project.samples.copy-single-success-message",
+						new Object[] { successful.get(0).getObject().getSampleName(), newProject.getName() }, locale));
 			}
 		}
 		// 3. Multiple samples copied
 		// 4. Multiple samples moved
 		else if (successful.size() > 1) {
 			if (remove) {
-				response.put(
-						"message",
-						messageSource.getMessage("project.samples.move-multiple-success-message", new Object[] {
-								successful.size(), newProject.getName() }, locale));
+				response.put("message", messageSource.getMessage("project.samples.move-multiple-success-message",
+						new Object[] { successful.size(), newProject.getName() }, locale));
 			} else {
-				response.put(
-						"message",
-						messageSource.getMessage("project.samples.copy-multiple-success-message", new Object[] {
-								successful.size(), newProject.getName() }, locale));
+				response.put("message", messageSource.getMessage("project.samples.copy-multiple-success-message",
+						new Object[] { successful.size(), newProject.getName() }, locale));
 			}
 		}
 
@@ -717,11 +742,7 @@ public class ProjectSamplesController {
 		}
 
 		// Create an update map
-		Sample[] mergeSamples = new Sample[sampleIds.size()];
-		int count = 0;
-		for (Long sampleId : sampleIds) {
-			mergeSamples[count++] = sampleService.read(sampleId);
-		}
+		List<Sample> mergeSamples = sampleIds.stream().map(sampleService::read).collect(Collectors.toList());
 
 		// Merge the samples
 		sampleService.mergeSamples(project, mergeIntoSample, mergeSamples);
@@ -894,7 +915,7 @@ public class ProjectSamplesController {
 		// try to add the sample to the project
 		Join<Project, Sample> addSampleToProject = null;
 		try {
-			addSampleToProject = projectService.addSampleToProject(project, sample);
+			addSampleToProject = projectService.addSampleToProject(project, sample, true);
 			Long sampleId = addSampleToProject.getObject().getId();
 			responseBody.put("sampleId", sampleId);
 			response.setStatus(HttpStatus.CREATED.value());
