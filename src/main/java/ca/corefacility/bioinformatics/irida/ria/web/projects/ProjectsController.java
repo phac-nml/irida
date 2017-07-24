@@ -605,6 +605,8 @@ public class ProjectsController {
 			writeProjectsToExcelFile(headers, dtProjects, locale, response);
 		} else if (type.equals("csv")) {
 			writeProjectsToCsvFile(headers, dtProjects, locale, response);
+		} else {
+			throw new IllegalArgumentException("No file type sent for downloading all projects.  Expecting parameter 'dtf=' xlsx or csv");
 		}
 	}
 
