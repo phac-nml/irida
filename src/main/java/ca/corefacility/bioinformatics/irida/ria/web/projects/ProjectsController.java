@@ -686,9 +686,10 @@ public class ProjectsController {
 		}
 
 		// Write the file
-		OutputStream stream = response.getOutputStream();
-		workbook.write(stream);
-		stream.flush();
+		try(OutputStream stream = response.getOutputStream()) {
+			workbook.write(stream);
+			stream.flush();
+		}
 	}
 
 	/**
