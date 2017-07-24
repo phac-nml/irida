@@ -133,11 +133,11 @@ public class ProjectServiceImplTest {
 		s.setId(new Long(2222));
 		Project p = project();
 
-		ProjectSampleJoin join = new ProjectSampleJoin(p, s);
+		ProjectSampleJoin join = new ProjectSampleJoin(p, s, true);
 
 		when(psjRepository.save(join)).thenReturn(join);
 
-		Join<Project, Sample> rel = projectService.addSampleToProject(p, s);
+		Join<Project, Sample> rel = projectService.addSampleToProject(p, s, true);
 
 		verify(psjRepository).save(join);
 		verify(sampleRepository).getSampleBySampleName(p, s.getSampleName());
@@ -186,10 +186,10 @@ public class ProjectServiceImplTest {
 		when(validator.validate(s)).thenReturn(noViolations);
 		when(sampleRepository.save(s)).thenReturn(s);
 
-		projectService.addSampleToProject(p, s);
+		projectService.addSampleToProject(p, s, true);
 
 		verify(sampleRepository).save(s);
-		verify(psjRepository).save(new ProjectSampleJoin(p, s));
+		verify(psjRepository).save(new ProjectSampleJoin(p, s, true));
 	}
 
 	@Test(expected = ConstraintViolationException.class)
@@ -203,7 +203,7 @@ public class ProjectServiceImplTest {
 
 		when(validator.validate(s)).thenReturn(violations);
 
-		projectService.addSampleToProject(p, s);
+		projectService.addSampleToProject(p, s, true);
 
 		verifyZeroInteractions(sampleRepository, psjRepository);
 	}
@@ -220,7 +220,7 @@ public class ProjectServiceImplTest {
 		when(psjRepository.save(any(ProjectSampleJoin.class))).thenThrow(
 				new DataIntegrityViolationException("duplicate"));
 
-		projectService.addSampleToProject(p, s);
+		projectService.addSampleToProject(p, s, true);
 
 		verify(sampleRepository).save(s);
 	}
@@ -234,7 +234,7 @@ public class ProjectServiceImplTest {
 
 		when(sampleRepository.getSampleBySampleName(p, s.getSampleName())).thenReturn(otherSample);
 
-		projectService.addSampleToProject(p, s);
+		projectService.addSampleToProject(p, s, true);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -365,8 +365,8 @@ public class ProjectServiceImplTest {
 	public void testGetProjectsForSample() {
 		Sample sample = new Sample("my sample");
 		@SuppressWarnings("unchecked")
-		List<Join<Project, Sample>> projects = Lists.newArrayList(new ProjectSampleJoin(new Project("p1"), sample),
-				new ProjectSampleJoin(new Project("p2"), sample));
+		List<Join<Project, Sample>> projects = Lists.newArrayList(new ProjectSampleJoin(new Project("p1"), sample, true),
+				new ProjectSampleJoin(new Project("p2"), sample, true));
 
 		when(psjRepository.getProjectForSample(sample)).thenReturn(projects);
 
@@ -423,8 +423,8 @@ public class ProjectServiceImplTest {
 
 		List<Sample> samples = ImmutableList.of(new Sample("s1"), new Sample("s2"));
 		
-		ProjectSampleJoin psj0 = new ProjectSampleJoin(project, samples.get(0));
-		ProjectSampleJoin psj1 = new ProjectSampleJoin(project, samples.get(1));
+		ProjectSampleJoin psj0 = new ProjectSampleJoin(project, samples.get(0), true);
+		ProjectSampleJoin psj1 = new ProjectSampleJoin(project, samples.get(1), true);
 		
 		when(psjRepository.readSampleForProject(project, samples.get(0))).thenReturn(psj0);
 		when(psjRepository.readSampleForProject(project, samples.get(1))).thenReturn(psj1);
@@ -440,7 +440,7 @@ public class ProjectServiceImplTest {
 	public void testRemoveSampleWithOtherLinksFromProject() {
 		Sample s = new Sample("s1");
 		Project p1 = new Project("p1");
-		final ProjectSampleJoin j = new ProjectSampleJoin(p1, s);
+		final ProjectSampleJoin j = new ProjectSampleJoin(p1, s, true);
 
 		when(psjRepository.getProjectForSample(s)).thenReturn(ImmutableList.of(j));
 		when(psjRepository.readSampleForProject(p1, s)).thenReturn(j);

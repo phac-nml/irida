@@ -82,7 +82,7 @@ public class AssemblyFileProcessorTest {
 		when(objectRepository.findOne(sequenceFileId)).thenReturn(pair);
 		when(ssoRepository.getSampleForSequencingObject(pair)).thenReturn(new SampleSequencingObjectJoin(sample, pair));
 		when(psjRepository.getProjectForSample(sample)).thenReturn(
-				ImmutableList.of(new ProjectSampleJoin(project, sample)));
+				ImmutableList.of(new ProjectSampleJoin(project, sample, true)));
 
 		assertTrue("should want to assemble file", processor.shouldProcessFile(sequenceFileId));
 		processor.process(sequenceFileId);
@@ -101,7 +101,7 @@ public class AssemblyFileProcessorTest {
 		when(objectRepository.findOne(sequenceFileId)).thenReturn(pair);
 		when(ssoRepository.getSampleForSequencingObject(pair)).thenReturn(new SampleSequencingObjectJoin(sample, pair));
 		when(psjRepository.getProjectForSample(sample)).thenReturn(
-				ImmutableList.of(new ProjectSampleJoin(project, sample)));
+				ImmutableList.of(new ProjectSampleJoin(project, sample, true)));
 
 		assertFalse("processor should not want to assemble file", processor.shouldProcessFile(sequenceFileId));
 
@@ -124,7 +124,7 @@ public class AssemblyFileProcessorTest {
 		when(ssoRepository.getSampleForSequencingObject(pair)).thenReturn(new SampleSequencingObjectJoin(sample, pair));
 		when(psjRepository.getProjectForSample(sample)).thenReturn(
 				ImmutableList
-						.of(new ProjectSampleJoin(disabledProject, sample), new ProjectSampleJoin(project, sample)));
+						.of(new ProjectSampleJoin(disabledProject, sample, true), new ProjectSampleJoin(project, sample, true)));
 
 		processor.process(sequenceFileId);
 

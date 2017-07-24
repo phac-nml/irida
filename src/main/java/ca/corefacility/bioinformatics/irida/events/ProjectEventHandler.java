@@ -73,13 +73,18 @@ public class ProjectEventHandler {
 		Collection<ProjectEvent> events = new ArrayList<>();
 
 		if (eventClass.equals(SampleAddedProjectEvent.class)) {
-			events.add(handleSampleAddedProjectEvent(methodEvent));
+			events.addAll(handleSampleAddedProjectEvent(methodEvent));
 		} else if (eventClass.equals(UserRemovedProjectEvent.class)) {
 			events.add(handleUserRemovedEvent(methodEvent));
 		} else if (eventClass.equals(UserRoleSetProjectEvent.class)) {
 			events.add(handleUserRoleSetProjectEvent(methodEvent));
 		} else if (eventClass.equals(DataAddedToSampleProjectEvent.class)) {
 			final Collection<DataAddedToSampleProjectEvent> dataAddedEvents = handleSequenceFileAddedEvent(methodEvent);
+			
+			/*
+			 * We want the sample to show modification when these events are
+			 * added, so update mod date
+			 */
 			for (final DataAddedToSampleProjectEvent e : dataAddedEvents) {
 				final Sample s = e.getSample();
 				s.setModifiedDate(eventDate);
@@ -102,22 +107,42 @@ public class ProjectEventHandler {
 			projectRepository.save(project);
 		}
 	}
-
+	
 	/**
-	 * Create a {@link SampleAddedProjectEvent}. The method must have returned a
-	 * {@link ProjectSampleJoin}
+	 * Create one or more {@link SampleAddedProjectEvent}. Can be run on methods
+	 * which return a {@link ProjectSampleJoin} or collection of joins.
 	 * 
 	 * @param event
-	 *            The {@link MethodEvent} that this event is being launched from
 	 */
-	private ProjectEvent handleSampleAddedProjectEvent(MethodEvent event) {
+	private Collection<SampleAddedProjectEvent> handleSampleAddedProjectEvent(MethodEvent event) {
 		Object returnValue = event.getReturnValue();
-		if (!(returnValue instanceof ProjectSampleJoin)) {
-			throw new IllegalArgumentException(
-					"Method annotated with @LaunchesProjectEvent(SampleAddedProjectEvent.class) method must return ProjectSampleJoin");
+		Collection<SampleAddedProjectEvent> events = new ArrayList<>();
+
+		if (Collection.class.isAssignableFrom(returnValue.getClass())) {
+			Collection<?> collection = (Collection<?>) returnValue;
+
+			for (Object singleElement : collection) {
+				if (!(singleElement instanceof ProjectSampleJoin)) {
+					throw new IllegalArgumentException(
+							"Method annotated with @LaunchesProjectEvent(SampleAddedProjectEvent.class) must return one or more ProjectSampleJoin");
+				}
+				logger.debug("Adding multi sample " + singleElement.toString());
+
+				events.add(eventRepository.save(new SampleAddedProjectEvent((ProjectSampleJoin) singleElement)));
+			}
+
+		} else {
+			if (!(returnValue instanceof ProjectSampleJoin)) {
+				throw new IllegalArgumentException(
+						"Method annotated with @LaunchesProjectEvent(DataAddedToSampleProjectEvent.class) must return one or more SampleSequenceFileJoins");
+			}
+
+			logger.debug("Adding single sample " + returnValue.toString());
+
+			events.add(eventRepository.save(new SampleAddedProjectEvent((ProjectSampleJoin) returnValue)));
 		}
-		ProjectSampleJoin join = (ProjectSampleJoin) returnValue;
-		return eventRepository.save(new SampleAddedProjectEvent(join));
+
+		return events;
 	}
 
 	/**

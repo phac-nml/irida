@@ -100,8 +100,8 @@
     <sequence_file_pair_files pair_id="1" files_id="2" />
     
     <sample id="1" createdDate="2013-07-18 14:20:19.0" sampleName="sample"/>
-    <project_sample id="1" sample_id="1" project_id="1" createdDate="2013-07-18 14:20:19.0" />
-    <project_sample id="2" sample_id="1" project_id="2" createdDate="2013-07-18 14:20:19.0" />
+    <project_sample id="1" sample_id="1" project_id="1" createdDate="2013-07-18 14:20:19.0" owner="true" />
+    <project_sample id="2" sample_id="1" project_id="2" createdDate="2013-07-18 14:20:19.0" owner="true" />
     
     <sample_sequencingobject id="1" sample_id="1" sequencingobject_id="1" created_date="2013-07-18 14:20:19.0" />
 
