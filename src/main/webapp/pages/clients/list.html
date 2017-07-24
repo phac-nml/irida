@@ -20,7 +20,7 @@
                 <tr th:inline="text">
                     <th data-data="id" width="20" id="id-header">[[#{iridaThing.id}]]</th>
                     <th data-data="clientId" width="160" id="clientid-header">[[#{client.clientid}]]</th>
-                    <th data-data="grants" id="grants-header">[[#{client.grant-types}]]</th>
+                    <th data-data="grants" data-orderable="false" id="grants-header">[[#{client.grant-types}]]</th>
                     <th data-data="createdDate" id="created-header">[[#{iridaThing.timestamp}]]</th>
                     <th data-data="tokens" id="tokens-header" data-orderable="false">
                         [[#{client.details.token.active}]]
