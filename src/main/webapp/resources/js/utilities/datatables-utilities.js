@@ -153,7 +153,13 @@ export function createRestrictedWidthContent({ text, width = 150 }) {
   return addTooltip({ dom, title: text });
 }
 
-export function wrapCellContents({text, width = "250px"}) {
+/**
+ * Wrap the contents of a cell in a div that will force wrapping at the desired width.
+ * @param {string} text to put in cell
+ * @param {string} width desired (e.g. '100px' or '50em')
+ * @return {string} formatted DOM as text
+ */
+export function wrapCellContents({ text, width = "250px" }) {
   const div = document.createElement("div");
   div.classList.add("dt-wrap-cell");
   div.style.width = width;
@@ -182,7 +188,8 @@ export function createFilterTag({ text, type, handler }) {
   if (text) {
     const tag = `
   <button data-type="${type}" class="btn btn-default btn-xs filter-tags__tag">
-      <b>${type}</b> : ${text} ${createIcon({icon: ICONS.remove, fixed: true}).outerHTML}
+      <b>${type}</b> : ${text} ${createIcon({ icon: ICONS.remove, fixed: true })
+      .outerHTML}
   </button>`;
     const $tag = $(tag);
     $tag.on("click", function() {

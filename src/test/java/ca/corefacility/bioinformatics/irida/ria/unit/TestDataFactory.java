@@ -28,6 +28,7 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
@@ -88,14 +89,14 @@ public class TestDataFactory {
 	}
 
 	public static AnalysisSubmission constructAnalysisSubmission() {
-		Set<SingleEndSequenceFile> files = new HashSet<>();
+		Set<SequencingObject> files = new HashSet<>();
 		files.add(constructSingleEndSequenceFile());
 		Long id = 5L;
-		final ReferenceFile rf = new ReferenceFile(files.iterator().next().getSequenceFile().getFile());
+		final ReferenceFile rf = new ReferenceFile(files.iterator().next().getFiles().iterator().next().getFile());
 		rf.setId(id);
 		AnalysisSubmission analysisSubmission = AnalysisSubmission.builder(UUID.randomUUID())
 				.name("submission-" + id)
-				.inputFilesSingleEnd(files)
+				.inputFiles(files)
 				.referenceFile(rf)
 				.build();
 		analysisSubmission.setId(id);
