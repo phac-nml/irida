@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -410,7 +411,7 @@ public class ClientsController extends BaseController {
 				.searchClient(params.getSearchValue());
 
 		Page<IridaClientDetails> page = clientDetailsService
-				.search(specification, params.getCurrentPage(), params.getLength(), params.getSort());
+				.search(specification, new PageRequest(params.getCurrentPage(), params.getLength(), params.getSort()));
 		List<DataTablesResponseModel> models = new ArrayList<>();
 		for (IridaClientDetails client : page.getContent()) {
 			models.add(new DTClient(client, clientDetailsService.countActiveTokensForClient(client)));
