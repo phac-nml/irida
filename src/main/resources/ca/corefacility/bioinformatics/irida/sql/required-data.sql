@@ -657,22 +657,22 @@ INSERT INTO `workflow_named_parameter_values` (named_parameters_id, named_parame
 INSERT INTO `workflow_named_parameter_values` (named_parameters_id, named_parameter_value, named_parameter_name) VALUES (1, '-6', 'minimum-read-coverage');
 
 -- analysis_submission_sequence_file_pair
-INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 11);
-INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 12);
-INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 13);
-INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 14);
-INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 15);
-INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 16);
-INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 17);
-INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 18);
-INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 19);
-INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 20);
-INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 21);
-INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 22);
-INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 23);
-INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (13, 24);
-INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (100 ,1);
-INSERT INTO `analysis_submission_sequence_file_pair` (analysis_submission_id, sequence_file_pair_id) VALUES (101 ,2);
+INSERT INTO `analysis_submission_sequencing_object` (analysis_submission_id, sequencing_object_id) VALUES (13, 11);
+INSERT INTO `analysis_submission_sequencing_object` (analysis_submission_id, sequencing_object_id) VALUES (13, 12);
+INSERT INTO `analysis_submission_sequencing_object` (analysis_submission_id, sequencing_object_id) VALUES (13, 13);
+INSERT INTO `analysis_submission_sequencing_object` (analysis_submission_id, sequencing_object_id) VALUES (13, 14);
+INSERT INTO `analysis_submission_sequencing_object` (analysis_submission_id, sequencing_object_id) VALUES (13, 15);
+INSERT INTO `analysis_submission_sequencing_object` (analysis_submission_id, sequencing_object_id) VALUES (13, 16);
+INSERT INTO `analysis_submission_sequencing_object` (analysis_submission_id, sequencing_object_id) VALUES (13, 17);
+INSERT INTO `analysis_submission_sequencing_object` (analysis_submission_id, sequencing_object_id) VALUES (13, 18);
+INSERT INTO `analysis_submission_sequencing_object` (analysis_submission_id, sequencing_object_id) VALUES (13, 19);
+INSERT INTO `analysis_submission_sequencing_object` (analysis_submission_id, sequencing_object_id) VALUES (13, 20);
+INSERT INTO `analysis_submission_sequencing_object` (analysis_submission_id, sequencing_object_id) VALUES (13, 21);
+INSERT INTO `analysis_submission_sequencing_object` (analysis_submission_id, sequencing_object_id) VALUES (13, 22);
+INSERT INTO `analysis_submission_sequencing_object` (analysis_submission_id, sequencing_object_id) VALUES (13, 23);
+INSERT INTO `analysis_submission_sequencing_object` (analysis_submission_id, sequencing_object_id) VALUES (13, 24);
+INSERT INTO `analysis_submission_sequencing_object` (analysis_submission_id, sequencing_object_id) VALUES (100 ,1);
+INSERT INTO `analysis_submission_sequencing_object` (analysis_submission_id, sequencing_object_id) VALUES (101 ,2);
 
 INSERT INTO `project_event` (created_date, role, project_id, user_id, sample_id, DTYPE) values (now(), 'PROJECT_OWNER', 1, 2, NULL, 'UserRoleSetProjectEvent');
 INSERT INTO `project_event` (created_date, role, project_id, user_id, sample_id, DTYPE) values (now(), 'PROJECT_USER', 3, 2, NULL, 'UserRoleSetProjectEvent');

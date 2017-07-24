@@ -577,6 +577,12 @@ public class ProjectsController {
 	public void exportProjectsToFile(@RequestParam(value = "dtf") String type,
 			@RequestParam(required = false, defaultValue = "false", value = "admin") Boolean isAdmin,
 			HttpServletResponse response, Principal principal, Locale locale) throws IOException {
+		// Let's make sure the export type is set properly
+		if (!(type.equalsIgnoreCase("xlsx") || type.equalsIgnoreCase("csv"))) {
+			throw new IllegalArgumentException(
+					"No file type sent for downloading all projects.  Expecting parameter 'dtf=' xlsx or csv");
+		}
+
 		List<Project> projects;
 		// If viewing the admin projects page give the user all the projects.
 		if (isAdmin) {
@@ -603,7 +609,7 @@ public class ProjectsController {
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "." + type + "\"");
 		if (type.equals("xlsx")) {
 			writeProjectsToExcelFile(headers, dtProjects, locale, response);
-		} else if (type.equals("csv")) {
+		} else {
 			writeProjectsToCsvFile(headers, dtProjects, locale, response);
 		}
 	}
@@ -626,21 +632,22 @@ public class ProjectsController {
 	private void writeProjectsToCsvFile(List<String> headers, List<DTProject> projects, Locale locale,
 			HttpServletResponse response) throws IOException {
 		PrintWriter writer = response.getWriter();
-		CSVPrinter printer = new CSVPrinter(writer, CSVFormat.DEFAULT.withRecordSeparator(System.lineSeparator()));
-		printer.printRecord(headers);
+		try(CSVPrinter printer = new CSVPrinter(writer, CSVFormat.DEFAULT.withRecordSeparator(System.lineSeparator()))) {
+			printer.printRecord(headers);
 
-		DateFormat dateFormat = new SimpleDateFormat(messageSource.getMessage("locale.date.long", null, locale));
-		for (DTProject p : projects) {
-			List<String> record = new ArrayList<>();
-			record.add(String.valueOf(p.getId()));
-			record.add(p.getName());
-			record.add(p.getOrganism());
-			record.add(String.valueOf(p.getSamples()));
-			record.add(dateFormat.format(p.getCreatedDate()));
-			record.add(dateFormat.format(p.getModifiedDate()));
-			printer.printRecord(record);
+			DateFormat dateFormat = new SimpleDateFormat(messageSource.getMessage("locale.date.long", null, locale));
+			for (DTProject p : projects) {
+				List<String> record = new ArrayList<>();
+				record.add(String.valueOf(p.getId()));
+				record.add(p.getName());
+				record.add(p.getOrganism());
+				record.add(String.valueOf(p.getSamples()));
+				record.add(dateFormat.format(p.getCreatedDate()));
+				record.add(dateFormat.format(p.getModifiedDate()));
+				printer.printRecord(record);
+			}
+			printer.flush();
 		}
-		printer.flush();
 	}
 
 	/**
@@ -685,9 +692,10 @@ public class ProjectsController {
 		}
 
 		// Write the file
-		OutputStream stream = response.getOutputStream();
-		workbook.write(stream);
-		stream.flush();
+		try(OutputStream stream = response.getOutputStream()) {
+			workbook.write(stream);
+			stream.flush();
+		}
 	}
 
 	/**
