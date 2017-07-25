@@ -176,7 +176,7 @@ See the [user guide](../../user/user/dashboard#remote-apis) for information on c
 Allowing access to your IRIDA installation
 ------------------------------------------
 
-A Remote connection is granted with the same process as remote clients.  To allow a remote installation to access your IRIDA instance, an OAuth2 client must be created with the following specifications:
+A Remote Connection is granted with the same process as remote clients.  To allow a remote IRIDA instance to access your IRIDA instance, an OAuth2 client must be created with the following specifications:
 
 * Token Validity: 12 hours recommended.  A short token validity will require users to reauthorize the API more often.
 * Grant Type: `authorization_code`
