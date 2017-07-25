@@ -13,5 +13,6 @@ module.exports = {
   'projects-associated-edit': './resources/js/pages/projects/associated-projects/edit.module.js',
   'sample-files': './resources/js/pages/samples/sample-files.js',
   'project-reference-files': './resources/js/pages/projects/project-reference-files.js',
-  'analyses-table': './resources/js/pages/analyses/analyses-table.js'
+  'analyses-table': './resources/js/pages/analyses/analyses-table.js',
+  'clients-list': './resources/js/pages/clients/clients-list.js'
 };
