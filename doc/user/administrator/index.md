@@ -173,10 +173,10 @@ Remote IRIDA installations can be used as data sources for associated projects a
 See the [user guide](../../user/user/dashboard#remote-apis) for information on connecting to remote APIs.
 
 
-Allowing access to your API
----------------------------
+Allowing access to your IRIDA installation
+------------------------------------------
 
-Remote API access is granted with the same process as remote clients.  To allow a remote installation to access your API, an OAuth2 client must be created with the following specifications:
+A Remote connection is granted with the same process as remote clients.  To allow a remote installation to access your IRIDA instance, an OAuth2 client must be created with the following specifications:
 
 * Token Validity: 12 hours recommended.  A short token validity will require users to reauthorize the API more often.
 * Grant Type: `authorization_code`
@@ -184,12 +184,12 @@ Remote API access is granted with the same process as remote clients.  To allow 
 
 **Note:** In order for a remote client to communicate with the REST API, the client must be able to access the REST API via HTTP.  This may involve opening access in a firewall or setting up a VPN connection between sites.
 
-For more information about creating OAuth2 clents see the [managing system clients](#managing-system-clients) section.
+For more information about creating OAuth2 clients see the [managing system clients](#managing-system-clients) section.
 
-Adding a Remote API
--------------------
+Adding a Remote IRIDA installation
+----------------------------------
 
-Before a user can use a remote instance of IRIDA as a data source for associated projects and workflows, an administrator must create a connection to that remote instance (similar to how external tool developers can connect to the REST API).  To add a Remote API, an administrator will need the following information from the remote installation:
+Before a user can use a remote instance of IRIDA as a data source for associated projects and workflows, an administrator must create a connection to that remote instance (similar to how external tool developers can connect to the REST API).  To add a Remote connection, an administrator will need the following information from the remote installation:
 
 * An OAuth2 client ID which has been set up on the remote installation.
 * An OAuth2 client secret.
@@ -199,13 +199,13 @@ After being given the client credentials, go to the "Remote API" page.
 
 ![Remote API page](images/remote-api-dash.png)
 
-The Remote APIs page will display all currently available Remote APIs and your connection status with the API.
+The Remote Connections page will display all currently available Remote Connections and their connection status with the API.
 
-To add a new API, click the "Add Remote API" button:
+To add a new connection, click the "Add Remote Connection" button:
 
 ![Add api](images/add-api.png)
 
-Enter a suitable name for the remote installation.  This name will be visible to users connecting and accessing data from that api.  Also enter the "Client ID", "Client Secret", and "Service URL" of the remote API as given by the remote administrator.
+Enter a suitable name for the remote installation.  This name will be visible to users connecting and accessing data from that instance.  Also enter the "Client ID", "Client Secret", and "Service URL" of the Remote Connection as given by the remote administrator.
 
 ![Create API](images/create-api-details.png)
 
@@ -215,9 +215,9 @@ To test the remote API, click the "Connect" button.  You should be directed to a
 
 ![API Details](images/api-details.png)
 
-Removing a Remote API
----------------------
-From the Remote API list page, click on the name of the API you wish to delete.  This will bring you to the API details page.  Click the "Remove" button on that page and confirm.
+Removing a Remote Connection
+----------------------------
+From the Remote Connections list page, click on the name of the API you wish to delete.  This will bring you to the API details page.  Click the "Remove" button on that page and confirm.
 
 ![Remove API](images/remove-api.png)
 
