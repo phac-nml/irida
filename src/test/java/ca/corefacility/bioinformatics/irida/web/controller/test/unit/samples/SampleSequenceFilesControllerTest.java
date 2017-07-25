@@ -30,6 +30,7 @@ import com.google.common.collect.Lists;
 import com.google.common.net.HttpHeaders;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
@@ -364,8 +365,8 @@ public class SampleSequenceFilesControllerTest {
 		MockMultipartFile mmf2 = new MockMultipartFile("filename2", "filename2", "blurgh2",
 				FileCopyUtils.copyToByteArray(f2.toFile()));
 		MockHttpServletResponse response = new MockHttpServletResponse();
-		when(sampleService.getSampleForProject(p, s.getId())).thenReturn(s);
-		when(sampleService.getSampleForProject(p, s.getId())).thenReturn(s);
+		when(sampleService.getSampleForProject(p, s.getId())).thenReturn(new ProjectSampleJoin(p,s,true));
+		
 		when(sequencingObjectService.createSequencingObjectInSample(any(SequenceFilePair.class), Matchers.eq(s)))
 				.thenReturn(sso);
 		controller.addNewSequenceFilePairToSample(s.getId(), mmf1, resource1, mmf2, resource2, response);

@@ -46,7 +46,7 @@ import com.google.common.net.HttpHeaders;
 /**
  * Tests for {@link RESTProjectSamplesController}.
  */
-public class ProjectSamplesControllerTest {
+public class RESTProjectSamplesControllerTest {
 	private RESTProjectSamplesController controller;
 	private ProjectService projectService;
 	private SampleService sampleService;
@@ -63,10 +63,10 @@ public class ProjectSamplesControllerTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
         Sample s = TestDataFactory.constructSample();
         Project p = TestDataFactory.constructProject();
-		Join<Project, Sample> r = new ProjectSampleJoin(p, s);
+		Join<Project, Sample> r = new ProjectSampleJoin(p, s, true);
 		
 		when(projectService.read(p.getId())).thenReturn(p);
-		when(projectService.addSampleToProject(p, s)).thenReturn(r);
+		when(projectService.addSampleToProject(p, s, true)).thenReturn(r);
         
         ModelMap modelMap = controller.addSampleToProject(p.getId(), s, response);
         
@@ -75,7 +75,7 @@ public class ProjectSamplesControllerTest {
 		assertTrue("ModelMap should contan a SampleResource",o instanceof Sample);
 		 
         verify(projectService, times(1)).read(p.getId());
-        verify(projectService, times(1)).addSampleToProject(p, s);
+        verify(projectService, times(1)).addSampleToProject(p, s, true);
         
         Link selfLink = s.getLink(Link.REL_SELF);
         Link sequenceFilesLink = s.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
@@ -130,7 +130,7 @@ public class ProjectSamplesControllerTest {
 	public void testGetProjectSamples() {
 		Project p = TestDataFactory.constructProject();
 		Sample s = TestDataFactory.constructSample();
-		Join<Project, Sample> r = new ProjectSampleJoin(p, s);
+		Join<Project, Sample> r = new ProjectSampleJoin(p, s, true);
 
 		@SuppressWarnings("unchecked")
 		List<Join<Project, Sample>> relationships = Lists.newArrayList(r);
@@ -177,7 +177,7 @@ public class ProjectSamplesControllerTest {
 		// mock out the service calls
 		when(projectService.read(p.getId())).thenReturn(p);
 		when(sampleService.read(s.getId())).thenReturn(s);
-		when(sampleService.getSampleForProject(p, s.getId())).thenReturn(s);
+		when(sampleService.getSampleForProject(p, s.getId())).thenReturn(new ProjectSampleJoin(p,s,true));
 
 		ModelMap modelMap = controller.getProjectSample(p.getId(), s.getId());
 
@@ -232,15 +232,15 @@ public class ProjectSamplesControllerTest {
 	public void testCopySampleToProject() {
 		final Project p = TestDataFactory.constructProject();
 		final Sample s = TestDataFactory.constructSample();
-		final ProjectSampleJoin r = new ProjectSampleJoin(p,s);
+		final ProjectSampleJoin r = new ProjectSampleJoin(p,s, true);
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		when(projectService.read(p.getId())).thenReturn(p);
 		when(sampleService.read(s.getId())).thenReturn(s);
-		when(projectService.addSampleToProject(p, s)).thenReturn(r);
+		when(projectService.addSampleToProject(p, s, false)).thenReturn(r);
 		ModelMap modelMap = controller
 				.copySampleToProject(p.getId(), Lists.newArrayList(s.getId()), response);
 		
-		verify(projectService).addSampleToProject(p, s);
+		verify(projectService).addSampleToProject(p, s, false);
 		assertEquals("response should have CREATED status", HttpStatus.CREATED.value(), response.getStatus());
 		final String location = response.getHeader(HttpHeaders.LOCATION);
 		assertEquals("location should include sample and project IDs", "http://localhost/api/projects/" + p.getId()
@@ -283,7 +283,7 @@ public class ProjectSamplesControllerTest {
 		when(projectService.read(p.getId())).thenReturn(p);
 		when(sampleService.read(s.getId())).thenReturn(s);
 
-		when(projectService.addSampleToProject(p, s)).thenThrow(new EntityExistsException("sample already exists!"));
+		when(projectService.addSampleToProject(p, s, false)).thenThrow(new EntityExistsException("sample already exists!"));
 
 		controller.copySampleToProject(p.getId(), Lists.newArrayList(s.getId()),new MockHttpServletResponse());
 	}

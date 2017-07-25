@@ -165,7 +165,7 @@ public class CartControllerTest {
 
 		List<Join<Project, Sample>> joins = new ArrayList<>();
 		samples.forEach((s) -> {
-			joins.add(new ProjectSampleJoin(project, s));
+			joins.add(new ProjectSampleJoin(project, s, true));
 		});
 		when(sampleService.getSamplesForProject(project)).thenReturn(joins);
 
@@ -225,7 +225,7 @@ public class CartControllerTest {
 			Sample sample = new Sample("sample" + id);
 			sample.setId(id);
 			samples.add(sample);
-			when(sampleService.getSampleForProject(project, id)).thenReturn(sample);
+			when(sampleService.getSampleForProject(project, id)).thenReturn(new ProjectSampleJoin(project,sample, true));
 		}
 	}
 }

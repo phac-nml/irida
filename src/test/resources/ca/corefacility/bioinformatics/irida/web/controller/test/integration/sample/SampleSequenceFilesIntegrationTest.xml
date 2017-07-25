@@ -24,7 +24,7 @@
 	<sample id="1" sampleName="sample" createdDate="2013-07-18 14:20:19.0" />
 
 	<project_sample id="1" project_id="5" sample_id="1"
-		createdDate="2013-07-18 14:20:19.0" />
+		createdDate="2013-07-18 14:20:19.0" owner="true"/>
 	<project_user id="1" project_id="5" user_id="3"
 		projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
 		email_subscription="false" />

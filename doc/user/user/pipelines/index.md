@@ -50,9 +50,7 @@ You can search for individual samples within the cart use the 'cart search' fiel
 
 ![Cart search field](images/cart-filter-input.png)
 
-Search terms can match partial samples names.  Note: projects that do not contain any samples that match the filter are hidden.  The blue label displays the number of samples that match the filter and the total number of samples in the project.
-
-![Cart search active](images/cart-filter-active.png)
+Search terms can match partial samples names.  Note: projects that do not contain any samples that match the filter are hidden.
 
 Selecting a pipeline
 --------------------

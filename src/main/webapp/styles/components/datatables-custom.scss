@@ -112,6 +112,19 @@ table.selectable tbody tr.selected td {
   justify-content: flex-end;
 }
 
+.locked-sample {
+  a.sample-label {
+    position: relative;
+    &:after {
+      font-family: FontAwesome;
+      content: "\f023";
+      color: #000000;
+      position: absolute;
+      left: -20px;
+    }
+  }
+}
+
 .dataTables_filter {
   display: inline-block;
 }
