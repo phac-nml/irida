@@ -63,7 +63,6 @@
 								{{:: p.label }}
 							</div>
 							<div class="cart_item__btns pull-right">
-								<span class="label label-info">{{p.filteredSamples.length}} / {{ p.samples.length }}</span>
 								<button class="btn-icon" ng-click="cartCtrl.removeProject(p.id)"
 								        ng-attr-id="{{'remove-project-'+p.id}}"
 								        th:title="#{cart.tooltip.removeProject}">

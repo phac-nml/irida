@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,6 +42,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerExcept
 import ca.corefacility.bioinformatics.irida.exceptions.UnsupportedReferenceFileContentError;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
@@ -285,7 +287,7 @@ public class ProjectServiceImplIT {
 
 		Collection<Join<Project, User>> projects = projectService.getProjectsForUser(u);
 
-		assertEquals("User should have 2 projects.", 2, projects.size());
+		assertEquals("User should have 3 projects.", 3, projects.size());
 		assertEquals("User should be on project 2.", Long.valueOf(2L), projects.iterator().next().getSubject().getId());
 	}
 
@@ -295,7 +297,7 @@ public class ProjectServiceImplIT {
 		Sample s = sampleService.read(1L);
 		Project p = projectService.read(1L);
 
-		Join<Project, Sample> join = projectService.addSampleToProject(p, s);
+		Join<Project, Sample> join = projectService.addSampleToProject(p, s, true);
 		assertEquals("Project should equal original project.", p, join.getSubject());
 		assertEquals("Sample should equal orginal sample.", s, join.getObject());
 
@@ -309,8 +311,8 @@ public class ProjectServiceImplIT {
 		Sample s = sampleService.read(1L);
 		Project p = projectService.read(1L);
 
-		projectService.addSampleToProject(p, s);
-		projectService.addSampleToProject(p, s);
+		projectService.addSampleToProject(p, s, true);
+		projectService.addSampleToProject(p, s, true);
 	}
 
 	@Test(expected = EntityExistsException.class)
@@ -319,11 +321,11 @@ public class ProjectServiceImplIT {
 		Sample s = sampleService.read(1L);
 		Project p = projectService.read(1L);
 
-		projectService.addSampleToProject(p, s);
+		projectService.addSampleToProject(p, s, true);
 
 		Sample otherSample = new Sample(s.getSampleName());
 
-		projectService.addSampleToProject(p, otherSample);
+		projectService.addSampleToProject(p, otherSample, true);
 
 		// if 2 exist with the same id, this call will fail
 		Sample sampleBySequencerSampleId = sampleService.getSampleBySampleName(p,
@@ -341,7 +343,7 @@ public class ProjectServiceImplIT {
 		projectService.removeSampleFromProject(p2, s);
 		projectService.removeSampleFromProject(p3, s);
 
-		Collection<Join<Project, Sample>> samples = sampleService.getSamplesForProject(p2);
+		Collection<Join<Project, Sample>> samples = sampleService.getSamplesForProject(p3);
 		assertTrue("No samples should be assigned to project.", samples.isEmpty());
 		assertFalse("sample should be deleted because it was detached", sampleService.exists(s.getId()));
 	}
@@ -350,9 +352,10 @@ public class ProjectServiceImplIT {
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testRemoveSamplesFromProject() {
 		Sample s1 = sampleService.read(1L);
+		Sample s2 = sampleService.read(2L);
 		Project p = projectService.read(2L);
 
-		projectService.removeSamplesFromProject(p, ImmutableList.of(s1));
+		projectService.removeSamplesFromProject(p, ImmutableList.of(s1, s2));
 
 		Collection<Join<Project, Sample>> samples = sampleService.getSamplesForProject(p);
 		assertTrue("No samples should be assigned to project.", samples.isEmpty());
@@ -377,7 +380,7 @@ public class ProjectServiceImplIT {
 		Project p = projectService.read(1L);
 		Sample s = s();
 
-		Join<Project, Sample> join = projectService.addSampleToProject(p, s);
+		Join<Project, Sample> join = projectService.addSampleToProject(p, s, true);
 		assertNotNull("Join should not be empty.", join);
 		assertEquals("Wrong project in join.", p, join.getSubject());
 		assertEquals("Wrong sample in join.", s, join.getObject());
@@ -388,7 +391,7 @@ public class ProjectServiceImplIT {
 	public void testFindAllProjectsAsUser() {
 		List<Project> projects = (List<Project>) projectService.findAll();
 
-		assertEquals("Wrong number of projects.", 2, projects.size());
+		assertEquals("Wrong number of projects.", 3, projects.size());
 	}
 
 	@Test
@@ -712,6 +715,77 @@ public class ProjectServiceImplIT {
 		assertEquals("should have found 1 project", 1, projects.size());
 		ProjectAnalysisSubmissionJoin project = projects.iterator().next();
 		assertEquals("should have found project 2", new Long(2L), project.getSubject().getId());
+	}
+	
+	@Test
+	@WithMockUser(username = "user1", roles = "USER")
+	public void testCopySamplesWithOwner(){
+		Project source = projectService.read(2L);
+		Project destination = projectService.read(10L);
+				
+		Sample sample1 = sampleService.read(1L);
+		Set<Sample> samples = Sets.newHashSet(sample1);
+		
+		List<ProjectSampleJoin> copiedSamples = projectService.copyOrMoveSamples(source, destination, samples, false, true);
+		
+		assertEquals(samples.size(), copiedSamples.size());
+
+		copiedSamples.forEach(j -> {
+			assertTrue("Project should be owner for sample", j.isOwner());
+		});
+	}
+	
+	@Test
+	@WithMockUser(username = "user1", roles = "USER")
+	public void testCopySamplesWithoutOwner() {
+		Project source = projectService.read(2L);
+		Project destination = projectService.read(10L);
+
+		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(source);
+
+		Set<Sample> samples = samplesForProject.stream().map(j -> j.getObject()).collect(Collectors.toSet());
+
+		List<ProjectSampleJoin> copiedSamples = projectService.copyOrMoveSamples(source, destination, samples, false,
+				false);
+
+		assertEquals(samples.size(), copiedSamples.size());
+
+		copiedSamples.forEach(j -> {
+			assertFalse("Project shouldn't be owner for sample", j.isOwner());
+		});
+	}
+
+	@Test
+	@WithMockUser(username = "user1", roles = "USER")
+	public void testCopyLockedSamplesWithoutOwner() {
+		Project source = projectService.read(2L);
+		Project destination = projectService.read(10L);
+
+		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(source);
+
+		Set<Sample> samples = samplesForProject.stream().map(j -> j.getObject()).collect(Collectors.toSet());
+
+		List<ProjectSampleJoin> copiedSamples = projectService.copyOrMoveSamples(source, destination, samples, false,
+				false);
+
+		assertEquals(samples.size(), copiedSamples.size());
+
+		copiedSamples.forEach(j -> {
+			assertFalse("Project shouldn't be owner for sample", j.isOwner());
+		});
+	}
+
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "user1", roles = "USER")
+	public void testCopyLockedSamplesWithOwnerFail() {
+		Project source = projectService.read(2L);
+		Project destination = projectService.read(10L);
+
+		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(source);
+
+		Set<Sample> samples = samplesForProject.stream().map(j -> j.getObject()).collect(Collectors.toSet());
+
+		projectService.copyOrMoveSamples(source, destination, samples, false, true);
 	}
 
 	private Project p() {

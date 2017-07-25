@@ -469,6 +469,10 @@ var datatable = (function(moment, tl, page) {
     if (badQc) {
       row.classList.add("row-warning");
     }
+
+    if (!item.owner) {
+      row.classList.add("locked-sample");
+    }
     
   }
 

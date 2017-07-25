@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
@@ -70,7 +71,14 @@ public class UpdateSamplePermission extends BasePermission<Sample, Long> {
 				.anyMatch(g -> g.getAuthority().equals(Role.ROLE_SEQUENCER.getAuthority()))) {
 			return true;
 		}
-		
-		return projects.stream().anyMatch(p -> projectOwnerPermission.isAllowed(authentication, p.getSubject()));
+
+		/*
+		 * Checking if user is manager on the project and if the current project
+		 * owns the sample.
+		 */
+		return projects.stream().anyMatch(p -> {
+			ProjectSampleJoin j = (ProjectSampleJoin) p;
+			return projectOwnerPermission.isAllowed(authentication, j.getSubject()) && j.isOwner();
+		});
 	}
 }

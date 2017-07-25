@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
@@ -52,14 +53,20 @@ public class ProjectSampleJoin implements Join<Project, Sample> {
 	@Temporal(TemporalType.TIMESTAMP)
 	private final Date createdDate;
 
+	@Column(name = "owner")
+	@NotNull
+	private boolean owner;
+
 	public ProjectSampleJoin() {
 		createdDate = new Date();
+		owner = true;
 	}
 
-	public ProjectSampleJoin(Project subject, Sample object) {
+	public ProjectSampleJoin(Project subject, Sample object, boolean owner) {
 		this();
 		this.project = subject;
 		this.sample = object;
+		this.owner = owner;
 	}
 
 	@Override
@@ -98,5 +105,23 @@ public class ProjectSampleJoin implements Join<Project, Sample> {
 	@Override
 	public Date getCreatedDate() {
 		return createdDate;
+	}
+
+	/**
+	 * Whether the {@link Project} has modification rights to the {@link Sample}
+	 * 
+	 * @return true if the {@link Project} owns the {@link Sample}
+	 */
+	public boolean isOwner() {
+		return owner;
+	}
+
+	public void setOwner(boolean owner) {
+		this.owner = owner;
+	}
+
+	@Override
+	public String toString() {
+		return "Project: " + project.getName() + " Sample: " + sample.getSampleName();
 	}
 }

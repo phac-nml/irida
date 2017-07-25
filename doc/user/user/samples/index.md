@@ -26,6 +26,7 @@ The samples listing shows high-level sample details, such as:
 * The project that the sample belongs to (if from a related project),
 * The date that the sample was created in IRIDA.
 * Whether the sample failed IRIDA's quality control checks.  If a sample has failed QC, the cell will have a red background and warning icon <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>.  Note if you are displaying [associated project samples](#viewing-associated-samples) QC information will come from the sample's parent project.
+* Whether the sample can be modified in this project.  If the project does not have modification access, a lock icon will be displayed <i class="fa fa-lock" aria-hidden="true"></i>.
 
 ### Viewing individual sample details
 
@@ -226,6 +227,8 @@ In the dialog that appears you will be presented with a list of the samples that
 
 When you click on the drop-down box to select a project, you can either visually find the project that you want, or you can filter the projects by their name by typing into the text field.
 
+If you have selected samples that are non-modifiable in your current project, you will be shown a warning that the samples you are moving will also be non-modifiable in the new project.
+
 Once you've selected the project that you want to move the samples to, click on the "Move Samples" button.
 
 ### Merging samples within a project
@@ -245,6 +248,8 @@ Click on the sample name under "**Select a sample to merge into**" to choose whi
 You may also (optionally) rename the target sample by entering a new sample name under "**Rename sample**". The sample name must be **at least** 3 characters long, and **must not** contain white space characters (tab or space) or any of the following characters: `? ( ) [ ] / \ = + < > : ; " , * ^ | & ' .`. If you do not want to rename the target sample, leave this field blank.
 
 Once you've finished choosing the sample to merge into, click on the "Complete Merge" button at the bottom of the dialog.
+
+Note if you select samples that are non-modifiable, a warning will be displayed that you cannot merge the selected samples.
 
 Exporting samples
 -----------------
