@@ -189,7 +189,7 @@ For more information about creating OAuth2 clients see the [managing system clie
 Adding a Remote IRIDA installation
 ----------------------------------
 
-Before a user can use a remote instance of IRIDA as a data source for associated projects and workflows, an administrator must create a connection to that remote instance (similar to how external tool developers can connect to the REST API).  To add a Remote connection, an administrator will need the following information from the remote installation:
+Before a user can use a remote instance of IRIDA as a data source for associated projects and workflows, an administrator must create a connection to that remote instance (similar to how external tool developers can connect to the REST API).  To add a Remote Connection, an administrator will need the following information from the remote installation:
 
 * An OAuth2 client ID which has been set up on the remote installation.
 * An OAuth2 client secret.

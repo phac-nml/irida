@@ -72,23 +72,23 @@ You can click on the cart button to reveal more information about the contents o
 
 For more information about using the cart, please see the [launching pipelines](../pipelines) section, and the [managing samples](../samples) section.
 
-Remote APIs
------------
-Remote IRIDA installations can be used as data sources for associated projects and worklows.  The "Remote APIs" section allows users to connect to remote IRIDA installations.  
+Remote instances of IRIDA
+-------------------------
+Remote instances of IRIDA can be used as data sources for associated projects and worklows.  The "Remote IRIDA Connections" section allows users to connect to remote instances of IRIDA.  
 
 **Note**: You must have been provided with a username and password for a remote instance of IRIDA before you can use the data located on that instance.
 
 ![Remote API button](images/remote-api-dash.png)
 
-Adminstrators can add or remove available Remote APIs from this menu.  Details can be found in the [administrator guide](../../administrator/#managing-remote-apis).
+Administrators can add or remove available remote instances of IRIDA from this menu.  Details can be found in the [administrator guide](../../administrator/#managing-remote-apis).
 
-### Connecting to Remote APIs
+### Connecting to remote instances of IRIDA
 
-The Remote APIs list will show you all configured Remote APIs.  To connect, click the "Connect" button next to an API.
+The Remote Connections list will show you all configured remote instances of IRIDA.  To connect, click the "Connect" button next to the right of the connection status.
 
 ![Remote API list](images/api-list.png)
 
-If you have never connected to the remote API before, or your login has expired, you will be shown a login window for the remote site.  Enter your login credentials for that site.  The username and password that you use to connect to a remote instance of IRIDA are different than the username and password that you used to log in to the local site.
+If you have never connected to the remote IRIDA instance before, or your login has expired, you will be shown a login window for the remote site.  Enter your login credentials for that site.  The username and password that you use to connect to a remote instance of IRIDA are different than the username and password that you used to log in to the local site.
 
 ![Remote API login page](images/remote-login.png)
 
