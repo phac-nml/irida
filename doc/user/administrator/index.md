@@ -193,7 +193,7 @@ Before a user can use a remote instance of IRIDA as a data source for associated
 
 * An OAuth2 client ID which has been set up on the remote installation.
 * An OAuth2 client secret.
-* The root address of the REST API of the remote installation.
+* The root address of the IRIDA REST API of the remote installation.
 
 After being given the client credentials, go to the "Remote IRIDA Connections" page.
 
