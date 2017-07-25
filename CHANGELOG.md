@@ -14,6 +14,8 @@ Changes
 * [Developer]: Checking if single end files have been synchronized to stop duplication.
 * [Developer]: Changed relationship of sequence files to a single collection in AnalysisSubmission instead of a collection for each file type.
 * [Documentation]: Rewrote Galaxy installation guide, added sections for linking IRIDA to existing Galaxy or to a pre-build Docker image.
+* [Developer]: Removed `Dandelion` dependencies from the dashboard & projects listing pages.
+* [Developer]: Created new DataTables reqest handler to enable removing Dandelion DataTables.
 
 0.16.0 to 0.17.0
 ----------------
@@ -36,8 +38,6 @@ Changes
 * [UI]: Fixed bug where a project collaborator could try to change the role of a group.
 * [UI]: Fix bug where notifications were not being displayed when samples where copied between projects.
 * [Workflow]: The SISTR pipeline has been upgraded to use `sistr_cmd` version 1.0.2.
-* [Developer]: Removed `Dandelion` dependencies from the dashboard & projects listing pages.
-* [Developer]: Created new DataTables reqest handler to enable removing Dandelion DataTables.
 
 0.15.0 to 0.16.0
 ----------------
