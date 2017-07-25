@@ -164,8 +164,8 @@ Click "OK" to confirm, or "Cancel" to decline the deletion.
 
 After deleting a client, you will be returned to the list of clients.
 
-Managing remote instances of IRIDA
-==================================
+Managing Remote IRIDA Connections
+=================================
 Remote instances of IRIDA can be used as data sources for associated projects and workflows.  Users will be able to view an aggregated view of samples from the local project along with all local and associated projects.  Administrators can create connections to remote instances of IRIDA using OAuth2 similar to how external tool developers can connect to the IRIDA REST API.
 
 ![Remote API connection](images/api-diagram.png)
