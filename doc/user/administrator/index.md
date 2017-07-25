@@ -209,15 +209,15 @@ Enter a suitable name for the remote installation.  This name will be visible to
 
 ![Create API](images/create-api-details.png)
 
-After adding the remote API you should be directed to the details page for that API.
+After adding the Remote Connection you should be directed to the details page for that API.
 
-To test the remote API, click the "Connect" button.  You should be directed to a login page for the remote API's REST API.  To connect to the remote API you must have been given a username and password for the remote installation.  See [remote APIs](../user/dashboard/#remote-apis) for more details.
+To test the Remote Connection, click the "Connect" button.  You should be directed to a login page for the remote API's REST API.  To connect to the remote API you must have been given a username and password for the remote installation.  See [remote APIs](../user/dashboard/#remote-apis) for more details.
 
 ![API Details](images/api-details.png)
 
 Removing a Remote Connection
 ----------------------------
-From the Remote Connections list page, click on the name of the API you wish to delete.  This will bring you to the API details page.  Click the "Remove" button on that page and confirm.
+From the Remote Connections list page, click on the name of the connection you wish to delete.  This will bring you to the API details page.  Click the "Remove" button on that page and confirm.
 
 ![Remove API](images/remove-api.png)
 
