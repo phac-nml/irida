@@ -1,44 +1,81 @@
-/*exported projectsTable*/
-/*global oTable_projectsTable */
+import "DataTables/datatables";
+import "DataTables/datatables-buttons";
+import $ from "jquery";
+import {
+  createItemLink,
+  generateColumnOrderInfo,
+  tableConfig,
+  wrapCellContents
+} from "./../../utilities/datatables-utilities";
+import { formatDate } from "./../../utilities/date-utilities";
 
-var projectsTable = (function (tl) {
-  /**
-   * Create a link button to the IRIDA thing
-   *
-   * @param {Object} data column data
-   * @param {String} type type of data
-   * @param {Object} full full object for the row.
-   * @returns {String} either a anchor dom element to the project or just the name of the project.
-   */
-  function createItemButton(data, type, full) {
-    if (tl && tl.BASE_URL) {
-      var html = '<a class="item-link" title="' + data + '" href="' + tl.BASE_URL + 'projects/' + full.id + '"><span class="cell-width-200">' + data + '</span></a>';
-      if(full.remote == true){
-        html = html + '&nbsp;<i class="fa fa-exchange" aria-hidden="true"></i>';
-      }
-      return html;
-    } else {
-      return data;
+/*
+Get the table headers and create a look up table for them.
+This give the row name in snake case and its index.
+ */
+const COLUMNS = generateColumnOrderInfo();
+
+/**
+ * Download table in specified format.
+ * @param {string} format format of downloaded doc.
+ */
+function downloadItem({ format = "xlsx" }) {
+  const url = `${window.PAGE.urls.export}&dtf=${format}`;
+  const anchor = document.createElement("a");
+  anchor.style.display = "none";
+  anchor.href = url;
+  anchor.click();
+}
+
+const config = Object.assign(tableConfig, {
+  ajax: window.PAGE.urls.projects,
+  // These are loaded through the PAGE object.
+  buttons: [
+    {
+      extend: "collection",
+      className: "btn-sm",
+      text() {
+        return document.querySelector("#export-btn-text").innerHTML;
+      },
+      // The buttons are loaded onto the PAGE variable.
+      // These are for exporting the table to either
+      // csv or excel.
+      buttons: window.PAGE.buttons.map(button => ({
+        text: button.name,
+        action() {
+          downloadItem({ format: button.format });
+        }
+      }))
     }
-  }
-
-  return {
-    createItemButton: createItemButton
-  };
-})(window.TL);
-
-(function ($) {
-  $(function () {
-    var $filterBtn = $('#filterProjectsBtn');
-
-    $filterBtn.on('click', function () {
-      oTable_projectsTable.ajax.reload();
-    });
-
-    $('#filterForm').on('keydown', function (e) {
-      if (e.which === 13) {
-        $filterBtn.click();
+  ],
+  order: [[COLUMNS.MODIFIED_DATE, "desc"]],
+  columnDefs: [
+    {
+      targets: [COLUMNS.NAME],
+      render(data, type, full) {
+        // Render the name as a link to the actual project.
+        return createItemLink({
+          url: `${window.PAGE.urls.project}${full.id}`,
+          label: data,
+          width: "200px"
+        });
       }
-    });
-  });
-})(window.jQuery);
+    },
+    {
+      targets: COLUMNS.ORGANISM,
+      render(data) {
+        return wrapCellContents({ text: data });
+      }
+    },
+    // Format all dates to standate date for the systme.
+    {
+      targets: [COLUMNS.CREATED_DATE, COLUMNS.MODIFIED_DATE],
+      render(data) {
+        const date = formatDate({ date: data });
+        return `<time>${date}</time>`;
+      }
+    }
+  ]
+});
+
+$("#projects").DataTable(config);

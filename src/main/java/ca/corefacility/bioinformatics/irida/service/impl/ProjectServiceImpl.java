@@ -37,10 +37,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
 import ca.corefacility.bioinformatics.irida.events.annotations.LaunchesProjectEvent;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -64,9 +60,7 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
@@ -83,8 +77,13 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.project.UserGroup
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * A specialized service layer for projects.
@@ -109,6 +108,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	private final UserGroupProjectJoinRepository ugpjRepository;
 	private final SampleSequencingObjectJoinRepository ssoRepository;
 	private final ProjectAnalysisSubmissionJoinRepository pasRepository;
+	private final SequencingObjectRepository sequencingObjectRepository;
 	private final ProjectRepository projectRepository;
 
 	@Autowired
@@ -117,7 +117,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			ProjectSampleJoinRepository psjRepository, RelatedProjectRepository relatedProjectRepository,
 			ReferenceFileRepository referenceFileRepository, ProjectReferenceFileJoinRepository prfjRepository,
 			final UserGroupProjectJoinRepository ugpjRepository, SampleSequencingObjectJoinRepository ssoRepository,
-			ProjectAnalysisSubmissionJoinRepository pasRepository, Validator validator) {
+			ProjectAnalysisSubmissionJoinRepository pasRepository,
+			SequencingObjectRepository sequencingObjectRepository, Validator validator) {
 		super(projectRepository, validator, Project.class);
 		this.projectRepository = projectRepository;
 		this.sampleRepository = sampleRepository;
@@ -130,6 +131,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		this.ugpjRepository = ugpjRepository;
 		this.ssoRepository = ssoRepository;
 		this.pasRepository = pasRepository;
+		this.sequencingObjectRepository = sequencingObjectRepository;
 	}
 
 	/**
@@ -632,12 +634,12 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_USER')")
-	public Page<Project> findProjectsForUser(final String search, final String filterName, final String filterOrganism, final Integer page,
-			final Integer count, final Direction sortDirection, final String... sortedBy) {
+	public Page<Project> findProjectsForUser(final String search, final Integer page,
+			final Integer count, final Sort sort) {
 		final UserDetails loggedInDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		final User loggedIn = userRepository.loadUserByUsername(loggedInDetails.getUsername());
-		final PageRequest pr = new PageRequest(page, count, sortDirection, getOrDefaultSortProperties(sortedBy));
-		return projectRepository.findAll(searchForProjects(search, filterName, filterOrganism, loggedIn), pr);
+		final PageRequest pr = new PageRequest(page, count, getOrDefaultSort(sort));
+		return projectRepository.findAll(searchForProjects(search, null, null, loggedIn), pr);
 	}
 	
 	/**
@@ -645,10 +647,9 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public Page<Project> findAllProjects(final String search, final String filterName, final String filterOrganism, final Integer page,
-			final Integer count, final Direction sortDirection, final String... sortedBy) {
-		final PageRequest pr = new PageRequest(page, count, sortDirection, getOrDefaultSortProperties(sortedBy));
-		return projectRepository.findAll(searchForProjects(search, filterName, filterOrganism, null), pr);
+	public Page<Project> findAllProjects(String searchValue, int currentPage, int length, Sort sort) {
+		final PageRequest pr = new PageRequest(currentPage, length, sort);
+		return projectRepository.findAll(searchForProjects(searchValue, null, null, null), pr);
 	}
 
 	/**
@@ -741,12 +742,11 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@PostFilter("hasPermission(filterObject, 'canReadProject')")
 	@Override
 	public List<Project> getProjectsUsedInAnalysisSubmission(AnalysisSubmission submission) {
-		Set<SequenceFilePair> inputFilePairs = submission.getPairedInputFiles();
-		Set<SingleEndSequenceFile> inputFileSingle = submission.getInputFilesSingleEnd();
+		Set<SequencingObject> findSequencingObjectsForAnalysisSubmission = sequencingObjectRepository
+				.findSequencingObjectsForAnalysisSubmission(submission);
 
 		// get available projects
-		Set<Project> projectsInAnalysis = getProjectsForSequencingObjects(inputFilePairs);
-		projectsInAnalysis.addAll(getProjectsForSequencingObjects(inputFileSingle));
+		Set<Project> projectsInAnalysis = getProjectsForSequencingObjects(findSequencingObjectsForAnalysisSubmission);
 
 		return Lists.newArrayList(projectsInAnalysis);
 	}
@@ -766,6 +766,21 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		} else {
 			return sortProperties;
 		}
+	}
+
+	/**
+	 * If the {@link Sort} is null create a default {@link Sort} for the data.
+	 *
+	 * @param sort
+	 * 		{@link Sort} for the data
+	 *
+	 * @return the create {@link Sort} if none was defined, otherwise just return the original {@link Sort}
+	 */
+	private static final Sort getOrDefaultSort(Sort sort) {
+		if (sort == null) {
+			sort = new Sort(Direction.ASC, CREATED_DATE_SORT_PROPERTY);
+		}
+		return sort;
 	}
 	
 	/**

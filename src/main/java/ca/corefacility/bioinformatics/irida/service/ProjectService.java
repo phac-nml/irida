@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
@@ -323,49 +324,38 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	/**
 	 * Find a list of projects (for a user or admin) using the specified search
 	 * criteria
-	 * 
+	 *
 	 * @param search
-	 * 			  the search text to use for *all* fields.
-	 * @param filterName
-	 *            the name to filter on
-	 * @param filterOrganism
-	 *            the organism to filter on
+	 * 		{@link String} generic string to search terms for
 	 * @param page
-	 *            the requested page of results
+	 * 		{@link Integer} current page viewed.
 	 * @param count
-	 *            the number of results on the page
-	 * @param sortDirection
-	 *            the direction the results should be sorted by
-	 * @param sortedBy
-	 *            the property to be used to sort the results
-	 * @return a page of projects for the user.
+	 * 		{@link Integer} length of current page.
+	 * @param sort
+	 * 		{@link Sort} Current table sort properties.
+	 *
+	 * @return {@link Page} of {@link Project}
 	 */
-	public Page<Project> findProjectsForUser(final String search, final String filterName, final String filterOrganism, final Integer page,
-			final Integer count, final Direction sortDirection, final String... sortedBy);
+	public Page<Project> findProjectsForUser(final String search, final Integer page, final Integer count,
+			final Sort sort);
 
 	/**
 	 * Find a paged list of all projects (for admin) using the specified search
 	 * criteria.
-	 * 
-	 * @param search
-	 * 			  the search text to use for *all* fields.
-	 * @param filterName
-	 *            the name to filter on
-	 * @param filterOrganism
-	 *            the organism to filter on
-	 * @param page
-	 *            the requested page of results
-	 * @param count
-	 *            the number of results on the page
-	 * @param sortDirection
-	 *            the direction the results should be sorted by
-	 * @param sortedBy
-	 *            the property to be used to sort the results
-	 * @return a page of projects for the user.
+	 *
+	 * @param searchValue
+	 * 		{@link String} generic string to search terms for
+	 * @param currentPage
+	 * 		{@link Integer} current page viewed.
+	 * @param length
+	 * 		{@link Integer} length of current page.
+	 * @param sort
+	 * 		{@link Sort} Current table sort properties.
+	 *
+	 * @return {@link Page} of {@link Project}
 	 */
-	public Page<Project> findAllProjects(final String search, final String filterName, final String filterOrganism, final Integer page,
-			final Integer count, final Direction sortDirection, final String... sortedBy);
-	
+	public Page<Project> findAllProjects(String searchValue, int currentPage, int length, Sort sort);
+
 	/**
 	 * Get a list of {@link Project}s from remote sites that have a given
 	 * {@link SyncStatus}

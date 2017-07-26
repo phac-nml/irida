@@ -64,7 +64,8 @@ var RowClickHandler = (function (page) {
     if(!Array.isArray(selected[item.projectId])) {
       return false;
     }
-    return selected[item.projectId].indexOf(item.sampleId) > -1;
+    // Seems to be storing as a string instead of number.
+    return selected[item.projectId].includes(item.sampleId + "");
   }
 
   function getSelectedCount() {

@@ -8,6 +8,7 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.history.Revision;
@@ -210,6 +211,18 @@ public interface CRUDService<IdentifierType extends Serializable, Type extends T
 	 */
 	public Page<Type> search(Specification<Type> specification, int page, int size, Direction order,
 			String... sortProperties);
+
+	/**
+	 * Search for an entity of {@link Type} and {@link PageRequest}
+	 *
+	 * @param specification
+	 * 		The search {@link Specification}
+	 * @param pageRequest
+	 * 		The {@link PageRequest}
+	 *
+	 * @return a {@link Page} og {@link Type}
+	 */
+	public Page<Type> search(Specification<Type> specification, PageRequest pageRequest);
 
 	/**
 	 * Find all of the revisions for the specified identifier.

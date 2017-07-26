@@ -7,18 +7,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
@@ -81,6 +70,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.Datata
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -99,7 +89,7 @@ public class AnalysisController {
 	private static final String BASE = "analysis/";
 	public static final String PAGE_DETAILS_DIRECTORY = BASE + "details/";
 	public static final String PREVIEW_UNAVAILABLE = PAGE_DETAILS_DIRECTORY + "unavailable";
-	public static final String PAGE_ANALYSIS_LIST = BASE + "analysis-list";
+	public static final String PAGE_ANALYSIS_LIST = "analyses/analyses";
 
 	/*
 	 * SERVICES
@@ -112,13 +102,14 @@ public class AnalysisController {
 	private UpdateAnalysisSubmissionPermission updateAnalysisPermission;
 	private SampleService sampleService;
 	private MetadataTemplateService metadataTemplateService;
+	private SequencingObjectService sequencingObjectService;
 
 	@Autowired
 	public AnalysisController(AnalysisSubmissionService analysisSubmissionService,
-			IridaWorkflowsService iridaWorkflowsService, UserService userService,
-			SampleService sampleService, ProjectService projectService,
-			UpdateAnalysisSubmissionPermission updateAnalysisPermission,
-			MetadataTemplateService metadataTemplateService, MessageSource messageSource) {
+			IridaWorkflowsService iridaWorkflowsService, UserService userService, SampleService sampleService,
+			ProjectService projectService, UpdateAnalysisSubmissionPermission updateAnalysisPermission,
+			MetadataTemplateService metadataTemplateService, SequencingObjectService sequencingObjectService,
+			MessageSource messageSource) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
 		this.messageSource = messageSource;
@@ -127,6 +118,7 @@ public class AnalysisController {
 		this.sampleService = sampleService;
 		this.projectService = projectService;
 		this.metadataTemplateService = metadataTemplateService;
+		this.sequencingObjectService = sequencingObjectService;
 	}
 
 	// ************************************************************************************************
@@ -204,13 +196,14 @@ public class AnalysisController {
 
 		// Input files
 		// - Paired
-		Set<SequenceFilePair> inputFilePairs = submission.getPairedInputFiles();
+		Set<SequenceFilePair> inputFilePairs = sequencingObjectService
+				.getSequencingObjectsOfTypeForAnalysisSubmission(submission, SequenceFilePair.class);
 		model.addAttribute("paired_end", inputFilePairs);
-		
+
 		// Check if user can update analysis
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		model.addAttribute("updatePermission", updateAnalysisPermission.isAllowed(authentication, submission));
-		
+
 		if (iridaWorkflow.getWorkflowDescription().requiresReference() && submission.getReferenceFile().isPresent()) {
 			logger.debug("Adding reference file to page for submission with id [" + submission.getId() + "].");
 			model.addAttribute("referenceFile", submission.getReferenceFile().get());
@@ -250,7 +243,8 @@ public class AnalysisController {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		// Input files
 		// - Paired
-		Set<SequenceFilePair> inputFilePairs = submission.getPairedInputFiles();
+		Set<SequenceFilePair> inputFilePairs = sequencingObjectService
+				.getSequencingObjectsOfTypeForAnalysisSubmission(submission, SequenceFilePair.class);
 
 		// get projects already shared with submission
 		Set<Project> projectsShared = projectService.getProjectsForAnalysisSubmission(submission).stream()

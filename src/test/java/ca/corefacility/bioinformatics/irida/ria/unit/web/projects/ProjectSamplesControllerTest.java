@@ -38,29 +38,28 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.ProjectSampleModel;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProjectSamples;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectSamplesController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
-import com.github.dandelion.datatables.core.ajax.ColumnDef;
-import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
-import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 public class ProjectSamplesControllerTest {
 	public static final String PROJECT_ORGANISM = "E. coli";
+	public static final String FILE_PATH = "src/test/resources/files/test_file.fastq";
 	private static final String USER_NAME = "testme";
 	private static final User user = new User(USER_NAME, null, null, null, null, null);
 	private static final String PROJECT_NAME = "test_project";
 	private static final Long PROJECT_ID = 1L;
 	private static final Long PROJECT_MODIFIED_DATE = 1403723706L;
 	private static Project project = null;
-	public static final String FILE_PATH = "src/test/resources/files/test_file.fastq";
-
 	// Services
 	private ProjectService projectService;
 	private ProjectSamplesController controller;
@@ -313,20 +312,16 @@ public class ProjectSamplesControllerTest {
 
 		when(sampleService
 				.getFilteredSamplesForProjects(any(List.class), any(List.class), any(String.class), any(String.class), any(String.class), any(Date.class), any(Date.class),
-						any(Integer.class), any(Integer.class), any(Sort.class)))
+						any(Integer.class), any(Integer.class), any(
+								Sort.class)))
 				.thenReturn(TestDataFactory.getPageOfProjectSampleJoin());
-		DatatablesCriterias criterias = mock(DatatablesCriterias.class);
-
-		ColumnDef columnDef = new ColumnDef();
-		columnDef.setSortDirection(ColumnDef.SortDirection.ASC);
-		columnDef.setName("sample.sampleName");
-		when(criterias.getSortedColumnDefs()).thenReturn(ImmutableList.of(columnDef));
-
-		DatatablesResponse<ProjectSampleModel> response = controller
-				.getProjectSamples(1L, criterias, ImmutableList.of(), ImmutableList.of(), null, null, null, null);
-		List<ProjectSampleModel> data = response.getData();
+		DataTablesParams params = mock(DataTablesParams.class);
+		when(params.getSort()).thenReturn(new Sort(Direction.ASC, "sample.sampleName"));
+		DataTablesResponse response = controller
+				.getProjectSamples(1L, params, ImmutableList.of(), ImmutableList.of(), null, null, null, null);
+		List<DataTablesResponseModel> data = response.getData();
 		assertEquals("Has the correct number of samples", 1, data.size());
-		ProjectSampleModel sampleData = data.get(0);
+		DTProjectSamples sampleData = (DTProjectSamples) data.get(0);
 		assertEquals("Has the correct sample", "Joined Sample", sampleData.getSampleName());
 
 	}

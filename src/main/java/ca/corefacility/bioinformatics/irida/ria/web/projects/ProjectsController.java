@@ -1,27 +1,26 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.security.Principal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 import org.springframework.format.Formatter;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.HttpStatus;
@@ -48,17 +46,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.github.dandelion.datatables.core.ajax.DataSet;
-import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
-import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
-import com.github.dandelion.datatables.core.export.CsvExport;
-import com.github.dandelion.datatables.core.export.ExportConf;
-import com.github.dandelion.datatables.core.export.ExportUtils;
-import com.github.dandelion.datatables.core.export.HtmlTableBuilder;
-import com.github.dandelion.datatables.core.export.ReservedFormat;
-import com.github.dandelion.datatables.core.html.HtmlTable;
-import com.github.dandelion.datatables.extras.export.poi.XlsxExport;
-import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -80,7 +67,11 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.CartController;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.ProjectsDatatableUtils;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProject;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
@@ -129,7 +120,7 @@ public class ProjectsController {
 	private final IridaWorkflowsService workflowsService;
 	private final CartController cartController;
 	private final UpdateSamplePermission updateSamplePermission;
-	
+
 	@Value("${file.upload.max_size}")
 	private final Long MAX_UPLOAD_SIZE = IridaRestApiWebConfig.UNLIMITED_UPLOAD_SIZE;
 
@@ -145,8 +136,7 @@ public class ProjectsController {
 
 	// CONSTANTS
 	private final List<Map<String, String>> EXPORT_TYPES = ImmutableList.of(
-			ImmutableMap.of("format", ReservedFormat.XLSX, "name", "Excel"),
-			ImmutableMap.of("format", ReservedFormat.CSV, "name", "CSV")
+			ImmutableMap.of("format", "xlsx", "name", "Excel"), ImmutableMap.of("format", "csv", "name", "CSV")
 	);
 
 
@@ -257,7 +247,7 @@ public class ProjectsController {
 			@RequestParam(name = "cart", required = false, defaultValue = "false") boolean useCartSamples,
 			final Model model) {
 		model.addAttribute("useCartSamples", useCartSamples);
-		
+
 		Map<Project, Set<Sample>> selected = cartController.getSelected();
 
 		// Check which samples they can modify
@@ -276,39 +266,39 @@ public class ProjectsController {
 
 		model.addAttribute("allowedSamples", allowed);
 		model.addAttribute("disallowedSamples", disallowed);
-		
+
 		if (!model.containsAttribute("errors")) {
 			model.addAttribute("errors", new HashMap<>());
 		}
 		return CREATE_NEW_PROJECT_PAGE;
 	}
-	
+
 	/**
 	 * Get the page to synchronize remote projects
-	 * 
+	 *
 	 * @param model
 	 *            Model to render for view
 	 * @return Name of the project sync page
 	 */
 	@RequestMapping(value = "/projects/synchronize", method = RequestMethod.GET)
 	public String getSynchronizeProjectPage(final Model model) {
-		
+
 		Iterable<RemoteAPI> apis = remoteApiService.findAll();
 		model.addAttribute("apis",apis);
 		model.addAttribute("frequencies", ProjectSyncFrequency.values());
 		model.addAttribute("defaultFrequency", ProjectSyncFrequency.WEEKLY);
-		
+
 		if (!model.containsAttribute("errors")) {
 			model.addAttribute("errors", new HashMap<>());
 		}
-		
+
 		return SYNC_NEW_PROJECT_PAGE;
 	}
 
 	/**
 	 * Get a {@link Project} from a remote api and mark it to be synchronized in
 	 * this IRIDA installation
-	 * 
+	 *
 	 * @param url
 	 *            the URL of the remote project
 	 * @return Redirect to the new project. If an oauth exception occurs it will
@@ -338,11 +328,11 @@ public class ProjectsController {
 			return getSynchronizeProjectPage(model);
 		}
 	}
-	
+
 	/**
 	 * List all the {@link Project}s that can be read for a user from a given
 	 * {@link RemoteAPI}
-	 * 
+	 *
 	 * @param apiId
 	 *            the local ID of the {@link RemoteAPI}
 	 * @return a List of {@link Project}s
@@ -415,10 +405,10 @@ public class ProjectsController {
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_METADATA);
 		return PROJECT_METADATA_PAGE;
 	}
-	
+
 	/**
 	 * Get the page for analyses shared with a given {@link Project}
-	 * 
+	 *
 	 * @param projectId
 	 *            the ID of the {@link Project}
 	 * @param principal
@@ -486,14 +476,14 @@ public class ProjectsController {
 		if (!Strings.isNullOrEmpty(remoteURL)) {
 			project.setRemoteURL(remoteURL);
 		}
-		
+
 		try {
 			projectService.update(project);
 		} catch (ConstraintViolationException ex) {
 			model.addAttribute("errors", getErrorsFromViolationException(ex));
 			return getProjectMetadataEditPage(model, principal, projectId);
 		}
-		
+
 		return "redirect:/projects/" + projectId + "/metadata";
 	}
 
@@ -531,142 +521,181 @@ public class ProjectsController {
 	}
 
 	/**
-	 * User mapping to get a list of all project they are on.
+	 *  User mapping to get a list of all project they are on.
 	 *
-	 * @param criterias
-	 * 		the search criteria to apply
-	 * @param principal
-	 * 		{@link Principal} currently logged in user.
+	 * @param params
+	 * 		{@link DataTablesParams} passed from the UI DataTables instance.
 	 *
-	 * @return {@link List} of project {@link Map}
+	 * @return {@link DataTablesResponse}
 	 */
 	@RequestMapping("/projects/ajax/list")
 	@ResponseBody
-	public DatatablesResponse<Map<String, Object>> getAjaxProjectList(@DatatablesParams DatatablesCriterias criterias,
-			final Principal principal) {
-		final String search = criterias.getSearch();
-		final Map<String, String> searchMap = ProjectsDatatableUtils.generateSearchMap(criterias.getColumnDefs());
-
-		final String organismName = searchMap.getOrDefault("organism", "");
-		final String projectName = searchMap.getOrDefault("name", "");
-
-		final Map<String, Object> sortProperties = ProjectsDatatableUtils.getSortProperties(criterias);
-		final Integer currentPage = ProjectsDatatableUtils.getCurrentPage(criterias);
-		final Sort.Direction direction = (Sort.Direction) sortProperties.get("direction");
-		final String sortName = sortProperties.get("sort_string").toString();
-
-		final Page<Project> page = projectService.findProjectsForUser(search, projectName, organismName, currentPage,
-				criterias.getLength(), direction, sortName);
-		List<Map<String, Object>> projects = new ArrayList<>(page.getSize());
-		projects.addAll(page.getContent().stream().map(join -> createProjectMap(join))
-				.collect(Collectors.toList()));
-		DataSet<Map<String, Object>> dataSet = new DataSet<>(projects, page.getTotalElements(),
-				page.getTotalElements());
-		return DatatablesResponse.build(dataSet, criterias);
+	public DataTablesResponse getAjaxProjectList(@DataTablesRequest DataTablesParams params) {
+		final Page<Project> page = projectService
+				.findProjectsForUser(params.getSearchValue(), params.getCurrentPage(), params.getLength(),
+						params.getSort());
+		List<DataTablesResponseModel> projects = page.getContent().stream().map(this::createDataTablesProject).collect(Collectors.toList());
+		return new DataTablesResponse(params, page, projects);
 	}
 
 	/**
 	 * Admin mapping to get a list of all project they are on.
 	 *
-	 * @param criterias
-	 * 			the search criteria to apply
-	 * @return {@link List} of project {@link Map}
+	 * @param params
+	 * 		{@link DataTablesParams} passed from the UI DataTables instance.
+	 *
+	 * @return {@link DataTablesResponse}
 	 */
 	@RequestMapping("/projects/admin/ajax/list")
 	@ResponseBody
-	public DatatablesResponse<Map<String, Object>> getAjaxAdminProjectsList(
-			@DatatablesParams DatatablesCriterias criterias) {
-		final String search = criterias.getSearch();
-		final Map<String, String> searchMap = ProjectsDatatableUtils.generateSearchMap(criterias.getColumnDefs());
-		final String organismName = searchMap.getOrDefault("organism", "");
-		final String projectName = searchMap.getOrDefault("name", "");
-		
-		Map<String, Object> sortProperties = ProjectsDatatableUtils.getSortProperties(criterias);
-		final Integer currentPage = ProjectsDatatableUtils.getCurrentPage(criterias);
-		final Sort.Direction direction = (Sort.Direction) sortProperties.get("direction");
-		final String sortName = sortProperties.get("sort_string").toString();
-
-		final Page<Project> page = projectService.findAllProjects(search, projectName, organismName, currentPage,
-				criterias.getLength(), direction, sortName);
-		List<Map<String, Object>> projects = new ArrayList<>(page.getSize());
-		projects.addAll(page.getContent().stream().map(this::createProjectMap).collect(Collectors.toList()));
-		DataSet<Map<String, Object>> dataSet = new DataSet<>(projects, page.getTotalElements(),
-				page.getTotalElements());
-		return DatatablesResponse.build(dataSet, criterias);
+	public DataTablesResponse getAjaxAdminProjectsList(@DataTablesRequest DataTablesParams params) {
+		final Page<Project> page = projectService
+				.findAllProjects(params.getSearchValue(), params.getCurrentPage(), params.getLength(),
+						params.getSort());
+		List<DataTablesResponseModel> projects = page.getContent().stream().map(this::createDataTablesProject).collect(Collectors.toList());
+		return new DataTablesResponse(params, page, projects);
 	}
 
 	/**
-	 * Get a listing of all project available to current user.
+	 * Export Projects table as either an excel file or CSV
 	 *
 	 * @param type
-	 * 		{@link String} Type of export.  See {@link ReservedFormat}
+	 * 		of file to export (csv or excel)
 	 * @param isAdmin
-	 * 		{@link Boolean} If the current user is viewing the admin section
-	 * @param request
-	 * 		{@link HttpServletRequest}
+	 * 		if the currently logged in user is an administrator
 	 * @param response
 	 * 		{@link HttpServletResponse}
+	 * @param principal
+	 * 		{@link Principal}
 	 * @param locale
-	 * 		{@link Locale} Current users locale
+	 * 		{@link Locale}
 	 *
 	 * @throws IOException
+	 * 		thrown if cannot open the {@link HttpServletResponse} {@link OutputStream}
 	 */
 	@RequestMapping("/projects/ajax/export")
-	public void exportProjectsTableAsExcel(@RequestParam(value = "dtf") String type,
-			@RequestParam(required = false, defaultValue = "false", value = "admin") Boolean isAdmin, HttpServletRequest request,
+	public void exportProjectsToFile(@RequestParam(value = "dtf") String type,
+			@RequestParam(required = false, defaultValue = "false", value = "admin") Boolean isAdmin,
 			HttpServletResponse response, Principal principal, Locale locale) throws IOException {
-		List<Project> projects;
+		// Let's make sure the export type is set properly
+		if (!(type.equalsIgnoreCase("xlsx") || type.equalsIgnoreCase("csv"))) {
+			throw new IllegalArgumentException(
+					"No file type sent for downloading all projects.  Expecting parameter 'dtf=' xlsx or csv");
+		}
 
+		List<Project> projects;
 		// If viewing the admin projects page give the user all the projects.
 		if (isAdmin) {
 			projects = (List<Project>) projectService.findAll();
 		}
 		// If on the users projects page, give the user their projects.
 		else {
-			projects = new ArrayList<>();
 			User user = userService.getUserByUsername(principal.getName());
-			List<Join<Project, User>> projectsForUser = projectService.getProjectsForUser(user);
-			for(Join<Project, User> join : projectsForUser) {
-				projects.add(join.getSubject());
-			}
+			projects = projectService.getProjectsForUser(user).stream().map(Join::getSubject)
+					.collect(Collectors.toList());
 		}
 
-		List<Map<String, Object>> projectMap = projects.stream().map(this::createProjectMap)
+		List<DTProject> dtProjects = projects.stream().map(this::createDataTablesProject).collect(Collectors.toList());
+		List<String> headers = ImmutableList.of("id", "name", "organism", "samples", "created", "modified").stream()
+				.map(h -> messageSource.getMessage("projects.table." + h, new Object[] {}, locale))
 				.collect(Collectors.toList());
 
-		// Build export configuration
-		ExportConf exportConf;
-		if (type.equals(ReservedFormat.XLSX)) {
-			exportConf = new ExportConf.Builder(ReservedFormat.XLSX)
-					.header(true)
-					.exportClass(new XlsxExport())
-					.build();
+		// Create the filename
+		Date date = new Date();
+		DateFormat fileDateFormat = new SimpleDateFormat(
+				messageSource.getMessage("date.iso-8601", null, locale));
+		String filename = "IRIDA_projects_" + fileDateFormat.format(date);
+
+		response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "." + type + "\"");
+		if (type.equals("xlsx")) {
+			writeProjectsToExcelFile(headers, dtProjects, locale, response);
 		} else {
-			exportConf = new ExportConf.Builder(ReservedFormat.CSV)
-					.header(true)
-					.exportClass(new CsvExport())
-					.build();
+			writeProjectsToCsvFile(headers, dtProjects, locale, response);
+		}
+	}
+
+	/**
+	 * Write the projects as a CSV file
+	 *
+	 * @param headers
+	 * 		{@link List} for {@link String} headers for the information.
+	 * @param projects
+	 * 		{@link List} of {@link DTProject} to export
+	 * @param locale
+	 * 		{@link Locale}
+	 * @param response
+	 * 		{@link HttpServletResponse}
+	 *
+	 * @throws IOException
+	 * 		Thrown if cannot get the {@link PrintWriter} for the response
+	 */
+	private void writeProjectsToCsvFile(List<String> headers, List<DTProject> projects, Locale locale,
+			HttpServletResponse response) throws IOException {
+		PrintWriter writer = response.getWriter();
+		try(CSVPrinter printer = new CSVPrinter(writer, CSVFormat.DEFAULT.withRecordSeparator(System.lineSeparator()))) {
+			printer.printRecord(headers);
+
+			DateFormat dateFormat = new SimpleDateFormat(messageSource.getMessage("locale.date.long", null, locale));
+			for (DTProject p : projects) {
+				List<String> record = new ArrayList<>();
+				record.add(String.valueOf(p.getId()));
+				record.add(p.getName());
+				record.add(p.getOrganism());
+				record.add(String.valueOf(p.getSamples()));
+				record.add(dateFormat.format(p.getCreatedDate()));
+				record.add(dateFormat.format(p.getModifiedDate()));
+				printer.printRecord(record);
+			}
+			printer.flush();
+		}
+	}
+
+	/**
+	 * Write the projects as a Excel file
+	 *
+	 * @param headers
+	 * 		{@link List} for {@link String} headers for the information.
+	 * @param projects
+	 * 		{@link List} of {@link DTProject} to export
+	 * @param locale
+	 * 		{@link Locale}
+	 * @param response
+	 * 		{@link HttpServletResponse}
+	 *
+	 * @throws IOException
+	 * 		Thrown if cannot get the {@link OutputStream} for the response
+	 */
+	private void writeProjectsToExcelFile(List<String> headers, List<DTProject> projects, Locale locale,
+			HttpServletResponse response) throws IOException {
+		XSSFWorkbook workbook = new XSSFWorkbook();
+		XSSFSheet sheet = workbook.createSheet();
+		int rowCount = 0;
+
+		// Create the headers
+		Row headerRow = sheet.createRow(rowCount++);
+		for (int cellCount = 0; cellCount < headers.size(); cellCount++) {
+			Cell cell = headerRow.createCell(cellCount);
+			cell.setCellValue(headers.get(cellCount));
 		}
 
-		// Format the file name based on ISO standard date format.
-		Date date = new Date();
-		DateFormat dateFormat = new SimpleDateFormat(
-				messageSource.getMessage("date.iso-8601", null, locale));
-		exportConf.setFileName("IRIDA_projects_" + dateFormat.format(date));
+		// Create the rest of the sheet
+		DateFormat dateFormat = new SimpleDateFormat(messageSource.getMessage("locale.date.long", null, locale));
+		for (DTProject p : projects) {
+			Row row = sheet.createRow(rowCount++);
+			int cellCount = 0;
+			row.createCell(cellCount++).setCellValue(String.valueOf(p.getId()));
+			row.createCell(cellCount++).setCellValue(p.getName());
+			row.createCell(cellCount++).setCellValue(p.getOrganism());
+			row.createCell(cellCount++).setCellValue(String.valueOf(p.getSamples()));
+			row.createCell(cellCount++).setCellValue(dateFormat.format(p.getCreatedDate()));
+			row.createCell(cellCount).setCellValue(dateFormat.format(p.getModifiedDate()));
+		}
 
-		// Build the table to export
-		HtmlTable table = new HtmlTableBuilder<Map<String, Object>>()
-				.newBuilder("projects", projectMap, request, exportConf)
-				.column().fillWithProperty("id").title("ID")
-				.column().fillWithProperty("name").title("Name")
-				.column().fillWithProperty("description").title("Description")
-				.column().fillWithProperty("organism").title("Organism")
-				.column().fillWithProperty("samples").title("Samples")
-				.column().fillWithProperty("createdDate").title("Created Date")
-				.column().fillWithProperty("modifiedDate").title("Modified Date")
-				.build();
-
-		ExportUtils.renderExport(table, exportConf, response);
+		// Write the file
+		try(OutputStream stream = response.getOutputStream()) {
+			workbook.write(stream);
+			stream.flush();
+		}
 	}
 
 	/**
@@ -692,17 +721,17 @@ public class ProjectsController {
 	public ResponseEntity<String> roleChangeErrorHandler(Exception ex) {
 		return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
 	}
-	
+
 	/**
 	 * Test whether the logged in user can modify a {@link Sample}
-	 * 
+	 *
 	 * @param sample
 	 *            the {@link Sample} to check
 	 * @return true if they can modify
 	 */
 	private boolean canModifySample(Sample sample) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		
+
 		return updateSamplePermission.isAllowed(authentication, sample);
 	}
 
@@ -741,28 +770,17 @@ public class ProjectsController {
 	}
 
 	/**
-	 * Extract the details of the a {@link Project} into a {@link Map} which is consumable by the UI
+	 * Extract the details of the a {@link Project} into a {@link DTProject} which is consumable by the UI
 	 *
 	 * @param project
 	 * 		{@link Project}
 	 *
-	 * @return {@link Map}
+	 * @return {@link DTProject}
 	 */
-	public Map<String, Object> createProjectMap(Project project) {
-		Map<String, Object> map = new HashMap<>();
-
-		map.put("id", project.getId());
-		map.put("name", project.getName());
-		map.put("description", Strings.isNullOrEmpty(project.getProjectDescription()) ? "" : project.getProjectDescription());
-		map.put("organism", Strings.isNullOrEmpty(project.getOrganism()) ? "" : project.getOrganism());
-		map.put("samples", sampleService.getNumberOfSamplesForProject(project));
-		map.put("createdDate", project.getCreatedDate());
-		map.put("modifiedDate", project.getModifiedDate());
-		map.put("remote", project.isRemote());
-
-		return map;
+	private DTProject createDataTablesProject(Project project) {
+		return new DTProject(project, sampleService.getNumberOfSamplesForProject(project));
 	}
-	
+
 	/**
 	 * Response class for a {@link Project} and its {@link RemoteStatus}
 	 */
