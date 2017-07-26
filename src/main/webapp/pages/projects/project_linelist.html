@@ -20,6 +20,15 @@
 </head>
 <body>
 <main layout:fragment="main">
+    <div ng-controller="lineListTableController as tableCtrl">
+        <table id="linelist" class="table table-striped">
+            <thead>
+            <tr>
+                <th th:each="header : ${headers}" th:text="${header}"></th>
+            </tr>
+            </thead>
+        </table>
+    </div>
     <linelist></linelist>
 </main>
 
