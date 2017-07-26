@@ -286,12 +286,12 @@ Settings for remote synchronized projects can also be managed from the project s
 * **Last Synchronization** - The time the project was last synchronized or checked for updates.  Click the **Sync Now** button to mark the project for synchronization before it's scheduled sync time. 
 * **Remote Connections** - Displays the remote IRIDA installation the project is hosted on and your connection status with that API.
 * **Synchronization Frequency** - How often the project will be synchronized.  You can update this setting here.
-* **Synchronization User** - The account which will be used to request project updates from the remote IRIDA installation.  This user account must have access to the project on the remote IRIDA API in order for synchronization to proceed.  Click * **Become Synchronization User** to set this to be your user account.
+* **Synchronization User** - The account which will be used to request project updates from the remote IRIDA installation.  This user account must have access to the project on the remote IRIDA instance in order for synchronization to proceed.  Click **Become Synchronization User** to set this to be your user account.
 
 Synchronizing a remote project
 ------------------------------
 
-IRIDA allows you to synchronize projects between different IRIDA installations.  A remote project appears similar to a local project, but users are not allowed to add samples or sequencing data to a remote project.  Instead all data associated with a remote project will be pulled from a remote IRIDA API on a regular schedule.  The only data that can be managed for a remote project is the members that are allowed to view the project and associated sample data.
+IRIDA allows you to synchronize projects between different IRIDA installations.  A remote project appears similar to a local project, but users are not allowed to add samples or sequencing data to a remote project.  Instead all data associated with a remote project will be pulled from a remote IRIDA instance on a regular schedule.  The only data that can be managed for a remote project is the members that are allowed to view the project and associated sample data.
 
 #### Connecting to a remote instance of IRIDA
 
