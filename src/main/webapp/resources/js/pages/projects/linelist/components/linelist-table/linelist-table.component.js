@@ -1,5 +1,5 @@
-import {dom} from './../../../../../utilities/datatables.utilities';
-import {EVENTS} from './../../constants';
+import {dom} from "./../../../../../utilities/datatables.utilities";
+import {EVENTS} from "./../../constants";
 
 /**
  * Controller for the metadata linelist Datatables
@@ -8,10 +8,12 @@ import {EVENTS} from './../../constants';
  * @param {object} DTColumnBuilder Datatables column builder
  * @param {object} LinelistService service to get information for the linelist
  */
-function controller($scope,
-                    DTOptionsBuilder,
-                    DTColumnBuilder,
-                    LinelistService) {
+function controller(
+  $scope,
+  DTOptionsBuilder,
+  DTColumnBuilder,
+  LinelistService
+) {
   const $ctrl = this;
   $ctrl.table = {};
 
@@ -20,53 +22,52 @@ function controller($scope,
    *  - Setting upt the table options and columns
    */
   $ctrl.$onInit = () => {
-    $ctrl.dtOptions = DTOptionsBuilder
-    .fromFnPromise(() => {
+    $ctrl.dtOptions = DTOptionsBuilder.fromFnPromise(() => {
       return LinelistService.getMetadata();
     })
-    .withDOM(dom)
-    .withScroller()
-    .withOption('scrollX', true)
-    .withOption('deferRender', true)
-    .withOption('scrollY', '50vh')
-    .withOption('scrollCollapse', true)
-    .withColReorder()
-    .withColReorderCallback(function() {
-      $ctrl.parent.columnReorder(this.fnOrder());
-    });
+      .withDOM(dom)
+      .withScroller()
+      .withOption("scrollX", true)
+      .withOption("deferRender", true)
+      .withOption("scrollY", "50vh")
+      .withOption("scrollCollapse", true)
+      .withColReorder()
+      .withColReorderCallback(function() {
+        $ctrl.parent.columnReorder(this.fnOrder());
+      });
 
-    $ctrl.dtColumns = $ctrl.fields
-      .map(header => {
-        const col = DTColumnBuilder
-          .newColumn(header)
-          .withTitle(header)
-          .renderWith((data, type, full) => {
-            // This is where any custom rendering logic should go.
-            // example formatting date columns.
-            if (header === 'label' &&
-              full.hasOwnProperty('id') && full.hasOwnProperty('label')) {
-              return `
+    $ctrl.dtColumns = $ctrl.fields.map(header => {
+      const col = DTColumnBuilder.newColumn(header)
+        .withTitle(header)
+        .renderWith((data, type, full) => {
+          // This is where any custom rendering logic should go.
+          // example formatting date columns.
+          if (
+            header === "label" &&
+            full.hasOwnProperty("id") &&
+            full.hasOwnProperty("label")
+          ) {
+            return `
 <a class="btn btn-link" 
    href="${window.PAGE.urls.sample}${full.id.value}/details">${data.value}</a>
 `;
-            }
+          }
 
-            return data.value;
-          });
-        col.visible = true;
-        return col;
-      });
+          return data.value;
+        });
+      col.visible = true;
+      return col;
+    });
   };
 
   /**
    * Listen for changes to the column visibility called from the Metadata sidebar.
    */
   $scope.$on(EVENTS.TABLE.columnVisibility, (e, args) => {
-    const {column} = args;
-    const col = $ctrl.dtColumns
-      .find(c => {
-        return c.sTitle === column.label;
-      });
+    const { column } = args;
+    const col = $ctrl.dtColumns.find(c => {
+      return c.sTitle === column.label;
+    });
 
     col.visible = column.visible;
   });
@@ -116,10 +117,10 @@ function controller($scope,
 }
 
 controller.$inject = [
-  '$scope',
-  'DTOptionsBuilder',
-  'DTColumnBuilder',
-  'LinelistService'
+  "$scope",
+  "DTOptionsBuilder",
+  "DTColumnBuilder",
+  "LinelistService"
 ];
 
 export const TableComponent = {
@@ -132,11 +133,11 @@ export const TableComponent = {
   dt-instance="$ctrl.table">
 </table>`,
   require: {
-    parent: '^^linelist'
+    parent: "^^linelist"
   },
   bindings: {
-    fields: '<',
-    metadata: '<'
+    fields: "<",
+    metadata: "<"
   },
   controller
 };
