@@ -236,7 +236,7 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 			throws ConcatenateException {
 
 		SequencingObjectConcatenator<? extends SequencingObject> concatenator = SequencingObjectConcatenatorFactory
-				.getConcatenator(toJoin.iterator().next().getClass());
+				.getConcatenator(toJoin);
 
 		SequencingObject concatenated = concatenator.concatenateFiles(toJoin);
 
