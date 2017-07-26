@@ -80,7 +80,7 @@ Remote instances of IRIDA can be used as data sources for associated projects an
 
 ![Remote API button](images/remote-api-dash.png)
 
-Administrators can add or remove available remote instances of IRIDA from this menu.  Details can be found in the [administrator guide](../../administrator/#managing-remote-apis).
+Administrators can add or remove available remote instances of IRIDA from this menu.  Details can be found in the [administrator guide](../../administrator/#remote-instances-of-irida).
 
 ### Connecting to remote instances of IRIDA
 

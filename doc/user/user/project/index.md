@@ -309,7 +309,7 @@ To begin creating a synchronized project, click the **Synchronize Remote Project
 
 ![Synchronize menu option](images/synchronize-menu-option.png) 
 
-Once on the **Synchronize New Remote Project** page, you must select the required remote instance of IRIDA and verify your connection status.  If you don't have a valid connection to the remote instance, you must click the `Connect` button and follow the instructions to connect in order to proceed.  For more information on connecting to remote instance of IRIDA see the [remote instance of IRIDA documentation](../dashboard/#remote-apis).
+Once on the **Synchronize New Remote Project** page, you must select the required remote instance of IRIDA and verify your connection status.  If you don't have a valid connection to the remote instance, you must click the `Connect` button and follow the instructions to connect in order to proceed.  For more information on connecting to remote instance of IRIDA see the [remote instance of IRIDA documentation](../dashboard/#remote-instances-of-irida).
 
 ![Synchronize api connect](images/synchronize-connect-api.png)
 
