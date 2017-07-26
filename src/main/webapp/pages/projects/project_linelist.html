@@ -5,6 +5,7 @@
         layout:decorator="projects/_base">
 <head>
     <title th:text="#{linelist.page-title}">Title</title>
+    <link rel="stylesheet" th:href="@{/resources/css/pages/project_linelist.css}" />
     <script th:inline="javascript">
       var PAGE = {
         urls: {
@@ -18,7 +19,7 @@
     </script>
 </head>
 <body>
-<main layout:fragment="main" ddl:bundle-includes="project-linelist">
+<main layout:fragment="main">
     <linelist></linelist>
 </main>
 
@@ -153,6 +154,8 @@
             </button>
         </div>
     </script>
+
+    <script th:src="@{/resources/js/build/project-linelist.bundle.js}"></script>
 </th:block>
 </body>
 </html>
