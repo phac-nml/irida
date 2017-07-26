@@ -1,24 +1,26 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:ddl="http://www.thymeleaf.org/dandelion"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns:sec="http://www.springframework.org/security/tags"
       layout:decorator="template/page">
 <head>
   <title th:text="#{dashboard.title}">THIS IS SOMETHING WRONG</title>
+  <link rel="stylesheet" href="/resources/css/modules/events.css"
+        th:href="@{/resources/css/modules/events.css}"/>
+  <link rel="stylesheet" href="/resources/css/modules/announcements.css"
+        th:href="@{/resources/css/modules/announcements.css}"/>
   <script th:inline="javascript">
     var PAGE = {
       urls: {
-        link:    /*[[@{/announcements/}]]*/ '/announcements'
-      }
+        link: /*[[@{/announcements/}]]*/ '/announcements',
+      },
     };
     window.dependencies = ['irida.events', 'irida.announcements'];
   </script>
 </head>
-
 <body>
 <div class="row" layout:fragment="page">
-  <div class="col-md-6 col-sm-12" ddl:bundle-includes="events">
+  <div class="col-md-6 col-sm-12">
     <section class="panel panel-primary">
       <div class="panel-heading clearfix">
         <h4 class="pull-left" th:text="#{event.title}">_Recent Activities_</h4>
@@ -37,7 +39,7 @@
     </section>
 
   </div>
-  <div  class="col-md-6 col-sm-12" ddl:bundle-includes="announcement">
+  <div class="col-md-6 col-sm-12">
     <section class="panel panel-primary">
       <div class="panel-heading clearfix">
         <h4 class="pull-left" th:text="#{announcement.title}">_New Announcements_</h4>
@@ -54,6 +56,19 @@
     </section>
   </div>
 </div>
+
+<th:block layout:fragment="scripts">
+  <script src="/resources/bower_components/livestampjs/livestamp.min.js"
+          th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}"></script>
+  <script src="/resources/js/modules/events/events.js"
+          th:src="@{/resources/js/modules/events/events.js}"></script>
+  <script src="/resources/bower_components/marked/marked.min.js"
+          th:src="@{/resources/bower_components/marked/marked.min.js}"></script>
+  <script src="/resources/bower_components/angular-marked/angular-marked.min.js"
+          th:src="@{/resources/bower_components/angular-marked/angular-marked.min.js}"></script>
+  <script src="/resources/js/pages/announcement/announcementDashboard.js"
+          th:src="@{/resources/js/pages/announcement/announcementDashboard.js}"></script>
+</th:block>
 </body>
 
 </html>

@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.security.permissions.sample;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -40,7 +41,7 @@ public class UpdateSamplePermissionTest {
 		updateSamplePermission = new UpdateSamplePermission(sampleRepository, projectOwnerPermission,
 				projectSampleJoinRepository);
 		Collection<GrantedAuthority> roles = new ArrayList<>();
-		roles.add(Role.ROLE_ADMIN);
+		roles.add(Role.ROLE_USER);
 
 		auth = new UsernamePasswordAuthenticationToken("fbristow", "password1", roles);
 	}
@@ -51,39 +52,51 @@ public class UpdateSamplePermissionTest {
 		final Project p2 = new Project();
 		final Sample s = new Sample();
 
-		when(projectSampleJoinRepository.getProjectForSample(s)).thenReturn(
-				ImmutableList.of(new ProjectSampleJoin(p1, s), new ProjectSampleJoin(p2, s)));
+		when(projectSampleJoinRepository.getProjectForSample(s))
+				.thenReturn(ImmutableList.of(new ProjectSampleJoin(p1, s, true), new ProjectSampleJoin(p2, s, true)));
 		when(projectOwnerPermission.isAllowed(auth, p1)).thenReturn(true);
 		when(projectOwnerPermission.isAllowed(auth, p2)).thenReturn(true);
 
 		assertTrue("Permission to update sample should be given.", updateSamplePermission.isAllowed(auth, s));
 	}
-	
+
 	@Test
 	public void testGrantPermissionWithOneProject() {
 		final Project p1 = new Project();
 		final Project p2 = new Project();
 		final Sample s = new Sample();
 
-		when(projectSampleJoinRepository.getProjectForSample(s)).thenReturn(
-				ImmutableList.of(new ProjectSampleJoin(p1, s), new ProjectSampleJoin(p2, s)));
+		when(projectSampleJoinRepository.getProjectForSample(s))
+				.thenReturn(ImmutableList.of(new ProjectSampleJoin(p1, s, true), new ProjectSampleJoin(p2, s, true)));
 		when(projectOwnerPermission.isAllowed(auth, p1)).thenReturn(false);
 		when(projectOwnerPermission.isAllowed(auth, p2)).thenReturn(true);
 
 		assertTrue("Permission to update sample should be given.", updateSamplePermission.isAllowed(auth, s));
 	}
-	
+
 	@Test
 	public void testRejectPermissionWithNoProjects() {
 		final Project p1 = new Project();
 		final Project p2 = new Project();
 		final Sample s = new Sample();
 
-		when(projectSampleJoinRepository.getProjectForSample(s)).thenReturn(
-				ImmutableList.of(new ProjectSampleJoin(p1, s), new ProjectSampleJoin(p2, s)));
+		when(projectSampleJoinRepository.getProjectForSample(s))
+				.thenReturn(ImmutableList.of(new ProjectSampleJoin(p1, s, true), new ProjectSampleJoin(p2, s, true)));
 		when(projectOwnerPermission.isAllowed(auth, p1)).thenReturn(false);
 		when(projectOwnerPermission.isAllowed(auth, p2)).thenReturn(false);
 
-		assertTrue("Permission to update sample should be given.", updateSamplePermission.isAllowed(auth, s));
+		assertFalse("Permission to update sample should not be given.", updateSamplePermission.isAllowed(auth, s));
+	}
+
+	@Test
+	public void testRejectPermissionNotOwner() {
+		final Project p1 = new Project();
+		final Sample s = new Sample();
+
+		when(projectSampleJoinRepository.getProjectForSample(s))
+				.thenReturn(ImmutableList.of(new ProjectSampleJoin(p1, s, false)));
+		when(projectOwnerPermission.isAllowed(auth, p1)).thenReturn(true);
+
+		assertFalse("Permission to update sample should not be given.", updateSamplePermission.isAllowed(auth, s));
 	}
 }

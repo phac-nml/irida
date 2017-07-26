@@ -37,10 +37,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
 import ca.corefacility.bioinformatics.irida.events.annotations.LaunchesProjectEvent;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -85,6 +81,10 @@ import ca.corefacility.bioinformatics.irida.repositories.referencefile.Reference
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * A specialized service layer for projects.
@@ -369,8 +369,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	@Transactional
 	@LaunchesProjectEvent(SampleAddedProjectEvent.class)
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#project, 'isProjectOwner')")
-	public ProjectSampleJoin addSampleToProject(Project project, Sample sample) {
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or (hasPermission(#project, 'isProjectOwner'))")
+	public ProjectSampleJoin addSampleToProject(Project project, Sample sample, boolean owner) {
 		logger.trace("Adding sample to project.");
 
 		// Check to ensure a sample with this sequencer id doesn't exist in this
@@ -393,7 +393,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			}
 		}
 
-		ProjectSampleJoin join = new ProjectSampleJoin(project, sample);
+		ProjectSampleJoin join = new ProjectSampleJoin(project, sample, owner);
 
 		try {
 			return psjRepository.save(join);
@@ -410,11 +410,43 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Transactional
 	@LaunchesProjectEvent(SampleAddedProjectEvent.class)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or ( hasPermission(#source, 'isProjectOwner') and hasPermission(#destination, 'isProjectOwner'))")
-	public ProjectSampleJoin moveSampleBetweenProjects(Project source, Project destination, Sample sample) {
-		ProjectSampleJoin join = addSampleToProject(destination, sample);
+	public ProjectSampleJoin moveSampleBetweenProjects(Project source, Project destination, Sample sample, boolean owner) {
+		ProjectSampleJoin join = addSampleToProject(destination, sample, owner);
 		removeSampleFromProject(source, sample);
 
 		return join;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	@LaunchesProjectEvent(SampleAddedProjectEvent.class)
+	@PreAuthorize("hasPermission(#source, 'isProjectOwner') " + "and hasPermission(#destination, 'isProjectOwner') "
+			+ "and hasPermission(#samples, 'canReadSample') "
+			+ "and ((not #giveOwner) or hasPermission(#samples, 'canUpdateSample') )")
+	public List<ProjectSampleJoin> copyOrMoveSamples(Project source, Project destination, Collection<Sample> samples,
+			boolean move, boolean giveOwner) {
+
+		List<ProjectSampleJoin> newJoins = new ArrayList<>();
+
+		for (Sample sample : samples) {
+
+			ProjectSampleJoin newJoin;
+			if (move) {
+				newJoin = moveSampleBetweenProjects(source, destination, sample, giveOwner);
+			} else {
+				newJoin = addSampleToProject(destination, sample, giveOwner);
+			}
+
+			logger.trace("Copied sample " + sample.getId() + " to project " + destination.getId());
+
+			newJoins.add(newJoin);
+
+		}
+
+		return newJoins;
 	}
 
 	/**
@@ -600,12 +632,12 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_USER')")
-	public Page<Project> findProjectsForUser(final String search, final String filterName, final String filterOrganism, final Integer page,
-			final Integer count, final Direction sortDirection, final String... sortedBy) {
+	public Page<Project> findProjectsForUser(final String search, final Integer page,
+			final Integer count, final Sort sort) {
 		final UserDetails loggedInDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		final User loggedIn = userRepository.loadUserByUsername(loggedInDetails.getUsername());
-		final PageRequest pr = new PageRequest(page, count, sortDirection, getOrDefaultSortProperties(sortedBy));
-		return projectRepository.findAll(searchForProjects(search, filterName, filterOrganism, loggedIn), pr);
+		final PageRequest pr = new PageRequest(page, count, getOrDefaultSort(sort));
+		return projectRepository.findAll(searchForProjects(search, null, null, loggedIn), pr);
 	}
 	
 	/**
@@ -613,10 +645,9 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public Page<Project> findAllProjects(final String search, final String filterName, final String filterOrganism, final Integer page,
-			final Integer count, final Direction sortDirection, final String... sortedBy) {
-		final PageRequest pr = new PageRequest(page, count, sortDirection, getOrDefaultSortProperties(sortedBy));
-		return projectRepository.findAll(searchForProjects(search, filterName, filterOrganism, null), pr);
+	public Page<Project> findAllProjects(String searchValue, int currentPage, int length, Sort sort) {
+		final PageRequest pr = new PageRequest(currentPage, length, sort);
+		return projectRepository.findAll(searchForProjects(searchValue, null, null, null), pr);
 	}
 
 	/**
@@ -696,7 +727,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 
 		sampleIds.forEach(sid -> {
 			Sample s = sampleRepository.findOne(sid);
-			addSampleToProject(project, s);
+			addSampleToProject(project, s, false);
 		});
 
 		return created;
@@ -734,6 +765,21 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		} else {
 			return sortProperties;
 		}
+	}
+
+	/**
+	 * If the {@link Sort} is null create a default {@link Sort} for the data.
+	 *
+	 * @param sort
+	 * 		{@link Sort} for the data
+	 *
+	 * @return the create {@link Sort} if none was defined, otherwise just return the original {@link Sort}
+	 */
+	private static final Sort getOrDefaultSort(Sort sort) {
+		if (sort == null) {
+			sort = new Sort(Direction.ASC, CREATED_DATE_SORT_PROPERTY);
+		}
+		return sort;
 	}
 	
 	/**
