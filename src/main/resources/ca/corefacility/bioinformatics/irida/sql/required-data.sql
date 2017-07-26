@@ -27,19 +27,19 @@ insert into user_group_member(created_date, role, group_id, user_id) values (now
 insert into user_group_member(created_date, role, group_id, user_id) values (now(), 'GROUP_OWNER', 8, 3);
 
 -- projects required for integration tests
-INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`, `assemble_uploads`, `sistr_typing_uploads`) VALUES ('2015-06-01 08:24:09', '2015-06-01 08:24:09' , 'Project 1', 'E. coli O157 I am a very long that is out fo control, this should be even longer', 0, 0);
-INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`, `assemble_uploads`, `sistr_typing_uploads`) VALUES ('2015-06-01 08:24:09', '2015-06-02 08:24:09' , 'Project 3', 'E. coli', 0, 0);
-INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`, `assemble_uploads`, `sistr_typing_uploads`) VALUES ('2015-06-01 08:24:09', '2015-06-03 08:24:09' , 'Project 2', 'E. coli', 0, 0);
-INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`, `assemble_uploads`, `sistr_typing_uploads`) VALUES ('2015-06-01 08:24:09', '2015-06-04 08:24:09' , 'Project 5', 'E. coli', 0, 0);
-INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`, `assemble_uploads`, `sistr_typing_uploads`) VALUES ('2015-06-01 08:24:09', '2015-06-05 08:24:09' , 'Project 6', 'E. coli', 0, 0);
-INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`, `assemble_uploads`, `sistr_typing_uploads`) VALUES ('2015-06-01 08:24:09', '2015-06-06 08:24:09' , 'Project 4', 'E. coli', 0, 0);
+INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`, `assemble_uploads`, `sistr_typing_uploads`) VALUES ('2015-06-01 08:24:09', '2016-06-01 08:24:09' , 'Project 1', 'E. coli O157 I am a very long that is out fo control, this should be even longer', 0, 0);
+INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`, `assemble_uploads`, `sistr_typing_uploads`) VALUES ('2015-06-01 08:24:09', '2015-07-02 08:24:09' , 'Project 3', 'E. coli', 0, 0);
+INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`, `assemble_uploads`, `sistr_typing_uploads`) VALUES ('2015-06-01 08:24:09', '2015-08-03 08:24:09' , 'Project 2', 'E. coli', 0, 0);
+INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`, `assemble_uploads`, `sistr_typing_uploads`) VALUES ('2015-06-01 08:24:09', '2015-09-04 08:24:09' , 'Project 5', 'E. coli', 0, 0);
+INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`, `assemble_uploads`, `sistr_typing_uploads`) VALUES ('2015-06-01 08:24:09', '2015-10-05 08:24:09' , 'Project 6', 'E. coli', 0, 0);
+INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`, `assemble_uploads`, `sistr_typing_uploads`) VALUES ('2015-06-01 08:24:09', '2015-06-15 08:24:09' , 'Project 4', 'E. coli', 0, 0);
 INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`, `assemble_uploads`, `sistr_typing_uploads`) VALUES ('2015-06-01 08:24:09', '2015-06-07 08:24:09' , 'Project 7', 'E. coli', 0, 0);
 INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`, `assemble_uploads`, `sistr_typing_uploads`) VALUES ('2015-06-01 08:24:09', '2015-06-08 08:24:09' , 'Project 8', 'E. coli', 0, 0);
 INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`, `assemble_uploads`, `sistr_typing_uploads`) VALUES ('2015-06-01 08:24:09', '2015-06-09 08:24:09' , 'Project 9', 'E. coli', 0, 0);
 INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`, `assemble_uploads`, `sistr_typing_uploads`) VALUES ('2015-06-01 08:24:09', '2015-06-10 08:24:09' , 'Project 10', 'E. coli', 0, 0);
 INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`, `assemble_uploads`, `sistr_typing_uploads`) VALUES ('2015-06-01 08:24:09', '2015-06-11 08:24:09' , 'Listeria Outbreak 2013', 'Listeria', 0, 0);
-INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`, `assemble_uploads`, `sistr_typing_uploads`) VALUES ('2015-06-01 08:24:09', '2015-06-12 08:24:09' , 'Listeria Outbreak 2014', 'Listeria', 0, 0);
-INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`, `assemble_uploads`, `sistr_typing_uploads`) VALUES ('2015-06-01 08:24:09', '2015-06-13 08:24:09' , 'Listeria Outbreak 2015', 'Listeria', 0, 0);
+INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`, `assemble_uploads`, `sistr_typing_uploads`) VALUES ('2015-06-01 08:24:09', now() , 'Listeria Outbreak 2014', 'Listeria', 0, 0);
+INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`, `assemble_uploads`, `sistr_typing_uploads`) VALUES ('2015-06-01 08:24:09', now() , 'Listeria Outbreak 2015', 'Listeria', 0, 0);
 INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`, `assemble_uploads`, `sistr_typing_uploads`) VALUES ('2015-06-01 08:24:09', '2015-06-14 08:24:09' , 'E. coli O157 Outbreak 2012', 'E. coli', 0, 0);
 INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`, `assemble_uploads`, `sistr_typing_uploads`) VALUES ('2015-06-01 08:24:09', '2015-06-15 08:24:09' , 'Project 15', 'E. coli', 0, 0);
 INSERT INTO project (`createdDate`, `modifiedDate`, `name`, `organism`, `assemble_uploads`, `sistr_typing_uploads`) VALUES ('2015-06-01 08:24:09', '2015-06-16 08:24:09' , 'Project 16', 'E. coli', 0, 0);

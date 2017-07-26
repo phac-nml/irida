@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<main layout:fragment="page" ddl:bundle-includes="groups-create">
+<main layout:fragment="page">
 		<div class="row">
 			<div class="col-md-8 col-md-offset-2 mrgn-tp-lg wb-frmvld">
 				<form role="form" action="/groups/create"
@@ -41,5 +41,8 @@
 		</div>
 	</main>
 
+<th:block layout:fragment="scripts">
+	<script th:src="@{/resources/js/pages/users/groups-create.js}"></script>
+</th:block>
 </body>
 </html>
