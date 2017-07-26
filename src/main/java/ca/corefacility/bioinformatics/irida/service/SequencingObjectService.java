@@ -10,6 +10,7 @@ import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 /**
  * Service for managing {@link SequencingObject}s and relationships with related
@@ -100,4 +101,29 @@ public interface SequencingObjectService extends CRUDService<Long, SequencingObj
 	 * @return the updated {@link SequencingObject}
 	 */
 	public SequencingObject updateRemoteStatus(Long id, RemoteStatus remoteStatus);
+	
+	/**
+	 * Get the set of {@link SequencingObject}s associated with a given
+	 * {@link AnalysisSubmission}
+	 * 
+	 * @param submission
+	 *            the {@link AnalysisSubmission}
+	 * @return the associated {@link SequencingObject}s
+	 */
+	public Set<SequencingObject> getSequencingObjectsForAnalysisSubmission(AnalysisSubmission submission);
+	
+	/**
+	 * Get all {@link SequencingObject}s of a given type associated with an
+	 * {@link AnalysisSubmission}
+	 * 
+	 * @param submission
+	 *            the {@link AnalysisSubmission}
+	 * @param type
+	 *            the class type of {@link SequencingObject} to return
+	 * @return a set of the requested type
+	 * 
+	 * @param <Type>
+	 *            a class type extending {@link SequencingObject}
+	 */
+	public <Type extends SequencingObject> Set<Type> getSequencingObjectsOfTypeForAnalysisSubmission(AnalysisSubmission submission, Class<Type> type);
 }

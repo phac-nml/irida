@@ -65,7 +65,7 @@ public class SequenceFilePair extends SequencingObject implements IridaSequenceF
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(files);
+		return Objects.hash(getFiles());
 	}
 
 	@Override
@@ -73,7 +73,7 @@ public class SequenceFilePair extends SequencingObject implements IridaSequenceF
 		if (obj instanceof SequenceFilePair) {
 			SequenceFilePair pair = (SequenceFilePair) obj;
 
-			return super.equals(obj) && Objects.equals(files, pair.files);
+			return super.equals(obj) && Objects.equals(getFiles(), pair.getFiles());
 		}
 
 		return false;

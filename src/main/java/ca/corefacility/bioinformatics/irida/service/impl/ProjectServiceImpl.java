@@ -60,9 +60,7 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
@@ -79,6 +77,7 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.project.UserGroup
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 
@@ -109,6 +108,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	private final UserGroupProjectJoinRepository ugpjRepository;
 	private final SampleSequencingObjectJoinRepository ssoRepository;
 	private final ProjectAnalysisSubmissionJoinRepository pasRepository;
+	private final SequencingObjectRepository sequencingObjectRepository;
 	private final ProjectRepository projectRepository;
 
 	@Autowired
@@ -117,7 +117,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			ProjectSampleJoinRepository psjRepository, RelatedProjectRepository relatedProjectRepository,
 			ReferenceFileRepository referenceFileRepository, ProjectReferenceFileJoinRepository prfjRepository,
 			final UserGroupProjectJoinRepository ugpjRepository, SampleSequencingObjectJoinRepository ssoRepository,
-			ProjectAnalysisSubmissionJoinRepository pasRepository, Validator validator) {
+			ProjectAnalysisSubmissionJoinRepository pasRepository,
+			SequencingObjectRepository sequencingObjectRepository, Validator validator) {
 		super(projectRepository, validator, Project.class);
 		this.projectRepository = projectRepository;
 		this.sampleRepository = sampleRepository;
@@ -130,6 +131,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		this.ugpjRepository = ugpjRepository;
 		this.ssoRepository = ssoRepository;
 		this.pasRepository = pasRepository;
+		this.sequencingObjectRepository = sequencingObjectRepository;
 	}
 
 	/**
@@ -740,12 +742,11 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@PostFilter("hasPermission(filterObject, 'canReadProject')")
 	@Override
 	public List<Project> getProjectsUsedInAnalysisSubmission(AnalysisSubmission submission) {
-		Set<SequenceFilePair> inputFilePairs = submission.getPairedInputFiles();
-		Set<SingleEndSequenceFile> inputFileSingle = submission.getInputFilesSingleEnd();
+		Set<SequencingObject> findSequencingObjectsForAnalysisSubmission = sequencingObjectRepository
+				.findSequencingObjectsForAnalysisSubmission(submission);
 
 		// get available projects
-		Set<Project> projectsInAnalysis = getProjectsForSequencingObjects(inputFilePairs);
-		projectsInAnalysis.addAll(getProjectsForSequencingObjects(inputFileSingle));
+		Set<Project> projectsInAnalysis = getProjectsForSequencingObjects(findSequencingObjectsForAnalysisSubmission);
 
 		return Lists.newArrayList(projectsInAnalysis);
 	}

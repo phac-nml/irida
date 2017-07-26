@@ -29,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysisController;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -52,6 +53,7 @@ public class AnalysisControllerTest {
 	private SampleService sampleService;
 	private UpdateAnalysisSubmissionPermission updatePermission;
 	private MetadataTemplateService metadataTemplateService;
+	private SequencingObjectService sequencingObjectService;
 
 	@Before
 	public void init() {
@@ -60,10 +62,11 @@ public class AnalysisControllerTest {
 		projectServiceMock = mock(ProjectService.class);
 		updatePermission = mock(UpdateAnalysisSubmissionPermission.class);
 		sampleService = mock(SampleService.class);
+		sequencingObjectService = mock(SequencingObjectService.class);
 		MessageSource messageSourceMock = mock(MessageSource.class);
 		analysisController = new AnalysisController(analysisSubmissionServiceMock, iridaWorkflowsServiceMock,
 				userServiceMock, sampleService, projectServiceMock, updatePermission, metadataTemplateService,
-				messageSourceMock);
+				sequencingObjectService, messageSourceMock);
 	}
 
 	@Test
