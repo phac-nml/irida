@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 
+import org.apache.http.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +45,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
@@ -88,6 +91,7 @@ public class SamplesController extends BaseController {
 	private static final String SAMPLE_PAGE = SAMPLES_DIR + "sample";
 	private static final String SAMPLE_EDIT_PAGE = SAMPLES_DIR + "sample_edit";
 	public static final String SAMPLE_FILES_PAGE = SAMPLES_DIR + "sample_files";
+	public static final String FILES_CONCATENATE_PAGE = SAMPLES_DIR + "sample_files_concatenate";
 
 	// Field Names
 	public static final String SAMPLE_NAME = "sampleName";
@@ -451,6 +455,43 @@ public class SamplesController extends BaseController {
 		}
 
 		return ImmutableMap.of("samples", result);
+	}
+	
+	@RequestMapping(value = "/samples/{sampleId}/sequenceFiles/concatenate", method = RequestMethod.GET)
+	public String getConcatenatePage(@PathVariable Long sampleId, Model model) throws ConcatenateException {
+		Sample sample = sampleService.read(sampleId);
+		model.addAttribute("sampleId", sampleId);
+
+		Collection<SampleSequencingObjectJoin> filePairJoins = sequencingObjectService
+				.getSequencesForSampleOfType(sample, SequenceFilePair.class);
+		Collection<SampleSequencingObjectJoin> singleFileJoins = sequencingObjectService
+				.getSequencesForSampleOfType(sample, SingleEndSequenceFile.class);
+
+		List<SequencingObject> filePairs = filePairJoins.stream().map(SampleSequencingObjectJoin::getObject)
+				.collect(Collectors.toList());
+
+		// SequenceFile
+		model.addAttribute("paired_end", filePairs);
+		model.addAttribute("single_end", singleFileJoins);
+
+		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
+		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isProjectManagerForSample(sample));
+		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_FILES);
+		return FILES_CONCATENATE_PAGE;
+	}
+	
+	@RequestMapping(value = "/samples/{sampleId}/sequenceFiles/concatenate", method = RequestMethod.POST)
+	public String concatenateSequenceFiles(@PathVariable Long sampleId, @RequestParam(name = "seq") Set<Long> objectIds,
+			HttpServletRequest request) throws ConcatenateException {
+		Sample sample = sampleService.read(sampleId);
+
+		Iterable<SequencingObject> readMultiple = sequencingObjectService.readMultiple(objectIds);
+
+		sequencingObjectService.concatenateSequences(Sets.newHashSet(readMultiple), sample);
+
+		final String url = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+		final String redirectUrl = url.substring(0, url.indexOf("/concatenate"));
+		return "redirect:" + redirectUrl;
 	}
 
 	/**

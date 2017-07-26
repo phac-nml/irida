@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="samples/_base">
+<head lang="en">
+	<meta charset="UTF-8"/>
+	<title th:text="#{samples.files.title(${sample.label})}">THIS IS SOMETHING WRONG</title>
+	<link rel="stylesheet" th:href="@{/resources/css/pages/sample_files.css}"/>
+	<script th:inline="javascript">
+		var PAGE = {
+			sample: {
+				id: /*[[${sample.getId()}]]*/ '1'
+			}
+		};
+	</script>
+</head>
+<body>
+
+<main layout:fragment="main">
+	<div class="row">
+		<div class="col-md-12">
+			<h1 id="sample-page-title" th:text="#{samples.files.page-title(${sample.getLabel()})}"></h1>
+		</div>
+	</div>
+	<form th:action="${url}" method="POST" th:with="url=@{${#httpServletRequest.requestURI}}">
+	<div class="row">
+		<div class="col-md-12">
+			<table class="table">
+				<th:block th:each="pair : ${paired_end}">
+					<tr class="paired_end paired_end__forward sequence-file-row" th:with="file=${pair.getForwardSequenceFile()}">
+						<td class="td_radio" rowspan="2">
+							<input type="checkbox" class="concat" name="seq" data-object-type="pair" th:value="${pair.id}"/>
+						</td>
+						<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${pair},file=${file},icon='forward',relative='true')"></td>
+
+					</tr>
+					<tr class="paired_end paired_end__reverse sequence-file-row" th:with="file=${pair.getReverseSequenceFile()}">
+
+						<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${pair},file=${file},icon='reverse',relative='true')"></td>
+					</tr>
+										
+					<tr><td colspan="5" class="sequence_spacer"></td></tr>
+				</th:block>
+				<th:block th:each="join : ${single_end}" th:with="file=${join.getObject()}">
+					<tr class="single_end sequence-file-row">
+						<td class="td_radio">
+							<input type="checkbox" class="concat" name="seq" data-object-type="single" th:value="${file.id}"/>
+						</td>
+						<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${file},file=${file.getSequenceFile()},icon='single',relative='true')"></td>
+					</tr>
+					
+					<tr><td colspan="5" class="sequence_spacer"></td></tr>
+				</th:block>
+			</table>
+		</div>
+	</div>
+	<input type="submit"/>
+	</form>
+
+</main>
+<th:block layout:fragment="scripts" th:inline="javascript">
+	<script>
+		var checked = {};
+
+		$(document).ready(function(){
+			$(".concat").on("click", function(){
+				var different = checkTypes();
+
+				if(different){
+					console.log("bad");
+				}
+			});
+		});
+
+		function checkTypes() {
+			var type = "none";
+			var different = false;
+			$(".concat:checked").each(function(){
+				var checkType = $(this).data("object-type");
+				if(type === "none"){
+					type = checkType;
+				}
+				else if(type != checkType){
+					different = true;
+				}
+			});
+
+			return different;
+		}
+	</script>
+</th:block>
+</body>
+</html>
