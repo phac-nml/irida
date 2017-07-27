@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
@@ -34,6 +35,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.concatenate.SequencingObjectConcatenator;
 import ca.corefacility.bioinformatics.irida.processing.concatenate.SequencingObjectConcatenatorFactory;
@@ -230,6 +232,32 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasPermission(#submission, 'canReadAnalysisSubmission')")
+	public Set<SequencingObject> getSequencingObjectsForAnalysisSubmission(AnalysisSubmission submission) {
+		return repository.findSequencingObjectsForAnalysisSubmission(submission);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasPermission(#submission, 'canReadAnalysisSubmission')")
+	@SuppressWarnings("unchecked")
+	public <Type extends SequencingObject> Set<Type> getSequencingObjectsOfTypeForAnalysisSubmission(
+			AnalysisSubmission submission, Class<Type> type) {
+		Set<SequencingObject> findSequencingObjectsForAnalysisSubmission = getSequencingObjectsForAnalysisSubmission(
+				submission);
+
+		return findSequencingObjectsForAnalysisSubmission.stream().filter(f -> {
+			return f.getClass().equals(type);
+		}).map(f -> {
+			return (Type) f;
+		}).collect(Collectors.toSet());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	@PreAuthorize("hasPermission(#toJoin, 'canReadSequencingObject') and hasPermission(#targetSample, 'canUpdateSample')")
 	@Transactional
 	public SampleSequencingObjectJoin concatenateSequences(Set<SequencingObject> toJoin, Sample targetSample)
@@ -242,4 +270,5 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 
 		return createSequencingObjectInSample(concatenated, targetSample);
 	}
+
 }
