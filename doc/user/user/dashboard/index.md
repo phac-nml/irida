@@ -78,7 +78,7 @@ Remote instances of IRIDA can be used as data sources for associated projects an
 
 **Note**: You must have been provided with a username and password for a remote instance of IRIDA before you can use the data located on that instance.
 
-![Remote API button](images/remote-api-dash.png)
+![Remote instances button](images/remote-api-dash.png)
 
 Administrators can add or remove available remote instances of IRIDA from this menu.  Details can be found in the [administrator guide](../../administrator/#remote-instances-of-irida).
 
@@ -86,11 +86,11 @@ Administrators can add or remove available remote instances of IRIDA from this m
 
 The Remote Connections list will show you all configured remote instances of IRIDA.  To connect, click the "Connect" button next to the right of the connection status.
 
-![Remote API list](images/api-list.png)
+![Remote instances list](images/api-list.png)
 
 If you have never connected to the remote IRIDA instance before, or your login has expired, you will be shown a login window for the remote site.  Enter your login credentials for that site.  The username and password that you use to connect to a remote instance of IRIDA are different than the username and password that you used to log in to the local site.
 
-![Remote API login page](images/remote-login.png)
+![Remote instance login page](images/remote-login.png)
 
 You will be shown an authorization page.  Read the details and click "Authorize" to connect to the API.
 
