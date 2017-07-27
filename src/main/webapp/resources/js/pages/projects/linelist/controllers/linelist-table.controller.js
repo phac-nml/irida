@@ -13,10 +13,12 @@ function defineTable() {
     scrollCollapse: true,
     scrollX: true,
     scroller: true,
-    colReorder: true,
     data: window.metadataList,
     fixedColumns: {
       leftColumns: 1
+    },
+    colReorder: {
+      fixedColumnsLeft: 1
     },
     columnDefs: window.headersList.map(function(header, index) {
       return {
