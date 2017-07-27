@@ -17,7 +17,7 @@
         </ul>
     </div>
 </nav>
-<div layout:fragment="page" ddl:bundle-includes="sequence-files">
+<div layout:fragment="page">
     <div th:if="!${fastQC}" id="fastQC-no-run" class="alert alert-info" role="alert">
         <h1 id="wb-cont" role="heading" th:text="${file.getLabel()}"></h1>
         <b th:text="#{sf.no-results}">There is no FastQC data available for this file.</b>
@@ -78,10 +78,8 @@
     </th:block>
 </div>
 
-<th:block th:inline="javascript" layout:fragment="page-scripts">
+<th:block th:inline="javascript" layout:fragment="scripts">
     <iframe id="invisible" style="display:none;"></iframe>
-	<script src="/resources/bower_components/datatables/media/js/jquery.dataTables.min.js"
-	        th:src="@{/resources/bower_components/datatables/media/js/jquery.dataTables.min.js}"></script>
     <script>
         $("#fileDownload").on('click', function () {
             var iframe = document.getElementById('invisible');

@@ -1,14 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.oauth;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.util.List;
 import java.util.Locale;
@@ -23,17 +17,20 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.ui.ExtendedModelMap;
 
-import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
-import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
-import ca.corefacility.bioinformatics.irida.ria.web.oauth.ClientsController;
-import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
-
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+
+import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
+import ca.corefacility.bioinformatics.irida.ria.web.oauth.ClientsController;
+import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
 
 public class ClientsControllerTest {
 	private IridaClientDetailsService clientDetailsService;
@@ -76,32 +73,21 @@ public class ClientsControllerTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetAjaxClientList() {
-		int page = 0;
-		int size = 10;
-		int draw = 1;
-		int sortColumn = 0;
-		String direction = "asc";
-		String searchValue = "";
 		IridaClientDetails client1 = new IridaClientDetails();
 		client1.setId(1L);
 		IridaClientDetails client2 = new IridaClientDetails();
 		client2.setId(2L);
 		Page<IridaClientDetails> clientPage = new PageImpl<>(Lists.newArrayList(client1, client2));
 
-		when(clientDetailsService.search(any(Specification.class), eq(page), eq(size), any(Direction.class),
-				any(String.class))).thenReturn(clientPage);
+		when(clientDetailsService.search(any(Specification.class), any(PageRequest.class))).thenReturn(clientPage);
 
-		Map<String, Object> ajaxClientList = controller.getAjaxClientList(page, size, draw, sortColumn, direction,
-				searchValue);
+		DataTablesParams params = new DataTablesParams(1, 10, 1, "", new Sort(Sort.Direction.ASC, "createdDate"));
+		DataTablesResponse response = controller.getAjaxClientsList(params);
 
-		assertNotNull(ajaxClientList.get(DataTable.RESPONSE_PARAM_DATA));
-		List<List<String>> clientList = (List<List<String>>) ajaxClientList.get(DataTable.RESPONSE_PARAM_DATA);
+		List<DataTablesResponseModel> models = response.getData();
+		assertEquals(2, models.size());
 
-		assertEquals(2, clientList.size());
-
-		verify(clientDetailsService).search(any(Specification.class), eq(page), eq(size), any(Direction.class),
-				any(String.class));
-
+		verify(clientDetailsService).search(any(Specification.class), any(PageRequest.class));
 	}
 
 	@Test

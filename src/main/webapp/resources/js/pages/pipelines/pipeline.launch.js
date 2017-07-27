@@ -250,7 +250,8 @@
 				},
 				transformRequest: undefined,
 				data            : JSON.stringify(parametersToSave)
-      }).then(function(data) {
+      }).then(function(response) {
+      	var data = response.data;
 				$uibModalInstance.dismiss();
 				// on success, we can re-use the selected parameters in
 				// this controller; update the id and label, then append

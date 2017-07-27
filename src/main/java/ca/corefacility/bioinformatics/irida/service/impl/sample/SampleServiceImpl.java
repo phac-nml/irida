@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -48,6 +47,7 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSa
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleSpecification;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
@@ -75,6 +75,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	private SampleSequencingObjectJoinRepository ssoRepository;
 	
 	private QCEntryRepository qcEntryRepository;
+	
+	private SequencingObjectRepository sequencingObjectRepository;
 
 	/**
 	 * Reference to {@link AnalysisRepository}.
@@ -93,6 +95,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 *            the analysis repository.
 	 * @param ssoRepository
 	 *            The {@link SampleSequencingObjectJoin} repository
+	 * @param sequencingObjectRepository
+	 *            the {@link SequencingObject} repository
 	 * @param qcEntryRepository
 	 *            a repository for storing and reading {@link QCEntry}
 	 * @param validator
@@ -101,13 +105,14 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Autowired
 	public SampleServiceImpl(SampleRepository sampleRepository, ProjectSampleJoinRepository psjRepository,
 			final AnalysisRepository analysisRepository, SampleSequencingObjectJoinRepository ssoRepository,
-			QCEntryRepository qcEntryRepository, Validator validator) {
+			QCEntryRepository qcEntryRepository, SequencingObjectRepository sequencingObjectRepository, Validator validator) {
 		super(sampleRepository, validator, Sample.class);
 		this.sampleRepository = sampleRepository;
 		this.psjRepository = psjRepository;
 		this.analysisRepository = analysisRepository;
 		this.ssoRepository = ssoRepository;
 		this.qcEntryRepository = qcEntryRepository;
+		this.sequencingObjectRepository = sequencingObjectRepository;
 	}
 	
 	/**
@@ -157,21 +162,21 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	public Sample update(Sample object) {
 		return super.update(object);
 	}
-
+	
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SEQUENCER') or hasPermission(#project, 'canReadProject')")
-	public Sample getSampleForProject(Project project, Long identifier) throws EntityNotFoundException {
-		Optional<Sample> sample = psjRepository.getSamplesForProject(project).stream().map(j -> j.getObject())
-				.filter(s -> s.getId().equals(identifier)).findFirst();
-		if (sample.isPresent()) {
-			return sample.get();
-		} else {
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SEQUENCER') or (hasPermission(#project, 'canReadProject') and hasPermission(#sampleId, 'canReadSample'))")
+	public ProjectSampleJoin getSampleForProject(Project project, Long sampleId) {
+		Sample sample = read(sampleId);
+		ProjectSampleJoin join = psjRepository.readSampleForProject(project, sample);
+		if (join == null) {
 			throw new EntityNotFoundException("Join between the project and this identifier doesn't exist");
+
 		}
+		return join;
 	}
 	
 	/**
@@ -242,9 +247,10 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	@Transactional
-	@PreAuthorize("hasPermission(#project, 'isProjectOwner')")
-	public Sample mergeSamples(Project project, Sample mergeInto, Sample... toMerge) {
+	@PreAuthorize("hasPermission(#project, 'isProjectOwner') and hasPermission(#mergeInto, 'canUpdateSample') and hasPermission(#toMerge, 'canUpdateSample')")
+	public Sample mergeSamples(Project project, Sample mergeInto, Collection<Sample> toMerge) {
 		// confirm that all samples are part of the same project:
 		confirmProjectSampleJoin(project, mergeInto);
 
@@ -265,7 +271,18 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		return mergeInto;
 	}
 
-	private void confirmProjectSampleJoin(Project project, Sample sample) {
+	/**
+	 * Confirm that a {@link ProjectSampleJoin} exists between the given
+	 * {@link Project} and {@link Sample}.
+	 * 
+	 * @param project
+	 *            the {@link Project} to check
+	 * @param sample
+	 *            the {@link Sample} to check
+	 * @throws IllegalArgumentException
+	 *             if join does not exist
+	 */
+	private void confirmProjectSampleJoin(Project project, Sample sample) throws IllegalArgumentException{
 		Set<Project> projects = new HashSet<>();
 		List<Join<Project, Sample>> sampleProjects = psjRepository.getProjectForSample(sample);
 		for (Join<Project, Sample> p : sampleProjects) {
@@ -395,12 +412,11 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@PreAuthorize("hasPermission(#submission, 'canReadAnalysisSubmission')")
 	@PostFilter("hasPermission(filterObject, 'canReadSample')")
 	public Collection<Sample> getSamplesForAnalysisSubimssion(AnalysisSubmission submission) {
-		Set<SequencingObject> sequences = new HashSet<>();
-		sequences.addAll(submission.getPairedInputFiles());
-		sequences.addAll(submission.getInputFilesSingleEnd());
+		Set<SequencingObject> objectsForAnalysisSubmission = sequencingObjectRepository
+				.findSequencingObjectsForAnalysisSubmission(submission);
 
-		Set<Sample> samples = sequences.stream().map(s -> ssoRepository.getSampleForSequencingObject(s).getSubject())
-				.collect(Collectors.toSet());
+		Set<Sample> samples = objectsForAnalysisSubmission.stream()
+				.map(s -> ssoRepository.getSampleForSequencingObject(s).getSubject()).collect(Collectors.toSet());
 		return samples;
 	}
 

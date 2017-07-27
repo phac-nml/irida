@@ -25,6 +25,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.Sets;
+
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
@@ -39,11 +44,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
-
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.google.common.collect.Sets;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
@@ -217,8 +217,9 @@ public class AnalysisSubmissionRepositoryIT {
 				.name("submission paired 1").inputFiles(Sets.newHashSet(sequenceFilePair)).build();
 		analysisSubmissionPaired.setSubmitter(submitter1);
 		AnalysisSubmission savedSubmission = analysisSubmissionRepository.save(analysisSubmissionPaired);
-		assertEquals(0, savedSubmission.getInputFilesSingleEnd().size());
-		assertEquals(Sets.newHashSet(sequenceFilePair), savedSubmission.getPairedInputFiles());
+
+		assertEquals(Sets.newHashSet(sequenceFilePair),
+				objectRepository.findSequencingObjectsForAnalysisSubmission(savedSubmission));
 		assertFalse(savedSubmission.getReferenceFile().isPresent());
 	}
 
@@ -234,8 +235,8 @@ public class AnalysisSubmissionRepositoryIT {
 		analysisSubmissionPaired.setSubmitter(submitter1);
 		AnalysisSubmission savedSubmission = analysisSubmissionRepository.save(analysisSubmissionPaired);
 
-		assertEquals(0, savedSubmission.getInputFilesSingleEnd().size());
-		assertEquals(Sets.newHashSet(sequenceFilePair), savedSubmission.getPairedInputFiles());
+		assertEquals(Sets.newHashSet(sequenceFilePair),
+				objectRepository.findSequencingObjectsForAnalysisSubmission(savedSubmission));
 		assertEquals(referenceFile, savedSubmission.getReferenceFile().get());
 	}
 	
@@ -246,18 +247,17 @@ public class AnalysisSubmissionRepositoryIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testCreateAnalysisSingleAndPairedAndReference() {
+		Set<SequencingObject> inputs = Sets.newHashSet(sequenceFilePair, singleEndFile);
 		AnalysisSubmission analysisSubmissionPaired = AnalysisSubmission.builder(workflowId).name("submission paired 1")
-				.inputFiles(Sets.newHashSet(sequenceFilePair, singleEndFile)).referenceFile(referenceFile).build();
+				.inputFiles(inputs).referenceFile(referenceFile).build();
 		analysisSubmissionPaired.setSubmitter(submitter1);
 		AnalysisSubmission savedSubmission = analysisSubmissionRepository.save(analysisSubmissionPaired);
 
-		assertTrue("should have single end file in collection",
-				savedSubmission.getInputFilesSingleEnd().contains(singleEndFile));
-		assertEquals("should have 1 single file", 1, savedSubmission.getInputFilesSingleEnd().size());
+		Set<SequencingObject> inputsSaved = objectRepository
+				.findSequencingObjectsForAnalysisSubmission(savedSubmission);
 
-		assertTrue("should have pair file in collection",
-				savedSubmission.getPairedInputFiles().contains(sequenceFilePair));
-		assertEquals("should have 1 paired file", 1, savedSubmission.getPairedInputFiles().size());
+		assertTrue("should have single end file in collection", inputsSaved.contains(singleEndFile));
+		assertTrue("should have pair file in collection", inputsSaved.contains(sequenceFilePair));
 
 		assertEquals(referenceFile, savedSubmission.getReferenceFile().get());
 	}
@@ -274,13 +274,11 @@ public class AnalysisSubmissionRepositoryIT {
 		analysisSubmissionPaired.setSubmitter(submitter1);
 		AnalysisSubmission savedSubmission = analysisSubmissionRepository.save(analysisSubmissionPaired);
 
-		assertTrue("should have single end file in collection",
-				savedSubmission.getInputFilesSingleEnd().contains(singleEndFile));
-		assertEquals("should have 1 single file", 1, savedSubmission.getInputFilesSingleEnd().size());
+		Set<SequencingObject> inputsSaved = objectRepository
+				.findSequencingObjectsForAnalysisSubmission(savedSubmission);
 
-		assertTrue("should have pair file in collection",
-				savedSubmission.getPairedInputFiles().contains(sequenceFilePair));
-		assertEquals("should have 1 paired file", 1, savedSubmission.getPairedInputFiles().size());
+		assertTrue("should have single end file in collection", inputsSaved.contains(singleEndFile));
+		assertTrue("should have pair file in collection", inputsSaved.contains(sequenceFilePair));
 
 		assertFalse(savedSubmission.getReferenceFile().isPresent());
 	}

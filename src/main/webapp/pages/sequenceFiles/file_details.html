@@ -23,6 +23,7 @@
             ]
         };
     </script>
+    <link rel="stylesheet" th:href="@{/node_modules/angular-bootstrap-lightbox/dist/angular-bootstrap-lightbox.min.css}"/>
     <style>
         .modal-dialog {
             width: 830px!important;
@@ -58,7 +59,7 @@
     </section>
 </main>
 
-<th:block layout:fragment="scripts">
+<th:block layout:fragment="pageScripts">
     <script type="text/ng-template" id="lightbox.html">
         <div class="modal-header">
             <h3 class="modal-title clearfix text-center">
@@ -71,6 +72,8 @@
             <img ng-src="{{Lightbox.imageUrl}}" alt=""/>
         </div>
     </script>
+    <script th:src="@{/node_modules/angular-bootstrap-lightbox/dist/angular-bootstrap-lightbox.min.js}"></script>
+    <script th:src="@{/resources/js/pages/sequence-files/sequence-files.js}"></script>
 </th:block>
 </body>
 </html>

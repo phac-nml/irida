@@ -1,14 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.oauth;
 
 import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.validation.ConstraintViolationException;
 
@@ -18,7 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -38,9 +32,12 @@ import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 import ca.corefacility.bioinformatics.irida.repositories.specification.IridaClientDetailsSpecification;
-import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
-import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTClient;
 import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
 
 /**
@@ -60,11 +57,6 @@ public class ClientsController extends BaseController {
 
 	private final IridaClientDetailsService clientDetailsService;
 	private final MessageSource messageSource;
-
-	private final String SORT_BY_ID = "id";
-	private final List<String> SORT_COLUMNS = Lists.newArrayList(SORT_BY_ID, "clientId", "authorizedGrantTypes",
-			"createdDate");
-	private static final String SORT_ASCENDING = "asc";
 
 	private final List<String> AVAILABLE_GRANTS = Lists.newArrayList("password", "authorization_code");
 
@@ -261,7 +253,7 @@ public class ClientsController extends BaseController {
 		readClient.setAutoApprovableScopes(autoScopes);
 		
 		if (!Strings.isNullOrEmpty(new_secret)) {
-			String clientSecret = generateClientSecret();;
+			String clientSecret = generateClientSecret();
 			readClient.setClientSecret(clientSecret);
 		}
 		
@@ -372,7 +364,7 @@ public class ClientsController extends BaseController {
 		
 		
 
-		String responsePage = null;
+		String responsePage;
 		try {
 			IridaClientDetails create = clientDetailsService.create(client);
 			responsePage = "redirect:/clients/" + create.getId();
@@ -400,70 +392,26 @@ public class ClientsController extends BaseController {
 	}
 
 	/**
-	 * Ajax request page for getting a list of all clients
-	 * 
-	 * @param start
-	 *            The start element of the page
-	 * @param length
-	 *            The page length
-	 * @param draw
-	 *            Whether to draw the table
-	 * @param sortColumn
-	 *            The column to sort on
-	 * @param direction
-	 *            The direction of the sort
-	 * @param searchValue
-	 *            The string search value for the table
-	 * @return a Map for the table
+	 * Get a {@link DataTablesResponse} for the Clients page.
+	 *
+	 * @param params
+	 * 		{@link DataTablesParams} for the current DataTable.
+	 *
+	 * @return {@link DataTablesResponse}
 	 */
 	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<String, Object> getAjaxClientList(
-			@RequestParam(DataTable.REQUEST_PARAM_START) Integer start,
-			@RequestParam(DataTable.REQUEST_PARAM_LENGTH) Integer length,
-			@RequestParam(DataTable.REQUEST_PARAM_DRAW) Integer draw,
-			@RequestParam(value = DataTable.REQUEST_PARAM_SORT_COLUMN, defaultValue = "0") Integer sortColumn,
-			@RequestParam(value = DataTable.REQUEST_PARAM_SORT_DIRECTION, defaultValue = "asc") String direction,
-			@RequestParam(DataTable.REQUEST_PARAM_SEARCH_VALUE) String searchValue) {
+	@ResponseBody
+	public DataTablesResponse getAjaxClientsList(@DataTablesRequest DataTablesParams params) {
+		Specification<IridaClientDetails> specification = IridaClientDetailsSpecification
+				.searchClient(params.getSearchValue());
 
-		String sortString;
-
-		try {
-			sortString = SORT_COLUMNS.get(sortColumn);
-		} catch (IndexOutOfBoundsException ex) {
-			sortString = SORT_BY_ID;
+		Page<IridaClientDetails> page = clientDetailsService
+				.search(specification, new PageRequest(params.getCurrentPage(), params.getLength(), params.getSort()));
+		List<DataTablesResponseModel> models = new ArrayList<>();
+		for (IridaClientDetails client : page.getContent()) {
+			models.add(new DTClient(client, clientDetailsService.countActiveTokensForClient(client)));
 		}
-
-		Sort.Direction sortDirection = direction.equals(SORT_ASCENDING) ? Sort.Direction.ASC : Sort.Direction.DESC;
-
-		int pageNum = start / length;
-
-		Page<IridaClientDetails> search = clientDetailsService.search(
-				IridaClientDetailsSpecification.searchClient(searchValue), pageNum, length, sortDirection, sortString);
-
-		List<List<String>> clientsData = new ArrayList<>();
-		for (IridaClientDetails client : search) {
-			// get the number of active tokens for the client
-			int activeTokensForClient = clientDetailsService.countActiveTokensForClient(client);
-
-			String grants = StringUtils.collectionToDelimitedString(client.getAuthorizedGrantTypes(), ", ");
-
-			List<String> row = new ArrayList<>();
-			row.add(client.getId().toString());
-			row.add(client.getClientId());
-			row.add(grants);
-			row.add(Formats.DATE.format(client.getCreatedDate()));
-			row.add(String.valueOf(activeTokensForClient));
-
-			clientsData.add(row);
-		}
-
-		Map<String, Object> map = new HashMap<>();
-		map.put(DataTable.RESPONSE_PARAM_DRAW, draw);
-		map.put(DataTable.RESPONSE_PARAM_RECORDS_TOTAL, search.getTotalElements());
-		map.put(DataTable.RESPONSE_PARAM_RECORDS_FILTERED, search.getTotalElements());
-
-		map.put(DataTable.RESPONSE_PARAM_DATA, clientsData);
-		return map;
+		return new DataTablesResponse(params, page, models);
 	}
 
 	/**
@@ -491,7 +439,7 @@ public class ClientsController extends BaseController {
 
 		// 4. Create 5 random.
 		int c = 'A';
-		int rand = 0;
+		int rand;
 		for (int i = 0; i < RANDOM_LENGTH; i++) {
 			rand = random.nextInt(3);
 			switch (rand) {

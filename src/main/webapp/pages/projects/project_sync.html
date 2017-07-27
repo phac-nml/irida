@@ -14,7 +14,7 @@
 </head>
 <body>
 <div layout:fragment="page">
-    <div class="col-md-8 col-md-offset-2 mrgn-tp-lg" ddl:bundle-includes="project-sync">
+    <div class="col-md-8 col-md-offset-2 mrgn-tp-lg">
         <form name="new_project" class="ng-cloak" th:action="@{/projects/synchronize}" method="post" role="form"
               novalidate="novalidate">
             <section class="panel panel-default">
@@ -82,6 +82,7 @@
     </div>
 </div>
 <th:block layout:fragment="scripts" th:inline="javascript">
+    <script th:src="@{/resources/js/pages/projects/project-sync.js}"></script>
     <script layout:fragment="scripts" th:inline="javascript" th:replace="remote_apis/remote_api_connect"></script>
 </th:block>
 </body>

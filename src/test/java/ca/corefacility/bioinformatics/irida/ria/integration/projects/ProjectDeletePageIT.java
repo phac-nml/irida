@@ -1,15 +1,13 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
-
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectDeletePage;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test class for deleting a project
@@ -28,7 +26,7 @@ public class ProjectDeletePageIT extends AbstractIridaUIITChromeDriver {
 
 		ProjectsPage projectsPage = new ProjectsPage(driver());
 		projectsPage.toAdminProjectsPage();
-		projectsPage.filterByName(PROJECT_NAME);
+		projectsPage.doSearch(PROJECT_NAME);
 		assertEquals("should be 1 project with name " + PROJECT_NAME, 1, projectsPage.projectsTableSize());
 
 		page = ProjectDeletePage.goTo(driver(), PROJECT_ID);
@@ -36,7 +34,7 @@ public class ProjectDeletePageIT extends AbstractIridaUIITChromeDriver {
 		page.deleteProject();
 
 		projectsPage.toAdminProjectsPage();
-		projectsPage.filterByName(PROJECT_NAME);
+		projectsPage.doSearch(PROJECT_NAME);
 		assertEquals("project should no longer exist", 0, projectsPage.projectsTableSize());
 	}
 
@@ -46,7 +44,7 @@ public class ProjectDeletePageIT extends AbstractIridaUIITChromeDriver {
 
 		ProjectsPage projectsPage = new ProjectsPage(driver());
 		projectsPage.toUserProjectsPage();
-		projectsPage.filterByName(PROJECT_NAME);
+		projectsPage.doSearch(PROJECT_NAME);
 		assertEquals("should be 1 project with name " + PROJECT_NAME, 1, projectsPage.projectsTableSize());
 
 		page = ProjectDeletePage.goTo(driver(), PROJECT_ID);
@@ -54,7 +52,7 @@ public class ProjectDeletePageIT extends AbstractIridaUIITChromeDriver {
 		page.deleteProject();
 
 		projectsPage.toUserProjectsPage();
-		projectsPage.filterByName(PROJECT_NAME);
+		projectsPage.doSearch(PROJECT_NAME);
 		assertEquals("project should no longer exist", 0, projectsPage.projectsTableSize());
 	}
 

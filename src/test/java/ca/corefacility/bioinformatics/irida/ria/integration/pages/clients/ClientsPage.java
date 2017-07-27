@@ -29,7 +29,7 @@ public class ClientsPage extends AbstractPage {
 	}
 
 	public boolean checkClientExistsInTable(String clientId) {
-		List<WebElement> findElements = driver.findElements(By.className("clientLink"));
+		List<WebElement> findElements = driver.findElements(By.className("btn-link"));
 		for (WebElement ele : findElements) {
 			if (ele.getText().equals(clientId)) {
 				return true;

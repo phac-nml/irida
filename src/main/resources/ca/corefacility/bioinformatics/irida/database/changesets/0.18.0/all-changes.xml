@@ -8,4 +8,5 @@
 	<include file="max-coverage.xml" relativeToChangelogFile="true" />
 	<include file="analysis-input-combined.xml"
 		relativeToChangelogFile="true" />
+	<include file="sample-owner.xml" relativeToChangelogFile="true" />
 </databaseChangeLog>
