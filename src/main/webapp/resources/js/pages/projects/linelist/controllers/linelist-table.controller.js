@@ -7,6 +7,33 @@ import { tableConfig } from "../../../../utilities/datatables-utilities";
 import { EVENTS } from "../constants";
 
 function defineTable() {
+  const columnDefs = (() => {
+    const cols = [
+      {
+        targets: 0,
+        render(data, type, full) {
+          // TODO:  item link should be in datatables file.
+          return `
+<a href="${window.PAGE.urls.sample}/${full.id}/details">${full.label}</a>
+`;
+        }
+      }
+    ];
+
+    // Copy the headers list, and remove the label (at index 0).
+    const headers = Array.from(window.headersList);
+    headers.shift();
+    headers.forEach((header, index) => {
+      cols.push({
+        targets: index,
+        render(data, type, full) {
+          return full[header].value;
+        }
+      });
+    });
+    return cols;
+  })();
+
   const config = Object.assign({}, tableConfig, {
     serverSide: false,
     scrollY: "600px",
@@ -20,27 +47,7 @@ function defineTable() {
     colReorder: {
       fixedColumnsLeft: 1
     },
-    columnDefs: window.headersList.map(function(header, index) {
-      return {
-        targets: index,
-        render(data, type, full) {
-          let value = full[header].value;
-          // This is where any custom rendering logic should go.
-          // example formatting date columns.
-          if (
-            header === "label" &&
-            full.hasOwnProperty("id") &&
-            full.hasOwnProperty("label")
-          ) {
-            return `
-<a class="btn btn-link" 
-   href="${window.PAGE.urls.sample}${full.id.value}/details">${value}</a>
-`;
-          }
-          return value;
-        }
-      };
-    })
+    columnDefs
   });
 
   return $("#linelist").DataTable(config);
