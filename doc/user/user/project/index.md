@@ -283,7 +283,7 @@ Before a remote project can be synchronized a connection must be set up between 
 
 First the IRIDA installation hosting the project must create a client which will be used to connect to the remote instance of IRIDA.  The client must be created with a grant type of `authorization_code` and scope of `read`.  It is also recommended to enable refresh tokens for clients which will be involved in project synchronization.  Documentation on creating system clients can be found in the administrator guide's [managing system clients section](../../administrator/#managing-system-clients) and it must be performed by a system administrator.
 
-Next the receiving IRIDA installation must set up a remote connection to the hosting IRIDA site.  Information on adding a remote instance of IRIDA connection can be found in the administrator guide's [adding a remote api section](../../administrator/#adding-a-remote-api) and must also be perfomed by an administrator.
+Next the receiving IRIDA installation must set up a remote connection to the hosting IRIDA site.  Information on adding a remote instance of IRIDA connection can be found in the administrator guide's [adding a remote connections section](../../administrator/#adding-a-remote-irida-installation) and must also be perfomed by an administrator.
 
 #### Creating a remote synchronized project
 
