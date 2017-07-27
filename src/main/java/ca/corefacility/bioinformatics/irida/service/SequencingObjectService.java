@@ -136,10 +136,13 @@ public interface SequencingObjectService extends CRUDService<Long, SequencingObj
 	 *            the {@link SequencingObject}s to concatenate
 	 * @param targetSample
 	 *            the {@link Sample} to save to
+	 * @param removeOriginals
+	 *            Whether to remove the original {@link SequencingObject}s from
+	 *            the sample
 	 * @return the new {@link SampleSequencingObjectJoin}
 	 * @throws ConcatenateException
 	 *             if there was an error concatenating the sequences
 	 */
-	public SampleSequencingObjectJoin concatenateSequences(Set<SequencingObject> toJoin, Sample targetSample)
-			throws ConcatenateException;
+	public SampleSequencingObjectJoin concatenateSequences(Set<SequencingObject> toJoin, Sample targetSample,
+			boolean removeOriginals) throws ConcatenateException;
 }

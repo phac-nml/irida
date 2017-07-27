@@ -260,15 +260,24 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 	@Override
 	@PreAuthorize("hasPermission(#toJoin, 'canReadSequencingObject') and hasPermission(#targetSample, 'canUpdateSample')")
 	@Transactional
-	public SampleSequencingObjectJoin concatenateSequences(Set<SequencingObject> toJoin, Sample targetSample)
+	public SampleSequencingObjectJoin concatenateSequences(Set<SequencingObject> toJoin, Sample targetSample, boolean removeOriginals)
 			throws ConcatenateException {
 
 		SequencingObjectConcatenator<? extends SequencingObject> concatenator = SequencingObjectConcatenatorFactory
 				.getConcatenator(toJoin);
 
 		SequencingObject concatenated = concatenator.concatenateFiles(toJoin);
+		
+		SampleSequencingObjectJoin created = createSequencingObjectInSample(concatenated, targetSample);
+		
+		if (removeOriginals) {
+			for (SequencingObject obj : toJoin) {
+				SampleSequencingObjectJoin sampleForSequencingObject = ssoRepository.getSampleForSequencingObject(obj);
+				ssoRepository.delete(sampleForSequencingObject);
+			}
+		}
 
-		return createSequencingObjectInSample(concatenated, targetSample);
+		return created;
 	}
 
 }

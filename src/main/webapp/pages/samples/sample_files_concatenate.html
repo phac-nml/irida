@@ -54,7 +54,13 @@
 			</table>
 		</div>
 	</div>
-	<input type="submit"/>
+
+	<div class="checkbox">
+		<label>
+			<input type="checkbox" name="remove" value="true"/> <span th:text="#{samples.files.concatenate.remove_originals}">_Remove originals_</span>
+		</label>
+  	</div>
+	<input clas="btn btn-primary" type="submit" th:text="#{samples.files.concatenate.submit}"/>
 	</form>
 
 </main>

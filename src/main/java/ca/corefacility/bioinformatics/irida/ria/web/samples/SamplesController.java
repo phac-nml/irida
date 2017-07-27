@@ -456,7 +456,8 @@ public class SamplesController extends BaseController {
 		return ImmutableMap.of("samples", result);
 	}
 	
-	@RequestMapping(value = "/samples/{sampleId}/sequenceFiles/concatenate", method = RequestMethod.GET)
+	@RequestMapping(value = { "/samples/{sampleId}/sequenceFiles/concatenate",
+			"/projects/{projectId}/samples/{sampleId}/sequenceFiles/concatenate" }, method = RequestMethod.GET)
 	public String getConcatenatePage(@PathVariable Long sampleId, Model model) throws ConcatenateException {
 		Sample sample = sampleService.read(sampleId);
 		model.addAttribute("sampleId", sampleId);
@@ -478,15 +479,17 @@ public class SamplesController extends BaseController {
 		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_FILES);
 		return FILES_CONCATENATE_PAGE;
 	}
-	
-	@RequestMapping(value = "/samples/{sampleId}/sequenceFiles/concatenate", method = RequestMethod.POST)
+
+	@RequestMapping(value = { "/samples/{sampleId}/sequenceFiles/concatenate",
+			"/projects/{projectId}/samples/{sampleId}/sequenceFiles/concatenate" }, method = RequestMethod.POST)
 	public String concatenateSequenceFiles(@PathVariable Long sampleId, @RequestParam(name = "seq") Set<Long> objectIds,
+			@RequestParam(name = "remove", defaultValue = "false", required = false) boolean removeOriginals,
 			HttpServletRequest request) throws ConcatenateException {
 		Sample sample = sampleService.read(sampleId);
 
 		Iterable<SequencingObject> readMultiple = sequencingObjectService.readMultiple(objectIds);
 
-		sequencingObjectService.concatenateSequences(Sets.newHashSet(readMultiple), sample);
+		sequencingObjectService.concatenateSequences(Sets.newHashSet(readMultiple), sample, removeOriginals);
 
 		final String url = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
 		final String redirectUrl = url.substring(0, url.indexOf("/concatenate"));
