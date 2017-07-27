@@ -32,39 +32,18 @@
   justify-content: center;
 }
 
-.table-wrapper {
-  overflow: auto;
-}
-
-.dataTables_scroll, .table-wrapper {
-  border: 1px solid #DDDDDD;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.18);
-}
-
-.dataTables_scroll table.table {
-  margin-top: 0 !important;
-}
+//.table-wrapper {
+//  overflow: auto;
+//}
+//
+//.dataTables_scroll, .table-wrapper {
+//  border: 1px solid #DDDDDD;
+//  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.18);
+//}
 
 .dataTable {
   thead, th, tbody, td {
     white-space: nowrap;
-  }
-
-  th {
-    vertical-align: top !important;
-  }
-
-  td {
-    padding: 5px 18px !important;
-  }
-
-  tr a {
-    background-color: transparent !important;
-  }
-
-  tr {
-    background-color: white;
-    transition: all 0.3s ease;
   }
 }
 

@@ -27,7 +27,7 @@ function controller(LinelistService, $scope) {
 
 controller.$inject = [
   'LinelistService',
-  '$scope'
+  '$rootScope'
 ];
 
 export const Linelist = {
