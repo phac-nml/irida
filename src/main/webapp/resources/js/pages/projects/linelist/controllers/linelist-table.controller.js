@@ -9,7 +9,7 @@ import { EVENTS } from "../constants";
 function defineTable() {
   const config = Object.assign({}, tableConfig, {
     serverSide: false,
-    scrollY: 800,
+    scrollY: "600px",
     scrollCollapse: true,
     scrollX: true,
     scroller: true,
