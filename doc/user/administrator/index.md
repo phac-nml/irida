@@ -170,7 +170,7 @@ Remote instances of IRIDA can be used as data sources for associated projects an
 
 ![Remote API connection](images/api-diagram.png)
 
-See the [user guide](../../user/user/dashboard#remote-instances-of-irida) for information on connecting to remote instances of IRIDA.
+See the [user guide](../../user/user/dashboard#managing-remote-irida-connections) for information on connecting to remote instances of IRIDA.
 
 
 Allowing access to your IRIDA installation
