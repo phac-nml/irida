@@ -5,9 +5,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -620,6 +622,25 @@ public class AnalysisSubmissionServiceImplIT {
 		AnalysisSubmission read = analysisSubmissionService.read(3L);
 		Project project2 = projectService.read(2L);
 		analysisSubmissionService.shareAnalysisSubmissionWithProject(read, project2);
+	}
+	
+	@Test
+	@WithMockUser(username = "aaron", roles = "USER")
+	public void testGetAnalysisSubmissionsSharedToProject() {
+		Project project = projectService.read(1L);
+		Collection<AnalysisSubmission> submissions = analysisSubmissionService.getAnalysisSubmissionsSharedToProject(project);
+		
+		Set<Long> submissionIds = submissions.stream().map(AnalysisSubmission::getId).collect(Collectors.toSet());
+		assertEquals("Incorrect analysis submissions for project", Sets.newHashSet(3L, 9L), submissionIds);
+	}
+	
+	@Test
+	@WithMockUser(username = "aaron", roles = "USER")
+	public void testGetAnalysisSubmissionsSharedToProjectNoSubmissions() {
+		Project project = projectService.read(2L);
+		Collection<AnalysisSubmission> submissions = analysisSubmissionService.getAnalysisSubmissionsSharedToProject(project);
+		
+		assertEquals("Unexpected analysis submission in project", 0, submissions.size());
 	}
 
 	@Test
