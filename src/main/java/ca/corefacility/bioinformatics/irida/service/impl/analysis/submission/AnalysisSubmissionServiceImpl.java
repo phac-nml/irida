@@ -572,7 +572,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	}
 	
 	@Override
-	@PreAuthorize("hasPermission(#project, 'canReadProject")
+	@PreAuthorize("hasPermission(#project, 'canReadProject')")
 	public Collection<AnalysisSubmission> getAnalysisSubmissionsSharedToProject(Project project) {
 		return pasRepository.getSubmissionsForProject(project).stream().map(ProjectAnalysisSubmissionJoin::getObject)
 				.collect(Collectors.toSet());
