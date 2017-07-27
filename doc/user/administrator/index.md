@@ -211,7 +211,7 @@ Enter a suitable name for the remote installation.  This name will be visible to
 
 After adding the Remote Connection you should be directed to the details page for that API.
 
-To test the Remote Connection, click the "Connect" button.  You should be directed to a login page for the remote API's REST API.  To connect to the remote API you must have been given a username and password for the remote installation.  See [Remote instances of IRIDA](../user/dashboard/#remote-instances-of-irida) for more details.
+To test the Remote Connection, click the "Connect" button.  You should be directed to a login page for the remote connection.  To connect to the remote API you must have been given a username and password for the remote installation.  See [Remote instances of IRIDA](../user/dashboard/#remote-instances-of-irida) for more details.
 
 ![API Details](images/api-details.png)
 
