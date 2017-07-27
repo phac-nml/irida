@@ -14,7 +14,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 
 public abstract class SequencingObjectConcatenator<Type extends SequencingObject> {
-	public abstract Type concatenateFiles(Set<? extends SequencingObject> toConcatenate) throws ConcatenateException;
+	public abstract Type concatenateFiles(Set<? extends SequencingObject> toConcatenate, String filename) throws ConcatenateException;
 
 	protected void appendToFile(Path target, SequenceFile file) throws ConcatenateException {
 

@@ -14,18 +14,15 @@ import ca.corefacility.bioinformatics.irida.processing.concatenate.SequencingObj
 public class SingleEndSequenceFileConcatenator extends SequencingObjectConcatenator<SingleEndSequenceFile> {
 
 	@Override
-	public SingleEndSequenceFile concatenateFiles(Set<? extends SequencingObject> toConcatenate)
+	public SingleEndSequenceFile concatenateFiles(Set<? extends SequencingObject> toConcatenate, String filename)
 			throws ConcatenateException {
-		SingleEndSequenceFile firstFile = (SingleEndSequenceFile) toConcatenate.iterator().next();
-		SequenceFile original = firstFile.getSequenceFile();
-
-		String forwardName = original.getFileName();
-
 		Path tempFile;
+		
+		filename = filename + ".fastq";
 		try {
 			Path tempDirectory = Files.createTempDirectory(null);
 
-			tempFile = tempDirectory.resolve(forwardName);
+			tempFile = tempDirectory.resolve(filename);
 
 			tempFile = Files.createFile(tempFile);
 

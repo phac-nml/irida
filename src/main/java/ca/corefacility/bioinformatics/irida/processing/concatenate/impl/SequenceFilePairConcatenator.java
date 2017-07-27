@@ -13,18 +13,14 @@ import ca.corefacility.bioinformatics.irida.processing.concatenate.SequencingObj
 
 public class SequenceFilePairConcatenator extends SequencingObjectConcatenator<SequenceFilePair> {
 
-	public SequenceFilePairConcatenator(){
+	public SequenceFilePairConcatenator() {
 	}
-	
-	@Override
-	public SequenceFilePair concatenateFiles(Set<? extends SequencingObject> toConcatenate)
-			throws ConcatenateException {
-		SequenceFilePair firstFile = (SequenceFilePair) toConcatenate.iterator().next();
-		SequenceFile originalForward = firstFile.getForwardSequenceFile();
-		SequenceFile originalReverse = firstFile.getReverseSequenceFile();
 
-		String forwardName = originalForward.getFileName();
-		String reverseName = originalReverse.getFileName();
+	@Override
+	public SequenceFilePair concatenateFiles(Set<? extends SequencingObject> toConcatenate, String filename)
+			throws ConcatenateException {
+		String forwardName = filename + "_F.fastq";
+		String reverseName = filename + "_R.fastq";
 
 		Path forwardFile;
 		Path reverseFile;
