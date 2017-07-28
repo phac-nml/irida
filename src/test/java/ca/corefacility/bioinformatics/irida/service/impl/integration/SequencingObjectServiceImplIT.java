@@ -138,14 +138,8 @@ public class SequencingObjectServiceImplIT {
 	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
 	public void testAddSequenceFilePairAsSequencer() throws IOException {
 
-		Path sequenceFile = Files.createTempFile("file1", ".fastq");
-		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
-
-		Path sequenceFile2 = Files.createTempFile("file2", ".fastq");
-		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
-
-		SequenceFile file1 = new SequenceFile(sequenceFile);
-		SequenceFile file2 = new SequenceFile(sequenceFile2);
+		SequenceFile file1 = createSequenceFile("file1");
+		SequenceFile file2 = createSequenceFile("file2");
 
 		SequenceFilePair sequenceFilePair = new SequenceFilePair(file1, file2);
 
@@ -274,10 +268,7 @@ public class SequencingObjectServiceImplIT {
 	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
 	public void testCreateNotCompressedSequenceFile() throws IOException, InterruptedException {
 		final Long expectedRevisionNumber = 3L;
-		SequenceFile sf = new SequenceFile();
-		Path sequenceFile = Files.createTempFile(null, null);
-		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
-		sf.setFile(sequenceFile);
+		SequenceFile sf = createSequenceFile("file1");
 		SingleEndSequenceFile singleEndSequenceFile = new SingleEndSequenceFile(sf);
 
 		logger.trace("About to save the file.");
@@ -517,8 +508,8 @@ public class SequencingObjectServiceImplIT {
 		String newFileName = "newname";
 		Sample sample = sampleService.read(1L);
 
-		SequenceFile file1 = createSequenceFileFile("file1");
-		SequenceFile file2 = createSequenceFileFile("file2");
+		SequenceFile file1 = createSequenceFile("file1");
+		SequenceFile file2 = createSequenceFile("file2");
 		
 		long originalLength = file1.getFile().toFile().length();
 
@@ -554,7 +545,7 @@ public class SequencingObjectServiceImplIT {
 		assertEquals("new file should be 2x size of originals", originalLength * 2, newFileSize);
 	}
 	
-	private SequenceFile createSequenceFileFile(String name) throws IOException{
+	private SequenceFile createSequenceFile(String name) throws IOException{
 		Path sequenceFile = Files.createTempFile(name, ".fastq");
 		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
 		
