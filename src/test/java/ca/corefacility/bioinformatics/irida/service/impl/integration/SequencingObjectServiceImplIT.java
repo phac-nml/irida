@@ -47,6 +47,7 @@ import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -54,9 +55,9 @@ import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.CoverageQCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.FileProcessorErrorQCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
+import ca.corefacility.bioinformatics.irida.model.sample.QCEntry.QCEntryStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
-import ca.corefacility.bioinformatics.irida.model.sample.QCEntry.QCEntryStatus;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
@@ -508,5 +509,55 @@ public class SequencingObjectServiceImplIT {
 		SequencingObject s4 = objectService.read(4L);
 				
 		objectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(s1,s4));
+	}
+	
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testConcatenateSequenceFiles() throws IOException, InterruptedException, ConcatenateException {
+		String newFileName = "newname";
+		Sample sample = sampleService.read(1L);
+
+		SequenceFile file1 = createSequenceFileFile("file1");
+		SequenceFile file2 = createSequenceFileFile("file2");
+		
+		long originalLength = file1.getFile().toFile().length();
+
+		SequencingObject so1 = new SingleEndSequenceFile(file1);
+		SequencingObject so2 = new SingleEndSequenceFile(file2);
+
+		SampleSequencingObjectJoin join1 = objectService.createSequencingObjectInSample(so1, sample);
+		SampleSequencingObjectJoin join2 = objectService.createSequencingObjectInSample(so2, sample);
+		Collection<SampleSequencingObjectJoin> originalSeqs = objectService.getSequencingObjectsForSample(sample);
+
+		// Wait 5 seconds. file processing should have run by then.
+		Thread.sleep(5000);
+
+		Set<SequencingObject> fileSet = Sets.newHashSet(join1.getObject(), join2.getObject());
+
+		SampleSequencingObjectJoin concatenateSequences = objectService.concatenateSequences(fileSet, newFileName, sample,
+				false);
+		Collection<SampleSequencingObjectJoin> newSeqs = objectService.getSequencingObjectsForSample(sample);
+		
+		// Wait 5 seconds. file processing should have run by then.
+		Thread.sleep(5000);
+
+		assertTrue("new seq collection should contain originals", newSeqs.containsAll(originalSeqs));
+		assertTrue("new seq collection should contain new object", newSeqs.contains(concatenateSequences));
+		assertEquals("new seq collection should have 1 more object", originalSeqs.size() + 1, newSeqs.size());
+		
+		SequencingObject newSeqObject = concatenateSequences.getObject();
+		SequenceFile newFile = newSeqObject.getFiles().iterator().next();
+		assertTrue("new file should contain new name", newFile.getFileName().contains(newFileName));
+		
+		long newFileSize = newFile.getFile().toFile().length();
+		
+		assertEquals("new file should be 2x size of originals", originalLength * 2, newFileSize);
+	}
+	
+	private SequenceFile createSequenceFileFile(String name) throws IOException{
+		Path sequenceFile = Files.createTempFile(name, ".fastq");
+		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
+		
+		return new SequenceFile(sequenceFile);
 	}
 }
