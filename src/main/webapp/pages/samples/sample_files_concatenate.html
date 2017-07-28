@@ -22,85 +22,60 @@
 			<h1 id="sample-page-title" th:text="#{samples.files.page-title(${sample.getLabel()})}"></h1>
 		</div>
 	</div>
-	<form th:action="${url}" method="POST" th:with="url=@{${#httpServletRequest.requestURI}}">
-	<div class="row">
-		<div class="col-md-12">
-			<table class="table">
-				<th:block th:each="pair : ${paired_end}">
-					<tr class="paired_end paired_end__forward sequence-file-row" th:with="file=${pair.getForwardSequenceFile()}">
-						<td class="td_radio" rowspan="2">
-							<input type="checkbox" class="concat" name="seq" data-object-type="pair" th:value="${pair.id}"/>
-						</td>
-						<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${pair},file=${file},icon='forward',relative='true')"></td>
+	<form th:action="${url}" id="concatenate-form" method="POST" th:with="url=@{${#httpServletRequest.requestURI}}">
+		<div class="row">
+			<div class="col-md-12">
+				<table class="table">
+					<th:block th:each="pair : ${paired_end}">
+						<tr class="paired_end paired_end__forward sequence-file-row" th:with="file=${pair.getForwardSequenceFile()}">
+							<td class="td_radio" rowspan="2">
+								<input type="checkbox" class="concat" name="seq" data-object-type="pair" th:value="${pair.id}"/>
+							</td>
+							<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${pair},file=${file},icon='forward',relative='true')"></td>
 
-					</tr>
-					<tr class="paired_end paired_end__reverse sequence-file-row" th:with="file=${pair.getReverseSequenceFile()}">
+						</tr>
+						<tr class="paired_end paired_end__reverse sequence-file-row" th:with="file=${pair.getReverseSequenceFile()}">
 
-						<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${pair},file=${file},icon='reverse',relative='true')"></td>
-					</tr>
-										
-					<tr><td colspan="5" class="sequence_spacer"></td></tr>
-				</th:block>
-				<th:block th:each="join : ${single_end}" th:with="file=${join.getObject()}">
-					<tr class="single_end sequence-file-row">
-						<td class="td_radio">
-							<input type="checkbox" class="concat" name="seq" data-object-type="single" th:value="${file.id}"/>
-						</td>
-						<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${file},file=${file.getSequenceFile()},icon='single',relative='true')"></td>
-					</tr>
-					
-					<tr><td colspan="5" class="sequence_spacer"></td></tr>
-				</th:block>
-			</table>
+							<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${pair},file=${file},icon='reverse',relative='true')"></td>
+						</tr>
+											
+						<tr><td colspan="5" class="sequence_spacer"></td></tr>
+					</th:block>
+					<th:block th:each="join : ${single_end}" th:with="file=${join.getObject()}">
+						<tr class="single_end sequence-file-row">
+							<td class="td_radio">
+								<input type="checkbox" class="concat" name="seq" data-object-type="single" th:value="${file.id}"/>
+							</td>
+							<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${file},file=${file.getSequenceFile()},icon='single',relative='true')"></td>
+						</tr>
+						
+						<tr><td colspan="5" class="sequence_spacer"></td></tr>
+					</th:block>
+				</table>
+			</div>
 		</div>
-	</div>
 
-	<div class="form-group">
-		<label for="filename">_New Filename_</label>
-		<div class="input-group">
-			<input type="text" class="form-control" id="filename" name="filename" th:value="${sample.sampleName}"/>
-			<div class="input-group-addon">.fastq</div>
+		<div class="form-group">
+			<label for="filename">_New Filename_</label>
+			<div class="input-group">
+				<input type="text" class="form-control" id="filename" name="filename" th:value="${sample.sampleName}"/>
+				<div class="input-group-addon">.fastq</div>
+			</div>
 		</div>
-  	</div>
 
-	<div class="checkbox">
-		<label>
-			<input type="checkbox" name="remove" value="true"/> <span th:text="#{samples.files.concatenate.remove_originals}">_Remove originals_</span>
-		</label>
-  	</div>
-	<input clas="btn btn-primary" type="submit" th:text="#{samples.files.concatenate.submit}"/>
+		<div class="checkbox">
+			<label>
+				<input type="checkbox" name="remove" value="true"/> <span th:text="#{samples.files.concatenate.remove_originals}">_Remove originals_</span>
+			</label>
+		</div>
+		<input class="btn btn-primary" id="form-submit" type="submit"/>
 	</form>
 
 </main>
 <th:block layout:fragment="scripts" th:inline="javascript">
+	<script th:src="@{/resources/js/pages/samples/sample-files-concatenate.js}"></script>
 	<script>
-		var checked = {};
-
-		$(document).ready(function(){
-			$(".concat").on("click", function(){
-				var different = checkTypes();
-
-				if(different){
-					console.log("bad");
-				}
-			});
-		});
-
-		function checkTypes() {
-			var type = "none";
-			var different = false;
-			$(".concat:checked").each(function(){
-				var checkType = $(this).data("object-type");
-				if(type === "none"){
-					type = checkType;
-				}
-				else if(type != checkType){
-					different = true;
-				}
-			});
-
-			return different;
-		}
+		
 	</script>
 </th:block>
 </body>
