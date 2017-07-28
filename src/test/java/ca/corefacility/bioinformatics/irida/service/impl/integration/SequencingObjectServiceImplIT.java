@@ -523,6 +523,9 @@ public class SequencingObjectServiceImplIT {
 
 		// Wait 5 seconds. file processing should have run by then.
 		Thread.sleep(10000);
+		
+		so1 = objectService.read(join1.getObject().getId());
+		so2 = objectService.read(join2.getObject().getId());
 
 		Set<SequencingObject> fileSet = Sets.newHashSet(join1.getObject(), join2.getObject());
 
