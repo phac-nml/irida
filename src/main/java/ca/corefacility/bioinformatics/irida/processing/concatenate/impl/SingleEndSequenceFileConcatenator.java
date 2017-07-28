@@ -11,15 +11,26 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.concatenate.SequencingObjectConcatenator;
 
+/**
+ * {@link SequenceFilePairConcatenator} for {@link SingleEndSequenceFile}s
+ */
 public class SingleEndSequenceFileConcatenator extends SequencingObjectConcatenator<SingleEndSequenceFile> {
 
+	public SingleEndSequenceFileConcatenator() {
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public SingleEndSequenceFile concatenateFiles(Set<? extends SequencingObject> toConcatenate, String filename)
 			throws ConcatenateException {
 		Path tempFile;
-		
+
+		// create the filename with extension
 		filename = filename + ".fastq";
 		try {
+			// create a temp directory and temp file
 			Path tempDirectory = Files.createTempDirectory(null);
 
 			tempFile = tempDirectory.resolve(filename);
@@ -30,6 +41,7 @@ public class SingleEndSequenceFileConcatenator extends SequencingObjectConcatena
 			throw new ConcatenateException("Could not create temporary files", e);
 		}
 
+		// for each file concatenate the file
 		for (SequencingObject f : toConcatenate) {
 			SingleEndSequenceFile single = (SingleEndSequenceFile) f;
 
@@ -38,6 +50,7 @@ public class SingleEndSequenceFileConcatenator extends SequencingObjectConcatena
 			appendToFile(tempFile, forwardSequenceFile);
 		}
 
+		// create the new sequencefile and object
 		SequenceFile forward = new SequenceFile(tempFile);
 
 		SingleEndSequenceFile seqObject = new SingleEndSequenceFile(forward);

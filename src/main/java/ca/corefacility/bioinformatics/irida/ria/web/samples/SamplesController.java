@@ -456,6 +456,16 @@ public class SamplesController extends BaseController {
 		return ImmutableMap.of("samples", result);
 	}
 	
+	/**
+	 * Get the page for concatenating {@link SequencingObject}s in a
+	 * {@link Sample}
+	 * 
+	 * @param sampleId
+	 *            the {@link Sample} to get files for
+	 * @param model
+	 *            model for the view
+	 * @return name of the files concatenate page
+	 */
 	@RequestMapping(value = { "/samples/{sampleId}/sequenceFiles/concatenate",
 			"/projects/{projectId}/samples/{sampleId}/sequenceFiles/concatenate" }, method = RequestMethod.GET)
 	public String getConcatenatePage(@PathVariable Long sampleId, Model model) {
@@ -480,6 +490,23 @@ public class SamplesController extends BaseController {
 		return FILES_CONCATENATE_PAGE;
 	}
 
+	/**
+	 * Concatenate a collection of {@link SequencingObject}s
+	 * 
+	 * @param sampleId
+	 *            the id of the {@link Sample} to concatenate in
+	 * @param objectIds
+	 *            the {@link SequencingObject} ids
+	 * @param filename
+	 *            base of the new filename to create
+	 * @param removeOriginals
+	 *            boolean whether to remove the original files
+	 * @param model
+	 *            model for the view
+	 * @param request
+	 *            the incoming {@link HttpServletRequest}
+	 * @return redirect to the files page if successul
+	 */
 	@RequestMapping(value = { "/samples/{sampleId}/sequenceFiles/concatenate",
 			"/projects/{projectId}/samples/{sampleId}/sequenceFiles/concatenate" }, method = RequestMethod.POST)
 	public String concatenateSequenceFiles(@PathVariable Long sampleId, @RequestParam(name = "seq") Set<Long> objectIds,
