@@ -19,7 +19,7 @@
 	<main layout:fragment="main">
 		<div class="row">
 			<div class="col-md-12">
-				<h1 id="sample-page-title" th:text="#{samples.files.page-title(${sample.getLabel()})}"></h1>
+				<h1 id="sample-page-title" th:text="#{samples.files.concatenate.page-title(${sample.getLabel()})}"></h1>
 			</div>
 		</div>
 		<form th:action="${url}" id="concatenate-form" method="POST" th:with="url=@{${#httpServletRequest.requestURI}}">
@@ -62,7 +62,7 @@
 			<div class="alert alert-warning" id="type-warning" th:text="#{samples.files.concatenate.type-warning}">_Selected files must be of the same type_</div>
 
 			<div class="form-group">
-				<label for="filename">_New Filename_</label>
+				<label for="filename" th:text="#{sample.files.concatenate.filename}">_New Filename_</label>
 				<div class="input-group">
 					<input type="text" class="form-control" id="filename" name="filename" th:value="${sample.sampleName}" />
 					<div class="input-group-addon">.fastq</div>
@@ -72,7 +72,7 @@
 			<div class="form-group">
 				<div class="checkbox">
 					<label>
-						<input type="checkbox" name="remove" value="true"/> <span th:text="#{samples.files.concatenate.remove_originals}">_Remove originals_</span>
+						<input type="checkbox" name="remove" value="true"/> <span th:text="#{samples.files.concatenate.remove-originals}">_Remove originals_</span>
 					</label>
 				</div>
 				<input class="btn btn-primary" id="form-submit" type="submit" />
