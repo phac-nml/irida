@@ -1,9 +1,11 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.integration.analysis;
 
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asAdmin;
+import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asUser;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.CoreMatchers.hasSize;
 import static org.hamcrest.CoreMatchers.not;
 
 import java.io.IOException;
@@ -12,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -50,12 +53,34 @@ import ca.corefacility.bioinformatics.irida.web.spring.view.NewickFileView;
 public class RESTAnalysisSubmissionControllerIT {
 
 	public static final String ANALYSIS_BASE = "/api/analysisSubmissions";
+	public static String ANALYSIS_PHYLOGENOMICS_BASE = "/api/analysisSubmissions/analysisType/phylogenomics";
+	public static String ANALYSIS_SISTR_BASE = "/api/analysisSubmissions/analysisType/sistr";
 	
 	private static final Logger logger = LoggerFactory.getLogger(RESTAnalysisSubmissionControllerIT.class);
 	
 	@Autowired
 	@Qualifier("outputFileBaseDirectory")
 	private Path outputFileBaseDirectory;
+	
+	@Test
+	public void testReadAllSubmissionsByPhylogenomicsTypeAdmin() {
+		asAdmin().expect().body("resource.resources.identifier", hasItems("1", "2")).when().get(ANALYSIS_PHYLOGENOMICS_BASE);
+	}
+	
+	@Test
+	public void testReadAllSubmissionsBySistrTypeAdmin() {
+		asAdmin().expect().body("resource.resources.identifier", hasItems("3")).when().get(ANALYSIS_SISTR_BASE);
+	}
+	
+	@Test
+	public void testReadAllSubmissionsByPhylogenomicsTypeUser() {
+		asUser().expect().body("resource.resources.identifier", Matchers.hasSize(0)).when().get(ANALYSIS_PHYLOGENOMICS_BASE);
+	}
+	
+	@Test
+	public void testReadAllSubmissionsBySistrTypeUser() {
+		asUser().expect().body("resource.resources.identifier", hasItems("3")).when().get(ANALYSIS_SISTR_BASE);
+	}
 
 	@Test
 	public void testReadSubmission() {
