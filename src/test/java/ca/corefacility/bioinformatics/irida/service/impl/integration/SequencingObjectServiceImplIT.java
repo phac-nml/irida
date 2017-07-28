@@ -269,6 +269,7 @@ public class SequencingObjectServiceImplIT {
 	public void testCreateNotCompressedSequenceFile() throws IOException, InterruptedException {
 		final Long expectedRevisionNumber = 3L;
 		SequenceFile sf = createSequenceFile("file1");
+		Path sequenceFile = sf.getFile();
 		SingleEndSequenceFile singleEndSequenceFile = new SingleEndSequenceFile(sf);
 
 		logger.trace("About to save the file.");
