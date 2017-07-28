@@ -1,52 +1,57 @@
 import "DataTables/datatables";
 import "DataTables/datatables-fixedColumns";
-import "DataTables/datatables-scroller";
 import "DataTables/datatables-colreorder";
 import $ from "jquery";
-import { tableConfig } from "../../../../utilities/datatables-utilities";
+import {
+  tableConfig,
+  createItemLink
+} from "../../../../utilities/datatables-utilities";
 import { EVENTS } from "../constants";
 
 function defineTable() {
   const columnDefs = (() => {
-    const cols = [
-      {
-        targets: 0,
-        render(data, type, full) {
-          // TODO:  item link should be in datatables file.
-          return `
-<a href="${window.PAGE.urls.sample}/${full.id}/details">${full.label}</a>
-`;
-        }
-      }
-    ];
+    const cols = [];
 
     // Copy the headers list, and remove the label (at index 0).
     const headers = Array.from(window.headersList);
-    headers.shift();
     headers.forEach((header, index) => {
-      cols.push({
-        targets: index,
-        render(data, type, full) {
-          return full[header].value;
-        }
-      });
+      if (index === 0) {
+        // This is the label.  Needs to be a link to the sample.
+        cols.push({
+          targets: 0,
+          render(data, type, full) {
+            return createItemLink({
+              url: `${window.PAGE.urls.sample}${full.id.value}/details`,
+              label: full.label.value
+            });
+          }
+        });
+      } else {
+        cols.push({
+          targets: index,
+          render(data, type, full) {
+            return full[header].value;
+          }
+        });
+      }
     });
     return cols;
   })();
 
   const config = Object.assign({}, tableConfig, {
+    data: window.metadataList,
     serverSide: false,
+    paging: false,
     scrollY: "600px",
     scrollCollapse: true,
     scrollX: true,
-    scroller: true,
-    data: window.metadataList,
     fixedColumns: {
       leftColumns: 1
     },
     colReorder: {
       fixedColumnsLeft: 1
     },
+    scroller: true,
     columnDefs
   });
 
@@ -74,12 +79,10 @@ export function LineListTableController($scope) {
    */
   $scope.$on(EVENTS.TABLE.template, (e, args) => {
     const { fields } = args;
-    console.log(fields);
 
     // The `order` will be and array of the current ordering (e.g.: [1, 2, 4, 5, 3])
     // in relation to its initial order.
     const order = table.colReorder.order();
-    console.log(order);
 
     // This will be the position in the order for the next non-template field.
     let openColumn = fields.length;
@@ -111,7 +114,6 @@ export function LineListTableController($scope) {
         column.visible(false, false);
       }
     });
-    console.log(order);
 
     // TODO: something wrong here!
     table.colReorder.order(order);

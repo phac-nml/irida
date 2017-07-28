@@ -1,0 +1,55 @@
+/**
+This is a new files to replace datatables-custom.scss after all DataTables updated
+ */
+
+.dataTable {
+  th {
+    white-space: nowrap;
+  }
+}
+
+.dataTables_paginate {
+  display: flex;
+  justify-content: center;
+}
+
+// New custom wrapper for updated tables
+// This is set in JS in datatable-utilities.js#dom
+.dt-table-wrapper {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.18);
+  margin-bottom: 10px;
+}
+
+// Set up the filter to be pulled to the right and accept flex box
+#dt-filters {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.dataTables_filter {
+  display: inline-block;
+}
+
+.dt-filter-btns {
+  margin: 0 !important;
+}
+
+// Filter Row - updated tables
+.filter-tags {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.filter-tags__space {
+  display: flex;
+}
+
+.filter-tags__tag {
+  margin-left: 4px;
+}
+
+.dt-wrap-cell {
+  white-space: pre-wrap;
+  word-break: break-all;
+  word-wrap: break-word;
+}

@@ -95,25 +95,20 @@ public class ProjectLineListController {
 		for (Join<Project, Sample> join : samplesForProject) {
 			Sample sample = join.getObject();
 			Map<String, Object> fullMetadata = new HashMap<>();
+
 			if (!sample.getMetadata().isEmpty()) {
 				Map<MetadataTemplateField, MetadataEntry> metadata = sample.getMetadata();
 				
 				Map<String,MetadataEntry> stringMetadata = new HashMap<>();
 				metadata.forEach((key, value) -> stringMetadata.put(key.getLabel(), value));
-				
+
 				for (String header : headers) {
-					/*
-					Since the id and the label are kept on the Sample not in the JSON,
-					They need to be pulled specifically from the sample.
-					 */
-					if (header.equalsIgnoreCase("id")) {
-						fullMetadata.put("id", ImmutableMap.of("value", sample.getId()));
-					} else if (header.equalsIgnoreCase("label")) {
-						fullMetadata.put("label", ImmutableMap.of("value", sample.getSampleName()));
-					} else {
-						fullMetadata.put(header, stringMetadata.getOrDefault(header, new MetadataEntry("", "")));
-					}
+					fullMetadata.put(header, stringMetadata.getOrDefault(header, new MetadataEntry("", "")));
 				}
+
+				// Id and Label must be defaults in all metadata.
+				fullMetadata.put("id", ImmutableMap.of("value", sample.getId()));
+				fullMetadata.put("label", ImmutableMap.of("value", sample.getSampleName()));
 
 				// Put this here to avoid showing samples that do not have
 				// any metadata associated with them.
