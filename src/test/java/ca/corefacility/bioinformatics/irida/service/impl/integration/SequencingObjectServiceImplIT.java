@@ -522,7 +522,7 @@ public class SequencingObjectServiceImplIT {
 		Collection<SampleSequencingObjectJoin> originalSeqs = objectService.getSequencingObjectsForSample(sample);
 
 		// Wait 5 seconds. file processing should have run by then.
-		Thread.sleep(5000);
+		Thread.sleep(10000);
 
 		Set<SequencingObject> fileSet = Sets.newHashSet(join1.getObject(), join2.getObject());
 
