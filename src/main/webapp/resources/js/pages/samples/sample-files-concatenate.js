@@ -1,16 +1,13 @@
 $(document).ready(function() {
   checkTypes();
-  
-  $(".concat").on("click", function() {
-    var different = checkTypes();
 
-    if (different) {
-      console.log("bad");
-    }
+  $(".concat").on("click", function() {
+    checkTypes();
   });
 
   $("#concatenate-form").submit(function() {
     $("#form-submit").prop("disabled", true);
+    $("#submit-info").show();
   });
 });
 
@@ -30,8 +27,10 @@ function checkTypes() {
 
   if (count >= 2 && !different) {
     $("#form-submit").prop("disabled", false);
+    $("#type-warning").hide();
   } else {
     $("#form-submit").prop("disabled", true);
+    $("#type-warning").show();
   }
 
   return different;
