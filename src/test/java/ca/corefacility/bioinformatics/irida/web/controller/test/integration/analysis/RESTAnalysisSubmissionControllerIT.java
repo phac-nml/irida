@@ -62,13 +62,23 @@ public class RESTAnalysisSubmissionControllerIT {
 	private Path outputFileBaseDirectory;
 	
 	@Test
+	public void testReadAllSubmissionsAdmin() {
+		asAdmin().expect().body("resource.resources.identifier", hasItems("1", "2", "3", "4")).when().get(ANALYSIS_BASE);
+	}
+	
+	@Test
+	public void testReadAllSubmissionsUser() {
+		asUser().expect().body("resource.resources.identifier", hasItems("3", "4")).when().get(ANALYSIS_BASE);
+	}
+	
+	@Test
 	public void testReadAllSubmissionsByPhylogenomicsTypeAdmin() {
 		asAdmin().expect().body("resource.resources.identifier", hasItems("1", "2")).when().get(ANALYSIS_PHYLOGENOMICS_BASE);
 	}
 	
 	@Test
 	public void testReadAllSubmissionsBySistrTypeAdmin() {
-		asAdmin().expect().body("resource.resources.identifier", hasItems("3","4")).when().get(ANALYSIS_SISTR_BASE);
+		asAdmin().expect().body("resource.resources.identifier", hasItems("3", "4")).when().get(ANALYSIS_SISTR_BASE);
 	}
 	
 	@Test
