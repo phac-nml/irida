@@ -47,6 +47,7 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSa
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleSpecification;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
@@ -74,6 +75,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	private SampleSequencingObjectJoinRepository ssoRepository;
 	
 	private QCEntryRepository qcEntryRepository;
+	
+	private SequencingObjectRepository sequencingObjectRepository;
 
 	/**
 	 * Reference to {@link AnalysisRepository}.
@@ -92,6 +95,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 *            the analysis repository.
 	 * @param ssoRepository
 	 *            The {@link SampleSequencingObjectJoin} repository
+	 * @param sequencingObjectRepository
+	 *            the {@link SequencingObject} repository
 	 * @param qcEntryRepository
 	 *            a repository for storing and reading {@link QCEntry}
 	 * @param validator
@@ -100,13 +105,14 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Autowired
 	public SampleServiceImpl(SampleRepository sampleRepository, ProjectSampleJoinRepository psjRepository,
 			final AnalysisRepository analysisRepository, SampleSequencingObjectJoinRepository ssoRepository,
-			QCEntryRepository qcEntryRepository, Validator validator) {
+			QCEntryRepository qcEntryRepository, SequencingObjectRepository sequencingObjectRepository, Validator validator) {
 		super(sampleRepository, validator, Sample.class);
 		this.sampleRepository = sampleRepository;
 		this.psjRepository = psjRepository;
 		this.analysisRepository = analysisRepository;
 		this.ssoRepository = ssoRepository;
 		this.qcEntryRepository = qcEntryRepository;
+		this.sequencingObjectRepository = sequencingObjectRepository;
 	}
 	
 	/**
@@ -406,12 +412,11 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@PreAuthorize("hasPermission(#submission, 'canReadAnalysisSubmission')")
 	@PostFilter("hasPermission(filterObject, 'canReadSample')")
 	public Collection<Sample> getSamplesForAnalysisSubimssion(AnalysisSubmission submission) {
-		Set<SequencingObject> sequences = new HashSet<>();
-		sequences.addAll(submission.getPairedInputFiles());
-		sequences.addAll(submission.getInputFilesSingleEnd());
+		Set<SequencingObject> objectsForAnalysisSubmission = sequencingObjectRepository
+				.findSequencingObjectsForAnalysisSubmission(submission);
 
-		Set<Sample> samples = sequences.stream().map(s -> ssoRepository.getSampleForSequencingObject(s).getSubject())
-				.collect(Collectors.toSet());
+		Set<Sample> samples = objectsForAnalysisSubmission.stream()
+				.map(s -> ssoRepository.getSampleForSequencingObject(s).getSubject()).collect(Collectors.toSet());
 		return samples;
 	}
 

@@ -36,6 +36,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhyl
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisSISTRTyping;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
@@ -51,6 +52,7 @@ import com.google.common.collect.ImmutableMap;
 public class RESTAnalysisSubmissionController extends RESTGenericController<AnalysisSubmission> {
 	private AnalysisSubmissionService analysisSubmissionService;
 	private SampleService sampleService;
+	private SequencingObjectService sequencingObjectService;
 
 	// rel for reading the analysis for a submission
 	public static final String ANALYSIS_REL = "analysis";
@@ -73,10 +75,11 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 
 	@Autowired
 	public RESTAnalysisSubmissionController(AnalysisSubmissionService analysisSubmissionService,
-			SampleService sampleService) {
+			SampleService sampleService, SequencingObjectService sequencingObjectService) {
 		super(analysisSubmissionService, AnalysisSubmission.class);
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.sampleService = sampleService;
+		this.sequencingObjectService = sequencingObjectService;
 	}
 
 	/**
@@ -143,7 +146,8 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 		ModelMap map = new ModelMap();
 		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(identifier);
 
-		Set<SequenceFilePair> pairs = analysisSubmission.getPairedInputFiles();
+		Set<SequenceFilePair> pairs = sequencingObjectService
+				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SequenceFilePair.class);
 		ResourceCollection<SequenceFilePair> resources = new ResourceCollection<>(pairs.size());
 		for (SequenceFilePair pair : pairs) {
 			SampleSequencingObjectJoin join = sampleService.getSampleForSequencingObject(pair);
@@ -175,7 +179,8 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 		ModelMap map = new ModelMap();
 		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(identifier);
 
-		Set<SingleEndSequenceFile> inputFilesSingleEnd = analysisSubmission.getInputFilesSingleEnd();
+		Set<SingleEndSequenceFile> inputFilesSingleEnd = sequencingObjectService
+				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SingleEndSequenceFile.class);
 		ResourceCollection<SequencingObject> resources = new ResourceCollection<>(inputFilesSingleEnd.size());
 		for (SingleEndSequenceFile file : inputFilesSingleEnd) {
 			SampleSequencingObjectJoin join = sampleService.getSampleForSequencingObject(file);
@@ -186,9 +191,8 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 			resources.add(sequencingObject);
 		}
 
-		resources
-				.add(linkTo(methodOn(RESTAnalysisSubmissionController.class).getAnalysisInputUnpairedFiles(identifier))
-						.withSelfRel());
+		resources.add(linkTo(methodOn(RESTAnalysisSubmissionController.class).getAnalysisInputUnpairedFiles(identifier))
+				.withSelfRel());
 		map.addAttribute(RESTGenericController.RESOURCE_NAME, resources);
 
 		return map;

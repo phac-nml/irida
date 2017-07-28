@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -15,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -85,6 +87,9 @@ public abstract class SequencingObject extends IridaResourceSupport implements M
 	@OneToMany(mappedBy = "sequencingObject", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
 	@NotAudited
 	private Set<QCEntry> qcEntries;
+	
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH, mappedBy = "inputFiles")
+	private List<AnalysisSubmission> analysisSubmissions;
 
 	public SequencingObject() {
 		createdDate = new Date();

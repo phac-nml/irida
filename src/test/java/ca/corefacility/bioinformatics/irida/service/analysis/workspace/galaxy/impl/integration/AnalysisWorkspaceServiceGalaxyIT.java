@@ -85,6 +85,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.U
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -123,6 +124,9 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	
 	@Autowired
 	private SampleRepository sampleRepository;
+	
+	@Autowired
+	private SequencingObjectService sequencingObjectService;
 
 	@Autowired
 	@Qualifier("rootTempDirectory")
@@ -859,9 +863,12 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePathA, referenceFilePath, validWorkflowIdSingle);
-		assertEquals("the created submission should have no paired input files", 0, analysisSubmission
-				.getPairedInputFiles().size());
-		Set<SingleEndSequenceFile> submittedSf = analysisSubmission.getInputFilesSingleEnd();
+		
+		Set<SingleEndSequenceFile> submittedSf = sequencingObjectService
+				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SingleEndSequenceFile.class);
+		Set<SequenceFilePair> pairedFiles = sequencingObjectService
+				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SequenceFilePair.class);
+		assertEquals("the created submission should have no paired input files", 0, pairedFiles.size());
 		assertEquals("the created submission should have 1 single input file", 1, submittedSf.size());
 
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
@@ -923,9 +930,12 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePathA, referenceFilePath, validWorkflowIdSingleSingleSample);
-		assertEquals("the created submission should have no paired input files", 0, analysisSubmission
-				.getPairedInputFiles().size());
-		Set<SingleEndSequenceFile> submittedSf = analysisSubmission.getInputFilesSingleEnd();
+		
+		Set<SingleEndSequenceFile> submittedSf = sequencingObjectService
+				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SingleEndSequenceFile.class);
+		Set<SequenceFilePair> pairedFiles = sequencingObjectService
+				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SequenceFilePair.class);
+		assertEquals("the created submission should have no paired input files", 0, pairedFiles.size());
 		assertEquals("the created submission should have 1 single input file", 1, submittedSf.size());
 
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
@@ -991,9 +1001,13 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
 				paths1, paths2, referenceFilePath, validWorkflowIdPaired);
-		assertEquals("the created submission should have no single input files", 0, analysisSubmission
-				.getInputFilesSingleEnd().size());
-		Set<SequenceFilePair> pairedFiles = analysisSubmission.getPairedInputFiles();
+		
+		Set<SingleEndSequenceFile> submittedSingleFiles = sequencingObjectService
+				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SingleEndSequenceFile.class);
+		Set<SequenceFilePair> pairedFiles = sequencingObjectService
+				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SequenceFilePair.class);
+		
+		assertEquals("the created submission should have no single input files", 0, submittedSingleFiles.size());
 		assertEquals("the created submission has an invalid number of paired input files", 1, pairedFiles.size());
 		SequenceFilePair submittedSp = pairedFiles.iterator().next();
 		Set<SequenceFile> submittedSf = submittedSp.getFiles();
@@ -1062,9 +1076,13 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
 				paths1, paths2, referenceFilePath, validWorkflowIdPairedSingleSample);
-		assertEquals("the created submission should have no single input files", 0, analysisSubmission
-				.getInputFilesSingleEnd().size());
-		Set<SequenceFilePair> pairedFiles = analysisSubmission.getPairedInputFiles();
+		
+		Set<SingleEndSequenceFile> submittedSingleFiles = sequencingObjectService
+				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SingleEndSequenceFile.class);
+		Set<SequenceFilePair> pairedFiles = sequencingObjectService
+				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SequenceFilePair.class);
+		
+		assertEquals("the created submission should have no single input files", 0, submittedSingleFiles.size());
 		assertEquals("the created submission has an invalid number of paired input files", 1, pairedFiles.size());
 		SequenceFilePair submittedSp = pairedFiles.iterator().next();
 		Set<SequenceFile> submittedSf = submittedSp.getFiles();
@@ -1203,9 +1221,12 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 				.setupSinglePairSubmissionInDatabaseSameSample(1L, paths1, paths2, sequenceFilePath3,
 						referenceFilePath, validWorkflowIdSinglePaired);
 
-		Set<SingleEndSequenceFile> singleFiles = analysisSubmission.getInputFilesSingleEnd();
+		Set<SingleEndSequenceFile> singleFiles = sequencingObjectService
+				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SingleEndSequenceFile.class);
+		Set<SequenceFilePair> pairedFiles = sequencingObjectService
+				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SequenceFilePair.class);
+		
 		assertEquals("invalid number of single end input files", 1, singleFiles.size());
-		Set<SequenceFilePair> pairedFiles = analysisSubmission.getPairedInputFiles();
 		assertEquals("invalid number of paired end inputs", 1, pairedFiles.size());
 		SequenceFilePair submittedSp = pairedFiles.iterator().next();
 		Set<SequenceFile> submittedSf = submittedSp.getFiles();
