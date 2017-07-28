@@ -190,16 +190,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testFindAllAdminUser() {
-		assertNotNull("Should find submissions", analysisSubmissionService.findAll());
-	}
-
-	/**
-	 * Tests finding all accessible to admin user.
-	 */
-	@Test
-	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testFindAllAccessibleByCurrentUserAdmin() {
-		Iterable<AnalysisSubmission> submissions = analysisSubmissionService.findAllAccessibleByCurrentUser();
+		Iterable<AnalysisSubmission> submissions = analysisSubmissionService.findAll();
 
 		Set<Long> submissionIds = Sets.newHashSet();
 		submissions.forEach(submission -> submissionIds.add(submission.getId()));
@@ -212,8 +203,8 @@ public class AnalysisSubmissionServiceImplIT {
 	 */
 	@Test
 	@WithMockUser(username = "otheraaron", roles = "USER")
-	public void testFindAllAccessibleByCurrentUserRegular() {
-		Iterable<AnalysisSubmission> submissions = analysisSubmissionService.findAllAccessibleByCurrentUser();
+	public void testFindAllRegularUser() {
+		Iterable<AnalysisSubmission> submissions = analysisSubmissionService.findAll();
 
 		Set<Long> submissionIds = Sets.newHashSet();
 		submissions.forEach(submission -> submissionIds.add(submission.getId()));
