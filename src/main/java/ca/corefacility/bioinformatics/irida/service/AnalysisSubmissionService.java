@@ -68,6 +68,13 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 */
 	public List<AnalysisSubmission> getAnalysisSubmissionsAccessibleByCurrentUserByWorkflowIds(
 			Collection<UUID> workflowIds);
+
+	/**
+	 * Finds all {@link AnalysisSubmission}s accessible by the current user.
+	 * 
+	 * @return All {@link AnalysisSubmission}s accessible by the current user.
+	 */
+	public Iterable<AnalysisSubmission> findAllAccessibleByCurrentUser();
 	
 	/**
 	 * Submit {@link AnalysisSubmission} for workflows allowing multiple one

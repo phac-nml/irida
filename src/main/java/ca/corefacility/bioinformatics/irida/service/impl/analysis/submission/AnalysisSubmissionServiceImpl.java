@@ -180,6 +180,16 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	public Iterable<AnalysisSubmission> findAll() {
 		return super.findAll();
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@PostFilter("hasPermission(filterObject, 'canReadAnalysisSubmission')")
+	public Iterable<AnalysisSubmission> findAllAccessibleByCurrentUser() {
+		return findAll();
+	}
 
 	/**
 	 * {@inheritDoc}
