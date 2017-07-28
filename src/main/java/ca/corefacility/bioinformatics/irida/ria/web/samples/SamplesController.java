@@ -458,7 +458,7 @@ public class SamplesController extends BaseController {
 	
 	@RequestMapping(value = { "/samples/{sampleId}/sequenceFiles/concatenate",
 			"/projects/{projectId}/samples/{sampleId}/sequenceFiles/concatenate" }, method = RequestMethod.GET)
-	public String getConcatenatePage(@PathVariable Long sampleId, Model model) throws ConcatenateException {
+	public String getConcatenatePage(@PathVariable Long sampleId, Model model) {
 		Sample sample = sampleService.read(sampleId);
 		model.addAttribute("sampleId", sampleId);
 
@@ -485,12 +485,21 @@ public class SamplesController extends BaseController {
 	public String concatenateSequenceFiles(@PathVariable Long sampleId, @RequestParam(name = "seq") Set<Long> objectIds,
 			@RequestParam(name = "filename") String filename,
 			@RequestParam(name = "remove", defaultValue = "false", required = false) boolean removeOriginals,
-			HttpServletRequest request) throws ConcatenateException {
+			Model model, HttpServletRequest request) {
 		Sample sample = sampleService.read(sampleId);
 
 		Iterable<SequencingObject> readMultiple = sequencingObjectService.readMultiple(objectIds);
 
-		sequencingObjectService.concatenateSequences(Sets.newHashSet(readMultiple), filename, sample, removeOriginals);
+		try {
+			sequencingObjectService.concatenateSequences(Sets.newHashSet(readMultiple), filename, sample,
+					removeOriginals);
+		} catch (ConcatenateException ex) {
+			logger.error("Error concatenating files: ", ex);
+			
+			model.addAttribute("concatenateError", true);
+			
+			return getConcatenatePage(sampleId, model);
+		}
 
 		final String url = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
 		final String redirectUrl = url.substring(0, url.indexOf("/concatenate"));

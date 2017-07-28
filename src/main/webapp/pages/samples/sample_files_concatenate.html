@@ -22,6 +22,12 @@
 				<h1 id="sample-page-title" th:text="#{samples.files.concatenate.page-title(${sample.getLabel()})}"></h1>
 			</div>
 		</div>
+
+		<div class="alert alert-danger" id="submit-info" th:if="${concatenateError}">
+			<i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+			<span th:text="#{samples.files.concatenate.error}">_concatenation error_</span>
+		</div>
+
 		<form th:action="${url}" id="concatenate-form" method="POST" th:with="url=@{${#httpServletRequest.requestURI}}">
 			<div class="row">
 				<div class="col-md-12">
