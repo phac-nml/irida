@@ -5,7 +5,6 @@ import static ca.corefacility.bioinformatics.irida.web.controller.test.integrati
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.CoreMatchers.hasSize;
 import static org.hamcrest.CoreMatchers.not;
 
 import java.io.IOException;
