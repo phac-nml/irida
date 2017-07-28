@@ -69,7 +69,7 @@ public class RESTAnalysisSubmissionControllerIT {
 	
 	@Test
 	public void testReadAllSubmissionsBySistrTypeAdmin() {
-		asAdmin().expect().body("resource.resources.identifier", hasItems("3")).when().get(ANALYSIS_SISTR_BASE);
+		asAdmin().expect().body("resource.resources.identifier", hasItems("3","4")).when().get(ANALYSIS_SISTR_BASE);
 	}
 	
 	@Test
@@ -79,7 +79,7 @@ public class RESTAnalysisSubmissionControllerIT {
 	
 	@Test
 	public void testReadAllSubmissionsBySistrTypeUser() {
-		asUser().expect().body("resource.resources.identifier", hasItems("3")).when().get(ANALYSIS_SISTR_BASE);
+		asUser().expect().body("resource.resources.identifier", hasItems("3", "4")).when().get(ANALYSIS_SISTR_BASE);
 	}
 
 	@Test
