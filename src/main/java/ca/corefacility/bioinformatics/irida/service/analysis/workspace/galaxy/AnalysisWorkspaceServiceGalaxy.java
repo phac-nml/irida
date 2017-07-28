@@ -128,7 +128,6 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	@Override
 	public String prepareAnalysisWorkspace(AnalysisSubmission analysisSubmission) throws ExecutionManagerException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
-		checkNotNull(analysisSubmission.getInputFilesSingleEnd(), "inputFiles are null");
 		checkArgument(analysisSubmission.getRemoteAnalysisId() == null, "analysis id should be null");
 
 		History workflowHistory = galaxyHistoriesService.newHistoryForWorkflow();
@@ -180,17 +179,16 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 			throws ExecutionManagerException, IridaWorkflowException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkNotNull(analysisSubmission.getRemoteAnalysisId(), "analysisId is null");
-		checkNotNull(analysisSubmission.getInputFilesSingleEnd(), "inputFiles are null");
 		checkNotNull(analysisSubmission.getWorkflowId(), "workflowId is null");
 		checkNotNull(analysisSubmission.getRemoteWorkflowId(), "remoteWorkflowId is null");
-		checkArgument(
-				!(analysisSubmission.getInputFilesSingleEnd().isEmpty()
-						&& analysisSubmission.getPairedInputFiles().isEmpty()),
-				"no single or paired sequence files passed to submission " + analysisSubmission
-						+ " . At least one type of file must be available");
 
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(analysisSubmission.getWorkflowId());
 		IridaWorkflowInput workflowInput = iridaWorkflow.getWorkflowDescription().getInputs();
+
+		Set<SingleEndSequenceFile> singleEndFiles = sequencingObjectService
+				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SingleEndSequenceFile.class);
+		Set<SequenceFilePair> pairedEndFiles = sequencingObjectService
+				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SequenceFilePair.class);
 
 		if (iridaWorkflow.getWorkflowDescription().requiresReference()) {
 			checkArgument(analysisSubmission.getReferenceFile().isPresent(),
@@ -201,13 +199,13 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		}
 
 		if (!iridaWorkflow.getWorkflowDescription().acceptsSingleSequenceFiles()) {
-			checkArgument(analysisSubmission.getInputFilesSingleEnd().isEmpty(),
+			checkArgument(singleEndFiles.isEmpty(),
 					"workflow does not accept single sequence files, but single sequence files are passed as input to "
 							+ analysisSubmission);
 		}
 
 		if (!iridaWorkflow.getWorkflowDescription().acceptsPairedSequenceFiles()) {
-			checkArgument(analysisSubmission.getPairedInputFiles().isEmpty(),
+			checkArgument(pairedEndFiles.isEmpty(),
 					"workflow does not accept paired sequence files, but paired sequence files are passed as input to "
 							+ analysisSubmission);
 		}
@@ -219,10 +217,10 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 
 		// get unique files for pairs and single files
 		Map<Sample, SingleEndSequenceFile> singleFiles = sequencingObjectService
-				.getUniqueSamplesForSequencingObjects(analysisSubmission.getInputFilesSingleEnd());
+				.getUniqueSamplesForSequencingObjects(singleEndFiles);
 
 		Map<Sample, SequenceFilePair> pairedFiles = sequencingObjectService
-				.getUniqueSamplesForSequencingObjects(analysisSubmission.getPairedInputFiles());
+				.getUniqueSamplesForSequencingObjects(pairedEndFiles);
 
 		// check that there aren't common sample names between single and paired
 		if (samplesInCommon(singleFiles, pairedFiles)) {
@@ -346,11 +344,11 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		if (iridaWorkflow.getWorkflowDescription().getInputs().requiresSingleSample()) {
 
 			try {
+				Set<SequencingObject> sequencingObjectsForAnalysisSubmission = sequencingObjectService
+						.getSequencingObjectsForAnalysisSubmission(analysisSubmission);
 				Set<Sample> samples = Sets.newHashSet();
 				samples.addAll(sequencingObjectService
-						.getUniqueSamplesForSequencingObjects(analysisSubmission.getInputFilesSingleEnd()).keySet());
-				samples.addAll(sequencingObjectService
-						.getUniqueSamplesForSequencingObjects(analysisSubmission.getPairedInputFiles()).keySet());
+						.getUniqueSamplesForSequencingObjects(sequencingObjectsForAnalysisSubmission).keySet());
 
 				Set<String> sampleNames = samples.stream().map(Sample::getSampleName).collect(Collectors.toSet());
 
@@ -366,8 +364,8 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 					labelPrefix = sampleNames.iterator().next();
 				}
 			} catch (EntityNotFoundException e) {
-				logger.warn("Got exception when attempting to read sample names for submission "
-						+ analysisSubmission + " for adding to output file label", e);
+				logger.warn("Got exception when attempting to read sample names for submission " + analysisSubmission
+						+ " for adding to output file label", e);
 
 			}
 		} else {
@@ -383,11 +381,9 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Analysis getAnalysisResults(AnalysisSubmission analysisSubmission)
-			throws ExecutionManagerException, IridaWorkflowNotFoundException, IOException,
-			IridaWorkflowAnalysisTypeException {
+	public Analysis getAnalysisResults(AnalysisSubmission analysisSubmission) throws ExecutionManagerException,
+			IridaWorkflowNotFoundException, IOException, IridaWorkflowAnalysisTypeException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
-		checkNotNull(analysisSubmission.getInputFilesSingleEnd(), "input sequence files is null");
 		checkNotNull(analysisSubmission.getWorkflowId(), "workflowId is null");
 		checkNotNull(analysisSubmission.getRemoteWorkflowId(), "remoteWorkflowId is null");
 

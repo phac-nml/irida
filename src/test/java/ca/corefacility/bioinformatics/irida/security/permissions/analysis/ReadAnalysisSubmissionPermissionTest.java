@@ -29,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.ProjectAnalysisSubmissionJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.ReadAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.files.ReadSequencingObjectPermission;
@@ -53,6 +54,9 @@ public class ReadAnalysisSubmissionPermissionTest {
 
 	@Mock
 	private UserRepository userRepository;
+	
+	@Mock
+	private SequencingObjectRepository sequencingObjectRepository;
 
 	@Mock
 	ProjectAnalysisSubmissionJoinRepository pasRepository;
@@ -78,7 +82,7 @@ public class ReadAnalysisSubmissionPermissionTest {
 		MockitoAnnotations.initMocks(this);
 
 		readAnalysisSubmissionPermission = new ReadAnalysisSubmissionPermission(analysisSubmissionRepository,
-				userRepository, seqObjectPermission, pasRepository, readProjectPermission);
+				userRepository, sequencingObjectRepository, seqObjectPermission, pasRepository, readProjectPermission);
 
 		inputSingleFiles = Sets.newHashSet(new SingleEndSequenceFile(new SequenceFile()));
 	}
@@ -200,6 +204,8 @@ public class ReadAnalysisSubmissionPermissionTest {
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(analysisSubmissionRepository.findOne(1L)).thenReturn(analysisSubmission);
 		when(seqObjectPermission.customPermissionAllowed(auth, pair)).thenReturn(true);
+		when(sequencingObjectRepository.findSequencingObjectsForAnalysisSubmission(analysisSubmission))
+				.thenReturn(ImmutableSet.of(pair));
 
 		assertTrue("permission should be granted.", readAnalysisSubmissionPermission.isAllowed(auth, 1L));
 
@@ -235,6 +241,8 @@ public class ReadAnalysisSubmissionPermissionTest {
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(analysisSubmissionRepository.findOne(1L)).thenReturn(analysisSubmission);
 		when(seqObjectPermission.customPermissionAllowed(auth, pair)).thenReturn(true);
+		when(sequencingObjectRepository.findSequencingObjectsForAnalysisSubmission(analysisSubmission))
+				.thenReturn(ImmutableSet.of(pair));
 
 		assertTrue("permission should be granted.", readAnalysisSubmissionPermission.isAllowed(auth, 1L));
 
