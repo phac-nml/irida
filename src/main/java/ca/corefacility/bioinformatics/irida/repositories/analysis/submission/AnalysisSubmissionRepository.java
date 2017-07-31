@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.repositories.analysis.submission;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.springframework.data.jpa.repository.Query;
 
@@ -57,6 +58,18 @@ public interface AnalysisSubmissionRepository extends IridaJpaRepository<Analysi
 	@Query("select s from AnalysisSubmission s where s.analysisState = ?1 and s.analysisCleanedState = ?2")
 	public List<AnalysisSubmission> findByAnalysisState(AnalysisState analysisState,
 			AnalysisCleanedState analysisCleanedState);
+	
+	/**
+	 * Finds all {@link AnalysisSubmission}s corresponding to the given workflow
+	 * ids.
+	 * 
+	 * @param workflowIds
+	 *            The workflow ids to match.
+	 * @return A list of {@link AnalysisSubmission}s matching one of the
+	 *         workflow ids.
+	 */
+	@Query("select s from AnalysisSubmission s where s.workflowId in ?1")
+	public List<AnalysisSubmission> findByWorkflowIds(Collection<UUID> workflowIds);
 
 	/**
 	 * Loads up all {@link AnalysisSubmission}s by the submitted {@link User}.
