@@ -511,7 +511,7 @@ public class SequencingObjectServiceImplIT {
 
 		SequenceFile file1 = createSequenceFile("file1");
 		SequenceFile file2 = createSequenceFile("file2");
-		
+
 		long originalLength = file1.getFile().toFile().length();
 
 		SequencingObject so1 = new SingleEndSequenceFile(file1);
@@ -519,31 +519,37 @@ public class SequencingObjectServiceImplIT {
 
 		SampleSequencingObjectJoin join1 = objectService.createSequencingObjectInSample(so1, sample);
 		SampleSequencingObjectJoin join2 = objectService.createSequencingObjectInSample(so2, sample);
-		Collection<SampleSequencingObjectJoin> originalSeqs = objectService.getSequencingObjectsForSample(sample);
 
 		// Wait 5 seconds. file processing should have run by then.
-		Thread.sleep(10000);
-		
+		Thread.sleep(5000);
+
+		// re-read the original files so file processing will be complete
 		so1 = objectService.read(join1.getObject().getId());
 		so2 = objectService.read(join2.getObject().getId());
 
-		Set<SequencingObject> fileSet = Sets.newHashSet(join1.getObject(), join2.getObject());
+		Collection<SampleSequencingObjectJoin> originalSeqs = objectService.getSequencingObjectsForSample(sample);
 
-		SampleSequencingObjectJoin concatenateSequences = objectService.concatenateSequences(fileSet, newFileName, sample,
-				false);
-		Collection<SampleSequencingObjectJoin> newSeqs = objectService.getSequencingObjectsForSample(sample);
-		
+		Set<SequencingObject> fileSet = Sets.newHashSet(so1, so2);
+
+		SampleSequencingObjectJoin concatenateSequences = objectService.concatenateSequences(fileSet, newFileName,
+				sample, false);
+
 		// Wait 5 seconds. file processing should have run by then.
 		Thread.sleep(5000);
+
+		Collection<SampleSequencingObjectJoin> newSeqs = objectService.getSequencingObjectsForSample(sample);
+
+		// re-read the concatenated file so file processing will be complete
+		concatenateSequences = sampleService.getSampleForSequencingObject(concatenateSequences.getObject());
 
 		assertTrue("new seq collection should contain originals", newSeqs.containsAll(originalSeqs));
 		assertTrue("new seq collection should contain new object", newSeqs.contains(concatenateSequences));
 		assertEquals("new seq collection should have 1 more object", originalSeqs.size() + 1, newSeqs.size());
-		
+
 		SequencingObject newSeqObject = concatenateSequences.getObject();
 		SequenceFile newFile = newSeqObject.getFiles().iterator().next();
 		assertTrue("new file should contain new name", newFile.getFileName().contains(newFileName));
-		
+
 		long newFileSize = newFile.getFile().toFile().length();
 		
 		assertEquals("new file should be 2x size of originals", originalLength * 2, newFileSize);
