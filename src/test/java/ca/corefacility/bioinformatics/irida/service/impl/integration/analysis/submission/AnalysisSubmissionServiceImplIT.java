@@ -651,7 +651,7 @@ public class AnalysisSubmissionServiceImplIT {
 		Collection<AnalysisSubmission> submissions = analysisSubmissionService.getAnalysisSubmissionsSharedToProject(project);
 		
 		Set<Long> submissionIds = submissions.stream().map(AnalysisSubmission::getId).collect(Collectors.toSet());
-		assertEquals("Incorrect analysis submissions for project", Sets.newHashSet(3L, 9L), submissionIds);
+		assertEquals("Incorrect analysis submissions for project", Sets.newHashSet(3L, 10L), submissionIds);
 	}
 	
 	@Test
@@ -701,7 +701,7 @@ public class AnalysisSubmissionServiceImplIT {
 						Sets.newHashSet(UUID.fromString("e47c1a8b-4ccd-4e56-971b-24c384933f44")));
 
 		Set<Long> submissionIds = submissions.stream().map(AnalysisSubmission::getId).collect(Collectors.toSet());
-		assertEquals("Got incorrect analysis submissions", ImmutableSet.of(3L, 9L), submissionIds);
+		assertEquals("Got incorrect analysis submissions", ImmutableSet.of(3L, 9L, 10L), submissionIds);
 	}
 
 	@Test
@@ -726,7 +726,7 @@ public class AnalysisSubmissionServiceImplIT {
 								UUID.fromString("d18dfcfe-f10c-48c0-b297-4f90cb9c44bc")));
 
 		Set<Long> submissionIds = submissions.stream().map(AnalysisSubmission::getId).collect(Collectors.toSet());
-		assertEquals("Got incorrect analysis submissions", ImmutableSet.of(3L, 9L, 11L), submissionIds);
+		assertEquals("Got incorrect analysis submissions", ImmutableSet.of(3L, 9L, 10L, 11L), submissionIds);
 	}
 	
 	@Test

@@ -27,7 +27,7 @@ public interface ProjectAnalysisSubmissionJoinRepository
 	public List<ProjectAnalysisSubmissionJoin> getProjectsForSubmission(AnalysisSubmission submission);
 
 	/**
-	 * Gets all the {@link AnalysisSubmission}s for a given {@link Project}.
+	 * Gets all the {@link ProjectAnalysisSubmissionJoin}s for a given {@link Project}.
 	 * 
 	 * @param project
 	 *            The {@link Project}.
