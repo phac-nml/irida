@@ -4,7 +4,7 @@ IRIDA Development Primer
 Important links
 ---------------
 * IRIDA GitHub - https://github.com/phac-nml/irida
-* IRIDA GitLab - http://gitlab-irida.corefacility.ca/ (only accessable from NML network)
+* IRIDA GitLab - http://gitlab-irida.corefacility.ca/ (only accessible from NML network)
 * Documentation site - https://irida.corefacility.ca/documentation/
 * Public information website - https://irida.ca
 
@@ -45,6 +45,8 @@ Hibernate is used to map Java objects to database tables without the need for wr
 Quick start development requirements
 ------------------------------------
 
+An (incomplete) set of instructions for getting the IRIDA service layer and web front up and running for development on your Linux machine.  To include Galaxy and all the pipeline requirements, see the main IRIDA documentation.
+
 * Clone IRIDA from the IRIDA [GitLab][].
 * Install the following dependencies from your chosen package manager:
   * MariaDB
@@ -57,8 +59,22 @@ bash install-libs.sh
 ```
 * Create a test database in MariaDB with the name `irida_test` and user `test` with password `test`.
 
+From here you should be able to run the IRIDA service layer, REST API, and web UI using Jetty.
+
 Running and building IRIDA
 --------------------------
+
+#### Running a development server
+
+An IRIDA development server can be run with the `run.sh` script available in the project root directory.  The script has one option `--create-db`.  Using this option will automatically drop and recreate the databse using test data.
+
+Running the `run.sh` without arguments script is equivalent to running:
+
+```bash
+mvn clean jetty:run -Dspring.profiles.active=dev
+```
+
+Any arguments added after `run.sh` will be proxied to the `mvn ...` command.
 
 #### Spring profiles
 
@@ -81,18 +97,6 @@ When running IRIDA from the command line, a profile can be set by adding the fol
 ```bash
 -Dspring.profiles.active=YOURPROFILE
 ```
-
-#### Running a development server
-
-An IRIDA development server can be run with the `run.sh` script available in the project root directory.  The script has one option `--create-db`.  Using this option will automatically drop and recreate the databse using test data.
-
-Running the `run.sh` without arguments script is equivalent to running:
-
-```bash
-mvn clean jetty:run -Dspring.profiles.active=dev
-```
-
-Any arguments added after `run.sh` will be proxied to the `mvn ...` command.
 
 #### Building IRIDA for release
 
@@ -155,9 +159,9 @@ When adding new features we have a couple places we need to inform our users.  F
 
 While in development we use Hibernate to manage our database changes, in production we use [Liquibase][]. 
 
-Liquibase allows you to specify changesets to a database in incremental, database agnostic XML files.  In practice IRIDA requires MariaDB or MySQL, but it's still worthwhile to use a tool to properly manage the updates.  Liquibase ensures that all changes to the database are performed in the correct order, and manages this by keeping track of a hashcode of the last applied changeset.  When IRIDA is started, liquibase runs first to check if there are new changesets to be applied, and also that the current state of the database is in the format that IRIDA will be expecting.
+Liquibase allows you to create changesets for an application's database in incremental, database agnostic XML files.  In practice IRIDA requires MariaDB or MySQL, but it's still worthwhile to use a tool to properly manage the updates.  Liquibase ensures that all changes to the database are performed in the correct order, and manages this by keeping track of a hashcode of the last applied changeset.  When IRIDA is started, liquibase runs first to check if there are new changesets to be applied, and also that the current state of the database is in the format that IRIDA will be expecting.
 
-When we're doing development, Liquibase is generally not used.  Instead we generally rely on Hibernate's HBM2DDL module which allows us to directly make changes to the model classes and those changes will be reflected into the database.This can be enabled by running IRIDA in the `dev` Spring profile.  Additionally when running in the `dev` profile example data from `src/main/resounrces/ca/corefacility/bioinformatics/irida/sql` will be loaded into the database for test purpose.  Since HBM2DDL is not to be used in production environments, before creating a merge request you should add any changes that are made to the database to a new changeset XML file and test that the database is correctly built in the `prod` Spring profile.  It's also worthwhile to take a dump of a production IRIDA database and ensure that your Liquibase upgrade correctly migrates any data to your new format.
+When we're doing development, Liquibase is generally not used.  Instead we generally rely on Hibernate's HBM2DDL module which allows us to directly make changes to the model classes and those changes will be reflected into the database.This can be enabled by running IRIDA in the `dev` Spring profile.  Additionally when running in the `dev` profile example data from `src/main/resounrces/ca/corefacility/bioinformatics/irida/sql` will be loaded into the database for test purpose.  Since HBM2DDL is not to be used in production environments, before creating a merge request you should add any changes that are made to the database to a new changeset XML file and test that the database is correctly built in the `prod` Spring profile.  If you've modified any tables in the database it's also worth testing whether those changes can be properly migrated from an existing production database.  To do this you should take a dump of a production IRIDA database, load the dump up on your development machine, and run a server in `prod` profile to ensure the database upgrades correctly.
 
 You can find the existing Liquibase changeset files in `/src/manin/resounces/ca/corefacility/bioinformatics/irida/database/changesets`.
 
@@ -168,11 +172,11 @@ Version control
 
 The IRIDA project uses Git, [GitLab][], and [GitHub][] for version control purposes.  The main development server used is the NML's [GitLab][] site.  We use an internal repository so that we have greater control over how the code is managed, greater control over the testing servers, and allows us to have private conversations about issues.  Once a feature is pushed to the *development* or *master* branches of the project, it is automatically mirrored to our [GitHub][] site to give access ot public users.
 
-External collaborators are welcomed to develop new features and should submit pull requests on IRIDA's [GitHub][] page.
+External collaborators are welcomed to develop new features and should submit pull requests on IRIDA's [GitHub][] page.  Note that if we receive a GitHub pull request, NML IRIDA developers should pull the branch locally, then push it up to GitLab before merging to ensure the GitHub and GitLab repositories don't get out of sync.
 
 ### Branch structure
 
-IRIDA's branch structure is loosely based on the [GitFlow](http://nvie.com/posts/a-successful-git-branching-model) branch model.  This model allows the team to develop multiple features in parallel without contaminating the main development branch, keeping merge requests sane, and allows for stable releases.
+IRIDA's branch structure is loosely based on the [GitFlow](http://nvie.com/posts/a-successful-git-branching-model) branch model.  This model allows the team to develop multiple features in parallel without contaminating the main development branch, keeping merge requests sane, and allows for stable and patchable releases.
 
 #### Branches:
 
