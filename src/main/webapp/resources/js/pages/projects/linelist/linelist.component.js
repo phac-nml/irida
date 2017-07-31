@@ -1,4 +1,4 @@
-import {EVENTS} from './constants';
+import { EVENTS } from "./constants";
 
 /**
  * Controller for the entire LineList page
@@ -12,25 +12,22 @@ function controller(LinelistService, $scope) {
     this.fields = LinelistService.getHeaders();
   };
 
-  this.updateColumnVisibility = column => {
-    $scope.$broadcast(EVENTS.TABLE.columnVisibility, {column});
+  this.updateColumnVisibility = (column, index) => {
+    $scope.$broadcast(EVENTS.TABLE.columnVisibility, { column, index });
   };
 
   this.columnReorder = columns => {
-    $scope.$broadcast(EVENTS.TABLE.colReorder, {columns});
+    $scope.$broadcast(EVENTS.TABLE.colReorder, { columns });
   };
 
   this.templateSelected = fields => {
-    $scope.$broadcast(EVENTS.TABLE.template, {fields});
+    $scope.$broadcast(EVENTS.TABLE.template, { fields });
   };
 }
 
-controller.$inject = [
-  'LinelistService',
-  '$rootScope'
-];
+controller.$inject = ["LinelistService", "$rootScope"];
 
 export const Linelist = {
-  templateUrl: 'linelist.tmpl.html',
+  templateUrl: "linelist.tmpl.html",
   controller
 };

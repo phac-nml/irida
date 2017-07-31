@@ -1,4 +1,4 @@
-import {EVENTS} from './../../constants';
+import { EVENTS } from "./../../constants";
 
 /**
  * Controller for handling getting the name for a new template.
@@ -10,20 +10,17 @@ function saveTemplateController(templates, $uibModalInstance) {
   this.template = {};
 
   this.cancel = () => {
-    this.template.name = '';
+    this.template.name = "";
     $uibModalInstance.dismiss();
   };
 
   this.save = () => {
     $uibModalInstance.close(this.template.name);
-    this.template.name = '';
+    this.template.name = "";
   };
 }
 
-saveTemplateController.$inject = [
-  'templates',
-  '$uibModalInstance'
-];
+saveTemplateController.$inject = ["templates", "$uibModalInstance"];
 
 /**
  * Controller for the ng-aside that allows the user to select
@@ -32,12 +29,15 @@ saveTemplateController.$inject = [
  * @param {array} fields metadata fields
  * @param {function} toggleColumnVisibility call to toggle the column within the Datatables.
  */
-function showMetadataFieldSelectionsController($uibModalInstance,
-                                               fields, toggleColumnVisibility) {
+function showMetadataFieldSelectionsController(
+  $uibModalInstance,
+  fields,
+  toggleColumnVisibility
+) {
   this.fields = fields;
 
-  this.toggleColumn = column => {
-    toggleColumnVisibility(column);
+  this.toggleColumn = (column, index) => {
+    toggleColumnVisibility(column, index + 1);
   };
 
   this.close = () => {
@@ -46,9 +46,9 @@ function showMetadataFieldSelectionsController($uibModalInstance,
 }
 
 showMetadataFieldSelectionsController.$inject = [
-  '$uibModalInstance',
-  'fields',
-  'toggleColumnVisibility'
+  "$uibModalInstance",
+  "fields",
+  "toggleColumnVisibility"
 ];
 
 /**
@@ -65,8 +65,14 @@ showMetadataFieldSelectionsController.$inject = [
  * @description
  *
  */
-function MetadataController($window, $scope, $aside, $uibModal,
-                            MetadataTemplateService, notifications) {
+function MetadataController(
+  $window,
+  $scope,
+  $aside,
+  $uibModal,
+  MetadataTemplateService,
+  notifications
+) {
   const vm = this;
   let FIELD_ORDER;
   let FIELDS;
@@ -81,20 +87,17 @@ function MetadataController($window, $scope, $aside, $uibModal,
     MetadataTemplateService.query(templates => {
       this.templates = templates;
       // Add a fake template so the user can see all the fields.
-      this.templates.unshift(
-        {
-          label: $window.PAGE.i18n.allFields,
-          identifier: 0,
-          fields: []
-        }
-      );
+      this.templates.unshift({
+        label: $window.PAGE.i18n.allFields,
+        identifier: 0,
+        fields: []
+      });
       this.selectedTemplate = this.templates[0];
     });
 
-    FIELDS = vm.fields
-      .map(field => {
-        return {label: field, visible: true};
-      });
+    FIELDS = vm.fields.map(field => {
+      return { label: field, visible: true };
+    });
     FIELD_ORDER = vm.fields.map((x, i) => i);
   };
 
@@ -103,24 +106,27 @@ function MetadataController($window, $scope, $aside, $uibModal,
    */
   vm.showMetadataTemplator = () => {
     $aside.open({
-      templateUrl: 'metadata.aside.tmpl',
-      openedClass: 'metadata-open',
-      controllerAs: '$ctrl',
+      templateUrl: "metadata.aside.tmpl",
+      openedClass: "metadata-open",
+      controllerAs: "$ctrl",
       controller: showMetadataFieldSelectionsController,
       resolve: {
         fields() {
           // Send in the appropriately ordered fields based
           // on the current table order.
-          return FIELD_ORDER.map(col => {
+          const fields = FIELD_ORDER.map(col => {
             return FIELDS[col];
           });
+          // Remove the label
+          fields.shift();
+          return fields;
         },
         toggleColumnVisibility() {
           return vm.parent.updateColumnVisibility;
         }
       },
-      placement: 'left',
-      size: 'sm'
+      placement: "left",
+      size: "sm"
     });
   };
 
@@ -131,7 +137,7 @@ function MetadataController($window, $scope, $aside, $uibModal,
     $uibModal
       .open({
         templateUrl: `save-template.tmpl.html`,
-        controllerAs: '$modal',
+        controllerAs: "$modal",
         controller: saveTemplateController,
         resolve: {
           templates: () => {
@@ -139,8 +145,7 @@ function MetadataController($window, $scope, $aside, $uibModal,
           }
         }
       })
-      .result
-      .then(name => {
+      .result.then(name => {
         saveTemplate(name);
       });
   };
@@ -163,7 +168,6 @@ function MetadataController($window, $scope, $aside, $uibModal,
       FIELD_ORDER = vm.fields.map((x, i) => i);
     } else {
       fields = Array.from(vm.selectedTemplate.fields);
-
       // Make sure only the headers visible are turned on.
       FIELDS.forEach(field => {
         const index = fields.findIndex(f => {
@@ -181,23 +185,23 @@ function MetadataController($window, $scope, $aside, $uibModal,
    * @param {string} name for the new template
    */
   function saveTemplate(name) {
-    const fields = FIELD_ORDER
-      .map(index => {
-        // Need to put the fields in the order they are in the table
-        return FIELDS[index];
-      })
+    const fields = FIELD_ORDER.map(index => {
+      // Need to put the fields in the order they are in the table
+      return FIELDS[index];
+    })
       .filter(field => field.visible)
       .map(field => field.label);
     const newTemplate = new MetadataTemplateService();
     newTemplate.name = name;
+    fields.shift();
     newTemplate.fields = fields;
     newTemplate.$save(response => {
-      const {template, message} = response;
+      const { template, message } = response;
       vm.templates.push(template);
       vm.selectedTemplate = template;
       notifications.show({
         msg: message,
-        type: 'success'
+        type: "success"
       });
     });
   }
@@ -212,22 +216,22 @@ function MetadataController($window, $scope, $aside, $uibModal,
 }
 
 MetadataController.$inject = [
-  '$window',
-  '$scope',
-  '$aside',
-  '$uibModal',
-  'SampleMetadataTemplateService',
-  'notifications'
+  "$window",
+  "$scope",
+  "$aside",
+  "$uibModal",
+  "SampleMetadataTemplateService",
+  "notifications"
 ];
 
 export const MetadataComponent = {
-  templateUrl: 'metadata.button.tmpl',
+  templateUrl: "metadata.button.tmpl",
   require: {
-    parent: '^^linelist'
+    parent: "^^linelist"
   },
   bindings: {
-    templates: '<',
-    fields: '<'
+    templates: "<",
+    fields: "<"
   },
   controller: MetadataController
 };

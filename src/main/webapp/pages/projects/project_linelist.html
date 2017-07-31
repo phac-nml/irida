@@ -99,7 +99,7 @@
                                bs-switch=""
                                switch-size="small"
                                ng-model="field.visible"
-                               ng-change="$ctrl.toggleColumn(field)"
+                               ng-change="$ctrl.toggleColumn(field, $index)"
                                switch-label-width="200"
                                switch-label="{{ field.label }}"
                         />

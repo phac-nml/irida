@@ -3,9 +3,10 @@ import "DataTables/datatables-fixedColumns";
 import "DataTables/datatables-colreorder";
 import $ from "jquery";
 import {
-  tableConfig,
-  createItemLink
+  createItemLink,
+  tableConfig
 } from "../../../../utilities/datatables-utilities";
+import { formatDate } from "../../../../utilities/date-utilities";
 import { EVENTS } from "../constants";
 
 function defineTable() {
@@ -27,18 +28,28 @@ function defineTable() {
           }
         });
       } else {
-        cols.push({
-          targets: index,
-          render(data, type, full) {
-            return full[header].value;
-          }
-        });
+        if (header.toLowerCase().indexOf("date") > -1) {
+          cols.push({
+            targets: index,
+            render(data, type, full) {
+              const date = formatDate({ date: full[header].value });
+              return `<time>${date}</time>`;
+            }
+          });
+        } else {
+          cols.push({
+            targets: index,
+            render(data, type, full) {
+              return full[header].value;
+            }
+          });
+        }
       }
     });
     return cols;
   })();
 
-  const config = Object.assign({}, tableConfig, {
+  const config = Object.assign(tableConfig, {
     data: window.metadataList,
     serverSide: false,
     paging: false,
@@ -58,7 +69,7 @@ function defineTable() {
   return $("#linelist").DataTable(config);
 }
 
-export function LineListTableController($scope) {
+export function LineListTableController($rootScope, $scope) {
   const $ctrl = this;
   let table;
   $ctrl.$onInit = () => {
@@ -69,8 +80,8 @@ export function LineListTableController($scope) {
    * Listen for changes to the column visibility called from the Metadata sidebar.
    */
   $scope.$on(EVENTS.TABLE.columnVisibility, (e, args) => {
-    const { column } = args;
-    const index = window.headersList.indexOf(column.label);
+    const { column, index } = args;
+    // const index = window.headersList.indexOf(column.label);
     table.column(index).visible(column.visible);
   });
 
@@ -85,24 +96,31 @@ export function LineListTableController($scope) {
     const order = table.colReorder.order();
 
     // This will be the position in the order for the next non-template field.
-    let openColumn = fields.length;
+    // +1 for the label column
+    let openColumn = fields.length + 1;
 
     table.columns().every(function(index) {
+      // Always want to label visible and in the right order.
+      // NEVER mess with the label.
+      if (index === 0) return;
+
       const column = this;
       const header = this.header().innerHTML;
 
       // See if the column is in the template fields, and capture its index
       // to add to the new order.
-      const templateIndex = fields.findIndex(field => {
+      let templateIndex = fields.findIndex(field => {
         return field.label === header;
       });
 
       if (templateIndex > -1) {
+        templateIndex += 1; // Need to leave room for the label
+
         // Column has been found in the template.
         // Add the column's index (this is the columns original index when the table was created)
         // to the order array and the position it is required in the template.
         // E.g. If it is originally the 2nd column, but needs to be in the first position [2, ...]
-        order[templateIndex] = index;
+        order[templateIndex] = index; // Offset for label
         // Only template columns should be visible
         column.visible(true, false);
       } else {
@@ -115,10 +133,10 @@ export function LineListTableController($scope) {
       }
     });
 
-    // TODO: something wrong here!
     table.colReorder.order(order);
     table.columns.adjust().draw(false);
+    $rootScope.$broadcast(EVENTS.TABLE.colReorder, { columns: order });
   });
 }
 
-LineListTableController.$inject = ["$scope"];
+LineListTableController.$inject = ["$rootScope", "$scope"];
