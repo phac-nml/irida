@@ -24,17 +24,14 @@ public class SampleFilesConcatenatePage extends AbstractPage {
 	@FindBy(id = "form-submit")
 	private WebElement submitBtn;
 
-	@FindBy(className = "pair_object")
+	@FindBy(className = "concat_pair")
 	private List<WebElement> pairs;
 
-	@FindBy(className = "single_object")
+	@FindBy(className = "concat_single")
 	private List<WebElement> singles;
 
 	@FindBy(id = "form-submit")
 	private WebElement formSubmit;
-
-	@FindBy(className = "concat")
-	private List<WebElement> concatChecks;
 
 	public SampleFilesConcatenatePage(WebDriver driver) {
 		super(driver);
@@ -50,20 +47,24 @@ public class SampleFilesConcatenatePage extends AbstractPage {
 
 	public void selectSingles() {
 		singles.forEach(s -> {
-			WebElement concatCheck = s.findElement(By.className("concat"));
-			concatCheck.click();
+			s.click();
 		});
 	}
 
 	public void selectPairs() {
 		pairs.forEach(s -> {
-			WebElement concatCheck = s.findElement(By.className("concat"));
-			concatCheck.click();
+			s.click();
 		});
 	}
 
 	public void uncheckAll() {
-		concatChecks.forEach(c -> {
+		pairs.forEach(c -> {
+			if (c.isSelected()) {
+				c.click();
+			}
+		});
+		
+		singles.forEach(c -> {
 			if (c.isSelected()) {
 				c.click();
 			}
@@ -71,7 +72,8 @@ public class SampleFilesConcatenatePage extends AbstractPage {
 	}
 
 	public long getSelectedCount() {
-		return concatChecks.stream().filter(c -> c.isSelected()).count();
+		return pairs.stream().filter(WebElement::isSelected).count()
+				+ singles.stream().filter(WebElement::isSelected).count();
 	}
 
 	public boolean isSubmitEnabled() {

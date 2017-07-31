@@ -10,6 +10,7 @@ import org.junit.Test;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.samples.SampleFilesConcatenatePage;
 
 /**
@@ -21,6 +22,7 @@ public class SampleFilesConcatenatePageIT extends AbstractIridaUIITChromeDriver 
 
 	@Before
 	public void setUp() {
+		LoginPage.loginAsManager(driver());
 		page = SampleFilesConcatenatePage.goToConcatenatePage(driver(), 1L);
 	}
 

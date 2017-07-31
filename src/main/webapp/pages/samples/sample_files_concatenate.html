@@ -32,10 +32,10 @@
 			<div class="row">
 				<div class="col-md-12">
 					<table class="table">
-						<div th:each="pair : ${paired_end}" class="pair_object">
+						<th:block th:each="pair : ${paired_end}">
 							<tr class="paired_end paired_end__forward sequence-file-row" th:with="file=${pair.getForwardSequenceFile()}">
 								<td class="td_radio" rowspan="2">
-									<input type="checkbox" class="concat" name="seq" data-object-type="pair" th:value="${pair.id}" />
+									<input type="checkbox" class="concat concat_pair" name="seq" data-object-type="pair" th:value="${pair.id}" />
 								</td>
 								<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${pair},file=${file},icon='forward',relative='true')"></td>
 
@@ -48,11 +48,11 @@
 							<tr>
 								<td colspan="5" class="sequence_spacer"></td>
 							</tr>
-						</div>
-						<div th:each="join : ${single_end}" th:with="file=${join.getObject()}" class="single_object">
+						</th:block>
+						<th:block th:each="join : ${single_end}" th:with="file=${join.getObject()}" class="single_object">
 							<tr class="single_end sequence-file-row">
 								<td class="td_radio">
-									<input type="checkbox" class="concat" name="seq" data-object-type="single" th:value="${file.id}" />
+									<input type="checkbox" class="concat concat_single" name="seq" data-object-type="single" th:value="${file.id}" />
 								</td>
 								<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${file},file=${file.getSequenceFile()},icon='single',relative='true')"></td>
 							</tr>
@@ -60,7 +60,7 @@
 							<tr>
 								<td colspan="5" class="sequence_spacer"></td>
 							</tr>
-						</div>
+						</th:block>
 					</table>
 				</div>
 			</div>
