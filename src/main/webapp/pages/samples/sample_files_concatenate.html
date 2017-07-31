@@ -32,7 +32,7 @@
 			<div class="row">
 				<div class="col-md-12">
 					<table class="table">
-						<th:block th:each="pair : ${paired_end}">
+						<div th:each="pair : ${paired_end}" class="pair_object">
 							<tr class="paired_end paired_end__forward sequence-file-row" th:with="file=${pair.getForwardSequenceFile()}">
 								<td class="td_radio" rowspan="2">
 									<input type="checkbox" class="concat" name="seq" data-object-type="pair" th:value="${pair.id}" />
@@ -48,8 +48,8 @@
 							<tr>
 								<td colspan="5" class="sequence_spacer"></td>
 							</tr>
-						</th:block>
-						<th:block th:each="join : ${single_end}" th:with="file=${join.getObject()}">
+						</div>
+						<div th:each="join : ${single_end}" th:with="file=${join.getObject()}" class="single_object">
 							<tr class="single_end sequence-file-row">
 								<td class="td_radio">
 									<input type="checkbox" class="concat" name="seq" data-object-type="single" th:value="${file.id}" />
@@ -60,7 +60,7 @@
 							<tr>
 								<td colspan="5" class="sequence_spacer"></td>
 							</tr>
-						</th:block>
+						</div>
 					</table>
 				</div>
 			</div>
