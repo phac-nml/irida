@@ -69,7 +69,7 @@
 	<analysis_submission id="11" name="my analysis"
 		remote_analysis_id="1" analysis_state="NEW" created_date="2013-07-18 14:20:19.0"
 		workflow_id="d18dfcfe-f10c-48c0-b297-4f90cb9c44bc" submitter="2" analysis_cleaned_state="NOT_CLEANED"/>
-	<analysis_submission id="21" name="my analysis"
+	<analysis_submission id="12" name="my analysis"
 		remote_analysis_id="1" analysis_state="NEW" created_date="2013-07-18 14:20:19.0"
 		workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="2" analysis_cleaned_state="NOT_CLEANED"/>
     <workflow_named_parameters id="1" created_date="2014-02-06 10:01:02" name="named parameters" workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" />

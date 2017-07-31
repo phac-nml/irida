@@ -265,7 +265,7 @@ public class SampleSequenceFilesIT {
 		String sequenceFilePairUri = ITestSystemProperties.BASE_URL + "/api/samples/1/pairs/1";
 
 		Response response = asUser().expect().statusCode(HttpStatus.OK.value()).when().get(sequenceFilePairUri);
-		assertEquals("Assembly results were found where none should exist",
+		assertNull("Assembly results were found where none should exist",
 				response.jsonPath().getString("resource.links.find{it.rel=='"
 						+ RESTSampleSequenceFilesController.REL_AUTOMATED_ASSEMBLY + "'}.href"));
 		assertEquals("SISTR results were not found", ITestSystemProperties.BASE_URL + "/api/analysisSubmission/2",
