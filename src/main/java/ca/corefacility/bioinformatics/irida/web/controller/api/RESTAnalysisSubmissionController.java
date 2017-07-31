@@ -90,20 +90,23 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	 * @param type
 	 *            The type to request
 	 * @return ModelMap containing the requested type of resource
-	 * @throws IridaWorkflowNotFoundException
-	 *             If a workflow was not found in the set of ids.
 	 */
 	@RequestMapping("/analysisType/{type}")
-	public ModelMap listOfType(@PathVariable String type) throws IridaWorkflowNotFoundException {
+	public ModelMap listOfType(@PathVariable String type) {
 		ModelMap model = new ModelMap();
 
 		if (!ANALYSIS_TYPES.containsKey(type)) {
 			throw new EntityNotFoundException("Analysis type not found");
 		}
 		AnalysisType analysisType = ANALYSIS_TYPES.get(type);
-		Set<UUID> workflowIds = iridaWorkflowsService.getAllWorkflowsByType(analysisType).stream()
-				.map(IridaWorkflow::getWorkflowDescription).map(IridaWorkflowDescription::getId)
-				.collect(Collectors.toSet());
+		Set<UUID> workflowIds;
+		try {
+			workflowIds = iridaWorkflowsService.getAllWorkflowsByType(analysisType).stream()
+					.map(IridaWorkflow::getWorkflowDescription).map(IridaWorkflowDescription::getId)
+					.collect(Collectors.toSet());
+		} catch (IridaWorkflowNotFoundException e) {
+			throw new EntityNotFoundException("Analysis type not found", e);
+		}
 
 		List<AnalysisSubmission> analysesOfType = analysisSubmissionService
 				.getAnalysisSubmissionsAccessibleByCurrentUserByWorkflowIds(workflowIds);
@@ -131,12 +134,8 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 		Collection<Link> links = super.constructCollectionResourceLinks(list);
 
 		for (String type : ANALYSIS_TYPES.keySet()) {
-			try {
-				links.add(linkTo(methodOn(RESTAnalysisSubmissionController.class).listOfType(type))
-						.withRel(SUBMISSIONS_REL + "/" + type));
-			} catch (IridaWorkflowNotFoundException e) {
-				throw new EntityNotFoundException("Analysis type not found", e);
-			}
+			links.add(linkTo(methodOn(RESTAnalysisSubmissionController.class).listOfType(type))
+					.withRel(SUBMISSIONS_REL + "/" + type));
 		}
 
 		return links;

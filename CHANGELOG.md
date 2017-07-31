@@ -16,6 +16,7 @@ Changes
 * [Documentation]: Rewrote Galaxy installation guide, added sections for linking IRIDA to existing Galaxy or to a pre-build Docker image.
 * [Developer]: Removed `Dandelion` dependencies from the dashboard & projects listing pages.
 * [Developer]: Created new DataTables reqest handler to enable removing Dandelion DataTables.
+* [API]: Performance improvements when listing analyses of a specific type in the REST API.
 
 0.16.0 to 0.17.0
 ----------------
