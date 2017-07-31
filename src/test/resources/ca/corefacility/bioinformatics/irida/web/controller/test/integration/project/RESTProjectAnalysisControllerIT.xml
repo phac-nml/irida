@@ -47,9 +47,9 @@
 		submitter="1" analysis_cleaned_state="NOT_CLEANED" />
 
 	<project_analysis_submission id="1"
-		project_id="1" analysis_submission_id="4" created_date="2013-07-18 14:20:19.0" />
+		project_id="1" analysis_submission_id="1" created_date="2013-07-18 14:20:19.0" />
 	<project_analysis_submission id="2"
-		project_id="2" analysis_submission_id="4" created_date="2013-07-18 14:20:19.0" />
+		project_id="1" analysis_submission_id="2" created_date="2013-07-18 14:20:19.0" />
 	<project_analysis_submission id="3"
-		project_id="3" analysis_submission_id="4" created_date="2013-07-18 14:20:19.0" />
+		project_id="1" analysis_submission_id="3" created_date="2013-07-18 14:20:19.0" />
 </dataset>
