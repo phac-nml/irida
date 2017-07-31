@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -115,7 +115,7 @@ public class RESTProjectAnalysisController {
 			throw new EntityNotFoundException("Analysis type [" + type + "] not found");
 		}
 
-		Class<? extends Analysis> analysisClass = RESTAnalysisSubmissionController.ANALYSIS_TYPES.get(type);
+		AnalysisType analysisType = RESTAnalysisSubmissionController.ANALYSIS_TYPES.get(type);
 
 		ModelMap modelMap = new ModelMap();
 		Project p = projectService.read(projectId);
@@ -127,10 +127,9 @@ public class RESTProjectAnalysisController {
 
 		for (AnalysisSubmission submission : analysisSubmissions) {
 			IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(submission.getWorkflowId());
-			Class<? extends Analysis> submissionAnalysisClass = iridaWorkflow.getWorkflowDescription().getAnalysisType()
-					.getAnalysisClass();
+			AnalysisType submissionAnalysisType = iridaWorkflow.getWorkflowDescription().getAnalysisType();
 
-			if (analysisClass.equals(submissionAnalysisClass)) {
+			if (analysisType.equals(submissionAnalysisType)) {
 				submission.add(linkBuilder.slash(submission.getId()).withSelfRel());
 				analysisResources.add(submission);
 			}
