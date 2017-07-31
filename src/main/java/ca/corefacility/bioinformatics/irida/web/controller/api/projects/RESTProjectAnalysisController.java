@@ -38,7 +38,7 @@ public class RESTProjectAnalysisController {
 	private static final Logger logger = LoggerFactory.getLogger(RESTProjectAnalysisController.class);
 
 	private static String PROJECT_REL = "project";
-	private static String ANALYSIS_RESOURCES = "analysisResources";
+	private static String ANALYSIS_RESOURCES = "resource";
 
 	private ProjectService projectService;
 	private AnalysisSubmissionService analysisSubmissionService;

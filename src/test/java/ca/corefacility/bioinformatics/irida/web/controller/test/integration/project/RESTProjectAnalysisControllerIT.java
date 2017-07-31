@@ -36,41 +36,41 @@ import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConf
 public class RESTProjectAnalysisControllerIT {
 
 	public static final String ANALYSIS_PROJECT_BASE = "/api/projects/1/analyses";
-	public static String ANALYSIS_SISTR_BASE = "/api/projects/1/analysisType/sistr";
+	public static String ANALYSIS_SISTR_BASE = "/api/projects/1/analyses/sistr";
 
 	@Test
 	public void testGetProjectAnalysisAsAdmin() {
-		asAdmin().expect().body("resource.analysisResources.identifier", hasItems("1", "2", "3")).when()
+		asAdmin().expect().body("resource.resources.identifier", hasItems("1", "2", "3")).when()
 				.get(ANALYSIS_PROJECT_BASE);
 	}
 
 	@Test
 	public void testGetProjectAnalysisAsUser() {
-		asUser().expect().body("resource.analysisResources.identifier", hasItems("1", "2", "3")).when()
+		asUser().expect().body("resource.resources.identifier", hasItems("1", "2", "3")).when()
 				.get(ANALYSIS_PROJECT_BASE);
 	}
 
 	@Test
 	public void testGetProjectAnalysisAsOtherUser() {
-		asOtherUser().expect().body("resource.analysisResources.identifier", Matchers.hasSize(0)).when()
+		asOtherUser().expect().body("resource.resources.identifier", Matchers.hasSize(0)).when()
 				.get(ANALYSIS_PROJECT_BASE);
 	}
 
 	@Test
 	public void testGetProjectAnalysisByTypeAsAdmin() {
-		asAdmin().expect().body("resource.analysisResources.identifier", hasItems("2", "3")).when()
+		asAdmin().expect().body("resource.resources.identifier", hasItems("2", "3")).when()
 				.get(ANALYSIS_SISTR_BASE);
 	}
 
 	@Test
 	public void testGetProjectAnalysisByTypeUser() {
-		asUser().expect().body("resource.analysisResources.identifier", hasItems("2", "3")).when()
+		asUser().expect().body("resource.resources.identifier", hasItems("2", "3")).when()
 				.get(ANALYSIS_SISTR_BASE);
 	}
 
 	@Test
 	public void testGetProjectAnalysisByTypeAsOtherUser() {
-		asOtherUser().expect().body("resource.analysisResources.identifier", Matchers.hasSize(0)).when()
+		asOtherUser().expect().body("resource.resources.identifier", Matchers.hasSize(0)).when()
 				.get(ANALYSIS_SISTR_BASE);
 	}
 }
