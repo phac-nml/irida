@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -18,6 +19,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.samples.Sample
 public class SampleFilesConcatenatePageIT extends AbstractIridaUIITChromeDriver {
 	public SampleFilesConcatenatePage page;
 
+	@Before
 	public void setUp() {
 		page = SampleFilesConcatenatePage.goToConcatenatePage(driver(), 1L);
 	}
