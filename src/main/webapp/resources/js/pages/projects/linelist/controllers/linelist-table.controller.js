@@ -1,4 +1,3 @@
-import "jszip";
 import "DataTables/datatables";
 import "DataTables/datatables-fixedColumns";
 import "DataTables/datatables-colreorder";
@@ -62,14 +61,16 @@ function defineTable() {
     buttons: [
       {
         extend: "csvHtml5",
+        className: "btn-sm",
         exportOptions: {
           columns: ":visible"
         }
       },
       {
-        extend: 'excelHtml5',
+        extend: "excelHtml5",
+        className: "btn-sm",
         exportOptions: {
-          columns: ':visible'
+          columns: ":visible"
         }
       }
     ],
