@@ -22,6 +22,7 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestSystemProperties;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
@@ -41,36 +42,36 @@ public class RESTProjectAnalysisControllerIT {
 	@Test
 	public void testGetProjectAnalysisAsAdmin() {
 		asAdmin().expect().body("resource.resources.identifier", hasItems("1", "2", "3")).when()
-				.get(ANALYSIS_PROJECT_BASE);
+				.get(ITestSystemProperties.BASE_URL + ANALYSIS_PROJECT_BASE);
 	}
 
 	@Test
 	public void testGetProjectAnalysisAsUser() {
 		asUser().expect().body("resource.resources.identifier", hasItems("1", "2", "3")).when()
-				.get(ANALYSIS_PROJECT_BASE);
+				.get(ITestSystemProperties.BASE_URL + ANALYSIS_PROJECT_BASE);
 	}
 
 	@Test
 	public void testGetProjectAnalysisAsOtherUser() {
 		asOtherUser().expect().body("resource.resources.identifier", Matchers.hasSize(0)).when()
-				.get(ANALYSIS_PROJECT_BASE);
+				.get(ITestSystemProperties.BASE_URL + ANALYSIS_PROJECT_BASE);
 	}
 
 	@Test
 	public void testGetProjectAnalysisByTypeAsAdmin() {
 		asAdmin().expect().body("resource.resources.identifier", hasItems("2", "3")).when()
-				.get(ANALYSIS_SISTR_BASE);
+				.get(ITestSystemProperties.BASE_URL + ANALYSIS_SISTR_BASE);
 	}
 
 	@Test
 	public void testGetProjectAnalysisByTypeUser() {
 		asUser().expect().body("resource.resources.identifier", hasItems("2", "3")).when()
-				.get(ANALYSIS_SISTR_BASE);
+				.get(ITestSystemProperties.BASE_URL + ANALYSIS_SISTR_BASE);
 	}
 
 	@Test
 	public void testGetProjectAnalysisByTypeAsOtherUser() {
 		asOtherUser().expect().body("resource.resources.identifier", Matchers.hasSize(0)).when()
-				.get(ANALYSIS_SISTR_BASE);
+				.get(ITestSystemProperties.BASE_URL + ANALYSIS_SISTR_BASE);
 	}
 }
