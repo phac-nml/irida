@@ -27,8 +27,8 @@ public class SequenceFilePairConcatenator extends SequencingObjectConcatenator<S
 			throws ConcatenateException {
 
 		// create the filenames with F/R for the forward and reverse files
-		String forwardName = filename + "_F.fastq";
-		String reverseName = filename + "_R.fastq";
+		String forwardName = filename + "_R1.fastq";
+		String reverseName = filename + "_R2.fastq";
 
 		Path forwardFile;
 		Path reverseFile;
