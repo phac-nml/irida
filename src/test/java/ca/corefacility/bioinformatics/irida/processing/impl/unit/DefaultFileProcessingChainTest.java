@@ -16,6 +16,7 @@ import org.mockito.ArgumentCaptor;
 import ca.corefacility.bioinformatics.irida.exceptions.FileProcessorTimeoutException;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
@@ -145,6 +146,12 @@ public class DefaultFileProcessingChainTest {
 		public Boolean modifiesFile() {
 			return false;
 		}
+
+		@Override
+		public void process(SequencingObject sequencingObject) {
+			throw new FileProcessorException("I'm terrible at this.");
+			
+		}
 	}
 
 	private static class FailingFileProcessorNoContinue implements FileProcessor {
@@ -157,6 +164,12 @@ public class DefaultFileProcessingChainTest {
 		@Override
 		public Boolean modifiesFile() {
 			return true;
+		}
+
+		@Override
+		public void process(SequencingObject sequencingObject) {
+			throw new FileProcessorException("I'm *really* terrible at this.");
+			
 		}
 
 	}

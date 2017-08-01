@@ -69,6 +69,11 @@ public class AssemblyFileProcessor implements FileProcessor {
 	public void process(Long sequenceFileId) throws FileProcessorException {
 		SequencingObject sequencingObject = objectRepository.findOne(sequenceFileId);
 
+		process(sequencingObject);
+	}
+	
+	@Override
+	public void process(SequencingObject sequencingObject) {
 		logger.debug("Setting up automated assembly for sequence " + sequencingObject.getId());
 
 		// assembly run by admin
@@ -106,7 +111,7 @@ public class AssemblyFileProcessor implements FileProcessor {
 		} else {
 			logger.warn("Could not assemble sequencing object " + sequencingObject.getId()
 					+ " because it's not paired end");
-		}
+		}		
 	}
 
 	/**

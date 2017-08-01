@@ -88,7 +88,13 @@ public class FastqcFileProcessor implements FileProcessor {
 	public void process(final Long sequencingObjectId) throws FileProcessorException {
 		SequencingObject seqObj = objectRepository.findOne(sequencingObjectId);
 
-		for (SequenceFile file : seqObj.getFiles()) {
+		process(seqObj);
+	}
+	
+	@Override
+	@Transactional
+	public void process(SequencingObject sequencingObject) {
+		for (SequenceFile file : sequencingObject.getFiles()) {
 			processSingleFile(file);
 		}
 	}

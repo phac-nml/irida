@@ -47,21 +47,7 @@ public class CoverageFileProcessor implements FileProcessor {
 		// read the seqobject
 		SequencingObject read = objectRepository.findOne(sequenceFileId);
 
-		if (read.getQcEntries() != null) {
-			// remove any existing coverage entries
-			read.getQcEntries().stream().filter(q -> q instanceof CoverageQCEntry)
-					.forEach(q -> qcEntryRepository.delete(q));
-		}
-
-		// count the total bases
-		long totalBases = read.getFiles().stream().mapToLong(f -> {
-			AnalysisFastQC fastqc = analysisRepository.findFastqcAnalysisForSequenceFile(f);
-			return fastqc.getTotalBases();
-		}).sum();
-
-		// save the entry
-		CoverageQCEntry coverageQCEntry = new CoverageQCEntry(read, totalBases);
-		qcEntryRepository.save(coverageQCEntry);
+		process(read);
 
 	}
 
@@ -71,6 +57,26 @@ public class CoverageFileProcessor implements FileProcessor {
 	@Override
 	public Boolean modifiesFile() {
 		return false;
+	}
+
+	@Override
+	public void process(SequencingObject sequencingObject) {
+		if (sequencingObject.getQcEntries() != null) {
+			// remove any existing coverage entries
+			sequencingObject.getQcEntries().stream().filter(q -> q instanceof CoverageQCEntry)
+					.forEach(q -> qcEntryRepository.delete(q));
+		}
+
+		// count the total bases
+		long totalBases = sequencingObject.getFiles().stream().mapToLong(f -> {
+			AnalysisFastQC fastqc = analysisRepository.findFastqcAnalysisForSequenceFile(f);
+			return fastqc.getTotalBases();
+		}).sum();
+
+		// save the entry
+		CoverageQCEntry coverageQCEntry = new CoverageQCEntry(sequencingObject, totalBases);
+		qcEntryRepository.save(coverageQCEntry);
+
 	}
 
 }

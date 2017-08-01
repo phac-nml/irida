@@ -69,6 +69,12 @@ public class SistrTypingFileProcessor implements FileProcessor {
 	public void process(Long sequenceFileId) throws FileProcessorException {
 		SequencingObject sequencingObject = objectRepository.findOne(sequenceFileId);
 
+		process(sequencingObject);
+	}
+	
+	@Override
+	@Transactional
+	public void process(SequencingObject sequencingObject) {
 		logger.debug("Setting up SISTR typing for sequence " + sequencingObject.getId());
 
 		User admin = userRepository.loadUserByUsername("admin");
@@ -106,6 +112,7 @@ public class SistrTypingFileProcessor implements FileProcessor {
 			logger.warn("Could not run SISTR typing for sequencing object " + sequencingObject.getId()
 					+ " because it's not paired end");
 		}
+		
 	}
 
 	/**

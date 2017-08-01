@@ -49,6 +49,12 @@ public class ChecksumFileProcessor implements FileProcessor {
 	@Override
 	public void process(Long sequenceFileId) throws FileProcessorException {
 		SequencingObject sequencingObject = objectRepository.findOne(sequenceFileId);
+		process(sequencingObject);
+
+	}
+	
+	@Override
+	public void process(SequencingObject sequencingObject) {
 		Set<SequenceFile> files = sequencingObject.getFiles();
 
 		for (SequenceFile file : files) {
@@ -64,7 +70,6 @@ public class ChecksumFileProcessor implements FileProcessor {
 			}
 
 		}
-
 	}
 
 	/**
