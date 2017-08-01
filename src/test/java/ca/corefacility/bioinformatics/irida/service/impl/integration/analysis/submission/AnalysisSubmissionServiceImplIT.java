@@ -472,7 +472,7 @@ public class AnalysisSubmissionServiceImplIT {
 		User user = userRepository.findOne(1L);
 		Set<AnalysisSubmission> submissions = analysisSubmissionService.getAnalysisSubmissionsForUser(user);
 		assertNotNull("should get submissions for the user", submissions);
-		assertEquals("submissions should have correct number", 10, submissions.size());
+		assertEquals("submissions should have correct number", 9, submissions.size());
 	}
 
 	/**
@@ -484,7 +484,7 @@ public class AnalysisSubmissionServiceImplIT {
 	public void testGetAnalysisSubmissionsForCurrentUserAsRegularUser() {
 		Set<AnalysisSubmission> submissions = analysisSubmissionService.getAnalysisSubmissionsForCurrentUser();
 		assertNotNull("should get submissions for the user", submissions);
-		assertEquals("submissions should have correct number", 10, submissions.size());
+		assertEquals("submissions should have correct number", 9, submissions.size());
 	}
 
 	/**
@@ -496,7 +496,7 @@ public class AnalysisSubmissionServiceImplIT {
 	public void testGetAnalysisSubmissionsForCurrentUserAsRegularUser2() {
 		Set<AnalysisSubmission> submissions = analysisSubmissionService.getAnalysisSubmissionsForCurrentUser();
 		assertNotNull("should get submissions for the user", submissions);
-		assertEquals("submissions should have correct number", 2, submissions.size());
+		assertEquals("submissions should have correct number", 3, submissions.size());
 	}
 
 	/**
@@ -508,7 +508,7 @@ public class AnalysisSubmissionServiceImplIT {
 	public void testGetAnalysisSubmissionsForCurrentUserAsAdminUser() {
 		Set<AnalysisSubmission> submissions = analysisSubmissionService.getAnalysisSubmissionsForCurrentUser();
 		assertNotNull("should get submissions for the user", submissions);
-		assertEquals("submissions should have correct number", 2, submissions.size());
+		assertEquals("submissions should have correct number", 3, submissions.size());
 	}
 
 	/**
