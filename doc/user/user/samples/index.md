@@ -78,7 +78,7 @@ In the concatenation page you must select 2 or more sequence file objects **of t
 
 Once you have selected your files to concatenate, you have the following options:
 
-* *New filename* - This will set the base name of the new concatenated files.  For paired-end data a modifier will be appended to determine the forward an reverse files.
+* *New filename* - This will set the base name of the new concatenated files.  For paired-end data a modifier will be appended to determine the forward and reverse files.
 * *Remove originals* - This will remove the original files from the sample, leaving only the new concatenated file.
 
 Once you have selected your files and selected your options, click *Submit* to begin the concatenation.  This may take a while, so you should stay on this page until the process is complete.  Once your files are concatenated, you will be redirected back to the sample-files page.
