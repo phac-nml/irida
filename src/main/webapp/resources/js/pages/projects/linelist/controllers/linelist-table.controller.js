@@ -1,6 +1,9 @@
+import "jszip";
 import "DataTables/datatables";
 import "DataTables/datatables-fixedColumns";
 import "DataTables/datatables-colreorder";
+import "DataTables/datatables-buttons";
+import "datatables.net-buttons/js/buttons.html5";
 import $ from "jquery";
 import {
   createItemLink,
@@ -56,6 +59,20 @@ function defineTable() {
     scrollY: "600px",
     scrollCollapse: true,
     scrollX: true,
+    buttons: [
+      {
+        extend: "csvHtml5",
+        exportOptions: {
+          columns: ":visible"
+        }
+      },
+      {
+        extend: 'excelHtml5',
+        exportOptions: {
+          columns: ':visible'
+        }
+      }
+    ],
     fixedColumns: {
       leftColumns: 1
     },
