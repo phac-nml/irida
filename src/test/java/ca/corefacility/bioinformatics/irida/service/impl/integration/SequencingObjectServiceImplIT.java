@@ -191,8 +191,8 @@ public class SequencingObjectServiceImplIT {
 		SequencingRun mr = sequencingRunService.read(1L);
 		sequencingRunService.addSequencingObjectToSequencingRun(mr, so);
 
-		// Wait 5 seconds. file processing should have failed by then.
-		Thread.sleep(5000);
+		// Sleeping for a bit to let file processing run
+		Thread.sleep(10000);
 
 		Sample readSample = sampleService.read(s.getId());
 
@@ -285,6 +285,9 @@ public class SequencingObjectServiceImplIT {
 		logger.trace("Finished saving the file.");
 
 		assertNotNull("ID wasn't assigned.", sequencingObject.getId());
+		
+		// Sleeping for a bit to let file processing run
+		Thread.sleep(10000);
 
 		// figure out what the version number of the sequence file is (should be
 		// 1; the file wasn't gzipped, but fastqc will have modified it.)
@@ -346,6 +349,9 @@ public class SequencingObjectServiceImplIT {
 		logger.trace("Finished saving the file.");
 
 		assertNotNull("ID wasn't assigned.", sequencingObject.getId());
+		
+		// Sleeping for a bit to let file processing run
+		Thread.sleep(10000);
 
 		// figure out what the version number of the sequence file is (should be
 		// 2; the file was gzipped)
@@ -389,7 +395,7 @@ public class SequencingObjectServiceImplIT {
 			dir.next();
 			fileCount++;
 		}
-		assertEquals("Wrong number of directories beneath the id directory", 4, fileCount);
+		assertEquals("Wrong number of directories beneath the id directory", 2, fileCount);
 	}
 
 	@Test
@@ -456,7 +462,7 @@ public class SequencingObjectServiceImplIT {
 		project = projectService.update(project);
 
 		// Wait 5 seconds. file processing should have run by then.
-		Thread.sleep(5000);
+		Thread.sleep(10000);
 
 		qcEntries = sampleService.getQCEntriesForSample(readSample);
 		assertEquals("should be one qc entry", 1, qcEntries.size());
