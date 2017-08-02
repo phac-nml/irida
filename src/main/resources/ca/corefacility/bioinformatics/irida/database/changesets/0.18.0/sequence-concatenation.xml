@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="sequence-concatenation" author="tom">
+
+		<createTable tableName="sequence_concatenation">
+			<column name="id" autoIncrement="true" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="created_date" type="datetime" />
+
+			<column name="concatenated_id" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true"
+					referencedColumnNames="id" referencedTableName="sequencing_object"
+					foreignKeyName="FK_CONCATENATED_DESTINATION" />
+			</column>
+		</createTable>
+
+		<createTable tableName="sequence_concatenation_sequencing_object">
+			<column name="sequence_concatenation_id" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true"
+					referencedColumnNames="id" referencedTableName="sequence_concatenation"
+					foreignKeyName="FK_CONCATENATED_CONCATENATED_ID" />
+			</column>
+
+			<column name="sources_id" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true"
+					referencedColumnNames="id" referencedTableName="sequencing_object"
+					foreignKeyName="FK_CONCATENATED_SOURCE" />
+			</column>
+		</createTable>
+	</changeSet>
+</databaseChangeLog>

@@ -32,6 +32,7 @@ import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceConcatenation;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
@@ -41,6 +42,7 @@ import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.concatenate.SequencingObjectConcatenator;
 import ca.corefacility.bioinformatics.irida.processing.concatenate.SequencingObjectConcatenatorFactory;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceConcatenationRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.SampleSequencingObjectSpecification;
@@ -61,10 +63,12 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 	private TaskExecutor fileProcessingChainExecutor;
 	private FileProcessingChain fileProcessingChain;
 	private final SequencingObjectRepository repository;
+	private final SequenceConcatenationRepository concatenationRepository;
 
 	@Autowired
 	public SequencingObjectServiceImpl(SequencingObjectRepository repository,
 			SequenceFileRepository sequenceFileRepository, SampleSequencingObjectJoinRepository ssoRepository,
+			SequenceConcatenationRepository concatenationRepository,
 			@Qualifier("fileProcessingChainExecutor") TaskExecutor executor,
 			@Qualifier("uploadFileProcessingChain") FileProcessingChain fileProcessingChain, Validator validator) {
 		super(repository, validator, SequencingObject.class);
@@ -73,6 +77,7 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 		this.fileProcessingChainExecutor = executor;
 		this.fileProcessingChain = fileProcessingChain;
 		this.sequenceFileRepository = sequenceFileRepository;
+		this.concatenationRepository = concatenationRepository;
 	}
 
 	/**
@@ -270,6 +275,8 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 		SequencingObject concatenated = concatenator.concatenateFiles(toJoin, filename);
 		
 		SampleSequencingObjectJoin created = createSequencingObjectInSample(concatenated, targetSample);
+		
+		concatenationRepository.save(new SequenceConcatenation(created.getObject(), toJoin));
 		
 		if (removeOriginals) {
 			for (SequencingObject obj : toJoin) {
