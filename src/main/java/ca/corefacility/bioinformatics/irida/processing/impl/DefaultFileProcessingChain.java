@@ -134,6 +134,18 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 		this.sleepDuration = sleepDuration * 1000;
 	}
 
+	/**
+	 * Checks the {@link SequenceFile}s for the given {@link SequencingObject}
+	 * to see if it's files are in the place they should be. Since there's lots
+	 * of saves going on during the {@link FileProcessingChain} the transaction
+	 * might not be complete in the time the file is first read.
+	 * 
+	 * @param sequencingObjectId
+	 *            the id of the {@link SequencingObject} to check
+	 * @return the settled {@link SequencingObject}
+	 * @throws FileProcessorTimeoutException
+	 *             if the files don't settle in the configured timeout
+	 */
 	private SequencingObject getSettledSequencingObject(Long sequencingObjectId) throws FileProcessorTimeoutException {
 		boolean filesNotSettled = true;
 
@@ -143,9 +155,8 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 
 		do {
 			if (waiting > timeout) {
-				throw new FileProcessorTimeoutException(
-						"Waiting for longer than " + sleepDuration * timeout + "ms, bailing out.  File id "
-								+ sequencingObjectId);
+				throw new FileProcessorTimeoutException("Waiting for longer than " + sleepDuration * timeout
+						+ "ms, bailing out.  File id " + sequencingObjectId);
 			}
 
 			waiting++;
