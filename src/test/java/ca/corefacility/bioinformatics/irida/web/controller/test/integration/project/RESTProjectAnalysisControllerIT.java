@@ -5,7 +5,7 @@ import static ca.corefacility.bioinformatics.irida.web.controller.test.integrati
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asUser;
 import static org.hamcrest.CoreMatchers.hasItems;
 
-import org.hamcrest.Matchers;
+import org.eclipse.jetty.http.HttpStatus;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ActiveProfiles;
@@ -41,37 +41,37 @@ public class RESTProjectAnalysisControllerIT {
 
 	@Test
 	public void testGetProjectAnalysisAsAdmin() {
-		asAdmin().get(ITestSystemProperties.BASE_URL + ANALYSIS_PROJECT_BASE).then().log().all()
+		asAdmin().get(ITestSystemProperties.BASE_URL + ANALYSIS_PROJECT_BASE).then().statusCode(HttpStatus.OK_200)
 				.body("resource.resources.identifier", hasItems("1", "2", "3"));
 	}
 
 	@Test
 	public void testGetProjectAnalysisAsUser() {
-		asUser().get(ITestSystemProperties.BASE_URL + ANALYSIS_PROJECT_BASE).then().log().all()
+		asUser().get(ITestSystemProperties.BASE_URL + ANALYSIS_PROJECT_BASE).then()
 				.body("resource.resources.identifier", hasItems("1", "2", "3"));
 	}
 
 	@Test
 	public void testGetProjectAnalysisAsOtherUser() {
-		asOtherUser().get(ITestSystemProperties.BASE_URL + ANALYSIS_PROJECT_BASE).then().log().all()
-				.body("resource.resources.identifier", Matchers.hasSize(0));
+		asOtherUser().get(ITestSystemProperties.BASE_URL + ANALYSIS_PROJECT_BASE).then()
+				.statusCode(HttpStatus.FORBIDDEN_403);
 	}
 
 	@Test
 	public void testGetProjectAnalysisByTypeAsAdmin() {
-		asAdmin().get(ITestSystemProperties.BASE_URL + ANALYSIS_SISTR_BASE).then().log().all().body("resource.resources.identifier",
-				hasItems("2", "3"));
+		asAdmin().get(ITestSystemProperties.BASE_URL + ANALYSIS_SISTR_BASE).then().statusCode(HttpStatus.OK_200)
+				.body("resource.resources.identifier", hasItems("2", "3"));
 	}
 
 	@Test
 	public void testGetProjectAnalysisByTypeUser() {
-		asUser().get(ITestSystemProperties.BASE_URL + ANALYSIS_SISTR_BASE).then().log().all().body("resource.resources.identifier",
-				hasItems("2", "3"));
+		asUser().get(ITestSystemProperties.BASE_URL + ANALYSIS_SISTR_BASE).then().statusCode(HttpStatus.OK_200)
+				.body("resource.resources.identifier", hasItems("2", "3"));
 	}
 
 	@Test
 	public void testGetProjectAnalysisByTypeAsOtherUser() {
-		asOtherUser().get(ITestSystemProperties.BASE_URL + ANALYSIS_SISTR_BASE).then().log().all()
-				.body("resource.resources.identifier", Matchers.hasSize(0));
+		asOtherUser().get(ITestSystemProperties.BASE_URL + ANALYSIS_SISTR_BASE).then()
+				.statusCode(HttpStatus.FORBIDDEN_403);
 	}
 }
