@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -260,7 +261,7 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 	@Override
 	@PreAuthorize("hasPermission(#toJoin, 'canReadSequencingObject') and hasPermission(#targetSample, 'canUpdateSample')")
 	@Transactional
-	public SampleSequencingObjectJoin concatenateSequences(Set<SequencingObject> toJoin, String filename, Sample targetSample, boolean removeOriginals)
+	public SampleSequencingObjectJoin concatenateSequences(List<SequencingObject> toJoin, String filename, Sample targetSample, boolean removeOriginals)
 			throws ConcatenateException {
 
 		SequencingObjectConcatenator<? extends SequencingObject> concatenator = SequencingObjectConcatenatorFactory

@@ -44,7 +44,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -518,7 +518,7 @@ public class SamplesController extends BaseController {
 		Iterable<SequencingObject> readMultiple = sequencingObjectService.readMultiple(objectIds);
 
 		try {
-			sequencingObjectService.concatenateSequences(Sets.newHashSet(readMultiple), filename, sample,
+			sequencingObjectService.concatenateSequences(Lists.newArrayList(readMultiple), filename, sample,
 					removeOriginals);
 		} catch (ConcatenateException ex) {
 			logger.error("Error concatenating files: ", ex);

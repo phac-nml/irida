@@ -5,7 +5,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Set;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 
@@ -34,7 +34,7 @@ public abstract class SequencingObjectConcatenator<Type extends SequencingObject
 	 * @throws ConcatenateException
 	 *             if there is an error during concatenation
 	 */
-	public abstract Type concatenateFiles(Set<? extends SequencingObject> toConcatenate, String filename)
+	public abstract Type concatenateFiles(List<? extends SequencingObject> toConcatenate, String filename)
 			throws ConcatenateException;
 
 	/**

@@ -3,7 +3,7 @@ package ca.corefacility.bioinformatics.irida.processing.concatenate.impl;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Set;
+import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -23,7 +23,7 @@ public class SequenceFilePairConcatenator extends SequencingObjectConcatenator<S
 	 * {@inheritDoc}
 	 */
 	@Override
-	public SequenceFilePair concatenateFiles(Set<? extends SequencingObject> toConcatenate, String filename)
+	public SequenceFilePair concatenateFiles(List<? extends SequencingObject> toConcatenate, String filename)
 			throws ConcatenateException {
 
 		// create the filenames with F/R for the forward and reverse files

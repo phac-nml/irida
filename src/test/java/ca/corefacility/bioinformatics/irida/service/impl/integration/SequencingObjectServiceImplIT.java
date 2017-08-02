@@ -43,6 +43,7 @@ import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
@@ -529,7 +530,7 @@ public class SequencingObjectServiceImplIT {
 
 		Collection<SampleSequencingObjectJoin> originalSeqs = objectService.getSequencingObjectsForSample(sample);
 
-		Set<SequencingObject> fileSet = Sets.newHashSet(so1, so2);
+		List<SequencingObject> fileSet = Lists.newArrayList(so1, so2);
 
 		SampleSequencingObjectJoin concatenateSequences = objectService.concatenateSequences(fileSet, newFileName,
 				sample, false);

@@ -10,7 +10,7 @@ import java.nio.file.Path;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -40,7 +40,7 @@ public class SingleEndSequenceFileConcatenatorTest {
 		SingleEndSequenceFile f1 = new SingleEndSequenceFile(original1);
 		SingleEndSequenceFile f2 = new SingleEndSequenceFile(original2);
 
-		SingleEndSequenceFile concatenateFiles = concat.concatenateFiles(Sets.newHashSet(f1, f2), newFileName);
+		SingleEndSequenceFile concatenateFiles = concat.concatenateFiles(Lists.newArrayList(f1, f2), newFileName);
 
 		SequenceFile newSeqFile = concatenateFiles.getSequenceFile();
 
