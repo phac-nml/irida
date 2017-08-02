@@ -376,6 +376,7 @@ Each project can be accessed by a unique URL.
 | `self` | A link to this project |
 | `project/users` | A link to view the collection of users that can view this project (the same format as [the list of users](#users) |
 | `project/samples` | A link to view the collection of samples that are contained within this project. |
+| `project/analyses` | A link to the analyses shared with this project. |
 
 ##### Properties
 {:.no_toc}
@@ -401,6 +402,10 @@ Each project can be accessed by a unique URL.
       {
         "href": "http://localhost:8080/api/projects/1/samples",
         "rel": "project/samples"
+      },
+      {
+      "rel" : "project/analyses",
+      "href" : "http://localhost:8080/api/projects/1/analyses"
       },
       {
         "href": "http://localhost:8080/api/projects/1",

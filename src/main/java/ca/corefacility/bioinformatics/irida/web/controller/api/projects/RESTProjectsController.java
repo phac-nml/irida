@@ -31,6 +31,11 @@ public class RESTProjectsController extends RESTGenericController<Project> {
      * rel used for accessing users associated with a project.
      */
     private static final String PROJECT_USERS_REL = "project/users";
+    
+    /**
+     * rel used for accessing analyses shared to a project.
+     */
+    private static final String PROJECT_ANALYSES_REL = "project/analyses";
 
     /**
      * Default constructor. Should not be used.
@@ -63,6 +68,8 @@ public class RESTProjectsController extends RESTGenericController<Project> {
                 withRel(PROJECT_USERS_REL));
         links.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSamples(projectId))
                 .withRel(RESTProjectSamplesController.REL_PROJECT_SAMPLES));
+        links.add(linkTo(methodOn(RESTProjectAnalysisController.class).getProjectAnalyses(projectId))
+                .withRel(PROJECT_ANALYSES_REL));
         return links;
     }
 }
