@@ -41,37 +41,37 @@ public class RESTProjectAnalysisControllerIT {
 
 	@Test
 	public void testGetProjectAnalysisAsAdmin() {
-		asAdmin().expect().body("resource.resources.identifier", hasItems("1", "2", "3")).when()
-				.get(ITestSystemProperties.BASE_URL + ANALYSIS_PROJECT_BASE);
+		asAdmin().get(ITestSystemProperties.BASE_URL + ANALYSIS_PROJECT_BASE).then().log().all()
+				.body("resource.resources.identifier", hasItems("1", "2", "3"));
 	}
 
 	@Test
 	public void testGetProjectAnalysisAsUser() {
-		asUser().expect().body("resource.resources.identifier", hasItems("1", "2", "3")).when()
-				.get(ITestSystemProperties.BASE_URL + ANALYSIS_PROJECT_BASE);
+		asUser().get(ITestSystemProperties.BASE_URL + ANALYSIS_PROJECT_BASE).then().log().all()
+				.body("resource.resources.identifier", hasItems("1", "2", "3"));
 	}
 
 	@Test
 	public void testGetProjectAnalysisAsOtherUser() {
-		asOtherUser().expect().body("resource.resources.identifier", Matchers.hasSize(0)).when()
-				.get(ITestSystemProperties.BASE_URL + ANALYSIS_PROJECT_BASE);
+		asOtherUser().get(ITestSystemProperties.BASE_URL + ANALYSIS_PROJECT_BASE).then().log().all()
+				.body("resource.resources.identifier", Matchers.hasSize(0));
 	}
 
 	@Test
 	public void testGetProjectAnalysisByTypeAsAdmin() {
-		asAdmin().expect().body("resource.resources.identifier", hasItems("2", "3")).when()
-				.get(ITestSystemProperties.BASE_URL + ANALYSIS_SISTR_BASE);
+		asAdmin().get(ITestSystemProperties.BASE_URL + ANALYSIS_SISTR_BASE).then().log().all().body("resource.resources.identifier",
+				hasItems("2", "3"));
 	}
 
 	@Test
 	public void testGetProjectAnalysisByTypeUser() {
-		asUser().expect().body("resource.resources.identifier", hasItems("2", "3")).when()
-				.get(ITestSystemProperties.BASE_URL + ANALYSIS_SISTR_BASE);
+		asUser().get(ITestSystemProperties.BASE_URL + ANALYSIS_SISTR_BASE).then().log().all().body("resource.resources.identifier",
+				hasItems("2", "3"));
 	}
 
 	@Test
 	public void testGetProjectAnalysisByTypeAsOtherUser() {
-		asOtherUser().expect().body("resource.resources.identifier", Matchers.hasSize(0)).when()
-				.get(ITestSystemProperties.BASE_URL + ANALYSIS_SISTR_BASE);
+		asOtherUser().get(ITestSystemProperties.BASE_URL + ANALYSIS_SISTR_BASE).then().log().all()
+				.body("resource.resources.identifier", Matchers.hasSize(0));
 	}
 }

@@ -4,12 +4,14 @@ import static ca.corefacility.bioinformatics.irida.web.controller.test.integrati
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asUser;
 import static com.jayway.restassured.path.json.JsonPath.from;
 import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.both;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -29,16 +31,16 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
-import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
-import ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestSystemProperties;
-
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.net.HttpHeaders;
 import com.jayway.restassured.response.Response;
+
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
+import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
+import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
+import ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestSystemProperties;
 
 /**
  * Integration tests for working with sequence files and samples.
@@ -238,39 +240,34 @@ public class SampleSequenceFilesIT {
 	
 	@Test
 	public void testReadSequenceFilesNoAnalysis() {
-		String sequenceFilePairUri = ITestSystemProperties.BASE_URL + "/api/samples/1/pairs/3";
+		String sequenceFilePairUri = ITestSystemProperties.BASE_URL + "/api/samples/1/pairs/4";
 
-		Response response = asUser().expect().statusCode(HttpStatus.OK.value()).when().get(sequenceFilePairUri);
-		assertNull("Assembly results were found where none should exist",
-				response.jsonPath().getString("resource.links.find{it.rel=='"
-						+ RESTSampleSequenceFilesController.REL_AUTOMATED_ASSEMBLY + "'}.href"));
-		assertNull("SISTR results were found where none should exist", response.jsonPath().getString(
-				"resource.links.find{it.rel=='" + RESTSampleSequenceFilesController.REL_SISTR_TYPING + "'}.href"));
+		asUser().get(sequenceFilePairUri).then().statusCode(HttpStatus.OK.value()).and()
+				.body("resource.links.rel", not(anyOf(hasItem("analysis/assembly"), hasItem("analysis/sistr"))));
 	}
 
 	@Test
 	public void testReadSequenceFilesAssemblyAnalysis() {
-		String sequenceFilePairUri = ITestSystemProperties.BASE_URL + "/api/samples/1/pairs/4";
+		String sequenceFilePairUri = ITestSystemProperties.BASE_URL + "/api/samples/1/pairs/2";
 
-		Response response = asUser().expect().statusCode(HttpStatus.OK.value()).when().get(sequenceFilePairUri);
-		assertEquals("Assembly results were not found", ITestSystemProperties.BASE_URL + "/api/analysisSubmission/2",
-				response.jsonPath().getString("resource.links.find{it.rel=='"
-						+ RESTSampleSequenceFilesController.REL_AUTOMATED_ASSEMBLY + "'}.href"));
-		assertNull("SISTR results were found where none should exist", response.jsonPath().getString(
-				"resource.links.find{it.rel=='" + RESTSampleSequenceFilesController.REL_SISTR_TYPING + "'}.href"));
+		asUser().get(sequenceFilePairUri).then().statusCode(HttpStatus.OK.value()).and().body("resource.links.rel",
+				both(hasItem("analysis/assembly")).and(not(hasItem("analysis/sistr"))));
 	}
 
 	@Test
 	public void testReadSequenceFilesSISTRAnalysis() {
+		String sequenceFilePairUri = ITestSystemProperties.BASE_URL + "/api/samples/1/pairs/3";
+
+		asUser().get(sequenceFilePairUri).then().statusCode(HttpStatus.OK.value()).and().body("resource.links.rel",
+				both(hasItem("analysis/sistr")).and(not(hasItem("analysis/assembly"))));
+	}
+	
+	@Test
+	public void testReadSequenceFilesSISTRAssemblyAnalysis() {
 		String sequenceFilePairUri = ITestSystemProperties.BASE_URL + "/api/samples/1/pairs/1";
 
-		Response response = asUser().expect().statusCode(HttpStatus.OK.value()).when().get(sequenceFilePairUri);
-		assertNull("Assembly results were found where none should exist",
-				response.jsonPath().getString("resource.links.find{it.rel=='"
-						+ RESTSampleSequenceFilesController.REL_AUTOMATED_ASSEMBLY + "'}.href"));
-		assertEquals("SISTR results were not found", ITestSystemProperties.BASE_URL + "/api/analysisSubmission/2",
-				response.jsonPath().getString("resource.links.find{it.rel=='"
-						+ RESTSampleSequenceFilesController.REL_SISTR_TYPING + "'}.href"));
+		asUser().get(sequenceFilePairUri).then().statusCode(HttpStatus.OK.value()).and().body("resource.links.rel",
+				both(hasItem("analysis/sistr")).and(hasItem("analysis/assembly")));
 	}
 
 	@Test
