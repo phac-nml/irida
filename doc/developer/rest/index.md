@@ -414,6 +414,64 @@ Each project can be accessed by a unique URL.
 
 ```
 
+#### Project Analyses
+{:.no_toc}
+
+Lists all the analysis submission objects that have been shared with the particular project.
+
+##### Links
+{:.no_toc}
+
+| Name | Description |
+|------|-------------|
+| `self` | A link to the project analyses |
+| `project` | A link back to the individual project for these shared analyses. |
+
+##### Properties
+
+Each Analysis Submission under `resources` has the same properties as for [Analysis Submssions](#properties-7).
+
+##### Example Response
+
+```json
+{
+  "resource" : {
+    "resources" : [ {
+      "name" : "SISTRTyping_20170728_AE014613-699860",
+      "workflowId" : "e8f9cc61-3264-48c6-81d9-02d9e84bccc7",
+      "remoteInputDataId" : "33b43b4e7093c91f",
+      "remoteWorkflowId" : "33b43b4e7093c91f",
+      "inputParameters" : {
+        "assembly-contig-min-length-coverage-calculation" : "5000",
+        "assembly-contig-min-length" : "500",
+        "read-merge-min-overlap" : "20",
+        "assembly-contig-min-coverage-ratio" : "0.33",
+        "read-merge-max-overlap" : "300",
+        "assembly-contig-min-repeat-coverage-ratio" : "1.75"
+      },
+      "createdDate" : 1501260023000,
+      "modifiedDate" : 1501260369000,
+      "analysisState" : "COMPLETED",
+      "analysisCleanedState" : "NOT_CLEANED",
+      "analysisDescription" : "",
+      "label" : "SISTRTyping_20170728_AE014613-699860",
+      "links" : [ {
+        "rel" : "self",
+        "href" : "http://localhost:8080/api/analysisSubmissions/17"
+      } ],
+      "identifier" : "17"
+    } ],
+    "links" : [ {
+      "rel" : "project",
+      "href" : "http://localhost:8080/api/projects/2"
+    }, {
+      "rel" : "self",
+      "href" : "http://localhost:8080/api/projects/2/analyses"
+    } ]
+  }
+
+```
+
 ### Samples
 
 A sample corresponds to a single isolate and contains the sequencing data and metadata. A [collection of samples](#sample-collection) can only be accessed via a [project](#project), and an [individual sample](#sample-individual) can only be accessed from a sample collection.
@@ -836,13 +894,20 @@ Listing sequence file pairs will display the sequnece files for a given sample w
         "rel" : "self",
         "href" : "http://localhost:8080/api/samples/52/sequenceFiles/pairs/1"
       }, {
+      }, {
+        "rel" : "analysis/assembly",
+        "href" : "http://localhost:8080/api/analysisSubmissions/3"
+      }, {
+        "rel" : "analysis/sistr",
+        "href" : "http://localhost:8080/api/analysisSubmissions/4"
+      }, {
         "rel" : "pair/forward",
         "href" : "http://localhost:8080/api/samples/52/sequenceFiles/1"
       }, {
         "rel" : "pair/reverse",
         "href" : "http://localhost:8080/api/samples/52/sequenceFiles/2"
       }, {
-        "rel" : "sequenceFilePair/sample",
+        "rel" : "sample",
         "href" : "http://localhost:8080/api/samples/52"
       } ],
       "identifier" : "1"
@@ -868,9 +933,11 @@ A sequence file pair individual contains a reference to 2 [sequence files](#sequ
 | Name | Description |
 |------|-------------|
 | `self` | A link to this sequence file pair record. |
+| `analysis/assembly` | A link to an assembly analysis associated with this pair. |
+| `analysis/sistr` | A link to the SISTR results associated with this pair. |
 | `pair/forward` | A link to the forward oriented sequence file. |
 | `pair/reverse` | A link to the reverse oriented sequence file. |
-| `sequenceFilePair/sample` | A link to the sample that contains this sequence file. |
+| `sample` | A link to the sample that contains this sequence file. |
 
 ##### Properties
 {:.no_toc}
@@ -915,13 +982,19 @@ A sequence file pair individual contains a reference to 2 [sequence files](#sequ
       "rel" : "self",
       "href" : "http://localhost:8080/api/samples/52/sequenceFiles/pairs/1"
     }, {
+      "rel" : "analysis/assembly",
+      "href" : "http://localhost:8080/api/analysisSubmissions/3"
+    }, {
+      "rel" : "analysis/sistr",
+      "href" : "http://localhost:8080/api/analysisSubmissions/4"
+    }, {
       "rel" : "pair/forward",
       "href" : "http://localhost:8080/api/samples/52/sequenceFiles/1"
     }, {
       "rel" : "pair/reverse",
       "href" : "http://localhost:8080/api/samples/52/sequenceFiles/2"
     }, {
-      "rel" : "sequenceFilePair/sample",
+      "rel" : "sample",
       "href" : "http://localhost:8080/api/samples/52"
     } ],
     "identifier" : "1"
@@ -1129,7 +1202,6 @@ Each analysis submission corresponds to a collection of inputs (files and parame
 | `input/unpaired` | A link to the collection of single-end input files used for this analysis.  See [Sequence File Collection](#sequence-file-collection) for response format. |
 
 ##### Properties
-{:.no_toc}
 
 **Note**: No validation is marked for analysis submission properties because an analysis submission is immutable.
 
