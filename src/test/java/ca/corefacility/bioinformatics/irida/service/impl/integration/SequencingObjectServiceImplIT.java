@@ -272,7 +272,7 @@ public class SequencingObjectServiceImplIT {
 	@Test
 	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
 	public void testCreateNotCompressedSequenceFile() throws IOException, InterruptedException {
-		final Long expectedRevisionNumber = 3L;
+		final Long expectedRevisionNumber = 1L;
 		SequenceFile sf = new SequenceFile();
 		Path sequenceFile = Files.createTempFile(null, null);
 		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
@@ -287,7 +287,7 @@ public class SequencingObjectServiceImplIT {
 		assertNotNull("ID wasn't assigned.", sequencingObject.getId());
 
 		// figure out what the version number of the sequence file is (should be
-		// 2; the file wasn't gzipped, but fastqc will have modified it.)
+		// 1; the file wasn't gzipped, but fastqc will have modified it.)
 		SequencingObject readObject = null;
 		do {
 			readObject = asRole(Role.ROLE_ADMIN, "admin").objectService.read(sequencingObject.getId());
@@ -331,7 +331,7 @@ public class SequencingObjectServiceImplIT {
 	@Test
 	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
 	public void testCreateCompressedSequenceFile() throws IOException, InterruptedException {
-		final Long expectedRevisionNumber = 4L;
+		final Long expectedRevisionNumber = 2L;
 		SequenceFile sf = new SequenceFile();
 		Path sequenceFile = Files.createTempFile("TEMPORARY-SEQUENCE-FILE", ".gz");
 		OutputStream gzOut = new GZIPOutputStream(Files.newOutputStream(sequenceFile));
@@ -348,7 +348,7 @@ public class SequencingObjectServiceImplIT {
 		assertNotNull("ID wasn't assigned.", sequencingObject.getId());
 
 		// figure out what the version number of the sequence file is (should be
-		// 3; the file was gzipped)
+		// 2; the file was gzipped)
 		// get the MOST RECENT version of the sequence file from the database
 		// (it will have been modified outside of the create method.)
 		SequencingObject readObject = null;
