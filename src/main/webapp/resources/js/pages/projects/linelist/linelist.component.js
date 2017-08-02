@@ -12,16 +12,8 @@ function controller(LinelistService, $scope) {
     this.fields = LinelistService.getHeaders();
   };
 
-  this.updateColumnVisibility = (column, index) => {
-    $scope.$broadcast(EVENTS.TABLE.columnVisibility, { column, index });
-  };
-
   this.columnReorder = columns => {
     $scope.$broadcast(EVENTS.TABLE.colReorder, { columns });
-  };
-
-  this.templateSelected = fields => {
-    $scope.$broadcast(EVENTS.TABLE.template, { fields });
   };
 }
 

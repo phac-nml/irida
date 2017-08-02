@@ -25,19 +25,20 @@ saveTemplateController.$inject = ["templates", "$uibModalInstance"];
 /**
  * Controller for the ng-aside that allows the user to select
  * visible metadata fields
+ * @param {object} $rootScope angular highest level scope object.
  * @param {object} $uibModalInstance angular UI modal instance.
  * @param {array} fields metadata fields
- * @param {function} toggleColumnVisibility call to toggle the column within the Datatables.
  */
 function showMetadataFieldSelectionsController(
+  $rootScope,
   $uibModalInstance,
-  fields,
-  toggleColumnVisibility
+  fields
 ) {
   this.fields = fields;
 
-  this.toggleColumn = (column, index) => {
-    toggleColumnVisibility(column, index + 1);
+  this.toggleColumn = column => {
+    const index = fields.findIndex(field => field.label === column.label);
+    $rootScope.$broadcast(EVENTS.TABLE.columnVisibility, { column, index });
   };
 
   this.close = () => {
@@ -46,9 +47,9 @@ function showMetadataFieldSelectionsController(
 }
 
 showMetadataFieldSelectionsController.$inject = [
+  "$rootScope",
   "$uibModalInstance",
-  "fields",
-  "toggleColumnVisibility"
+  "fields"
 ];
 
 /**
@@ -56,6 +57,7 @@ showMetadataFieldSelectionsController.$inject = [
  * for hiding and showing metadata columns.
  *
  * @param {object} $window angular window reference.
+ * @param {object} $rootScope angular highest level scope object.
  * @param {object} $scope angular DOM scope reference.
  * @param {object} $aside Reference to the angular-aside instance
  * @param {object} $uibModal Reference to the angular-bootstrap modal instance
@@ -67,6 +69,7 @@ showMetadataFieldSelectionsController.$inject = [
  */
 function MetadataController(
   $window,
+  $rootScope,
   $scope,
   $aside,
   $uibModal,
@@ -117,13 +120,9 @@ function MetadataController(
           const fields = FIELD_ORDER.map(col => {
             return FIELDS[col];
           });
-          console.log(fields);
           // Remove the label
           fields.shift();
           return fields;
-        },
-        toggleColumnVisibility() {
-          return vm.parent.updateColumnVisibility;
         }
       },
       placement: "left",
@@ -167,6 +166,7 @@ function MetadataController(
       // Datatables does not fire an event when the table is reset to its
       // original state, so we will just reset the field order here.
       FIELD_ORDER = vm.fields.map((x, i) => i);
+      $rootScope.$broadcast(EVENTS.TABLE.reset);
     } else {
       fields = Array.from(vm.selectedTemplate.fields);
       // Make sure only the headers visible are turned on.
@@ -176,9 +176,9 @@ function MetadataController(
         });
         field.visible = index > -1;
       });
+      // Update the Datatables with the fields to display.
+      $rootScope.$broadcast(EVENTS.TABLE.template, { fields });
     }
-    // Update the Datatables with the fields to display.
-    vm.parent.templateSelected(fields);
   };
 
   /**
@@ -218,6 +218,7 @@ function MetadataController(
 
 MetadataController.$inject = [
   "$window",
+  "$rootScope",
   "$scope",
   "$aside",
   "$uibModal",

@@ -108,8 +108,15 @@ export function LineListTableController($rootScope, $scope) {
    */
   $scope.$on(EVENTS.TABLE.columnVisibility, (e, args) => {
     const { column, index } = args;
-    // const index = window.headersList.indexOf(column.label);
-    table.column(index).visible(column.visible);
+    // index +1 to account for label.
+    table.column(index + 1).visible(column.visible);
+  });
+
+  $scope.$on(EVENTS.TABLE.reset, () => {
+    table.columns().every(function() {
+      this.visible(true, false);
+    });
+    table.colReorder.reset();
   });
 
   /**
