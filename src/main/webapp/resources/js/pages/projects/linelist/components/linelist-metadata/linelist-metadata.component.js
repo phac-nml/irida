@@ -117,6 +117,7 @@ function MetadataController(
           const fields = FIELD_ORDER.map(col => {
             return FIELDS[col];
           });
+          console.log(fields);
           // Remove the label
           fields.shift();
           return fields;
@@ -193,7 +194,6 @@ function MetadataController(
       .map(field => field.label);
     const newTemplate = new MetadataTemplateService();
     newTemplate.name = name;
-    fields.shift();
     newTemplate.fields = fields;
     newTemplate.$save(response => {
       const { template, message } = response;
@@ -208,9 +208,10 @@ function MetadataController(
 
   // Set up event listener for re-arranging the columns on the table.
   $scope.$on(EVENTS.TABLE.colReorder, (e, args) => {
-    const newOrder = args.columns;
-    if (newOrder) {
-      FIELD_ORDER = newOrder;
+    // Order is a rearrangement of the current order.
+    const { order } = args;
+    if (order) {
+      FIELD_ORDER = order;
     }
   });
 }
