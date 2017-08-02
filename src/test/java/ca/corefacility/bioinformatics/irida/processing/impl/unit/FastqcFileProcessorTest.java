@@ -90,7 +90,7 @@ public class FastqcFileProcessorTest {
 			fail();
 		}
 
-		verify(sequenceFileRepository).save(argument.capture());
+		verify(sequenceFileRepository).saveMetadata(argument.capture());
 		SequenceFile updatedFile = argument.getValue();
 		final Field fastqcAnalysis = ReflectionUtils.findField(SequenceFile.class, "fastqcAnalysis");
 		ReflectionUtils.makeAccessible(fastqcAnalysis);

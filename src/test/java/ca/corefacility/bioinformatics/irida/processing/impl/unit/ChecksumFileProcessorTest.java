@@ -45,7 +45,7 @@ public class ChecksumFileProcessorTest {
 		fileProcessor.process(1L);
 
 		ArgumentCaptor<SequenceFile> fileCaptor = ArgumentCaptor.forClass(SequenceFile.class);
-		verify(sequenceFileRepository).save(fileCaptor.capture());
+		verify(sequenceFileRepository).saveMetadata(fileCaptor.capture());
 
 		SequenceFile file = fileCaptor.getValue();
 
