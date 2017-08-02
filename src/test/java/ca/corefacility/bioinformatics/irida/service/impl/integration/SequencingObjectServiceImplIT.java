@@ -328,7 +328,7 @@ public class SequencingObjectServiceImplIT {
 			dir.next();
 			fileCount++;
 		}
-		assertEquals("Wrong number of directories beneath the id directory", 3, fileCount);
+		assertEquals("Wrong number of directories beneath the id directory", 1, fileCount);
 	}
 
 	@Test
@@ -443,8 +443,8 @@ public class SequencingObjectServiceImplIT {
 		SequencingRun mr = sequencingRunService.read(1L);
 		sequencingRunService.addSequencingObjectToSequencingRun(mr, so);
 
-		// Wait 5 seconds. file processing should have run by then.
-		Thread.sleep(5000);
+		// Wait 10 seconds. file processing should have run by then.
+		Thread.sleep(10000);
 
 		Sample readSample = sampleService.read(s.getId());
 
@@ -461,7 +461,7 @@ public class SequencingObjectServiceImplIT {
 		project.setMinimumCoverage(10);
 		project = projectService.update(project);
 
-		// Wait 5 seconds. file processing should have run by then.
+		// Wait 10 seconds. file processing should have run by then.
 		Thread.sleep(10000);
 
 		qcEntries = sampleService.getQCEntriesForSample(readSample);
