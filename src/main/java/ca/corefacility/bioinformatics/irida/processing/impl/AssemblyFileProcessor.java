@@ -66,13 +66,6 @@ public class AssemblyFileProcessor implements FileProcessor {
 	 */
 	@Override
 	@Transactional
-	public void process(Long sequenceFileId) throws FileProcessorException {
-		SequencingObject sequencingObject = objectRepository.findOne(sequenceFileId);
-
-		process(sequencingObject);
-	}
-	
-	@Override
 	public void process(SequencingObject sequencingObject) {
 		logger.debug("Setting up automated assembly for sequence " + sequencingObject.getId());
 

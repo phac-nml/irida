@@ -10,10 +10,8 @@ import ca.corefacility.bioinformatics.irida.model.sample.CoverageQCEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
-import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 
 /**
  * {@link FileProcessor} used to calculate coverage of a
@@ -23,32 +21,14 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.Sequencing
 public class CoverageFileProcessor implements FileProcessor {
 	private static final Logger logger = LoggerFactory.getLogger(CoverageFileProcessor.class);
 
-	private SequencingObjectRepository objectRepository;
-
 	private QCEntryRepository qcEntryRepository;
 
 	private AnalysisRepository analysisRepository;
 
 	@Autowired
-	public CoverageFileProcessor(SequencingObjectRepository objectRepository, QCEntryRepository qcEntryRepository,
-			AnalysisRepository analysisRepository) {
-		this.objectRepository = objectRepository;
+	public CoverageFileProcessor(QCEntryRepository qcEntryRepository, AnalysisRepository analysisRepository) {
 		this.qcEntryRepository = qcEntryRepository;
 		this.analysisRepository = analysisRepository;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void process(Long sequenceFileId) throws FileProcessorException {
-		logger.trace("Counting coverage for file " + sequenceFileId);
-
-		// read the seqobject
-		SequencingObject read = objectRepository.findOne(sequenceFileId);
-
-		process(read);
-
 	}
 
 	/**
@@ -61,6 +41,8 @@ public class CoverageFileProcessor implements FileProcessor {
 
 	@Override
 	public void process(SequencingObject sequencingObject) {
+		logger.trace("Counting coverage for file " + sequencingObject);
+
 		if (sequencingObject.getQcEntries() != null) {
 			// remove any existing coverage entries
 			sequencingObject.getQcEntries().stream().filter(q -> q instanceof CoverageQCEntry)

@@ -127,10 +127,6 @@ public class DefaultFileProcessingChainTest {
 	}
 
 	private static class FailingFileProcessor implements FileProcessor {
-		@Override
-		public void process(Long sequenceFile) throws FileProcessorException {
-			throw new FileProcessorException("I'm terrible at this.");
-		}
 
 		@Override
 		public Boolean modifiesFile() {
@@ -145,11 +141,6 @@ public class DefaultFileProcessingChainTest {
 	}
 
 	private static class FailingFileProcessorNoContinue implements FileProcessor {
-
-		@Override
-		public void process(Long sequenceFile) throws FileProcessorException {
-			throw new FileProcessorException("I'm *really* terrible at this.");
-		}
 
 		@Override
 		public Boolean modifiesFile() {

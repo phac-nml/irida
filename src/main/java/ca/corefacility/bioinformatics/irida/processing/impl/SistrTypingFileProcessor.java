@@ -33,9 +33,9 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
 import com.google.common.collect.Sets;
 
 /**
- * File processor which launches a SISTR typing pipeline
- * on uploaded sequences. It will check with a sequence's associated project for
- * whether or not it should type with SISTR.
+ * File processor which launches a SISTR typing pipeline on uploaded sequences.
+ * It will check with a sequence's associated project for whether or not it
+ * should type with SISTR.
  */
 @Component
 public class SistrTypingFileProcessor implements FileProcessor {
@@ -66,14 +66,6 @@ public class SistrTypingFileProcessor implements FileProcessor {
 	 */
 	@Override
 	@Transactional
-	public void process(Long sequenceFileId) throws FileProcessorException {
-		SequencingObject sequencingObject = objectRepository.findOne(sequenceFileId);
-
-		process(sequencingObject);
-	}
-	
-	@Override
-	@Transactional
 	public void process(SequencingObject sequencingObject) {
 		logger.debug("Setting up SISTR typing for sequence " + sequencingObject.getId());
 
@@ -95,8 +87,7 @@ public class SistrTypingFileProcessor implements FileProcessor {
 
 			// build an AnalysisSubmission
 			Builder builder = new AnalysisSubmission.Builder(pipelineUUID);
-			AnalysisSubmission submission = builder
-					.inputFiles(Sets.newHashSet((SequenceFilePair) sequencingObject))
+			AnalysisSubmission submission = builder.inputFiles(Sets.newHashSet((SequenceFilePair) sequencingObject))
 					.name("Automated SISTR Typing " + sequencingObject.toString()).build();
 			submission.setSubmitter(admin);
 
@@ -112,7 +103,7 @@ public class SistrTypingFileProcessor implements FileProcessor {
 			logger.warn("Could not run SISTR typing for sequencing object " + sequencingObject.getId()
 					+ " because it's not paired end");
 		}
-		
+
 	}
 
 	/**
