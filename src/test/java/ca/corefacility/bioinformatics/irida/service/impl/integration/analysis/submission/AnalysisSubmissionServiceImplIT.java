@@ -6,8 +6,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -36,6 +38,7 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
@@ -83,7 +86,7 @@ public class AnalysisSubmissionServiceImplIT {
 
 	@Autowired
 	private WorkflowNamedParametersRepository parametersRepository;
-	
+
 	@Autowired
 	private ProjectService projectService;
 
@@ -187,7 +190,25 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testFindAllAdminUser() {
-		assertNotNull("Should find submissions", analysisSubmissionService.findAll());
+		Iterable<AnalysisSubmission> submissions = analysisSubmissionService.findAll();
+
+		Set<Long> submissionIds = Sets.newHashSet();
+		submissions.forEach(submission -> submissionIds.add(submission.getId()));
+		assertEquals("Invalid analysis submissions found",
+				ImmutableSet.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L, 11L), submissionIds);
+	}
+
+	/**
+	 * Tests finding all accessible to regular user.
+	 */
+	@Test
+	@WithMockUser(username = "otheraaron", roles = "USER")
+	public void testFindAllRegularUser() {
+		Iterable<AnalysisSubmission> submissions = analysisSubmissionService.findAll();
+
+		Set<Long> submissionIds = Sets.newHashSet();
+		submissions.forEach(submission -> submissionIds.add(submission.getId()));
+		assertEquals("Invalid analysis submissions found", ImmutableSet.of(3L, 9L, 11L), submissionIds);
 	}
 
 	/**
@@ -474,7 +495,7 @@ public class AnalysisSubmissionServiceImplIT {
 	public void testGetAnalysisSubmissionsForCurrentUserAsRegularUser2() {
 		Set<AnalysisSubmission> submissions = analysisSubmissionService.getAnalysisSubmissionsForCurrentUser();
 		assertNotNull("should get submissions for the user", submissions);
-		assertEquals("submissions should have correct number", 1, submissions.size());
+		assertEquals("submissions should have correct number", 2, submissions.size());
 	}
 
 	/**
@@ -486,7 +507,7 @@ public class AnalysisSubmissionServiceImplIT {
 	public void testGetAnalysisSubmissionsForCurrentUserAsAdminUser() {
 		Set<AnalysisSubmission> submissions = analysisSubmissionService.getAnalysisSubmissionsForCurrentUser();
 		assertNotNull("should get submissions for the user", submissions);
-		assertEquals("submissions should have correct number", 1, submissions.size());
+		assertEquals("submissions should have correct number", 2, submissions.size());
 	}
 
 	/**
@@ -591,7 +612,7 @@ public class AnalysisSubmissionServiceImplIT {
 	public void testGetPercentageCompleteFailError() throws EntityNotFoundException, ExecutionManagerException {
 		analysisSubmissionService.getPercentCompleteForAnalysisSubmission(7L);
 	}
-	
+
 	/**
 	 * Tests whether a user can read an analysis when they are not the submitter
 	 * but they are on a project where the analysis is shared
@@ -639,7 +660,67 @@ public class AnalysisSubmissionServiceImplIT {
 
 		analysisSubmissionService.removeAnalysisProjectShare(read, project2);
 	}
+
+	@Test
+	@WithMockUser(username = "aaron", roles = "USER")
+	public void testGetAnalysisSubmissionsAccessibleByCurrentUserByWorkflowIdsUser1Pass1() {
+		List<AnalysisSubmission> submissions = analysisSubmissionService
+				.getAnalysisSubmissionsAccessibleByCurrentUserByWorkflowIds(
+						Sets.newHashSet(UUID.fromString("e47c1a8b-4ccd-4e56-971b-24c384933f44")));
+
+		Set<Long> submissionIds = submissions.stream().map(AnalysisSubmission::getId).collect(Collectors.toSet());
+		assertEquals("Got incorrect analysis submissions", ImmutableSet.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 10L),
+				submissionIds);
+	}
+
+	@Test
+	@WithMockUser(username = "otheraaron", roles = "USER")
+	public void testGetAnalysisSubmissionsAccessibleByCurrentUserByWorkflowIdsUser2Pass1() {
+		List<AnalysisSubmission> submissions = analysisSubmissionService
+				.getAnalysisSubmissionsAccessibleByCurrentUserByWorkflowIds(
+						Sets.newHashSet(UUID.fromString("e47c1a8b-4ccd-4e56-971b-24c384933f44")));
+
+		Set<Long> submissionIds = submissions.stream().map(AnalysisSubmission::getId).collect(Collectors.toSet());
+		assertEquals("Got incorrect analysis submissions", ImmutableSet.of(3L, 9L), submissionIds);
+	}
+
+	@Test
+	@WithMockUser(username = "aaron", roles = "USER")
+	public void testGetAnalysisSubmissionsAccessibleByCurrentUserByWorkflowIdsUser1Pass2() {
+		List<AnalysisSubmission> submissions = analysisSubmissionService
+				.getAnalysisSubmissionsAccessibleByCurrentUserByWorkflowIds(
+						Sets.newHashSet(UUID.fromString("e47c1a8b-4ccd-4e56-971b-24c384933f44"),
+								UUID.fromString("d18dfcfe-f10c-48c0-b297-4f90cb9c44bc")));
+
+		Set<Long> submissionIds = submissions.stream().map(AnalysisSubmission::getId).collect(Collectors.toSet());
+		assertEquals("Got incorrect analysis submissions", ImmutableSet.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 10L),
+				submissionIds);
+	}
+
+	@Test
+	@WithMockUser(username = "otheraaron", roles = "USER")
+	public void testGetAnalysisSubmissionsAccessibleByCurrentUserByWorkflowIdsUser2Pass2() {
+		List<AnalysisSubmission> submissions = analysisSubmissionService
+				.getAnalysisSubmissionsAccessibleByCurrentUserByWorkflowIds(
+						Sets.newHashSet(UUID.fromString("e47c1a8b-4ccd-4e56-971b-24c384933f44"),
+								UUID.fromString("d18dfcfe-f10c-48c0-b297-4f90cb9c44bc")));
+
+		Set<Long> submissionIds = submissions.stream().map(AnalysisSubmission::getId).collect(Collectors.toSet());
+		assertEquals("Got incorrect analysis submissions", ImmutableSet.of(3L, 9L, 11L), submissionIds);
+	}
 	
+	@Test
+	@WithMockUser(username = "aaron", roles = "USER")
+	public void testGetAnalysisSubmissionsAccessibleByCurrentUserByWorkflowIdsUser1NoSubmissions() {
+		List<AnalysisSubmission> submissions = analysisSubmissionService
+				.getAnalysisSubmissionsAccessibleByCurrentUserByWorkflowIds(
+						Sets.newHashSet(UUID.fromString("d18dfcfe-f10c-48c0-b297-4f90cb9c44bc")));
+
+		Set<Long> submissionIds = submissions.stream().map(AnalysisSubmission::getId).collect(Collectors.toSet());
+		assertEquals("Got incorrect analysis submissions", ImmutableSet.of(),
+				submissionIds);
+	}
+
 	/**
 	 * Test specification.
 	 * 
