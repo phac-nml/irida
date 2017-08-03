@@ -467,24 +467,10 @@ public class UsersController {
 	}
 
 	/**
-	 * Get the listing of users
-	 *
-	 * @param principal
-	 *            The logged in user
-	 * @param start
-	 *            The start page
-	 * @param length
-	 *            The length of a page
-	 * @param draw
-	 *            a WET-specific variable.
-	 * @param sortColumn
-	 *            The column to sort on
-	 * @param direction
-	 *            The direction to sort
-	 * @param searchValue
-	 *            The value to search with
-	 *
-	 * @return A Model {@code Map<String,Object>} containing the users to list
+	 * Get a list of users based on search criteria.
+	 * @param params {@link DataTablesParams} for the current Users DataTables.
+	 * @param locale {@link Locale}
+	 * @return {@link DataTablesResponse} of the filtered users list.
 	 */
 	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody
