@@ -1,7 +1,7 @@
 import "DataTables/datatables";
 import $ from "jquery";
-import {createItemLink, generateColumnOrderInfo, tableConfig} from "Utilities/datatables-utilities";
-import {formatDate} from "Utilities/date-utilities";
+import { createItemLink, generateColumnOrderInfo, tableConfig } from "Utilities/datatables-utilities";
+import { formatDate } from "Utilities/date-utilities";
 
 const COLUMNS = generateColumnOrderInfo();
 
@@ -18,7 +18,7 @@ const config = Object.assign(tableConfig, {
       render: function(data, type, row) {
         return createItemLink({
           label: data,
-          url: `${$table.data("clients")}${row[0]}`
+          url: `${$table.data("clients")}${row.id}`
         });
       },
       targets: COLUMNS.CLIENT_ID
