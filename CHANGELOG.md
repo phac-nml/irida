@@ -17,6 +17,7 @@ Changes
 * [Developer]: Removed `Dandelion` dependencies from the dashboard & projects listing pages.
 * [Developer]: Created new DataTables reqest handler to enable removing Dandelion DataTables.
 * [API]: Performance improvements when listing analyses of a specific type in the REST API.
+* [API]: Added REST API endpoints for accessing all analyses associated with a project and for accessing automated analyses.
 
 0.16.0 to 0.17.0
 ----------------
