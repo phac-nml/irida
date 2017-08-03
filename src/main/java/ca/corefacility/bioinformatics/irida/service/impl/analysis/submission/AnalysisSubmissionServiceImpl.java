@@ -581,6 +581,9 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		return analysisSubmissionRepository.findByAnalysisState(states);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
 	public Collection<AnalysisSubmission> getAnalysisSubmissionsSharedToProject(Project project) {

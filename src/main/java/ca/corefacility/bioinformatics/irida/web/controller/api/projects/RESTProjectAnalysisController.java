@@ -8,7 +8,6 @@ import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -75,10 +74,11 @@ public class RESTProjectAnalysisController {
 				.getAnalysisSubmissionsSharedToProject(p);
 
 		ResourceCollection<AnalysisSubmission> analysisResources = new ResourceCollection<>(analysisSubmissions.size());
-		ControllerLinkBuilder linkBuilder = linkTo(RESTAnalysisSubmissionController.class);
 
 		for (AnalysisSubmission submission : analysisSubmissions) {
-			submission.add(linkBuilder.slash(submission.getId()).withSelfRel());
+			submission.add(
+					linkTo(methodOn(RESTAnalysisSubmissionController.class, Long.class).getResource(submission.getId()))
+							.withSelfRel());
 			analysisResources.add(submission);
 		}
 
@@ -123,14 +123,15 @@ public class RESTProjectAnalysisController {
 				.getAnalysisSubmissionsSharedToProject(p);
 
 		ResourceCollection<AnalysisSubmission> analysisResources = new ResourceCollection<>(analysisSubmissions.size());
-		ControllerLinkBuilder linkBuilder = linkTo(RESTAnalysisSubmissionController.class);
 
 		for (AnalysisSubmission submission : analysisSubmissions) {
 			IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(submission.getWorkflowId());
 			AnalysisType submissionAnalysisType = iridaWorkflow.getWorkflowDescription().getAnalysisType();
 
 			if (analysisType.equals(submissionAnalysisType)) {
-				submission.add(linkBuilder.slash(submission.getId()).withSelfRel());
+				submission.add(linkTo(
+						methodOn(RESTAnalysisSubmissionController.class, Long.class).getResource(submission.getId()))
+								.withSelfRel());
 				analysisResources.add(submission);
 			}
 		}
