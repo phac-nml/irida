@@ -18,12 +18,12 @@ public interface FileProcessor {
 	 * persisted by the {@link FileProcessor} itself -- the
 	 * {@link FileProcessingChain} *does not* handle persistence.
 	 * 
-	 * @param sequenceFileId
-	 *            the id of the file to process.
+	 * @param sequencingObject
+	 *            the {@link SequencingObject} to process
 	 * @throws FileProcessorException
 	 *             when processing fails.
 	 */
-	public void process(Long sequenceFileId) throws FileProcessorException;
+	public void process(SequencingObject sequencingObject);
 
 	/**
 	 * If the {@link FileProcessor} throws a {@link FileProcessorException}, the
@@ -45,7 +45,7 @@ public interface FileProcessor {
 	 *            the {@link SequencingObject} id to check
 	 * @return true if the processor should act on the file
 	 */
-	public default boolean shouldProcessFile(Long sequencingObjectId){
+	public default boolean shouldProcessFile(Long sequencingObjectId) {
 		return true;
 	}
 }
