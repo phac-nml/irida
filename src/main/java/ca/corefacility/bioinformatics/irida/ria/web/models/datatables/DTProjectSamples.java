@@ -21,6 +21,7 @@ public class DTProjectSamples implements DataTablesResponseModel {
 	private Date createdDate;
 	private Date modifiedDate;
 	private List<QCEntry> qcEntries;
+	private boolean owner;
 
 	public DTProjectSamples(ProjectSampleJoin projectSampleJoin, List<QCEntry> qcEntries) {
 		Project project = projectSampleJoin.getSubject();
@@ -34,6 +35,7 @@ public class DTProjectSamples implements DataTablesResponseModel {
 		this.createdDate = sample.getCreatedDate();
 		this.modifiedDate = sample.getModifiedDate();
 		this.qcEntries = qcEntries;
+		this.owner = projectSampleJoin.isOwner();
 	}
 
 	public Long getId() {
@@ -66,5 +68,9 @@ public class DTProjectSamples implements DataTablesResponseModel {
 
 	public List<QCEntry> getQcEntries() {
 		return qcEntries;
+	}
+	
+	public boolean isOwner(){
+		return owner;
 	}
 }
