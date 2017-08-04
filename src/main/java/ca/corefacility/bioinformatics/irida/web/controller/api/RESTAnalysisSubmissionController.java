@@ -159,11 +159,13 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 		for (SequenceFilePair pair : pairs) {
 			SampleSequencingObjectJoin join = sampleService.getSampleForSequencingObject(pair);
 
-			Long sampleId = join.getSubject().getId();
+			if (join != null) {
+				Long sampleId = join.getSubject().getId();
 
-			pair = RESTSampleSequenceFilesController.addSequencingObjectLinks(pair, sampleId);
+				pair = RESTSampleSequenceFilesController.addSequencingObjectLinks(pair, sampleId);
 
-			resources.add(pair);
+				resources.add(pair);
+			}
 		}
 
 		resources.add(linkTo(methodOn(RESTAnalysisSubmissionController.class).getAnalysisInputFilePairs(identifier))
@@ -191,11 +193,14 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 		ResourceCollection<SequencingObject> resources = new ResourceCollection<>(inputFilesSingleEnd.size());
 		for (SingleEndSequenceFile file : inputFilesSingleEnd) {
 			SampleSequencingObjectJoin join = sampleService.getSampleForSequencingObject(file);
-			SequencingObject sequencingObject = join.getObject();
+			
+			if (join != null) {
+				SequencingObject sequencingObject = join.getObject();
 
-			RESTSampleSequenceFilesController.addSequencingObjectLinks(sequencingObject, join.getSubject().getId());
+				RESTSampleSequenceFilesController.addSequencingObjectLinks(sequencingObject, join.getSubject().getId());
 
-			resources.add(sequencingObject);
+				resources.add(sequencingObject);
+			}
 		}
 
 		resources.add(linkTo(methodOn(RESTAnalysisSubmissionController.class).getAnalysisInputUnpairedFiles(identifier))

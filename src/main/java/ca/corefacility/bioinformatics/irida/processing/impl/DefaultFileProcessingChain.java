@@ -1,14 +1,17 @@
 package ca.corefacility.bioinformatics.irida.processing.impl;
 
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.exceptions.FileProcessorTimeoutException;
 import ca.corefacility.bioinformatics.irida.model.sample.FileProcessorErrorQCEntry;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
@@ -31,7 +34,7 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 	private Boolean fastFail = false;
 
 	private Integer timeout = 60;
-	
+
 	private Integer sleepDuration = 1000;
 
 	private final SequencingObjectRepository sequencingObjectRepository;
@@ -63,27 +66,30 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 		// file has been persisted in the database.
 		while (!sequencingObjectRepository.exists(sequencingObjectId)) {
 			if (waiting > timeout) {
-				throw new FileProcessorTimeoutException("Waiting for longer than " + sleepDuration * timeout + "ms, bailing out.");
+				throw new FileProcessorTimeoutException(
+						"Waiting for longer than " + sleepDuration * timeout + "ms, bailing out.");
 			}
-			
+
 			waiting++;
-			
+
 			try {
 				Thread.sleep(sleepDuration);
 			} catch (InterruptedException e) {
 			}
 		}
-		
+
 		for (FileProcessor fileProcessor : fileProcessors) {
 			try {
-				if(fileProcessor.shouldProcessFile(sequencingObjectId)){
-					fileProcessor.process(sequencingObjectId);
+				if (fileProcessor.shouldProcessFile(sequencingObjectId)) {
+					SequencingObject settledSequencingObject = getSettledSequencingObject(sequencingObjectId);
+
+					fileProcessor.process(settledSequencingObject);
 				}
 			} catch (FileProcessorException e) {
 				SequencingObject sequencingObject = sequencingObjectRepository.findOne(sequencingObjectId);
-				
+
 				qcRepository.save(new FileProcessorErrorQCEntry(sequencingObject));
-				
+
 				// if the file processor modifies the file, then just fast fail,
 				// we can't proceed with the remaining file processors. If the
 				// file processor *doesn't* modify the file, then continue with
@@ -92,8 +98,8 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 					throw e;
 				} else {
 					ignoredExceptions.add(e);
-					logger.error("File processor [" + fileProcessor.getClass() + "] failed to process [" + sequencingObjectId
-							+ "], but proceeding with the remaining processors because the "
+					logger.error("File processor [" + fileProcessor.getClass() + "] failed to process ["
+							+ sequencingObjectId + "], but proceeding with the remaining processors because the "
 							+ "file would not be modified by the processor. Stack trace follows.", e);
 				}
 			}
@@ -126,5 +132,48 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 	 */
 	public void setSleepDuration(Integer sleepDuration) {
 		this.sleepDuration = sleepDuration * 1000;
+	}
+
+	/**
+	 * Checks the {@link SequenceFile}s for the given {@link SequencingObject}
+	 * to see if it's files are in the place they should be. Since there's lots
+	 * of saves going on during the {@link FileProcessingChain} the transaction
+	 * might not be complete in the time the file is first read.
+	 * 
+	 * @param sequencingObjectId
+	 *            the id of the {@link SequencingObject} to check
+	 * @return the settled {@link SequencingObject}
+	 * @throws FileProcessorTimeoutException
+	 *             if the files don't settle in the configured timeout
+	 */
+	private SequencingObject getSettledSequencingObject(Long sequencingObjectId) throws FileProcessorTimeoutException {
+		boolean filesNotSettled = true;
+
+		Integer waiting = 0;
+
+		SequencingObject sequencingObject;
+
+		do {
+			if (waiting > timeout) {
+				throw new FileProcessorTimeoutException("Waiting for longer than " + sleepDuration * timeout
+						+ "ms, bailing out.  File id " + sequencingObjectId);
+			}
+
+			waiting++;
+
+			try {
+				Thread.sleep(sleepDuration);
+			} catch (InterruptedException e) {
+			}
+
+			sequencingObject = sequencingObjectRepository.findOne(sequencingObjectId);
+			Set<SequenceFile> files = sequencingObject.getFiles();
+
+			filesNotSettled = files.stream().anyMatch(f -> {
+				return !Files.exists(f.getFile());
+			});
+		} while (filesNotSettled);
+
+		return sequencingObject;
 	}
 }

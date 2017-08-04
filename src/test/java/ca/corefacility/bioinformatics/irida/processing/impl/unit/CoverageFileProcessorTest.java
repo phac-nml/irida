@@ -24,23 +24,19 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFast
 import ca.corefacility.bioinformatics.irida.processing.impl.CoverageFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 
 public class CoverageFileProcessorTest {
 
 	private CoverageFileProcessor processor;
-	private SequencingObjectRepository objectRepository;
 	private QCEntryRepository qcEntryRepository;
 	private AnalysisRepository analysisRepository;
 
 	@Before
 	public void setup() {
-		objectRepository = mock(SequencingObjectRepository.class);
-
 		qcEntryRepository = mock(QCEntryRepository.class);
 		analysisRepository = mock(AnalysisRepository.class);
 
-		processor = new CoverageFileProcessor(objectRepository, qcEntryRepository, analysisRepository);
+		processor = new CoverageFileProcessor(qcEntryRepository, analysisRepository);
 	}
 
 	@Test
@@ -50,15 +46,13 @@ public class CoverageFileProcessorTest {
 		p.setMinimumCoverage(2);
 		SequenceFile file = new SequenceFile();
 		SequencingObject o = new SingleEndSequenceFile(file);
-		Long fileId = 1L;
 		AnalysisFastQC fqc = mock(AnalysisFastQC.class);
 		Long baseCount = 300L;
 
-		when(objectRepository.findOne(fileId)).thenReturn(o);
 		when(analysisRepository.findFastqcAnalysisForSequenceFile(file)).thenReturn(fqc);
 		when(fqc.getTotalBases()).thenReturn(baseCount);
 
-		processor.process(fileId);
+		processor.process(o);
 
 		ArgumentCaptor<CoverageQCEntry> qcCaptor = ArgumentCaptor.forClass(CoverageQCEntry.class);
 
@@ -79,15 +73,13 @@ public class CoverageFileProcessorTest {
 		p.setMinimumCoverage(5);
 		SequenceFile file = new SequenceFile();
 		SequencingObject o = new SingleEndSequenceFile(file);
-		Long fileId = 1L;
 		AnalysisFastQC fqc = mock(AnalysisFastQC.class);
 		Long baseCount = 300L;
 
-		when(objectRepository.findOne(fileId)).thenReturn(o);
 		when(analysisRepository.findFastqcAnalysisForSequenceFile(file)).thenReturn(fqc);
 		when(fqc.getTotalBases()).thenReturn(baseCount);
 
-		processor.process(fileId);
+		processor.process(o);
 
 		ArgumentCaptor<CoverageQCEntry> qcCaptor = ArgumentCaptor.forClass(CoverageQCEntry.class);
 
@@ -108,18 +100,16 @@ public class CoverageFileProcessorTest {
 		p.setMinimumCoverage(2);
 		SequenceFile file = new SequenceFile();
 		SequencingObject o = new SingleEndSequenceFile(file);
-		Long fileId = 1L;
 		AnalysisFastQC fqc = mock(AnalysisFastQC.class);
 		Long baseCount = 300L;
 
 		QCEntry existingQc = new CoverageQCEntry();
 		o.setQcEntries(Sets.newHashSet(existingQc));
 
-		when(objectRepository.findOne(fileId)).thenReturn(o);
 		when(analysisRepository.findFastqcAnalysisForSequenceFile(file)).thenReturn(fqc);
 		when(fqc.getTotalBases()).thenReturn(baseCount);
 
-		processor.process(fileId);
+		processor.process(o);
 
 		ArgumentCaptor<CoverageQCEntry> qcCaptor = ArgumentCaptor.forClass(CoverageQCEntry.class);
 

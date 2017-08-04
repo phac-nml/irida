@@ -1,9 +1,11 @@
 package ca.corefacility.bioinformatics.irida.service;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
@@ -126,4 +128,24 @@ public interface SequencingObjectService extends CRUDService<Long, SequencingObj
 	 *            a class type extending {@link SequencingObject}
 	 */
 	public <Type extends SequencingObject> Set<Type> getSequencingObjectsOfTypeForAnalysisSubmission(AnalysisSubmission submission, Class<Type> type);
+
+	/**
+	 * Concatenate a collection of {@link SequencingObject}s and save back to a
+	 * {@link Sample}
+	 * 
+	 * @param toJoin
+	 *            the {@link SequencingObject}s to concatenate * @param filename
+	 *            Root name of the newly created files
+	 * @param targetSample
+	 *            the {@link Sample} to save to
+	 * 
+	 * @param removeOriginals
+	 *            Whether to remove the original {@link SequencingObject}s from
+	 *            the sample
+	 * @return the new {@link SampleSequencingObjectJoin}
+	 * @throws ConcatenateException
+	 *             if there was an error concatenating the sequences
+	 */
+	public SampleSequencingObjectJoin concatenateSequences(List<SequencingObject> toJoin, String filename,
+			Sample targetSample, boolean removeOriginals) throws ConcatenateException;
 }

@@ -23,7 +23,7 @@
 </head>
 <body>
 
-<div th:if="${canManageSample}" class="panel panel-default panel-file-upload" ng-controller="FileUploadController as fileUploadCtrl" layout:fragment="sidebar">
+<div th:if="${canManageSample}" th:with="url=@{${#httpServletRequest.requestURI}}" class="panel panel-default panel-file-upload" ng-controller="FileUploadController as fileUploadCtrl" layout:fragment="sidebar">
 	<div class="panel-body" ng-hide="fileUploadCtrl.uploading || fileUploadCtrl.processing">
 		<div class="fileUpload btn btn-default btn-sm btn-block">
 			<th:block th:text="#{samples.files.upload.btn}"></th:block>
@@ -57,6 +57,13 @@
 			<button type="button" class="close" data-dismiss="alert" aria-label="Close" ng-click="fileUploadCtrl.errorMessage=''"><span aria-hidden="true">&times;</span></button>
 			<strong th:text="#{project.samples.files.upload.error.title}">__UPLOAD_ERROR__</strong>
 			<p>{{ fileUploadCtrl.errorMessage }}</p></div>
+	</div>
+	<div class="panel-body">
+		<a th:href="${url + '/concatenate'}" class="btn btn-default btn-sm btn-block">
+			<th:block th:text="#{samples.files.concatenate.btn}"></th:block>
+			&nbsp;
+			<i class="fa fa-plus-square" aria-hidden="true"></i>
+			</a>
 	</div>
 </div>
 
