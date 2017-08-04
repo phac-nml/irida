@@ -27,6 +27,16 @@ public interface ProjectAnalysisSubmissionJoinRepository
 	public List<ProjectAnalysisSubmissionJoin> getProjectsForSubmission(AnalysisSubmission submission);
 
 	/**
+	 * Gets all the {@link ProjectAnalysisSubmissionJoin}s for a given {@link Project}.
+	 * 
+	 * @param project
+	 *            The {@link Project}.
+	 * @return A list of {@link ProjectAnalysisSubmissionJoin}s
+	 */
+	@Query("FROM ProjectAnalysisSubmissionJoin j WHERE j.project=?1")
+	public List<ProjectAnalysisSubmissionJoin> getSubmissionsForProject(Project project);
+
+	/**
 	 * Read a {@link ProjectAnalysisSubmissionJoin} object for a given
 	 * {@link AnalysisSubmission} and {@link Project}
 	 * 

@@ -187,8 +187,8 @@ public class SequencingObjectServiceImplIT {
 		SequencingRun mr = sequencingRunService.read(1L);
 		sequencingRunService.addSequencingObjectToSequencingRun(mr, so);
 
-		// Wait 5 seconds. file processing should have failed by then.
-		Thread.sleep(5000);
+		// Sleeping for a bit to let file processing run
+		Thread.sleep(10000);
 
 		Sample readSample = sampleService.read(s.getId());
 
@@ -268,7 +268,7 @@ public class SequencingObjectServiceImplIT {
 	@Test
 	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
 	public void testCreateNotCompressedSequenceFile() throws IOException, InterruptedException {
-		final Long expectedRevisionNumber = 3L;
+		final Long expectedRevisionNumber = 1L;
 		SequenceFile sf = createSequenceFile("file1");
 		Path sequenceFile = sf.getFile();
 		SingleEndSequenceFile singleEndSequenceFile = new SingleEndSequenceFile(sf);
@@ -279,9 +279,12 @@ public class SequencingObjectServiceImplIT {
 		logger.trace("Finished saving the file.");
 
 		assertNotNull("ID wasn't assigned.", sequencingObject.getId());
+		
+		// Sleeping for a bit to let file processing run
+		Thread.sleep(10000);
 
 		// figure out what the version number of the sequence file is (should be
-		// 2; the file wasn't gzipped, but fastqc will have modified it.)
+		// 1; the file wasn't gzipped, but fastqc will have modified it.)
 		SequencingObject readObject = null;
 		do {
 			readObject = asRole(Role.ROLE_ADMIN, "admin").objectService.read(sequencingObject.getId());
@@ -319,13 +322,13 @@ public class SequencingObjectServiceImplIT {
 			dir.next();
 			fileCount++;
 		}
-		assertEquals("Wrong number of directories beneath the id directory", 3, fileCount);
+		assertEquals("Wrong number of directories beneath the id directory", 1, fileCount);
 	}
 
 	@Test
 	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
 	public void testCreateCompressedSequenceFile() throws IOException, InterruptedException {
-		final Long expectedRevisionNumber = 4L;
+		final Long expectedRevisionNumber = 2L;
 		SequenceFile sf = new SequenceFile();
 		Path sequenceFile = Files.createTempFile("TEMPORARY-SEQUENCE-FILE", ".gz");
 		OutputStream gzOut = new GZIPOutputStream(Files.newOutputStream(sequenceFile));
@@ -340,9 +343,12 @@ public class SequencingObjectServiceImplIT {
 		logger.trace("Finished saving the file.");
 
 		assertNotNull("ID wasn't assigned.", sequencingObject.getId());
+		
+		// Sleeping for a bit to let file processing run
+		Thread.sleep(10000);
 
 		// figure out what the version number of the sequence file is (should be
-		// 3; the file was gzipped)
+		// 2; the file was gzipped)
 		// get the MOST RECENT version of the sequence file from the database
 		// (it will have been modified outside of the create method.)
 		SequencingObject readObject = null;
@@ -383,7 +389,7 @@ public class SequencingObjectServiceImplIT {
 			dir.next();
 			fileCount++;
 		}
-		assertEquals("Wrong number of directories beneath the id directory", 4, fileCount);
+		assertEquals("Wrong number of directories beneath the id directory", 2, fileCount);
 	}
 
 	@Test
@@ -431,8 +437,8 @@ public class SequencingObjectServiceImplIT {
 		SequencingRun mr = sequencingRunService.read(1L);
 		sequencingRunService.addSequencingObjectToSequencingRun(mr, so);
 
-		// Wait 5 seconds. file processing should have run by then.
-		Thread.sleep(5000);
+		// Wait 10 seconds. file processing should have run by then.
+		Thread.sleep(10000);
 
 		Sample readSample = sampleService.read(s.getId());
 
@@ -449,8 +455,8 @@ public class SequencingObjectServiceImplIT {
 		project.setMinimumCoverage(10);
 		project = projectService.update(project);
 
-		// Wait 5 seconds. file processing should have run by then.
-		Thread.sleep(5000);
+		// Wait 10 seconds. file processing should have run by then.
+		Thread.sleep(10000);
 
 		qcEntries = sampleService.getQCEntriesForSample(readSample);
 		assertEquals("should be one qc entry", 1, qcEntries.size());

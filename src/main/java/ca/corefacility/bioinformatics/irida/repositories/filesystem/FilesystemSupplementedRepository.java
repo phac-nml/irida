@@ -19,5 +19,15 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
  */
 @NoRepositoryBean
 public interface FilesystemSupplementedRepository<Type extends VersionedFileFields<Long> & IridaThing> {
-
+	/**
+	 * Save an entity without updating any of the {@link Path} entries within
+	 * the file. WARNING, if you update the {@link Path} entries of this file
+	 * and use this method, a new file revision will not be created in the file
+	 * storage or database.
+	 * 
+	 * @param entity
+	 *            the entity to save
+	 * @return the saved entity
+	 */
+	public Type saveMetadata(final Type entity);
 }
