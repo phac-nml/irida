@@ -14,17 +14,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.zip.GZIPOutputStream;
 
-import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 
 /**
  * Tests for {@link GzipFileProcessor}.
@@ -33,7 +31,6 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.Sequencing
  */
 public class GzipFileProcessorTest {
 
-	private SequencingObjectRepository objectRepository;
 	private GzipFileProcessor fileProcessor;
 	private SequenceFileRepository sequenceFileRepository;
 	private static final String FILE_CONTENTS = ">test read\nACGTACTCATG";
@@ -41,8 +38,7 @@ public class GzipFileProcessorTest {
 	@Before
 	public void setUp() {
 		sequenceFileRepository = mock(SequenceFileRepository.class);
-		objectRepository = mock(SequencingObjectRepository.class);
-		fileProcessor = new GzipFileProcessor(sequenceFileRepository, objectRepository, Boolean.FALSE);
+		fileProcessor = new GzipFileProcessor(sequenceFileRepository, Boolean.FALSE);
 	}
 
 	@Test(expected = FileProcessorException.class)
@@ -57,14 +53,14 @@ public class GzipFileProcessorTest {
 		out.close();
 		sf.setFile(compressed);
 
-		when(objectRepository.findOne(any(Long.class))).thenReturn(new SingleEndSequenceFile(sf));
+		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
 		when(sequenceFileRepository.save(any(SequenceFile.class))).thenThrow(new RuntimeException());
-		fileProcessor.process(1L);
+		fileProcessor.process(so);
 	}
 
 	@Test
 	public void testDeleteOriginalFile() throws IOException {
-		fileProcessor = new GzipFileProcessor(sequenceFileRepository, objectRepository, Boolean.TRUE);
+		fileProcessor = new GzipFileProcessor(sequenceFileRepository, Boolean.TRUE);
 		final SequenceFile sf = constructSequenceFile();
 
 		// compress the file, update the sequence file reference
@@ -75,9 +71,9 @@ public class GzipFileProcessorTest {
 		out.close();
 		sf.setFile(compressed);
 
-		when(objectRepository.findOne(any(Long.class))).thenReturn(new SingleEndSequenceFile(sf));
+		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
 
-		fileProcessor.process(1L);
+		fileProcessor.process(so);
 
 		verify(sequenceFileRepository, times(1)).save(any(SequenceFile.class));
 
@@ -90,9 +86,9 @@ public class GzipFileProcessorTest {
 		SequenceFile sf = constructSequenceFile();
 		Path original = sf.getFile();
 
-		when(objectRepository.findOne(any(Long.class))).thenReturn(new SingleEndSequenceFile(sf));
+		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
 
-		fileProcessor.process(1L);
+		fileProcessor.process(so);
 
 		verify(sequenceFileRepository, times(0)).save(any(SequenceFile.class));
 
@@ -118,11 +114,11 @@ public class GzipFileProcessorTest {
 		out.close();
 
 		when(sequenceFileRepository.save(sf)).thenReturn(sfUpdated);
-		when(objectRepository.findOne(any(Long.class))).thenReturn(new SingleEndSequenceFile(sf));
+		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
 
 		sf.setFile(compressed);
 
-		fileProcessor.process(id);
+		fileProcessor.process(so);
 
 		ArgumentCaptor<SequenceFile> argument = ArgumentCaptor.forClass(SequenceFile.class);
 		verify(sequenceFileRepository).save(argument.capture());
@@ -155,10 +151,10 @@ public class GzipFileProcessorTest {
 		out.close();
 
 		sf.setFile(compressed);
+		
+		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
 
-		when(objectRepository.findOne(any(Long.class))).thenReturn(new SingleEndSequenceFile(sf));
-
-		fileProcessor.process(id);
+		fileProcessor.process(so);
 
 		ArgumentCaptor<SequenceFile> argument = ArgumentCaptor.forClass(SequenceFile.class);
 		verify(sequenceFileRepository).save(argument.capture());

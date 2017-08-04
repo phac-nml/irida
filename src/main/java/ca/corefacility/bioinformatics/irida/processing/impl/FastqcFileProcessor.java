@@ -57,7 +57,6 @@ public class FastqcFileProcessor implements FileProcessor {
 	private static final String EXECUTION_MANAGER_ANALYSIS_ID = "internal-fastqc";
 
 	private final SequenceFileRepository sequenceFileRepository;
-	private final SequencingObjectRepository objectRepository;
 	private final MessageSource messageSource;
 
 	/**
@@ -73,22 +72,15 @@ public class FastqcFileProcessor implements FileProcessor {
 	 *            {@link SequencingObject}s
 	 */
 	@Autowired
-	public FastqcFileProcessor(final MessageSource messageSource, final SequenceFileRepository sequenceFileRepository,
-			final SequencingObjectRepository objectRepository) {
+	public FastqcFileProcessor(final MessageSource messageSource, final SequenceFileRepository sequenceFileRepository) {
 		this.messageSource = messageSource;
 		this.sequenceFileRepository = sequenceFileRepository;
-		this.objectRepository = objectRepository;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	@Transactional
-	public void process(final Long sequencingObjectId) throws FileProcessorException {
-		SequencingObject seqObj = objectRepository.findOne(sequencingObjectId);
-
-		for (SequenceFile file : seqObj.getFiles()) {
+	public void process(SequencingObject sequencingObject) {
+		for (SequenceFile file : sequencingObject.getFiles()) {
 			processSingleFile(file);
 		}
 	}
@@ -103,12 +95,9 @@ public class FastqcFileProcessor implements FileProcessor {
 	 */
 	private void processSingleFile(SequenceFile sequenceFile) throws FileProcessorException {
 		Path fileToProcess = sequenceFile.getFile();
-		AnalysisFastQC.AnalysisFastQCBuilder analysis = AnalysisFastQC
-				.builder()
-				.executionManagerAnalysisId(EXECUTION_MANAGER_ANALYSIS_ID)
-				.description(
-						messageSource.getMessage("fastqc.file.processor.analysis.description", null,
-								LocaleContextHolder.getLocale()));
+		AnalysisFastQC.AnalysisFastQCBuilder analysis = AnalysisFastQC.builder()
+				.executionManagerAnalysisId(EXECUTION_MANAGER_ANALYSIS_ID).description(messageSource.getMessage(
+						"fastqc.file.processor.analysis.description", null, LocaleContextHolder.getLocale()));
 		try {
 			uk.ac.babraham.FastQC.Sequence.SequenceFile fastQCSequenceFile = SequenceFactory
 					.getSequenceFile(fileToProcess.toFile());
@@ -138,7 +127,7 @@ public class FastqcFileProcessor implements FileProcessor {
 
 			sequenceFile.setFastQCAnalysis(analysis.build());
 
-			sequenceFileRepository.save(sequenceFile);
+			sequenceFileRepository.saveMetadata(sequenceFile);
 		} catch (Exception e) {
 			logger.error("FastQC failed to process the sequence file. Stack trace follows.", e);
 			throw new FileProcessorException("FastQC failed to parse the sequence file.", e);
@@ -161,8 +150,8 @@ public class FastqcFileProcessor implements FileProcessor {
 		analysis.totalSequences(stats.getActualCount());
 		analysis.filteredSequences(stats.getFilteredCount());
 		analysis.gcContent(stats.getGCContent());
-		analysis.totalBases(stats.getACount() + stats.getGCount() + stats.getCCount() + stats.getTCount()
-				+ stats.getNCount());
+		analysis.totalBases(
+				stats.getACount() + stats.getGCount() + stats.getCCount() + stats.getTCount() + stats.getNCount());
 	}
 
 	/**

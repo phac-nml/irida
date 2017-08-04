@@ -16,7 +16,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 
 /**
  * {@link FileProcessor} used to calculate a checksum using sha256 for uploaded
@@ -28,27 +27,24 @@ public class ChecksumFileProcessor implements FileProcessor {
 
 	private SequenceFileRepository fileRepository;
 
-	private SequencingObjectRepository objectRepository;
 
 	@Autowired
-	public ChecksumFileProcessor(SequencingObjectRepository objectRepository, SequenceFileRepository fileRepository) {
-		this.objectRepository = objectRepository;
+	public ChecksumFileProcessor(SequenceFileRepository fileRepository) {
 		this.fileRepository = fileRepository;
 	}
 
 	/**
-	 * Create an sha256sum for the files in a {@link SequencingObject} and save it
-	 * with the file.
+	 * Create an sha256sum for the files in a {@link SequencingObject} and save
+	 * it with the file.
 	 * 
-	 * @param sequenceFileId
-	 *            the id of the {@link SequencingObject} to modify
+	 * @param sequencingObject
+	 *            the {@link SequencingObject} to modify
 	 * @throws FileProcessorException
 	 *             a {@link FileProcessorException} if the file could not be
 	 *             processed
 	 */
 	@Override
-	public void process(Long sequenceFileId) throws FileProcessorException {
-		SequencingObject sequencingObject = objectRepository.findOne(sequenceFileId);
+	public void process(SequencingObject sequencingObject) {
 		Set<SequenceFile> files = sequencingObject.getFiles();
 
 		for (SequenceFile file : files) {
@@ -58,13 +54,12 @@ public class ChecksumFileProcessor implements FileProcessor {
 				logger.trace("Checksum generated for file " + file.getId() + ": " + shaDigest);
 				file.setUploadSha256(shaDigest);
 
-				fileRepository.save(file);
+				fileRepository.saveMetadata(file);
 			} catch (IOException e) {
 				throw new FileProcessorException("could not calculate checksum", e);
 			}
 
 		}
-
 	}
 
 	/**

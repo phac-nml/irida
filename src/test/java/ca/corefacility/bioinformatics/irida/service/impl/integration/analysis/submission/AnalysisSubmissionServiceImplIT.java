@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -195,7 +196,7 @@ public class AnalysisSubmissionServiceImplIT {
 		Set<Long> submissionIds = Sets.newHashSet();
 		submissions.forEach(submission -> submissionIds.add(submission.getId()));
 		assertEquals("Invalid analysis submissions found",
-				ImmutableSet.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L, 11L), submissionIds);
+				ImmutableSet.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L, 11L, 12L), submissionIds);
 	}
 
 	/**
@@ -208,7 +209,7 @@ public class AnalysisSubmissionServiceImplIT {
 
 		Set<Long> submissionIds = Sets.newHashSet();
 		submissions.forEach(submission -> submissionIds.add(submission.getId()));
-		assertEquals("Invalid analysis submissions found", ImmutableSet.of(3L, 9L, 11L), submissionIds);
+		assertEquals("Invalid analysis submissions found", ImmutableSet.of(3L, 9L, 11L, 12L), submissionIds);
 	}
 
 	/**
@@ -495,7 +496,7 @@ public class AnalysisSubmissionServiceImplIT {
 	public void testGetAnalysisSubmissionsForCurrentUserAsRegularUser2() {
 		Set<AnalysisSubmission> submissions = analysisSubmissionService.getAnalysisSubmissionsForCurrentUser();
 		assertNotNull("should get submissions for the user", submissions);
-		assertEquals("submissions should have correct number", 2, submissions.size());
+		assertEquals("submissions should have correct number", 3, submissions.size());
 	}
 
 	/**
@@ -507,7 +508,7 @@ public class AnalysisSubmissionServiceImplIT {
 	public void testGetAnalysisSubmissionsForCurrentUserAsAdminUser() {
 		Set<AnalysisSubmission> submissions = analysisSubmissionService.getAnalysisSubmissionsForCurrentUser();
 		assertNotNull("should get submissions for the user", submissions);
-		assertEquals("submissions should have correct number", 2, submissions.size());
+		assertEquals("submissions should have correct number", 3, submissions.size());
 	}
 
 	/**
@@ -642,6 +643,25 @@ public class AnalysisSubmissionServiceImplIT {
 		Project project2 = projectService.read(2L);
 		analysisSubmissionService.shareAnalysisSubmissionWithProject(read, project2);
 	}
+	
+	@Test
+	@WithMockUser(username = "aaron", roles = "USER")
+	public void testGetAnalysisSubmissionsSharedToProject() {
+		Project project = projectService.read(1L);
+		Collection<AnalysisSubmission> submissions = analysisSubmissionService.getAnalysisSubmissionsSharedToProject(project);
+		
+		Set<Long> submissionIds = submissions.stream().map(AnalysisSubmission::getId).collect(Collectors.toSet());
+		assertEquals("Incorrect analysis submissions for project", Sets.newHashSet(3L, 12L), submissionIds);
+	}
+	
+	@Test
+	@WithMockUser(username = "aaron", roles = "USER")
+	public void testGetAnalysisSubmissionsSharedToProjectNoSubmissions() {
+		Project project = projectService.read(2L);
+		Collection<AnalysisSubmission> submissions = analysisSubmissionService.getAnalysisSubmissionsSharedToProject(project);
+		
+		assertEquals("Unexpected analysis submission in project", 0, submissions.size());
+	}
 
 	@Test
 	@WithMockUser(username = "aaron", roles = "USER")
@@ -669,7 +689,7 @@ public class AnalysisSubmissionServiceImplIT {
 						Sets.newHashSet(UUID.fromString("e47c1a8b-4ccd-4e56-971b-24c384933f44")));
 
 		Set<Long> submissionIds = submissions.stream().map(AnalysisSubmission::getId).collect(Collectors.toSet());
-		assertEquals("Got incorrect analysis submissions", ImmutableSet.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 10L),
+		assertEquals("Got incorrect analysis submissions", ImmutableSet.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 10L, 12L),
 				submissionIds);
 	}
 
@@ -681,7 +701,7 @@ public class AnalysisSubmissionServiceImplIT {
 						Sets.newHashSet(UUID.fromString("e47c1a8b-4ccd-4e56-971b-24c384933f44")));
 
 		Set<Long> submissionIds = submissions.stream().map(AnalysisSubmission::getId).collect(Collectors.toSet());
-		assertEquals("Got incorrect analysis submissions", ImmutableSet.of(3L, 9L), submissionIds);
+		assertEquals("Got incorrect analysis submissions", ImmutableSet.of(3L, 9L, 12L), submissionIds);
 	}
 
 	@Test
@@ -693,7 +713,7 @@ public class AnalysisSubmissionServiceImplIT {
 								UUID.fromString("d18dfcfe-f10c-48c0-b297-4f90cb9c44bc")));
 
 		Set<Long> submissionIds = submissions.stream().map(AnalysisSubmission::getId).collect(Collectors.toSet());
-		assertEquals("Got incorrect analysis submissions", ImmutableSet.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 10L),
+		assertEquals("Got incorrect analysis submissions", ImmutableSet.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 10L, 12L),
 				submissionIds);
 	}
 
@@ -706,7 +726,7 @@ public class AnalysisSubmissionServiceImplIT {
 								UUID.fromString("d18dfcfe-f10c-48c0-b297-4f90cb9c44bc")));
 
 		Set<Long> submissionIds = submissions.stream().map(AnalysisSubmission::getId).collect(Collectors.toSet());
-		assertEquals("Got incorrect analysis submissions", ImmutableSet.of(3L, 9L, 11L), submissionIds);
+		assertEquals("Got incorrect analysis submissions", ImmutableSet.of(3L, 9L, 11L, 12L), submissionIds);
 	}
 	
 	@Test
