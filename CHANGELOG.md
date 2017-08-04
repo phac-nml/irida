@@ -17,6 +17,7 @@ Changes
 * [Developer]: Removed `Dandelion` dependencies from the dashboard & projects listing pages.
 * [Developer]: Created new DataTables reqest handler to enable removing Dandelion DataTables.
 * [API]: Performance improvements when listing analyses of a specific type in the REST API.
+* [Developer]: Updated to using latest verion of `maven-frontend-plugin` and `yarn`.
 
 0.16.0 to 0.17.0
 ----------------

@@ -138,16 +138,18 @@ The complete test suite sets up a temporary instance of Galaxy for verifying int
 Front End Development Setup
 ---------------------------
 
+IRIDA uses [Yarn](https://yarnpkg.com) for front-end dependency management.  [Install yarn](https://yarnpkg.com/en/docs/install) by following the directions for your machine.  For production, it is automatically installed during the build process.
+
 From within `src/main/webapp/`:
 
-You will need to run `npm install` to install all dependencies required to run the following from the command line.
+You will need to run `yarn` to install all dependencies required to run the following from the command line.
 
 Tasks
 =====
 
-* `npm run sass` - compile all `.scss` files into `.css` files, with sourcemaps.
-* `npm run build` - compile all es6 files to es2015.
-* `npm run lint:js [filename]` - lint a specific file.
+* `yarn run sass` - compile all `.scss` files into `.css` files, with sourcemaps.
+* `yarn run build` - compile all es6 files to es2015.
+* `yarn`npm run lint:js [filename]` - lint a specific file.
 
 JavaScript and SCSS Code Formatting and Linting
 ===============================================
