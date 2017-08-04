@@ -8,13 +8,15 @@
   },
   "dependencies": {
     "angular": "1.6.2",
+    "angular-datatables": "^0.6.0",
+    "angular-messages": "1.6.2",
+    "angular-resource": "1.6.2",
     "angular-aside": "^1.3.2",
     "angular-bootstrap-lightbox": "^0.12.0",
     "angular-bootstrap-switch": "^0.5.1",
     "angular-drag-and-drop-lists": "^1.4.0",
-    "angular-messages": "1.6.2",
     "angular-ui-router": "1.0.0-alpha.4",
-    "bootstrap-switch": "^3.3.2",
+    "bootstrap-switch": "^3.3.4",
     "datatables-bootstrap3-plugin": "^0.5.0",
     "datatables.net": "^1.10.15",
     "datatables.net-bs": "^1.10.15",
@@ -30,24 +32,19 @@
     "lodash": "^4.15.0",
     "moment": "^2.18.1",
     "ng-file-upload": "^12.2.12",
-    "npm": "^3.10.6",
-    "phylocanvas": "^2.7.2",
+    "phylocanvas": "^2.8.1",
     "phylocanvas-plugin-export-svg": "^1.0.0",
     "phylocanvas-plugin-metadata": "^2.0.1",
     "select2": "^4.0.3",
     "select2-bootstrap-theme": "0.1.0-beta.9",
-    "sortablejs": "^1.5.1"
+    "sortablejs": "^1.5.1",
+    "ui-select": "^0.19.6"
   },
   "devDependencies": {
-    "angular-bootstrap-switch": "^0.5.1",
-    "angular-datatables": "^0.6.0",
-    "angular-messages": "1.6.2",
-    "angular-resource": "1.6.2",
     "babel-core": "^6.14.0",
     "babel-loader": "^6.2.5",
     "babel-preset-es2015": "^6.14.0",
     "babel-preset-stage-0": "^6.5.0",
-    "bootstrap-switch": "^3.3.4",
     "bower": "^1.7.7",
     "browser-sync": "^2.11.1",
     "chromedriver": "2.24.1",
@@ -61,15 +58,10 @@
     "gulp-sass": "^2.1.1",
     "gulp-sourcemaps": "^1.6.0",
     "node-sass": "^4.5.3",
-    "phylocanvas": "^2.8.1",
     "phylocanvas-plugin-export-svg": "^1.0.0",
     "prettier": "^1.5.2",
     "run-sequence": "^1.2.2",
     "style-loader": "^0.13.2",
-    "ui-select": "^0.19.6",
     "webpack-stream": "^3.2.0"
-  },
-  "engines": {
-    "node": ">=0.10.0"
   }
 }
