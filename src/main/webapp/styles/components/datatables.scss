@@ -26,6 +26,11 @@ This is a new files to replace datatables-custom.scss after all DataTables updat
   }
 }
 
+// Prevent horizontal scrollbars in the fixed columns
+.DTFC_LeftBodyLiner {
+  overflow-x: hidden;
+}
+
 // For fixed columns, this adds a gradient of it to differentiate it from
 // the rest of the table.
 .DTFC_LeftHeadWrapper th,
