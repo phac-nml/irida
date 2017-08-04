@@ -44,7 +44,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
@@ -88,6 +90,7 @@ public class SamplesController extends BaseController {
 	private static final String SAMPLE_PAGE = SAMPLES_DIR + "sample";
 	private static final String SAMPLE_EDIT_PAGE = SAMPLES_DIR + "sample_edit";
 	public static final String SAMPLE_FILES_PAGE = SAMPLES_DIR + "sample_files";
+	public static final String FILES_CONCATENATE_PAGE = SAMPLES_DIR + "sample_files_concatenate";
 
 	// Field Names
 	public static final String SAMPLE_NAME = "sampleName";
@@ -451,6 +454,83 @@ public class SamplesController extends BaseController {
 		}
 
 		return ImmutableMap.of("samples", result);
+	}
+	
+	/**
+	 * Get the page for concatenating {@link SequencingObject}s in a
+	 * {@link Sample}
+	 * 
+	 * @param sampleId
+	 *            the {@link Sample} to get files for
+	 * @param model
+	 *            model for the view
+	 * @return name of the files concatenate page
+	 */
+	@RequestMapping(value = { "/samples/{sampleId}/sequenceFiles/concatenate",
+			"/projects/{projectId}/samples/{sampleId}/sequenceFiles/concatenate" }, method = RequestMethod.GET)
+	public String getConcatenatePage(@PathVariable Long sampleId, Model model) {
+		Sample sample = sampleService.read(sampleId);
+		model.addAttribute("sampleId", sampleId);
+
+		Collection<SampleSequencingObjectJoin> filePairJoins = sequencingObjectService
+				.getSequencesForSampleOfType(sample, SequenceFilePair.class);
+		Collection<SampleSequencingObjectJoin> singleFileJoins = sequencingObjectService
+				.getSequencesForSampleOfType(sample, SingleEndSequenceFile.class);
+
+		List<SequencingObject> filePairs = filePairJoins.stream().map(SampleSequencingObjectJoin::getObject)
+				.collect(Collectors.toList());
+
+		// SequenceFile
+		model.addAttribute("paired_end", filePairs);
+		model.addAttribute("single_end", singleFileJoins);
+
+		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
+		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isProjectManagerForSample(sample));
+		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_FILES);
+		return FILES_CONCATENATE_PAGE;
+	}
+
+	/**
+	 * Concatenate a collection of {@link SequencingObject}s
+	 * 
+	 * @param sampleId
+	 *            the id of the {@link Sample} to concatenate in
+	 * @param objectIds
+	 *            the {@link SequencingObject} ids
+	 * @param filename
+	 *            base of the new filename to create
+	 * @param removeOriginals
+	 *            boolean whether to remove the original files
+	 * @param model
+	 *            model for the view
+	 * @param request
+	 *            the incoming {@link HttpServletRequest}
+	 * @return redirect to the files page if successul
+	 */
+	@RequestMapping(value = { "/samples/{sampleId}/sequenceFiles/concatenate",
+			"/projects/{projectId}/samples/{sampleId}/sequenceFiles/concatenate" }, method = RequestMethod.POST)
+	public String concatenateSequenceFiles(@PathVariable Long sampleId, @RequestParam(name = "seq") Set<Long> objectIds,
+			@RequestParam(name = "filename") String filename,
+			@RequestParam(name = "remove", defaultValue = "false", required = false) boolean removeOriginals,
+			Model model, HttpServletRequest request) {
+		Sample sample = sampleService.read(sampleId);
+
+		Iterable<SequencingObject> readMultiple = sequencingObjectService.readMultiple(objectIds);
+
+		try {
+			sequencingObjectService.concatenateSequences(Lists.newArrayList(readMultiple), filename, sample,
+					removeOriginals);
+		} catch (ConcatenateException ex) {
+			logger.error("Error concatenating files: ", ex);
+			
+			model.addAttribute("concatenateError", true);
+			
+			return getConcatenatePage(sampleId, model);
+		}
+
+		final String url = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+		final String redirectUrl = url.substring(0, url.indexOf("/concatenate"));
+		return "redirect:" + redirectUrl;
 	}
 
 	/**

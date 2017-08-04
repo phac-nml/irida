@@ -43,10 +43,12 @@ import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -54,9 +56,9 @@ import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.CoverageQCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.FileProcessorErrorQCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
+import ca.corefacility.bioinformatics.irida.model.sample.QCEntry.QCEntryStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
-import ca.corefacility.bioinformatics.irida.model.sample.QCEntry.QCEntryStatus;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
@@ -137,14 +139,8 @@ public class SequencingObjectServiceImplIT {
 	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
 	public void testAddSequenceFilePairAsSequencer() throws IOException {
 
-		Path sequenceFile = Files.createTempFile("file1", ".fastq");
-		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
-
-		Path sequenceFile2 = Files.createTempFile("file2", ".fastq");
-		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
-
-		SequenceFile file1 = new SequenceFile(sequenceFile);
-		SequenceFile file2 = new SequenceFile(sequenceFile2);
+		SequenceFile file1 = createSequenceFile("file1");
+		SequenceFile file2 = createSequenceFile("file2");
 
 		SequenceFilePair sequenceFilePair = new SequenceFilePair(file1, file2);
 
@@ -191,8 +187,8 @@ public class SequencingObjectServiceImplIT {
 		SequencingRun mr = sequencingRunService.read(1L);
 		sequencingRunService.addSequencingObjectToSequencingRun(mr, so);
 
-		// Wait 5 seconds. file processing should have failed by then.
-		Thread.sleep(5000);
+		// Sleeping for a bit to let file processing run
+		Thread.sleep(10000);
 
 		Sample readSample = sampleService.read(s.getId());
 
@@ -272,11 +268,9 @@ public class SequencingObjectServiceImplIT {
 	@Test
 	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
 	public void testCreateNotCompressedSequenceFile() throws IOException, InterruptedException {
-		final Long expectedRevisionNumber = 3L;
-		SequenceFile sf = new SequenceFile();
-		Path sequenceFile = Files.createTempFile(null, null);
-		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
-		sf.setFile(sequenceFile);
+		final Long expectedRevisionNumber = 1L;
+		SequenceFile sf = createSequenceFile("file1");
+		Path sequenceFile = sf.getFile();
 		SingleEndSequenceFile singleEndSequenceFile = new SingleEndSequenceFile(sf);
 
 		logger.trace("About to save the file.");
@@ -285,9 +279,12 @@ public class SequencingObjectServiceImplIT {
 		logger.trace("Finished saving the file.");
 
 		assertNotNull("ID wasn't assigned.", sequencingObject.getId());
+		
+		// Sleeping for a bit to let file processing run
+		Thread.sleep(10000);
 
 		// figure out what the version number of the sequence file is (should be
-		// 2; the file wasn't gzipped, but fastqc will have modified it.)
+		// 1; the file wasn't gzipped, but fastqc will have modified it.)
 		SequencingObject readObject = null;
 		do {
 			readObject = asRole(Role.ROLE_ADMIN, "admin").objectService.read(sequencingObject.getId());
@@ -325,13 +322,13 @@ public class SequencingObjectServiceImplIT {
 			dir.next();
 			fileCount++;
 		}
-		assertEquals("Wrong number of directories beneath the id directory", 3, fileCount);
+		assertEquals("Wrong number of directories beneath the id directory", 1, fileCount);
 	}
 
 	@Test
 	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
 	public void testCreateCompressedSequenceFile() throws IOException, InterruptedException {
-		final Long expectedRevisionNumber = 4L;
+		final Long expectedRevisionNumber = 2L;
 		SequenceFile sf = new SequenceFile();
 		Path sequenceFile = Files.createTempFile("TEMPORARY-SEQUENCE-FILE", ".gz");
 		OutputStream gzOut = new GZIPOutputStream(Files.newOutputStream(sequenceFile));
@@ -346,9 +343,12 @@ public class SequencingObjectServiceImplIT {
 		logger.trace("Finished saving the file.");
 
 		assertNotNull("ID wasn't assigned.", sequencingObject.getId());
+		
+		// Sleeping for a bit to let file processing run
+		Thread.sleep(10000);
 
 		// figure out what the version number of the sequence file is (should be
-		// 3; the file was gzipped)
+		// 2; the file was gzipped)
 		// get the MOST RECENT version of the sequence file from the database
 		// (it will have been modified outside of the create method.)
 		SequencingObject readObject = null;
@@ -389,7 +389,7 @@ public class SequencingObjectServiceImplIT {
 			dir.next();
 			fileCount++;
 		}
-		assertEquals("Wrong number of directories beneath the id directory", 4, fileCount);
+		assertEquals("Wrong number of directories beneath the id directory", 2, fileCount);
 	}
 
 	@Test
@@ -437,8 +437,8 @@ public class SequencingObjectServiceImplIT {
 		SequencingRun mr = sequencingRunService.read(1L);
 		sequencingRunService.addSequencingObjectToSequencingRun(mr, so);
 
-		// Wait 5 seconds. file processing should have run by then.
-		Thread.sleep(5000);
+		// Wait 10 seconds. file processing should have run by then.
+		Thread.sleep(10000);
 
 		Sample readSample = sampleService.read(s.getId());
 
@@ -455,8 +455,8 @@ public class SequencingObjectServiceImplIT {
 		project.setMinimumCoverage(10);
 		project = projectService.update(project);
 
-		// Wait 5 seconds. file processing should have run by then.
-		Thread.sleep(5000);
+		// Wait 10 seconds. file processing should have run by then.
+		Thread.sleep(10000);
 
 		qcEntries = sampleService.getQCEntriesForSample(readSample);
 		assertEquals("should be one qc entry", 1, qcEntries.size());
@@ -508,5 +508,64 @@ public class SequencingObjectServiceImplIT {
 		SequencingObject s4 = objectService.read(4L);
 				
 		objectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(s1,s4));
+	}
+	
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testConcatenateSequenceFiles() throws IOException, InterruptedException, ConcatenateException {
+		String newFileName = "newname";
+		Sample sample = sampleService.read(1L);
+
+		SequenceFile file1 = createSequenceFile("file1");
+		SequenceFile file2 = createSequenceFile("file2");
+
+		long originalLength = file1.getFile().toFile().length();
+
+		SequencingObject so1 = new SingleEndSequenceFile(file1);
+		SequencingObject so2 = new SingleEndSequenceFile(file2);
+
+		SampleSequencingObjectJoin join1 = objectService.createSequencingObjectInSample(so1, sample);
+		SampleSequencingObjectJoin join2 = objectService.createSequencingObjectInSample(so2, sample);
+
+		// Wait 5 seconds. file processing should have run by then.
+		Thread.sleep(5000);
+
+		// re-read the original files so file processing will be complete
+		so1 = objectService.read(join1.getObject().getId());
+		so2 = objectService.read(join2.getObject().getId());
+
+		Collection<SampleSequencingObjectJoin> originalSeqs = objectService.getSequencingObjectsForSample(sample);
+
+		List<SequencingObject> fileSet = Lists.newArrayList(so1, so2);
+
+		SampleSequencingObjectJoin concatenateSequences = objectService.concatenateSequences(fileSet, newFileName,
+				sample, false);
+
+		// Wait 5 seconds. file processing should have run by then.
+		Thread.sleep(5000);
+
+		Collection<SampleSequencingObjectJoin> newSeqs = objectService.getSequencingObjectsForSample(sample);
+
+		// re-read the concatenated file so file processing will be complete
+		concatenateSequences = sampleService.getSampleForSequencingObject(concatenateSequences.getObject());
+
+		assertTrue("new seq collection should contain originals", newSeqs.containsAll(originalSeqs));
+		assertTrue("new seq collection should contain new object", newSeqs.contains(concatenateSequences));
+		assertEquals("new seq collection should have 1 more object", originalSeqs.size() + 1, newSeqs.size());
+
+		SequencingObject newSeqObject = concatenateSequences.getObject();
+		SequenceFile newFile = newSeqObject.getFiles().iterator().next();
+		assertTrue("new file should contain new name", newFile.getFileName().contains(newFileName));
+
+		long newFileSize = newFile.getFile().toFile().length();
+		
+		assertEquals("new file should be 2x size of originals", originalLength * 2, newFileSize);
+	}
+	
+	private SequenceFile createSequenceFile(String name) throws IOException{
+		Path sequenceFile = Files.createTempFile(name, ".fastq");
+		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
+		
+		return new SequenceFile(sequenceFile);
 	}
 }

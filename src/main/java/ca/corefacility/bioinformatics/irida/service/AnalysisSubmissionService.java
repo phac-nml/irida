@@ -182,4 +182,14 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @return a Collection of {@link AnalysisSubmission}
 	 */
 	public Collection<AnalysisSubmission> findAnalysesByState(Collection<AnalysisState> states);
+
+	/**
+	 * Get a collection of all {@link AnalysisSubmission}s shared with a
+	 * {@link Project}.
+	 * 
+	 * @param project
+	 *            The {@link Project} to search.
+	 * @return A collection of {@link AnalysisSubmission}s.
+	 */
+	public Collection<AnalysisSubmission> getAnalysisSubmissionsSharedToProject(Project project);
 }
