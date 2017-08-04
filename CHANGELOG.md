@@ -19,6 +19,7 @@ Changes
 * [API]: Performance improvements when listing analyses of a specific type in the REST API.
 * [Developer]: Changed file processing chain to try to avoid errors in processing.
 * [API]: Added REST API endpoints for accessing all analyses associated with a project and for accessing automated analyses.
+* [UI]: Added ability to concatenate sequence files in a sample.
 
 0.16.0 to 0.17.0
 ----------------

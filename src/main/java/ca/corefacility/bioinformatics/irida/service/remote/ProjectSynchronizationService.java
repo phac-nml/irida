@@ -255,9 +255,14 @@ public class ProjectSynchronizationService {
 		Map<String, SequencingObject> objectsByUrl = new HashMap<>();
 		localObjects.forEach(j -> {
 			SequencingObject pair = j.getObject();
-			String url = pair.getRemoteStatus().getURL();
+			
+			// check if the file was actually sync'd. Someone may have
+			// concatenated it
+			if (pair.getRemoteStatus() != null) {
+				String url = pair.getRemoteStatus().getURL();
 
-			objectsByUrl.put(url, pair);
+				objectsByUrl.put(url, pair);
+			}
 		});
 
 		List<SequenceFilePair> sequenceFilePairsForSample = pairRemoteService.getSequenceFilePairsForSample(sample);
