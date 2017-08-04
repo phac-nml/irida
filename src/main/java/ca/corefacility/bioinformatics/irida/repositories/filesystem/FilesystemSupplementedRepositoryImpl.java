@@ -20,6 +20,7 @@ import javax.persistence.PreUpdate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ReflectionUtils;
 
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
@@ -165,6 +166,17 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 		logger.trace("About to write files to disk.");
 		writeFilesToDisk(baseDirectory, entity);
 		logger.trace("Returning merged entity.");
+		return entityManager.merge(entity);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public Type saveMetadata(final Type entity) {
+		logger.trace("Saving entity state without any file changes");
+
 		return entityManager.merge(entity);
 	}
 
