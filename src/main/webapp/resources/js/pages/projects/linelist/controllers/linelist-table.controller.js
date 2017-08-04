@@ -1,12 +1,8 @@
 import "DataTables/datatables";
-import "DataTables/datatables-fixedColumns";
 import "DataTables/datatables-colreorder";
+import "DataTables/datatables-fixedColumns";
 import $ from "jquery";
-import {
-  createItemLink,
-  tableConfig
-} from "../../../../utilities/datatables-utilities";
-import { formatDate } from "../../../../utilities/date-utilities";
+import { createItemLink, tableConfig } from "../../../../utilities/datatables-utilities";
 import { EVENTS } from "../constants";
 
 function defineTable() {
@@ -28,22 +24,12 @@ function defineTable() {
           }
         });
       } else {
-        if (header.toLowerCase().indexOf("date") > -1) {
-          cols.push({
-            targets: index,
-            render(data, type, full) {
-              const date = formatDate({ date: full[header].value });
-              return `<time>${date}</time>`;
-            }
-          });
-        } else {
-          cols.push({
-            targets: index,
-            render(data, type, full) {
-              return full[header].value;
-            }
-          });
-        }
+        cols.push({
+          targets: index,
+          render(data, type, full) {
+            return full[header].value;
+          }
+        });
       }
     });
     return cols;
