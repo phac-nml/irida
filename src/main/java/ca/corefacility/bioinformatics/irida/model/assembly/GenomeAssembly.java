@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.model.sample;
+package ca.corefacility.bioinformatics.irida.model.assembly;
 
 import java.nio.file.Path;
 import java.util.Date;
@@ -15,7 +15,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -27,7 +26,6 @@ import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
  */
 @Entity
 @Table(name = "genome_assembly")
-@Audited
 @EntityListeners(AuditingEntityListener.class)
 public abstract class GenomeAssembly extends IridaResourceSupport implements MutableIridaThing {
 

@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.model.sample;
+package ca.corefacility.bioinformatics.irida.model.assembly;
 
 import java.nio.file.Path;
 import java.util.Date;
@@ -10,7 +10,6 @@ import javax.persistence.EntityListeners;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.envers.Audited;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
@@ -19,7 +18,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 //@Entity
 //@Table(name = "genome_assembly_file")
-//@Audited
 //@EntityListeners(AuditingEntityListener.class)
 public class GenomeAssemblyFile extends GenomeAssembly {
 
