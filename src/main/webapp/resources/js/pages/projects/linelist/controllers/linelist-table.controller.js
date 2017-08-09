@@ -19,7 +19,7 @@ function defineTable() {
           render(data, type, full) {
             return createItemLink({
               url: `${window.PAGE.urls.sample}${full.id.value}/details`,
-              label: full.label.value
+              label: full[header].value
             });
           }
         });

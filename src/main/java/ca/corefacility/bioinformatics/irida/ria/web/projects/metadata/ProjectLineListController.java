@@ -86,7 +86,7 @@ public class ProjectLineListController {
 		}
 
 		// Get the headers (metadata fields)
-		List<String> headers = getAllProjectMetadataFields(projectId);
+		List<String> headers = getAllProjectMetadataFields(projectId, locale);
 		model.addAttribute("headers", headers);
 
 		// Get all the metadata for each sample in the project
@@ -108,7 +108,7 @@ public class ProjectLineListController {
 
 				// Id and Label must be defaults in all metadata.
 				fullMetadata.put("id", ImmutableMap.of("value", sample.getId()));
-				fullMetadata.put("label", ImmutableMap.of("value", sample.getSampleName()));
+				fullMetadata.put(messageSource.getMessage("linelist.table.header.sampleName", new Object[]{}, locale), ImmutableMap.of("value", sample.getSampleName()));
 
 				// Put this here to avoid showing samples that do not have
 				// any metadata associated with them.
@@ -210,7 +210,7 @@ public class ProjectLineListController {
 	 *
 	 * @return {@link Set} containing unique metadata fields
 	 */
-	private List<String> getAllProjectMetadataFields(Long projectId) {
+	private List<String> getAllProjectMetadataFields(Long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
 		Set<String> fields = new HashSet<>();
 
@@ -239,7 +239,7 @@ public class ProjectLineListController {
 		List<String> fieldList = new ArrayList<>(fields);
 
 		// Need to add default sample fields.
-		fieldList.add(0, "label");
+		fieldList.add(0, messageSource.getMessage("linelist.table.header.sampleName", new Object[]{}, locale));
 
 		return fieldList;
 	}
