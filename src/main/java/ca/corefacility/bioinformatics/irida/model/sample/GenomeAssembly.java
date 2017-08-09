@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.model.sample;
 
-import java.nio.file.Path;
 import java.util.Date;
 import java.util.Objects;
 
@@ -23,17 +22,13 @@ import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 
 /**
- * An assembled genome.
- * 
- * @author aaron
- *
+ * Defines a genome assembly which can be associated with a sample.
  */
-
 @Entity
 @Table(name = "genome_assembly")
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-public class GenomeAssembly extends IridaResourceSupport implements MutableIridaThing {
+public abstract class GenomeAssembly extends IridaResourceSupport implements MutableIridaThing {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -45,17 +40,13 @@ public class GenomeAssembly extends IridaResourceSupport implements MutableIrida
 	@Column(name = "created_date")
 	private Date createdDate;
 
-	@NotNull
-	@Column(name = "file_path", unique = true)
-	private Path file;
-
-	public GenomeAssembly() {
-		createdDate = new Date();
+	public GenomeAssembly(Date createdDate) {
+		this.createdDate = createdDate;
 	}
 
 	@Override
 	public String getLabel() {
-		return file.toString();
+		return toString();
 	}
 
 	@Override
@@ -85,7 +76,7 @@ public class GenomeAssembly extends IridaResourceSupport implements MutableIrida
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, file, createdDate);
+		return Objects.hash(id, createdDate);
 	}
 
 	@Override
@@ -97,7 +88,6 @@ public class GenomeAssembly extends IridaResourceSupport implements MutableIrida
 		if (getClass() != obj.getClass())
 			return false;
 		GenomeAssembly other = (GenomeAssembly) obj;
-		return Objects.equals(this.id, other.id) && Objects.equals(this.file, other.file)
-				&& Objects.equals(this.createdDate, other.createdDate);
+		return Objects.equals(this.id, other.id) && Objects.equals(this.createdDate, other.createdDate);
 	}
 }
