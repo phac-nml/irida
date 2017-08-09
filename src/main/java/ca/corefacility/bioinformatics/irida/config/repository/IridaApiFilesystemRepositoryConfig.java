@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+import ca.corefacility.bioinformatics.irida.model.sample.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl.RelativePathTranslatorListener;
@@ -29,13 +30,16 @@ public class IridaApiFilesystemRepositoryConfig {
 
 	private @Value("${output.file.base.directory}") String outputFileBaseDirectory;
 	
+	private @Value("${assembly.file.base.directory}") String assemblyFileBaseDirectory;
+	
 	@Bean
 	public RelativePathTranslatorListener relativePathTranslatorListener(final @Qualifier("referenceFileBaseDirectory") Path referenceFileBaseDirectory, 
 			final @Qualifier("sequenceFileBaseDirectory") Path sequenceFileBaseDirectory,
-			final @Qualifier("outputFileBaseDirectory") Path outputFileBaseDirectory) {
+			final @Qualifier("outputFileBaseDirectory") Path outputFileBaseDirectory, final @Qualifier("assemblyFileBaseDirectory") Path assemblyFileBaseDirectory) {
 		RelativePathTranslatorListener.addBaseDirectory(SequenceFile.class, sequenceFileBaseDirectory);
 		RelativePathTranslatorListener.addBaseDirectory(ReferenceFile.class, referenceFileBaseDirectory);
 		RelativePathTranslatorListener.addBaseDirectory(AnalysisOutputFile.class, outputFileBaseDirectory);
+		RelativePathTranslatorListener.addBaseDirectory(GenomeAssembly.class, assemblyFileBaseDirectory);
 		return new RelativePathTranslatorListener();
 	}
 
@@ -48,6 +52,12 @@ public class IridaApiFilesystemRepositoryConfig {
 	@Profile("prod")
 	@Bean(name = "sequenceFileBaseDirectory")
 	public Path sequenceFileBaseDirectoryProd() {
+		return getExistingPathOrThrow(sequenceFileBaseDirectory);
+	}
+	
+	@Profile("prod")
+	@Bean(name = "assemblyFileBaseDirectory")
+	public Path assemblyFileBaseDirectoryProd() {
 		return getExistingPathOrThrow(sequenceFileBaseDirectory);
 	}
 

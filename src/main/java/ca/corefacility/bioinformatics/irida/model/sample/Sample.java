@@ -142,6 +142,9 @@ public class Sample extends IridaResourceSupport
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@MapKeyColumn(name = "metadata_KEY")
 	private Map<MetadataTemplateField, MetadataEntry> metadata;
+	
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	private GenomeAssembly genomeAssembly;
 
 	public Sample() {
 		createdDate = new Date();
@@ -303,6 +306,14 @@ public class Sample extends IridaResourceSupport
 
 	public void setIsolationSource(String isolationSource) {
 		this.isolationSource = isolationSource;
+	}
+	
+	public GenomeAssembly getAssembly() {
+		return genomeAssembly;
+	}
+	
+	public void setGenomeAssembly(GenomeAssembly genomeAssembly) {
+		this.genomeAssembly = genomeAssembly;
 	}
 
 	@Override
