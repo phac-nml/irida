@@ -17,10 +17,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
  * An assembled genome derived from an uploaded file.
  */
 
-@Entity
-@Table(name = "genome_assembly_file")
-@Audited
-@EntityListeners(AuditingEntityListener.class)
+//@Entity
+//@Table(name = "genome_assembly_file")
+//@Audited
+//@EntityListeners(AuditingEntityListener.class)
 public class GenomeAssemblyFile extends GenomeAssembly {
 
 	@NotNull
@@ -29,6 +29,14 @@ public class GenomeAssemblyFile extends GenomeAssembly {
 
 	public GenomeAssemblyFile() {
 		super(new Date());
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Path getFile() {
+		return file;
 	}
 
 	@Override
