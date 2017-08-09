@@ -12,4 +12,6 @@
 	<include file="sample-owner.xml" relativeToChangelogFile="true" />
 	<include file="sequence-concatenation.xml"
 		relativeToChangelogFile="true" />
+	<include file="sample-assembly.xml"
+		relativeToChangelogFile="true" />
 </databaseChangeLog>

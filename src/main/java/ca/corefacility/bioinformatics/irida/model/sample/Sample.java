@@ -144,6 +144,7 @@ public class Sample extends IridaResourceSupport
 	private Map<MetadataTemplateField, MetadataEntry> metadata;
 	
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@JoinColumn(name = "genome_assembly")
 	private GenomeAssembly genomeAssembly;
 
 	public Sample() {
