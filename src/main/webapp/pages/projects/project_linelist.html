@@ -25,6 +25,8 @@
         <table id="linelist" class="table table-striped" cellspacing="0" width="100%">
             <thead>
             <tr>
+                <!-- Fixed DataTables column with the Sample label -->
+                <th data-data="irida-sample-name" th:text="#{linelist.table.header.sampleName}"></th>
                 <th th:each="header : ${headers}" th:text="${header}"></th>
             </tr>
             </thead>
@@ -34,7 +36,6 @@
 
 <th:block layout:fragment="scripts">
     <script th:inline="javascript">
-      var headersList = /*[[${headers}]]*/ [];
       var metadataList = /*[[${metadataList}]]*/ [];
     </script>
     <script type="text/ng-template" id="linelist.tmpl.html">

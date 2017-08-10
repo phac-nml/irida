@@ -29,6 +29,14 @@
 		projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
 		email_subscription="false" />
 
+	<analysis_submission id="1" name="sistr"
+		workflow_id="e8f9cc61-3264-48c6-81d9-02d9e84bccc7" analysis_state="COMPLETED" created_date="2013-07-18 14:20:19.0"
+		submitter="1" analysis_cleaned_state="NOT_CLEANED" />
+
+	<analysis_submission id="2" name="assembly"
+		workflow_id="87186c71-5c8a-4027-a9d9-b29850cebdb3" analysis_state="COMPLETED" created_date="2013-07-18 14:20:19.0"
+		submitter="1" analysis_cleaned_state="NOT_CLEANED" />
+
 	<client_details id="1" clientId="testClient"
 		clientSecret="testClientSecret" token_validity="43200" createdDate="2013-07-18 14:20:19.0" />
 	<client_role name="ROLE_CLIENT" description="A basic OAuth2 client." />
@@ -47,11 +55,19 @@
 		file_path="/sequenceFile2_01_L001_R1_001.fastq.gz" />
 	<sequence_file id="3" created_date="2013-07-18 14:20:19.0"
 		file_path="/sequenceFile2_01_L001_R2_001.fastq.gz" />
+	<sequence_file id="4" created_date="2013-07-18 14:20:19.0"
+		file_path="/sequenceFile3_01_L001_R1_001.fastq.gz" />
+	<sequence_file id="5" created_date="2013-07-18 14:20:19.0"
+		file_path="/sequenceFile3_01_L001_R2_001.fastq.gz" />
+	<sequence_file id="6" created_date="2013-07-18 14:20:19.0"
+		file_path="/sequenceFile4_01_L001_R1_001.fastq.gz" />
+	<sequence_file id="7" created_date="2013-07-18 14:20:19.0"
+		file_path="/sequenceFile4_01_L001_R2_001.fastq.gz" />
 
-	<sequencing_object id="1" created_date="2013-07-18 14:20:19.0" />
-	<sequencing_object id="2" created_date="2013-07-18 14:20:19.0" />
-
-	<sequence_file_single_end id="2" file_id="1" />
+	<sequencing_object id="1" created_date="2013-07-18 14:20:19.0" automated_assembly="2" sistr_typing="1" />
+	<sequencing_object id="2" created_date="2013-07-18 14:20:19.0" automated_assembly="2" />
+	<sequencing_object id="3" created_date="2013-07-18 14:20:19.0" sistr_typing="1" />
+	<sequencing_object id="4" created_date="2013-07-18 14:20:19.0" />
 
 	<sample_sequencingobject id="1"
 		created_date="2013-07-18 14:20:19.0" sample_id="1"
@@ -59,11 +75,30 @@
 	<sample_sequencingobject id="2"
 		created_date="2013-07-18 14:20:19.0" sample_id="1"
 		sequencingobject_id="2" />
-
+	<sample_sequencingobject id="3"
+		created_date="2013-07-18 14:20:19.0" sample_id="1"
+		sequencingobject_id="3" />
+	<sample_sequencingobject id="4"
+		created_date="2013-07-18 14:20:19.0" sample_id="1"
+		sequencingobject_id="4" />
 
 	<sequence_file_pair id="1" />
 	<sequence_file_pair_files pair_id="1"
 		files_id="2" />
 	<sequence_file_pair_files pair_id="1"
 		files_id="3" />
+		
+	<sequence_file_pair id="2" />
+	<sequence_file_pair_files pair_id="2"
+		files_id="4" />
+	<sequence_file_pair_files pair_id="2"
+		files_id="5" />
+		
+	<sequence_file_pair id="3" />
+	<sequence_file_pair_files pair_id="3"
+		files_id="6" />
+	<sequence_file_pair_files pair_id="3"
+		files_id="7" />
+				
+	<sequence_file_single_end id="4" file_id="1" />
 </dataset>

@@ -10,10 +10,8 @@ import ca.corefacility.bioinformatics.irida.model.sample.CoverageQCEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
-import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 
 /**
  * {@link FileProcessor} used to calculate coverage of a
@@ -23,16 +21,12 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.Sequencing
 public class CoverageFileProcessor implements FileProcessor {
 	private static final Logger logger = LoggerFactory.getLogger(CoverageFileProcessor.class);
 
-	private SequencingObjectRepository objectRepository;
-
 	private QCEntryRepository qcEntryRepository;
 
 	private AnalysisRepository analysisRepository;
 
 	@Autowired
-	public CoverageFileProcessor(SequencingObjectRepository objectRepository, QCEntryRepository qcEntryRepository,
-			AnalysisRepository analysisRepository) {
-		this.objectRepository = objectRepository;
+	public CoverageFileProcessor(QCEntryRepository qcEntryRepository, AnalysisRepository analysisRepository) {
 		this.qcEntryRepository = qcEntryRepository;
 		this.analysisRepository = analysisRepository;
 	}
@@ -41,36 +35,30 @@ public class CoverageFileProcessor implements FileProcessor {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void process(Long sequenceFileId) throws FileProcessorException {
-		logger.trace("Counting coverage for file " + sequenceFileId);
+	public Boolean modifiesFile() {
+		return false;
+	}
 
-		// read the seqobject
-		SequencingObject read = objectRepository.findOne(sequenceFileId);
+	@Override
+	public void process(SequencingObject sequencingObject) {
+		logger.trace("Counting coverage for file " + sequencingObject);
 
-		if (read.getQcEntries() != null) {
+		if (sequencingObject.getQcEntries() != null) {
 			// remove any existing coverage entries
-			read.getQcEntries().stream().filter(q -> q instanceof CoverageQCEntry)
+			sequencingObject.getQcEntries().stream().filter(q -> q instanceof CoverageQCEntry)
 					.forEach(q -> qcEntryRepository.delete(q));
 		}
 
 		// count the total bases
-		long totalBases = read.getFiles().stream().mapToLong(f -> {
+		long totalBases = sequencingObject.getFiles().stream().mapToLong(f -> {
 			AnalysisFastQC fastqc = analysisRepository.findFastqcAnalysisForSequenceFile(f);
 			return fastqc.getTotalBases();
 		}).sum();
 
 		// save the entry
-		CoverageQCEntry coverageQCEntry = new CoverageQCEntry(read, totalBases);
+		CoverageQCEntry coverageQCEntry = new CoverageQCEntry(sequencingObject, totalBases);
 		qcEntryRepository.save(coverageQCEntry);
 
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Boolean modifiesFile() {
-		return false;
 	}
 
 }

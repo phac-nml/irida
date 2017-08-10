@@ -1,51 +1,39 @@
 import "DataTables/datatables";
-import "DataTables/datatables-fixedColumns";
 import "DataTables/datatables-colreorder";
+import "DataTables/datatables-fixedColumns";
 import "DataTables/datatables-buttons";
 import "datatables.net-buttons/js/buttons.html5";
 import $ from "jquery";
-import {
-  createItemLink,
-  tableConfig
-} from "../../../../utilities/datatables-utilities";
-import { formatDate } from "../../../../utilities/date-utilities";
+import { createItemLink, tableConfig } from "../../../../utilities/datatables-utilities";
 import { EVENTS } from "../constants";
+
+const $table = $("#linelist");
 
 function defineTable() {
   const columnDefs = (() => {
-    const cols = [];
-
-    // Copy the headers list, and remove the label (at index 0).
-    const headers = Array.from(window.headersList);
-    headers.forEach((header, index) => {
-      if (index === 0) {
-        // This is the label.  Needs to be a link to the sample.
-        cols.push({
-          targets: 0,
-          render(data, type, full) {
-            return createItemLink({
-              url: `${window.PAGE.urls.sample}${full.id.value}/details`,
-              label: full.label.value
-            });
-          }
-        });
-      } else {
-        if (header.toLowerCase().indexOf("date") > -1) {
-          cols.push({
-            targets: index,
-            render(data, type, full) {
-              const date = formatDate({ date: full[header].value });
-              return `<time>${date}</time>`;
-            }
-          });
-        } else {
-          cols.push({
-            targets: index,
-            render(data, type, full) {
-              return full[header].value;
-            }
+    const cols = [
+      {
+        targets: 0,
+        render(data, type, full) {
+          return createItemLink({
+            url: `${window.PAGE.urls.sample}${full.id.value}/details`,
+            label: full["irida-sample-name"].value
           });
         }
+      }
+    ];
+
+    // Copy the headers list, and remove the label (at index 0).
+    const headers = $table.find("th");
+    headers.each(function(index) {
+      if (index !== 0) {
+        const text = $(this).text();
+        cols.push({
+          targets: index,
+          render(data, type, full) {
+            return full[text].value;
+          }
+        });
       }
     });
     return cols;
@@ -84,7 +72,7 @@ function defineTable() {
     columnDefs
   });
 
-  return $("#linelist").DataTable(config);
+  return $table.DataTable(config);
 }
 
 export function LineListTableController($rootScope, $scope) {

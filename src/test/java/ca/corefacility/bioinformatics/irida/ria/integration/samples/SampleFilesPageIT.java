@@ -52,7 +52,7 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 	public void testPageSetup() {
 		page.gotoPage(SAMPLE_ID);
 		assertTrue("Page Title contains the sample label", page.getPageTitle().contains(SAMPLE_LABEL));
-		assertEquals("Displays the correct number of sequence files", 3, page.getSequenceFileCount());
+		assertEquals("Displays the correct number of sequence files", 4, page.getSequenceFileCount());
 		assertEquals("should be 1 qc entry", 1, page.getQcEntryCount());
 		
 		page.checkBreadCrumbs(BREADCRUMBS);
@@ -65,7 +65,7 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 		page.deleteFirstFile();
 		assertTrue("Should display a confirmation message that the file was deleted",
 				page.isDeleteConfirmationMessageDisplayed());
-		assertEquals("Displays the correct number of sequence files", 2, page.getSequenceFileCount());
+		assertEquals("Displays the correct number of sequence files", 3, page.getSequenceFileCount());
 	}
 
 	@Test
@@ -74,7 +74,7 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 		
 		page.deleteFirstPair();
 		assertTrue("Should display a confirmation message that the file was deleted", page.isDeleteConfirmationMessageDisplayed());
-		assertEquals("Displays the correct number of sequence files", 1, page.getSequenceFileCount());
+		assertEquals("Displays the correct number of sequence files", 2, page.getSequenceFileCount());
 	}
 
 	@Test

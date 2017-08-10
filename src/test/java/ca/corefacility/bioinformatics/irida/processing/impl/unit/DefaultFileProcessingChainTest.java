@@ -7,16 +7,20 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
+import com.google.common.collect.Sets;
+
 import ca.corefacility.bioinformatics.irida.exceptions.FileProcessorTimeoutException;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
@@ -34,7 +38,7 @@ public class DefaultFileProcessingChainTest {
 	private SequencingObjectRepository objectRepository;
 	private QCEntryRepository qcRepository;
 
-	private SingleEndSequenceFile seqObject;
+	private SequencingObject seqObject;
 	private Long objectId = 1L;
 
 	@Before
@@ -42,7 +46,7 @@ public class DefaultFileProcessingChainTest {
 		this.objectRepository = mock(SequencingObjectRepository.class);
 		this.qcRepository = mock(QCEntryRepository.class);
 
-		seqObject = new SingleEndSequenceFile(null);
+		seqObject = new NoFileSequencingObject();
 		when(objectRepository.findOne(objectId)).thenReturn(seqObject);
 	}
 
@@ -52,17 +56,12 @@ public class DefaultFileProcessingChainTest {
 		fileProcessingChain.setTimeout(1);
 		fileProcessingChain.setSleepDuration(0);
 
-		SequenceFile sf = new SequenceFile();
-		sf.setId(1L);
-
 		fileProcessingChain.launchChain(objectId);
 	}
 
 	@Test
 	public void testProcessEmptyChain() throws FileProcessorTimeoutException {
 		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, qcRepository);
-		SequenceFile sf = new SequenceFile();
-		sf.setId(1L);
 		when(objectRepository.exists(objectId)).thenReturn(true);
 
 		fileProcessingChain.launchChain(objectId);
@@ -72,8 +71,6 @@ public class DefaultFileProcessingChainTest {
 	public void testFailWithContinueChain() throws FileProcessorTimeoutException {
 		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, qcRepository,
 				new FailingFileProcessor());
-		SequenceFile sf = new SequenceFile();
-		sf.setId(1L);
 		when(objectRepository.exists(objectId)).thenReturn(true);
 
 		List<Exception> exceptions = fileProcessingChain.launchChain(1L);
@@ -88,8 +85,6 @@ public class DefaultFileProcessingChainTest {
 	public void testFastFailProcessorChain() throws FileProcessorTimeoutException {
 		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, qcRepository,
 				new FailingFileProcessor());
-		SequenceFile sf = new SequenceFile();
-		sf.setId(1L);
 		when(objectRepository.exists(objectId)).thenReturn(true);
 
 		fileProcessingChain.setFastFail(true);
@@ -102,8 +97,7 @@ public class DefaultFileProcessingChainTest {
 	public void testFailOnProcessorChain() throws FileProcessorTimeoutException {
 		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, qcRepository,
 				new FailingFileProcessorNoContinue());
-		SequenceFile sf = new SequenceFile();
-		sf.setId(1L);
+
 		when(objectRepository.exists(objectId)).thenReturn(true);
 
 		fileProcessingChain.launchChain(1L);
@@ -113,9 +107,6 @@ public class DefaultFileProcessingChainTest {
 	public void testFailWriteQCEntry() throws FileProcessorTimeoutException {
 		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, qcRepository,
 				new FailingFileProcessorNoContinue());
-
-		SequenceFile sf = new SequenceFile();
-		sf.setId(1L);
 		when(objectRepository.exists(objectId)).thenReturn(true);
 
 		boolean exceptionCaught = false;
@@ -136,29 +127,52 @@ public class DefaultFileProcessingChainTest {
 	}
 
 	private static class FailingFileProcessor implements FileProcessor {
-		@Override
-		public void process(Long sequenceFile) throws FileProcessorException {
-			throw new FileProcessorException("I'm terrible at this.");
-		}
 
 		@Override
 		public Boolean modifiesFile() {
 			return false;
+		}
+
+		@Override
+		public void process(SequencingObject sequencingObject) {
+			throw new FileProcessorException("I'm terrible at this.");
+
 		}
 	}
 
 	private static class FailingFileProcessorNoContinue implements FileProcessor {
 
 		@Override
-		public void process(Long sequenceFile) throws FileProcessorException {
-			throw new FileProcessorException("I'm *really* terrible at this.");
-		}
-
-		@Override
 		public Boolean modifiesFile() {
 			return true;
 		}
 
+		@Override
+		public void process(SequencingObject sequencingObject) {
+			throw new FileProcessorException("I'm *really* terrible at this.");
+
+		}
+
+	}
+
+	/**
+	 * Sequencing object which contains no files for testing
+	 */
+	private class NoFileSequencingObject extends SequencingObject {
+
+		@Override
+		public void setModifiedDate(Date modifiedDate) {
+		}
+
+		@Override
+		public String getLabel() {
+			return "No files";
+		}
+
+		@Override
+		public Set<SequenceFile> getFiles() {
+			return Sets.newHashSet();
+		}
 	}
 
 }
