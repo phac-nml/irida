@@ -1,8 +1,8 @@
+import "datatables.net-buttons/js/buttons.html5";
 import "DataTables/datatables";
+import "DataTables/datatables-buttons";
 import "DataTables/datatables-colreorder";
 import "DataTables/datatables-fixedColumns";
-import "DataTables/datatables-buttons";
-import "datatables.net-buttons/js/buttons.html5";
 import $ from "jquery";
 import { createItemLink, tableConfig } from "../../../../utilities/datatables-utilities";
 import { EVENTS } from "../constants";
@@ -50,18 +50,24 @@ function defineTable() {
     scrollX: true,
     buttons: [
       {
-        extend: "csvHtml5",
-        className: "btn-sm",
-        exportOptions: {
-          columns: ":visible"
-        }
-      },
-      {
-        extend: "excelHtml5",
-        className: "btn-sm",
-        exportOptions: {
-          columns: ":visible"
-        }
+        extend: "collection",
+        text: window.PAGE.i18n.exportTable,
+        buttons: [
+          {
+            extend: "csvHtml5",
+            className: "btn-sm",
+            exportOptions: {
+              columns: ":visible"
+            }
+          },
+          {
+            extend: "excelHtml5",
+            className: "btn-sm",
+            exportOptions: {
+              columns: ":visible"
+            }
+          }
+        ]
       }
     ],
     fixedColumns: {
