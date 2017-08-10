@@ -74,7 +74,6 @@ public class UsersController {
 	private static final String EDIT_USER_PAGE = "user/edit";
 	private static final String CREATE_USER_PAGE = "user/create";
 	private static final String ERROR_PAGE = "error";
-	private static final String SORT_BY_ID = "id";
 	private static final String ROLE_MESSAGE_PREFIX = "systemrole.";
 	private static final Logger logger = LoggerFactory.getLogger(UsersController.class);
 
@@ -82,9 +81,6 @@ public class UsersController {
 	private final ProjectService projectService;
 	private final PasswordResetService passwordResetService;
 	private final EmailController emailController;
-
-	private final List<String> SORT_COLUMNS = Lists.newArrayList(SORT_BY_ID, "username", "lastName",
-			"firstName", "email", "systemRole", "createdDate", "modifiedDate");
 
 	private final List<Role> adminAllowedRoles = Lists.newArrayList(Role.ROLE_ADMIN, Role.ROLE_MANAGER, Role.ROLE_USER,
 			Role.ROLE_TECHNICIAN, Role.ROLE_SEQUENCER);
