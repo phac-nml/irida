@@ -26,6 +26,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -144,8 +145,10 @@ public class Sample extends IridaResourceSupport
 	@MapKeyColumn(name = "metadata_KEY")
 	private Map<MetadataTemplateField, MetadataEntry> metadata;
 	
-	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinColumn(name = "genome_assembly")
+	@OneToOne(fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST,
+			CascadeType.REFRESH })
+	@JoinColumn(name = "genome_assembly_id")
+	@NotAudited
 	private GenomeAssembly genomeAssembly;
 
 	public Sample() {

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssemblyFromAnalysis;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -26,6 +27,7 @@ import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -47,18 +49,20 @@ public class AssemblyFileProcessor implements FileProcessor {
 	private final AnalysisSubmissionRepository submissionRepository;
 	private final UserRepository userRepository;
 	private final IridaWorkflowsService workflowsService;
+	private final SampleRepository sampleRepository;
 
 	@Autowired
 	public AssemblyFileProcessor(SequencingObjectRepository objectRepository,
 			AnalysisSubmissionRepository submissionRepository, IridaWorkflowsService workflowsService,
 			UserRepository userRepository, SampleSequencingObjectJoinRepository ssoRepository,
-			ProjectSampleJoinRepository psjRepository) {
+			ProjectSampleJoinRepository psjRepository, SampleRepository sampleRepository) {
 		this.objectRepository = objectRepository;
 		this.submissionRepository = submissionRepository;
 		this.workflowsService = workflowsService;
 		this.userRepository = userRepository;
 		this.ssoRepository = ssoRepository;
 		this.psjRepository = psjRepository;
+		this.sampleRepository = sampleRepository;
 	}
 
 	/**
@@ -99,12 +103,23 @@ public class AssemblyFileProcessor implements FileProcessor {
 			sequencingObject.setAutomatedAssembly(submission);
 
 			objectRepository.save(sequencingObject);
+			
+			SampleSequencingObjectJoin sampleJoin = ssoRepository.getSampleForSequencingObject(sequencingObject);
+			Sample sampleForSequencingObject = sampleJoin.getSubject();
+			
+			// If sample does not already have an associated assembly.
+			if (sampleForSequencingObject.getAssembly() == null) {
+				sampleForSequencingObject.setGenomeAssembly(new GenomeAssemblyFromAnalysis(submission));
+				sampleRepository.save(sampleForSequencingObject);
+				
+				logger.debug("Automated assembly set as default assembly for sample id=[" + sampleForSequencingObject.getId() + "]");
+			}
 
 			logger.debug("Automated assembly submission created for sequencing object " + sequencingObject.getId());
 		} else {
 			logger.warn("Could not assemble sequencing object " + sequencingObject.getId()
 					+ " because it's not paired end");
-		}		
+		}	
 	}
 
 	/**

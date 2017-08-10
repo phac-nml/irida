@@ -30,16 +30,13 @@ public class IridaApiFilesystemRepositoryConfig {
 
 	private @Value("${output.file.base.directory}") String outputFileBaseDirectory;
 	
-	private @Value("${assembly.file.base.directory}") String assemblyFileBaseDirectory;
-	
 	@Bean
 	public RelativePathTranslatorListener relativePathTranslatorListener(final @Qualifier("referenceFileBaseDirectory") Path referenceFileBaseDirectory, 
 			final @Qualifier("sequenceFileBaseDirectory") Path sequenceFileBaseDirectory,
-			final @Qualifier("outputFileBaseDirectory") Path outputFileBaseDirectory, final @Qualifier("assemblyFileBaseDirectory") Path assemblyFileBaseDirectory) {
+			final @Qualifier("outputFileBaseDirectory") Path outputFileBaseDirectory) {
 		RelativePathTranslatorListener.addBaseDirectory(SequenceFile.class, sequenceFileBaseDirectory);
 		RelativePathTranslatorListener.addBaseDirectory(ReferenceFile.class, referenceFileBaseDirectory);
 		RelativePathTranslatorListener.addBaseDirectory(AnalysisOutputFile.class, outputFileBaseDirectory);
-		RelativePathTranslatorListener.addBaseDirectory(GenomeAssemblyFile.class, assemblyFileBaseDirectory);
 		return new RelativePathTranslatorListener();
 	}
 
@@ -52,12 +49,6 @@ public class IridaApiFilesystemRepositoryConfig {
 	@Profile("prod")
 	@Bean(name = "sequenceFileBaseDirectory")
 	public Path sequenceFileBaseDirectoryProd() {
-		return getExistingPathOrThrow(sequenceFileBaseDirectory);
-	}
-	
-	@Profile("prod")
-	@Bean(name = "assemblyFileBaseDirectory")
-	public Path assemblyFileBaseDirectoryProd() {
 		return getExistingPathOrThrow(sequenceFileBaseDirectory);
 	}
 

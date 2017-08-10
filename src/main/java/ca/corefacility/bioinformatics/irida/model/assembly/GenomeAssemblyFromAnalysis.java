@@ -23,12 +23,27 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 @EntityListeners(AuditingEntityListener.class)
 public class GenomeAssemblyFromAnalysis extends GenomeAssembly {
 	
-	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinColumn(name = "analysis_submission_id", unique = true, nullable = false)
+	@OneToOne(fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST,
+			CascadeType.REFRESH })
+	@JoinColumn(name = "analysis_submission_id", nullable = false)
 	private AnalysisSubmission assembly;
+	
+	@SuppressWarnings("unused")
+	private GenomeAssemblyFromAnalysis() {
+		super();
+	}
 
-	public GenomeAssemblyFromAnalysis() {
+	public GenomeAssemblyFromAnalysis(AnalysisSubmission assembly) {
 		super(new Date());
+		this.assembly = assembly;
+	}
+	
+	public AnalysisSubmission getAnalysisSubmission() {
+		return assembly;
+	}
+	
+	public void setAnalysisSubmission(AnalysisSubmission assembly) {
+		this.assembly = assembly;
 	}
 
 	/**

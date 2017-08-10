@@ -6,17 +6,17 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
@@ -26,7 +26,7 @@ import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
  */
 @Entity
 @Table(name = "genome_assembly")
-@EntityListeners(AuditingEntityListener.class)
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class GenomeAssembly extends IridaResourceSupport implements MutableIridaThing {
 
 	@Id
@@ -38,6 +38,11 @@ public abstract class GenomeAssembly extends IridaResourceSupport implements Mut
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_date")
 	private Date createdDate;
+
+	protected GenomeAssembly() {
+		this.id = null;
+		this.createdDate = null;
+	}
 
 	public GenomeAssembly(Date createdDate) {
 		this.createdDate = createdDate;

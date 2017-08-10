@@ -6,25 +6,35 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
 	<changeSet id="sample-owner" author="aaron">
-	
+
 		<createTable tableName="genome_assembly">
 			<column name="id" autoIncrement="true" type="bigint(20)">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="created_date" type="datetime" />
+		</createTable>
 
-			<column name="file_path" type="varchar(255)">
-				<constraints nullable="false" />
+		<createTable tableName="genome_assembly_analysis">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"
+					referencedTableName="genome_assembly" referencedColumnNames="id"
+					foreignKeyName="FK_GENOME_ASSEMBLY_ANALYSIS" />
+			</column>
+			<column name="analysis_submission_id" type="bigint(20)">
+				<constraints referencedTableName="analysis_submission"
+					referencedColumnNames="id" nullable="false"
+					foreignKeyName="FK_GENOME_ASSEMBLY_ANALYSIS_ANALYSIS_SUBMISSION" />
 			</column>
 		</createTable>
-		
+
 		<addColumn tableName="sample">
 			<column name="genome_assembly_id" type="bigint(20)">
-				<constraints referencedColumnNames="id" referencedTableName="genome_assembly"
-					foreignKeyName="FK_SAMPLE_GENOME_ASSEMBLY"/>
+				<constraints referencedColumnNames="id"
+					referencedTableName="genome_assembly" foreignKeyName="FK_SAMPLE_GENOME_ASSEMBLY"
+					nullable="true" />
 			</column>
 		</addColumn>
-		
+
 		<addColumn tableName="sample_AUD">
 			<column name="genome_assembly_id" type="bigint(20)" />
 		</addColumn>
