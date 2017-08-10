@@ -107,6 +107,6 @@ After a template is created it can me modified or deleted under [Project Setting
 
 Data can be exported as either Excel or CSV formats.  Ony the fields currently in the table will be exported.
 
-Clicking on either `CSV` or `Excel` buttons will download the respective file type.
+Clicking on the `Export` button which will reveal a dropdown where you can select from either `CSV` or `Excel`, the download will begin automatically.
 
 ![Export Buttons](images/export_btns.png)
