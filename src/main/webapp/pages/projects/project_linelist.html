@@ -13,7 +13,8 @@
           sample: /*[[@{/samples/}]]*/ ''
         },
         i18n: {
-          allFields: /*[[#{linelist.templates.all}]]*/ 'All Fields'
+          allFields: /*[[#{linelist.templates.all}]]*/ 'All Fields',
+          exportTable: /*[[#{linelist.export}]]*/ 'Export'
         }
       };
     </script>
@@ -159,6 +160,7 @@
         </div>
     </script>
 
+    <script th:src="@{/node_modules/jszip/dist/jszip.min.js}"></script>
     <script th:src="@{/resources/js/build/project-linelist.bundle.js}"></script>
 </th:block>
 </body>

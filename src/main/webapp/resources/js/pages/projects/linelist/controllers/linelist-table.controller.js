@@ -1,4 +1,6 @@
+import "datatables.net-buttons/js/buttons.html5";
 import "DataTables/datatables";
+import "DataTables/datatables-buttons";
 import "DataTables/datatables-colreorder";
 import "DataTables/datatables-fixedColumns";
 import $ from "jquery";
@@ -46,6 +48,28 @@ function defineTable() {
     scrollY: "600px",
     scrollCollapse: true,
     scrollX: true,
+    buttons: [
+      {
+        extend: "collection",
+        text: window.PAGE.i18n.exportTable,
+        buttons: [
+          {
+            extend: "csvHtml5",
+            className: "btn-sm",
+            exportOptions: {
+              columns: ":visible"
+            }
+          },
+          {
+            extend: "excelHtml5",
+            className: "btn-sm",
+            exportOptions: {
+              columns: ":visible"
+            }
+          }
+        ]
+      }
+    ],
     fixedColumns: {
       leftColumns: 1
     },
