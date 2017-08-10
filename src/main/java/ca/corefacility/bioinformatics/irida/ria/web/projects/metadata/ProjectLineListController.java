@@ -108,7 +108,7 @@ public class ProjectLineListController {
 
 				// Id and Label must be defaults in all metadata.
 				fullMetadata.put("id", ImmutableMap.of("value", sample.getId()));
-				fullMetadata.put(messageSource.getMessage("linelist.table.header.sampleName", new Object[]{}, locale), ImmutableMap.of("value", sample.getSampleName()));
+				fullMetadata.put("irida-sample-name", ImmutableMap.of("value", sample.getSampleName()));
 
 				// Put this here to avoid showing samples that do not have
 				// any metadata associated with them.
@@ -236,12 +236,7 @@ public class ProjectLineListController {
 					.collect(Collectors.toSet()));
 		}
 
-		List<String> fieldList = new ArrayList<>(fields);
-
-		// Need to add default sample fields.
-		fieldList.add(0, messageSource.getMessage("linelist.table.header.sampleName", new Object[]{}, locale));
-
-		return fieldList;
+		return new ArrayList<>(fields);
 	}
 
 	/**

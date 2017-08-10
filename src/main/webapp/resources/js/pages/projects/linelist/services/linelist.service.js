@@ -12,12 +12,9 @@ export class LinelistService {
   }
 
   getHeaders() {
-    return this.$window.headersList;
+    const trs = document.querySelectorAll(".dataTables_scrollHeadInner th");
+    return [...trs].map(tr => tr.innerText);
   }
 }
 
-LinelistService.$inject = [
-  '$window',
-  '$http',
-  '$q'
-];
+LinelistService.$inject = ["$window", "$http", "$q"];
