@@ -2,10 +2,14 @@ package ca.corefacility.bioinformatics.irida.ria.web.models.datatables;
 
 import java.util.Date;
 
+import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
 import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
 
+/**
+ * User interface model for DataTables for {@link User} on an {@link Announcement}
+ */
 public class DTAnnouncementUser implements DataTablesResponseModel, Comparable<DTAnnouncementUser> {
 	private Long id;
 	private final String username;
