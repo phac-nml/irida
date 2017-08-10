@@ -102,3 +102,11 @@ After a unique name with more than 5 letters is provided the `Save` button will 
 
 
 After a template is created it can me modified or deleted under [Project Settings > Sample Metadata Templates](../sample-metadata-templates)
+
+### Exporting Data from Metadata Table
+
+Data can be exported as either Excel or CSV formats.  Ony the fields currently in the table will be exported.
+
+Clicking on either `CSV` or `Excel` buttons will download the respective file type.
+
+![Export Buttons](images/export_btns.png)
