@@ -4,15 +4,23 @@
  *  Webpack will then create the bundle in `resource/js/build/`
  */
 module.exports = {
-  app: './resources/js/app.js',
-  projects: './resources/js/pages/projects/projects.js',
-  'samples-metadata-import': './resources/js/pages/projects/samples-metadata-import/index.js',
-  'project-linelist': './resources/js/pages/projects/linelist/index.js',
-  'create-metadata-template': './resources/js/pages/projects/metadata-template/create-metadata-template.js',
-  'visualizations-phylogenetics': './resources/js/pages/visualizations/phylogenetics/index.js',
-  'projects-associated-edit': './resources/js/pages/projects/associated-projects/edit.module.js',
-  'sample-files': './resources/js/pages/samples/sample-files.js',
-  'project-reference-files': './resources/js/pages/projects/project-reference-files.js',
-  'analyses-table': './resources/js/pages/analyses/analyses-table.js',
-  'clients-list': './resources/js/pages/clients/clients-list.js'
+  app: "./resources/js/app.js",
+  projects: "./resources/js/pages/projects/projects.js",
+  "samples-metadata-import":
+    "./resources/js/pages/projects/samples-metadata-import/index.js",
+  "project-linelist": "./resources/js/pages/projects/linelist/index.js",
+  "create-metadata-template":
+    "./resources/js/pages/projects/metadata-template/create-metadata-template.js",
+  "visualizations-phylogenetics":
+    "./resources/js/pages/visualizations/phylogenetics/index.js",
+  "projects-associated-edit":
+    "./resources/js/pages/projects/associated-projects/edit.module.js",
+  "sample-files": "./resources/js/pages/samples/sample-files.js",
+  "project-reference-files":
+    "./resources/js/pages/projects/project-reference-files.js",
+  "clients-list": "./resources/js/pages/clients/clients-list.js",
+  "announcement-users":
+    "./resources/js/pages/announcement/announcement-users.js",
+  "announcement-admin":
+    "./resources/js/pages/announcement/announcement-admin.js"
 };

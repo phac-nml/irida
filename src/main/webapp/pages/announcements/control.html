@@ -5,47 +5,34 @@
 <head>
     <title th:text="#{announcement.admin-menu}">_Announcement_</title>
     <script th:inline="javascript">
-        var PAGE = {
-            urls: {
-                link:       /*[[@{/announcements/}]]*/ '/announcements',
-                details:    /*[[@{/details/}]]*/ '/detail'
-            },
-            i18n: {
-                edit: /*[[#{announcement.control.editDetails}]]*/ '_View_Edit_Announcement'
-            }
-        };
-    </script>
-    <style>
-        .dataTables_paginate {
-            text-align: center!important;
+      var PAGE = {
+        urls: {
+          link: /*[[@{/announcements/}]]*/ "/announcements",
+          user: /*[[@{/users/}]]*/ "/users/"
+        },
+        i18n: {
+          edit: /*[[#{announcement.control.editDetails}]]*/ "_View_Edit_Announcement"
         }
-    </style>
+      };
+    </script>
 </head>
-
 <body>
-<div layout:fragment="page" ddl:bundle-includes="announcements-table" ddl:asset-css-excludes="jquery.datatables">
+<div layout:fragment="page">
     <main class="col-md-12">
         <h1 th:text="#{announcement.admin-menu}"></h1>
-        <div dt:conf="announcementTable">
-            <div dt:confType="callback" dt:type="createdRow" dt:function="announcement#announcementTable.detailsCallback" />
-            <div dt:confType="extrahtml" dt:uid="2">
-                <div class="btn-toolbar" style="margin-bottom: 1rem;" role="toolbar">
-                    <a class="btn btn-default" id="create-new-button" th:text="#{announcement.create.title}"
-                       th:href="@{create}">_Create NEW_</a>
-                </div>
-            </div>
-        </div>
-        <table id="announcementTable" dt:table="true" dt:url="@{/announcements/control/ajax/list}">
+        <table id="announcementTable" class="table table-striped" cellspacing="0" width="100%" data:url="@{/announcements/control/ajax/list}">
             <thead>
                 <tr role="row">
-                    <th id="message-header" dt:property="message" dt:searchable="true" th:text="#{announcement.control.message}"></th>
-                    <th width="150px" dt:property="user.username" dt:searchable="true" th:text="#{announcement.control.createdBy}"></th>
-                    <th width="150px" dt:property="createdDate" dt:renderFunction="datatables-utils#datatable.formatDate" dt:sortInitDirection="desc" th:text="#{announcement.control.createdDate}"></th>
-                    <th width="10px" dt:sortable="false" dt:searchable="false" dt:filterable="false" dt:renderFunction="announcement#announcementTable.renderDetailsButton"/>
+                    <th id="message-header" data-data="message"  data-orderable="false" th:text="#{announcement.control.message}"></th>
+                    <th width="150px" data-data="user.username" th:text="#{announcement.control.createdBy}"></th>
+                    <th width="150px" data-data="createdDate" th:text="#{announcement.control.createdDate}"></th>
                 </tr>
             </thead>
         </table>
     </main>
 </div>
+<th:block layout:fragment="scripts">
+    <script th:src="@{/resources/js/build/announcement-admin.bundle.js}"></script>
+</th:block>
 </body>
 </html>

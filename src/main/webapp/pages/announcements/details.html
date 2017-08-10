@@ -7,21 +7,19 @@
     <title th:text="#{announcement.admin-menu}">THIS IS SOMETHING WRONG</title>
     <script th:inline="javascript">
         var PAGE = {
+          urls: {
+            user: /*[[@{/users/}]]*/ '/users/'
+          },
             i18n: {
                 markRead: /*[[#{announcement.markRead}]]*/ 'Mark_as_Read',
                 markUnread: /*[[#{announcement.markUnread}]]*/ 'Mark_as_Unread'
             }
         };
     </script>
-    <style>
-        .dataTables_paginate {
-            text-align: center!important;
-        }
-    </style>
 </head>
 
 <body>
-<div layout:fragment="page" ddl:bundle-includes="announcements-table" ddl:asset-css-excludes="jquery.datatables">
+<div layout:fragment="page">
     <div class="col-md-8 col-md-offset-2 mrgn-tp-lg">
         <form name="update_announcement" class="ng-cloak"
               th:action="@{/announcements/{aID}/details(aID=${announcement.getId()})}"
@@ -57,20 +55,19 @@
                 <h2 class="panel-title" th:text="#{announcement.control.details.title}"></h2>
             </div>
             <div class="panel-body">
-                <div dt:conf="announcementUserTable">
-                    <div dt:confType="extrahtml" dt:uid="0">
-                        <p><span th:text="#{announcement.details.numusers}"></span>: <span th:text="${numReads}"></span>/<span th:text="${numTotal}"></span> </p>
-                    </div>
+                <div class="hidden">
+                    <div id="read-counts"><p><span th:text="#{announcement.details.numusers}"></span>: <span
+                        th:text="${numReads}"></span>/<span th:text="${numTotal}"></span></p></div>
                 </div>
-                <table id="announcementUserTable" dt:table="true"
-                       dt:url="@{/announcements/__${announcement.getId()}__/details/ajax/list}"
-                       dt:dom="0frtlip">
+                <table id="announcementTable"
+                       class="table table-striped" cellspacing="0" width="100%"
+                       data:url="@{/announcements/{id}/details/ajax/list(id=${announcement.getId()})}">
                     <thead>
                     <tr role="row">
-                        <th dt:property="username" dt:searchable="true" th:text="#{announcement.control.details.username}"></th>
-                        <th width="45px" dt:sortable="false" dt:renderFunction="announcement#announcementTable.renderStatus">Status</th>
-                        <th width="100px" dt:property="createdDate" dt:renderFunction="announcement#announcementTable.renderDate"
-                             dt:sortable="false" th:text="#{announcement.control.details.dateRead}"></th>
+                        <th data-data="username" th:text="#{announcement.control.details.username}"></th>
+                        <th width="45px" data-data="status" data-orderable="false">Status</th>
+                        <th width="100px" data-data="dateRead"
+                            data-orderable="false" th:text="#{announcement.control.details.dateRead}"></th>
                     </tr>
                     </thead>
                 </table>
@@ -79,5 +76,8 @@
     </div>
 
 </div>
+<th:block layout:fragment="scripts">
+    <script th:src="@{/resources/js/build/announcement-users.bundle.js}"></script>
+</th:block>
 </body>
 </html>

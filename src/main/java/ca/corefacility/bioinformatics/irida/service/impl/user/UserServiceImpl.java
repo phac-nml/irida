@@ -181,6 +181,15 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_USER')")
+	public Page<User> search(Specification<User> specification, PageRequest request) {
+		return super.search(specification, request);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@PreAuthorize(CHANGE_PASSWORD_PERMISSIONS)
 	public User changePassword(Long userId, String password) {
 		Set<ConstraintViolation<User>> violations = validatePassword(password);

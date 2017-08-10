@@ -1,31 +1,39 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
+import java.io.IOException;
+import java.security.Principal;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
 import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnnouncementSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesUtils;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTAnnouncementAdmin;
+import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTAnnouncementUser;
 import ca.corefacility.bioinformatics.irida.service.AnnouncementService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-import com.github.dandelion.datatables.core.ajax.DataSet;
-import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
-import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
-import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
-import java.security.Principal;
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  *  Controller for handling {@link ca.corefacility.bioinformatics.irida.model.announcements.Announcement} views
@@ -249,80 +257,50 @@ public class AnnouncementsController extends BaseController{
     }
 
     /**
-     * Get all announcements to be displayed in a datatable for admin control centre
+     * Get all announcements to be displayed in a DataTables for admin control centre
      *
-     * @param criteria
-     *                  Criteria/options for the datatable when rendering table items/rows
+     * @param params
+     * 		{@link DataTablesParams} for the current DataTable.
      *
-     * @return A map containing all of the data to be displayed in the datatables
-     *
+     * @return {@link DataTablesResponse}
      */
     @RequestMapping(value = "/control/ajax/list")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public @ResponseBody DatatablesResponse<Announcement> getAnnouncementsAdmin(
-            final @DatatablesParams DatatablesCriterias criteria) {
-        final int currentPage = DatatablesUtils.getCurrentPage(criteria);
-        final Map<String, Object> sortProperties = DatatablesUtils.getSortProperties(criteria);
-        final Sort.Direction direction = (Sort.Direction) sortProperties.get("direction");
-        String sortName = sortProperties.get("sort_string").toString();
-        sortName = sortName.replaceAll("announcement.", "");
-        if (sortName.equals("identifier")) {
-            sortName = "id";
-        }
-        if (sortName.equals("createdById")) {
-            sortName = "user";
-        }
+    public @ResponseBody
+    DataTablesResponse getAnnouncementsAdmin(@DataTablesRequest DataTablesParams params) {
+        final Page<Announcement> page = announcementService
+                .search(AnnouncementSpecification.searchAnnouncement(params.getSearchValue()),
+                        new PageRequest(params.getCurrentPage(), params.getLength(), params.getSort()));
 
-        final String searchString = criteria.getSearch();
-        final Page<Announcement> announcements = announcementService.search(AnnouncementSpecification
-                .searchAnnouncement(searchString), currentPage, criteria.getLength(), direction, sortName);
-        final List<Announcement> announcementDataTableResponseList = announcements.getContent().stream()
+        final List<DataTablesResponseModel> announcements = page.getContent().stream().map(DTAnnouncementAdmin::new)
                 .collect(Collectors.toList());
-
-        final DataSet<Announcement> announcementDataSet = new DataSet<>(announcementDataTableResponseList,
-                announcements.getTotalElements(), announcements.getTotalElements());
-
-        logger.trace("Total number of announcements: " + announcementDataSet.getTotalRecords());
-        return DatatablesResponse.build(announcementDataSet, criteria);
+        return new DataTablesResponse(params, page, announcements);
     }
 
     /**
      * Get user read status for current announcement
      *
      * @param announcementID
-     *              The announcement we want read status/information about
-     * @param criterias
-     *              Criteria/options for the datatable when rendering
-     * @return A map of objects containing user and announcement read information
+     * 		{@link Long} identifier for the current {@link Announcement}
+     * @param params
+     * 		{@link DataTablesParams} for the DataTable
+     *
+     * @return {@link DataTablesResponse}
      */
     @RequestMapping(value = "/{announcementID}/details/ajax/list", method = RequestMethod.GET)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public @ResponseBody DatatablesResponse<AnnouncementUserDataTableResponse> getUserAnnouncementInfoTable(
-            @PathVariable Long announcementID,
-            final @DatatablesParams DatatablesCriterias criterias) {
-
+    public @ResponseBody
+    DataTablesResponse getUserAnnouncementInfoTable(
+            @PathVariable Long announcementID, @DataTablesRequest DataTablesParams params) {
         final Announcement currentAnnouncement = announcementService.read(announcementID);
 
-        final int currentPage = DatatablesUtils.getCurrentPage(criterias);
-        final Map<String, Object> sortProperties = DatatablesUtils.getSortProperties(criterias);
-        final Sort.Direction direction = (Sort.Direction) sortProperties.get("direction");
-        String sortName = sortProperties.get("sort_string").toString();
-        sortName = sortName.replaceAll("announcement.", "");
-        if (sortName.equals("user")) {
-            sortName = "username";
-        }
-
-        final String searchString = criterias.getSearch();
-        final Page<User> users = userService.search(UserSpecification.searchUser(searchString), currentPage,
-                criterias.getLength(), direction, sortName);
-        final List<AnnouncementUserDataTableResponse> announcementUserDataTableResponses = users.getContent().stream()
-                .map(user -> new AnnouncementUserDataTableResponse(user.getUsername(), userHasRead(user, currentAnnouncement)))
+        final Page<User> page = userService.search(UserSpecification.searchUser(params.getSearchValue()),
+                new PageRequest(params.getCurrentPage(), params.getLength(), params.getSort()));
+        final List<DataTablesResponseModel> response = page.getContent().stream()
+                .map(user -> new DTAnnouncementUser(user, userHasRead(user, currentAnnouncement)))
                 .collect(Collectors.toList());
 
-        final DataSet<AnnouncementUserDataTableResponse> announcementUserDataSet = new DataSet<>(announcementUserDataTableResponses,
-                users.getTotalElements(), users.getTotalElements());
-
-        return DatatablesResponse.build(announcementUserDataSet, criterias);
+        return new DataTablesResponse(params, page, response);
     }
 
     /**
@@ -339,66 +317,6 @@ public class AnnouncementsController extends BaseController{
         final List<AnnouncementUserJoin> readUsers = announcementService.getReadUsersForAnnouncement(announcement);
         final Optional<AnnouncementUserJoin> currentAnnouncement = readUsers.stream()
                 .filter(j -> j.getObject().equals(user)).findAny();
-        if (currentAnnouncement.isPresent()) {
-            return currentAnnouncement.get();
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Utility/Container class for returning information about {@link Announcement}s and {@link User}s and their read statuses
-     */
-    private static final class AnnouncementUserDataTableResponse implements Comparable<AnnouncementUserDataTableResponse> {
-        private final String username;
-        private final AnnouncementUserJoin join;
-        private final Date createdDate;
-        private final boolean hasRead;
-
-        public AnnouncementUserDataTableResponse(final String username, final AnnouncementUserJoin join) {
-            this.username = username;
-            this.join = join;
-            if (join != null) {
-                createdDate = join.getCreatedDate();
-                hasRead = true;
-            } else {
-                createdDate = new Date(0);
-                hasRead = false;
-            }
-        }
-
-        /**
-         * Comparator method to compare dates for each read receipt
-         * @param response
-         *      The object to compare to
-         * @return
-         *      -1 if this object is newer than {@param response}
-         *      0 if they have the same date
-         *      1 if {@param repsonse} is newer than this object
-         */
-        public int compareTo(AnnouncementUserDataTableResponse response) {
-            return this.createdDate.compareTo(response.createdDate);
-        }
-
-        @SuppressWarnings("unused")
-        public String getUsername() {
-            return this.username;
-        }
-
-        @SuppressWarnings("unused")
-        public AnnouncementUserJoin getJoin() {
-            return this.join;
-        }
-
-        @SuppressWarnings("unused")
-        public Date getCreatedDate() {
-            return this.createdDate;
-        }
-
-        @SuppressWarnings("unused")
-        public boolean getHasRead() {
-            return this.hasRead;
-        }
-
+        return currentAnnouncement.orElse(null);
     }
 }

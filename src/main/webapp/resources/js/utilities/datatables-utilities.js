@@ -85,6 +85,17 @@ export function createDeleteBtn(data = {}) {
   return btn;
 }
 
+export function createEditLink(data = {}) {
+  const link = document.createElement("a");
+  link.href = data.link;
+  link.classList.add("btn", "btn-default", "edit-link");
+
+  const icon = createIcon({ icon: ICONS.edit, fixed: true });
+  const tooltiped = addTooltip({ dom: icon, title: data.title });
+  link.append(tooltiped);
+  return link;
+}
+
 /**
  * Create a button group containing action buttons for this row.
  * @param {array} buttons list of DOM nodes for buttons.
