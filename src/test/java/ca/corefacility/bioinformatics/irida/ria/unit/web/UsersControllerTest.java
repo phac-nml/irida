@@ -59,10 +59,6 @@ public class UsersControllerTest {
 	private static final String USERS_DETAILS_PAGE = "user/user_details";
 	private static final String USER_EDIT_PAGE = "user/edit";
 
-	// DATATABLES position for project information
-	private static final int USER_ID_TABLE_LOCATION = 0;
-	private static final int USERNAME_TABLE_LOCATION = 1;
-
 	private static final long NUM_TOTAL_ELEMENTS = 2L;
 	private static final String USER_NAME = "testme";
 
