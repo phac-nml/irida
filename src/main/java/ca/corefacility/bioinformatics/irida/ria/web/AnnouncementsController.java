@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.ria.web;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -339,61 +338,5 @@ public class AnnouncementsController extends BaseController{
         final Optional<AnnouncementUserJoin> currentAnnouncement = readUsers.stream()
                 .filter(j -> j.getObject().equals(user)).findAny();
         return currentAnnouncement.orElse(null);
-    }
-
-    /**
-     * Utility/Container class for returning information about {@link Announcement}s and {@link User}s and their read statuses
-     */
-    private static final class AnnouncementUserDataTableResponse implements Comparable<AnnouncementUserDataTableResponse> {
-        private final String username;
-        private final AnnouncementUserJoin join;
-        private final Date createdDate;
-        private final boolean hasRead;
-
-        public AnnouncementUserDataTableResponse(final String username, final AnnouncementUserJoin join) {
-            this.username = username;
-            this.join = join;
-            if (join != null) {
-                createdDate = join.getCreatedDate();
-                hasRead = true;
-            } else {
-                createdDate = new Date(0);
-                hasRead = false;
-            }
-        }
-
-        /**
-         * Comparator method to compare dates for each read receipt
-         * @param response
-         *      The object to compare to
-         * @return
-         *      -1 if this object is newer than {@param response}
-         *      0 if they have the same date
-         *      1 if {@param repsonse} is newer than this object
-         */
-        public int compareTo(AnnouncementUserDataTableResponse response) {
-            return this.createdDate.compareTo(response.createdDate);
-        }
-
-        @SuppressWarnings("unused")
-        public String getUsername() {
-            return this.username;
-        }
-
-        @SuppressWarnings("unused")
-        public AnnouncementUserJoin getJoin() {
-            return this.join;
-        }
-
-        @SuppressWarnings("unused")
-        public Date getCreatedDate() {
-            return this.createdDate;
-        }
-
-        @SuppressWarnings("unused")
-        public boolean getHasRead() {
-            return this.hasRead;
-        }
-
     }
 }
