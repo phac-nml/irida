@@ -75,7 +75,6 @@ public class UsersController {
 	private static final String CREATE_USER_PAGE = "user/create";
 	private static final String ERROR_PAGE = "error";
 	private static final String SORT_BY_ID = "id";
-	private static final String SORT_ASCENDING = "asc";
 	private static final String ROLE_MESSAGE_PREFIX = "systemrole.";
 	private static final Logger logger = LoggerFactory.getLogger(UsersController.class);
 
