@@ -10,6 +10,8 @@ const $table = $("#linelist");
 function defineTable() {
   const columnDefs = (() => {
     const cols = [
+      // The first column is ALWAYS the IRIDA Sample name.
+      // This will render it as a link to the full sample.
       {
         targets: 0,
         render(data, type, full) {
