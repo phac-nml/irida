@@ -768,7 +768,6 @@ INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id)
 INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (2, 5);
 INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (2, 8);
 INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (2, 11);
-INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (2, 12);
 
 -- PROJECT METADATA TEMPLATE
 INSERT INTO `project_metadata_template` (id, created_date, project_id, template_id) VALUES (1, '2016-06-10 08:05:53',4, 1);
