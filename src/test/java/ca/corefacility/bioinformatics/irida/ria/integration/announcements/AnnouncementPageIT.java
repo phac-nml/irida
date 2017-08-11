@@ -121,7 +121,7 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver{
 		detailPage.enterMessage(newMessage);
 
 		String announcementMessage = controlPage.getAnnouncement(4);
-		assertTrue("Unexpected message content", announcementMessage.contains(newMessage));
+		assertTrue("Unexpected message content", newMessage.contains(announcementMessage));
 	}
 
     @Test
