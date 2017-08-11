@@ -1,11 +1,7 @@
 import $ from "jquery";
-import "../../vendor/datatables/datatables";
+import { createItemLink, generateColumnOrderInfo, tableConfig } from "../../utilities/datatables-utilities";
 import { formatDate } from "../../utilities/date-utilities";
-import {
-  createItemLink,
-  generateColumnOrderInfo,
-  tableConfig
-} from "../../utilities/datatables-utilities";
+import "../../vendor/datatables/datatables";
 
 const COLUMNS = generateColumnOrderInfo();
 const $table = $("#announcementTable");
@@ -44,3 +40,6 @@ const config = Object.assign({}, tableConfig, {
 });
 
 $table.DataTable(config);
+
+const btns = $("#create-btn-wrapper").html();
+$(".buttons").html(btns);
