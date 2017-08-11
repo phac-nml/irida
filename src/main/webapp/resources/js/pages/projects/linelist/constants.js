@@ -1,7 +1,8 @@
 export const EVENTS = {
   TABLE: {
-    columnVisibility: 'columnVisibility',
-    colReorder: 'colReorder',
-    template: 'template'
+    columnVisibility: "columnVisibility",
+    colReorder: "colReorder",
+    template: "template",
+    reset: "resetTable"
   }
 };
