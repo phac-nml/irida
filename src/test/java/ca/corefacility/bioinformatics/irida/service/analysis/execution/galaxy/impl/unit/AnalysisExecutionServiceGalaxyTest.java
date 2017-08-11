@@ -57,7 +57,9 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsync;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyCleanupAsync;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisResultsWriterService;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 /**
@@ -83,6 +85,10 @@ public class AnalysisExecutionServiceGalaxyTest {
 	private Analysis analysisResults;
 	@Mock
 	private IridaWorkflowsService iridaWorkflowsService;
+	@Mock
+	private AnalysisResultsWriterService analysisResultsWriterService;
+	@Mock
+	private SampleService sampleService;
 
 	@Mock
 	private IridaWorkflow iridaWorkflow;
@@ -147,7 +153,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 
 		AnalysisExecutionServiceGalaxyAsync workflowManagementAsync = new AnalysisExecutionServiceGalaxyAsync(
 				analysisSubmissionService, analysisService, galaxyWorkflowService, analysisWorkspaceService,
-				iridaWorkflowsService);
+				iridaWorkflowsService, analysisResultsWriterService, sampleService);
 		AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionServiceGalaxyCleanupAsync = new AnalysisExecutionServiceGalaxyCleanupAsync(
 				analysisSubmissionService, galaxyWorkflowService, galaxyHistoriesService, galaxyLibrariesService);
 		workflowManagement = new AnalysisExecutionServiceGalaxy(analysisSubmissionService, galaxyHistoriesService,

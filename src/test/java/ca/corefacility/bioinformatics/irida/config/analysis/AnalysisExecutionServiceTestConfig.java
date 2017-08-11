@@ -38,6 +38,7 @@ import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisE
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsync;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyCleanupAsync;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisResultsWriterService;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisCollectionServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisParameterServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisProvenanceServiceGalaxy;
@@ -91,10 +92,13 @@ public class AnalysisExecutionServiceTestConfig {
 	private GalaxyWorkflowService galaxyWorkflowService;
 	
 	@Autowired
-	SampleRemoteService sampleRemoteService;
+	private SampleRemoteService sampleRemoteService;
 	
 	@Autowired
-	SequencingObjectService sequencingObjectService;
+	private SequencingObjectService sequencingObjectService;
+	
+	@Autowired
+	private AnalysisResultsWriterService analysisResultsWriterService;
 
 	@Lazy
 	@Bean
@@ -107,7 +111,7 @@ public class AnalysisExecutionServiceTestConfig {
 	@Bean
 	public AnalysisExecutionServiceGalaxyAsync analysisExecutionServiceGalaxyAsync() {
 		return new AnalysisExecutionServiceGalaxyAsync(analysisSubmissionService, analysisService,
-				galaxyWorkflowService, analysisWorkspaceService(), iridaWorkflowsService);
+				galaxyWorkflowService, analysisWorkspaceService(), iridaWorkflowsService, analysisResultsWriterService, sampleService);
 	}
 	
 	@Lazy
