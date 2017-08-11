@@ -4,12 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.security.Principal;
 import java.util.Date;
@@ -26,13 +21,15 @@ import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.ExtendedModelMap;
+
+import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -42,14 +39,15 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.web.UsersController;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTUser;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-
-import com.google.common.collect.Lists;
 
 /**
  * Unit test for {@link }
@@ -60,10 +58,6 @@ public class UsersControllerTest {
 	private static final String USERS_PAGE = "user/list";
 	private static final String USERS_DETAILS_PAGE = "user/user_details";
 	private static final String USER_EDIT_PAGE = "user/edit";
-
-	// DATATABLES position for project information
-	private static final int USER_ID_TABLE_LOCATION = 0;
-	private static final int USERNAME_TABLE_LOCATION = 1;
 
 	private static final long NUM_TOTAL_ELEMENTS = 2L;
 	private static final String USER_NAME = "testme";
@@ -104,22 +98,20 @@ public class UsersControllerTest {
 	@Test
 	public void testGetAjaxUserList() {
 
-		Principal principal = () -> USER_NAME;
-
-		when(userService.search(any(Specification.class), eq(0), eq(10), eq(Sort.Direction.ASC), eq("id"))).thenReturn(
+		when(userService.search(any(Specification.class), any(PageRequest.class))).thenReturn(
 				userPage);
 		when(messageSource.getMessage(any(String.class), eq(null), any(Locale.class))).thenReturn("User");
+		DataTablesParams params = mock(DataTablesParams.class);
+		when(params.getLength()).thenReturn(1);
 
-		Map<String, Object> response = controller.getAjaxUserList(principal, 0, 10, 1, 0, "asc", "");
+		DataTablesResponse response = controller.getAjaxUserList(params, Locale.US);
 
-		List<List<String>> userList = (List<List<String>>) response.get(DataTable.RESPONSE_PARAM_DATA);
+		List<DataTablesResponseModel> users = response.getData();
 
-		assertEquals(NUM_TOTAL_ELEMENTS, userList.size());
-		List<String> list = userList.get(0);
-		assertEquals("1", list.get(USER_ID_TABLE_LOCATION));
-		assertEquals("tom", list.get(USERNAME_TABLE_LOCATION));
-
-		verify(userService).search(any(Specification.class), eq(0), eq(10), eq(Sort.Direction.ASC), eq("id"));
+		assertEquals(NUM_TOTAL_ELEMENTS, users.size());
+		DTUser firstUser = (DTUser) users.get(0);
+		assertEquals("Tom", firstUser.getFirstName());
+		assertEquals("tom@nowhere.com", firstUser.getEmail());
 		verify(messageSource, times(2)).getMessage(any(String.class), eq(null), any(Locale.class));
 	}
 
