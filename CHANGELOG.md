@@ -21,7 +21,7 @@ Changes
 * [API]: Added REST API endpoints for accessing all analyses associated with a project and for accessing automated analyses.
 * [UI]: Added ability to concatenate sequence files in a sample.
 * [UI]: New feature to export metadata through the Project line list view.
-* [Developer]: Updated to using latest verion of `maven-frontend-plugin` and `yarn`.
+* [Developer]: Updated to using latest version of `maven-frontend-plugin`, `nodejs` and `yarn`.
 
 0.16.0 to 0.17.0
 ----------------
