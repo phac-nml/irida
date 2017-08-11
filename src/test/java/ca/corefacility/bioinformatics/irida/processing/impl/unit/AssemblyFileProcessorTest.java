@@ -46,8 +46,6 @@ public class AssemblyFileProcessorTest {
 	@Mock
 	private ProjectSampleJoinRepository psjRepository;
 	@Mock
-	private SampleRepository sampleRepository;
-	@Mock
 	private AnalysisSubmissionRepository submissionRepository;
 	@Mock
 	private UserRepository userRepository;
@@ -61,7 +59,7 @@ public class AssemblyFileProcessorTest {
 		MockitoAnnotations.initMocks(this);
 
 		processor = new AssemblyFileProcessor(objectRepository, submissionRepository, workflowsService, userRepository,
-				ssoRepository, psjRepository, sampleRepository);
+				ssoRepository, psjRepository);
 
 		UUID workflowUUID = UUID.randomUUID();
 		IridaWorkflowDescription workflowDescription = new IridaWorkflowDescription(workflowUUID, null, null, null,

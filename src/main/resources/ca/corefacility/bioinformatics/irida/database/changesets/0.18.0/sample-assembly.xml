@@ -20,10 +20,10 @@
 					referencedTableName="genome_assembly" referencedColumnNames="id"
 					foreignKeyName="FK_GENOME_ASSEMBLY_ANALYSIS" />
 			</column>
-			<column name="analysis_submission_id" type="bigint(20)">
-				<constraints referencedTableName="analysis_submission"
+			<column name="analysis_id" type="bigint(20)">
+				<constraints referencedTableName="analysis"
 					referencedColumnNames="id" nullable="false"
-					foreignKeyName="FK_GENOME_ASSEMBLY_ANALYSIS_ANALYSIS_SUBMISSION" />
+					foreignKeyName="FK_GENOME_ASSEMBLY_ANALYSIS_ANALYSIS" />
 			</column>
 		</createTable>
 
