@@ -173,18 +173,8 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_USER')")
-	public Page<User> search(Specification<User> specification, int page, int size, Direction order,
-			String... sortProperties) {
-		return super.search(specification, page, size, order, sortProperties);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@PreAuthorize("hasRole('ROLE_USER')")
-	public Page<User> search(Specification<User> specification, PageRequest request) {
-		return super.search(specification, request);
+	public Page<User> search(Specification<User> specification, PageRequest pageRequest) {
+		return super.search(specification, pageRequest);
 	}
 
 	/**

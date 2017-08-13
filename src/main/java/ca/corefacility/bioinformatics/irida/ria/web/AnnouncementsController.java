@@ -279,28 +279,24 @@ public class AnnouncementsController extends BaseController{
 
     /**
      * Get user read status for current announcement
-     *
-     * @param announcementID
-     * 		{@link Long} identifier for the current {@link Announcement}
-     * @param params
-     * 		{@link DataTablesParams} for the DataTable
-     *
-     * @return {@link DataTablesResponse}
+     * @param announcementID {@link Long} identifier for the {@link Announcement}
+     * @param params {@link DataTablesParams} parameters for current DataTable
+     * @return {@link DataTablesResponse} containing the list of users.
      */
     @RequestMapping(value = "/{announcementID}/details/ajax/list", method = RequestMethod.GET)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public @ResponseBody
-    DataTablesResponse getUserAnnouncementInfoTable(
-            @PathVariable Long announcementID, @DataTablesRequest DataTablesParams params) {
+    public @ResponseBody DataTablesResponse getUserAnnouncementInfoTable(
+            @PathVariable Long announcementID,
+            final @DataTablesRequest DataTablesParams params) {
+
         final Announcement currentAnnouncement = announcementService.read(announcementID);
 
-        final Page<User> page = userService.search(UserSpecification.searchUser(params.getSearchValue()),
-                new PageRequest(params.getCurrentPage(), params.getLength(), params.getSort()));
-        final List<DataTablesResponseModel> response = page.getContent().stream()
+        final Page<User> page = userService.search(UserSpecification.searchUser(params.getSearchValue()), new PageRequest(params.getCurrentPage(), params.getLength(), params.getSort()));
+        final List<DataTablesResponseModel> announcementUsers = page.getContent().stream()
                 .map(user -> new DTAnnouncementUser(user, userHasRead(user, currentAnnouncement)))
                 .collect(Collectors.toList());
 
-        return new DataTablesResponse(params, page, response);
+        return new DataTablesResponse(params, page, announcementUsers);
     }
 
     /**

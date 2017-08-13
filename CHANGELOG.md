@@ -14,12 +14,13 @@ Changes
 * [Developer]: Checking if single end files have been synchronized to stop duplication.
 * [Developer]: Changed relationship of sequence files to a single collection in AnalysisSubmission instead of a collection for each file type.
 * [Documentation]: Rewrote Galaxy installation guide, added sections for linking IRIDA to existing Galaxy or to a pre-build Docker image.
-* [Developer]: Removed `Dandelion` dependencies from the dashboard & projects listing pages.
-* [Developer]: Created new DataTables reqest handler to enable removing Dandelion DataTables.
+* [Developer]: Removed `Dandelion` dependencies from the dashboard, projects listing, & users listing pages.
+* [Developer]: Created new DataTables request handler to enable removing Dandelion DataTables.
 * [API]: Performance improvements when listing analyses of a specific type in the REST API.
 * [Developer]: Changed file processing chain to try to avoid errors in processing.
 * [API]: Added REST API endpoints for accessing all analyses associated with a project and for accessing automated analyses.
 * [UI]: Added ability to concatenate sequence files in a sample.
+* [UI]: New feature to export metadata through the Project line list view.
 
 0.16.0 to 0.17.0
 ----------------

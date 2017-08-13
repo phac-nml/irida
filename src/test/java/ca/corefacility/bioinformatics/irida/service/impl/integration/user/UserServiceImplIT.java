@@ -1,9 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration.user;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -14,11 +11,12 @@ import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -42,6 +40,7 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -349,14 +348,14 @@ public class UserServiceImplIT {
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testSearchUser(){
 		String search = "Mr";
-		Page<User> searchUser = userService.search(UserSpecification.searchUser(search), 0, 10, Direction.ASC, "id");
+		Page<User> searchUser = userService.search(UserSpecification.searchUser(search), new PageRequest(0, 10, new Sort(Direction.ASC, "id")));
 		assertEquals(3,searchUser.getContent().size());
 		for(User u : searchUser){
 			assertTrue(u.getFirstName().contains("Mr"));
 		}
 		
 		search = "User";
-		searchUser = userService.search(UserSpecification.searchUser(search), 0, 10, Direction.ASC, "id");
+		searchUser = userService.search(UserSpecification.searchUser(search), new PageRequest(0, 10, new Sort(Direction.ASC, "id")));
 		assertEquals(2,searchUser.getContent().size());
 	}
 

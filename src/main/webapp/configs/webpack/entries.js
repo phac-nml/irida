@@ -18,7 +18,9 @@ module.exports = {
   "sample-files": "./resources/js/pages/samples/sample-files.js",
   "project-reference-files":
     "./resources/js/pages/projects/project-reference-files.js",
+  "analyses-table": "./resources/js/pages/analyses/analyses-table.js",
   "clients-list": "./resources/js/pages/clients/clients-list.js",
+  "users-list": "./resources/js/pages/users/users-list.js",
   "announcement-users":
     "./resources/js/pages/announcement/announcement-users.js",
   "announcement-admin":
