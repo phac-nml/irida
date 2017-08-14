@@ -169,7 +169,7 @@ The analysis details page shows you more detailed information about your pipelin
 
 ![Analysis details page.](images/analysis-details-page.png)
 
-To download output files, you can use the "Output Files" section from this page.  To download an individual file, click on the file name.  To download all the *all* the outputs produced by the pipeline, you can click on the "Download Files" button.
+To download output files, you can use the "Output Files" section from this page.  To download an individual file, click on the file name.  To download *all* the outputs produced by the pipeline, you can click on the "Download Files" button.
 
 ![Analysis download.](images/analysis-details-download.png)
 
