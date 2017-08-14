@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.service.analysis.storage;
+package ca.corefacility.bioinformatics.irida.service.analysis.sample;
 
 import java.util.Collection;
 
@@ -6,7 +6,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 
 /**
- * A service for updating samples with results from a particular analysis.
+ * A service for updating samples with results from a particular {@link Analysis} type.
  */
 public interface AnalysisSampleUpdatorService {
 	/**

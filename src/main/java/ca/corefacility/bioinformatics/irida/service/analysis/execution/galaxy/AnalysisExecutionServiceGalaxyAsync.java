@@ -30,7 +30,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflo
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.analysis.annotations.RunAsUser;
-import ca.corefacility.bioinformatics.irida.service.analysis.storage.AnalysisSubmissionSampleService;
+import ca.corefacility.bioinformatics.irida.service.analysis.sample.AnalysisSubmissionSampleService;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 

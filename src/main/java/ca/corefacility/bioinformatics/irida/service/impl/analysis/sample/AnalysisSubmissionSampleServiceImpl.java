@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.service.analysis.storage;
+package ca.corefacility.bioinformatics.irida.service.impl.analysis.sample;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -15,8 +15,13 @@ import org.springframework.stereotype.Service;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.service.analysis.sample.AnalysisSampleUpdatorService;
+import ca.corefacility.bioinformatics.irida.service.analysis.sample.AnalysisSubmissionSampleService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
+/**
+ * Updates samples from an {@link AnalysisSubmission} with results from the analysis.
+ */
 @Service
 public class AnalysisSubmissionSampleServiceImpl implements AnalysisSubmissionSampleService {
 

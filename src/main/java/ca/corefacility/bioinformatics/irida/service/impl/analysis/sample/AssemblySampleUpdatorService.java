@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.service.analysis.storage;
+package ca.corefacility.bioinformatics.irida.service.impl.analysis.sample;
 
 import java.util.Collection;
 
@@ -12,6 +12,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisAssemblyAnnotation;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
+import ca.corefacility.bioinformatics.irida.service.analysis.sample.AnalysisSampleUpdatorService;
 
 /**
  * Updates a sample with the results from a genome assembly.

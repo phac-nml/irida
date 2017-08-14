@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.config.analysis;
 
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,10 +9,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 
 import com.github.jmchilton.blend4j.galaxy.JobsClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
-import com.google.common.collect.ImmutableMap;
 
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisAssemblyAnnotation;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
@@ -26,9 +21,7 @@ import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisE
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsync;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyCleanupAsync;
-import ca.corefacility.bioinformatics.irida.service.analysis.storage.AnalysisSampleUpdatorService;
-import ca.corefacility.bioinformatics.irida.service.analysis.storage.AnalysisSubmissionSampleService;
-import ca.corefacility.bioinformatics.irida.service.analysis.storage.AssemblySampleUpdatorService;
+import ca.corefacility.bioinformatics.irida.service.analysis.sample.AnalysisSubmissionSampleService;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisCollectionServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisParameterServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisProvenanceServiceGalaxy;
@@ -87,15 +80,6 @@ public class AnalysisExecutionServiceConfig {
 	
 	@Autowired
 	private JobsClient jobsClient;
-	
-	@Autowired
-	private AssemblySampleUpdatorService assemblySampleUpdatorService;
-
-	@Bean
-	public Map<Class<? extends Analysis>, AnalysisSampleUpdatorService> analysisSampleUpdatorMap() {
-		return ImmutableMap.<Class<? extends Analysis>, AnalysisSampleUpdatorService>builder()
-				.put(AnalysisAssemblyAnnotation.class, assemblySampleUpdatorService).build();
-	}
 	
 	@Lazy
 	@Bean
