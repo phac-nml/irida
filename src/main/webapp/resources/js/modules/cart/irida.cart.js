@@ -240,16 +240,28 @@
 
   function GalaxyDialogCtrl($uibModalInstance, $timeout, $scope, CartService, GalaxyExportService, openedByCart, multiProject, sampleIds, projectId) {
     var vm = this;
-    vm.addtohistory=true;
-    vm.makepairedcollection=true;
+    vm.addtohistory = true;
+    vm.makepairedcollection = true;
     vm.showOauthIframe = false;
     vm.showEmailLibInput = true;
-    vm.redirectURI = TL.BASE_URL + 'galaxy/auth_code';
+    vm.redirectURI = TL.BASE_URL + "galaxy/auth_code";
+    vm.validation = {};
 
-    vm.upload = function () {
-      vm.makeOauth2AuthRequest(TL.galaxyClientID);
-      vm.showEmailLibInput = false;
-      vm.showOauthIframe = true;
+    vm.upload = function() {
+      vm.validation = {};
+      if (vm.email === "") {
+        vm.validation.email = true;
+      }
+
+      if (vm.name === "") {
+        vm.validation.name = true;
+      }
+
+      if (Object.keys(vm.validation).length === 0) {
+        vm.makeOauth2AuthRequest(TL.galaxyClientID);
+        vm.showEmailLibInput = false;
+        vm.showOauthIframe = true;
+      }
     };
 
     vm.makeOauth2AuthRequest = function (clientID) {
