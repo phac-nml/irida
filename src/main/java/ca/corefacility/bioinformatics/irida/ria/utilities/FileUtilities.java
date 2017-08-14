@@ -40,27 +40,26 @@ public class FileUtilities {
 	 *            Name fo the file to create
 	 * @param files
 	 *            Set of {@link AnalysisOutputFile}
-	 * @throws IOException
-	 *             if the file cannot be read from the filesystem.
 	 */
 	public static void createAnalysisOutputFileZippedResponse(HttpServletResponse response, String fileName,
-			Set<AnalysisOutputFile> files) throws IOException {
+			Set<AnalysisOutputFile> files) {
 		/*
 		 * Replacing spaces and commas as they cause issues with
 		 * Content-disposition response header.
 		 */
 		fileName = fileName.replaceAll(" ", "_");
 		fileName = fileName.replaceAll(",", "");
-		
+
 		logger.debug("Creating zipped file response. [" + fileName + "]");
-		
+
 		// set the response headers before we do *ANYTHING* so that the filename
 		// actually appears in the download dialog
 		response.setHeader(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + fileName + EXTENSION_ZIP);
 		// for zip file
 		response.setContentType(CONTENT_TYPE_APPLICATION_ZIP);
 
-		try (ZipOutputStream outputStream = new ZipOutputStream(response.getOutputStream())) {
+		try (ServletOutputStream responseStream = response.getOutputStream();
+				ZipOutputStream outputStream = new ZipOutputStream(responseStream)) {
 
 			for (AnalysisOutputFile file : files) {
 				if (!Files.exists(file.getFile())) {
@@ -82,7 +81,7 @@ public class FileUtilities {
 				// 4) Close the current entry in the archive in preparation for
 				// the next entry.
 				outputStream.closeEntry();
-				
+
 				ObjectMapper objectMapper = new ObjectMapper();
 				byte[] bytes = objectMapper.writeValueAsBytes(file);
 				outputStream.putNextEntry(new ZipEntry(zipEntryName.toString() + "-prov.json"));
@@ -100,24 +99,18 @@ public class FileUtilities {
 					+ "but it might be something else, see the stack trace below for more information.", e);
 		} catch (Exception e) {
 			logger.error("Download failed...", e);
-		} finally {
-			response.getOutputStream().close();
 		}
 	}
 
 	/**
-	 * Utility method for download single file from
-	 * an analysis.
+	 * Utility method for download single file from an analysis.
 	 *
 	 * @param response
 	 *            {@link HttpServletResponse}
 	 * @param files
 	 *            Set of {@link AnalysisOutputFile}
-	 * @throws IOException
-	 *             if the file cannot be read from the filesystem.
 	 */
-	public static void createSingleFileResponse(HttpServletResponse response, AnalysisOutputFile file)
-			throws IOException {
+	public static void createSingleFileResponse(HttpServletResponse response, AnalysisOutputFile file) {
 		String fileName = file.getLabel();
 
 		fileName = fileName.replaceAll(" ", "_");
@@ -137,8 +130,6 @@ public class FileUtilities {
 					+ "but it might be something else, see the stack trace below for more information.", e);
 		} catch (Exception e) {
 			logger.error("Download failed...", e);
-		} finally {
-			response.getOutputStream().close();
 		}
 	}
 

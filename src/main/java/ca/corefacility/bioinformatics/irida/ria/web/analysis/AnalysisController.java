@@ -593,23 +593,20 @@ public class AnalysisController {
 	 * Download all output files from an {@link AnalysisSubmission}
 	 *
 	 * @param analysisSubmissionId
-	 * 		Id for a {@link AnalysisSubmission}
+	 *            Id for a {@link AnalysisSubmission}
 	 * @param response
-	 * 		{@link HttpServletResponse}
-	 *
-	 * @throws IOException
-	 * 		if we fail to create a zip file.
+	 *            {@link HttpServletResponse}
 	 */
 	@RequestMapping(value = "/ajax/download/{analysisSubmissionId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public void getAjaxDownloadAnalysisSubmission(@PathVariable Long analysisSubmissionId, HttpServletResponse response)
-			throws IOException {
+	public void getAjaxDownloadAnalysisSubmission(@PathVariable Long analysisSubmissionId,
+			HttpServletResponse response) {
 		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(analysisSubmissionId);
-		
+
 		Analysis analysis = analysisSubmission.getAnalysis();
 		Set<AnalysisOutputFile> files = analysis.getAnalysisOutputFiles();
 		FileUtilities.createAnalysisOutputFileZippedResponse(response, analysisSubmission.getName(), files);
 	}
-	
+
 	/**
 	 * Download single output files from an {@link AnalysisSubmission}
 	 *
@@ -619,13 +616,10 @@ public class AnalysisController {
 	 *            the id of the file to download
 	 * @param response
 	 *            {@link HttpServletResponse}
-	 *
-	 * @throws IOException
-	 *             if we fail to read the file
 	 */
 	@RequestMapping(value = "/ajax/download/{analysisSubmissionId}/file/{fileId}")
 	public void getAjaxDownloadAnalysisSubmissionIndividualFile(@PathVariable Long analysisSubmissionId,
-			@PathVariable Long fileId, HttpServletResponse response) throws IOException {
+			@PathVariable Long fileId, HttpServletResponse response) {
 		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(analysisSubmissionId);
 
 		Analysis analysis = analysisSubmission.getAnalysis();
