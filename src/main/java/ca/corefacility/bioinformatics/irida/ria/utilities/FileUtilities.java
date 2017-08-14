@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.jackson.map.ObjectMapper;
@@ -26,6 +27,7 @@ public class FileUtilities {
 	public static final String CONTENT_DISPOSITION = "Content-Disposition";
 	public static final String ATTACHMENT_FILENAME = "attachment;filename=";
 	public static final String CONTENT_TYPE_APPLICATION_ZIP = "application/zip";
+	public static final String CONTENT_TYPE_TEXT = "text/plain";
 	public static final String EXTENSION_ZIP = ".zip";
 
 	/**
@@ -91,6 +93,43 @@ public class FileUtilities {
 			// Tell the output stream that you are finished downloading.
 			outputStream.finish();
 			outputStream.close();
+		} catch (IOException e) {
+			// this generally means that the user has cancelled the download
+			// from their web browser; we can safely ignore this
+			logger.debug("This *probably* means that the user cancelled the download, "
+					+ "but it might be something else, see the stack trace below for more information.", e);
+		} catch (Exception e) {
+			logger.error("Download failed...", e);
+		} finally {
+			response.getOutputStream().close();
+		}
+	}
+
+	/**
+	 * Utility method for download single file from
+	 * an analysis.
+	 *
+	 * @param response
+	 *            {@link HttpServletResponse}
+	 * @param files
+	 *            Set of {@link AnalysisOutputFile}
+	 * @throws IOException
+	 *             if the file cannot be read from the filesystem.
+	 */
+	public static void createSingleFileResponse(HttpServletResponse response, AnalysisOutputFile file)
+			throws IOException {
+		String fileName = file.getLabel();
+
+		fileName = fileName.replaceAll(" ", "_");
+		fileName = fileName.replaceAll(",", "");
+
+		// set the response headers before we do *ANYTHING* so that the filename
+		// actually appears in the download dialog
+		response.setHeader(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + fileName);
+		response.setContentType(CONTENT_TYPE_TEXT);
+
+		try (ServletOutputStream outputStream = response.getOutputStream()) {
+			Files.copy(file.getFile(), response.getOutputStream());
 		} catch (IOException e) {
 			// this generally means that the user has cancelled the download
 			// from their web browser; we can safely ignore this

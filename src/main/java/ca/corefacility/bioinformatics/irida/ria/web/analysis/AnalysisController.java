@@ -609,6 +609,35 @@ public class AnalysisController {
 		Set<AnalysisOutputFile> files = analysis.getAnalysisOutputFiles();
 		FileUtilities.createAnalysisOutputFileZippedResponse(response, analysisSubmission.getName(), files);
 	}
+	
+	/**
+	 * Download single output files from an {@link AnalysisSubmission}
+	 *
+	 * @param analysisSubmissionId
+	 *            Id for a {@link AnalysisSubmission}
+	 * @param fileId
+	 *            the id of the file to download
+	 * @param response
+	 *            {@link HttpServletResponse}
+	 *
+	 * @throws IOException
+	 *             if we fail to read the file
+	 */
+	@RequestMapping(value = "/ajax/download/{analysisSubmissionId}/file/{fileId}")
+	public void getAjaxDownloadAnalysisSubmissionIndividualFile(@PathVariable Long analysisSubmissionId,
+			@PathVariable Long fileId, HttpServletResponse response) throws IOException {
+		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(analysisSubmissionId);
+
+		Analysis analysis = analysisSubmission.getAnalysis();
+		Set<AnalysisOutputFile> files = analysis.getAnalysisOutputFiles();
+
+		Optional<AnalysisOutputFile> optFile = files.stream().filter(f -> f.getId().equals(fileId)).findAny();
+		if (!optFile.isPresent()) {
+			throw new EntityNotFoundException("Could not find file with id " + fileId);
+		}
+
+		FileUtilities.createSingleFileResponse(response, optFile.get());
+	}
 
 	/**
 	 * Get the current status for a given {@link AnalysisSubmission}
