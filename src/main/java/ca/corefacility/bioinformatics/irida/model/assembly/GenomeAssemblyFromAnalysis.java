@@ -15,7 +15,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisAssemblyAnnotation;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 /**
  * Defines a genome assembly from an IRIDA-based analysis.
@@ -24,12 +23,12 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 @Table(name = "genome_assembly_analysis")
 @EntityListeners(AuditingEntityListener.class)
 public class GenomeAssemblyFromAnalysis extends GenomeAssembly {
-	
+
 	@OneToOne(fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST,
 			CascadeType.REFRESH })
 	@JoinColumn(name = "analysis_id", nullable = false)
 	private Analysis assembly;
-	
+
 	@SuppressWarnings("unused")
 	private GenomeAssemblyFromAnalysis() {
 		super();
@@ -39,11 +38,11 @@ public class GenomeAssemblyFromAnalysis extends GenomeAssembly {
 		super(new Date());
 		this.assembly = assembly;
 	}
-	
+
 	public Analysis getAnalysisSubmission() {
 		return assembly;
 	}
-	
+
 	public void setAnalysisSubmission(Analysis assembly) {
 		this.assembly = assembly;
 	}

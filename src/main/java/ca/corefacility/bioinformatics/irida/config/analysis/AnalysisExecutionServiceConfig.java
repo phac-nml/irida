@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.config.analysis;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,12 +11,13 @@ import org.springframework.scheduling.annotation.EnableAsync;
 
 import com.github.jmchilton.blend4j.galaxy.JobsClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
+import com.google.common.collect.ImmutableMap;
 
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisAssemblyAnnotation;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
-import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
@@ -23,13 +26,14 @@ import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisE
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsync;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyCleanupAsync;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisResultsWriterService;
+import ca.corefacility.bioinformatics.irida.service.analysis.storage.AnalysisSampleUpdatorService;
+import ca.corefacility.bioinformatics.irida.service.analysis.storage.AnalysisSubmissionSampleService;
+import ca.corefacility.bioinformatics.irida.service.analysis.storage.AssemblySampleUpdatorService;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisCollectionServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisParameterServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisProvenanceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
-import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 /**
@@ -76,10 +80,7 @@ public class AnalysisExecutionServiceConfig {
 	private SequencingObjectService sequencingObjectService;
 	
 	@Autowired
-	private AnalysisResultsWriterService analysisResultsWriterService;
-	
-	@Autowired
-	private SampleService sampleService;
+	private AnalysisSubmissionSampleService analysisSubmissionSampleService;
 	
 	@Autowired
 	private ToolsClient toolsClient;
@@ -88,7 +89,13 @@ public class AnalysisExecutionServiceConfig {
 	private JobsClient jobsClient;
 	
 	@Autowired
-	private SampleRepository sampleRepository;
+	private AssemblySampleUpdatorService assemblySampleUpdatorService;
+
+	@Bean
+	public Map<Class<? extends Analysis>, AnalysisSampleUpdatorService> analysisSampleUpdatorMap() {
+		return ImmutableMap.<Class<? extends Analysis>, AnalysisSampleUpdatorService>builder()
+				.put(AnalysisAssemblyAnnotation.class, assemblySampleUpdatorService).build();
+	}
 	
 	@Lazy
 	@Bean
@@ -100,12 +107,8 @@ public class AnalysisExecutionServiceConfig {
 	@Lazy
 	@Bean
 	public AnalysisExecutionServiceGalaxyAsync analysisExecutionServiceGalaxyAsync() {
-		analysisResultsWriterService.registerAnalysisSampleUpdator(AnalysisAssemblyAnnotation.class,
-				new AnalysisResultsWriterService.AssemblySampleUpdator(sampleRepository));
-		
 		return new AnalysisExecutionServiceGalaxyAsync(analysisSubmissionService, analysisService,
-				galaxyWorkflowService, analysisWorkspaceService(), iridaWorkflowsService, analysisResultsWriterService,
-				sampleService);
+				galaxyWorkflowService, analysisWorkspaceService(), iridaWorkflowsService, analysisSubmissionSampleService);
 	}
 	
 	@Lazy
