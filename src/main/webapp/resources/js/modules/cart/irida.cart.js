@@ -249,6 +249,8 @@
 
     vm.upload = function() {
       vm.validation = {};
+
+      // Ensure email and name aren't empty
       if (vm.email === "") {
         vm.validation.email = true;
       }
@@ -257,6 +259,7 @@
         vm.validation.name = true;
       }
 
+      // submit if no errors
       if (Object.keys(vm.validation).length === 0) {
         vm.makeOauth2AuthRequest(TL.galaxyClientID);
         vm.showEmailLibInput = false;
