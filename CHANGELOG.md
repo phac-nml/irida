@@ -22,6 +22,7 @@ Changes
 * [UI]: Added ability to concatenate sequence files in a sample.
 * [UI]: New feature to export metadata through the Project line list view.
 * [UI]: Fixed bug allowing empty library name for Galaxy exporting.
+* [UI]: Added ability to download individual analysis output files.
 
 0.16.0 to 0.17.0
 ----------------
