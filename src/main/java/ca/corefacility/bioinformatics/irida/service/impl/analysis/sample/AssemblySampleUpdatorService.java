@@ -5,6 +5,7 @@ import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssemblyFromAnalysis;
@@ -30,6 +31,7 @@ public class AssemblySampleUpdatorService implements AnalysisSampleUpdatorServic
 	}
 
 	@Override
+	@PreAuthorize("hasPermission(#samples, 'canUpdateSample')")
 	public void update(Collection<Sample> samples, Analysis analysis) {
 		if (samples.size() != 1) {
 			throw new RuntimeException("Error: expected only 1 sample, but got " + samples.size() + " samples");
