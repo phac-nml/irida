@@ -7,7 +7,19 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.Principal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Scanner;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
@@ -61,7 +73,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisSISTRTyping;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
@@ -480,6 +491,8 @@ public class AnalysisController {
 		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubimssion(submission);
 		Map<String,Object> result = ImmutableMap.of("parse_results_error", true);
 		
+		final String sistrFileKey = "sistr-predictions";
+		
 		// Get details about the workflow
 		UUID workflowUUID = submission.getWorkflowId();
 		IridaWorkflow iridaWorkflow;
@@ -491,8 +504,8 @@ public class AnalysisController {
 		}
 		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription().getAnalysisType();
 		if (analysisType.equals(AnalysisType.SISTR_TYPING)) {
-			AnalysisSISTRTyping analysis = (AnalysisSISTRTyping) submission.getAnalysis();
-			Path path = analysis.getSISTRResults().getFile();
+			Analysis analysis = submission.getAnalysis();
+			Path path = analysis.getAnalysisOutputFile(sistrFileKey).getFile();
 			try {
 				String json = new Scanner(new BufferedReader(new FileReader(path.toFile()))).useDelimiter("\\Z").next();
 				
