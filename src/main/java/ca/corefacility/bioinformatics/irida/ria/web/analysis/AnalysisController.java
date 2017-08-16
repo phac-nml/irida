@@ -72,7 +72,6 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
@@ -338,8 +337,8 @@ public class AnalysisController {
 	// ************************************************************************************************
 
 	/**
-	 * Construct the model parameters for an
-	 * {@link AnalysisPhylogenomicsPipeline}
+	 * Construct the model parameters for an {@link AnalysisType#PHYLOGENOMICS}
+	 * {@link Analysis}
 	 * 
 	 * @param submission
 	 *            The analysis submission
@@ -349,8 +348,10 @@ public class AnalysisController {
 	 *             If the tree file couldn't be read
 	 */
 	private void tree(AnalysisSubmission submission, Model model) throws IOException {
-		AnalysisPhylogenomicsPipeline analysis = (AnalysisPhylogenomicsPipeline) submission.getAnalysis();
-		AnalysisOutputFile file = analysis.getPhylogeneticTree();
+		final String treeFileKey = "tree";
+		
+		Analysis analysis = submission.getAnalysis();
+		AnalysisOutputFile file = analysis.getAnalysisOutputFile(treeFileKey);
 		List<String> lines = Files.readAllLines(file.getFile());
 		model.addAttribute("analysis", analysis);
 		model.addAttribute("newick", lines.get(0));
@@ -691,9 +692,11 @@ public class AnalysisController {
 	@RequestMapping("/ajax/{submissionId}/newick")
 	@ResponseBody
 	public Map<String, Object> getNewickForAnalysis(@PathVariable Long submissionId) throws IOException {
+		final String treeFileKey = "tree";
+		
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
-		AnalysisPhylogenomicsPipeline analysis = (AnalysisPhylogenomicsPipeline) submission.getAnalysis();
-		AnalysisOutputFile file = analysis.getPhylogeneticTree();
+		Analysis analysis = submission.getAnalysis();
+		AnalysisOutputFile file = analysis.getAnalysisOutputFile(treeFileKey);
 		List<String> lines = Files.readAllLines(file.getFile());
 		return ImmutableMap.of("newick", lines.get(0));
 	}
