@@ -10,6 +10,8 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -27,6 +29,7 @@ import javax.validation.constraints.NotNull;
 
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableMap;
@@ -71,6 +74,10 @@ public class Analysis extends IridaResourceSupport implements IridaThing {
 			"analysis_id", "analysis_output_file_key" }, name = "UK_ANALYSIS_OUTPUT_FILE_KEY"))
 	private final Map<String, AnalysisOutputFile> analysisOutputFilesMap;
 
+	@Enumerated(EnumType.STRING)
+	@Column(name = "analysis_type")
+	private AnalysisType analysisType;
+	
 	/**
 	 * For hibernate
 	 */
@@ -81,6 +88,7 @@ public class Analysis extends IridaResourceSupport implements IridaThing {
 		this.executionManagerAnalysisId = null;
 		this.additionalProperties = null;
 		this.analysisOutputFilesMap = null;
+		this.analysisType = null;
 	}
 
 	/**
@@ -93,13 +101,14 @@ public class Analysis extends IridaResourceSupport implements IridaThing {
 	 *            {@link AnalysisOutputFile}s.
 	 */
 	public Analysis(final String executionManagerAnalysisId,
-			final Map<String, AnalysisOutputFile> analysisOutputFilesMap) {
+			final Map<String, AnalysisOutputFile> analysisOutputFilesMap, AnalysisType analysisType) {
 		this.id = null;
 		this.createdDate = new Date();
 		this.executionManagerAnalysisId = executionManagerAnalysisId;
 		this.analysisOutputFilesMap = analysisOutputFilesMap;
 		this.description = null;
 		this.additionalProperties = Collections.emptyMap();
+		this.analysisType = analysisType;
 	}
 
 	/**
@@ -214,5 +223,13 @@ public class Analysis extends IridaResourceSupport implements IridaThing {
 	@JsonIgnore
 	public Set<String> getAnalysisOutputFileNames() {
 		return analysisOutputFilesMap.keySet();
+	}
+	
+	public AnalysisType getAnalysisType() {
+		return analysisType;
+	}
+	
+	public void setAnalysisType(AnalysisType analysisType) {
+		this.analysisType = analysisType;
 	}
 }
