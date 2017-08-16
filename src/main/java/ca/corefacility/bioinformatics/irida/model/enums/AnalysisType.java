@@ -1,22 +1,16 @@
 package ca.corefacility.bioinformatics.irida.model.enums;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkArgument;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 
 import com.google.common.collect.Sets;
-
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisAssemblyAnnotation;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisAssemblyAnnotationCollection;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisSISTRTyping;
 
 /**
  * Defines a specific type of an analysis.
@@ -30,31 +24,37 @@ public enum AnalysisType {
 	 * A phylogenomics analysis type for generating phylogenomic trees.
 	 */
 	@XmlEnumValue("phylogenomics")
-	PHYLOGENOMICS("phylogenomics", AnalysisPhylogenomicsPipeline.class),
+	PHYLOGENOMICS("phylogenomics"),
 
 	/**
 	 * SISTR Typing.
 	 */
 	@XmlEnumValue("sistr-typing")
-	SISTR_TYPING("sistr-typing", AnalysisSISTRTyping.class),
+	SISTR_TYPING("sistr-typing"),
 	
 	/**
 	 * An assembly and annotation analysis type on a single sample.
 	 */
 	@XmlEnumValue("assembly-annotation")
-	ASSEMBLY_ANNOTATION("assembly-annotation", AnalysisAssemblyAnnotation.class),
+	ASSEMBLY_ANNOTATION("assembly-annotation"),
 
 	/**
 	 * An assembly and annotation analysis type on a collection of samples.
 	 */
 	@XmlEnumValue("assembly-annotation-collection")
-	ASSEMBLY_ANNOTATION_COLLECTION("assembly-annotation-collection", AnalysisAssemblyAnnotationCollection.class),
+	ASSEMBLY_ANNOTATION_COLLECTION("assembly-annotation-collection"),
+	
+	/**
+	 * A fastqc analysis
+	 */
+	@XmlEnumValue("fastqc")
+	FASTQC("fastqc"),
 
 	/**
 	 * A default analysis type.
 	 */
 	@XmlEnumValue("default")
-	DEFAULT("default", Analysis.class);
+	DEFAULT("default");
 
 	/**
 	 * Creates an {@link AnalysisType} from the corresponding String.
@@ -73,7 +73,6 @@ public enum AnalysisType {
 	private static Map<String, AnalysisType> typeMap = new HashMap<>();
 
 	private String type;
-	private Class<? extends Analysis> analysisClass;
 
 	/**
 	 * Sets of a Map used to convert a string to an AnalysisType
@@ -84,18 +83,8 @@ public enum AnalysisType {
 		}
 	}
 
-	private AnalysisType(String type, Class<? extends Analysis> analysisClass) {
+	private AnalysisType(String type) {
 		this.type = type;
-		this.analysisClass = analysisClass;
-	}
-
-	/**
-	 * Gets the particular {@link Analysis} class corresponding to this type.
-	 * 
-	 * @return An {@link Analysis} class for this type.
-	 */
-	public Class<? extends Analysis> getAnalysisClass() {
-		return analysisClass;
 	}
 
 	/**
