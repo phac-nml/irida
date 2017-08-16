@@ -7,6 +7,8 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+
 /**
  * Metadata for Core SNP Pipeline implementation in Galaxy.
  * 
@@ -26,7 +28,7 @@ public class AnalysisPhylogenomicsPipeline extends Analysis {
 
 	public AnalysisPhylogenomicsPipeline(final String executionManagerAnalysisId,
 			final Map<String, AnalysisOutputFile> analysisOutputFilesMap) {
-		super(executionManagerAnalysisId, analysisOutputFilesMap);
+		super(executionManagerAnalysisId, analysisOutputFilesMap, AnalysisType.PHYLOGENOMICS);
 	}
 
 	@JsonIgnore

@@ -5,6 +5,8 @@ import java.util.Map;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+
 /**
  * Metadata for an assembly and annotation analysis.
  * 
@@ -30,7 +32,7 @@ public class AnalysisAssemblyAnnotationCollection extends Analysis {
 	 */
 	public AnalysisAssemblyAnnotationCollection(final String executionManagerAnalysisId,
 			final Map<String, AnalysisOutputFile> analysisOutputFilesMap) {
-		super(executionManagerAnalysisId, analysisOutputFilesMap);
+		super(executionManagerAnalysisId, analysisOutputFilesMap, AnalysisType.ASSEMBLY_ANNOTATION);
 	}
 	
 	public AnalysisOutputFile getReadMergeLog() {

@@ -7,6 +7,8 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+
 /**
  * Metadata for SISTR Typing.
  * 
@@ -26,7 +28,7 @@ public class AnalysisSISTRTyping extends Analysis {
 
 	public AnalysisSISTRTyping(final String executionManagerAnalysisId,
 			final Map<String, AnalysisOutputFile> analysisOutputFilesMap) {
-		super(executionManagerAnalysisId, analysisOutputFilesMap);
+		super(executionManagerAnalysisId, analysisOutputFilesMap, AnalysisType.SISTR_TYPING);
 	}
 
 	@JsonIgnore

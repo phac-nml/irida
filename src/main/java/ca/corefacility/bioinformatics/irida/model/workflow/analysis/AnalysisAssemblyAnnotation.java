@@ -7,6 +7,8 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+
 /**
  * Metadata for an assembly and annotation analysis.
  * 
@@ -32,7 +34,7 @@ public class AnalysisAssemblyAnnotation extends Analysis {
 	 */
 	public AnalysisAssemblyAnnotation(final String executionManagerAnalysisId,
 			final Map<String, AnalysisOutputFile> analysisOutputFilesMap) {
-		super(executionManagerAnalysisId, analysisOutputFilesMap);
+		super(executionManagerAnalysisId, analysisOutputFilesMap, AnalysisType.ASSEMBLY_ANNOTATION);
 	}
 
 	@JsonIgnore
