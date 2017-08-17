@@ -14,8 +14,8 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
  * 
  *
  */
-@Entity
-@Table(name = "analysis_phylogenomicspipeline")
+//@Entity
+//@Table(name = "analysis_phylogenomicspipeline")
 public class AnalysisPhylogenomicsPipeline extends Analysis {
 
 	/**

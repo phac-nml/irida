@@ -1206,18 +1206,14 @@ public class AnalysisExecutionServiceGalaxyIT {
 		assertEquals("analysis results in returned submission and from database should be the same",
 				analysisResults.getId(), analysisResultsDatabase.getId());
 
-		assertEquals("analysis results is an invalid class", AnalysisAssemblyAnnotation.class,
-				analysisResults.getClass());
-		AnalysisAssemblyAnnotation analysisResultsAssembly = (AnalysisAssemblyAnnotation) analysisResultsDatabase;
-
 		String analysisId = analysisExecuted.getRemoteAnalysisId();
 		assertEquals("id should be set properly for analysis", analysisId,
-				analysisResultsAssembly.getExecutionManagerAnalysisId());
+				analysisResultsDatabase.getExecutionManagerAnalysisId());
 
-		assertEquals("invalid number of output files", 3, analysisResultsAssembly.getAnalysisOutputFiles().size());
-		AnalysisOutputFile contigs = analysisResultsAssembly.getAnalysisOutputFile("contigs");
-		AnalysisOutputFile annotations = analysisResultsAssembly.getAnalysisOutputFile("annotations-genbank");
-		AnalysisOutputFile prokkaLog = analysisResultsAssembly.getAnalysisOutputFile("annotations-log");
+		assertEquals("invalid number of output files", 3, analysisResultsDatabase.getAnalysisOutputFiles().size());
+		AnalysisOutputFile contigs = analysisResultsDatabase.getAnalysisOutputFile("contigs");
+		AnalysisOutputFile annotations = analysisResultsDatabase.getAnalysisOutputFile("annotations-genbank");
+		AnalysisOutputFile prokkaLog = analysisResultsDatabase.getAnalysisOutputFile("annotations-log");
 
 		assertTrue("contigs should be equal",
 				com.google.common.io.Files.equal(expectedContigs.toFile(), contigs.getFile().toFile()));
