@@ -60,10 +60,9 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryExc
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowUploadException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisAssemblyAnnotation;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
@@ -92,6 +91,11 @@ public class AnalysisExecutionServiceGalaxyIT {
 	private static final float DELTA = 0.000001f;
 
 	private static final String CMD_LINE_PATTERN = "echo -e \"csv,1[^\"]+\" > (/.*?)+; echo \"output_tree\" > (/.*?)+; echo \"positions\" > (/.*?)+";
+	
+	// SNVPhyl keys
+	private static final String MATRIX_KEY = "matrix";
+	private static final String TREE_KEY = "tree";
+	private static final String TABLE_KEY = "table";
 
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionServiceGalaxyIT.class);
 
@@ -515,17 +519,16 @@ public class AnalysisExecutionServiceGalaxyIT {
 		assertEquals("analysis results in returned submission and from database should be the same",
 				analysisResults.getId(), analysisResultsDatabase.getId());
 
-		assertEquals(AnalysisPhylogenomicsPipeline.class, analysisResults.getClass());
-		AnalysisPhylogenomicsPipeline analysisResultsPhylogenomics = (AnalysisPhylogenomicsPipeline) analysisResultsDatabase;
+		assertEquals(AnalysisType.PHYLOGENOMICS, analysisResults.getAnalysisType());
 
 		String analysisId = analysisExecuted.getRemoteAnalysisId();
 		assertEquals("id should be set properly for analysis", analysisId,
-				analysisResultsPhylogenomics.getExecutionManagerAnalysisId());
+				analysisResultsDatabase.getExecutionManagerAnalysisId());
 
-		assertEquals(3, analysisResultsPhylogenomics.getAnalysisOutputFiles().size());
-		AnalysisOutputFile phylogeneticTree = analysisResultsPhylogenomics.getPhylogeneticTree();
-		AnalysisOutputFile snpMatrix = analysisResultsPhylogenomics.getSnvMatrix();
-		AnalysisOutputFile snpTable = analysisResultsPhylogenomics.getSnvTable();
+		assertEquals(3, analysisResultsDatabase.getAnalysisOutputFiles().size());
+		AnalysisOutputFile phylogeneticTree = analysisResultsDatabase.getAnalysisOutputFile(TREE_KEY);
+		AnalysisOutputFile snpMatrix = analysisResultsDatabase.getAnalysisOutputFile(MATRIX_KEY);
+		AnalysisOutputFile snpTable = analysisResultsDatabase.getAnalysisOutputFile(TABLE_KEY);
 
 		assertTrue("phylogenetic trees should be equal",
 				com.google.common.io.Files.equal(expectedTree.toFile(), phylogeneticTree.getFile().toFile()));
@@ -543,18 +546,17 @@ public class AnalysisExecutionServiceGalaxyIT {
 		Analysis analysis = finalSubmission.getAnalysis();
 		assertNotNull(analysis);
 
-		Analysis savedAnalysisFromDatabase = analysisService.read(analysisResultsPhylogenomics.getId());
-		assertTrue(savedAnalysisFromDatabase instanceof AnalysisPhylogenomicsPipeline);
-		AnalysisPhylogenomicsPipeline savedPhylogenomics = (AnalysisPhylogenomicsPipeline) savedAnalysisFromDatabase;
+		Analysis savedAnalysisFromDatabase = analysisService.read(analysisResultsDatabase.getId());
+		assertEquals(AnalysisType.PHYLOGENOMICS, savedAnalysisFromDatabase.getAnalysisType());
 
 		assertEquals("Analysis from submission and from database should be the same",
 				savedAnalysisFromDatabase.getId(), analysis.getId());
 
-		assertEquals(analysisResultsPhylogenomics.getId(), savedPhylogenomics.getId());
-		assertEquals(analysisResultsPhylogenomics.getPhylogeneticTree().getFile(), savedPhylogenomics
-				.getPhylogeneticTree().getFile());
-		assertEquals(analysisResultsPhylogenomics.getSnvMatrix().getFile(), savedPhylogenomics.getSnvMatrix().getFile());
-		assertEquals(analysisResultsPhylogenomics.getSnvTable().getFile(), savedPhylogenomics.getSnvTable().getFile());
+		assertEquals(analysisResultsDatabase.getId(), savedAnalysisFromDatabase.getId());
+		assertEquals(analysisResultsDatabase.getAnalysisOutputFile(TREE_KEY).getFile(), savedAnalysisFromDatabase
+				.getAnalysisOutputFile(TREE_KEY).getFile());
+		assertEquals(analysisResultsDatabase.getAnalysisOutputFile(MATRIX_KEY).getFile(), savedAnalysisFromDatabase.getAnalysisOutputFile(MATRIX_KEY).getFile());
+		assertEquals(analysisResultsDatabase.getAnalysisOutputFile(TABLE_KEY).getFile(), savedAnalysisFromDatabase.getAnalysisOutputFile(TABLE_KEY).getFile());
 	}
 	
 	/**
@@ -595,18 +597,17 @@ public class AnalysisExecutionServiceGalaxyIT {
 		assertEquals("analysis results in returned submission and from database should be the same",
 				analysisResults.getId(), analysisResultsDatabase.getId());
 
-		assertEquals("analysis results is an invalid class", AnalysisPhylogenomicsPipeline.class,
-				analysisResults.getClass());
-		AnalysisPhylogenomicsPipeline analysisResultsPhylogenomics = (AnalysisPhylogenomicsPipeline) analysisResultsDatabase;
+
+		assertEquals(AnalysisType.PHYLOGENOMICS, analysisResults.getAnalysisType());
 
 		String analysisId = analysisExecuted.getRemoteAnalysisId();
 		assertEquals("id should be set properly for analysis", analysisId,
-				analysisResultsPhylogenomics.getExecutionManagerAnalysisId());
+				analysisResultsDatabase.getExecutionManagerAnalysisId());
 
-		assertEquals("invalid number of output files", 3, analysisResultsPhylogenomics.getAnalysisOutputFiles().size());
-		AnalysisOutputFile phylogeneticTree = analysisResultsPhylogenomics.getPhylogeneticTree();
-		AnalysisOutputFile snpMatrix = analysisResultsPhylogenomics.getSnvMatrix();
-		AnalysisOutputFile snpTable = analysisResultsPhylogenomics.getSnvTable();
+		assertEquals("invalid number of output files", 3, analysisResultsDatabase.getAnalysisOutputFiles().size());
+		AnalysisOutputFile phylogeneticTree = analysisResultsDatabase.getAnalysisOutputFile(TREE_KEY);
+		AnalysisOutputFile snpMatrix = analysisResultsDatabase.getAnalysisOutputFile(MATRIX_KEY);
+		AnalysisOutputFile snpTable = analysisResultsDatabase.getAnalysisOutputFile(TABLE_KEY);
 
 		assertTrue("phylogenetic trees should be equal",
 				com.google.common.io.Files.equal(expectedTree.toFile(), phylogeneticTree.getFile().toFile()));
@@ -660,23 +661,22 @@ public class AnalysisExecutionServiceGalaxyIT {
 		Analysis analysis = finalSubmission.getAnalysis();
 		assertNotNull("analysis should not be null in submission", analysis);
 
-		Analysis savedAnalysisFromDatabase = analysisService.read(analysisResultsPhylogenomics.getId());
-		assertTrue("saved analysis in submission is not correct class",
-				savedAnalysisFromDatabase instanceof AnalysisPhylogenomicsPipeline);
-		AnalysisPhylogenomicsPipeline savedPhylogenomics = (AnalysisPhylogenomicsPipeline) savedAnalysisFromDatabase;
+		Analysis savedAnalysisFromDatabase = analysisService.read(analysisResultsDatabase.getId());
+		assertEquals("saved analysis in submission is not correct class", AnalysisType.PHYLOGENOMICS,
+				savedAnalysisFromDatabase.getAnalysisType());
 
 		assertEquals("Analysis from submission and from database should be the same",
 				savedAnalysisFromDatabase.getId(), analysis.getId());
 
 		assertEquals("analysis results from database and from submission should have correct id",
-				analysisResultsPhylogenomics.getId(), savedPhylogenomics.getId());
+				analysisResultsDatabase.getId(), savedAnalysisFromDatabase.getId());
 		assertEquals("analysis results from database and from submission should have correct tree output file",
-				analysisResultsPhylogenomics.getPhylogeneticTree().getFile(), savedPhylogenomics.getPhylogeneticTree()
+				analysisResultsDatabase.getAnalysisOutputFile(TREE_KEY).getFile(), savedAnalysisFromDatabase.getAnalysisOutputFile(TREE_KEY)
 						.getFile());
 		assertEquals("analysis results from database and from submission should have correct matrix output file",
-				analysisResultsPhylogenomics.getSnvMatrix().getFile(), savedPhylogenomics.getSnvMatrix().getFile());
+				analysisResultsDatabase.getAnalysisOutputFile(MATRIX_KEY).getFile(), savedAnalysisFromDatabase.getAnalysisOutputFile(MATRIX_KEY).getFile());
 		assertEquals("analysis results from database and from submission should have correct table output file",
-				analysisResultsPhylogenomics.getSnvTable().getFile(), savedPhylogenomics.getSnvTable().getFile());
+				analysisResultsDatabase.getAnalysisOutputFile(MATRIX_KEY).getFile(), savedAnalysisFromDatabase.getAnalysisOutputFile(MATRIX_KEY).getFile());
 	}
 	
 	/**
@@ -722,14 +722,13 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		Analysis analysisResults = analysisSubmissionCompletedDatabase.getAnalysis();
 
-		assertEquals("analysis results is an invalid class", AnalysisPhylogenomicsPipeline.class,
-				analysisResults.getClass());
-		AnalysisPhylogenomicsPipeline analysisResultsPhylogenomics = (AnalysisPhylogenomicsPipeline) analysisResults;
+		assertEquals("analysis results is an invalid class", AnalysisType.PHYLOGENOMICS,
+				analysisResults.getAnalysisType());
 
-		assertEquals("invalid number of output files", 3, analysisResultsPhylogenomics.getAnalysisOutputFiles().size());
-		AnalysisOutputFile phylogeneticTree = analysisResultsPhylogenomics.getPhylogeneticTree();
-		AnalysisOutputFile snpMatrix = analysisResultsPhylogenomics.getSnvMatrix();
-		AnalysisOutputFile snpTable = analysisResultsPhylogenomics.getSnvTable();
+		assertEquals("invalid number of output files", 3, analysisResults.getAnalysisOutputFiles().size());
+		AnalysisOutputFile phylogeneticTree = analysisResults.getAnalysisOutputFile(TREE_KEY);
+		AnalysisOutputFile snpMatrix = analysisResults.getAnalysisOutputFile(MATRIX_KEY);
+		AnalysisOutputFile snpTable = analysisResults.getAnalysisOutputFile(TABLE_KEY);
 
 		// verify parameters were set properly by checking contents of file
 		@SuppressWarnings("resource")
@@ -857,14 +856,13 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		Analysis analysisResults = analysisSubmissionCompletedDatabase.getAnalysis();
 
-		assertEquals("analysis results is an invalid class", AnalysisPhylogenomicsPipeline.class,
-				analysisResults.getClass());
-		AnalysisPhylogenomicsPipeline analysisResultsPhylogenomics = (AnalysisPhylogenomicsPipeline) analysisResults;
+		assertEquals("analysis results is an invalid class", AnalysisType.PHYLOGENOMICS,
+				analysisResults.getAnalysisType());
 
-		assertEquals("invalid number of output files", 3, analysisResultsPhylogenomics.getAnalysisOutputFiles().size());
-		AnalysisOutputFile phylogeneticTree = analysisResultsPhylogenomics.getPhylogeneticTree();
-		AnalysisOutputFile snpMatrix = analysisResultsPhylogenomics.getSnvMatrix();
-		AnalysisOutputFile snpTable = analysisResultsPhylogenomics.getSnvTable();
+		assertEquals("invalid number of output files", 3, analysisResults.getAnalysisOutputFiles().size());
+		AnalysisOutputFile phylogeneticTree = analysisResults.getAnalysisOutputFile(TREE_KEY);
+		AnalysisOutputFile snpMatrix = analysisResults.getAnalysisOutputFile(MATRIX_KEY);
+		AnalysisOutputFile snpTable = analysisResults.getAnalysisOutputFile(TABLE_KEY);
 
 		// verify parameters were set properly by checking contents of file
 		@SuppressWarnings("resource")
@@ -995,14 +993,13 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		Analysis analysisResults = analysisSubmissionCompletedDatabase.getAnalysis();
 
-		assertEquals("analysis results is an invalid class", AnalysisPhylogenomicsPipeline.class,
-				analysisResults.getClass());
-		AnalysisPhylogenomicsPipeline analysisResultsPhylogenomics = (AnalysisPhylogenomicsPipeline) analysisResults;
+		assertEquals("analysis results is an invalid class", AnalysisType.PHYLOGENOMICS,
+				analysisResults.getAnalysisType());
 
-		assertEquals("invalid number of output files", 3, analysisResultsPhylogenomics.getAnalysisOutputFiles().size());
-		AnalysisOutputFile phylogeneticTree = analysisResultsPhylogenomics.getPhylogeneticTree();
-		AnalysisOutputFile snpMatrix = analysisResultsPhylogenomics.getSnvMatrix();
-		AnalysisOutputFile snpTable = analysisResultsPhylogenomics.getSnvTable();
+		assertEquals("invalid number of output files", 3, analysisResults.getAnalysisOutputFiles().size());
+		AnalysisOutputFile phylogeneticTree = analysisResults.getAnalysisOutputFile(TREE_KEY);
+		AnalysisOutputFile snpMatrix = analysisResults.getAnalysisOutputFile(MATRIX_KEY);
+		AnalysisOutputFile snpTable = analysisResults.getAnalysisOutputFile(TABLE_KEY);
 
 		// verify parameters were set properly by checking contents of file
 		@SuppressWarnings("resource")
@@ -1135,12 +1132,11 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		Analysis analysisResults = analysisSubmissionCompletedDatabase.getAnalysis();
 
-		assertEquals("analysis results is an invalid class", AnalysisPhylogenomicsPipeline.class,
-				analysisResults.getClass());
-		AnalysisPhylogenomicsPipeline analysisResultsPhylogenomics = (AnalysisPhylogenomicsPipeline) analysisResults;
+		assertEquals("analysis results is an invalid class", AnalysisType.PHYLOGENOMICS,
+				analysisResults.getAnalysisType());
 
-		assertEquals("invalid number of output files", 3, analysisResultsPhylogenomics.getAnalysisOutputFiles().size());
-		AnalysisOutputFile phylogeneticTree = analysisResultsPhylogenomics.getPhylogeneticTree();
+		assertEquals("invalid number of output files", 3, analysisResults.getAnalysisOutputFiles().size());
+		AnalysisOutputFile phylogeneticTree = analysisResults.getAnalysisOutputFile(TREE_KEY);
 
 		// verify parameters were set properly by checking contents of file
 		@SuppressWarnings("resource")
