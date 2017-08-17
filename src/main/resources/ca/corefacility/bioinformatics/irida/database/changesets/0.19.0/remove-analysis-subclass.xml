@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="max-coverage" author="tom">
+
+		<addColumn tableName="analysis">
+			<column name="analysis_type" type="varchar(255)" />
+		</addColumn>
+
+		<sql>
+			UPDATE analysis a INNER JOIN analysis_phylogenomicspipeline p ON
+			a.id=p.id
+			SET a.analysis_type="PHYLOGENOMICS";
+		</sql>
+
+		<sql>
+			UPDATE analysis a INNER JOIN
+			analysis_assemblyannotation_collection p ON a.id=p.id
+			SET
+			a.analysis_type="ASSEMBLY_ANNOTATION_COLLECTION";
+		</sql>
+
+		<sql>
+			UPDATE analysis a INNER JOIN
+			analysis_assemblyannotation p ON
+			a.id=p.id
+			SET
+			a.analysis_type="ASSEMBLY_ANNOTATION";
+		</sql>
+
+		<sql>
+			UPDATE analysis a INNER JOIN
+			analysis_sistr_typing p ON
+			a.id=p.id
+			SET
+			a.analysis_type="SISTR_TYPING";
+		</sql>
+
+		<dropTable tableName="analysis_phylogenomicspipeline" />
+		<dropTable tableName="analysis_assemblyannotation_collection" />
+		<dropTable tableName="analysis_assemblyannotation_collection" />
+		<dropTable tableName="analysis_sistr_typing" />
+	</changeSet>
+</databaseChangeLog>
