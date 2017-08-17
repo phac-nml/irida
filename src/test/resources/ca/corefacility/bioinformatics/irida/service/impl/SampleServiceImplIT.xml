@@ -57,7 +57,8 @@
 		project_id="2" sample_id="9" owner="true" />
 
 	<analysis id="1" createdDate="2013-07-18 14:20:19.0"
-		description="FastQC" executionManagerAnalysisId="fastqc" />
+		description="FastQC" executionManagerAnalysisId="fastqc"
+		analysis_type="FASTQC" />
 	<analysis_fastqc id="1" duplicationLevelChart="x"
 		encoding="x" fileType="x" filteredSequences="0" gcContent="30"
 		maxLength="250" minLength="10" perBaseQualityScoreChart="x"
