@@ -43,12 +43,6 @@ public enum AnalysisType {
 	 */
 	@XmlEnumValue("assembly-annotation-collection")
 	ASSEMBLY_ANNOTATION_COLLECTION("assembly-annotation-collection"),
-	
-	/**
-	 * A fastqc analysis
-	 */
-	@XmlEnumValue("fastqc")
-	FASTQC("fastqc"),
 
 	/**
 	 * A default analysis type.
