@@ -42,7 +42,7 @@
 
 		<dropTable tableName="analysis_phylogenomicspipeline" />
 		<dropTable tableName="analysis_assemblyannotation_collection" />
-		<dropTable tableName="analysis_assemblyannotation_collection" />
+		<dropTable tableName="analysis_assemblyannotation" />
 		<dropTable tableName="analysis_sistr_typing" />
 	</changeSet>
 </databaseChangeLog>
