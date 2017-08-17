@@ -62,7 +62,7 @@ public class ToolsListExporter {
 
 		IridaWorkflowsService iridaWorkflowsService = context.getBean(IridaWorkflowsService.class);
 		Map<AnalysisType, IridaWorkflow> workflows = iridaWorkflowsService
-				.getAllDefaultWorkflowsByType(Sets.newHashSet(AnalysisType.valuesMinusDefault()));
+				.getAllDefaultWorkflowsByType(Sets.newHashSet(AnalysisType.executableAnalysisTypes()));
 
 		context.close();
 

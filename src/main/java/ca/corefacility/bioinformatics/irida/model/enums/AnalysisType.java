@@ -43,6 +43,12 @@ public enum AnalysisType {
 	 */
 	@XmlEnumValue("assembly-annotation-collection")
 	ASSEMBLY_ANNOTATION_COLLECTION("assembly-annotation-collection"),
+	
+	/**
+	 * A fastqc analysis type
+	 */
+	@XmlEnumValue("fastqc")
+	FASTQC("fastqc"),
 
 	/**
 	 * A default analysis type.
@@ -93,6 +99,23 @@ public enum AnalysisType {
 		Set<AnalysisType> valuesSet = Sets.newHashSet(values);
 		valuesSet.remove(AnalysisType.DEFAULT);
 		return valuesSet.toArray(new AnalysisType[values.length - 1]);
+	}
+
+	/**
+	 * Get the array of all {@link AnalysisType}s that can be executed by
+	 * galaxy. This removes {@link AnalysisType#DEFAULT} and
+	 * {@link AnalysisType#FASTQC}
+	 * 
+	 * @return An array of all {@link AnalysisType}s which can be executed by
+	 *         galaxy
+	 */
+	public static AnalysisType[] executableAnalysisTypes() {
+		AnalysisType[] values = AnalysisType.values();
+		Set<AnalysisType> valuesSet = Sets.newHashSet(values);
+		valuesSet.remove(AnalysisType.DEFAULT);
+		valuesSet.remove(AnalysisType.FASTQC);
+
+		return valuesSet.toArray(new AnalysisType[values.length - 2]);
 	}
 
 	/**

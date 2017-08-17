@@ -40,6 +40,25 @@
 			a.analysis_type="SISTR_TYPING";
 		</sql>
 
+		<sql>
+			UPDATE analysis a INNER JOIN
+			analysis_fastqc p ON
+			a.id=p.id
+			SET
+			a.analysis_type="FASTQC";
+		</sql>
+
+		<!-- shouldn't be any left, but we're about to set it as not null -->
+		<sql>
+			UPDATE analysis a
+			SET
+			a.analysis_type="DEFAULT" WHERE
+			a.analysis_type is null;
+		</sql>
+
+		<addNotNullConstraint columnDataType="varchar(255)"
+			columnName="analysis_type" tableName="analysis" />
+
 		<dropTable tableName="analysis_phylogenomicspipeline" />
 		<dropTable tableName="analysis_assemblyannotation_collection" />
 		<dropTable tableName="analysis_assemblyannotation" />

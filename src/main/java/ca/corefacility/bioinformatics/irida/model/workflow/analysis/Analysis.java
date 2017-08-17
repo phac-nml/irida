@@ -74,6 +74,7 @@ public class Analysis extends IridaResourceSupport implements IridaThing {
 			"analysis_id", "analysis_output_file_key" }, name = "UK_ANALYSIS_OUTPUT_FILE_KEY"))
 	private final Map<String, AnalysisOutputFile> analysisOutputFilesMap;
 
+	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(name = "analysis_type")
 	private AnalysisType analysisType;
