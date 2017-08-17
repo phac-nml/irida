@@ -50,7 +50,7 @@ public abstract class GenomeAssembly extends IridaResourceSupport implements Mut
 
 	@Override
 	public String getLabel() {
-		return toString();
+		return getFile().getFileName().toString();
 	}
 
 	@Override

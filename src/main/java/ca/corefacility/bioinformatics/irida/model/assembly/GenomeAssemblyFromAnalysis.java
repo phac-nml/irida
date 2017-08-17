@@ -15,6 +15,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisAssemblyAnnotation;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 
 /**
  * Defines a genome assembly from an IRIDA-based analysis.
@@ -46,12 +47,24 @@ public class GenomeAssemblyFromAnalysis extends GenomeAssembly {
 	public void setAnalysisSubmission(Analysis assembly) {
 		this.assembly = assembly;
 	}
+	
+	public AnalysisOutputFile getAssemblyOutput() {
+		return assembly.getAnalysisOutputFile("contigs-with-repeats");
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getLabel() {
+		return getAssemblyOutput().getLabel();
+	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public Path getFile() {
-		return assembly.getAnalysisOutputFile("contigs-with-repeats").getFile();
+		return getAssemblyOutput().getFile();
 	}
 }
