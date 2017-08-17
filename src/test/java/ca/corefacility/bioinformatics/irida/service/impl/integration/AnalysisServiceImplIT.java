@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -9,7 +10,6 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +28,11 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableMap;
 
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 
@@ -44,6 +45,10 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/AnalysisServiceImplIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class AnalysisServiceImplIT {
+	
+	private static final String MATRIX_KEY = "matrix";
+	private static final String TREE_KEY = "tree";
+	private static final String TABLE_KEY = "table";
 
 	@Autowired
 	private AnalysisService analysisService;
@@ -72,29 +77,29 @@ public class AnalysisServiceImplIT {
 		AnalysisOutputFile matrix = new AnalysisOutputFile(matrixPath, "internal-galaxy-matrix-identifier", "", toolExecutionMatrix);
 		Map<String, AnalysisOutputFile> analysisOutputFiles = new ImmutableMap.Builder<String, AnalysisOutputFile>()
 				.put("tree", tree).put("matrix", matrix).put("table", table).build();
-		AnalysisPhylogenomicsPipeline pipeline = new AnalysisPhylogenomicsPipeline(EXECUTION_MANAGER_ID,
-				analysisOutputFiles);
+		Analysis pipeline = new Analysis(EXECUTION_MANAGER_ID,
+				analysisOutputFiles, AnalysisType.PHYLOGENOMICS);
 
 		// make sure that we're not falsely putting the files into the correct
 		// directory in the first place.
 		assertFalse("file was stored in the wrong directory.",
-				pipeline.getPhylogeneticTree().getFile().startsWith(outputFileBaseDirectory));
+				pipeline.getAnalysisOutputFile(TREE_KEY).getFile().startsWith(outputFileBaseDirectory));
 		assertFalse("file was stored in the wrong directory.",
-				pipeline.getSnvMatrix().getFile().startsWith(outputFileBaseDirectory));
+				pipeline.getAnalysisOutputFile(MATRIX_KEY).getFile().startsWith(outputFileBaseDirectory));
 		assertFalse("file was stored in the wrong directory.",
-				pipeline.getSnvTable().getFile().startsWith(outputFileBaseDirectory));
+				pipeline.getAnalysisOutputFile(TABLE_KEY).getFile().startsWith(outputFileBaseDirectory));
 
 		Analysis analysis = analysisService.create(pipeline);
 
 		// make sure that we put the analysis output files into the correct
 		// directory.
-		assertTrue("returned analysis was of the wrong type.", analysis instanceof AnalysisPhylogenomicsPipeline);
-		AnalysisPhylogenomicsPipeline saved = (AnalysisPhylogenomicsPipeline) analysis;
+		assertEquals("returned analysis was of the wrong type.", AnalysisType.PHYLOGENOMICS,
+				analysis.getAnalysisType());
 		assertTrue("file was stored in the wrong directory.",
-				saved.getPhylogeneticTree().getFile().startsWith(outputFileBaseDirectory));
+				analysis.getAnalysisOutputFile(TREE_KEY).getFile().startsWith(outputFileBaseDirectory));
 		assertTrue("file was stored in the wrong directory.",
-				saved.getSnvMatrix().getFile().startsWith(outputFileBaseDirectory));
+				analysis.getAnalysisOutputFile(MATRIX_KEY).getFile().startsWith(outputFileBaseDirectory));
 		assertTrue("file was stored in the wrong directory.",
-				saved.getSnvTable().getFile().startsWith(outputFileBaseDirectory));
+				analysis.getAnalysisOutputFile(TABLE_KEY).getFile().startsWith(outputFileBaseDirectory));
 	}
 }
