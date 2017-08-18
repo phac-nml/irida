@@ -1,12 +1,23 @@
+---
+layout: default
+---
+
 IRIDA Development Primer
 ========================
+{:.no_toc}
+
+This guide describes how to write documentation for IRIDA.
+
+* This comment becomes the table of contents
+{:toc}
+
 
 Important links
 ---------------
-* IRIDA GitHub - https://github.com/phac-nml/irida
-* IRIDA GitLab - http://gitlab-irida.corefacility.ca/ (only accessible from NML network)
-* Documentation site - https://irida.corefacility.ca/documentation/
-* Public information website - https://irida.ca
+* IRIDA GitHub - [https://github.com/phac-nml/irida](https://github.com/phac-nml/irida)
+* IRIDA GitLab - [http://gitlab-irida.corefacility.ca/](http://gitlab-irida.corefacility.ca/) (only accessible from NML network)
+* Documentation site - [https://irida.corefacility.ca/documentation/](https://irida.corefacility.ca/documentation/)
+* Public information website - [https://irida.ca](https://irida.ca)
 
 Languages and Libraries
 -----------------------
@@ -14,6 +25,7 @@ Languages and Libraries
 IRIDA is a Java application developed using Java 8.
 
 #### Spring framework
+{:.no_toc}
 
 Documentation: http://docs.spring.io/spring-framework/docs/4.2.3.RELEASE/spring-framework-reference/html/
 
@@ -22,6 +34,7 @@ IRIDA uses the Spring Framework as the main backbone of the application.  Spring
 For a better understanding of how Spring works, it's recommended that IRIDA developers attend a *Core Spring Training* course https://pivotal.io/training/courses/core-spring-training.
 
 #### Apache Maven
+{:.no_toc}
 
 Documentation: http://maven.apache.org/guides/
 
@@ -30,12 +43,14 @@ IRIDA uses Apache Maven for dependency management and build automation.  Maven a
 Maven settings and dependencies can generally be found in the `pom.xml` file in the IRIDA root directory.
 
 #### Hibernate
+{:.no_toc}
 
 Documentation: http://hibernate.org/orm/documentation/4.3/
 
 Hibernate is used to map Java objects to database tables without the need for writing extra database code.  IRIDA uses hibernate through the Java Persistence API abstraction.
 
 #### Other important libraries
+{:.no_toc}
 
 * Thymeleaf - Web interface templating - http://www.thymeleaf.org/documentation.html
 * JQuery - Javascript libraries - https://api.jquery.com/
@@ -134,7 +149,7 @@ IRIDA Codebase
 IRIDA is organized as a fairly classic Java web application.  All files are found under the `ca.corefacility.bioinformatics.irida` package root.
 
 * `config` - Configuration classes.  All Spring application config, web config, Maven config, and scheduled task configuration can be found here.
-* `database.changesets` - Java Liquibase changesets.  See more about our liquibase usage in the [Database Updates section](#database_updates).
+* `database.changesets` - Java Liquibase changesets.  See more about our liquibase usage in the [Database Updates section](#database-updates).
 * `events` - Classes here handle the `ProjectEvent` structure in IRIDA.  These are the messages you can find on the IRIDA dashboard and project recent activity pages.
 * `exceptions` - Java `Exception` classes written for IRIDA.
 * `model` - IRIDA uses MVC.  These are the model classes which are persisted into the database using [Spring Data JPA][] and Hibernate.
@@ -175,10 +190,12 @@ The IRIDA project uses Git, [GitLab][], and [GitHub][] for version control purpo
 External collaborators are welcomed to develop new features and should submit pull requests on IRIDA's [GitHub][] page.  Note that if we receive a GitHub pull request, NML IRIDA developers should pull the branch locally, then push it up to GitLab before merging to ensure the GitHub and GitLab repositories don't get out of sync.
 
 ### Branch structure
+{:.no_toc}
 
 IRIDA's branch structure is loosely based on the [GitFlow](http://nvie.com/posts/a-successful-git-branching-model) branch model.  This model allows the team to develop multiple features in parallel without contaminating the main development branch, keeping merge requests sane, and allows for stable and patchable releases.
 
-#### Branches:
+#### Branches
+{:.no_toc}
 
 * *development* - This is the main running development branch.  It represents the latest features that have been developed by the team.  Features here should be kept in a state that they can be released at any time.
 * *master* - This is the release branch.  It should be kept at the latest stable release.
@@ -186,8 +203,9 @@ IRIDA's branch structure is loosely based on the [GitFlow](http://nvie.com/posts
 * hotfix branches - These branches will be created when there is an bug in the master branch which must be fixed immediately.  When these branches are complete they should be merged into both *development* and *master*.
 
 #### Release tags & versioning scheme
+{:.no_toc}
 
-Whenever code is merged into *master*, a release should be created.  To mart the release the person merging the code should create a git tag at the point of the merge.
+Whenever code is merged into *master*, a release should be created.  To mark the release the person merging the code should create a git tag at the point of the merge.
 
 ```bash
 git tag 0.version.subversion
@@ -204,9 +222,10 @@ Once the tag has been pushed, the tag should have been automatically created on 
 
 Example workflow:
 
-![Git workflow](images/git-flow.png)
+![Git workflow](git-flow.png)
 
 #### Merge requests
+{:.no_toc}
 
 Code is not to be merged into the *development* or *master* branches by the developer who wrote the code.  Instead a merge request should be made on [GitLab][] and assigned to another developer on the project.  The reviewer should look over the code for issues, and anything that needs to be fixed should be mentioned in a comment in the merge request.  Once an issue has been fixed, the developer should push the changes to the merge request branch and mention the commit id in the comment so the reviewer can track the changes.
 
@@ -215,6 +234,7 @@ If a merge request is a fix for an issue that is being tracked in [GitLab][], th
 When the reviewer is satisfied with the state of the branch to be merged, they should merge it into the *development* branch in [GitLab][] to close the request.
 
 #### Performing a release
+{:.no_toc}
 
 After building a new `master` branch and releasing a tag, it is time to release a new version of IRIDA on its production servers.  To see more about the IRIDA release plan, see the following [GitLab][] snippet: http://gitlab-irida.corefacility.ca/snippets/30
 
