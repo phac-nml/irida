@@ -20,5 +20,6 @@ module.exports = {
     "./resources/js/pages/projects/project-reference-files.js",
   "analyses-table": "./resources/js/pages/analyses/analyses-table.js",
   "clients-list": "./resources/js/pages/clients/clients-list.js",
-  "users-list": "./resources/js/pages/users/users-list.js"
+  "users-list": "./resources/js/pages/users/users-list.js",
+  "sequencing-runs": "./resources/js/pages/sequencing-runs/sequencing-runs-list.js"
 };
