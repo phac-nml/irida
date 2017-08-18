@@ -21,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -28,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.ProjectAnalysisSubmissionJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.ReadAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.files.ReadSequencingObjectPermission;
@@ -52,6 +54,9 @@ public class ReadAnalysisSubmissionPermissionTest {
 
 	@Mock
 	private UserRepository userRepository;
+	
+	@Mock
+	private SequencingObjectRepository sequencingObjectRepository;
 
 	@Mock
 	ProjectAnalysisSubmissionJoinRepository pasRepository;
@@ -64,7 +69,7 @@ public class ReadAnalysisSubmissionPermissionTest {
 
 	private UUID workflowId = UUID.randomUUID();
 
-	private Set<SingleEndSequenceFile> inputSingleFiles;
+	private Set<SequencingObject> inputSingleFiles;
 
 	@Mock
 	private ReadSequencingObjectPermission seqObjectPermission;
@@ -77,7 +82,7 @@ public class ReadAnalysisSubmissionPermissionTest {
 		MockitoAnnotations.initMocks(this);
 
 		readAnalysisSubmissionPermission = new ReadAnalysisSubmissionPermission(analysisSubmissionRepository,
-				userRepository, seqObjectPermission, pasRepository, readProjectPermission);
+				userRepository, sequencingObjectRepository, seqObjectPermission, pasRepository, readProjectPermission);
 
 		inputSingleFiles = Sets.newHashSet(new SingleEndSequenceFile(new SequenceFile()));
 	}
@@ -94,7 +99,7 @@ public class ReadAnalysisSubmissionPermissionTest {
 		Authentication auth = new UsernamePasswordAuthenticationToken("aaron", "password1");
 
 		AnalysisSubmission analysisSubmission = AnalysisSubmission.builder(workflowId).name("test")
-				.inputFilesSingleEnd(inputSingleFiles).referenceFile(referenceFile).build();
+				.inputFiles(inputSingleFiles).referenceFile(referenceFile).build();
 		analysisSubmission.setSubmitter(u);
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
@@ -118,7 +123,7 @@ public class ReadAnalysisSubmissionPermissionTest {
 		Authentication auth = new UsernamePasswordAuthenticationToken("aaron", "password1");
 
 		AnalysisSubmission analysisSubmission = AnalysisSubmission.builder(workflowId).name("test")
-				.inputFilesSingleEnd(inputSingleFiles).referenceFile(referenceFile).build();
+				.inputFiles(inputSingleFiles).referenceFile(referenceFile).build();
 		analysisSubmission.setSubmitter(u);
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
@@ -142,7 +147,7 @@ public class ReadAnalysisSubmissionPermissionTest {
 		Authentication auth = new UsernamePasswordAuthenticationToken("aaron", "password1");
 
 		AnalysisSubmission analysisSubmission = AnalysisSubmission.builder(workflowId).name("test")
-				.inputFilesSingleEnd(inputSingleFiles).referenceFile(referenceFile).build();
+				.inputFiles(inputSingleFiles).referenceFile(referenceFile).build();
 		analysisSubmission.setSubmitter(new User());
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
@@ -165,7 +170,7 @@ public class ReadAnalysisSubmissionPermissionTest {
 		Authentication auth = new UsernamePasswordAuthenticationToken("aaron", "password1", roles);
 
 		when(analysisSubmissionRepository.findOne(1L)).thenReturn(AnalysisSubmission.builder(workflowId).name("test")
-				.inputFilesSingleEnd(inputSingleFiles).referenceFile(referenceFile).build());
+				.inputFiles(inputSingleFiles).referenceFile(referenceFile).build());
 		assertTrue("permission was not granted to admin.", readAnalysisSubmissionPermission.isAllowed(auth, 1L));
 
 		// we should fast pass through to permission granted for administrators.
@@ -184,7 +189,7 @@ public class ReadAnalysisSubmissionPermissionTest {
 		SequenceFilePair pair = new SequenceFilePair();
 
 		AnalysisSubmission analysisSubmission = AnalysisSubmission.builder(workflowId).name("test")
-				.inputFilesPaired(ImmutableSet.of(pair)).referenceFile(referenceFile).build();
+				.inputFiles(ImmutableSet.of(pair)).referenceFile(referenceFile).build();
 		analysisSubmission.setSubmitter(new User());
 		pair.setAutomatedAssembly(analysisSubmission);
 
@@ -199,6 +204,8 @@ public class ReadAnalysisSubmissionPermissionTest {
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(analysisSubmissionRepository.findOne(1L)).thenReturn(analysisSubmission);
 		when(seqObjectPermission.customPermissionAllowed(auth, pair)).thenReturn(true);
+		when(sequencingObjectRepository.findSequencingObjectsForAnalysisSubmission(analysisSubmission))
+				.thenReturn(ImmutableSet.of(pair));
 
 		assertTrue("permission should be granted.", readAnalysisSubmissionPermission.isAllowed(auth, 1L));
 
@@ -219,7 +226,7 @@ public class ReadAnalysisSubmissionPermissionTest {
 		SequenceFilePair pair = new SequenceFilePair();
 
 		AnalysisSubmission analysisSubmission = AnalysisSubmission.builder(workflowId).name("test")
-				.inputFilesPaired(ImmutableSet.of(pair)).referenceFile(referenceFile).build();
+				.inputFiles(ImmutableSet.of(pair)).referenceFile(referenceFile).build();
 		analysisSubmission.setSubmitter(new User());
 		pair.setSistrTyping(analysisSubmission);
 
@@ -234,6 +241,8 @@ public class ReadAnalysisSubmissionPermissionTest {
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(analysisSubmissionRepository.findOne(1L)).thenReturn(analysisSubmission);
 		when(seqObjectPermission.customPermissionAllowed(auth, pair)).thenReturn(true);
+		when(sequencingObjectRepository.findSequencingObjectsForAnalysisSubmission(analysisSubmission))
+				.thenReturn(ImmutableSet.of(pair));
 
 		assertTrue("permission should be granted.", readAnalysisSubmissionPermission.isAllowed(auth, 1L));
 
@@ -252,7 +261,7 @@ public class ReadAnalysisSubmissionPermissionTest {
 		Project p = new Project();
 
 		AnalysisSubmission analysisSubmission = AnalysisSubmission.builder(workflowId).name("test")
-				.inputFilesSingleEnd(inputSingleFiles).referenceFile(referenceFile).build();
+				.inputFiles(inputSingleFiles).referenceFile(referenceFile).build();
 		analysisSubmission.setSubmitter(new User());
 
 		when(pasRepository.getProjectsForSubmission(analysisSubmission))

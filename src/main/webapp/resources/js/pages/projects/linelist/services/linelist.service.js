@@ -12,12 +12,12 @@ export class LinelistService {
   }
 
   getHeaders() {
-    return this.$window.headersList;
+    // Get all the headers for the table (this is wrapped in the scroller).
+    const trs = document.querySelectorAll(".dataTables_scrollHeadInner th");
+    // Since this is a nodeList not an array, we need to convert it to an array
+    // then map over the items and get the text.
+    return [...trs].map(tr => tr.innerText);
   }
 }
 
-LinelistService.$inject = [
-  '$window',
-  '$http',
-  '$q'
-];
+LinelistService.$inject = ["$window", "$http", "$q"];

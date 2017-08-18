@@ -1,10 +1,8 @@
 package ca.corefacility.bioinformatics.irida.processing.impl.unit;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -20,10 +18,8 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.processing.impl.ChecksumFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 
 public class ChecksumFileProcessorTest {
-	private SequencingObjectRepository objectRepository;
 	private ChecksumFileProcessor fileProcessor;
 	private SequenceFileRepository sequenceFileRepository;
 	private static final String FILE_CONTENTS = ">test read\nACGTACTCATG";
@@ -32,20 +28,19 @@ public class ChecksumFileProcessorTest {
 	@Before
 	public void setUp() {
 		sequenceFileRepository = mock(SequenceFileRepository.class);
-		objectRepository = mock(SequencingObjectRepository.class);
-		fileProcessor = new ChecksumFileProcessor(objectRepository, sequenceFileRepository);
+		fileProcessor = new ChecksumFileProcessor(sequenceFileRepository);
 	}
 
 	@Test
 	public void testChecksumCreated() throws IOException {
 		final SequenceFile sf = constructSequenceFile();
 
-		when(objectRepository.findOne(any(Long.class))).thenReturn(new SingleEndSequenceFile(sf));
+		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
 
-		fileProcessor.process(1L);
+		fileProcessor.process(so);
 
 		ArgumentCaptor<SequenceFile> fileCaptor = ArgumentCaptor.forClass(SequenceFile.class);
-		verify(sequenceFileRepository).save(fileCaptor.capture());
+		verify(sequenceFileRepository).saveMetadata(fileCaptor.capture());
 
 		SequenceFile file = fileCaptor.getValue();
 
@@ -56,9 +51,9 @@ public class ChecksumFileProcessorTest {
 	public void testFileNotExists() throws IOException {
 		final SequenceFile sf = new SequenceFile(Paths.get("/reallyfakefile"));
 
-		when(objectRepository.findOne(any(Long.class))).thenReturn(new SingleEndSequenceFile(sf));
+		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
 
-		fileProcessor.process(1L);
+		fileProcessor.process(so);
 	}
 
 	private SequenceFile constructSequenceFile() throws IOException {

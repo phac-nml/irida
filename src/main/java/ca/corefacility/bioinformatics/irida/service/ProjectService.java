@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
@@ -135,7 +136,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 *
 	 * @return a reference to the relationship resource created between the two entities.
 	 */
-	public Join<Project, Sample> addSampleToProject(Project project, Sample sample);
+	public Join<Project, Sample> addSampleToProject(Project project, Sample sample, boolean owner);
 	
 	
 	/**
@@ -147,9 +148,30 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 *            Destination {@link Project}
 	 * @param sample
 	 *            {@link Sample} to be moved
+	 * @param owner
+	 *            Should the new project be an owner?
 	 * @return Newly created {@link ProjectSampleJoin}
 	 */
-	public ProjectSampleJoin moveSampleBetweenProjects(Project source, Project destination, Sample sample);
+	public ProjectSampleJoin moveSampleBetweenProjects(Project source, Project destination, Sample sample, boolean owner);
+	
+	/**
+	 * Copy or move a list of {@link Sample} between 2 {@link Project}
+	 * 
+	 * @param source
+	 *            the source {@link Project}
+	 * @param destination
+	 *            the {@link Project} being copied to
+	 * @param samples
+	 *            a collection of {@link Sample}
+	 * @param move
+	 *            boolean whether to move or copy. true for move
+	 * @param giveOwner
+	 *            whether to give ownership rights to the destination
+	 *            {@link Project}
+	 * @return a list of new {@link ProjectSampleJoin}
+	 */
+	public List<ProjectSampleJoin> copyOrMoveSamples(Project source, Project destination, Collection<Sample> samples,
+			boolean move, boolean giveOwner);
 
 	/**
 	 * Remove the specified {@link Sample} from the {@link Project}. The {@link Sample} will also be deleted from the
@@ -302,49 +324,38 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	/**
 	 * Find a list of projects (for a user or admin) using the specified search
 	 * criteria
-	 * 
+	 *
 	 * @param search
-	 * 			  the search text to use for *all* fields.
-	 * @param filterName
-	 *            the name to filter on
-	 * @param filterOrganism
-	 *            the organism to filter on
+	 * 		{@link String} generic string to search terms for
 	 * @param page
-	 *            the requested page of results
+	 * 		{@link Integer} current page viewed.
 	 * @param count
-	 *            the number of results on the page
-	 * @param sortDirection
-	 *            the direction the results should be sorted by
-	 * @param sortedBy
-	 *            the property to be used to sort the results
-	 * @return a page of projects for the user.
+	 * 		{@link Integer} length of current page.
+	 * @param sort
+	 * 		{@link Sort} Current table sort properties.
+	 *
+	 * @return {@link Page} of {@link Project}
 	 */
-	public Page<Project> findProjectsForUser(final String search, final String filterName, final String filterOrganism, final Integer page,
-			final Integer count, final Direction sortDirection, final String... sortedBy);
+	public Page<Project> findProjectsForUser(final String search, final Integer page, final Integer count,
+			final Sort sort);
 
 	/**
 	 * Find a paged list of all projects (for admin) using the specified search
 	 * criteria.
-	 * 
-	 * @param search
-	 * 			  the search text to use for *all* fields.
-	 * @param filterName
-	 *            the name to filter on
-	 * @param filterOrganism
-	 *            the organism to filter on
-	 * @param page
-	 *            the requested page of results
-	 * @param count
-	 *            the number of results on the page
-	 * @param sortDirection
-	 *            the direction the results should be sorted by
-	 * @param sortedBy
-	 *            the property to be used to sort the results
-	 * @return a page of projects for the user.
+	 *
+	 * @param searchValue
+	 * 		{@link String} generic string to search terms for
+	 * @param currentPage
+	 * 		{@link Integer} current page viewed.
+	 * @param length
+	 * 		{@link Integer} length of current page.
+	 * @param sort
+	 * 		{@link Sort} Current table sort properties.
+	 *
+	 * @return {@link Page} of {@link Project}
 	 */
-	public Page<Project> findAllProjects(final String search, final String filterName, final String filterOrganism, final Integer page,
-			final Integer count, final Direction sortDirection, final String... sortedBy);
-	
+	public Page<Project> findAllProjects(String searchValue, int currentPage, int length, Sort sort);
+
 	/**
 	 * Get a list of {@link Project}s from remote sites that have a given
 	 * {@link SyncStatus}

@@ -5,7 +5,7 @@
 <head lang="en">
 	<meta charset="UTF-8"/>
 	<title th:text="#{samples.files.title(${sample.label})}">THIS IS SOMETHING WRONG</title>
-
+	<link rel="stylesheet" th:href="@{/resources/css/pages/sample_files.css}"/>
 	<script th:inline="javascript">
 		var PAGE = {
 			sample: {
@@ -13,6 +13,9 @@
 			},
 			i18n: {
 				leaving: /*[[#{project.samples.files.upload.page-leave}]]*/ "Leaving the page will cause your file upload to be cancelled."
+			},
+		  	URLS: {
+			  upload: /*[[@{/samples/{id}/sequenceFiles/upload(id=${sample.getId()})}]]*/ ''
 			}
 		};
 		window.dependencies = ['irida.sample.files'];
@@ -20,7 +23,7 @@
 </head>
 <body>
 
-<div th:if="${canManageSample}" class="panel panel-default panel-file-upload" ng-controller="FileUploadController as fileUploadCtrl" layout:fragment="sidebar">
+<div th:if="${canManageSample}" th:with="url=@{${#httpServletRequest.requestURI}}" class="panel panel-default panel-file-upload" ng-controller="FileUploadController as fileUploadCtrl" layout:fragment="sidebar">
 	<div class="panel-body" ng-hide="fileUploadCtrl.uploading || fileUploadCtrl.processing">
 		<div class="fileUpload btn btn-default btn-sm btn-block">
 			<th:block th:text="#{samples.files.upload.btn}"></th:block>
@@ -55,9 +58,16 @@
 			<strong th:text="#{project.samples.files.upload.error.title}">__UPLOAD_ERROR__</strong>
 			<p>{{ fileUploadCtrl.errorMessage }}</p></div>
 	</div>
+	<div class="panel-body">
+		<a th:href="${url + '/concatenate'}" class="btn btn-default btn-sm btn-block">
+			<th:block th:text="#{samples.files.concatenate.btn}"></th:block>
+			&nbsp;
+			<i class="fa fa-plus-square" aria-hidden="true"></i>
+			</a>
+	</div>
 </div>
 
-<main layout:fragment="main" ddl:bundle-includes="sample-files">
+<main layout:fragment="main">
 	<div class="row">
 		<div class="col-md-12">
 			<h1 id="sample-page-title" th:text="#{samples.files.page-title(${sample.getLabel()})}"></h1>
@@ -85,10 +95,11 @@
 								        data:ng-click="${'fileCtrl.deleteFile(' + pair.id + ', &#39;'' + pair.getLabel() +'&#39;')'}">
 									<span class="fa fa-fw fa-trash"></span>
 								</button>
-                                <button class="btn btn-default"
-								        data:ng-click="${'fileCtrl.download(' + pair.getId() + ', ' + file.getId() + ')'}">
+								<a class="btn btn-default btn-sm"
+									 th:attr="download=${file.getLabel()}"
+									 th:href="@{/sequenceFiles/download/{objectId}/file/{fileId}(objectId=${pair.id}, fileId=${file.getId()})}">
 									<span class="fa fa-fw fa-download"></span>
-								</button>
+								</a>
 							</div>
 						</td>
 					</tr>
@@ -96,10 +107,11 @@
 						<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${pair},file=${file},icon='reverse',relative='true')"></td>
 						<td>
 							<div class="btn-group btn-group-sm pull-right" role="group">
-								<button class="btn btn-default"
-								        data:ng-click="${'fileCtrl.download(' + pair.getId() + ', ' + file.getId() + ')'}">
+								<a class="btn btn-default btn-sm"
+									 th:attr="download=${file.getLabel()}"
+									 th:href="@{/sequenceFiles/download/{objectId}/file/{fileId}(objectId=${pair.id}, fileId=${file.getId()})}">
 									<span class="fa fa-fw fa-download"></span>
-								</button>
+								</a>
 							</div>
 						</td>
 					</tr>
@@ -154,10 +166,12 @@
 										data:ng-click="${'fileCtrl.deleteFile(' + fId + ')'}">
 									<span class="fa fa-fw fa-trash"></span>
 								</button>
-								<button class="btn btn-default"
-										data:ng-click="${'fileCtrl.download(' + file.getId() + ', ' + + file.getSequenceFile().getId() + ')'}">
+
+								<a class="btn btn-default btn-sm"
+									 th:attr="download=${file.getLabel()}"
+									 th:href="@{/sequenceFiles/download/{objectId}/file/{fileId}(objectId=${file.getId()}, fileId=${file.getSequenceFile().getId()})}">
 									<span class="fa fa-fw fa-download"></span>
-								</button>
+								</a>
 
 							</div>
 						</td>
@@ -186,18 +200,18 @@
 <th:block layout:fragment="scripts" th:inline="javascript">
 	<script type="text/ng-template" id="/upload-error.html">
 		<div class="modal-header">
-			<h2>
+			<h4 class="modal-title">
 				<i class="fa fa-exclamation-triangle fa-fw" aria-hidden="true"></i>
-				&nbsp;&nbsp;
-				<th:block th:text="#{project.samples.files.error.title}"></th:block>
-			</h2>
+				&nbsp;
+				<th:block th:text="#{project.samples.files.error.title}"/>
+			</h4>
 		</div>
 		<div class="modal-body">
-			<h3>
+			<p>
 				<ng-pluralize count="rejectModalCtrl.rejects.length"
 							  th:attr="when='{\'1\' : \'' + #{project.samples.files.error.bad-files.single} + '\', \'other\': \'' + #{project.samples.files.error.bad-files.plural} + '\'}'">
 				</ng-pluralize>
-			</h3>
+			</p>
 			<alert type="danger">
 				<div ng-repeat="file in rejectModalCtrl.rejects">
 					<strong class="bad-file-name">{{file.name}}</strong>
@@ -263,6 +277,8 @@
 		</div>
 		</form>
 	</script>
+
+	<script th:src="@{/resources/js/build/sample-files.bundle.js}"></script>
 </th:block>
 </body>
 </html>

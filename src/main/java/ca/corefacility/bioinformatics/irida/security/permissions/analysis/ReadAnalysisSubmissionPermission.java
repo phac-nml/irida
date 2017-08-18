@@ -9,12 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.ProjectAnalysisSubmissionJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.files.ReadSequencingObjectPermission;
@@ -31,7 +32,8 @@ public class ReadAnalysisSubmissionPermission extends BasePermission<AnalysisSub
 	private static final Logger logger = LoggerFactory.getLogger(ReadAnalysisSubmissionPermission.class);
 	private static final String PERMISSION_PROVIDED = "canReadAnalysisSubmission";
 
-	private UserRepository userRepository;
+	private final UserRepository userRepository;
+	private final SequencingObjectRepository sequencingObjectRepository;
 	private final ReadSequencingObjectPermission seqObjectPermission;
 	private final ProjectAnalysisSubmissionJoinRepository pasRepository;
 	private final ReadProjectPermission readProjectPermission;
@@ -44,6 +46,8 @@ public class ReadAnalysisSubmissionPermission extends BasePermission<AnalysisSub
 	 *            A {@link AnalysisSubmissionRepository}.
 	 * @param userRepository
 	 *            A {@link UserRepository}.
+	 * @param sequencingObjectRepository
+	 *            a {@link SequencingObjectRepository}
 	 * @param seqObjectPermission
 	 *            {@link ReadSequencingObjectPermission} to test if the
 	 *            {@link AnalysisSubmission} is part of an automated assembly
@@ -56,10 +60,12 @@ public class ReadAnalysisSubmissionPermission extends BasePermission<AnalysisSub
 	 */
 	@Autowired
 	public ReadAnalysisSubmissionPermission(AnalysisSubmissionRepository analysisSubmissionRepository,
-			UserRepository userRepository, ReadSequencingObjectPermission seqObjectPermission,
-			ProjectAnalysisSubmissionJoinRepository pasRepository, ReadProjectPermission readProjectPermission) {
+			UserRepository userRepository, SequencingObjectRepository sequencingObjectRepository,
+			ReadSequencingObjectPermission seqObjectPermission, ProjectAnalysisSubmissionJoinRepository pasRepository,
+			ReadProjectPermission readProjectPermission) {
 		super(AnalysisSubmission.class, Long.class, analysisSubmissionRepository);
 		this.userRepository = userRepository;
+		this.sequencingObjectRepository = sequencingObjectRepository;
 		this.seqObjectPermission = seqObjectPermission;
 		this.pasRepository = pasRepository;
 		this.readProjectPermission = readProjectPermission;
@@ -109,7 +115,8 @@ public class ReadAnalysisSubmissionPermission extends BasePermission<AnalysisSub
 		 * this analysis is the auto assembly or sistr for a file and if they
 		 * can read the file
 		 */
-		Set<SequenceFilePair> pairedInputFiles = analysisSubmission.getPairedInputFiles();
+		Set<SequencingObject> pairedInputFiles = sequencingObjectRepository
+				.findSequencingObjectsForAnalysisSubmission(analysisSubmission);
 
 		boolean anyMatch = pairedInputFiles.stream().filter(o -> {
 			AnalysisSubmission a = o.getAutomatedAssembly();

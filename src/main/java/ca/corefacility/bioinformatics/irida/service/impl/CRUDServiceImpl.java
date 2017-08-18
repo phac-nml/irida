@@ -241,6 +241,7 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 	 * {@inheritDoc}
 	 */
 	@Override
+	@Deprecated
 	@Transactional(readOnly = true)
 	public Page<ValueType> search(Specification<ValueType> specification, int page, int size, Direction order,
 			String... sortProperties) {
@@ -252,6 +253,15 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 		}
 
 		return repository.findAll(specification, new PageRequest(page, size, order, sortProperties));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public Page<ValueType> search(Specification<ValueType> specification, PageRequest pageRequest) {
+		return repository.findAll(specification, pageRequest);
 	}
 
 	/**

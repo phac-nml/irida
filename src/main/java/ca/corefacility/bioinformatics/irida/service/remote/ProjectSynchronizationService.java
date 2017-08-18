@@ -30,6 +30,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.security.ProjectSynchronizationAuthenticationToken;
@@ -244,18 +245,24 @@ public class ProjectSynchronizationService {
 			// if the sample doesn't already exist create it
 			sample.getRemoteStatus().setSyncStatus(SyncStatus.UPDATING);
 			localSample = sampleService.create(sample);
-			projectService.addSampleToProject(project, sample);
+			projectService.addSampleToProject(project, sample, true);
 		}
 
 		// get the local files and organize by their url
-		Collection<SampleSequencingObjectJoin> localPairs = objectService.getSequencesForSampleOfType(localSample,
-				SequenceFilePair.class);
-		Map<String, SequenceFilePair> pairsByUrl = new HashMap<>();
-		localPairs.forEach(j -> {
-			SequenceFilePair pair = (SequenceFilePair) j.getObject();
-			String url = pair.getRemoteStatus().getURL();
+		
+		Collection<SampleSequencingObjectJoin> localObjects = objectService.getSequencingObjectsForSample(localSample);
 
-			pairsByUrl.put(url, pair);
+		Map<String, SequencingObject> objectsByUrl = new HashMap<>();
+		localObjects.forEach(j -> {
+			SequencingObject pair = j.getObject();
+			
+			// check if the file was actually sync'd. Someone may have
+			// concatenated it
+			if (pair.getRemoteStatus() != null) {
+				String url = pair.getRemoteStatus().getURL();
+
+				objectsByUrl.put(url, pair);
+			}
 		});
 
 		List<SequenceFilePair> sequenceFilePairsForSample = pairRemoteService.getSequenceFilePairsForSample(sample);
@@ -263,7 +270,7 @@ public class ProjectSynchronizationService {
 		List<ProjectSynchronizationException> syncErrors = new ArrayList<>();
 
 		for (SequenceFilePair pair : sequenceFilePairsForSample) {
-			if (!pairsByUrl.containsKey(pair.getRemoteStatus().getURL())) {
+			if (!objectsByUrl.containsKey(pair.getRemoteStatus().getURL())) {
 				pair.setId(null);
 				try {
 					syncSequenceFilePair(pair, localSample);
@@ -276,11 +283,13 @@ public class ProjectSynchronizationService {
 		List<SingleEndSequenceFile> unpairedFilesForSample = singleEndRemoteService.getUnpairedFilesForSample(sample);
 
 		for (SingleEndSequenceFile file : unpairedFilesForSample) {
-			file.setId(null);
-			try {
-				syncSingleEndSequenceFile(file, localSample);
-			} catch (ProjectSynchronizationException e) {
-				syncErrors.add(e);
+			if (!objectsByUrl.containsKey(file.getRemoteStatus().getURL())) {
+				file.setId(null);
+				try {
+					syncSingleEndSequenceFile(file, localSample);
+				} catch (ProjectSynchronizationException e) {
+					syncErrors.add(e);
+				}
 			}
 		}
 

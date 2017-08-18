@@ -204,7 +204,7 @@ public class CartController {
 	@ResponseBody
 	public Map<String, Object> removeProjectSample(@PathVariable Long projectId, @PathVariable Long sampleId) {
 		Project project = projectService.read(projectId);
-		Sample sampleForProject = sampleService.getSampleForProject(project, sampleId);
+		Sample sampleForProject = sampleService.getSampleForProject(project, sampleId).getObject();
 		Set<Sample> selectedSamplesForProject = getSelectedSamplesForProject(project);
 
 		selectedSamplesForProject.remove(sampleForProject);
@@ -264,7 +264,7 @@ public class CartController {
 	 */
 	private Set<Sample> loadSamplesForProject(Project project, Set<Long> sampleIds) {
 		return sampleIds.stream().map((id) -> {
-			return sampleService.getSampleForProject(project, id);
+			return sampleService.getSampleForProject(project, id).getObject();
 		}).collect(Collectors.toSet());
 
 	}

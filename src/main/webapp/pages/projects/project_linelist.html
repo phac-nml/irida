@@ -5,6 +5,7 @@
         layout:decorator="projects/_base">
 <head>
     <title th:text="#{linelist.page-title}">Title</title>
+    <link rel="stylesheet" th:href="@{/resources/css/pages/project_linelist.css}" />
     <script th:inline="javascript">
       var PAGE = {
         urls: {
@@ -12,19 +13,30 @@
           sample: /*[[@{/samples/}]]*/ ''
         },
         i18n: {
-          allFields: /*[[#{linelist.templates.all}]]*/ 'All Fields'
+          allFields: /*[[#{linelist.templates.all}]]*/ 'All Fields',
+          exportTable: /*[[#{linelist.export}]]*/ 'Export'
         }
       };
     </script>
 </head>
 <body>
-<main layout:fragment="main" ddl:bundle-includes="project-linelist">
-    <linelist></linelist>
+<main layout:fragment="main">
+    <div ng-controller="lineListTableController as tableCtrl">
+        <linelist></linelist>
+        <table id="linelist" class="table table-striped" cellspacing="0" width="100%">
+            <thead>
+            <tr>
+                <!-- Fixed DataTables column with the Sample label -->
+                <th data-data="irida-sample-name" th:text="#{linelist.table.header.sampleName}"></th>
+                <th th:each="header : ${headers}" th:text="${header}"></th>
+            </tr>
+            </thead>
+        </table>
+    </div>
 </main>
 
 <th:block layout:fragment="scripts">
     <script th:inline="javascript">
-      var headersList = /*[[${headers}]]*/ [];
       var metadataList = /*[[${metadataList}]]*/ [];
     </script>
     <script type="text/ng-template" id="linelist.tmpl.html">
@@ -89,16 +101,10 @@
                                bs-switch=""
                                switch-size="small"
                                ng-model="field.visible"
-                               ng-change="$ctrl.toggleColumn(field)"
+                               ng-change="$ctrl.toggleColumn(field, $index)"
                                switch-label-width="200"
                                switch-label="{{ field.label }}"
-                               switch-readonly="{{ $index === 0 }}"
                         />
-                        <div ng-if="$index === 0">
-                            <small class="text-info" th:text="#{linelist.columns.first-warning}">
-                                _First column can not be hidden._
-                            </small>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -153,6 +159,9 @@
             </button>
         </div>
     </script>
+
+    <script th:src="@{/node_modules/jszip/dist/jszip.min.js}"></script>
+    <script th:src="@{/resources/js/build/project-linelist.bundle.js}"></script>
 </th:block>
 </body>
 </html>

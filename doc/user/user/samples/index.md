@@ -26,6 +26,7 @@ The samples listing shows high-level sample details, such as:
 * The project that the sample belongs to (if from a related project),
 * The date that the sample was created in IRIDA.
 * Whether the sample failed IRIDA's quality control checks.  If a sample has failed QC, the cell will have a red background and warning icon <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>.  Note if you are displaying [associated project samples](#viewing-associated-samples) QC information will come from the sample's parent project.
+* Whether the sample can be modified in this project.  If the project does not have modification access, a lock icon will be displayed <i class="fa fa-lock" aria-hidden="true"></i>.
 
 ### Viewing individual sample details
 
@@ -64,6 +65,23 @@ You can download all sequence files in a sample by following the instructions in
 If you need to delete a sequence file from IRIDA, you can do so by clicking on the <img src="images/delete-icon.png" alt="Delete icon" class="inline"> icon, on the right-hand side of the row for the sequence file.
 
 You can only delete a sequence file from a sample if you have the project <img src="images/manager-icon.png" class="inline" alt="Manager role icon."> **Manager** role on the project.
+
+#### Concatenating sequence files
+
+In cases where a top-up run or any other additional data is added to a sample, you may want to combine the sequence files into a single *concatenated* file.  IRIDA allows you to do this under the *Concatenate Files* page.
+
+![Concatenate link]({{ site.baseurl }}/images/tutorials/common/samples/concatenate-link.png)
+
+In the concatenation page you must select 2 or more sequence file objects **of the same type** to concatenate.  If you have selected a collection of files which cannot be concatenated, a warning will be displayed.
+
+![Concatenate page]({{ site.baseurl }}/images/tutorials/common/samples/concatenate-page.png)
+
+Once you have selected your files to concatenate, you have the following options:
+
+* *New filename* - This will set the base name of the new concatenated files.  For paired-end data a modifier will be appended to determine the forward and reverse files.
+* *Remove originals* - This will remove the original files from the sample, leaving only the new concatenated file.
+
+Once you have selected your files and selected your options, click *Submit* to begin the concatenation.  This may take a while, so you should stay on this page until the process is complete.  Once your files are concatenated, you will be redirected back to the sample-files page.
 
 #### Viewing automated assemblies
 
@@ -226,6 +244,8 @@ In the dialog that appears you will be presented with a list of the samples that
 
 When you click on the drop-down box to select a project, you can either visually find the project that you want, or you can filter the projects by their name by typing into the text field.
 
+If you have selected samples that are non-modifiable in your current project, you will be shown a warning that the samples you are moving will also be non-modifiable in the new project.
+
 Once you've selected the project that you want to move the samples to, click on the "Move Samples" button.
 
 ### Merging samples within a project
@@ -245,6 +265,8 @@ Click on the sample name under "**Select a sample to merge into**" to choose whi
 You may also (optionally) rename the target sample by entering a new sample name under "**Rename sample**". The sample name must be **at least** 3 characters long, and **must not** contain white space characters (tab or space) or any of the following characters: `? ( ) [ ] / \ = + < > : ; " , * ^ | & ' .`. If you do not want to rename the target sample, leave this field blank.
 
 Once you've finished choosing the sample to merge into, click on the "Complete Merge" button at the bottom of the dialog.
+
+Note if you select samples that are non-modifiable, a warning will be displayed that you cannot merge the selected samples.
 
 Exporting samples
 -----------------

@@ -4,6 +4,7 @@
       layout:decorator="sequenceFiles/_base">
 <head>
     <title th:text="${file.getLabel()}">THIS IS SOMETHING WRONG</title>
+    <link rel="stylesheet" th:href="@{/node_modules/datatables.net-bs/css/dataTables.bootstrap.css}"/>
 </head>
 <body>
 <main layout:fragment="main">
@@ -35,6 +36,8 @@
 <aside th:replace="sequenceFiles/file_base :: sidebar"></aside>
 
 <th:block layout:fragment="pageScripts" th:inline="javascript">
+    <script th:src="@{/node_modules/datatables.net/js/jquery.dataTables.js}"></script>
+    <script th:src="@{/node_modules/datatables.net-bs/js/dataTables.bootstrap.js}"></script>
     <script>
         /*<![CDATA[*/
         $("#orTable").dataTable({

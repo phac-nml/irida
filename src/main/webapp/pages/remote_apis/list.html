@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="remote_apis/_base">
+      layout:decorator="template/page">
 <head>
     <title th:text="#{clients.title}">_Clients_</title>
+    <link rel="stylesheet" th:href="@{/node_modules/datatables.net-bs/css/dataTables.bootstrap.css}"/>
     <script th:inline="javascript">
         var PAGE = {
             urls: {
@@ -18,7 +19,7 @@
     </script>
 </head>
 <body>
-<main layout:fragment="main" ddl:bundle-includes="remote-apis-list" ddl:asset-css-excludes="jquery.datatables">
+<main layout:fragment="page">
     <h1 th:text="#{remoteapi.title}">_Clients_</h1>
 
     <p th:text="#{remoteapi.status.description}">_Connect links on this page will redirect you to a remote IRIDA
@@ -38,6 +39,11 @@
     </table>
 </main>
 
-<script layout:fragment="scripts" th:inline="javascript" th:replace="remote_apis/remote_api_connect"></script>
+<th:block layout:fragment="scripts">
+    <th:block th:inline="javascript" th:replace="remote_apis/remote_api_connect"/>
+    <script src="/node_modules/datatables.net/js/jquery.dataTables.js"></script>
+    <script src="/node_modules/datatables.net-bs/js/dataTables.bootstrap.js"></script>
+    <script th:src="@{/resources/js/pages/remote-apis/remote-apis-list.js}"></script>
+</th:block>
 </body>
 </html>

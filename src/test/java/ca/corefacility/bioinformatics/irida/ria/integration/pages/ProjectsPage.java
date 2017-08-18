@@ -35,13 +35,13 @@ public class ProjectsPage extends AbstractPage {
 	private void loadPage(String url) {
 		get(driver, url);
 		waitForTime(100);
-		waitForElementVisible(By.cssSelector("#projectsTable tbody tr"));
+		waitForElementVisible(By.cssSelector("#projects tbody tr"));
 	}
 
 	public int projectsTableSize() {
 		logger.trace("Getting table size");
 
-		List<WebElement> projectList = driver.findElements(By.cssSelector("#projectsTable tbody tr"));
+		List<WebElement> projectList = driver.findElements(By.cssSelector("#projects tbody tr"));
 
 		int size = projectList.size();
 
@@ -58,63 +58,34 @@ public class ProjectsPage extends AbstractPage {
 	}
 
 	public void gotoProjectPage(int row) {
-		submitAndWait(driver.findElements(By.cssSelector("#projectsTable .item-link")).get(row));
+		submitAndWait(driver.findElements(By.cssSelector("#projects .btn-link")).get(row));
 	}
 
 	public List<WebElement> getProjectColumn() {
-		return driver.findElements(By.cssSelector("#projectsTable tbody td:nth-child(2)"));
+		return driver.findElements(By.cssSelector("#projects tbody td:nth-child(2)"));
 	}
 
 	public void clickProjectNameHeader() {
 		// Sorting row is the second one
-		WebElement th = driver.findElements(By.cssSelector("#projectsTable th")).get(1);
-		final String originalSortOrder = th.getAttribute("aria-sort");
-		th.findElement(By.className("header-name")).click();
+		WebElement th = driver.findElement(By.cssSelector("[data-data='name']"));
+		final String originalSortOrder = th.getAttribute("class");
+		th.click();
 		new WebDriverWait(driver, TIME_OUT_IN_SECONDS).until(
 				(org.openqa.selenium.support.ui.ExpectedCondition<Boolean>) input -> {
-					final String ariaSort = th.getAttribute("aria-sort");
+					final String ariaSort = th.getAttribute("class");
 					return ariaSort!= null && !ariaSort.equals(originalSortOrder);
 				});
 	}
 
-	public void clearFilters() {
-		WebElement clearBtn = driver.findElement(By.id("clearFilterBtn"));
-		waitForElementToBeClickable(clearBtn);
-		clearBtn.click();
-		waitForElementInvisible(By.className("projectsTable_processing"));
-	}
-
-	public void filterByName(String name) {
-		openFilters();
-		WebElement input = waitForElementVisible(By.id("nameFilter"));
-		input.sendKeys(name);
-		submitFilter("nameFilterClear");
-	}
-
-	public void filterByOrganism(String organism) {
-		openFilters();
-		WebElement input = driver.findElement(By.id("organismFilter"));
-		input.sendKeys(organism);
-		submitFilter("organismFilterClear");
-	}
-
-	private void openFilters() {
-		WebElement btn = waitForElementVisible(By.id("openFilterModal"));
-		btn.click();
-	}
-
-	private void submitFilter(String filterClearerId) {
-		driver.findElement(By.id("filterProjectsBtn")).click();
-		waitForElementInvisible(By.className("modal-header"));
-	}
-
 	public void doSearch(String term) {
-		driver.findElement(By.cssSelector("#projectsTable_filter input")).sendKeys(term);
-		waitForElementInvisible(By.className("projectsTable_processing"));
+		WebElement input = driver.findElement(By.cssSelector("#projects_filter input"));
+		input.clear();
+		input.sendKeys(term);
+		waitForElementInvisible(By.className("projects_processing"));
 	}
 
 	public void clickLinkToProject(int row) {
-		List<WebElement> links = (List<WebElement>) waitForElementsVisible(By.className("item-link"));
+		List<WebElement> links = (List<WebElement>) waitForElementsVisible(By.cssSelector("#projects .btn-link"));
 		submitAndWait(links.get(row));
 	}
 }
