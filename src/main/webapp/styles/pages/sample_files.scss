@@ -1,10 +1,25 @@
 @import "../helpers/variables";
 @import "../animations/animations";
 
-.paired_end, .single_end, .file_info {
+.paired_end, .single_end, .file_info, .assembly_sample_info {
   background-color: $color-grey-light;
   td {
     border: none !important;
+  }
+}
+
+.assembly_sample_info {
+  .td_icon {
+    background-color: $colour-paired-end;
+    color: $color-grey-light;
+    vertical-align: middle;
+    text-align: center;
+  }
+  
+  .assembly_row {
+    border: 1px solid $colour-paired-end;
+    #vertical-align: middle;
+    #text-align: center;
   }
 }
 
@@ -44,8 +59,15 @@
   border: 1px solid #133B54;
 }
 
-.qc_icon {
+.qc_icon, .assembly_sample_icon {
   vertical-align: middle !important;
+}
+
+.assembly_sample_icon {
+    background-color: $colour-paired-end;
+    color: $color-grey-light;
+    vertical-align: middle;
+    text-align: center;
 }
 
 .qc_list {
@@ -67,7 +89,7 @@
   }
 }
 
-.file_info {
+.file_info, .assembly_sample_info {
   border: 1px solid $colour-paired-end;
 }
 

@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.assembly;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.Objects;
@@ -76,6 +78,10 @@ public abstract class GenomeAssembly extends IridaResourceSupport implements Mut
 	@Override
 	public void setModifiedDate(Date modifiedDate) {
 		throw new UnsupportedOperationException("Cannot update a genome assembly");
+	}
+	
+	public long getFileSize() throws IOException {
+		return Files.size(getFile());
 	}
 
 	/**
