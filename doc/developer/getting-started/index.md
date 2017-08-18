@@ -6,11 +6,16 @@ IRIDA Development Primer
 ========================
 {:.no_toc}
 
-This guide describes how to write documentation for IRIDA.
+This guide is for new developers to the IRIDA project to get a basic understanding of the layout of the project.
 
 * This comment becomes the table of contents
 {:toc}
 
+Document History
+----------------
+{:.no_toc}
+
+* Aug 18, 2017: Document creation.
 
 Important links
 ---------------
@@ -27,7 +32,7 @@ IRIDA is a Java application developed using Java 8.
 #### Spring framework
 {:.no_toc}
 
-Documentation: http://docs.spring.io/spring-framework/docs/4.2.3.RELEASE/spring-framework-reference/html/
+Documentation: [http://docs.spring.io/spring-framework/docs/4.2.3.RELEASE/spring-framework-reference/html/](http://docs.spring.io/spring-framework/docs/4.2.3.RELEASE/spring-framework-reference/html/)
 
 IRIDA uses the Spring Framework as the main backbone of the application.  Spring is used to assist with many of the main functions of the application including configuration, dependency injection, MVC, REST API, Java persistance API management, and more.
 
@@ -36,7 +41,7 @@ For a better understanding of how Spring works, it's recommended that IRIDA deve
 #### Apache Maven
 {:.no_toc}
 
-Documentation: http://maven.apache.org/guides/
+Documentation: [http://maven.apache.org/guides/](http://maven.apache.org/guides/)
 
 IRIDA uses Apache Maven for dependency management and build automation.  Maven allows developers to specify dependencies for a Java application and Maven will handle downloading all necessary required packages and ensuring they're available for developers on the Java classpath.  It also allows you to specify build lifecycles to automate packaging an application for distribution or execute code for development.
 
@@ -45,7 +50,7 @@ Maven settings and dependencies can generally be found in the `pom.xml` file in 
 #### Hibernate
 {:.no_toc}
 
-Documentation: http://hibernate.org/orm/documentation/4.3/
+Documentation:[http://hibernate.org/orm/documentation/4.3/](http://hibernate.org/orm/documentation/4.3/)
 
 Hibernate is used to map Java objects to database tables without the need for writing extra database code.  IRIDA uses hibernate through the Java Persistence API abstraction.
 
@@ -56,6 +61,18 @@ Hibernate is used to map Java objects to database tables without the need for wr
 * JQuery - Javascript libraries - https://api.jquery.com/
 * AngularJS - Javascript libraries and templating - https://docs.angularjs.org/api
 * Jekyll - Documentation build - http://jekyllrb.com/docs/home/
+
+Development platform
+--------------------
+
+The development platform used by most IRIDA developers is the [Eclipse](https://eclipse.org/ide/) IDE.  
+
+The following plugins are recommended:
+* Eclipse EGit - Git integration.  Helps by showing changes made to your codebase.
+* Eclipse m2e - Maven integration.  Helps build your Maven project.
+
+The following code formatting file should be imported into Eclipse for consistency between developers: [IRIDA eclipse code format](irida-code-format.xml)
+
 
 Quick start development requirements
 ------------------------------------
