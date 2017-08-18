@@ -13,9 +13,8 @@ import javax.persistence.Table;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisAssemblyAnnotation;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 /**
  * Defines a genome assembly from an IRIDA-based analysis.
@@ -27,31 +26,31 @@ public class GenomeAssemblyFromAnalysis extends GenomeAssembly {
 
 	@OneToOne(fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST,
 			CascadeType.REFRESH })
-	@JoinColumn(name = "analysis_id", nullable = false)
-	private Analysis assembly;
+	@JoinColumn(name = "analysis_submission_id", nullable = false)
+	private AnalysisSubmission assembly;
 
 	@SuppressWarnings("unused")
 	private GenomeAssemblyFromAnalysis() {
 		super();
 	}
 
-	public GenomeAssemblyFromAnalysis(AnalysisAssemblyAnnotation assembly) {
+	public GenomeAssemblyFromAnalysis(AnalysisSubmission assembly) {
 		super(new Date());
 		this.assembly = assembly;
 	}
 
-	public Analysis getAnalysisSubmission() {
+	public AnalysisSubmission getAnalysisSubmission() {
 		return assembly;
 	}
 
-	public void setAnalysisSubmission(Analysis assembly) {
+	public void setAnalysisSubmission(AnalysisSubmission assembly) {
 		this.assembly = assembly;
 	}
-	
+
 	public AnalysisOutputFile getAssemblyOutput() {
-		return assembly.getAnalysisOutputFile("contigs-with-repeats");
+		return assembly.getAnalysis().getAnalysisOutputFile("contigs-with-repeats");
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */

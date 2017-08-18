@@ -10,8 +10,7 @@ import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssemblyFromAnalysis;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisAssemblyAnnotation;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.service.analysis.sample.AnalysisSampleUpdatorService;
 
@@ -32,7 +31,7 @@ public class AssemblySampleUpdatorService implements AnalysisSampleUpdatorServic
 
 	@Override
 	@PreAuthorize("hasPermission(#samples, 'canUpdateSample')")
-	public void update(Collection<Sample> samples, Analysis analysis) {
+	public void update(Collection<Sample> samples, AnalysisSubmission analysis) {
 		if (samples.size() != 1) {
 			throw new RuntimeException("Error: expected only 1 sample, but got " + samples.size() + " samples");
 		}
@@ -40,7 +39,7 @@ public class AssemblySampleUpdatorService implements AnalysisSampleUpdatorServic
 		Sample sample = samples.iterator().next();
 
 		if (sample.getAssembly() == null) {
-			sample.setGenomeAssembly(new GenomeAssemblyFromAnalysis((AnalysisAssemblyAnnotation) analysis));
+			sample.setGenomeAssembly(new GenomeAssemblyFromAnalysis(analysis));
 			sampleRepository.save(sample);
 		} else {
 			logger.debug("Already exists assembly for sample " + sample + ", will not update assembly");

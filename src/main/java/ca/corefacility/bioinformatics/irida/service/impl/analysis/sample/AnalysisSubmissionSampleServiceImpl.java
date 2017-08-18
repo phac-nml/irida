@@ -50,7 +50,7 @@ public class AnalysisSubmissionSampleServiceImpl implements AnalysisSubmissionSa
 		AnalysisSampleUpdatorService analysisSampleUpdatorService = analysisSampleUpdatorMap.get(analysis.getClass());
 
 		if (analysisSampleUpdatorService != null) {
-			analysisSampleUpdatorService.update(samples, analysis);
+			analysisSampleUpdatorService.update(samples, analysisSubmission);
 		} else {
 			logger.debug("No associated object for updating samples for analysis of type " + analysis.getClass());
 		}
