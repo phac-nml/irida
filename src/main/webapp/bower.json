@@ -45,6 +45,7 @@
     "angular-animate": "1.6.2",
     "moment": "2.15.0",
     "font-awesome": "^4.7.0",
-    "datatables": "^1.10.15"
+    "datatables": "^1.10.15",
+    "angular-bootstrap": "0.14.3"
   }
 }
