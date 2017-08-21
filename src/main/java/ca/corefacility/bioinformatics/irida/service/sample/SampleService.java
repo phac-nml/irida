@@ -245,4 +245,11 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 */
 	public List<QCEntry> getQCEntriesForSample(Sample sample);
 
+	/**
+	 * Removes the associated {@link GenomeAssembly} from a sample.
+	 * 
+	 * @param sample
+	 *            The sample to remove the genome assembly from.
+	 */
+	public void removeGenomeAssemblyFromSample(Sample sample);
 }

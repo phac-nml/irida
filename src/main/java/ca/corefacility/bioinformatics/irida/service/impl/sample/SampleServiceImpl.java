@@ -457,4 +457,15 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 		return sortProperties;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Transactional
+	@PreAuthorize("hasPermission(#sample, 'canUpdateSample')")
+	@Override
+	public void removeGenomeAssemblyFromSample(Sample sample) {
+		sample.setGenomeAssembly(null);
+		sampleRepository.save(sample);
+	}
 }
