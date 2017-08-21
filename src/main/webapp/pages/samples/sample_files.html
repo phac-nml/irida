@@ -263,10 +263,10 @@
 							</button>
 
 							<a class="btn btn-default btn-sm"
-								href="#">
+									th:attr="download=${sample.assembly.label}"
+									th:href="@{/samples/download/{sampleId}/assembly(sampleId=${sample.id})}">
 								<span class="fa fa-fw fa-download"></span>
 							</a>
-
 						</div>
 					</td>
 				</tr>
@@ -274,7 +274,7 @@
 		</div>
 	</div>
 
-	</main>
+</main>
 <th:block layout:fragment="scripts" th:inline="javascript">
 	<script type="text/ng-template" id="/upload-error.html">
 		<div class="modal-header">

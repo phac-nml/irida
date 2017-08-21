@@ -47,6 +47,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
+import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
@@ -302,6 +303,26 @@ public class SamplesController extends BaseController {
 		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isProjectManagerForSample(sample));
 		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_FILES);
 		return SAMPLE_FILES_PAGE;
+	}
+	
+	/**
+	 * Downloads an {@link GenomeAssembly} associated with a sample.
+	 *
+	 * @param sampleId
+	 *            Id for the sample containing the assembly to download.
+	 * @param response
+	 *            {@link HttpServletResponse}
+	 * @throws IOException
+	 *             if we can't write the file to the response.
+	 */
+	@RequestMapping("/samples/download/{sampleId}/assembly")
+	public void downloadAssembly(@PathVariable Long sampleId, HttpServletResponse response) throws IOException {
+		Sample sample = sampleService.read(sampleId);
+		GenomeAssembly genomeAssembly = sample.getAssembly();
+		Path path = genomeAssembly.getFile();
+		response.setHeader("Content-Disposition", "attachment; filename=\"" + genomeAssembly.getLabel() + "\"");
+		Files.copy(path, response.getOutputStream());
+		response.flushBuffer();
 	}
 
 	/**

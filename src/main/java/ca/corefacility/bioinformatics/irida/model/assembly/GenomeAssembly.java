@@ -79,11 +79,11 @@ public abstract class GenomeAssembly extends IridaResourceSupport implements Mut
 	public void setModifiedDate(Date modifiedDate) {
 		throw new UnsupportedOperationException("Cannot update a genome assembly");
 	}
-	
+
 	public long getFileSize() throws IOException {
 		return Files.size(getFile());
 	}
-
+	
 	/**
 	 * Gets the assembly file.
 	 * 
