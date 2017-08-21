@@ -421,6 +421,46 @@ public class SamplesController extends BaseController {
 	}
 
 	/**
+	 * Remove a given {@link GenomeAssembly} from a sample
+	 *
+	 * @param attributes
+	 *            the redirect attributes where we can add flash-scoped messages
+	 *            for the client.
+	 * @param sampleId
+	 *            the {@link Sample} id
+	 * @param request
+	 *            {@link HttpServletRequest}
+	 * @param locale
+	 *            the locale specified by the browser.
+	 * @return map stating the request was successful
+	 */
+	@RequestMapping(value = "/samples/{sampleId}/files/assembly/delete", method = RequestMethod.POST)
+	public String removeGenomeAssemblyFromSample(RedirectAttributes attributes, @PathVariable Long sampleId,
+			HttpServletRequest request, Locale locale) {
+		Sample sample = sampleService.read(sampleId);
+		GenomeAssembly genomeAssembly = sample.getAssembly();
+
+		if (genomeAssembly == null) {
+			logger.debug("Attempted to remove genome assembly from sample=" + sample
+					+ ", but assembly has already been removed");
+		} else {
+			try {
+				sampleService.removeGenomeAssemblyFromSample(sample);
+				attributes.addFlashAttribute("fileDeleted", true);
+				attributes.addFlashAttribute("fileDeletedMessage", messageSource.getMessage(
+						"samples.files.assembly.removed.message", new Object[] { genomeAssembly.getLabel() }, locale));
+			} catch (Exception e) {
+				logger.error("Could not remove assembly from sample=" + sample, e);
+				attributes.addFlashAttribute("fileDeleted", true);
+				attributes.addFlashAttribute("fileDeletedError", messageSource.getMessage(
+						"samples.files.assembly.remove.error", new Object[] { sample.getSampleName() }, locale));
+			}
+		}
+
+		return "redirect:" + request.getHeader("referer");
+	}
+
+	/**
 	 * Upload {@link SequenceFile}'s to a sample
 	 *
 	 * @param sampleId

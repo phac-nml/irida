@@ -148,7 +148,7 @@ public class Sample extends IridaResourceSupport
 	@OneToOne(fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST,
 			CascadeType.REFRESH })
 	@JoinColumn(name = "genome_assembly_id")
-	@NotAudited
+	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 	private GenomeAssembly genomeAssembly;
 
 	public Sample() {
