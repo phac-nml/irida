@@ -48,7 +48,7 @@ public class AnnouncementControlPage extends AbstractPage {
 
     public String getAnnouncement(int position) {
         WebElement table = driver.findElement(By.id("announcementTable"));
-		List<WebElement> messages = table.findElements(By.cssSelector("tbody>tr>td:first-of-type"));
+		List<WebElement> messages = table.findElements(By.cssSelector("tbody>tr>td:first-of-type a"));
 		return messages.get(position).getText();
     }
 
