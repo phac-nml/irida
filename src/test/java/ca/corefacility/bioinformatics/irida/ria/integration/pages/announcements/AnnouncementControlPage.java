@@ -42,7 +42,7 @@ public class AnnouncementControlPage extends AbstractPage {
      */
     public List<Date> getCreatedDates() {
         WebElement table = driver.findElement(By.id("announcementTable"));
-        List<WebElement> datesText = table.findElements(By.cssSelector("tbody>tr>td:last-of-type"));
+        List<WebElement> datesText = table.findElements(By.cssSelector("tbody td:last-of-type"));
         return datesText.stream().map(td -> new Date(td.getText())).collect(Collectors.toList());
     }
 
