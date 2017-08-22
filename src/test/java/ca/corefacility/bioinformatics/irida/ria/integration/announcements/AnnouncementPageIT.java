@@ -129,10 +129,10 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver{
         controlPage.goTo();
 		List<Date> dates = controlPage.getCreatedDates();
 
-		String announcement = controlPage.getAnnouncement(2);
+		String messagePreview = controlPage.getAnnouncement(2);
 
 		controlPage.gotoMessageDetails(2);
-		assertTrue("Announcement content doesn't match expected", announcement.equals(detailPage.getInputText()));
+		assertTrue("Announcement content doesn't match expected", detailPage.getInputText().contains(messagePreview));
 
         detailPage.clickDeleteButton();
 
