@@ -4,7 +4,7 @@
       layout:decorator="template/page">
 <head>
     <title th:text="#{clients.title}">_Clients_</title>
-    <link rel="stylesheet" th:href="@{/node_modules/datatables.net-bs/css/dataTables.bootstrap.css}"/>
+    <link rel="stylesheet" th:href="@{/resources/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css}" />
     <script th:inline="javascript">
         var PAGE = {
             urls: {
@@ -41,8 +41,8 @@
 
 <th:block layout:fragment="scripts">
     <th:block th:inline="javascript" th:replace="remote_apis/remote_api_connect"/>
-    <script src="/node_modules/datatables.net/js/jquery.dataTables.js"></script>
-    <script src="/node_modules/datatables.net-bs/js/dataTables.bootstrap.js"></script>
+    <script th:src="@{/resources/bower_components/datatables.net/js/jquery.dataTables.min.js}"></script>
+    <script th:src="@{/resources/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js}"></script>
     <script th:src="@{/resources/js/pages/remote-apis/remote-apis-list.js}"></script>
 </th:block>
 </body>

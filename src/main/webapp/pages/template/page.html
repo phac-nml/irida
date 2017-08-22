@@ -139,10 +139,8 @@
 		};
 	</script>
 
-	<script src="/node_modules/jquery/dist/jquery.min.js"
-			th:src="@{/node_modules/jquery/dist/jquery.min.js}"></script>
-	<script src="/resources/bower_components/bootstrap/dist/js/bootstrap.min.js"
-			th:src="@{/resources/bower_components/bootstrap/dist/js/bootstrap.min.js}"></script>
+	<script th:src="@{/resources/bower_components/jquery/dist/jquery.min.js}"></script>
+	<script th:src="@{/resources/bower_components/bootstrap/dist/js/bootstrap.min.js}"></script>
 
 	<th:block ddl:placeholder-include="js">
 		<!--/* Dandelion injects script tags here */-->
