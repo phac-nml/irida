@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.model.assembly;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.Objects;
@@ -18,10 +19,13 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.annotation.CreatedDate;
 
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 
 /**
  * Defines a genome assembly which can be associated with a sample.
@@ -30,6 +34,8 @@ import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 @Table(name = "genome_assembly")
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class GenomeAssembly extends IridaResourceSupport implements MutableIridaThing {
+
+	private static final Logger logger = LoggerFactory.getLogger(GenomeAssembly.class);
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -83,7 +89,25 @@ public abstract class GenomeAssembly extends IridaResourceSupport implements Mut
 	public long getFileSize() throws IOException {
 		return Files.size(getFile());
 	}
-	
+
+	/**
+	 * Get human-readable file size.
+	 * 
+	 * @return A human-readable file size.
+	 * @throws IOException
+	 */
+	public String getReadableFileSize() throws IOException {
+		String size = "N/A";
+		try {
+			size = IridaSequenceFile.humanReadableByteCount(Files.size(getFile()), true);
+		} catch (NoSuchFileException e) {
+			logger.error("Could not find file " + getFile());
+		} catch (IOException e) {
+			logger.error("Could not calculate file size: ", e);
+		}
+		return size;
+	}
+
 	/**
 	 * Gets the assembly file.
 	 * 
