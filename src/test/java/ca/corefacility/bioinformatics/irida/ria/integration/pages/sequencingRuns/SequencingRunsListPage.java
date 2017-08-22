@@ -1,14 +1,15 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.sequencingRuns;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 /**
  * Page displaying the list of sequencing runs
@@ -32,17 +33,15 @@ public class SequencingRunsListPage extends AbstractPage {
 
 	public List<Long> getDisplayedIds() {
 		logger.trace("Listing runs");
-		List<WebElement> rows = driver.findElements(By.className("run-id"));
-		return rows.stream().map((r) -> {
-			return Long.parseLong(r.getText());
-		}).collect(Collectors.toList());
+		List<WebElement> rows = driver.findElements(By.cssSelector("tbody td:first-of-type a"));
+		return rows.stream().map((r) -> Long.parseLong(r.getText())).collect(Collectors.toList());
 
 	}
 
 	public boolean idDisplayIdInList(String id) {
 		logger.trace("Listing runs");
-		waitForElementVisible(By.className("run-id"));
-		List<WebElement> ids = driver.findElements(By.className("run-id"));
+		waitForElementVisible(By.cssSelector("tbody tr"));
+		List<WebElement> ids = driver.findElements(By.cssSelector("tbody td:first-of-type a"));
 		boolean found = false;
 		for (WebElement rowId : ids) {
 			if (rowId.getText().equals(id)) {
