@@ -28,7 +28,7 @@ public class SequencingRunsListPage extends AbstractPage {
 	public void goTo() {
 		get(driver, PAGEURL);
 		// wait for rows to be shown
-		waitForElementVisible(By.className("run-id"));
+		waitForElementVisible(By.cssSelector("tbody td"));
 	}
 
 	public List<Long> getDisplayedIds() {
