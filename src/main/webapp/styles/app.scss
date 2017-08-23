@@ -154,3 +154,8 @@ ol.start li:before, ol.continue li:before {
   top: 5px;
   right: 0;
 }
+
+// TODO: This is a temporary fix for the modal hidden behind the overlay using dandelion production profile
+.modal-dialog {
+  z-index: 1000000;
+}
