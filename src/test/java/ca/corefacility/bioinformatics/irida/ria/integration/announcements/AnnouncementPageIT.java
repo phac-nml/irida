@@ -9,6 +9,8 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
@@ -27,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.announcements.
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/announcements/AnnouncementPageIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver{
+	private static final Logger logger = LoggerFactory.getLogger(AnnouncementPageIT.class);
 
     //Page objects
     private AnnouncementControlPage controlPage;
@@ -132,6 +135,8 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver{
 		String messagePreview = controlPage.getAnnouncement(2);
 
 		controlPage.gotoMessageDetails(2);
+		logger.debug("DETAILS INPUT: ", detailPage.getInputText());
+		logger.debug("PREVIEW: ", messagePreview);
 		assertTrue("Announcement content doesn't match expected", detailPage.getInputText().contains(messagePreview));
 
         detailPage.clickDeleteButton();
