@@ -85,7 +85,7 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 		if (wrongPort2 > largestPort) {
 			wrongPort2 = galaxyPort - 2;
 		}
-		URL wrongGalaxyURL2 = new URL("localhost:" + wrongPort2 + "/");
+		URL wrongGalaxyURL2 = new URL("http://localhost:" + wrongPort2 + "/");
 		localGalaxy.setTestGalaxyURL(wrongGalaxyURL2);
 	}
 }
