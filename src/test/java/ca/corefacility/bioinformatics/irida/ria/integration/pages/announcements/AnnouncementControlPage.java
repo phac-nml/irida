@@ -24,8 +24,8 @@ public class AnnouncementControlPage extends AbstractPage {
 
     public void goTo() {
         get(driver, "announcements/admin");
-        waitForAjax();
-    }
+		waitForTime(1000);
+	}
 
     /**
      * Get the size of the announcement table currently visible on the control page
