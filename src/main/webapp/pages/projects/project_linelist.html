@@ -21,7 +21,7 @@
 </head>
 <body>
 <main layout:fragment="main">
-    <div ng-controller="lineListTableController as tableCtrl">
+    <div th:if="not ${#lists.isEmpty(metadataList)}" ng-controller="lineListTableController as tableCtrl">
         <linelist></linelist>
         <table id="linelist" class="table table-striped" cellspacing="0" width="100%">
             <thead>
@@ -32,6 +32,23 @@
             </tr>
             </thead>
         </table>
+    </div>
+    <div class="panel panel-info" th:if="${#lists.isEmpty(metadataList)}">
+        <div class="panel-body">
+            <div class="media">
+                <div class="media-left">
+                    <i class="fa fa-list-alt media-object" style="font-size: 10rem;"></i>
+                </div>
+                <div class="media-body">
+                    <h4 class="media-heading" style="padding-top: 6px;" th:text="#{linelist.empty-table.title}"></h4>
+                    <p class="lead" th:text="#{linelist.empty-table.warning}"></p>
+                    <div class="clearfix">
+                        <a th:href="@{/projects/{id}/sample-metadata/upload(id=${project.getId()})}"
+                           class="btn btn-primary pull-right"><i class="fa fa-upload"></i> Upload Bulk Metada</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </main>
 
