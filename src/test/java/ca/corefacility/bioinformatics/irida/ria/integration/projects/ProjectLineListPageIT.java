@@ -57,8 +57,10 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 		page.openColumnVisibilityPanel();
 		page.toggleColumn("firstSymptom");
 		page.closeColumnVisibilityPanel();
+
 		assertEquals("Should have 5 columns visible", 5, page.getNumberTableColumns());
 		page.saveTemplate(TEMPLATE_NAME);
+
 		// Switch to a different template
 		page.selectTemplate(TEMPLATE_1);
 		assertEquals("Should have 4 columns visible", 4, page.getNumberTableColumns());
