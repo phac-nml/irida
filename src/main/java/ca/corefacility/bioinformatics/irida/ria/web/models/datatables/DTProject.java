@@ -15,6 +15,7 @@ public class DTProject implements DataTablesResponseModel {
 	private Long samples;
 	private Date createdDate;
 	private Date modifiedDate;
+	private boolean isRemote;
 
 	public DTProject(Project project, Long sampleCount) {
 		this.id = project.getId();
@@ -23,6 +24,7 @@ public class DTProject implements DataTablesResponseModel {
 		this.samples = sampleCount;
 		this.createdDate = project.getCreatedDate();
 		this.modifiedDate = project.getModifiedDate();
+		this.isRemote = project.isRemote();
 	}
 
 	@Override
@@ -48,5 +50,9 @@ public class DTProject implements DataTablesResponseModel {
 
 	public Date getModifiedDate() {
 		return modifiedDate;
+	}
+
+	public boolean isRemote() {
+		return isRemote;
 	}
 }
