@@ -10,13 +10,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.*;
 import com.google.common.collect.Sets;
-
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisAssemblyAnnotation;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisAssemblyAnnotationCollection;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisSISTRTyping;
 
 /**
  * Defines a specific type of an analysis.
@@ -49,6 +44,9 @@ public enum AnalysisType {
 	 */
 	@XmlEnumValue("assembly-annotation-collection")
 	ASSEMBLY_ANNOTATION_COLLECTION("assembly-annotation-collection", AnalysisAssemblyAnnotationCollection.class),
+
+	@XmlEnumValue("mlst-mentalist")
+	MLST_MENTALIST("mlst-mentalist", AnalysisMLSTMentalist.class),
 
 	/**
 	 * A default analysis type.

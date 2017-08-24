@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<iridaWorkflow>
+    <id>beee0266-c141-45ef-8d3e-9c471a90de88</id>
+    <name>MLSTMentalist</name>
+    <version>0.1.2</version>
+    <analysisType>mlst-mentalist</analysisType>
+    <inputs>
+        <sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
+        <reference>reference</reference>
+        <requiresSingleSample>false</requiresSingleSample>
+    </inputs>
+    <parameters>
+        <parameter name="my_parameter" defaultValue="1">
+            <toolParameter
+                    toolId="my_tool"
+                    parameterName="my_parameter" />
+        </parameter>
+    </parameters>
+    <outputs>
+        <output name="tree" fileName="phylogeneticTree.tre" />
+    </outputs>
+    <toolRepositories>
+        <repository>
+            <name></name>
+            <owner></owner>
+            <url></url>
+            <revision></revision>
+        </repository>
+    </toolRepositories>
+</iridaWorkflow>
