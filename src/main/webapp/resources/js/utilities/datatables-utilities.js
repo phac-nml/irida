@@ -118,7 +118,7 @@ export function createItemLink({ url, label, width = "160px" }) {
     link.style.width = width;
     link.style.textAlign = "left";
     link.href = url;
-    link.innerText = label;
+    link.innerHTML = label;
 
     return link.outerHTML;
   }
