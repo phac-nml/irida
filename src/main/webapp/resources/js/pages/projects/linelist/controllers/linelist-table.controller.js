@@ -113,6 +113,7 @@ export function LineListTableController($rootScope, $scope) {
       this.visible(true, false);
     });
     table.colReorder.reset();
+    table.columns.adjust().draw();
   });
 
   /**
@@ -161,6 +162,7 @@ export function LineListTableController($rootScope, $scope) {
           column.visible(false, false);
         }
       }
+      table.columns.adjust().draw();
     });
 
     $rootScope.$broadcast(EVENTS.TABLE.colReorder, {
