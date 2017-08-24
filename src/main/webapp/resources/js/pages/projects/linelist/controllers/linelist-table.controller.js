@@ -51,18 +51,17 @@ function defineTable() {
     buttons: [
       {
         extend: "collection",
+        className: "btn-sm",
         text: window.PAGE.i18n.exportTable,
         buttons: [
           {
             extend: "csvHtml5",
-            className: "btn-sm",
             exportOptions: {
               columns: ":visible"
             }
           },
           {
             extend: "excelHtml5",
-            className: "btn-sm",
             exportOptions: {
               columns: ":visible"
             }
