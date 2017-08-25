@@ -90,7 +90,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 	public void selectTemplate(String templateName) {
 		Select select = new Select(templateSelect);
 		select.selectByVisibleText(templateName);
-		waitForTime(2000);
+		waitForTime(1000);
 	}
 
 	public void saveTemplate(String templateName) {
