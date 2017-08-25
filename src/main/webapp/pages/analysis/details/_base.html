@@ -83,7 +83,7 @@
             <div class="sidebar__icon">
               <span class="fa fa-file-o fa-fw" aria-hidden="true"></span>
             </div>
-            <div th:text="${file.getLabel()}"></div>
+            <a href="#" th:href="@{/analysis/ajax/download/{aid}/file/{fid}(aid=${analysisSubmission.id},fid=${file.id})}" th:text="${file.getLabel()}">_filename_</a>
           </div>
           <div class="sidebar__item">
             <button class="btn btn-default btn-sm btn-block spaced-bottom" data:ng-click="'fileDownloadController.getZipFile(\'' + ${analysisSubmission.getId()} +'\')'">
