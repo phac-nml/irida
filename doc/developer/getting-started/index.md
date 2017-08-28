@@ -149,6 +149,8 @@ When running IRIDA from the command line, a profile can be set by adding the fol
 
 While GitLab CI runs all IRIDA's testing on every git push, it is often useful to run IRIDA's test suite locally for debugging or development.  IRIDA's test suite can be run with Maven using the `test` and `verify` goals.
 
+See the [IRIDA tests](#irida-tests) section for more on how IRIDA's tests are developed.
+
 ##### Unit tests
 {:.no_toc}
 
@@ -262,11 +264,23 @@ IRIDA has 2 main types of tests:
 #### Unit tests
 {:.no_toc}
 
-IRIDA unit tests are run entirely with JUnit.  Any classes or methods performing any sort of business logic should have unit tests written for them.  In general all test requirements should be mocked with Mockito, and tests should be written for expected behaviour, failure cases, and edge cases.  To mark a class as a unit test, the java file must be named with a `*Test.java` suffix.  For examples of existing IRIDA unit tests, see any classes under `src/test/java` class path `ca.corefacility.bioinformatics.irida.service.impl.unit`.
+IRIDA unit tests are written entirely with JUnit and run with Maven Surefire.  Any classes or methods performing any sort of business logic should have unit tests written for them.  In general all test requirements should be mocked with Mockito, and tests should be written for expected behaviour, failure cases, and edge cases.  To mark a class as a unit test, the java file must be named with a `*Test.java` suffix.  For examples of existing IRIDA unit tests, see any classes under `src/test/java` class path `ca.corefacility.bioinformatics.irida.service.impl.unit`.
 
 #### Integration tests
 {:.no_toc}
 
+IRIDA's integration tests are again developed using JUnit and run with Maven Failsafe.  In addition to the unit tests described above, IRIDA's integration tests verify that all components of the application work correctly together to produce the intended result.  Integration tests are generally written using the `SpringJUnit4ClassRunner` class which allows us to use a Spring application context and `@Autowired` to wire in test dependencies.  Mocking generally should not be used for dependencies in any integration tests.
+
+As integration tests rely on the full application stack, database entries must be created at the beginning of each test.  To do this IRIDA uses the [DBUnit](http://dbunit.sourceforge.net/) library to load test data into the database prior to every test, and to clear the database after the test is completed.  Test database files are generally created for each test class, but some are reused between test classes.  DBUnit test files are written in an easy XML format.
+
+Tests for different parts of the application may use additional libraries such as:
+
+* [Selenium](http://www.seleniumhq.org/) for user interface testing.
+* [REST-assured](http://rest-assured.io/) for REST API testing.
+
+Refer to similar tests for examples of writing tests for the UI, REST API, etc.
+
+To mark a class as a unit test, the java file must be named with a `*IT.java` suffix.  For examples of existing basic IRIDA integration tests, see classes under `src/test/java` class path `ca.corefacility.bioinformatics.irida.service.impl.integration`.
 
 ### Database Updates
 
@@ -279,6 +293,9 @@ When we're doing development, Liquibase is generally not used.  Instead we gener
 You can find the existing Liquibase changeset files in `/src/manin/resounces/ca/corefacility/bioinformatics/irida/database/changesets`.
 
 Sometimes database changes are too complex to be able to use Liquibase XML files.  Conveniently Liquibase also allows you to apply change sets using Java code.  This mode is not recommended to use very often as you don't get some of the same change management features, but it's useful when you have a difficult migration.  If you need to use a change set written in Java, place it under the `ca.corefacility.bioinformatics.irida.database.changesets` package.
+
+### Javadoc
+
 
 Version control
 ---------------
@@ -326,6 +343,15 @@ Example workflow:
 {:.no_toc}
 
 Code is not to be merged into the *development* or *master* branches by the developer who wrote the code.  Instead a merge request should be made on [GitLab][] and assigned to another developer on the project.  The reviewer should look over the code for issues, and anything that needs to be fixed should be mentioned in a comment in the merge request.  Once an issue has been fixed, the developer should push the changes to the merge request branch and mention the commit id in the comment so the reviewer can track the changes.
+
+The reviewer of a merge request should ensure the following:
+
+* The new or updated functionality works as expected.  This includes properly handling error cases.
+* Any new functionality is well documented in Javadoc, inline code comments, and in the user guide.
+* *CHANGELOG.md* and *UPGRADING.md* files are updated with necessary information.
+* Any new features have appropriate unit and/or integration tests written and all tests are passing.
+* New code is properly formatted using IRIDA's code formatter file.
+* New code does not produce any Java errors or warnings.  Acceptable warnings may include *deprecated* warnings for methods or classes which should be refactored out.  See Eclipse's *Problems* panel for warnings produced.
 
 If a merge request is a fix for an issue that is being tracked in [GitLab][], the developer should mention the issue number in the merge request with the format `Fixes #1234` so that the merge request will be linked to the issue and it will be automatically closed once the merge is complete.
 
