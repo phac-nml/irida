@@ -1,16 +1,12 @@
 import $ from "jquery";
-import "../../vendor/datatables/datatables";
+import { addTooltip } from "../../utilities/bootstrap-utilities";
+import { createItemLink, generateColumnOrderInfo, tableConfig } from "../../utilities/datatables-utilities";
 import { formatDate } from "../../utilities/date-utilities";
 import { createIcon, ICONS } from "../../utilities/fontawesome-utilities";
-import { addTooltip } from "../../utilities/bootstrap-utilities";
-import {
-  createItemLink,
-  generateColumnOrderInfo,
-  tableConfig
-} from "../../utilities/datatables-utilities";
+import "../../vendor/datatables/datatables";
 
 const COLUMNS = generateColumnOrderInfo();
-const $table = $("#announcementTable");
+const $table = $("#announcementUsersTable");
 
 const config = Object.assign({}, tableConfig, {
   ajax: $table.data("url"),

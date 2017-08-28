@@ -42,5 +42,6 @@ const config = Object.assign({}, tableConfig, {
 
 $table.DataTable(config);
 
-const btns = $("#create-btn-wrapper").html();
-$(".buttons").html(btns);
+const wrapper = $("#create-btn-wrapper");
+$(".buttons").html(wrapper.html());
+wrapper.remove();

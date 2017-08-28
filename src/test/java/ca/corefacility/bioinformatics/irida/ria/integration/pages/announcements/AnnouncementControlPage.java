@@ -58,13 +58,13 @@ public class AnnouncementControlPage extends AbstractPage {
     }
 
     public void clickCreateNewAnnouncementButton() {
-        WebElement createButton = driver.findElement(By.id("create-new-button"));
+        waitForTime(2000);
+        WebElement createButton = driver.findElement(By.cssSelector("a#create-announcement"));
         createButton.click();
     }
 
     public void gotoMessageDetails(int index) {
-        WebElement table = driver.findElement(By.id("announcementTable"));
-        List<WebElement> messages = table.findElements(By.cssSelector("tbody a"));
+        List<WebElement> messages = driver.findElements(By.cssSelector("tbody .preview-column a"));
         if (index < messages.size()) {
             messages.get(index).click();
             waitForTime(DEFAULT_WAIT);
