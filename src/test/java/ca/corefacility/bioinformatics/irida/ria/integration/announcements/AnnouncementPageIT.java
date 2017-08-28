@@ -135,8 +135,8 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver{
 		String messagePreview = controlPage.getAnnouncement(2);
 
 		controlPage.gotoMessageDetails(2);
-		logger.debug("DETAILS INPUT: ", detailPage.getInputText());
-		logger.debug("PREVIEW: ", messagePreview);
+		logger.debug("DETAILS INPUT: " + detailPage.getInputText());
+		logger.debug("PREVIEW: " + messagePreview);
 		assertTrue("Announcement content doesn't match expected", detailPage.getInputText().contains(messagePreview));
 
         detailPage.clickDeleteButton();
