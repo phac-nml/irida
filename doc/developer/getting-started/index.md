@@ -54,6 +54,20 @@ Documentation:[http://hibernate.org/orm/documentation/4.3/](http://hibernate.org
 
 Hibernate is used to map Java objects to database tables without the need for writing extra database code.  IRIDA uses hibernate through the Java Persistence API abstraction.
 
+#### Liquibase
+{:.no_toc}
+
+Documentation: [http://www.liquibase.org/documentation/index.html](http://www.liquibase.org/documentation/index.html)
+
+Liquibase is used to manage IRIDA's relational database change management.  Any time a change is made to IRIDA's production database schema, Liquibase is used to perform the change.  See the [Database Updates](#database-updates) section for more.
+
+#### Galaxy
+{:.no_toc}
+
+Documentation: [https://docs.galaxyproject.org/en/master/index.html](https://docs.galaxyproject.org/en/master/index.html)
+
+Galaxy is used as IRIDA's analysis workflow engine.  Analysis pipelines must be developed as Galaxy pipelines to integrate with IRIDA's workflow system.  See the [Galaxy Setup](/administrator/galaxy/) documentation for Galaxy installation and the [Tool Development](/developer/tools/) documentation for building tools for IRDIA.
+
 #### Other important libraries
 {:.no_toc}
 
