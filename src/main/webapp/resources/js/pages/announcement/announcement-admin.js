@@ -12,6 +12,7 @@ const config = Object.assign({}, tableConfig, {
   columnDefs: [
     {
       targets: COLUMNS.MESSAGE,
+      className: "preview-column",
       render(data, type, full) {
         return createItemLink({
           url: `${window.PAGE.urls.link}${full.id}/details`,
