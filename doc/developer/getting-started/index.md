@@ -82,6 +82,7 @@ Development platform
 The development platform used by most IRIDA developers is the [Eclipse](https://eclipse.org/ide/) IDE.  
 
 The following plugins are recommended:
+
 * Eclipse EGit - Git integration.  Helps by showing changes made to your codebase.
 * Eclipse m2e - Maven integration.  Helps build your Maven project.
 
@@ -177,7 +178,17 @@ This will build the documentation HTML files into `doc/_site`.  That directory c
 IRIDA Codebase
 --------------
 
-IRIDA is organized as a fairly classic Java web application.  All files are found under the `ca.corefacility.bioinformatics.irida` package root.
+IRIDA is organized as a fairly classic Java web application.  All main source can be found in the `src/main/` path.  Test code will be in `src/test/`
+
+* `src/main/java` - IRIDA's Java source code.  All Java code for the main application is in this root.
+* `src/main/webapp` - Web application code.  All web templates, Javascript, CSS, etc. is found here.
+* `src/main/resources` - Configuration files, database update files, internationalization, and other scripts which are outside of the other `src/main` directories.
+* `src/test/java` - Java test files.  IRIDA uses JUnit for testing.  See the [IRIDA tests](#irida-tests) section for more.
+* `src/test/resources` - Additional files required for IRIDA testing.  These will generally be database files, test data, and test configuration.
+
+### Java classpath
+
+All files are found under the `ca.corefacility.bioinformatics.irida` package root.
 
 * `config` - Configuration classes.  All Spring application config, web config, Maven config, and scheduled task configuration can be found here.
 * `database.changesets` - Java Liquibase changesets.  See more about our liquibase usage in the [Database Updates section](#database-updates).
@@ -201,7 +212,22 @@ Building new features
 
 When adding new features we have a couple places we need to inform our users.  First is the `CHANGELOG.md` file found in the root of the project.  If you've added a feature, fixed a bug, or made any changes worthwhile of telling IRIDA users, other IRIDA developers, or administrators they should be mentioned here.  Next is the `UPGRADING.md` guide.  This file is used to to inform IRIDA system admins what steps need to be taken when upgrading from one version of IRIDA to another.  For example if you add anything to a configuration file, if there are changes which require an upgrade to the database, a workflow, or any dependencies, it should be mentioned here.
 
-#### Database Updates
+### IRIDA tests
+
+IRIDA uses JUnit for the majority of its testing.  To ensure the IRIDA codebase is performing as expected, when developing new features you should also write tests for the newly developed code.
+
+IRIDA has 2 main types of tests:
+
+#### Unit tests
+{:.no_toc}
+
+IRIDA unit tests are run entirely with JUnit.  Any classes or methods performing any sort of business logic should have unit tests written for them.  In general all test requirements should be mocked with Mockito, and tests should be written for expected behaviour, failure cases, and edge cases.  To mark a class as a unit test, the java file must be named with a `*Test.java` suffix.  For examples of existing IRIDA unit tests, see any classes under `src/test/java` class path `ca.corefacility.bioinformatics.irida.service.impl.unit`.
+
+#### Integration tests
+{:.no_toc}
+
+
+### Database Updates
 
 While in development we use Hibernate to manage our database changes, in production we use [Liquibase][]. 
 
