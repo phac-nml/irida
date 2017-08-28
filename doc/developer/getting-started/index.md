@@ -251,6 +251,17 @@ All files are found under the `ca.corefacility.bioinformatics.irida` package roo
 Building new features
 ---------------------
 
+#### GitLab Issues
+
+Any time a request comes in from a user for a new feature, or a bug is found, an *issue* should be created on [GitLab]().  The IRIDA project uses GitLab's issues list as it's main project tracking system.  The issue should be documented as fully as possible with the following:
+
+* A general description of the problem/feature.
+* What the expected functionality should be.
+* Steps to reproduce the issue or how the feature should work.
+* Who reported the bug or feature request.
+
+Once an issue is completed it should be referenced in a [merge request](#merge-requests) in GitLab so the reviewer can know the full scope of the issue.
+
 ### Informing users of changes
 
 When adding new features we have a couple places we need to inform our users.  First is the `CHANGELOG.md` file found in the root of the project.  If you've added a feature, fixed a bug, or made any changes worthwhile of telling IRIDA users, other IRIDA developers, or administrators they should be mentioned here.  Next is the `UPGRADING.md` guide.  This file is used to to inform IRIDA system admins what steps need to be taken when upgrading from one version of IRIDA to another.  For example if you add anything to a configuration file, if there are changes which require an upgrade to the database, a workflow, or any dependencies, it should be mentioned here.
