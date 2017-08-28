@@ -294,8 +294,11 @@ You can find the existing Liquibase changeset files in `/src/manin/resounces/ca/
 
 Sometimes database changes are too complex to be able to use Liquibase XML files.  Conveniently Liquibase also allows you to apply change sets using Java code.  This mode is not recommended to use very often as you don't get some of the same change management features, but it's useful when you have a difficult migration.  If you need to use a change set written in Java, place it under the `ca.corefacility.bioinformatics.irida.database.changesets` package.
 
-### Javadoc
+### Documentation
 
+IRIDA has a number of sources of documentation.  For any user-facing changes, documentation should be added to the appropriate section of the user documentation under the `doc/` directory with instructions on how to use the new feature.
+
+Developer documentation is also necessary for all Java classes, methods, code blocks, JavaScript, and any other code written for IRIDA.  In the Java portion of the IRIDA codebase, all methods and classes must have associated Javadoc.  To generate a Javadoc template for a method or class in Eclipse, type `/**` and press `<Enter>`.  A method/class description, all parameters, and return value should be documented.
 
 Version control
 ---------------
