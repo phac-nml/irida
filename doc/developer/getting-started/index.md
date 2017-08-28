@@ -145,6 +145,47 @@ When running IRIDA from the command line, a profile can be set by adding the fol
 -Dspring.profiles.active=YOURPROFILE
 ```
 
+#### Running IRIDA tests locally
+
+While GitLab CI runs all IRIDA's testing on every git push, it is often useful to run IRIDA's test suite locally for debugging or development.  IRIDA's test suite can be run with Maven using the `test` and `verify` goals.
+
+##### Unit tests
+{:.no_toc}
+
+IRIDA's unit tests can be run with the following command:
+
+```bash
+mvn clean test
+```
+
+Maven will download all required dependencies and run the full suite of unit tests.  This will take a couple minutes and a report stating what tests passed and failed will be presented.
+
+##### Integration tests
+{:.no_toc}
+
+IRIDA has 4 integration test profiles which splits the integration test suite into functional groups.  This allows GitLab CI to run the tests in parallel, and local test executions to only run the required portion of the test suite.  The 4 profiles are the following:
+
+* `service_testing` - Runs the service layer and repository testing.
+* `ui_testing` - Integration tests for IRIDA's web interface.
+* `rest_testing` - Tests IRIDA's REST API.
+* `galaxy_testing` - Runs all tests requiring a functional Galaxy instance.  This includes all analysis submission and pipeline tests.  This profile will automatically start a test galaxy instance to test with.
+
+See the `<profiles>` section of the `pom.xml` file to see how the profiles are defined.
+
+As the integration tests simulate a running IRIDA installation, in order to run any integration test the requirements needed to run a production IRIDA server must be installed on your development machine.  To run a test profile, run the following command:
+
+```bash
+mvn clean verify -P<TEST PROFILE>
+```
+
+The `ui_testing` profile requires additional parameters:
+
+```bash
+xvfb-run --auto-servernum --server-num=1 mvn clean verify -B -Pui_testing -Dwebdriver.chrome.driver=./src/main/webapp/node_modules/chromedriver/lib/chromedriver/chromedriver
+```
+
+Similar to the unit tests, Maven will download all dependencies, run the tests, and present a report.  Integration tests will take much longer than unit tests.
+
 #### Building IRIDA for release
 
 Run the following:
