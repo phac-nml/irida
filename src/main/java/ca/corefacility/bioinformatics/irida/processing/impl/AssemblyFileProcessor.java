@@ -104,7 +104,7 @@ public class AssemblyFileProcessor implements FileProcessor {
 		} else {
 			logger.warn("Could not assemble sequencing object " + sequencingObject.getId()
 					+ " because it's not paired end");
-		}	
+		}		
 	}
 
 	/**
