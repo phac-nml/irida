@@ -6,6 +6,9 @@ import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
 
+/**
+ * User interface model for DataTables for administration of {@link Announcement}
+ */
 public class DTAnnouncementAdmin implements DataTablesResponseModel {
 	private Long id;
 	private String message;
