@@ -56,7 +56,9 @@ const config = Object.assign(tableConfig, {
         // Render the name as a link to the actual project.
         return createItemLink({
           url: `${window.PAGE.urls.project}${full.id}`,
-          label: data,
+          label: `${full.remote
+            ? `<div aria-hidden="true" data-toggle="tooltip" data-placement="top" title="${window.PAGE.i18n.remote}">${data}&nbsp;<i style="color: #000;" class="fa fa-exchange pull-right"></i></div>`
+            : data}`,
           width: "200px"
         });
       }
