@@ -39,5 +39,15 @@
 			<column name="genome_assembly_id" type="bigint(20)" />
 		</addColumn>
 
+		<addColumn tableName="analysis_submission">
+			<column name="update_samples" type="bit(1)" defaultValue="false">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+
+		<addColumn tableName="analysis_submission_AUD">
+			<column name="update_samples" type="bit(1)" />
+		</addColumn>
+
 	</changeSet>
 </databaseChangeLog>

@@ -41,18 +41,24 @@ public class AnalysisSubmissionSampleServiceImpl implements AnalysisSubmissionSa
 	 */
 	@Override
 	public void update(AnalysisSubmission analysisSubmission) {
-		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubimssion(analysisSubmission);
-		Analysis analysis = analysisSubmission.getAnalysis();
-
-		checkNotNull(analysis, "No analysis associated with submission " + analysisSubmission);
-		checkNotNull(samples, "No samples associated with submission " + analysisSubmission);
-
-		AnalysisSampleUpdatorService analysisSampleUpdatorService = analysisSampleUpdatorMap.get(analysis.getClass());
-
-		if (analysisSampleUpdatorService != null) {
-			analysisSampleUpdatorService.update(samples, analysisSubmission);
+		if (!analysisSubmission.getUpdateSamples()) {
+			logger.trace("Will not update samples from results for submission=" + analysisSubmission);
 		} else {
-			logger.debug("No associated object for updating samples for analysis of type " + analysis.getClass());
+			logger.debug("Updating sample from results for submission=" + analysisSubmission);
+			
+			Collection<Sample> samples = sampleService.getSamplesForAnalysisSubimssion(analysisSubmission);
+			Analysis analysis = analysisSubmission.getAnalysis();
+	
+			checkNotNull(analysis, "No analysis associated with submission " + analysisSubmission);
+			checkNotNull(samples, "No samples associated with submission " + analysisSubmission);
+	
+			AnalysisSampleUpdatorService analysisSampleUpdatorService = analysisSampleUpdatorMap.get(analysis.getClass());
+	
+			if (analysisSampleUpdatorService != null) {
+				analysisSampleUpdatorService.update(samples, analysisSubmission);
+			} else {
+				logger.debug("No associated object for updating samples for analysis of type " + analysis.getClass());
+			}
 		}
 	}
 }
