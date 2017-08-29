@@ -285,10 +285,6 @@ public class ProjectLineListController {
 
 		List<MetadataTemplateField> metadataFields = new ArrayList<>();
 
-		// First columns coming in from the Line List Table will ALWAYS be the Sample Name.
-		// Need to remove that since it is standard on the sample as "label:.
-		fields.remove(0);
-
 		for (String label : fields) {
 			// Check to see if this field already exists.
 			MetadataTemplateField metadataField = metadataTemplateService.readMetadataFieldByLabel(label);

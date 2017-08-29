@@ -186,12 +186,10 @@ function MetadataController(
    * @param {string} name for the new template
    */
   function saveTemplate(name) {
-    const fields = FIELD_ORDER.map(index => {
-      // Need to put the fields in the order they are in the table
-      return FIELDS[index];
-    })
-      .filter(field => field.visible)
-      .map(field => field.label);
+    const fields = [
+      ...document.querySelectorAll(".dataTables_scrollHeadInner th")
+    ].map(th => th.innerText);
+    fields.shift(); // Need to remove the sample name column.
     const newTemplate = new MetadataTemplateService();
     newTemplate.name = name;
     newTemplate.fields = fields;
