@@ -15,6 +15,7 @@ const config = Object.assign({}, tableConfig, {
     {
       targets: COLUMNS.USERNAME,
       render(data, type, full) {
+        // Render the username as a link to the users page.
         return createItemLink({
           url: `${window.PAGE.urls.user}${full.user.identifier}`,
           label: full.user.username,
@@ -26,8 +27,10 @@ const config = Object.assign({}, tableConfig, {
       targets: COLUMNS.STATUS,
       render(data, type, full) {
         if (full.dateRead) {
+          // If it is read, then add a check mark icon
           const icon = createIcon({ icon: ICONS.checkmark });
           icon.style.color = "green";
+          // Add a tooltip incase the icon is not clear
           addTooltip({ dom: icon, title: "Read" });
           return icon.outerHTML;
         }
