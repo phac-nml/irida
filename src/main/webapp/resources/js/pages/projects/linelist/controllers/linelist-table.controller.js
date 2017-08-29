@@ -51,18 +51,17 @@ function defineTable() {
     buttons: [
       {
         extend: "collection",
+        className: "btn-sm",
         text: window.PAGE.i18n.exportTable,
         buttons: [
           {
             extend: "csvHtml5",
-            className: "btn-sm",
             exportOptions: {
               columns: ":visible"
             }
           },
           {
             extend: "excelHtml5",
-            className: "btn-sm",
             exportOptions: {
               columns: ":visible"
             }
@@ -113,6 +112,7 @@ export function LineListTableController($rootScope, $scope) {
       this.visible(true, false);
     });
     table.colReorder.reset();
+    table.columns.adjust().draw();
   });
 
   /**
@@ -161,6 +161,7 @@ export function LineListTableController($rootScope, $scope) {
           column.visible(false, false);
         }
       }
+      table.columns.adjust().draw();
     });
 
     $rootScope.$broadcast(EVENTS.TABLE.colReorder, {

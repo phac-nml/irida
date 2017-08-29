@@ -101,6 +101,6 @@ public class ProjectLineListPage extends ProjectPageBase {
 		templateNameInput.sendKeys(templateName);
 		wait.until(ExpectedConditions.elementToBeClickable(completeSaveBtn));
 		completeSaveBtn.click();
-		waitForTime(1000);
+		waitForTime(2000);
 	}
 }

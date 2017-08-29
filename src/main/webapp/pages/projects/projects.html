@@ -6,10 +6,13 @@
     <title th:text="#{projects.title}">List of Projects</title>
     <script th:inline="javascript">
       var PAGE = {
-        urls: {
-          projects: /*[[@{${ajaxURL}}]]*/ '',
-          project: /*[[@{/projects/}]]*/ '',
-          export: /*[[@{/projects/ajax/export(admin=${isAdmin})}]]*/ '',
+          urls: {
+            projects: /*[[@{${ajaxURL}}]]*/ "",
+            project: /*[[@{/projects/}]]*/ "",
+            export: /*[[@{/projects/ajax/export(admin=${isAdmin})}]]*/ ""
+          },
+        i18n: {
+          remote: /*[[#{projects.table.remoteSynchronized}]]*/ ""
         },
         buttons: /*[[${exportTypes}]]*/ []
       };
