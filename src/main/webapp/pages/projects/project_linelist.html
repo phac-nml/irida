@@ -44,7 +44,7 @@
                     <p class="lead" th:text="#{linelist.empty-table.warning}"></p>
                     <div class="clearfix">
                         <a th:href="@{/projects/{id}/sample-metadata/upload(id=${project.getId()})}"
-                           class="btn btn-primary pull-right"><i class="fa fa-upload"></i> Upload Bulk Metada</a>
+                           class="btn btn-primary pull-right"><i class="fa fa-upload"></i> <th:block th:text="#{linelist.add-metadata.btn}" /></a>
                     </div>
                 </div>
             </div>
