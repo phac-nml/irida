@@ -1,3 +1,6 @@
+/**
+ * Initializes the datatables on the announcements page.
+ */
 import $ from "jquery";
 import {
   createItemLink,
