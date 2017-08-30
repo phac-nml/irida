@@ -1,6 +1,9 @@
 Changes
 =======
 
+0.18.0 to 0.19.0
+----------------
+
 0.17.0 to 0.18.0
 ----------------
 * [Developer]: Removed old javascript build configuration files.
