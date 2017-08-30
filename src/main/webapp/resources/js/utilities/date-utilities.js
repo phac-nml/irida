@@ -20,7 +20,10 @@ export function formatTimeForNow({ now, date }) {
  * @return {string} humanized version of the date
  */
 export function getHumanizedDuration({ date }) {
-  return moment.duration(date).humanize();
+  if (date !== null) {
+    return moment.duration(Number(date)).humanize();
+  }
+  return "";
 }
 
 /**
