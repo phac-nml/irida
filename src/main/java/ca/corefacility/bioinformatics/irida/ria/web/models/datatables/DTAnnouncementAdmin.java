@@ -19,6 +19,10 @@ public class DTAnnouncementAdmin implements DataTablesResponseModel {
 		this.id = announcement.getId();
 		// Only display the first line of the message.
 		this.message = announcement.getMessage().split("\\r?\\n")[0];
+		if(this.message.length() > 80){
+			// If the message is still really long just take a substring of it.
+			this.message = this.message.substring(0, 79) + " ...";
+		}
 		this.createdDate = announcement.getCreatedDate();
 		this.user = announcement.getUser();
 	}
