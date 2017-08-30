@@ -4,6 +4,9 @@ Upgrading
 This document summarizes the environmental changes that need to be made when
 upgrading IRIDA that cannot be automated.
 
+0.18.0 to 0.19.0
+----------------
+
 0.17.0 to 0.18.0
 ----------------
 
