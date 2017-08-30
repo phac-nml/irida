@@ -4,6 +4,13 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
   <title th:text="#{project.samples.new.title(${project.label})}">__NEW_SAMPLE__</title>
+  <script th:inline="javascript">
+    var PAGE = {
+      urls: {
+        validateName: /*[[@{/projects/{projectId}/validate-sample-name(projectId=${project.getId()})}]]*/ "/project/1/validate-sample-name"
+      }
+    };
+  </script>
 </head>
 
 <body>
@@ -18,6 +25,7 @@
             <div class="form-group">
               <label for="sampleName" th:text="#{samples.details.sampleName}">_SAMPLE_NAME_</label>  <small class="text-muted">(Required, Only letters, numbers, _, and - characters, and unique)</small>
               <input type="text" id="sampleName" name="sampleName" class="form-control"
+                     data-msg-checkExisting="_IT IS A VLAIDE NAME"
                      data-msg-required="_This field is required, damn it!_"
                      data-msg-checkallowedchars="_HEY! Fuck head! That pattern is all messed up@!_"
                      data-msg-minlength="_HEY! YOU NEED MORE TEXT HERE!_"/>

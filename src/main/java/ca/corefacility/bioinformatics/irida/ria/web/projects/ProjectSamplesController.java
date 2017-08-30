@@ -48,6 +48,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.github.dandelion.datatables.core.export.ExportUtils;
 import com.github.dandelion.datatables.core.export.ReservedFormat;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
@@ -983,6 +984,21 @@ public class ProjectSamplesController {
 			ProjectSamplesTableExport tableExport = new ProjectSamplesTableExport(type, project.getName() + "_samples", messageSource, locale);
 			ExportUtils.renderExport(tableExport.generateHtmlTable(page, request), tableExport.getExportConf(), response);
 		}
+	}
+
+	@RequestMapping("/projects/{projectId}/validate-sample-name")
+	@ResponseBody
+	public Map<String, Boolean> validateNewSampleName(@PathVariable Long projectId, @RequestParam String name) {
+		logger.debug("NAME: ", name);
+		Project project = projectService.read(projectId);
+		try {
+			sampleService.getSampleBySampleName(project, name);
+			return ImmutableMap.of("valid", false);
+		} catch (Exception e) {
+			// If the sample is not found, then the name is good to go!
+			return ImmutableMap.of("valid", true);
+		}
+
 	}
 
 	/**

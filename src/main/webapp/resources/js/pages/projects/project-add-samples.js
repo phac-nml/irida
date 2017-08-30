@@ -5,8 +5,15 @@ import "jquery-validation";
 const form = $("#create-sample-form");
 const saveBtn = $("#save-btn");
 
-$.validator.addMethod("checkallowedchars", function(value) {
+$.validator.addMethod("checkallowedchars", value => {
   return /^[A-Z\d_-]+$/i.test(value);
+});
+
+$.validator.addMethod("checkExisting", name => {
+  return $.ajax({
+    url: window.PAGE.urls.validateName,
+    data: { name }
+  }).done(result => !result.valid);
 });
 
 form.validate({
@@ -31,7 +38,8 @@ form.validate({
     sampleName: {
       required: true,
       minlength: 3,
-      checkallowedchars: true
+      checkallowedchars: true,
+      checkExisting: true
     }
   },
   submitHandler: function(form) {
