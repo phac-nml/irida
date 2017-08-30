@@ -168,7 +168,7 @@ function GalaxyExportService(CartService, $http, $q) {
     samples = [];
 
   function addSampleFile(sampleName, sampleFilePath) {
-    const sample = _.find(samples, function(sampleItr) {
+    let sample = _.find(samples, function(sampleItr) {
       return sampleItr.name === sampleName;
     });
     if (typeof sample === "undefined") {
