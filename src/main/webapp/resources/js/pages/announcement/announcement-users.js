@@ -1,15 +1,25 @@
+/**
+ * Initializes the DataTable on the announcements page to indicate who
+ * has read the announcement.
+ */
 import $ from "jquery";
 import { addTooltip } from "../../utilities/bootstrap-utilities";
-import { createItemLink, generateColumnOrderInfo, tableConfig } from "../../utilities/datatables-utilities";
+import {
+  createItemLink,
+  generateColumnOrderInfo,
+  tableConfig
+} from "../../utilities/datatables-utilities";
 import { formatDate } from "../../utilities/date-utilities";
 import { createIcon, ICONS } from "../../utilities/fontawesome-utilities";
 import "../../vendor/datatables/datatables";
 
+// Generate the column names with order for this table.
 const COLUMNS = generateColumnOrderInfo();
 const $table = $("#announcementUsersTable");
 
 const config = Object.assign({}, tableConfig, {
   ajax: $table.data("url"),
+  // Order the table by the username
   order: [[COLUMNS.USERNAME, "asc"]],
   columnDefs: [
     {
@@ -50,8 +60,12 @@ const config = Object.assign({}, tableConfig, {
   ]
 });
 
+// Initialize the datatable.
 $table.DataTable(config);
 
-// Update the positioning of the read counts.
+/**
+ * Update the positioning of the read counts to be
+ * directly above the table.
+ */
 const readCounts = $("#read-counts").html();
 $(".buttons").html(readCounts);
