@@ -7,7 +7,7 @@
 </head>
 
 <body>
-<main layout:fragment="page" ddl:bundle-includes="users-password">
+<main layout:fragment="page">
     <div class="row">
         <div class="col-md-8 col-md-offset-2 mrgn-tp-lg wb-frmvld">
             <form role="form" action="/users/1/edit"
@@ -106,5 +106,9 @@
         </div>
     </div>
 </main>
+
+<th:block layout:fragment="scripts">
+    <script th:src="@{/resources/js/pages/users/users-password.js}"></script>
+</th:block>
 </body>
 </html>

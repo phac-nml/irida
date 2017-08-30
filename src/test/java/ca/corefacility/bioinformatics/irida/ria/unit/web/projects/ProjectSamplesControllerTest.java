@@ -38,29 +38,28 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.ProjectSampleModel;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProjectSamples;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectSamplesController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
-import com.github.dandelion.datatables.core.ajax.ColumnDef;
-import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
-import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 public class ProjectSamplesControllerTest {
 	public static final String PROJECT_ORGANISM = "E. coli";
+	public static final String FILE_PATH = "src/test/resources/files/test_file.fastq";
 	private static final String USER_NAME = "testme";
 	private static final User user = new User(USER_NAME, null, null, null, null, null);
 	private static final String PROJECT_NAME = "test_project";
 	private static final Long PROJECT_ID = 1L;
 	private static final Long PROJECT_MODIFIED_DATE = 1403723706L;
 	private static Project project = null;
-	public static final String FILE_PATH = "src/test/resources/files/test_file.fastq";
-
 	// Services
 	private ProjectService projectService;
 	private ProjectSamplesController controller;
@@ -105,6 +104,7 @@ public class ProjectSamplesControllerTest {
 	}
 
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testCopySampleToProjectRemove() {
 		Long projectId = 1L;
@@ -115,28 +115,31 @@ public class ProjectSamplesControllerTest {
 		Project newProject = new Project("newProject");
 		Sample s2 = new Sample("s2");
 		Sample s3 = new Sample("s3");
+		ArrayList<Sample> sampleList = Lists.newArrayList(s2, s3);
+		boolean owner = true;
+		boolean move = true;
+		ArrayList<ProjectSampleJoin> joins = Lists.newArrayList(new ProjectSampleJoin(newProject, s2, owner),
+				new ProjectSampleJoin(newProject, s3, owner));
 
 		when(projectService.read(projectId)).thenReturn(oldProject);
 		when(projectService.read(newProjectId)).thenReturn(newProject);
-		when(sampleService.read(2L)).thenReturn(s2);
-		when(sampleService.read(3L)).thenReturn(s3);
+		when(sampleService.readMultiple(any(Iterable.class))).thenReturn(sampleList);
+		when(projectService.copyOrMoveSamples(oldProject, newProject, sampleList, move, owner)).thenReturn(joins);
 
 		Map<String, Object> result = controller.copySampleToProject(projectId, sampleIds, newProjectId,
-				removeFromOriginal, Locale.US);
+				removeFromOriginal, true, Locale.US);
 
 		assertTrue(result.containsKey("result"));
 		assertTrue(result.containsKey("message"));
 
 		verify(projectService).read(projectId);
 		verify(projectService).read(newProjectId);
-		for (Long x : sampleIds) {
-			verify(sampleService).read(x);
-		}
 
-		verify(projectService).moveSampleBetweenProjects(oldProject, newProject, s2);
-		verify(projectService).moveSampleBetweenProjects(oldProject, newProject, s3);
+		verify(projectService).copyOrMoveSamples(oldProject, newProject, sampleList, move, owner);
+
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testCopySampleToProject() {
 		Long projectId = 1L;
@@ -147,25 +150,26 @@ public class ProjectSamplesControllerTest {
 		Project newProject = new Project("newProject");
 		Sample s2 = new Sample("s2");
 		Sample s3 = new Sample("s3");
+		ArrayList<Sample> sampleList = Lists.newArrayList(s2, s3);
+		boolean owner = true;
+		boolean move = false;
+		ArrayList<ProjectSampleJoin> joins = Lists.newArrayList(new ProjectSampleJoin(newProject, s2, owner),
+				new ProjectSampleJoin(newProject, s3, owner));
 
 		when(projectService.read(projectId)).thenReturn(oldProject);
 		when(projectService.read(newProjectId)).thenReturn(newProject);
-		when(sampleService.read(2L)).thenReturn(s2);
-		when(sampleService.read(3L)).thenReturn(s3);
+		when(sampleService.readMultiple(any(Iterable.class))).thenReturn(sampleList);
+		when(projectService.copyOrMoveSamples(oldProject, newProject, sampleList, move, owner)).thenReturn(joins);
 
-		controller.copySampleToProject(projectId, sampleIds, newProjectId,
-				removeFromOriginal, Locale.US);
+		controller.copySampleToProject(projectId, sampleIds, newProjectId, removeFromOriginal, true, Locale.US);
 
 		verify(projectService).read(projectId);
 		verify(projectService).read(newProjectId);
-		for (Long x : sampleIds) {
-			verify(sampleService).read(x);
-		}
-		verify(projectService).addSampleToProject(newProject, s2);
-		verify(projectService).addSampleToProject(newProject, s3);
-		verify(projectService, times(0)).removeSampleFromProject(any(Project.class), any(Sample.class));
+
+		verify(projectService).copyOrMoveSamples(oldProject, newProject, sampleList, move, owner);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testCopySampleToProjectSampleExists() {
 		Long projectId = 1L;
@@ -176,27 +180,26 @@ public class ProjectSamplesControllerTest {
 		Project newProject = new Project("newProject");
 		Sample s2 = new Sample("s2");
 		Sample s3 = new Sample("s3");
+		ArrayList<Sample> sampleList = Lists.newArrayList(s2, s3);
+		boolean owner = true;
+		boolean move = false;
+
 
 		when(projectService.read(projectId)).thenReturn(oldProject);
 		when(projectService.read(newProjectId)).thenReturn(newProject);
-		when(sampleService.read(2L)).thenReturn(s2);
-		when(sampleService.read(3L)).thenReturn(s3);
-		when(projectService.addSampleToProject(newProject, s3)).thenThrow(
+		when(sampleService.readMultiple(any(Iterable.class))).thenReturn(sampleList);
+
+		when(projectService.copyOrMoveSamples(oldProject, newProject, sampleList, move, owner)).thenThrow(
 				new EntityExistsException("that sample exists in the project"));
 
+
 		Map<String, Object> copySampleToProject = controller.copySampleToProject(projectId, sampleIds, newProjectId,
-				removeFromOriginal, Locale.US);
+				removeFromOriginal, true, Locale.US);
 
 		assertTrue(copySampleToProject.containsKey("warnings"));
 
 		verify(projectService).read(projectId);
 		verify(projectService).read(newProjectId);
-		for (Long x : sampleIds) {
-			verify(sampleService).read(x);
-		}
-		verify(projectService).addSampleToProject(newProject, s2);
-		verify(projectService).addSampleToProject(newProject, s3);
-		verify(projectService, times(0)).removeSampleFromProject(any(Project.class), any(Sample.class));
 	}
 
 	@Test
@@ -204,7 +207,7 @@ public class ProjectSamplesControllerTest {
 		Project project1 = getProject();
 		Sample sample = new Sample("test");
 		sample.setId(1L);
-		projectService.addSampleToProject(project1, sample);
+		projectService.addSampleToProject(project1, sample, true);
 		List<Long> idList = new ArrayList<>();
 		idList.add(1L);
 		when(projectService.read(PROJECT_ID)).thenReturn(project1);
@@ -304,25 +307,21 @@ public class ProjectSamplesControllerTest {
 		Sample sample = TestDataFactory.constructSample();
 		when(projectService.read(anyLong())).thenReturn(project);
 		when(sampleService.getSamplesForProject(any(Project.class))).thenReturn(ImmutableList.of(
-				new ProjectSampleJoin(project, sample)
+				new ProjectSampleJoin(project, sample, true)
 		));
 
 		when(sampleService
 				.getFilteredSamplesForProjects(any(List.class), any(List.class), any(String.class), any(String.class), any(String.class), any(Date.class), any(Date.class),
-						any(Integer.class), any(Integer.class), any(Sort.class)))
+						any(Integer.class), any(Integer.class), any(
+								Sort.class)))
 				.thenReturn(TestDataFactory.getPageOfProjectSampleJoin());
-		DatatablesCriterias criterias = mock(DatatablesCriterias.class);
-
-		ColumnDef columnDef = new ColumnDef();
-		columnDef.setSortDirection(ColumnDef.SortDirection.ASC);
-		columnDef.setName("sample.sampleName");
-		when(criterias.getSortedColumnDefs()).thenReturn(ImmutableList.of(columnDef));
-
-		DatatablesResponse<ProjectSampleModel> response = controller
-				.getProjectSamples(1L, criterias, ImmutableList.of(), ImmutableList.of(), null, null, null, null);
-		List<ProjectSampleModel> data = response.getData();
+		DataTablesParams params = mock(DataTablesParams.class);
+		when(params.getSort()).thenReturn(new Sort(Direction.ASC, "sample.sampleName"));
+		DataTablesResponse response = controller
+				.getProjectSamples(1L, params, ImmutableList.of(), ImmutableList.of(), null, null, null, null);
+		List<DataTablesResponseModel> data = response.getData();
 		assertEquals("Has the correct number of samples", 1, data.size());
-		ProjectSampleModel sampleData = data.get(0);
+		DTProjectSamples sampleData = (DTProjectSamples) data.get(0);
 		assertEquals("Has the correct sample", "Joined Sample", sampleData.getSampleName());
 
 	}

@@ -1,21 +1,19 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectsPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectsPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
+import java.util.List;
 
-import com.github.springtestdbunit.annotation.DatabaseSetup;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * <p> Integration test to ensure that the Projects Page. </p>
@@ -55,13 +53,7 @@ public class ProjectsPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
 	public void testAdvancedFilters() {
-		projectsPage.filterByName("3");
-		assertEquals("Projects table should be populated by 1 projects after applying filter", 1, projectsPage.projectsTableSize());
-
-		projectsPage.clearFilters();
-		assertEquals("Projects table should be populated by 7 projects", 7, projectsPage.projectsTableSize());
-
-		projectsPage.filterByOrganism("coli");
+		projectsPage.doSearch("coli");
 		assertEquals("Projects table should be populated by 4 projects after applying filter", 4,
 				projectsPage.projectsTableSize());
 
@@ -69,6 +61,9 @@ public class ProjectsPageIT extends AbstractIridaUIITChromeDriver {
 		projectsPage.doSearch("K-12");
 		assertEquals("Projects table should be populated by 1 project after applying filter", 1,
 				projectsPage.projectsTableSize());
+
+		projectsPage.doSearch("3");
+		assertEquals("Projects table should be populated by 1 projects after applying filter", 1, projectsPage.projectsTableSize());
 	}
 
 	@Test

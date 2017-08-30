@@ -19,7 +19,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 
 /**
  * Handle gzip-ed files (if necessary). This class partially assumes that gzip
@@ -37,21 +36,16 @@ public class GzipFileProcessor implements FileProcessor {
 	private static final String GZIP_EXTENSION = ".gz";
 
 	private final SequenceFileRepository sequenceFileRepository;
-	private final SequencingObjectRepository objectRepository;
 	private boolean removeCompressedFile;
 
 	@Autowired
-	public GzipFileProcessor(final SequenceFileRepository sequenceFileService,
-			final SequencingObjectRepository objectRepository) {
-		this.sequenceFileRepository = sequenceFileService;
-		this.objectRepository = objectRepository;
+	public GzipFileProcessor(final SequenceFileRepository sequenceFileRepository) {
+		this.sequenceFileRepository = sequenceFileRepository;
 		removeCompressedFile = false;
 	}
 
-	public GzipFileProcessor(final SequenceFileRepository sequenceFileService,
-			final SequencingObjectRepository objectRepository, Boolean removeCompressedFiles) {
-		this.sequenceFileRepository = sequenceFileService;
-		this.objectRepository = objectRepository;
+	public GzipFileProcessor(final SequenceFileRepository sequenceFileRepository, Boolean removeCompressedFiles) {
+		this.sequenceFileRepository = sequenceFileRepository;
 		this.removeCompressedFile = removeCompressedFiles;
 	}
 
@@ -70,12 +64,10 @@ public class GzipFileProcessor implements FileProcessor {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
 	@Transactional
-	public void process(final Long sequencingObjectId) throws FileProcessorException {
-		SequencingObject seqObj = objectRepository.findOne(sequencingObjectId);
-
-		for (SequenceFile file : seqObj.getFiles()) {
+	@Override
+	public void process(SequencingObject sequencingObject) {
+		for (SequenceFile file : sequencingObject.getFiles()) {
 			processSingleFile(file);
 		}
 	}

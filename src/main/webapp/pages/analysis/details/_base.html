@@ -2,6 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="template/page">
 <head>
+  <link rel="stylesheet" th:href="@{/resources/css/pages/analyses.css}"/>
+  <link rel="stylesheet" th:href="@{/resources/css/pages/sample_files.css}" />
   <style>
     .analysis-details .sidebar__heading {
       transition: all 0.5s ease;
@@ -24,8 +26,7 @@
   <div layout:fragment="page" ng-app="irida.analysis"
        th:with="isCompleted=${#strings.equalsIgnoreCase(analysisSubmission.getAnalysisState().toString(), 'COMPLETED')},
         isError=${#strings.equalsIgnoreCase(analysisSubmission.getAnalysisState().toString(), 'ERROR')},
-        analysis=${analysisSubmission.getAnalysis()}" ng-controller="StateController as stateController"
-       ddl:bundle-includes="analysis">
+        analysis=${analysisSubmission.getAnalysis()}" ng-controller="StateController as stateController">
     <main class="col-md-9 col-md-push-3" layout:fragment="main">
 
     </main>
@@ -82,7 +83,7 @@
             <div class="sidebar__icon">
               <span class="fa fa-file-o fa-fw" aria-hidden="true"></span>
             </div>
-            <div th:text="${file.getLabel()}"></div>
+            <a href="#" th:href="@{/analysis/ajax/download/{aid}/file/{fid}(aid=${analysisSubmission.id},fid=${file.id})}" th:text="${file.getLabel()}">_filename_</a>
           </div>
           <div class="sidebar__item">
             <button class="btn btn-default btn-sm btn-block spaced-bottom" data:ng-click="'fileDownloadController.getZipFile(\'' + ${analysisSubmission.getId()} +'\')'">
@@ -103,7 +104,11 @@
   <th:block layout:fragment="scripts">
     <th:block layout:fragment="previewScripts"></th:block>
 
-    <th:block layout:fragment="pageScripts"></th:block>
+    <script th:src="@{/resources/bower_components/angular-ui-router/release/angular-ui-router.min.js}"></script>
+    <script th:src="@{/resources/vendor/PhyloCanvas/PhyloCanvas.js}"></script>
+    <script th:src="@{/resources/js/modules/phylocanvas/PhyloCanvasDirective.js}"></script>
+    <script th:src="@{/resources/js/modules/navs/SubNavDirective.js}"></script>
+    <script th:src="@{/resources/js/pages/analysis/analysis.js}"></script>
   </th:block>
 </body>
 

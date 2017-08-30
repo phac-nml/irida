@@ -1,16 +1,13 @@
 var gulp = require('gulp');
 var cache = require('gulp-cached');
-var eslint = require('gulp-eslint');
 var sass = require('gulp-sass');
 var sourcemaps = require('gulp-sourcemaps');
 var autoprefixer = require('gulp-autoprefixer');
-var notify = require('gulp-notify');
 var browserSync = require('browser-sync').create();
-var runSequence = require('run-sequence');
 
 // WEBPACK
 let webpack = require('webpack-stream');
-let webpackDevConfig = require('./configs/webpack/webpack.dev.config.js');
+let webpackDevConfig = require('./webpack.config.js');
 
 var scss = {
 	files : "./styles/**/*.scss",
@@ -33,15 +30,6 @@ var autoprefixerOptions = {
 	browsers: ['last 2 versions', '> 5%', 'Firefox ESR']
 };
 
-gulp.task('lint', function () {
-	return gulp
-		.src(javascript.files)
-		.pipe(cache('linting'))
-		.pipe(eslint())
-		.pipe(eslint.format())
-		.pipe(eslint.failOnError());
-});
-
 gulp.task('webpack', function() {
   return gulp
 		.src("./resources/js/dev/*.js")
@@ -55,8 +43,7 @@ gulp.task('sass', function () {
 		.pipe(cache('scss'))
 		.pipe(sass(scss.dev).on("error", sass.logError))
 		.pipe(sourcemaps.write())
-		.pipe(gulp.dest(scss.output))
-		.pipe(notify({message: "SCSS complete"}));
+		.pipe(gulp.dest(scss.output));
 });
 
 gulp.task('sass:prod', function () {
@@ -83,8 +70,8 @@ gulp.task('watch', function() {
 	gulp.watch('./resource/js/dev/**/*.js', ['webpack']).on('change', browserSync.reload);
 });
 
-gulp.task('start', function() {
-	runSequence('sass:prod', 'webpack');
+gulp.task('start', ['sass:prod'], function () {
+  gulp.start('webpack');
 });
 
 gulp.task('default', ['serve', 'watch']);

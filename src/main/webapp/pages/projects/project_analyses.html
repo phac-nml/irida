@@ -8,7 +8,10 @@
 <body>
 
 <main layout:fragment="main">
-	<th:block th:replace="analysis/analysis-table :: analysis-table"/>	
+	<th:block th:replace="analyses/analyses-table :: table"/>
 </main>
+<th:block layout:fragment="scripts">
+	<th:block th:replace="analyses/analyses-table :: scripts"/>
+</th:block>
 </body>
 </html>

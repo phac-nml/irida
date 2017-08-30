@@ -22,10 +22,10 @@ public class AnalysesUserPage extends AbstractPage {
 	@FindBy(className = "analysis__state")
 	private List<WebElement> analysesList;
 
-	@FindBy(className = "download-analysis-btn")
+	@FindBy(className = "download-btn")
 	private List<WebElement> downloadAnalysisBtn;
 	
-	@FindBy(className = "delete-analysis-btn")
+	@FindBy(className = "remove-btn")
 	private List<WebElement> deleteAnalysisBtn;
 
 	@FindBy(className = "progress-bar")

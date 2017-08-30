@@ -50,9 +50,7 @@ You can search for individual samples within the cart use the 'cart search' fiel
 
 ![Cart search field](images/cart-filter-input.png)
 
-Search terms can match partial samples names.  Note: projects that do not contain any samples that match the filter are hidden.  The blue label displays the number of samples that match the filter and the total number of samples in the project.
-
-![Cart search active](images/cart-filter-active.png)
+Search terms can match partial samples names.  Note: projects that do not contain any samples that match the filter are hidden.
 
 Selecting a pipeline
 --------------------
@@ -170,6 +168,10 @@ You can either click on the <img src="images/download-icon.png" class="inline" a
 The analysis details page shows you more detailed information about your pipeline submission, including the names of the files that were produced by the analysis (on the left-hand side of the page), a preview of the outputs (if available), and some tabs to view more details about how the pipeline was submitted:
 
 ![Analysis details page.](images/analysis-details-page.png)
+
+To download output files, you can use the "Output Files" section from this page.  To download an individual file, click on the file name.  To download *all* the outputs produced by the pipeline, you can click on the "Download Files" button.
+
+![Analysis download.](images/analysis-details-download.png)
 
 ### Viewing the sequencing data submitted for analysis
 

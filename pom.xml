@@ -4,7 +4,7 @@
 	<groupId>ca.corefacility.bioinformatics</groupId>
 	<artifactId>irida</artifactId>
 	<packaging>war</packaging>
-	<version>0.17.1</version>
+	<version>0.18.0-SNAPSHOT</version>
 	<name>irida</name>
 	<url>http://www.irida.ca</url>
 
@@ -559,6 +559,11 @@
 			<version>3.4</version>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-csv</artifactId>
+			<version>${commons-csv.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>com.sksamuel.diff</groupId>
 			<artifactId>diff</artifactId>
 			<version>1.1.11</version>
@@ -855,7 +860,7 @@
 				<artifactId>jetty-maven-plugin</artifactId>
 				<version>${maven.jetty.plugin.version}</version>
 				<configuration>
-					<scanIntervalSeconds>1</scanIntervalSeconds>
+					<scanIntervalSeconds>0</scanIntervalSeconds>
 					<stopPort>9966</stopPort>
 					<stopKey>STOP</stopKey>
 				</configuration>
@@ -1028,6 +1033,7 @@
 		<el-ri.version>1.0</el-ri.version>
 		<com.github.jmchilton.blend4j.version>0.2.0-SNAPSHOT-29f28db211c300fcaf21a7a5992478fc5a9893cd</com.github.jmchilton.blend4j.version>
 		<apache.jena.version>1.1.0</apache.jena.version>
+		<commons-csv.version>1.4</commons-csv.version>
 		<xml.apis.version>1.4.01</xml.apis.version>
 		<liquibase.version>3.5.1</liquibase.version>
 		<biojava.version>3.0</biojava.version>

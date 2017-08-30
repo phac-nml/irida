@@ -1,9 +1,6 @@
-const angular = require('angular');
-const _ = require('underscore');
-
-require('style!bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.css');
-require('bootstrap-switch');
-require('angular-bootstrap-switch');
+import angular from 'angular';
+import _ from 'lodash';
+import 'plugins/angular/angular-bootstrap-switch';
 
 const editApp = angular
   .module('associated.edit', [

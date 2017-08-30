@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
@@ -157,19 +158,22 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 		// Select some samples
 		page.selectSample(0);
-		page.selectSample(1);
+		page.selectSample(2);
 		assertEquals("Should be 2 selected samples", "2 samples selected", page.getSelectedInfoText());
 
 		// Merge these samples with the original name
-		List<String> originalNames = page.getSampleNamesOnPage().subList(0, 2); // Only need the first two
+		List<String> originalNames = Lists.newArrayList(page.getSampleNamesOnPage().get(0),
+				page.getSampleNamesOnPage().get(2));
 		page.mergeSamplesWithOriginalName();
-		List<String> mergeNames = page.getSampleNamesOnPage().subList(0, 2);
+		List<String> mergeNames = Lists.newArrayList(page.getSampleNamesOnPage().get(0),
+				page.getSampleNamesOnPage().get(2));
 		assertEquals("Should still the first samples name", originalNames.get(0), mergeNames.get(0));
-		assertFalse("Should have different sample second since it was merged", originalNames.get(1).equals(mergeNames.get(1)));
+		assertFalse("Should have different sample second since it was merged",
+				originalNames.get(1).equals(mergeNames.get(1)));
 
 		// Merge with a new name
 		page.selectSample(0);
-		page.selectSample(1);
+		page.selectSample(2);
 		String newSampleName = "NEW_NAME";
 		page.mergeSamplesWithNewName(newSampleName);
 		String name = page.getSampleNamesOnPage().get(0);
@@ -185,7 +189,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		List<String> names = page.getSampleNamesOnPage().subList(0, 1);
 		String newProjectName = "project4";
-		page.copySamples(newProjectName);
+		page.copySamples(newProjectName, false);
 
 		ProjectSamplesPage newPage = ProjectSamplesPage.gotToPage(driver(), 4);
 		List<String> newNames = newPage.getSampleNamesOnPage().subList(0, 1);
@@ -193,6 +197,29 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		for(int i = 0; i == names.size(); i++) {
 			assertEquals("Should have the same samples since they were copied", names.get(i), newNames.get(i));
 		}
+		
+		assertEquals("should be 2 locked samples", 2, page.getLockedSampleNames().size());
+	}
+	
+	@Test
+	public void testCopySamplesLocked() {
+		LoginPage.loginAsManager(driver());
+		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
+		page.selectSample(0);
+		page.selectSample(1);
+
+		List<String> names = page.getSampleNamesOnPage().subList(0, 1);
+		String newProjectName = "project4";
+		page.copySamples(newProjectName, false);
+
+		ProjectSamplesPage newPage = ProjectSamplesPage.gotToPage(driver(), 4);
+		List<String> newNames = newPage.getSampleNamesOnPage().subList(0, 1);
+
+		for (int i = 0; i == names.size(); i++) {
+			assertEquals("Should have the same samples since they were copied", names.get(i), newNames.get(i));
+		}
+
+		assertEquals("should be 2 locked samples", 2, page.getLockedSampleNames().size());
 	}
 
 	@Test
@@ -233,37 +260,46 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	public void testFilteringSamplesByProperties() {
+	public void testFilteringSamplesByProperties() throws InterruptedException {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
+		Thread.sleep(500L);
 		assertEquals("Should have 21 projects displayed", "Showing 1 to 10 of 21 entries", page.getTableInfo());
 		page.filterByName("5");
+		Thread.sleep(500L);
 		assertEquals("Should have 17 projects displayed", "Showing 1 to 10 of 17 entries", page.getTableInfo());
 		page.filterByName("52");
+		Thread.sleep(500L);
 		assertEquals("Should have 17 projects displayed", "Showing 1 to 3 of 3 entries", page.getTableInfo());
 
 		// Test clearing the filters
 		page.clearFilter();
+		Thread.sleep(500L);
 		assertEquals("Should have 21 projects displayed", "Showing 1 to 10 of 21 entries", page.getTableInfo());
 
 		// Should ignore case
 		page.filterByName("sample");
+		Thread.sleep(500L);
 		assertEquals("Should ignore case when filtering", "Showing 1 to 10 of 21 entries", page.getTableInfo());
 
 		// Test date range filter
 		page.clearFilter();
+		Thread.sleep(500L);
 		assertEquals("Should have 21 projects displayed", "Showing 1 to 10 of 21 entries", page.getTableInfo());
 	}
 
 	@Test
-	public void testFilteringWithDates() {
+	public void testFilteringWithDates() throws InterruptedException {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
+		Thread.sleep(500L);
 		page.filterByDateRange("07/06/2015", "07/09/2015");
+		Thread.sleep(500L);
 		assertEquals("Should ignore case when filtering", "Showing 1 to 4 of 4 entries", page.getTableInfo());
 
 		// Test clearing the filters
 		page.clearFilter();
+		Thread.sleep(500L);
 		assertEquals("Should have 21 samples displayed", "Showing 1 to 10 of 21 entries", page.getTableInfo());
 	}
 

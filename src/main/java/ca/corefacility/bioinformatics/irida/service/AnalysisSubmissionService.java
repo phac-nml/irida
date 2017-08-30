@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
@@ -55,6 +56,18 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 *         user.
 	 */
 	public Set<AnalysisSubmission> getAnalysisSubmissionsForCurrentUser();
+	
+	/**
+	 * Gets all {@link AnalysisSubmissionService}s accessible by the current
+	 * user matching one of the workflow ids.
+	 * 
+	 * @param workflowIds
+	 *            The workflow ids to match.
+	 * @return A list of {@link AnalysisSubmission}s matching one of the
+	 *         workflow ids.
+	 */
+	public List<AnalysisSubmission> getAnalysisSubmissionsAccessibleByCurrentUserByWorkflowIds(
+			Collection<UUID> workflowIds);
 	
 	/**
 	 * Submit {@link AnalysisSubmission} for workflows allowing multiple one
@@ -169,4 +182,14 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @return a Collection of {@link AnalysisSubmission}
 	 */
 	public Collection<AnalysisSubmission> findAnalysesByState(Collection<AnalysisState> states);
+
+	/**
+	 * Get a collection of all {@link AnalysisSubmission}s shared with a
+	 * {@link Project}.
+	 * 
+	 * @param project
+	 *            The {@link Project} to search.
+	 * @return A collection of {@link AnalysisSubmission}s.
+	 */
+	public Collection<AnalysisSubmission> getAnalysisSubmissionsSharedToProject(Project project);
 }

@@ -32,24 +32,19 @@ public class ProjectSampleModel extends AbstractExportModel {
 			"geographicLocationName",
 			"isolationSource",
 			"latitude",
-			"longitude"
+			"longitude",
+			"owner"
 	);
 	private Project project;
 	private Sample sample;
 	private List<QCEntry> qcEntries;
+	private ProjectSampleJoin join;
 
 	public ProjectSampleModel(ProjectSampleJoin psj, List<QCEntry> qcEntries) {
 		this.project = psj.getSubject();
 		this.sample = psj.getObject();
 		this.qcEntries = qcEntries;
-	}
-
-	public static String generateSortName(String name) {
-		if (name.equals("projectName")) {
-			return "project.name";
-		} else {
-			return "sample." + name;
-		}
+		this.join = psj;
 	}
 
 	public String getId() {
@@ -114,5 +109,9 @@ public class ProjectSampleModel extends AbstractExportModel {
 	
 	public List<QCEntry> getQcEntries(){
 		return qcEntries;
+	}
+	
+	public boolean isOwner(){
+		return join.isOwner();
 	}
 }

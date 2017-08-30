@@ -15,6 +15,7 @@
         controllerAs: "copyModalCtrl",
         controller  : ["$uibModalInstance", function ($uibModalInstance) {
           var vm = this;
+          vm.giveOwner = false;
 
           vm.generateSelect2 = function () {
             return function (data) {
@@ -36,7 +37,8 @@
           vm.doCopy = function () {
             $uibModalInstance.close({
               sampleIds: config.selectedSamples,
-              newProjectId: vm.project
+              newProjectId: vm.project,
+              giveOwner: vm.giveOwner
             });
           };
         }]

@@ -1,4 +1,5 @@
-require('style!./../../../../../css/components/ngFileUpload.css');
+import 'css/components/ngFileUpload.css';
+
 /**
  * @file AngularJS component displaying the capability of uploading an excel file
  * (via dropzone).

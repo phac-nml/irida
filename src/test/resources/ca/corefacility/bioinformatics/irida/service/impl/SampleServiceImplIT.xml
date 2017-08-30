@@ -42,19 +42,19 @@
 		 sampleName="sample9" organism="org3"/>
 
 	<project_sample id="1" createdDate="2013-07-18 14:20:19.0"
-		project_id="1" sample_id="1" />
+		project_id="1" sample_id="1" owner="true" />
 	<project_sample id="2" createdDate="2013-07-18 14:20:19.0"
-		project_id="1" sample_id="2" />
+		project_id="1" sample_id="2" owner="true" />
 	<project_sample id="3" createdDate="2013-07-18 14:20:19.0"
-		project_id="1" sample_id="3" />
+		project_id="1" sample_id="3" owner="true" />
 	<project_sample id="4" createdDate="2013-07-18 14:20:19.0"
-		project_id="2" sample_id="4" />
+		project_id="2" sample_id="4" owner="true" />
 	<project_sample id="5" createdDate="2013-07-18 14:20:19.0"
-		project_id="3" sample_id="5" />
+		project_id="3" sample_id="5" owner="true" />
 	<project_sample id="8" createdDate="2013-07-18 14:20:19.0"
-		project_id="2" sample_id="8" />
+		project_id="2" sample_id="8" owner="true" />
 	<project_sample id="9" createdDate="2013-07-18 14:20:19.0"
-		project_id="2" sample_id="9" />
+		project_id="2" sample_id="9" owner="true" />
 
 	<analysis id="1" createdDate="2013-07-18 14:20:19.0"
 		description="FastQC" executionManagerAnalysisId="fastqc" />
@@ -148,11 +148,11 @@
 		remote_analysis_id="1" analysis_state="SUBMITTING" created_date="2013-07-18 14:20:19.0"
 		workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="1"
 		analysis_cleaned_state="NOT_CLEANED" />
-		
-	<analysis_submission_sequence_file_pair
-	analysis_submission_id="1" sequence_file_pair_id="1" />
-	<analysis_submission_sequence_file_pair
-		analysis_submission_id="1" sequence_file_pair_id="2" />
+
+	<analysis_submission_sequencing_object
+		analysis_submission_id="1" sequencing_object_id="1" />
+	<analysis_submission_sequencing_object
+		analysis_submission_id="1" sequencing_object_id="2" />
 
 	<qc_entry id="1" created_date="2013-07-18 14:20:19.0"
 		sequencingObject_id="4" DTYPE="FileProcessorErrorQCEntry"/>

@@ -3,8 +3,7 @@
       layout:decorator="template/page">
 <head lang="en">
 	<title th:text="${title}">Pipelines - Launch</title>
-	<link rel="stylesheet" href="/resources/css/pages/sample_files.css"
-	      th:href="@{/resources/css/pages/sample_files.css}"/>
+	<link rel="stylesheet" th:href="@{/resources/css/pages/sample_files.css}"/>
 	<script th:inline="javascript">
 	/*<![CDATA[*/
 	    window.dependencies = ['irida.pipelines'];
@@ -27,7 +26,7 @@
 	</script>
 </head>
 <body>
-<div layout:fragment="page" ng-app="irida.pipelines" ddl:bundle-includes="launch-pipeline" >
+<div layout:fragment="page" ng-app="irida.pipelines">
 	<form class="form-horizontal" method="post" ng-controller="PipelineController as pipeline">
 		<div id="pipeline-creation">
 			<div class="row">
@@ -273,6 +272,8 @@
 	<div th:replace="templates/_file.utils :: upload-error"></div>
 	<th:block th:if="${parameters} and ${#lists.size(parameters)} != 0"
 	          th:replace="pipelines/templates/parameters :: modal (${parameterModalTitle}, ${parameters})"></th:block>
+	<script th:src="@{/resources/bower_components/ng-file-upload/ng-file-upload.min.js}"></script>
+	<script th:src="@{/resources/js/pages/pipelines/pipeline.launch.js}"></script>
 </th:block>
 </body>
 </html>

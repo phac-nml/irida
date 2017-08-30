@@ -66,9 +66,7 @@ public class AssemblyFileProcessor implements FileProcessor {
 	 */
 	@Override
 	@Transactional
-	public void process(Long sequenceFileId) throws FileProcessorException {
-		SequencingObject sequencingObject = objectRepository.findOne(sequenceFileId);
-
+	public void process(SequencingObject sequencingObject) {
 		logger.debug("Setting up automated assembly for sequence " + sequencingObject.getId());
 
 		// assembly run by admin
@@ -91,7 +89,7 @@ public class AssemblyFileProcessor implements FileProcessor {
 			// build an AnalysisSubmission
 			Builder builder = new AnalysisSubmission.Builder(pipelineUUID);
 			AnalysisSubmission submission = builder
-					.inputFilesPaired(Sets.newHashSet((SequenceFilePair) sequencingObject))
+					.inputFiles(Sets.newHashSet((SequenceFilePair) sequencingObject))
 					.name("Automated Assembly " + sequencingObject.toString()).build();
 			submission.setSubmitter(admin);
 
@@ -106,7 +104,7 @@ public class AssemblyFileProcessor implements FileProcessor {
 		} else {
 			logger.warn("Could not assemble sequencing object " + sequencingObject.getId()
 					+ " because it's not paired end");
-		}
+		}		
 	}
 
 	/**

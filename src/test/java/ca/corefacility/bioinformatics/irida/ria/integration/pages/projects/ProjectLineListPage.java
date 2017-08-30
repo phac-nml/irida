@@ -17,10 +17,10 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class ProjectLineListPage extends ProjectPageBase {
 	private static final String RELATIVE_URL = "/projects/{projectId}/linelist";
 
-	@FindBy(css = ".dataTables_scrollHeadInner th")
+	@FindBy(css = "#linelist th")
 	private List<WebElement> tableHeaders;
 
-	@FindBy(css = "tbody tr")
+	@FindBy(css = "#linelist tbody tr")
 	private List<WebElement> tableRows;
 
 	@FindBy(id = "col-vis-btn")
@@ -101,6 +101,6 @@ public class ProjectLineListPage extends ProjectPageBase {
 		templateNameInput.sendKeys(templateName);
 		wait.until(ExpectedConditions.elementToBeClickable(completeSaveBtn));
 		completeSaveBtn.click();
-		waitForTime(1000);
+		waitForTime(2000);
 	}
 }
