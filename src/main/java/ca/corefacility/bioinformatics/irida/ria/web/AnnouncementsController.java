@@ -266,8 +266,7 @@ public class AnnouncementsController extends BaseController{
      */
     @RequestMapping(value = "/control/ajax/list")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public @ResponseBody
-    DataTablesResponse getAnnouncementsAdmin(@DataTablesRequest DataTablesParams params) {
+    public @ResponseBody DataTablesResponse getAnnouncementsAdmin(@DataTablesRequest DataTablesParams params) {
         final Page<Announcement> page = announcementService
                 .search(AnnouncementSpecification.searchAnnouncement(params.getSearchValue()),
                         new PageRequest(params.getCurrentPage(), params.getLength(), params.getSort()));
