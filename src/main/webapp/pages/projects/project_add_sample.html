@@ -7,7 +7,8 @@
   <script th:inline="javascript">
     var PAGE = {
       urls: {
-        validateName: /*[[@{/projects/{projectId}/validate-sample-name(projectId=${project.getId()})}]]*/ "/project/1/validate-sample-name"
+        validateName: /*[[@{/projects/{projectId}/validate-sample-name(projectId=${project.getId()})}]]*/ "/project/1/validate-sample-name",
+        taxonomy: /*[[@{/projects/ajax/taxonomy/search}]]*/ "/projects/ajax/taxonomy/search"
       }
     };
   </script>
@@ -21,19 +22,23 @@
           <h2 class="panel-title" th:text="#{project.samples.new.form.header}">__Create_New_Sample__</h2>
         </div>
         <div class="panel-body">
-          <form id="create-sample-form" th:action="@{/projects/{id}/samples(id=${project.getId()})}" method="post">
+          <div class="row"><div class="col-md-12"><form id="create-sample-form" th:action="@{/projects/{id}/samples(id=${project.getId()})}" method="post">
             <div class="form-group">
-              <label for="sampleName" th:text="#{samples.details.sampleName}">_SAMPLE_NAME_</label>  <small class="text-muted">(Required, Only letters, numbers, _, and - characters, and unique)</small>
+              <label for="sampleName" th:text="#{samples.details.sampleName}">_SAMPLE_NAME_</label>  <small class="text-muted pull-right">(Required, Only letters, numbers, _, and - characters, and unique)</small>
               <input type="text" id="sampleName" name="sampleName" class="form-control"
-                     data-msg-checkExisting="_IT IS A VLAIDE NAME"
+                     data-msg-remote="__This name is already spoken for__"
                      data-msg-required="_This field is required, damn it!_"
                      data-msg-checkallowedchars="_HEY! Fuck head! That pattern is all messed up@!_"
                      data-msg-minlength="_HEY! YOU NEED MORE TEXT HERE!_"/>
             </div>
+            <div class="form-group">
+              <label for="organism" th:text="#{samples.details.organism}">ORGANISM_</label> <small class="text-muted pull-right">(Optional)</small>
+              <select id="organism" name="organism" class="form-control"></select>
+            </div>
             <button id="save-btn" class="btn btn-primary" type="submit" disabled="disabled"
                     th:text="_NEED_TEXT_">
             </button>
-          </form>
+          </form></div></div>
         </div>
       </div>
 

@@ -988,15 +988,14 @@ public class ProjectSamplesController {
 
 	@RequestMapping("/projects/{projectId}/validate-sample-name")
 	@ResponseBody
-	public Map<String, Boolean> validateNewSampleName(@PathVariable Long projectId, @RequestParam String name) {
-		logger.debug("NAME: ", name);
+	public boolean validateNewSampleName(@PathVariable Long projectId, @RequestParam String sampleName) {
 		Project project = projectService.read(projectId);
 		try {
-			sampleService.getSampleBySampleName(project, name);
-			return ImmutableMap.of("valid", false);
+			sampleService.getSampleBySampleName(project, sampleName);
+			return false;
 		} catch (Exception e) {
 			// If the sample is not found, then the name is good to go!
-			return ImmutableMap.of("valid", true);
+			return true;
 		}
 
 	}

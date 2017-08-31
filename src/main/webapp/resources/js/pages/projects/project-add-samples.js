@@ -1,19 +1,20 @@
 import $ from "jquery";
-import "./../../vendor/plugins/jquery/select2";
 import "jquery-validation";
+import "./../../vendor/plugins/jquery/select2";
 
 const form = $("#create-sample-form");
 const saveBtn = $("#save-btn");
 
+// SAMPLE NAME VALIDATION
+/**
+ * Sample Name Validation.  Must only be:
+ * 1. Letter (upper or lowercase)
+ * 2. Number
+ * 3. _ (underscore)
+ * 4. - (hyphen)
+ */
 $.validator.addMethod("checkallowedchars", value => {
   return /^[A-Z\d_-]+$/i.test(value);
-});
-
-$.validator.addMethod("checkExisting", name => {
-  return $.ajax({
-    url: window.PAGE.urls.validateName,
-    data: { name }
-  }).done(result => !result.valid);
 });
 
 form.validate({
@@ -39,17 +40,47 @@ form.validate({
       required: true,
       minlength: 3,
       checkallowedchars: true,
-      checkExisting: true
+      // Server validation to ensure that the name is not already used
+      // within this project.
+      remote: {
+        url: window.PAGE.urls.validateName,
+        success(valid) {
+          saveBtn.prop("disabled", valid ? false : "disabled");
+        }
+      }
     }
   },
+  // Disable the button of clicking to prevent multiple clicks.
   submitHandler: function(form) {
     saveBtn.attr("disabled", true);
     form.submit();
   }
 });
 
-form.find("input").on("keyup blur", () => {
+// Update the form submit button on changes to the sample name
+form.find("#sampleName").on("keyup blur", () => {
   saveBtn.prop("disabled", form.valid() ? false : "disabled");
+});
+
+// Set up the organism field
+$("#organism").select2({
+  minimumInputLength: 1,
+  ajax: {
+    url: window.PAGE.urls.taxonomy,
+    dataType: "json",
+    delay: 250,
+    data(params) {
+      return {
+        searchTerm: params.term
+      };
+    },
+    processResults(data) {
+      return {
+        results: data
+      };
+    },
+    cache: true
+  }
 });
 
 // import angular from "angular";
