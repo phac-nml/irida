@@ -15,6 +15,7 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.util.ReflectionUtils;
 
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -80,6 +81,8 @@ public class AnalysisFastQC extends Analysis {
 		this.duplicationLevelChart = null;
 		this.overrepresentedSequences = null;
 		this.fastQCReport = null;
+		
+		this.setAnalysisType(AnalysisType.FASTQC);
 	}
 
 	public AnalysisFastQC(final AnalysisFastQCBuilder builder) {
@@ -98,6 +101,8 @@ public class AnalysisFastQC extends Analysis {
 		this.duplicationLevelChart = builder.duplicationLevelChart;
 		this.overrepresentedSequences = builder.overrepresentedSequences;
 		this.fastQCReport = builder.fastQCReport;
+		
+		this.setAnalysisType(AnalysisType.FASTQC);
 	}
 
 	public static AnalysisFastQCBuilder builder() {
