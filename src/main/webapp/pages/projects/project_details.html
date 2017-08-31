@@ -3,21 +3,18 @@
 
 <head>
   <title th:text="${project.label} + ' - ' + #{project.nav.details}"></title>
-    <script>window.dependencies=['irida.project.activities'];</script>
 </head>
 
 <body>
   <main layout:fragment="main">
-    <div ddl:bundle-includes="events">
+    <div>
       <div class="row">
          <div class="col-md-12"> <events data:url="@{/events/project/{id}(id=${project.getId()})}"></events></div>
       </div>
     </div>
   </main>
   <th:block layout:fragment="scripts" th:inline="javascript">
-  <script th:inline="javascript">
-    angular.module('irida.project.activities',['irida.events']);
-  </script>
+    <script th:src="@{/resources/js/build/events.bundle.js}"></script>
   </th:block>
 </body>
 
