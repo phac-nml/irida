@@ -1,21 +1,25 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.announcements;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.announcements.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import com.github.springtestdbunit.annotation.DatabaseSetup;
+import java.util.Date;
+import java.util.List;
 
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.announcements.AnnouncementControlPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.announcements.AnnouncementCreatePage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.announcements.AnnouncementDashboardPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.announcements.AnnouncementDetailPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.announcements.AnnouncementReadPage;
 
 /**
  * Integration test to ensure the Announcement Control page works
@@ -48,20 +52,20 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver{
     }
 
     @Test
-    public void testSortAnnouncementsByContent() {
-        controlPage.goTo();
-        controlPage.clickMessageHeader();
+	public void testSortAnnouncementsByDate() {
+		controlPage.goTo();
+		controlPage.clickDateCreatedHeader();
 
-        List<WebElement> announcements = controlPage.getVisibleAnnouncementsContent();
+		List<Date> announcementDates = controlPage.getCreatedDates();
 
-        assertTrue("List of announcements is not sorted correctly", checkSortedAscending(announcements));
+		assertTrue("List of announcements is not sorted correctly", checkDatesSortedDescending(announcementDates));
 
-        controlPage.clickMessageHeader();
+		controlPage.clickDateCreatedHeader();
 
-        announcements = controlPage.getVisibleAnnouncementsContent();
+		announcementDates = controlPage.getCreatedDates();
 
-        assertTrue("List of announcements is not sorted correctly", checkSortedDescending(announcements));
-    }
+		assertTrue("List of announcements is not sorted correctly", checkDatesSortedAscending(announcementDates));
+	}
 
     @Test
     public void testSubmitNewAnnouncement() {
@@ -69,78 +73,77 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver{
 
         controlPage.goTo();
 
-        int numAnnouncementsBefore = controlPage.getVisibleAnnouncementsContent().size();
+		int numAnnouncementsBefore = controlPage.getCreatedDates().size();
 
         controlPage.clickCreateNewAnnouncementButton();
         createPage.enterMessage(message);
         controlPage.waitForDatatableAjax();
 
-        //check the announcements on the page to make sure that the message is one of the announcements
-        List<WebElement> announcements = controlPage.getVisibleAnnouncementsContent();
-        List<String> content = announcements.stream().map(c -> c.getText()).collect(Collectors.toList());
+		// New messages should appear first in the table
+		String newMessage = controlPage.getAnnouncement(0);
 
-        assertTrue("Unexpected announcement content.", content.get(0).equals(message));
-        assertEquals("Unexpected number of announcements visible", numAnnouncementsBefore + 1, announcements.size());
-    }
+		assertTrue("Unexpected announcement content.", newMessage.equals(message));
+		assertEquals("Unexpected number of announcements visible", numAnnouncementsBefore + 1,
+				controlPage.getCreatedDates().size());
+	}
 
     @Test
     public void testCheckDetailsPage() {
         controlPage.goTo();
 
-        List<WebElement> content = controlPage.getVisibleAnnouncementsContent();
+		String preview0 = controlPage.getAnnouncement(0);
+		String preview1 = controlPage.getAnnouncement(1);
+		String preview2 = controlPage.getAnnouncement(2);
 
-        String announcement1 = content.get(1).getText();
-        String announcement2 = content.get(2).getText();
-        String announcement3 = content.get(3).getText();
+		controlPage.gotoMessageDetails(0);
+		compareMessages(detailPage.getInputText(), preview0);
+		detailPage.clickCancelButton();
 
-        controlPage.clickDetailsButton(1);
-        assertTrue("Announcement content doesn't match expected", announcement1.equals(detailPage.getInputText()));
+		controlPage.gotoMessageDetails(1);
+		compareMessages(detailPage.getInputText(), preview1);
+		detailPage.clickCancelButton();
 
-        detailPage.clickCancelButton();
+		controlPage.gotoMessageDetails(2);
+		compareMessages(detailPage.getInputText(), preview2);
+		detailPage.clickCancelButton();
+	}
 
-        controlPage.clickDetailsButton(2);
-        assertTrue("Announcement content doesn't match expected", announcement2.equals(detailPage.getInputText()));
-
-        detailPage.clickCancelButton();
-
-        controlPage.clickDetailsButton(3);
-        assertTrue("Announcement content doesn't match expected", announcement3.equals(detailPage.getInputText()));
-    }
+	private void compareMessages(String announcement, String preview) {
+		assertTrue("Announcement preview does not match the message.", announcement.contains(preview));
+	}
 
     @Test
     public void testUpdateAnnouncement() {
         String newMessage = "Updated!!!";
 
         controlPage.goTo();
-        controlPage.clickDetailsButton(4);
-        detailPage.enterMessage(newMessage);
+		controlPage.gotoMessageDetails(4);
+		detailPage.enterMessage(newMessage);
 
-        List<WebElement> content = controlPage.getVisibleAnnouncementsContent();
-        String announcement = content.get(4).getText();
-        assertTrue("Unexpected message content", announcement.equals(newMessage));
-    }
+		String announcementMessage = controlPage.getAnnouncement(4);
+		assertTrue("Unexpected message content", newMessage.contains(announcementMessage));
+	}
 
     @Test
     public void testDeleteAnnouncement() {
         controlPage.goTo();
+		List<Date> dates = controlPage.getCreatedDates();
 
-        List<WebElement> content = controlPage.getVisibleAnnouncementsContent();
+		String messagePreview = controlPage.getAnnouncement(2);
 
-        String announcement = content.get(2).getText();
-
-        controlPage.clickDetailsButton(2);
-        assertTrue("Announcement content doesn't match expected", announcement.equals(detailPage.getInputText()));
+		controlPage.gotoMessageDetails(2);
+		assertTrue("Announcement content doesn't match expected", detailPage.getInputText().contains(messagePreview));
 
         detailPage.clickDeleteButton();
 
-        assertEquals("Unexpected number of announcements", content.size() - 1, controlPage.getVisibleAnnouncementsContent().size());
-    }
+		assertEquals("Unexpected number of announcements", dates.size() - 1, controlPage.getCreatedDates().size());
+	}
 
     @Test
     public void testDetailsTablePopulated() {
         controlPage.goTo();
-        controlPage.clickDetailsButton(0);
-        assertEquals("Unexpected number of user information rows in table", 6, detailPage.getTableDataSize());
+		controlPage.gotoMessageDetails(0);
+		assertEquals("Unexpected number of user information rows in table", 6, detailPage.getTableDataSize());
     }
 
     @Test
@@ -160,18 +163,18 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver{
     }
 
     /**
-     * Checks if a List of {@link WebElement} is sorted in ascending order.
-     *
-     * @param elements
-     * 		List of {@link WebElement}
-     *
+	 * Checks if a List of {@link Date} is sorted in ascending order.
+	 *
+	 * @param dates
+	 * 		List of {@link Date}
+	 *
      * @return if the list is sorted ascending
      */
-    private boolean checkSortedAscending(List<WebElement> elements) {
-        boolean isSorted = true;
-        for (int i = 1; i < elements.size(); i++) {
-            if (elements.get(i).getText().compareTo(elements.get(i - 1).getText()) < 0) {
-                isSorted = false;
+	private boolean checkDatesSortedAscending(List<Date> dates) {
+		boolean isSorted = true;
+		for (int i = 1; i < dates.size(); i++) {
+			if (dates.get(i).compareTo(dates.get(i - 1)) < 0) {
+				isSorted = false;
                 break;
             }
         }
@@ -179,18 +182,18 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver{
     }
 
     /**
-     * Checks if a list of {@link WebElement} is sorted in descending order.
-     *
-     * @param elements
-     * 		List of {@link WebElement}
-     *
+	 * Checks if a list of {@link Date} is sorted in descending order.
+	 *
+	 * @param dates
+	 * 		List of {@link Date}
+	 *
      * @return if the list is sorted ascending
      */
-    private boolean checkSortedDescending(List<WebElement> elements) {
-        boolean isSorted = true;
-        for (int i = 1; i < elements.size(); i++) {
-            if (elements.get(i).getText().compareTo(elements.get(i - 1).getText()) > 0) {
-                isSorted = false;
+	private boolean checkDatesSortedDescending(List<Date> dates) {
+		boolean isSorted = true;
+		for (int i = 1; i < dates.size(); i++) {
+			if (dates.get(i).compareTo(dates.get(i - 1)) > 0) {
+				isSorted = false;
                 break;
             }
         }

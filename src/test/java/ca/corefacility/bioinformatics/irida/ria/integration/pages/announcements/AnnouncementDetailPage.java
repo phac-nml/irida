@@ -1,9 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.announcements;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 /**
  * Page object to represent the Announcements Detail page
@@ -28,7 +29,7 @@ public class AnnouncementDetailPage extends AbstractPage {
     }
 
     public int getTableDataSize() {
-        WebElement table = driver.findElement(By.id("announcementUserTable"));
+        WebElement table = driver.findElement(By.id("announcementUsersTable"));
         return table.findElements(By.cssSelector("tbody>tr")).size();
     }
 

@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.util.List;
 import java.util.Map;
@@ -13,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
@@ -157,8 +156,8 @@ public class AnnouncementServiceImplIT {
     public void testSearchReturnsExistingAnnouncement() {
         String searchString = "Downtime";
         Page<Announcement> searchAnnouncement = announcementService.search(AnnouncementSpecification.searchAnnouncement(searchString),
-                0, 10, Sort.Direction.ASC, "id");
-        assertEquals("Unexpected number of announcements returned", 2, searchAnnouncement.getContent().size());
+				new PageRequest(0, 10, new Sort(Sort.Direction.ASC, "id")));
+		assertEquals("Unexpected number of announcements returned", 2, searchAnnouncement.getContent().size());
         for(Announcement a : searchAnnouncement) {
             assertTrue(a.getMessage().contains(searchString));
         }
@@ -169,16 +168,17 @@ public class AnnouncementServiceImplIT {
     public void testSearchReturnsNoResults() {
         String searchString = "ThisShouldn'tMatchAnything!!";
         Page<Announcement> searchAnnouncement = announcementService.search(AnnouncementSpecification.searchAnnouncement(searchString),
-                0, 10, Sort.Direction.ASC, "id");
-        assertEquals("Unexpected number of announcements returned", 0, searchAnnouncement.getContent().size());
+				new PageRequest(1, 10, new Sort(Sort.Direction.ASC, "id")));
+		assertEquals("Unexpected number of announcements returned", 0, searchAnnouncement.getContent().size());
     }
 
     @Test
     @WithMockUser(username = "user", roles = "USER")
     public void testSearchNullSearchString() {
-        Page<Announcement> searchAnnouncement = announcementService.search(AnnouncementSpecification.searchAnnouncement(null),
-                0, 10, Sort.Direction.ASC, "id");
-        assertEquals("Unexpected number of announcements returned", 0, searchAnnouncement.getContent().size());
+		Page<Announcement> searchAnnouncement = announcementService
+				.search(AnnouncementSpecification.searchAnnouncement(null),
+						new PageRequest(0, 10, new Sort(Sort.Direction.ASC, "id")));
+		assertEquals("Unexpected number of announcements returned", 0, searchAnnouncement.getContent().size());
     }
 
     @Test
