@@ -156,7 +156,7 @@ public class AnnouncementServiceImplIT {
     public void testSearchReturnsExistingAnnouncement() {
         String searchString = "Downtime";
         Page<Announcement> searchAnnouncement = announcementService.search(AnnouncementSpecification.searchAnnouncement(searchString),
-				new PageRequest(1, 10, new Sort(Sort.Direction.ASC, "id")));
+				new PageRequest(0, 10, new Sort(Sort.Direction.ASC, "id")));
 		assertEquals("Unexpected number of announcements returned", 2, searchAnnouncement.getContent().size());
         for(Announcement a : searchAnnouncement) {
             assertTrue(a.getMessage().contains(searchString));
