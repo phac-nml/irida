@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="template/page">
+<head>
+    <title th:text="#{search.title}">_Search_</title>
+    <script th:inline="javascript">
+      var PAGE = {
+          urls: {
+            projects: /*[[@{/search/projects?query={query}(query=${searchQuery})}]]*/ "",
+            project: /*[[@{/projects/}]]*/ ""
+          },
+        i18n: {
+          remote: /*[[#{projects.table.remoteSynchronized}]]*/ ""
+        }
+      };
+    </script>
+</head>
+<body>
+<div layout:fragment="page">
+
+    <main class="col-md-12" property="mainContentOfPage">
+        <h1 th:text="#{search.title}"></h1>
+
+        <table id="projects" class="table table-striped"
+               cellspacing="0" width="100%">
+            <thead>
+            <tr>
+                <th data-data="id" width="20" th:text="#{projects.table.id}"></th>
+                <th data-data="name" th:text="#{projects.table.name}"></th>
+                <th data-data="organism" th:text="#{projects.table.organism}"></th>
+                <th data-data="samples" data-orderable="false" th:text="#{projects.table.samples}"></th>
+                <th class="dt-date" data-data="createdDate" th:text="#{projects.table.created}"></th>
+                <th class="dt-date" data-data="modifiedDate" th:text="#{projects.table.modified}"></th>
+            </tr>
+            </thead>
+        </table>
+    </main>
+
+</div>
+
+<th:block layout:fragment="scripts">
+    <script src="/resources/js/build/search.bundle.js"
+            th:src="@{/resources/js/build/search.bundle.js}"></script>
+</th:block>
+</body>
+</html>
