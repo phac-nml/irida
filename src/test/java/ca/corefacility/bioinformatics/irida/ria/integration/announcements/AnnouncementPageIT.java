@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.announcements;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -52,7 +53,7 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver{
     }
 
     @Test
-	public void testSortAnnouncementsByDate() {
+	public void testSortAnnouncementsByDate() throws ParseException {
 		controlPage.goTo();
 		controlPage.clickDateCreatedHeader();
 
