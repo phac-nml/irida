@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -28,7 +29,7 @@ public class AnalysisSubmissionSampleServiceImpl implements AnalysisSubmissionSa
 	private static final Logger logger = LoggerFactory.getLogger(AssemblySampleUpdatorService.class);
 
 	@Resource(name="analysisSampleUpdatorMap")
-	private Map<Class<? extends Analysis>, AnalysisSampleUpdatorService> analysisSampleUpdatorMap;
+	private Map<AnalysisType, AnalysisSampleUpdatorService> analysisSampleUpdatorMap;
 	
 	@Autowired
 	private SampleService sampleService;
@@ -52,12 +53,12 @@ public class AnalysisSubmissionSampleServiceImpl implements AnalysisSubmissionSa
 			checkNotNull(analysis, "No analysis associated with submission " + analysisSubmission);
 			checkNotNull(samples, "No samples associated with submission " + analysisSubmission);
 	
-			AnalysisSampleUpdatorService analysisSampleUpdatorService = analysisSampleUpdatorMap.get(analysis.getClass());
+			AnalysisSampleUpdatorService analysisSampleUpdatorService = analysisSampleUpdatorMap.get(analysis.getAnalysisType());
 	
 			if (analysisSampleUpdatorService != null) {
 				analysisSampleUpdatorService.update(samples, analysisSubmission);
 			} else {
-				logger.debug("No associated object for updating samples for analysis of type " + analysis.getClass());
+				logger.debug("No associated object for updating samples for analysis of type " + analysis.getAnalysisType());
 			}
 		}
 	}

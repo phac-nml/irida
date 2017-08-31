@@ -5,7 +5,7 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-	<changeSet id="sample-owner" author="aaron">
+	<changeSet id="sample-assembly" author="aaron">
 
 		<createTable tableName="genome_assembly">
 			<column name="id" autoIncrement="true" type="bigint(20)">
