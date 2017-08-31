@@ -7,7 +7,19 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.Principal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Scanner;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
@@ -60,8 +72,6 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisSISTRTyping;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
@@ -327,8 +337,8 @@ public class AnalysisController {
 	// ************************************************************************************************
 
 	/**
-	 * Construct the model parameters for an
-	 * {@link AnalysisPhylogenomicsPipeline}
+	 * Construct the model parameters for an {@link AnalysisType#PHYLOGENOMICS}
+	 * {@link Analysis}
 	 * 
 	 * @param submission
 	 *            The analysis submission
@@ -338,8 +348,10 @@ public class AnalysisController {
 	 *             If the tree file couldn't be read
 	 */
 	private void tree(AnalysisSubmission submission, Model model) throws IOException {
-		AnalysisPhylogenomicsPipeline analysis = (AnalysisPhylogenomicsPipeline) submission.getAnalysis();
-		AnalysisOutputFile file = analysis.getPhylogeneticTree();
+		final String treeFileKey = "tree";
+		
+		Analysis analysis = submission.getAnalysis();
+		AnalysisOutputFile file = analysis.getAnalysisOutputFile(treeFileKey);
 		List<String> lines = Files.readAllLines(file.getFile());
 		model.addAttribute("analysis", analysis);
 		model.addAttribute("newick", lines.get(0));
@@ -480,6 +492,8 @@ public class AnalysisController {
 		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubimssion(submission);
 		Map<String,Object> result = ImmutableMap.of("parse_results_error", true);
 		
+		final String sistrFileKey = "sistr-predictions";
+		
 		// Get details about the workflow
 		UUID workflowUUID = submission.getWorkflowId();
 		IridaWorkflow iridaWorkflow;
@@ -491,8 +505,8 @@ public class AnalysisController {
 		}
 		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription().getAnalysisType();
 		if (analysisType.equals(AnalysisType.SISTR_TYPING)) {
-			AnalysisSISTRTyping analysis = (AnalysisSISTRTyping) submission.getAnalysis();
-			Path path = analysis.getSISTRResults().getFile();
+			Analysis analysis = submission.getAnalysis();
+			Path path = analysis.getAnalysisOutputFile(sistrFileKey).getFile();
 			try {
 				String json = new Scanner(new BufferedReader(new FileReader(path.toFile()))).useDelimiter("\\Z").next();
 				
@@ -678,9 +692,11 @@ public class AnalysisController {
 	@RequestMapping("/ajax/{submissionId}/newick")
 	@ResponseBody
 	public Map<String, Object> getNewickForAnalysis(@PathVariable Long submissionId) throws IOException {
+		final String treeFileKey = "tree";
+		
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
-		AnalysisPhylogenomicsPipeline analysis = (AnalysisPhylogenomicsPipeline) submission.getAnalysis();
-		AnalysisOutputFile file = analysis.getPhylogeneticTree();
+		Analysis analysis = submission.getAnalysis();
+		AnalysisOutputFile file = analysis.getAnalysisOutputFile(treeFileKey);
 		List<String> lines = Files.readAllLines(file.getFile());
 		return ImmutableMap.of("newick", lines.get(0));
 	}
