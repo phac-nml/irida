@@ -52,10 +52,9 @@ import ca.corefacility.bioinformatics.irida.config.repository.ForbidJpqlUpdateDe
 import ca.corefacility.bioinformatics.irida.config.repository.IridaApiRepositoriesConfig;
 import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
 import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsConfig;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisAssemblyAnnotation;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.impl.AssemblyFileProcessor;
@@ -130,9 +129,9 @@ public class IridaApiServicesConfig {
 	private int fpQueueCapacity;
 
 	@Bean
-	public Map<Class<? extends Analysis>, AnalysisSampleUpdatorService> analysisSampleUpdatorMap() {
-		return ImmutableMap.<Class<? extends Analysis>, AnalysisSampleUpdatorService>builder()
-				.put(AnalysisAssemblyAnnotation.class, assemblySampleUpdatorService).build();
+	public Map<AnalysisType, AnalysisSampleUpdatorService> analysisSampleUpdatorMap() {
+		return ImmutableMap.<AnalysisType, AnalysisSampleUpdatorService>builder()
+				.put(AnalysisType.ASSEMBLY_ANNOTATION, assemblySampleUpdatorService).build();
 	}
 	
 	@Bean

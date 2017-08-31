@@ -48,11 +48,11 @@ import com.google.common.collect.Sets;
 import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
@@ -79,6 +79,14 @@ public class SNVPhylAnalysisIT {
 	
 	private static final Logger logger = LoggerFactory
 			.getLogger(SNVPhylAnalysisIT.class);
+	
+	private static final String MATRIX_KEY = "matrix";
+	private static final String TREE_KEY = "tree";
+	private static final String TABLE_KEY = "table";
+	private static final String CORE_KEY = "core";
+	private static final String QUALITY_KEY = "mapping-quality";
+	private static final String STATS_KEY = "filter-stats";
+	private static final String ALIGN_KEY = "alignment";
 	
 	@Autowired
 	private DatabaseSetupGalaxyITService databaseSetupGalaxyITService;
@@ -274,78 +282,77 @@ public class SNVPhylAnalysisIT {
 		submission = analysisSubmissionRepository.findOne(submission.getId());
 		assertEquals("analysis state should be completed.", AnalysisState.COMPLETED, submission.getAnalysisState());
 
-		Analysis analysis = submission.getAnalysis();
+		Analysis analysisPhylogenomics = submission.getAnalysis();
 		assertEquals("Should have generated a phylogenomics pipeline analysis type.",
-				AnalysisPhylogenomicsPipeline.class, analysis.getClass());
-		AnalysisPhylogenomicsPipeline analysisPhylogenomics = (AnalysisPhylogenomicsPipeline) analysis;
+				AnalysisType.PHYLOGENOMICS, analysisPhylogenomics.getAnalysisType());
 
 		assertEquals("the phylogenomics pipeline should have 8 output files.", 8, analysisPhylogenomics
 				.getAnalysisOutputFiles().size());
 		
 		@SuppressWarnings("resource")
-		String matrixContent = new Scanner(analysisPhylogenomics.getSnvMatrix().getFile().toFile()).useDelimiter("\\Z")
+		String matrixContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(MATRIX_KEY).getFile().toFile()).useDelimiter("\\Z")
 				.next();
 		assertTrue(
 				"snpMatrix should be the same but is \"" + matrixContent + "\"",
-				com.google.common.io.Files.equal(outputSnvMatrix1.toFile(), analysisPhylogenomics.getSnvMatrix()
+				com.google.common.io.Files.equal(outputSnvMatrix1.toFile(), analysisPhylogenomics.getAnalysisOutputFile(MATRIX_KEY)
 						.getFile().toFile()));
-		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnvMatrix()
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getAnalysisOutputFile(MATRIX_KEY)
 				.getCreatedByTool());
 		
 		@SuppressWarnings("resource")
-		String snpTableContent = new Scanner(analysisPhylogenomics.getSnvTable().getFile().toFile()).useDelimiter(
+		String snpTableContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(TABLE_KEY).getFile().toFile()).useDelimiter(
 				"\\Z").next();
 		assertTrue(
 				"snpTable should be the same but is \"" + snpTableContent + "\"",
-				com.google.common.io.Files.equal(outputSnvTable1.toFile(), analysisPhylogenomics.getSnvTable().getFile()
+				com.google.common.io.Files.equal(outputSnvTable1.toFile(), analysisPhylogenomics.getAnalysisOutputFile(TABLE_KEY).getFile()
 						.toFile()));
-		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnvTable()
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getAnalysisOutputFile(TABLE_KEY)
 				.getCreatedByTool());
 		
 		@SuppressWarnings("resource")
-		String vcf2coreContent = new Scanner(analysisPhylogenomics.getCoreGenomeLog().getFile().toFile()).useDelimiter(
+		String vcf2coreContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(CORE_KEY).getFile().toFile()).useDelimiter(
 				"\\Z").next();
 		assertTrue(
 				"vcf2core should be the same but is \"" + vcf2coreContent + "\"",
-				com.google.common.io.Files.equal(vcf2core1.toFile(), analysisPhylogenomics.getCoreGenomeLog().getFile()
+				com.google.common.io.Files.equal(vcf2core1.toFile(), analysisPhylogenomics.getAnalysisOutputFile(CORE_KEY).getFile()
 						.toFile()));
-		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getCoreGenomeLog()
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getAnalysisOutputFile(CORE_KEY)
 				.getCreatedByTool());
 		
 		// only check size of mapping quality file due to samples output in random order
 		assertTrue("the mapping quality file should not be empty.",
-				Files.size(analysisPhylogenomics.getMappingQuality().getFile()) > 0);
+				Files.size(analysisPhylogenomics.getAnalysisOutputFile(QUALITY_KEY).getFile()) > 0);
 		
 		@SuppressWarnings("resource")
-		String filterStatsContent = new Scanner(analysisPhylogenomics.getFilterStats().getFile().toFile()).useDelimiter(
+		String filterStatsContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(STATS_KEY).getFile().toFile()).useDelimiter(
 				"\\Z").next();
 		assertTrue(
 				"filterStats should be the same but is \"" + filterStatsContent + "\"",
-				com.google.common.io.Files.equal(filterStats1.toFile(), analysisPhylogenomics.getFilterStats().getFile()
+				com.google.common.io.Files.equal(filterStats1.toFile(), analysisPhylogenomics.getAnalysisOutputFile(STATS_KEY).getFile()
 						.toFile()));
-		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getFilterStats()
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getAnalysisOutputFile(STATS_KEY)
 				.getCreatedByTool());
 		
 		@SuppressWarnings("resource")
-		String snvAlignContent = new Scanner(analysisPhylogenomics.getSnvAlign().getFile().toFile()).useDelimiter(
+		String snvAlignContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(ALIGN_KEY).getFile().toFile()).useDelimiter(
 				"\\Z").next();
 		assertTrue(
 				"snvAlign should be the same but is \"" + snvAlignContent + "\"",
-				com.google.common.io.Files.equal(snvAlign1.toFile(), analysisPhylogenomics.getSnvAlign().getFile()
+				com.google.common.io.Files.equal(snvAlign1.toFile(), analysisPhylogenomics.getAnalysisOutputFile(ALIGN_KEY).getFile()
 						.toFile()));
-		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnvAlign()
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getAnalysisOutputFile(ALIGN_KEY)
 				.getCreatedByTool());
 		
 		// only test to make sure the files have a valid size since PhyML uses a
 		// random seed to generate the tree (and so changes results)
 		assertTrue("the phylogenetic tree file should not be empty.",
-				Files.size(analysisPhylogenomics.getPhylogeneticTree().getFile()) > 0);
+				Files.size(analysisPhylogenomics.getAnalysisOutputFile(TREE_KEY).getFile()) > 0);
 		assertTrue("the phylogenetic tree stats file should not be empty.",
-				Files.size(analysisPhylogenomics.getPhylogeneticTreeStats().getFile()) > 0);
+				Files.size(analysisPhylogenomics.getAnalysisOutputFile(TREE_KEY).getFile()) > 0);
 
 		// try to follow the phylogenomics provenance all the way back to the
 		// upload tools
-		final List<ToolExecution> toolsToVisit = Lists.newArrayList(analysisPhylogenomics.getPhylogeneticTree()
+		final List<ToolExecution> toolsToVisit = Lists.newArrayList(analysisPhylogenomics.getAnalysisOutputFile(TREE_KEY)
 				.getCreatedByTool());
 		assertFalse("file should have tool provenance attached.", toolsToVisit.isEmpty());
 
@@ -405,78 +412,77 @@ public class SNVPhylAnalysisIT {
 		submission = analysisSubmissionRepository.findOne(submission.getId());
 		assertEquals("analysis state should be completed.", AnalysisState.COMPLETED, submission.getAnalysisState());
 
-		Analysis analysis = submission.getAnalysis();
+		Analysis analysisPhylogenomics = submission.getAnalysis();
 		assertEquals("Should have generated a phylogenomics pipeline analysis type.",
-				AnalysisPhylogenomicsPipeline.class, analysis.getClass());
-		AnalysisPhylogenomicsPipeline analysisPhylogenomics = (AnalysisPhylogenomicsPipeline) analysis;
+				AnalysisType.PHYLOGENOMICS, analysisPhylogenomics.getAnalysisType());
 
 		assertEquals("the phylogenomics pipeline should have 8 output files.", 8, analysisPhylogenomics
 				.getAnalysisOutputFiles().size());
 		
 		@SuppressWarnings("resource")
-		String matrixContent = new Scanner(analysisPhylogenomics.getSnvMatrix().getFile().toFile()).useDelimiter("\\Z")
+		String matrixContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(MATRIX_KEY).getFile().toFile()).useDelimiter("\\Z")
 				.next();
 		assertTrue(
 				"snpMatrix should be the same but is \"" + matrixContent + "\"",
-				com.google.common.io.Files.equal(outputSnvMatrix2.toFile(), analysisPhylogenomics.getSnvMatrix()
+				com.google.common.io.Files.equal(outputSnvMatrix2.toFile(), analysisPhylogenomics.getAnalysisOutputFile(MATRIX_KEY)
 						.getFile().toFile()));
-		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnvMatrix()
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getAnalysisOutputFile(MATRIX_KEY)
 				.getCreatedByTool());
 		
 		@SuppressWarnings("resource")
-		String snpTableContent = new Scanner(analysisPhylogenomics.getSnvTable().getFile().toFile()).useDelimiter(
+		String snpTableContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(TABLE_KEY).getFile().toFile()).useDelimiter(
 				"\\Z").next();
 		assertTrue(
 				"snpTable should be the same but is \"" + snpTableContent + "\"",
-				com.google.common.io.Files.equal(outputSnvTable2.toFile(), analysisPhylogenomics.getSnvTable().getFile()
+				com.google.common.io.Files.equal(outputSnvTable2.toFile(), analysisPhylogenomics.getAnalysisOutputFile(TABLE_KEY).getFile()
 						.toFile()));
-		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnvTable()
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getAnalysisOutputFile(TABLE_KEY)
 				.getCreatedByTool());
 		
 		@SuppressWarnings("resource")
-		String vcf2coreContent = new Scanner(analysisPhylogenomics.getCoreGenomeLog().getFile().toFile()).useDelimiter(
+		String vcf2coreContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(CORE_KEY).getFile().toFile()).useDelimiter(
 				"\\Z").next();
 		assertTrue(
 				"vcf2core should be the same but is \"" + vcf2coreContent + "\"",
-				com.google.common.io.Files.equal(vcf2core2.toFile(), analysisPhylogenomics.getCoreGenomeLog().getFile()
+				com.google.common.io.Files.equal(vcf2core2.toFile(), analysisPhylogenomics.getAnalysisOutputFile(CORE_KEY).getFile()
 						.toFile()));
-		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getCoreGenomeLog()
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getAnalysisOutputFile(CORE_KEY)
 				.getCreatedByTool());
 		
 		// only check size of mapping quality file due to samples output in random order
 		assertTrue("the mapping quality file should not be empty.",
-				Files.size(analysisPhylogenomics.getMappingQuality().getFile()) > 0);
+				Files.size(analysisPhylogenomics.getAnalysisOutputFile(QUALITY_KEY).getFile()) > 0);
 		
 		@SuppressWarnings("resource")
-		String filterStatsContent = new Scanner(analysisPhylogenomics.getFilterStats().getFile().toFile()).useDelimiter(
+		String filterStatsContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(STATS_KEY).getFile().toFile()).useDelimiter(
 				"\\Z").next();
 		assertTrue(
 				"filterStats should be the same but is \"" + filterStatsContent + "\"",
-				com.google.common.io.Files.equal(filterStats2.toFile(), analysisPhylogenomics.getFilterStats().getFile()
+				com.google.common.io.Files.equal(filterStats2.toFile(), analysisPhylogenomics.getAnalysisOutputFile(STATS_KEY).getFile()
 						.toFile()));
-		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getFilterStats()
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getAnalysisOutputFile(STATS_KEY)
 				.getCreatedByTool());
 		
 		@SuppressWarnings("resource")
-		String snvAlignContent = new Scanner(analysisPhylogenomics.getSnvAlign().getFile().toFile()).useDelimiter(
+		String snvAlignContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(ALIGN_KEY).getFile().toFile()).useDelimiter(
 				"\\Z").next();
 		assertTrue(
 				"snvAlign should be the same but is \"" + snvAlignContent + "\"",
-				com.google.common.io.Files.equal(snvAlign2.toFile(), analysisPhylogenomics.getSnvAlign().getFile()
+				com.google.common.io.Files.equal(snvAlign2.toFile(), analysisPhylogenomics.getAnalysisOutputFile(ALIGN_KEY).getFile()
 						.toFile()));
-		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnvAlign()
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getAnalysisOutputFile(ALIGN_KEY)
 				.getCreatedByTool());
 		
 		// only test to make sure the files have a valid size since PhyML uses a
 		// random seed to generate the tree (and so changes results)
 		assertTrue("the phylogenetic tree file should not be empty.",
-				Files.size(analysisPhylogenomics.getPhylogeneticTree().getFile()) > 0);
+				Files.size(analysisPhylogenomics.getAnalysisOutputFile(TREE_KEY).getFile()) > 0);
 		assertTrue("the phylogenetic tree stats file should not be empty.",
-				Files.size(analysisPhylogenomics.getPhylogeneticTreeStats().getFile()) > 0);
+				Files.size(analysisPhylogenomics.getAnalysisOutputFile(TREE_KEY).getFile()) > 0);
 
 		// try to follow the phylogenomics provenance all the way back to the
 		// upload tools
-		List<ToolExecution> toolsToVisit = Lists.newArrayList(analysisPhylogenomics.getPhylogeneticTree()
+		List<ToolExecution> toolsToVisit = Lists.newArrayList(analysisPhylogenomics.getAnalysisOutputFile(TREE_KEY)
 				.getCreatedByTool());
 		assertFalse("file should have tool provenance attached.", toolsToVisit.isEmpty());
 
@@ -506,7 +512,7 @@ public class SNVPhylAnalysisIT {
 		
 		// try to follow the mapping quality provenance all the way back to the
 		// upload tools
-		toolsToVisit = Lists.newArrayList(analysisPhylogenomics.getMappingQuality()
+		toolsToVisit = Lists.newArrayList(analysisPhylogenomics.getAnalysisOutputFile(QUALITY_KEY)
 				.getCreatedByTool());
 		assertFalse("file should have tool provenance attached.", toolsToVisit.isEmpty());
 		
@@ -556,78 +562,77 @@ public class SNVPhylAnalysisIT {
 		submission = analysisSubmissionRepository.findOne(submission.getId());
 		assertEquals("analysis state should be completed.", AnalysisState.COMPLETED, submission.getAnalysisState());
 
-		Analysis analysis = submission.getAnalysis();
+		Analysis analysisPhylogenomics = submission.getAnalysis();
 		assertEquals("Should have generated a phylogenomics pipeline analysis type.",
-				AnalysisPhylogenomicsPipeline.class, analysis.getClass());
-		AnalysisPhylogenomicsPipeline analysisPhylogenomics = (AnalysisPhylogenomicsPipeline) analysis;
+				AnalysisType.PHYLOGENOMICS, analysisPhylogenomics.getAnalysisType());
 
 		assertEquals("the phylogenomics pipeline should have 8 output files.", 8, analysisPhylogenomics
 				.getAnalysisOutputFiles().size());
 		
 		@SuppressWarnings("resource")
-		String matrixContent = new Scanner(analysisPhylogenomics.getSnvMatrix().getFile().toFile()).useDelimiter("\\Z")
+		String matrixContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(MATRIX_KEY).getFile().toFile()).useDelimiter("\\Z")
 				.next();
 		assertTrue(
 				"snpMatrix should be the same but is \"" + matrixContent + "\"",
-				com.google.common.io.Files.equal(outputSnvMatrix3.toFile(), analysisPhylogenomics.getSnvMatrix()
+				com.google.common.io.Files.equal(outputSnvMatrix3.toFile(), analysisPhylogenomics.getAnalysisOutputFile(MATRIX_KEY)
 						.getFile().toFile()));
-		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnvMatrix()
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getAnalysisOutputFile(MATRIX_KEY)
 				.getCreatedByTool());
 		
 		@SuppressWarnings("resource")
-		String snpTableContent = new Scanner(analysisPhylogenomics.getSnvTable().getFile().toFile()).useDelimiter(
+		String snpTableContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(TABLE_KEY).getFile().toFile()).useDelimiter(
 				"\\Z").next();
 		assertTrue(
 				"snpTable should be the same but is \"" + snpTableContent + "\"",
-				com.google.common.io.Files.equal(outputSnvTable3.toFile(), analysisPhylogenomics.getSnvTable().getFile()
+				com.google.common.io.Files.equal(outputSnvTable3.toFile(), analysisPhylogenomics.getAnalysisOutputFile(TABLE_KEY).getFile()
 						.toFile()));
-		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnvTable()
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getAnalysisOutputFile(TABLE_KEY)
 				.getCreatedByTool());
 		
 		@SuppressWarnings("resource")
-		String vcf2coreContent = new Scanner(analysisPhylogenomics.getCoreGenomeLog().getFile().toFile()).useDelimiter(
+		String vcf2coreContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(CORE_KEY).getFile().toFile()).useDelimiter(
 				"\\Z").next();
 		assertTrue(
 				"vcf2core should be the same but is \"" + vcf2coreContent + "\"",
-				com.google.common.io.Files.equal(vcf2core3.toFile(), analysisPhylogenomics.getCoreGenomeLog().getFile()
+				com.google.common.io.Files.equal(vcf2core3.toFile(), analysisPhylogenomics.getAnalysisOutputFile(CORE_KEY).getFile()
 						.toFile()));
-		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getCoreGenomeLog()
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getAnalysisOutputFile(CORE_KEY)
 				.getCreatedByTool());
 		
 		// only check size of mapping quality file due to samples output in random order
 		assertTrue("the mapping quality file should not be empty.",
-				Files.size(analysisPhylogenomics.getMappingQuality().getFile()) > 0);
+				Files.size(analysisPhylogenomics.getAnalysisOutputFile(QUALITY_KEY).getFile()) > 0);
 		
 		@SuppressWarnings("resource")
-		String filterStatsContent = new Scanner(analysisPhylogenomics.getFilterStats().getFile().toFile()).useDelimiter(
+		String filterStatsContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(STATS_KEY).getFile().toFile()).useDelimiter(
 				"\\Z").next();
 		assertTrue(
 				"filterStats should be the same but is \"" + filterStatsContent + "\"",
-				com.google.common.io.Files.equal(filterStats3.toFile(), analysisPhylogenomics.getFilterStats().getFile()
+				com.google.common.io.Files.equal(filterStats3.toFile(), analysisPhylogenomics.getAnalysisOutputFile(STATS_KEY).getFile()
 						.toFile()));
-		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getFilterStats()
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getAnalysisOutputFile(STATS_KEY)
 				.getCreatedByTool());
 		
 		@SuppressWarnings("resource")
-		String snvAlignContent = new Scanner(analysisPhylogenomics.getSnvAlign().getFile().toFile()).useDelimiter(
+		String snvAlignContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(ALIGN_KEY).getFile().toFile()).useDelimiter(
 				"\\Z").next();
 		assertTrue(
 				"snvAlign should be the same but is \"" + snvAlignContent + "\"",
-				com.google.common.io.Files.equal(snvAlign3.toFile(), analysisPhylogenomics.getSnvAlign().getFile()
+				com.google.common.io.Files.equal(snvAlign3.toFile(), analysisPhylogenomics.getAnalysisOutputFile(ALIGN_KEY).getFile()
 						.toFile()));
-		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnvAlign()
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getAnalysisOutputFile(ALIGN_KEY)
 				.getCreatedByTool());
 		
 		// only test to make sure the files have a valid size since PhyML uses a
 		// random seed to generate the tree (and so changes results)
 		assertTrue("the phylogenetic tree file should not be empty.",
-				Files.size(analysisPhylogenomics.getPhylogeneticTree().getFile()) > 0);
+				Files.size(analysisPhylogenomics.getAnalysisOutputFile(TREE_KEY).getFile()) > 0);
 		assertTrue("the phylogenetic tree stats file should not be empty.",
-				Files.size(analysisPhylogenomics.getPhylogeneticTreeStats().getFile()) > 0);
+				Files.size(analysisPhylogenomics.getAnalysisOutputFile(TREE_KEY).getFile()) > 0);
 
 		// try to follow the phylogenomics provenance all the way back to the
 		// upload tools
-		List<ToolExecution> toolsToVisit = Lists.newArrayList(analysisPhylogenomics.getPhylogeneticTree()
+		List<ToolExecution> toolsToVisit = Lists.newArrayList(analysisPhylogenomics.getAnalysisOutputFile(TREE_KEY)
 				.getCreatedByTool());
 		assertFalse("file should have tool provenance attached.", toolsToVisit.isEmpty());
 
@@ -657,7 +662,7 @@ public class SNVPhylAnalysisIT {
 		
 		// try to follow the mapping quality provenance all the way back to the
 		// upload tools
-		toolsToVisit = Lists.newArrayList(analysisPhylogenomics.getMappingQuality()
+		toolsToVisit = Lists.newArrayList(analysisPhylogenomics.getAnalysisOutputFile(QUALITY_KEY)
 				.getCreatedByTool());
 		assertFalse("file should have tool provenance attached.", toolsToVisit.isEmpty());
 		

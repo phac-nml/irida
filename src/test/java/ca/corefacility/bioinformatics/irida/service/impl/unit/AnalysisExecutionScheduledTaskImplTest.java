@@ -30,7 +30,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -64,7 +64,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	private ReferenceFile referenceFile;
 
 	@Mock
-	private AnalysisPhylogenomicsPipeline analysis;
+	private Analysis analysis;
 	
 	@Mock
 	private AnalysisSubmission analysisSubmissionMock;

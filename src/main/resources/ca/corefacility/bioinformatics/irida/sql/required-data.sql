@@ -374,11 +374,11 @@ INSERT INTO `qc_entry` (created_date, sequencingObject_id, DTYPE) VALUES (now(),
 INSERT INTO `qc_entry` (created_date, sequencingObject_id, total_bases, DTYPE) VALUES (now(), 3, '100', 'CoverageQCEntry');
 
 -- analysis
-INSERT INTO `analysis` (id, createdDate, description, executionManagerAnalysisId) VALUES (1,'2014-07-30 08:24:35','Analysis produced by FastQC','internal-fastqc'),(2,'2014-07-30 08:24:35','Analysis produced by FastQC','internal-fastqc'),(3,'2014-07-30 08:24:34','Analysis produced by FastQC','internal-fastqc'),(4,'2014-07-30 08:24:35','Analysis produced by FastQC','internal-fastqc'),(5,'2014-07-30 08:24:35','Analysis produced by FastQC','internal-fastqc'),(6,'2014-07-30 08:24:35','Analysis produced by FastQC','internal-fastqc'),(7,'2014-08-06 10:01:04','Analysis produced by FastQC','internal-fastqc'),(8,'2014-08-06 10:01:03','Analysis produced by FastQC','internal-fastqc'),(9,'2014-08-06 10:01:03','Analysis produced by FastQC','internal-fastqc'),(10,'2014-08-06 10:01:04','Analysis produced by FastQC','internal-fastqc'),(11,'2014-08-06 10:01:04','Analysis produced by FastQC','internal-fastqc'),(12,'2014-08-06 10:01:03','Analysis produced by FastQC','internal-fastqc');
-INSERT INTO `analysis` (id, createdDate, executionManagerAnalysisId) VALUES (13,'2014-07-30 08:24:35', 'Whole Genome Phylogenomics Pipeline');
-INSERT INTO `analysis` (id, createdDate, executionManagerAnalysisId) VALUES (14,'2014-07-30 08:24:35', 'SISTR Pipeline PASS');
-INSERT INTO `analysis` (id, createdDate, executionManagerAnalysisId) VALUES (15,'2014-07-30 08:24:35', 'SISTR Pipeline FAIL');
-INSERT INTO `analysis` (id, createdDate, executionManagerAnalysisId) VALUES (16,'2014-07-30 08:24:35', 'Assembly Test');
+INSERT INTO `analysis` (id, createdDate, description, executionManagerAnalysisId, analysis_type) VALUES (1,'2014-07-30 08:24:35','Analysis produced by FastQC','internal-fastqc', 'FASTQC'),(2,'2014-07-30 08:24:35','Analysis produced by FastQC','internal-fastqc', 'FASTQC'),(3,'2014-07-30 08:24:34','Analysis produced by FastQC','internal-fastqc', 'FASTQC'),(4,'2014-07-30 08:24:35','Analysis produced by FastQC','internal-fastqc', 'FASTQC'),(5,'2014-07-30 08:24:35','Analysis produced by FastQC','internal-fastqc', 'FASTQC'),(6,'2014-07-30 08:24:35','Analysis produced by FastQC','internal-fastqc', 'FASTQC'),(7,'2014-08-06 10:01:04','Analysis produced by FastQC','internal-fastqc', 'FASTQC'),(8,'2014-08-06 10:01:03','Analysis produced by FastQC','internal-fastqc', 'FASTQC'),(9,'2014-08-06 10:01:03','Analysis produced by FastQC','internal-fastqc', 'FASTQC'),(10,'2014-08-06 10:01:04','Analysis produced by FastQC','internal-fastqc', 'FASTQC'),(11,'2014-08-06 10:01:04','Analysis produced by FastQC','internal-fastqc', 'FASTQC'),(12,'2014-08-06 10:01:03','Analysis produced by FastQC','internal-fastqc', 'FASTQC');
+INSERT INTO `analysis` (id, createdDate, executionManagerAnalysisId, analysis_type) VALUES (13,'2014-07-30 08:24:35', 'Whole Genome Phylogenomics Pipeline', 'PHYLOGENOMICS');
+INSERT INTO `analysis` (id, createdDate, executionManagerAnalysisId, analysis_type) VALUES (14,'2014-07-30 08:24:35', 'SISTR Pipeline PASS', 'SISTR_TYPING');
+INSERT INTO `analysis` (id, createdDate, executionManagerAnalysisId, analysis_type) VALUES (15,'2014-07-30 08:24:35', 'SISTR Pipeline FAIL', 'SISTR_TYPING');
+INSERT INTO `analysis` (id, createdDate, executionManagerAnalysisId, analysis_type) VALUES (16,'2014-07-30 08:24:35', 'Assembly Test', 'ASSEMBLY_ANNOTATION');
 
 -- tool_execution
 INSERT INTO `tool_execution` (id, created_date, execution_manager_identifier, tool_name, tool_version, command_line) VALUES (1, '2015-03-04 13:58:46', 'galaxyIdentifier', 'SNP Matrix', '0.0.1', '/bin/snp-matrix');
@@ -551,14 +551,6 @@ INSERT INTO `reference_file` (id, createdDate, filePath, fileRevisionNumber, mod
 
 -- project_referencefile
 INSERT INTO `project_referencefile` (id, createdDate, project_id, reference_file_id) VALUES (1, '2014-08-06 10:01:02', 4, 1);
-
--- analysis_phylogenomicspipeline
-INSERT INTO `analysis_phylogenomicspipeline` (id) VALUES (13);
-INSERT INTO `analysis_sistr_typing` (id) VALUES (14);
-INSERT INTO `analysis_sistr_typing` (id) VALUES (15);
-
--- analysis_assemblyannotation
-INSERT INTO `analysis_assemblyannotation` (`id`) VALUES (16);
 
 -- analysis_submission
 INSERT INTO `analysis_submission` (analysis_state, name, created_date, analysis_id, workflow_id, submitter, analysis_cleaned_state) VALUES ('COMPLETED', 'Analysis-1', '2014-08-06 10:01:02', 13, 'b7c8b437-3c41-485e-92e5-72b67e37959f', 1, 'NOT_CLEANED');

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="remove-analysis-subclass" author="tom">
+
+		<addColumn tableName="analysis">
+			<column name="analysis_type" type="varchar(255)" />
+		</addColumn>
+
+		<sql>
+			UPDATE analysis a INNER JOIN analysis_phylogenomicspipeline p ON
+			a.id=p.id
+			SET a.analysis_type="PHYLOGENOMICS";
+		</sql>
+
+		<sql>
+			UPDATE analysis a INNER JOIN
+			analysis_assemblyannotation_collection p ON a.id=p.id
+			SET
+			a.analysis_type="ASSEMBLY_ANNOTATION_COLLECTION";
+		</sql>
+
+		<sql>
+			UPDATE analysis a INNER JOIN
+			analysis_assemblyannotation p ON
+			a.id=p.id
+			SET
+			a.analysis_type="ASSEMBLY_ANNOTATION";
+		</sql>
+
+		<sql>
+			UPDATE analysis a INNER JOIN
+			analysis_sistr_typing p ON
+			a.id=p.id
+			SET
+			a.analysis_type="SISTR_TYPING";
+		</sql>
+
+		<sql>
+			UPDATE analysis a INNER JOIN
+			analysis_fastqc p ON
+			a.id=p.id
+			SET
+			a.analysis_type="FASTQC";
+		</sql>
+
+		<!-- shouldn't be any left, but we're about to set it as not null -->
+		<sql>
+			UPDATE analysis a
+			SET
+			a.analysis_type="DEFAULT" WHERE
+			a.analysis_type is null;
+		</sql>
+
+		<addNotNullConstraint columnDataType="varchar(255)"
+			columnName="analysis_type" tableName="analysis" />
+
+		<dropTable tableName="analysis_phylogenomicspipeline" />
+		<dropTable tableName="analysis_assemblyannotation_collection" />
+		<dropTable tableName="analysis_assemblyannotation" />
+		<dropTable tableName="analysis_sistr_typing" />
+	</changeSet>
+</databaseChangeLog>
