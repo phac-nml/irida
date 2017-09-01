@@ -5,6 +5,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
@@ -47,7 +49,7 @@ public class ProjectAddSamplePage extends AbstractPage {
 	public void enterSampleName(String name) {
 		sampleNameInput.clear();
 		sampleNameInput.sendKeys(name);
-		waitForTime(600);
+		waitForTime(1000);
 	}
 
 	public void createSample() {
@@ -60,16 +62,22 @@ public class ProjectAddSamplePage extends AbstractPage {
 	}
 
 	public boolean isMinLengthNameErrorVisible() {
-		return sampleNameError.isDisplayed() && sampleNameError.getText()
+		return sampleNameError.isDisplayed() && getErrorText()
 				.equals("Sample name must be at least 3 letters.");
 	}
 
 	public boolean isRequiredNameErrorVisible() {
-		return sampleNameError.isDisplayed() && sampleNameError.getText().equals("Sample name is required.");
+		return sampleNameError.isDisplayed() && getErrorText().equals("Sample name is required.");
 	}
 
 	public boolean isInvalidCharactersInNameVisible() {
-		return sampleNameError.isDisplayed() && sampleNameError.getText()
+		return sampleNameError.isDisplayed() && getErrorText()
 				.contains("Sample names should only include letters, numbers, and certain special characters");
+	}
+
+	private String getErrorText() {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOf(sampleNameError));
+		return sampleNameError.getText();
 	}
 }
