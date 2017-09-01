@@ -17,7 +17,7 @@ public class ProjectAddSamplePage extends AbstractPage {
 	@FindBy(name = "sampleName")
 	private WebElement sampleNameInput;
 
-	@FindBy(id = "createBtn")
+	@FindBy(id = "save-btn")
 	private WebElement createBtn;
 	
 	@FindBy(id = "required-name-error")
