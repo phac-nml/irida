@@ -4,7 +4,10 @@ import "DataTables/datatables-buttons";
 import "DataTables/datatables-colreorder";
 import "DataTables/datatables-fixedColumns";
 import $ from "jquery";
-import { createItemLink, tableConfig } from "../../../../utilities/datatables-utilities";
+import {
+  createItemLink,
+  tableConfig
+} from "../../../../utilities/datatables-utilities";
 import { EVENTS } from "../constants";
 
 const $table = $("#linelist");
@@ -51,18 +54,17 @@ function defineTable() {
     buttons: [
       {
         extend: "collection",
+        className: "btn-sm",
         text: window.PAGE.i18n.exportTable,
         buttons: [
           {
             extend: "csvHtml5",
-            className: "btn-sm",
             exportOptions: {
               columns: ":visible"
             }
           },
           {
             extend: "excelHtml5",
-            className: "btn-sm",
             exportOptions: {
               columns: ":visible"
             }
@@ -85,18 +87,21 @@ function defineTable() {
 
 export function LineListTableController($rootScope, $scope) {
   const $ctrl = this;
+
   let table;
   $ctrl.$onInit = () => {
-    table = defineTable();
+    if (window.metadataList.length > 0) {
+      table = defineTable();
 
-    // Broadcast when one of the columns have been reordered
-    table.on("column-reorder", function(e, settings, details) {
-      if (!details.drop) {
-        $rootScope.$broadcast(EVENTS.TABLE.colReorder, {
-          order: Array.from(table.colReorder.order())
-        });
-      }
-    });
+      // Broadcast when one of the columns have been reordered
+      table.on("column-reorder", function(e, settings, details) {
+        if (!details.drop) {
+          $rootScope.$broadcast(EVENTS.TABLE.colReorder, {
+            order: Array.from(table.colReorder.order())
+          });
+        }
+      });
+    }
   };
 
   /**

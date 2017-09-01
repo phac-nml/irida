@@ -1,6 +1,11 @@
 Changes
 =======
 
+0.18.0 to 0.19.0
+----------------
+* [Developer] Removed the requirement for pipeline developers to add an `Analysis` subclass and database tables for pipelines.  All pipeline results can now be stored in the `Analysis` class.
+* [Developer]: Removed dandelion from: Announcements
+
 0.17.0 to 0.18.0
 ----------------
 * [Developer]: Removed old javascript build configuration files.
