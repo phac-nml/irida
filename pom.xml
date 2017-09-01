@@ -1081,7 +1081,7 @@
 		<maven.site.plugin.version>3.4</maven.site.plugin.version>
 		<errorprone.version>2.5</errorprone.version>
 		<frontend-maven-plugin.version>1.5</frontend-maven-plugin.version>
-		<node.version>v8.3.0</node.version>
+		<node.version>v8.4.0</node.version>
 		<yarn.version>v0.27.5</yarn.version>
 		<jgravatar.version>1.0</jgravatar.version>
 
