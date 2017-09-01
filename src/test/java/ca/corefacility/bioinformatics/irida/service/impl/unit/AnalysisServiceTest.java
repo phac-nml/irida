@@ -15,15 +15,16 @@ import javax.validation.Validator;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.common.collect.ImmutableMap;
+
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisOutputFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisServiceImpl;
-
-import com.google.common.collect.ImmutableMap;
 
 public class AnalysisServiceTest {
 
@@ -63,7 +64,7 @@ public class AnalysisServiceTest {
 		AnalysisOutputFile report3 = new AnalysisOutputFile(outputFile3, "", "", null);
 		Map<String, AnalysisOutputFile> analysisOutputFiles = new ImmutableMap.Builder<String, AnalysisOutputFile>()
 				.put("tree", report1).put("matrix", report2).put("table", report3).build();
-		AnalysisPhylogenomicsPipeline analysis = new AnalysisPhylogenomicsPipeline("something", analysisOutputFiles);
+		Analysis analysis = new Analysis("something", analysisOutputFiles, AnalysisType.PHYLOGENOMICS);
 
 		analysisService.create(analysis);
 
