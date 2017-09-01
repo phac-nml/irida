@@ -47,7 +47,7 @@ public class ProjectAddSamplePage extends AbstractPage {
 	public void enterSampleName(String name) {
 		sampleNameInput.clear();
 		sampleNameInput.sendKeys(name);
-		waitForTime(400);
+		waitForTime(600);
 	}
 
 	public void createSample() {
