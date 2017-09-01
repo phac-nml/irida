@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.impl.analysis.sample;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.Lists;
+
+import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssemblyFromAnalysis;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -38,11 +42,14 @@ public class AssemblySampleUpdatorService implements AnalysisSampleUpdatorServic
 
 		Sample sample = samples.iterator().next();
 
-		if (sample.getAssembly() == null) {
-			sample.setGenomeAssembly(new GenomeAssemblyFromAnalysis(analysis));
+		if (!sample.hasGenomeAssemblies()) {
+			sample.setGenomeAssemblies(Lists.newArrayList(new GenomeAssemblyFromAnalysis(analysis)));
 			sampleRepository.save(sample);
 		} else {
-			logger.debug("Already exists assembly for sample " + sample + ", will not update assembly");
+			List<GenomeAssembly> assembliesList = sample.getGenomeAssemblies();
+			assembliesList.add(new GenomeAssemblyFromAnalysis(analysis));
+			sample.setGenomeAssemblies(assembliesList);
+			sampleRepository.save(sample);
 		}
 	}
 }

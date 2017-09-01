@@ -465,7 +465,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@PreAuthorize("hasPermission(#sample, 'canUpdateSample')")
 	@Override
 	public void removeGenomeAssemblyFromSample(Sample sample) {
-		sample.setGenomeAssembly(null);
+		sample.setGenomeAssemblies(null);
 		sampleRepository.save(sample);
 	}
 }

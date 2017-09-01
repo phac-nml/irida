@@ -15,6 +15,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
@@ -32,6 +33,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
@@ -145,15 +147,16 @@ public class Sample extends IridaResourceSupport
 	@MapKeyColumn(name = "metadata_KEY")
 	private Map<MetadataTemplateField, MetadataEntry> metadata;
 	
-	@OneToOne(fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST,
+	@OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST,
 			CascadeType.REFRESH })
-	@JoinColumn(name = "genome_assembly_id")
+	@JoinTable(name = "sample_genome_assembly", joinColumns = @JoinColumn(name = "sample_id"), inverseJoinColumns = @JoinColumn(name = "genome_assembly_id", nullable = false))
 	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
-	private GenomeAssembly genomeAssembly;
+	private List<GenomeAssembly> genomeAssemblies;
 
 	public Sample() {
 		createdDate = new Date();
 		metadata = new HashMap<>();
+		genomeAssemblies = Lists.newArrayList();
 	}
 
 	/**
@@ -313,12 +316,16 @@ public class Sample extends IridaResourceSupport
 		this.isolationSource = isolationSource;
 	}
 	
-	public GenomeAssembly getAssembly() {
-		return genomeAssembly;
+	public List<GenomeAssembly> getGenomeAssemblies() {
+		return genomeAssemblies;
 	}
 	
-	public void setGenomeAssembly(GenomeAssembly genomeAssembly) {
-		this.genomeAssembly = genomeAssembly;
+	public void setGenomeAssemblies(List<GenomeAssembly> genomeAssemblies) {
+		this.genomeAssemblies = genomeAssemblies;
+	}
+	
+	public boolean hasGenomeAssemblies() {
+		return genomeAssemblies != null && genomeAssemblies.size() > 0;
 	}
 
 	@Override

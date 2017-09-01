@@ -318,9 +318,9 @@ public class SamplesController extends BaseController {
 	@RequestMapping("/samples/download/{sampleId}/assembly")
 	public void downloadAssembly(@PathVariable Long sampleId, HttpServletResponse response) throws IOException {
 		Sample sample = sampleService.read(sampleId);
-		GenomeAssembly genomeAssembly = sample.getAssembly();
-		Path path = genomeAssembly.getFile();
-		response.setHeader("Content-Disposition", "attachment; filename=\"" + genomeAssembly.getLabel() + "\"");
+		List<GenomeAssembly> genomeAssemblies = sample.getGenomeAssemblies();
+		Path path = genomeAssemblies.get(0).getFile();
+		response.setHeader("Content-Disposition", "attachment; filename=\"" + genomeAssemblies.get(0).getLabel() + "\"");
 		Files.copy(path, response.getOutputStream());
 		response.flushBuffer();
 	}
@@ -438,7 +438,7 @@ public class SamplesController extends BaseController {
 	public String removeGenomeAssemblyFromSample(RedirectAttributes attributes, @PathVariable Long sampleId,
 			HttpServletRequest request, Locale locale) {
 		Sample sample = sampleService.read(sampleId);
-		GenomeAssembly genomeAssembly = sample.getAssembly();
+		GenomeAssembly genomeAssembly = sample.getGenomeAssemblies().get(0);
 
 		if (genomeAssembly == null) {
 			logger.debug("Attempted to remove genome assembly from sample=" + sample
