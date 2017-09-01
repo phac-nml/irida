@@ -1,14 +1,11 @@
 import "datatables.net-buttons/js/buttons.html5";
-import "DataTables/datatables";
-import "DataTables/datatables-buttons";
-import "DataTables/datatables-colreorder";
-import "DataTables/datatables-fixedColumns";
 import $ from "jquery";
-import {
-  createItemLink,
-  tableConfig
-} from "../../../../utilities/datatables-utilities";
+import { createItemLink, tableConfig } from "../../../../utilities/datatables-utilities";
 import { EVENTS } from "../constants";
+import "./../../../../vendor/datatables/datatables";
+import "./../../../../vendor/datatables/datatables-buttons";
+import "./../../../../vendor/datatables/datatables-colreorder";
+import "./../../../../vendor/datatables/datatables-fixedColumns";
 
 const $table = $("#linelist");
 
