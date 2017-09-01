@@ -19,15 +19,8 @@ public class ProjectAddSamplePage extends AbstractPage {
 
 	@FindBy(id = "save-btn")
 	private WebElement createBtn;
-	
-	@FindBy(id = "required-name-error")
-	private WebElement requiredNameError;
-	
-	@FindBy(id = "minlength-name-error")
-	private WebElement minlengthNameError;
-	
-	@FindBy(id = "nameValidator-name-error")
-	private WebElement nameValidatorNameError;
+
+	@FindBy(id = "sampleName-error") private WebElement sampleNameError;
 
 	@FindBy(css = "a.select2-choice")
 	private WebElement organismSelect2;
@@ -67,14 +60,16 @@ public class ProjectAddSamplePage extends AbstractPage {
 	}
 
 	public boolean isMinLengthNameErrorVisible() {
-		return minlengthNameError.isDisplayed();
+		return sampleNameError.isDisplayed() && sampleNameError.getText()
+				.equals("Sample name must be at least 3 letters.");
 	}
 
 	public boolean isRequiredNameErrorVisible() {
-		return requiredNameError.isDisplayed();
+		return sampleNameError.isDisplayed() && sampleNameError.getText().equals("Sample name is required.");
 	}
 
 	public boolean isInvalidCharactersInNameVisible() {
-		return nameValidatorNameError.isDisplayed();
+		return sampleNameError.isDisplayed() && sampleNameError.getText()
+				.contains("Sample names should only include letters, numbers, and certain special characters");
 	}
 }
