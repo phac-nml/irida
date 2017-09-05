@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -49,7 +50,9 @@ public class ProjectAddSamplePage extends AbstractPage {
 	public void enterSampleName(String name) {
 		sampleNameInput.clear();
 		sampleNameInput.sendKeys(name);
-		waitForTime(1000);
+		waitForTime(400);
+		// Let's leave the input to force the update
+		sampleNameInput.sendKeys(Keys.TAB);
 	}
 
 	public void createSample() {
