@@ -47,6 +47,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -310,19 +311,35 @@ public class SamplesController extends BaseController {
 	 *
 	 * @param sampleId
 	 *            Id for the sample containing the assembly to download.
+	 * @param assemblyId
+	 *            The id for the assembly.
 	 * @param response
 	 *            {@link HttpServletResponse}
 	 * @throws IOException
 	 *             if we can't write the file to the response.
 	 */
-	@RequestMapping("/samples/download/{sampleId}/assembly")
-	public void downloadAssembly(@PathVariable Long sampleId, HttpServletResponse response) throws IOException {
+	@RequestMapping("/samples/download/{sampleId}/assembly/{assemblyId}")
+	public void downloadAssembly(@PathVariable Long sampleId, @PathVariable Long assemblyId,
+			HttpServletResponse response) throws IOException {
 		Sample sample = sampleService.read(sampleId);
 		List<GenomeAssembly> genomeAssemblies = sample.getGenomeAssemblies();
-		Path path = genomeAssemblies.get(0).getFile();
-		response.setHeader("Content-Disposition", "attachment; filename=\"" + genomeAssemblies.get(0).getLabel() + "\"");
-		Files.copy(path, response.getOutputStream());
-		response.flushBuffer();
+		GenomeAssembly foundAssembly = null;
+		for (GenomeAssembly assembly : genomeAssemblies) {
+			if (assembly.getId() == assemblyId) {
+				foundAssembly = assembly;
+			}
+		}
+
+		if (foundAssembly == null) {
+			throw new EntityNotFoundException("Genome assembly with id=" + assemblyId + ", from sample id="
+					+ sample.getId() + ", does not exist");
+		} else {
+			Path path = foundAssembly.getFile();
+			response.setHeader("Content-Disposition",
+					"attachment; filename=\"" + genomeAssemblies.get(0).getLabel() + "\"");
+			Files.copy(path, response.getOutputStream());
+			response.flushBuffer();
+		}
 	}
 
 	/**

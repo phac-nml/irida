@@ -273,7 +273,7 @@
 
 							<a class="btn btn-default btn-sm"
 									th:attr="download=${assembly.label}"
-									th:href="@{/samples/download/{sampleId}/assembly(sampleId=${sample.id})}">
+									th:href="@{/samples/download/{sampleId}/assembly/{assemblyId}(sampleId=${sample.id}, assemblyId=${assembly.id})}">
 								<span class="fa fa-fw fa-download"></span>
 							</a>
 						</div>
