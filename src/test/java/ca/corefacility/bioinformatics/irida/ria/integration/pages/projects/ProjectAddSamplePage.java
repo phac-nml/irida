@@ -62,16 +62,16 @@ public class ProjectAddSamplePage extends AbstractPage {
 	}
 
 	public boolean isMinLengthNameErrorVisible() {
-		return sampleNameError.isDisplayed() && getErrorText()
+		return getErrorText()
 				.equals("Sample name must be at least 3 letters.");
 	}
 
 	public boolean isRequiredNameErrorVisible() {
-		return sampleNameError.isDisplayed() && getErrorText().equals("Sample name is required.");
+		return getErrorText().equals("Sample name is required.");
 	}
 
 	public boolean isInvalidCharactersInNameVisible() {
-		return sampleNameError.isDisplayed() && getErrorText()
+		return getErrorText()
 				.contains("Sample names should only include letters, numbers, and certain special characters");
 	}
 
