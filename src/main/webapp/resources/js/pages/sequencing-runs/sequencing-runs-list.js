@@ -1,11 +1,7 @@
-import $ from "jquery";
-import { formatDate } from "../../utilities/date-utilities";
-import {
-  createItemLink,
-  generateColumnOrderInfo,
-  tableConfig
-} from "../../utilities/datatables-utilities";
 import "DataTables/datatables";
+import $ from "jquery";
+import { createItemLink, generateColumnOrderInfo, tableConfig } from "../../utilities/datatables-utilities";
+import { formatDate } from "../../utilities/date-utilities";
 
 /*
 Get the table headers and create a look up table for them.
@@ -17,15 +13,19 @@ const url = $table.data("url");
 
 const config = Object.assign({}, tableConfig, {
   ajax: url,
+  // Sort by the date with the newest on top.
   order: [[COLUMNS.CREATED_DATE, "desc"]],
   columnDefs: [
     {
       targets: [COLUMNS.ID],
-      render(data, type, full) {
+      render(data) {
+        // Render the id column as the id with a link to the acutal
+        // Run page.
         return createItemLink({
           url: `${PAGE.urls.link}${data}`,
           label: data,
-          width: "100px"
+          width: "100px",
+          classes: ["run-link"] // Special class for selenium testing
         });
       }
     },
@@ -34,6 +34,7 @@ const config = Object.assign({}, tableConfig, {
       render(data) {
         if (data !== null) {
           return createItemLink({
+            // Link to the users page.
             url: `${PAGE.urls.users}${data.identifier}`,
             label: data.label
           });
@@ -44,6 +45,7 @@ const config = Object.assign({}, tableConfig, {
     {
       targets: [COLUMNS.CREATED_DATE],
       render(data) {
+        // Render as default date for DataTables on the platform
         const date = formatDate({ date: data });
         return `<time>${date}</time>`;
       }
@@ -52,4 +54,3 @@ const config = Object.assign({}, tableConfig, {
 });
 
 $table.DataTable(config);
-

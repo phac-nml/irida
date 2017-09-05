@@ -33,7 +33,7 @@ public class SequencingRunsListPage extends AbstractPage {
 
 	public List<Long> getDisplayedIds() {
 		logger.trace("Listing runs");
-		List<WebElement> rows = driver.findElements(By.cssSelector("tbody td:first-of-type a"));
+		List<WebElement> rows = driver.findElements(By.className("run-link"));
 		return rows.stream().map((r) -> Long.parseLong(r.getText())).collect(Collectors.toList());
 
 	}
@@ -41,7 +41,7 @@ public class SequencingRunsListPage extends AbstractPage {
 	public boolean idDisplayIdInList(String id) {
 		logger.trace("Listing runs");
 		waitForElementVisible(By.cssSelector("tbody tr"));
-		List<WebElement> ids = driver.findElements(By.cssSelector("tbody td:first-of-type a"));
+		List<WebElement> ids = driver.findElements(By.className("run-link"));
 		boolean found = false;
 		for (WebElement rowId : ids) {
 			if (rowId.getText().equals(id)) {
