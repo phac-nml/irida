@@ -69,9 +69,9 @@ const sampleConfig = Object.assign({}, tableConfig, {
       render(data, type, full) {
         // Render the name as a link to the actual project.
         return createItemLink({
-          url: `${window.PAGE.urls.project}${full.projectId}+"/samples/"+${full.id}`,
-          label: data,
-          width: "200px"
+          url: `${window.PAGE.urls.project}${full.projectId}/samples/${full.id}`,
+          label: data
+          //width: "200px"
         });
       }
     },
@@ -79,6 +79,16 @@ const sampleConfig = Object.assign({}, tableConfig, {
       targets: SAMPLE_COLUMNS.ORGANISM,
       render(data) {
         return wrapCellContents({ text: data });
+      }
+    },
+    {
+      targets: [SAMPLE_COLUMNS.PROJECT_NAME],
+      render(data, type, full) {
+        // Render the name as a link to the actual project.
+        return createItemLink({
+          url: `${window.PAGE.urls.project}${full.projectId}`,
+          label: data
+        });
       }
     },
     // Format all dates to standate date for the systme.
