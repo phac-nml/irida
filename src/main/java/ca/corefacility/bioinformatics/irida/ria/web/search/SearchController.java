@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,12 +49,20 @@ public class SearchController {
 	@RequestMapping("/search/ajax/samples")
 	@ResponseBody
 	public DataTablesResponse searchSamples(@RequestParam String query, @DataTablesRequest DataTablesParams params) {
-	
-		Page<ProjectSampleJoin> samplePage = sampleService.searchSamplesForUser(query,params.getCurrentPage(), params.getLength(),
-				params.getSort());
-		
-		List<DataTablesResponseModel> samples = samplePage.getContent().stream().map(this::createDataTablesSample).collect(Collectors.toList());
-		//return sampleService.searchSamplesForUser(query);
+
+		Sort originalSort = params.getSort();
+		List<Sort.Order> orders = Lists.newArrayList();
+		originalSort.forEach(o -> {
+			orders.add(new Sort.Order(o.getDirection(), "sample." + o.getProperty()));
+		});
+
+		Sort newSort = new Sort(orders);
+		Page<ProjectSampleJoin> samplePage = sampleService.searchSamplesForUser(query, params.getCurrentPage(),
+				params.getLength(), newSort);
+
+		List<DataTablesResponseModel> samples = samplePage.getContent().stream().map(this::createDataTablesSample)
+				.collect(Collectors.toList());
+		// return sampleService.searchSamplesForUser(query);
 		return new DataTablesResponse(params, samplePage, samples);
 	}
 

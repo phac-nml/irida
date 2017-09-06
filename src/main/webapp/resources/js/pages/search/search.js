@@ -59,11 +59,37 @@ const projectConfig = Object.assign({}, tableConfig, {
 const sampleConfig = Object.assign({}, tableConfig, {
   ajax: window.PAGE.urls.samples,
   searching: false,
-  order: [[SAMPLE_COLUMNS.ID, "desc"]],
+  order: [[SAMPLE_COLUMNS.MODIFIED_DATE, "desc"]],
   initComplete: function(settings, json) {
     $("#sample-count").text(json.recordsTotal);
   },
-  columnDefs: []
+  columnDefs: [
+    {
+      targets: [SAMPLE_COLUMNS.SAMPLE_NAME],
+      render(data, type, full) {
+        // Render the name as a link to the actual project.
+        return createItemLink({
+          url: `${window.PAGE.urls.project}${full.projectId}+"/samples/"+${full.id}`,
+          label: data,
+          width: "200px"
+        });
+      }
+    },
+    {
+      targets: SAMPLE_COLUMNS.ORGANISM,
+      render(data) {
+        return wrapCellContents({ text: data });
+      }
+    },
+    // Format all dates to standate date for the systme.
+    {
+      targets: [SAMPLE_COLUMNS.CREATED_DATE, SAMPLE_COLUMNS.MODIFIED_DATE],
+      render(data) {
+        const date = formatDate({ date: data });
+        return `<time>${date}</time>`;
+      }
+    }
+  ]
 });
 
 $("#projects").DataTable(projectConfig);
