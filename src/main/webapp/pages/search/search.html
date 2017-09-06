@@ -34,6 +34,17 @@
             </ul>
             <div class="tab-content">
                 <div id="sample-tab" class="tab-pane active">
+                    <table id="samples" class="table table-striped" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th data-data="id" width="20" th:text="#{samples.table.id}"></th>
+                                <th data-data="name" th:text="#{samples.table.name}"></th>
+                                <th data-data="organism" th:text="#{samples.table.organism}"></th>
+                                <th class="dt-date" data-data="createdDate" th:text="#{samples.table.created}"></th>
+                                <th class="dt-date" data-data="modifiedDate" th:text="#{samples.table.modified}"></th>
+                            </tr>
+                        </thead>
+                    </table>
                 </div>
                 <div id="project-tab" class="tab-pane">
                     <table id="projects" class="table table-striped" cellspacing="0" width="100%">

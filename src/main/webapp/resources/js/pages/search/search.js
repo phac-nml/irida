@@ -13,9 +13,9 @@ import { formatDate } from "./../../utilities/date-utilities";
 Get the table headers and create a look up table for them.
 This give the row name in snake case and its index.
  */
-const COLUMNS = generateColumnOrderInfo("#projects");
+const PROJECT_COLUMNS = generateColumnOrderInfo("#projects");
 
-const config = Object.assign(tableConfig, {
+const projectConfig = Object.assign(tableConfig, {
   ajax: window.PAGE.urls.projects,
   searching: false,
   order: [[COLUMNS.MODIFIED_DATE, "desc"]],
@@ -24,7 +24,7 @@ const config = Object.assign(tableConfig, {
   },
   columnDefs: [
     {
-      targets: [COLUMNS.NAME],
+      targets: [PROJECT_COLUMNS.NAME],
       render(data, type, full) {
         // Render the name as a link to the actual project.
         return createItemLink({
@@ -39,14 +39,14 @@ const config = Object.assign(tableConfig, {
       }
     },
     {
-      targets: COLUMNS.ORGANISM,
+      targets: PROJECT_COLUMNS.ORGANISM,
       render(data) {
         return wrapCellContents({ text: data });
       }
     },
     // Format all dates to standate date for the systme.
     {
-      targets: [COLUMNS.CREATED_DATE, COLUMNS.MODIFIED_DATE],
+      targets: [PROJECT_COLUMNS.CREATED_DATE, PROJECT_COLUMNS.MODIFIED_DATE],
       render(data) {
         const date = formatDate({ date: data });
         return `<time>${date}</time>`;
@@ -55,4 +55,5 @@ const config = Object.assign(tableConfig, {
   ]
 });
 
-$("#projects").DataTable(config);
+$("#projects").DataTable(projectConfig);
+
