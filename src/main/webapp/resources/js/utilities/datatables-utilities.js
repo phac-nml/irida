@@ -129,9 +129,9 @@ export function createItemLink({ url, label, width = "160px" }) {
  * Get the order of the columns on the page.
  * @return {object} {{COLUMN_NAME: index}}
  */
-export function generateColumnOrderInfo() {
+export function generateColumnOrderInfo(tableId) {
   const columns = {};
-  $("thead th").each((index, elm) => {
+  $(tableId + " thead th").each((index, elm) => {
     const data = _.snakeCase($(elm).data("data")).toUpperCase();
     columns[data] = index;
   });

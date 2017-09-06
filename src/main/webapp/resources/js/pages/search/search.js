@@ -13,7 +13,7 @@ import { formatDate } from "./../../utilities/date-utilities";
 Get the table headers and create a look up table for them.
 This give the row name in snake case and its index.
  */
-const COLUMNS = generateColumnOrderInfo();
+const COLUMNS = generateColumnOrderInfo("#projects");
 
 const config = Object.assign(tableConfig, {
   ajax: window.PAGE.urls.projects,
