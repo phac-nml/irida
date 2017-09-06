@@ -365,7 +365,7 @@
 		</form>
 	</script>
 		<script type="text/ng-template" id="/confirm_assembly.html">
-		<form method="post" th:action="@{/samples/{sId}/files/assembly/delete(sId=${sampleId})}">
+		<form method="post" th:action="@{/samples/{sId}/files/assembly/{aId}/delete(sId=${sampleId},aId=${assemblyId})}">
 			<div class="modal-header">
 			<h3 class="modal-title" th:text="#{samples.files.assembly.remove.confirmation}"></h3>
 		</div>

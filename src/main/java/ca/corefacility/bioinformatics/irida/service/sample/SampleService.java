@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort.Direction;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
+import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
@@ -247,14 +248,6 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	public List<QCEntry> getQCEntriesForSample(Sample sample);
 
 	/**
-	 * Removes the associated {@link GenomeAssembly} from a sample.
-	 * 
-	 * @param sample
-	 *            The sample to remove the genome assembly from.
-	 */
-	public void removeGenomeAssemblyFromSample(Sample sample);
-
-	/**
 	 * Gets a collection of {@link SampleGenomeAssemblyJoin}s for the given
 	 * sample.
 	 * 
@@ -263,4 +256,25 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @return A collection of joins to {@link GenomeAssembly}s for the sample.
 	 */
 	public Collection<SampleGenomeAssemblyJoin> getAssembliesForSample(Sample sample);
+	
+	/**
+	 * Gets the genome assembly for a sample.
+	 * 
+	 * @param sample
+	 *            The sample.
+	 * @param genomeAssemblyId
+	 *            The id of the genome assembly.
+	 * @return The {@link GenomeAssembly} with the given information.
+	 */
+	public GenomeAssembly getGenomeAssemblyForSample(Sample sample, Long genomeAssemblyId);
+
+	/**
+	 * Deletes the given genome assembly from the given sample.
+	 * 
+	 * @param sample
+	 *            The sample.
+	 * @param genomeAssemblyId
+	 *            The genome assembly.
+	 */
+	public void removeGenomeAssemblyFromSample(Sample sample, Long genomeAssemblyId);
 }

@@ -330,25 +330,14 @@ public class SamplesController extends BaseController {
 	@RequestMapping("/samples/download/{sampleId}/assembly/{assemblyId}")
 	public void downloadAssembly(@PathVariable Long sampleId, @PathVariable Long assemblyId,
 			HttpServletResponse response) throws IOException {
-//		Sample sample = sampleService.read(sampleId);
-//		List<GenomeAssembly> genomeAssemblies = sample.getGenomeAssemblies();
-//		GenomeAssembly foundAssembly = null;
-//		for (GenomeAssembly assembly : genomeAssemblies) {
-//			if (assembly.getId() == assemblyId) {
-//				foundAssembly = assembly;
-//			}
-//		}
-//
-//		if (foundAssembly == null) {
-//			throw new EntityNotFoundException("Genome assembly with id=" + assemblyId + ", from sample id="
-//					+ sample.getId() + ", does not exist");
-//		} else {
-//			Path path = foundAssembly.getFile();
-//			response.setHeader("Content-Disposition",
-//					"attachment; filename=\"" + genomeAssemblies.get(0).getLabel() + "\"");
-//			Files.copy(path, response.getOutputStream());
-//			response.flushBuffer();
-//		}
+		Sample sample = sampleService.read(sampleId);
+		GenomeAssembly genomeAssembly = sampleService.getGenomeAssemblyForSample(sample, assemblyId);
+
+		Path path = genomeAssembly.getFile();
+		response.setHeader("Content-Disposition",
+				"attachment; filename=\"" + genomeAssembly.getLabel() + "\"");
+		Files.copy(path, response.getOutputStream());
+		response.flushBuffer();
 	}
 
 	/**
@@ -454,34 +443,31 @@ public class SamplesController extends BaseController {
 	 *            for the client.
 	 * @param sampleId
 	 *            the {@link Sample} id
+	 * @param assemblyId
+	 *            The {@link GenomeAssembly}.
 	 * @param request
 	 *            {@link HttpServletRequest}
 	 * @param locale
 	 *            the locale specified by the browser.
 	 * @return map stating the request was successful
 	 */
-	@RequestMapping(value = "/samples/{sampleId}/files/assembly/delete", method = RequestMethod.POST)
+	@RequestMapping(value = "/samples/{sampleId}/files/assembly/{assemblyId}/delete", method = RequestMethod.POST)
 	public String removeGenomeAssemblyFromSample(RedirectAttributes attributes, @PathVariable Long sampleId,
-			HttpServletRequest request, Locale locale) {
-//		Sample sample = sampleService.read(sampleId);
-//		GenomeAssembly genomeAssembly = sample.getGenomeAssemblies().get(0);
-//
-//		if (genomeAssembly == null) {
-//			logger.debug("Attempted to remove genome assembly from sample=" + sample
-//					+ ", but assembly has already been removed");
-//		} else {
-//			try {
-//				sampleService.removeGenomeAssemblyFromSample(sample);
-//				attributes.addFlashAttribute("fileDeleted", true);
-//				attributes.addFlashAttribute("fileDeletedMessage", messageSource.getMessage(
-//						"samples.files.assembly.removed.message", new Object[] { genomeAssembly.getLabel() }, locale));
-//			} catch (Exception e) {
-//				logger.error("Could not remove assembly from sample=" + sample, e);
-//				attributes.addFlashAttribute("fileDeleted", true);
-//				attributes.addFlashAttribute("fileDeletedError", messageSource.getMessage(
-//						"samples.files.assembly.remove.error", new Object[] { sample.getSampleName() }, locale));
-//			}
-//		}
+			@PathVariable Long assemblyId, HttpServletRequest request, Locale locale) {
+		Sample sample = sampleService.read(sampleId);
+		GenomeAssembly genomeAssembly = sampleService.getGenomeAssemblyForSample(sample, assemblyId);
+
+		try {
+			sampleService.removeGenomeAssemblyFromSample(sample, assemblyId);
+			attributes.addFlashAttribute("fileDeleted", true);
+			attributes.addFlashAttribute("fileDeletedMessage", messageSource.getMessage(
+					"samples.files.assembly.removed.message", new Object[] { genomeAssembly.getLabel() }, locale));
+		} catch (Exception e) {
+			logger.error("Could not remove assembly from sample=" + sample, e);
+			attributes.addFlashAttribute("fileDeleted", true);
+			attributes.addFlashAttribute("fileDeletedError", messageSource.getMessage(
+					"samples.files.assembly.remove.error", new Object[] { sample.getSampleName() }, locale));
+		}
 
 		return "redirect:" + request.getHeader("referer");
 	}

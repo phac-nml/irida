@@ -31,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
+import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
@@ -472,8 +473,13 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Transactional
 	@PreAuthorize("hasPermission(#sample, 'canUpdateSample')")
 	@Override
-	public void removeGenomeAssemblyFromSample(Sample sample) {
-		throw new RuntimeException("TODO");
+	public void removeGenomeAssemblyFromSample(Sample sample, Long genomeAssemblyId) {
+		SampleGenomeAssemblyJoin join = sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(sample.getId(),
+				genomeAssemblyId);
+		if (join != null) {
+			logger.debug("Removing genome assembly [" + genomeAssemblyId + "] from sample [" + sample.getId() + "]");
+			sampleGenomeAssemblyJoinRepository.delete(join.getObject().getId());
+		}
 	}
 
 	/**
@@ -483,5 +489,16 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Override
 	public Collection<SampleGenomeAssemblyJoin> getAssembliesForSample(Sample sample) {
 		return sampleGenomeAssemblyJoinRepository.findBySample(sample);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasPermission(#sample, 'canReadSample')")
+	@Override
+	public GenomeAssembly getGenomeAssemblyForSample(Sample sample, Long genomeAssemblyId) {
+		SampleGenomeAssemblyJoin join = sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(sample.getId(),
+				genomeAssemblyId);
+		return join.getObject();
 	}
 }
