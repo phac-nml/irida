@@ -52,7 +52,7 @@ public class SearchController {
 	public String search(@RequestParam String query, Model model) {
 		model.addAttribute("searchQuery", query);
 
-		return "search/search";
+		return "search/project";
 	}
 
 	/**

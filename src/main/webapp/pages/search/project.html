@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="search/search">
+
+<head>
+    <title th:text="#{search.title}">_Search_</title>
+</head>
+
+<body>
+    <div layout:fragment="search-content">
+
+        <table id="projects" class="table table-striped" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th data-data="id" width="20" th:text="#{projects.table.id}"></th>
+                    <th data-data="name" th:text="#{projects.table.name}"></th>
+                    <th data-data="organism" th:text="#{projects.table.organism}"></th>
+                    <th data-data="samples" data-orderable="false" th:text="#{projects.table.samples}"></th>
+                    <th class="dt-date" data-data="createdDate" th:text="#{projects.table.created}"></th>
+                    <th class="dt-date" data-data="modifiedDate" th:text="#{projects.table.modified}"></th>
+                </tr>
+            </thead>
+        </table>
+
+    </div>
+
+</body>
+
+</html>
