@@ -31,7 +31,7 @@ public class SearchController {
 		this.sampleService = sampleService;
 	}
 
-	@RequestMapping("/search/projects")
+	@RequestMapping("/search/ajax/projects")
 	@ResponseBody
 	public DataTablesResponse searchProjects(@RequestParam String query, @DataTablesRequest DataTablesParams params) {
 		final Page<Project> page = projectService
@@ -41,7 +41,7 @@ public class SearchController {
 		return new DataTablesResponse(params, page, projects);
 	}
 	
-	@RequestMapping("/search/samples")
+	@RequestMapping("/search/ajax/samples")
 	@ResponseBody
 	public Object searchSamples(@RequestParam String query) {
 		
@@ -52,7 +52,7 @@ public class SearchController {
 	public String search(@RequestParam String query, Model model) {
 		model.addAttribute("searchQuery", query);
 
-		return "search/project";
+		return "search/search";
 	}
 
 	/**

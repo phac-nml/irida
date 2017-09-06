@@ -4,16 +4,16 @@
 <head>
     <title th:text="#{search.title}">_Search_</title>
     <script th:inline="javascript">
-        var PAGE = {
-            urls: {
-                projects: /*[[@{/search/projects?query={query}(query=${searchQuery})}]]*/ "",
-                project: /*[[@{/projects/}]]*/ ""
-            },
-            i18n: {
-                remote: /*[[#{projects.table.remoteSynchronized}]]*/ ""
-            }
-        };
-    </script>
+            var PAGE = {
+                urls: {
+                    projects: /*[[@{/search/ajax/projects?query={query}(query=${searchQuery})}]]*/ "",
+                    project: /*[[@{/projects/}]]*/ ""
+                },
+                i18n: {
+                    remote: /*[[#{projects.table.remoteSynchronized}]]*/ ""
+                }
+            };
+        </script>
 </head>
 
 <body>
@@ -22,9 +22,22 @@
         <main class="col-md-12" property="mainContentOfPage">
             <h1 th:text="#{search.title}"></h1>
 
-            <div layout:fragment="search-content">
-                <strong>This should not be displayed.  It should be overwritten by the specific page.</strong>
-            </div>
+            <ul class="nav nav-tabs">
+                <li role="presentation" th:classappend="${type == 'sample'} ? active"><a href="#" th:href="@{/search/samples?query={query}(query=${searchQuery})}">_Samples_</a></li>
+                <li role="presentation" th:classappend="${type == 'project'} ? active"><a href="#" th:href="@{/search/projects?query={query}(query=${searchQuery})}">_Projects_</a></li>
+            </ul>
+            <table id="projects" class="table table-striped" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th data-data="id" width="20" th:text="#{projects.table.id}"></th>
+                            <th data-data="name" th:text="#{projects.table.name}"></th>
+                            <th data-data="organism" th:text="#{projects.table.organism}"></th>
+                            <th data-data="samples" data-orderable="false" th:text="#{projects.table.samples}"></th>
+                            <th class="dt-date" data-data="createdDate" th:text="#{projects.table.created}"></th>
+                            <th class="dt-date" data-data="modifiedDate" th:text="#{projects.table.modified}"></th>
+                        </tr>
+                    </thead>
+                </table>
         </main>
 
     </div>
