@@ -41,7 +41,7 @@ public class ProjectAddSamplePageIT extends AbstractIridaUIITChromeDriver {
 
 		// Create a valid sample
 		page.enterSampleName(NAME_VALID);
-		assertTrue("Create button should b	e enabled", page.isCreateButtonEnabled());
+		assertTrue("Create button should be enabled", page.isCreateButtonEnabled());
 		page.createSample();
 		assertTrue("Should redirect to sample files page.", driver().getCurrentUrl().contains("/sequenceFiles"));
 		SampleFilesPage filesPage = new SampleFilesPage(driver());
