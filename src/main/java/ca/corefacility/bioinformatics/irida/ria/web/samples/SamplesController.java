@@ -50,6 +50,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
@@ -277,7 +278,11 @@ public class SamplesController extends BaseController {
 				.getSequencesForSampleOfType(sample, SequenceFilePair.class);
 		Collection<SampleSequencingObjectJoin> singleFileJoins = sequencingObjectService
 				.getSequencesForSampleOfType(sample, SingleEndSequenceFile.class);
+		Collection<SampleGenomeAssemblyJoin> genomeAssemblyJoins = sampleService.getAssembliesForSample(sample);
+		logger.debug("Assembly joins " + genomeAssemblyJoins);
 
+		List<GenomeAssembly> genomeAssemblies = genomeAssemblyJoins.stream().map(SampleGenomeAssemblyJoin::getObject)
+				.collect(Collectors.toList());
 		List<SequencingObject> filePairs = filePairJoins.stream().map(SampleSequencingObjectJoin::getObject)
 				.collect(Collectors.toList());
 
@@ -299,6 +304,10 @@ public class SamplesController extends BaseController {
 		// SequenceFile
 		model.addAttribute("paired_end", filePairs);
 		model.addAttribute("single_end", singleFileJoins);
+		
+		// assemblies
+		model.addAttribute("assemblies", genomeAssemblies);
+		model.addAttribute("has_assemblies", genomeAssemblies.size() > 0);
 
 		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
 		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isProjectManagerForSample(sample));

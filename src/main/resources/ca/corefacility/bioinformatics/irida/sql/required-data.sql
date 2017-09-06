@@ -232,7 +232,7 @@ INSERT INTO sample (`createdDate`, `modifiedDate`, `sampleName`, `description`, 
 INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:59', 'E. coli', '2015-08-20 08:24:09', '10-7165', 'The 54th sample');
 
 -- sample genome assembly
-INSERT INTO sample_genome_assembly(`sample_id`, `genome_assembly_id`) VALUES (54, 1);
+INSERT INTO sample_genome_assembly(`sample_id`, `genome_assembly_id`, `createdDate`) VALUES (54, 1, '2014-07-30 08:24:59');
 
 -- sample relationship
 INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`, `owner`) VALUES ('2014-07-30 08:24:09', 5, 1, 1);

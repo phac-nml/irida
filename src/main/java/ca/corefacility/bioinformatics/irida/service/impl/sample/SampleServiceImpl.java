@@ -475,4 +475,13 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	public void removeGenomeAssemblyFromSample(Sample sample) {
 		throw new RuntimeException("TODO");
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasPermission(#sample, 'canReadSample')")
+	@Override
+	public Collection<SampleGenomeAssemblyJoin> getAssembliesForSample(Sample sample) {
+		return sampleGenomeAssemblyJoinRepository.findBySample(sample);
+	}
 }

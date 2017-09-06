@@ -12,6 +12,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
@@ -252,4 +253,14 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *            The sample to remove the genome assembly from.
 	 */
 	public void removeGenomeAssemblyFromSample(Sample sample);
+
+	/**
+	 * Gets a collection of {@link SampleGenomeAssemblyJoin}s for the given
+	 * sample.
+	 * 
+	 * @param sample
+	 *            The sample.
+	 * @return A collection of joins to {@link GenomeAssembly}s for the sample.
+	 */
+	public Collection<SampleGenomeAssemblyJoin> getAssembliesForSample(Sample sample);
 }
