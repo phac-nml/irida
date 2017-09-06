@@ -11,12 +11,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.common.collect.Lists;
+
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProject;
+import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProjectSamples;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
@@ -43,9 +47,10 @@ public class SearchController {
 	
 	@RequestMapping("/search/ajax/samples")
 	@ResponseBody
-	public Object searchSamples(@RequestParam String query) {
+	public DataTablesResponse searchSamples(@RequestParam String query) {
 		
-		return sampleService.searchSamplesForUser(query);
+		//return sampleService.searchSamplesForUser(query);
+		return null;
 	}
 
 	@RequestMapping("/search")
@@ -66,5 +71,9 @@ public class SearchController {
 	 */
 	private DTProject createDataTablesProject(Project project) {
 		return new DTProject(project, sampleService.getNumberOfSamplesForProject(project));
+	}
+	
+	private DTProjectSamples createDataTablesSample(ProjectSampleJoin join){
+		return new DTProjectSamples(join, Lists.newArrayList());
 	}
 }

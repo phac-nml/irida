@@ -456,11 +456,15 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	}
 	
 	@PreAuthorize("permitAll()")
-	public List<ProjectSampleJoin> searchSamplesForUser(String query) {
+	@Override
+	public Page<ProjectSampleJoin> searchSamplesForUser(String query, final Integer page, final Integer count,
+			final Sort sort) {
 		final UserDetails loggedInDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		final User loggedIn = userRepository.loadUserByUsername(loggedInDetails.getUsername());
 		
-		return psjRepository.findAll(sampleForUserSpecification(loggedIn, query));
+		final PageRequest pr = new PageRequest(page, count, sort);
+		
+		return psjRepository.findAll(sampleForUserSpecification(loggedIn, query), pr);
 	}
 	
 	/**
