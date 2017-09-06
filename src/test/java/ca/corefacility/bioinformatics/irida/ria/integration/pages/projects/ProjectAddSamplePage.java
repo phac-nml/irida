@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -48,7 +49,7 @@ public class ProjectAddSamplePage extends AbstractPage {
 	public void enterSampleName(String name) {
 		sampleNameInput.clear();
 		sampleNameInput.sendKeys(name);
-		waitForTime(1000);
+		sampleNameInput.sendKeys(Keys.chord(Keys.SHIFT, Keys.TAB));
 	}
 
 	public void createSample() {
@@ -58,26 +59,29 @@ public class ProjectAddSamplePage extends AbstractPage {
 	}
 
 	public boolean isCreateButtonEnabled() {
+		// Give the button a moment to update.
+		waitForTime(500);
 		return createBtn.isEnabled();
 	}
 
 	public boolean isMinLengthNameErrorVisible() {
-		return getErrorText()
-				.equals("Sample name must be at least 3 letters.");
+		String text = "Sample name must be at least 3 letters.";
+		return getErrorText(text).equals(text);
 	}
 
 	public boolean isRequiredNameErrorVisible() {
-		return getErrorText().equals("Sample name is required.");
+		String text = "Sample name is required.";
+		return getErrorText(text).equals(text);
 	}
 
 	public boolean isInvalidCharactersInNameVisible() {
-		return getErrorText()
-				.contains("Sample names should only include letters, numbers, and certain special characters");
+		String text = "Sample names should only include letters, numbers, and certain special characters !, @, #, $, %, _, -, and `. Sample names cannot include white space characters (spaces or tabs).";
+		return getErrorText(text).contains(text);
 	}
 
-	private String getErrorText() {
+	private String getErrorText(String text) {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
-		wait.until(ExpectedConditions.visibilityOf(sampleNameError));
+		wait.until(ExpectedConditions.textToBePresentInElement(sampleNameError, text));
 		return sampleNameError.getText();
 	}
 }
