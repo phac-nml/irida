@@ -28,6 +28,9 @@
 		</createTable>
 
 		<createTable tableName="sample_genome_assembly">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
 			<column name="sample_id" type="bigint(20)">
 				<constraints referencedColumnNames="id"
 					referencedTableName="sample" foreignKeyName="FK_SAMPLE_GENOME_ASSEMBLY_SAMPLE"
@@ -38,9 +41,12 @@
 					referencedTableName="genome_assembly" foreignKeyName="FK_SAMPLE_GENOME_ASSEMBLY_ASSEMBLY"
 					nullable="false" />
 			</column>
+
+			<column name="createdDate" type="datetime" />
 		</createTable>
 
 		<createTable tableName="sample_genome_assembly_AUD">
+			<column name="id" type="bigint(20)" />
 			<column name="sample_id" type="bigint(20)" />
 			<column name="genome_assembly_id" type="bigint(20)" />
 			<column name="REV" type="int(11)">
@@ -48,6 +54,7 @@
 					referencedTableName="Revisions" foreignKeyName="FK_SAMPLE_GENOME_ASSEMBLY_AUD" />
 			</column>
 			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="createdDate" type="datetime" />
 		</createTable>
 
 		<addColumn tableName="analysis_submission">
