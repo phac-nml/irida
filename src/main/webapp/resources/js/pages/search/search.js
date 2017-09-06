@@ -19,6 +19,9 @@ const config = Object.assign(tableConfig, {
   ajax: window.PAGE.urls.projects,
   searching: false,
   order: [[COLUMNS.MODIFIED_DATE, "desc"]],
+  initComplete: function(settings, json) {
+    $("#project-count").text(json.recordsTotal);
+  },
   columnDefs: [
     {
       targets: [COLUMNS.NAME],
@@ -27,7 +30,9 @@ const config = Object.assign(tableConfig, {
         return createItemLink({
           url: `${window.PAGE.urls.project}${full.id}`,
           label: `${full.remote
-            ? `<div aria-hidden="true" data-toggle="tooltip" data-placement="top" title="${window.PAGE.i18n.remote}">${data}&nbsp;<i style="color: #000;" class="fa fa-exchange pull-right"></i></div>`
+            ? `<div aria-hidden="true" data-toggle="tooltip" data-placement="top" title="${window
+                .PAGE.i18n
+                .remote}">${data}&nbsp;<i style="color: #000;" class="fa fa-exchange pull-right"></i></div>`
             : data}`,
           width: "200px"
         });
