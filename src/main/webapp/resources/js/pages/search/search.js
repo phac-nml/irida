@@ -14,11 +14,12 @@ Get the table headers and create a look up table for them.
 This give the row name in snake case and its index.
  */
 const PROJECT_COLUMNS = generateColumnOrderInfo("#projects");
+const SAMPLE_COLUMNS = generateColumnOrderInfo("#samples");
 
-const projectConfig = Object.assign(tableConfig, {
+const projectConfig = Object.assign({}, tableConfig, {
   ajax: window.PAGE.urls.projects,
   searching: false,
-  order: [[COLUMNS.MODIFIED_DATE, "desc"]],
+  order: [[PROJECT_COLUMNS.MODIFIED_DATE, "desc"]],
   initComplete: function(settings, json) {
     $("#project-count").text(json.recordsTotal);
   },
@@ -55,5 +56,15 @@ const projectConfig = Object.assign(tableConfig, {
   ]
 });
 
-$("#projects").DataTable(projectConfig);
+const sampleConfig = Object.assign({}, tableConfig, {
+  ajax: window.PAGE.urls.samples,
+  searching: false,
+  order: [[SAMPLE_COLUMNS.ID, "desc"]],
+  initComplete: function(settings, json) {
+    $("#sample-count").text(json.recordsTotal);
+  },
+  columnDefs: []
+});
 
+$("#projects").DataTable(projectConfig);
+$("#samples").DataTable(sampleConfig);

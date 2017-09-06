@@ -7,6 +7,7 @@
         var PAGE = {
             urls: {
                 projects: /*[[@{/search/ajax/projects?query={query}(query=${searchQuery})}]]*/ "",
+                samples: /*[[@{/search/ajax/samples?query={query}(query=${searchQuery})}]]*/ "",
                 project: /*[[@{/projects/}]]*/ ""
             },
             i18n: {
@@ -38,7 +39,7 @@
                         <thead>
                             <tr>
                                 <th data-data="id" width="20" th:text="#{samples.table.id}"></th>
-                                <th data-data="name" th:text="#{samples.table.name}"></th>
+                                <th data-data="sampleName" th:text="#{samples.table.name}"></th>
                                 <th data-data="organism" th:text="#{samples.table.organism}"></th>
                                 <th class="dt-date" data-data="createdDate" th:text="#{samples.table.created}"></th>
                                 <th class="dt-date" data-data="modifiedDate" th:text="#{samples.table.modified}"></th>

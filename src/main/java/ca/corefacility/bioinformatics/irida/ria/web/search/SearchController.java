@@ -47,10 +47,14 @@ public class SearchController {
 	
 	@RequestMapping("/search/ajax/samples")
 	@ResponseBody
-	public DataTablesResponse searchSamples(@RequestParam String query) {
+	public DataTablesResponse searchSamples(@RequestParam String query, @DataTablesRequest DataTablesParams params) {
+	
+		Page<ProjectSampleJoin> samplePage = sampleService.searchSamplesForUser(query,params.getCurrentPage(), params.getLength(),
+				params.getSort());
 		
+		List<DataTablesResponseModel> samples = samplePage.getContent().stream().map(this::createDataTablesSample).collect(Collectors.toList());
 		//return sampleService.searchSamplesForUser(query);
-		return null;
+		return new DataTablesResponse(params, samplePage, samples);
 	}
 
 	@RequestMapping("/search")
