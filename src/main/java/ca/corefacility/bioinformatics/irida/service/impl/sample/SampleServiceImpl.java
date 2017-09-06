@@ -12,6 +12,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityExistsException;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import javax.validation.Validator;
@@ -23,8 +28,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +41,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
@@ -40,6 +49,9 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
+import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
@@ -50,6 +62,7 @@ import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleSpecification;
+import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
@@ -82,6 +95,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * Reference to {@link AnalysisRepository}.
 	 */
 	private final AnalysisRepository analysisRepository;
+	
+	private final UserRepository userRepository;
 
 
 	/**
@@ -105,7 +120,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Autowired
 	public SampleServiceImpl(SampleRepository sampleRepository, ProjectSampleJoinRepository psjRepository,
 			final AnalysisRepository analysisRepository, SampleSequencingObjectJoinRepository ssoRepository,
-			QCEntryRepository qcEntryRepository, SequencingObjectRepository sequencingObjectRepository, Validator validator) {
+			QCEntryRepository qcEntryRepository, SequencingObjectRepository sequencingObjectRepository, UserRepository userRepository, Validator validator) {
 		super(sampleRepository, validator, Sample.class);
 		this.sampleRepository = sampleRepository;
 		this.psjRepository = psjRepository;
@@ -113,6 +128,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		this.ssoRepository = ssoRepository;
 		this.qcEntryRepository = qcEntryRepository;
 		this.sequencingObjectRepository = sequencingObjectRepository;
+		this.userRepository = userRepository;
 	}
 	
 	/**
@@ -439,6 +455,14 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		return super.updateMultiple(objects);
 	}
 	
+	@PreAuthorize("permitAll()")
+	public List<ProjectSampleJoin> getSamplesForUser() {
+		final UserDetails loggedInDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		final User loggedIn = userRepository.loadUserByUsername(loggedInDetails.getUsername());
+		
+		return psjRepository.findAll(sampleForUserSpecification(loggedIn));
+	}
+	
 	/**
 	 * Verify that the given sort properties array is not null or empty. If it
 	 * is, give a default sort property.
@@ -456,5 +480,63 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		}
 
 		return sortProperties;
+	}
+	
+	private static Specification<ProjectSampleJoin> sampleForUserSpecification(final User user) {
+		return new Specification<ProjectSampleJoin>() {
+
+			@Override
+			public Predicate toPredicate(Root<ProjectSampleJoin> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				return cb.or(individualProjectMembership(root, query, cb), groupProjectMembership(root, query, cb));
+			}
+
+			/**
+			 * This {@link Predicate} filters out {@link Project}s for the
+			 * specific user where they are assigned individually as a member.
+			 * 
+			 * @param root
+			 *            the root of the query
+			 * @param query
+			 *            the query
+			 * @param cb
+			 *            the builder
+			 * @return a {@link Predicate} that filters {@link Project}s where
+			 *         users are individually assigned.
+			 */
+			private Predicate individualProjectMembership(final Root<ProjectSampleJoin> root,
+					final CriteriaQuery<?> query, final CriteriaBuilder cb) {
+				final Subquery<Long> userMemberSelect = query.subquery(Long.class);
+				final Root<ProjectUserJoin> userMemberJoin = userMemberSelect.from(ProjectUserJoin.class);
+				userMemberSelect.select(userMemberJoin.get("project").get("id"))
+						.where(cb.equal(userMemberJoin.get("user"), user));
+				return cb.in(root.get("project")).value(userMemberSelect);
+			}
+
+			/**
+			 * This {@link Predicate} filters out {@link Project}s for the
+			 * specific user where they are assigned transitively through a
+			 * {@link UserGroup}.
+			 * 
+			 * @param root
+			 *            the root of the query
+			 * @param query
+			 *            the query
+			 * @param cb
+			 *            the builder
+			 * @return a {@link Predicate} that filters {@link Project}s where
+			 *         users are assigned transitively through {@link UserGroup}
+			 *         .
+			 */
+			private Predicate groupProjectMembership(final Root<ProjectSampleJoin> root, final CriteriaQuery<?> query,
+					final CriteriaBuilder cb) {
+				final Subquery<Long> groupMemberSelect = query.subquery(Long.class);
+				final Root<UserGroupProjectJoin> groupMemberJoin = groupMemberSelect.from(UserGroupProjectJoin.class);
+				groupMemberSelect.select(groupMemberJoin.get("project").get("id"))
+						.where(cb.equal(groupMemberJoin.join("userGroup").join("users").get("user"), user));
+				return cb.in(root.get("project")).value(groupMemberSelect);
+			}
+
+		};
+
 	}
 }

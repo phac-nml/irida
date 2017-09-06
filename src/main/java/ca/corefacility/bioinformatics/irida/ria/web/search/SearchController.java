@@ -40,6 +40,13 @@ public class SearchController {
 		List<DataTablesResponseModel> projects = page.getContent().stream().map(this::createDataTablesProject).collect(Collectors.toList());
 		return new DataTablesResponse(params, page, projects);
 	}
+	
+	@RequestMapping("/search/samples")
+	@ResponseBody
+	public Object searchSamples(@RequestParam String query) {
+		
+		return sampleService.getSamplesForUser();
+	}
 
 	@RequestMapping("/search")
 	public String search(@RequestParam String query, Model model) {
