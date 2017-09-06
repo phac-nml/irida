@@ -5,6 +5,7 @@
  */
 module.exports = {
   app: "./resources/js/app.js",
+  events: "./resources/js/modules/events/events.js",
   projects: "./resources/js/pages/projects/projects.js",
   "samples-metadata-import":
     "./resources/js/pages/projects/samples-metadata-import/index.js",
@@ -21,5 +22,10 @@ module.exports = {
     "./resources/js/pages/projects/project-reference-files.js",
   "analyses-table": "./resources/js/pages/analyses/analyses-table.js",
   "clients-list": "./resources/js/pages/clients/clients-list.js",
-  "users-list": "./resources/js/pages/users/users-list.js"
+  "users-list": "./resources/js/pages/users/users-list.js",
+  "announcement-users":
+    "./resources/js/pages/announcement/announcement-users.js",
+  "announcement-admin":
+    "./resources/js/pages/announcement/announcement-admin.js",
+  "sequencing-runs": "./resources/js/pages/sequencing-runs/sequencing-runs-list.js"
 };

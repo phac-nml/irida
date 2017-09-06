@@ -3,12 +3,11 @@
 
 <head>
   <title th:text="#{event.admin.title}">_ALL EVENTS_</title>
-    <script>window.dependencies=['irida.admin.activities'];</script>
 </head>
 
 <body>
 <div class="row" layout:fragment="page">
-    <main class="container" role="main" property="mainContentOfPage" ddl:bundle-includes="events">
+    <main class="container" role="main" property="mainContentOfPage">
         <div class="row">
             <div class="col-md-12">
                 <h1 th:text="#{event.admin.title}">_Recent Activities_</h1>
@@ -19,9 +18,7 @@
 </div>
 
   <th:block layout:fragment="scripts">
-    <script th:inline="javascript">
-        angular.module('irida.admin.activities', ['irida.events']);
-    </script>
+    <script th:src="@{/resources/js/build/events.bundle.js}"></script>
   </th:block>
 </body>
 

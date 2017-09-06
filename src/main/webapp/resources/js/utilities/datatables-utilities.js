@@ -1,7 +1,7 @@
 import $ from "jquery";
 import _ from "lodash";
-import {addTooltip} from "./bootstrap-utilities";
-import {createIcon, ICONS} from "./fontawesome-utilities";
+import { addTooltip } from "./bootstrap-utilities";
+import { createIcon, ICONS } from "./fontawesome-utilities";
 
 /*
 <div class="row">
@@ -109,12 +109,13 @@ export function createButtonCell(buttons = []) {
  * @param {string} url to find the item at
  * @param {string} label label for the item
  * @param {string} width width for the button
+ * @param {array} list of extra classes to add to the link
  * @return {*} anchor element containing link.
  */
-export function createItemLink({ url, label, width = "160px" }) {
+export function createItemLink({ url, label, width = "160px", classes = [] }) {
   if (typeof url !== "undefined" && typeof label !== "undefined") {
     const link = document.createElement("a");
-    link.classList.add("btn", "btn-link", "dt-wrap-cell");
+    link.classList.add("btn", "btn-link", "dt-wrap-cell", ...classes);
     link.style.width = width;
     link.style.textAlign = "left";
     link.href = url;
