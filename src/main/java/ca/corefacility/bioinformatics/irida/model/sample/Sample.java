@@ -15,7 +15,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
@@ -27,17 +26,14 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
-import org.hibernate.envers.RelationTargetAuditMode;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
-import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.event.SampleAddedProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSample;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -146,17 +142,10 @@ public class Sample extends IridaResourceSupport
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@MapKeyColumn(name = "metadata_KEY")
 	private Map<MetadataTemplateField, MetadataEntry> metadata;
-	
-	@OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST,
-			CascadeType.REFRESH })
-	@JoinTable(name = "sample_genome_assembly", joinColumns = @JoinColumn(name = "sample_id"), inverseJoinColumns = @JoinColumn(name = "genome_assembly_id", nullable = false))
-	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
-	private List<GenomeAssembly> genomeAssemblies;
 
 	public Sample() {
 		createdDate = new Date();
 		metadata = new HashMap<>();
-		genomeAssemblies = Lists.newArrayList();
 	}
 
 	/**
@@ -314,18 +303,6 @@ public class Sample extends IridaResourceSupport
 
 	public void setIsolationSource(String isolationSource) {
 		this.isolationSource = isolationSource;
-	}
-	
-	public List<GenomeAssembly> getGenomeAssemblies() {
-		return genomeAssemblies;
-	}
-	
-	public void setGenomeAssemblies(List<GenomeAssembly> genomeAssemblies) {
-		this.genomeAssemblies = genomeAssemblies;
-	}
-	
-	public boolean hasGenomeAssemblies() {
-		return genomeAssemblies != null && genomeAssemblies.size() > 0;
 	}
 
 	@Override

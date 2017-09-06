@@ -33,6 +33,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
@@ -44,6 +45,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFast
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGenomeAssemblyJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
@@ -82,6 +84,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * Reference to {@link AnalysisRepository}.
 	 */
 	private final AnalysisRepository analysisRepository;
+	
+	private final SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository;
 
 
 	/**
@@ -97,6 +101,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 *            The {@link SampleSequencingObjectJoin} repository
 	 * @param sequencingObjectRepository
 	 *            the {@link SequencingObject} repository
+	 * @param sampleGenomeAssemblyJoinRepository
+	 *            The {@link SampleGenomeAssemblyJoin} repository.
 	 * @param qcEntryRepository
 	 *            a repository for storing and reading {@link QCEntry}
 	 * @param validator
@@ -105,7 +111,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Autowired
 	public SampleServiceImpl(SampleRepository sampleRepository, ProjectSampleJoinRepository psjRepository,
 			final AnalysisRepository analysisRepository, SampleSequencingObjectJoinRepository ssoRepository,
-			QCEntryRepository qcEntryRepository, SequencingObjectRepository sequencingObjectRepository, Validator validator) {
+			QCEntryRepository qcEntryRepository, SequencingObjectRepository sequencingObjectRepository,
+			SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository, Validator validator) {
 		super(sampleRepository, validator, Sample.class);
 		this.sampleRepository = sampleRepository;
 		this.psjRepository = psjRepository;
@@ -113,6 +120,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		this.ssoRepository = ssoRepository;
 		this.qcEntryRepository = qcEntryRepository;
 		this.sequencingObjectRepository = sequencingObjectRepository;
+		this.sampleGenomeAssemblyJoinRepository = sampleGenomeAssemblyJoinRepository;
 	}
 	
 	/**
@@ -465,7 +473,6 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@PreAuthorize("hasPermission(#sample, 'canUpdateSample')")
 	@Override
 	public void removeGenomeAssemblyFromSample(Sample sample) {
-		sample.setGenomeAssemblies(null);
-		sampleRepository.save(sample);
+		throw new RuntimeException("TODO");
 	}
 }
