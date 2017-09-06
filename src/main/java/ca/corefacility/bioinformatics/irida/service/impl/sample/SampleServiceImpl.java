@@ -456,11 +456,11 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	}
 	
 	@PreAuthorize("permitAll()")
-	public List<ProjectSampleJoin> getSamplesForUser() {
+	public List<ProjectSampleJoin> searchSamplesForUser(String query) {
 		final UserDetails loggedInDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		final User loggedIn = userRepository.loadUserByUsername(loggedInDetails.getUsername());
 		
-		return psjRepository.findAll(sampleForUserSpecification(loggedIn));
+		return psjRepository.findAll(sampleForUserSpecification(loggedIn, query));
 	}
 	
 	/**
@@ -482,12 +482,19 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		return sortProperties;
 	}
 	
-	private static Specification<ProjectSampleJoin> sampleForUserSpecification(final User user) {
+	private static Specification<ProjectSampleJoin> sampleForUserSpecification(final User user, final String queryString) {
 		return new Specification<ProjectSampleJoin>() {
 
 			@Override
 			public Predicate toPredicate(Root<ProjectSampleJoin> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-				return cb.or(individualProjectMembership(root, query, cb), groupProjectMembership(root, query, cb));
+				Predicate sampleAccess = cb.or(individualProjectMembership(root, query, cb), groupProjectMembership(root, query, cb));
+				
+				return cb.and(sampleAccess, sampleProperties(root, query, cb)); 
+			}
+			
+			private Predicate sampleProperties(final Root<ProjectSampleJoin> root,
+					final CriteriaQuery<?> query, final CriteriaBuilder cb) {
+				return cb.like(root.get("sample").get("sampleName"), "%" + queryString + "%");
 			}
 
 			/**

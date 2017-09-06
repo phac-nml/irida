@@ -245,6 +245,6 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 */
 	public List<QCEntry> getQCEntriesForSample(Sample sample);
 	
-	public List<ProjectSampleJoin> getSamplesForUser();
+	public List<ProjectSampleJoin> searchSamplesForUser(String query);
 
 }

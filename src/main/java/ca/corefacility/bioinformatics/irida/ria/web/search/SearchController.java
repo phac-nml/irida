@@ -45,7 +45,7 @@ public class SearchController {
 	@ResponseBody
 	public Object searchSamples(@RequestParam String query) {
 		
-		return sampleService.getSamplesForUser();
+		return sampleService.searchSamplesForUser(query);
 	}
 
 	@RequestMapping("/search")
