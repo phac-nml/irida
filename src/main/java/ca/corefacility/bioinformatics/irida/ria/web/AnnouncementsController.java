@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -13,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,11 +21,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.github.dandelion.datatables.core.ajax.DataSet;
-import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
-import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
-import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
-
 import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
 import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -35,9 +28,9 @@ import ca.corefacility.bioinformatics.irida.repositories.specification.Announcem
 import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTAnnouncementAdmin;
 import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTAnnouncementUser;
 import ca.corefacility.bioinformatics.irida.service.AnnouncementService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -264,41 +257,23 @@ public class AnnouncementsController extends BaseController{
     }
 
     /**
-     * Get all announcements to be displayed in a datatable for admin control centre
+     * Get all announcements to be displayed in a DataTables for admin control centre
      *
-     * @param criteria
-     *                  Criteria/options for the datatable when rendering table items/rows
+     * @param params
+     * 		{@link DataTablesParams} for the current DataTable.
      *
-     * @return A map containing all of the data to be displayed in the datatables
-     *
+     * @return {@link DataTablesResponse}
      */
     @RequestMapping(value = "/control/ajax/list")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public @ResponseBody DatatablesResponse<Announcement> getAnnouncementsAdmin(
-            final @DatatablesParams DatatablesCriterias criteria) {
-        final int currentPage = DatatablesUtils.getCurrentPage(criteria);
-        final Map<String, Object> sortProperties = DatatablesUtils.getSortProperties(criteria);
-        final Sort.Direction direction = (Sort.Direction) sortProperties.get("direction");
-        String sortName = sortProperties.get("sort_string").toString();
-        sortName = sortName.replaceAll("announcement.", "");
-        if (sortName.equals("identifier")) {
-            sortName = "id";
-        }
-        if (sortName.equals("createdById")) {
-            sortName = "user";
-        }
+    public @ResponseBody DataTablesResponse getAnnouncementsAdmin(@DataTablesRequest DataTablesParams params) {
+        final Page<Announcement> page = announcementService
+                .search(AnnouncementSpecification.searchAnnouncement(params.getSearchValue()),
+                        new PageRequest(params.getCurrentPage(), params.getLength(), params.getSort()));
 
-        final String searchString = criteria.getSearch();
-        final Page<Announcement> announcements = announcementService.search(AnnouncementSpecification
-                .searchAnnouncement(searchString), currentPage, criteria.getLength(), direction, sortName);
-        final List<Announcement> announcementDataTableResponseList = announcements.getContent().stream()
+        final List<DataTablesResponseModel> announcements = page.getContent().stream().map(DTAnnouncementAdmin::new)
                 .collect(Collectors.toList());
-
-        final DataSet<Announcement> announcementDataSet = new DataSet<>(announcementDataTableResponseList,
-                announcements.getTotalElements(), announcements.getTotalElements());
-
-        logger.trace("Total number of announcements: " + announcementDataSet.getTotalRecords());
-        return DatatablesResponse.build(announcementDataSet, criteria);
+        return new DataTablesResponse(params, page, announcements);
     }
 
     /**

@@ -5,7 +5,9 @@
 export const ICONS = {
   download: "fa-download", // Downloading,
   trash: "fa-trash", // Deleting
-  remove: "fa-times" // Removing
+  remove: "fa-times", // Removing
+  edit: "fa-pencil", // Editing
+  checkmark: "fa-check"
 };
 
 /**
