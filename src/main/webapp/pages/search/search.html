@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="template/page">
 
 <head>
-    <title th:text="#{search.title}">_Search_</title>
+    <title th:text="#{search.title(${searchQuery})}">_Search_</title>
     <script th:inline="javascript">
         var PAGE = {
             urls: {
@@ -21,15 +21,15 @@
     <div layout:fragment="page">
 
         <main class="col-md-12" property="mainContentOfPage">
-            <h1 th:text="#{search.title}"></h1>
+            <h1 th:text="#{search.title(${searchQuery})}"></h1>
 
             <ul class="nav nav-tabs">
                 <li class="active"><a data-toggle="tab" href="#sample-tab">
-                        <span>_Samples_</span>
+                        <span th:text="#{search.samples.tab}">_Samples_</span>
                         <span id="sample-count" class="badge"><i class="fa fa-spinner fa-spin" aria-hidden="true"></i></span>
                     </a></li>
                 <li><a data-toggle="tab" href="#project-tab">
-                    <span>_Projects_</span>
+                    <span th:text="#{search.projects.tab}">_Projects_</span>
                     <span id="project-count" class="badge"><i class="fa fa-spinner fa-spin" aria-hidden="true"></i></span>
                 </a></li>
             </ul>
@@ -38,11 +38,11 @@
                     <table id="samples" class="table table-striped" cellspacing="0" width="100%">
                         <thead>
                             <tr>
-                                <th data-data="sampleName" th:text="#{samples.table.name}"></th>
-                                <th data-data="organism" th:text="#{samples.table.organism}"></th>
-                                <th data-data="projectName" data-orderable="false" th:text="#{samples.table.project}"></th>
-                                <th class="dt-date" data-data="createdDate" th:text="#{samples.table.created}"></th>
-                                <th class="dt-date" data-data="modifiedDate" th:text="#{samples.table.modified}"></th>
+                                <th data-data="sampleName" th:text="#{search.samples.name}"></th>
+                                <th data-data="organism" th:text="#{search.samples.organism}"></th>
+                                <th data-data="projectName" data-orderable="false" th:text="#{search.samples.project}"></th>
+                                <th class="dt-date" data-data="createdDate" th:text="#{search.samples.created}"></th>
+                                <th class="dt-date" data-data="modifiedDate" th:text="#{search.samples.modified}"></th>
                             </tr>
                         </thead>
                     </table>
@@ -51,12 +51,12 @@
                     <table id="projects" class="table table-striped" cellspacing="0" width="100%">
                         <thead>
                             <tr>
-                                <th data-data="id" width="20" th:text="#{projects.table.id}"></th>
-                                <th data-data="name" th:text="#{projects.table.name}"></th>
-                                <th data-data="organism" th:text="#{projects.table.organism}"></th>
-                                <th data-data="samples" data-orderable="false" th:text="#{projects.table.samples}"></th>
-                                <th class="dt-date" data-data="createdDate" th:text="#{projects.table.created}"></th>
-                                <th class="dt-date" data-data="modifiedDate" th:text="#{projects.table.modified}"></th>
+                                <th data-data="id" width="20" th:text="#{search.projects.id}"></th>
+                                <th data-data="name" th:text="#{search.projects.name}"></th>
+                                <th data-data="organism" th:text="#{search.projects.organism}"></th>
+                                <th data-data="samples" data-orderable="false" th:text="#{search.projects.samples}"></th>
+                                <th class="dt-date" data-data="createdDate" th:text="#{search.projects.created}"></th>
+                                <th class="dt-date" data-data="modifiedDate" th:text="#{search.projects.modified}"></th>
                             </tr>
                         </thead>
                     </table>
