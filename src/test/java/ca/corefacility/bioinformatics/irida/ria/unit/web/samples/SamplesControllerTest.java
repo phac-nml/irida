@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,7 +41,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
+import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
+import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssemblyFromAnalysis;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -49,8 +53,10 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplesController;
+import ca.corefacility.bioinformatics.irida.security.permissions.sample.ReadSamplePermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
@@ -71,8 +77,10 @@ public class SamplesControllerTest {
 	private ProjectService projectService;
 	private SequencingObjectService sequencingObjectService;
 	private UpdateSamplePermission updateSamplePermission;
+	private ReadSamplePermission readSamplePermission;
 	private MetadataTemplateService metadataTemplateService;
 	private MessageSource messageSource;
+	private GenomeAssembly genomeAssembly;
 
 	@Before
 	public void setUp() {
@@ -82,6 +90,8 @@ public class SamplesControllerTest {
 		metadataTemplateService = mock(MetadataTemplateService.class);
 		messageSource = mock(MessageSource.class);
 		updateSamplePermission = mock(UpdateSamplePermission.class);
+		readSamplePermission = mock(ReadSamplePermission.class);
+		genomeAssembly = mock(GenomeAssembly.class);
 		controller = new SamplesController(sampleService, projectService, sequencingObjectService,
 				updateSamplePermission, metadataTemplateService, messageSource);
 	}
@@ -246,6 +256,47 @@ public class SamplesControllerTest {
 		controller.removeSequencingObjectFromSample(attributes, sampleId, fileId, request, Locale.US);
 
 		verify(sampleService).removeSequencingObjectFromSample(sample, file);
+	}
+	
+	@Test
+	public void testDownloadAssembly() throws IOException {
+		HttpServletResponse response = new MockHttpServletResponse();
+
+		Long sampleId = 1L;
+		Long assemblyId = 3L;
+		SequenceFile file = new SequenceFile(Paths.get("/tmp"));
+		file.setId(2L);
+
+		Sample sample = new Sample();
+		GenomeAssembly genomeAssembly = TestDataFactory.constructGenomeAssembly();
+
+		when(sampleService.read(sampleId)).thenReturn(sample);
+		when(sampleService.getGenomeAssemblyForSample(sample, assemblyId)).thenReturn(genomeAssembly);
+		when(readSamplePermission.isAllowed(any(Authentication.class), eq(sample))).thenReturn(true);
+
+		controller.downloadAssembly(sampleId, assemblyId, response);
+
+		verify(sampleService).read(sampleId);
+		verify(sampleService).getGenomeAssemblyForSample(sample, assemblyId);
+	}
+	
+	@Test
+	public void testRemoveGenomeAssemblyFromSample() {
+		Long sampleId = 1L;
+		Long assemblyId = 2L;
+		GenomeAssembly genomeAssembly = TestDataFactory.constructGenomeAssembly();
+		Sample sample = new Sample();
+
+		when(sampleService.read(sampleId)).thenReturn(sample);
+		when(sampleService.getGenomeAssemblyForSample(sample, assemblyId)).thenReturn(genomeAssembly);
+		when(updateSamplePermission.isAllowed(any(Authentication.class), eq(sample))).thenReturn(true);
+		
+		RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
+		HttpServletRequest request = new MockHttpServletRequest();
+		
+		controller.removeGenomeAssemblyFromSample(attributes, sampleId, assemblyId, request, Locale.US);
+
+		verify(sampleService).removeGenomeAssemblyFromSample(sample, assemblyId);
 	}
 
 	// ************************************************************************************************
