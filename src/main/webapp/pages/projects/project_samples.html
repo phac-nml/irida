@@ -56,6 +56,14 @@
             }
         };
     </script>
+    <style>
+        tbody {
+            user-select: none;
+        }
+        tr.selected {
+            background-color: rgba(91, 192, 222, 1.00) !important;
+        }
+    </style>
 </head>
 <body>
 <main id="project-samples-main" layout:fragment="main">
@@ -64,11 +72,12 @@
            data:url="@{/projects/{id}/ajax/samples(id=${project.getId()})}">
         <thead>
         <tr>
-            <th data-data="sample.sampleName" th:text="#{project.samples.table.name}"></th>
-            <th data-data="organism" th:text="#{project.samples.table.organism}"></th>
-            <th data-data="project.label" th:text="#{project.samples.table.project}"></th>
+            <th data-orderable="false"></th>
+            <th data-data="sampleName" data-name="sample.sampleName" th:text="#{project.samples.table.name}"></th>
+            <th data-data="organism" data-name="sample.organism" th:text="#{project.samples.table.organism}"></th>
+            <th data-data="projectName" data-name="project.name" th:text="#{project.samples.table.project}"></th>
             <th class="dt-date" data-data="createdDate"  th:text="#{project.samples.table.created}"></th>
-            <th class="dt-date" data-data="modifiedDate" th:text="#{project.samples.table.modified}"></th>
+            <th class="dt-date" data-data="modifiedDate" data-name="sample.modifiedDate" th:text="#{project.samples.table.modified}"></th>
         </tr>
         </thead>
     </table>
