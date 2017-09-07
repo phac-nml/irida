@@ -69,7 +69,8 @@ const sampleConfig = Object.assign({}, tableConfig, {
       render(data, type, full) {
         // Render the name as a link to the actual project.
         return createItemLink({
-          url: `${window.PAGE.urls.project}${full.projectId}/samples/${full.id}`,
+          url: `${window.PAGE.urls
+            .project}${full.projectId}/samples/${full.id}`,
           label: data
           //width: "200px"
         });
@@ -102,5 +103,24 @@ const sampleConfig = Object.assign({}, tableConfig, {
   ]
 });
 
+// init the datatables
 $("#projects").DataTable(projectConfig);
 $("#samples").DataTable(sampleConfig);
+
+// update the page hash on tab click
+$('a[data-toggle="tab"]').on("shown.bs.tab", function(e) {
+  var hash = $(this).attr("href");
+  window.location.hash = hash;
+});
+
+$(document).ready(function() {
+  var hash = window.location.hash;
+
+  console.log("ready");
+
+  if (hash === "#project-tab") {
+    $('.nav-tabs a[href="#project-tab"]').tab("show");
+  } else if (hash === "#sample-tab") {
+    $('.nav-tabs a[href="#sample-tab"]').tab("show");
+  }
+});
