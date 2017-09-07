@@ -1,7 +1,7 @@
 import $ from "jquery";
 import _ from "lodash";
-import {addTooltip} from "./bootstrap-utilities";
-import {createIcon, ICONS} from "./fontawesome-utilities";
+import { addTooltip } from "./bootstrap-utilities";
+import { createIcon, ICONS } from "./fontawesome-utilities";
 
 /*
 <div class="row">
@@ -130,8 +130,12 @@ export function createItemLink({ url, label, width = "160px" }) {
  * @return {object} {{COLUMN_NAME: index}}
  */
 export function generateColumnOrderInfo(tableId) {
+  var selector = "thead th";
+  if (tableId) {
+    selector = tableId + " " + selector;
+  }
   const columns = {};
-  $(tableId + " thead th").each((index, elm) => {
+  $(selector).each((index, elm) => {
     const data = _.snakeCase($(elm).data("data")).toUpperCase();
     columns[data] = index;
   });
@@ -175,7 +179,9 @@ export function wrapCellContents({ text, width = "250px" }) {
  */
 export function createFilterTag({ text, type, handler }) {
   const remove = elm => {
-    $(elm).off("click").remove();
+    $(elm)
+      .off("click")
+      .remove();
   };
   const $filterTags = $(".filter-tags");
 
