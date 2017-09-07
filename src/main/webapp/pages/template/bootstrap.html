@@ -74,7 +74,7 @@
 			<div class="navbar-right">
 			<form class="navbar-form navbar-left" th:action="@{/search}" method="GET">
 				<div class="form-group input-group">
-					<input type="text" class="form-control" name="query" th:placeholder="#{nav.main.search}" th:value="${searchQuery}"/>
+					<input type="text" class="form-control" name="query" th:placeholder="#{nav.main.search}" th:value="${searchQuery}" autofocus="autofocus"/>
 					<span class="input-group-btn">
 					<button class="btn btn-default" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
 				</span>
