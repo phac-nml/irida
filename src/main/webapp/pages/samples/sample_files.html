@@ -266,8 +266,8 @@
 						<div class="btn-group-sm pull-right" role="group">
 							<button th:if="${canManageSample}"
 								class="btn btn-default remove-file"
-								th:with="sId=${sample.id + ', &#39;'' + assembly.getLabel() + ''&#39;'}"
-								data:ng-click="${'fileCtrl.deleteFile(' + sId + ')'}">
+								th:with="aId=${assembly.id + ', &#39;'' + assembly.getLabel() + ''&#39;'}"
+								data:ng-click="${'fileCtrl.deleteFile(' + aId + ')'}">
 								<span class="fa fa-fw fa-trash"></span>
 							</button>
 
@@ -365,13 +365,13 @@
 		</form>
 	</script>
 		<script type="text/ng-template" id="/confirm_assembly.html">
-		<form method="post" th:action="@{/samples/{sId}/files/assembly/{aId}/delete(sId=${sampleId},aId=${assemblyId})}">
+		<form method="post" th:action="@{/samples/{sId}/files/assembly/delete(sId=${sampleId})}">
 			<div class="modal-header">
 			<h3 class="modal-title" th:text="#{samples.files.assembly.remove.confirmation}"></h3>
 		</div>
 		<div class="modal-body">
 			<h4>{{ ::deleteCtrl.label }}</h4>
-			<input type="hidden" name="fileId" value="{{ deleteCtrl.fileId }}"/>
+			<input type="hidden" name="assemblyId" value="{{ deleteCtrl.fileId }}"/>
 		</div>
 		<div class="modal-footer">
 			<button type="button" class="btn btn-default" ng-click="deleteCtrl.cancel()" th:text="#{form.btn.cancel}">Cancel</button>

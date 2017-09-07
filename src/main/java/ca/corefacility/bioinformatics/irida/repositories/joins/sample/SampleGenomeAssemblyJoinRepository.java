@@ -33,6 +33,6 @@ public interface SampleGenomeAssemblyJoinRepository extends CrudRepository<Sampl
 	 *            The assembly id.
 	 * @return The {@link GenomeAssembly}.
 	 */
-	@Query(value = "SELECT * FROM sample_genome_assembly j WHERE j.sample_id = ?1 AND j.genome_assembly_id = ?2", nativeQuery = true)
+	@Query("FROM SampleGenomeAssemblyJoin j WHERE j.sample.id = ?1 AND j.genomeAssembly.id = ?2")
 	public SampleGenomeAssemblyJoin findBySampleAndAssemblyId(Long sampleId, Long assemblyId);
 }

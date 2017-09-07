@@ -451,9 +451,9 @@ public class SamplesController extends BaseController {
 	 *            the locale specified by the browser.
 	 * @return map stating the request was successful
 	 */
-	@RequestMapping(value = "/samples/{sampleId}/files/assembly/{assemblyId}/delete", method = RequestMethod.POST)
+	@RequestMapping(value = "/samples/{sampleId}/files/assembly/delete", method = RequestMethod.POST)
 	public String removeGenomeAssemblyFromSample(RedirectAttributes attributes, @PathVariable Long sampleId,
-			@PathVariable Long assemblyId, HttpServletRequest request, Locale locale) {
+			@RequestParam Long assemblyId, HttpServletRequest request, Locale locale) {
 		Sample sample = sampleService.read(sampleId);
 		GenomeAssembly genomeAssembly = sampleService.getGenomeAssemblyForSample(sample, assemblyId);
 
