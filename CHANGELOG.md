@@ -5,6 +5,7 @@ Changes
 ----------------
 * [Developer] Removed the requirement for pipeline developers to add an `Analysis` subclass and database tables for pipelines.  All pipeline results can now be stored in the `Analysis` class.
 * [Developer]: Removed dandelion from: Announcements, Cart, Sequencing Runs, Login, Project Settings - Landing
+* [UI]: Added global project and sample search from top toolbar.
 
 0.17.0 to 0.18.0
 ----------------
