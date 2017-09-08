@@ -247,5 +247,8 @@ public interface SampleService extends CRUDService<Long, Sample> {
 
 	public Page<ProjectSampleJoin> searchSamplesForUser(String query, final Integer page, final Integer count,
 			final Sort sort);
+	
+	public Page<ProjectSampleJoin> searchAllSamples(String query, final Integer page, final Integer count,
+			final Sort sort);
 
 }

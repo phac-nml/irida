@@ -467,6 +467,15 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		return psjRepository.findAll(sampleForUserSpecification(loggedIn, query), pr);
 	}
 	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@Override
+	public Page<ProjectSampleJoin> searchAllSamples(String query, final Integer page, final Integer count,
+			final Sort sort) {
+		final PageRequest pr = new PageRequest(page, count, sort);
+
+		return psjRepository.findAll(sampleForUserSpecification(null, query), pr);
+	}
+	
 	/**
 	 * Verify that the given sort properties array is not null or empty. If it
 	 * is, give a default sort property.
@@ -491,9 +500,16 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 			@Override
 			public Predicate toPredicate(Root<ProjectSampleJoin> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-				Predicate sampleAccess = cb.or(individualProjectMembership(root, query, cb), groupProjectMembership(root, query, cb));
+				Predicate search;
+				if(user != null){
+					Predicate sampleAccess= cb.or(individualProjectMembership(root, query, cb), groupProjectMembership(root, query, cb));
+					search = cb.and(sampleAccess, sampleProperties(root, query, cb));
+				}
+				else{
+					search = sampleProperties(root, query, cb);
+				}
 				
-				return cb.and(sampleAccess, sampleProperties(root, query, cb)); 
+				return search; 
 			}
 			
 			private Predicate sampleProperties(final Root<ProjectSampleJoin> root,

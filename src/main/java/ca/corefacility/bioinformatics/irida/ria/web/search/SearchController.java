@@ -51,9 +51,16 @@ public class SearchController {
 	 */
 	@RequestMapping("/search/ajax/projects")
 	@ResponseBody
-	public DataTablesResponse searchProjects(@RequestParam String query, @DataTablesRequest DataTablesParams params) {
-		final Page<Project> page = projectService.findProjectsForUser(query, params.getCurrentPage(),
-				params.getLength(), params.getSort());
+	public DataTablesResponse searchProjects(@RequestParam String query,
+			@RequestParam(required = false, defaultValue = "false") boolean global,
+			@DataTablesRequest DataTablesParams params) {
+		Page<Project> page;
+		if (global) {
+			page = projectService.findAllProjects(query, params.getCurrentPage(), params.getLength(), params.getSort());
+		} else {
+			page = projectService.findProjectsForUser(query, params.getCurrentPage(), params.getLength(),
+					params.getSort());
+		}
 		List<DataTablesResponseModel> projects = page.getContent().stream().map(this::createDataTablesProject)
 				.collect(Collectors.toList());
 		return new DataTablesResponse(params, page, projects);
@@ -70,7 +77,9 @@ public class SearchController {
 	 */
 	@RequestMapping("/search/ajax/samples")
 	@ResponseBody
-	public DataTablesResponse searchSamples(@RequestParam String query, @DataTablesRequest DataTablesParams params) {
+	public DataTablesResponse searchSamples(@RequestParam String query,
+			@RequestParam(required = false, defaultValue = "false") boolean global,
+			@DataTablesRequest DataTablesParams params) {
 
 		Sort originalSort = params.getSort();
 		List<Sort.Order> orders = Lists.newArrayList();
@@ -79,8 +88,13 @@ public class SearchController {
 		});
 
 		Sort newSort = new Sort(orders);
-		Page<ProjectSampleJoin> samplePage = sampleService.searchSamplesForUser(query, params.getCurrentPage(),
-				params.getLength(), newSort);
+		Page<ProjectSampleJoin> samplePage;
+		if (global) {
+			samplePage = sampleService.searchAllSamples(query, params.getCurrentPage(), params.getLength(), newSort);
+		} else {
+			samplePage = sampleService.searchSamplesForUser(query, params.getCurrentPage(), params.getLength(),
+					newSort);
+		}
 
 		List<DataTablesResponseModel> samples = samplePage.getContent().stream().map(this::createDataTablesSample)
 				.collect(Collectors.toList());
@@ -97,8 +111,10 @@ public class SearchController {
 	 * @return name of the search view
 	 */
 	@RequestMapping("/search")
-	public String search(@RequestParam String query, Model model) {
+	public String search(@RequestParam String query,
+			@RequestParam(required = false, defaultValue = "false") boolean global, Model model) {
 		model.addAttribute("searchQuery", query);
+		model.addAttribute("searchGlobal", global);
 
 		return "search/search";
 	}

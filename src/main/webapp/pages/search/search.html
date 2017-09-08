@@ -6,13 +6,13 @@
     <script th:inline="javascript">
         var PAGE = {
             urls: {
-                projects: /*[[@{/search/ajax/projects?query={query}(query=${searchQuery})}]]*/ "",
-                samples: /*[[@{/search/ajax/samples?query={query}(query=${searchQuery})}]]*/ "",
+                projects: /*[[@{/search/ajax/projects(query=${searchQuery},global=${searchGlobal})}]]*/ "",
+                samples: /*[[@{/search/ajax/samples(query=${searchQuery},global=${searchGlobal})}]]*/ "",
                 project: /*[[@{/projects/}]]*/ ""
             },
             i18n: {
                 remote: /*[[#{projects.table.remoteSynchronized}]]*/ ""
-            }
+            },
         };
     </script>
 </head>
