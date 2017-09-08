@@ -479,6 +479,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		if (join != null) {
 			logger.debug("Removing genome assembly [" + genomeAssemblyId + "] from sample [" + sample.getId() + "]");
 			sampleGenomeAssemblyJoinRepository.delete(join.getId());
+		} else {
+			logger.trace("Genome assembly [" + genomeAssemblyId + "] is not associated with sample [" + sample.getId() + "]. Ignoring.");
 		}
 	}
 
@@ -499,6 +501,10 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	public GenomeAssembly getGenomeAssemblyForSample(Sample sample, Long genomeAssemblyId) {
 		SampleGenomeAssemblyJoin join = sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(sample.getId(),
 				genomeAssemblyId);
+		if (join == null) {
+			throw new EntityNotFoundException("No join found between sample [" + sample.getId() + "] and genome assembly [" + genomeAssemblyId + "]");
+		}
+		
 		return join.getObject();
 	}
 }

@@ -42,9 +42,9 @@
 	<analysis_submission_parameters />
 	<project_analysis_submission/>
 	
-	<sample_genome_assembly />
-	<genome_assembly_analysis />
 	<genome_assembly />
+	<genome_assembly_analysis />
+	<sample_genome_assembly />
 
 	<password_reset />
 	
