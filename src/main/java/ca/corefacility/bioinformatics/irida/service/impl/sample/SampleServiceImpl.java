@@ -478,7 +478,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 				genomeAssemblyId);
 		if (join != null) {
 			logger.debug("Removing genome assembly [" + genomeAssemblyId + "] from sample [" + sample.getId() + "]");
-			sampleGenomeAssemblyJoinRepository.delete(join.getObject().getId());
+			sampleGenomeAssemblyJoinRepository.delete(join.getId());
 		}
 	}
 
