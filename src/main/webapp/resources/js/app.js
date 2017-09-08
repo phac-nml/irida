@@ -2,6 +2,7 @@ import $ from "jquery";
 import angular from "angular";
 import _ from "lodash";
 import "./modules/cart/irida.cart";
+import "./pages/search/irida.search";
 
 const deps = _.union(window.dependencies || [], [
   "ngAria",

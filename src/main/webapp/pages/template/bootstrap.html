@@ -72,17 +72,24 @@
 				</li>
 			</ul>
 			<div class="navbar-right">
-			<form class="navbar-form navbar-left" th:action="@{/search}" method="GET">
+			<form id="global-search" class="navbar-form navbar-left" th:action="@{/search}" method="GET">
 				<div class="form-group input-group">
 					<input type="text" class="form-control" name="query" th:placeholder="#{nav.main.search}" th:value="${searchQuery}" autofocus="autofocus"/>
-					<span class="input-group-addon" sec:authorize="hasRole('ROLE_ADMIN')">
-						<i class="fa fa-globe" aria-hidden="true"></i>
-						<input type="checkbox" name="global" value="true" th:attr="checked=${searchGlobal}"/>
-					</span>
-					<span class="input-group-btn">
-						<button class="btn btn-default" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
-					</span>
+					
+					<div class="input-group-btn">
+						<button class="btn btn-default" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+						<th:block sec:authorize="hasAnyRole('ROLE_ADMIN')">
+							<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu dropdown-menu-right">
+								<li><a href="#" id="search-admin-link">_Search all projects/samples_</a></li>
+							</ul>
+						</th:block>
+					</div>
+					
 				</div>
+				<input id="admin-global-search" type="hidden" name="global" value="true"/>
 			</form>
 
 			<ul class="nav navbar-nav navbar-right">
