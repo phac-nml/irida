@@ -16,6 +16,7 @@ import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
@@ -25,6 +26,9 @@ import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProjectS
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
+/**
+ * Controller to manage global searching
+ */
 @Controller
 public class SearchController {
 	private final ProjectService projectService;
@@ -36,16 +40,34 @@ public class SearchController {
 		this.sampleService = sampleService;
 	}
 
+	/**
+	 * Search all projects a user is a member of based on a query string
+	 * 
+	 * @param query
+	 *            the query string
+	 * @param params
+	 *            parameters for a datatables response
+	 * @return a {@link DataTablesResponse} to display the search results
+	 */
 	@RequestMapping("/search/ajax/projects")
 	@ResponseBody
 	public DataTablesResponse searchProjects(@RequestParam String query, @DataTablesRequest DataTablesParams params) {
-		final Page<Project> page = projectService
-				.findProjectsForUser(query, params.getCurrentPage(), params.getLength(),
-						params.getSort());
-		List<DataTablesResponseModel> projects = page.getContent().stream().map(this::createDataTablesProject).collect(Collectors.toList());
+		final Page<Project> page = projectService.findProjectsForUser(query, params.getCurrentPage(),
+				params.getLength(), params.getSort());
+		List<DataTablesResponseModel> projects = page.getContent().stream().map(this::createDataTablesProject)
+				.collect(Collectors.toList());
 		return new DataTablesResponse(params, page, projects);
 	}
-	
+
+	/**
+	 * Search all {@link Sample}s in projects for a user based on a query string
+	 * 
+	 * @param query
+	 *            the query string
+	 * @param params
+	 *            parameters for a datatables response
+	 * @return a {@link DataTablesResponse} to display search results
+	 */
 	@RequestMapping("/search/ajax/samples")
 	@ResponseBody
 	public DataTablesResponse searchSamples(@RequestParam String query, @DataTablesRequest DataTablesParams params) {
@@ -62,10 +84,18 @@ public class SearchController {
 
 		List<DataTablesResponseModel> samples = samplePage.getContent().stream().map(this::createDataTablesSample)
 				.collect(Collectors.toList());
-		// return sampleService.searchSamplesForUser(query);
 		return new DataTablesResponse(params, samplePage, samples);
 	}
 
+	/**
+	 * Get the search view with a given query
+	 * 
+	 * @param query
+	 *            the query string
+	 * @param model
+	 *            model for the view
+	 * @return name of the search view
+	 */
 	@RequestMapping("/search")
 	public String search(@RequestParam String query, Model model) {
 		model.addAttribute("searchQuery", query);
@@ -85,8 +115,16 @@ public class SearchController {
 	private DTProject createDataTablesProject(Project project) {
 		return new DTProject(project, sampleService.getNumberOfSamplesForProject(project));
 	}
-	
-	private DTProjectSamples createDataTablesSample(ProjectSampleJoin join){
+
+	/**
+	 * Extract the details of a {@link ProjectSampleJoin} into a
+	 * {@link DTProjectSamples}
+	 * 
+	 * @param join
+	 *            the {@link ProjectSampleJoin}
+	 * @return the created {@link DTProjectSamples}
+	 */
+	private DTProjectSamples createDataTablesSample(ProjectSampleJoin join) {
 		return new DTProjectSamples(join, Lists.newArrayList());
 	}
 }
