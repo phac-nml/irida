@@ -45,6 +45,8 @@ public class SearchController {
 	 * 
 	 * @param query
 	 *            the query string
+	 * @param global
+	 *            Whether to perform an admin global search
 	 * @param params
 	 *            parameters for a datatables response
 	 * @return a {@link DataTablesResponse} to display the search results
@@ -70,7 +72,8 @@ public class SearchController {
 	 * Search all {@link Sample}s in projects for a user based on a query string
 	 * 
 	 * @param query
-	 *            the query string
+	 *            the query string * @param global Whether to perform an admin
+	 *            global search
 	 * @param params
 	 *            parameters for a datatables response
 	 * @return a {@link DataTablesResponse} to display search results
@@ -105,7 +108,8 @@ public class SearchController {
 	 * Get the search view with a given query
 	 * 
 	 * @param query
-	 *            the query string
+	 *            the query string * @param global Whether to perform an admin
+	 *            global search
 	 * @param model
 	 *            model for the view
 	 * @return name of the search view
