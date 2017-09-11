@@ -184,8 +184,8 @@ public class ProjectSamplesController {
 			return "redirect:/projects/" + projectId + "/samples/" + join.getObject().getId();
 		} catch (EntityExistsException e) {
 			// This will be thrown if a sample already exists in the project with this name.
-			logger.debug("TKLEJFLSDJFKLSDJFKLDJFKLSDJFSDJFLKJSDFJSKLDFJLKSDJFLKSDJFKJDKLFJKLFKSDKFJDSKFKSDFKSDFKLDFKJDKSDKFKSJFKSFKDFKJDFKLDJSFKLDSJFKLJSDFKLJSDF");
-			return "projects/project_add_sample";
+			// This should have already been addressed on the client
+			return "redirect:/projects/" + projectId + "/samples/new";
 		}
 	}
 
