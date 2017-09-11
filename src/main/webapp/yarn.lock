@@ -2,6 +2,10 @@
 # yarn lockfile v1
 
 
+"@bassettsj/livestamp@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@bassettsj/livestamp/-/livestamp-2.0.0.tgz#87640e82bb241b820407fb39275c77436e1bcf85"
+
 "@gulp-sourcemaps/map-sources@1.X":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@gulp-sourcemaps/map-sources/-/map-sources-1.0.0.tgz#890ae7c5d8c877f6d384860215ace9d7ec945bda"
@@ -3035,7 +3039,7 @@ jquery-mousewheel@~3.1.13:
   version "3.1.13"
   resolved "https://registry.yarnpkg.com/jquery-mousewheel/-/jquery-mousewheel-3.1.13.tgz#06f0335f16e353a695e7206bf50503cb523a6ee5"
 
-jquery-validation@^1.16.0:
+jquery-validation@^1.17.0:
   version "1.17.0"
   resolved "https://registry.yarnpkg.com/jquery-validation/-/jquery-validation-1.17.0.tgz#ab66b6b583d7740b9bbd148993e50e8ac041f35b"
   dependencies:
@@ -4750,9 +4754,9 @@ scss-tokenizer@^0.2.3:
     js-base64 "^2.1.8"
     source-map "^0.4.2"
 
-select2-bootstrap-theme@0.1.0-beta.9:
-  version "0.1.0-beta.9"
-  resolved "https://registry.yarnpkg.com/select2-bootstrap-theme/-/select2-bootstrap-theme-0.1.0-beta.9.tgz#ceb5d155b789edf4151033f07142df8898b6031d"
+select2-bootstrap-theme@^0.1.0-beta.10:
+  version "0.1.0-beta.10"
+  resolved "https://registry.yarnpkg.com/select2-bootstrap-theme/-/select2-bootstrap-theme-0.1.0-beta.10.tgz#b9426ecfc03bf4a235e76a132377574310469ac0"
 
 select2@^4.0.3:
   version "4.0.3"
