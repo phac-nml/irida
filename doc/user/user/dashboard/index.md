@@ -41,23 +41,23 @@ From the main menu, you can click on the "Projects" button to access all project
 
 For more information about managing your projects, please see the [managing projects](../project) section.
 
-### Pipelines
+### Analyses
+
+The analyses menu displays information about analysis pipelines available in IRIDA and links to how to monitory your running pipelines.
+
+#### Pipelines
+{:.no_toc}
 
 You can view the pipelines that are installed in IRIDA by clicking on the "Pipelines" button.
 
 For more information about running pipelines, please see the [launching pipelines](../pipelines) section.
 
-### Analyses
+#### Your Analyses
+{:.no_toc}
 
 After you've launched a pipeline, you can monitor its progress and view results by clicking on the "Analyses" button.
 
 For more information about viewing pipeline results and working with analysis, please see the [viewing pipeline results](../pipelines/#viewing-pipeline-results) section.
-
-### Users
-
-From the main menu, you can click on the "Users" button to access and manage user groups. You may create a new user group by clicking on "Users", then "Create Group".
-
-For more information about managing user groups, please see the [managing user groups](../user-groups) section.
 
 Cart
 ----
@@ -72,8 +72,21 @@ You can click on the cart button to reveal more information about the contents o
 
 For more information about using the cart, please see the [launching pipelines](../pipelines) section, and the [managing samples](../samples) section.
 
-Remote instances of IRIDA
--------------------------
+Settings
+--------
+
+The <i class="fa fa-cog"></i> menu allows you to manage a number of settings for IRIDA.
+
+![Settings panel](images/settings-panel.png)
+
+### Groups
+
+From the main menu, you can click on the "Groups" link to view the groups available on the system.  You may create a new user group by clicking on "Create Group".
+
+For more information about managing user groups, please see the [managing user groups](../user-groups) section.
+
+### Remote instances of IRIDA
+
 Remote instances of IRIDA can be used as data sources for associated projects and worklows.  The "Remote IRIDA Connections" section allows users to connect to remote instances of IRIDA.  
 
 **Note**: You must have been provided with a username and password for a remote instance of IRIDA before you can use the data located on that instance.
@@ -82,7 +95,8 @@ Remote instances of IRIDA can be used as data sources for associated projects an
 
 Administrators can add or remove available remote instances of IRIDA from this menu.  Details can be found in the [administrator guide](../../administrator/#managing-remote-irida-connections).
 
-### Connecting to remote instances of IRIDA
+#### Connecting to remote instances of IRIDA
+{:.no_toc}
 
 The Remote Connections list will show you all configured remote instances of IRIDA.  To connect, click the "Connect" button next to the right of the connection status.
 
