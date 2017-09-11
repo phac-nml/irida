@@ -3,8 +3,8 @@ Changes
 
 0.18.0 to 0.19.0
 ----------------
-* [Developer]: Fixed issue where bootstrap was being loaded twice onto the page.
-* [UI]: Fixed URL for concatenation of sample sequence files.
+* [Developer]: Fixed issue where bootstrap was being loaded twice onto the page. (0.18.1)
+* [UI]: Fixed URL for concatenation of sample sequence files. (0.18.1)
 
 0.17.0 to 0.18.0
 ----------------
