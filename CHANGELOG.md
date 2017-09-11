@@ -5,6 +5,8 @@ Changes
 ----------------
 * [Developer] Removed the requirement for pipeline developers to add an `Analysis` subclass and database tables for pipelines.  All pipeline results can now be stored in the `Analysis` class.
 * [Developer]: Removed dandelion from: Announcements, Cart, Sequencing Runs, Login, Project Settings - Landing
+* [Developer]: Fixed issue where bootstrap was being loaded twice onto the page. (0.18.1)
+* [UI]: Fixed URL for concatenation of sample sequence files. (0.18.1)
 
 0.17.0 to 0.18.0
 ----------------
