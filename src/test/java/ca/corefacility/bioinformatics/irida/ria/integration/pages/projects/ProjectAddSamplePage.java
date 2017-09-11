@@ -1,10 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
-import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
@@ -17,17 +19,10 @@ public class ProjectAddSamplePage extends AbstractPage {
 	@FindBy(name = "sampleName")
 	private WebElement sampleNameInput;
 
-	@FindBy(id = "createBtn")
+	@FindBy(id = "save-btn")
 	private WebElement createBtn;
-	
-	@FindBy(id = "required-name-error")
-	private WebElement requiredNameError;
-	
-	@FindBy(id = "minlength-name-error")
-	private WebElement minlengthNameError;
-	
-	@FindBy(id = "nameValidator-name-error")
-	private WebElement nameValidatorNameError;
+
+	@FindBy(id = "sampleName-error") private WebElement sampleNameError;
 
 	@FindBy(css = "a.select2-choice")
 	private WebElement organismSelect2;
@@ -54,27 +49,39 @@ public class ProjectAddSamplePage extends AbstractPage {
 	public void enterSampleName(String name) {
 		sampleNameInput.clear();
 		sampleNameInput.sendKeys(name);
-		waitForTime(400);
+		sampleNameInput.sendKeys(Keys.chord(Keys.SHIFT, Keys.TAB));
 	}
 
 	public void createSample() {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.elementToBeClickable(createBtn));
 		createBtn.click();
-		waitForElementVisible(By.id("sample-page-title"));
 	}
 
 	public boolean isCreateButtonEnabled() {
+		// Give the button a moment to update.
+		waitForTime(500);
 		return createBtn.isEnabled();
 	}
 
 	public boolean isMinLengthNameErrorVisible() {
-		return minlengthNameError.isDisplayed();
+		String text = "Sample name must be at least 3 letters.";
+		return getErrorText(text).equals(text);
 	}
 
 	public boolean isRequiredNameErrorVisible() {
-		return requiredNameError.isDisplayed();
+		String text = "Sample name is required.";
+		return getErrorText(text).equals(text);
 	}
 
 	public boolean isInvalidCharactersInNameVisible() {
-		return nameValidatorNameError.isDisplayed();
+		String text = "Sample names should only include letters, numbers, and certain special characters !, @, #, $, %, _, -, and `. Sample names cannot include white space characters (spaces or tabs).";
+		return getErrorText(text).contains(text);
+	}
+
+	private String getErrorText(String text) {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.textToBePresentInElement(sampleNameError, text));
+		return sampleNameError.getText();
 	}
 }
