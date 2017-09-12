@@ -29,6 +29,10 @@
 		modifiedDate="2013-07-18 14:20:19.0" filePath="/tmp/file.fasta"
 		fileRevisionNumber="1" />
 		
+	<reference_file id="2" createdDate="2013-07-18 14:20:19.0"
+		modifiedDate="2013-07-18 14:20:19.0" filePath="/tmp/file2.fasta"
+		fileRevisionNumber="1" />
+		
 	<analysis id="1" createdDate="2013-07-18 00:00:00.0"
 		description="FastQC" executionManagerAnalysisId="fastqc" />
 	<analysis_fastqc id="1" duplicationLevelChart="x"

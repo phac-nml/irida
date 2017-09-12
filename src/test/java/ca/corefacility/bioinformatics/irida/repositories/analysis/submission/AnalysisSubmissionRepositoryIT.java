@@ -339,4 +339,32 @@ public class AnalysisSubmissionRepositoryIT {
 		Set<AnalysisSubmission> submissions = analysisSubmissionRepository.findBySubmitter(submitter2);
 		assertEquals("there should be no submissions found", 0, submissions.size());
 	}
+	
+	/**
+	 * Tests successfully getting analysis submissions by a reference file.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testFindByReferenceFileSuccess() {
+		analysisSubmissionRepository.save(analysisSubmission);
+		analysisSubmissionRepository.save(analysisSubmission2);
+
+		Set<AnalysisSubmission> submissions = analysisSubmissionRepository.findByReferenceFile(referenceFile);
+		assertEquals("should have gotten 2 analysis submissions", 2, submissions.size());
+	}
+
+	/**
+	 * Tests successfully getting analysis submissions by a reference file.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testFindByReferenceFileNone() {
+		analysisSubmissionRepository.save(analysisSubmission);
+		analysisSubmissionRepository.save(analysisSubmission2);
+
+		ReferenceFile referenceFile = referenceFileRepository.findOne(2L);
+
+		Set<AnalysisSubmission> submissions = analysisSubmissionRepository.findByReferenceFile(referenceFile);
+		assertEquals("should have gotten 0 analysis submissions", 0, submissions.size());
+	}
 }

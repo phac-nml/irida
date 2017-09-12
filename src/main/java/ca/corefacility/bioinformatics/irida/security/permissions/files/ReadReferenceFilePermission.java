@@ -12,6 +12,7 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectReferenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
+import ca.corefacility.bioinformatics.irida.security.permissions.analysis.ReadAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ReadProjectPermission;
 
 /**
@@ -25,14 +26,17 @@ public class ReadReferenceFilePermission extends BasePermission<ReferenceFile, L
 	public static final String PERMISSION_PROVIDED = "canReadReferenceFile";
 
 	private final ReadProjectPermission readProjectPermission;
+	private final ReadAnalysisSubmissionPermission readAnalysisSubmissionPermission;
 	private final ProjectReferenceFileJoinRepository prfRepository;
 
 	@Autowired
 	public ReadReferenceFilePermission(final ReferenceFileRepository referenceFileRepository,
-			final ProjectReferenceFileJoinRepository prfRepository, final ReadProjectPermission readProjectPermission) {
+			final ProjectReferenceFileJoinRepository prfRepository, final ReadProjectPermission readProjectPermission,
+			final ReadAnalysisSubmissionPermission readAnalysisSubmissionPermission) {
 		super(ReferenceFile.class, Long.class, referenceFileRepository);
 		this.prfRepository = prfRepository;
 		this.readProjectPermission = readProjectPermission;
+		this.readAnalysisSubmissionPermission = readAnalysisSubmissionPermission;
 	}
 
 	@Override
@@ -49,6 +53,7 @@ public class ReadReferenceFilePermission extends BasePermission<ReferenceFile, L
 		List<Join<Project, ReferenceFile>> findProjectsForReferenceFile = prfRepository
 				.findProjectsForReferenceFile(targetDomainObject);
 
+		
 		return findProjectsForReferenceFile.stream()
 				.anyMatch(j -> readProjectPermission.isAllowed(authentication, j.getSubject()));
 	}
