@@ -64,7 +64,7 @@ function announcements(svc, $compile) {
   };
 }
 
-angular
+export const DashboardAnnouncementsModule = angular
   .module("irida.announcements", ["hc.marked"])
   .service("AnnouncementsService", ["$http", AnnouncementsService])
   .directive("announcements", [
@@ -78,7 +78,7 @@ angular
     "AnnouncementsService",
     function($window, $scope, AnnouncementsService) {
       $scope.markRead = function markRead(aID, event) {
-        var url = winow.PAGE.urls.link + "/read/" + aID;
+        var url = window.PAGE.urls.link + "/read/" + aID;
         AnnouncementsService.markAnnouncementRead(url);
 
         var target = angular
@@ -97,4 +97,4 @@ angular
         }
       };
     }
-  ]);
+  ]).name;

@@ -1,5 +1,6 @@
 import angular from "angular";
 import "./../../../css/modules/events.css";
+import { AppModule } from "../../pages/visualizations/phylogenetics/components/app/app.module";
 
 /**
  * Service to get events DOM from server.
@@ -73,7 +74,8 @@ function events(svc, $compile) {
   };
 }
 
-angular
+export const EventsModule = angular
   .module("irida.events", [])
   .service("EventsService", ["$http", EventsService])
-  .directive("events", ["EventsService", "$compile", events]);
+  .directive("events", ["EventsService", "$compile", events]).name;
+
