@@ -5,6 +5,7 @@ Changes
 ----------------
 * [Developer]: Fixed issue where bootstrap was being loaded twice onto the page. (0.18.1)
 * [UI]: Fixed URL for concatenation of sample sequence files. (0.18.1)
+* [UI]: Fixed issued with layout of the events panel on the dashboard page. (0.18.2)
 
 0.17.0 to 0.18.0
 ----------------
