@@ -5,10 +5,7 @@
       layout:decorator="template/page">
 <head>
   <title th:text="#{dashboard.title}">THIS IS SOMETHING WRONG</title>
-  <link rel="stylesheet" href="/resources/css/modules/events.css"
-        th:href="@{/resources/css/modules/events.css}"/>
-  <link rel="stylesheet" href="/resources/css/modules/announcements.css"
-        th:href="@{/resources/css/modules/announcements.css}"/>
+  <link rel="stylesheet" th:href="@{/resources/css/modules/announcements.css}"/>
   <script th:inline="javascript">
     var PAGE = {
       urls: {
@@ -58,16 +55,10 @@
 </div>
 
 <th:block layout:fragment="scripts">
-  <script src="/resources/bower_components/livestampjs/livestamp.min.js"
-          th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}"></script>
-  <script src="/resources/js/modules/events/events.js"
-          th:src="@{/resources/js/modules/events/events.js}"></script>
-  <script src="/resources/bower_components/marked/marked.min.js"
-          th:src="@{/resources/bower_components/marked/marked.min.js}"></script>
-  <script src="/resources/bower_components/angular-marked/angular-marked.min.js"
-          th:src="@{/resources/bower_components/angular-marked/angular-marked.min.js}"></script>
-  <script src="/resources/js/pages/announcement/announcementDashboard.js"
-          th:src="@{/resources/js/pages/announcement/announcementDashboard.js}"></script>
+  <script th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}"></script>
+  <script th:src="@{/resources/bower_components/marked/marked.min.js}"></script>
+  <script th:src="@{/resources/bower_components/angular-marked/angular-marked.min.js}"></script>
+  <script th:src="@{/resources/js/build/dashboard.bundle.js}"></script>
 </th:block>
 </body>
 

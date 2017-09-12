@@ -5,6 +5,7 @@
  */
 module.exports = {
   app: "./resources/js/app.js",
+  dashboard: "./resources/js/pages/dashboard.js",
   projects: "./resources/js/pages/projects/projects.js",
   "samples-metadata-import":
     "./resources/js/pages/projects/samples-metadata-import/index.js",
