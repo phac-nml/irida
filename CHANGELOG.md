@@ -5,6 +5,8 @@ Changes
 ----------------
 * [Developer]: Fixed issue where bootstrap was being loaded twice onto the page. (0.18.1)
 * [UI]: Fixed URL for concatenation of sample sequence files. (0.18.1)
+* [UI]: Fix broken link for concatenating files. (0.18.2)
+* [UI]: Fix broken permissions for downloading reference files not associated with a project. (0.18.2)
 
 0.17.0 to 0.18.0
 ----------------
