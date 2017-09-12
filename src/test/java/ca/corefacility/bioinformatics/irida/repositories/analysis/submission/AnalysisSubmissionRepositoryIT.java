@@ -130,10 +130,10 @@ public class AnalysisSubmissionRepositoryIT {
 		
 		analysisSubmission2b = AnalysisSubmission.builder(workflowId).name(analysisName2)
 				.inputFiles(singleFiles2).referenceFile(referenceFile2).build();
-		analysisSubmission2.setRemoteAnalysisId(analysisId2);
-		analysisSubmission2.setAnalysisState(AnalysisState.SUBMITTING);
-		analysisSubmission2.setSubmitter(submitter2);
-		analysisSubmission2.setAnalysisCleanedState(AnalysisCleanedState.NOT_CLEANED);
+		analysisSubmission2b.setRemoteAnalysisId(analysisId2);
+		analysisSubmission2b.setAnalysisState(AnalysisState.SUBMITTING);
+		analysisSubmission2b.setSubmitter(submitter2);
+		analysisSubmission2b.setAnalysisCleanedState(AnalysisCleanedState.NOT_CLEANED);
 	}
 
 	/**

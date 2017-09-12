@@ -66,7 +66,8 @@ public class ReadReferenceFilePermission extends BasePermission<ReferenceFile, L
 		// Allowed to read reference file if they have permission on an analysis
 		// submission using this file, or if they have permission on a project
 		// with this reference file.
-		return readAnalysisSubmissionPermission.isAllowed(authentication, analysisSubmissions)
+		return (analysisSubmissions.size() > 0
+				&& readAnalysisSubmissionPermission.isAllowed(authentication, analysisSubmissions))
 				|| findProjectsForReferenceFile.stream()
 						.anyMatch(j -> readProjectPermission.isAllowed(authentication, j.getSubject()));
 	}
