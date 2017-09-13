@@ -1,4 +1,5 @@
 (function(factory) {
+  // Default DataTables plugin setup.
   if (typeof define === "function" && define.amd) {
     // AMD
     define(["jquery", "datatables.net"], function($) {
@@ -29,10 +30,26 @@
     version: "0.0.1"
   };
 
+  /**
+   * Internationalization Helper
+   */
+  function i18n(label, def) {
+    return function(dt) {
+      return dt.i18n(label, def);
+    };
+  }
+
+  /**
+   * Initialize the plugin.
+   * @param {object} dt - the current DataTable
+   */
   DataTable.select.init = function(dt) {
     const ctx = dt.settings()[0];
+    // Get the configuration for the selection from initialization object.
     const init = ctx.oInit.select;
+    console.log(init);
     const defaults = DataTable.defaults.select;
+    console.log(defaults);
     const opts = init === undefined ? defaults : init;
 
     // Default items
@@ -219,11 +236,13 @@
     api.on("selection-count.dt", function(e, size) {
       let text = "";
       if (0 === size) {
-        text = "No samples selected";
+        text = api.i18n("select.none", "No samples selected");
       } else if (1 === size) {
-        text = "1 sample selected";
+        text = api.i18n("select.one", "1 sample selected");
       } else if (1 < size) {
-        text = `${size} samples selected`;
+        text = api
+          .i18n("select.other", "1 sample selected")
+          .replace("{count}", size);
       }
       $(".selected-counts").html(`<div>${text}</div>`);
     });
@@ -232,28 +251,22 @@
   /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * BUTTONS
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-  /**
-  * Select All
-  */
-  $.fn.dataTable.ext.buttons.selectAll = {
-    text: "_SELECT_ALL_",
-    className: "btn-sm",
-    action(e, dt, node, config) {
-      dt.select.selectAll();
+  $.extend(DataTable.ext.buttons, {
+    selectAll: {
+      text: i18n("buttons.selectAll", "Select All"),
+      className: "btn-sm",
+      action(e, dt, node, config) {
+        dt.select.selectAll();
+      }
+    },
+    selectNone: {
+      text: i18n("buttons.selectNone", "Select None"),
+      className: "btn-sm",
+      action(e, dt, node, config) {
+        dt.select.selectNone();
+      }
     }
-  };
-
-  /**
-   * Select None
-   */
-  $.fn.dataTable.ext.buttons.selectNone = {
-    text: "_SELECT_NONE_",
-    className: "btn-sm",
-    action(e, dt, node, config) {
-      dt.select.selectNone();
-    }
-  };
+  });
 
   /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * Initialisation

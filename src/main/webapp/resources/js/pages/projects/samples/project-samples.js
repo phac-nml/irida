@@ -36,6 +36,13 @@ const config = Object.assign({}, tableConfig, {
   order: [[COLUMNS.MODIFIED_DATE, "asc"]],
   rowId: "DT_RowId",
   buttons: ["selectAll", "selectNone"],
+  language: {
+    select: window.PAGE.i18n.select,
+    buttons: {
+      selectAll: window.PAGE.i18n.buttons.selectAll,
+      selectNone: window.PAGE.i18n.buttons.selectNone
+    }
+  },
   columnDefs: [
     {
       orderable: false,

@@ -48,11 +48,15 @@
                     days60: /*[[#{project.sample.filter.date.days60}]]*/ "Last 60 Days",
                     days120: /*[[#{project.sample.filter.date.days120}]]*/ "Last 120 Days"
                 },
-                selectedCounts: {
-                    none: /*[[#{project.samples.counts.none}]]*/ "No samples selected",
-                    one: /*[[#{project.samples.counts.one}]]*/ "1 sample selected",
-                    other: /*[[#{project.samples.counts.more}]]*/ "{count} samples selected"
-                }
+              buttons: {
+                selectAll: /*[[#{project.samples.select.selectAll}]]*/ "Select All",
+                selectNone: /*[[#{project.samples.select.selectNone}]]*/ "Select None"
+              },
+              select: {
+                none: /*[[#{project.samples.counts.none}]]*/ "No samples selected",
+                one: /*[[#{project.samples.counts.one}]]*/ "1 sample selected",
+                other: /*[[#{project.samples.counts.more}]]*/ "{count} samples selected"
+              }
             }
         };
     </script>
