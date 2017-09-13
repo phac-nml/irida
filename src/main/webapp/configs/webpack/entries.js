@@ -9,6 +9,7 @@ module.exports = {
   projects: "./resources/js/pages/projects/projects.js",
   "samples-metadata-import":
     "./resources/js/pages/projects/samples-metadata-import/index.js",
+  "project-add-sample": "./resources/js/pages/projects/project-add-samples.js",
   "project-linelist": "./resources/js/pages/projects/linelist/index.js",
   "create-metadata-template":
     "./resources/js/pages/projects/metadata-template/create-metadata-template.js",

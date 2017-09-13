@@ -1,16 +1,14 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectAddSamplePage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.samples.SampleFilesPage;
-
-import com.github.springtestdbunit.annotation.DatabaseSetup;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectAddSamplePage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.samples.SampleFilesPage;
 
 /**
  * Integration Test for creating a new sample.
