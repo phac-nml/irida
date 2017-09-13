@@ -18,11 +18,24 @@ const config = Object.assign({}, tableConfig, {
   stateSave: true,
   deferRender: true,
   select: {
-    allUrl: window.PAGE.urls.samples.sampleIds
+    allUrl: window.PAGE.urls.samples.sampleIds,
+    formatSelectAllResponseFn(response) {
+      const projectIds = Object.keys(response);
+      const complete = new Map();
+      for (const pId of projectIds) {
+        for (const sId of response[pId]) {
+          complete.set(`row_${sId}`, {
+            project: pId,
+            sample: sId
+          });
+        }
+      }
+      return complete;
+    }
   },
   order: [[COLUMNS.MODIFIED_DATE, "asc"]],
   rowId: "DT_RowId",
-  buttons: ["selectAll"],
+  buttons: ["selectAll", "selectNone"],
   columnDefs: [
     {
       orderable: false,

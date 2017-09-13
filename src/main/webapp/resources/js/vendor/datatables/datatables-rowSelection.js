@@ -61,11 +61,36 @@
 
   function selectAllRows(dt) {
     const ctx = dt.settings()[0];
-    console.error("TODO: Implement selecting all rows");
     // Try storing to local storage to prevent calling the server each time.
-    $.post(ctx._select.allUrl).then(response => {
-
+    const postPromise = $.post(ctx._select.allUrl).then(response => {
+      if (typeof ctx._select.formatSelectAllResponseFn === "function") {
+        // Left the call code format the response.
+        return ctx._select.formatSelectAllResponseFn(response);
+      } else {
+        // Response should be a list of the id's for the rows to select
+        // Needs to be formatted into row_[id]
+        return response.map(i => `row_${i}`);
+      }
     });
+
+    postPromise.then(data => {
+      if (data instanceof Map) {
+        ctx._select.selected = data;
+        dt.draw();
+        eventTrigger(dt, "selection-count.dt", data.size);
+        return;
+      }
+      throw Error(
+        "Expected to get a map with key = row_[id] and value of what would be in data-info for the row."
+      );
+    });
+  }
+
+  function selectNone(dt) {
+    const ctx = dt.settings()[0];
+    ctx._select.selected = new Map();
+    dt.draw();
+    eventTrigger(dt, "selection-count.dt", 0);
   }
 
   const apiRegister = DataTable.Api.register;
@@ -87,6 +112,7 @@
   apiRegister("select.init()", function() {
     return this.iterator("table", function(ctx) {
       init(ctx);
+      eventTrigger(new DataTable.Api(ctx), "selection-count.dt", 0);
     });
   });
 
@@ -100,6 +126,12 @@
   apiRegister("select.selectAll()", function() {
     return this.iterator("table", function(ctx) {
       selectAllRows(new DataTable.Api(ctx));
+    });
+  });
+
+  apiRegister("select.selectNone()", function() {
+    return this.iterator("table", function(ctx) {
+      selectNone(new DataTable.Api(ctx));
     });
   });
 
@@ -186,25 +218,40 @@
      */
     api.on("selection-count.dt", function(e, size) {
       let text = "";
-      if (1 === size) {
-        text = "One sample selected";
+      if (0 === size) {
+        text = "No samples selected";
+      } else if (1 === size) {
+        text = "1 sample selected";
       } else if (1 < size) {
         text = `${size} samples selected`;
       }
-      $(".buttons").html(
-        `<span style="line-height: 28px; text-align: center;">${text}</span>`
-      );
+      $(".selected-counts").html(`<div>${text}</div>`);
     });
   }
 
   /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * BUTTONS
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+  /**
+  * Select All
+  */
   $.fn.dataTable.ext.buttons.selectAll = {
     text: "_SELECT_ALL_",
     className: "btn-sm",
     action(e, dt, node, config) {
       dt.select.selectAll();
+    }
+  };
+
+  /**
+   * Select None
+   */
+  $.fn.dataTable.ext.buttons.selectNone = {
+    text: "_SELECT_NONE_",
+    className: "btn-sm",
+    action(e, dt, node, config) {
+      dt.select.selectNone();
     }
   };
 

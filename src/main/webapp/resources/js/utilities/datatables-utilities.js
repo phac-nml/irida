@@ -29,9 +29,10 @@ import { createIcon, ICONS } from "./fontawesome-utilities";
 const dom = `
 <".row"
   <"col-md-6 col-sm-12 buttons"B><"#dt-filters.col-md-6 col-sm-12"f>>
-  <".row"
-    <"col-md-12 filter-tags"<"filter-tags__space">>
-  >
+<".row"<"col-md-12 selected-counts">>
+<".row"
+  <"col-md-12 filter-tags"<"filter-tags__space">>
+>
 <"dt-table-wrapper"rt>
 <"row"
   <"col-md-3 col-sm-12"l>
@@ -176,7 +177,9 @@ export function wrapCellContents({ text, width = "250px" }) {
  */
 export function createFilterTag({ text, type, handler }) {
   const remove = elm => {
-    $(elm).off("click").remove();
+    $(elm)
+      .off("click")
+      .remove();
   };
   const $filterTags = $(".filter-tags");
 
