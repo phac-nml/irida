@@ -982,7 +982,7 @@ public class ProjectSamplesController {
 		try {
 			sampleService.getSampleBySampleName(project, sampleName);
 			return false;
-		} catch (Exception e) {
+		} catch (EntityNotFoundException e) {
 			// If the sample is not found, then the name is good to go!
 			return true;
 		}
