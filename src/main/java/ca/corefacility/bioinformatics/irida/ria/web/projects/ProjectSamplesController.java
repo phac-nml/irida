@@ -176,6 +176,16 @@ public class ProjectSamplesController {
 		return "projects/project_add_sample";
 	}
 
+	/**
+	 * Create a new {@link Sample} in a {@link Project}
+	 *
+	 * @param projectId
+	 * 		{@link Long} identifier for the current {@link Project}
+	 * @param sample
+	 * 		{@link Sample} to create in the {@link Project}
+	 *
+	 * @return Redirect to the newly created {@link Sample} page
+	 */
 	@RequestMapping(value = "/projects/{projectId}/samples/new", method = RequestMethod.POST)
 	public String createNewSample(@PathVariable Long projectId, Sample sample) {
 		Project project = projectService.read(projectId);
