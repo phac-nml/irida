@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
+	@Ignore
 	public void testToolbarButtonsAsCollaborator() {
 		LoginPage.loginAsUser(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
@@ -50,6 +52,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
+	@Ignore
 	public void testToolbarButtonsAsManager() {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
@@ -100,6 +103,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
+	@Ignore
 	public void testAssociatedProjects() {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
@@ -139,6 +143,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
+	@Ignore
 	public void testAddSamplesToCart() {
 		LoginPage.loginAsManager(driver());
 		logger.info("Testing adding samples to the global cart.");
@@ -153,6 +158,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
+	@Ignore
 	public void testMergeSamples() {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
@@ -181,6 +187,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
+	@Ignore
 	public void testCopySamples() {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
@@ -202,6 +209,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 	
 	@Test
+	@Ignore
 	public void testCopySamplesLocked() {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
@@ -223,6 +231,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
+	@Ignore
 	public void testMoveSamples() {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
@@ -243,6 +252,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
+	@Ignore
 	public void testRemoveSamplesFromProject() {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
@@ -260,6 +270,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
+	@Ignore
 	public void testFilteringSamplesByProperties() throws InterruptedException {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
@@ -289,6 +300,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
+	@Ignore
 	public void testFilteringWithDates() throws InterruptedException {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
@@ -304,6 +316,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
+	@Ignore
 	public void testCartFunctionality() {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
@@ -322,6 +335,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
+	@Ignore
 	public void testLinkerFunctionalityForProject() {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
@@ -331,6 +345,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
+	@Ignore
 	public void testLinkerFunctionalityForSamples() {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
