@@ -46,11 +46,7 @@
   DataTable.select.init = function(dt) {
     const ctx = dt.settings()[0];
     // Get the configuration for the selection from initialization object.
-    const init = ctx.oInit.select;
-    console.log(init);
-    const defaults = DataTable.defaults.select;
-    console.log(defaults);
-    const opts = init === undefined ? defaults : init;
+    const opts = ctx.oInit.select;
 
     // Default items
     const selector = "input[type=checkbox]";
@@ -255,6 +251,10 @@
     selectAll: {
       text: i18n("buttons.selectAll", "Select All"),
       className: "btn-sm",
+      key: {
+        altKey: true,
+        key: "s"
+      },
       action(e, dt, node, config) {
         dt.select.selectAll();
       }
@@ -262,6 +262,10 @@
     selectNone: {
       text: i18n("buttons.selectNone", "Select None"),
       className: "btn-sm",
+      key: {
+        altKey: true,
+        key: "d"
+      },
       action(e, dt, node, config) {
         dt.select.selectNone();
       }
