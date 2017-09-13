@@ -165,6 +165,8 @@ public class ProjectSamplesController {
 	 * 		Id for the {@link Project} the sample will belong to.
 	 * @param model
 	 * 		{@link Model}
+	 * @param sample
+	 * 		{@link Sample} required if redirected back to the create page.
 	 *
 	 * @return Name of the add sample page.
 	 */
