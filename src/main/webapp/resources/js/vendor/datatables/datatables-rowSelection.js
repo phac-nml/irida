@@ -1,6 +1,6 @@
 /**
  * This file is strongly based off the DataTables original select plugin,
- * but works with server side paging and OS checkboxes.
+ * but works with server side paging and OS checkbox.
  */
 (function(factory) {
   // Default DataTables plugin setup.
@@ -81,7 +81,7 @@
   };
 
   /**
-   * Set up click handlers for the checkboxes.
+   * Set up click handlers for the checkbox.
    * @param dt {object} current DataTable
    */
   function enableRowCheckboxSelection(dt) {
@@ -326,11 +326,11 @@
   });
 
   /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- * Initialisation
+ * Initialization
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-  // Attach a listener to the document which listens for DataTables initialisation
-  // events so we can automatically initialise
+  // Attach a listener to the document which listens for DataTables initialization
+  // events so we can automatically initialize
   $(document).on("preInit.dt.dtSelect", function(e, ctx) {
     if (e.namespace !== "dt") {
       return;
