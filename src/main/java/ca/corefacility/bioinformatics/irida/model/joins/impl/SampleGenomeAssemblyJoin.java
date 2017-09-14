@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.joins.impl;
 
 import java.util.Date;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -10,10 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -45,7 +43,7 @@ public class SampleGenomeAssemblyJoin implements Join<Sample, GenomeAssembly> {
 	@JoinColumn(name = "sample_id")
 	private Sample sample;
 
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@ManyToOne(fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.PERSIST })
 	@JoinColumn(name = "genome_assembly_id")
 	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 	private GenomeAssembly genomeAssembly;
@@ -62,11 +60,12 @@ public class SampleGenomeAssemblyJoin implements Join<Sample, GenomeAssembly> {
 	private SampleGenomeAssemblyJoin() {
 		this.createdDate = new Date();
 	}
-	
+
 	public SampleGenomeAssemblyJoin(Sample subject, GenomeAssembly object) {
 		this.createdDate = new Date();
 		this.sample = subject;
 		this.genomeAssembly = object;
+		object.addSampleGenomeAssemblyJoin(this);
 	}
 
 	@Override
@@ -93,4 +92,22 @@ public class SampleGenomeAssemblyJoin implements Join<Sample, GenomeAssembly> {
 	public Date getTimestamp() {
 		return createdDate;
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, createdDate);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SampleGenomeAssemblyJoin other = (SampleGenomeAssemblyJoin) obj;
+		return Objects.equals(id, other.id) && Objects.equals(createdDate, other.createdDate);
+	}
+
 }

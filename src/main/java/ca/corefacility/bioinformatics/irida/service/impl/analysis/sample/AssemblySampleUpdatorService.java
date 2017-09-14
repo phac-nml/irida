@@ -1,6 +1,10 @@
 package ca.corefacility.bioinformatics.irida.service.impl.analysis.sample;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.util.Collection;
+
+import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +17,7 @@ import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssemblyFromAna
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.GenomeAssemblyRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGenomeAssemblyJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.analysis.sample.AnalysisSampleUpdatorService;
@@ -25,22 +30,25 @@ public class AssemblySampleUpdatorService implements AnalysisSampleUpdatorServic
 
 	private static final Logger logger = LoggerFactory.getLogger(AssemblySampleUpdatorService.class);
 
+	private final AnalysisSubmissionRepository analysisSubmissionRepository;
 	private final GenomeAssemblyRepository genomeAssemblyRepository;
 	private final SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository;
 
 	@Autowired
-	public AssemblySampleUpdatorService(GenomeAssemblyRepository genomeAssemblyRepository,
+	public AssemblySampleUpdatorService(AnalysisSubmissionRepository analysisSubmissionRepository, 
+			GenomeAssemblyRepository genomeAssemblyRepository,
 			SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository) {
+		this.analysisSubmissionRepository = analysisSubmissionRepository;
 		this.sampleGenomeAssemblyJoinRepository = sampleGenomeAssemblyJoinRepository;
 		this.genomeAssemblyRepository = genomeAssemblyRepository;
 	}
 
 	@Override
+	@Transactional
 	@PreAuthorize("hasPermission(#samples, 'canUpdateSample')")
 	public void update(Collection<Sample> samples, AnalysisSubmission analysis) {
-		if (samples.size() != 1) {
-			throw new RuntimeException("Error: expected only 1 sample, but got " + samples.size() + " samples");
-		}
+		checkArgument(samples.size() == 1, "Error: expected only 1 sample, but got " + samples.size() + " samples");
+		analysis = analysisSubmissionRepository.findOne(analysis.getId()); // re-load to make sure submission is re-attached to session
 
 		Sample sample = samples.iterator().next();
 

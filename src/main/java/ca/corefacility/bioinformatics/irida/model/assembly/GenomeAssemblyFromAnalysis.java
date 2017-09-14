@@ -24,8 +24,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 @EntityListeners(AuditingEntityListener.class)
 public class GenomeAssemblyFromAnalysis extends GenomeAssembly {
 
-	@OneToOne(fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST,
-			CascadeType.REFRESH })
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "analysis_submission_id", nullable = false)
 	private AnalysisSubmission assembly;
 

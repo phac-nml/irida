@@ -162,7 +162,7 @@
 		workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="1"
 		analysis_cleaned_state="NOT_CLEANED" />	
 		
-	<analysis_submission id="2" analysis_id="5" name="my analysis"
+	<analysis_submission id="2" name="my analysis"
 		remote_analysis_id="1" analysis_state="COMPLETED" created_date="2013-07-18 14:20:19.0"
 		workflow_id="87186c71-5c8a-4027-a9d9-b29850cebdb3" submitter="1" remote_workflow_id="1"
 		remote_input_data_id="1" analysis_cleaned_state="NOT_CLEANED" update_samples="1" />

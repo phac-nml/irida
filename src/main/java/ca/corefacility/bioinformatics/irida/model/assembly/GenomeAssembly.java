@@ -5,15 +5,19 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -26,6 +30,7 @@ import org.springframework.data.annotation.CreatedDate;
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 
 /**
  * Defines a genome assembly which can be associated with a sample.
@@ -46,6 +51,9 @@ public abstract class GenomeAssembly extends IridaResourceSupport implements Mut
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_date")
 	private Date createdDate;
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "genomeAssembly")
+	private List<SampleGenomeAssemblyJoin> sampleGenomeAssemblies;
 
 	protected GenomeAssembly() {
 		this.id = null;
@@ -90,6 +98,12 @@ public abstract class GenomeAssembly extends IridaResourceSupport implements Mut
 		return Files.size(getFile());
 	}
 
+	public void addSampleGenomeAssemblyJoin(SampleGenomeAssemblyJoin join) {
+		if (!sampleGenomeAssemblies.contains(join)) {
+			sampleGenomeAssemblies.add(join);
+		}
+	}
+
 	/**
 	 * Get human-readable file size.
 	 * 
@@ -99,7 +113,7 @@ public abstract class GenomeAssembly extends IridaResourceSupport implements Mut
 	public String getReadableFileSize() throws IOException {
 		String size = "N/A";
 		try {
-			size = IridaSequenceFile.humanReadableByteCount(Files.size(getFile()), true);
+			size = IridaSequenceFile.humanReadableByteCount(getFileSize(), true);
 		} catch (NoSuchFileException e) {
 			logger.error("Could not find file " + getFile());
 		} catch (IOException e) {
