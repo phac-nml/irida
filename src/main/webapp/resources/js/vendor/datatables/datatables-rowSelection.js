@@ -1,3 +1,7 @@
+/**
+ * This file is strongly based off the DataTables original select plugin,
+ * but works with server side paging and OS checkboxes.
+ */
 (function(factory) {
   // Default DataTables plugin setup.
   if (typeof define === "function" && define.amd) {
@@ -47,21 +51,39 @@
     const ctx = dt.settings()[0];
     // Get the configuration for the selection from initialization object.
     const opts = ctx.oInit.select;
-
-    // Default items
-    const selector = "input[type=checkbox]";
-    const selected = new Map();
-    let currentId = undefined;
-
+    /**
+     * Assign opts to the context so we can easily access it later.
+     */
     ctx._select = Object.assign({}, opts);
 
-    // Initalize selection
+    // Default items
+    /**
+     * Default selector for the row.
+     */
+    const selector = "input[type=checkbox]";
+    /**
+     * All currently selected row are stored in a Map with the key
+     * being the row id (row_[id]) and the value equal to the value
+     * in the rows data-info attribute.
+     */
+    const selected = new Map();
+    /**
+     * The id for the most recently selected row.  This is stored for multi-row
+     * selection.
+     */
+    let currentId = undefined;
+
+    // Initialize selection
     dt.select.selector(selector);
     dt.select.selected(selected);
     dt.select.currentId(currentId);
     dt.select.init();
   };
 
+  /**
+   * Set up click handlers for the checkboxes.
+   * @param dt {object} current DataTable
+   */
   function enableRowCheckboxSelection(dt) {
     const $body = $(dt.table().body());
     const ctx = dt.settings()[0];
@@ -73,18 +95,21 @@
     });
   }
 
+  /**
+   * Select all rows in the table.
+   * This requires a server call, and a help function should be supplied
+   * in the select config (formatSelectAllResponseFn)
+   * @param dt {object} Current DataTable
+   */
   function selectAllRows(dt) {
     const ctx = dt.settings()[0];
     // Try storing to local storage to prevent calling the server each time.
     const postPromise = $.post(ctx._select.allUrl).then(response => {
       if (typeof ctx._select.formatSelectAllResponseFn === "function") {
-        // Left the call code format the response.
+        // Let the user handle formatting response.
         return ctx._select.formatSelectAllResponseFn(response);
-      } else {
-        // Response should be a list of the id's for the rows to select
-        // Needs to be formatted into row_[id]
-        return response.map(i => `row_${i}`);
       }
+      throw new Error("Expected supplied function [formatSelectAllResponseFn]");
     });
 
     postPromise.then(data => {
@@ -94,7 +119,7 @@
         eventTrigger(dt, "selection-count.dt", data.size);
         return;
       }
-      throw Error(
+      throw new Error(
         "Expected to get a map with key = row_[id] and value of what would be in data-info for the row."
       );
     });
@@ -108,21 +133,22 @@
   }
 
   const apiRegister = DataTable.Api.register;
-  const apiRegisterPlural = DataTable.Api.registerPlural;
 
   /**
    * Trigger an event on a DataTable
    *
-   * @param {DataTable.Api} api      DataTable to trigger events on
-   * @param  {boolean}      selected true if selected, false if deselected
-   * @param  {string}       type     Item type acting on
-   *     triggering
+   * @param api {object} DataTable api to trigger events on
+   * @param type {boolean} the type of event that was triggered
+   * @param args {string|object} arguments to pass to the handler
    * @private
    */
   function eventTrigger(api, type, args) {
     $(api.table().node()).trigger(type, args);
   }
 
+  /**
+   * Register the select initialization function with Datatables
+   */
   apiRegister("select.init()", function() {
     return this.iterator("table", function(ctx) {
       init(ctx);
@@ -130,6 +156,9 @@
     });
   });
 
+  /**
+   * Register the table selector with DataTables
+   */
   apiRegister("select.selector()", function(selector) {
     return this.iterator("table", function(ctx) {
       ctx._select.selector = selector;
@@ -137,18 +166,27 @@
     });
   });
 
+  /**
+   * Register the select table function with DataTables
+   */
   apiRegister("select.selectAll()", function() {
     return this.iterator("table", function(ctx) {
       selectAllRows(new DataTable.Api(ctx));
     });
   });
 
+  /**
+   * Register the select none function with DataTables
+   */
   apiRegister("select.selectNone()", function() {
     return this.iterator("table", function(ctx) {
       selectNone(new DataTable.Api(ctx));
     });
   });
 
+  /**
+   * Register the selected rows map with DataTables
+   */
   apiRegister("select.selected()", function(selected) {
     return this.iterator("table", function(ctx) {
       if (typeof selected === "undefined") {
@@ -159,6 +197,9 @@
     });
   });
 
+  /**
+   * Register the ability to get and set the currentId with DataTables
+   */
   apiRegister("select.currentId()", function(id) {
     return this.iterator("table", function(ctx) {
       if (typeof id === undefined) {
@@ -213,16 +254,27 @@
               const $trId = $tr.attr("id");
 
               if ($trId === currentId || $trId === id) {
+                /*
+                 * Does not matter if the user selects above or below the previous
+                 * one.  As soon as this hits a row that is either the previous current
+                 * or the one just click this will become true.  Once it hits the respective
+                 * opposite row this wil be false.  In between, everything will be selected.
+                 */
                 inside = !inside;
               } else if (inside) {
-                $tr.find('input[type="checkbox"]').prop("checked", true);
+                // Capture the row id and the data-info for the row.
                 selected.set($trId, $tr.data("info"));
+                // Show the user that the row is selected.
+                $tr.find('input[type="checkbox"]').prop("checked", true);
               }
             });
         }
         selected.set(id, info);
         ctx._select.currentId = id;
       }
+      /**
+       * Fire the event for the number of rows that have been selected.
+       */
       eventTrigger(api, "selection-count.dt", selected.size);
     });
 
@@ -233,12 +285,12 @@
     api.on("selection-count.dt", function(e, size) {
       let text = "";
       if (0 === size) {
-        text = api.i18n("select.none", "No samples selected");
+        text = api.i18n("select.none", "No rows selected");
       } else if (1 === size) {
-        text = api.i18n("select.one", "1 sample selected");
+        text = api.i18n("select.one", "1 row selected");
       } else if (1 < size) {
         text = api
-          .i18n("select.other", "1 sample selected")
+          .i18n("select.other", `${size} rows selected`)
           .replace("{count}", size);
       }
       $(".selected-counts").html(`<div>${text}</div>`);
@@ -256,7 +308,7 @@
         altKey: true,
         key: "s"
       },
-      action(e, dt, node, config) {
+      action(e, dt) {
         dt.select.selectAll();
       }
     },
@@ -267,7 +319,7 @@
         altKey: true,
         key: "d"
       },
-      action(e, dt, node, config) {
+      action(e, dt) {
         dt.select.selectNone();
       }
     }
@@ -284,6 +336,9 @@
       return;
     }
 
+    /*
+     * Initialize select within the DataTable.
+     */
     DataTable.select.init(new DataTable.Api(ctx));
   });
 

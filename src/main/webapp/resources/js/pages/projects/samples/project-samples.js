@@ -9,8 +9,20 @@ import "./../../../vendor/datatables/datatables";
 import "./../../../vendor/datatables/datatables-buttons";
 import "./../../../vendor/datatables/datatables-rowSelection";
 
+/**
+ *  Get the names and order of the table columns
+ * @type {Object}
+ */
 const COLUMNS = generateColumnOrderInfo();
+/**
+ * Get a handle on the table
+ * @type {*|jQuery|HTMLElement}
+ */
 const $table = $("#project-samples");
+/**
+ * Get access the the url for the tables data.
+ * @type {string}
+ */
 const url = $table.data("url");
 
 const config = Object.assign({}, tableConfig, {
@@ -44,6 +56,8 @@ const config = Object.assign({}, tableConfig, {
     }
   },
   columnDefs: [
+    // Add an empty checkbox to the first column in each row
+    // This will handle row selection.
     {
       orderable: false,
       data: null,
@@ -86,8 +100,4 @@ const config = Object.assign({}, tableConfig, {
   }
 });
 
-const $dt = $table.DataTable(config);
-
-$dt.on("selection-count.dt", function(e, count) {
-  const selected = $dt.select.selected()[0];
-});
+$table.DataTable(config);
