@@ -55,6 +55,7 @@
 
     ctx._select = Object.assign({}, opts);
 
+    // Initalize selection
     dt.select.selector(selector);
     dt.select.selected(selected);
     dt.select.currentId(currentId);
