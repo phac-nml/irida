@@ -4,7 +4,6 @@ import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -43,7 +42,6 @@ import org.thymeleaf.templatemode.StandardTemplateModeHandlers;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.config.analysis.AnalysisExecutionServiceConfig;
@@ -52,7 +50,6 @@ import ca.corefacility.bioinformatics.irida.config.repository.ForbidJpqlUpdateDe
 import ca.corefacility.bioinformatics.irida.config.repository.IridaApiRepositoriesConfig;
 import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
 import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsConfig;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
@@ -69,9 +66,7 @@ import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepositor
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionCleanupService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
-import ca.corefacility.bioinformatics.irida.service.analysis.sample.AnalysisSampleUpdatorService;
 import ca.corefacility.bioinformatics.irida.service.impl.InMemoryTaxonomyService;
-import ca.corefacility.bioinformatics.irida.service.impl.analysis.sample.AssemblySampleUpdatorService;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionCleanupServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
@@ -93,9 +88,6 @@ public class IridaApiServicesConfig {
 	
 	@Autowired
 	private Environment env;
-	
-	@Autowired
-	private AssemblySampleUpdatorService assemblySampleUpdatorService;
 
 	@Value("${taxonomy.location}")
 	private ClassPathResource taxonomyFileLocation;
@@ -127,12 +119,6 @@ public class IridaApiServicesConfig {
 	
 	@Value("${file.processing.queue.capacity}")
 	private int fpQueueCapacity;
-
-	@Bean
-	public Map<AnalysisType, AnalysisSampleUpdatorService> analysisSampleUpdatorMap() {
-		return ImmutableMap.<AnalysisType, AnalysisSampleUpdatorService>builder()
-				.put(AnalysisType.ASSEMBLY_ANNOTATION, assemblySampleUpdatorService).build();
-	}
 	
 	@Bean
 	public BeanPostProcessor forbidJpqlUpdateDeletePostProcessor() {

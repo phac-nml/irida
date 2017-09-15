@@ -27,6 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.annotation.CreatedDate;
 
+import com.google.common.collect.Lists;
+
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
@@ -58,10 +60,12 @@ public abstract class GenomeAssembly extends IridaResourceSupport implements Mut
 	protected GenomeAssembly() {
 		this.id = null;
 		this.createdDate = null;
+		this.sampleGenomeAssemblies = null;
 	}
 
 	public GenomeAssembly(Date createdDate) {
 		this.createdDate = createdDate;
+		this.sampleGenomeAssemblies = Lists.newArrayList();
 	}
 
 	@Override

@@ -1,14 +1,11 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration.analysis.sample;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.nio.file.AccessDeniedException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
 import org.springframework.test.context.ActiveProfiles;
@@ -63,12 +60,12 @@ public class AssemblySampleUpdatorServiceIT {
 	public void testUpdateSuccess() {
 		AnalysisSubmission a = analysisSubmissionRepository.findOne(1L);
 		Sample s = sampleRepository.findOne(2L);
-		assertFalse("Should be no join between sample and assembly", sampleGenomeAssemblyJoinRepository.exists(1L));
+		assertEquals("Should be no join between sample and assembly", 0, sampleGenomeAssemblyJoinRepository.count());
 
 		assemblySampleUpdatorService.update(Sets.newHashSet(s), a);
 
-		assertTrue("Should exist a join between sample and assembly", sampleGenomeAssemblyJoinRepository.exists(1L));
-		SampleGenomeAssemblyJoin j = sampleGenomeAssemblyJoinRepository.findOne(1L);
+		assertEquals("Should exist a join between sample and assembly", 1, sampleGenomeAssemblyJoinRepository.count());
+		SampleGenomeAssemblyJoin j = sampleGenomeAssemblyJoinRepository.findAll().iterator().next();
 
 		assertEquals("Should have joined sample 2L", (Long) 2L, j.getSubject().getId());
 		assertEquals("Should have joined assembly 1L", (Long) 1L, j.getObject().getId());
