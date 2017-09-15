@@ -45,7 +45,7 @@ public class AssemblySampleUpdatorService implements AnalysisSampleUpdatorServic
 
 	@Override
 	@Transactional
-	@PreAuthorize("hasPermission(#samples, 'canUpdateSample')")
+	@PreAuthorize("hasPermission(#samples, 'canUpdateSample') AND hasPermission(#analysis, 'canReadAnalysisSubmission')")
 	public void update(Collection<Sample> samples, AnalysisSubmission analysis) {
 		checkArgument(samples.size() == 1, "Error: expected only 1 sample, but got " + samples.size() + " samples");
 		analysis = analysisSubmissionRepository.findOne(analysis.getId()); // re-load to make sure submission is re-attached to session
