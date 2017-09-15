@@ -27,8 +27,6 @@
     "datatables.net-fixedcolumns-bs": "^3.2.2",
     "datatables.net-scroller": "^1.4.2",
     "datatables.net-scroller-bs": "^1.4.2",
-    "datatables.net-select": "^1.2.2",
-    "datatables.net-select-bs": "^1.2.2",
     "install": "^0.8.1",
     "jquery": "^3.2.1",
     "jquery-validation": "^1.17.0",
