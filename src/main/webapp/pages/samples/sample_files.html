@@ -280,7 +280,7 @@
 					<td>
 						<div class="btn-group-sm pull-right" role="group">
 							<button th:if="${canManageSample}"
-								class="btn btn-default remove-file"
+								class="btn btn-default remove-assembly"
 								th:with="aId=${assembly.id + ', &#39;'' + assembly.getLabel() + ''&#39;'}"
 								data:ng-click="${'fileCtrl.deleteFile(' + aId + ')'}">
 								<span class="fa fa-fw fa-trash"></span>
