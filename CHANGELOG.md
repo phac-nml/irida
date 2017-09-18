@@ -9,6 +9,7 @@ Changes
 * [UI]: Fixed URL for concatenation of sample sequence files. (0.18.1)
 * [Developer]: Removed dandelion from: Announcements, Cart, Sequencing Runs, Login, Project Settings - Landing, Events, Create Sample
 * [UI]: Added empty state if no files exist in a sample.
+* [UI]: Added ability to associate assemblies with a sample.
 
 0.17.0 to 0.18.0
 ----------------
