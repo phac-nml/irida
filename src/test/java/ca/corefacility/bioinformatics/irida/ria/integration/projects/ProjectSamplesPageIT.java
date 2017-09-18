@@ -9,12 +9,12 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.google.common.collect.Lists;
-
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
+
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.google.common.collect.Lists;
 
 /**
  * <p>
@@ -130,16 +130,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		page.deselectAllSamples();
 		assertEquals("Should be 0 selected samples", "No samples selected", page.getSelectedInfoText());
-
-		page.selectPage();
-		assertEquals("Should be 10 selected samples", "10 samples selected", page.getSelectedInfoText());
-
-		page.selectAllSamples();
-		assertEquals("Should have all samples selected", "21 samples selected", page.getSelectedInfoText());
-
-		page.deselectPage();
-		assertEquals("Should have all samples selected", "11 samples selected", page.getSelectedInfoText());
-
 	}
 
 	@Test
@@ -204,7 +194,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		for(int i = 0; i == names.size(); i++) {
 			assertEquals("Should have the same samples since they were copied", names.get(i), newNames.get(i));
 		}
-		
+
 		assertEquals("should be 2 locked samples", 2, page.getLockedSampleNames().size());
 	}
 	

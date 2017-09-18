@@ -303,7 +303,7 @@
   $.extend(DataTable.ext.buttons, {
     selectAll: {
       text: i18n("buttons.selectAll", "Select All"),
-      className: "btn-sm",
+      className: "btn-sm dt-select-all",
       key: {
         altKey: true,
         key: "s"
@@ -314,7 +314,7 @@
     },
     selectNone: {
       text: i18n("buttons.selectNone", "Select None"),
-      className: "btn-sm",
+      className: "btn-sm dt-select-none",
       key: {
         altKey: true,
         key: "d"
