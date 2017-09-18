@@ -279,7 +279,7 @@ public class SamplesController extends BaseController {
 		Collection<SampleSequencingObjectJoin> singleFileJoins = sequencingObjectService
 				.getSequencesForSampleOfType(sample, SingleEndSequenceFile.class);
 		Collection<SampleGenomeAssemblyJoin> genomeAssemblyJoins = sampleService.getAssembliesForSample(sample);
-		logger.debug("Assembly joins " + genomeAssemblyJoins);
+		logger.trace("Assembly joins " + genomeAssemblyJoins);
 
 		List<GenomeAssembly> genomeAssemblies = genomeAssemblyJoins.stream().map(SampleGenomeAssemblyJoin::getObject)
 				.collect(Collectors.toList());
