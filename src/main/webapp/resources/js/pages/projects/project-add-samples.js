@@ -1,47 +1,19 @@
 import $ from "jquery";
 import "jquery-validation";
 import "./../../vendor/plugins/jquery/select2";
+import {
+  validationConfig,
+  sampleNameCharacterValidation
+} from "../../utilities/form-validation";
 
 const form = $("#create-sample-form");
 const saveBtn = $("#save-btn");
 
-// SAMPLE NAME VALIDATION
-/**
- * Sample Name Validation.  Must only be:
- * 1. Letter (upper or lowercase)
- * 2. Number
- * 3. _ (underscore)
- * 4. - (hyphen)
- * 5. !
- * 6. @
- * 7. #
- * 8. $
- * 9. %
- * 10. ~
- * 11. ` (back tick)
- */
-$.validator.addMethod("checkallowedchars", value => {
-  return /^[A-Za-z\d-_!@#$%~`]+$/i.test(value);
-});
+// Set up sample name character validation.
+sampleNameCharacterValidation();
 
-form.validate({
-  errorElement: "em",
-  errorPlacement: function(error, element) {
-    error.addClass("help-block");
-    error.insertAfter(element);
-  },
-  highlight(element) {
-    $(element)
-      .parents(".form-group")
-      .addClass("has-error")
-      .removeClass("has-success");
-  },
-  unhighlight(element) {
-    $(element)
-      .parents(".form-group")
-      .addClass("has-success")
-      .removeClass("has-error");
-  },
+// Activate jquery-validate on the form.
+const formConfig = Object.assign({}, validationConfig, {
   rules: {
     sampleName: {
       required: true,
@@ -53,13 +25,9 @@ form.validate({
         url: window.PAGE.urls.validateName
       }
     }
-  },
-  // Disable the button of clicking to prevent multiple clicks.
-  submitHandler(form) {
-    saveBtn.attr("disabled", true);
-    form.submit();
   }
 });
+form.validate(formConfig);
 
 // Update the form submit button on changes to the sample name
 form.find("#sampleName").on("keyup blur", () => {
@@ -69,7 +37,7 @@ form.find("#sampleName").on("keyup blur", () => {
   }, 300);
 });
 
-// Set up the organism field
+// Set up the organism field select2 input
 const organismInput = $("#organism");
 
 organismInput.select2({
