@@ -159,3 +159,61 @@ ol.start li:before, ol.continue li:before {
 .modal-dialog {
   z-index: 1000000;
 }
+
+/*
+SEARCH
+*/
+#global-search {
+  .search-wrapper {
+    width: 300px;
+    vertical-align: middle;
+    white-space: nowrap;
+    position: relative;
+
+    .icon{
+      position: absolute;
+      top: 50%;
+      margin-left: 17px;
+      margin-top: 8px;
+      z-index: 1;
+      color: #c2c2c2;
+    }
+
+    .search-dd {
+      button {
+        border: none !important;
+        background: transparent;
+        color: #c2c2c2;
+        height: 35px;
+      }
+      position: absolute;
+      top: 50%;
+      right: 25px;
+    }
+
+    input[type=search]{
+      width: 300px;
+      height: 35px;
+      background: #302e31;
+      border: none;
+      font-size: 14pt;
+      float: left;
+      color: #c2c2c2;
+      padding-left: 45px;
+      padding-right: 45px;
+      border-radius: 3px;
+      transition: all .55s ease;
+
+      &::placeholder {
+        color: #65737e!important;
+      }
+    }
+
+    & input[type=search]:hover,
+    & input[type=search]:focus,
+    & input[type=search]:active{
+      background: #ffffff;
+      color: #222222;
+    }
+  }
+}
