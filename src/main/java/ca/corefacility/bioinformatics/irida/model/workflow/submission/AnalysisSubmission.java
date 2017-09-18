@@ -611,13 +611,15 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 
 			return this;
 		}
-		
+
 		/**
-		 * Turns on/off updating of samples from results for this analysis submission.
+		 * Turns on/off updating of samples from results for this analysis
+		 * submission.
+		 * 
 		 * @param updateSamples
-		 * 				Turn on/off updating samples.
-         * @return A {@link Builder}
-         */
+		 *            Turn on/off updating samples.
+		 * @return A {@link Builder}
+		 */
 		public Builder updateSamples(boolean updateSamples) {
 			this.updateSamples = updateSamples;
 
