@@ -3,6 +3,7 @@
       layout:decorator="template/page">
 <head lang="en">
 	<title th:text="#{pipeline.launch.page-title}">Pipelines - Launch</title>
+	<link rel="stylesheet" th:href="@{/resources/css/modules/pipelines.css}" />
 	<style>
 		.flex-row {
 			display: flex;
@@ -26,7 +27,7 @@
 	</style>
 </head>
 <body>
-<div layout:fragment="page" ddl:bundle-includes="pipelines">
+<div layout:fragment="page">
 	<h1><span th:text="#{pipeline.launch.title}">Select a Pipeline</span></h1>
 	<div th:replace="pipelines/fragments/i18n :: cart-summary(${counts})"></div>
 	<div class="row">
