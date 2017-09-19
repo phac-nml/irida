@@ -235,7 +235,7 @@
 		</div>
 	</div>
 	
-	<div th:if="${has_assemblies}">
+	<div th:if="${not #lists.isEmpty(assemblies)}">
 		<div class="row">
 			<div class="col-md-12">
 				<h2 id="sample-page-subtitle"
@@ -244,7 +244,7 @@
 		</div>
 	</div>
 
-	<div class="row" th:if="${has_assemblies}">
+	<div class="row" th:if="${not #lists.isEmpty(assemblies)}">
 		<div class="col-md-12">
 			<table class="table assembly_sample_info"
 				th:with="dateFormat=#{locale.date.short}, url=@{${#httpServletRequest.requestURI}}"
