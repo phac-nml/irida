@@ -17,6 +17,6 @@ public class AnnouncementReadPage extends AbstractPage {
     }
 
     public List<WebElement> getAllReadAnnouncements() {
-		return driver.findElements(By.cssSelector(".announcement-item"));
+        return driver.findElements(By.cssSelector(".announcement-item"));
     }
 }
