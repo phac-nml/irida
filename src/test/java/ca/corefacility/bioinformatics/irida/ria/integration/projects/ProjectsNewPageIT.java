@@ -5,13 +5,14 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectsNewPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectMetadataPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
-import static org.junit.Assert.*;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.Assert.*;
 
 import java.util.List;
 
