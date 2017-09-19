@@ -4,6 +4,7 @@ import { fromNow } from "../../utilities/date-utilities";
 
 const markdownConverter = new showdown.Converter();
 
+// Change all the markdown in each announcment to HTML use showdown.
 $(".announcement-item").each((i, elm) => {
   const $elm = $(elm);
   const message = $elm.data("message");
