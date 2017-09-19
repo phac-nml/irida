@@ -165,6 +165,8 @@ public class ProjectSamplesController {
 	 * 		Id for the {@link Project} the sample will belong to.
 	 * @param model
 	 * 		{@link Model}
+	 * @param sample
+	 * 		{@link Sample} required if redirected back to the create page.
 	 *
 	 * @return Name of the add sample page.
 	 */
@@ -176,6 +178,16 @@ public class ProjectSamplesController {
 		return "projects/project_add_sample";
 	}
 
+	/**
+	 * Create a new {@link Sample} in a {@link Project}
+	 *
+	 * @param projectId
+	 * 		{@link Long} identifier for the current {@link Project}
+	 * @param sample
+	 * 		{@link Sample} to create in the {@link Project}
+	 *
+	 * @return Redirect to the newly created {@link Sample} page
+	 */
 	@RequestMapping(value = "/projects/{projectId}/samples/new", method = RequestMethod.POST)
 	public String createNewSample(@PathVariable Long projectId, Sample sample) {
 		Project project = projectService.read(projectId);
@@ -970,7 +982,7 @@ public class ProjectSamplesController {
 		try {
 			sampleService.getSampleBySampleName(project, sampleName);
 			return false;
-		} catch (Exception e) {
+		} catch (EntityNotFoundException e) {
 			// If the sample is not found, then the name is good to go!
 			return true;
 		}
