@@ -17,27 +17,20 @@
             }
         };
     </script>
-   	<style>
-		.dataTables_paginate {
-			text-align: center!important;
-		}
-	</style>
 </head>
 <body>
-<div layout:fragment="page" ddl:bundle-includes="groups-list" ddl:asset-css-excludes="jquery.datatables">
+<div layout:fragment="page">
     <main class="col-md-12">
         <h1 th:text="#{nav.main.groups-list}">_Groups_</h1>
-        <div dt:conf="groupsTable">
-			<div dt:confType="callback" dt:type="createdRow" dt:function="groups-list#groupsTable.deleteLinkCallback" />
-		</div>
-        <table id="groupsTable" dt:table="true" dt:url="@{/groups/ajax/list}">
+
+        <table id="groupsTable" class="table table-striped" cellspacing="0" width="100%" data:url="@{/groups/ajax/list}">
             <thead>
             <tr role="row">
-                <th dt:property="group.name" dt:searchable="true" th:text="#{group.name}" dt:renderFunction="groups-list#groupsTable.groupLinkRow"></th>
-                <th dt:property="group.description" dt:searchable="true" th:text="#{group.description}" dt:renderFunction="groups-list#groupsTable.descriptionRow"></th>
-                <th width="150px" dt:property="group.createdDate" dt:renderFunction="datatables-utils#datatable.formatDate" th:text="#{group.created}"></th>
-                <th width="150px" dt:property="group.modifiedDate" dt:renderFunction="datatables-utils#datatable.formatDate" th:text="#{group.modified}"></th>
-                <th width="50px" dt:sortable="false" dt:filterable="false" dt:renderFunction="groups-list#groupsTable.removeGroupButton" />
+                <th data:data="group.name" th:text="#{group.name}"></th>
+                <th data:data="group.description" th:text="#{group.description}"></th>
+                <th class="dt-date" data:data="group.createdDate" th:text="#{group.created}"></th>
+                <th class="dt-date" data:data="group.modifiedDate" th:text="#{group.modified}"></th>
+                <th data-orderable="false"></th>
             </tr>
             </thead>
         </table>
@@ -46,5 +39,9 @@
 		</div>
     </main>
 </div>
+
+<th:block layout:fragment="scripts">
+    <script th:src="@{/resources/js/build/groups-list.bundle.js}"></script>
+</th:block>
 </body>
 </html>

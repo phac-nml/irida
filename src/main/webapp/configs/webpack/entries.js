@@ -27,5 +27,7 @@ module.exports = {
     "./resources/js/pages/announcement/announcement-users.js",
   "announcement-admin":
     "./resources/js/pages/announcement/announcement-admin.js",
-  "sequencing-runs": "./resources/js/pages/sequencing-runs/sequencing-runs-list.js"
+  "sequencing-runs":
+    "./resources/js/pages/sequencing-runs/sequencing-runs-list.js",
+  "groups-list": "./resources/js/pages/users/groups-list.js"
 };

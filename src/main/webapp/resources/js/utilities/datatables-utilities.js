@@ -80,9 +80,8 @@ export function createDeleteBtn(data = {}) {
   Object.assign(btn.dataset, data);
 
   const icon = createIcon({ icon: ICONS.trash, fixed: true });
-  const tooltiped = addTooltip({ dom: icon, title: "Delete" });
-  btn.append(tooltiped);
-  return btn;
+  btn.append(icon);
+  return addTooltip({ dom: btn, title: "Delete" });
 }
 
 /**
