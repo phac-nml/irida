@@ -18,7 +18,7 @@ const COLUMNS = generateColumnOrderInfo();
  * Get a handle on the table
  * @type {*|jQuery|HTMLElement}
  */
-const $table = $("#project-samples");
+const $table = $("#samplesTable");
 /**
  * Get access the the url for the tables data.
  * @type {string}
