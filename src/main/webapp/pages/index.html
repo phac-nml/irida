@@ -56,7 +56,7 @@
 </div>
 
 <th:block layout:fragment="scripts">
-  <script src="/resources/js/build/events.bundle.js"></script>
+  <script th:src="@{/resources/js/build/events.bundle.js}"></script>
   <script src="/resources/bower_components/livestampjs/livestamp.min.js"
           th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}"></script>
   <script src="/resources/bower_components/marked/marked.min.js"
