@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -30,7 +29,7 @@ import org.springframework.data.annotation.CreatedDate;
 import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
-import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
+import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 
@@ -40,7 +39,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssembl
 @Entity
 @Table(name = "genome_assembly")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class GenomeAssembly extends IridaResourceSupport implements MutableIridaThing {
+public abstract class GenomeAssembly extends IridaResourceSupport implements IridaThing {
 
 	private static final Logger logger = LoggerFactory.getLogger(GenomeAssembly.class);
 
@@ -81,21 +80,6 @@ public abstract class GenomeAssembly extends IridaResourceSupport implements Mut
 	@Override
 	public Date getCreatedDate() {
 		return createdDate;
-	}
-
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	@Override
-	public Date getModifiedDate() {
-		return createdDate;
-	}
-
-	@Override
-	public void setModifiedDate(Date modifiedDate) {
-		throw new UnsupportedOperationException("Cannot update a genome assembly");
 	}
 
 	public long getFileSize() throws IOException {
