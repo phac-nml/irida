@@ -5,14 +5,15 @@
       layout:decorator="projects/_base">
 <head>
     <title th:text="#{metadata.page-title}"></title>
-    <style>
-
-    </style>
+    <link rel="stylesheet" th:href="@{/resources/css/pages/project_samples_metadata.css}"/>
 </head>
 <body>
-<div layout:fragment="main" ddl:bundle-includes="project-samples-metadata">
+<div layout:fragment="main">
     <h3 th:text="#{metadata.upload.component.title}"></h3>
     <section ui-view=""></section>
+</div>
+
+<th:block layout:fragment="scripts">
     <script type="text/ng-template" id="upload.component.tmpl.html">
         <p class="lead spaced-bottom" th:text="#{metadata.upload.component.intro}"></p>
         <div ng-show="$ctrl.errors" class="alert alert-danger">
@@ -125,6 +126,7 @@
         </div>
         <table id="missing-table" class="table table-striped nowrap" cellspacing="0" width="100%"></table>
     </script>
-</div>
+    <script th:src="@{/resources/js/build/samples-metadata-import.bundle.js}"></script>
+</th:block>
 </body>
 </html>
