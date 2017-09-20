@@ -28,20 +28,21 @@
 	<reference_file id="1" createdDate="2013-07-18 14:20:19.0"
 		modifiedDate="2013-07-18 14:20:19.0" filePath="/tmp/file.fasta"
 		fileRevisionNumber="1" />
-		
-	<reference_file id="2" createdDate="2013-07-18 14:20:19.0"
+    <reference_file id="2" createdDate="2013-07-18 14:20:19.0"
 		modifiedDate="2013-07-18 14:20:19.0" filePath="/tmp/file2.fasta"
 		fileRevisionNumber="1" />
-		
+
 	<analysis id="1" createdDate="2013-07-18 00:00:00.0"
-		description="FastQC" executionManagerAnalysisId="fastqc" />
+		description="FastQC" executionManagerAnalysisId="fastqc"
+		analysis_type="FASTQC" />
 	<analysis_fastqc id="1" duplicationLevelChart="x"
 		encoding="x" fileType="x" filteredSequences="0" gcContent="30"
 		maxLength="250" minLength="10" perBaseQualityScoreChart="x"
 		perSequenceQualityScoreChart="x" totalBases="1000" totalSequences="4" />
 	
 	<analysis id="2" createdDate="2013-07-19 00:00:00.0"
-		description="FastQC" executionManagerAnalysisId="fastqc" />
+		description="FastQC" executionManagerAnalysisId="fastqc"
+		analysis_type="FASTQC" />
 	<analysis_fastqc id="2" duplicationLevelChart="x"
 		encoding="x" fileType="x" filteredSequences="0" gcContent="30"
 		maxLength="250" minLength="10" perBaseQualityScoreChart="x"

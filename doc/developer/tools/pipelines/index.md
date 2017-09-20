@@ -88,42 +88,16 @@ IRIDA Integration
 
 ### 1. Pipeline Data Model
 
-In order to properly integrate the workflow with IRIDA there are a few additions to the IRIDA code that are needed.  In particular a new analysis type will need to be defined in IRIDA to store and display the workflow results.  This will require two steps as follows.
+The [Analysis][] class is the root class for all analyses. In IRIDA, this class will be used to store the output files once an analysis is complete.  No modification or extension is needed for this class unless your pipeline is storing special results which need to be stored in the database.
 
-#### A. Add a new Analysis Class
-
-The [Analysis][] class is the root class for all analyses.  In IRIDA, this class will be used to store the ouput files once an analysis is complete.  For each analysis type, a new class extending [Analysis][] must be created.  For example:
-
-```java
-public class AnalysisMyPipeline extends Analysis {
-	
-	/**
-	 * Builds a new {@link AnalysisMyPipeline} with the given
-	 * information.
-	 * 
-	 * @param executionManagerAnalysisId
-	 *            The execution manager id for this analysis.
-	 * @param analysisOutputFilesMap
-	 *            A {@link Map} of output files for this analysis.
-	 */
-	public AnalysisMyPipeline(final String executionManagerAnalysisId,
-			final Map<String, AnalysisOutputFile> analysisOutputFilesMap) {
-		super(executionManagerAnalysisId, analysisOutputFilesMap);
-	}
-}
-
-```
-
-#### B. Add a new Analysis Type
-
-The [AnalysisType][] enum defines the different types of analyses/pipelines available in IRIDA.  You will need to add a new constant here for your particular analysis type.  For example:
+In order to properly integrate the workflow with IRIDA your pipeline may require adding a new [AnalysisType][].  The [AnalysisType][] enum defines the different types of analyses/pipelines available in IRIDA.  You will need to add a new constant here for your particular analysis type.  For example:
 
 ```java
 @XmlEnumValue("mypipeline")
-MY_PIPELINE("mypipeline", AnalysisMyPipeline.class)
+MY_PIPELINE("mypipeline")
 ```
 
-This links the constant `AnalysisType.MY_PIPELINE` to the string `mypipeline` and the class `AnalysisMyPipeline`.
+This links the constant `AnalysisType.MY_PIPELINE` to the string `mypipeline`.
 
 ### 2. IRIDA Workflow Definition
 

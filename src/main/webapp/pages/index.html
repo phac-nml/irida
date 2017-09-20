@@ -5,14 +5,12 @@
       layout:decorator="template/page">
 <head>
   <title th:text="#{dashboard.title}">THIS IS SOMETHING WRONG</title>
-  <link rel="stylesheet" th:href="@{/resources/css/modules/announcements.css}"/>
   <script th:inline="javascript">
     var PAGE = {
       urls: {
         link: /*[[@{/announcements/}]]*/ '/announcements',
       },
     };
-    window.dependencies = ['irida.events', 'irida.announcements'];
   </script>
 </head>
 <body>

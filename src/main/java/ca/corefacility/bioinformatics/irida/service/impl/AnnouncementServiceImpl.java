@@ -10,7 +10,7 @@ import javax.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -104,9 +104,8 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
     @Override
     @Transactional
     @PreAuthorize("hasAnyRole('ROLE_USER')")
-    public Page<Announcement> search(Specification<Announcement> specification, int page, int size,
-                                     Sort.Direction order, String... sortProperties) {
-        return super.search(specification, page, size, order, sortProperties);
+    public Page<Announcement> search(Specification<Announcement> specification, PageRequest request) {
+        return super.search(specification, request);
     }
 
     /**
