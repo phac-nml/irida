@@ -19,3 +19,13 @@ To enable automated assemblies for the project, check the "Automatically assembl
 When you've finished entering the details for your new project, click on the "Create Project" button. You will be redirected to the projects list.
 
 IRIDA will automatically generate a numeric project identifier for your project. The project identifier is used by external tools for uploading sequencing data to IRIDA. The project identifier can be found in the ["Project Details" panel]({{ site.baseurl }}/user/user/project/index.html#viewing-project-details), or in the [projects list]({{ site.baseurl }}/user/user/project/index.html#viewing-existing-projects).
+
+#### Creating a project from cart
+
+You can create a project with samples already added to the project by using the [cart]({{ site.baseurl }}/user/user/dashboard/#cart).  To use this feature, you must first add some samples to the cart.  Once the samples are added you can click the arrow next to **Select a Pipeline**, and click **Create Project from Samples**.  This will bring you to the create project page.
+
+![Create project cart]({{ site.baseurl }}/images/tutorials/common/projects/create-project-cart.png)
+
+Continue creating the project details as described above, but note the checkbox **Add samples in cart to project**.  If this checkbox is enabled any samples in the cart will be automatically added to this project.  If there are any samples which you cannot add to the project, a warning will be displayed below.
+
+![Create project cart warning]({{ site.baseurl }}/images/tutorials/common/projects/create-project-cart-warning.png)

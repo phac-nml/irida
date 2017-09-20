@@ -8,8 +8,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
@@ -21,24 +21,28 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.common.collect.ImmutableMap;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisAssemblyAnnotation;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
-
-import com.google.common.collect.ImmutableMap;
 
 /**
  * REST controller to manage sharing of {@link AnalysisSubmission},
@@ -49,6 +53,8 @@ import com.google.common.collect.ImmutableMap;
 public class RESTAnalysisSubmissionController extends RESTGenericController<AnalysisSubmission> {
 	private AnalysisSubmissionService analysisSubmissionService;
 	private SampleService sampleService;
+	private SequencingObjectService sequencingObjectService;
+	private IridaWorkflowsService iridaWorkflowsService;
 
 	// rel for reading the analysis for a submission
 	public static final String ANALYSIS_REL = "analysis";
@@ -62,15 +68,20 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	public static final String INPUT_FILES_PAIRED_REL = "input/paired";
 
 	// available analysis types to filter for
-	public static Map<String, Class<? extends Analysis>> ANALYSIS_TYPES = ImmutableMap.of("phylogenomics",
-			AnalysisPhylogenomicsPipeline.class, "assembly", AnalysisAssemblyAnnotation.class);
+	public static Map<String, AnalysisType> ANALYSIS_TYPES = ImmutableMap.<String, AnalysisType>builder()
+			.put("phylogenomics", AnalysisType.PHYLOGENOMICS).put("assembly", AnalysisType.ASSEMBLY_ANNOTATION)
+			.put("assembly-collection", AnalysisType.ASSEMBLY_ANNOTATION_COLLECTION)
+			.put("sistr", AnalysisType.SISTR_TYPING).build();
 
 	@Autowired
 	public RESTAnalysisSubmissionController(AnalysisSubmissionService analysisSubmissionService,
-			SampleService sampleService) {
+			SampleService sampleService, SequencingObjectService sequencingObjectService,
+			IridaWorkflowsService iridaWorkflowsService) {
 		super(analysisSubmissionService, AnalysisSubmission.class);
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.sampleService = sampleService;
+		this.sequencingObjectService = sequencingObjectService;
+		this.iridaWorkflowsService = iridaWorkflowsService;
 	}
 
 	/**
@@ -87,13 +98,18 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 		if (!ANALYSIS_TYPES.containsKey(type)) {
 			throw new EntityNotFoundException("Analysis type not found");
 		}
-		Class<? extends Analysis> analysisClass = ANALYSIS_TYPES.get(type);
+		AnalysisType analysisType = ANALYSIS_TYPES.get(type);
+		Set<UUID> workflowIds;
+		try {
+			workflowIds = iridaWorkflowsService.getAllWorkflowsByType(analysisType).stream()
+					.map(IridaWorkflow::getWorkflowDescription).map(IridaWorkflowDescription::getId)
+					.collect(Collectors.toSet());
+		} catch (IridaWorkflowNotFoundException e) {
+			throw new EntityNotFoundException("Analysis type not found", e);
+		}
 
-		Iterable<AnalysisSubmission> submissions = analysisSubmissionService.findAll();
-
-		List<AnalysisSubmission> analysesOfType = StreamSupport.stream(submissions.spliterator(), false)
-				.filter((s) -> s.getAnalysis() != null && s.getAnalysis().getClass().equals(analysisClass))
-				.collect(Collectors.toList());
+		List<AnalysisSubmission> analysesOfType = analysisSubmissionService
+				.getAnalysisSubmissionsAccessibleByCurrentUserByWorkflowIds(workflowIds);
 
 		ResourceCollection<AnalysisSubmission> resourceCollection = new ResourceCollection<>(analysesOfType.size());
 		for (AnalysisSubmission s : analysesOfType) {
@@ -118,8 +134,8 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 		Collection<Link> links = super.constructCollectionResourceLinks(list);
 
 		for (String type : ANALYSIS_TYPES.keySet()) {
-			links.add(linkTo(methodOn(RESTAnalysisSubmissionController.class).listOfType(type)).withRel(
-					SUBMISSIONS_REL + "/" + type));
+			links.add(linkTo(methodOn(RESTAnalysisSubmissionController.class).listOfType(type))
+					.withRel(SUBMISSIONS_REL + "/" + type));
 		}
 
 		return links;
@@ -137,16 +153,19 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 		ModelMap map = new ModelMap();
 		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(identifier);
 
-		Set<SequenceFilePair> pairs = analysisSubmission.getPairedInputFiles();
+		Set<SequenceFilePair> pairs = sequencingObjectService
+				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SequenceFilePair.class);
 		ResourceCollection<SequenceFilePair> resources = new ResourceCollection<>(pairs.size());
 		for (SequenceFilePair pair : pairs) {
 			SampleSequencingObjectJoin join = sampleService.getSampleForSequencingObject(pair);
 
-			Long sampleId = join.getSubject().getId();
+			if (join != null) {
+				Long sampleId = join.getSubject().getId();
 
-			pair = RESTSampleSequenceFilesController.addSequencingObjectLinks(pair, sampleId);
+				pair = RESTSampleSequenceFilesController.addSequencingObjectLinks(pair, sampleId);
 
-			resources.add(pair);
+				resources.add(pair);
+			}
 		}
 
 		resources.add(linkTo(methodOn(RESTAnalysisSubmissionController.class).getAnalysisInputFilePairs(identifier))
@@ -169,20 +188,23 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 		ModelMap map = new ModelMap();
 		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(identifier);
 
-		Set<SingleEndSequenceFile> inputFilesSingleEnd = analysisSubmission.getInputFilesSingleEnd();
+		Set<SingleEndSequenceFile> inputFilesSingleEnd = sequencingObjectService
+				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SingleEndSequenceFile.class);
 		ResourceCollection<SequencingObject> resources = new ResourceCollection<>(inputFilesSingleEnd.size());
 		for (SingleEndSequenceFile file : inputFilesSingleEnd) {
 			SampleSequencingObjectJoin join = sampleService.getSampleForSequencingObject(file);
-			SequencingObject sequencingObject = join.getObject();
+			
+			if (join != null) {
+				SequencingObject sequencingObject = join.getObject();
 
-			RESTSampleSequenceFilesController.addSequencingObjectLinks(sequencingObject, join.getSubject().getId());
+				RESTSampleSequenceFilesController.addSequencingObjectLinks(sequencingObject, join.getSubject().getId());
 
-			resources.add(sequencingObject);
+				resources.add(sequencingObject);
+			}
 		}
 
-		resources
-				.add(linkTo(methodOn(RESTAnalysisSubmissionController.class).getAnalysisInputUnpairedFiles(identifier))
-						.withSelfRel());
+		resources.add(linkTo(methodOn(RESTAnalysisSubmissionController.class).getAnalysisInputUnpairedFiles(identifier))
+				.withSelfRel());
 		map.addAttribute(RESTGenericController.RESOURCE_NAME, resources);
 
 		return map;
@@ -213,9 +235,9 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 		 * Add links to the available files
 		 */
 		for (String name : analysis.getAnalysisOutputFileNames()) {
-			analysis.add(linkTo(
-					methodOn(RESTAnalysisSubmissionController.class).getAnalysisOutputFile(identifier, name)).withRel(
-					FILE_REL + "/" + name));
+			analysis.add(
+					linkTo(methodOn(RESTAnalysisSubmissionController.class).getAnalysisOutputFile(identifier, name))
+							.withRel(FILE_REL + "/" + name));
 		}
 
 		model.addAttribute(RESOURCE_NAME, analysis);
@@ -243,9 +265,9 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 		}
 
 		AnalysisOutputFile analysisOutputFile = read.getAnalysis().getAnalysisOutputFile(fileType);
-		analysisOutputFile.add(linkTo(
-				methodOn(RESTAnalysisSubmissionController.class).getAnalysisOutputFile(submissionId, fileType))
-				.withSelfRel());
+		analysisOutputFile.add(
+				linkTo(methodOn(RESTAnalysisSubmissionController.class).getAnalysisOutputFile(submissionId, fileType))
+						.withSelfRel());
 
 		model.addAttribute(RESOURCE_NAME, analysisOutputFile);
 
@@ -284,14 +306,14 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	protected Collection<Link> constructCustomResourceLinks(AnalysisSubmission resource) {
 		Collection<Link> links = new HashSet<>();
 		if (resource.getAnalysisState().equals(AnalysisState.COMPLETED)) {
-			links.add(linkTo(
-					methodOn(RESTAnalysisSubmissionController.class).getAnalysisForSubmission(resource.getId()))
-					.withRel(ANALYSIS_REL));
+			links.add(
+					linkTo(methodOn(RESTAnalysisSubmissionController.class).getAnalysisForSubmission(resource.getId()))
+							.withRel(ANALYSIS_REL));
 		}
 
-		links.add(linkTo(
-				methodOn(RESTAnalysisSubmissionController.class).getAnalysisInputUnpairedFiles(resource.getId()))
-				.withRel(INPUT_FILES_UNPAIRED_REL));
+		links.add(
+				linkTo(methodOn(RESTAnalysisSubmissionController.class).getAnalysisInputUnpairedFiles(resource.getId()))
+						.withRel(INPUT_FILES_UNPAIRED_REL));
 
 		links.add(linkTo(methodOn(RESTAnalysisSubmissionController.class).getAnalysisInputFilePairs(resource.getId()))
 				.withRel(INPUT_FILES_PAIRED_REL));

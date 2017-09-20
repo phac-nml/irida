@@ -4,9 +4,12 @@ import static ca.corefacility.bioinformatics.irida.web.controller.test.integrati
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asUser;
 import static com.jayway.restassured.path.json.JsonPath.from;
 import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.both;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -28,16 +31,16 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
-import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
-import ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestSystemProperties;
-
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.net.HttpHeaders;
 import com.jayway.restassured.response.Response;
+
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
+import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
+import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
+import ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestSystemProperties;
 
 /**
  * Integration tests for working with sequence files and samples.
@@ -233,6 +236,38 @@ public class SampleSequenceFilesIT {
 				.body("resource.fileName", equalTo("sequenceFile2_01_L001_R1_001.fastq.gz")).when().get(forwardLink);
 		asUser().expect().statusCode(HttpStatus.OK.value()).and()
 				.body("resource.fileName", equalTo("sequenceFile2_01_L001_R2_001.fastq.gz")).when().get(reverseLink);
+	}
+	
+	@Test
+	public void testReadSequenceFilesNoAnalysis() {
+		String sequenceFilePairUri = ITestSystemProperties.BASE_URL + "/api/samples/1/pairs/4";
+
+		asUser().get(sequenceFilePairUri).then().statusCode(HttpStatus.OK.value()).and()
+				.body("resource.links.rel", not(anyOf(hasItem("analysis/assembly"), hasItem("analysis/sistr"))));
+	}
+
+	@Test
+	public void testReadSequenceFilesAssemblyAnalysis() {
+		String sequenceFilePairUri = ITestSystemProperties.BASE_URL + "/api/samples/1/pairs/2";
+
+		asUser().get(sequenceFilePairUri).then().statusCode(HttpStatus.OK.value()).and().body("resource.links.rel",
+				both(hasItem("analysis/assembly")).and(not(hasItem("analysis/sistr"))));
+	}
+
+	@Test
+	public void testReadSequenceFilesSISTRAnalysis() {
+		String sequenceFilePairUri = ITestSystemProperties.BASE_URL + "/api/samples/1/pairs/3";
+
+		asUser().get(sequenceFilePairUri).then().statusCode(HttpStatus.OK.value()).and().body("resource.links.rel",
+				both(hasItem("analysis/sistr")).and(not(hasItem("analysis/assembly"))));
+	}
+	
+	@Test
+	public void testReadSequenceFilesSISTRAssemblyAnalysis() {
+		String sequenceFilePairUri = ITestSystemProperties.BASE_URL + "/api/samples/1/pairs/1";
+
+		asUser().get(sequenceFilePairUri).then().statusCode(HttpStatus.OK.value()).and().body("resource.links.rel",
+				both(hasItem("analysis/sistr")).and(hasItem("analysis/assembly")));
 	}
 
 	@Test

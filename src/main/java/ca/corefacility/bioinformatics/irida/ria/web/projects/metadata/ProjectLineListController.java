@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.common.collect.ImmutableMap;
+
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -33,8 +35,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUt
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-
-import com.google.common.collect.ImmutableMap;
 
 @Controller
 @RequestMapping("/projects/{projectId}/linelist")
@@ -86,7 +86,7 @@ public class ProjectLineListController {
 		}
 
 		// Get the headers (metadata fields)
-		List<String> headers = getAllProjectMetadataFields(projectId);
+		List<String> headers = getAllProjectMetadataFields(projectId, locale);
 		model.addAttribute("headers", headers);
 
 		// Get all the metadata for each sample in the project
@@ -95,25 +95,20 @@ public class ProjectLineListController {
 		for (Join<Project, Sample> join : samplesForProject) {
 			Sample sample = join.getObject();
 			Map<String, Object> fullMetadata = new HashMap<>();
+
 			if (!sample.getMetadata().isEmpty()) {
 				Map<MetadataTemplateField, MetadataEntry> metadata = sample.getMetadata();
 				
 				Map<String,MetadataEntry> stringMetadata = new HashMap<>();
 				metadata.forEach((key, value) -> stringMetadata.put(key.getLabel(), value));
-				
+
 				for (String header : headers) {
-					/*
-					Since the id and the label are kept on the Sample not in the JSON,
-					They need to be pulled specifically from the sample.
-					 */
-					if (header.equalsIgnoreCase("id")) {
-						fullMetadata.put("id", ImmutableMap.of("value", sample.getId()));
-					} else if (header.equalsIgnoreCase("label")) {
-						fullMetadata.put("label", ImmutableMap.of("value", sample.getSampleName()));
-					} else {
-						fullMetadata.put(header, stringMetadata.getOrDefault(header, new MetadataEntry("", "")));
-					}
+					fullMetadata.put(header, stringMetadata.getOrDefault(header, new MetadataEntry("", "")));
 				}
+
+				// Id and Label must be defaults in all metadata.
+				fullMetadata.put("id", ImmutableMap.of("value", sample.getId()));
+				fullMetadata.put("irida-sample-name", ImmutableMap.of("value", sample.getSampleName()));
 
 				// Put this here to avoid showing samples that do not have
 				// any metadata associated with them.
@@ -215,7 +210,7 @@ public class ProjectLineListController {
 	 *
 	 * @return {@link Set} containing unique metadata fields
 	 */
-	private List<String> getAllProjectMetadataFields(Long projectId) {
+	private List<String> getAllProjectMetadataFields(Long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
 		Set<String> fields = new HashSet<>();
 
@@ -241,13 +236,7 @@ public class ProjectLineListController {
 					.collect(Collectors.toSet()));
 		}
 
-		List<String> fieldList = new ArrayList<>(fields);
-
-		// Need to add default sample fields.
-		fieldList.add(0, "label");
-		fieldList.add(0, "id");
-
-		return fieldList;
+		return new ArrayList<>(fields);
 	}
 
 	/**
@@ -295,6 +284,7 @@ public class ProjectLineListController {
 		Project project = projectService.read(projectId);
 
 		List<MetadataTemplateField> metadataFields = new ArrayList<>();
+
 		for (String label : fields) {
 			// Check to see if this field already exists.
 			MetadataTemplateField metadataField = metadataTemplateService.readMetadataFieldByLabel(label);

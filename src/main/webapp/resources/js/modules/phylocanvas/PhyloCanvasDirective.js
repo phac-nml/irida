@@ -1,3 +1,5 @@
+// TODO: (Josh | 2017-06-21) This needs to be updated to use the newder phylocanvas.
+
 /**
  * [PhyloCanvas documentation](http://www.spatialepidemiology.net/PhyloCanvasDocs/)
  * This Directive is a wrapper for the PhyloCanvas Library.
@@ -43,6 +45,7 @@
 
           phylo = new PhyloCanvas.Tree("phylocanvas", attrs.config);
           phylo.setTreeType(scope.shape);
+          phylo.contextMenu = false;
           phylo.load(attrs.newick);
         },
         controller: ['$scope', function($scope) {

@@ -64,7 +64,8 @@ var RowClickHandler = (function (page) {
     if(!Array.isArray(selected[item.projectId])) {
       return false;
     }
-    return selected[item.projectId].indexOf(item.sampleId) > -1;
+    // Seems to be storing as a string instead of number.
+    return selected[item.projectId].includes(item.sampleId + "");
   }
 
   function getSelectedCount() {
@@ -406,8 +407,10 @@ var datatable = (function(moment, tl, page) {
     var outer = document.createElement("div");
     var div = document.createElement("div");
     div.classList.add("project-label");
-    var text = document.createTextNode(data);
-    div.appendChild(text);
+    var link = document.createElement("a");
+    link.href = tl.BASE_URL + "projects/" + full.projectId;
+    link.text = data;
+    div.appendChild(link);
 
     var colour = projectColourer.getColour(full.projectName);
     div.style.borderColor = colour;
@@ -465,6 +468,10 @@ var datatable = (function(moment, tl, page) {
 
     if (badQc) {
       row.classList.add("row-warning");
+    }
+
+    if (!item.owner) {
+      row.classList.add("locked-sample");
     }
     
   }

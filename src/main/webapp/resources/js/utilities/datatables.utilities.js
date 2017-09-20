@@ -1,3 +1,6 @@
+/**
+ * This file is being replaced by datatables-utilities.js
+ */
 // Default table html DOM layout
 export const dom = `
 <'row spaced-bottom'<'col-md-8 col-sm-12 toolbar'l><'col-md-4 col-sm-12'f>>

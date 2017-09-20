@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.UUID;
 
 import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
@@ -24,6 +26,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -174,7 +177,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@PostFilter("hasPermission(filterObject, 'canReadAnalysisSubmission')")
 	public Iterable<AnalysisSubmission> findAll() {
 		return super.findAll();
 	}
@@ -336,6 +340,13 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		return getAnalysisSubmissionsForUser(user);
 	}
 	
+	@Override
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@PostFilter("hasPermission(filterObject, 'canReadAnalysisSubmission')")
+	public List<AnalysisSubmission> getAnalysisSubmissionsAccessibleByCurrentUserByWorkflowIds(Collection<UUID> workflowIds) {
+		return analysisSubmissionRepository.findByWorkflowIds(workflowIds);
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -351,12 +362,13 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		IridaWorkflowDescription description = workflow.getWorkflowDescription();
 			
 		if (description.acceptsSingleSequenceFiles()) {
-			final Map<Sample, SingleEndSequenceFile> samplesMap = sequencingObjectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(sequenceFiles));
+			final Map<Sample, SingleEndSequenceFile> samplesMap = sequencingObjectService
+					.getUniqueSamplesForSequencingObjects(Sets.newHashSet(sequenceFiles));
 			for (final Sample s : samplesMap.keySet()) {
 				// Build the analysis submission
 				AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
 				builder.name(name + "_" + s.getSampleName());
-				builder.inputFilesSingleEnd(ImmutableSet.of(samplesMap.get(s)));
+				builder.inputFiles(ImmutableSet.of(samplesMap.get(s)));
 
 				// Add reference file
 				if (ref != null && description.requiresReference()) {
@@ -392,7 +404,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 				// Build the analysis submission
 				AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
 				builder.name(name + "_" + s.getSampleName());
-				builder.inputFilesPaired(ImmutableSet.of(samplesMap.get(s)));
+				builder.inputFiles(ImmutableSet.of(samplesMap.get(s)));
 
 				// Add reference file
 				if (ref != null && description.requiresReference()) {
@@ -452,7 +464,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		// Add any single end sequencing files.
 		if (description.acceptsSingleSequenceFiles()) {
 			if (!sequenceFiles.isEmpty()) {
-				builder.inputFilesSingleEnd(Sets.newHashSet(sequenceFiles));
+				builder.inputFiles(Sets.newHashSet(sequenceFiles));
 			}
 		}
 
@@ -460,7 +472,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		if (description.acceptsPairedSequenceFiles()) {
 			if (!sequenceFilePairs.isEmpty())
 			{
-				builder.inputFilesPaired(Sets.newHashSet(sequenceFilePairs));
+				builder.inputFiles(Sets.newHashSet(sequenceFilePairs));
 			}
 		}
 
@@ -567,5 +579,15 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Collection<AnalysisSubmission> findAnalysesByState(Collection<AnalysisState> states) {
 		return analysisSubmissionRepository.findByAnalysisState(states);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasPermission(#project, 'canReadProject')")
+	public Collection<AnalysisSubmission> getAnalysisSubmissionsSharedToProject(Project project) {
+		return pasRepository.getSubmissionsForProject(project).stream().map(ProjectAnalysisSubmissionJoin::getObject)
+				.collect(Collectors.toSet());
 	}
 }

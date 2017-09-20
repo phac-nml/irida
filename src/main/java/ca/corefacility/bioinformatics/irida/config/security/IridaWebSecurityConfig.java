@@ -186,7 +186,7 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		@Override
 		public void configure(WebSecurity web) throws Exception {
-			web.ignoring().antMatchers("/resources/**").antMatchers("/public/**").antMatchers("/dandelion/**")
+			web.ignoring().antMatchers("/node_modules/**").antMatchers("/resources/**").antMatchers("/public/**").antMatchers("/dandelion/**")
 					.antMatchers("/dandelion-assets/**").antMatchers("/ddl-debugger/**");
 		}
 

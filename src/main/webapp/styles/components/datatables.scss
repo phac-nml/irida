@@ -1,0 +1,90 @@
+/**
+This is a new files to replace datatables-custom.scss after all DataTables updated
+ */
+
+.dataTable {
+  border: 1px solid #efefef;
+  // This is to override datatables default that is also set as
+  // specific.  This is just more specific.
+  &.table.table-striped {
+    margin-top: 0 !important;
+  }
+  // center the text in the headers
+  th {
+    white-space: nowrap;
+    height: 32px;
+    vertical-align: middle !important;
+    position: relative;
+  }
+  // Center the Sort indicator
+  th:after {
+    position: absolute;
+    display: block;
+    top: 50%;
+    transform: translateY(-50%);
+    content: '';
+  }
+}
+
+// Prevent horizontal scrollbars in the fixed columns
+.DTFC_LeftBodyLiner {
+  overflow-x: hidden;
+}
+
+// For fixed columns, this adds a gradient of it to differentiate it from
+// the rest of the table.
+.DTFC_LeftHeadWrapper th,
+.DTFC_LeftBodyWrapper td {
+  background-color: rgba(218, 237, 247, 1.00);
+  border-right: 2px solid #eee;
+}
+
+.dataTables_paginate {
+  display: flex;
+  justify-content: center;
+}
+
+// New custom wrapper for updated tables
+// This is set in JS in datatable-utilities.js#dom
+.dt-table-wrapper {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.18);
+  margin-bottom: 10px;
+}
+
+// Set up the filter to be pulled to the right and accept flex box
+#dt-filters {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.dataTables_filter {
+  display: inline-block;
+}
+
+.dt-filter-btns {
+  margin: 0 !important;
+}
+
+// Filter Row - updated tables
+.filter-tags {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.filter-tags__space {
+  display: flex;
+}
+
+.filter-tags__tag {
+  margin-left: 4px;
+}
+
+.dt-wrap-cell {
+  white-space: pre-wrap;
+  word-break: break-all;
+  word-wrap: break-word;
+}
+
+.dt-date {
+  width: 200px !important;
+}

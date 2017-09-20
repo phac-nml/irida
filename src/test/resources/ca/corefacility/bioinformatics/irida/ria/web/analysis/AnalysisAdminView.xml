@@ -11,7 +11,7 @@
              sampleName="sample1"/>
 
     <project_sample id="1" createdDate="2013-07-18 14:20:19.0"
-                    project_id="1" sample_id="1"/>
+                    project_id="1" sample_id="1" owner="true" />
 
 	<sequencing_run id="1" createdDate="2013-07-18 14:20:19.0"
 		modifiedDate="2013-07-18 14:20:19.0" description="info" upload_status="COMPLETE"
@@ -91,5 +91,5 @@
 
     <analysis_output_file_map analysis_id="1" analysisOutputFilesMap_id="1" analysis_output_file_key="tree" />
 
-    <analysis_submission_sequence_file_pair analysis_submission_id="4" sequence_file_pair_id="1" />
+    <analysis_submission_sequencing_object analysis_submission_id="4" sequencing_object_id="1" />
 </dataset>

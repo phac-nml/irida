@@ -1,9 +1,33 @@
 Changes
 =======
 
+0.18.0 to 0.19.0
+----------------
+* [Developer]: Fixed issue where bootstrap was being loaded twice onto the page. (0.18.1)
+* [UI]: Fixed URL for concatenation of sample sequence files. (0.18.1)
+
 0.17.0 to 0.18.0
 ----------------
+* [Developer]: Removed old javascript build configuration files.
+* [Developer]: Cleaned up javascript imports (removed all `require` statements).
+* [UI]: Removed phylocanvas context menu from analysis > details page.
+* [Workflow]: Made workflows applying to a single sample to include sample name in all output files. Updated previous output files in database to also include sample name if corresponding workflow used only a single sample.
+* [UI]: Added buttons on the project settings page, and metadata template page to download an excel template.
+* [Developer]: Reorganized permissions classes into subpackages.
+* [UI]: Added maximum coverage quality control option.
 * [UI]: Allowing admins to delete synchronized data so it will be resynchronized if there was a problem. Note any changes made to synchronized samples will be overwritten on the next sync job.  (0.17.1)
+* [Developer]: Checking if single end files have been synchronized to stop duplication.
+* [Developer]: Changed relationship of sequence files to a single collection in AnalysisSubmission instead of a collection for each file type.
+* [Documentation]: Rewrote Galaxy installation guide, added sections for linking IRIDA to existing Galaxy or to a pre-build Docker image.
+* [Developer]: Removed `Dandelion` dependencies from the dashboard, projects listing, & users listing pages.
+* [Developer]: Created new DataTables request handler to enable removing Dandelion DataTables.
+* [API]: Performance improvements when listing analyses of a specific type in the REST API.
+* [Developer]: Changed file processing chain to try to avoid errors in processing.
+* [API]: Added REST API endpoints for accessing all analyses associated with a project and for accessing automated analyses.
+* [UI]: Added ability to concatenate sequence files in a sample.
+* [UI]: New feature to export metadata through the Project line list view.
+* [UI]: Fixed bug allowing empty library name for Galaxy exporting.
+* [UI]: Added ability to download individual analysis output files.
 
 0.16.0 to 0.17.0
 ----------------

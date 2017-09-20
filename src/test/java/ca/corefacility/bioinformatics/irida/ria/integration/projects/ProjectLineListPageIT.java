@@ -5,11 +5,11 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectLineListPage;
-
-import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 /**
  * <p>
@@ -49,17 +49,22 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Test selecting templates
 		page.selectTemplate(TEMPLATE_1);
-		assertEquals("Should have 4 columns visible", 3, page.getNumberTableColumns());
+
+		// Even though the template only has 3 terms, 4 columns will be visible because of the label.
+		assertEquals("Should have 4 columns visible", 4, page.getNumberTableColumns());
 
 		// Test saving a template
 		page.openColumnVisibilityPanel();
 		page.toggleColumn("firstSymptom");
 		page.closeColumnVisibilityPanel();
+
+		assertEquals("Should have 5 columns visible", 5, page.getNumberTableColumns());
 		page.saveTemplate(TEMPLATE_NAME);
+
 		// Switch to a different template
 		page.selectTemplate(TEMPLATE_1);
-		assertEquals("Should have 4 columns visible", 3, page.getNumberTableColumns());
+		assertEquals("Should have 4 columns visible", 4, page.getNumberTableColumns());
 		page.selectTemplate(TEMPLATE_NAME);
-		assertEquals("Should have 3 columns visible", 4, page.getNumberTableColumns());
+		assertEquals("Should have 5 columns visible", 5, page.getNumberTableColumns());
 	}
 }

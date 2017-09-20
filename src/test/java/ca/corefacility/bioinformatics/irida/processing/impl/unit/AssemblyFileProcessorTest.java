@@ -82,10 +82,10 @@ public class AssemblyFileProcessorTest {
 		when(objectRepository.findOne(sequenceFileId)).thenReturn(pair);
 		when(ssoRepository.getSampleForSequencingObject(pair)).thenReturn(new SampleSequencingObjectJoin(sample, pair));
 		when(psjRepository.getProjectForSample(sample)).thenReturn(
-				ImmutableList.of(new ProjectSampleJoin(project, sample)));
+				ImmutableList.of(new ProjectSampleJoin(project, sample, true)));
 
 		assertTrue("should want to assemble file", processor.shouldProcessFile(sequenceFileId));
-		processor.process(sequenceFileId);
+		processor.process(pair);
 
 		verify(submissionRepository).save(any(AnalysisSubmission.class));
 	}
@@ -101,7 +101,7 @@ public class AssemblyFileProcessorTest {
 		when(objectRepository.findOne(sequenceFileId)).thenReturn(pair);
 		when(ssoRepository.getSampleForSequencingObject(pair)).thenReturn(new SampleSequencingObjectJoin(sample, pair));
 		when(psjRepository.getProjectForSample(sample)).thenReturn(
-				ImmutableList.of(new ProjectSampleJoin(project, sample)));
+				ImmutableList.of(new ProjectSampleJoin(project, sample, true)));
 
 		assertFalse("processor should not want to assemble file", processor.shouldProcessFile(sequenceFileId));
 
@@ -110,7 +110,6 @@ public class AssemblyFileProcessorTest {
 
 	@Test
 	public void testOneProjectEnabled() {
-		Long sequenceFileId = 1L;
 		SequenceFilePair pair = new SequenceFilePair(new SequenceFile(Paths.get("file_R1_1.fastq.gz")),
 				new SequenceFile(Paths.get("file_R2_1.fastq.gz")));
 		Sample sample = new Sample();
@@ -120,13 +119,12 @@ public class AssemblyFileProcessorTest {
 		Project disabledProject = new Project();
 		disabledProject.setAssembleUploads(false);
 
-		when(objectRepository.findOne(sequenceFileId)).thenReturn(pair);
 		when(ssoRepository.getSampleForSequencingObject(pair)).thenReturn(new SampleSequencingObjectJoin(sample, pair));
 		when(psjRepository.getProjectForSample(sample)).thenReturn(
 				ImmutableList
-						.of(new ProjectSampleJoin(disabledProject, sample), new ProjectSampleJoin(project, sample)));
+						.of(new ProjectSampleJoin(disabledProject, sample, true), new ProjectSampleJoin(project, sample, true)));
 
-		processor.process(sequenceFileId);
+		processor.process(pair);
 
 		verify(submissionRepository).save(any(AnalysisSubmission.class));
 	}

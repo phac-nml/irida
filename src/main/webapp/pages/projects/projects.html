@@ -1,97 +1,55 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:ddl="http://www.thymeleaf.org/dandelion"
-      xmlns:dt="http://www.thymeleaf.org/dandelion/datatables"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="template/page">
 <head>
-	<title th:text="#{projects.title}">List of Projects</title>
-	<style>
-		.dataTables_paginate {
-			text-align: center!important;
-		}
-	</style>
+    <title th:text="#{projects.title}">List of Projects</title>
+    <script th:inline="javascript">
+      var PAGE = {
+          urls: {
+            projects: /*[[@{${ajaxURL}}]]*/ "",
+            project: /*[[@{/projects/}]]*/ "",
+            export: /*[[@{/projects/ajax/export(admin=${isAdmin})}]]*/ ""
+          },
+        i18n: {
+          remote: /*[[#{projects.table.remoteSynchronized}]]*/ ""
+        },
+        buttons: /*[[${exportTypes}]]*/ []
+      };
+    </script>
 </head>
 <body>
-<div layout:fragment="page"
-     ddl:bundle-includes="projects" ddl:asset-css-excludes="jquery.datatables">
-	<main class="col-md-12" role="main" property="mainContentOfPage">
-		<h1 th:text="#{projects.title}"></h1>
+<div layout:fragment="page">
 
-		<div dt:conf="projectsTable">
-			<div dt:confType="extrajs" dt:bundles="projects-table" dt:placeholder="before_end_document_ready" />
-			<div dt:confType="extrahtml" dt:uid="0">
-				<div class="btn-toolbar pull-right" style="padding-left: 9px;">
-					<button id="openFilterModal" class="btn btn-sm btn-default" data-toggle="modal" data-target="#filterModal" th:text="#{projects.filter.btn}">
-						Advanced Filter
-					</button>
-					<button id="clearFilterBtn" class="btn btn-sm btn-inverse" th:text="#{projects.filter.clear}">Clear</button>
-				</div>
-			</div>
-			<div dt:confType="extrahtml" dt:uid="1">
-				<div class="col-md-12 text-right">
-					<span id="nameFilterClear" th:title="#{projects.filter.clear.title}" class="label label-default hidden">Name: <em id="nameFilterPreview"></em>&nbsp;</span>
-					<span id="organismFilterClear" th:title="#{projects.filter.clear.title}" class="label label-default hidden">Organism: <em id="organismFilterPreview"></em></span>
-				</div>
-			</div>
-			<div dt:confType="extrahtml" dt:uid="2">
-				<div class="dropdown">
-					<button class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-download fa-fw" aria-hidden="true"></i>&nbsp;<span th:text="#{projects.export}">Export</span>&nbsp;&nbsp;<span class="caret"></span></button>
-					<ul class="dropdown-menu" aria-labelledby="reportMenu">
-						<li role="menuitem" th:each="type : ${exportTypes}">
-							<a th:href="@{'/projects/ajax/export?dtf=' + ${type.format} + '&amp;admin=' + ${isAdmin}}" href="/projects/ajax/export/xlsx" th:text="#{'projects.export.' + ${type.format}}">Excel</a>
-						</li>
-					</ul>
-				</div>
-			</div>
-        </div>
-        <table id="projectsTable" dt:table="true" dt:url="@{${ajaxURL}}">
+    <main class="col-md-12" property="mainContentOfPage">
+        <h1 th:text="#{projects.title}"></h1>
+
+        <table id="projects" class="table table-striped"
+               cellspacing="0" width="100%">
             <thead>
-            <tr role="row">
-                <th width="100px" dt:property="id" dt:searchable="false" th:text="#{projects.table.id}" style="vertical-align: top;"></th>
-                <th dt:property="name" dt:filterable="true" width="200px" dt:renderFunction="projects#projectsTable.createItemButton"
-                	><span class="header-name" th:text="#{projects.table.name}"></span></th>
-                <th dt:property="organism" th:text="#{projects.table.organism}"
-                    dt:renderFunction="datatables-utils#datatable.forceContentSize"></th>
-                <th dt:property="samples" dt:sortable="false" dt:searchable="false" th:text="#{projects.table.samples}"></th>
-                <th width="150px" dt:property="createdDate" dt:sortType="natural" th:text="#{projects.table.created}"
-                    dt:renderFunction="datatables-utils#datatable.formatDate"></th>
-                <th width="200px" dt:property="modifiedDate" dt:sortType="natural" dt:sortInitDirection="desc" th:text="#{projects.table.modified}"
-                    dt:renderFunction="datatables-utils#datatable.formatDateWithTime"></th>
+            <tr>
+                <th data-data="id" width="20" th:text="#{projects.table.id}"></th>
+                <th data-data="name" th:text="#{projects.table.name}"></th>
+                <th data-data="organism" th:text="#{projects.table.organism}"></th>
+                <th data-data="samples" data-orderable="false" th:text="#{projects.table.samples}"></th>
+                <th class="dt-date" data-data="createdDate" th:text="#{projects.table.created}"></th>
+                <th class="dt-date" data-data="modifiedDate" th:text="#{projects.table.modified}"></th>
             </tr>
             </thead>
         </table>
     </main>
+
+    <div class="hidden" id="export-btn-text">
+        <i class="fa fa-download" aria-hidden="true"></i>
+        &nbsp;<th:block th:text="#{projects.export}"/>
+        <i class="fa fa-caret-down" aria-hidden="true">
+        </i>
+    </div>
 </div>
-<th:block layout:fragment="scripts" th:inline="javascript">
-	<div class="modal fade" id="filterModal" role="dialog" aria-labelledby="#filterTitle">
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" data:aria-label="#{form.btn.close}">
-						<span aria-hidden="true">&times;</span>
-					</button>
-					<h4 class="modal-title" id="filterTitle" th:text="#{projects.filter.title}">_Advanced Projects Filter</h4>
-				</div>
-				<div class="modal-body">
-					<form id="filterForm" name="filterForm">
-						<div class="form-group">
-							<label th:text="#{projects.table.name}"></label>
-							<input autofocus="autofocus" type="text" id="nameFilter" name="name" class="form-control"/>
-						</div>
-						<div class="form-group">
-							<label th:text="#{projects.table.organism}"></label>
-							<input type="text" id="organismFilter" name="organism" class="form-control"/>
-						</div>
-					</form>
-				</div>
-				<div class="modal-footer">
-					<button tabindex="-1" type="button" class="btn btn-default" data-dismiss="modal" th:text="#{form.btn.close}"></button>
-					<button id="filterProjectsBtn" type="submit" class="btn btn-primary" data-dismiss="modal" th:text="#{projects.filter.btn}">Filter Projects</button>
-				</div>
-			</div>
-		</div>
-	</div>
+
+<th:block layout:fragment="scripts">
+    <script src="/resources/js/build/projects.bundle.js"
+            th:src="@{/resources/js/build/projects.bundle.js}"></script>
 </th:block>
 </body>
 </html>
