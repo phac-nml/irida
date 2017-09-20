@@ -1,7 +1,11 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.analysis;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.Map;
 
+@Entity
+@Table(name = "analysis_mlst_mentalist")
 public class AnalysisMLSTMentalist extends Analysis {
 
     /**

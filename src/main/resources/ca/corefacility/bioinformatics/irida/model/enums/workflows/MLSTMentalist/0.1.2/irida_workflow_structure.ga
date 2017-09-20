@@ -1,0 +1,34 @@
+{
+    "a_galaxy_workflow": "true",
+    "annotation": "",
+    "format-version": "0.1",
+    "name": "Mentalist MLST v0.1.2",
+    "steps": {
+        "0": {
+        "annotation": "",
+                   "id": 0,
+                    "input_connections": {},
+                    "inputs": [
+                        {
+                            "description": "",
+                            "name": "sequence_reads_paired"
+                        }
+                    ],
+                    "label": null,
+                    "name": "Input dataset collection",
+                    "outputs": [],
+                    "position": {
+                        "left": 200,
+                        "top": 200
+                    },
+                    "tool_errors": null,
+                    "tool_id": null,
+                    "tool_state": "{\"collection_type\": \"list:paired\", \"name\": \"sequence_reads_paired\"}",
+                    "tool_version": null,
+                    "type": "data_collection_input",
+                    "user_outputs": [],
+                    "uuid": "37619da7-4ccf-4ca1-8fe2-cbbf3d0f86d0"
+        },
+    },
+    "uuid": "120014e2-7d54-4bde-b059-ea520f0211b5"
+}
