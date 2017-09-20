@@ -27,6 +27,20 @@ export function getHumanizedDuration({ date }) {
 }
 
 /**
+ * Generate the time from now.  Renders as human readable.s
+ * @param {string} date raw string date from server
+ * @return {*}
+ */
+export function fromNow({ date }) {
+  const start = new Date(date);
+  if (moment.isDate(start)) {
+    const t = moment(start).fromNow();
+    return t;
+  }
+  return "";
+}
+
+/**
  * Format unix timestamp as human readable string.
  * @param  {Number} date unix timestamp
  * @return {string} formatted date
