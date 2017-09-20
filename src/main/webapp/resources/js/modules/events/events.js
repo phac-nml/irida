@@ -1,6 +1,5 @@
 import angular from "angular";
 import "./../../../css/modules/events.css";
-import { AppModule } from "../../pages/visualizations/phylogenetics/components/app/app.module";
 
 /**
  * Service to get events DOM from server.
