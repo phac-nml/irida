@@ -203,7 +203,7 @@ public class ProjectSynchronizationService {
 
 				samplesByUrl.put(url, sample);
 			} else {
-				logger.warn("Sample " + j.getId() + " is not a remote sample.  It will not be synchronized.");
+				logger.warn("Sample " + sample.getId() + " is not a remote sample.  It will not be synchronized.");
 			}
 		});
 
