@@ -5,9 +5,6 @@
 
 <head>
     <title th:text="#{announcement.read}">_Viewing read announcements_</title>
-    <script th:inline="javascript">
-        window.dependencies = ['irida.announcements'];
-    </script>
 </head>
 
 <body>
@@ -50,5 +47,8 @@
         </section>
     </div>
 </div>
+<th:block layout:fragment="scripts">
+    <script th:src="@{/resources/js/build/announcements-read.bundle.js}"></script>
+</th:block>
 </body>
 </html>
