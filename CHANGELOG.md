@@ -8,7 +8,7 @@ Changes
 * [UI]: Fixed URL for concatenation of sample sequence files. (0.18.1)
 * [Developer]: Removed dandelion from: Announcements, Cart, Sequencing Runs, Login, Project Settings - Landing, Events, Create Sample, Line List, Announcements - Create & Read
 * [UI]: Added empty state if no files exist in a sample.
-* [Developer]: Updated front-end build system from `npm` to `yarn`.
+* [Developer]: Upgraded to v5.3.0 of `npm`
 
 0.17.0 to 0.18.0
 ----------------
