@@ -4,6 +4,7 @@
  *  Webpack will then create the bundle in `resource/js/build/`
  */
 module.exports = {
+  announcements: "./resources/js/pages/announcement/announcements.js",
   app: "./resources/js/app.js",
   events: "./resources/js/modules/events/events.js",
   projects: "./resources/js/pages/projects/projects.js",
