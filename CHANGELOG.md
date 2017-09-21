@@ -8,6 +8,7 @@ Changes
 * [UI]: Fixed URL for concatenation of sample sequence files. (0.18.1)
 * [Developer]: Removed dandelion from: Announcements, Cart, Sequencing Runs, Login, Project Settings - Landing, Events, Create Sample, Line List, Announcements - Create & Read, Livestampjs
 * [UI]: Added empty state if no files exist in a sample.
+* [UI]: Cleaned up styles on DataTables with fixed columns.
 
 0.17.0 to 0.18.0
 ----------------
