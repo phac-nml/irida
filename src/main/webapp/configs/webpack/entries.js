@@ -5,6 +5,7 @@
  */
 module.exports = {
   vendor: ["lodash"],
+  announcements: "./resources/js/pages/announcement/announcements.js",
   app: "./resources/js/app.js",
   events: "./resources/js/modules/events/events.js",
   projects: "./resources/js/pages/projects/projects.js",
