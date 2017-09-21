@@ -14,22 +14,19 @@ function EventsService($http) {
    * @param size - defaults to 10 if not supplied.
    * @returns {*}
    */
-  function getEvents(url, size) {
-    size = typeof size === "undefined" ? 10 : size;
+  function getEvents(url, size = 10) {
     return $http
       .get(url, {
-        params: { size: size },
+        params: { size },
         headers: {
           Accept: "text/html"
         }
       })
-      .then(function(data) {
-        return data.data;
-      });
+      .then(data => data.data);
   }
 
   return {
-    getEvents: getEvents
+    getEvents
   };
 }
 
@@ -48,7 +45,7 @@ function events(svc, $compile) {
     replace: true,
     controllerAs: "eventsCtrl",
     controller: function($scope, $element) {
-      var vm = this;
+      const vm = this;
 
       vm.size = 10;
       $scope.$watch(
@@ -77,4 +74,3 @@ export const EventsModule = angular
   .module("irida.events", [])
   .service("EventsService", ["$http", EventsService])
   .directive("events", ["EventsService", "$compile", events]).name;
-
