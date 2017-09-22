@@ -17,6 +17,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -54,6 +56,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkf
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.CartController;
 import ca.corefacility.bioinformatics.irida.ria.web.pipelines.dto.WorkflowParametersToSave;
+import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
@@ -98,6 +101,7 @@ public class PipelineController extends BaseController {
 	private IridaWorkflowsService workflowsService;
 	private MessageSource messageSource;
 	private final WorkflowNamedParametersService namedParameterService;
+	private UpdateSamplePermission updateSamplePermission;
 	
 	/*
 	 * CONTROLLERS
@@ -109,7 +113,8 @@ public class PipelineController extends BaseController {
 			ReferenceFileService referenceFileService, AnalysisSubmissionService analysisSubmissionService,
 			IridaWorkflowsService iridaWorkflowsService, ProjectService projectService, UserService userService,
 			CartController cartController, MessageSource messageSource,
-			final WorkflowNamedParametersService namedParameterService) {
+			final WorkflowNamedParametersService namedParameterService,
+			UpdateSamplePermission updateSamplePermission) {
 		this.sequencingObjectService = sequencingObjectService;
 		this.referenceFileService = referenceFileService;
 		this.analysisSubmissionService = analysisSubmissionService;
@@ -119,6 +124,7 @@ public class PipelineController extends BaseController {
 		this.cartController = cartController;
 		this.messageSource = messageSource;
 		this.namedParameterService = namedParameterService;
+		this.updateSamplePermission = updateSamplePermission;
 	}
 
 	/**
@@ -180,10 +186,12 @@ public class PipelineController extends BaseController {
 	@RequestMapping(value = "/{pipelineId}")
 	public String getSpecifiedPipelinePage(final Model model, Principal principal, Locale locale, @PathVariable UUID pipelineId) {
 		String response = URL_EMPTY_CART_REDIRECT;
+		boolean canUpdateAllSamples = true;
 
 		Map<Project, Set<Sample>> cartMap = cartController.getSelected();
 		// Cannot run a pipeline on an empty cart!
 		if (!cartMap.isEmpty()) {
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
 			IridaWorkflow flow = null;
 			try {
@@ -254,6 +262,8 @@ public class PipelineController extends BaseController {
 				projectMap.put("name", project.getLabel());
 				projectMap.put("samples", sampleList);
 				projectList.add(projectMap);
+				
+				canUpdateAllSamples &= updateSamplePermission.isAllowed(authentication, samples);
 			}
 
 			// Need to add the pipeline parameters
@@ -303,6 +313,7 @@ public class PipelineController extends BaseController {
 			model.addAttribute("referenceRequired", description.requiresReference());
 			model.addAttribute("addRefProjects", addRefList);
 			model.addAttribute("projects", projectList);
+			model.addAttribute("canUpdateSamples", canUpdateAllSamples);
 			response = URL_GENERIC_PIPELINE;
 		}
 

@@ -25,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.CartController;
 import ca.corefacility.bioinformatics.irida.ria.web.pipelines.PipelineController;
+import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
@@ -51,6 +52,7 @@ public class PipelineControllerTest {
 	// Controller to test
 	private PipelineController controller;
 	private WorkflowNamedParametersService namedParameterService;
+	private UpdateSamplePermission updateSamplePermission;
 
 	@Before
 	public void setUp() {
@@ -63,9 +65,11 @@ public class PipelineControllerTest {
 		cartController = mock(CartController.class);
 		sequencingObjectService = mock(SequencingObjectService.class);
 		namedParameterService = mock(WorkflowNamedParametersService.class);
+		updateSamplePermission = mock(UpdateSamplePermission.class);
 
 		controller = new PipelineController(sequencingObjectService, referenceFileService, analysisSubmissionService,
-				workflowsService, projectService, userService, cartController, messageSource, namedParameterService);
+				workflowsService, projectService, userService, cartController, messageSource, namedParameterService,
+				updateSamplePermission);
 		when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 	}
 
