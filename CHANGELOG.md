@@ -9,6 +9,7 @@ Changes
 * [UI]: Fix broken permissions for downloading reference files not associated with a project. (0.18.2)
 * [UI]: Fixed issued with layout of the events panel on the dashboard page. (0.18.2)
 * [UI]: Fixed issue with local samples causing problems in synchronized projects. (0.18.2)
+* [API]: Fixed permission issue when asking for permission for analysis results using sequencing objects with no associated samples (0.18.3).
 
 0.17.0 to 0.18.0
 ----------------
