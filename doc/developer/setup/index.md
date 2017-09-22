@@ -149,7 +149,7 @@ Tasks
 
 * `npm run sass` - compile all `.scss` files into `.css` files, with sourcemaps.
 * `npm run build` - compile all es6 files to es2015.
-* `npm`npm run lint:js [filename]` - lint a specific file.
+* `npm run lint:js [filename]` - lint a specific file.
 
 JavaScript and SCSS Code Formatting and Linting
 ===============================================
