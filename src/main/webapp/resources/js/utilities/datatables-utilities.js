@@ -9,9 +9,14 @@ import { createIcon, ICONS } from "./fontawesome-utilities";
     [BUTTONS]
   </div>
   <div class="col-md-6 col-sm-12 dt-filters">
-    [FILTER}
+    [FILTER] <-- This is the DataTables search box (and button to open advanced filters if needed)
   </div>
 </div>
+<div class="row">
+  <div class="col-md-12 filter-tags">
+    [Filter tags (for quickly removing filters) go here.
+  </div>
+<div>
 [PROCESSING]
 [TABLE]
 <div class="row">
