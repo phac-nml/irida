@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
@@ -103,4 +104,15 @@ public interface AnalysisSubmissionRepository extends IridaJpaRepository<Analysi
 	 */
 	@Query("FROM AnalysisSubmission s WHERE ?1 IN elements(s.inputFiles)")
 	public Set<AnalysisSubmission> findAnalysisSubmissionsForSequecingObject(SequencingObject object);
+
+	/**
+	 * Get the Set of {@link AnalysisSubmission}s making use of the given
+	 * {@link ReferenceFile}.
+	 * 
+	 * @param file
+	 *            The {@link ReferenceFile}.
+	 * @return A Set of {@link AnalysisSubmission}s.
+	 */
+	@Query("FROM AnalysisSubmission s WHERE ?1 = referenceFile")
+	public Set<AnalysisSubmission> findByReferenceFile(ReferenceFile file);
 }

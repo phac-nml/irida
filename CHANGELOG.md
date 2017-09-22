@@ -8,6 +8,10 @@ Changes
 * [UI]: Fixed URL for concatenation of sample sequence files. (0.18.1)
 * [Developer]: Removed dandelion from: Announcements, Cart, Sequencing Runs, Login, Project Settings - Landing, Events, Create Sample, Line List, Announcements - Create & Read, Livestampjs
 * [UI]: Added empty state if no files exist in a sample.
+* [UI]: Fix broken link for concatenating files. (0.18.2)
+* [UI]: Fix broken permissions for downloading reference files not associated with a project. (0.18.2)
+* [UI]: Fixed issued with layout of the events panel on the dashboard page. (0.18.2)
+* [UI]: Fixed issue with local samples causing problems in synchronized projects. (0.18.2)
 * [Developer]: Upgraded to v5.3.0 of `npm`
 
 0.17.0 to 0.18.0
@@ -32,7 +36,6 @@ Changes
 * [UI]: New feature to export metadata through the Project line list view.
 * [UI]: Fixed bug allowing empty library name for Galaxy exporting.
 * [UI]: Added ability to download individual analysis output files.
-* [Developer]: Updated to using latest version of `maven-frontend-plugin`, `nodejs` and `yarn`.
 
 0.16.0 to 0.17.0
 ----------------
