@@ -345,7 +345,7 @@ public class PipelineController extends BaseController {
 			@RequestParam(required = false) List<Long> single, @RequestParam(required = false) List<Long> paired,
 			@RequestParam(required = false) Map<String, String> parameters, @RequestParam(required = false) Long ref,
 			@RequestParam String name, @RequestParam(name = "description", required = false) String analysisDescription,
-			@RequestParam(required = false) List<Long> sharedProjects) {
+			@RequestParam(required = false) List<Long> sharedProjects, @RequestParam(required = false, defaultValue = "true") Boolean writeResultsToSamples) {
 		Map<String, Object> result = ImmutableMap.of("success", true);
 		try {
 			IridaWorkflow flow = workflowsService.getIridaWorkflow(pipelineId);
@@ -432,10 +432,10 @@ public class PipelineController extends BaseController {
 
 			if (description.getInputs().requiresSingleSample()) {
 				analysisSubmissionService.createSingleSampleSubmission(flow, ref, singleEndFiles, sequenceFilePairs,
-						params, namedParameters, name, analysisDescription, projectsToShare);
+						params, namedParameters, name, analysisDescription, projectsToShare, writeResultsToSamples);
 			} else {
 				analysisSubmissionService.createMultipleSampleSubmission(flow, ref, singleEndFiles, sequenceFilePairs,
-						params, namedParameters, name, analysisDescription, projectsToShare);
+						params, namedParameters, name, analysisDescription, projectsToShare, writeResultsToSamples);
 			}
 
 		} catch (IridaWorkflowNotFoundException e) {
