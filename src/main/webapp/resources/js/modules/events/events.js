@@ -1,4 +1,3 @@
-import "@bassettsj/livestamp";
 import angular from "angular";
 import "./../../../css/modules/events.css";
 
@@ -23,11 +22,11 @@ function EventsService($http) {
           Accept: "text/html"
         }
       })
-      .then(response => response.data);
+      .then(data => data.data);
   }
 
   return {
-    getEvents: getEvents
+    getEvents
   };
 }
 
@@ -71,7 +70,7 @@ function events(svc, $compile) {
   };
 }
 
-angular
-  .module("irida")
+export const EventsModule = angular
+  .module("irida.events", [])
   .service("EventsService", ["$http", EventsService])
-  .directive("events", ["EventsService", "$compile", events]);
+  .directive("events", ["EventsService", "$compile", events]).name;

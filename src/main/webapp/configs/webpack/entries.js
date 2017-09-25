@@ -4,8 +4,11 @@
  *  Webpack will then create the bundle in `resource/js/build/`
  */
 module.exports = {
+  vendor: ["lodash"],
+  announcements: "./resources/js/pages/announcement/announcements.js",
   app: "./resources/js/app.js",
-  events: "./resources/js/modules/events/events.js",
+  dashboard: "./resources/js/pages/dashboard.js",
+  "project-events": "./resources/js/pages/projects/project-events.js",
   projects: "./resources/js/pages/projects/projects.js",
   "samples-metadata-import":
     "./resources/js/pages/projects/samples-metadata-import/index.js",
