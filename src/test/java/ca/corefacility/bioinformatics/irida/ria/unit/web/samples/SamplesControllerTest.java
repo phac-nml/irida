@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,10 +40,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
-import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssemblyFromAnalysis;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -53,7 +50,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplesController;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.ReadSamplePermission;
@@ -80,7 +76,6 @@ public class SamplesControllerTest {
 	private ReadSamplePermission readSamplePermission;
 	private MetadataTemplateService metadataTemplateService;
 	private MessageSource messageSource;
-	private GenomeAssembly genomeAssembly;
 
 	@Before
 	public void setUp() {
@@ -91,7 +86,6 @@ public class SamplesControllerTest {
 		messageSource = mock(MessageSource.class);
 		updateSamplePermission = mock(UpdateSamplePermission.class);
 		readSamplePermission = mock(ReadSamplePermission.class);
-		genomeAssembly = mock(GenomeAssembly.class);
 		controller = new SamplesController(sampleService, projectService, sequencingObjectService,
 				updateSamplePermission, metadataTemplateService, messageSource);
 	}
