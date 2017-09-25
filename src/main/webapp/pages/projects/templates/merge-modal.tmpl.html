@@ -25,6 +25,7 @@
 				<label th:text="#{project.samples.modal.merge.name-label}">_Rename Sample_</label>
 				<input id="newName" name="newName" class="form-control" type="text"
 					ng-model="mergeCtrl.name"
+					ng-model-options="{ debounce: 300 }"
 					ng-minlength="5"
 					ng-pattern="mergeCtrl.validNameRE"/>
 				<div ng-messages="mergeForm.newName.$dirty &amp;&amp; mergeForm.newName.$error">
