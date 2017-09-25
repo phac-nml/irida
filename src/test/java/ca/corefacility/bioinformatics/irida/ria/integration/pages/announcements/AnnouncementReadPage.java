@@ -1,11 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.announcements;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+import java.util.List;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import java.util.List;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 /**
  * Page object to represent the Read Announcements page
@@ -16,6 +17,6 @@ public class AnnouncementReadPage extends AbstractPage {
     }
 
     public List<WebElement> getAllReadAnnouncements() {
-        return driver.findElements(By.cssSelector("li.announcement-item"));
+        return driver.findElements(By.cssSelector(".announcement-item"));
     }
 }
