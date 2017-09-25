@@ -53,7 +53,7 @@ public class AnalysisSubmissionSampleServiceImpl implements AnalysisSubmissionSa
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void update(AnalysisSubmission analysisSubmission) {
+	public void updateSamples(AnalysisSubmission analysisSubmission) {
 		if (!analysisSubmission.getUpdateSamples()) {
 			logger.trace("Will not update samples from results for submission=" + analysisSubmission);
 		} else {

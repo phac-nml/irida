@@ -210,7 +210,7 @@ public class AnalysisExecutionServiceGalaxyAsync {
 		}
 
 		AnalysisSubmission completedSubmission = analysisSubmissionService.update(submittedAnalysis);
-		analysisSubmissionSampleService.update(completedSubmission);
+		analysisSubmissionSampleService.updateSamples(completedSubmission);
 
 		return new AsyncResult<>(completedSubmission);
 	}

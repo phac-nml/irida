@@ -13,5 +13,5 @@ public interface AnalysisSubmissionSampleService {
 	 * @param analysisSubmission
 	 *            The submission to update.
 	 */
-	public void update(AnalysisSubmission analysisSubmission);
+	public void updateSamples(AnalysisSubmission analysisSubmission);
 }
