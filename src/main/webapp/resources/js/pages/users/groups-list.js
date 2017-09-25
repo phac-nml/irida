@@ -41,7 +41,6 @@ const config = Object.assign({}, tableConfig, {
     {
       targets: -1,
       render(data, type, full) {
-        console.log(data, type, full);
         if (full.admin || full.groupOwner) {
           return createButtonCell([createDeleteBtn()]);
         }
