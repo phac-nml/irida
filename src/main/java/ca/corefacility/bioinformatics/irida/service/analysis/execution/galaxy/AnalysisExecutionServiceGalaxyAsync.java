@@ -30,7 +30,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflo
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.analysis.annotations.RunAsUser;
-import ca.corefacility.bioinformatics.irida.service.analysis.sample.AnalysisSubmissionSampleService;
+import ca.corefacility.bioinformatics.irida.service.analysis.sample.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
@@ -49,7 +49,7 @@ public class AnalysisExecutionServiceGalaxyAsync {
 	private final AnalysisWorkspaceServiceGalaxy workspaceService;
 	private final GalaxyWorkflowService galaxyWorkflowService;
 	private final IridaWorkflowsService iridaWorkflowsService;
-	private final AnalysisSubmissionSampleService analysisSubmissionSampleService;
+	private final AnalysisSubmissionSampleProcessor analysisSubmissionSampleService;
 
 	/**
 	 * Builds a new {@link AnalysisExecutionServiceGalaxyAsync} with the given
@@ -73,7 +73,7 @@ public class AnalysisExecutionServiceGalaxyAsync {
 	public AnalysisExecutionServiceGalaxyAsync(AnalysisSubmissionService analysisSubmissionService,
 			AnalysisService analysisService, GalaxyWorkflowService galaxyWorkflowService,
 			AnalysisWorkspaceServiceGalaxy workspaceService, IridaWorkflowsService iridaWorkflowsService,
-			AnalysisSubmissionSampleService analysisSubmissionSampleService) {
+			AnalysisSubmissionSampleProcessor analysisSubmissionSampleService) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.analysisService = analysisService;
 		this.galaxyWorkflowService = galaxyWorkflowService;

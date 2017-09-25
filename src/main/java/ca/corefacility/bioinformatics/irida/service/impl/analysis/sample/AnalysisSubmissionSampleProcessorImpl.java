@@ -8,7 +8,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -17,15 +17,15 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.service.analysis.sample.AnalysisSampleUpdatorService;
-import ca.corefacility.bioinformatics.irida.service.analysis.sample.AnalysisSubmissionSampleService;
+import ca.corefacility.bioinformatics.irida.service.analysis.sample.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 /**
  * Updates samples from an {@link AnalysisSubmission} with results from the
  * analysis.
  */
-@Service
-public class AnalysisSubmissionSampleServiceImpl implements AnalysisSubmissionSampleService {
+@Component
+public class AnalysisSubmissionSampleProcessorImpl implements AnalysisSubmissionSampleProcessor {
 
 	private static final Logger logger = LoggerFactory.getLogger(AssemblySampleUpdatorService.class);
 
@@ -33,7 +33,7 @@ public class AnalysisSubmissionSampleServiceImpl implements AnalysisSubmissionSa
 	private final SampleService sampleService;
 
 	/**
-	 * Builds a new {@link AnalysisSubmissionSampleServiceImpl}.
+	 * Builds a new {@link AnalysisSubmissionSampleProcessorImpl}.
 	 * 
 	 * @param sampleService
 	 *            The {@link SampleService}.
@@ -41,7 +41,7 @@ public class AnalysisSubmissionSampleServiceImpl implements AnalysisSubmissionSa
 	 *            The {@link AnalysisSampleUpdatorService} for assemblies.
 	 */
 	@Autowired
-	public AnalysisSubmissionSampleServiceImpl(SampleService sampleService,
+	public AnalysisSubmissionSampleProcessorImpl(SampleService sampleService,
 			AnalysisSampleUpdatorService assemblySampleUpdatorService) {
 		this.sampleService = sampleService;
 
