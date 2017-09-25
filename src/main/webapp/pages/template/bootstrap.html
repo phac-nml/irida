@@ -72,7 +72,7 @@
 				</li>
 			</ul>
 			<div class="navbar-right">
-			<form id="global-search" class="navbar-form navbar-left" th:action="@{/search}" method="GET">
+			<form id="global-search" class="navbar-form navbar-left clearfix" th:action="@{/search}" method="GET">
 				<div class="search-wrapper">
 					<span class="icon"><i class="fa fa-fw fa-search"></i></span>
 					<input type="search" name="query" th:placeholder="#{nav.main.search}" th:value="${searchQuery}"/>

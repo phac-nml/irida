@@ -217,3 +217,16 @@ SEARCH
     }
   }
 }
+
+@media (max-width: 768px) {
+  #global-search {
+    .search-wrapper{
+      width: 100%;
+      display: block;
+
+      input[type=search]{
+        width: 100%;
+      }
+    }
+  }
+}
