@@ -1,12 +1,15 @@
 import $ from "jquery";
 import _ from "lodash";
-import { addTooltip } from "./bootstrap-utilities";
-import { createIcon, ICONS } from "./fontawesome-utilities";
+import {addTooltip} from "./bootstrap-utilities";
+import {createIcon, ICONS} from "./fontawesome-utilities";
 
 /*
+ Default layout around DataTables in IRIDA.
+ @link https://datatables.net/reference/option/dom
+ dom expands into:
 <div class="row">
   <div class="col-md-6 col-sm-12 buttons">
-    [BUTTONS]
+    [BUTTONS] - All DataTables specific buttons get loaded here.
   </div>
   <div class="col-md-6 col-sm-12 dt-filters">
     [FILTER] <-- This is the DataTables search box (and button to open advanced filters if needed)
@@ -14,20 +17,20 @@ import { createIcon, ICONS } from "./fontawesome-utilities";
 </div>
 <div class="row">
   <div class="col-md-12 filter-tags">
-    [Filter tags (for quickly removing filters) go here.
+    [FILTER TAGS] (for quickly removing filters) go here.
   </div>
 <div>
-[PROCESSING]
-[TABLE]
+[PROCESSING] - Displayed when DataTables is fetching and processing new data.
+[TABLE] - Actual table
 <div class="row">
   <div class="col-md-3 col-sm-12">
-    [LENGTH]
+    [LENGTH] - length changing control input
   </div>
   <div class="col-md-6 col-sm-12">
-    [PAGING]
+    [PAGING] - pagination control
   </div>
   <div class="col-md-3 col-sm-12">
-    [INFO]
+    [INFO] - table information summary
   </div>
 </div>
 */
