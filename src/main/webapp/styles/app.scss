@@ -177,6 +177,7 @@ SEARCH
       margin-top: 8px;
       z-index: 1;
       color: #c2c2c2;
+      pointer-events: none;
     }
 
     .search-dd {
@@ -193,31 +194,20 @@ SEARCH
 
     input[type=search]{
       width: 300px;
-      height: 35px;
-      background: #302e31;
+      height: 37px;
       border: none;
-      font-size: 14pt;
       float: left;
-      color: #c2c2c2;
       padding-left: 45px;
       padding-right: 45px;
       border-radius: 3px;
-      transition: all .55s ease;
-
       &::placeholder {
-        color: #65737e!important;
+        color: #c2c2c2;
       }
-    }
-
-    & input[type=search]:hover,
-    & input[type=search]:focus,
-    & input[type=search]:active{
-      background: #ffffff;
-      color: #222222;
     }
   }
 }
 
+// Allow for proper styling in collapsed navigation.
 @media (max-width: 768px) {
   #global-search {
     .search-wrapper{
