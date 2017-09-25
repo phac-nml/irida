@@ -40,12 +40,16 @@ const config = Object.assign({}, tableConfig, {
     },
     {
       targets: -1,
-      render() {
-        return createButtonCell([createDeleteBtn()]);
+      render(data, type, full) {
+        console.log(data, type, full);
+        if (full.admin || full.groupOwner) {
+          return createButtonCell([createDeleteBtn()]);
+        }
+        return "";
       }
     }
   ],
-  createdRow: function(row, data, index) {
+  createdRow(row, data, index) {
     row.dataset.id = data.group.identifier;
     $(row).tooltip({ selector: "[data-toggle='tooltip']" });
   }
