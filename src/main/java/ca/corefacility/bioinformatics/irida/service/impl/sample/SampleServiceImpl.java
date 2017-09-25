@@ -455,18 +455,25 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		return super.updateMultiple(objects);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@PreAuthorize("permitAll()")
 	@Override
 	public Page<ProjectSampleJoin> searchSamplesForUser(String query, final Integer page, final Integer count,
 			final Sort sort) {
-		final UserDetails loggedInDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		final UserDetails loggedInDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+				.getPrincipal();
 		final User loggedIn = userRepository.loadUserByUsername(loggedInDetails.getUsername());
-		
+
 		final PageRequest pr = new PageRequest(page, count, sort);
-		
+
 		return psjRepository.findAll(sampleForUserSpecification(loggedIn, query), pr);
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@Override
 	public Page<ProjectSampleJoin> searchAllSamples(String query, final Integer page, final Integer count,
@@ -495,25 +502,43 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		return sortProperties;
 	}
 	
-	private static Specification<ProjectSampleJoin> sampleForUserSpecification(final User user, final String queryString) {
+	/**
+	 * Specification for searching {@link Sample}s
+	 * @param user the {@link User} to get samples for.  If this property is null, will serch for all users.
+	 * @param queryString the query string to search for
+	 * @return a {@link Specification} for {@link ProjectSampleJoin}
+	 */
+	private static Specification<ProjectSampleJoin> sampleForUserSpecification(final User user,
+			final String queryString) {
 		return new Specification<ProjectSampleJoin>() {
 
 			@Override
 			public Predicate toPredicate(Root<ProjectSampleJoin> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 				Predicate search;
-				if(user != null){
-					Predicate sampleAccess= cb.or(individualProjectMembership(root, query, cb), groupProjectMembership(root, query, cb));
+				if (user != null) {
+					Predicate sampleAccess = cb.or(individualProjectMembership(root, query, cb),
+							groupProjectMembership(root, query, cb));
 					search = cb.and(sampleAccess, sampleProperties(root, query, cb));
-				}
-				else{
+				} else {
 					search = sampleProperties(root, query, cb);
 				}
-				
-				return search; 
+
+				return search;
 			}
-			
-			private Predicate sampleProperties(final Root<ProjectSampleJoin> root,
-					final CriteriaQuery<?> query, final CriteriaBuilder cb) {
+
+			/**
+			 * Search with the given query for sample properties
+			 * 
+			 * @param root
+			 *            root for ProjectSampleJoin
+			 * @param query
+			 *            criteria query
+			 * @param cb
+			 *            criteria query builder
+			 * @return a predicate
+			 */
+			private Predicate sampleProperties(final Root<ProjectSampleJoin> root, final CriteriaQuery<?> query,
+					final CriteriaBuilder cb) {
 				return cb.like(root.get("sample").get("sampleName"), "%" + queryString + "%");
 			}
 
@@ -564,6 +589,5 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			}
 
 		};
-
 	}
 }
