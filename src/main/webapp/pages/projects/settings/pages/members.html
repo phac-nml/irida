@@ -39,9 +39,9 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <table id="usersTable" dt:table="true" dt:url="@{/projects/{id}/settings/ajax/members(id=${project.getId()})}">
+            <table id="usersTable" data:url="@{/projects/{id}/settings/ajax/members(id=${project.getId()})}">
                 <thead>
-                <tr role="row">
+                <tr>
                     <th dt:property="object.username" dt:searchable="true" th:text="#{project.table.collaborator.name}" dt:renderFunction="project-members#projectMembersTable.memberNameLinkRow"></th>
                     <th dt:property="projectRole" th:if="${isAdmin} or ${manageMembers}" th:text="#{project.table.collaborator.role}" dt:renderFunction="project-members#projectMembersTable.renderGroupRole"></th>
                     <th dt:property="projectRole" th:if="not (${isAdmin} or ${manageMembers})" th:text="#{project.table.collaborator.role}" dt:renderFunction="project-members#projectMembersTable.renderGroupRoleAsText"></th>
