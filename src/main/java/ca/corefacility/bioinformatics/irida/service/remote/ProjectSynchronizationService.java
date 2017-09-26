@@ -196,9 +196,15 @@ public class ProjectSynchronizationService {
 		Map<String, Sample> samplesByUrl = new HashMap<>();
 		localSamples.forEach(j -> {
 			Sample sample = j.getObject();
-			String url = sample.getRemoteStatus().getURL();
+			
+			// If a user has added a sample for some reason, ignore it
+			if (sample.getRemoteStatus() != null) {
+				String url = sample.getRemoteStatus().getURL();
 
-			samplesByUrl.put(url, sample);
+				samplesByUrl.put(url, sample);
+			} else {
+				logger.warn("Sample " + sample.getId() + " is not a remote sample.  It will not be synchronized.");
+			}
 		});
 
 		List<Sample> readSamplesForProject = sampleRemoteService.getSamplesForProject(readProject);
