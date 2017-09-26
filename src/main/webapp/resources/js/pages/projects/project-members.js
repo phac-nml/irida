@@ -1,4 +1,5 @@
 import $ from "jquery";
+import "./../../vendor/plugins/jquery/select2";
 import "./../../vendor/datatables/datatables";
 import {
   tableConfig,
@@ -147,56 +148,50 @@ $table
     );
   });
 
-// 	$("#add-member-membername").select2({
-// 	    minimumInputLength: 1,
-// 	    ajax: {
-// 	        url: page.urls.usersSelection,
-// 	        dataType: 'json',
-// 	        data: function(term) {
-// 	            return {
-// 	                term: term,
-// 	                page_limit: 10
-// 	            };
-// 	        },
-// 	        results: function(data, params) {
-// 	            return {results: data.map(function(el) {
-// 	        		return {"id": el["identifier"], "text": el["label"]};
-// 	        	})};
-// 	        }
-// 	    }
-// 	});
-//
-// 	$("#submitAddMember").click(function() {
-// 		$.ajax({
-// 			url: page.urls.addMember,
-// 			method: 'POST',
-// 			data: {
-// 				"memberId" : $("#add-member-membername").val(),
-// 				"projectRole" : $("#add-member-role").val()
-// 			},
-// 			success: function(result) {
-// 				$("#addMemberModal").modal('hide');
-// 				oTable_usersTable.ajax.reload();
-// 				notifications.show({
-// 					'msg': result.result
-// 				});
-// 				$("#add-member-membername").select2("val", "");
-// 			},
-// 			error: function() {
-// 				$("#addMemberModal").modal('hide');
-// 				notifications.show({
-// 					'msg': page.i18n.unexpectedAddError,
-// 					'type': 'error'
-// 				})
-// 			}
-// 		})
-// 	});
-//
-// 	return {
-// 		renderGroupRole : renderGroupRole,
-// 		renderGroupRoleAsText : renderGroupRoleAsText,
-// 		memberNameLinkRow : memberNameLinkRow,
-// 		removeMemberButton : removeMemberButton,
-// 		rowRenderedCallback : rowRenderedCallback
-// 	};
-// })(window.PAGE, window.notifications);
+$("#add-member-membername").select2({
+  theme: "bootstrap",
+  width: "100%",
+  minimumInputLength: 1,
+  ajax: {
+    url: window.PAGE.urls.usersSelection,
+    data(params) {
+      return {
+        term: params.term,
+        page_limit: 10
+      };
+    },
+    processResults(data) {
+      return {
+        results: data.map(function(el) {
+          return { id: el["identifier"], text: el["label"] };
+        })
+      };
+    }
+  }
+});
+
+$("#submitAddMember").on("click", function() {
+  $.ajax({
+    url: window.PAGE.urls.addMember,
+    method: "POST",
+    data: {
+      memberId: $("#add-member-membername").val(),
+      projectRole: $("#add-member-role").val()
+    },
+    success(result) {
+      $("#addMemberModal").modal("hide");
+      $dt.ajax.reload();
+      window.notifications.show({
+        msg: result.result
+      });
+      $("#add-member-membername").select2("val", "");
+    },
+    error() {
+      $("#addMemberModal").modal("hide");
+      window.notifications.show({
+        msg: window.PAGE.i18n.unexpectedAddError,
+        type: "error"
+      });
+    }
+  });
+});
