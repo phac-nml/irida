@@ -1,10 +1,6 @@
 import $ from "jquery";
-import {
-  createItemLink,
-  generateColumnOrderInfo,
-  tableConfig
-} from "../../../utilities/datatables-utilities";
-import { formatDate } from "../../../utilities/date-utilities";
+import {createItemLink, generateColumnOrderInfo, tableConfig} from "../../../utilities/datatables-utilities";
+import {formatDate} from "../../../utilities/date-utilities";
 import "./../../../vendor/datatables/datatables";
 import "./../../../vendor/datatables/datatables-buttons";
 import "./../../../vendor/datatables/datatables-rowSelection";
@@ -32,6 +28,10 @@ const config = Object.assign({}, tableConfig, {
   select: {
     allUrl: window.PAGE.urls.samples.sampleIds,
     formatSelectAllResponseFn(response) {
+      // This is a callback function used by datatables-select
+      // to format the server response when selectAll is clicked.
+      // It puts the response into the format of the `data-info` attribute
+      // set on the row itself ({row_id: {projectId, sampleId}}
       const projectIds = Object.keys(response);
       const complete = new Map();
       for (const pId of projectIds) {
