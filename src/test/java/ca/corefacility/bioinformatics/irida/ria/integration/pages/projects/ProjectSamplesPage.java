@@ -142,17 +142,11 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(id = "selection-toggle")
 	private WebElement selectionToggle;
 
-	@FindBy(id = "selection-all")
+	@FindBy(className = "dt-select-all")
 	private WebElement selectionAll;
 
-	@FindBy(id = "selection-none")
+	@FindBy(className = "dt-select-none")
 	private WebElement selectionNone;
-
-	@FindBy(id = "selection-page-all")
-	private WebElement selectionPageAll;
-
-	@FindBy(id = "selection-page-none")
-	private WebElement selectionPageNone;
 
 	@FindBy(id = "export-samples-btn")
 	private WebElement exportSamplesDropdownBtn;
@@ -278,7 +272,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	public void selectSampleWithShift(int row) {
 		Actions actions = new Actions(driver);
-		actions.keyDown(Keys.SHIFT).click(tableRows.get(row)).perform();
+		actions.keyDown(Keys.SHIFT).click(tableRows.get(row).findElement(By.cssSelector("td input[type='checkbox']"))).perform();
 		// Sometimes, that shift key never gets lifted!
 		actions.keyUp(Keys.SHIFT).perform();
 	}
@@ -403,36 +397,13 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public void selectAllSamples() {
-		selectionToggle.click();
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("selection-all")));
 		selectionAll.click();
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("selection-all")));
 		waitForTime(500);
 	}
 
 	public void deselectAllSamples() {
-		selectionToggle.click();
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("selection-none")));
 		selectionNone.click();
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("selection-none")));
-	}
-
-	public void selectPage() {
-		selectionToggle.click();
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("selection-page-all")));
-		selectionPageAll.click();
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("selection-page-all")));
-	}
-
-	public void deselectPage() {
-		selectionToggle.click();
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("selection-page-none")));
-		selectionPageNone.click();
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("selection-page-none")));
+		waitForTime(500);
 	}
 
 	private void enterSelect2Value(String value) {

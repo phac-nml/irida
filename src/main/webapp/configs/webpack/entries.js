@@ -10,6 +10,8 @@ module.exports = {
   projects: "./resources/js/pages/projects/projects.js",
   "samples-metadata-import":
     "./resources/js/pages/projects/samples-metadata-import/index.js",
+  "project-samples":
+    "./resources/js/pages/projects/samples/project-samples.js",
   "project-add-sample": "./resources/js/pages/projects/project-add-samples.js",
   "project-linelist": "./resources/js/pages/projects/linelist/index.js",
   "create-metadata-template":
@@ -28,5 +30,6 @@ module.exports = {
     "./resources/js/pages/announcement/announcement-users.js",
   "announcement-admin":
     "./resources/js/pages/announcement/announcement-admin.js",
-  "sequencing-runs": "./resources/js/pages/sequencing-runs/sequencing-runs-list.js"
+  "sequencing-runs":
+    "./resources/js/pages/sequencing-runs/sequencing-runs-list.js"
 };
