@@ -14,7 +14,7 @@ module.exports = {
           presets: ["es2015", "stage-0"]
         }
       },
-      { test: /\.css$/, loader: "style-loader!css-loader" },
+      { test: /\.css$/, loader: "style-loader!css-loader" }
     ]
   },
   externals: {
@@ -22,14 +22,13 @@ module.exports = {
     //  on the global var jQuery
     jquery: "jQuery",
     angular: "angular",
-    moment: "moment",
-    lodash: "_"
+    moment: "moment"
   },
   resolve: {
     alias: {
       DataTables: path.resolve(__dirname, "resources/js/vendor/datatables/"),
       plugins: path.resolve(__dirname, "resources/js/vendor/plugins/"),
-      Utilities: path.resolve(__dirname, 'resources/js/utilities/'),
+      Utilities: path.resolve(__dirname, "resources/js/utilities/"),
       css: path.resolve(__dirname, "resources/css/")
     }
   },

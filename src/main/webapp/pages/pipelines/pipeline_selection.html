@@ -3,30 +3,10 @@
       layout:decorator="template/page">
 <head lang="en">
 	<title th:text="#{pipeline.launch.page-title}">Pipelines - Launch</title>
-	<style>
-		.flex-row {
-			display: flex;
-			justify-content: space-between;
-		}
-		.flex-row .panel-heading {
-			height: 60px;
-		}
-		.panel {
-			display: flex;
-			flex-direction: column;
-		}
-		.flex-panel .panel-body {
-			max-height: 250px;
-			overflow-y: auto;
-			flex-grow: 2;
-		}
-		.flex-panel {
-			width: 32%!important;
-		}
-	</style>
+	<link rel="stylesheet" th:href="@{/resources/css/modules/pipelines.css}" />
 </head>
 <body>
-<div layout:fragment="page" ddl:bundle-includes="pipelines">
+<div layout:fragment="page">
 	<h1><span th:text="#{pipeline.launch.title}">Select a Pipeline</span></h1>
 	<div th:replace="pipelines/fragments/i18n :: cart-summary(${counts})"></div>
 	<div class="row">

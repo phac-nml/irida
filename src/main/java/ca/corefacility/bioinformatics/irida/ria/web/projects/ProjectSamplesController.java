@@ -5,15 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -34,11 +26,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.format.Formatter;
 import org.springframework.format.datetime.DateFormatter;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -175,14 +165,40 @@ public class ProjectSamplesController {
 	 * 		Id for the {@link Project} the sample will belong to.
 	 * @param model
 	 * 		{@link Model}
+	 * @param sample
+	 * 		{@link Sample} required if redirected back to the create page.
 	 *
 	 * @return Name of the add sample page.
 	 */
 	@RequestMapping("/projects/{projectId}/samples/new")
-	public String getCreateNewSamplePage(@PathVariable Long projectId, Model model) {
+	public String getCreateNewSamplePage(@PathVariable Long projectId, Model model, Sample sample) {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
+		model.addAttribute("sample", sample);
 		return "projects/project_add_sample";
+	}
+
+	/**
+	 * Create a new {@link Sample} in a {@link Project}
+	 *
+	 * @param projectId
+	 * 		{@link Long} identifier for the current {@link Project}
+	 * @param sample
+	 * 		{@link Sample} to create in the {@link Project}
+	 *
+	 * @return Redirect to the newly created {@link Sample} page
+	 */
+	@RequestMapping(value = "/projects/{projectId}/samples/new", method = RequestMethod.POST)
+	public String createNewSample(@PathVariable Long projectId, Sample sample) {
+		Project project = projectService.read(projectId);
+		try {
+			Join<Project, Sample> join = projectService.addSampleToProject(project, sample, true);
+			return "redirect:/projects/" + projectId + "/samples/" + join.getObject().getId();
+		} catch (EntityExistsException e) {
+			// This will be thrown if a sample already exists in the project with this name.
+			// This should have already been addressed on the client
+			return "redirect:/projects/" + projectId + "/samples/new";
+		}
 	}
 
 	/**
@@ -890,43 +906,6 @@ public class ProjectSamplesController {
 	}
 
 	/**
-	 * Create a new {@link Sample} in a {@link Project}
-	 *
-	 * @param projectId
-	 * 		the ID of the {@link Project} to add to
-	 * @param sample
-	 * 		The {@link Sample} to create
-	 * @param response
-	 * 		{@link HttpServletResponse}
-	 *
-	 * @return Success status and id if successful, errors if not
-	 */
-	@RequestMapping(value = "/projects/{projectId}/samples", method = RequestMethod.POST)
-	public Map<String, Object> createSampleInProject(@PathVariable Long projectId, @ModelAttribute Sample sample,
-			HttpServletResponse response) {
-		// get the project
-		Project project = projectService.read(projectId);
-
-		Map<String, Object> responseBody = new HashMap<>();
-
-		// try to add the sample to the project
-		Join<Project, Sample> addSampleToProject = null;
-		try {
-			addSampleToProject = projectService.addSampleToProject(project, sample, true);
-			Long sampleId = addSampleToProject.getObject().getId();
-			responseBody.put("sampleId", sampleId);
-			response.setStatus(HttpStatus.CREATED.value());
-		} catch (ConstraintViolationException ex) {
-			// if errors respond with the errors
-			Map<String, String> errorsFromViolationException = getErrorsFromViolationException(ex);
-			responseBody.put("errors", errorsFromViolationException);
-			response.setStatus(HttpStatus.BAD_REQUEST.value());
-		}
-
-		return responseBody;
-	}
-
-	/**
 	 * Export {@link Sample} from a {@link Project} as either Excel or CSV formatted.
 	 *
 	 * @param projectId
@@ -983,6 +962,31 @@ public class ProjectSamplesController {
 			ProjectSamplesTableExport tableExport = new ProjectSamplesTableExport(type, project.getName() + "_samples", messageSource, locale);
 			ExportUtils.renderExport(tableExport.generateHtmlTable(page, request), tableExport.getExportConf(), response);
 		}
+	}
+
+	/**
+	 * Valid the name for a new {@link Sample} label.  This checks against existing sample names within the current
+	 * project to ensure that it is not a duplicate.
+	 *
+	 * @param projectId
+	 * 		Identifier for the current project
+	 * @param sampleName
+	 * 		{@link String} name to validate.
+	 *
+	 * @return {@link Boolean} true if the name is unique.
+	 */
+	@RequestMapping("/projects/{projectId}/validate-sample-name")
+	@ResponseBody
+	public boolean validateNewSampleName(@PathVariable Long projectId, @RequestParam String sampleName) {
+		Project project = projectService.read(projectId);
+		try {
+			sampleService.getSampleBySampleName(project, sampleName);
+			return false;
+		} catch (EntityNotFoundException e) {
+			// If the sample is not found, then the name is good to go!
+			return true;
+		}
+
 	}
 
 	/**
