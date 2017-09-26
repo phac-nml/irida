@@ -1,95 +1,152 @@
+import $ from "jquery";
 import "./../../vendor/datatables/datatables";
-import {tableConfig} from '../../utilities/datatables-utilities';
+import {
+  tableConfig,
+  createItemLink,
+  generateColumnOrderInfo,
+  createDeleteBtn,
+  createButtonCell
+} from "../../utilities/datatables-utilities";
+import { formatDate } from "../../utilities/date-utilities";
 
 const $table = $("#usersTable");
+const roleTemplateWrapper = document.querySelector("#role-template-wrapper");
+
+const createRole = (() => {
+  const elm = roleTemplateWrapper.querySelector("select");
+  if (elm && elm.tagName === "SELECT") {
+    return function(data) {
+      const select = roleTemplateWrapper.firstElementChild.cloneNode(true);
+      const option = select.querySelector(`option[value=${data}]`);
+      option.setAttribute("selected", "selected");
+      return select.outerHTML;
+    };
+  }
+  return data => {
+    return roleTemplateWrapper.querySelector(`.${data}`).outerHTML;
+  };
+})();
+
+const COLUMNS = generateColumnOrderInfo();
 const CONFIG = Object.assign({}, tableConfig, {
-  ajax: $table.data("url")
+  ajax: $table.data("url"),
+  columnDefs: [
+    {
+      targets: [COLUMNS.OBJECT_USERNAME],
+      render(data, type, full) {
+        return createItemLink({
+          url: `${window.PAGE.urls.usersLink}${full.object.identifier}`,
+          label: data
+        });
+      }
+    },
+    {
+      targets: [COLUMNS.CREATED_DATE],
+      render(data) {
+        return `<time>${formatDate({ date: data })}</time>`;
+      }
+    },
+    {
+      targets: [COLUMNS.PROJECT_ROLE],
+      render: createRole
+    },
+    {
+      targets: -1,
+      render() {
+        const deleteBtn = createDeleteBtn({
+          title: window.PAGE.i18n.remove
+        });
+        return createButtonCell([deleteBtn]);
+      }
+    }
+  ],
+  createdRow(row, data) {
+    const $row = $(row);
+    $row.data("user", data.object.identifier);
+    $row.tooltip({ selector: "[data-toggle='tooltip']" });
+  }
 });
 
-$table.DataTable(CONFIG);
+/*
+Initialize the DataTable
+ */
+const $dt = $table.DataTable(CONFIG);
+// Add custom buttons for adding a new member
+const $memberBtn = $("#table-toolbar");
+// Only admins will have these buttons.
+if ($memberBtn) {
+  $("#toolbar-wrapper").remove();
+  const $btnDiv = $("#usersTable_wrapper").find(".buttons");
+  $btnDiv.html($memberBtn);
+}
 
-// var projectMembersTable = (function(page, notifications) {
-// 	function renderGroupRole(data, type, full) {
-//     var select = '<select id="' + full.object.identifier + '-role-select" class="form-control input-full project-role-select">';
-//     select += '<option value="PROJECT_USER" ' + (data == 'PROJECT_USER' ? 'selected="selected"' : '') + '>' + page.i18n.PROJECT_USER + '</option>';
-//     select += '<option value="PROJECT_OWNER" ' + (data == 'PROJECT_OWNER' ? 'selected="selected"' : '') + '>' + page.i18n.PROJECT_OWNER + '</option>';
-//     select += '</select>';
-//     return select;
-// 	};
-//
-// 	function renderGroupRoleAsText(data, type, full) {
-// 		return page.i18n[data];
-// 	};
-//
-// 	function memberNameLinkRow(data, type, full) {
-// 		return "<a class='item-link' title='" + data + "' href='"
-// 				+ page.urls.usersLink + full.object.identifier + "'><span class='col-names'>" + full.object.label
-// 				+ "</span></a>";
-// 	};
-//
-// 	function removeMemberButton(data, type, full) {
-// 		return "<div class='btn-group pull-right' data-toggle='tooltip' data-placement='left' title='" + page.i18n.remove + "'><button id='remove-member-" + full.object.identifier + "' type='button' data-toggle='modal' data-target='#removeUserModal' class='btn btn-default btn-xs remove-member-btn'><span class='fa fa-remove'></span></div>";
-// 	};
-//
-// 	function rowRenderedCallback(row, data) {
-// 		var row = $(row);
-// 		row.find(".remove-member-btn").click(function () {
-// 			$("#removeMemberModal").load(page.urls.deleteModal+"#removeMemberModalGen", { 'memberId' : data.object.identifier }, function() {
-// 				var modal = $(this);
-// 				modal.on("show.bs.modal", function () {
-// 					$(this).find("#remove-member-button").off("click").click(function () {
-// 						$.ajax({
-// 							url     : page.urls.removeMember + data.object.identifier,
-// 							type    : 'DELETE',
-// 							success : function (result) {
-// 								if (result.success) {
-// 									oTable_usersTable.ajax.reload();
-// 									notifications.show({
-// 										'msg': result.success
-// 									});
-// 								} else if (result.failure) {
-// 									notifications.show({
-// 										'msg' : result.failure,
-// 										'type': 'error'
-// 									});
-// 								}
-// 								modal.modal('hide');
-// 							}
-// 						});
-// 					});
-// 				});
-// 				modal.modal('show');
-// 			});
-// 		});
-// 		row.find('[data-toggle="tooltip"]').tooltip();
-// 		var originalRole;
-// 		row.find('.project-role-select').on('focus', function() {
-// 			originalRole = this.value;
-// 		}).change(function() {
-// 			var select = $(this);
-// 			$.ajax({
-// 				url: page.urls.updateRole + data.object.identifier,
-// 				type: 'POST',
-// 				data: {
-// 					'projectRole': select.val()
-// 				},
-// 				success : function(result) {
-// 					if (result.success) {
-// 						originalRole = select.val();
-// 						notifications.show({'msg': result.success});
-// 					} else if (result.failure) {
-// 						select.val(originalRole);
-// 						notifications.show({
-// 							'msg' : result.failure,
-// 							'type': 'error'
-// 						})
-// 					}
-// 				}
-// 			});
-// 		});
-// 	};
-//
-//
+$table
+  .on("focus", "select", function() {
+    const $elm = $(this);
+    $elm.data("prev", $elm.val());
+  })
+  .on("change", "select", function(e) {
+    const $select = $(this);
+
+    $.ajax({
+      url: `${window.PAGE.urls.updateRole}${$select.data("userId")}`,
+      type: "POST",
+      data: {
+        projectRole: $select.val()
+      },
+      success(result) {
+        if (result.success) {
+          window.notifications.show({ msg: result.success });
+        } else if (result.failure) {
+          $select.val($select.data("prev"));
+          window.notifications.show({
+            msg: result.failure,
+            type: "error"
+          });
+        }
+      }
+    });
+  })
+  .on("click", ".remove-btn", function() {
+    const memberId = $(this)
+      .closest("tr")
+      .data("user");
+
+    $("#removeMemberModal").load(
+      `${window.PAGE.urls.deleteModal}#removeMemberModalGen`,
+      { memberId },
+      function() {
+        const modal = $(this);
+        modal.on("show.bs.modal", function() {
+          $(this)
+            .find("#remove-member-button")
+            .off("click")
+            .click(function() {
+              $.ajax({
+                url: `${window.PAGE.urls.removeMember}${memberId}`,
+                type: "DELETE",
+                success: function(result) {
+                  if (result.success) {
+                    $dt.ajax.reload();
+                    window.notifications.show({
+                      msg: result.success
+                    });
+                  } else if (result.failure) {
+                    window.notifications.show({
+                      msg: result.failure,
+                      type: "error"
+                    });
+                  }
+                  modal.modal("hide");
+                }
+              });
+            });
+        });
+        modal.modal("show");
+      }
+    );
+  });
+
 // 	$("#add-member-membername").select2({
 // 	    minimumInputLength: 1,
 // 	    ajax: {
