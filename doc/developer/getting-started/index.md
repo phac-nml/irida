@@ -36,7 +36,7 @@ Documentation: [http://docs.spring.io/spring-framework/docs/4.2.3.RELEASE/spring
 
 IRIDA uses the Spring Framework as the main backbone of the application.  Spring is used to assist with many of the main functions of the application including configuration, dependency injection, MVC, REST API, Java persistance API management, and more.
 
-For a better understanding of how Spring works, it's recommended that IRIDA developers attend a *Core Spring Training* course https://pivotal.io/training/courses/core-spring-training.
+For a better understanding of how Spring works, it's recommended that IRIDA developers attend a *Core Spring Training* course [https://pivotal.io/training/courses/core-spring-training](https://pivotal.io/training/courses/core-spring-training).
 
 #### Apache Maven
 {:.no_toc}
@@ -71,10 +71,10 @@ Galaxy is used as IRIDA's analysis workflow engine.  Analysis pipelines must be 
 #### Other important libraries
 {:.no_toc}
 
-* Thymeleaf - Web interface templating - http://www.thymeleaf.org/documentation.html
-* JQuery - Javascript libraries - https://api.jquery.com/
-* AngularJS - Javascript libraries and templating - https://docs.angularjs.org/api
-* Jekyll - Documentation build - http://jekyllrb.com/docs/home/
+* Thymeleaf - Web interface templating - [http://www.thymeleaf.org/documentation.html](http://www.thymeleaf.org/documentation.html)
+* JQuery - Javascript libraries - [https://api.jquery.com/](https://api.jquery.com/)
+* AngularJS - Javascript libraries and templating - [https://docs.angularjs.org/api](https://docs.angularjs.org/api)
+* Jekyll - Documentation build - [http://jekyllrb.com/docs/home/](http://jekyllrb.com/docs/home/)
 
 Development platform
 --------------------
@@ -100,6 +100,7 @@ An (incomplete) set of instructions for getting the IRIDA service layer and web 
   * Java 8 JDK
   * Apache Maven
 * Run the library installation script in the `lib/` directory:
+
 ```
 cd irida/lib/
 bash install-libs.sh
@@ -128,7 +129,7 @@ Any arguments added after `run.sh` will be proxied to the `mvn ...` command.
 Spring allows us to set profiles in the application that can be used to set up certain services for running in different environments.  IRIDA has the following profiles:
 
 * `prod` - Production mode.  
-  * Hibernate will not be allowed to make changes.  
+  * Hibernate will not be allowed to make changes to the database schema.  
   * Database will be managed by Liquibase.  
   * Attempt to connect to Galaxy to run workflows
   * Run all scheduled tasks such as NCBI uploads, data synchronization, etc.
@@ -141,6 +142,7 @@ Spring allows us to set profiles in the application that can be used to set up c
 * `test` - This profile is generally used when testing connecting to Galaxy.
 
 When running IRIDA from the command line, a profile can be set by adding the following parameter:
+
 ```bash
 -Dspring.profiles.active=YOURPROFILE
 ```
@@ -200,7 +202,7 @@ This will create the `.war` and `.zip` files for IRIDA release under the `target
 
 #### Building IRIDA documentation
 
-IRIDA documentation can be found in the `doc/` directory in the IRIDA root directory.  IRIDA's documentation is built using [Jekyll][].  Jekyll allows us to write documentation in Markdown format and it will convert the pages to HTML for releasing to the web.  The documentation at http://irida.corefacility.ca/documentation is all generated using this tool.
+IRIDA documentation can be found in the `doc/` directory in the IRIDA root directory.  IRIDA's documentation is built using [Jekyll][].  Jekyll allows us to write documentation in Markdown format and it will convert the pages to HTML for releasing to the web.  The documentation at [http://irida.corefacility.ca/documentation](http://irida.corefacility.ca/documentation) is all generated using this tool.
 
 To test any documentation changes, you can `cd` into the `doc/` directory and run the following command:
 
@@ -253,7 +255,7 @@ Building new features
 
 #### GitLab Issues
 
-Any time a request comes in from a user for a new feature, or a bug is found, an *issue* should be created on [GitLab]().  The IRIDA project uses GitLab's issues list as it's main project tracking system.  The issue should be documented as fully as possible with the following:
+Any time a request comes in from a user for a new feature, or a bug is found, an *issue* should be created on [GitLab][].  The IRIDA project uses GitLab's issues list as it's main project tracking system.  The issue should be documented as fully as possible with the following:
 
 * A general description of the problem/feature.
 * What the expected functionality should be.
@@ -264,7 +266,7 @@ Once an issue is completed it should be referenced in a [merge request](#merge-r
 
 ### Informing users of changes
 
-When adding new features we have a couple places we need to inform our users.  First is the `CHANGELOG.md` file found in the root of the project.  If you've added a feature, fixed a bug, or made any changes worthwhile of telling IRIDA users, other IRIDA developers, or administrators they should be mentioned here.  Next is the `UPGRADING.md` guide.  This file is used to to inform IRIDA system admins what steps need to be taken when upgrading from one version of IRIDA to another.  For example if you add anything to a configuration file, if there are changes which require an upgrade to the database, a workflow, or any dependencies, it should be mentioned here.
+When adding new features we have a couple places we need to inform our users.  First is the `CHANGELOG.md` file found in the root of the project.  If you've added a feature, fixed a bug, or made any changes worthwhile of telling IRIDA users, other IRIDA developers, or administrators they should be mentioned here.  Next is the `UPGRADING.md` guide.  This file is used to inform IRIDA system admins what steps need to be taken when upgrading from one version of IRIDA to another.  For example if you add anything to a configuration file, if there are changes which require an upgrade to the database, a workflow, or any dependencies, it should be mentioned here.
 
 ### IRIDA tests
 
@@ -314,7 +316,7 @@ Developer documentation is also necessary for all Java classes, methods, code bl
 Version control
 ---------------
 
-The IRIDA project uses Git, [GitLab][], and [GitHub][] for version control purposes.  The main development server used is the NML's [GitLab][] site.  We use an internal repository so that we have greater control over how the code is managed, greater control over the testing servers, and allows us to have private conversations about issues.  Once a feature is pushed to the *development* or *master* branches of the project, it is automatically mirrored to our [GitHub][] site to give access ot public users.
+The IRIDA project uses Git, [GitLab][], and [GitHub][] for version control purposes.  The main development server used is the NML's [GitLab][] site.  We use an internal repository so that we have greater control over how the code is managed, greater control over the testing servers, and allows us to have private conversations about issues.  Once a feature is pushed to the *development* or *master* branches of the project, it is automatically mirrored to our [GitHub][] site to give access to public users.
 
 External collaborators are welcomed to develop new features and should submit pull requests on IRIDA's [GitHub][] page.  Note that if we receive a GitHub pull request, NML IRIDA developers should pull the branch locally, then push it up to GitLab before merging to ensure the GitHub and GitLab repositories don't get out of sync.
 
@@ -346,7 +348,7 @@ Don't forget to push the tag when you're finished.
 git push --tags
 ```
 
-Once the tag has been pushed, the tag should have been automatically created on IRIDA's [GitHub][] site at https://github.com/phac-nml/irida/releases.  This release will be created as a tag, but will not be a full release until release notes and release files are uploaded to [GitHub][].  To do this, click *Edit* next to the new tag, enter the details from the `CHANGELOG.md` file for this release, and upload the `.war` and `.zip` files for this release.
+Once the tag has been pushed, the tag should have been automatically created on IRIDA's [GitHub][] site at [https://github.com/phac-nml/irida/releases](https://github.com/phac-nml/irida/releases).  This release will be created as a tag, but will not be a full release until release notes and release files are uploaded to [GitHub][].  To do this, click *Edit* next to the new tag, enter the details from the `CHANGELOG.md` file for this release, and upload the `.war` and `.zip` files for this release.
 
 
 Example workflow:
@@ -377,9 +379,9 @@ When the reviewer is satisfied with the state of the branch to be merged, they s
 After building a new `master` branch and releasing a tag, it is time to release a new version of IRIDA on its production servers.  To see more about the IRIDA release plan, see the following [GitLab][] snippet: http://gitlab-irida.corefacility.ca/snippets/30
 
 
-[GitHub]: (https://github.com/phac-nml/irida)
-[GitLab]: (http://gitlab-irida.corefacility.ca/)
-[Spring Data JPA]: (http://projects.spring.io/spring-data-jpa/)
-[Spring Security]: (https://projects.spring.io/spring-security/)
-[Liquibase]: (http://www.liquibase.org/documentation/)
-[Jekyll]: (http://jekyllrb.com/docs/home/)
+[GitHub]: https://github.com/phac-nml/irida
+[GitLab]: http://gitlab-irida.corefacility.ca/
+[Spring Data JPA]: http://projects.spring.io/spring-data-jpa/
+[Spring Security]: https://projects.spring.io/spring-security/
+[Liquibase]: http://www.liquibase.org/documentation/
+[Jekyll]: http://jekyllrb.com/docs/home/
