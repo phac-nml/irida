@@ -1,7 +1,8 @@
 import angular from "angular";
 import _ from "lodash";
+import { CART } from "../../utilities/events-utilities";
 
-function CartController($scope, cart) {
+function CartController(cart) {
   const vm = this;
   vm.show = false;
   vm.projects = [];
@@ -9,7 +10,11 @@ function CartController($scope, cart) {
   vm.collapsed = {};
   vm.term = "";
 
-  $scope.$on("cart.update", function() {
+  /*
+  This is here since this has been updated to use a standard Event,
+  and not handled through angularjs.
+   */
+  document.addEventListener(CART.UPDATED, function() {
     getCart(false);
   });
 
@@ -87,15 +92,14 @@ function CartDirective() {
     templateUrl: "/cart.html",
     replace: true,
     controllerAs: "cart",
-    controller: ["$scope", "CartService", CartController]
+    controller: ["CartService", CartController]
   };
 }
 
-function CartService(scope, $http, $q, notifications) {
+function CartService(scope, $http) {
   const svc = this;
   const urls = {
     all: window.TL.BASE_URL + "cart",
-    add: window.TL.BASE_URL + "cart/add/samples",
     project: window.TL.BASE_URL + "cart/project/"
   };
 
@@ -106,38 +110,6 @@ function CartService(scope, $http, $q, notifications) {
       } else {
         return [];
       }
-    });
-  };
-
-  /**
-   * Add samples to the global cart
-   * @param {object} projectSamples
-   *    {projectId: [sampleIds]}
-   * @returns {*|Promise.<TResult>}
-   */
-  svc.add = function(projectSamples) {
-    const projectIds = Object.keys(projectSamples);
-    const promises = [];
-    const resultMsg = [];
-
-    // Add each project's samples to the global cart.
-    projectIds.forEach(function(id) {
-      const promise = $http
-        .post(urls.add, { projectId: id, sampleIds: projectSamples[id] })
-        .then(function(result) {
-          resultMsg.push(result.data.message);
-        });
-      promises.push(promise);
-    });
-
-    // Return the resolution of all the results from adding the samples to the cart
-    return $q.all(promises).then(function() {
-      // Let everyone know that the cart has been updates
-      scope.$emit("cart.update");
-      // Show notifications for each project and their samples that were added to the cart.
-      resultMsg.forEach(function(msg) {
-        notifications.show({ msg: msg });
-      });
     });
   };
 
@@ -412,8 +384,6 @@ angular
   .service("CartService", [
     "$rootScope",
     "$http",
-    "$q",
-    "notifications",
     CartService
   ])
   .controller("CartSliderController", [

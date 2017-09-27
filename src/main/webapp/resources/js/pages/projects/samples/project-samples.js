@@ -1,6 +1,11 @@
 import $ from "jquery";
-import {createItemLink, generateColumnOrderInfo, tableConfig} from "../../../utilities/datatables-utilities";
-import {formatDate} from "../../../utilities/date-utilities";
+import {
+  createItemLink,
+  generateColumnOrderInfo,
+  tableConfig
+} from "../../../utilities/datatables-utilities";
+import { formatDate } from "../../../utilities/date-utilities";
+import { addSamplesToCart } from "../../../modules/cart/cart";
 import "./../../../vendor/datatables/datatables";
 import "./../../../vendor/datatables/datatables-buttons";
 import "./../../../vendor/datatables/datatables-rowSelection";
@@ -100,4 +105,34 @@ const config = Object.assign({}, tableConfig, {
   }
 });
 
-$table.DataTable(config);
+const $dt = $table.DataTable(config);
+
+/*
+CART FUNCTIONALITY
+ */
+const $cartBtn = $("#cart-add-btn");
+$cartBtn.on("click", function() {
+  const selected = $dt.select.selected()[0];
+  /*
+  Selected data needs to be formatted into an object: {projectId => [sampleIds]}
+   */
+  const projects = {};
+  selected.forEach(item => {
+    projects[item.project] = projects[item.project] || [];
+    projects[item.project].push(item.sample);
+  });
+  addSamplesToCart(projects);
+});
+
+/*
+TABLE EVENT HANDLERS
+ */
+
+// Row selection events.
+$dt.on("selection-count.dt", function(e, count) {
+  /*
+  Update the state of the cart button.
+  If there is nothing selected, disable the button.
+   */
+  $cartBtn.prop("disabled", count === 0);
+});

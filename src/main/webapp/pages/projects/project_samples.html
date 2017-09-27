@@ -63,7 +63,15 @@
 </head>
 <body>
 <main id="project-samples-main" layout:fragment="main">
-
+    <div class="btn-toolbar spaced-bottom" role="toolbar">
+        <div class="btn-group btn-group-sm" role="group">
+            <button id="cart-add-btn" class="btn btn-primary btn-sm" disabled="disabled">
+                <i class="fa fa-cart-plus fa-fw" aria-hidden="true"></i>
+                &nbsp;
+                <th:block th:text="#{project.samples.nav.add-to-cart}">Add To Cart</th:block>
+            </button>
+        </div>
+    </div>
     <table id="samplesTable" class="table table-striped" cellspacing="0" width="100%"
            data:url="@{/projects/{id}/ajax/samples(id=${project.getId()})}">
         <thead>
@@ -226,11 +234,7 @@
                                 <!--</a></li>-->
                         <!--</ul>-->
                     <!--</div>-->
-                    <!--<button id="cart-add-btn" class="btn btn-primary btn-sm" ng-click="toolsCtrl.addToCart()">-->
-                        <!--<i class="fa fa-cart-plus fa-fw" aria-hidden="true"></i>-->
-                        <!--&nbsp;-->
-                        <!--<th:block th:text="#{project.samples.nav.add-to-cart}">Add To Cart</th:block>-->
-                    <!--</button>-->
+
                 <!--</div>-->
             <!--</div>-->
         <!--</div>-->
