@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssemblyFromAnalysis;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -58,5 +59,13 @@ public class AssemblySampleUpdatorService implements AnalysisSampleUpdatorServic
 		logger.trace(
 				"Saving join for sample [" + sample.getId() + "] to analysis submission [" + analysis.getId() + "]");
 		sampleGenomeAssemblyJoinRepository.save(sampleGenomeAssemblyJoin);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public AnalysisType getAnalysisType() {
+		return AnalysisType.ASSEMBLY_ANNOTATION;
 	}
 }

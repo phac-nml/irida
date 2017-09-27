@@ -1,16 +1,18 @@
 package ca.corefacility.bioinformatics.irida.service.impl.analysis.sample;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -24,7 +26,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
  * Updates samples from an {@link AnalysisSubmission} with results from the
  * analysis.
  */
-@Component
+@Service
 public class AnalysisSubmissionSampleProcessorImpl implements AnalysisSubmissionSampleProcessor {
 
 	private static final Logger logger = LoggerFactory.getLogger(AssemblySampleUpdatorService.class);
@@ -37,16 +39,24 @@ public class AnalysisSubmissionSampleProcessorImpl implements AnalysisSubmission
 	 * 
 	 * @param sampleService
 	 *            The {@link SampleService}.
-	 * @param assemblySampleUpdatorService
-	 *            The {@link AnalysisSampleUpdatorService} for assemblies.
+	 * @param analysisSampleUpdatorServices
+	 *            A list of {@link AnalysisSampleUpdatorService}s to use for
+	 *            updating samples.
 	 */
 	@Autowired
 	public AnalysisSubmissionSampleProcessorImpl(SampleService sampleService,
-			AnalysisSampleUpdatorService assemblySampleUpdatorService) {
+			List<AnalysisSampleUpdatorService> analysisSampleUpdatorServices) {
+		checkNotNull(analysisSampleUpdatorServices, "assemblySampleUpdatorService is null");
 		this.sampleService = sampleService;
+		this.analysisSampleUpdatorMap = Maps.newHashMap();
 
-		analysisSampleUpdatorMap = ImmutableMap.<AnalysisType, AnalysisSampleUpdatorService>builder()
-				.put(AnalysisType.ASSEMBLY_ANNOTATION, assemblySampleUpdatorService).build();
+		for (AnalysisSampleUpdatorService analysisSampleUpdatorService : analysisSampleUpdatorServices) {
+			AnalysisType analysisType = analysisSampleUpdatorService.getAnalysisType();
+			checkArgument(!analysisSampleUpdatorMap.containsKey(analysisType),
+					"Error: already have registered " + " for AnalysisType " + analysisType);
+
+			analysisSampleUpdatorMap.put(analysisSampleUpdatorService.getAnalysisType(), analysisSampleUpdatorService);
+		}
 	}
 
 	/**
