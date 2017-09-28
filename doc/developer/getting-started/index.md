@@ -244,11 +244,74 @@ All files are found under the `ca.corefacility.bioinformatics.irida` package roo
 * `processing` - IRIDA's file processing chain.  This contains classes used when processing files uploaded to IRIDA such as unzipping, FastQC, and quality control.
 * `repositories` - Repositories used for communicating with IRIDA's database.  These classes generally use [Spring Data JPA][] for communicating with the database.
 * `ria` - "Rich Internet Application", this is where the controller code and all Java code for the web interface is found.
-* `security` - IRIDA's security layer.  You'll mostly find [Spring Security][]  classes within.  See more in the [security](#security) section.
+* `security` - IRIDA's security layer.  You'll mostly find [Spring Security][]  classes within.  See more in the [security](#irida-security) section.
 * `service` - IRIDA's service layer.  Here you'll find the business logic for reading, saving, and manipulating data.
 * `util` - General utility classes.  These are generally developer tools that don't fit anywhere else in the class structure.
 * `validators` - Validation classes used to verify data being saved in the database is correct.
 * `web` - IRIDA's REST API.
+
+### IRIDA Security
+
+IRIDA uses [Spring Security][] extensively to control access and authentication in the platform.  The majority of the security resides at the service layer of the application, but some security functions can be found elsewhere in the codebase.
+
+#### Method Security
+{:.no_toc}
+
+Method security is generally handled by adding Spring security annotations to methods.  These annotations can have a number of different forms.
+
+##### Role based security
+{:.no_toc}
+
+The `@PreAuthorize` annotation is used for the majority of security functions.  This annotation outlines the conditions which must be met in order for a user to run a given method.  If the user does not meet the conditions, an `AccessDeniedException` will be thrown.
+
+The simplest case for this annotation uses the `hasRole('ROLE')` format.  In this case it is checking whether the logged in user has a given system role.  For example the following block will check if the logged in user is an admin:
+
+```java
+@PreAuthorize("hasRole('ROLE_ADMIN')")
+public void doStuff(){}
+```
+
+##### Custom permission classes
+{:.no_toc}
+
+In cases where role-based security isn't enough, Spring Security allows us to write custom permissions classes to test whether a user can perform a function.  For most cases in IRIDA, this is checking whether a user has access to a given object in the database (Project, Sample, SequencingObject, etc.) to perform a given action (read, update, delete, etc.).  These custom permission classes can be found in the `ca.corefacility.bioinformatics.irida.security.permissions` classpath of the project.  Permissions must extend the `BasePermission` class and be annotated as a `@Component` to be wired into the IRIDA security layer.  See `ReadProjectPermission` for an example.
+
+The meat of the permission lies in the `public boolean customPermissionAllowed(final Authentication authentication, final DOMAIN_OBJECT p)` method.  This method uses the logged in user's authentication and a reference to the object they're trying to access to try to determine if they should be able to perform the action.  Since the permission class is a Spring `@Component` it can wire in any repository layer elements needed to perform the test.  Once the `customPermissionAllowed` method determines if a user can perform the action, it returns `true`/`false` and the action will be approved or denied as such.
+
+The second required method is `public String getPermissionProvided()`.  This method provides the security system a name for the permission.  This name will be used in the `@PreAuthorize` or `@PostFilter` annotations using Spring Expression Language.
+
+When a permission class implements both of these methods, it can be used in Spring security annotations.  For example if we had the permission `ReadProjectPermission` named `canReadProject`, we could use it on a method in the following fashion:
+
+```java
+@PreAuthorize("hasPermission(#project, 'canReadProject')")
+public void doStuff(Project project){}
+```
+
+This block does the following:
+
+1. Loads the `ReadProjectPermission` class based on the `canReadProject` name
+2. Passes the `project` parameter into the `customPermissionAllowed` method of the permission class as it's identified by the `#project` parameter in the annotation.
+3. Executes the `customPermissionAllowed` method to determine if the logged in user has access to do the requested action.
+4. If the user should have access, the method runs as normal.  If not, `AccessDeniedException` is thrown.
+
+In addition to passing in domain objects, the permission classes are able to read objects by their ID.  For example if we have the following block:
+
+```java
+@PreAuthorize("hasPermission(#projectId, 'canReadProject')")
+public void doStuff(Long projectId){}
+```
+
+Passing the `projectId` parameter to the annotation will read a `Project` from the database before passing to the `customPermissionAllowed` method.
+
+These permission classes can also be used with the `@PostFilter` annotation.  This annotation runs after the method completes to see if the user has access to the output of the method.  For example with the following block:
+
+```java
+@PostFilter("hasPermission(filterObject, 'canReadProject')")
+public Project doStuff(){}
+```
+
+This code will ensure the logged in user can read the return value of the function.  If they cannot, an `AccessDeniedException` will be thrown.
+
 
 Building new features
 ---------------------
