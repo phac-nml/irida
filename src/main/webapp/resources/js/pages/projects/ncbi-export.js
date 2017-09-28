@@ -1,9 +1,9 @@
 import $ from "jquery";
 import "../../vendor/datatables/datatables";
 import {
-  tableConfig,
   createItemLink,
-  generateColumnOrderInfo
+  generateColumnOrderInfo,
+  tableConfig
 } from "../../utilities/datatables-utilities";
 import { formatDate } from "../../utilities/date-utilities";
 
@@ -51,7 +51,7 @@ const CONFIG = Object.assign({}, tableConfig, {
           const url = `${PAGE.URLS.projectBase}${full.project.identifier}`;
           return createItemLink({
             url,
-            label: full.label,
+            label: data.label,
             width: 300
           });
         }
