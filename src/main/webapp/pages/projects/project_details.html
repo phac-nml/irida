@@ -13,9 +13,8 @@
       </div>
     </div>
   </main>
-  <th:block layout:fragment="scripts" th:inline="javascript">
-    <script th:src="@{/resources/js/build/events.bundle.js}"></script>
-  </th:block>
 </body>
-
+<th:block layout:fragment="scripts">
+  <script th:src="@{/resources/js/build/project-events.bundle.js}"></script>
+</th:block>
 </html>

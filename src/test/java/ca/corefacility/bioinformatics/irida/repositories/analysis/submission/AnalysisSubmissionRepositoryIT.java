@@ -71,9 +71,11 @@ public class AnalysisSubmissionRepositoryIT {
 
 	private AnalysisSubmission analysisSubmission;
 	private AnalysisSubmission analysisSubmission2;
+	private AnalysisSubmission analysisSubmission2b;
 	private SequenceFilePair sequenceFilePair;
 	private SequenceFile sequenceFile;
 	private ReferenceFile referenceFile;
+	private ReferenceFile referenceFile2;
 	private SingleEndSequenceFile singleEndFile;
 
 	private static final String analysisId = "10";
@@ -106,6 +108,8 @@ public class AnalysisSubmissionRepositoryIT {
 
 		referenceFile = referenceFileRepository.findOne(1L);
 		assertNotNull(referenceFile);
+		
+		referenceFile2 = referenceFileRepository.findOne(2L);
 
 		submitter1 = userRepository.findOne(1L);
 		submitter2 = userRepository.findOne(2L);
@@ -123,6 +127,13 @@ public class AnalysisSubmissionRepositoryIT {
 		analysisSubmission2.setAnalysisState(AnalysisState.SUBMITTING);
 		analysisSubmission2.setSubmitter(submitter2);
 		analysisSubmission2.setAnalysisCleanedState(AnalysisCleanedState.NOT_CLEANED);
+		
+		analysisSubmission2b = AnalysisSubmission.builder(workflowId).name(analysisName2)
+				.inputFiles(singleFiles2).referenceFile(referenceFile2).build();
+		analysisSubmission2b.setRemoteAnalysisId(analysisId2);
+		analysisSubmission2b.setAnalysisState(AnalysisState.SUBMITTING);
+		analysisSubmission2b.setSubmitter(submitter2);
+		analysisSubmission2b.setAnalysisCleanedState(AnalysisCleanedState.NOT_CLEANED);
 	}
 
 	/**
@@ -338,5 +349,44 @@ public class AnalysisSubmissionRepositoryIT {
 
 		Set<AnalysisSubmission> submissions = analysisSubmissionRepository.findBySubmitter(submitter2);
 		assertEquals("there should be no submissions found", 0, submissions.size());
+	}
+	
+	/**
+	 * Tests successfully getting analysis submissions by a reference file.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testFindByReferenceFileSuccess() {
+		analysisSubmissionRepository.save(analysisSubmission);
+		analysisSubmissionRepository.save(analysisSubmission2);
+
+		Set<AnalysisSubmission> submissions = analysisSubmissionRepository.findByReferenceFile(referenceFile);
+		assertEquals("should have gotten 2 analysis submissions", 2, submissions.size());
+	}
+	
+	/**
+	 * Tests successfully getting analysis submissions by a reference file.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testFindByReferenceFileSuccess2() {
+		analysisSubmissionRepository.save(analysisSubmission);
+		analysisSubmissionRepository.save(analysisSubmission2b);
+
+		Set<AnalysisSubmission> submissions = analysisSubmissionRepository.findByReferenceFile(referenceFile);
+		assertEquals("should have gotten 1 analysis submissions", 1, submissions.size());
+	}
+
+	/**
+	 * Tests successfully getting analysis submissions by a reference file.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testFindByReferenceFileNone() {
+		analysisSubmissionRepository.save(analysisSubmission);
+		analysisSubmissionRepository.save(analysisSubmission2);
+
+		Set<AnalysisSubmission> submissions = analysisSubmissionRepository.findByReferenceFile(referenceFile2);
+		assertEquals("should have gotten 0 analysis submissions", 0, submissions.size());
 	}
 }
