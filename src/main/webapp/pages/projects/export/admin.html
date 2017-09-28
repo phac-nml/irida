@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="template/page"
-      ddl:bundle-includes="ncbi-exports"
-      ddl:asset-css-excludes="jquery.datatables">
+      layout:decorator="template/page">
 <head>
   <title th:text="#{project.export.table.title}">SRA</title>
   <script th:inline="javascript">
@@ -18,18 +16,22 @@
 <body>
 <main layout:fragment="page">
   <h1 th:text="#{project.export.table.title}">_Project Exports_</h1>
-  <table id="exportTable" dt:table="true" dt:url="@{/ajax/export/list}" dt:filterPlaceholder="none" dt:filterable="false" dt:sortable="false">
+  <table id="exportTable" data:url="@{/ajax/export/list}" class="table table-striped" cellspacing="0" width="100%">
     <thead>
       <tr role="row">
-        <th dt:property="identifier" th:text="#{iridaThing.id}" dt:renderFunction="ncbi-exports#exportsTable.createLinkButton"></th>
-        <th dt:property="bioSampleFiles" th:text="#{project.export.table.samples}" dt:renderFunction="datatables-utils#datatable.displayListSize"></th>
-        <th dt:property="project" th:text="#{project.export.table.project}" dt:renderFunction="ncbi-exports#exportsTable.createProjectLink"></th>
-        <th dt:property="uploadState" th:text="#{project.export.table.state}"></th>
-        <th dt:property="createdDate" th:text="#{iridaThing.timestamp}" dt:renderFunction="datatables-utils#datatable.formatDate"></th>
+        <th data:data="identifier" th:text="#{iridaThing.id}"></th>
+        <th data:data="bioSampleFiles" th:text="#{project.export.table.samples}"></th>
+        <th data:data="project" th:text="#{project.export.table.project}"></th>
+        <th data:data="uploadState" th:text="#{project.export.table.state}"></th>
+        <th class="dt-date" data:data="createdDate" th:text="#{iridaThing.timestamp}"></th>
       </tr>
     </thead>
   </table>
 </main>
+
+<th:block layout:fragment="scripts">
+  <script th:src="@{/resources/js/build/ncbi-exports.bundle.js}"></script>
+</th:block>
 </body>
 
 </html>
