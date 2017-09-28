@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.security.permissions.files;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -18,6 +20,8 @@ import ca.corefacility.bioinformatics.irida.security.permissions.sample.ReadSamp
 @Component
 public class ReadSequencingObjectPermission extends BasePermission<SequencingObject, Long> {
 	private static final String PERMISSION_PROVIDED = "canReadSequencingObject";
+	
+	private static final Logger logger = LoggerFactory.getLogger(ReadSequencingObjectPermission.class);
 
 	private final ReadSamplePermission samplePermission;
 	private final SampleSequencingObjectJoinRepository ssoRepository;
@@ -48,7 +52,13 @@ public class ReadSequencingObjectPermission extends BasePermission<SequencingObj
 	public boolean customPermissionAllowed(final Authentication authentication, final SequencingObject sf) {
 		SampleSequencingObjectJoin sequencingObjectJoin = ssoRepository.getSampleForSequencingObject(sf);
 
-		return samplePermission.isAllowed(authentication, sequencingObjectJoin.getSubject());
+		if (sequencingObjectJoin != null) {
+			return samplePermission.isAllowed(authentication, sequencingObjectJoin.getSubject());
+		} else {
+			logger.trace("Permission denied for reading sequencing object id=" + sf.getId() + " by user=" + authentication.getName() + ", no joined sample found.");
+			
+			return false;
+		}
 	}
 
 	/**

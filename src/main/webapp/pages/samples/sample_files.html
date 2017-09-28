@@ -23,7 +23,7 @@
 </head>
 <body>
 
-<div th:if="${canManageSample}" th:with="url=@{${#httpServletRequest.requestURI}}" class="panel panel-default panel-file-upload" ng-controller="FileUploadController as fileUploadCtrl" layout:fragment="sidebar">
+<div th:if="${canManageSample}" th:with="url=${#httpServletRequest.requestURI}" class="panel panel-default panel-file-upload" ng-controller="FileUploadController as fileUploadCtrl" layout:fragment="sidebar">
 	<div class="panel-body" ng-hide="fileUploadCtrl.uploading || fileUploadCtrl.processing">
 		<div class="fileUpload btn btn-default btn-sm btn-block">
 			<th:block th:text="#{samples.files.upload.btn}"></th:block>
@@ -33,7 +33,9 @@
 				   ngf-change="fileUploadCtrl.uploadFiles($files, $event, $rejectedFiles)"
 				   ngf-accept="'.fastq,.fastq.gz'"
 				   ngf-select=""
-				   multiple="true"/></div>
+				   multiple="true"/>
+		</div>
+		<small class="text-muted" th:text="#{samples.files.empty.message-paired}"></small>
 	</div>
 	<div class="ng-cloak panel-body" ng-show="fileUploadCtrl.uploading || fileUploadCtrl.processing || fileUploadCtrl.errorMessage">
 		<h3 th:text="#{samples.files.upload.progress.title}">_Uploading Files</h3>
@@ -58,7 +60,7 @@
 			<strong th:text="#{project.samples.files.upload.error.title}">__UPLOAD_ERROR__</strong>
 			<p>{{ fileUploadCtrl.errorMessage }}</p></div>
 	</div>
-	<div class="panel-body">
+	<div class="panel-body" th:if="${not #lists.isEmpty(single_end) or not #lists.isEmpty(paired_end)}">
 		<a th:href="${url + '/concatenate'}" class="btn btn-default btn-sm btn-block">
 			<th:block th:text="#{samples.files.concatenate.btn}"></th:block>
 			&nbsp;
@@ -77,6 +79,19 @@
 			</div>
 			<div th:if="${fileDeletedError}" class="alert alert-error" role="alert">
 				<strong th:text="${fileDeletedError}"></strong>
+			</div>
+		</div>
+	</div>
+	<div class="panel panel-info" th:if="${#lists.isEmpty(single_end) and #lists.isEmpty(paired_end)}">
+		<div class="panel-body">
+			<div class="media">
+				<div class="media-left">
+					<i class="fa fa-file-o media-object" style="font-size: 10rem;"></i>
+				</div>
+				<div class="media-body">
+					<h4 class="media-heading" th:text="#{samples.files.empty.title}"></h4>
+					<p class="lead" th:text="#{samples.files.empty.message}"></p>
+				</div>
 			</div>
 		</div>
 	</div>

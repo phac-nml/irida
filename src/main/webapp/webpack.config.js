@@ -22,8 +22,7 @@ module.exports = {
     //  on the global var jQuery
     jquery: "jQuery",
     angular: "angular",
-    moment: "moment",
-    lodash: "_"
+    moment: "moment"
   },
   resolve: {
     alias: {
