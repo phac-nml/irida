@@ -254,12 +254,9 @@ All files are found under the `ca.corefacility.bioinformatics.irida` package roo
 
 IRIDA uses [Spring Security][] extensively to control access and authentication in the platform.  The majority of the security resides at the service layer of the application, but some security functions can be found elsewhere in the codebase.
 
-#### Method Security
-{:.no_toc}
-
 Method security is generally handled by adding Spring security annotations to methods.  These annotations can have a number of different forms.
 
-##### Role based security
+#### Role based security
 {:.no_toc}
 
 The `@PreAuthorize` annotation is used for the majority of security functions.  This annotation outlines the conditions which must be met in order for a user to run a given method.  If the user does not meet the conditions, an `AccessDeniedException` will be thrown.
@@ -271,7 +268,7 @@ The simplest case for this annotation uses the `hasRole('ROLE')` format.  In thi
 public void doStuff(){}
 ```
 
-##### Custom permission classes
+#### Custom permission classes
 {:.no_toc}
 
 In cases where role-based security isn't enough, Spring Security allows us to write custom permissions classes to test whether a user can perform a function.  For most cases in IRIDA, this is checking whether a user has access to a given object in the database (Project, Sample, SequencingObject, etc.) to perform a given action (read, update, delete, etc.).  These custom permission classes can be found in the `ca.corefacility.bioinformatics.irida.security.permissions` classpath of the project.  Permissions must extend the `BasePermission` class and be annotated as a `@Component` to be wired into the IRIDA security layer.  See `ReadProjectPermission` for an example.
@@ -311,7 +308,6 @@ public Project doStuff(){}
 ```
 
 This code will ensure the logged in user can read the return value of the function.  If they cannot, an `AccessDeniedException` will be thrown.
-
 
 Building new features
 ---------------------
