@@ -62,7 +62,7 @@ public class AnalysisSubmissionSampleProcessorImplIT {
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "dr-evil", roles = "USER")
 	public void testUpdateFailPermission() {
-		AnalysisSubmission a = analysisSubmissionRepository.findOne(1L);
+		AnalysisSubmission a = analysisSubmissionRepository.findOne(2L);
 
 		analysisSubmissionSampleProcessorImpl.updateSamples(a);
 	}

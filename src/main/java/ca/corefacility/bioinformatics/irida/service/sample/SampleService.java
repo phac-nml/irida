@@ -235,7 +235,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *            the {@link AnalysisSubmission}
 	 * @return a Collection of {@link Sample}
 	 */
-	public Collection<Sample> getSamplesForAnalysisSubimssion(AnalysisSubmission submission);
+	public Collection<Sample> getSamplesForAnalysisSubmission(AnalysisSubmission submission);
 	
 	/**
 	 * Find all the {@link QCEntry} associated with {@link SequencingObject}s in

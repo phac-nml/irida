@@ -420,7 +420,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Override
 	@PreAuthorize("hasPermission(#submission, 'canReadAnalysisSubmission')")
 	@PostFilter("hasPermission(filterObject, 'canReadSample')")
-	public Collection<Sample> getSamplesForAnalysisSubimssion(AnalysisSubmission submission) {
+	public Collection<Sample> getSamplesForAnalysisSubmission(AnalysisSubmission submission) {
 		Set<SequencingObject> objectsForAnalysisSubmission = sequencingObjectRepository
 				.findSequencingObjectsForAnalysisSubmission(submission);
 

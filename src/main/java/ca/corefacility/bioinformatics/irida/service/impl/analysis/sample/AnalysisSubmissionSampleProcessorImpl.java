@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Maps;
 
@@ -63,13 +64,14 @@ public class AnalysisSubmissionSampleProcessorImpl implements AnalysisSubmission
 	 * {@inheritDoc}
 	 */
 	@Override
+	@Transactional
 	public void updateSamples(AnalysisSubmission analysisSubmission) {
 		if (!analysisSubmission.getUpdateSamples()) {
 			logger.trace("Will not update samples from results for submission=" + analysisSubmission);
 		} else {
 			logger.debug("Updating sample from results for submission=" + analysisSubmission);
 
-			Collection<Sample> samples = sampleService.getSamplesForAnalysisSubimssion(analysisSubmission);
+			Collection<Sample> samples = sampleService.getSamplesForAnalysisSubmission(analysisSubmission);
 			Analysis analysis = analysisSubmission.getAnalysis();
 
 			checkNotNull(analysis, "No analysis associated with submission " + analysisSubmission);

@@ -360,7 +360,7 @@ public class SampleServiceImplIT {
 	@WithMockUser(username = "fbristow", roles = "USER")
 	public void testGetSamplesForAnalysisSubmission() {
 		AnalysisSubmission submission = analysisSubmissionService.read(1L);
-		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubimssion(submission);
+		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubmission(submission);
 		
 		assertEquals("should be 2 samples", 2, samples.size());
 		
