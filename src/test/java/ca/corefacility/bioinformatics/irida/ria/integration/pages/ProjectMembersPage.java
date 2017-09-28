@@ -1,9 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
@@ -15,8 +13,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -89,7 +88,8 @@ public class ProjectMembersPage extends AbstractPage {
 	}
 
 	public void clickAddMember() {
-		WebElement addMembers = driver.findElement(By.id("add-members-button"));
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebElement addMembers = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("add-members-button")));
 		addMembers.click();
 		waitForAjax();
 	}
