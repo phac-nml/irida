@@ -22,11 +22,18 @@
 </head>
 <body>
 <div layout:fragment="settings-content">
-    <!--<div dt:conf="usersTable">-->
-    <!--<div dt:confType="callback" dt:type="createdRow" dt:function="project-members#projectMembersTable.rowRenderedCallback" />-->
-    <!--<div dt:confType="extrahtml" dt:uid="2">-->
-    <!--</div>-->
-    <!--</div>-->
+    <div class="hidden" id="toolbar-wrapper">
+        <div id="table-toolbar" class="btn-toolbar spaced-bottom" role="toolbar">
+            <div class="btn-group btn-group-sm">
+                <button id="add-members-button" class="btn btn-default"
+                        type="button" data-toggle="modal" data-target="#addMemberModal"
+                        th:if="${isAdmin} or ${manageMembers}" href="#addMembersLink"
+                        th:text="#{project.members.edit.add}">_Add Members_
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-md-12">
             <table id="usersTable" class="table table-striped" cellspacing="0" width="100%"
@@ -47,6 +54,9 @@
             </table>
         </div>
     </div>
+
+    <div th:replace="projects/templates/roles :: roles"></div>
+
     <div class="modal fade" id="removeMemberModal" role="dialog" aria-labelledBy="#deleteConfirmTitle"></div>
     <div class="modal fade" id="addMemberModal" role="dialog" aria-labelledby="#addMemberTitle">
         <div class="modal-dialog">
@@ -89,32 +99,9 @@
         </div>
     </div>
 
-    <div class="hidden" id="role-template-wrapper">
-        <th:block th:if="${isAdmin} or ${manageMembers}">
-            <select class="form-control input-full project-role-select">
-                <option value="PROJECT_USER" th:text="#{projectRole.PROJECT_USER}"></option>
-                <option value="PROJECT_OWNER" th:text="#{projectRole.PROJECT_OWNER}"></option>
-            </select>
-        </th:block>
-        <th:block th:unless="${isAdmin} or ${manageMembers}">
-            <span class="PROJECT_USER" th:text="#{projectRole.PROJECT_USER}"></span>
-            <span class="PROJECT_OWNER" th:text="#{projectRole.PROJECT_OWNER}"></span>
-        </th:block>
-    </div>
-    <div th:if="${isAdmin} or ${manageMembers}" class="hidden" id="toolbar-wrapper">
-        <div id="table-toolbar" class="btn-toolbar spaced-bottom" role="toolbar">
-            <div class="btn-group">
-                <button id="add-members-button" class="btn btn-default btn-sm"
-                        type="button" data-toggle="modal" data-target="#addMemberModal"
-                        th:if="${isAdmin} or ${manageMembers}" href="#addMembersLink"
-                        th:text="#{project.members.edit.add}">_Add Members_
-                </button>
-            </div>
-        </div>
-    </div>
 </div>
 <th:block layout:fragment="scripts">
-    <script th:src="@{/resources/js/build/project-members.bundle.js}"></script>
+    <script th:src="@{/resources/js/build/project-roles.bundle.js}"></script>
 </th:block>
 </body>
 </html>

@@ -49,7 +49,7 @@ const CONFIG = Object.assign({}, tableConfig, {
   ajax: $table.data("url"),
   columnDefs: [
     {
-      targets: [COLUMNS.OBJECT_USERNAME],
+      targets: [COLUMNS.OBJECT_USERNAME, COLUMNS.OBJECT_NAME],
       render(data, type, full) {
         /*
         Create a link back to the user's page.
