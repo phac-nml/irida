@@ -20,7 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.service.analysis.sample.AnalysisSampleUpdatorService;
+import ca.corefacility.bioinformatics.irida.service.analysis.sample.AnalysisSampleUpdator;
 import ca.corefacility.bioinformatics.irida.service.analysis.sample.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
@@ -33,7 +33,7 @@ public class AnalysisSubmissionSampleProcessorImpl implements AnalysisSubmission
 
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisSubmissionSampleProcessorImpl.class);
 
-	private final Map<AnalysisType, AnalysisSampleUpdatorService> analysisSampleUpdatorMap;
+	private final Map<AnalysisType, AnalysisSampleUpdator> analysisSampleUpdatorMap;
 	private final SampleService sampleService;
 
 	/**
@@ -42,17 +42,17 @@ public class AnalysisSubmissionSampleProcessorImpl implements AnalysisSubmission
 	 * @param sampleService
 	 *            The {@link SampleService}.
 	 * @param analysisSampleUpdatorServices
-	 *            A list of {@link AnalysisSampleUpdatorService}s to use for
+	 *            A list of {@link AnalysisSampleUpdator}s to use for
 	 *            updating samples.
 	 */
 	@Autowired
 	public AnalysisSubmissionSampleProcessorImpl(SampleService sampleService,
-			List<AnalysisSampleUpdatorService> analysisSampleUpdatorServices) {
+			List<AnalysisSampleUpdator> analysisSampleUpdatorServices) {
 		checkNotNull(analysisSampleUpdatorServices, "assemblySampleUpdatorService is null");
 		this.sampleService = sampleService;
 		this.analysisSampleUpdatorMap = Maps.newHashMap();
 
-		for (AnalysisSampleUpdatorService analysisSampleUpdatorService : analysisSampleUpdatorServices) {
+		for (AnalysisSampleUpdator analysisSampleUpdatorService : analysisSampleUpdatorServices) {
 			AnalysisType analysisType = analysisSampleUpdatorService.getAnalysisType();
 			checkArgument(!analysisSampleUpdatorMap.containsKey(analysisType),
 					"Error: already have registered " + " for AnalysisType " + analysisType);
@@ -79,7 +79,7 @@ public class AnalysisSubmissionSampleProcessorImpl implements AnalysisSubmission
 			checkNotNull(analysis, "No analysis associated with submission " + analysisSubmission);
 			checkNotNull(samples, "No samples associated with submission " + analysisSubmission);
 
-			AnalysisSampleUpdatorService analysisSampleUpdatorService = analysisSampleUpdatorMap
+			AnalysisSampleUpdator analysisSampleUpdatorService = analysisSampleUpdatorMap
 					.get(analysis.getAnalysisType());
 
 			if (analysisSampleUpdatorService != null) {

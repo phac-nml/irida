@@ -11,7 +11,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
  * A service for updating samples with results from a particular
  * {@link Analysis} type.
  */
-public interface AnalysisSampleUpdatorService {
+public interface AnalysisSampleUpdator {
 	/**
 	 * Updates a collection of samples with a particular analysis result.
 	 * 

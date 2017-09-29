@@ -18,22 +18,22 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.GenomeAssemblyRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGenomeAssemblyJoinRepository;
-import ca.corefacility.bioinformatics.irida.service.analysis.sample.AnalysisSampleUpdatorService;
+import ca.corefacility.bioinformatics.irida.service.analysis.sample.AnalysisSampleUpdator;
 
 /**
  * Updates a sample with the results from a genome assembly.
  */
 @Component
-public class AssemblySampleUpdatorService implements AnalysisSampleUpdatorService {
+public class AssemblySampleUpdator implements AnalysisSampleUpdator {
 
-	private static final Logger logger = LoggerFactory.getLogger(AssemblySampleUpdatorService.class);
+	private static final Logger logger = LoggerFactory.getLogger(AssemblySampleUpdator.class);
 
 	private final AnalysisSubmissionRepository analysisSubmissionRepository;
 	private final GenomeAssemblyRepository genomeAssemblyRepository;
 	private final SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository;
 
 	@Autowired
-	public AssemblySampleUpdatorService(AnalysisSubmissionRepository analysisSubmissionRepository, 
+	public AssemblySampleUpdator(AnalysisSubmissionRepository analysisSubmissionRepository, 
 			GenomeAssemblyRepository genomeAssemblyRepository,
 			SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository) {
 		this.analysisSubmissionRepository = analysisSubmissionRepository;

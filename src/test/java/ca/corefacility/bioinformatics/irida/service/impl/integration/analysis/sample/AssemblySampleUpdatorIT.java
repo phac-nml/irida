@@ -28,7 +28,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGenomeAssemblyJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
-import ca.corefacility.bioinformatics.irida.service.impl.analysis.sample.AssemblySampleUpdatorService;
+import ca.corefacility.bioinformatics.irida.service.impl.analysis.sample.AssemblySampleUpdator;
 
 /**
  * Tests updating samples with assemblies.
@@ -39,12 +39,12 @@ import ca.corefacility.bioinformatics.irida.service.impl.analysis.sample.Assembl
 @ActiveProfiles("it")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
 		WithSecurityContextTestExcecutionListener.class })
-@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/analysis/sample/AssemblySampleUpdatorServiceIT.xml")
+@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/analysis/sample/AssemblySampleUpdatorIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
-public class AssemblySampleUpdatorServiceIT {
+public class AssemblySampleUpdatorIT {
 
 	@Autowired
-	private AssemblySampleUpdatorService assemblySampleUpdatorService;
+	private AssemblySampleUpdator assemblySampleUpdatorService;
 
 	@Autowired
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
