@@ -7,7 +7,7 @@ import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssemblyFromAnalysis;
@@ -23,7 +23,7 @@ import ca.corefacility.bioinformatics.irida.service.analysis.sample.AnalysisSamp
 /**
  * Updates a sample with the results from a genome assembly.
  */
-@Service
+@Component
 public class AssemblySampleUpdatorService implements AnalysisSampleUpdatorService {
 
 	private static final Logger logger = LoggerFactory.getLogger(AssemblySampleUpdatorService.class);
