@@ -116,13 +116,15 @@ function CartService(scope, $http) {
   svc.clear = function() {
     //fire a DELETE to the server on the cart then broadcast the cart update event
     return $http.delete(urls.all).then(function() {
-      scope.$broadcast("cart.update", {});
+      const event = new Event(CART.UPDATED);
+      document.dispatchEvent(event);
     });
   };
 
   svc.removeProject = function(projectId) {
     return $http.delete(urls.project + projectId).then(function() {
-      scope.$broadcast("cart.update", {});
+      const event = new Event(CART.UPDATED);
+      document.dispatchEvent(event);
     });
   };
 
@@ -130,7 +132,8 @@ function CartService(scope, $http) {
     return $http
       .delete(urls.project + projectId + "/samples/" + sampleId)
       .then(function() {
-        scope.$broadcast("cart.update", {});
+        const event = new Event(CART.UPDATED);
+        document.dispatchEvent(event);
       });
   };
 }
