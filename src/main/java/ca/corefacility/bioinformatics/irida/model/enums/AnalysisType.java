@@ -52,7 +52,7 @@ public enum AnalysisType {
 	FASTQC("fastqc"),
 
 	@XmlEnumValue("mlst-mentalist")
-	MLST_MENTALIST("mlst-mentalist", AnalysisMLSTMentalist.class),
+	MLST_MENTALIST("mlst-mentalist"),
 
 	/**
 	 * A default analysis type.
