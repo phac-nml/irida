@@ -202,7 +202,7 @@
    */
   apiRegister("select.currentId()", function(id) {
     return this.iterator("table", function(ctx) {
-      if (typeof id === undefined) {
+      if (typeof id === "undefined") {
         return ctx._select.currentId;
       }
       ctx._select.currentId = id;

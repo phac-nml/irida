@@ -1,9 +1,14 @@
 import $ from "jquery";
-import {createItemLink, generateColumnOrderInfo, tableConfig} from "../../../utilities/datatables-utilities";
-import {formatDate} from "../../../utilities/date-utilities";
+import {
+  createItemLink,
+  generateColumnOrderInfo,
+  tableConfig
+} from "../../../utilities/datatables-utilities";
+import { formatDate } from "../../../utilities/date-utilities";
 import "./../../../vendor/datatables/datatables";
 import "./../../../vendor/datatables/datatables-buttons";
 import "./../../../vendor/datatables/datatables-rowSelection";
+import { CART } from "../../../utilities/events-utilities";
 
 /**
  *  Get the names and order of the table columns
@@ -100,4 +105,39 @@ const config = Object.assign({}, tableConfig, {
   }
 });
 
-$table.DataTable(config);
+const $dt = $table.DataTable(config);
+
+/*
+CART FUNCTIONALITY
+ */
+const $cartBtn = $("#cart-add-btn");
+$cartBtn.on("click", function() {
+  const selected = $dt.select.selected()[0];
+  /*
+  Selected data needs to be formatted into an object: {projectId => [sampleIds]}
+   */
+  const projects = {};
+  selected.forEach(item => {
+    projects[item.project] = projects[item.project] || [];
+    projects[item.project].push(item.sample);
+  });
+
+  /*
+  Update the cart with the new samples.
+   */
+  const event = new CustomEvent(CART.ADD, { detail: { projects } });
+  document.dispatchEvent(event);
+});
+
+/*
+TABLE EVENT HANDLERS
+ */
+
+// Row selection events.
+$dt.on("selection-count.dt", function(e, count) {
+  /*
+  Update the state of the cart button.
+  If there is nothing selected, disable the button.
+   */
+  $cartBtn.prop("disabled", count === 0);
+});
