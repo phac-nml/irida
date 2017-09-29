@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.service.analysis.sample;
+package ca.corefacility.bioinformatics.irida.pipeline.results;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 

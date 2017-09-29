@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.service.impl.analysis.sample;
+package ca.corefacility.bioinformatics.irida.pipeline.results.impl;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -15,10 +15,10 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSampleUpdator;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.GenomeAssemblyRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGenomeAssemblyJoinRepository;
-import ca.corefacility.bioinformatics.irida.service.analysis.sample.AnalysisSampleUpdator;
 
 /**
  * Updates a sample with the results from a genome assembly.

@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.service.analysis.sample;
+package ca.corefacility.bioinformatics.irida.pipeline.results;
 
 import java.util.Collection;
 

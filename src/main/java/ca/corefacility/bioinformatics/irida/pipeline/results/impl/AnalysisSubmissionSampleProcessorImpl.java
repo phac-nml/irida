@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.service.impl.analysis.sample;
+package ca.corefacility.bioinformatics.irida.pipeline.results.impl;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Maps;
@@ -20,15 +20,15 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.service.analysis.sample.AnalysisSampleUpdator;
-import ca.corefacility.bioinformatics.irida.service.analysis.sample.AnalysisSubmissionSampleProcessor;
+import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSampleUpdator;
+import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 /**
  * Updates samples from an {@link AnalysisSubmission} with results from the
  * analysis.
  */
-@Service
+@Component
 public class AnalysisSubmissionSampleProcessorImpl implements AnalysisSubmissionSampleProcessor {
 
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisSubmissionSampleProcessorImpl.class);
