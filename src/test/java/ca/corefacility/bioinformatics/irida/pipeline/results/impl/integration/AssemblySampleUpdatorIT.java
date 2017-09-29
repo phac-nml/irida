@@ -1,11 +1,10 @@
 package ca.corefacility.bioinformatics.irida.pipeline.results.impl.integration;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
 import org.springframework.test.context.ActiveProfiles;
@@ -44,7 +43,7 @@ import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository
 public class AssemblySampleUpdatorIT {
 
 	@Autowired
-	private AssemblySampleUpdator assemblySampleUpdatorService;
+	private AssemblySampleUpdator assemblySampleUpdator;
 
 	@Autowired
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
@@ -62,22 +61,13 @@ public class AssemblySampleUpdatorIT {
 		Sample s = sampleRepository.findOne(2L);
 		assertEquals("Should be no join between sample and assembly", 0, sampleGenomeAssemblyJoinRepository.count());
 
-		assemblySampleUpdatorService.update(Sets.newHashSet(s), a);
+		assemblySampleUpdator.update(Sets.newHashSet(s), a);
 
 		assertEquals("Should exist a join between sample and assembly", 1, sampleGenomeAssemblyJoinRepository.count());
 		SampleGenomeAssemblyJoin j = sampleGenomeAssemblyJoinRepository.findAll().iterator().next();
 
 		assertEquals("Should have joined sample 2L", (Long) 2L, j.getSubject().getId());
-		assertEquals("Should have joined assembly 1L", (Long) 1L, j.getObject().getId());
-	}
-
-	@Test(expected = AccessDeniedException.class)
-	@WithMockUser(username = "dr-evil", roles = "USER")
-	public void testUpdateFailPermission() {
-		AnalysisSubmission a = analysisSubmissionRepository.findOne(1L);
-		Sample s = sampleRepository.findOne(1L);
-
-		assemblySampleUpdatorService.update(Sets.newHashSet(s), a);
+		assertNotNull("Should have joined an assembly", j.getObject().getId());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -87,6 +77,6 @@ public class AssemblySampleUpdatorIT {
 		Sample s1 = sampleRepository.findOne(1L);
 		Sample s2 = sampleRepository.findOne(2L);
 
-		assemblySampleUpdatorService.update(Sets.newHashSet(s1, s2), a);
+		assemblySampleUpdator.update(Sets.newHashSet(s1, s2), a);
 	}
 }
