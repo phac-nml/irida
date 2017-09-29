@@ -25,8 +25,9 @@ const createRole = (() => {
   the ability to change the role on a particular user.
    */
   if (elm && elm.tagName === "SELECT") {
-    return function(data) {
+    return function(data, type, full) {
       const select = roleTemplateWrapper.firstElementChild.cloneNode(true);
+      select.id = `${full.object.identifier}-role-select`;
       const option = select.querySelector(`option[value=${data}]`);
       option.setAttribute("selected", "selected");
       return select.outerHTML;
@@ -56,7 +57,7 @@ const CONFIG = Object.assign({}, tableConfig, {
          */
         return createItemLink({
           url: `${window.PAGE.urls.usersLink}${full.object.identifier}`,
-          label: data
+          label: full.object.label
         });
       }
     },
@@ -93,7 +94,7 @@ const CONFIG = Object.assign({}, tableConfig, {
     /*
     Add the user id to the row so that it can be used for updating the user.
      */
-    $row.data("user", data.object.identifier);
+    row.dataset.user =  data.object.identifier;
     /*
     Activate the tooltips.
      */

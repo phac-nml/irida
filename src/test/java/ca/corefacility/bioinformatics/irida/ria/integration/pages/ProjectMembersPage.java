@@ -45,14 +45,15 @@ public class ProjectMembersPage extends AbstractPage {
 		return driver.findElement(By.tagName("h1")).getText();
 	}
 
-	public List<String> getProjectMembersNames() {
-		List<WebElement> els = driver.findElements(By.cssSelector("span.col-names"));
+	public List<String> 	getProjectMembersNames() {
+		List<WebElement> els = driver.findElements(By.cssSelector("td:first-child a"));
 		return els.stream().map(WebElement::getText).collect(Collectors.toList());
 	}
 
 	public void clickRemoveUserButton(Long id) {
 		logger.debug("Clicking remove user button for " + id);
-		WebElement removeUserButton = driver.findElement(By.id("remove-member-" + id));
+		WebElement row = waitForElementVisible(By.cssSelector("[data-user='" + id + "']"));
+		WebElement removeUserButton = row.findElement(By.className("remove-btn"));
 		removeUserButton.click();
 	}
 
@@ -95,15 +96,14 @@ public class ProjectMembersPage extends AbstractPage {
 	}
 
 	public void addUserToProject(final String username, final ProjectRole role) {
-		WebElement userElement = waitForElementVisible(By.className("select2-choice"));
+		WebElement userElement = waitForElementVisible(By.className("select2-selection"));
 		userElement.click();
-		WebElement userField = waitForElementVisible(By.className("select2-input"));
+		WebElement userField = waitForElementVisible(By.className("select2-search__field"));
 		// we're using select2 on the user element so it ends up being made into
 		// an input box rather than a select.
 		userField.sendKeys(username);
-		Collection<WebElement> selectUserDropdown = waitForElementsVisible(By.className("select2-result-label"));
-		
-		selectUserDropdown.iterator().next().click();
+		WebElement selection = waitForElementVisible(By.className("select2-results__option--highlighted"));
+		selection.click();
 
 		WebElement roleElement = driver.findElement(By.id("add-member-role"));
 		Select roleSelect = new Select(roleElement);
