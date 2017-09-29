@@ -76,9 +76,12 @@ export function createDownloadLink({ url, title }) {
 export function createDeleteBtn(data = { title: "Delete" }) {
   const btn = document.createElement("button");
   btn.classList.add("btn", "btn-default", "remove-btn");
-  addTooltip({ dom: btn, title: data.title });
+  // Add any required data attributes.
+  Object.assign(btn.dataset, data);
+
   const icon = createIcon({ icon: ICONS.trash, fixed: true });
-  btn.appendChild(icon);
+  const tooltiped = addTooltip({ dom: icon, title: "Delete" });
+  btn.append(tooltiped);
   return btn;
 }
 
