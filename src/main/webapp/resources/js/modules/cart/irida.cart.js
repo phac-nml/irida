@@ -1,6 +1,7 @@
 import angular from "angular";
 import _ from "lodash";
 import { CART } from "../../utilities/events-utilities";
+import $ from "jquery";
 
 function CartController(cart) {
   const vm = this;
@@ -100,6 +101,7 @@ function CartService(scope, $http) {
   const svc = this;
   const urls = {
     all: window.TL.BASE_URL + "cart",
+    add: window.TL.BASE_URL + "cart/add/samples",
     project: window.TL.BASE_URL + "cart/project/"
   };
 
@@ -112,6 +114,46 @@ function CartService(scope, $http) {
       }
     });
   };
+
+  document.addEventListener(
+    CART.ADD,
+    function(e) {
+      const projects = e.detail.projects;
+      if (typeof projects === "undefined") {
+        return;
+      }
+      const promises = [];
+      /*
+    For each project that has samples, post the project/samples to
+    and store the promise.
+     */
+      Object.keys(projects).forEach(projectId => {
+        promises.push(
+          $.post(window.TL.URLS.cart.add, {
+            projectId,
+            sampleIds: projects[projectId]
+          }).then(response => {
+            /*
+          Display a notification of what occurred on the server.
+           */
+            window.notifications.show({
+              msg: response.message
+            });
+          })
+        );
+      });
+
+      /*
+    Wait until all the projects have been added to the server cart, and
+    then notify the UI that this has occurred.
+     */
+      $.when.apply($, promises).done(function() {
+        const event = new Event(CART.UPDATED);
+        document.dispatchEvent(event);
+      });
+    },
+    false
+  );
 
   svc.clear = function() {
     //fire a DELETE to the server on the cart then broadcast the cart update event
@@ -384,11 +426,7 @@ function CartFilter() {
 
 angular
   .module("irida.cart", ["irida.notifications"])
-  .service("CartService", [
-    "$rootScope",
-    "$http",
-    CartService
-  ])
+  .service("CartService", ["$rootScope", "$http", CartService])
   .controller("CartSliderController", [
     "CartService",
     "$uibModal",

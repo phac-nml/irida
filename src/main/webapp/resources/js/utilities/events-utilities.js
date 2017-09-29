@@ -7,5 +7,6 @@
 All events related to the cart functionality.
  */
 export const CART = {
-  UPDATED: "cart:updated"
+  UPDATED: "cart:updated",
+  ADD: "cart:add"
 };

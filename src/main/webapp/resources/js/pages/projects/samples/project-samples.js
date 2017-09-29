@@ -5,10 +5,10 @@ import {
   tableConfig
 } from "../../../utilities/datatables-utilities";
 import { formatDate } from "../../../utilities/date-utilities";
-import { addSamplesToCart } from "../../../modules/cart/cart";
 import "./../../../vendor/datatables/datatables";
 import "./../../../vendor/datatables/datatables-buttons";
 import "./../../../vendor/datatables/datatables-rowSelection";
+import { CART } from "../../../utilities/events-utilities";
 
 /**
  *  Get the names and order of the table columns
@@ -121,7 +121,12 @@ $cartBtn.on("click", function() {
     projects[item.project] = projects[item.project] || [];
     projects[item.project].push(item.sample);
   });
-  addSamplesToCart(projects);
+
+  /*
+  Update the cart with the new samples.
+   */
+  const event = new CustomEvent(CART.ADD, { detail: { projects } });
+  document.dispatchEvent(event);
 });
 
 /*
