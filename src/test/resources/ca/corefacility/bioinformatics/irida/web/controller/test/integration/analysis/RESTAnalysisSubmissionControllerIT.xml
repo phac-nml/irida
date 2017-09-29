@@ -40,9 +40,7 @@
 		projectRole="PROJECT_USER" />
 
 	<analysis id="1" createdDate="2014-02-06 12:01:02"
-		executionManagerAnalysisId="XYZABC" />
-
-	<analysis_phylogenomicspipeline id="1" />
+		executionManagerAnalysisId="XYZABC" analysis_type="PHYLOGENOMICS" />
 
 	<analysis_submission id="1" name="another analysis"
 		remote_analysis_id="1" analysis_id="1" analysis_state="COMPLETED"

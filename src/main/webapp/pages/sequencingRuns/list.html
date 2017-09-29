@@ -4,32 +4,36 @@
 <head>
 <title th:text="#{sequencingruns.title}">_Clients_</title>
 	<script th:inline="javascript">
-		
-		var PAGE = {
-			urls: {
-				link: /*[[@{/sequencingRuns/}]]*/ '/sequencingRuns/',
-                users: /*[[@{/users/}]]*/ '/users/'
-			}
-		};
+    var PAGE = {
+      urls: {
+        link: /*[[@{/sequencingRuns/}]]*/ "/sequencingRuns/",
+        users: /*[[@{/users/}]]*/ "/users/"
+      }
+    };
 	</script>
 </head>
 <body>
-    <main layout:fragment="main" ddl:bundle-includes="sequencing-runs-list" ddl:asset-css-excludes="jquery.datatables">
+    <main layout:fragment="main">
         <div class="col-md-12">
             <h1 th:text="#{sequencingruns.title}">_Sequencing runs_</h1>
             
-            <table id="groupsTable" dt:table="true" dt:url="@{/sequencingRuns/ajax/list}" dt:filterPlaceholder="none" dt:filterable="false">
+            <table id="sequencingRuns" data:url="@{/sequencingRuns/ajax/list}" class="table table-striped"
+                   cellspacing="0" width="100%">
                 <thead>
-                <tr role="row">
-                    <th dt:property="id" th:text="#{iridaThing.id}" dt:renderFunction="sequencing-runs-list#runsTable.runLinkRow" dt:sortInitDirection="desc"></th>
-                    <th dt:property="sequencerType" dt:sortable="false" th:text="#{sequencingruns.type}"></th>
-                    <th dt:property="uploadStatus" th:text="#{sequencingruns.uploadStatus}"></th>
-                    <th dt:property="user" th:text="#{sequencingruns.details.uploader}" dt:renderFunction="sequencing-runs-list#runsTable.runUserRow"></th>
-                    <th dt:property="createdDate" th:text="#{iridaThing.timestamp}" dt:renderFunction="datatables-utils#datatable.formatDate" ></th>
+                <tr>
+                    <th data-data="id" th:text="#{iridaThing.id}"></th>
+                    <th data-data="sequencerType" data-orderable="false" th:text="#{sequencingruns.type}"></th>
+                    <th data-data="uploadStatus" th:text="#{sequencingruns.uploadStatus}"></th>
+                    <th data-data="user" th:text="#{sequencingruns.details.uploader}"></th>
+                    <th class="dt-date" data-data="createdDate" th:text="#{iridaThing.timestamp}"></th>
                 </tr>
                 </thead>
             </table>
         </div>
     </main>
+
+<th:block layout:fragment="scripts">
+    <script th:src="@{/resources/js/build/sequencing-runs.bundle.js}"></script>
+</th:block>
 </body>
 </html>

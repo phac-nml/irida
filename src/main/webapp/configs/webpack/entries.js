@@ -4,10 +4,15 @@
  *  Webpack will then create the bundle in `resource/js/build/`
  */
 module.exports = {
+  vendor: ["lodash"],
+  announcements: "./resources/js/pages/announcement/announcements.js",
   app: "./resources/js/app.js",
+  dashboard: "./resources/js/pages/dashboard.js",
+  "project-events": "./resources/js/pages/projects/project-events.js",
   projects: "./resources/js/pages/projects/projects.js",
   "samples-metadata-import":
     "./resources/js/pages/projects/samples-metadata-import/index.js",
+  "project-add-sample": "./resources/js/pages/projects/project-add-samples.js",
   "project-linelist": "./resources/js/pages/projects/linelist/index.js",
   "create-metadata-template":
     "./resources/js/pages/projects/metadata-template/create-metadata-template.js",
@@ -20,5 +25,13 @@ module.exports = {
     "./resources/js/pages/projects/project-reference-files.js",
   "analyses-table": "./resources/js/pages/analyses/analyses-table.js",
   "clients-list": "./resources/js/pages/clients/clients-list.js",
-  "users-list": "./resources/js/pages/users/users-list.js"
+  "users-list": "./resources/js/pages/users/users-list.js",
+  "announcement-users":
+    "./resources/js/pages/announcement/announcement-users.js",
+  "announcement-admin":
+    "./resources/js/pages/announcement/announcement-admin.js",
+  "sequencing-runs":
+    "./resources/js/pages/sequencing-runs/sequencing-runs-list.js",
+  "groups-list": "./resources/js/pages/users/groups-list.js",
+  "ncbi-exports": "./resources/js/pages/projects/ncbi-export.js"
 };

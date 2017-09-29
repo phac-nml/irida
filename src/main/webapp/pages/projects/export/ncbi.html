@@ -3,13 +3,15 @@
 
 <head>
   <title th:text="#{project.export.title}"></title>
+  <link rel="stylesheet" th:href="@{/resources/css/pages/ncbi_export_create.css}"/>
+  <link rel="stylesheet" th:href="@{/resources/css/pages/sample_files.css}"/>
   <script>
     window.dependencies = ['irida.ncbi'];
   </script>
 </head>
 
 <body>
-  <main layout:fragment="main" ddl:bundle-includes="ncbi-export-create">
+  <main layout:fragment="main">
     <div class="row">
       <h1 th:text="#{project.export.title}">_NCBI Export_</h1>
     </div>
