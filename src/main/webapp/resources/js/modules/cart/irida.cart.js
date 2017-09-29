@@ -115,6 +115,12 @@ function CartService(scope, $http) {
     });
   };
 
+  /*
+  Add Samples to the global cart
+  Event Listener for adding samples to the global cart.
+  Expects an object with project ids references an array of sample ids
+  { projectId: [sampleIds] }
+   */
   document.addEventListener(
     CART.ADD,
     function(e) {
