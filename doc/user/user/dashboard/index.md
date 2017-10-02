@@ -87,11 +87,9 @@ For more information about managing user groups, please see the [managing user g
 
 ### Remote instances of IRIDA
 
-Remote instances of IRIDA can be used as data sources for associated projects and worklows.  The "Remote IRIDA Connections" section allows users to connect to remote instances of IRIDA.  
+Remote instances of IRIDA can be used as data sources for associated projects and worklfows.  The "Remote IRIDA Connections" section allows users to connect to remote instances of IRIDA.  
 
 **Note**: You must have been provided with a username and password for a remote instance of IRIDA before you can use the data located on that instance.
-
-![Remote instances button](images/remote-api-dash.png)
 
 Administrators can add or remove available remote instances of IRIDA from this menu.  Details can be found in the [administrator guide](../../administrator/#managing-remote-irida-connections).
 
@@ -117,18 +115,15 @@ User Settings
 
 The settings menu allows you to view and edit the details of your own user account. This menu also allows you to update your email subscription preferences.  You can find the settings menu in the top, right-hand corner of the page, if you have a [Gravatar](https://en.gravatar.com/) account associated with your email in IRIDA, your gravatar will be displayed:
 
-![The settings menu in the dashboard.](images/settings.png)
+![The settings menu in the dashboard.](images/user-settings.png)
 
 For more information about the user settings page, see the [user settings page](user.html).
 
-Logout
-------
+### Logout
 
 Once you've finished working with IRIDA, we strongly recommend that you log out, especially if you are using a shared computer.
 
-You can log out of IRIDA by clicking on the <img src="images/logout-icon.png" alt="logout icon" class="inline"> in the top, right-hand corner of the page:
-
-![The logout button in the dashboard.](images/logout.png)
+You can log out of IRIDA by clicking on the user settings menu in the top, right-hand corner of the page, and *Logout*.
 
 Recent Activities
 -----------------
