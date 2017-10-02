@@ -3,9 +3,9 @@ package ca.corefacility.bioinformatics.irida.pipeline.results.impl;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSampleUpdator;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
+import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 /**
@@ -34,7 +35,7 @@ public class AnalysisSubmissionSampleProcessorImpl implements AnalysisSubmission
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisSubmissionSampleProcessorImpl.class);
 
 	private final Map<AnalysisType, AnalysisSampleUpdator> analysisSampleUpdatorMap;
-	private final SampleService sampleService;
+	private final SampleRepository sampleRepository;
 
 	/**
 	 * Builds a new {@link AnalysisSubmissionSampleProcessorImpl}.
@@ -42,14 +43,14 @@ public class AnalysisSubmissionSampleProcessorImpl implements AnalysisSubmission
 	 * @param sampleService
 	 *            The {@link SampleService}.
 	 * @param analysisSampleUpdatorServices
-	 *            A list of {@link AnalysisSampleUpdator}s to use for
-	 *            updating samples.
+	 *            A list of {@link AnalysisSampleUpdator}s to use for updating
+	 *            samples.
 	 */
 	@Autowired
-	public AnalysisSubmissionSampleProcessorImpl(SampleService sampleService,
+	public AnalysisSubmissionSampleProcessorImpl(SampleRepository sampleRepository,
 			List<AnalysisSampleUpdator> analysisSampleUpdatorServices) {
 		checkNotNull(analysisSampleUpdatorServices, "assemblySampleUpdatorService is null");
-		this.sampleService = sampleService;
+		this.sampleRepository = sampleRepository;
 		this.analysisSampleUpdatorMap = Maps.newHashMap();
 
 		for (AnalysisSampleUpdator analysisSampleUpdatorService : analysisSampleUpdatorServices) {
@@ -73,7 +74,7 @@ public class AnalysisSubmissionSampleProcessorImpl implements AnalysisSubmission
 		} else {
 			logger.debug("Updating sample from results for submission=" + analysisSubmission);
 
-			Collection<Sample> samples = sampleService.getSamplesForAnalysisSubmission(analysisSubmission);
+			Set<Sample> samples = sampleRepository.findSamplesForAnalysisSubmission(analysisSubmission.getId());
 			Analysis analysis = analysisSubmission.getAnalysis();
 
 			checkNotNull(analysis, "No analysis associated with submission " + analysisSubmission);
