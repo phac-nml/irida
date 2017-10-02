@@ -77,9 +77,10 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
  */
 @Configuration
 @Import({ IridaApiSecurityConfig.class, IridaApiAspectsConfig.class, IridaApiRepositoriesConfig.class,
-		ExecutionManagerConfig.class, AnalysisExecutionServiceConfig.class,
-		IridaWorkflowsConfig.class, WebEmailConfig.class })
-@ComponentScan(basePackages = {"ca.corefacility.bioinformatics.irida.service", "ca.corefacility.bioinformatics.irida.processing"})
+		ExecutionManagerConfig.class, AnalysisExecutionServiceConfig.class, IridaWorkflowsConfig.class,
+		WebEmailConfig.class })
+@ComponentScan(basePackages = { "ca.corefacility.bioinformatics.irida.service",
+		"ca.corefacility.bioinformatics.irida.processing", "ca.corefacility.bioinformatics.irida.pipeline.results" })
 public class IridaApiServicesConfig {
 	private static final Logger logger = LoggerFactory.getLogger(IridaApiServicesConfig.class);
 	

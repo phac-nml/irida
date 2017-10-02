@@ -1,15 +1,17 @@
-package ca.corefacility.bioinformatics.irida.service.analysis.sample;
+package ca.corefacility.bioinformatics.irida.pipeline.results;
 
 import java.util.Collection;
 
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 /**
- * A service for updating samples with results from a particular {@link Analysis} type.
+ * A service for updating samples with results from a particular
+ * {@link Analysis} type.
  */
-public interface AnalysisSampleUpdatorService {
+public interface AnalysisSampleUpdator {
 	/**
 	 * Updates a collection of samples with a particular analysis result.
 	 * 
@@ -19,4 +21,11 @@ public interface AnalysisSampleUpdatorService {
 	 *            The {@link AnalysisSubmission} to use for updating.
 	 */
 	public void update(Collection<Sample> samples, AnalysisSubmission analysis);
+
+	/**
+	 * Gets the {@link AnalysisType} this updator service handles.
+	 * 
+	 * @return The {@link AnalysisType}.
+	 */
+	public AnalysisType getAnalysisType();
 }

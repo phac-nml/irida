@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="projects/_base"
-      ddl:bundle-includes="ncbi-exports"
-      ddl:asset-css-excludes="jquery.datatables">
+      layout:decorator="projects/_base">
 <head>
   <title th:text="#{project.export.table.title}">SRA</title>
   <script th:inline="javascript">
@@ -16,18 +14,22 @@
 </head>
 
 <body>
-<main layout:fragment="main" role="main" property="mainContentOfPage">
-  <table id="exportTable" dt:table="true" dt:url="@{/ajax/projects/{id}/export/list(id=${project.id})}" dt:filterPlaceholder="none" dt:pageable="false" dt:filterable="false" dt:sortable="false">
+<main layout:fragment="main">
+  <table id="exportTable" data:url="@{/ajax/projects/{id}/export/list(id=${project.id})}" class="table table-striped" cellspacing="0" width="100%">
     <thead>
-      <tr role="row">
-        <th dt:property="identifier" th:text="#{iridaThing.id}" dt:renderFunction="ncbi-exports#exportsTable.createLinkButton"></th>
-        <th dt:property="bioSampleFiles" th:text="#{project.export.table.samples}" dt:renderFunction="datatables-utils#datatable.displayListSize"></th>
-        <th dt:property="uploadState" th:text="#{project.export.table.state}"></th>
-        <th dt:property="createdDate" th:text="#{iridaThing.timestamp}" dt:renderFunction="datatables-utils#datatable.formatDate"></th>
-      </tr>
+    <tr role="row">
+      <th data:data="identifier" th:text="#{iridaThing.id}"></th>
+      <th data:data="bioSampleFiles" th:text="#{project.export.table.samples}"></th>
+      <th class="dt-date" data:data="uploadState" th:text="#{project.export.table.state}"></th>
+      <th class="dt-date" data:data="createdDate" th:text="#{iridaThing.timestamp}"></th>
+    </tr>
     </thead>
   </table>
 </main>
+
+<th:block layout:fragment="scripts">
+  <script th:src="@{/resources/js/build/ncbi-exports.bundle.js}"></script>
+</th:block>
 </body>
 
 </html>
