@@ -4,6 +4,7 @@
  *  Webpack will then create the bundle in `resource/js/build/`
  */
 module.exports = {
+  vendor: ["lodash"],
   announcements: "./resources/js/pages/announcement/announcements.js",
   app: "./resources/js/app.js",
   dashboard: "./resources/js/pages/dashboard.js",
@@ -29,5 +30,8 @@ module.exports = {
     "./resources/js/pages/announcement/announcement-users.js",
   "announcement-admin":
     "./resources/js/pages/announcement/announcement-admin.js",
-  "sequencing-runs": "./resources/js/pages/sequencing-runs/sequencing-runs-list.js"
+  "sequencing-runs":
+    "./resources/js/pages/sequencing-runs/sequencing-runs-list.js",
+  "groups-list": "./resources/js/pages/users/groups-list.js",
+  "ncbi-exports": "./resources/js/pages/projects/ncbi-export.js"
 };
