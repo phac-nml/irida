@@ -56,7 +56,7 @@ public class AnalysisSubmissionSampleProcessorImpl implements AnalysisSubmission
 		for (AnalysisSampleUpdator analysisSampleUpdatorService : analysisSampleUpdatorServices) {
 			AnalysisType analysisType = analysisSampleUpdatorService.getAnalysisType();
 			checkArgument(!analysisSampleUpdatorMap.containsKey(analysisType),
-					"Error: already have registered " + " for AnalysisType " + analysisType);
+					"Error: already have registered " + analysisSampleUpdatorService.getClass() + " for AnalysisType " + analysisType);
 
 			analysisSampleUpdatorMap.put(analysisSampleUpdatorService.getAnalysisType(), analysisSampleUpdatorService);
 		}
