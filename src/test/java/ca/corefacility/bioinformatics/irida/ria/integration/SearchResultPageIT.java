@@ -11,7 +11,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.SearchResultPa
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
-public class SearchResultPageTest extends AbstractIridaUIITChromeDriver {
+public class SearchResultPageIT extends AbstractIridaUIITChromeDriver {
 	private SearchResultPage page;
 
 	@Before
