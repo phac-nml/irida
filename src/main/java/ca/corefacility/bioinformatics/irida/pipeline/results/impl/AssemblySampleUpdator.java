@@ -17,7 +17,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssembl
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSampleUpdator;
-import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.GenomeAssemblyRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGenomeAssemblyJoinRepository;
 
@@ -29,15 +28,12 @@ public class AssemblySampleUpdator implements AnalysisSampleUpdator {
 
 	private static final Logger logger = LoggerFactory.getLogger(AssemblySampleUpdator.class);
 
-	private final AnalysisSubmissionRepository analysisSubmissionRepository;
 	private final GenomeAssemblyRepository genomeAssemblyRepository;
 	private final SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository;
 
 	@Autowired
-	public AssemblySampleUpdator(AnalysisSubmissionRepository analysisSubmissionRepository, 
-			GenomeAssemblyRepository genomeAssemblyRepository,
+	public AssemblySampleUpdator(GenomeAssemblyRepository genomeAssemblyRepository,
 			SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository) {
-		this.analysisSubmissionRepository = analysisSubmissionRepository;
 		this.sampleGenomeAssemblyJoinRepository = sampleGenomeAssemblyJoinRepository;
 		this.genomeAssemblyRepository = genomeAssemblyRepository;
 	}

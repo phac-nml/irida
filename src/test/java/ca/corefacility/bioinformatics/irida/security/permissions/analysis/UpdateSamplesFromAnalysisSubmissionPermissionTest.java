@@ -19,8 +19,8 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
-import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 /**
  * Tests for {@link UpdateSamplesFromAnalysisSubmissionPermission}
@@ -37,7 +37,7 @@ public class UpdateSamplesFromAnalysisSubmissionPermissionTest {
 	private ReadAnalysisSubmissionPermission readAnalysisSubmissionPermission;
 
 	@Mock
-	private SampleService sampleService;
+	private SampleRepository sampleRepository;
 
 	@Mock
 	private UpdateSamplesFromAnalysisSubmissionPermission updateSamplesFromAnalysisSubmissionPermission;
@@ -62,13 +62,15 @@ public class UpdateSamplesFromAnalysisSubmissionPermissionTest {
 		MockitoAnnotations.initMocks(this);
 
 		updateSamplesFromAnalysisSubmissionPermission = new UpdateSamplesFromAnalysisSubmissionPermission(
-				analysisSubmissionRepository, updateSamplePermission, readAnalysisSubmissionPermission, sampleService);
+				analysisSubmissionRepository, updateSamplePermission, readAnalysisSubmissionPermission,
+				sampleRepository);
 
 		sequencingObjects = Sets.newHashSet(seq1, seq2);
 		samples = Sets.newHashSet(new Sample(), new Sample());
 		analysisSubmission = AnalysisSubmission.builder(UUID.randomUUID()).inputFiles(sequencingObjects).build();
+		analysisSubmission.setId(1L);
 
-		when(sampleService.getSamplesForAnalysisSubmission(analysisSubmission)).thenReturn(samples);
+		when(sampleRepository.findSamplesForAnalysisSubmission(analysisSubmission.getId())).thenReturn(samples);
 	}
 
 	@Test
