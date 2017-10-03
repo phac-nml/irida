@@ -16,14 +16,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
 public class SearchResultPageIT extends AbstractIridaUIITChromeDriver {
 	private SearchResultPage page;
-
-	@Before
-	public void setUpTest() {
-		LoginPage.loginAsUser(driver());
-
-		page = SearchResultPage.initPage(driver());
-	}
-
+	
 	@Test
 	public void testSampleSearch() {
 		LoginPage.loginAsUser(driver());
