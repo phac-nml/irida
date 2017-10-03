@@ -160,6 +160,7 @@ public class AbstractPage {
 	 */
 	public void globalSearch(String query, boolean admin) {
 		WebElement searchBox = driver.findElement(By.id("global-search-input"));
+		searchBox.clear();
 		searchBox.sendKeys(query);
 		if (!admin) {
 			searchBox.sendKeys(Keys.ENTER);

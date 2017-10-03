@@ -32,7 +32,7 @@ public class SearchResultPage extends AbstractPage {
 		int count = 0;
 		boolean found = false;
 		do {
-			waitForTime(500);
+			waitForTime(100);
 
 			List<WebElement> spinners = driver.findElements(By.className("search-spinner"));
 
