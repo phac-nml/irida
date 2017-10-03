@@ -77,7 +77,7 @@
 					<span class="icon"><i class="fa fa-fw fa-search"></i></span>
 					<input id="global-search-input" type="search" name="query" th:placeholder="#{nav.main.search}" th:value="${searchQuery}"/>
 					<div class="input-group-btn search-dd" sec:authorize="hasAnyRole('ROLE_ADMIN')">
-						<button type="button" class="btn dropdown-toggle" data-toggle="dropdown"
+						<button type="button" id="admin-search-toggle" class="btn dropdown-toggle" data-toggle="dropdown"
 								aria-haspopup="true" aria-expanded="false">
 							<span class="caret"></span>
 						</button>
