@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.Principal;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -24,11 +26,17 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTAnalysis;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.MediaType;
@@ -359,50 +367,58 @@ public class AnalysisController {
 		// inform the view to display the tree preview
 		model.addAttribute("preview", "tree");
 	}
-	
-	/**
-	 * Get the list of all {@link AnalysisSubmission}s in the system
-	 * 
-	 * @param criterias
-	 *            {@link DatatablesCriterias} to filter or sort results
-	 * @param locale
-	 *            User's locale
-	 * @return {@link DatatablesResponse} containing
-	 *         {@link AnalysisTableResponse} objects
-	 * @throws IridaWorkflowNotFoundException
-	 *             If the requested workflow doesn't exist
-	 * @throws NoPercentageCompleteException
-	 *             If a percentage complete cannot be calculated
-	 * @throws EntityNotFoundException
-	 *             If the submission cannot be found
-	 * @throws ExecutionManagerException
-	 *             If the submission cannot be read properly
-	 */
+
 	@RequestMapping("/ajax/list/all")
 	@ResponseBody
-	public DatatablesResponse<AnalysisTableResponse> getSubmissions(@DatatablesParams DatatablesCriterias criterias,
-			Locale locale) throws IridaWorkflowNotFoundException, NoPercentageCompleteException,
-			EntityNotFoundException, ExecutionManagerException {
-		int currentPage = DatatablesUtils.getCurrentPage(criterias);
-		Map<String, Object> sortProps = DatatablesUtils.getSortProperties(criterias);
-		String searchString = criterias.getSearch();
+	public DataTablesResponse getSubmissions(@DataTablesRequest DataTablesParams params, Locale locale)
+			throws IridaWorkflowNotFoundException, EntityNotFoundException, ExecutionManagerException {
+		Specification<AnalysisSubmission> specification = AnalysisSubmissionSpecification
+				.filterAnalyses(params.getSearchValue(), null, AnalysisState.COMPLETED, null, null, null);
 
-		Specification<AnalysisSubmission> filters = getFilters(searchString, criterias, null, null);
+		Page<AnalysisSubmission> page = analysisSubmissionService
+				.search(specification, new PageRequest(params.getCurrentPage(), params.getLength(), params.getSort()));
 
-		Page<AnalysisSubmission> submissions = analysisSubmissionService.search(filters, currentPage,
-				criterias.getLength(), (Sort.Direction) sortProps.get(DatatablesUtils.SORT_DIRECTION),
-				(String) sortProps.get(DatatablesUtils.SORT_STRING));
-
-		List<AnalysisTableResponse> responses = new ArrayList<>();
-		for (AnalysisSubmission sub : submissions) {
-			AnalysisTableResponse analysisTableResponse = new AnalysisTableResponse(sub, locale);
-			responses.add(analysisTableResponse);
+		List<DataTablesResponseModel> data = new ArrayList<>();
+		for (AnalysisSubmission submission : page.getContent()) {
+			data.add(createDataTablesAnalysis(submission, locale));
 		}
 
-		DataSet<AnalysisTableResponse> dataSet = new DataSet<>(responses, submissions.getTotalElements(),
-				submissions.getTotalElements());
+		return new DataTablesResponse(params, page, data);
+	}
 
-		return DatatablesResponse.build(dataSet, criterias);
+	private DTAnalysis createDataTablesAnalysis(AnalysisSubmission submission, Locale locale)
+			throws IridaWorkflowNotFoundException, ExecutionManagerException {
+		Long id = submission.getId();
+		String name = submission.getName();
+		String submitter = submission.getSubmitter().getLabel();
+		Date createdDate = submission.getCreatedDate();
+		float percentComplete = 0;
+		if (!submission.getAnalysisState().equals(AnalysisState.ERROR)) {
+			percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(submission.getId());
+		}
+
+		String workflowType = workflowsService.getIridaWorkflow(submission.getWorkflowId()).getWorkflowDescription()
+				.getAnalysisType().toString();
+		String workflow = messageSource.getMessage("workflow." + workflowType + ".title", null, locale);
+		String state = messageSource
+				.getMessage("analysis.state." + submission.getAnalysisState().toString(), null, locale);
+		Long duration = getAnalysisDuration(submission);
+
+		return new DTAnalysis(id, name, submitter, percentComplete, createdDate, workflow, state, duration);
+	}
+
+	private Long getAnalysisDuration(AnalysisSubmission submission) {
+		Analysis analysis = submission.getAnalysis();
+		Long duration = 0L;
+		Instant createInstant = submission.getCreatedDate().toInstant();
+		// get duration
+		if (submission.getAnalysisState().equals(AnalysisState.COMPLETED)) {
+			Instant finishedInstant = analysis.getCreatedDate().toInstant();
+			Duration between = Duration.between(finishedInstant, createInstant);
+			duration = between.toMillis();
+		}
+
+		return duration;
 	}
 	
 	/**

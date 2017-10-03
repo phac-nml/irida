@@ -21,7 +21,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
@@ -140,6 +142,15 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	
 	public void setAnalysisExecutionService(final AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionService) {
 		this.analysisExecutionService = analysisExecutionService;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_USER')")
+	public Page<AnalysisSubmission> search(Specification<AnalysisSubmission> specification, PageRequest pageRequest)  {
+		return super.search(specification, pageRequest);
 	}
 
 	/**
@@ -306,16 +317,6 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 
 			throw e;
 		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@PreAuthorize("hasRole('ROLE_USER')")
-	public Page<AnalysisSubmission> search(Specification<AnalysisSubmission> specification, int page, int size,
-			Direction order, String... sortProperties) {
-		return super.search(specification, page, size, order, sortProperties);
 	}
 
 	/**

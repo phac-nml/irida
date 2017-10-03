@@ -33,16 +33,16 @@ function createState(full) {
   };
 
   let stateClass = "";
-  if (stateClasses[full.submission.analysisState] !== null) {
-    stateClass = stateClasses[full.submission.analysisState];
+  if (stateClasses[full.state] !== null) {
+    stateClass = stateClasses[full.state];
   }
 
   let percent = full.percentComplete;
-  if (full.submission.analysisState === "ERROR") {
+  if (full.state === "ERROR") {
     percent = 100;
   }
   return `
-${full.analysisState}
+${full.state}
 <div class='progress analysis__state'>
   <div class='progress-bar ${stateClass}' 
        role='progressbar' aria-valuenow='${percent}' 
@@ -59,7 +59,7 @@ const config = Object.assign(tableConfig, {
   columnDefs: [
     // Analysis state needs to be displayed with progress bars.
     {
-      targets: [COLUMNS.ANALYSIS_STATE],
+      targets: [COLUMNS.STATE],
       render(data, type, full) {
         return createState(full);
       }
@@ -77,7 +77,7 @@ const config = Object.assign(tableConfig, {
     // Fork flow name are too long and will not fit properly into the column.
     // Restrict the cell width.  This adds a tooltip automatically.
     {
-      targets: COLUMNS.WORKFLOW_ID,
+      targets: COLUMNS.WORKFLOW,
       render(data) {
         return createRestrictedWidthContent({ text: data }).outerHTML;
       }
@@ -104,7 +104,7 @@ const config = Object.assign(tableConfig, {
         const buttons = [];
         // If the submission is completed, then it can be downloaded, created a link
         // to download it.
-        if (full.submission.analysisState.localeCompare("COMPLETED") === 0) {
+        if (full.state.localeCompare("COMPLETED") === 0) {
           const anchor = createDownloadLink({
             url: `${window.PAGE.URLS.download}${full.id}`,
             title: `${full.name}.zip`
