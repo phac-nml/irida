@@ -9,17 +9,38 @@ import "./../../../vendor/datatables/datatables";
 import "./../../../vendor/datatables/datatables-buttons";
 import "./../../../vendor/datatables/datatables-rowSelection";
 import { CART } from "../../../utilities/events-utilities";
+import { GetOrderedColour } from "../../../utilities/colour.utilities";
+
+/**
+ * Reference to the currently selected associated projects.
+ * @type {Map}
+ */
+const ASSOCIATED_PROJECTS = new Map();
+
+/**
+ * Reference to the colour for a specific project.
+ * @type {Map}
+ */
+const PROJECT_COLOURS = new Map();
+
+/**
+ * Generator for the project colours
+ * @type {GetOrderedColour}
+ */
+const COLOUR_PICKER = new GetOrderedColour();
 
 /**
  *  Get the names and order of the table columns
  * @type {Object}
  */
 const COLUMNS = generateColumnOrderInfo();
+
 /**
  * Get a handle on the table
  * @type {*|jQuery|HTMLElement}
  */
 const $table = $("#samplesTable");
+
 /**
  * Get access the the url for the tables data.
  * @type {string}
@@ -27,7 +48,19 @@ const $table = $("#samplesTable");
 const url = $table.data("url");
 
 const config = Object.assign({}, tableConfig, {
-  ajax: url,
+  ajax: {
+    url,
+    data(d) {
+      /*
+      Add any extra parameters that need to be passed to the server
+      here.
+       */
+      if (ASSOCIATED_PROJECTS.size > 0) {
+        // Add a list of ids for currently visible associated projects
+        d.associated = Array.from(ASSOCIATED_PROJECTS.keys());
+      }
+    }
+  },
   stateSave: true,
   deferRender: true,
   select: {
@@ -84,9 +117,20 @@ const config = Object.assign({}, tableConfig, {
     {
       targets: [COLUMNS.PROJECT_NAME],
       render(data, type, full) {
+        /*
+        Each project gets its own colour bar next to the name of the project.
+         */
+        let colour;
+        if (PROJECT_COLOURS.has(data)) {
+          colour = PROJECT_COLOURS.get(data);
+        } else {
+          colour = COLOUR_PICKER.getNext();
+          PROJECT_COLOURS.set(data, colour);
+        }
         return createItemLink({
           url: `${window.TL.BASE_URL}projects/${full.projectId}`,
-          label: data
+          label: `<div class="label-bar-color" style="background-color: ${colour}">&nbsp;</div>${data}`,
+          classes: ["project-link"]
         });
       }
     },
@@ -127,6 +171,40 @@ $cartBtn.on("click", function() {
    */
   const event = new CustomEvent(CART.ADD, { detail: { projects } });
   document.dispatchEvent(event);
+});
+
+/*
+ASSOCIATED PROJECTS
+ */
+
+// This allows for the use of checkboxes in the dropdown without
+// it closing on every click.
+$(".associated-dd .dropdown-menu a").on("click", function(event) {
+  const li = $(this).parent();
+  const $target = $(event.currentTarget);
+  const $inp = $target.find("input");
+  const id = $inp.val();
+
+  if (ASSOCIATED_PROJECTS.has(id)) {
+    ASSOCIATED_PROJECTS.delete(id);
+    setTimeout(function() {
+      li.removeClass("selected");
+      $inp.prop("checked", false);
+      // Update the DataTable
+      $dt.ajax.reload(null, false);
+    }, 0);
+  } else {
+    ASSOCIATED_PROJECTS.set(id, true);
+    setTimeout(function() {
+      li.addClass("selected");
+      $inp.prop("checked", true);
+      // Update the DataTable
+      $dt.ajax.reload(null, false);
+    }, 0);
+  }
+
+  $(event.target).blur();
+  return false;
 });
 
 /*

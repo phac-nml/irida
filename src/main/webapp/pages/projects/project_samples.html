@@ -7,15 +7,8 @@
     <title th:text="${project.label} + ' - ' + #{project.nav.samples}"></title>
     <script th:inline="javascript">
       var PAGE = {
-        project: {
-          id: /*[[${project.getId()}]]*/ '4'
-        },
-        ajaxParam: {date: {}},
         linker: /*[[${linker}]]*/'',
         urls: {
-          associated: {
-            local: /*[[@{/projects/{id}/ajax/associated(id=${project.getId()})}]]*/ ''
-          },
           modals: {
             remove: /*[[@{/projects/templates/remove-modal}]]*/ '/projects/templates/remove-modal',
             merge: /*[[@{/projects/{projectId}/templates/merge-modal(projectId=${project.getId()})}]]*/ '/projects/templates/merge-modal',
@@ -65,19 +58,19 @@
 <main id="project-samples-main" layout:fragment="main">
     <div class="row">
         <div class="col-md-12">
-            <div class="btn-toolbar spaced-bottom" role="toolbar">
-                <div class="dropdown">
-                    <button class="btn btn-default btn-sm dropdown-toggle" type="button" id="dropdownMenu1"
+            <div class="btn-toolbar dt-btn-toolbar" role="toolbar">
+                <div class="dropdown associated-dd" th:if="${not #lists.isEmpty(associatedProjects)}">
+                    <button class="btn btn-default btn-sm dropdown-toggle" type="button" id="associated-btn"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                        _Associated Projects_
-                        <span class="caret"></span>
+                        <th:block th:text="#{project.samples.nav.associated}"></th:block>
+                        <i class="fa fa-caret-down fa-fw"></i>
                     </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                        <li><a href="#">Action</a></li>
-                        <li><a href="#">Another action</a></li>
-                        <li><a href="#">Something else here</a></li>
-                        <li role="separator" class="divider"></li>
-                        <li><a href="#">Separated link</a></li>
+                    <ul id="associated-dropdown" class="dropdown-menu" aria-labelledby="associated-btn">
+                        <li th:each="item : ${associatedProjects}">
+                            <a href="#" class="associated-cb">
+                                <input type="checkbox" th:value="${item.getIdentifier()}"/>
+                                <th:block th:text="${item.getName()}"></th:block>
+                            </a></li>
                     </ul>
                 </div>
                 <button id="cart-add-btn" class="btn btn-primary btn-sm" disabled="disabled">
