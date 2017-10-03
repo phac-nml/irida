@@ -16,10 +16,11 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
 public class SearchResultPageIT extends AbstractIridaUIITChromeDriver {
 	private SearchResultPage page;
-	
+
 	@Test
 	public void testSampleSearch() {
 		LoginPage.loginAsUser(driver());
+		page = SearchResultPage.initPage(driver());
 
 		page.globalSearch("samp", false);
 		page = SearchResultPage.initPage(driver());
@@ -36,6 +37,8 @@ public class SearchResultPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testProjectSearch() {
 		LoginPage.loginAsUser(driver());
+		page = SearchResultPage.initPage(driver());
+
 		page.globalSearch("project2", false);
 		page = SearchResultPage.initPage(driver());
 
@@ -60,6 +63,7 @@ public class SearchResultPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testAdminSampleSearch() {
 		LoginPage.loginAsAdmin(driver());
+		page = SearchResultPage.initPage(driver());
 
 		page.globalSearch("samp", true);
 		page = SearchResultPage.initPage(driver());
@@ -75,6 +79,8 @@ public class SearchResultPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testAdminProjectSearch() {
 		LoginPage.loginAsAdmin(driver());
+		page = SearchResultPage.initPage(driver());
+
 		page.globalSearch("project2", true);
 		page = SearchResultPage.initPage(driver());
 
