@@ -42,10 +42,6 @@ function SessionFactory($timeout, $interval, $window, $uibModal) {
               });
             };
 
-            $scope.logout = function() {
-              $window.location = tl.BASE_URL + "logout";
-            };
-
             $scope.timeleft = modalWait;
             const countdown = $interval(function() {
               $scope.timeleft = $scope.timeleft - 1000;
