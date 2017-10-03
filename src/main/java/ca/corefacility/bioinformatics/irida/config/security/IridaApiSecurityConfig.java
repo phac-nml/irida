@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
@@ -34,9 +35,11 @@ import com.google.common.base.Joiner;
 
 @SuppressWarnings("deprecation")
 @Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true, order = IridaApiSecurityConfig.METHOD_SECURITY_ORDER)
 @ComponentScan(basePackages = "ca.corefacility.bioinformatics.irida.security")
 public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
+	
+	public static final int METHOD_SECURITY_ORDER = Ordered.LOWEST_PRECEDENCE;
 
 	private static final String ANONYMOUS_AUTHENTICATION_KEY = "anonymousTokenAuthProvider";
 
