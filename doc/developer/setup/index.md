@@ -142,7 +142,7 @@ IRIDA uses [Yarn](https://yarnpkg.com) for front-end dependency management.  [In
 
 From within `src/main/webapp/`:
 
-You will need to run `npm` to install all dependencies required to run the following from the command line.
+You will need to run `yarn install` to install all dependencies required to run the following from the command line.
 
 Tasks
 =====
