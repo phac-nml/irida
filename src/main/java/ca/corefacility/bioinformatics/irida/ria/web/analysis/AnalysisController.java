@@ -31,6 +31,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTa
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTAnalysis;
+import ca.corefacility.bioinformatics.irida.ria.web.services.AnalysesListingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -121,13 +122,14 @@ public class AnalysisController {
 	private SampleService sampleService;
 	private MetadataTemplateService metadataTemplateService;
 	private SequencingObjectService sequencingObjectService;
+	private AnalysesListingService analysesListingService;
 
 	@Autowired
 	public AnalysisController(AnalysisSubmissionService analysisSubmissionService,
 			IridaWorkflowsService iridaWorkflowsService, UserService userService, SampleService sampleService,
 			ProjectService projectService, UpdateAnalysisSubmissionPermission updateAnalysisPermission,
 			MetadataTemplateService metadataTemplateService, SequencingObjectService sequencingObjectService,
-			MessageSource messageSource) {
+			AnalysesListingService analysesListingService, MessageSource messageSource) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
 		this.messageSource = messageSource;
@@ -137,6 +139,7 @@ public class AnalysisController {
 		this.projectService = projectService;
 		this.metadataTemplateService = metadataTemplateService;
 		this.sequencingObjectService = sequencingObjectService;
+		this.analysesListingService = analysesListingService;
 	}
 
 	// ************************************************************************************************
@@ -372,64 +375,7 @@ public class AnalysisController {
 	@ResponseBody
 	public DataTablesResponse getSubmissions(@DataTablesRequest DataTablesParams params, Locale locale)
 			throws IridaWorkflowNotFoundException, EntityNotFoundException, ExecutionManagerException {
-		// Lets set up the filters
-		Map<String, String> searchMap = params.getSearchMap();
-		AnalysisState state = searchMap.containsKey("analysis.state") ? AnalysisState.valueOf(searchMap.get("analysis.state")) : null;
-		String name = searchMap.getOrDefault("name", null);
-		Set<UUID> workflowIds = null;
-		if (searchMap.containsKey("workflow")) {
-			AnalysisType workflowType = AnalysisType.fromString(searchMap.get("workflow"));
-			Set<IridaWorkflow> workflows = workflowsService.getAllWorkflowsByType(workflowType);
-			workflowIds = workflows.stream().map(IridaWorkflow::getWorkflowIdentifier).collect(Collectors.toSet());
-		}
-
-		Specification<AnalysisSubmission> specification = AnalysisSubmissionSpecification
-				.filterAnalyses(params.getSearchValue(), name, state, null, workflowIds, null);
-
-		Page<AnalysisSubmission> page = analysisSubmissionService
-				.search(specification, new PageRequest(params.getCurrentPage(), params.getLength(), params.getSort()));
-
-		List<DataTablesResponseModel> data = new ArrayList<>();
-		for (AnalysisSubmission submission : page.getContent()) {
-			data.add(createDataTablesAnalysis(submission, locale));
-		}
-
-		return new DataTablesResponse(params, page, data);
-	}
-
-	private DTAnalysis createDataTablesAnalysis(AnalysisSubmission submission, Locale locale)
-			throws IridaWorkflowNotFoundException, ExecutionManagerException {
-		Long id = submission.getId();
-		String name = submission.getName();
-		String submitter = submission.getSubmitter().getLabel();
-		Date createdDate = submission.getCreatedDate();
-		float percentComplete = 0;
-		if (!submission.getAnalysisState().equals(AnalysisState.ERROR)) {
-			percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(submission.getId());
-		}
-
-		String workflowType = workflowsService.getIridaWorkflow(submission.getWorkflowId()).getWorkflowDescription()
-				.getAnalysisType().toString();
-		String workflow = messageSource.getMessage("workflow." + workflowType + ".title", null, locale);
-		String state = messageSource
-				.getMessage("analysis.state." + submission.getAnalysisState().toString(), null, locale);
-		Long duration = getAnalysisDuration(submission);
-
-		return new DTAnalysis(id, name, submitter, percentComplete, createdDate, workflow, state, duration);
-	}
-
-	private Long getAnalysisDuration(AnalysisSubmission submission) {
-		Analysis analysis = submission.getAnalysis();
-		Long duration = 0L;
-		Instant createInstant = submission.getCreatedDate().toInstant();
-		// get duration
-		if (submission.getAnalysisState().equals(AnalysisState.COMPLETED)) {
-			Instant finishedInstant = analysis.getCreatedDate().toInstant();
-			Duration between = Duration.between(finishedInstant, createInstant);
-			duration = between.toMillis();
-		}
-
-		return duration;
+		return analysesListingService.getPagedSubmissions(params, locale);
 	}
 	
 	/**
