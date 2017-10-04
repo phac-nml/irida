@@ -372,8 +372,19 @@ public class AnalysisController {
 	@ResponseBody
 	public DataTablesResponse getSubmissions(@DataTablesRequest DataTablesParams params, Locale locale)
 			throws IridaWorkflowNotFoundException, EntityNotFoundException, ExecutionManagerException {
+		// Lets set up the filters
+		Map<String, String> searchMap = params.getSearchMap();
+		AnalysisState state = searchMap.containsKey("analysis.state") ? AnalysisState.valueOf(searchMap.get("analysis.state")) : null;
+		String name = searchMap.getOrDefault("name", null);
+		Set<UUID> workflowIds = null;
+		if (searchMap.containsKey("workflow")) {
+			AnalysisType workflowType = AnalysisType.fromString(searchMap.get("workflow"));
+			Set<IridaWorkflow> workflows = workflowsService.getAllWorkflowsByType(workflowType);
+			workflowIds = workflows.stream().map(IridaWorkflow::getWorkflowIdentifier).collect(Collectors.toSet());
+		}
+
 		Specification<AnalysisSubmission> specification = AnalysisSubmissionSpecification
-				.filterAnalyses(params.getSearchValue(), null, AnalysisState.COMPLETED, null, null, null);
+				.filterAnalyses(params.getSearchValue(), name, state, null, workflowIds, null);
 
 		Page<AnalysisSubmission> page = analysisSubmissionService
 				.search(specification, new PageRequest(params.getCurrentPage(), params.getLength(), params.getSort()));

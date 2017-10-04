@@ -147,7 +147,7 @@ function setFilterState(name, state, workflow) {
     }
     return "";
   };
-  const workflowColumn = table.column(COLUMNS.WORKFLOW_ID);
+  const workflowColumn = table.column(COLUMNS.WORKFLOW);
   workflowColumn.search(workflow);
   createFilterTag({
     text: workflowValue(),
@@ -166,7 +166,7 @@ function setFilterState(name, state, workflow) {
     }
     return "";
   };
-  const stateColumn = table.column(COLUMNS.ANALYSIS_STATE);
+  const stateColumn = table.column(COLUMNS.STATE);
   stateColumn.search(state);
   createFilterTag({
     text: stateValue(),
