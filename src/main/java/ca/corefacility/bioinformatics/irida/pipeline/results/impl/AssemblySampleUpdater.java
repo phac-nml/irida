@@ -16,7 +16,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSampleUpdator;
+import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSampleUpdater;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.GenomeAssemblyRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGenomeAssemblyJoinRepository;
 
@@ -24,15 +24,15 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGeno
  * Updates a sample with the results from a genome assembly.
  */
 @Component
-public class AssemblySampleUpdator implements AnalysisSampleUpdator {
+public class AssemblySampleUpdater implements AnalysisSampleUpdater {
 
-	private static final Logger logger = LoggerFactory.getLogger(AssemblySampleUpdator.class);
+	private static final Logger logger = LoggerFactory.getLogger(AssemblySampleUpdater.class);
 
 	private final GenomeAssemblyRepository genomeAssemblyRepository;
 	private final SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository;
 
 	@Autowired
-	public AssemblySampleUpdator(GenomeAssemblyRepository genomeAssemblyRepository,
+	public AssemblySampleUpdater(GenomeAssemblyRepository genomeAssemblyRepository,
 			SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository) {
 		this.sampleGenomeAssemblyJoinRepository = sampleGenomeAssemblyJoinRepository;
 		this.genomeAssemblyRepository = genomeAssemblyRepository;

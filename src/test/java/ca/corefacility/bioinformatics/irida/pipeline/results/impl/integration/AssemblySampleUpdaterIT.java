@@ -24,7 +24,7 @@ import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConf
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.pipeline.results.impl.AssemblySampleUpdator;
+import ca.corefacility.bioinformatics.irida.pipeline.results.impl.AssemblySampleUpdater;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGenomeAssemblyJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
@@ -38,12 +38,12 @@ import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository
 @ActiveProfiles("it")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
 		WithSecurityContextTestExcecutionListener.class })
-@DatabaseSetup("/ca/corefacility/bioinformatics/irida/pipeline/results/impl/AssemblySampleUpdatorIT.xml")
+@DatabaseSetup("/ca/corefacility/bioinformatics/irida/pipeline/results/impl/AssemblySampleUpdaterIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
-public class AssemblySampleUpdatorIT {
+public class AssemblySampleUpdaterIT {
 
 	@Autowired
-	private AssemblySampleUpdator assemblySampleUpdator;
+	private AssemblySampleUpdater assemblySampleUpdater;
 
 	@Autowired
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
@@ -61,7 +61,7 @@ public class AssemblySampleUpdatorIT {
 		Sample s = sampleRepository.findOne(2L);
 		assertEquals("Should be no join between sample and assembly", 0, sampleGenomeAssemblyJoinRepository.count());
 
-		assemblySampleUpdator.update(Sets.newHashSet(s), a);
+		assemblySampleUpdater.update(Sets.newHashSet(s), a);
 
 		assertEquals("Should exist a join between sample and assembly", 1, sampleGenomeAssemblyJoinRepository.count());
 		SampleGenomeAssemblyJoin j = sampleGenomeAssemblyJoinRepository.findAll().iterator().next();
@@ -77,6 +77,6 @@ public class AssemblySampleUpdatorIT {
 		Sample s1 = sampleRepository.findOne(1L);
 		Sample s2 = sampleRepository.findOne(2L);
 
-		assemblySampleUpdator.update(Sets.newHashSet(s1, s2), a);
+		assemblySampleUpdater.update(Sets.newHashSet(s1, s2), a);
 	}
 }
