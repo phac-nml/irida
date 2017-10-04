@@ -149,7 +149,6 @@ Tasks
 
 * `yarn run sass` - compile all `.scss` files into `.css` files, with sourcemaps.
 * `yarn run build` - compile all es6 files to es2015.
-* `yarn`npm run lint:js [filename]` - lint a specific file.
 
 JavaScript and SCSS Code Formatting and Linting
 ===============================================
