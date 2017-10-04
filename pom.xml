@@ -1086,7 +1086,6 @@
 		<frontend-maven-plugin.version>1.6</frontend-maven-plugin.version>
 		<node.version>v8.6.0</node.version>
 		<yarn.version>v1.1.0</yarn.version>
-		<!--<yarn.version>v1.0.2</yarn.version>-->
 		<jgravatar.version>1.0</jgravatar.version>
 
 		<!-- project configuration -->
