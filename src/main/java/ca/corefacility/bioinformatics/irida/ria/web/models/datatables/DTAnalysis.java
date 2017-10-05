@@ -33,60 +33,32 @@ public class DTAnalysis implements DataTablesResponseModel {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public String getName() {
 		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public String getSubmitter() {
 		return submitter;
 	}
 
-	public void setSubmitter(String submitter) {
-		this.submitter = submitter;
-	}
-
 	public float getPercentComplete() {
 		return percentComplete;
-	}
-
-	public void setPercentComplete(float percentComplete) {
-		this.percentComplete = percentComplete;
 	}
 
 	public Date getCreatedDate() {
 		return createdDate;
 	}
 
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
-
 	public String getWorkflow() {
 		return workflow;
-	}
-
-	public void setWorkflow(String workflow) {
-		this.workflow = workflow;
-	}
-
-	public Long getDuration() {
-		return duration;
 	}
 
 	public String getState() {
 		return state;
 	}
 
-	public void setDuration(Long duration) {
-		this.duration = duration;
+	public Long getDuration() {
+		return duration;
 	}
 
 	public boolean isUpdatePermission() {
