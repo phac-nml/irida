@@ -25,6 +25,8 @@ import com.google.common.collect.Sets;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
@@ -38,11 +40,15 @@ public class SampleRepositoryIT {
 
 	@Autowired
 	private SampleRepository sampleRepository;
+	
+	@Autowired
+	private AnalysisSubmissionRepository analysisSubmissionRepository;
 
 	@Test
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
 	public void testFindSamplesForAnalysisSubmissionSingleSample() {
-		Set<Sample> samples = sampleRepository.findSamplesForAnalysisSubmission(10L);
+		AnalysisSubmission a = analysisSubmissionRepository.findOne(10L);
+		Set<Sample> samples = sampleRepository.findSamplesForAnalysisSubmission(a);
 
 		assertEquals("Sample ids are equal", Sets.newHashSet(11L),
 				samples.stream().map(Sample::getId).collect(Collectors.toSet()));
@@ -51,7 +57,8 @@ public class SampleRepositoryIT {
 	@Test
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
 	public void testFindSamplesForAnalysisSubmissionMultipleSample() {
-		Set<Sample> samples = sampleRepository.findSamplesForAnalysisSubmission(21L);
+		AnalysisSubmission a = analysisSubmissionRepository.findOne(21L);
+		Set<Sample> samples = sampleRepository.findSamplesForAnalysisSubmission(a);
 
 		assertEquals("Sample ids are equal", Sets.newHashSet(22L, 33L),
 				samples.stream().map(Sample::getId).collect(Collectors.toSet()));

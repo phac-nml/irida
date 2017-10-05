@@ -63,7 +63,7 @@ public class UpdateSamplesFromAnalysisSubmissionPermission extends BasePermissio
 			return false;
 		}
 
-		Set<Sample> samples = sampleRepository.findSamplesForAnalysisSubmission(analysisSubmission.getId());
+		Set<Sample> samples = sampleRepository.findSamplesForAnalysisSubmission(analysisSubmission);
 
 		if (updateSamplePermission.isAllowed(authentication, samples)) {
 			logger.trace("Permission GRANTED for [" + authentication + "] on samples [" + samples + "]");

@@ -75,7 +75,7 @@ public class AnalysisSubmissionSampleProcessorImpl implements AnalysisSubmission
 		} else {
 			logger.debug("Updating sample from results for submission=" + analysisSubmission);
 
-			Set<Sample> samples = sampleRepository.findSamplesForAnalysisSubmission(analysisSubmission.getId());
+			Set<Sample> samples = sampleRepository.findSamplesForAnalysisSubmission(analysisSubmission);
 			Analysis analysis = analysisSubmission.getAnalysis();
 
 			checkNotNull(analysis, "No analysis associated with submission " + analysisSubmission);
