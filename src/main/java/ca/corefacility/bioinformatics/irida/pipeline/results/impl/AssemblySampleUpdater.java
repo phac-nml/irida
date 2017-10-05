@@ -37,6 +37,9 @@ public class AssemblySampleUpdater implements AnalysisSampleUpdater {
 		this.genomeAssemblyRepository = genomeAssemblyRepository;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void update(Collection<Sample> samples, AnalysisSubmission analysis) {
 		checkArgument(samples.size() == 1, "Error: expected only 1 sample, but got " + samples.size() + " samples");
