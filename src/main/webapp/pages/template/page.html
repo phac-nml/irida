@@ -108,8 +108,8 @@
 					&nbsp;{{timeleft | countdown}}</b>
 			</div>
 			<div class="modal-footer">
-				<button class="btn btn-default" ng-click="logout()" th:text="#{session.timeout-modal.logout}">Log me out
-				</button>
+				<a class="btn btn-default" th:href="@{/logout}" th:text="#{session.timeout-modal.logout}">Log me out
+				</a>
 				<button class="btn btn-primary" ng-click="poke()" th:text="#{session.timeout-modal.poke}">Keep me here
 				</button>
 			</div>
