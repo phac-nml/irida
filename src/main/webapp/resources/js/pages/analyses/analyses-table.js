@@ -104,7 +104,7 @@ const config = Object.assign(tableConfig, {
         const buttons = [];
         // If the submission is completed, then it can be downloaded, created a link
         // to download it.
-        if (full.state.localeCompare("COMPLETED") === 0) {
+        if (full.state.localeCompare("Completed") === 0) {
           const anchor = createDownloadLink({
             url: `${window.PAGE.URLS.download}${full.id}`,
             title: `${full.name}.zip`

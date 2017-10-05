@@ -16,9 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -46,11 +43,9 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
-import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.AnalysesListingService;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
@@ -66,12 +61,6 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.dandelion.datatables.core.ajax.ColumnDef;
-import com.github.dandelion.datatables.core.ajax.DataSet;
-import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
-import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
-import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -364,88 +353,49 @@ public class AnalysisController {
 	@ResponseBody
 	public DataTablesResponse getSubmissions(@DataTablesRequest DataTablesParams params, Locale locale)
 			throws IridaWorkflowNotFoundException, EntityNotFoundException, ExecutionManagerException {
-		return analysesListingService.getPagedSubmissions(params, locale);
+		return analysesListingService.getPagedSubmissions(params, locale, null, null);
 	}
-	
+
 	/**
-	 * Get the list of a users {@link AnalysisSubmission}s
-	 * 
-	 * @param criterias
-	 *            {@link DatatablesCriterias} to filter or sort results
-	 * @param principal
-	 *            Logged in user
-	 * @param locale
-	 *            User's locale
-	 * @return {@link DatatablesResponse} containing
-	 *         {@link AnalysisTableResponse} objects
-	 * @throws IridaWorkflowNotFoundException
-	 *             If the requested workflow doesn't exist
-	 * @throws NoPercentageCompleteException
-	 *             If a percentage complete cannot be calculated
-	 * @throws EntityNotFoundException
-	 *             If the submission cannot be found
-	 * @throws ExecutionManagerException
-	 *             If the submission cannot be read properly
+	 * DataTables request handler for a User listing all {@link AnalysisSubmission}
+	 *
+	 * @param params {@link DataTablesParams}
+	 * @param principal {@link Principal}
+	 * @param locale {@link Locale}
+	 * @return {@link DataTablesResponse}
+	 * @throws IridaWorkflowNotFoundException If the requested workflow doesn't exist
+	 * @throws EntityNotFoundException        If the submission cannot be found
+	 * @throws ExecutionManagerException      If the submission cannot be read properly
 	 */
 	@RequestMapping("/ajax/list")
 	@ResponseBody
-	public DatatablesResponse<AnalysisTableResponse> getSubmissionsForUser(
-			@DatatablesParams DatatablesCriterias criterias, Principal principal, Locale locale)
-			throws IridaWorkflowNotFoundException, NoPercentageCompleteException, EntityNotFoundException,
+	public DataTablesResponse getSubmissionsForUser(@DataTablesRequest DataTablesParams params, Principal principal,
+			Locale locale) throws IridaWorkflowNotFoundException, EntityNotFoundException,
 			ExecutionManagerException {
-		User principalUser = userService.getUserByUsername(principal.getName());
-
-		int currentPage = DatatablesUtils.getCurrentPage(criterias);
-		Map<String, Object> sortProps = DatatablesUtils.getSortProperties(criterias);
-		String searchString = criterias.getSearch();
-
-		Specification<AnalysisSubmission> filters = getFilters(searchString, criterias, principalUser, null);
-
-		Page<AnalysisSubmission> submissions = analysisSubmissionService.search(filters, currentPage,
-				criterias.getLength(), (Sort.Direction) sortProps.get(DatatablesUtils.SORT_DIRECTION),
-				(String) sortProps.get(DatatablesUtils.SORT_STRING));
-
-		List<AnalysisTableResponse> responses = new ArrayList<>();
-		for (AnalysisSubmission sub : submissions) {
-			AnalysisTableResponse analysisTableResponse = new AnalysisTableResponse(sub, locale);
-			responses.add(analysisTableResponse);
-		}
-
-		DataSet<AnalysisTableResponse> dataSet = new DataSet<>(responses, submissions.getTotalElements(),
-				submissions.getTotalElements());
-
-		return DatatablesResponse.build(dataSet, criterias);
+		User user = userService.getUserByUsername(principal.getName());
+		return analysesListingService.getPagedSubmissions(params, locale, user, null);
 	}
-	
+
+	/**
+	 * DataTables request handler for a User listing all {@link AnalysisSubmission}
+	 *
+	 * @param params {@link DataTablesParams}
+	 * @param projectId {@link Long}
+	 * @param principal {@link Principal}
+	 * @param locale {@link Locale}
+	 * @return {@link DataTablesResponse}
+	 * @throws IridaWorkflowNotFoundException If the requested workflow doesn't exist
+	 * @throws EntityNotFoundException        If the submission cannot be found
+	 * @throws ExecutionManagerException      If the submission cannot be read properly
+	 */
 	@RequestMapping("/ajax/project/{projectId}/list")
 	@ResponseBody
-	public DatatablesResponse<AnalysisTableResponse> getSubmissionsForProject(
-			@DatatablesParams DatatablesCriterias criterias, @PathVariable Long projectId, Principal principal, Locale locale)
+	public DataTablesResponse getSubmissionsForProject(@DataTablesRequest DataTablesParams params,
+			@PathVariable Long projectId, Principal principal, Locale locale)
 			throws IridaWorkflowNotFoundException, NoPercentageCompleteException, EntityNotFoundException,
 			ExecutionManagerException {
-
 		Project project = projectService.read(projectId);
-		
-		int currentPage = DatatablesUtils.getCurrentPage(criterias);
-		Map<String, Object> sortProps = DatatablesUtils.getSortProperties(criterias);
-		String searchString = criterias.getSearch();
-
-		Specification<AnalysisSubmission> filters = getFilters(searchString, criterias, null, project);
-
-		Page<AnalysisSubmission> submissions = analysisSubmissionService.search(filters, currentPage,
-				criterias.getLength(), (Sort.Direction) sortProps.get(DatatablesUtils.SORT_DIRECTION),
-				(String) sortProps.get(DatatablesUtils.SORT_STRING));
-
-		List<AnalysisTableResponse> responses = new ArrayList<>();
-		for (AnalysisSubmission sub : submissions) {
-			AnalysisTableResponse analysisTableResponse = new AnalysisTableResponse(sub, locale);
-			responses.add(analysisTableResponse);
-		}
-
-		DataSet<AnalysisTableResponse> dataSet = new DataSet<>(responses, submissions.getTotalElements(),
-				submissions.getTotalElements());
-
-		return DatatablesResponse.build(dataSet, criterias);
+		return analysesListingService.getPagedSubmissions(params, locale, null, project);
 	}
 
 	@SuppressWarnings("resource")
@@ -500,49 +450,6 @@ public class AnalysisController {
 			}
 		}
 		return result;
-	}
-
-	/**
-	 * Get a search specification for listing {@link AnalysisSubmission}s
-	 * 
-	 * @param searchString
-	 *            The basic search string to search
-	 * @param criterias
-	 *            {@link DatatablesCriterias} sent from the view
-	 * @param user
-	 *            User to filter results by. Send null if user is not requried
-	 * @return Specification to send to the repsoitory search method
-	 * @throws IridaWorkflowNotFoundException
-	 *             If the requested workflow dows not exist
-	 */
-	private Specification<AnalysisSubmission> getFilters(String searchString, DatatablesCriterias criterias, User user, Project project)
-			throws IridaWorkflowNotFoundException {
-		//properties to search
-		String name = null;
-		AnalysisState state = null;
-		Set<UUID> workflowIds = null;
-		
-		//get the properties from the criterias
-		for (ColumnDef def : criterias.getColumnDefs()) {
-			String columnName = def.getName();
-			if (!Strings.isNullOrEmpty(def.getSearch())) {
-
-				if (columnName.equals("name")) {
-					name = def.getSearch();
-				} else if (columnName.equalsIgnoreCase("analysisState")) {
-					state = AnalysisState.fromString(def.getSearch());
-				} else if (columnName.equalsIgnoreCase("workflowId")) {
-					//get the workflow from the workflow id string
-					AnalysisType workflow = AnalysisType.fromString(def.getSearch());
-					Set<IridaWorkflow> allWorkflowsByType = workflowsService.getAllWorkflowsByType(workflow);
-					workflowIds = allWorkflowsByType.stream().map(IridaWorkflow::getWorkflowIdentifier)
-							.collect(Collectors.toSet());
-				}
-			}
-
-		}
-
-		return AnalysisSubmissionSpecification.filterAnalyses(searchString, name, state, user, workflowIds, project);
 	}
 
 	// ************************************************************************************************
@@ -790,100 +697,6 @@ public class AnalysisController {
 		}
 
 		return viewName;
-	}
-	
-	/**
-	 * Class holding the information to send to the client to display
-	 * {@link AnalysisSubmission}s
-	 */
-	public class AnalysisTableResponse {
-		private Long id;
-		private String name;
-		private User submitter;
-		private AnalysisSubmission submission;
-		private String workflowId;
-		private String analysisState;
-		private String duration;
-		private String percentComplete;
-		private Date createdDate;
-		private boolean updatePermission;
-
-		public AnalysisTableResponse(AnalysisSubmission submission, Locale locale)
-				throws IridaWorkflowNotFoundException, NoPercentageCompleteException, EntityNotFoundException,
-				ExecutionManagerException {
-			this.submission = submission;
-
-			this.id = submission.getId();
-			this.name = submission.getName();
-			this.submitter = submission.getSubmitter();
-			this.createdDate = submission.getCreatedDate();
-
-			// get the workflow name
-			UUID workflowUUID = submission.getWorkflowId();
-			String type = workflowsService.getIridaWorkflow(workflowUUID).getWorkflowDescription().getAnalysisType()
-					.toString();
-			workflowId = messageSource.getMessage("workflow." + type + ".title", null, locale);
-
-			// get the analysis state message
-			String analysisState = submission.getAnalysisState().toString();
-			this.analysisState = messageSource.getMessage("analysis.state." + analysisState, null, locale);
-
-			// get duration
-			if (submission.getAnalysisState().equals(AnalysisState.COMPLETED)) {
-				Analysis analysis = submission.getAnalysis();
-				long dur = submission.getCreatedDate().getTime() - analysis.getCreatedDate().getTime();
-				duration = String.valueOf(Math.abs(dur));
-			}
-
-			if (!submission.getAnalysisState().equals(AnalysisState.ERROR)) {
-				float percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(submission
-						.getId());
-				this.percentComplete = Float.toString(percentComplete);
-			}
-			
-			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-			updatePermission = updateAnalysisPermission.isAllowed(authentication, submission);
-		}
-
-		public AnalysisSubmission getSubmission() {
-			return submission;
-		}
-
-		public String getWorkflowId() {
-			return workflowId;
-		}
-
-		public String getAnalysisState() {
-			return analysisState;
-		}
-
-		public String getDuration() {
-			return duration;
-		}
-
-		public Long getId() {
-			return id;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public User getSubmitter() {
-			return submitter;
-		}
-
-		public String getPercentComplete() {
-			return percentComplete;
-		}
-		
-		public Date getCreatedDate() {
-			return createdDate;
-		}
-		
-		public boolean getUpdatePermission() {
-			return updatePermission;
-		}
 	}
 	
 	/**

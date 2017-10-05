@@ -14,7 +14,7 @@ public class AnalysesDataFactory {
 		return new Page<AnalysisSubmission>() {
 			@Override
 			public int getTotalPages() {
-				return 0;
+				return 15;
 			}
 
 			@Override
