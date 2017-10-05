@@ -13,9 +13,10 @@ public class DTAnalysis implements DataTablesResponseModel {
 	private String workflow;
 	private String state;
 	private Long duration;
+	boolean updatePermission;
 
 	public DTAnalysis(Long id, String name, String submitter, float percentComplete, Date createdDate, String workflow,
-			String state, Long duration) {
+			String state, Long duration, boolean updatePermission) {
 		this.id = id;
 		this.name = name;
 		this.submitter = submitter;
@@ -24,6 +25,7 @@ public class DTAnalysis implements DataTablesResponseModel {
 		this.workflow = workflow;
 		this.state = state;
 		this.duration = duration;
+		this.updatePermission = updatePermission;
 	}
 
 	@Override
@@ -85,5 +87,9 @@ public class DTAnalysis implements DataTablesResponseModel {
 
 	public void setDuration(Long duration) {
 		this.duration = duration;
+	}
+
+	public boolean isUpdatePermission() {
+		return updatePermission;
 	}
 }

@@ -1,5 +1,19 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
@@ -12,40 +26,39 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTa
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTAnalysis;
+import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Component;
-
-import java.time.Duration;
-import java.time.Instant;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Component
 public class AnalysesListingService {
 	private AnalysisSubmissionService analysisSubmissionService;
 	private IridaWorkflowsService iridaWorkflowsService;
+	private UpdateAnalysisSubmissionPermission updateAnalysisPermission;
 	private MessageSource messageSource;
 
 	@Autowired
 	public AnalysesListingService(AnalysisSubmissionService analysisSubmissionService,
-			IridaWorkflowsService iridaWorkflowsService, MessageSource messageSource) {
+			IridaWorkflowsService iridaWorkflowsService, UpdateAnalysisSubmissionPermission updateAnalysisPermission,
+			MessageSource messageSource) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.iridaWorkflowsService = iridaWorkflowsService;
+		this.updateAnalysisPermission = updateAnalysisPermission;
 		this.messageSource = messageSource;
 	}
 
 	public DataTablesResponse getPagedSubmissions(DataTablesParams params, Locale locale)
 			throws IridaWorkflowNotFoundException, ExecutionManagerException {
-		// Lets set up the filters
+		/*
+		Check the DataTableParams to see if any search conditions are present
+		 */
 		Map<String, String> searchMap = params.getSearchMap();
-		AnalysisState state = searchMap.containsKey("analysis.state") ? AnalysisState.valueOf(searchMap.get("analysis.state")) : null;
+		AnalysisState state = searchMap.containsKey("analysisState") ? AnalysisState.valueOf(searchMap.get("analysisState")) : null;
 		String name = searchMap.getOrDefault("name", null);
+		/*
+		Workflow Ids are a special consideration.
+		The actual ids need to be look up based on the name passed.
+		 */
 		Set<UUID> workflowIds = null;
 		if (searchMap.containsKey("workflow")) {
 			AnalysisType workflowType = AnalysisType.fromString(searchMap.get("workflow"));
@@ -53,14 +66,23 @@ public class AnalysesListingService {
 			workflowIds = workflows.stream().map(IridaWorkflow::getWorkflowIdentifier).collect(Collectors.toSet());
 		}
 
+		/*
+		Generate the specification.
+		Note no user or project are required since this is a global analyses search
+		performed by an administrator.
+		 */
 		Specification<AnalysisSubmission> specification = AnalysisSubmissionSpecification
 				.filterAnalyses(params.getSearchValue(), name, state, null, workflowIds, null);
 
 		Page<AnalysisSubmission> page = analysisSubmissionService
 				.search(specification, new PageRequest(params.getCurrentPage(), params.getLength(), params.getSort()));
 
+		/*
+		IRIDA DataTables response expects and object that implements the DataTablesResponseModel interface.
+		 */
 		List<DataTablesResponseModel> data = new ArrayList<>();
 		for (AnalysisSubmission submission : page.getContent()) {
+			// Each AnalysisSubmission needs to be converted into a DTAnalysis.
 			data.add(createDataTablesAnalysis(submission, locale));
 		}
 
@@ -85,7 +107,11 @@ public class AnalysesListingService {
 				.getMessage("analysis.state." + submission.getAnalysisState().toString(), null, locale);
 		Long duration = getAnalysisDuration(submission);
 
-		return new DTAnalysis(id, name, submitter, percentComplete, createdDate, workflow, state, duration);
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		boolean updatePermission = updateAnalysisPermission.isAllowed(authentication, submission);
+
+		return new DTAnalysis(id, name, submitter, percentComplete, createdDate, workflow, state, duration,
+				updatePermission);
 	}
 
 	private Long getAnalysisDuration(AnalysisSubmission submission) {
