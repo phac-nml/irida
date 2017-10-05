@@ -99,7 +99,7 @@ const config = Object.assign(tableConfig, {
     {
       targets: COLUMNS.BUTTONS,
       sortable: false,
-      width: 200,
+      width: 50,
       render(data, type, full) {
         const buttons = [];
         // If the submission is completed, then it can be downloaded, created a link
