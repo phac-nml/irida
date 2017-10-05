@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Maps;
@@ -67,7 +68,7 @@ public class AnalysisSubmissionSampleProcessorImpl implements AnalysisSubmission
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#analysisSubmission, 'canUpdateSamplesFromAnalysisSubmission')")
-	@Transactional
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
 	public void updateSamples(AnalysisSubmission analysisSubmission) {
 		if (!analysisSubmission.getUpdateSamples()) {
 			logger.trace("Will not update samples from results for submission=" + analysisSubmission);

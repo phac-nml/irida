@@ -7,6 +7,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doThrow;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -22,6 +23,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.access.AccessDeniedException;
 
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDeleteResponse;
 import com.google.common.collect.Maps;
@@ -86,7 +88,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 	@Mock
 	private IridaWorkflowsService iridaWorkflowsService;
 	@Mock
-	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleService;
+	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
 	@Mock
 	private SampleService sampleService;
 
@@ -153,7 +155,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 
 		AnalysisExecutionServiceGalaxyAsync workflowManagementAsync = new AnalysisExecutionServiceGalaxyAsync(
 				analysisSubmissionService, analysisService, galaxyWorkflowService, analysisWorkspaceService,
-				iridaWorkflowsService, analysisSubmissionSampleService);
+				iridaWorkflowsService, analysisSubmissionSampleProcessor);
 		AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionServiceGalaxyCleanupAsync = new AnalysisExecutionServiceGalaxyCleanupAsync(
 				analysisSubmissionService, galaxyWorkflowService, galaxyHistoriesService, galaxyLibrariesService);
 		workflowManagement = new AnalysisExecutionServiceGalaxy(analysisSubmissionService, galaxyHistoriesService,
@@ -489,6 +491,28 @@ public class AnalysisExecutionServiceGalaxyTest {
 
 		verify(analysisService).create(analysisResults);
 		verify(analysisSubmissionService, times(2)).update(any(AnalysisSubmission.class));
+	}
+	
+	/**
+	 * Tests successfully getting analysis results even if updating samples failed.
+	 */
+	@Test
+	public void testTransferAnalysisResultsSuccessUpdateSamplesFail() throws ExecutionManagerException, IOException,
+			IridaWorkflowNotFoundException, InterruptedException, ExecutionException, IridaWorkflowAnalysisTypeException {
+		when(analysisSubmissionService.exists(INTERNAL_ANALYSIS_ID)).thenReturn(true);
+		when(analysisSubmissionService.update(analysisFinishedRunning)).thenReturn(analysisCompleting);
+		when(analysisSubmissionService.update(analysisCompleting)).thenReturn(analysisCompleted);
+		doThrow(new AccessDeniedException("")).when(analysisSubmissionSampleProcessor).updateSamples(analysisSubmission);
+		
+		Future<AnalysisSubmission> actualCompletedSubmissionFuture = workflowManagement
+				.transferAnalysisResults(analysisFinishedRunning);
+		AnalysisSubmission actualCompletedSubmission = actualCompletedSubmissionFuture.get();
+		assertEquals(analysisCompleted, actualCompletedSubmission);
+		assertEquals("analysisResults should be equal", analysisResults, actualCompletedSubmission.getAnalysis());
+
+		verify(analysisService).create(analysisResults);
+		verify(analysisSubmissionService, times(2)).update(any(AnalysisSubmission.class));
+		verify(analysisSubmissionSampleProcessor).updateSamples(any(AnalysisSubmission.class));
 	}
 
 	/**

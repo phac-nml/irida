@@ -49,7 +49,7 @@ public class AnalysisExecutionServiceGalaxyAsync {
 	private final AnalysisWorkspaceServiceGalaxy workspaceService;
 	private final GalaxyWorkflowService galaxyWorkflowService;
 	private final IridaWorkflowsService iridaWorkflowsService;
-	private final AnalysisSubmissionSampleProcessor analysisSubmissionSampleService;
+	private final AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
 
 	/**
 	 * Builds a new {@link AnalysisExecutionServiceGalaxyAsync} with the given
@@ -79,7 +79,7 @@ public class AnalysisExecutionServiceGalaxyAsync {
 		this.galaxyWorkflowService = galaxyWorkflowService;
 		this.workspaceService = workspaceService;
 		this.iridaWorkflowsService = iridaWorkflowsService;
-		this.analysisSubmissionSampleService = analysisSubmissionSampleService;
+		this.analysisSubmissionSampleProcessor = analysisSubmissionSampleService;
 	}
 
 	/**
@@ -210,7 +210,12 @@ public class AnalysisExecutionServiceGalaxyAsync {
 		}
 
 		AnalysisSubmission completedSubmission = analysisSubmissionService.update(submittedAnalysis);
-		analysisSubmissionSampleService.updateSamples(completedSubmission);
+		
+		try {
+			analysisSubmissionSampleProcessor.updateSamples(completedSubmission);
+		} catch (Exception e) {
+			logger.error("Error updating corresponding samples with analysis results for AnalysisSubmission = [" + completedSubmission.getId() + "]. Skipping this step.", e);
+		}
 
 		return new AsyncResult<>(completedSubmission);
 	}

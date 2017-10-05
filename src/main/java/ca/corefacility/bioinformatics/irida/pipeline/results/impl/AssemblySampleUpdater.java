@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssemblyFromAnalysis;
@@ -39,7 +38,6 @@ public class AssemblySampleUpdater implements AnalysisSampleUpdater {
 	}
 
 	@Override
-	@Transactional
 	public void update(Collection<Sample> samples, AnalysisSubmission analysis) {
 		checkArgument(samples.size() == 1, "Error: expected only 1 sample, but got " + samples.size() + " samples");
 
