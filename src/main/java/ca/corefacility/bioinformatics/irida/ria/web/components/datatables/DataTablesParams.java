@@ -47,6 +47,9 @@ public class DataTablesParams {
 	private Sort sort;
 	private Map<String, String> searchMap;
 
+	public DataTablesParams() {
+	}
+
 	public DataTablesParams(Integer start, Integer length, Integer draw, String searchValue, Sort sort, Map<String, String> searchMap) {
 		this.start = start;
 		this.length = length;
