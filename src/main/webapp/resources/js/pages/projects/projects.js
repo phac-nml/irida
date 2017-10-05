@@ -1,5 +1,5 @@
-import "DataTables/datatables";
-import "DataTables/datatables-buttons";
+import "../../vendor/datatables/datatables";
+import "../../vendor/datatables/datatables-buttons";
 import $ from "jquery";
 import {
   createItemLink,
@@ -19,7 +19,7 @@ const COLUMNS = generateColumnOrderInfo();
  * Download table in specified format.
  * @param {string} format format of downloaded doc.
  */
-function downloadItem({ format = "xlsx" }) {
+function downloadItem({format = "xlsx"}) {
   const url = `${window.PAGE.urls.export}&dtf=${format}`;
   const anchor = document.createElement("a");
   anchor.style.display = "none";
