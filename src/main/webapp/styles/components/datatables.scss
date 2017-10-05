@@ -72,14 +72,6 @@ table.dataTable thead th.sorting_desc:after {
     position: absolute !important;
     top: 30px !important;
     left: 0;
-
-    input[type=checkbox] {
-      display: none;
-    }
-    li.selected a, li.selected a:hover {
-      background-color: #337AB7!important;
-      color: #fefefe;
-    }
   }
 
 }

@@ -179,29 +179,54 @@ ASSOCIATED PROJECTS
 
 // This allows for the use of checkboxes in the dropdown without
 // it closing on every click.
+const ASSOCIATED_INPUTS = $(".associated-cb input");
 $(".associated-dd .dropdown-menu a").on("click", function(event) {
   const li = $(this).parent();
   const $target = $(event.currentTarget);
   const $inp = $target.find("input");
   const id = $inp.val();
+  /*
+  This seems backwards, but the checkbox has not yet updated itself at this point.
+   */
+  const checked = !$inp.prop("checked");
 
-  if (ASSOCIATED_PROJECTS.has(id)) {
-    ASSOCIATED_PROJECTS.delete(id);
+  if (id === "ALL") {
+    // Need to get all the ids and select all the checkboxes
+    ASSOCIATED_INPUTS.each((index, elm) => {
+      const $elm = $(elm);
+      $elm.prop("checked", checked);
+
+      if (checked) {
+        ASSOCIATED_PROJECTS.set($elm.val(), true);
+      } else {
+        ASSOCIATED_PROJECTS.delete($elm.val());
+      }
+    });
+
+    // Update this input
     setTimeout(function() {
-      li.removeClass("selected");
-      $inp.prop("checked", false);
+      $inp.prop("checked", checked);
       // Update the DataTable
       $dt.ajax.reload(null, false);
     }, 0);
   } else {
-    ASSOCIATED_PROJECTS.set(id, true);
-    setTimeout(function() {
-      li.addClass("selected");
-      $inp.prop("checked", true);
-      // Update the DataTable
-      $dt.ajax.reload(null, false);
-    }, 0);
+    if (ASSOCIATED_PROJECTS.has(id)) {
+      ASSOCIATED_PROJECTS.delete(id);
+    } else {
+      ASSOCIATED_PROJECTS.set(id, true);
+    }
   }
+  setTimeout(function() {
+    // Update the current checkbox
+    $inp.prop("checked", checked);
+    // Update the select all checkbox
+    $("#select-all-cb").prop(
+      "checked",
+      ASSOCIATED_PROJECTS.size === ASSOCIATED_INPUTS.size()
+    );
+    // Update the DataTable
+    $dt.ajax.reload(null, false);
+  }, 0);
 
   $(event.target).blur();
   return false;

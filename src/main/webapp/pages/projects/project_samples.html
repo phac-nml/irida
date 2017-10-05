@@ -66,6 +66,13 @@
                         <i class="fa fa-caret-down fa-fw"></i>
                     </button>
                     <ul id="associated-dropdown" class="dropdown-menu" aria-labelledby="associated-btn">
+                        <li>
+                            <a href="#">
+                                <input id="select-all-cb" value="ALL" type="checkbox"/>&nbsp;
+                                <th:block  th:text="#{project.samples.nav.associated-selectAll}" />
+                            </a>
+                        </li>
+                        <li role="separator" class="divider"></li>
                         <li th:each="item : ${associatedProjects}">
                             <a href="#" class="associated-cb">
                                 <input type="checkbox" th:value="${item.getIdentifier()}"/>
