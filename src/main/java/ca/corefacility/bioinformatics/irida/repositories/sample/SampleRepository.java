@@ -56,10 +56,10 @@ public interface SampleRepository extends IridaJpaRepository<Sample, Long> {
 	 * Get the {@link Sample}s associated with a given
 	 * {@link AnalysisSubmission}
 	 * 
-	 * @param analysisSubmissionId
-	 *            the {@link AnalysisSubmission} id.
+	 * @param analysisSubmission
+	 *            the {@link AnalysisSubmission}.
 	 * @return the set of associated {@link Sample}s
 	 */
-	@Query(value = "SELECT s.* from sample s INNER JOIN sample_sequencingobject sso ON s.id = sso.sample_id INNER JOIN analysis_submission_sequencing_object asso ON sso.sequencingobject_id = asso.sequencing_object_id WHERE asso.analysis_submission_id = ?1", nativeQuery = true)
-	public Set<Sample> findSamplesForAnalysisSubmission(Long analysisSubmissionId);
+	@Query("SELECT j.sample FROM SampleSequencingObjectJoin j WHERE ?1 in elements(j.sequencingObject.analysisSubmissions)")
+	public Set<Sample> findSamplesForAnalysisSubmission(AnalysisSubmission analysisSubmission);
 }

@@ -70,7 +70,7 @@ public class UpdateSamplesFromAnalysisSubmissionPermissionTest {
 		analysisSubmission = AnalysisSubmission.builder(UUID.randomUUID()).inputFiles(sequencingObjects).build();
 		analysisSubmission.setId(1L);
 
-		when(sampleRepository.findSamplesForAnalysisSubmission(analysisSubmission.getId())).thenReturn(samples);
+		when(sampleRepository.findSamplesForAnalysisSubmission(analysisSubmission)).thenReturn(samples);
 	}
 
 	@Test
