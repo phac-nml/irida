@@ -49,10 +49,17 @@ check_dependencies() {
 clean_database_docker() {
 	set -x
 	echo "drop database $DATABASE_NAME; create database $DATABASE_NAME;" | mysql -u$DATABASE_USER -p$DATABASE_PASSWORD
+	mysql -u$DATABASE_USER -p$DATABASE_PASSWORD $DATABASE_NAME < $SCRIPT_DIR/ci/irida_latest.sql
 	if [ "$(docker ps | grep $GALAXY_DOCKER_NAME)" != "" ];
 	then
 		docker rm -f -v $GALAXY_DOCKER_NAME
 	fi
+}
+
+test_unit() {
+	set -x
+	if [ $DO_CLEANUP -ne 0 ]; then clean_database_docker; fi
+	mvn clean test $@
 }
 
 test_service() {
@@ -89,7 +96,7 @@ if [ $# -eq 0 ];
 then
 	echo -e "Usage: $0 [-c|--clean-database-docker] [test_type] [Maven options]"
 	echo -e "\t-c|--clean-database-docker: Clean out test database ($JDBC_URL) and previous Docker containers ($GALAXY_DOCKER_NAME) before running tests."
-	echo -e "\t[test_type]:                One of the IRIDA test types {service, ui, rest, galaxy, all}."
+	echo -e "\t[test_type]:                One of the IRIDA test types {service, ui, rest, galaxy, unit, all}."
 	echo -e "\t[Maven options]:            Additional options to pass to 'mvn'.  In particular, can pass '-Dtest.it=ca.corefacility.bioinformatics.irida.fully.qualified.name' to run tests from a particular class.\n"
 	echo -e "Example:\n"
 	echo -e "$0 -c service"
@@ -129,8 +136,13 @@ case "$1" in
 		shift
 		test_galaxy $@
 	;;
+	unit)
+		shift
+		test_unit $@
+	;;
 	all)
 		shift
+		test_unit
 		test_service $@
 		test_ui $@
 		test_rest $@
