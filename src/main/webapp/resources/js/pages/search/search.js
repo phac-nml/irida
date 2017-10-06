@@ -1,5 +1,4 @@
-import "DataTables/datatables";
-//import "DataTables/datatables-buttons";
+import "../../vendor/datatables/datatables";
 import $ from "jquery";
 import {
   createItemLink,
