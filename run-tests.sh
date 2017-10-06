@@ -5,7 +5,10 @@ SCRIPT_DIR=`pwd`
 JDBC_URL=jdbc:mysql://localhost:3306/irida_test
 TMP_DIRECTORY=/tmp
 GALAXY_DOCKER=phacnml/galaxy-irida-17.01:0.17.0-it
-GALAXY_DOCKER_PORT=48888
+GALAXY_PORT=48889
+GALAXY_URL=http://localhost:$GALAXY_PORT
+GALAXY_INVALID_URL=http://localhost:48890
+GALAXY_INVALID_URL2=http://localhost:48891
 
 check_dependencies() {
 	mvn --version 1>/dev/null 2>/dev/null
@@ -43,7 +46,9 @@ test_ui() {
 }
 
 test_galaxy() {
-	mvn clean verify -B -Pgalaxy_testing -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY
+	DOCKER_ID=$(docker run -d -p $GALAXY_PORT:80 -v $TMP_DIRECTORY:$TMP_DIRECTORY $GALAXY_DOCKER)
+	mvn clean verify -B -Pgalaxy_testing -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dtest.galaxy.url=$GALAXY_URL -Dtest.galaxy.invalid.url=$GALAXY_INVALID_URL -Dtest.galaxy.invalid.url2=$GALAXY_INVALID_URL2
+	docker rm -f -v $DOCKER_ID
 }
 
 ############
@@ -59,8 +64,9 @@ fi
 
 check_dependencies
 
-# Change to IRIDA root
-cd $SCRIPT_DIR/..
+cd $SCRIPT_DIR
+
+set -x
 
 case "$1" in
 	service)
