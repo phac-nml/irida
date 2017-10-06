@@ -37,6 +37,13 @@ check_dependencies() {
 		echo "Command 'docker' does not exist.  Please install Docker (e.g., 'curl -sSL https://get.docker.com/ | sh') to continue."
 		exit 1
 	fi
+
+	mysql --version 1>/dev/null 2>/dev/null
+	if [ $? -ne 0 ];
+	then
+		echo "Command 'mysql' does not exist.  Please install MySQL/MariaDB (e.g., 'apt-get install mariadb-client mariadb-server') to continue."
+		exit 1
+	fi
 }
 
 clean_database_docker() {
@@ -50,27 +57,27 @@ clean_database_docker() {
 
 test_service() {
 	set -x
-	if [ $DO_CLEANUP ]; then clean_database_docker; fi
-	mvn clean verify -B -Pservice_testing -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY
+	if [ $DO_CLEANUP -ne 0 ]; then clean_database_docker; fi
+	mvn clean verify -B -Pservice_testing -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY $@
 }
 
 test_rest() {
 	set -x
-	if [ $DO_CLEANUP ]; then clean_database_docker; fi
-	mvn clean verify -Prest_testing -B
+	if [ $DO_CLEANUP -ne 0 ]; then clean_database_docker; fi
+	mvn clean verify -Prest_testing -B $@
 }
 
 test_ui() {
 	set -x
-	if [ $DO_CLEANUP ]; then clean_database_docker; fi
-	xvfb-run --auto-servernum --server-num=1 mvn clean verify -B -Pui_testing -Dwebdriver.chrome.driver=./src/main/webapp/node_modules/chromedriver/lib/chromedriver/chromedriver -Dirida.it.nosandbox=true -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY
+	if [ $DO_CLEANUP -ne 0 ]; then clean_database_docker; fi
+	xvfb-run --auto-servernum --server-num=1 mvn clean verify -B -Pui_testing -Dwebdriver.chrome.driver=./src/main/webapp/node_modules/chromedriver/lib/chromedriver/chromedriver -Dirida.it.nosandbox=true -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY $@
 }
 
 test_galaxy() {
 	set -x
-	if [ $DO_CLEANUP ]; then clean_database_docker; fi
+	if [ $DO_CLEANUP -ne 0 ]; then clean_database_docker; fi
 	docker run -d -p $GALAXY_PORT:80 --name $GALAXY_DOCKER_NAME -v $TMP_DIRECTORY:$TMP_DIRECTORY -v $SCRIPT_DIR:$SCRIPT_DIR $GALAXY_DOCKER
-	mvn clean verify -B -Pgalaxy_testing -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dtest.galaxy.url=$GALAXY_URL -Dtest.galaxy.invalid.url=$GALAXY_INVALID_URL -Dtest.galaxy.invalid.url2=$GALAXY_INVALID_URL2
+	mvn clean verify -B -Pgalaxy_testing -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dtest.galaxy.url=$GALAXY_URL -Dtest.galaxy.invalid.url=$GALAXY_INVALID_URL -Dtest.galaxy.invalid.url2=$GALAXY_INVALID_URL2 $@
 	docker rm -f -v $GALAXY_DOCKER_NAME
 }
 
@@ -80,15 +87,18 @@ test_galaxy() {
 
 if [ $# -eq 0 ];
 then
-	echo -e "Usage: $0 [-c|--clean-database-docker] [test_type]"
-	echo -e "\t-c|--clean-database-docker:\tClean out test database ($JDBC_URL) and previous Docker containers ($GALAXY_DOCKER_NAME). In general, this should be set to avoid issues."
-	echo -e "\t[test_type]:\tOne of the IRIDA test types {service, ui, rest, galaxy, all}."
+	echo -e "Usage: $0 [-c|--clean-database-docker] [test_type] [Maven options]"
+	echo -e "\t-c|--clean-database-docker: Clean out test database ($JDBC_URL) and previous Docker containers ($GALAXY_DOCKER_NAME) before running tests."
+	echo -e "\t[test_type]:                One of the IRIDA test types {service, ui, rest, galaxy, all}."
+	echo -e "\t[Maven options]:            Additional options to pass to 'mvn'.  In particular, can pass '-Dtest.it=ca.corefacility.bioinformatics.irida.fully.qualified.name' to run tests from a particular class.\n"
 	echo -e "Example:\n"
-	echo -e "run-tests.sh --clean-database-docker service"
-	echo -e "\tThis will test the Service layer of IRIDA.  This will not clean up previous databases/docker containers."
-	echo -e "run-tests.sh --clean-database-docker galaxy"
-	echo -e "\tRuns the Galaxy integration tests for IRIDA. This will clean the database 'irida_test' on localhost first."
-	echo -e "\tThis will also attempt to launch Galaxy Docker on $GALAXY_URL"
+	echo -e "$0 -c service"
+	echo -e "\tThis will test the Service layer of IRIDA, cleaning up the test database/docker containers first.\n"
+	echo -e "$0 -c galaxy"
+	echo -e "\tRuns the Galaxy integration tests for IRIDA"
+	echo -e "\tThis will also attempt to launch Galaxy Docker on $GALAXY_URL\n"
+	echo -e "$0 rest -Dtest.it=ca.corefacility.bioinformatics.irida.web.controller.test.integration.analysis.RESTAnalysisSubmissionControllerIT"
+	echo -e "\tThis will run IRIDA REST API tests found in the class 'RESTAnalysisSubmissionControllerIT'. This will *not* clean up the previous tests database files."
 	exit 0
 fi
 
@@ -104,24 +114,30 @@ fi
 
 case "$1" in
 	service)
-	test_service
+		shift
+		test_service $@
 	;;
 	ui)
-	test_ui
+		shift
+		test_ui $@
 	;;
 	rest)
-	test_rest
+		shift
+		test_rest $@
 	;;
 	galaxy)
-	test_galaxy
+		shift
+		test_galaxy $@
 	;;
 	all)
-	test_service
-	test_ui
-	test_rest
-	test_galaxy
+		shift
+		test_service $@
+		test_ui $@
+		test_rest $@
+		test_galaxy $@
 	;;
 	*)
-	echo "Unrecogized test [$1]"
-	exit 1
+		echo "Unrecogized test [$1]"
+		exit 1
+	;;
 esac
