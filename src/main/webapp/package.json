@@ -2,7 +2,7 @@
   "name": "irida-ui",
   "version": "1.0.0",
   "scripts": {
-    "start": "webdpack-dev-server --env development",
+    "start": "webpack-dev-server --env development",
     "build": "gulp sass && webpack --env.target production"
   },
   "dependencies": {

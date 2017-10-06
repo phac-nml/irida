@@ -1,4 +1,4 @@
-exports.devServer = ({ host, port } = {}) => ({
+exports.devServer = ({ host, port, proxy } = {}) => ({
   devServer: {
     historyApiFallback: true,
     stats: "errors-only",
@@ -29,13 +29,6 @@ exports.lintJavaScript = ({ include, exclude, options }) => ({
 
 exports.loadCSS = ({ include, exclude, options }) => ({
   module: {
-    rules: [
-      {
-        test: /\.css$/,
-        include,
-        exclude,
-        use: "style-loader!css-loader"
-      }
-    ]
+    rules: [{ test: /\.css$/, loader: "style-loader!css-loader" }]
   }
 });

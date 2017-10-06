@@ -48,7 +48,10 @@ const productionConfig = merge([]);
 const developmentConfig = merge([
   parts.devServer({
     host: process.env.HOST,
-    port: process.env.PORT
+    port: 3000,
+    proxy: {
+      "/": "http://localhost:8080"
+    }
   })
   // Add this back in after we format the entire project!
   // parts.lintJavaScript({ include: PATHS.app })
