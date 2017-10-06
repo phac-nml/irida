@@ -130,7 +130,7 @@ public class AnalysisSubmissionServiceImplIT {
 		// Add a state filter
 		AnalysisState state = AnalysisState.COMPLETED;
 		specification = AnalysisSubmissionSpecification.filterAnalyses(null, name, state, null, null, null);
-		paged = analysisSubmissionService.search(specification, 0, 10, Sort.Direction.ASC, "createdDate");
+		paged = analysisSubmissionService.search(specification, new PageRequest(0, 10, new Sort(Direction.ASC, "createdDate")));
 		assertEquals(2, paged.getContent().size());
 	}
 
