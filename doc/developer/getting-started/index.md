@@ -94,7 +94,7 @@ Quick start development requirements
 
 An (incomplete) set of instructions for getting the IRIDA service layer and web front up and running for development on your Linux machine.  To include Galaxy and all the pipeline requirements, see the main IRIDA documentation.
 
-* Clone IRIDA from the IRIDA [GitLab][].
+* Clone IRIDA from the IRIDA [GitLab][] or [GitHub][].
 * Install the following dependencies from your chosen package manager:
   * MariaDB
   * Java 8 JDK
@@ -300,14 +300,14 @@ public void doStuff(Long projectId){}
 
 Passing the `projectId` parameter to the annotation will read a `Project` from the database before passing to the `customPermissionAllowed` method.
 
-These permission classes can also be used with the `@PostFilter` annotation.  This annotation runs after the method completes to see if the user has access to the output of the method.  For example with the following block:
+These permission classes can also be used with the `@PostFilter` annotation.  This annotation runs after the method completes to see if the user has access to the output of the method.  This is generally used for methods returning collections of objects.  For example with the following block:
 
 ```java
 @PostFilter("hasPermission(filterObject, 'canReadProject')")
-public Project doStuff(){}
+public List<Project> doStuff(){}
 ```
 
-This code will ensure the logged in user can read the return value of the function.  If they cannot, an `AccessDeniedException` will be thrown.
+This code will ensure the logged in user can read each of the `Project`s being returned.  Any object they should not have access to will be pruned from the list.
 
 Building new features
 ---------------------
