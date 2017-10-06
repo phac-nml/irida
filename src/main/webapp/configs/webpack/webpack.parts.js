@@ -1,3 +1,4 @@
+const CleanWebpackPlugin = require("clean-webpack-plugin");
 const ProgressBarPlugin = require("progress-bar-webpack-plugin");
 const WriteFilePlugin = require("write-file-webpack-plugin");
 
@@ -44,6 +45,13 @@ exports.writeFilePlugin = () => ({
       test: /\.(css|js)/
     })
   ]
+});
+
+/*
+ * Remove directories listed in the path arg.
+ */
+exports.clean = (path, options = { verbose: false }) => ({
+  plugins: [new CleanWebpackPlugin([path], options)]
 });
 
 exports.progressBar = () => ({

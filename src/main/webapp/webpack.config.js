@@ -4,7 +4,7 @@ const parts = require("./configs/webpack/webpack.parts");
 const entries = require("./configs/webpack/entries.js");
 
 const PATHS = {
-  build: path.join(__dirname, "resources/js/build")
+  build: path.resolve(__dirname, "resources/js/build")
 };
 
 /*
@@ -43,6 +43,7 @@ const commonConfig = merge([
     }
   },
   parts.loadCSS({ exclude: /node_modules/ }),
+  parts.clean(PATHS.build),
   parts.progressBar()
 ]);
 
@@ -75,7 +76,6 @@ const developmentConfig = merge([
 ]);
 
 module.exports = env => {
-  console.log(env);
   if (env.target === "production") {
     return merge(commonConfig, productionConfig);
   }
