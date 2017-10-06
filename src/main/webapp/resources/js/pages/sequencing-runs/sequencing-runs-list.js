@@ -1,6 +1,10 @@
-import "DataTables/datatables";
+import "../../vendor/datatables/datatables";
 import $ from "jquery";
-import { createItemLink, generateColumnOrderInfo, tableConfig } from "../../utilities/datatables-utilities";
+import {
+  createItemLink,
+  generateColumnOrderInfo,
+  tableConfig
+} from "../../utilities/datatables-utilities";
 import { formatDate } from "../../utilities/date-utilities";
 
 /*

@@ -1,6 +1,6 @@
-import $ from 'jquery';
-import angular from 'angular';
-import 'plugins/jquery/select2.js';
+import $ from "jquery";
+import angular from "angular";
+import "../../vendor/plugins/jquery/select2.js";
 
 /*
  * Turns a pre-populated select input into a select2.

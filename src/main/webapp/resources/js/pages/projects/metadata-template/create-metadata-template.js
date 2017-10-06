@@ -1,7 +1,7 @@
-import $ from 'jquery';
-import Sortable from 'sortablejs';
-import 'plugins/jquery/select2';
-import 'jquery-validation';
+import $ from "jquery";
+import Sortable from "sortablejs";
+import "../../../vendor/plugins/jquery/select2";
+import "jquery-validation";
 
 // ****************************************************************************
 // FORM VALIDATION - uses jquery-validation plugin
