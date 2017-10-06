@@ -43,7 +43,7 @@ const commonConfig = merge([
     }
   },
   parts.loadCSS({ exclude: /node_modules/ }),
-  parts.clean(PATHS.build),
+  parts.clean([PATHS.build]),
   parts.progressBar()
 ]);
 
@@ -71,7 +71,7 @@ const developmentConfig = merge([
     }
   }),
   // Add this back in after we format the entire project!
-  parts.lintJavaScript({ include: Object.values(entries) }),
+  // parts.lintJavaScript(),
   parts.writeFilePlugin()
 ]);
 
