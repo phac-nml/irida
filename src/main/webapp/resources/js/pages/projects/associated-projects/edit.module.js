@@ -1,6 +1,6 @@
-import angular from 'angular';
-import _ from 'lodash';
-import 'plugins/angular/angular-bootstrap-switch';
+import angular from "angular";
+import _ from "lodash";
+import "../../../vendor/plugins/angular/angular-bootstrap-switch";
 
 const editApp = angular
   .module('associated.edit', [
