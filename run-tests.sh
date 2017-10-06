@@ -33,20 +33,32 @@ check_dependencies() {
 	fi
 }
 
+clean_database() {
+	echo "drop database irida_test; create database irida_test;" | mysql -utest -ptest
+}
+
 test_service() {
+	set -x
+	clean_database
 	mvn clean verify -B -Pservice_testing -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY
 }
 
 test_rest() {
+	set -x
+	clean_database
 	mvn clean verify -Prest_testing -B
 }
 
 test_ui() {
+	set -x
+	clean_database
 	xvfb-run --auto-servernum --server-num=1 mvn clean verify -B -Pui_testing -Dwebdriver.chrome.driver=./src/main/webapp/node_modules/chromedriver/lib/chromedriver/chromedriver -Dirida.it.nosandbox=true -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY
 }
 
 test_galaxy() {
-	DOCKER_ID=$(docker run -d -p $GALAXY_PORT:80 -v $TMP_DIRECTORY:$TMP_DIRECTORY $GALAXY_DOCKER)
+	set -x
+	clean_database
+	DOCKER_ID=$(docker run -d -p $GALAXY_PORT:80 -v $TMP_DIRECTORY:$TMP_DIRECTORY -v $SCRIPT_DIR:$SCRIPT_DIR $GALAXY_DOCKER)
 	mvn clean verify -B -Pgalaxy_testing -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dtest.galaxy.url=$GALAXY_URL -Dtest.galaxy.invalid.url=$GALAXY_INVALID_URL -Dtest.galaxy.invalid.url2=$GALAXY_INVALID_URL2
 	docker rm -f -v $DOCKER_ID
 }
@@ -59,14 +71,18 @@ if [ $# -eq 0 ];
 then
 	echo -e "Usage: $0 [type]"
 	echo -e "\t[type]: One of {service, ui, rest, galaxy, all}."
+	echo -e "Example:\n"
+	echo -e "run-tests.sh service"
+	echo -e "\tThis will test the Service layer of IRIDA.  This will clean the database 'irida_test' on localhost first."
+	echo -e "run-tests.sh galaxy"
+	echo -e "\tRuns the Galaxy integration tests for IRIDA. This will clean the database 'irida_test' on localhost first."
+	echo -e "\tThis will also attempt to launch Galaxy Docker on $GALAXY_URL"
 	exit 0
 fi
 
 check_dependencies
 
 cd $SCRIPT_DIR
-
-set -x
 
 case "$1" in
 	service)
