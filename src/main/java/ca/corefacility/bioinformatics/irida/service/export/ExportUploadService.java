@@ -570,6 +570,8 @@ public class ExportUploadService {
 
 			try (InputStream stream = Files.newInputStream(path)) {
 				client.storeFile(filename, stream);
+
+				done = true;
 			} catch (Exception e) {
 				String reply = client.getReplyString();
 				logger.error("Error uploading file: " + reply, e);
