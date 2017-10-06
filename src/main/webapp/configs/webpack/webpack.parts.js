@@ -1,4 +1,4 @@
-const webpack = require("webpack");
+const ProgressBarPlugin = require("progress-bar-webpack-plugin");
 const WriteFilePlugin = require("write-file-webpack-plugin");
 
 exports.devServer = ({ host, port, proxy } = {}) => ({
@@ -44,4 +44,8 @@ exports.writeFilePlugin = () => ({
       test: /\.(css|js)/
     })
   ]
+});
+
+exports.progressBar = () => ({
+  plugins: [new ProgressBarPlugin()]
 });

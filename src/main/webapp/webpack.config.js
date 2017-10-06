@@ -7,6 +7,9 @@ const PATHS = {
   build: path.join(__dirname, "resources/js/build")
 };
 
+/*
+ This is used by both the production and the development configurations.
+ */
 const commonConfig = merge([
   {
     entry: entries,
@@ -39,7 +42,8 @@ const commonConfig = merge([
       filename: "[name].bundle.js"
     }
   },
-  parts.loadCSS({ exclude: /node_modules/ })
+  parts.loadCSS({ exclude: /node_modules/ }),
+  parts.progressBar()
 ]);
 
 /* ======================
