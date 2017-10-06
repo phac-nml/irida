@@ -65,6 +65,12 @@ const config = Object.assign({}, tableConfig, {
   deferRender: true,
   select: {
     allUrl: window.PAGE.urls.samples.sampleIds,
+    allPostDataFn() {
+      console.log([...ASSOCIATED_PROJECTS.keys()]);
+      return {
+        associated: [...ASSOCIATED_PROJECTS.keys()]
+      };
+    },
     formatSelectAllResponseFn(response) {
       // This is a callback function used by datatables-select
       // to format the server response when selectAll is clicked.

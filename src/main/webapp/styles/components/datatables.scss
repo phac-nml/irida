@@ -72,8 +72,48 @@ table.dataTable thead th.sorting_desc:after {
     position: absolute !important;
     top: 30px !important;
     left: 0;
-  }
 
+    .checkbox {
+      padding-left: 10px;
+    }
+
+    li > ul {
+      max-height: 300px;
+      overflow-y: scroll;
+      list-style: none;
+      margin: 0;
+
+      li {
+        margin-left: -40px !important;
+        line-height: 20px;
+        &:hover {
+          background-color: #f9f9f9 !important;
+        }
+      }
+
+      a {
+        background-color: #ffffff;
+        box-sizing: border-box;
+        clear: both;
+        color: rgb(38, 38, 38);
+        display: block;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 20px;
+        list-style: none outside none;
+        outline: rgb(38, 38, 38) none 0px;
+        padding: 3px 20px;
+        text-align: left;
+        text-decoration: none;
+        text-decoration-color: rgb(38, 38, 38);
+        text-decoration-style: solid;
+        white-space: nowrap;
+        &:hover {
+          background-color: rgb(245, 245, 245);
+        }
+      }
+    }
+  }
 }
 
 // New custom wrapper for updated tables

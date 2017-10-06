@@ -68,16 +68,23 @@
                     <ul id="associated-dropdown" class="dropdown-menu" aria-labelledby="associated-btn">
                         <li>
                             <a href="#">
-                                <input id="select-all-cb" value="ALL" type="checkbox"/>&nbsp;
-                                <th:block  th:text="#{project.samples.nav.associated-selectAll}" />
+                                <div class="checkbox"><input id="select-all-cb" value="ALL" type="checkbox"/>&nbsp;
+                                    <th:block th:text="#{project.samples.nav.associated-selectAll}"/>
+                                </div>
                             </a>
                         </li>
                         <li role="separator" class="divider"></li>
-                        <li th:each="item : ${associatedProjects}">
-                            <a href="#" class="associated-cb">
-                                <input type="checkbox" th:value="${item.getIdentifier()}"/>
-                                <th:block th:text="${item.getName()}"></th:block>
-                            </a></li>
+                        <li>
+                            <ul>
+                                <li th:each="item : ${associatedProjects}">
+                                    <a href="#" class="associated-cb">
+                                        <div class="checkbox"><input type="checkbox" th:value="${item.getIdentifier()}"/>&nbsp;
+                                            <th:block th:text="${item.getName()}"/>
+                                        </div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
                     </ul>
                 </div>
                 <button id="cart-add-btn" class="btn btn-primary btn-sm" disabled="disabled">
