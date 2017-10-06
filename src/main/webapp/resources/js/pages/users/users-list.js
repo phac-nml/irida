@@ -1,5 +1,9 @@
-import "DataTables/datatables";
-import { createItemLink, generateColumnOrderInfo, tableConfig } from "../../utilities/datatables-utilities";
+import "../../vendor/datatables/datatables";
+import {
+  createItemLink,
+  generateColumnOrderInfo,
+  tableConfig
+} from "../../utilities/datatables-utilities";
 import { formatDate } from "../../utilities/date-utilities";
 
 /*
