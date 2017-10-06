@@ -10,7 +10,6 @@ const PATHS = {
 const commonConfig = merge([
   {
     entry: entries,
-    devtool: "source-maps",
     module: {
       rules: [
         {
@@ -43,18 +42,32 @@ const commonConfig = merge([
   parts.loadCSS({ exclude: /node_modules/ })
 ]);
 
+/* ======================
+ PRODUCTION CONFIGURATION
+====================== */
 const productionConfig = merge([]);
 
+/* =======================
+ DEVELOPMENT CONFIGURATION
+ ====================== */
 const developmentConfig = merge([
+  {
+    devtool: "inline-source-map"
+  },
   parts.devServer({
     host: process.env.HOST,
     port: 3000,
     proxy: {
-      "/": "http://localhost:8080"
+      "/": {
+        target: "http://localhost:8080",
+        secure: false,
+        prependPath: false
+      }
     }
-  })
+  }),
   // Add this back in after we format the entire project!
-  // parts.lintJavaScript({ include: PATHS.app })
+  parts.lintJavaScript({ include: Object.values(entries) }),
+  parts.writeFilePlugin()
 ]);
 
 module.exports = env => {
