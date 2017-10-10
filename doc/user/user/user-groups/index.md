@@ -16,7 +16,7 @@ User accounts can be organized into a collection called a user group. User group
 Viewing existing user groups
 ----------------------------
 
-You can access the list of user groups that have already been created by clicking on the "Users" menu at the top of the dashboard and selecting "Groups":
+You can access the list of user groups that have already been created by clicking on the "Settings" menu at the top of the dashboard and selecting "Groups":
 
 ![Groups dashboard location.](images/groups-menu.png)
 
