@@ -81,6 +81,8 @@ public class ExportUploadService {
 	@Value("${irida.administrative.notifications.email}")
 	private String notificationAdminEmail;
 
+	private static final int MAX_RETRIES = 3;
+
 	// set of statuses that should be watched and update
 	private static Set<ExportUploadState> updateableStates = ImmutableSet.of(ExportUploadState.UPLOADED,
 			ExportUploadState.SUBMITTED, ExportUploadState.CREATED, ExportUploadState.QUEUED,
@@ -532,32 +534,51 @@ public class ExportUploadService {
 	 *             if file could not be uploaded
 	 */
 	private void uploadString(FTPClient client, String filename, String content) throws UploadException {
-		try (ByteArrayInputStream stringStream = new ByteArrayInputStream(content.getBytes())) {
-			client.storeFile(filename, stringStream);
-		} catch (Exception e) {
-			String reply = client.getReplyString();
-			throw new UploadException("Could not upload file " + filename + " : " + reply, e);
-		}
+		int tries = 0;
+		boolean done = false;
+
+		do {
+			tries++;
+			try (ByteArrayInputStream stringStream = new ByteArrayInputStream(content.getBytes())) {
+
+				client.storeFile(filename, stringStream);
+
+				done = true;
+			} catch (Exception e) {
+				String reply = client.getReplyString();
+				logger.error("Error uploading file: " + reply, e);
+				if (tries >= MAX_RETRIES) {
+					throw new UploadException("Could not upload file " + filename + " : " + reply, e);
+				}
+			}
+		} while (!done);
 	}
 
 	/**
 	 * Upload a file {@link Path} to a remote ftp client
-	 * 
-	 * @param client
-	 *            {@link FTPClient} to upload with
-	 * @param filename
-	 *            name of file to create
-	 * @param path
-	 *            {@link Path} to upload
-	 * @throws UploadException
-	 *             if file could not be uploaded
+	 *
+	 * @param client   {@link FTPClient} to upload with
+	 * @param filename name of file to create
+	 * @param path     {@link Path} to upload
+	 * @throws UploadException if file could not be uploaded
 	 */
 	private void uploadPath(FTPClient client, String filename, Path path) throws UploadException {
-		try (InputStream stream = Files.newInputStream(path)) {
-			client.storeFile(filename, stream);
-		} catch (Exception e) {
-			String reply = client.getReplyString();
-			throw new UploadException("Could not upload file " + filename + " : " + reply, e);
-		}
+		int tries = 0;
+		boolean done = false;
+		do {
+			tries++;
+
+			try (InputStream stream = Files.newInputStream(path)) {
+				client.storeFile(filename, stream);
+
+				done = true;
+			} catch (Exception e) {
+				String reply = client.getReplyString();
+				logger.error("Error uploading file: " + reply, e);
+				if (tries >= MAX_RETRIES) {
+					throw new UploadException("Could not upload file " + filename + " : " + reply, e);
+				}
+			}
+		} while (!done);
 	}
 }
