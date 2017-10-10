@@ -5,6 +5,7 @@
     "start": "webpack-dev-server --env development --hot --inline",
     "build": "gulp sass && webpack --env.target production"
   },
+  "browserslist": ["> 1%", "last 2 versions"],
   "dependencies": {
     "@bassettsj/livestamp": "^2.0.0",
     "angular": "1.6.2",
@@ -47,8 +48,7 @@
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
-    "babel-preset-es2015": "^6.14.0",
-    "babel-preset-stage-0": "^6.5.0",
+    "babel-preset-env": "^1.6.0",
     "bower": "^1.7.7",
     "chromedriver": "2.24.1",
     "clean-webpack-plugin": "^0.1.17",
