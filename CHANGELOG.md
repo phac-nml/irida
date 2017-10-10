@@ -15,6 +15,8 @@ Changes
 * [API]: Fixed permission issue when asking for permission for analysis results using sequencing objects with no associated samples (0.18.3).
 * [UI]: Cleaned up styles on DataTables with fixed columns.
 * [Developer]: Upgraded to v5.3.0 of `npm`, and changed build process to use `yarn`.
+* [API]: NCBI uploads automatically retry after failure.
+* [UI]: Added global project and sample search from top toolbar.
 
 0.17.0 to 0.18.0
 ----------------
