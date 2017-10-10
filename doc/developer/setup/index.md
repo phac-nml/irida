@@ -107,7 +107,7 @@ You can verify that you've installed everything correctly in one of two ways:
 1. Minimal verification: Check to see that Jetty starts, or
 2. Maximal verification: Run the complete test suite.
 
-Checking to see that Jetty starts will ensure that you're able to start hacking on the UI or the REST API. If you're going to be working on Galaxy-related features, you should *probably* run the complete test suite as it checks out a fresh version of Galaxy. Keep in mind that the complete test suite execution currently takes approximately 1 hour to complete.
+Checking to see that Jetty starts will ensure that you're able to start hacking on the UI or the REST API. If you're going to be working on Galaxy-related features, you should *probably* run the complete test suite as it runs a Docker version of Galaxy and verifies that communication between IRIDA and Galaxy will work properly. Keep in mind that the complete test suite execution currently takes approximately 1 hour to complete.
 
 #### Checking to see that Jetty starts
 
@@ -129,11 +129,18 @@ For all subsequent runs, simply run the script with no options:
     
 This will update the database if the schema has been changed, but without dropping all of the tables beforehand, which will cause Jetty to start up much faster.
 
+#### Integration Testing
+
+To run the full integration test suite for IRIDA please run the following:
+
+    ./run-tests.sh -c all
+
+This will run all the integration test profiles using Maven, and print out reports for each profile.
+
 Setting up Galaxy
 -----------------
 
-The complete test suite sets up a temporary instance of Galaxy for verifying interactions between IRIDA and Galaxy, so you must install some prerequisites before you can run the complete test suite. Please see the article on [setting up Galaxy](galaxy).
-
+Please refer to the [Galaxy Install Guide][galaxy-install] for information on setting up Galaxy to use with IRIDA. The simplest method is to use Docker, but if new tools are being developed for Galaxy and integrated into IRIDA it is recommended to install a non-Docker version of Galaxy.
 
 Front End Development Setup
 ---------------------------
@@ -182,3 +189,5 @@ To enable eslinting (JavaScript linting) in VS Code:
 <video controls="controls" style="width: 960px">
     <source src="images/vs-code-eslint.mp4" type="video/mp4" />
 </video>   
+
+[galaxy-install]: ../../administrator/galaxy
