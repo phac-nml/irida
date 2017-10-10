@@ -90,7 +90,8 @@ public class AssemblyFileProcessor implements FileProcessor {
 			Builder builder = new AnalysisSubmission.Builder(pipelineUUID);
 			AnalysisSubmission submission = builder
 					.inputFiles(Sets.newHashSet((SequenceFilePair) sequencingObject))
-					.name("Automated Assembly " + sequencingObject.toString()).build();
+					.name("Automated Assembly " + sequencingObject.toString())
+					.updateSamples(true).build();
 			submission.setSubmitter(admin);
 
 			submission = submissionRepository.save(submission);

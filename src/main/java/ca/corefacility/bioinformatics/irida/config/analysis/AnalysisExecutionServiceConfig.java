@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import com.github.jmchilton.blend4j.galaxy.JobsClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 
+import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
@@ -66,10 +67,13 @@ public class AnalysisExecutionServiceConfig {
 	private GalaxyWorkflowService galaxyWorkflowService;
 		
 	@Autowired
-	SampleRemoteService sampleRemoteService;
+	private SampleRemoteService sampleRemoteService;
 	
 	@Autowired
-	SequencingObjectService sequencingObjectService;
+	private SequencingObjectService sequencingObjectService;
+	
+	@Autowired
+	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleService;
 	
 	@Autowired
 	private ToolsClient toolsClient;
@@ -88,7 +92,7 @@ public class AnalysisExecutionServiceConfig {
 	@Bean
 	public AnalysisExecutionServiceGalaxyAsync analysisExecutionServiceGalaxyAsync() {
 		return new AnalysisExecutionServiceGalaxyAsync(analysisSubmissionService, analysisService,
-				galaxyWorkflowService, analysisWorkspaceService(), iridaWorkflowsService);
+				galaxyWorkflowService, analysisWorkspaceService(), iridaWorkflowsService, analysisSubmissionSampleService);
 	}
 	
 	@Lazy
