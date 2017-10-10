@@ -1,3 +1,4 @@
+const webpack = require("webpack");
 const CleanWebpackPlugin = require("clean-webpack-plugin");
 const ProgressBarPlugin = require("progress-bar-webpack-plugin");
 const WriteFilePlugin = require("write-file-webpack-plugin");
@@ -17,11 +18,13 @@ exports.devServer = ({ host, port, proxy } = {}) => ({
     host, // Defaults to `localhost`
     port, // Defaults to 8080,
     proxy,
+    hot: true,
     overlay: {
       errors: true,
       warnings: true
     }
-  }
+  },
+  plugins: [new webpack.HotModuleReplacementPlugin()]
 });
 
 /**

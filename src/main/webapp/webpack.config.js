@@ -13,6 +13,10 @@ const PATHS = {
 const commonConfig = merge([
   {
     entry: entries,
+    stats: {
+      children: false,
+      cached: false
+    },
     module: {
       rules: [
         {
@@ -42,15 +46,16 @@ const commonConfig = merge([
       filename: "[name].bundle.js"
     }
   },
-  parts.loadCSS({ exclude: /node_modules/ }),
-  parts.clean([PATHS.build]),
-  parts.progressBar()
+  parts.loadCSS({ exclude: /node_modules/ })
 ]);
 
 /* ======================
  PRODUCTION CONFIGURATION
 ====================== */
-const productionConfig = merge([]);
+const productionConfig = merge([
+  parts.progressBar(),
+  parts.clean([PATHS.build])
+]);
 
 /* =======================
  DEVELOPMENT CONFIGURATION
@@ -61,14 +66,16 @@ const developmentConfig = merge([
   },
   parts.devServer({
     host: process.env.HOST,
-    port: 3000,
+    port: 9090,
     proxy: {
       "/": {
         target: "http://localhost:8080",
         secure: false,
         prependPath: false
       }
-    }
+    },
+    publicPath: "http://localhost:9090/",
+    historyApiFallback: true
   }),
   // Add this back in after we format the entire project!
   // parts.lintJavaScript(),
