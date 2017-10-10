@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
@@ -147,6 +148,26 @@ public class AbstractPage {
 
 	public int getCartCount() {
 		return Integer.parseInt(driver.findElement(By.id("cart-count")).getText());
+	}
+
+	/**
+	 * Search globally for a query
+	 *
+	 * @param query
+	 * 		the query to search for
+	 * @param admin
+	 * 		whether to search as an admin
+	 */
+	public void globalSearch(String query, boolean admin) {
+		WebElement searchBox = driver.findElement(By.id("global-search-input"));
+		searchBox.clear();
+		searchBox.sendKeys(query);
+		if (!admin) {
+			searchBox.sendKeys(Keys.ENTER);
+		} else {
+			driver.findElement(By.id("admin-search-toggle")).click();
+			driver.findElement(By.id("search-admin-link")).click();
+		}
 	}
 
 	public void showCart() {
