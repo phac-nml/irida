@@ -95,16 +95,17 @@ test_galaxy() {
 if [ $# -eq 0 ];
 then
 	echo -e "Usage: $0 [-c|--clean-database-docker] [test_type] [Maven options]"
+	echo -e "Options:"
 	echo -e "\t-c|--clean-database-docker: Clean out test database ($JDBC_URL) and previous Docker containers ($GALAXY_DOCKER_NAME) before running tests."
-	echo -e "\t[test_type]:                One of the IRIDA test types {service, ui, rest, galaxy, unit, all}."
+	echo -e "\t[test_type]:                One of the IRIDA test types {service_testing, ui_testing, rest_testing, galaxy_testing, unit, all}."
 	echo -e "\t[Maven options]:            Additional options to pass to 'mvn'.  In particular, can pass '-Dtest.it=ca.corefacility.bioinformatics.irida.fully.qualified.name' to run tests from a particular class.\n"
 	echo -e "Example:\n"
-	echo -e "$0 -c service"
+	echo -e "$0 -c service_testing"
 	echo -e "\tThis will test the Service layer of IRIDA, cleaning up the test database/docker containers first.\n"
-	echo -e "$0 -c galaxy"
+	echo -e "$0 -c galaxy_testing"
 	echo -e "\tRuns the Galaxy integration tests for IRIDA"
 	echo -e "\tThis will also attempt to launch Galaxy Docker on $GALAXY_URL\n"
-	echo -e "$0 rest -Dtest.it=ca.corefacility.bioinformatics.irida.web.controller.test.integration.analysis.RESTAnalysisSubmissionControllerIT"
+	echo -e "$0 rest_testing -Dtest.it=ca.corefacility.bioinformatics.irida.web.controller.test.integration.analysis.RESTAnalysisSubmissionControllerIT"
 	echo -e "\tThis will run IRIDA REST API tests found in the class 'RESTAnalysisSubmissionControllerIT'. This will *not* clean up the previous tests database files."
 	exit 0
 fi
@@ -120,19 +121,19 @@ then
 fi
 
 case "$1" in
-	service)
+	service_testing)
 		shift
 		test_service $@
 	;;
-	ui)
+	ui_testing)
 		shift
 		test_ui $@
 	;;
-	rest)
+	rest_testing)
 		shift
 		test_rest $@
 	;;
-	galaxy)
+	galaxy_testing)
 		shift
 		test_galaxy $@
 	;;

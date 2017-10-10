@@ -176,19 +176,19 @@ IRIDA has 4 integration test profiles which splits the integration test suite in
 
 See the `<profiles>` section of the `pom.xml` file to see how the profiles are defined.
 
-As the integration tests simulate a running IRIDA installation, in order to run any integration test the requirements needed to run a production IRIDA server must be installed on your development machine.  To run a test profile, run the following command:
+As the integration tests simulate a running IRIDA installation, in order to run any integration test the requirements needed to run a production IRIDA server must be installed on your development machine.  The test profiles can each by run directly with Maven, but additional setup may be required for the tests to work properly.  To perform this setup and run all the tests, the `run-tests.sh` script can be used.  To run a test profile please run the following:
 
 ```bash
-mvn clean verify -P<TEST PROFILE>
-```
-
-The `ui_testing` profile requires additional parameters:
-
-```bash
-xvfb-run --auto-servernum --server-num=1 mvn clean verify -B -Pui_testing -Dwebdriver.chrome.driver=./src/main/webapp/node_modules/chromedriver/lib/chromedriver/chromedriver
+./run-tests.sh -c <TEST PROFILE>
 ```
 
 Similar to the unit tests, Maven will download all dependencies, run the tests, and present a report.  Integration tests will take much longer than unit tests.
+
+Additional Maven parameters can be passed to `run-tests.sh`.  In particular, individual test classes can be run using `-Dtest=ca.corefacilty.bioinformatics.irida.TheTestClass` (for unit tests) or `-Dtest.it=ca.corefacilty.bioinformatics.irida.TheTestClass` (for integration tests). For example:
+
+```bash
+./run-tests.sh -c rest_testing -Dtest.it=ca.corefacility.bioinformatics.irida.web.controller.test.integration.analysis.RESTAnalysisSubmissionControllerIT
+```
 
 #### Building IRIDA for release
 
