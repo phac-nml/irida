@@ -25,6 +25,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.hibernate.validator.constraints.Email;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -109,6 +110,10 @@ public class User extends IridaResourceSupport implements MutableIridaThing, Com
 	@LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
+
+	@NotAudited
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date lastLogin;
 
 	private String locale;
 
@@ -363,5 +368,13 @@ public class User extends IridaResourceSupport implements MutableIridaThing, Com
 
 	public void setSystemRole(Role systemRole) {
 		this.systemRole = systemRole;
+	}
+
+	public Date getLastLogin() {
+		return lastLogin;
+	}
+
+	public void setLastLogin(Date lastLogin) {
+		this.lastLogin = lastLogin;
 	}
 }
