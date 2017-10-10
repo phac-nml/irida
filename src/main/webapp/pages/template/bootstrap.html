@@ -70,66 +70,27 @@
 						</li>
 					</ul>
 				</li>
-				<li class="uib-dropdown" uib-dropdown="">
-					<a href="#" class="uib-dropdown-toggle" data-toggle="uib-dropdown" uib-dropdown-toggle="" role="button">
-						<span th:text="#{nav.main.users}">Users</span>
-						&nbsp;
-						<span class="caret"></span>
-					</a>
-					<ul class="uib-dropdown-menu" role="menu">
-						<th:block sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')">
-						<li role="menuitem">
-							<a href="/users" th:href="@{/users}" th:text="#{nav.main.users-list}">
-								List Users
-							</a>
-						</li>
-						<li role="menuitem">
-							<a href="#" th:href="@{/users/create}">
-								<span th:text="#{nav.main.add.user}">Create new user</span>
-							</a>
-						</li>
-						<li role="presentation" class="divider"></li>
-						</th:block>
-						<li role="menuitem">
-							<a href="#" th:href="@{/groups}" th:text="#{nav.main.groups-list}">
-								List Groups
-							</a>
-						</li>
-						<li role="menuitem">
-							<a href="#" th:href="@{/groups/create}">
-								<span th:text="#{nav.main.add.group}">Create new group</span>
-							</a>
-						</li>
-					</ul>
-				</li>
 			</ul>
+			<div class="navbar-right">
+			<form id="global-search" class="navbar-form navbar-left clearfix" th:action="@{/search}" method="GET">
+				<div class="search-wrapper">
+					<span class="icon"><i class="fa fa-fw fa-search"></i></span>
+					<input id="global-search-input" type="search" name="query" th:placeholder="#{nav.main.search}" th:value="${searchQuery}"/>
+					<div class="input-group-btn search-dd" sec:authorize="hasAnyRole('ROLE_ADMIN')">
+						<button type="button" id="admin-search-toggle" class="btn dropdown-toggle" data-toggle="dropdown"
+								aria-haspopup="true" aria-expanded="false">
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu dropdown-menu-right">
+							<li><a href="#" id="search-admin-link" th:text="#{nav.main.search.admin}">_Search all projects/samples_</a></li>
+						</ul>
+					</div>
+				</div>
+				<input id="admin-global-search" type="hidden" name="global" value="false"/>
+			</form>
+
 			<ul class="nav navbar-nav navbar-right">
-				<li sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_TECHNICIAN')" class="uib-dropdown" uib-dropdown="">
-					<a href="#" class="uib-dropdown-toggle" data-toggle="uib-dropdown" uib-dropdown-toggle="">
-						<span th:text="#{nav.main.admin}">Admin</span>
-						<span class="caret"></span>
-					</a>
-					<ul class="uib-dropdown-menu" role="menu">
-						<li sec:authorize="hasRole('ROLE_ADMIN')" role="menuitem">
-							<a href="#" th:href="@{/clients}" th:text="#{nav.main.clients}">
-								_Clients_
-							</a>
-						</li>
-						<li role="menuitem">
-							<a href="#" th:href="@{/sequencingRuns}" th:text="#{nav.main.sequencingruns}">
-								_Sequencing Runs_
-							</a>
-						</li>
-            			<li sec:authorize="hasRole('ROLE_ADMIN')" role="menuitem">
-							<a href="#" th:href="@{/export/ncbi}" th:text="#{nav.main.ncbi-uploads}">
-								_NCBI Exports_
-							</a>
-						</li>
-						<li sec:authorize="hasRole('ROLE_ADMIN')" role="menuitem">
-							<a href="#" th:href="@{/announcements/admin}" th:text="#{nav.main.announcement}">Announcements</a>
-						</li>
-					</ul>
-				</li>
+				
 				<li uib-dropdown="">
 					<a href="#" class="uib-dropdown-toggle" data-toggle="uib-dropdown"
 					   uib-dropdown-toggle="">
@@ -169,28 +130,97 @@
 				</li>
 				<li>
 					<button id="cart-show-btn" class="btn btn-link navbar-btn" ng-click="cart.show=!cart.show">
-						<span style="font-size: 20px" class="fa fa-fw fa-shopping-cart"></span>
+						<span class="fa fa-fw fa-shopping-cart nav-icons"></span>
 						<span id="cart-count" ng-hide="cart.count === 0" class="btn__badge" ng-bind="cart.count"></span>
 					</button>
 				</li>
-				<li>
-					<a href="#" th:href="@{/remote_api}" data:uib-tooltip="#{nav.main.remoteapis}" tooltip-placement="bottom">
-						<i class="fa fa-exchange fa-fw" aria-hidden="true"></i>
-					</a>
-				</li>
 
-				<li>
-					<a class="nav-gravatar" href="#" th:href="@{/users/current}" th:with="email=${#httpSession.getAttribute('CURRENT_USER_DETAILS') != null} ? ${#httpSession.getAttribute('CURRENT_USER_DETAILS').email} : 'anonymous@anonymous.ca'"
-					   data:uib-tooltip="#{nav.main.account}" tooltip-placement="bottom">
-						<img class="gravatar" th:src="${session.gravatar}"/>
+				<li uib-dropdown="">
+					<a href="#" class="uib-dropdown-toggle" data-toggle="uib-dropdown" uib-dropdown-toggle="">
+						<i class="fa fa-cog nav-icons" aria-hidden="true"></i>
+						<span class="caret"></span>
 					</a>
+					<ul class="uib-dropdown-menu" role="menu">
+						<th:block sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')">
+							<li role="menuitem">
+								<a href="/users" th:href="@{/users}" th:text="#{nav.main.users-list}">
+									List Users
+								</a>
+							</li>
+							<li role="menuitem">
+								<a href="#" th:href="@{/users/create}">
+									<span th:text="#{nav.main.add.user}">Create new user</span>
+								</a>
+							</li>
+							<li role="presentation" class="divider"></li>
+						</th:block>
+
+						<li role="menuitem">
+							<a href="#" th:href="@{/groups}" th:text="#{nav.main.groups-list}">
+								List Groups
+							</a>
+						</li>
+						<li role="menuitem">
+							<a href="#" th:href="@{/groups/create}">
+								<span th:text="#{nav.main.add.group}">Create new group</span>
+							</a>
+						</li>
+
+						<li role="separator" class="divider"></li>
+
+						<li role="menuitem">
+								<a href="#" th:href="@{/remote_api}" th:text="#{nav.main.remoteapis}">_Remote IRIDA Connections_</a>
+						</li>
+						
+						<th:block sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_TECHNICIAN')">
+							<li role="presentation" class="divider"></li>
+							
+								<li sec:authorize="hasRole('ROLE_ADMIN')" role="menuitem">
+									<a href="#" th:href="@{/clients}" th:text="#{nav.main.clients}">
+										_Clients_
+									</a>
+								</li>
+								<li role="menuitem">
+									<a href="#" th:href="@{/sequencingRuns}" th:text="#{nav.main.sequencingruns}">
+										_Sequencing Runs_
+									</a>
+								</li>
+								<li sec:authorize="hasRole('ROLE_ADMIN')" role="menuitem">
+									<a href="#" th:href="@{/export/ncbi}" th:text="#{nav.main.ncbi-uploads}">
+										_NCBI Exports_
+									</a>
+								</li>
+								<li sec:authorize="hasRole('ROLE_ADMIN')" role="menuitem">
+									<a href="#" th:href="@{/announcements/admin}" th:text="#{nav.main.announcement}">_Announcements_</a>
+								</li>
+							
+						</th:block>
+					</ul>
 				</li>
-				<li>
-					<a th:href="@{/logout}" href="/logout" data:uib-tooltip="#{nav.main.logout}" tooltip-placement="bottom">
-						<i class="fa fa-sign-out"></i>
-					</a>
+				<li uib-dropdown="">
+					<a class="nav-gravatar" href="#" 
+						th:with="email=${#httpSession.getAttribute('CURRENT_USER_DETAILS') != null} ? ${#httpSession.getAttribute('CURRENT_USER_DETAILS').email} : 'anonymous@anonymous.ca'"
+						data-toggle="uib-dropdown" uib-dropdown-toggle="">
+						<img class="gravatar" th:src="${session.gravatar}"/>
+						<span class="caret"></span>
+					 </a>
+					 <ul class="uib-dropdown-menu" role="menu">
+					 	<li role="menuitem">
+							<a href="#" th:href="@{/users/current}">
+								<span th:text="#{nav.main.account}">_My account_</span>
+								<i class="fa fa-user pull-right" aria-hidden="true"></i>
+							</a>
+						</li>
+						<li role="menuitem">
+							<a th:href="@{/logout}" href="/logout">
+							<span th:text="#{nav.main.logout}">_Logout_</span>
+								<i class="fa fa-sign-out pull-right"></i>
+							</a>
+						</li>
+					</ul>
 				</li>
 			</ul>
+		</div>
 		</div>
 		<!-- /.navbar-collapse -->
 	</div>
