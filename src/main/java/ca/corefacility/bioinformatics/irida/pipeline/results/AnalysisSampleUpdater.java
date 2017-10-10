@@ -23,7 +23,7 @@ public interface AnalysisSampleUpdater {
 	public void update(Collection<Sample> samples, AnalysisSubmission analysis);
 
 	/**
-	 * Gets the {@link AnalysisType} this updator service handles.
+	 * Gets the {@link AnalysisType} this updater service handles.
 	 * 
 	 * @return The {@link AnalysisType}.
 	 */
