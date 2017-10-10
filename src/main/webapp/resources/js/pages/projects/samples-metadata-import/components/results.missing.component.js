@@ -4,8 +4,11 @@
  * Sample names on the server.
  */
 import $ from 'jquery';
-import 'DataTables/datatables.js';
-import {dom, formatBasicHeaders} from '../../../../utilities/datatables.utilities';
+import '../../../../vendor/datatables/datatables';
+import {
+  dom,
+  formatBasicHeaders
+} from '../../../../utilities/datatables.utilities';
 
 const resultsMissingComponent = {
   templateUrl: 'results.missing.component.tmpl.html',

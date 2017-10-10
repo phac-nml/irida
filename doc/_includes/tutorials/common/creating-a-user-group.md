@@ -1,6 +1,6 @@
 All users are permitted to create user groups in IRIDA.
 
-After logging in, click on the **Users** menu and select "Create Group":
+After logging in, click on the **Settings** <i class="fa fa-cog"></i>  menu and select "Create Group":
 
 ![Create user group menu.]({{ site.baseurl }}/images/tutorials/common/users/create-user-group-menu.png)
 
