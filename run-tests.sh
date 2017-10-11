@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 cd `dirname $0`
 SCRIPT_DIR=`pwd`
 
@@ -48,9 +48,24 @@ check_dependencies() {
 }
 
 clean_database_docker() {
+	DB_ERR="Failed to clean/create new database named '$DATABASE_NAME'. Perhaps you need to grant permission first with 'echo \"grant all privileges on $DATABASE_NAME.* to '$DATABASE_USER'@'localhost';\" | mysql -u root -p'."
+
 	set -x
-	echo "drop database $DATABASE_NAME; create database $DATABASE_NAME;" | mysql -u$DATABASE_USER -p$DATABASE_PASSWORD
+	echo "drop database if exists $DATABASE_NAME; create database $DATABASE_NAME;" | mysql -u$DATABASE_USER -p$DATABASE_PASSWORD
+	if [ $? -ne 0 ];
+	then
+		set +x
+		echo $DB_ERR
+		exit 1
+	fi
 	mysql -u$DATABASE_USER -p$DATABASE_PASSWORD $DATABASE_NAME < $SCRIPT_DIR/ci/irida_latest.sql
+	if [ $? -ne 0 ];
+	then
+		set +x
+		echo $DB_ERR
+		exit 1
+	fi
+
 	if [ "$(docker ps | grep $GALAXY_DOCKER_NAME)" != "" ];
 	then
 		docker rm -f -v $GALAXY_DOCKER_NAME
@@ -58,25 +73,21 @@ clean_database_docker() {
 }
 
 test_service() {
-	set -x
 	clean_database_docker
 	mvn clean verify -B -Pservice_testing -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY $@
 }
 
 test_rest() {
-	set -x
 	clean_database_docker
 	mvn clean verify -Prest_testing -B $@
 }
 
 test_ui() {
-	set -x
 	clean_database_docker
 	xvfb-run --auto-servernum --server-num=1 mvn clean verify -B -Pui_testing -Dwebdriver.chrome.driver=$CHROME_DRIVER -Dirida.it.nosandbox=true -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY $@
 }
 
 test_galaxy() {
-	set -x
 	clean_database_docker
 	docker run -d -p $GALAXY_PORT:80 --name $GALAXY_DOCKER_NAME -v $TMP_DIRECTORY:$TMP_DIRECTORY -v $SCRIPT_DIR:$SCRIPT_DIR $GALAXY_DOCKER
 	mvn clean verify -B -Pgalaxy_testing -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dtest.galaxy.url=$GALAXY_URL -Dtest.galaxy.invalid.url=$GALAXY_INVALID_URL -Dtest.galaxy.invalid.url2=$GALAXY_INVALID_URL2 $@
@@ -84,7 +95,6 @@ test_galaxy() {
 }
 
 test_all() {
-	set -x
 	clean_database_docker
 	docker run -d -p $GALAXY_PORT:80 --name $GALAXY_DOCKER_NAME -v $TMP_DIRECTORY:$TMP_DIRECTORY -v $SCRIPT_DIR:$SCRIPT_DIR $GALAXY_DOCKER
 	xvfb-run --auto-servernum --server-num=1 mvn clean verify -B -Pall_testing -Dwebdriver.chrome.driver=$CHROME_DRIVER -Dirida.it.nosandbox=true -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dtest.galaxy.url=$GALAXY_URL -Dtest.galaxy.invalid.url=$GALAXY_INVALID_URL -Dtest.galaxy.invalid.url2=$GALAXY_INVALID_URL2 $@
