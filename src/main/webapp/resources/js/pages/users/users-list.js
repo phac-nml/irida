@@ -32,11 +32,18 @@ const config = Object.assign(tableConfig, {
       }
     },
     {
-      targets: [COLUMNS.CREATED_DATE, COLUMNS.LAST_LOGIN],
+      targets: [COLUMNS.CREATED_DATE],
+      render(data) {
+        const date = formatDate({ date: data });
+        return `<time>${date}</time>`;
+      }
+    },
+    {
+      targets: [COLUMNS.LAST_LOGIN],
       render(data) {
         if (data != null) {
           const date = formatDate({ date: data });
-          return `<time>${date}</time>`;
+          return `<time class="last-login">${date}</time>`;
         } else {
           return "";
         }
