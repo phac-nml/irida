@@ -41,7 +41,7 @@ public class UsersPage extends AbstractPage {
 
 	public List<String> getLastLogins() {
 		waitForAjax();
-		List<WebElement> loginDates = driver.findElements(By.xpath("//table[@id='projectsTable']/tbody//td[7]"));
+		List<WebElement> loginDates = driver.findElements(By.xpath("//table[@id='projectsTable']/tbody//td[6]"));
 
 		List<String> dates = loginDates.stream().map(d -> d.getText()).collect(Collectors.toList());
 
