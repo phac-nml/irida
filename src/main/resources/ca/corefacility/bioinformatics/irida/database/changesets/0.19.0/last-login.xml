@@ -8,7 +8,7 @@
     <changeSet id="remove-analysis-subclass" author="tom">
 
         <addColumn tableName="user">
-            <column name="last_login" type="datetime"/>
+            <column name="lastLogin" type="datetime"/>
         </addColumn>
 
     </changeSet>
