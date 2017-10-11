@@ -14,7 +14,7 @@ GALAXY_URL=http://localhost:$GALAXY_PORT
 GALAXY_INVALID_URL=http://localhost:48890
 GALAXY_INVALID_URL2=http://localhost:48891
 
-DO_CLEANUP=0
+DO_KILL_DOCKER=true
 
 check_dependencies() {
 	mvn --version 1>/dev/null 2>/dev/null
@@ -56,36 +56,30 @@ clean_database_docker() {
 	fi
 }
 
-test_unit() {
-	set -x
-	if [ $DO_CLEANUP -ne 0 ]; then clean_database_docker; fi
-	mvn clean test $@
-}
-
 test_service() {
 	set -x
-	if [ $DO_CLEANUP -ne 0 ]; then clean_database_docker; fi
+	clean_database_docker
 	mvn clean verify -B -Pservice_testing -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY $@
 }
 
 test_rest() {
 	set -x
-	if [ $DO_CLEANUP -ne 0 ]; then clean_database_docker; fi
+	clean_database_docker
 	mvn clean verify -Prest_testing -B $@
 }
 
 test_ui() {
 	set -x
-	if [ $DO_CLEANUP -ne 0 ]; then clean_database_docker; fi
+	clean_database_docker
 	xvfb-run --auto-servernum --server-num=1 mvn clean verify -B -Pui_testing -Dwebdriver.chrome.driver=./src/main/webapp/node_modules/chromedriver/lib/chromedriver/chromedriver -Dirida.it.nosandbox=true -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY $@
 }
 
 test_galaxy() {
 	set -x
-	if [ $DO_CLEANUP -ne 0 ]; then clean_database_docker; fi
+	clean_database_docker
 	docker run -d -p $GALAXY_PORT:80 --name $GALAXY_DOCKER_NAME -v $TMP_DIRECTORY:$TMP_DIRECTORY -v $SCRIPT_DIR:$SCRIPT_DIR $GALAXY_DOCKER
 	mvn clean verify -B -Pgalaxy_testing -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dtest.galaxy.url=$GALAXY_URL -Dtest.galaxy.invalid.url=$GALAXY_INVALID_URL -Dtest.galaxy.invalid.url2=$GALAXY_INVALID_URL2 $@
-	docker rm -f -v $GALAXY_DOCKER_NAME
+	if [ "$DO_KILL_DOCKER" = true ]; then docker rm -f -v $GALAXY_DOCKER_NAME; fi
 }
 
 ############
@@ -94,16 +88,17 @@ test_galaxy() {
 
 if [ $# -eq 0 ];
 then
-	echo -e "Usage: $0 [-c|--clean-database-docker] [test_type] [Maven options]"
+	echo -e "Usage: $0 [-d database] [--no-kill-docker] test_type [Maven options]"
 	echo -e "Options:"
-	echo -e "\t-c|--clean-database-docker: Clean out test database ($JDBC_URL) and previous Docker containers ($GALAXY_DOCKER_NAME) before running tests."
-	echo -e "\t[test_type]:                One of the IRIDA test types {service_testing, ui_testing, rest_testing, galaxy_testing, unit, all}."
-	echo -e "\t[Maven options]:            Additional options to pass to 'mvn'.  In particular, can pass '-Dtest.it=ca.corefacility.bioinformatics.irida.fully.qualified.name' to run tests from a particular class.\n"
+	echo -e "\t-d|--database:   Override name of database ($DATABASE_NAME) used for testing."
+	echo -e "\t--no-kill-docker: Do not kill Galaxy Docker after Galaxy tests have run."
+	echo -e "\ttest_type:     One of the IRIDA test types {service_testing, ui_testing, rest_testing, galaxy_testing, all}."
+	echo -e "\t[Maven options]: Additional options to pass to 'mvn'.  In particular, can pass '-Dtest.it=ca.corefacility.bioinformatics.irida.fully.qualified.name' to run tests from a particular class.\n"
 	echo -e "Example:\n"
-	echo -e "$0 -c service_testing"
+	echo -e "$0 service_testing"
 	echo -e "\tThis will test the Service layer of IRIDA, cleaning up the test database/docker containers first.\n"
-	echo -e "$0 -c galaxy_testing"
-	echo -e "\tRuns the Galaxy integration tests for IRIDA"
+	echo -e "$0 -d irida_test2 galaxy_testing"
+	echo -e "\tRuns the Galaxy integration tests for IRIDA, using a database named 'irida_test2'."
 	echo -e "\tThis will also attempt to launch Galaxy Docker on $GALAXY_URL\n"
 	echo -e "$0 rest_testing -Dtest.it=ca.corefacility.bioinformatics.irida.web.controller.test.integration.analysis.RESTAnalysisSubmissionControllerIT"
 	echo -e "\tThis will run IRIDA REST API tests found in the class 'RESTAnalysisSubmissionControllerIT'. This will *not* clean up the previous tests database files."
@@ -114,11 +109,21 @@ check_dependencies
 
 cd $SCRIPT_DIR
 
-if [ "$1" = "--clean-database-docker" -o "$1" = "-c" ];
-then
-	DO_CLEANUP=1
-	shift
-fi
+while [ "$1" = "--database" -o "$1" = "-d" -o "$1" = "--no-kill-docker" ];
+do
+	if [ "$1" = "--database" -o "$1" = "-d" ];
+	then
+		shift
+		DATABASE_NAME=$1
+		shift
+	elif [ "$1" = "--no-kill-docker" ];
+	then
+		DO_KILL_DOCKER=false
+		shift
+	else
+		shift
+	fi
+done
 
 case "$1" in
 	service_testing)
@@ -137,13 +142,8 @@ case "$1" in
 		shift
 		test_galaxy $@
 	;;
-	unit)
-		shift
-		test_unit $@
-	;;
 	all)
 		shift
-		test_unit
 		test_service $@
 		test_ui $@
 		test_rest $@
