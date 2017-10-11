@@ -77,7 +77,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(id = "removeBtnOk")
 	private WebElement removeBtnOK;
 
-	@FindBy(className = "merge-modal")
+	@FindBy(id = "merge-samples-modal")
 	private WebElement mergeModal;
 
 	@FindBy(id = "confirmMergeBtn")
@@ -224,7 +224,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public boolean isMergeBtnEnabled() {
-		return !mergeBtn.getAttribute("class").contains("disabled");
+		return mergeBtn.isEnabled();
 	}
 
 	public boolean isCopyBtnEnabled() {
@@ -317,9 +317,6 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		mergeBtn.click();
 		wait.until(ExpectedConditions.visibilityOf(mergeModal));
 		newMergeNameInput.sendKeys(newName);
-		// This wait is for 350 ms because there is a debounce of 300 ms on the input field in which
-		// time the AngularJS model on the input does not update - prevents flickering of input error warnings.
-		waitForTime(400);
 		mergeBtnOK.click();
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("merge-modal")));
 	}
@@ -381,7 +378,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public List<String> getSampleNamesOnPage() {
-		List<WebElement> sampleTDs = driver.findElements(By.className("sample-label"));
+		List<WebElement> sampleTDs = driver.findElements(By.cssSelector("tbody td:nth-child(2) a"));
 		List<String> names = new ArrayList<>();
 		names.addAll(sampleTDs.stream().map(WebElement::getText).collect(Collectors.toList()));
 		return names;

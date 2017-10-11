@@ -261,7 +261,7 @@ public class ProjectSamplesController {
 		List<Sample> locked = new ArrayList<>();
 
 		//check for locked samples
-		ids.stream().forEach(i -> {
+		ids.forEach(i -> {
 			ProjectSampleJoin join = sampleService.getSampleForProject(project, i);
 			samples.add(join.getObject());
 
@@ -270,6 +270,7 @@ public class ProjectSamplesController {
 			}
 		});
 
+		model.addAttribute("project", project);
 		model.addAttribute("samples", samples);
 		model.addAttribute("locked", locked);
 
@@ -970,17 +971,17 @@ public class ProjectSamplesController {
 	 *
 	 * @param projectId
 	 * 		Identifier for the current project
-	 * @param sampleName
+	 * @param newName
 	 * 		{@link String} name to validate.
 	 *
 	 * @return {@link Boolean} true if the name is unique.
 	 */
 	@RequestMapping("/projects/{projectId}/validate-sample-name")
 	@ResponseBody
-	public boolean validateNewSampleName(@PathVariable Long projectId, @RequestParam String sampleName) {
+	public boolean validateNewSampleName(@PathVariable Long projectId, @RequestParam String newName) {
 		Project project = projectService.read(projectId);
 		try {
-			sampleService.getSampleBySampleName(project, sampleName);
+			sampleService.getSampleBySampleName(project, newName);
 			return false;
 		} catch (EntityNotFoundException e) {
 			// If the sample is not found, then the name is good to go!

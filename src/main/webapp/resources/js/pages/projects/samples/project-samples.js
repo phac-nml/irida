@@ -10,6 +10,35 @@ import "./../../../vendor/datatables/datatables-buttons";
 import "./../../../vendor/datatables/datatables-rowSelection";
 import { CART } from "../../../utilities/events-utilities";
 import { GetOrderedColour } from "../../../utilities/colour.utilities";
+import SampleDropdownButton from "./SampleDropdownButton";
+
+/*
+ Initialize the sample tools menu.
+ */
+const SAMPLE_TOOL_ACTIONS = {
+  "cart-add-btn"() {
+    const selected = $dt.select.selected()[0];
+    /*
+    Selected data needs to be formatted into an object: {projectId => [sampleIds]}
+     */
+    const projects = {};
+    selected.forEach(item => {
+      projects[item.project] = projects[item.project] || [];
+      projects[item.project].push(item.sample);
+    });
+
+    /*
+    Update the cart with the new samples.
+     */
+    const event = new CustomEvent(CART.ADD, { detail: { projects } });
+    document.dispatchEvent(event);
+  }
+};
+
+const sampleToolsNodes = document.querySelectorAll(".sample-tool-btn");
+const SAMPLE_TOOL_BUTTONS = [...sampleToolsNodes].map(
+  elm => new SampleDropdownButton(elm, SAMPLE_TOOL_ACTIONS[elm.id])
+);
 
 /**
  * Reference to the currently selected associated projects.
@@ -89,7 +118,7 @@ const config = Object.assign({}, tableConfig, {
       return complete;
     }
   },
-  order: [[COLUMNS.MODIFIED_DATE, "asc"]],
+  order: [[COLUMNS.MODIFIED_DATE, "desc"]],
   rowId: "DT_RowId",
   buttons: ["selectAll", "selectNone"],
   language: {
@@ -157,32 +186,6 @@ const config = Object.assign({}, tableConfig, {
 
 const $dt = $table.DataTable(config);
 
-/*
-CART FUNCTIONALITY
- */
-const $cartBtn = $("#cart-add-btn");
-$cartBtn.on("click", function() {
-  const selected = $dt.select.selected()[0];
-  /*
-  Selected data needs to be formatted into an object: {projectId => [sampleIds]}
-   */
-  const projects = {};
-  selected.forEach(item => {
-    projects[item.project] = projects[item.project] || [];
-    projects[item.project].push(item.sample);
-  });
-
-  /*
-  Update the cart with the new samples.
-   */
-  const event = new CustomEvent(CART.ADD, { detail: { projects } });
-  document.dispatchEvent(event);
-});
-
-/*
-ASSOCIATED PROJECTS
- */
-
 // This allows for the use of checkboxes in the dropdown without
 // it closing on every click.
 const ASSOCIATED_INPUTS = $(".associated-cb input");
@@ -245,8 +248,67 @@ TABLE EVENT HANDLERS
 // Row selection events.
 $dt.on("selection-count.dt", function(e, count) {
   /*
-  Update the state of the cart button.
-  If there is nothing selected, disable the button.
+  Update the state of the buttons in the navbar.
    */
-  $cartBtn.prop("disabled", count === 0);
+  for (const btn of SAMPLE_TOOL_BUTTONS) {
+    btn.checkState(count);
+  }
+});
+
+/*
+Store reference to handle different modals.
+ */
+const MODALS = {
+  /**
+   * Hanle opening the merge modal.
+   * @param {string} url for the content of the modal
+   * @param {string} script url for the javascript needed for modal.
+   * @param {list} sampleIds list of sample ids to merge.
+   */
+  merge(url, script, sampleIds) {
+    const modal = $(this);
+
+    /*
+    Load the content for the dialogue based on the server response.
+     */
+    modal.load(`${url}?${$.param({ sampleIds })}`, function() {
+      if (typeof script !== "undefined") {
+        $.getScript(script);
+      }
+    });
+
+    /*
+    Handle the closing the modal
+     */
+    modal.on("samples:merged", function(e) {
+      $(this).modal("hide");
+      $dt.select.selectNone();
+      $dt.ajax.reload();
+    });
+  }
+};
+
+/*
+Handle MERGE through the modal window.
+ */
+$("#modal-wrapper").on("show.bs.modal", function(event) {
+  const wrapper = this;
+  /*
+  Determine which modal to open
+   */
+  const btn = $(event.relatedTarget);
+  const whichModal = btn.data("modal");
+  const url = btn.data("url");
+  const script = btn.data("script");
+
+  /*
+  Find the ids for the currently selected samples.
+   */
+  const selected = $dt.select.selected()[0];
+  const sampleIds = [];
+  for (let [key, value] of selected) {
+    sampleIds.push(value.sample);
+  }
+
+  MODALS[whichModal].call(wrapper, url, script, sampleIds);
 });
