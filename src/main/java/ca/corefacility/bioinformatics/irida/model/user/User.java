@@ -113,6 +113,7 @@ public class User extends IridaResourceSupport implements MutableIridaThing, Com
 
 	@NotAudited
 	@Temporal(TemporalType.TIMESTAMP)
+	@JsonIgnore
 	private Date lastLogin;
 
 	private String locale;
@@ -370,11 +371,8 @@ public class User extends IridaResourceSupport implements MutableIridaThing, Com
 		this.systemRole = systemRole;
 	}
 
+	@JsonIgnore
 	public Date getLastLogin() {
 		return lastLogin;
-	}
-
-	public void setLastLogin(Date lastLogin) {
-		this.lastLogin = lastLogin;
 	}
 }
