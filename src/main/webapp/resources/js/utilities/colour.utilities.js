@@ -8,7 +8,6 @@ export const getRandomColour = () =>
     .slice(-6)}`;
 
 const COLOURS = [
-  "RGB(176, 190, 197)",
   "#D50000",
   "#C51162",
   "#AA00FF",
