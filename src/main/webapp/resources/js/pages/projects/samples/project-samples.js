@@ -66,7 +66,6 @@ const config = Object.assign({}, tableConfig, {
   select: {
     allUrl: window.PAGE.urls.samples.sampleIds,
     allPostDataFn() {
-      console.log([...ASSOCIATED_PROJECTS.keys()]);
       return {
         associated: [...ASSOCIATED_PROJECTS.keys()]
       };
