@@ -725,7 +725,7 @@ public class ProjectSamplesController {
 	 * 		An id for a {@link Sample} to merge the other samples into.
 	 * @param sampleIds
 	 * 		A list of ids for {@link Sample} to merge together.
-	 * @param newName
+	 * @param sampleName
 	 * 		An optional new name for the {@link Sample}.
 	 * @param locale
 	 * 		The {@link Locale} of the current user.
@@ -735,7 +735,7 @@ public class ProjectSamplesController {
 	@RequestMapping(value = "/projects/{projectId}/ajax/samples/merge", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String, Object> ajaxSamplesMerge(@PathVariable Long projectId,
 			@RequestParam Long mergeSampleId, @RequestParam(value = "sampleIds[]") List<Long> sampleIds,
-			@RequestParam String newName, Locale locale) {
+			@RequestParam String sampleName, Locale locale) {
 		Map<String, Object> result = new HashMap<>();
 		int samplesMergeCount = sampleIds.size();
 		Project project = projectService.read(projectId);
@@ -743,9 +743,9 @@ public class ProjectSamplesController {
 		Sample mergeIntoSample = sampleService.read(mergeSampleId);
 		sampleIds.remove(mergeSampleId);
 
-		if (!Strings.isNullOrEmpty(newName)) {
+		if (!Strings.isNullOrEmpty(sampleName)) {
 			try {
-				mergeIntoSample.setSampleName(newName);
+				mergeIntoSample.setSampleName(sampleName);
 				mergeIntoSample = sampleService.update(mergeIntoSample);
 			} catch (ConstraintViolationException e) {
 				logger.error(e.getLocalizedMessage());
@@ -971,17 +971,17 @@ public class ProjectSamplesController {
 	 *
 	 * @param projectId
 	 * 		Identifier for the current project
-	 * @param newName
+	 * @param sampleName
 	 * 		{@link String} name to validate.
 	 *
 	 * @return {@link Boolean} true if the name is unique.
 	 */
 	@RequestMapping("/projects/{projectId}/validate-sample-name")
 	@ResponseBody
-	public boolean validateNewSampleName(@PathVariable Long projectId, @RequestParam String newName) {
+	public boolean validateNewSampleName(@PathVariable Long projectId, @RequestParam String sampleName) {
 		Project project = projectService.read(projectId);
 		try {
-			sampleService.getSampleBySampleName(project, newName);
+			sampleService.getSampleBySampleName(project, sampleName);
 			return false;
 		} catch (EntityNotFoundException e) {
 			// If the sample is not found, then the name is good to go!

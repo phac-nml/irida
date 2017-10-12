@@ -28,10 +28,10 @@
 						</label>
 					</div>
 					<div class="form-group">
-						<label th:text="#{project.samples.modal.merge.name-label}"></label>
+						<label for="sampleName" th:text="#{project.samples.modal.merge.name-label}"></label>
 						<small class="text-muted pull-right"
 							   th:utext="#{project.samples.modal.merge.name.info}"></small>
-						<input id="newName" name="newName" class="form-control" type="text"
+						<input id="sampleName" name="sampleName" class="form-control" type="text"
 							   data:validate-url="@{/projects/{projectId}/validate-sample-name(projectId=${project.getId()})}"
 							   th:placeholder="#{project.samples.modal.merge.name.placeholder}"
 							   data:msg-remote="#{project.samples.new.form.name.error.label-exists}"

@@ -18,7 +18,7 @@ const config = Object.assign({}, validationConfig, {
     $(element).valid();
   },
   rules: {
-    newName: {
+    sampleName: {
       minLengthIfPresent: 3,
       checkallowedchars: true,
       // Server validation to ensure that the label is not already used
