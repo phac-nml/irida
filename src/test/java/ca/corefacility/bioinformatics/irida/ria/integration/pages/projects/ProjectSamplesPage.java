@@ -83,7 +83,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(id = "confirmMergeBtn")
 	private WebElement mergeBtnOK;
 
-	@FindBy(id = "newName")
+	@FindBy(id = "sampleName")
 	private WebElement newMergeNameInput;
 
 	@FindBy(id = "copy-samples-modal")
