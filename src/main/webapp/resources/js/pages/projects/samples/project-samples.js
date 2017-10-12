@@ -21,13 +21,24 @@ const ASSOCIATED_PROJECTS = new Map();
  * Reference to the colour for a specific project.
  * @type {Map}
  */
-const PROJECT_COLOURS = new Map();
+const PROJECT_COLOURS = (function() {
+  const colourGenerator = new GetOrderedColour();
+  const colours = new Map();
+  $(".associated-cb input").each((i, elm) => {
+    const input = $(elm);
+    const colour = colourGenerator.getNext();
+    /*
+    Add some colour to the checkbox so it can easily be
+    associated with the name in the table
+     */
+    $(
+      `<div class="label-bar-color" style="margin: 0; background-color: ${colour}">&nbsp;</div>`
+    ).insertAfter(input);
 
-/**
- * Generator for the project colours
- * @type {GetOrderedColour}
- */
-const COLOUR_PICKER = new GetOrderedColour();
+    colours.set(Number(input.val()), colour);
+  });
+  return colours;
+})();
 
 /**
  *  Get the names and order of the table columns
@@ -122,19 +133,11 @@ const config = Object.assign({}, tableConfig, {
     {
       targets: [COLUMNS.PROJECT_NAME],
       render(data, type, full) {
-        /*
-        Each project gets its own colour bar next to the name of the project.
-         */
-        let colour;
-        if (PROJECT_COLOURS.has(data)) {
-          colour = PROJECT_COLOURS.get(data);
-        } else {
-          colour = COLOUR_PICKER.getNext();
-          PROJECT_COLOURS.set(data, colour);
-        }
         return createItemLink({
           url: `${window.TL.BASE_URL}projects/${full.projectId}`,
-          label: `<div class="label-bar-color" style="background-color: ${colour}">&nbsp;</div>${data}`,
+          label: `<div class="label-bar-color" style="background-color: ${PROJECT_COLOURS.get(
+            full.projectId
+          )}">&nbsp;</div>${data}`,
           classes: ["project-link"]
         });
       }
