@@ -79,7 +79,7 @@ test_service() {
 
 test_rest() {
 	clean_database_docker
-	mvn clean verify -Prest_testing -B $@
+	mvn clean verify -Prest_testing -B -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY $@
 }
 
 test_ui() {
