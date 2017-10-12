@@ -1,3 +1,7 @@
+/**
+ * @file This file is used by both project > users and project > user groups
+ * for handling user / group project roles.
+ */
 import $ from "jquery";
 import "./../../vendor/plugins/jquery/select2";
 import "./../../vendor/datatables/datatables";
