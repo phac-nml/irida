@@ -186,14 +186,21 @@ ASSOCIATED PROJECTS
 // it closing on every click.
 const ASSOCIATED_INPUTS = $(".associated-cb input");
 $(".associated-dd .dropdown-menu a").on("click", function(event) {
-  const li = $(this).parent();
-  const $target = $(event.currentTarget);
-  const $inp = $target.find("input");
-  const id = $inp.val();
   /*
-  This seems backwards, but the checkbox has not yet updated itself at this point.
+  Find the input element.
    */
-  const checked = !$inp.prop("checked");
+  const $inp = $(event.currentTarget).find("input");
+  const id = $inp.val();
+
+  /*
+  This is a little finicky.  If the user clicked the actual input element,
+  then get the checked property of the input.  Else the input has not yet changed
+  so get its opposite.
+   */
+  const checked =
+    event.target instanceof HTMLInputElement
+      ? $inp.prop("checked")
+      : !$inp.prop("checked");
 
   if (id === "ALL") {
     // Need to get all the ids and select all the checkboxes
@@ -207,13 +214,6 @@ $(".associated-dd .dropdown-menu a").on("click", function(event) {
         ASSOCIATED_PROJECTS.delete($elm.val());
       }
     });
-
-    // Update this input
-    setTimeout(function() {
-      $inp.prop("checked", checked);
-      // Update the DataTable
-      $dt.ajax.reload(null, false);
-    }, 0);
   } else {
     if (ASSOCIATED_PROJECTS.has(id)) {
       ASSOCIATED_PROJECTS.delete(id);
@@ -221,6 +221,7 @@ $(".associated-dd .dropdown-menu a").on("click", function(event) {
       ASSOCIATED_PROJECTS.set(id, true);
     }
   }
+
   setTimeout(function() {
     // Update the current checkbox
     $inp.prop("checked", checked);
