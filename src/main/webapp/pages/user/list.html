@@ -27,8 +27,8 @@
                 <th id="firstName-header" data:data="firstName" th:text="#{users.firstName}"></th>
                 <th id="email-header" data:data="email" th:text="#{users.email}"></th>
                 <th id="role-header" data:data="systemRole" th:text="#{users.role}"></th>
-                <th id="created-header" data:data="createdDate" th:text="#{users.created}"></th>
-                <th data:data="lastLogin" id="last-login-header" th:text="#{users.last-login}"></th>
+                <th class="dt-date" id="created-header" data:data="createdDate" th:text="#{users.created}"></th>
+                <th class="dt-date" data:data="lastLogin" id="last-login-header" th:text="#{users.last-login}"></th>
             </tr>
             </thead>
             <tbody id="user-table-body"></tbody>
