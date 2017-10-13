@@ -28,6 +28,30 @@ exports.devServer = ({ host, port, proxy } = {}) => ({
 });
 
 /**
+ * Compile ES6+ code to current browser compatible JavaScript
+ * @returns {{module: {rules: *[]}}}
+ */
+exports.loadJavaScript = () => ({
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        loader: "babel-loader",
+        exclude: /node_modules/,
+        options: {
+          // Enable caching for improved performance during
+          // development.
+          // It uses default OS directory by default. If you need
+          // something more custom, pass a path to it.
+          // I.e., { cacheDirectory: '<path>' }
+          cacheDirectory: true
+        }
+      }
+    ]
+  }
+});
+
+/**
  * Enforce eslint standard are enforced.
  * @returns {{module: {rules: *[]}}}
  */

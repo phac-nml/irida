@@ -17,23 +17,7 @@ const commonConfig = merge([
       children: false,
       cached: false
     },
-    module: {
-      rules: [
-        {
-          test: /\.js$/,
-          loader: "babel-loader",
-          exclude: /node_modules/,
-          options: {
-            // Enable caching for improved performance during
-            // development.
-            // It uses default OS directory by default. If you need
-            // something more custom, pass a path to it.
-            // I.e., { cacheDirectory: '<path>' }
-            cacheDirectory: true
-          }
-        }
-      ]
-    },
+
     externals: {
       // require('jquery') is external and available
       //  on the global var jQuery
@@ -46,6 +30,7 @@ const commonConfig = merge([
       filename: "[name].bundle.js"
     }
   },
+  parts.loadJavaScript(),
   parts.loadCSS({ exclude: /node_modules/ })
 ]);
 
