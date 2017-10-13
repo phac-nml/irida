@@ -481,7 +481,7 @@ public class UsersController {
 			String systemRole = messageSource.getMessage(roleMessageName, null, locale);
 
 			usersData.add(new DTUser(user.getId(), user.getUsername(), user.getFirstName(), user.getLastName(), user.getEmail(), systemRole,
-					user.getCreatedDate(), user.getModifiedDate()));
+					user.getCreatedDate(), user.getModifiedDate(), user.getLastLogin()));
 		}
 
 		return new DataTablesResponse(params, userPage, usersData);
