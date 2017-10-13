@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -43,6 +44,22 @@ public class UsersPageIT extends AbstractIridaUIITChromeDriver {
 		usersPage.clickUsernameHeader();
 		List<WebElement> desElements = usersPage.getUsernameColumn();
 		assertTrue("Projects page is sorted Descending", checkSortedDescending(desElements));
+	}
+
+	@Test
+	public void testLastLogin() {
+		usersPage.goTo();
+
+		List<String> lastLogins = usersPage.getLastLogins();
+		List<String> definedDates = lastLogins.stream().filter(d -> !d.isEmpty()).collect(Collectors.toList());
+		assertEquals("Should be 1 last login", 1, definedDates.size());
+
+		LoginPage.loginAsAdmin(driver());
+		usersPage.goTo();
+
+		lastLogins = usersPage.getLastLogins();
+		definedDates = lastLogins.stream().filter(d -> !d.isEmpty()).collect(Collectors.toList());
+		assertEquals("Should be 2 last logins", 2, definedDates.size());
 	}
 
 	/**
