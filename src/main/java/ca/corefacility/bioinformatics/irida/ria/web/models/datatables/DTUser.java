@@ -16,9 +16,10 @@ public class DTUser implements DataTablesResponseModel {
 	private String systemRole;
 	private Date createdDate;
 	private Date modifiedDate;
+	private Date lastLogin;
 
-	public DTUser(Long id, String username, String firstName, String lastName, String email, String systemRole, Date createdDate,
-			Date modifiedDate) {
+	public DTUser(Long id, String username, String firstName, String lastName, String email, String systemRole,
+			Date createdDate, Date modifiedDate, Date lastLogin) {
 		this.id = id;
 		this.username = username;
 		this.firstName = firstName;
@@ -27,6 +28,7 @@ public class DTUser implements DataTablesResponseModel {
 		this.systemRole = systemRole;
 		this.createdDate = createdDate;
 		this.modifiedDate = modifiedDate;
+		this.lastLogin = lastLogin;
 	}
 
 	@Override
@@ -60,5 +62,9 @@ public class DTUser implements DataTablesResponseModel {
 
 	public Date getModifiedDate() {
 		return modifiedDate;
+	}
+
+	public Date getLastLogin() {
+		return lastLogin;
 	}
 }
