@@ -157,16 +157,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_USER')")
-	public Page<Project> search(Specification<Project> specification, int page, int size, Direction order,
-			String... sortProperties) {
-		return super.search(specification, page, size, order, sortProperties);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadProject')")
 	public Page<Revision<Integer, Project>> findRevisions(Long id, Pageable pageable)
 			throws EntityRevisionDeletedException {

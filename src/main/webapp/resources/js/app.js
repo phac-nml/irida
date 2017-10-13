@@ -2,14 +2,16 @@ import $ from "jquery";
 import angular from "angular";
 import _ from "lodash";
 import "./modules/cart/irida.cart";
+import { IridaSession } from "./services/IridaSession";
+import "./pages/search/irida.search";
 
 const deps = _.union(window.dependencies || [], [
   "ngAria",
   "ngAnimate",
   "ui.bootstrap",
-  "irida.session",
   "irida.notifications",
-  "irida.cart"
+  "irida.cart",
+  IridaSession
 ]);
 
 const app = angular.module("irida", deps).config($httpProvider => {
