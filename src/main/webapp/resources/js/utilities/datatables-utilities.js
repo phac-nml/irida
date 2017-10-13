@@ -70,10 +70,10 @@ export function createDownloadLink({ url, title }) {
   anchor.classList.add("btn", "btn-default", "download-btn");
   anchor.download = title;
   anchor.setAttribute("href", url);
+  addTooltip({ dom: anchor, title: "Download" });
 
   const icon = createIcon({ icon: ICONS.download, fixed: true });
-  const tooltiped = addTooltip({ dom: icon, title: "Download" });
-  anchor.append(tooltiped);
+  anchor.append(icon);
   return anchor;
 }
 
@@ -82,7 +82,7 @@ export function createDownloadLink({ url, title }) {
  * @param {object} data attributes need to delete an item.
  * @return {object} DOM element for button.
  */
-export function createDeleteBtn(data = {}) {
+export function createDeleteBtn(data = { title: "Delete" }) {
   const btn = document.createElement("button");
   btn.classList.add("btn", "btn-default", "remove-btn");
   // Add any required data attributes.
