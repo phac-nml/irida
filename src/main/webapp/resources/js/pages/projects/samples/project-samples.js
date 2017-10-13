@@ -1,4 +1,5 @@
 import $ from "jquery";
+import chroma from "chroma-js";
 import {
   createItemLink,
   generateColumnOrderInfo,
@@ -9,7 +10,6 @@ import "./../../../vendor/datatables/datatables";
 import "./../../../vendor/datatables/datatables-buttons";
 import "./../../../vendor/datatables/datatables-rowSelection";
 import { CART } from "../../../utilities/events-utilities";
-import { GetOrderedColour } from "../../../utilities/colour.utilities";
 import SampleDropdownButton from "./SampleDropdownButton";
 
 /*
@@ -51,11 +51,10 @@ const ASSOCIATED_PROJECTS = new Map();
  * @type {Map}
  */
 const PROJECT_COLOURS = (function() {
-  const colourGenerator = new GetOrderedColour();
   const colours = new Map();
   $(".associated-cb input").each((i, elm) => {
     const input = $(elm);
-    const colour = colourGenerator.getNext();
+    const colour = chroma.random();
     /*
     Add some colour to the checkbox so it can easily be
     associated with the name in the table

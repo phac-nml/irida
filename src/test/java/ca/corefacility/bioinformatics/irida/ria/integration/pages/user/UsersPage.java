@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.user;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -36,6 +37,15 @@ public class UsersPage extends AbstractPage {
 	public List<WebElement> getUsernameColumn() {
 		waitForAjax();
 		return driver.findElements(By.xpath("//table[@id='projectsTable']/tbody//td[2]"));
+	}
+
+	public List<String> getLastLogins() {
+		waitForAjax();
+		List<WebElement> loginDates = driver.findElements(By.className("last-login"));
+
+		List<String> dates = loginDates.stream().map(d -> d.getText()).collect(Collectors.toList());
+
+		return dates;
 	}
 	
 	private void waitForAjax() {
