@@ -17,6 +17,7 @@ Changes
 * [Developer]: Upgraded to v5.3.0 of `npm`, and changed build process to use `yarn`.
 * [API]: NCBI uploads automatically retry after failure.
 * [UI]: Added global project and sample search from top toolbar.
+* [UI]: Changed user's modified date to "Last Login" in user list.
 
 0.17.0 to 0.18.0
 ----------------
