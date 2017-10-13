@@ -29,16 +29,7 @@ import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.github.dandelion.datatables.core.export.ExportUtils;
-import com.github.dandelion.datatables.core.export.ReservedFormat;
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
+import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -61,6 +52,11 @@ import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProjectS
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
+import com.github.dandelion.datatables.core.export.ExportUtils;
+import com.github.dandelion.datatables.core.export.ReservedFormat;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 @Controller
 public class ProjectSamplesController {
@@ -456,7 +452,7 @@ public class ProjectSamplesController {
 			@RequestParam(value = "name", required = false, defaultValue = "") String sampleNameSearch,
 			@RequestParam(required = false, defaultValue = "") String organismSearch,
 			@RequestParam(value = "minDate", required = false, defaultValue = "") Long startDateSearch,
-			@RequestParam(value = "endDate", required = false, defaultValue = "") Long endDateSearch) {
+			@RequestParam(value = "endDate", required = false, defaultValue = "") Long endDateSearch, Locale locale) {
 		List<Project> projects = new ArrayList<>();
 		// Check to see if any associated projects need to be added to the query.
 		if (!associated.isEmpty()) {
@@ -474,8 +470,9 @@ public class ProjectSamplesController {
 
 		// Create DataTables representation of the page.
 		List<DataTablesResponseModel> models = new ArrayList<>();
-		models.addAll(page.getContent().stream().map(this::buildProjectSamplDataTablesModel)
-				.collect(Collectors.toList()));
+		for (ProjectSampleJoin psj : page.getContent()) {
+			models.add(buildProjectSampleDataTablesModel(psj, locale));
+		}
 		return new DataTablesResponse(params, page, models);
 	}
 
@@ -487,14 +484,21 @@ public class ProjectSamplesController {
 	 *            {@link ProjectSampleModel} from
 	 * @return a newly constructed {@link ProjectSampleModel}
 	 */
-	private DTProjectSamples buildProjectSamplDataTablesModel(ProjectSampleJoin sso) {
+	private DTProjectSamples buildProjectSampleDataTablesModel(ProjectSampleJoin sso, Locale locale) {
 		Project p = sso.getSubject();
 		
 		List<QCEntry> qcEntriesForSample = sampleService.getQCEntriesForSample(sso.getObject());
-		
-		//add the project settings for the qc entries
-		qcEntriesForSample.forEach(q -> q.addProjectSettings(p));
-		return new DTProjectSamples(sso, qcEntriesForSample);
+		List<String> list = new ArrayList<>();
+		for (QCEntry q : qcEntriesForSample) {
+			q.addProjectSettings(p);
+			String status = q.getStatus()
+					.toString();
+			if (!status.equals("UNAVAILABLE")) {
+				list.add(
+						messageSource.getMessage("sample.files.qc." + q.getType(), new Object[] { q.getMessage() }, locale));
+			}
+		}
+		return new DTProjectSamples(sso, list);
 	}
 
 	/**

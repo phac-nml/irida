@@ -1,7 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.web.models.datatables;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -20,10 +22,10 @@ public class DTProjectSamples implements DataTablesResponseModel {
 	private String projectName;
 	private Date createdDate;
 	private Date modifiedDate;
-	private List<QCEntry> qcEntries;
+	private List<String> qcEntries;
 	private boolean owner;
 
-	public DTProjectSamples(ProjectSampleJoin projectSampleJoin, List<QCEntry> qcEntries) {
+	public DTProjectSamples(ProjectSampleJoin projectSampleJoin, List<String> qcEntries) {
 		Project project = projectSampleJoin.getSubject();
 		Sample sample = projectSampleJoin.getObject();
 
@@ -66,7 +68,7 @@ public class DTProjectSamples implements DataTablesResponseModel {
 		return modifiedDate;
 	}
 
-	public List<QCEntry> getQcEntries() {
+	public List<String> getQcEntries() {
 		return qcEntries;
 	}
 	
