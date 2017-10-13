@@ -1,0 +1,38 @@
+// Used when a colour bar needs to be displayed next to a label
+// E.g. on the project samples page for a unique colour for each project.
+.label-bar-color {
+  width: 5px;
+  display: inline-block;
+  background-color: RGB(176, 190, 197);
+  margin-left: -15px;
+  margin-right: 5px;
+}
+
+.row-warning {
+  background-color: #f2dede !important;
+}
+
+.popover-list {
+  list-style: none;
+  padding: 0;
+
+  li {
+    padding-left: 1.3em;
+  }
+
+  li.error:before {
+    content: "\f00d"; /* FontAwesome Unicode for X */
+    font-family: FontAwesome;
+    color: #d9534f;
+    display: inline-block;
+    margin-left: -1.3em;
+    width: 1.3em;
+  }
+}
+
+.qc-warning-wrapper {
+  position: absolute;
+  top: 15px;
+  left: 0;
+  color: #D9534F;
+}

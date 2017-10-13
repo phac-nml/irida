@@ -81,20 +81,6 @@ table.selectable tbody tr.selected td {
   line-height: 2em;
 }
 
-.row-warning {
-  background-color: #f2dede !important;
-  a.sample-label {
-    position: relative;
-    &:before {
-      font-family: FontAwesome;
-      content: "\f071";
-      color: #000000;
-      position: absolute;
-      left: -5px;
-    }
-  }
-}
-
 .locked-sample {
   a.sample-label {
     position: relative;
