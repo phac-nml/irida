@@ -55,6 +55,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 * The property name to use for passwords on the {@link User} class.
 	 */
 	private static final String PASSWORD_PROPERTY = "password";
+	private static final String LAST_LOGIN_PROPERTY = "lastLogin";
 	/**
 	 * The property name to use for expired credentials on the {@link User}
 	 * class.
@@ -231,6 +232,9 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 			} else {
 				throw new ConstraintViolationException(violations);
 			}
+		}
+		if (properties.containsKey(LAST_LOGIN_PROPERTY)) {
+			throw new IllegalArgumentException("Cannot update last login property");
 		}
 
 		return super.updateFields(uid, properties);
