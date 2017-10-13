@@ -74,7 +74,7 @@ exports.lintJavaScript = () => ({
  */
 exports.loadCSS = () => ({
   module: {
-    rules: [{ test: /\.css$/, loader: "style-loader!css-loader" }]
+    rules: [{ test: /\.css$/, exclude: /node_modules/, loader: "style-loader!css-loader" }]
   }
 });
 

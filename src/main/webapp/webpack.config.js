@@ -31,7 +31,7 @@ const commonConfig = merge([
     }
   },
   parts.loadJavaScript(),
-  parts.loadCSS({ exclude: /node_modules/ })
+  parts.loadCSS()
 ]);
 
 /* ======================
