@@ -135,7 +135,7 @@ const config = Object.assign({}, tableConfig, {
       return complete;
     }
   },
-  order: [[COLUMNS.MODIFIED_DATE, "asc"]],
+  order: [[COLUMNS.MODIFIED_DATE, "desc"]],
   rowId: "DT_RowId",
   buttons: ["selectAll", "selectNone"],
   language: {
