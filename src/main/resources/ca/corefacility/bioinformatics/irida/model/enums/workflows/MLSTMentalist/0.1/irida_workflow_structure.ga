@@ -1,0 +1,106 @@
+{
+    "a_galaxy_workflow": "true",
+    "annotation": "",
+    "format-version": "0.1",
+    "name": "mentalist_call",
+    "steps": {
+        "0": {
+            "annotation": "",
+            "content_id": null,
+            "id": 0,
+            "input_connections": {},
+            "inputs": [
+                {
+                    "description": "",
+                    "name": "Input FastQ"
+                }
+            ],
+            "label": null,
+            "name": "Input dataset collection",
+            "outputs": [],
+            "position": {
+                "left": 200,
+                "top": 200
+            },
+            "tool_errors": null,
+            "tool_id": null,
+            "tool_state": "{\"collection_type\": \"list:paired\", \"name\": \"sequence_reads_paired\"}",
+            "tool_version": null,
+            "type": "data_collection_input",
+            "uuid": "15e83043-0952-4312-8368-cc660187ea25",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "output",
+                    "uuid": "b63ef638-2157-4ebb-89f6-91616a5afe63"
+                }
+            ]
+        },
+        "1": {
+            "annotation": "",
+            "content_id": "testtoolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_call/0.1.2",
+            "id": 1,
+            "input_connections": {
+                "input_fastqs": {
+                    "id": 0,
+                    "output_name": "output"
+                }
+            },
+            "inputs": [
+                {
+                    "description": "runtime parameter for tool MentaLiST MLST Analysis",
+                    "name": "kmer_db"
+                },
+                {
+                    "description": "runtime parameter for tool MentaLiST MLST Analysis",
+                    "name": "input_fastqs"
+                },
+                {
+                    "description": "runtime parameter for tool MentaLiST MLST Analysis",
+                    "name": "sample_name"
+                }
+            ],
+            "label": null,
+            "name": "MentaLiST MLST Analysis",
+            "outputs": [
+                {
+                    "name": "output_file",
+                    "type": "tsv"
+                }
+            ],
+            "position": {
+                "left": 475,
+                "top": 200
+            },
+            "post_job_actions": {
+                "RenameDatasetActionoutput_file": {
+                    "action_arguments": {
+                        "newname": "mentalist_call.tsv"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "output_file"
+                }
+            },
+            "tool_errors": null,
+            "tool_id": "testtoolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_call/0.1.2",
+            "tool_shed_repository": {
+                "changeset_revision": "e038a8823a99",
+                "name": "mentalist",
+                "owner": "dfornika",
+                "tool_shed": "testtoolshed.g2.bx.psu.edu"
+            },
+            "tool_state": "{\"__page__\": 0, \"kmer_db\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__rerun_remap_job_id__\": null, \"sample_name\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"discard_threshold\": \"\\\"0.3\\\"\", \"input_fastqs\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"quick_filter\": \"\\\"false\\\"\", \"external_counter\": \"\\\"false\\\"\", \"skip_length\": \"\\\"1\\\"\"}",
+            "tool_version": "0.1.2",
+            "type": "tool",
+            "uuid": "2e5bda2a-4c8d-47d6-997c-d1506b09b736",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "output_file",
+                    "uuid": "03bdc978-e927-41d2-986b-736e21cce8fd"
+                }
+            ]
+        }
+    },
+    "uuid": "beee0266-c141-45ef-8d3e-9c471a90de88"
+}

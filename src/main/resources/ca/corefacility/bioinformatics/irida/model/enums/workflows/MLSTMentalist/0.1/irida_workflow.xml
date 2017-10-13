@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<iridaWorkflow>
+    <id>beee0266-c141-45ef-8d3e-9c471a90de88</id>
+    <name>MLSTMentalist</name>
+    <version>0.1</version>
+    <analysisType>mlst-mentalist</analysisType>
+    <inputs>
+        <sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
+        <requiresSingleSample>true</requiresSingleSample>
+    </inputs>
+    <parameters>
+        <parameter name="kmer_db" defaultValue="campylobacter_jejuni_pubmlst_k31">
+            <toolParameter
+                    toolId="testtoolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_call/0.1.2"
+                    parameterName="kmer_db" />
+        </parameter>
+        <parameter name="discard_threshold" defaultValue="0.3">
+            <toolParameter
+                    toolId="testtoolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_call/0.1.2"
+                    parameterName="discard_threshold" />
+        </parameter>
+        <parameter name="skip_length" defaultValue="1">
+            <toolParameter
+                    toolId="testtoolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_call/0.1.2"
+                    parameterName="skip_length" />
+        </parameter>
+    </parameters>
+    <outputs>
+        <output name="mlst-result" fileName="mentalist_call.tsv" />
+    </outputs>
+    <toolRepositories>
+        <repository>
+            <name>mentalist</name>
+            <owner>dfornika</owner>
+            <url>http://testtoolshed.g2.bx.psu.edu/</url>
+            <revision>e038a8823a99</revision>
+        </repository>
+    </toolRepositories>
+</iridaWorkflow>
