@@ -1,6 +1,37 @@
 /**
 This is a new files to replace datatables-custom.scss after all DataTables updated
  */
+/*
+Use FontAweseom as the sorting controllers.
+ */
+table.dataTable thead th {
+  position: relative;
+  background-image: none !important;
+}
+
+table.dataTable thead th.sorting:after,
+table.dataTable thead th.sorting_asc:after,
+table.dataTable thead th.sorting_desc:after {
+  position: absolute;
+  display: block;
+  top: 50%;
+  transform: translateY(-50%);
+  content: "";
+  font-family: FontAwesome;
+}
+
+table.dataTable thead th.sorting:after {
+  content: "\f0dc";
+  color: #ddd;
+  font-size: 0.8em;
+  padding-top: 0.12em;
+}
+table.dataTable thead th.sorting_asc:after {
+  content: "\f0de";
+}
+table.dataTable thead th.sorting_desc:after {
+  content: "\f0dd";
+}
 
 .dataTable {
   th {
@@ -31,10 +62,65 @@ This is a new files to replace datatables-custom.scss after all DataTables updat
   justify-content: center;
 }
 
+// Styles for a toolbar above the table
+.dt-btn-toolbar {
+  margin-bottom: 1rem;
+  margin-left: 0 !important;
+
+  // Overriding dropdown placement.
+  .dropdown-menu {
+    position: absolute !important;
+    top: 30px !important;
+    left: 0;
+
+    .checkbox {
+      padding-left: 10px;
+    }
+
+    li > ul {
+      max-height: 300px;
+      overflow-y: scroll;
+      list-style: none;
+      margin: 0;
+
+      li {
+        margin-left: -40px !important;
+        line-height: 20px;
+        &:hover {
+          background-color: #f9f9f9 !important;
+        }
+      }
+
+      a {
+        background-color: #ffffff;
+        box-sizing: border-box;
+        clear: both;
+        color: rgb(38, 38, 38);
+        display: block;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 20px;
+        list-style: none outside none;
+        outline: rgb(38, 38, 38) none 0px;
+        padding: 3px 20px;
+        text-align: left;
+        text-decoration: none;
+        text-decoration-color: rgb(38, 38, 38);
+        text-decoration-style: solid;
+        white-space: nowrap;
+        &:hover {
+          background-color: rgb(245, 245, 245);
+        }
+      }
+    }
+  }
+}
+
 // New custom wrapper for updated tables
 // This is set in JS in datatable-utilities.js#dom
 .dt-table-wrapper {
   border: 1px solid rgba(224, 227, 232, 1);
+  margin-bottom: 1rem;
 }
 
 // Set up the filter to be pulled to the right and accept flex box
@@ -73,4 +159,14 @@ This is a new files to replace datatables-custom.scss after all DataTables updat
 
 .dt-date {
   width: 200px !important;
+}
+
+// Used when a colour bar needs to be displayed next to a label
+// E.g. on the project samples page for a unique colour for each project.
+.label-bar-color {
+  width: 5px;
+  display: inline-block;
+  background-color: RGB(176, 190, 197);
+  margin-left: -15px;
+  margin-right: 5px;
 }

@@ -104,7 +104,10 @@
   function selectAllRows(dt) {
     const ctx = dt.settings()[0];
     // Try storing to local storage to prevent calling the server each time.
-    const postPromise = $.post(ctx._select.allUrl).then(response => {
+    const postPromise = $.post(
+      ctx._select.allUrl,
+      ctx._select.allPostDataFn()
+    ).then(response => {
       if (typeof ctx._select.formatSelectAllResponseFn === "function") {
         // Let the user handle formatting response.
         return ctx._select.formatSelectAllResponseFn(response);

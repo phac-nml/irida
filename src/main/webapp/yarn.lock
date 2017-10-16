@@ -1221,6 +1221,10 @@ chokidar@1.7.0, chokidar@^1.0.0:
   optionalDependencies:
     fsevents "^1.0.0"
 
+chroma-js@^1.3.4:
+  version "1.3.4"
+  resolved "https://registry.yarnpkg.com/chroma-js/-/chroma-js-1.3.4.tgz#93a7c19f287960285cc3fdebb205b8ea1a0f04f9"
+
 chromedriver@2.24.1:
   version "2.24.1"
   resolved "https://registry.yarnpkg.com/chromedriver/-/chromedriver-2.24.1.tgz#e7fb2e2a6cd6ae754ef0ae11f0813ca2bd993e92"

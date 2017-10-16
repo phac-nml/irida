@@ -101,7 +101,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	@Ignore
 	public void testAssociatedProjects() {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);

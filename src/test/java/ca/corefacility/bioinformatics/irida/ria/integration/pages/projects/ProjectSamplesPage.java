@@ -35,7 +35,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(id = "associated-btn")
 	private WebElement associatedProjectMenuBtn;
 
-	@FindBy(css = "#associated-dropdown")
+	@FindBy(id = "associated-dropdown")
 	private WebElement associatedDropdown;
 
 	@FindBy(className = "associated-cb")

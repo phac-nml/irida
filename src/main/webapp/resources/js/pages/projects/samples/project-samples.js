@@ -1,4 +1,5 @@
 import $ from "jquery";
+import chroma from "chroma-js";
 import {
   createItemLink,
   generateColumnOrderInfo,
@@ -11,15 +12,45 @@ import "./../../../vendor/datatables/datatables-rowSelection";
 import { CART } from "../../../utilities/events-utilities";
 
 /**
+ * Reference to the currently selected associated projects.
+ * @type {Map}
+ */
+const ASSOCIATED_PROJECTS = new Map();
+
+/**
+ * Reference to the colour for a specific project.
+ * @type {Map}
+ */
+const PROJECT_COLOURS = (function() {
+  const colours = new Map();
+  $(".associated-cb input").each((i, elm) => {
+    const input = $(elm);
+    const colour = chroma.random();
+    /*
+    Add some colour to the checkbox so it can easily be
+    associated with the name in the table
+     */
+    $(
+      `<div class="label-bar-color" style="margin: 0; background-color: ${colour}">&nbsp;</div>`
+    ).insertAfter(input);
+
+    colours.set(Number(input.val()), colour);
+  });
+  return colours;
+})();
+
+/**
  *  Get the names and order of the table columns
  * @type {Object}
  */
 const COLUMNS = generateColumnOrderInfo();
+
 /**
  * Get a handle on the table
  * @type {*|jQuery|HTMLElement}
  */
 const $table = $("#samplesTable");
+
 /**
  * Get access the the url for the tables data.
  * @type {string}
@@ -27,11 +58,28 @@ const $table = $("#samplesTable");
 const url = $table.data("url");
 
 const config = Object.assign({}, tableConfig, {
-  ajax: url,
+  ajax: {
+    url,
+    data(d) {
+      /*
+      Add any extra parameters that need to be passed to the server
+      here.
+       */
+      if (ASSOCIATED_PROJECTS.size > 0) {
+        // Add a list of ids for currently visible associated projects
+        d.associated = Array.from(ASSOCIATED_PROJECTS.keys());
+      }
+    }
+  },
   stateSave: true,
   deferRender: true,
   select: {
     allUrl: window.PAGE.urls.samples.sampleIds,
+    allPostDataFn() {
+      return {
+        associated: [...ASSOCIATED_PROJECTS.keys()]
+      };
+    },
     formatSelectAllResponseFn(response) {
       // This is a callback function used by datatables-select
       // to format the server response when selectAll is clicked.
@@ -86,7 +134,10 @@ const config = Object.assign({}, tableConfig, {
       render(data, type, full) {
         return createItemLink({
           url: `${window.TL.BASE_URL}projects/${full.projectId}`,
-          label: data
+          label: `<div class="label-bar-color" style="background-color: ${PROJECT_COLOURS.get(
+            full.projectId
+          )}">&nbsp;</div>${data}`,
+          classes: ["project-link"]
         });
       }
     },
@@ -127,6 +178,66 @@ $cartBtn.on("click", function() {
    */
   const event = new CustomEvent(CART.ADD, { detail: { projects } });
   document.dispatchEvent(event);
+});
+
+/*
+ASSOCIATED PROJECTS
+ */
+
+// This allows for the use of checkboxes in the dropdown without
+// it closing on every click.
+const ASSOCIATED_INPUTS = $(".associated-cb input");
+$(".associated-dd .dropdown-menu a").on("click", function(event) {
+  /*
+  Find the input element.
+   */
+  const $inp = $(event.currentTarget).find("input");
+  const id = $inp.val();
+
+  /*
+  This is a little finicky.  If the user clicked the actual input element,
+  then get the checked property of the input.  Else the input has not yet changed
+  so get its opposite.
+   */
+  const checked =
+    event.target instanceof HTMLInputElement
+      ? $inp.prop("checked")
+      : !$inp.prop("checked");
+
+  if (id === "ALL") {
+    // Need to get all the ids and select all the checkboxes
+    ASSOCIATED_INPUTS.each((index, elm) => {
+      const $elm = $(elm);
+      $elm.prop("checked", checked);
+
+      if (checked) {
+        ASSOCIATED_PROJECTS.set($elm.val(), true);
+      } else {
+        ASSOCIATED_PROJECTS.delete($elm.val());
+      }
+    });
+  } else {
+    if (ASSOCIATED_PROJECTS.has(id)) {
+      ASSOCIATED_PROJECTS.delete(id);
+    } else {
+      ASSOCIATED_PROJECTS.set(id, true);
+    }
+  }
+
+  setTimeout(function() {
+    // Update the current checkbox
+    $inp.prop("checked", checked);
+    // Update the select all checkbox
+    $("#select-all-cb").prop(
+      "checked",
+      ASSOCIATED_PROJECTS.size === ASSOCIATED_INPUTS.size()
+    );
+    // Update the DataTable
+    $dt.ajax.reload(null, false);
+  }, 0);
+
+  $(event.target).blur();
+  return false;
 });
 
 /*
