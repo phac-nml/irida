@@ -205,10 +205,10 @@ This will:
 4. Run IRIDA `galaxy_testing` integration test profile.
 5. Remove Docker image on <http://localhost:48889>.
 
-Additional Maven parameters can be passed to `run-tests.sh`.  In particular, individual test classes can be run using `-Dtest=ca.corefacilty.bioinformatics.irida.TheTestClass` (for unit tests) or `-Dtest.it=ca.corefacilty.bioinformatics.irida.TheTestClass` (for integration tests). For example:
+Additional Maven parameters can be passed to `run-tests.sh`.  In particular, individual test classes can be run using `-Dit.test=ca.corefacilty.bioinformatics.irida.TheTestClass`. For example:
 
 ```bash
-./run-tests.sh rest_testing -Dtest.it=ca.corefacility.bioinformatics.irida.web.controller.test.integration.analysis.RESTAnalysisSubmissionControllerIT
+./run-tests.sh rest_testing -Dit.test=ca.corefacility.bioinformatics.irida.web.controller.test.integration.analysis.RESTAnalysisSubmissionControllerIT
 ```
 
 #### Building IRIDA for release
