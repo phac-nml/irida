@@ -106,6 +106,7 @@ cd irida/lib/
 bash install-libs.sh
 ```
 * Create a test database in MariaDB with the name `irida_test` and user `test` with password `test`.
+* Create a second test database in MariaDB with the name `irida_integration_test` and user `test` with password `test` (for running local integration tests).
 
 From here you should be able to run the IRIDA service layer, REST API, and web UI using Jetty.
 
@@ -182,13 +183,13 @@ As the integration tests simulate a running IRIDA installation, in order to run 
 ./run-tests.sh <TEST PROFILE>
 ```
 
-This will clean and setup an empty database for IRIDA on the local machine named **irida_test**.  This will also, for the Galaxy test profile, start up a Galaxy IRIDA testing Docker image running on <http://localhost:48889> and destory this Docker image afterwards (you can skip destorying the Docker image by passing `--no-kill-docker` to this script).  In order to not overwrite the database **irida_test** you may pass the name of a new database as:
+This will clean and setup an empty database for IRIDA on the local machine named **irida_integration_test**.  This will also, for the Galaxy test profile, start up a Galaxy IRIDA testing Docker image running on <http://localhost:48889> and destory this Docker image afterwards (you can skip destorying the Docker image by passing `--no-kill-docker` to this script).  In order to not overwrite the database **irida_integration_test** you may pass the name of a new database as:
 
 ```bash
 ./run-tests.sh -d <DATABASE> <TEST PROFILE>
 ```
 
-This assumes that the user **test** has been given all permissions to `<DATABASE>` (e.g., in SQL `GRANT ALL ON <DATABASE>.* to 'test'@'localhost';`).
+This assumes that the user **test** has been given all permissions to `<DATABASE>` (e.g., in SQL `grant all privileges on <DATABASE>.* to 'test'@'localhost';`).
 
 As an example of how to run the IRIDA integration tests:
 
@@ -198,7 +199,7 @@ As an example of how to run the IRIDA integration tests:
 
 This will:
 
-1. Clean/re-build the IRIDA database on `irida_test` (use `-d` to override).
+1. Clean/re-build the IRIDA database on `irida_integration_test` (use `-d` to override).
 2. Remove any previous Docker images from previous tests (named *irida-galaxy-test*).
 3. Start up a new Docker image with Galaxy running on <http://localhost:48889>.
 4. Run IRIDA `galaxy_testing` integration test profile.

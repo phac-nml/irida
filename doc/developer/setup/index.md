@@ -15,7 +15,7 @@ You're required to install a few different pieces of software on your machine be
 1. DB: A MySQL or MariaDB server,
 2. Languages: Java 8 (we have a hard requirement on Java 8), Python, Node
 3. Build: Apache Maven, Bower
-4. SCM: Git and Mercurial (Git for IRIDA, Mercurial for Galaxy)
+4. SCM: Git
 5. IDE: Eclipse, Netbeans, IntelliJ, vim... (whatever you want, really).
 
 Install instructions
@@ -33,7 +33,7 @@ These instructions work for a fresh, up-to-date install of Ubuntu 14.04 LTS. No 
     sudo apt-get update
 
     # You will be prompted to set a root password for mysql and to accept the license for the Java installer.
-    sudo apt-get install --yes --no-install-recommends mysql-server maven git mercurial oracle-java8-installer
+    sudo apt-get install --yes --no-install-recommends mysql-server maven git oracle-java8-installer
 
 
 Install instructions for CentOS
@@ -51,6 +51,7 @@ Once you've installed all of the prerequisites with your package manager (or man
 You've *probably* already figured out how to clone IRIDA if you're reading this documentation. Nevertheless, for completeness sake, you can clone IRIDA on the command-line like so:
 
     git clone http://irida.corefacility.ca/gitlab/irida/irida.git
+    # Or, alternatively, git clone https://github.com/phac-nml/irida.git
 
 Importing IRIDA into an IDE is left to the developer.
 
@@ -89,6 +90,10 @@ You'll need to permit those user credentials to create the tables in the databas
 Also create the database if it doesn't exist:
 
     echo "create database irida_test;" | mysql -u root -p
+
+In order to run local integration tests, the database `irida_integration_test` is used instead.  This database requires permissions from user `'test'@'localhost'`.  To grant such permissions a quick one-liner is:
+
+    echo "grant all privileges on irida_integration_test.* to 'test'@'localhost';" | mysql -u root -p
 
 ### Configure Filesystem Locations
 
@@ -133,7 +138,7 @@ This will update the database if the schema has been changed, but without droppi
 
 To run the full integration test suite for IRIDA please run the following:
 
-    ./run-tests.sh -c all
+    ./run-tests.sh all_testing
 
 This will run all the integration test profiles using Maven, and print out reports for each profile.
 
