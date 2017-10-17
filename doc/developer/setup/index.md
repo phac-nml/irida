@@ -138,7 +138,7 @@ This will update the database if the schema has been changed, but without droppi
 
 To run the full integration test suite for IRIDA please run the following:
 
-    ./run-tests.sh all_testing
+    ./run-tests.sh all
 
 This will run all the integration test profiles using Maven, and print out reports for each profile.
 

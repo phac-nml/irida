@@ -50,7 +50,7 @@ check_dependencies() {
 	fi
 }
 
-clean_database_docker() {
+pretest_cleanup() {
 	DB_ERR="Failed to clean/create new database named '$DATABASE_NAME'. Perhaps you need to grant permission first with 'echo \"grant all privileges on $DATABASE_NAME.* to '$DATABASE_USER'@'localhost';\" | mysql -u root -p'."
 
 	set -x
@@ -73,31 +73,42 @@ clean_database_docker() {
 	then
 		docker rm -f -v $GALAXY_DOCKER_NAME
 	fi
+
+	# Remove any file contents from these directories (possibly from other tests)
+	rm -rf $SEQUENCE_FILE_DIR/*
+	rm -rf $REFERENCE_FILE_DIR/*
+	rm -rf $OUTPUT_FILE_DIR/*
+}
+
+posttest_cleanup() {
+        rm -rf $SEQUENCE_FILE_DIR
+        rm -rf $REFERENCE_FILE_DIR
+        rm -rf $OUTPUT_FILE_DIR
 }
 
 test_service() {
-	clean_database_docker
+	pretest_cleanup
 	mvn clean verify -B -Pservice_testing -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dsequence.file.base.directory=$SEQUENCE_FILE_DIR -Dreference.file.base.directory=$REFERENCE_FILE_DIR -Doutput.file.base.directory=$OUTPUT_FILE_DIR $@
 	exit_code=$?
 	return $exit_code
 }
 
 test_rest() {
-	clean_database_docker
+	pretest_cleanup
 	mvn clean verify -Prest_testing -B -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dsequence.file.base.directory=$SEQUENCE_FILE_DIR -Dreference.file.base.directory=$REFERENCE_FILE_DIR -Doutput.file.base.directory=$OUTPUT_FILE_DIR $@
 	exit_code=$?
 	return $exit_code
 }
 
 test_ui() {
-	clean_database_docker
+	pretest_cleanup
 	xvfb-run --auto-servernum --server-num=1 mvn clean verify -B -Pui_testing -Dwebdriver.chrome.driver=$CHROME_DRIVER -Dirida.it.nosandbox=true -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dsequence.file.base.directory=$SEQUENCE_FILE_DIR -Dreference.file.base.directory=$REFERENCE_FILE_DIR -Doutput.file.base.directory=$OUTPUT_FILE_DIR $@
 	exit_code=$?
 	return $exit_code
 }
 
 test_galaxy() {
-	clean_database_docker
+	pretest_cleanup
 	docker run -d -p $GALAXY_PORT:80 --name $GALAXY_DOCKER_NAME -v $TMP_DIRECTORY:$TMP_DIRECTORY -v $SCRIPT_DIR:$SCRIPT_DIR $GALAXY_DOCKER
 	mvn clean verify -B -Pgalaxy_testing -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dtest.galaxy.url=$GALAXY_URL -Dtest.galaxy.invalid.url=$GALAXY_INVALID_URL -Dtest.galaxy.invalid.url2=$GALAXY_INVALID_URL2 -Dsequence.file.base.directory=$SEQUENCE_FILE_DIR -Dreference.file.base.directory=$REFERENCE_FILE_DIR -Doutput.file.base.directory=$OUTPUT_FILE_DIR $@
 	exit_code=$?
@@ -112,9 +123,12 @@ test_all() {
 		if [ $? -ne 0 ];
 		then
 			echo "FAILED at $test_profile"
+			posttest_cleanup
 			exit 1
 		fi
 	done
+
+	echo "SUCCESS for all integration tests"
 }
 
 ############
@@ -127,16 +141,18 @@ then
 	echo -e "Options:"
 	echo -e "\t-d|--database:   Override name of database ($DATABASE_NAME) used for testing."
 	echo -e "\t--no-kill-docker: Do not kill Galaxy Docker after Galaxy tests have run."
-	echo -e "\ttest_type:     One of the IRIDA test types {service_testing, ui_testing, rest_testing, galaxy_testing, all_testing}."
+	echo -e "\ttest_type:     One of the IRIDA test types {service_testing, ui_testing, rest_testing, galaxy_testing, all}."
 	echo -e "\t[Maven options]: Additional options to pass to 'mvn'.  In particular, can pass '-Dit.test=ca.corefacility.bioinformatics.irida.fully.qualified.name' to run tests from a particular class.\n"
-	echo -e "Example:\n"
-	echo -e "$0 service_testing"
+	echo -e "Examples:\n"
+	echo -e "$0 service_testing\n"
 	echo -e "\tThis will test the Service layer of IRIDA, cleaning up the test database/docker containers first.\n"
-	echo -e "$0 -d irida_integration_test2 galaxy_testing"
+	echo -e "$0 -d irida_integration_test2 galaxy_testing\n"
 	echo -e "\tRuns the Galaxy integration tests for IRIDA, using a database named 'irida_integration_test2'."
 	echo -e "\tThis will also attempt to launch Galaxy Docker on $GALAXY_URL\n"
-	echo -e "$0 rest_testing -Dit.test=ca.corefacility.bioinformatics.irida.web.controller.test.integration.analysis.RESTAnalysisSubmissionControllerIT"
-	echo -e "\tThis will run IRIDA REST API tests found in the class 'RESTAnalysisSubmissionControllerIT'. This will *not* clean up the previous tests database files."
+	echo -e "$0 rest_testing -Dit.test=ca.corefacility.bioinformatics.irida.web.controller.test.integration.analysis.RESTAnalysisSubmissionControllerIT\n"
+	echo -e "\tThis will run IRIDA REST API tests found in the class 'RESTAnalysisSubmissionControllerIT'.\n"
+	echo -e "$0 all\n"
+	echo -e "\tThis will run all integration tests in IRIDA, reporting 'SUCCESS for all integration tests' on successessful completion of all tests."
 	exit 0
 fi
 
@@ -164,22 +180,27 @@ case "$1" in
 	service_testing)
 		shift
 		test_service $@
+		posttest_cleanup
 	;;
 	ui_testing)
 		shift
 		test_ui $@
+		posttest_cleanup
 	;;
 	rest_testing)
 		shift
 		test_rest $@
+		posttest_cleanup
 	;;
 	galaxy_testing)
 		shift
 		test_galaxy $@
+		posttest_cleanup
 	;;
-	all_testing)
+	all)
 		shift
 		test_all $@
+		posttest_cleanup
 	;;
 	*)
 		echo "Unrecogized test [$1]"
