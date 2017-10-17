@@ -55,6 +55,12 @@ const SAMPLE_TOOL_BUTTONS = [...sampleToolsNodes].map(
 const ASSOCIATED_PROJECTS = new Map();
 
 /**
+ * Reference to sample ids used in filter-by-file.
+ * @type {Array}
+ */
+let FILE_SAMPLE_NAMES = [];
+
+/**
  * Reference to the colour for a specific project.
  * @type {Map}
  */
@@ -105,6 +111,13 @@ const config = Object.assign({}, tableConfig, {
       if (ASSOCIATED_PROJECTS.size > 0) {
         // Add a list of ids for currently visible associated projects
         d.associated = Array.from(ASSOCIATED_PROJECTS.keys());
+      }
+
+      /*
+      Add any filter by file names that need to be passed.
+       */
+      if (FILE_SAMPLE_NAMES.length > 0) {
+        d.sampleNames = FILE_SAMPLE_NAMES;
       }
     }
   },
@@ -186,7 +199,7 @@ const config = Object.assign({}, tableConfig, {
     }
   ],
   drawCallback() {
-    $('[data-toggle="popover"]').popover(POPOVER_OPTIONS);
+    $table.find('[data-toggle="popover"]').popover(POPOVER_OPTIONS);
   },
   createdRow(row, data) {
     const $row = $(row);
@@ -194,6 +207,13 @@ const config = Object.assign({}, tableConfig, {
       project: data.projectId,
       sample: data.id
     });
+
+    /*
+    Check to see if row should be selected based on sample name
+     */
+    if (FILE_SAMPLE_NAMES.includes(data.sampleName)) {
+      this.api().select.select(row);
+    }
 
     if (!data.owner) {
       const icon = $(".locked-wrapper").clone();
@@ -353,3 +373,32 @@ $("#modal-wrapper").on("show.bs.modal", function(event) {
 
   MODALS[whichModal].call(wrapper, url, script, sampleIds);
 });
+
+/*
+Add the filter buttons
+ */
+const filterByFileBtn = $("#filter-toolbar").detach();
+filterByFileBtn.appendTo("#dt-filters");
+
+// Set up the file filer
+function handleFileSelect(e) {
+  const file = e.target.files[0];
+  if (typeof file === "undefined") return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    // From the file contents, get a list of names (1 per line expected);
+    const contents = e.target.result.match(/[^\r\n]+/g);
+    // Store the unique values in the ajax variable
+    FILE_SAMPLE_NAMES = [...new Set(contents)];
+    // Refresh the table.
+    $dt.ajax.reload();
+  };
+  reader.readAsText(file);
+}
+const filterByFileInput = document.querySelector("#filter-by-file");
+filterByFileInput.addEventListener("change", handleFileSelect, false);
+
+/*
+Activate page tooltips
+ */
+$('[data-toggle="popover"]').popover();
