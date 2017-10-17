@@ -204,6 +204,7 @@ case "$1" in
 	;;
 	*)
 		echo "Unrecogized test [$1]"
+		posttest_cleanup
 		exit 1
 	;;
 esac
