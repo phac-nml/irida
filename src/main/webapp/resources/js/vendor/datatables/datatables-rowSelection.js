@@ -135,6 +135,17 @@
     eventTrigger(dt, "selection-count.dt", 0);
   }
 
+  function selectRow(dt, row) {
+    const ctx = dt.settings()[0];
+
+    const $row = $(row);
+    const id = $row.attr("id");
+    const info = $row.data("info");
+    ctx._select.selected.set(id, info);
+    $row.find("input[type=checkbox]").prop("checked", true);
+    eventTrigger(dt, "selection-count.dt", ctx._select.selected.size);
+  }
+
   const apiRegister = DataTable.Api.register;
 
   /**
@@ -166,6 +177,15 @@
     return this.iterator("table", function(ctx) {
       ctx._select.selector = selector;
       enableRowCheckboxSelection(new DataTable.Api(ctx));
+    });
+  });
+
+  /**
+   * Register the select table function with DataTables
+   */
+  apiRegister("select.select()", function(row) {
+    return this.iterator("table", function(ctx) {
+      selectRow(new DataTable.Api(ctx), row);
     });
   });
 
