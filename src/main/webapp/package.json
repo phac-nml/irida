@@ -4,7 +4,8 @@
   "scripts": {
     "lint:js": "eslint",
     "build": "gulp sass && gulp webpack",
-    "sass": "gulp sass"
+    "sass": "gulp sass",
+    "clean": "rm -r node* resources/css/"
   },
   "dependencies": {
     "@bassettsj/livestamp": "^2.0.0",

@@ -208,13 +208,6 @@ const config = Object.assign({}, tableConfig, {
       sample: data.id
     });
 
-    /*
-    Check to see if row should be selected based on sample name
-     */
-    if (FILE_SAMPLE_NAMES.includes(data.sampleName)) {
-      this.api().select.select(row);
-    }
-
     if (!data.owner) {
       const icon = $(".locked-wrapper").clone();
       const td = $row.find("td:first-of-type");
@@ -394,7 +387,9 @@ function handleFileSelect(e) {
     // Store the unique values in the ajax variable
     FILE_SAMPLE_NAMES = [...new Set(contents)];
     // Refresh the table.
-    $dt.ajax.reload();
+    $dt.ajax.reload(() => {
+      $dt.select.selectAll();
+    });
   };
   reader.readAsText(file);
 }
