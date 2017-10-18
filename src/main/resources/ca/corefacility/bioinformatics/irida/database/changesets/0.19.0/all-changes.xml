@@ -6,6 +6,6 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 	<include file="remove-analysis-subclass.xml"
 		relativeToChangelogFile="true" />
-	<include file="sample-assembly.xml"
-		relativeToChangelogFile="true" />
+	<include file="sample-assembly.xml" relativeToChangelogFile="true" />
+	<include file="last-login.xml" relativeToChangelogFile="true" />
 </databaseChangeLog>

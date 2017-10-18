@@ -277,4 +277,37 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *            The genome assembly.
 	 */
 	public void removeGenomeAssemblyFromSample(Sample sample, Long genomeAssemblyId);
+
+	/**
+	 * Search all {@link Sample}s in projects the current logged in user has
+	 * access to
+	 * 
+	 * @param query
+	 *            the query string to search
+	 * @param page
+	 *            which page to return
+	 * @param count
+	 *            the number of entities to return
+	 * @param sort
+	 *            how to sort the result
+	 * @return a page of {@link ProjectSampleJoin}
+	 */
+	public Page<ProjectSampleJoin> searchSamplesForUser(String query, final Integer page, final Integer count,
+			final Sort sort);
+
+	/**
+	 * Search all {@link Sample}s in the database on the given query
+	 * 
+	 * @param query
+	 *            the query string to search
+	 * @param page
+	 *            which page to return
+	 * @param count
+	 *            the number of entities to return
+	 * @param sort
+	 *            how to sort the result
+	 * @return a page of {@link ProjectSampleJoin}
+	 */
+	public Page<ProjectSampleJoin> searchAllSamples(String query, final Integer page, final Integer count,
+			final Sort sort);
 }
