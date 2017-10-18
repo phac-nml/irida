@@ -1,5 +1,5 @@
-import "css/pages/analyses-list.css";
-import "DataTables/datatables";
+import "../../../css/pages/analyses-list.css";
+import "../../vendor/datatables/datatables";
 import $ from "jquery";
 import {
   createButtonCell,
@@ -10,9 +10,12 @@ import {
   createRestrictedWidthContent,
   generateColumnOrderInfo,
   tableConfig
-} from "Utilities/datatables-utilities";
-import {formatDate, getHumanizedDuration} from "Utilities/date-utilities";
-import {deleteAnalysis} from "../analysis/analysis-service";
+} from "../../utilities/datatables-utilities";
+import {
+  formatDate,
+  getHumanizedDuration
+} from "../../utilities/date-utilities";
+import { deleteAnalysis } from "../analysis/analysis-service";
 
 /*
 Get the table headers and create a look up table for them.

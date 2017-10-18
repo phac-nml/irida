@@ -15,7 +15,7 @@ import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
  * Specialized repository for {@link User}.
  * 
  */
-public interface UserRepository extends IridaJpaRepository<User, Long>, UserDetailsService {
+public interface UserRepository extends IridaJpaRepository<User, Long>, UserDetailsService, UserRepositoryCustom {
 
 	/**
 	 * Get a user from the database with the supplied username.
