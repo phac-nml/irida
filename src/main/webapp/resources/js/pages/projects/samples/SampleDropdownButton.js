@@ -1,4 +1,13 @@
+/**
+ * This class represents the state and function of buttons within the
+ * project > sample > Sample Tools dropdown menu.
+ */
 export default class SampleDropdownButton {
+  /**
+   * Link the dom and the EventListener for a button.
+   * @param {node} node - actual button DOM node.
+   * @param {function} listenerFn - EventHandler for the click event.
+   */
   constructor(node, listenerFn) {
     this.button = node;
     this.enabledAt = this.button.dataset.enabledAt;
