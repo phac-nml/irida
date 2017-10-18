@@ -65,7 +65,6 @@ table.dataTable thead th.sorting_desc:after {
 // Styles for a toolbar above the table
 .dt-btn-toolbar {
   margin-bottom: 1rem;
-  margin-left: 0 !important;
 
   // Overriding dropdown placement.
   .dropdown-menu {
@@ -75,6 +74,13 @@ table.dataTable thead th.sorting_desc:after {
 
     .checkbox {
       padding-left: 10px;
+    }
+
+    .btn-default {
+      border: none !important;
+      border-radius: 0;
+      display: block;
+      text-align: left !important;
     }
 
     li > ul {

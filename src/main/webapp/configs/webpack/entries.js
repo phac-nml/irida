@@ -14,6 +14,7 @@ module.exports = {
     "./resources/js/pages/projects/samples-metadata-import/index.js",
   "project-samples":
     "./resources/js/pages/projects/samples/project-samples.js",
+  "project-samples-merge": "./resources/js/pages/projects/samples/modals/sample-merge.js",
   "project-add-sample": "./resources/js/pages/projects/project-add-samples.js",
   "project-linelist": "./resources/js/pages/projects/linelist/index.js",
   "create-metadata-template":
