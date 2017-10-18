@@ -1,9 +1,13 @@
+/**
+ * This file is for the Project > Project Samples Page.
+ * Handles validation logic for a new sample name.
+ */
 import $ from "jquery";
 import "jquery-validation";
 import {
-  validationConfig,
   minLengthIfPresentValidation,
-  sampleNameCharacterValidation
+  sampleNameCharacterValidation,
+  validationConfig
 } from "../../../../utilities/form-validation";
 
 /*
@@ -12,8 +16,12 @@ Set up sample name validation
 sampleNameCharacterValidation();
 minLengthIfPresentValidation();
 
+/**
+ * Configuration object for jQuery Validate.
+ */
 const config = Object.assign({}, validationConfig, {
-  debug: true,
+  // Validate the field each time the key is pressed, this will ensure that
+  // the field updates properly.
   onkeyup(element) {
     $(element).valid();
   },
