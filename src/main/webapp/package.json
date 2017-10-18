@@ -5,7 +5,10 @@
     "start": "webpack-dev-server --env development",
     "build": "gulp sass && webpack --env.target production"
   },
-  "browserslist": ["> 1%", "last 2 versions"],
+  "browserslist": [
+    "> 1%",
+    "last 2 versions"
+  ],
   "dependencies": {
     "@bassettsj/livestamp": "^2.0.0",
     "angular": "1.6.2",
@@ -48,13 +51,13 @@
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
-    "babel-preset-env": "^1.6.0",
+    "babel-preset-env": "^1.6.1",
     "bower": "^1.7.7",
     "chromedriver": "2.24.1",
     "clean-webpack-plugin": "^0.1.17",
-    "css-loader": "^0.25.0",
-    "eslint": "^3.4.0",
-    "eslint-loader": "^1.5.0",
+    "css-loader": "^0.28.7",
+    "eslint": "^4.9.0",
+    "eslint-loader": "1.9.0",
     "eslint-plugin-prettier": "^2.1.2",
     "gulp": "^3.9.0",
     "gulp-autoprefixer": "^3.1.0",
@@ -67,7 +70,7 @@
     "progress-bar-webpack-plugin": "^1.10.0",
     "sass-loader": "^6.0.6",
     "style-loader": "^0.13.2",
-    "webpack": "^3.6.0",
+    "webpack": "^3.8.1",
     "webpack-dev-server": "^2.9.1",
     "webpack-merge": "^4.1.0",
     "write-file-webpack-plugin": "^4.2.0"
