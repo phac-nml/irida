@@ -303,18 +303,21 @@ const MODALS = {
   /**
    * Hanle opening the merge modal.
    * @param {string} url for the content of the modal
-   * @param {string} script url for the javascript needed for modal.
+   * @param {string} src url for the javascript needed for modal.
    * @param {list} sampleIds list of sample ids to merge.
    */
-  merge(url, script, sampleIds) {
+  merge({ url, src, sampleIds }) {
     const modal = $(this);
 
     /*
     Load the content for the dialogue based on the server response.
      */
     modal.load(`${url}?${$.param({ sampleIds })}`, function() {
-      if (typeof script !== "undefined") {
-        $.getScript(script);
+      if (typeof src !== "undefined") {
+        const script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = src;
+        document.getElementsByTagName("head")[0].appendChild(script);
       }
     });
 
@@ -351,5 +354,5 @@ $("#modal-wrapper").on("show.bs.modal", function(event) {
     sampleIds.push(value.sample);
   }
 
-  MODALS[whichModal].call(wrapper, url, script, sampleIds);
+  MODALS[whichModal].call(wrapper, { url, src: script, sampleIds });
 });
