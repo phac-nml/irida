@@ -74,4 +74,12 @@ public class AnalysisSubmissionSampleProcessorImplIT {
 
 		analysisSubmissionSampleProcessorImpl.updateSamples(a);
 	}
+	
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "fbristow", roles = "USER")
+	public void testUpdateSamplesFailAnalysisSubmittedNonProjectOwner() {
+		AnalysisSubmission a = analysisSubmissionRepository.findOne(3L);
+
+		analysisSubmissionSampleProcessorImpl.updateSamples(a);
+	}
 }
