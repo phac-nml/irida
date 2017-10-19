@@ -12,8 +12,7 @@
         urls: {
           modals: {
             remove: /*[[@{/projects/templates/remove-modal}]]*/ '/projects/templates/remove-modal',
-            merge: /*[[]]*/ "/projects/templates/merge-modal",
-            copy: /*[[@{/projects/templates/copy-modal(projectId=${project.getId()})}]]*/ '/projects/templates/copy-modal',
+            copy: /*[[]]*/ '/projects/templates/copy-modal',
             move: /*[[@{/projects/templates/move-modal(projectId=${project.getId()})}]]*/ '/projects/templates/move-modal',
             galaxy: /*[[@{/cart/template/galaxy/project/{projectId}(projectId=${project.getId()})}]]*/ '/cart/template/galaxy/project/1',
             filter: /*[[@{/projects/template/samples-filter-modal}]]*/ ''
@@ -25,7 +24,6 @@
             project: /*[[@{/projects/{id}/ajax/samples(id=${project.getId()})}]]*/ '',
             local: /*[[@{'/projects/{id}/ajax/samples'}]]*/ '',
             remove: /*[[@{/projects/{id}/ajax/samples/delete(id=${project.getId()})}]]*/ '',
-            merge: /*[[]]*/ "",
             copy: /*[[@{/projects/{id}/ajax/samples/copy(id=${project.getId()})}]]*/ '',
             download: /*[[@{/projects/{id}/download/files(id=${project.getId()})}]]*/ '/projects/1/download/files',
             ncbi: /*[[@{/projects/{id}/export/ncbi(id=${project.getId()})}]]*/ '/projects/1/export/ncbi',
@@ -71,13 +69,22 @@
                             <li>
                                 <button id="mergeBtn"
                                         class="btn btn-sm btn-default btn-block sample-tool-btn"
-                                        data-toggle="modal" data-target="#modal-wrapper"
+                                        data-toggle="modal" data-target="#js-modal-wrapper"
                                         data-enabled-at="2"
                                         data-modal="merge"
                                         data:url="@{/projects/{projectId}/templates/merge-modal(projectId=${project.getId()})}"
                                         data:script="@{/resources/js/build/project-samples-merge.bundle.js}">
                                     <i class="fa fa-compress fa-fw" aria-hidden="true"></i> &nbsp;
                                     <th:block th:text="#{project.samples.nav.merge}"/>
+                                </button>
+                            </li>
+                            <li>
+                                <button id="js-copyBtn"
+                                        class="btn btn-sm btn-default btn-block sample-tool-btn"
+                                        data-toggle="modal" data-target="#js-modal-wrapper"
+                                        data-modal="copy" data-enabled-at="1"
+                                        data:url="@{/projects/templates/copy-modal(projectId=${project.getId()})}">
+                                    copy shit
                                 </button>
                             </li>
                         </ul>
@@ -137,7 +144,7 @@
         </thead>
     </table>
 
-    <div id="modal-wrapper" class="modal fade" tabindex="-1" role="dialog"></div>
+    <div id="js-modal-wrapper" class="modal fade" tabindex="-1" role="dialog"></div>
 
     <div class="hidden">
         <span class="qc-warning-wrapper" data-toggle="popover"
