@@ -68,9 +68,9 @@ public class AnalysisSubmissionSampleProcessorImpl implements AnalysisSubmission
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasPermission(#analysisSubmission, 'canUpdateSamplesFromAnalysisSubmission')")
 	@RunAsUser("#analysisSubmission.getSubmitter()")
 	@Transactional(propagation=Propagation.REQUIRES_NEW)
+	@PreAuthorize("hasPermission(#analysisSubmission, 'canUpdateSamplesFromAnalysisSubmission')")
 	public void updateSamples(AnalysisSubmission analysisSubmission) {
 		if (!analysisSubmission.getUpdateSamples()) {
 			logger.trace("Will not update samples from results for submission=" + analysisSubmission);
