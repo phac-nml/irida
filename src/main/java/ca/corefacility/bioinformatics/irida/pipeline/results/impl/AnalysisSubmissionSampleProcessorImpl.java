@@ -63,6 +63,14 @@ public class AnalysisSubmissionSampleProcessorImpl implements AnalysisSubmission
 			analysisSampleUpdaterMap.put(analysisSampleUpdaterService.getAnalysisType(), analysisSampleUpdaterService);
 		}
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean hasRegisteredAnalysisSampleUpdater(AnalysisType analysisType) {
+		return analysisSampleUpdaterMap.keySet().contains(analysisType);
+	}
 
 	/**
 	 * {@inheritDoc}
