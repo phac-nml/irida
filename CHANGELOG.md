@@ -10,6 +10,7 @@ Changes
 * [UI]: Fixed issued with layout of the events panel on the dashboard page. (0.18.2)
 * [UI]: Fixed issue with local samples causing problems in synchronized projects. (0.18.2)
 * [API]: Fixed permission issue when asking for permission for analysis results using sequencing objects with no associated samples (0.18.3).
+* [UI]: Fixed issue with uploading `.fastqc` files in IE, and allow for uploading for `fastqc.gz` in all browsers (0.18.4).
 
 0.17.0 to 0.18.0
 ----------------
