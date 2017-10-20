@@ -582,7 +582,7 @@ public class ProjectSamplesController {
 
 		for (Project p : projects) {
 			Map<String, String> map = new HashMap<>();
-			map.put("identifier", p.getId().toString());
+			map.put("id", p.getId().toString());
 			map.put("text", p.getName());
 			projectMap.add(map);
 		}
@@ -633,11 +633,8 @@ public class ProjectSamplesController {
 					remove, giveOwner);
 
 		} catch (EntityExistsException ex) {
-			logger.warn("Attempted to add sample " + ex.getFieldName() + " to project " + newProjectId
-					+ " where it already exists.");
-			String msg = remove ? "project.samples.move.sample-exists" : "project.samples.copy.sample-exists";
-			warnings.add(
-					messageSource.getMessage(msg, new Object[] { ex.getFieldName(), newProject.getName() }, locale));
+			logger.warn(ex.getLocalizedMessage());
+			warnings.add(ex.getLocalizedMessage());
 		}
 
 		if (!warnings.isEmpty() || successful.size() == 0) {

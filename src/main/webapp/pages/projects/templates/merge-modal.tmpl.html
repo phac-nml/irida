@@ -10,7 +10,7 @@
 				</h4>
 			</div>
 			<form id="mergeForm" name="mergeForm"
-				  th:action="@{/projects/{id}/ajax/samples/merge(id=${project.getId()})}">
+				  th:action="@{/projects/{id}/ajax/samples/mergemerge.h(id=${project.getId()})}">
 				<div class="modal-body"
 					 th:unless="${#lists.size(locked) > 0}">
 					<h4 th:text="#{project.samples.modal.merge.intro(${#lists.size(samples)})}"/>

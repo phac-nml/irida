@@ -14,6 +14,11 @@ import SampleDropdownButton from "./SampleDropdownButton";
 import { SAMPLE_EVENTS } from "./constants";
 
 /*
+This is required to use select2 inside a modal.
+ */
+$.fn.modal.Constructor.prototype.enforceFocus = function () {};
+
+/*
  Initialize the sample tools menu.
  */
 const SAMPLE_TOOL_ACTIONS = {
