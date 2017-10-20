@@ -18,6 +18,7 @@ Changes
 * [API]: NCBI uploads automatically retry after failure.
 * [UI]: Added global project and sample search from top toolbar.
 * [UI]: Changed user's modified date to "Last Login" in user list.
+* [Developer]: Created `production` and `development` webpack builds.
 
 0.17.0 to 0.18.0
 ----------------
