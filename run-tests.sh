@@ -24,29 +24,25 @@ check_dependencies() {
 	mvn --version 1>/dev/null 2>/dev/null
 	if [ $? -ne 0 ];
 	then
-		echo "Command 'mvn' does not exist.  Please install Maven (e.g., 'apt-get install maven') to continue."
-		exit 1
+		exit_error "Command 'mvn' does not exist.  Please install Maven (e.g., 'apt-get install maven') to continue."
 	fi
 
 	xvfb-run -h 1>/dev/null 2>/dev/null
 	if [ $? -ne 0 ];
 	then
-		echo "Command 'xvfb-run' does not exist.  Please install xvfb (e.g., 'apt-get install xvfb') to continue."
-		exit 1
+		exit_error "Command 'xvfb-run' does not exist.  Please install xvfb (e.g., 'apt-get install xvfb') to continue."
 	fi
 
 	docker --version 1>/dev/null 2>/dev/null
 	if [ $? -ne 0 ];
 	then
-		echo "Command 'docker' does not exist.  Please install Docker (e.g., 'curl -sSL https://get.docker.com/ | sh') to continue."
-		exit 1
+		exit_error "Command 'docker' does not exist.  Please install Docker (e.g., 'curl -sSL https://get.docker.com/ | sh') to continue."
 	fi
 
 	mysql --version 1>/dev/null 2>/dev/null
 	if [ $? -ne 0 ];
 	then
-		echo "Command 'mysql' does not exist.  Please install MySQL/MariaDB (e.g., 'apt-get install mariadb-client mariadb-server') to continue."
-		exit 1
+		exit_error "Command 'mysql' does not exist.  Please install MySQL/MariaDB (e.g., 'apt-get install mariadb-client mariadb-server') to continue."
 	fi
 }
 
@@ -58,15 +54,13 @@ pretest_cleanup() {
 	if [ $? -ne 0 ];
 	then
 		set +x
-		echo $DB_ERR
-		exit 1
+		exit_error $DB_ERR
 	fi
 	mysql -u$DATABASE_USER -p$DATABASE_PASSWORD $DATABASE_NAME < $SCRIPT_DIR/ci/irida_latest.sql
 	if [ $? -ne 0 ];
 	then
 		set +x
-		echo $DB_ERR
-		exit 1
+		exit_error $DB_ERR
 	fi
 
 	if [ "$(docker ps | grep $GALAXY_DOCKER_NAME)" != "" ];
@@ -74,6 +68,10 @@ pretest_cleanup() {
 		docker rm -f -v $GALAXY_DOCKER_NAME
 	fi
 
+	tmp_dir_cleanup
+}
+
+tmp_dir_cleanup() {
 	# Remove any file contents from these directories (possibly from other tests)
 	rm -rf $SEQUENCE_FILE_DIR/*
 	rm -rf $REFERENCE_FILE_DIR/*
@@ -86,29 +84,31 @@ posttest_cleanup() {
         rm -rf $OUTPUT_FILE_DIR
 }
 
+exit_error() {
+	echo $1
+	posttest_cleanup
+	exit 1
+}
+
 test_service() {
-	pretest_cleanup
 	mvn clean verify -B -Pservice_testing -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dsequence.file.base.directory=$SEQUENCE_FILE_DIR -Dreference.file.base.directory=$REFERENCE_FILE_DIR -Doutput.file.base.directory=$OUTPUT_FILE_DIR $@
 	exit_code=$?
 	return $exit_code
 }
 
 test_rest() {
-	pretest_cleanup
 	mvn clean verify -Prest_testing -B -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dsequence.file.base.directory=$SEQUENCE_FILE_DIR -Dreference.file.base.directory=$REFERENCE_FILE_DIR -Doutput.file.base.directory=$OUTPUT_FILE_DIR $@
 	exit_code=$?
 	return $exit_code
 }
 
 test_ui() {
-	pretest_cleanup
 	xvfb-run --auto-servernum --server-num=1 mvn clean verify -B -Pui_testing -Dwebdriver.chrome.driver=$CHROME_DRIVER -Dirida.it.nosandbox=true -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dsequence.file.base.directory=$SEQUENCE_FILE_DIR -Dreference.file.base.directory=$REFERENCE_FILE_DIR -Doutput.file.base.directory=$OUTPUT_FILE_DIR $@
 	exit_code=$?
 	return $exit_code
 }
 
 test_galaxy() {
-	pretest_cleanup
 	docker run -d -p $GALAXY_PORT:80 --name $GALAXY_DOCKER_NAME -v $TMP_DIRECTORY:$TMP_DIRECTORY -v $SCRIPT_DIR:$SCRIPT_DIR $GALAXY_DOCKER
 	mvn clean verify -B -Pgalaxy_testing -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dtest.galaxy.url=$GALAXY_URL -Dtest.galaxy.invalid.url=$GALAXY_INVALID_URL -Dtest.galaxy.invalid.url2=$GALAXY_INVALID_URL2 -Dsequence.file.base.directory=$SEQUENCE_FILE_DIR -Dreference.file.base.directory=$REFERENCE_FILE_DIR -Doutput.file.base.directory=$OUTPUT_FILE_DIR $@
 	exit_code=$?
@@ -119,12 +119,11 @@ test_galaxy() {
 test_all() {
 	for test_profile in test_rest test_service test_galaxy test_ui;
 	do
+		tmp_dir_cleanup
 		eval $test_profile
 		if [ $? -ne 0 ];
 		then
-			echo "FAILED at $test_profile"
-			posttest_cleanup
-			exit 1
+			exit_error "FAILED at $test_profile"
 		fi
 	done
 
@@ -153,6 +152,8 @@ then
 	echo -e "\tThis will run IRIDA REST API tests found in the class 'RESTAnalysisSubmissionControllerIT'.\n"
 	echo -e "$0 all\n"
 	echo -e "\tThis will run all integration tests in IRIDA, reporting 'SUCCESS for all integration tests' on successessful completion of all tests."
+
+	posttest_cleanup
 	exit 0
 fi
 
@@ -179,32 +180,35 @@ done
 case "$1" in
 	service_testing)
 		shift
+		pretest_cleanup
 		test_service $@
 		posttest_cleanup
 	;;
 	ui_testing)
 		shift
+		pretest_cleanup
 		test_ui $@
 		posttest_cleanup
 	;;
 	rest_testing)
 		shift
+		pretest_cleanup
 		test_rest $@
 		posttest_cleanup
 	;;
 	galaxy_testing)
 		shift
+		pretest_cleanup
 		test_galaxy $@
 		posttest_cleanup
 	;;
 	all)
 		shift
+		pretest_cleanup
 		test_all $@
 		posttest_cleanup
 	;;
 	*)
-		echo "Unrecogized test [$1]"
-		posttest_cleanup
-		exit 1
+		exit_error "Unrecogized test [$1]"
 	;;
 esac
