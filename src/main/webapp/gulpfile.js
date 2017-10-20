@@ -3,11 +3,6 @@ var cache = require('gulp-cached');
 var sass = require('gulp-sass');
 var sourcemaps = require('gulp-sourcemaps');
 var autoprefixer = require('gulp-autoprefixer');
-var browserSync = require('browser-sync').create();
-
-// WEBPACK
-let webpack = require('webpack-stream');
-let webpackDevConfig = require('./webpack.config.js');
 
 var scss = {
 	files : "./styles/**/*.scss",
@@ -22,20 +17,9 @@ var scss = {
 	}
 };
 
-var javascript = {
-	files: "./resources/js/**/*.js"
-};
-
 var autoprefixerOptions = {
 	browsers: ['last 2 versions', '> 5%', 'Firefox ESR']
 };
-
-gulp.task('webpack', function() {
-  return gulp
-		.src("./resources/js/dev/*.js")
-		.pipe(webpack(webpackDevConfig))
-		.pipe(gulp.dest('./resources/js/build/'));
-});
 
 gulp.task('sass', function () {
 	return gulp
@@ -54,24 +38,10 @@ gulp.task('sass:prod', function () {
 		.pipe(gulp.dest(scss.output));
 });
 
-gulp.task('serve', function() {
-	browserSync.init({
-		proxy: "localhost:8080"
-	}, function () {
-		gulp.watch(scss.output + "/*", function () {
-			gulp.src(scss.output + "/").pipe(browserSync.stream());
-		});
-	});
-});
-
 gulp.task('watch', function() {
 	gulp.watch(scss.files, ['sass']);
-	gulp.watch(javascript.files, ['lint']).on('change', browserSync.reload);
-	gulp.watch('./resource/js/dev/**/*.js', ['webpack']).on('change', browserSync.reload);
 });
 
-gulp.task('start', ['sass:prod'], function () {
-  gulp.start('webpack');
-});
+gulp.task('start', ['sass:prod']);
 
 gulp.task('default', ['serve', 'watch']);
