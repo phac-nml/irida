@@ -1,19 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
-
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
@@ -22,7 +8,6 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
@@ -30,6 +15,18 @@ import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTAnalysis
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+
+import java.time.Duration;
+import java.time.Instant;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Used to create {@link DataTablesResponse}s for all pages that use `analyses-table.js`.
@@ -68,7 +65,9 @@ public class AnalysesListingService {
 		Check the DataTableParams to see if any search conditions are present
 		 */
 		Map<String, String> searchMap = params.getSearchMap();
-		AnalysisState state = searchMap.containsKey("analysisState") ? AnalysisState.valueOf(searchMap.get("analysisState")) : null;
+		AnalysisState state = searchMap.containsKey("analysisState") ?
+				AnalysisState.valueOf(searchMap.get("analysisState")) :
+				null;
 		String name = searchMap.getOrDefault("name", null);
 		/*
 		Workflow Ids are a special consideration.
@@ -81,16 +80,22 @@ public class AnalysesListingService {
 			workflowIds = workflows.stream().map(IridaWorkflow::getWorkflowIdentifier).collect(Collectors.toSet());
 		}
 
-		/*
-		Generate the specification.
-		Note no user or project are required since this is a global analyses search
-		performed by an administrator.
-		 */
-		Specification<AnalysisSubmission> specification = AnalysisSubmissionSpecification.filterAnalyses(
-				params.getSearchValue(), name, state, user, workflowIds, project);
+		Page<AnalysisSubmission> page;
+		PageRequest pageRequest = new PageRequest(params.getCurrentPage(), params.getLength(), params.getSort());
 
-		Page<AnalysisSubmission> page = analysisSubmissionService.search(specification,
-				new PageRequest(params.getCurrentPage(), params.getLength(), params.getSort()));
+		if (user != null) {
+			//if user is set, get submissions for the user
+			page = analysisSubmissionService
+					.listSubmissionsForUser(params.getSearchValue(), name, state, user, workflowIds, pageRequest);
+		} else if (project != null) {
+			// if the project is set, get submissions for the project
+			page = analysisSubmissionService
+					.listSubmissionsForProject(params.getSearchValue(), name, state, workflowIds, project, pageRequest);
+		} else {
+			// if neither is set, get admin page
+			page = analysisSubmissionService
+					.listAllSubmissions(params.getSearchValue(), name, state, workflowIds, pageRequest);
+		}
 
 		/*
 		IRIDA DataTables response expects and object that implements the DataTablesResponseModel interface.
