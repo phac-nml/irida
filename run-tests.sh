@@ -19,6 +19,7 @@ REFERENCE_FILE_DIR=`mktemp -d reference-file-base-XXXXXXXX -p $TMP_DIRECTORY`
 OUTPUT_FILE_DIR=`mktemp -d output-file-base-XXXXXXXX -p $TMP_DIRECTORY`
 
 DO_KILL_DOCKER=true
+NO_CLEANUP=false
 
 check_dependencies() {
 	mvn --version 1>/dev/null 2>/dev/null
@@ -47,28 +48,33 @@ check_dependencies() {
 }
 
 pretest_cleanup() {
-	DB_ERR="Failed to clean/create new database named '$DATABASE_NAME'. Perhaps you need to grant permission first with 'echo \"grant all privileges on $DATABASE_NAME.* to '$DATABASE_USER'@'localhost';\" | mysql -u root -p'."
-
-	set -x
-	echo "drop database if exists $DATABASE_NAME; create database $DATABASE_NAME;" | mysql -u$DATABASE_USER -p$DATABASE_PASSWORD
-	if [ $? -ne 0 ];
+	if [ "$NO_CLEANUP" = true ];
 	then
-		set +x
-		exit_error $DB_ERR
+		return
+	else
+		DB_ERR="Failed to clean/create new database named '$DATABASE_NAME'. Perhaps you need to grant permission first with 'echo \"grant all privileges on $DATABASE_NAME.* to '$DATABASE_USER'@'localhost';\" | mysql -u root -p'."
+	
+		set -x
+		echo "drop database if exists $DATABASE_NAME; create database $DATABASE_NAME;" | mysql -u$DATABASE_USER -p$DATABASE_PASSWORD
+		if [ $? -ne 0 ];
+		then
+			set +x
+			exit_error $DB_ERR
+		fi
+		mysql -u$DATABASE_USER -p$DATABASE_PASSWORD $DATABASE_NAME < $SCRIPT_DIR/ci/irida_latest.sql
+		if [ $? -ne 0 ];
+		then
+			set +x
+			exit_error $DB_ERR
+		fi
+	
+		if [ "$(docker ps | grep $GALAXY_DOCKER_NAME)" != "" ];
+		then
+			docker rm -f -v $GALAXY_DOCKER_NAME
+		fi
+	
+		tmp_dir_cleanup
 	fi
-	mysql -u$DATABASE_USER -p$DATABASE_PASSWORD $DATABASE_NAME < $SCRIPT_DIR/ci/irida_latest.sql
-	if [ $? -ne 0 ];
-	then
-		set +x
-		exit_error $DB_ERR
-	fi
-
-	if [ "$(docker ps | grep $GALAXY_DOCKER_NAME)" != "" ];
-	then
-		docker rm -f -v $GALAXY_DOCKER_NAME
-	fi
-
-	tmp_dir_cleanup
 }
 
 tmp_dir_cleanup() {
@@ -136,9 +142,10 @@ test_all() {
 
 if [ $# -eq 0 ];
 then
-	echo -e "Usage: $0 [-d database] [--no-kill-docker] test_type [Maven options]"
+	echo -e "Usage: $0 [-d database] [--no-cleanup] [--no-kill-docker] test_type [Maven options]"
 	echo -e "Options:"
 	echo -e "\t-d|--database:   Override name of database ($DATABASE_NAME) used for testing."
+	echo -e "\t-c|--no-cleanup: Do not cleanup previous test database before execution."
 	echo -e "\t--no-kill-docker: Do not kill Galaxy Docker after Galaxy tests have run."
 	echo -e "\ttest_type:     One of the IRIDA test types {service_testing, ui_testing, rest_testing, galaxy_testing, all}."
 	echo -e "\t[Maven options]: Additional options to pass to 'mvn'.  In particular, can pass '-Dit.test=ca.corefacility.bioinformatics.irida.fully.qualified.name' to run tests from a particular class.\n"
@@ -161,7 +168,7 @@ check_dependencies
 
 cd $SCRIPT_DIR
 
-while [ "$1" = "--database" -o "$1" = "-d" -o "$1" = "--no-kill-docker" ];
+while [ "$1" = "--database" -o "$1" = "-d" -o "$1" = "--no-kill-docker" -o "$1" = "-c" -o "$1" = "--no-cleanup" ];
 do
 	if [ "$1" = "--database" -o "$1" = "-d" ];
 	then
@@ -171,6 +178,10 @@ do
 	elif [ "$1" = "--no-kill-docker" ];
 	then
 		DO_KILL_DOCKER=false
+		shift
+	elif [ "$1" = "--no-cleanup" -o "$1" = "-c" ];
+	then
+		NO_CLEANUP=true
 		shift
 	else
 		shift
