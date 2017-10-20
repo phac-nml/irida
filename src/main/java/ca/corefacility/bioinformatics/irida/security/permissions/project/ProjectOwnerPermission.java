@@ -26,7 +26,7 @@ public class ProjectOwnerPermission extends ModifyProjectPermission {
 	private static final String PERMISSION_PROVIDED = "isProjectOwner";
 
 	/**
-	 * Construct an instance of {@link ReadProjectPermission}.
+	 * Construct an instance of {@link ProjectOwnerPermission}.
 	 * 
 	 * @param projectRepository
 	 *            the project repository.

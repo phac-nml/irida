@@ -635,7 +635,7 @@ public class ProjectSamplesController {
 			warnings.add(
 					messageSource.getMessage(msg, new Object[] { ex.getFieldName(), newProject.getName() }, locale));
 		} catch (AccessDeniedException ex) {
-			logger.warn("Access Denied adding samples to project " + newProjectId, ex);
+			logger.warn("Access denied adding samples to project " + newProjectId, ex);
 			String msg = remove ? "project.samples.move.sample-denied" : "project.samples.copy.sample-denied";
 			warnings.add(
 					messageSource.getMessage(msg, new Object[] { newProject.getName() }, locale));

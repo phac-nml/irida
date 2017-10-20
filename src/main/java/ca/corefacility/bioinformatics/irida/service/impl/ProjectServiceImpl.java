@@ -415,8 +415,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	@Transactional
 	@LaunchesProjectEvent(SampleAddedProjectEvent.class)
-	@PreAuthorize("( (hasRole('ROLE_ADMIN') and (#source instanceof T(ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable)) and (not #giveOwner)) "
-			+ "or hasPermission(#source, 'isProjectOwner') )"
+	@PreAuthorize("(hasPermission(#source, 'isProjectOwnerAllowRemote') and (not #giveOwner))"
 			+ "and hasPermission(#destination, 'isProjectOwner') " + "and hasPermission(#samples, 'canReadSample') "
 			+ "and ((not #giveOwner) or hasPermission(#samples, 'canUpdateSample') )")
 	public List<ProjectSampleJoin> copyOrMoveSamples(Project source, Project destination, Collection<Sample> samples,
