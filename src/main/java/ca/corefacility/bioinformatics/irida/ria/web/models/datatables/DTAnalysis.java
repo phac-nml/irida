@@ -1,9 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.web.models.datatables;
 
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
-
 import java.util.Date;
 
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
+
+/**
+ * User interface model for DataTables for an Analysis
+ */
 public class DTAnalysis implements DataTablesResponseModel {
 	private Long id;
 	private String name;
