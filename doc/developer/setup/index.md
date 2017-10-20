@@ -149,7 +149,7 @@ Tasks
 
 * `yarn sass` - compile all `.scss` files into `.css` files, with sourcemaps.
 * `yarn build` - compile all es6 files to es2015.
-* `yarn start` - use when developing front end code.  Webpack will monitor for changes to the entry files, compile them, and then updated the browser with the changes.
+* `yarn start` - use when developing front end code.  Webpack will monitor for changes to the entry files, compile them, and then updates the browser with the changes.
 
 JavaScript and SCSS Code Formatting and Linting
 ===============================================
