@@ -1,30 +1,76 @@
 const path = require("path");
-let entries = require("./configs/webpack/entries.js");
+const merge = require("webpack-merge");
+const parts = require("./configs/webpack/webpack.parts");
+const entries = require("./configs/webpack/entries.js");
 
-module.exports = {
-  entry: entries,
-  devtool: "source-maps",
-  module: {
-    loaders: [
-      {
-        test: /.js?$/,
-        loader: "babel-loader",
-        exclude: /node_modules/,
-        query: {
-          presets: ["es2015", "stage-0"]
-        }
-      },
-      { test: /\.css$/, loader: "style-loader!css-loader" }
-    ]
+const PATHS = {
+  build: path.resolve(__dirname, "resources/js/build")
+};
+
+/*
+ This is used by both the production and the development configurations.
+ */
+const commonConfig = merge([
+  {
+    entry: entries,
+    stats: {
+      children: false,
+      cached: false
+    },
+
+    externals: {
+      // require('jquery') is external and available
+      //  on the global var jQuery
+      jquery: "jQuery",
+      angular: "angular",
+      moment: "moment"
+    },
+    output: {
+      path: PATHS.build,
+      filename: "[name].bundle.js"
+    }
   },
-  externals: {
-    // require('jquery') is external and available
-    //  on the global var jQuery
-    jquery: "jQuery",
-    angular: "angular",
-    moment: "moment"
+  parts.loadJavaScript(),
+  parts.loadCSS()
+]);
+
+/* ======================
+ PRODUCTION CONFIGURATION
+====================== */
+const productionConfig = merge([
+  parts.progressBar(),
+  parts.clean([PATHS.build])
+]);
+
+/* =======================
+ DEVELOPMENT CONFIGURATION
+ ====================== */
+const developmentConfig = merge([
+  {
+    devtool: "inline-source-map"
   },
-  output: {
-    filename: "[name].bundle.js"
+  parts.devServer({
+    host: process.env.HOST,
+    port: 9090,
+    proxy: {
+      "/": {
+        target: "http://localhost:8080",
+        secure: false,
+        prependPath: false
+      }
+    },
+    publicPath: "http://localhost:9090/",
+    historyApiFallback: true
+  }),
+  // Add this back in after we format the entire project!
+  // parts.lintJavaScript(),
+  parts.writeFilePlugin()
+]);
+
+module.exports = env => {
+  if (env.target === "production") {
+    return merge(commonConfig, productionConfig);
   }
+
+  return merge(commonConfig, developmentConfig);
 };
