@@ -116,10 +116,8 @@ public class AnalysisSubmissionServiceImplIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void searchAnalyses() {
 
-		Specification<AnalysisSubmission> specification = AnalysisSubmissionSpecification
-				.filterAnalyses(null, null, null, null, null, null);
-		Page<AnalysisSubmission> paged = analysisSubmissionService
-				.search(specification, new PageRequest(0, 10, new Sort(Direction.ASC, "createdDate")));
+		Page<AnalysisSubmission> paged = analysisSubmissionService.listAllSubmissions(null, null, null, null,
+				new PageRequest(0, 10, new Sort(Direction.ASC, "createdDate")));
 		assertEquals(10, paged.getContent().size());
 
 		// Try filtering a by names
