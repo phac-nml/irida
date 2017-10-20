@@ -1,12 +1,14 @@
 package ca.corefacility.bioinformatics.irida.ria.security;
 
 import java.io.IOException;
+import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
@@ -22,6 +24,12 @@ import com.timgroup.jgravatar.GravatarRating;
 public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 	private static final String GRAVATAR_ATTRIBUTE = "gravatar";
 
+	private UserRepository userRepository;
+
+	public LoginSuccessHandler(UserRepository userRepository){
+		this.userRepository = userRepository;
+	}
+
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest httpServletRequest,
 			HttpServletResponse httpServletResponse, Authentication authentication)
@@ -35,5 +43,7 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
 		Gravatar gravatar = new Gravatar(30, GravatarRating.GENERAL_AUDIENCES, GravatarDefaultImage.IDENTICON);
 		String gravatarUrl = gravatar.getUrl(user.getEmail());
 		session.setAttribute(GRAVATAR_ATTRIBUTE, gravatarUrl);
+
+		userRepository.updateLogin(user, new Date());
 	}
 }
