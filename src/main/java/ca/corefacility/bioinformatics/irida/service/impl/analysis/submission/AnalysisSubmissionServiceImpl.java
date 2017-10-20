@@ -15,6 +15,7 @@ import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
+import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
 import org.hibernate.TransientPropertyValueException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -144,12 +145,31 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		this.analysisExecutionService = analysisExecutionService;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
+	@PreAuthorize("hasPermission(#project, 'canReadProject')")
+	public Page<AnalysisSubmission> listSubmissionsForProject(String search, String name, AnalysisState state,
+			Set<UUID> workflowIds, Project project, PageRequest pageRequest) {
+
+		Specification<AnalysisSubmission> specification = AnalysisSubmissionSpecification
+				.filterAnalyses(search, name, state, null, workflowIds, project);
+		return super.search(specification, pageRequest);
+	}
+
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public Page<AnalysisSubmission> listAllSubmissions(String search, String name, AnalysisState state,
+			Set<UUID> workflowIds, PageRequest pageRequest) {
+		Specification<AnalysisSubmission> specification = AnalysisSubmissionSpecification
+				.filterAnalyses(search, name, state, null, workflowIds, null);
+		return super.search(specification, pageRequest);
+	}
+
 	@Override
 	@PreAuthorize("hasRole('ROLE_USER')")
-	public Page<AnalysisSubmission> search(Specification<AnalysisSubmission> specification, PageRequest pageRequest)  {
+	public Page<AnalysisSubmission> listSubmissionsForUser(String search, String name, AnalysisState state,
+			User user, Set<UUID> workflowIds, PageRequest pageRequest) {
+		Specification<AnalysisSubmission> specification = AnalysisSubmissionSpecification
+				.filterAnalyses(search, name, state, user, workflowIds, null);
 		return super.search(specification, pageRequest);
 	}
 
