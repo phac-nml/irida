@@ -27,6 +27,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.format.Formatter;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -633,6 +634,11 @@ public class ProjectSamplesController {
 			String msg = remove ? "project.samples.move.sample-exists" : "project.samples.copy.sample-exists";
 			warnings.add(
 					messageSource.getMessage(msg, new Object[] { ex.getFieldName(), newProject.getName() }, locale));
+		} catch (AccessDeniedException ex) {
+			logger.warn("Access Denied adding samples to project " + newProjectId, ex);
+			String msg = remove ? "project.samples.move.sample-denied" : "project.samples.copy.sample-denied";
+			warnings.add(
+					messageSource.getMessage(msg, new Object[] { newProject.getName() }, locale));
 		}
 
 		if (!warnings.isEmpty() || successful.size() == 0) {
