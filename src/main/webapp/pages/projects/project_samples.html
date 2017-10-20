@@ -71,7 +71,6 @@
                                         class="btn btn-sm btn-default btn-block sample-tool-btn"
                                         data-toggle="modal" data-target="#js-modal-wrapper"
                                         data-enabled-at="2"
-                                        data-modal="merge"
                                         data:url="@{/projects/{projectId}/templates/merge-modal(projectId=${project.getId()})}"
                                         data:script="@{/resources/js/build/project-samples-merge.bundle.js}">
                                     <i class="fa fa-compress fa-fw" aria-hidden="true"></i> &nbsp;
@@ -82,8 +81,9 @@
                                 <button id="js-copyBtn"
                                         class="btn btn-sm btn-default btn-block sample-tool-btn"
                                         data-toggle="modal" data-target="#js-modal-wrapper"
-                                        data-modal="copy" data-enabled-at="1"
-                                        data:url="@{/projects/templates/copy-modal(projectId=${project.getId()})}">
+                                        data-enabled-at="1"
+                                        data:url="@{/projects/{projectId}/templates/copy-modal(projectId=${project.getId()})}"
+                                        data:script="@{/resources/js/build/project-samples-copy.bundle.js}">
                                     copy shit
                                 </button>
                             </li>

@@ -374,6 +374,13 @@ $("#js-modal-wrapper").on("show.bs.modal", function(event) {
       script = undefined;
     }
   });
+
+  /*
+  Clear the content of the modal when it is closed.
+   */
+  modal.on("hidden.bs.modal", function () {
+    modal.empty();
+  });
 });
 
 /*

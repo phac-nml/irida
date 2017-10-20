@@ -283,8 +283,8 @@ public class ProjectSamplesController {
 	 *
 	 * @return
 	 */
-	@RequestMapping(value = "/projects/templates/copy-modal", produces = MediaType.TEXT_HTML_VALUE)
-	public String getCopySamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, @RequestParam Long projectId,
+	@RequestMapping(value = "/projects/{projectId}/templates/copy-modal", produces = MediaType.TEXT_HTML_VALUE)
+	public String getCopySamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, @PathVariable Long projectId,
 			Model model) {
 		model.addAllAttributes(generateCopyMoveSamplesContent(projectId, ids));
 		model.addAttribute("projectId", projectId);
@@ -572,7 +572,7 @@ public class ProjectSamplesController {
 	@RequestMapping(value = "/projects/{projectId}/ajax/samples/available_projects")
 	@ResponseBody
 	public Map<String, Object> getProjectsAvailableToCopySamples(final @PathVariable Long projectId,
-			@RequestParam String term, @RequestParam int pageSize,
+			@RequestParam String term, @RequestParam(required = false, defaultValue = "10") int pageSize,
 			@RequestParam int page, Principal principal) {
 		final Project projectToExclude = projectService.read(projectId);
 		List<Map<String, String>> projectMap = new ArrayList<>();
