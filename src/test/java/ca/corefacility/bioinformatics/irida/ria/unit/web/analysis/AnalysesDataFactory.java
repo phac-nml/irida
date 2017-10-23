@@ -1,14 +1,19 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.analysis;
 
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import com.google.common.collect.ImmutableList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import java.util.Iterator;
-import java.util.List;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
+import com.google.common.collect.ImmutableList;
+
+/**
+ * Factory for creating a {@link Page} of {@link AnalysisSubmission} for testing the DataTables calls.
+ */
 public class AnalysesDataFactory {
 	protected static Page<AnalysisSubmission> getPagedAnalysisSubmissions() {
 		return new Page<AnalysisSubmission>() {
