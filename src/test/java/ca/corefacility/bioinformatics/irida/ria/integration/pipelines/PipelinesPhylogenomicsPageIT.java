@@ -36,7 +36,6 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 		page = new PipelinesPhylogenomicsPage(driver());
 	}
 
-	@Ignore
 	@Test
 	public void testPageSetup() {
 		addSamplesToCart();
@@ -47,7 +46,6 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 		assertEquals("Should display the correct number of samples.", 2, page.getNumberOfSamplesDisplayed());
 	}
 
-	@Ignore
 	@Test
 	public void testSubmitWithTransientReferenceFile() {
 		LoginPage.loginAsUser(driver());
@@ -65,7 +63,6 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 		assertTrue("Page should display reference file name.", page.isReferenceFileNameDisplayed());
 	}
 
-	@Ignore
 	@Test
 	public void testPipelineSubmission() {
 		addSamplesToCart();
@@ -76,7 +73,6 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 				page.isPipelineSubmittedSuccessMessageShown());
 	}
 
-	@Ignore
 	@Test
 	public void testCheckPipelineStatusAfterSubmit() {
 		addSamplesToCart();
@@ -89,7 +85,6 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 		assertTrue("Should be on analysis page", driver().getCurrentUrl().endsWith("/analysis"));
 	}
 
-	@Ignore
 	@Test
 	public void testClearPipelineAndGetSamples() {
 		addSamplesToCart();
@@ -103,7 +98,6 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 		assertFalse("cart should be empty", page.isCartCountVisible());
 	}
 
-	@Ignore
 	@Test
 	public void testRemoveSample() {
 		addSamplesToCart();
@@ -117,7 +111,6 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 		assertEquals("cart samples count should equal samples on page", laterNumber, page.getCartCount());
 	}
 
-	@Ignore
 	@Test
 	public void testRemoveAllSample() {
 		addSamplesToCart();
@@ -128,7 +121,6 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 		assertTrue("user should be redirected to pipelinese page", driver().getCurrentUrl().endsWith("/pipelines"));
 	}
 
-	@Ignore
 	@Test
 	public void testModifyParameters() {
 		addSamplesToCart();
@@ -146,7 +138,6 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 		assertEquals("Value should be reset to the default value", value, page.getAlternativeAlleleFractionValue());
 	}
 
-	@Ignore
 	@Test
 	public void testModifyParametersAgain() throws InterruptedException {
 		addSamplesToCart();
@@ -168,7 +159,6 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 				newValue, page.getAlternativeAlleleFractionValue());
 	}
 
-	@Ignore
 	@Test
 	public void testModifyAndSaveParameters() {
 		addSamplesToCart();
@@ -196,7 +186,6 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 	}
 
 	@Test
-	@Ignore
 	public void testRemoteSample() throws InterruptedException{
 		LoginPage.loginAsAdmin(driver());
 		// add the api
