@@ -316,26 +316,7 @@ $dt.on("selection-count.dt", function(e, count) {
 });
 
 /*
-Store reference to handle different modals.
- */
-const MODAL_RESULTS_HANDLER = {
-  /**
-   * Handle closing the merge samples modal
-   */
-  merge() {}
-};
-
-function loadSampleToolsModal({ url, src, sampleIds }) {
-  const modal = $(this);
-
-  /*
-  Load the content for the dialogue based on the server response.
-   */
-  return;
-}
-
-/*
-Handle MERGE through the modal window.
+Handle opening the Sample Tools modals.
  */
 $("#js-modal-wrapper").on("show.bs.modal", function(event) {
   const wrapper = this;

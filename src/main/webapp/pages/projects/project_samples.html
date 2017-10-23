@@ -84,7 +84,8 @@
                                         data-enabled-at="1"
                                         data:url="@{/projects/{projectId}/templates/copy-modal(projectId=${project.getId()})}"
                                         data:script="@{/resources/js/build/project-samples-copy.bundle.js}">
-                                    copy shit
+                                    <i class="fa fa-files-o fa-fw" aria-hidden="true"></i> &nbsp;
+                                    <th:block th:text="#{project.samples.nav.copy}"/>
                                 </button>
                             </li>
                         </ul>
