@@ -214,7 +214,7 @@ const config = Object.assign({}, tableConfig, {
       Generate the content for the popover
        */
       const content = `<ul class="popover-list">
-          ${data.qcEntries.map(qc => `<li class="error">${qc}</li>`)}
+          ${data.qcEntries.map(qc => `<li class="error">${qc}</li>`).join("")}
       </ul>`;
       icon.data("content", content);
       const td = $row.find(`td:nth-of-type(${COLUMNS.SAMPLE_NAME + 1})`);
