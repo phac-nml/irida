@@ -13,6 +13,9 @@
                 <div class="modal-body" th:with="extraCount=${#lists.size(extraSamples)}">
                     <h4 th:text="${total>1} ? #{project.samples.modal.copy.intro-plural(${total})} : #{project.samples.modal.copy.intro-singular(${samples[0].sampleName})}">
                         Copy Samples Title</h4>
+                    <th:block th:if="${total==1}">
+                        <input type="hidden" th:value="${samples.get(0).getId()}" name="sampleIds[]"/>
+                    </th:block>
                     <th:block th:if="${total>1}">
                         <ol class="start">
                             <li th:each="sample : ${samples}">
