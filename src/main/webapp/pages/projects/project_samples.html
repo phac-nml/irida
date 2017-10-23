@@ -5,6 +5,7 @@
         layout:decorator="projects/_base">
 <head>
     <title th:text="${project.label} + ' - ' + #{project.nav.samples}"></title>
+    <link rel="stylesheet" th:href="@{/resources/css/pages/project_samples.css}"/>
     <script th:inline="javascript">
       var PAGE = {
         linker: /*[[${linker}]]*/'',
@@ -137,6 +138,18 @@
     </table>
 
     <div id="modal-wrapper" class="modal fade" tabindex="-1" role="dialog"></div>
+
+    <div class="hidden">
+        <span class="qc-warning-wrapper" data-toggle="popover"
+              th:title="#{sample.files.qc.popover-label}">
+            <i class="fa fa-fw fa-exclamation-triangle"></i>
+        </span>
+        <div id="popover-template" class="popover" role="tooltip">
+            <div class="arrow"></div>
+            <h3 class="popover-title"></h3>
+            <div class="popover-content"></div>
+        </div>
+    </div>
 
     <!--<div class="hidden">-->
     <!--<filtered-tags id="filtered-tags"></filtered-tags>-->

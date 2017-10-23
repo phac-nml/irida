@@ -35,6 +35,14 @@ const SAMPLE_TOOL_ACTIONS = {
   }
 };
 
+const POPOVER_OPTIONS = {
+  container: "body",
+  trigger: "hover",
+  placement: "right",
+  html: true,
+  template: $("#popover-template").clone()
+};
+
 const sampleToolsNodes = document.querySelectorAll(".sample-tool-btn");
 const SAMPLE_TOOL_BUTTONS = [...sampleToolsNodes].map(
   elm => new SampleDropdownButton(elm, SAMPLE_TOOL_ACTIONS[elm.id])
@@ -177,11 +185,35 @@ const config = Object.assign({}, tableConfig, {
       }
     }
   ],
+  drawCallback() {
+    $('[data-toggle="popover"]').popover(POPOVER_OPTIONS);
+  },
   createdRow(row, data) {
     row.dataset.info = JSON.stringify({
       project: data.projectId,
       sample: data.id
     });
+
+    /*
+    Check if this sample has any quality control issues.
+    If there are they will be displayed in a popover.
+     */
+    if (data.qcEntries.length) {
+      const $row = $(row);
+      $row.addClass("row-warning");
+
+      const icon = $(".qc-warning-wrapper").clone();
+      /*
+      Generate the content for the popover
+       */
+      const content = `<ul class="popover-list">
+          ${data.qcEntries.map(qc => `<li class="error">${qc}</li>`).join("")}
+      </ul>`;
+      icon.data("content", content);
+      const td = $row.find(`td:nth-of-type(${COLUMNS.SAMPLE_NAME + 1})`);
+      td.css("position", "relative");
+      icon.appendTo(td);
+    }
   }
 });
 

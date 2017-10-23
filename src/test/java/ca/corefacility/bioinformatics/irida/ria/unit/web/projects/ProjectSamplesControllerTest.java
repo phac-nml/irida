@@ -318,7 +318,7 @@ public class ProjectSamplesControllerTest {
 		DataTablesParams params = mock(DataTablesParams.class);
 		when(params.getSort()).thenReturn(new Sort(Direction.ASC, "sample.sampleName"));
 		DataTablesResponse response = controller
-				.getProjectSamples(1L, params, ImmutableList.of(), ImmutableList.of(), null, null, null, null);
+				.getProjectSamples(1L, params, ImmutableList.of(), ImmutableList.of(), null, null, null, null, Locale.US);
 		List<DataTablesResponseModel> data = response.getData();
 		assertEquals("Has the correct number of samples", 1, data.size());
 		DTProjectSamples sampleData = (DTProjectSamples) data.get(0);

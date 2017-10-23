@@ -33,7 +33,8 @@ table.dataTable thead th.sorting_desc:after {
   content: "\f0dd";
 }
 
-.dataTable {
+table.dataTable {
+  margin-bottom: 0 !important;
   th {
     white-space: nowrap;
     height: 32px;
@@ -165,14 +166,4 @@ table.dataTable thead th.sorting_desc:after {
 
 .dt-date {
   width: 200px !important;
-}
-
-// Used when a colour bar needs to be displayed next to a label
-// E.g. on the project samples page for a unique colour for each project.
-.label-bar-color {
-  width: 5px;
-  display: inline-block;
-  background-color: RGB(176, 190, 197);
-  margin-left: -15px;
-  margin-right: 5px;
 }
