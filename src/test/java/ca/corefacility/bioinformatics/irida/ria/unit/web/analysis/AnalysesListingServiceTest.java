@@ -1,23 +1,17 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.analysis;
 
 import java.util.Locale;
-import java.util.Set;
-import java.util.UUID;
 
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.user.User;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.springframework.context.MessageSource;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.AnalysesListingService;
@@ -31,10 +25,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
+/**
+ * Unit test for {@link AnalysesListingService} which handles DataTables call for listing Analyses.
+ */
 public class AnalysesListingServiceTest {
 	private AnalysesListingService analysesListingService;
 
@@ -57,8 +52,8 @@ public class AnalysesListingServiceTest {
 				ImmutableMap.of());
 
 		when(analysisSubmissionService
-				.listAllSubmissions(eq(searchValue), any(String.class), eq(null), Matchers.<Set<UUID>>any(),
-						Matchers.<PageRequest>any())).thenReturn(AnalysesDataFactory.getPagedAnalysisSubmissions());
+				.listAllSubmissions(eq(searchValue), any(String.class), eq(null), Matchers.any(),
+						Matchers.any())).thenReturn(AnalysesDataFactory.getPagedAnalysisSubmissions());
 
 		DataTablesResponse response = analysesListingService.getPagedSubmissions(params, Locale.US, null, null);
 
@@ -69,8 +64,8 @@ public class AnalysesListingServiceTest {
 		assertTrue("Should have data value", response.getData() != null);
 
 		verify(analysisSubmissionService)
-				.listAllSubmissions(eq(searchValue), any(String.class), eq(null), Matchers.<Set<UUID>>any(),
-						Matchers.<PageRequest>any());
+				.listAllSubmissions(eq(searchValue), any(String.class), eq(null), Matchers.any(),
+						Matchers.any());
 	}
 
 	@Test
@@ -81,7 +76,7 @@ public class AnalysesListingServiceTest {
 				ImmutableMap.of());
 
 		when(analysisSubmissionService.listSubmissionsForUser(eq(searchValue), any(String.class), eq(null), eq(user),
-				Matchers.<Set<UUID>>any(), Matchers.<PageRequest>any()))
+				Matchers.any(), Matchers.any()))
 				.thenReturn(AnalysesDataFactory.getPagedAnalysisSubmissions());
 
 		DataTablesResponse response = analysesListingService.getPagedSubmissions(params, Locale.US, user, null);
@@ -93,7 +88,7 @@ public class AnalysesListingServiceTest {
 		assertTrue("Should have data value", response.getData() != null);
 
 		verify(analysisSubmissionService).listSubmissionsForUser(eq(searchValue), any(String.class), eq(null), eq(user),
-				Matchers.<Set<UUID>>any(), Matchers.<PageRequest>any());
+				Matchers.any(), Matchers.any());
 	}
 
 	@Test
@@ -104,8 +99,8 @@ public class AnalysesListingServiceTest {
 				ImmutableMap.of());
 
 		when(analysisSubmissionService
-				.listSubmissionsForProject(eq(searchValue), any(String.class), eq(null), Matchers.<Set<UUID>>any(),
-						eq(project), Matchers.<PageRequest>any()))
+				.listSubmissionsForProject(eq(searchValue), any(String.class), eq(null), Matchers.any(),
+						eq(project), Matchers.any()))
 				.thenReturn(AnalysesDataFactory.getPagedAnalysisSubmissions());
 
 		DataTablesResponse response = analysesListingService.getPagedSubmissions(params, Locale.US, null, project);
@@ -117,7 +112,7 @@ public class AnalysesListingServiceTest {
 		assertTrue("Should have data value", response.getData() != null);
 
 		verify(analysisSubmissionService)
-				.listSubmissionsForProject(eq(searchValue), any(String.class), eq(null), Matchers.<Set<UUID>>any(),
-						eq(project), Matchers.<PageRequest>any());
+				.listSubmissionsForProject(eq(searchValue), any(String.class), eq(null), Matchers.any(),
+						eq(project), Matchers.any());
 	}
 }
