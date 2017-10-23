@@ -16,8 +16,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysisController;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
@@ -36,6 +34,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * Unit test for {@link AnalysisController} for handling request for DataTables.
+ */
 public class AnalysisControllerDataTablesTest {
 
 	@Mock
@@ -62,8 +63,8 @@ public class AnalysisControllerDataTablesTest {
 		DataTablesParams params = new DataTablesParams(1, 10, 1, "", new Sort(Sort.Direction.ASC, "id"),
 				ImmutableMap.of());
 		Page<AnalysisSubmission> page = AnalysesDataFactory.getPagedAnalysisSubmissions();
-		when(analysesListingService.getPagedSubmissions(Matchers.<DataTablesParams>any(),
-				Matchers.<Locale>any(), Matchers.<User>any(), Matchers.<Project>any())).thenReturn(new DataTablesResponse(params, page, ImmutableList.of()));
+		when(analysesListingService.getPagedSubmissions(Matchers.any(),
+				Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(new DataTablesResponse(params, page, ImmutableList.of()));
 
 		mockMvc = MockMvcBuilders.standaloneSetup(analysisController)
 				.build();
