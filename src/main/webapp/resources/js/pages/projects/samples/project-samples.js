@@ -206,7 +206,7 @@ const config = Object.assign({}, tableConfig, {
       /*
       Generate the content for the popover
        */
-k;      const content = `<ul class="popover-list">
+      const content = `<ul class="popover-list">
           ${data.qcEntries.map(qc => `<li class="error">${qc}</li>`).join("")}
       </ul>`;
       icon.data("content", content);
