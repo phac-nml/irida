@@ -5,21 +5,17 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.PipelinesAssemblyPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.PipelinesPhylogenomicsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.PipelinesSelectionPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.AssociatedProjectEditPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.RemoteApiUtilities;
-
-import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 /**
  * <p>
@@ -31,7 +27,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 public class AssemblyPipelinePageIT extends AbstractIridaUIITChromeDriver {
 	private static final Logger logger = LoggerFactory.getLogger(AssemblyPipelinePageIT.class);
 	private PipelinesAssemblyPage page;
-	
+
 	@Before
 	public void setUpTest() {
 		page = new PipelinesAssemblyPage(driver());
@@ -39,7 +35,7 @@ public class AssemblyPipelinePageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
 	public void testPageSetup() {
-		addSamplesToCart();
+		addSamplesToCartManager();
 
 		logger.info("Checking Assembly Page Setup.");
 		assertEquals("Should display the correct number of samples.", 2, page.getNumberOfSamplesDisplayed());
@@ -47,17 +43,18 @@ public class AssemblyPipelinePageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
 	public void testPipelineSubmission() {
-		addSamplesToCart();
+		addSamplesToCartManager();
 
 		page.clickLaunchPipelineBtn();
-		assertTrue("Message should be displayed when the pipeline is submitted", page.isPipelineSubmittedMessageShown());
+		assertTrue("Message should be displayed when the pipeline is submitted",
+				page.isPipelineSubmittedMessageShown());
 		assertTrue("Message should be displayed once the pipeline finished submitting",
 				page.isPipelineSubmittedSuccessMessageShown());
 	}
 
 	@Test
 	public void testCheckPipelineStatusAfterSubmit() {
-		addSamplesToCart();
+		addSamplesToCartManager();
 
 		page.clickLaunchPipelineBtn();
 		assertTrue("Message should be displayed once the pipeline finished submitting",
@@ -66,21 +63,21 @@ public class AssemblyPipelinePageIT extends AbstractIridaUIITChromeDriver {
 
 		assertTrue("Should be on analysis page", driver().getCurrentUrl().endsWith("/analysis"));
 	}
-	
+
 	@Test
 	public void testShareResultsWithSamples() {
-		addSamplesToCart();
+		addSamplesToCartManager();
 
-//		assertTrue("Share Results with Samples checkbox should exist", page.existsShareResultsWithSamples());
+		assertTrue("Share Results with Samples checkbox should exist", page.existsShareResultsWithSamples());
 		page.clickShareResultsWithSamples();
 		page.clickLaunchPipelineBtn();
 		assertTrue("Message should be displayed once the pipeline finished submitting",
 				page.isPipelineSubmittedSuccessMessageShown());
 	}
-	
+
 	@Test
 	public void testNoShareResultsWithSamples() {
-		addSamplesToCart();
+		addSamplesToCartManager();
 
 		assertTrue("Share Results with Samples checkbox should exist", page.existsShareResultsWithSamples());
 		page.clickLaunchPipelineBtn();
@@ -88,8 +85,27 @@ public class AssemblyPipelinePageIT extends AbstractIridaUIITChromeDriver {
 				page.isPipelineSubmittedSuccessMessageShown());
 	}
 
-	private void addSamplesToCart() {
+	@Test
+	public void testUserNoShareResultsWithSamples() {
+		addSamplesToCartUser();
+
+		assertFalse("Share Results with Samples checkbox should not exist", page.existsShareResultsWithSamples());
+		page.clickLaunchPipelineBtn();
+		assertTrue("Message should be displayed once the pipeline finished submitting",
+				page.isPipelineSubmittedSuccessMessageShown());
+	}
+
+	private void addSamplesToCartUser() {
+		LoginPage.loginAsUser(driver());
+		addSamplesToCart();
+	}
+
+	private void addSamplesToCartManager() {
 		LoginPage.loginAsManager(driver());
+		addSamplesToCart();
+	}
+
+	private void addSamplesToCart() {
 		ProjectSamplesPage samplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
 		samplesPage.selectSample(0);
 		samplesPage.selectSample(1);
