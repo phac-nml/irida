@@ -129,13 +129,13 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 				page.getParametersModalTitle());
 
 		// set the value for the ALternative Allele Fraction
-		String value = page.getAlternativeAlleleFractionValue();
+		String value = page.getSNVAbundanceRatio();
 		String newValue = "10";
-		page.setAlternativeAlleleFraction(newValue);
+		page.setSNVAbundanceRatio(newValue);
 		assertEquals("Should not have the same value as the default after being changed", newValue,
-				page.getAlternativeAlleleFractionValue());
-		page.clickSetDefaultAlternativeAlleleFraction();
-		assertEquals("Value should be reset to the default value", value, page.getAlternativeAlleleFractionValue());
+				page.getSNVAbundanceRatio());
+		page.clickSetDefaultSNVAbundanceRatio();
+		assertEquals("Value should be reset to the default value", value, page.getSNVAbundanceRatio());
 	}
 
 	@Test
@@ -147,8 +147,8 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 
 		// set the value for the ALternative Allele Fraction
 		String newValue = "10";
-		page.setAlternativeAlleleFraction(newValue);
-		assertEquals("Should be set to the new value.", newValue, page.getAlternativeAlleleFractionValue());
+		page.setSNVAbundanceRatio(newValue);
+		assertEquals("Should be set to the new value.", newValue, page.getSNVAbundanceRatio());
 
 		page.clickUseParametersButton();
 
@@ -156,7 +156,7 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 		// there:
 		page.clickPipelineParametersBtn();
 		assertEquals("alternative allele fraction should have the same value as the new value after being changed",
-				newValue, page.getAlternativeAlleleFractionValue());
+				newValue, page.getSNVAbundanceRatio());
 	}
 
 	@Test
@@ -169,9 +169,9 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 		// set the value for the ALternative Allele Fraction
 		String newValue = "10";
 		final String savedParametersName = "Saved parameters name.";
-		page.setAlternativeAlleleFraction(newValue);
+		page.setSNVAbundanceRatio(newValue);
 		assertEquals("Should have updated alternative allele fractiion value to new value.", newValue,
-				page.getAlternativeAlleleFractionValue());
+				page.getSNVAbundanceRatio());
 		page.clickSaveParameters();
 		assertTrue("Page should have shown name for parameters field with selected parameters name.",
 				page.isNameForParametersVisible());
