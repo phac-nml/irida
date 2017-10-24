@@ -21,7 +21,7 @@ export function formatTimeForNow({ now, date }) {
  */
 export function getHumanizedDuration({ date }) {
   if (date !== null) {
-    return moment.duration(Number(date)).humanize();
+    return moment.duration(date).humanize();
   }
   return "";
 }
