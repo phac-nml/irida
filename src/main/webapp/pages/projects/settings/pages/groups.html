@@ -40,7 +40,7 @@
                    data:url="@{/projects/{id}/settings/ajax/groups(id=${project.getId()})}">
                 <thead>
                 <tr role="row">
-                    <th data-data="object.name" th:text="#{project.table.collaborator.name}"></th>
+                    <th data-data="userGroup.name" th:text="#{project.table.collaborator.name}"></th>
                     <th data-data="projectRole" th:if="${isAdmin} or ${manageMembers}"
                         th:text="#{project.table.collaborator.role}"></th>
                     <th data-data="projectRole" th:if="not (${isAdmin} or ${manageMembers})"
