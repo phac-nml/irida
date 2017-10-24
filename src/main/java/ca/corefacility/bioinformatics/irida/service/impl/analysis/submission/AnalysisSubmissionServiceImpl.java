@@ -15,13 +15,16 @@ import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
+import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
 import org.hibernate.TransientPropertyValueException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
@@ -140,6 +143,43 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	
 	public void setAnalysisExecutionService(final AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionService) {
 		this.analysisExecutionService = analysisExecutionService;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasPermission(#project, 'canReadProject')")
+	public Page<AnalysisSubmission> listSubmissionsForProject(String search, String name, AnalysisState state,
+			Set<UUID> workflowIds, Project project, PageRequest pageRequest) {
+
+		Specification<AnalysisSubmission> specification = AnalysisSubmissionSpecification
+				.filterAnalyses(search, name, state, null, workflowIds, project);
+		return super.search(specification, pageRequest);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public Page<AnalysisSubmission> listAllSubmissions(String search, String name, AnalysisState state,
+			Set<UUID> workflowIds, PageRequest pageRequest) {
+		Specification<AnalysisSubmission> specification = AnalysisSubmissionSpecification
+				.filterAnalyses(search, name, state, null, workflowIds, null);
+		return super.search(specification, pageRequest);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_USER')")
+	public Page<AnalysisSubmission> listSubmissionsForUser(String search, String name, AnalysisState state,
+			User user, Set<UUID> workflowIds, PageRequest pageRequest) {
+		Specification<AnalysisSubmission> specification = AnalysisSubmissionSpecification
+				.filterAnalyses(search, name, state, user, workflowIds, null);
+		return super.search(specification, pageRequest);
 	}
 
 	/**
@@ -306,16 +346,6 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 
 			throw e;
 		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@PreAuthorize("hasRole('ROLE_USER')")
-	public Page<AnalysisSubmission> search(Specification<AnalysisSubmission> specification, int page, int size,
-			Direction order, String... sortProperties) {
-		return super.search(specification, page, size, order, sortProperties);
 	}
 
 	/**
