@@ -145,6 +145,9 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		this.analysisExecutionService = analysisExecutionService;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
 	public Page<AnalysisSubmission> listSubmissionsForProject(String search, String name, AnalysisState state,
@@ -155,6 +158,9 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		return super.search(specification, pageRequest);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Page<AnalysisSubmission> listAllSubmissions(String search, String name, AnalysisState state,
@@ -164,6 +170,9 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		return super.search(specification, pageRequest);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public Page<AnalysisSubmission> listSubmissionsForUser(String search, String name, AnalysisState state,
