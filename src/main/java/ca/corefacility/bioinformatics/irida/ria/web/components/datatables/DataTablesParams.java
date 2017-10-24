@@ -45,13 +45,18 @@ public class DataTablesParams {
 	private Integer draw;
 	private String searchValue;
 	private Sort sort;
+	private Map<String, String> searchMap;
 
-	public DataTablesParams(Integer start, Integer length, Integer draw, String searchValue, Sort sort) {
+	public DataTablesParams() {
+	}
+
+	public DataTablesParams(Integer start, Integer length, Integer draw, String searchValue, Sort sort, Map<String, String> searchMap) {
 		this.start = start;
 		this.length = length;
 		this.draw = draw;
 		this.searchValue = searchValue;
 		this.sort = sort;
+		this.searchMap = searchMap;
 	}
 
 	/**
@@ -67,8 +72,17 @@ public class DataTablesParams {
 		Integer draw = Integer.valueOf(request.getParameter("draw"));
 		String searchValue = request.getParameter("search[value]");
 		List<DataTablesColumnDefinitions> dataTablesColumnDefinitions = getColumnDefinitions(request);
+
+		// Get any column specific search data
+		Map<String, String> searchMap = new HashMap<>();
+		for (DataTablesColumnDefinitions def : dataTablesColumnDefinitions) {
+			if (!Strings.isNullOrEmpty(def.getSearchValue())) {
+				searchMap.put(def.getColumnName(), def.getSearchValue());
+			}
+		}
+
 		Sort sort = getColumnSortData(request, dataTablesColumnDefinitions);
-		return new DataTablesParams(start, length, draw, searchValue, sort);
+		return new DataTablesParams(start, length, draw, searchValue, sort, searchMap);
 	}
 
 	/**
@@ -198,5 +212,13 @@ public class DataTablesParams {
 	 */
 	public Sort getSort() {
 		return sort;
+	}
+
+	/**
+	 * Get all the searches on this columns in this table
+	 * @return {@link Map}
+	 */
+	public Map<String, String> getSearchMap() {
+		return searchMap;
 	}
 }
