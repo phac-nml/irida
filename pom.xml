@@ -669,10 +669,6 @@
 							</excludes>
 							<argLine>${failsafeArgLine}</argLine>
 							<systemPropertyVariables>
-								<test.galaxy.repository.url>${test.galaxy.repository.url}</test.galaxy.repository.url>
-								<test.galaxy.branch>${test.galaxy.branch}</test.galaxy.branch>
-								<test.galaxy.revision>${test.galaxy.revision}</test.galaxy.revision>
-								<test.galaxy.database>${test.galaxy.database}</test.galaxy.database>
 								<jetty.port>${jetty.port}</jetty.port>
 								<spring.profiles.active>it</spring.profiles.active>
 								<jetty.port>${jetty.port}</jetty.port>
