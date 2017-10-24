@@ -128,7 +128,7 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 		assertEquals("Should have the proper pipeline name in title", "Default Parameters",
 				page.getParametersModalTitle());
 
-		// set the value for the ALternative Allele Fraction
+		// set the value
 		String value = page.getSNVAbundanceRatio();
 		String newValue = "10";
 		page.setSNVAbundanceRatio(newValue);
@@ -155,7 +155,7 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 		// open the dialog again and make sure that the changed values are still
 		// there:
 		page.clickPipelineParametersBtn();
-		assertEquals("alternative allele fraction should have the same value as the new value after being changed",
+		assertEquals("snv abundance ratio should have the same value as the new value after being changed",
 				newValue, page.getSNVAbundanceRatio());
 	}
 
@@ -170,7 +170,7 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 		String newValue = "10";
 		final String savedParametersName = "Saved parameters name.";
 		page.setSNVAbundanceRatio(newValue);
-		assertEquals("Should have updated alternative allele fractiion value to new value.", newValue,
+		assertEquals("Should have updated snv abundance ratio value to new value.", newValue,
 				page.getSNVAbundanceRatio());
 		page.clickSaveParameters();
 		assertTrue("Page should have shown name for parameters field with selected parameters name.",
@@ -181,39 +181,6 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 				page.getSelectedParameterSet());
 		// now test that we can run the pipeline
 		page.clickLaunchPipelineBtn();
-		assertTrue("Message should be displayed once the pipeline finished submitting",
-				page.isPipelineSubmittedSuccessMessageShown());
-	}
-
-	@Test
-	public void testRemoteSample() throws InterruptedException{
-		LoginPage.loginAsAdmin(driver());
-		// add the api
-		RemoteApiUtilities.addRemoteApi(driver());
-
-		// associate a project from that api
-		AssociatedProjectEditPage apEditPage = new AssociatedProjectEditPage(driver());
-		apEditPage.goTo(1L);
-		apEditPage.viewRemoteTab();
-		apEditPage.clickAssociatedButton(1L);
-		assertTrue(apEditPage.checkNotyStatus("success"));
-
-		ProjectSamplesPage samplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
-
-		samplesPage.selectSample(0);
-		samplesPage.addSelectedSamplesToCart();
-		
-//		samplesPage.enableRemoteProjects();
-//
-//		samplesPage.selectSampleByClass("remote-sample");
-//		samplesPage.addSamplesToGlobalCart();
-		
-		PipelinesSelectionPage.goToPhylogenomicsPipeline(driver());
-		
-		assertTrue(page.isRemoteSampleDisplayed());
-
-		page.clickLaunchPipelineBtn();
-		assertTrue("Message should be displayed when the pipeline is submitted", page.isPipelineSubmittedMessageShown());
 		assertTrue("Message should be displayed once the pipeline finished submitting",
 				page.isPipelineSubmittedSuccessMessageShown());
 	}
