@@ -20,6 +20,7 @@ Changes
 * [UI]: Changed user's modified date to "Last Login" in user list.
 * [Developer]: Created `production` and `development` webpack builds.
 * [UI]: Fixed issue with uploading `.fastqc` files in IE, and allow for uploading for `fastqc.gz` in all browsers (0.18.4).
+* [UI]: Added ability to update an analysis submission name after it's been submitted.
 
 0.17.0 to 0.18.0
 ----------------
