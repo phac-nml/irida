@@ -28,9 +28,9 @@
 				</h1>
 			</div>
 			<div class="col-md-1">
-				<button id="editAnalysisButton" data-toggle="modal" data-target="#editAnalysisModal" class="btn btn-sm btn-default btn-block">
-						 <i class="fa fa-pencil" aria-hidden="true"></i>
-					</button>
+				<button th:if="${updatePermission}" id="editAnalysisButton" data-toggle="modal" data-target="#editAnalysisModal" class="btn btn-sm btn-default btn-block">
+					<i class="fa fa-pencil" aria-hidden="true"></i>
+				</button>
 			</div>
 		</div>
 		<div class="row">
