@@ -21,24 +21,28 @@
 <body>
 <main layout:fragment="main">
 		<div class="row">
-				<div class="col-md-11 ng-cloak">
-					<h1>
-						<th:block th:text="${analysisSubmission.label}"></th:block>
-						<small ng-hide="stateController.state === 'ERROR'" ng-bind="stateController.percentage + '%'"></small>
-					</h1>
-				</div>
-				<div class="col-md-1">
-					<button id="editAnalysisButton" data-toggle="modal" data-target="#editAnalysisModal"
-						class="btn btn-sm btn-default btn-block">
+			<div class="col-md-11 ng-cloak">
+				<h1>
+					<th:block th:text="${analysisSubmission.label}"></th:block>
+					<small ng-hide="stateController.state === 'ERROR'" ng-bind="stateController.percentage + '%'"></small>
+				</h1>
+			</div>
+			<div class="col-md-1">
+				<button id="editAnalysisButton" data-toggle="modal" data-target="#editAnalysisModal" class="btn btn-sm btn-default btn-block">
 						 <i class="fa fa-pencil" aria-hidden="true"></i>
 					</button>
-				</div>
 			</div>
-			<div class="row">
-				<div class="col-md-12">
-					<uib-progressbar ng-hide="stateController.state === 'ERROR'" class="active" value="stateController.percentage"></uib-progressbar>
-				</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<uib-progressbar ng-hide="stateController.state === 'ERROR'" class="active" value="stateController.percentage"></uib-progressbar>
 			</div>
+		</div>
+		<div class="row" th:if="${updateError}">
+			<div class="col-md-12">
+				<div class="alert alert-danger" role="alert" th:text="#{analysis.edit.update-failed}">_Name update failed_</div>
+			</div>
+		</div>
 
 	<div class="row">
 		<div class="col-md-12">
@@ -284,9 +288,10 @@
 				</div>
 				<form th:action="@{/analysis/{aid}/edit(aid=${analysisSubmission.getId()})}" method="POST">
 					<div class="modal-body">
+						<p th:text="#{analysis.edit.hint}">_Enter a new name for the analysis:_</p>
 						<div class="form-group">
-							<label for="analysis-name-input">_Analysis Name_</label>
-							<input type="text" class="form-control" id="analysis-name-input" th:value="${analysisSubmission.name}"/>
+							<label for="analysis-name-input" th:text="#{analysis.edit.name}">_Analysis Name_</label>
+							<input type="text" class="form-control" id="analysis-name-input" name="name" th:value="${analysisSubmission.name}"/>
 						</div>
 					</div>
 					<div class="modal-footer">
