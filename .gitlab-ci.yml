@@ -12,6 +12,9 @@ variables:
   MYSQL_PASSWORD: test
   JDBC_URL: jdbc:mysql://mariadb:3306/irida_test
   TMP_DIRECTORY: /builds/irida
+  GALAXY_URL: http://phacnml__galaxy-irida-17.01:80
+  GALAXY_INVALID_URL: http://phacnml__galaxy-irida-17.01:48889
+  GALAXY_INVALID_URL2: http://phacnml__galaxy-irida-17.01:48890
 
 
 before_script:
@@ -53,7 +56,7 @@ galaxy_job:
     - mariadb:10.0
     - phacnml/galaxy-irida-17.01:0.17.0-it
   script:
-  - mvn clean verify -B -Pgalaxy_testing -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY
+  - mvn clean verify -B -Pgalaxy_testing -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dtest.galaxy.url=$GALAXY_URL -Dtest.galaxy.invalid.url=$GALAXY_INVALID_URL -Dtest.galaxy.invalid.url2=$GALAXY_INVALID_URL2
   stage: test
 build-docs_job:
   tags:
