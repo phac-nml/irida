@@ -510,6 +510,13 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>com.jayway.jsonpath</groupId>
+			<artifactId>json-path</artifactId>
+			<version>${jsonpath.version}</version>
+			<scope>test</scope>
+		</dependency>
+
 		<!-- Logging -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -662,10 +669,6 @@
 							</excludes>
 							<argLine>${failsafeArgLine}</argLine>
 							<systemPropertyVariables>
-								<test.galaxy.repository.url>${test.galaxy.repository.url}</test.galaxy.repository.url>
-								<test.galaxy.branch>${test.galaxy.branch}</test.galaxy.branch>
-								<test.galaxy.revision>${test.galaxy.revision}</test.galaxy.revision>
-								<test.galaxy.database>${test.galaxy.database}</test.galaxy.database>
 								<jetty.port>${jetty.port}</jetty.port>
 								<spring.profiles.active>it</spring.profiles.active>
 								<jetty.port>${jetty.port}</jetty.port>
@@ -1065,6 +1068,7 @@
 		<javax.interceptor-api.version>3.1</javax.interceptor-api.version>
 		<powermock.version>1.6.2</powermock.version>
 		<mockftpserver.version>2.6</mockftpserver.version>
+		<jsonpath.version>2.4.0</jsonpath.version>
 		<imgscalr.version>4.2</imgscalr.version>
 		<jackson.dataformat.yaml.version>2.7.4</jackson.dataformat.yaml.version>
 

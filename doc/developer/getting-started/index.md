@@ -106,6 +106,7 @@ cd irida/lib/
 bash install-libs.sh
 ```
 * Create a test database in MariaDB with the name `irida_test` and user `test` with password `test`.
+* Create a second test database in MariaDB with the name `irida_integration_test` and user `test` with password `test` (for running local integration tests).
 
 From here you should be able to run the IRIDA service layer, REST API, and web UI using Jetty.
 
@@ -176,19 +177,39 @@ IRIDA has 4 integration test profiles which splits the integration test suite in
 
 See the `<profiles>` section of the `pom.xml` file to see how the profiles are defined.
 
-As the integration tests simulate a running IRIDA installation, in order to run any integration test the requirements needed to run a production IRIDA server must be installed on your development machine.  To run a test profile, run the following command:
+As the integration tests simulate a running IRIDA installation, in order to run any integration test the requirements needed to run a production IRIDA server must be installed on your development machine.  The test profiles can each by run directly with `mvn verify`, but additional setup may be required for the tests to work properly.  To perform this setup and run all the tests, the `run-tests.sh` script can be used.  To run a test profile with `run-tests.sh` please run the following:
 
 ```bash
-mvn clean verify -P<TEST PROFILE>
+./run-tests.sh <TEST PROFILE>
 ```
 
-The `ui_testing` profile requires additional parameters:
+This will clean and setup an empty database for IRIDA on the local machine named **irida_integration_test**.  This will also, for the Galaxy test profile, start up a Galaxy IRIDA testing Docker image running on <http://localhost:48889> and destory this Docker image afterwards (you can skip destorying the Docker image by passing `--no-kill-docker` to this script).  In order to not overwrite the database **irida_integration_test** you may pass the name of a new database as:
 
 ```bash
-xvfb-run --auto-servernum --server-num=1 mvn clean verify -B -Pui_testing -Dwebdriver.chrome.driver=./src/main/webapp/node_modules/chromedriver/lib/chromedriver/chromedriver
+./run-tests.sh -d <DATABASE> <TEST PROFILE>
 ```
 
-Similar to the unit tests, Maven will download all dependencies, run the tests, and present a report.  Integration tests will take much longer than unit tests.
+This assumes that the user **test** has been given all permissions to `<DATABASE>` (e.g., in SQL `grant all privileges on <DATABASE>.* to 'test'@'localhost';`).
+
+As an example of how to run the IRIDA integration tests:
+
+```
+./run-tests.sh galaxy_testing
+```
+
+This will:
+
+1. Clean/re-build the IRIDA database on `irida_integration_test` (use `-d` to override).
+2. Remove any previous Docker images from previous tests (named *irida-galaxy-test*).
+3. Start up a new Docker image with Galaxy running on <http://localhost:48889>.
+4. Run IRIDA `galaxy_testing` integration test profile.
+5. Remove Docker image on <http://localhost:48889>.
+
+Additional Maven parameters can be passed to `run-tests.sh`.  In particular, individual test classes can be run using `-Dit.test=ca.corefacilty.bioinformatics.irida.TheTestClass`. For example:
+
+```bash
+./run-tests.sh rest_testing -Dit.test=ca.corefacility.bioinformatics.irida.web.controller.test.integration.analysis.RESTAnalysisSubmissionControllerIT
+```
 
 #### Building IRIDA for release
 
