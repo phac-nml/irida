@@ -53,7 +53,7 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 		// Add sample from a project that user is a "Project User" and has no
 		// reference files.
 		ProjectSamplesPage samplesPage = ProjectSamplesPage.gotToPage(driver(), 2);
-		samplesPage.selectSample(1);
+		samplesPage.selectSample(0);
 		samplesPage.addSelectedSamplesToCart();
 
 		PipelinesSelectionPage.goToPhylogenomicsPipeline(driver());
