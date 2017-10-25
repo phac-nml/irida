@@ -37,17 +37,15 @@ const CONFIG = Object.assign({}, tableConfig, {
       }
     },
     {
-      targets: [COLUMNS.PROJECT_NAME],
+      targets: [COLUMNS.PROJECT],
       render(data, type, full) {
-        if (full.identifier) {
-          // Create a link back to the project
-          const url = `${PAGE.URLS.projectBase}${full.project.identifier}`;
-          return createItemLink({
-            url,
-            label: data,
-            width: 300
-          });
-        }
+        // Create a link back to the project
+        const url = `${PAGE.URLS.projectBase}${full.project.identifier}`;
+        return createItemLink({
+          url,
+          label: data.name,
+          width: 300
+        });
       }
     },
     {
