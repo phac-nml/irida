@@ -13,6 +13,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -295,24 +300,25 @@ public class ProjectExportController {
 	/**
 	 * Ajax method for getting the {@link NcbiExportSubmission}s for a given
 	 * {@link Project}
-	 * 
-	 * @param criterias
-	 *            Datatables request object
+	 *
 	 * @param projectId
 	 *            {@link Project} id
 	 * @return DatatablesResponse of Map of submission params
 	 */
 	@RequestMapping("/ajax/projects/{projectId}/export/list")
 	@ResponseBody
-	public DatatablesResponse<NcbiExportSubmission> getExportsForProject(
-			@DatatablesParams DatatablesCriterias criterias, @PathVariable Long projectId) {
+	public DataTablesResponse getExportsForProject(
+			@DataTablesRequest DataTablesParams params, @PathVariable Long projectId) {
 		Project project = projectService.read(projectId);
 		List<NcbiExportSubmission> submissions = exportSubmissionService.getSubmissionsForProject(project);
 
 		DataSet<NcbiExportSubmission> dataSet = new DataSet<NcbiExportSubmission>(submissions,
 				(long) submissions.size(), (long) submissions.size());
 
-		return DatatablesResponse.build(dataSet, criterias);
+		List<DataTablesResponseModel> dtExportSubmissions = submissions.stream().map(s -> new DTExportSubmission(s))
+				.collect(Collectors.toList());
+		return new DataTablesResponse(params, submissions.size(), dtExportSubmissions);
+
 	}
 
 	/**
@@ -444,6 +450,35 @@ public class ProjectExportController {
 
 		public NcbiLibraryStrategy getLibraryStrategy() {
 			return libraryStrategy;
+		}
+	}
+
+	protected class DTExportSubmission implements DataTablesResponseModel {
+		private NcbiExportSubmission submission;
+
+		public DTExportSubmission(NcbiExportSubmission submission){
+			this.submission = submission;
+		}
+
+		@Override
+		public Long getId() {
+			return submission.getId();
+		}
+
+		public int getSampleCount() {
+			return submission.getBioSampleFiles().size();
+		}
+
+		public ExportUploadState getUploadState() {
+			return submission.getUploadState();
+		}
+
+		public Date getCreatedDate() {
+			return submission.getCreatedDate();
+		}
+
+		public Project getProject() {
+			return submission.getProject();
 		}
 	}
 }

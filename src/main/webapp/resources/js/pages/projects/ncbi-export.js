@@ -24,7 +24,7 @@ const CONFIG = Object.assign({}, tableConfig, {
   ajax: $table.data("url"),
   columnDefs: [
     {
-      targets: [COLUMNS.IDENTIFIER],
+      targets: [COLUMNS.ID],
       render(data, type, full) {
         // Create a link back to the submission.
         const url = `${window.PAGE.URLS.projectBase}${full.project
@@ -34,13 +34,6 @@ const CONFIG = Object.assign({}, tableConfig, {
           label: data,
           width: 50
         });
-      }
-    },
-    {
-      targets: [COLUMNS.BIO_SAMPLE_FILES],
-      render(data) {
-        // Get the number of files in the submission.
-        return data.length;
       }
     },
     {
