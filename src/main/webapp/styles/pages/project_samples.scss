@@ -1,3 +1,7 @@
+.dataTable input[type="checkbox"] {
+  margin-left: 1.3em !important;
+}
+
 // Used when a colour bar needs to be displayed next to a label
 // E.g. on the project samples page for a unique colour for each project.
 .label-bar-color {
@@ -34,5 +38,11 @@
   position: absolute;
   top: 15px;
   left: 0;
-  color: #D9534F;
+  color: #d9534f;
+}
+
+.locked-wrapper {
+  position: absolute;
+  top: 16px;
+  left: 4px;
 }

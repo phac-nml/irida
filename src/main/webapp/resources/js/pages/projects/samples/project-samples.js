@@ -189,17 +189,24 @@ const config = Object.assign({}, tableConfig, {
     $('[data-toggle="popover"]').popover(POPOVER_OPTIONS);
   },
   createdRow(row, data) {
+    const $row = $(row);
     row.dataset.info = JSON.stringify({
       project: data.projectId,
       sample: data.id
     });
+
+    if (!data.owner) {
+      const icon = $(".locked-wrapper").clone();
+      const td = $row.find("td:first-of-type");
+      td.css("position", "relative");
+      icon.appendTo(td);
+    }
 
     /*
     Check if this sample has any quality control issues.
     If there are they will be displayed in a popover.
      */
     if (data.qcEntries.length) {
-      const $row = $(row);
       $row.addClass("row-warning");
 
       const icon = $(".qc-warning-wrapper").clone();
