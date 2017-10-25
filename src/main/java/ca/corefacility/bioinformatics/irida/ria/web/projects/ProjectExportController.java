@@ -312,9 +312,6 @@ public class ProjectExportController {
 		Project project = projectService.read(projectId);
 		List<NcbiExportSubmission> submissions = exportSubmissionService.getSubmissionsForProject(project);
 
-		DataSet<NcbiExportSubmission> dataSet = new DataSet<NcbiExportSubmission>(submissions,
-				(long) submissions.size(), (long) submissions.size());
-
 		List<DataTablesResponseModel> dtExportSubmissions = submissions.stream().map(s -> new DTExportSubmission(s))
 				.collect(Collectors.toList());
 		return new DataTablesResponse(params, submissions.size(), dtExportSubmissions);
@@ -323,24 +320,20 @@ public class ProjectExportController {
 
 	/**
 	 * Ajax method for getting all {@link NcbiExportSubmission}s
-	 * 
-	 * @param criterias
-	 *            Datatables request object
+	 *
 	 * @return DatatablesResponse of Map of submission params
 	 */
 	@RequestMapping("/ajax/export/list")
 	@ResponseBody
-	public DatatablesResponse<NcbiExportSubmission> getAllExports(@DatatablesParams DatatablesCriterias criterias) {
+	public DataTablesResponse getAllExports(@DataTablesRequest DataTablesParams params) {
 
-		int currentPage = DatatablesUtils.getCurrentPage(criterias);
-
-		Page<NcbiExportSubmission> submissions = exportSubmissionService.list(currentPage, criterias.getLength(),
+		Page<NcbiExportSubmission> submissions = exportSubmissionService.list(params.getCurrentPage(), params.getLength(),
 				Sort.Direction.DESC, "createdDate");
 
-		DataSet<NcbiExportSubmission> dataSet = new DataSet<NcbiExportSubmission>(submissions.getContent(),
-				submissions.getTotalElements(), submissions.getTotalElements());
+		List<DataTablesResponseModel> dtExportSubmissions = submissions.getContent().stream().map(s -> new DTExportSubmission(s))
+				.collect(Collectors.toList());
 
-		return DatatablesResponse.build(dataSet, criterias);
+		return new DataTablesResponse(params, submissions, dtExportSubmissions);
 	}
 
 	/**

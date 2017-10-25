@@ -24,10 +24,11 @@ public class DataTablesResponse {
 		this.data = data;
 	}
 
-	public DataTablesResponse(DataTablesParams dataTablesParams, long recordsTotal, List<DataTablesResponseModel> data) {
+	public DataTablesResponse(DataTablesParams dataTablesParams, long recordsTotal,
+			List<DataTablesResponseModel> data) {
 		this.dataTablesParams = dataTablesParams;
 		this.recordsTotal = recordsTotal;
-		this.recordsFiltered=recordsTotal;
+		this.recordsFiltered = recordsTotal;
 		this.data = data;
 	}
 
