@@ -14,9 +14,9 @@ GALAXY_URL=http://localhost:$GALAXY_PORT
 GALAXY_INVALID_URL=http://localhost:48890
 GALAXY_INVALID_URL2=http://localhost:48891
 CHROME_DRIVER=$SCRIPT_DIR/src/main/webapp/node_modules/chromedriver/lib/chromedriver/chromedriver
-SEQUENCE_FILE_DIR=`mktemp -d sequence-file-base-XXXXXXXX -p $TMP_DIRECTORY`
-REFERENCE_FILE_DIR=`mktemp -d reference-file-base-XXXXXXXX -p $TMP_DIRECTORY`
-OUTPUT_FILE_DIR=`mktemp -d output-file-base-XXXXXXXX -p $TMP_DIRECTORY`
+SEQUENCE_FILE_DIR=`mktemp -d $TMP_DIRECTORY/sequence-file-base-XXXXXXXX`
+REFERENCE_FILE_DIR=`mktemp -d $TMP_DIRECTORY/reference-file-base-XXXXXXXX`
+OUTPUT_FILE_DIR=`mktemp -d $TMP_DIRECTORY/output-file-base-XXXXXXXX`
 
 DO_KILL_DOCKER=true
 NO_CLEANUP=false
