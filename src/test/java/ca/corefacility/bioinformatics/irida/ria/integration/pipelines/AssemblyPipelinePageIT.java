@@ -20,12 +20,9 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.Pipe
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
 
 /**
- * <p>
- * Testing for launching a phylogenomics pipeline.
- * </p>
- *
+ * Testing for launching an assembly pipeline.
  */
-@DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/pipelines/PipelineAssemblyView.xml")
+@DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/pipelines/AssemblyPipelinePageIT.xml")
 public class AssemblyPipelinePageIT extends AbstractIridaUIITChromeDriver {
 	private static final Logger logger = LoggerFactory.getLogger(AssemblyPipelinePageIT.class);
 	private PipelinesAssemblyPage page;
@@ -41,29 +38,6 @@ public class AssemblyPipelinePageIT extends AbstractIridaUIITChromeDriver {
 
 		logger.info("Checking Assembly Page Setup.");
 		assertEquals("Should display the correct number of samples.", 1, page.getNumberOfSamplesDisplayed());
-	}
-
-	@Test
-	public void testPipelineSubmission() {
-		addSamplesToCartManager();
-
-		page.clickLaunchPipelineBtn();
-		assertTrue("Message should be displayed when the pipeline is submitted",
-				page.isPipelineSubmittedMessageShown());
-		assertTrue("Message should be displayed once the pipeline finished submitting",
-				page.isPipelineSubmittedSuccessMessageShown());
-	}
-
-	@Test
-	public void testCheckPipelineStatusAfterSubmit() {
-		addSamplesToCartManager();
-
-		page.clickLaunchPipelineBtn();
-		assertTrue("Message should be displayed once the pipeline finished submitting",
-				page.isPipelineSubmittedSuccessMessageShown());
-		page.clickSeePipeline();
-
-		assertTrue("Should be on analysis page", driver().getCurrentUrl().endsWith("/analysis"));
 	}
 
 	@Test
