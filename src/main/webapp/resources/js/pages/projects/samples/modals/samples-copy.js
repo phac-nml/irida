@@ -1,3 +1,7 @@
+/**
+ * This script if for copying and moving samples from projects.
+ * Loaded when the modal for either copying or moving samples is displayed.
+ */
 import $ from "jquery";
 import "../../../../vendor/plugins/jquery/select2";
 import { SAMPLE_EVENTS } from "../constants";
@@ -7,7 +11,7 @@ Set up the projects Select2 input
  */
 const $input = $("#js-projectsSelect");
 const url = $input.data("url");
-const $submitBtn = $("#js-confirm-copy-samples");
+const $submitBtn = $("#js-confirm");
 
 $input.select2({
   theme: "bootstrap",
@@ -47,7 +51,6 @@ Handle completing the copy
  */
 $("#js-copy-form").submit(function(e) {
   e.preventDefault();
-  console.log($(this).serialize());
   const copyUrl = $submitBtn.data("url");
   $.post(copyUrl, $(this).serialize(), function(response) {
     /*

@@ -274,21 +274,21 @@ public class ProjectSamplesController {
 	}
 
 	/**
-	 * Create a modal dialog to copy samples to another project.
+	 * Create a modal dialogue for moving or copying {@link Sample} to another {@link Project}
 	 *
-	 * @param ids
-	 * 		{@link List} List of {@link Long} identifiers for {@link Sample} to merge.
-	 * @param model
-	 * 		{@link Model}
-	 *
-	 * @return
+	 * @param ids       {@link List} of identifiers for {@link Sample}s to copy or move.
+	 * @param projectId Identifier for the current {@link Project}
+	 * @param model     {@link Model} for the UI
+	 * @param move      Whether or not to display copy or move wording.
+	 * @return Modal dialogue.
 	 */
-	@RequestMapping(value = "/projects/{projectId}/templates/copy-modal", produces = MediaType.TEXT_HTML_VALUE)
+	@RequestMapping(value = "/projects/{projectId}/templates/copy-move-modal", produces = MediaType.TEXT_HTML_VALUE)
 	public String getCopySamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, @PathVariable Long projectId,
-			Model model) {
+			Model model, @RequestParam(required = false) boolean move) {
 		model.addAllAttributes(generateCopyMoveSamplesContent(projectId, ids));
 		model.addAttribute("projectId", projectId);
-		return PROJECT_TEMPLATE_DIR + "copy-modal.tmpl";
+		model.addAttribute("type", move ? "move" : "copy");
+		return PROJECT_TEMPLATE_DIR + "copy-move-modal.tmpl";
 	}
 
 	/**
@@ -324,24 +324,6 @@ public class ProjectSamplesController {
 		});
 		model.addAttribute("organisms", organisms);
 		return PROJECT_TEMPLATE_DIR + "sample-filter.modal";
-	}
-
-	/**
-	 * Create a modal dialog to move samples to another project.
-	 *
-	 * @param ids
-	 * 		{@link List} List of {@link Long} identifiers for {@link Sample} to move.
-	 * @param model
-	 * 		{@link Model}
-	 *
-	 * @return
-	 */
-	@RequestMapping(value = "/projects/templates/move-modal", produces = MediaType.TEXT_HTML_VALUE)
-	public String getMoveSamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, @RequestParam Long projectId,
-			Model model) {
-		model.addAllAttributes(generateCopyMoveSamplesContent(projectId, ids));
-		model.addAttribute("projectId", projectId);
-		return PROJECT_TEMPLATE_DIR + "move-modal.tmpl";
 	}
 
 	/**

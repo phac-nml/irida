@@ -1,17 +1,16 @@
-<div id="js-copy-samples-modal" th:with="total=${#lists.size(samples) + #lists.size(extraSamples)}">
+<div id="js-copy-samples-modal" th:with="total=${#lists.size(samples) + #lists.size(extraSamples)}, prefix=${'project.samples.modal.' + type}">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <form id="js-copy-form">
                 <div class="modal-header">
                     <h3 class="modal-title">
-                        <i class="fa fa-files-o fa-fw" aria-hidden="true"></i>
-                        &nbsp;
+                        <i class="fa fa-fw" aria-hidden="true" th:classappend="${#strings.equalsIgnoreCase(type, 'copy')} ? 'fa-files-o' : 'fa-truck'"></i>
                         <th:block
-                                th:text="${total == 1} ? #{project.samples.modal.copy.title-singular} : #{project.samples.modal.copy.title-plural}"/>
+                                th:text="${total == 1} ? #{${prefix} + '.title-singular'} : #{${prefix} + '.title-plural'}"/>
                     </h3>
                 </div>
                 <div class="modal-body" th:with="extraCount=${#lists.size(extraSamples)}">
-                    <h4 th:text="${total>1} ? #{project.samples.modal.copy.intro-plural(${total})} : #{project.samples.modal.copy.intro-singular(${samples[0].sampleName})}">
+                    <h4 th:text="${total>1} ? #{${prefix + '.intro-plural'}(${total})} : #{${prefix + '.intro-singular'}(${samples[0].sampleName})}">
                         Copy Samples Title</h4>
                     <th:block th:if="${total==1}">
                         <input type="hidden" th:value="${samples.get(0).getId()}" name="sampleIds[]"/>
@@ -46,13 +45,13 @@
                     </th:block>
                     <div class="form-group">
                         <label for="js-projectsSelect"
-                               th:text="${total>1} ? #{project.samples.modal.copy.select-label-plural} : #{project.samples.modal.copy.select-label-singular}"></label>
+                               th:text="${total>1} ? #{${prefix} + '.select-label-plural'} : #{${prefix} + '.select-label-singular'}"></label>
                         <select name="newProjectId" data:url="@{/projects/{id}/ajax/samples/available_projects(id=${projectId})}"
                                 id="js-projectsSelect" class="form-control" style="width: 100%;"></select>
                     </div>
 
                     <div class="alert alert-warning" th:if="${#lists.size(lockedSamples) > 0}">
-                        <span th:text="#{project.samples.modal.copy.locked}">_The following samples will be read only as this project does not have modification access_</span>
+                        <span th:text="#{${prefix} + '.locked'}">_The following samples will be read only as this project does not have modification access_</span>
                         <input type="hidden" value="false" name="giveOwner" id="giveOwner" />
                     </div>
                     <div class="form-group" th:if="${#lists.size(lockedSamples) == 0}">
@@ -67,10 +66,10 @@
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-default" th:text="#{form.btn.cancel}" data-dismiss="modal"></button>
-                    <button id="js-confirm-copy-samples" disabled="disabled"
+                    <button id="js-confirm" disabled="disabled"
                             type="submit" class="btn btn-primary"
-                            data:url="@{/projects/{id}/ajax/samples/copy(id=${projectId})}"
-                            th:text="#{project.samples.modal.copy.complete}">
+                            data:url="@{/projects/{id}/ajax/samples/copy(id=${projectId}, remove=${#strings.equalsIgnoreCase(type, 'move')})}"
+                            th:text="#{${prefix} + '.complete'}">
                         __MOVE_OR_COPY__
                     </button>
                 </div>

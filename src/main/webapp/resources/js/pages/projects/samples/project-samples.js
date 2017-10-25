@@ -16,7 +16,7 @@ import { SAMPLE_EVENTS } from "./constants";
 /*
 This is required to use select2 inside a modal.
  */
-$.fn.modal.Constructor.prototype.enforceFocus = function () {};
+$.fn.modal.Constructor.prototype.enforceFocus = function() {};
 
 /*
  Initialize the sample tools menu.
@@ -332,8 +332,8 @@ $("#js-modal-wrapper").on("show.bs.modal", function(event) {
    */
   const btn = $(event.relatedTarget);
   const url = btn.data("url");
+  const params = btn.data("params") || {};
   const script_src = btn.data("script");
-
   /*
   Find the ids for the currently selected samples.
    */
@@ -342,9 +342,11 @@ $("#js-modal-wrapper").on("show.bs.modal", function(event) {
   for (let [key, value] of selected) {
     sampleIds.push(value.sample);
   }
+  params["sampleIds"] = sampleIds;
+  console.log("Hello I am some params: ", params);
 
   let script;
-  modal.load(`${url}?${$.param({ sampleIds })}`, function() {
+  modal.load(`${url}?${$.param(params)}`, function() {
     if (typeof script_src !== "undefined") {
       script = document.createElement("script");
       script.type = "text/javascript";
@@ -370,7 +372,7 @@ $("#js-modal-wrapper").on("show.bs.modal", function(event) {
   /*
   Clear the content of the modal when it is closed.
    */
-  modal.on("hidden.bs.modal", function () {
+  modal.on("hidden.bs.modal", function() {
     modal.empty();
   });
 });
