@@ -96,9 +96,9 @@ public class PipelinesAssemblyPage extends AbstractPage {
 		waitForTime(500);
 	}
 	
-	public void setNameForSavedParameters(String value) {
-		driver.findElement(By.id("parameterSetName")).clear();
-		driver.findElement(By.id("parameterSetName")).sendKeys(value);
+	public void setNameForAnalysisPipeline(String value) {
+		driver.findElement(By.id("pipeline-name")).clear();
+		driver.findElement(By.id("pipeline-name")).sendKeys(value);
 	}
 	
 	public void clickUseParametersButton() {
