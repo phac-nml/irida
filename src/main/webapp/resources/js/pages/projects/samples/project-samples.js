@@ -55,10 +55,16 @@ const SAMPLE_TOOL_BUTTONS = [...sampleToolsNodes].map(
 const ASSOCIATED_PROJECTS = new Map();
 
 /**
- * Reference to sample ids used in filter-by-file.
- * @type {Array}
+Constants for the names of filters used in ajax requests.
  */
-let FILE_SAMPLE_NAMES = [];
+const FILTERS = {
+  FILTER_BY_FILE: "sampleNames"
+};
+/**
+ * Reference to all filters available on the table.
+ * @type {Map<any, any>}
+ */
+const TABLE_FILTERS = new Map();
 
 /**
  * Reference to the colour for a specific project.
@@ -114,10 +120,10 @@ const config = Object.assign({}, tableConfig, {
       }
 
       /*
-      Add any filter by file names that need to be passed.
+      Add any available filters
        */
-      if (FILE_SAMPLE_NAMES.length > 0) {
-        d.sampleNames = FILE_SAMPLE_NAMES;
+      for (let [key, value] of TABLE_FILTERS) {
+        d[key] = value;
       }
     }
   },
@@ -385,7 +391,7 @@ function handleFileSelect(e) {
     // From the file contents, get a list of names (1 per line expected);
     const contents = e.target.result.match(/[^\r\n]+/g);
     // Store the unique values in the ajax variable
-    FILE_SAMPLE_NAMES = [...new Set(contents)];
+    TABLE_FILTERS.set(FILTERS.FILTER_BY_FILE, [...new Set(contents)]);
     // Refresh the table.
     $dt.ajax.reload(() => {
       $dt.select.selectAll();
@@ -395,6 +401,30 @@ function handleFileSelect(e) {
 }
 const filterByFileInput = document.querySelector("#filter-by-file");
 filterByFileInput.addEventListener("change", handleFileSelect, false);
+
+/*
+Set up the ability to clear all filters
+ */
+function clearFilters() {
+  /*
+  Clear custom table filters
+   */
+  TABLE_FILTERS.clear();
+  /*
+  Clear DataTables default search
+   */
+  $dt.search("");
+  /*
+  De-select all items in the table
+   */
+  $dt.select.selectNone();
+  /*
+  Reload the table.
+   */
+  $dt.ajax.reload();
+}
+const clearFilterBtn = document.querySelector(".js-clear-filters");
+clearFilterBtn.addEventListener("click", clearFilters, false);
 
 /*
 Activate page tooltips

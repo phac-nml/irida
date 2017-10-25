@@ -155,7 +155,7 @@
         </span>
 
         <!-- Button for filtering samples by file -->
-        <div id="filter-toolbar" class="btn-toolbar" style="margin-left: 2px;">
+        <div id="filter-toolbar" class="btn-toolbar" style="margin-left: 1px;">
             <div class="btn-group btn-group-sm" role="group">
                 <label class="btn btn-default" data-toggle="popover" data-placement="left"
                        data-trigger="hover" data-container="body"
@@ -164,6 +164,9 @@
                     <i class="fa fa-file-text-o" aria-hidden="true"></i>
                     <input type="file" id="filter-by-file" style="display: none;"/>
                 </label>
+            </div>
+            <div class="btn-group btn-group-sm">
+                <button class="btn btn-default js-clear-filters" th:text="#{form.btn.clear}">CLEAR</button>
             </div>
         </div>
     </div>
