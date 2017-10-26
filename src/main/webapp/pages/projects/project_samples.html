@@ -58,17 +58,17 @@
     <div class="row">
         <div class="col-md-12">
             <div class="btn-toolbar dt-btn-toolbar" role="toolbar">
-                <div class="btn-group">
+                <div class="btn-group" th:if="${isOwner || isAdmin}">
                     <div class="dropdown">
-                        <button id="sample-tools" class="btn btn-default btn-sm dropdown-toggle"
+                        <button id="sample-tools" class="btn btn-default btn-sm dropdown-toggle t-sample-tools"
                                 data-toggle="dropdown">
                             <th:block th:text="#{project.samples.nav.sample-tools}"/>
                             <i class="fa fa-caret-down fa-fw"></i>
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="sample-tools">
                             <li>
-                                <button id="mergeBtn"
-                                        class="btn btn-sm btn-default btn-block sample-tool-btn"
+                                <button id="js-mergeBtn"
+                                        class="btn btn-sm btn-default btn-block sample-tool-btn t-merge-btn"
                                         data-toggle="modal" data-target="#js-modal-wrapper"
                                         data-enabled-at="2"
                                         data:url="@{/projects/{projectId}/templates/merge-modal(projectId=${project.getId()})}"
@@ -79,7 +79,7 @@
                             </li>
                             <li>
                                 <button id="js-copyBtn"
-                                        class="btn btn-sm btn-default btn-block sample-tool-btn"
+                                        class="btn btn-sm btn-default btn-block sample-tool-btn t-copy-btn"
                                         data-toggle="modal" data-target="#js-modal-wrapper"
                                         data-enabled-at="1" data-params="{&quot;move&quot;: false}"
                                         data:url="@{/projects/{projectId}/templates/copy-move-modal(projectId=${project.getId()})}"
@@ -90,7 +90,7 @@
                             </li>
                             <li>
                                 <button id="js-moveBtn"
-                                        class="btn btn-sm btn-default btn-block sample-tool-btn"
+                                        class="btn btn-sm btn-default btn-block sample-tool-btn t-move-btn"
                                         data-toggle="modal" data-target="#js-modal-wrapper"
                                         data-enabled-at="1" data-params="{&quot;move&quot;: true}"
                                         data:url="@{/projects/{projectId}/templates/copy-move-modal(projectId=${project.getId()})}"
@@ -104,12 +104,12 @@
                 </div>
                 <div class="btn-group">
                     <div class="dropdown associated-dd" th:if="${not #lists.isEmpty(associatedProjects)}">
-                    <button class="btn btn-default btn-sm dropdown-toggle" type="button" id="associated-btn"
+                    <button class="btn btn-default btn-sm dropdown-toggle t-associated-btn" type="button" id="associated-btn"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                         <th:block th:text="#{project.samples.nav.associated}"/>
                         <i class="fa fa-caret-down fa-fw"></i>
                     </button>
-                    <ul id="associated-dropdown" class="dropdown-menu" aria-labelledby="associated-btn">
+                    <ul id="associated-dropdown" class="dropdown-menu t-associated-dropdown" aria-labelledby="associated-btn">
                         <li>
                             <a href="#">
                                 <div class="checkbox"><input id="select-all-cb" value="ALL" type="checkbox"/>&nbsp;
@@ -121,7 +121,7 @@
                         <li>
                             <ul>
                                 <li th:each="item : ${associatedProjects}">
-                                    <a href="#" class="associated-cb">
+                                    <a href="#" class="associated-cb t-associated-cb">
                                         <div class="checkbox"><input type="checkbox" th:value="${item.getIdentifier()}"/>&nbsp;
                                             <th:block th:text="${item.getName()}"/>
                                         </div>
@@ -132,7 +132,7 @@
                     </ul>
                     </div>
                 </div>
-                <button id="cart-add-btn" class="btn btn-primary btn-sm sample-tool-btn" data-enabled-at="1">
+                <button id="cart-add-btn" class="btn btn-primary btn-sm sample-tool-btn t-add-cart-btn" data-enabled-at="1">
                     <i class="fa fa-cart-plus fa-fw" aria-hidden="true"></i>
                     &nbsp;
                     <th:block th:text="#{project.samples.nav.add-to-cart}">Add To Cart</th:block>

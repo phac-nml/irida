@@ -26,19 +26,13 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(tagName = "h1")
 	private WebElement pageHeader;
 
-	@FindBy(id = "samplesTable")
-	private WebElement samplesTable;
-
-	@FindBy(id = "processingIndicator")
-	private WebElement tableProcessingIndicator;
-
-	@FindBy(id = "associated-btn")
+	@FindBy(className = "t-associated-btn")
 	private WebElement associatedProjectMenuBtn;
 
-	@FindBy(id = "associated-dropdown")
+	@FindBy(className = "t-associated-dropdown")
 	private WebElement associatedDropdown;
 
-	@FindBy(className = "associated-cb")
+	@FindBy(className = "t-associated-cb")
 	private List<WebElement> associatedCbs;
 
 	@FindBy(className = "selected-counts")
@@ -50,25 +44,25 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(css = "tbody tr")
 	private List<WebElement> tableRows;
 
-	@FindBy(id = "sample-tools")
+	@FindBy(className = "t-sample-tools")
 	private WebElement toolsDropdownBtn;
 
-	@FindBy(id = "mergeBtn")
+	@FindBy(className = "t-merge-btn")
 	private WebElement mergeBtn;
 
-	@FindBy(id = "copyBtn")
+	@FindBy(className = "t-copy-btn")
 	private WebElement copyBtn;
 	
 	@FindBy(id = "giveOwner")
 	private WebElement giveOwnerBtn;
 
-	@FindBy(id = "moveBtn")
+	@FindBy(className = "t-move-btn")
 	private WebElement moveBtn;
 
-	@FindBy(id = "removeBtn")
+	@FindBy(className = "t-remove-btn")
 	private WebElement removeBtn;
 
-	@FindBy(id = "cart-add-btn")
+	@FindBy(className = "t-add-cart-btn")
 	private WebElement addToCartBtn;
 
 	@FindBy(id = "remove-samples-modal")
@@ -86,10 +80,10 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(id = "sampleName")
 	private WebElement newMergeNameInput;
 
-	@FindBy(id = "copy-samples-modal")
+	@FindBy(className = "t-copy-samples-modal")
 	private WebElement copySamplesModal;
 
-	@FindBy(id = "confirm-copy-samples")
+	@FindBy(id = "js-confirm")
 	private WebElement copyModalConfirmBtn;
 
 	@FindBy(id = "projectsSelect")
@@ -98,13 +92,13 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(id = "confirm-copy-samples")
 	private WebElement copyOkBtn;
 
-	@FindBy(className = "select2-chosen")
+	@FindBy(className = "select2-selection")
 	private WebElement select2Opener;
 
-	@FindBy(className = "select2-input")
+	@FindBy(className = "select2-search__field")
 	private WebElement select2Input;
 
-	@FindBy(className = "select2-results")
+	@FindBy(className = "select2-results__options")
 	private WebElement select2Results;
 
 	@FindBy(id = "filterByPropertyBtn")
@@ -202,7 +196,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	public void openToolsDropDown() {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		toolsDropdownBtn.click();
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("mergeBtn")));
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("js-mergeBtn")));
 	}
 
 	public void openExportDropdown() {
@@ -228,15 +222,15 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public boolean isCopyBtnEnabled() {
-		return !copyBtn.getAttribute("class").contains("disabled");
+		return copyBtn.isEnabled();
 	}
 
 	public boolean isMoveBtnEnabled() {
-		return !moveBtn.getAttribute("class").contains("disabled");
+		return moveBtn.isEnabled();
 	}
 
 	public boolean isRemoveBtnEnabled() {
-		return !moveBtn.getAttribute("class").contains("disabled");
+		return removeBtn.isEnabled();
 	}
 
 	// PAGINATION
@@ -412,8 +406,6 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		// Wait needed to allow select2 to populate.
 		waitForTime(500);
 		select2Input.sendKeys(Keys.RETURN);
-
-		wait.until(ExpectedConditions.not(ExpectedConditions.visibilityOf(select2Results)));
 	}
 
 	private void copyMoveSamples(String project, boolean owner) {
@@ -427,7 +419,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		
 		wait.until(ExpectedConditions.elementToBeClickable(copyModalConfirmBtn));
 		copyModalConfirmBtn.click();
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("copy-modal")));
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("t-copy-samples-modal")));
 	}
 
 	public String getLinkerText() {
@@ -439,7 +431,15 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 	
 	public List<String> getLockedSampleNames(){
-		return lockedSamples.stream().map(s -> s.findElement(By.className("sample-label")).getText())
-				.collect(Collectors.toList());
+		List<WebElement> trs = driver.findElements(By.cssSelector("tbody tr"));
+		List<String> locked = new ArrayList<>();
+		for (WebElement tr : trs) {
+			if (tr.findElements(By.className("fa-lock"))
+					.size() > 0) {
+				locked.add(tr.findElement(By.className("t-sample-label"))
+						.getText());
+			}
+		}
+		return locked;
 	}
 }

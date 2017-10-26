@@ -187,7 +187,8 @@ const config = Object.assign({}, tableConfig, {
         return createItemLink({
           url: `${window.TL
             .BASE_URL}projects/${full.projectId}/samples/${full.id}`,
-          label: full.sampleName
+          label: full.sampleName,
+          classes: ["t-sample-label"]
         });
       }
     },
@@ -343,7 +344,6 @@ $("#js-modal-wrapper").on("show.bs.modal", function(event) {
     sampleIds.push(value.sample);
   }
   params["sampleIds"] = sampleIds;
-  console.log("Hello I am some params: ", params);
 
   let script;
   modal.load(`${url}?${$.param(params)}`, function() {
