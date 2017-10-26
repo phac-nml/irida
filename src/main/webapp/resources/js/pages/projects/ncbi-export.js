@@ -22,6 +22,7 @@ const $table = $("#exportTable");
 const CONFIG = Object.assign({}, tableConfig, {
   dom,
   ajax: $table.data("url"),
+  paging: PAGE.paging,
   columnDefs: [
     {
       targets: [COLUMNS.ID],
