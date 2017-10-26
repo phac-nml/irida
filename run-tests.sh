@@ -179,13 +179,11 @@ do
 	then
 		NO_CLEANUP=true
 		shift
-	else
-		shift
-	fi
-
-	if [ "$1" = "--no-headless" ];
+	elif [ "$1" = "--no-headless" ];
 	then
 		HEADLESS=false
+		shift
+	else
 		shift
 	fi
 done
