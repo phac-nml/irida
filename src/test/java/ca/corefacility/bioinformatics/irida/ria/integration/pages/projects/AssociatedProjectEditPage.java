@@ -79,11 +79,6 @@ public class AssociatedProjectEditPage extends AbstractPage {
 		return noty.isDisplayed();
 	}
 
-	public void viewRemoteTab() {
-		driver.findElement(By.id("remote-tab")).click();
-		waitForTime(1000);
-	}
-
 	// ************************************************************************************************
 	// UTILITY METHODS
 	// ************************************************************************************************
