@@ -60,7 +60,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertFalse("Merge option should not be enabled", page.isMergeBtnEnabled());
 		assertFalse("Copy option should not be enabled", page.isCopyBtnEnabled());
 		assertFalse("Move option should not be enabled", page.isMoveBtnEnabled());
-//		assertFalse("Remove option should not be enabled", page.isRemoveBtnEnabled());
+		assertFalse("Remove option should not be enabled", page.isRemoveBtnEnabled());
 //		page.openExportDropdown();
 //		assertFalse("Download option should not be enabled", page.isDownloadBtnEnabled());
 //		assertFalse("NCBI Export option should not be enabled", page.isNcbiBtnEnabled());
@@ -71,7 +71,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertFalse("Merge option should not be enabled", page.isMergeBtnEnabled());
 		assertTrue("Copy option should be enabled", page.isCopyBtnEnabled());
 		assertTrue("Move option should be enabled", page.isMoveBtnEnabled());
-//		assertTrue("Remove option should be enabled", page.isRemoveBtnEnabled());
+		assertTrue("Remove option should be enabled", page.isRemoveBtnEnabled());
 //		page.openExportDropdown();
 //		assertTrue("Download option should be enabled", page.isDownloadBtnEnabled());
 //		assertTrue("NCBI Export option should be enabled", page.isNcbiBtnEnabled());
@@ -82,7 +82,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue("Merge option should be enabled", page.isMergeBtnEnabled());
 		assertTrue("Copy option should be enabled", page.isCopyBtnEnabled());
 		assertTrue("Move option should be enabled", page.isMoveBtnEnabled());
-//		assertTrue("Remove option should be enabled", page.isRemoveBtnEnabled());
+		assertTrue("Remove option should be enabled", page.isRemoveBtnEnabled());
 //		page.openExportDropdown();
 //		assertTrue("Download option should be enabled", page.isDownloadBtnEnabled());
 //		assertTrue("NCBI Export option should be enabled", page.isNcbiBtnEnabled());

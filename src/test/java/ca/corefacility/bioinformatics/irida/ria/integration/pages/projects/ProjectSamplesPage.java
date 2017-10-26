@@ -196,7 +196,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	public void openToolsDropDown() {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		toolsDropdownBtn.click();
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("js-mergeBtn")));
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-merge-btn")));
 	}
 
 	public void openExportDropdown() {
