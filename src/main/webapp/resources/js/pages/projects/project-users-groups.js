@@ -46,7 +46,6 @@ const createRole = (() => {
 Get the current order of the columns with there label format.
  */
 const COLUMNS = generateColumnOrderInfo();
-console.log(COLUMNS);
 
 /*
 Create a custom DataTables configuration.
@@ -99,7 +98,7 @@ const CONFIG = Object.assign({}, tableConfig, {
     /*
     Add the user id to the row so that it can be used for updating the user.
      */
-    row.dataset.user =  data.id;
+    row.dataset.user = data.id;
     /*
     Activate the tooltips.
      */
