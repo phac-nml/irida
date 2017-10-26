@@ -208,7 +208,7 @@ public class ProjectSamplesController {
 	 * @return
 	 */
 	@RequestMapping(value = "/projects/{projectId}/templates/remove-modal", produces = MediaType.TEXT_HTML_VALUE)
-	public String getRemoveSamplesFromProjectModal(@RequestParam(name = "sampleIds[]") List<Long> ids, Model model) {
+	public String getRemoveSamplesFromProjectModal(@RequestParam(name = "sampleIds[]") List<Long> ids, @PathVariable Long projectId, Model model) {
 		List<Sample> samplesThatAreInMultiple = new ArrayList<>();
 		List<Sample> samplesThatAreInOne = new ArrayList<>();
 		List<Sample> extraMultiple = new ArrayList<>();
@@ -237,6 +237,7 @@ public class ProjectSamplesController {
 		model.addAttribute("samplesThatAreInOne", samplesThatAreInOne);
 		model.addAttribute("extraMultiple", extraMultiple);
 		model.addAttribute("extraSingle", extraSingle);
+		model.addAttribute("project", projectService.read(projectId));
 		return PROJECT_TEMPLATE_DIR + "remove-modal.tmpl";
 	}
 

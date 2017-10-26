@@ -27,7 +27,6 @@ export default class SampleDropdownButton {
    * @param {boolean} hasAssociated whether associated projects are being displayed.
    */
   checkState(count, hasAssociated) {
-    console.log(count, hasAssociated);
     if (hasAssociated && !this.allowAssociated) {
       this.button.disabled = true;
     } else {
