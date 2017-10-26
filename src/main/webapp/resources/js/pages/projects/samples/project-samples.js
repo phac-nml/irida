@@ -187,7 +187,8 @@ const config = Object.assign({}, tableConfig, {
         return createItemLink({
           url: `${window.TL
             .BASE_URL}projects/${full.projectId}/samples/${full.id}`,
-          label: full.sampleName
+          label: full.sampleName,
+          classes: ["t-sample-label"]
         });
       }
     },
