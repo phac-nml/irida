@@ -42,9 +42,7 @@
                 <tr>
                     <th data-data="user.username" data-property="name" dt:searchable="true"
                         th:text="#{project.table.collaborator.name}"></th>
-                    <th data-data="projectRole" data-property="role" th:if="${isAdmin} or ${manageMembers}"
-                        th:text="#{project.table.collaborator.role}"></th>
-                    <th data-data="projectRole" data-property="role" th:if="not (${isAdmin} or ${manageMembers})"
+                    <th data-data="role" data-property="role"
                         th:text="#{project.table.collaborator.role}"></th>
                     <th data-data="createdDate" data-property="joined" class="dt-date"
                         th:text="#{project.table.collaborator.since}"></th>

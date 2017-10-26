@@ -15,6 +15,8 @@ import {
 import { formatDate } from "../../utilities/date-utilities";
 
 const $table = $("#usersTable");
+const canManage = !!$table.data("admin");
+
 /*
 Get the template for the role wrapper.  This is used to populate the member role column.
 If the user is a manager or administrator, the template will contain a select input,
@@ -75,7 +77,7 @@ const CONFIG = Object.assign({}, tableConfig, {
       }
     },
     {
-      targets: [COLUMNS.PROJECT_ROLE],
+      targets: [COLUMNS.ROLE],
       render: createRole
     },
     {

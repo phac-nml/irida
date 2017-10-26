@@ -41,9 +41,7 @@
                 <thead>
                 <tr role="row">
                     <th data-data="userGroup.name" th:text="#{project.table.collaborator.name}"></th>
-                    <th data-data="projectRole" th:if="${isAdmin} or ${manageMembers}"
-                        th:text="#{project.table.collaborator.role}"></th>
-                    <th data-data="projectRole" th:if="not (${isAdmin} or ${manageMembers})"
+                    <th data-data="role"
                         th:text="#{project.table.collaborator.role}"></th>
                     <th width="150px" data-data="createdDate" th:text="#{project.table.collaborator.since}"></th>
                     <th width="50px" th:if="${isAdmin} or ${manageMembers}" data-orderable="false"></th>
