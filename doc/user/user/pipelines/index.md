@@ -201,7 +201,13 @@ You can click on each of the file names to expand the complete listing of *how* 
 
 You can further inspect the parameters of each of the tools that were used to generate the analysis by clicking on one of the steps:
 
-![Actual pipeline parameters.](images/actual-pipeline-parameters.png)
+![Analysis name edit.](images/actual-pipeline-parameters.png)
+
+### Edit analysis name
+
+If you are the user who submitted the pipeline, you are able to change the submission name from the results page.  Click the pencil icon next to the analysis name, enter the new analysis name, and click update.
+
+![Edit pipeline name.](images/edit-name.png)
 
 ## Sharing pipeline results
 
