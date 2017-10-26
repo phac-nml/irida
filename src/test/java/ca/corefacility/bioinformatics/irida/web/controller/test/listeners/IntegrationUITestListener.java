@@ -67,7 +67,10 @@ public class IntegrationUITestListener extends RunListener {
 		// Run chrome in headless mode
 		String headless = System.getProperty("irida.it.headless");
 		if (headless != null && headless.equals("true")) {
+			logger.info("Running Chome in headless mode");
 			options.addArguments("headless");
+		} else {
+			logger.info("Running Chome in no headless (normal) mode");
 		}
 		
 		options.addArguments("window-size=1400x900");
