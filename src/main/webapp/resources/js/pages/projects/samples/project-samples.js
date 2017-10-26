@@ -251,6 +251,15 @@ const config = Object.assign({}, tableConfig, {
 
 const $dt = $table.DataTable(config);
 
+function checkToolButtonState(count = $dt.select.selected()[0].size) {
+  /*
+  Update the state of the buttons in the navbar.
+   */
+  for (const btn of SAMPLE_TOOL_BUTTONS) {
+    btn.checkState(count, ASSOCIATED_PROJECTS.size > 0);
+  }
+}
+
 // This allows for the use of checkboxes in the dropdown without
 // it closing on every click.
 const ASSOCIATED_INPUTS = $(".associated-cb input");
@@ -303,6 +312,7 @@ $(".associated-dd .dropdown-menu a").on("click", function(event) {
     $dt.ajax.reload(null, false);
   }, 0);
 
+  checkToolButtonState();
   $(event.target).blur();
   return false;
 });
@@ -313,12 +323,7 @@ TABLE EVENT HANDLERS
 
 // Row selection events.
 $dt.on("selection-count.dt", function(e, count) {
-  /*
-  Update the state of the buttons in the navbar.
-   */
-  for (const btn of SAMPLE_TOOL_BUTTONS) {
-    btn.checkState(count, ASSOCIATED_PROJECTS.size > 0);
-  }
+  checkToolButtonState(count);
 });
 
 /*
@@ -343,7 +348,6 @@ $("#js-modal-wrapper").on("show.bs.modal", function(event) {
     sampleIds.push(value.sample);
   }
   params["sampleIds"] = sampleIds;
-  console.log("Hello I am some params: ", params);
 
   let script;
   modal.load(`${url}?${$.param(params)}`, function() {
