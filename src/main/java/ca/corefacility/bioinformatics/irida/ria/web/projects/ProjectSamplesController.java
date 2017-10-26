@@ -207,7 +207,7 @@ public class ProjectSamplesController {
 	 *
 	 * @return
 	 */
-	@RequestMapping(value = "/projects/templates/remove-modal", produces = MediaType.TEXT_HTML_VALUE)
+	@RequestMapping(value = "/projects/{projectId}/templates/remove-modal", produces = MediaType.TEXT_HTML_VALUE)
 	public String getRemoveSamplesFromProjectModal(@RequestParam(name = "sampleIds[]") List<Long> ids, Model model) {
 		List<Sample> samplesThatAreInMultiple = new ArrayList<>();
 		List<Sample> samplesThatAreInOne = new ArrayList<>();

@@ -106,7 +106,7 @@
                                         class="btn btn-sm btn-default btn-block sample-tool-btn"
                                         data-toggle="modal" data-target="#js-modal-wrapper"
                                         data-enabled-at="1"  data-allow-associated="false"
-                                        data:url="@{/projects/{projectId}/templates/copy-move-modal(projectId=${project.getId()})}"
+                                        data:url="@{/projects/{projectId}/templates/remove-modal(projectId=${project.getId()})}"
                                         data:script="@{/resources/js/build/project-samples-copy.bundle.js}">
                                     <i class="fa fa-trash fa-fw" aria-hidden="true"></i>&nbsp;
                                     <th:block th:text="#{project.samples.nav.remove}"/>
