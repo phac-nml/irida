@@ -1,23 +1,26 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
+import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
+import ca.corefacility.bioinformatics.irida.model.export.*;
+import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles.Builder;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTExportSubmission;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
+import ca.corefacility.bioinformatics.irida.service.export.NcbiExportSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,39 +30,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
-import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles;
-import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles.Builder;
-import ca.corefacility.bioinformatics.irida.model.export.NcbiInstrumentModel;
-import ca.corefacility.bioinformatics.irida.model.export.NcbiLibrarySelection;
-import ca.corefacility.bioinformatics.irida.model.export.NcbiLibrarySource;
-import ca.corefacility.bioinformatics.irida.model.export.NcbiLibraryStrategy;
-import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
-import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesUtils;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
-import ca.corefacility.bioinformatics.irida.service.export.NcbiExportSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.github.dandelion.datatables.core.ajax.DataSet;
-import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
-import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
-import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
-import com.google.common.collect.ImmutableMap;
+import java.security.Principal;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Controller managing requests to export project data to external sources.
@@ -443,35 +418,6 @@ public class ProjectExportController {
 
 		public NcbiLibraryStrategy getLibraryStrategy() {
 			return libraryStrategy;
-		}
-	}
-
-	protected class DTExportSubmission implements DataTablesResponseModel {
-		private NcbiExportSubmission submission;
-
-		public DTExportSubmission(NcbiExportSubmission submission){
-			this.submission = submission;
-		}
-
-		@Override
-		public Long getId() {
-			return submission.getId();
-		}
-
-		public int getSampleCount() {
-			return submission.getBioSampleFiles().size();
-		}
-
-		public ExportUploadState getUploadState() {
-			return submission.getUploadState();
-		}
-
-		public Date getCreatedDate() {
-			return submission.getCreatedDate();
-		}
-
-		public Project getProject() {
-			return submission.getProject();
 		}
 	}
 }
