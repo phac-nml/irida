@@ -10,9 +10,6 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.http.ContentType;
-
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -31,11 +28,6 @@ public class IntegrationUITestListener extends RunListener {
 	public void testRunStarted(Description description) throws Exception {
 		logger.debug("Running ChromeDriver for UI tests.");
 		startWebDriver();
-		
-        logger.debug("Setting up RestAssured.");
-
-        RestAssured.requestContentType(ContentType.JSON);
-        RestAssured.port = Integer.valueOf(System.getProperty("jetty.port"));
 	}
 
 	/**

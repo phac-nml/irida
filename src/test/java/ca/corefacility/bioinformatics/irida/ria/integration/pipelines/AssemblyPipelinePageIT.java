@@ -1,18 +1,24 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pipelines;
 
-import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asAdmin;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
+import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.PipelinesAssemblyPage;
@@ -22,10 +28,14 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Proje
 /**
  * Testing for launching an assembly pipeline.
  */
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/pipelines/AssemblyPipelinePageIT.xml")
 public class AssemblyPipelinePageIT extends AbstractIridaUIITChromeDriver {
 	private static final Logger logger = LoggerFactory.getLogger(AssemblyPipelinePageIT.class);
 	private PipelinesAssemblyPage page;
+
+	@Autowired
+	private AnalysisSubmissionRepository analysisSubmissionRepository;
 
 	@Before
 	public void setUpTest() {
@@ -44,6 +54,8 @@ public class AssemblyPipelinePageIT extends AbstractIridaUIITChromeDriver {
 	public void testShareResultsWithSamples() {
 		addSamplesToCartManager();
 
+		logger.debug("SecurityContext=" + SecurityContextHolder.getContext().getAuthentication());
+
 		String analysisName = AssemblyPipelinePageIT.class.getName() + ".testShareResultsWithSamples";
 		page.setNameForAnalysisPipeline(analysisName);
 
@@ -53,10 +65,10 @@ public class AssemblyPipelinePageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue("Message should be displayed once the pipeline finished submitting",
 				page.isPipelineSubmittedSuccessMessageShown());
 
-		// verify that the appropriate flag gets set for sharing results with samples
-		asAdmin().expect()
-				.body("resource.resources.find{it.name == '" + analysisName + "_sample1'}.updateSamples", equalTo(true))
-				.when().get("/api/analysisSubmissions");
+		AnalysisSubmission submission = findAnalysisSubmissionWithName(analysisName + "_sample1");
+
+		assertNotNull("Analysis Submission is null", submission);
+		assertTrue("updateSamples should be true", submission.getUpdateSamples());
 	}
 
 	@Test
@@ -71,8 +83,10 @@ public class AssemblyPipelinePageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue("Message should be displayed once the pipeline finished submitting",
 				page.isPipelineSubmittedSuccessMessageShown());
 
-		asAdmin().expect().body("resource.resources.find{it.name == '" + analysisName + "_sample1'}.updateSamples",
-				equalTo(false)).when().get("/api/analysisSubmissions");
+		AnalysisSubmission submission = findAnalysisSubmissionWithName(analysisName + "_sample1");
+
+		assertNotNull("Analysis Submission is null", submission);
+		assertFalse("updateSamples should be false", submission.getUpdateSamples());
 	}
 
 	@Test
@@ -87,8 +101,10 @@ public class AssemblyPipelinePageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue("Message should be displayed once the pipeline finished submitting",
 				page.isPipelineSubmittedSuccessMessageShown());
 
-		asAdmin().expect().body("resource.resources.find{it.name == '" + analysisName + "_sample1'}.updateSamples",
-				equalTo(false)).when().get("/api/analysisSubmissions");
+		AnalysisSubmission submission = findAnalysisSubmissionWithName(analysisName + "_sample1");
+
+		assertNotNull("Analysis Submission is null", submission);
+		assertFalse("updateSamples should be false", submission.getUpdateSamples());
 	}
 
 	private void addSamplesToCartUser() {
@@ -106,5 +122,16 @@ public class AssemblyPipelinePageIT extends AbstractIridaUIITChromeDriver {
 		samplesPage.selectSample(0);
 		samplesPage.addSelectedSamplesToCart();
 		PipelinesSelectionPage.goToAssemblyPipelinePipeline(driver());
+	}
+
+	private AnalysisSubmission findAnalysisSubmissionWithName(String name) {
+		AnalysisSubmission submission = null;
+		for (AnalysisSubmission s : analysisSubmissionRepository.findAll()) {
+			if (name.equals(s.getName())) {
+				submission = s;
+			}
+		}
+
+		return submission;
 	}
 }
