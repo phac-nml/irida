@@ -364,7 +364,7 @@ public class PipelineController extends BaseController {
 			@RequestParam(required = false) List<Long> single, @RequestParam(required = false) List<Long> paired,
 			@RequestParam(required = false) Map<String, String> parameters, @RequestParam(required = false) Long ref,
 			@RequestParam String name, @RequestParam(name = "description", required = false) String analysisDescription,
-			@RequestParam(required = false) List<Long> sharedProjects, @RequestParam(required = false, defaultValue = "true") Boolean writeResultsToSamples) {
+			@RequestParam(required = false) List<Long> sharedProjects, @RequestParam(required = false, defaultValue = "false") Boolean writeResultsToSamples) {
 		Map<String, Object> result = ImmutableMap.of("success", true);
 		try {
 			IridaWorkflow flow = workflowsService.getIridaWorkflow(pipelineId);
