@@ -70,7 +70,7 @@
                                 <button id="mergeBtn"
                                         class="btn btn-sm btn-default btn-block sample-tool-btn"
                                         data-toggle="modal" data-target="#js-modal-wrapper"
-                                        data-enabled-at="2"
+                                        data-enabled-at="2" data-allow-associated="false"
                                         data:url="@{/projects/{projectId}/templates/merge-modal(projectId=${project.getId()})}"
                                         data:script="@{/resources/js/build/project-samples-merge.bundle.js}">
                                     <i class="fa fa-compress fa-fw" aria-hidden="true"></i> &nbsp;
@@ -81,7 +81,8 @@
                                 <button id="js-copyBtn"
                                         class="btn btn-sm btn-default btn-block sample-tool-btn"
                                         data-toggle="modal" data-target="#js-modal-wrapper"
-                                        data-enabled-at="1" data-params="{&quot;move&quot;: false}"
+                                        data-enabled-at="1" data-allow-associated="false"
+                                        data-params="{&quot;move&quot;: false}"
                                         data:url="@{/projects/{projectId}/templates/copy-move-modal(projectId=${project.getId()})}"
                                         data:script="@{/resources/js/build/project-samples-copy.bundle.js}">
                                     <i class="fa fa-files-o fa-fw" aria-hidden="true"></i> &nbsp;
@@ -92,11 +93,23 @@
                                 <button id="js-moveBtn"
                                         class="btn btn-sm btn-default btn-block sample-tool-btn"
                                         data-toggle="modal" data-target="#js-modal-wrapper"
-                                        data-enabled-at="1" data-params="{&quot;move&quot;: true}"
+                                        data-enabled-at="1" data-allow-associated="false"
+                                        data-params="{&quot;move&quot;: true}"
                                         data:url="@{/projects/{projectId}/templates/copy-move-modal(projectId=${project.getId()})}"
                                         data:script="@{/resources/js/build/project-samples-copy.bundle.js}">
                                     <i class="fa fa-truck fa-fw" aria-hidden="true"></i> &nbsp;
                                     <th:block th:text="#{project.samples.nav.move}"/>
+                                </button>
+                            </li>
+                            <li>
+                                <button id="js-removeBtn"
+                                        class="btn btn-sm btn-default btn-block sample-tool-btn"
+                                        data-toggle="modal" data-target="#js-modal-wrapper"
+                                        data-enabled-at="1"  data-allow-associated="false"
+                                        data:url="@{/projects/{projectId}/templates/copy-move-modal(projectId=${project.getId()})}"
+                                        data:script="@{/resources/js/build/project-samples-copy.bundle.js}">
+                                    <i class="fa fa-trash fa-fw" aria-hidden="true"></i>&nbsp;
+                                    <th:block th:text="#{project.samples.nav.remove}"/>
                                 </button>
                             </li>
                         </ul>

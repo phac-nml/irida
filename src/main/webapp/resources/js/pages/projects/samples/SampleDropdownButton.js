@@ -11,20 +11,23 @@ export default class SampleDropdownButton {
   constructor(node, listenerFn) {
     this.button = node;
     this.enabledAt = this.button.dataset.enabledAt;
+    this.allowAssociated = this.button.allowAssociated;
 
     if (typeof listenerFn === "function") {
       this.button.addEventListener("click", listenerFn, false);
     }
 
-    this.checkState(0);
+    this.checkState(0, false);
   }
 
   /**
    * Check to see if the button should be disabled based upon the
    * number of currently selected samples
    * @param {number} count of selected samples
+   * @param {boolean} hasAssociated whether associated projects are being displayed.
    */
-  checkState(count) {
-    this.button.disabled = count < this.enabledAt;
+  checkState(count, hasAssociated) {
+    this.button.disabled =
+      this.allowAssociated || (!hasAssociated && count < this.enabledAt);
   }
 }

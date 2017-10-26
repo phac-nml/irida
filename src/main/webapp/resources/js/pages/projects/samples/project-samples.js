@@ -317,7 +317,7 @@ $dt.on("selection-count.dt", function(e, count) {
   Update the state of the buttons in the navbar.
    */
   for (const btn of SAMPLE_TOOL_BUTTONS) {
-    btn.checkState(count);
+    btn.checkState(count, ASSOCIATED_PROJECTS.size > 0);
   }
 });
 
