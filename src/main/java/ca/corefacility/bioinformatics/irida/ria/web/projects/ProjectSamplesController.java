@@ -768,7 +768,7 @@ public class ProjectSamplesController {
 	@RequestMapping(value = "/projects/{projectId}/ajax/samples/remove", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public Map<String, Object> removeSamplesFromProject(@PathVariable Long projectId,
-			@RequestParam(value = "samples[]") List<Long> samples, Locale locale) {
+			@RequestParam(value = "sampleIds[]") List<Long> samples, Locale locale) {
 		Map<String, Object> result = new HashMap<>();
 
 		// read the project
@@ -783,8 +783,9 @@ public class ProjectSamplesController {
 		// build success message
 		result.put("result", "success");
 		result.put(
-				"message",
-				messageSource.getMessage("project.samples.remove.success",
+				"message", messageSource.getMessage(samples.size() == 1 ?
+								"project.samples.remove-success-singular" :
+								"project.samples.remove-success-plural",
 						new Object[] { samples.size(), project.getLabel() }, locale));
 
 		return result;

@@ -59,7 +59,7 @@
         <div class="col-md-12">
             <div class="btn-toolbar dt-btn-toolbar" role="toolbar">
                 <div class="btn-group">
-                    <div class="dropdown">
+                    <div th:if="${isOwner || isAdmin}" class="dropdown">
                         <button id="sample-tools" class="btn btn-default btn-sm dropdown-toggle"
                                 data-toggle="dropdown">
                             <th:block th:text="#{project.samples.nav.sample-tools}"/>
