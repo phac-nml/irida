@@ -84,12 +84,12 @@ public class PipelinesPhylogenomicsPage extends AbstractPage {
 		return driver.findElement(By.className("modal-title")).getText();
 	}
 
-	public String getAlternativeAlleleFractionValue() {
-		return driver.findElement(By.id("alternative-allele-fraction")).getAttribute("value");
+	public String getSNVAbundanceRatio() {
+		return driver.findElement(By.id("snv-abundance-ratio")).getAttribute("value");
 	}
 
-	public void setAlternativeAlleleFraction(String value) {
-		final WebElement aaf = driver.findElement(By.id("alternative-allele-fraction"));
+	public void setSNVAbundanceRatio(String value) {
+		final WebElement aaf = driver.findElement(By.id("snv-abundance-ratio"));
 		aaf.clear();
 		aaf.sendKeys(value);
 		waitForTime(500);
@@ -110,8 +110,8 @@ public class PipelinesPhylogenomicsPage extends AbstractPage {
 		waitForTime(250);
 	}
 
-	public void clickSetDefaultAlternativeAlleleFraction() {
-		driver.findElements(By.xpath("//div[input[@id='alternative-allele-fraction']]/span/button")).get(0).click();
+	public void clickSetDefaultSNVAbundanceRatio() {
+		driver.findElements(By.xpath("//div[input[@id='snv-abundance-ratio']]/span/button")).get(0).click();
 	}
 
 	public void clickSeePipeline() {

@@ -218,6 +218,39 @@ public class AnalysisController {
 
 		return viewName;
 	}
+
+	/**
+	 * Update an analysis name
+	 *
+	 * @param submissionId ID of the submission to update
+	 * @param name         name to update the analysis to
+	 * @param model        model for view
+	 * @param locale       locale of the user
+	 * @return redirect to the analysis page after update
+	 */
+	@RequestMapping(value = "/{submissionId}/edit", produces = MediaType.TEXT_HTML_VALUE)
+	public String editAnalysisName(@PathVariable Long submissionId, @RequestParam String name, Model model,
+			Locale locale) {
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+
+		submission.setName(name);
+
+		boolean error = false;
+
+		try {
+			analysisSubmissionService.update(submission);
+		} catch (Exception e) {
+			logger.error("Error while updating analysis name", e);
+			error = true;
+		}
+
+		if (error) {
+			model.addAttribute("updateError", true);
+			return getDetailsPage(submissionId, model, locale);
+		}
+
+		return "redirect:/analysis/" + submissionId;
+	}
 	
 	/**
 	 * Get the status of projects that can be shared with the given analysis
