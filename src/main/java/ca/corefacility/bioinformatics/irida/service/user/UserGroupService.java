@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
 import ca.corefacility.bioinformatics.irida.exceptions.UserGroupWithoutOwnerException;
@@ -115,14 +116,12 @@ public interface UserGroupService extends CRUDService<Long, UserGroup> {
 	 *            the current page
 	 * @param size
 	 *            the size of the page
-	 * @param order
-	 *            the order
-	 * @param sortProperties
+	 * @param sort
 	 *            the properties to sort on
 	 * @return a page of {@link UserGroupProjectJoin}.
 	 */
 	public Page<UserGroupProjectJoin> getUserGroupsForProject(final String searchName, final Project project, int page,
-			int size, Direction order, String... sortProperties);
+			int size, Sort sort);
 
 	/**
 	 * Get a collection of {@link UserGroup} that aren't already on a

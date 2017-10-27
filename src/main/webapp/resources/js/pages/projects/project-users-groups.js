@@ -15,6 +15,8 @@ import {
 import { formatDate } from "../../utilities/date-utilities";
 
 const $table = $("#usersTable");
+const canManage = !!$table.data("admin");
+
 /*
 Get the template for the role wrapper.  This is used to populate the member role column.
 If the user is a manager or administrator, the template will contain a select input,
@@ -31,8 +33,8 @@ const createRole = (() => {
   if (elm && elm.tagName === "SELECT") {
     return function(data, type, full) {
       const select = roleTemplateWrapper.firstElementChild.cloneNode(true);
-      select.id = `${full.object.identifier}-role-select`;
-      const option = select.querySelector(`option[value=${data}]`);
+      select.id = `${full.id}-role-select`;
+      const option = select.querySelector(`option[value=${full.role}]`);
       option.setAttribute("selected", "selected");
       return select.outerHTML;
     };
@@ -54,28 +56,28 @@ const CONFIG = Object.assign({}, tableConfig, {
   ajax: $table.data("url"),
   columnDefs: [
     {
-      targets: [COLUMNS.OBJECT_USERNAME, COLUMNS.OBJECT_NAME],
+      targets: [COLUMNS.USER_USERNAME, COLUMNS.USER_GROUP_NAME],
       render(data, type, full) {
         /*
         Create a link back to the user's page.
          */
         return createItemLink({
-          url: `${window.PAGE.urls.usersLink}${full.object.identifier}`,
-          label: full.object.label
+          url: `${window.PAGE.urls.usersLink}${full.id}`,
+          label: full.name
         });
       }
     },
     {
       targets: [COLUMNS.CREATED_DATE],
-      render(data) {
+      render(data, type, full) {
         /*
         Format the date based on the standard for IRIDA.
          */
-        return `<time>${formatDate({ date: data })}</time>`;
+        return `<time>${formatDate({ date: full.joined })}</time>`;
       }
     },
     {
-      targets: [COLUMNS.PROJECT_ROLE],
+      targets: [COLUMNS.ROLE],
       render: createRole
     },
     {
@@ -98,7 +100,7 @@ const CONFIG = Object.assign({}, tableConfig, {
     /*
     Add the user id to the row so that it can be used for updating the user.
      */
-    row.dataset.user =  data.object.identifier;
+    row.dataset.user = data.id;
     /*
     Activate the tooltips.
      */
