@@ -331,10 +331,7 @@ public class ProjectMembersController {
 				params.getSearchValue(), params.getCurrentPage(), params.getLength(), params.getSort());
 		List<DataTablesResponseModel> modelList = new ArrayList<>();
 		for (Join<Project, User> join : usersForProject) {
-			modelList.add(new DTProjectMember(join.getObject()
-					.getId(), join.getObject()
-					.getLabel(), ((ProjectUserJoin) join).getProjectRole()
-					.toString(), join.getCreatedDate()));
+			modelList.add(new DTProjectMember((ProjectUserJoin) join));
 		}
 		return new DataTablesResponse(params, usersForProject, modelList);
 	}
@@ -358,10 +355,7 @@ public class ProjectMembersController {
 				params.getSearchValue(), project, params.getCurrentPage(), params.getLength(), params.getSort());
 		List<DataTablesResponseModel> responseModels = new ArrayList<>();
 		for (UserGroupProjectJoin userGroupProjectJoin : userGroupsForProject) {
-			responseModels.add(new DTProjectGroup(userGroupProjectJoin.getObject()
-					.getId(), userGroupProjectJoin.getObject()
-					.getName(), userGroupProjectJoin.getProjectRole()
-					.toString(), userGroupProjectJoin.getCreatedDate()));
+			responseModels.add(new DTProjectGroup(userGroupProjectJoin));
 		}
 
 		return new DataTablesResponse(params, userGroupsForProject, responseModels);

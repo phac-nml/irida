@@ -2,7 +2,10 @@ package ca.corefacility.bioinformatics.irida.ria.web.models.datatables;
 
 import java.util.Date;
 
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
 
 /**
@@ -14,11 +17,12 @@ public class DTProjectMember implements DataTablesResponseModel {
 	private String role;
 	private Date joined;
 
-	public DTProjectMember(Long id, String name, String role, Date joined) {
-		this.id = id;
-		this.name = name;
-		this.role = role;
-		this.joined = joined;
+	public DTProjectMember(ProjectUserJoin projectUserJoin) {
+		User user = projectUserJoin.getObject();
+		this.id = user.getId();
+		this.name = user.getLabel();
+		this.role = projectUserJoin.getProjectRole().toString();
+		this.joined = projectUserJoin.getCreatedDate();
 	}
 
 	public Long getId() {
