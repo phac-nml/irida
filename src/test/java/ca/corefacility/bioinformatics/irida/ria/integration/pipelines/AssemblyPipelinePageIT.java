@@ -54,8 +54,6 @@ public class AssemblyPipelinePageIT extends AbstractIridaUIITChromeDriver {
 	public void testShareResultsWithSamples() {
 		addSamplesToCartManager();
 
-		logger.debug("SecurityContext=" + SecurityContextHolder.getContext().getAuthentication());
-
 		String analysisName = AssemblyPipelinePageIT.class.getName() + ".testShareResultsWithSamples";
 		page.setNameForAnalysisPipeline(analysisName);
 
