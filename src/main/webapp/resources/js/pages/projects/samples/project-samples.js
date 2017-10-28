@@ -408,6 +408,10 @@ Set up the ability to clear all filters
  */
 function clearFilters() {
   /*
+  Clear file filter
+   */
+  document.querySelector("#filter-by-file").value = null;
+  /*
   Clear custom table filters
    */
   TABLE_FILTERS.clear();
