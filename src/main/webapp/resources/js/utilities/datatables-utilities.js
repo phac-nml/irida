@@ -1,7 +1,7 @@
 import $ from "jquery";
 import _ from "lodash";
-import {addTooltip} from "./bootstrap-utilities";
-import {createIcon, ICONS} from "./fontawesome-utilities";
+import { addTooltip } from "./bootstrap-utilities";
+import { createIcon, ICONS } from "./fontawesome-utilities";
 
 /*
  Default layout around DataTables in IRIDA.
