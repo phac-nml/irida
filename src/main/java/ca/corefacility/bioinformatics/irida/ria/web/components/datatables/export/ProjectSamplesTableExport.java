@@ -6,7 +6,10 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.data.domain.Page;
 
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -20,6 +23,7 @@ import com.github.dandelion.datatables.core.html.HtmlTable;
  * Export project samples table.
  */
 public class ProjectSamplesTableExport extends TableExport {
+	private static final Logger logger = LoggerFactory.getLogger(ProjectSamplesTableExport.class);
 
 	public ProjectSamplesTableExport(String exportFormat, String fileName, MessageSource messageSource, Locale locale) throws ExportFormatException {
 		super(exportFormat, fileName, messageSource, locale);
@@ -44,7 +48,15 @@ public class ProjectSamplesTableExport extends TableExport {
 				.newBuilder("samples", samples, request, exportConf);
 
 		for (String attr : ProjectSampleModel.attributes) {
-			steps.column().fillWithProperty(attr).title(messageSource.getMessage("sample." + attr, new Object[]{}, locale));
+			String title = attr;
+			try {
+				title = messageSource.getMessage("sample." + attr, new Object[] {}, locale);
+			} catch (NoSuchMessageException e) {
+				logger.debug("No internationalization string found for samples table export for attribute: " + attr);
+			}
+			steps.column()
+					.fillWithProperty(attr)
+					.title(title);
 		}
 
 		return steps.column().fillWith("").title("").build();
