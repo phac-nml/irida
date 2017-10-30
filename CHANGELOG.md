@@ -22,6 +22,7 @@ Changes
 * [UI]: Fixed issue with uploading `.fastqc` files in IE, and allow for uploading for `fastqc.gz` in all browsers (0.18.4).
 * [UI]: Added ability to update an analysis submission name after it's been submitted.
 * [Developer]: Added `run-tests.sh` script for running local integration tests.
+* [UI]: Fixed issue with exporting `csv` and `excel` from Project > Samples pages (0.18.5).
 
 0.17.0 to 0.18.0
 ----------------
