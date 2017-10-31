@@ -55,6 +55,18 @@ const SAMPLE_TOOL_BUTTONS = [...sampleToolsNodes].map(
 const ASSOCIATED_PROJECTS = new Map();
 
 /**
+Constants for the names of filters used in ajax requests.
+ */
+const FILTERS = {
+  FILTER_BY_FILE: "sampleNames"
+};
+/**
+ * Reference to all filters available on the table.
+ * @type {Map<any, any>}
+ */
+const TABLE_FILTERS = new Map();
+
+/**
  * Reference to the colour for a specific project.
  * @type {Map}
  */
@@ -105,6 +117,13 @@ const config = Object.assign({}, tableConfig, {
       if (ASSOCIATED_PROJECTS.size > 0) {
         // Add a list of ids for currently visible associated projects
         d.associated = Array.from(ASSOCIATED_PROJECTS.keys());
+      }
+
+      /*
+      Add any available filters
+       */
+      for (let [key, value] of TABLE_FILTERS) {
+        d[key] = value;
       }
     }
   },
@@ -186,7 +205,7 @@ const config = Object.assign({}, tableConfig, {
     }
   ],
   drawCallback() {
-    $('[data-toggle="popover"]').popover(POPOVER_OPTIONS);
+    $table.find('[data-toggle="popover"]').popover(POPOVER_OPTIONS);
   },
   createdRow(row, data) {
     const $row = $(row);
@@ -356,3 +375,62 @@ $("#modal-wrapper").on("show.bs.modal", function(event) {
 
   MODALS[whichModal].call(wrapper, { url, src: script, sampleIds });
 });
+
+/*
+Add the filter buttons
+ */
+const filterByFileBtn = $("#filter-toolbar").detach();
+filterByFileBtn.appendTo("#dt-filters");
+
+// Set up the file filer
+function handleFileSelect(e) {
+  const file = e.target.files[0];
+  if (typeof file === "undefined") return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    // From the file contents, get a list of names (1 per line expected);
+    const contents = e.target.result.match(/[^\r\n]+/g);
+    // Store the unique values in the ajax variable
+    TABLE_FILTERS.set(FILTERS.FILTER_BY_FILE, [...new Set(contents)]);
+    // Refresh the table.
+    $dt.ajax.reload(() => {
+      $dt.select.selectAll();
+    });
+  };
+  reader.readAsText(file);
+}
+const filterByFileInput = document.querySelector("#filter-by-file");
+filterByFileInput.addEventListener("change", handleFileSelect, false);
+
+/*
+Set up the ability to clear all filters
+ */
+function clearFilters() {
+  /*
+  Clear file filter
+   */
+  document.querySelector("#filter-by-file").value = null;
+  /*
+  Clear custom table filters
+   */
+  TABLE_FILTERS.clear();
+  /*
+  Clear DataTables default search
+   */
+  $dt.search("");
+  /*
+  De-select all items in the table
+   */
+  $dt.select.selectNone();
+  /*
+  Reload the table.
+   */
+  $dt.ajax.reload();
+}
+const clearFilterBtn = document.querySelector(".js-clear-filters");
+clearFilterBtn.addEventListener("click", clearFilters, false);
+
+/*
+Activate page tooltips
+ */
+$('[data-toggle="popover"]').popover();

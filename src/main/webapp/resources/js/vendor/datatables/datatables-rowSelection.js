@@ -103,9 +103,15 @@
    */
   function selectAllRows(dt) {
     const ctx = dt.settings()[0];
+    /*
+    Need to get the filters so we only select the available samples.
+     */
+    const data = dt.ajax.params();
+
     // Try storing to local storage to prevent calling the server each time.
     const postPromise = $.post(
       ctx._select.allUrl,
+      data,
       ctx._select.allPostDataFn()
     ).then(response => {
       if (typeof ctx._select.formatSelectAllResponseFn === "function") {

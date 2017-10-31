@@ -447,7 +447,7 @@ public class ProjectSamplesController {
 	@ResponseBody
 	public DataTablesResponse getProjectSamples(@PathVariable Long projectId,
 			@DataTablesRequest DataTablesParams params,
-			@RequestParam(required = false, defaultValue = "") List<String> sampleNames,
+			@RequestParam(required = false, name = "sampleNames[]", defaultValue = "") List<String> sampleNames,
 			@RequestParam(required = false, name = "associated[]", defaultValue = "") List<Long> associated,
 			@RequestParam(value = "name", required = false, defaultValue = "") String sampleNameSearch,
 			@RequestParam(required = false, defaultValue = "") String organismSearch,
