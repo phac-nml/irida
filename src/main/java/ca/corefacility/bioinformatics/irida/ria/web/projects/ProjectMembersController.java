@@ -1,41 +1,35 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
 import java.security.Principal;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesUtils;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProjectGroup;
+import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProjectMember;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
-import com.github.dandelion.datatables.core.ajax.DataSet;
-import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
-import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
-import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
@@ -319,64 +313,52 @@ public class ProjectMembersController {
 	}
 
 	/**
-	 * Get a page of users on the project for display in a datatable.
-	 * 
-	 * @param criteria
-	 *            the datatables criteria for filtering/sorting members
+	 * Get a page of users on the project for display in a DataTable.
+	 *
+	 * @param params
+	 *            the datatables parameters for this DataTable
 	 * @param projectId
 	 *            the id of the project we're looking at
-	 * @return a page of users on the project
+	 * @return a {@link DataTablesResponseModel} of users on the project
 	 */
 	@RequestMapping(value = "/{projectId}/settings/ajax/members")
-	public @ResponseBody DatatablesResponse<Join<Project, User>> getProjectUserMembers(
-			final @DatatablesParams DatatablesCriterias criteria, final @PathVariable Long projectId) {
-		final Project p = projectService.read(projectId);
-		final int currentPage = DatatablesUtils.getCurrentPage(criteria);
-		final Map<String, Object> sortProperties = DatatablesUtils.getSortProperties(criteria);
-		final Sort.Direction direction = (Sort.Direction) sortProperties.get("direction");
-		// Jackson renders the JSON on the page rendered by datatables as user
-		// -> object and label -> username, so translate it back so JPA
-		// understands what we're sorting and filtering on
-		final String sortName = sortProperties.get("sort_string").toString().replaceAll("object.", "user.")
-				.replaceAll("label", "username");
-		final String searchString = criteria.getSearch();
+	@ResponseBody
+	public DataTablesResponse getProjectUserMembers(@DataTablesRequest DataTablesParams params,
+			final @PathVariable Long projectId) {
+		final Project project = projectService.read(projectId);
 
-		final Page<Join<Project, User>> users = userService.searchUsersForProject(p, searchString, currentPage,
-				criteria.getLength(), direction, sortName);
-		final DataSet<Join<Project, User>> usersDataSet = new DataSet<>(users.getContent(), users.getTotalElements(),
-				users.getTotalElements());
-
-		return DatatablesResponse.build(usersDataSet, criteria);
+		final Page<Join<Project, User>> usersForProject = userService.searchUsersForProject(project,
+				params.getSearchValue(), params.getCurrentPage(), params.getLength(), params.getSort());
+		List<DataTablesResponseModel> modelList = new ArrayList<>();
+		for (Join<Project, User> join : usersForProject) {
+			modelList.add(new DTProjectMember((ProjectUserJoin) join));
+		}
+		return new DataTablesResponse(params, usersForProject, modelList);
 	}
 
 	/**
-	 * Get a page of groups on the project for display in a datatable.
-	 * 
-	 * @param criteria
+	 * Get a page of groups on the project for display in a DataTable.
+	 *
+	 * @param params
 	 *            the datatables criteria for filtering/sorting groups
 	 * @param projectId
 	 *            the id of the project we're looking at
-	 * @return a page of groups on the project.
+	 * @return a {@link DataTablesResponseModel} of groups on the project
 	 */
 	@RequestMapping(value = "/{projectId}/settings/ajax/groups")
-	public @ResponseBody DatatablesResponse<UserGroupProjectJoin> getProjectGroupMembers(
-			final @DatatablesParams DatatablesCriterias criteria, final @PathVariable Long projectId) {
-		final Project p = projectService.read(projectId);
-		final int currentPage = DatatablesUtils.getCurrentPage(criteria);
-		final Map<String, Object> sortProperties = DatatablesUtils.getSortProperties(criteria);
-		final Sort.Direction direction = (Sort.Direction) sortProperties.get("direction");
-		// Jackson renders the JSON on the page rendered by datatables as
-		// userGroup -> object so translate it back so that JPA understands what
-		// we're filtering on.
-		final String sortName = sortProperties.get("sort_string").toString().replaceAll("object.", "userGroup.");
-		final String searchString = criteria.getSearch();
+	@ResponseBody
+	public DataTablesResponse getProjectGroupMembers(@DataTablesRequest DataTablesParams params,
+			final @PathVariable Long projectId) {
+		final Project project = projectService.read(projectId);
 
-		final Page<UserGroupProjectJoin> users = userGroupService.getUserGroupsForProject(searchString, p, currentPage,
-				criteria.getLength(), direction, sortName);
-		final DataSet<UserGroupProjectJoin> usersDataSet = new DataSet<>(users.getContent(), users.getTotalElements(),
-				users.getTotalElements());
+		final Page<UserGroupProjectJoin> userGroupsForProject = userGroupService.getUserGroupsForProject(
+				params.getSearchValue(), project, params.getCurrentPage(), params.getLength(), params.getSort());
+		List<DataTablesResponseModel> responseModels = new ArrayList<>();
+		for (UserGroupProjectJoin userGroupProjectJoin : userGroupsForProject) {
+			responseModels.add(new DTProjectGroup(userGroupProjectJoin));
+		}
 
-		return DatatablesResponse.build(usersDataSet, criteria);
+		return new DataTablesResponse(params, userGroupsForProject, responseModels);
 	}
 
 	/**

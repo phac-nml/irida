@@ -24,7 +24,9 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 		"classpath:/ca/corefacility/bioinformatics/irida/config/filesystem.properties",
 		"classpath:/ca/corefacility/bioinformatics/irida/config/caching.properties",
 		"classpath:/ca/corefacility/bioinformatics/irida/config/ontology.properties",
-		"classpath:/ca/corefacility/bioinformatics/irida/config/workflows.properties", "file:/etc/irida/irida.conf" }, ignoreResourceNotFound = true)
+		"classpath:/ca/corefacility/bioinformatics/irida/config/workflows.properties",
+		"classpath:/ca/corefacility/bioinformatics/irida/config/galaxy.properties",
+		"file:/etc/irida/irida.conf" }, ignoreResourceNotFound = true)
 public class IridaApiPropertyPlaceholderConfig {
 
 	@Bean

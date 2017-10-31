@@ -104,7 +104,7 @@ public class ProjectsControllerTest {
 		when(sampleService.getSamplesForProject(any(Project.class)))
 				.thenReturn(TestDataFactory.constructListJoinProjectSample());
 
-		DataTablesParams params = new DataTablesParams(0, 10, 1, "", new Sort(Sort.Direction.ASC, "modifiedDate"));
+		DataTablesParams params = new DataTablesParams(0, 10, 1, "", new Sort(Sort.Direction.ASC, "modifiedDate"), new HashMap<>());
 		DataTablesResponse response = controller.getAjaxProjectList(params);
 		assertEquals("Should have 10 data elements, since page size is 10", 10, response.getData().size());
 	}
@@ -116,7 +116,7 @@ public class ProjectsControllerTest {
 		when(sampleService.getSamplesForProject(any(Project.class))).thenReturn(TestDataFactory.constructListJoinProjectSample());
 
 
-		DataTablesParams params = new DataTablesParams(0, 10, 1, "", new Sort(Sort.Direction.ASC, "modifiedDate"));
+		DataTablesParams params = new DataTablesParams(0, 10, 1, "", new Sort(Sort.Direction.ASC, "modifiedDate"), new HashMap<>());
 		DataTablesResponse response = controller.getAjaxAdminProjectsList(params);
 		assertEquals("Should have 10 data elements, since page size is 10", 10, response.getData().size());
 	}

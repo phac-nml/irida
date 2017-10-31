@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.analysis;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -10,6 +8,8 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis.AnalysesUserPage;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  */
@@ -35,8 +35,8 @@ public class AnalysesUserPageIT extends AbstractIridaUIITChromeDriver {
 
 		assertEquals("Should display progress bars with percent complete for everything except error state", 6,
 				page.getNumberOfProgressBars());
-		assertEquals("Should display 90% complete", "90.0", page.getPercentComplete(1));
-		assertEquals("Should display 15% complete", "15.0", page.getPercentComplete(2));
+		assertEquals("Should display 90% complete", "90", page.getPercentComplete(1));
+		assertEquals("Should display 15% complete", "15", page.getPercentComplete(2));
 	}
 
 	@Test
