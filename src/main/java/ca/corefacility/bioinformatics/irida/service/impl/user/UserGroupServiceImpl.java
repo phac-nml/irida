@@ -292,9 +292,9 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	@Override
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public Page<UserGroupJoin> filterUsersByUsername(final String username, final UserGroup userGroup, int page,
-			int size, Direction order, String... sortProperties) {
+			int size, Sort sort) {
 		return userGroupJoinRepository.findAll(filterUserGroupJoinByUsername(username, userGroup),
-				new PageRequest(page, size, order, sortProperties));
+				new PageRequest(page, size, sort));
 	}
 
 	/**
