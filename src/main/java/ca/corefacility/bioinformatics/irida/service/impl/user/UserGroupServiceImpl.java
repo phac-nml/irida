@@ -327,6 +327,15 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_USER')")
+	public Page<UserGroup> search(Specification<UserGroup> specification, PageRequest pageRequest) {
+		return super.search(specification, pageRequest);
+	}
+
+	/**
 	 * A convenience specification to get a {@link UserGroupJoin} from a
 	 * {@link User} and {@link UserGroup}.
 	 * 

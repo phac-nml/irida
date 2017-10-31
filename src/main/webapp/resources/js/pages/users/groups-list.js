@@ -6,7 +6,7 @@ import {
   generateColumnOrderInfo,
   tableConfig
 } from "../../utilities/datatables-utilities";
-import {formatDate} from "../../utilities/date-utilities";
+import { formatDate } from "../../utilities/date-utilities";
 import "../../vendor/datatables/datatables";
 
 const table = $("#groupsTable");
@@ -18,22 +18,22 @@ const config = Object.assign({}, tableConfig, {
   ajax: url,
   columnDefs: [
     {
-      targets: [COLUMNS.GROUP_NAME],
+      targets: [COLUMNS.NAME],
       render(data, type, full) {
         return createItemLink({
-          url: `${window.PAGE.urls.link}${full.group.identifier}`,
+          url: `${window.PAGE.urls.link}${full.id}`,
           label: data
         });
       }
     },
     {
-      targets: [COLUMNS.GROUP_DESCRIPTION],
+      targets: [COLUMNS.DESCRIPTION],
       render(data) {
         return `<p class="crop">${data}</p>`;
       }
     },
     {
-      targets: [COLUMNS.GROUP_CREATED_DATE, COLUMNS.GROUP_MODIFIED_DATE],
+      targets: [COLUMNS.CREATED_DATE, COLUMNS.MODIFIED_DATE],
       render(data) {
         return `<time>${formatDate({ date: data })}</time>`;
       }
@@ -41,17 +41,13 @@ const config = Object.assign({}, tableConfig, {
     {
       targets: -1,
       render(data, type, full) {
-        if (full.admin || full.groupOwner) {
+        if (full.admin || full.owner) {
           return createButtonCell([createDeleteBtn()]);
         }
         return "";
       }
     }
-  ],
-  createdRow(row, data, index) {
-    row.dataset.id = data.group.identifier;
-    $(row).tooltip({ selector: "[data-toggle='tooltip']" });
-  }
+  ]
 });
 
 const $dt = table.DataTable(config);

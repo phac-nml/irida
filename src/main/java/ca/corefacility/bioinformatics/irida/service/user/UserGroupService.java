@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
@@ -14,6 +15,7 @@ import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin.UserGroupRole;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
+import ca.corefacility.bioinformatics.irida.repositories.specification.UserGroupSpecification;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
 /**
