@@ -22,9 +22,10 @@ const $table = $("#exportTable");
 const CONFIG = Object.assign({}, tableConfig, {
   dom,
   ajax: $table.data("url"),
+  paging: PAGE.paging,
   columnDefs: [
     {
-      targets: [COLUMNS.IDENTIFIER],
+      targets: [COLUMNS.ID],
       render(data, type, full) {
         // Create a link back to the submission.
         const url = `${window.PAGE.URLS.projectBase}${full.project
@@ -37,24 +38,15 @@ const CONFIG = Object.assign({}, tableConfig, {
       }
     },
     {
-      targets: [COLUMNS.BIO_SAMPLE_FILES],
-      render(data) {
-        // Get the number of files in the submission.
-        return data.length;
-      }
-    },
-    {
       targets: [COLUMNS.PROJECT],
       render(data, type, full) {
-        if (full.identifier) {
-          // Create a link back to the project
-          const url = `${PAGE.URLS.projectBase}${full.project.identifier}`;
-          return createItemLink({
-            url,
-            label: data.label,
-            width: 300
-          });
-        }
+        // Create a link back to the project
+        const url = `${PAGE.URLS.projectBase}${full.project.identifier}`;
+        return createItemLink({
+          url,
+          label: data.name,
+          width: 300
+        });
       }
     },
     {
