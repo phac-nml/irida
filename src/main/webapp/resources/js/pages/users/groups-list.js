@@ -42,7 +42,9 @@ const config = Object.assign({}, tableConfig, {
       targets: -1,
       render(data, type, full) {
         if (full.admin || full.owner) {
-          return createButtonCell([createDeleteBtn()]);
+          const btn = createDeleteBtn();
+          btn.dataset.group = full.id;
+          return createButtonCell([btn]);
         }
         return "";
       }
@@ -53,8 +55,7 @@ const config = Object.assign({}, tableConfig, {
 const $dt = table.DataTable(config);
 
 $dt.on("click", ".remove-btn", function(e) {
-  const $row = $(this).closest("tr");
-  const id = $row.data("id");
+  const id = $(this).data("group");
 
   $("#removeGroupModal").load(
     window.PAGE.urls.deleteModal + "#removeGroupModalGen",
