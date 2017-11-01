@@ -7,6 +7,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTSequencingRun;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
@@ -135,26 +140,24 @@ public class SequencingRunController {
 	 */
 	@RequestMapping(value = "/ajax/list")
 	@ResponseBody
-	public DatatablesResponse<SequencingRunDatablesResponse> listSequencingRuns(
-			@DatatablesParams DatatablesCriterias criterias, Locale locale) {
+	public DataTablesResponse listSequencingRuns(
+			@DatatablesParams DatatablesCriterias criterias, @DataTablesRequest DataTablesParams params, Locale locale) {
 
-		int currentPage = DatatablesUtils.getCurrentPage(criterias);
-		Integer pageSize = criterias.getLength();
 		Map<String, Object> sortProps = DatatablesUtils.getSortProperties(criterias);
+		Sort sort = params.getSort();
 
 		String sortProperty = (String) sortProps.get(DatatablesUtils.SORT_STRING);
 		Sort.Direction order = (Sort.Direction) sortProps.get(DatatablesUtils.SORT_DIRECTION);
 
-		Page<SequencingRun> list = sequencingRunService.list(currentPage, pageSize, order, sortProperty);
 
-		List<SequencingRunDatablesResponse> collect = list.getContent().stream()
-				.map(s -> new SequencingRunDatablesResponse(s, messageSource
-						.getMessage(UPLOAD_STATUS_MESSAGE_BASE + s.getUploadStatus().toString(), null, locale), s.getUser()))
+		Page<SequencingRun> list = sequencingRunService.list(params.getCurrentPage(), params.getLength(), sort);
+
+		List<DataTablesResponseModel> runs = list.getContent().stream().map(s -> new DTSequencingRun(s, messageSource
+				.getMessage(UPLOAD_STATUS_MESSAGE_BASE + s.getUploadStatus().toString(), null, locale)))
 				.collect(Collectors.toList());
 
-		DataSet<SequencingRunDatablesResponse> dataSet = new DataSet<>(collect, list.getTotalElements(),
-				list.getTotalElements());
-		return DatatablesResponse.build(dataSet, criterias);
+
+		return new DataTablesResponse(params, list, runs);
 	}
 
 	private Model getPageDetails(Long runId, Model model) {
