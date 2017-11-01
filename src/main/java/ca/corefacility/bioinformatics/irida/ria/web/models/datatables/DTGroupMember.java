@@ -6,6 +6,9 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
 
+/**
+ * User interface model for DataTables for {@link UserGroup} member
+ */
 public class DTGroupMember implements DataTablesResponseModel {
 	private Long id;
 	private String label;
