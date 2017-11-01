@@ -88,8 +88,8 @@ public interface UserGroupService extends CRUDService<Long, UserGroup> {
 	 *            the properties to sort on
 	 * @return a page of {@link UserGroupJoin}.
 	 */
-	Page<UserGroupJoin> filterUsersByUsername(final String username, final UserGroup userGroup, int page, int size,
-			Sort sort);
+	 Page<UserGroupJoin> filterUsersByUsername(final String username, final UserGroup userGroup, int page,
+			int size, Sort sort);
 
 	/**
 	 * Get the set of {@link User} that are not currently in the
