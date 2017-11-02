@@ -7,6 +7,9 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models
 
 import java.util.Date;
 
+/**
+ * Datatables response class for {@link SequencingRun}
+ */
 public class DTSequencingRun implements DataTablesResponseModel {
 
 	private SequencingRun sequencingRun;
