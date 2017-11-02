@@ -134,22 +134,27 @@ You should see `sistr_cmd 1.0.2` as output of the above command.
 ## 1. MariaDB
 
 MariaDB Ubuntu users may encounter errors when deploying IRIDA due to character set requirements. If the application does not launch and you see the following message in the IRIDA logs: 
+
 ```
 Caused by: liquibase.exception.DatabaseException: Specified key was too long; max key length is 767 bytes [Failed SQL: CREATE TABLE irida_test.system_role (id BIGINT AUTO_INCREMENT NOT NULL, description VARCHAR(255) NOT NULL, name VARCHAR(255) NOT NULL, CONSTRAINT PK_SYSTEM_ROLE PRIMARY KEY (id), CONSTRAINT UK_3qbj4kdbey8f8wgabcel8i7io UNIQUE (name))]
 ```
 
-you will need to make the following changes to MariaDB configurations files within the `/etc/mysql/mariadb.conf.d/folder` as described below:
+you will need to make the following changes to MariaDB configurations files within the `/etc/mysql/mariadb.conf.d/` folder as described below:
 
-`50-mysql-clients.cnf`
+__`50-mysql-clients.cnf`__
 
 ```
 default-character-set = utf8
 ```
-`50-client.cnf`
+
+__`50-client.cnf`__
+
 ```
 default-character-set = utf8
 ```
-`50-server.cnf`
+
+__`50-server.cnf`__
+
 ```
 character-set-server = utf8
 collation-server = utf8_general_ci
