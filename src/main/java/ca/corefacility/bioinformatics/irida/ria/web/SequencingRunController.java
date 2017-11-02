@@ -120,12 +120,9 @@ public class SequencingRunController {
 	/**
 	 * Get a list of all the sequencing runs
 	 *
-	 * @param params
-	 *            a {@link DataTablesParams} of the sort and paging options
-	 * @param locale
-	 *            the locale used by the browser for the current request.
-	 *
-	 * @return A DatatablesResponse of SequencingRunDatablesResponse of the runs
+	 * @param params a {@link DataTablesParams} of the sort and paging options
+	 * @param locale the locale used by the browser for the current request.
+	 * @return A DatatablesResponse of DTSequencingRun of the runs
 	 */
 	@RequestMapping(value = "/ajax/list")
 	@ResponseBody
@@ -135,10 +132,9 @@ public class SequencingRunController {
 
 		Page<SequencingRun> list = sequencingRunService.list(params.getCurrentPage(), params.getLength(), sort);
 
-		List<DataTablesResponseModel> runs = list.getContent().stream().map(s -> new DTSequencingRun(s, messageSource
-				.getMessage(UPLOAD_STATUS_MESSAGE_BASE + s.getUploadStatus().toString(), null, locale)))
+		List<DataTablesResponseModel> runs = list.getContent().stream().map(s -> new DTSequencingRun(s,
+				messageSource.getMessage(UPLOAD_STATUS_MESSAGE_BASE + s.getUploadStatus().toString(), null, locale)))
 				.collect(Collectors.toList());
-
 
 		return new DataTablesResponse(params, list, runs);
 	}
