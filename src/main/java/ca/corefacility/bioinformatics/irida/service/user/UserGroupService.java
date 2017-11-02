@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 
 import ca.corefacility.bioinformatics.irida.exceptions.UserGroupWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -85,14 +84,12 @@ public interface UserGroupService extends CRUDService<Long, UserGroup> {
 	 *            the current page
 	 * @param size
 	 *            the size of the page
-	 * @param order
-	 *            the order of sorting
-	 * @param sortProperties
+	 * @param sort
 	 *            the properties to sort on
 	 * @return a page of {@link UserGroupJoin}.
 	 */
-	Page<UserGroupJoin> filterUsersByUsername(final String username, final UserGroup userGroup, int page, int size,
-			Direction order, String... sortProperties);
+	 Page<UserGroupJoin> filterUsersByUsername(final String username, final UserGroup userGroup, int page,
+			int size, Sort sort);
 
 	/**
 	 * Get the set of {@link User} that are not currently in the

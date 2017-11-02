@@ -14,7 +14,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -29,17 +28,13 @@ import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin.UserG
 import ca.corefacility.bioinformatics.irida.repositories.specification.UserGroupSpecification;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTGroupMember;
 import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTUserGroup;
 import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
-import com.github.dandelion.datatables.core.ajax.DataSet;
-import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
-import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
-import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
@@ -291,32 +286,25 @@ public class GroupsController {
 	/**
 	 * List the members in the group.
 	 * 
-	 * @param criteria
-	 *            the datatables criteria to search for.
+	 * @param params
+	 *            the datatables parameters to search for.
 	 * @param userGroupId
 	 *            the group ID to get members for.
 	 * @return the datatables-formatted response with filtered users.
 	 */
 	@RequestMapping("/{userGroupId}/ajax/list")
-	public @ResponseBody DatatablesResponse<UserGroupJoin> getGroupUsers(
-			final @DatatablesParams DatatablesCriterias criteria, final @PathVariable Long userGroupId) {
+	@ResponseBody
+	public DataTablesResponse getGroupUsers(@DataTablesRequest DataTablesParams params,
+			@PathVariable Long userGroupId) {
 		final UserGroup group = userGroupService.read(userGroupId);
-		final int currentPage = DatatablesUtils.getCurrentPage(criteria);
-		final Map<String, Object> sortProperties = DatatablesUtils.getSortProperties(criteria);
-		final Sort.Direction direction = (Sort.Direction) sortProperties.get("direction");
-		String sortName = sortProperties.get("sort_string").toString();
 
-		if (sortName.startsWith("subject")) {
-			sortName = "user";
-		}
-
-		final String usernameFilter = criteria.getSearch();
-		final Page<UserGroupJoin> groups = userGroupService.filterUsersByUsername(usernameFilter, group, currentPage,
-				criteria.getLength(), direction, sortName);
-		final DataSet<UserGroupJoin> groupDataSet = new DataSet<>(groups.getContent(), groups.getTotalElements(),
-				groups.getTotalElements());
-
-		return DatatablesResponse.build(groupDataSet, criteria);
+		final Page<UserGroupJoin> page = userGroupService.filterUsersByUsername(params.getSearchValue(), group,
+				params.getCurrentPage(), params.getLength(), params.getSort());
+		List<DataTablesResponseModel> members = page.getContent()
+				.stream()
+				.map(DTGroupMember::new)
+				.collect(Collectors.toList());
+		return new DataTablesResponse(params, page, members);
 	}
 
 	/**
