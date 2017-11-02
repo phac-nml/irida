@@ -25,6 +25,14 @@ public class DataTablesResponse {
 		this.data = data;
 	}
 
+	public DataTablesResponse(DataTablesParams dataTablesParams, long recordsTotal,
+			List<DataTablesResponseModel> data) {
+		this.dataTablesParams = dataTablesParams;
+		this.recordsTotal = recordsTotal;
+		this.recordsFiltered = recordsTotal;
+		this.data = data;
+	}
+
 	/**
 	 * Get the draw counter. This is used by DataTables to ensure that the Ajax returns from server-side processing
 	 * requests are drawn in sequence by DataTables.  Extracted directly from the initial

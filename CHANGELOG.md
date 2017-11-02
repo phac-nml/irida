@@ -6,7 +6,7 @@ Changes
 * [Developer] Removed the requirement for pipeline developers to add an `Analysis` subclass and database tables for pipelines.  All pipeline results can now be stored in the `Analysis` class.
 * [Developer]: Fixed issue where bootstrap was being loaded twice onto the page. (0.18.1)
 * [UI]: Fixed URL for concatenation of sample sequence files. (0.18.1)
-* [Developer]: Removed dandelion from: Announcements, Cart, Sequencing Runs, Login, Project Settings - Landing, Events, Create Sample, Line List, Announcements - Create & Read, Livestampjs, Pipelines Launch, lodash, NCBI Export Page, Session Handler, Project Members and Groups Server Side.
+* [Developer]: Removed dandelion from: Announcements, Cart, Sequencing Runs, Login, Project Settings - Landing, Events, Create Sample, Line List, Announcements - Create & Read, Livestampjs, Pipelines Launch, lodash, NCBI Export Page, Session Handler, Project Members and Groups Server Side,  NCBI export lists, Groups Listing.
 * [UI]: Added empty state if no files exist in a sample.
 * [UI]: Fix broken link for concatenating files. (0.18.2)
 * [UI]: Fix broken permissions for downloading reference files not associated with a project. (0.18.2)
