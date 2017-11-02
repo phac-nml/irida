@@ -132,7 +132,7 @@ public class SequencingRunController {
 
 		Page<SequencingRun> list = sequencingRunService.list(params.getCurrentPage(), params.getLength(), sort);
 
-		List<DataTablesResponseModel> runs = list.getContent().stream().map(s -> new DTSequencingRun(s,
+		List<DTSequencingRun> runs = list.getContent().stream().map(s -> new DTSequencingRun(s,
 				messageSource.getMessage(UPLOAD_STATUS_MESSAGE_BASE + s.getUploadStatus().toString(), null, locale)))
 				.collect(Collectors.toList());
 

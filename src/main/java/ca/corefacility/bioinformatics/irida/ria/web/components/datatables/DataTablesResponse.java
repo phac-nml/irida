@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.components.datatables;
 import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
+import com.google.common.collect.Lists;
 import org.springframework.data.domain.Page;
 
 /**
@@ -15,9 +16,9 @@ public class DataTablesResponse {
 	private DataTablesParams dataTablesParams;
 	private Long recordsTotal;
 	private Long recordsFiltered;
-	private List<DataTablesResponseModel> data;
+	private List<? extends DataTablesResponseModel> data;
 
-	public DataTablesResponse(DataTablesParams dataTablesParams, Page<?> page, List<DataTablesResponseModel> data) {
+	public DataTablesResponse(DataTablesParams dataTablesParams, Page<?> page, List<? extends DataTablesResponseModel> data) {
 		this.dataTablesParams = dataTablesParams;
 		this.recordsTotal = page.getTotalElements();
 		this.recordsFiltered = page.getTotalElements();
@@ -61,6 +62,6 @@ public class DataTablesResponse {
 	 * @return {@link List}
 	 */
 	public List<DataTablesResponseModel> getData() {
-		return data;
+		return Lists.newArrayList(data);
 	}
 }
