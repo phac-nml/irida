@@ -290,8 +290,11 @@ public class ProjectSamplesController {
 	@RequestMapping(value = "/projects/templates/copy-modal", produces = MediaType.TEXT_HTML_VALUE)
 	public String getCopySamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, @RequestParam Long projectId,
 			Model model) {
-		model.addAllAttributes(generateCopyMoveSamplesContent(projectId, ids));
+		Project project = projectService.read(projectId);
+		
+		model.addAllAttributes(generateCopyMoveSamplesContent(project, ids));
 		model.addAttribute("projectId", projectId);
+		model.addAttribute("isRemoteProject", project.isRemote());
 		return PROJECT_TEMPLATE_DIR + "copy-modal.tmpl";
 	}
 
@@ -343,7 +346,9 @@ public class ProjectSamplesController {
 	@RequestMapping(value = "/projects/templates/move-modal", produces = MediaType.TEXT_HTML_VALUE)
 	public String getMoveSamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, @RequestParam Long projectId,
 			Model model) {
-		model.addAllAttributes(generateCopyMoveSamplesContent(projectId, ids));
+		Project project = projectService.read(projectId);
+		
+		model.addAllAttributes(generateCopyMoveSamplesContent(project, ids));
 		model.addAttribute("projectId", projectId);
 		return PROJECT_TEMPLATE_DIR + "move-modal.tmpl";
 	}
@@ -356,9 +361,8 @@ public class ProjectSamplesController {
 	 *
 	 * @return
 	 */
-	private Map<String, List<Sample>> generateCopyMoveSamplesContent(Long projectId, List<Long> ids) {
+	private Map<String, List<Sample>> generateCopyMoveSamplesContent(Project project, List<Long> ids) {
 		Map<String, List<Sample>> model = new HashMap<>();
-		Project project = projectService.read(projectId);
 		List<Sample> samples = new ArrayList<>();
 		List<Sample> extraSamples = new ArrayList<>();
 		List<Sample> lockedSamples = new ArrayList<>();
