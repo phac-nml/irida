@@ -800,6 +800,31 @@ public class ProjectServiceImplIT {
 				projectSampleJoinRepository.getSamplesForProject(destination).stream().map(j -> j.getObject().getId())
 						.collect(Collectors.toSet()));
 	}
+	
+	@Test
+	@WithMockUser(username = "user1", roles = "USER")
+	public void testMoveSamplesWithoutOwner() {
+		Project source = projectService.read(2L);
+		Project destination = projectService.read(10L);
+
+		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(source);
+
+		Set<Sample> samples = samplesForProject.stream().map(j -> j.getObject()).collect(Collectors.toSet());
+
+		List<ProjectSampleJoin> movedSamples = projectService.moveSamples(source, destination, samples, false);
+
+		assertEquals(samples.size(), movedSamples.size());
+
+		movedSamples.forEach(j -> {
+			assertFalse("Project shouldn't be owner for sample", j.isOwner());
+		});
+
+		assertEquals("Samples should not exist in source project", Long.valueOf(0L),
+				projectSampleJoinRepository.countSamplesForProject(source));
+		assertEquals("Samples should exist in destination project", Sets.newHashSet(1L, 2L),
+				projectSampleJoinRepository.getSamplesForProject(destination).stream().map(j -> j.getObject().getId())
+						.collect(Collectors.toSet()));
+	}
 
 	@Test
 	@WithMockUser(username = "user1", roles = "USER")
@@ -826,6 +851,31 @@ public class ProjectServiceImplIT {
 				projectSampleJoinRepository.getSamplesForProject(destination).stream().map(j -> j.getObject().getId())
 						.collect(Collectors.toSet()));
 	}
+	
+	@Test
+	@WithMockUser(username = "user1", roles = "USER")
+	public void testMoveLockedSamplesWithoutOwner() {
+		Project source = projectService.read(2L);
+		Project destination = projectService.read(10L);
+
+		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(source);
+
+		Set<Sample> samples = samplesForProject.stream().map(j -> j.getObject()).collect(Collectors.toSet());
+
+		List<ProjectSampleJoin> movedSamples = projectService.moveSamples(source, destination, samples, false);
+
+		assertEquals(samples.size(), movedSamples.size());
+
+		movedSamples.forEach(j -> {
+			assertFalse("Project shouldn't be owner for sample", j.isOwner());
+		});
+		
+		assertEquals("Samples should not exist in source project", Long.valueOf(0L),
+				projectSampleJoinRepository.countSamplesForProject(source));
+		assertEquals("Samples should exist in destination project", Sets.newHashSet(1L, 2L),
+				projectSampleJoinRepository.getSamplesForProject(destination).stream().map(j -> j.getObject().getId())
+						.collect(Collectors.toSet()));
+	}
 
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "user1", roles = "USER")
@@ -838,6 +888,19 @@ public class ProjectServiceImplIT {
 		Set<Sample> samples = samplesForProject.stream().map(j -> j.getObject()).collect(Collectors.toSet());
 
 		projectService.copySamples(source, destination, samples, true);
+	}
+	
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "user1", roles = "USER")
+	public void testMoveLockedSamplesWithOwnerFail() {
+		Project source = projectService.read(2L);
+		Project destination = projectService.read(10L);
+
+		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(source);
+
+		Set<Sample> samples = samplesForProject.stream().map(j -> j.getObject()).collect(Collectors.toSet());
+
+		projectService.moveSamples(source, destination, samples, true);
 	}
 
 	private Project p() {
