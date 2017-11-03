@@ -150,7 +150,7 @@ public class ProjectServiceImplIT {
 		final Project p = projectService.read(9L);
 		final Page<Project> unassociated = projectService.getUnassociatedProjects(p, "", 0, 10, Direction.ASC, "name");
 
-		assertEquals("Admin should have 9 unassociated projects.", 9, unassociated.getNumberOfElements());
+		assertEquals("Admin should have 10 unassociated projects.", 10, unassociated.getNumberOfElements());
 	}
 
 	@Test
@@ -296,7 +296,7 @@ public class ProjectServiceImplIT {
 
 		Collection<Join<Project, User>> projects = projectService.getProjectsForUser(u);
 
-		assertEquals("User should have 3 projects.", 3, projects.size());
+		assertEquals("User should have 4 projects.", 4, projects.size());
 		assertEquals("User should be on project 2.", Long.valueOf(2L), projects.iterator().next().getSubject().getId());
 	}
 
@@ -399,7 +399,7 @@ public class ProjectServiceImplIT {
 	public void testFindAllProjectsAsUser() {
 		List<Project> projects = (List<Project>) projectService.findAll();
 
-		assertEquals("Wrong number of projects.", 3, projects.size());
+		assertEquals("Wrong number of projects.", 4, projects.size());
 	}
 
 	@Test
@@ -407,7 +407,7 @@ public class ProjectServiceImplIT {
 	public void testFindAllProjectsAsAdmin() {
 		List<Project> projects = (List<Project>) projectService.findAll();
 
-		assertEquals("Wrong number of projects.", 10, projects.size());
+		assertEquals("Wrong number of projects.", 11, projects.size());
 	}
 
 	@Test
@@ -775,6 +775,36 @@ public class ProjectServiceImplIT {
 				projectSampleJoinRepository.readSampleForProject(destination, sample1));
 	}
 
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "user1", roles = "USER")
+	public void testCopySamplesWithOwnerRemoteFail() {
+		Project source = projectService.read(11L);
+		Project destination = projectService.read(10L);
+
+		assertTrue("Source project should be a remote project for the test", source.isRemote());
+		assertFalse("Destination project should not be a remote project for the test", destination.isRemote());
+
+		Sample sample = sampleService.read(3L);
+		Set<Sample> samples = Sets.newHashSet(sample);
+
+		projectService.copySamples(source, destination, samples, true);
+	}
+
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "user1", roles = "USER")
+	public void testMoveSamplesWithOwnerRemoteFail() {
+		Project source = projectService.read(11L);
+		Project destination = projectService.read(10L);
+
+		assertTrue("Source project should be a remote project for the test", source.isRemote());
+		assertFalse("Destination project should not be a remote project for the test", destination.isRemote());
+
+		Sample sample = sampleService.read(3L);
+		Set<Sample> samples = Sets.newHashSet(sample);
+
+		projectService.moveSamples(source, destination, samples, true);
+	}
+
 	@Test
 	@WithMockUser(username = "user1", roles = "USER")
 	public void testCopySamplesWithoutOwner() {
@@ -800,7 +830,7 @@ public class ProjectServiceImplIT {
 				projectSampleJoinRepository.getSamplesForProject(destination).stream().map(j -> j.getObject().getId())
 						.collect(Collectors.toSet()));
 	}
-	
+
 	@Test
 	@WithMockUser(username = "user1", roles = "USER")
 	public void testMoveSamplesWithoutOwner() {
@@ -828,6 +858,47 @@ public class ProjectServiceImplIT {
 
 	@Test
 	@WithMockUser(username = "user1", roles = "USER")
+	public void testCopySamplesWithoutOwnerRemote() {
+		Project source = projectService.read(11L);
+		Project destination = projectService.read(10L);
+
+		assertTrue("Source project should be a remote project for the test", source.isRemote());
+		assertFalse("Destination project should not be a remote project for the test", destination.isRemote());
+
+		Sample sample = sampleService.read(3L);
+		Set<Sample> samples = Sets.newHashSet(sample);
+
+		List<ProjectSampleJoin> copiedSamples = projectService.copySamples(source, destination, samples, false);
+
+		assertEquals(samples.size(), copiedSamples.size());
+
+		copiedSamples.forEach(j -> {
+			assertFalse("Project should not be owner for sample", j.isOwner());
+		});
+
+		assertNotNull("Samples should still exist in source project",
+				projectSampleJoinRepository.readSampleForProject(source, sample));
+		assertNotNull("Sample should exist in destination project",
+				projectSampleJoinRepository.readSampleForProject(destination, sample));
+	}
+
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "user1", roles = "USER")
+	public void testMoveSamplesWithoutOwnerRemoteFail() {
+		Project source = projectService.read(11L);
+		Project destination = projectService.read(10L);
+
+		assertTrue("Source project should be a remote project for the test", source.isRemote());
+		assertFalse("Destination project should not be a remote project for the test", destination.isRemote());
+
+		Sample sample = sampleService.read(3L);
+		Set<Sample> samples = Sets.newHashSet(sample);
+
+		projectService.moveSamples(source, destination, samples, false);
+	}
+
+	@Test
+	@WithMockUser(username = "user1", roles = "USER")
 	public void testCopyLockedSamplesWithoutOwner() {
 		Project source = projectService.read(2L);
 		Project destination = projectService.read(10L);
@@ -843,7 +914,7 @@ public class ProjectServiceImplIT {
 		copiedSamples.forEach(j -> {
 			assertFalse("Project shouldn't be owner for sample", j.isOwner());
 		});
-		
+
 		assertEquals("Samples should still exist in source project", Sets.newHashSet(1L, 2L),
 				projectSampleJoinRepository.getSamplesForProject(source).stream().map(j -> j.getObject().getId())
 						.collect(Collectors.toSet()));
@@ -851,7 +922,7 @@ public class ProjectServiceImplIT {
 				projectSampleJoinRepository.getSamplesForProject(destination).stream().map(j -> j.getObject().getId())
 						.collect(Collectors.toSet()));
 	}
-	
+
 	@Test
 	@WithMockUser(username = "user1", roles = "USER")
 	public void testMoveLockedSamplesWithoutOwner() {
@@ -869,7 +940,7 @@ public class ProjectServiceImplIT {
 		movedSamples.forEach(j -> {
 			assertFalse("Project shouldn't be owner for sample", j.isOwner());
 		});
-		
+
 		assertEquals("Samples should not exist in source project", Long.valueOf(0L),
 				projectSampleJoinRepository.countSamplesForProject(source));
 		assertEquals("Samples should exist in destination project", Sets.newHashSet(1L, 2L),
@@ -889,7 +960,7 @@ public class ProjectServiceImplIT {
 
 		projectService.copySamples(source, destination, samples, true);
 	}
-	
+
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "user1", roles = "USER")
 	public void testMoveLockedSamplesWithOwnerFail() {

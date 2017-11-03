@@ -55,7 +55,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkf
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.WorkflowNamedParametersRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
-import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -727,17 +726,5 @@ public class AnalysisSubmissionServiceImplIT {
 		Set<Long> submissionIds = submissions.stream().map(AnalysisSubmission::getId).collect(Collectors.toSet());
 		assertEquals("Got incorrect analysis submissions", ImmutableSet.of(),
 				submissionIds);
-	}
-
-	/**
-	 * Test specification.
-	 * 
-	 *
-	 */
-	private class AnalysisSubmissionTestSpecification implements Specification<AnalysisSubmission> {
-		@Override
-		public Predicate toPredicate(Root<AnalysisSubmission> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-			return null;
-		}
 	}
 }

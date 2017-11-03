@@ -415,7 +415,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	@Transactional
 	@LaunchesProjectEvent(SampleAddedProjectEvent.class)
-	@PreAuthorize("(hasPermission(#source, 'isProjectOwner') or (hasPermission(#source, 'isProjectOwnerAllowRemote') and (not #giveOwner)))"
+	@PreAuthorize("(hasPermission(#source, 'isProjectOwner') or (hasPermission(#source, 'isProjectOwnerAllowRemote') and (not #giveOwner))) "
 			+ "and hasPermission(#destination, 'isProjectOwner') and hasPermission(#samples, 'canReadSample') "
 			+ "and ((not #giveOwner) or hasPermission(#samples, 'canUpdateSample') )")
 	public List<ProjectSampleJoin> copySamples(Project source, Project destination, Collection<Sample> samples,
