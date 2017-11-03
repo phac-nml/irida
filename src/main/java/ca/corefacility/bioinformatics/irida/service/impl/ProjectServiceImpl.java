@@ -418,24 +418,42 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@PreAuthorize("(hasPermission(#source, 'isProjectOwnerAllowRemote') and (not #giveOwner))"
 			+ "and hasPermission(#destination, 'isProjectOwner') " + "and hasPermission(#samples, 'canReadSample') "
 			+ "and ((not #giveOwner) or hasPermission(#samples, 'canUpdateSample') )")
-	public List<ProjectSampleJoin> copyOrMoveSamples(Project source, Project destination, Collection<Sample> samples,
-			boolean move, boolean giveOwner) {
+	public List<ProjectSampleJoin> copySamples(Project source, Project destination, Collection<Sample> samples,
+			boolean giveOwner) {
 
 		List<ProjectSampleJoin> newJoins = new ArrayList<>();
 
 		for (Sample sample : samples) {
-
-			ProjectSampleJoin newJoin;
-			if (move) {
-				newJoin = moveSampleBetweenProjects(source, destination, sample, giveOwner);
-			} else {
-				newJoin = addSampleToProject(destination, sample, giveOwner);
-			}
-
+			ProjectSampleJoin newJoin = addSampleToProject(destination, sample, giveOwner);
+			
 			logger.trace("Copied sample " + sample.getId() + " to project " + destination.getId());
 
 			newJoins.add(newJoin);
+		}
 
+		return newJoins;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	@LaunchesProjectEvent(SampleAddedProjectEvent.class)
+	@PreAuthorize("hasPermission(#source, 'isProjectOwner') and hasPermission(#destination, 'isProjectOwner') "
+			+ "and hasPermission(#samples, 'canReadSample') "
+			+ "and ((not #giveOwner) or hasPermission(#samples, 'canUpdateSample') )")
+	public List<ProjectSampleJoin> moveSamples(Project source, Project destination, Collection<Sample> samples,
+			boolean giveOwner) {
+
+		List<ProjectSampleJoin> newJoins = new ArrayList<>();
+
+		for (Sample sample : samples) {
+			ProjectSampleJoin newJoin = moveSampleBetweenProjects(source, destination, sample, giveOwner);
+			
+			logger.trace("Moved sample " + sample.getId() + " to project " + destination.getId());
+
+			newJoins.add(newJoin);
 		}
 
 		return newJoins;

@@ -629,8 +629,13 @@ public class ProjectSamplesController {
 		List<ProjectSampleJoin> successful = new ArrayList<>();
 		try {
 
-			successful = projectService.copyOrMoveSamples(originalProject, newProject, Lists.newArrayList(samples),
-					remove, giveOwner);
+			if (remove) {
+				successful = projectService.moveSamples(originalProject, newProject, Lists.newArrayList(samples),
+					giveOwner);
+			} else {
+				successful = projectService.copySamples(originalProject, newProject, Lists.newArrayList(samples),
+						giveOwner);
+			}
 
 		} catch (EntityExistsException ex) {
 			logger.warn("Attempted to add sample " + ex.getFieldName() + " to project " + newProjectId

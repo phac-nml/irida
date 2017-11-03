@@ -106,7 +106,7 @@ public class ProjectSamplesControllerTest {
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testCopySampleToProjectRemove() {
+	public void testMoveSampleToProject() {
 		Long projectId = 1L;
 		List<Long> sampleIds = ImmutableList.of(2L, 3L);
 		Long newProjectId = 4L;
@@ -117,14 +117,13 @@ public class ProjectSamplesControllerTest {
 		Sample s3 = new Sample("s3");
 		ArrayList<Sample> sampleList = Lists.newArrayList(s2, s3);
 		boolean owner = true;
-		boolean move = true;
 		ArrayList<ProjectSampleJoin> joins = Lists.newArrayList(new ProjectSampleJoin(newProject, s2, owner),
 				new ProjectSampleJoin(newProject, s3, owner));
 
 		when(projectService.read(projectId)).thenReturn(oldProject);
 		when(projectService.read(newProjectId)).thenReturn(newProject);
 		when(sampleService.readMultiple(any(Iterable.class))).thenReturn(sampleList);
-		when(projectService.copyOrMoveSamples(oldProject, newProject, sampleList, move, owner)).thenReturn(joins);
+		when(projectService.moveSamples(oldProject, newProject, sampleList, owner)).thenReturn(joins);
 
 		Map<String, Object> result = controller.copySampleToProject(projectId, sampleIds, newProjectId,
 				removeFromOriginal, true, Locale.US);
@@ -135,7 +134,7 @@ public class ProjectSamplesControllerTest {
 		verify(projectService).read(projectId);
 		verify(projectService).read(newProjectId);
 
-		verify(projectService).copyOrMoveSamples(oldProject, newProject, sampleList, move, owner);
+		verify(projectService).moveSamples(oldProject, newProject, sampleList, owner);
 
 	}
 
@@ -152,21 +151,20 @@ public class ProjectSamplesControllerTest {
 		Sample s3 = new Sample("s3");
 		ArrayList<Sample> sampleList = Lists.newArrayList(s2, s3);
 		boolean owner = true;
-		boolean move = false;
 		ArrayList<ProjectSampleJoin> joins = Lists.newArrayList(new ProjectSampleJoin(newProject, s2, owner),
 				new ProjectSampleJoin(newProject, s3, owner));
 
 		when(projectService.read(projectId)).thenReturn(oldProject);
 		when(projectService.read(newProjectId)).thenReturn(newProject);
 		when(sampleService.readMultiple(any(Iterable.class))).thenReturn(sampleList);
-		when(projectService.copyOrMoveSamples(oldProject, newProject, sampleList, move, owner)).thenReturn(joins);
+		when(projectService.copySamples(oldProject, newProject, sampleList, owner)).thenReturn(joins);
 
 		controller.copySampleToProject(projectId, sampleIds, newProjectId, removeFromOriginal, true, Locale.US);
 
 		verify(projectService).read(projectId);
 		verify(projectService).read(newProjectId);
 
-		verify(projectService).copyOrMoveSamples(oldProject, newProject, sampleList, move, owner);
+		verify(projectService).copySamples(oldProject, newProject, sampleList, owner);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -182,14 +180,12 @@ public class ProjectSamplesControllerTest {
 		Sample s3 = new Sample("s3");
 		ArrayList<Sample> sampleList = Lists.newArrayList(s2, s3);
 		boolean owner = true;
-		boolean move = false;
-
 
 		when(projectService.read(projectId)).thenReturn(oldProject);
 		when(projectService.read(newProjectId)).thenReturn(newProject);
 		when(sampleService.readMultiple(any(Iterable.class))).thenReturn(sampleList);
 
-		when(projectService.copyOrMoveSamples(oldProject, newProject, sampleList, move, owner)).thenThrow(
+		when(projectService.copySamples(oldProject, newProject, sampleList, owner)).thenThrow(
 				new EntityExistsException("that sample exists in the project"));
 
 

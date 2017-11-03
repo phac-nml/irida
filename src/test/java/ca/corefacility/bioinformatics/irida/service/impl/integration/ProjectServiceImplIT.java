@@ -726,7 +726,7 @@ public class ProjectServiceImplIT {
 		Sample sample1 = sampleService.read(1L);
 		Set<Sample> samples = Sets.newHashSet(sample1);
 		
-		List<ProjectSampleJoin> copiedSamples = projectService.copyOrMoveSamples(source, destination, samples, false, true);
+		List<ProjectSampleJoin> copiedSamples = projectService.copySamples(source, destination, samples, true);
 		
 		assertEquals(samples.size(), copiedSamples.size());
 
@@ -745,8 +745,7 @@ public class ProjectServiceImplIT {
 
 		Set<Sample> samples = samplesForProject.stream().map(j -> j.getObject()).collect(Collectors.toSet());
 
-		List<ProjectSampleJoin> copiedSamples = projectService.copyOrMoveSamples(source, destination, samples, false,
-				false);
+		List<ProjectSampleJoin> copiedSamples = projectService.copySamples(source, destination, samples, false);
 
 		assertEquals(samples.size(), copiedSamples.size());
 
@@ -765,8 +764,7 @@ public class ProjectServiceImplIT {
 
 		Set<Sample> samples = samplesForProject.stream().map(j -> j.getObject()).collect(Collectors.toSet());
 
-		List<ProjectSampleJoin> copiedSamples = projectService.copyOrMoveSamples(source, destination, samples, false,
-				false);
+		List<ProjectSampleJoin> copiedSamples = projectService.copySamples(source, destination, samples, false);
 
 		assertEquals(samples.size(), copiedSamples.size());
 
@@ -785,7 +783,7 @@ public class ProjectServiceImplIT {
 
 		Set<Sample> samples = samplesForProject.stream().map(j -> j.getObject()).collect(Collectors.toSet());
 
-		projectService.copyOrMoveSamples(source, destination, samples, false, true);
+		projectService.copySamples(source, destination, samples, true);
 	}
 
 	private Project p() {
