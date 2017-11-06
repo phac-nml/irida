@@ -11,6 +11,12 @@ import "./../../../vendor/datatables/datatables-buttons";
 import "./../../../vendor/datatables/datatables-rowSelection";
 import { CART } from "../../../utilities/events-utilities";
 import SampleDropdownButton from "./SampleDropdownButton";
+import { SAMPLE_EVENTS } from "./constants";
+
+/*
+This is required to use select2 inside a modal.
+ */
+$.fn.modal.Constructor.prototype.enforceFocus = function() {};
 
 /*
  Initialize the sample tools menu.
@@ -181,7 +187,8 @@ const config = Object.assign({}, tableConfig, {
         return createItemLink({
           url: `${window.TL
             .BASE_URL}projects/${full.projectId}/samples/${full.id}`,
-          label: full.sampleName
+          label: full.sampleName,
+          classes: ["t-sample-label"]
         });
       }
     },
@@ -316,54 +323,18 @@ $dt.on("selection-count.dt", function(e, count) {
 });
 
 /*
-Store reference to handle different modals.
+Handle opening the Sample Tools modals.
  */
-const MODALS = {
-  /**
-   * Hanle opening the merge modal.
-   * @param {string} url for the content of the modal
-   * @param {string} src url for the javascript needed for modal.
-   * @param {list} sampleIds list of sample ids to merge.
-   */
-  merge({ url, src, sampleIds }) {
-    const modal = $(this);
-
-    /*
-    Load the content for the dialogue based on the server response.
-     */
-    modal.load(`${url}?${$.param({ sampleIds })}`, function() {
-      if (typeof src !== "undefined") {
-        const script = document.createElement("script");
-        script.type = "text/javascript";
-        script.src = src;
-        document.getElementsByTagName("head")[0].appendChild(script);
-      }
-    });
-
-    /*
-    Handle the closing the modal
-     */
-    modal.on("samples:merged", function(e) {
-      $(this).modal("hide");
-      $dt.select.selectNone();
-      $dt.ajax.reload();
-    });
-  }
-};
-
-/*
-Handle MERGE through the modal window.
- */
-$("#modal-wrapper").on("show.bs.modal", function(event) {
+$("#js-modal-wrapper").on("show.bs.modal", function(event) {
   const wrapper = this;
+  const modal = $(wrapper);
   /*
   Determine which modal to open
    */
   const btn = $(event.relatedTarget);
-  const whichModal = btn.data("modal");
   const url = btn.data("url");
-  const script = btn.data("script");
-
+  const params = btn.data("params") || {};
+  const script_src = btn.data("script");
   /*
   Find the ids for the currently selected samples.
    */
@@ -372,8 +343,38 @@ $("#modal-wrapper").on("show.bs.modal", function(event) {
   for (let [key, value] of selected) {
     sampleIds.push(value.sample);
   }
+  params["sampleIds"] = sampleIds;
 
-  MODALS[whichModal].call(wrapper, { url, src: script, sampleIds });
+  let script;
+  modal.load(`${url}?${$.param(params)}`, function() {
+    if (typeof script_src !== "undefined") {
+      script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src = script_src;
+      document.getElementsByTagName("head")[0].appendChild(script);
+    }
+  });
+
+  /*
+  Handle the closing the modal
+   */
+  modal.on(SAMPLE_EVENTS.SAMPLE_TOOLS_CLOSED, function(e) {
+    modal.modal("hide");
+    $dt.select.selectNone();
+    $dt.ajax.reload();
+    // Remove the script
+    if (typeof script !== "undefined") {
+      document.getElementsByTagName("head")[0].removeChild(script);
+      script = undefined;
+    }
+  });
+
+  /*
+  Clear the content of the modal when it is closed.
+   */
+  modal.on("hidden.bs.modal", function() {
+    modal.empty();
+  });
 });
 
 /*

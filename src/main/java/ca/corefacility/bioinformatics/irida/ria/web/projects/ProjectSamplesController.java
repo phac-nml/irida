@@ -274,21 +274,21 @@ public class ProjectSamplesController {
 	}
 
 	/**
-	 * Create a modal dialog to copy samples to another project.
+	 * Create a modal dialogue for moving or copying {@link Sample} to another {@link Project}
 	 *
-	 * @param ids
-	 * 		{@link List} List of {@link Long} identifiers for {@link Sample} to merge.
-	 * @param model
-	 * 		{@link Model}
-	 *
-	 * @return
+	 * @param ids       {@link List} of identifiers for {@link Sample}s to copy or move.
+	 * @param projectId Identifier for the current {@link Project}
+	 * @param model     {@link Model} for the UI
+	 * @param move      Whether or not to display copy or move wording.
+	 * @return Modal dialogue.
 	 */
-	@RequestMapping(value = "/projects/templates/copy-modal", produces = MediaType.TEXT_HTML_VALUE)
-	public String getCopySamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, @RequestParam Long projectId,
-			Model model) {
+	@RequestMapping(value = "/projects/{projectId}/templates/copy-move-modal", produces = MediaType.TEXT_HTML_VALUE)
+	public String getCopySamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, @PathVariable Long projectId,
+			Model model, @RequestParam(required = false) boolean move) {
 		model.addAllAttributes(generateCopyMoveSamplesContent(projectId, ids));
 		model.addAttribute("projectId", projectId);
-		return PROJECT_TEMPLATE_DIR + "copy-modal.tmpl";
+		model.addAttribute("type", move ? "move" : "copy");
+		return PROJECT_TEMPLATE_DIR + "copy-move-modal.tmpl";
 	}
 
 	/**
@@ -324,24 +324,6 @@ public class ProjectSamplesController {
 		});
 		model.addAttribute("organisms", organisms);
 		return PROJECT_TEMPLATE_DIR + "sample-filter.modal";
-	}
-
-	/**
-	 * Create a modal dialog to move samples to another project.
-	 *
-	 * @param ids
-	 * 		{@link List} List of {@link Long} identifiers for {@link Sample} to move.
-	 * @param model
-	 * 		{@link Model}
-	 *
-	 * @return
-	 */
-	@RequestMapping(value = "/projects/templates/move-modal", produces = MediaType.TEXT_HTML_VALUE)
-	public String getMoveSamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, @RequestParam Long projectId,
-			Model model) {
-		model.addAllAttributes(generateCopyMoveSamplesContent(projectId, ids));
-		model.addAttribute("projectId", projectId);
-		return PROJECT_TEMPLATE_DIR + "move-modal.tmpl";
 	}
 
 	/**
@@ -572,7 +554,7 @@ public class ProjectSamplesController {
 	@RequestMapping(value = "/projects/{projectId}/ajax/samples/available_projects")
 	@ResponseBody
 	public Map<String, Object> getProjectsAvailableToCopySamples(final @PathVariable Long projectId,
-			@RequestParam String term, @RequestParam int pageSize,
+			@RequestParam String term, @RequestParam(required = false, defaultValue = "10") int pageSize,
 			@RequestParam int page, Principal principal) {
 		final Project projectToExclude = projectService.read(projectId);
 		List<Map<String, String>> projectMap = new ArrayList<>();
@@ -582,7 +564,7 @@ public class ProjectSamplesController {
 
 		for (Project p : projects) {
 			Map<String, String> map = new HashMap<>();
-			map.put("identifier", p.getId().toString());
+			map.put("id", p.getId().toString());
 			map.put("text", p.getName());
 			projectMap.add(map);
 		}
@@ -633,11 +615,8 @@ public class ProjectSamplesController {
 					remove, giveOwner);
 
 		} catch (EntityExistsException ex) {
-			logger.warn("Attempted to add sample " + ex.getFieldName() + " to project " + newProjectId
-					+ " where it already exists.");
-			String msg = remove ? "project.samples.move.sample-exists" : "project.samples.copy.sample-exists";
-			warnings.add(
-					messageSource.getMessage(msg, new Object[] { ex.getFieldName(), newProject.getName() }, locale));
+			logger.warn("Attempt to add project to sample failed", ex);
+			warnings.add(ex.getLocalizedMessage());
 		}
 
 		if (!warnings.isEmpty() || successful.size() == 0) {

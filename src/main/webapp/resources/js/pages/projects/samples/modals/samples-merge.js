@@ -9,6 +9,7 @@ import {
   sampleNameCharacterValidation,
   validationConfig
 } from "../../../../utilities/form-validation";
+import {SAMPLE_EVENTS} from "../constants";
 
 /*
 Set up sample name validation
@@ -45,7 +46,7 @@ const config = Object.assign({}, validationConfig, {
       /*
       Close the modal
        */
-      $("#modal-wrapper").trigger("samples:merged");
+      $("#js-modal-wrapper").trigger(SAMPLE_EVENTS.SAMPLE_TOOLS_CLOSED);
 
       /*
       Alert the user that this was a success!
@@ -59,3 +60,4 @@ const config = Object.assign({}, validationConfig, {
 });
 
 $("#mergeForm").validate(config);
+

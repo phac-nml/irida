@@ -1,16 +1,18 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.google.common.collect.Lists;
+import java.util.List;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
+
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.google.common.collect.Lists;
 
 import static org.junit.Assert.*;
 
@@ -42,7 +44,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	@Ignore
 	public void testToolbarButtonsAsCollaborator() {
 		LoginPage.loginAsUser(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
@@ -57,8 +58,8 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		// Test set up with no sample selected
 		page.openToolsDropDown();
 		assertFalse("Merge option should not be enabled", page.isMergeBtnEnabled());
-//		assertFalse("Copy option should not be enabled", page.isCopyBtnEnabled());
-//		assertFalse("Move option should not be enabled", page.isMoveBtnEnabled());
+		assertFalse("Copy option should not be enabled", page.isCopyBtnEnabled());
+		assertFalse("Move option should not be enabled", page.isMoveBtnEnabled());
 //		assertFalse("Remove option should not be enabled", page.isRemoveBtnEnabled());
 //		page.openExportDropdown();
 //		assertFalse("Download option should not be enabled", page.isDownloadBtnEnabled());
@@ -68,8 +69,8 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.selectSample(0);
 		page.openToolsDropDown();
 		assertFalse("Merge option should not be enabled", page.isMergeBtnEnabled());
-//		assertTrue("Copy option should be enabled", page.isCopyBtnEnabled());
-//		assertTrue("Move option should be enabled", page.isMoveBtnEnabled());
+		assertTrue("Copy option should be enabled", page.isCopyBtnEnabled());
+		assertTrue("Move option should be enabled", page.isMoveBtnEnabled());
 //		assertTrue("Remove option should be enabled", page.isRemoveBtnEnabled());
 //		page.openExportDropdown();
 //		assertTrue("Download option should be enabled", page.isDownloadBtnEnabled());
@@ -79,8 +80,8 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.selectSample(1);
 		page.openToolsDropDown();
 		assertTrue("Merge option should be enabled", page.isMergeBtnEnabled());
-//		assertTrue("Copy option should be enabled", page.isCopyBtnEnabled());
-//		assertTrue("Move option should be enabled", page.isMoveBtnEnabled());
+		assertTrue("Copy option should be enabled", page.isCopyBtnEnabled());
+		assertTrue("Move option should be enabled", page.isMoveBtnEnabled());
 //		assertTrue("Remove option should be enabled", page.isRemoveBtnEnabled());
 //		page.openExportDropdown();
 //		assertTrue("Download option should be enabled", page.isDownloadBtnEnabled());
@@ -171,7 +172,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	@Ignore
 	public void testCopySamples() {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
@@ -215,7 +215,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	@Ignore
 	public void testMoveSamples() {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
