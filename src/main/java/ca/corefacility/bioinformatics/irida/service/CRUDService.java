@@ -10,6 +10,7 @@ import javax.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
@@ -160,6 +161,16 @@ public interface CRUDService<IdentifierType extends Serializable, Type extends T
 	 *             <code>sortProperty</code>.
 	 */
 	public Page<Type> list(int page, int size, Direction order, String... sortProperty) throws IllegalArgumentException;
+
+	/**
+	 * List objects of <code>Type</code> in the database, limited to some specific page
+	 *
+	 * @param page the specific page to use
+	 * @param size the size of the pages
+	 * @param sort A {@link Sort} object for ordering the results
+	 * @return a list of objects in the given range
+	 */
+	public Page<Type> list(int page, int size, Sort sort);
 
 	/**
 	 * List objects of <code>Type</code> in the database, limited to some

@@ -131,7 +131,7 @@ export function createItemLink({ url, label, width = "160px", classes = [] }) {
  * @return {object} {{COLUMN_NAME: index}}
  */
 export function generateColumnOrderInfo(tableId) {
-  var selector = "thead th";
+  let selector = "thead th";
   if (tableId) {
     selector = tableId + " " + selector;
   }
