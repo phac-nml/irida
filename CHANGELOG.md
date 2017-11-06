@@ -23,6 +23,7 @@ Changes
 * [UI]: Added ability to update an analysis submission name after it's been submitted.
 * [Developer]: Added `run-tests.sh` script for running local integration tests.
 * [UI]: Fixed issue with exporting `csv` and `excel` from Project > Samples pages (0.18.5).
+* [UI]: Fixed bug with importing large `excel` file that contained columns with only a header and no other data in column.
 
 0.17.0 to 0.18.0
 ----------------
