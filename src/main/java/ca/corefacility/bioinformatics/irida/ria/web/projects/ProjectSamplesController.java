@@ -615,7 +615,7 @@ public class ProjectSamplesController {
 					remove, giveOwner);
 
 		} catch (EntityExistsException ex) {
-			logger.warn(ex.getLocalizedMessage());
+			logger.warn("Attempt to add project to sample failed", ex);
 			warnings.add(ex.getLocalizedMessage());
 		}
 
