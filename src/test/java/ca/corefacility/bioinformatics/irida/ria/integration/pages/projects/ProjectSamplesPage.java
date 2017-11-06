@@ -327,7 +327,8 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		WebDriverWait wait = openToolsDropdownAndWait();
 		wait.until(ExpectedConditions.visibilityOf(moveBtn));
 		moveBtn.click();
-		copyMoveSamples(projectNum, true);
+		// Setting owner to false because we removed the checkbox from the move.
+		copyMoveSamples(projectNum, false);
 	}
 
 	public void filterByName(String name) {
