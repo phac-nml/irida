@@ -1,12 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
 import java.security.Principal;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolation;
@@ -18,22 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.github.dandelion.datatables.core.ajax.DataSet;
-import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
-import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
-import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesParams;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.UserGroupWithoutOwnerException;
@@ -43,9 +26,17 @@ import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin.UserGroupRole;
 import ca.corefacility.bioinformatics.irida.repositories.specification.UserGroupSpecification;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DatatablesUtils;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTGroupMember;
+import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTUserGroup;
 import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for interacting with {@link UserGroup}.
@@ -143,36 +134,23 @@ public class GroupsController {
 
 	/**
 	 * Search/filter/page with datatables for {@link UserGroup}.
-	 * 
-	 * @param criteria
-	 *            the search criteria.
-	 * @param principal
-	 *            the user currently logged in
-	 * @return the datatables-formatted list of matching {@link UserGroup}.
+	 * @param params {@link DataTablesParams} for the current DataTable
+	 * @param principal Currently logged in user
+	 * @return {@link DataTablesResponse} for the current table base on the parameters.
 	 */
 	@RequestMapping("/ajax/list")
-	public @ResponseBody DatatablesResponse<GroupsDataTableResponse> getGroups(
-			final @DatatablesParams DatatablesCriterias criteria, final Principal principal) {
-		final int currentPage = DatatablesUtils.getCurrentPage(criteria);
-		final Map<String, Object> sortProperties = DatatablesUtils.getSortProperties(criteria);
-		final Sort.Direction direction = (Sort.Direction) sortProperties.get("direction");
-		String sortName = sortProperties.get("sort_string").toString();
-		sortName = sortName.replaceAll("group.", "");
-		if (sortName.equals("identifier")) {
-			sortName = "id";
-		}
-
-		final String searchString = criteria.getSearch();
-		final Page<UserGroup> groups = userGroupService.search(UserGroupSpecification.searchUserGroup(searchString),
-				currentPage, criteria.getLength(), direction, sortName);
-		final User currentUser = userService.getUserByUsername(principal.getName());
-		final List<GroupsDataTableResponse> groupsWithOwnership = groups.getContent().stream()
-				.map(ug -> new GroupsDataTableResponse(ug, isGroupOwner(currentUser, ug),
+	@ResponseBody
+	public DataTablesResponse getGroups(final @DataTablesRequest DataTablesParams params, final Principal principal) {
+		Page<UserGroup> groups = userGroupService.search(
+				UserGroupSpecification.searchUserGroup(params.getSearchValue()),
+				new PageRequest(params.getCurrentPage(), params.getLength(), params.getSort()));
+		User currentUser = userService.getUserByUsername(principal.getName());
+		List<DataTablesResponseModel> groupsWithOwnership = groups.getContent()
+				.stream()
+				.map(ug -> new DTUserGroup(ug, isGroupOwner(currentUser, ug),
 						currentUser.getSystemRole().equals(Role.ROLE_ADMIN)))
 				.collect(Collectors.toList());
-		final DataSet<GroupsDataTableResponse> groupsDataSet = new DataSet<>(groupsWithOwnership,
-				groups.getTotalElements(), groups.getTotalElements());
-		return DatatablesResponse.build(groupsDataSet, criteria);
+		return new DataTablesResponse(params, groups, groupsWithOwnership);
 	}
 
 	/**
@@ -308,32 +286,25 @@ public class GroupsController {
 	/**
 	 * List the members in the group.
 	 * 
-	 * @param criteria
-	 *            the datatables criteria to search for.
+	 * @param params
+	 *            the datatables parameters to search for.
 	 * @param userGroupId
 	 *            the group ID to get members for.
 	 * @return the datatables-formatted response with filtered users.
 	 */
 	@RequestMapping("/{userGroupId}/ajax/list")
-	public @ResponseBody DatatablesResponse<UserGroupJoin> getGroupUsers(
-			final @DatatablesParams DatatablesCriterias criteria, final @PathVariable Long userGroupId) {
+	@ResponseBody
+	public DataTablesResponse getGroupUsers(@DataTablesRequest DataTablesParams params,
+			@PathVariable Long userGroupId) {
 		final UserGroup group = userGroupService.read(userGroupId);
-		final int currentPage = DatatablesUtils.getCurrentPage(criteria);
-		final Map<String, Object> sortProperties = DatatablesUtils.getSortProperties(criteria);
-		final Sort.Direction direction = (Sort.Direction) sortProperties.get("direction");
-		String sortName = sortProperties.get("sort_string").toString();
 
-		if (sortName.startsWith("subject")) {
-			sortName = "user";
-		}
-
-		final String usernameFilter = criteria.getSearch();
-		final Page<UserGroupJoin> groups = userGroupService.filterUsersByUsername(usernameFilter, group, currentPage,
-				criteria.getLength(), direction, sortName);
-		final DataSet<UserGroupJoin> groupDataSet = new DataSet<>(groups.getContent(), groups.getTotalElements(),
-				groups.getTotalElements());
-
-		return DatatablesResponse.build(groupDataSet, criteria);
+		final Page<UserGroupJoin> page = userGroupService.filterUsersByUsername(params.getSearchValue(), group,
+				params.getCurrentPage(), params.getLength(), params.getSort());
+		List<DataTablesResponseModel> members = page.getContent()
+				.stream()
+				.map(DTGroupMember::new)
+				.collect(Collectors.toList());
+		return new DataTablesResponse(params, page, members);
 	}
 
 	/**
@@ -470,46 +441,4 @@ public class GroupsController {
 					new Object[] { user.getLabel(), roleName }, locale));
 		}
 	}
-
-	/**
-	 * Convenience class for wrapping {@link UserGroup} with ownership
-	 * permissions when listing.
-	 */
-	private static final class GroupsDataTableResponse {
-		private final UserGroup group;
-		private final boolean groupOwner;
-		private final boolean isAdmin;
-
-		/**
-		 * Create a new row in the datatable.
-		 * 
-		 * @param group
-		 *            the group
-		 * @param groupOwner
-		 *            is the current user an owner of the group
-		 * @param isAdmin
-		 *            is the current user an admin
-		 */
-		public GroupsDataTableResponse(final UserGroup group, final boolean groupOwner, final boolean isAdmin) {
-			this.group = group;
-			this.groupOwner = groupOwner;
-			this.isAdmin = isAdmin;
-		}
-
-		@SuppressWarnings("unused")
-		public UserGroup getGroup() {
-			return this.group;
-		}
-
-		@SuppressWarnings("unused")
-		public boolean isGroupOwner() {
-			return this.groupOwner;
-		}
-
-		@SuppressWarnings("unused")
-		public boolean isAdmin() {
-			return this.isAdmin;
-		}
-	}
-
 }
