@@ -188,7 +188,7 @@
                                 <i class="fa fa-caret-down fa-fw" aria-hidden="true"></i>
                             </button>
                             <ul id="sample-tools-dropdown" class="dropdown-menu" uib-dropdown-menu="" role="menu">
-                                <li id="mergeBtn"
+                                <li id="mergeBtn" th:if="${not project.isRemote()}"
                                     ng-class="{disabled: toolsCtrl.disabled.lessThanTwo || toolsCtrl.disabled.hasAssociated}"
                                     tooltip-enable="toolsCtrl.disabled.lessThanTwo || toolsCtrl.disabled.hasAssociated"
                                     uib-tooltip-template="'merge.msg.tmpl'">
@@ -206,7 +206,7 @@
                                         <th:block th:text="#{project.samples.nav.copy}">_COPY_</th:block>
                                     </a>
                                 </li>
-                                <li id="moveBtn"
+                                <li id="moveBtn" th:if="${not project.isRemote()}"
                                     ng-class="{disabled: toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated}"
                                     tooltip-enable="toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated"
                                     uib-tooltip-template="'move.msg.tmpl'">
