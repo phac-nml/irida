@@ -1,9 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.web.components.datatables;
 
-import javax.servlet.http.HttpServletRequest;
-
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
 import com.google.common.base.Strings;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Responsible for extracting and representing DataTables Columns
@@ -21,13 +21,17 @@ import com.google.common.base.Strings;
  */
 public class DataTablesColumnDefinitions {
 	private String name;
+	private String data;
 	private boolean orderable;
 	private boolean searchable;
+	private String searchValue;
 
-	private DataTablesColumnDefinitions(String name, boolean searchable, boolean orderable) {
+	private DataTablesColumnDefinitions(String name, String data, boolean searchable, boolean orderable, String searchValue) {
 		this.name = name;
+		this.data = data;
 		this.searchable = searchable;
 		this.orderable = orderable;
+		this.searchValue = searchValue;
 	}
 
 	/**
@@ -46,9 +50,11 @@ public class DataTablesColumnDefinitions {
 		if (Strings.isNullOrEmpty(name)) {
 			name = request.getParameter(prefix + "[data]");
 		}
+		String data = request.getParameter(prefix + "[data]");
 		boolean searchable = Boolean.parseBoolean(request.getParameter(prefix + "[searchable]"));
 		boolean orderable = Boolean.parseBoolean(request.getParameter(prefix + "[orderable]"));
-		return new DataTablesColumnDefinitions(name, searchable, orderable);
+		String searchValue = request.getParameter(prefix + "[search][value]");
+		return new DataTablesColumnDefinitions(name, data, searchable, orderable, searchValue);
 	}
 
 	/**
@@ -80,5 +86,14 @@ public class DataTablesColumnDefinitions {
 	 */
 	public boolean isSearchable() {
 		return searchable;
+	}
+
+	/**
+	 * Get the value searched for in this column
+	 *
+	 * @return {@link String}
+	 */
+	public String getSearchValue() {
+		return searchValue;
 	}
 }

@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
@@ -291,9 +292,9 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	@Override
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public Page<UserGroupJoin> filterUsersByUsername(final String username, final UserGroup userGroup, int page,
-			int size, Direction order, String... sortProperties) {
+			int size, Sort sort) {
 		return userGroupJoinRepository.findAll(filterUserGroupJoinByUsername(username, userGroup),
-				new PageRequest(page, size, order, sortProperties));
+				new PageRequest(page, size, sort));
 	}
 
 	/**
@@ -311,9 +312,9 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public Page<UserGroupProjectJoin> getUserGroupsForProject(final String searchName, final Project project,
-			final int page, final int size, final Direction order, final String... sortProperties) {
+			final int page, final int size, final Sort sort) {
 		return userGroupProjectJoinRepository.findAll(filterUserGroupProjectJoinByProject(searchName, project),
-				new PageRequest(page, size, order, sortProperties));
+				new PageRequest(page, size, sort));
 	}
 
 	/**
@@ -323,6 +324,15 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public List<UserGroup> getUserGroupsNotOnProject(final Project project, final String search) {
 		return userGroupRepository.findUserGroupsNotOnProject(project, search);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_USER')")
+	public Page<UserGroup> search(Specification<UserGroup> specification, PageRequest pageRequest) {
+		return super.search(specification, pageRequest);
 	}
 
 	/**

@@ -10,70 +10,77 @@
 		urls : {
 			addMember : /*[[@{/groups/{id}/members(id=${group.getId()})}]]*/'/groups/1/members',
 			removeMember : /*[[@{/groups/{id}/members/(id=${group.getId()})}]]*/'/groups/1/members',
-			updateRole : /*[[@{/groups/{id}/members/editrole/(id=${group.getId()})}]]*/ '/groups/1/members',
-			table : /*[[@{/groups/{id}/ajax/list(id=${group.id})}]]*/'/groups/1/ajax/list',
 			usersLink : /*[[@{/users/}]]*/'/users',
 			usersSelection : /*[[@{/groups/{id}/ajax/availablemembers(id=${group.getId()})}]]*/'/groups/1/ajax/availablemembers',
 			deleteModal : /*[[@{/groups/removeUserModal}]]*/ '/groups/removeUserModal'
 		},
 		i18n : {
-			'GROUP_OWNER' : /*[[#{group.users.role.GROUP_OWNER}]]*/'_Group owner_',
-			'GROUP_MEMBER' : /*[[#{group.users.role.GROUP_MEMBER}]]*/'_Group member_',
 			'unexpectedAddError' : /*[[#{group.users.add.notification.failure}]]*/'_An error happened when adding the user to this group, try again_',
 			'unexpectedRemoveError' : /*[[#{group.users.remove.notification.failure}]]*/'_An error happened when removing the user from this group, try again_',
 			'remove': /*[[#{group.users.remove.button.tooltip}]]*/ '_Remove user from group_'
 		}
 	};
 </script>
-<style>
-	.dataTables_paginate {
-		text-align: center!important;
-	}
-</style>
 </head>
 <body>
-	<main layout:fragment="page" ddl:bundle-includes="group-members"
-		ddl:asset-css-excludes="jquery.datatables">
-	<div dt:conf="groupMembersTable">
-		<div dt:confType="callback" dt:type="createdRow" dt:function="group-members#groupMembersTable.rowRenderedCallback" />
-		<div dt:confType="extrahtml" dt:uid="2">
-			<div class="btn-toolbar" style="margin-bottom: 1rem;" role="toolbar">
-				<button id="add-members-button" class="btn btn-default"
-					type="button" data-toggle="modal" data-target="#addUserModal"
-					th:if="${isAdmin} or ${isOwner}" href="#addMembersLink"
-					th:text="#{group.users.add.button}">_Add
-					Members_</button>
-				<a id="edit-group-button" class="btn btn-default"
-					th:if="${isAdmin} or ${isOwner}"
-					th:href="@{/groups/{id}/edit(id=${group.id})}"
-					th:text="#{group.edit.button}">_Edit Group Details_</a>
-			</div>
-		</div>
-	</div>
+<main layout:fragment="page">
 	<div class="col-md-12">
 		<div class="row">
 			<div class="col-md-12">
-				<h1 id="wb-cont" class="group-details-title" property="name"
-					th:text="${group.label}">__IRIDA Group__</h1>
-				<p th:text="${group.description}">_Group description_</p>
+				<h1 th:text="${group.label}">__IRIDA Group__</h1>
+				<p class="lead" th:text="${group.description}">_Group description_</p>
 					
 				
 			</div>
 			<div class="col-md-12">
-				<table id="groupMembersTable" dt:table="true" dt:url="@{/groups/{id}/ajax/list(id=${group.id})}">
+				<table id="groupMembersTable" class="table table-striped" data:canManage="${isAdmin} or ${isOwner}"
+					   data:url="@{/groups/{id}/ajax/list(id=${group.id})}"
+					   cellspacing="0" width="100%">
 					<thead>
 					<tr role="row">
-						<th dt:property="subject.label" dt:searchable="true" th:text="#{group.users.username}" dt:renderFunction="group-members#groupMembersTable.userNameLinkRow"></th>
-						<th dt:property="role" th:if="${isAdmin} or ${isOwner}" dt:renderFunction="group-members#groupMembersTable.renderGroupRole" th:text="#{group.users.role}"></th>
-						<th dt:property="role" th:if="not (${isAdmin} or ${isOwner})" dt:renderFunction="group-members#groupMembersTable.renderGroupRoleAsText" th:text="#{group.users.role}"></th>
-						<th width="150px" dt:property="createdDate" dt:renderFunction="datatables-utils#datatable.formatDate" th:text="#{group.users.date.added}"></th>
-						<th width="50px" dt:sortable="false" dt:renderFunction="group-members#groupMembersTable.removeUserButton" th:if="${isAdmin} or ${isOwner}"></th>
+						<th data-data="user.username" th:text="#{group.users.username}"></th>
+						<th data-data="role" th:text="#{group.users.role}"></th>
+						<th width="150px" data-data="createdDate" class="dt-date"
+							th:text="#{group.users.date.added}"></th>
+						<th width="50px" data-orderable="false" th:if="${isAdmin} or ${isOwner}"></th>
 					</tr>
 					</thead>
 				</table>
 			</div>
 		</div>
 
+	</div>
+	<div class="hidden" id="toolbar-wrapper">
+		<div id="table-toolbar" class="btn-toolbar spaced-bottom" role="toolbar">
+			<div class="btn-group btn-group-sm">
+				<button id="add-members-button" class="btn btn-default"
+						type="button" data-toggle="modal" data-target="#addUserModal"
+						th:if="${isAdmin} or ${isOwner}" href="#addMembersLink"
+						th:text="#{group.users.add.button}">_Add
+					Members_
+				</button>
+			</div>
+			<div class="btn-group btn-group-sm">
+				<a id="edit-group-button" class="btn btn-default"
+				   th:if="${isAdmin} or ${isOwner}"
+				   th:href="@{/groups/{id}/edit(id=${group.id})}"
+				   th:text="#{group.edit.button}">_Edit Group Details_</a>
+			</div>
+		</div>
+	</div>
+
+	<div class="hidden" id="role-template-wrapper">
+		<th:block th:if="${isAdmin} or ${manageMembers}">
+			<select class="form-control input-full project-role-select"
+					data:updateUrl="@{/groups/{id}/members/editrole/(id=${group.getId()})}">
+				<option value="GROUP_MEMBER" th:text="#{group.users.role.GROUP_MEMBER}"></option>
+				<option value="GROUP_OWNER" th:text="#{group.users.role.GROUP_OWNER}"></option>
+			</select>
+		</th:block>
+		<th:block th:unless="${isAdmin} or ${manageMembers}">
+			<span class="GROUP_MEMBER" th:text="#{group.users.role.GROUP_MEMBER}"></span>
+			<span class="GROUP_OWNER" th:text="#{group.users.role.GROUP_OWNER}"></span>
+		</th:block>
 	</div>
 	
 	<div class="modal fade" id="addUserModal" role="dialog" aria-labelledby="#addUserTitle">
@@ -88,7 +95,7 @@
 				<div class="modal-body">
 	                <div class="form-group">
 	                    <label class="control-label" for="add-user-username" th:text="#{group.users.add.user}">_Username_</label>
-	                    <input type="hidden" id="add-user-username" name="userId" class="form-control input-full" th:placeholder="#{group.users.add.select-user}"/>
+						<select id="add-user-username" name="userId" class="form-control input-full" th:placeholder="#{group.users.add.select-user}"></select>
 	                </div>
 	                <div class="form-group">
 	                    <label class="control-label" for="add-user-role" th:text="#{group.users.add.role}">_Group Role_</label>
@@ -112,5 +119,9 @@
 		
 	</div>
 	</main>
+
+<th:block layout:fragment="scripts">
+	<script th:src="@{/resources/js/build/group-members.bundle.js}"></script>
+</th:block>
 </body>
 </html>

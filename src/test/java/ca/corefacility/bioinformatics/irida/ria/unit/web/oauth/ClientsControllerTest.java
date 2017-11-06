@@ -4,10 +4,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -81,7 +78,7 @@ public class ClientsControllerTest {
 
 		when(clientDetailsService.search(any(Specification.class), any(PageRequest.class))).thenReturn(clientPage);
 
-		DataTablesParams params = new DataTablesParams(1, 10, 1, "", new Sort(Sort.Direction.ASC, "createdDate"));
+		DataTablesParams params = new DataTablesParams(1, 10, 1, "", new Sort(Sort.Direction.ASC, "createdDate"), new HashMap<>());
 		DataTablesResponse response = controller.getAjaxClientsList(params);
 
 		List<DataTablesResponseModel> models = response.getData();
