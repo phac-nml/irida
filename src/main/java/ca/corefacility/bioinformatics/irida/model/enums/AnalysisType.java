@@ -39,6 +39,12 @@ public enum AnalysisType {
 	ASSEMBLY_ANNOTATION("assembly-annotation"),
 
 	/**
+	 * An assembly and annotation analysis type on a single sample.
+	 */
+	@XmlEnumValue("salmonella-subtyping")
+	SALMONELLA_SUBTYPING("salmonella-subtyping"),
+	
+	/**
 	 * An assembly and annotation analysis type on a collection of samples.
 	 */
 	@XmlEnumValue("assembly-annotation-collection")
