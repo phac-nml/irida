@@ -42,6 +42,7 @@ module.exports = {
   "sequencing-runs":
     "./resources/js/pages/sequencing-runs/sequencing-runs-list.js",
   "groups-list": "./resources/js/pages/users/groups-list.js",
+  "group-members": "./resources/js/pages/users/groups-members.js",
   "ncbi-exports": "./resources/js/pages/projects/ncbi-export.js",
   search: "./resources/js/pages/search/search.js"
 };

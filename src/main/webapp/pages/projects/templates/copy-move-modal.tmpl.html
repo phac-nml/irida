@@ -49,12 +49,13 @@
                         <select name="newProjectId" data:url="@{/projects/{id}/ajax/samples/available_projects(id=${projectId})}"
                                 id="js-projectsSelect" class="form-control" style="width: 100%;"></select>
                     </div>
-
                     <div class="alert alert-warning" th:if="${#lists.size(lockedSamples) > 0}">
                         <span th:text="#{${prefix} + '.locked'}">_The following samples will be read only as this project does not have modification access_</span>
                         <input type="hidden" value="false" name="giveOwner" id="giveOwner" />
                     </div>
-                    <div class="form-group" th:if="${#lists.size(lockedSamples) == 0}">
+
+                    <!-- Only the the allow modification checkbox for the copy not the move -->
+                    <div class="form-group" th:if="${#lists.size(lockedSamples) == 0 and #strings.equals(type, 'copy')}">
                         <div class="checkbox">
                             <label>
                                 <input type="checkbox" value="true" id="giveOwner" name="giveOwner"/>
