@@ -6,6 +6,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.annotation.Order;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -16,6 +17,7 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 
 import com.google.common.collect.Lists;
 
+import ca.corefacility.bioinformatics.irida.config.repository.IridaApiRepositoriesConfig;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 
 /**
@@ -25,7 +27,11 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
  * @see RunAsUser
  */
 @Aspect
+@Order(value=RunAsUserAspect.RUN_AS_USER_ORDER)
 public class RunAsUserAspect {
+	
+	public static final int RUN_AS_USER_ORDER = IridaApiRepositoriesConfig.TRANSACTION_MANAGEMENT_ORDER - 1;
+	
 	private static final Logger logger = LoggerFactory.getLogger(RunAsUserAspect.class);
 
 	/**

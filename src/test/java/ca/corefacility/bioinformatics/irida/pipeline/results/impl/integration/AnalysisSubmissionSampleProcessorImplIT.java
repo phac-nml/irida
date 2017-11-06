@@ -38,16 +38,16 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGeno
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/pipeline/results/impl/AnalysisSubmissionSampleProcessorImplIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class AnalysisSubmissionSampleProcessorImplIT {
-	
+
 	@Autowired
 	private AnalysisSubmissionSampleProcessorImpl analysisSubmissionSampleProcessorImpl;
-	
+
 	@Autowired
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
-	
+
 	@Autowired
 	private SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository;
-	
+
 	@Test
 	@WithMockUser(username = "fbristow", roles = "USER")
 	public void testUpdateSamplesSuccess() {
@@ -58,7 +58,7 @@ public class AnalysisSubmissionSampleProcessorImplIT {
 
 		assertEquals("Should exist a join between sample and assembly", 1, sampleGenomeAssemblyJoinRepository.count());
 	}
-	
+
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "fbristow", roles = "USER")
 	public void testUpdateFailPermissionNonSampleOwner() {
@@ -66,11 +66,26 @@ public class AnalysisSubmissionSampleProcessorImplIT {
 
 		analysisSubmissionSampleProcessorImpl.updateSamples(a);
 	}
-	
+
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "dr-evil", roles = "USER")
 	public void testUpdateFailPermissionNonProjectOwner() {
 		AnalysisSubmission a = analysisSubmissionRepository.findOne(2L);
+
+		analysisSubmissionSampleProcessorImpl.updateSamples(a);
+	}
+
+	/**
+	 * Verifies that even if "fbristow" (the project owner) is set to run this
+	 * code, the RunAsUserAspect will switch the user to the owner of the
+	 * analysis submission, a non-project owner who should not have the ability
+	 * to write to the samples (and so should throw an AccessDeniedException
+	 * for this test).
+	 */
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "fbristow", roles = "USER")
+	public void testUpdateSamplesFailAnalysisSubmittedNonProjectOwner() {
+		AnalysisSubmission a = analysisSubmissionRepository.findOne(3L);
 
 		analysisSubmissionSampleProcessorImpl.updateSamples(a);
 	}

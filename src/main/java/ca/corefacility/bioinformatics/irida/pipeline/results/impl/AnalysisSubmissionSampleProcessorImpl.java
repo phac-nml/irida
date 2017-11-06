@@ -24,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSampleUpdater;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
+import ca.corefacility.bioinformatics.irida.service.analysis.annotations.RunAsUser;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 /**
@@ -62,13 +63,22 @@ public class AnalysisSubmissionSampleProcessorImpl implements AnalysisSubmission
 			analysisSampleUpdaterMap.put(analysisSampleUpdaterService.getAnalysisType(), analysisSampleUpdaterService);
 		}
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean hasRegisteredAnalysisSampleUpdater(AnalysisType analysisType) {
+		return analysisSampleUpdaterMap.keySet().contains(analysisType);
+	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasPermission(#analysisSubmission, 'canUpdateSamplesFromAnalysisSubmission')")
+	@RunAsUser("#analysisSubmission.getSubmitter()")
 	@Transactional(propagation=Propagation.REQUIRES_NEW)
+	@PreAuthorize("hasPermission(#analysisSubmission, 'canUpdateSamplesFromAnalysisSubmission')")
 	public void updateSamples(AnalysisSubmission analysisSubmission) {
 		if (!analysisSubmission.getUpdateSamples()) {
 			logger.trace("Will not update samples from results for submission=" + analysisSubmission);
