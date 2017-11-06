@@ -26,10 +26,10 @@
         <table id="groupsTable" class="table table-striped" cellspacing="0" width="100%" data:url="@{/groups/ajax/list}">
             <thead>
             <tr role="row">
-                <th data:data="group.name" th:text="#{group.name}"></th>
-                <th data:data="group.description" th:text="#{group.description}"></th>
-                <th class="dt-date" data:data="group.createdDate" th:text="#{group.created}"></th>
-                <th class="dt-date" data:data="group.modifiedDate" th:text="#{group.modified}"></th>
+                <th data:data="name" th:text="#{group.name}"></th>
+                <th data:data="description" th:text="#{group.description}"></th>
+                <th class="dt-date" data:data="createdDate" th:text="#{group.created}"></th>
+                <th class="dt-date" data:data="modifiedDate" th:text="#{group.modified}"></th>
                 <th width="30px" data-orderable="false"></th>
             </tr>
             </thead>

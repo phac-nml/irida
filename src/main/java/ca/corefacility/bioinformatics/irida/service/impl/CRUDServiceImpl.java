@@ -19,6 +19,7 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
@@ -126,6 +127,16 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 	public Page<ValueType> list(int page, int size, final Direction order, final String... sortProperties)
 			throws IllegalArgumentException {
 		return repository.findAll(new PageRequest(page, size, order, sortProperties));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Transactional(readOnly = true)
+	@Override
+	public Page<ValueType> list(int page, int size, Sort sort)
+			throws IllegalArgumentException {
+		return repository.findAll(new PageRequest(page, size, sort));
 	}
 
 	/**
