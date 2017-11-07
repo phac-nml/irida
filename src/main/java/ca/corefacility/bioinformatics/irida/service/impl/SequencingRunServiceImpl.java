@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -196,5 +197,14 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 	public Page<SequencingRun> list(int page, int size, Direction order, String... sortProperties)
 			throws IllegalArgumentException {
 		return super.list(page, size, order, sortProperties);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER', 'ROLE_TECHNICIAN')")
+	@Override
+	public Page<SequencingRun> list(int page, int size, Sort sort) throws IllegalArgumentException {
+		return super.list(page, size, sort);
 	}
 }
