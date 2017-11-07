@@ -10,8 +10,11 @@ export default class SampleDropdownButton {
    */
   constructor(node, listenerFn) {
     this.button = node;
-    this.enabledAt = this.button.dataset.enabledAt;
-    this.allowAssociated = this.button.allowAssociated;
+    this.$parent = $(this.button.parentElement);
+    this.enabledAt = this.$parent.data("enabledAt");
+    this.enabledMsg = this.$parent.data("enabledMsg");
+    this.allowAssociated = this.$parent.data("allowAssociated");
+    this.associatedMsg = this.$parent.data("associatedMsg");
 
     if (typeof listenerFn === "function") {
       this.button.addEventListener("click", listenerFn, false);
@@ -27,10 +30,32 @@ export default class SampleDropdownButton {
    * @param {boolean} hasAssociated whether associated projects are being displayed.
    */
   checkState(count, hasAssociated) {
+    // Remove the tooltip. A new one will be created based on the
+    // information provided.
+    this.$parent.tooltip("destroy");
+
     if (hasAssociated && !this.allowAssociated) {
-      this.button.disabled = true;
+      this.$parent.addClass("disabled");
+
+      // Activate the tooltip
+      this.$parent.tooltip({
+        container: "body",
+        placement: "right",
+        title: this.associatedMsg
+      });
     } else {
-      this.button.disabled = count < this.enabledAt;
+      if (count < this.enabledAt) {
+        this.$parent.addClass("disabled");
+
+        // Activate the tooltip
+        this.$parent.tooltip({
+          container: "body",
+          placement: "right",
+          title: this.enabledMsg
+        });
+      } else {
+        this.$parent.removeClass("disabled");
+      }
     }
   }
 }
