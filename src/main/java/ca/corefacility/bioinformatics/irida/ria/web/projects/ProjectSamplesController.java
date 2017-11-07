@@ -205,38 +205,26 @@ public class ProjectSamplesController {
 	 * @param model
 	 * 		{@link Model}
 	 *
-	 * @return
+	 * @return Path to the remove modal template
 	 */
 	@RequestMapping(value = "/projects/{projectId}/templates/remove-modal", produces = MediaType.TEXT_HTML_VALUE)
 	public String getRemoveSamplesFromProjectModal(@RequestParam(name = "sampleIds[]") List<Long> ids, @PathVariable Long projectId, Model model) {
 		List<Sample> samplesThatAreInMultiple = new ArrayList<>();
 		List<Sample> samplesThatAreInOne = new ArrayList<>();
-		List<Sample> extraMultiple = new ArrayList<>();
-		List<Sample> extraSingle = new ArrayList<>();
 
 		for (Long id : ids) {
 			Sample sample = sampleService.read(id);
 			List<Join<Project, Sample>> join = projectService.getProjectsForSample(sample);
 
 			if (join.size() > 1) {
-				if (samplesThatAreInMultiple.size() < 10) {
-					samplesThatAreInMultiple.add(sample);
-				} else {
-					extraMultiple.add(sample);
-				}
+				samplesThatAreInMultiple.add(sample);
 			} else {
-				if (samplesThatAreInOne.size() < 10) {
-					samplesThatAreInOne.add(sample);
-				} else {
-					extraSingle.add(sample);
-				}
+				samplesThatAreInOne.add(sample);
 			}
 		}
 
 		model.addAttribute("samplesThatAreInMultiple", samplesThatAreInMultiple);
 		model.addAttribute("samplesThatAreInOne", samplesThatAreInOne);
-		model.addAttribute("extraMultiple", extraMultiple);
-		model.addAttribute("extraSingle", extraSingle);
 		model.addAttribute("project", projectService.read(projectId));
 		return PROJECT_TEMPLATE_DIR + "remove-modal.tmpl";
 	}
