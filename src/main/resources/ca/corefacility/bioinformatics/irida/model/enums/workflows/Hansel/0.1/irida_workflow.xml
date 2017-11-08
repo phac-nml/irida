@@ -4,7 +4,7 @@
 	<id>0e8738e6-2aeb-4627-9d6e-15ae32f21c44</id>
 	<name>bio_hansel</name>
 	<version>0.1</version>
-	<analysisType>salmonella-subtyping</analysisType>
+	<analysisType>BIO_HANSEL</analysisType>
 	<inputs>
 		<sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
 		<reference>reference</reference>
@@ -51,9 +51,9 @@
 		</repository>
 		<repository>
 			<name>combine_tabular_collection</name>
-			<owner>phil</owner>
-			<url>http://galaxy-toolshed.corefacility.ca/</url>
-			<revision>2480c36b4891</revision>
+			<owner>nml</owner>
+			<url>https://toolshed.g2.bx.psu.edu/</url>
+			<revision>b815081988b5</revision>
 		</repository>
 		<repository>
 			<name>collapse_collections</name>
