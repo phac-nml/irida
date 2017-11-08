@@ -46,3 +46,8 @@
   top: 16px;
   left: 4px;
 }
+
+.panel-body__scroll {
+  max-height: 200px;
+  overflow-y: auto;
+}

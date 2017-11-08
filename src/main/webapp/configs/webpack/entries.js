@@ -12,10 +12,13 @@ module.exports = {
   projects: "./resources/js/pages/projects/projects.js",
   "samples-metadata-import":
     "./resources/js/pages/projects/samples-metadata-import/index.js",
-  "project-samples":
-    "./resources/js/pages/projects/samples/project-samples.js",
-  "project-samples-merge": "./resources/js/pages/projects/samples/modals/samples-merge.js",
-  "project-samples-copy": "./resources/js/pages/projects/samples/modals/samples-copy.js",
+  "project-samples": "./resources/js/pages/projects/samples/project-samples.js",
+  "project-samples-merge":
+    "./resources/js/pages/projects/samples/modals/samples-merge.js",
+  "project-samples-copy":
+    "./resources/js/pages/projects/samples/modals/samples-copy.js",
+  "project-samples-remove":
+    "./resources/js/pages/projects/samples/modals/samples-remove.js",
   "project-add-sample": "./resources/js/pages/projects/project-add-samples.js",
   "project-linelist": "./resources/js/pages/projects/linelist/index.js",
   "create-metadata-template":
