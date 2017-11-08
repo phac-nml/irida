@@ -10,7 +10,7 @@ import "./../../../vendor/datatables/datatables";
 import "./../../../vendor/datatables/datatables-buttons";
 import "./../../../vendor/datatables/datatables-rowSelection";
 import { CART } from "../../../utilities/events-utilities";
-import SampleDropdownButton from "./SampleDropdownButton";
+import { SampleCartButton, SampleDropdownButton } from "./SampleButtons";
 import { SAMPLE_EVENTS } from "./constants";
 
 /*
@@ -19,28 +19,8 @@ This is required to use select2 inside a modal.
 $.fn.modal.Constructor.prototype.enforceFocus = function() {};
 
 /*
- Initialize the sample tools menu.
+Defaults for table popovers
  */
-const SAMPLE_TOOL_ACTIONS = {
-  "cart-add-btn"() {
-    const selected = $dt.select.selected()[0];
-    /*
-    Selected data needs to be formatted into an object: {projectId => [sampleIds]}
-     */
-    const projects = {};
-    selected.forEach(item => {
-      projects[item.project] = projects[item.project] || [];
-      projects[item.project].push(item.sample);
-    });
-
-    /*
-    Update the cart with the new samples.
-     */
-    const event = new CustomEvent(CART.ADD, { detail: { projects } });
-    document.dispatchEvent(event);
-  }
-};
-
 const POPOVER_OPTIONS = {
   container: "body",
   trigger: "hover",
@@ -49,10 +29,35 @@ const POPOVER_OPTIONS = {
   template: $("#popover-template").clone()
 };
 
+/*
+ Initialize the sample tools menu.  This is used to check the status of the buttons.
+ */
 const sampleToolsNodes = document.querySelectorAll(".js-sample-tool-btn");
 const SAMPLE_TOOL_BUTTONS = [...sampleToolsNodes].map(
-  elm => new SampleDropdownButton(elm, SAMPLE_TOOL_ACTIONS[elm.id])
+  elm => new SampleDropdownButton(elm)
 );
+
+/*
+Initialize the add to cart button
+ */
+const cartBtn = new SampleCartButton($(".js-cart-btn"), function() {
+  const selected = $dt.select.selected()[0];
+  /*
+  Selected data needs to be formatted into an object: {projectId => [sampleIds]}
+   */
+  const projects = {};
+  selected.forEach(item => {
+    projects[item.project] = projects[item.project] || [];
+    projects[item.project].push(item.sample);
+  });
+
+  /*
+  Update the cart with the new samples.
+   */
+  const event = new CustomEvent(CART.ADD, { detail: { projects } });
+  document.dispatchEvent(event);
+});
+SAMPLE_TOOL_BUTTONS.push(cartBtn);
 
 /**
  * Reference to the currently selected associated projects.
@@ -336,7 +341,7 @@ $("#js-modal-wrapper").on("show.bs.modal", function(event) {
   /*
   Determine which modal to open
    */
-  const btn = $(event.relatedTarget);
+  const btn = event.relatedTarget;
   const url = btn.data("url");
   const params = btn.data("params") || {};
   const script_src = btn.data("script");
