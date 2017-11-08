@@ -7,6 +7,7 @@ import { SAMPLE_EVENTS } from "../constants";
 
 $(".js-remove-form").submit(function(e) {
   e.preventDefault();
+  $("#js-submit").prop("disabled", true);
 
   $.post($("#js-submit").data("url"), $(this).serialize(), function(response) {
     /*
