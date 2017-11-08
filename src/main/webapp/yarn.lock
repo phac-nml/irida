@@ -888,6 +888,13 @@ boom@5.x.x:
   dependencies:
     hoek "4.x.x"
 
+bootstrap-daterangepicker@^2.1.25:
+  version "2.1.25"
+  resolved "https://registry.yarnpkg.com/bootstrap-daterangepicker/-/bootstrap-daterangepicker-2.1.25.tgz#fcd8ba0b755a054d330d7a3b7c4dd8bb855cffb7"
+  dependencies:
+    jquery ">=1.10"
+    moment "^2.9.0"
+
 bootstrap-switch@3.3.2:
   version "3.3.2"
   resolved "https://registry.yarnpkg.com/bootstrap-switch/-/bootstrap-switch-3.3.2.tgz#79ddb49fadc308fb731e257f95957af48996eea7"
@@ -3280,7 +3287,7 @@ jquery-validation@^1.17.0:
   dependencies:
     jquery "^1.7 || ^2.0 || ^3.1"
 
-jquery@>=1.11.0, jquery@>=1.7, jquery@>=1.9.0, "jquery@^1.7 || ^2.0 || ^3.1", jquery@^3.2.1:
+jquery@>=1.10, jquery@>=1.11.0, jquery@>=1.7, jquery@>=1.9.0, "jquery@^1.7 || ^2.0 || ^3.1", jquery@^3.2.1:
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.2.1.tgz#5c4d9de652af6cd0a770154a631bba12b015c787"
 
@@ -3828,7 +3835,7 @@ mkdirp@0.5.1, mkdirp@0.5.x, "mkdirp@>=0.5 0", mkdirp@^0.5.0, mkdirp@^0.5.1, mkdi
   dependencies:
     minimist "0.0.8"
 
-moment@^2.11.2, moment@^2.18.1:
+moment@^2.11.2, moment@^2.18.1, moment@^2.9.0:
   version "2.19.1"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.19.1.tgz#56da1a2d1cbf01d38b7e1afc31c10bcfa1929167"
 

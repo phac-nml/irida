@@ -48,6 +48,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.export.ProjectSamplesTableExport;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.ProjectSampleModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.UISampleFilter;
 import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProjectSamples;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
@@ -292,12 +293,18 @@ public class ProjectSamplesController {
 	 *
 	 * @return {@link String} path to the modal template
 	 */
-	@RequestMapping(value = "/projects/template/samples-filter-modal", produces = MediaType.TEXT_HTML_VALUE)
-	public String getProjectSamplesFilterModal(
-			@RequestParam(value = "projectIds[]", required = false, defaultValue = "") List<Long> projectIds,
-			Model model) {
+	@RequestMapping(value = "/projects/{projectId}/template/samples-filter-modal", produces = MediaType.TEXT_HTML_VALUE)
+	public String getProjectSamplesFilterModal(@PathVariable Long projectId, UISampleFilter filter, Model model) {
+		model.addAttribute("filter", filter);
+
+		List<Long> ids = filter.getAssociated();
+		if (ids == null) {
+			ids = new ArrayList<>();
+		}
+		ids.add(projectId);
+
 		Set<String> organismSet = new HashSet<>();
-		for (Long id : projectIds) {
+		for (Long id : ids) {
 			Project project = projectService.read(id);
 			organismSet.addAll(sampleService.getSampleOrganismsForProject(project));
 		}
@@ -312,7 +319,7 @@ public class ProjectSamplesController {
 			return o1.compareToIgnoreCase(o2);
 		});
 		model.addAttribute("organisms", organisms);
-		return PROJECT_TEMPLATE_DIR + "sample-filter.modal";
+		return PROJECT_TEMPLATE_DIR + "filter-modal.tmpl";
 	}
 
 	/**
@@ -421,7 +428,7 @@ public class ProjectSamplesController {
 			@RequestParam(required = false, name = "sampleNames[]", defaultValue = "") List<String> sampleNames,
 			@RequestParam(required = false, name = "associated[]", defaultValue = "") List<Long> associated,
 			@RequestParam(value = "name", required = false, defaultValue = "") String sampleNameSearch,
-			@RequestParam(required = false, defaultValue = "") String organismSearch,
+			@RequestParam(required = false, defaultValue = "") String organism,
 			@RequestParam(value = "minDate", required = false, defaultValue = "") Long startDateSearch,
 			@RequestParam(value = "endDate", required = false, defaultValue = "") Long endDateSearch, Locale locale) {
 		List<Project> projects = new ArrayList<>();
@@ -436,7 +443,7 @@ public class ProjectSamplesController {
 		Date maxDate = endDateSearch == null ? null : new Date(endDateSearch);
 		final Page<ProjectSampleJoin> page = sampleService
 				.getFilteredSamplesForProjects(projects, sampleNames, sampleNameSearch, params.getSearchValue(),
-						organismSearch, minDate, maxDate, params.getCurrentPage(), params.getLength(),
+						organism, minDate, maxDate, params.getCurrentPage(), params.getLength(),
 						params.getSort());
 
 		// Create DataTables representation of the page.

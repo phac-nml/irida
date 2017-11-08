@@ -36,9 +36,11 @@
         },
         i18n: {
           dateFilter: {
-            days30: /*[[#{project.sample.filter.date.days30}]]*/ "Last 30 Days",
-            days60: /*[[#{project.sample.filter.date.days60}]]*/ "Last 60 Days",
-            days120: /*[[#{project.sample.filter.date.days120}]]*/ "Last 120 Days"
+            format: /*[[#{project.sample.filter.date.format}]]*/ "MMM dd, YYYY",
+            month: /*[[#{project.sample.filter.date.month}]]*/ "_MONTH_",
+            months3: /*[[#{project.sample.filter.date.months3}]]*/ "3 Months_",
+            months6: /*[[#{project.sample.filter.date.months6}]]*/ "6 Months_",
+            year: /*[[#{project.sample.filter.date.year}]]*/ "Year_"
           },
           buttons: {
             selectAll: /*[[#{project.samples.select.selectAll}]]*/ "Select All",
@@ -193,6 +195,9 @@
     </table>
 
     <div id="js-modal-wrapper" class="modal fade" tabindex="-1" role="dialog"></div>
+    <div id="js-filter-modal-wrapper" class="modal fade" tabindex="-1" role="dialog"
+         data:template="@{/projects/{id}/template/samples-filter-modal(id=${project.getId()})}"
+         data:script="@{/resources/js/build/project-samples-filter.bundle.js}"></div>
 
     <div class="hidden">
         <span class="qc-warning-wrapper" data-toggle="popover"
@@ -212,16 +217,22 @@
         <!-- Button for filtering samples by file -->
         <div id="filter-toolbar" class="btn-toolbar" style="margin-left: 1px;">
             <div class="btn-group btn-group-sm" role="group">
+                <button class="btn btn-default t-filters-btn" id="#js-open-filters"
+                        data-toggle="modal" data-target="#js-filter-modal-wrapper">
+                    <i class="fa fa-filter fa-fw" aria-hidden="true"></i>
+                </button>
+            </div>
+            <div class="btn-group btn-group-sm" role="group">
                 <label class="btn btn-default" data-toggle="popover" data-placement="left"
                        data-trigger="hover" data-container="body"
                        data:content="#{project.sample.filterByFile.modal.body}"
                        th:title="#{project.sample.filterByFile.modal.title}">
-                    <i class="fa fa-file-text-o" aria-hidden="true"></i>
+                    <i class="fa fa-file-text-o fa-fw" aria-hidden="true"></i>
                     <input type="file" id="filter-by-file" style="display: none;"/>
                 </label>
             </div>
             <div class="btn-group btn-group-sm">
-                <button class="btn btn-default js-clear-filters" th:text="#{form.btn.clear}">CLEAR</button>
+                <button class="btn btn-default js-clear-filters t-clear-filters" th:text="#{form.btn.clear}">CLEAR</button>
             </div>
         </div>
     </div>

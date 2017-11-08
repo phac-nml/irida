@@ -253,48 +253,37 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	@Ignore
-	public void testFilteringSamplesByProperties() throws InterruptedException {
+	public void testFilteringSamplesByProperties() {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
-		Thread.sleep(500L);
 		assertEquals("Should have 21 projects displayed", "Showing 1 to 10 of 21 entries", page.getTableInfo());
 		page.filterByName("5");
-		Thread.sleep(500L);
 		assertEquals("Should have 17 projects displayed", "Showing 1 to 10 of 17 entries", page.getTableInfo());
 		page.filterByName("52");
-		Thread.sleep(500L);
 		assertEquals("Should have 17 projects displayed", "Showing 1 to 3 of 3 entries", page.getTableInfo());
 
 		// Test clearing the filters
 		page.clearFilter();
-		Thread.sleep(500L);
 		assertEquals("Should have 21 projects displayed", "Showing 1 to 10 of 21 entries", page.getTableInfo());
 
 		// Should ignore case
 		page.filterByName("sample");
-		Thread.sleep(500L);
 		assertEquals("Should ignore case when filtering", "Showing 1 to 10 of 21 entries", page.getTableInfo());
 
 		// Test date range filter
 		page.clearFilter();
-		Thread.sleep(500L);
 		assertEquals("Should have 21 projects displayed", "Showing 1 to 10 of 21 entries", page.getTableInfo());
 	}
 
 	@Test
-	@Ignore
-	public void testFilteringWithDates() throws InterruptedException {
+	public void testFilteringWithDates() {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
-		Thread.sleep(500L);
-		page.filterByDateRange("07/06/2015", "07/09/2015");
-		Thread.sleep(500L);
+		page.filterByDateRange("July 06, 2015 - July 09, 2015");
 		assertEquals("Should ignore case when filtering", "Showing 1 to 4 of 4 entries", page.getTableInfo());
 
 		// Test clearing the filters
 		page.clearFilter();
-		Thread.sleep(500L);
 		assertEquals("Should have 21 samples displayed", "Showing 1 to 10 of 21 entries", page.getTableInfo());
 	}
 
