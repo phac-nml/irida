@@ -38,7 +38,7 @@ public class GalaxyToolDataServiceTest {
     private static final String VALID_TOOL_DATA_TABLE_ID = "igv_broad_genomes";
     private static final String VALID_TOOL_DATA_VALUE = "hg38";
     private static final String VALID_TOOL_DATA_COLUMN = "url";
-    
+
     /**
      * Sets up variables for workflow tests.
      * @throws URISyntaxException
@@ -46,8 +46,16 @@ public class GalaxyToolDataServiceTest {
     @Before
     public void setup() throws URISyntaxException {
         MockitoAnnotations.initMocks(this);
-        toolDataClient =
+
         galaxyToolDataService = new GalaxyToolDataService(toolDataClient);
+
+        String toolDataTableId = "igv_broad_genomes";
+        TabularToolDataTable toolDataTable = new TabularToolDataTable();
+        toolDataTables = new HashMap<String, TabularToolDataTable>();
+        toolDataTables.put(toolDataTableId, toolDataTable);
+
+        when(toolDataClient.showToolData(VALID_TOOL_DATA_TABLE_ID)).thenReturn(toolDataTable);
+
     }
 
     /**
