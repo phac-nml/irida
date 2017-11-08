@@ -49,7 +49,7 @@ const POPOVER_OPTIONS = {
   template: $("#popover-template").clone()
 };
 
-const sampleToolsNodes = document.querySelectorAll(".sample-tool-btn");
+const sampleToolsNodes = document.querySelectorAll(".js-sample-tool-btn");
 const SAMPLE_TOOL_BUTTONS = [...sampleToolsNodes].map(
   elm => new SampleDropdownButton(elm, SAMPLE_TOOL_ACTIONS[elm.id])
 );

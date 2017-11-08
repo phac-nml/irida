@@ -1,3 +1,23 @@
+function isButton(element) {
+  return element.prop("nodeName") === "BUTTON";
+}
+
+function disableElement(element) {
+  if (isButton(element)) {
+    element.prop("disabled", true);
+  } else {
+    element.addClass("disabled");
+  }
+}
+
+function enableElement(element) {
+  if (isButton(element)) {
+    element.prop("disabled", false);
+  } else {
+    element.removeClass("disabled");
+  }
+}
+
 /**
  * This class represents the state and function of buttons within the
  * project > sample > Sample Tools dropdown menu.
@@ -9,15 +29,18 @@ export default class SampleDropdownButton {
    * @param {function} listenerFn - EventHandler for the click event.
    */
   constructor(node, listenerFn) {
-    this.button = node;
-    this.$parent = $(this.button.parentElement);
-    this.enabledAt = this.$parent.data("enabledAt");
-    this.enabledMsg = this.$parent.data("enabledMsg");
-    this.allowAssociated = this.$parent.data("allowAssociated");
-    this.associatedMsg = this.$parent.data("associatedMsg");
+    /*
+    If the node is a button then it does not need to reference the parent element
+    Everything should be on the button itself.
+     */
+    this.$node = node.nodeName === "BUTTON" ? $(node) : $(node.parentElement);
+    this.enabledAt = this.$node.data("enabledAt");
+    this.enabledMsg = this.$node.data("enabledMsg");
+    this.allowAssociated = this.$node.data("allowAssociated");
+    this.associatedMsg = this.$node.data("associatedMsg");
 
     if (typeof listenerFn === "function") {
-      this.button.addEventListener("click", listenerFn, false);
+      node.addEventListener("click", listenerFn, false);
     }
 
     this.checkState(0, false);
@@ -32,29 +55,27 @@ export default class SampleDropdownButton {
   checkState(count, hasAssociated) {
     // Remove the tooltip. A new one will be created based on the
     // information provided.
-    this.$parent.tooltip("destroy");
+    this.$node.tooltip("destroy");
 
     if (hasAssociated && !this.allowAssociated) {
-      this.$parent.addClass("disabled");
-
+      disableElement(this.$node, this.isButton);
       // Activate the tooltip
-      this.$parent.tooltip({
+      this.$node.tooltip({
         container: "body",
         placement: "right",
         title: this.associatedMsg
       });
     } else {
       if (count < this.enabledAt) {
-        this.$parent.addClass("disabled");
-
+        disableElement(this.$node, this.isButton);
         // Activate the tooltip
-        this.$parent.tooltip({
+        this.$node.tooltip({
           container: "body",
           placement: "right",
           title: this.enabledMsg
         });
       } else {
-        this.$parent.removeClass("disabled");
+        enableElement(this.$node, this.isButton);
       }
     }
   }
