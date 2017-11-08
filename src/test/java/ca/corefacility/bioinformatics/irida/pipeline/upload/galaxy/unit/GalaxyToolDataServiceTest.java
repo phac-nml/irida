@@ -29,13 +29,8 @@ import com.github.jmchilton.blend4j.galaxy.beans.TabularToolDataTable;
  */
 public class GalaxyToolDataServiceTest {
 
-    @Mock private GalaxyHistoriesService galaxyHistory;
     @Mock private ToolDataClient toolDataClient;
     @Mock private TabularToolDataTable toolDataTable;
-    @Mock private History workflowHistory;
-    @Mock private Dataset inputDataset;
-    @Mock private Dataset downloadDataset;
-    @Mock private GalaxyResponseException responseException;
 
     private GalaxyToolDataService galaxyToolDataService;
 
@@ -43,9 +38,7 @@ public class GalaxyToolDataServiceTest {
     private static final String VALID_TOOL_DATA_TABLE_ID = "igv_broad_genomes";
     private static final String VALID_TOOL_DATA_VALUE = "hg38";
     private static final String VALID_TOOL_DATA_COLUMN = "url";
-
-    private Map<String, ArrayList<String>> tableColumns;
-
+    
     /**
      * Sets up variables for workflow tests.
      * @throws URISyntaxException
@@ -53,7 +46,7 @@ public class GalaxyToolDataServiceTest {
     @Before
     public void setup() throws URISyntaxException {
         MockitoAnnotations.initMocks(this);
-
+        toolDataClient =
         galaxyToolDataService = new GalaxyToolDataService(toolDataClient);
     }
 
