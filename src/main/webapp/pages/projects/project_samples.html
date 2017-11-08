@@ -73,7 +73,7 @@
                                    data-toggle="modal" data-target="#js-modal-wrapper"
                                    data:url="@{/projects/{projectId}/templates/merge-modal(projectId=${project.getId()})}"
                                    data:script="@{/resources/js/build/project-samples-merge.bundle.js}">
-                                    <i class="fa fa-compress fa-fw" aria-hidden="true"></i> &nbsp;
+                                    <i class="fa fa-compress fa-fw spaced-after__sm" aria-hidden="true"></i>
                                     <th:block th:text="#{project.samples.nav.merge}"/>
                                 </a>
                             </li>
@@ -85,7 +85,7 @@
                                    data-params="{&quot;move&quot;: false}"
                                    data:url="@{/projects/{projectId}/templates/copy-move-modal(projectId=${project.getId()})}"
                                    data:script="@{/resources/js/build/project-samples-copy.bundle.js}">
-                                    <i class="fa fa-files-o fa-fw" aria-hidden="true"></i> &nbsp;
+                                    <i class="fa fa-files-o fa-fw spaced-after__sm" aria-hidden="true"></i>
                                     <th:block th:text="#{project.samples.nav.copy}"/>
                                 </a>
                             </li>
@@ -97,7 +97,7 @@
                                    data-params="{&quot;move&quot;: true}"
                                    data:url="@{/projects/{projectId}/templates/copy-move-modal(projectId=${project.getId()})}"
                                    data:script="@{/resources/js/build/project-samples-copy.bundle.js}">
-                                    <i class="fa fa-truck fa-fw" aria-hidden="true"></i> &nbsp;
+                                    <i class="fa fa-truck fa-fw spaced-after__sm" aria-hidden="true"></i>
                                     <th:block th:text="#{project.samples.nav.move}"/>
                                 </a>
                             </li>
@@ -108,8 +108,27 @@
                                    data-toggle="modal" data-target="#js-modal-wrapper"
                                    data:url="@{/projects/{projectId}/templates/remove-modal(projectId=${project.getId()})}"
                                    data:script="@{/resources/js/build/project-samples-remove.bundle.js}">
-                                    <i class="fa fa-trash fa-fw" aria-hidden="true"></i>&nbsp;
+                                    <i class="fa fa-trash fa-fw spaced-after__sm" aria-hidden="true"></i>
                                     <th:block th:text="#{project.samples.nav.remove}"/>
+                                </a>
+                            </li>
+
+                            <li role="separator" class="divider"></li>
+
+                            <!-- IMPORT METADATE LINK-->
+                            <li>
+                                <a th:href="@{/projects/{id}/sample-metadata/upload(id=${project.getId()})}">
+                                    <i class="fa fa-upload fa-fw spaced-after__sm" aria-hidden="true"></i>
+                                    <th:block th:text="#{project.nav.samples.import-metadata}"/>
+                                </a>
+                            </li>
+                            <li role="separator" class="divider"></li>
+
+                            <!-- NEW SAMPLE LINK -->
+                            <li>
+                                <a th:href="@{/projects/{id}/samples/new(id=${project.getId()})}">
+                                    <i class="fa fa-plus fa-fw spaced-after__sm" aria-hidden="true"></i>
+                                    <th:block th:text="#{project.samples.nav.new}"/>
                                 </a>
                             </li>
                         </ul>
