@@ -205,6 +205,16 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-merge-btn")));
 	}
 
+	public void closeToolsDropdown() {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		Actions act = new Actions(driver);
+		act.moveToElement(toolsDropdownBtn)
+				.moveByOffset(10, 10)
+				.click()
+				.perform();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("t-merge-btn")));
+	}
+
 	public void openExportDropdown() {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		exportSamplesDropdownBtn.click();
@@ -272,13 +282,13 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	public void selectSample(int row) {
 		// Need to get the anything but the first column as that is a link to the sample!
-		WebElement checkbox = tableRows.get(row).findElement(By.cssSelector("td input[type='checkbox']"));
+		WebElement checkbox = tableRows.get(row).findElement(By.className("t-row-select"));
 		checkbox.click();
 	}
 
 	public void selectSampleWithShift(int row) {
 		Actions actions = new Actions(driver);
-		actions.keyDown(Keys.SHIFT).click(tableRows.get(row).findElement(By.cssSelector("td input[type='checkbox']"))).perform();
+		actions.keyDown(Keys.SHIFT).click(tableRows.get(row).findElement(By.className("t-row-select"))).perform();
 		// Sometimes, that shift key never gets lifted!
 		actions.keyUp(Keys.SHIFT).perform();
 	}

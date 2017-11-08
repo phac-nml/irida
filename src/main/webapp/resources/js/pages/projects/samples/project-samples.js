@@ -176,7 +176,7 @@ const config = Object.assign({}, tableConfig, {
       orderable: false,
       data: null,
       render() {
-        return `<input type="checkbox"/>`;
+        return `<input class="t-row-select" type="checkbox"/>`;
       },
       targets: 0
     },
