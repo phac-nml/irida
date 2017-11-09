@@ -46,7 +46,9 @@ Start by [viewing the details of an individual sample](#viewing-individual-sampl
 
 You can provide as many or as few sample details that you want -- the sample details are not used by any workflows in IRIDA (except the sample name in the SNVPhyl workflow), and (with the exception of the sample name) none of the sample details are required fields. When you've finished updating the sample details, you can click on the "Update" button at the bottom, right-hand side of the page.
 
-### Viewing sequence files
+### Viewing associated files
+
+#### Viewing Sequence Files
 
 {% include tutorials/common/samples/view-sequence-files.md %}
 
@@ -92,6 +94,14 @@ If the project manager has enabled automated assemblies for uploaded data an ass
 The assembly status will be displayed along with a link to view the assembly results page.  For more information on viewing pipeline results see the [pipeline documentation](../pipelines/#viewing-pipeline-results)  
 
 See the [project documentation](../project#managing-automated-assemblies) for information on enabling automated assembly.
+
+#### Viewing associated assemblies
+
+Samples can also be associated with assembled genomes.  By default, any automated assemblies for uploaded sequencing data will be associated with a sample under the **Assemblies** section.
+
+![sample-automated-assembly](images/sample-automated-assembly.png)
+
+Manually-run assemblies through IRIDA may also be saved back to the associated sample from the [Launch Pipelines](../pipelines/#saving-pipeline-results-to-a-sample) page.
 
 Adding a new sample
 -------------------
