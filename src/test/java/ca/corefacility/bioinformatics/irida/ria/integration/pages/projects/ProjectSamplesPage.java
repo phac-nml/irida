@@ -205,6 +205,17 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("download-btn")));
 	}
 
+	public void closeToolsDropdown() {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		Actions act = new Actions(driver);
+		act.moveToElement(toolsDropdownBtn)
+				.moveByOffset(10, 10)
+				.click()
+				.perform();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("t-merge-btn")));
+	}
+
+
 	public boolean isSampleToolsAvailable() {
 		return driver.findElements(By.id("sample-tools")).size() > 0;
 	}
