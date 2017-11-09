@@ -279,7 +279,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	public void testFilteringWithDates() {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
-		page.filterByDateRange("July 06, 2015 - July 09, 2015");
+		page.filterByDateRange("07/06/2015", "07/09/2015");
 		assertEquals("Should ignore case when filtering", "Showing 1 to 4 of 4 entries", page.getTableInfo());
 
 		// Test clearing the filters

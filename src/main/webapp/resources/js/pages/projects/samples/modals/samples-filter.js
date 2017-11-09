@@ -35,9 +35,9 @@ const dateRangePicker = $dateRangeFilter
   })
   .on("apply.daterangepicker", function(ev, picker) {
     $(this).val(
-      picker.startDate.format(window.PAGE.i18n.dateFilter.format) +
-      " - " +
-      picker.endDate.format(window.PAGE.i18n.dateFilter.format)
+      `${picker.startDate.format(
+        window.PAGE.i18n.dateFilter.format
+      )} - ${picker.endDate.format(window.PAGE.i18n.dateFilter.format)}`
     );
   })
   .on("cancel.daterangepicker", function(ev, picker) {

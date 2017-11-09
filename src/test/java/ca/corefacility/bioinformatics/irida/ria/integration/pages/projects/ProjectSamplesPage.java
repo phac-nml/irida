@@ -370,14 +370,20 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("modal-content")));
 	}
 
-	public void filterByDateRange(String range) {
+	public void filterByDateRange(String start, String end) {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
-
 		openFilterModal();
-		dateRangeInput.clear();
-		dateRangeInput.sendKeys(range);
-		dateRangeInput.sendKeys(Keys.TAB);
 
+		dateRangeInput.clear();
+		dateRangeInput.click();
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("daterangepicker")));
+
+		daterangepickerStart.clear();
+		daterangepickerStart.sendKeys(start);
+
+		daterangepickerEnd.clear();
+		daterangepickerEnd.sendKeys(end);
+		applyDateRangeBtn.click();
 		applyFiltersBtn.click();
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("modal-content")));
 	}
