@@ -170,13 +170,13 @@
                 </div>
                 <div class="btn-group btn-group-sm">
                     <div class="dropdown">
-                        <button id="export-samples-btn" class="btn btn-default btn-sm" data-toggle="dropdown">
+                        <button class="btn btn-default btn-sm t-export-samples-btn" data-toggle="dropdown">
                             <th:block th:text="#{project.samples.export.label}"/>
                             <i class="fa fa-caret-down fa-fw" aria-hidden="true"></i>
                         </button>
                         <ul class="dropdown-menu" role="menu" aria-labelledby="export-samples-btn">
                             <li role="menuitem">
-                                <a href="#" class="js-sample-export-btn js-download-btn"
+                                <a href="#" class="js-sample-export-btn t-download-btn"
                                    data-enabled-at="1" data-toggle="tooltip" data-type="download"
                                    data:url="@{/projects/{id}/download/files(id=${project.getId()})}"
                                    data:associated-msg="#{project.samples.only-for-project-tooltip}"

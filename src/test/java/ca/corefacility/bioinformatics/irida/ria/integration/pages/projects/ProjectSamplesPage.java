@@ -148,10 +148,10 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(className = "dt-select-none")
 	private WebElement selectionNone;
 
-	@FindBy(id = "export-samples-btn")
+	@FindBy(className = "t-export-samples-btn")
 	private WebElement exportSamplesDropdownBtn;
 
-	@FindBy(id = "download-btn")
+	@FindBy(className = "t-download-btn")
 	private WebElement downloadBtn;
 
 	@FindBy(id = "ncbi-btn")
@@ -218,7 +218,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	public void openExportDropdown() {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		exportSamplesDropdownBtn.click();
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("download-btn")));
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-download-btn")));
 	}
 
 	public boolean isSampleToolsAvailable() {
@@ -226,7 +226,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public boolean isDownloadBtnEnabled() {
-		return !downloadBtn.getAttribute("class").contains("disabled");
+		return isAnchorElementDisabled(downloadBtn);
 	}
 
 	public boolean isNcbiBtnEnabled() {

@@ -16,7 +16,7 @@ import {
   SampleDropdownButton
 } from "./SampleButtons";
 import { FILTERS, SAMPLE_EVENTS } from "./constants";
-import {download} from "../../../utilities/file.utilities";
+import { download } from "../../../utilities/file.utilities";
 
 /*
 This is required to use select2 inside a modal.
@@ -54,7 +54,7 @@ const EXPORT_HANDLERS = {
     selected.forEach(s => {
       ids.push(s.sample);
     });
-    download(`${url}?${$.param({ids})}`)
+    download(`${url}?${$.param({ ids })}`);
   }
 };
 [...document.querySelectorAll(".js-sample-export-btn")].forEach(elm => {
@@ -63,7 +63,9 @@ const EXPORT_HANDLERS = {
       new SampleExportButton(elm, EXPORT_HANDLERS[elm.dataset.type])
     );
   } else {
-    throw new Error("Sample Export buttons must have a data attribute of 'type'");
+    throw new Error(
+      "Sample Export buttons must have a data attribute of 'type'"
+    );
   }
 });
 
