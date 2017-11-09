@@ -31,7 +31,7 @@ public enum AnalysisType {
 	 */
 	@XmlEnumValue("sistr-typing")
 	SISTR_TYPING("sistr-typing"),
-	
+
 	/**
 	 * An assembly and annotation analysis type on a single sample.
 	 */
@@ -39,17 +39,17 @@ public enum AnalysisType {
 	ASSEMBLY_ANNOTATION("assembly-annotation"),
 
 	/**
-	 * Salmonella subtyping of Heidelberg and Enteritidis strains.
+	 * SNV Subtyping for Salmonella Heidelberg, and Salmonella Enteritidis.
 	 */
-	@XmlEnumValue("BIO_HANSEL")
-	SALMONELLA_SUBTYPING("BIO_HANSEL"),
-	
+	@XmlEnumValue("snv-subtyping-collection")
+	SNV_SUBTYPING_COLLECTION("snv-subtyping-collection"),
+
 	/**
-	 * An assembly and annotation analysis type on a collection of samples.
+	 * An assembly and annotation analysis type on a collectio n of samples.
 	 */
 	@XmlEnumValue("assembly-annotation-collection")
 	ASSEMBLY_ANNOTATION_COLLECTION("assembly-annotation-collection"),
-	
+
 	/**
 	 * A fastqc analysis type
 	 */
