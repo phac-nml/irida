@@ -7,7 +7,6 @@
 	<analysisType>snv-subtyping-collection</analysisType>
 	<inputs>
 		<sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
-		<reference>reference</reference>
 		<requiresSingleSample>false</requiresSingleSample>
 	</inputs>
 	<parameters>
@@ -26,11 +25,6 @@
 				toolId="toolshed.g2.bx.psu.edu/repos/nml/bio_hansel/bio_hansel/0.1.3"
 				parameterName="kmer_max" />
 		</parameter>
-		<parameter name="desired_coverage" defaultValue="50">
-			<toolParameter
-				toolId="toolshed.g2.bx.psu.edu/repos/nml/seqtk_nml/seqtk_nml_sample/1.0.1"
-				parameterName="coverage" />
-		</parameter>
 	</parameters>
 	<outputs>
 		<output name="hansel_results" fileName="hansel_results.tab" />
@@ -42,12 +36,6 @@
 			<owner>nml</owner>
 			<url>https://toolshed.g2.bx.psu.edu/</url>
 			<revision>09ebaa5192ab</revision>
-		</repository>
-		<repository>
-			<name>seqtk_nml</name>
-			<owner>nml</owner>
-			<url>https://toolshed.g2.bx.psu.edu/</url>
-			<revision>f49992c79fe4</revision>
 		</repository>
 		<repository>
 			<name>combine_tabular_collection</name>
