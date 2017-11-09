@@ -40,13 +40,11 @@
                    data:url="@{/projects/{id}/settings/ajax/members(id=${project.getId()})}">
                 <thead>
                 <tr>
-                    <th data:data="object.username" dt:searchable="true"
+                    <th data-data="user.username" data-property="name" dt:searchable="true"
                         th:text="#{project.table.collaborator.name}"></th>
-                    <th data:data="projectRole" th:if="${isAdmin} or ${manageMembers}"
+                    <th data-data="role" data-property="role"
                         th:text="#{project.table.collaborator.role}"></th>
-                    <th data:data="projectRole" th:if="not (${isAdmin} or ${manageMembers})"
-                        th:text="#{project.table.collaborator.role}"></th>
-                    <th data:data="createdDate" class="dt-date" dt:property="createdDate"
+                    <th data-data="createdDate" data-property="joined" class="dt-date"
                         th:text="#{project.table.collaborator.since}"></th>
                     <th width="30px" data-orderable="false" th:if="${isAdmin} or ${manageMembers}"></th>
                 </tr>

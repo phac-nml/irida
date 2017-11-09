@@ -556,7 +556,7 @@ INSERT INTO `reference_file` (id, createdDate, filePath, fileRevisionNumber, mod
 INSERT INTO `project_referencefile` (id, createdDate, project_id, reference_file_id) VALUES (1, '2014-08-06 10:01:02', 4, 1);
 
 -- analysis_submission
-INSERT INTO `analysis_submission` (analysis_state, name, created_date, analysis_id, workflow_id, submitter, analysis_cleaned_state, update_samples) VALUES ('COMPLETED', 'Analysis-1', '2014-08-06 10:01:02', 13, 'b7c8b437-3c41-485e-92e5-72b67e37959f', 1, 'NOT_CLEANED', 0);
+INSERT INTO `analysis_submission` (analysis_state, name, created_date, analysis_id, workflow_id, submitter, analysis_cleaned_state, update_samples) VALUES ('COMPLETED', 'Analysis-1', '2014-08-06 10:01:02', 13, 'b7c8b437-3c41-485e-92e5-72b67e37959f', 2, 'NOT_CLEANED', 0);
 INSERT INTO `analysis_submission` (analysis_state, name, created_date, analysis_id, workflow_id, submitter, analysis_cleaned_state, update_samples) VALUES ('PREPARING', 'Analysis-2', '2014-07-06 10:01:02', 13, 'b7c8b437-3c41-485e-92e5-72b67e37959f', 1, 'NOT_CLEANED', 0);
 INSERT INTO `analysis_submission` (analysis_state, name, created_date, analysis_id, workflow_id, submitter, analysis_cleaned_state, update_samples) VALUES ('PREPARED', 'Analysis-3', '2014-07-09 10:01:02', 13, 'b7c8b437-3c41-485e-92e5-72b67e37959f', 1, 'NOT_CLEANED', 0);
 INSERT INTO `analysis_submission` (analysis_state, name, created_date, analysis_id, workflow_id, submitter, analysis_cleaned_state, update_samples) VALUES ('COMPLETED', 'Analysis-4', '2014-07-15 10:01:02', 13, 'b7c8b437-3c41-485e-92e5-72b67e37959f', 1, 'NOT_CLEANED', 0);

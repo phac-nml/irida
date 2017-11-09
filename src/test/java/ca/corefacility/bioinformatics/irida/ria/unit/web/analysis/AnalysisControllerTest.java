@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.util.Locale;
 
+import ca.corefacility.bioinformatics.irida.ria.web.services.AnalysesListingService;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
@@ -54,6 +55,7 @@ public class AnalysisControllerTest {
 	private UpdateAnalysisSubmissionPermission updatePermission;
 	private MetadataTemplateService metadataTemplateService;
 	private SequencingObjectService sequencingObjectService;
+	private AnalysesListingService analysesListingService;
 
 	@Before
 	public void init() {
@@ -63,10 +65,11 @@ public class AnalysisControllerTest {
 		updatePermission = mock(UpdateAnalysisSubmissionPermission.class);
 		sampleService = mock(SampleService.class);
 		sequencingObjectService = mock(SequencingObjectService.class);
+		analysesListingService = mock(AnalysesListingService.class);
 		MessageSource messageSourceMock = mock(MessageSource.class);
 		analysisController = new AnalysisController(analysisSubmissionServiceMock, iridaWorkflowsServiceMock,
 				userServiceMock, sampleService, projectServiceMock, updatePermission, metadataTemplateService,
-				sequencingObjectService, messageSourceMock);
+				sequencingObjectService, analysesListingService, messageSourceMock);
 	}
 
 	@Test

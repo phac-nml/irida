@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort;
 
 import ca.corefacility.bioinformatics.irida.exceptions.UserGroupWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -28,7 +28,7 @@ public interface UserGroupService extends CRUDService<Long, UserGroup> {
 	 *            the group to get users for.
 	 * @return the users in the group.
 	 */
-	public Collection<UserGroupJoin> getUsersForGroup(final UserGroup userGroup);
+	Collection<UserGroupJoin> getUsersForGroup(final UserGroup userGroup);
 
 	/**
 	 * Add a user to the group with the specified role.
@@ -41,7 +41,7 @@ public interface UserGroupService extends CRUDService<Long, UserGroup> {
 	 *            the role that the user should have in the group
 	 * @return the relationship created between the user and group.
 	 */
-	public UserGroupJoin addUserToGroup(final User user, final UserGroup userGroup, final UserGroupRole role);
+	UserGroupJoin addUserToGroup(final User user, final UserGroup userGroup, final UserGroupRole role);
 
 	/**
 	 * Change the role for the {@link User} in the {@link UserGroup}.
@@ -57,7 +57,7 @@ public interface UserGroupService extends CRUDService<Long, UserGroup> {
 	 *             when the user group doesn't have an owner as a result of the
 	 *             role change.
 	 */
-	public UserGroupJoin changeUserGroupRole(final User user, final UserGroup userGroup, final UserGroupRole role)
+	UserGroupJoin changeUserGroupRole(final User user, final UserGroup userGroup, final UserGroupRole role)
 			throws UserGroupWithoutOwnerException;
 
 	/**
@@ -71,7 +71,7 @@ public interface UserGroupService extends CRUDService<Long, UserGroup> {
 	 *             when the user group doesn't have an owner as a result of the
 	 *             removal.
 	 */
-	public void removeUserFromGroup(final User user, final UserGroup userGroup) throws UserGroupWithoutOwnerException;
+	void removeUserFromGroup(final User user, final UserGroup userGroup) throws UserGroupWithoutOwnerException;
 
 	/**
 	 * Filter the list of users in the {@link UserGroup} by username.
@@ -84,14 +84,12 @@ public interface UserGroupService extends CRUDService<Long, UserGroup> {
 	 *            the current page
 	 * @param size
 	 *            the size of the page
-	 * @param order
-	 *            the order of sorting
-	 * @param sortProperties
+	 * @param sort
 	 *            the properties to sort on
 	 * @return a page of {@link UserGroupJoin}.
 	 */
-	public Page<UserGroupJoin> filterUsersByUsername(final String username, final UserGroup userGroup, int page,
-			int size, Direction order, String... sortProperties);
+	 Page<UserGroupJoin> filterUsersByUsername(final String username, final UserGroup userGroup, int page,
+			int size, Sort sort);
 
 	/**
 	 * Get the set of {@link User} that are not currently in the
@@ -101,7 +99,7 @@ public interface UserGroupService extends CRUDService<Long, UserGroup> {
 	 *            the group to get the set of non-members
 	 * @return the set of users not in the group.
 	 */
-	public Collection<User> getUsersNotInGroup(final UserGroup userGroup);
+	Collection<User> getUsersNotInGroup(final UserGroup userGroup);
 
 	/**
 	 * Get a page of {@link UserGroupProjectJoin} for a specific {@link Project}
@@ -115,14 +113,12 @@ public interface UserGroupService extends CRUDService<Long, UserGroup> {
 	 *            the current page
 	 * @param size
 	 *            the size of the page
-	 * @param order
-	 *            the order
-	 * @param sortProperties
+	 * @param sort
 	 *            the properties to sort on
 	 * @return a page of {@link UserGroupProjectJoin}.
 	 */
-	public Page<UserGroupProjectJoin> getUserGroupsForProject(final String searchName, final Project project, int page,
-			int size, Direction order, String... sortProperties);
+	Page<UserGroupProjectJoin> getUserGroupsForProject(final String searchName, final Project project, int page,
+			int size, Sort sort);
 
 	/**
 	 * Get a collection of {@link UserGroup} that aren't already on a
@@ -134,5 +130,5 @@ public interface UserGroupService extends CRUDService<Long, UserGroup> {
 	 *            the name to filter on
 	 * @return the groups not already on the project.
 	 */
-	public List<UserGroup> getUserGroupsNotOnProject(final Project project, final String filter);
+	List<UserGroup> getUserGroupsNotOnProject(final Project project, final String filter);
 }

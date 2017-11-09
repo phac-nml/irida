@@ -20,6 +20,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 /**
  * A service for AnalysisSubmissions.
@@ -198,4 +200,42 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @return A collection of {@link AnalysisSubmission}s.
 	 */
 	public Collection<AnalysisSubmission> getAnalysisSubmissionsSharedToProject(Project project);
+
+	/**
+	 * Get a page of the {@link AnalysisSubmission}s shared with a project.
+	 *
+	 * @param search      basic search string
+	 * @param name        analysis submission name
+	 * @param state       {@link AnalysisState} of the submission to search
+	 * @param workflowIds set of workflow UUIDs to search
+	 * @param project     {@link Project} to search in
+	 * @param pageRequest a {@link PageRequest} for the restults to show
+	 * @return a page of {@link AnalysisSubmission}
+	 */
+	public Page<AnalysisSubmission> listSubmissionsForProject(String search, String name, AnalysisState state,
+			Set<UUID> workflowIds, Project project, PageRequest pageRequest);
+
+	/**
+	 * Get a page of all {@link AnalysisSubmission}s in the system
+	 *
+	 * @param search      basic search string
+	 * @param name        analysis submission name
+	 * @param state       {@link AnalysisState} of the submission to search
+	 * @param workflowIds set of workflow UUIDs to search
+	 * @param pageRequest a {@link PageRequest} for the restults to show
+	 * @return a page of {@link AnalysisSubmission}
+	 */
+	public Page<AnalysisSubmission> listAllSubmissions(String search, String name, AnalysisState state,
+			Set<UUID> workflowIds, PageRequest pageRequest);
+
+	/**
+	 * @param search      basic search string
+	 * @param name        analysis submission name
+	 * @param state       {@link AnalysisState} of the submission to search
+	 * @param user        the {@link User} to get submissions for
+	 * @param workflowIds set of workflow UUIDs to search
+	 * @param pageRequest a {@link PageRequest} for the restults to show	 * @return
+	 */
+	public Page<AnalysisSubmission> listSubmissionsForUser(String search, String name, AnalysisState state, User user,
+			Set<UUID> workflowIds, PageRequest pageRequest);
 }

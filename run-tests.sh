@@ -14,24 +14,19 @@ GALAXY_URL=http://localhost:$GALAXY_PORT
 GALAXY_INVALID_URL=http://localhost:48890
 GALAXY_INVALID_URL2=http://localhost:48891
 CHROME_DRIVER=$SCRIPT_DIR/src/main/webapp/node_modules/chromedriver/lib/chromedriver/chromedriver
-SEQUENCE_FILE_DIR=`mktemp -d sequence-file-base-XXXXXXXX -p $TMP_DIRECTORY`
-REFERENCE_FILE_DIR=`mktemp -d reference-file-base-XXXXXXXX -p $TMP_DIRECTORY`
-OUTPUT_FILE_DIR=`mktemp -d output-file-base-XXXXXXXX -p $TMP_DIRECTORY`
+SEQUENCE_FILE_DIR=`mktemp -d $TMP_DIRECTORY/sequence-file-base-XXXXXXXX`
+REFERENCE_FILE_DIR=`mktemp -d $TMP_DIRECTORY/reference-file-base-XXXXXXXX`
+OUTPUT_FILE_DIR=`mktemp -d $TMP_DIRECTORY/output-file-base-XXXXXXXX`
 
 DO_KILL_DOCKER=true
 NO_CLEANUP=false
+HEADLESS=true
 
 check_dependencies() {
 	mvn --version 1>/dev/null 2>/dev/null
 	if [ $? -ne 0 ];
 	then
 		exit_error "Command 'mvn' does not exist.  Please install Maven (e.g., 'apt-get install maven') to continue."
-	fi
-
-	xvfb-run -h 1>/dev/null 2>/dev/null
-	if [ $? -ne 0 ];
-	then
-		exit_error "Command 'xvfb-run' does not exist.  Please install xvfb (e.g., 'apt-get install xvfb') to continue."
 	fi
 
 	docker --version 1>/dev/null 2>/dev/null
@@ -109,7 +104,7 @@ test_rest() {
 }
 
 test_ui() {
-	xvfb-run --auto-servernum --server-num=1 mvn clean verify -B -Pui_testing -Dwebdriver.chrome.driver=$CHROME_DRIVER -Dirida.it.nosandbox=true -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dsequence.file.base.directory=$SEQUENCE_FILE_DIR -Dreference.file.base.directory=$REFERENCE_FILE_DIR -Doutput.file.base.directory=$OUTPUT_FILE_DIR $@
+	mvn clean verify -B -Pui_testing -Dwebdriver.chrome.driver=$CHROME_DRIVER -Dirida.it.nosandbox=true -Dirida.it.headless=$HEADLESS -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dsequence.file.base.directory=$SEQUENCE_FILE_DIR -Dreference.file.base.directory=$REFERENCE_FILE_DIR -Doutput.file.base.directory=$OUTPUT_FILE_DIR $@
 	exit_code=$?
 	return $exit_code
 }
@@ -142,11 +137,12 @@ test_all() {
 
 if [ $# -eq 0 ];
 then
-	echo -e "Usage: $0 [-d database] [--no-cleanup] [--no-kill-docker] test_type [Maven options]"
+	echo -e "Usage: $0 [options..] test_type [Maven options]"
 	echo -e "Options:"
 	echo -e "\t-d|--database:   Override name of database ($DATABASE_NAME) used for testing."
 	echo -e "\t-c|--no-cleanup: Do not cleanup previous test database before execution."
 	echo -e "\t--no-kill-docker: Do not kill Galaxy Docker after Galaxy tests have run."
+	echo -e "\t--no-headless: Do not run chrome in headless mode (for viewing results of UI tests)."
 	echo -e "\ttest_type:     One of the IRIDA test types {service_testing, ui_testing, rest_testing, galaxy_testing, all}."
 	echo -e "\t[Maven options]: Additional options to pass to 'mvn'.  In particular, can pass '-Dit.test=ca.corefacility.bioinformatics.irida.fully.qualified.name' to run tests from a particular class.\n"
 	echo -e "Examples:\n"
@@ -168,7 +164,7 @@ check_dependencies
 
 cd $SCRIPT_DIR
 
-while [ "$1" = "--database" -o "$1" = "-d" -o "$1" = "--no-kill-docker" -o "$1" = "-c" -o "$1" = "--no-cleanup" ];
+while [ "$1" = "--database" -o "$1" = "-d" -o "$1" = "--no-kill-docker" -o "$1" = "-c" -o "$1" = "--no-cleanup" -o "$1" = "--no-headless" ];
 do
 	if [ "$1" = "--database" -o "$1" = "-d" ];
 	then
@@ -182,6 +178,10 @@ do
 	elif [ "$1" = "--no-cleanup" -o "$1" = "-c" ];
 	then
 		NO_CLEANUP=true
+		shift
+	elif [ "$1" = "--no-headless" ];
+	then
+		HEADLESS=false
 		shift
 	else
 		shift

@@ -116,22 +116,20 @@ public class AnalysisSubmissionServiceImplIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void searchAnalyses() {
 
-		Specification<AnalysisSubmission> specification = AnalysisSubmissionSpecification.filterAnalyses(null, null,
-				null, null, null, null);
-		Page<AnalysisSubmission> paged = analysisSubmissionService.search(specification, 0, 10, Sort.Direction.ASC,
-				"createdDate");
+		Page<AnalysisSubmission> paged = analysisSubmissionService.listAllSubmissions(null, null, null, null,
+				new PageRequest(0, 10, new Sort(Direction.ASC, "createdDate")));
 		assertEquals(10, paged.getContent().size());
 
 		// Try filtering a by names
 		String name = "My";
-		specification = AnalysisSubmissionSpecification.filterAnalyses(null, name, null, null, null, null);
-		paged = analysisSubmissionService.search(specification, 0, 10, Sort.Direction.ASC, "createdDate");
+		paged = analysisSubmissionService.listAllSubmissions(null, name, null, null,
+				new PageRequest(0, 10, new Sort(Direction.ASC, "createdDate")));
 		assertEquals(8, paged.getContent().size());
 
 		// Add a state filter
 		AnalysisState state = AnalysisState.COMPLETED;
-		specification = AnalysisSubmissionSpecification.filterAnalyses(null, name, state, null, null, null);
-		paged = analysisSubmissionService.search(specification, 0, 10, Sort.Direction.ASC, "createdDate");
+		paged = analysisSubmissionService.listAllSubmissions(null, name, state, null,
+				new PageRequest(0, 10, new Sort(Direction.ASC, "createdDate")));
 		assertEquals(2, paged.getContent().size());
 	}
 
@@ -429,16 +427,6 @@ public class AnalysisSubmissionServiceImplIT {
 		AnalysisSubmission createdSubmission = analysisSubmissionService.create(submission);
 		assertNotNull("Submission should have been created", createdSubmission);
 		assertEquals("submitter should be set properly", Long.valueOf(2L), createdSubmission.getSubmitter().getId());
-	}
-
-	/**
-	 * Tests searching as an admin user.
-	 */
-	@Test
-	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testSearchAdminUser() {
-		assertNotNull("search should succeed", analysisSubmissionService
-				.search(new AnalysisSubmissionTestSpecification(), 1, 1, Direction.ASC, "createdDate"));
 	}
 
 	/**

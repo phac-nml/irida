@@ -6,7 +6,7 @@ Changes
 * [Developer] Removed the requirement for pipeline developers to add an `Analysis` subclass and database tables for pipelines.  All pipeline results can now be stored in the `Analysis` class.
 * [Developer]: Fixed issue where bootstrap was being loaded twice onto the page. (0.18.1)
 * [UI]: Fixed URL for concatenation of sample sequence files. (0.18.1)
-* [Developer]: Removed dandelion from: Announcements, Cart, Sequencing Runs, Login, Project Settings - Landing, Events, Create Sample, Line List, Announcements - Create & Read, Livestampjs, Pipelines Launch, lodash, NCBI Export Page, Session Handler
+* [Developer]: Removed dandelion from: Announcements, Cart, Sequencing Runs, Login, Project Settings - Landing, Events, Create Sample, Line List, Announcements - Create & Read, Livestampjs, Pipelines Launch, lodash, NCBI Export Page, Session Handler, Project Members and Groups Server Side,  NCBI export lists, Groups Listing, Group Members.
 * [UI]: Added empty state if no files exist in a sample.
 * [UI]: Added ability to associate assemblies with a sample.
 * [UI]: Fix broken link for concatenating files. (0.18.2)
@@ -21,6 +21,10 @@ Changes
 * [UI]: Changed user's modified date to "Last Login" in user list.
 * [Developer]: Created `production` and `development` webpack builds.
 * [UI]: Fixed issue with uploading `.fastqc` files in IE, and allow for uploading for `fastqc.gz` in all browsers (0.18.4).
+* [UI]: Added ability to update an analysis submission name after it's been submitted.
+* [Developer]: Added `run-tests.sh` script for running local integration tests.
+* [UI]: Fixed issue with exporting `csv` and `excel` from Project > Samples pages (0.18.5).
+* [UI]: Fixed bug with importing large `excel` file that contained columns with only a header and no other data in column.
 
 0.17.0 to 0.18.0
 ----------------
