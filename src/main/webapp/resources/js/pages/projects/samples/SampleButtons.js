@@ -1,5 +1,32 @@
 import $ from "jquery";
 
+function checkState(count, hasAssociated) {
+  // Remove the tooltip. A new one will be created based on the
+  // information provided.
+  this.$node.tooltip("destroy");
+  if (hasAssociated) {
+    this.$node.parent().addClass("disabled");
+    // Activate the tooltip
+    this.$node.tooltip({
+      container: "body",
+      placement: "right",
+      title: this.$node.data("associatedMsg")
+    });
+  } else {
+    if (count < this.$node.data("enabledAt")) {
+      this.$node.parent().addClass("disabled");
+      // Activate the tooltip
+      this.$node.tooltip({
+        container: "body",
+        placement: "right",
+        title: this.$node.data("enabledMsg")
+      });
+    } else {
+      this.$node.parent().removeClass("disabled");
+    }
+  }
+}
+
 export class SampleCartButton {
   constructor(node, clickHandler) {
     this.$node = $(node);
@@ -16,6 +43,21 @@ export class SampleCartButton {
   }
 }
 
+export class SampleExportButton {
+  constructor(node, clickHandler) {
+    const $node = $(node);
+    this.$node = $node;
+    this.$node.on("click", function() {
+      clickHandler.call($node);
+    });
+    this.checkState();
+  }
+
+  checkState(count = 0, hasAssociated = false) {
+    checkState.call(this, count, hasAssociated);
+  }
+}
+
 /**
  * This class represents the state and function of buttons within the
  * project > sample > Sample Tools dropdown menu.
@@ -29,7 +71,7 @@ export class SampleDropdownButton {
     const btn = this;
     this.$node = $(node);
 
-    this.$node.on("click", function () {
+    this.$node.on("click", function() {
       btn.clickHandler();
     });
     this.checkState();
@@ -48,29 +90,6 @@ export class SampleDropdownButton {
    * @param {boolean} hasAssociated whether associated projects are being displayed.
    */
   checkState(count = 0, hasAssociated = false) {
-    // Remove the tooltip. A new one will be created based on the
-    // information provided.
-    this.$node.tooltip("destroy");
-    if (hasAssociated) {
-      this.$node.parent().addClass("disabled");
-      // Activate the tooltip
-      this.$node.tooltip({
-        container: "body",
-        placement: "right",
-        title: this.$node.data("associatedMsg")
-      });
-    } else {
-      if (count < this.$node.data("enabledAt")) {
-        this.$node.parent().addClass("disabled");
-        // Activate the tooltip
-        this.$node.tooltip({
-          container: "body",
-          placement: "right",
-          title: this.$node.data("enabledMsg")
-        });
-      } else {
-        this.$node.parent().removeClass("disabled");
-      }
-    }
+    checkState.call(this, count, hasAssociated);
   }
 }
