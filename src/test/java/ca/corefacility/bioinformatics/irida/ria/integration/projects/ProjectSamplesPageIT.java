@@ -72,7 +72,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue("Copy option should be enabled", page.isCopyBtnEnabled());
 		assertTrue("Move option should be enabled", page.isMoveBtnEnabled());
 		assertTrue("Remove option should be enabled", page.isRemoveBtnEnabled());
-//		page.openExportDropdown();
+		page.closeToolsDropdown();
 //		assertTrue("Download option should be enabled", page.isDownloadBtnEnabled());
 //		assertTrue("NCBI Export option should be enabled", page.isNcbiBtnEnabled());
 
