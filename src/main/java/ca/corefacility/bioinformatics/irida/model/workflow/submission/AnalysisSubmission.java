@@ -194,13 +194,14 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 
 		this.name = (builder.name != null) ? builder.name : "Unknown";
 		this.inputFiles = builder.inputFiles;
-		this.inputParameters = (builder.inputParameters != null) ? ImmutableMap.copyOf(builder.inputParameters)
-				: ImmutableMap.of();
+		this.inputParameters = (builder.inputParameters != null) ?
+				ImmutableMap.copyOf(builder.inputParameters) :
+				ImmutableMap.of();
 		this.referenceFile = builder.referenceFile;
 		this.workflowId = builder.workflowId;
 		this.namedParameters = builder.namedParameters;
 		this.analysisDescription = (builder.analysisDescription);
-		this.priority = priority;
+		this.priority = builder.priority;
 	}
 
 	/**
@@ -493,7 +494,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 		private Map<String, String> inputParameters;
 		private IridaWorkflowNamedParameters namedParameters;
 		private String analysisDescription;
-		private Priority priority;
+		private Priority priority = Priority.MEDIUM;
 
 		/**
 		 * Creates a new {@link Builder} with a workflow id.
@@ -714,6 +715,6 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	public enum Priority {
 		LOW,
 		MEDIUM,
-		HIGH
+		HIGH;
 	}
 }

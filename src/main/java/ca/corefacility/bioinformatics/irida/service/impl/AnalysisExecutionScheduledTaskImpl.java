@@ -77,6 +77,10 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
 					.findByAnalysisState(AnalysisState.NEW);
 
+			analysisSubmissions.sort((a1, a2) -> {
+				return a2.getPriority().compareTo(a1.getPriority());
+			});
+
 			Set<Future<AnalysisSubmission>> submissions = Sets.newHashSet();
 
 			// check to see if execution service wants any more jobs
