@@ -2,8 +2,11 @@ package ca.corefacility.bioinformatics.irida.ria.web.models;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import com.google.common.base.Strings;
 
 /**
  * User Interface model for available field to filter the Project Samples by.
@@ -14,12 +17,11 @@ public class UISampleFilter {
 
 	private String name;
 	private String organism;
-	private List<Long> associated;
-	private Date startDate;
-	private Date endDate;
+	private String startDate;
+	private String endDate;
 
 	public String getName() {
-		return name;
+		return Strings.isNullOrEmpty(name) ? "" : name;
 	}
 
 	public void setName(String name) {
@@ -27,41 +29,41 @@ public class UISampleFilter {
 	}
 
 	public String getOrganism() {
-		return organism;
+		return Strings.isNullOrEmpty(organism) ? "" : organism;
 	}
 
 	public void setOrganism(String organism) {
 		this.organism = organism;
 	}
 
-	public List<Long> getAssociated() {
-		return associated;
-	}
-
-	public void setAssociated(List<Long> associated) {
-		this.associated = associated;
-	}
-
 	public Date getStartDate() {
-		return startDate;
+		if (Strings.isNullOrEmpty(startDate)) {
+			return null;
+		} else {
+			return new Date(Long.valueOf(startDate));
+		}
 	}
 
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
+	public void setStartDate(String date) {
+		this.startDate = date;
 	}
 
 	public Date getEndDate() {
-		return endDate;
+		if (Strings.isNullOrEmpty(endDate)) {
+			return null;
+		} else {
+			return new Date(Long.valueOf(endDate));
+		}
 	}
 
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
+	public void setEndDate(String date) {
+		this.endDate = date;
 	}
 
 	public String getDateRange() {
-		if (startDate == null || endDate == null) {
+		if (Strings.isNullOrEmpty(this.startDate) || Strings.isNullOrEmpty(this.endDate)) {
 			return "";
 		}
-		return dateRangeFormatter.format(startDate) + " - " + dateRangeFormatter.format(endDate);
+		return dateRangeFormatter.format(this.getStartDate()) + " - " + dateRangeFormatter.format(this.getEndDate());
 	}
 }
