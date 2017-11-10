@@ -6,13 +6,13 @@
         <div class="modal-body">
             <div class="form-group">
                 <label for="js-name" th:text="#{project.sample.filter-name}">Sample NAME</label>
-                <input type="text" class="form-control t-name-filter" id="js-name"/>
+                <input type="text" class="form-control t-name-filter" id="js-name" th:value="${filter.getName()}"/>
             </div>
             <div class="form-group">
                 <label for="js-organism" th:text="#{project.sample.filter-organism}">Sample Organism</label>
                 <select name="organism" id="js-organism" th:value="${filter.getOrganism()}"
                         class="form-control">
-                    <option th:each="organism : ${organisms}" th:value="${organism}" th:text="${organism}"></option>
+                    <option th:each="organism : ${organisms}" th:value="${organism}" th:selected="${#strings.equals(filter.getOrganism(), organism)}" th:text="${organism}"></option>
                 </select>
             </div>
             <div class="form-group">
