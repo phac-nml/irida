@@ -7,6 +7,10 @@ const $organismFilter = $("#js-organism");
 const $nameFilter = $("#js-name");
 const $dateRangeFilter = $("#js-daterange");
 
+/*
+Set up the date range filter.
+This is based of off jquery date range picker (http://www.daterangepicker.com/)
+ */
 const dateRangePicker = $dateRangeFilter
   .daterangepicker({
     autoUpdateInput: false,
@@ -34,25 +38,38 @@ const dateRangePicker = $dateRangeFilter
     }
   })
   .on("apply.daterangepicker", function(ev, picker) {
+    /*
+    Call the the apply button is clicked.
+    Formats the dates into human readable form.  This is required since we disabled
+    the update of the input field (autoUpdateInput: false) to allow for an empty field to begin with.
+     */
     $(this).val(
       `${picker.startDate.format(
         window.PAGE.i18n.dateFilter.format
       )} - ${picker.endDate.format(window.PAGE.i18n.dateFilter.format)}`
     );
   })
-  .on("cancel.daterangepicker", function(ev, picker) {
+  .on("cancel.daterangepicker", function() {
     $(this).val("");
   });
 
 $("#js-do-filter").on("click", function() {
   const filters = {};
+  /*
+  Apply the filters to the table.
+   */
 
+  // Check to see if the name filter needs to be applied.
   if ($nameFilter.val()) {
     filters[FILTERS.FILTER_BY_NAME] = $nameFilter.val();
   }
+
+  // Check to see if the organism filter needs tobe applied.
   if ($organismFilter.val()) {
     filters[FILTERS.FILTER_BY_ORGANISM] = $organismFilter.val();
   }
+
+  // Check to see if the date range filter needs to be applied.
   if ($dateRangeFilter.val()) {
     console.log($dateRangeFilter.val());
     const dateranges = dateRangePicker.data("daterangepicker");
@@ -62,6 +79,9 @@ $("#js-do-filter").on("click", function() {
     filters[FILTERS.FILTER_BY_LATEST_DATE] = endDate;
   }
 
+  /*
+  Close the modal and return the values so the table can be updated.
+   */
   $("#js-filter-modal-wrapper").trigger(
     SAMPLE_EVENTS.SAMPLE_FILTER_CLOSED,
     filters
