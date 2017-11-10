@@ -399,6 +399,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 				AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
 				builder.name(name + "_" + s.getSampleName());
 				builder.inputFiles(ImmutableSet.of(samplesMap.get(s)));
+				builder.priority(AnalysisSubmission.Priority.MEDIUM);
 
 				// Add reference file
 				if (ref != null && description.requiresReference()) {
@@ -483,6 +484,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 			String newAnalysisDescription, List<Project> projectsToShare) {
 		AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
 		builder.name(name);
+		builder.priority(AnalysisSubmission.Priority.MEDIUM);
 		IridaWorkflowDescription description = workflow.getWorkflowDescription();
 
 		// Add reference file
