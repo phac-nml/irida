@@ -48,15 +48,15 @@ export class SampleExportButton {
     const $node = $(node);
     this.$node = $node;
     this.$node.on("click", function() {
-      clickHandler.call($node);
+      if (!this.$node.parent().hasClass("disabled")) {
+        clickHandler.call($node);
+      }
     });
     this.checkState();
   }
 
   checkState(count = 0, hasAssociated = false) {
-    if (!this.$node.parent().hasClass("disabled")) {
-      checkState.call(this, count, hasAssociated);
-    }
+    checkState.call(this, count, hasAssociated);
   }
 }
 
