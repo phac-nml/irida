@@ -286,8 +286,7 @@ public class ProjectSamplesController {
 	 *
 	 * @param projectId
 	 * 		{@link Long} identifier for the current {@link Project}
-	 * @param associated
-	 * 		{@link List} of {@link Long} identifiers for visible associated {@link Project}
+	 * @param filter {@link UISampleFilter} Current filter parameters.
 	 * @param model
 	 * 		Spring {@link Model}
 	 *
@@ -297,12 +296,24 @@ public class ProjectSamplesController {
 	public String getProjectSamplesFilterModal(@PathVariable Long projectId, UISampleFilter filter, Model model) {
 		model.addAttribute("filter", filter);
 
+		/*
+		If no associated project ids are passed in the filter, then the list is never initialized,
+		and needs to be initialized.
+		 */
 		List<Long> ids = filter.getAssociated();
 		if (ids == null) {
 			ids = new ArrayList<>();
 		}
+		/*
+		Add the current project to the list of project ids to ensure that we get the organisms
+		that are associated with the current project.
+		 */
 		ids.add(projectId);
 
+		/*
+		Create an alphabetically organized list of unique values of all the different organisms
+		that are in the current and all associated projects.
+		 */
 		Set<String> organismSet = new HashSet<>();
 		for (Long id : ids) {
 			Project project = projectService.read(id);
