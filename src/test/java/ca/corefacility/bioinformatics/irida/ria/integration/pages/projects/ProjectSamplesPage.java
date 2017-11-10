@@ -226,33 +226,33 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public boolean isDownloadBtnEnabled() {
-		return isAnchorElementDisabled(downloadBtn);
+		return isAnchorElementEnabled(downloadBtn);
 	}
 
 	public boolean isNcbiBtnEnabled() {
 		return !ncbiBtn.getAttribute("class").contains("disabled");
 	}
 
-	private boolean isAnchorElementDisabled(WebElement element) {
+	private boolean isAnchorElementEnabled(WebElement element) {
 		// Using xpath because for anchor elements in dropdowns, bootstrap adds
 		// the disabled class it the parent li element.
 		return !element.findElement(By.xpath("./..")).getAttribute("class").contains("disabled");
 	}
 
 	public boolean isMergeBtnEnabled() {
-		return isAnchorElementDisabled(mergeBtn);
+		return isAnchorElementEnabled(mergeBtn);
 	}
 
 	public boolean isCopyBtnEnabled() {
-		return isAnchorElementDisabled(copyBtn);
+		return isAnchorElementEnabled(copyBtn);
 	}
 
 	public boolean isMoveBtnEnabled() {
-		return isAnchorElementDisabled(moveBtn);
+		return isAnchorElementEnabled(moveBtn);
 	}
 
 	public boolean isRemoveBtnEnabled() {
-		return isAnchorElementDisabled(removeBtn);
+		return isAnchorElementEnabled(removeBtn);
 	}
 
 	// PAGINATION
