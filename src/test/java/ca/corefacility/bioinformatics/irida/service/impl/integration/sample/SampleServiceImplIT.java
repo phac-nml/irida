@@ -45,10 +45,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
-import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
@@ -78,10 +75,6 @@ public class SampleServiceImplIT {
 	private AnalysisSubmissionService analysisSubmissionService;
 	@Autowired
 	private Path outputFileBaseDirectory;
-	@Autowired
-	private AnalysisSubmissionRepository analysisSubmissionRepository;
-	@Autowired
-	private AnalysisRepository analysisRepository;
 
 	/**
 	 * Variation in a floating point number to be considered equal.
@@ -391,12 +384,7 @@ public class SampleServiceImplIT {
 	@WithMockUser(username = "fbristow", roles="USER")
 	public void testGetGenomeAssemblyForSampleSuccess() throws AnalysisAlreadySetException {
 		Path expectedAssemblyPath = outputFileBaseDirectory.resolve("testfile.fasta");
-		
 		Sample s = sampleService.read(1L);
-		AnalysisSubmission analysisSubmission = analysisSubmissionRepository.findOne(2L);
-		Analysis analysis = analysisRepository.findOne(5L);
-		analysisSubmission.setAnalysis(analysis);
-		analysisSubmissionRepository.save(analysisSubmission);
 				
 		GenomeAssembly genomeAssembly = sampleService.getGenomeAssemblyForSample(s, 1L);
 		assertEquals("should have same path for assembly", expectedAssemblyPath, genomeAssembly.getFile());
