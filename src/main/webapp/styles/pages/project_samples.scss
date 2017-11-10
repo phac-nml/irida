@@ -51,3 +51,18 @@
   max-height: 200px;
   overflow-y: auto;
 }
+
+.linker-form {
+  .copy-error,
+  .copy-success {
+    display: none !important;
+  }
+
+  &.has-success .copy-success {
+    display: block !important;
+  }
+
+  &.has-error .copy-error {
+    display: block !important;
+  }
+}

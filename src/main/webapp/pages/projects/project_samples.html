@@ -26,7 +26,6 @@
             remove: /*[[@{/projects/{id}/ajax/samples/delete(id=${project.getId()})}]]*/ '',
             copy: /*[[@{/projects/{id}/ajax/samples/copy(id=${project.getId()})}]]*/ '',
             ncbi: /*[[@{/projects/{id}/export/ncbi(id=${project.getId()})}]]*/ '/projects/1/export/ncbi',
-            linker: /*[[@{/projects/template/samples/linker}]]*/ '/projects/1/samples/linker',
             export: /*[[@{/projects/{id}/samples/export(id=${project.getId()})}]]*/ 'projects/1/samples/export',
             idList: /*[[@{/samples/idList}]]*/ "/samples/idList",
             sampleIds: /*[[@{/projects/{id}/ajax/sampleIds(id=${project.getId()})}]]*/ '/projects/{projectId}/ajax/sampleIds'
@@ -183,6 +182,16 @@
                                    data:enabled-msg="#{project.samples.tooltip.download.requires-more-than-one}">
                                     <i class="fa fa-download fa-fw space-after__sm" aria-hidden="true"></i>
                                     <th:block th:text="#{project.samples.export.download}"/>
+                                </a>
+                            </li>
+                            <li th:if="${linkerAvailable}" role="menuitem">
+                                <a href="#" class="js-sample-tool-btn"
+                                   data-toggle="tooltip" data-enabled-at="0"
+                                   data:url="@{/projects/{projectId}/templates/linker-modal(projectId=${project.getId()})}"
+                                   data:script="@{/resources/js/build/project-samples-linker.bundle.js}"
+                                   data:associated-msg="#{project.samples.only-for-project-tooltip}">
+                                    <i class="fa fa-terminal fa-fw space-right__sm" aria-hidden="true"></i>
+                                    <th:block th:text="#{project.samples.export.linker}"/>
                                 </a>
                             </li>
                         </ul>
@@ -357,14 +366,7 @@
     <!--<div style="display: inline-block;" uib-dropdown="">-->
 
 
-    <!--<li id="linker-btn" th:if="${linkerAvailable}" role="menuitem"-->
-    <!--ng-class="{disabled: toolsCtrl.disabled.hasAssociated}"-->
-    <!--tooltip-enable="toolsCtrl.disabled.hasAssociated"-->
-    <!--uib-tooltip-template="'linker.msg.tmpl'">-->
-    <!--<a href="#" ng-click="toolsCtrl.linker()">-->
-    <!--<i class="fa fa-terminal fa-fw" aria-hidden="true"></i>&nbsp;<th:block th:text="#{project.samples.export.linker}"/>-->
-    <!--</a>-->
-    <!--</li>-->
+
     <!--<li role="menuitem"-->
     <!--th:if="${galaxyCallback}"-->
     <!--ng-class="{disabled: toolsCtrl.disabled.hasAssociated}">-->
