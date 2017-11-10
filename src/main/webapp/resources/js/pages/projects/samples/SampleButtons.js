@@ -54,7 +54,9 @@ export class SampleExportButton {
   }
 
   checkState(count = 0, hasAssociated = false) {
-    checkState.call(this, count, hasAssociated);
+    if (!this.$node.parent().hasClass("disabled")) {
+      checkState.call(this, count, hasAssociated);
+    }
   }
 }
 
