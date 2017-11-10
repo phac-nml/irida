@@ -177,6 +177,8 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	@Lob
 	private String analysisDescription;
 
+	@NotNull
+	@Enumerated(EnumType.STRING)
 	private Priority priority;
 
 	/**
@@ -683,7 +685,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	@Override
 	public int hashCode() {
 		return Objects.hash(name, workflowId, remoteAnalysisId, remoteInputDataId, remoteWorkflowId, createdDate,
-				modifiedDate, analysisState, analysisCleanedState, analysis, referenceFile, namedParameters, submitter);
+				modifiedDate, analysisState, analysisCleanedState, analysis, referenceFile, namedParameters, submitter, priority);
 	}
 
 	@Override
@@ -697,8 +699,9 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 					&& Objects.equals(remoteWorkflowId, p.remoteWorkflowId)
 					&& Objects.equals(analysisState, p.analysisState)
 					&& Objects.equals(analysisCleanedState, p.analysisCleanedState)
-					&& Objects.equals(referenceFile, p.referenceFile)
-					&& Objects.equals(namedParameters, p.namedParameters) && Objects.equals(submitter, p.submitter);
+					&& Objects.equals(referenceFile, p.referenceFile) && Objects
+					.equals(namedParameters, p.namedParameters) && Objects.equals(submitter, p.submitter) && Objects
+					.equals(priority, p.priority);
 		}
 
 		return false;
