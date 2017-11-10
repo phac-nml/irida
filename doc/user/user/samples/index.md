@@ -8,7 +8,7 @@ Managing Samples
 ================
 {:.no_toc}
 
-Each [project](../project) in IRIDA may contain a collection of samples that corresponds to an isolate. Each sample may contain several sequencing files, either paired-end, single-end, or both. This section of the user guide describes how you can view samples, manage samples (merging, copying, renaming, exporting), and search for samples by name.
+Each [project](../project) in IRIDA may contain a collection of samples that corresponds to an isolate. Each sample may contain several sequencing files, either paired-end or single-end, or several assembled genomes. This section of the user guide describes how you can view samples, manage samples (merging, copying, renaming, exporting), and search for samples by name.
 
 * This comment becomes the toc
 {:toc}
@@ -48,6 +48,10 @@ You can provide as many or as few sample details that you want -- the sample det
 
 ### Viewing associated files
 
+Samples can have two different types of associated files, either **Sequence Files** which are produced by a sequencing instrument, or **Assemblies** which consist of the re-constructed genome from the sequence reads.
+
+![sample-associated-files](images/sample-associated-files.png)
+
 #### Viewing Sequence Files
 
 {% include tutorials/common/samples/view-sequence-files.md %}
@@ -85,23 +89,34 @@ Once you have selected your files to concatenate, you have the following options
 
 Once you have selected your files and selected your options, click *Submit* to begin the concatenation.  This may take a while, so you should stay on this page until the process is complete.  Once your files are concatenated, you will be redirected back to the sample-files page.
 
-#### Viewing automated assemblies
-
-If the project manager has enabled automated assemblies for uploaded data an assembly may be shown for a sequence file.
-
-![Automated assembly](images/automated-assembly.png)
-
-The assembly status will be displayed along with a link to view the assembly results page.  For more information on viewing pipeline results see the [pipeline documentation](../pipelines/#viewing-pipeline-results)  
-
-See the [project documentation](../project#managing-automated-assemblies) for information on enabling automated assembly.
-
 #### Viewing associated assemblies
 
-Samples can also be associated with assembled genomes.  By default, any automated assemblies for uploaded sequencing data will be associated with a sample under the **Assemblies** section.
+Samples can also be associated with assembled genomes.
 
 ![sample-automated-assembly](images/sample-automated-assembly.png)
 
-Manually-run assemblies through IRIDA may also be saved back to the associated sample from the [Launch Pipelines](../pipelines/#saving-pipeline-results-to-a-sample) page.
+Associating assembled genomes with samples can occur in two ways:
+
+1. By enabling [automated assemblies](../project/#automated-pipelines), which will be triggered on upload of sequencing files in the appropriate project.
+2. Or by selecting the option to save assemblies back to a sample from the [Launch Pipelines](../pipelines/#saving-pipeline-results-to-a-sample) page.
+
+The assembled genome file can be downloaded by clicking the <span class="fa fa-fw fa-download"></span> icon.
+
+#### Deleting associated assemblies
+
+Assembled genomes may be deleted from a sample by selecting the <img src="images/delete-icon.png" alt="Delete icon" class="inline"> icon.
+
+![delete-sample-assembly](images/delete-sample-assembly.png)
+
+#### Viewing automated assemblies associated with sequecing file
+
+If the project manager has enabled automated assemblies for uploaded data an assembly will be shown associated with the particular sequence files used to generate the assembled genome.
+
+![Automated assembly](images/automated-assembly.png)
+
+The assembly status will be displayed along with a link to view the assembly results page.  On completion, the assembled genome will be associated with the sample.  For more information on viewing pipeline results see the [pipeline documentation](../pipelines/#viewing-pipeline-results)  
+
+See the [project documentation](../project#automated-pipelines) for information on enabling automated assembly.
 
 Adding a new sample
 -------------------
