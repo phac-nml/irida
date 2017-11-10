@@ -108,7 +108,7 @@ Assembled genomes may be deleted from a sample by selecting the <img src="images
 
 ![delete-sample-assembly](images/delete-sample-assembly.png)
 
-#### Viewing automated assemblies associated with sequecing file
+#### Viewing automated assemblies associated with sequencing files
 
 If the project manager has enabled automated assemblies for uploaded data an assembly will be shown associated with the particular sequence files used to generate the assembled genome.
 

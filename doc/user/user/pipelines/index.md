@@ -8,12 +8,7 @@ Launching Pipelines
 ===================
 {:.no_toc}
 
-IRIDA currently provides two different pipelines for analysing your sequencing data:
-
-1. The SNVPhyl whole-genome phylogeny pipeline ([poster](https://share.corefacility.ca/public.php?service=files&t=b1fef5379e23b663d308db9ebb5b6bb5&download)), and
-2. An assembly ([SPAdes](http://bioinf.spbau.ru/spades)) and annotation ([Prokka](http://www.vicbioinformatics.com/software.prokka.shtml)) pipeline.
-
-These pipelines take as input a set of sequencing read files from different samples. The samples must first be added to a cart before a pipeline can be run.
+IRIDA provides multiple analysis pipelines for analysing your sequencing data.  These pipelines take as input a set of sequencing read files from different samples. The samples must first be added to a cart before a pipeline can be run.
 
 * this comment becomes the toc
 {:toc}
@@ -59,7 +54,7 @@ Once you've selected the samples that you want to analyse and [added them to the
 
 ![Select a pipeline button.](images/select-a-pipeline-button.png)
 
-The pipelines page will allow you to choose from the pipelines that are currently configured in IRIDA. IRIDA currently has two pipelines:
+The pipelines page will allow you to choose from the pipelines that are currently configured in IRIDA. IRIDA has multiple pipelines:
 
 ![Select a pipeline page.](images/select-a-pipeline-page.png)
 
@@ -69,11 +64,11 @@ Click on the "Select" button at the bottom, right-hand side of the pipeline that
 
 ![Reference file required.](images/reference-file-required.png)
 
-If you have the <img src="images/manager-icon.png" class="inline" alt="Manager role icon."> **Manager** role on a project, you can [add a reference file to the project](../project/#adding-reference-files-to-a-project). Reference files added to a project can be shared with all other project members.
+If you have the <img src="images/manager-icon.png" class="inline" alt="Manager role icon."> **Manager** role on a project, you can [add a reference file to the project](../project/#reference-files). Reference files added to a project can be shared with all other project members.
 
 If you do not have the <img src="images/manager-icon.png" class="inline" alt="Manager role icon."> **Manager** role on a project, or you would just like to upload a reference file for *this* pipeline, you can add a new reference file to the analysis by clicking on the "{% icon fa-upload %} Upload New" button. If you upload a reference to the analysis instead of the project, no other users will be able to see or use the file you've uploaded.
 
-When you select a pipeline that doesn't require a reference file (or you've already [uploaded one](../project/#adding-reference-files-to-a-project)), you will be presented with a list of the samples that you've selected for analysis in the pipeline:
+When you select a pipeline that doesn't require a reference file (or you've already [uploaded one](../project/#reference-files)), you will be presented with a list of the samples that you've selected for analysis in the pipeline:
 
 ![Pipeline samples.](images/pipeline-samples.png)
 
