@@ -104,26 +104,25 @@ public class SampleServiceImplIT {
 	 */
 	@Test
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
-	public void testMergeSamples() {
+	public void testMergeSamplesIntoSample1() {
 		Sample mergeInto = sampleService.read(1L);
 		Sample sample2 = sampleService.read(2L);
 		Sample sample3 = sampleService.read(3L);
 		Project p = projectService.read(1L);
 
-		assertEquals("Sample 1 should only have genome assembly 1 before", Lists.newArrayList(1L),
-				sampleGenomeAssemblyJoinRepository.findBySample(mergeInto).stream().map(t -> t.getObject())
+		assertEquals("Sample 1 should only have genome assembly 1", Lists.newArrayList(1L),
+				sampleGenomeAssemblyJoinRepository.findBySample(mergeInto).stream().map(t -> t.getObject().getId())
 						.collect(Collectors.toList()));
-		assertEquals("Sample 2 should only have genome assembly 2 before", Lists.newArrayList(2L),
-				sampleGenomeAssemblyJoinRepository.findBySample(sample2).stream().map(t -> t.getObject())
+		assertEquals("Sample 2 should only have genome assembly 2", Lists.newArrayList(2L),
+				sampleGenomeAssemblyJoinRepository.findBySample(sample2).stream().map(t -> t.getObject().getId())
 						.collect(Collectors.toList()));
 		assertTrue("Sample 3 should have no genome assemblies before",
 				sampleGenomeAssemblyJoinRepository.findBySample(sample3).isEmpty());
 
 		assertNotNull("Join between sample 2 and genome assembly 2 should exist",
-				sampleGenomeAssemblyJoinRepository.findOne(2L));
+				sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(2L, 2L));
 
-		Sample merged = sampleService.mergeSamples(p, mergeInto,
-				Lists.newArrayList(sampleService.read(2L), sampleService.read(3L)));
+		Sample merged = sampleService.mergeSamples(p, mergeInto, Lists.newArrayList(sample2, sample3));
 
 		assertEquals("Merged sample should be same as mergeInto.", mergeInto, merged);
 
@@ -132,14 +131,61 @@ public class SampleServiceImplIT {
 		assertSampleNotFound(3L);
 
 		assertNull("Join between sample 2 and genome assembly 2 should not exist",
-				sampleGenomeAssemblyJoinRepository.findOne(2L));
+				sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(2L, 2L));
 
 		// the merged sample should have 3 sequence files
 		assertEquals("Merged sample should have 3 sequence files", 3,
 				objectService.getSequencingObjectsForSample(merged).size());
 
 		assertEquals("Sample 1 should only have genome assemblies 1 and 2", Lists.newArrayList(1L, 2L),
-				sampleGenomeAssemblyJoinRepository.findBySample(mergeInto).stream().map(t -> t.getObject())
+				sampleGenomeAssemblyJoinRepository.findBySample(mergeInto).stream().map(t -> t.getObject().getId())
+						.collect(Collectors.toList()));
+	}
+
+	/**
+	 * Straightforward merging of samples all belonging to the same project.
+	 */
+	@Test
+	@WithMockUser(username = "fbristow", roles = "ADMIN")
+	public void testMergeSamplesIntoSample3() {
+		Sample mergeInto = sampleService.read(3L);
+		Sample sample1 = sampleService.read(1L);
+		Sample sample2 = sampleService.read(2L);
+		Project p = projectService.read(1L);
+
+		assertEquals("Sample 1 should only have genome assembly 1", Lists.newArrayList(1L),
+				sampleGenomeAssemblyJoinRepository.findBySample(sample1).stream().map(t -> t.getObject().getId())
+						.collect(Collectors.toList()));
+		assertEquals("Sample 2 should only have genome assembly 2", Lists.newArrayList(2L),
+				sampleGenomeAssemblyJoinRepository.findBySample(sample2).stream().map(t -> t.getObject().getId())
+						.collect(Collectors.toList()));
+		assertTrue("Sample 3 should have no genome assemblies before",
+				sampleGenomeAssemblyJoinRepository.findBySample(mergeInto).isEmpty());
+
+		assertNotNull("Join between sample 2 and genome assembly 2 should exist",
+				sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(2L, 2L));
+		assertNotNull("Join between sample 1 and genome assembly 1 should exist",
+				sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(1L, 1L));
+
+		Sample merged = sampleService.mergeSamples(p, mergeInto, Lists.newArrayList(sample1, sample2));
+
+		assertEquals("Merged sample should be same as mergeInto.", mergeInto, merged);
+
+		// merged samples should be deleted
+		assertSampleNotFound(1L);
+		assertSampleNotFound(2L);
+
+		assertNull("Join between sample 2 and genome assembly 2 should not exist",
+				sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(2L, 2L));
+		assertNull("Join between sample 1 and genome assembly 1 should not exist",
+				sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(1L, 1L));
+
+		// the merged sample should have 3 sequence files
+		assertEquals("Merged sample should have 3 sequence files", 3,
+				objectService.getSequencingObjectsForSample(merged).size());
+
+		assertEquals("Sample 3 should only have genome assemblies 1 and 2", Lists.newArrayList(1L, 2L),
+				sampleGenomeAssemblyJoinRepository.findBySample(mergeInto).stream().map(t -> t.getObject().getId())
 						.collect(Collectors.toList()));
 	}
 
