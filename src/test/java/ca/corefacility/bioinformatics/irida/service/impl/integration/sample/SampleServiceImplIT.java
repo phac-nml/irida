@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.service.impl.integration.sample;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -9,6 +10,7 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolationException;
 
@@ -46,6 +48,8 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGenomeAssemblyJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
@@ -75,6 +79,10 @@ public class SampleServiceImplIT {
 	private AnalysisSubmissionService analysisSubmissionService;
 	@Autowired
 	private Path outputFileBaseDirectory;
+	@Autowired
+	private SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository;
+	@Autowired
+	private SampleRepository sampleRepository;
 
 	/**
 	 * Variation in a floating point number to be considered equal.
@@ -98,7 +106,21 @@ public class SampleServiceImplIT {
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
 	public void testMergeSamples() {
 		Sample mergeInto = sampleService.read(1L);
+		Sample sample2 = sampleService.read(2L);
+		Sample sample3 = sampleService.read(3L);
 		Project p = projectService.read(1L);
+
+		assertEquals("Sample 1 should only have genome assembly 1 before", Lists.newArrayList(1L),
+				sampleGenomeAssemblyJoinRepository.findBySample(mergeInto).stream().map(t -> t.getObject())
+						.collect(Collectors.toList()));
+		assertEquals("Sample 2 should only have genome assembly 2 before", Lists.newArrayList(2L),
+				sampleGenomeAssemblyJoinRepository.findBySample(sample2).stream().map(t -> t.getObject())
+						.collect(Collectors.toList()));
+		assertTrue("Sample 3 should have no genome assemblies before",
+				sampleGenomeAssemblyJoinRepository.findBySample(sample3).isEmpty());
+
+		assertNotNull("Join between sample 2 and genome assembly 2 should exist",
+				sampleGenomeAssemblyJoinRepository.findOne(2L));
 
 		Sample merged = sampleService.mergeSamples(p, mergeInto,
 				Lists.newArrayList(sampleService.read(2L), sampleService.read(3L)));
@@ -109,9 +131,16 @@ public class SampleServiceImplIT {
 		assertSampleNotFound(2L);
 		assertSampleNotFound(3L);
 
+		assertNull("Join between sample 2 and genome assembly 2 should not exist",
+				sampleGenomeAssemblyJoinRepository.findOne(2L));
+
 		// the merged sample should have 3 sequence files
 		assertEquals("Merged sample should have 3 sequence files", 3,
 				objectService.getSequencingObjectsForSample(merged).size());
+
+		assertEquals("Sample 1 should only have genome assemblies 1 and 2", Lists.newArrayList(1L, 2L),
+				sampleGenomeAssemblyJoinRepository.findBySample(mergeInto).stream().map(t -> t.getObject())
+						.collect(Collectors.toList()));
 	}
 
 	/**
