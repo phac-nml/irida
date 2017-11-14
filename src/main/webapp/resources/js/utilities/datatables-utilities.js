@@ -37,9 +37,8 @@ import { createIcon, ICONS } from "./fontawesome-utilities";
 const dom = `
 <".row"
   <"col-md-6 col-sm-12 buttons"B><"#dt-filters.col-md-6 col-sm-12"f>>
-<".row"<"col-md-12 selected-counts">>
-<".row"
-  <"col-md-12 filter-tags"<"filter-tags__space">>
+<".row"<"col-md-3 selected-counts">
+  <"col-md-9 filter-tags"<"filter-tags__space">>
 >
 <"dt-table-wrapper"rt>
 <"row"
@@ -214,5 +213,31 @@ export function createFilterTag({ text, type, handler }) {
       handler();
     });
     $filterTags.append($tag);
+  }
+}
+
+export function displayFilters(filters, formaters) {
+  // This should be set by datatable.
+  const $dt = this;
+  const elm = $(".filter-tags");
+  /*
+    Clear any filters that might be display
+     */
+  const wrapper = $(`<div class="filter-chip--wrapper"></div>`);
+  elm.html(wrapper);
+
+  for (let [key, value] of filters.entries()) {
+    if (formaters.hasOwnProperty(key)) {
+      console.log("BOO");
+      value = formaters[key](value);
+    }
+    const chip = $(
+      `<span class="filter-chip--chip">${key} : ${value} <i class="fa fa-times-circle filter-chip--close" title="remove" aria-hidden="true"></i></span>`
+    );
+    chip.on("click", ".filter-chip--close", function() {
+      filters.delete(key);
+      $dt.ajax.reload();
+    });
+    wrapper.append(chip);
   }
 }

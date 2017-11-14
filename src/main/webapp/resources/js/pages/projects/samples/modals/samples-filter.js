@@ -13,6 +13,8 @@ This is based of off jquery date range picker (http://www.daterangepicker.com/)
  */
 const dateRangePicker = $dateRangeFilter
   .daterangepicker({
+    startDate: $("[name=startDate]").val(),
+    endDate: $("[name=endDate]").val(),
     autoUpdateInput: false,
     locale: {
       cancelLabel: "Clear"
@@ -71,7 +73,6 @@ $("#js-do-filter").on("click", function() {
 
   // Check to see if the date range filter needs to be applied.
   if ($dateRangeFilter.val()) {
-    console.log($dateRangeFilter.val());
     const dateranges = dateRangePicker.data("daterangepicker");
     const startDate = dateranges.startDate.toDate().getTime();
     const endDate = dateranges.endDate.toDate().getTime();

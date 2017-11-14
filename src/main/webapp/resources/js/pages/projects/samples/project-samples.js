@@ -2,6 +2,7 @@ import $ from "jquery";
 import chroma from "chroma-js";
 import {
   createItemLink,
+  displayFilters,
   generateColumnOrderInfo,
   tableConfig
 } from "../../../utilities/datatables-utilities";
@@ -17,6 +18,7 @@ import {
 } from "./SampleButtons";
 import { FILTERS, SAMPLE_EVENTS } from "./constants";
 import { download } from "../../../utilities/file.utilities";
+import moment from "moment";
 
 /*
 This is required to use select2 inside a modal.
@@ -103,6 +105,15 @@ const ASSOCIATED_PROJECTS = new Map();
  */
 const TABLE_FILTERS = new Map();
 
+const tableFilterFormaters = {
+  startDate(date) {
+    return moment(date).format(window.PAGE.i18n.dateFilter.format);
+  },
+  endDate(date) {
+    return moment(date).format(window.PAGE.i18n.dateFilter.format);
+  }
+};
+
 /**
  * Reference to the colour for a specific project.
  * @type {Map}
@@ -162,6 +173,8 @@ const config = Object.assign({}, tableConfig, {
       for (let [key, value] of TABLE_FILTERS) {
         d[key] = value;
       }
+
+      displayFilters.call($dt, TABLE_FILTERS, tableFilterFormaters);
     }
   },
   stateSave: true,
