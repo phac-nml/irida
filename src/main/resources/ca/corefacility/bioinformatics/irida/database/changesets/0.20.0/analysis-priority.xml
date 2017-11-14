@@ -5,7 +5,7 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <changeSet id="last-login" author="tom">
+    <changeSet id="analysis-priority" author="tom">
 
         <addColumn tableName="analysis_submission">
             <column name="priority" type="varchar(255)"/>
