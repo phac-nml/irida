@@ -101,13 +101,19 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(className = "select2-results__options")
 	private WebElement select2Results;
 
-	@FindBy(id = "filterByPropertyBtn")
+	@FindBy(className = "t-filters-btn")
 	private WebElement filterByPropertyBtn;
+
+	@FindBy(className = "t-apply-filter-btn")
+	private WebElement applyFiltersBtn;
+
+	@FindBy(className = "t-name-filter")
+	private WebElement nameFilterInput;
 
 	@FindBy(className = "filter-modal")
 	private WebElement filterModal;
 
-	@FindBy(id = "clearFilterBtn")
+	@FindBy(className = "t-clear-filters")
 	private WebElement clearFilterBtn;
 
 	// This will be 'Previous', 1, 2, ..., 'Next'
@@ -115,7 +121,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	private List<WebElement> pagination;
 
 	// Samples filter date range picker
-	@FindBy(id = "daterange")
+	@FindBy(className = "t-daterange-filter")
 	private WebElement dateRangeInput;
 
 	@FindBy(name = "daterangepicker_start")
@@ -199,12 +205,6 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-merge-btn")));
 	}
 
-	public void openExportDropdown() {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		exportSamplesDropdownBtn.click();
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("download-btn")));
-	}
-
 	public void closeToolsDropdown() {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		Actions act = new Actions(driver);
@@ -215,6 +215,11 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("t-merge-btn")));
 	}
 
+	public void openExportDropdown() {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		exportSamplesDropdownBtn.click();
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("download-btn")));
+	}
 
 	public boolean isSampleToolsAvailable() {
 		return driver.findElements(By.id("sample-tools")).size() > 0;
@@ -277,13 +282,13 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	public void selectSample(int row) {
 		// Need to get the anything but the first column as that is a link to the sample!
-		WebElement checkbox = tableRows.get(row).findElement(By.cssSelector("td input[type='checkbox']"));
+		WebElement checkbox = tableRows.get(row).findElement(By.className("t-row-select"));
 		checkbox.click();
 	}
 
 	public void selectSampleWithShift(int row) {
 		Actions actions = new Actions(driver);
-		actions.keyDown(Keys.SHIFT).click(tableRows.get(row).findElement(By.cssSelector("td input[type='checkbox']"))).perform();
+		actions.keyDown(Keys.SHIFT).click(tableRows.get(row).findElement(By.className("t-row-select"))).perform();
 		// Sometimes, that shift key never gets lifted!
 		actions.keyUp(Keys.SHIFT).perform();
 	}
@@ -348,39 +353,39 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		copyMoveSamples(projectNum, false);
 	}
 
-	public void filterByName(String name) {
+	private void openFilterModal() {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		filterByPropertyBtn.click();
-		wait.until(ExpectedConditions.visibilityOf(filterModal));
-		WebElement nameInput = filterModal.findElement(By.id("name"));
-		nameInput.clear();
-		sendInputTextSlowly(name, nameInput);
-		filterModal.findElement(By.id("doFilterBtn")).click();
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("filter-modal")));
-		// Ensure that modal fully closed.
-		waitForTime(300);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("modal-content")));
+	}
+
+	public void filterByName(String name) {
+		openFilterModal();
+
+		nameFilterInput.clear();
+		nameFilterInput.sendKeys(name);
+		applyFiltersBtn.click();
+
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("modal-content")));
 	}
 
 	public void filterByDateRange(String start, String end) {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
-		filterByPropertyBtn.click();
-		wait.until(ExpectedConditions.visibilityOf(filterModal));
-		dateRangeInput.click();
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".daterangepicker.show-calendar")));
+		openFilterModal();
 
-		Actions builder = new Actions(driver);
-		builder.moveToElement(daterangepickerStart, 100, 0).click().build().perform();
+		dateRangeInput.clear();
+		dateRangeInput.click();
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("daterangepicker")));
 
 		daterangepickerStart.clear();
-		sendInputTextSlowly(start, daterangepickerStart);
+		daterangepickerStart.sendKeys(start);
 
-		builder.moveToElement(daterangepickerEnd, 100, 10).click().build().perform();
 		daterangepickerEnd.clear();
-		sendInputTextSlowly(end, daterangepickerEnd);
+		daterangepickerEnd.sendKeys(end);
 		applyDateRangeBtn.click();
-
-		filterModal.findElement(By.id("doFilterBtn")).click();
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("filter-modal")));
+		applyFiltersBtn.click();
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("modal-content")));
 	}
 
 	public void clearFilter() {

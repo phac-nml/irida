@@ -11,7 +11,7 @@ import "./../../../vendor/datatables/datatables-buttons";
 import "./../../../vendor/datatables/datatables-rowSelection";
 import { CART } from "../../../utilities/events-utilities";
 import { SampleCartButton, SampleDropdownButton } from "./SampleButtons";
-import { SAMPLE_EVENTS } from "./constants";
+import { FILTERS, SAMPLE_EVENTS } from "./constants";
 
 /*
 This is required to use select2 inside a modal.
@@ -65,12 +65,6 @@ SAMPLE_TOOL_BUTTONS.push(cartBtn);
  */
 const ASSOCIATED_PROJECTS = new Map();
 
-/**
-Constants for the names of filters used in ajax requests.
- */
-const FILTERS = {
-  FILTER_BY_FILE: "sampleNames"
-};
 /**
  * Reference to all filters available on the table.
  * @type {Map<any, any>}
@@ -182,7 +176,7 @@ const config = Object.assign({}, tableConfig, {
       orderable: false,
       data: null,
       render() {
-        return `<input type="checkbox"/>`;
+        return `<input class="t-row-select" type="checkbox"/>`;
       },
       targets: 0
     },
@@ -412,6 +406,66 @@ function handleFileSelect(e) {
 }
 const filterByFileInput = document.querySelector("#filter-by-file");
 filterByFileInput.addEventListener("change", handleFileSelect, false);
+
+/*
+Set up specific filters modal
+ */
+$("#js-filter-modal-wrapper").on("show.bs.modal", function() {
+  const $wrapper = $(this);
+  const template = $wrapper.data("template");
+  const scriptUrl = $wrapper.data("script");
+  const params = {};
+
+  if (ASSOCIATED_PROJECTS.size > 0) {
+    // Add a list of ids for currently visible associated projects
+    params.associated = Array.from(ASSOCIATED_PROJECTS.keys());
+  }
+
+  if (TABLE_FILTERS.has(FILTERS.FILTER_BY_NAME)) {
+    params.name = TABLE_FILTERS.get(FILTERS.FILTER_BY_NAME);
+  }
+
+  if (TABLE_FILTERS.has(FILTERS.FILTER_BY_ORGANISM)) {
+    params.organism = TABLE_FILTERS.get(FILTERS.FILTER_BY_ORGANISM);
+  }
+
+  if (
+    TABLE_FILTERS.has(FILTERS.FILTER_BY_EARLY_DATE) &&
+    TABLE_FILTERS.has(FILTERS.FILTER_BY_LATEST_DATE)
+  ) {
+    params.startDate = new Date(
+      TABLE_FILTERS.get(FILTERS.FILTER_BY_EARLY_DATE)
+    );
+    params.endDate = new Date(TABLE_FILTERS.get(FILTERS.FILTER_BY_LATEST_DATE));
+  }
+
+  let script;
+  $wrapper.load(`${template}?${$.param(params)}`, function() {
+    script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = scriptUrl;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  });
+
+  /*
+  Handle applying the filters
+   */
+  $wrapper.on(SAMPLE_EVENTS.SAMPLE_FILTER_CLOSED, function(e, filters) {
+    /*
+    Add the filters to the table parameters
+     */
+    for (const filter in filters) {
+      if (filters.hasOwnProperty(filter)) {
+        TABLE_FILTERS.set(filter, filters[filter]);
+      }
+    }
+
+    /*
+    Reload the table to apply the filters
+     */
+    $dt.ajax.reload();
+  });
+});
 
 /*
 Set up the ability to clear all filters
