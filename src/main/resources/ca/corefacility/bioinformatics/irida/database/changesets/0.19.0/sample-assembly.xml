@@ -75,8 +75,8 @@
 
 		<sql>
 			<!-- Create a table to store link between sample and analysis_submission -->
-			<!-- I need to incrementing ids for any newly created genome_assemblies, which is done by creating -->
-			<!-- an incrementing key in this temporary table, and using this as the genome_assembly_id -->
+			<!-- I need to create incrementing ids for any newly created genome_assemblies, which is -->
+			<!-- done by creating an incrementing key in this temporary table, and using this as the genome_assembly_id -->
 			CREATE TEMPORARY TABLE sample_analysis_submission_0_19_0
 				(genome_assembly_id bigint(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 					sample_id bigint(20), analysis_submission_id bigint(20), now datetime);
