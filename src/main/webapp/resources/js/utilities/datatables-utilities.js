@@ -228,7 +228,6 @@ export function displayFilters(filters, formaters) {
 
   for (let [key, value] of filters.entries()) {
     if (formaters.hasOwnProperty(key)) {
-      console.log("BOO");
       value = formaters[key](value);
     }
     const chip = $(
