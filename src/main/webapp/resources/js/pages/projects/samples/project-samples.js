@@ -478,10 +478,8 @@ $("#js-filter-modal-wrapper").on("show.bs.modal", function() {
     TABLE_FILTERS.has(FILTERS.FILTER_BY_EARLY_DATE) &&
     TABLE_FILTERS.has(FILTERS.FILTER_BY_LATEST_DATE)
   ) {
-    params.startDate = new Date(
-      TABLE_FILTERS.get(FILTERS.FILTER_BY_EARLY_DATE)
-    );
-    params.endDate = new Date(TABLE_FILTERS.get(FILTERS.FILTER_BY_LATEST_DATE));
+    params.startDate = TABLE_FILTERS.get(FILTERS.FILTER_BY_EARLY_DATE);
+    params.endDate = TABLE_FILTERS.get(FILTERS.FILTER_BY_LATEST_DATE);
   }
 
   let script;

@@ -7,14 +7,18 @@ const $organismFilter = $("#js-organism");
 const $nameFilter = $("#js-name");
 const $dateRangeFilter = $("#js-daterange");
 
+function formatDateRangeInput(start, end) {
+  $dateRangeFilter.val(`${start.format(
+    window.PAGE.i18n.dateFilter.format
+  )} - ${end.format(window.PAGE.i18n.dateFilter.format)}`);
+}
+
 /*
 Set up the date range filter.
 This is based of off jquery date range picker (http://www.daterangepicker.com/)
  */
-const dateRangePicker = $dateRangeFilter
+$dateRangeFilter
   .daterangepicker({
-    startDate: $("[name=startDate]").val(),
-    endDate: $("[name=endDate]").val(),
     autoUpdateInput: false,
     locale: {
       cancelLabel: "Clear"
@@ -45,15 +49,24 @@ const dateRangePicker = $dateRangeFilter
     Formats the dates into human readable form.  This is required since we disabled
     the update of the input field (autoUpdateInput: false) to allow for an empty field to begin with.
      */
-    $(this).val(
-      `${picker.startDate.format(
-        window.PAGE.i18n.dateFilter.format
-      )} - ${picker.endDate.format(window.PAGE.i18n.dateFilter.format)}`
-    );
+    formatDateRangeInput(picker.startDate, picker.endDate);
   })
   .on("cancel.daterangepicker", function() {
     $(this).val("");
   });
+
+/*
+Initialize the daterange picker if valiues were already set
+ */
+const startInputVal = $("[name=startDate]").val();
+const endInputVal = $("[name=endDate]").val();
+if(!isNaN(Date.parse(startInputVal)) || !isNaN(Date.parse(endInputVal))) {
+  const start = moment(new Date(startInputVal));
+  $dateRangeFilter.data('daterangepicker').setStartDate(start);
+  const end = moment(new Date(endInputVal));
+  $dateRangeFilter.data('daterangepicker').setEndDate(end);
+  formatDateRangeInput(start, end);
+}
 
 $("#js-do-filter").on("click", function() {
   const filters = {};
@@ -73,7 +86,7 @@ $("#js-do-filter").on("click", function() {
 
   // Check to see if the date range filter needs to be applied.
   if ($dateRangeFilter.val()) {
-    const dateranges = dateRangePicker.data("daterangepicker");
+    const dateranges = $dateRangeFilter.data("daterangepicker");
     const startDate = dateranges.startDate.toDate().getTime();
     const endDate = dateranges.endDate.toDate().getTime();
     filters[FILTERS.FILTER_BY_EARLY_DATE] = startDate;
