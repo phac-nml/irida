@@ -293,6 +293,15 @@
 							<label for="analysis-name-input" th:text="#{analysis.edit.name}">_Analysis Name_</label>
 							<input type="text" class="form-control" id="analysis-name-input" name="name" th:value="${analysisSubmission.name}"/>
 						</div>
+						<div class="form-group" sec:authorize="hasRole('ROLE_ADMIN')">
+								<label for="analysis-name-input" th:text="#{analysis.edit.priority}">_Analysis Name_</label>
+								
+								<select class="form-control" name="priority">
+										<option 
+										  th:each="priority : ${T(ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission.Priority).values()}" 
+										  th:text="${priority}" th:value="${priority}" th:selected="${analysisSubmission.priority == priority}">_High_</option>
+									  </select>
+						</div>
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal" th:text="#{form.btn.cancel}">Close</button>

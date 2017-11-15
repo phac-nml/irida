@@ -313,7 +313,21 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#object, 'canReadAnalysisSubmission')")
 	public AnalysisSubmission update(AnalysisSubmission object) {
+		AnalysisSubmission readSubmission = read(object.getId());
+
+		if (!readSubmission.getPriority().equals(object.getPriority())) {
+			throw new IllegalArgumentException("Analysis priority must be updated by updatePriority method.");
+		}
+
 		return super.update(object);
+	}
+
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public AnalysisSubmission updatePriority(AnalysisSubmission submission, AnalysisSubmission.Priority priority) {
+		submission.setPriority(priority);
+
+		return super.update(submission);
 	}
 
 	/**

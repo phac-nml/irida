@@ -229,7 +229,8 @@ public class AnalysisController {
 	 * @return redirect to the analysis page after update
 	 */
 	@RequestMapping(value = "/{submissionId}/edit", produces = MediaType.TEXT_HTML_VALUE)
-	public String editAnalysisName(@PathVariable Long submissionId, @RequestParam String name, Model model,
+	public String editAnalysisName(@PathVariable Long submissionId, @RequestParam String name,
+			@RequestParam(required = false, defaultValue = "") AnalysisSubmission.Priority priority, Model model,
 			Locale locale) {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 
@@ -244,6 +245,10 @@ public class AnalysisController {
 			error = true;
 		}
 
+		if(priority != null){
+			analysisSubmissionService.updatePriority(submission, priority);
+		}
+
 		if (error) {
 			model.addAttribute("updateError", true);
 			return getDetailsPage(submissionId, model, locale);
@@ -251,6 +256,8 @@ public class AnalysisController {
 
 		return "redirect:/analysis/" + submissionId;
 	}
+
+
 	
 	/**
 	 * Get the status of projects that can be shared with the given analysis
