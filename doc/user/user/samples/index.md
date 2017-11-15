@@ -8,7 +8,7 @@ Managing Samples
 ================
 {:.no_toc}
 
-Each [project](../project) in IRIDA may contain a collection of samples that corresponds to an isolate. Each sample may contain several sequencing files, either paired-end or single-end, or several assembled genomes. This section of the user guide describes how you can view samples, manage samples (merging, copying, renaming, exporting), and search for samples by name.
+Each [project](../project) in IRIDA may contain a collection of samples that corresponds to an isolate. Each sample may contain several files: either sequencing files in paired-end or single-end format, or assembled genomes. This section of the user guide describes how you can view samples, manage samples (merging, copying, renaming, exporting), and search for samples by name.
 
 * This comment becomes the toc
 {:toc}
