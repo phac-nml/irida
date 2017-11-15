@@ -80,7 +80,7 @@ export class SampleExportButton {
     const $node = $(node);
     this.$node = $node;
     this.$node.on("click", function() {
-      if (!this.$node.parent().hasClass("disabled")) {
+      if (!$(this).parent().hasClass("disabled")) {
         clickHandler.call($node);
       }
     });
