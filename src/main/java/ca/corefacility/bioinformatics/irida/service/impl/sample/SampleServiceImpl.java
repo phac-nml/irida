@@ -277,6 +277,9 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		// confirm that all samples are part of the same project:
 		confirmProjectSampleJoin(project, mergeInto);
 
+		logger.debug("Merging samples " + toMerge.stream().map(t -> t.getId()).collect(Collectors.toList())
+				+ " into sample [" + mergeInto.getId() + "]");
+
 		for (Sample s : toMerge) {
 			confirmProjectSampleJoin(project, s);
 			List<SampleSequencingObjectJoin> sequencesForSample = ssoRepository.getSequencesForSample(s);
@@ -284,6 +287,20 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 				SequencingObject sequencingObject = join.getObject();
 				ssoRepository.delete(join);
 				addSequencingObjectToSample(mergeInto, sequencingObject);
+			}
+
+			Collection<SampleGenomeAssemblyJoin> genomeAssemblyJoins = getAssembliesForSample(s);
+			for (SampleGenomeAssemblyJoin join : genomeAssemblyJoins) {
+				GenomeAssembly genomeAssembly = join.getObject();
+
+				logger.trace(
+						"Removing genome assembly [" + genomeAssembly.getId() + "] from sample [" + s.getId() + "]");
+				sampleGenomeAssemblyJoinRepository.delete(join);
+
+				logger.trace("Adding genome assembly [" + genomeAssembly.getId() + "] to sample [" + mergeInto.getId()
+						+ "]");
+				SampleGenomeAssemblyJoin newJoin = new SampleGenomeAssemblyJoin(mergeInto, genomeAssembly);
+				sampleGenomeAssemblyJoinRepository.save(newJoin);
 			}
 
 			// have to remove the sample to be deleted from its project:
