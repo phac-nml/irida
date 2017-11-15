@@ -73,5 +73,34 @@
 			<column name="update_samples" type="bit(1)" />
 		</addColumn>
 
+		<sql>
+			<!-- Create a table to store link between sample and analysis_submission -->
+			<!-- I need to incrementing ids for any newly created genome_assemblies, which is done by creating -->
+			<!-- an incrementing key in this temporary table, and using this as the genome_assembly_id -->
+			CREATE TEMPORARY TABLE sample_analysis_submission_0_19_0
+				(genome_assembly_id bigint(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+					sample_id bigint(20), analysis_submission_id bigint(20), now datetime);
+
+			INSERT INTO sample_analysis_submission_0_19_0 (sample_id, analysis_submission_id, now)
+				SELECT sso.sample_id AS sample_id, sub.id AS analysis_submission_id, now() AS now
+				FROM sample_sequencingobject sso
+					INNER JOIN sequencing_object so ON sso.sequencingobject_id = so.id
+					INNER JOIN analysis_submission sub ON so.automated_assembly = sub.id
+				WHERE sub.analysis_state = 'COMPLETED' AND so.automated_assembly IS NOT NULL
+				ORDER BY sub.id;
+
+			INSERT INTO genome_assembly (id,created_date)
+				SELECT genome_assembly_id, now
+				FROM sample_analysis_submission_0_19_0;
+
+			INSERT INTO genome_assembly_analysis (id,analysis_submission_id)
+				SELECT genome_assembly_id, analysis_submission_id
+				FROM sample_analysis_submission_0_19_0;
+
+			INSERT INTO sample_genome_assembly (sample_id, genome_assembly_id, createdDate)
+				SELECT sample_id, genome_assembly_id, now
+				FROM sample_analysis_submission_0_19_0;
+		</sql>
+
 	</changeSet>
 </databaseChangeLog>
