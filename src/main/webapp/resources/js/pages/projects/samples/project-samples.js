@@ -2,7 +2,6 @@ import $ from "jquery";
 import chroma from "chroma-js";
 import {
   createItemLink,
-  displayFilters,
   generateColumnOrderInfo,
   tableConfig
 } from "../../../utilities/datatables-utilities";
@@ -105,15 +104,6 @@ const ASSOCIATED_PROJECTS = new Map();
  */
 const TABLE_FILTERS = new Map();
 
-const tableFilterFormaters = {
-  startDate(date) {
-    return moment(date).format(window.PAGE.i18n.dateFilter.format);
-  },
-  endDate(date) {
-    return moment(date).format(window.PAGE.i18n.dateFilter.format);
-  }
-};
-
 /**
  * Reference to the colour for a specific project.
  * @type {Map}
@@ -174,7 +164,7 @@ const config = Object.assign({}, tableConfig, {
         d[key] = value;
       }
 
-      displayFilters.call($dt, TABLE_FILTERS, tableFilterFormaters);
+      displayFilters.call($dt, TABLE_FILTERS);
     }
   },
   stateSave: true,
@@ -537,6 +527,50 @@ function clearFilters() {
 }
 const clearFilterBtn = document.querySelector(".js-clear-filters");
 clearFilterBtn.addEventListener("click", clearFilters, false);
+
+/**
+ * Display any filters that are applied to the table and give the user a quick way to remove them.
+ * @param  {Map} filters currently applied to the table.
+ */
+function displayFilters(filters) {
+  // This should be set by datatable.
+  const table = this;
+  const $wrapper = $(`<div class="filter-chip--wrapper"></div>`);
+
+  function createChip(name, value, handler) {
+    const $chip =  $(
+      `<span class="filter-chip--chip">${name} : ${value} <i class="fa fa-times-circle filter-chip--close" title="remove" aria-hidden="true"></i></span>`
+    );
+    $chip.on("click", ".filter-chip--close", handler);
+    $wrapper.append($chip);
+  }
+  if(filters.has(FILTERS.FILTER_BY_NAME)) {
+    createChip(window.PAGE.i18n.chips.name, filters.get(FILTERS.FILTER_BY_NAME), () => {
+      filters.delete(FILTERS.FILTER_BY_NAME);
+      table.ajax.reload();
+    });
+  }
+
+  if(filters.has(FILTERS.FILTER_BY_ORGANISM)) {
+    createChip(window.PAGE.i18n.chips.organism, filters.get(FILTERS.FILTER_BY_ORGANISM), () => {
+      filters.delete(FILTERS.FILTER_BY_ORGANISM);
+      table.ajax.reload();
+    });
+  }
+
+  if(filters.has(FILTERS.FILTER_BY_EARLY_DATE) && filters.has(FILTERS.FILTER_BY_LATEST_DATE)) {
+    const start = moment(filters.get(FILTERS.FILTER_BY_EARLY_DATE)).format("ll");
+    const end = moment(filters.get(FILTERS.FILTER_BY_LATEST_DATE)).format("ll");
+    const range = `${start} - ${end}`;
+    createChip(window.PAGE.i18n.chips.range, range, () => {
+      filters.delete(FILTERS.FILTER_BY_EARLY_DATE);
+      filters.delete(FILTERS.FILTER_BY_LATEST_DATE);
+      table.ajax.reload();
+    });
+  }
+
+  $(".filter-tags").html($wrapper);
+}
 
 /*
 Activate page tooltips

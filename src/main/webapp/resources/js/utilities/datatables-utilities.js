@@ -215,28 +215,3 @@ export function createFilterTag({ text, type, handler }) {
     $filterTags.append($tag);
   }
 }
-
-export function displayFilters(filters, formaters) {
-  // This should be set by datatable.
-  const $dt = this;
-  const elm = $(".filter-tags");
-  /*
-    Clear any filters that might be display
-     */
-  const wrapper = $(`<div class="filter-chip--wrapper"></div>`);
-  elm.html(wrapper);
-
-  for (let [key, value] of filters.entries()) {
-    if (formaters.hasOwnProperty(key)) {
-      value = formaters[key](value);
-    }
-    const chip = $(
-      `<span class="filter-chip--chip">${key} : ${value} <i class="fa fa-times-circle filter-chip--close" title="remove" aria-hidden="true"></i></span>`
-    );
-    chip.on("click", ".filter-chip--close", function() {
-      filters.delete(key);
-      $dt.ajax.reload();
-    });
-    wrapper.append(chip);
-  }
-}

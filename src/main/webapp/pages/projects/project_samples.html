@@ -33,6 +33,11 @@
           fileMissingSamples: /*[[@{/projects/{id}/ajax/samples/missing(id=${project.getId()})}]]*/ "/projects/{projectId}/ajax/samples/missing"
         },
         i18n: {
+          chips: {
+            name: /*[[#{project.sample.filter-name}]]*/ "Name",
+            range: /*[[#{project.sample.filter-date.label}]]*/ "Date Range",
+            organism: /*[[#{project.sample.filter-organism}]]*/ "Organism"
+          },
           dateFilter: {
             format: /*[[#{project.sample.filter.date.format}]]*/ "MMM dd, YYYY",
             month: /*[[#{project.sample.filter.date.month}]]*/ "_MONTH_",
