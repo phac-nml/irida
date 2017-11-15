@@ -89,6 +89,7 @@
 				WHERE sub.analysis_state = 'COMPLETED' AND so.automated_assembly IS NOT NULL
 				ORDER BY sub.id;
 
+			<!-- Construct 'genome_assembly' entries for automated assemblies -->
 			INSERT INTO genome_assembly (id,created_date)
 				SELECT genome_assembly_id, now
 				FROM sample_analysis_submission_0_19_0;
@@ -97,9 +98,15 @@
 				SELECT genome_assembly_id, analysis_submission_id
 				FROM sample_analysis_submission_0_19_0;
 
+			<!-- Construct links between sample and completed automated assemblies -->
 			INSERT INTO sample_genome_assembly (sample_id, genome_assembly_id, createdDate)
 				SELECT sample_id, genome_assembly_id, now
 				FROM sample_analysis_submission_0_19_0;
+
+			<!-- Set 'update_samples' to true (1) for automated assemblies -->
+			UPDATE analysis_submission sub
+				INNER JOIN sequencing_object so ON so.automated_assembly = sub.id
+				SET update_samples = 1;
 		</sql>
 
 	</changeSet>
