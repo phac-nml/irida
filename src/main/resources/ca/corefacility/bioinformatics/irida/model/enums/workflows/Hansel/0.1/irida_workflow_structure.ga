@@ -96,7 +96,7 @@
         }, 
         "2": {
             "annotation": "", 
-            "content_id": "galaxy-toolshed.corefacility.ca/repos/phil/combine_tabular_collection/combine/0.1", 
+            "content_id": "toolshed.g2.bx.psu.edu/repos/nml/combine_tabular_collection/combine/0.1", 
             "id": 2, 
             "input_connections": {
                 "texts": {
@@ -119,8 +119,8 @@
                 }
             ], 
             "position": {
-                "left": 719, 
-                "top": 200
+                "left": 723.5, 
+                "top": 187.5
             }, 
             "post_job_actions": {
                 "RenameDatasetActionoutput": {
@@ -132,22 +132,22 @@
                 }
             }, 
             "tool_errors": null, 
-            "tool_id": "galaxy-toolshed.corefacility.ca/repos/phil/combine_tabular_collection/combine/0.1", 
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/combine_tabular_collection/combine/0.1", 
             "tool_shed_repository": {
-                "changeset_revision": "2480c36b4891", 
+                "changeset_revision": "b815081988b5", 
                 "name": "combine_tabular_collection", 
-                "owner": "phil", 
-                "tool_shed": "galaxy-toolshed.corefacility.ca"
+                "owner": "nml", 
+                "tool_shed": "toolshed.g2.bx.psu.edu"
             }, 
             "tool_state": "{\"texts\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}", 
             "tool_version": "0.1", 
             "type": "tool", 
-            "uuid": "07d37b3a-22d3-4bd7-afb2-08f14656c7aa", 
+            "uuid": "487675e4-67c2-4939-9603-d11e4643dff1", 
             "workflow_outputs": [
                 {
-                    "label": "Hansel Results", 
+                    "label": null, 
                     "output_name": "output", 
-                    "uuid": "932ae275-86b4-4463-9d66-94eb3807329f"
+                    "uuid": "37fc6ea7-3369-4234-9eac-025dce061670"
                 }
             ]
         }, 
@@ -176,8 +176,8 @@
                 }
             ], 
             "position": {
-                "left": 719, 
-                "top": 330
+                "left": 721, 
+                "top": 329
             }, 
             "post_job_actions": {
                 "RenameDatasetActionoutput": {
@@ -209,5 +209,5 @@
             ]
         }
     }, 
-    "uuid": "6894867c-f4c8-4336-97b9-5417f6138b13"
+    "uuid": "2cefcf6f-49aa-4a5a-a485-368e466082c3"
 }
