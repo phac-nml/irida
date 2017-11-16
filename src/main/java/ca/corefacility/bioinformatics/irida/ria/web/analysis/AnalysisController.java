@@ -224,6 +224,7 @@ public class AnalysisController {
 	 *
 	 * @param submissionId ID of the submission to update
 	 * @param name         name to update the analysis to
+	 * @param priority     the priority to update the analysis to.  Note only admins will be allowed to update priority
 	 * @param model        model for view
 	 * @param locale       locale of the user
 	 * @return redirect to the analysis page after update
@@ -240,13 +241,13 @@ public class AnalysisController {
 
 		try {
 			analysisSubmissionService.update(submission);
+			// Setting the priority as a separate call as it's not allowed to be updated with the normal update
+			if (priority != null) {
+				analysisSubmissionService.updatePriority(submission, priority);
+			}
 		} catch (Exception e) {
-			logger.error("Error while updating analysis name", e);
+			logger.error("Error while updating analysis", e);
 			error = true;
-		}
-
-		if(priority != null){
-			analysisSubmissionService.updatePriority(submission, priority);
 		}
 
 		if (error) {
