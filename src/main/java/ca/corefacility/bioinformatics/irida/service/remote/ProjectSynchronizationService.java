@@ -187,6 +187,11 @@ public class ProjectSynchronizationService {
 		if (checkForChanges(project.getRemoteStatus(), readProject)) {
 			logger.debug("found changes for project " + readProject.getSelfHref());
 
+			// need to keep the status and frequency of the local project
+			RemoteStatus originalStatus = project.getRemoteStatus();
+			readProject.setRemoteStatus(originalStatus);
+			readProject.setSyncFrequency(project.getSyncFrequency());
+
 			project = projectService.update(readProject);
 		}
 
