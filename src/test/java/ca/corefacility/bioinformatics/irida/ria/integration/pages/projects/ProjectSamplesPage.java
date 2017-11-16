@@ -148,10 +148,10 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(className = "dt-select-none")
 	private WebElement selectionNone;
 
-	@FindBy(id = "export-samples-btn")
+	@FindBy(className = "t-export-samples-btn")
 	private WebElement exportSamplesDropdownBtn;
 
-	@FindBy(id = "download-btn")
+	@FindBy(className = "t-download-btn")
 	private WebElement downloadBtn;
 
 	@FindBy(id = "ncbi-btn")
@@ -218,7 +218,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	public void openExportDropdown() {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		exportSamplesDropdownBtn.click();
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("download-btn")));
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-download-btn")));
 	}
 
 	public boolean isSampleToolsAvailable() {
@@ -226,33 +226,33 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public boolean isDownloadBtnEnabled() {
-		return !downloadBtn.getAttribute("class").contains("disabled");
+		return isAnchorElementEnabled(downloadBtn);
 	}
 
 	public boolean isNcbiBtnEnabled() {
 		return !ncbiBtn.getAttribute("class").contains("disabled");
 	}
 
-	private boolean isAnchorElementDisabled(WebElement element) {
+	private boolean isAnchorElementEnabled(WebElement element) {
 		// Using xpath because for anchor elements in dropdowns, bootstrap adds
 		// the disabled class it the parent li element.
 		return !element.findElement(By.xpath("./..")).getAttribute("class").contains("disabled");
 	}
 
 	public boolean isMergeBtnEnabled() {
-		return isAnchorElementDisabled(mergeBtn);
+		return isAnchorElementEnabled(mergeBtn);
 	}
 
 	public boolean isCopyBtnEnabled() {
-		return isAnchorElementDisabled(copyBtn);
+		return isAnchorElementEnabled(copyBtn);
 	}
 
 	public boolean isMoveBtnEnabled() {
-		return isAnchorElementDisabled(moveBtn);
+		return isAnchorElementEnabled(moveBtn);
 	}
 
 	public boolean isRemoveBtnEnabled() {
-		return isAnchorElementDisabled(removeBtn);
+		return isAnchorElementEnabled(removeBtn);
 	}
 
 	// PAGINATION

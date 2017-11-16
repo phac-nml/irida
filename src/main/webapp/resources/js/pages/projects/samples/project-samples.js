@@ -10,8 +10,13 @@ import "./../../../vendor/datatables/datatables";
 import "./../../../vendor/datatables/datatables-buttons";
 import "./../../../vendor/datatables/datatables-rowSelection";
 import { CART } from "../../../utilities/events-utilities";
-import { SampleCartButton, SampleDropdownButton } from "./SampleButtons";
+import {
+  SampleCartButton,
+  SampleExportButton,
+  SampleDropdownButton
+} from "./SampleButtons";
 import { FILTERS, SAMPLE_EVENTS } from "./constants";
+import { download } from "../../../utilities/file.utilities";
 
 /*
 This is required to use select2 inside a modal.
@@ -36,6 +41,33 @@ const sampleToolsNodes = document.querySelectorAll(".js-sample-tool-btn");
 const SAMPLE_TOOL_BUTTONS = [...sampleToolsNodes].map(
   elm => new SampleDropdownButton(elm)
 );
+
+/*
+Initialize the sample export menu.
+ */
+const EXPORT_HANDLERS = {
+  download() {
+    // this is set by the object calling (i.e. download btn)
+    const url = this.data("url");
+    const selected = $dt.select.selected()[0];
+    const ids = [];
+    selected.forEach(s => {
+      ids.push(s.sample);
+    });
+    download(`${url}?${$.param({ ids })}`);
+  }
+};
+[...document.querySelectorAll(".js-sample-export-btn")].forEach(elm => {
+  if (EXPORT_HANDLERS[elm.dataset.type]) {
+    SAMPLE_TOOL_BUTTONS.push(
+      new SampleExportButton(elm, EXPORT_HANDLERS[elm.dataset.type])
+    );
+  } else {
+    throw new Error(
+      "Sample Export buttons must have a data attribute of 'type'"
+    );
+  }
+});
 
 /*
 Initialize the add to cart button
