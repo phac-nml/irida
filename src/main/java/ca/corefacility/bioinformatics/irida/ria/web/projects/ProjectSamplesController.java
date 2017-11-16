@@ -42,6 +42,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJ
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesToExcel;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.export.ProjectSamplesTableExport;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
@@ -52,6 +53,7 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
+import com.github.dandelion.datatables.core.export.DatatablesExport;
 import com.github.dandelion.datatables.core.export.ExportUtils;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -854,18 +856,19 @@ public class ProjectSamplesController {
 	 * @param request     {@link HttpServletRequest}
 	 * @param response    {@link HttpServletResponse}
 	 * @param locale      of the current user.
+	 * @throws IOException
 	 */
 	@RequestMapping(value = "/projects/{projectId}/samples/export")
 	public void exportProjectSamplesTable(
 			@PathVariable Long projectId,
-			@RequestParam(value = "dtf") String type,
+			@RequestParam String type,
 			@DataTablesRequest DataTablesParams params,
 			@RequestParam(required = false, defaultValue = "") List<String> sampleNames,
 			@RequestParam(required = false, defaultValue = "") List<Long> associated,
 			UISampleFilter filter,
 			HttpServletRequest request,
 			HttpServletResponse response,
-			Locale locale) {
+			Locale locale) throws IOException {
 
 		Project project = projectService.read(projectId);
 		List<Project> projects = new ArrayList<>();
@@ -880,8 +883,13 @@ public class ProjectSamplesController {
 						filter.getEndDate(), 0, Integer.MAX_VALUE, params.getSort());
 
 		if (page != null) {
-			ProjectSamplesTableExport tableExport = new ProjectSamplesTableExport(type, project.getName() + "_samples", messageSource, locale);
-			ExportUtils.renderExport(tableExport.generateHtmlTable(page, request), tableExport.getExportConf(), response);
+			// Create DataTables representation of the page.
+			List<DTProjectSamples> models = new ArrayList<>();
+			for (ProjectSampleJoin psj : page.getContent()) {
+				models.add(buildProjectSampleDataTablesModel(psj, locale));
+			}
+			DataTablesToExcel tablesToExcel = new DataTablesToExcel();
+			tablesToExcel.writeWorkbook(response, project.getLabel().replace(" ", "_"), models, messageSource, locale);
 		}
 	}
 

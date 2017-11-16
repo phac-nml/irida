@@ -199,6 +199,14 @@
                                     <th:block th:text="#{project.samples.export.linker}"/>
                                 </a>
                             </li>
+                            <li role="separator" class="divider"></li>
+                            <li>
+                                <a href="#" class="js-sample-export-btn" data-type="excel"
+                                   data:url="@{/projects/{id}/samples/export(id=${project.getId()})}">
+                                    <i class="fa fa-file-excel-o fa-fw space-right__sm" aria-hidden="true"></i>
+                                    <th:block th:text="#{project.samples.export-to-excel}"/>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </div>
