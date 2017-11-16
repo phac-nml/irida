@@ -189,7 +189,7 @@ public class ProjectSynchronizationService {
 
 			// need to keep the status and frequency of the local project
 			RemoteStatus originalStatus = project.getRemoteStatus();
-			readProject.setRemoteStatus(originalStatus);
+			readProject.getRemoteStatus().setSyncStatus(originalStatus.getSyncStatus());
 			readProject.setSyncFrequency(project.getSyncFrequency());
 
 			project = projectService.update(readProject);
