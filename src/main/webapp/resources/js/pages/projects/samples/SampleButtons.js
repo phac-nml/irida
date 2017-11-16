@@ -15,7 +15,7 @@ function checkState(count, hasAssociated) {
   // Remove the tooltip. A new one will be created based on the
   // information provided.
   this.$node.tooltip("destroy");
-  if (hasAssociated) {
+  if (hasAssociated  && this.$node.data("associatedMsg")) {
     this.$node.parent().addClass("disabled");
     // Activate the tooltip
     this.$node.tooltip({
