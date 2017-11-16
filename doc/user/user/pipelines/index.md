@@ -238,7 +238,7 @@ This will save the assembly back to the selected sample on completion of the pip
 
 ![sample-assembly-results](../samples/images/sample-automated-assembly.png)
 
-The saved assemblies can then be directly accessible to anyone with permission to read the associated Sample.
+The saved assemblies can then be directly accessible to anyone with permission to read the Sample.
 
 If an assembly already exists for a Sample, then the saved assembly will be appended onto the list of saved assemblies.
 

@@ -46,11 +46,11 @@ Start by [viewing the details of an individual sample](#viewing-individual-sampl
 
 You can provide as many or as few sample details that you want -- the sample details are not used by any workflows in IRIDA (except the sample name in the SNVPhyl workflow), and (with the exception of the sample name) none of the sample details are required fields. When you've finished updating the sample details, you can click on the "Update" button at the bottom, right-hand side of the page.
 
-### Viewing associated files
+### Viewing contained files
 
-Samples can have two different types of associated files, either **Sequence Files** which are produced by a sequencing instrument, or **Assemblies** which consist of the re-constructed genome from the sequence reads.
+Samples can contain different types of files, either **Sequence Files** which are produced by a sequencing instrument, or **Assemblies** which consist of the re-constructed genome from the sequence reads.
 
-![sample-associated-files](images/sample-associated-files.png)
+![sample-contained-files](images/sample-contained-files.png)
 
 #### Viewing Sequence Files
 
@@ -89,32 +89,32 @@ Once you have selected your files to concatenate, you have the following options
 
 Once you have selected your files and selected your options, click *Submit* to begin the concatenation.  This may take a while, so you should stay on this page until the process is complete.  Once your files are concatenated, you will be redirected back to the sample-files page.
 
-#### Viewing associated assemblies
+#### Viewing genome assemblies
 
-Samples can also be associated with assembled genomes.
+Samples can also contain assembled genomes.
 
 ![sample-automated-assembly](images/sample-automated-assembly.png)
 
-Associating assembled genomes with samples can occur in two ways:
+Genome assemblies can be linked to samples in two ways:
 
 1. By enabling [automated assemblies](../project/#automated-pipelines), which will be triggered on upload of sequencing files in the appropriate project.
 2. Or by selecting the option to save assemblies back to a sample from the [Launch Pipelines](../pipelines/#saving-pipeline-results-to-a-sample) page.
 
 The assembled genome file can be downloaded by clicking the <span class="fa fa-fw fa-download"></span> icon.
 
-#### Deleting associated assemblies
+#### Deleting genome assemblies
 
 Assembled genomes may be deleted from a sample by selecting the <img src="images/delete-icon.png" alt="Delete icon" class="inline"> icon.
 
 ![delete-sample-assembly](images/delete-sample-assembly.png)
 
-#### Viewing automated assemblies associated with sequencing files
+#### Viewing automated assemblies
 
 If the project manager has enabled automated assemblies for uploaded data an assembly will be shown associated with the particular sequence files used to generate the assembled genome.
 
 ![Automated assembly](images/automated-assembly.png)
 
-The assembly status will be displayed along with a link to view the assembly results page.  On completion, the assembled genome will be associated with the sample.  For more information on viewing pipeline results see the [pipeline documentation](../pipelines/#viewing-pipeline-results)  
+The assembly status will be displayed along with a link to view the assembly results page.  On completion, the assembled genome will be saved back to the Sample.  For more information on viewing pipeline results see the [pipeline documentation](../pipelines/#viewing-pipeline-results)  
 
 See the [project documentation](../project#automated-pipelines) for information on enabling automated assembly.
 
