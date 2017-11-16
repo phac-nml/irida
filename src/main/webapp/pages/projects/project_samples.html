@@ -183,7 +183,6 @@
                                 <a href="#" class="js-sample-export-btn t-download-btn"
                                    data-enabled-at="1" data-toggle="tooltip" data-type="download"
                                    data:url="@{/projects/{id}/download/files(id=${project.getId()})}"
-                                   data:associated-msg="#{project.samples.only-for-project-tooltip}"
                                    data:enabled-msg="#{project.samples.tooltip.download.requires-more-than-one}">
                                     <i class="fa fa-download fa-fw space-after__sm" aria-hidden="true"></i>
                                     <th:block th:text="#{project.samples.export.download}"/>
