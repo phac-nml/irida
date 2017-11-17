@@ -161,8 +161,8 @@
                                 <ul>
                                     <li role="menuitem" th:each="item : ${associatedProjects}">
                                         <a href="#" class="associated-cb t-associated-cb">
-                                            <div class="checkbox"><input type="checkbox"
-                                                                         th:value="${item.getIdentifier()}"/>&nbsp;
+                                            <div class="checkbox">
+                                                <input type="checkbox" class="spaced-right__sm" th:value="${item.getIdentifier()}"/>
                                                 <th:block th:text="${item.getName()}"/>
                                             </div>
                                         </a>
@@ -184,7 +184,7 @@
                                    data-enabled-at="1" data-toggle="tooltip" data-type="download"
                                    data:url="@{/projects/{id}/download/files(id=${project.getId()})}"
                                    data:enabled-msg="#{project.samples.tooltip.download.requires-more-than-one}">
-                                    <i class="fa fa-download fa-fw space-after__sm" aria-hidden="true"></i>
+                                    <i class="fa fa-download fa-fw spaced-after__sm" aria-hidden="true"></i>
                                     <th:block th:text="#{project.samples.export.download}"/>
                                 </a>
                             </li>
@@ -194,18 +194,24 @@
                                    data:url="@{/projects/{projectId}/templates/linker-modal(projectId=${project.getId()})}"
                                    data:script="@{/resources/js/build/project-samples-linker.bundle.js}"
                                    data:associated-msg="#{project.samples.only-for-project-tooltip}">
-                                    <i class="fa fa-terminal fa-fw space-right__sm" aria-hidden="true"></i>
+                                    <i class="fa fa-terminal fa-fw spaced-right__sm" aria-hidden="true"></i>
                                     <th:block th:text="#{project.samples.export.linker}"/>
                                 </a>
                             </li>
                             <li role="separator" class="divider"></li>
                             <li>
-                                <a href="#" class="js-sample-export-btn" data-type="excel"
+                                <a href="#" class="js-sample-export-btn" data-file="excel" data-type="file"
                                    data:url="@{/projects/{id}/samples/export(id=${project.getId()})}">
-                                    <i class="fa fa-file-excel-o fa-fw space-right__sm" aria-hidden="true"></i>
+                                    <i class="fa fa-file-excel-o fa-fw spaced-right__sm" aria-hidden="true"></i>
                                     <th:block th:text="#{project.samples.export-to-excel}"/>
                                 </a>
                             </li>
+                            <li>
+                                <a href="#" class="js-sample-export-btn" data-file="csv" data-type="file"
+                                   data:url="@{/projects/{id}/samples/export(id=${project.getId()})}">
+                                    <i class="fa fa-file-o fa-fw spaced-after__sm" aria-hidden="true"></i>
+                                    <th:block th:text="#{project.samples.export-to-csv}"/>
+                                </a></li>
                         </ul>
                     </div>
                 </div>
