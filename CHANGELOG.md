@@ -26,6 +26,7 @@ Changes
 * [UI]: Fixed issue with exporting `csv` and `excel` from Project > Samples pages (0.18.5).
 * [UI]: Fixed bug with importing large `excel` file that contained columns with only a header and no other data in column.
 * [UI]: Added the ability to associate assembled genomes run through IRIDA with a sample.
+* [UI]: Fixed project sync settings from resetting themselves.
 
 0.17.0 to 0.18.0
 ----------------
