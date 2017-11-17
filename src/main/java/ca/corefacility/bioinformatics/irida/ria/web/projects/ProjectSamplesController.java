@@ -16,6 +16,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,11 +112,6 @@ public class ProjectSamplesController {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
 
-		// Add the linker command if available
-		if (LINKER_AVAILABLE) {
-			model.addAttribute("linker", LINKER_SCRIPT + " -p " + project.getId());
-		}
-
 		// Set up the template information
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 
@@ -206,6 +202,29 @@ public class ProjectSamplesController {
 		model.addAttribute("samplesThatAreInOne", samplesThatAreInOne);
 		model.addAttribute("project", projectService.read(projectId));
 		return PROJECT_TEMPLATE_DIR + "remove-modal.tmpl";
+	}
+
+	/**
+	 * Generate a modal for displaying the ngs-linker command
+	 *
+	 * @param ids       List of {@link Sample} identifiers
+	 * @param projectId identtifier for the current {@link Project}
+	 * @param model     UI Model
+	 * @return Path to template
+	 */
+	@RequestMapping(value = "/projects/{projectId}/templates/linker-modal", produces = MediaType.TEXT_HTML_VALUE)
+	public String getLinkerCommandModal(@RequestParam(name = "sampleIds[]", defaultValue = "") List<Long> ids,
+			@PathVariable Long projectId, Model model) {
+		Project project = projectService.read(projectId);
+		int totalSamples = sampleService.getSamplesForProject(project).size();
+
+		String cmd = LINKER_SCRIPT + " -p " + projectId;
+		if (ids.size() != 0 && ids.size() != totalSamples) {
+			cmd += " -s " +  StringUtils.join(ids, " -s ");
+		}
+
+		model.addAttribute("command", cmd);
+		return PROJECT_TEMPLATE_DIR + "linker-modal.tmpl";
 	}
 
 	/**

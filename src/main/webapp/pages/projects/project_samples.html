@@ -26,7 +26,6 @@
             remove: /*[[@{/projects/{id}/ajax/samples/delete(id=${project.getId()})}]]*/ '',
             copy: /*[[@{/projects/{id}/ajax/samples/copy(id=${project.getId()})}]]*/ '',
             ncbi: /*[[@{/projects/{id}/export/ncbi(id=${project.getId()})}]]*/ '/projects/1/export/ncbi',
-            linker: /*[[@{/projects/template/samples/linker}]]*/ '/projects/1/samples/linker',
             export: /*[[@{/projects/{id}/samples/export(id=${project.getId()})}]]*/ 'projects/1/samples/export',
             idList: /*[[@{/samples/idList}]]*/ "/samples/idList",
             sampleIds: /*[[@{/projects/{id}/ajax/sampleIds(id=${project.getId()})}]]*/ '/projects/{projectId}/ajax/sampleIds'
@@ -182,6 +181,16 @@
                                    data:enabled-msg="#{project.samples.tooltip.download.requires-more-than-one}">
                                     <i class="fa fa-download fa-fw space-after__sm" aria-hidden="true"></i>
                                     <th:block th:text="#{project.samples.export.download}"/>
+                                </a>
+                            </li>
+                            <li th:if="${linkerAvailable}" role="menuitem">
+                                <a href="#" class="js-sample-tool-btn"
+                                   data-toggle="tooltip" data-enabled-at="0"
+                                   data:url="@{/projects/{projectId}/templates/linker-modal(projectId=${project.getId()})}"
+                                   data:script="@{/resources/js/build/project-samples-linker.bundle.js}"
+                                   data:associated-msg="#{project.samples.only-for-project-tooltip}">
+                                    <i class="fa fa-terminal fa-fw space-right__sm" aria-hidden="true"></i>
+                                    <th:block th:text="#{project.samples.export.linker}"/>
                                 </a>
                             </li>
                         </ul>
@@ -356,14 +365,7 @@
     <!--<div style="display: inline-block;" uib-dropdown="">-->
 
 
-    <!--<li id="linker-btn" th:if="${linkerAvailable}" role="menuitem"-->
-    <!--ng-class="{disabled: toolsCtrl.disabled.hasAssociated}"-->
-    <!--tooltip-enable="toolsCtrl.disabled.hasAssociated"-->
-    <!--uib-tooltip-template="'linker.msg.tmpl'">-->
-    <!--<a href="#" ng-click="toolsCtrl.linker()">-->
-    <!--<i class="fa fa-terminal fa-fw" aria-hidden="true"></i>&nbsp;<th:block th:text="#{project.samples.export.linker}"/>-->
-    <!--</a>-->
-    <!--</li>-->
+
     <!--<li role="menuitem"-->
     <!--th:if="${galaxyCallback}"-->
     <!--ng-class="{disabled: toolsCtrl.disabled.hasAssociated}">-->
@@ -481,46 +483,11 @@
 <!--</ul>-->
 <!--</script>-->
 
-<!--<script type="text/ng-template" id="linker.msg.tmpl">-->
-<!--<ul class="tooltip-ul">-->
-<!--<li ng-show="toolsCtrl.disabled.hasAssociated" th:text="#{project.samples.only-for-project-tooltip}">Not with associated</li>-->
-<!--</ul>-->
-<!--</script>-->
-
 <!--<script type="text/ng-template" id="ncbi.msg.tmpl">-->
 <!--<ul class="tooltip-ul">-->
 <!--<li ng-show="toolsCtrl.disabled.lessThanOne" th:text="#{project.samples.tooltip.ncbi.requires-more-than-one}">Needs to be more than one</li>-->
 <!--<li ng-show="toolsCtrl.disabled.hasAssociated" th:text="#{project.samples.only-for-project-tooltip}">Not with associated</li>-->
 <!--</ul>-->
-<!--</script>-->
-
-<!--<script type="text/ng-template" id="linker.tmpl.html" th:inline="javascript">-->
-<!--<div id="linker-modal" class="form">-->
-<!--<div class="modal-header">-->
-<!--<h3 class="modal-title">-->
-<!--<i class="fa fa-terminal fa-fw" aria-hidden="true"></i>&nbsp;-->
-<!--<span th:utext="#{ngs.linker.title}">__LINKER</span>-->
-<!--</h3>-->
-<!--</div>-->
-<!--<div class="modal-body">-->
-<!--<p th:text="#{ngs.linker.details}"></p>-->
-<!--<div class="input-group">-->
-<!--<input id="linker-cmd" class="form-control" type="text" ng-model="lCtrl.cmd"/>-->
-<!--<span class="input-group-btn">-->
-<!--<button class="btn btn-default clipboard-btn"-->
-<!--type="button"-->
-<!--data-clipboard-target="#linker-cmd"-->
-<!--data:uib-tooltip="#{form.clipboard}"-->
-<!--tooltip-placement="bottom">-->
-<!--<i class="fa fa-clipboard fa-fw" aria-hidden="true"></i>-->
-<!--</button>-->
-<!--</span>-->
-<!--</div>-->
-<!--</div>-->
-<!--<div class="modal-footer">-->
-<!--<button id="linkerCloseBtn" class="btn btn-primary" ng-click="lCtrl.close()" th:text="#{form.btn.close}">Close</button>-->
-<!--</div>-->
-<!--</div>-->
 <!--</script>-->
 <!--</th:block>-->
 </html>
