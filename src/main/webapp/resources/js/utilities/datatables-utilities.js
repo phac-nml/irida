@@ -37,9 +37,8 @@ import { createIcon, ICONS } from "./fontawesome-utilities";
 const dom = `
 <".row"
   <"col-md-6 col-sm-12 buttons"B><"#dt-filters.col-md-6 col-sm-12"f>>
-<".row"<"col-md-12 selected-counts">>
-<".row"
-  <"col-md-12 filter-tags"<"filter-tags__space">>
+<".row"<"col-md-3 selected-counts">
+  <"col-md-9 filter-tags"<"filter-tags__space">>
 >
 <"dt-table-wrapper"rt>
 <"row"

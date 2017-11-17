@@ -2,9 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.models;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import com.google.common.base.Strings;
 
@@ -58,12 +56,5 @@ public class UISampleFilter {
 
 	public void setEndDate(String date) {
 		this.endDate = date;
-	}
-
-	public String getDateRange() {
-		if (Strings.isNullOrEmpty(this.startDate) || Strings.isNullOrEmpty(this.endDate)) {
-			return "";
-		}
-		return dateRangeFormatter.format(this.getStartDate()) + " - " + dateRangeFormatter.format(this.getEndDate());
 	}
 }

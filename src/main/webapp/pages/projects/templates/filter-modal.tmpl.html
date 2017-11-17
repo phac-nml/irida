@@ -17,7 +17,9 @@
             </div>
             <div class="form-group">
                 <label for="daterange" th:text="#{project.sample.filter-date.label}">Date One</label>
-                <input type="text" class="form-control t-daterange-filter" id="js-daterange" th:value="${filter.getDateRange()}"/>
+                <input type="hidden" name="startDate" th:value="${filter.getStartDate()}" />
+                <input type="hidden" name="endDate" th:value="${filter.getEndDate()}" />
+                <input type="text" class="form-control t-daterange-filter" id="js-daterange"/>
             </div>
         </div>
         <div class="modal-footer">

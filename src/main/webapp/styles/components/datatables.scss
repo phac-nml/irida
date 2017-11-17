@@ -167,3 +167,34 @@ table.dataTable {
 .dt-date {
   width: 200px !important;
 }
+
+// Filter Chips Styles
+.filter-chip--wrapper {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+  margin-bottom: .5rem;
+}
+
+.filter-chip--chip {
+  transition: box-shadow 280ms cubic-bezier(.4,0,.2,1);
+  display: inline-flex;
+  padding: 7px 12px;
+  border-radius: 24px;
+  align-items: center;
+  cursor: default;
+  margin-left: .5rem;
+  background-color: #e0e0e0;
+  color: rgba(0,0,0,.87);
+}
+
+.filter-chip--close {
+  font-size: 1.2em;
+  width: 1em;
+  height: 1em;
+  margin-right: -4px;
+  margin-left: 6px;
+  cursor: pointer;
+  display: inline-block;
+}

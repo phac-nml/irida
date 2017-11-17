@@ -17,6 +17,7 @@ import {
 } from "./SampleButtons";
 import { FILTERS, SAMPLE_EVENTS } from "./constants";
 import { download } from "../../../utilities/file.utilities";
+import moment from "moment";
 
 /*
 This is required to use select2 inside a modal.
@@ -162,6 +163,8 @@ const config = Object.assign({}, tableConfig, {
       for (let [key, value] of TABLE_FILTERS) {
         d[key] = value;
       }
+
+      displayFilters.call($dt, TABLE_FILTERS);
     }
   },
   stateSave: true,
@@ -465,10 +468,8 @@ $("#js-filter-modal-wrapper").on("show.bs.modal", function() {
     TABLE_FILTERS.has(FILTERS.FILTER_BY_EARLY_DATE) &&
     TABLE_FILTERS.has(FILTERS.FILTER_BY_LATEST_DATE)
   ) {
-    params.startDate = new Date(
-      TABLE_FILTERS.get(FILTERS.FILTER_BY_EARLY_DATE)
-    );
-    params.endDate = new Date(TABLE_FILTERS.get(FILTERS.FILTER_BY_LATEST_DATE));
+    params.startDate = TABLE_FILTERS.get(FILTERS.FILTER_BY_EARLY_DATE);
+    params.endDate = TABLE_FILTERS.get(FILTERS.FILTER_BY_LATEST_DATE);
   }
 
   let script;
@@ -526,6 +527,50 @@ function clearFilters() {
 }
 const clearFilterBtn = document.querySelector(".js-clear-filters");
 clearFilterBtn.addEventListener("click", clearFilters, false);
+
+/**
+ * Display any filters that are applied to the table and give the user a quick way to remove them.
+ * @param  {Map} filters currently applied to the table.
+ */
+function displayFilters(filters) {
+  // This should be set by datatable.
+  const table = this;
+  const $wrapper = $(`<div class="filter-chip--wrapper"></div>`);
+
+  function createChip(name, value, handler) {
+    const $chip =  $(
+      `<span class="filter-chip--chip">${name} : ${value} <i class="fa fa-times-circle filter-chip--close" title="remove" aria-hidden="true"></i></span>`
+    );
+    $chip.on("click", ".filter-chip--close", handler);
+    $wrapper.append($chip);
+  }
+  if(filters.has(FILTERS.FILTER_BY_NAME)) {
+    createChip(window.PAGE.i18n.chips.name, filters.get(FILTERS.FILTER_BY_NAME), () => {
+      filters.delete(FILTERS.FILTER_BY_NAME);
+      table.ajax.reload();
+    });
+  }
+
+  if(filters.has(FILTERS.FILTER_BY_ORGANISM)) {
+    createChip(window.PAGE.i18n.chips.organism, filters.get(FILTERS.FILTER_BY_ORGANISM), () => {
+      filters.delete(FILTERS.FILTER_BY_ORGANISM);
+      table.ajax.reload();
+    });
+  }
+
+  if(filters.has(FILTERS.FILTER_BY_EARLY_DATE) && filters.has(FILTERS.FILTER_BY_LATEST_DATE)) {
+    const start = moment(filters.get(FILTERS.FILTER_BY_EARLY_DATE)).format("ll");
+    const end = moment(filters.get(FILTERS.FILTER_BY_LATEST_DATE)).format("ll");
+    const range = `${start} - ${end}`;
+    createChip(window.PAGE.i18n.chips.range, range, () => {
+      filters.delete(FILTERS.FILTER_BY_EARLY_DATE);
+      filters.delete(FILTERS.FILTER_BY_LATEST_DATE);
+      table.ajax.reload();
+    });
+  }
+
+  $(".filter-tags").html($wrapper);
+}
 
 /*
 Activate page tooltips
