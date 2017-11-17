@@ -11,11 +11,7 @@
         linker: /*[[${linker}]]*/'',
         urls: {
           modals: {
-            remove: /*[[@{/projects/templates/remove-modal}]]*/ '/projects/templates/remove-modal',
-            copy: /*[[]]*/ '/projects/templates/copy-modal',
-            move: /*[[@{/projects/templates/move-modal(projectId=${project.getId()})}]]*/ '/projects/templates/move-modal',
             galaxy: /*[[@{/cart/template/galaxy/project/{projectId}(projectId=${project.getId()})}]]*/ '/cart/template/galaxy/project/1',
-            filter: /*[[@{/projects/template/samples-filter-modal}]]*/ ''
           },
           projects: {
             available: /*[[@{/projects/{id}/ajax/samples/available_projects(id=${project.getId()})}]]*/ ''
@@ -25,7 +21,6 @@
             local: /*[[@{'/projects/{id}/ajax/samples'}]]*/ '',
             remove: /*[[@{/projects/{id}/ajax/samples/delete(id=${project.getId()})}]]*/ '',
             copy: /*[[@{/projects/{id}/ajax/samples/copy(id=${project.getId()})}]]*/ '',
-            ncbi: /*[[@{/projects/{id}/export/ncbi(id=${project.getId()})}]]*/ '/projects/1/export/ncbi',
             export: /*[[@{/projects/{id}/samples/export(id=${project.getId()})}]]*/ 'projects/1/samples/export',
             idList: /*[[@{/samples/idList}]]*/ "/samples/idList",
             sampleIds: /*[[@{/projects/{id}/ajax/sampleIds(id=${project.getId()})}]]*/ '/projects/{projectId}/ajax/sampleIds'
@@ -196,6 +191,16 @@
                                    data:associated-msg="#{project.samples.only-for-project-tooltip}">
                                     <i class="fa fa-terminal fa-fw space-right__sm" aria-hidden="true"></i>
                                     <th:block th:text="#{project.samples.export.linker}"/>
+                                </a>
+                            </li>
+                            <li role="menuitem">
+                                <a href="#" class="js-sample-export-btn"
+                                   data-toggle="tooltip" data-enabled-at="1" data-type="ncbi"
+                                   data:url="@{/projects/{id}/export/ncbi(id=${project.getId()})}"
+                                   data:enabled-msg="#{project.samples.tooltip.ncbi.requires-more-than-one}"
+                                   data:associated-msg="#{project.samples.only-for-project-tooltip}">
+                                    <i class="fa fa-upload fa-fw spaced-right__sm" aria-hidden="true"></i>
+                                    <th:block th:text="#{project.samples.export.ncbi}"/>
                                 </a>
                             </li>
                             <li role="separator" class="divider"></li>
