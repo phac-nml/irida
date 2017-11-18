@@ -29,7 +29,7 @@ public class DataTablesExportToFile {
 	 * @param headers for the table
 	 * @throws IOException thrown if file cannot be written
 	 */
-	public void writeFile(String type, HttpServletResponse response, String filename, List<? extends DataTablesExportable> models, List<String> headers) throws IOException {
+	public static void writeFile(String type, HttpServletResponse response, String filename, List<? extends DataTablesExportable> models, List<String> headers) throws IOException {
 		if(type.equals("excel")) {
 			writeToExcel(response, filename, models, headers);
 		} else {
@@ -37,7 +37,15 @@ public class DataTablesExportToFile {
 		}
 	}
 
-	private void writeToExcel(HttpServletResponse response, String filename,
+	/**
+	 * Write data within datatable to an excel formatted file.
+	 * @param response {@link HttpServletResponse}
+	 * @param filename {@link String} name of the file to download.
+	 * @param models Data to download in the table
+	 * @param headers for the table
+	 * @throws IOException thrown if file cannot be written
+	 */
+	private static void writeToExcel(HttpServletResponse response, String filename,
 			List<? extends DataTablesExportable> models, List<String> headers) throws IOException {
 		XSSFWorkbook workbook = new XSSFWorkbook();
 		XSSFSheet sheet = workbook.createSheet();
@@ -67,7 +75,6 @@ public class DataTablesExportToFile {
 		workbook.write(response.getOutputStream());
 	}
 
-
 	/**
 	 * Write data within datatable to a csv formatted file.
 	 * @param response {@link HttpServletResponse}
@@ -76,7 +83,7 @@ public class DataTablesExportToFile {
 	 * @param headers for the table
 	 * @throws IOException thrown if file cannot be written
 	 */
-	private void writeToCSV(HttpServletResponse response, String filename, List<? extends DataTablesExportable> models,
+	private static void writeToCSV(HttpServletResponse response, String filename, List<? extends DataTablesExportable> models,
 			List<String> headers) throws IOException {
 		List<String[]> results = new ArrayList<>();
 		results.add(headers.toArray(new String[0]));

@@ -886,8 +886,7 @@ public class ProjectSamplesController {
 				models.add(buildProjectSampleDataTablesModel(psj, locale));
 			}
 			List<String> headers = models.get(0).getTableHeaders(messageSource, locale);
-			DataTablesExportToFile exportToFile = new DataTablesExportToFile();
-			exportToFile.writeFile(type, response, project.getLabel().replace(" ", "_"), models, headers);
+			DataTablesExportToFile.writeFile(type, response, project.getLabel().replace(" ", "_"), models, headers);
 		}
 	}
 
