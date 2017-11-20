@@ -154,8 +154,8 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(className = "t-download-btn")
 	private WebElement downloadBtn;
 
-	@FindBy(id = "ncbi-btn")
-	private WebElement ncbiBtn;
+	@FindBy(className = "t-ncbi-export-btn")
+	private WebElement ncbiExportBtn;
 
 	@FindBy(css = "#linker-btn a")
 	private WebElement linkerBtn;
@@ -230,7 +230,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public boolean isNcbiBtnEnabled() {
-		return !ncbiBtn.getAttribute("class").contains("disabled");
+		return isAnchorElementEnabled(ncbiExportBtn);
 	}
 
 	private boolean isAnchorElementEnabled(WebElement element) {
