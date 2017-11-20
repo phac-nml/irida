@@ -539,7 +539,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			 */
 			private Predicate sampleProperties(final Root<ProjectSampleJoin> root, final CriteriaQuery<?> query,
 					final CriteriaBuilder cb) {
-				return cb.like(root.get("sample").get("sampleName"), "%" + queryString + "%");
+				return cb.or(cb.like(root.get("sample").get("sampleName"), "%" + queryString + "%"),
+						cb.equal(root.get("sample").get("id"), queryString));
 			}
 
 			/**
