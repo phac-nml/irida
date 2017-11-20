@@ -157,13 +157,13 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(className = "t-ncbi-export-btn")
 	private WebElement ncbiExportBtn;
 
-	@FindBy(css = "#linker-btn a")
+	@FindBy(className = "t-linker-btn")
 	private WebElement linkerBtn;
 
-	@FindBy(className = "linker-modal")
+	@FindBy(className = "t-linker-modal")
 	private WebElement linkerModal;
 
-	@FindBy(id = "linker-cmd")
+	@FindBy(className = "t-cmd-text")
 	private WebElement linkerCmd;
 
 	@FindBy(id = "linkerCloseBtn")
