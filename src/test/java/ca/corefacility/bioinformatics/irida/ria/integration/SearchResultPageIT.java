@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.integration;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;

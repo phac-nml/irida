@@ -2,12 +2,15 @@ package ca.corefacility.bioinformatics.irida.service.impl.integration.sample;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolationException;
 
@@ -34,14 +37,19 @@ import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
+import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGenomeAssemblyJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
@@ -69,6 +77,12 @@ public class SampleServiceImplIT {
 	private SequencingObjectService objectService;
 	@Autowired
 	private AnalysisSubmissionService analysisSubmissionService;
+	@Autowired
+	private Path outputFileBaseDirectory;
+	@Autowired
+	private SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository;
+	@Autowired
+	private SampleRepository sampleRepository;
 
 	/**
 	 * Variation in a floating point number to be considered equal.
@@ -90,12 +104,25 @@ public class SampleServiceImplIT {
 	 */
 	@Test
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
-	public void testMergeSamples() {
+	public void testMergeSamplesIntoSample1() {
 		Sample mergeInto = sampleService.read(1L);
+		Sample sample2 = sampleService.read(2L);
+		Sample sample3 = sampleService.read(3L);
 		Project p = projectService.read(1L);
 
-		Sample merged = sampleService.mergeSamples(p, mergeInto,
-				Lists.newArrayList(sampleService.read(2L), sampleService.read(3L)));
+		assertEquals("Sample 1 should only have genome assembly 1", Lists.newArrayList(1L),
+				sampleGenomeAssemblyJoinRepository.findBySample(mergeInto).stream().map(t -> t.getObject().getId())
+						.collect(Collectors.toList()));
+		assertEquals("Sample 2 should only have genome assembly 2", Lists.newArrayList(2L),
+				sampleGenomeAssemblyJoinRepository.findBySample(sample2).stream().map(t -> t.getObject().getId())
+						.collect(Collectors.toList()));
+		assertTrue("Sample 3 should have no genome assemblies before",
+				sampleGenomeAssemblyJoinRepository.findBySample(sample3).isEmpty());
+
+		assertNotNull("Join between sample 2 and genome assembly 2 should exist",
+				sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(2L, 2L));
+
+		Sample merged = sampleService.mergeSamples(p, mergeInto, Lists.newArrayList(sample2, sample3));
 
 		assertEquals("Merged sample should be same as mergeInto.", mergeInto, merged);
 
@@ -103,9 +130,63 @@ public class SampleServiceImplIT {
 		assertSampleNotFound(2L);
 		assertSampleNotFound(3L);
 
+		assertNull("Join between sample 2 and genome assembly 2 should not exist",
+				sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(2L, 2L));
+
 		// the merged sample should have 3 sequence files
 		assertEquals("Merged sample should have 3 sequence files", 3,
 				objectService.getSequencingObjectsForSample(merged).size());
+
+		assertEquals("Sample 1 should only have genome assemblies 1 and 2", Lists.newArrayList(1L, 2L),
+				sampleGenomeAssemblyJoinRepository.findBySample(mergeInto).stream().map(t -> t.getObject().getId())
+						.collect(Collectors.toList()));
+	}
+
+	/**
+	 * Straightforward merging of samples all belonging to the same project.
+	 */
+	@Test
+	@WithMockUser(username = "fbristow", roles = "ADMIN")
+	public void testMergeSamplesIntoSample3() {
+		Sample mergeInto = sampleService.read(3L);
+		Sample sample1 = sampleService.read(1L);
+		Sample sample2 = sampleService.read(2L);
+		Project p = projectService.read(1L);
+
+		assertEquals("Sample 1 should only have genome assembly 1", Lists.newArrayList(1L),
+				sampleGenomeAssemblyJoinRepository.findBySample(sample1).stream().map(t -> t.getObject().getId())
+						.collect(Collectors.toList()));
+		assertEquals("Sample 2 should only have genome assembly 2", Lists.newArrayList(2L),
+				sampleGenomeAssemblyJoinRepository.findBySample(sample2).stream().map(t -> t.getObject().getId())
+						.collect(Collectors.toList()));
+		assertTrue("Sample 3 should have no genome assemblies before",
+				sampleGenomeAssemblyJoinRepository.findBySample(mergeInto).isEmpty());
+
+		assertNotNull("Join between sample 2 and genome assembly 2 should exist",
+				sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(2L, 2L));
+		assertNotNull("Join between sample 1 and genome assembly 1 should exist",
+				sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(1L, 1L));
+
+		Sample merged = sampleService.mergeSamples(p, mergeInto, Lists.newArrayList(sample1, sample2));
+
+		assertEquals("Merged sample should be same as mergeInto.", mergeInto, merged);
+
+		// merged samples should be deleted
+		assertSampleNotFound(1L);
+		assertSampleNotFound(2L);
+
+		assertNull("Join between sample 2 and genome assembly 2 should not exist",
+				sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(2L, 2L));
+		assertNull("Join between sample 1 and genome assembly 1 should not exist",
+				sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(1L, 1L));
+
+		// the merged sample should have 3 sequence files
+		assertEquals("Merged sample should have 3 sequence files", 3,
+				objectService.getSequencingObjectsForSample(merged).size());
+
+		assertEquals("Sample 3 should only have genome assemblies 1 and 2", Lists.newArrayList(1L, 2L),
+				sampleGenomeAssemblyJoinRepository.findBySample(mergeInto).stream().map(t -> t.getObject().getId())
+						.collect(Collectors.toList()));
 	}
 
 	/**
@@ -347,7 +428,7 @@ public class SampleServiceImplIT {
 	@WithMockUser(username = "fbristow", roles = "USER")
 	public void testGetSamplesForAnalysisSubmission() {
 		AnalysisSubmission submission = analysisSubmissionService.read(1L);
-		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubimssion(submission);
+		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubmission(submission);
 		
 		assertEquals("should be 2 samples", 2, samples.size());
 		
@@ -372,6 +453,74 @@ public class SampleServiceImplIT {
 		Sample s = new Sample();
 		s.setId(1L);
 		sampleService.getQCEntriesForSample(s);
+	}
+	
+	@Test
+	@WithMockUser(username = "fbristow", roles="USER")
+	public void testGetGenomeAssemblyForSampleSuccess() throws AnalysisAlreadySetException {
+		Path expectedAssemblyPath = outputFileBaseDirectory.resolve("testfile.fasta");
+		Sample s = sampleService.read(1L);
+				
+		GenomeAssembly genomeAssembly = sampleService.getGenomeAssemblyForSample(s, 1L);
+		assertEquals("should have same path for assembly", expectedAssemblyPath, genomeAssembly.getFile());
+	}
+	
+	@Test(expected=EntityNotFoundException.class)
+	@WithMockUser(username = "fbristow", roles="USER")
+	public void testGetGenomeAssemblyForSampleFailNoAssembly() {
+		Sample s = sampleService.read(1L);
+		sampleService.getGenomeAssemblyForSample(s, 2L);
+	}
+	
+	@Test(expected=AccessDeniedException.class)
+	@WithMockUser(username = "dr-evil", roles="USER")
+	public void testGetGenomeAssemblyForSampleFailDenied() {
+		Sample s = sampleService.read(1L);
+		sampleService.getGenomeAssemblyForSample(s, 1L);
+	}
+	
+	@Test
+	@WithMockUser(username = "fbristow", roles="USER")
+	public void testGetAssembliesForSampleSuccess() {
+		Sample s = sampleService.read(1L);
+		Collection<SampleGenomeAssemblyJoin> joins = sampleService.getAssembliesForSample(s);
+		assertEquals("should have same size for assemblies", 1, joins.size());
+		
+		SampleGenomeAssemblyJoin join = joins.iterator().next();
+		assertEquals("Should be same sample", s.getId(), join.getSubject().getId());
+		assertEquals("Should be same assembly", new Long(1L), join.getObject().getId());
+	}
+	
+	@Test(expected=AccessDeniedException.class)
+	@WithMockUser(username = "dr-evil", roles="USER")
+	public void testGetAssembliesForSampleFail() {
+		Sample s = sampleService.read(1L);
+		sampleService.getAssembliesForSample(s);
+	}
+	
+	@Test
+	@WithMockUser(username = "fbristow", roles="USER")
+	public void testRemoveGenomeAssemblyFromSampleSuccess() {	
+		Sample s = sampleService.read(1L);
+		assertNotNull(sampleService.getGenomeAssemblyForSample(s, 1L));
+		
+		sampleService.removeGenomeAssemblyFromSample(s, 1L);
+		
+		try {
+			sampleService.getGenomeAssemblyForSample(s, 1L);
+		} catch (EntityNotFoundException e) {
+			return;
+		}
+		fail("Did not catch " + EntityNotFoundException.class);
+	}
+	
+	@Test(expected=AccessDeniedException.class)
+	@WithMockUser(username = "dr-evil", roles="USER")
+	public void testRemoveGenomeAssemblyFromSampleFail() {	
+		Sample s = sampleService.read(1L);
+		assertNotNull(sampleService.getGenomeAssemblyForSample(s, 1L));
+		
+		sampleService.removeGenomeAssemblyFromSample(s, 1L);
 	}
 
 	private void assertSampleNotFound(Long id) {
