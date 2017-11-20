@@ -10,9 +10,6 @@
       var PAGE = {
         linker: /*[[${linker}]]*/'',
         urls: {
-          modals: {
-            galaxy: /*[[@{/cart/template/galaxy/project/{projectId}(projectId=${project.getId()})}]]*/ '/cart/template/galaxy/project/1',
-          },
           projects: {
             available: /*[[@{/projects/{id}/ajax/samples/available_projects(id=${project.getId()})}]]*/ ''
           },
@@ -193,6 +190,17 @@
                                     <th:block th:text="#{project.samples.export.linker}"/>
                                 </a>
                             </li>
+
+                            <li role="menuitem" ng-controller="GalaxyExportController as gExportCtrl">
+                            <!--<li th:if="${galaxyCallback}" role="menuitem" ng-controller="GalaxyExportController as gCtrl">-->
+                                <a href="#" ng-click="gExportCtrl.exportToGalaxy($event)"
+                                   data:url="@{/cart/template/galaxy/project/{projectId}(projectId=${project.getId()})}"
+                                   data:project-id="${project.getId()}"
+                                   data:associated-msg="#{project.samples.only-for-project-tooltip}">
+                                    <i class="fa fa-cloud-upload fa-fw spaced-right__sm" aria-hidden="true"></i>
+                                    <th:block th:text="#{project.samples.export.galaxy}"></th:block>
+                                </a>
+                            </li>
                             <li role="menuitem">
                                 <a href="#" class="js-sample-export-btn"
                                    data-toggle="tooltip" data-enabled-at="1" data-type="ncbi"
@@ -287,14 +295,6 @@
         </div>
     </div>
 
-    <!--<li role="menuitem"-->
-    <!--th:if="${galaxyCallback}"-->
-    <!--ng-class="{disabled: toolsCtrl.disabled.hasAssociated}">-->
-    <!--<a href="#" ng-click="toolsCtrl.galaxy(); cart.show=false">-->
-    <!--<i class="fa fa-cloud-upload fa-fw" aria-hidden="true"></i>-->
-    <!--<span th:text="#{project.samples.export.galaxy}"></span>-->
-    <!--</a>-->
-    <!--</li>-->
 </main>
 <th:block layout:fragment="scripts">
     <script th:src="@{/resources/js/build/project-samples.bundle.js}"></script>
