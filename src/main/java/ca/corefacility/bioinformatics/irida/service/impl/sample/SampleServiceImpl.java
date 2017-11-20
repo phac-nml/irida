@@ -3,12 +3,7 @@ package ca.corefacility.bioinformatics.irida.service.impl.sample;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityExistsException;
@@ -21,6 +16,7 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import javax.validation.Validator;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -539,8 +535,14 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			 */
 			private Predicate sampleProperties(final Root<ProjectSampleJoin> root, final CriteriaQuery<?> query,
 					final CriteriaBuilder cb) {
-				return cb.or(cb.like(root.get("sample").get("sampleName"), "%" + queryString + "%"),
-						cb.equal(root.get("sample").get("id"), queryString));
+				List<Predicate> predicates = new ArrayList<>();
+
+				predicates.add(cb.like(root.get("sample").get("sampleName"), "%" + queryString + "%"));
+				if (NumberUtils.isDigits(queryString)) {
+					predicates.add(cb.equal(root.get("sample").get("id"), queryString));
+				}
+				Predicate[] predArray = new Predicate[predicates.size()];
+				return cb.or(predicates.toArray(predArray));
 			}
 
 			/**
