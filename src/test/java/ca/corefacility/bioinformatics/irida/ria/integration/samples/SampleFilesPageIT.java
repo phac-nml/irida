@@ -53,6 +53,7 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 		page.gotoPage(SAMPLE_ID);
 		assertTrue("Page Title contains the sample label", page.getPageTitle().contains(SAMPLE_LABEL));
 		assertEquals("Displays the correct number of sequence files", 4, page.getSequenceFileCount());
+		assertEquals("Displays the correct number of assemblies", 2, page.getAssemblyFileCount());
 		assertEquals("should be 1 qc entry", 1, page.getQcEntryCount());
 		
 		page.checkBreadCrumbs(BREADCRUMBS);
@@ -62,7 +63,7 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 	public void testDeleteFile() {
 		page.gotoPage(SAMPLE_ID);
 		
-		page.deleteFirstFile();
+		page.deleteFirstSequenceFile();
 		assertTrue("Should display a confirmation message that the file was deleted",
 				page.isDeleteConfirmationMessageDisplayed());
 		assertEquals("Displays the correct number of sequence files", 3, page.getSequenceFileCount());
@@ -72,9 +73,20 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 	public void testDeletePair(){
 		page.gotoPage(SAMPLE_ID);
 		
-		page.deleteFirstPair();
+		page.deleteFirstSequenceFilePair();
 		assertTrue("Should display a confirmation message that the file was deleted", page.isDeleteConfirmationMessageDisplayed());
 		assertEquals("Displays the correct number of sequence files", 2, page.getSequenceFileCount());
+	}
+	
+	@Test
+	public void testDeleteAssembly() {
+		page.gotoPage(SAMPLE_ID);
+		
+		page.deleteFirstAssemblyFile();
+		assertTrue("Should display a confirmation message that the file was deleted",
+				page.isDeleteConfirmationMessageDisplayed());
+		assertEquals("Displays the correct number of assemblies", 1, page.getAssemblyFileCount());
+		assertEquals("Should not have deleted sequence files (displays correct number of sequence files)", 4, page.getSequenceFileCount());
 	}
 
 	@Test

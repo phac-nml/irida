@@ -47,7 +47,9 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
+import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
@@ -275,7 +277,11 @@ public class SamplesController extends BaseController {
 				.getSequencesForSampleOfType(sample, SequenceFilePair.class);
 		Collection<SampleSequencingObjectJoin> singleFileJoins = sequencingObjectService
 				.getSequencesForSampleOfType(sample, SingleEndSequenceFile.class);
+		Collection<SampleGenomeAssemblyJoin> genomeAssemblyJoins = sampleService.getAssembliesForSample(sample);
+		logger.trace("Assembly joins " + genomeAssemblyJoins);
 
+		List<GenomeAssembly> genomeAssemblies = genomeAssemblyJoins.stream().map(SampleGenomeAssemblyJoin::getObject)
+				.collect(Collectors.toList());
 		List<SequencingObject> filePairs = filePairJoins.stream().map(SampleSequencingObjectJoin::getObject)
 				.collect(Collectors.toList());
 
@@ -297,11 +303,39 @@ public class SamplesController extends BaseController {
 		// SequenceFile
 		model.addAttribute("paired_end", filePairs);
 		model.addAttribute("single_end", singleFileJoins);
+		
+		// assemblies
+		model.addAttribute("assemblies", genomeAssemblies);
 
 		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
 		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isProjectManagerForSample(sample));
 		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_FILES);
 		return SAMPLE_FILES_PAGE;
+	}
+	
+	/**
+	 * Downloads an {@link GenomeAssembly} associated with a sample.
+	 *
+	 * @param sampleId
+	 *            Id for the sample containing the assembly to download.
+	 * @param assemblyId
+	 *            The id for the assembly.
+	 * @param response
+	 *            {@link HttpServletResponse}
+	 * @throws IOException
+	 *             if we can't write the file to the response.
+	 */
+	@RequestMapping("/samples/download/{sampleId}/assembly/{assemblyId}")
+	public void downloadAssembly(@PathVariable Long sampleId, @PathVariable Long assemblyId,
+			HttpServletResponse response) throws IOException {
+		Sample sample = sampleService.read(sampleId);
+		GenomeAssembly genomeAssembly = sampleService.getGenomeAssemblyForSample(sample, assemblyId);
+
+		Path path = genomeAssembly.getFile();
+		response.setHeader("Content-Disposition",
+				"attachment; filename=\"" + genomeAssembly.getLabel() + "\"");
+		Files.copy(path, response.getOutputStream());
+		response.flushBuffer();
 	}
 
 	/**
@@ -394,6 +428,43 @@ public class SamplesController extends BaseController {
 			attributes.addFlashAttribute("fileDeleted", true);
 			attributes.addFlashAttribute("fileDeletedError", messageSource.getMessage("samples.files.remove.error",
 					new Object[] { sequencingObject.getLabel() }, locale));
+		}
+
+		return "redirect:" + request.getHeader("referer");
+	}
+
+	/**
+	 * Remove a given {@link GenomeAssembly} from a sample
+	 *
+	 * @param attributes
+	 *            the redirect attributes where we can add flash-scoped messages
+	 *            for the client.
+	 * @param sampleId
+	 *            the {@link Sample} id
+	 * @param assemblyId
+	 *            The {@link GenomeAssembly}.
+	 * @param request
+	 *            {@link HttpServletRequest}
+	 * @param locale
+	 *            the locale specified by the browser.
+	 * @return map stating the request was successful
+	 */
+	@RequestMapping(value = "/samples/{sampleId}/files/assembly/delete", method = RequestMethod.POST)
+	public String removeGenomeAssemblyFromSample(RedirectAttributes attributes, @PathVariable Long sampleId,
+			@RequestParam Long assemblyId, HttpServletRequest request, Locale locale) {
+		Sample sample = sampleService.read(sampleId);
+		GenomeAssembly genomeAssembly = sampleService.getGenomeAssemblyForSample(sample, assemblyId);
+
+		try {
+			sampleService.removeGenomeAssemblyFromSample(sample, assemblyId);
+			attributes.addFlashAttribute("fileDeleted", true);
+			attributes.addFlashAttribute("fileDeletedMessage", messageSource.getMessage(
+					"samples.files.assembly.removed.message", new Object[] { genomeAssembly.getLabel() }, locale));
+		} catch (Exception e) {
+			logger.error("Could not remove assembly from sample=" + sample, e);
+			attributes.addFlashAttribute("fileDeleted", true);
+			attributes.addFlashAttribute("fileDeletedError", messageSource.getMessage(
+					"samples.files.assembly.remove.error", new Object[] { sample.getSampleName() }, locale));
 		}
 
 		return "redirect:" + request.getHeader("referer");

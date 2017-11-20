@@ -39,9 +39,11 @@ import org.springframework.transaction.annotation.Transactional;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
+import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
@@ -56,6 +58,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFast
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGenomeAssemblyJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
@@ -96,6 +99,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	private final AnalysisRepository analysisRepository;
 	
+	private final SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository;
+
 	private final UserRepository userRepository;
 
 
@@ -120,7 +125,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Autowired
 	public SampleServiceImpl(SampleRepository sampleRepository, ProjectSampleJoinRepository psjRepository,
 			final AnalysisRepository analysisRepository, SampleSequencingObjectJoinRepository ssoRepository,
-			QCEntryRepository qcEntryRepository, SequencingObjectRepository sequencingObjectRepository, UserRepository userRepository, Validator validator) {
+			QCEntryRepository qcEntryRepository, SequencingObjectRepository sequencingObjectRepository,
+			SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository, UserRepository userRepository, Validator validator) {
 		super(sampleRepository, validator, Sample.class);
 		this.sampleRepository = sampleRepository;
 		this.psjRepository = psjRepository;
@@ -129,6 +135,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		this.qcEntryRepository = qcEntryRepository;
 		this.sequencingObjectRepository = sequencingObjectRepository;
 		this.userRepository = userRepository;
+		this.sampleGenomeAssemblyJoinRepository = sampleGenomeAssemblyJoinRepository;
 	}
 	
 	/**
@@ -270,6 +277,9 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		// confirm that all samples are part of the same project:
 		confirmProjectSampleJoin(project, mergeInto);
 
+		logger.debug("Merging samples " + toMerge.stream().map(t -> t.getId()).collect(Collectors.toList())
+				+ " into sample [" + mergeInto.getId() + "]");
+
 		for (Sample s : toMerge) {
 			confirmProjectSampleJoin(project, s);
 			List<SampleSequencingObjectJoin> sequencesForSample = ssoRepository.getSequencesForSample(s);
@@ -277,6 +287,20 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 				SequencingObject sequencingObject = join.getObject();
 				ssoRepository.delete(join);
 				addSequencingObjectToSample(mergeInto, sequencingObject);
+			}
+
+			Collection<SampleGenomeAssemblyJoin> genomeAssemblyJoins = getAssembliesForSample(s);
+			for (SampleGenomeAssemblyJoin join : genomeAssemblyJoins) {
+				GenomeAssembly genomeAssembly = join.getObject();
+
+				logger.trace(
+						"Removing genome assembly [" + genomeAssembly.getId() + "] from sample [" + s.getId() + "]");
+				sampleGenomeAssemblyJoinRepository.delete(join);
+
+				logger.trace("Adding genome assembly [" + genomeAssembly.getId() + "] to sample [" + mergeInto.getId()
+						+ "]");
+				SampleGenomeAssemblyJoin newJoin = new SampleGenomeAssemblyJoin(mergeInto, genomeAssembly);
+				sampleGenomeAssemblyJoinRepository.save(newJoin);
 			}
 
 			// have to remove the sample to be deleted from its project:
@@ -427,7 +451,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Override
 	@PreAuthorize("hasPermission(#submission, 'canReadAnalysisSubmission')")
 	@PostFilter("hasPermission(filterObject, 'canReadSample')")
-	public Collection<Sample> getSamplesForAnalysisSubimssion(AnalysisSubmission submission) {
+	public Collection<Sample> getSamplesForAnalysisSubmission(AnalysisSubmission submission) {
 		Set<SequencingObject> objectsForAnalysisSubmission = sequencingObjectRepository
 				.findSequencingObjectsForAnalysisSubmission(submission);
 
@@ -500,6 +524,47 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		}
 
 		return sortProperties;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Transactional
+	@PreAuthorize("hasPermission(#sample, 'canUpdateSample')")
+	@Override
+	public void removeGenomeAssemblyFromSample(Sample sample, Long genomeAssemblyId) {
+		SampleGenomeAssemblyJoin join = sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(sample.getId(),
+				genomeAssemblyId);
+		if (join != null) {
+			logger.debug("Removing genome assembly [" + genomeAssemblyId + "] from sample [" + sample.getId() + "]");
+			sampleGenomeAssemblyJoinRepository.delete(join.getId());
+		} else {
+			logger.trace("Genome assembly [" + genomeAssemblyId + "] is not associated with sample [" + sample.getId() + "]. Ignoring.");
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasPermission(#sample, 'canReadSample')")
+	@Override
+	public Collection<SampleGenomeAssemblyJoin> getAssembliesForSample(Sample sample) {
+		return sampleGenomeAssemblyJoinRepository.findBySample(sample);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasPermission(#sample, 'canReadSample')")
+	@Override
+	public GenomeAssembly getGenomeAssemblyForSample(Sample sample, Long genomeAssemblyId) {
+		SampleGenomeAssemblyJoin join = sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(sample.getId(),
+				genomeAssemblyId);
+		if (join == null) {
+			throw new EntityNotFoundException("No join found between sample [" + sample.getId() + "] and genome assembly [" + genomeAssemblyId + "]");
+		}
+		
+		return join.getObject();
 	}
 	
 	/**
