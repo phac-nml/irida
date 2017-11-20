@@ -57,11 +57,11 @@ const EXPORT_HANDLERS = {
     });
     download(`${url}?${$.param({ ids })}`);
   },
-  excel() {
+  file() {
     // this is set by the object calling (i.e. download btn)
     const url = this.data("url");
     const params = $dt.ajax.params();
-    params.type = "excel";
+    params.type = this.data("type");
     download(`${url}?${$.param(params)}`);
   },
   ncbi() {

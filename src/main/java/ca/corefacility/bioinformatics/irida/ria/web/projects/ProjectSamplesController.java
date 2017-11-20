@@ -42,9 +42,8 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJ
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesToExcel;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesExportToFile;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.export.ProjectSamplesTableExport;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.ProjectSampleModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.UISampleFilter;
@@ -53,8 +52,6 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
-import com.github.dandelion.datatables.core.export.DatatablesExport;
-import com.github.dandelion.datatables.core.export.ExportUtils;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
@@ -888,8 +885,8 @@ public class ProjectSamplesController {
 			for (ProjectSampleJoin psj : page.getContent()) {
 				models.add(buildProjectSampleDataTablesModel(psj, locale));
 			}
-			DataTablesToExcel tablesToExcel = new DataTablesToExcel();
-			tablesToExcel.writeWorkbook(response, project.getLabel().replace(" ", "_"), models, messageSource, locale);
+			List<String> headers = models.get(0).getTableHeaders(messageSource, locale);
+			DataTablesExportToFile.writeFile(type, response, project.getLabel().replace(" ", "_"), models, headers);
 		}
 	}
 

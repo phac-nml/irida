@@ -81,12 +81,12 @@ public class DTProjectSamples implements DataTablesResponseModel, DataTablesExpo
 	}
 
 	@Override
-	public List<Object> toTableRow() {
-		List<Object> data = new ArrayList<>();
-		data.add(this.getId());
+	public List<String> toTableRow() {
+		List<String> data = new ArrayList<>();
+		data.add(String.valueOf(this.getId()));
 		data.add(this.getSampleName());
 		data.add(this.getOrganism());
-		data.add(this.getProjectId());
+		data.add(String.valueOf(this.getProjectId()));
 		data.add(this.getProjectName());
 		data.add(dateFormatter.format(this.getCreatedDate()));
 		data.add(dateFormatter.format(this.getModifiedDate()));
