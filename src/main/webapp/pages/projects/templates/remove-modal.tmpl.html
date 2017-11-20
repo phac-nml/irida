@@ -1,5 +1,5 @@
 <div id="js-remove-modal" th:with="countSingle=${#lists.size(samplesThatAreInOne)},countMultiple=${#lists.size(samplesThatAreInMultiple)}">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog t-remove-modal" role="document">
         <form class="js-remove-form">
             <div class="modal-content">
                 <div class="modal-header">
@@ -52,7 +52,7 @@
 
                 <div class="modal-footer">
                     <button class="btn btn-default" th:text="#{form.btn.cancel}" data-dismiss="modal"></button>
-                    <button id="js-submit" class="btn btn-primary" th:text="#{project.samples.modal.remove.button}"
+                    <button id="js-submit" class="btn btn-primary t-submit-remove" th:text="#{project.samples.modal.remove.button}"
                             data:url="@{/projects/{projectId}/ajax/samples/remove(projectId=${project.getId()})}">_Remove_
                     </button>
                 </div>
