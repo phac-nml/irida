@@ -434,7 +434,7 @@ public class AnalysisController {
 	@SuppressWarnings("resource")
 	@RequestMapping("/ajax/sistr/{id}") @ResponseBody public Map<String,Object> getSistrAnalysis(@PathVariable Long id) {
 		AnalysisSubmission submission = analysisSubmissionService.read(id);
-		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubimssion(submission);
+		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubmission(submission);
 		Map<String,Object> result = ImmutableMap.of("parse_results_error", true);
 		
 		final String sistrFileKey = "sistr-predictions";
@@ -616,7 +616,7 @@ public class AnalysisController {
 	public Map<String, Object> getMetadataForAnalysisSamples(
 			@PathVariable Long submissionId) {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
-		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubimssion(submission);
+		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubmission(submission);
 
 		// Let's get a list of all the metadata available that is unique.
 		Set<String> terms = new HashSet<>();

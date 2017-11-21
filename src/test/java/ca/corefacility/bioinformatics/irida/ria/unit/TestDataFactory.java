@@ -22,6 +22,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
+import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
+import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssemblyFromAnalysis;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -86,6 +88,11 @@ public class TestDataFactory {
 		Path path = Paths.get("/tmp/sequence-files/fake-file" + Math.random() + ".fast");
 		return new ReferenceFile(path);
 	}
+	
+	public static GenomeAssembly constructGenomeAssembly() {
+		AnalysisSubmission submission = constructAnalysisSubmission();
+		return new GenomeAssemblyFromAnalysis(submission);
+	}
 
 	public static AnalysisSubmission constructAnalysisSubmission() {
 		Set<SequencingObject> files = new HashSet<>();
@@ -114,7 +121,8 @@ public class TestDataFactory {
 		Map<String, AnalysisOutputFile> analysisOutputFiles = new ImmutableMap.Builder<String, AnalysisOutputFile>()
 				.put("tree", constructAnalysisOutputFile("snp_tree.tree"))
 				.put("matrix", constructAnalysisOutputFile("test_file_1.fastq"))
-				.put("table", constructAnalysisOutputFile("test_file_2.fastq")).build();
+				.put("table", constructAnalysisOutputFile("test_file_2.fastq")).
+				put("contigs-with-repeats", constructAnalysisOutputFile("test_file.fasta")).build();
 		Analysis analysis = new Analysis(FAKE_EXECUTION_MANAGER_ID, analysisOutputFiles, AnalysisType.PHYLOGENOMICS);
 		return analysis;
 	}

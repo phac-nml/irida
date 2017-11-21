@@ -45,6 +45,8 @@
 			ref          = typeof vm.uploadedReferenceFile !== "undefined" ? vm.uploadedReferenceFile : Number(ng.element('option:selected').val()),
 			// User defined name for the pipeline
 			name         = ng.element('#pipeline-name').val(),
+			// Whether or not to write results back to samples
+			writeResultsToSamples = $('#share-results-samples').is(':checked'),
 			// All the selected sample single or pair-end files
 			radioBtns    = ng.element("input[type='radio']:checked"),
 			// Holds all the ids for the selected single-end
@@ -55,7 +57,7 @@
 			description = ng.element('#analysis-description').val(),
 			// Projects to share results with
 			shared = [];
-
+			
 			if (name === null || name.length === 0) {
 				vm.error = page.i18n.required;
 			} else {
@@ -102,7 +104,8 @@
 				}
 				params['name'] = name;
 				params['description'] = description;
-
+				params['writeResultsToSamples'] = writeResultsToSamples;
+								
 				if(shared.length > 0){
 					params['sharedProjects'] = shared;
 				}

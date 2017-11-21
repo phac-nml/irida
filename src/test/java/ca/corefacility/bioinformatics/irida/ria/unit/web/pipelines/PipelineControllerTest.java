@@ -22,9 +22,11 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.CartController;
 import ca.corefacility.bioinformatics.irida.ria.web.pipelines.PipelineController;
+import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
@@ -51,6 +53,8 @@ public class PipelineControllerTest {
 	// Controller to test
 	private PipelineController controller;
 	private WorkflowNamedParametersService namedParameterService;
+	private UpdateSamplePermission updateSamplePermission;
+	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
 
 	@Before
 	public void setUp() {
@@ -63,9 +67,12 @@ public class PipelineControllerTest {
 		cartController = mock(CartController.class);
 		sequencingObjectService = mock(SequencingObjectService.class);
 		namedParameterService = mock(WorkflowNamedParametersService.class);
+		updateSamplePermission = mock(UpdateSamplePermission.class);
+		analysisSubmissionSampleProcessor = mock(AnalysisSubmissionSampleProcessor.class);
 
 		controller = new PipelineController(sequencingObjectService, referenceFileService, analysisSubmissionService,
-				workflowsService, projectService, userService, cartController, messageSource, namedParameterService);
+				workflowsService, projectService, userService, cartController, messageSource, namedParameterService,
+				updateSamplePermission, analysisSubmissionSampleProcessor);
 		when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 	}
 

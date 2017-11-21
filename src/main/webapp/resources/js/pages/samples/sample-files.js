@@ -54,6 +54,36 @@ function FileController($uibModal) {
 }
 
 /**
+ * Controller for the Buttons in the list of assembly files.
+ *
+ * @param {Object} $uibModal Angular modal
+ * @constructor
+ */
+function AssemblyFileController($uibModal) {
+  /**
+   * Click handler for the delete button for an assembly
+   *  Displays a confirmation modal
+   *
+   * @param {long} id Id for the assembly to delete
+   * @param {String} label Name of the assembly to delete
+   */
+  this.deleteFile = function(id, label) {
+    $uibModal.open({
+      templateUrl: '/confirm_assembly.html',
+      controller: 'FileDeletionController as deleteCtrl',
+      resolve: {
+        id: function() {
+          return id;
+        },
+        label: function() {
+          return label;
+        }
+      }
+    });
+  };
+}
+
+/**
  * Controller to handle uploading new sequence files
  *
  * @param {object} Upload angular file upload
@@ -178,6 +208,7 @@ angular.module('irida.sample.files', [
     '$uibModal', FileUploadController
   ])
   .controller('FileController', ['$uibModal', FileController])
+  .controller('AssemblyFileController', ['$uibModal', AssemblyFileController])
   .controller('FileDeletionController', ['$uibModalInstance', 'id', 'label',
     FileDeletionController
   ]);
