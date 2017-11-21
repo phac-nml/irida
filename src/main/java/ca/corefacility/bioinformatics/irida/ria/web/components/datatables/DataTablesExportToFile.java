@@ -32,8 +32,10 @@ public class DataTablesExportToFile {
 	public static void writeFile(DataTablesExportTypes type, HttpServletResponse response, String filename, List<? extends DataTablesExportable> models, List<String> headers) throws IOException {
 		if(type.equals(DataTablesExportTypes.excel)) {
 			writeToExcel(response, filename, models, headers);
-		} else {
+		} else if(type.equals(DataTablesExportTypes.csv)) {
 			writeToCSV(response, filename, models, headers);
+		} else {
+			throw new  IllegalArgumentException("Trying to export and unknown table format: " + type);
 		}
 	}
 
