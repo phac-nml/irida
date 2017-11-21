@@ -166,6 +166,10 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "named_parameters_id")
 	private IridaWorkflowNamedParameters namedParameters;
+	
+	@NotNull
+	@Column(name = "update_samples")
+	private boolean updateSamples;
 
 	protected AnalysisSubmission() {
 		this.createdDate = new Date();
@@ -198,6 +202,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 		this.workflowId = builder.workflowId;
 		this.namedParameters = builder.namedParameters;
 		this.analysisDescription = (builder.analysisDescription);
+		this.updateSamples = builder.updateSamples;
 	}
 
 	/**
@@ -482,6 +487,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 		private Map<String, String> inputParameters;
 		private IridaWorkflowNamedParameters namedParameters;
 		private String analysisDescription;
+		private boolean updateSamples = false;
 
 		/**
 		 * Creates a new {@link Builder} with a workflow id.
@@ -606,6 +612,20 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 			return this;
 		}
 
+		/**
+		 * Turns on/off updating of samples from results for this analysis
+		 * submission.
+		 * 
+		 * @param updateSamples
+		 *            Turn on/off updating samples.
+		 * @return A {@link Builder}
+		 */
+		public Builder updateSamples(boolean updateSamples) {
+			this.updateSamples = updateSamples;
+
+			return this;
+		}
+
 		public AnalysisSubmission build() {
 			checkArgument(inputFiles != null,
 					"input file collection is null.  You must supply at least one set of input files");
@@ -654,6 +674,22 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	 */
 	public boolean hasRemoteInputDataId() {
 		return remoteInputDataId != null;
+	}
+	
+	/**
+	 * Sets flag to indicate whether or not samples in the submission should be updated with analysis results following completion.
+	 * @param updateSamples If true, updates samples from results on completion.
+	 */
+	public void setUpdateSamples(boolean updateSamples) {
+		this.updateSamples = updateSamples;
+	}
+
+	/**
+	 * Whether or not to update samples from results on completion.
+	 * @return Update samples from results on completion.
+	 */
+	public boolean getUpdateSamples() {
+		return updateSamples;
 	}
 
 	@Override

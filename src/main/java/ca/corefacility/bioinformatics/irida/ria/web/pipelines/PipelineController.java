@@ -17,6 +17,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,9 +53,11 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
+import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.CartController;
 import ca.corefacility.bioinformatics.irida.ria.web.pipelines.dto.WorkflowParametersToSave;
+import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
@@ -98,6 +102,8 @@ public class PipelineController extends BaseController {
 	private IridaWorkflowsService workflowsService;
 	private MessageSource messageSource;
 	private final WorkflowNamedParametersService namedParameterService;
+	private UpdateSamplePermission updateSamplePermission;
+	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
 	
 	/*
 	 * CONTROLLERS
@@ -109,7 +115,9 @@ public class PipelineController extends BaseController {
 			ReferenceFileService referenceFileService, AnalysisSubmissionService analysisSubmissionService,
 			IridaWorkflowsService iridaWorkflowsService, ProjectService projectService, UserService userService,
 			CartController cartController, MessageSource messageSource,
-			final WorkflowNamedParametersService namedParameterService) {
+			final WorkflowNamedParametersService namedParameterService,
+			UpdateSamplePermission updateSamplePermission,
+			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor) {
 		this.sequencingObjectService = sequencingObjectService;
 		this.referenceFileService = referenceFileService;
 		this.analysisSubmissionService = analysisSubmissionService;
@@ -119,6 +127,8 @@ public class PipelineController extends BaseController {
 		this.cartController = cartController;
 		this.messageSource = messageSource;
 		this.namedParameterService = namedParameterService;
+		this.updateSamplePermission = updateSamplePermission;
+		this.analysisSubmissionSampleProcessor = analysisSubmissionSampleProcessor;
 	}
 
 	/**
@@ -180,10 +190,12 @@ public class PipelineController extends BaseController {
 	@RequestMapping(value = "/{pipelineId}")
 	public String getSpecifiedPipelinePage(final Model model, Principal principal, Locale locale, @PathVariable UUID pipelineId) {
 		String response = URL_EMPTY_CART_REDIRECT;
+		boolean canUpdateAllSamples;
 
 		Map<Project, Set<Sample>> cartMap = cartController.getSelected();
 		// Cannot run a pipeline on an empty cart!
 		if (!cartMap.isEmpty()) {
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
 			IridaWorkflow flow = null;
 			try {
@@ -192,6 +204,10 @@ public class PipelineController extends BaseController {
 				logger.error("Workflow not found - See stack:", e);
 				return "redirect:errors/not_found";
 			}
+			
+			// Check if there even is functionality to update samples from results for this pipeline
+			canUpdateAllSamples = analysisSubmissionSampleProcessor
+					.hasRegisteredAnalysisSampleUpdater(flow.getWorkflowDescription().getAnalysisType());
 
 			User user = userService.getUserByUsername(principal.getName());
 			// Get all the reference files that could be used for this pipeline.
@@ -254,6 +270,8 @@ public class PipelineController extends BaseController {
 				projectMap.put("name", project.getLabel());
 				projectMap.put("samples", sampleList);
 				projectList.add(projectMap);
+				
+				canUpdateAllSamples &= updateSamplePermission.isAllowed(authentication, samples);
 			}
 
 			// Need to add the pipeline parameters
@@ -303,6 +321,7 @@ public class PipelineController extends BaseController {
 			model.addAttribute("referenceRequired", description.requiresReference());
 			model.addAttribute("addRefProjects", addRefList);
 			model.addAttribute("projects", projectList);
+			model.addAttribute("canUpdateSamples", canUpdateAllSamples);
 			response = URL_GENERIC_PIPELINE;
 		}
 
@@ -345,7 +364,7 @@ public class PipelineController extends BaseController {
 			@RequestParam(required = false) List<Long> single, @RequestParam(required = false) List<Long> paired,
 			@RequestParam(required = false) Map<String, String> parameters, @RequestParam(required = false) Long ref,
 			@RequestParam String name, @RequestParam(name = "description", required = false) String analysisDescription,
-			@RequestParam(required = false) List<Long> sharedProjects) {
+			@RequestParam(required = false) List<Long> sharedProjects, @RequestParam(required = false, defaultValue = "false") Boolean writeResultsToSamples) {
 		Map<String, Object> result = ImmutableMap.of("success", true);
 		try {
 			IridaWorkflow flow = workflowsService.getIridaWorkflow(pipelineId);
@@ -432,10 +451,10 @@ public class PipelineController extends BaseController {
 
 			if (description.getInputs().requiresSingleSample()) {
 				analysisSubmissionService.createSingleSampleSubmission(flow, ref, singleEndFiles, sequenceFilePairs,
-						params, namedParameters, name, analysisDescription, projectsToShare);
+						params, namedParameters, name, analysisDescription, projectsToShare, writeResultsToSamples);
 			} else {
 				analysisSubmissionService.createMultipleSampleSubmission(flow, ref, singleEndFiles, sequenceFilePairs,
-						params, namedParameters, name, analysisDescription, projectsToShare);
+						params, namedParameters, name, analysisDescription, projectsToShare, writeResultsToSamples);
 			}
 
 		} catch (IridaWorkflowNotFoundException e) {
