@@ -40,6 +40,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesExportTypes;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesExportToFile;
@@ -858,7 +859,7 @@ public class ProjectSamplesController {
 	@RequestMapping(value = "/projects/{projectId}/samples/export")
 	public void exportProjectSamplesTable(
 			@PathVariable Long projectId,
-			@RequestParam String type,
+			@RequestParam DataTablesExportTypes type,
 			@DataTablesRequest DataTablesParams params,
 			@RequestParam(required = false, defaultValue = "") List<String> sampleNames,
 			@RequestParam(required = false, defaultValue = "") List<Long> associated,

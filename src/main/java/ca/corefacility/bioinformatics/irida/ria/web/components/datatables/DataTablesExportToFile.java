@@ -29,8 +29,8 @@ public class DataTablesExportToFile {
 	 * @param headers for the table
 	 * @throws IOException thrown if file cannot be written
 	 */
-	public static void writeFile(String type, HttpServletResponse response, String filename, List<? extends DataTablesExportable> models, List<String> headers) throws IOException {
-		if(type.equals(DataTablesExportTypes.EXCEL.toString())) {
+	public static void writeFile(DataTablesExportTypes type, HttpServletResponse response, String filename, List<? extends DataTablesExportable> models, List<String> headers) throws IOException {
+		if(type.equals(DataTablesExportTypes.excel)) {
 			writeToExcel(response, filename, models, headers);
 		} else {
 			writeToCSV(response, filename, models, headers);
