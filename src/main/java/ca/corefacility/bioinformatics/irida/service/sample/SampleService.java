@@ -10,8 +10,10 @@ import org.springframework.data.domain.Sort.Direction;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
+import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
@@ -233,7 +235,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *            the {@link AnalysisSubmission}
 	 * @return a Collection of {@link Sample}
 	 */
-	public Collection<Sample> getSamplesForAnalysisSubimssion(AnalysisSubmission submission);
+	public Collection<Sample> getSamplesForAnalysisSubmission(AnalysisSubmission submission);
 	
 	/**
 	 * Find all the {@link QCEntry} associated with {@link SequencingObject}s in
@@ -244,6 +246,37 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @return a list of {@link QCEntry}
 	 */
 	public List<QCEntry> getQCEntriesForSample(Sample sample);
+
+	/**
+	 * Gets a collection of {@link SampleGenomeAssemblyJoin}s for the given
+	 * sample.
+	 * 
+	 * @param sample
+	 *            The sample.
+	 * @return A collection of joins to {@link GenomeAssembly}s for the sample.
+	 */
+	public Collection<SampleGenomeAssemblyJoin> getAssembliesForSample(Sample sample);
+	
+	/**
+	 * Gets the genome assembly for a sample.
+	 * 
+	 * @param sample
+	 *            The sample.
+	 * @param genomeAssemblyId
+	 *            The id of the genome assembly.
+	 * @return The {@link GenomeAssembly} with the given information.
+	 */
+	public GenomeAssembly getGenomeAssemblyForSample(Sample sample, Long genomeAssemblyId);
+
+	/**
+	 * Deletes the given genome assembly from the given sample.
+	 * 
+	 * @param sample
+	 *            The sample.
+	 * @param genomeAssemblyId
+	 *            The genome assembly.
+	 */
+	public void removeGenomeAssemblyFromSample(Sample sample, Long genomeAssemblyId);
 
 	/**
 	 * Search all {@link Sample}s in projects the current logged in user has
@@ -277,5 +310,4 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 */
 	public Page<ProjectSampleJoin> searchAllSamples(String query, final Integer page, final Integer count,
 			final Sort sort);
-
 }

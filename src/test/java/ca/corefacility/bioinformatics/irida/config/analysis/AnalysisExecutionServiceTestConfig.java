@@ -24,6 +24,7 @@ import com.google.common.collect.Lists;
 import ca.corefacility.bioinformatics.irida.config.conditions.NonWindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
@@ -91,10 +92,13 @@ public class AnalysisExecutionServiceTestConfig {
 	private GalaxyWorkflowService galaxyWorkflowService;
 	
 	@Autowired
-	SampleRemoteService sampleRemoteService;
+	private SampleRemoteService sampleRemoteService;
 	
 	@Autowired
-	SequencingObjectService sequencingObjectService;
+	private SequencingObjectService sequencingObjectService;
+	
+	@Autowired
+	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleService;
 
 	@Lazy
 	@Bean
@@ -107,7 +111,7 @@ public class AnalysisExecutionServiceTestConfig {
 	@Bean
 	public AnalysisExecutionServiceGalaxyAsync analysisExecutionServiceGalaxyAsync() {
 		return new AnalysisExecutionServiceGalaxyAsync(analysisSubmissionService, analysisService,
-				galaxyWorkflowService, analysisWorkspaceService(), iridaWorkflowsService);
+				galaxyWorkflowService, analysisWorkspaceService(), iridaWorkflowsService, analysisSubmissionSampleService);
 	}
 	
 	@Lazy

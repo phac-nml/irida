@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="sample-assembly" author="aaron">
+
+		<createTable tableName="genome_assembly">
+			<column name="id" autoIncrement="true" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="created_date" type="datetime">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createTable tableName="genome_assembly_analysis">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"
+					referencedTableName="genome_assembly" referencedColumnNames="id"
+					foreignKeyName="FK_GENOME_ASSEMBLY_ANALYSIS" />
+			</column>
+			<column name="analysis_submission_id" type="bigint(20)">
+				<constraints referencedTableName="analysis_submission"
+					referencedColumnNames="id" nullable="false"
+					foreignKeyName="FK_GENOME_ASSEMBLY_ANALYSIS_SUBMISSION_ANALYSIS" />
+			</column>
+		</createTable>
+
+		<createTable tableName="sample_genome_assembly">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="sample_id" type="bigint(20)">
+				<constraints referencedColumnNames="id"
+					referencedTableName="sample" foreignKeyName="FK_SAMPLE_GENOME_ASSEMBLY_SAMPLE"
+					nullable="false" />
+			</column>
+			<column name="genome_assembly_id" type="bigint(20)">
+				<constraints referencedColumnNames="id"
+					referencedTableName="genome_assembly" foreignKeyName="FK_SAMPLE_GENOME_ASSEMBLY_ASSEMBLY"
+					nullable="false" />
+			</column>
+
+			<column name="createdDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createTable tableName="sample_genome_assembly_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="sample_id" type="bigint(20)" />
+			<column name="genome_assembly_id" type="bigint(20)" />
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" referencedColumnNames="id"
+					referencedTableName="Revisions" foreignKeyName="FK_SAMPLE_GENOME_ASSEMBLY_AUD" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="createdDate" type="datetime" />
+		</createTable>
+
+		<addColumn tableName="analysis_submission">
+			<column name="update_samples" type="bit(1)" defaultValue="false">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+
+		<addColumn tableName="analysis_submission_AUD">
+			<column name="update_samples" type="bit(1)" />
+		</addColumn>
+
+		<sql>
+			<!-- Create a table to store link between sample and analysis_submission -->
+			<!-- I need to create incrementing ids for any newly created genome_assemblies, which is -->
+			<!-- done by creating an incrementing key in this temporary table, and using this as the genome_assembly_id -->
+			CREATE TEMPORARY TABLE sample_analysis_submission_0_19_0
+				(genome_assembly_id bigint(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+					sample_id bigint(20), analysis_submission_id bigint(20), submission_created_date datetime);
+
+			INSERT INTO sample_analysis_submission_0_19_0 (sample_id, analysis_submission_id, submission_created_date)
+				SELECT sso.sample_id AS sample_id, sub.id AS analysis_submission_id, sub.created_date AS submission_created_date
+				FROM sample_sequencingobject sso
+					INNER JOIN sequencing_object so ON sso.sequencingobject_id = so.id
+					INNER JOIN analysis_submission sub ON so.automated_assembly = sub.id
+				WHERE sub.analysis_state = 'COMPLETED' AND so.automated_assembly IS NOT NULL
+				ORDER BY sub.id;
+
+			<!-- Construct 'genome_assembly' entries for automated assemblies -->
+			INSERT INTO genome_assembly (id,created_date)
+				SELECT genome_assembly_id, submission_created_date
+				FROM sample_analysis_submission_0_19_0;
+
+			INSERT INTO genome_assembly_analysis (id,analysis_submission_id)
+				SELECT genome_assembly_id, analysis_submission_id
+				FROM sample_analysis_submission_0_19_0;
+
+			<!-- Construct links between sample and completed automated assemblies -->
+			INSERT INTO sample_genome_assembly (sample_id, genome_assembly_id, createdDate)
+				SELECT sample_id, genome_assembly_id, submission_created_date
+				FROM sample_analysis_submission_0_19_0;
+
+			<!-- Set 'update_samples' to true (1) for automated assemblies -->
+			UPDATE analysis_submission sub
+				INNER JOIN sequencing_object so ON so.automated_assembly = sub.id
+				SET update_samples = 1;
+		</sql>
+
+	</changeSet>
+</databaseChangeLog>
