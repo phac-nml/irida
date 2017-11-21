@@ -87,7 +87,7 @@ public class SearchResultPageIT extends AbstractIridaUIITChromeDriver {
 		int sampleCount = page.getSampleCount();
 		int projectCount = page.getProjectCount();
 
-		assertEquals("should be 2 samples", 1, sampleCount);
+		assertEquals("should be 2 samples", 2, sampleCount);
 	}
 
 	@Test
