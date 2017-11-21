@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,17 +44,17 @@ public class GalaxyToolDataService {
      * @param dataTableId
      *            The id of the tool data table.
      * @return  The Tool Data Table Object.
-     * @throws WorkflowException
+     * @throws GalaxyDatasetNotFoundException
      *             If there was an issue getting the details of the tool data table.
      */
-    public TabularToolDataTable getToolDataTable(String dataTableId) throws WorkflowException {
+    public TabularToolDataTable getToolDataTable(String dataTableId) throws GalaxyDatasetNotFoundException {
         checkNotNull(dataTableId, "dataTableId is null");
         checkNotNull(toolDataClient, "toolDataClient is null");
         TabularToolDataTable toolDataTable = toolDataClient.showDataTable(dataTableId);
         if (toolDataTable != null) {
             return toolDataTable;
         } else {
-            throw new WorkflowException("Could not find Tool Data Table named: " + dataTableId);
+            throw new GalaxyDatasetNotFoundException("Could not find Tool Data Table named: " + dataTableId);
         }
     }
 
@@ -63,9 +64,9 @@ public class GalaxyToolDataService {
      * @param value  Tool Data Table 'value' entry (acts as unique key for the table).
      * @param column  Tool Data Table column to select data from.
      * @return  The entry in the Tool Data Table corresponding to that value/column pair.
-     * @throws WorkflowException  If no such data could be found.
+     * @throws GalaxyDatasetNotFoundException  If no such data could be found.
      */
-    public String getToolDataField(TabularToolDataTable toolDataTable, String column, String value) throws WorkflowException {
+    public String getToolDataField(TabularToolDataTable toolDataTable, String column, String value) throws GalaxyDatasetNotFoundException {
         checkNotNull(toolDataTable, "toolDataTable is null");
         checkNotNull(column, "column is null");
         checkNotNull(value, "value is null");
@@ -73,7 +74,7 @@ public class GalaxyToolDataService {
         if (field != null) {
             return field;
         } else {
-            throw new WorkflowException("Cannot find data for value " + value + " in column " + column);
+            throw new GalaxyDatasetNotFoundException("Cannot find data for value " + value + " in column " + column);
         }
     }
 
@@ -82,16 +83,16 @@ public class GalaxyToolDataService {
      * @param toolDataTable  The TabularToolDataTable to look in.
      * @param column  Tool Data Table column to select data from.
      * @return  A list of fields in the Tool Data Table corresponding to that column.
-     * @throws WorkflowException  If no such column could be found in the table.
+     * @throws GalaxyDatasetNotFoundException  If no such column could be found in the table.
      */
-    public List<String> getToolDataColumn(TabularToolDataTable toolDataTable, String column) throws WorkflowException {
+    public List<String> getToolDataColumn(TabularToolDataTable toolDataTable, String column) throws GalaxyDatasetNotFoundException {
         checkNotNull(toolDataTable, "toolDataTable is null");
         checkNotNull(column, "column is null");
         List<String> fields = toolDataTable.getFieldsForColumn(column);
         if (fields != null) {
             return fields;
         } else {
-            throw new WorkflowException("Cannot find data for column: " + column + " in tool data table " + toolDataTable.getName());
+            throw new GalaxyDatasetNotFoundException("Cannot find data for column: " + column + " in tool data table " + toolDataTable.getName());
         }
     }
 
