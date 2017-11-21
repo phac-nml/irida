@@ -1,18 +1,14 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects.metadata;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.MetadataImportFileTypeNotSupportedError;
-import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
-import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
-import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.io.Files;
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
+import java.util.Map.Entry;
+
+import javax.servlet.http.HttpSession;
+
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -28,13 +24,20 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpSession;
-import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
-import java.util.Map.Entry;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.MetadataImportFileTypeNotSupportedError;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.io.Files;
 
 /**
  * This class is designed to be used for bulk actions on {@link MetadataEntry}
@@ -127,17 +130,22 @@ public class ProjectSampleMetadataController {
 			// Get the metadata out of the table.
 			List<Map<String, String>> rows = new ArrayList<>();
 			while (rowIterator.hasNext()) {
-				int headerCounter = 0;
 				Map<String, String> rowMap = new HashMap<>();
 				Row row = rowIterator.next();
 				Iterator<Cell> cellIterator = row.cellIterator();
-				while (cellIterator.hasNext() && headerCounter < headers.size()) {
+				while (cellIterator.hasNext()) {
 					Cell cell = cellIterator.next();
-					cell.setCellType(Cell.CELL_TYPE_STRING);
-					String cellValue = cell.getStringCellValue().trim();
-					String header = headers.get(headerCounter).trim();
-					rowMap.put(header, cellValue);
-					headerCounter += 1;
+					int columnIndex = cell.getColumnIndex();
+					if (columnIndex < headers.size()) {
+						String header = headers.get(columnIndex);
+
+						if (cell.getCellType() == Cell.CELL_TYPE_BLANK) {
+							rowMap.put(header, "");
+						} else {
+							cell.setCellType(Cell.CELL_TYPE_STRING);
+							rowMap.put(header, cell.getStringCellValue());
+						}
+					}
 				}
 				rows.add(rowMap);
 			}

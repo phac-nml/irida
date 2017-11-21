@@ -386,7 +386,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	public Collection<AnalysisSubmission> createSingleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
 			Map<String, String> params, IridaWorkflowNamedParameters namedParameters, String name,
-			String analysisDescription, List<Project> projectsToShare) {
+			String analysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples) {
 		final Collection<AnalysisSubmission> createdSubmissions = new HashSet<AnalysisSubmission>();
 		// Single end reads
 		IridaWorkflowDescription description = workflow.getWorkflowDescription();
@@ -399,6 +399,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 				AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
 				builder.name(name + "_" + s.getSampleName());
 				builder.inputFiles(ImmutableSet.of(samplesMap.get(s)));
+				builder.updateSamples(writeResultsToSamples);
 
 				// Add reference file
 				if (ref != null && description.requiresReference()) {
@@ -435,6 +436,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 				AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
 				builder.name(name + "_" + s.getSampleName());
 				builder.inputFiles(ImmutableSet.of(samplesMap.get(s)));
+				builder.updateSamples(writeResultsToSamples);
 
 				// Add reference file
 				if (ref != null && description.requiresReference()) {
@@ -480,9 +482,10 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	public AnalysisSubmission createMultipleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
 			Map<String, String> params, IridaWorkflowNamedParameters namedParameters, String name,
-			String newAnalysisDescription, List<Project> projectsToShare) {
+			String newAnalysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples) {
 		AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
 		builder.name(name);
+		builder.updateSamples(writeResultsToSamples);
 		IridaWorkflowDescription description = workflow.getWorkflowDescription();
 
 		// Add reference file
