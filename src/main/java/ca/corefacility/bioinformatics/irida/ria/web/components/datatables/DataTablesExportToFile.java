@@ -22,7 +22,7 @@ public class DataTablesExportToFile {
 
 	/**
 	 * Write data within datatable to an excel formatted file.
-	 * @param type {@link String} type of file to create (either excel or csv)
+	 * @param type {@link DataTablesExportTypes} type of file to create (either excel or csv)
 	 * @param response {@link HttpServletResponse}
 	 * @param filename {@link String} name of the file to download.
 	 * @param models Data to download in the table
