@@ -22,6 +22,7 @@ import moment from "moment";
 
 /*
 This is required to use select2 inside a modal.
+This is required to use select2 inside a modal.
  */
 $.fn.modal.Constructor.prototype.enforceFocus = function() {};
 
@@ -71,6 +72,10 @@ const EXPORT_HANDLERS = {
     selected.forEach(s => {
       ids.push(s.sample);
     });
+    /*
+    NCBI Export is a separate page.  If there are ids available for export,
+    redirect the user to that page.
+     */
     if (ids.length > 0) {
       window.location.href = `${this.data("url")}?${$.param({ ids })}`;
     }
