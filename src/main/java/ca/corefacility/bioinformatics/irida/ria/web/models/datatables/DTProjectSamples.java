@@ -80,6 +80,9 @@ public class DTProjectSamples implements DataTablesResponseModel, DataTablesExpo
 		return owner;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<String> toTableRow() {
 		List<String> data = new ArrayList<>();
@@ -93,6 +96,9 @@ public class DTProjectSamples implements DataTablesResponseModel, DataTablesExpo
 		return data;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<String> getTableHeaders(MessageSource messageSource, Locale locale) {
 		List<String> headers = new ArrayList<>();

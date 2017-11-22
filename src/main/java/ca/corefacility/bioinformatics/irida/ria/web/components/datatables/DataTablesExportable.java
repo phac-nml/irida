@@ -6,8 +6,9 @@ import java.util.Locale;
 import org.springframework.context.MessageSource;
 
 /**
- * This interface is responsible for enforcing that {@link DataTablesResponseModel} will
- * be have the correct methods.
+ * This interface is responsible for enforcing that classes implementing
+ * {@link ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel} and
+ * need to be exportable will be able to explicitly state which attributes and in which order they need to be exported.
  */
 public interface DataTablesExportable {
 	/**
