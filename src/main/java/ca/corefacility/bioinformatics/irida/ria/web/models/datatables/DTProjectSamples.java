@@ -1,20 +1,24 @@
 package ca.corefacility.bioinformatics.irida.ria.web.models.datatables;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+import org.springframework.context.MessageSource;
 
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesExportable;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
 
 /**
  * DataTables response object for {@link ProjectSampleJoin}
  */
-public class DTProjectSamples implements DataTablesResponseModel {
+public class DTProjectSamples implements DataTablesResponseModel, DataTablesExportable {
+	private final String dataPattern = "MMM dd, yyyy";
+	private final DateFormat dateFormatter = new SimpleDateFormat(dataPattern);
+
 	private Long id;
 	private Long projectId;
 	private String sampleName;
@@ -74,5 +78,37 @@ public class DTProjectSamples implements DataTablesResponseModel {
 	
 	public boolean isOwner(){
 		return owner;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<String> toTableRow() {
+		List<String> data = new ArrayList<>();
+		data.add(String.valueOf(this.getId()));
+		data.add(this.getSampleName());
+		data.add(this.getOrganism());
+		data.add(String.valueOf(this.getProjectId()));
+		data.add(this.getProjectName());
+		data.add(dateFormatter.format(this.getCreatedDate()));
+		data.add(dateFormatter.format(this.getModifiedDate()));
+		return data;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<String> getTableHeaders(MessageSource messageSource, Locale locale) {
+		List<String> headers = new ArrayList<>();
+		headers.add(messageSource.getMessage("iridaThing.id", new Object[] {}, locale));
+		headers.add(messageSource.getMessage("project.samples.table.name", new Object[] {}, locale));
+		headers.add(messageSource.getMessage("project.samples.table.organism", new Object[] {}, locale));
+		headers.add(messageSource.getMessage("project.samples.table.project-id", new Object[] {}, locale));
+		headers.add(messageSource.getMessage("project.samples.table.project", new Object[] {}, locale));
+		headers.add(messageSource.getMessage("project.samples.table.created", new Object[] {}, locale));
+		headers.add(messageSource.getMessage("project.samples.table.modified", new Object[] {}, locale));
+		return headers;
 	}
 }

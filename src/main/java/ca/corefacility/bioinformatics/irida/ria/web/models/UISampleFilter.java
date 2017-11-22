@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.models;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.google.common.base.Strings;
@@ -10,8 +8,6 @@ import com.google.common.base.Strings;
  * User Interface model for available field to filter the Project Samples by.
  */
 public class UISampleFilter {
-	private final String dateRangeFormatPattern = "MMMMM dd, yyyy";
-	private final DateFormat dateRangeFormatter = new SimpleDateFormat(dateRangeFormatPattern);
 
 	private String name;
 	private String organism;

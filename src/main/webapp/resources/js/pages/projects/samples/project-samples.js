@@ -12,8 +12,8 @@ import "./../../../vendor/datatables/datatables-rowSelection";
 import { CART } from "../../../utilities/events-utilities";
 import {
   SampleCartButton,
-  SampleExportButton,
-  SampleDropdownButton
+  SampleDropdownButton,
+  SampleExportButton
 } from "./SampleButtons";
 import { FILTERS, SAMPLE_EVENTS } from "./constants";
 import { download } from "../../../utilities/file.utilities";
@@ -56,6 +56,13 @@ const EXPORT_HANDLERS = {
       ids.push(s.sample);
     });
     download(`${url}?${$.param({ ids })}`);
+  },
+  file() {
+    // this is set by the object calling (i.e. download btn)
+    const url = this.data("url");
+    const params = $dt.ajax.params();
+    params.type = this.data("file");
+    download(`${url}?${$.param(params)}`);
   }
 };
 [...document.querySelectorAll(".js-sample-export-btn")].forEach(elm => {
