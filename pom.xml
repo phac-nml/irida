@@ -1037,7 +1037,7 @@
 		<aspectj.version>1.8.1</aspectj.version>
 		<hibernate.validator.version>5.1.1.Final</hibernate.validator.version>
 		<el-ri.version>1.0</el-ri.version>
-		<com.github.jmchilton.blend4j.version>0.2.0-SNAPSHOT-29f28db211c300fcaf21a7a5992478fc5a9893cd</com.github.jmchilton.blend4j.version>
+		<com.github.jmchilton.blend4j.version>0.2.0-SNAPSHOT-044e471c96ebe1d97ccff3abceab047ffd36a660</com.github.jmchilton.blend4j.version>
 		<apache.jena.version>1.1.0</apache.jena.version>
 		<commons-csv.version>1.4</commons-csv.version>
 		<xml.apis.version>1.4.01</xml.apis.version>
