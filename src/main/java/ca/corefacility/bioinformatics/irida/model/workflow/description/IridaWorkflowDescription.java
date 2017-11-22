@@ -112,13 +112,12 @@ public class IridaWorkflowDescription {
 	}
 
 	/**
-	 * Whether or not this workflow requires a reference file.
+	 * Whether or not this workflow requires a data from a galaxy tool data table.
 	 *
 	 * @return True if this workflow requires a Tool Data Table field, false otherwise.
 	 */
 	public boolean requiresToolDataTableField() {
-		// TODO: logic for which pipelines use tool data table fields.
-		return true;
+		return getInputs().getToolDataTable().isPresent();
 	}
 
 	/**
