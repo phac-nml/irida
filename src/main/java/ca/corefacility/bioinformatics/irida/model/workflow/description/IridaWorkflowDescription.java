@@ -112,6 +112,16 @@ public class IridaWorkflowDescription {
 	}
 
 	/**
+	 * Whether or not this workflow requires a reference file.
+	 *
+	 * @return True if this workflow requires a Tool Data Table field, false otherwise.
+	 */
+	public boolean requiresToolDataTableField() {
+		// TODO: logic for which pipelines use tool data table fields.
+		return true;
+	}
+
+	/**
 	 * Whether or not this workflow accepts single sequence files as input.
 	 * 
 	 * @return True if this workflow accepts single sequence files, false

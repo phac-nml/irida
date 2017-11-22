@@ -319,6 +319,7 @@ public class PipelineController extends BaseController {
 			model.addAttribute("pipelineId", pipelineId.toString());
 			model.addAttribute("referenceFiles", referenceFileList);
 			model.addAttribute("referenceRequired", description.requiresReference());
+			model.addAttribute("toolDataTableFieldRequired", description.requiresToolDataTableField());
 			model.addAttribute("addRefProjects", addRefList);
 			model.addAttribute("projects", projectList);
 			model.addAttribute("canUpdateSamples", canUpdateAllSamples);

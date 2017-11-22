@@ -8,11 +8,13 @@
 	 * @param ParameterService for passing parameter information between modal and page
 	 * @constructor
 	 */
-	function PipelineController($scope, $http, CartService, notifications, ParameterService) {
+	function PipelineController($scope, $http, CartService, notifications, ParameterService, ToolDataTableService) {
 		var vm = this;
 
 		vm.parameters = ParameterService.getOriginalSettings();
 		vm.selectedParameters = ParameterService.getSelectedParameters();
+		vm.toolDataTableFields = ToolDataTableService.getOriginalSettings();
+		vm.selectedToolDataTableField = ToolDataTableService.getSelectedToolDataTableField();
 
 		$scope.$on('PARAMETERS_SAVED', function () {
 			vm.selectedParameters = ParameterService.getSelectedParameters();
@@ -35,6 +37,15 @@
 		vm.parameterSelected = function () {
 			ParameterService.setSelectedParameters(vm.selectedParameters);
 		};
+
+		/**
+         * Update the selected tool data table field in the tool data table service
+         * for the modal dialog whenever we select a new tool data table field
+         * from the drop-down.
+         */
+        vm.toolDataTableFieldSelected = function () {
+        	ToolDataTableService.setSelectedToolDataTableField(vm.selectedToolDataTableField);
+        };
 
 		/**
 		 * Launch the pipeline
@@ -296,19 +307,19 @@
 				label: "",
 				parameters: []
 			});
-    }
+        }
 
 		/**
 		 * Duplicated copy of the original set of parameters on the page
 		 * so that we can quickly roll back to default values for any
 		 * parameter set.
 		 */
-    var originalSettings = page.pipeline.parameters.map(function (params) {
-      return {
-        currentSettings: ng.copy(params),
-        defaultSettings: ng.copy(params)
-      }
-    });
+        var originalSettings = page.pipeline.parameters.map(function (params) {
+            return {
+                currentSettings: ng.copy(params),
+                defaultSettings: ng.copy(params)
+            }
+        });
 
 		var selectedParameters = originalSettings[0];
 
@@ -365,9 +376,62 @@
 		svc.resetCurrentSelection = function () {
 			selectedParameters.currentSettings = ng.copy(selectedParameters.defaultSettings);
 		}
-  }
+    }
 
-  function FileUploadCtrl($rootScope, Upload) {
+    /**
+     * Service for handling Tool Data Table values.
+     */
+    function ToolDataTableService() {
+        var svc = this;
+
+        // Check to see if there are any tool data table fields, if not put a default
+        if(page.pipeline.tooldatatable.length === 0) {
+      	   	page.pipeline.tooldatatable.push({
+      			id: "no_tooldatatable_fields",
+      			label: "",
+      			tooldatatable: []
+        	});
+        }
+
+        /**
+         * Duplicated copy of the original set of parameters on the page
+         * so that we can quickly roll back to default values for any
+         * parameter set.
+         */
+        var originalSettings = page.pipeline.parameters.map(function (params) {
+            return {
+                currentSettings: ng.copy(params),
+                defaultSettings: ng.copy(params)
+            }
+        });
+
+        var selectedParameters = originalSettings[0];
+
+        /**
+         * Get the settings that the page currently has.
+         */
+        svc.getOriginalSettings = function () {
+        	return originalSettings;
+        };
+
+        /**
+         * Get the currently selected parameters from the page.
+         */
+        svc.getSelectedToolDataTableField = function () {
+            return selectedToolDataTableField;
+        };
+
+        /**
+         * Set the current set of parameters on the page.
+         *
+         * @param currentSelection the parameters that are currently selected
+         */
+        svc.setSelectedToolDataTableField = function (currentSelection) {
+            selectedToolDataTableField = currentSelection;
+        };
+    }
+
+    function FileUploadCtrl($rootScope, Upload) {
 	    var vm = this;
 	    
 	    vm.referenceUploadStarted = false;
@@ -395,13 +459,14 @@
 	        });
 	      }
 	    };
-  }
+    }
 
-  ng.module('irida.pipelines', ['irida.cart', 'ngFileUpload'])
-		.controller('PipelineController', ['$rootScope', '$http', 'CartService', 'notifications', 'ParameterService', PipelineController])
+    ng.module('irida.pipelines', ['irida.cart', 'ngFileUpload'])
+		.controller('PipelineController', ['$rootScope', '$http', 'CartService', 'notifications', 'ParameterService', 'ToolDataTableService', PipelineController])
 		.controller('ParameterModalController', ["$uibModal", ParameterModalController])
 		.controller('ParameterController', ['$rootScope', '$http', '$uibModalInstance', 'ParameterService', ParameterController])
 		.controller('FileUploadCtrl', ['$rootScope', 'Upload', FileUploadCtrl])
 		.service('ParameterService', [ParameterService])
+		.service('ToolDataTableService', [ToolDataTableService])
 	;
 })(window.angular, window.jQuery, window._, window.location, window.PAGE);
