@@ -60,7 +60,10 @@
     </div>
 </div>
 
-<th:block layout:fragment="scripts"
-          th:replace="remote_apis/remote_api_connect"/>
+
+<th:block layout:fragment="scripts">
+          <th:block th:replace="remote_apis/remote_api_connect"/>
+          <script th:src="@{/resources/js/pages/projects/project-settings-basic.js}"></script>
+</th:block>
 </body>
 </html>

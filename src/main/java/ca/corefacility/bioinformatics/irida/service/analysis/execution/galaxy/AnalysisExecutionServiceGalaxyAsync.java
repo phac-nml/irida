@@ -26,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.Prep
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.WorkflowInputsGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkflowStructure;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
@@ -48,6 +49,7 @@ public class AnalysisExecutionServiceGalaxyAsync {
 	private final AnalysisWorkspaceServiceGalaxy workspaceService;
 	private final GalaxyWorkflowService galaxyWorkflowService;
 	private final IridaWorkflowsService iridaWorkflowsService;
+	private final AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
 
 	/**
 	 * Builds a new {@link AnalysisExecutionServiceGalaxyAsync} with the given
@@ -63,16 +65,21 @@ public class AnalysisExecutionServiceGalaxyAsync {
 	 *            A service for a workflow workspace.
 	 * @param iridaWorkflowsService
 	 *            A service for loading up {@link IridaWorkflow}s.
+	 * @param analysisSubmissionSampleService
+	 *            A service to updating samples associated with a submission
+	 *            with the analysis results.
 	 */
 	@Autowired
 	public AnalysisExecutionServiceGalaxyAsync(AnalysisSubmissionService analysisSubmissionService,
 			AnalysisService analysisService, GalaxyWorkflowService galaxyWorkflowService,
-			AnalysisWorkspaceServiceGalaxy workspaceService, IridaWorkflowsService iridaWorkflowsService) {
+			AnalysisWorkspaceServiceGalaxy workspaceService, IridaWorkflowsService iridaWorkflowsService,
+			AnalysisSubmissionSampleProcessor analysisSubmissionSampleService) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.analysisService = analysisService;
 		this.galaxyWorkflowService = galaxyWorkflowService;
 		this.workspaceService = workspaceService;
 		this.iridaWorkflowsService = iridaWorkflowsService;
+		this.analysisSubmissionSampleProcessor = analysisSubmissionSampleService;
 	}
 
 	/**
@@ -203,6 +210,12 @@ public class AnalysisExecutionServiceGalaxyAsync {
 		}
 
 		AnalysisSubmission completedSubmission = analysisSubmissionService.update(submittedAnalysis);
+		
+		try {
+			analysisSubmissionSampleProcessor.updateSamples(completedSubmission);
+		} catch (Exception e) {
+			logger.error("Error updating corresponding samples with analysis results for AnalysisSubmission = [" + completedSubmission.getId() + "]. Skipping this step.", e);
+		}
 
 		return new AsyncResult<>(completedSubmission);
 	}
