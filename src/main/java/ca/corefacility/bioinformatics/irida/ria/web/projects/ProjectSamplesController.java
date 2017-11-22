@@ -40,10 +40,10 @@ import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesExportToFile;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesExportTypes;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesExportToFile;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.ProjectSampleModel;
@@ -880,15 +880,15 @@ public class ProjectSamplesController {
 				.getFilteredSamplesForProjects(projects, sampleNames, filter.getName(), params.getSearchValue(), filter.getOrganism(), filter.getStartDate(),
 						filter.getEndDate(), 0, Integer.MAX_VALUE, params.getSort());
 
-		if (page != null) {
-			// Create DataTables representation of the page.
-			List<DTProjectSamples> models = new ArrayList<>();
-			for (ProjectSampleJoin psj : page.getContent()) {
-				models.add(buildProjectSampleDataTablesModel(psj, locale));
-			}
-			List<String> headers = models.get(0).getTableHeaders(messageSource, locale);
-			DataTablesExportToFile.writeFile(type, response, project.getLabel().replace(" ", "_"), models, headers);
+		// Create DataTables representation of the page.
+		List<DTProjectSamples> models = new ArrayList<>();
+		for (ProjectSampleJoin psj : page.getContent()) {
+			models.add(buildProjectSampleDataTablesModel(psj, locale));
 		}
+		List<String> headers = models.get(0)
+				.getTableHeaders(messageSource, locale);
+		DataTablesExportToFile.writeFile(type, response, project.getLabel()
+				.replace(" ", "_"), models, headers);
 	}
 
 	/**
