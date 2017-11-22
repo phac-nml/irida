@@ -11,11 +11,7 @@
         linker: /*[[${linker}]]*/'',
         urls: {
           modals: {
-            remove: /*[[@{/projects/templates/remove-modal}]]*/ '/projects/templates/remove-modal',
-            copy: /*[[]]*/ '/projects/templates/copy-modal',
-            move: /*[[@{/projects/templates/move-modal(projectId=${project.getId()})}]]*/ '/projects/templates/move-modal',
             galaxy: /*[[@{/cart/template/galaxy/project/{projectId}(projectId=${project.getId()})}]]*/ '/cart/template/galaxy/project/1',
-            filter: /*[[@{/projects/template/samples-filter-modal}]]*/ ''
           },
           projects: {
             available: /*[[@{/projects/{id}/ajax/samples/available_projects(id=${project.getId()})}]]*/ ''
@@ -25,7 +21,6 @@
             local: /*[[@{'/projects/{id}/ajax/samples'}]]*/ '',
             remove: /*[[@{/projects/{id}/ajax/samples/delete(id=${project.getId()})}]]*/ '',
             copy: /*[[@{/projects/{id}/ajax/samples/copy(id=${project.getId()})}]]*/ '',
-            ncbi: /*[[@{/projects/{id}/export/ncbi(id=${project.getId()})}]]*/ '/projects/1/export/ncbi',
             export: /*[[@{/projects/{id}/samples/export(id=${project.getId()})}]]*/ 'projects/1/samples/export',
             idList: /*[[@{/samples/idList}]]*/ "/samples/idList",
             sampleIds: /*[[@{/projects/{id}/ajax/sampleIds(id=${project.getId()})}]]*/ '/projects/{projectId}/ajax/sampleIds'
@@ -198,6 +193,16 @@
                                     <th:block th:text="#{project.samples.export.linker}"/>
                                 </a>
                             </li>
+                            <li role="menuitem">
+                                <a href="#" class="js-sample-export-btn t-ncbi-export-btn"
+                                   data-toggle="tooltip" data-enabled-at="1" data-type="ncbi"
+                                   data:url="@{/projects/{id}/export/ncbi(id=${project.getId()})}"
+                                   data:enabled-msg="#{project.samples.tooltip.ncbi.requires-more-than-one}"
+                                   data:associated-msg="#{project.samples.only-for-project-tooltip}">
+                                    <i class="fa fa-upload fa-fw spaced-right__sm" aria-hidden="true"></i>
+                                    <th:block th:text="#{project.samples.export.ncbi}"/>
+                                </a>
+                            </li>
                             <li role="separator" class="divider"></li>
                             <li>
                                 <a href="#" class="js-sample-export-btn" data-file="excel" data-type="file"
@@ -282,109 +287,6 @@
         </div>
     </div>
 
-    <!--<div class="hidden">-->
-    <!--<filtered-tags id="filtered-tags"></filtered-tags>-->
-    <!--<samples-filter id="filter-btns"></samples-filter>-->
-    <!--<div id="toolbar">-->
-    <!--<div role="toolbar" aria-label="Sample Table Tools">-->
-    <!--<div style="display: inline-block;" th:if="${not #lists.isEmpty(associatedProjects)}" uib-dropdown=""-->
-    <!--auto-close="outsideClick"-->
-    <!--ng-controller="AssociatedProjectsController as apCtrl">-->
-    <!--<button id="associated-btn" class="btn btn-default btn-sm" uib-dropdown-toggle=""-->
-    <!--aria-haspopup="true">-->
-    <!--<th:block th:text="#{project.samples.nav.associated}"></th:block>-->
-    <!--&nbsp;-->
-    <!--<i class="fa fa-caret-down" aria-hidden="true"></i>-->
-    <!--</button>-->
-    <!--<ul id="associated-dropdown" class="dropdown-menu" uib-dropdown-menu="" role="menu"-->
-    <!--aria-labelledby="associated-btn">-->
-    <!--<li role="menuitemcheckbox">-->
-    <!--<a style="display: block;" href="#" ng-click="apCtrl.selectAllOrNone($event)">-->
-    <!--<div class="checkbox" style="display: block;">-->
-    <!--<input id="select-all-cb" type="checkbox"/>&nbsp;-->
-    <!--<th:block  th:text="#{project.samples.nav.associated-selectAll}" />-->
-    <!--</div>-->
-    <!--</a>-->
-    <!--</li>-->
-    <!--<li role="separator" class="divider"></li>-->
-    <!--<li role="menuitemcheckbox" th:each="associated : ${associatedProjects}">-->
-    <!--<a class="associated-link" href="#" style="display: block;" data:id="${associated.getId()}"-->
-    <!--ng-click="apCtrl.toggleAssociatedProject($event)">-->
-    <!--<div class="checkbox" style="display: block;">-->
-    <!--<label>-->
-    <!--<input class="associated-cb" type="checkbox"/>-->
-    <!--&nbsp;-->
-    <!--<th:block th:text="${associated.getName()}"></th:block>-->
-    <!--</label>-->
-    <!--</div>-->
-    <!--</a>-->
-    <!--</li>-->
-    <!--</ul>-->
-    <!--</div>-->
-    <!--<div style="display: inline-block;" ng-controller="ToolsController as toolsCtrl">-->
-    <!--<th:block th:if="${isOwner || isAdmin}">-->
-    <!--<div style="display: inline-block;" uib-dropdown="">-->
-    <!--<button id="sample-tools" class="btn btn-default btn-sm" uib-dropdown-toggle=""-->
-    <!--type="button">-->
-    <!--<th:block th:text="#{project.samples.nav.sample-tools}"></th:block>&nbsp;-->
-    <!--<i class="fa fa-caret-down fa-fw" aria-hidden="true"></i>-->
-    <!--</button>-->
-    <!--<ul id="sample-tools-dropdown" class="dropdown-menu" uib-dropdown-menu="" role="menu">-->
-    <!--<li id="mergeBtn"-->
-    <!--ng-class="{disabled: toolsCtrl.disabled.lessThanTwo || toolsCtrl.disabled.hasAssociated}"-->
-    <!--tooltip-enable="toolsCtrl.disabled.lessThanTwo || toolsCtrl.disabled.hasAssociated"-->
-    <!--uib-tooltip-template="'merge.msg.tmpl'">-->
-    <!--<a href="#" ng-click="toolsCtrl.merge()">-->
-    <!--<i class="fa fa-compress fa-fw" aria-hidden="true"></i> &nbsp;-->
-    <!--<th:block th:text="#{project.samples.nav.merge}">Merge</th:block>-->
-    <!--</a>-->
-    <!--</li>-->
-    <!--<li id="copyBtn"-->
-    <!--ng-class="{disabled: toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated}"-->
-    <!--tooltip-enable="toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated"-->
-    <!--uib-tooltip-template="'copy.msg.tmpl'">-->
-    <!--<a href="#" ng-click="toolsCtrl.copy()">-->
-    <!--<i class="fa fa-files-o fa-fw" aria-hidden="true"></i>&nbsp;-->
-    <!--<th:block th:text="#{project.samples.nav.copy}">_COPY_</th:block>-->
-    <!--</a>-->
-    <!--</li>-->
-    <!--<li id="moveBtn"-->
-    <!--ng-class="{disabled: toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated}"-->
-    <!--tooltip-enable="toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated"-->
-    <!--uib-tooltip-template="'move.msg.tmpl'">-->
-    <!--<a href="#" ng-click="toolsCtrl.move()">-->
-    <!--<i class="fa fa-truck fa-fw" aria-hidden="true"></i>&nbsp;-->
-    <!--<th:block th:text="#{project.samples.nav.move}">_MOVE_</th:block>-->
-    <!--</a>-->
-    <!--</li>-->
-    <!--<li id="removeBtn"-->
-    <!--ng-class="{disabled: toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated}"-->
-    <!--tooltip-enable="toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated"-->
-    <!--uib-tooltip-template="'remove.msg.tmpl'">-->
-    <!--<a href="#" ng-click="toolsCtrl.remove()">-->
-    <!--<i class="fa fa-trash fa-fw" aria-hidden="true"></i>&nbsp;-->
-    <!--<th:block th:text="#{project.samples.nav.remove}">_MOVE_</th:block>-->
-    <!--</a>-->
-    <!--</li>-->
-    <!--<li role="separator" class="divider"></li>-->
-    <!--<li>-->
-    <!--<a th:href="@{/projects/{id}/sample-metadata/upload(id=${project.getId()})}">-->
-    <!--<i class="fa fa-upload" aria-hidden="true"></i>&nbsp;-->
-    <!--<th:block th:text="#{project.nav.samples.import-metadata}"/>-->
-    <!--</a></li>-->
-    <!--<li role="separator" class="divider"></li>-->
-    <!--<li>-->
-    <!--<a th:href="@{/projects/{id}/samples/new(id=${project.getId()})}">-->
-    <!--<i class="fa fa-plus fa-fw" aria-hidden="true"></i>&nbsp;-->
-    <!--<th:block th:text="#{project.samples.nav.new}"/>-->
-    <!--</a></li>-->
-    <!--</ul>-->
-    <!--</div>-->
-    <!--</th:block>-->
-    <!--<div style="display: inline-block;" uib-dropdown="">-->
-
-
-
     <!--<li role="menuitem"-->
     <!--th:if="${galaxyCallback}"-->
     <!--ng-class="{disabled: toolsCtrl.disabled.hasAssociated}">-->
@@ -393,120 +295,9 @@
     <!--<span th:text="#{project.samples.export.galaxy}"></span>-->
     <!--</a>-->
     <!--</li>-->
-    <!--<li id="ncbi-btn" role="menuitem"-->
-    <!--ng-class="{disabled: toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated}"-->
-    <!--tooltip-enable="toolsCtrl.disabled.lessThanOne || toolsCtrl.disabled.hasAssociated"-->
-    <!--uib-tooltip-template="'ncbi.msg.tmpl'">-->
-    <!--<a href="#" ng-click="toolsCtrl.ncbiExport()">-->
-    <!--<i class="fa fa-upload fa-fw" aria-hidden="true"></i>&nbsp;<th:block th:text="#{project.samples.export.ncbi}"/>-->
-    <!--</a>-->
-    <!--</li>-->
-    <!--<li role="separator" class="divider"></li>-->
-    <!--<li>-->
-    <!--<a href="#" ng-click="toolsCtrl.exportToFile('xlsx')">-->
-    <!--<i class="fa fa-file-excel-o fa-fw" aria-hidden="true"></i>&nbsp;<th:block th:text="#{project.samples.export-to-excel}"/>-->
-    <!--</a></li>-->
-    <!--<li>-->
-    <!--<a href="#" ng-click="toolsCtrl.exportToFile('csv')">-->
-    <!--<i class="fa fa-file-o fa-fw" aria-hidden="true"></i>&nbsp;<th:block th:text="#{project.samples.export-to-csv}"/>-->
-    <!--</a></li>-->
-    <!--</ul>-->
-    <!--</div>-->
-
-    <!--</div>-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--</div>-->
 </main>
 <th:block layout:fragment="scripts">
     <script th:src="@{/resources/js/build/project-samples.bundle.js}"></script>
 </th:block>
 </body>
-
-<!--<th:block layout:fragment="scripts">-->
-<!--<script type="text/ng-template" id="filterButtons.html">-->
-<!--<div th:replace="projects/partials/samples.tmpl :: filterButtons"></div>-->
-<!--</script>-->
-
-<!--<script type="text/ng-template" id="samplesUpdate.html" th:inline="javascript">-->
-<!--<div>-->
-<!--<strong th:text="#{project.samples.display.notification.title}">Displaying:</strong><br/>-->
-<!--<ul>-->
-<!--<li ng-repeat='item in items' th:text="#{project.samples.display.notification.item}"></li>-->
-<!--</ul>-->
-<!--</div>-->
-<!--</script>-->
-
-<!--<script type="text/ng-template" id="filter.html">-->
-<!--<div style="display: inline-block; margin-left: 3px;">-->
-<!--<div class="btn-group btn-group-sm">-->
-<!--<button id="filterByPropertyBtn" data:uib-tooltip="#{project.samples.filter.label}" type="button"-->
-<!--class="btn btn-default" ng-click="filterCtrl.openFilterModal()">-->
-<!--<span class="fa fa-filter"></span>-->
-<!--</button>-->
-<!--<label class="btn btn-default" for="filter-file-input" data:uib-tooltip="#{project.sample.filterByFile.modal.title}"-->
-<!--tooltip-append-to-body="true">-->
-<!--<input type="file" name="file" id="filter-file-input" class="inputfile" filter-by-file="filterCtrl.filterByFile($fileContent)"/>-->
-<!--<i class="fa fa-file-o fa-fw" aria-hidden="true"></i>-->
-<!--</label>-->
-<!--</div>-->
-<!--<button id="clearFilterBtn" class="btn btn-sm" th:text="#{form.btn.clear}" ng-click="filterCtrl.clearAll()">Clear</button>-->
-<!--</div>-->
-<!--</script>-->
-
-<!--<script type="text/ng-template" id="filtered-tags.html">-->
-<!--<div class="text-right">-->
-<!--<span class="label label-default" ng-show="tags.file" th:text="#{project.sample.filter-by-file}" ng-click="tags.closeFile()"></span>-->
-<!--<span class="label label-default" ng-show="tags.date.min" ng-click="tags.close('min')"><th:block th:text="#{project.samples.filter.by-minDate}"/> : {{tags.date.min | date: 'mediumDate'}}</span>-->
-<!--<span class="label label-default" ng-show="tags.date.end" ng-click="tags.close('end')"><th:block th:text="#{project.samples.filter.by-endDate}"/> : {{tags.date.end | date: 'mediumDate'}}</span>-->
-<!--<span ng-repeat="(tag, value) in tags.tag"-->
-<!--class="label label-default"-->
-<!--ng-click="tags.close(tag)">-->
-<!--{{ tag }} : {{ value }}-->
-<!--</span>-->
-<!--</div>-->
-<!--</script>-->
-
-<!--<script type="text/ng-template" id="merge.msg.tmpl">-->
-<!--<ul class="tooltip-ul">-->
-<!--<li ng-show="toolsCtrl.disabled.lessThanTwo" th:text="#{project.samples.tooltip.merge.requires-more-than-one}">Needs to be more than one</li>-->
-<!--<li ng-show="toolsCtrl.disabled.hasAssociated" th:text="#{project.samples.only-for-project-tooltip}">Not with associated</li>-->
-<!--</ul>-->
-<!--</script>-->
-
-<!--<script type="text/ng-template" id="copy.msg.tmpl">-->
-<!--<ul class="tooltip-ul">-->
-<!--<li ng-show="toolsCtrl.disabled.lessThanOne" th:text="#{project.samples.tooltip.copy.requires-more-than-one}">Needs to be more than one</li>-->
-<!--<li ng-show="toolsCtrl.disabled.hasAssociated" th:text="#{project.samples.only-for-project-tooltip}">Not with associated</li>-->
-<!--</ul>-->
-<!--</script>-->
-
-<!--<script type="text/ng-template" id="move.msg.tmpl">-->
-<!--<ul class="tooltip-ul">-->
-<!--<li ng-show="toolsCtrl.disabled.lessThanOne" th:text="#{project.samples.tooltip.move.requires-more-than-one}">Needs to be more than one</li>-->
-<!--<li ng-show="toolsCtrl.disabled.hasAssociated" th:text="#{project.samples.only-for-project-tooltip}">Not with associated</li>-->
-<!--</ul>-->
-<!--</script>-->
-
-<!--<script type="text/ng-template" id="remove.msg.tmpl">-->
-<!--<ul class="tooltip-ul">-->
-<!--<li ng-show="toolsCtrl.disabled.lessThanOne" th:text="#{project.samples.tooltip.remove.requires-more-than-one}">Needs to be more than one</li>-->
-<!--<li ng-show="toolsCtrl.disabled.hasAssociated" th:text="#{project.samples.only-for-project-tooltip}">Not with associated</li>-->
-<!--</ul>-->
-<!--</script>-->
-
-<!--<script type="text/ng-template" id="download.msg.tmpl">-->
-<!--<ul class="tooltip-ul">-->
-<!--<li ng-show="toolsCtrl.disabled.lessThanOne" th:text="#{project.samples.tooltip.download.requires-more-than-one}">Needs to be more than one</li>-->
-<!--<li ng-show="toolsCtrl.disabled.hasAssociated" th:text="#{project.samples.only-for-project-tooltip}">Not with associated</li>-->
-<!--</ul>-->
-<!--</script>-->
-
-<!--<script type="text/ng-template" id="ncbi.msg.tmpl">-->
-<!--<ul class="tooltip-ul">-->
-<!--<li ng-show="toolsCtrl.disabled.lessThanOne" th:text="#{project.samples.tooltip.ncbi.requires-more-than-one}">Needs to be more than one</li>-->
-<!--<li ng-show="toolsCtrl.disabled.hasAssociated" th:text="#{project.samples.only-for-project-tooltip}">Not with associated</li>-->
-<!--</ul>-->
-<!--</script>-->
-<!--</th:block>-->
 </html>

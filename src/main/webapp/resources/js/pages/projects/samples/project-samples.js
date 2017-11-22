@@ -63,6 +63,16 @@ const EXPORT_HANDLERS = {
     const params = $dt.ajax.params();
     params.type = this.data("file");
     download(`${url}?${$.param(params)}`);
+  },
+  ncbi() {
+    const ids = [];
+    const selected = $dt.select.selected()[0];
+    selected.forEach(s => {
+      ids.push(s.sample);
+    });
+    if(ids.length > 0){
+      window.location.href = `${this.data("url")}?${$.param({ids})}`;
+    }
   }
 };
 [...document.querySelectorAll(".js-sample-export-btn")].forEach(elm => {
