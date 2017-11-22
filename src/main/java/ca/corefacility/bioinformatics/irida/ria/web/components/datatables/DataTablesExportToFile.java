@@ -22,18 +22,20 @@ public class DataTablesExportToFile {
 
 	/**
 	 * Write data within datatable to an excel formatted file.
-	 * @param type {@link String} type of file to create (either excel or csv)
+	 * @param type {@link DataTablesExportTypes} type of file to create (either excel or csv)
 	 * @param response {@link HttpServletResponse}
 	 * @param filename {@link String} name of the file to download.
 	 * @param models Data to download in the table
 	 * @param headers for the table
 	 * @throws IOException thrown if file cannot be written
 	 */
-	public static void writeFile(String type, HttpServletResponse response, String filename, List<? extends DataTablesExportable> models, List<String> headers) throws IOException {
-		if(type.equals(DataTablesExportTypes.EXCEL.toString())) {
+	public static void writeFile(DataTablesExportTypes type, HttpServletResponse response, String filename, List<? extends DataTablesExportable> models, List<String> headers) throws IOException {
+		if(type.equals(DataTablesExportTypes.excel)) {
 			writeToExcel(response, filename, models, headers);
-		} else {
+		} else if(type.equals(DataTablesExportTypes.csv)) {
 			writeToCSV(response, filename, models, headers);
+		} else {
+			throw new  IllegalArgumentException("Trying to export and unknown table format: " + type);
 		}
 	}
 
