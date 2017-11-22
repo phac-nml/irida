@@ -115,8 +115,6 @@ $('a[data-toggle="tab"]').on("shown.bs.tab", function(e) {
 $(document).ready(function() {
   var hash = window.location.hash;
 
-  console.log("ready");
-
   if (hash === "#project-tab") {
     $('.nav-tabs a[href="#project-tab"]').tab("show");
   } else if (hash === "#sample-tab") {
