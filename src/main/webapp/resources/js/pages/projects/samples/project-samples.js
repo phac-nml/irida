@@ -62,7 +62,7 @@ const EXPORT_HANDLERS = {
     // this is set by the object calling (i.e. download btn)
     const url = this.data("url");
     const params = $dt.ajax.params();
-    params.type = this.data("type");
+    params.type = this.data("file");
     download(`${url}?${$.param(params)}`);
   },
   ncbi() {

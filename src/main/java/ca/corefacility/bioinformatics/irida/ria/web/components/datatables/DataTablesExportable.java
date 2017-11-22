@@ -5,6 +5,10 @@ import java.util.Locale;
 
 import org.springframework.context.MessageSource;
 
+/**
+ * This interface is responsible for enforcing that {@link DataTablesResponseModel} will
+ * be have the correct methods.
+ */
 public interface DataTablesExportable {
 	/**
 	 * Convert the attribute of the class into a ordered list.
