@@ -28,6 +28,9 @@ public class IridaWorkflowInput {
 	@XmlElement(name = "requiresSingleSample", defaultValue="false")
 	private boolean requiresSingleSample;
 
+	@XmlElement(name = "toolDataTable")
+	private String toolDataTable;
+
 	public IridaWorkflowInput() {
 	}
 
@@ -56,6 +59,33 @@ public class IridaWorkflowInput {
 	}
 
 	/**
+	 * Builds a new {@link IridaWorkflowInput} object with the given
+	 * information.
+	 *
+	 * @param sequenceReadsSingle
+	 *            The label to use for a collection of single-end sequence
+	 *            reads. Null if no acceptance of single-end reads.
+	 * @param sequenceReadsPaired
+	 *            The label to use for a collection of paired-end sequence
+	 *            reads. Null if no acceptance of paired-end reads.
+	 * @param reference
+	 *            The label to use for a reference file.
+	 * @param toolDataTable
+	 *            The label to use for a tool data table.
+	 * @param requiresSingleSample
+	 *            Whether or not this workflow requires a single sample, or can
+	 *            work with multiple samples.
+	 */
+	public IridaWorkflowInput(String sequenceReadsSingle, String sequenceReadsPaired, String reference, String toolDataTable,
+							  boolean requiresSingleSample) {
+		this.sequenceReadsSingle = sequenceReadsSingle;
+		this.sequenceReadsPaired = sequenceReadsPaired;
+		this.reference = reference;
+		this.toolDataTable = toolDataTable;
+		this.requiresSingleSample = requiresSingleSample;
+	}
+
+	/**
 	 * Gets the sequence reads single label.
 	 * 
 	 * @return The sequence reads single label, or {@link Optional#empty()} if no
@@ -73,6 +103,16 @@ public class IridaWorkflowInput {
 	 */
 	public Optional<String> getReference() {
 		return Optional.ofNullable(reference);
+	}
+
+	/**
+	 * Gets the reference label.
+	 *
+	 * @return The reference label, or {@link Optional#empty()} if no such label
+	 *         exists.
+	 */
+	public Optional<String> getToolDataTable() {
+		return Optional.ofNullable(toolDataTable);
 	}
 
 	/**
