@@ -384,28 +384,9 @@
     function ToolDataTableService() {
         var svc = this;
 
-        // Check to see if there are any tool data table fields, if not put a default
-        if(page.pipeline.tooldatatable.length === 0) {
-      	   	page.pipeline.tooldatatable.push({
-      			id: "no_tooldatatable_fields",
-      			label: "",
-      			tooldatatable: []
-        	});
-        }
+        var originalSettings = {};
 
-        /**
-         * Duplicated copy of the original set of parameters on the page
-         * so that we can quickly roll back to default values for any
-         * parameter set.
-         */
-        var originalSettings = page.pipeline.parameters.map(function (params) {
-            return {
-                currentSettings: ng.copy(params),
-                defaultSettings: ng.copy(params)
-            }
-        });
-
-        var selectedParameters = originalSettings[0];
+        var selectedToolDataTableField = originalSettings[0];
 
         /**
          * Get the settings that the page currently has.
@@ -422,9 +403,9 @@
         };
 
         /**
-         * Set the current set of parameters on the page.
+         * Set the current tool data table field on the page.
          *
-         * @param currentSelection the parameters that are currently selected
+         * @param currentSelection the tool data table field that is currently selected
          */
         svc.setSelectedToolDataTableField = function (currentSelection) {
             selectedToolDataTableField = currentSelection;
