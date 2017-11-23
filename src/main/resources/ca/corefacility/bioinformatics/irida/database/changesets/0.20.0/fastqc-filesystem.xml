@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="fastqc-filesystem" author="tom">
+
+        <dropNotNullConstraint
+                columnDataType="bigint(20)"
+                columnName="tool_execution_id"
+                tableName="analysis_output_file"/>
+
+        <addColumn tableName="analysis_output_file">
+            <column name="analysis_id" type="bigint(20)"/>
+        </addColumn>
+
+        <customChange
+                class="ca.corefacility.bioinformatics.irida.database.changesets.FastqcToFilesystem"/>
+    </changeSet>
+</databaseChangeLog>
