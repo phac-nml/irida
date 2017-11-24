@@ -30,15 +30,16 @@ $(document).ready(function() {
   var ucase = new RegExp("^.*[A-Z].*$");
   var lcase = new RegExp("^.*[a-z].*$");
   var num = new RegExp("^.*[0-9].*$");
+  var special = new RegExp("^.*[!@#$%^&*()+?/<>=.\\\\{}].*$");
 
   $("input[type=password]").keyup(function() {
     var visible = 0;
     var MIN_LENGTH = 8;
-    var NUM_RULES = 4;
+    var NUM_RULES = 5;
 
     var passwordField = $("#password");
 
-    // Password must be 6 characters or longer
+    // Password must be 8 characters or longer
     if (passwordField.val().length >= MIN_LENGTH) {
       $("#password-minlength").hide(100);
       visible++;
@@ -71,6 +72,15 @@ $(document).ready(function() {
       visible++;
     } else {
       $("#password-number").show(100);
+      visible--;
+    }
+
+    //Password must contain a special character
+    if (special.test(passwordField.val())) {
+      $("#password-special").hide(100);
+      visible++;
+    } else {
+      $("#password-special").show(100);
       visible--;
     }
 

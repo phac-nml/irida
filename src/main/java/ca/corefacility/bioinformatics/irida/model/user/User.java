@@ -79,7 +79,8 @@ public class User extends IridaResourceSupport implements MutableIridaThing, Com
 	@Size(min = 8, max = 1024, message = "{user.password.size}")
 	@Pattern.List({ @Pattern(regexp = "^.*[A-Z].*$", message = "{user.password.uppercase}"),
 			@Pattern(regexp = "^.*[0-9].*$", message = "{user.password.number}"),
-			@Pattern(regexp = "^.*[a-z].*$", message = "{user.password.lowercase}") })
+			@Pattern(regexp = "^.*[a-z].*$", message = "{user.password.lowercase}"),
+			@Pattern(regexp = "^.*[!@#$%^&*()+?/<>=.\\\\{}].*$", message = "{user.password.special}") })
 	private String password;
 
 	@NotNull(message = "{user.firstName.notnull}")
