@@ -38,7 +38,7 @@ public class PasswordResetPage extends AbstractPage {
 	
 	public boolean checkFailure(final String failureMessage) {
 		try {
-			final WebElement el = waitForElementVisible(By.className("alert-warning"));
+			final WebElement el = waitForElementVisible(By.className("alert-danger"));
 			return el.getText().contains(failureMessage);
 		} catch (Exception e) {
 			return false;
