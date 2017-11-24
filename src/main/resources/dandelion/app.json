@@ -10,7 +10,6 @@
     "angular-animate",
     "font-awesome",
     "animate.css",
-    "utilities",
     "notifications"
   ],
   "assets": [
