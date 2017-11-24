@@ -8,7 +8,7 @@ Managing Samples
 ================
 {:.no_toc}
 
-Each [project](../project) in IRIDA may contain a collection of samples that corresponds to an isolate. Each sample may contain several sequencing files, either paired-end, single-end, or both. This section of the user guide describes how you can view samples, manage samples (merging, copying, renaming, exporting), and search for samples by name.
+Each [project](../project) in IRIDA may contain a collection of samples that corresponds to an isolate. Each sample may contain one or more of the following types of files: sequencing files in paired-end or single-end format, or assembled genomes. This section of the user guide describes how you can view samples, manage samples (merging, copying, renaming, exporting), and search for samples by name.
 
 * This comment becomes the toc
 {:toc}
@@ -46,7 +46,13 @@ Start by [viewing the details of an individual sample](#viewing-individual-sampl
 
 You can provide as many or as few sample details that you want -- the sample details are not used by any workflows in IRIDA (except the sample name in the SNVPhyl workflow), and (with the exception of the sample name) none of the sample details are required fields. When you've finished updating the sample details, you can click on the "Update" button at the bottom, right-hand side of the page.
 
-### Viewing sequence files
+### Viewing contained files
+
+Samples can contain different types of files, either **Sequence Files** which are produced by a sequencing instrument, or **Assemblies** which consist of the re-constructed genome from the sequence reads.
+
+![sample-contained-files](images/sample-contained-files.png)
+
+#### Viewing Sequence Files
 
 {% include tutorials/common/samples/view-sequence-files.md %}
 
@@ -83,15 +89,34 @@ Once you have selected your files to concatenate, you have the following options
 
 Once you have selected your files and selected your options, click *Submit* to begin the concatenation.  This may take a while, so you should stay on this page until the process is complete.  Once your files are concatenated, you will be redirected back to the sample-files page.
 
+#### Viewing genome assemblies
+
+Samples can also contain assembled genomes.
+
+![sample-automated-assembly](images/sample-automated-assembly.png)
+
+Genome assemblies can be linked to samples in two ways:
+
+1. By enabling [automated assemblies](../project/#automated-pipelines), which will be triggered on upload of sequencing files in the appropriate project.
+2. Or by selecting the option to save assemblies back to a sample from the [Launch Pipelines](../pipelines/#saving-pipeline-results-to-a-sample) page.
+
+The assembled genome file can be downloaded by clicking the <span class="fa fa-fw fa-download"></span> icon.
+
+#### Deleting genome assemblies
+
+Assembled genomes may be deleted from a sample by selecting the <img src="images/delete-icon.png" alt="Delete icon" class="inline"> icon.
+
+![delete-sample-assembly](images/delete-sample-assembly.png)
+
 #### Viewing automated assemblies
 
-If the project manager has enabled automated assemblies for uploaded data an assembly may be shown for a sequence file.
+If the project manager has enabled automated assemblies for uploaded data an assembly will be shown associated with the particular sequence files used to generate the assembled genome.
 
 ![Automated assembly](images/automated-assembly.png)
 
-The assembly status will be displayed along with a link to view the assembly results page.  For more information on viewing pipeline results see the [pipeline documentation](../pipelines/#viewing-pipeline-results)  
+The assembly status will be displayed along with a link to view the assembly results page.  On completion, the assembled genome will be saved back to the Sample.  For more information on viewing pipeline results see the [pipeline documentation](../pipelines/#viewing-pipeline-results)  
 
-See the [project documentation](../project#managing-automated-assemblies) for information on enabling automated assembly.
+See the [project documentation](../project#automated-pipelines) for information on enabling automated assembly.
 
 Adding a new sample
 -------------------
@@ -250,7 +275,7 @@ Once you've selected the project that you want to move the samples to, click on 
 
 ### Merging samples within a project
 
-If a sample was created when sequencing data was uploaded with an incorrect name, you may want to merge two samples together. When you merge two samples, you will move all of the **sequencing files** from one sample to another, then **delete the original sample**. **None** of the sample metadata will be copied between the merged samples, instead you will select one sample as the target for the sample merge. Only users with the project <img src="images/manager-icon.png" class="inline" alt="Manager role icon."> **Manager** role can merge samples in a project.
+If a sample was created when sequencing data was uploaded with an incorrect name, you may want to merge two samples together. When you merge two samples, you will move all of the **sequencing files** and **assembled genomes** from one sample to another, then **delete the original sample**. **None** of the sample metadata will be copied between the merged samples, instead you will select one sample as the target for the sample merge. Only users with the project <img src="images/manager-icon.png" class="inline" alt="Manager role icon."> **Manager** role can merge samples in a project.
 
 Start by [selecting the samples](#selecting-samples) that you want to merge. You **must** select more than one sample to enable the merge samples button. Once you've selected the two or more samples that you would like to merge, click on the "Samples" button just above the samples list and select "Merge Samples":
 

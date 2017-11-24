@@ -91,7 +91,8 @@ public class AssemblyFileProcessor implements FileProcessor {
 			AnalysisSubmission submission = builder
 					.inputFiles(Sets.newHashSet((SequenceFilePair) sequencingObject))
 					.priority(AnalysisSubmission.Priority.LOW)
-					.name("Automated Assembly " + sequencingObject.toString()).build();
+					.name("Automated Assembly " + sequencingObject.toString())
+					.updateSamples(true).build();
 			submission.setSubmitter(admin);
 
 			submission = submissionRepository.save(submission);

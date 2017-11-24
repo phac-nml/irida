@@ -8,6 +8,7 @@ Changes
 * [UI]: Fixed URL for concatenation of sample sequence files. (0.18.1)
 * [Developer]: Removed dandelion from: Announcements, Cart, Sequencing Runs, Login, Project Settings - Landing, Events, Create Sample, Line List, Announcements - Create & Read, Livestampjs, Pipelines Launch, lodash, NCBI Export Page, Session Handler, Project Members and Groups Server Side,  NCBI export lists, Groups Listing, Group Members.
 * [UI]: Added empty state if no files exist in a sample.
+* [UI]: Added ability to associate assemblies with a sample.
 * [UI]: Fix broken link for concatenating files. (0.18.2)
 * [UI]: Fix broken permissions for downloading reference files not associated with a project. (0.18.2)
 * [UI]: Fixed issued with layout of the events panel on the dashboard page. (0.18.2)
@@ -24,6 +25,7 @@ Changes
 * [Developer]: Added `run-tests.sh` script for running local integration tests.
 * [UI]: Fixed issue with exporting `csv` and `excel` from Project > Samples pages (0.18.5).
 * [UI]: Fixed bug with importing large `excel` file that contained columns with only a header and no other data in column.
+* [UI]: Fixed project sync settings from resetting themselves.
 
 0.17.0 to 0.18.0
 ----------------
