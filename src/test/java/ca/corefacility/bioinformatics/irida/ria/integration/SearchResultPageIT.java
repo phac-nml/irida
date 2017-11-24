@@ -76,6 +76,21 @@ public class SearchResultPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
+	public void testAdminSampleSearchById() {
+		LoginPage.loginAsAdmin(driver());
+		page = SearchResultPage.initPage(driver());
+
+		page.globalSearch("1", true);
+		page = SearchResultPage.initPage(driver());
+
+		page.waitForSearchResults();
+		int sampleCount = page.getSampleCount();
+		int projectCount = page.getProjectCount();
+
+		assertEquals("should be 2 samples", 2, sampleCount);
+	}
+
+	@Test
 	public void testAdminProjectSearch() {
 		LoginPage.loginAsAdmin(driver());
 		page = SearchResultPage.initPage(driver());
