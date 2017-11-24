@@ -639,16 +639,16 @@ app.controller("GalaxyExportController", [
         controllerAs: "gCtrl",
         controller: "GalaxyDialogCtrl",
         resolve: {
-          sampleIds: function() {
+          sampleIds() {
             return ids;
           },
-          openedByCart: function() {
+          openedByCart() {
             return false;
           },
-          multiProject: function() {
+          multiProject() {
             return false;
           },
-          projectId: function() {
+          projectId() {
             return projectId;
           }
         }
