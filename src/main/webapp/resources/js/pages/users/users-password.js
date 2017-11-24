@@ -33,7 +33,7 @@ $(document).ready(function() {
 
   $("input[type=password]").keyup(function() {
     var visible = 0;
-    var MIN_LENGTH = 6;
+    var MIN_LENGTH = 8;
     var NUM_RULES = 4;
 
     var passwordField = $("#password");
