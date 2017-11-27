@@ -9,7 +9,6 @@ const deps = _.union(window.dependencies || [], [
   "ngAria",
   "ngAnimate",
   "ui.bootstrap",
-  "irida.notifications",
   "irida.cart",
   IridaSession
 ]);
