@@ -1,10 +1,10 @@
 import angular from "angular";
 import _ from "lodash";
 import "../../../vendor/plugins/angular/angular-bootstrap-switch";
+import {showNotification} from "../../../modules/notifications";
 
 const editApp = angular
   .module('associated.edit', [
-    'irida.notifications',
     'frapontillo.bootstrap-switch'
   ])
   .service('AssociatedService', function($http, $window) {
@@ -49,7 +49,7 @@ const editApp = angular
     return self;
   })
   .controller('AssociatedTableCtrl',
-    function($scope, notifications, AssociatedService) {
+    function($scope, AssociatedService) {
       const $ctrl = this;
       // paging: handle all things to do with the paging of the
       //  - page = the current page being displayed.
@@ -146,11 +146,11 @@ const editApp = angular
               if (data.result === 'success') {
                 // notySuccess(/*[[#{project.associated.added}]]*/ 'Associated project added.');
                 // #{project.associated.error}
-                notifications.show({msg: data.message});
+                showNotification({text: data.message});
                 titleElem.html(++titleVal);
               } else {
                 // notyError();
-                notifications.show({msg: data.message});
+                showNotification({text: data.message});
                 project.associated = 'associated';
               }
             });
@@ -159,11 +159,10 @@ const editApp = angular
             .removeAssociatedStatus({associatedProjectId: project.id})
             .then(data => {
               if (data.result === 'success') {
-                // notySuccess(/*[[#{project.associated.removed}]]*/ 'Associated project removed.');
-                notifications.show({msg: data.message});
+                showNotification({text: data.message});
                 titleElem.html(--titleVal);
               } else {
-                notifications.show({msg: data.message, type: 'error'});
+                showNotification({text: data.message, type: 'error'});
                 project.associated = false;
               }
             });
