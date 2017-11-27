@@ -315,6 +315,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	public AnalysisSubmission update(AnalysisSubmission object) {
 		AnalysisSubmission readSubmission = read(object.getId());
 
+		// Throw an exception if trying to change analysis priority.  This must be done by the specific method.
 		if (!readSubmission.getPriority().equals(object.getPriority())) {
 			throw new IllegalArgumentException("Analysis priority must be updated by updatePriority method.");
 		}
@@ -322,6 +323,9 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		return super.update(object);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public AnalysisSubmission updatePriority(AnalysisSubmission submission, AnalysisSubmission.Priority priority) {

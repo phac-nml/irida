@@ -239,5 +239,12 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	public Page<AnalysisSubmission> listSubmissionsForUser(String search, String name, AnalysisState state, User user,
 			Set<UUID> workflowIds, PageRequest pageRequest);
 
+	/**
+	 * Update the priority of an {@link AnalysisSubmission}
+	 *
+	 * @param submission the submission to update
+	 * @param priority   the new {@link AnalysisSubmission.Priority}
+	 * @return the updated submission
+	 */
 	public AnalysisSubmission updatePriority(AnalysisSubmission submission, AnalysisSubmission.Priority priority);
 }
