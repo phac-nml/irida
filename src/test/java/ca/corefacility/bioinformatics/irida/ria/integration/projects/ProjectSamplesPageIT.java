@@ -3,8 +3,6 @@ package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 import java.util.List;
 
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
@@ -23,19 +21,16 @@ import static org.junit.Assert.*;
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectSamplesView.xml")
 public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
-	private static final Logger logger = LoggerFactory.getLogger(ProjectSamplesPageIT.class);
 
 	@Test(expected = AssertionError.class)
 	public void testGoingToInvalidPage() {
 		LoginPage.loginAsManager(driver());
-		logger.debug("Testing going to an invalid sample id");
 		ProjectSamplesPage.gotToPage(driver(), 100);
 	}
 
 	@Test
 	public void testPageSetUp() {
 		LoginPage.loginAsManager(driver());
-		logger.info("Testing page set up for: Project Samples");
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 
 		assertTrue("Should have the project name as the page main header.", page.getTitle().equals("project ID 1"));
@@ -92,7 +87,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testPaging() {
 		LoginPage.loginAsManager(driver());
-		logger.info("Testing paging for: Project Samples");
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 
 		assertFalse("'Previous' button should be disabled", page.isPreviousBtnEnabled());
@@ -112,7 +106,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testSampleSelection() {
 		LoginPage.loginAsManager(driver());
-		logger.info("Testing sample selection for: Project Samples");
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 		assertEquals("Should be 0 selected samples", "No samples selected", page.getSelectedInfoText());
 
@@ -132,7 +125,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testAddSamplesToCart() {
 		LoginPage.loginAsManager(driver());
-		logger.info("Testing adding samples to the global cart.");
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 		page.selectSample(0);
 		page.selectSampleWithShift(4);
