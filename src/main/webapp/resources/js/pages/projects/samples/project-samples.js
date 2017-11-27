@@ -634,21 +634,24 @@ app.controller("GalaxyExportController", [
         ids.push(s.sample);
       });
 
+      // Cart is expecting an object {projectId: [sampleIds]}
+      const sampleIds = {[projectId] : ids};
+
       $uibModal.open({
         templateUrl,
         controllerAs: "gCtrl",
         controller: "GalaxyDialogCtrl",
         resolve: {
-          sampleIds: function() {
-            return ids;
+          sampleIds() {
+            return sampleIds;
           },
-          openedByCart: function() {
+          openedByCart() {
             return false;
           },
-          multiProject: function() {
+          multiProject() {
             return false;
           },
-          projectId: function() {
+          projectId() {
             return projectId;
           }
         }
