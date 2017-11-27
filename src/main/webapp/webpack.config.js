@@ -4,7 +4,7 @@ const parts = require("./configs/webpack/webpack.parts");
 const entries = require("./configs/webpack/entries.js");
 
 const PATHS = {
-  build: path.resolve(__dirname, "resources/js/build")
+  build: path.resolve(__dirname, "resources/dist")
 };
 
 /*
@@ -27,7 +27,7 @@ const commonConfig = merge([
     },
     output: {
       path: PATHS.build,
-      filename: "[name].bundle.js"
+      filename: "js/[name].bundle.js"
     }
   },
   parts.loadJavaScript(),
