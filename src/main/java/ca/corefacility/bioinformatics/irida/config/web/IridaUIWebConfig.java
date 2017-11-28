@@ -9,26 +9,27 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.LocaleResolver;
-import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
-import org.thymeleaf.cache.StandardCacheManager;
 import org.thymeleaf.dialect.IDialect;
-import org.thymeleaf.extras.springsecurity3.dialect.SpringSecurityDialect;
+import org.thymeleaf.extras.springsecurity4.dialect.SpringSecurityDialect;
 import org.thymeleaf.spring4.SpringTemplateEngine;
+import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
+import org.thymeleaf.templatemode.TemplateMode;
 
 import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
 import ca.corefacility.bioinformatics.irida.config.services.WebEmailConfig;
@@ -39,7 +40,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config
 
 import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
 import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableMap;
 import nz.net.ultraq.thymeleaf.LayoutDialect;
 
 /**
@@ -48,13 +48,12 @@ import nz.net.ultraq.thymeleaf.LayoutDialect;
 @EnableWebMvc
 @ComponentScan(basePackages = { "ca.corefacility.bioinformatics.irida.ria" })
 @Import({ WebEmailConfig.class, IridaApiSecurityConfig.class })
-public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
+public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements ApplicationContextAware {
 	private static final String SPRING_PROFILE_PRODUCTION = "prod";
 	private static final String TEMPLATE_LOCATION = "/pages/";
 	private static final String TEMPLATE_SUFFIX = ".html";
-	private static final String TEMPLATE_MODE = "HTML5";
-	private static final long TEMPLATE_CACHE_TTL_MS = 3600000L;
 	private static final String LOCALE_CHANGE_PARAMETER = "lang";
+	private static final long TEMPLATE_CACHE_TTL_MS = 3600000L;
 	private static final Logger logger = LoggerFactory.getLogger(IridaUIWebConfig.class);
 	private final static String ANALYTICS_DIR = "/etc/irida/analytics/";
 
@@ -63,6 +62,17 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 	
 	@Autowired
 	private MessageSource messageSource;
+
+	private ApplicationContext applicationContext;
+
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		this.applicationContext = applicationContext;
+	}
+
+	public IridaUIWebConfig() {
+		super();
+	}
 
 	@Bean
 	public LocaleChangeInterceptor localeChangeInterceptor() {
@@ -86,7 +96,7 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 			} catch (DirectoryIteratorException ex) {
 				logger.error("Error reading analytics directory: ", ex);
 			} catch (IOException e) {
-				logger.error("Error readin analytics file: ", e);
+				logger.error("Error reading analytics file: ", e);
 			}
 		}
 		return new AnalyticsHandlerInterceptor(analytics.toString());
@@ -130,52 +140,51 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 				.setViewName("projects/templates/referenceFiles/delete");
 	}
 
+
 	@Bean
-	public ServletContextTemplateResolver templateResolver() {
-		logger.debug("Configuring Template Resolvers.");
-		ServletContextTemplateResolver resolver = new ServletContextTemplateResolver();
-		resolver.setPrefix(TEMPLATE_LOCATION);
-		resolver.setSuffix(TEMPLATE_SUFFIX);
-		resolver.setTemplateMode(TEMPLATE_MODE);
+	public SpringResourceTemplateResolver templateResolver(){
+		// SpringResourceTemplateResolver automatically integrates with Spring's own
+		// resource resolution infrastructure, which is highly recommended.
+		SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
+		templateResolver.setApplicationContext(this.applicationContext);
+		templateResolver.setPrefix(TEMPLATE_LOCATION);
+		templateResolver.setSuffix(TEMPLATE_SUFFIX);
+		// HTML is the default value, added here for the sake of clarity.
+		templateResolver.setTemplateMode(TemplateMode.HTML);
+		// Template cache is true by default. Set to false if you want
+		// templates to be automatically updated when modified.
+		templateResolver.setCacheable(true);
 
 		// Set template cache timeout if in production
 		// Don't cache at all if in development
 		if (env.acceptsProfiles(SPRING_PROFILE_PRODUCTION)) {
-			resolver.setCacheTTLMs(TEMPLATE_CACHE_TTL_MS);
+			templateResolver.setCacheTTLMs(TEMPLATE_CACHE_TTL_MS);
 		} else {
-			resolver.setCacheTTLMs(0L);
+			templateResolver.setCacheTTLMs(0L);
 		}
-		return resolver;
+		return templateResolver;
 	}
 
 	@Bean
-	public SpringTemplateEngine templateEngine() {
-		logger.debug("Configuring SpringTemplateEngine");
-		SpringTemplateEngine engine = new SpringTemplateEngine();
-		engine.setTemplateResolver(templateResolver());
-		engine.setAdditionalDialects(additionalDialects());
-
-		// straight up disable the thymeleaf expression cache. The problem with
-		// ${object.member} sometimes working and sometimes not working comes
-		// from using the same expression in two different contexts (i.e.,
-		// object is a Map in one case, and a Project in another). Thymeleaf
-		// caches the expressions, and something is happening between uses of
-		// the expression.
-		final StandardCacheManager cacheManager = (StandardCacheManager) engine.getCacheManager();
-		cacheManager.setExpressionCacheMaxSize(0);
-
-		return engine;
+	public SpringTemplateEngine templateEngine(){
+		// SpringTemplateEngine automatically applies SpringStandardDialect and
+		// enables Spring's own MessageSource message resolution mechanisms.
+		SpringTemplateEngine templateEngine = new SpringTemplateEngine();
+		templateEngine.setTemplateResolver(templateResolver());
+		// Enabling the SpringEL compiler with Spring 4.2.4 or newer can
+		// speed up execution in most scenarios, but might be incompatible
+		// with specific cases when expressions in one template are reused
+		// across different data types, so this flag is "false" by default
+		// for safer backwards compatibility.
+		templateEngine.setEnableSpringELCompiler(false);
+		templateEngine.setAdditionalDialects(additionalDialects());
+		return templateEngine;
 	}
 
 	@Bean
-	public ViewResolver thymeleafViewResolver() {
-		logger.debug("Configuring thymeleaf view resolver.");
+	public ThymeleafViewResolver viewResolver(){
 		ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
 		viewResolver.setTemplateEngine(templateEngine());
-		viewResolver.setOrder(1);
-		viewResolver.setStaticVariables(ImmutableMap.of("themePath", "themes/bootstrap/"));
-		// DO NOT try to handle REST API calls.
-		viewResolver.setOrder(Ordered.LOWEST_PRECEDENCE);
 		return viewResolver;
 	}
 
@@ -213,5 +222,4 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 		dialects.add(new DataAttributeDialect());
 		return dialects;
 	}
-
 }
