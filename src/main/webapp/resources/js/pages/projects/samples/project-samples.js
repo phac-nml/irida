@@ -1,4 +1,5 @@
 import $ from "jquery";
+import angular from "angular";
 import chroma from "chroma-js";
 import {
   createItemLink,
@@ -20,6 +21,7 @@ import { download } from "../../../utilities/file.utilities";
 import moment from "moment";
 
 /*
+This is required to use select2 inside a modal.
 This is required to use select2 inside a modal.
  */
 $.fn.modal.Constructor.prototype.enforceFocus = function() {};
@@ -70,8 +72,12 @@ const EXPORT_HANDLERS = {
     selected.forEach(s => {
       ids.push(s.sample);
     });
-    if(ids.length > 0){
-      window.location.href = `${this.data("url")}?${$.param({ids})}`;
+    /*
+    NCBI Export is a separate page.  If there are ids available for export,
+    redirect the user to that page.
+     */
+    if (ids.length > 0) {
+      window.location.href = `${this.data("url")}?${$.param({ ids })}`;
     }
   }
 };
@@ -456,6 +462,7 @@ function handleFileSelect(e) {
   };
   reader.readAsText(file);
 }
+
 const filterByFileInput = document.querySelector("#filter-by-file");
 filterByFileInput.addEventListener("change", handleFileSelect, false);
 
@@ -542,6 +549,7 @@ function clearFilters() {
    */
   $dt.ajax.reload();
 }
+
 const clearFilterBtn = document.querySelector(".js-clear-filters");
 clearFilterBtn.addEventListener("click", clearFilters, false);
 
@@ -555,28 +563,42 @@ function displayFilters(filters) {
   const $wrapper = $(`<div class="filter-chip--wrapper"></div>`);
 
   function createChip(name, value, handler) {
-    const $chip =  $(
+    const $chip = $(
       `<span class="filter-chip--chip">${name} : ${value} <i class="fa fa-times-circle filter-chip--close" title="remove" aria-hidden="true"></i></span>`
     );
     $chip.on("click", ".filter-chip--close", handler);
     $wrapper.append($chip);
   }
-  if(filters.has(FILTERS.FILTER_BY_NAME)) {
-    createChip(window.PAGE.i18n.chips.name, filters.get(FILTERS.FILTER_BY_NAME), () => {
-      filters.delete(FILTERS.FILTER_BY_NAME);
-      table.ajax.reload();
-    });
+
+  if (filters.has(FILTERS.FILTER_BY_NAME)) {
+    createChip(
+      window.PAGE.i18n.chips.name,
+      filters.get(FILTERS.FILTER_BY_NAME),
+      () => {
+        filters.delete(FILTERS.FILTER_BY_NAME);
+        table.ajax.reload();
+      }
+    );
   }
 
-  if(filters.has(FILTERS.FILTER_BY_ORGANISM)) {
-    createChip(window.PAGE.i18n.chips.organism, filters.get(FILTERS.FILTER_BY_ORGANISM), () => {
-      filters.delete(FILTERS.FILTER_BY_ORGANISM);
-      table.ajax.reload();
-    });
+  if (filters.has(FILTERS.FILTER_BY_ORGANISM)) {
+    createChip(
+      window.PAGE.i18n.chips.organism,
+      filters.get(FILTERS.FILTER_BY_ORGANISM),
+      () => {
+        filters.delete(FILTERS.FILTER_BY_ORGANISM);
+        table.ajax.reload();
+      }
+    );
   }
 
-  if(filters.has(FILTERS.FILTER_BY_EARLY_DATE) && filters.has(FILTERS.FILTER_BY_LATEST_DATE)) {
-    const start = moment(filters.get(FILTERS.FILTER_BY_EARLY_DATE)).format("ll");
+  if (
+    filters.has(FILTERS.FILTER_BY_EARLY_DATE) &&
+    filters.has(FILTERS.FILTER_BY_LATEST_DATE)
+  ) {
+    const start = moment(filters.get(FILTERS.FILTER_BY_EARLY_DATE)).format(
+      "ll"
+    );
     const end = moment(filters.get(FILTERS.FILTER_BY_LATEST_DATE)).format("ll");
     const range = `${start} - ${end}`;
     createChip(window.PAGE.i18n.chips.range, range, () => {
@@ -593,3 +615,47 @@ function displayFilters(filters) {
 Activate page tooltips
  */
 $('[data-toggle="popover"]').popover();
+
+// TODO: (Josh : 2017-11-20): Please refactor this code to remove angular and
+// update modal request to include necessary parameters.
+const app = angular.module("irida");
+
+app.controller("GalaxyExportController", [
+  "$uibModal",
+  function($uibModal) {
+    const vm = this;
+
+    vm.exportToGalaxy = function exportToGalaxy($event) {
+      const templateUrl = $event.target.dataset.url;
+      const projectId = $event.target.dataset.projectId;
+      const ids = [];
+      const selected = $dt.select.selected()[0];
+      selected.forEach(s => {
+        ids.push(s.sample);
+      });
+
+      // Cart is expecting an object {projectId: [sampleIds]}
+      const sampleIds = {[projectId] : ids};
+
+      $uibModal.open({
+        templateUrl,
+        controllerAs: "gCtrl",
+        controller: "GalaxyDialogCtrl",
+        resolve: {
+          sampleIds() {
+            return sampleIds;
+          },
+          openedByCart() {
+            return false;
+          },
+          multiProject() {
+            return false;
+          },
+          projectId() {
+            return projectId;
+          }
+        }
+      });
+    };
+  }
+]);
