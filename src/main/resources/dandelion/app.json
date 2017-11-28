@@ -2,7 +2,6 @@
   "dependencies": [
     "jquery",
     "bootstrap3",
-    "moment",
     "angular",
     "angular-aria",
     "angular-bootstrap",

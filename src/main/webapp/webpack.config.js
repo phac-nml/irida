@@ -22,8 +22,7 @@ const commonConfig = merge([
       // require('jquery') is external and available
       //  on the global var jQuery
       jquery: "jQuery",
-      angular: "angular",
-      moment: "moment"
+      angular: "angular"
     },
     output: {
       path: PATHS.build,
