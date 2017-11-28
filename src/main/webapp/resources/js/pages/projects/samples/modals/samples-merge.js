@@ -10,6 +10,7 @@ import {
   validationConfig
 } from "../../../../utilities/form-validation";
 import {SAMPLE_EVENTS} from "../constants";
+import { showNotification } from "../../../../modules/notifications";
 
 /*
 Set up sample name validation
@@ -51,9 +52,9 @@ const config = Object.assign({}, validationConfig, {
       /*
       Alert the user that this was a success!
        */
-      window.notifications.show({
+      showNotification({
         type: response.result,
-        msg: response.message
+        text: response.message
       });
     });
   }
