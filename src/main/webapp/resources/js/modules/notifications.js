@@ -13,3 +13,7 @@ export function showNotification({text, type = "success"}) {
     text
   });
 }
+
+window.notifications = (function () {
+  return {show: showNotification};
+})();
