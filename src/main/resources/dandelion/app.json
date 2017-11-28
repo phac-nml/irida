@@ -3,7 +3,6 @@
     "jquery",
     "bootstrap3",
     "moment",
-    "lodash",
     "angular",
     "angular-aria",
     "angular-bootstrap",

@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import find from 'lodash/find';
 import {convertFileSize, download} from '../../utilities/file.utilities';
 
 const angular = require('angular');
@@ -124,7 +124,7 @@ function fileUploadProgress() {
 
       $scope.$on(UPLOAD_PROGRESS, function(evt, args) {
         // Find the upload
-        const upload = _.find($scope.files, ['filename', args.file]);
+        const upload = find($scope.files, ['filename', args.file]);
         if (upload) {
           upload.progress = args.progress;
         }

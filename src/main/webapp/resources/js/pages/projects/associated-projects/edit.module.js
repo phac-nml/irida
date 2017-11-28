@@ -1,5 +1,5 @@
 import angular from "angular";
-import _ from "lodash";
+import debounce from "lodash/debounce";
 import "../../../vendor/plugins/angular/angular-bootstrap-switch";
 import {showNotification} from "../../../modules/notifications";
 
@@ -127,7 +127,7 @@ const editApp = angular
       // This watch occurs when the name is filtered.
       //  'debounce' whats for the given time before calling.  This allows the user to enter
       //  multiple characters without triggering for each one.
-      $scope.$watch(() => $ctrl.filterCriteria.name, _.debounce((n, o) => {
+      $scope.$watch(() => $ctrl.filterCriteria.name, debounce((n, o) => {
         if (n !== o) {
           $ctrl.fetchResult().then(() => {
             $ctrl.paging.page = 1;
