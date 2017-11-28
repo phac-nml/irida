@@ -16,7 +16,7 @@ $(".js-remove-form").submit(function(e) {
      */
     $("#js-modal-wrapper").trigger(SAMPLE_EVENTS.SAMPLE_TOOLS_CLOSED);
 
-    if (response.success)
+    if (response.result === "success")
       showNotification({
         type: "success",
         text: response.message
