@@ -8,4 +8,4 @@ IRIDA is Canada’s Integrated Rapid Infectious Disease Analysis Platform for Ge
     * Download: <https://irida.corefacility.ca/documentation/downloads/index.html>
 * Contact
     * Email: <irida-mail@sfu.ca>
-    * Gitter: Join us on <https://gitter.im/irida-project/Lobby>.
+    * Gitter: [![Gitter chat](https://badges.gitter.im/irida-project/repo.png)](https://gitter.im/irida-project)

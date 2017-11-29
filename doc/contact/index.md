@@ -17,7 +17,7 @@ You can get in touch with the IRIDA team in several different ways.
 Chat
 ----
 
-The best method for getting in touch with the IRIDA development team is on our Gitter channel <https://gitter.im/irida-project/Lobby>.
+The best method for getting in touch with the IRIDA development team is on our Gitter channel <https://gitter.im/irida-project>.
 
 E-mail
 ------
