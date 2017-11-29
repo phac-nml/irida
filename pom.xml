@@ -4,7 +4,7 @@
 	<groupId>ca.corefacility.bioinformatics</groupId>
 	<artifactId>irida</artifactId>
 	<packaging>war</packaging>
-	<version>0.19.0-SNAPSHOT</version>
+	<version>0.20.0-SNAPSHOT</version>
 	<name>irida</name>
 	<url>http://www.irida.ca</url>
 
@@ -68,6 +68,18 @@
 		<repository>
 			<id>spring-milestones</id>
 			<url>https://repo.spring.io/libs-milestone/</url>
+		</repository>
+		<repository>
+			<id>clojars.org</id>
+			<url>http://clojars.org/repo</url>
+		</repository>
+		<repository>
+			<id>repo.spring.io-milestone</id>
+			<url>http://repo.spring.io/milestone/</url>
+		</repository>
+		<repository>
+			<id>central.maven.org-maven2</id>
+			<url>http://central.maven.org/maven2/</url>
 		</repository>
 	</repositories>
 
@@ -602,6 +614,20 @@
 			<artifactId>imgscalr-lib</artifactId>
 			<version>${imgscalr.version}</version>
 		</dependency>
+
+		<!-- Clojure nREPL -->
+		<dependency>
+			<groupId>net.matlux</groupId>
+			<artifactId>jvm-breakglass</artifactId>
+			<version>0.0.8</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<version>2.0.0.M5</version>
+			<optional>true</optional>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -859,9 +885,10 @@
 
 			<!-- Jetty plugin -->
 			<plugin>
+				<!-- https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-maven-plugin -->
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
-				<version>${maven.jetty.plugin.version}</version>
+				<version>9.4.7.v20170914</version>
 				<configuration>
 					<scanIntervalSeconds>0</scanIntervalSeconds>
 					<stopPort>9966</stopPort>
