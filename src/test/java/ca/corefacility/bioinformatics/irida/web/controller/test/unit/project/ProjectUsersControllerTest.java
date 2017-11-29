@@ -148,6 +148,68 @@ public class ProjectUsersControllerTest {
     }
 
     @Test
+    public void testAddUserToProjectWithRole() throws ProjectWithoutOwnerException {
+        Project p = TestDataFactory.constructProject();
+        User u = TestDataFactory.constructUser();
+        ProjectRole r = ProjectRole.PROJECT_OWNER;
+        ProjectUserJoin j = new ProjectUserJoin(p,u, r);
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        when(projectService.read(p.getId())).thenReturn(p);
+        when(userService.getUserByUsername(u.getUsername())).thenReturn(u);
+        when(projectService.addUserToProject(p, u, r)).thenReturn(j);
+        // prepare the "user" for addition to the project, just a map of userId and a username.
+        Map<String, String> userMap = ImmutableMap
+                .of(RESTProjectUsersController.USER_ID_KEY, u.getUsername(), RESTProjectUsersController.USER_ROLE_KEY,
+                        r.toString());
+
+        // add the user to the project
+        ModelMap map = controller.addUserToProject(p.getId(), userMap,response);
+
+        // confirm that the service method was called
+        verify(projectService, times(1)).addUserToProject(p, u, ProjectRole.PROJECT_OWNER);
+        verify(projectService, times(1)).read(p.getId());
+        verify(userService, times(1)).getUserByUsername(u.getUsername());
+        // check that the response is as expected:
+        assertEquals("Response must be CREATED",HttpStatus.CREATED.value(), response.getStatus());
+        //check for a correct user link
+        String location = response.getHeader(HttpHeaders.LOCATION);
+        assertNotNull("location must not be null",location);
+        assertFalse("location must not be empty",location.isEmpty());
+        assertEquals("location must be correct","http://localhost/api/projects/" + p.getId() + "/users/" + u.getUsername(), location);
+        //check the ModelMap's resource type
+        Object o = map.get(RESTGenericController.RESOURCE_NAME);
+        assertNotNull("object must not be null",o);
+        assertTrue("object must be an instance of LabelledRelationshipResource",o instanceof LabelledRelationshipResource);
+        @SuppressWarnings("unchecked")
+        LabelledRelationshipResource<Project, User> lrr = (LabelledRelationshipResource<Project, User>) o;
+        Object o2 = lrr.getResource();
+        assertNotNull("object must not be null",o2);
+        assertTrue("object must be an instance of ProjectUserJoin",o2 instanceof ProjectUserJoin);
+        ProjectUserJoin pj = (ProjectUserJoin) o2;
+        Object o3 = pj.getObject();
+        assertNotNull("object must not be null",o3);
+        assertTrue("object must be an instance of User",o3 instanceof User);
+        User user = (User) o3;
+        assertEquals("Username must be correct",user.getUsername(),u.getUsername());
+        //check for a correct relationship link
+        assertTrue("relationship link must be correct",lrr.getLink("self").getHref().endsWith(u.getUsername()));
+        Link relationship = lrr.getLink(RESTGenericController.REL_RELATIONSHIP);
+        assertNotNull("relationship link must exist",relationship);
+        assertEquals("relationship link must be correct","http://localhost/api/projects/" + p.getId() +
+                "/users/" + u.getUsername(), relationship.getHref());
+        // confirm that a project link exists
+        Link projectLink = lrr.getLink(RESTProjectsController.REL_PROJECT);
+        assertNotNull("project link must exist",projectLink);
+        assertEquals("project link must be correct","http://localhost/api/projects/" + p.getId(), projectLink.getHref());
+        // confirm that a project users link exists
+        Link projectUsersLink = lrr.getLink(RESTProjectUsersController.REL_PROJECT_USERS);
+        assertNotNull("project users link must exist",projectUsersLink);
+        assertEquals("project users link must be correct","http://localhost/api/projects/" + p.getId() +
+                "/users", projectUsersLink.getHref());
+    }
+
+    @Test
     public void testRemoveUserFromProject() throws ProjectWithoutOwnerException {
         Project p = TestDataFactory.constructProject();
         User u = TestDataFactory.constructUser();

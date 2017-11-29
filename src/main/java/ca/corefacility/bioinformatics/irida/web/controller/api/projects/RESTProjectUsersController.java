@@ -43,7 +43,13 @@ public class RESTProjectUsersController {
      * key used in map when adding user to project.
      */
     public static final String USER_ID_KEY = "userId";
-    /**
+
+	/**
+	 * Key used in map for role when adding user to project
+	 */
+	public static final String USER_ROLE_KEY = "role";
+
+	/**
      * Rel to get to the list of users associated with a project.
      */
     public static final String REL_PROJECT_USERS = "project/users";
@@ -130,12 +136,18 @@ public class RESTProjectUsersController {
         String username = representation.get(USER_ID_KEY);
         // then, get the user
         User u = userService.getUserByUsername(username);
-        ProjectRole r = ProjectRole.PROJECT_USER;
+
+		ProjectRole r = ProjectRole.PROJECT_USER;
+
+        if(representation.containsKey(USER_ROLE_KEY)){
+			r = ProjectRole.fromString(representation.get(USER_ROLE_KEY));
+		}
+
         // then add the user to the project with the specified role.
         Join<Project,User> joined = projectService.addUserToProject(p, u, r);
         LabelledRelationshipResource<Project,User>  lrr = new LabelledRelationshipResource
         		<Project,User> (joined.getLabel(),joined);
-        // prepare a link to the user 
+        // prepare a link to the user
         lrr.add(linkTo(RESTUsersController.class).slash(u.getUsername()).withSelfRel());
         // prepare a link to the user as added to the project
         lrr.add(linkTo(methodOn(RESTProjectUsersController.class).removeUserFromProject(projectId,
@@ -153,7 +165,7 @@ public class RESTProjectUsersController {
 		// prepare the response for the client
 		ModelMap modelMap = new ModelMap();
         modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, lrr);
-        
+
         return modelMap;
     }
 
