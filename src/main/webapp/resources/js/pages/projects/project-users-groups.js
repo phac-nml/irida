@@ -13,6 +13,7 @@ import {
   tableConfig
 } from "../../utilities/datatables-utilities";
 import { formatDate } from "../../utilities/date-utilities";
+import { showNotification } from "../../modules/notifications";
 
 const $table = $("#usersTable");
 const canManage = !!$table.data("admin");
@@ -143,15 +144,15 @@ $table
       },
       success(result) {
         if (result.success) {
-          window.notifications.show({ msg: result.success });
+          showNotification({ text: result.success });
         } else if (result.failure) {
           /*
           If failed, return the select box to it's original state, and
           show the user a notification as to what exactly happened.
            */
           $select.val($select.data("prev"));
-          window.notifications.show({
-            msg: result.failure,
+          showNotification({
+            text: result.failure,
             type: "error"
           });
         }
@@ -185,12 +186,12 @@ $table
                     If it worked, reload to the table to remove the user from it.
                      */
                     $dt.ajax.reload();
-                    window.notifications.show({
-                      msg: result.success
+                    showNotification({
+                      text: result.success
                     });
                   } else if (result.failure) {
-                    window.notifications.show({
-                      msg: result.failure,
+                    showNotification({
+                      text: result.failure,
                       type: "error"
                     });
                   }
@@ -244,15 +245,15 @@ $("#submitAddMember").on("click", function() {
     success(result) {
       $("#addMemberModal").modal("hide");
       $dt.ajax.reload();
-      window.notifications.show({
-        msg: result.result
+      showNotification({
+        text: result.result
       });
       $("#add-member-membername").select2("val", "");
     },
     error() {
       $("#addMemberModal").modal("hide");
-      window.notifications.show({
-        msg: window.PAGE.i18n.unexpectedAddError,
+      showNotification({
+        text: window.PAGE.i18n.unexpectedAddError,
         type: "error"
       });
     }

@@ -1,14 +1,13 @@
-(function (ng, $, _, location, page) {
+(function (ng, $, location, page) {
 	"use strict";
 	/**
 	 * Main controller for the pipeline launch page.
 	 * @param $http AngularJS http object
 	 * @param CartService a reference to the cart service (to clear it)
-	 * @param notifications notifications
 	 * @param ParameterService for passing parameter information between modal and page
 	 * @constructor
 	 */
-	function PipelineController($scope, $http, CartService, notifications, ParameterService) {
+	function PipelineController($scope, $http, CartService, ParameterService) {
 		var vm = this;
 
 		vm.parameters = ParameterService.getOriginalSettings();
@@ -65,8 +64,8 @@
 				vm.loading = true;
 
 				// Get a list of paired and single end files to run.
-				_.forEach(radioBtns, function (c) {
-					c = $(c);
+				radioBtns.each(function (c) {
+					c = $(this);
 
 					if (c.attr('data-type') === 'single_end') {
 						single.push(Number(c.val()));
@@ -99,7 +98,7 @@
 					params['paired'] = paired;
 				}
 
-				if (_.keys(selectedParameters).length > 0 && selectedParameters.id !== 'no_parameters') {
+				if (Object.keys(selectedParameters).length > 0 && selectedParameters.id !== 'no_parameters') {
 					params['selectedParameters'] = selectedParameters;
 				}
 				params['name'] = name;
@@ -133,7 +132,7 @@
 								vm.paramError = data.parameters;
 							}
 							else if (data.pipelineError) {
-								notifications.show({type: 'error', msg: data.pipelineError});
+								window.notifications.show({type: 'error', text: data.pipelineError});
 							}
 						}
 					});
@@ -391,17 +390,17 @@
 	          vm.referenceUploadStarted = false;
 	        }, function(response) {
 	          vm.referenceUploadStarted = false;
-	          window.notifications.show({msg: response.data.error, type: 'error'});
+	          window.notifications.show({text: response.data.error, type: 'error'});
 	        });
 	      }
 	    };
   }
 
   ng.module('irida.pipelines', ['irida.cart', 'ngFileUpload'])
-		.controller('PipelineController', ['$rootScope', '$http', 'CartService', 'notifications', 'ParameterService', PipelineController])
+		.controller('PipelineController', ['$rootScope', '$http', 'CartService', 'ParameterService', PipelineController])
 		.controller('ParameterModalController', ["$uibModal", ParameterModalController])
 		.controller('ParameterController', ['$rootScope', '$http', '$uibModalInstance', 'ParameterService', ParameterController])
 		.controller('FileUploadCtrl', ['$rootScope', 'Upload', FileUploadCtrl])
 		.service('ParameterService', [ParameterService])
 	;
-})(window.angular, window.jQuery, window._, window.location, window.PAGE);
+})(window.angular, window.jQuery, window.location, window.PAGE);

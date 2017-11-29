@@ -1,5 +1,6 @@
 import angular from 'angular';
 import './../../modules/utilities/file.utils';
+import { showNotification } from "../../modules/notifications";
 
 /**
  * Angular service for project files.
@@ -36,10 +37,9 @@ function ProjectFileService($rootScope, $http) {
  * @param {object} $rootScope angular DOM root scope
  * @param {object} $uibModal angular-ui modal
  * @param {object} $http angular http object
- * @param {object} notifications show notifications.
  * @constructor
  */
-function ReferenceFileService($rootScope, $uibModal, $http, notifications) {
+function ReferenceFileService($rootScope, $uibModal, $http) {
   'use strict';
   const svc = this;
 
@@ -59,8 +59,8 @@ function ReferenceFileService($rootScope, $uibModal, $http, notifications) {
         fileId: file.id,
         projectId: window.project.id
       }).then(function(response) {
-        notifications.show({
-          msg: response.data.msg,
+        showNotification({
+          text: response.data.msg,
           type: response.data.result
         });
         $rootScope.$broadcast('FILE_DELETED', {id: file.id});
@@ -138,7 +138,7 @@ function FileUploadCtrl($timeout, fileService) {
 
 angular.module('References', ['file.utils'])
   .service('ProjectFileService', ['$rootScope', '$http', ProjectFileService])
-  .service('ReferenceFileService', ['$rootScope', '$uibModal', '$http', 'notifications', ReferenceFileService])
+  .service('ReferenceFileService', ['$rootScope', '$uibModal', '$http', ReferenceFileService])
   .controller('FilesCtrl', ['ProjectFileService', 'ReferenceFileService', FilesCtrl])
   .controller('DeleteCtrl', ['$uibModalInstance', 'file', DeleteCtrl])
   .controller('FileUploadCtrl', ['$timeout', 'FileService', FileUploadCtrl]);

@@ -9,6 +9,7 @@ import {
   tableConfig
 } from "../../utilities/datatables-utilities";
 import { formatDate } from "../../utilities/date-utilities";
+import { showNotification } from "../../modules/notifications";
 
 const COLUMNS = generateColumnOrderInfo();
 const $table = $("#groupMembersTable");
@@ -58,12 +59,12 @@ function removeUser(userId) {
               success: function(result) {
                 if (result.success) {
                   $dt.ajax.reload();
-                  window.notifications.show({
-                    msg: result.success
+                  showNotification({
+                    text: result.success
                   });
                 } else if (result.failure) {
-                  window.notifications.show({
-                    msg: result.failure,
+                  showNotification({
+                    text: result.failure,
                     type: "error"
                   });
                 }
@@ -169,15 +170,15 @@ $table
       },
       success(result) {
         if (result.success) {
-          window.notifications.show({ msg: result.success });
+          showNotification({ text: result.success });
         } else if (result.failure) {
           /*
           If failed, return the select box to it's original state, and
           show the user a notification as to what exactly happened.
            */
           $select.val($select.data("prev"));
-          window.notifications.show({
-            msg: result.failure,
+          showNotification({
+            text: result.failure,
             type: "error"
           });
         }
@@ -222,8 +223,8 @@ $("#submitAddMember").click(function() {
     success(result) {
       $("#addUserModal").modal("hide");
       $dt.ajax.reload();
-      window.notifications.show({
-        msg: result.result
+      showNotification({
+        text: result.result
       });
       $("#add-user-username")
         .val("")
@@ -231,8 +232,8 @@ $("#submitAddMember").click(function() {
     },
     error() {
       $("#addUserModal").modal("hide");
-      window.notifications.show({
-        msg: page.i18n.unexpectedAddError,
+      showNotification({
+        text: page.i18n.unexpectedAddError,
         type: "error"
       });
     }

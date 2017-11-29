@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="template/base"
-	  ddl:bundle-includes="app">
+      layout:decorator="~{template/base}">
 <head lang="en">
+	<link rel="stylesheet" th:href="@{/resources/bower_components/font-awesome/css/font-awesome.min.css}"/>
+	<link rel="stylesheet" th:href="@{/resources/bower_components/animate.css/animate.min.css}"/>
 	<style>
 		.ng-cloak {
 			display: none !important;
@@ -119,6 +120,11 @@
 	<script th:inline="javascript">
 		var TL = {
 			BASE_URL      : /*[[@{/}]]*/ '/',
+		  	URLS: {
+			  cart: {
+			    add: /*[[@{/cart/add/samples}]]*/ "/cart/add/samples"
+			  }
+			},
 			SESSION_LENGTH: /*[[${#httpSession.getAttribute('SESSION_TIMEOUT')}]]*/ 1800,
 			lang          : {
 				page  : {
@@ -140,9 +146,13 @@
 	</script>
 
 	<script th:src="@{/resources/dist/js/vendor.bundle.js}"></script>
-	<th:block ddl:placeholder-include="js">
-		<!--/* Dandelion injects script tags here */-->
-	</th:block>
+	<script th:src="@{/resources/bower_components/jquery/dist/jquery.min.js}"></script>
+	<script th:src="@{/resources/bower_components/angular/angular.min.js}"></script>
+	<script th:src="@{/resources/bower_components/angular-aria/angular-aria.min.js}"></script>
+	<script th:src="@{/resources/bower_components/angular-animate/angular-animate.min.js}"></script>
+	<script th:src="@{/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js}"></script>
+	<script th:src="@{/resources/bower_components/bootstrap/dist/js/bootstrap.min.js}"></script>
+	<script th:src="@{/resources/dist/js/app.bundle.js}"></script>
 
 	<th:block layout:fragment="scripts">
 		<!--/* optional script tags */-->
