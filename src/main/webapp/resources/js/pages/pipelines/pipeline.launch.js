@@ -93,6 +93,7 @@
 				});
 
 				var currentSettings = ParameterService.getSelectedParameters().currentSettings;
+				var currentToolDataTableField = ToolDataTableService.getSelectedToolDataTableField().currentSettings;
 				var selectedParameters = {
 					"id"        : currentSettings.id,
 					"parameters": currentSettings.parameters
