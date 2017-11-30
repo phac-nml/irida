@@ -295,7 +295,7 @@
 						<div class="form-group" sec:authorize="hasRole('ROLE_ADMIN')" th:if="${analysisSubmission.analysisState == T(ca.corefacility.bioinformatics.irida.model.enums.AnalysisState).NEW}">
 								<label for="analysis-name-input" th:text="#{analysis.edit.priority}">_Analysis Name_</label>
 								
-								<select class="form-control" name="priority">
+								<select class="form-control" name="priority" id="analysis-edit-priority">
 										<option 
 										  th:each="priority : ${T(ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission.Priority).values()}" 
 										  th:text="${priority}" th:value="${priority}" th:selected="${analysisSubmission.priority == priority}">_High_</option>
