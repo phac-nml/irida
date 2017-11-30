@@ -19,7 +19,13 @@
 			},
 			pipeline: {
 				parameters: /*[[${parameters}]]*/ [],
-				pipelineId : /*[[${pipelineId}]]*/ 'pipelineId'
+				pipelineId : /*[[${pipelineId}]]*/ 'pipelineId',
+				toolDataTableFields: [
+					{ "displayColumn": "Campylobacter jejuni k=31 (PubMLST) 2017-10-30",
+					  "parameterColumn": "/galaxy-central/tool-data/mentalist_databases/campylobacter_jejuni_pubmlst_k31/campylobacter_jejuni_pubmlst_k31.jld" },
+					{ "displayColumn": "Salmonella enterica k=31 (PubMLST) 2017-11-01",
+					  "parameterColumn": "/galaxy-central/tool-data/mentalist_databases/salmonella_enterica_pubmlst_k31_2017-11-01/salmonella_enterica_pubmlst_k31_2017-11-01.jld" }
+				]
 			}
 		};
 		/*]]>*/
@@ -106,7 +112,7 @@
 												class="form-control"
 												ng-model="pipeline.selectedToolDataTableField"
 												ng-change="pipeline.toolDataTableFieldSelected()"
-												ng-options="item.currentSettings.label for item in pipeline.parameters">
+												ng-options="item.displayColumn for item in pipeline.toolDataTableFields">
 										</select>
 									</div>
 								</div>

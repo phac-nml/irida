@@ -384,7 +384,7 @@
     function ToolDataTableService() {
         var svc = this;
 
-        var originalSettings = {};
+        var originalSettings = page.pipeline.toolDataTableFields;
 
         var selectedToolDataTableField = originalSettings[0];
 
