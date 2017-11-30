@@ -101,8 +101,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 	}
 
 	public boolean priorityEditVisible() {
-		WebElement priorityEdit = driver.findElement(By.id("analysis-edit-priority"));
-		return priorityEdit.isDisplayed();
+		return !driver.findElements(By.id("analysis-edit-priority")).isEmpty();
 	}
 
 	/**
