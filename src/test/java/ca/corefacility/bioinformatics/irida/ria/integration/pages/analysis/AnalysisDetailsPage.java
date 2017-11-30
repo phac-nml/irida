@@ -39,6 +39,12 @@ public class AnalysisDetailsPage extends AbstractPage {
 	@FindBy(className = "paired_end")
 	private List<WebElement> pairedEndElements;
 
+	@FindBy(id = "editAnalysisButton")
+	private WebElement editButton;
+
+	@FindBy(id = "analysis-edit-priority")
+	private WebElement priorityEdit;
+
 	private WebElement currentFile;
 
 	public AnalysisDetailsPage(WebDriver driver) {
@@ -87,6 +93,18 @@ public class AnalysisDetailsPage extends AbstractPage {
 			throw new IllegalArgumentException("share box with id " + id + " doesn't exist");
 		}
 		checkbox.get().click();
+	}
+
+	/**
+	 * Click the edit button
+	 */
+	public void clickEditButton() {
+		editButton.click();
+		waitForTime(500);
+	}
+
+	public boolean priorityEditVisible() {
+		return priorityEdit.isDisplayed();
 	}
 
 	/**
