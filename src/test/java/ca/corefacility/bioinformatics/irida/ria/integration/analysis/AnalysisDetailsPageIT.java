@@ -46,7 +46,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testEditPriorityHidden() throws URISyntaxException, IOException {
 
-		LoginPage.loginAsAdmin(driver());
+		LoginPage.loginAsManager(driver());
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L);
 
 		page.clickEditButton();
