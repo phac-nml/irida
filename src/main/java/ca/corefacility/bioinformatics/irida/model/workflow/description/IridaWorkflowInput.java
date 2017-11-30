@@ -28,7 +28,7 @@ public class IridaWorkflowInput {
 	@XmlElement(name = "requiresSingleSample", defaultValue="false")
 	private boolean requiresSingleSample;
 
-	@XmlElement(name = "toolDataTable")
+	@XmlElement(name = "galaxyToolDataTable")
 	private String toolDataTable;
 
 	public IridaWorkflowInput() {
