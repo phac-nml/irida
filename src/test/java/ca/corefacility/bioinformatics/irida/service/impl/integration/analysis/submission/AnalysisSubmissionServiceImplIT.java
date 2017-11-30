@@ -404,10 +404,24 @@ public class AnalysisSubmissionServiceImplIT {
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testUpdatePriority() {
+	public void testUpdatePriorityFail() {
 		AnalysisSubmission submission = analysisSubmissionService.read(1L);
 		submission.setPriority(AnalysisSubmission.Priority.HIGH);
 		analysisSubmissionService.update(submission);
+	}
+
+	/**
+	 * Tests updating the analysis with a new priority.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testUpdatePriority() {
+		AnalysisSubmission submission = analysisSubmissionService.read(1L);
+
+		analysisSubmissionService.updatePriority(submission, AnalysisSubmission.Priority.HIGH);
+		submission = analysisSubmissionService.read(1L);
+
+		assertEquals("Should have high priority", submission.getPriority(), AnalysisSubmission.Priority.HIGH);
 	}
 
 	/**
