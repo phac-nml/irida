@@ -36,7 +36,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	
 	private Object prepareAnalysesLock = new Object();
 	private Object executeAnalysesLock = new Object();
-	private Object monitorRunningAnalysesLock = new Object();			// Sort submissions by priority high to low
+	private Object monitorRunningAnalysesLock = new Object();
 
 	private Object transferAnalysesResultsLock = new Object();
 	private Object cleanupAnalysesResultsLock = new Object();
