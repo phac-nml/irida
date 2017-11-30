@@ -1,0 +1,20 @@
+sudo: required
+language: java
+
+services:
+  - docker
+  - mysql
+
+jdk:
+  - openjdk8
+
+before_install:
+  - mysql -e 'CREATE USER "test"@"localhost" IDENTIFIED BY "test"; GRANT ALL ON irida_integration_test.* to "test"@"localhost";'
+
+install:
+  - docker pull phacnml/galaxy-irida-17.01
+  - mvn -version
+  - cd lib && ./install-libs.sh
+  - mvn clean package -DskipTests
+
+script: travis_wait ./run-tests.sh service_testing
