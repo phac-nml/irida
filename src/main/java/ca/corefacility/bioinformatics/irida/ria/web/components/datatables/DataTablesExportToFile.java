@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.ria.web.components.datatables;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
