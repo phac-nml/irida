@@ -230,7 +230,7 @@ public class AnalysisController {
 	 * @return redirect to the analysis page after update
 	 */
 	@RequestMapping(value = "/{submissionId}/edit", produces = MediaType.TEXT_HTML_VALUE)
-	public String editAnalysisName(@PathVariable Long submissionId, @RequestParam String name,
+	public String editAnalysis(@PathVariable Long submissionId, @RequestParam String name,
 			@RequestParam(required = false, defaultValue = "") AnalysisSubmission.Priority priority, Model model,
 			Locale locale) {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
