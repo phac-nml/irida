@@ -7,7 +7,11 @@
     <analysisType>mlst-mentalist</analysisType>
     <inputs>
         <sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
-        <toolDataTable name="mentalist_databases"></toolDataTable>
+        <galaxyToolDataTable name="mentalist_databases" displayColumn="name" parameterColumn="path">
+            <toolParameter
+                    toolId="testtoolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_call/0.1.2"
+                    parameterName="kmer_db" />
+        </galaxyToolDataTable>
         <requiresSingleSample>true</requiresSingleSample>
     </inputs>
     <parameters>
