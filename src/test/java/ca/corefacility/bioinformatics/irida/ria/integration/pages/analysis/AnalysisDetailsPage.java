@@ -42,9 +42,6 @@ public class AnalysisDetailsPage extends AbstractPage {
 	@FindBy(id = "editAnalysisButton")
 	private WebElement editButton;
 
-	@FindBy(id = "analysis-edit-priority")
-	private WebElement priorityEdit;
-
 	private WebElement currentFile;
 
 	public AnalysisDetailsPage(WebDriver driver) {
@@ -104,6 +101,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 	}
 
 	public boolean priorityEditVisible() {
+		WebElement priorityEdit = driver.findElement(By.id("analysis-edit-priority"));
 		return priorityEdit.isDisplayed();
 	}
 
