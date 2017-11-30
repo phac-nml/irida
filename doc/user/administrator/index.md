@@ -224,7 +224,7 @@ From the Remote Connections list page, click on the name of the connection you w
 Setting Analysis Submission Priority
 ====================================
 
-Administrators have the ability to set the priority of analysis submissions in IRIDA.  This feature can be used to ensure important analyses are run in a timely fashion when the analysis queue is filled by routine or other low priority analyses.  By default all manually submitted submissions will have a priority of `MEDIUM`, where all automated submissions (such as automated assemblies and automated SISTR) will have `LOW` priority.
+Administrators have the ability to set the priority of analysis submissions in IRIDA.  This feature can be used to ensure important analyses are run in a timely fashion when the analysis queue is filled by routine or other low priority analyses.  By default all manually submitted submissions will have a priority of `MEDIUM`, whereas all automated submissions (such as automated assemblies and automated SISTR) will have `LOW` priority.
 
 To update the priority of a submission, first view the submission page.  The current priority will be displayed in the info section
 
