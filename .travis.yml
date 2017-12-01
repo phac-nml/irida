@@ -24,15 +24,9 @@ cache:
     - $HOME/.m2
     - src/main/webapp/node_modules/
 
-stages:
-  - test
-
 install:
   - mysql -e "CREATE USER '$MYSQL_USER'@'localhost' IDENTIFIED BY '$MYSQL_PASSWORD'; GRANT ALL ON $MYSQL_DATABASE.* to '$MYSQL_USER'@'localhost';"
   - mvn -version
   - pushd lib; ./install-libs.sh; popd
 
-jobs:
-  include:
-    - stage: test
-      script: "./run-tests.sh $TEST_SUITE"
+script: ./run-tests.sh $TEST_SUITE
