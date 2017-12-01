@@ -16,7 +16,7 @@ services:
   - docker
 
 addons:
-  - mariadb: '10.0'
+  mariadb: '10.0'
 
 jdk:
   - openjdk8
