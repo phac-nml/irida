@@ -2,9 +2,10 @@ sudo: required
 language: java
 
 env:
-  - MYSQL_DATABASE=irida_integration_test
-  - MYSQL_USER=test
-  - MYSQL_PASSWORD=test
+  global:
+    - MYSQL_DATABASE=irida_integration_test
+    - MYSQL_USER=test
+    - MYSQL_PASSWORD=test
 
 services:
   - docker
