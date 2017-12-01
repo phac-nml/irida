@@ -162,7 +162,7 @@ public class UsersController {
 			Map<String, Object> map = new HashMap<>();
 			map.put("identifier", project.getId());
 			map.put("name", project.getName());
-			map.put("isManager", pujoin.getProjectRole().equals(ProjectRole.PROJECT_OWNER) ? true : false);
+			map.put("isManager", pujoin.getProjectRole().equals(ProjectRole.PROJECT_OWNER));
 			map.put("subscribed" , pujoin.isEmailSubscription());
 
 			String proleMessageName = "projectRole." + pujoin.getProjectRole().toString();
@@ -540,7 +540,7 @@ public class UsersController {
 	/**
 	 * Check if the logged in user is allowed to edit the given user.
 	 *
-	 * @param principal
+	 * @param principalUser
 	 *            The currently logged in principal
 	 * @param user
 	 *            The user to edit
@@ -578,6 +578,7 @@ public class UsersController {
 		int ALPHABET_SIZE = 26;
 		int SINGLE_DIGIT_SIZE = 10;
 		int RANDOM_LENGTH = PASSWORD_LENGTH - 3;
+		String SPECIAL_CHARS = "!@#$%^&*()+?/<>=.\\{}";
 
 		List<Character> pwdArray = new ArrayList<>(PASSWORD_LENGTH);
 		SecureRandom random = new SecureRandom();
@@ -591,11 +592,14 @@ public class UsersController {
 		// 3. Create 1 random number.
 		pwdArray.add((char) ('0' + random.nextInt(SINGLE_DIGIT_SIZE)));
 
-		// 4. Create 5 random.
+		// 4. Add 1 special character
+		pwdArray.add(SPECIAL_CHARS.charAt(random.nextInt(SPECIAL_CHARS.length())));
+
+		// 5. Create 5 random.
 		int c = 'A';
-		int rand = 0;
+		int rand;
 		for (int i = 0; i < RANDOM_LENGTH; i++) {
-			rand = random.nextInt(3);
+			rand = random.nextInt(4);
 			switch (rand) {
 			case 0:
 				c = '0' + random.nextInt(SINGLE_DIGIT_SIZE);
@@ -606,14 +610,17 @@ public class UsersController {
 			case 2:
 				c = 'A' + random.nextInt(ALPHABET_SIZE);
 				break;
+			case 3:
+				c = SPECIAL_CHARS.charAt(random.nextInt(SPECIAL_CHARS.length()));
+				break;
 			}
 			pwdArray.add((char) c);
 		}
 
-		// 5. Shuffle.
+		// 6. Shuffle.
 		Collections.shuffle(pwdArray, random);
 
-		// 6. Create string.
+		// 7. Create string.
 		Joiner joiner = Joiner.on("");
 		return joiner.join(pwdArray);
 	}

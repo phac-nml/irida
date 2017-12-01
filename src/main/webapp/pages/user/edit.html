@@ -40,7 +40,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label th:text="#{users.email}" for="email">_Email_</label>
+                            <label class="control-label" th:text="#{users.email}" for="email">_Email_</label>
 
                             <div id="email-error" th:if="${#maps.containsKey(errors, 'email')}"
                                  th:text="${errors.email}" class="alert alert-warning">_Email Error_
@@ -50,7 +50,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label th:text="#{user.phone}" for="phoneNumber">_Email_</label>
+                            <label class="control-label" th:text="#{user.phone}" for="phoneNumber">_Email_</label>
 
                             <div id="email-error" th:if="${#maps.containsKey(errors, 'phoneNumber')}"
                                  th:text="${errors.phoneNumber}" class="alert alert-warning">_Phone Number Error_
@@ -72,25 +72,7 @@
                                 </option>
                             </select>
                         </div>
-
-                        <div class="form-group">
-                            <label class="control-label" th:text="#{user.password}" for="password">_Password_</label>
-
-                            <div th:if="${#maps.containsKey(errors, 'password')}" th:text="${errors.password}"
-                                 class="alert alert-warning">_Password Error_
-                            </div>
-                            <input type="password" id="password" name="password" class="form-control input-full"
-                                   placeholder="Password"/>
-                            <div th:replace="templates/requirements :: pw-requirements"></div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="control-label" th:text="#{user.confirmPassword}" for="confirmPassword">_Confirm
-                                Password_</label>
-                            <input type="password" id="confirmPassword" name="confirmPassword"
-                                   class="form-control input-full" placeholder="Confirm Password"/>
-                        </div>
-
+                        <div th:replace="templates/password :: passwordInputs (hidden=false, required=false)"></div>
                         <div class="form-group" sec:authorize="hasRole('ROLE_ADMIN')">
                             <label class="control-label" th:text="#{user.enabled}" for="enabled">_Enabled_</label>
                             <input type="checkbox" name="enabled" id="enabled" th:checked="${user.enabled}"/>
@@ -108,7 +90,7 @@
 </main>
 
 <th:block layout:fragment="scripts">
-    <script th:src="@{/resources/js/pages/users/users-password.js}"></script>
+    <script th:src="@{/resources/js/build/users-password.bundle.js}"></script>
 </th:block>
 </body>
 </html>

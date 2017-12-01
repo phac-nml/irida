@@ -6,6 +6,8 @@ import org.openqa.selenium.WebElement;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
+import java.util.List;
+
 public class PasswordResetPage extends AbstractPage {
 	private final String RELATIVE_URL = "password_reset/";
 
@@ -22,9 +24,10 @@ public class PasswordResetPage extends AbstractPage {
 		WebElement confirmElement = driver.findElement(By.id("confirmPassword"));
 		passwordElement.sendKeys(password);
 		confirmElement.sendKeys(confirmPassword);
+	}
 
-		WebElement submitButton = driver.findElement(By.className("submit"));
-		submitAndWait(submitButton);
+	public void clickSubmit() {
+		submitAndWait(driver.findElement(By.className("submit")));
 	}
 
 	public boolean checkSuccess() {

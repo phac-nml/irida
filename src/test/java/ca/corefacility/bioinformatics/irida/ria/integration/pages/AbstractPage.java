@@ -269,4 +269,20 @@ public class AbstractPage {
 			waitForTime(200);
 		}
 	}
+
+	/**
+	 * Check if the '.submit' is enabled
+	 * @return if the '.submit' is enabled
+	 */
+	public boolean isSubmitEnabled() {
+		return driver.findElement(By.className("submit")).isEnabled();
+	}
+
+	/**
+	 * Check if there are any '.has-error' elements
+	 * @return if there are any '.has-error' elements
+	 */
+	public boolean hasErrors() {
+		return !driver.findElements(By.className("has-error")).isEmpty();
+	}
 }

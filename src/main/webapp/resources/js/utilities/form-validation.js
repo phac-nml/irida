@@ -9,20 +9,22 @@ export const validationConfig = {
     error.insertAfter(element);
   },
   highlight(element) {
-    $(element)
-      .parents(".form-group")
-      .addClass("has-error")
-      .removeClass("has-success");
+    const fg = $(element).parents(".form-group");
+    if (!fg.hasClass("has-error")) {
+      fg.addClass("has-error").removeClass("has-success");
+    }
   },
   unhighlight(element) {
-    $(element)
-      .parents(".form-group")
-      .addClass("has-success")
-      .removeClass("has-error");
+    const fg = $(element).parents(".form-group");
+    if (fg.hasClass("has-error")) {
+      fg.removeClass("has-error")
+        .addClass("has-success");
+      setTimeout(() => fg.removeClass("has-success"), 1000);
+    }
   },
   // Disable the button of clicking to prevent multiple clicks.
   submitHandler(form) {
-    saveBtn.attr("disabled", true);
+    $(form).find(":submit").attr("disabled", true);
     form.submit();
   }
 };
@@ -51,5 +53,27 @@ export function sampleNameCharacterValidation() {
   }
   throw new Error(
     "jquery-validate must be loaded to activate sample name checker"
+  );
+}
+
+
+export function passwordCharacterReqsValidation() {
+  if (typeof $.validator === "function") {
+    $.validator.addMethod("hasLowercaseLetter", value => {
+      return /^.*[a-z].*$/.test(value);
+    });
+    $.validator.addMethod("hasUppercaseLetter", value => {
+      return /^.*[A-Z].*$/.test(value);
+    });
+    $.validator.addMethod("hasNumber", value => {
+      return /^.*[0-9].*$/.test(value);
+    });
+    $.validator.addMethod("hasSpecialChar", value => {
+      return /^.*[!@#$%^&*()+?/<>=.\\{}].*$/.test(value);
+    });
+    return;
+  }
+  throw new Error(
+    "jquery-validate must be loaded to activate password checker"
   );
 }

@@ -23,35 +23,46 @@ public class CreateUserPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void createGoodUser() {
 		createPage.goTo();
-		createPage.createUserWithPassword("tom", "tom@somwehre.com", "Password1", "Password1");
+		createPage.enterUserCredsWithPassword("tom", "tom@somwehre.com", "Password1!", "Password1!");
+		assertFalse(createPage.hasErrors());
+		createPage.clickSubmit();
 		assertTrue(createPage.createSuccess());
 	}
 
 	@Test
 	public void createExistingUsername() {
 		createPage.goTo();
-		createPage.createUserWithPassword("mrtest", "tom@somwehre.com", "Password1", "Password1");
+		createPage.enterUserCredsWithPassword("mrtest", "tom@somwehre.com", "Password1!", "Password1!");
+		// TODO: add client side remote validation checking if username already exists
+		createPage.clickSubmit();
 		assertFalse(createPage.createSuccess());
 	}
 
 	@Test
 	public void createExistingEmail() {
 		createPage.goTo();
-		createPage.createUserWithPassword("tom", "manager@nowhere.com", "Password1", "Password1");
+		createPage.enterUserCredsWithPassword("tom", "manager@nowhere.com", "Password1!", "Password1!");
+		// TODO: add client side remote validation checking if email already exists
+		createPage.clickSubmit();
 		assertFalse(createPage.createSuccess());
 	}
 
 	@Test
 	public void createNoPasswordMatch() {
 		createPage.goTo();
-		createPage.createUserWithPassword("tom", "manager@nowhere.com", "Password1", "Different1");
+		createPage.enterUserCredsWithPassword("tom", "manager@nowhere.com", "Password1!", "Different1");
+		assertTrue(createPage.hasErrors());
+		assertTrue(createPage.isSubmitEnabled());
+		createPage.clickSubmit();
 		assertFalse(createPage.createSuccess());
 	}
 
 	@Test
 	public void testCreateUserWithoutPassword() {
 		createPage.goTo();
-		createPage.createUserWithoutPassword("tom", "tom@somwehre.com");
+		createPage.enterUserCredsWithoutPassword("tom", "tom@somwehre.com");
+		assertFalse(createPage.hasErrors());
+		createPage.clickSubmit();
 		assertTrue(createPage.createSuccess());
 	}
 
