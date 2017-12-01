@@ -37,30 +37,6 @@ public class IridaWorkflowInput {
 	/**
 	 * Builds a new {@link IridaWorkflowInput} object with the given
 	 * information.
-	 * 
-	 * @param sequenceReadsSingle
-	 *            The label to use for a collection of single-end sequence
-	 *            reads. Null if no acceptance of single-end reads.
-	 * @param sequenceReadsPaired
-	 *            The label to use for a collection of paired-end sequence
-	 *            reads. Null if no acceptance of paired-end reads.
-	 * @param reference
-	 *            The label to use for a reference file.
-	 * @param requiresSingleSample
-	 *            Whether or not this workflow requires a single sample, or can
-	 *            work with multiple samples.
-	 */
-	public IridaWorkflowInput(String sequenceReadsSingle, String sequenceReadsPaired, String reference,
-			boolean requiresSingleSample) {
-		this.sequenceReadsSingle = sequenceReadsSingle;
-		this.sequenceReadsPaired = sequenceReadsPaired;
-		this.reference = reference;
-		this.requiresSingleSample = requiresSingleSample;
-	}
-
-	/**
-	 * Builds a new {@link IridaWorkflowInput} object with the given
-	 * information.
 	 *
 	 * @param sequenceReadsSingle
 	 *            The label to use for a collection of single-end sequence

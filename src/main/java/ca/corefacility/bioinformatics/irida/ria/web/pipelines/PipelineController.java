@@ -326,7 +326,9 @@ public class PipelineController extends BaseController {
 			model.addAttribute("toolDataTableRequired", description.requiresToolDataTable());
 			if (description.requiresToolDataTable()) {
 				String galaxyToolDataTable = description.getInputs().getGalaxyToolDataTable().get();
+				String sequenceReadsPaired = description.getInputs().getSequenceReadsPaired().get();
 				System.out.println(" *** " + galaxyToolDataTable);
+				System.out.println(" *** " + sequenceReadsPaired);
 				/* List<String> displayFields = mentalistDatabases.getFieldsForColumn("name");
 				Iterator<String> displayFieldsIterator = displayFields.iterator();
 				List<String> parameterFields = mentalistDatabases.getFieldsForColumn("path");
