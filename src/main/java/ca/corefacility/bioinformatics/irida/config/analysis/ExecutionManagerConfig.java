@@ -10,6 +10,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyToolDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,7 @@ import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.RolesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
+import com.github.jmchilton.blend4j.galaxy.ToolDataClient;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -213,6 +215,26 @@ public class ExecutionManagerConfig {
 	@Bean
 	public GalaxyWorkflowService galaxyWorkflowService() throws ExecutionManagerConfigurationException {
 		return new GalaxyWorkflowService(workflowsClient(), StandardCharsets.UTF_8);
+	}
+
+	/**
+	 * @return A GalaxyToolDataService for interacting with Galaxy Tool Data Tables.
+	 * @throws ExecutionManagerConfigurationException If there is an issue building the execution manager.
+	 */
+	@Lazy
+	@Bean
+	public GalaxyToolDataService galaxyToolDataService() throws ExecutionManagerConfigurationException {
+		return new GalaxyToolDataService(toolDataClient());
+	}
+
+	/**
+	 * @return A ToolDataClient for interacting with Galaxy.
+	 * @throws ExecutionManagerConfigurationException If there is an issue building the execution manager.
+	 */
+	@Lazy
+	@Bean
+	public ToolDataClient toolDataClient() throws ExecutionManagerConfigurationException {
+		return galaxyInstance().getToolDataClient();
 	}
 
 	/**

@@ -29,7 +29,7 @@ public class IridaWorkflowInput {
 	private boolean requiresSingleSample;
 
 	@XmlElement(name = "galaxyToolDataTable")
-	private String toolDataTable;
+	private String galaxyToolDataTable;
 
 	public IridaWorkflowInput() {
 	}
@@ -70,18 +70,18 @@ public class IridaWorkflowInput {
 	 *            reads. Null if no acceptance of paired-end reads.
 	 * @param reference
 	 *            The label to use for a reference file.
-	 * @param toolDataTable
+	 * @param galaxyToolDataTable
 	 *            The label to use for a tool data table.
 	 * @param requiresSingleSample
 	 *            Whether or not this workflow requires a single sample, or can
 	 *            work with multiple samples.
 	 */
-	public IridaWorkflowInput(String sequenceReadsSingle, String sequenceReadsPaired, String reference, String toolDataTable,
+	public IridaWorkflowInput(String sequenceReadsSingle, String sequenceReadsPaired, String reference, String galaxyToolDataTable,
 							  boolean requiresSingleSample) {
 		this.sequenceReadsSingle = sequenceReadsSingle;
 		this.sequenceReadsPaired = sequenceReadsPaired;
 		this.reference = reference;
-		this.toolDataTable = toolDataTable;
+		this.galaxyToolDataTable = galaxyToolDataTable;
 		this.requiresSingleSample = requiresSingleSample;
 	}
 
@@ -111,8 +111,8 @@ public class IridaWorkflowInput {
 	 * @return The reference label, or {@link Optional#empty()} if no such label
 	 *         exists.
 	 */
-	public Optional<String> getToolDataTable() {
-		return Optional.ofNullable(toolDataTable);
+	public Optional<String> getGalaxyToolDataTable() {
+		return Optional.ofNullable(galaxyToolDataTable);
 	}
 
 	/**

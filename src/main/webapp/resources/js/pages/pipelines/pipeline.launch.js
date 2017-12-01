@@ -93,6 +93,7 @@
 				});
 
 				var currentSettings = ParameterService.getSelectedParameters().currentSettings;
+				var currentToolDataTableField = ToolDataTableService.getSelectedToolDataTableField().currentSettings;
 				var selectedParameters = {
 					"id"        : currentSettings.id,
 					"parameters": currentSettings.parameters
@@ -383,10 +384,11 @@
      */
     function ToolDataTableService() {
         var svc = this;
-
-        var originalSettings = page.pipeline.toolDataTableFields;
-
-        var selectedToolDataTableField = originalSettings[0];
+        
+        if (page.pipeline.toolDataTableFields != null) {
+            var originalSettings = page.pipeline.toolDataTableFields;
+            var selectedToolDataTableField = originalSettings[0];
+        }
 
         /**
          * Get the settings that the page currently has.

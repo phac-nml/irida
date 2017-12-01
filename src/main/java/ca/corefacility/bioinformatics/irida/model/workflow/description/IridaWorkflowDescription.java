@@ -117,7 +117,7 @@ public class IridaWorkflowDescription {
 	 * @return True if this workflow requires a Tool Data Table field, false otherwise.
 	 */
 	public boolean requiresToolDataTable() {
-		return getInputs().getToolDataTable().isPresent();
+		return getInputs().getGalaxyToolDataTable().isPresent();
 	}
 
 	/**
