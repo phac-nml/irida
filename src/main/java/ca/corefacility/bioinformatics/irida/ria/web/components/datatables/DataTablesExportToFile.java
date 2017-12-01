@@ -64,7 +64,7 @@ public class DataTablesExportToFile {
 		for (DataTablesExportable model : models) {
 			row = sheet.createRow(rowNum++);
 			int cellCount = 0;
-			for (String content : model.toTableRow()) {
+			for (String content : model.getExportableTableRow()) {
 				Cell cell = row.createCell(cellCount++);
 				cell.setCellValue(content);
 			}
@@ -89,7 +89,7 @@ public class DataTablesExportToFile {
 		List<String[]> results = new ArrayList<>();
 		results.add(headers.toArray(new String[0]));
 		for (DataTablesExportable model : models) {
-			results.add(model.toTableRow()
+			results.add(model.getExportableTableRow()
 					.toArray(new String[0]));
 		}
 
