@@ -12,13 +12,10 @@ cache:
     directories:
       - $HOME/.m2
 
-before_install:
-  - mysql -e 'CREATE USER "test"@"localhost" IDENTIFIED BY "test"; GRANT ALL ON irida_integration_test.* to "test"@"localhost";'
-  - docker pull phacnml/galaxy-irida-17.01:0.17.0-it
-
 install:
+  - mysql -e 'CREATE USER "test"@"localhost" IDENTIFIED BY "test"; GRANT ALL ON irida_integration_test.* to "test"@"localhost";'
   - mvn -version
   - pushd lib; ./install-libs.sh; popd
-  - mvn clean package -DskipTests
+  - docker pull phacnml/galaxy-irida-17.01
 
-script: ./run-tests.sh all
+script: ./run-tests.sh galaxy_testing
