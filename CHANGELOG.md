@@ -3,6 +3,8 @@ Changes
 
 0.19.0 to 0.20.0
 ----------------
+* [Developer]: Fixed exception being thrown related to permission denied for updating samples when a normal user (collaborator on a project) runs the assembly pipeline (0.19.1).
+* [UI]: Allowing admins to manually prioritize high importance analyses.
 * [Developer]: Removed dandelion from project > samples page.
 
 0.18.0 to 0.19.0
