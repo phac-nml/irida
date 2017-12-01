@@ -14,6 +14,8 @@ env:
 
 services:
   - docker
+
+addons:
   - mariadb: '10.0'
 
 jdk:
