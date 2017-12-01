@@ -2,16 +2,12 @@ package ca.corefacility.bioinformatics.irida.ria.web.pipelines;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyToolDataService;
+import com.github.jmchilton.blend4j.galaxy.beans.TabularToolDataTable;
+import org.apache.jena.atlas.iterator.Iter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,6 +62,8 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
 
+import javax.swing.text.html.Option;
+
 /**
  * Controller for pipeline related views
  *
@@ -104,6 +102,7 @@ public class PipelineController extends BaseController {
 	private final WorkflowNamedParametersService namedParameterService;
 	private UpdateSamplePermission updateSamplePermission;
 	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
+	private GalaxyToolDataService galaxyToolDataService;
 	
 	/*
 	 * CONTROLLERS
@@ -117,7 +116,7 @@ public class PipelineController extends BaseController {
 			CartController cartController, MessageSource messageSource,
 			final WorkflowNamedParametersService namedParameterService,
 			UpdateSamplePermission updateSamplePermission,
-			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor) {
+			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor, GalaxyToolDataService galaxyToolDataService) {
 		this.sequencingObjectService = sequencingObjectService;
 		this.referenceFileService = referenceFileService;
 		this.analysisSubmissionService = analysisSubmissionService;
@@ -129,6 +128,7 @@ public class PipelineController extends BaseController {
 		this.namedParameterService = namedParameterService;
 		this.updateSamplePermission = updateSamplePermission;
 		this.analysisSubmissionSampleProcessor = analysisSubmissionSampleProcessor;
+		this.galaxyToolDataService = galaxyToolDataService;
 	}
 
 	/**
@@ -277,6 +277,7 @@ public class PipelineController extends BaseController {
 			// Need to add the pipeline parameters
 			final List<IridaWorkflowParameter> defaultWorkflowParameters = flow.getWorkflowDescription().getParameters();
 			final List<Map<String, Object>> parameters = new ArrayList<>();
+			final List<Map<String, String>> toolDataTableFields = new ArrayList<>();
 			if (defaultWorkflowParameters != null) {
 				final List<Map<String, String>> defaultParameters = new ArrayList<>();
 				final String workflowName = description.getName().toLowerCase();
@@ -319,10 +320,29 @@ public class PipelineController extends BaseController {
 			model.addAttribute("pipelineId", pipelineId.toString());
 			model.addAttribute("referenceFiles", referenceFileList);
 			model.addAttribute("referenceRequired", description.requiresReference());
-			model.addAttribute("toolDataTableRequired", description.requiresToolDataTable());
 			model.addAttribute("addRefProjects", addRefList);
 			model.addAttribute("projects", projectList);
 			model.addAttribute("canUpdateSamples", canUpdateAllSamples);
+			model.addAttribute("toolDataTableRequired", description.requiresToolDataTable());
+			if (description.requiresToolDataTable()) {
+				String galaxyToolDataTable = description.getInputs().getGalaxyToolDataTable().get();
+				System.out.println(" *** " + galaxyToolDataTable);
+				/* List<String> displayFields = mentalistDatabases.getFieldsForColumn("name");
+				Iterator<String> displayFieldsIterator = displayFields.iterator();
+				List<String> parameterFields = mentalistDatabases.getFieldsForColumn("path");
+				Iterator<String> parameterFieldsIterator = parameterFields.iterator();
+
+				while (displayFieldsIterator.hasNext() && parameterFieldsIterator.hasNext()) {
+					String displayField = displayFieldsIterator.next();
+					String parameterField = parameterFieldsIterator.next();
+					HashMap<String, String> toolDataTableFieldsMap = new HashMap<>();
+					toolDataTableFieldsMap.put("displayField", displayField);
+					toolDataTableFieldsMap.put("parameterField", parameterField);
+					toolDataTableFields.add(toolDataTableFieldsMap);
+				}
+				 */
+				model.addAttribute("toolDataTableFields", toolDataTableFields);
+			}
 			response = URL_GENERIC_PIPELINE;
 		}
 
