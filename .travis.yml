@@ -29,8 +29,6 @@ install:
 
 jobs:
   include:
-    - stage: doc
-      script: mvn clean site -B
     - stage: test
       script: ./run-tests.sh service_testing
     - stage: test
