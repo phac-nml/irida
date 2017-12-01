@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/phac-nml/irida.svg?branch=development)](https://travis-ci.org/phac-nml/irida)
+
 IRIDA
 =====
 IRIDA is Canada’s Integrated Rapid Infectious Disease Analysis Platform for Genomic Epidemiology.  More information can be found in the following links.
