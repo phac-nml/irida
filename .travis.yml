@@ -3,14 +3,14 @@ language: java
 
 env:
   global:
-    - MYSQL_DATABASE=irida_integration_test
-    - MYSQL_USER=test
-    - MYSQL_PASSWORD=test
+    - "MYSQL_DATABASE=irida_integration_test"
+    - "MYSQL_USER=test"
+    - "MYSQL_PASSWORD=test"
   matrix:
-    - TEST_SUITE=service_testing
-    - TEST_SUITE=rest_testing
-    - TEST_SUITE=galaxy_testing
-    - TEST_SUITE=ui_testing
+    - "TEST_SUITE=service_testing"
+    - "TEST_SUITE=rest_testing"
+    - "TEST_SUITE=galaxy_testing"
+    - "TEST_SUITE=ui_testing"
 
 services:
   - docker
@@ -22,9 +22,9 @@ jdk:
 cache:
   directories:
     - $HOME/.m2
+    - src/main/webapp/node_modules/
 
 stages:
-  - doc
   - test
 
 install:
@@ -35,4 +35,4 @@ install:
 jobs:
   include:
     - stage: test
-      script: ./run-tests.sh $TEST_SUITE
+      script: "./run-tests.sh $TEST_SUITE"
