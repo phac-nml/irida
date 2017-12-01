@@ -1,6 +1,11 @@
 sudo: required
 language: java
 
+env:
+  - MYSQL_DATABASE=irida_integration_test
+  - MYSQL_USER=test
+  - MYSQL_PASSWORD=test
+
 services:
   - docker
   - mysql
@@ -9,13 +14,28 @@ jdk:
   - openjdk8
 
 cache:
-    directories:
-      - $HOME/.m2
+  directories:
+    - $HOME/.m2
+
+stages:
+  - doc
+  - test
 
 install:
-  - mysql -e 'CREATE USER "test"@"localhost" IDENTIFIED BY "test"; GRANT ALL ON irida_integration_test.* to "test"@"localhost";'
+  - mysql -e "CREATE USER '$MYSQL_USER'@'localhost' IDENTIFIED BY '$MYSQL_PASSWORD'; GRANT ALL ON $MYSQL_DATABASE.* to '$MYSQL_USER'@'localhost';"
   - mvn -version
   - pushd lib; ./install-libs.sh; popd
   - docker pull phacnml/galaxy-irida-17.01
 
-script: ./run-tests.sh galaxy_testing
+jobs:
+  include:
+    - stage: doc
+      script: mvn clean site -B
+    - stage: test
+      script: ./run-tests.sh service_testing
+    - stage: test
+      script: ./run-tests.sh rest_testing
+    - stage: test
+      script: ./run-tests.sh galaxy_testing
+    - stage: test
+      script: ./run-tests.sh ui_testing
