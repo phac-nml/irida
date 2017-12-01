@@ -1,6 +1,10 @@
 Changes
 =======
 
+0.19.0 to 0.20.0
+----------------
+* [Developer]: Removed dandelion from project > samples page.
+
 0.18.0 to 0.19.0
 ----------------
 * [Developer] Removed the requirement for pipeline developers to add an `Analysis` subclass and database tables for pipelines.  All pipeline results can now be stored in the `Analysis` class.
