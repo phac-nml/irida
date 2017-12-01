@@ -8,9 +8,13 @@ services:
 jdk:
   - openjdk8
 
+cache:
+    directories:
+      - $HOME/.m2
+
 before_install:
   - mysql -e 'CREATE USER "test"@"localhost" IDENTIFIED BY "test"; GRANT ALL ON irida_integration_test.* to "test"@"localhost";'
-  - phacnml/galaxy-irida-17.01:0.17.0-it
+  - docker pull phacnml/galaxy-irida-17.01:0.17.0-it
 
 install:
   - mvn -version
