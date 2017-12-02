@@ -5,6 +5,8 @@ import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowGalaxyToolDataTable;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyToolDataService;
 import com.github.jmchilton.blend4j.galaxy.beans.TabularToolDataTable;
 import org.apache.jena.atlas.iterator.Iter;
@@ -325,13 +327,16 @@ public class PipelineController extends BaseController {
 			model.addAttribute("canUpdateSamples", canUpdateAllSamples);
 			model.addAttribute("toolDataTableRequired", description.requiresToolDataTable());
 			if (description.requiresToolDataTable()) {
-				String galaxyToolDataTable = description.getInputs().getGalaxyToolDataTable().get();
-				String sequenceReadsPaired = description.getInputs().getSequenceReadsPaired().get();
-				System.out.println(" *** " + galaxyToolDataTable);
-				System.out.println(" *** " + sequenceReadsPaired);
-				/* List<String> displayFields = mentalistDatabases.getFieldsForColumn("name");
+				IridaWorkflowGalaxyToolDataTable iridaWorkflowGalaxyToolDataTable = description.getInputs().getGalaxyToolDataTable().get();
+				TabularToolDataTable galaxyToolDataTable = new TabularToolDataTable();
+				try {
+					galaxyToolDataTable = galaxyToolDataService.getToolDataTable(iridaWorkflowGalaxyToolDataTable.getName());
+				} catch ( GalaxyDatasetNotFoundException e ) {
+					logger.debug("Tool Data Table not found: ", e);
+				}
+				List<String> displayFields = galaxyToolDataTable.getFieldsForColumn(iridaWorkflowGalaxyToolDataTable.getDisplayColumn());
 				Iterator<String> displayFieldsIterator = displayFields.iterator();
-				List<String> parameterFields = mentalistDatabases.getFieldsForColumn("path");
+				List<String> parameterFields = galaxyToolDataTable.getFieldsForColumn(iridaWorkflowGalaxyToolDataTable.getParameterColumn());
 				Iterator<String> parameterFieldsIterator = parameterFields.iterator();
 
 				while (displayFieldsIterator.hasNext() && parameterFieldsIterator.hasNext()) {
@@ -342,7 +347,6 @@ public class PipelineController extends BaseController {
 					toolDataTableFieldsMap.put("parameterField", parameterField);
 					toolDataTableFields.add(toolDataTableFieldsMap);
 				}
-				 */
 				model.addAttribute("toolDataTableFields", toolDataTableFields);
 			}
 			response = URL_GENERIC_PIPELINE;

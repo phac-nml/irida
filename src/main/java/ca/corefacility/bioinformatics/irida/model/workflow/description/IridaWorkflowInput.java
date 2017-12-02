@@ -53,7 +53,7 @@ public class IridaWorkflowInput {
 	 *            Whether or not this workflow requires a single sample, or can
 	 *            work with multiple samples.
 	 */
-	public IridaWorkflowInput(String sequenceReadsSingle, String sequenceReadsPaired, String reference, String galaxyToolDataTable,
+	public IridaWorkflowInput(String sequenceReadsSingle, String sequenceReadsPaired, String reference, IridaWorkflowGalaxyToolDataTable galaxyToolDataTable,
 							  boolean requiresSingleSample) {
 		this.sequenceReadsSingle = sequenceReadsSingle;
 		this.sequenceReadsPaired = sequenceReadsPaired;
@@ -88,7 +88,7 @@ public class IridaWorkflowInput {
 	 * @return The reference label, or {@link Optional#empty()} if no such label
 	 *         exists.
 	 */
-	public Optional<String> getGalaxyToolDataTable() {
+	public Optional<IridaWorkflowGalaxyToolDataTable> getGalaxyToolDataTable() {
 		return Optional.ofNullable(galaxyToolDataTable);
 	}
 
