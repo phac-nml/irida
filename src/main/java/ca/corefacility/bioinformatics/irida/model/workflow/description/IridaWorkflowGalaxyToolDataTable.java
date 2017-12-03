@@ -27,7 +27,10 @@ public class IridaWorkflowGalaxyToolDataTable {
     private String parameterColumn;
 
     @XmlElement
-    IridaToolParameter toolParameter;
+    private IridaWorkflowParameter parameter;
+
+    @XmlElement
+    private IridaToolParameter toolParameter;
 
     public IridaWorkflowGalaxyToolDataTable() {
     }

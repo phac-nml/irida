@@ -13,7 +13,7 @@
 
 		vm.parameters = ParameterService.getOriginalSettings();
 		vm.selectedParameters = ParameterService.getSelectedParameters();
-		vm.toolDataTableFields = ToolDataTableService.getOriginalSettings();
+		vm.toolDataTables = ToolDataTableService.getOriginalSettings();
 		vm.selectedToolDataTableField = ToolDataTableService.getSelectedToolDataTableField();
 
 		$scope.$on('PARAMETERS_SAVED', function () {
@@ -385,8 +385,8 @@
     function ToolDataTableService() {
         var svc = this;
         
-        if (page.pipeline.toolDataTableFields != null) {
-            var originalSettings = page.pipeline.toolDataTableFields;
+        if (page.pipeline.toolDataTables != null) {
+            var originalSettings = page.pipeline.toolDataTables;
             var selectedToolDataTableField = originalSettings[0];
         }
 

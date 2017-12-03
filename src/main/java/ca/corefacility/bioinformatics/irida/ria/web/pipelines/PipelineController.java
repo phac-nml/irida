@@ -279,7 +279,6 @@ public class PipelineController extends BaseController {
 			// Need to add the pipeline parameters
 			final List<IridaWorkflowParameter> defaultWorkflowParameters = flow.getWorkflowDescription().getParameters();
 			final List<Map<String, Object>> parameters = new ArrayList<>();
-			final List<Map<String, String>> toolDataTableFields = new ArrayList<>();
 			if (defaultWorkflowParameters != null) {
 				final List<Map<String, String>> defaultParameters = new ArrayList<>();
 				final String workflowName = description.getName().toLowerCase();
@@ -326,28 +325,39 @@ public class PipelineController extends BaseController {
 			model.addAttribute("projects", projectList);
 			model.addAttribute("canUpdateSamples", canUpdateAllSamples);
 			model.addAttribute("toolDataTableRequired", description.requiresToolDataTable());
-			if (description.requiresToolDataTable()) {
-				IridaWorkflowGalaxyToolDataTable iridaWorkflowGalaxyToolDataTable = description.getInputs().getGalaxyToolDataTable().get();
-				TabularToolDataTable galaxyToolDataTable = new TabularToolDataTable();
-				try {
-					galaxyToolDataTable = galaxyToolDataService.getToolDataTable(iridaWorkflowGalaxyToolDataTable.getName());
-				} catch ( GalaxyDatasetNotFoundException e ) {
-					logger.debug("Tool Data Table not found: ", e);
-				}
-				List<String> displayFields = galaxyToolDataTable.getFieldsForColumn(iridaWorkflowGalaxyToolDataTable.getDisplayColumn());
-				Iterator<String> displayFieldsIterator = displayFields.iterator();
-				List<String> parameterFields = galaxyToolDataTable.getFieldsForColumn(iridaWorkflowGalaxyToolDataTable.getParameterColumn());
-				Iterator<String> parameterFieldsIterator = parameterFields.iterator();
 
-				while (displayFieldsIterator.hasNext() && parameterFieldsIterator.hasNext()) {
-					String displayField = displayFieldsIterator.next();
-					String parameterField = parameterFieldsIterator.next();
-					HashMap<String, String> toolDataTableFieldsMap = new HashMap<>();
-					toolDataTableFieldsMap.put("displayField", displayField);
-					toolDataTableFieldsMap.put("parameterField", parameterField);
-					toolDataTableFields.add(toolDataTableFieldsMap);
+			final List<Map<String, Object>> toolDataTables = new ArrayList<>();
+			if (description.requiresToolDataTable()) {
+				List<IridaWorkflowGalaxyToolDataTable> iridaWorkflowGalaxyToolDataTables = description.getInputs().getGalaxyToolDataTables().get();
+				TabularToolDataTable galaxyToolDataTable = new TabularToolDataTable();
+				for (IridaWorkflowGalaxyToolDataTable iridaWorkflowGalaxyToolDataTable : iridaWorkflowGalaxyToolDataTables) {
+					String toolDataTableName = new String();
+					Map<String, Object> toolDataTable = new HashMap<>();
+					try {
+						toolDataTableName = iridaWorkflowGalaxyToolDataTable.getName();
+						galaxyToolDataTable = galaxyToolDataService.getToolDataTable(toolDataTableName);
+						toolDataTable.put("id", toolDataTableName);
+						toolDataTable.put("label", messageSource.getMessage("tooldatatable.label." + toolDataTableName, null, locale));
+						toolDataTable.put("parameters", new ArrayList<>());
+					} catch (GalaxyDatasetNotFoundException e) {
+						logger.debug("Tool Data Table not found: ", e);
+					}
+					List<String> labels = galaxyToolDataTable.getFieldsForColumn(iridaWorkflowGalaxyToolDataTable.getDisplayColumn());
+					Iterator<String> labelsIterator = labels.iterator();
+					List<String> values = galaxyToolDataTable.getFieldsForColumn(iridaWorkflowGalaxyToolDataTable.getParameterColumn());
+					Iterator<String> valuesIterator = values.iterator();
+
+					while (labelsIterator.hasNext() && valuesIterator.hasNext()) {
+						String label = labelsIterator.next();
+						String value = valuesIterator.next();
+						HashMap<String, String> toolDataTableFieldsMap = new HashMap<>();
+						toolDataTableFieldsMap.put("label", label);
+						toolDataTableFieldsMap.put("value", value);
+						((List) toolDataTable.get("parameters")).add(toolDataTableFieldsMap);
+					}
+					toolDataTables.add(toolDataTable);
 				}
-				model.addAttribute("toolDataTableFields", toolDataTableFields);
+				model.addAttribute("toolDataTables", toolDataTables);
 			}
 			response = URL_GENERIC_PIPELINE;
 		}
