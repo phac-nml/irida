@@ -7,19 +7,32 @@
     <analysisType>mlst-mentalist</analysisType>
     <inputs>
         <sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
-        <galaxyToolDataTable name="mentalist_databases" displayColumn="name" parameterColumn="path">
-            <toolParameter
-                    toolId="testtoolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_call/0.1.2"
-                    parameterName="kmer_db" />
-        </galaxyToolDataTable>
+        <galaxyToolDataTables>
+            <galaxyToolDataTable name="mentalist_databases" displayColumn="name" parameterColumn="path">
+                <parameter name="kmer_db">
+                    <toolParameter
+                        toolId="testtoolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_call/0.1.2"
+                        parameterName="kmer_db" />
+                </parameter>
+            </galaxyToolDataTable>
+            <galaxyToolDataTable name="igv_broad_genomes" displayColumn="name" parameterColumn="url">
+                <parameter name="kmer_db">
+                    <toolParameter
+                            toolId="testtoolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_call/0.1.2"
+                            parameterName="kmer_db" />
+                </parameter>
+            </galaxyToolDataTable>
+            <galaxyToolDataTable name="bam_iobio" displayColumn="name" parameterColumn="url">
+                <parameter name="bam_iobio">
+                    <toolParameter
+                            toolId="testtoolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_call/0.1.2"
+                            parameterName="kmer_db" />
+                </parameter>
+            </galaxyToolDataTable>
+        </galaxyToolDataTables>
         <requiresSingleSample>true</requiresSingleSample>
     </inputs>
     <parameters>
-        <parameter name="kmer_db" defaultValue="campylobacter_jejuni_pubmlst_k31">
-            <toolParameter
-                    toolId="testtoolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_call/0.1.2"
-                    parameterName="kmer_db" />
-        </parameter>
         <parameter name="discard_threshold" defaultValue="0.3">
             <toolParameter
                     toolId="testtoolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_call/0.1.2"
