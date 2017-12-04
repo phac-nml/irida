@@ -13,7 +13,7 @@
 
 		vm.parameters = ParameterService.getOriginalSettings();
 		vm.selectedParameters = ParameterService.getSelectedParameters();
-		vm.toolDataTables = ToolDataTableService.getOriginalSettings();
+		vm.toolDataTables = ToolDataTableService.getSettings();
 		vm.selectedToolDataTableField = ToolDataTableService.getSelectedToolDataTableField();
 
 		$scope.$on('PARAMETERS_SAVED', function () {
@@ -35,6 +35,7 @@
 		 * from the drop-down.
 		 */
 		vm.parameterSelected = function () {
+		    console.log(vm.selectedParameters);
 			ParameterService.setSelectedParameters(vm.selectedParameters);
 		};
 
@@ -43,8 +44,9 @@
          * for the modal dialog whenever we select a new tool data table field
          * from the drop-down.
          */
-        vm.toolDataTableFieldSelected = function () {
-        	ToolDataTableService.setSelectedToolDataTableField(vm.selectedToolDataTableField);
+        vm.toolDataTableFieldSelected = function (toolDataTable) {
+            console.log(vm.selectedToolDataTableField);
+        	ToolDataTableService.setSelectedToolDataTableField(toolDataTable, vm.selectedToolDataTableField);
         };
 
 		/**
@@ -93,7 +95,7 @@
 				});
 
 				var currentSettings = ParameterService.getSelectedParameters().currentSettings;
-				var currentToolDataTableField = ToolDataTableService.getSelectedToolDataTableField().currentSettings;
+				var currentToolDataTableFields = ToolDataTableService.getSelectedToolDataTableFields();
 				var selectedParameters = {
 					"id"        : currentSettings.id,
 					"parameters": currentSettings.parameters
@@ -380,28 +382,33 @@
     }
 
     /**
-     * Service for handling Tool Data Table values.
+     * Service for handling Tool Data Tables.
      */
     function ToolDataTableService() {
         var svc = this;
-        
+
+        var settings = {};
         if (page.pipeline.toolDataTables != null) {
-            var originalSettings = page.pipeline.toolDataTables;
-            var selectedToolDataTableField = originalSettings[0];
+            settings["currentSettings"] = {};
+            settings["availableSettings"] = {};
+            for (var toolDataTable of page.pipeline.toolDataTables) {
+                settings.currentSettings[toolDataTable.id] = null;
+                settings.availableSettings[toolDataTable.id] = toolDataTable;
+            }
         }
 
         /**
          * Get the settings that the page currently has.
          */
-        svc.getOriginalSettings = function () {
-        	return originalSettings;
+        svc.getSettings = function () {
+        	return settings;
         };
 
         /**
          * Get the currently selected parameters from the page.
          */
-        svc.getSelectedToolDataTableField = function () {
-            return selectedToolDataTableField;
+        svc.getSelectedToolDataTableField = function (toolDataTable) {
+            return settings.currentSettings[toolDataTable];
         };
 
         /**
@@ -409,8 +416,9 @@
          *
          * @param currentSelection the tool data table field that is currently selected
          */
-        svc.setSelectedToolDataTableField = function (currentSelection) {
-            selectedToolDataTableField = currentSelection;
+        svc.setSelectedToolDataTableField = function (toolDataTable, currentSelection) {
+            console.log("toolDataTable: " + toolDataTable + " currentSelection: " + currentSelection)
+            settings.currentSettings[toolDataTable] = currentSelection;
         };
     }
 

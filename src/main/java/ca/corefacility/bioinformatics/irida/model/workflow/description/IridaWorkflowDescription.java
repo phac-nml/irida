@@ -49,6 +49,10 @@ public class IridaWorkflowDescription {
 	@XmlElement(name = "parameter")
 	private List<IridaWorkflowParameter> parameters;
 
+	@XmlElementWrapper(name = "parameters")
+	@XmlElement(name = "galaxyToolDataTable")
+	private List<IridaWorkflowGalaxyToolDataTable> galaxyToolDataTables;
+
 	@XmlElementWrapper(name = "toolRepositories")
 	@XmlElement(name = "repository")
 	private List<IridaWorkflowToolRepository> repository;
