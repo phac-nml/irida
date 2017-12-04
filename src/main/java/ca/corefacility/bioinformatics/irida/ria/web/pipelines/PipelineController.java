@@ -353,6 +353,7 @@ public class PipelineController extends BaseController {
 						HashMap<String, String> toolDataTableFieldsMap = new HashMap<>();
 						toolDataTableFieldsMap.put("label", label);
 						toolDataTableFieldsMap.put("value", value);
+						toolDataTableFieldsMap.put("name", iridaWorkflowGalaxyToolDataTable.getWorkflowParameter().getName());
 						((List) toolDataTable.get("parameters")).add(toolDataTableFieldsMap);
 					}
 					toolDataTables.add(toolDataTable);
