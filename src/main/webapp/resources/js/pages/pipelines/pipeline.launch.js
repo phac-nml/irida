@@ -95,12 +95,14 @@
 				});
 
 				var currentSettings = ParameterService.getSelectedParameters().currentSettings;
-				var currentToolDataTableFields = ToolDataTableService.getSelectedToolDataTableFields();
+				var currentToolDataTableSettings = ToolDataTableService.getSettings().currentSettings;
+				var toolDataTableParameters = Object.values(currentToolDataTableSettings).map(
+				    ({label, value, name}) => ({label, value, name})
+				);
 				var selectedParameters = {
 					"id"        : currentSettings.id,
-					"parameters": currentSettings.parameters
+					"parameters": currentSettings.parameters.concat(toolDataTableParameters)
 				};
-
 				// Create the parameter object;
 				var params = {};
 				if ($.isNumeric(ref)) {
@@ -134,6 +136,7 @@
 						"Content-Type": "application/json"
 					}
 				})
+
           .then(function(response) {
           	var data = response.data;
 						if (data.success) {

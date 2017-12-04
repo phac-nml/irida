@@ -62,6 +62,15 @@ public class IridaWorkflowGalaxyToolDataTable {
         return parameterColumn;
     }
 
+    /**
+     * The Irida Workflow Parameter that the parameter value will be bound to.
+     *
+     * @return The Irida Workflow Parameter that the parameter value will be bound to.
+     */
+    public IridaWorkflowParameter getWorkflowParameter() {
+        return parameter;
+    }
+
     @Override
     public int hashCode() {
             return Objects.hash(name, displayColumn, parameterColumn);
