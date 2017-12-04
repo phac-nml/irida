@@ -22,17 +22,17 @@
                             parameterName="kmer_db" />
                 </parameter>
             </galaxyToolDataTable>
+            <galaxyToolDataTable name="bam_iobio" displayColumn="name" parameterColumn="url">
+                <parameter name="bam_iobio">
+                    <toolParameter
+                            toolId="testtoolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_call/0.1.2"
+                            parameterName="kmer_db" />
+                </parameter>
+            </galaxyToolDataTable>
         </galaxyToolDataTables>
         <requiresSingleSample>true</requiresSingleSample>
     </inputs>
     <parameters>
-        <galaxyToolDataTable name="igv_broad_genomes" displayColumn="name" parameterColumn="url">
-            <parameter name="igv_broad_genome">
-                <toolParameter
-                    toolId="testtoolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_call/0.1.2"
-                    parameterName="kmer_db" />
-            </parameter>
-        </galaxyToolDataTable>
         <parameter name="discard_threshold" defaultValue="0.3">
             <toolParameter
                     toolId="testtoolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_call/0.1.2"
