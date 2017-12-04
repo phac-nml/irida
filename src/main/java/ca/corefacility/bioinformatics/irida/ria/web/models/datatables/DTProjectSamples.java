@@ -91,8 +91,8 @@ public class DTProjectSamples implements DataTablesResponseModel, DataTablesExpo
 		data.add(this.getOrganism());
 		data.add(String.valueOf(this.getProjectId()));
 		data.add(this.getProjectName());
-		data.add(dateFormatter.format(this.getCreatedDate()));
-		data.add(dateFormatter.format(this.getModifiedDate()));
+		data.add(this.getCreatedDate() != null ? dateFormatter.format(this.getCreatedDate()) : "");
+		data.add(this.getModifiedDate() != null ? dateFormatter.format(this.getModifiedDate()) : "");
 		return data;
 	}
 
