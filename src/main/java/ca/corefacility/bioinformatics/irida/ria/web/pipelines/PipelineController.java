@@ -5,6 +5,8 @@ import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowGalaxyToolDataTable;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyToolDataService;
 import com.github.jmchilton.blend4j.galaxy.beans.TabularToolDataTable;
 import org.apache.jena.atlas.iterator.Iter;
@@ -277,7 +279,6 @@ public class PipelineController extends BaseController {
 			// Need to add the pipeline parameters
 			final List<IridaWorkflowParameter> defaultWorkflowParameters = flow.getWorkflowDescription().getParameters();
 			final List<Map<String, Object>> parameters = new ArrayList<>();
-			final List<Map<String, String>> toolDataTableFields = new ArrayList<>();
 			if (defaultWorkflowParameters != null) {
 				final List<Map<String, String>> defaultParameters = new ArrayList<>();
 				final String workflowName = description.getName().toLowerCase();
@@ -324,26 +325,39 @@ public class PipelineController extends BaseController {
 			model.addAttribute("projects", projectList);
 			model.addAttribute("canUpdateSamples", canUpdateAllSamples);
 			model.addAttribute("toolDataTableRequired", description.requiresToolDataTable());
-			if (description.requiresToolDataTable()) {
-				String galaxyToolDataTable = description.getInputs().getGalaxyToolDataTable().get();
-				String sequenceReadsPaired = description.getInputs().getSequenceReadsPaired().get();
-				System.out.println(" *** " + galaxyToolDataTable);
-				System.out.println(" *** " + sequenceReadsPaired);
-				/* List<String> displayFields = mentalistDatabases.getFieldsForColumn("name");
-				Iterator<String> displayFieldsIterator = displayFields.iterator();
-				List<String> parameterFields = mentalistDatabases.getFieldsForColumn("path");
-				Iterator<String> parameterFieldsIterator = parameterFields.iterator();
 
-				while (displayFieldsIterator.hasNext() && parameterFieldsIterator.hasNext()) {
-					String displayField = displayFieldsIterator.next();
-					String parameterField = parameterFieldsIterator.next();
-					HashMap<String, String> toolDataTableFieldsMap = new HashMap<>();
-					toolDataTableFieldsMap.put("displayField", displayField);
-					toolDataTableFieldsMap.put("parameterField", parameterField);
-					toolDataTableFields.add(toolDataTableFieldsMap);
+			final List<Map<String, Object>> toolDataTables = new ArrayList<>();
+			if (description.requiresToolDataTable()) {
+				List<IridaWorkflowGalaxyToolDataTable> iridaWorkflowGalaxyToolDataTables = description.getInputs().getGalaxyToolDataTables().get();
+				TabularToolDataTable galaxyToolDataTable = new TabularToolDataTable();
+				for (IridaWorkflowGalaxyToolDataTable iridaWorkflowGalaxyToolDataTable : iridaWorkflowGalaxyToolDataTables) {
+					String toolDataTableName = new String();
+					Map<String, Object> toolDataTable = new HashMap<>();
+					try {
+						toolDataTableName = iridaWorkflowGalaxyToolDataTable.getName();
+						galaxyToolDataTable = galaxyToolDataService.getToolDataTable(toolDataTableName);
+						toolDataTable.put("id", toolDataTableName);
+						toolDataTable.put("label", messageSource.getMessage("tooldatatable.label." + toolDataTableName, null, locale));
+						toolDataTable.put("parameters", new ArrayList<>());
+					} catch (GalaxyDatasetNotFoundException e) {
+						logger.debug("Tool Data Table not found: ", e);
+					}
+					List<String> labels = galaxyToolDataTable.getFieldsForColumn(iridaWorkflowGalaxyToolDataTable.getDisplayColumn());
+					Iterator<String> labelsIterator = labels.iterator();
+					List<String> values = galaxyToolDataTable.getFieldsForColumn(iridaWorkflowGalaxyToolDataTable.getParameterColumn());
+					Iterator<String> valuesIterator = values.iterator();
+
+					while (labelsIterator.hasNext() && valuesIterator.hasNext()) {
+						String label = labelsIterator.next();
+						String value = valuesIterator.next();
+						HashMap<String, String> toolDataTableFieldsMap = new HashMap<>();
+						toolDataTableFieldsMap.put("label", label);
+						toolDataTableFieldsMap.put("value", value);
+						((List) toolDataTable.get("parameters")).add(toolDataTableFieldsMap);
+					}
+					toolDataTables.add(toolDataTable);
 				}
-				 */
-				model.addAttribute("toolDataTableFields", toolDataTableFields);
+				model.addAttribute("toolDataTables", toolDataTables);
 			}
 			response = URL_GENERIC_PIPELINE;
 		}

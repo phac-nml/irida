@@ -20,7 +20,7 @@
 			pipeline: {
 				parameters: /*[[${parameters}]]*/ [],
 				pipelineId : /*[[${pipelineId}]]*/ 'pipelineId',
-				toolDataTableFields: /*[[${toolDataTableFields}]]*/ []
+				toolDataTables: /*[[${toolDataTables}]]*/ []
 			}
 		};
 		/*]]>*/
@@ -98,17 +98,18 @@
 							</div>
 						</div>
 						<div th:if="${toolDataTableRequired}" class="form-group">
-							<label class="col-sm-2 control-label"
-								   th:text="#{workflow.label.tool-data-table}">Data Table</label>
-							<div class="col-sm-10">
-								<div class="row">
-									<div class="col-md-9">
-										<select id="tool-data-table-fields" name="tool-data-table-fields"
-												class="form-control"
-												ng-model="pipeline.selectedToolDataTableField"
-												ng-change="pipeline.toolDataTableFieldSelected()"
-												ng-options="item.displayColumn for item in pipeline.toolDataTableFields">
-										</select>
+							<div class="form-group" ng-repeat="toolDataTable in pipeline.toolDataTables.availableSettings">
+								<label class="col-sm-2 control-label">{{toolDataTable.label}}</label>
+								<div class="col-sm-10">
+									<div class="row">
+										<div class="col-md-9">
+											<select id="{{toolDataTable.id}}" name="{{toolDataTable.label}}"
+													class="form-control"
+													ng-model="pipeline.selectedToolDataTableField"
+													ng-change="pipeline.toolDataTableFieldSelected('{{toolDataTable.id}}')"
+													ng-options="item.label for item in toolDataTable.parameters">
+											</select>
+										</div>
 									</div>
 								</div>
 							</div>

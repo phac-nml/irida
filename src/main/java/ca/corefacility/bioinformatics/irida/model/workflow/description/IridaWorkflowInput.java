@@ -1,11 +1,9 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.description;
 
+import java.util.List;
 import java.util.Objects;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -29,8 +27,9 @@ public class IridaWorkflowInput {
 	@XmlElement(name = "requiresSingleSample", defaultValue="false")
 	private boolean requiresSingleSample;
 
+	@XmlElementWrapper(name = "galaxyToolDataTables")
 	@XmlElement(name = "galaxyToolDataTable")
-	private IridaWorkflowGalaxyToolDataTable galaxyToolDataTable;
+	private List<IridaWorkflowGalaxyToolDataTable> galaxyToolDataTables;
 
 	public IridaWorkflowInput() {
 	}
@@ -47,18 +46,18 @@ public class IridaWorkflowInput {
 	 *            reads. Null if no acceptance of paired-end reads.
 	 * @param reference
 	 *            The label to use for a reference file.
-	 * @param galaxyToolDataTable
+	 * @param galaxyToolDataTables
 	 *            The label to use for a tool data table.
 	 * @param requiresSingleSample
 	 *            Whether or not this workflow requires a single sample, or can
 	 *            work with multiple samples.
 	 */
-	public IridaWorkflowInput(String sequenceReadsSingle, String sequenceReadsPaired, String reference, String galaxyToolDataTable,
+	public IridaWorkflowInput(String sequenceReadsSingle, String sequenceReadsPaired, String reference, List<IridaWorkflowGalaxyToolDataTable> galaxyToolDataTables,
 							  boolean requiresSingleSample) {
 		this.sequenceReadsSingle = sequenceReadsSingle;
 		this.sequenceReadsPaired = sequenceReadsPaired;
 		this.reference = reference;
-		this.galaxyToolDataTable = galaxyToolDataTable;
+		this.galaxyToolDataTables = galaxyToolDataTables;
 		this.requiresSingleSample = requiresSingleSample;
 	}
 
@@ -88,8 +87,8 @@ public class IridaWorkflowInput {
 	 * @return The reference label, or {@link Optional#empty()} if no such label
 	 *         exists.
 	 */
-	public Optional<String> getGalaxyToolDataTable() {
-		return Optional.ofNullable(galaxyToolDataTable);
+	public Optional<List <IridaWorkflowGalaxyToolDataTable>> getGalaxyToolDataTables() {
+		return Optional.ofNullable(galaxyToolDataTables);
 	}
 
 	/**
