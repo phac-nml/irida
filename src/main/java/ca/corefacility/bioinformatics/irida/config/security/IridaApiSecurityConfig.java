@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.config.security;
 
 import java.util.List;
 
+import ca.corefacility.bioinformatics.irida.security.PasswordExpiryChecker;
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,6 +96,7 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 		DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
 		authenticationProvider.setUserDetailsService(userRepository);
 		authenticationProvider.setPasswordEncoder(passwordEncoder());
+		authenticationProvider.setPreAuthenticationChecks(preAuthenticationChecker());
 		authenticationProvider.setPostAuthenticationChecks(postAuthenticationChecker());
 		return authenticationProvider;
 	}
@@ -111,6 +113,11 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	@Bean
 	public UserDetailsChecker postAuthenticationChecker() {
 		return new IgnoreExpiredCredentialsForPasswordChangeChecker();
+	}
+
+	@Bean
+	public UserDetailsChecker preAuthenticationChecker(){
+		return new PasswordExpiryChecker(userRepository);
 	}
 
 	@Bean(name = "userAuthenticationManager")
