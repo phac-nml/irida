@@ -20,7 +20,7 @@
             copy: /*[[@{/projects/{id}/ajax/samples/copy(id=${project.getId()})}]]*/ '',
             export: /*[[@{/projects/{id}/samples/export(id=${project.getId()})}]]*/ 'projects/1/samples/export',
             idList: /*[[@{/samples/idList}]]*/ "/samples/idList",
-            sampleIds: /*[[@{/projects/{id}/ajax/sampleIds(id=${project.getId()})}]]*/ '/projects/{projectId}/ajax/sampleIds'
+            sampleIds: /*[[@{/projects/{id}/ajax/sampleIds(id=${project.getId()})}]]*/ '/projects/{projectId}/ajax/sampleIds'®
           },
           fileMissingSamples: /*[[@{/projects/{id}/ajax/samples/missing(id=${project.getId()})}]]*/ "/projects/{projectId}/ajax/samples/missing"
         },
@@ -70,7 +70,7 @@
                                    data:associated-msg="#{project.samples.only-for-project-tooltip}"
                                    data:url="@{/projects/{projectId}/templates/merge-modal(projectId=${project.getId()})}"
                                    data:script="@{/resources/js/build/project-samples-merge.bundle.js}">
-                                    <i class="fa fa-compress fa-fw spaced-after__sm" aria-hidden="true"></i>
+                                    <i class="fa fa-compress fa-fw spaced-right__sm" aria-hidden="true"></i>
                                     <th:block th:text="#{project.samples.nav.merge}"/>
                                 </a>
                             </li>
@@ -82,7 +82,7 @@
                                    data-params="{&quot;move&quot;: false}"
                                    data:url="@{/projects/{projectId}/templates/copy-move-modal(projectId=${project.getId()})}"
                                    data:script="@{/resources/js/build/project-samples-copy.bundle.js}">
-                                    <i class="fa fa-files-o fa-fw spaced-after__sm" aria-hidden="true"></i>
+                                    <i class="fa fa-files-o fa-fw spaced-right__sm" aria-hidden="true"></i>
                                     <th:block th:text="#{project.samples.nav.copy}"/>
                                 </a>
                             </li>
@@ -94,7 +94,7 @@
                                    data:associated-msg="#{project.samples.only-for-project-tooltip}"
                                    data:url="@{/projects/{projectId}/templates/copy-move-modal(projectId=${project.getId()})}"
                                    data:script="@{/resources/js/build/project-samples-copy.bundle.js}">
-                                    <i class="fa fa-truck fa-fw spaced-after__sm" aria-hidden="true"></i>
+                                    <i class="fa fa-truck fa-fw spaced-right__sm" aria-hidden="true"></i>
                                     <th:block th:text="#{project.samples.nav.move}"/>
                                 </a>
                             </li>
@@ -105,7 +105,7 @@
                                    data:associated-msg="#{project.samples.only-for-project-tooltip}"
                                    data:url="@{/projects/{projectId}/templates/remove-modal(projectId=${project.getId()})}"
                                    data:script="@{/resources/js/build/project-samples-remove.bundle.js}">
-                                    <i class="fa fa-trash fa-fw spaced-after__sm" aria-hidden="true"></i>
+                                    <i class="fa fa-trash fa-fw spaced-right__sm" aria-hidden="true"></i>
                                     <th:block th:text="#{project.samples.nav.remove}"/>
                                 </a>
                             </li>
@@ -115,7 +115,7 @@
                             <!-- IMPORT METADATA LINK-->
                             <li role="menuitem">
                                 <a th:href="@{/projects/{id}/sample-metadata/upload(id=${project.getId()})}">
-                                    <i class="fa fa-upload fa-fw spaced-after__sm" aria-hidden="true"></i>
+                                    <i class="fa fa-upload fa-fw spaced-right__sm" aria-hidden="true"></i>
                                     <th:block th:text="#{project.nav.samples.import-metadata}"/>
                                 </a>
                             </li>
@@ -124,7 +124,7 @@
                             <!-- NEW SAMPLE LINK -->
                             <li role="menuitem">
                                 <a th:href="@{/projects/{id}/samples/new(id=${project.getId()})}">
-                                    <i class="fa fa-plus fa-fw spaced-after__sm" aria-hidden="true"></i>
+                                    <i class="fa fa-plus fa-fw spaced-right__sm" aria-hidden="true"></i>
                                     <th:block th:text="#{project.samples.nav.new}"/>
                                 </a>
                             </li>
@@ -176,7 +176,7 @@
                                    data-enabled-at="1" data-toggle="tooltip" data-type="download"
                                    data:url="@{/projects/{id}/download/files(id=${project.getId()})}"
                                    data:enabled-msg="#{project.samples.tooltip.download.requires-more-than-one}">
-                                    <i class="fa fa-download fa-fw spaced-after__sm" aria-hidden="true"></i>
+                                    <i class="fa fa-download fa-fw spaced-right__sm" aria-hidden="true"></i>
                                     <th:block th:text="#{project.samples.export.download}"/>
                                 </a>
                             </li>
@@ -221,7 +221,7 @@
                             <li>
                                 <a href="#" class="js-sample-export-btn" data-file="csv" data-type="file"
                                    data:url="@{/projects/{id}/samples/export(id=${project.getId()})}">
-                                    <i class="fa fa-file-o fa-fw spaced-after__sm" aria-hidden="true"></i>
+                                    <i class="fa fa-file-o fa-fw spaced-right__sm" aria-hidden="true"></i>
                                     <th:block th:text="#{project.samples.export-to-csv}"/>
                                 </a></li>
                         </ul>
@@ -229,7 +229,7 @@
                 </div>
                 <button id="cart-add-btn" class="btn btn-primary btn-sm js-cart-btn t-add-cart-btn"
                         data-enabled-at="1">
-                    <i class="fa fa-cart-plus fa-fw spaced-after__sm" aria-hidden="true"></i>
+                    <i class="fa fa-cart-plus fa-fw spaced-right__sm" aria-hidden="true"></i>
                     <th:block th:text="#{project.samples.nav.add-to-cart}">Add To Cart</th:block>
                 </button>
             </div>
