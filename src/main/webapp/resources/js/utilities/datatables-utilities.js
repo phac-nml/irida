@@ -4,34 +4,42 @@ import { addTooltip } from "./bootstrap-utilities";
 import { createIcon, ICONS } from "./fontawesome-utilities";
 
 /*
+ Default layout around DataTables in IRIDA.
+ @link https://datatables.net/reference/option/dom
+ dom expands into:
 <div class="row">
   <div class="col-md-6 col-sm-12 buttons">
-    [BUTTONS]
+    [BUTTONS] - All DataTables specific buttons get loaded here.
   </div>
   <div class="col-md-6 col-sm-12 dt-filters">
-    [FILTER}
+    [FILTER] <-- This is the DataTables search box (and button to open advanced filters if needed)
   </div>
 </div>
-[PROCESSING]
-[TABLE]
+<div class="row">
+  <div class="col-md-12 filter-tags">
+    [FILTER TAGS] (for quickly removing filters) go here.
+  </div>
+<div>
+[PROCESSING] - Displayed when DataTables is fetching and processing new data.
+[TABLE] - Actual table
 <div class="row">
   <div class="col-md-3 col-sm-12">
-    [LENGTH]
+    [LENGTH] - length changing control input
   </div>
   <div class="col-md-6 col-sm-12">
-    [PAGING]
+    [PAGING] - pagination control
   </div>
   <div class="col-md-3 col-sm-12">
-    [INFO]
+    [INFO] - table information summary
   </div>
 </div>
 */
 const dom = `
 <".row"
   <"col-md-6 col-sm-12 buttons"B><"#dt-filters.col-md-6 col-sm-12"f>>
-  <".row"
-    <"col-md-12 filter-tags"<"filter-tags__space">>
-  >
+<".row"<"col-md-3 selected-counts">
+  <"col-md-9 filter-tags"<"filter-tags__space">>
+>
 <"dt-table-wrapper"rt>
 <"row"
   <"col-md-3 col-sm-12"l>
