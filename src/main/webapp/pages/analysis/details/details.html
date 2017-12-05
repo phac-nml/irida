@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="analysis/details/_base">
 
-<head lang="en">
+<head>
 	<style>
 		.tool i {
 			font-size: .75em;
@@ -288,10 +288,18 @@
 				</div>
 				<form th:action="@{/analysis/{aid}/edit(aid=${analysisSubmission.getId()})}" method="POST">
 					<div class="modal-body">
-						<p th:text="#{analysis.edit.hint}">_Enter a new name for the analysis:_</p>
 						<div class="form-group">
 							<label for="analysis-name-input" th:text="#{analysis.edit.name}">_Analysis Name_</label>
 							<input type="text" class="form-control" id="analysis-name-input" name="name" th:value="${analysisSubmission.name}"/>
+						</div>
+						<div class="form-group" sec:authorize="hasRole('ROLE_ADMIN')" th:if="${analysisSubmission.analysisState == T(ca.corefacility.bioinformatics.irida.model.enums.AnalysisState).NEW}">
+								<label for="analysis-name-input" th:text="#{analysis.edit.priority}">_Analysis Name_</label>
+								
+								<select class="form-control" name="priority" id="analysis-edit-priority">
+										<option 
+										  th:each="priority : ${T(ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission.Priority).values()}" 
+										  th:text="${priority}" th:value="${priority}" th:selected="${analysisSubmission.priority == priority}">_High_</option>
+									  </select>
 						</div>
 					</div>
 					<div class="modal-footer">
