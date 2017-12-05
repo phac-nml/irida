@@ -116,7 +116,9 @@
 						</li>
 						<li role="separator" class="divider"></li>
 						<li role="menuitem" th:if="#{help.contact.email}">
-							<a href="mailto:" th:attr="href='mailto:'+#{help.contact.email}"><i class="fa fa-envelope-o fa-fw" aria-hidden="true"></i>&nbsp;<span th:text="#{generic.irida.contact}"></span></a>
+							<a href="mailto:" th:attr="href='mailto:'+#{help.contact.email}">
+								<i class="fa fa-envelope-o fa-fw spaced-right__sm" aria-hidden="true"></i>
+								<th:block th:text="#{generic.irida.contact}"></th:block></a>
 						</li>
 						<li role="menuitem">
 							<a href="http://www.irida.ca" target="_blank">
