@@ -8,10 +8,10 @@
     <inputs>
         <sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
         <galaxyToolDataTables>
-            <galaxyToolDataTable name="mentalist_databases" displayColumn="name" parameterColumn="path">
+            <galaxyToolDataTable name="mentalist_databases" displayColumn="name" parameterColumn="value">
                 <parameter name="kmer_db" defaultValue="">
                     <toolParameter
-                        toolId="testtoolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_call/0.1.2"
+                        toolId="testtoolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_call/0.1.3"
                         parameterName="kmer_db" />
                 </parameter>
             </galaxyToolDataTable>
@@ -21,18 +21,8 @@
     <parameters>
         <parameter name="kmer_db" defaultValue="">
             <toolParameter
-                    toolId="testtoolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_call/0.1.2"
+                    toolId="testtoolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_call/0.1.3"
                     parameterName="kmer_db" />
-        </parameter>
-        <parameter name="discard_threshold" defaultValue="0.3">
-            <toolParameter
-                    toolId="testtoolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_call/0.1.2"
-                    parameterName="discard_threshold" />
-        </parameter>
-        <parameter name="skip_length" defaultValue="1">
-            <toolParameter
-                    toolId="testtoolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_call/0.1.2"
-                    parameterName="skip_length" />
         </parameter>
     </parameters>
     <outputs>
@@ -43,7 +33,7 @@
             <name>mentalist</name>
             <owner>dfornika</owner>
             <url>http://testtoolshed.g2.bx.psu.edu/</url>
-            <revision>e038a8823a99</revision>
+            <revision>038558f760a0</revision>
         </repository>
     </toolRepositories>
 </iridaWorkflow>
