@@ -207,14 +207,13 @@
 					 <ul class="uib-dropdown-menu" role="menu">
 					 	<li role="menuitem">
 							<a href="#" th:href="@{/users/current}">
-								<span th:text="#{nav.main.account}">_My account_</span>
-								<i class="fa fa-user pull-right" aria-hidden="true"></i>
+								<i class="fa fa-user" aria-hidden="true"></i>&nbsp;<span th:text="#{nav.main.account}">_My account_</span>
 							</a>
 						</li>
 						<li role="menuitem">
 							<a th:href="@{/logout}" href="/logout">
-							<span th:text="#{nav.main.logout}">_Logout_</span>
-								<i class="fa fa-sign-out pull-right"></i>
+							<i class="fa fa-sign-out"></i>&nbsp;<span th:text="#{nav.main.logout}">_Logout_</span>
+								
 							</a>
 						</li>
 					</ul>

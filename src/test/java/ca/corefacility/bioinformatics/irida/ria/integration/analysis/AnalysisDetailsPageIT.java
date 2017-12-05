@@ -11,7 +11,9 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
+import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/analysis/AnalysisAdminView.xml")
 public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
@@ -40,4 +42,20 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		page.displayInputFilesTab();
 		assertEquals("Should display 1 pair of paired end files", 2, page.getNumberOfPairedEndInputFiles());
 	}
+
+	@Test
+	public void testEditPriorityHidden() throws URISyntaxException, IOException {
+
+		LoginPage.loginAsManager(driver());
+		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L);
+
+		page.clickEditButton();
+
+		assertFalse("priority edit should be hidden", page.priorityEditVisible());
+
+		page = AnalysisDetailsPage.initPage(driver(), 8L);
+
+		assertTrue("priority edit should be visible", page.priorityEditVisible());
+	}
+
 }
