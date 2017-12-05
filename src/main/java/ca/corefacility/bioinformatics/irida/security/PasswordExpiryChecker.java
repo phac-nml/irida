@@ -22,6 +22,8 @@ public class PasswordExpiryChecker implements UserDetailsChecker {
 
 	private UserRepository userRepository;
 
+	private static final int PASSWORD_AGE_IN_DAYS = 30;
+
 	public PasswordExpiryChecker(UserRepository userRepository) {
 		this.userRepository = userRepository;
 	}
@@ -37,23 +39,24 @@ public class PasswordExpiryChecker implements UserDetailsChecker {
 		Calendar cal = new GregorianCalendar();
 		cal.setTime(today);
 
-		cal.add(Calendar.DAY_OF_MONTH, -30);
+		cal.add(Calendar.DAY_OF_MONTH, -PASSWORD_AGE_IN_DAYS);
 		Date monthAgo = cal.getTime();
 
 		User oldUser = null;
 
 		for (Revision<Integer, User> rev : revisions) {
-			oldUser = rev.getEntity();
 
-			logger.debug("Checking old user with date of " + rev.getRevisionDate());
+			logger.trace("Checking old user with date of " + rev.getRevisionDate());
 
-			if (rev.getRevisionDate().isBefore(monthAgo.getTime())) {
+			if (rev.getRevisionDate().toDate().before(monthAgo)) {
+				oldUser = rev.getEntity();
 				break;
 			}
 		}
 
 		if (oldUser != null && oldUser.getPassword().equals(user.getPassword())) {
-			throw new CredentialsExpiredException("Old creds");
+			logger.warn("Credentials for user " + user.getUsername() + " have expired.");
+			throw new CredentialsExpiredException("Credentials have expired.");
 		}
 
 	}
