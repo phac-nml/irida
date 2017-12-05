@@ -120,11 +120,27 @@ input[type="search"] {
 
 // Defaults spacing for the bottom of elements.
 .spaced-bottom {
-  margin-bottom: 1rem;
+  margin-bottom: 1em;
 }
 
 .spaced-top {
-  margin-top: 1rem;
+  margin-top: 1em;
+}
+
+.spaced-right {
+  margin-right: 1em;
+}
+
+.spaced-right__sm {
+  margin-right: .35em;
+}
+
+.spaced-left {
+  margin-left: 1em;
+}
+
+.spaced-left__sm {
+  margin-left: .35em;
 }
 
 // Use for ordered lists that require continued numbering.
