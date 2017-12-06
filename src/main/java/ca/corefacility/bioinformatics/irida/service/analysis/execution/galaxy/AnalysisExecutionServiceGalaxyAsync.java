@@ -211,10 +211,12 @@ public class AnalysisExecutionServiceGalaxyAsync {
 
 		AnalysisSubmission completedSubmission = analysisSubmissionService.update(submittedAnalysis);
 		
-		try {
-			analysisSubmissionSampleProcessor.updateSamples(completedSubmission);
-		} catch (Exception e) {
-			logger.error("Error updating corresponding samples with analysis results for AnalysisSubmission = [" + completedSubmission.getId() + "]. Skipping this step.", e);
+		if (completedSubmission.getUpdateSamples()) {
+			try {
+				analysisSubmissionSampleProcessor.updateSamples(completedSubmission);
+			} catch (Exception e) {
+				logger.error("Error updating corresponding samples with analysis results for AnalysisSubmission = [" + completedSubmission.getId() + "]. Skipping this step.", e);
+			}
 		}
 
 		return new AsyncResult<>(completedSubmission);
