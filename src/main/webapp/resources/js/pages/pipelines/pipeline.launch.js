@@ -4,7 +4,6 @@
 	 * Main controller for the pipeline launch page.
 	 * @param $http AngularJS http object
 	 * @param CartService a reference to the cart service (to clear it)
-	 * @param notifications notifications
 	 * @param ParameterService for passing parameter information between modal and page
 	 * @constructor
 	 */
@@ -35,7 +34,6 @@
 		 * from the drop-down.
 		 */
 		vm.parameterSelected = function () {
-		    console.log(vm.selectedParameters);
 			ParameterService.setSelectedParameters(vm.selectedParameters);
 		};
 
@@ -45,7 +43,6 @@
          * from the drop-down.
          */
         vm.toolDataTableFieldSelected = function (toolDataTable) {
-            console.log(vm.selectedToolDataTableField);
         	ToolDataTableService.setSelectedToolDataTableField(toolDataTable, vm.selectedToolDataTableField);
         };
 
@@ -150,7 +147,7 @@
 								vm.paramError = data.parameters;
 							}
 							else if (data.pipelineError) {
-								notifications.show({type: 'error', msg: data.pipelineError});
+								window.notifications.show({type: 'error', text: data.pipelineError});
 							}
 						}
 					});
@@ -420,7 +417,6 @@
          * @param currentSelection the tool data table field that is currently selected
          */
         svc.setSelectedToolDataTableField = function (toolDataTable, currentSelection) {
-            console.log("toolDataTable: " + toolDataTable + " currentSelection: " + currentSelection)
             settings.currentSettings[toolDataTable] = currentSelection;
         };
     }
@@ -449,7 +445,7 @@
 	          vm.referenceUploadStarted = false;
 	        }, function(response) {
 	          vm.referenceUploadStarted = false;
-	          window.notifications.show({msg: response.data.error, type: 'error'});
+	          window.notifications.show({text: response.data.error, type: 'error'});
 	        });
 	      }
 	    };

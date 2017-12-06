@@ -11,11 +11,11 @@ var projectSettings = (function(page, notifications) {
             }, 
             statusCode : {
                 200 : function(response){
-                    notifications.show({'msg': response.result});
+                    notifications.show({text: response.result});
                 }
             },
             fail : function(){
-                notifications.show({'msg': page.i18n.error, type:"error"});
+                notifications.show({text: page.i18n.error, type:"error"});
             }
         });
     });
@@ -32,11 +32,11 @@ var projectSettings = (function(page, notifications) {
             }, 
             statusCode : {
                 200 : function(response){
-                    notifications.show({'msg': response.result});
+                    notifications.show({text: response.result});
                 }
             },
             fail : function(){
-                notifications.show({'msg': page.i18n.error, type:"error"});
+                notifications.show({text: page.i18n.error, type:"error"});
             }
         });
     });
@@ -56,7 +56,7 @@ var projectSettings = (function(page, notifications) {
             }, 
             statusCode : {
                 200 : function(response){
-                    notifications.show({'msg': response.result});
+                    notifications.show({text: response.result});
                     
                     
                     if(minimumCoverage) {
@@ -81,7 +81,7 @@ var projectSettings = (function(page, notifications) {
                 }
             },
             fail : function(){
-                notifications.show({'msg': page.i18n.error, type:"error"});
+                notifications.show({text: page.i18n.error, type:"error"});
             }
         });
     });
@@ -138,15 +138,15 @@ var projectSettings = (function(page, notifications) {
             statusCode : {
                 200 : function(response){
                     if(response.result){
-                        notifications.show({'msg': response.result});
+                        notifications.show({text: response.result});
                     }
                     else if(response.error){
-                        notifications.show({'msg': response.error, type:"error"});
+                        notifications.show({text: response.error, type:"error"});
                     }
                 }
             },
             error : function(){
-                notifications.show({'msg': page.i18n.error, type:"error"});
+                notifications.show({text: page.i18n.error, type:"error"});
             }
         });
     }

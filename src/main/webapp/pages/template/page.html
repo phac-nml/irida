@@ -3,7 +3,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="template/base"
 	  ddl:bundle-includes="app">
-<head lang="en">
+<head>
 	<style>
 		.ng-cloak {
 			display: none !important;
@@ -119,6 +119,11 @@
 	<script th:inline="javascript">
 		var TL = {
 			BASE_URL      : /*[[@{/}]]*/ '/',
+		  	URLS: {
+			  cart: {
+			    add: /*[[@{/cart/add/samples}]]*/ "/cart/add/samples"
+			  }
+			},
 			SESSION_LENGTH: /*[[${#httpSession.getAttribute('SESSION_TIMEOUT')}]]*/ 1800,
 			lang          : {
 				page  : {
