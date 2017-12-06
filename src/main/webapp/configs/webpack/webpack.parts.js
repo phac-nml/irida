@@ -2,6 +2,7 @@ const webpack = require("webpack");
 const CleanWebpackPlugin = require("clean-webpack-plugin");
 const ProgressBarPlugin = require("progress-bar-webpack-plugin");
 const WriteFilePlugin = require("write-file-webpack-plugin");
+const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 
 /**
  * Compiles and live reloads page during development.
@@ -65,6 +66,12 @@ exports.lintJavaScript = () => ({
       }
     ]
   }
+});
+
+exports.compress = () => ({
+  plugins: [
+    new UglifyJsPlugin()
+  ]
 });
 
 /**
