@@ -2,6 +2,7 @@ import angular from "angular";
 import _ from "lodash";
 import { CART } from "../../utilities/events-utilities";
 import $ from "jquery";
+import {showNotification} from "../notifications";
 
 function CartController(cart) {
   const vm = this;
@@ -142,8 +143,8 @@ function CartService(scope, $http) {
             /*
           Display a notification of what occurred on the server.
            */
-            window.notifications.show({
-              msg: response.message
+            showNotification({
+              text: response.message
             });
           })
         );
@@ -431,7 +432,7 @@ function CartFilter() {
 }
 
 angular
-  .module("irida.cart", ["irida.notifications"])
+  .module("irida.cart", [])
   .service("CartService", ["$rootScope", "$http", CartService])
   .controller("CartSliderController", [
     "CartService",

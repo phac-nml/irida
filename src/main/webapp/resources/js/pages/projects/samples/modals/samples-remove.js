@@ -4,6 +4,7 @@
  */
 import $ from "jquery";
 import { SAMPLE_EVENTS } from "../constants";
+import { showNotification } from "../../../../modules/notifications";
 
 $(".js-remove-form").submit(function(e) {
   e.preventDefault();
@@ -15,10 +16,10 @@ $(".js-remove-form").submit(function(e) {
      */
     $("#js-modal-wrapper").trigger(SAMPLE_EVENTS.SAMPLE_TOOLS_CLOSED);
 
-    if (response.success)
-      window.notifications.show({
+    if (response.result === "success")
+      showNotification({
         type: "success",
-        msg: response.message
+        text: response.message
       });
   });
 });

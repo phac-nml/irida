@@ -5,6 +5,7 @@
 import $ from "jquery";
 import "../../../../vendor/plugins/jquery/select2";
 import { SAMPLE_EVENTS } from "../constants";
+import { showNotification } from "../../../../modules/notifications";
 
 /*
 Set up the projects Select2 input
@@ -62,15 +63,15 @@ $("#js-copy-form").submit(function(e) {
     Alert the user that this was a success!
      */
     if (response.result === "success") {
-      window.notifications.show({
+      showNotification({
         type: response.result,
-        msg: response.message
+        text: response.message
       });
     } else {
       response.warnings.forEach(warning => {
-        window.notifications.show({
+        showNotification({
           type: "error",
-          msg: warning
+          text: warning
         });
       });
     }
