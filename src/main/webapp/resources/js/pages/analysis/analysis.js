@@ -15,7 +15,7 @@
         hiddenIFrame.style.display = 'none';
         document.body.appendChild(hiddenIFrame);
       }
-      hiddenIFrame.src = page.URLS.download + id + '?dandelionAssetFilterState=false';
+      hiddenIFrame.src = page.URLS.download + id
     };
   }
 
