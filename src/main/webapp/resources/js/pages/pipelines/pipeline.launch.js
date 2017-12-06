@@ -7,7 +7,7 @@
 	 * @param ParameterService for passing parameter information between modal and page
 	 * @constructor
 	 */
-	function PipelineController($scope, $http, CartService, notifications, ParameterService, ToolDataTableService) {
+	function PipelineController($scope, $http, CartService, ParameterService, ToolDataTableService) {
 		var vm = this;
 
 		vm.parameters = ParameterService.getOriginalSettings();
@@ -452,7 +452,7 @@
     }
 
     ng.module('irida.pipelines', ['irida.cart', 'ngFileUpload'])
-		.controller('PipelineController', ['$rootScope', '$http', 'CartService', 'notifications', 'ParameterService', 'ToolDataTableService', PipelineController])
+		.controller('PipelineController', ['$rootScope', '$http', 'CartService', 'ParameterService', 'ToolDataTableService', PipelineController])
 		.controller('ParameterModalController', ["$uibModal", ParameterModalController])
 		.controller('ParameterController', ['$rootScope', '$http', '$uibModalInstance', 'ParameterService', ParameterController])
 		.controller('FileUploadCtrl', ['$rootScope', 'Upload', FileUploadCtrl])
