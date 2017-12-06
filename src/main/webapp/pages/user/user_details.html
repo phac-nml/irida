@@ -249,7 +249,6 @@
             SubscriptionService.updateSubscription(PAGE.userId, projectId, subscribe).then(function(response) {
               var data = response.data;
               window.notifications.show({type: 'success', text: data.message, title: title});
-              window.notifications.show({type: 'success', text: data.message, title: title});
             }, function(response) {
               var data = response.data;
               window.notifications.show({type: 'error', text: errorMessage, title: title});
