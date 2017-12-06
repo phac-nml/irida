@@ -69,9 +69,7 @@ exports.lintJavaScript = () => ({
 });
 
 exports.compress = () => ({
-  plugins: [
-    new UglifyJsPlugin()
-  ]
+  plugins: [new UglifyJsPlugin({ cache: true, parallel: true })]
 });
 
 /**
