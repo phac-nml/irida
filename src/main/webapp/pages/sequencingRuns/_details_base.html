@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
     layout:decorator="template/page">
-<head lang="en">
-</head>
 <body>
     <nav class="navbar navbar-default navbar-static-top subnav" role="navigation" layout:fragment="subnav"
          th:with="baseLink=@{/sequencingRuns/{id}(id=${run.getId()})}">
