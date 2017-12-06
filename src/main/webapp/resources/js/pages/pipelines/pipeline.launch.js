@@ -35,7 +35,6 @@
 		 * from the drop-down.
 		 */
 		vm.parameterSelected = function () {
-		    console.log(vm.selectedParameters);
 			ParameterService.setSelectedParameters(vm.selectedParameters);
 		};
 
@@ -45,7 +44,6 @@
          * from the drop-down.
          */
         vm.toolDataTableFieldSelected = function (toolDataTable) {
-            console.log(vm.selectedToolDataTableField);
         	ToolDataTableService.setSelectedToolDataTableField(toolDataTable, vm.selectedToolDataTableField);
         };
 
@@ -420,7 +418,6 @@
          * @param currentSelection the tool data table field that is currently selected
          */
         svc.setSelectedToolDataTableField = function (toolDataTable, currentSelection) {
-            console.log("toolDataTable: " + toolDataTable + " currentSelection: " + currentSelection)
             settings.currentSettings[toolDataTable] = currentSelection;
         };
     }
