@@ -9,9 +9,7 @@
     "angular-bootstrap",
     "angular-animate",
     "font-awesome",
-    "animate.css",
-    "utilities",
-    "notifications"
+    "animate.css"
   ],
   "assets": [
     {

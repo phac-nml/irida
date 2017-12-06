@@ -41,6 +41,7 @@ form.find("#sampleName").on("keyup blur", () => {
 const organismInput = $("#organism");
 
 organismInput.select2({
+  theme: "bootstrap",
   minimumInputLength: 1,
   ajax: {
     url: window.PAGE.urls.taxonomy,
