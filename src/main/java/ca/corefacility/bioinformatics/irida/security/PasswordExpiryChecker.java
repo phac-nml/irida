@@ -17,17 +17,30 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+/**
+ * Checks whether a user's password has changed within the configured expiry time.
+ */
 public class PasswordExpiryChecker implements UserDetailsChecker {
 	private static final Logger logger = LoggerFactory.getLogger(PasswordExpiryChecker.class);
 
 	private UserRepository userRepository;
 
-	private static final int PASSWORD_AGE_IN_DAYS = 30;
+	private int passwordExpiryInDays;
 
-	public PasswordExpiryChecker(UserRepository userRepository) {
+	/**
+	 * Build a {@link PasswordExpiryChecker} with a given {@link UserRepository} and configured password expiry date
+	 *
+	 * @param userRepository       a {@link UserRepository}
+	 * @param passwordExpiryInDays number of days until a password expires
+	 */
+	public PasswordExpiryChecker(UserRepository userRepository, int passwordExpiryInDays) {
 		this.userRepository = userRepository;
+		this.passwordExpiryInDays = passwordExpiryInDays;
 	}
 
+	/**
+	 * Checks if the given {@link UserDetails} password has expired.
+	 */
 	@Override
 	public void check(UserDetails toCheck) {
 		String username = toCheck.getUsername();
@@ -39,8 +52,8 @@ public class PasswordExpiryChecker implements UserDetailsChecker {
 		Calendar cal = new GregorianCalendar();
 		cal.setTime(today);
 
-		cal.add(Calendar.DAY_OF_MONTH, -PASSWORD_AGE_IN_DAYS);
-		Date monthAgo = cal.getTime();
+		cal.add(Calendar.DAY_OF_MONTH, -passwordExpiryInDays);
+		Date expiryDate = cal.getTime();
 
 		User oldUser = null;
 
@@ -48,12 +61,16 @@ public class PasswordExpiryChecker implements UserDetailsChecker {
 
 			logger.trace("Checking old user with date of " + rev.getRevisionDate());
 
-			if (rev.getRevisionDate().toDate().before(monthAgo)) {
+			// if revision date is older than the expiry date we can stop looking
+			if (rev.getRevisionDate().toDate().before(expiryDate)) {
 				oldUser = rev.getEntity();
 				break;
 			}
 		}
 
+		/*
+		If oldUser is null, the user isn't old enough to reset.  If the passwords are equal, they haven't been changed in the expiry time.
+		 */
 		if (oldUser != null && oldUser.getPassword().equals(user.getPassword())) {
 			logger.warn("Credentials for user " + user.getUsername() + " have expired.");
 			throw new CredentialsExpiredException("Credentials have expired.");

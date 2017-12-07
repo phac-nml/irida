@@ -117,7 +117,7 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 
 	@Bean
 	public UserDetailsChecker preAuthenticationChecker(){
-		return new PasswordExpiryChecker(userRepository);
+		return new PasswordExpiryChecker(userRepository, 30);
 	}
 
 	@Bean(name = "userAuthenticationManager")
