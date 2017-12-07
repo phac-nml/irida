@@ -1,9 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -118,6 +116,38 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		analysisExecutionScheduledTask.prepareAnalyses();
 
 		verify(analysisExecutionService).prepareSubmission(analysisSubmission);
+	}
+
+	@Test
+	public void testPrepareAnalysisPriorities()
+			throws ExecutionManagerException, IOException, IridaWorkflowNotFoundException {
+		AnalysisSubmission low = AnalysisSubmission.builder(workflowId)
+				.name("low")
+				.inputFiles(sequenceFiles)
+				.priority(AnalysisSubmission.Priority.LOW)
+				.build();
+
+		AnalysisSubmission medium = AnalysisSubmission.builder(workflowId)
+				.name("medium")
+				.inputFiles(sequenceFiles)
+				.priority(AnalysisSubmission.Priority.MEDIUM)
+				.build();
+
+		AnalysisSubmission high = AnalysisSubmission.builder(workflowId)
+				.name("high")
+				.inputFiles(sequenceFiles)
+				.priority(AnalysisSubmission.Priority.HIGH)
+				.build();
+
+		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.NEW))
+				.thenReturn(Arrays.asList(medium, high, low));
+		when(analysisExecutionService.getCapacity()).thenReturn(2);
+
+		analysisExecutionScheduledTask.prepareAnalyses();
+
+		verify(analysisExecutionService).prepareSubmission(high);
+		verify(analysisExecutionService).prepareSubmission(medium);
+		verify(analysisExecutionService, times(0)).prepareSubmission(low);
 	}
 
 	/**

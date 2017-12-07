@@ -84,15 +84,15 @@ public class DTProjectSamples implements DataTablesResponseModel, DataTablesExpo
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<String> toTableRow() {
+	public List<String> getExportableTableRow() {
 		List<String> data = new ArrayList<>();
 		data.add(String.valueOf(this.getId()));
 		data.add(this.getSampleName());
 		data.add(this.getOrganism());
 		data.add(String.valueOf(this.getProjectId()));
 		data.add(this.getProjectName());
-		data.add(dateFormatter.format(this.getCreatedDate()));
-		data.add(dateFormatter.format(this.getModifiedDate()));
+		data.add(this.getCreatedDate() != null ? dateFormatter.format(this.getCreatedDate()) : "");
+		data.add(this.getModifiedDate() != null ? dateFormatter.format(this.getModifiedDate()) : "");
 		return data;
 	}
 
@@ -100,7 +100,7 @@ public class DTProjectSamples implements DataTablesResponseModel, DataTablesExpo
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<String> getTableHeaders(MessageSource messageSource, Locale locale) {
+	public List<String> getExportableTableHeaders(MessageSource messageSource, Locale locale) {
 		List<String> headers = new ArrayList<>();
 		headers.add(messageSource.getMessage("iridaThing.id", new Object[] {}, locale));
 		headers.add(messageSource.getMessage("project.samples.table.name", new Object[] {}, locale));
