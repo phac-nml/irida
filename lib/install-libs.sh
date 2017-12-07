@@ -5,9 +5,5 @@ mvn --settings maven-central-secure-settings.xml install:install-file -Dfile=sam
 mvn --settings maven-central-secure-settings.xml install:install-file -Dfile=fastqc-0.10.1.jar -Dsources=fastqc-0.10.1-src.jar -DpomFile=fastqc-0.10.1.pom -DcreateChecksum=true
 
 # Galaxy Dependencies
-# git submodule needs to run from top level of git repository
-pushd `git rev-parse --show-toplevel`
-git submodule update --init --recursive
-popd
-
-sh galaxy-dependencies/install.sh
+# Git commit fac9057d047377e679b6c14672b364a20b9a462b from https://github.com/apetkau/blend4j
+mvn install:install-file -Dfile=blend4j-0.2.0-SNAPSHOT-fac9057d047377e679b6c14672b364a20b9a462b.jar -DpomFile=blend4j-0.2.0-SNAPSHOT-fac9057d047377e679b6c14672b364a20b9a462b.pom -Dversion=0.2.0-SNAPSHOT-fac9057d047377e679b6c14672b364a20b9a462b -DcreateChecksum=true
