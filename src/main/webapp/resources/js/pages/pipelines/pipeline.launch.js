@@ -1,4 +1,4 @@
-(function (ng, $, _, location, page) {
+(function (ng, $, location, page) {
 	"use strict";
 	/**
 	 * Main controller for the pipeline launch page.
@@ -64,8 +64,8 @@
 				vm.loading = true;
 
 				// Get a list of paired and single end files to run.
-				_.forEach(radioBtns, function (c) {
-					c = $(c);
+				radioBtns.each(function (c) {
+					c = $(this);
 
 					if (c.attr('data-type') === 'single_end') {
 						single.push(Number(c.val()));
@@ -98,7 +98,7 @@
 					params['paired'] = paired;
 				}
 
-				if (_.keys(selectedParameters).length > 0 && selectedParameters.id !== 'no_parameters') {
+				if (Object.keys(selectedParameters).length > 0 && selectedParameters.id !== 'no_parameters') {
 					params['selectedParameters'] = selectedParameters;
 				}
 				params['name'] = name;
@@ -403,4 +403,4 @@
 		.controller('FileUploadCtrl', ['$rootScope', 'Upload', FileUploadCtrl])
 		.service('ParameterService', [ParameterService])
 	;
-})(window.angular, window.jQuery, window._, window.location, window.PAGE);
+})(window.angular, window.jQuery, window.location, window.PAGE);
