@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
+import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -287,7 +288,7 @@ public class UsersController {
 					session.setAttribute(UserSecurityInterceptor.CURRENT_USER_DETAILS, user);
 				}
 
-			} catch (ConstraintViolationException | DataIntegrityViolationException ex) {
+			} catch (ConstraintViolationException | DataIntegrityViolationException | PasswordReusedException ex) {
 				errors = handleCreateUpdateException(ex, locale);
 
 				model.addAttribute("errors", errors);
@@ -519,6 +520,9 @@ public class UsersController {
 			EntityExistsException eex = (EntityExistsException) ex;
 			errors.put(eex.getFieldName(), eex.getMessage());
 		}
+		else if(ex instanceof PasswordReusedException){
+			errors.put("password", messageSource.getMessage("user.edit.passwordReused", null, locale));
+		}
 
 		return errors;
 	}
@@ -540,7 +544,7 @@ public class UsersController {
 	/**
 	 * Check if the logged in user is allowed to edit the given user.
 	 *
-	 * @param principal
+	 * @param principalUser
 	 *            The currently logged in principal
 	 * @param user
 	 *            The user to edit
