@@ -1,6 +1,6 @@
 const angular = require('angular');
 require('./../../modules/utilities/file.utils');
-require('../../../sass/pages/sample_files.scss');
+require('../../../sass/pages/sample-files.scss');
 
 /**
  * Controller for the modal to confirm removing a sequenceFile

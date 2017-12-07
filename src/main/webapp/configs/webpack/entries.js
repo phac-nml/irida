@@ -6,6 +6,7 @@
 module.exports = {
   vendor: ["babel-polyfill"],
   announcements: "./resources/js/pages/announcement/announcements.js",
+  analysis: "./resources/js/pages/analysis/analysis.js",
   app: "./resources/js/app.js",
   dashboard: "./resources/js/pages/dashboard.js",
   "project-events": "./resources/js/pages/projects/project-events.js",
@@ -25,6 +26,7 @@ module.exports = {
     "./resources/js/pages/projects/samples/modals/samples-linker.js",
   "project-add-sample": "./resources/js/pages/projects/project-add-samples.js",
   "project-linelist": "./resources/js/pages/projects/linelist/index.js",
+  "project-ncbi-export": "./resources/js/pages/projects/export/ncbi-export.js",
   "create-metadata-template":
     "./resources/js/pages/projects/metadata-template/create-metadata-template.js",
   "visualizations-phylogenetics":
@@ -43,6 +45,8 @@ module.exports = {
     "./resources/js/pages/announcement/announcement-users.js",
   "announcement-admin":
     "./resources/js/pages/announcement/announcement-admin.js",
+  "pipeline-selection": "./resources/js/pages/pipelines/pipeline-selection.js",
+  "sample-edit": "./resources/js/pages/samples/sample-edit.js",
   "sequencing-runs":
     "./resources/js/pages/sequencing-runs/sequencing-runs-list.js",
   "groups-list": "./resources/js/pages/users/groups-list.js",
