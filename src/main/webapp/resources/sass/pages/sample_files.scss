@@ -1,5 +1,5 @@
-@import "../helpers/variables";
-@import "../animations/animations";
+@import "../../../styles/helpers/variables";
+@import "../../../styles/animations/animations";
 
 .paired_end, .single_end, .file_info, .assembly_sample_info {
   background-color: $color-grey-light;
