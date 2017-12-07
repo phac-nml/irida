@@ -83,7 +83,7 @@
     return svc;
   }
 
-  function ProjectShareController(AnalysisService, notifications) {
+  function ProjectShareController(AnalysisService) {
     var vm = this;
 
     vm.projects = {};
@@ -97,7 +97,7 @@
 
     vm.updateShared = function(project) {
       AnalysisService.updateProjectShare(project.project.identifier, project.shared).then(function(response) {
-        notifications.show({msg: response.message});
+        notifications.show({text: response.message});
       });
     };
 
@@ -205,6 +205,6 @@
     .controller('FileDownloadController', [FileDownloadController])
     .controller('StateController', ['AnalysisService', StateController])
     .controller('PreviewController', [PreviewController])
-    .controller('ProjectShareController', ['AnalysisService', 'notifications', ProjectShareController])
+    .controller('ProjectShareController', ['AnalysisService', ProjectShareController])
   ;
 })(window.angular, window.PAGE, window.notifications);

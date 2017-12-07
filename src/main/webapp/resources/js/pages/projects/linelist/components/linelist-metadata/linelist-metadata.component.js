@@ -1,4 +1,5 @@
 import { EVENTS } from "./../../constants";
+import { showNotification } from "../../../../../modules/notifications";
 
 /**
  * Controller for handling getting the name for a new template.
@@ -62,7 +63,6 @@ showMetadataFieldSelectionsController.$inject = [
  * @param {object} $aside Reference to the angular-aside instance
  * @param {object} $uibModal Reference to the angular-bootstrap modal instance
  * @param {object} MetadataTemplateService service for handling metadata templates
- * @param {object} notifications IRIDA browser notification service.
  *
  * @description
  *
@@ -73,8 +73,7 @@ function MetadataController(
   $scope,
   $aside,
   $uibModal,
-  MetadataTemplateService,
-  notifications
+  MetadataTemplateService
 ) {
   const vm = this;
   let FIELD_ORDER;
@@ -197,8 +196,8 @@ function MetadataController(
       const { template, message } = response;
       vm.templates.push(template);
       vm.selectedTemplate = template;
-      notifications.show({
-        msg: message,
+      showNotification({
+        text: message,
         type: "success"
       });
     });
@@ -220,8 +219,7 @@ MetadataController.$inject = [
   "$scope",
   "$aside",
   "$uibModal",
-  "SampleMetadataTemplateService",
-  "notifications"
+  "SampleMetadataTemplateService"
 ];
 
 export const MetadataComponent = {

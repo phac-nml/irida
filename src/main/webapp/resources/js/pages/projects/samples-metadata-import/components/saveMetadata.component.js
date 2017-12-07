@@ -1,3 +1,5 @@
+import { showNotification } from "../../../../modules/notifications";
+
 /**
  * @file AngularJS component for handling saving valid metadata to the server.
  */
@@ -22,7 +24,7 @@ const saveMetadata = {
     label: '@'
   },
   template,
-  controller($window, sampleMetadataService, notifications) {
+  controller($window, sampleMetadataService) {
     this.saveMetadata = () => {
       this.saving = true;
       sampleMetadataService
@@ -30,14 +32,14 @@ const saveMetadata = {
         .then(response => {
           const results = response.data;
           if (results.success) {
-            notifications.show({
-              msg: results.success
+            showNotification({
+              text: results.success
             });
             $window.location.href = this.url;
           }
           if (results['save-errors']) {
-            results['save-errors'].forEach(msg => {
-              notifications.show({msg, type: 'error'});
+            results['save-errors'].forEach(text => {
+              showNotification({text, type: 'error'});
             });
           }
           this.saving = false;

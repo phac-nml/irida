@@ -1,7 +1,10 @@
 import angular from "angular";
 import _ from "lodash";
+import { CART } from "../../utilities/events-utilities";
+import $ from "jquery";
+import {showNotification} from "../notifications";
 
-function CartController($scope, cart) {
+function CartController(cart) {
   const vm = this;
   vm.show = false;
   vm.projects = [];
@@ -9,7 +12,11 @@ function CartController($scope, cart) {
   vm.collapsed = {};
   vm.term = "";
 
-  $scope.$on("cart.update", function() {
+  /*
+  This is here since this has been updated to use a standard Event,
+  and not handled through angularjs.
+   */
+  document.addEventListener(CART.UPDATED, function() {
     getCart(false);
   });
 
@@ -87,11 +94,11 @@ function CartDirective() {
     templateUrl: "/cart.html",
     replace: true,
     controllerAs: "cart",
-    controller: ["$scope", "CartService", CartController]
+    controller: ["CartService", CartController]
   };
 }
 
-function CartService(scope, $http, $q, notifications) {
+function CartService(scope, $http) {
   const svc = this;
   const urls = {
     all: window.TL.BASE_URL + "cart",
@@ -109,48 +116,64 @@ function CartService(scope, $http, $q, notifications) {
     });
   };
 
-  /**
-   * Add samples to the global cart
-   * @param {object} projectSamples
-   *    {projectId: [sampleIds]}
-   * @returns {*|Promise.<TResult>}
+  /*
+  Add Samples to the global cart
+  Event Listener for adding samples to the global cart.
+  Expects an object with project ids references an array of sample ids
+  { projectId: [sampleIds] }
    */
-  svc.add = function(projectSamples) {
-    const projectIds = Object.keys(projectSamples);
-    const promises = [];
-    const resultMsg = [];
-
-    // Add each project's samples to the global cart.
-    projectIds.forEach(function(id) {
-      const promise = $http
-        .post(urls.add, { projectId: id, sampleIds: projectSamples[id] })
-        .then(function(result) {
-          resultMsg.push(result.data.message);
-        });
-      promises.push(promise);
-    });
-
-    // Return the resolution of all the results from adding the samples to the cart
-    return $q.all(promises).then(function() {
-      // Let everyone know that the cart has been updates
-      scope.$emit("cart.update");
-      // Show notifications for each project and their samples that were added to the cart.
-      resultMsg.forEach(function(msg) {
-        notifications.show({ msg: msg });
+  document.addEventListener(
+    CART.ADD,
+    function(e) {
+      const projects = e.detail.projects;
+      if (typeof projects === "undefined") {
+        return;
+      }
+      const promises = [];
+      /*
+    For each project that has samples, post the project/samples to
+    and store the promise.
+     */
+      Object.keys(projects).forEach(projectId => {
+        promises.push(
+          $.post(window.TL.URLS.cart.add, {
+            projectId,
+            sampleIds: projects[projectId]
+          }).then(response => {
+            /*
+          Display a notification of what occurred on the server.
+           */
+            showNotification({
+              text: response.message
+            });
+          })
+        );
       });
-    });
-  };
+
+      /*
+    Wait until all the projects have been added to the server cart, and
+    then notify the UI that this has occurred.
+     */
+      $.when.apply($, promises).done(function() {
+        const event = new Event(CART.UPDATED);
+        document.dispatchEvent(event);
+      });
+    },
+    false
+  );
 
   svc.clear = function() {
     //fire a DELETE to the server on the cart then broadcast the cart update event
     return $http.delete(urls.all).then(function() {
-      scope.$broadcast("cart.update", {});
+      const event = new Event(CART.UPDATED);
+      document.dispatchEvent(event);
     });
   };
 
   svc.removeProject = function(projectId) {
     return $http.delete(urls.project + projectId).then(function() {
-      scope.$broadcast("cart.update", {});
+      const event = new Event(CART.UPDATED);
+      document.dispatchEvent(event);
     });
   };
 
@@ -158,7 +181,8 @@ function CartService(scope, $http, $q, notifications) {
     return $http
       .delete(urls.project + projectId + "/samples/" + sampleId)
       .then(function() {
-        scope.$broadcast("cart.update", {});
+        const event = new Event(CART.UPDATED);
+        document.dispatchEvent(event);
       });
   };
 }
@@ -408,14 +432,8 @@ function CartFilter() {
 }
 
 angular
-  .module("irida.cart", ["irida.notifications"])
-  .service("CartService", [
-    "$rootScope",
-    "$http",
-    "$q",
-    "notifications",
-    CartService
-  ])
+  .module("irida.cart", [])
+  .service("CartService", ["$rootScope", "$http", CartService])
   .controller("CartSliderController", [
     "CartService",
     "$uibModal",

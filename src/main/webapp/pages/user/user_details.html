@@ -204,7 +204,7 @@
 
 		var pwd = angular.module('PasswordRest', []);
 
-		pwd.service('ResetService', ['$http', 'notifications', function ($http, notifications) {
+		pwd.service('ResetService', ['$http', function ($http) {
 			var svc = this;
 
 			svc.resetPassword = function () {
@@ -212,32 +212,32 @@
                   .then(function(response) {
                     var data = response.data;
 						if(data.success){
-							notifications.show({type: 'success', msg: data.message, title: data.title});
+							window.notifications.show({type: 'success', text: data.message, title: data.title});
 						}else{
-							notifications.show({type: 'error', msg: data.message, title: data.title});
+							window.notifications.show({type: 'error', text: data.message, title: data.title});
 						}
 						return data;
 					});
 			}
 		}]);
-      
+
         pwd.service('SubscriptionService', ['$http', function($http){
           var svc = this;
-          
+
           svc.updateSubscription = function(userId, projectId, subscribe){
             var urlBase = /*[[@{/events/projects/}]]*/ '/events/projects/';
             urlBase += projectId + '/subscribe/' + userId;
             var params = {subscribe:subscribe};
-            
+
             return $http.post(urlBase, params);
           };
         }]);
-      
-        pwd.controller('SubscriptionController', ['SubscriptionService','notifications', function (SubscriptionService, notifications) {
+
+        pwd.controller('SubscriptionController', ['SubscriptionService', function (SubscriptionService) {
           var sub = this;
           var title = /*[[#{user.projects.subscriptions}]]*/ 'Subscriptions';
           var errorMessage = /*[[#{user.projects.subscriptions.error}]]*/ 'Error';
-          
+
           angular.element(".subcription-checkbox").on("change", function(){
             var box = $(this);
             var projectId = box.val();
@@ -248,10 +248,10 @@
 
             SubscriptionService.updateSubscription(PAGE.userId, projectId, subscribe).then(function(response) {
               var data = response.data;
-              notifications.show({type: 'success', msg: data.message, title: title});
+              window.notifications.show({type: 'success', text: data.message, title: title});
             }, function(response) {
               var data = response.data;
-              notifications.show({type: 'error', msg: errorMessage, title: title});
+              window.notifications.show({type: 'error', text: errorMessage, title: title});
               box.attr('checked', false);
             });
           });
