@@ -5,7 +5,9 @@
         layout:decorator="projects/_base">
 <head>
     <title th:text="${project.label} + ' - ' + #{project.nav.samples}"></title>
-    <link rel="stylesheet" th:href="@{/resources/css/pages/project_samples.css}"/>
+    <link rel="stylesheet" th:href="@{/resources/dist/css/project-samples.bundle.css}"/>
+    <link rel="stylesheet" th:href="@{/resources/dist/css/project-samples-copy.bundle.css}">
+    <link rel="stylesheet" th:href="@{/resources/dist/css/project-samples-filter.bundle.css}">
     <script th:inline="javascript">
       var PAGE = {
         linker: /*[[${linker}]]*/'',
