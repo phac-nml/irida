@@ -24,6 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.history.Revisions;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -87,6 +88,7 @@ public class UserServiceImplTest {
 		when(userRepository.save(persisted)).thenReturn(persisted);
 		when(userRepository.findOne(id)).thenReturn(persisted);
 		when(userRepository.exists(id)).thenReturn(true);
+		when(userRepository.findRevisions(id)).thenReturn(new Revisions<>(Lists.newArrayList()));
 
 		User u = userService.updateFields(id, properties);
 		assertEquals("User-type was not returned.", persisted, u);
@@ -146,6 +148,7 @@ public class UserServiceImplTest {
 		when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
 		when(userRepository.exists(1L)).thenReturn(true);
 		when(userRepository.findOne(1L)).thenReturn(user());
+		when(userRepository.findRevisions(1L)).thenReturn(new Revisions<>(Lists.newArrayList()));
 
 		userService.changePassword(1L, password);
 
