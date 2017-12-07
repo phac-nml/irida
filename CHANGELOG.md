@@ -5,6 +5,9 @@ Changes
 ----------------
 * [Developer]: Fixed exception being thrown related to permission denied for updating samples when a normal user (collaborator on a project) runs the assembly pipeline (0.19.1).
 * [UI]: Allowing admins to manually prioritize high importance analyses.
+* [Developer]: Removed dandelion from project > samples page.
+* [UI]: Fixed issue where Projects table could not be exported (0.19.2).
+* [UI]: Fixed user menu icons misaligning in Firefox (0.19.2).
 
 0.18.0 to 0.19.0
 ----------------

@@ -1,73 +1,62 @@
-<div id="remove-samples-modal" th:with="countSingle=${#lists.size(samplesThatAreInOne)},countSingleExtra=${#lists.size(extraSingle)},countMultiple=${#lists.size(samplesThatAreInMultiple)},countMultipleExtra=${#lists.size(extraMultiple)}">
-	<div class="modal-header">
-		<h3 class="modal-title" th:with="total=${countSingle + countSingleExtra + countMultiple + countMultipleExtra}">
-			<i class="fa fa-trash fa-fw" aria-hidden="true"></i>
-			<span th:if="${total > 1}" th:text="#{project.samples.modal.remove.title-multiple(${total})}"/>
-			<span th:if="${total == 1}" th:text="#{project.samples.modal.remove.title-singular}"/>
-		</h3>
-	</div>
+<div id="js-remove-modal" th:with="countSingle=${#lists.size(samplesThatAreInOne)},countMultiple=${#lists.size(samplesThatAreInMultiple)}">
+    <div class="modal-dialog t-remove-modal" role="document">
+        <form class="js-remove-form">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title"
+                        th:with="total=${countSingle + countMultiple}">
+                        <i class="fa fa-trash fa-fw" aria-hidden="true"></i>
+                        <th:block th:text="${total > 1} ? #{project.samples.modal.remove.title-multiple(${total})} : #{project.samples.modal.remove.title-singular}"/>
+                    </h3>
+                </div>
 
-	<div class="modal-body">
-		<div class="row panel-equal-container">
-			<div class="col-sm-12" th:if="${countMultiple > 0}" th:class="${countSingle > 0} ? 'col-md-6' : 'col-md-12'">
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<th:block th:if="${countMultiple == 1}" th:text="#{project.samples.modal.remove.samplesThatAreInMultiple.description-singular}" />
-						<th:block th:if="${countMultiple > 1}" th:text="#{project.samples.modal.remove.samplesThatAreInMultiple.description-multiple(${countMultiple + countMultipleExtra})}" />
-					</div>
-					<div class="panel-body">
-						<ol class="start">
-							<li th:each="sample : ${samplesThatAreInMultiple}" th:text="${sample.sampleName}"></li>
-							<!-- Might as well show if there are only a couple -->
-							<th:block th:if="${countMultipleExtra &lt; 5}">
-								<li th:each="sample : ${extraMultiple}" th:text="${sample.sampleName}"></li>
-							</th:block>
-						</ol>
-						<button class="btn btn-link" th:if="${countMultipleExtra &gt; 4}" th:text="#{project.samples.modal.remove.samplesThatAreInOne.extra-multiple(${extraMultiple}}"
-						        uib-popover-template="'extraMultiple.tmpl'" popover-placement="right"/>
-						<script th:if="${countMultipleExtra > 4}" type="text/ng-template" id="extraMultiple.tmpl">
-							<div>
-								<ol class="continue">
-									<li th:each="sample : ${extraSingle}" th:text="${sample.sampleName}"></li>
-								</ol>
-							</div>
-						</script>
-					</div>
-				</div>
-			</div>
-			<div class="col-sm-12" th:if="${countSingle > 0}" th:class="${countMultiple > 0} ? 'col-md-6' : 'col-md-12'">
-				<div class="panel panel-warning">
-					<div class="panel-heading">
-						<th:block th:if="${countSingle == 1}" th:utext="#{project.samples.modal.remove.samplesThatAreInOne.description-singular}"/>
-						<th:block th:if="${countSingle > 1}" th:utext="#{project.samples.modal.remove.samplesThatAreInOne.description-multiple(${countSingle + countSingleExtra})}"/>
-					</div>
-					<div class="panel-body">
-						<ol class="start">
-							<li th:each="sample : ${samplesThatAreInOne}" th:text="${sample.sampleName}"></li>
-							<!-- Might as well show if there are only a couple -->
-							<th:block th:if="${countSingleExtra &lt; 5}">
-								<li th:each="sample : ${extraSingle}" th:text="${sample.sampleName}"></li>
-							</th:block>
-						</ol>
-						<button class="btn btn-link" th:if="${countSingleExtra > 4}" th:text="#{project.samples.modal.remove.samplesThatAreInOne.extra-multiple(${countSingleExtra})}"
-						        uib-popover-template="'extraSingle.tmpl'" popover-placement="left"/>
-						<script th:if="${countSingleExtra > 4}" type="text/ng-template" id="extraSingle.tmpl">
-							<div>
-								<ol class="continue">
-									<li th:each="sample : ${extraSingle}" th:text="${sample.sampleName}"></li>
-								</ol>
-							</div>
-						</script>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+                <div class="modal-body">
+                    <div class="row panel-equal-container">
+                        <div class="col-sm-12" th:if="${countMultiple > 0}"
+                             th:class="${countSingle > 0} ? 'col-md-6' : 'col-md-12'">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <th:block th:text="${countMultiple == 1} ? #{project.samples.modal.remove.samplesThatAreInMultiple.description-singular} : #{project.samples.modal.remove.samplesThatAreInMultiple.description-multiple(${countMultiple})}"/>
+                                </div>
+                                <div class="panel-body panel-body__scroll">
+                                    <ol>
+                                        <li th:each="sample : ${samplesThatAreInMultiple}">
+                                            <input type="hidden" th:value="${sample.getId()}" name="sampleIds[]"/>
+                                            <th:block th:text="${sample.sampleName}"/>
+                                        </li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12" th:if="${countSingle > 0}"
+                             th:class="${countMultiple > 0} ? 'col-md-6' : 'col-md-12'">
+                            <div class="panel panel-warning">
+                                <div class="panel-heading">
+                                    <th:block th:if="${countSingle == 1}"
+                                              th:utext="#{project.samples.modal.remove.samplesThatAreInOne.description-singular}"/>
+                                    <th:block th:if="${countSingle > 1}"
+                                              th:utext="#{project.samples.modal.remove.samplesThatAreInOne.description-multiple(${countSingle})}"/>
+                                </div>
+                                <div class="panel-body panel-body__scroll">
+                                    <ol>
+                                        <li th:each="sample : ${samplesThatAreInOne}">
+                                            <input type="hidden" th:value="${sample.getId()}" name="sampleIds[]"/>
+                                            <th:block th:text="${sample.sampleName}"/>
+                                        </li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-	<div class="modal-footer">
-		<button class="btn btn-default" th:text="#{form.btn.cancel}" ng-click="removeCtrl.cancel()"></button>
-		<button id="removeBtnOk" class="btn btn-primary" th:text="#{project.samples.modal.remove.button}"
-		        ng-click="removeCtrl.remove()">_Remove_
-		</button>
-	</div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" th:text="#{form.btn.cancel}" data-dismiss="modal"></button>
+                    <button id="js-submit" class="btn btn-primary t-submit-remove" th:text="#{project.samples.modal.remove.button}"
+                            data:url="@{/projects/{projectId}/ajax/samples/remove(projectId=${project.getId()})}">_Remove_
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>

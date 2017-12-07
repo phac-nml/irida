@@ -47,7 +47,23 @@ export const validationConfig = {
 export function sampleNameCharacterValidation() {
   if (typeof $.validator === "function") {
     $.validator.addMethod("checkallowedchars", value => {
-      return /^[A-Za-z\d-_!@#$%~`]+$/i.test(value);
+      return value.length === 0 || /^[A-Za-z\d-_!@#$%~`]+$/i.test(value);
+    });
+    return;
+  }
+  throw new Error(
+    "jquery-validate must be loaded to activate sample name checker"
+  );
+}
+
+/**
+ * Add a validator that can be used within an optional input, that has a
+ * minlength if present.
+ */
+export function minLengthIfPresentValidation() {
+  if (typeof $.validator === "function") {
+    $.validator.addMethod("minLengthIfPresent", (value, element, size) => {
+      return value.length === 0 || value.length >= size;
     });
     return;
   }

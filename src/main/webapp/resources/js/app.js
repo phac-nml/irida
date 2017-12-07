@@ -4,12 +4,16 @@ import _ from "lodash";
 import "./modules/cart/irida.cart";
 import { IridaSession } from "./services/IridaSession";
 import "./pages/search/irida.search";
+/*
+This will load notifications into the global namespace.  Remove this once all
+files have been converted over to wekbpack builds.
+ */
+import "./modules/notifications";
 
 const deps = _.union(window.dependencies || [], [
   "ngAria",
   "ngAnimate",
   "ui.bootstrap",
-  "irida.notifications",
   "irida.cart",
   IridaSession
 ]);

@@ -4,11 +4,10 @@
 	 * Main controller for the pipeline launch page.
 	 * @param $http AngularJS http object
 	 * @param CartService a reference to the cart service (to clear it)
-	 * @param notifications notifications
 	 * @param ParameterService for passing parameter information between modal and page
 	 * @constructor
 	 */
-	function PipelineController($scope, $http, CartService, notifications, ParameterService) {
+	function PipelineController($scope, $http, CartService, ParameterService) {
 		var vm = this;
 
 		vm.parameters = ParameterService.getOriginalSettings();
@@ -133,7 +132,7 @@
 								vm.paramError = data.parameters;
 							}
 							else if (data.pipelineError) {
-								notifications.show({type: 'error', msg: data.pipelineError});
+								window.notifications.show({type: 'error', text: data.pipelineError});
 							}
 						}
 					});
@@ -391,14 +390,14 @@
 	          vm.referenceUploadStarted = false;
 	        }, function(response) {
 	          vm.referenceUploadStarted = false;
-	          window.notifications.show({msg: response.data.error, type: 'error'});
+	          window.notifications.show({text: response.data.error, type: 'error'});
 	        });
 	      }
 	    };
   }
 
   ng.module('irida.pipelines', ['irida.cart', 'ngFileUpload'])
-		.controller('PipelineController', ['$rootScope', '$http', 'CartService', 'notifications', 'ParameterService', PipelineController])
+		.controller('PipelineController', ['$rootScope', '$http', 'CartService', 'ParameterService', PipelineController])
 		.controller('ParameterModalController', ["$uibModal", ParameterModalController])
 		.controller('ParameterController', ['$rootScope', '$http', '$uibModalInstance', 'ParameterService', ParameterController])
 		.controller('FileUploadCtrl', ['$rootScope', 'Upload', FileUploadCtrl])
