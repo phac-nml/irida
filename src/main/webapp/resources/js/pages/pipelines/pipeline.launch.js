@@ -396,11 +396,14 @@
 	    };
   }
 
-  ng.module('irida.pipelines', ['irida.cart', 'ngFileUpload'])
+  const pipelineModule = ng.module('irida.pipelines', ['irida.cart', 'ngFileUpload'])
 		.controller('PipelineController', ['$rootScope', '$http', 'CartService', 'ParameterService', PipelineController])
 		.controller('ParameterModalController', ["$uibModal", ParameterModalController])
 		.controller('ParameterController', ['$rootScope', '$http', '$uibModalInstance', 'ParameterService', ParameterController])
 		.controller('FileUploadCtrl', ['$rootScope', 'Upload', FileUploadCtrl])
 		.service('ParameterService', [ParameterService])
+	  .name
 	;
+
+  ng.module("irida").requires.push(pipelineModule);
 })(window.angular, window.jQuery, window.location, window.PAGE);

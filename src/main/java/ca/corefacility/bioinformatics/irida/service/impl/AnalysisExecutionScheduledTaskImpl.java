@@ -37,6 +37,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	private Object prepareAnalysesLock = new Object();
 	private Object executeAnalysesLock = new Object();
 	private Object monitorRunningAnalysesLock = new Object();
+
 	private Object transferAnalysesResultsLock = new Object();
 	private Object cleanupAnalysesResultsLock = new Object();
 
@@ -76,6 +77,11 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 
 			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
 					.findByAnalysisState(AnalysisState.NEW);
+
+			// Sort submissions by priority high to low
+			analysisSubmissions.sort((a1, a2) -> {
+				return a2.getPriority().compareTo(a1.getPriority());
+			});
 
 			Set<Future<AnalysisSubmission>> submissions = Sets.newHashSet();
 

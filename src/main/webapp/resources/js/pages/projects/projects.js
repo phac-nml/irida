@@ -24,7 +24,9 @@ function downloadItem({format = "xlsx"}) {
   const anchor = document.createElement("a");
   anchor.style.display = "none";
   anchor.href = url;
+  document.body.appendChild(anchor);
   anchor.click();
+  document.body.removeChild(anchor);
 }
 
 const config = Object.assign(tableConfig, {
