@@ -15,7 +15,9 @@ import java.util.Map;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
+import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
 import org.hibernate.exception.ConstraintViolationException;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -24,6 +26,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.history.Revision;
+import org.springframework.data.history.RevisionMetadata;
 import org.springframework.data.history.Revisions;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -156,6 +160,40 @@ public class UserServiceImplTest {
 		verify(userRepository).save(argument.capture());
 		User saved = argument.getValue();
 		assertEquals("password field was not encoded.", encodedPassword, saved.getPassword());
+	}
+
+	@Test(expected = PasswordReusedException.class)
+	public void testUpdateExistingPassword() {
+		String password = "Password1";
+		String oldPassword = "oldPassword";
+		String encodedPassword = password + "_ENCODED";
+
+		User revUser = new User();
+		revUser.setPassword(oldPassword);
+		Revision<Integer, User> rev = new Revision(new RevisionMetadata() {
+			@Override
+			public Number getRevisionNumber() {
+				return 1L;
+			}
+
+			@Override
+			public DateTime getRevisionDate() {
+				return new DateTime();
+			}
+
+			@Override
+			public Object getDelegate() {
+				return null;
+			}
+		}, revUser);
+
+		when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
+		when(passwordEncoder.matches(password, oldPassword)).thenReturn(true);
+		when(userRepository.exists(1L)).thenReturn(true);
+		when(userRepository.findOne(1L)).thenReturn(user());
+		when(userRepository.findRevisions(1L)).thenReturn(new Revisions<Integer, User>(Lists.newArrayList(rev)));
+
+		userService.changePassword(1L, password);
 	}
 
 	@Test(expected = EntityExistsException.class)
