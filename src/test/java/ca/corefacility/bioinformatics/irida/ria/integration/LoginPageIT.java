@@ -65,4 +65,12 @@ public class LoginPageIT extends AbstractIridaUIITChromeDriver {
 		page.login(EXPIRED_USERNAME, newPassword);
 		assertTrue("The user is logged in and redirected.", driver().getTitle().contains("Dashboard"));
 	}
+
+	@Test
+	public void testOldLogin() throws Exception {
+		LoginPage page = LoginPage.to(driver());
+		page.login("oldLogin", EXPIRED_PASSWORD);
+		assertTrue("The 'oldLogin' user should be sent to a password reset page.",
+				driver().getCurrentUrl().contains("password_reset/"));
+	}
 }
