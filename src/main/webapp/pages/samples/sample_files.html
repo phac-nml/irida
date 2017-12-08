@@ -2,8 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="samples/_base">
-<head lang="en">
-	<meta charset="UTF-8"/>
+<head>
 	<title th:text="#{samples.files.title(${sample.label})}">THIS IS SOMETHING WRONG</title>
 	<link rel="stylesheet" th:href="@{/resources/css/pages/sample_files.css}"/>
 	<script th:inline="javascript">
@@ -18,7 +17,6 @@
 			  upload: /*[[@{/samples/{id}/sequenceFiles/upload(id=${sample.getId()})}]]*/ ''
 			}
 		};
-		window.dependencies = ['irida.sample.files'];
 	</script>
 </head>
 <body>

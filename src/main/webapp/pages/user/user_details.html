@@ -4,7 +4,6 @@
 <head>
 	<title th:text="${user.label}">_USER PAGE_</title>
 	<script th:inline="javascript">
-		window.dependencies = ['PasswordRest'];
 		var PAGE = {
 			urls: {
 				reset: /*[[@{/password_reset/ajax/create/{id}(id=${user.getId()})}]]*/ 'password_reset/ajax/create/'
@@ -249,7 +248,6 @@
             SubscriptionService.updateSubscription(PAGE.userId, projectId, subscribe).then(function(response) {
               var data = response.data;
               window.notifications.show({type: 'success', text: data.message, title: title});
-              window.notifications.show({type: 'success', text: data.message, title: title});
             }, function(response) {
               var data = response.data;
               window.notifications.show({type: 'error', text: errorMessage, title: title});
@@ -286,6 +284,8 @@
 				});
 			};
 		}]);
+
+		angular.module("irida").requires.push(pwd.name);
 	</script>
 </th:block>
 </body>

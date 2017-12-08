@@ -4,7 +4,6 @@
 <head>
     <title th:text="#{project.settings.page.title.references}">Title</title>
     <script th:inline="javascript">
-      window.dependencies = ['References'];
       var PAGE = {
         urls: {
           get: /*[[@{/projects/{id}/settings/ajax/reference/all(id=${project.identifier})}]]*/ '/projects/1/ajax/reference/all',

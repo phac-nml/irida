@@ -16,7 +16,7 @@ public interface DataTablesExportable {
 	 *
 	 * @return List of values in order for the specific datatable.
 	 */
-	List<String> toTableRow();
+	List<String> getExportableTableRow();
 
 	/**
 	 * Get an ordered list of internationalized table headers for the datatable.
@@ -25,5 +25,5 @@ public interface DataTablesExportable {
 	 * @param locale        {@link Locale} for the current user.
 	 * @return List of table headers.
 	 */
-	List<String> getTableHeaders(MessageSource messageSource, Locale locale);
+	List<String> getExportableTableHeaders(MessageSource messageSource, Locale locale);
 }
