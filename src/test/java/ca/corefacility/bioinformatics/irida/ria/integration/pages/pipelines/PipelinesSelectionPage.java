@@ -17,6 +17,9 @@ public class PipelinesSelectionPage extends AbstractPage {
 
 	@FindBy(id = "phylogenomics_btn")
 	private static WebElement phylogenomicsBtn;
+	
+	@FindBy(id = "assembly-annotation_btn")
+	private static WebElement asssemblyBtn;
 
 	public PipelinesSelectionPage(WebDriver driver) {
 		super(driver);
@@ -34,5 +37,11 @@ public class PipelinesSelectionPage extends AbstractPage {
 		get(webDriver, RELATIVE_URL);
 		PageFactory.initElements(webDriver, PipelinesSelectionPage.class);
 		phylogenomicsBtn.click();
+	}
+	
+	public static void goToAssemblyPipelinePipeline(WebDriver webDriver) {
+		get(webDriver, RELATIVE_URL);
+		PageFactory.initElements(webDriver, PipelinesSelectionPage.class);
+		asssemblyBtn.click();
 	}
 }

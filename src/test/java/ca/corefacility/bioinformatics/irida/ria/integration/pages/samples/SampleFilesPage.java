@@ -1,14 +1,15 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.samples;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 /**
  * <p>
@@ -39,6 +40,10 @@ public class SampleFilesPage extends AbstractPage {
 		return driver.findElements(By.className("sequence-file-row")).size();
 	}
 	
+	public int getAssemblyFileCount() {
+		return driver.findElements(By.className("assembly_row")).size();
+	}
+	
 	public String getSampleName(){
 		return driver.findElement(By.id("sample-name")).getText();
 	}
@@ -47,7 +52,7 @@ public class SampleFilesPage extends AbstractPage {
 		return driver.findElements(By.className("qc-item")).size();
 	}
 	
-	public void deleteFirstFile(){
+	public void deleteFirstSequenceFile(){
 		WebElement removeButton = driver.findElements(By.className("remove-file")).iterator().next();
 		removeButton.click();
 		WebElement confirmRemoveButton = (new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(By
@@ -55,8 +60,16 @@ public class SampleFilesPage extends AbstractPage {
 		confirmRemoveButton.click();
 	}
 	
-	public void deleteFirstPair(){
+	public void deleteFirstSequenceFilePair(){
 		WebElement removeButton = driver.findElements(By.className("remove-pair")).iterator().next();
+		removeButton.click();
+		WebElement confirmRemoveButton = (new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(By
+				.id("remove-file-confirm")));
+		confirmRemoveButton.click();
+	}
+	
+	public void deleteFirstAssemblyFile(){
+		WebElement removeButton = driver.findElements(By.className("remove-assembly")).iterator().next();
 		removeButton.click();
 		WebElement confirmRemoveButton = (new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(By
 				.id("remove-file-confirm")));

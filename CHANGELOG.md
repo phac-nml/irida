@@ -1,6 +1,12 @@
 Changes
 =======
 
+0.19.0 to 0.20.0
+----------------
+* [Developer]: Fixed exception being thrown related to permission denied for updating samples when a normal user (collaborator on a project) runs the assembly pipeline (0.19.1).
+* [UI]: Fixed issue where Projects table could not be exported (0.19.2).
+* [UI]: Fixed user menu icons misaligning in Firefox (0.19.2).
+
 0.18.0 to 0.19.0
 ----------------
 * [Developer] Removed the requirement for pipeline developers to add an `Analysis` subclass and database tables for pipelines.  All pipeline results can now be stored in the `Analysis` class.
@@ -8,6 +14,7 @@ Changes
 * [UI]: Fixed URL for concatenation of sample sequence files. (0.18.1)
 * [Developer]: Removed dandelion from: Announcements, Cart, Sequencing Runs, Login, Project Settings - Landing, Events, Create Sample, Line List, Announcements - Create & Read, Livestampjs, Pipelines Launch, lodash, NCBI Export Page, Session Handler, Project Members and Groups Server Side,  NCBI export lists, Groups Listing, Group Members.
 * [UI]: Added empty state if no files exist in a sample.
+* [UI]: Added ability to associate assemblies with a sample.
 * [UI]: Fix broken link for concatenating files. (0.18.2)
 * [UI]: Fix broken permissions for downloading reference files not associated with a project. (0.18.2)
 * [UI]: Fixed issued with layout of the events panel on the dashboard page. (0.18.2)
@@ -23,6 +30,8 @@ Changes
 * [UI]: Added ability to update an analysis submission name after it's been submitted.
 * [Developer]: Added `run-tests.sh` script for running local integration tests.
 * [UI]: Fixed issue with exporting `csv` and `excel` from Project > Samples pages (0.18.5).
+* [UI]: Fixed bug with importing large `excel` file that contained columns with only a header and no other data in column.
+* [UI]: Fixed project sync settings from resetting themselves.
 
 0.17.0 to 0.18.0
 ----------------
