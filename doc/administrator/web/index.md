@@ -84,6 +84,8 @@ The main configuration parameters you will need to change are:
   * `ncbi.upload.password` - FTP password
   * `ncbi.upload.baseDirectory` - base directory in which to create SRA submissions
   * `ncbi.upload.namespace` - Prefix for file upload identifiers to NCBI. The namespace is used to guarantee upload IDs are unique.  This configuration option is used as a placeholder and may still be set by the user.
+5. **Security configuration**
+ * `security.password.expiry` - The number of days a password is valid for in IRIDA.  After a password expires the user will be required to create a new one.  Passwords cannot be reused.
 
 Web Configuration
 -----------------
