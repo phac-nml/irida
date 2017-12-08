@@ -4,8 +4,7 @@
       layout:decorator="template/page">
 <body>
 <th:block layout:fragment="scripts">
-    <script th:src="@{/resources/bower_components/moment/moment.js}"></script>
-    <script th:src="@{/resources/js/client.js}"></script>
+    <script th:src="@{/resources/js/client.js}" src="/resources/js/client.js"></script>
     <th:block layout:fragment="page-scripts"/>
 </th:block>
 </body>
