@@ -30,7 +30,7 @@ const commonConfig = merge([
       filename: "js/[name].bundle.js"
     }
   },
-  parts.compress(),
+  parts.compressJavaScript(),
   parts.loadJavaScript(),
   parts.loadCSS()
 ]);

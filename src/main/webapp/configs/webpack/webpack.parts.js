@@ -72,7 +72,7 @@ exports.lintJavaScript = () => ({
  * Compress JS.  Make sure that to use angular injections.
  * @returns {{plugins: *[]}}
  */
-exports.compress = () => ({
+exports.compressJavaScript = () => ({
   plugins: [new UglifyJsPlugin({ cache: true, parallel: true })]
 });
 

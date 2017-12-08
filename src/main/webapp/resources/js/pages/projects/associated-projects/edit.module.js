@@ -7,7 +7,7 @@ const editApp = angular
   .module('associated.edit', [
     'frapontillo.bootstrap-switch'
   ])
-  .service('AssociatedService', function($http, $window) {
+  .service('AssociatedService', ["$http", "$window", function($http, $window) {
     const self = this;
     const page = $window.PAGE;
 
@@ -47,9 +47,9 @@ const editApp = angular
     };
 
     return self;
-  })
+  }])
   .controller('AssociatedTableCtrl',
-    function($scope, AssociatedService) {
+    ["$scope", "AssociatedService", function($scope, AssociatedService) {
       const $ctrl = this;
       // paging: handle all things to do with the paging of the
       //  - page = the current page being displayed.
@@ -168,7 +168,7 @@ const editApp = angular
             });
         }
       };
-    })
+    }])
   .name;
 
 // Add this to the main app.
