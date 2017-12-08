@@ -3,10 +3,7 @@ package ca.corefacility.bioinformatics.irida.service.impl.unit.user;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -194,6 +191,8 @@ public class UserServiceImplTest {
 		when(userRepository.findRevisions(1L)).thenReturn(new Revisions<Integer, User>(Lists.newArrayList(rev)));
 
 		userService.changePassword(1L, password);
+
+		verify(userRepository, times(0)).save(any(User.class));
 	}
 
 	@Test(expected = EntityExistsException.class)
