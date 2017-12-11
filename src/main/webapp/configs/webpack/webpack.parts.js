@@ -69,7 +69,7 @@ exports.lintJavaScript = () => ({
 });
 
 const extractSass = new ExtractTextPlugin({
-  filename: "css/[name].css",
+  filename: "css/[name].bundle.css",
   // disable: process.env.NODE_ENV === "development"
 });
 
