@@ -27,6 +27,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mail.MailSendException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -485,6 +486,39 @@ public class UsersController {
 		}
 
 		return new DataTablesResponse(params, userPage, usersData);
+	}
+
+
+	/**
+	 * Check that username not already taken
+	 * @param username Username to check existence of
+	 * @return true if username not taken
+	 */
+	@RequestMapping(value = "/validate-username", method = RequestMethod.GET)
+	@ResponseBody
+	public Boolean usernameExists(@RequestParam String username) {
+		try {
+			userService.getUserByUsername(username);
+			return false;
+		} catch (UsernameNotFoundException e) {
+			return true;
+		}
+	}
+
+	/**
+	 * Check that email not already taken
+	 * @param email Email address to check existence of
+	 * @return true if email not taken
+	 */
+	@RequestMapping(value = "/validate-email", method = RequestMethod.GET)
+	@ResponseBody
+	public Boolean emailExists(@RequestParam String email) {
+		try {
+			userService.loadUserByEmail(email);
+			return false;
+		} catch (EntityNotFoundException e) {
+			return true;
+		}
 	}
 
 	/**

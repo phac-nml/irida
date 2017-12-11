@@ -26,7 +26,7 @@ public class CreateUserPage extends AbstractPage {
 
 	public void enterUserCredsWithPassword(String username, String email, String password, String confirmPassword) {
 		// unselect the set password checkbox
-		WebElement setPasswordCheckbox = driver.findElement(By.id("setpassword"));
+		WebElement setPasswordCheckbox = driver.findElement(By.className("t-set-password-cb"));
 		if (setPasswordCheckbox.isSelected()) {
 			setPasswordCheckbox.click();
 		}
@@ -43,7 +43,7 @@ public class CreateUserPage extends AbstractPage {
 
 	public void enterUserCredsWithoutPassword(String username, String email) {
 		// ensure the password checkbox is checked
-		WebElement setPasswordCheckbox = driver.findElement(By.id("setpassword"));
+		WebElement setPasswordCheckbox = driver.findElement(By.className("t-set-password-cb"));
 		if (!setPasswordCheckbox.isSelected()) {
 			setPasswordCheckbox.click();
 		}
@@ -58,24 +58,25 @@ public class CreateUserPage extends AbstractPage {
 	}
 
 	public void clickSubmit() {
-		driver.findElement(By.className("submit")).click();
+		driver.findElement(By.className("t-submit-btn")).click();
 	}
 
 	public boolean createSuccess() {
 		try {
-			WebElement id = waitForElementVisible(By.id("wb-cont"));
-			return id.getText().equals("test user");
+			return waitForElementVisible(By.className("t-create-user-page-success"))
+					.getText()
+					.equals("test user");
 		} catch (Exception e) {
 			return false;
 		}
 	}
 
 	public boolean isSubmitEnabled(){
-		return driver.findElement(By.className("submit")).isEnabled();
+		return driver.findElement(By.className("t-submit-btn")).isEnabled();
 	}
 
 	public boolean hasErrors() {
-		return !driver.findElements(By.className("has-error")).isEmpty();
+		return !driver.findElements(By.className("t-form-error")).isEmpty();
 	}
 
 }

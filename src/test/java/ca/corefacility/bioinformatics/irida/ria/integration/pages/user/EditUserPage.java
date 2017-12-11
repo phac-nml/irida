@@ -40,12 +40,12 @@ public class EditUserPage extends AbstractPage {
 	}
 
 	public void clickSubmit() {
-		driver.findElement(By.className("submit")).click();
+		driver.findElement(By.className("t-submit-btn")).click();
 	}
 
 	public boolean updateSuccess(){
 		try {
-			waitForElementVisible(By.className("user-details-title"));
+			waitForElementVisible(By.className("t-edit-user-page-success"));
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -53,11 +53,11 @@ public class EditUserPage extends AbstractPage {
 	}
 
 	public boolean isSubmitEnabled(){
-		return driver.findElement(By.className("submit")).isEnabled();
+		return driver.findElement(By.className("t-submit-btn")).isEnabled();
 	}
 
 	public boolean hasErrors() {
-		return !driver.findElements(By.className("has-error")).isEmpty();
+		return !driver.findElements(By.className("t-form-error")).isEmpty();
 	}
 
 }

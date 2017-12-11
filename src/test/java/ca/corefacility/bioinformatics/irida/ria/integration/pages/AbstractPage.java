@@ -257,6 +257,15 @@ public class AbstractPage {
 	}
 
 	/**
+	 * Wait for jQuery-Validate remote validation to complete
+	 */
+	public void waitForJQueryRemoteValidation() {
+		new WebDriverWait(driver, TIME_OUT_IN_SECONDS)
+				.until((Predicate<WebDriver>) input ->
+						(Boolean) ((JavascriptExecutor) driver).executeScript("return jQuery.active == 0"));
+	}
+
+	/**
 	 * Selenium is having issues sending complete sequences of strings to the UI.
 	 * Sending one at a time might help.  See thread: https://github.com/angular/protractor/issues/698
 	 * @param keys {@link String} value to send to the input
@@ -271,18 +280,18 @@ public class AbstractPage {
 	}
 
 	/**
-	 * Check if the '.submit' is enabled
-	 * @return if the '.submit' is enabled
+	 * Check if the '.t-submit-btn' is enabled
+	 * @return if the '.t-submit-btn' is enabled
 	 */
 	public boolean isSubmitEnabled() {
-		return driver.findElement(By.className("submit")).isEnabled();
+		return driver.findElement(By.className("t-submit-btn")).isEnabled();
 	}
 
 	/**
-	 * Check if there are any '.has-error' elements
-	 * @return if there are any '.has-error' elements
+	 * Check if there are any '.t-form-error' elements
+	 * @return if there are any '.t-form-error' elements
 	 */
 	public boolean hasErrors() {
-		return !driver.findElements(By.className("has-error")).isEmpty();
+		return !driver.findElements(By.className("t-form-error")).isEmpty();
 	}
 }

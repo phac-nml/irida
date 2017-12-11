@@ -11,20 +11,21 @@ export const validationConfig = {
   highlight(element) {
     const fg = $(element).parents(".form-group");
     if (!fg.hasClass("has-error")) {
-      fg.addClass("has-error").removeClass("has-success");
+      fg.addClass("has-error t-form-error").removeClass("has-success");
     }
   },
   unhighlight(element) {
     const fg = $(element).parents(".form-group");
     if (fg.hasClass("has-error")) {
-      fg.removeClass("has-error")
-        .addClass("has-success");
+      fg.removeClass("has-error t-form-error").addClass("has-success");
       setTimeout(() => fg.removeClass("has-success"), 1000);
     }
   },
   // Disable the button of clicking to prevent multiple clicks.
   submitHandler(form) {
-    $(form).find(":submit").attr("disabled", true);
+    $(form)
+      .find(":submit")
+      .attr("disabled", true);
     form.submit();
   }
 };
@@ -72,7 +73,14 @@ export function minLengthIfPresentValidation() {
   );
 }
 
-
+/**
+ * When called it adds validation methods to jquery-validate that check that
+ * the user password contains at least one:
+ * - uppercase letter
+ * - lowercase letter
+ * - number
+ * - special character !@#$%^&*()+?/<>=.\{}
+ */
 export function passwordCharacterReqsValidation() {
   if (typeof $.validator === "function") {
     $.validator.addMethod("hasLowercaseLetter", value => {

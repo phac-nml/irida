@@ -27,22 +27,13 @@ public class PasswordResetPage extends AbstractPage {
 	}
 
 	public void clickSubmit() {
-		submitAndWait(driver.findElement(By.className("submit")));
+		submitAndWait(driver.findElement(By.className("t-submit-btn")));
 	}
 
 	public boolean checkSuccess() {
 		try {
-			WebElement el = waitForElementVisible(By.className("reset-success"));
+			WebElement el = waitForElementVisible(By.className("t-reset-success"));
 			return el.getText().contains("Password successfully updated.");
-		} catch (Exception e) {
-			return false;
-		}
-	}
-	
-	public boolean checkFailure(final String failureMessage) {
-		try {
-			final WebElement el = waitForElementVisible(By.className("alert-danger"));
-			return el.getText().contains(failureMessage);
 		} catch (Exception e) {
 			return false;
 		}

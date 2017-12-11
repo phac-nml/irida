@@ -37,10 +37,8 @@ public class PasswordResetPageIT extends AbstractIridaUIITChromeDriver {
 		String password = "Password1!";
 		passwordResetPage.getPasswordReset("XYZ");
 		passwordResetPage.enterPassword(password, password);
-		assertFalse("Password inputs should have no errors (class='has-error')",
-				passwordResetPage.hasErrors());
-		assertTrue("Submit button should be enabled",
-				passwordResetPage.isSubmitEnabled());
+		assertFalse("Password inputs should have no errors", passwordResetPage.hasErrors());
+		assertTrue("Submit button should be enabled", passwordResetPage.isSubmitEnabled());
 		passwordResetPage.clickSubmit();
 		assertTrue("Should have successfully reset password.", passwordResetPage.checkSuccess());
 	}
@@ -50,7 +48,7 @@ public class PasswordResetPageIT extends AbstractIridaUIITChromeDriver {
 		String password = "Password1!";
 		passwordResetPage.getPasswordReset("XYZ");
 		passwordResetPage.enterPassword(password, "different1");
-		assertTrue("There should be elements with '.has-error' due to mismatching passwords",
+		assertTrue("There should be elements with '.t-form-error' due to mismatching passwords",
 				passwordResetPage.hasErrors());
 		assertFalse("Submit button should be disabled",
 				passwordResetPage.isSubmitEnabled());
@@ -61,7 +59,7 @@ public class PasswordResetPageIT extends AbstractIridaUIITChromeDriver {
 		String password = "notcomplex";
 		passwordResetPage.getPasswordReset("XYZ");
 		passwordResetPage.enterPassword(password, password);
-		assertTrue("There should be elements with '.has-error' due to password not meeting requirements",
+		assertTrue("There should be elements with '.t-form-error' due to password not meeting requirements",
 				passwordResetPage.hasErrors());
 		assertFalse("Submit button should be disabled", passwordResetPage.isSubmitEnabled());
 	}
@@ -72,7 +70,7 @@ public class PasswordResetPageIT extends AbstractIridaUIITChromeDriver {
 		// reset password
 		passwordResetPage.getPasswordReset("XYZ");
 		passwordResetPage.enterPassword(password, password);
-		assertFalse("There should be no '.has-error' elements; password should meet all requirements",
+		assertFalse("There should be no '.t-form-error' elements; password should meet all requirements",
 				passwordResetPage.hasErrors());
 		assertTrue("Submit button should be enabled", passwordResetPage.isSubmitEnabled());
 		passwordResetPage.clickSubmit();

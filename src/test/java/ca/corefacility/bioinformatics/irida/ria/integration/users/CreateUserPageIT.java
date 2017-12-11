@@ -24,6 +24,7 @@ public class CreateUserPageIT extends AbstractIridaUIITChromeDriver {
 	public void createGoodUser() {
 		createPage.goTo();
 		createPage.enterUserCredsWithPassword("tom", "tom@somwehre.com", "Password1!", "Password1!");
+		createPage.waitForJQueryRemoteValidation();
 		assertFalse(createPage.hasErrors());
 		createPage.clickSubmit();
 		assertTrue(createPage.createSuccess());
@@ -33,7 +34,8 @@ public class CreateUserPageIT extends AbstractIridaUIITChromeDriver {
 	public void createExistingUsername() {
 		createPage.goTo();
 		createPage.enterUserCredsWithPassword("mrtest", "tom@somwehre.com", "Password1!", "Password1!");
-		// TODO: add client side remote validation checking if username already exists
+		createPage.waitForJQueryRemoteValidation();
+		assertTrue(createPage.hasErrors());
 		createPage.clickSubmit();
 		assertFalse(createPage.createSuccess());
 	}
@@ -42,7 +44,8 @@ public class CreateUserPageIT extends AbstractIridaUIITChromeDriver {
 	public void createExistingEmail() {
 		createPage.goTo();
 		createPage.enterUserCredsWithPassword("tom", "manager@nowhere.com", "Password1!", "Password1!");
-		// TODO: add client side remote validation checking if email already exists
+		createPage.waitForJQueryRemoteValidation();
+		assertTrue(createPage.hasErrors());
 		createPage.clickSubmit();
 		assertFalse(createPage.createSuccess());
 	}
@@ -51,6 +54,7 @@ public class CreateUserPageIT extends AbstractIridaUIITChromeDriver {
 	public void createNoPasswordMatch() {
 		createPage.goTo();
 		createPage.enterUserCredsWithPassword("tom", "manager@nowhere.com", "Password1!", "Different1");
+		createPage.waitForJQueryRemoteValidation();
 		assertTrue(createPage.hasErrors());
 		assertTrue(createPage.isSubmitEnabled());
 		createPage.clickSubmit();
@@ -61,6 +65,7 @@ public class CreateUserPageIT extends AbstractIridaUIITChromeDriver {
 	public void testCreateUserWithoutPassword() {
 		createPage.goTo();
 		createPage.enterUserCredsWithoutPassword("tom", "tom@somwehre.com");
+		createPage.waitForJQueryRemoteValidation();
 		assertFalse(createPage.hasErrors());
 		createPage.clickSubmit();
 		assertTrue(createPage.createSuccess());
