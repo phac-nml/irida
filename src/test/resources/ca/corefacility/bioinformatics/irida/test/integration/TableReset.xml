@@ -20,6 +20,10 @@
 	<project />
 	<related_project />
 
+	<tool_execution />
+	<tool_execution_parameters />
+	<tool_execution_prev_steps />
+
 	<analysis_output_file />
 	<analysis_output_file_map />
 
