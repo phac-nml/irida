@@ -5,9 +5,6 @@
   <title th:text="#{project.export.title}"></title>
   <link rel="stylesheet" th:href="@{/resources/dist/css/project-ncbi-export.bundle.css}">
   <link rel="stylesheet" th:href="@{/resources/dist/css/sample-files.bundle.css}">
-  <script>
-    window.dependencies = ['irida.ncbi'];
-  </script>
 </head>
 
 <body>
@@ -475,19 +472,21 @@
        * Angular controller for the date picker widget
        */
       (function() {
-        angular.module('irida.ncbi', []).controller("DatePickerControl", function() {
+        const ncbiModule = angular.module('irida.ncbi', []).controller("DatePickerControl", function () {
           var vm = this;
 
           vm.dt = /*[[${#calendars.format(#dates.createToday(),'YYYY-MM-dd')}]]*/ "2015-08-24";
           vm.opened = false;
 
-          vm.open = function(e) {
+          vm.open = function (e) {
             e.preventDefault();
             e.stopPropagation();
             this.opened = true;
           };
 
-        });
+        }).name;
+
+        angular.module("irida").requires.push(ncbiModule);
 
       })();
     </script>

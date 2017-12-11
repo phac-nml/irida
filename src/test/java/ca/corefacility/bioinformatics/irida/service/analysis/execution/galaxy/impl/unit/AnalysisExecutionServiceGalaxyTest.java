@@ -180,7 +180,6 @@ public class AnalysisExecutionServiceGalaxyTest {
 		analysisPrepared.setRemoteWorkflowId(REMOTE_WORKFLOW_ID);
 		analysisPrepared.setRemoteAnalysisId(ANALYSIS_ID);
 
-
 		analysisSubmitting.setId(INTERNAL_ANALYSIS_ID);
 		analysisSubmitting.setAnalysisState(AnalysisState.SUBMITTING);
 		analysisSubmitting.setRemoteWorkflowId(REMOTE_WORKFLOW_ID);
@@ -214,6 +213,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 		analysisCompleted.setAnalysisCleanedState(AnalysisCleanedState.NOT_CLEANED);
 		analysisCompleted.setAnalysis(analysisResults);
 		analysisCompleted.setRemoteInputDataId(LIBRARY_ID);
+		analysisCompleted.setUpdateSamples(true);
 		
 		analysisCompletedCleaning.setId(INTERNAL_ANALYSIS_ID);
 		analysisCompletedCleaning.setAnalysisState(AnalysisState.COMPLETED);

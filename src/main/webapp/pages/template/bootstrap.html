@@ -24,8 +24,7 @@
 				<li uib-dropdown="">
 					<a href="#" uib-dropdown-toggle="" role="button">
 						<span th:text="#{nav.main.project}">Projects</span>
-						&nbsp;
-						<span class="caret"></span>
+						<i class="fa fa-angle-down spaced-left__sm" aria-hidden="true"></i>
 					</a>
 					<ul class="uib-dropdown-menu" role="menu">
 						<li role="menuitem">
@@ -54,8 +53,7 @@
 				<li uib-dropdown="">
 					<a href="#" data-toggle="uib-dropdown" uib-dropdown-toggle="">
 						<span th:text="#{nav.main.analysis}">Analysis</span>
-						&nbsp;
-						<span class="caret"></span>
+						<i class="fa fa-angle-down spaced-left__sm" aria-hidden="true"></i>
 					</a>
 					<ul class="uib-dropdown-menu" role="menu">
 						<li role="menuitem">
@@ -79,7 +77,7 @@
 					<div class="input-group-btn search-dd" sec:authorize="hasAnyRole('ROLE_ADMIN')">
 						<button type="button" id="admin-search-toggle" class="btn dropdown-toggle" data-toggle="dropdown"
 								aria-haspopup="true" aria-expanded="false">
-							<span class="caret"></span>
+							<i class="fa fa-angle-down" aria-hidden="true"></i>
 						</button>
 						<ul class="dropdown-menu dropdown-menu-right">
 							<li><a href="#" id="search-admin-link" th:text="#{nav.main.search.admin}">_Search all projects/samples_</a></li>
@@ -94,8 +92,8 @@
 				<li uib-dropdown="">
 					<a href="#" class="uib-dropdown-toggle" data-toggle="uib-dropdown"
 					   uib-dropdown-toggle="">
-						<span th:text="#{nav.main.help}">__Help__</span>
-						<span class="caret"></span>
+						<th:block th:text="#{nav.main.help}">__Help__</th:block>
+						<i class="fa fa-angle-down spaced-left__sm" aria-hidden="true"></i>
 					</a>
 					<ul class="uib-dropdown-menu" role="menu">
 						<li role="menuitem">
@@ -118,11 +116,14 @@
 						</li>
 						<li role="separator" class="divider"></li>
 						<li role="menuitem" th:if="#{help.contact.email}">
-							<a href="mailto:" th:attr="href='mailto:'+#{help.contact.email}"><i class="fa fa-envelope-o fa-fw" aria-hidden="true"></i>&nbsp;<span th:text="#{generic.irida.contact}"></span></a>
+							<a href="mailto:" th:attr="href='mailto:'+#{help.contact.email}">
+								<i class="fa fa-envelope-o fa-fw spaced-right__sm" aria-hidden="true"></i>
+								<th:block th:text="#{generic.irida.contact}"></th:block></a>
 						</li>
 						<li role="menuitem">
 							<a href="http://www.irida.ca" target="_blank">
-								<i class="fa fa-external-link-square fa-fw" aria-hidden="true"></i>&nbsp;<span th:text="#{generic.irida.website}"></span></a>
+								<i class="fa fa-external-link-square fa-fw spaced-right__sm" aria-hidden="true"></i>
+								<th:text th:text="#{generic.irida.website}"></th:text></a>
 						</li>
 						<li role="separator" class="divider"></li>
 						<li class="dropdown-header"><span th:text="#{irida.version}" /></li>
@@ -138,12 +139,13 @@
 				<li uib-dropdown="">
 					<a href="#" class="uib-dropdown-toggle" data-toggle="uib-dropdown" uib-dropdown-toggle="">
 						<i class="fa fa-cog nav-icons" aria-hidden="true"></i>
-						<span class="caret"></span>
+						<i class="fa fa-angle-down spaced-left__sm" aria-hidden="true"></i>
 					</a>
 					<ul class="uib-dropdown-menu" role="menu">
 						<th:block sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')">
 							<li role="menuitem">
-								<a href="/users" th:href="@{/users}" th:text="#{nav.main.users-list}">
+								<a href="/user
+								's" th:href="@{/users}" th:text="#{nav.main.users-list}">
 									List Users
 								</a>
 							</li>
@@ -202,19 +204,19 @@
 						th:with="email=${#httpSession.getAttribute('CURRENT_USER_DETAILS') != null} ? ${#httpSession.getAttribute('CURRENT_USER_DETAILS').email} : 'anonymous@anonymous.ca'"
 						data-toggle="uib-dropdown" uib-dropdown-toggle="">
 						<img class="gravatar" th:src="${session.gravatar}"/>
-						<span class="caret"></span>
+						<i class="fa fa-angle-down spaced-left__sm" aria-hidden="true"></i>
 					 </a>
 					 <ul class="uib-dropdown-menu" role="menu">
 					 	<li role="menuitem">
 							<a href="#" th:href="@{/users/current}">
-								<span th:text="#{nav.main.account}">_My account_</span>
-								<i class="fa fa-user pull-right" aria-hidden="true"></i>
+								<i class="fa fa-fw fa-user spaced-right__sm" aria-hidden="true"></i>
+								<th:block th:text="#{nav.main.account}">_My account_</th:block>
 							</a>
 						</li>
 						<li role="menuitem">
 							<a th:href="@{/logout}" href="/logout">
-							<span th:text="#{nav.main.logout}">_Logout_</span>
-								<i class="fa fa-sign-out pull-right"></i>
+								<i class="fa fa-fw fa-sign-out spaced-right__sm"></i>
+								<th:block th:text="#{nav.main.logout}">_Logout_</th:block>
 							</a>
 						</li>
 					</ul>

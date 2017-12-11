@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="template/page">
-<head lang="en">
+<head>
 	<title th:text="${title}">Pipelines - Launch</title>
 	<link rel="stylesheet" th:href="@{/resources/dist/css/sample-files.bundle.css}">
 	<script th:inline="javascript">
 	/*<![CDATA[*/
-	    window.dependencies = ['irida.pipelines'];
 		var PAGE = {
 			urls: {
 				upload: /*[[@{/referenceFiles/new}]]*/ '/referenceFiles/new',
