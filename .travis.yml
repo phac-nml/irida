@@ -1,0 +1,34 @@
+sudo: required
+language: java
+
+env:
+  global:
+    - "MYSQL_DATABASE=irida_integration_test"
+    - "MYSQL_USER=test"
+    - "MYSQL_PASSWORD=test"
+  matrix:
+    - "TEST_SUITE=service_testing"
+    - "TEST_SUITE=rest_testing"
+    - "TEST_SUITE=galaxy_testing"
+    - "TEST_SUITE=ui_testing"
+
+services:
+  - docker
+
+addons:
+  mariadb: '10.0'
+
+jdk:
+  - openjdk8
+
+cache:
+  directories:
+    - $HOME/.m2
+    - src/main/webapp/node_modules/
+
+install:
+  - mysql -e "CREATE USER '$MYSQL_USER'@'localhost' IDENTIFIED BY '$MYSQL_PASSWORD'; GRANT ALL ON $MYSQL_DATABASE.* to '$MYSQL_USER'@'localhost';"
+  - mvn -version
+  - pushd lib; ./install-libs.sh; popd
+
+script: ./run-tests.sh $TEST_SUITE
