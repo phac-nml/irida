@@ -375,9 +375,9 @@
           var paired = [];
           var single = [];
 
-          _.forEach(sampleElements, function(ele) {
+          sampleElements.forEach(function(ele) {
             data[ele] = sample.find("." + ele).val();
-          });          
+          });
           
           var filesContainer = $("#files-"+sampleId);
 

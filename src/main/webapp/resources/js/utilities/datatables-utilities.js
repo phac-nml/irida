@@ -1,7 +1,7 @@
 import $ from "jquery";
-import _ from "lodash";
 import { addTooltip } from "./bootstrap-utilities";
 import { createIcon, ICONS } from "./fontawesome-utilities";
+import snakeCase from "lodash/snakeCase";
 
 /*
  Default layout around DataTables in IRIDA.
@@ -145,7 +145,7 @@ export function generateColumnOrderInfo(tableId) {
   }
   const columns = {};
   $(selector).each((index, elm) => {
-    const data = _.snakeCase($(elm).data("data")).toUpperCase();
+    const data = snakeCase($(elm).data("data")).toUpperCase();
     columns[data] = index;
   });
   return columns;
