@@ -43,11 +43,11 @@ Deploying IRIDA mainly involves deploying the `WAR` file into your Servlet conta
 
 Servlet Container Configuration
 -------------------------------
-Two environment variables needs to be set in your Servlet container for IRIDA to function correctly: `spring.profiles.active=prod`, and `dandelion.profile.active=prod`.
+Two environment variables needs to be set in your Servlet container for IRIDA to function correctly: `spring.profiles.active=prod`.
 
 You can adjust these variables in Tomcat by editing (depending on your distribution) `/etc/tomcat/tomcat.conf` (CentOS) or `/etc/default/tomcat7` (Ubuntu), and finding the `JAVA_OPTS` variable and setting the variables as shown below:
 
-    JAVA_OPTS="-Dspring.profiles.active=prod -Ddandelion.profile.active=prod"
+    JAVA_OPTS="-Dspring.profiles.active=prod"
 
 Core Configuration
 ------------------
