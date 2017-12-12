@@ -1,9 +1,6 @@
 @import "helpers/variables";
 @import "helpers/mixins";
 
-// LAYOUTS
-@import "layouts/all";
-
 // ANIMATIONS
 @import "animations/animations";
 
@@ -23,8 +20,12 @@
 // Frameworks used on all pages.
 @import "components/noty";
 
-// TODO: these should only be loaded on their pages - add through dandelion
+// TODO: these should only be loaded on their pages - add through webpack
 @import "pages/remoteApi";
+
+html, body {
+  height: 100%;
+}
 
 // Gravatar
 .nav-gravatar {
@@ -173,11 +174,6 @@ ol.start li:before, ol.continue li:before {
   position: absolute;
   top: 5px;
   right: 0;
-}
-
-// TODO: This is a temporary fix for the modal hidden behind the overlay using dandelion production profile
-.modal-dialog {
-  z-index: 1000000;
 }
 
 /*
