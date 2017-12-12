@@ -54,5 +54,16 @@ $([table selector]).DataTable(Obeject.assign({}, tableConfig), {
 ```
 
 For a complete example of custom column rendering, row selection, and date rendering see `/src/main/webapp/resources/js/pages/projects/samples/project-samples.js`.
+
+Server Side
+===========
+
+Server sided parsing and capturing of DataTables parameters is handled by adding the annotated argument `@DataTablesRequest DataTablesParams params` to you ajax handler. For and example see `ProjectSamplesController#getProjectSamples`.
+
+`DataTablesResponse` object can be use to return the correct json structure for DataTables to consume.  Three objects are required to create this response:
+
+1. `DataTablesParams` object received as an argument, 
+2. An instance of a `Page` object, 
+3. A `List` of objects that implements `DataTablesResponseModel`.  The implemented class should be in the directory `/Users/josh/Dev/irida/src/main/java/ca/corefacility/bioinformatics/irida/ria/web/models/datatables/` and be prefixed with `DT`. 
     
     
