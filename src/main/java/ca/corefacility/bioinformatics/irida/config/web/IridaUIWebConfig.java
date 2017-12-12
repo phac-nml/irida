@@ -1,11 +1,7 @@
 package ca.corefacility.bioinformatics.irida.config.web;
 
 import java.io.IOException;
-import java.nio.file.DirectoryIteratorException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -24,12 +20,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ViewResolver;
-import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.thymeleaf.cache.StandardCacheManager;
@@ -45,9 +36,7 @@ import ca.corefacility.bioinformatics.irida.ria.config.AnalyticsHandlerIntercept
 import ca.corefacility.bioinformatics.irida.ria.config.BreadCrumbInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequestResolver;
-import com.github.dandelion.datatables.extras.spring3.ajax.DatatablesCriteriasMethodArgumentResolver;
-import com.github.dandelion.datatables.thymeleaf.dialect.DataTablesDialect;
-import com.github.dandelion.thymeleaf.dialect.DandelionDialect;
+
 import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
@@ -128,7 +117,6 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 		// production.
 		registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
 		registry.addResourceHandler("/public/**").addResourceLocations("/public/");
-		registry.addResourceHandler("/dandelion-assets/**").addResourceLocations("/dandelion-assets/");
 	}
 
 	@Override
@@ -211,8 +199,6 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 	 */
 	@Override public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
 		argumentResolvers.add(new DataTablesRequestResolver());
-		// TODO: (Josh: 2017-05-23) Remove DatatablesCriteriasMethodArgumentResolver once Dandelion is removed from project.
-		argumentResolvers.add(new DatatablesCriteriasMethodArgumentResolver());
 	}
 
 	/**
@@ -225,9 +211,6 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 		dialects.add(new SpringSecurityDialect());
 		dialects.add(new LayoutDialect());
 		dialects.add(new DataAttributeDialect());
-		// TODO: (Josh: 2017-05-23) Remove these after all Dandelion removed from project.
-		dialects.add(new DandelionDialect());
-		dialects.add(new DataTablesDialect());
 		return dialects;
 	}
 
