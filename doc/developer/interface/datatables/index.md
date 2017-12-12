@@ -64,6 +64,6 @@ Server sided parsing and capturing of DataTables parameters is handled by adding
 
 1. `DataTablesParams` object received as an argument, 
 2. An instance of a `Page` object, 
-3. A `List` of objects that implements `DataTablesResponseModel`.  The implemented class should be in the directory `/Users/josh/Dev/irida/src/main/java/ca/corefacility/bioinformatics/irida/ria/web/models/datatables/` and be prefixed with `DT`. 
+3. A `List` of objects that implements `DataTablesResponseModel`.  The implemented class should be in the directory `src/main/java/ca/corefacility/bioinformatics/irida/ria/web/models/datatables/` and be prefixed with `DT`. 
     
     
