@@ -65,5 +65,20 @@ Server sided parsing and capturing of DataTables parameters is handled by adding
 1. `DataTablesParams` object received as an argument, 
 2. An instance of a `Page` object, 
 3. A `List` of objects that implements `DataTablesResponseModel`.  The implemented class should be in the directory `src/main/java/ca/corefacility/bioinformatics/irida/ria/web/models/datatables/` and be prefixed with `DT`. 
+
+Example usage:
+
+```java
+public DataTablesResponse ajaxRequest(@DataTablesRequest DataTablesParams params) {
+    // get a Page of objects
+    Page<Project> page = service.list(...);
+
+    // build the datatables response objects
+    List<DTProject> responses = ... // build response objects using page from above
+
+    // return a new DataTablesResponse class
+    return new DataTablesResponse(params, page, responses);
+}
+```
     
     
