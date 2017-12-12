@@ -45,7 +45,7 @@ public class EditUserPage extends AbstractPage {
 
 	public boolean updateSuccess(){
 		try {
-			waitForElementVisible(By.className("t-edit-user-page-success"));
+			waitForElementVisible(By.className("t-user-page-success"));
 			return true;
 		} catch (Exception e) {
 			return false;

@@ -63,7 +63,7 @@ public class CreateUserPage extends AbstractPage {
 
 	public boolean createSuccess() {
 		try {
-			return waitForElementVisible(By.className("t-create-user-page-success"))
+			return waitForElementVisible(By.className("t-user-page-success"))
 					.getText()
 					.equals("test user");
 		} catch (Exception e) {
