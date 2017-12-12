@@ -203,7 +203,7 @@ public class AbstractPage {
 
 	/**
 	 * Test for breadcrumbs on any given page.
-	 * 
+	 *
 	 * @param expected
 	 *            {@link List} containing {@link Map} of expected crumbs - href:
 	 *            expected href - text: expected text displayed
@@ -223,7 +223,7 @@ public class AbstractPage {
 
 	/**
 	 * Get the current JETTY port
-	 * 
+	 *
 	 * @return
 	 */
 	public String getApplicationPort() {
@@ -233,7 +233,7 @@ public class AbstractPage {
 	/**
 	 * Convenience method to make sure that form submission actually happens
 	 * before proceeding to checking later steps.
-	 * 
+	 *
 	 * @param submitButton
 	 *            the submit button to click.
 	 */
@@ -244,22 +244,9 @@ public class AbstractPage {
 	}
 
 	/**
-	 * Wait for jQuery AJAX calls to complete on a page with Data tables.
+	 * Wait for jQuery AJAX calls to complete on a page
 	 */
-	public void waitForDatatableAjax() {
-		new WebDriverWait(driver, TIME_OUT_IN_SECONDS).until(new Predicate<WebDriver>() {
-			@Override
-			public boolean apply(WebDriver input) {
-				return (Boolean) ((JavascriptExecutor) driver)
-						.executeScript("return jQuery.active == 0");
-			}			
-		});
-	}
-
-	/**
-	 * Wait for jQuery-Validate remote validation to complete
-	 */
-	public void waitForJQueryRemoteValidation() {
+	public void waitForJQueryAjaxResponse() {
 		new WebDriverWait(driver, TIME_OUT_IN_SECONDS)
 				.until((Predicate<WebDriver>) input ->
 						(Boolean) ((JavascriptExecutor) driver).executeScript("return jQuery.active == 0"));
