@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="sequenceFiles/_base">
+      data-layout-decorate="~{sequenceFiles/_base}">
 <head>
     <title th:text="${file.getLabel()}"></title>
     <script th:inline="javascript">
