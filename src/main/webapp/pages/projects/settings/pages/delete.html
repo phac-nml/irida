@@ -25,7 +25,7 @@
             <form method="POST" th:action="@{/projects/{id}/settings/delete(id=${project.id})}">
                 <div class="checkbox">
                     <label>
-                        <input id="confirm-deletion" value="true" type="checkbox" name="confirm"/>
+                        <input id="confirm-deletion" type="checkbox" value="true" name="confirm"/>
                         <span th:text="#{project.settings.delete.confirm}">_Confirm Deletion_</span>
                     </label>
                 </div>
