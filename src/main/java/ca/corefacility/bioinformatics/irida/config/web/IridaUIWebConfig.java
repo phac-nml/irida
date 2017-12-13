@@ -179,6 +179,7 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements Applica
 	public ThymeleafViewResolver viewResolver(){
 		ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
 		viewResolver.setTemplateEngine(templateEngine());
+		viewResolver.setOrder(1);
 		return viewResolver;
 	}
 
