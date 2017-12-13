@@ -3,9 +3,6 @@
       layout:decorator="projects/settings/_base">
 <head>
     <title th:text="#{project.settings.page.delete}">Basic</title>
-    <script th:inline="javascript">
-      var PAGE = {};
-    </script>
 </head>
 <body>
 <th:block layout:fragment="settings-content">
@@ -28,16 +25,20 @@
             <form method="POST" th:action="@{/projects/{id}/settings/delete(id=${project.id})}">
                 <div class="checkbox">
                     <label>
-                        <input id="confirm-deletion" type="checkbox" value="true" name="confirm"/>
+                        <input id="confirm-deletion" value="true" type="checkbox" name="confirm"/>
                         <span th:text="#{project.settings.delete.confirm}">_Confirm Deletion_</span>
                     </label>
                 </div>
 
-                <button type="submit" id="submit-delete" class="btn btn-danger" th:text="#{project.settings.delete.submit}">_Delete project_</button>
+                <button type="submit" id="submit-delete" class="btn btn-danger"
+                        th:text="#{project.settings.delete.submit}">_Delete project_
+                </button>
             </form>
         </div>
     </div>
 </th:block>
-
+<th:block layout:fragment="scripts">
+    <script src="/resources/js/pages/projects/project-settings-basic.js"></script>
+</th:block>
 </body>
 </html>
