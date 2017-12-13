@@ -4,13 +4,6 @@
       layout:decorator="template/page">
 <head>
     <title th:text="${user.label}">_USER PAGE_</title>
-    <script th:inline="javascript">
-      var PAGE = {
-        urls: {
-          validateEmail: /*[[@{/users/validate-email}]]*/ "/users/validate-email",
-        }
-      };
-    </script>
 </head>
 
 <body>

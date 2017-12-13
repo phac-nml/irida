@@ -6,15 +6,15 @@ import {
   validationConfig
 } from "../../utilities/form-validation";
 
+// Minimum password length
 const PWD_MIN_LENGTH = 8;
 
 // Create User page "Require User Activation" checkbox (input#setpassword)
 // if unchecked then don't activate user, allow password to be set in page
 // if checked, don't ask for password for new user creation
 const $setPasswordCb = $(".js-set-password-cb");
-
-const $pwdFormGroup = $(".js-password-wrapper");
-const $pwdForm = $pwdFormGroup.parents("form");
+const $pwdWrapper = $(".js-password-wrapper");
+const $pwdForm = $pwdWrapper.parents("form");
 const $submit = $(".js-submit-btn");
 const $pwdInputs = $(".js-password-input");
 
@@ -23,6 +23,25 @@ passwordCharacterReqsValidation();
 
 function submitBtnToggle() {
   return $submit.prop("disabled", $pwdForm.valid() ? false : "disabled");
+}
+
+function getBaseUrl() {
+  try {
+    // window.TL.BASE_URL is undefined on the password_reset page
+    // this function should not be called on the password_reset page
+    return window.TL.BASE_URL;
+  } catch (e) {
+    // in case window.TL.BASE_URL is undefined, return a reasonable default
+    return "/";
+  }
+}
+
+function getUsernameValidationUrl() {
+  return getBaseUrl() + "users/validate-username";
+}
+
+function getEmailValidationUrl() {
+  return getBaseUrl() + "users/validate-email";
 }
 
 function passwordResetValidation() {
@@ -63,7 +82,7 @@ function editUserDetailsValidation() {
         },
         email: {
           minlength: 5,
-          remote: window.PAGE.urls.validateEmail
+          remote: getEmailValidationUrl()
         },
         password: {
           minlength: PWD_MIN_LENGTH,
@@ -84,13 +103,12 @@ function editUserDetailsValidation() {
 }
 
 function createUserValidation() {
-  // TODO: add remote checks for existing username and email https://jqueryvalidation.org/remote-method/
   const createUserValidation = Object.assign({}, validationConfig, {
     rules: {
       username: {
         required: true,
         minlength: 3,
-        remote: window.PAGE.urls.validateUsername
+        remote: getUsernameValidationUrl()
       },
       firstName: {
         required: true,
@@ -103,7 +121,7 @@ function createUserValidation() {
       email: {
         required: true,
         minlength: 5,
-        remote: window.PAGE.urls.validateEmail
+        remote: getEmailValidationUrl()
       },
       phoneNumber: {
         required: true,
@@ -128,10 +146,10 @@ function createUserValidation() {
 
   function toggleShowPassword() {
     if ($setPasswordCb.prop("checked")) {
-      $pwdFormGroup.hide();
+      $pwdWrapper.hide();
       $pwdInputs.removeAttr("required");
     } else {
-      $pwdFormGroup.show();
+      $pwdWrapper.show();
       $pwdInputs.attr("required", "required");
     }
   }
@@ -144,7 +162,7 @@ function createUserValidation() {
     // configured to send activation e-mails to users. Uncheck the checkbox
     // and show the password entry fields.
     $setPasswordCb.prop("checked", false);
-    $pwdFormGroup.show();
+    $pwdWrapper.show();
     $pwdInputs.attr("required", "required");
   } else {
     // if the activation e-mail checkbox is not disabled, then we're
