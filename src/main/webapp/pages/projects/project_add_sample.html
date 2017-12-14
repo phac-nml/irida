@@ -29,7 +29,7 @@
                     th:action="@{/projects/{id}/samples/new(id=${project.getId()})}"
                     method="post">
                 <div class="form-group">
-                  <label for="labesampleNamel" th:text="#{samples.details.sampleName}">_SAMPLE_NAME_</label>
+                  <label for="sampleName" th:text="#{samples.details.sampleName}">_SAMPLE_NAME_</label>
                   <small class="text-muted pull-right" th:utext="#{project.samples.new.form.label.info}"></small>
                   <input type="text" id="sampleName" name="sampleName" class="form-control"
                          th:field="*{sampleName}"
