@@ -93,13 +93,16 @@
 
 				var currentSettings = ParameterService.getSelectedParameters().currentSettings;
 				var currentToolDataTableSettings = ToolDataTableService.getSettings().currentSettings;
-				var toolDataTableParameters = Object.values(currentToolDataTableSettings).map(
-				    ({label, value, name}) => ({label, value, name})
-				);
 				var selectedParameters = {
 					"id"        : currentSettings.id,
-					"parameters": currentSettings.parameters.concat(toolDataTableParameters)
+					"parameters": currentSettings.parameters
 				};
+				if (currentToolDataTableSettings.length > 0) {
+				    var toolDataTableParameters = Object.values(currentToolDataTableSettings).map(
+                        ({label, value, name}) => ({label, value, name})
+                    );
+                    selectedParameters.parameters.concat(toolDataTableParameters);
+				}
 				// Create the parameter object;
 				var params = {};
 				if ($.isNumeric(ref)) {
@@ -401,7 +404,7 @@
             settings["currentSettings"] = {};
             settings["availableSettings"] = {};
             for (var toolDataTable of page.pipeline.toolDataTables) {
-                settings.currentSettings[toolDataTable.id] = null;
+                settings.currentSettings = {};
                 settings.availableSettings[toolDataTable.id] = toolDataTable;
             }
         }
