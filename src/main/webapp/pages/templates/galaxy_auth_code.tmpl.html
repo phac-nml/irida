@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
-	<title layout:title-pattern="$DECORATOR_TITLE - $CONTENT_TITLE" th:text="#{global.title}">IRIDA Platform</title>
+	<title data-layout-title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE" th:text="#{global.title}">IRIDA Platform</title>
 </head>
 <body vocab="http://schema.org/" typeof="WebPage" ng-app="GalaxyRedirect" ng-controller="authCodeController">
 
