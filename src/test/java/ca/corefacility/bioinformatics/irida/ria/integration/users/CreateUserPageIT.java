@@ -3,7 +3,9 @@ package ca.corefacility.bioinformatics.irida.ria.integration.users;
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.CreateUserPage;
+
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,35 +25,51 @@ public class CreateUserPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void createGoodUser() {
 		createPage.goTo();
-		createPage.createUserWithPassword("tom", "tom@somwehre.com", "Password1", "Password1");
+		createPage.enterUserCredsWithPassword("tom", "tom@somwehre.com", "Password1!", "Password1!");
+		createPage.waitForJQueryAjaxResponse();
+		assertFalse(createPage.hasErrors());
+		createPage.clickSubmit();
 		assertTrue(createPage.createSuccess());
 	}
 
 	@Test
 	public void createExistingUsername() {
 		createPage.goTo();
-		createPage.createUserWithPassword("mrtest", "tom@somwehre.com", "Password1", "Password1");
+		createPage.enterUserCredsWithPassword("mrtest", "tom@somwehre.com", "Password1!", "Password1!");
+		createPage.waitForJQueryAjaxResponse();
+		assertTrue(createPage.hasErrors());
+		createPage.clickSubmit();
 		assertFalse(createPage.createSuccess());
 	}
 
 	@Test
 	public void createExistingEmail() {
 		createPage.goTo();
-		createPage.createUserWithPassword("tom", "manager@nowhere.com", "Password1", "Password1");
+		createPage.enterUserCredsWithPassword("tom", "manager@nowhere.com", "Password1!", "Password1!");
+		createPage.waitForJQueryAjaxResponse();
+		assertTrue(createPage.hasErrors());
+		createPage.clickSubmit();
 		assertFalse(createPage.createSuccess());
 	}
 
 	@Test
 	public void createNoPasswordMatch() {
 		createPage.goTo();
-		createPage.createUserWithPassword("tom", "manager@nowhere.com", "Password1", "Different1");
+		createPage.enterUserCredsWithPassword("tom", "manager@nowhere.com", "Password1!", "Different1");
+		createPage.waitForJQueryAjaxResponse();
+		assertTrue(createPage.hasErrors());
+		assertTrue(createPage.isSubmitEnabled());
+		createPage.clickSubmit();
 		assertFalse(createPage.createSuccess());
 	}
 
 	@Test
 	public void testCreateUserWithoutPassword() {
 		createPage.goTo();
-		createPage.createUserWithoutPassword("tom", "tom@somwehre.com");
+		createPage.enterUserCredsWithoutPassword("tom", "tom@somwehre.com");
+		createPage.waitForJQueryAjaxResponse();
+		assertFalse(createPage.hasErrors());
+		createPage.clickSubmit();
 		assertTrue(createPage.createSuccess());
 	}
 
