@@ -8,6 +8,7 @@ upgrading IRIDA that cannot be automated.
 ----------------
 
 * This upgrade makes schema changes to the databases and cannot be parallel deployed.  Servlet container must be stopped before deploying the new `war` file.
+* This upgrade removes Dandelion framework from IRIDA.  `-Ddandelion.profile.active=prod"` should be removed from Tomcat settings.  Please see <https://irida.corefacility.ca/documentation/administrator/web/#servlet-container-configuration>.
 
 0.18.0 to 0.19.0
 ----------------
