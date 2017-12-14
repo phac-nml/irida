@@ -22,8 +22,8 @@ public class PasswordExpiryCheckerTest {
 	private PasswordExpiryChecker checker;
 	private UserRepository userRepository;
 
-	User user;
-	User revUser;
+	private User user;
+	private User revUser;
 
 	@Before
 	public void setUp() {
@@ -51,6 +51,7 @@ public class PasswordExpiryCheckerTest {
 		cal.add(Calendar.DAY_OF_MONTH, -1);
 		Date expiryDate = cal.getTime();
 
+		@SuppressWarnings("unchecked")
 		Revision<Integer, User> revision = new Revision(new RevisionMetadata() {
 			@Override
 			public Number getRevisionNumber() {
@@ -88,6 +89,7 @@ public class PasswordExpiryCheckerTest {
 		cal.add(Calendar.DAY_OF_MONTH, -10);
 		Date expiryDate = cal.getTime();
 
+		@SuppressWarnings("unchecked")
 		Revision<Integer, User> revision = new Revision(new RevisionMetadata() {
 			@Override
 			public Number getRevisionNumber() {
@@ -125,6 +127,7 @@ public class PasswordExpiryCheckerTest {
 		cal.add(Calendar.DAY_OF_MONTH, -10);
 		Date expiryDate = cal.getTime();
 
+		@SuppressWarnings("unchecked")
 		Revision<Integer, User> revision = new Revision(new RevisionMetadata() {
 			@Override
 			public Number getRevisionNumber() {

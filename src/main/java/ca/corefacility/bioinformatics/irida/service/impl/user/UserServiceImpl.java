@@ -1,17 +1,19 @@
 package ca.corefacility.bioinformatics.irida.service.impl.user;
 
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Valid;
-import javax.validation.Validator;
-
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
-import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
+import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,20 +31,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
-import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
-import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
-
-import com.google.common.collect.ImmutableMap;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
+import javax.validation.Validator;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of the {@link UserService}.
@@ -322,8 +318,9 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 
 	/**
 	 * Validate the password of a {@link User} *before* encoding the password
-	 * and passing to super.
+	 * and passing to super.  This will check both password structure and whether a password has been reused
 	 *
+	 * @param userId   the ID of the user to check for old passwords.
 	 * @param password the password to validate.
 	 * @return true if valid, false otherwise.
 	 */
@@ -334,7 +331,6 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 		Set<String> oldPasswords = revisions.getContent().stream().map(r -> r.getEntity().getPassword())
 				.collect(Collectors.toSet());
 
-		boolean reused = false;
 		for (String oldPassword : oldPasswords) {
 			if (passwordEncoder.matches(password, oldPassword)) {
 				throw new PasswordReusedException("Password has already been used.");

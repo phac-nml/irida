@@ -7,9 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
 import org.springframework.security.authentication.CredentialsExpiredException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsChecker;
 
@@ -43,7 +40,6 @@ public class PasswordExpiryChecker implements UserDetailsChecker {
 	 */
 	@Override
 	public void check(UserDetails toCheck) {
-		String username = toCheck.getUsername();
 		User user = userRepository.loadUserByUsername(toCheck.getUsername());
 
 		Revisions<Integer, User> revisions = userRepository.findRevisions(user.getId());
