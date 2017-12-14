@@ -1,4 +1,5 @@
 import angular from "angular";
+import "@bassettsj/livestamp";
 import "./../../../css/modules/events.css";
 
 /**
@@ -17,7 +18,7 @@ function EventsService($http) {
   function getEvents(url, size = 10) {
     return $http
       .get(url, {
-        params: { size },
+        params: {size},
         headers: {
           Accept: "text/html"
         }
@@ -44,15 +45,15 @@ function events(svc, $compile) {
     },
     replace: true,
     controllerAs: "eventsCtrl",
-    controller: function($scope, $element) {
+    controller: function ($scope, $element) {
       const vm = this;
 
       vm.size = 10;
       $scope.$watch(
-        function() {
+        function () {
           return vm.size;
         },
-        function(n, o) {
+        function (n, o) {
           if (n !== o) {
             getEvents();
           }
@@ -60,7 +61,7 @@ function events(svc, $compile) {
       );
 
       function getEvents() {
-        svc.getEvents($scope.url, vm.size).then(function(data) {
+        svc.getEvents($scope.url, vm.size).then(function (data) {
           $element.html($compile(data)($scope));
         });
       }

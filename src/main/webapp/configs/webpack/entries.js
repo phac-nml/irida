@@ -5,6 +5,7 @@
  */
 module.exports = {
   vendor: ["lodash", "babel-polyfill"],
+  activities: "./resources/js/pages/activities/activities.js",
   announcements: "./resources/js/pages/announcement/announcements.js",
   app: "./resources/js/app.js",
   dashboard: "./resources/js/pages/dashboard.js",
