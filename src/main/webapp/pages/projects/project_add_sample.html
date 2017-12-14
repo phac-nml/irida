@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html
-      xmlns:th="http://www.thymeleaf.org" layout:decorator="template/page"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        data-layout-decorate="~{template/page}">
 <head>
   <title th:text="#{project.samples.new.title(${project.label})}">__NEW_SAMPLE__</title>
   <script th:inline="javascript">

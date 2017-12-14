@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="sequenceFiles/_base">
+      data-layout-decorate="~{sequenceFiles/_base}">
 <head>
     <title th:text="${file.getLabel()}">THIS IS SOMETHING WRONG</title>
     <link rel="stylesheet" th:href="@{/resources/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css}"/>
