@@ -58,10 +58,10 @@ public class RemoteAPITokenServiceImplIT {
 	public void setUp() {
 		User u = new User();
 		u.setUsername("tom");
-		u.setPassword(passwordEncoder.encode("Password1"));
+		u.setPassword(passwordEncoder.encode("Password1!"));
 		u.setSystemRole(Role.ROLE_USER);
 
-		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(u, "Password1",
+		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(u, "Password1!",
 				ImmutableList.of(Role.ROLE_USER));
 		auth.setDetails(u);
 		SecurityContextHolder.getContext().setAuthentication(auth);
