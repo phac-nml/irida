@@ -9,6 +9,8 @@ Changes
 * [UI]: Fixed issue where Projects table could not be exported (0.19.2).
 * [UI]: Fixed user menu icons misaligning in Firefox (0.19.2).
 * [Developer]: Updated front end templating engine to Thymeleaf v3.
+* [Administration]: Added option to expire passwords after a configured number of days.  Set `security.password.expiry` in `/etc/irida/irida.conf` to configure.
+* [Administration]: Limiting users from reusing passwords.
 
 0.18.0 to 0.19.0
 ----------------
