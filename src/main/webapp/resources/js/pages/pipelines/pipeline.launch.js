@@ -387,6 +387,15 @@
     function ToolDataTableService() {
         var svc = this;
 
+        // Check to see if there are any tool data tables, if not put a default
+        if(page.pipeline.toolDataTables == null) {
+            page.pipeline.toolDataTables = [{
+                id: "no_tool_data_tables",
+                label: "",
+                parameters: []
+            }];
+        }
+
         var settings = {};
         if (page.pipeline.toolDataTables != null) {
             settings["currentSettings"] = {};
