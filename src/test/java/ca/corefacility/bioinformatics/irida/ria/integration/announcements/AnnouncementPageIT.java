@@ -78,7 +78,7 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver{
 
         controlPage.clickCreateNewAnnouncementButton();
         createPage.enterMessage(message);
-        controlPage.waitForDatatableAjax();
+        controlPage.waitForJQueryAjaxResponse();
 
 		// New messages should appear first in the table
 		String newMessage = controlPage.getAnnouncement(0);

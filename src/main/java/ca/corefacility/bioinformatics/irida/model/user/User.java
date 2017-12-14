@@ -73,13 +73,14 @@ public class User extends IridaResourceSupport implements MutableIridaThing, Com
 	private String email;
 
 	@NotNull(message = "{user.password.notnull}")
-	// passwords must be at least six characters long, but prohibit passwords
+	// passwords must be at least 8 characters long, but prohibit passwords
 	// longer than 1024 (who's going to remember a password that long anyway?)
 	// to prevent DOS attacks on our password hashing.
-	@Size(min = 6, max = 1024, message = "{user.password.size}")
+	@Size(min = 8, max = 1024, message = "{user.password.size}")
 	@Pattern.List({ @Pattern(regexp = "^.*[A-Z].*$", message = "{user.password.uppercase}"),
 			@Pattern(regexp = "^.*[0-9].*$", message = "{user.password.number}"),
-			@Pattern(regexp = "^.*[a-z].*$", message = "{user.password.lowercase}") })
+			@Pattern(regexp = "^.*[a-z].*$", message = "{user.password.lowercase}"),
+			@Pattern(regexp = "^.*[!@#$%^&*()+?/<>=.\\\\{}].*$", message = "{user.password.special}") })
 	private String password;
 
 	@NotNull(message = "{user.firstName.notnull}")
