@@ -203,7 +203,7 @@ public class AbstractPage {
 
 	/**
 	 * Test for breadcrumbs on any given page.
-	 * 
+	 *
 	 * @param expected
 	 *            {@link List} containing {@link Map} of expected crumbs - href:
 	 *            expected href - text: expected text displayed
@@ -223,7 +223,7 @@ public class AbstractPage {
 
 	/**
 	 * Get the current JETTY port
-	 * 
+	 *
 	 * @return
 	 */
 	public String getApplicationPort() {
@@ -233,7 +233,7 @@ public class AbstractPage {
 	/**
 	 * Convenience method to make sure that form submission actually happens
 	 * before proceeding to checking later steps.
-	 * 
+	 *
 	 * @param submitButton
 	 *            the submit button to click.
 	 */
@@ -244,16 +244,12 @@ public class AbstractPage {
 	}
 
 	/**
-	 * Wait for jQuery AJAX calls to complete on a page with Data tables.
+	 * Wait for jQuery AJAX calls to complete on a page
 	 */
-	public void waitForDatatableAjax() {
-		new WebDriverWait(driver, TIME_OUT_IN_SECONDS).until(new Predicate<WebDriver>() {
-			@Override
-			public boolean apply(WebDriver input) {
-				return (Boolean) ((JavascriptExecutor) driver)
-						.executeScript("return jQuery.active == 0");
-			}			
-		});
+	public void waitForJQueryAjaxResponse() {
+		new WebDriverWait(driver, TIME_OUT_IN_SECONDS)
+				.until((Predicate<WebDriver>) input ->
+						(Boolean) ((JavascriptExecutor) driver).executeScript("return jQuery.active == 0"));
 	}
 
 	/**
@@ -268,5 +264,21 @@ public class AbstractPage {
 			inputElement.sendKeys(key);
 			waitForTime(200);
 		}
+	}
+
+	/**
+	 * Check if the '.t-submit-btn' is enabled
+	 * @return if the '.t-submit-btn' is enabled
+	 */
+	public boolean isSubmitEnabled() {
+		return driver.findElement(By.className("t-submit-btn")).isEnabled();
+	}
+
+	/**
+	 * Check if there are any '.t-form-error' elements
+	 * @return if there are any '.t-form-error' elements
+	 */
+	public boolean hasErrors() {
+		return !driver.findElements(By.className("t-form-error")).isEmpty();
 	}
 }

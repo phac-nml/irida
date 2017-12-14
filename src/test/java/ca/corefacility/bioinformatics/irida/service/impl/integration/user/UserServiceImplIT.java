@@ -105,7 +105,7 @@ public class UserServiceImplIT {
 	@Test
 	@WithMockUser(username = "fbristow", roles = "MANAGER")
 	public void testCreateUserAsManagerSucceed() {
-		User u = new User("user", "user@user.us", "Password1", "User", "User", "7029");
+		User u = new User("user", "user@user.us", "Password1!", "User", "User", "7029");
 		u.setSystemRole(Role.ROLE_USER);
 		userService.create(u);
 	}
@@ -191,7 +191,7 @@ public class UserServiceImplIT {
 	@Test
 	@WithMockUser(username = "fbristow", roles = "MANAGER")
 	public void testUpdatePasswordWithCompleteLoginDetails() {
-		String updatedPassword = "NewPassword1";
+		String updatedPassword = "NewPassword1!";
 		User updated = userService.changePassword(1L, updatedPassword);
 		assertNotEquals("Password in user object should be encoded.", updated.getPassword(), updatedPassword);
 		assertTrue("Password is encoded correctly.", passwordEncoder.matches(updatedPassword, updated.getPassword()));
@@ -208,15 +208,18 @@ public class UserServiceImplIT {
 	public void testUpdatePasswordWithExpiredPassword() {
 		User u = new User();
 		u.setUsername("fbristow");
-		u.setPassword(passwordEncoder.encode("Password1"));
+		String encodedPassword = passwordEncoder.encode("Password1!");
+		System.out.println("testUpdatePasswordWithExpiredPassword");
+		System.out.println(encodedPassword);
+		u.setPassword(encodedPassword);
 		u.setSystemRole(Role.ROLE_MANAGER);
 		u.setCredentialsNonExpired(false);
-		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(u, "Password1",
+		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(u, "Password1!",
 				ImmutableList.of(Role.ROLE_MANAGER));
 		auth.setDetails(u);
 		auth.setAuthenticated(false);
 		SecurityContextHolder.getContext().setAuthentication(auth);
-		String updatedPassword = "NewPassword1";
+		String updatedPassword = "NewPassword1!";
 		User updated = userService.changePassword(1L, updatedPassword);
 		assertNotEquals("Password in user object should be encoded.", updated.getPassword(), updatedPassword);
 		assertTrue("User should not have expired credentials anymore.", updated.isCredentialsNonExpired());
@@ -227,13 +230,13 @@ public class UserServiceImplIT {
 	public void testUpdatePasswordWithAnonymousUser() {
 		SecurityContextHolder.getContext().setAuthentication(
 				new AnonymousAuthenticationToken("key", "anonymouse", ImmutableList.of(Role.ROLE_SEQUENCER)));
-		userService.changePassword(1L, "NewPassword1");
+		userService.changePassword(1L, "NewPassword1!");
 	}
 
 	@Test(expected = EntityExistsException.class)
 	@WithMockUser(username = "fbristow", roles = "MANAGER")
 	public void testCreateDuplicateEmail() {
-		User u = new User("user", "manager@nowhere.com", "Password1", "User", "User", "7029");
+		User u = new User("user", "manager@nowhere.com", "Password1!", "User", "User", "7029");
 		u.setSystemRole(Role.ROLE_USER);
 		userService.create(u);
 	}
@@ -241,7 +244,7 @@ public class UserServiceImplIT {
 	@Test(expected = EntityExistsException.class)
 	@WithMockUser(username = "fbristow", roles = "MANAGER")
 	public void testCreateDuplicateUsername() {
-		User u = new User("fbristow", "distinct@nowhere.com", "Password1", "User", "User", "7029");
+		User u = new User("fbristow", "distinct@nowhere.com", "Password1!", "User", "User", "7029");
 		u.setSystemRole(Role.ROLE_USER);
 		userService.create(u);
 	}
@@ -321,7 +324,7 @@ public class UserServiceImplIT {
 			fail();
 		} catch (ConstraintViolationException e) {
 			Set<ConstraintViolation<?>> violationSet = e.getConstraintViolations();
-			assertEquals(1, violationSet.size());
+			assertEquals(2, violationSet.size());
 			ConstraintViolation<?> violation = violationSet.iterator().next();
 			assertTrue(violation.getPropertyPath().toString().contains("password"));
 		} catch (Exception e) {

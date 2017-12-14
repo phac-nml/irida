@@ -28,6 +28,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mail.MailSendException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -163,7 +164,7 @@ public class UsersController {
 			Map<String, Object> map = new HashMap<>();
 			map.put("identifier", project.getId());
 			map.put("name", project.getName());
-			map.put("isManager", pujoin.getProjectRole().equals(ProjectRole.PROJECT_OWNER) ? true : false);
+			map.put("isManager", pujoin.getProjectRole().equals(ProjectRole.PROJECT_OWNER));
 			map.put("subscribed" , pujoin.isEmailSubscription());
 
 			String proleMessageName = "projectRole." + pujoin.getProjectRole().toString();
@@ -488,6 +489,39 @@ public class UsersController {
 		return new DataTablesResponse(params, userPage, usersData);
 	}
 
+
+	/**
+	 * Check that username not already taken
+	 * @param username Username to check existence of
+	 * @return true if username not taken
+	 */
+	@RequestMapping(value = "/validate-username", method = RequestMethod.GET)
+	@ResponseBody
+	public Boolean usernameExists(@RequestParam String username) {
+		try {
+			userService.getUserByUsername(username);
+			return false;
+		} catch (UsernameNotFoundException e) {
+			return true;
+		}
+	}
+
+	/**
+	 * Check that email not already taken
+	 * @param email Email address to check existence of
+	 * @return true if email not taken
+	 */
+	@RequestMapping(value = "/validate-email", method = RequestMethod.GET)
+	@ResponseBody
+	public Boolean emailExists(@RequestParam String email) {
+		try {
+			userService.loadUserByEmail(email);
+			return false;
+		} catch (EntityNotFoundException e) {
+			return true;
+		}
+	}
+
 	/**
 	 * Handle exceptions for the create and update pages
 	 *
@@ -582,6 +616,7 @@ public class UsersController {
 		int ALPHABET_SIZE = 26;
 		int SINGLE_DIGIT_SIZE = 10;
 		int RANDOM_LENGTH = PASSWORD_LENGTH - 3;
+		String SPECIAL_CHARS = "!@#$%^&*()+?/<>=.\\{}";
 
 		List<Character> pwdArray = new ArrayList<>(PASSWORD_LENGTH);
 		SecureRandom random = new SecureRandom();
@@ -595,11 +630,14 @@ public class UsersController {
 		// 3. Create 1 random number.
 		pwdArray.add((char) ('0' + random.nextInt(SINGLE_DIGIT_SIZE)));
 
-		// 4. Create 5 random.
+		// 4. Add 1 special character
+		pwdArray.add(SPECIAL_CHARS.charAt(random.nextInt(SPECIAL_CHARS.length())));
+
+		// 5. Create 5 random.
 		int c = 'A';
-		int rand = 0;
+		int rand;
 		for (int i = 0; i < RANDOM_LENGTH; i++) {
-			rand = random.nextInt(3);
+			rand = random.nextInt(4);
 			switch (rand) {
 			case 0:
 				c = '0' + random.nextInt(SINGLE_DIGIT_SIZE);
@@ -610,14 +648,17 @@ public class UsersController {
 			case 2:
 				c = 'A' + random.nextInt(ALPHABET_SIZE);
 				break;
+			case 3:
+				c = SPECIAL_CHARS.charAt(random.nextInt(SPECIAL_CHARS.length()));
+				break;
 			}
 			pwdArray.add((char) c);
 		}
 
-		// 5. Shuffle.
+		// 6. Shuffle.
 		Collections.shuffle(pwdArray, random);
 
-		// 6. Create string.
+		// 7. Create string.
 		Joiner joiner = Joiner.on("");
 		return joiner.join(pwdArray);
 	}

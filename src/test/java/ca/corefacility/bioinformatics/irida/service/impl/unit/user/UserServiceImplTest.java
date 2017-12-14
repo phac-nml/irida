@@ -75,7 +75,7 @@ public class UserServiceImplTest {
 
 	@Test
 	public void testPasswordUpdate() {
-		final String password = "Password1";
+		final String password = "Password1!";
 		final String encodedPassword = "ENCODED_" + password;
 		final User persisted = user();
 		final Long id = persisted.getId();
@@ -143,7 +143,7 @@ public class UserServiceImplTest {
 
 	@Test
 	public void testUpdatePasswordGoodPassword() {
-		String password = "Password1";
+		String password = "Password1!";
 		String encodedPassword = password + "_ENCODED";
 
 		when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
@@ -302,7 +302,7 @@ public class UserServiceImplTest {
 
 	private User user() {
 		String username = "fbristow";
-		String password = "Password1";
+		String password = "Password1!";
 		String email = "fbristow@gmail.com";
 		String firstName = "Franklin";
 		String lastName = "Bristow";
