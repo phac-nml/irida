@@ -403,9 +403,8 @@
         if (page.pipeline.galaxyToolDataTables != null) {
             settings["currentSettings"] = {};
             settings["availableSettings"] = {};
-            for (var galaxyToolDataTable of page.pipeline.galaxyToolDataTables) {
-                settings.currentSettings = {};
-                settings.availableSettings[galaxyToolDataTable.id] = galaxyToolDataTable;
+            for (var i = 0; i < page.pipeline.galaxyToolDataTables.length; i++) {
+                settings.availableSettings[page.pipeline.galaxyToolDataTables[i].id] = page.pipeline.galaxyToolDataTables[i];
             }
         }
 
