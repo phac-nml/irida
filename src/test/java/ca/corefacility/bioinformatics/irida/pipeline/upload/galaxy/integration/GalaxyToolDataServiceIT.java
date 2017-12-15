@@ -227,13 +227,9 @@ public class GalaxyToolDataServiceIT {
      * @throws GalaxyDatasetNotFoundException
      */
     @Test
-    public void testGetToolDataTableValid() throws GalaxyDatasetNotFoundException {
+    public void testGetToolDataTableValid() throws Exception {
         TabularToolDataTable toolDataTable;
-        try {
-            toolDataTable = galaxyToolDataService.getToolDataTable(VALID_TOOL_DATA_TABLE_ID);
-        } catch (Exception e) {
-            throw new GalaxyDatasetNotFoundException(e);
-        }
+        toolDataTable = galaxyToolDataService.getToolDataTable(VALID_TOOL_DATA_TABLE_ID);
         assertNotNull(toolDataTable);
         assertEquals(VALID_TOOL_DATA_TABLE_ID, toolDataTable.getName());
     }
@@ -242,13 +238,9 @@ public class GalaxyToolDataServiceIT {
      * Tests failing to find a valid workflow input id from a workflow details.
      * @throws GalaxyDatasetNotFoundException
      */
-    @Test(expected=GalaxyDatasetNotFoundException.class)
+    @Test(expected=ClientHandlerException.class)
     public void testGetToolDataInvalid() throws GalaxyToolDataTableException {
         TabularToolDataTable toolDataTable;
-        try {
-            toolDataTable = galaxyToolDataService.getToolDataTable(INVALID_TOOL_DATA_TABLE_ID);
-        } catch (ClientHandlerException e) {
-            throw new GalaxyToolDataTableException(e);
-        }
+        toolDataTable = galaxyToolDataService.getToolDataTable(INVALID_TOOL_DATA_TABLE_ID);
     }
 }
