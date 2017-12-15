@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration;
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyToolDataTableException;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyToolDataService;
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.ToolDataClient;
@@ -226,60 +227,20 @@ public class GalaxyToolDataServiceIT {
      * @throws GalaxyDatasetNotFoundException
      */
     @Test
-    public void testGetToolDataTableValid() throws GalaxyDatasetNotFoundException {
+    public void testGetToolDataTableValid() throws Exception {
         TabularToolDataTable toolDataTable;
-        try {
-            toolDataTable = galaxyToolDataService.getToolDataTable(VALID_TOOL_DATA_TABLE_ID);
-        } catch (Exception e) {
-            throw new GalaxyDatasetNotFoundException(e);
-        }
+        toolDataTable = galaxyToolDataService.getToolDataTable(VALID_TOOL_DATA_TABLE_ID);
         assertNotNull(toolDataTable);
         assertEquals(VALID_TOOL_DATA_TABLE_ID, toolDataTable.getName());
-    }
-
-    /**
-     * Tests getting a valid workflow input id from a workflow details.
-     * @throws GalaxyDatasetNotFoundException
-     */
-    @Test
-    public void testGetToolDataFieldValid() throws GalaxyDatasetNotFoundException {
-        TabularToolDataTable toolDataTable;
-        try {
-            toolDataTable = galaxyToolDataService.getToolDataTable(VALID_TOOL_DATA_TABLE_ID);
-        } catch (Exception e) {
-            throw new GalaxyDatasetNotFoundException(e);
-        }
-        assertEquals("http://s3.amazonaws.com/igv.broadinstitute.org/genomes/hg38.genome",
-                galaxyToolDataService.getToolDataField(toolDataTable, VALID_TOOL_DATA_VALUE, VALID_TOOL_DATA_COLUMN));
-    }
-
-    /**
-     * Tests getting a valid workflow input id from a workflow details.
-     * @throws GalaxyDatasetNotFoundException
-     */
-    @Test
-    public void testGetToolDataColumnValid() throws GalaxyDatasetNotFoundException {
-        TabularToolDataTable toolDataTable;
-        try {
-            toolDataTable = galaxyToolDataService.getToolDataTable(VALID_TOOL_DATA_TABLE_ID);
-        } catch (Exception e) {
-            throw new GalaxyDatasetNotFoundException(e);
-        }
-        assertEquals(VALID_TOOL_DATA_COLUMN_FIELDS,
-                galaxyToolDataService.getToolDataColumn(toolDataTable, VALID_TOOL_DATA_COLUMN));
     }
 
     /**
      * Tests failing to find a valid workflow input id from a workflow details.
      * @throws GalaxyDatasetNotFoundException
      */
-    @Test(expected=GalaxyDatasetNotFoundException.class)
-    public void testGetToolDataInvalid() throws GalaxyDatasetNotFoundException {
+    @Test(expected=ClientHandlerException.class)
+    public void testGetToolDataInvalid() throws GalaxyToolDataTableException {
         TabularToolDataTable toolDataTable;
-        try {
-            toolDataTable = galaxyToolDataService.getToolDataTable(INVALID_TOOL_DATA_TABLE_ID);
-        } catch (ClientHandlerException e) {
-            throw new GalaxyDatasetNotFoundException(e);
-        }
+        toolDataTable = galaxyToolDataService.getToolDataTable(INVALID_TOOL_DATA_TABLE_ID);
     }
 }

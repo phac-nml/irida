@@ -126,9 +126,9 @@ public class SequencingObjectServiceImplIT {
 	private SequencingObjectServiceImplIT asRole(Role r, String username) {
 		User u = new User();
 		u.setUsername(username);
-		u.setPassword(passwordEncoder.encode("Password1"));
+		u.setPassword(passwordEncoder.encode("Password1!"));
 		u.setSystemRole(r);
-		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(u, "Password1",
+		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(u, "Password1!",
 				ImmutableList.of(r));
 		auth.setDetails(u);
 		SecurityContextHolder.getContext().setAuthentication(auth);

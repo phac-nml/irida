@@ -1,6 +1,6 @@
 import $ from "jquery";
 import angular from "angular";
-import _ from "lodash";
+import union from "lodash/union";
 import "./modules/cart/irida.cart";
 import { IridaSession } from "./services/IridaSession";
 import "./pages/search/irida.search";
@@ -10,7 +10,7 @@ files have been converted over to wekbpack builds.
  */
 import "./modules/notifications";
 
-const deps = _.union(window.dependencies || [], [
+const deps = union(window.dependencies || [], [
   "ngAria",
   "ngAnimate",
   "ui.bootstrap",

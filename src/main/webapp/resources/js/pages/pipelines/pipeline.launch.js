@@ -1,4 +1,4 @@
-(function (ng, $, _, location, page) {
+(function (ng, $, location, page) {
 	"use strict";
 	/**
 	 * Main controller for the pipeline launch page.
@@ -75,8 +75,8 @@
 				vm.loading = true;
 
 				// Get a list of paired and single end files to run.
-				_.forEach(radioBtns, function (c) {
-					c = $(c);
+				radioBtns.each(function (c) {
+					c = $(this);
 
 					if (c.attr('data-type') === 'single_end') {
 						single.push(Number(c.val()));
@@ -93,13 +93,16 @@
 
 				var currentSettings = ParameterService.getSelectedParameters().currentSettings;
 				var currentToolDataTableSettings = ToolDataTableService.getSettings().currentSettings;
-				var toolDataTableParameters = Object.values(currentToolDataTableSettings).map(
-				    ({label, value, name}) => ({label, value, name})
-				);
 				var selectedParameters = {
 					"id"        : currentSettings.id,
-					"parameters": currentSettings.parameters.concat(toolDataTableParameters)
+					"parameters": currentSettings.parameters
 				};
+				if (currentToolDataTableSettings.length > 0) {
+				    var toolDataTableParameters = Object.values(currentToolDataTableSettings).map(
+                        ({label, value, name}) => ({label, value, name})
+                    );
+                    selectedParameters.parameters.concat(toolDataTableParameters);
+				}
 				// Create the parameter object;
 				var params = {};
 				if ($.isNumeric(ref)) {
@@ -112,7 +115,7 @@
 					params['paired'] = paired;
 				}
 
-				if (_.keys(selectedParameters).length > 0 && selectedParameters.id !== 'no_parameters') {
+				if (Object.keys(selectedParameters).length > 0 && selectedParameters.id !== 'no_parameters') {
 					params['selectedParameters'] = selectedParameters;
 				}
 				params['name'] = name;
@@ -387,12 +390,21 @@
     function ToolDataTableService() {
         var svc = this;
 
+        // Check to see if there are any tool data tables, if not put a default
+        if(page.pipeline.toolDataTables == null) {
+            page.pipeline.toolDataTables = [{
+                id: "no_tool_data_tables",
+                label: "",
+                parameters: []
+            }];
+        }
+
         var settings = {};
         if (page.pipeline.toolDataTables != null) {
             settings["currentSettings"] = {};
             settings["availableSettings"] = {};
             for (var toolDataTable of page.pipeline.toolDataTables) {
-                settings.currentSettings[toolDataTable.id] = null;
+                settings.currentSettings = {};
                 settings.availableSettings[toolDataTable.id] = toolDataTable;
             }
         }
@@ -459,4 +471,4 @@
 		.service('ParameterService', [ParameterService])
 		.service('ToolDataTableService', [ToolDataTableService])
 	;
-})(window.angular, window.jQuery, window._, window.location, window.PAGE);
+})(window.angular, window.jQuery, window.location, window.PAGE);

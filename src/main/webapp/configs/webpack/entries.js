@@ -4,7 +4,7 @@
  *  Webpack will then create the bundle in `resource/js/build/`
  */
 module.exports = {
-  vendor: ["lodash", "babel-polyfill"],
+  vendor: ["babel-polyfill"],
   announcements: "./resources/js/pages/announcement/announcements.js",
   app: "./resources/js/app.js",
   dashboard: "./resources/js/pages/dashboard.js",
@@ -39,6 +39,7 @@ module.exports = {
   "analyses-table": "./resources/js/pages/analyses/analyses-table.js",
   "clients-list": "./resources/js/pages/clients/clients-list.js",
   "users-list": "./resources/js/pages/users/users-list.js",
+  "users-password": "./resources/js/pages/users/users-password.js",
   "announcement-users":
     "./resources/js/pages/announcement/announcement-users.js",
   "announcement-admin":

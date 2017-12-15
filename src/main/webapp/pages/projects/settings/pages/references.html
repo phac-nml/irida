@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="projects/settings/_base">
+      data-layout-decorate="~{projects/settings/_base}">
 <head>
     <title th:text="#{project.settings.page.title.references}">Title</title>
     <script th:inline="javascript">
@@ -13,7 +13,7 @@
           upload: /*[[@{/referenceFiles/project/{id}/new(id=${project.identifier})}]]*/ 'referenceFiles/project/1/new'
         },
         templates: {
-          deleteFile: /*[[@{/projects/templates/referenceFiles/delete'}]]*/ '/projects/templates/referenceFiles/delete'
+          deleteFile: /*[[@{/projects/templates/referenceFiles/delete}]]*/ '/projects/templates/referenceFiles/delete'
         }
       };
     </script>
