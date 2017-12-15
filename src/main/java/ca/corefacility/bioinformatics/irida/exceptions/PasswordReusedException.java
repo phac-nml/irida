@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.exceptions;
 
 /**
- * Thrown when a user attempts to update a password with on they've already used.
+ * Thrown when a user attempts to update a password with one they've already used.
  */
 public class PasswordReusedException extends RuntimeException {
 
