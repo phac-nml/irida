@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyToolDataTableException;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowGalaxyToolDataTable;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyToolDataService;
 import com.github.jmchilton.blend4j.galaxy.beans.TabularToolDataTable;
@@ -339,7 +340,7 @@ public class PipelineController extends BaseController {
 						toolDataTable.put("id", toolDataTableName);
 						toolDataTable.put("label", messageSource.getMessage("tooldatatable.label." + toolDataTableName, null, locale));
 						toolDataTable.put("parameters", new ArrayList<>());
-					} catch (GalaxyDatasetNotFoundException e) {
+					} catch (GalaxyToolDataTableException e) {
 						logger.debug("Tool Data Table not found: ", e);
 					}
 					List<String> labels = galaxyToolDataTable.getFieldsForColumn(iridaWorkflowGalaxyToolDataTable.getDisplayColumn());
