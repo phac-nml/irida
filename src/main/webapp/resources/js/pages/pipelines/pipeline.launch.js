@@ -5,6 +5,7 @@
 	 * @param $http AngularJS http object
 	 * @param CartService a reference to the cart service (to clear it)
 	 * @param ParameterService for passing parameter information between modal and page
+	 * @param GalaxyToolDataTableService for selecting parameters from a Galaxy Tool Data Table
 	 * @constructor
 	 */
 	function PipelineController($scope, $http, CartService, ParameterService, GalaxyToolDataTableService) {
@@ -135,25 +136,23 @@
 					headers : {
 						"Content-Type": "application/json"
 					}
-				})
-
-          .then(function(response) {
-          	var data = response.data;
-						if (data.success) {
-							vm.success = true;
+				}).then(function(response) {
+          	        var data = response.data;
+					if (data.success) {
+						vm.success = true;
+					}
+					else {
+						if (data.error) {
+							vm.error = data.error;
 						}
-						else {
-							if (data.error) {
-								vm.error = data.error;
-							}
-							else if (data.parameterError) {
+						else if (data.parameterError) {
 								vm.paramError = data.parameters;
-							}
-							else if (data.pipelineError) {
-								window.notifications.show({type: 'error', text: data.pipelineError});
-							}
 						}
-					});
+						else if (data.pipelineError) {
+							window.notifications.show({type: 'error', text: data.pipelineError});
+						}
+					}
+				});
 			}
 		};
 
@@ -270,8 +269,8 @@
 				},
 				transformRequest: undefined,
 				data            : JSON.stringify(parametersToSave)
-      }).then(function(response) {
-      	var data = response.data;
+            }).then(function(response) {
+      	        var data = response.data;
 				$uibModalInstance.dismiss();
 				// on success, we can re-use the selected parameters in
 				// this controller; update the id and label, then append
@@ -385,7 +384,7 @@
     }
 
     /**
-     * Service for handling Tool Data Tables.
+     * Service for handling Galaxy Tool Data Tables.
      */
     function GalaxyToolDataTableService() {
         var svc = this;
@@ -424,7 +423,7 @@
 
         /**
          * Set the current tool data table field on the page.
-         *
+         * @param galaxyToolDataTable the Galaxy Tool Data Table to set
          * @param currentSelection the tool data table field that is currently selected
          */
         svc.setSelectedGalaxyToolDataTableField = function (galaxyToolDataTable, currentSelection) {
