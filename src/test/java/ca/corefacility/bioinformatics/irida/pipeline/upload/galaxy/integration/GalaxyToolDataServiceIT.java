@@ -239,38 +239,6 @@ public class GalaxyToolDataServiceIT {
     }
 
     /**
-     * Tests getting a valid workflow input id from a workflow details.
-     * @throws GalaxyDatasetNotFoundException
-     */
-    @Test
-    public void testGetToolDataFieldValid() throws GalaxyToolDataTableException {
-        TabularToolDataTable toolDataTable;
-        try {
-            toolDataTable = galaxyToolDataService.getToolDataTable(VALID_TOOL_DATA_TABLE_ID);
-        } catch (Exception e) {
-            throw new GalaxyToolDataTableException(e);
-        }
-        assertEquals("http://s3.amazonaws.com/igv.broadinstitute.org/genomes/hg38.genome",
-                galaxyToolDataService.getToolDataField(toolDataTable, VALID_TOOL_DATA_VALUE, VALID_TOOL_DATA_COLUMN));
-    }
-
-    /**
-     * Tests getting a valid workflow input id from a workflow details.
-     * @throws GalaxyToolDataTableException
-     */
-    @Test
-    public void testGetToolDataColumnValid() throws GalaxyToolDataTableException {
-        TabularToolDataTable toolDataTable;
-        try {
-            toolDataTable = galaxyToolDataService.getToolDataTable(VALID_TOOL_DATA_TABLE_ID);
-        } catch (Exception e) {
-            throw new GalaxyToolDataTableException(e);
-        }
-        assertEquals(VALID_TOOL_DATA_COLUMN_FIELDS,
-                galaxyToolDataService.getToolDataColumn(toolDataTable, VALID_TOOL_DATA_COLUMN));
-    }
-
-    /**
      * Tests failing to find a valid workflow input id from a workflow details.
      * @throws GalaxyDatasetNotFoundException
      */
