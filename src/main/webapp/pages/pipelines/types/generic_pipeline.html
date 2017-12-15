@@ -20,7 +20,7 @@
 			pipeline: {
 				parameters: /*[[${parameters}]]*/ [],
 				pipelineId : /*[[${pipelineId}]]*/ 'pipelineId',
-				toolDataTables: /*[[${toolDataTables}]]*/ []
+				galaxyToolDataTables: /*[[${galaxyToolDataTables}]]*/ []
 			}
 		};
 		/*]]>*/
@@ -97,14 +97,14 @@
 								</div>
 							</div>
 						</div>
-						<div th:if="${toolDataTableRequired}" class="form-group"
-							 ng-repeat="toolDataTable in pipeline.toolDataTables.availableSettings">
-							<label class="col-sm-2 control-label">{{toolDataTable.label}}</label>
+						<div th:if="${galaxyToolDataTableRequired}" class="form-group"
+							 ng-repeat="galaxyToolDataTable in pipeline.galaxyToolDataTables.availableSettings">
+							<label class="col-sm-2 control-label">{{galaxyToolDataTable.label}}</label>
 							<div class="col-sm-10">
-								<select id="{{toolDataTable.id}}" name="{{toolDataTable.label}}" class="form-control"
-										ng-model="pipeline.selectedToolDataTableField"
-										ng-change="pipeline.toolDataTableFieldSelected('{{toolDataTable.id}}')"
-										ng-options="item.label for item in toolDataTable.parameters">
+								<select id="{{galaxyToolDataTable.id}}" name="{{galaxyToolDataTable.label}}" class="form-control"
+										ng-model="pipeline.selectedGalaxyToolDataTableField"
+										ng-change="pipeline.galaxyToolDataTableFieldSelected('{{galaxyToolDataTable.id}}')"
+										ng-options="item.label for item in galaxyToolDataTable.parameters">
 								</select>
 							</div>
 						</div>

@@ -325,7 +325,7 @@ public class PipelineController extends BaseController {
 			model.addAttribute("addRefProjects", addRefList);
 			model.addAttribute("projects", projectList);
 			model.addAttribute("canUpdateSamples", canUpdateAllSamples);
-			model.addAttribute("toolDataTableRequired", description.requiresToolDataTable());
+			model.addAttribute("galaxyToolDataTableRequired", description.requiresToolDataTable());
 
 			final List<Map<String, Object>> toolDataTables = new ArrayList<>();
 			if (description.requiresToolDataTable()) {
@@ -361,7 +361,7 @@ public class PipelineController extends BaseController {
 						logger.debug("Tool Data Table not found: ", e);
 					}
 				}
-				model.addAttribute("toolDataTables", toolDataTables);
+				model.addAttribute("galaxyToolDataTables", toolDataTables);
 			}
 			response = URL_GENERIC_PIPELINE;
 		}

@@ -7,13 +7,13 @@
 	 * @param ParameterService for passing parameter information between modal and page
 	 * @constructor
 	 */
-	function PipelineController($scope, $http, CartService, ParameterService, ToolDataTableService) {
+	function PipelineController($scope, $http, CartService, ParameterService, GalaxyToolDataTableService) {
 		var vm = this;
 
 		vm.parameters = ParameterService.getOriginalSettings();
 		vm.selectedParameters = ParameterService.getSelectedParameters();
-		vm.toolDataTables = ToolDataTableService.getSettings();
-		vm.selectedToolDataTableField = ToolDataTableService.getSelectedToolDataTableField();
+		vm.galaxyToolDataTables = GalaxyToolDataTableService.getSettings();
+		vm.selectedGalaxyToolDataTableField = GalaxyToolDataTableService.getSelectedGalaxyToolDataTableField();
 
 		$scope.$on('PARAMETERS_SAVED', function () {
 			vm.selectedParameters = ParameterService.getSelectedParameters();
@@ -42,8 +42,8 @@
          * for the modal dialog whenever we select a new tool data table field
          * from the drop-down.
          */
-        vm.toolDataTableFieldSelected = function (toolDataTable) {
-        	ToolDataTableService.setSelectedToolDataTableField(toolDataTable, vm.selectedToolDataTableField);
+        vm.galaxyToolDataTableFieldSelected = function (galaxyToolDataTable) {
+        	GalaxyToolDataTableService.setSelectedGalaxyToolDataTableField(galaxyToolDataTable, vm.selectedGalaxyToolDataTableField);
         };
 
 		/**
@@ -92,16 +92,16 @@
 				});
 
 				var currentSettings = ParameterService.getSelectedParameters().currentSettings;
-				var currentToolDataTableSettings = ToolDataTableService.getSettings().currentSettings;
+				var currentGalaxyToolDataTableSettings = GalaxyToolDataTableService.getSettings().currentSettings;
 				var selectedParameters = {
 					"id"        : currentSettings.id,
 					"parameters": currentSettings.parameters
 				};
-				if (currentToolDataTableSettings.length > 0) {
-				    var toolDataTableParameters = Object.values(currentToolDataTableSettings).map(
+				if (currentGalaxyToolDataTableSettings.length > 0) {
+				    var galaxyToolDataTableParameters = Object.values(currentGalaxyToolDataTableSettings).map(
                         ({label, value, name}) => ({label, value, name})
                     );
-                    selectedParameters.parameters.concat(toolDataTableParameters);
+                    selectedParameters.parameters.concat(galaxyToolDataTableParameters);
 				}
 				// Create the parameter object;
 				var params = {};
@@ -387,12 +387,12 @@
     /**
      * Service for handling Tool Data Tables.
      */
-    function ToolDataTableService() {
+    function GalaxyToolDataTableService() {
         var svc = this;
 
         // Check to see if there are any tool data tables, if not put a default
-        if(page.pipeline.toolDataTables == null) {
-            page.pipeline.toolDataTables = [{
+        if(page.pipeline.galaxyToolDataTables == null) {
+            page.pipeline.galaxyToolDataTables = [{
                 id: "no_tool_data_tables",
                 label: "",
                 parameters: []
@@ -400,12 +400,12 @@
         }
 
         var settings = {};
-        if (page.pipeline.toolDataTables != null) {
+        if (page.pipeline.galaxyToolDataTables != null) {
             settings["currentSettings"] = {};
             settings["availableSettings"] = {};
-            for (var toolDataTable of page.pipeline.toolDataTables) {
+            for (var galaxyToolDataTable of page.pipeline.galaxyToolDataTables) {
                 settings.currentSettings = {};
-                settings.availableSettings[toolDataTable.id] = toolDataTable;
+                settings.availableSettings[galaxyToolDataTable.id] = galaxyToolDataTable;
             }
         }
 
@@ -419,8 +419,8 @@
         /**
          * Get the currently selected parameters from the page.
          */
-        svc.getSelectedToolDataTableField = function (toolDataTable) {
-            return settings.currentSettings[toolDataTable];
+        svc.getSelectedGalaxyToolDataTableField = function (galaxyToolDataTable) {
+            return settings.currentSettings[galaxyToolDataTable];
         };
 
         /**
@@ -428,8 +428,8 @@
          *
          * @param currentSelection the tool data table field that is currently selected
          */
-        svc.setSelectedToolDataTableField = function (toolDataTable, currentSelection) {
-            settings.currentSettings[toolDataTable] = currentSelection;
+        svc.setSelectedGalaxyToolDataTableField = function (galaxyToolDataTable, currentSelection) {
+            settings.currentSettings[galaxyToolDataTable] = currentSelection;
         };
     }
 
@@ -464,11 +464,11 @@
     }
 
     ng.module('irida.pipelines', ['irida.cart', 'ngFileUpload'])
-		.controller('PipelineController', ['$rootScope', '$http', 'CartService', 'ParameterService', 'ToolDataTableService', PipelineController])
+		.controller('PipelineController', ['$rootScope', '$http', 'CartService', 'ParameterService', 'GalaxyToolDataTableService', PipelineController])
 		.controller('ParameterModalController', ["$uibModal", ParameterModalController])
 		.controller('ParameterController', ['$rootScope', '$http', '$uibModalInstance', 'ParameterService', ParameterController])
 		.controller('FileUploadCtrl', ['$rootScope', 'Upload', FileUploadCtrl])
 		.service('ParameterService', [ParameterService])
-		.service('ToolDataTableService', [ToolDataTableService])
+		.service('GalaxyToolDataTableService', [GalaxyToolDataTableService])
 	;
 })(window.angular, window.jQuery, window.location, window.PAGE);
