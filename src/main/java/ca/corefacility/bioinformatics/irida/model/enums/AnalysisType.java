@@ -10,7 +10,6 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.*;
 import com.google.common.collect.Sets;
 
 /**
