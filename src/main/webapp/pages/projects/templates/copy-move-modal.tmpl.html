@@ -54,13 +54,18 @@
                         <input type="hidden" value="false" name="giveOwner" id="giveOwner" />
                     </div>
 
+                    <div class="alert alert-warning" th:if="${isRemoteProject}">
+                        <span th:text="#{project.samples.modal.copy.remote}">_All copied samples will be read only as this project is a remote project_</span>
+                    </div>
+                    <div th:if="${not isRemoteProject}">
                     <!-- Only the the allow modification checkbox for the copy not the move -->
-                    <div class="form-group" th:if="${#lists.size(lockedSamples) == 0 and #strings.equals(type, 'copy')}">
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" value="true" id="giveOwner" name="giveOwner"/>
-                                <span th:text="#{project.samples.modal.copy.lock-copied}">_Allow modification in new project_</span>
-                            </label>
+                        <div class="form-group" th:if="${#lists.size(lockedSamples) == 0 and #strings.equals(type, 'copy')}">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" value="true" id="giveOwner" name="giveOwner"/>
+                                    <span th:text="#{project.samples.modal.copy.lock-copied}">_Allow modification in new project_</span>
+                                </label>
+                            </div>
                         </div>
                     </div>
 
