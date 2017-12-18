@@ -459,7 +459,7 @@
 	        });
 	    }
 	};
-    }
+  }
 
   const pipelineModule = ng.module('irida.pipelines', ['irida.cart', 'ngFileUpload'])
 		.controller('PipelineController', ['$rootScope', '$http', 'CartService', 'ParameterService', 'GalaxyToolDataTableService', PipelineController])
