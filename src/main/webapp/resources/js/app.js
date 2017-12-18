@@ -1,6 +1,5 @@
 import $ from "jquery";
 import angular from "angular";
-import union from "lodash/union";
 import "./modules/cart/irida.cart";
 import { IridaSession } from "./services/IridaSession";
 import "./pages/search/irida.search";
@@ -10,13 +9,13 @@ files have been converted over to wekbpack builds.
  */
 import "./modules/notifications";
 
-const deps = union(window.dependencies || [], [
+const deps = [
   "ngAria",
   "ngAnimate",
   "ui.bootstrap",
   "irida.cart",
   IridaSession
-]);
+];
 
 const app = angular.module("irida", deps).config($httpProvider => {
   $httpProvider.defaults.headers.post["Content-Type"] =

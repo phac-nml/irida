@@ -461,12 +461,15 @@
 	};
     }
 
-    ng.module('irida.pipelines', ['irida.cart', 'ngFileUpload'])
-	.controller('PipelineController', ['$rootScope', '$http', 'CartService', 'ParameterService', 'GalaxyToolDataTableService', PipelineController])
-	.controller('ParameterModalController', ["$uibModal", ParameterModalController])
-	.controller('ParameterController', ['$rootScope', '$http', '$uibModalInstance', 'ParameterService', ParameterController])
-	.controller('FileUploadCtrl', ['$rootScope', 'Upload', FileUploadCtrl])
-	.service('ParameterService', [ParameterService])
-	.service('GalaxyToolDataTableService', [GalaxyToolDataTableService])
-    ;
+  const pipelineModule = ng.module('irida.pipelines', ['irida.cart', 'ngFileUpload'])
+		.controller('PipelineController', ['$rootScope', '$http', 'CartService', 'ParameterService', 'GalaxyToolDataTableService', PipelineController])
+		.controller('ParameterModalController', ["$uibModal", ParameterModalController])
+		.controller('ParameterController', ['$rootScope', '$http', '$uibModalInstance', 'ParameterService', ParameterController])
+		.controller('FileUploadCtrl', ['$rootScope', 'Upload', FileUploadCtrl])
+	        .service('ParameterService', [ParameterService])
+	        .service('GalaxyToolDataTableService', [GalaxyToolDataTableService])
+	  .name
+	;
+
+  ng.module("irida").requires.push(pipelineModule);
 })(window.angular, window.jQuery, window.location, window.PAGE);

@@ -10,6 +10,7 @@ import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
+import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -151,6 +152,8 @@ public class PasswordResetController {
 					String errorKey = violation.getPropertyPath().toString();
 					errors.put(errorKey, violation.getMessage());
 				}
+			} catch (PasswordReusedException ex) {
+				errors.put("password", messageSource.getMessage("user.edit.passwordReused", null, locale));
 			}
 		}
 

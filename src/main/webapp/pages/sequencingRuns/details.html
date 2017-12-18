@@ -3,7 +3,6 @@
       data-layout-decorate="~{sequencingRuns/_details_base}">
 <head>
   <title th:text="#{sequencingruns.details.title(${run.id})}">_Run_</title>
-  <script>window.dependencies = ['irida.sequencingruns'];</script>
 </head>
 <body>
     <main layout:fragment="main">
@@ -84,8 +83,8 @@
               }
               
             });
-          
-          
+
+          angular.module("irida").requires.push(app.name);
           
         })(window.angular, [angular]);
       </script>

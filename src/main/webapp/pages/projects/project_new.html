@@ -9,8 +9,6 @@
           href="/resources/bower_components/select2/select2.css"/>
     <link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2-bootstrap.css}"
           href="/resources/bower_components/select2/select2-bootstrap.css"/>
-
-    <script>window.dependencies=["irida.project.new"];</script>
 </head>
 <body>
 <div layout:fragment="page">
@@ -182,14 +180,16 @@
         (function() {
             "use strict";
 
-            angular.module("irida.project.new", ["ui.bootstrap"])
-                    .controller('NewProjectController', function () {
-                        var vm = this;
-                        vm.project = {
-                            name: /*[[${project} ? ${project.getName()} : '']]*/ '',
-                            remoteURL: /*[[${project} ? ${project.getRemoteURL()} : '']]*/ '',
-                        };
-                    });
+          const newProjectModule = angular.module("irida.project.new", ["ui.bootstrap"])
+            .controller('NewProjectController', function () {
+              var vm = this;
+              vm.project = {
+                name: /*[[${project} ? ${project.getName()} : '']]*/ '',
+                remoteURL: /*[[${project} ? ${project.getRemoteURL()} : '']]*/ '',
+              };
+            })
+            .name;
+          angular.module("irida").requires.push(newProjectModule);
         })();
     </script>
 </th:block>
