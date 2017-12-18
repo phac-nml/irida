@@ -50,6 +50,7 @@
 		url="http://localhost:8080/api/projects/11" api_id="1"
 		remote_hash_code="1" read_by="3" last_update="2013-07-18 14:20:19.0" />
 
+	<project id="11" createdDate="2013-07-18 14:20:19.0" name="test_remote" organism="test" remote_status="1" sync_frequency="DAILY" />
 	<project id="1" createdDate="2013-07-18 14:20:19.0" name="project" organism="listeria" />
 	<project id="2" createdDate="2013-07-18 14:20:19.0" name="project2" organism="listeria"/>
 	<project id="3" createdDate="2013-07-18 14:20:19.0" name="project3" organism="listeria" />
@@ -60,7 +61,6 @@
 	<project id="8" createdDate="2013-07-18 14:22:19.0" name="project8" organism="listeria" />
 	<project id="9" createdDate="2013-07-18 14:20:19.0" name="project9" organism="e. coli" />
 	<project id="10" createdDate="2013-07-18 14:22:19.0" name="listeria" organism=""/>
-	<project id="11" createdDate="2013-07-18 14:20:19.0" name="test_remote" organism="test" remote_status="1" sync_frequency="DAILY" />
 	
 	<user_group_project id="1" created_date="2013-07-18 14:20:19.0" project_role="PROJECT_OWNER" project_id="9" user_group_id="1" />
 	<user_group_project id="2" created_date="2013-07-18 14:20:19.0" project_role="PROJECT_USER" project_id="8" user_group_id="1" />
