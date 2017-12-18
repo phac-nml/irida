@@ -136,9 +136,12 @@ function FileUploadCtrl($timeout, fileService) {
   };
 }
 
-angular.module('References', ['file.utils'])
+const refModule = angular.module('References', ['file.utils'])
   .service('ProjectFileService', ['$rootScope', '$http', ProjectFileService])
   .service('ReferenceFileService', ['$rootScope', '$uibModal', '$http', ReferenceFileService])
   .controller('FilesCtrl', ['ProjectFileService', 'ReferenceFileService', FilesCtrl])
   .controller('DeleteCtrl', ['$uibModalInstance', 'file', DeleteCtrl])
-  .controller('FileUploadCtrl', ['$timeout', 'FileService', FileUploadCtrl]);
+  .controller('FileUploadCtrl', ['$timeout', 'FileService', FileUploadCtrl])
+  .name;
+
+angular.module("irida").requires.push(refModule);
