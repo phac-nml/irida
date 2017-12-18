@@ -42,8 +42,8 @@ public class AnalysisSubmissionSampleProcessorImpl implements AnalysisSubmission
 	/**
 	 * Builds a new {@link AnalysisSubmissionSampleProcessorImpl}.
 	 * 
-	 * @param sampleService
-	 *            The {@link SampleService}.
+	 * @param sampleRepository
+	 *            The {@link SampleRepository}.
 	 * @param analysisSampleUpdaterServices
 	 *            A list of {@link AnalysisSampleUpdater}s to use for updating
 	 *            samples.
