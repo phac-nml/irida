@@ -51,6 +51,12 @@
       });
     }
 
+
+    svc.getBioHanselResults = function() {
+        return $http.get(page.URLS.bio_hansel).then(function(result){
+            return result.data;
+        });
+    }
     /**
      * Exported function to call the server for information about the current analysis.
      * @param fn Callback function with how to handle the results.
@@ -143,6 +149,18 @@
     vm.newick = page.NEWICK;
   }
 
+  function BioHanselController(analysisService){
+    var vm = this;
+
+    analysisService.getBioHanselResults().then(function(result) {
+      if (result['parse_results_error']) {
+        vm.parse_results_error = true;
+      } else {
+         //pass
+      }
+    });
+  }
+
   function SistrController(analysisService) {
     var vm = this;
 
@@ -186,6 +204,12 @@
           templateUrl: "sistr.html",
           controllerAs: "sistrCtrl",
           controller: ["AnalysisService", SistrController]
+        })
+        .state("bio_hansel", {
+          url: "/bio_hansel",
+          templateUrl: "bio_hansel.html",
+          controllerAs: "bioHanselCtrl",
+          controller: ["AnalysisService", BioHanselController]
         })
         .state("inputs", {
           url        : "/inputs",

@@ -116,7 +116,7 @@ public class AnalysisController {
 
 	/**
 	 * Get the admin all {@link Analysis} list page
-	 * 
+	 *
 	 * @param model
 	 *            Model for view variables
 	 * @return Name of the analysis page view
@@ -133,7 +133,7 @@ public class AnalysisController {
 
 	/**
 	 * Get the user {@link Analysis} list page
-	 * 
+	 *
 	 * @param model
 	 *            Model for view variables
 	 * @return Name of the analysis page view
@@ -149,7 +149,7 @@ public class AnalysisController {
 
 	/**
 	 * View details about an individual analysis submission
-	 * 
+	 *
 	 * @param submissionId
 	 *            the ID of the submission
 	 * @param model
@@ -209,12 +209,14 @@ public class AnalysisController {
 					tree(submission, model);
 				} else if (analysisType.equals(AnalysisType.SISTR_TYPING)) {
 					model.addAttribute("sistr", true);
+				} else if (analysisType.equals(AnalysisType.SNV_SUBTYPING_COLLECTION)) {
+					model.addAttribute("bio_hansel", true);
 				}
 			}
 
 		} catch (IOException e) {
 			logger.error("Couldn't get preview for analysis", e);
-		} 
+		}
 
 		return viewName;
 	}
@@ -251,10 +253,10 @@ public class AnalysisController {
 
 		return "redirect:/analysis/" + submissionId;
 	}
-	
+
 	/**
 	 * Get the status of projects that can be shared with the given analysis
-	 * 
+	 *
 	 * @param submissionId
 	 *            the {@link AnalysisSubmission} id
 	 * @return a list of {@link SharedProjectResponse}
@@ -281,7 +283,7 @@ public class AnalysisController {
 		// Create response for shared projects
 		projectResponses.addAll(projectsInAnalysis.stream().filter(p -> !projectsShared.contains(p))
 				.map(p -> new SharedProjectResponse(p, false)).collect(Collectors.toList()));
-		
+
 		projectResponses.sort(new Comparator<SharedProjectResponse>() {
 
 			@Override
@@ -292,11 +294,11 @@ public class AnalysisController {
 
 		return projectResponses;
 	}
-	
+
 	/**
 	 * Update the share status of a given {@link AnalysisSubmission} for a given
 	 * {@link Project}
-	 * 
+	 *
 	 * @param submissionId
 	 *            the {@link AnalysisSubmission} id to share/unshare
 	 * @param projectId
@@ -315,13 +317,13 @@ public class AnalysisController {
 		String message = "";
 		if (shareStatus) {
 			analysisSubmissionService.shareAnalysisSubmissionWithProject(submission, project);
-			
+
 			message = messageSource.getMessage("analysis.details.share.enable", new Object[] { project.getLabel() }, locale);
 		} else {
 			analysisSubmissionService.removeAnalysisProjectShare(submission, project);
 			message = messageSource.getMessage("analysis.details.share.remove", new Object[] { project.getLabel() }, locale);
 		}
-		
+
 		return ImmutableMap.of("result", "success", "message", message);
 	}
 
@@ -351,7 +353,7 @@ public class AnalysisController {
 	/**
 	 * Construct the model parameters for an {@link AnalysisType#PHYLOGENOMICS}
 	 * {@link Analysis}
-	 * 
+	 *
 	 * @param submission
 	 *            The analysis submission
 	 * @param model
@@ -361,7 +363,7 @@ public class AnalysisController {
 	 */
 	private void tree(AnalysisSubmission submission, Model model) throws IOException {
 		final String treeFileKey = "tree";
-		
+
 		Analysis analysis = submission.getAnalysis();
 		AnalysisOutputFile file = analysis.getAnalysisOutputFile(treeFileKey);
 		List<String> lines = Files.readAllLines(file.getFile());
@@ -436,9 +438,9 @@ public class AnalysisController {
 		AnalysisSubmission submission = analysisSubmissionService.read(id);
 		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubimssion(submission);
 		Map<String,Object> result = ImmutableMap.of("parse_results_error", true);
-		
+
 		final String sistrFileKey = "sistr-predictions";
-		
+
 		// Get details about the workflow
 		UUID workflowUUID = submission.getWorkflowId();
 		IridaWorkflow iridaWorkflow;
@@ -454,22 +456,22 @@ public class AnalysisController {
 			Path path = analysis.getAnalysisOutputFile(sistrFileKey).getFile();
 			try {
 				String json = new Scanner(new BufferedReader(new FileReader(path.toFile()))).useDelimiter("\\Z").next();
-				
+
 				// verify file is proper json file
 				ObjectMapper mapper = new ObjectMapper();
 				List<Map<String,Object>> sistrResults = mapper.readValue(json, new TypeReference<List<Map<String,Object>>>(){});
-				
+
 				if (sistrResults.size() > 0) {
 					// should only ever be one sample for these results
 					if (samples.size() == 1) {
 						Sample sample = samples.iterator().next();
 						result = sistrResults.get(0);
-						
+
 						result.put("parse_results_error", false);
-						
+
 						result.put("sample_name", sample.getSampleName());
 					} else {
-						logger.error("Invalid number of associated samles for submission " + submission);
+						logger.error("Invalid number of associated samples for submission " + submission);
 					}
 				} else {
 					logger.error("SISTR results for file [" + path + "] are not correctly formatted");
@@ -485,13 +487,76 @@ public class AnalysisController {
 		return result;
 	}
 
+
+	@SuppressWarnings("resource")
+	@RequestMapping("/ajax/bio_hansel/{id}") @ResponseBody public Map<String,Object> getBioHanselAnalysis(@PathVariable Long id) {
+		AnalysisSubmission submission = analysisSubmissionService.read(id);
+		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubimssion(submission);
+        Map<String,Object> result = new HashMap<>();
+        result.put("parse_results_error", true); //init with parsing error true
+
+		final String[] hanselOutputFiles = {"hansel_results", "hansel_match_results", "technician_results"};
+
+		// Get details about the workflow, to verify the correct Analysis Type.
+		UUID workflowUUID = submission.getWorkflowId();
+		IridaWorkflow iridaWorkflow;
+
+		try {
+			iridaWorkflow = workflowsService.getIridaWorkflow(workflowUUID);
+		} catch (IridaWorkflowNotFoundException e) {
+			logger.error("Error finding workflow, ", e);
+			throw new EntityNotFoundException("Couldn't find workflow for submission " + submission.getId(), e);
+		}
+
+		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription().getAnalysisType();
+		if (analysisType.equals(AnalysisType.SNV_SUBTYPING_COLLECTION)) {
+
+			Analysis analysis = submission.getAnalysis();
+            ObjectMapper mapper = new ObjectMapper();
+            List<Map<String,Object>> currResults;
+			Path currPath;
+			String currJson;
+            boolean parseSuccess = true;
+
+			for(String currFile : hanselOutputFiles){
+			    currPath = analysis.getAnalysisOutputFile(currFile).getFile();
+
+                try {
+                    logger.debug("Attempting to parse "+currPath+" as JSON.");
+                    currJson = new String(Files.readAllBytes(currPath));
+                    currResults = mapper.readValue(currJson, new TypeReference<List<Map<String,Object>>>(){});
+
+                    if( currResults.size() > 0 && currResults.size() == 1){
+                        result.put(currFile, currResults.get(0));
+                    }else{
+                        logger.error(String.format("Invalid output file was detected from %s. Could not get results! ", currFile));
+                        parseSuccess = false;
+                    }
+
+                } catch (JsonParseException | JsonMappingException e) {
+                    logger.error("Error attempting to parse file [" + currPath + "] as JSON",e);
+                } catch (FileNotFoundException e) {
+                    logger.error("File [" + currPath + "] not found",e);
+                } catch (IOException e) {
+                    logger.error("Error reading file [" + currPath + "]", e);
+                }
+
+                if( parseSuccess ){
+                    result.put("parse_results_error", false);
+                }
+            }
+
+		}
+		return result;
+	}
+
 	// ************************************************************************************************
 	// AJAX
 	// ************************************************************************************************
-	
+
 	/**
 	 * Delete an {@link AnalysisSubmission} by id.
-	 * 
+	 *
 	 * @param analysisSubmissionId
 	 *            the submission ID to delete.
 	 */
@@ -595,7 +660,7 @@ public class AnalysisController {
 	@ResponseBody
 	public Map<String, Object> getNewickForAnalysis(@PathVariable Long submissionId) throws IOException {
 		final String treeFileKey = "tree";
-		
+
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		Analysis analysis = submission.getAnalysis();
 		AnalysisOutputFile file = analysis.getAnalysisOutputFile(treeFileKey);
@@ -636,7 +701,7 @@ public class AnalysisController {
 			sampleMetadata.entrySet().forEach(e -> {
 				stringMetadata.put(e.getKey().getLabel(), e.getValue());
 			});
-			
+
 			Map<String, MetadataEntry> valuesMap = new HashMap<>();
 			for (String term : terms) {
 
@@ -660,7 +725,7 @@ public class AnalysisController {
 
 	/**
 	 * Get a list of all {@link MetadataTemplate}s for the {@link AnalysisSubmission}
-	 * 
+	 *
 	 * @param submissionId id of the {@link AnalysisSubmission}
 	 * @return a map of {@link MetadataTemplate}s
 	 */
@@ -731,7 +796,7 @@ public class AnalysisController {
 
 		return viewName;
 	}
-	
+
 	/**
 	 * Response object storing a project and whether or not it's shared with a
 	 * given {@link AnalysisSubmission}

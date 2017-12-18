@@ -58,7 +58,8 @@
 					<sub-nav-item state="preview" data:text="#{analysis.tab.preview}"></sub-nav-item>
 				</th:block>
 				<sub-nav-item th:if="${sistr}" state="sistr" text="Sistr"></sub-nav-item>
-				<sub-nav-item state="inputs" data:text="#{analysis.tab.input-files}"></sub-nav-item>
+                <sub-nav-item th:if="${bio_hansel}" state="bio_hansel" text="Bio_Hansel Results"></sub-nav-item>
+                <sub-nav-item state="inputs" data:text="#{analysis.tab.input-files}"></sub-nav-item>
 				<th:block th:if="${isCompleted}">
 					<sub-nav-item state="provenance" data:text="#{analysis.tab.provenance}"></sub-nav-item>
 				</th:block>
@@ -209,6 +210,10 @@
 					<p><a href="https://doi.org/10.1371/journal.pone.0147101">The <i>Salmonella In Silico</i> Typing Resource (SISTR): an open web-accessible tool for rapidly typing and subtyping draft Salmonella genome assemblies. Catherine Yoshida, Peter Kruczkiewicz, Chad R. Laing, Erika J. Lingohr, Victor P.J. Gannon, John H.E. Nash, Eduardo N. Taboada. <cite>PLoS ONE 11(1): e0147101. doi: 10.1371/journal.pone.0147101</cite></a></p>
 				</div>
 			</script>
+
+            <script type="text/ng-template" id="bio_hansel.html">
+                <div>Hello</div>
+            </script>
 
 			<script type="text/ng-template" id="inputs.html" th:with="fileCount = ${#lists.size(paired_end)}">
 				<th:block th:if="${referenceFile}">
