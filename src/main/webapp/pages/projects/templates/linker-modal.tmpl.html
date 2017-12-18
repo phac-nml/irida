@@ -1,0 +1,31 @@
+<div class="modal-dialog t-linker-modal" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <i class="fa fa-terminal fa-fw" aria-hidden="true"></i>&nbsp;
+                <span th:utext="#{ngs.linker.title}">__LINKER</span>
+            </h3>
+        </div>
+        <div class="modal-body">
+            <p th:text="#{ngs.linker.details}"></p>
+            <div class="form-group linker-form js-linker-form">
+                <div class="input-group">
+                    <input class="form-control js-cmd-text t-cmd-text" type="text" th:value="${command}"/>
+                    <span class="input-group-btn">
+                        <button class="btn btn-default js-clipboard-btn"
+                                type="button"
+                                data-clipboard-target=".js-cmd-text"
+                                data-toggle="tooltip"
+                                th:title="#{form.clipboard}"
+                                tooltip-placement="top">
+                            <i class="fa fa-clipboard fa-fw" aria-hidden="true"></i>
+                        </button>
+                    </span>
+                </div>
+                <span class="help-block copy-success" th:text="#{form.clipboard.success}">Copied to clipboard.</span>
+                <span class="help-block copy-error" th:text="#{form.clipboard.error}">Cannot copy to clipboard.</span>
+            </div>
+        </div>
+    </div>
+</div>

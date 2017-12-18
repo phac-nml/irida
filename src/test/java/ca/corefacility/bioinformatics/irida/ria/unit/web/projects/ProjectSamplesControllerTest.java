@@ -41,6 +41,7 @@ import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.UISampleFilter;
 import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProjectSamples;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectSamplesController;
@@ -253,7 +254,6 @@ public class ProjectSamplesControllerTest {
 		String property = "name";
 		final Project p = new Project();
 
-		Principal principal = () -> USER_NAME;
 		User puser = new User(USER_NAME, null, null, null, null, null);
 		puser.setSystemRole(Role.ROLE_ADMIN);
 		Page<Project> projects = new PageImpl<>(Lists.newArrayList(TestDataFactory.constructProject(), TestDataFactory.constructProject()));
@@ -262,7 +262,7 @@ public class ProjectSamplesControllerTest {
 		when(projectService.getUnassociatedProjects(p, term, page, pagesize, order, property)).thenReturn(projects);
 
 		Map<String, Object> projectsAvailableToCopySamples = controller.getProjectsAvailableToCopySamples(1L, 
-				term, pagesize, page, principal);
+				term, pagesize, page);
 
 		assertTrue(projectsAvailableToCopySamples.containsKey("total"));
 		assertEquals(2L, projectsAvailableToCopySamples.get("total"));
@@ -288,7 +288,7 @@ public class ProjectSamplesControllerTest {
 		when(projectService.getUnassociatedProjects(p, term, page, pagesize, order, ProjectSamplesController.PROJECT_NAME_PROPERTY)).thenReturn(projects);
 
 		Map<String, Object> projectsAvailableToCopySamples = controller
-				.getProjectsAvailableToCopySamples(1L, term, pagesize, page, principal);
+				.getProjectsAvailableToCopySamples(1L, term, pagesize, page);
 
 		assertTrue(projectsAvailableToCopySamples.containsKey("total"));
 		assertEquals(2L, projectsAvailableToCopySamples.get("total"));
@@ -314,7 +314,7 @@ public class ProjectSamplesControllerTest {
 		DataTablesParams params = mock(DataTablesParams.class);
 		when(params.getSort()).thenReturn(new Sort(Direction.ASC, "sample.sampleName"));
 		DataTablesResponse response = controller
-				.getProjectSamples(1L, params, ImmutableList.of(), ImmutableList.of(), null, null, null, null);
+				.getProjectSamples(1L, params, ImmutableList.of(), ImmutableList.of(), new UISampleFilter(), Locale.US);
 		List<DataTablesResponseModel> data = response.getData();
 		assertEquals("Has the correct number of samples", 1, data.size());
 		DTProjectSamples sampleData = (DTProjectSamples) data.get(0);

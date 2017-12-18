@@ -1,13 +1,11 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="projects/export/_base">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      data-layout-decorate="~{projects/export/_base}">
 
 <head>
   <title th:text="#{project.export.title}"></title>
   <link rel="stylesheet" th:href="@{/resources/css/pages/ncbi_export_create.css}"/>
   <link rel="stylesheet" th:href="@{/resources/css/pages/sample_files.css}"/>
-  <script>
-    window.dependencies = ['irida.ncbi'];
-  </script>
 </head>
 
 <body>
@@ -375,9 +373,9 @@
           var paired = [];
           var single = [];
 
-          _.forEach(sampleElements, function(ele) {
+          sampleElements.forEach(function(ele) {
             data[ele] = sample.find("." + ele).val();
-          });          
+          });
           
           var filesContainer = $("#files-"+sampleId);
 
@@ -475,19 +473,21 @@
        * Angular controller for the date picker widget
        */
       (function() {
-        angular.module('irida.ncbi', []).controller("DatePickerControl", function() {
+        const ncbiModule = angular.module('irida.ncbi', []).controller("DatePickerControl", function () {
           var vm = this;
 
           vm.dt = /*[[${#calendars.format(#dates.createToday(),'YYYY-MM-dd')}]]*/ "2015-08-24";
           vm.opened = false;
 
-          vm.open = function(e) {
+          vm.open = function (e) {
             e.preventDefault();
             e.stopPropagation();
             this.opened = true;
           };
 
-        });
+        }).name;
+
+        angular.module("irida").requires.push(ncbiModule);
 
       })();
     </script>

@@ -1,19 +1,17 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import static org.junit.Assert.*;
-
 import java.util.List;
 
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
+
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.google.common.collect.Lists;
+
+import static org.junit.Assert.*;
 
 /**
  * <p>
@@ -23,19 +21,16 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Proje
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectSamplesView.xml")
 public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
-	private static final Logger logger = LoggerFactory.getLogger(ProjectSamplesPageIT.class);
 
 	@Test(expected = AssertionError.class)
 	public void testGoingToInvalidPage() {
 		LoginPage.loginAsManager(driver());
-		logger.debug("Testing going to an invalid sample id");
 		ProjectSamplesPage.gotToPage(driver(), 100);
 	}
 
 	@Test
 	public void testPageSetUp() {
 		LoginPage.loginAsManager(driver());
-		logger.info("Testing page set up for: Project Samples");
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 
 		assertTrue("Should have the project name as the page main header.", page.getTitle().equals("project ID 1"));
@@ -60,6 +55,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertFalse("Copy option should not be enabled", page.isCopyBtnEnabled());
 		assertFalse("Move option should not be enabled", page.isMoveBtnEnabled());
 		assertFalse("Remove option should not be enabled", page.isRemoveBtnEnabled());
+		page.closeToolsDropdown();
 		page.openExportDropdown();
 		assertFalse("Download option should not be enabled", page.isDownloadBtnEnabled());
 		assertFalse("NCBI Export option should not be enabled", page.isNcbiBtnEnabled());
@@ -71,6 +67,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue("Copy option should be enabled", page.isCopyBtnEnabled());
 		assertTrue("Move option should be enabled", page.isMoveBtnEnabled());
 		assertTrue("Remove option should be enabled", page.isRemoveBtnEnabled());
+		page.closeToolsDropdown();
 		page.openExportDropdown();
 		assertTrue("Download option should be enabled", page.isDownloadBtnEnabled());
 		assertTrue("NCBI Export option should be enabled", page.isNcbiBtnEnabled());
@@ -85,13 +82,11 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.openExportDropdown();
 		assertTrue("Download option should be enabled", page.isDownloadBtnEnabled());
 		assertTrue("NCBI Export option should be enabled", page.isNcbiBtnEnabled());
-
 	}
 
 	@Test
 	public void testPaging() {
 		LoginPage.loginAsManager(driver());
-		logger.info("Testing paging for: Project Samples");
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 
 		assertFalse("'Previous' button should be disabled", page.isPreviousBtnEnabled());
@@ -111,7 +106,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testSampleSelection() {
 		LoginPage.loginAsManager(driver());
-		logger.info("Testing sample selection for: Project Samples");
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 		assertEquals("Should be 0 selected samples", "No samples selected", page.getSelectedInfoText());
 
@@ -126,22 +120,11 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		page.deselectAllSamples();
 		assertEquals("Should be 0 selected samples", "No samples selected", page.getSelectedInfoText());
-
-		page.selectPage();
-		assertEquals("Should be 10 selected samples", "10 samples selected", page.getSelectedInfoText());
-
-		page.selectAllSamples();
-		assertEquals("Should have all samples selected", "21 samples selected", page.getSelectedInfoText());
-
-		page.deselectPage();
-		assertEquals("Should have all samples selected", "11 samples selected", page.getSelectedInfoText());
-
 	}
 
 	@Test
 	public void testAddSamplesToCart() {
 		LoginPage.loginAsManager(driver());
-		logger.info("Testing adding samples to the global cart.");
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 		page.selectSample(0);
 		page.selectSampleWithShift(4);
@@ -197,7 +180,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		for(int i = 0; i == names.size(); i++) {
 			assertEquals("Should have the same samples since they were copied", names.get(i), newNames.get(i));
 		}
-		
+
 		assertEquals("should be 2 locked samples", 2, page.getLockedSampleNames().size());
 	}
 	
@@ -260,46 +243,37 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	public void testFilteringSamplesByProperties() throws InterruptedException {
+	public void testFilteringSamplesByProperties() {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
-		Thread.sleep(500L);
 		assertEquals("Should have 21 projects displayed", "Showing 1 to 10 of 21 entries", page.getTableInfo());
 		page.filterByName("5");
-		Thread.sleep(500L);
 		assertEquals("Should have 17 projects displayed", "Showing 1 to 10 of 17 entries", page.getTableInfo());
 		page.filterByName("52");
-		Thread.sleep(500L);
 		assertEquals("Should have 17 projects displayed", "Showing 1 to 3 of 3 entries", page.getTableInfo());
 
 		// Test clearing the filters
 		page.clearFilter();
-		Thread.sleep(500L);
 		assertEquals("Should have 21 projects displayed", "Showing 1 to 10 of 21 entries", page.getTableInfo());
 
 		// Should ignore case
 		page.filterByName("sample");
-		Thread.sleep(500L);
 		assertEquals("Should ignore case when filtering", "Showing 1 to 10 of 21 entries", page.getTableInfo());
 
 		// Test date range filter
 		page.clearFilter();
-		Thread.sleep(500L);
 		assertEquals("Should have 21 projects displayed", "Showing 1 to 10 of 21 entries", page.getTableInfo());
 	}
 
 	@Test
-	public void testFilteringWithDates() throws InterruptedException {
+	public void testFilteringWithDates() {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
-		Thread.sleep(500L);
 		page.filterByDateRange("07/06/2015", "07/09/2015");
-		Thread.sleep(500L);
 		assertEquals("Should ignore case when filtering", "Showing 1 to 4 of 4 entries", page.getTableInfo());
 
 		// Test clearing the filters
 		page.clearFilter();
-		Thread.sleep(500L);
 		assertEquals("Should have 21 samples displayed", "Showing 1 to 10 of 21 entries", page.getTableInfo());
 	}
 

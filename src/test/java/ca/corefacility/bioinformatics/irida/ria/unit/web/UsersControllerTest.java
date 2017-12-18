@@ -370,7 +370,7 @@ public class UsersControllerTest {
 		when(userService.create(any(User.class))).thenThrow(exception);
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(pu);
 
-		String submitCreateUser = controller.submitCreateUser(u, null, password, "checked", model, principal);
+		String submitCreateUser = controller.submitCreateUser(u, "ROLE_USER", password, "checked", model, principal);
 
 		assertEquals("user/create", submitCreateUser);
 		assertTrue(model.containsKey("errors"));

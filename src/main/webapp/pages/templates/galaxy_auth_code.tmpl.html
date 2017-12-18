@@ -1,11 +1,8 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      lang="en">
-<head lang="en">
-	<meta charset="UTF-8"/>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-	<title layout:title-pattern="$DECORATOR_TITLE - $CONTENT_TITLE" th:text="#{global.title}">IRIDA Platform</title>
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+	<title data-layout-title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE" th:text="#{global.title}">IRIDA Platform</title>
 </head>
 <body vocab="http://schema.org/" typeof="WebPage" ng-app="GalaxyRedirect" ng-controller="authCodeController">
 

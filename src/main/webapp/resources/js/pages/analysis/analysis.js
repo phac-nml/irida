@@ -15,7 +15,7 @@
         hiddenIFrame.style.display = 'none';
         document.body.appendChild(hiddenIFrame);
       }
-      hiddenIFrame.src = page.URLS.download + id + '?dandelionAssetFilterState=false';
+      hiddenIFrame.src = page.URLS.download + id
     };
   }
 
@@ -83,7 +83,7 @@
     return svc;
   }
 
-  function ProjectShareController(AnalysisService, notifications) {
+  function ProjectShareController(AnalysisService) {
     var vm = this;
 
     vm.projects = {};
@@ -97,7 +97,7 @@
 
     vm.updateShared = function(project) {
       AnalysisService.updateProjectShare(project.project.identifier, project.shared).then(function(response) {
-        notifications.show({msg: response.message});
+        notifications.show({text: response.message});
       });
     };
 
@@ -174,7 +174,7 @@
     });
   }
 
-  angular.module('irida.analysis', ['ui.router', 'subnav', 'phylocanvas'])
+  var analysisModule = angular.module('irida.analysis', ['ui.router', 'subnav', 'phylocanvas'])
     .config(['$stateProvider', function ($stateProvider) {
       $stateProvider
         .state("preview", {
@@ -205,6 +205,9 @@
     .controller('FileDownloadController', [FileDownloadController])
     .controller('StateController', ['AnalysisService', StateController])
     .controller('PreviewController', [PreviewController])
-    .controller('ProjectShareController', ['AnalysisService', 'notifications', ProjectShareController])
+    .controller('ProjectShareController', ['AnalysisService', ProjectShareController])
+    .name
   ;
+
+  angular.module("irida").requires.push(analysisModule);
 })(window.angular, window.PAGE, window.notifications);

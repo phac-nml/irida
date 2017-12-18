@@ -10,7 +10,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.thymeleaf.spring4.SpringTemplateEngine;
-import org.thymeleaf.templatemode.StandardTemplateModeHandlers;
+import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 /**
@@ -60,7 +60,7 @@ public class WebEmailConfig {
 		ClassLoaderTemplateResolver classLoaderTemplateResolver = new ClassLoaderTemplateResolver();
 		classLoaderTemplateResolver.setPrefix(MAIL_TEMPLATE_PREFIX);
 		classLoaderTemplateResolver.setSuffix(TEMPLATE_SUFFIX);
-		classLoaderTemplateResolver.setTemplateMode(StandardTemplateModeHandlers.XHTML.getTemplateModeName());
+		classLoaderTemplateResolver.setTemplateMode(TemplateMode.HTML);
 		classLoaderTemplateResolver.setCharacterEncoding(CHARACER_ENCODING);
 		return classLoaderTemplateResolver;
 	}

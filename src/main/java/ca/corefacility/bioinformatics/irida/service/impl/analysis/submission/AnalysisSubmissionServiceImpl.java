@@ -310,9 +310,27 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#object, 'canReadAnalysisSubmission')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#object, 'canUpdateAnalysisSubmission')")
 	public AnalysisSubmission update(AnalysisSubmission object) {
+		AnalysisSubmission readSubmission = read(object.getId());
+
+		// Throw an exception if trying to change analysis priority.  This must be done by the specific method.
+		if (!readSubmission.getPriority().equals(object.getPriority())) {
+			throw new IllegalArgumentException("Analysis priority must be updated by updatePriority method.");
+		}
+
 		return super.update(object);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public AnalysisSubmission updatePriority(AnalysisSubmission submission, AnalysisSubmission.Priority priority) {
+		submission.setPriority(priority);
+
+		return super.update(submission);
 	}
 
 	/**
@@ -399,6 +417,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 				builder.name(name + "_" + s.getSampleName());
 				builder.inputFiles(ImmutableSet.of(samplesMap.get(s)));
 				builder.updateSamples(writeResultsToSamples);
+				builder.priority(AnalysisSubmission.Priority.MEDIUM);
 
 				// Add reference file
 				if (ref != null && description.requiresReference()) {
@@ -484,6 +503,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 			String newAnalysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples) {
 		AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
 		builder.name(name);
+		builder.priority(AnalysisSubmission.Priority.MEDIUM);
 		builder.updateSamples(writeResultsToSamples);
 		IridaWorkflowDescription description = workflow.getWorkflowDescription();
 
