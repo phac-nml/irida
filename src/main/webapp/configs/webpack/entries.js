@@ -41,6 +41,7 @@ module.exports = {
   "analyses-table": "./resources/js/pages/analyses/analyses-table.js",
   "clients-list": "./resources/js/pages/clients/clients-list.js",
   "users-list": "./resources/js/pages/users/users-list.js",
+  "users-password": "./resources/js/pages/users/users-password.js",
   "announcement-users":
     "./resources/js/pages/announcement/announcement-users.js",
   "announcement-admin":
