@@ -52,7 +52,7 @@ public class ProjectEventAspect implements Ordered {
 	 * time down to at least the second), just make sure that this aspect is
 	 * being applied *outside* of the transaction.
 	 * 
-	 * @return
+	 * @return the order of this aspect
 	 */
 	@Override
 	public int getOrder() {

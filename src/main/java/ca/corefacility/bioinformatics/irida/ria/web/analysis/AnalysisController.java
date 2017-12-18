@@ -265,7 +265,7 @@ public class AnalysisController {
 	 * 
 	 * @param submissionId
 	 *            the {@link AnalysisSubmission} id
-	 * @return a list of {@link SharedProjectResponse}
+	 * @return a list of {@link AnalysisController.SharedProjectResponse}
 	 */
 	@RequestMapping(value = "/ajax/{submissionId}/share", method = RequestMethod.GET)
 	@ResponseBody

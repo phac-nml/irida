@@ -110,7 +110,7 @@ public class ProjectSettingsAssociatedProjectsController {
 	 * @param projectId
 	 * 		{@link Long} identifier for the current {@link Project}
 	 *
-	 * @return
+	 * @return a list of the associated projects for the given project
 	 */
 	@RequestMapping("/ajax/associated")
 	public @ResponseBody

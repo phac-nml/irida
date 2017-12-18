@@ -224,7 +224,7 @@ public interface CRUDService<IdentifierType extends Serializable, Type extends T
 			String... sortProperties);
 
 	/**
-	 * Search for an entity of {@link Type} and {@link PageRequest}
+	 * Search for an entity of {@code Type} and {@link PageRequest}
 	 *
 	 * @param specification
 	 * 		The search {@link Specification}

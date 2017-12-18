@@ -272,7 +272,7 @@ public class ProjectLineListController {
 	 * @param name
 	 * 		{@link String} name for the new template.
 	 *
-	 * @return
+	 * @return the saved {@link MetadataTemplate} and a response message
 	 */
 	@RequestMapping(
 			value = "/templates",

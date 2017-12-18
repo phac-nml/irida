@@ -337,7 +337,7 @@ public class ProjectSampleMetadataController {
 	 * @param projectId
 	 * 		{@link Long} identifier for the current {@link Project}
 	 *
-	 * @return
+	 * @return the currently stored {@link SampleMetadataStorage}
 	 */
 	@RequestMapping("/upload/getMetadata")
 	@ResponseBody

@@ -100,8 +100,8 @@ public class ProjectSamplesMetadataTemplateController {
 	 *
 	 * @param projectId
 	 * 		{@link Long} identifier for a {@link Project}
-	 * @param templateId
-	 * 		{@link Long} identifier for a {@link MetadataTemplate}
+	 * @param template
+	 * 		A {@link UIMetadataTemplate} to save to a {@link Project}
 	 *
 	 * @return {@link String} redirects to the template page.
 	 */
@@ -158,7 +158,7 @@ public class ProjectSamplesMetadataTemplateController {
 	 * 		{@link HttpServletResponse}
 	 *
 	 * @throws IOException
-	 * 		thrown if {@link HttpOutputStream} cannot be used.
+	 * 		thrown if output stream cannot be used.
 	 */
 	@RequestMapping(value = "/{templateId}/excel")
 	public void downloadTemplate(@PathVariable Long templateId, HttpServletResponse response) throws IOException {

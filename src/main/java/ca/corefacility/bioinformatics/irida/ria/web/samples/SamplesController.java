@@ -382,9 +382,7 @@ public class SamplesController extends BaseController {
 	 * links that previously existed and may be bookmarked. These url require
 	 * the "/sequenceFiles" to prevent loading errors.
 	 *
-	 * @param request{@link
-	 * 			HttpServletRequest}
-	 *
+	 * @param request {@link HttpServletRequest}
 	 * @return {@link String} with the project sequence file URL
 	 */
 	@RequestMapping(value = { "/samples/{sampleId}", "/projects/{projectId}/samples/{sampleId}" })

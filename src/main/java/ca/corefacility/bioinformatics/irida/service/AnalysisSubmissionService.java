@@ -209,7 +209,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @param state       {@link AnalysisState} of the submission to search
 	 * @param workflowIds set of workflow UUIDs to search
 	 * @param project     {@link Project} to search in
-	 * @param pageRequest a {@link PageRequest} for the restults to show
+	 * @param pageRequest a {@link PageRequest} for the results to show
 	 * @return a page of {@link AnalysisSubmission}
 	 */
 	public Page<AnalysisSubmission> listSubmissionsForProject(String search, String name, AnalysisState state,
@@ -222,7 +222,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @param name        analysis submission name
 	 * @param state       {@link AnalysisState} of the submission to search
 	 * @param workflowIds set of workflow UUIDs to search
-	 * @param pageRequest a {@link PageRequest} for the restults to show
+	 * @param pageRequest a {@link PageRequest} for the results to show
 	 * @return a page of {@link AnalysisSubmission}
 	 */
 	public Page<AnalysisSubmission> listAllSubmissions(String search, String name, AnalysisState state,
@@ -243,7 +243,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * Update the priority of an {@link AnalysisSubmission}
 	 *
 	 * @param submission the submission to update
-	 * @param priority   the new {@link AnalysisSubmission.Priority}
+	 * @param priority   the new priority
 	 * @return the updated submission
 	 */
 	public AnalysisSubmission updatePriority(AnalysisSubmission submission, AnalysisSubmission.Priority priority);
