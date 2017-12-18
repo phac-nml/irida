@@ -43,6 +43,7 @@ public class PasswordExpiryCheckerTest {
 	}
 
 	@Test
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void testNonExpiredLogin() {
 		Date today = new Date();
 		Calendar cal = new GregorianCalendar();
@@ -51,7 +52,6 @@ public class PasswordExpiryCheckerTest {
 		cal.add(Calendar.DAY_OF_MONTH, -1);
 		Date expiryDate = cal.getTime();
 
-		@SuppressWarnings("unchecked")
 		Revision<Integer, User> revision = new Revision(new RevisionMetadata() {
 			@Override
 			public Number getRevisionNumber() {
@@ -78,6 +78,7 @@ public class PasswordExpiryCheckerTest {
 	}
 
 	@Test
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void testChangedPassword() {
 		user.setPassword("password1");
 		revUser.setPassword("password2");
@@ -89,7 +90,6 @@ public class PasswordExpiryCheckerTest {
 		cal.add(Calendar.DAY_OF_MONTH, -10);
 		Date expiryDate = cal.getTime();
 
-		@SuppressWarnings("unchecked")
 		Revision<Integer, User> revision = new Revision(new RevisionMetadata() {
 			@Override
 			public Number getRevisionNumber() {
@@ -116,6 +116,7 @@ public class PasswordExpiryCheckerTest {
 	}
 
 	@Test(expected = CredentialsExpiredException.class)
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void testExpiredPassword() {
 		user.setPassword("password1");
 		revUser.setPassword("password1");
@@ -127,7 +128,6 @@ public class PasswordExpiryCheckerTest {
 		cal.add(Calendar.DAY_OF_MONTH, -10);
 		Date expiryDate = cal.getTime();
 
-		@SuppressWarnings("unchecked")
 		Revision<Integer, User> revision = new Revision(new RevisionMetadata() {
 			@Override
 			public Number getRevisionNumber() {
