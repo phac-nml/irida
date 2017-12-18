@@ -28,10 +28,7 @@ The first thing that you're required to do when you access IRIDA is to create a 
 
 As in the [system introduction](..), passwords must:
 
-* Have at least 6 characters (and less than 1024 characters),
-* Include at least 1 upper-case character,
-* Include at least 1 lower-case character,
-* Include at least 1 number.
+{% include tutorials/common/password-requirements.md %}
 
 After you enter a new password you should automatically be redirected to the main IRIDA dashboard:
 
@@ -73,10 +70,7 @@ You can then change your password:
 
 As in the [system overview](../system-overview), passwords must:
 
-* Have at least 6 characters (and less than 1024 characters),
-* Include at least 1 upper-case character,
-* Include at least 1 lower-case character,
-* Include at least 1 number.
+{% include tutorials/common/password-requirements.md %}
 
 After you enter a new password you should automatically be redirected to the main IRIDA dashboard:
 

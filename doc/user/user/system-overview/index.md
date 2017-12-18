@@ -45,10 +45,7 @@ First and last names are required to be at least 2 characters long, but are othe
 
 The password that you choose for IRIDA must meet the following requirements:
 
-* At least 6 characters long (and less than 1024 characters long),
-* Include at least 1 upper-case character,
-* Include at least 1 lower-case character,
-* Include at least 1 number.
+{% include tutorials/common/password-requirements.md %}
 
 Phone numbers must be at least 4 characters long, but are otherwise not validated. For example, the following phone numbers are valid:
 
