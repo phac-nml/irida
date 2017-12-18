@@ -11,6 +11,7 @@ import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
+import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -194,6 +195,13 @@ public class UserServiceImplIT {
 		User updated = userService.changePassword(1L, updatedPassword);
 		assertNotEquals("Password in user object should be encoded.", updated.getPassword(), updatedPassword);
 		assertTrue("Password is encoded correctly.", passwordEncoder.matches(updatedPassword, updated.getPassword()));
+	}
+
+	@Test(expected = PasswordReusedException.class)
+	@WithMockUser(username = "fbristow", roles = "MANAGER")
+	public void testUpdatePasswordWithExistingPassword() {
+		String updatedPassword = "Password1";
+		User updated = userService.changePassword(1L, updatedPassword);
 	}
 
 	@Test
