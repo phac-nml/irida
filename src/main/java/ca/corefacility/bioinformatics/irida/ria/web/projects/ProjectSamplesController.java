@@ -26,6 +26,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -270,9 +271,12 @@ public class ProjectSamplesController {
 	@RequestMapping(value = "/projects/{projectId}/templates/copy-move-modal", produces = MediaType.TEXT_HTML_VALUE)
 	public String getCopySamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, @PathVariable Long projectId,
 			Model model, @RequestParam(required = false) boolean move) {
-		model.addAllAttributes(generateCopyMoveSamplesContent(projectId, ids));
+		Project project = projectService.read(projectId);
+		
+		model.addAllAttributes(generateCopyMoveSamplesContent(project, ids));
 		model.addAttribute("projectId", projectId);
 		model.addAttribute("type", move ? "move" : "copy");
+		model.addAttribute("isRemoteProject", project.isRemote());
 		return PROJECT_TEMPLATE_DIR + "copy-move-modal.tmpl";
 	}
 
@@ -325,14 +329,14 @@ public class ProjectSamplesController {
 	/**
 	 * Generate a {@link Map} of {@link Sample} to move or copy.
 	 *
+	 * @param project  The {@link Project}.
 	 * @param ids
 	 * 		{@link Long} of ids for {@link Sample}
 	 *
 	 * @return {@link Map} of samples to be moved or copied
 	 */
-	private Map<String, List<Sample>> generateCopyMoveSamplesContent(Long projectId, List<Long> ids) {
+	private Map<String, List<Sample>> generateCopyMoveSamplesContent(Project project, List<Long> ids) {
 		Map<String, List<Sample>> model = new HashMap<>();
-		Project project = projectService.read(projectId);
 		List<Sample> samples = new ArrayList<>();
 		List<Sample> extraSamples = new ArrayList<>();
 		List<Sample> lockedSamples = new ArrayList<>();
@@ -575,12 +579,20 @@ public class ProjectSamplesController {
 		List<ProjectSampleJoin> successful = new ArrayList<>();
 		try {
 
-			successful = projectService.copyOrMoveSamples(originalProject, newProject, Lists.newArrayList(samples),
-					remove, giveOwner);
+			if (remove) {
+				successful = projectService.moveSamples(originalProject, newProject, Lists.newArrayList(samples), giveOwner);
+			} else {
+				successful = projectService.copySamples(originalProject, newProject, Lists.newArrayList(samples), giveOwner);
+			}
 
 		} catch (EntityExistsException ex) {
 			logger.warn("Attempt to add project to sample failed", ex);
 			warnings.add(ex.getLocalizedMessage());
+		} catch (AccessDeniedException ex) {
+			logger.warn("Access denied adding samples to project " + newProjectId, ex);
+			String msg = remove ? "project.samples.move.sample-denied" : "project.samples.copy.sample-denied";
+			warnings.add(
+					messageSource.getMessage(msg, new Object[] { newProject.getName() }, locale));
 		}
 
 		if (!warnings.isEmpty() || successful.size() == 0) {
