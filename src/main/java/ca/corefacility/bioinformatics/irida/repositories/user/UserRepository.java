@@ -39,16 +39,4 @@ public interface UserRepository extends IridaJpaRepository<User, Long>, UserDeta
 	 */
 	@Query("SELECT u FROM User u WHERE u NOT IN (SELECT f from ProjectUserJoin p JOIN p.user f WHERE p.project=?1) and CONCAT(u.firstName, ' ', u.lastName) like %?2%")
 	public List<User> getUsersAvailableForProject(Project project, String term);
-
-	/**
-	 * Get a user from the database with the supplied email address
-	 * 
-	 * @param email
-	 *            The email address to look up
-	 * @return The user with the given email address
-	 * @throws EntityNotFoundException
-	 *             if no user can be found with the given email address
-	 */
-	@Query("SELECT u FROM User u WHERE u.email = ?1")
-	public User loadUserByEmail(String email) throws EntityNotFoundException;
 }

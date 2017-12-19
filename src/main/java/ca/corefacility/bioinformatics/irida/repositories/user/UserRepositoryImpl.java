@@ -46,6 +46,28 @@ public class UserRepositoryImpl implements UserDetailsService, UserRepositoryCus
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public User loadUserByEmail(String email) throws EntityNotFoundException {
+		Query q = entityManager.createQuery("from User u where u.email = :email");
+		q.setParameter("email", email);
+
+		try {
+			User u = (User) q.getSingleResult();
+			if (u == null) {
+				throw new EntityNotFoundException("Could not find email.");
+			}
+			return u;
+		} catch (Exception e) {
+			throw new EntityNotFoundException("Could not find email.", e);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@Transactional
 	public void updateLogin(User user, Date date) {
