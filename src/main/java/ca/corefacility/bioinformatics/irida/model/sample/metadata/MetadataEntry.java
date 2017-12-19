@@ -2,11 +2,7 @@ package ca.corefacility.bioinformatics.irida.model.sample.metadata;
 
 import java.util.Objects;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
@@ -19,6 +15,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 @Entity
 @Audited
 @Table(name = "metadata_entry")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class MetadataEntry {
 
 	@Id
