@@ -3,10 +3,8 @@ import angular from "angular";
 import "./modules/cart/irida.cart";
 import { IridaSession } from "./services/IridaSession";
 import "./pages/search/irida.search";
-
 // Import css
-import "../../styles/app.scss";
-
+import "../sass/app.scss";
 /*
 This will load notifications into the global namespace.  Remove this once all
 files have been converted over to wekbpack builds.
