@@ -1,7 +1,7 @@
 import angular from 'angular';
 import uiRouter from 'angular-ui-router';
 import ngFileUpload from 'ng-file-upload';
-import {states} from './router.config';
+import { states } from './router.config';
 import metadataUploader from './components/upload.component';
 import selectSampleNameColumnComponent from './components/selectSampleNameColumn.component';
 import headerItem from './components/headerItem.component';
@@ -9,7 +9,8 @@ import resultsComponent from './components/results.component';
 import saveMetadata from './components/saveMetadata.component';
 import resultsFoundComponent from './components/results.found.component';
 import resultsMissingComponent from './components/results.missing.component';
-import {sampleMetadataService} from './factories/metadataImport.service';
+import { sampleMetadataService } from './factories/metadataImport.service';
+import "../../../../sass/pages/project-samples-metadata-import.scss";
 
 const app = angular.module('irida');
 

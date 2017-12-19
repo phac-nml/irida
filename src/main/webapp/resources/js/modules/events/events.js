@@ -1,5 +1,5 @@
 import angular from "angular";
-import "./../../../css/modules/events.css";
+import "../../../sass/modules/events.scss";
 
 /**
  * Service to get events DOM from server.
