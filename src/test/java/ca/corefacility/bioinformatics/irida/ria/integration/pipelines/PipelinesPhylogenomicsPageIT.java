@@ -4,8 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,11 +14,14 @@ import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChr
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.PipelinesPhylogenomicsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.PipelinesSelectionPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.AssociatedProjectEditPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.RemoteApiUtilities;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.io.IOException;
+import java.nio.file.Path;
 
 /**
  * <p>
@@ -31,9 +34,24 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 	private static final Logger logger = LoggerFactory.getLogger(PipelinesPhylogenomicsPageIT.class);
 	private PipelinesPhylogenomicsPage page;
 
+	@Autowired
+	@Qualifier("sequenceFileBaseDirectory")
+	private Path sequenceDirectory;
+
+	@Autowired
+	@Qualifier("referenceFileBaseDirectory")
+	private Path referenceDirectory;
+
+	@Autowired
+	@Qualifier("outputFileBaseDirectory")
+	private Path outputDirectory;
+
 	@Before
-	public void setUpTest() {
+	public void setUpTest() throws IOException {
 		page = new PipelinesPhylogenomicsPage(driver());
+		FileUtils.cleanDirectory(sequenceDirectory.toFile());
+		FileUtils.cleanDirectory(referenceDirectory.toFile());
+		FileUtils.cleanDirectory(outputDirectory.toFile());
 	}
 
 	@Test
