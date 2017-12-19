@@ -71,10 +71,12 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 				Map<String, Object> result = sistrResults.get(0);
 
 				SISTR_FIELDS.entrySet().forEach(e -> {
-					String value = result.get(e.getKey()).toString();
-					PipelineProvidedMetadataEntry metadataEntry = new PipelineProvidedMetadataEntry(value, "text",
-							analysis);
-					stringEntries.put(e.getValue(), metadataEntry);
+					if (result.containsKey(e.getKey())) {
+						String value = result.get(e.getKey()).toString();
+						PipelineProvidedMetadataEntry metadataEntry = new PipelineProvidedMetadataEntry(value, "text",
+								analysis);
+						stringEntries.put(e.getValue(), metadataEntry);
+					}
 				});
 
 				Map<MetadataTemplateField, MetadataEntry> metadataMap = metadataTemplateService
