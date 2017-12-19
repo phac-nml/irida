@@ -12,6 +12,7 @@ Changes
 * [Administration]: Added option to expire passwords after a configured number of days.  Set `security.password.expiry` in `/etc/irida/irida.conf` to configure.
 * [Administration]: Limiting users from reusing passwords.
 * [Developer]: Updated webpack compile path to be `resources/dist`.
+* [Developer]: Webpack now extracts `css` / `scss` into its own bundles.
 
 0.18.0 to 0.19.0
 ----------------
