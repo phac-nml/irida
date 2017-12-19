@@ -16,12 +16,14 @@ import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.*;
 
 @Component
@@ -33,21 +35,32 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 
 	private MetadataTemplateService metadataTemplateService;
 	private SampleService sampleService;
+	private Path outputFileDirectory;
+
+	private static Map<String, String> SISTR_FIELDS = ImmutableMap
+			.of("serovar", "SISTR serovar", "cgmlst_subspecies", "SISTR cgMLST Subspecies", "cgmlst_ST",
+					"SISTR cgMLST Sequence Type", "qc_status", "SISTR QC Status");
 
 	@Autowired
-	public SISTRSampleUpdater(MetadataTemplateService metadataTemplateService, SampleService sampleService) {
+	public SISTRSampleUpdater(MetadataTemplateService metadataTemplateService, SampleService sampleService,
+			@Qualifier("outputFileBaseDirectory") Path outputFileDirectory) {
 		this.metadataTemplateService = metadataTemplateService;
 		this.sampleService = sampleService;
+		this.outputFileDirectory = outputFileDirectory;
 	}
 
 	@Override
 	public void update(Collection<Sample> samples, AnalysisSubmission analysis) {
 		AnalysisOutputFile sistrFile = analysis.getAnalysis().getAnalysisOutputFile(SISTR_FILE);
 
+		//need to resolve the absolute path as it won't have been saved yet
+		Path relativeFile = sistrFile.getFile();
+		Path absoluteFile = outputFileDirectory.resolve(relativeFile);
+
 		Map<String, MetadataEntry> stringEntries = new HashMap<>();
 		try {
-			String jsonFile = new Scanner(new BufferedReader(new FileReader(sistrFile.getFile().toFile())))
-					.useDelimiter("\\Z").next();
+			String jsonFile = new Scanner(new BufferedReader(new FileReader(absoluteFile.toFile()))).useDelimiter("\\Z")
+					.next();
 
 			ObjectMapper mapper = new ObjectMapper();
 			List<Map<String, Object>> sistrResults = mapper
@@ -57,17 +70,12 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 			if (sistrResults.size() > 0) {
 				Map<String, Object> result = sistrResults.get(0);
 
-				//serovar
-				String serovarString = (String) result.get("serovar");
-				PipelineProvidedMetadataEntry serovar = new PipelineProvidedMetadataEntry(serovarString, "text",
-						analysis);
-				stringEntries.put("SISTR_serovar", serovar);
-
-				//serovar_antigen
-				String antigenString = (String) result.get("serovar_antigen");
-				PipelineProvidedMetadataEntry antigen = new PipelineProvidedMetadataEntry(antigenString, "text",
-						analysis);
-				stringEntries.put("SISTR_serovar_antigen", antigen);
+				SISTR_FIELDS.entrySet().forEach(e -> {
+					String value = result.get(e.getKey()).toString();
+					PipelineProvidedMetadataEntry metadataEntry = new PipelineProvidedMetadataEntry(value, "text",
+							analysis);
+					stringEntries.put(e.getValue(), metadataEntry);
+				});
 
 				Map<MetadataTemplateField, MetadataEntry> metadataMap = metadataTemplateService
 						.getMetadataMap(stringEntries);
