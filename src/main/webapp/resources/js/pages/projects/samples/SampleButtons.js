@@ -10,8 +10,9 @@ import $ from "jquery";
  * Check the state of the calling button to see if it should be enabled or not.
  * @param count the number if samples currently selected.
  * @param hasAssociated if there are associated project currently displayed.
+ * @param isRemote If thie project is a remote project.
  */
-function checkState(count, hasAssociated) {
+function checkState(count, hasAssociated, isRemote) {
   // Remove the tooltip. A new one will be created based on the
   // information provided.
   this.$node.tooltip("destroy");
@@ -23,18 +24,24 @@ function checkState(count, hasAssociated) {
       placement: "right",
       title: this.$node.data("associatedMsg")
     });
+  } else if (isRemote && this.$node.data("remoteMsg")) {
+    this.$node.parent().addClass("disabled");
+    // Activate the tooltip
+    this.$node.tooltip({
+      container: "body",
+      placement: "right",
+      title: this.$node.data("remoteMsg")
+    });
+  } else if (count < this.$node.data("enabledAt")) {
+    this.$node.parent().addClass("disabled");
+    // Activate the tooltip
+    this.$node.tooltip({
+      container: "body",
+      placement: "right",
+      title: this.$node.data("enabledMsg")
+    });
   } else {
-    if (count < this.$node.data("enabledAt")) {
-      this.$node.parent().addClass("disabled");
-      // Activate the tooltip
-      this.$node.tooltip({
-        container: "body",
-        placement: "right",
-        title: this.$node.data("enabledMsg")
-      });
-    } else {
-      this.$node.parent().removeClass("disabled");
-    }
+    this.$node.parent().removeClass("disabled");
   }
 }
 
@@ -127,8 +134,9 @@ export class SampleDropdownButton {
    * number of currently selected samples
    * @param {number} count of selected samples
    * @param {boolean} hasAssociated whether associated projects are being displayed.
+   * @param {boolean} isRemote Whether the project is a remote project.
    */
-  checkState(count = 0, hasAssociated = false) {
-    checkState.call(this, count, hasAssociated);
+  checkState(count = 0, hasAssociated = false, isRemote = false) {
+    checkState.call(this, count, hasAssociated, isRemote);
   }
 }

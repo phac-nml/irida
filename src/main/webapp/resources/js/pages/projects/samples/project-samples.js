@@ -166,6 +166,8 @@ const $table = $("#samplesTable");
  * @type {string}
  */
 const url = $table.data("url");
+ 
+const IS_REMOTE_PROJECT = window.PAGE.isRemoteProject;
 
 const config = Object.assign({}, tableConfig, {
   ajax: {
@@ -314,7 +316,7 @@ function checkToolButtonState(count = $dt.select.selected()[0].size) {
   Update the state of the buttons in the navbar.
    */
   for (const btn of SAMPLE_TOOL_BUTTONS) {
-    btn.checkState(count, ASSOCIATED_PROJECTS.size > 0);
+    btn.checkState(count, ASSOCIATED_PROJECTS.size > 0, IS_REMOTE_PROJECT);
   }
 }
 
