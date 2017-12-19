@@ -55,7 +55,7 @@
                     </div>
 
                     <div class="alert alert-warning" th:if="${isRemoteProject}">
-                        <span th:text="#{project.samples.modal.copy.remote}">_All copied samples will be read only as this project is a remote project_</span>
+                        <span th:text="#{project.samples.modal.copy.remote}">_All samples will be read only as this project is a remote project_</span>
                     </div>
                     <div th:if="${not isRemoteProject}">
                     <!-- Only the the allow modification checkbox for the copy not the move -->
