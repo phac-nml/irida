@@ -190,7 +190,7 @@ function SistrController(analysisService) {
   });
 }
 
-angular
+const iridaAnalysis = angular
   .module("irida.analysis", ["ui.router", "subnav", "phylocanvas"])
   .config([
     "$stateProvider",
@@ -227,4 +227,7 @@ angular
   .controller("ProjectShareController", [
     "AnalysisService",
     ProjectShareController
-  ]);
+  ])
+  .name;
+
+angular.module("irida").requires.push(iridaAnalysis);
