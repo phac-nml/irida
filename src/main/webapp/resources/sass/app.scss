@@ -17,9 +17,6 @@
 @import "components/tables";
 @import "components/typography";
 
-// Frameworks used on all pages.
-@import "components/noty";
-
 // TODO: these should only be loaded on their pages - add through webpack
 @import "pages/remoteApi";
 
@@ -77,11 +74,6 @@ h2.h2-muted {
   margin-top: 0 !important;
   font-weight: 300 !important;
   font-size: 2.5rem;
-}
-
-// Material overide, conflicts with bootstrap.
-input[type="search"] {
-  box-sizing: inherit!important;
 }
 
 // TODO: Clean these up.

@@ -28,6 +28,20 @@ const commonConfig = merge([
     output: {
       path: PATHS.build,
       filename: "js/[name].bundle.js"
+    },
+    module: {
+      rules: [
+        {
+          test: /\.woff2?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+          use: {
+            loader: "url-loader"
+          }
+        },
+        {
+          test: /\.(ttf|eot|svg)(\?[\s\S]+)?$/,
+          use: "file-loader"
+        }
+      ]
     }
   },
   parts.loadJavaScript(),

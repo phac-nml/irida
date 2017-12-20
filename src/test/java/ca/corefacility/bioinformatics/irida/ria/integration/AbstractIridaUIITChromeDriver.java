@@ -57,7 +57,7 @@ public class AbstractIridaUIITChromeDriver {
      * Code to execute before *each* test.
      */
     @Before
-    public void setUpTest() {
+    public void setUpTest() throws IOException {
     	// logout before everything else.
     	LoginPage.logout(driver());
     }
