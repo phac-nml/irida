@@ -5,7 +5,7 @@
         data-layout-decorate="~{projects/_base}">
 <head>
     <title th:text="#{linelist.page-title}">Title</title>
-    <link rel="stylesheet" th:href="@{/resources/css/pages/project_linelist.css}" />
+    <link rel="stylesheet" th:href="@{/resources/dist/css/project-linelist.bundle.css}">
     <script th:inline="javascript">
       var PAGE = {
         urls: {
@@ -178,7 +178,7 @@
     </script>
 
     <script th:src="@{/resources/bower_components/jszip/dist/jszip.min.js}"></script>
-    <script th:src="@{/resources/js/build/project-linelist.bundle.js}"></script>
+    <script th:src="@{/resources/dist/js/project-linelist.bundle.js}"></script>
 </th:block>
 </body>
 </html>

@@ -16,9 +16,13 @@ import {
   SampleDropdownButton,
   SampleExportButton
 } from "./SampleButtons";
-import { FILTERS, SAMPLE_EVENTS } from "./constants";
+import {
+  FILTERS,
+  SAMPLE_EVENTS
+} from "./constants";
 import { download } from "../../../utilities/file.utilities";
 import moment from "moment";
+import "../../../../sass/pages/project-samples.scss";
 
 /*
 This is required to use select2 inside a modal.
@@ -242,8 +246,9 @@ const config = Object.assign({}, tableConfig, {
       targets: [COLUMNS.SAMPLE_NAME],
       render(data, type, full) {
         return createItemLink({
-          url: `${window.TL
-            .BASE_URL}projects/${full.projectId}/samples/${full.id}`,
+          url: `${window.TL.BASE_URL}projects/${full.projectId}/samples/${
+            full.id
+            }`,
           label: full.sampleName,
           classes: ["t-sample-label"]
         });
@@ -635,7 +640,7 @@ app.controller("GalaxyExportController", [
       });
 
       // Cart is expecting an object {projectId: [sampleIds]}
-      const sampleIds = {[projectId] : ids};
+      const sampleIds = { [projectId]: ids };
 
       $uibModal.open({
         templateUrl,
