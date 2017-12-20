@@ -1,27 +1,19 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pipelines;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.PipelinesPhylogenomicsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.PipelinesSelectionPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
-
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.junit.Before;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.nio.file.Path;
+
+import static org.junit.Assert.*;
 
 /**
  * <p>
@@ -34,24 +26,9 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 	private static final Logger logger = LoggerFactory.getLogger(PipelinesPhylogenomicsPageIT.class);
 	private PipelinesPhylogenomicsPage page;
 
-	@Autowired
-	@Qualifier("sequenceFileBaseDirectory")
-	private Path sequenceDirectory;
-
-	@Autowired
-	@Qualifier("referenceFileBaseDirectory")
-	private Path referenceDirectory;
-
-	@Autowired
-	@Qualifier("outputFileBaseDirectory")
-	private Path outputDirectory;
-
 	@Before
 	public void setUpTest() throws IOException {
 		page = new PipelinesPhylogenomicsPage(driver());
-		FileUtils.cleanDirectory(sequenceDirectory.toFile());
-		FileUtils.cleanDirectory(referenceDirectory.toFile());
-		FileUtils.cleanDirectory(outputDirectory.toFile());
 	}
 
 	@Test
@@ -65,7 +42,7 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 	}
 
 	@Test
-	public void testSubmitWithTransientReferenceFile() {
+	public void testSubmitWithTransientReferenceFile() throws IOException {
 		LoginPage.loginAsUser(driver());
 
 		// Add sample from a project that user is a "Project User" and has no
@@ -77,8 +54,8 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 		PipelinesSelectionPage.goToPhylogenomicsPipeline(driver());
 		assertTrue("Should display a warning to the user that there are no reference files.",
 				page.isNoReferenceWarningDisplayed());
-		page.selectReferenceFile();
-		assertTrue("Page should display reference file name.", page.isReferenceFileNameDisplayed());
+		String fileName = page.selectReferenceFile();
+		assertTrue("Page should display reference file name.", page.isReferenceFileNameDisplayed(fileName));
 	}
 
 	@Test
