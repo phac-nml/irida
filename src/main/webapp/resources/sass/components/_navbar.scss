@@ -13,7 +13,7 @@
 }
 
 // Update z-index for submenu
-.navbar-nav>li>.dropdown-menu {
+.navbar-nav > li > .dropdown-menu {
   z-index: 10000;
 }
 
@@ -27,10 +27,10 @@
   li:not(.active) a {
     background-color: #eeeeee;
     color: #222222;
-    transition: all .2s ease-in-out;
+    transition: all 0.2s ease-in-out;
 
     &:hover {
-      background-color: #BBBBBB;
+      background-color: #bbbbbb;
     }
   }
 }

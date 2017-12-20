@@ -7,7 +7,7 @@
   }
   i.glyphicon {
     color: $irida-colour-grey-dark;
-    margin-right: .5em;
+    margin-right: 0.5em;
   }
   em {
     font-style: normal;
@@ -27,7 +27,7 @@
 }
 
 .sidebar {
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   border: 1px solid $irida-colour-grey;
   border-bottom-color: $irida-colour-grey-dark;
   border-radius: $irida-global-radius;
@@ -60,18 +60,18 @@
   .input-group-btn button {
     border: 1px solid $irida-colour-grey-dark !important;
     border-left: none;
-    color: $irida-colour-grey-dark
+    color: $irida-colour-grey-dark;
   }
 }
 
 .sidebar__item {
   border-top: 1px solid $irida-colour-grey-light;
-  padding: .3em 0.5em;
+  padding: 0.3em 0.5em;
   display: flex;
   align-items: center;
 
   > div {
-    padding: 0 .3em;
+    padding: 0 0.3em;
   }
 }
 
