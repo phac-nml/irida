@@ -4,6 +4,7 @@
  *  Webpack will then create the bundle in `resource/js/build/`
  */
 module.exports = {
+  bootstrap: "bootstrap-loader",
   vendor: ["babel-polyfill"],
   announcements: "./resources/js/pages/announcement/announcements.js",
   analysis: "./resources/js/pages/analysis/analysis.js",
