@@ -26,6 +26,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 
+/**
+ * {@link AnalysisSampleUpdater} that adds a number of results from a SISTR run to the metadata of a {@link Sample}
+ */
 @Component
 public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 
@@ -49,19 +52,30 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 		this.outputFileDirectory = outputFileDirectory;
 	}
 
+	/**
+	 * Add SISTR results to the metadata of the given {@link Sample}s
+	 *
+	 * @param samples  The samples to update.
+	 * @param analysis the {@link AnalysisSubmission} to apply to the samples
+	 */
 	@Override
 	public void update(Collection<Sample> samples, AnalysisSubmission analysis) {
 		AnalysisOutputFile sistrFile = analysis.getAnalysis().getAnalysisOutputFile(SISTR_FILE);
 
-		//need to resolve the absolute path as it won't have been saved yet
-		Path relativeFile = sistrFile.getFile();
-		Path absoluteFile = outputFileDirectory.resolve(relativeFile);
+		Path filePath = sistrFile.getFile();
+
+		//need to check if the file path is absolute as it might not be saved yet
+		if (!filePath.isAbsolute()) {
+			filePath = outputFileDirectory.resolve(filePath);
+		}
 
 		Map<String, MetadataEntry> stringEntries = new HashMap<>();
 		try {
-			String jsonFile = new Scanner(new BufferedReader(new FileReader(absoluteFile.toFile()))).useDelimiter("\\Z")
+			//Read the JSON file from SISTR output
+			String jsonFile = new Scanner(new BufferedReader(new FileReader(filePath.toFile()))).useDelimiter("\\Z")
 					.next();
 
+			// map the results into a Map
 			ObjectMapper mapper = new ObjectMapper();
 			List<Map<String, Object>> sistrResults = mapper
 					.readValue(jsonFile, new TypeReference<List<Map<String, Object>>>() {
@@ -70,6 +84,7 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 			if (sistrResults.size() > 0) {
 				Map<String, Object> result = sistrResults.get(0);
 
+				//loop through each of the requested fields and save the entries
 				SISTR_FIELDS.entrySet().forEach(e -> {
 					if (result.containsKey(e.getKey())) {
 						String value = result.get(e.getKey()).toString();
@@ -79,9 +94,11 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 					}
 				});
 
+				// convert string map into metadata fields
 				Map<MetadataTemplateField, MetadataEntry> metadataMap = metadataTemplateService
 						.getMetadataMap(stringEntries);
 
+				//save metadata back to sample
 				samples.forEach(s -> sampleService.updateFields(s.getId(), ImmutableMap.of("metadata", metadataMap)));
 
 			} else {
