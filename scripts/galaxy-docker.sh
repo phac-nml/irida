@@ -25,7 +25,7 @@ OUTPUT="$(docker run -d -p 48888:80 -v ${MOUNTPATH}:${MOUNTPATH} \
     -v /tmp/irida:/tmp/irida apetkau/galaxy-irida-16.10-it:0.1)"
 
 #run the test suite
-mvn clean verify -B -Pgalaxy_testing -Djdbc.url=jdbc:mysql://localhost:3306/irida_test -Dirida.it.rootdirectory=/tmp/irida
+mvn clean verify -Pgalaxy_testing
 
 #kill the container with the long container id
 docker kill ${OUTPUT}
