@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.GZIPOutputStream;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -101,7 +102,7 @@ public class SequencingObjectServiceImplIT {
 
 	@Autowired
 	private SampleService sampleService;
-	
+
 	@Autowired
 	private SampleRepository sampleRepository;
 
@@ -121,6 +122,7 @@ public class SequencingObjectServiceImplIT {
 	@Before
 	public void setUp() throws IOException {
 		Files.createDirectories(baseDirectory);
+		FileUtils.cleanDirectory(baseDirectory.toFile());
 	}
 
 	private SequencingObjectServiceImplIT asRole(Role r, String username) {
@@ -279,7 +281,7 @@ public class SequencingObjectServiceImplIT {
 		logger.trace("Finished saving the file.");
 
 		assertNotNull("ID wasn't assigned.", sequencingObject.getId());
-		
+
 		// Sleeping for a bit to let file processing run
 		Thread.sleep(10000);
 
@@ -343,7 +345,7 @@ public class SequencingObjectServiceImplIT {
 		logger.trace("Finished saving the file.");
 
 		assertNotNull("ID wasn't assigned.", sequencingObject.getId());
-		
+
 		// Sleeping for a bit to let file processing run
 		Thread.sleep(10000);
 
@@ -465,7 +467,7 @@ public class SequencingObjectServiceImplIT {
 		assertTrue("should be coverage entry", qcEntry instanceof CoverageQCEntry);
 		assertEquals("qc should have failed", QCEntryStatus.NEGATIVE, qcEntry.getStatus());
 	}
-	
+
 	/**
 	 * Tests to make sure we get a properly constructed map of samples to sequencing objects.
 	 */
@@ -474,16 +476,16 @@ public class SequencingObjectServiceImplIT {
 	public void testGetUniqueSamplesForSequencingObjectsSuccess() {
 		SequencingObject s1 = objectService.read(1L);
 		SequencingObject s2 = objectService.read(2L);
-		
+
 		Sample sa1 = sampleService.read(1L);
 		Sample sa2 = sampleService.read(2L);
-		
+
 		Map<Sample, SequencingObject> sampleMap = objectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(s1,s2));
 		assertEquals("Incorrect number of results returned in sample map", 2, sampleMap.size());
 		assertEquals("Incorrect sequencing object mapped to sample", s2.getId(), sampleMap.get(sa1).getId());
 		assertEquals("Incorrect sequencing object mapped to sample", s1.getId(), sampleMap.get(sa2).getId());
 	}
-	
+
 	/**
 	 * Tests failure when a sample for one sequencing object does not exist.
 	 */
@@ -492,12 +494,12 @@ public class SequencingObjectServiceImplIT {
 	public void testGetUniqueSamplesForSequencingObjectsFailNoSample() {
 		SequencingObject s1 = objectService.read(1L);
 		SequencingObject s2 = objectService.read(2L);
-		
+
 		sampleRepository.delete(1L);
-		
+
 		objectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(s1,s2));
 	}
-	
+
 	/**
 	 * Tests failure for duplicate samples in sequencing objects.
 	 */
@@ -506,10 +508,10 @@ public class SequencingObjectServiceImplIT {
 	public void testGetUniqueSamplesForSequencingObjectsFailDuplicateSample() {
 		SequencingObject s1 = objectService.read(1L);
 		SequencingObject s4 = objectService.read(4L);
-				
+
 		objectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(s1,s4));
 	}
-	
+
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testConcatenateSequenceFiles() throws IOException, InterruptedException, ConcatenateException {
@@ -558,14 +560,14 @@ public class SequencingObjectServiceImplIT {
 		assertTrue("new file should contain new name", newFile.getFileName().contains(newFileName));
 
 		long newFileSize = newFile.getFile().toFile().length();
-		
+
 		assertEquals("new file should be 2x size of originals", originalLength * 2, newFileSize);
 	}
-	
+
 	private SequenceFile createSequenceFile(String name) throws IOException{
 		Path sequenceFile = Files.createTempFile(name, ".fastq");
 		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
-		
+
 		return new SequenceFile(sequenceFile);
 	}
 }
