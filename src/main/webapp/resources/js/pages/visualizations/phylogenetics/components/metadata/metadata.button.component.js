@@ -1,5 +1,5 @@
-import angular from 'angular';
-import {METADATA} from '../../constants';
+import angular from "angular";
+import { METADATA } from "../../constants";
 
 /**
  * Controller for the side panel that displays
@@ -32,10 +32,7 @@ class MetadataAsideController {
   }
 }
 
-MetadataAsideController.$inject = [
-  '$uibModalInstance',
-  'parent'
-];
+MetadataAsideController.$inject = ["$uibModalInstance", "parent"];
 
 /**
  * Controller for the button to toggle the metadata side panel.
@@ -54,11 +51,12 @@ class MetadataButtonController {
 
     // Register listeners
     $scope.$on(METADATA.TEMPLATE, (e, args) => {
-      const {fields} = args;
+      const { fields } = args;
       const existing = angular.copy(this.terms);
       const newOrder = [];
 
-      if (fields) { // Add the visible fields in order
+      if (fields) {
+        // Add the visible fields in order
         fields.forEach(field => {
           const index = existing.findIndex(t => {
             return t.term === field;
@@ -73,7 +71,7 @@ class MetadataButtonController {
 
       // Hide remainder of fields;
       // typeof fields === 'undefined' would evaluate to try only for the show all fields option.
-      const showFields = typeof fields === 'undefined';
+      const showFields = typeof fields === "undefined";
       existing.forEach(term => {
         term.selected = showFields;
         newOrder.push(term);
@@ -85,12 +83,12 @@ class MetadataButtonController {
     });
 
     $scope.$on(METADATA.LOADED, (event, args) => {
-      const {terms} = args;
+      const { terms } = args;
       this.terms = terms.map(term => {
-        return ({
+        return {
           term,
           selected: true
-        });
+        };
       });
     });
   }
@@ -102,7 +100,7 @@ class MetadataButtonController {
     const columns = this.terms
       .filter(term => term.selected)
       .map(term => term.term);
-    this.$rootScope.$broadcast(METADATA.UPDATED, {columns});
+    this.$rootScope.$broadcast(METADATA.UPDATED, { columns });
   }
 
   /**
@@ -112,34 +110,28 @@ class MetadataButtonController {
     const parent = this;
 
     // Open the Aside to let the user select terms.
-    this.$aside
-      .open({
-        templateUrl: `metadataAside.tmpl.html`,
-        placement: `left`,
-        size: 'sm',
-        openedClass: 'metadata-open',
-        controllerAs: '$ctrl',
-        controller: MetadataAsideController,
-        resolve: {
-          parent() {
-            return parent;
-          }
+    this.$aside.open({
+      templateUrl: `metadataAside.tmpl.html`,
+      placement: `left`,
+      size: "sm",
+      openedClass: "metadata-open",
+      controllerAs: "$ctrl",
+      controller: MetadataAsideController,
+      resolve: {
+        parent() {
+          return parent;
         }
-      });
+      }
+    });
   }
-
 }
 
-MetadataButtonController.$inject = [
-  '$rootScope',
-  '$scope',
-  '$aside'
-];
+MetadataButtonController.$inject = ["$rootScope", "$scope", "$aside"];
 
 export const MetadataButton = {
   bindings: {
-    metadataUrl: '@' // Pass in the metadata url from the UI.
+    metadataUrl: "@" // Pass in the metadata url from the UI.
   },
-  templateUrl: 'metadataButton.tmpl.html',
+  templateUrl: "metadataButton.tmpl.html",
   controller: MetadataButtonController
 };

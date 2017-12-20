@@ -1,6 +1,6 @@
-(function($, noty, page){
-  $(function(){
-    $("#remove-btn").click(function(){
+(function($, noty, page) {
+  $(function() {
+    $("#remove-btn").click(function() {
       noty({
         layout: "center",
         type: "default",
@@ -8,25 +8,24 @@
         modal: true,
         buttons: [
           {
-            addClass: 'btn btn-primary btn-sm confirm-delete',
+            addClass: "btn btn-primary btn-sm confirm-delete",
             text: page.buttons.ok,
-            onClick: function () {
+            onClick: function() {
               $("#removeForm").submit();
             }
           },
           {
-            addClass: 'btn btn-default btn-sm',
+            addClass: "btn btn-default btn-sm",
             text: page.buttons.cancel,
-            onClick: function ($noty) {
+            onClick: function($noty) {
               $noty.close();
             }
           }
         ]
       });
-
     });
 
-    $("#revoke-btn").click(function(){
+    $("#revoke-btn").click(function() {
       noty({
         layout: "center",
         type: "default",
@@ -34,22 +33,21 @@
         modal: true,
         buttons: [
           {
-            addClass: 'btn btn-primary btn-sm confirm-revoke',
+            addClass: "btn btn-primary btn-sm confirm-revoke",
             text: page.buttons.ok,
-            onClick: function () {
+            onClick: function() {
               $("#revokeForm").submit();
             }
           },
           {
-            addClass: 'btn btn-default btn-sm',
+            addClass: "btn btn-default btn-sm",
             text: page.buttons.cancel,
-            onClick: function ($noty) {
+            onClick: function($noty) {
               $noty.close();
             }
           }
         ]
       });
-
     });
   });
 })(window.jQuery, window.noty, window.PAGE);
