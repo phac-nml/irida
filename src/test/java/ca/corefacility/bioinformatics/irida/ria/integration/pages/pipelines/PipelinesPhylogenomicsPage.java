@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 import org.openqa.selenium.By;
@@ -148,7 +149,7 @@ public class PipelinesPhylogenomicsPage extends AbstractPage {
 		//create a temp file copy of the test file so it has a unique name
 		Path path = Paths.get("src/test/resources/files/test_file.fasta");
 		Path tempFile = Files.createTempFile("temp_file", ".fasta");
-		Files.copy(path, tempFile);
+		Files.copy(path, tempFile, StandardCopyOption.REPLACE_EXISTING);
 
 		WebElement uploadBtn = driver.findElement(By.id("file-upload-button"));
 		uploadBtn.sendKeys(tempFile.toAbsolutePath().toString());
