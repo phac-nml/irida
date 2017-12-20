@@ -10,6 +10,7 @@ import saveMetadata from "./components/saveMetadata.component";
 import resultsFoundComponent from "./components/results.found.component";
 import resultsMissingComponent from "./components/results.missing.component";
 import { sampleMetadataService } from "./factories/metadataImport.service";
+import "../../../../sass/pages/project-samples-metadata-import.scss";
 
 const app = angular.module("irida");
 

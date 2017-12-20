@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="template/page">
+      data-layout-decorate="~{template/page}">
 <head>
     <title th:text="#{projects.title}">List of Projects</title>
+    <link rel="stylesheet" th:href="@{/resources/dist/css/projects.bundle.css}">
     <script th:inline="javascript">
       var PAGE = {
           urls: {

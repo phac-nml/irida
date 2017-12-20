@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="projects/_base">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      data-layout-decorate="~{projects/_base}">
 
 <head>
   <title th:text="${project.label} + ' - ' + #{project.nav.details}"></title>
+  <link rel="stylesheet" th:href="@{/resources/dist/css/project-events.bundle.css}">
 </head>
 
 <body>

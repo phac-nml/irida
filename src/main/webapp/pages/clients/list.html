@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="clients/_base">
+      data-layout-decorate="~{clients/_base}">
 <head>
     <title th:text="#{clients.title}">_Clients_</title>
+    <link rel="stylesheet" th:href="@{/resources/dist/css/clients-list.bundle.css}">
 </head>
 <body>
 <th:block layout:fragment="page">

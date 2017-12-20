@@ -1,4 +1,4 @@
-import "../../../css/pages/analyses-list.css";
+import "../../../sass/pages/analyses-list.scss";
 import "../../vendor/datatables/datatables";
 import $ from "jquery";
 import {

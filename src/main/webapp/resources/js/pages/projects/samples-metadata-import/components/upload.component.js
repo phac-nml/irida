@@ -1,4 +1,4 @@
-import "../../../../../css/components/ngFileUpload.css";
+import "../../../../../sass/components/ngFileUpload.scss";
 
 /**
  * @file AngularJS component displaying the capability of uploading an excel file

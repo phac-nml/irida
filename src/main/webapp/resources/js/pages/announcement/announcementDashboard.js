@@ -1,5 +1,5 @@
 import angular from "angular";
-import "./../../../css/modules/announcements.css";
+import "./../../../sass/modules/announcements.scss";
 
 /**
    * Service to get announcements DOM from server
