@@ -20,13 +20,14 @@
 // TODO: these should only be loaded on their pages - add through webpack
 @import "pages/remoteApi";
 
-html, body {
+html,
+body {
   height: 100%;
 }
 
 // Gravatar
 .nav-gravatar {
-  padding: 11px 5px!important;
+  padding: 11px 5px !important;
 }
 img.gravatar {
   border-radius: 50%;
@@ -41,14 +42,19 @@ img.gravatar {
   top: 3px;
   right: -3px;
   height: 20px;
-  width: 20px!important;
-  padding: 0!important;
+  width: 20px !important;
+  padding: 0 !important;
   font-size: 1.3rem;
   line-height: 2rem;
 }
 
 // Bootstrap override
-.nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
+.nav,
+.pagination,
+.carousel,
+.panel-title a {
+  cursor: pointer;
+}
 
 .clickable {
   display: block;
@@ -79,7 +85,7 @@ h2.h2-muted {
 // TODO: Clean these up.
 #table-filter {
   padding: 0;
-  &>div {
+  & > div {
     padding: 20px;
   }
   .filter-btns > button {
@@ -92,23 +98,22 @@ h2.h2-muted {
   border-radius: 4px;
   padding: 4px 8px 6px 8px;
   margin: 5px;
-  background-color: rgba(0, 0, 0, .5);
-  border-top: 1px solid rgba(0, 0, 0, .4);
+  background-color: rgba(0, 0, 0, 0.5);
+  border-top: 1px solid rgba(0, 0, 0, 0.4);
 }
 
-
 .crop {
-  max-width: 250px!important;
-  white-space: nowrap!important;
-  overflow: hidden!important;
-  text-overflow: ellipsis!important;
+  max-width: 250px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
 }
 
 .wrap-cell {
-  max-width: 160px!important;
+  max-width: 160px !important;
   white-space: normal;
-  word-wrap:break-word;
-  text-align: left!important;
+  word-wrap: break-word;
+  text-align: left !important;
 }
 
 // Defaults spacing for the bottom of elements.
@@ -125,7 +130,7 @@ h2.h2-muted {
 }
 
 .spaced-right__sm {
-  margin-right: .35em;
+  margin-right: 0.35em;
 }
 
 .spaced-left {
@@ -133,7 +138,7 @@ h2.h2-muted {
 }
 
 .spaced-left__sm {
-  margin-left: .35em;
+  margin-left: 0.35em;
 }
 
 // Use for ordered lists that require continued numbering.
@@ -141,10 +146,12 @@ h2.h2-muted {
 ol.start {
   counter-reset: mycounter;
 }
-ol.start li, ol.continue li {
+ol.start li,
+ol.continue li {
   list-style: none;
 }
-ol.start li:before, ol.continue li:before {
+ol.start li:before,
+ol.continue li:before {
   content: counter(mycounter) ". ";
   counter-increment: mycounter;
 }
@@ -178,7 +185,7 @@ SEARCH
     white-space: nowrap;
     position: relative;
 
-    .icon{
+    .icon {
       position: absolute;
       top: 50%;
       left: 0;
@@ -201,7 +208,7 @@ SEARCH
       right: 25px;
     }
 
-    input[type=search]{
+    input[type="search"] {
       width: 300px;
       height: 37px;
       border: none;
@@ -219,11 +226,11 @@ SEARCH
 // Allow for proper styling in collapsed navigation.
 @media (max-width: 768px) {
   #global-search {
-    .search-wrapper{
+    .search-wrapper {
       width: 100%;
       display: block;
 
-      input[type=search]{
+      input[type="search"] {
         width: 100%;
       }
     }
