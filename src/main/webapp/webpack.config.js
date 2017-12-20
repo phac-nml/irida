@@ -33,7 +33,9 @@ const commonConfig = merge([
       rules: [
         {
           test: /\.woff2?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-          use: "url-loader?limit=10000"
+          use: {
+            loader: "url-loader"
+          }
         },
         {
           test: /\.(ttf|eot|svg)(\?[\s\S]+)?$/,
