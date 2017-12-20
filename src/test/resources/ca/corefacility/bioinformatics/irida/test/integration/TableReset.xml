@@ -11,7 +11,6 @@
 	
 	<sequence_file />
 	<sequence_file_properties />
-	<system_role />
 	<user />
 	
 	<sequencing_run />
@@ -20,6 +19,10 @@
 	<remote_status />
 	<project />
 	<related_project />
+
+	<tool_execution />
+	<tool_execution_parameters />
+	<tool_execution_prev_steps />
 
 	<analysis_output_file />
 	<analysis_output_file_map />
@@ -104,7 +107,6 @@
 	<analysis_submission_AUD />
 	<analysis_submission_sequencing_object_AUD />
 	<analysis_submission_parameters_AUD />
-	<system_role_AUD />
 	<user_AUD />
 	<sample_AUD />
 	<remote_api_AUD />

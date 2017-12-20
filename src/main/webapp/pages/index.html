@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns:sec="http://www.springframework.org/security/tags"
-      layout:decorator="template/page">
+      data-layout-decorate="~{template/page}">
 <head>
   <title th:text="#{dashboard.title}">THIS IS SOMETHING WRONG</title>
   <link rel="stylesheet" th:href="@{/resources/dist/css/dashboard.bundle.css}">

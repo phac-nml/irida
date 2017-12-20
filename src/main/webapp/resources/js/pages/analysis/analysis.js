@@ -18,8 +18,19 @@ function FileDownloadController() {
       hiddenIFrame.style.display = "none";
       document.body.appendChild(hiddenIFrame);
     }
-    hiddenIFrame.src =
-      window.PAGE.URLS.download + id + "?dandelionAssetFilterState=false";
+    hiddenIFrame.src = window.PAGE.URLS.download + id;
+  };
+
+  vm.getZipFile = function(id) {
+    var iFrameId = "hiddenDownloader";
+    var hiddenIFrame = document.getElementById(iFrameId);
+    if (hiddenIFrame === null) {
+      hiddenIFrame = document.createElement("iframe");
+      hiddenIFrame.id = iFrameId;
+      hiddenIFrame.style.display = "none";
+      document.body.appendChild(hiddenIFrame);
+    }
+    hiddenIFrame.src = page.URLS.download + id;
   };
 }
 
@@ -179,7 +190,7 @@ function SistrController(analysisService) {
   });
 }
 
-angular
+const iridaAnalysis = angular
   .module("irida.analysis", ["ui.router", "subnav", "phylocanvas"])
   .config([
     "$stateProvider",
@@ -216,4 +227,7 @@ angular
   .controller("ProjectShareController", [
     "AnalysisService",
     ProjectShareController
-  ]);
+  ])
+  .name;
+
+angular.module("irida").requires.push(iridaAnalysis);

@@ -129,6 +129,7 @@ test_all() {
 	done
 
 	echo "SUCCESS for all integration tests"
+	return 0
 }
 
 ############
@@ -188,38 +189,46 @@ do
 	fi
 done
 
+exit_code=1
 case "$1" in
 	service_testing)
 		shift
 		pretest_cleanup
 		test_service $@
+		exit_code=$?
 		posttest_cleanup
 	;;
 	ui_testing)
 		shift
 		pretest_cleanup
 		test_ui $@
+		exit_code=$?
 		posttest_cleanup
 	;;
 	rest_testing)
 		shift
 		pretest_cleanup
 		test_rest $@
+		exit_code=$?
 		posttest_cleanup
 	;;
 	galaxy_testing)
 		shift
 		pretest_cleanup
 		test_galaxy $@
+		exit_code=$?
 		posttest_cleanup
 	;;
 	all)
 		shift
 		pretest_cleanup
 		test_all $@
+		exit_code=$?
 		posttest_cleanup
 	;;
 	*)
 		exit_error "Unrecogized test [$1]"
 	;;
 esac
+
+exit $exit_code

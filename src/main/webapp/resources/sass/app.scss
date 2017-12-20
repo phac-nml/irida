@@ -1,9 +1,6 @@
 @import "helpers/variables";
 @import "helpers/mixins";
 
-// LAYOUTS
-@import "layouts/all";
-
 // ANIMATIONS
 @import "animations/animations";
 
@@ -20,11 +17,12 @@
 @import "components/tables";
 @import "components/typography";
 
-// Frameworks used on all pages.
-@import "components/noty";
-
-// TODO: these should only be loaded on their pages - add through dandelion
+// TODO: these should only be loaded on their pages - add through webpack
 @import "pages/remoteApi";
+
+html, body {
+  height: 100%;
+}
 
 // Gravatar
 .nav-gravatar {
@@ -78,11 +76,6 @@ h2.h2-muted {
   font-size: 2.5rem;
 }
 
-// Material overide, conflicts with bootstrap.
-input[type="search"] {
-  box-sizing: inherit!important;
-}
-
 // TODO: Clean these up.
 #table-filter {
   padding: 0;
@@ -120,15 +113,27 @@ input[type="search"] {
 
 // Defaults spacing for the bottom of elements.
 .spaced-bottom {
-  margin-bottom: 1rem;
+  margin-bottom: 1em;
 }
 
 .spaced-top {
-  margin-top: 1rem;
+  margin-top: 1em;
 }
 
-.spaced-after__sm {
-  margin-right: .5rem;
+.spaced-right {
+  margin-right: 1em;
+}
+
+.spaced-right__sm {
+  margin-right: .35em;
+}
+
+.spaced-left {
+  margin-left: 1em;
+}
+
+.spaced-left__sm {
+  margin-left: .35em;
 }
 
 // Use for ordered lists that require continued numbering.
@@ -161,11 +166,6 @@ ol.start li:before, ol.continue li:before {
   position: absolute;
   top: 5px;
   right: 0;
-}
-
-// TODO: This is a temporary fix for the modal hidden behind the overlay using dandelion production profile
-.modal-dialog {
-  z-index: 1000000;
 }
 
 /*

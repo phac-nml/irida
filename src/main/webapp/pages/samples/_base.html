@@ -1,10 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="template/page">
-<head lang="en">
-	<title>THIS IS SOMETHING WRONG</title>
-</head>
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  data-layout-decorate="~{template/page}">
 <body>
 <nav class="navbar navbar-default navbar-static-top subnav" role="navigation" layout:fragment="subnav"
      th:with="baseLink=@{'/samples/' + ${sample.getId()}}">

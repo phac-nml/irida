@@ -3,7 +3,16 @@ Changes
 
 0.19.0 to 0.20.0
 ----------------
+* [Developer]: Fixed exception being thrown related to permission denied for updating samples when a normal user (collaborator on a project) runs the assembly pipeline (0.19.1).
+* [UI]: Allowing admins to manually prioritize high importance analyses.
+* [Developer]: Removed dandelion from project > samples page.
+* [UI]: Fixed issue where Projects table could not be exported (0.19.2).
+* [UI]: Fixed user menu icons misaligning in Firefox (0.19.2).
 * [Developer]: Updated front end templating engine to Thymeleaf v3.
+* [Administration]: Added option to expire passwords after a configured number of days.  Set `security.password.expiry` in `/etc/irida/irida.conf` to configure.
+* [Administration]: Limiting users from reusing passwords.
+* [Developer]: Updated webpack compile path to be `resources/dist`.
+* [Developer]: Webpack now extracts `css` / `scss` into its own bundles.
 
 0.18.0 to 0.19.0
 ----------------
