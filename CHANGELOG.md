@@ -13,6 +13,7 @@ Changes
 * [Administration]: Limiting users from reusing passwords.
 * [Developer]: Updated webpack compile path to be `resources/dist`.
 * [Developer]: Webpack now extracts `css` / `scss` into its own bundles.
+* [UI]: SISTR able to write metadata back to samples.
 
 0.18.0 to 0.19.0
 ----------------
