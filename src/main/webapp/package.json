@@ -8,7 +8,7 @@
     "precommit": "lint-staged"
   },
   "lint-staged": {
-    "*.{js, json}": ["prettier --write", "git add"]
+    "*.{js, json, scss}": ["prettier --write", "git add"]
   },
   "browserslist": ["> 1%", "last 2 versions"],
   "dependencies": {
