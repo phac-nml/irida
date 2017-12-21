@@ -2,15 +2,14 @@ package ca.corefacility.bioinformatics.irida.ria.web.pipelines;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyToolDataTableException;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowGalaxyToolDataTable;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyToolDataService;
+
+import com.github.jmchilton.blend4j.galaxy.beans.TabularToolDataTable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,6 +65,7 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
 
+
 /**
  * Controller for pipeline related views
  *
@@ -104,6 +104,7 @@ public class PipelineController extends BaseController {
 	private final WorkflowNamedParametersService namedParameterService;
 	private UpdateSamplePermission updateSamplePermission;
 	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
+	private GalaxyToolDataService galaxyToolDataService;
 	
 	/*
 	 * CONTROLLERS
@@ -117,7 +118,7 @@ public class PipelineController extends BaseController {
 			CartController cartController, MessageSource messageSource,
 			final WorkflowNamedParametersService namedParameterService,
 			UpdateSamplePermission updateSamplePermission,
-			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor) {
+			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor, GalaxyToolDataService galaxyToolDataService) {
 		this.sequencingObjectService = sequencingObjectService;
 		this.referenceFileService = referenceFileService;
 		this.analysisSubmissionService = analysisSubmissionService;
@@ -129,6 +130,7 @@ public class PipelineController extends BaseController {
 		this.namedParameterService = namedParameterService;
 		this.updateSamplePermission = updateSamplePermission;
 		this.analysisSubmissionSampleProcessor = analysisSubmissionSampleProcessor;
+		this.galaxyToolDataService = galaxyToolDataService;
 	}
 
 	/**
@@ -322,6 +324,44 @@ public class PipelineController extends BaseController {
 			model.addAttribute("addRefProjects", addRefList);
 			model.addAttribute("projects", projectList);
 			model.addAttribute("canUpdateSamples", canUpdateAllSamples);
+			model.addAttribute("galaxyToolDataTableRequired", description.requiresToolDataTable());
+
+			final List<Map<String, Object>> toolDataTables = new ArrayList<>();
+			if (description.requiresToolDataTable()) {
+				List<IridaWorkflowGalaxyToolDataTable> iridaWorkflowGalaxyToolDataTables = description.getInputs().getGalaxyToolDataTables().get();
+				TabularToolDataTable galaxyToolDataTable = new TabularToolDataTable();
+				for (IridaWorkflowGalaxyToolDataTable iridaWorkflowGalaxyToolDataTable : iridaWorkflowGalaxyToolDataTables) {
+					List<Object> parametersList = new ArrayList<>();
+					String toolDataTableName = new String();
+					Map<String, Object> toolDataTable = new HashMap<>();
+					try {
+						toolDataTableName = iridaWorkflowGalaxyToolDataTable.getName();
+						galaxyToolDataTable = galaxyToolDataService.getToolDataTable(toolDataTableName);
+						toolDataTable.put("id", toolDataTableName);
+						toolDataTable.put("label", messageSource.getMessage("tooldatatable.label." + toolDataTableName, null, locale));
+						toolDataTable.put("parameters", parametersList);
+
+						List<String> labels = galaxyToolDataTable.getFieldsForColumn(iridaWorkflowGalaxyToolDataTable.getDisplayColumn());
+						Iterator<String> labelsIterator = labels.iterator();
+						List<String> values = galaxyToolDataTable.getFieldsForColumn(iridaWorkflowGalaxyToolDataTable.getParameterColumn());
+						Iterator<String> valuesIterator = values.iterator();
+
+						while (labelsIterator.hasNext() && valuesIterator.hasNext()) {
+							String label = labelsIterator.next();
+							String value = valuesIterator.next();
+							HashMap<String, String> toolDataTableFieldsMap = new HashMap<>();
+							toolDataTableFieldsMap.put("label", label);
+							toolDataTableFieldsMap.put("value", value);
+							toolDataTableFieldsMap.put("name", iridaWorkflowGalaxyToolDataTable.getWorkflowParameter().getName());
+							parametersList.add(toolDataTableFieldsMap);
+						}
+						toolDataTables.add(toolDataTable);
+					} catch (GalaxyToolDataTableException e) {
+						logger.debug("Tool Data Table not found: ", e);
+					}
+				}
+				model.addAttribute("galaxyToolDataTables", toolDataTables);
+			}
 			response = URL_GENERIC_PIPELINE;
 		}
 

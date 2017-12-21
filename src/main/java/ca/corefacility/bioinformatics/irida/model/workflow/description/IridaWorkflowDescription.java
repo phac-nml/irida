@@ -49,6 +49,10 @@ public class IridaWorkflowDescription {
 	@XmlElement(name = "parameter")
 	private List<IridaWorkflowParameter> parameters;
 
+	@XmlElementWrapper(name = "parameters")
+	@XmlElement(name = "galaxyToolDataTable")
+	private List<IridaWorkflowGalaxyToolDataTable> galaxyToolDataTables;
+
 	@XmlElementWrapper(name = "toolRepositories")
 	@XmlElement(name = "repository")
 	private List<IridaWorkflowToolRepository> repository;
@@ -109,6 +113,15 @@ public class IridaWorkflowDescription {
 	 */
 	public boolean requiresReference() {
 		return getInputs().getReference().isPresent();
+	}
+
+	/**
+	 * Whether or not this workflow requires a data from a galaxy tool data table.
+	 *
+	 * @return True if this workflow requires a Tool Data Table field, false otherwise.
+	 */
+	public boolean requiresToolDataTable() {
+		return getInputs().getGalaxyToolDataTables().isPresent();
 	}
 
 	/**
