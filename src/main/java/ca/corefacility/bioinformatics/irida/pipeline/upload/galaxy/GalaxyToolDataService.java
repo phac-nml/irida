@@ -2,9 +2,6 @@ package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyToolDataTableException;
 
 import com.github.jmchilton.blend4j.galaxy.beans.TabularToolDataTable;
@@ -18,9 +15,6 @@ import com.github.jmchilton.blend4j.galaxy.ToolDataClient;
  *
  */
 public class GalaxyToolDataService {
-
-    private static final Logger logger = LoggerFactory
-            .getLogger(GalaxyToolDataService.class);
 
     private ToolDataClient toolDataClient;
 

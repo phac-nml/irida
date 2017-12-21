@@ -8,8 +8,9 @@ import java.util.stream.Collectors;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyToolDataTableException;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowGalaxyToolDataTable;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyToolDataService;
+
 import com.github.jmchilton.blend4j.galaxy.beans.TabularToolDataTable;
-import org.apache.jena.atlas.iterator.Iter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,7 +65,6 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
 
-import javax.swing.text.html.Option;
 
 /**
  * Controller for pipeline related views
