@@ -230,18 +230,10 @@ Pipeline results can also be shared anytime after a pipeline has been launched. 
 
 ## Saving pipeline results to a sample
 
-Pipeline results can also be saved back to the submitted sample.  Currently, only the results of a genome assembly can be saved back to a sample.  To save the genome assembly back to a sample, on submission of a pipeline please select the `Save Results to Samples` checkbox on the pipeline setup page.
+Some pipelines allow you to save data back to the samples in which the pipeline was ran.  The type of data which will be saved back to the samples will differ between pipelines.  For example an assembly and annotation pipeline will save the assembly to the list of files on a sample, where a typing pipeline such as SISTR may save a serotype to the metadata of the sample.
+
+To save analysis results back to a sample, on submission of a pipeline please select the `Save Results to Samples` checkbox on the pipeline setup page.
 
 ![save-results-to-samples](images/save-results-to-samples.png)
-
-This will save the assembly back to the selected sample on completion of the pipeline.  This will look like:
-
-![sample-assembly-results](../samples/images/sample-automated-assembly.png)
-
-The saved assemblies can then be directly accessible to anyone with permission to read the Sample.
-
-If an assembly already exists for a Sample, then the saved assembly will be appended onto the list of saved assemblies.
-
-![saved-assembly-list](images/saved-assembly-list.png)
 
 <a href="../samples/">Previous: Managing Samples</a>
