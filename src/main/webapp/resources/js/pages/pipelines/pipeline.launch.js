@@ -98,11 +98,11 @@
 		    "id"        : currentSettings.id,
 		    "parameters": currentSettings.parameters
 		};
-		if (currentGalaxyToolDataTableSettings.length > 0) {
+		if (Object.keys(currentGalaxyToolDataTableSettings).length > 0) {
 		    var galaxyToolDataTableParameters = Object.values(currentGalaxyToolDataTableSettings).map(
                         ({label, value, name}) => ({label, value, name})
                     );
-                    selectedParameters.parameters.concat(galaxyToolDataTableParameters);
+            selectedParameters.parameters = selectedParameters.parameters.concat(galaxyToolDataTableParameters);
 		}
 		// Create the parameter object;
 		var params = {};
