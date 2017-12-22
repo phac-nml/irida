@@ -6,13 +6,19 @@
 <th:block layout:fragment="scripts" th:inline="javascript">
     <script src=""></script>
     <script th:inline="javascript">
-        /*
-        This is loaded into an iFrame.
-        Close the bootstrap modal on the parent page.
-         */
-        var modal = window.parent.document.querySelector("#remote-connect-wrapper");
-        modal.dataset.result = "success";
-        modal.querySelector(".close").click();
+
+      /*
+      This is loaded into an iFrame.
+      */
+      window.parent.location.reload();
+      /*
+      This is loaded into an iFrame.
+      Close the bootstrap modal on the parent page.
+       */
+      // TODO: (Josh | 2017-12-22) Re-enable closing modal after other pages fixed.
+        // var modal = window.parent.document.querySelector("#remote-connect-wrapper");
+        // modal.dataset.result = "success";
+        // modal.querySelector(".close").click();
     </script>
 </th:block>
 </body>
