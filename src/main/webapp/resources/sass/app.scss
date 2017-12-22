@@ -17,9 +17,6 @@
 @import "components/tables";
 @import "components/typography";
 
-// TODO: these should only be loaded on their pages - add through webpack
-@import "pages/remoteApi";
-
 html, body {
   height: 100%;
 }

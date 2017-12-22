@@ -1,51 +1,72 @@
-/*globals getApiStatus*/
-(function ($, page) {
-    $(document).ready(function () {
-        $('#remoteapiTable').DataTable({
-            dom: "<'row filter-row'<'col-sm-6'l><'col-sm-6'0f>><'row datatables-active-filters'1><'panel panel-default''<'row'<'col-sm-12'tr>>><'row'<'col-sm-5'i><'col-sm-7'p>>",
-            processing: true,
-            serverSide: true,
-            deferRender: true,
-            ajax: page.urls.table,
-            stateSave: true,
-            stateDuration: -1,
-            order: [[0, "desc"]],
-            columns: [
-                {
-                    "data": "name",
-                    "render": function (data, type, row) {
-                        return '<a class="api-name" href="' + page.urls.linkBase + row.id + '">' + data + '</a>';
-                    }
-                },
-                {
-                    "data": "createdDate"
-                },
-                {
-                    "sortable": false,
-                    "render": function (data, type, row) {
-                        var span = "<div data-api-id='" + row.id + "' class='connection-status' id=" + row.id + ">" + page.lang.statusText + "</div>";
-                        return span;
-                    }
-                },
-                {
-                    "sortable": false,
-                    render: function (data, type, row) {
-                        return "<button id='connect-button-" + row.id + "' class='oauth-connect-link btn btn-default btn-xs hidden' data-api-id='" + row.id + "'>" + page.lang.connectText + "</a>";
-                    }
-                }
+import $ from "jquery";
+import "../../vendor/datatables/datatables";
+import {
+  generateColumnOrderInfo,
+  tableConfig
+} from "../../utilities/datatables-utilities";
+import { formatDate } from "../../utilities/date-utilities";
+import {
+  CONNECT_MODAL_SELECTOR,
+  initConnectRemoteApi,
+  updateRemoteConnectionStatus
+} from "./remote-apis";
 
-            ],
-            drawCallback: function () {
-                $(".connection-status").each(function () {
-                    var resultDiv = "#" + $(this).attr("id");
-                    var apiId = $(this).data("api-id");
-                    var buttonId = "#connect-button-" + apiId;
+const COLUMNS = generateColumnOrderInfo();
+const $table = $("#remoteapiTable");
 
-                    getApiStatus(apiId, resultDiv, buttonId, null);
-                });
+function generateRowId(apiId) {
+  return `api-${apiId}`;
+}
 
-            }
+const config = Object.assign({}, tableConfig, {
+  ajax: $table.data("url"),
+  order: [[COLUMNS.CREATED_DATE, "desc"]],
+  columnDefs: [
+    {
+      targets: COLUMNS.NAME,
+      render(data, type, full) {
+        return `<a class="btn btn-link t-api-name" href="${
+          window.TL.BASE_URL
+        }remote_api/${full.id}">${data}</a>`;
+      }
+    },
+    {
+      targets: [COLUMNS.CREATED_DATE],
+      render(data) {
+        const date = formatDate({ date: data });
+        return `<time>${date}</time>`;
+      }
+    },
+    {
+      targets: [COLUMNS.STATUS],
+      sortable: false,
+      render(data, type, full) {
+        return `<div class="status-wrapper"><i class="fa fa-spinner fa-pulse spaced-right__sm fa-fw"></i><span data-api-id='${
+          full.id
+        }' class='connection-status' id=${full.id}>${
+          window.PAGE.lang.statusText
+        }</span></div>`;
+      }
+    },
+    {
+      targets: [COLUMNS.CONNECTION_BUTTON],
+      render(data, type, full) {
+        return `<button class='oauth-connect-link btn btn-default btn-xs hidden' data-toggle="modal" data-target="#${CONNECT_MODAL_SELECTOR}" data-api-id='${
+          full.id
+        }'>${window.PAGE.lang.connectText}</a>`;
+      }
+    }
+  ],
+  createdRow(row, data) {
+    const $row = $(row);
+    $row.attr("id", generateRowId(data.id));
+    updateRemoteConnectionStatus($(row), data.id);
+  }
+});
 
-        });
-    });
-})(window.jQuery, window.PAGE);
+$table.DataTable(config);
+
+initConnectRemoteApi(function(apiId) {
+  const $row = $(`#${generateRowId(apiId)}`);
+  updateRemoteConnectionStatus($row, apiId);
+});

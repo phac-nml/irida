@@ -15,7 +15,7 @@
                 <div class="sidebar__heading clearfix">
                 	<h2 class="pull-left" th:text="#{remoteapi.details.title}">_API Details_</h2>
 					        <div class="btn-group-xs pull-right">
-				            <button id="remove-btn" class="btn btn-danger" th:text="#{remoteapi.remove.button}">Remove</button>
+				            <button id="remove-btn" class="btn btn-danger" data-toggle="modal" data-target="#remove-modal" th:text="#{remoteapi.remove.button}">Remove</button>
                 	</div>
                 </div>
 
@@ -71,13 +71,14 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6 connection-status-panel">
             <div class="panel panel-info">
                 <div class="panel-heading clearfix">
                     <h3 class="panel-title pull-left">Connection Status</h3>
                     <div class="btn-group-xs pull-right">
                         <button class="oauth-connect-link btn btn-default btn-xs hidden" id="connect-button"
-                            th:attr="data-api-id=${remoteApi.getId()}"
+                            data:api-id="${remoteApi.getId()}" data-toggle="modal"
+                                data-target="#remote-connect-wrapper"
                             th:text="#{remoteapi.status.connect.button}">_Connect_</button>
                     </div>
                 </div>
@@ -86,8 +87,10 @@
                         <li>
                             <i class="glyphicon glyphicon-link"></i>[[#{remoteapi.status}]]
                             <span class="pull-right">
-                                <span id="connection-status"
-                                        th:text="#{remoteapi.status.waiting}">_Connection Status_</span>
+                                <span id="connection-status" class="status-wrapper">
+                                    <i class="fa fa-spinner fa-pulse fa-fw"></i>
+                                    <th:block th:text="#{remoteapi.status.waiting}"/>
+                                </span>
                             </span>
 
                         </li>
@@ -102,48 +105,29 @@
         </div>
        </div>
     <section>
-        <form id="removeForm" action="/remote_api/remove" th:action="@{/remote_api/remove}" method="POST">
-            <input type="hidden" th:value="${remoteApi.getId()}" name="id"/>
-        </form>
     </section>
+
+    <div class="modal fade" id="remove-modal" tabindex="-1" role="dialog" aria-labelledby="remove-title">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="remove-title" th:text="#{remoteapi.remove.confirm(${remoteApi.name})}">New message</h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" th:text="#{form.btn.cancel}">Close</button>
+                    <form id="removeForm" style="display: inline-block;" th:action="@{/remote_api/remove}" method="POST">
+                        <input type="hidden" th:value="${remoteApi.getId()}" name="id"/>
+                        <button type="submit" class="btn btn-primary" th:text="#{form.btn.confim}">Send message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </main>
-<th:block layout:fragment="scripts" th:inline="javascript">
-    <script th:src="@{/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js}"
-            src="/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js"></script>
-    <script th:inline="javascript">
-    	$(document).ready(function(){
-    		$("#remove-btn").click(function(){
-    			noty({
-    				layout: "center",
-    	            type: "default",
-    	            text: /*[[#{remoteapi.remove.confirm(${remoteApi.name})}]]*/ "Remove Remote API?",
-    	            modal: true,
-    	            buttons: [
-    	                {
-    	                    addClass: 'btn btn-primary btn-sm confirm-delete',
-    	                    text: /*[[#{form.btn.confim}]]*/ 'OK',
-    	                    onClick: function ($noty) {
-    	                        $("#removeForm").submit();
-    	                    }
-    	                },
-    	                {
-    	                    addClass: 'btn btn-default btn-sm',
-    	                    text: /*[[#{form.btn.cancel}]]*/ 'Cancel',
-    	                    onClick: function ($noty) {
-    	                        $noty.close();
-    	                    }
-    	                }
-    	            ],
-    			});
-
-    		});
-
-    		var apiId = /*[[${remoteApi.getId()}]]*/ 1;
-    		getApiStatus(apiId,"#connection-status","#connect-button");
-    	});
-
-    </script>
-    <script th:replace="remote_apis/remote_api_connect"></script>
+<th:block layout:fragment="scripts">
+    <script th:src="@{/resources/dist/js/remote-api-details.bundle.js}"></script>
 </th:block>
 </body>
 </html>

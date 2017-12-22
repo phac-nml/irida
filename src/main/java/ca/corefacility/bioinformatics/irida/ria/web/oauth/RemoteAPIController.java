@@ -64,7 +64,7 @@ public class RemoteAPIController extends BaseController {
 	public static final String ADD_API_PAGE = "remote_apis/create";
 	public static final String PARENT_FRAME_RELOAD_PAGE = "remote_apis/parent_reload";
 
-	public static final String VALID_OAUTH_CONNECTION = "valid";
+	public static final String VALID_OAUTH_CONNECTION = "valid_token";
 	public static final String INVALID_OAUTH_TOKEN = "invalid_token";
 
 	private final String SORT_BY_ID = "id";
@@ -289,18 +289,36 @@ public class RemoteAPIController extends BaseController {
 	 *            The ID of the api
 	 * @return "valid" or "invalid_token" message
 	 */
+//	@RequestMapping("/status/{apiId}")
+//	@ResponseBody
+//	public String checkApiStatus(@PathVariable Long apiId) {
+//		RemoteAPI api = remoteAPIService.read(apiId);
+//
+//		try {
+//			projectRemoteService.getServiceStatus(api);
+//			return VALID_OAUTH_CONNECTION;
+//		} catch (IridaOAuthException ex) {
+//			logger.debug("Can't connect to API: " + ex.getMessage());
+//			return INVALID_OAUTH_TOKEN;
+//		}
+//	}
+
 	@RequestMapping("/status/{apiId}")
-	@ResponseBody
 	public String checkApiStatus(@PathVariable Long apiId) {
 		RemoteAPI api = remoteAPIService.read(apiId);
 
 		try {
 			projectRemoteService.getServiceStatus(api);
-			return VALID_OAUTH_CONNECTION;
+			return "remote_apis/fragments.html :: #" + VALID_OAUTH_CONNECTION;
 		} catch (IridaOAuthException ex) {
 			logger.debug("Can't connect to API: " + ex.getMessage());
-			return INVALID_OAUTH_TOKEN;
+			return "remote_apis/fragments.html :: #" + INVALID_OAUTH_TOKEN;
 		}
+	}
+
+	@RequestMapping("/modal/{apiId}")
+	public String getApiConnectModal(@PathVariable Long apiId) {
+		return "remote_apis/fragments.html :: #" + "connect-modal";
 	}
 
 	/**

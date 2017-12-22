@@ -28,6 +28,9 @@ module.exports = {
   "project-add-sample": "./resources/js/pages/projects/project-add-samples.js",
   "project-linelist": "./resources/js/pages/projects/linelist/index.js",
   "project-ncbi-export": "./resources/js/pages/projects/export/ncbi-export.js",
+  "remote-api-details":
+    "./resources/js/pages/remote-apis/remote-api-details.js",
+  "remote-apis": "./resources/js/pages/remote-apis/remote-apis-list.js",
   "create-metadata-template":
     "./resources/js/pages/projects/metadata-template/create-metadata-template.js",
   "visualizations-phylogenetics":
