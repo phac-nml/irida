@@ -17,18 +17,6 @@ $("#becomeSyncUser").on("click", function() {
   updateSyncSettings({ changeUser: "true" });
 });
 
-$("#confirm-deletion").on("change", function() {
-  toggleDeleteButton();
-});
-
-function toggleDeleteButton() {
-  if ($("#confirm-deletion").is(":checked")) {
-    $("#submit-delete").prop("disabled", false);
-  } else {
-    $("#submit-delete").prop("disabled", true);
-  }
-}
-
 function updateSyncSettings(data) {
   $.ajax({
     url: window.PAGE.urls.sync,
