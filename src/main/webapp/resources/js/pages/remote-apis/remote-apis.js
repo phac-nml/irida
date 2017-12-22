@@ -9,7 +9,7 @@ function getApiStatus(apiId) {
 export function updateRemoteConnectionStatus($container, apiId) {
   const $status = $container.find(".status-wrapper");
 
-  getApiStatus(apiId)
+  return getApiStatus(apiId)
     .success(response => {
       $status.html(response);
       if (response.includes("invalid_token")) {
@@ -35,7 +35,6 @@ export function updateRemoteConnectionStatus($container, apiId) {
 
 export const CONNECT_MODAL_SELECTOR = "remote-connect-wrapper";
 export function initConnectRemoteApi(connectedCB) {
-  console.info(typeof connectedCB);
   const wrapper = document.createElement("div");
   wrapper.classList.add("modal", "fade");
   wrapper.tabIndex = -1;
