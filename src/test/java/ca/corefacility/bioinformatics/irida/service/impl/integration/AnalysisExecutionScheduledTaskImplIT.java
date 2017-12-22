@@ -37,6 +37,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
@@ -45,6 +46,7 @@ import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisE
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.CleanupAnalysisSubmissionConditionAge;
 
+import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
@@ -76,6 +78,12 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	@Autowired
 	private UserRepository userRepository;
 
+	@Autowired
+	private GalaxyInstance galaxyInstance;
+
+	@Autowired
+	private JobErrorRepository jobErrorRepository;
+
 	private AnalysisExecutionScheduledTask analysisExecutionScheduledTask;
 
 	private Path sequenceFilePath;
@@ -86,7 +94,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	private UUID validIridaWorkflowId = UUID.fromString("1f9ea289-5053-4e4a-bc76-1f0c60b179f8");
 	private UUID iridaWorkflowIdWithError = UUID.fromString("9ac828e9-2ee4-409d-80dd-f1bf955fd8b9");
 	private UUID invalidIridaWorkflowId = UUID.fromString("8ec369e8-1b39-4b9a-97a1-70ac1f6cc9e6");
-	
+
 	private User analysisSubmitter;
 
 	/**
@@ -100,7 +108,8 @@ public class AnalysisExecutionScheduledTaskImplIT {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
-				analysisExecutionService, CleanupAnalysisSubmissionCondition.ALWAYS_CLEANUP);
+				analysisExecutionService, CleanupAnalysisSubmissionCondition.ALWAYS_CLEANUP,
+				galaxyInstance, jobErrorRepository);
 
 		Path sequenceFilePathReal = Paths
 				.get(DatabaseSetupGalaxyITService.class.getResource("testData1.fastq").toURI());
@@ -151,7 +160,8 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testFullAnalysisRunSuccessNoCleanupAge() throws Exception {
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
-				analysisExecutionService, new CleanupAnalysisSubmissionConditionAge(Duration.ofDays(1)));
+				analysisExecutionService, new CleanupAnalysisSubmissionConditionAge(Duration.ofDays(1)),
+				galaxyInstance, jobErrorRepository);
 		
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);

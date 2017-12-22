@@ -38,6 +38,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
@@ -56,6 +57,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
@@ -107,6 +109,12 @@ public class SNVPhylAnalysisIT {
 	@Autowired
 	private SequencingObjectService sequencingObjectService;
 
+	@Autowired
+	private GalaxyInstance galaxyInstance;
+
+	@Autowired
+	private JobErrorRepository jobErrorRepository;
+
 	private AnalysisExecutionScheduledTask analysisExecutionScheduledTask;
 
 	private Path sequenceFilePathA1;
@@ -153,7 +161,8 @@ public class SNVPhylAnalysisIT {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
-				analysisExecutionService, CleanupAnalysisSubmissionCondition.NEVER_CLEANUP);
+				analysisExecutionService, CleanupAnalysisSubmissionCondition.NEVER_CLEANUP,
+				galaxyInstance, jobErrorRepository);
 
 		Path tempDir = Files.createTempDirectory(rootTempDirectory, "snvphylTest");
 

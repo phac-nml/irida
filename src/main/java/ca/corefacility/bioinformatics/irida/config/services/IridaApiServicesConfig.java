@@ -11,6 +11,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import javax.validation.Validator;
 
+import net.matlux.NreplServerSpring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -244,7 +245,8 @@ public class IridaApiServicesConfig {
 	
 	@Bean
 	@DependsOn("springLiquibase")
-	@Profile({ "prod" })
+	@Profile({ "prod", "dev" })
+//	@Profile({ "prod" })
 	public AnalysisSubmissionCleanupService analysisSubmissionCleanupService(
 			AnalysisSubmissionRepository analysisSubmissionRepository, UserService userService) {
 		AnalysisSubmissionCleanupService analysisSubmissionCleanupService = new AnalysisSubmissionCleanupServiceImpl(
@@ -318,4 +320,11 @@ public class IridaApiServicesConfig {
 		exportUploadTemplateEngine.addTemplateResolver(classLoaderTemplateResolver);
 		return exportUploadTemplateEngine;
 	}
+
+	@Bean
+	@Profile("dev")
+	public NreplServerSpring nRepl() {
+		return new NreplServerSpring(1112);
+	}
 }
+

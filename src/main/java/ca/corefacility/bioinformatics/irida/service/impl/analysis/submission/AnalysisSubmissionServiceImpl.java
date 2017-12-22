@@ -2,19 +2,15 @@ package ca.corefacility.bioinformatics.irida.service.impl.analysis.submission;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.UUID;
 
 import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
 import org.hibernate.TransientPropertyValueException;
 import org.slf4j.Logger;
@@ -24,7 +20,6 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
@@ -104,34 +99,37 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	private ProjectAnalysisSubmissionJoinRepository pasRepository;
 	private final ReferenceFileRepository referenceFileRepository;
 	private final GalaxyHistoriesService galaxyHistoriesService;
-	private final SequencingObjectService sequencingObjectService;
-	
+	private JobErrorRepository jobErrorRepository;
+
 	// required, but not constructor injected because we have circular dependencies :(
 	@Autowired
 	private AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionService;
+	private final SequencingObjectService sequencingObjectService;
 
 	/**
 	 * Builds a new AnalysisSubmissionServiceImpl with the given information.
-	 * 
-	 * @param analysisSubmissionRepository
+	 *  @param analysisSubmissionRepository
 	 *            A repository for accessing analysis submissions.
 	 * @param userRepository
 	 *            A repository for accessing user information.
 	 * @param referenceFileRepository
-	 *            the reference file repository
+ *            the reference file repository
 	 * @param sequencingObjectService
-	 *            the {@link SequencingObject} service.
-
+*            the {@link SequencingObject} service.
 	 * @param galaxyHistoriesService
-	 *            The {@link GalaxyHistoriesService}.
-	 * @param validator
-	 *            A validator.
+*            The {@link GalaxyHistoriesService}.
+	 * @param jobErrorRepository {@link JobErrorRepository} object
+	 * @param validator A Validator
 	 */
 	@Autowired
 	public AnalysisSubmissionServiceImpl(AnalysisSubmissionRepository analysisSubmissionRepository,
-			UserRepository userRepository, final ReferenceFileRepository referenceFileRepository,
-			final SequencingObjectService sequencingObjectService, final GalaxyHistoriesService galaxyHistoriesService,
-			ProjectAnalysisSubmissionJoinRepository pasRepository, Validator validator) {
+			UserRepository userRepository,
+			final ReferenceFileRepository referenceFileRepository,
+			final SequencingObjectService sequencingObjectService,
+			final GalaxyHistoriesService galaxyHistoriesService,
+			ProjectAnalysisSubmissionJoinRepository pasRepository,
+			JobErrorRepository jobErrorRepository,
+			Validator validator) {
 		super(analysisSubmissionRepository, validator, AnalysisSubmission.class);
 		this.userRepository = userRepository;
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
@@ -139,6 +137,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.sequencingObjectService = sequencingObjectService;
 		this.pasRepository = pasRepository;
+		this.jobErrorRepository = jobErrorRepository;
 	}
 	
 	public void setAnalysisExecutionService(final AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionService) {
@@ -602,6 +601,16 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		default:
 			throw new NoPercentageCompleteException("No valid percent complete for state " + analysisState);
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadAnalysisSubmission')")
+	public Optional<List<JobError>> getJobErrors(Long id) throws EntityNotFoundException {
+		AnalysisSubmission analysisSubmission = read(id);
+		return jobErrorRepository.findAllByAnalysisSubmission(analysisSubmission);
 	}
 
 	/**

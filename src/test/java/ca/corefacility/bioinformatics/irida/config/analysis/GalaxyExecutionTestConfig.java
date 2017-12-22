@@ -15,10 +15,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrari
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 
-import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
-import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
-import com.github.jmchilton.blend4j.galaxy.ToolsClient;
-import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
+import com.github.jmchilton.blend4j.galaxy.*;
 
 /**
  * Test configuration for Galaxy execution services.
@@ -41,6 +38,12 @@ public class GalaxyExecutionTestConfig {
 	 * have been properly uploaded.
 	 */
 	private static final int LIBRARY_POLLING_TIME = 5;
+
+	@Lazy
+	@Bean
+	public GalaxyInstance galaxyInstance() {
+		return localGalaxy.getGalaxyInstanceAdmin();
+	}
 
 	@Lazy
 	@Bean
