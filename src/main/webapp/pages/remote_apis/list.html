@@ -19,18 +19,23 @@
 <main layout:fragment="page">
     <h1 th:text="#{remoteapi.title}">_Clients_</h1>
 
-    <p th:text="#{remoteapi.status.description}">_Connect links on this page will redirect you to a remote IRIDA
+    <p class="lead" th:text="#{remoteapi.status.description}">_Connect links on this page will redirect you to a remote IRIDA
         site._</p>
-    <a href="/clients/create" sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/remote_api/create}"
-       th:text="#{remoteapi.add}" class="btn btn-default">_Add Client_</a>
+
+    <div class="js-connection-toolbar btn-toolbar hidden">
+        <div class="btn-group btn-group-sm" role="group">
+            <a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/remote_api/create}"
+               th:text="#{remoteapi.add}" class="btn btn-default">_Add Client_</a>
+        </div>
+    </div>
     <table id="remoteapiTable" class="table table-striped" width="100%" cellspacing="0"
            data:url="@{/remote_api/ajax/list}">
         <thead>
         <tr th:inline="text">
             <th data-data="name" id="name-header" th:text="#{remoteapi.name}"></th>
             <th data-data="createdDate" id="created-header" class="dt-date" th:text="#{iridaThing.timestamp}"></th>
-            <th data-data="status" id="status-header" th:text="#{remoteapi.status}"></th>
-            <th data-data="connectionButton"></th>
+            <th data-data="status" id="status-header" style="width: 150px;" th:text="#{remoteapi.status}"></th>
+            <th data-data="connectionButton" style="width: 80px;"></th>
         </tr>
         </thead>
         <tbody id="remoteapi-table-body"></tbody>

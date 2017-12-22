@@ -51,7 +51,7 @@ const config = Object.assign({}, tableConfig, {
     {
       targets: [COLUMNS.CONNECTION_BUTTON],
       render(data, type, full) {
-        return `<button class='oauth-connect-link btn btn-default btn-xs hidden' data-toggle="modal" data-target="#${CONNECT_MODAL_SELECTOR}" data-api-id='${
+        return `<button class='oauth-connect-link btn btn-default pull-right hidden' data-toggle="modal" data-target="#${CONNECT_MODAL_SELECTOR}" data-api-id='${
           full.id
         }'>${window.PAGE.lang.connectText}</a>`;
       }
@@ -65,6 +65,11 @@ const config = Object.assign({}, tableConfig, {
 });
 
 $table.DataTable(config);
+// Set up the button section
+const $btnWrapper = $("#remoteapiTable_wrapper .buttons");
+const $toolbar = $(".js-connection-toolbar").detach();
+$toolbar.removeClass("hidden");
+$btnWrapper.html($toolbar);
 
 initConnectRemoteApi(function(apiId) {
   const $row = $(`#${generateRowId(apiId)}`);
