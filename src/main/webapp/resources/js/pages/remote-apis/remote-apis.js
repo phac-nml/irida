@@ -7,7 +7,7 @@ function getApiStatus(apiId) {
 }
 
 export function updateRemoteConnectionStatus($container, apiId) {
-  const $status = $container.find(".status-wrapper");
+  const $status = $container.find(".js-status-wrapper");
 
   return getApiStatus(apiId)
     .success(response => {
