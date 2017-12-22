@@ -41,7 +41,7 @@ const config = Object.assign({}, tableConfig, {
       targets: [COLUMNS.STATUS],
       sortable: false,
       render(data, type, full) {
-        return `<div class="status-wrapper"><i class="fa fa-spinner fa-pulse spaced-right__sm fa-fw"></i><span data-api-id='${
+        return `<div class="js-status-wrapper"><i class="fa fa-spinner fa-pulse spaced-right__sm fa-fw"></i><span data-api-id='${
           full.id
         }' class='connection-status' id=${full.id}>${
           window.PAGE.lang.statusText
