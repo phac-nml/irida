@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyToolDataTableException;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDynamicSource;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowGalaxyToolDataTable;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyToolDataService;
 
@@ -283,6 +284,9 @@ public class PipelineController extends BaseController {
 				final List<Map<String, String>> defaultParameters = new ArrayList<>();
 				final String workflowName = description.getName().toLowerCase();
 				for (IridaWorkflowParameter p : defaultWorkflowParameters) {
+					if (p.isRequired()) {
+						continue;
+					}
 					defaultParameters.add(ImmutableMap.of(
 							"label",
 							messageSource.getMessage("pipeline.parameters." + workflowName + "." + p.getName(), null, locale),
@@ -324,26 +328,31 @@ public class PipelineController extends BaseController {
 			model.addAttribute("addRefProjects", addRefList);
 			model.addAttribute("projects", projectList);
 			model.addAttribute("canUpdateSamples", canUpdateAllSamples);
-			model.addAttribute("galaxyToolDataTableRequired", description.requiresToolDataTable());
+			model.addAttribute("dynamicSourceRequired", description.requiresDynamicSource());
 
 			final List<Map<String, Object>> toolDataTables = new ArrayList<>();
-			if (description.requiresToolDataTable()) {
-				List<IridaWorkflowGalaxyToolDataTable> iridaWorkflowGalaxyToolDataTables = description.getInputs().getGalaxyToolDataTables().get();
+			if (description.requiresDynamicSource()) {
+				List<IridaWorkflowDynamicSource> dynamicSources = new ArrayList<>();
+				for (IridaWorkflowParameter parameter : description.getParameters()) {
+					if(parameter.isRequired()) {
+				 		dynamicSources.add(parameter.getDynamicSource());
+					}
+				}
 				TabularToolDataTable galaxyToolDataTable = new TabularToolDataTable();
-				for (IridaWorkflowGalaxyToolDataTable iridaWorkflowGalaxyToolDataTable : iridaWorkflowGalaxyToolDataTables) {
+				for (IridaWorkflowDynamicSource dynamicSource : dynamicSources) {
 					List<Object> parametersList = new ArrayList<>();
 					String toolDataTableName = new String();
 					Map<String, Object> toolDataTable = new HashMap<>();
 					try {
-						toolDataTableName = iridaWorkflowGalaxyToolDataTable.getName();
+						toolDataTableName = dynamicSource.getGalaxyToolDataTable().getName();
 						galaxyToolDataTable = galaxyToolDataService.getToolDataTable(toolDataTableName);
 						toolDataTable.put("id", toolDataTableName);
 						toolDataTable.put("label", messageSource.getMessage("tooldatatable.label." + toolDataTableName, null, locale));
 						toolDataTable.put("parameters", parametersList);
 
-						List<String> labels = galaxyToolDataTable.getFieldsForColumn(iridaWorkflowGalaxyToolDataTable.getDisplayColumn());
+						List<String> labels = galaxyToolDataTable.getFieldsForColumn(dynamicSource.getGalaxyToolDataTable().getDisplayColumn());
 						Iterator<String> labelsIterator = labels.iterator();
-						List<String> values = galaxyToolDataTable.getFieldsForColumn(iridaWorkflowGalaxyToolDataTable.getParameterColumn());
+						List<String> values = galaxyToolDataTable.getFieldsForColumn(dynamicSource.getGalaxyToolDataTable().getParameterColumn());
 						Iterator<String> valuesIterator = values.iterator();
 
 						while (labelsIterator.hasNext() && valuesIterator.hasNext()) {
@@ -352,7 +361,7 @@ public class PipelineController extends BaseController {
 							HashMap<String, String> toolDataTableFieldsMap = new HashMap<>();
 							toolDataTableFieldsMap.put("label", label);
 							toolDataTableFieldsMap.put("value", value);
-							toolDataTableFieldsMap.put("name", iridaWorkflowGalaxyToolDataTable.getWorkflowParameter().getName());
+							toolDataTableFieldsMap.put("name", dynamicSource.getGalaxyToolDataTable().getName());
 							parametersList.add(toolDataTableFieldsMap);
 						}
 						toolDataTables.add(toolDataTable);
@@ -360,7 +369,7 @@ public class PipelineController extends BaseController {
 						logger.debug("Tool Data Table not found: ", e);
 					}
 				}
-				model.addAttribute("galaxyToolDataTables", toolDataTables);
+				model.addAttribute("dynamicSources", toolDataTables);
 			}
 			response = URL_GENERIC_PIPELINE;
 		}
@@ -409,7 +418,6 @@ public class PipelineController extends BaseController {
 		try {
 			IridaWorkflow flow = workflowsService.getIridaWorkflow(pipelineId);
 			IridaWorkflowDescription description = flow.getWorkflowDescription();
-
 			// The pipeline needs to have a name.
 			if (Strings.isNullOrEmpty(name)) {
 				return ImmutableMap

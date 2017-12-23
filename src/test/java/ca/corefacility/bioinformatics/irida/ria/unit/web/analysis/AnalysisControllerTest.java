@@ -78,7 +78,7 @@ public class AnalysisControllerTest {
 		ExtendedModelMap model = new ExtendedModelMap();
 		Locale locale = Locale.ENGLISH;
 
-		final IridaWorkflowInput input = new IridaWorkflowInput("single", "paired", "reference", null, true);
+		final IridaWorkflowInput input = new IridaWorkflowInput("single", "paired", "reference", true);
 		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
 		IridaWorkflowDescription description = new IridaWorkflowDescription(submission.getWorkflowId(), "My Workflow",
 				"V1", AnalysisType.PHYLOGENOMICS, input, Lists.newArrayList(), Lists.newArrayList(),
@@ -105,7 +105,7 @@ public class AnalysisControllerTest {
 		ExtendedModelMap model = new ExtendedModelMap();
 		Locale locale = Locale.ENGLISH;
 
-		final IridaWorkflowInput input = new IridaWorkflowInput("single", "paired", "reference", null, true);
+		final IridaWorkflowInput input = new IridaWorkflowInput("single", "paired", "reference", true);
 		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
 		IridaWorkflowDescription description = new IridaWorkflowDescription(submission.getWorkflowId(), "My Workflow",
 				"V1", AnalysisType.PHYLOGENOMICS, input, Lists.newArrayList(), Lists.newArrayList(),

@@ -162,8 +162,11 @@ public class IridaWorkflowLoaderService {
 					try {
 						workflowParameter.getDefaultValue();
 					} catch (NullPointerException e) {
-						throw new IridaWorkflowLoadException("Workflow parameter" + workflowParameter
-								+ " has no default value set: " + descriptionFile, e);
+						logger.debug("Workflow parameter" + workflowParameter
+								+ " has no default value set: " + descriptionFile);
+						if (!workflowParameter.isRequired()) {
+							throw new IridaWorkflowLoadException("Parameters with no default value must set the \"required\" attribute to \"true\".");
+						}
 					}
 				}
 			}

@@ -19,7 +19,7 @@
 			pipeline: {
 				parameters: /*[[${parameters}]]*/ [],
 				pipelineId : /*[[${pipelineId}]]*/ 'pipelineId',
-				galaxyToolDataTables: /*[[${galaxyToolDataTables}]]*/ []
+				dynamicSources: /*[[${dynamicSources}]]*/ []
 			}
 		};
 		/*]]>*/
@@ -96,8 +96,8 @@
 								</div>
 							</div>
 						</div>
-						<div th:if="${galaxyToolDataTableRequired}" class="form-group"
-							 ng-repeat="galaxyToolDataTable in pipeline.galaxyToolDataTables.availableSettings">
+						<div th:if="${dynamicSourceRequired}" class="form-group"
+							 ng-repeat="dynamicSource in pipeline.dynamicSources.availableSettings">
 							<label class="col-sm-2 control-label">{{galaxyToolDataTable.label}}</label>
 							<div class="col-sm-10">
 								<select id="{{galaxyToolDataTable.id}}" name="{{galaxyToolDataTable.label}}" class="form-control"
