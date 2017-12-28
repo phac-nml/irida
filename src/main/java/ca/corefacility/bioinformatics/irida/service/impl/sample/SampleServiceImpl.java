@@ -1,26 +1,37 @@
 package ca.corefacility.bioinformatics.irida.service.impl.sample;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.persistence.EntityExistsException;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.persistence.criteria.Subquery;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Valid;
-import javax.validation.Validator;
-
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
+import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
+import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
+import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGenomeAssemblyJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
+import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
+import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleSpecification;
+import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
+import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,35 +47,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
-import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
-import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
-import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
-import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
-import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
-import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleSpecification;
-import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
-import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
-import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import javax.persistence.EntityExistsException;
+import javax.persistence.criteria.*;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
+import javax.validation.Validator;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Service class for managing {@link Sample}.
@@ -96,6 +88,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	private final AnalysisRepository analysisRepository;
 	
+	private final SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository;
+
 	private final UserRepository userRepository;
 
 
@@ -120,7 +114,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Autowired
 	public SampleServiceImpl(SampleRepository sampleRepository, ProjectSampleJoinRepository psjRepository,
 			final AnalysisRepository analysisRepository, SampleSequencingObjectJoinRepository ssoRepository,
-			QCEntryRepository qcEntryRepository, SequencingObjectRepository sequencingObjectRepository, UserRepository userRepository, Validator validator) {
+			QCEntryRepository qcEntryRepository, SequencingObjectRepository sequencingObjectRepository,
+			SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository, UserRepository userRepository, Validator validator) {
 		super(sampleRepository, validator, Sample.class);
 		this.sampleRepository = sampleRepository;
 		this.psjRepository = psjRepository;
@@ -129,6 +124,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		this.qcEntryRepository = qcEntryRepository;
 		this.sequencingObjectRepository = sequencingObjectRepository;
 		this.userRepository = userRepository;
+		this.sampleGenomeAssemblyJoinRepository = sampleGenomeAssemblyJoinRepository;
 	}
 	
 	/**
@@ -270,6 +266,9 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		// confirm that all samples are part of the same project:
 		confirmProjectSampleJoin(project, mergeInto);
 
+		logger.debug("Merging samples " + toMerge.stream().map(t -> t.getId()).collect(Collectors.toList())
+				+ " into sample [" + mergeInto.getId() + "]");
+
 		for (Sample s : toMerge) {
 			confirmProjectSampleJoin(project, s);
 			List<SampleSequencingObjectJoin> sequencesForSample = ssoRepository.getSequencesForSample(s);
@@ -277,6 +276,20 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 				SequencingObject sequencingObject = join.getObject();
 				ssoRepository.delete(join);
 				addSequencingObjectToSample(mergeInto, sequencingObject);
+			}
+
+			Collection<SampleGenomeAssemblyJoin> genomeAssemblyJoins = getAssembliesForSample(s);
+			for (SampleGenomeAssemblyJoin join : genomeAssemblyJoins) {
+				GenomeAssembly genomeAssembly = join.getObject();
+
+				logger.trace(
+						"Removing genome assembly [" + genomeAssembly.getId() + "] from sample [" + s.getId() + "]");
+				sampleGenomeAssemblyJoinRepository.delete(join);
+
+				logger.trace("Adding genome assembly [" + genomeAssembly.getId() + "] to sample [" + mergeInto.getId()
+						+ "]");
+				SampleGenomeAssemblyJoin newJoin = new SampleGenomeAssemblyJoin(mergeInto, genomeAssembly);
+				sampleGenomeAssemblyJoinRepository.save(newJoin);
 			}
 
 			// have to remove the sample to be deleted from its project:
@@ -427,7 +440,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Override
 	@PreAuthorize("hasPermission(#submission, 'canReadAnalysisSubmission')")
 	@PostFilter("hasPermission(filterObject, 'canReadSample')")
-	public Collection<Sample> getSamplesForAnalysisSubimssion(AnalysisSubmission submission) {
+	public Collection<Sample> getSamplesForAnalysisSubmission(AnalysisSubmission submission) {
 		Set<SequencingObject> objectsForAnalysisSubmission = sequencingObjectRepository
 				.findSequencingObjectsForAnalysisSubmission(submission);
 
@@ -501,6 +514,47 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 		return sortProperties;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Transactional
+	@PreAuthorize("hasPermission(#sample, 'canUpdateSample')")
+	@Override
+	public void removeGenomeAssemblyFromSample(Sample sample, Long genomeAssemblyId) {
+		SampleGenomeAssemblyJoin join = sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(sample.getId(),
+				genomeAssemblyId);
+		if (join != null) {
+			logger.debug("Removing genome assembly [" + genomeAssemblyId + "] from sample [" + sample.getId() + "]");
+			sampleGenomeAssemblyJoinRepository.delete(join.getId());
+		} else {
+			logger.trace("Genome assembly [" + genomeAssemblyId + "] is not associated with sample [" + sample.getId() + "]. Ignoring.");
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasPermission(#sample, 'canReadSample')")
+	@Override
+	public Collection<SampleGenomeAssemblyJoin> getAssembliesForSample(Sample sample) {
+		return sampleGenomeAssemblyJoinRepository.findBySample(sample);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasPermission(#sample, 'canReadSample')")
+	@Override
+	public GenomeAssembly getGenomeAssemblyForSample(Sample sample, Long genomeAssemblyId) {
+		SampleGenomeAssemblyJoin join = sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(sample.getId(),
+				genomeAssemblyId);
+		if (join == null) {
+			throw new EntityNotFoundException("No join found between sample [" + sample.getId() + "] and genome assembly [" + genomeAssemblyId + "]");
+		}
+		
+		return join.getObject();
+	}
 	
 	/**
 	 * Specification for searching {@link Sample}s
@@ -539,7 +593,9 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			 */
 			private Predicate sampleProperties(final Root<ProjectSampleJoin> root, final CriteriaQuery<?> query,
 					final CriteriaBuilder cb) {
-				return cb.like(root.get("sample").get("sampleName"), "%" + queryString + "%");
+
+				return cb.or(cb.like(root.get("sample").get("sampleName"), "%" + queryString + "%"),
+						cb.equal(root.get("sample").get("id").as(String.class), queryString));
 			}
 
 			/**

@@ -1,217 +1,204 @@
-import "../../vendor/datatables/datatables";
-import "../../vendor/datatables/datatables-buttons";
-import $ from "jquery";
-import {
-  createItemLink,
-  generateColumnOrderInfo,
-  tableConfig,
-  wrapCellContents
-} from "./../../utilities/datatables-utilities";
-import { formatDate } from "./../../utilities/date-utilities";
+import angular from "angular";
+import { showNotification } from "../../modules/notifications";
+import "../../../sass/pages/analysis.scss";
 
-(function (angular, page, notifications) {
-  /**
-   * Controller to download the analysis.
-   * @constructor
-   */
-  function FileDownloadController() {
-    var vm = this;
+/**
+ * Controller to download the analysis.
+ * @constructor
+ */
+function FileDownloadController() {
+  const vm = this;
 
-    vm.getZipFile = function (id) {
-      var iFrameId = 'hiddenDownloader';
-      var hiddenIFrame = document.getElementById(iFrameId);
-      if (hiddenIFrame === null) {
-        hiddenIFrame = document.createElement('iframe');
-        hiddenIFrame.id = iFrameId;
-        hiddenIFrame.style.display = 'none';
-        document.body.appendChild(hiddenIFrame);
-      }
-      hiddenIFrame.src = page.URLS.download + id + '?dandelionAssetFilterState=false';
-    };
-  }
-
-  /**
-   * Service for Analysis
-   * @param $http
-   * @param $interval
-   * @returns {AnalysisService}
-   * @constructor
-   */
-  function AnalysisService($http) {
-    var svc = this;
-
-    /**
-     * Call the server to get the status for the current analysis.
-     * 'page.URLS.status' is on the `_base.html` page for the analysis.
-     * @returns {*}
-     * @private
-     */
-    function _getState() {
-      return $http.get(page.URLS.status).then(function (data) {
-        return data.data;
-      });
+  vm.getZipFile = function(id) {
+    const iFrameId = "hiddenDownloader";
+    let hiddenIFrame = document.getElementById(iFrameId);
+    if (hiddenIFrame === null) {
+      hiddenIFrame = document.createElement("iframe");
+      hiddenIFrame.id = iFrameId;
+      hiddenIFrame.style.display = "none";
+      document.body.appendChild(hiddenIFrame);
     }
+    hiddenIFrame.src = window.PAGE.URLS.download + id;
+  };
 
-    
-    /**
-     * Get the results from a SISTR analysis to preview in the browser.
-     */
-    svc.getSistrResults = function() {
-      return $http.get(page.URLS.sistr).then(function(result) {
-        return result.data;
-      });
+  vm.getZipFile = function(id) {
+    var iFrameId = "hiddenDownloader";
+    var hiddenIFrame = document.getElementById(iFrameId);
+    if (hiddenIFrame === null) {
+      hiddenIFrame = document.createElement("iframe");
+      hiddenIFrame.id = iFrameId;
+      hiddenIFrame.style.display = "none";
+      document.body.appendChild(hiddenIFrame);
     }
+    hiddenIFrame.src = page.URLS.download + id;
+  };
+}
 
-
-    svc.getBioHanselResults = function() {
-        return $http.get(page.URLS.bio_hansel).then(function(result){
-            return result.data;
-        });
-    }
-    /**
-     * Exported function to call the server for information about the current analysis.
-     * @param fn Callback function with how to handle the results.
-     */
-    svc.getAnalysisState = function (fn) {
-      _getState().then(function (data) {
-        fn(data);
-      });
-    };
-
-    /**
-     * Call the server to update the shared status of the current analysis.
-     */
-    svc.updateProjectShare = function(project, shared) {
-      var data = {project: project, shared: shared};
-      return $http.post(page.URLS.share, data).then(function(response) {
-        return response.data;
-      });
-    };
-
-    /**
-     * Call the server to get the shared status of project
-     */
-    svc.getSharedProjects = function() {
-      return $http.get(page.URLS.share).then(function(response) {
-        return response.data;
-      });
-    };
-
-    return svc;
-  }
-
-  function ProjectShareController(AnalysisService, notifications) {
-    var vm = this;
-
-    vm.projects = {};
-
-    function initialize() {
-      AnalysisService.getSharedProjects().then(function(response){
-        vm.projects = response;
-        console.log(vm.projects);
-      });
-    }
-
-    vm.updateShared = function(project) {
-      AnalysisService.updateProjectShare(project.project.identifier, project.shared).then(function(response) {
-        notifications.show({msg: response.message});
-      });
-    };
-
-    initialize();
-  }
+/**
+ * Service for Analysis
+ * @param $http
+ * @returns {AnalysisService}
+ * @constructor
+ */
+function AnalysisService($http) {
+  const svc = this;
 
   /**
-   * Controls the state for the current analysis.
-   * @param AnalysisService
-   * @constructor
+   * Call the server to get the status for the current analysis.
+   * 'page.URLS.status' is on the `_base.html` page for the analysis.
+   * @returns {*}
+   * @private
    */
-  function StateController(AnalysisService) {
-    var vm = this;
-    vm.percentage = 0;
-
-    /**
-     * Initializes the sate of the analysis.
-     */
-    function initialize() {
-      return AnalysisService.getAnalysisState(function (data) {
-        vm.state = data.state;
-        vm.stateLang = data.stateLang;
-        vm.percentage = Math.round(parseFloat(data.percentComplete));
-        vm.stateClass = _createClass(vm.state);
-      });
-    }
-
-    /**
-     * Dynamically creates the border color for the top of the sidebar depending on the state of the analysis.
-     * @param state
-     * @returns {string}
-     * @private
-     */
-    function _createClass(state) {
-      return 'analysis__alert--' + state.toLowerCase();
-    }
-
-    initialize();
-  }
-
-  function PreviewController() {
-    var vm = this;
-    vm.newick = page.NEWICK;
-  }
-
-  function BioHanselController(analysisService){
-    var vm = this;
-
-    analysisService.getBioHanselResults().then(function(result) {
-      if (result['parse_results_error']) {
-        vm.parse_results_error = true;
-      } else {
-
-        vm.hansel_results = result['hansel_results']
-        vm.hansel_match_results = result['hansel_match_results']
-        vm.hansel_tech_results = result['hansel_tech_results']
-        vm.parse_results_error = result['parse_results_error']
-      }
-     });
-  }
-
-  function SistrController(analysisService) {
-    var vm = this;
-
-    analysisService.getSistrResults().then(function(result) {
-      if (result['parse_results_error']) {
-        vm.parse_results_error = true;
-      } else {
-        var sample_information = {};
-        sample_information['name'] = result['sample_name'];
-        sample_information['qc_status'] = result['qc_status'];
-        sample_information['qc_messages'] = result['qc_messages'].split("|");
-        sample_information['qc_pass'] = (result['qc_status'] == 'PASS');
-        sample_information['qc_warning'] = (result['qc_status'] == 'WARNING');
-        sample_information['qc_fail'] = (result['qc_status'] == 'FAIL');
-
-        var cgMLST_predictions = {};
-        cgMLST_predictions['matching_alleles'] = result['cgmlst_matching_alleles']+'/330';
-        cgMLST_predictions['percent_matching'] = parseFloat((1 - result['cgmlst_distance'])*100).toFixed(1)+"%";
-  
-        var mash_predictions = {};
-        mash_predictions['distance'] = result['mash_distance'];
-  
-	    vm.result = result;
-        vm.sample_information = sample_information;
-        vm.cgMLST_predictions = cgMLST_predictions;
-        vm.mash_predictions = mash_predictions;
-        vm.parse_results_error = result['parse_results_error'];
-      }
+  function _getState() {
+    return $http.get(window.PAGE.URLS.status).then(function(data) {
+      return data.data;
     });
   }
 
-  angular.module('irida.analysis', ['ui.router', 'subnav', 'phylocanvas'])
-    .config(['$stateProvider', function ($stateProvider) {
+  /**
+   * Get the results from a SISTR analysis to preview in the browser.
+   */
+  svc.getSistrResults = function() {
+    return $http.get(window.PAGE.URLS.sistr).then(function(result) {
+      return result.data;
+    });
+  };
+
+  /**
+   * Exported function to call the server for information about the current analysis.
+   * @param fn Callback function with how to handle the results.
+   */
+  svc.getAnalysisState = function(fn) {
+    _getState().then(function(data) {
+      fn(data);
+    });
+  };
+
+  /**
+   * Call the server to update the shared status of the current analysis.
+   */
+  svc.updateProjectShare = function(project, shared) {
+    const data = { project: project, shared: shared };
+    return $http.post(window.PAGE.URLS.share, data).then(function(response) {
+      return response.data;
+    });
+  };
+
+        fn(data);
+  /**
+   * Call the server to get the shared status of project
+   */
+  svc.getSharedProjects = function() {
+    return $http.get(window.PAGE.URLS.share).then(function(response) {
+      return response.data;
+    });
+  };
+
+  return svc;
+}
+
+function ProjectShareController(AnalysisService) {
+  const vm = this;
+
+  vm.projects = {};
+
+  function initialize() {
+    AnalysisService.getSharedProjects().then(function(response) {
+      vm.projects = response;
+    });
+  }
+
+  vm.updateShared = function(project) {
+    AnalysisService.updateProjectShare(
+      project.project.identifier,
+      project.shared
+    ).then(function(response) {
+      showNotification({ text: response.message });
+    });
+  };
+
+  initialize();
+}
+
+/**
+ * Controls the state for the current analysis.
+ * @param AnalysisService
+ * @constructor
+ */
+function StateController(AnalysisService) {
+  const vm = this;
+  vm.percentage = 0;
+
+  /**
+   * Initializes the sate of the analysis.
+   */
+  function initialize() {
+    return AnalysisService.getAnalysisState(function(data) {
+      vm.state = data.state;
+      vm.stateLang = data.stateLang;
+      vm.percentage = Math.round(parseFloat(data.percentComplete));
+      vm.stateClass = _createClass(vm.state);
+    });
+  }
+
+  /**
+   * Dynamically creates the border color for the top of the sidebar depending on the state of the analysis.
+   * @param state
+   * @returns {string}
+   * @private
+   */
+  function _createClass(state) {
+    return "analysis__alert--" + state.toLowerCase();
+  }
+
+  initialize();
+}
+
+function PreviewController() {
+  this.newick = window.PAGE.NEWICK;
+}
+
+function SistrController(analysisService) {
+  const vm = this;
+
+  analysisService.getSistrResults().then(function(result) {
+    if (result["parse_results_error"]) {
+      vm.parse_results_error = true;
+    } else {
+      const sample_information = {};
+      sample_information["name"] = result["sample_name"];
+      sample_information["qc_status"] = result["qc_status"];
+      sample_information["qc_messages"] = result["qc_messages"].split("|");
+      sample_information["qc_pass"] = result["qc_status"] == "PASS";
+      sample_information["qc_warning"] = result["qc_status"] == "WARNING";
+      sample_information["qc_fail"] = result["qc_status"] == "FAIL";
+
+      const cgMLST_predictions = {};
+      cgMLST_predictions["matching_alleles"] =
+        result["cgmlst_matching_alleles"] + "/330";
+      cgMLST_predictions["percent_matching"] =
+        parseFloat((1 - result["cgmlst_distance"]) * 100).toFixed(1) + "%";
+
+      const mash_predictions = {};
+      mash_predictions["distance"] = result["mash_distance"];
+
+      vm.result = result;
+      vm.sample_information = sample_information;
+      vm.cgMLST_predictions = cgMLST_predictions;
+      vm.mash_predictions = mash_predictions;
+      vm.parse_results_error = result["parse_results_error"];
+    }
+  });
+}
+
+const iridaAnalysis = angular
+  .module("irida.analysis", ["ui.router", "subnav", "phylocanvas"])
+  .config([
+    "$stateProvider",
+    function($stateProvider) {
       $stateProvider
         .state("preview", {
-          url        : "/preview",
+          url: "/preview",
           templateUrl: "preview.html"
         })
         .state("sistr", {
@@ -227,23 +214,27 @@ import { formatDate } from "./../../utilities/date-utilities";
           controller: ["AnalysisService", BioHanselController]
         })
         .state("inputs", {
-          url        : "/inputs",
+          url: "/inputs",
           templateUrl: "inputs.html"
         })
         .state("provenance", {
-          url        : "/provenance",
+          url: "/provenance",
           templateUrl: "provenance.html"
         })
         .state("share", {
-          url        : "/share",
+          url: "/share",
           templateUrl: "share.html"
-        })
-      ;
-    }])
-    .service('AnalysisService', ['$http', AnalysisService])
-    .controller('FileDownloadController', [FileDownloadController])
-    .controller('StateController', ['AnalysisService', StateController])
-    .controller('PreviewController', [PreviewController])
-    .controller('ProjectShareController', ['AnalysisService', 'notifications', ProjectShareController])
-  ;
-})(window.angular, window.PAGE, window.notifications);
+        });
+    }
+  ])
+  .service("AnalysisService", ["$http", AnalysisService])
+  .controller("FileDownloadController", [FileDownloadController])
+  .controller("StateController", ["AnalysisService", StateController])
+  .controller("PreviewController", [PreviewController])
+  .controller("ProjectShareController", [
+    "AnalysisService",
+    ProjectShareController
+  ])
+  .name;
+
+angular.module("irida").requires.push(iridaAnalysis);

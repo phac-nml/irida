@@ -1,4 +1,4 @@
-import {getRandomColour} from './../../../../../utilities/colour.utilities';
+import chroma from "chroma-js";
 import {METADATA} from './../../constants';
 
 const EMPTY_COLOUR = 'rgba(0,0,0,0)';
@@ -26,7 +26,7 @@ const formatMetadata = (metadata, metadataFieldLabels) => {
         // If not, get it a new one.
         colourMap[field] = colourMap[field] || {};
         colourMap[field][metadataLabel] =
-          colourMap[field][metadataLabel] || getRandomColour();
+          colourMap[field][metadataLabel] || chroma.random();
         result[sampleName][field] = {
           label: metadataLabel,
           colour: colourMap[field][metadataLabel]

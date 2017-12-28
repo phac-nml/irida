@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="template/base"
-	  ddl:bundle-includes="bootstrap3">
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  data-layout-decorate="~{template/base}">
 <head>
-<title th:text="#{password.activate}">_Activate Account_</title>
+	<title th:text="#{password.activate}">_Activate Account_</title>
 </head>
 <body>
 	<div class="container" layout:fragment="content">

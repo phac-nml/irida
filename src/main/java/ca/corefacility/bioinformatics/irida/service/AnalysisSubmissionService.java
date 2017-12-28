@@ -94,12 +94,15 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 *            {@link String} the description of the analysis being submitted
 	 * @param projectsToShare
 	 *            A list of {@link Project}s to share analysis results with
+	 * @param writeResultsToSamples
+	 *            If true, results of this pipeline will be saved back to the
+	 *            samples on successful completion.
 	 * @return the {@link AnalysisSubmission} created for the files.
 	 */
 	public AnalysisSubmission createMultipleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
 			Map<String, String> unnamedParameters, IridaWorkflowNamedParameters namedParameters, String name,
-			String analysisDescription, List<Project> projectsToShare);
+			String analysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples);
 
 	/**
 	 * Submit {@link AnalysisSubmission} for workflows requiring only one
@@ -124,13 +127,16 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 *            {@link String} the description of the analysis being submitted
 	 * @param projectsToShare
 	 *            A list of {@link Project}s to share analysis results with
+	 * @param writeResultsToSamples
+	 *            If true, results of this pipeline will be saved back to the
+	 *            samples on successful completion.
 	 * @return the {@link Collection} of {@link AnalysisSubmission} created for
 	 *         the supplied files.
 	 */
 	public Collection<AnalysisSubmission> createSingleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
 			Map<String, String> unnamedParameters, IridaWorkflowNamedParameters namedParameters, String name,
-			String analysisDescription, List<Project> projectsToShare);
+			String analysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples);
 
 	/**
 	 * Given the id of an {@link AnalysisSubmission} gets the percentage
@@ -232,4 +238,13 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 */
 	public Page<AnalysisSubmission> listSubmissionsForUser(String search, String name, AnalysisState state, User user,
 			Set<UUID> workflowIds, PageRequest pageRequest);
+
+	/**
+	 * Update the priority of an {@link AnalysisSubmission}
+	 *
+	 * @param submission the submission to update
+	 * @param priority   the new {@link AnalysisSubmission.Priority}
+	 * @return the updated submission
+	 */
+	public AnalysisSubmission updatePriority(AnalysisSubmission submission, AnalysisSubmission.Priority priority);
 }

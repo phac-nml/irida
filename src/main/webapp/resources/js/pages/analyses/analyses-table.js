@@ -1,4 +1,4 @@
-import "../../../css/pages/analyses-list.css";
+import "../../../sass/pages/analyses-list.scss";
 import "../../vendor/datatables/datatables";
 import $ from "jquery";
 import {
@@ -16,6 +16,7 @@ import {
   getHumanizedDuration
 } from "../../utilities/date-utilities";
 import { deleteAnalysis } from "../analysis/analysis-service";
+import { showNotification } from "../../modules/notifications";
 
 /*
 Get the table headers and create a look up table for them.
@@ -205,12 +206,12 @@ $("#deleteConfirmModal")
     $(this).find("#delete-analysis-button").off("click").on("click", () => {
       deleteAnalysis({ id: button.data("id") }).then(
         result => {
-          window.notifications.show({ msg: result.result });
+          showNotification({ text: result.result });
           table.ajax.reload();
         },
         () => {
-          window.notifications.show({
-            msg: window.PAGE.i18n.unexpectedDeleteError,
+          showNotification({
+            text: window.PAGE.i18n.unexpectedDeleteError,
             type: "error"
           });
         }

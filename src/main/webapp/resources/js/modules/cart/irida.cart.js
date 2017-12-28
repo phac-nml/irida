@@ -1,7 +1,11 @@
 import angular from "angular";
-import _ from "lodash";
+import find from "lodash/find";
+import filter from "lodash/filter";
+import { CART } from "../../utilities/events-utilities";
+import $ from "jquery";
+import { showNotification } from "../notifications";
 
-function CartController($scope, cart) {
+function CartController(cart) {
   const vm = this;
   vm.show = false;
   vm.projects = [];
@@ -9,18 +13,22 @@ function CartController($scope, cart) {
   vm.collapsed = {};
   vm.term = "";
 
-  $scope.$on("cart.update", function() {
+  /*
+  This is here since this has been updated to use a standard Event,
+  and not handled through angularjs.
+   */
+  document.addEventListener(CART.UPDATED, function () {
     getCart(false);
   });
 
   function getCart(collapse) {
-    cart.all().then(function(data) {
+    cart.all().then(function (data) {
       vm.count = 0;
       vm.projects = data.projects;
-      _.each(vm.projects, function(p) {
+      vm.projects.forEach(function (p) {
         vm.count += p.samples.length;
         // Sort the samples by created date.
-        p.samples.sort(function(a, b) {
+        p.samples.sort(function (a, b) {
           return b.createdDate - a.createdDate > 0;
         });
         if (collapse) {
@@ -40,38 +48,38 @@ function CartController($scope, cart) {
 function CartSliderController(CartService, $uibModal) {
   const vm = this;
 
-  vm.clear = function() {
+  vm.clear = function () {
     CartService.clear();
   };
 
-  vm.removeProject = function(projectId) {
+  vm.removeProject = function (projectId) {
     CartService.removeProject(projectId);
   };
 
-  vm.removeSample = function(projectId, sampleId) {
+  vm.removeSample = function (projectId, sampleId) {
     CartService.removeSample(projectId, sampleId);
   };
 
-  vm.exportToGalaxy = function() {
-    CartService.all().then(function(data) {
+  vm.exportToGalaxy = function () {
+    CartService.all().then(function (data) {
       if (data !== null) {
         const firstProjID = data.projects[0].id;
 
         $uibModal.open({
           templateUrl:
-            window.TL.BASE_URL + "cart/template/galaxy/project/" + firstProjID,
+          window.TL.BASE_URL + "cart/template/galaxy/project/" + firstProjID,
           controller: "GalaxyDialogCtrl as gCtrl",
           resolve: {
-            openedByCart: function() {
+            openedByCart: function () {
               return true;
             },
-            multiProject: function() {
+            multiProject: function () {
               return data.length > 1;
             },
-            sampleIds: function() {
+            sampleIds: function () {
               return false;
             },
-            projectId: function() {
+            projectId: function () {
               return false;
             }
           }
@@ -87,11 +95,11 @@ function CartDirective() {
     templateUrl: "/cart.html",
     replace: true,
     controllerAs: "cart",
-    controller: ["$scope", "CartService", CartController]
+    controller: ["CartService", CartController]
   };
 }
 
-function CartService(scope, $http, $q, notifications) {
+function CartService(scope, $http) {
   const svc = this;
   const urls = {
     all: window.TL.BASE_URL + "cart",
@@ -99,66 +107,83 @@ function CartService(scope, $http, $q, notifications) {
     project: window.TL.BASE_URL + "cart/project/"
   };
 
-  svc.all = function() {
-    return $http.get(urls.all).then(function(response) {
+  svc.all = function () {
+    return $http.get(urls.all).then(function (response) {
       if (response.data) {
-        return { projects: response.data.projects };
+        return {projects: response.data.projects};
       } else {
         return [];
       }
     });
   };
 
-  /**
-   * Add samples to the global cart
-   * @param {object} projectSamples
-   *    {projectId: [sampleIds]}
-   * @returns {*|Promise.<TResult>}
+  /*
+  Add Samples to the global cart
+  Event Listener for adding samples to the global cart.
+  Expects an object with project ids references an array of sample ids
+  { projectId: [sampleIds] }
    */
-  svc.add = function(projectSamples) {
-    const projectIds = Object.keys(projectSamples);
-    const promises = [];
-    const resultMsg = [];
-
-    // Add each project's samples to the global cart.
-    projectIds.forEach(function(id) {
-      const promise = $http
-        .post(urls.add, { projectId: id, sampleIds: projectSamples[id] })
-        .then(function(result) {
-          resultMsg.push(result.data.message);
-        });
-      promises.push(promise);
-    });
-
-    // Return the resolution of all the results from adding the samples to the cart
-    return $q.all(promises).then(function() {
-      // Let everyone know that the cart has been updates
-      scope.$emit("cart.update");
-      // Show notifications for each project and their samples that were added to the cart.
-      resultMsg.forEach(function(msg) {
-        notifications.show({ msg: msg });
+  document.addEventListener(
+    CART.ADD,
+    function (e) {
+      const projects = e.detail.projects;
+      if (typeof projects === "undefined") {
+        return;
+      }
+      const promises = [];
+      /*
+    For each project that has samples, post the project/samples to
+    and store the promise.
+     */
+      Object.keys(projects).forEach(projectId => {
+        promises.push(
+          $.post(window.TL.URLS.cart.add, {
+            projectId,
+            sampleIds: projects[projectId]
+          }).then(response => {
+            /*
+          Display a notification of what occurred on the server.
+           */
+            showNotification({
+              text: response.message
+            });
+          })
+        );
       });
-    });
-  };
 
-  svc.clear = function() {
+      /*
+    Wait until all the projects have been added to the server cart, and
+    then notify the UI that this has occurred.
+     */
+      $.when.apply($, promises).done(function () {
+        const event = new Event(CART.UPDATED);
+        document.dispatchEvent(event);
+      });
+    },
+    false
+  );
+
+  svc.clear = function () {
     //fire a DELETE to the server on the cart then broadcast the cart update event
-    return $http.delete(urls.all).then(function() {
-      scope.$broadcast("cart.update", {});
+    return $http.delete(urls.all).then(function () {
+      const event = new Event(CART.UPDATED);
+      document.dispatchEvent(event);
     });
   };
 
-  svc.removeProject = function(projectId) {
-    return $http.delete(urls.project + projectId).then(function() {
-      scope.$broadcast("cart.update", {});
+  svc.removeProject = function (projectId) {
+    return $http.delete(urls.project + projectId).then(function () {
+      const event = new Event(CART.UPDATED);
+      document.dispatchEvent(event);
     });
   };
 
-  svc.removeSample = function(projectId, sampleId) {
+  svc.removeSample = function (projectId, sampleId) {
     return $http
       .delete(urls.project + projectId + "/samples/" + sampleId)
-      .then(function() {
-        scope.$broadcast("cart.update", {});
+      .then(function () {
+        const event = new Event(CART.UPDATED);
+        document.dispatchEvent(event);
       });
   };
 }
@@ -168,19 +193,19 @@ function GalaxyExportService(CartService, $http, $q) {
     samples = [];
 
   function addSampleFile(sampleName, sampleFilePath) {
-    let sample = _.find(samples, function(sampleItr) {
+    let sample = find(samples, function (sampleItr) {
       return sampleItr.name === sampleName;
     });
     if (typeof sample === "undefined") {
       sample = {
         name: sampleName,
-        _links: { self: { href: "" } }, //expected by the tool
-        _embedded: { sample_files: [] }
+        _links: {self: {href: ""}}, //expected by the tool
+        _embedded: {sample_files: []}
       };
       samples.push(sample);
     }
     sample._embedded.sample_files.push({
-      _links: { self: { href: sampleFilePath } }
+      _links: {self: {href: sampleFilePath}}
     });
   }
 
@@ -189,11 +214,11 @@ function GalaxyExportService(CartService, $http, $q) {
         addtohistory: false,
         makepairedcollection: false
       },
-      p = _.extend({}, defaults, args),
+      p = Object.assign({}, defaults, args),
       params = {
         _embedded: {
-          library: { name: p.name },
-          user: { email: p.email },
+          library: {name: p.name},
+          user: {email: p.email},
           addtohistory: p.addtohistory,
           makepairedcollection: p.makepairedcollection,
           oauth2: {
@@ -211,31 +236,31 @@ function GalaxyExportService(CartService, $http, $q) {
     ];
   }
 
-  svc.exportFromProjSampPage = function(args, ids, projectId) {
+  svc.exportFromProjSampPage = function (args, ids, projectId) {
     // Need to get an actual list of samples from the server from their ids.
     const promises = [];
-    Object.keys(ids).map(function(id) {
+    Object.keys(ids).map(function (id) {
       promises.push(
         $http
-          .post(PAGE.urls.samples.idList, { sampleIds: ids[id], projectId: id })
-          .then(function(result) {
-            result.data.samples.forEach(function(sample) {
+          .post(PAGE.urls.samples.idList, {sampleIds: ids[id], projectId: id})
+          .then(function (result) {
+            result.data.samples.forEach(function (sample) {
               addSampleFile(sample.label, sample.href);
             });
           })
       );
     });
-    return $q.all(promises).then(function() {
+    return $q.all(promises).then(function () {
       return getSampleFormEntities(args);
     });
   };
 
-  svc.exportFromCart = function(args) {
-    return CartService.all().then(function(data) {
+  svc.exportFromCart = function (args) {
+    return CartService.all().then(function (data) {
       const projects = data.projects;
-      _.each(projects, function(project) {
+      projects.forEach(function (project) {
         const samples = project.samples;
-        _.each(samples, function(sample) {
+        samples.forEach(function (sample) {
           addSampleFile(sample.label, sample.href);
         });
       });
@@ -244,17 +269,15 @@ function GalaxyExportService(CartService, $http, $q) {
   };
 }
 
-function GalaxyDialogCtrl(
-  $uibModalInstance,
-  $timeout,
-  $scope,
-  CartService,
-  GalaxyExportService,
-  openedByCart,
-  multiProject,
-  sampleIds,
-  projectId
-) {
+function GalaxyDialogCtrl($uibModalInstance,
+                          $timeout,
+                          $scope,
+                          CartService,
+                          GalaxyExportService,
+                          openedByCart,
+                          multiProject,
+                          sampleIds,
+                          projectId) {
   const vm = this;
   vm.addtohistory = true;
   vm.makepairedcollection = true;
@@ -263,7 +286,7 @@ function GalaxyDialogCtrl(
   vm.redirectURI = window.TL.BASE_URL + "galaxy/auth_code";
   vm.validation = {};
 
-  vm.upload = function() {
+  vm.upload = function () {
     vm.validation = {};
 
     // Ensure email and name aren't empty
@@ -283,7 +306,7 @@ function GalaxyDialogCtrl(
     }
   };
 
-  vm.makeOauth2AuthRequest = function(clientID) {
+  vm.makeOauth2AuthRequest = function (clientID) {
     const request = buildOauth2Request(
       clientID,
       "code",
@@ -306,7 +329,7 @@ function GalaxyDialogCtrl(
     );
   }
 
-  $scope.$on("galaxyAuthCode", function(e, authToken) {
+  $scope.$on("galaxyAuthCode", function (e, authToken) {
     if (authToken) {
       vm.uploading = true;
 
@@ -350,25 +373,25 @@ function GalaxyDialogCtrl(
     //allowing the full form to be generated before it is submitted.
 
     //Two timeouts are required now--this is starting to look like a real hack.
-    $timeout(function() {
-      $timeout(function() {
+    $timeout(function () {
+      $timeout(function () {
         document.getElementById("galSubFrm").submit();
         vm.close();
       });
     });
   }
 
-  vm.setName = function(name, orgName) {
+  vm.setName = function (name, orgName) {
     if (multiProject) {
       vm.name = orgName;
     } else {
       vm.name = name;
     }
   };
-  vm.setEmail = function(email) {
+  vm.setEmail = function (email) {
     vm.email = email;
   };
-  vm.close = function() {
+  vm.close = function () {
     $uibModalInstance.close();
   };
 }
@@ -383,9 +406,9 @@ function CartFilter() {
    * @param list - list to filter
    * @param term - search term to use to filter the list.
    */
-  return function(list, term) {
+  return function (list, term) {
     //filter each element in the collection
-    return _.filter(list, function(item) {
+    return filter(list, function (item) {
       //if we have a project, check for how many samples we have left
       if (item.samples) {
         return filterList(item.samples, term).length > 0;
@@ -396,7 +419,7 @@ function CartFilter() {
   };
 
   function filterList(samples, term) {
-    return _.filter(samples, function(s) {
+    return filter(samples, function (s) {
       return filterSample(s, term);
     });
   }
@@ -408,14 +431,8 @@ function CartFilter() {
 }
 
 angular
-  .module("irida.cart", ["irida.notifications"])
-  .service("CartService", [
-    "$rootScope",
-    "$http",
-    "$q",
-    "notifications",
-    CartService
-  ])
+  .module("irida.cart", [])
+  .service("CartService", ["$rootScope", "$http", CartService])
   .controller("CartSliderController", [
     "CartService",
     "$uibModal",

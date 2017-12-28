@@ -1,6 +1,6 @@
 const angular = require('angular');
 require('./../../modules/utilities/file.utils');
-require('./../../../css/pages/sample_files.css');
+require('../../../sass/pages/sample-files.scss');
 
 /**
  * Controller for the modal to confirm removing a sequenceFile
@@ -40,6 +40,36 @@ function FileController($uibModal) {
   this.deleteFile = function(id, label) {
     $uibModal.open({
       templateUrl: '/confirm.html',
+      controller: 'FileDeletionController as deleteCtrl',
+      resolve: {
+        id: function() {
+          return id;
+        },
+        label: function() {
+          return label;
+        }
+      }
+    });
+  };
+}
+
+/**
+ * Controller for the Buttons in the list of assembly files.
+ *
+ * @param {Object} $uibModal Angular modal
+ * @constructor
+ */
+function AssemblyFileController($uibModal) {
+  /**
+   * Click handler for the delete button for an assembly
+   *  Displays a confirmation modal
+   *
+   * @param {long} id Id for the assembly to delete
+   * @param {String} label Name of the assembly to delete
+   */
+  this.deleteFile = function(id, label) {
+    $uibModal.open({
+      templateUrl: '/confirm_assembly.html',
       controller: 'FileDeletionController as deleteCtrl',
       resolve: {
         id: function() {
@@ -168,7 +198,7 @@ function FileUploadController(Upload, $timeout, $window, $uibModal) {
   };
 }
 
-angular.module('irida.sample.files', [
+const filesModule = angular.module('irida.sample.files', [
   'file.utils',
   'ngAnimate',
   'ui.bootstrap',
@@ -178,6 +208,10 @@ angular.module('irida.sample.files', [
     '$uibModal', FileUploadController
   ])
   .controller('FileController', ['$uibModal', FileController])
+  .controller('AssemblyFileController', ['$uibModal', AssemblyFileController])
   .controller('FileDeletionController', ['$uibModalInstance', 'id', 'label',
     FileDeletionController
-  ]);
+  ])
+  .name;
+
+angular.module("irida").requires.push(filesModule);

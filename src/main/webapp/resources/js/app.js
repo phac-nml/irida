@@ -1,18 +1,23 @@
 import $ from "jquery";
 import angular from "angular";
-import _ from "lodash";
 import "./modules/cart/irida.cart";
 import { IridaSession } from "./services/IridaSession";
 import "./pages/search/irida.search";
+// Import css
+import "../sass/app.scss";
+/*
+This will load notifications into the global namespace.  Remove this once all
+files have been converted over to wekbpack builds.
+ */
+import "./modules/notifications";
 
-const deps = _.union(window.dependencies || [], [
+const deps = [
   "ngAria",
   "ngAnimate",
   "ui.bootstrap",
-  "irida.notifications",
   "irida.cart",
   IridaSession
-]);
+];
 
 const app = angular.module("irida", deps).config($httpProvider => {
   $httpProvider.defaults.headers.post["Content-Type"] =

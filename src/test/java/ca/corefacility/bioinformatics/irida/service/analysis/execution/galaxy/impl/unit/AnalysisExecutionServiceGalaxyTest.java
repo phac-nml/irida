@@ -7,6 +7,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doThrow;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -22,6 +23,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.access.AccessDeniedException;
 
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDeleteResponse;
 import com.google.common.collect.Maps;
@@ -49,6 +51,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.Prep
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.WorkflowInputsGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkflowStructure;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
@@ -58,6 +61,7 @@ import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.An
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsync;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyCleanupAsync;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 /**
@@ -83,6 +87,10 @@ public class AnalysisExecutionServiceGalaxyTest {
 	private Analysis analysisResults;
 	@Mock
 	private IridaWorkflowsService iridaWorkflowsService;
+	@Mock
+	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
+	@Mock
+	private SampleService sampleService;
 
 	@Mock
 	private IridaWorkflow iridaWorkflow;
@@ -147,7 +155,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 
 		AnalysisExecutionServiceGalaxyAsync workflowManagementAsync = new AnalysisExecutionServiceGalaxyAsync(
 				analysisSubmissionService, analysisService, galaxyWorkflowService, analysisWorkspaceService,
-				iridaWorkflowsService);
+				iridaWorkflowsService, analysisSubmissionSampleProcessor);
 		AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionServiceGalaxyCleanupAsync = new AnalysisExecutionServiceGalaxyCleanupAsync(
 				analysisSubmissionService, galaxyWorkflowService, galaxyHistoriesService, galaxyLibrariesService);
 		workflowManagement = new AnalysisExecutionServiceGalaxy(analysisSubmissionService, galaxyHistoriesService,
@@ -171,7 +179,6 @@ public class AnalysisExecutionServiceGalaxyTest {
 		analysisPrepared.setAnalysisState(AnalysisState.PREPARED);
 		analysisPrepared.setRemoteWorkflowId(REMOTE_WORKFLOW_ID);
 		analysisPrepared.setRemoteAnalysisId(ANALYSIS_ID);
-
 
 		analysisSubmitting.setId(INTERNAL_ANALYSIS_ID);
 		analysisSubmitting.setAnalysisState(AnalysisState.SUBMITTING);
@@ -206,6 +213,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 		analysisCompleted.setAnalysisCleanedState(AnalysisCleanedState.NOT_CLEANED);
 		analysisCompleted.setAnalysis(analysisResults);
 		analysisCompleted.setRemoteInputDataId(LIBRARY_ID);
+		analysisCompleted.setUpdateSamples(true);
 		
 		analysisCompletedCleaning.setId(INTERNAL_ANALYSIS_ID);
 		analysisCompletedCleaning.setAnalysisState(AnalysisState.COMPLETED);
@@ -483,6 +491,28 @@ public class AnalysisExecutionServiceGalaxyTest {
 
 		verify(analysisService).create(analysisResults);
 		verify(analysisSubmissionService, times(2)).update(any(AnalysisSubmission.class));
+	}
+	
+	/**
+	 * Tests successfully getting analysis results even if updating samples failed.
+	 */
+	@Test
+	public void testTransferAnalysisResultsSuccessUpdateSamplesFail() throws ExecutionManagerException, IOException,
+			IridaWorkflowNotFoundException, InterruptedException, ExecutionException, IridaWorkflowAnalysisTypeException {
+		when(analysisSubmissionService.exists(INTERNAL_ANALYSIS_ID)).thenReturn(true);
+		when(analysisSubmissionService.update(analysisFinishedRunning)).thenReturn(analysisCompleting);
+		when(analysisSubmissionService.update(analysisCompleting)).thenReturn(analysisCompleted);
+		doThrow(new AccessDeniedException("")).when(analysisSubmissionSampleProcessor).updateSamples(analysisSubmission);
+		
+		Future<AnalysisSubmission> actualCompletedSubmissionFuture = workflowManagement
+				.transferAnalysisResults(analysisFinishedRunning);
+		AnalysisSubmission actualCompletedSubmission = actualCompletedSubmissionFuture.get();
+		assertEquals(analysisCompleted, actualCompletedSubmission);
+		assertEquals("analysisResults should be equal", analysisResults, actualCompletedSubmission.getAnalysis());
+
+		verify(analysisService).create(analysisResults);
+		verify(analysisSubmissionService, times(2)).update(any(AnalysisSubmission.class));
+		verify(analysisSubmissionSampleProcessor).updateSamples(any(AnalysisSubmission.class));
 	}
 
 	/**

@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-    layout:decorator="sequencingRuns/_base">
+      data-layout-decorate="~{sequencingRuns/_base}">
 <head>
 <title th:text="#{sequencingruns.title}">_Clients_</title>
+    <link rel="stylesheet" th:href="@{/resources/dist/css/sequencing-runs.bundle.css}">
 	<script th:inline="javascript">
     var PAGE = {
       urls: {
@@ -33,7 +34,7 @@
     </main>
 
 <th:block layout:fragment="scripts">
-    <script th:src="@{/resources/js/build/sequencing-runs.bundle.js}"></script>
+    <script th:src="@{/resources/dist/js/sequencing-runs.bundle.js}"></script>
 </th:block>
 </body>
 </html>

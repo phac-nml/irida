@@ -166,6 +166,10 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "named_parameters_id")
 	private IridaWorkflowNamedParameters namedParameters;
+	
+	@NotNull
+	@Column(name = "update_samples")
+	private boolean updateSamples;
 
 	protected AnalysisSubmission() {
 		this.createdDate = new Date();
@@ -176,6 +180,10 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	@Column(name = "analysis_description")
 	@Lob
 	private String analysisDescription;
+
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	private Priority priority;
 
 	/**
 	 * Builds a new {@link AnalysisSubmission} with the given {@link Builder}.
@@ -198,6 +206,8 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 		this.workflowId = builder.workflowId;
 		this.namedParameters = builder.namedParameters;
 		this.analysisDescription = (builder.analysisDescription);
+		this.updateSamples = builder.updateSamples;
+		this.priority = builder.priority;
 	}
 
 	/**
@@ -337,6 +347,14 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	@JsonIgnore
 	public User getSubmitter() {
 		return submitter;
+	}
+
+	public Priority getPriority() {
+		return priority;
+	}
+
+	public void setPriority(Priority priority) {
+		this.priority = priority;
 	}
 
 	/**
@@ -482,6 +500,8 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 		private Map<String, String> inputParameters;
 		private IridaWorkflowNamedParameters namedParameters;
 		private String analysisDescription;
+		private boolean updateSamples = false;
+		private Priority priority = Priority.MEDIUM;
 
 		/**
 		 * Creates a new {@link Builder} with a workflow id.
@@ -606,6 +626,31 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 			return this;
 		}
 
+		/**
+		 * Sets the {@link Priority} of the analysis run
+		 *
+		 * @param priority the priority of the analysis
+		 * @return a {@link Builder}
+		 */
+		public Builder priority(final Priority priority){
+			this.priority = priority;
+			return this;
+		}
+
+		/**
+		 * Turns on/off updating of samples from results for this analysis
+		 * submission.
+		 * 
+		 * @param updateSamples
+		 *            Turn on/off updating samples.
+		 * @return A {@link Builder}
+		 */
+		public Builder updateSamples(boolean updateSamples) {
+			this.updateSamples = updateSamples;
+
+			return this;
+		}
+
 		public AnalysisSubmission build() {
 			checkArgument(inputFiles != null,
 					"input file collection is null.  You must supply at least one set of input files");
@@ -655,11 +700,27 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	public boolean hasRemoteInputDataId() {
 		return remoteInputDataId != null;
 	}
+	
+	/**
+	 * Sets flag to indicate whether or not samples in the submission should be updated with analysis results following completion.
+	 * @param updateSamples If true, updates samples from results on completion.
+	 */
+	public void setUpdateSamples(boolean updateSamples) {
+		this.updateSamples = updateSamples;
+	}
+
+	/**
+	 * Whether or not to update samples from results on completion.
+	 * @return Update samples from results on completion.
+	 */
+	public boolean getUpdateSamples() {
+		return updateSamples;
+	}
 
 	@Override
 	public int hashCode() {
 		return Objects.hash(name, workflowId, remoteAnalysisId, remoteInputDataId, remoteWorkflowId, createdDate,
-				modifiedDate, analysisState, analysisCleanedState, analysis, referenceFile, namedParameters, submitter);
+				modifiedDate, analysisState, analysisCleanedState, analysis, referenceFile, namedParameters, submitter, priority);
 	}
 
 	@Override
@@ -673,8 +734,9 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 					&& Objects.equals(remoteWorkflowId, p.remoteWorkflowId)
 					&& Objects.equals(analysisState, p.analysisState)
 					&& Objects.equals(analysisCleanedState, p.analysisCleanedState)
-					&& Objects.equals(referenceFile, p.referenceFile)
-					&& Objects.equals(namedParameters, p.namedParameters) && Objects.equals(submitter, p.submitter);
+					&& Objects.equals(referenceFile, p.referenceFile) && Objects
+					.equals(namedParameters, p.namedParameters) && Objects.equals(submitter, p.submitter) && Objects
+					.equals(priority, p.priority);
 		}
 
 		return false;
@@ -683,5 +745,14 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	@Override
 	public int compareTo(AnalysisSubmission o) {
 		return modifiedDate.compareTo(o.modifiedDate);
+	}
+
+	/**
+	 * Enum encoding the priority of analysis submissions
+	 */
+	public enum Priority {
+		LOW,
+		MEDIUM,
+		HIGH;
 	}
 }
