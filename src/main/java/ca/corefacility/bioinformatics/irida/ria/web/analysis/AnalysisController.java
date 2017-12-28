@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -495,7 +496,7 @@ public class AnalysisController {
         Map<String,Object> result = new HashMap<>();
         result.put("parse_results_error", true); //init with parsing error true
 
-		final String[] hanselOutputFiles = {"hansel_results", "hansel_match_results", "technician_results"};
+		final String[] hanselOutputFiles = {"hansel_tech_results"};//, "hansel_match_results", "hansel_tech_results"};
 
 		// Get details about the workflow, to verify the correct Analysis Type.
 		UUID workflowUUID = submission.getWorkflowId();
@@ -514,36 +515,35 @@ public class AnalysisController {
 			Analysis analysis = submission.getAnalysis();
             ObjectMapper mapper = new ObjectMapper();
             List<Map<String,Object>> currResults;
-			Path currPath;
-			String currJson;
+			Path currPath = Paths.get(""); //Init to pwd, in the very unlikely event we can't get the path.
+            String currJson;
             boolean parseSuccess = true;
 
-			for(String currFile : hanselOutputFiles){
-			    currPath = analysis.getAnalysisOutputFile(currFile).getFile();
+            try {
+                for(String currFile : hanselOutputFiles){
+                    //currPath = analysis.getAnalysisOutputFile(currFile).getFile();
+                    currPath = Paths.get("/home/mgopez/workspace/irida/TestJsonData/technician_results.tab.json");
+                        logger.debug("Attempting to parse "+currPath+" as JSON.");
+                        currJson = new String(Files.readAllBytes(currPath));
+                        currResults = mapper.readValue(currJson, new TypeReference<List<Map<String,Object>>>(){});
 
-                try {
-                    logger.debug("Attempting to parse "+currPath+" as JSON.");
-                    currJson = new String(Files.readAllBytes(currPath));
-                    currResults = mapper.readValue(currJson, new TypeReference<List<Map<String,Object>>>(){});
+                        if(currResults.size() > 0){
+                            result.put(currFile, currResults);
+                        }else{
+                            logger.error("Possible malformed JSON. Could not parse "+currFile+"!");
+                        }
 
-                    if( currResults.size() > 0 && currResults.size() == 1){
-                        result.put(currFile, currResults.get(0));
-                    }else{
-                        logger.error(String.format("Invalid output file was detected from %s. Could not get results! ", currFile));
-                        parseSuccess = false;
-                    }
-
-                } catch (JsonParseException | JsonMappingException e) {
-                    logger.error("Error attempting to parse file [" + currPath + "] as JSON",e);
-                } catch (FileNotFoundException e) {
-                    logger.error("File [" + currPath + "] not found",e);
-                } catch (IOException e) {
-                    logger.error("Error reading file [" + currPath + "]", e);
                 }
+                // #TODO: When all the files are implemented then ask if( all files exist and are length > 0 )
+                result.put("parse_results_error", false);
 
-                if( parseSuccess ){
-                    result.put("parse_results_error", false);
-                }
+
+            } catch (JsonParseException | JsonMappingException e) {
+                logger.error("Error attempting to parse file [" + currPath + "] as JSON",e);
+            } catch (FileNotFoundException e) {
+                logger.error("File [" + currPath + "] not found",e);
+            } catch (IOException e) {
+                logger.error("Error reading file [" + currPath + "]", e);
             }
 
 		}

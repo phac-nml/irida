@@ -20,6 +20,8 @@
 
 <body>
 <main layout:fragment="main">
+
+
 		<div class="row">
 			<div class="col-md-11 ng-cloak">
 				<h1>
@@ -212,7 +214,26 @@
 			</script>
 
             <script type="text/ng-template" id="bio_hansel.html">
-                <div>Hello</div>
+
+
+            	<div ng-hide="!bioHanselCtrl.parse_results_error">
+					<h2 th:text="#{analysis.details.bio_hansel.error}">_Bio_Hansel results unavailable._</h2>
+				</div>
+
+				<div ng-hide="bioHanselCtrl.parse_results_error">
+					<h2 th:text="#{analysis.details.bio_hansel.technician.summary}">Overview</h2>
+                    <table width="100%" class="display" id="tech_results_table">
+                        <thead>
+                            <tr>
+                                <th>sample</th>
+                                <th>subtype</th>
+                                <th>qc_status</th>
+                                <th>qc_message</th>
+                            </tr>
+                        </thead>
+                    </table>
+				</div>
+
             </script>
 
 			<script type="text/ng-template" id="inputs.html" th:with="fileCount = ${#lists.size(paired_end)}">
@@ -308,7 +329,6 @@
 		</div>
 	</div>
 </main>
-
 
 </body>
 

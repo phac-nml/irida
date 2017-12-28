@@ -1,3 +1,14 @@
+import "../../vendor/datatables/datatables";
+import "../../vendor/datatables/datatables-buttons";
+import $ from "jquery";
+import {
+  createItemLink,
+  generateColumnOrderInfo,
+  tableConfig,
+  wrapCellContents
+} from "./../../utilities/datatables-utilities";
+import { formatDate } from "./../../utilities/date-utilities";
+
 (function (angular, page, notifications) {
   /**
    * Controller to download the analysis.
@@ -156,9 +167,13 @@
       if (result['parse_results_error']) {
         vm.parse_results_error = true;
       } else {
-         //pass
+
+        vm.hansel_results = result['hansel_results']
+        vm.hansel_match_results = result['hansel_match_results']
+        vm.hansel_tech_results = result['hansel_tech_results']
+        vm.parse_results_error = result['parse_results_error']
       }
-    });
+     });
   }
 
   function SistrController(analysisService) {
@@ -183,7 +198,7 @@
         var mash_predictions = {};
         mash_predictions['distance'] = result['mash_distance'];
   
-	vm.result = result;
+	    vm.result = result;
         vm.sample_information = sample_information;
         vm.cgMLST_predictions = cgMLST_predictions;
         vm.mash_predictions = mash_predictions;
