@@ -202,3 +202,14 @@ table.dataTable {
   cursor: pointer;
   display: inline-block;
 }
+
+// Datatables directional sorting arrows
+table.dataTable thead th.sorting_desc::after {
+  content: "\f175";
+  font-family: FontAwesome;
+}
+
+table.dataTable thead th.sorting_asc::after {
+  content: "\f176";
+  font-family: FontAwesome;
+}
