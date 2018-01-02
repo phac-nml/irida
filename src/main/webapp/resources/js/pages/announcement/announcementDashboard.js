@@ -52,15 +52,19 @@ function announcements(svc, $compile) {
     },
     replace: true,
     controllerAs: "announcementCtrl",
-    controller: function($scope, $element) {
-      function getAnnouncements() {
-        svc.getAnnouncements($scope.url).then(function(data) {
-          $element.html($compile(data)($scope));
-        });
-      }
+    controller: [
+      "$scope",
+      "$element",
+      function($scope, $element) {
+        function getAnnouncements() {
+          svc.getAnnouncements($scope.url).then(function(data) {
+            $element.html($compile(data)($scope));
+          });
+        }
 
-      getAnnouncements();
-    }
+        getAnnouncements();
+      }
+    ]
   };
 }
 
