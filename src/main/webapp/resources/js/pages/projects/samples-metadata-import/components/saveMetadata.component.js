@@ -20,16 +20,17 @@ const template = `
 `;
 const saveMetadata = {
   bindings: {
-    url: '@',
-    label: '@'
+    url: "@",
+    label: "@"
   },
   template,
-  controller($window, sampleMetadataService) {
-    this.saveMetadata = () => {
-      this.saving = true;
-      sampleMetadataService
-        .saveMetadata()
-        .then(response => {
+  controller: [
+    "$window",
+    "sampleMetadataService",
+    function($window, sampleMetadataService) {
+      this.saveMetadata = () => {
+        this.saving = true;
+        sampleMetadataService.saveMetadata().then(response => {
           const results = response.data;
           if (results.success) {
             showNotification({
@@ -37,15 +38,16 @@ const saveMetadata = {
             });
             $window.location.href = this.url;
           }
-          if (results['save-errors']) {
-            results['save-errors'].forEach(text => {
-              showNotification({text, type: 'error'});
+          if (results["save-errors"]) {
+            results["save-errors"].forEach(text => {
+              showNotification({ text, type: "error" });
             });
           }
           this.saving = false;
         });
-    };
-  }
+      };
+    }
+  ]
 };
 
 export default saveMetadata;

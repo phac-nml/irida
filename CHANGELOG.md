@@ -13,6 +13,7 @@ Changes
 * [Administration]: Limiting users from reusing passwords.
 * [Developer]: Updated webpack compile path to be `resources/dist`.
 * [Developer]: Webpack now extracts `css` / `scss` into its own bundles.
+* [UI]: Added minification to production javascript.
 
 0.18.0 to 0.19.0
 ----------------
