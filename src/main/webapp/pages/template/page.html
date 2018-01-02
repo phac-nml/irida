@@ -5,6 +5,7 @@
 <head>
 	<link rel="stylesheet" th:href="@{/resources/bower_components/font-awesome/css/font-awesome.min.css}"/>
 	<link rel="stylesheet" th:href="@{/resources/bower_components/animate.css/animate.min.css}"/>
+	<link rel="stylesheet" th:href="@{/resources/dist/css/app.bundle.css}">
 	<style>
 		.ng-cloak {
 			display: none !important;
@@ -87,7 +88,7 @@
 					<div class="btn-group pull-right">
 						<a id="go-to-pipeline-btn" href="#" th:href="@{/pipelines}" class="btn btn-primary cart-action" ng-cloak="" th:text="#{cart.btn.run}">Run Pipeline</a>
 						<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-							<span class="caret"></span>
+							<i class="fa fa-chevron-down" aria-hidden="true"></i>
   						</button>
 						<ul class="dropdown-menu">
     						<li><a href="/projects/new?cart=true" th:href="@{/projects/new?cart=true}" th:text="#{cart.btn.create-project}">_Create project from samples_</a></li>
@@ -145,15 +146,15 @@
 		};
 	</script>
 
-	<script th:src="@{/resources/js/build/vendor.bundle.js}"></script>
+	<script th:src="@{/resources/dist/js/vendor.bundle.js}"></script>
 	<script th:src="@{/resources/bower_components/jquery/dist/jquery.min.js}"></script>
 	<script th:src="@{/resources/bower_components/moment/moment.js}"></script>
 	<script th:src="@{/resources/bower_components/angular/angular.min.js}"></script>
 	<script th:src="@{/resources/bower_components/angular-aria/angular-aria.min.js}"></script>
 	<script th:src="@{/resources/bower_components/angular-animate/angular-animate.min.js}"></script>
 	<script th:src="@{/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js}"></script>
-	<script th:src="@{/resources/bower_components/bootstrap/dist/js/bootstrap.min.js}"></script>
-	<script th:src="@{/resources/js/build/app.bundle.js}"></script>
+	<script th:src="@{/resources/dist/js/bootstrap.bundle.js}"></script>
+	<script th:src="@{/resources/dist/js/app.bundle.js}"></script>
 
 	<th:block layout:fragment="scripts">
 		<!--/* optional script tags */-->

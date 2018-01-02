@@ -1,7 +1,11 @@
 import angular from 'angular';
 import metadataPlugin from 'phylocanvas-plugin-metadata';
 import exportSVgPlugin from 'phylocanvas-plugin-export-svg';
-import {METADATA, TREE} from './../../constants';
+import {
+  METADATA,
+  TREE
+} from './../../constants';
+import "../../../../../../sass/pages/phylocanvas-metadata.scss";
 
 const PHYLOCANVAS_DIV = 'phylocanvas';
 const BOTTOM_PADDING = 180;
@@ -113,7 +117,7 @@ function phylocanvasController($window, $scope, $q, Phylocanvas,
   });
 
   $scope.$on(METADATA.LOADED, (event, args) => {
-    const {metadata} = args;
+    const { metadata } = args;
     // Add the metadata to the branches before the tree is drawn.
     tree.on('beforeFirstDraw', () => {
       for (const leaf of tree.leaves) {
@@ -128,7 +132,7 @@ function phylocanvasController($window, $scope, $q, Phylocanvas,
    * This forces phylocanvas to updates the metadata fields displayed.
    */
   $scope.$on(METADATA.TEMPLATE, (event, args) => {
-    const {fields} = args;
+    const { fields } = args;
     tree.metadata.columns = MetadataService
       .getSortedAndFilteredColumns(fields);
     tree.draw();

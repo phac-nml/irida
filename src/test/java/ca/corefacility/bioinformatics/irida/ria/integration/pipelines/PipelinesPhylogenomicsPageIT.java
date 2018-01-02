@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -29,7 +31,7 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 	private PipelinesPhylogenomicsPage page;
 
 	@Before
-	public void setUpTest() {
+	public void setUpTest() throws IOException {
 		page = new PipelinesPhylogenomicsPage(driver());
 	}
 
@@ -44,7 +46,7 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 	}
 
 	@Test
-	public void testSubmitWithTransientReferenceFile() {
+	public void testSubmitWithTransientReferenceFile() throws IOException {
 		LoginPage.loginAsUser(driver());
 
 		// Add sample from a project that user is a "Project User" and has no
@@ -56,8 +58,8 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 		PipelinesSelectionPage.goToPhylogenomicsPipeline(driver());
 		assertTrue("Should display a warning to the user that there are no reference files.",
 				page.isNoReferenceWarningDisplayed());
-		page.selectReferenceFile();
-		assertTrue("Page should display reference file name.", page.isReferenceFileNameDisplayed());
+		String fileName = page.selectReferenceFile();
+		assertTrue("Page should display reference file name.", page.isReferenceFileNameDisplayed(fileName));
 	}
 
 	@Test
