@@ -22,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErrorsService;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
@@ -57,7 +58,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
 	private AnalysisExecutionService analysisExecutionService;
 	private final CleanupAnalysisSubmissionCondition cleanupCondition;
-	private GalaxyInstance galaxyInstance;
+	private GalaxyJobErrorsService galaxyJobErrorsService;
 	private JobErrorRepository jobErrorRepository;
 
 	/**
@@ -68,18 +69,19 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	 * @param analysisExecutionServiceGalaxy A service for executing {@link AnalysisSubmission}s.
 	 * @param cleanupCondition               The condition defining when an {@link AnalysisSubmission}
 	 *                                       should be cleaned up.
-	 * @param galaxyInstance                 {@link GalaxyInstance} for interacting with Galaxy API
+	 * @param galaxyJobErrorsService		 {@link GalaxyJobErrorsService} for getting {@link JobError} objects
 	 * @param jobErrorRepository             {@link JobErrorRepository} for {@link JobError} objects
 	 */
 	@Autowired
 	public AnalysisExecutionScheduledTaskImpl(AnalysisSubmissionRepository analysisSubmissionRepository,
 			AnalysisExecutionService analysisExecutionServiceGalaxy,
-			CleanupAnalysisSubmissionCondition cleanupCondition, GalaxyInstance galaxyInstance,
+			CleanupAnalysisSubmissionCondition cleanupCondition,
+			GalaxyJobErrorsService galaxyJobErrorsService,
 			JobErrorRepository jobErrorRepository) {
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
 		this.analysisExecutionService = analysisExecutionServiceGalaxy;
 		this.cleanupCondition = cleanupCondition;
-		this.galaxyInstance = galaxyInstance;
+		this.galaxyJobErrorsService = galaxyJobErrorsService;
 		this.jobErrorRepository = jobErrorRepository;
 	}
 
@@ -157,37 +159,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 		}
 	}
 
-	/**
-	 * Get any {@link JobError} associated with an {@link AnalysisSubmission}
-	 *
-	 * @param analysisSubmission {@link AnalysisSubmission} to search for job failures
-	 * @return List of {@link JobError} objects associated with {@link AnalysisSubmission}
-	 */
-	private List<JobError> getJobErrors(AnalysisSubmission analysisSubmission) {
-		HistoriesClient historiesClient = galaxyInstance.getHistoriesClient();
-		ToolsClient toolsClient = galaxyInstance.getToolsClient();
-		JobsClient jobsClient = galaxyInstance.getJobsClient();
-		String historyId = analysisSubmission.getRemoteAnalysisId();
-		HistoryDetails historyDetails = historiesClient.showHistory(historyId);
-		List<String> erroredDatasetIds = historyDetails.getStateIds()
-				.get("error");
-		List<HistoryContentsProvenance> provenances = erroredDatasetIds.stream()
-				.map((x) -> historiesClient.showProvenance(historyId, x))
-				.collect(Collectors.toList());
-		Map<String, List<HistoryContentsProvenance>> jobIdProvenancesMap = provenances.stream()
-				.collect(Collectors.groupingBy(HistoryContentsProvenance::getJobId));
-		List<JobError> jobErrors = new ArrayList<>();
-		for (Map.Entry<String, List<HistoryContentsProvenance>> entry : jobIdProvenancesMap.entrySet()) {
-			String jobId = entry.getKey();
-			JobDetails jobDetails = jobsClient.showJob(jobId);
-			HistoryContentsProvenance p = entry.getValue()
-					.iterator()
-					.next();
-			Tool tool = toolsClient.showTool(p.getToolId());
-			jobErrors.add(new JobError(analysisSubmission, jobDetails, p, tool));
-		}
-		return jobErrors;
-	}
+
 
 	/**
 	 * {@inheritDoc}
@@ -229,7 +201,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	 * @param analysisSubmission {@link AnalysisSubmission} object to get and save {@link JobError}s for
 	 */
 	private void handleJobErrors(AnalysisSubmission analysisSubmission) {
-		List<JobError> jobErrors = getJobErrors(analysisSubmission);
+		List<JobError> jobErrors = galaxyJobErrorsService.getJobErrors(analysisSubmission);
 		for (JobError jobError : jobErrors) {
 			logger.warn("AnalysisSubmission [id=" + analysisSubmission.getId() + "] had a JobError [jobId="
 					+ jobError.getJobId() + ", toolId=" + jobError.getToolId() + ", exitCode=" + jobError.getExitCode()

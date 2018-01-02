@@ -36,6 +36,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErrorsService;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
@@ -79,7 +80,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	private UserRepository userRepository;
 
 	@Autowired
-	private GalaxyInstance galaxyInstance;
+	private GalaxyJobErrorsService galaxyJobErrorsService;
 
 	@Autowired
 	private JobErrorRepository jobErrorRepository;
@@ -109,7 +110,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, CleanupAnalysisSubmissionCondition.ALWAYS_CLEANUP,
-				galaxyInstance, jobErrorRepository);
+				galaxyJobErrorsService, jobErrorRepository);
 
 		Path sequenceFilePathReal = Paths
 				.get(DatabaseSetupGalaxyITService.class.getResource("testData1.fastq").toURI());
@@ -161,7 +162,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	public void testFullAnalysisRunSuccessNoCleanupAge() throws Exception {
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, new CleanupAnalysisSubmissionConditionAge(Duration.ofDays(1)),
-				galaxyInstance, jobErrorRepository);
+				galaxyJobErrorsService, jobErrorRepository);
 		
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);

@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Profile;
 
 import ca.corefacility.bioinformatics.irida.config.conditions.NonWindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErrorsService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
@@ -66,5 +67,15 @@ public class GalaxyExecutionTestConfig {
 		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceAdmin().getWorkflowsClient();
 
 		return new GalaxyWorkflowService(workflowsClient, StandardCharsets.UTF_8);
+	}
+
+	@Lazy
+	@Bean
+	public GalaxyJobErrorsService galaxyJobErrorsService() {
+		GalaxyInstance galaxyInstance = localGalaxy.getGalaxyInstanceAdmin();
+		return new GalaxyJobErrorsService(
+				galaxyInstance.getHistoriesClient(),
+				galaxyInstance.getToolsClient(),
+				galaxyInstance.getJobsClient());
 	}
 }
