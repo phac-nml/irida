@@ -15,6 +15,7 @@ Changes
 * [Developer]: Webpack now extracts `css` / `scss` into its own bundles.
 * [UI]: Added minification to production javascript.
 * [Developer]: Ran `prettier` on all javascript files within `resources/js`.
+* [Developer]: Ran `prettier` on all scss files within `resources/sass`.
 
 0.18.0 to 0.19.0
 ----------------
