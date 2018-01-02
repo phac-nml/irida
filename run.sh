@@ -1,4 +1,5 @@
 #!/bin/bash
+export MIN_JS=false
 
 ADD=""
 

@@ -58,6 +58,10 @@ table.dataTable {
   border-right: 2px solid rgba(218, 220, 224, 1) !important;
 }
 
+.DTFC_LeftBodyLiner {
+  overflow-x: hidden !important;
+}
+
 .dataTables_paginate {
   display: flex;
   justify-content: center;
