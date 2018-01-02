@@ -35,16 +35,16 @@
             <div class="panel-body">
                 <ul class="nav nav-pills nav-stacked project-details">
                     <li>
-                        <i class="glyphicon glyphicon-barcode"></i>
+                        <i class="fa fa-barcode" aria-hidden="true"></i>
                         <em th:text="#{sf.sidebar.file-id}"></em>
                         <span id="file-id" th:text="${file.getId()}"></span></li>
                     <li>
-                        <i class="glyphicon glyphicon-calendar"></i>
+                        <i class="fa fa-calendar" aria-hidden="true"></i>
                         <em th:text="#{sf.sidebar.created}"></em>
                         <span id="file-created" th:title="${created}" th:text="${created}"></span>
                     </li>
                     <li>
-                        <i class="glyphicon glyphicon-qrcode"></i>
+                        <i class="fa fa-qrcode" aria-hidden="true"></i>
                         <em th:text="#{sf.encoding}">_ENCODING_</em>
                         <span id="file-encoding" th:text="*{encoding}"></span>
                     </li>
