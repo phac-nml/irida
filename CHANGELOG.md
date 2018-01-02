@@ -14,6 +14,7 @@ Changes
 * [Developer]: Updated webpack compile path to be `resources/dist`.
 * [Developer]: Webpack now extracts `css` / `scss` into its own bundles.
 * [UI]: Added minification to production javascript.
+* [Developer]: Ran `prettier` on all javascript files within `resources/js`.
 
 0.18.0 to 0.19.0
 ----------------
