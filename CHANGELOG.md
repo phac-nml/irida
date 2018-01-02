@@ -7,8 +7,8 @@ Changes
 * [UI]: Fixed issue where Projects table could not be exported (0.19.2).
 * [UI]: Fixed user menu icons misaligning in Firefox (0.19.2).
 * [UI]: Fixed issue where delete project button was always enabled, and created an error when clicked. (0.19.3)
-* [UI]: Fixed issue where all activities page could not be displayed.
-* [UI]: Fixed issue where time stamps where not displayed on activities pages.
+* [UI]: Fixed issue where all activities page could not be displayed. (0.19.4)
+* [UI]: Fixed issue where time stamps where not displayed on activities pages. (0.19.4)
 
 0.18.0 to 0.19.0
 ----------------
