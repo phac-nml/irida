@@ -36,7 +36,7 @@
                 <div class="sidebar__body">
                   <div class="sidebar__item">
                     <div class="sidebar__icon">
-                      <i class="glyphicon glyphicon-barcode"></i>
+                        <i class="fa fa-fw fa-barcode" aria-hidden="true"></i>
                     </div>
                     <div th:text="#{iridaThing.id}">_ID_</div>
                     <div class="sidebar__value" id="client-id" th:text="${client.getId()}">_ID_</div>
@@ -44,7 +44,7 @@
 
                   <div class="sidebar__item">
                     <div class="sidebar__icon">
-                      <i class="glyphicon glyphicon-tag"></i>
+                        <i class="fa fa-fw fa-tag" aria-hidden="true"></i>
                     </div>
                     <div th:text="#{client.clientid}">_ID_</div>
                     <div class="sidebar__value" id="client-clientid" th:text="${client.clientId}">_Client ID_</div>
@@ -52,7 +52,7 @@
 
                   <div class="sidebar__item">
                     <div class="sidebar__icon">
-                      <i class="glyphicon glyphicon-eye-close"></i>
+                        <i class="fa fa-fw fa-eye-slash" aria-hidden="true"></i>
                     </div>
                     <div th:text="#{client.details.clientSecret}">_ID_</div>
                     <div class="sidebar__value" id="client-secret" th:text="${client.clientSecret}">_Secret_</div>
@@ -60,7 +60,7 @@
 
                   <div class="sidebar__item">
                     <div class="sidebar__icon">
-                      <i class="glyphicon glyphicon-ok-sign"></i>
+                        <i class="fa fa-fw fa-check" aria-hidden="true"></i>
                     </div>
                     <div th:text="#{client.grant-types}">_ID_</div>
                     <div class="sidebar__value" id="client-grants" th:text="${grants}">_Grants_</div>
@@ -68,7 +68,7 @@
 
                   <div class="sidebar__item">
                     <div class="sidebar__icon">
-                      <i class="glyphicon glyphicon-transfer"></i>
+                        <i class="fa fa-fw fa-pencil" aria-hidden="true"></i>
                     </div>
                     <div th:text="#{client.scopes}">_ID_</div>
                     <div class="sidebar__value" id="client-scopes" th:text="${scopes}">_Scopes_</div>
@@ -76,7 +76,7 @@
                   
                   <div class="sidebar__item">
                     <div class="sidebar__icon">
-                      <i class="glyphicon glyphicon-transfer"></i>
+                        <i class="fa fa-fw fa-pencil" aria-hidden="true"></i>
                     </div>
                     <div th:text="#{client.autoScopes}">_ID_</div>
                     <div class="sidebar__value" id="client-auto-approvable-scopes" th:text="${autoApproveScopes}">_Auto-Approvable Scopes_</div>
@@ -84,7 +84,7 @@
 
                   <div class="sidebar__item">
                     <div class="sidebar__icon">
-                      <i class="glyphicon glyphicon-time"></i>
+                        <i class="fa fa-fw fa-clock-o" aria-hidden="true"></i>
                     </div>
                     <div th:text="#{client.details.tokenValidity}">_ID_</div>
                     <div class="sidebar__value tokenValidityInSeconds" id="client-token-validity"
@@ -92,7 +92,7 @@
                   </div>
                   <div class="sidebar__item" th:if="${client.refreshTokenValiditySeconds > 0}">
                     <div class="sidebar__icon">
-                      <i class="glyphicon glyphicon-time"></i>
+                        <i class="fa fa-fw fa-clock-o" aria-hidden="true"></i>
                     </div>
                     <div th:text="#{client.details.refreshValidity}">_ID_</div>
                     <div class="sidebar__value tokenValidityInSeconds" id="refresh-token-validity"
@@ -101,7 +101,7 @@
 
                   <div class="sidebar__item">
                     <div class="sidebar__icon">
-                      <i class="glyphicon glyphicon-calendar"></i>
+                        <i class="fa fa-fw fa-calendar" aria-hidden="true"></i>
                     </div>
                     <div th:text="#{iridaThing.timestamp}">_ID_</div>
                     <div class="sidebar__value" id="client-created"
