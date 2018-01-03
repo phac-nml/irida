@@ -15,6 +15,7 @@ Changes
 * [Developer]: Webpack now extracts `css` / `scss` into its own bundles.
 * [UI]: Added minification to production javascript.
 * [UI]: Fixed issue where delete project button was always enabled, and created an error when clicked. (0.19.3)
+* [UI]: Clean up of the main navigation bar code, and removed its dependency on angular-ui.
 
 0.18.0 to 0.19.0
 ----------------
