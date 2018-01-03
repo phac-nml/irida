@@ -4,7 +4,7 @@ const parts = require("./configs/webpack/webpack.parts");
 const entries = require("./configs/webpack/entries.js");
 
 const PATHS = {
-  build: path.resolve(__dirname, "resources/js/build")
+  build: path.resolve(__dirname, "resources/dist")
 };
 
 /*
@@ -27,7 +27,21 @@ const commonConfig = merge([
     },
     output: {
       path: PATHS.build,
-      filename: "[name].bundle.js"
+      filename: "js/[name].bundle.js"
+    },
+    module: {
+      rules: [
+        {
+          test: /\.woff2?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+          use: {
+            loader: "url-loader"
+          }
+        },
+        {
+          test: /\.(ttf|eot|svg)(\?[\s\S]+)?$/,
+          use: "file-loader"
+        }
+      ]
     }
   },
   parts.loadJavaScript(),
@@ -38,7 +52,11 @@ const commonConfig = merge([
  PRODUCTION CONFIGURATION
 ====================== */
 const productionConfig = merge([
+  {
+    devtool: "hidden-source-map"
+  },
   parts.progressBar(),
+  parts.compressJavaScript(),
   parts.clean([PATHS.build])
 ]);
 

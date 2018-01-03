@@ -2,6 +2,7 @@ import $ from "jquery";
 import Sortable from "sortablejs";
 import "../../../vendor/plugins/jquery/select2";
 import "jquery-validation";
+import "../../../../sass/pages/create-linelist-template.scss";
 
 // ****************************************************************************
 // FORM VALIDATION - uses jquery-validation plugin
@@ -130,7 +131,7 @@ $('#add-field-modal')
               return !existingFields.has(item);
             });
             const results = data
-              .map(item => ({id: item, text: item}));
+              .map(item => ({ id: item, text: item }));
             const searchTerm = params.term;
             if (!data.includes(searchTerm) &&
               !existingFields.has(searchTerm)) {
@@ -140,7 +141,7 @@ $('#add-field-modal')
                 text: searchTerm
               });
             }
-            return {results};
+            return { results };
           },
           cache: true
         },

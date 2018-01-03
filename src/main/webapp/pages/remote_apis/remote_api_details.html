@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="template/page">
+      data-layout-decorate="~{template/page}">
 <head>
     <title th:text="#{remoteapi.details.title(${remoteApi.name})}">_REMOTE API PAGE_</title>
 </head>
@@ -22,7 +22,7 @@
                 <div class="sidebar__body">
                   <div class="sidebar__item">
                     <div class="sidebar__icon">
-                      <i class="glyphicon glyphicon-barcode"></i>
+                        <i class="fa fa-barcode" aria-hidden="true"></i>
                     </div>
                     <div th:text="#{iridaThing.id}">_ID_</div>
                     <div class="sidebar__value" id="remoteapi-id" th:text="${remoteApi.getId()}">_ID_</div>
@@ -30,7 +30,7 @@
 
                   <div class="sidebar__item">
                     <div class="sidebar__icon">
-                      <i class="glyphicon glyphicon-flag"></i>
+                        <i class="fa fa-flag" aria-hidden="true"></i>
                     </div>
                     <div th:text="#{remoteapi.name}">_ID_</div>
                     <div class="sidebar__value" id="remoteapi-name" th:text="${remoteApi.name}">_Name_</div>
@@ -38,7 +38,7 @@
 
                   <div class="sidebar__item" sec:authorize="hasRole('ROLE_ADMIN')">
                     <div class="sidebar__icon">
-                      <i class="glyphicon glyphicon-globe"></i>
+                        <i class="fa fa-globe" aria-hidden="true"></i>
                     </div>
                     <div th:text="#{remoteapi.serviceurl}">_ID_</div>
                     <div class="sidebar__value" id="remoteapi-serviceurl" th:text="${remoteApi.serviceURI}">_URL_</div>
@@ -46,7 +46,7 @@
 
                   <div class="sidebar__item" sec:authorize="hasRole('ROLE_ADMIN')">
                     <div class="sidebar__icon">
-                      <i class="glyphicon glyphicon-tag"></i>
+                        <i class="fa fa-tag" aria-hidden="true"></i>
                     </div>
                     <div th:text="#{remoteapi.clientid}">_ID_</div>
                     <div class="sidebar__value" id="remoteapi-clientid" th:text="${remoteApi.clientId}">_Client ID_</div>
@@ -54,7 +54,7 @@
 
                   <div class="sidebar__item" sec:authorize="hasRole('ROLE_ADMIN')">
                     <div class="sidebar__icon">
-                      <i class="glyphicon glyphicon-eye-close"></i>
+                        <i class="fa fa-eye-slash" aria-hidden="true"></i>
                     </div>
                     <div th:text="#{remoteapi.details.secret}">_ID_</div>
                     <div class="sidebar__value" id="remoteapi-secret" th:text="${remoteApi.clientSecret}">_Secret_</div>
@@ -62,7 +62,7 @@
 
                   <div class="sidebar__item" sec:authorize="hasRole('ROLE_ADMIN')">
                     <div class="sidebar__icon">
-                      <i class="glyphicon glyphicon-calendar"></i>
+                        <i class="fa fa-calendar" aria-hidden="true"></i>
                     </div>
                     <div th:text="#{iridaThing.timestamp}">_ID_</div>
                     <div class="sidebar__value" id="remoteapi-created"
@@ -84,7 +84,7 @@
                 <div class="panel-body">
                     <ul class="list-unstyled project-details" th:inline="text">
                         <li>
-                            <i class="glyphicon glyphicon-link"></i>[[#{remoteapi.status}]]
+                            [[#{remoteapi.status}]]
                             <span class="pull-right">
                                 <span id="connection-status"
                                         th:text="#{remoteapi.status.waiting}">_Connection Status_</span>
@@ -92,7 +92,7 @@
 
                         </li>
                         <li th:if="${tokenExpiry}">
-                            <i class="glyphicon glyphicon-time"></i>&nbsp;[[#{remoteapi.status.tokenexpiry}]]
+                            <i class="fa fa-clock-o" aria-hidden="true"></i>&nbsp;[[#{remoteapi.status.tokenexpiry}]]
                             <span class="pull-right" id="token-expiry"
                                     th:text="${tokenExpiry}">_TOKEN_EXPIRY_</span>
                         </li>

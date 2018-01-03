@@ -1,6 +1,6 @@
 const angular = require('angular');
 require('./../../modules/utilities/file.utils');
-require('./../../../css/pages/sample_files.css');
+require('../../../sass/pages/sample-files.scss');
 
 /**
  * Controller for the modal to confirm removing a sequenceFile
@@ -198,7 +198,7 @@ function FileUploadController(Upload, $timeout, $window, $uibModal) {
   };
 }
 
-angular.module('irida.sample.files', [
+const filesModule = angular.module('irida.sample.files', [
   'file.utils',
   'ngAnimate',
   'ui.bootstrap',
@@ -211,4 +211,7 @@ angular.module('irida.sample.files', [
   .controller('AssemblyFileController', ['$uibModal', AssemblyFileController])
   .controller('FileDeletionController', ['$uibModalInstance', 'id', 'label',
     FileDeletionController
-  ]);
+  ])
+  .name;
+
+angular.module("irida").requires.push(filesModule);

@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="template/page">
+	  data-layout-decorate="~{template/page}">
 <head>
 	<title th:text="${user.label}">_USER PAGE_</title>
 	<script th:inline="javascript">
-		window.dependencies = ['PasswordRest'];
 		var PAGE = {
 			urls: {
 				reset: /*[[@{/password_reset/ajax/create/{id}(id=${user.getId()})}]]*/ 'password_reset/ajax/create/'
@@ -21,7 +20,11 @@
 		</div>
 		<div class="row">
 			<div class="col-md-12">
-				<h1 id="wb-cont" class="user-details-title" property="name" th:text="${user.label}">__USER NAME__</h1>
+				<h1 class="t-user-page-success"
+					property="name"
+					th:text="${user.label}">
+					__USER NAME__
+				</h1>
 			</div>
 		</div>
 		<div class="row">
@@ -46,7 +49,7 @@
 
 							<div class="sidebar__item">
                 <div class="sidebar__icon">
-								  <i class="glyphicon glyphicon-barcode"></i>
+					<i class="fa fa-barcode" aria-hidden="true"></i>
                 </div>
                 <div th:text="#{users.id}">_ID_</div>
                 <div class="sidebar__value" id="user-id" th:text="${user.getId()}">_USER_ID_</div>
@@ -54,7 +57,7 @@
 
               <div class="sidebar__item">
                 <div class="sidebar__icon">
-                  <i class="glyphicon glyphicon-user"></i>
+					<i class="fa fa-user" aria-hidden="true"></i>
                 </div>
                 <div th:text="#{users.username}">_Username</div>
                 <div class="sidebar__value" id="user-username" th:text="${user.username}">_USERNAME_</div>
@@ -62,7 +65,7 @@
 
               <div class="sidebar__item">
                 <div class="sidebar__icon">
-                  <i class="glyphicon glyphicon-tag"></i>
+					<i class="fa fa-tag" aria-hidden="true"></i>
                 </div>
                 <div th:text="#{user.name}">_Name_</div>
                 <div class="sidebar__value" id="user-name" th:text="${user.label}">_NAME_</div>
@@ -70,7 +73,7 @@
 
               <div class="sidebar__item">
                 <div class="sidebar__icon">
-                  <i class="glyphicon glyphicon-envelope"></i>
+					<i class="fa fa-envelope" aria-hidden="true"></i>
                 </div>
                 <div th:text="#{users.email}">_email_</div>
                 <div class="sidebar__value">
@@ -81,7 +84,7 @@
 
               <div class="sidebar__item">
                 <div class="sidebar__icon">
-                  <i class="glyphicon glyphicon-earphone"></i>
+					<i class="fa fa-phone" aria-hidden="true"></i>
                 </div>
                 <div th:text="#{user.phone}">_phone</div>
                 <div class="sidebar__value" id="user-phone" th:text="${user.phoneNumber}">_123-456-7890_</div>
@@ -89,7 +92,7 @@
 
               <div class="sidebar__item">
                 <div class="sidebar__icon">
-                  <i class="glyphicon glyphicon-stats"></i>
+					<i class="fa fa-users" aria-hidden="true"></i>
                 </div>
                 <div th:text="#{users.role}">_phone</div>
                 <div class="sidebar__value" id="user-role" th:text="${systemRole}">_ROLE_</div>
@@ -97,18 +100,18 @@
 
               <div class="sidebar__item">
                 <div class="sidebar__icon">
-                  <i class="glyphicon glyphicon-off"></i>
+					<i class="fa fa-power-off" aria-hidden="true"></i>
                 </div>
                 <div th:text="#{user.enabled}">_phone</div>
                 <div class="sidebar__value">
-                  <i class="glyphicon glyphicon-ok" th:if="${user.enabled}"></i>
-                  <i class="glyphicon glyphicon-remove" th:if="not ${user.enabled}"></i>
+					<i class="fa fa-check" aria-hidden="true" th:if="${user.enabled}"></i>
+					<i class="fa fa-times" aria-hidden="true" th:if="not ${user.enabled}"></i>
                 </div>
               </div>
 
               <div class="sidebar__item">
                 <div class="sidebar__icon">
-                  <i class="glyphicon glyphicon-calendar"></i>
+					<i class="fa fa-calendar" aria-hidden="true"></i>
                 </div>
                 <div th:text="#{user.created}">_phone</div>
                 <div class="sidebar__value" id="user-created"
@@ -117,7 +120,7 @@
 
               <div class="sidebar__item">
                 <div class="sidebar__icon">
-                  <i class="glyphicon glyphicon-calendar"></i>
+					<i class="fa fa-calendar" aria-hidden="true"></i>
                 </div>
                 <div th:text="#{user.modified}">_phone</div>
                 <div class="sidebar__value" id="user-modified"
@@ -159,10 +162,7 @@
 								<td class="user-project-id" th:text="${project.identifier}">_PROJECT_ID_</td>
 								<td class="user-project-name"><a th:href="@{'/projects/'+${project.identifier}}"><span
 										th:text="${project.name}">_PROJECT_NAME_</span></a></td>
-								<td class="user-project-role">
-									<span class="project-role-icon glyphicon"
-									      th:classappend="${project.isManager} ? 'glyphicon-tower' : 'glyphicon-user'"></span>&nbsp;
-									<span class="project-role-name" th:text="${project.role}">_PROJECT_ROLE_</span>
+								<td class="user-project-role"  th:text="${project.role}">_POJECT_ROLE_</span>
 								</td>
 								<td class="user-project-date"
 								    th:text="${#calendars.format(project.date, 'dd MMM yyyy')}">_DATE ADDED_
@@ -285,6 +285,8 @@
 				});
 			};
 		}]);
+
+		angular.module("irida").requires.push(pwd.name);
 	</script>
 </th:block>
 </body>

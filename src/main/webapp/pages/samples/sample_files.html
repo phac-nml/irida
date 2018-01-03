@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="samples/_base">
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  data-layout-decorate="~{samples/_base}">
 <head>
 	<title th:text="#{samples.files.title(${sample.label})}">THIS IS SOMETHING WRONG</title>
-	<link rel="stylesheet" th:href="@{/resources/css/pages/sample_files.css}"/>
+	<link rel="stylesheet" th:href="@{/resources/dist/css/sample-files.bundle.css}">
 	<script th:inline="javascript">
 		var PAGE = {
 			sample: {
@@ -17,7 +17,6 @@
 			  upload: /*[[@{/samples/{id}/sequenceFiles/upload(id=${sample.getId()})}]]*/ ''
 			}
 		};
-		window.dependencies = ['irida.sample.files'];
 	</script>
 </head>
 <body>
@@ -393,7 +392,7 @@
 		</form>
 	</script>
 
-	<script th:src="@{/resources/js/build/sample-files.bundle.js}"></script>
+	<script th:src="@{/resources/dist/js/sample-files.bundle.js}"></script>
 </th:block>
 </body>
 </html>

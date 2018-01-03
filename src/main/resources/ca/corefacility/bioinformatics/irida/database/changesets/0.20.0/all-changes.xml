@@ -6,6 +6,8 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
     <include file="analysis-priority.xml"
              relativeToChangelogFile="true"/>
+    <include file="system-role-removal.xml"
+             relativeToChangelogFile="true"/>
     <include file="add-job-error-table.xml"
              relativeToChangelogFile="true"/>
 </databaseChangeLog>

@@ -19,7 +19,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.PasswordR
 public class LoginPageIT extends AbstractIridaUIITChromeDriver {
 
 	private static final String EXPIRED_USERNAME = "expiredGuy";
-	private static final String EXPIRED_PASSWORD = "Password1";
+	private static final String EXPIRED_PASSWORD = "Password1!";
 
 	@Test
 	public void testBadUsername() throws Exception {
@@ -58,6 +58,7 @@ public class LoginPageIT extends AbstractIridaUIITChromeDriver {
 		page.login(EXPIRED_USERNAME, EXPIRED_PASSWORD);
 		PasswordResetPage passwordResetPage = new PasswordResetPage(driver());
 		passwordResetPage.enterPassword(newPassword, newPassword);
+		passwordResetPage.clickSubmit();
 		assertTrue("Should have succeeded in changing password.", passwordResetPage.checkSuccess());
 
 		AbstractPage.logout(driver());

@@ -11,7 +11,6 @@
 	
 	<sequence_file />
 	<sequence_file_properties />
-	<system_role />
 	<user />
 	
 	<sequencing_run />
@@ -110,7 +109,6 @@
 	<analysis_submission_AUD />
 	<analysis_submission_sequencing_object_AUD />
 	<analysis_submission_parameters_AUD />
-	<system_role_AUD />
 	<user_AUD />
 	<sample_AUD />
 	<remote_api_AUD />

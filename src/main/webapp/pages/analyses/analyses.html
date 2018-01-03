@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="template/page">
+      data-layout-decorate="~{template/page}">
 <head>
     <title th:text="#{analyses.user.page-title}">_Analyses_</title>
+    <link rel="stylesheet" th:href="@{/resources/dist/css/analyses-table.bundle.css}">
 </head>
 <body>
 <div class="col-md-12" layout:fragment="page">

@@ -8,6 +8,13 @@ Changes
 * [Developer]: Removed dandelion from project > samples page.
 * [UI]: Fixed issue where Projects table could not be exported (0.19.2).
 * [UI]: Fixed user menu icons misaligning in Firefox (0.19.2).
+* [Developer]: Updated front end templating engine to Thymeleaf v3.
+* [Administration]: Added option to expire passwords after a configured number of days.  Set `security.password.expiry` in `/etc/irida/irida.conf` to configure.
+* [Administration]: Limiting users from reusing passwords.
+* [Developer]: Updated webpack compile path to be `resources/dist`.
+* [Developer]: Webpack now extracts `css` / `scss` into its own bundles.
+* [UI]: Added minification to production javascript.
+* [UI]: Fixed issue where delete project button was always enabled, and created an error when clicked. (0.19.3)
 
 0.18.0 to 0.19.0
 ----------------
