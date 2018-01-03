@@ -130,6 +130,14 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	public void transferAnalysesResults() {
 		analysisExecutionScheduledTask().transferAnalysesResults();
 	}
+
+	/**
+	 * Cycle through any transferred submissions and perform post-processing
+	 */
+	@Scheduled(initialDelay = 6000, fixedDelay = ANALYSIS_EXECUTION_TASK_RATE)
+	public void postProcessResults() {
+		analysisExecutionScheduledTask().postProcessResults();
+	}
 	
 	/**
 	 * Cycle through any completed or error submissions and clean up results from the execution manager.

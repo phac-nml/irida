@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,10 +39,11 @@ public class AnalysisSubmissionSampleProcessorImpl implements AnalysisSubmission
 
 	private final Map<AnalysisType, AnalysisSampleUpdater> analysisSampleUpdaterMap;
 	private final SampleRepository sampleRepository;
+	private final AnalysisSubmissionService analysisSubmissionService;
 
 	/**
 	 * Builds a new {@link AnalysisSubmissionSampleProcessorImpl}.
-	 * 
+	 *
 	 * @param sampleService
 	 *            The {@link SampleService}.
 	 * @param analysisSampleUpdaterServices
@@ -49,11 +51,12 @@ public class AnalysisSubmissionSampleProcessorImpl implements AnalysisSubmission
 	 *            samples.
 	 */
 	@Autowired
-	public AnalysisSubmissionSampleProcessorImpl(SampleRepository sampleRepository,
+	public AnalysisSubmissionSampleProcessorImpl(SampleRepository sampleRepository, AnalysisSubmissionService analysisSubmissionService,
 			List<AnalysisSampleUpdater> analysisSampleUpdaterServices) {
 		checkNotNull(analysisSampleUpdaterServices, "assemblySampleUpdaterService is null");
 		this.sampleRepository = sampleRepository;
 		this.analysisSampleUpdaterMap = Maps.newHashMap();
+		this.analysisSubmissionService = analysisSubmissionService;
 
 		for (AnalysisSampleUpdater analysisSampleUpdaterService : analysisSampleUpdaterServices) {
 			AnalysisType analysisType = analysisSampleUpdaterService.getAnalysisType();
@@ -63,7 +66,7 @@ public class AnalysisSubmissionSampleProcessorImpl implements AnalysisSubmission
 			analysisSampleUpdaterMap.put(analysisSampleUpdaterService.getAnalysisType(), analysisSampleUpdaterService);
 		}
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -95,6 +98,9 @@ public class AnalysisSubmissionSampleProcessorImpl implements AnalysisSubmission
 					.get(analysis.getAnalysisType());
 
 			if (analysisSampleUpdaterService != null) {
+				// re-reading submission to ensure file paths are correct
+				analysisSubmission = analysisSubmissionService.read(analysisSubmission.getId());
+
 				analysisSampleUpdaterService.update(samples, analysisSubmission);
 			} else {
 				logger.debug(

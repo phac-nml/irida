@@ -37,7 +37,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	private Object prepareAnalysesLock = new Object();
 	private Object executeAnalysesLock = new Object();
 	private Object monitorRunningAnalysesLock = new Object();
-
+	private Object postProcessingLock = new Object();
 	private Object transferAnalysesResultsLock = new Object();
 	private Object cleanupAnalysesResultsLock = new Object();
 
@@ -192,6 +192,28 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 				} catch (ExecutionManagerException | IOException | IridaWorkflowException e) {
 					logger.error("Error transferring submission " + analysisSubmission, e);
 				}
+			}
+
+			return submissions;
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Set<Future<AnalysisSubmission>> postProcessResults() {
+		synchronized (postProcessingLock) {
+			logger.trace("Running postProcessResults");
+
+			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
+					.findByAnalysisState(AnalysisState.TRANSFERRED);
+
+			Set<Future<AnalysisSubmission>> submissions = Sets.newHashSet();
+
+			for (AnalysisSubmission analysisSubmission : analysisSubmissions) {
+				logger.debug("Post processing results for " + analysisSubmission);
+				submissions.add(analysisExecutionService.postProcessResults(analysisSubmission));
 			}
 
 			return submissions;

@@ -59,6 +59,16 @@ public enum AnalysisState {
 	COMPLETED("COMPLETED"),
 
 	/**
+	 * An analysis that has been transferred to IRIDA, but has not had post processing performed.
+	 */
+	TRANSFERRED("TRANSFERRED"),
+
+	/**
+	 * An analysis currently undergoing post processing
+	 */
+	POST_PROCESSING("POST_PROCESSING"),
+
+	/**
 	 * An analysis that was not successfully able to run.
 	 */
 	ERROR("ERROR");
@@ -100,7 +110,8 @@ public enum AnalysisState {
 	 * @return a List of {@link AnalysisState}
 	 */
 	public static List<AnalysisState> getRunningStates() {
-		return Lists.newArrayList(PREPARING, PREPARED, SUBMITTING, RUNNING, FINISHED_RUNNING, COMPLETING);
+		return Lists.newArrayList(PREPARING, PREPARED, SUBMITTING, RUNNING, FINISHED_RUNNING, COMPLETING, TRANSFERRED,
+				POST_PROCESSING);
 	}
 
 	/**

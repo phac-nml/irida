@@ -38,18 +38,15 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 
 	private MetadataTemplateService metadataTemplateService;
 	private SampleService sampleService;
-	private Path outputFileDirectory;
 
 	private static Map<String, String> SISTR_FIELDS = ImmutableMap
 			.of("serovar", "SISTR serovar", "cgmlst_subspecies", "SISTR cgMLST Subspecies", "cgmlst_ST",
 					"SISTR cgMLST Sequence Type", "qc_status", "SISTR QC Status");
 
 	@Autowired
-	public SISTRSampleUpdater(MetadataTemplateService metadataTemplateService, SampleService sampleService,
-			@Qualifier("outputFileBaseDirectory") Path outputFileDirectory) {
+	public SISTRSampleUpdater(MetadataTemplateService metadataTemplateService, SampleService sampleService) {
 		this.metadataTemplateService = metadataTemplateService;
 		this.sampleService = sampleService;
-		this.outputFileDirectory = outputFileDirectory;
 	}
 
 	/**
@@ -63,11 +60,6 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 		AnalysisOutputFile sistrFile = analysis.getAnalysis().getAnalysisOutputFile(SISTR_FILE);
 
 		Path filePath = sistrFile.getFile();
-
-		//need to check if the file path is absolute as it might not be saved yet
-		if (!filePath.isAbsolute()) {
-			filePath = outputFileDirectory.resolve(filePath);
-		}
 
 		Map<String, MetadataEntry> stringEntries = new HashMap<>();
 		try {
