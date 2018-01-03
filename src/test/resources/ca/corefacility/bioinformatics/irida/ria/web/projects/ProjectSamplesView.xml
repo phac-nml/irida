@@ -32,7 +32,16 @@
         client_details_id="1" resource_id="NmlIrida" />
     <client_details_scope client_details_id="1" scope="read" />
     
+    <remote_api id="1" name="a client" serviceURI="http://localhost:8080/api"
+		clientId="client" clientSecret="secret" createdDate="2013-07-18 14:20:19.0" />
+	<remote_status id="1" sync_status="SYNCHRONIZED"
+		url="http://localhost:8080/api/projects/7" api_id="1"
+		remote_hash_code="1" read_by="1" last_update="2013-07-18 14:20:19.0" />
+	<remote_status id="2" sync_status="SYNCHRONIZED"
+		url="http://localhost:8080/api/samples/23" api_id="1"
+		remote_hash_code="1" read_by="1" last_update="2013-07-18 14:20:19.0" />
 
+	<project id="7" createdDate="2013-07-18 14:20:19.0" name="test_remote" organism="test" remote_status="1" sync_frequency="DAILY" />
     <project id="1" createdDate="2013-07-12 14:20:19.0" name="project" modifiedDate="2013-07-18 14:20:19.0"
              organism="E. coli" projectDescription="This is an interesting project description." remoteURL="http://google.ca"/>
     <project id="2" createdDate="2013-07-18 14:20:19.0" name="project2" modifiedDate="2013-07-18 14:19:19.0" />
@@ -67,7 +76,12 @@
 	<project_user id="9" project_id="6" user_id="1"
 		projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
 		email_subscription="false" />
+	<project_user id="10" project_id="7" user_id="1"
+		projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
+		email_subscription="false" />
 
+    <sample id="23" createdDate="2013-07-22 14:20:19.0" modifiedDate="2015-07-22 14:00:19.0" description="description23"
+             sampleName="sample5fg23" remote_status="2" />
     <sample id="1" createdDate="2013-07-01 14:00:19.0" modifiedDate="2015-07-01 14:00:19.0" description="description1"
              sampleName="sample1" organism="E. coli" />
     <sample id="2" createdDate="2013-07-02 14:01:19.0" modifiedDate="2015-07-02 14:00:19.0" description="description2"
@@ -136,7 +150,7 @@
     <project_sample id="21" project_id="1" sample_id="21" createdDate="2013-07-18 14:42:19.0" owner="true" />
     <project_sample id="22" project_id="6" sample_id="21" createdDate="2013-07-18 14:42:19.0" owner="true" />
     <project_sample id="23" project_id="3" sample_id="21" createdDate="2013-07-18 14:42:19.0" owner="true" />
-
+    <project_sample id="24" project_id="7" sample_id="23" createdDate="2013-07-18 14:42:19.0" owner="true" />
 
     <sequence_file id="1" created_date="2013-07-18 14:20:19.0"
                    file_path="src/test/resources/files/test_file.fastq" />

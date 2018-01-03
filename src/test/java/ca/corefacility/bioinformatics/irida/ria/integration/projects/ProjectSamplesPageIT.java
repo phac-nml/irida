@@ -185,6 +185,26 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 	
 	@Test
+	public void testCopyRemoteSampleManagerSuccess() {
+		LoginPage.loginAsManager(driver());
+		ProjectSamplesPage project4page = ProjectSamplesPage.gotToPage(driver(), 4);
+		assertEquals("should have no samples", 0, project4page.getLockedSampleNames().size());
+		
+		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 7);
+		page.selectSample(0);
+
+		List<String> names = page.getSampleNamesOnPage().subList(0, 1);
+		String newProjectName = "project4";
+		page.copySamples(newProjectName, false);
+
+		project4page = ProjectSamplesPage.gotToPage(driver(), 4);
+		List<String> project4Names = project4page.getSampleNamesOnPage().subList(0, 1);
+
+		assertEquals("Should have the same samples since they were copied", names.get(0), project4Names.get(0));
+		assertEquals("should be 1 locked samples", 1, project4page.getLockedSampleNames().size());
+	}
+	
+	@Test
 	public void testCopySamplesLocked() {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
