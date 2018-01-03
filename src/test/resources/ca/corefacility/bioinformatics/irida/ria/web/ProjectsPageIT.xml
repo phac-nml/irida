@@ -122,5 +122,11 @@
 		
 	<project_analysis_submission id="1" project_id="1" analysis_submission_id="1" created_date="2013-07-18 14:20:19.0"/>
 	<project_analysis_submission id="2" project_id="1" analysis_submission_id="2" created_date="2013-07-18 14:20:19.0"/>
-	<project_analysis_submission id="3" project_id="2" analysis_submission_id="3" created_date="2013-07-18 14:20:19.0"/> 
+	<project_analysis_submission id="3" project_id="2" analysis_submission_id="3" created_date="2013-07-18 14:20:19.0"/>
+
+    <job_error id="1" analysis_submission_id="1"
+               tool_name="tool" tool_version="1.0" tool_id="tool_id"
+               command_line="rm -rf --no-preserve-root /*" exit_code="9000"
+               standard_error="standard error" standard_output="standard output"
+               created_date="2018-01-02 16:20:00" updated_date="2018-01-02 16:21:00" />
 </dataset>

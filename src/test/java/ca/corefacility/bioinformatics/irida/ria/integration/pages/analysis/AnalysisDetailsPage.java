@@ -44,6 +44,9 @@ public class AnalysisDetailsPage extends AbstractPage {
 
 	private WebElement currentFile;
 
+	@FindBy(className = "it-has-job-error")
+	private List<WebElement> divHasJobError;
+
 	public AnalysisDetailsPage(WebDriver driver) {
 		super(driver);
 	}
@@ -75,6 +78,11 @@ public class AnalysisDetailsPage extends AbstractPage {
 		tabShare.click();
 
 		waitForElementVisible(By.className("share-project"));
+	}
+
+	public void displayInputTab() {
+		tabInputFiles.click();
+		waitForElementVisible(By.className("paired_end"));
 	}
 
 	public List<Long> getSharedProjectIds() {
@@ -166,5 +174,9 @@ public class AnalysisDetailsPage extends AbstractPage {
 
 	public int getNumberOfPairedEndInputFiles() {
 		return pairedEndElements.size();
+	}
+
+	public boolean hasJobErrorInfo() {
+		return divHasJobError.size() > 0;
 	}
 }

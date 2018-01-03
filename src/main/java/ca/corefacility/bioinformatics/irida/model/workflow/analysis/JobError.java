@@ -15,7 +15,6 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryContentsProvenance;
 import com.github.jmchilton.blend4j.galaxy.beans.JobDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.Tool;
@@ -81,14 +80,14 @@ public class JobError extends IridaResourceSupport implements IridaThing, Compar
 	 * Galaxy Job standard error if any
 	 */
 	@Lob
-	@Column(name = "standardError")
+	@Column(name = "standard_error")
 	private final String standardError;
 
 	/**
 	 * Galaxy Job standard output if any
 	 */
 	@Lob
-	@Column(name = "standardOutput")
+	@Column(name = "standard_output")
 	private final String standardOutput;
 
 	/**
@@ -291,37 +290,66 @@ public class JobError extends IridaResourceSupport implements IridaThing, Compar
 		if (o == null || getClass() != o.getClass())
 			return false;
 		JobError jobError = (JobError) o;
-		return getExitCode() == jobError.getExitCode() && Objects.equals(getId(), jobError.getId()) && Objects.equals(
-				getToolId(), jobError.getToolId()) && Objects.equals(getToolName(), jobError.getToolName())
-				&& Objects.equals(getToolVersion(), jobError.getToolVersion()) && Objects.equals(getToolDescription(),
-				jobError.getToolDescription()) && Objects.equals(getCommandLine(), jobError.getCommandLine())
-				&& Objects.equals(getParameters(), jobError.getParameters()) && Objects.equals(getStandardError(),
-				jobError.getStandardError()) && Objects.equals(getStandardOutput(), jobError.getStandardOutput())
-				&& Objects.equals(getProvenanceUUID(), jobError.getProvenanceUUID()) && Objects.equals(
-				getProvenanceId(), jobError.getProvenanceId()) && Objects.equals(getJobId(), jobError.getJobId())
-				&& Objects.equals(getHistoryId(), jobError.getHistoryId()) && Objects.equals(getCreatedDate(),
-				jobError.getCreatedDate()) && Objects.equals(getUpdatedDate(), jobError.getUpdatedDate())
-				&& Objects.equals(getAnalysisSubmission(), jobError.getAnalysisSubmission());
+		return getExitCode() == jobError.getExitCode() &&
+		       Objects.equals(getId(), jobError.getId()) &&
+		       Objects.equals(getToolId(), jobError.getToolId()) &&
+		       Objects.equals(getToolName(), jobError.getToolName()) &&
+		       Objects.equals(getToolVersion(), jobError.getToolVersion()) &&
+		       Objects.equals(getToolDescription(), jobError.getToolDescription()) &&
+		       Objects.equals(getCommandLine(), jobError.getCommandLine()) &&
+		       Objects.equals(getParameters(), jobError.getParameters()) &&
+		       Objects.equals(getStandardError(), jobError.getStandardError()) &&
+		       Objects.equals(getStandardOutput(), jobError.getStandardOutput()) &&
+		       Objects.equals(getProvenanceUUID(), jobError.getProvenanceUUID()) &&
+		       Objects.equals(getProvenanceId(), jobError.getProvenanceId()) &&
+		       Objects.equals(getJobId(), jobError.getJobId()) &&
+		       Objects.equals(getHistoryId(), jobError.getHistoryId()) &&
+		       Objects.equals(getCreatedDate(), jobError.getCreatedDate()) &&
+		       Objects.equals(getUpdatedDate(), jobError.getUpdatedDate()) &&
+		       Objects.equals(getAnalysisSubmission(), jobError.getAnalysisSubmission());
 	}
 
 	@Override
 	public int hashCode() {
-
-		return Objects.hash(getId(), getToolId(), getToolName(), getToolVersion(), getToolDescription(),
-				getCommandLine(), getParameters(), getStandardError(), getStandardOutput(), getProvenanceUUID(),
-				getProvenanceId(), getJobId(), getHistoryId(), getCreatedDate(), getUpdatedDate(), getExitCode(),
+		return Objects.hash(getId(),
+				getToolId(),
+				getToolName(),
+				getToolVersion(),
+				getToolDescription(),
+				getCommandLine(),
+				getParameters(),
+				getStandardError(),
+				getStandardOutput(),
+				getProvenanceUUID(),
+				getProvenanceId(),
+				getJobId(),
+				getHistoryId(),
+				getCreatedDate(),
+				getUpdatedDate(),
+				getExitCode(),
 				getAnalysisSubmission());
 	}
 
 	@Override
 	public String toString() {
-		return "JobError{" + "id=" + id + ", toolId='" + toolId + '\'' + ", toolName='" + toolName + '\''
-				+ ", toolVersion='" + toolVersion + '\'' + ", toolDescription='" + toolDescription + '\''
-				+ ", commandLine='" + commandLine + '\'' + ", parameters='" + parameters + '\'' + ", standardError='"
-				+ standardError + '\'' + ", standardOutput='" + standardOutput + '\'' + ", provenanceUUID="
-				+ provenanceUUID + ", provenanceId='" + provenanceId + '\'' + ", jobId='" + jobId + '\''
-				+ ", historyId='" + historyId + '\'' + ", createdDate=" + createdDate + ", updatedDate=" + updatedDate
-				+ ", exitCode=" + exitCode + ", analysisSubmission=" + analysisSubmission + '}';
+		return "JobError{" + "id=" + id +
+				", toolId='" + toolId + '\'' +
+				", toolName='" + toolName + '\'' +
+				", toolVersion='" + toolVersion + '\'' +
+				", toolDescription='" + toolDescription + '\'' +
+				", commandLine='" + commandLine + '\'' +
+				", parameters='" + parameters + '\'' +
+				", standardError='" + standardError + '\'' +
+				", standardOutput='" + standardOutput + '\'' +
+				", provenanceUUID=" + provenanceUUID +
+				", provenanceId='" + provenanceId + '\'' +
+				", jobId='" + jobId + '\'' +
+				", historyId='" + historyId + '\'' +
+				", createdDate=" + createdDate +
+				", updatedDate=" + updatedDate +
+				", exitCode=" + exitCode +
+				", analysisSubmission=" + analysisSubmission +
+				'}';
 	}
 
 	@Override

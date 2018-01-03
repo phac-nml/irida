@@ -23,8 +23,8 @@
         <column name="parameters" type="LONGTEXT"/>
         <column name="provenance_id" type="VARCHAR(255)"/>
         <column name="provenance_uuid" type="VARCHAR(255)"/>
-        <column name="standardError" type="LONGTEXT"/>
-        <column name="standardOutput" type="LONGTEXT"/>
+        <column name="standard_error" type="LONGTEXT"/>
+        <column name="standard_output" type="LONGTEXT"/>
         <column name="tool_description" type="VARCHAR(255)"/>
         <column name="tool_id" type="VARCHAR(255)"/>
         <column name="tool_name" type="VARCHAR(255)">
