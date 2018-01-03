@@ -330,29 +330,27 @@ public class PipelineController extends BaseController {
 			model.addAttribute("canUpdateSamples", canUpdateAllSamples);
 			model.addAttribute("dynamicSourceRequired", description.requiresDynamicSource());
 
-			final List<Map<String, Object>> toolDataTables = new ArrayList<>();
+			final List<Map<String, Object>> dynamicSources = new ArrayList<>();
 			if (description.requiresDynamicSource()) {
 				List<IridaWorkflowDynamicSource> dynamicSources = new ArrayList<>();
 				for (IridaWorkflowParameter parameter : description.getParameters()) {
 					if(parameter.isRequired()) {
-				 		dynamicSources.add(parameter.getDynamicSource());
+				 		dynamicSources.add(parameter.getDynamicSource().get(0));
 					}
 				}
-				TabularToolDataTable galaxyToolDataTable = new TabularToolDataTable();
 				for (IridaWorkflowDynamicSource dynamicSource : dynamicSources) {
 					List<Object> parametersList = new ArrayList<>();
-					String toolDataTableName = new String();
+					String sourceName;
 					Map<String, Object> toolDataTable = new HashMap<>();
 					try {
-						toolDataTableName = dynamicSource.getGalaxyToolDataTable().getName();
-						galaxyToolDataTable = galaxyToolDataService.getToolDataTable(toolDataTableName);
-						toolDataTable.put("id", toolDataTableName);
-						toolDataTable.put("label", messageSource.getMessage("tooldatatable.label." + toolDataTableName, null, locale));
+						sourceName = dynamicSource.getName();
+						toolDataTable.put("id", sourceName);
+						toolDataTable.put("label", messageSource.getMessage("tooldatatable.label." + sourceName, null, locale));
 						toolDataTable.put("parameters", parametersList);
 
-						List<String> labels = galaxyToolDataTable.getFieldsForColumn(dynamicSource.getGalaxyToolDataTable().getDisplayColumn());
+						List<String> labels = dynamicSource.getLabels();
 						Iterator<String> labelsIterator = labels.iterator();
-						List<String> values = galaxyToolDataTable.getFieldsForColumn(dynamicSource.getGalaxyToolDataTable().getParameterColumn());
+						List<String> values = dynamicSource.getValues();
 						Iterator<String> valuesIterator = values.iterator();
 
 						while (labelsIterator.hasNext() && valuesIterator.hasNext()) {
@@ -361,15 +359,15 @@ public class PipelineController extends BaseController {
 							HashMap<String, String> toolDataTableFieldsMap = new HashMap<>();
 							toolDataTableFieldsMap.put("label", label);
 							toolDataTableFieldsMap.put("value", value);
-							toolDataTableFieldsMap.put("name", dynamicSource.getGalaxyToolDataTable().getName());
+							toolDataTableFieldsMap.put("name", dynamicSource.getName());
 							parametersList.add(toolDataTableFieldsMap);
 						}
-						toolDataTables.add(toolDataTable);
+						dynamicSources.add(toolDataTable);
 					} catch (GalaxyToolDataTableException e) {
 						logger.debug("Tool Data Table not found: ", e);
 					}
 				}
-				model.addAttribute("dynamicSources", toolDataTables);
+				model.addAttribute("dynamicSources", dynamicSources);
 			}
 			response = URL_GENERIC_PIPELINE;
 		}

@@ -6,7 +6,6 @@ import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 
 /**
  * A parameter for a particular tool in a workflow.
@@ -25,12 +24,6 @@ public class IridaWorkflowGalaxyToolDataTable {
 
     @XmlAttribute
     private String parameterColumn;
-
-    @XmlElement
-    private IridaWorkflowParameter parameter;
-
-    @XmlElement
-    private IridaToolParameter toolParameter;
 
     public IridaWorkflowGalaxyToolDataTable() {
     }
@@ -60,15 +53,6 @@ public class IridaWorkflowGalaxyToolDataTable {
      */
     public String getParameterColumn() {
         return parameterColumn;
-    }
-
-    /**
-     * The Irida Workflow Parameter that the parameter value will be bound to.
-     *
-     * @return The Irida Workflow Parameter that the parameter value will be bound to.
-     */
-    public IridaWorkflowParameter getWorkflowParameter() {
-        return parameter;
     }
 
     @Override

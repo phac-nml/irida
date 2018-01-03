@@ -1,18 +1,9 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.description;
 
-import javax.xml.bind.annotation.XmlElement;
+import java.util.List;
 
-public class IridaWorkflowDynamicSource {
+public interface IridaWorkflowDynamicSource {
+    Object getSource();
 
-    @XmlElement(name = "galaxyToolDataTable")
-    private IridaWorkflowGalaxyToolDataTable galaxyToolDataTable;
-
-    public IridaWorkflowGalaxyToolDataTable getGalaxyToolDataTable() {
-        return galaxyToolDataTable;
-    }
-
-    @Override
-    public String toString() {
-        return "IridaWorkflowDynamicSource [type=GalaxyToolDataTable name=" + galaxyToolDataTable.getName() + "]";
-    }
+    String getName();
 }

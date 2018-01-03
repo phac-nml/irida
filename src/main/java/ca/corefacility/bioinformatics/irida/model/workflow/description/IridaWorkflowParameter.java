@@ -29,9 +29,13 @@ public class IridaWorkflowParameter {
 
 	@XmlAttribute(name = "required")
 	private Boolean required;
-	
-	@XmlElement(name = "dynamicSource")
-	private IridaWorkflowDynamicSource dynamicSource;
+
+	@XmlElementWrapper(name = "dynamicSource")
+	@XmlElements({
+			@XmlElement(name = "galaxyToolDataTable", type = IridaWorkflowDynamicSourceGalaxy.class),
+	})
+	public List<IridaWorkflowDynamicSource> dynamicSource;
+
 
 	@XmlElement(name = "toolParameter")
 	private List<IridaToolParameter> toolParameters;
@@ -75,7 +79,7 @@ public class IridaWorkflowParameter {
 	 * @param toolParameters
 	 *            The tool parameters corresponding to this named parameter.
 	 */
-	public IridaWorkflowParameter(String name, Boolean required, IridaWorkflowDynamicSource dynamicSource, List<IridaToolParameter> toolParameters ) {
+	public IridaWorkflowParameter(String name, Boolean required, List<IridaWorkflowDynamicSource> dynamicSource, List<IridaToolParameter> toolParameters ) {
 		checkNotNull(name, "name is null");
 		// checkNotNull(defaultValue, "defaultValue is null");
 		checkNotNull(toolParameters, "toolParameters is null");
@@ -132,11 +136,12 @@ public class IridaWorkflowParameter {
 	}
 
 	/**
-	 * Gets the default value for this parameter.
+	 * Gets the dynamic source for the parameter.
 	 *
-	 * @return The default value for this parameter.
+	 * @return The dynamic source for this parameter.
+	 * @throws NullPointerException
 	 */
-	public IridaWorkflowDynamicSource getDynamicSource() throws NullPointerException {
+	public List<IridaWorkflowDynamicSource> getDynamicSource() throws NullPointerException {
 		if (dynamicSource == null) {
 			throw new NullPointerException("dynamicSource is null");
 		} else {

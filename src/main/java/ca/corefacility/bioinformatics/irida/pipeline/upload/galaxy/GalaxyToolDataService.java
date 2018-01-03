@@ -8,7 +8,6 @@ import com.github.jmchilton.blend4j.galaxy.beans.TabularToolDataTable;
 import com.github.jmchilton.blend4j.galaxy.ToolDataClient;
 
 
-
 /**
  * A service class for dealing with Galaxy Tool Data Tables.
  *
