@@ -81,13 +81,12 @@ public class UserGroupProjectJoin implements Join<Project, UserGroup> {
 
 	/**
 	 * Create a new {@link UserGroupProjectJoin}.
-	 * 
-	 * @param project
-	 *            the {@link Project} that you're permitting the
-	 *            {@link UserGroup} to access.
-	 * @param userGroup
-	 *            the {@link UserGroup} being permitted to access the
-	 *            {@link Project}.
+	 *
+	 * @param project   the {@link Project} that you're permitting the
+	 *                  {@link UserGroup} to access.
+	 * @param userGroup the {@link UserGroup} being permitted to access the
+	 *                  {@link Project}.
+	 * @param role      The Role the users in the group should have
 	 */
 	public UserGroupProjectJoin(final Project project, final UserGroup userGroup, final ProjectRole role) {
 		this.id = null;

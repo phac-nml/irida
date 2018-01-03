@@ -16,8 +16,8 @@ public interface AnnouncementService extends CRUDService<Long, Announcement> {
 	/**
 	 * Mark an {@link Announcement} object as read by a {@link User}
 	 *
-	 * @param announcement
-	 * @param user
+	 * @param announcement The announcement to mark
+	 * @param user the user who's read the announcement
 	 * @return An {@link AnnouncementUserJoin} object representing the relationship between
 	 * the announcement and the user
 	 */
@@ -26,8 +26,8 @@ public interface AnnouncementService extends CRUDService<Long, Announcement> {
 	/**
 	 * Mark an {@link Announcement} as unread by a {@link User}
 	 *
-	 * @param announcement
-	 * @param user
+	 * @param announcement the announcement to mark
+	 * @param user the user to mark the announcement for
 	 */
 	public void markAnnouncementAsUnreadByUser(Announcement announcement, User user);
 

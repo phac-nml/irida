@@ -708,6 +708,7 @@
 					<outputDirectory>doc/_site/developer/apidocs/</outputDirectory>
 					<reportOutputDirectory>doc/_site/developer/apidocs/</reportOutputDirectory>
 					<quiet>true</quiet>
+					<additionalparam>-Xdoclint:all</additionalparam>
 				</configuration>
 			</plugin>
 			<plugin>

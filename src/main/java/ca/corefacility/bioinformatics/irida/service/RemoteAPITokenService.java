@@ -40,16 +40,13 @@ public interface RemoteAPITokenService {
 
 	/**
 	 * Create a new {@link RemoteAPIToken} from a given auth code
-	 * 
-	 * @param authcode
-	 *            the auth code to create a token for
-	 * @param remoteAPI
-	 *            the remote api to get a token for
-	 * @param tokenRedirect
-	 *            a redirect url to get the token from
+	 *
+	 * @param authcode      the auth code to create a token for
+	 * @param remoteAPI     the remote api to get a token for
+	 * @param tokenRedirect a redirect url to get the token from
 	 * @return the newly created token
-	 * @throws OAuthSystemException
-	 * @throws OAuthProblemException
+	 * @throws OAuthSystemException  If ther's a problem building the token request
+	 * @throws OAuthProblemException If there's a problem with the token request
 	 */
 	public RemoteAPIToken createTokenFromAuthCode(String authcode, RemoteAPI remoteAPI, String tokenRedirect)
 			throws OAuthSystemException, OAuthProblemException;

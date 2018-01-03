@@ -231,11 +231,11 @@ public class ProjectMembersController {
 
 	/**
 	 * Remove a user group from a project
-	 * 
-	 * @param projectId
-	 *            The project to remove from
-	 * @param userId
-	 *            The user to remove
+	 *
+	 * @param projectId The project to remove from
+	 * @param userId    The user to remove
+	 * @param locale    Locale of the logged in user
+	 * @return Success or error message
 	 */
 	@RequestMapping(path = "{projectId}/settings/groups/{userId}", method = RequestMethod.DELETE)
 	@ResponseBody
@@ -256,13 +256,12 @@ public class ProjectMembersController {
 
 	/**
 	 * Update a user's role on a project
-	 * 
-	 * @param projectId
-	 *            The ID of the project
-	 * @param userId
-	 *            The ID of the user
-	 * @param projectRole
-	 *            The role to set
+	 *
+	 * @param projectId   The ID of the project
+	 * @param userId      The ID of the user
+	 * @param projectRole The role to set
+	 * @param locale      Locale of the logged in user
+	 * @return Success or error message
 	 */
 	@RequestMapping(path = "{projectId}/settings/members/editrole/{userId}", method = RequestMethod.POST)
 	@ResponseBody
@@ -285,13 +284,12 @@ public class ProjectMembersController {
 
 	/**
 	 * Update a user group's role on a project
-	 * 
-	 * @param projectId
-	 *            The ID of the project
-	 * @param userId
-	 *            The ID of the user
-	 * @param projectRole
-	 *            The role to set
+	 *
+	 * @param projectId   The ID of the project
+	 * @param userId      The ID of the user
+	 * @param projectRole The role to set
+	 * @param locale      Locale of the logged in user
+	 * @return Success or failure message
 	 */
 	@RequestMapping(path = "{projectId}/settings/groups/editrole/{userId}", method = RequestMethod.POST)
 	@ResponseBody

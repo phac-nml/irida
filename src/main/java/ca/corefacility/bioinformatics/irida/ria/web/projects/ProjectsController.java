@@ -299,10 +299,11 @@ public class ProjectsController {
 	 * Get a {@link Project} from a remote api and mark it to be synchronized in
 	 * this IRIDA installation
 	 *
-	 * @param url
-	 *            the URL of the remote project
+	 * @param url           the URL of the remote project
+	 * @param syncFrequency How often to sync the project
+	 * @param model         Model for the view
 	 * @return Redirect to the new project. If an oauth exception occurs it will
-	 *         be forwarded back to the creation page.
+	 * be forwarded back to the creation page.
 	 */
 	@RequestMapping(value = "/projects/synchronize", method = RequestMethod.POST)
 	public String syncProject(@RequestParam String url, @RequestParam ProjectSyncFrequency syncFrequency, Model model) {

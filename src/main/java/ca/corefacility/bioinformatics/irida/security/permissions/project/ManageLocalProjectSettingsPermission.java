@@ -16,13 +16,12 @@ public class ManageLocalProjectSettingsPermission extends ModifyProjectPermissio
 
 	/**
 	 * Construct an instance of {@link ManageLocalProjectSettingsPermission}.
-	 * 
-	 * @param projectRepository
-	 *            the project repository.
-	 * @param userRepository
-	 *            the user repository.
-	 * @param pujRepository
-	 *            the project user join repository.
+	 *
+	 * @param projectRepository the project repository.
+	 * @param userRepository    the user repository.
+	 * @param pujRepository     the project user join repository.
+	 * @param ugpjRepository    the user group project join repository
+	 * @param ugRepository      the user group join repository
 	 */
 	@Autowired
 	public ManageLocalProjectSettingsPermission(final ProjectRepository projectRepository,

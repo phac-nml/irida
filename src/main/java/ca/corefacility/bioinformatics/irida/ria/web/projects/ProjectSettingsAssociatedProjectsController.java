@@ -123,11 +123,9 @@ public class ProjectSettingsAssociatedProjectsController {
 	/**
 	 * Add an associated project to a project
 	 *
-	 * @param projectId
-	 * 		The subject project id
-	 * @param associatedProjectId
-	 * 		The associated project id
-	 *
+	 * @param projectId           The subject project id
+	 * @param associatedProjectId The associated project id
+	 * @param locale              Locale of the logged in user
 	 * @return "success" if the request was successful
 	 */
 	@RequestMapping(value = "", method = RequestMethod.POST)
@@ -146,11 +144,9 @@ public class ProjectSettingsAssociatedProjectsController {
 	/**
 	 * Delete an associated project to a project
 	 *
-	 * @param projectId
-	 * 		The subject project id
-	 * @param associatedProjectId
-	 * 		The associated project id
-	 *
+	 * @param projectId           The subject project id
+	 * @param associatedProjectId The associated project id
+	 * @param locale              Locale of the logged in user
 	 * @return "success" if the request was successful
 	 */
 	@RequestMapping(value = "", method = RequestMethod.DELETE)

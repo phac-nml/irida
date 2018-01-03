@@ -94,12 +94,11 @@ public class Analysis extends IridaResourceSupport implements IridaThing {
 
 	/**
 	 * Builds a new {@link Analysis} object with the given information.
-	 * 
-	 * @param executionManagerAnalysisId
-	 *            The id for an execution manager used with this analysis.
-	 * @param analysisOutputFilesMap
-	 *            A {@link Map} of output file keys and
-	 *            {@link AnalysisOutputFile}s.
+	 *
+	 * @param executionManagerAnalysisId The id for an execution manager used with this analysis.
+	 * @param analysisOutputFilesMap     A {@link Map} of output file keys and
+	 *                                   {@link AnalysisOutputFile}s.
+	 * @param analysisType               The {@link AnalysisType} for this analysis
 	 */
 	public Analysis(final String executionManagerAnalysisId,
 			final Map<String, AnalysisOutputFile> analysisOutputFilesMap, AnalysisType analysisType) {

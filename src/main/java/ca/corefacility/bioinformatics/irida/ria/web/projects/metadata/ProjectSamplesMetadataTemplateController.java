@@ -140,7 +140,7 @@ public class ProjectSamplesMetadataTemplateController {
 	 * @param templateId
 	 * 		{@link Long} identifier for a {@link MetadataTemplate}
 	 *
-	 * @return {@link String} redirects to project > settings > metadata templates
+	 * @return {@link String} redirects to project - settings - metadata templates
 	 */
 	@RequestMapping(value = "/delete/{templateId}", method = RequestMethod.POST)
 	public String deleteMetadataTemplate(@PathVariable Long projectId, @PathVariable Long templateId) {

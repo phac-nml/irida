@@ -82,11 +82,10 @@ public final class UserGroupJoin implements Join<User, UserGroup> {
 
 	/**
 	 * Create a new {@link UserGroupJoin}.
-	 * 
-	 * @param user
-	 *            the {@link User} in the {@link UserGroup}.
-	 * @param group
-	 *            the {@link UserGroup} that the {@link User} is a member of.
+	 *
+	 * @param user  the {@link User} in the {@link UserGroup}.
+	 * @param group the {@link UserGroup} that the {@link User} is a member of.
+	 * @param role  The role the user should have on the project
 	 */
 	public UserGroupJoin(final User user, final UserGroup group, final UserGroupRole role) {
 		this.createdDate = new Date();

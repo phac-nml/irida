@@ -31,13 +31,12 @@ public abstract class ModifyProjectPermission extends BasePermission<Project,Lon
 
 	/**
 	 * Construct an instance of {@link ModifyProjectPermission}.
-	 * 
-	 * @param projectRepository
-	 *            the project repository.
-	 * @param userRepository
-	 *            the user repository.
-	 * @param pujRepository
-	 *            the project user join repository.
+	 *
+	 * @param projectRepository the project repository.
+	 * @param userRepository    the user repository.
+	 * @param pujRepository     the project user join repository.
+	 * @param ugpjRepository    The user group project join repository
+	 * @param ugRepository      The user group join repository
 	 */
 	@Autowired
 	public ModifyProjectPermission(final ProjectRepository projectRepository, final UserRepository userRepository,

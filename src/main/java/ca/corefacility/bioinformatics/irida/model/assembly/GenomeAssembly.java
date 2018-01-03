@@ -96,9 +96,8 @@ public abstract class GenomeAssembly extends IridaResourceSupport implements Iri
 	 * Get human-readable file size.
 	 * 
 	 * @return A human-readable file size.
-	 * @throws IOException
 	 */
-	public String getReadableFileSize() throws IOException {
+	public String getReadableFileSize()  {
 		String size = "N/A";
 		try {
 			size = IridaSequenceFile.humanReadableByteCount(getFileSize(), true);

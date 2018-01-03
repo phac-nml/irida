@@ -229,12 +229,15 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 			Set<UUID> workflowIds, PageRequest pageRequest);
 
 	/**
+	 * Get a page of {@link AnalysisSubmission}s the given user has submitted.
+	 *
 	 * @param search      basic search string
 	 * @param name        analysis submission name
 	 * @param state       {@link AnalysisState} of the submission to search
 	 * @param user        the {@link User} to get submissions for
 	 * @param workflowIds set of workflow UUIDs to search
-	 * @param pageRequest a {@link PageRequest} for the restults to show	 * @return
+	 * @param pageRequest a {@link PageRequest} for the restults to show
+	 * @return a page of {@link AnalysisSubmission}s for the given user
 	 */
 	public Page<AnalysisSubmission> listSubmissionsForUser(String search, String name, AnalysisState state, User user,
 			Set<UUID> workflowIds, PageRequest pageRequest);
