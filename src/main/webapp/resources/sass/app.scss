@@ -39,11 +39,15 @@ body {
 * MAIN NAVIGATION
 *****************************************************************************************/
 .navbar-collapse {
-  background-color: black;
+  background-color: #222222;
+}
+
+.navbar-brand {
+  padding: 10px 15px 10px 15px !important;
 }
 
 .navbar-logo {
-  height: 25px;
+  height: 30px;
 }
 
 .navbar-collapse-icon {
@@ -51,19 +55,24 @@ body {
   font-size: 20px;
 }
 
-.nav-icons {
-  font-size: 20px;
+// Icon links
+.nav-icon-wrapper {
+  padding-top: 14px !important;
+  padding-bottom: 14px !important;
 }
 
-.navbar,
-.nav .dropdown {
-  height: 55px;
+.nav-icon {
+  font-size: 21px;
 }
 
 // Gravatar
+.nav-gravatar-wrapper {
+  margin-right: 15px;
+  padding: 14px 15px !important;
+}
 .nav-gravatar {
   border-radius: 50%;
-  width: 25px;
+  width: 20px;
   padding: 0 auto;
 }
 
@@ -82,6 +91,8 @@ body {
 
 // Search
 #global-search {
+  margin: 7px 15px 6px 0 !important;
+
   .search-wrapper {
     width: 300px;
     vertical-align: middle;
