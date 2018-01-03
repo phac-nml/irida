@@ -82,11 +82,17 @@
 	<project_user id="10" project_id="7" user_id="1"
 		projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
 		email_subscription="false" />
+	<project_user id="11" project_id="7" user_id="2"
+		projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
+		email_subscription="false" />
+	<project_user id="12" project_id="4" user_id="2"
+		projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
+		email_subscription="false" />
 
     <sample id="23" createdDate="2013-07-22 14:20:19.0" modifiedDate="2015-07-22 14:00:19.0" description="description23"
-             sampleName="sample5fg23" remote_status="2" />
+             sampleName="sample23p7" remote_status="2" />
     <sample id="24" createdDate="2013-07-22 14:20:19.0" modifiedDate="2015-07-22 14:00:19.0" description="description24"
-             sampleName="sample5fg24" remote_status="3" />
+             sampleName="sample24p7" remote_status="3" />
     <sample id="1" createdDate="2013-07-01 14:00:19.0" modifiedDate="2015-07-01 14:00:19.0" description="description1"
              sampleName="sample1" organism="E. coli" />
     <sample id="2" createdDate="2013-07-02 14:01:19.0" modifiedDate="2015-07-02 14:00:19.0" description="description2"

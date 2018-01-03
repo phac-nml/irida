@@ -10,6 +10,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Proje
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import static org.junit.Assert.*;
 
@@ -170,17 +171,15 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.selectSample(0);
 		page.selectSample(1);
 
-		List<String> names = page.getSampleNamesOnPage().subList(0, 1);
+		List<String> names = page.getSampleNamesOnPage().subList(0, 2);
 		String newProjectName = "project4";
 		
 		page.copySamples(newProjectName, false);
 
 		ProjectSamplesPage newPage = ProjectSamplesPage.gotToPage(driver(), 4);
-		List<String> newNames = newPage.getSampleNamesOnPage().subList(0, 1);
+		List<String> newNames = newPage.getSampleNamesOnPage().subList(0, 2);
 
-		for(int i = 0; i == names.size(); i++) {
-			assertEquals("Should have the same samples since they were copied", names.get(i), newNames.get(i));
-		}
+		assertEquals("Should have the same samples since they were moved", Sets.newHashSet(names), Sets.newHashSet(newNames));
 
 		assertEquals("should be 2 locked samples", 2, page.getLockedSampleNames().size());
 	}
@@ -203,7 +202,30 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		List<String> project4Names = project4page.getSampleNamesOnPage().subList(0, 1);
 
 		assertEquals("Should have the same samples since they were copied", names.get(0), project4Names.get(0));
-		assertEquals("should be 1 locked samples", 1, project4page.getLockedSampleNames().size());
+		assertEquals("should be 1 locked sample in project 4", 1, project4page.getLockedSampleNames().size());
+		assertEquals("should still be 1 unlocked sample in remote project", 1, project4page.getSampleNamesOnPage().size());
+	}
+	
+	@Test
+	public void testCopyRemoteSampleUserSuccess() {
+		LoginPage.loginAsUser(driver());
+		ProjectSamplesPage project4page = ProjectSamplesPage.gotToPage(driver(), 4);
+		assertEquals("should have no samples", 0, project4page.getLockedSampleNames().size());
+		
+		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 7);
+		page.selectSample(0);
+
+		List<String> names = page.getSampleNamesOnPage().subList(0, 1);
+		String newProjectName = "project4";
+		
+		page.copySamples(newProjectName, false);
+
+		project4page = ProjectSamplesPage.gotToPage(driver(), 4);
+		List<String> project4Names = project4page.getSampleNamesOnPage().subList(0, 1);
+
+		assertEquals("Should have the same samples since they were copied", names.get(0), project4Names.get(0));
+		assertEquals("should be 1 locked sample in project 4", 1, project4page.getLockedSampleNames().size());
+		assertEquals("should still be 1 unlocked sample in remote project", 1, project4page.getSampleNamesOnPage().size());
 	}
 	
 	@Test(expected=ProjectSamplesPage.GiveOwnerNotDisplayedException.class)
@@ -239,17 +261,14 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.selectSample(0);
 		page.selectSample(1);
 
-		List<String> names = page.getSampleNamesOnPage().subList(0, 1);
+		List<String> names = page.getSampleNamesOnPage().subList(0, 2);
 		String newProjectName = "project4";
 		page.copySamples(newProjectName, false);
 
 		ProjectSamplesPage newPage = ProjectSamplesPage.gotToPage(driver(), 4);
-		List<String> newNames = newPage.getSampleNamesOnPage().subList(0, 1);
+		List<String> newNames = newPage.getSampleNamesOnPage().subList(0, 2);
 
-		for (int i = 0; i == names.size(); i++) {
-			assertEquals("Should have the same samples since they were copied", names.get(i), newNames.get(i));
-		}
-
+		assertEquals("Should have the same samples since they were moved", Sets.newHashSet(names), Sets.newHashSet(newNames));
 		assertEquals("should be 2 locked samples", 2, page.getLockedSampleNames().size());
 	}
 
@@ -258,19 +277,17 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 		assertEquals("Should be displaying 21 samples", "Showing 1 to 10 of 21 entries", page.getTableInfo());
-		List<String> movedNames = page.getSampleNamesOnPage().subList(2, 3);
+		List<String> movedNames = page.getSampleNamesOnPage().subList(2, 4);
 		page.selectSample(2);
 		page.selectSample(3);
 		page.moveSamples("project3");
 		assertEquals("Should be displaying 19 samples", "Showing 1 to 10 of 19 entries", page.getTableInfo());
 
-
 		ProjectSamplesPage.gotToPage(driver(), 3);
-		List<String> newNames = page.getSampleNamesOnPage().subList(0, 1);
+		List<String> newNames = page.getSampleNamesOnPage();
 
-		for(int i = 0; i == movedNames.size(); i++) {
-			assertEquals("Should have the same samples since they were copied", movedNames.get(i), newNames.get(i));
-		}
+		assertTrue("Should have the same samples since they were moved, but instead movedNames=" + movedNames
+				+ ", newNames=" + newNames, Sets.newHashSet(newNames).containsAll(movedNames));
 	}
 
 	@Test
