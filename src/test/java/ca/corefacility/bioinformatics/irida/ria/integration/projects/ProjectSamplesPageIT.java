@@ -172,6 +172,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		List<String> names = page.getSampleNamesOnPage().subList(0, 1);
 		String newProjectName = "project4";
+		
 		page.copySamples(newProjectName, false);
 
 		ProjectSamplesPage newPage = ProjectSamplesPage.gotToPage(driver(), 4);
@@ -195,6 +196,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		List<String> names = page.getSampleNamesOnPage().subList(0, 1);
 		String newProjectName = "project4";
+		
 		page.copySamples(newProjectName, false);
 
 		project4page = ProjectSamplesPage.gotToPage(driver(), 4);
@@ -202,6 +204,32 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		assertEquals("Should have the same samples since they were copied", names.get(0), project4Names.get(0));
 		assertEquals("should be 1 locked samples", 1, project4page.getLockedSampleNames().size());
+	}
+	
+	@Test(expected=ProjectSamplesPage.GiveOwnerNotDisplayedException.class)
+	public void testCopyRemoteSampleManagerFailGiveOwner() {
+		LoginPage.loginAsManager(driver());
+
+		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 7);
+		page.selectSample(0);
+
+		String newProjectName = "project4";
+		
+		page.copySamples(newProjectName, true);
+	}
+	
+	@Test
+	public void testRemoteSampleManagerButtonDisabled() {
+		LoginPage.loginAsManager(driver());
+
+		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 7);
+		page.selectSample(0);
+		page.selectSample(1);
+
+		page.waitUntilCopyButtonEnabled();
+		assertTrue("Copy button should be enabled", page.isCopyBtnEnabled());
+		assertFalse("Move button should not be enabled", page.isMoveBtnEnabled());
+		assertFalse("Merge button should not be enabled", page.isMergeBtnEnabled());
 	}
 	
 	@Test

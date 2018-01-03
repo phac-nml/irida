@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -336,6 +337,11 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		mergeBtnOK.click();
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("merge-modal")));
 	}
+	
+	public void waitUntilCopyButtonEnabled() {
+		WebDriverWait wait = openToolsDropdownAndWait();
+		wait.until(ExpectedConditions.visibilityOf(copyBtn));
+	}
 
 	public void copySamples(String project, boolean owner) {
 		WebDriverWait wait = openToolsDropdownAndWait();
@@ -436,8 +442,12 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.visibilityOf(copySamplesModal));
 		enterSelect2Value(project);
 		
-		if(owner){
-			giveOwnerBtn.click();
+		if(owner) {
+			try {
+				giveOwnerBtn.click();
+			} catch (NoSuchElementException e) {
+				throw new GiveOwnerNotDisplayedException();
+			}
 		}
 		
 		wait.until(ExpectedConditions.elementToBeClickable(copyModalConfirmBtn));
@@ -464,5 +474,14 @@ public class ProjectSamplesPage extends ProjectPageBase {
 			}
 		}
 		return locked;
+	}
+	
+	/**
+	 * Exception which is thrown when attempting to give owner to a sample
+	 * during copy/move and button is not displayed. Used for verifying no give
+	 * owner button when copying remote samples.
+	 */
+	@SuppressWarnings("serial")
+	public static class GiveOwnerNotDisplayedException extends RuntimeException {
 	}
 }
