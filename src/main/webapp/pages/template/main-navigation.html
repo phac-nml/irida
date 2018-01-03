@@ -125,7 +125,7 @@
                             </li>
                             <li role="separator" class="divider"></li>
                             <li th:if="#{help.contact.email}">
-                                <a th:href="#{'mailto:' + help.contact.email}">
+                                <a th:href="'mailto:' + #{help.contact.email}">
                                     <i class="fa fa-envelope-o fa-fw spaced-right__sm" aria-hidden="true"></i>
                                     <th:block th:text="#{generic.irida.contact}"/>
                                 </a>
