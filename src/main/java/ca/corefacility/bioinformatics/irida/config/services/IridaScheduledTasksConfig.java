@@ -49,8 +49,7 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
  * 
  *
  */
-@Profile({ "prod", "dev" })
-//@Profile({ "prod" })
+@Profile({ "prod" })
 @Configuration
 @EnableScheduling
 public class IridaScheduledTasksConfig implements SchedulingConfigurer {

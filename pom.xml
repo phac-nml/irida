@@ -71,15 +71,7 @@
 		</repository>
 		<repository>
 			<id>clojars.org</id>
-			<url>http://clojars.org/repo</url>
-		</repository>
-		<repository>
-			<id>repo.spring.io-milestone</id>
-			<url>http://repo.spring.io/milestone/</url>
-		</repository>
-		<repository>
-			<id>central.maven.org-maven2</id>
-			<url>http://central.maven.org/maven2/</url>
+			<url>https://clojars.org/repo</url>
 		</repository>
 	</repositories>
 
@@ -593,13 +585,6 @@
 			<groupId>net.matlux</groupId>
 			<artifactId>jvm-breakglass</artifactId>
 			<version>0.0.8</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-devtools</artifactId>
-			<version>2.0.0.M5</version>
-			<optional>true</optional>
 		</dependency>
 	</dependencies>
 

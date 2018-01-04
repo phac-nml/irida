@@ -244,7 +244,7 @@ function JobErrorsController(analysisService) {
   vm.formatDate = function(j, attr) {
     try {
       if (j.hasOwnProperty(attr)) {
-        j[attr] =formatDate(j[attr]);
+        j[attr] = formatDate({ date: j[attr] });
       }
     } catch (e) {
       console.error(e);
