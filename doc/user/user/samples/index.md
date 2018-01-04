@@ -255,7 +255,7 @@ Alternatively, there is a dropdown next to the select all checkbox that allows y
 
 ### Moving samples between projects
 
-An alternative to [sharing samples between projects](#copying-samples-between-projects) is to **move** a sample between projects. Unlike sharing, when a sample is moved, the original sample is removed.
+An alternative to [sharing samples between projects](#sharing-samples-between-projects) is to **move** a sample between projects. Unlike sharing, when a sample is moved, the original sample is removed.
 
 Like sharing samples, you must be a project <img src="images/manager-icon.png" class="inline" alt="Manager role icon."> **Manager** on **both** the project that you are moving the sample *from*, and the project that you are moving the sample *to*.
 
