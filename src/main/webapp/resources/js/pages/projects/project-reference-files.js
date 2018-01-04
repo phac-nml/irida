@@ -1,5 +1,5 @@
-import angular from 'angular';
-import './../../modules/utilities/file.utils';
+import angular from "angular";
+import "./../../modules/utilities/file.utils";
 import { showNotification } from "../../modules/notifications";
 
 /**
@@ -9,24 +9,22 @@ import { showNotification } from "../../modules/notifications";
  * @constructor
  */
 function ProjectFileService($rootScope, $http) {
-  'use strict';
+  "use strict";
   const svc = this;
   svc.files = [];
 
   svc.getFiles = function getFiles() {
-    return $http.get(window.PAGE.urls.get)
-      .then(function(response) {
-        angular.copy(response.data.files, svc.files);
-      });
+    return $http.get(window.PAGE.urls.get).then(function(response) {
+      angular.copy(response.data.files, svc.files);
+    });
   };
 
-  $rootScope.$on('FILE_DELETED', function(e, args) {
-    const filtered = svc.files
-      .filter(file => (args.id !== file.id));
+  $rootScope.$on("FILE_DELETED", function(e, args) {
+    const filtered = svc.files.filter(file => args.id !== file.id);
     angular.copy(filtered, svc.files);
   });
 
-  $rootScope.$on('NEW_FILE', function(e, args) {
+  $rootScope.$on("NEW_FILE", function(e, args) {
     args.file.newFile = true;
     svc.files.push(args.file);
   });
@@ -40,13 +38,13 @@ function ProjectFileService($rootScope, $http) {
  * @constructor
  */
 function ReferenceFileService($rootScope, $uibModal, $http) {
-  'use strict';
+  "use strict";
   const svc = this;
 
   svc.deleteFile = function(file) {
     const modalInstance = $uibModal.open({
-      templateUrl: '/delete-modal.html',
-      controller: 'DeleteCtrl as dCtrl',
+      templateUrl: "/delete-modal.html",
+      controller: "DeleteCtrl as dCtrl",
       resolve: {
         file: function() {
           return file;
@@ -55,16 +53,18 @@ function ReferenceFileService($rootScope, $uibModal, $http) {
     });
 
     modalInstance.result.then(function() {
-      $http.post(window.PAGE.urls.remove, {
-        fileId: file.id,
-        projectId: window.project.id
-      }).then(function(response) {
-        showNotification({
-          text: response.data.msg,
-          type: response.data.result
+      $http
+        .post(window.PAGE.urls.remove, {
+          fileId: file.id,
+          projectId: window.project.id
+        })
+        .then(function(response) {
+          showNotification({
+            text: response.data.msg,
+            type: response.data.result
+          });
+          $rootScope.$broadcast("FILE_DELETED", { id: file.id });
         });
-        $rootScope.$broadcast('FILE_DELETED', {id: file.id});
-      });
     });
   };
 }
@@ -76,7 +76,7 @@ function ReferenceFileService($rootScope, $uibModal, $http) {
  * @constructor
  */
 function DeleteCtrl($uibModalInstance, file) {
-  'use strict';
+  "use strict";
   this.file = file;
 
   this.delete = function() {
@@ -95,14 +95,14 @@ function DeleteCtrl($uibModalInstance, file) {
  * @constructor
  */
 function FilesCtrl(ProjectFileService, projectFilesService) {
-  'use strict';
+  "use strict";
 
   this.getRowClass = function(file) {
-    let rowClass = '';
+    let rowClass = "";
     if (!angular.isNumber(file.size)) {
-      rowClass = 'danger';
+      rowClass = "danger";
     } else if (file.newFile) {
-      rowClass = 'success';
+      rowClass = "success";
     }
     return rowClass;
   };
@@ -136,12 +136,22 @@ function FileUploadCtrl($timeout, fileService) {
   };
 }
 
-const refModule = angular.module('References', ['file.utils'])
-  .service('ProjectFileService', ['$rootScope', '$http', ProjectFileService])
-  .service('ReferenceFileService', ['$rootScope', '$uibModal', '$http', ReferenceFileService])
-  .controller('FilesCtrl', ['ProjectFileService', 'ReferenceFileService', FilesCtrl])
-  .controller('DeleteCtrl', ['$uibModalInstance', 'file', DeleteCtrl])
-  .controller('FileUploadCtrl', ['$timeout', 'FileService', FileUploadCtrl])
+const refModule = angular
+  .module("References", ["file.utils"])
+  .service("ProjectFileService", ["$rootScope", "$http", ProjectFileService])
+  .service("ReferenceFileService", [
+    "$rootScope",
+    "$uibModal",
+    "$http",
+    ReferenceFileService
+  ])
+  .controller("FilesCtrl", [
+    "ProjectFileService",
+    "ReferenceFileService",
+    FilesCtrl
+  ])
+  .controller("DeleteCtrl", ["$uibModalInstance", "file", DeleteCtrl])
+  .controller("FileUploadCtrl", ["$timeout", "FileService", FileUploadCtrl])
   .name;
 
 angular.module("irida").requires.push(refModule);

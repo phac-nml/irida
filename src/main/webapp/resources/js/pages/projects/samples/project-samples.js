@@ -16,10 +16,7 @@ import {
   SampleDropdownButton,
   SampleExportButton
 } from "./SampleButtons";
-import {
-  FILTERS,
-  SAMPLE_EVENTS
-} from "./constants";
+import { FILTERS, SAMPLE_EVENTS } from "./constants";
 import { download } from "../../../utilities/file.utilities";
 import moment from "moment";
 import "../../../../sass/pages/project-samples.scss";
@@ -250,7 +247,7 @@ const config = Object.assign({}, tableConfig, {
         return createItemLink({
           url: `${window.TL.BASE_URL}projects/${full.projectId}/samples/${
             full.id
-            }`,
+          }`,
           label: full.sampleName,
           classes: ["t-sample-label"]
         });

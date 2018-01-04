@@ -227,7 +227,6 @@ const iridaAnalysis = angular
   .controller("ProjectShareController", [
     "AnalysisService",
     ProjectShareController
-  ])
-  .name;
+  ]).name;
 
 angular.module("irida").requires.push(iridaAnalysis);
