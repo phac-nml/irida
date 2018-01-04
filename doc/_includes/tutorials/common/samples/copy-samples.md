@@ -1,4 +1,4 @@
-Samples may be shared between projects. A sample that is shared into multiple projects is effectively *linked* between those projects -- the files contained within the sample are not physically duplicated, and any sample metadata changes in one project are reproduced in the sample for all project.
+Samples may be shared between projects. A sample that is shared into multiple projects is effectively *linked* between those projects -- the files contained within the sample are not physically duplicated, and any sample metadata changes in one project are reproduced in the sample for all projects.
 
 You must be a project **Manager** on **both** the project that you are sharing the sample *from*, and the project that you are sharing the sample *to*.
 
