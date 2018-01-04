@@ -8,6 +8,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -35,6 +37,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundExce
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErrorsService;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
@@ -379,6 +382,26 @@ public class AnalysisExecutionScheduledTaskImplIT {
 		assertEquals(1, submissionsFutureSet.size());
 		AnalysisSubmission returnedSubmission = submissionsFutureSet.iterator().next().get();
 		assertEquals(AnalysisState.ERROR, returnedSubmission.getAnalysisState());
+		Optional<List<JobError>> jobErrors = jobErrorRepository.findAllByAnalysisSubmission(
+				returnedSubmission);
+		assertTrue("There should be a JobError present", jobErrors.isPresent());
+
+		Object o = jobErrors.get();
+		Class<?> aClass = o.getClass();
+		assertTrue("JobErrorRepository.findAllByAnalysisSubmission returns a single JobError rather than a list if "
+						+ "there's only one JobError",
+				aClass == JobError.class);
+
+		JobError jobError = (JobError) o;
+		assertTrue("JobError should have some stderr message",
+				jobError.getStandardError() != null &&
+						!jobError.getStandardError().equals(""));
+		assertTrue("JobError should be triggered by 'IndexError: list index out of range'",
+				jobError.getStandardError().contains("IndexError: list index out of range"));
+		assertTrue("JobError tool ID should be 'Filter1'",
+				jobError.getToolId().equals("Filter1"));
+		assertTrue("JobError exit code should be '1'",
+				jobError.getExitCode() == 1);
 	}
 
 	/**

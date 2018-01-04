@@ -1,5 +1,6 @@
 import angular from "angular";
 import { showNotification } from "../../modules/notifications";
+import { formatDate } from "../../utilities/date-utilities";
 import "../../../sass/pages/analysis.scss";
 
 /**
@@ -64,18 +65,22 @@ function AnalysisService($http) {
     });
   };
 
-    svc.getJobErrors = function(vm) {
-      vm.is_in_progress = true;
-      return $http.get(window.PAGE.URLS.job_errors).then(function successCallback(x) {
+  svc.getJobErrors = function(vm) {
+    vm.is_in_progress = true;
+    return $http.get(window.PAGE.URLS.job_errors).then(
+      function successCallback(x) {
         vm.is_in_progress = false;
         return x.data;
-      }, function errorCallback(x) {
+      },
+      function errorCallback(x) {
         vm.is_in_progress = false;
-        console.error("Could not GET job error(s) from '" + page.URLS.job_errors + "'");
+        console.error(
+          "Could not GET job error(s) from '" + page.URLS.job_errors + "'"
+        );
         console.error(x);
-      });
-
-    };
+      }
+    );
+  };
 
   /**
    * Exported function to call the server for information about the current analysis.
@@ -203,65 +208,71 @@ function SistrController(analysisService) {
   });
 }
 
-  function JobErrorsController(analysisService) {
-    const vm = this;
-    vm.has_job_errors = false;
-    vm.is_in_progress = true;
-    vm.job_errors = [];
-    vm.sortLines = function(obj, attr) {
-      obj[attr] = obj[attr].split('\n').reverse().join('\n').trim();
+function JobErrorsController(analysisService) {
+  const vm = this;
+  vm.has_job_errors = false;
+  vm.is_in_progress = true;
+  vm.job_errors = [];
+  vm.sortLines = function(obj, attr) {
+    obj[attr] = obj[attr]
+      .split("\n")
+      .reverse()
+      .join("\n")
+      .trim();
+  };
+  vm.isLoading = function() {
+    return !vm.has_job_errors && vm.is_in_progress;
+  };
+  vm.hasNoJobErrorInfoAvailable = function() {
+    return !vm.has_job_errors && !vm.is_in_progress;
+  };
+  vm.jsonifyParameters = function(j) {
+    try {
+      if (j.hasOwnProperty("parameters")) {
+        j.parameters = JSON.parse(
+          j.parameters
+            .replace(/=/g, ":")
+            .replace(/(:)\s*([\w\-]+)/g, '$1"$2"')
+            .replace(/([\w|]+):/g, '"$1":')
+        );
+      }
+    } catch (e) {
+      console.error(e);
+      console.error("Could not JSONify 'parameters' for job error object");
     }
-    vm.isLoading = function() {
-      return !vm.has_job_errors && vm.is_in_progress;
+  };
+  vm.formatDate = function(j, attr) {
+    try {
+      if (j.hasOwnProperty(attr)) {
+        j[attr] =formatDate(j[attr]);
+      }
+    } catch (e) {
+      console.error(e);
+      console.error(
+        "Could not format '" + attr + "' of job error object as Date"
+      );
     }
-    vm.hasNoJobErrorInfoAvailable = function() {
-      return !vm.has_job_errors && !vm.is_in_progress;
+  };
+  analysisService.getJobErrors(vm).then(function(x) {
+    if (typeof x === "undefined" || x === null) {
+      return;
     }
-    vm.jsonifyParameters = function(j) {
-      try {
-        if (j.hasOwnProperty("parameters")) {
-          j.parameters = JSON.parse(j.parameters.replace(/=/g,':')
-                                     .replace(/(:)\s*([\w\-]+)/g, "\$1\"\$2\"")
-                                     .replace(/([\w\|]+):/g, '"\$1":'));
-        }
-      } catch (e) {
-        console.error(e);
-        console.error("Could not JSONify 'parameters' for job error object");
-      }
+    if (typeof x.job_errors === "undefined") {
+      return;
     }
-    vm.formatDate = function(j, attr) {
-      try {
-        if (j.hasOwnProperty(attr)) {
-          const t = new Date(j[attr]);
-          if (moment.isDate(t)) {
-            j[attr] = moment(t).format("lll");
-          }
-        }
-      } catch (e) {
-        console.error(e);
-        console.error("Could not format '" + attr + "' of job error object as Date");
-      }
+    if (x.job_errors.length === 0) {
+      return;
     }
-    analysisService.getJobErrors(vm).then(function(x) {
-      if (typeof x === "undefined" || x === null) {
-        return;
-      }
-      if (typeof x.job_errors === "undefined") {
-        return;
-      }
-      if (x.job_errors.length === 0) {
-        return;
-      }
-      vm.has_job_errors = true;
-      for (const j of x.job_errors) {
-        vm.formatDate(j, "createdDate");
-        vm.formatDate(j, "updatedDate");
-        vm.jsonifyParameters(j);
-      }
-      vm.job_errors = x.job_errors;
-      vm.is_in_progress = false;
-    });
-  }
+    vm.has_job_errors = true;
+    for (const j of x.job_errors) {
+      vm.formatDate(j, "createdDate");
+      vm.formatDate(j, "updatedDate");
+      vm.jsonifyParameters(j);
+    }
+    vm.job_errors = x.job_errors;
+    vm.is_in_progress = false;
+  });
+}
 
 const iridaAnalysis = angular
   .module("irida.analysis", ["ui.router", "subnav", "phylocanvas"])
@@ -306,7 +317,6 @@ const iridaAnalysis = angular
   .controller("ProjectShareController", [
     "AnalysisService",
     ProjectShareController
-  ])
-  .name;
+  ]).name;
 
 angular.module("irida").requires.push(iridaAnalysis);

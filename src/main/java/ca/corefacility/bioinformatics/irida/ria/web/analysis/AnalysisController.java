@@ -267,31 +267,6 @@ public class AnalysisController {
 
 		return "redirect:/analysis/" + submissionId;
 	}
-	//
-	//	private List<Map<String, Object>> getJobErrorsMaps(List<JobError> jobErrors) {
-	//		ArrayList<Object> out = new ArrayList<>();
-	//		for (JobError j : jobErrors) {
-	//			Map<String, Object> m = ImmutableMap.builder()
-	//					.put("id", j.getId())
-	//					.put("commandLine", j.getCommandLine())
-	//					.put("analysisSubmissionId", j.getAnalysisSubmission().getId())
-	//					.put("history_id", j.getHistoryId())
-	//					.put("createdDate", j.getCreatedDate())
-	//					.put("parameters", j.getParameters())
-	//					.put("exitCode", j.getExitCode())
-	//					.put("standardError", j.getStandardError())
-	//					.put("jobId", j.getJobId())
-	//					.put("provenanceId", j.getProvenanceId())
-	//					.put("provenanceUUID", j.getProvenanceUUID().toString())
-	//					.put("toolDescription", j.getToolDescription())
-	//					.put("toolId", j.getToolId())
-	//					.put("toolName", j.getToolName())
-	//					.put("toolVersion", j.getToolVersion())
-	//					.put("label", j.getLabel())
-	//					.put("updatedDate", j.getUpdatedDate());
-	//		}
-	//
-	//	}
 
 	@RequestMapping(value = "/ajax/{submissionId}/job-errors", method = RequestMethod.GET)
 	@ResponseBody
