@@ -289,22 +289,29 @@ public class RemoteAPIController extends BaseController {
 	 *            The ID of the api
 	 * @return "valid" or "invalid_token" message
 	 */
-//	@RequestMapping("/status/{apiId}")
-//	@ResponseBody
-//	public String checkApiStatus(@PathVariable Long apiId) {
-//		RemoteAPI api = remoteAPIService.read(apiId);
-//
-//		try {
-//			projectRemoteService.getServiceStatus(api);
-//			return VALID_OAUTH_CONNECTION;
-//		} catch (IridaOAuthException ex) {
-//			logger.debug("Can't connect to API: " + ex.getMessage());
-//			return INVALID_OAUTH_TOKEN;
-//		}
-//	}
-
 	@RequestMapping("/status/{apiId}")
+	@ResponseBody
 	public String checkApiStatus(@PathVariable Long apiId) {
+		RemoteAPI api = remoteAPIService.read(apiId);
+
+		try {
+			projectRemoteService.getServiceStatus(api);
+			return VALID_OAUTH_CONNECTION;
+		} catch (IridaOAuthException ex) {
+			logger.debug("Can't connect to API: " + ex.getMessage());
+			return INVALID_OAUTH_TOKEN;
+		}
+	}
+
+	/**
+	 * Check the currently logged in user's OAuth2 connection status to a given
+	 * API and return the proper html to the user.
+	 *
+	 * @param apiId The ID of the api
+	 * @return "valid" or "invalid_token" message
+	 */
+	@RequestMapping("/status/web/{apiId}")
+	public String checkWebApiStatus(@PathVariable Long apiId) {
 		RemoteAPI api = remoteAPIService.read(apiId);
 
 		try {

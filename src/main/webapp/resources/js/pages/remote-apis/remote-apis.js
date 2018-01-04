@@ -1,6 +1,6 @@
 function getApiStatus(apiId) {
   return $.ajax({
-    url: `${window.TL.BASE_URL}remote_api/status/${apiId}`,
+    url: `${window.TL.BASE_URL}remote_api/status/web/${apiId}`,
     type: "GET",
     dataType: "html"
   });
