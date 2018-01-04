@@ -18,7 +18,7 @@
 		<div style="height: 100%;" class="st-container" ng-class="{'cart-open':cart.show}">
 			<div class="st-content">
 				<div class="st-content-inner">
-					<nav th:replace="template/bootstrap :: #topnav"></nav>
+					<nav th:replace="template/main-navigation.html :: #topnav"></nav>
 					<div th:if="${crumbs != null and #lists.size(crumbs) > 1}" class="breadcrumbs">
 						<div class="container">
 							<ol>
