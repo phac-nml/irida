@@ -17,6 +17,7 @@ Changes
 * [UI]: Fixed issue where delete project button was always enabled, and created an error when clicked. (0.19.3)
 * [UI]: Clean up of the main navigation bar code, and removed its dependency on angular-ui.
 * [UI]: Fixed reflow layout of pipeline launch page.
+* [UI]: Changed the wording of 'copying' samples to 'sharing' samples.
 * [Developer]: Ran `prettier` on all javascript files within `resources/js`.
 
 0.18.0 to 0.19.0
