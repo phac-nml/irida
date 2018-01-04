@@ -1,4 +1,4 @@
-Samples may be shared between projects. A sample that is shared into multiple projects is effectively *linked* between those projects -- the files contained within the sample are not physically duplicated, and any sample metadata changes in one project are reproduced in the sample in the copied project.
+Samples may be shared between projects. A sample that is shared into multiple projects is effectively *linked* between those projects -- the files contained within the sample are not physically duplicated, and any sample metadata changes in one project are reproduced in the sample for all project.
 
 You must be a project **Manager** on **both** the project that you are sharing the sample *from*, and the project that you are sharing the sample *to*.
 
@@ -6,7 +6,7 @@ Start by [selecting the samples]({{ site.baseurl }}/user/user/samples/#selecting
 
 ![Share samples button.]({{ site.baseurl }}/images/tutorials/common/samples/copy-samples-button.png)
 
-In the dialog that appears you will be presented with a list of the samples that are going to be copied, and an option to choose the project that the samples should be copied to:
+In the dialog that appears you will be presented with a list of the samples that are going to be shared, and an option to choose the project that the samples should be shared to:
 
 ![Copy samples dialog.]({{ site.baseurl }}/images/tutorials/common/samples/copy-samples-dialog.png)
 
