@@ -19,6 +19,7 @@ Changes
 * [UI]: Fixed reflow layout of pipeline launch page.
 * [UI]: Changed the wording of 'copying' samples to 'sharing' samples.
 * [Developer]: Ran `prettier` on all javascript files within `resources/js`.
+* [Developer]: Ran `prettier` on all scss files within `resources/sass`.
 
 0.18.0 to 0.19.0
 ----------------
