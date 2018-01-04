@@ -126,7 +126,7 @@ public class ProjectSamplesControllerTest {
 		when(sampleService.readMultiple(any(Iterable.class))).thenReturn(sampleList);
 		when(projectService.moveSamples(oldProject, newProject, sampleList, owner)).thenReturn(joins);
 
-		Map<String, Object> result = controller.copySampleToProject(projectId, sampleIds, newProjectId,
+		Map<String, Object> result = controller.shareSampleToProject(projectId, sampleIds, newProjectId,
 				removeFromOriginal, true, Locale.US);
 
 		assertTrue(result.containsKey("result"));
@@ -141,7 +141,7 @@ public class ProjectSamplesControllerTest {
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testCopySampleToProject() {
+	public void testShareSampleToProject() {
 		Long projectId = 1L;
 		List<Long> sampleIds = ImmutableList.of(2L, 3L);
 		Long newProjectId = 4L;
@@ -158,19 +158,19 @@ public class ProjectSamplesControllerTest {
 		when(projectService.read(projectId)).thenReturn(oldProject);
 		when(projectService.read(newProjectId)).thenReturn(newProject);
 		when(sampleService.readMultiple(any(Iterable.class))).thenReturn(sampleList);
-		when(projectService.copySamples(oldProject, newProject, sampleList, owner)).thenReturn(joins);
+		when(projectService.shareSamples(oldProject, newProject, sampleList, owner)).thenReturn(joins);
 
-		controller.copySampleToProject(projectId, sampleIds, newProjectId, removeFromOriginal, true, Locale.US);
+		controller.shareSampleToProject(projectId, sampleIds, newProjectId, removeFromOriginal, true, Locale.US);
 
 		verify(projectService).read(projectId);
 		verify(projectService).read(newProjectId);
 
-		verify(projectService).copySamples(oldProject, newProject, sampleList, owner);
+		verify(projectService).shareSamples(oldProject, newProject, sampleList, owner);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testCopySampleToProjectSampleExists() {
+	public void testShareSampleToProjectSampleExists() {
 		Long projectId = 1L;
 		List<Long> sampleIds = ImmutableList.of(2L, 3L);
 		Long newProjectId = 4L;
@@ -186,11 +186,11 @@ public class ProjectSamplesControllerTest {
 		when(projectService.read(newProjectId)).thenReturn(newProject);
 		when(sampleService.readMultiple(any(Iterable.class))).thenReturn(sampleList);
 
-		when(projectService.copySamples(oldProject, newProject, sampleList, owner)).thenThrow(
+		when(projectService.shareSamples(oldProject, newProject, sampleList, owner)).thenThrow(
 				new EntityExistsException("that sample exists in the project"));
 
 
-		Map<String, Object> copySampleToProject = controller.copySampleToProject(projectId, sampleIds, newProjectId,
+		Map<String, Object> copySampleToProject = controller.shareSampleToProject(projectId, sampleIds, newProjectId,
 				removeFromOriginal, true, Locale.US);
 
 		assertTrue(copySampleToProject.containsKey("warnings"));

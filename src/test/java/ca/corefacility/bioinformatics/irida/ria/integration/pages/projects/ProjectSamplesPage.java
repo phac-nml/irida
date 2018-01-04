@@ -244,7 +244,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		return isAnchorElementEnabled(mergeBtn);
 	}
 
-	public boolean isCopyBtnEnabled() {
+	public boolean isShareBtnEnabled() {
 		return isAnchorElementEnabled(copyBtn);
 	}
 
@@ -338,17 +338,17 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("merge-modal")));
 	}
 	
-	public void waitUntilCopyButtonVisible() {
+	public void waitUntilShareButtonVisible() {
 		WebDriverWait wait = openToolsDropdownAndWait();
 		wait.until(ExpectedConditions.visibilityOf(copyBtn));
 	}
 
-	public void copySamples(String project, boolean owner) {
+	public void shareSamples(String project, boolean owner) {
 		WebDriverWait wait = openToolsDropdownAndWait();
 		wait.until(ExpectedConditions.visibilityOf(copyBtn));
 		
 		copyBtn.click();
-		copyMoveSamples(project, owner);
+		shareMoveSamples(project, owner);
 	}
 
 	public void moveSamples(String projectNum) {
@@ -356,7 +356,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.visibilityOf(moveBtn));
 		moveBtn.click();
 		// Setting owner to false because we removed the checkbox from the move.
-		copyMoveSamples(projectNum, false);
+		shareMoveSamples(projectNum, false);
 	}
 
 	private void openFilterModal() {
@@ -436,7 +436,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		select2Input.sendKeys(Keys.RETURN);
 	}
 
-	private void copyMoveSamples(String project, boolean owner) {
+	private void shareMoveSamples(String project, boolean owner) {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(ExpectedConditions.visibilityOf(copySamplesModal));
 		enterSelect2Value(project);

@@ -260,16 +260,16 @@ public class ProjectSamplesController {
 	}
 
 	/**
-	 * Create a modal dialogue for moving or copying {@link Sample} to another {@link Project}
+	 * Create a modal dialogue for moving or sharing {@link Sample} to another {@link Project}
 	 *
 	 * @param ids       {@link List} of identifiers for {@link Sample}s to copy or move.
 	 * @param projectId Identifier for the current {@link Project}
 	 * @param model     UI Model
-	 * @param move      Whether or not to display copy or move wording.
-	 * @return Path to copy or move modal template.
+	 * @param move      Whether or not to display share or move wording.
+	 * @return Path to share or move modal template.
 	 */
 	@RequestMapping(value = "/projects/{projectId}/templates/copy-move-modal", produces = MediaType.TEXT_HTML_VALUE)
-	public String getCopySamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, @PathVariable Long projectId,
+	public String getShareSamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, @PathVariable Long projectId,
 			Model model, @RequestParam(required = false) boolean move) {
 		Project project = projectService.read(projectId);
 		
@@ -552,10 +552,10 @@ public class ProjectSamplesController {
 	}
 
 	/**
-	 * Copy or move samples from one project to another
+	 * Share or move samples from one project to another
 	 *
 	 * @param projectId    The original project id
-	 * @param sampleIds    the sample identifiers to copy
+	 * @param sampleIds    the sample identifiers to share
 	 * @param newProjectId The new project id
 	 * @param remove       true/false whether to remove the samples from the original  project
 	 * @param giveOwner    whether to give ownership of the sample to the new project
@@ -564,7 +564,7 @@ public class ProjectSamplesController {
 	 */
 	@RequestMapping(value = "/projects/{projectId}/ajax/samples/copy", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> copySampleToProject(@PathVariable Long projectId,
+	public Map<String, Object> shareSampleToProject(@PathVariable Long projectId,
 			@RequestParam(value = "sampleIds[]") List<Long> sampleIds, @RequestParam Long newProjectId,
 			@RequestParam(required = false) boolean remove,
 			@RequestParam(required = false, defaultValue = "false") boolean giveOwner, Locale locale) {
@@ -582,7 +582,7 @@ public class ProjectSamplesController {
 			if (remove) {
 				successful = projectService.moveSamples(originalProject, newProject, Lists.newArrayList(samples), giveOwner);
 			} else {
-				successful = projectService.copySamples(originalProject, newProject, Lists.newArrayList(samples), giveOwner);
+				successful = projectService.shareSamples(originalProject, newProject, Lists.newArrayList(samples), giveOwner);
 			}
 
 		} catch (EntityExistsException ex) {

@@ -731,14 +731,14 @@ public class ProjectServiceImplIT {
 
 	@Test
 	@WithMockUser(username = "user1", roles = "USER")
-	public void testCopySamplesWithOwner() {
+	public void testShareSamplesWithOwner() {
 		Project source = projectService.read(2L);
 		Project destination = projectService.read(10L);
 
 		Sample sample1 = sampleService.read(1L);
 		Set<Sample> samples = Sets.newHashSet(sample1);
 
-		List<ProjectSampleJoin> copiedSamples = projectService.copySamples(source, destination, samples, true);
+		List<ProjectSampleJoin> copiedSamples = projectService.shareSamples(source, destination, samples, true);
 
 		assertEquals(samples.size(), copiedSamples.size());
 
@@ -777,7 +777,7 @@ public class ProjectServiceImplIT {
 
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "user1", roles = "USER")
-	public void testCopySamplesWithOwnerRemoteFail() {
+	public void testShareSamplesWithOwnerRemoteFail() {
 		Project source = projectService.read(11L);
 		Project destination = projectService.read(10L);
 
@@ -787,7 +787,7 @@ public class ProjectServiceImplIT {
 		Sample sample = sampleService.read(3L);
 		Set<Sample> samples = Sets.newHashSet(sample);
 
-		projectService.copySamples(source, destination, samples, true);
+		projectService.shareSamples(source, destination, samples, true);
 	}
 
 	@Test(expected = AccessDeniedException.class)
@@ -807,7 +807,7 @@ public class ProjectServiceImplIT {
 
 	@Test
 	@WithMockUser(username = "user1", roles = "USER")
-	public void testCopySamplesWithoutOwner() {
+	public void testShareSamplesWithoutOwner() {
 		Project source = projectService.read(2L);
 		Project destination = projectService.read(10L);
 
@@ -815,7 +815,7 @@ public class ProjectServiceImplIT {
 
 		Set<Sample> samples = samplesForProject.stream().map(j -> j.getObject()).collect(Collectors.toSet());
 
-		List<ProjectSampleJoin> copiedSamples = projectService.copySamples(source, destination, samples, false);
+		List<ProjectSampleJoin> copiedSamples = projectService.shareSamples(source, destination, samples, false);
 
 		assertEquals(samples.size(), copiedSamples.size());
 
@@ -858,7 +858,7 @@ public class ProjectServiceImplIT {
 
 	@Test
 	@WithMockUser(username = "user1", roles = "USER")
-	public void testCopySamplesWithoutOwnerRemote() {
+	public void testShareSamplesWithoutOwnerRemote() {
 		Project source = projectService.read(11L);
 		Project destination = projectService.read(10L);
 
@@ -868,7 +868,7 @@ public class ProjectServiceImplIT {
 		Sample sample = sampleService.read(3L);
 		Set<Sample> samples = Sets.newHashSet(sample);
 
-		List<ProjectSampleJoin> copiedSamples = projectService.copySamples(source, destination, samples, false);
+		List<ProjectSampleJoin> copiedSamples = projectService.shareSamples(source, destination, samples, false);
 
 		assertEquals(samples.size(), copiedSamples.size());
 
@@ -899,7 +899,7 @@ public class ProjectServiceImplIT {
 
 	@Test
 	@WithMockUser(username = "user1", roles = "USER")
-	public void testCopyLockedSamplesWithoutOwner() {
+	public void testShareLockedSamplesWithoutOwner() {
 		Project source = projectService.read(2L);
 		Project destination = projectService.read(10L);
 
@@ -907,7 +907,7 @@ public class ProjectServiceImplIT {
 
 		Set<Sample> samples = samplesForProject.stream().map(j -> j.getObject()).collect(Collectors.toSet());
 
-		List<ProjectSampleJoin> copiedSamples = projectService.copySamples(source, destination, samples, false);
+		List<ProjectSampleJoin> copiedSamples = projectService.shareSamples(source, destination, samples, false);
 
 		assertEquals(samples.size(), copiedSamples.size());
 
@@ -950,7 +950,7 @@ public class ProjectServiceImplIT {
 
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "user1", roles = "USER")
-	public void testCopyLockedSamplesWithOwnerFail() {
+	public void testShareLockedSamplesWithOwnerFail() {
 		Project source = projectService.read(2L);
 		Project destination = projectService.read(10L);
 
@@ -958,7 +958,7 @@ public class ProjectServiceImplIT {
 
 		Set<Sample> samples = samplesForProject.stream().map(j -> j.getObject()).collect(Collectors.toSet());
 
-		projectService.copySamples(source, destination, samples, true);
+		projectService.shareSamples(source, destination, samples, true);
 	}
 
 	@Test(expected = AccessDeniedException.class)
