@@ -11,7 +11,7 @@ import "../../vendor/plugins/jquery/select2.js";
  */
 const Select2Basic = () => {
   return {
-    restrict: 'A',
+    restrict: "A",
     link($scope, $elm) {
       const field = $elm[0];
       $(field).select2();
@@ -20,6 +20,5 @@ const Select2Basic = () => {
 };
 
 export const Select2BasicModule = angular
-  .module('select2.basic', [])
-  .directive('select2Basic', Select2Basic)
-  .name;
+  .module("select2.basic", [])
+  .directive("select2Basic", Select2Basic).name;
