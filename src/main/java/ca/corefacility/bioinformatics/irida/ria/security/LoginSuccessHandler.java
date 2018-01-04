@@ -8,11 +8,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 
 import com.timgroup.jgravatar.Gravatar;
 import com.timgroup.jgravatar.GravatarDefaultImage;
@@ -40,7 +40,7 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
 		User user = (User) authentication.getPrincipal();
 
 		// Add gravatar url as to the session for use in thymeleaf templates.
-		Gravatar gravatar = new Gravatar(30, GravatarRating.GENERAL_AUDIENCES, GravatarDefaultImage.IDENTICON);
+		Gravatar gravatar = new Gravatar(25, GravatarRating.GENERAL_AUDIENCES, GravatarDefaultImage.IDENTICON);
 		String gravatarUrl = gravatar.getUrl(user.getEmail());
 		session.setAttribute(GRAVATAR_ATTRIBUTE, gravatarUrl);
 
