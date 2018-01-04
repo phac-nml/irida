@@ -18,6 +18,7 @@ Changes
 * [UI]: Clean up of the main navigation bar code, and removed its dependency on angular-ui.
 * [UI]: Fixed reflow layout of pipeline launch page.
 * [UI]: Changed the wording of 'copying' samples to 'sharing' samples.
+* [UI]: Allow users to share (copy) samples from a remote project. Disabled menu items for move and merge.
 
 0.18.0 to 0.19.0
 ----------------
