@@ -308,24 +308,17 @@ public class RemoteAPIController extends BaseController {
 	 * API and return the proper html to the user.
 	 *
 	 * @param apiId The ID of the api
-	 * @return "valid" or "invalid_token" message
+	 * @return html fragment for current connection state.
 	 */
 	@RequestMapping("/status/web/{apiId}")
 	public String checkWebApiStatus(@PathVariable Long apiId) {
-		RemoteAPI api = remoteAPIService.read(apiId);
-
-		try {
-			projectRemoteService.getServiceStatus(api);
-			return "remote_apis/fragments.html :: #" + VALID_OAUTH_CONNECTION;
-		} catch (IridaOAuthException ex) {
-			logger.debug("Can't connect to API: " + ex.getMessage());
-			return "remote_apis/fragments.html :: #" + INVALID_OAUTH_TOKEN;
-		}
+		String status = checkApiStatus(apiId);
+		return "remote_apis/fragments.html :: #" + status;
 	}
 
 	@RequestMapping("/modal/{apiId}")
 	public String getApiConnectModal(@PathVariable Long apiId) {
-		return "remote_apis/fragments.html :: #" + "connect-modal";
+		return "remote_apis/fragments.html :: #connect-modal";
 	}
 
 	/**
