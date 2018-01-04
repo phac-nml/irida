@@ -30,7 +30,7 @@ public class PipelinesSelectionPage extends AbstractPage {
 	}
 
 	public boolean arePipelinesDisplayed() {
-		return driver.findElements(By.className("workflow")).size() > 0;
+		return driver.findElements(By.className("t-pipeline")).size() > 0;
 	}
 
 	public static void goToPhylogenomicsPipeline(WebDriver webDriver) {
