@@ -4,7 +4,7 @@
             <form id="js-copy-form">
                 <div class="modal-header">
                     <h3 class="modal-title">
-                        <i class="fa fa-fw" aria-hidden="true" th:classappend="${#strings.equalsIgnoreCase(type, 'copy')} ? 'fa-files-o' : 'fa-truck'"></i>
+                        <i class="fa fa-fw" aria-hidden="true" th:classappend="${#strings.equalsIgnoreCase(type, 'copy')} ? 'fa-share-alt' : 'fa-truck'"></i>
                         <th:block
                                 th:text="${total == 1} ? #{${prefix} + '.title-singular'} : #{${prefix} + '.title-plural'}"/>
                     </h3>
