@@ -279,7 +279,6 @@ public class ProjectSamplesControllerTest {
 		Direction order = Direction.ASC;
 		final Project p = new Project();
 
-		Principal principal = () -> USER_NAME;
 		User puser = new User(USER_NAME, null, null, null, null, null);
 		puser.setSystemRole(Role.ROLE_USER);
 		Page<Project> projects = new PageImpl<>(Lists.newArrayList(TestDataFactory.constructProject(), TestDataFactory.constructProject()));

@@ -248,7 +248,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.selectSample(0);
 		page.selectSample(1);
 
-		page.waitUntilCopyButtonEnabled();
+		page.waitUntilCopyButtonVisible();
 		assertTrue("Copy button should be enabled", page.isCopyBtnEnabled());
 		assertFalse("Move button should not be enabled", page.isMoveBtnEnabled());
 		assertFalse("Merge button should not be enabled", page.isMergeBtnEnabled());

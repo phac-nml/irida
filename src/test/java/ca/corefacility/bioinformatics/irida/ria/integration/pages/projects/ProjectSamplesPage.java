@@ -338,7 +338,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("merge-modal")));
 	}
 	
-	public void waitUntilCopyButtonEnabled() {
+	public void waitUntilCopyButtonVisible() {
 		WebDriverWait wait = openToolsDropdownAndWait();
 		wait.until(ExpectedConditions.visibilityOf(copyBtn));
 	}
@@ -431,7 +431,6 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		// Wait for select2 to be open properly.
 		waitForTime(500);
 		sendInputTextSlowly(value, select2Input);
-		WebDriverWait wait = new WebDriverWait(driver, 10);
 		// Wait needed to allow select2 to populate.
 		waitForTime(500);
 		select2Input.sendKeys(Keys.RETURN);
