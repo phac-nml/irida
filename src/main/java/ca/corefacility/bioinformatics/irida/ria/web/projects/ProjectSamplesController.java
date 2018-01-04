@@ -273,7 +273,7 @@ public class ProjectSamplesController {
 			Model model, @RequestParam(required = false) boolean move) {
 		Project project = projectService.read(projectId);
 		
-		model.addAllAttributes(generateCopyMoveSamplesContent(project, ids));
+		model.addAllAttributes(generateShareMoveSamplesContent(project, ids));
 		model.addAttribute("projectId", projectId);
 		model.addAttribute("type", move ? "move" : "copy");
 		model.addAttribute("isRemoteProject", project.isRemote());
@@ -327,15 +327,15 @@ public class ProjectSamplesController {
 	}
 
 	/**
-	 * Generate a {@link Map} of {@link Sample} to move or copy.
+	 * Generate a {@link Map} of {@link Sample} to move or share.
 	 *
 	 * @param project  The {@link Project}.
 	 * @param ids
 	 * 		{@link Long} of ids for {@link Sample}
 	 *
-	 * @return {@link Map} of samples to be moved or copied
+	 * @return {@link Map} of samples to be moved or shared.
 	 */
-	private Map<String, List<Sample>> generateCopyMoveSamplesContent(Project project, List<Long> ids) {
+	private Map<String, List<Sample>> generateShareMoveSamplesContent(Project project, List<Long> ids) {
 		Map<String, List<Sample>> model = new HashMap<>();
 		List<Sample> samples = new ArrayList<>();
 		List<Sample> extraSamples = new ArrayList<>();

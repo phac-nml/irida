@@ -426,7 +426,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		for (Sample sample : samples) {
 			ProjectSampleJoin newJoin = addSampleToProject(destination, sample, giveOwner);
 			
-			logger.trace("Copied sample " + sample.getId() + " to project " + destination.getId());
+			logger.trace("Shared sample " + sample.getId() + " to project " + destination.getId());
 
 			newJoins.add(newJoin);
 		}
