@@ -1,6 +1,7 @@
-.metadata-open .modal-content, .metadata-open .modal-dialog {
-  overflow: hidden!important;
-  padding: 0!important;
+.metadata-open .modal-content,
+.metadata-open .modal-dialog {
+  overflow: hidden !important;
+  padding: 0 !important;
 }
 
 .metadata-aside {
@@ -19,7 +20,7 @@
   line-height: 52px;
   vertical-align: middle;
   padding: 0 1rem;
-  background-color: rgba(53, 59, 67, 1.00);
+  background-color: rgba(53, 59, 67, 1);
 }
 
 .metadata-aside__switches {
