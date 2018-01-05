@@ -74,7 +74,6 @@ exports.lintJavaScript = () => ({
  * @returns {{plugins: *[]}}
  */
 exports.compressJavaScript = () => {
-  console.log(process.env);
   if (process.env.MIN_JS !== "false") {
     return { plugins: [new UglifyJsPlugin({ cache: true, parallel: true })] };
   }
