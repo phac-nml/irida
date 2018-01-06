@@ -98,12 +98,12 @@
 						</div>
 						<div th:if="${dynamicSourceRequired}" class="form-group"
 							 ng-repeat="dynamicSource in pipeline.dynamicSources.availableSettings">
-							<label class="col-sm-2 control-label">{{galaxyToolDataTable.label}}</label>
+							<label class="col-sm-2 control-label">{{dynamicSource.label}}</label>
 							<div class="col-sm-10">
-								<select id="{{galaxyToolDataTable.id}}" name="{{galaxyToolDataTable.label}}" class="form-control"
-										ng-model="pipeline.selectedGalaxyToolDataTableField"
-										ng-change="pipeline.galaxyToolDataTableFieldSelected('{{galaxyToolDataTable.id}}')"
-										ng-options="item.label for item in galaxyToolDataTable.parameters">
+								<select id="{{dynamicSource.id}}" name="{{dynamicSource.label}}" class="form-control"
+										ng-model="pipeline.selectedDynamicSource"
+										ng-change="pipeline.galaxyToolDataTableFieldSelected('{{dynamicSource.id}}')"
+										ng-options="item.label for item in dynamicSource.parameters">
 								</select>
 							</div>
 						</div>

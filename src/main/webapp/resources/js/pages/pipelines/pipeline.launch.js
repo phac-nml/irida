@@ -5,16 +5,16 @@
      * @param $http AngularJS http object
      * @param CartService a reference to the cart service (to clear it)
      * @param ParameterService for passing parameter information between modal and page
-     * @param GalaxyToolDataTableService for selecting parameters from a Galaxy Tool Data Table
+     * @param DynamicSourceService for selecting parameters from a Galaxy Tool Data Table
      * @constructor
      */
-    function PipelineController($scope, $http, CartService, ParameterService, GalaxyToolDataTableService) {
+    function PipelineController($scope, $http, CartService, ParameterService, DynamicSourceService) {
 	var vm = this;
 
 	vm.parameters = ParameterService.getOriginalSettings();
 	vm.selectedParameters = ParameterService.getSelectedParameters();
-	vm.galaxyToolDataTables = GalaxyToolDataTableService.getSettings();
-	vm.selectedGalaxyToolDataTableField = GalaxyToolDataTableService.getSelectedGalaxyToolDataTableField();
+	vm.dynamicSources = DynamicSourceService.getSettings();
+	vm.selectedDynamicSource = DynamicSourceService.getSelectedGalaxyToolDataTableField();
 
 	$scope.$on('PARAMETERS_SAVED', function () {
 	    vm.selectedParameters = ParameterService.getSelectedParameters();
@@ -44,7 +44,7 @@
          * from the drop-down.
          */
         vm.galaxyToolDataTableFieldSelected = function (galaxyToolDataTable) {
-            GalaxyToolDataTableService.setSelectedGalaxyToolDataTableField(galaxyToolDataTable, vm.selectedGalaxyToolDataTableField);
+            DynamicSourceService.setSelectedGalaxyToolDataTableField(galaxyToolDataTable, vm.selectedDynamicSource);
         };
 
 	/**
@@ -386,12 +386,12 @@
     /**
      * Service for handling Galaxy Tool Data Tables.
      */
-    function GalaxyToolDataTableService() {
+    function DynamicSourceService() {
         var svc = this;
 
         // Check to see if there are any tool data tables, if not put a default
-        if(page.pipeline.galaxyToolDataTables == null) {
-            page.pipeline.galaxyToolDataTables = [{
+        if(page.pipeline.dynamicSources == null) {
+            page.pipeline.dynamicSources = [{
                 id: "no_tool_data_tables",
                 label: "",
                 parameters: []
@@ -399,11 +399,11 @@
         }
 
         var settings = {};
-        if (page.pipeline.galaxyToolDataTables != null) {
+        if (page.pipeline.dynamicSources != null) {
             settings["currentSettings"] = {};
             settings["availableSettings"] = {};
-            for (var i = 0; i < page.pipeline.galaxyToolDataTables.length; i++) {
-                settings.availableSettings[page.pipeline.galaxyToolDataTables[i].id] = page.pipeline.galaxyToolDataTables[i];
+            for (var i = 0; i < page.pipeline.dynamicSources.length; i++) {
+                settings.availableSettings[page.pipeline.dynamicSources[i].id] = page.pipeline.dynamicSources[i];
             }
         }
 
@@ -462,12 +462,12 @@
   }
 
   const pipelineModule = ng.module('irida.pipelines', ['irida.cart', 'ngFileUpload'])
-		.controller('PipelineController', ['$rootScope', '$http', 'CartService', 'ParameterService', 'GalaxyToolDataTableService', PipelineController])
+		.controller('PipelineController', ['$rootScope', '$http', 'CartService', 'ParameterService', 'DynamicSourceService', PipelineController])
 		.controller('ParameterModalController', ["$uibModal", ParameterModalController])
 		.controller('ParameterController', ['$rootScope', '$http', '$uibModalInstance', 'ParameterService', ParameterController])
 		.controller('FileUploadCtrl', ['$rootScope', 'Upload', FileUploadCtrl])
 	        .service('ParameterService', [ParameterService])
-	        .service('GalaxyToolDataTableService', [GalaxyToolDataTableService])
+	        .service('DynamicSourceService', [DynamicSourceService])
 	  .name
 	;
 

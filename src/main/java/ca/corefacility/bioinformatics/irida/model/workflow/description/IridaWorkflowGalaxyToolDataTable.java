@@ -28,6 +28,12 @@ public class IridaWorkflowGalaxyToolDataTable {
     public IridaWorkflowGalaxyToolDataTable() {
     }
 
+    public IridaWorkflowGalaxyToolDataTable(String name, String displayColumn, String parameterColumn) {
+        this.name = name;
+        this.displayColumn = displayColumn;
+        this.parameterColumn = parameterColumn;
+    }
+
     /**
      * The name of the Galaxy Tool Data Table.
      *

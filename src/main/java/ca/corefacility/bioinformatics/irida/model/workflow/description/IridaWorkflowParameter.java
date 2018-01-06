@@ -34,7 +34,10 @@ public class IridaWorkflowParameter {
 	@XmlElements({
 			@XmlElement(name = "galaxyToolDataTable", type = IridaWorkflowDynamicSourceGalaxy.class),
 	})
-	public List<IridaWorkflowDynamicSource> dynamicSource;
+	// In order to satisfy the @XMLElementWrapper annotation we need to store dynamicSources in a
+	// collection type, but there should only be at most one <dynamicSource> element per <parameter> element
+	// in the workflow definition .xml file
+	private List<IridaWorkflowDynamicSourceGalaxy> dynamicSources;
 
 
 	@XmlElement(name = "toolParameter")
@@ -79,7 +82,7 @@ public class IridaWorkflowParameter {
 	 * @param toolParameters
 	 *            The tool parameters corresponding to this named parameter.
 	 */
-	public IridaWorkflowParameter(String name, Boolean required, List<IridaWorkflowDynamicSource> dynamicSource, List<IridaToolParameter> toolParameters ) {
+	public IridaWorkflowParameter(String name, Boolean required, List<IridaWorkflowDynamicSourceGalaxy> dynamicSources, List<IridaToolParameter> toolParameters ) {
 		checkNotNull(name, "name is null");
 		// checkNotNull(defaultValue, "defaultValue is null");
 		checkNotNull(toolParameters, "toolParameters is null");
@@ -88,7 +91,7 @@ public class IridaWorkflowParameter {
 		this.name = name;
 		this.required = required;
 		this.toolParameters = toolParameters;
-		this.dynamicSource = dynamicSource;
+		this.dynamicSources = dynamicSources;
 
 	}
 
@@ -141,17 +144,17 @@ public class IridaWorkflowParameter {
 	 * @return The dynamic source for this parameter.
 	 * @throws NullPointerException
 	 */
-	public List<IridaWorkflowDynamicSource> getDynamicSource() throws NullPointerException {
-		if (dynamicSource == null) {
+	public IridaWorkflowDynamicSourceGalaxy getDynamicSource() throws NullPointerException {
+		if (this.dynamicSources.get(0) == null) {
 			throw new NullPointerException("dynamicSource is null");
 		} else {
-			return dynamicSource;
+			return dynamicSources.get(0);
 		}
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(name, defaultValue, toolParameters, required, dynamicSource);
+		return Objects.hash(name, defaultValue, toolParameters, required, dynamicSources);
 	}
 
 	@Override
@@ -164,7 +167,7 @@ public class IridaWorkflowParameter {
 			return Objects.equals(name, other.name) && Objects.equals(defaultValue, other.defaultValue)
 					&& Objects.equals(toolParameters, other.toolParameters)
 					&& Objects.equals(required, other.required)
-			        && Objects.equals(dynamicSource, other.dynamicSource);
+			        && Objects.equals(dynamicSources, other.dynamicSources);
 		}
 
 		return false;
@@ -175,7 +178,7 @@ public class IridaWorkflowParameter {
 		if (defaultValue != null) {
 			return "IridaWorkflowParameter [name=" + name + ", defaultValue=" + defaultValue + "]";
 		} else {
-			return "IridaWorkflowParameter [name=" + name + ", dynamicSource=" + dynamicSource.toString() + "]";
+			return "IridaWorkflowParameter [name=" + name + ", dynamicSource=" + dynamicSources.get(0).toString() + "]";
 		}
 	}
 }
