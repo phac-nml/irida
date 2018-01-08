@@ -48,7 +48,8 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 		public ApplicationContextAwareSpringLiquibase(final ApplicationContext applicationContext) {
 			this.applicationContext = applicationContext;
 		}
-		
+
+		@Override
 		protected SpringResourceOpener createResourceOpener() {
 			return new ApplicationContextSpringResourceOpener(getChangeLog());
 		}

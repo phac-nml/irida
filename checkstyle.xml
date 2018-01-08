@@ -6,14 +6,14 @@
 <module name="Checker">
     <module name="TreeWalker">
         <module name="JavadocMethod">
-            <property name="scope" value="public"/>
+            <property name="scope" value="protected"/>
             <property name="allowMissingPropertyJavadoc" value="true"/>
             <property name="allowedAnnotations" value="Override, Bean"/>
             <property name="tokens" value="METHOD_DEF"/>
             <property name="ignoreMethodNamesRegex" value="^main$"/>
         </module>
         <module name="JavadocType">
-            <property name="scope" value="public"/>
+            <property name="scope" value="protected"/>
         </module>
     </module>
 </module>

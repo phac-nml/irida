@@ -52,14 +52,15 @@ import ca.corefacility.bioinformatics.irida.web.filter.UnauthenticatedAnonymousA
 
 /**
  * Configuration for web security using OAuth2
- * 
- *
  */
 @Configuration
 @EnableWebSecurity
 public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 	private static final Logger logger = LoggerFactory.getLogger(IridaWebSecurityConfig.class);
 
+	/**
+	 * OAuth Resource Server config for IRIDA
+	 */
 	@Configuration
 	@EnableResourceServer
 	@ComponentScan(basePackages = "ca.corefacility.bioinformatics.irida.repositories.remote")
@@ -127,6 +128,9 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 		}
 	}
 
+	/**
+	 * Authorization server config for IRIDA
+	 */
 	protected static class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
 
 		@Autowired
@@ -174,6 +178,9 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	}
 
+	/**
+	 * UI security config for IRIDA
+	 */
 	@Configuration
 	@Order(Ordered.HIGHEST_PRECEDENCE + 1)
 	protected static class UISecurityConfig extends WebSecurityConfigurerAdapter {

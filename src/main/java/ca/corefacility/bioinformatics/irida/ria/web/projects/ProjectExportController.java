@@ -356,6 +356,9 @@ public class ProjectExportController {
 
 	}
 
+	/**
+	 * Properties of a NCBI BioSample being exported
+	 */
 	protected static class BioSampleBody {
 		@JsonProperty
 		String bioSample;
