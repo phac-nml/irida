@@ -8,9 +8,11 @@ const $nameFilter = $("#js-name");
 const $dateRangeFilter = $("#js-daterange");
 
 function formatDateRangeInput(start, end) {
-  $dateRangeFilter.val(`${start.format(
-    window.PAGE.i18n.dateFilter.format
-  )} - ${end.format(window.PAGE.i18n.dateFilter.format)}`);
+  $dateRangeFilter.val(
+    `${start.format(window.PAGE.i18n.dateFilter.format)} - ${end.format(
+      window.PAGE.i18n.dateFilter.format
+    )}`
+  );
 }
 
 /*
@@ -60,11 +62,11 @@ Initialize the daterange picker if valiues were already set
  */
 const startInputVal = $("[name=startDate]").val();
 const endInputVal = $("[name=endDate]").val();
-if(!isNaN(Date.parse(startInputVal)) || !isNaN(Date.parse(endInputVal))) {
+if (!isNaN(Date.parse(startInputVal)) || !isNaN(Date.parse(endInputVal))) {
   const start = moment(new Date(startInputVal));
-  $dateRangeFilter.data('daterangepicker').setStartDate(start);
+  $dateRangeFilter.data("daterangepicker").setStartDate(start);
   const end = moment(new Date(endInputVal));
-  $dateRangeFilter.data('daterangepicker').setEndDate(end);
+  $dateRangeFilter.data("daterangepicker").setEndDate(end);
   formatDateRangeInput(start, end);
 }
 

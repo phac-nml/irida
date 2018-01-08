@@ -1,5 +1,5 @@
-import angular from 'angular';
-import {TREE} from './../../constants';
+import angular from "angular";
+import { TREE } from "./../../constants";
 
 /**
  * Angular controller for export phylocanvas as SVG
@@ -14,16 +14,13 @@ function exportSVGController($rootScope) {
   };
 }
 
-exportSVGController.$inject = [
-  '$rootScope'
-];
+exportSVGController.$inject = ["$rootScope"];
 
 const exportSVGComponent = {
-  templateUrl: 'export-svg-component.tmpl.html',
+  templateUrl: "export-svg-component.tmpl.html",
   controller: exportSVGController
 };
 
 export const ExportSVG = angular
-  .module('irida.vis.exportSVG', [])
-  .component('exportSvgComponent', exportSVGComponent)
-  .name;
+  .module("irida.vis.exportSVG", [])
+  .component("exportSvgComponent", exportSVGComponent).name;
