@@ -9,6 +9,9 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.project.UserGroup
 import ca.corefacility.bioinformatics.irida.repositories.user.UserGroupJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 
+/**
+ * Permission checking if a user can update local project settings
+ */
 @Component
 public class ManageLocalProjectSettingsPermission extends ModifyProjectPermission {
 	

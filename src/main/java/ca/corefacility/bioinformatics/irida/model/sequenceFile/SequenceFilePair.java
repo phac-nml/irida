@@ -33,6 +33,9 @@ import com.google.common.collect.Lists;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
 
+/**
+ * A pair of sequence files in forward/reverse orientation.
+ */
 @Entity
 @Table(name = "sequence_file_pair")
 @EntityListeners(AuditingEntityListener.class)

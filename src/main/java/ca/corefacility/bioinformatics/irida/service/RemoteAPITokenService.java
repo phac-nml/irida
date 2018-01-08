@@ -7,6 +7,9 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
 
+/**
+ * Service for saving and reading tokens for Remote APIs
+ */
 public interface RemoteAPITokenService {
 	/**
 	 * Add a token to the store for a given service

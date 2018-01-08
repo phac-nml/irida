@@ -56,6 +56,9 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
+/**
+ * Controller for handling interactions with samples in a project
+ */
 @Controller
 public class ProjectSamplesController {
 	// From configuration.properties

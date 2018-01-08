@@ -36,6 +36,9 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
+/**
+ * Handles requests for the metadata in a project
+ */
 @Controller
 @RequestMapping("/projects/{projectId}/linelist")
 public class ProjectLineListController {

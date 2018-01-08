@@ -32,6 +32,9 @@ import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
+/**
+ * Handles basic settings pages for a project
+ */
 @Controller
 @RequestMapping("/projects/{projectId}/settings")
 public class ProjectSettingsController {

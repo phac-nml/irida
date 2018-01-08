@@ -259,19 +259,18 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 	public WebResponseExceptionTranslator exceptionTranslator() {
 		return new CustomOAuth2ExceptionTranslator();
 	}
-	
+
 	/**
 	 * Forcibly set the exception translator on the `authenticationEntryPoint`
 	 * so that we can supply our own errors on authentication failure. The
 	 * `authenticationEntryPoint` field on
 	 * {@link AbstractOAuth2SecurityExceptionHandler} is marked `private`, and
 	 * is not accessible for customizing.
-	 * 
-	 * @param configurer
-	 *            the instance of the configurer that we're customizing
-	 * @param exceptionTranslator
-	 *            the {@link WebResponseExceptionTranslator} that we want to
-	 *            set.
+	 *
+	 * @param configurer          the instance of the configurer that we're customizing
+	 * @param exceptionTranslator the {@link WebResponseExceptionTranslator} that we want to
+	 *                            set.
+	 * @param <T>                 The type of security configurer
 	 */
 	private static <T> void forceExceptionTranslator(final T configurer,
 			final WebResponseExceptionTranslator exceptionTranslator) {

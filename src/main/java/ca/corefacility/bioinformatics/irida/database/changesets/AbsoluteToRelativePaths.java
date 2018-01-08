@@ -24,6 +24,9 @@ import liquibase.resource.ResourceAccessor;
 import liquibase.statement.SqlStatement;
 import liquibase.statement.core.RawSqlStatement;
 
+/**
+ * Custom SQL change converting absolute paths to relative in the database
+ */
 public class AbsoluteToRelativePaths implements CustomSqlChange {
 
 	private static final Logger logger = LoggerFactory.getLogger(AbsoluteToRelativePaths.class);

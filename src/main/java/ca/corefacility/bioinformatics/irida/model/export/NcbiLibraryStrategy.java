@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.model.export;
 
+/**
+ * Library strategy of an ncbi export
+ */
 public enum NcbiLibraryStrategy {
 
 	WGS("WGS"),

@@ -111,6 +111,9 @@ public final class UserGroupJoin implements Join<User, UserGroup> {
 		return false;
 	}
 
+	/**
+	 * The role of a user in the group
+	 */
 	public enum UserGroupRole {
 		GROUP_OWNER, GROUP_MEMBER;
 

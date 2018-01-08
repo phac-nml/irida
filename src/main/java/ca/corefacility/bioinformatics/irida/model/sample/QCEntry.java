@@ -97,10 +97,16 @@ public abstract class QCEntry {
 	 */
 	public abstract QCEntryStatus getStatus();
 
+	/**
+	 * The type of {@link QCEntry}
+	 */
 	public enum QCEntryType {
 		PROCESSING, COVERAGE
 	}
 
+	/**
+	 * Status of a {@link QCEntry}, whether checks are positive, negative, or can't be calculated.
+	 */
 	public enum QCEntryStatus {
 		POSITIVE("POSITIVE"), NEGATIVE("NEGATIVE"), UNAVAILABLE("UNAVAILABLE");
 

@@ -28,6 +28,9 @@ import ca.corefacility.bioinformatics.irida.repositories.RemoteApiTokenRepositor
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 
+/**
+ * Service implementation for storing and reading remote api tokens
+ */
 @Service
 public class RemoteAPITokenServiceImpl implements RemoteAPITokenService {
 	private static final Logger logger = LoggerFactory.getLogger(RemoteAPITokenServiceImpl.class);

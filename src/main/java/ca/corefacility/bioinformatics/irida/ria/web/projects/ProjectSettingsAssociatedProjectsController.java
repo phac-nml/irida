@@ -40,6 +40,9 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
+/**
+ * Controller for handling associated projects in a project
+ */
 @Controller
 @RequestMapping("/projects/{projectId}/settings/associated")
 @Scope("session")

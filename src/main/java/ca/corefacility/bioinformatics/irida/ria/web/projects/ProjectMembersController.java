@@ -35,8 +35,6 @@ import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for handling project/members views and functions
- * 
- *
  */
 @Controller
 @RequestMapping("/projects")
@@ -206,11 +204,11 @@ public class ProjectMembersController {
 
 	/**
 	 * Remove a user from a project
-	 * 
-	 * @param projectId
-	 *            The project to remove from
-	 * @param userId
-	 *            The user to remove
+	 *
+	 * @param projectId The project to remove from
+	 * @param userId    The user to remove
+	 * @param locale    The locale of the logged in user
+	 * @return Success or failure message if user was removed
 	 */
 	@RequestMapping(path = "{projectId}/settings/members/{userId}", method = RequestMethod.DELETE)
 	@ResponseBody

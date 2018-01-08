@@ -31,6 +31,9 @@ public @interface ValidSampleName {
 
 	Class<? extends Payload>[] payload() default {};
 
+	/**
+	 * Characters not allowed in a sample name
+	 */
 	public static class ValidSampleNameBlacklist {
 		public static final char[] BLACKLIST = { '\'', '.', ' ', '\t' };
 	}

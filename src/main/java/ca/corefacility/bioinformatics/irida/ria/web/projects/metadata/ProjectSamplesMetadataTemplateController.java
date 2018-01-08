@@ -31,6 +31,9 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUt
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 
+/**
+ * Handles requests for {@link MetadataTemplate}s in a {@link Project}
+ */
 @Controller
 @RequestMapping("/projects/{projectId}/metadata-templates")
 public class ProjectSamplesMetadataTemplateController {

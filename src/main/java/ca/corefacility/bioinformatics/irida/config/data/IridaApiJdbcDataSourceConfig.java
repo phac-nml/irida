@@ -21,6 +21,9 @@ import org.springframework.util.StringUtils;
 
 import liquibase.integration.spring.SpringLiquibase;
 
+/**
+ * Configuration for IRIDA's JDBC Datasource
+ */
 @Configuration
 @Profile({ "dev", "prod", "it" })
 public class IridaApiJdbcDataSourceConfig implements DataConfig {

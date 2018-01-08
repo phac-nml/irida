@@ -107,6 +107,9 @@ public class NcbiBioSampleFiles {
 		this.libraryConstructionProtocol = library_construction_protocol;
 	}
 
+	/**
+	 * Builder class for {@link NcbiBioSampleFiles}
+	 */
 	public static class Builder {
 		private String bioSample;
 
