@@ -66,6 +66,7 @@ function events(svc, $compile) {
         function getEvents() {
           svc.getEvents($scope.url, vm.size).then(function(data) {
             $element.html($compile(data)($scope));
+            $('[data-toggle="tooltip"]').tooltip();
           });
         }
 
