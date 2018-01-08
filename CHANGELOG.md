@@ -4,15 +4,29 @@ Changes
 0.19.0 to 0.20.0
 ----------------
 * [Developer]: Fixed exception being thrown related to permission denied for updating samples when a normal user (collaborator on a project) runs the assembly pipeline (0.19.1).
+* [UI]: Allowing admins to manually prioritize high importance analyses.
+* [Developer]: Removed dandelion from project > samples page.
 * [UI]: Fixed issue where Projects table could not be exported (0.19.2).
 * [UI]: Fixed user menu icons misaligning in Firefox (0.19.2).
+* [Developer]: Updated front end templating engine to Thymeleaf v3.
+* [Administration]: Added option to expire passwords after a configured number of days.  Set `security.password.expiry` in `/etc/irida/irida.conf` to configure.
+* [Administration]: Limiting users from reusing passwords.
+* [Developer]: Updated webpack compile path to be `resources/dist`.
+* [Developer]: Webpack now extracts `css` / `scss` into its own bundles.
+* [UI]: Added minification to production javascript.
 * [UI]: Fixed issue where delete project button was always enabled, and created an error when clicked. (0.19.3)
-* [UI]: Fixed issue where all activities page could not be displayed. (0.19.4)
-* [UI]: Fixed issue where time stamps where not displayed on activities pages. (0.19.4)
+* [UI]: Clean up of the main navigation bar code, and removed its dependency on angular-ui.
+* [UI]: Fixed reflow layout of pipeline launch page.
+* [UI]: Changed the wording of 'copying' samples to 'sharing' samples.
+* [Developer]: Ran `prettier` on all javascript files within `resources/js`.
+* [Developer]: Ran `prettier` on all scss files within `resources/sass`.
+* [Developer]: Add a git pre-commit hook to ensure `prettier` formatting.
+* [UI]: Fixed issue where all activities page could not be displayed.
+* [UI]: Fixed issue where time stamps where not displayed on activities pages.
 
 0.18.0 to 0.19.0
 ----------------
-* [Developer] Removed the requirement for pipeline developers to add an `Analysis` subclass and database tables for pipelines.  All pipeline results can now be stored in the `Analysis` class.
+* [Developer]: Removed the requirement for pipeline developers to add an `Analysis` subclass and database tables for pipelines.  All pipeline results can now be stored in the `Analysis` class.
 * [Developer]: Fixed issue where bootstrap was being loaded twice onto the page. (0.18.1)
 * [UI]: Fixed URL for concatenation of sample sequence files. (0.18.1)
 * [Developer]: Removed dandelion from: Announcements, Cart, Sequencing Runs, Login, Project Settings - Landing, Events, Create Sample, Line List, Announcements - Create & Read, Livestampjs, Pipelines Launch, lodash, NCBI Export Page, Session Handler, Project Members and Groups Server Side,  NCBI export lists, Groups Listing, Group Members.

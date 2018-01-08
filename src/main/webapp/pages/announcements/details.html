@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns:data="http://www.w3.org/1999/xhtml"
-      layout:decorator="template/page">
+      data-layout-decorate="~{template/page}">
 
 <head>
     <title th:text="#{announcement.admin-menu}">THIS IS SOMETHING WRONG</title>
+    <link rel="stylesheet" th:href="@{/resources/dist/css/announcement-users.bundle.css}">
     <script th:inline="javascript">
         var PAGE = {
           urls: {
@@ -77,7 +78,7 @@
 
 </div>
 <th:block layout:fragment="scripts">
-    <script th:src="@{/resources/js/build/announcement-users.bundle.js}"></script>
+    <script th:src="@{/resources/dist/js/announcement-users.bundle.js}"></script>
 </th:block>
 </body>
 </html>

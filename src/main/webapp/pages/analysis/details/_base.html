@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="template/page">
+      data-layout-decorate="~{template/page}">
 <head>
-  <link rel="stylesheet" th:href="@{/resources/css/pages/analyses.css}"/>
-  <link rel="stylesheet" th:href="@{/resources/css/pages/sample_files.css}" />
+  <link rel="stylesheet" th:href="@{/resources/dist/css/analysis.bundle.css}">
+  <link rel="stylesheet" th:href="@{/resources/dist/css/sample-files.bundle.css}">
   <style>
     .analysis-details .sidebar__heading {
       transition: all 0.5s ease;
     }
   </style>
   <script th:inline="javascript">
-    window.dependencies = ['irida.analysis'];
     var PAGE = {
       URLS: {
         download: /*[[@{/analysis/ajax/download/}]]*/ '',
@@ -71,6 +70,13 @@
             <div th:text="#{iridaThing.timestamp}">Created</div>
             <div class="sidebar__value" th:text="${#calendars.format(analysisSubmission.getCreatedDate(), 'dd MMM yyyy')}"></div>
           </div>
+          <div class="sidebar__item" sec:authorize="hasRole('ROLE_ADMIN')">
+            <div class="sidebar__icon">
+              <i class="fa fa-sort-numeric-asc" aria-hidden="true"></i>
+            </div>
+            <div th:text="#{analysis.details.priority}">_Priority_</div>
+            <div class="sidebar__value" th:text="${analysisSubmission.priority}">_High_</div>
+          </div>
         </div>
       </div>
 
@@ -108,7 +114,7 @@
     <script th:src="@{/resources/vendor/PhyloCanvas/PhyloCanvas.js}"></script>
     <script th:src="@{/resources/js/modules/phylocanvas/PhyloCanvasDirective.js}"></script>
     <script th:src="@{/resources/js/modules/navs/SubNavDirective.js}"></script>
-    <script th:src="@{/resources/js/pages/analysis/analysis.js}"></script>
+    <script th:src="@{/resources/dist/js/analysis.bundle.js}"></script>
   </th:block>
 </body>
 

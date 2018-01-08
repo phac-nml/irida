@@ -1,4 +1,4 @@
-import "../../../css/pages/analyses-list.css";
+import "../../../sass/pages/analyses-list.scss";
 import "../../vendor/datatables/datatables";
 import $ from "jquery";
 import {
@@ -16,6 +16,7 @@ import {
   getHumanizedDuration
 } from "../../utilities/date-utilities";
 import { deleteAnalysis } from "../analysis/analysis-service";
+import { showNotification } from "../../modules/notifications";
 
 /*
 Get the table headers and create a look up table for them.
@@ -202,20 +203,23 @@ $("#deleteConfirmModal")
   .on("show.bs.modal", function(e) {
     const button = $(e.relatedTarget); // The button that triggered the modal.
 
-    $(this).find("#delete-analysis-button").off("click").on("click", () => {
-      deleteAnalysis({ id: button.data("id") }).then(
-        result => {
-          window.notifications.show({ msg: result.result });
-          table.ajax.reload();
-        },
-        () => {
-          window.notifications.show({
-            msg: window.PAGE.i18n.unexpectedDeleteError,
-            type: "error"
-          });
-        }
-      );
-    });
+    $(this)
+      .find("#delete-analysis-button")
+      .off("click")
+      .on("click", () => {
+        deleteAnalysis({ id: button.data("id") }).then(
+          result => {
+            showNotification({ text: result.result });
+            table.ajax.reload();
+          },
+          () => {
+            showNotification({
+              text: window.PAGE.i18n.unexpectedDeleteError,
+              type: "error"
+            });
+          }
+        );
+      });
   });
 
 // Set up clear filters button
@@ -238,12 +242,15 @@ $("#filterModal")
   .on("show.bs.modal", function() {
     // When the filter modal is opened, set up the click
     // handlers for all filter properties.
-    $(this).find("#filterAnalysesBtn").off("click").on("click", () => {
-      const name = nameFilter.value;
-      const state = stateFilter.value;
-      const workflow = workflowFilter.value;
-      setFilterState(name, state, workflow);
-    });
+    $(this)
+      .find("#filterAnalysesBtn")
+      .off("click")
+      .on("click", () => {
+        const name = nameFilter.value;
+        const state = stateFilter.value;
+        const workflow = workflowFilter.value;
+        setFilterState(name, state, workflow);
+      });
   });
 
 /**
@@ -256,5 +263,7 @@ $("#filterModal")
   $(document).remove($wrapper);
 
   // Adjust the default search field;
-  $("#analyses_filter").parent().append($btn);
+  $("#analyses_filter")
+    .parent()
+    .append($btn);
 })();

@@ -1,4 +1,4 @@
-import {METADATA, TEMPLATES, TREE} from './../../constants';
+import { METADATA, TEMPLATES, TREE } from "./../../constants";
 
 class AppController {
   constructor($scope) {
@@ -36,12 +36,10 @@ class AppController {
   }
 }
 
-AppController.$inject = [
-  '$scope'
-];
+AppController.$inject = ["$scope"];
 
 export const AppComponent = {
   transclude: true,
   controller: AppController,
-  templateUrl: 'app-component.tmpl.html'
+  templateUrl: "app-component.tmpl.html"
 };

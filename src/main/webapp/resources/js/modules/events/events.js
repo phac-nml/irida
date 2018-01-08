@@ -1,6 +1,6 @@
 import angular from "angular";
 import "@bassettsj/livestamp";
-import "./../../../css/modules/events.css";
+import "../../../sass/modules/events.scss";
 
 /**
  * Service to get events DOM from server.
@@ -18,7 +18,7 @@ function EventsService($http) {
   function getEvents(url, size = 10) {
     return $http
       .get(url, {
-        params: {size},
+        params: { size },
         headers: {
           Accept: "text/html"
         }
@@ -45,29 +45,33 @@ function events(svc, $compile) {
     },
     replace: true,
     controllerAs: "eventsCtrl",
-    controller: function ($scope, $element) {
-      const vm = this;
+    controller: [
+      "$scope",
+      "$element",
+      function($scope, $element) {
+        const vm = this;
 
-      vm.size = 10;
-      $scope.$watch(
-        function () {
-          return vm.size;
-        },
-        function (n, o) {
-          if (n !== o) {
-            getEvents();
+        vm.size = 10;
+        $scope.$watch(
+          function() {
+            return vm.size;
+          },
+          function(n, o) {
+            if (n !== o) {
+              getEvents();
+            }
           }
+        );
+
+        function getEvents() {
+          svc.getEvents($scope.url, vm.size).then(function(data) {
+            $element.html($compile(data)($scope));
+          });
         }
-      );
 
-      function getEvents() {
-        svc.getEvents($scope.url, vm.size).then(function (data) {
-          $element.html($compile(data)($scope));
-        });
+        getEvents();
       }
-
-      getEvents();
-    }
+    ]
   };
 }
 

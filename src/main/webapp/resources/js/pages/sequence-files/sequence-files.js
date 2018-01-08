@@ -10,10 +10,12 @@
     };
   }
 
-  ng
+  const sequenceFilesModule = ng
     .module("irida.sequence-files", ["bootstrapLightbox"])
     .config(function(LightboxProvider) {
       LightboxProvider.templateUrl = "lightbox.html";
     })
-    .controller("FastQCController", ["Lightbox", FastQCController]);
+    .controller("FastQCController", ["Lightbox", FastQCController]).name;
+
+  angular.module("irida").requires.push(sequenceFilesModule);
 })(window.angular, window.PAGE);
