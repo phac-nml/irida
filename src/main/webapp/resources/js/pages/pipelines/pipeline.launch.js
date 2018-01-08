@@ -93,16 +93,16 @@
 		});
 
 		var currentSettings = ParameterService.getSelectedParameters().currentSettings;
-		var currentGalaxyToolDataTableSettings = GalaxyToolDataTableService.getSettings().currentSettings;
+		var currentDynamicSourceSettings = DynamicSourceService.getSettings().currentSettings;
 		var selectedParameters = {
 		    "id"        : currentSettings.id,
 		    "parameters": currentSettings.parameters
 		};
-		if (Object.keys(currentGalaxyToolDataTableSettings).length > 0) {
-		    var galaxyToolDataTableParameters = Object.values(currentGalaxyToolDataTableSettings).map(
+		if (Object.keys(currentDynamicSourceSettings).length > 0) {
+		    var dynamicSourceParameters = Object.values(currentDynamicSourceSettings).map(
                         ({label, value, name}) => ({label, value, name})
                     );
-            selectedParameters.parameters = selectedParameters.parameters.concat(galaxyToolDataTableParameters);
+            selectedParameters.parameters = selectedParameters.parameters.concat(dynamicSourceParameters);
 		}
 		// Create the parameter object;
 		var params = {};

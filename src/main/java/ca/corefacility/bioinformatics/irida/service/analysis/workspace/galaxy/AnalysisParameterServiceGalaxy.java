@@ -74,9 +74,16 @@ public class AnalysisParameterServiceGalaxy implements AnalysisParameterService<
 							+ iridaParameter.getDefaultValue());
 				} else {
 					if (useDefaultValue(parameters, parameterName)) {
-						value = iridaParameter.getDefaultValue();
-						logger.debug("Parameter with name=" + parameterName + ", for workflow=" + iridaWorkflow
-								+ ", has no value set, using defaultValue=" + value);
+						try {
+							value = iridaParameter.getDefaultValue();
+						} catch (NullPointerException e) {
+							logger.debug("Parameter with name=" + parameterName + ", for workflow=" + iridaWorkflow
+									+ ", has no default value");
+						}
+						if (value != null) {
+							logger.debug("Parameter with name=" + parameterName + ", for workflow=" + iridaWorkflow
+									+ ", has no value set, using defaultValue=" + value);
+						}
 					}
 
 					for (IridaToolParameter iridaToolParameter : iridaParameter.getToolParameters()) {
