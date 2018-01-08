@@ -1,12 +1,9 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Future;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,14 +26,6 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTa
 import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 
-import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
-import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
-import com.github.jmchilton.blend4j.galaxy.JobsClient;
-import com.github.jmchilton.blend4j.galaxy.ToolsClient;
-import com.github.jmchilton.blend4j.galaxy.beans.HistoryContentsProvenance;
-import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
-import com.github.jmchilton.blend4j.galaxy.beans.JobDetails;
-import com.github.jmchilton.blend4j.galaxy.beans.Tool;
 import com.google.common.collect.Sets;
 
 /**
@@ -201,7 +190,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	 * @param analysisSubmission {@link AnalysisSubmission} object to get and save {@link JobError}s for
 	 */
 	private void handleJobErrors(AnalysisSubmission analysisSubmission) {
-		List<JobError> jobErrors = galaxyJobErrorsService.getJobErrors(analysisSubmission);
+		List<JobError> jobErrors = galaxyJobErrorsService.createNewJobErrors(analysisSubmission);
 		for (JobError jobError : jobErrors) {
 			logger.warn("AnalysisSubmission [id=" + analysisSubmission.getId() + "] had a JobError [jobId="
 					+ jobError.getJobId() + ", toolId=" + jobError.getToolId() + ", exitCode=" + jobError.getExitCode()

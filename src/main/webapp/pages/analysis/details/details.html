@@ -20,6 +20,9 @@
 			resize: both;
 			overflow: auto;
 		}
+		.tooltip-inner {
+			white-space: pre-wrap;
+		}
 	</style>
 </head>
 
@@ -301,8 +304,9 @@
 									<button class="btn btn-default btn-block" 
 											data-toggle="tooltip" data-placement="left"
 											title="Reverse order of lines"
-											ng-click="jobErrorsCtrl.sortLines(job_error, 'standardError')">
-										<i class="fa fa-sort" />
+											ng-click="jobErrorsCtrl.reverseLines(job_error, 'standardError')">
+										<i class="fa fa-sort-amount-{{ job_error.reversed.standardError ? 'desc' : 'asc' }}"
+										   aria-hidden="true"></i>
 									</button>
 								</div>
 							</div>
@@ -321,8 +325,9 @@
 									<button class="btn btn-default btn-block" 
 											data-toggle="tooltip" data-placement="left"
 											title="Reverse order of lines"
-											ng-click="jobErrorsCtrl.sortLines(job_error, 'standardOutput')">
-										<i class="fa fa-sort" />
+											ng-click="jobErrorsCtrl.reverseLines(job_error, 'standardOutput')">
+										<i class="fa fa-sort-amount-{{ job_error.reversed.standardOutput ? 'desc' : 'asc' }}"
+										   aria-hidden="true"></i>
 									</button>
 								</div>
 							</div>

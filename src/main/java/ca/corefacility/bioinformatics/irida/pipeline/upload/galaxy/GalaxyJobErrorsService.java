@@ -39,7 +39,7 @@ public class GalaxyJobErrorsService {
 	 * @param analysisSubmission {@link AnalysisSubmission} to search for job failures
 	 * @return List of {@link JobError} objects associated with {@link AnalysisSubmission}
 	 */
-	public List<JobError> getJobErrors(AnalysisSubmission analysisSubmission) {
+	public List<JobError> createNewJobErrors(AnalysisSubmission analysisSubmission) {
 		String historyId = analysisSubmission.getRemoteAnalysisId();
 		HistoryDetails historyDetails = historiesClient.showHistory(historyId);
 		List<String> erroredDatasetIds = historyDetails.getStateIds()

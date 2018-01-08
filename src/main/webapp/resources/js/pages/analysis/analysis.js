@@ -213,12 +213,13 @@ function JobErrorsController(analysisService) {
   vm.has_job_errors = false;
   vm.is_in_progress = true;
   vm.job_errors = [];
-  vm.sortLines = function(obj, attr) {
-    obj[attr] = obj[attr]
+  vm.reverseLines = (jobError, attr) => {
+    jobError[attr] = jobError[attr]
       .split("\n")
       .reverse()
       .join("\n")
       .trim();
+    jobError.reversed[attr] = !jobError.reversed[attr];
   };
   vm.isLoading = function() {
     return !vm.has_job_errors && vm.is_in_progress;
@@ -264,10 +265,13 @@ function JobErrorsController(analysisService) {
       return;
     }
     vm.has_job_errors = true;
-    for (const j of x.job_errors) {
-      vm.formatDate(j, "createdDate");
-      vm.formatDate(j, "updatedDate");
-      vm.jsonifyParameters(j);
+    for (const jobError of x.job_errors) {
+      jobError.reversed = {};
+      jobError.reversed.standardError = false;
+      jobError.reversed.standardOutput = false;
+      vm.formatDate(jobError, "createdDate");
+      vm.formatDate(jobError, "updatedDate");
+      vm.jsonifyParameters(jobError);
     }
     vm.job_errors = x.job_errors;
     vm.is_in_progress = false;

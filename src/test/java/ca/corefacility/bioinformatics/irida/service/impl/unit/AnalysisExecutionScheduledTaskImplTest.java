@@ -18,7 +18,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.google.common.collect.Sets;
 
@@ -110,7 +109,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 				.build();
 		analysisSubmission.setId(INTERNAL_ID);
 		analysisSubmission.setRemoteAnalysisId(ANALYSIS_ID);
-		when(galaxyJobErrorsService.getJobErrors(analysisSubmission)).thenReturn(new ArrayList<>());
+		when(galaxyJobErrorsService.createNewJobErrors(analysisSubmission)).thenReturn(new ArrayList<>());
 	}
 
 	/**

@@ -36,7 +36,13 @@
         <column name="updated_date" type="datetime">
             <constraints nullable="false"/>
         </column>
-        <column name="analysis_submission_id" type="BIGINT"/>
+        <column name="analysis_submission_id" type="BIGINT">
+            <constraints
+                    referencedTableName="analysis_submission"
+                    referencedColumnNames="id"
+                    foreignKeyName="FK_JOB_ERROR_ANALYSIS_SUBMISSION"
+                    nullable="false"/>
+        </column>
     </createTable>
     </changeSet>
 </databaseChangeLog>
