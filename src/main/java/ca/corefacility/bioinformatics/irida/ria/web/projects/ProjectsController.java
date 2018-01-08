@@ -736,6 +736,12 @@ public class ProjectsController {
 		return errors;
 	}
 
+	/**
+	 * Handle a {@link ProjectWithoutOwnerException} error.  Returns a forbidden error
+	 *
+	 * @param ex the exception to handle.
+	 * @return response entity with FORBIDDEN error
+	 */
 	@ExceptionHandler(ProjectWithoutOwnerException.class)
 	@ResponseBody
 	public ResponseEntity<String> roleChangeErrorHandler(Exception ex) {

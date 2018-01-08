@@ -69,6 +69,11 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 			return Arrays.stream(type.getDeclaredFields()).filter(pathFilter).collect(Collectors.toSet());
 		}
 
+		/**
+		 * Add a base directory to safe files to
+		 * @param c The class for the base directory to save files
+		 * @param p the path to save files to
+		 */
 		public static void addBaseDirectory(final Class<?> c, final Path p) {
 			baseDirectories.put(c, p);
 		}

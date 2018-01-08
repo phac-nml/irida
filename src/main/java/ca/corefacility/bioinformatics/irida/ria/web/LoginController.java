@@ -30,6 +30,10 @@ public class LoginController extends BaseController {
 		this.emailController = emailController;
 	}
 
+	/**
+	 * Get the index page
+	 * @return redirect to the dashboard page
+	 */
 	@RequestMapping(value = "/")
 	public String showSplash() {
 		return "forward:/dashboard";

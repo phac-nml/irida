@@ -274,8 +274,14 @@ public class PasswordResetController {
 		return ACTIVATION_PAGE;
 	}
 
+	/**
+	 * Get the activation page for the given activation
+	 *
+	 * @param activationId the activation id
+	 * @return redirect to the password reset page with the activation id
+	 */
 	@RequestMapping(value = "/activate", method = RequestMethod.POST)
-	public String getPasswordReset(@RequestParam String activationId, Model model) {
+	public String getPasswordReset(@RequestParam String activationId) {
 		return "redirect:/password_reset/" + activationId;
 	}
 

@@ -70,6 +70,11 @@ public abstract class QCEntry {
 		return sequencingObject;
 	}
 
+	/**
+	 * Get the message for the qc entry
+	 *
+	 * @return the qc entry message to display
+	 */
 	public abstract String getMessage();
 
 	/**

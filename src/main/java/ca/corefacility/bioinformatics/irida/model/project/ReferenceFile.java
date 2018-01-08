@@ -127,10 +127,12 @@ public class ReferenceFile implements VersionedFileFields<Long>, MutableIridaThi
 		return this.createdDate;
 	}
 
+	@Override
 	public void incrementFileRevisionNumber() {
 		this.fileRevisionNumber++;
 	}
 
+	@Override
 	public Long getFileRevisionNumber() {
 		return fileRevisionNumber;
 	}

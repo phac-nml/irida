@@ -142,6 +142,7 @@ public class SequenceFilePair extends SequencingObject implements IridaSequenceF
 		return builder.toString();
 	}
 
+	@Override
 	public Set<SequenceFile> getFiles() {
 		// returning an ImmutableSet to ensure it isn't changed
 		return ImmutableSet.copyOf(files);

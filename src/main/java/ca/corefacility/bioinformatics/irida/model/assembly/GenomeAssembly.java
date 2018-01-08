@@ -82,6 +82,11 @@ public abstract class GenomeAssembly extends IridaResourceSupport implements Iri
 		return createdDate;
 	}
 
+	/**
+	 * Get the size of the genome assembly files
+	 * @return file size
+	 * @throws IOException if the file cannot be read
+	 */
 	public long getFileSize() throws IOException {
 		return Files.size(getFile());
 	}

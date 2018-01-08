@@ -199,6 +199,11 @@ public class Analysis extends IridaResourceSupport implements IridaThing {
 		return createdDate;
 	}
 
+	/**
+	 * Get an output file with the given key
+	 * @param key the key
+	 * @return an AnalysisOutputFile
+	 */
 	public AnalysisOutputFile getAnalysisOutputFile(String key) {
 		return this.analysisOutputFilesMap.get(key);
 	}
