@@ -77,6 +77,10 @@ public class AbsoluteToRelativePaths implements CustomSqlChange {
 		return null;
 	}
 
+	/**
+	 * Check that files exist in expected locations
+	 * @return Any validation errors
+	 */
 	public ValidationErrors testRelativePaths() {
 		final ValidationErrors validationErrors = new ValidationErrors();
 

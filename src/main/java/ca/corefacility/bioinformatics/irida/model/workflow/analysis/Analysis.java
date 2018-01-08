@@ -156,10 +156,12 @@ public class Analysis extends IridaResourceSupport implements IridaThing {
 		this.additionalProperties = additionalProperties;
 	}
 
+	@Override
 	public int hashCode() {
 		return Objects.hash(createdDate, description, executionManagerAnalysisId, analysisOutputFilesMap);
 	}
 
+	@Override
 	public boolean equals(Object o) {
 		if (o == this) {
 			return true;

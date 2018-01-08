@@ -313,7 +313,13 @@ public class ProjectSynchronizationService {
 		
 		sampleService.update(localSample);
 	}
-	
+
+	/**
+	 * Synchronize the given sample's metadata
+	 *
+	 * @param sample the sample to sync
+	 * @return the synchronized sample
+	 */
 	public Sample syncSampleMetadata(Sample sample){
 		Map<String, MetadataEntry> sampleMetadata = sampleRemoteService.getSampleMetadata(sample);
 		Map<MetadataTemplateField, MetadataEntry> metadata = metadataTemplateService.getMetadataMap(sampleMetadata);

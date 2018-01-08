@@ -95,10 +95,12 @@ public final class UserGroupJoin implements Join<User, UserGroup> {
 		this.role = role;
 	}
 
+	@Override
 	public int hashCode() {
 		return Objects.hash(user, group, createdDate, role);
 	}
 
+	@Override
 	public boolean equals(final Object o) {
 		if (o == this) {
 			return true;
@@ -117,6 +119,12 @@ public final class UserGroupJoin implements Join<User, UserGroup> {
 	public enum UserGroupRole {
 		GROUP_OWNER, GROUP_MEMBER;
 
+		/**
+		 * Get a role from the given string
+		 *
+		 * @param code string representation of the role
+		 * @return the role
+		 */
 		public static UserGroupRole fromString(String code) {
 			switch (code.toUpperCase()) {
 			case "GROUP_MEMBER":

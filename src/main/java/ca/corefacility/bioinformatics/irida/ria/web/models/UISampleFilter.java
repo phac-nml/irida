@@ -30,6 +30,11 @@ public class UISampleFilter {
 		this.organism = organism;
 	}
 
+	/**
+	 * Get teh start date of the filter
+	 *
+	 * @return start date
+	 */
 	public Date getStartDate() {
 		if (Strings.isNullOrEmpty(startDate)) {
 			return null;
@@ -42,6 +47,11 @@ public class UISampleFilter {
 		this.startDate = date;
 	}
 
+	/**
+	 * Get the end date of the filter
+	 *
+	 * @return end date
+	 */
 	public Date getEndDate() {
 		if (Strings.isNullOrEmpty(endDate)) {
 			return null;

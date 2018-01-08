@@ -435,8 +435,15 @@ public class AnalysisController {
 		return analysesListingService.getPagedSubmissions(params, locale, null, project);
 	}
 
+	/**
+	 * Get the sistr analysis information to display
+	 *
+	 * @param id ID of the analysis submission
+	 * @return Json results for the SISTR analysis
+	 */
 	@SuppressWarnings("resource")
-	@RequestMapping("/ajax/sistr/{id}") @ResponseBody public Map<String,Object> getSistrAnalysis(@PathVariable Long id) {
+	@RequestMapping("/ajax/sistr/{id}") @ResponseBody
+	public Map<String,Object> getSistrAnalysis(@PathVariable Long id) {
 		AnalysisSubmission submission = analysisSubmissionService.read(id);
 		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubmission(submission);
 		Map<String,Object> result = ImmutableMap.of("parse_results_error", true);

@@ -126,6 +126,10 @@ public class AnalysisExecutionServiceGalaxyAsync {
 		return new AsyncResult<>(analysisPrepared);
 	}
 
+	/*
+	 * Method used to be @Transactional. This was removed as the txn was timing
+	 * out while data was trying to upload.
+	 */
 	/**
 	 * Executes the passed prepared {@link AnalysisSubmission} in an execution
 	 * manager.
@@ -138,10 +142,6 @@ public class AnalysisExecutionServiceGalaxyAsync {
 	 *             If there was an exception submitting the analysis to the
 	 *             execution manager.
 	 * @throws IridaWorkflowException If there was an issue with the IRIDA workflow.
-	 */
-	/*
-	 * Method used to be @Transactional. This was removed as the txn was timing
-	 * out while data was trying to upload.
 	 */
 	@RunAsUser("#analysisSubmission.getSubmitter()")
 	public Future<AnalysisSubmission> executeAnalysis(AnalysisSubmission analysisSubmission)

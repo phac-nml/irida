@@ -63,10 +63,12 @@ public class ReferenceFile implements VersionedFileFields<Long>, MutableIridaThi
 
 	private Long fileLength;
 
+	@Override
 	public int hashCode() {
 		return file.hashCode();
 	}
 
+	@Override
 	public boolean equals(Object o) {
 		if (o == this) {
 			return true;

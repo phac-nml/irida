@@ -86,6 +86,10 @@ public abstract class GenomeAssembly extends IridaResourceSupport implements Iri
 		return Files.size(getFile());
 	}
 
+	/**
+	 * Add a sample to this assembly
+	 * @param join the {@link SampleGenomeAssemblyJoin} to add
+	 */
 	public void addSampleGenomeAssemblyJoin(SampleGenomeAssemblyJoin join) {
 		if (!sampleGenomeAssemblies.contains(join)) {
 			sampleGenomeAssemblies.add(join);

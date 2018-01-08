@@ -127,6 +127,15 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService {
 		return token;
 	}
 
+	/**
+	 * Get a new token from the given auth code
+	 * @param authcode      the auth code to create a token for
+	 * @param remoteAPI     the remote api to get a token for
+	 * @param tokenRedirect a redirect url to get the token from
+	 * @return a new token
+	 * @throws OAuthSystemException If building the token request fails
+	 * @throws OAuthProblemException If the token request fails
+	 */
 	@Transactional
 	public RemoteAPIToken createTokenFromAuthCode(String authcode, RemoteAPI remoteAPI, String tokenRedirect)
 			throws OAuthSystemException, OAuthProblemException {

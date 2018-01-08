@@ -35,6 +35,17 @@ public class LoginController extends BaseController {
 		return "forward:/dashboard";
 	}
 
+	/**
+	 * Get the login page
+	 *
+	 * @param model model for the view
+	 * @param hasError Whether there's a login error
+	 * @param galaxyCallbackURL Galaxy callback url if needed
+	 * @param galaxyClientID Galaxy client id if needed
+	 * @param principal Currently logged in user.  If set user will get sent to dashboard.
+	 * @param httpSession Current HTTP session
+	 * @return Login page view name
+	 */
 	@RequestMapping(value = "/login")
 	public String showLogin(Model model,
 			@RequestParam(value = "error", required = false, defaultValue = "false") Boolean hasError,

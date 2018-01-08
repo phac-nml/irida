@@ -96,10 +96,12 @@ public class UserGroupProjectJoin implements Join<Project, UserGroup> {
 		this.projectRole = role;
 	}
 
+	@Override
 	public int hashCode() {
 		return Objects.hash(project, userGroup, projectRole, createdDate);
 	}
 
+	@Override
 	public boolean equals(final Object o) {
 		if (o == this) {
 			return true;

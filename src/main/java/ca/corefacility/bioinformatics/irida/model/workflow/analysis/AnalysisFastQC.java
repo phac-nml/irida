@@ -246,6 +246,11 @@ public class AnalysisFastQC extends Analysis {
 			return this;
 		}
 
+		/**
+		 * Build an AnalysisFastQC with the currently set parameters
+		 *
+		 * @return the new AnalysisFastQC
+		 */
 		public AnalysisFastQC build() {
 			if (enforceRequiredFieldCheck) {
 				final Field[] fields = AnalysisFastQCBuilder.class.getDeclaredFields();
