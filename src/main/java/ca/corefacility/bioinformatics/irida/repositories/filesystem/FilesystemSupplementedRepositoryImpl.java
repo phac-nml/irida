@@ -31,7 +31,7 @@ import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
  * Custom implementation of a repository that writes the {@link Path} part of an
  * entity to disk.
  * 
- *
+ *	@param <Type> The type of object this repository is storing
  */
 public abstract class FilesystemSupplementedRepositoryImpl<Type extends VersionedFileFields<Long> & IridaThing>
 		implements FilesystemSupplementedRepository<Type> {

@@ -32,9 +32,9 @@ public interface UserRepository extends IridaJpaRepository<User, Long>, UserDeta
 	 * Get the list of {@link User}s that are not associated with the current
 	 * project. This is a convenience method for the front end to see what users
 	 * can be added to the project.
-	 * 
-	 * @param project
-	 *            The project we want to list the available users for
+	 *
+	 * @param project The project we want to list the available users for
+	 * @param term    A search term for a user's first or last name
 	 * @return A List of {@link User}s that are not associated with the project.
 	 */
 	@Query("SELECT u FROM User u WHERE u NOT IN (SELECT f from ProjectUserJoin p JOIN p.user f WHERE p.project=?1) and CONCAT(u.firstName, ' ', u.lastName) like %?2%")

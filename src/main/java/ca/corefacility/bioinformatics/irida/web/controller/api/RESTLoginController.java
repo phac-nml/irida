@@ -6,6 +6,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+/**
+ * Controller to handle logins for the REST API
+ */
 @Controller
 public class RESTLoginController {
 	@RequestMapping("/api/login")
