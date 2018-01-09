@@ -21,6 +21,7 @@ Changes
 * [Developer]: Ran `prettier` on all javascript files within `resources/js`.
 * [Developer]: Ran `prettier` on all scss files within `resources/sass`.
 * [Developer]: Add a git pre-commit hook to ensure `prettier` formatting.
+* [UI]: Cleaned up sub-navigation elements on samples and files.
 
 0.18.0 to 0.19.0
 ----------------
