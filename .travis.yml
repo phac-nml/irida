@@ -11,6 +11,7 @@ env:
     - "TEST_SUITE=rest_testing"
     - "TEST_SUITE=galaxy_testing"
     - "TEST_SUITE=ui_testing"
+    - "TEST_SUITE=doc_testing"
 
 services:
   - docker
