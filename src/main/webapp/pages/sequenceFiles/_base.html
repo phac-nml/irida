@@ -3,26 +3,29 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       data-layout-decorate="~{template/page}">
 <body>
-<nav class="navbar navbar-default navbar-static-top subnav" role="navigation" layout:fragment="subnav">
-    <div class="container">
-        <ul th:if="${fastQC}" id="fastQC-details-nav" class="nav navbar-nav" th:inline="text" th:with="baseLink=${'/sequenceFiles/' + file.getId()}">
-            <li th:class="${activeNav} == 'dashboard' ? 'active'"><a href="summary">
-                <span th:text="#{sf.subnav.summary}"></span></a></li>
-            <li th:class="${activeNav} == 'overrepresented' ? 'active'"><a
-                href="overrepresented">
-                <span th:text="#{sf.subnav.overrepresented}"></span>&nbsp;<span class="badge" th:text="${#lists.size(fastQC.overrepresentedSequences)}"></span></a>
-            </li>
-        </ul>
-    </div>
-</nav>
-<div layout:fragment="page">
+<div layout:fragment="page" class="row">
+    <div class="col-md-12">
+        <h1 th:text="${file.getLabel()}"></h1>
+        <nav>
+            <ul th:if="${fastQC}" id="fastQC-details-nav" class="nav nav-tabs" th:inline="text"
+                th:with="baseLink=${'/sequenceFiles/' + file.getId()}">
+                <li th:class="${activeNav} == 'dashboard' ? 'active'"><a href="summary">
+                    <span th:text="#{sf.subnav.summary}"></span></a></li>
+                <li th:class="${activeNav} == 'overrepresented' ? 'active'"><a
+                        href="overrepresented">
+                    <th:block th:text="#{sf.subnav.overrepresented}"/><span class="badge spaced-left__sm"
+                                                                                    th:text="${#lists.size(fastQC.overrepresentedSequences)}"></span></a>
+                </li>
+            </ul>
+        </nav>
+
     <div th:if="!${fastQC}" id="fastQC-no-run" class="alert alert-info" role="alert">
         <h1 id="wb-cont" role="heading" th:text="${file.getLabel()}"></h1>
         <b th:text="#{sf.no-results}">There is no FastQC data available for this file.</b>
     </div>
     <th:block th:if="${fastQC}">
-        <!--/*/
     <main id="fastQC-details" class="col-md-8 col-md-push-4" layout:fragment="main">
+        <!--/*/r
         This is where the main content of every project page will go.
         /*/-->
     </main>
@@ -73,7 +76,7 @@
             </div>
         </div>
     </aside>
-    </th:block>
+    </th:block></div>
 </div>
 
 <th:block th:inline="javascript" layout:fragment="scripts">
