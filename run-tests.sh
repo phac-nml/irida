@@ -118,7 +118,7 @@ test_galaxy() {
 }
 
 test_doc() {
-	mvn clean site
+	mvn clean site $@
 	exit_code=$?
 	return $exit_code
 }
