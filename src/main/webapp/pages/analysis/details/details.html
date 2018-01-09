@@ -232,7 +232,7 @@
 				</div>
 				<div ng-show="jobErrorsCtrl.has_job_errors">
 					<div ng-repeat="job_error in jobErrorsCtrl.job_errors" class="it-has-job-error">
-						<h3>Job Error - {{ job_error.toolName }} ({{ job_error.toolVersion}}) - Exit Code {{ job_error.exitCode }}</h3>
+						<h3>[[ #{analysis.joberror} ]] - {{ job_error.toolName }} ({{ job_error.toolVersion}}) - [[ #{analysis.details.joberror.exitCode} ]] {{ job_error.exitCode }}</h3>
 						<table class="table table-bordered table-condensed">
 							<thead>
 								<tr>
@@ -303,7 +303,7 @@
 								<div class="col-md-1">
 									<button class="btn btn-default btn-block" 
 											data-toggle="tooltip" data-placement="left"
-											title="Reverse order of lines"
+											th:title="#{analysis.details.joberror.reverse-lines}"
 											ng-click="jobErrorsCtrl.reverseLines(job_error, 'standardError')">
 										<i class="fa fa-sort-amount-{{ job_error.reversed.standardError ? 'desc' : 'asc' }}"
 										   aria-hidden="true"></i>
@@ -324,7 +324,7 @@
 								<div class="col-md-1">
 									<button class="btn btn-default btn-block" 
 											data-toggle="tooltip" data-placement="left"
-											title="Reverse order of lines"
+											th:title="#{analysis.details.joberror.reverse-lines}"
 											ng-click="jobErrorsCtrl.reverseLines(job_error, 'standardOutput')">
 										<i class="fa fa-sort-amount-{{ job_error.reversed.standardOutput ? 'desc' : 'asc' }}"
 										   aria-hidden="true"></i>
