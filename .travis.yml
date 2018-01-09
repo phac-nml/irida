@@ -7,11 +7,11 @@ env:
     - "MYSQL_USER=test"
     - "MYSQL_PASSWORD=test"
   matrix:
-    - "TEST_SUITE=service_testing"
-    - "TEST_SUITE=rest_testing"
     - "TEST_SUITE=galaxy_testing"
     - "TEST_SUITE=ui_testing"
     - "TEST_SUITE=doc_testing"
+    - "TEST_SUITE=service_testing"
+    - "TEST_SUITE=rest_testing"
 
 services:
   - docker
