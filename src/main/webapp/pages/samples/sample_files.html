@@ -66,11 +66,9 @@
 	</div>
 </div>
 
-<main layout:fragment="main">
-	<div class="row">
-		<div class="col-md-12">
-			<h1 id="sample-page-title" th:text="#{samples.files.page-title(${sample.getLabel()})}"></h1>
-			<h2 id="sample-page-subtitle" th:text="#{samples.files.sequencefiles.title}"></h2>
+<div layout:fragment="main" class="col-md-9 col-md-push-3">
+	<div>
+		<div>
 			<div id="file-deleted-success" th:if="${fileDeletedMessage}" class="alert alert-success"
 			     role="alert">
 				<strong th:text="${fileDeletedMessage}"></strong>
@@ -295,7 +293,7 @@
 		</div>
 	</div>
 
-</main>
+</div>
 <th:block layout:fragment="scripts" th:inline="javascript">
 	<script type="text/ng-template" id="/upload-error.html">
 		<div class="modal-header">
