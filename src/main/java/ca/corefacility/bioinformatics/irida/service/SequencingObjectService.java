@@ -133,8 +133,7 @@ public interface SequencingObjectService extends CRUDService<Long, SequencingObj
 	 * Concatenate a collection of {@link SequencingObject}s and save back to a
 	 * {@link Sample}
 	 *
-	 * @param toJoin          the {@link SequencingObject}s to concatenate * @param filename
-	 *                        Root name of the newly created files
+	 * @param toJoin          the {@link SequencingObject}s to concatenate
 	 * @param filename        The name of the file to create on concatenation
 	 * @param targetSample    the {@link Sample} to save to
 	 * @param removeOriginals Whether to remove the original {@link SequencingObject}s from

@@ -31,7 +31,7 @@ public class UISampleFilter {
 	}
 
 	/**
-	 * Get teh start date of the filter
+	 * Get the start date of the filter
 	 *
 	 * @return start date
 	 */

@@ -126,10 +126,6 @@ public class AnalysisExecutionServiceGalaxyAsync {
 		return new AsyncResult<>(analysisPrepared);
 	}
 
-	/*
-	 * Method used to be @Transactional. This was removed as the txn was timing
-	 * out while data was trying to upload.
-	 */
 	/**
 	 * Executes the passed prepared {@link AnalysisSubmission} in an execution
 	 * manager.
