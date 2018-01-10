@@ -93,5 +93,11 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	 */
 	public List<MetadataTemplateField> getAllMetadataFieldsByQueryString(String query);
 
+	/**
+	 * Get the appropriate {@link MetadataTemplateField}s and {@link MetadataEntry}s for a given map of Strings
+	 *
+	 * @param metadata the strings to convert
+	 * @return a Map of {@link MetadataTemplateField}s and {@link MetadataEntry}s
+	 */
 	public Map<MetadataTemplateField, MetadataEntry> getMetadataMap(Map<String, MetadataEntry> metadata);
 }

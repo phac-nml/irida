@@ -201,6 +201,13 @@ public class RESTProjectSamplesController {
 		return modelMap;
 	}
 
+	/**
+	 * Get samples by a given string name
+	 *
+	 * @param projectId   the Project to get samples from
+	 * @param seqeuncerId the string id of the sample
+	 * @return The found sample
+	 */
 	@RequestMapping(value = "/api/projects/{projectId}/samples/bySequencerId/{seqeuncerId}", method = RequestMethod.GET)
 	public ModelAndView getProjectSampleBySequencerId(@PathVariable Long projectId, @PathVariable String seqeuncerId) {
 		Project p = projectService.read(projectId);

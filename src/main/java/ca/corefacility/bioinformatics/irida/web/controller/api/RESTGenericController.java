@@ -162,12 +162,12 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 	}
 
 	/**
-	 * Create a new instance of {@link Type} in the database, then respond to
+	 * Create a new instance of {@code Type} in the database, then respond to
 	 * the client with the location of the resource.
 	 * 
 	 * @param resource
-	 *            the {@link Type} that we should de-serialize to get an
-	 *            instance of {@link Type} to persist.
+	 *            the {@code Type} that we should de-serialize to get an
+	 *            instance of {@code Type} to persist.
 	 * @param response
 	 *            a reference to the servlet response.
 	 * @return a response containing the location of the newly persisted

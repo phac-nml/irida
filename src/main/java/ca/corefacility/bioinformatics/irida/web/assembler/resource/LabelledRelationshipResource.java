@@ -8,7 +8,9 @@ import javax.xml.bind.annotation.XmlElement;
 
 /**
  * An implementation of a resource that only has a label and an identifier.
- * 
+ *
+ * @param <Owner> The object type owning the relationship
+ * @param <Child> The owned object type in the relationship
  */
 public class LabelledRelationshipResource<Owner extends IridaThing, Child extends IridaThing> extends
 		IridaResourceSupport {

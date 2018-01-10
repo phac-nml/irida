@@ -651,6 +651,10 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 			return this;
 		}
 
+		/**
+		 * Build the analysis submission from the set parameters
+		 * @return the new AnalysisSubmission
+		 */
 		public AnalysisSubmission build() {
 			checkArgument(inputFiles != null,
 					"input file collection is null.  You must supply at least one set of input files");

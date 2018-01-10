@@ -89,10 +89,10 @@ public enum AnalysisType {
 
 	/**
 	 * Generates an array of all {@link AnalysisType}s minus the
-	 * {@link AnalysisType.DEFAULT}.
+	 * {@code AnalysisType.DEFAULT}.
 	 * 
 	 * @return An array of all {@link AnalysisType}s minus the
-	 *         {@link AnalysisType.DEFAULT}
+	 *         {@code AnalysisType.DEFAULT}
 	 */
 	public static AnalysisType[] valuesMinusDefault() {
 		AnalysisType[] values = AnalysisType.values();
