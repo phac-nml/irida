@@ -23,19 +23,13 @@ public class ProjectSampleSpecification {
 	/**
 	 * Search a {@link Project} and it's associated {@link Project}s for {@link Sample}s based on filtering criteria.
 	 *
-	 * @param projects
-	 * 		{@link List} of {@link Project} the {@link Sample}s must be found within.
-	 * @param sampleNames
-	 * 		{@link List} of {@link String} of Sample names to search
-	 * @param searchTerm
-	 * 		{@link String} search term to search for.
-	 * @param organism
-	 * 		{@link String} organism to search for.
-	 * @param minDate
-	 * 		{@link Date} minimum date the sample was modified.
-	 * @param maxDate
-	 * 		{@link Date} maximum date the sample was modified.
-	 *
+	 * @param projects    {@link List} of {@link Project} the {@link Sample}s must be found within.
+	 * @param sampleNames {@link List} of {@link String} of Sample names to search
+	 * @param sampleName  A single {@link Sample} name to loosely search
+	 * @param searchTerm  {@link String} search term to search for.
+	 * @param organism    {@link String} organism to search for.
+	 * @param minDate     {@link Date} minimum date the sample was modified.
+	 * @param maxDate     {@link Date} maximum date the sample was modified.
 	 * @return {@link Specification} of {@link ProjectSampleJoin} for criteria to search based on the filtered criteria.
 	 */
 	public static Specification<ProjectSampleJoin> getSamples(List<Project> projects, List<String> sampleNames,

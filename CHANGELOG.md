@@ -20,6 +20,10 @@ Changes
 * [UI]: Changed the wording of 'copying' samples to 'sharing' samples.
 * [UI]: Allow users to share (copy) samples from a remote project. Disabled menu items for move and merge.
 * [Developer]: Ran `prettier` on all javascript files within `resources/js`.
+* [Developer]: Ran `prettier` on all scss files within `resources/sass`.
+* [Developer]: Add a git pre-commit hook to ensure `prettier` formatting.
+* [UI]: Fixed issue where all activities page could not be displayed.
+* [UI]: Fixed issue where time stamps where not displayed on activities pages.
 
 0.18.0 to 0.19.0
 ----------------

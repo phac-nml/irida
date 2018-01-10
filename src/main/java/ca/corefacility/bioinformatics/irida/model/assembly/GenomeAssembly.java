@@ -82,10 +82,19 @@ public abstract class GenomeAssembly extends IridaResourceSupport implements Iri
 		return createdDate;
 	}
 
+	/**
+	 * Get the size of the genome assembly files
+	 * @return file size
+	 * @throws IOException if the file cannot be read
+	 */
 	public long getFileSize() throws IOException {
 		return Files.size(getFile());
 	}
 
+	/**
+	 * Add a sample to this assembly
+	 * @param join the {@link SampleGenomeAssemblyJoin} to add
+	 */
 	public void addSampleGenomeAssemblyJoin(SampleGenomeAssemblyJoin join) {
 		if (!sampleGenomeAssemblies.contains(join)) {
 			sampleGenomeAssemblies.add(join);
@@ -96,9 +105,8 @@ public abstract class GenomeAssembly extends IridaResourceSupport implements Iri
 	 * Get human-readable file size.
 	 * 
 	 * @return A human-readable file size.
-	 * @throws IOException
 	 */
-	public String getReadableFileSize() throws IOException {
+	public String getReadableFileSize()  {
 		String size = "N/A";
 		try {
 			size = IridaSequenceFile.humanReadableByteCount(getFileSize(), true);

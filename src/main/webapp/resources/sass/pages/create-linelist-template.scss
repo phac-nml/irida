@@ -1,9 +1,9 @@
 .template-field-draggable {
   cursor: move;
-  cursor: -webkit-grabbing;  /* overrides 'move' */
+  cursor: -webkit-grabbing; /* overrides 'move' */
 }
 
-[draggable='true'] {
+[draggable="true"] {
   cursor: move;
 }
 

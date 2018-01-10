@@ -55,7 +55,11 @@ public class AnalysisProvenanceServiceGalaxy {
 		this.toolsClient = toolsClient;
 		this.jobsClient = jobsClient;
 	}
-	
+
+	/**
+	 * Get an empty value placeholder
+	 * @return the placeholder for an empty value
+	 */
 	public static String emptyValuePlaceholder() {
 		return EMPTY_VALUE_PLACEHOLDER;
 	}

@@ -79,6 +79,7 @@ public class Announcement implements IridaThing, Comparable<Announcement> {
         this.user = user;
     }
 
+    @Override
     public int compareTo(Announcement other) {
         return this.createdDate.compareTo(other.getCreatedDate());
     }

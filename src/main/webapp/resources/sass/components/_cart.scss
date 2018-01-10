@@ -38,7 +38,7 @@ $cart-width: 400px;
   width: 0;
   height: 0;
   background: rgba(0, 0, 0, 0.2);
-  content: '';
+  content: "";
   opacity: 0;
   -webkit-transition: opacity 0.5s, width 0.1s 0.5s, height 0.1s 0.5s;
   transition: opacity 0.5s, width 0.1s 0.5s, height 0.1s 0.5s;
@@ -117,7 +117,7 @@ $cart-width: 400px;
 
 .cart-control-bottom .cart-action {
   width: 120px;
-  white-space: normal!important;
+  white-space: normal !important;
 }
 
 .cart-control-bottom .btn {
