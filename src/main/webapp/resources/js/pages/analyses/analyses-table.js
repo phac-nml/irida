@@ -22,7 +22,7 @@ import { showNotification } from "../../modules/notifications";
  * Internationalized text from div#messages.hidden
  * @type {Object} map of data attribute key name to i18n text
  */
-const MESSAGES = $("#messages").data();
+const MESSAGES = $("#js-messages").data();
 
 /*
 Get the table headers and create a look up table for them.
