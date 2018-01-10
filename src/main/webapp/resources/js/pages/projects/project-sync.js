@@ -13,6 +13,11 @@ const originalApiId = $apiSelection.val();
 document.querySelector("#connect-button").dataset.apiId = originalApiId;
 const $projectSelect = $("#project-select");
 
+/**
+ * Update the status of the connection to the remote api.  Used both to initial
+ * the status of the connection and then to update once a connection has been made.
+ * @param {number} apiId identifier the for the api to update.
+ */
 function updateConnection(apiId) {
   updateRemoteConnectionStatus($connectionWrapper, apiId).then(response => {
     if (!response.includes("invalid_token")) {
@@ -36,6 +41,10 @@ $projectSelect.on("change", function() {
   $("#projectUrl").val(projectUrl);
 });
 
+/**
+ * Get a list of project from the server for the currently selected remote api.
+ * @param {number} apiId selected API identifier.
+ */
 function getApiProjects(apiId) {
   const url = `${PAGE.urls.apiProjectList}${apiId}`;
 
@@ -43,14 +52,14 @@ function getApiProjects(apiId) {
   $("#projectUrl").val("");
 
   $.ajax({
-    url: url,
-    success: function(vals) {
+    url,
+    success(vals) {
       $(".project-option").remove();
 
       $.each(vals, function(i, response) {
-        var project = response.project;
-        var status = response.remoteStatus;
-        var projectUrl = status.url;
+        const project = response.project;
+        const status = response.remoteStatus;
+        const projectUrl = status.url;
         $projectSelect.append(
           `<option class="project-option" value="${projectUrl}">${
             project.label

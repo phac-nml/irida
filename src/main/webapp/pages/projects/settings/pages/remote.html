@@ -32,7 +32,8 @@
                 <i class="fa fa-spinner fa-spin"></i>
             </span>
 
-            <button type="button" class="oauth-connect-link btn btn-default hidden" id="connect-button"
+            <button type="button" class="oauth-connect-link btn btn-default hidden js-connect-btn" id="connect-button"
+                    data-toggle="modal" data-target="#remote-connect-wrapper"
                     th:text="#{remoteapi.status.connect.button}" data:api-id="${status.getApi().getId()}">
                 _Connect_
             </button>

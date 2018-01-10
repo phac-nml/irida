@@ -18,19 +18,32 @@ function updateConnection(api) {
   });
 }
 
+/**
+ * Update the frequency of the sync event.
+ */
 $(".sync-setting").change(function() {
   const frequency = $(this).val();
   updateSyncSettings({ frequency });
 });
 
+/**
+ * Sync the project now, instead of waiting until the next scheduled sync.
+ */
 $("#forceSync").on("click", function() {
   updateSyncSettings({ forceSync: "true" });
 });
 
+/**
+ * Set the current user as the sync user.
+ */
 $("#becomeSyncUser").on("click", function() {
   updateSyncSettings({ changeUser: "true" });
 });
 
+/**
+ * Update sync setting for this remote project.
+ * @param {object} data
+ */
 function updateSyncSettings(data) {
   $.ajax({
     url: window.PAGE.urls.sync,

@@ -14,6 +14,12 @@ import {
 const COLUMNS = generateColumnOrderInfo();
 const $table = $("#remoteapiTable");
 
+/**
+ * each row in the datatable needs a unique if, this generate an id based
+ * on the identifier for that API.
+ * @param {number} apiId the unique identifier for the API
+ * @returns {string}
+ */
 function generateRowId(apiId) {
   return `api-${apiId}`;
 }
@@ -64,13 +70,22 @@ const config = Object.assign({}, tableConfig, {
   }
 });
 
+/**
+ * Initialize the DataTable
+ */
 $table.DataTable(config);
-// Set up the button section
-const $btnWrapper = $("#remoteapiTable_wrapper .buttons");
+
+/**
+ * Stet up the "add remote connection" button in the proper place on the datatable.
+ */
+const $btnWrapper = $("#remoteapiTable_wrapper").find(".buttons");
 const $toolbar = $(".js-connection-toolbar").detach();
 $toolbar.removeClass("hidden");
 $btnWrapper.html($toolbar);
 
+/**
+ * Initialize the  connect to remote api functionality.
+ */
 initConnectRemoteApi(function(apiId) {
   const $row = $(`#${generateRowId(apiId)}`);
   updateRemoteConnectionStatus($row, apiId);
