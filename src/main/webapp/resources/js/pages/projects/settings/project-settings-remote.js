@@ -1,12 +1,26 @@
 import { showNotification } from "../../../modules/notifications";
-import { updateRemoteConnectionStatus } from "../../remote-apis/remote-apis";
+import {
+  initConnectRemoteApi,
+  updateRemoteConnectionStatus
+} from "../../remote-apis/remote-apis";
 
+const $connectionWrapper = $(".connection-wrapper");
 const API_ID = $("#connect-button").data("api-id");
 
-$(".sync-setting").change(function() {
-  var freq = $(this).val();
+/**
+ * Check the current connection status with the server.
+ */
+function updateConnection(api) {
+  updateRemoteConnectionStatus($connectionWrapper, api).then(response => {
+    if (!response.includes("invalid_token")) {
+      $(".api-connected-action").show();
+    }
+  });
+}
 
-  updateSyncSettings({ frequency: freq });
+$(".sync-setting").change(function() {
+  const frequency = $(this).val();
+  updateSyncSettings({ frequency });
 });
 
 $("#forceSync").on("click", function() {
@@ -37,10 +51,8 @@ function updateSyncSettings(data) {
   });
 }
 
-// Initialize connection status
-const $connectionWrapper = $(".connection-wrapper");
-updateRemoteConnectionStatus($connectionWrapper, API_ID).then(response => {
-  if (!response.includes("invalid_token")) {
-    $(".api-connected-action").show();
-  }
-});
+/*
+Initialize the page.
+ */
+initConnectRemoteApi(updateConnection);
+updateConnection(API_ID);
