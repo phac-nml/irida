@@ -5,10 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
@@ -24,8 +22,6 @@ import com.github.jmchilton.blend4j.galaxy.beans.Tool;
  * {@link JobsClient} if an error occurred during an Galaxy pipeline {@link AnalysisSubmission}.
  */
 public class GalaxyJobErrorsService {
-
-	private static final Logger logger = LoggerFactory.getLogger(GalaxyJobErrorsService.class);
 
 	private final HistoriesClient historiesClient;
 	private final ToolsClient toolsClient;
@@ -47,7 +43,7 @@ public class GalaxyJobErrorsService {
 		String historyId = analysisSubmission.getRemoteAnalysisId();
 		HistoryDetails historyDetails = historiesClient.showHistory(historyId);
 		List<String> erroredDatasetIds = historyDetails.getStateIds()
-				.get("error");
+				.get(GalaxyWorkflowState.ERROR.toString());
 		List<HistoryContentsProvenance> provenances = erroredDatasetIds.stream()
 				.map((x) -> historiesClient.showProvenance(historyId, x))
 				.collect(Collectors.toList());
