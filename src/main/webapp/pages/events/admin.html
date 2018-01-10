@@ -4,6 +4,7 @@
 
 <head>
   <title th:text="#{event.admin.title}">_ALL EVENTS_</title>
+    <link rel="stylesheet" th:href="@{/resources/dist/css/activities.bundle.css}">
 </head>
 
 <body>
@@ -19,7 +20,7 @@
 </div>
 
   <th:block layout:fragment="scripts">
-    <script th:src="@{/resources/dist/js/events.bundle.js}"></script>
+    <script th:src="@{/resources/dist/js/activities.bundle.js}"></script>
   </th:block>
 </body>
 

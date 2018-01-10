@@ -117,8 +117,14 @@ test_galaxy() {
 	return $exit_code
 }
 
+test_doc() {
+	mvn clean site $@
+	exit_code=$?
+	return $exit_code
+}
+
 test_all() {
-	for test_profile in test_rest test_service test_galaxy test_ui;
+	for test_profile in test_rest test_service test_galaxy test_ui test_doc;
 	do
 		tmp_dir_cleanup
 		eval $test_profile
@@ -144,7 +150,7 @@ then
 	echo -e "\t-c|--no-cleanup: Do not cleanup previous test database before execution."
 	echo -e "\t--no-kill-docker: Do not kill Galaxy Docker after Galaxy tests have run."
 	echo -e "\t--no-headless: Do not run chrome in headless mode (for viewing results of UI tests)."
-	echo -e "\ttest_type:     One of the IRIDA test types {service_testing, ui_testing, rest_testing, galaxy_testing, all}."
+	echo -e "\ttest_type:     One of the IRIDA test types {service_testing, ui_testing, rest_testing, galaxy_testing, doc_testing, all}."
 	echo -e "\t[Maven options]: Additional options to pass to 'mvn'.  In particular, can pass '-Dit.test=ca.corefacility.bioinformatics.irida.fully.qualified.name' to run tests from a particular class.\n"
 	echo -e "Examples:\n"
 	echo -e "$0 service_testing\n"
@@ -219,6 +225,13 @@ case "$1" in
 		exit_code=$?
 		posttest_cleanup
 	;;
+	doc_testing)
+		shift
+		#pretest_cleanup
+		test_doc $@
+		exit_code=$?
+		posttest_cleanup
+	;;
 	all)
 		shift
 		pretest_cleanup
@@ -227,7 +240,7 @@ case "$1" in
 		posttest_cleanup
 	;;
 	*)
-		exit_error "Unrecogized test [$1]"
+		exit_error "Unrecogized command [$1]"
 	;;
 esac
 

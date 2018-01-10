@@ -3,6 +3,8 @@ target/
 .classpath
 .project
 .settings
+.checkstyle
+build/
 .DS_Store/
 /src/main/webapp/resources/bower_components/
 irida.iml

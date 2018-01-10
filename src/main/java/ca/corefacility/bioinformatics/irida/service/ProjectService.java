@@ -128,12 +128,10 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	/**
 	 * Add the specified {@link Sample} to the {@link Project}.
 	 *
-	 * @param project
-	 * 		the {@link Project} to add the {@link Sample} to.
-	 * @param sample
-	 * 		the {@link Sample} to add to the {@link Project}. If the {@link Sample} has not previously been persisted, the
-	 * 		service will persist the {@link Sample}.
-	 *
+	 * @param project the {@link Project} to add the {@link Sample} to.
+	 * @param sample  the {@link Sample} to add to the {@link Project}. If the {@link Sample} has not previously been persisted, the
+	 *                service will persist the {@link Sample}.
+	 * @param owner   Whether the project will have modification access for this sample
 	 * @return a reference to the relationship resource created between the two entities.
 	 */
 	public Join<Project, Sample> addSampleToProject(Project project, Sample sample, boolean owner);

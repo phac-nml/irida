@@ -137,11 +137,10 @@ public class CartController {
 
 	/**
 	 * Add a {@link Sample} to the cart from a given {@link Project}
-	 * 
-	 * @param projectId
-	 *            The {@link Project} ID
-	 * @param sampleIds
-	 *            The {@link Sample} id
+	 *
+	 * @param projectId The {@link Project} ID
+	 * @param sampleIds The {@link Sample} id
+	 * @param locale    Locale of the logged in user
 	 * @return a map stating success
 	 */
 	@RequestMapping(value = "/add/samples", method = RequestMethod.POST)

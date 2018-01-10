@@ -107,7 +107,7 @@ public class FileUtilities {
 	 *
 	 * @param response
 	 *            {@link HttpServletResponse}
-	 * @param files
+	 * @param file
 	 *            Set of {@link AnalysisOutputFile}
 	 */
 	public static void createSingleFileResponse(HttpServletResponse response, AnalysisOutputFile file) {

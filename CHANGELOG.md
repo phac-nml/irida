@@ -21,6 +21,8 @@ Changes
 * [Developer]: Ran `prettier` on all javascript files within `resources/js`.
 * [Developer]: Ran `prettier` on all scss files within `resources/sass`.
 * [Developer]: Add a git pre-commit hook to ensure `prettier` formatting.
+* [UI]: Fixed issue where all activities page could not be displayed.
+* [UI]: Fixed issue where time stamps where not displayed on activities pages.
 * [UI]: Fixed issue where breadcrumbs were not displaying on the Project > Line List and Project > Analyses pages.
 
 0.18.0 to 0.19.0

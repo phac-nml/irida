@@ -92,24 +92,18 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 	private final UserRepository userRepository;
 
-
 	/**
 	 * Constructor.
-	 * 
-	 * @param sampleRepository
-	 *            the sample repository.
-	 * @param psjRepository
-	 *            the project sample join repository.
-	 * @param analysisRepository
-	 *            the analysis repository.
-	 * @param ssoRepository
-	 *            The {@link SampleSequencingObjectJoin} repository
-	 * @param sequencingObjectRepository
-	 *            the {@link SequencingObject} repository
-	 * @param qcEntryRepository
-	 *            a repository for storing and reading {@link QCEntry}
-	 * @param validator
-	 *            validator.
+	 *
+	 * @param sampleRepository                   the sample repository.
+	 * @param psjRepository                      the project sample join repository.
+	 * @param analysisRepository                 the analysis repository.
+	 * @param ssoRepository                      The {@link SampleSequencingObjectJoin} repository
+	 * @param sequencingObjectRepository         the {@link SequencingObject} repository
+	 * @param qcEntryRepository                  a repository for storing and reading {@link QCEntry}
+	 * @param sampleGenomeAssemblyJoinRepository A {@link SampleGenomeAssemblyJoinRepository}
+	 * @param userRepository                     A {@link UserRepository}
+	 * @param validator                          validator.
 	 */
 	@Autowired
 	public SampleServiceImpl(SampleRepository sampleRepository, ProjectSampleJoinRepository psjRepository,

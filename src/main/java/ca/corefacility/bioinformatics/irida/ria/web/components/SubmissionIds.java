@@ -15,6 +15,11 @@ public class SubmissionIds {
 		ids = new ArrayList<>();
 	}
 
+	/**
+	 * add an id to the submission ids
+	 *
+	 * @param id the id to add
+	 */
 	public void addId(Long id) {
 		ids.add(id);
 	}
