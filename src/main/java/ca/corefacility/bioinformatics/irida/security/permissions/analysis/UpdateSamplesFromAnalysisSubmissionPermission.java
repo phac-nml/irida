@@ -15,6 +15,9 @@ import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository
 import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 
+/**
+ * Permission for whether a user can update samples in a given analysis submission.
+ */
 @Component
 public class UpdateSamplesFromAnalysisSubmissionPermission extends BasePermission<AnalysisSubmission, Long> {
 

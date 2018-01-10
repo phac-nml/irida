@@ -18,6 +18,9 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl.RelativePathTranslatorListener;
 
+/**
+ * Configuration for filesystem repositories in IRIDA
+ */
 @Configuration
 public class IridaApiFilesystemRepositoryConfig {
 

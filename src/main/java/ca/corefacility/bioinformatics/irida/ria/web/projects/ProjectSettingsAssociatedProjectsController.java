@@ -40,6 +40,9 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
+/**
+ * Controller for handling associated projects in a project
+ */
 @Controller
 @RequestMapping("/projects/{projectId}/settings/associated")
 @Scope("session")
@@ -110,7 +113,7 @@ public class ProjectSettingsAssociatedProjectsController {
 	 * @param projectId
 	 * 		{@link Long} identifier for the current {@link Project}
 	 *
-	 * @return
+	 * @return a list of the associated projects for the given project
 	 */
 	@RequestMapping("/ajax/associated")
 	public @ResponseBody
@@ -123,11 +126,9 @@ public class ProjectSettingsAssociatedProjectsController {
 	/**
 	 * Add an associated project to a project
 	 *
-	 * @param projectId
-	 * 		The subject project id
-	 * @param associatedProjectId
-	 * 		The associated project id
-	 *
+	 * @param projectId           The subject project id
+	 * @param associatedProjectId The associated project id
+	 * @param locale              Locale of the logged in user
 	 * @return "success" if the request was successful
 	 */
 	@RequestMapping(value = "", method = RequestMethod.POST)
@@ -146,11 +147,9 @@ public class ProjectSettingsAssociatedProjectsController {
 	/**
 	 * Delete an associated project to a project
 	 *
-	 * @param projectId
-	 * 		The subject project id
-	 * @param associatedProjectId
-	 * 		The associated project id
-	 *
+	 * @param projectId           The subject project id
+	 * @param associatedProjectId The associated project id
+	 * @param locale              Locale of the logged in user
 	 * @return "success" if the request was successful
 	 */
 	@RequestMapping(value = "", method = RequestMethod.DELETE)

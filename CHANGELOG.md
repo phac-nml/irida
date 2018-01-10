@@ -15,10 +15,16 @@ Changes
 * [Developer]: Webpack now extracts `css` / `scss` into its own bundles.
 * [UI]: Added minification to production javascript.
 * [UI]: Fixed issue where delete project button was always enabled, and created an error when clicked. (0.19.3)
+* [UI]: Clean up of the main navigation bar code, and removed its dependency on angular-ui.
+* [UI]: Fixed reflow layout of pipeline launch page.
+* [UI]: Changed the wording of 'copying' samples to 'sharing' samples.
+* [Developer]: Ran `prettier` on all javascript files within `resources/js`.
+* [Developer]: Ran `prettier` on all scss files within `resources/sass`.
+* [Developer]: Add a git pre-commit hook to ensure `prettier` formatting.
 
 0.18.0 to 0.19.0
 ----------------
-* [Developer] Removed the requirement for pipeline developers to add an `Analysis` subclass and database tables for pipelines.  All pipeline results can now be stored in the `Analysis` class.
+* [Developer]: Removed the requirement for pipeline developers to add an `Analysis` subclass and database tables for pipelines.  All pipeline results can now be stored in the `Analysis` class.
 * [Developer]: Fixed issue where bootstrap was being loaded twice onto the page. (0.18.1)
 * [UI]: Fixed URL for concatenation of sample sequence files. (0.18.1)
 * [Developer]: Removed dandelion from: Announcements, Cart, Sequencing Runs, Login, Project Settings - Landing, Events, Create Sample, Line List, Announcements - Create & Read, Livestampjs, Pipelines Launch, lodash, NCBI Export Page, Session Handler, Project Members and Groups Server Side,  NCBI export lists, Groups Listing, Group Members.

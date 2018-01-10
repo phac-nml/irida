@@ -5,9 +5,9 @@
  */
 export function metadataTemplateName() {
   return {
-    require: 'ngModel',
+    require: "ngModel",
     scope: {
-      existing: '=existingTemplates'
+      existing: "=existingTemplates"
     },
     link($scope, $elm, $attrs, $ctrl) {
       // existingTemplates is an attribute on the input value that passes a reference to a list
@@ -19,10 +19,9 @@ export function metadataTemplateName() {
       // This acts as an input validator testing to see if the template name the user entered
       // already exists in the project.  Returns a boolean value whether the name exists or not.
       $ctrl.$validators.unique = (modelValue, viewValue) => {
-        return !$scope.existing
-          .find(template => {
-            return template.name === viewValue;
-          });
+        return !$scope.existing.find(template => {
+          return template.name === viewValue;
+        });
       };
     }
   };

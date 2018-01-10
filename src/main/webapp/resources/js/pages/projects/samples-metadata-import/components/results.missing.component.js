@@ -3,27 +3,27 @@
  * @file AngularJS Component for display rows from the metadata file that do not match
  * Sample names on the server.
  */
-import $ from 'jquery';
-import '../../../../vendor/datatables/datatables';
+import $ from "jquery";
+import "../../../../vendor/datatables/datatables";
 import {
   dom,
   formatBasicHeaders
-} from '../../../../utilities/datatables.utilities';
+} from "../../../../utilities/datatables.utilities";
 
 const resultsMissingComponent = {
-  templateUrl: 'results.missing.component.tmpl.html',
+  templateUrl: "results.missing.component.tmpl.html",
   bindings: {
-    rows: '='
+    rows: "="
   },
   controller() {
     this.$onInit = () => {
       if (this.rows.length > 0) {
         const headers = Object.keys(this.rows[0]);
         const columns = formatBasicHeaders(headers);
-        $('#missing-table').DataTable({
+        $("#missing-table").DataTable({
           dom,
           scrollX: true,
-          sScrollX: '100%',
+          sScrollX: "100%",
           data: this.rows,
           columns
         });

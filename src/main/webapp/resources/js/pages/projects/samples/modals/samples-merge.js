@@ -9,7 +9,7 @@ import {
   sampleNameCharacterValidation,
   validationConfig
 } from "../../../../utilities/form-validation";
-import {SAMPLE_EVENTS} from "../constants";
+import { SAMPLE_EVENTS } from "../constants";
 import { showNotification } from "../../../../modules/notifications";
 
 /*
@@ -61,4 +61,3 @@ const config = Object.assign({}, validationConfig, {
 });
 
 $("#mergeForm").validate(config);
-

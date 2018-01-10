@@ -19,6 +19,10 @@ import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.JobDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.Tool;
 
+/**
+ * Class to create new {@link JobError} objects using a Galaxy {@link HistoriesClient}, {@link ToolsClient} and
+ * {@link JobsClient} if an error occurred during an Galaxy pipeline {@link AnalysisSubmission}.
+ */
 public class GalaxyJobErrorsService {
 
 	private static final Logger logger = LoggerFactory.getLogger(GalaxyJobErrorsService.class);

@@ -100,7 +100,12 @@ public class TreeNode<ValueType> {
 	public void setProperties(Map<String, Object> properties) {
 		this.properties = properties;
 	}
-	
+
+	/**
+	 * Add a property to the tree node
+	 * @param key key for the property
+	 * @param value value of the property
+	 */
 	public void addProperty(String key, Object value){
 		properties.put(key, value);
 	}

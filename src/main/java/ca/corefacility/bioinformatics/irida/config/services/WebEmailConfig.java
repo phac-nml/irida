@@ -56,6 +56,10 @@ public class WebEmailConfig {
 		return sender;
 	}
 
+	/**
+	 * Configure the template resolver
+	 * @return A ClassLoaderTemplateResolver
+	 */
 	public ClassLoaderTemplateResolver classLoaderTemplateResolver() {
 		ClassLoaderTemplateResolver classLoaderTemplateResolver = new ClassLoaderTemplateResolver();
 		classLoaderTemplateResolver.setPrefix(MAIL_TEMPLATE_PREFIX);

@@ -235,13 +235,24 @@ const setupJobErrorPopoverUI = ({ jobError }, row) => {
 };
 
 /**
- * Initialize tooltip for icon that says "Click to preview job error info"
+ * Initialize tooltip for icon that says "Click to preview job error info".
+ * Hide on click to show popover or when popover is already open.
  * @param row DataTables row
  */
 function initClickToShowJobErrorTooltip(row) {
-  $(row)
-    .find(".js-job-error-tooltip")
-    .tooltip();
+  const $el = $(row).find(".js-job-error-tooltip");
+  $el
+    .tooltip({ container: "body", trigger: "manual" })
+    .on("click", () => $el.tooltip("hide"))
+    .on("mouseenter", () => {
+      // popover template will have `.popover` class
+      if ($(".popover").length === 1) {
+        $el.tooltip("show");
+      } else {
+        $el.tooltip("hide");
+      }
+    })
+    .on("mouseleave", () => $el.tooltip("hide"));
 }
 
 const config = Object.assign(tableConfig, {

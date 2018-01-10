@@ -8,7 +8,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.Principal;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
@@ -16,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -60,14 +58,10 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
-import clojure.lang.Obj;
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.github.jmchilton.blend4j.galaxy.beans.Job;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
@@ -79,8 +73,8 @@ import com.google.common.collect.ImmutableMap;
 public class AnalysisController {
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisController.class);
 	// PAGES
-	public static final Map<AnalysisType, String> PREVIEWS = ImmutableMap.of(AnalysisType.PHYLOGENOMICS, "tree",
-			AnalysisType.SISTR_TYPING, "sistr");
+	public static final Map<AnalysisType, String> PREVIEWS = ImmutableMap
+			.of(AnalysisType.PHYLOGENOMICS, "tree", AnalysisType.SISTR_TYPING, "sistr");
 	private static final String BASE = "analysis/";
 	public static final String PAGE_DETAILS_DIRECTORY = BASE + "details/";
 	public static final String PREVIEW_UNAVAILABLE = PAGE_DETAILS_DIRECTORY + "unavailable";
@@ -268,6 +262,11 @@ public class AnalysisController {
 		return "redirect:/analysis/" + submissionId;
 	}
 
+	/**
+	 * Get a map with list of {@link JobError} for an {@link AnalysisSubmission} under key `job_errors`
+	 * @param submissionId {@link AnalysisSubmission} id
+	 * @return map with list of {@link JobError} under key `job_errors`
+	 */
 	@RequestMapping(value = "/ajax/{submissionId}/job-errors", method = RequestMethod.GET)
 	@ResponseBody
 	public ImmutableMap<String, Object> getJobErrors(@PathVariable Long submissionId) {
@@ -293,9 +292,10 @@ public class AnalysisController {
 
 	/**
 	 * Get the status of projects that can be shared with the given analysis
-	 *
-	 * @param submissionId the {@link AnalysisSubmission} id
-	 * @return a list of {@link SharedProjectResponse}
+	 * 
+	 * @param submissionId
+	 *            the {@link AnalysisSubmission} id
+	 * @return a list of {@link AnalysisController.SharedProjectResponse}
 	 */
 	@RequestMapping(value = "/ajax/{submissionId}/share", method = RequestMethod.GET)
 	@ResponseBody
@@ -346,6 +346,7 @@ public class AnalysisController {
 	 * @param submissionId the {@link AnalysisSubmission} id to share/unshare
 	 * @param projectId    the {@link Project} id to share with
 	 * @param shareStatus  whether or not to share the {@link AnalysisSubmission}
+	 * @param locale       Locale of the logged in user
 	 * @return Success message if successful
 	 */
 	@RequestMapping(value = "/ajax/{submissionId}/share", method = RequestMethod.POST)
@@ -453,23 +454,27 @@ public class AnalysisController {
 	 * @param locale    {@link Locale}
 	 * @return {@link DataTablesResponse}
 	 * @throws IridaWorkflowNotFoundException If the requested workflow doesn't exist
-	 * @throws EntityNotFoundException        If the submission cannot be found
 	 * @throws ExecutionManagerException      If the submission cannot be read properly
 	 */
 	@RequestMapping("/ajax/project/{projectId}/list")
 	@ResponseBody
 	public DataTablesResponse getSubmissionsForProject(@DataTablesRequest DataTablesParams params,
 			@PathVariable Long projectId, Principal principal, Locale locale)
-			throws IridaWorkflowNotFoundException, NoPercentageCompleteException, EntityNotFoundException,
-			ExecutionManagerException {
+			throws IridaWorkflowNotFoundException, ExecutionManagerException {
 		Project project = projectService.read(projectId);
 		return analysesListingService.getPagedSubmissions(params, locale, null, project);
 	}
 
+	/**
+	 * Get the sistr analysis information to display
+	 *
+	 * @param id ID of the analysis submission
+	 * @return Json results for the SISTR analysis
+	 */
 	@SuppressWarnings("resource")
 	@RequestMapping("/ajax/sistr/{id}")
 	@ResponseBody
-	public Map<String, Object> getSistrAnalysis(@PathVariable Long id) {
+	public Map<String,Object> getSistrAnalysis(@PathVariable Long id) {
 		AnalysisSubmission submission = analysisSubmissionService.read(id);
 		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubmission(submission);
 		Map<String, Object> result = ImmutableMap.of("parse_results_error", true);
@@ -536,6 +541,8 @@ public class AnalysisController {
 	 * Delete an {@link AnalysisSubmission} by id.
 	 *
 	 * @param analysisSubmissionId the submission ID to delete.
+	 * @param locale               Locale of the logged in user
+	 * @return A message stating the submission was deleted
 	 */
 	@RequestMapping("/ajax/delete/{analysisSubmissionId}")
 	@ResponseBody
@@ -653,13 +660,10 @@ public class AnalysisController {
 		// Let's get a list of all the metadata available that is unique.
 		Set<String> terms = new HashSet<>();
 		for (Sample sample : samples) {
-			if (!sample.getMetadata()
-					.isEmpty()) {
+			if (!sample.getMetadata().isEmpty()) {
 				Map<MetadataTemplateField, MetadataEntry> metadata = sample.getMetadata();
-				terms.addAll(metadata.keySet()
-						.stream()
-						.map(MetadataTemplateField::getLabel)
-						.collect(Collectors.toSet()));
+				terms.addAll(
+						metadata.keySet().stream().map(MetadataTemplateField::getLabel).collect(Collectors.toSet()));
 			}
 		}
 
@@ -668,11 +672,9 @@ public class AnalysisController {
 		for (Sample sample : samples) {
 			Map<MetadataTemplateField, MetadataEntry> sampleMetadata = sample.getMetadata();
 			Map<String, MetadataEntry> stringMetadata = new HashMap<>();
-			sampleMetadata.entrySet()
-					.forEach(e -> {
-						stringMetadata.put(e.getKey()
-								.getLabel(), e.getValue());
-					});
+			sampleMetadata.entrySet().forEach(e -> {
+				stringMetadata.put(e.getKey().getLabel(), e.getValue());
+			});
 
 			Map<String, MetadataEntry> valuesMap = new HashMap<>();
 			for (String term : terms) {
@@ -689,7 +691,10 @@ public class AnalysisController {
 			metadata.put(sample.getLabel(), valuesMap);
 		}
 
-		return ImmutableMap.of("terms", terms, "metadata", metadata);
+		return ImmutableMap.of(
+				"terms", terms,
+				"metadata", metadata
+		);
 	}
 
 	/**
@@ -712,8 +717,8 @@ public class AnalysisController {
 				projectIds.add(project.getId());
 
 				// Get the templates for the project
-				List<ProjectMetadataTemplateJoin> templateList = metadataTemplateService.getMetadataTemplatesForProject(
-						project);
+				List<ProjectMetadataTemplateJoin> templateList = metadataTemplateService
+						.getMetadataTemplatesForProject(project);
 				for (ProjectMetadataTemplateJoin projectMetadataTemplateJoin : templateList) {
 					MetadataTemplate metadataTemplate = projectMetadataTemplateJoin.getObject();
 					Map<String, Object> templateMap = ImmutableMap.of("label", metadataTemplate.getLabel(), "id",

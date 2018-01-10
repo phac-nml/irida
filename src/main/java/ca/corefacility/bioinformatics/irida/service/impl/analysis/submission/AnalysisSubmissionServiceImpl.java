@@ -99,27 +99,24 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	private ProjectAnalysisSubmissionJoinRepository pasRepository;
 	private final ReferenceFileRepository referenceFileRepository;
 	private final GalaxyHistoriesService galaxyHistoriesService;
+	private final SequencingObjectService sequencingObjectService;
 	private JobErrorRepository jobErrorRepository;
 
 	// required, but not constructor injected because we have circular dependencies :(
 	@Autowired
 	private AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionService;
-	private final SequencingObjectService sequencingObjectService;
 
 	/**
 	 * Builds a new AnalysisSubmissionServiceImpl with the given information.
-	 *  @param analysisSubmissionRepository
-	 *            A repository for accessing analysis submissions.
-	 * @param userRepository
-	 *            A repository for accessing user information.
-	 * @param referenceFileRepository
- *            the reference file repository
-	 * @param sequencingObjectService
-*            the {@link SequencingObject} service.
-	 * @param galaxyHistoriesService
-*            The {@link GalaxyHistoriesService}.
-	 * @param jobErrorRepository {@link JobErrorRepository} object
-	 * @param validator A Validator
+	 *
+	 * @param analysisSubmissionRepository A repository for accessing analysis submissions.
+	 * @param userRepository               A repository for accessing user information.
+	 * @param referenceFileRepository      the reference file repository
+	 * @param sequencingObjectService      the {@link SequencingObject} service.
+	 * @param galaxyHistoriesService       The {@link GalaxyHistoriesService}.
+	 * @param validator                    A validator.
+	 * @param pasRepository                The {@link ProjectAnalysisSubmissionJoinRepository}
+	 * @param jobErrorRepository           A repository for accessing {@link JobError}
 	 */
 	@Autowired
 	public AnalysisSubmissionServiceImpl(AnalysisSubmissionRepository analysisSubmissionRepository,

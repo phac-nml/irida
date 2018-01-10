@@ -299,10 +299,11 @@ public class ProjectsController {
 	 * Get a {@link Project} from a remote api and mark it to be synchronized in
 	 * this IRIDA installation
 	 *
-	 * @param url
-	 *            the URL of the remote project
+	 * @param url           the URL of the remote project
+	 * @param syncFrequency How often to sync the project
+	 * @param model         Model for the view
 	 * @return Redirect to the new project. If an oauth exception occurs it will
-	 *         be forwarded back to the creation page.
+	 * be forwarded back to the creation page.
 	 */
 	@RequestMapping(value = "/projects/synchronize", method = RequestMethod.POST)
 	public String syncProject(@RequestParam String url, @RequestParam ProjectSyncFrequency syncFrequency, Model model) {
@@ -429,9 +430,16 @@ public class ProjectsController {
 		return PROJECT_ANALYSES_PAGE;
 	}
 
+	/**
+	 * Get the project edit page
+	 *
+	 * @param model     model for the view
+	 * @param principal currently logged in user
+	 * @param projectId id of the project to get
+	 * @return name of the project edit view
+	 */
 	@RequestMapping(value = "/projects/{projectId}/metadata/edit", method = RequestMethod.GET)
-	public String getProjectMetadataEditPage(final Model model, final Principal principal, @PathVariable long projectId)
-			throws IOException {
+	public String getProjectMetadataEditPage(final Model model, final Principal principal, @PathVariable long projectId) {
 		Project project = projectService.read(projectId);
 		User user = userService.getUserByUsername(principal.getName());
 		if (user.getSystemRole().equals(Role.ROLE_ADMIN)
@@ -455,12 +463,24 @@ public class ProjectsController {
 		}
 	}
 
+	/**
+	 * Submit a project metadata edit
+	 *
+	 * @param model              Model for the view
+	 * @param principal          currently logged in user
+	 * @param projectId          id of the project
+	 * @param name               new name of the project
+	 * @param organism           new organism for the project
+	 * @param projectDescription new description for the project
+	 * @param remoteURL          new remote URL for the project
+	 * @return Project view name
+	 */
 	@RequestMapping(value = "/projects/{projectId}/metadata/edit", method = RequestMethod.POST)
 	public String postProjectMetadataEditPage(final Model model, final Principal principal,
 			@PathVariable long projectId, @RequestParam(required = false, defaultValue = "") String name,
 			@RequestParam(required = false, defaultValue = "") String organism,
 			@RequestParam(required = false, defaultValue = "") String projectDescription,
-			@RequestParam(required = false, defaultValue = "") String remoteURL) throws IOException {
+			@RequestParam(required = false, defaultValue = "") String remoteURL) {
 
 		Project project = projectService.read(projectId);
 
@@ -716,6 +736,12 @@ public class ProjectsController {
 		return errors;
 	}
 
+	/**
+	 * Handle a {@link ProjectWithoutOwnerException} error.  Returns a forbidden error
+	 *
+	 * @param ex the exception to handle.
+	 * @return response entity with FORBIDDEN error
+	 */
 	@ExceptionHandler(ProjectWithoutOwnerException.class)
 	@ResponseBody
 	public ResponseEntity<String> roleChangeErrorHandler(Exception ex) {

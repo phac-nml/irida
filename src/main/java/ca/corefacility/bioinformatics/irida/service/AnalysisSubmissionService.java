@@ -215,7 +215,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @param state       {@link AnalysisState} of the submission to search
 	 * @param workflowIds set of workflow UUIDs to search
 	 * @param project     {@link Project} to search in
-	 * @param pageRequest a {@link PageRequest} for the restults to show
+	 * @param pageRequest a {@link PageRequest} for the results to show
 	 * @return a page of {@link AnalysisSubmission}
 	 */
 	public Page<AnalysisSubmission> listSubmissionsForProject(String search, String name, AnalysisState state,
@@ -228,19 +228,22 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @param name        analysis submission name
 	 * @param state       {@link AnalysisState} of the submission to search
 	 * @param workflowIds set of workflow UUIDs to search
-	 * @param pageRequest a {@link PageRequest} for the restults to show
+	 * @param pageRequest a {@link PageRequest} for the results to show
 	 * @return a page of {@link AnalysisSubmission}
 	 */
 	public Page<AnalysisSubmission> listAllSubmissions(String search, String name, AnalysisState state,
 			Set<UUID> workflowIds, PageRequest pageRequest);
 
 	/**
+	 * Get a page of {@link AnalysisSubmission}s the given user has submitted.
+	 *
 	 * @param search      basic search string
 	 * @param name        analysis submission name
 	 * @param state       {@link AnalysisState} of the submission to search
 	 * @param user        the {@link User} to get submissions for
 	 * @param workflowIds set of workflow UUIDs to search
-	 * @param pageRequest a {@link PageRequest} for the restults to show	 * @return
+	 * @param pageRequest a {@link PageRequest} for the restults to show
+	 * @return a page of {@link AnalysisSubmission}s for the given user
 	 */
 	public Page<AnalysisSubmission> listSubmissionsForUser(String search, String name, AnalysisState state, User user,
 			Set<UUID> workflowIds, PageRequest pageRequest);
@@ -249,7 +252,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * Update the priority of an {@link AnalysisSubmission}
 	 *
 	 * @param submission the submission to update
-	 * @param priority   the new {@link AnalysisSubmission.Priority}
+	 * @param priority   the new priority
 	 * @return the updated submission
 	 */
 	public AnalysisSubmission updatePriority(AnalysisSubmission submission, AnalysisSubmission.Priority priority);

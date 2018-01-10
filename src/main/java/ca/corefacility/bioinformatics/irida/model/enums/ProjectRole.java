@@ -20,6 +20,11 @@ public enum ProjectRole {
         return code;
     }
 
+    /**
+     * Get a role from the given string code
+     * @param code the string to get a role for
+     * @return The requested ProjectRole
+     */
     public static ProjectRole fromString(String code) {
         switch (code.toUpperCase()) {
             case "PROJECT_USER":

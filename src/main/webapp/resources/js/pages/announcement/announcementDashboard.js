@@ -2,11 +2,11 @@ import angular from "angular";
 import "./../../../sass/modules/announcements.scss";
 
 /**
-   * Service to get announcements DOM from server
-   * @param $http
-   * @returns {{getAnnouncements: getAnnouncements}}
-   * @constructor
-   */
+ * Service to get announcements DOM from server
+ * @param $http
+ * @returns {{getAnnouncements: getAnnouncements}}
+ * @constructor
+ */
 function AnnouncementsService($http) {
   function getAnnouncements(url) {
     return $http
@@ -39,11 +39,11 @@ function AnnouncementsService($http) {
 }
 
 /**
-   * Announcements directive to replace DOM with list of announcements from server
-   * @param svc
-   * @param $compile
-   * @returns {{template: string, scope: {url: string}, replace: boolean, controllerAs: string, controller: controller}}
-   */
+ * Announcements directive to replace DOM with list of announcements from server
+ * @param svc
+ * @param $compile
+ * @returns {{template: string, scope: {url: string}, replace: boolean, controllerAs: string, controller: controller}}
+ */
 function announcements(svc, $compile) {
   return {
     template: "<div></div>",
