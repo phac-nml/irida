@@ -1,13 +1,15 @@
 package ca.corefacility.bioinformatics.irida.pipeline.results.impl;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSampleUpdater;
+import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
+import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.analysis.annotations.RunAsUser;
+import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,17 +18,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Maps;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSampleUpdater;
-import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
-import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
-import ca.corefacility.bioinformatics.irida.service.analysis.annotations.RunAsUser;
-import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Updates samples from an {@link AnalysisSubmission} with results from the
@@ -43,12 +40,11 @@ public class AnalysisSubmissionSampleProcessorImpl implements AnalysisSubmission
 
 	/**
 	 * Builds a new {@link AnalysisSubmissionSampleProcessorImpl}.
-	 * 
-	 * @param sampleRepository
-	 *            The {@link SampleRepository}.
-	 * @param analysisSampleUpdaterServices
-	 *            A list of {@link AnalysisSampleUpdater}s to use for updating
-	 *            samples.
+	 *
+	 * @param sampleRepository              The {@link SampleRepository}.
+	 * @param analysisSubmissionService     The {@link AnalysisSubmissionService}
+	 * @param analysisSampleUpdaterServices A list of {@link AnalysisSampleUpdater}s to use for updating
+	 *                                      samples.
 	 */
 	@Autowired
 	public AnalysisSubmissionSampleProcessorImpl(SampleRepository sampleRepository, AnalysisSubmissionService analysisSubmissionService,
