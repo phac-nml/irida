@@ -139,10 +139,6 @@ public class AnalysisExecutionServiceGalaxyAsync {
 	 *             execution manager.
 	 * @throws IridaWorkflowException If there was an issue with the IRIDA workflow.
 	 */
-	/*
-	 * Method used to be @Transactional. This was removed as the txn was timing
-	 * out while data was trying to upload.
-	 */
 	@RunAsUser("#analysisSubmission.getSubmitter()")
 	public Future<AnalysisSubmission> executeAnalysis(AnalysisSubmission analysisSubmission)
 			throws ExecutionManagerException, IridaWorkflowException {

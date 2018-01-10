@@ -15,7 +15,7 @@ function checkState(count, hasAssociated) {
   // Remove the tooltip. A new one will be created based on the
   // information provided.
   this.$node.tooltip("destroy");
-  if (hasAssociated  && this.$node.data("associatedMsg")) {
+  if (hasAssociated && this.$node.data("associatedMsg")) {
     this.$node.parent().addClass("disabled");
     // Activate the tooltip
     this.$node.tooltip({
@@ -66,7 +66,6 @@ export class SampleCartButton {
   }
 }
 
-
 /**
  * Class representing sample export buttons
  */
@@ -80,7 +79,11 @@ export class SampleExportButton {
     const $node = $(node);
     this.$node = $node;
     this.$node.on("click", function() {
-      if (!$(this).parent().hasClass("disabled")) {
+      if (
+        !$(this)
+          .parent()
+          .hasClass("disabled")
+      ) {
         clickHandler.call($node);
       }
     });

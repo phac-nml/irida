@@ -236,11 +236,10 @@ public class AnnouncementsController extends BaseController{
      * @param model
      *                  The model for the view
      * @return Returns the detail page for the announcement
-     * @throws IOException
      */
     @RequestMapping(value = "/{announcementID}/details", method = RequestMethod.GET)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public String getAnnouncementDetailsPage(@PathVariable long announcementID, Model model) throws IOException {
+    public String getAnnouncementDetailsPage(@PathVariable long announcementID, Model model) {
         Announcement announcement = announcementService.read(announcementID);
 
         long numberOfReads = announcementService.countReadsForOneAnnouncement(announcement);

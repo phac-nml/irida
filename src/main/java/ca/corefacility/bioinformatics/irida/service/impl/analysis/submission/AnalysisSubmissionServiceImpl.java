@@ -114,20 +114,14 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 
 	/**
 	 * Builds a new AnalysisSubmissionServiceImpl with the given information.
-	 * 
-	 * @param analysisSubmissionRepository
-	 *            A repository for accessing analysis submissions.
-	 * @param userRepository
-	 *            A repository for accessing user information.
-	 * @param referenceFileRepository
-	 *            the reference file repository
-	 * @param sequencingObjectService
-	 *            the {@link SequencingObject} service.
-
-	 * @param galaxyHistoriesService
-	 *            The {@link GalaxyHistoriesService}.
-	 * @param validator
-	 *            A validator.
+	 *
+	 * @param analysisSubmissionRepository A repository for accessing analysis submissions.
+	 * @param userRepository               A repository for accessing user information.
+	 * @param referenceFileRepository      the reference file repository
+	 * @param sequencingObjectService      the {@link SequencingObject} service.
+	 * @param galaxyHistoriesService       The {@link GalaxyHistoriesService}.
+	 * @param validator                    A validator.
+	 * @param pasRepository                The {@link ProjectAnalysisSubmissionJoinRepository}
 	 */
 	@Autowired
 	public AnalysisSubmissionServiceImpl(AnalysisSubmissionRepository analysisSubmissionRepository,

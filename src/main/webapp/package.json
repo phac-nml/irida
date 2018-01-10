@@ -4,12 +4,13 @@
   "scripts": {
     "start": "webpack-dev-server --env.target development",
     "build": "webpack --env.target production",
-    "clean": "rm -r node* resources/css/"
+    "clean": "rm -r node* resources/dist/",
+    "precommit": "lint-staged"
   },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions"
-  ],
+  "lint-staged": {
+    "resources/**/*.{js,json,scss}": ["prettier --write", "git add"]
+  },
+  "browserslist": ["> 1%", "last 2 versions"],
   "dependencies": {
     "@bassettsj/livestamp": "^2.0.0",
     "angular": "1.6.2",
@@ -74,15 +75,17 @@
     "gulp-cached": "^1.1.0",
     "gulp-sass": "^2.1.1",
     "gulp-sourcemaps": "^1.6.0",
+    "husky": "^0.14.3",
+    "lint-staged": "^6.0.0",
     "node-sass": "^4.7.2",
     "postcss-loader": "^2.0.6",
-    "prettier": "1.9.0",
+    "prettier": "^1.9.2",
     "progress-bar-webpack-plugin": "^1.10.0",
     "resolve-url-loader": "^2.2.0",
     "sass-loader": "^6.0.6",
     "style-loader": "^0.19.0",
-    "url-loader": "^0.6.2",
     "uglifyjs-webpack-plugin": "^1.1.2",
+    "url-loader": "^0.6.2",
     "webpack": "^3.8.1",
     "webpack-dev-server": "^2.9.1",
     "webpack-merge": "^4.1.0",
