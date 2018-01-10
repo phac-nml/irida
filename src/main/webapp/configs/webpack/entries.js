@@ -6,6 +6,7 @@
 module.exports = {
   bootstrap: "bootstrap-loader",
   vendor: ["babel-polyfill"],
+  activities: "./resources/js/pages/activities/activities.js",
   announcements: "./resources/js/pages/announcement/announcements.js",
   analysis: "./resources/js/pages/analysis/analysis.js",
   app: "./resources/js/app.js",
