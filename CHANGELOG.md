@@ -22,6 +22,7 @@ Changes
 * [Developer]: Ran `prettier` on all scss files within `resources/sass`.
 * [Developer]: Add a git pre-commit hook to ensure `prettier` formatting.
 * [UI]: Cleaned up sub-navigation elements on samples and files.
+* [UI]: Fixed issue where breadcrumbs were not displaying on the Project > Line List and Project > Analyses pages.
 
 0.18.0 to 0.19.0
 ----------------
