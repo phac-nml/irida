@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.exceptions;
 
+/**
+ * Exception thrown if an object is not found by the execution manager
+ */
 public class ExecutionManagerObjectNotFoundException extends UploadException {
 
 	private static final long serialVersionUID = -8631240265058889252L;

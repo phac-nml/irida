@@ -105,10 +105,18 @@ public class AnalysisFastQC extends Analysis {
 		this.setAnalysisType(AnalysisType.FASTQC);
 	}
 
+	/**
+	 * get an AnalysisFastQCBuilder
+	 * @return an AnalysisFastQCBuilder
+	 */
 	public static AnalysisFastQCBuilder builder() {
 		return new AnalysisFastQCBuilder();
 	}
 
+	/**
+	 * Get a AnalysisFastQCBuilder sloppy builder that doesn't check fields
+	 * @return a AnalysisFastQCBuilder
+	 */
 	public static AnalysisFastQCBuilder sloppyBuilder() {
 		return new AnalysisFastQCBuilder(false);
 	}
@@ -160,92 +168,182 @@ public class AnalysisFastQC extends Analysis {
 			this.enforceRequiredFieldCheck = enforceRequiredFieldCheck;
 		}
 
+		/**
+		 * set the analysisOutputFilesMap
+		 * @param analysisOutputFilesMap the analysisOutputFilesMap
+		 * @return the builder
+		 */
 		public AnalysisFastQCBuilder analysisOutputFilesMap(final Map<String, AnalysisOutputFile> analysisOutputFilesMap) {
 			this.analysisOutputFilesMap = analysisOutputFilesMap;
 			return this;
 		}
 
+		/**
+		 * set the additionalProperties
+		 * @param additionalProperties the additionalProperties
+		 * @return the builder
+		 */
 		public AnalysisFastQCBuilder additionalProperties(final Map<String, String> additionalProperties) {
 			this.additionalProperties = additionalProperties;
 			return this;
 		}
 
+		/**
+		 * set the executionManagerAnalysisId
+		 * @param executionManagerAnalysisId the executionManagerAnalysisId
+		 * @return the builder
+		 */
 		public AnalysisFastQCBuilder executionManagerAnalysisId(final String executionManagerAnalysisId) {
 			this.executionManagerAnalysisId = executionManagerAnalysisId;
 			return this;
 		}
 
+		/**
+		 * set the description
+		 * @param description the description
+		 * @return the builder
+		 */
 		public AnalysisFastQCBuilder description(final String description) {
 			this.description = description;
 			return this;
 		}
 
+		/**
+		 * set the fastQCReport
+		 * @param fastQCReport the fastQCReport
+		 * @return the builder
+		 */
 		public AnalysisFastQCBuilder fastQCReport(final AnalysisOutputFile fastQCReport) {
 			this.fastQCReport = fastQCReport;
 			return this;
 		}
 
+		/**
+		 * set the overrepresentedSequences
+		 * @param overrepresentedSequences the overrepresentedSequences
+		 * @return the builder
+		 */
 		public AnalysisFastQCBuilder overrepresentedSequences(
 				final Set<OverrepresentedSequence> overrepresentedSequences) {
 			this.overrepresentedSequences = overrepresentedSequences;
 			return this;
 		}
 
+		/**
+		 * set the duplicationLevelChart
+		 * @param duplicationLevelChart the duplicationLevelChart
+		 * @return the builder
+		 */
 		public AnalysisFastQCBuilder duplicationLevelChart(final byte[] duplicationLevelChart) {
 			this.duplicationLevelChart = duplicationLevelChart;
 			return this;
 		}
 
+		/**
+		 * Set the perSequenceQualityScoreChart
+		 * @param perSequenceQualityScoreChart the perSequenceQualityScoreChart
+		 * @return the builder
+		 */
 		public AnalysisFastQCBuilder perSequenceQualityScoreChart(final byte[] perSequenceQualityScoreChart) {
 			this.perSequenceQualityScoreChart = perSequenceQualityScoreChart;
 			return this;
 		}
 
+		/**
+		 * set the perBaseQualityScoreChart
+		 * @param perBaseQualityScoreChart the perBaseQualityScoreChart
+		 * @return the builder
+		 */
 		public AnalysisFastQCBuilder perBaseQualityScoreChart(final byte[] perBaseQualityScoreChart) {
 			this.perBaseQualityScoreChart = perBaseQualityScoreChart;
 			return this;
 		}
 
+		/**
+		 * Set the gcContent
+		 * @param gcContent the gcContent
+		 * @return the builder
+		 */
 		public AnalysisFastQCBuilder gcContent(final Short gcContent) {
 			this.gcContent = gcContent;
 			return this;
 		}
 
+		/**
+		 * Set the maxLength
+		 * @param maxLength the maxLength
+		 * @return the builder
+		 */
 		public AnalysisFastQCBuilder maxLength(final Integer maxLength) {
 			this.maxLength = maxLength;
 			return this;
 		}
 
+		/**
+		 * Set the minLength
+		 * @param minLength the minLength
+		 * @return the builder
+		 */
 		public AnalysisFastQCBuilder minLength(final Integer minLength) {
 			this.minLength = minLength;
 			return this;
 		}
 
+		/**
+		 * Set the totalBases
+		 * @param totalBases the totalBases
+		 * @return the builder
+		 */
 		public AnalysisFastQCBuilder totalBases(final Long totalBases) {
 			this.totalBases = totalBases;
 			return this;
 		}
 
+		/**
+		 * Set the filteredSequences
+		 * @param filteredSequences the filteredSequences
+		 * @return the builder
+		 */
 		public AnalysisFastQCBuilder filteredSequences(final Integer filteredSequences) {
 			this.filteredSequences = filteredSequences;
 			return this;
 		}
 
+		/**
+		 * Set the total sequences
+		 * @param totalSequences the totalsequences
+		 * @return the builder
+		 */
 		public AnalysisFastQCBuilder totalSequences(final Integer totalSequences) {
 			this.totalSequences = totalSequences;
 			return this;
 		}
 
+		/**
+		 * Set the filetype
+		 * @param fileType the filetype
+		 * @return the builder
+		 */
 		public AnalysisFastQCBuilder fileType(final String fileType) {
 			this.fileType = fileType;
 			return this;
 		}
 
+		/**
+		 * Set the encoding
+		 * @param encoding the encoding
+		 * @return the builder
+		 */
 		public AnalysisFastQCBuilder encoding(final String encoding) {
 			this.encoding = encoding;
 			return this;
 		}
 
+		/**
+		 * Build an AnalysisFastQC with the currently set parameters
+		 *
+		 * @return the new AnalysisFastQC
+		 */
 		public AnalysisFastQC build() {
 			if (enforceRequiredFieldCheck) {
 				final Field[] fields = AnalysisFastQCBuilder.class.getDeclaredFields();
