@@ -335,28 +335,19 @@ public class PipelineController extends BaseController {
 	/**
 	 * Launch a pipeline
 	 *
-	 * @param locale
-	 *            the locale that the browser is using for the current request.
-	 * @param pipelineId
-	 *            the id for the {@link IridaWorkflow}
-	 * @param single
-	 *            a list of {@link SequenceFile} id's
-	 * @param paired
-	 *            a list of {@link SequenceFilePair} id's
-	 * @param parameters
-	 *            TODO: This is a hack! Update when fixing issue #100
-	 *            {@link Map} of ALL parameters passed. Only want the 'paras'
-	 *            object: a {@link Map} of pipeline parameters
-	 * @param ref
-	 *            the id for a {@link ReferenceFile}
-	 * @param name
-	 *            a user provided name for the {@link IridaWorkflow}
-	 * @param analysisDescription
-	 *            Optional description of the analysis
-	 * @param sharedProjects
-	 *            A list of {@link Project} ids to share the analysis submission
-	 *            with
-	 *
+	 * @param locale                the locale that the browser is using for the current request.
+	 * @param pipelineId            the id for the {@link IridaWorkflow}
+	 * @param single                a list of {@link SequenceFile} id's
+	 * @param paired                a list of {@link SequenceFilePair} id's
+	 * @param parameters            TODO: This is a hack! Update when fixing issue #100
+	 *                              {@link Map} of ALL parameters passed. Only want the 'paras'
+	 *                              object: a {@link Map} of pipeline parameters
+	 * @param ref                   the id for a {@link ReferenceFile}
+	 * @param name                  a user provided name for the {@link IridaWorkflow}
+	 * @param analysisDescription   Optional description of the analysis
+	 * @param sharedProjects        A list of {@link Project} ids to share the analysis submission
+	 *                              with
+	 * @param writeResultsToSamples Whether to save the results of the pipeline to the samples
 	 * @return a JSON response with the status and any messages.
 	 */
 	@RequestMapping(value = "/ajax/start/{pipelineId}", method = RequestMethod.POST)

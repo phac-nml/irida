@@ -127,6 +127,9 @@ public class RemoteStatus {
 		this.lastUpdate = lastUpdate;
 	}
 
+	/**
+	 * The status of the synchronized object
+	 */
 	public enum SyncStatus {
 		/**
 		 * Entity should not be synchronized

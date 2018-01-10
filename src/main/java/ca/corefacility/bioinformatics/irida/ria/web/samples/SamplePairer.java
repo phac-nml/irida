@@ -37,7 +37,7 @@ public class SamplePairer {
 	 * 			where the key is the common prefix of two paired files,
 	 * 			or the full file name of a single sequence file
 	 */
-	private static Map<String, List<MultipartFile>> organizeFiles(List<MultipartFile> files) throws IOException {
+	private static Map<String, List<MultipartFile>> organizeFiles(List<MultipartFile> files) {
 
 		Map<String, List<MultipartFile>> organizedFiles = new HashMap<>();
 
@@ -109,7 +109,7 @@ public class SamplePairer {
 	 *            List of {@link MultipartFile}s uploaded
 	 * @return Map of {@link Path}s to paired sequence files.
 	 */
-	public static Map<String, List<MultipartFile>> getPairedFiles(List<MultipartFile> files) throws IOException {
+	public static Map<String, List<MultipartFile>> getPairedFiles(List<MultipartFile> files) {
 
 		Map<String, List<MultipartFile>> pairedFiles = new HashMap<>();
 
@@ -132,7 +132,7 @@ public class SamplePairer {
 	 *            List of {@link MultipartFile}s uploaded
 	 * @return List of {@link Path}s to single sequence files.
 	 */
-	public static List<MultipartFile> getSingleFiles(List<MultipartFile> files) throws IOException {
+	public static List<MultipartFile> getSingleFiles(List<MultipartFile> files) {
 
 		List<MultipartFile> singleFilePaths = new ArrayList<>();
 

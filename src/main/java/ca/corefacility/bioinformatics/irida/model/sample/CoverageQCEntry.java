@@ -7,6 +7,9 @@ import javax.persistence.Transient;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 
+/**
+ * a {@link QCEntry} relating to the coverage of a sequence
+ */
 @Entity
 public class CoverageQCEntry extends QCEntry {
 

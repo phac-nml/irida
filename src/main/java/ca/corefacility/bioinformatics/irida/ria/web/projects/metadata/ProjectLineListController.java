@@ -36,6 +36,9 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
+/**
+ * Handles requests for the metadata in a project
+ */
 @Controller
 @RequestMapping("/projects/{projectId}/linelist")
 public class ProjectLineListController {
@@ -161,11 +164,9 @@ public class ProjectLineListController {
 	/**
 	 * Save a new line list template.
 	 *
-	 * @param projectId
-	 * 		{@link Long} id for the current project
-	 * @param templateName
-	 * 		{@link String} name for the new template
-	 *
+	 * @param projectId    {@link Long} id for the current project
+	 * @param templateName {@link String} name for the new template
+	 * @param fields       The fields to save to the template
 	 * @return The result of saving.
 	 */
 	@RequestMapping(value = "/linelist-templates/save-template/{templateName}",
@@ -265,19 +266,14 @@ public class ProjectLineListController {
 	/**
 	 * Save a list a {@link MetadataTemplateField} as a {@link MetadataTemplate}
 	 *
-	 * @param projectId
-	 * 		identifier for the current {@link Project}
-	 * @param fields
-	 * 		{@link List} of {@link String} names of {@link MetadataTemplateField}
-	 * @param name
-	 * 		{@link String} name for the new template.
-	 *
-	 * @return
+	 * @param projectId  identifier for the current {@link Project}
+	 * @param fields     {@link List} of {@link String} names of {@link MetadataTemplateField}
+	 * @param name       {@link String} name for the new template.
+	 * @param templateId ID of the template to update.  Will create new template if null
+	 * @param locale     Locale of teh logged in user
+	 * @return the saved {@link MetadataTemplate} and a response message
 	 */
-	@RequestMapping(
-			value = "/templates",
-			method = RequestMethod.POST
-	)
+	@RequestMapping(value = "/templates", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> saveMetadataTemplate(@PathVariable long projectId, @RequestParam String name,
 			@RequestParam(value = "fields[]") List<String> fields, @RequestParam(required = false) Long templateId, Locale locale) {

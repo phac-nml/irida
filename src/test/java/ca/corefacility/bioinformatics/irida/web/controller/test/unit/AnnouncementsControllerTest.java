@@ -192,11 +192,7 @@ public class AnnouncementsControllerTest {
         when(announcementService.countReadsForOneAnnouncement(any(Announcement.class))).thenReturn(0L);
         when(userService.count()).thenReturn(1L);
 
-        try {
-            page = announcementsController.getAnnouncementDetailsPage(id, model);
-        } catch (IOException e) {
-            fail("Unexpected error");
-        }
+        page = announcementsController.getAnnouncementDetailsPage(id, model);
 
         assertTrue("Unexpected redirect to a page", page.equals(ANNOUNCEMENT_DETAILS));
         assertEquals("Unexpected number of users", 1L, (model.get("numTotal")));

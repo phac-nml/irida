@@ -21,6 +21,9 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserGroupJoinRepos
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
 
+/**
+ * Superclass permission whether a user can modify project settings.  This superclass checks if a user has ownership of a project. This can be extended for specific settings.
+ */
 public abstract class ModifyProjectPermission extends BasePermission<Project,Long>{
 	private static final Logger logger = LoggerFactory.getLogger(ModifyProjectPermission.class);
 
@@ -31,13 +34,12 @@ public abstract class ModifyProjectPermission extends BasePermission<Project,Lon
 
 	/**
 	 * Construct an instance of {@link ModifyProjectPermission}.
-	 * 
-	 * @param projectRepository
-	 *            the project repository.
-	 * @param userRepository
-	 *            the user repository.
-	 * @param pujRepository
-	 *            the project user join repository.
+	 *
+	 * @param projectRepository the project repository.
+	 * @param userRepository    the user repository.
+	 * @param pujRepository     the project user join repository.
+	 * @param ugpjRepository    The user group project join repository
+	 * @param ugRepository      The user group join repository
 	 */
 	@Autowired
 	public ModifyProjectPermission(final ProjectRepository projectRepository, final UserRepository userRepository,

@@ -17,6 +17,9 @@ import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 
+/**
+ * Email controller used for testing.  Does not really send emails.
+ */
 @Component
 @Profile({ "it", "test" })
 public class TestEmailController extends EmailControllerImpl {

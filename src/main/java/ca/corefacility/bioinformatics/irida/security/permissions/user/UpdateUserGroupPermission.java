@@ -19,8 +19,6 @@ import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
 
 /**
  * Confirms that the authenticated user is allowed to modify a user group.
- * 
- * 
  */
 @Component
 public class UpdateUserGroupPermission extends BasePermission<UserGroup, Long> {
@@ -34,9 +32,10 @@ public class UpdateUserGroupPermission extends BasePermission<UserGroup, Long> {
 
 	/**
 	 * Construct an instance of {@link UpdateUserGroupPermission}.
-	 * 
-	 * @param userGroupRepository
-	 *            the user repository.
+	 *
+	 * @param userGroupRepository     the user group repository.
+	 * @param userGroupJoinRepository the user group join repository
+	 * @param userRepository          the user repository
 	 */
 	@Autowired
 	public UpdateUserGroupPermission(final UserGroupRepository userGroupRepository,
@@ -55,7 +54,7 @@ public class UpdateUserGroupPermission extends BasePermission<UserGroup, Long> {
 		final User user = userRepository.loadUserByUsername(authentication.getName());
 		final Optional<UserGroupJoin> userInGroup = userGroupJoinRepository.findUsersInGroup(g).stream()
 				.filter(j -> j.getSubject().equals(user)).findAny();
-		
+
 		if (userInGroup.isPresent()) {
 			final UserGroupJoin j = userInGroup.get();
 			if (j.getRole().equals(UserGroupRole.GROUP_OWNER)) {

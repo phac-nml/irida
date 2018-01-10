@@ -79,10 +79,12 @@ public class UserGroup implements MutableIridaThing {
 		this.name = name;
 	}
 
+	@Override
 	public int hashCode() {
 		return Objects.hash(name, createdDate, modifiedDate);
 	}
 
+	@Override
 	public boolean equals(final Object o) {
 		if (o == this) {
 			return true;

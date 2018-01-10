@@ -94,12 +94,11 @@ public class Analysis extends IridaResourceSupport implements IridaThing {
 
 	/**
 	 * Builds a new {@link Analysis} object with the given information.
-	 * 
-	 * @param executionManagerAnalysisId
-	 *            The id for an execution manager used with this analysis.
-	 * @param analysisOutputFilesMap
-	 *            A {@link Map} of output file keys and
-	 *            {@link AnalysisOutputFile}s.
+	 *
+	 * @param executionManagerAnalysisId The id for an execution manager used with this analysis.
+	 * @param analysisOutputFilesMap     A {@link Map} of output file keys and
+	 *                                   {@link AnalysisOutputFile}s.
+	 * @param analysisType               The {@link AnalysisType} for this analysis
 	 */
 	public Analysis(final String executionManagerAnalysisId,
 			final Map<String, AnalysisOutputFile> analysisOutputFilesMap, AnalysisType analysisType) {
@@ -157,10 +156,12 @@ public class Analysis extends IridaResourceSupport implements IridaThing {
 		this.additionalProperties = additionalProperties;
 	}
 
+	@Override
 	public int hashCode() {
 		return Objects.hash(createdDate, description, executionManagerAnalysisId, analysisOutputFilesMap);
 	}
 
+	@Override
 	public boolean equals(Object o) {
 		if (o == this) {
 			return true;
@@ -198,6 +199,11 @@ public class Analysis extends IridaResourceSupport implements IridaThing {
 		return createdDate;
 	}
 
+	/**
+	 * Get an output file with the given key
+	 * @param key the key
+	 * @return an AnalysisOutputFile
+	 */
 	public AnalysisOutputFile getAnalysisOutputFile(String key) {
 		return this.analysisOutputFilesMap.get(key);
 	}

@@ -22,6 +22,12 @@ public enum SequencingRunUploadStatus {
 		return code;
 	}
 
+	/**
+	 * Get a status from the given string
+	 *
+	 * @param code the string code to get a status for
+	 * @return a SequencingRunUploadStatus
+	 */
 	public static SequencingRunUploadStatus fromString(String code) {
 		switch (code.toUpperCase()) {
 		case "UPLOADING":
