@@ -27,6 +27,10 @@ public class ProjectOwnerAllowRemotePermission extends ModifyProjectPermission {
 	 *            the user repository.
 	 * @param pujRepository
 	 *            the project user join repository.
+	 * @param ugpjRepository
+	 *            the user group project repository.
+	 * @param ugRepository
+	 *            the user group join repository.
 	 */
 	@Autowired
 	public ProjectOwnerAllowRemotePermission(ProjectRepository projectRepository, UserRepository userRepository,
