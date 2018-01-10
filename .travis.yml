@@ -34,6 +34,6 @@ install:
   - mvn -version
   - pushd lib; ./install-libs.sh; popd
   - gem install jekyll
-  - gem install pygments
+  - gem install pygments.rb
 
 script: ./run-tests.sh $TEST_SUITE
