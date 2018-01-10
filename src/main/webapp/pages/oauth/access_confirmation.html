@@ -4,7 +4,7 @@
     <title th:text="#{auth.title}">IRIDA OAuth2 Approval Page</title>
     <link rel="stylesheet" th:href="@{/resources/dist/css/bootstrap.bundle.css}">
     <style>
-        form {
+        .button-form {
             display: inline-block;
         }
     </style>
@@ -29,13 +29,13 @@
         network by the site's administrators._</p></section>
 
 <div class="modal-footer">
-    <form id='confirmationForm' name='confirmationForm' th:action='@{/api/oauth/authorize}' method='post'>
+    <form id='confirmationForm' class="button-form" name='confirmationForm' th:action='@{/api/oauth/authorize}' method='post'>
         <input th:each="scope : ${scopes}" type="hidden" th:name="${'scope.'+ scope}" value="true"/>
         <input name='user_oauth_approval' value='true' type='hidden'/>
         <input class="btn btn-default" name='authorize' id="authorize-btn" th:value="#{auth.authorize}"
                value='_Authorize_' type='submit'/>
     </form>
-    <form id='denialForm' name='denialForm' th:action='@{/api/oauth/authorize}' method='post'>
+    <form id='denialForm' class="button-form" name='denialForm' th:action='@{/api/oauth/authorize}' method='post'>
         <input th:each="scope : ${scopes}" type="hidden" th:name="${'scope.'+ scope}" value="false"/>
         <input name='user_oauth_approval' value='false' type='hidden'/>
         <input class="btn btn-danger" name='deny' th:value="#{auth.deny}" value='_Deny_' type='submit'/>
