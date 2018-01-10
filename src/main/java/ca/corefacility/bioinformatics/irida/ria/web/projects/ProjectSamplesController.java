@@ -56,6 +56,9 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
+/**
+ * Controller for handling interactions with samples in a project
+ */
 @Controller
 public class ProjectSamplesController {
 	// From configuration.properties
@@ -279,12 +282,10 @@ public class ProjectSamplesController {
 	/**
 	 * Get the modal window for filtering project samples
 	 *
-	 * @param projectId
-	 * 		{@link Long} identifier for the current {@link Project}
-	 * @param filter {@link UISampleFilter} Current filter parameters.
-	 * @param model
-	 * 		UI Model
-	 *
+	 * @param projectId  {@link Long} identifier for the current {@link Project}
+	 * @param associated Which associated projects are enabled
+	 * @param filter     {@link UISampleFilter} Current filter parameters.
+	 * @param model      UI Model
 	 * @return {@link String} path to the modal template
 	 */
 	@RequestMapping(value = "/projects/{projectId}/template/samples-filter-modal", produces = MediaType.TEXT_HTML_VALUE)
@@ -365,7 +366,7 @@ public class ProjectSamplesController {
 	 * @param sampleNames {@link List} of sample names
 	 * @param projects    List of associated {@link Project} identifiers
 	 * @param locale      {@link Locale} local of current user
-	 * @return @{link Map} of Samples not in the current project
+	 * @return {@link Map} of Samples not in the current project
 	 */
 	@RequestMapping("/projects/{projectId}/ajax/samples/missing")
 	@ResponseBody
@@ -854,7 +855,7 @@ public class ProjectSamplesController {
 	 * @param request     {@link HttpServletRequest}
 	 * @param response    {@link HttpServletResponse}
 	 * @param locale      of the current user.
-	 * @throws IOException
+	 * @throws IOException if the exported file cannot be written
 	 */
 	@RequestMapping(value = "/projects/{projectId}/samples/export")
 	public void exportProjectSamplesTable(

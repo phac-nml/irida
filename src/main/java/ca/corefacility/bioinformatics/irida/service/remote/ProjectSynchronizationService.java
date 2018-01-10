@@ -228,12 +228,11 @@ public class ProjectSynchronizationService {
 
 	/**
 	 * Synchronize a given {@link Sample} to the local installation.
-	 * 
-	 * @param sample
-	 *            the {@link Sample} to synchronize. This should have been read
-	 *            from a remote api.
-	 * @param project
-	 *            The {@link Project} the {@link Sample} belongs in.
+	 *
+	 * @param sample          the {@link Sample} to synchronize. This should have been read
+	 *                        from a remote api.
+	 * @param project         The {@link Project} the {@link Sample} belongs in.
+	 * @param existingSamples A map of samples that have already been synchronized.  These will be checked to see if they've been updated
 	 */
 	public void syncSample(Sample sample, Project project, Map<String, Sample> existingSamples) {
 		Sample localSample;
@@ -314,7 +313,13 @@ public class ProjectSynchronizationService {
 		
 		sampleService.update(localSample);
 	}
-	
+
+	/**
+	 * Synchronize the given sample's metadata
+	 *
+	 * @param sample the sample to sync
+	 * @return the synchronized sample
+	 */
 	public Sample syncSampleMetadata(Sample sample){
 		Map<String, MetadataEntry> sampleMetadata = sampleRemoteService.getSampleMetadata(sample);
 		Map<MetadataTemplateField, MetadataEntry> metadata = metadataTemplateService.getMetadataMap(sampleMetadata);

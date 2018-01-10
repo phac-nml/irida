@@ -37,7 +37,9 @@ import ca.corefacility.bioinformatics.irida.service.CRUDService;
 /**
  * A universal CRUD service for all types. Specialized services should extend
  * this class to get basic CRUD methods for free.
- * 
+ *
+ * @param <KeyType>   Key in the database for the type stored
+ * @param <ValueType> Type of object stored by this service
  */
 public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Timestamped<KeyType>> implements
 		CRUDService<KeyType, ValueType> {

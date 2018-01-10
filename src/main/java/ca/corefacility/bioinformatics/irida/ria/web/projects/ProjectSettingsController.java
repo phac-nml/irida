@@ -32,6 +32,9 @@ import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
+/**
+ * Handles basic settings pages for a project
+ */
 @Controller
 @RequestMapping("/projects/{projectId}/settings")
 public class ProjectSettingsController {
@@ -258,13 +261,10 @@ public class ProjectSettingsController {
 	/**
 	 * Update the project assembly setting for the {@link Project}
 	 *
-	 * @param projectId
-	 *            the ID of a {@link Project}
-	 * @param assemble
-	 *            Whether or not to do automated assemblies
-	 * @param model
-	 *            Model for the view
-	 *
+	 * @param projectId the ID of a {@link Project}
+	 * @param assemble  Whether or not to do automated assemblies
+	 * @param model     Model for the view
+	 * @param locale    Locale of the logged in user
 	 * @return success message if successful
 	 */
 	@RequestMapping(value = "/assemble", method = RequestMethod.POST)
@@ -289,16 +289,14 @@ public class ProjectSettingsController {
 
 		return ImmutableMap.of("result", message);
 	}
-	
+
 	/**
 	 * Update the project sistr setting for the {@link Project}
 	 *
-	 * @param projectId
-	 *            the ID of a {@link Project}
-	 * @param sistr
-	 *            Whether or not to do automated sistr typing.
-	 * @param model
-	 *            Model for the view
+	 * @param projectId the ID of a {@link Project}
+	 * @param sistr     Whether or not to do automated sistr typing.
+	 * @param model     Model for the view
+	 * @param locale    Locale of the logged in user
 	 * @return success message if successful
 	 */
 	@RequestMapping(value = "/sistr", method = RequestMethod.POST)

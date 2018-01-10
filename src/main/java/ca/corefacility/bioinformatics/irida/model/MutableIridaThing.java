@@ -4,6 +4,9 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * An object that can be modified
+ */
 public interface MutableIridaThing extends IridaThing {
 	
 	/**

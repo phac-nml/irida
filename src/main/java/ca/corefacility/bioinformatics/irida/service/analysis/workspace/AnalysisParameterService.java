@@ -8,8 +8,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.execution.WorkflowInp
 
 /**
  * A service for setting up parameters for an analysis.
- * 
  *
+ * @param <WorkflowInputsType> Type of workflow inputs for this service
  */
 public interface AnalysisParameterService<WorkflowInputsType extends WorkflowInputsGeneric> {
 

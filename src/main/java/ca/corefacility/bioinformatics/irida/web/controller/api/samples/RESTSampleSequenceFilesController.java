@@ -560,11 +560,10 @@ public class RESTSampleSequenceFilesController {
 
 	/**
 	 * Remove a {@link SequencingObject} from a {@link Sample}.
-	 * 
-	 * @param sampleId
-	 *            the source {@link Sample} identifier.
-	 * @param objectId
-	 *            the identifier of the {@link SequencingObject} to move.
+	 *
+	 * @param sampleId   the source {@link Sample} identifier.
+	 * @param objectType The type of sequencing object being removed
+	 * @param objectId   the identifier of the {@link SequencingObject} to move.
 	 * @return a status indicating the success of the move.
 	 */
 	@RequestMapping(value = "/api/samples/{sampleId}/{objectType}/{objectId}", method = RequestMethod.DELETE)
@@ -616,11 +615,10 @@ public class RESTSampleSequenceFilesController {
 	/**
 	 * Add the links for a {@link SequencingObject} to its sample, self, to each
 	 * individual {@link SequenceFile}
-	 * 
-	 * @param sequencingObject
-	 *            {@link SequencingObject} to enhance
-	 * @param sampleId
-	 *            ID of the {@link Sample} for the object
+	 *
+	 * @param sequencingObject {@link SequencingObject} to enhance
+	 * @param sampleId         ID of the {@link Sample} for the object
+	 * @param <T>              The subclass of {@link SequencingObject} being enhanced by this method
 	 * @return the enhanced {@link SequencingObject}
 	 */
 	@SuppressWarnings("unchecked")

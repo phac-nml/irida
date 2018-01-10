@@ -38,6 +38,9 @@ import ca.corefacility.bioinformatics.irida.model.enums.SequencingRunUploadStatu
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 
+/**
+ * This class represents a collection of sequence files that have come off one run of a sequencer.
+ */
 @Entity
 @Table(name = "sequencing_run")
 @Audited

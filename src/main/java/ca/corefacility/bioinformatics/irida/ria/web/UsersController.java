@@ -346,6 +346,11 @@ public class UsersController {
 		return EDIT_USER_PAGE;
 	}
 
+	/**
+	 * Get the user creation view
+	 * @param model Model for the view
+	 * @return user creation view
+	 */
 	@RequestMapping(value = "/create", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
 	public String createUserPage(Model model) {

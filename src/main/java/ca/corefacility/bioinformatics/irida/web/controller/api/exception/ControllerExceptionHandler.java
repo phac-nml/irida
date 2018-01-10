@@ -157,6 +157,12 @@ public class ControllerExceptionHandler {
 		return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
 	}
 
+	/**
+	 * Handle a HttpMediaTypeNotSupportedException exception.  Returns a HTTP 415 and a list of the acceptable types
+	 *
+	 * @param e the exception to handle
+	 * @return A response entity stating the type is unsupported
+	 */
 	@ExceptionHandler(HttpMediaTypeNotSupportedException.class)
 	public ResponseEntity<ErrorResponse> handleMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException e) {
 		logger.error("A client attempted to issue a data submission against an endpoint with an unsupported "
