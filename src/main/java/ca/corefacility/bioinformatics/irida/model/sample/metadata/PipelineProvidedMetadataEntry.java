@@ -36,7 +36,7 @@ public class PipelineProvidedMetadataEntry extends MetadataEntry {
 	/**
 	 * Get the {@link AnalysisSubmission} that created this metadata
 	 *
-	 * @return
+	 * @return the {@link AnalysisSubmission}
 	 */
 	public AnalysisSubmission getSubmission() {
 		return submission;
