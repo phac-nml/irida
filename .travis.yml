@@ -33,6 +33,7 @@ install:
   - mysql -e "CREATE USER '$MYSQL_USER'@'localhost' IDENTIFIED BY '$MYSQL_PASSWORD'; GRANT ALL ON $MYSQL_DATABASE.* to '$MYSQL_USER'@'localhost';"
   - mvn -version
   - pushd lib; ./install-libs.sh; popd
-  - gem install jekyll pygments
+  - gem install jekyll
+  - gem install pygments
 
 script: ./run-tests.sh $TEST_SUITE
