@@ -38,6 +38,9 @@ public class IridaPermissionEvaluator implements PermissionEvaluator {
 		this.namedPermissionMap = new HashMap<>();
 	}
 
+	/**
+	 * Initialize the permission evaluator
+	 */
 	@PostConstruct
 	public void init() {
 		for (BasePermission<?,?> p : permissions) {

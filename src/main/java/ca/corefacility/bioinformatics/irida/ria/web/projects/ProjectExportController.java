@@ -242,11 +242,10 @@ public class ProjectExportController {
 
 	/**
 	 * Get the project export list view
-	 * 
-	 * @param projectId
-	 *            which {@link Project} to get exports for
-	 * @param model
-	 *            model for the view
+	 *
+	 * @param projectId which {@link Project} to get exports for
+	 * @param model     model for the view
+	 * @param principal The currently logged in user
 	 * @return name of the exports list view
 	 */
 	@RequestMapping("/projects/{projectId}/export")
@@ -276,8 +275,8 @@ public class ProjectExportController {
 	 * Ajax method for getting the {@link NcbiExportSubmission}s for a given
 	 * {@link Project}
 	 *
-	 * @param projectId
-	 *            {@link Project} id
+	 * @param projectId {@link Project} id
+	 * @param params    Parameters from the datatables request
 	 * @return DatatablesResponse of Map of submission params
 	 */
 	@RequestMapping("/ajax/projects/{projectId}/export/list")
@@ -296,6 +295,7 @@ public class ProjectExportController {
 	/**
 	 * Ajax method for getting all {@link NcbiExportSubmission}s
 	 *
+	 * @param params The parameters from the datatables request
 	 * @return DatatablesResponse of Map of submission params
 	 */
 	@RequestMapping("/ajax/export/list")
@@ -356,6 +356,9 @@ public class ProjectExportController {
 
 	}
 
+	/**
+	 * Properties of a NCBI BioSample being exported
+	 */
 	protected static class BioSampleBody {
 		@JsonProperty
 		String bioSample;

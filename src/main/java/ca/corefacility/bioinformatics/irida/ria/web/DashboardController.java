@@ -14,6 +14,10 @@ public class DashboardController {
 	private static final String DASHBOARD_PAGE = "index";
 	private static final Logger logger = LoggerFactory.getLogger(DashboardController.class);
 
+	/**
+	 * Get the index page
+	 * @return name of the dashboard view
+	 */
 	@RequestMapping(value = "/dashboard")
 	public String showIndex() {
 		logger.debug("Displaying dashboard page");

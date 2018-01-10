@@ -40,6 +40,8 @@ public interface Join<SubjectType extends IridaThing, ObjectType extends IridaTh
 
 	/**
 	 * By default, we will return the label of the subject of the join.
+	 *
+	 * @return The label of the object
 	 */
 	public default String getLabel() {
 		return getSubject().getLabel();

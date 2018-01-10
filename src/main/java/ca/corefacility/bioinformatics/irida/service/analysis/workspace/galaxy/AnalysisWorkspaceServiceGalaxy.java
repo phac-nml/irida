@@ -85,31 +85,23 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	/**
 	 * Builds a new {@link AnalysisWorkspaceServiceGalaxy} with the given
 	 * information.
-	 * 
-	 * @param galaxyHistoriesService
-	 *            A GalaxyHistoriesService for interacting with Galaxy
-	 *            Histories.
-	 * @param galaxyWorkflowService
-	 *            A GalaxyWorkflowService for interacting with Galaxy workflows.
-	 * @param galaxyLibrariesService
-	 *            An object for building libraries in Galaxy.
-	 * @param iridaWorkflowsService
-	 *            A service used for loading workflows from IRIDA.
-	 * @param analysisCollectionServiceGalaxy
-	 *            A service for constructing dataset collections of input files.
-	 * @param analysisProvenanceServiceGalaxy
-	 *            The service for provenance information.
-	 * @param analysisParameterServiceGalaxy
-	 *            A service for setting up parameters in Galaxy.
-	 * @param sequencingObjectService
-	 *            A service for reading {@link SequencingObject}s
+	 *
+	 * @param galaxyHistoriesService          A GalaxyHistoriesService for interacting with Galaxy
+	 *                                        Histories.
+	 * @param galaxyWorkflowService           A GalaxyWorkflowService for interacting with Galaxy workflows.
+	 * @param galaxyLibrariesService          An object for building libraries in Galaxy.
+	 * @param iridaWorkflowsService           A service used for loading workflows from IRIDA.
+	 * @param analysisCollectionServiceGalaxy A service for constructing dataset collections of input files.
+	 * @param analysisProvenanceServiceGalaxy The service for provenance information.
+	 * @param analysisParameterServiceGalaxy  A service for setting up parameters in Galaxy.
+	 * @param sequencingObjectService         A service for reading {@link SequencingObject}s
 	 */
 	public AnalysisWorkspaceServiceGalaxy(GalaxyHistoriesService galaxyHistoriesService,
 			GalaxyWorkflowService galaxyWorkflowService, GalaxyLibrariesService galaxyLibrariesService,
 			IridaWorkflowsService iridaWorkflowsService,
 			AnalysisCollectionServiceGalaxy analysisCollectionServiceGalaxy,
 			AnalysisProvenanceServiceGalaxy analysisProvenanceServiceGalaxy,
-			AnalysisParameterServiceGalaxy analysisParameterServiceGalaxy, SampleRemoteService sampleRemoteService,
+			AnalysisParameterServiceGalaxy analysisParameterServiceGalaxy,
 			SequencingObjectService sequencingObjectService) {
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.galaxyWorkflowService = galaxyWorkflowService;
