@@ -7,7 +7,7 @@
 
 	<header>
 		<div class="col-md-10">
-			<h1 role="heading" th:text="#{samples.title(${sample.getLabel()})}">__TITLE__</h1>
+			<h1 class="t-title" th:text="#{samples.title(${sample.getLabel()})}">__TITLE__</h1>
 		</div>
 		<div class="col-md-2" th:if="${canManageSample}">
 			<a id="edit-sample" class="btn btn-default btn-sm pull-right ng-cloak"
