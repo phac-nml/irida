@@ -1,3 +1,7 @@
+/**
+ * @file responsible for handling interactions on the Project > Settings > Rempte Page.
+ */
+
 import { showNotification } from "../../../modules/notifications";
 import {
   initConnectRemoteApi,
@@ -8,7 +12,7 @@ const $connectionWrapper = $(".connection-wrapper");
 const API_ID = $("#connect-button").data("api-id");
 
 /**
- * Check the current connection status with the server.
+ * Check the current connection status with the server, and update the UI accordingly.
  */
 function updateConnection(api) {
   updateRemoteConnectionStatus($connectionWrapper, api).then(response => {
