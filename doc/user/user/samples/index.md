@@ -249,15 +249,15 @@ Alternatively, there is a dropdown next to the select all checkbox that allows y
 
 ![Selected sample counts.](images/samples-select-cb-dropdown.png)
 
-### Copying samples between projects
+### Sharing samples between projects
 
 {% include tutorials/common/samples/copy-samples.md %}
 
 ### Moving samples between projects
 
-An alternative to [copying samples between projects](#copying-samples-between-projects) is to **move** a sample between projects. Unlike copying, when a sample is moved, the original sample is removed.
+An alternative to [sharing samples between projects](#sharing-samples-between-projects) is to **move** a sample between projects. Unlike sharing, when a sample is moved, the original sample is removed.
 
-Like copying samples, you must be a project <img src="images/manager-icon.png" class="inline" alt="Manager role icon."> **Manager** on **both** the project that you are moving the sample *from*, and the project that you are moving the sample *to*.
+Like sharing samples, you must be a project <img src="images/manager-icon.png" class="inline" alt="Manager role icon."> **Manager** on **both** the project that you are moving the sample *from*, and the project that you are moving the sample *to*.
 
 Start by [selecting the samples](#selecting-samples) that you want to move to the other project. When you've selected the samples that you want to move, click on the "Samples" button just above the samples list and select "Move Samples":
 

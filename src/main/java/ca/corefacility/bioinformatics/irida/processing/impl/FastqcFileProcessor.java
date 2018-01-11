@@ -67,9 +67,6 @@ public class FastqcFileProcessor implements FileProcessor {
 	 *            description for the analysis).
 	 * @param sequenceFileRepository
 	 *            the sequence file repository.
-	 * @param objectRepository
-	 *            {@link SequencingObjectRepository} to read
-	 *            {@link SequencingObject}s
 	 */
 	@Autowired
 	public FastqcFileProcessor(final MessageSource messageSource, final SequenceFileRepository sequenceFileRepository) {

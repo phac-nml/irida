@@ -24,8 +24,6 @@ import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
 
 /**
  * Confirms that the authenticated user is allowed to read a project.
- * 
- * 
  */
 @Component
 public class ReadProjectPermission extends BasePermission<Project, Long> {
@@ -42,13 +40,12 @@ public class ReadProjectPermission extends BasePermission<Project, Long> {
 
 	/**
 	 * Construct an instance of {@link ReadProjectPermission}.
-	 * 
-	 * @param projectRepository
-	 *            the project repository.
-	 * @param userRepository
-	 *            the user repository.
-	 * @param pujRepository
-	 *            the project user join repository.
+	 *
+	 * @param projectRepository the project repository.
+	 * @param userRepository    the user repository.
+	 * @param pujRepository     the project user join repository.
+	 * @param ugpjRepository    the user group/project join repository
+	 * @param ugRepository      The user group repository
 	 */
 	@Autowired
 	public ReadProjectPermission(final ProjectRepository projectRepository, final UserRepository userRepository,

@@ -35,6 +35,9 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.base.Joiner;
 
+/**
+ * Configuration for IRIDA's spring security modules
+ */
 @SuppressWarnings("deprecation")
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true, order = IridaApiSecurityConfig.METHOD_SECURITY_ORDER)
@@ -87,7 +90,7 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	 * Authentication provider for anonymous requests. Will be used for
 	 * username/password grants requesting /oauth/token.
 	 *
-	 * @return
+	 * @return an anonymous authentication provider
 	 */
 	private AuthenticationProvider anonymousAuthenticationProvider() {
 		AnonymousAuthenticationProvider anonymousAuthenticationProvider = new AnonymousAuthenticationProvider(

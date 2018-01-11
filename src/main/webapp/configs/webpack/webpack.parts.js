@@ -2,6 +2,7 @@ const webpack = require("webpack");
 const CleanWebpackPlugin = require("clean-webpack-plugin");
 const ProgressBarPlugin = require("progress-bar-webpack-plugin");
 const WriteFilePlugin = require("write-file-webpack-plugin");
+const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 /**
@@ -68,8 +69,18 @@ exports.lintJavaScript = () => ({
   }
 });
 
+/**
+ * Compress JS.  Make sure that to use angular injections.
+ * @returns {{plugins: *[]}}
+ */
+exports.compressJavaScript = () => {
+  if (process.env.MIN_JS !== "false") {
+    return { plugins: [new UglifyJsPlugin({ cache: true, parallel: true })] };
+  }
+};
+
 const extractSass = new ExtractTextPlugin({
-  filename: "css/[name].bundle.css",
+  filename: "css/[name].bundle.css"
   // disable: process.env.NODE_ENV === "development"
 });
 
@@ -80,22 +91,25 @@ const extractSass = new ExtractTextPlugin({
  */
 exports.loadCSS = () => ({
   module: {
-    rules: [{
-      test: /\.(s?)css$/,
-      use: extractSass.extract({
-        use: [{
-          loader: "css-loader"
-        }, {
-          loader: "sass-loader"
-        }],
-        // use style-loader in development
-        fallback: "style-loader"
-      })
-    }]
+    rules: [
+      {
+        test: /\.(s?)css$/,
+        use: extractSass.extract({
+          use: [
+            {
+              loader: "css-loader"
+            },
+            {
+              loader: "sass-loader"
+            }
+          ],
+          // use style-loader in development
+          fallback: "style-loader"
+        })
+      }
+    ]
   },
-  plugins: [
-    extractSass
-  ]
+  plugins: [extractSass]
 });
 
 /**
@@ -123,7 +137,11 @@ exports.writeFilePlugin = () => ({
  */
 exports.clean = (
   paths = [],
-  options = { verbose: false, dry: false, allowExternal: true }
+  options = {
+    verbose: false,
+    dry: false,
+    allowExternal: true
+  }
 ) => ({
   plugins: [new CleanWebpackPlugin(paths, options)]
 });

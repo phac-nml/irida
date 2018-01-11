@@ -1,4 +1,8 @@
-.event-item, .event-icon, .event-content, .event-date, .event-time {
+.event-item,
+.event-icon,
+.event-content,
+.event-date,
+.event-time {
   display: flex;
   align-items: center;
 }
@@ -9,7 +13,7 @@
   display: flex;
   justify-content: center;
   flex: 0 0 35px;
-  margin-right:10px;
+  margin-right: 10px;
 }
 .event-icon .fa {
   font-size: 1.6em;
@@ -18,7 +22,7 @@
   justify-content: flex-end;
   flex: 0 0 90px;
   color: #666;
-  font-size: .7em;
+  font-size: 0.7em;
   text-align: right;
 }
 .event-time {

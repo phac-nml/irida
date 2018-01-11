@@ -2,10 +2,10 @@ package ca.corefacility.bioinformatics.irida.model.export;
 
 /**
  * Instrument model for NCBI Upload.
- * 
+ *
  * @see <a href=
- *      "http://www.ncbi.nlm.nih.gov/books/NBK54984/table/SRA_Glossary_BK.T._platform_descriptor_t/?report=objectonly">
- *      NCBI Docs</a>
+ * "http://www.ncbi.nlm.nih.gov/books/NBK54984/table/SRA_Glossary_BK.T._platform_descriptor_t/?report=objectonly">
+ * NCBI Docs</a>
  */
 public enum NcbiInstrumentModel {
 
@@ -62,9 +62,10 @@ public enum NcbiInstrumentModel {
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Return the string value of the {@link NcbiInstrumentModel}
+	 *
+	 * @return the string value.
 	 */
-
 	public String getValue() {
 		return value;
 	}

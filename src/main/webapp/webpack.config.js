@@ -52,7 +52,11 @@ const commonConfig = merge([
  PRODUCTION CONFIGURATION
 ====================== */
 const productionConfig = merge([
+  {
+    devtool: "hidden-source-map"
+  },
   parts.progressBar(),
+  parts.compressJavaScript(),
   parts.clean([PATHS.build])
 ]);
 
