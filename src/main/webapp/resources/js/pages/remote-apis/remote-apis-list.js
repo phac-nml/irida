@@ -15,7 +15,7 @@ const COLUMNS = generateColumnOrderInfo();
 const $table = $("#remoteapiTable");
 
 /**
- * each row in the datatable needs a unique if, this generate an id based
+ * each row in the datatable needs a unique id, this generate an id based
  * on the identifier for that API.
  * @param {number} apiId the unique identifier for the API
  * @returns {string}
