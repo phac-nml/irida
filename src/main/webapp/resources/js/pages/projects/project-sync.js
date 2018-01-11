@@ -1,3 +1,8 @@
+/**
+ * @file Responsible for setting up new project synchronizations with a remote API.
+ * Loaded onto pages/projects/project_sync.html
+ */
+
 import $ from "jquery";
 import {
   initConnectRemoteApi,
@@ -26,6 +31,10 @@ function updateConnection(apiId) {
   });
 }
 
+/**
+ * Listen for changes in the api selection, and update the connection status / connect
+ * button.
+ */
 $apiSelection.on("change", function() {
   $connectBtn.addClass("hidden");
   const apiId = $(this).val();
@@ -33,6 +42,10 @@ $apiSelection.on("change", function() {
   updateConnection(apiId);
 });
 
+/**
+ * Listen for changes in the project selection based on the currently selected Remote API
+ * and update the selected project value.
+ */
 $projectSelect.on("change", function() {
   let projectUrl = $(this).val();
   if (projectUrl === 0) {
@@ -48,6 +61,7 @@ $projectSelect.on("change", function() {
 function getApiProjects(apiId) {
   const url = `${PAGE.urls.apiProjectList}${apiId}`;
 
+  // Remove any current projects, they would be from a different API.
   $(".project-option").remove();
   $("#projectUrl").val("");
 
