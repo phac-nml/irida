@@ -59,6 +59,10 @@ export function initConnectRemoteApi(connectedCB) {
         typeof connectedCB === "function"
       ) {
         connectedCB(apiId);
+      } else {
+        // If no callback, reload the current page, without using the cache,
+        // to ensure that everything gets updated.
+        window.location.reload(true);
       }
     });
   });

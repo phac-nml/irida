@@ -19,6 +19,7 @@ const $table = $("#remoteapiTable");
  * on the identifier for that API.
  * @param {number} apiId the unique identifier for the API
  * @returns {string}
+ *
  */
 function generateRowId(apiId) {
   return `api-${apiId}`;
