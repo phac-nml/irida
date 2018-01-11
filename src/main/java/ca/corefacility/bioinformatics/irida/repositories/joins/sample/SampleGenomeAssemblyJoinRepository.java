@@ -16,7 +16,7 @@ public interface SampleGenomeAssemblyJoinRepository extends CrudRepository<Sampl
 
 	/**
 	 * Gets a collection of {@link SampleGenomeAssemblyJoin} by the sample.
-	 * 
+	 *
 	 * @param sample
 	 *            The sample.
 	 * @return A collection of {@link SampleGenomeAssemblyJoin} by the sample.
@@ -26,9 +26,9 @@ public interface SampleGenomeAssemblyJoinRepository extends CrudRepository<Sampl
 
 	/**
 	 * Gets a {@link GenomeAssembly} from a {@link Sample} with the given id.
-	 * 
-	 * @param sample
-	 *            The sample.
+	 *
+	 * @param sampleId
+	 *            The sample ID.
 	 * @param assemblyId
 	 *            The assembly id.
 	 * @return The {@link GenomeAssembly}.

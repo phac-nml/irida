@@ -107,6 +107,9 @@ public class NcbiBioSampleFiles {
 		this.libraryConstructionProtocol = library_construction_protocol;
 	}
 
+	/**
+	 * Builder class for {@link NcbiBioSampleFiles}
+	 */
 	public static class Builder {
 		private String bioSample;
 
@@ -120,11 +123,22 @@ public class NcbiBioSampleFiles {
 		private String libraryConstructionProtocol;
 		private String namespace;
 
+		/**
+		 * set the single end files
+		 *
+		 * @param files the single end files
+		 * @return the builder
+		 */
 		public Builder files(List<SingleEndSequenceFile> files) {
 			this.files = files;
 			return this;
 		}
 
+		/**
+		 * set the file pairs
+		 * @param pairs the file pairs
+		 * @return the builder
+		 */
 		public Builder pairs(List<SequenceFilePair> pairs) {
 			this.pairs = pairs;
 			return this;
@@ -166,6 +180,12 @@ public class NcbiBioSampleFiles {
 			return this;
 		}
 
+		/**
+		 * Set the library source
+		 *
+		 * @param library_source the library_source
+		 * @return a builder
+		 */
 		public Builder librarySource(NcbiLibrarySource library_source) {
 			this.librarySource = library_source;
 			return this;

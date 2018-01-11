@@ -4,8 +4,8 @@ import java.util.Date;
 
 /**
  * An object with a timestamp and ID
- * 
  *
+ * @param <Identifier> the identifier for the object in the database
  */
 public interface Timestamped<Identifier> {
 

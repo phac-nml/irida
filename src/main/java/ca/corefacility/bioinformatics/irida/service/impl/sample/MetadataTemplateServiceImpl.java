@@ -61,7 +61,7 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 	}
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
 	 */
 	@PreAuthorize("hasPermission(#id, 'canUpdateMetadataTemplate')")
 	@Override

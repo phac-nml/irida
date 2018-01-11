@@ -65,9 +65,6 @@ public class AnalysisExecutionServiceConfig {
 	
 	@Autowired
 	private GalaxyWorkflowService galaxyWorkflowService;
-		
-	@Autowired
-	private SampleRemoteService sampleRemoteService;
 	
 	@Autowired
 	private SequencingObjectService sequencingObjectService;
@@ -107,7 +104,7 @@ public class AnalysisExecutionServiceConfig {
 	public AnalysisWorkspaceServiceGalaxy analysisWorkspaceService() {
 		return new AnalysisWorkspaceServiceGalaxy(galaxyHistoriesService, galaxyWorkflowService,
 				galaxyLibrariesService, iridaWorkflowsService, analysisCollectionServiceGalaxy(),
-				analysisProvenanceService(), analysisParameterServiceGalaxy, sampleRemoteService,
+				analysisProvenanceService(), analysisParameterServiceGalaxy,
 				sequencingObjectService);
 	}
 

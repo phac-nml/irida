@@ -13,6 +13,17 @@ Changes
 * [Administration]: Limiting users from reusing passwords.
 * [Developer]: Updated webpack compile path to be `resources/dist`.
 * [Developer]: Webpack now extracts `css` / `scss` into its own bundles.
+* [UI]: Added minification to production javascript.
+* [UI]: Fixed issue where delete project button was always enabled, and created an error when clicked. (0.19.3)
+* [UI]: Clean up of the main navigation bar code, and removed its dependency on angular-ui.
+* [UI]: Fixed reflow layout of pipeline launch page.
+* [UI]: Changed the wording of 'copying' samples to 'sharing' samples.
+* [Developer]: Ran `prettier` on all javascript files within `resources/js`.
+* [Developer]: Ran `prettier` on all scss files within `resources/sass`.
+* [Developer]: Add a git pre-commit hook to ensure `prettier` formatting.
+* [UI]: Fixed issue where all activities page could not be displayed.
+* [UI]: Fixed issue where time stamps where not displayed on activities pages.
+* [UI]: Fixed issue where breadcrumbs were not displaying on the Project > Line List and Project > Analyses pages.
 
 0.18.0 to 0.19.0
 ----------------

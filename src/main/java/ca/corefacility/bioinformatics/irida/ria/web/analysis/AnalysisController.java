@@ -265,7 +265,7 @@ public class AnalysisController {
 	 * 
 	 * @param submissionId
 	 *            the {@link AnalysisSubmission} id
-	 * @return a list of {@link SharedProjectResponse}
+	 * @return a list of {@link AnalysisController.SharedProjectResponse}
 	 */
 	@RequestMapping(value = "/ajax/{submissionId}/share", method = RequestMethod.GET)
 	@ResponseBody
@@ -300,17 +300,15 @@ public class AnalysisController {
 
 		return projectResponses;
 	}
-	
+
 	/**
 	 * Update the share status of a given {@link AnalysisSubmission} for a given
 	 * {@link Project}
-	 * 
-	 * @param submissionId
-	 *            the {@link AnalysisSubmission} id to share/unshare
-	 * @param projectId
-	 *            the {@link Project} id to share with
-	 * @param shareStatus
-	 *            whether or not to share the {@link AnalysisSubmission}
+	 *
+	 * @param submissionId the {@link AnalysisSubmission} id to share/unshare
+	 * @param projectId    the {@link Project} id to share with
+	 * @param shareStatus  whether or not to share the {@link AnalysisSubmission}
+	 * @param locale       Locale of the logged in user
 	 * @return Success message if successful
 	 */
 	@RequestMapping(value = "/ajax/{submissionId}/share", method = RequestMethod.POST)
@@ -420,27 +418,32 @@ public class AnalysisController {
 	/**
 	 * DataTables request handler for a User listing all {@link AnalysisSubmission}
 	 *
-	 * @param params {@link DataTablesParams}
+	 * @param params    {@link DataTablesParams}
 	 * @param projectId {@link Long}
 	 * @param principal {@link Principal}
-	 * @param locale {@link Locale}
+	 * @param locale    {@link Locale}
 	 * @return {@link DataTablesResponse}
 	 * @throws IridaWorkflowNotFoundException If the requested workflow doesn't exist
-	 * @throws EntityNotFoundException        If the submission cannot be found
 	 * @throws ExecutionManagerException      If the submission cannot be read properly
 	 */
 	@RequestMapping("/ajax/project/{projectId}/list")
 	@ResponseBody
 	public DataTablesResponse getSubmissionsForProject(@DataTablesRequest DataTablesParams params,
 			@PathVariable Long projectId, Principal principal, Locale locale)
-			throws IridaWorkflowNotFoundException, NoPercentageCompleteException, EntityNotFoundException,
-			ExecutionManagerException {
+			throws IridaWorkflowNotFoundException, ExecutionManagerException {
 		Project project = projectService.read(projectId);
 		return analysesListingService.getPagedSubmissions(params, locale, null, project);
 	}
 
+	/**
+	 * Get the sistr analysis information to display
+	 *
+	 * @param id ID of the analysis submission
+	 * @return Json results for the SISTR analysis
+	 */
 	@SuppressWarnings("resource")
-	@RequestMapping("/ajax/sistr/{id}") @ResponseBody public Map<String,Object> getSistrAnalysis(@PathVariable Long id) {
+	@RequestMapping("/ajax/sistr/{id}") @ResponseBody
+	public Map<String,Object> getSistrAnalysis(@PathVariable Long id) {
 		AnalysisSubmission submission = analysisSubmissionService.read(id);
 		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubmission(submission);
 		Map<String,Object> result = ImmutableMap.of("parse_results_error", true);
@@ -496,12 +499,13 @@ public class AnalysisController {
 	// ************************************************************************************************
 	// AJAX
 	// ************************************************************************************************
-	
+
 	/**
 	 * Delete an {@link AnalysisSubmission} by id.
-	 * 
-	 * @param analysisSubmissionId
-	 *            the submission ID to delete.
+	 *
+	 * @param analysisSubmissionId the submission ID to delete.
+	 * @param locale               Locale of the logged in user
+	 * @return A message stating the submission was deleted
 	 */
 	@RequestMapping("/ajax/delete/{analysisSubmissionId}")
 	@ResponseBody

@@ -14,10 +14,9 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
 
 /**
  * Generic super-class for permission types to extend from.
- * 
- * 
- * @param <DomainObjectType>
- *            the type of domain object that this permission is evaluating.
+ *
+ * @param <DomainObjectType> the type of domain object that this permission is evaluating.
+ * @param <IdentifierType>   The identifier for the domain object in the database
  */
 public abstract class BasePermission<DomainObjectType, IdentifierType extends Serializable> {
 
