@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.repositories.analysis.submission;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
@@ -15,22 +14,25 @@ public interface JobErrorRepository extends IridaJpaRepository<JobError, Long> {
 
 	/**
 	 * Find first {@link JobError} for a given {@link AnalysisSubmission}
+	 *
 	 * @param analysisSubmission Galaxy {@link AnalysisSubmission}
-	 * @return a {@link JobError} associated with an {@link AnalysisSubmission} if present
+	 * @return a {@link JobError} associated with an {@link AnalysisSubmission}
 	 */
-	Optional<JobError> findFirstByAnalysisSubmission(AnalysisSubmission analysisSubmission);
+	JobError findFirstByAnalysisSubmission(AnalysisSubmission analysisSubmission);
 
 	/**
 	 * Find all {@link JobError} objects for a given {@link AnalysisSubmission}
+	 *
 	 * @param analysisSubmission Galaxy {@link AnalysisSubmission}
-	 * @return all {@link JobError} objects associated with an {@link AnalysisSubmission} if present
+	 * @return all {@link JobError} objects associated with an {@link AnalysisSubmission}
 	 */
-	Optional<List<JobError>> findAllByAnalysisSubmission(AnalysisSubmission analysisSubmission);
+	List<JobError> findAllByAnalysisSubmission(AnalysisSubmission analysisSubmission);
 
 	/**
 	 * Find all {@link JobError} objects for an {@link ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow}
+	 *
 	 * @param iridaWorkflowId UUID of an {@link ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow}
-	 * @return all {@link JobError} objects associated with an {@link ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow} if present
+	 * @return all {@link JobError} objects associated with an {@link ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow}
 	 */
-	Optional<List<JobError>> findAllByAnalysisSubmission_WorkflowId(UUID iridaWorkflowId);
+	List<JobError> findAllByAnalysisSubmission_WorkflowId(UUID iridaWorkflowId);
 }

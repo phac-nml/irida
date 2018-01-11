@@ -153,19 +153,7 @@ public class AnalysesListingService {
 	}
 
 	private JobError getFirstJobError(AnalysisSubmission submission) throws ExecutionManagerException {
-		Optional<List<JobError>> jobErrors = analysisSubmissionService.getJobErrors(submission.getId());
-		JobError error = null;
-		if (jobErrors.isPresent()) {
-			Object o = jobErrors.get();
-			Class<?> aClass = o.getClass();
-			if (aClass == JobError.class) {
-				error = (JobError) o;
-			} else if (aClass == List.class) {
-				List<JobError> errors = jobErrors.get();
-				error = errors.iterator().next();
-			}
-		}
-		return error;
+		return analysisSubmissionService.getFirstJobError(submission.getId());
 	}
 
 	/**

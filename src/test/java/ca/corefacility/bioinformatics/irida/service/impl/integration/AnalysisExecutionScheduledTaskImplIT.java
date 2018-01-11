@@ -382,17 +382,12 @@ public class AnalysisExecutionScheduledTaskImplIT {
 		assertEquals(1, submissionsFutureSet.size());
 		AnalysisSubmission returnedSubmission = submissionsFutureSet.iterator().next().get();
 		assertEquals(AnalysisState.ERROR, returnedSubmission.getAnalysisState());
-		Optional<List<JobError>> jobErrors = jobErrorRepository.findAllByAnalysisSubmission(
+		List<JobError> jobErrors = jobErrorRepository.findAllByAnalysisSubmission(
 				returnedSubmission);
-		assertTrue("There should be a JobError present", jobErrors.isPresent());
+		assertTrue("There should only be one JobError",
+				jobErrors.size() == 1);
 
-		Object o = jobErrors.get();
-		Class<?> aClass = o.getClass();
-		assertTrue("JobErrorRepository.findAllByAnalysisSubmission returns a single JobError rather than a list if "
-						+ "there's only one JobError",
-				aClass == JobError.class);
-
-		JobError jobError = (JobError) o;
+		JobError jobError = jobErrors.get(0);
 		assertTrue("JobError should have some stderr message",
 				jobError.getStandardError() != null &&
 						!jobError.getStandardError().equals(""));

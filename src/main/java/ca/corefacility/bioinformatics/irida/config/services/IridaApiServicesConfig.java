@@ -11,7 +11,6 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import javax.validation.Validator;
 
-import net.matlux.NreplServerSpring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +41,7 @@ import ca.corefacility.bioinformatics.irida.config.analysis.ExecutionManagerConf
 import ca.corefacility.bioinformatics.irida.config.repository.ForbidJpqlUpdateDeletePostProcessor;
 import ca.corefacility.bioinformatics.irida.config.repository.IridaApiRepositoriesConfig;
 import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
+import ca.corefacility.bioinformatics.irida.config.services.conditions.NreplServerSpringCondition;
 import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsConfig;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -59,6 +59,7 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import net.matlux.NreplServerSpring;
 
 /**
  * Configuration for the IRIDA platform.
@@ -110,6 +111,9 @@ public class IridaApiServicesConfig {
 	
 	@Value("${file.processing.queue.capacity}")
 	private int fpQueueCapacity;
+
+	@Value("${irida.debug.nrepl.server.port}")
+	private Integer nreplPort;
 	
 	@Bean
 	public BeanPostProcessor forbidJpqlUpdateDeletePostProcessor() {
@@ -311,8 +315,10 @@ public class IridaApiServicesConfig {
 
 	@Bean
 	@Profile("dev")
+	@Conditional(NreplServerSpringCondition.class)
 	public NreplServerSpring nRepl() {
-		return new NreplServerSpring(1112);
+		return new NreplServerSpring(nreplPort);
 	}
+
 }
 

@@ -605,9 +605,19 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadAnalysisSubmission')")
-	public Optional<List<JobError>> getJobErrors(Long id) throws EntityNotFoundException {
+	public List<JobError> getJobErrors(Long id) throws EntityNotFoundException {
 		AnalysisSubmission analysisSubmission = read(id);
 		return jobErrorRepository.findAllByAnalysisSubmission(analysisSubmission);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadAnalysisSubmission')")
+	public JobError getFirstJobError(Long id) throws EntityNotFoundException {
+		AnalysisSubmission analysisSubmission = read(id);
+		return jobErrorRepository.findFirstByAnalysisSubmission(analysisSubmission);
 	}
 
 	/**

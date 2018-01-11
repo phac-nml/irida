@@ -584,7 +584,7 @@
 		<dependency>
 			<groupId>net.matlux</groupId>
 			<artifactId>jvm-breakglass</artifactId>
-			<version>0.0.8</version>
+			<version>${jvm-breakglass.version}</version>
 		</dependency>
 	</dependencies>
 
@@ -1069,6 +1069,7 @@
 		<jsonpath.version>2.4.0</jsonpath.version>
 		<imgscalr.version>4.2</imgscalr.version>
 		<jackson.dataformat.yaml.version>2.7.4</jackson.dataformat.yaml.version>
+		<jvm-breakglass.version>0.0.8</jvm-breakglass.version>
 
 		<!-- plugins -->
 		<maven.failsafe.plugin.version>2.19.1</maven.failsafe.plugin.version>

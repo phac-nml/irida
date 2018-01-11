@@ -271,17 +271,9 @@ public class AnalysisController {
 	@ResponseBody
 	public ImmutableMap<String, Object> getJobErrors(@PathVariable Long submissionId) {
 		try {
-			Optional<List<JobError>> jobErrors = analysisSubmissionService.getJobErrors(submissionId);
-			if (jobErrors.isPresent()) {
-				Object o = jobErrors.get();
-				Class<?> aClass = o.getClass();
-				if (aClass == JobError.class) {
-					JobError error = (JobError) o;
-					return ImmutableMap.of("job_errors", ImmutableList.of(error));
-				} else if (aClass == List.class) {
-					List<JobError> errors = jobErrors.get();
-					return ImmutableMap.of("job_errors", errors);
-				}
+			List<JobError> jobErrors = analysisSubmissionService.getJobErrors(submissionId);
+			if (jobErrors != null && !jobErrors.isEmpty()) {
+				return ImmutableMap.of("job_errors", jobErrors);
 			}
 		} catch (ExecutionManagerException e) {
 			logger.error(e.getMessage());
