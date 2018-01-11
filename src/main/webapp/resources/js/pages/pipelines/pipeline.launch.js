@@ -5,13 +5,22 @@
    * @param $http AngularJS http object
    * @param CartService a reference to the cart service (to clear it)
    * @param ParameterService for passing parameter information between modal and page
+   * @param DynamicSourceService for selecting parameters from a Galaxy Tool Data Table
    * @constructor
    */
-  function PipelineController($scope, $http, CartService, ParameterService) {
+  function PipelineController(
+    $scope,
+    $http,
+    CartService,
+    ParameterService,
+    DynamicSourceService
+  ) {
     var vm = this;
 
     vm.parameters = ParameterService.getOriginalSettings();
     vm.selectedParameters = ParameterService.getSelectedParameters();
+    vm.dynamicSources = DynamicSourceService.getSettings();
+    vm.selectedDynamicSource = DynamicSourceService.getSelectedGalaxyToolDataTableField();
 
     $scope.$on("PARAMETERS_SAVED", function() {
       vm.selectedParameters = ParameterService.getSelectedParameters();
@@ -33,6 +42,18 @@
      */
     vm.parameterSelected = function() {
       ParameterService.setSelectedParameters(vm.selectedParameters);
+    };
+
+    /**
+     * Update the selected tool data table field in the tool data table service
+     * for the modal dialog whenever we select a new tool data table field
+     * from the drop-down.
+     */
+    vm.galaxyToolDataTableFieldSelected = function(galaxyToolDataTable) {
+      DynamicSourceService.setSelectedGalaxyToolDataTableField(
+        galaxyToolDataTable,
+        vm.selectedDynamicSource
+      );
     };
 
     /**
@@ -83,10 +104,21 @@
 
         var currentSettings = ParameterService.getSelectedParameters()
           .currentSettings;
+        var currentDynamicSourceSettings = DynamicSourceService.getSettings()
+          .currentSettings;
+
         var selectedParameters = {
           id: currentSettings.id,
           parameters: currentSettings.parameters
         };
+        if (Object.keys(currentDynamicSourceSettings).length > 0) {
+          var dynamicSourceParameters = Object.values(
+            currentDynamicSourceSettings
+          ).map(({ label, value, name }) => ({ label, value, name }));
+          selectedParameters.parameters = selectedParameters.parameters.concat(
+            dynamicSourceParameters
+          );
+        }
 
         // Create the parameter object;
         var params = {};
@@ -382,6 +414,60 @@
     };
   }
 
+  /**
+   * Service for handling Galaxy Tool Data Tables.
+   */
+  function DynamicSourceService() {
+    var svc = this;
+
+    // Check to see if there are any tool data tables, if not put a default
+    if (page.pipeline.dynamicSources == null) {
+      page.pipeline.dynamicSources = [
+        {
+          id: "no_tool_data_tables",
+          label: "",
+          parameters: []
+        }
+      ];
+    }
+
+    var settings = {};
+    if (page.pipeline.dynamicSources != null) {
+      settings["currentSettings"] = {};
+      settings["availableSettings"] = {};
+      for (var i = 0; i < page.pipeline.dynamicSources.length; i++) {
+        settings.availableSettings[page.pipeline.dynamicSources[i].id] =
+          page.pipeline.dynamicSources[i];
+      }
+    }
+
+    /**
+     * Get the settings that the page currently has.
+     */
+    svc.getSettings = function() {
+      return settings;
+    };
+
+    /**
+     * Get the currently selected parameters from the page.
+     */
+    svc.getSelectedGalaxyToolDataTableField = function(galaxyToolDataTable) {
+      return settings.currentSettings[galaxyToolDataTable];
+    };
+
+    /**
+     * Set the current tool data table field on the page.
+     * @param galaxyToolDataTable the Galaxy Tool Data Table to set
+     * @param currentSelection the tool data table field that is currently selected
+     */
+    svc.setSelectedGalaxyToolDataTableField = function(
+      galaxyToolDataTable,
+      currentSelection
+    ) {
+      settings.currentSettings[galaxyToolDataTable] = currentSelection;
+    };
+  }
+
   function FileUploadCtrl($rootScope, Upload) {
     var vm = this;
 
@@ -427,6 +513,7 @@
       "$http",
       "CartService",
       "ParameterService",
+      "DynamicSourceService",
       PipelineController
     ])
     .controller("ParameterModalController", [
@@ -441,7 +528,8 @@
       ParameterController
     ])
     .controller("FileUploadCtrl", ["$rootScope", "Upload", FileUploadCtrl])
-    .service("ParameterService", [ParameterService]).name;
+    .service("ParameterService", [ParameterService])
+    .service("DynamicSourceService", [DynamicSourceService]).name;
 
   ng.module("irida").requires.push(pipelineModule);
 })(window.angular, window.jQuery, window.location, window.PAGE);
