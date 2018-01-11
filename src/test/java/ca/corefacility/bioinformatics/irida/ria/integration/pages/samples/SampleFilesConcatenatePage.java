@@ -37,7 +37,7 @@ public class SampleFilesConcatenatePage extends AbstractPage {
 	}
 
 	public static SampleFilesConcatenatePage goToConcatenatePage(WebDriver driver, Long sampleId) {
-		String url = "samples/" + sampleId + "/sequenceFiles/concatenate";
+		String url = "samples/" + sampleId + "/concatenate";
 		logger.trace("Going to concatenate page for sample " + sampleId);
 		get(driver, url);
 		waitForTime(400);
