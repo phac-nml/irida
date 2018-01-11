@@ -1,12 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.oauth;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
@@ -25,12 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.HandlerMapping;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -316,6 +306,12 @@ public class RemoteAPIController extends BaseController {
 		return "remote_apis/fragments.html :: #" + status;
 	}
 
+	/**
+	 * Get the HTML modal for connecting to a remote API
+	 *
+	 * @param apiId Identifier for the remote API to connect to.
+	 * @return {@link String} Path to the modal template.
+	 */
 	@RequestMapping("/modal/{apiId}")
 	public String getApiConnectModal(@PathVariable Long apiId) {
 		return "remote_apis/fragments.html :: #connect-modal";
