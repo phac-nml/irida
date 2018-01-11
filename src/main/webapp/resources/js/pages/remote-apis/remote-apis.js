@@ -1,3 +1,12 @@
+/**
+ * @file helper functions used by all pages that require connection with a remote API.
+ */
+
+/**
+ * Get the status of a Remote API. And get the DOM required to display it.
+ * @param {number} apiId Identifier for the remote API to connect to.
+ * @returns {node} DOM element containing the status of the API.
+ */
 function getApiStatus(apiId) {
   return $.ajax({
     url: `${window.TL.BASE_URL}remote_api/status/web/${apiId}`,
@@ -6,6 +15,19 @@ function getApiStatus(apiId) {
   });
 }
 
+/**
+ * Update the status of a remote API connection.  This updates the interface with the $container
+ *
+ * Expected DOM within the container:
+ * <code>
+ *   <div>
+ *    <div class="js-status-wrapper">  </div>
+ *    <div class="oauth-connect-link"></div>
+ *   </div>
+ * </code>
+ * @param $container
+ * @param apiId
+ */
 export function updateRemoteConnectionStatus($container, apiId) {
   const $status = $container.find(".js-status-wrapper");
 
@@ -33,7 +55,16 @@ export function updateRemoteConnectionStatus($container, apiId) {
     });
 }
 
+/*
+ * Set up a modal to connect to the remote API.
+ */
 export const CONNECT_MODAL_SELECTOR = "remote-connect-wrapper";
+
+/**
+ * Initialize the modal code on the page and set up callbacks.
+ * @param {function} connectedCB Callback to be called after the API has been connected.
+ *                   This usually updates the UI.
+ */
 export function initConnectRemoteApi(connectedCB) {
   const wrapper = document.createElement("div");
   wrapper.classList.add("modal", "fade");
