@@ -25,6 +25,7 @@ Changes
 * [UI]: Fixed issue where time stamps where not displayed on activities pages.
 * [UI]: Fixed issue where breadcrumbs were not displaying on the Project > Line List and Project > Analyses pages.
 * [UI]: Cleaned up sub-navigation elements on samples and files.
+* [UI]: Fixed issue where breadcrumbs not displaying on the Samples > File > QC Analsis pages.
 
 0.18.0 to 0.19.0
 ----------------
