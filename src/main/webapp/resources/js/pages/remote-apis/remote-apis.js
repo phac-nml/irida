@@ -81,22 +81,30 @@ export function initConnectRemoteApi(connectedCB) {
     const btn = event.relatedTarget;
     const apiId = btn.dataset.apiId;
 
+    /*
+    In order to ensure proper setup of the modal, the content needs to be loaded dynamically
+    for each remote API.  Here we are loading the content of the modal and then setting the
+    src for the embedded iframe to point to the remote API.
+     */
     $modal.load(`${window.TL.BASE_URL}remote_api/modal/${apiId}`, function() {
       const iframe = document.querySelector("#oauth-connect-frame");
       const url = iframe.dataset.url;
       iframe.src = `${url}${apiId}`;
     });
 
+    /*
+    Since the modal content is loaded from and iframe, clicking a button in the iframe can only close the
+    modal window.  When the modal is closed the developer can pass a callback function to allow the updating of the UI.
+     */
     $modal.on("hide.bs.modal", function(event) {
-      if (
-        event.currentTarget.dataset.result === "success" &&
-        typeof connectedCB === "function"
-      ) {
-        connectedCB(apiId);
-      } else {
-        // If no callback, reload the current page, without using the cache,
-        // to ensure that everything gets updated.
-        window.location.reload(true);
+      if (event.currentTarget.dataset.result === "success") {
+        if (typeof connectedCB === "function") {
+          connectedCB(apiId);
+        } else {
+          // If no callback, reload the current page, without using the cache,
+          // to ensure that everything gets updated.
+          window.location.reload(true);
+        }
       }
     });
   });
