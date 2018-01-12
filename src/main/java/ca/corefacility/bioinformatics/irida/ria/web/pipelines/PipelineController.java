@@ -332,7 +332,7 @@ public class PipelineController extends BaseController {
 				List<IridaWorkflowDynamicSourceGalaxy> dynamicSourcesInWorkflow = new ArrayList<>();
 				TabularToolDataTable galaxyToolDataTable = new TabularToolDataTable();
 				for (IridaWorkflowParameter parameter : description.getParameters()) {
-					if(parameter.isRequired()) {
+					if(parameter.isRequired() && parameter.hasDynamicSource()) {
 				 		dynamicSourcesInWorkflow.add(parameter.getDynamicSource());
 						for (IridaWorkflowDynamicSourceGalaxy dynamicSource : dynamicSourcesInWorkflow) {
 							List<Object> parametersList = new ArrayList<>();

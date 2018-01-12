@@ -79,19 +79,23 @@ public class IridaWorkflowParameter {
 	 *
 	 * @param required
 	 *            The default value of this parameter.
+	 *
+	 * @param dynamicSources
+	 *            Any dynamic sources for parameters (eg. Galaxy Tool Data Table)
 	 * @param toolParameters
 	 *            The tool parameters corresponding to this named parameter.
 	 */
 	public IridaWorkflowParameter(String name, Boolean required, List<IridaWorkflowDynamicSourceGalaxy> dynamicSources, List<IridaToolParameter> toolParameters ) {
 		checkNotNull(name, "name is null");
-		// checkNotNull(defaultValue, "defaultValue is null");
 		checkNotNull(toolParameters, "toolParameters is null");
 		checkArgument(toolParameters.size() > 0, "toolParameters has no elements");
+		checkArgument((dynamicSources == null || dynamicSources.size() == 1), "if dynamicSources is not null, it should have only one element");
 
 		this.name = name;
 		this.required = required;
 		this.toolParameters = toolParameters;
 		this.dynamicSources = dynamicSources;
+		this.defaultValue = null;
 
 	}
 
@@ -119,7 +123,7 @@ public class IridaWorkflowParameter {
 	 * 
 	 * @return The default value for this parameter.
 	 */
-	public String getDefaultValue() throws NullPointerException {
+	public String getDefaultValue() {
 		if (defaultValue == null) {
 		 	throw new NullPointerException("defaultValue is null");
 		} else {
@@ -142,14 +146,22 @@ public class IridaWorkflowParameter {
 	 * Gets the dynamic source for the parameter.
 	 *
 	 * @return The dynamic source for this parameter.
-	 * @throws NullPointerException
 	 */
-	public IridaWorkflowDynamicSourceGalaxy getDynamicSource() throws NullPointerException {
+	public IridaWorkflowDynamicSourceGalaxy getDynamicSource() {
 		if (this.dynamicSources.get(0) == null) {
 			throw new NullPointerException("dynamicSource is null");
 		} else {
 			return dynamicSources.get(0);
 		}
+	}
+
+	/**
+	 * Whether or not this parameter pulls its value from a Dynamic Source (eg. a Galaxy Tool Data Table)
+	 *
+	 * @return Boolean representing whether or not this parameter has a dynamic source
+	 */
+	public Boolean hasDynamicSource() {
+		return dynamicSources != null && dynamicSources.size() > 0;
 	}
 
 	@Override
