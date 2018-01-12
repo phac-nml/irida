@@ -290,6 +290,13 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.codehaus.jackson/jackson-mapper-asl -->
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>1.9.13</version>
+		</dependency>
+
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
@@ -371,7 +378,18 @@
 			<artifactId>el-ri</artifactId>
 			<version>${el.ri.version}</version>
 		</dependency>
-
+		<!-- https://mvnrepository.com/artifact/com.sun.jersey/jersey-client -->
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-client</artifactId>
+			<version>1.9.1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.sun.jersey.contribs/jersey-multipart -->
+		<dependency>
+			<groupId>com.sun.jersey.contribs</groupId>
+			<artifactId>jersey-multipart</artifactId>
+			<version>1.19.4</version>
+		</dependency>
 		<!-- Testing -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -567,6 +585,8 @@
 			<groupId>com.github.jmchilton.blend4j</groupId>
 			<artifactId>blend4j</artifactId>
 			<version>${com.github.jmchilton.blend4j.version}</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/lib/blend4j-0.2.0-SNAPSHOT-fac9057d047377e679b6c14672b364a20b9a462b.jar</systemPath>
 		</dependency>
 
 		<!-- Image manipulation -->

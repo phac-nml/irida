@@ -8,6 +8,7 @@ module.exports = {
   vendor: ["babel-polyfill"],
   announcements: "./resources/js/pages/announcement/announcements.js",
   analysis: "./resources/js/pages/analysis/analysis.js",
+  analysis_tables: "./resources/js/pages/bio_hansel/analysis_table.js",
   app: "./resources/js/app.js",
   dashboard: "./resources/js/pages/dashboard.js",
   "project-events": "./resources/js/pages/projects/project-events.js",

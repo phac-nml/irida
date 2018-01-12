@@ -3,12 +3,17 @@
       layout:decorator="analysis/details/details">
 
 <head>
+    <link rel="stylesheet" th:href="@{/resources/dist/css/analysis_tables.bundle.css}">
     <title th:text="#{analysis.page.title} + ' - '+ ${analysisSubmission.getId()} + ' - ' + ${workflowName}">dsf</title>
 </head>
 <body>
 <div layout:fragment="previewContent">
     <h1>Hello Jello</h1>
 </div>
+
+<th:block layout:fragment="analysis_tables_script">
+    <script th:scr="@{/resources/dist/js/analysis_tables.bundle.js}"></script>
+</th:block>
 
 <th:block th:if="${preview}" layout:fragment="previewScripts">
 </th:block>

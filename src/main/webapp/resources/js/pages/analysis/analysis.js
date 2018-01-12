@@ -1,6 +1,16 @@
 import angular from "angular";
 import { showNotification } from "../../modules/notifications";
 import "../../../sass/pages/analysis.scss";
+import "../../vendor/datatables/datatables";
+import "../../vendor/datatables/datatables-buttons";
+import $ from "jquery";
+import {
+  createItemLink,
+  generateColumnOrderInfo,
+  tableConfig,
+  wrapCellContents
+} from "./../../utilities/datatables-utilities";
+import { formatDate } from "./../../utilities/date-utilities";
 
 /**
  * Controller to download the analysis.
@@ -63,7 +73,11 @@ function AnalysisService($http) {
       return result.data;
     });
   };
-
+  svc.getBioHanselResults = function() {
+    return $http.get(window.PAGE.URLS.bio_hansel).then(function(result){
+      return result.data;
+    });
+  };
   /**
    * Exported function to call the server for information about the current analysis.
    * @param fn Callback function with how to handle the results.
@@ -84,7 +98,6 @@ function AnalysisService($http) {
     });
   };
 
-        fn(data);
   /**
    * Call the server to get the shared status of project
    */
@@ -158,6 +171,36 @@ function PreviewController() {
   this.newick = window.PAGE.NEWICK;
 }
 
+
+function BioHanselController(analysisService){
+  const vm = this;
+
+  analysisService.getBioHanselResults().then(function(result) {
+    if (result['parse_results_error']) {
+      vm.parse_results_error = true;
+    } else {
+
+    // TODO: This needs to be moved to another separate JS file as the DataTables stuff is heavy and shouldn't be loaded on every page.
+    for( var i = 0; i < result['hansel_tech_results'].length; i++ ){
+        result['hansel_tech_results'][i]['qc_message'] = JSON.parse(JSON.stringify(result['hansel_tech_results'][i]["qc_message"]).replace("FAIL: ", ""))
+    }
+    const COLUMNS = generateColumnOrderInfo("tech_results_table");
+    //Creating the DataTable used to show Bio Hansel's results.
+    $('#tech_results_table').DataTable( {
+        "data" : result["hansel_tech_results"],
+        "columns": [
+            { "data": "sample" },
+            { "data": "subtype" },
+            { "data": "qc_status" },
+            { "data": "qc_message" }
+        ],
+        "columnDefs": [{ "width": "20%", "targets": "QC MESSAGE" }]
+
+    } );
+    }
+   });
+}
+
 function SistrController(analysisService) {
   const vm = this;
 
@@ -191,6 +234,8 @@ function SistrController(analysisService) {
   });
 }
 
+
+
 const iridaAnalysis = angular
   .module("irida.analysis", ["ui.router", "subnav", "phylocanvas"])
   .config([
@@ -207,15 +252,15 @@ const iridaAnalysis = angular
           controllerAs: "sistrCtrl",
           controller: ["AnalysisService", SistrController]
         })
+        .state("inputs", {
+          url: "/inputs",
+          templateUrl: "inputs.html"
+        })
         .state("bio_hansel", {
           url: "/bio_hansel",
           templateUrl: "bio_hansel.html",
           controllerAs: "bioHanselCtrl",
           controller: ["AnalysisService", BioHanselController]
-        })
-        .state("inputs", {
-          url: "/inputs",
-          templateUrl: "inputs.html"
         })
         .state("provenance", {
           url: "/provenance",

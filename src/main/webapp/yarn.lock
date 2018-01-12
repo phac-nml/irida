@@ -3425,6 +3425,10 @@ jquery-validation@^1.17.0:
   dependencies:
     jquery "^1.7 || ^2.0 || ^3.1"
 
+jquery.tabulator@^3.3.2:
+  version "3.3.2"
+  resolved "https://registry.yarnpkg.com/jquery.tabulator/-/jquery.tabulator-3.3.2.tgz#c80046736d080ccf096539c108debdaf8cd66325"
+
 jquery@>=1.10, jquery@>=1.11.0, jquery@>=1.7, jquery@>=1.9.0, "jquery@^1.7 || ^2.0 || ^3.1", jquery@^3.2.1:
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.2.1.tgz#5c4d9de652af6cd0a770154a631bba12b015c787"
@@ -6279,7 +6283,7 @@ webpack-dev-middleware@^1.11.0:
     range-parser "^1.0.3"
     time-stamp "^2.0.0"
 
-webpack-dev-server@^2.9.1:
+webpack-dev-server@^2.9.7:
   version "2.9.7"
   resolved "https://registry.yarnpkg.com/webpack-dev-server/-/webpack-dev-server-2.9.7.tgz#100ad6a14775478924d417ca6dcfb9d52a98faed"
   dependencies:

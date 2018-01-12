@@ -498,7 +498,7 @@ public class AnalysisController {
 	@SuppressWarnings("resource")
 	@RequestMapping("/ajax/bio_hansel/{id}") @ResponseBody public Map<String,Object> getBioHanselAnalysis(@PathVariable Long id) {
 		AnalysisSubmission submission = analysisSubmissionService.read(id);
-		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubimssion(submission);
+		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubmission(submission);
         Map<String,Object> result = new HashMap<>();
         result.put("parse_results_error", true); //init with parsing error true
 

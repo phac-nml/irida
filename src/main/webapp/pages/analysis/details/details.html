@@ -221,14 +221,14 @@
 				</div>
 
 				<div ng-hide="bioHanselCtrl.parse_results_error">
-					<h2 th:text="#{analysis.details.bio_hansel.technician.summary}">Overview</h2>
-                    <table width="100%" class="display" id="tech_results_table">
+					<h2 th:text="#{analysis.details.bio_hansel.technician.summary}">Bio_Hansel Results Overview</h2>
+                    <table width="100%" class="table dataTable" style="overflow-y: scroll; max-width: 100%; display: block; white-space: word-wrap: break-word;" id="tech_results_table">
                         <thead>
                             <tr>
-                                <th>sample</th>
-                                <th>subtype</th>
-                                <th>qc_status</th>
-                                <th>qc_message</th>
+                                <th>Sample</th>
+                                <th>Subtype</th>
+                                <th>QC Status</th>
+                                <th>QC Message</th>
                             </tr>
                         </thead>
                     </table>
