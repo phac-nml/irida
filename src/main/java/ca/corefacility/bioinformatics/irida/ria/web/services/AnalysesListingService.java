@@ -129,9 +129,8 @@ public class AnalysesListingService {
 		AnalysisState analysisState = submission.getAnalysisState();
 		JobError error = null;
 		if (analysisState.equals(AnalysisState.ERROR)) {
-			 error = getFirstJobError(submission);
-		}
-		if (!analysisState.equals(AnalysisState.ERROR)) {
+			error = getFirstJobError(submission);
+		} else {
 			percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(submission.getId());
 		}
 
