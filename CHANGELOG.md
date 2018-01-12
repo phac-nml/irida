@@ -27,7 +27,6 @@ Changes
 * [UI]: Cleaned up sub-navigation elements on samples and files.
 * [UI]: Updated Remote API pages (datatables, and removed Noty modals).  
 * [UI]: Fixed issue where breadcrumbs not displaying on the Samples > File > QC Analsis pages.
-* [UI]: Updated Remote API pages (datatables, and removed Noty modals).
 
 0.18.0 to 0.19.0
 ----------------
