@@ -512,7 +512,6 @@ public class AnalysisExecutionServiceGalaxyTest {
 
 		verify(analysisService).create(analysisResults);
 		verify(analysisSubmissionService, times(2)).update(any(AnalysisSubmission.class));
-		verify(analysisSubmissionSampleProcessor).updateSamples(any(AnalysisSubmission.class));
 	}
 
 	/**
