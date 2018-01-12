@@ -41,7 +41,7 @@ const config = Object.assign({}, tableConfig, {
           return createItemLink({
             // Link to the users page.
             url: `${PAGE.urls.users}${data.identifier}`,
-            label: data.username
+            label: data.label
           });
         }
         return "";

@@ -25,7 +25,9 @@ Changes
 * [UI]: Fixed issue where time stamps where not displayed on activities pages.
 * [UI]: Fixed issue where breadcrumbs were not displaying on the Project > Line List and Project > Analyses pages.
 * [UI]: Cleaned up sub-navigation elements on samples and files.
-* [UI]: Updated Remote API pages (datatables, and removed Noty modals).
+* [UI]: Updated Remote API pages (datatables, and removed Noty modals).  
+* [UI]: Fixed issue where breadcrumbs not displaying on the Samples > File > QC Analsis pages.
+* [UI]: Removed search box from sequencing run page.
 
 0.18.0 to 0.19.0
 ----------------
