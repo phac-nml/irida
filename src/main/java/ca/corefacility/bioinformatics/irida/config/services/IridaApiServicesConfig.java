@@ -112,7 +112,7 @@ public class IridaApiServicesConfig {
 	@Value("${file.processing.queue.capacity}")
 	private int fpQueueCapacity;
 
-	@Value("${irida.debug.nrepl.server.port:#{null}")
+	@Value("${irida.debug.nrepl.server.port:#{null}}")
 	private Integer nreplPort;
 	
 	@Bean
