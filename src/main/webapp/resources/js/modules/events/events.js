@@ -1,4 +1,10 @@
+/**
+ * @file Responsible for loading and setting a table of events..
+ * Used on both the Dashboard and Admin > Events pages.
+ */
+
 import angular from "angular";
+import "@bassettsj/livestamp";
 import "../../../sass/modules/events.scss";
 
 /**
@@ -65,6 +71,7 @@ function events(svc, $compile) {
         function getEvents() {
           svc.getEvents($scope.url, vm.size).then(function(data) {
             $element.html($compile(data)($scope));
+            $('[data-toggle="tooltip"]').tooltip();
           });
         }
 
