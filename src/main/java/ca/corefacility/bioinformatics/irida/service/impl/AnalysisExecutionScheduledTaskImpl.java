@@ -195,7 +195,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 			logger.warn("AnalysisSubmission [id=" + analysisSubmission.getId() + "] had a JobError [jobId="
 					+ jobError.getJobId() + ", toolId=" + jobError.getToolId() + ", exitCode=" + jobError.getExitCode()
 					+ "]");
-			new AsyncResult<>(jobErrorRepository.save(jobError));
+			jobErrorRepository.save(jobError);
 		}
 	}
 

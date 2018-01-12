@@ -201,7 +201,7 @@ const setupJobErrorPopoverUI = ({ jobError }, row) => {
 </div>`;
     const title = `
 <span>
-  Job Error - ${jobError.toolName} (v${jobError.toolVersion}) 
+  ${MESSAGES.jobError} - ${jobError.toolName} (v${jobError.toolVersion}) 
 </span>
 <i class="pull-right fa fa-fw fa-times text-danger js-close-popover" />
 `;
