@@ -53,6 +53,7 @@ export const tableConfig = {
   dom,
   processing: true,
   serverSide: true,
+  deferRender: true,
   createdRow(row) {
     $(row).tooltip({ selector: "[data-toggle='tooltip']" });
   }
