@@ -276,8 +276,7 @@ public class AnalysisController {
 				return ImmutableMap.of("job_errors", jobErrors);
 			}
 		} catch (ExecutionManagerException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
+			logger.error("Error " + e);
 		}
 		return ImmutableMap.of("error", "No JobErrors for AnalysisSubmission [id=" + submissionId + "]");
 	}

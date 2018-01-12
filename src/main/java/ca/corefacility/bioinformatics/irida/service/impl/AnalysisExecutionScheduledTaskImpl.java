@@ -170,8 +170,6 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 					GalaxyWorkflowStatus workflowStatus = analysisExecutionService.getWorkflowStatus(
 							analysisSubmission);
 					submissions.add(handleWorkflowStatus(workflowStatus, analysisSubmission));
-
-					handleJobErrors(analysisSubmission);
 				} catch (ExecutionManagerException | RuntimeException e) {
 					logger.error("Error checking state for " + analysisSubmission, e);
 					analysisSubmission.setAnalysisState(AnalysisState.ERROR);
@@ -241,9 +239,9 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 		// Immediately switch overall workflow state to "ERROR" if an error occurred, even if some tools are still running.
 		if (workflowStatus.errorOccurred()) {
 			logger.error("Workflow for analysis " + analysisSubmission + " in error state " + workflowStatus);
-
 			analysisSubmission.setAnalysisState(AnalysisState.ERROR);
 			returnedSubmission = new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission));
+			handleJobErrors(analysisSubmission);
 		} else if (workflowStatus.completedSuccessfully()) {
 			logger.debug("Analysis finished " + analysisSubmission);
 
@@ -257,9 +255,9 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 			// If one of the above combinations did not match, assume an error occurred.
 			logger.error("Workflow for analysis " + analysisSubmission
 					+ " is neither complete, in error, or still running. Switching to error state " + workflowStatus);
-
 			analysisSubmission.setAnalysisState(AnalysisState.ERROR);
 			returnedSubmission = new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission));
+			handleJobErrors(analysisSubmission);
 		}
 
 		return returnedSubmission;
