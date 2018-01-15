@@ -68,8 +68,11 @@ public class ProjectControllerUtils {
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-		boolean isOwner = projectMembersPermission.isAllowed(authentication, project);
+		boolean isOwner = projectOwnerPermission.isAllowed(authentication, project);
 		model.addAttribute("isOwner", isOwner);
+		
+		boolean isOwnerAllowRemote = projectMembersPermission.isAllowed(authentication, project);
+		model.addAttribute("isOwnerAllowRemote", isOwnerAllowRemote);
 
 		boolean manageMembers = projectMembersPermission.isAllowed(authentication, project);
 		model.addAttribute("manageMembers", manageMembers);
