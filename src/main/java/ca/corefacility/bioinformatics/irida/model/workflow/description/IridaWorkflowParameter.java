@@ -87,9 +87,10 @@ public class IridaWorkflowParameter {
 	 */
 	public IridaWorkflowParameter(String name, Boolean required, List<IridaWorkflowDynamicSourceGalaxy> dynamicSources, List<IridaToolParameter> toolParameters ) {
 		checkNotNull(name, "name is null");
+		checkNotNull(required, "required is null");
 		checkNotNull(toolParameters, "toolParameters is null");
-		checkArgument(toolParameters.size() > 0, "toolParameters has no elements");
 		checkArgument((dynamicSources == null || dynamicSources.size() == 1), "if dynamicSources is not null, it should have only one element");
+		checkArgument(toolParameters.size() > 0, "toolParameters has no elements");
 
 		this.name = name;
 		this.required = required;
@@ -139,6 +140,9 @@ public class IridaWorkflowParameter {
 	 *         before launching a pipeline.
 	 */
 	public Boolean isRequired() {
+		if (required == null) {
+			return false;
+		}
 		return required;
 	}
 
