@@ -6,7 +6,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ManageLocalProjectSettingsPermission;
-import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerAllowRemotePermission;
+import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import com.google.common.collect.ImmutableMap;
@@ -32,14 +32,14 @@ public class ProjectControllerUtils {
 	// Services
 	private final UserService userService;
 	
-	private final ProjectOwnerAllowRemotePermission projectOwnerPermission;
+	private final ProjectOwnerPermission projectOwnerPermission;
 	private final ManageLocalProjectSettingsPermission projectMembersPermission;
 	private final MetadataTemplateService metadataTemplateService;
 
 	@Autowired
 	public ProjectControllerUtils(final UserService userService,
 			MetadataTemplateService metadataTemplateService,
-			final ProjectOwnerAllowRemotePermission projectOwnerPermission,
+			final ProjectOwnerPermission projectOwnerPermission,
 			final ManageLocalProjectSettingsPermission projectMembersPermission) {
 		this.userService = userService;
 		this.metadataTemplateService = metadataTemplateService;
