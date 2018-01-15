@@ -8,4 +8,6 @@
              relativeToChangelogFile="true"/>
     <include file="system-role-removal.xml"
              relativeToChangelogFile="true"/>
+    <include file="add-job-error-table.xml"
+             relativeToChangelogFile="true"/>
 </databaseChangeLog>

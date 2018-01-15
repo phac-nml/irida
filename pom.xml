@@ -69,6 +69,10 @@
 			<id>spring-milestones</id>
 			<url>https://repo.spring.io/libs-milestone/</url>
 		</repository>
+		<repository>
+			<id>clojars.org</id>
+			<url>https://clojars.org/repo</url>
+		</repository>
 	</repositories>
 
 	<pluginRepositories>
@@ -575,6 +579,13 @@
 			<artifactId>imgscalr-lib</artifactId>
 			<version>${imgscalr.version}</version>
 		</dependency>
+
+		<!-- Clojure nREPL -->
+		<dependency>
+			<groupId>net.matlux</groupId>
+			<artifactId>jvm-breakglass</artifactId>
+			<version>${jvm-breakglass.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -1058,6 +1069,7 @@
 		<jsonpath.version>2.4.0</jsonpath.version>
 		<imgscalr.version>4.2</imgscalr.version>
 		<jackson.dataformat.yaml.version>2.7.4</jackson.dataformat.yaml.version>
+		<jvm-breakglass.version>0.0.8</jvm-breakglass.version>
 
 		<!-- plugins -->
 		<maven.failsafe.plugin.version>2.19.1</maven.failsafe.plugin.version>
