@@ -718,7 +718,7 @@
 				<executions>
 					<execution>
 						<id>validate</id>
-						<phase>validate</phase>
+						<phase>pre-site</phase>
 						<configuration>
 							<configLocation>checkstyle.xml</configLocation>
 							<encoding>UTF-8</encoding>

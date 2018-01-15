@@ -49,14 +49,14 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 		logger.debug("clicking remove button");
 		
 		WebElement findElement = new WebDriverWait(driver, TIME_OUT_IN_SECONDS)
-				.until(ExpectedConditions.presenceOfElementLocated(By.id("remove-btn")));
+				.until(ExpectedConditions.presenceOfElementLocated(By.className("t-remove-btn")));
 		findElement.click();
 	}
 
 	public void confirmDelete() {
 		logger.debug("clicking confirm-delete button");
 		WebElement confirmButton = (new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(By
-				.className("confirm-delete")));
+				.className("t-confirm-delete")));
 		confirmButton.click();
 	}
 

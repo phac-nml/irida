@@ -19,6 +19,7 @@ const config = Object.assign({}, tableConfig, {
   ajax: url,
   // Sort by the date with the newest on top.
   order: [[COLUMNS.CREATED_DATE, "desc"]],
+  searching: false,
   columnDefs: [
     {
       targets: [COLUMNS.ID],
