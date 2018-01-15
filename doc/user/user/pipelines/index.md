@@ -255,7 +255,7 @@ For example, you may encounter an error when running the "Assembly and Annotatio
 
 ![analyses-table-error](images/analyses-table-error.png)
 
-If you click on the "?" icon, you can preview the Galaxy job error information:
+If you click on the <span class="fa fa-fw fa-question-circle"></span> icon, you can preview the Galaxy job error information:
 
 ![analyses-table-error-preview](images/analyses-table-error-preview.png)
 
