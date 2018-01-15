@@ -341,7 +341,7 @@ public class PipelineController extends BaseController {
 							try {
 								dynamicSourceName = dynamicSource.getName();
 								toolDataTable.put("id", dynamicSourceName);
-								toolDataTable.put("label", messageSource.getMessage("tooldatatable.label." + dynamicSourceName, null, locale));
+								toolDataTable.put("label", messageSource.getMessage("dynamicsource.label." + dynamicSourceName, null, locale));
 								toolDataTable.put("parameters", parametersList);
 
 								galaxyToolDataTable = galaxyToolDataService.getToolDataTable(dynamicSourceName);
