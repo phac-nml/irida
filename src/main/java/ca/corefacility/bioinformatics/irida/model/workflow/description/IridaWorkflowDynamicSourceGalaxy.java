@@ -4,6 +4,11 @@ import javax.xml.bind.annotation.XmlAttribute;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Class providing access to information about a Dynamic Parameter Source that is supplied by Galaxy.
+ * This class is intended to interface with Galaxy Tool Data Tables.
+ *
+ */
 public class IridaWorkflowDynamicSourceGalaxy {
     @XmlAttribute
     private String name;
