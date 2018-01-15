@@ -65,17 +65,22 @@ function AnalysisService($http) {
     });
   };
 
+  /**
+   * Get Galaxy JobError info from server
+   * @param vm JobErrorsController object for reporting progress of getting JobError info
+   * @returns {PromiseLike<T> | Promise<T> | *}
+   */
   svc.getJobErrors = function(vm) {
-    vm.is_in_progress = true;
-    return $http.get(window.PAGE.URLS.job_errors).then(
+    vm.isInProgress = true;
+    return $http.get(window.PAGE.URLS.jobErrors).then(
       function successCallback(x) {
-        vm.is_in_progress = false;
+        vm.isInProgress = false;
         return x.data;
       },
       function errorCallback(x) {
-        vm.is_in_progress = false;
+        vm.isInProgress = false;
         console.error(
-          "Could not GET job error(s) from '" + page.URLS.job_errors + "'"
+          "Could not GET job error(s) from '" + page.URLS.jobErrors + "'"
         );
         console.error(x);
       }
@@ -208,11 +213,26 @@ function SistrController(analysisService) {
   });
 }
 
+/**
+ * Angular Controller for handling Galaxy job errors
+ * @param analysisService Service for retrieving JobError info from server
+ * @constructor
+ */
 function JobErrorsController(analysisService) {
   const vm = this;
-  vm.has_job_errors = false;
-  vm.is_in_progress = true;
-  vm.job_errors = [];
+  vm.hasJobErrors = false;
+  vm.isInProgress = true;
+  /**
+   * Array of JobError objects
+   * @type {Array}
+   */
+  vm.jobErrors = [];
+  /**
+   * Reverse order of lines for a JobError attribute and set whether the
+   * attribute is reversed or not.
+   * @param jobError JobError object
+   * @param attr Attribute to reverse order of lines (e.g. "standardOutput")
+   */
   vm.reverseLines = (jobError, attr) => {
     jobError[attr] = jobError[attr]
       .split("\n")
@@ -221,17 +241,25 @@ function JobErrorsController(analysisService) {
       .trim();
     jobError.reversed[attr] = !jobError.reversed[attr];
   };
-  vm.isLoading = function() {
-    return !vm.has_job_errors && vm.is_in_progress;
-  };
-  vm.hasNoJobErrorInfoAvailable = function() {
-    return !vm.has_job_errors && !vm.is_in_progress;
-  };
-  vm.jsonifyParameters = function(j) {
+  /**
+   * Is JobError info being retrieved from the server?
+   * @returns {boolean}
+   */
+  vm.isLoading = () => !vm.hasJobErrors && vm.isInProgress;
+  /**
+   * Is there JobError info available?
+   * @returns {boolean}
+   */
+  vm.hasNoJobErrorInfoAvailable = () => !vm.hasJobErrors && !vm.isInProgress;
+  /**
+   * Transform parameters string into valid JSON and parse into Object
+   * @param jobError Object with JobError information
+   */
+  vm.jsonifyParameters = function(jobError) {
     try {
-      if (j.hasOwnProperty("parameters")) {
-        j.parameters = JSON.parse(
-          j.parameters
+      if (jobError.hasOwnProperty("parameters")) {
+        jobError.parameters = JSON.parse(
+          jobError.parameters
             .replace(/=/g, ":")
             .replace(/(:)\s*([\w\-]+)/g, '$1"$2"')
             .replace(/([\w|]+):/g, '"$1":')
@@ -242,10 +270,15 @@ function JobErrorsController(analysisService) {
       console.error("Could not JSONify 'parameters' for job error object");
     }
   };
-  vm.formatDate = function(j, attr) {
+  /**
+   * Format JobError attribute as a human-readable date
+   * @param jobError JobError object
+   * @param attr Attribute containing date value (e.g. "createdDate")
+   */
+  vm.formatDate = function(jobError, attr) {
     try {
-      if (j.hasOwnProperty(attr)) {
-        j[attr] = formatDate({ date: j[attr] });
+      if (jobError.hasOwnProperty(attr)) {
+        jobError[attr] = formatDate({ date: jobError[attr] });
       }
     } catch (e) {
       console.error(e);
@@ -255,17 +288,19 @@ function JobErrorsController(analysisService) {
     }
   };
   analysisService.getJobErrors(vm).then(function(x) {
+    // `x` is request data object
     if (typeof x === "undefined" || x === null) {
       return;
     }
-    if (typeof x.job_errors === "undefined") {
+    if (typeof x.jobErrors === "undefined") {
       return;
     }
-    if (x.job_errors.length === 0) {
+    if (x.jobErrors.length === 0) {
       return;
     }
-    vm.has_job_errors = true;
-    for (const jobError of x.job_errors) {
+    vm.jobErrors = x.jobErrors;
+    vm.hasJobErrors = true;
+    for (const jobError of vm.jobErrors) {
       jobError.reversed = {};
       jobError.reversed.standardError = false;
       jobError.reversed.standardOutput = false;
@@ -273,8 +308,7 @@ function JobErrorsController(analysisService) {
       vm.formatDate(jobError, "updatedDate");
       vm.jsonifyParameters(jobError);
     }
-    vm.job_errors = x.job_errors;
-    vm.is_in_progress = false;
+    vm.isInProgress = false;
   });
 }
 

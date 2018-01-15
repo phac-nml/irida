@@ -263,9 +263,9 @@ public class AnalysisController {
 	}
 
 	/**
-	 * Get a map with list of {@link JobError} for an {@link AnalysisSubmission} under key `job_errors`
+	 * Get a map with list of {@link JobError} for an {@link AnalysisSubmission} under key `jobErrors`
 	 * @param submissionId {@link AnalysisSubmission} id
-	 * @return map with list of {@link JobError} under key `job_errors`
+	 * @return map with list of {@link JobError} under key `jobErrors`
 	 */
 	@RequestMapping(value = "/ajax/{submissionId}/job-errors", method = RequestMethod.GET)
 	@ResponseBody
@@ -273,7 +273,7 @@ public class AnalysisController {
 		try {
 			List<JobError> jobErrors = analysisSubmissionService.getJobErrors(submissionId);
 			if (jobErrors != null && !jobErrors.isEmpty()) {
-				return ImmutableMap.of("job_errors", jobErrors);
+				return ImmutableMap.of("jobErrors", jobErrors);
 			}
 		} catch (ExecutionManagerException e) {
 			logger.error("Error " + e);
