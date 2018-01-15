@@ -623,7 +623,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#p, 'isProjectOwnerAllowRemote')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#p, 'canManageLocalProjectSettings')")
 	public Page<Project> getUnassociatedProjects(final Project p, final String searchName, final Integer page, final Integer count,
 			final Direction sortDirection, final String... sortedBy) {
 
