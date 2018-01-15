@@ -28,6 +28,7 @@ Changes
 * [UI]: Updated Remote API pages (datatables, and removed Noty modals).  
 * [UI]: Fixed issue where breadcrumbs not displaying on the Samples > File > QC Analsis pages.
 * [UI]: Removed search box from sequencing run page.
+* [UI/Workflow]: Galaxy job error info retrieved from Galaxy if a workflow submission fails. Job error info is shown in Analyses table and on the Analysis page if it exists. 
 * [UI]: SISTR able to write metadata back to samples.
 
 0.18.0 to 0.19.0

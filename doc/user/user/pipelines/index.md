@@ -237,3 +237,23 @@ To save analysis results back to a sample, on submission of a pipeline please se
 ![save-results-to-samples](images/save-results-to-samples.png)
 
 <a href="../samples/">Previous: Managing Samples</a>
+
+
+## Errors when executing pipelines
+
+You may experience an analysis pipeline execution failure caused by an error in one or more tools within a pipeline.
+
+For example, you may encounter an error when running the "Assembly and Annotation" pipeline:
+
+![analyses-table-error](images/analyses-table-error.png)
+
+If you click on the <span class="fa fa-fw fa-question-circle"></span> icon, you can preview the Galaxy job error information:
+
+![analyses-table-error-preview](images/analyses-table-error-preview.png)
+
+If you follow the link to the analysis page, you can view all the job error information for the pipeline in error:
+
+![analysis-job-error](images/analysis-job-error.png)
+
+This information may be helpful for troubleshooting and communicating what went wrong in a particular analysis pipeline.   
+
