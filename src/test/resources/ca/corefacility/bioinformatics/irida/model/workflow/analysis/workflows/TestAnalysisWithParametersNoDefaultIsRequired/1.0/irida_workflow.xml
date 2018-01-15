@@ -11,7 +11,7 @@
 		<requiresSingleSample>false</requiresSingleSample>
 	</inputs>
 	<parameters>
-		<parameter name="test-parameter">
+		<parameter name="test-parameter" required="true">
 			<toolParameter
 				toolId="irida.corefacility.ca/galaxy-shed/repos/irida/test-tool/0.1"
 				parameterName="a" />

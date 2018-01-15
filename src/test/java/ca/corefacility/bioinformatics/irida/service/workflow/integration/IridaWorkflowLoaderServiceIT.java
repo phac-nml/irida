@@ -88,7 +88,8 @@ public class IridaWorkflowLoaderServiceIT {
 	private Path workflowDirectoryPathInvalidType;
 	private Path workflowDirectoryPathNoParameters;
 	private Path workflowDirectoryPathWithParameters;
-	private Path workflowDirectoryPathWithParametersNoDefault;
+	private Path workflowDirectoryPathWithParametersNoDefaultNotRequired;
+	private Path workflowDirectoryPathWithParametersNoDefaultIsRequired;
 
 	@Before
 	public void setup() throws JAXBException, URISyntaxException, FileNotFoundException {
@@ -120,8 +121,10 @@ public class IridaWorkflowLoaderServiceIT {
 				.getResource("workflows/TestAnalysisNoParameters/1.0").toURI());
 		workflowDirectoryPathWithParameters = Paths.get(TestAnalysis.class
 				.getResource("workflows/TestAnalysisWithParameters/1.0").toURI());
-		workflowDirectoryPathWithParametersNoDefault = Paths.get(TestAnalysis.class
-				.getResource("workflows/TestAnalysisWithParametersNoDefault/1.0").toURI());
+		workflowDirectoryPathWithParametersNoDefaultNotRequired = Paths.get(TestAnalysis.class
+				.getResource("workflows/TestAnalysisWithParametersNoDefaultNotRequired/1.0").toURI());
+		workflowDirectoryPathWithParametersNoDefaultIsRequired = Paths.get(TestAnalysis.class
+				.getResource("workflows/TestAnalysisWithParametersNoDefaultIsRequired/1.0").toURI());
 		workflowDirectoryPathNoId = Paths.get(TestAnalysis.class.getResource("workflows/TestAnalysisNoId").toURI());
 	}
 
@@ -388,17 +391,29 @@ public class IridaWorkflowLoaderServiceIT {
 	}
 
 	/**
-	 * Test to make sure we fail to load a workflow with no default value.
+	 * Test to make sure we fail to load a workflow with no default value and without a required="true" attribute.
 	 * 
 	 * @throws IridaWorkflowLoadException
 	 * @throws IOException
 	 */
 	@Test(expected=IridaWorkflowLoadException.class)
-	public void testLoadWorkflowWithParametersNoDefaultValueFail() throws IridaWorkflowLoadException, IOException {
+	public void testLoadWorkflowWithParametersNoDefaultValueNotRequiredFail() throws IridaWorkflowLoadException, IOException {
 		workflowLoaderService
-				.loadIridaWorkflowFromDirectory(workflowDirectoryPathWithParametersNoDefault);
+				.loadIridaWorkflowFromDirectory(workflowDirectoryPathWithParametersNoDefaultNotRequired);
 	}
-	
+
+	/**
+	 * Test to make sure we fail to load a workflow with no default value and without a required="true" attribute.
+	 *
+	 * @throws IridaWorkflowLoadException
+	 * @throws IOException
+	 */
+	@Test(expected=IridaWorkflowLoadException.class)
+	public void testLoadWorkflowWithParametersNoDefaultValueIsRequiredSuccess() throws IridaWorkflowLoadException, IOException {
+		workflowLoaderService
+				.loadIridaWorkflowFromDirectory(workflowDirectoryPathWithParametersNoDefaultIsRequired);
+	}
+
 	/**
 	 * Tests failure to load up all implementations of a workflow from a
 	 * directory.

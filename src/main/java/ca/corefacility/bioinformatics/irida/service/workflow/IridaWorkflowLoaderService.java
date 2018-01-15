@@ -165,8 +165,19 @@ public class IridaWorkflowLoaderService {
 						logger.debug("Workflow parameter" + workflowParameter
 								+ " has no default value set: " + descriptionFile);
 						if (!workflowParameter.isRequired()) {
-							throw new IridaWorkflowLoadException("Parameters with no default value must set the \"required\" attribute to \"true\".");
+							throw new IridaWorkflowLoadException("Parameters with no default value must set the \"required\" attribute to \"true\"." + descriptionFile);
 						}
+					}
+					if (workflowParameter.hasDynamicSource() && !workflowParameter.isRequired()) {
+						throw new IridaWorkflowLoadException("Parameters loaded from Dynamic Sources must set the \"required\" attribute to \"true\"." + descriptionFile);
+					}
+					if (workflowParameter.isRequired()) {
+						try {
+							workflowParameter.getDefaultValue();
+						} catch (NullPointerException e) {
+							continue;
+						}
+						throw new IridaWorkflowLoadException("Required parameters should not have a default value." + descriptionFile);
 					}
 				}
 			}
