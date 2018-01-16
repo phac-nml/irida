@@ -191,10 +191,12 @@ public class IridaWorkflowParameter {
 
 	@Override
 	public String toString() {
-		if (defaultValue != null) {
-			return "IridaWorkflowParameter [name=" + name + ", defaultValue=" + defaultValue + "]";
-		} else {
-			return "IridaWorkflowParameter [name=" + name + ", dynamicSource=" + dynamicSources.get(0).toString() + "]";
-		}
+			String msg = "IridaWorkflowParameter [" +
+					"name=" + name +
+					", required=" + ((required == null) ? "null" : required) +
+					", defaultValue=" + ((defaultValue == null) ? "null" : defaultValue) +
+					", dynamicSource=" + ((dynamicSources == null) ? "null" : dynamicSources.get(0).toString()) +
+					"]";
+			return msg;
 	}
 }
