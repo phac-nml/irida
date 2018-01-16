@@ -411,7 +411,7 @@ public class IridaWorkflowLoaderServiceIT {
 	 * @throws IridaWorkflowLoadException
 	 * @throws IOException
 	 */
-	@Test(expected=IridaWorkflowLoadException.class)
+	@Test
 	public void testLoadWorkflowWithParametersNoDefaultValueIsRequiredSuccess() throws IridaWorkflowLoadException, IOException {
 		workflowLoaderService
 				.loadIridaWorkflowFromDirectory(workflowDirectoryPathWithParametersNoDefaultIsRequired);
