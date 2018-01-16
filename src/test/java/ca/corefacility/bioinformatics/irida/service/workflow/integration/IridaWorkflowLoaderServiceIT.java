@@ -90,6 +90,7 @@ public class IridaWorkflowLoaderServiceIT {
 	private Path workflowDirectoryPathWithParameters;
 	private Path workflowDirectoryPathWithParametersNoDefaultNotRequired;
 	private Path workflowDirectoryPathWithParametersNoDefaultIsRequired;
+	private Path workflowDirectoryPathWithParametersWithDynamicSourceNotRequired;
 
 	@Before
 	public void setup() throws JAXBException, URISyntaxException, FileNotFoundException {
@@ -125,6 +126,8 @@ public class IridaWorkflowLoaderServiceIT {
 				.getResource("workflows/TestAnalysisWithParametersNoDefaultNotRequired/1.0").toURI());
 		workflowDirectoryPathWithParametersNoDefaultIsRequired = Paths.get(TestAnalysis.class
 				.getResource("workflows/TestAnalysisWithParametersNoDefaultIsRequired/1.0").toURI());
+		workflowDirectoryPathWithParametersWithDynamicSourceNotRequired = Paths.get(TestAnalysis.class
+				.getResource("workflows/TestAnalysisWithParametersWithDynamicSourceNotRequired/1.0").toURI());
 		workflowDirectoryPathNoId = Paths.get(TestAnalysis.class.getResource("workflows/TestAnalysisNoId").toURI());
 	}
 
@@ -412,6 +415,18 @@ public class IridaWorkflowLoaderServiceIT {
 	public void testLoadWorkflowWithParametersNoDefaultValueIsRequiredSuccess() throws IridaWorkflowLoadException, IOException {
 		workflowLoaderService
 				.loadIridaWorkflowFromDirectory(workflowDirectoryPathWithParametersNoDefaultIsRequired);
+	}
+
+	/**
+	 * Test to make sure we fail to load a workflow with a <dynamicSource> child element and without a required="true" attribute.
+	 *
+	 * @throws IridaWorkflowLoadException
+	 * @throws IOException
+	 */
+	@Test(expected=IridaWorkflowLoadException.class)
+	public void testLoadWorkflowWithParametersWithDynamicSourceNotRequiredFail() throws IridaWorkflowLoadException, IOException {
+		workflowLoaderService
+				.loadIridaWorkflowFromDirectory(workflowDirectoryPathWithParametersWithDynamicSourceNotRequired);
 	}
 
 	/**
