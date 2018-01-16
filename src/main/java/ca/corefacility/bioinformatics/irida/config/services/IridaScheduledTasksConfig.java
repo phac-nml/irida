@@ -25,12 +25,15 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
+import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErrorsService;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
 import ca.corefacility.bioinformatics.irida.service.ProjectEventEmailScheduledTask;
@@ -70,6 +73,12 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	
 	@Autowired
 	private ProjectSynchronizationService projectSyncService;
+
+	@Autowired
+	private GalaxyJobErrorsService galaxyJobErrorsService;
+
+	@Autowired
+	private JobErrorRepository jobErrorRepository;
 	
 	@Value("${irida.scheduled.threads}")
 	private int threadCount = 2;
@@ -182,7 +191,7 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	@Bean
 	public AnalysisExecutionScheduledTask analysisExecutionScheduledTask() {
 		return new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository, analysisExecutionService,
-				cleanupAnalysisSubmissionCondition());
+				cleanupAnalysisSubmissionCondition(), galaxyJobErrorsService, jobErrorRepository);
 	}
 
 	/**

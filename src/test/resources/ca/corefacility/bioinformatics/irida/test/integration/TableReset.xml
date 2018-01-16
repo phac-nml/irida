@@ -44,6 +44,8 @@
 	<analysis_submission />
 	<analysis_submission_parameters />
 	<project_analysis_submission/>
+
+	<job_error />
 	
 	<genome_assembly />
 	<genome_assembly_analysis />

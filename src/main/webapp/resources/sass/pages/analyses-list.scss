@@ -4,3 +4,9 @@
   margin-bottom: 0 !important;
   line-height: 2px !important;
 }
+.js-close-popover {
+  cursor: pointer;
+}
+.js-close-popover:hover {
+  font-weight: bolder;
+}
