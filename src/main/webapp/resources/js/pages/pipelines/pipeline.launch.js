@@ -49,9 +49,9 @@
      * for the modal dialog whenever we select a new tool data table field
      * from the drop-down.
      */
-    vm.galaxyToolDataTableFieldSelected = function(galaxyToolDataTable) {
+    vm.dynamicSourceValueSelected = function(dynamicSourceValue) {
       DynamicSourceService.setSelectedGalaxyToolDataTableField(
-        galaxyToolDataTable,
+        dynamicSourceValue,
         vm.selectedDynamicSource
       );
     };
@@ -424,7 +424,7 @@
     if (page.pipeline.dynamicSources == null) {
       page.pipeline.dynamicSources = [
         {
-          id: "no_tool_data_tables",
+          id: "no_dynamic_sources",
           label: "",
           parameters: []
         }
