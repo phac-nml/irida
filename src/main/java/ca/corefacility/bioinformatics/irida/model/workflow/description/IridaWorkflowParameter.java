@@ -67,7 +67,6 @@ public class IridaWorkflowParameter {
 		this.name = name;
 		this.defaultValue = defaultValue;
 		this.toolParameters = toolParameters;
-		this.required = false;
 	}
 
 	/**
