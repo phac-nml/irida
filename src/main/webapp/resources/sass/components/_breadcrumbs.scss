@@ -66,7 +66,7 @@ $breadcrumb-color: $irida-colour-primary;
 }
 
 $loop-color: $breadcrumb-color;
-@for $i from 2 to 6 {
+@for $i from 2 to 10 {
   $loop-color: lighten($loop-color, 5%);
   .breadcrumbs li:nth-child(#{$i}) a {
     background-color: $loop-color;
