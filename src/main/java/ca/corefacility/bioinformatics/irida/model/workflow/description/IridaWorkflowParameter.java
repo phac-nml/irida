@@ -28,7 +28,7 @@ public class IridaWorkflowParameter {
 	private String defaultValue;
 
 	@XmlAttribute(name = "required")
-	private Boolean required;
+	private boolean required = false;
 
 	@XmlElementWrapper(name = "dynamicSource")
 	@XmlElements({
@@ -84,9 +84,8 @@ public class IridaWorkflowParameter {
 	 * @param toolParameters
 	 *            The tool parameters corresponding to this named parameter.
 	 */
-	public IridaWorkflowParameter(String name, Boolean required, List<IridaWorkflowDynamicSourceGalaxy> dynamicSources, List<IridaToolParameter> toolParameters ) {
+	public IridaWorkflowParameter(String name, boolean required, List<IridaWorkflowDynamicSourceGalaxy> dynamicSources, List<IridaToolParameter> toolParameters ) {
 		checkNotNull(name, "name is null");
-		checkNotNull(required, "required is null");
 		checkNotNull(toolParameters, "toolParameters is null");
 		checkArgument((dynamicSources == null || dynamicSources.size() == 1), "if dynamicSources is not null, it should have only one element");
 		checkArgument(toolParameters.size() > 0, "toolParameters has no elements");
@@ -138,10 +137,7 @@ public class IridaWorkflowParameter {
 	 * @return Boolean representing whether or not this parameter is required to be set manually
 	 *         before launching a pipeline.
 	 */
-	public Boolean isRequired() {
-		if (required == null) {
-			return false;
-		}
+	public boolean isRequired() {
 		return required;
 	}
 
@@ -192,7 +188,7 @@ public class IridaWorkflowParameter {
 	public String toString() {
 			String msg = "IridaWorkflowParameter [" +
 					"name=" + name +
-					", required=" + ((required == null) ? "null" : required) +
+					", required=" + required +
 					", defaultValue=" + ((defaultValue == null) ? "null" : defaultValue) +
 					", dynamicSource=" + ((dynamicSources == null) ? "null" : dynamicSources.get(0).toString()) +
 					"]";
