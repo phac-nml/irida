@@ -141,6 +141,9 @@ public class IridaWorkflowParameter {
 	 * Gets the dynamic source for the parameter.
 	 *
 	 * @return The dynamic source for this parameter.
+	 *
+	 * @throws IridaWorkflowParameterException
+	 *             If multiple dynamic sources are associated with one parameter.
 	 */
 	public IridaWorkflowDynamicSourceGalaxy getDynamicSource() throws IridaWorkflowParameterException {
 		if (dynamicSource != null) {
