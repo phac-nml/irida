@@ -92,6 +92,7 @@ public class IridaWorkflowLoaderServiceIT {
 	private Path workflowDirectoryPathWithParametersNoDefaultIsRequired;
 	private Path workflowDirectoryPathWithParametersWithDefaultIsRequired;
 	private Path workflowDirectoryPathWithParametersWithDynamicSourceNotRequired;
+	private Path workflowDirectoryPathWithParametersMultipleDynamicSources;
 
 	@Before
 	public void setup() throws JAXBException, URISyntaxException, FileNotFoundException {
@@ -131,6 +132,8 @@ public class IridaWorkflowLoaderServiceIT {
 				.getResource("workflows/TestAnalysisWithParametersWithDefaultIsRequired/1.0").toURI());
 		workflowDirectoryPathWithParametersWithDynamicSourceNotRequired = Paths.get(TestAnalysis.class
 				.getResource("workflows/TestAnalysisWithParametersWithDynamicSourceNotRequired/1.0").toURI());
+		workflowDirectoryPathWithParametersMultipleDynamicSources = Paths.get(TestAnalysis.class
+				.getResource("workflows/TestAnalysisWithParametersMultipleDynamicSources/1.0").toURI());
 		workflowDirectoryPathNoId = Paths.get(TestAnalysis.class.getResource("workflows/TestAnalysisNoId").toURI());
 	}
 
@@ -445,6 +448,18 @@ public class IridaWorkflowLoaderServiceIT {
 	public void testLoadWorkflowWithParametersWithDynamicSourceNotRequiredFail() throws IridaWorkflowLoadException, IOException {
 		workflowLoaderService
 				.loadIridaWorkflowFromDirectory(workflowDirectoryPathWithParametersWithDynamicSourceNotRequired);
+	}
+
+	/**
+	 * Test to make sure we fail to load a workflow with multiple <dynamicSource> child elements.
+	 *
+	 * @throws IridaWorkflowLoadException
+	 * @throws IOException
+	 */
+	@Test(expected=IridaWorkflowLoadException.class)
+	public void testLoadWorkflowWithParametersMultipleDynamicSourcesFail() throws IridaWorkflowLoadException, IOException {
+		workflowLoaderService
+				.loadIridaWorkflowFromDirectory(workflowDirectoryPathWithParametersMultipleDynamicSources);
 	}
 
 	/**
