@@ -5,6 +5,7 @@ import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowParameterException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyToolDataTableException;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.*;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyToolDataService;
@@ -333,7 +334,11 @@ public class PipelineController extends BaseController {
 				TabularToolDataTable galaxyToolDataTable = new TabularToolDataTable();
 				for (IridaWorkflowParameter parameter : description.getParameters()) {
 					if(parameter.isRequired() && parameter.hasDynamicSource()) {
-				 		dynamicSourcesInWorkflow.add(parameter.getDynamicSource());
+						try {
+							dynamicSourcesInWorkflow.add(parameter.getDynamicSource());
+						} catch (IridaWorkflowParameterException e) {
+							logger.debug("Dynamic Source error: ", e);
+						}
 						for (IridaWorkflowDynamicSourceGalaxy dynamicSource : dynamicSourcesInWorkflow) {
 							List<Object> parametersList = new ArrayList<>();
 							String dynamicSourceName;

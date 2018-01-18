@@ -14,6 +14,7 @@ import java.util.Set;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowParameterException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -167,6 +168,11 @@ public class IridaWorkflowLoaderService {
 					}
 					if (workflowParameter.isRequired() && workflowParameter.getDefaultValue() != null) {
 						throw new IridaWorkflowLoadException("Required parameters should not have a default value." + descriptionFile);
+					}
+					try {
+						workflowParameter.getDynamicSource();
+					} catch (IridaWorkflowParameterException e) {
+						throw new IridaWorkflowLoadException("Parameters may have no more than one Dynamic Source." + descriptionFile);
 					}
 				}
 			}

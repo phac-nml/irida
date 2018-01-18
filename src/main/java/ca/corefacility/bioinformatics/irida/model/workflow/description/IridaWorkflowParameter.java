@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.description;
 
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowParameterException;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -140,8 +142,16 @@ public class IridaWorkflowParameter {
 	 *
 	 * @return The dynamic source for this parameter.
 	 */
-	public IridaWorkflowDynamicSourceGalaxy getDynamicSource() {
-		return dynamicSource.get(0);
+	public IridaWorkflowDynamicSourceGalaxy getDynamicSource() throws IridaWorkflowParameterException {
+		if (dynamicSource != null) {
+			if (dynamicSource.size() > 1) {
+				throw new IridaWorkflowParameterException("Limit of one dynamic source per parameter.");
+			} else {
+				return dynamicSource.get(0);
+			}
+		} else {
+			return null;
+		}
 	}
 
 	/**
