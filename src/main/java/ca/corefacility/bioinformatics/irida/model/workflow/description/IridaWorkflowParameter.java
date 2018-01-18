@@ -3,8 +3,7 @@ package ca.corefacility.bioinformatics.irida.model.workflow.description;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkArgument;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import javax.xml.bind.annotation.*;
 
@@ -37,7 +36,7 @@ public class IridaWorkflowParameter {
 	// In order to satisfy the @XMLElementWrapper annotation we need to store dynamicSources in a
 	// collection type, but there should only be at most one <dynamicSource> element per <parameter> element
 	// in the workflow definition .xml file
-	private List<IridaWorkflowDynamicSourceGalaxy> dynamicSources;
+	private List<IridaWorkflowDynamicSourceGalaxy> dynamicSource;
 
 
 	@XmlElement(name = "toolParameter")
@@ -79,21 +78,20 @@ public class IridaWorkflowParameter {
 	 * @param required
 	 *            The default value of this parameter.
 	 *
-	 * @param dynamicSources
+	 * @param dynamicSource
 	 *            Any dynamic sources for parameters (eg. Galaxy Tool Data Table)
 	 * @param toolParameters
 	 *            The tool parameters corresponding to this named parameter.
 	 */
-	public IridaWorkflowParameter(String name, boolean required, List<IridaWorkflowDynamicSourceGalaxy> dynamicSources, List<IridaToolParameter> toolParameters ) {
+	public IridaWorkflowParameter(String name, boolean required, IridaWorkflowDynamicSourceGalaxy dynamicSource, List<IridaToolParameter> toolParameters ) {
 		checkNotNull(name, "name is null");
 		checkNotNull(toolParameters, "toolParameters is null");
-		checkArgument((dynamicSources == null || dynamicSources.size() == 1), "if dynamicSources is not null, it should have only one element");
 		checkArgument(toolParameters.size() > 0, "toolParameters has no elements");
 
 		this.name = name;
 		this.required = required;
 		this.toolParameters = toolParameters;
-		this.dynamicSources = dynamicSources;
+		this.dynamicSource = Collections.singletonList(dynamicSource);
 		this.defaultValue = null;
 
 	}
@@ -123,11 +121,7 @@ public class IridaWorkflowParameter {
 	 * @return The default value for this parameter.
 	 */
 	public String getDefaultValue() {
-		if (defaultValue == null) {
-		 	throw new NullPointerException("defaultValue is null");
-		} else {
-			return defaultValue;
-		}
+		return defaultValue;
 	}
 
 	/**
@@ -147,11 +141,7 @@ public class IridaWorkflowParameter {
 	 * @return The dynamic source for this parameter.
 	 */
 	public IridaWorkflowDynamicSourceGalaxy getDynamicSource() {
-		if (this.dynamicSources.get(0) == null) {
-			throw new NullPointerException("dynamicSource is null");
-		} else {
-			return dynamicSources.get(0);
-		}
+		return dynamicSource.get(0);
 	}
 
 	/**
@@ -160,12 +150,12 @@ public class IridaWorkflowParameter {
 	 * @return Boolean representing whether or not this parameter has a dynamic source
 	 */
 	public Boolean hasDynamicSource() {
-		return dynamicSources != null && dynamicSources.size() > 0;
+		return dynamicSource != null && dynamicSource.size() > 0;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(name, defaultValue, toolParameters, required, dynamicSources);
+		return Objects.hash(name, defaultValue, toolParameters, required, dynamicSource);
 	}
 
 	@Override
@@ -178,7 +168,7 @@ public class IridaWorkflowParameter {
 			return Objects.equals(name, other.name) && Objects.equals(defaultValue, other.defaultValue)
 					&& Objects.equals(toolParameters, other.toolParameters)
 					&& Objects.equals(required, other.required)
-			        && Objects.equals(dynamicSources, other.dynamicSources);
+			        && Objects.equals(dynamicSource, other.dynamicSource);
 		}
 
 		return false;
@@ -190,7 +180,7 @@ public class IridaWorkflowParameter {
 					"name=" + name +
 					", required=" + required +
 					", defaultValue=" + ((defaultValue == null) ? "null" : defaultValue) +
-					", dynamicSource=" + ((dynamicSources == null) ? "null" : dynamicSources.get(0).toString()) +
+					", dynamicSource=" + ((dynamicSource == null) ? "null" : dynamicSource.get(0).toString()) +
 					"]";
 			return msg;
 	}
