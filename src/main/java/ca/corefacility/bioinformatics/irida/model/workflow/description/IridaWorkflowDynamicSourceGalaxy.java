@@ -62,6 +62,6 @@ public class IridaWorkflowDynamicSourceGalaxy {
     @Override
     public String toString() {
         return "IridaWorkflowDynamicSourceGalaxy [type=GalaxyToolDataTable name=" + this.name +
-                " displayColumn=" + this.displayColumn + " parameterColumn= " + this.parameterColumn + "]";
+                ", displayColumn=" + this.displayColumn + ", parameterColumn=" + this.parameterColumn + "]";
     }
 }
