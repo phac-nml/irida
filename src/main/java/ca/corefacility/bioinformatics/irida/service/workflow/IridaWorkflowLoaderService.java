@@ -159,28 +159,14 @@ public class IridaWorkflowLoaderService {
 		} else {
 			if (workflowDescription.acceptsParameters()) {
 				for (IridaWorkflowParameter workflowParameter : workflowDescription.getParameters()) {
-					try {
-						workflowParameter.getDefaultValue();
-					} catch (NullPointerException e) {
-						logger.debug("Workflow parameter" + workflowParameter
-								+ " has no default value set: " + descriptionFile);
-						if (!workflowParameter.isRequired()) {
-							throw new IridaWorkflowLoadException("Parameters with no default value must set the \"required\" attribute to \"true\"." + descriptionFile);
-						}
+					if (workflowParameter.getDefaultValue() == null && !workflowParameter.isRequired()) {
+						throw new IridaWorkflowLoadException("Parameters with no default value must set the \"required\" attribute to \"true\"." + descriptionFile);
 					}
 					if (workflowParameter.hasDynamicSource() && !workflowParameter.isRequired()) {
 						throw new IridaWorkflowLoadException("Parameters loaded from Dynamic Sources must set the \"required\" attribute to \"true\"." + descriptionFile);
 					}
-					if (workflowParameter.isRequired()) {
-						boolean hasDefaultValue = true;
-						try {
-							workflowParameter.getDefaultValue();
-						} catch (NullPointerException e) {
-							hasDefaultValue = false;
-						}
-						if (hasDefaultValue) {
-							throw new IridaWorkflowLoadException("Required parameters should not have a default value." + descriptionFile);
-						}
+					if (workflowParameter.isRequired() && workflowParameter.getDefaultValue() != null) {
+						throw new IridaWorkflowLoadException("Required parameters should not have a default value." + descriptionFile);
 					}
 				}
 			}
