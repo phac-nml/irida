@@ -10,7 +10,7 @@ import $ from "jquery";
  * Check the state of the calling button to see if it should be enabled or not.
  * @param count the number if samples currently selected.
  * @param hasAssociated if there are associated project currently displayed.
- * @param isRemote If thie project is a remote project.
+ * @param isRemote If the project is a remote project.
  */
 function checkState(count, hasAssociated, isRemote) {
   // Remove the tooltip. A new one will be created based on the
