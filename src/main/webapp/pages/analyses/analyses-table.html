@@ -99,6 +99,21 @@
             </div>
         </div>
     </div>
+    <div class="hidden">
+        <div id="popover-template" class="popover" role="tooltip">
+            <div class="arrow"></div>
+            <h3 class="popover-title"></h3>
+            <div class="popover-content"></div>
+        </div>
+        <div id="js-messages" class="hidden"
+             th:data-standard-output="#{analysis.details.joberror.standardOutput}"
+             th:data-standard-error="#{analysis.details.joberror.standardError}"
+             th:data-go-to-submission="#{analysis.joberror.popover.goto-submission}"
+             th:data-job-error="#{analysis.joberror}"
+             th:data-truncated-output="#{analysis.joberror.popover.truncated-output}"
+             th:data-tooltip="#{analysis.joberror.popover.click-to-show}">
+        </div>
+    </div>
 </th:block>
 
 <th:block th:fragment="scripts">

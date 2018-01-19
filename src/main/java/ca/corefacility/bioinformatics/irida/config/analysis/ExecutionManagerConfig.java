@@ -25,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEma
 import ca.corefacility.bioinformatics.irida.model.workflow.manager.galaxy.ExecutionManagerGalaxy;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErrorsService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 
@@ -293,6 +294,12 @@ public class ExecutionManagerConfig {
 	@Bean
 	public HistoriesClient historiesClient() throws ExecutionManagerConfigurationException {
 		return galaxyInstance().getHistoriesClient();
+	}
+
+	@Lazy
+	@Bean
+	public GalaxyJobErrorsService galaxyJobErrorsService() throws ExecutionManagerConfigurationException {
+		return new GalaxyJobErrorsService(historiesClient(), toolsClient(), jobsClient());
 	}
 
 	/**

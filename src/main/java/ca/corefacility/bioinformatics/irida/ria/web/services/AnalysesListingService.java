@@ -7,6 +7,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
@@ -125,26 +126,33 @@ public class AnalysesListingService {
 		String submitter = submission.getSubmitter().getLabel();
 		Date createdDate = submission.getCreatedDate();
 		float percentComplete = 0;
-		if (!submission.getAnalysisState().equals(AnalysisState.ERROR)) {
+		AnalysisState analysisState = submission.getAnalysisState();
+		JobError error = null;
+		if (analysisState.equals(AnalysisState.ERROR)) {
+			error = getFirstJobError(submission);
+		} else {
 			percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(submission.getId());
 		}
 
 		String workflowType = iridaWorkflowsService.getIridaWorkflow(submission.getWorkflowId()).getWorkflowDescription()
 				.getAnalysisType().toString();
 		String workflow = messageSource.getMessage("workflow." + workflowType + ".title", null, locale);
-		String state = messageSource.getMessage("analysis.state." + submission.getAnalysisState()
+		String state = messageSource.getMessage("analysis.state." + analysisState
 				.toString(), null, locale);
 		Long duration = 0L;
-		if (submission.getAnalysisState()
-				.equals(AnalysisState.COMPLETED)) {
+		if (analysisState.equals(AnalysisState.COMPLETED)) {
 			duration = getDurationInMilliseconds(submission.getCreatedDate(), submission.getAnalysis().getCreatedDate());
 		}
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		boolean updatePermission = updateAnalysisPermission.isAllowed(authentication, submission);
 
-		return new DTAnalysis(id, name, submitter, percentComplete, createdDate, workflow, state, duration,
+		return new DTAnalysis(id, name, submitter, percentComplete, createdDate, workflow, state, error, duration,
 				updatePermission);
+	}
+
+	private JobError getFirstJobError(AnalysisSubmission submission) throws ExecutionManagerException {
+		return analysisSubmissionService.getFirstJobError(submission.getId());
 	}
 
 	/**
