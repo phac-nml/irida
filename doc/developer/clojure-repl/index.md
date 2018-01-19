@@ -1,3 +1,7 @@
+---
+layout: "default"
+---
+
 Using a Clojure nREPL to interact with a live instance of IRIDA
 ===============================================================
 
@@ -27,7 +31,7 @@ Requirements
 - Install `leiningen` (https://github.com/technomancy/leiningen)
 - In your `/etc/irida/irida.conf` file, ensure that the `irida.debug.nrepl.server.port` property is set to a valid port number such as `1112`:
 
-```conf
+```
 # Clojure nREPL server port
 irida.debug.nrepl.server.port=1112
 ```
