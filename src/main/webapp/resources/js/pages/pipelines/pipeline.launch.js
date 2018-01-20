@@ -20,7 +20,7 @@
     vm.parameters = ParameterService.getOriginalSettings();
     vm.selectedParameters = ParameterService.getSelectedParameters();
     vm.dynamicSources = DynamicSourceService.getSettings();
-    vm.selectedDynamicSource = DynamicSourceService.getSelectedGalaxyToolDataTableField();
+    vm.selectedDynamicSource = DynamicSourceService.getSelectedDynamicSourceValue();
 
     $scope.$on("PARAMETERS_SAVED", function() {
       vm.selectedParameters = ParameterService.getSelectedParameters();
@@ -50,7 +50,7 @@
      * from the drop-down.
      */
     vm.dynamicSourceValueSelected = function(dynamicSourceValue) {
-      DynamicSourceService.setSelectedGalaxyToolDataTableField(
+      DynamicSourceService.setSelectedDynamicSourceValue(
         dynamicSourceValue,
         vm.selectedDynamicSource
       );
@@ -451,7 +451,7 @@
     /**
      * Get the currently selected parameters from the page.
      */
-    svc.getSelectedGalaxyToolDataTableField = function(galaxyToolDataTable) {
+    svc.getSelectedDynamicSourceValue = function(galaxyToolDataTable) {
       return settings.currentSettings[galaxyToolDataTable];
     };
 
@@ -460,7 +460,7 @@
      * @param galaxyToolDataTable the Galaxy Tool Data Table to set
      * @param currentSelection the tool data table field that is currently selected
      */
-    svc.setSelectedGalaxyToolDataTableField = function(
+    svc.setSelectedDynamicSourceValue = function(
       galaxyToolDataTable,
       currentSelection
     ) {
