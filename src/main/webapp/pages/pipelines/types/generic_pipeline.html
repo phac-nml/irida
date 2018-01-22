@@ -104,6 +104,7 @@
 										ng-model="pipeline.selectedDynamicSource"
 										ng-change="pipeline.dynamicSourceValueSelected('{{dynamicSource.id}}')"
 										ng-options="item.label for item in dynamicSource.parameters">
+									<option value="">Please select...</option>
 								</select>
 							</div>
 						</div>
