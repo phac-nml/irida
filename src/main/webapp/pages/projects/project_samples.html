@@ -58,8 +58,8 @@
     <div class="row">
         <div class="col-md-12">
             <div class="btn-toolbar dt-btn-toolbar" role="toolbar">
-                <div class="btn-group" th:if="${isOwnerAllowRemote || isAdmin}">
-                    <div th:if="${isOwnerAllowRemote || isAdmin}" class="dropdown">
+                <div class="btn-group" th:if="${isOwnerAllowRemote}">
+                    <div class="dropdown">
                         <button id="sample-tools" class="btn btn-default btn-sm dropdown-toggle t-sample-tools"
                                 data-toggle="dropdown">
                             <th:block th:text="#{project.samples.nav.sample-tools}"/>
