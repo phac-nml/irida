@@ -189,6 +189,7 @@
 						<div>
 							<button id="btn-launch" class="btn btn-xl btn-danger btn-action"
 									th:title="#{workflow.launch.btn.title}"
+									ng-disabled="!pipeline.dynamicSources.availableSettings.no_dynamic_sources && !pipeline.selectedDynamicSource"
 									ng-click="pipeline.launch()">
 								<span class="fa fa-rocket"></span>
 							</button>
