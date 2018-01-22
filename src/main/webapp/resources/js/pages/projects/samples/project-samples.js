@@ -14,7 +14,8 @@ import { CART } from "../../../utilities/events-utilities";
 import {
   SampleCartButton,
   SampleDropdownButton,
-  SampleExportButton
+  SampleExportButton,
+  SampleProjectDropdownButton
 } from "./SampleButtons";
 import { FILTERS, SAMPLE_EVENTS } from "./constants";
 import { download } from "../../../utilities/file.utilities";
@@ -37,6 +38,8 @@ const POPOVER_OPTIONS = {
   html: true,
   template: $("#popover-template").clone()
 };
+
+const IS_REMOTE_PROJECT = window.PAGE.isRemoteProject;
 
 /*
  Initialize the sample tools menu.  This is used to check the status of the buttons.
@@ -92,6 +95,11 @@ const EXPORT_HANDLERS = {
       "Sample Export buttons must have a data attribute of 'type'"
     );
   }
+});
+[...document.querySelectorAll(".js-sample-project-tool-btn")].forEach(elm => {
+  SAMPLE_TOOL_BUTTONS.push(
+    new SampleProjectDropdownButton(elm, IS_REMOTE_PROJECT)
+  );
 });
 
 /*
@@ -167,8 +175,6 @@ const $table = $("#samplesTable");
  * @type {string}
  */
 const url = $table.data("url");
- 
-const IS_REMOTE_PROJECT = window.PAGE.isRemoteProject;
 
 const config = Object.assign({}, tableConfig, {
   ajax: {

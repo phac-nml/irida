@@ -109,7 +109,7 @@ export class SampleExportButton {
 
 /**
  * This class represents the state and function of buttons within the
- * project > sample > Sample Tools dropdown menu.
+ * project > sample > Sample Tools dropdown menu which apply to individual samples.
  */
 export class SampleDropdownButton {
   /**
@@ -135,6 +135,42 @@ export class SampleDropdownButton {
   /**
    * Check to see if the button should be disabled based upon the
    * number of currently selected samples
+   * @param {number} count of selected samples
+   * @param {boolean} hasAssociated whether associated projects are being displayed.
+   * @param {boolean} isRemote Whether the project is a remote project.
+   */
+  checkState(count = 0, hasAssociated = false, isRemote = false) {
+    checkState.call(this, count, hasAssociated, isRemote);
+  }
+}
+
+/**
+ * This class represents the state and function of buttons within the
+ * project > sample > Sample Tools dropdown menu which apply to the entire project.
+ */
+export class SampleProjectDropdownButton {
+  /**
+   * Link the dom and the EventListener for a button.
+   * @param {node} node - actual button DOM node.
+   */
+  constructor(node, isRemote) {
+    const btn = this;
+    this.$node = $(node);
+
+    this.$node.on("click", function() {
+      btn.clickHandler();
+    });
+    this.checkState(undefined, undefined, isRemote);
+  }
+
+  clickHandler() {
+    if (!this.$node.parent().hasClass("disabled")) {
+      window.location.href = this.$node.attr("data-url");
+    }
+  }
+
+  /**
+   * Check to see if the button should be disabled based upon type of project.
    * @param {number} count of selected samples
    * @param {boolean} hasAssociated whether associated projects are being displayed.
    * @param {boolean} isRemote Whether the project is a remote project.
