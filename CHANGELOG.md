@@ -18,6 +18,7 @@ Changes
 * [UI]: Clean up of the main navigation bar code, and removed its dependency on angular-ui.
 * [UI]: Fixed reflow layout of pipeline launch page.
 * [UI]: Changed the wording of 'copying' samples to 'sharing' samples.
+* [UI]: Allow users to share (copy) samples from a remote project. Disabled menu items for move and merge.
 * [Developer]: Ran `prettier` on all javascript files within `resources/js`.
 * [Developer]: Ran `prettier` on all scss files within `resources/sass`.
 * [Developer]: Add a git pre-commit hook to ensure `prettier` formatting.

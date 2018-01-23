@@ -10,6 +10,7 @@
     <link rel="stylesheet" th:href="@{/resources/dist/css/project-samples-filter.bundle.css}">
     <script th:inline="javascript">
       var PAGE = {
+        isRemoteProject: /*[[${project.isRemote()}]]*/ false,
         linker: /*[[${linker}]]*/'',
         urls: {
           projects: {
@@ -57,8 +58,8 @@
     <div class="row">
         <div class="col-md-12">
             <div class="btn-toolbar dt-btn-toolbar" role="toolbar">
-                <div class="btn-group" th:if="${isOwner || isAdmin}">
-                    <div th:if="${isOwner || isAdmin}" class="dropdown">
+                <div class="btn-group" th:if="${isOwnerAllowRemote}">
+                    <div class="dropdown">
                         <button id="sample-tools" class="btn btn-default btn-sm dropdown-toggle t-sample-tools"
                                 data-toggle="dropdown">
                             <th:block th:text="#{project.samples.nav.sample-tools}"/>
@@ -69,6 +70,7 @@
                                 <a href="#" class="js-sample-tool-btn t-merge-btn"
                                    data-enabled-at="2" data-toggle="tooltip"
                                    data:enabled-msg="#{project.samples.tooltip.merge.requires-more-than-one}"
+                                   data:remote-msg="#{project.samples.tooltip.merge.remote-project}"
                                    data:associated-msg="#{project.samples.only-for-project-tooltip}"
                                    data:url="@{/projects/{projectId}/templates/merge-modal(projectId=${project.getId()})}"
                                    data:script="@{/resources/dist/js/project-samples-merge.bundle.js}">
@@ -93,6 +95,7 @@
                                    data-enabled-at="1" data-params="{&quot;move&quot;: true}"
                                    data-toggle="tooltip"
                                    data:enabled-msg="#{project.samples.tooltip.move.requires-more-than-one}"
+                                   data:remote-msg="#{project.samples.tooltip.move.remote-project}"
                                    data:associated-msg="#{project.samples.only-for-project-tooltip}"
                                    data:url="@{/projects/{projectId}/templates/copy-move-modal(projectId=${project.getId()})}"
                                    data:script="@{/resources/dist/js/project-samples-copy.bundle.js}">
@@ -116,7 +119,11 @@
 
                             <!-- IMPORT METADATA LINK-->
                             <li role="menuitem">
-                                <a th:href="@{/projects/{id}/sample-metadata/upload(id=${project.getId()})}">
+                                <a href="#"
+                                	class="js-sample-project-tool-btn t-import-metadata-btn"
+                                	data:url="@{/projects/{id}/sample-metadata/upload(id=${project.getId()})}"
+                                	data-enabled-at="0" data-toggle="tooltip"
+                                	data:remote-msg="#{project.samples.tooltip.import-metadata.remote-project}">
                                     <i class="fa fa-upload fa-fw spaced-right__sm" aria-hidden="true"></i>
                                     <th:block th:text="#{project.nav.samples.import-metadata}"/>
                                 </a>
@@ -125,7 +132,11 @@
 
                             <!-- NEW SAMPLE LINK -->
                             <li role="menuitem">
-                                <a th:href="@{/projects/{id}/samples/new(id=${project.getId()})}">
+                                <a href="#"
+                                  	class="js-sample-project-tool-btn t-new-sample-btn"
+                                	data:url="@{/projects/{id}/samples/new(id=${project.getId()})}"
+                                	data-enabled-at="0" data-toggle="tooltip"
+                                	data:remote-msg="#{project.samples.tooltip.new-sample.remote-project}">
                                     <i class="fa fa-plus fa-fw spaced-right__sm" aria-hidden="true"></i>
                                     <th:block th:text="#{project.samples.nav.new}"/>
                                 </a>

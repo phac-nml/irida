@@ -70,7 +70,7 @@ public class ProjectSamplesIT {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectSamplesIT.class);
 
 	@Test
-	public void testCopySampleToProject() {
+	public void testShareSampleToProject() {
 		final List<String> samples = Lists.newArrayList("1");
 
 		final String projectUri = "/api/projects/4";
@@ -89,7 +89,7 @@ public class ProjectSamplesIT {
 	}
 
 	@Test
-	public void testCopySampleToProjectWithSameId() {
+	public void testShareSampleToProjectWithSameId() {
 		final List<String> samples = Lists.newArrayList("3");
 
 		final String projectUri = "/api/projects/4";
