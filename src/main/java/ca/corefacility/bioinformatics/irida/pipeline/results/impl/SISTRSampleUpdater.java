@@ -39,9 +39,15 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 	private MetadataTemplateService metadataTemplateService;
 	private SampleService sampleService;
 
-	private static Map<String, String> SISTR_FIELDS = ImmutableMap
-			.of("serovar", "SISTR serovar", "cgmlst_subspecies", "SISTR cgMLST Subspecies", "cgmlst_ST",
-					"SISTR cgMLST Sequence Type", "qc_status", "SISTR QC Status");
+	// @formatter:off
+	private static Map<String, String> SISTR_FIELDS = ImmutableMap.of(
+		"serovar", "SISTR serovar",
+		"cgmlst_subspecies", "SISTR cgMLST Subspecies",
+		"cgmlst_ST",
+		"SISTR cgMLST Sequence Type",
+		"qc_status", "SISTR QC Status"
+	);
+	// @formatter:on
 
 	@Autowired
 	public SISTRSampleUpdater(MetadataTemplateService metadataTemplateService, SampleService sampleService) {
