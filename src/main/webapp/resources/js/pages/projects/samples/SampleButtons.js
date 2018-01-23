@@ -13,9 +13,6 @@ import $ from "jquery";
  * @param isRemote If the project is a remote project.
  */
 function checkState(count, hasAssociated, isRemote) {
-  // Remove the tooltip. A new one will be created based on the
-  // information provided.
-  this.$node.tooltip("destroy");
   if (hasAssociated && this.$node.data("associatedMsg")) {
     this.$node.parent().addClass("disabled");
     // Activate the tooltip
@@ -41,6 +38,8 @@ function checkState(count, hasAssociated, isRemote) {
       title: this.$node.data("enabledMsg")
     });
   } else {
+    // Remove the tooltip.
+    this.$node.tooltip("destroy");
     this.$node.parent().removeClass("disabled");
   }
 }
