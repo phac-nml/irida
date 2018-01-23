@@ -18,6 +18,7 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import ca.corefacility.bioinformatics.irida.exceptions.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -29,14 +30,6 @@ import com.github.jmchilton.blend4j.galaxy.beans.HistoryDeleteResponse;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
-import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
-import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
-import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.NoSuchValueException;
-import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowUploadException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
@@ -497,8 +490,9 @@ public class AnalysisExecutionServiceGalaxyTest {
 	 * Tests successfully getting analysis results even if updating samples failed.
 	 */
 	@Test
-	public void testTransferAnalysisResultsSuccessUpdateSamplesFail() throws ExecutionManagerException, IOException,
-			IridaWorkflowNotFoundException, InterruptedException, ExecutionException, IridaWorkflowAnalysisTypeException {
+	public void testTransferAnalysisResultsSuccessUpdateSamplesFail()
+			throws ExecutionManagerException, IOException, IridaWorkflowNotFoundException, InterruptedException,
+			ExecutionException, IridaWorkflowAnalysisTypeException, PostProcessingException {
 		when(analysisSubmissionService.exists(INTERNAL_ANALYSIS_ID)).thenReturn(true);
 		when(analysisSubmissionService.update(analysisFinishedRunning)).thenReturn(analysisCompleting);
 		when(analysisSubmissionService.update(analysisCompleting)).thenReturn(analysisCompleted);

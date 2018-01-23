@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.pipeline.results.impl;
 
+import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -60,9 +61,10 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 	 *
 	 * @param samples  The samples to update.
 	 * @param analysis the {@link AnalysisSubmission} to apply to the samples
+	 * @throws PostProcessingException if the method cannot read the "sistr-predictions" output file
 	 */
 	@Override
-	public void update(Collection<Sample> samples, AnalysisSubmission analysis) {
+	public void update(Collection<Sample> samples, AnalysisSubmission analysis) throws PostProcessingException{
 		AnalysisOutputFile sistrFile = analysis.getAnalysis().getAnalysisOutputFile(SISTR_FILE);
 
 		Path filePath = sistrFile.getFile();
@@ -100,13 +102,13 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 				samples.forEach(s -> sampleService.updateFields(s.getId(), ImmutableMap.of("metadata", metadataMap)));
 
 			} else {
-				logger.error("SISTR results for file are not correctly formatted");
+				throw new PostProcessingException("SISTR results for file are not correctly formatted");
 			}
 
 		} catch (FileNotFoundException e) {
-			logger.error("Couldn't open SISTR ouptut file", e);
+			throw new PostProcessingException("Couldn't open SISTR ouptut file", e);
 		} catch (IOException e) {
-			logger.error("Error parsing JSON from SISTR results", e);
+			throw new PostProcessingException("Error parsing JSON from SISTR results", e);
 		}
 	}
 

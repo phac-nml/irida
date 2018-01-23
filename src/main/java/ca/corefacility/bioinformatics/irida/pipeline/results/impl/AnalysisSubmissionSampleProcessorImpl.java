@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.pipeline.results.impl;
 
+import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
@@ -78,7 +79,7 @@ public class AnalysisSubmissionSampleProcessorImpl implements AnalysisSubmission
 	@RunAsUser("#analysisSubmission.getSubmitter()")
 	@Transactional(propagation=Propagation.REQUIRES_NEW)
 	@PreAuthorize("hasPermission(#analysisSubmission, 'canUpdateSamplesFromAnalysisSubmission')")
-	public void updateSamples(AnalysisSubmission analysisSubmission) {
+	public void updateSamples(AnalysisSubmission analysisSubmission) throws PostProcessingException {
 		if (!analysisSubmission.getUpdateSamples()) {
 			logger.trace("Will not update samples from results for submission=" + analysisSubmission);
 		} else {

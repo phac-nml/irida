@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.pipeline.results;
 
+import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -15,7 +16,7 @@ public interface AnalysisSubmissionSampleProcessor {
 	 *
 	 * @param analysisSubmission The submission to update.
 	 */
-	public void updateSamples(AnalysisSubmission analysisSubmission);
+	public void updateSamples(AnalysisSubmission analysisSubmission) throws PostProcessingException;
 
 	/**
 	 * Whether or not there exists a registered {@link AnalysisSampleUpdater}
