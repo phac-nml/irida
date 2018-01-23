@@ -6,6 +6,7 @@ import org.hibernate.envers.Audited;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.util.Objects;
 
 /**
  * {@link MetadataEntry} that has been created by an analysis pipeline
@@ -18,6 +19,7 @@ public class PipelineProvidedMetadataEntry extends MetadataEntry {
 	private AnalysisSubmission submission;
 
 	//private constructor for hibernate
+	@SuppressWarnings("unused")
 	private PipelineProvidedMetadataEntry() {
 	}
 
@@ -40,5 +42,20 @@ public class PipelineProvidedMetadataEntry extends MetadataEntry {
 	 */
 	public AnalysisSubmission getSubmission() {
 		return submission;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof PipelineProvidedMetadataEntry) {
+
+			return super.equals(obj) && submission.equals(((PipelineProvidedMetadataEntry) obj).submission);
+		}
+
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(super.hashCode(), submission);
 	}
 }
