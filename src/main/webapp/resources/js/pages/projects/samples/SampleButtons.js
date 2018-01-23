@@ -17,14 +17,6 @@ function checkState(count, hasAssociated, isRemote) {
   // information provided.
   this.$node.tooltip("destroy");
   if (hasAssociated && this.$node.data("associatedMsg")) {
-    console.log(
-      "hasAssociated count=" +
-        count +
-        ", hasAssociated=" +
-        hasAssociated +
-        ", isRemote=" +
-        isRemote
-    );
     this.$node.parent().addClass("disabled");
     // Activate the tooltip
     this.$node.tooltip({
@@ -33,14 +25,6 @@ function checkState(count, hasAssociated, isRemote) {
       title: this.$node.data("associatedMsg")
     });
   } else if (isRemote && this.$node.data("remoteMsg")) {
-    console.log(
-      "isRemote count=" +
-        count +
-        ", hasAssociated=" +
-        hasAssociated +
-        ", isRemote=" +
-        isRemote
-    );
     this.$node.parent().addClass("disabled");
     // Activate the tooltip
     this.$node.tooltip({
@@ -49,14 +33,6 @@ function checkState(count, hasAssociated, isRemote) {
       title: this.$node.data("remoteMsg")
     });
   } else if (count < this.$node.data("enabledAt")) {
-    console.log(
-      "count count=" +
-        count +
-        ", hasAssociated=" +
-        hasAssociated +
-        ", isRemote=" +
-        isRemote
-    );
     this.$node.parent().addClass("disabled");
     // Activate the tooltip
     this.$node.tooltip({
