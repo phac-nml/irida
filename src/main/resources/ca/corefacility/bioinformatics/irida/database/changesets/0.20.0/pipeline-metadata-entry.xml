@@ -28,7 +28,6 @@
                 <constraints primaryKey="true" referencedColumnNames="id"
                              referencedTableName="Revisions" foreignKeyName="FK_PIPELINE_METADATA_ENTRY_AUD"/>
             </column>
-            <column name="REVTYPE" type="tinyint(4)"/>
         </createTable>
 
     </changeSet>
