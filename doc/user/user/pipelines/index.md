@@ -230,14 +230,11 @@ Pipeline results can also be shared anytime after a pipeline has been launched. 
 
 ## Saving pipeline results to a sample
 
-Some pipelines allow you to save data back to the samples in which the pipeline was ran.  The type of data which will be saved back to the samples will differ between pipelines.  For example an assembly and annotation pipeline will save the assembly to the list of files on a sample, where a typing pipeline such as SISTR may save a serotype to the metadata of the sample.
+Some pipelines allow you to save data back to the samples in which the pipeline was ran.  The type of data which will be saved back to the samples will differ between pipelines.  For example an assembly and annotation pipeline will save the assembly to the list of files on a sample, whereas a typing pipeline such as SISTR may save a serotype to the metadata of the sample.
 
 To save analysis results back to a sample, on submission of a pipeline please select the `Save Results to Samples` checkbox on the pipeline setup page.
 
 ![save-results-to-samples](images/save-results-to-samples.png)
-
-<a href="../samples/">Previous: Managing Samples</a>
-
 
 ## Errors when executing pipelines
 
@@ -257,3 +254,4 @@ If you follow the link to the analysis page, you can view all the job error info
 
 This information may be helpful for troubleshooting and communicating what went wrong in a particular analysis pipeline.   
 
+<a href="../samples/">Previous: Managing Samples</a>
