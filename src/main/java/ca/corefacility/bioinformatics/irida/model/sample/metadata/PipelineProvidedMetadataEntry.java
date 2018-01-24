@@ -47,8 +47,7 @@ public class PipelineProvidedMetadataEntry extends MetadataEntry {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof PipelineProvidedMetadataEntry) {
-
-			return super.equals(obj) && submission.equals(((PipelineProvidedMetadataEntry) obj).submission);
+			return super.equals(obj) && Objects.equals(submission, ((PipelineProvidedMetadataEntry) obj).submission);
 		}
 
 		return false;
