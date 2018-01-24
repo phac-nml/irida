@@ -14,14 +14,10 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -32,9 +28,6 @@ import java.util.*;
  */
 @Component
 public class SISTRSampleUpdater implements AnalysisSampleUpdater {
-
-	private static final Logger logger = LoggerFactory.getLogger(SISTRSampleUpdater.class);
-
 	private static final String SISTR_FILE = "sistr-predictions";
 
 	private MetadataTemplateService metadataTemplateService;
@@ -72,6 +65,7 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 		Map<String, MetadataEntry> stringEntries = new HashMap<>();
 		try {
 			//Read the JSON file from SISTR output
+			@SuppressWarnings("resouce")
 			String jsonFile = new Scanner(new BufferedReader(new FileReader(filePath.toFile()))).useDelimiter("\\Z")
 					.next();
 
@@ -86,7 +80,7 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 
 				//loop through each of the requested fields and save the entries
 				SISTR_FIELDS.entrySet().forEach(e -> {
-					if (result.containsKey(e.getKey())) {
+					if (result.containsKey(e.getKey()) && result.get(e.getKey()) != null) {
 						String value = result.get(e.getKey()).toString();
 						PipelineProvidedMetadataEntry metadataEntry = new PipelineProvidedMetadataEntry(value, "text",
 								analysis);
