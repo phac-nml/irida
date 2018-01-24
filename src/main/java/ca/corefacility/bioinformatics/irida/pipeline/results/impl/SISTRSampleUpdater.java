@@ -64,7 +64,7 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 	 * @throws PostProcessingException if the method cannot read the "sistr-predictions" output file
 	 */
 	@Override
-	public void update(Collection<Sample> samples, AnalysisSubmission analysis) throws PostProcessingException{
+	public void update(Collection<Sample> samples, AnalysisSubmission analysis) throws PostProcessingException {
 		AnalysisOutputFile sistrFile = analysis.getAnalysis().getAnalysisOutputFile(SISTR_FILE);
 
 		Path filePath = sistrFile.getFile();
@@ -105,8 +105,6 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 				throw new PostProcessingException("SISTR results for file are not correctly formatted");
 			}
 
-		} catch (FileNotFoundException e) {
-			throw new PostProcessingException("Couldn't open SISTR ouptut file", e);
 		} catch (IOException e) {
 			throw new PostProcessingException("Error parsing JSON from SISTR results", e);
 		}

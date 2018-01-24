@@ -15,6 +15,7 @@ public interface AnalysisSubmissionSampleProcessor {
 	 * contain information from the {@link Analysis}.
 	 *
 	 * @param analysisSubmission The submission to update.
+	 * @throws PostProcessingException if a post processing job fails
 	 */
 	public void updateSamples(AnalysisSubmission analysisSubmission) throws PostProcessingException;
 
