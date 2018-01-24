@@ -37,8 +37,7 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 	private static Map<String, String> SISTR_FIELDS = ImmutableMap.of(
 		"serovar", "SISTR serovar",
 		"cgmlst_subspecies", "SISTR cgMLST Subspecies",
-		"cgmlst_ST",
-		"SISTR cgMLST Sequence Type",
+		"cgmlst_ST", "SISTR cgMLST Sequence Type",
 		"qc_status", "SISTR QC Status"
 	);
 	// @formatter:on
