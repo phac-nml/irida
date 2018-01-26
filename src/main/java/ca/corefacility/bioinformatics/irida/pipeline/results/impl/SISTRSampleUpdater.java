@@ -64,7 +64,7 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 		Map<String, MetadataEntry> stringEntries = new HashMap<>();
 		try {
 			//Read the JSON file from SISTR output
-			@SuppressWarnings("resouce")
+			@SuppressWarnings("resource")
 			String jsonFile = new Scanner(new BufferedReader(new FileReader(filePath.toFile()))).useDelimiter("\\Z")
 					.next();
 
