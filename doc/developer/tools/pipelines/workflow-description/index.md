@@ -260,14 +260,15 @@ None.
 `<parameter>`
 -------------
 
-Contained in the `<parameters>` element tag.  This defines a single parameter for a workflow.  This must contain at least one `<toolParameter>` element which defines the specific Galaxy tool and parameter to override.  The `defaultValue` should also correspond to one of the acceptible Galaxy parameter values.
+Contained in the `<parameters>` element tag.  This defines a single parameter for a workflow.  This must contain at least one `<toolParameter>` element which defines the specific Galaxy tool and parameter to override.  The `defaultValue` should also correspond to one of the acceptible Galaxy parameter values. If no `defaultValue` can be specified, then the `required` attribute should be set to `true`, indicating that the user must input a parameter value before each pipeline run.
 
 ### Attributes
 
-| attribute        | type   | details                                                                                                                 | required | example              |
-|:-----------------|:-------|:------------------------------------------------------------------------------------------------------------------------|:---------|:---------------------|
-| **name**         | string | The name of the parameter.  This will be used in the IRIDA database and configuration files to refer to this parameter. | yes      | `name="myparameter"` |
-| **defaultValue** | string | The default value of the parameter.                                                                                     | yes      | `defaultValue="1"`   |
+| attribute        | type    | details                                                                                                                                    | required | example              |
+|:-----------------|:--------|:-------------------------------------------------------------------------------------------------------------------------------------------|:---------|:---------------------|
+| **name**         | string  | The name of the parameter.  This will be used in the IRIDA database and configuration files to refer to this parameter.                    | yes      | `name="myparameter"` |
+| **defaultValue** | string  | The default value of the parameter.                                                                                                        | yes      | `defaultValue="1"`   |
+| **required**     | boolean | "true" if no default value can be set for the parameter, so the user must select a value before launching. Defaults to "false" if not set. | no       | `required="true"`    |
 
 ### Example
 
