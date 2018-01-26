@@ -30,5 +30,12 @@
             </column>
         </createTable>
 
+        <modifyDataType columnName="value" newDataType="text" tableName="metadata_entry"/>
+        <modifyDataType columnName="value" newDataType="text" tableName="metadata_entry_AUD"/>
+
+        <customChange
+                class="ca.corefacility.bioinformatics.irida.database.changesets.AutomatedSISTRUpdate"></customChange>
+
+
     </changeSet>
 </databaseChangeLog>
