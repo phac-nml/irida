@@ -281,6 +281,39 @@ To override the model parameter defined in the Galaxy version of PhyML in <http:
 </parameter>
 ```
 
+`<dynamicSource>`
+-----------------
+
+### Attributes
+
+(None)
+
+`<galaxyToolDataTable>`
+-----------------------
+
+### Attributes
+
+| attribute           | type   | details                                                                                             | required | example                      |
+|:--------------------|:-------|:----------------------------------------------------------------------------------------------------|:---------|:-----------------------------|
+| **name**            | string | Name of the Galaxy Tool Data Table from which parameter values will be pulled.                      | yes      | `name="mentalist_databases"` |
+| **displayColumn**   | string | The name of the Tool Data Table column containing a human-readable label for the parameter value.   | yes      | `displayColumn="name"`       |
+| **parameterColumn** | string | The name of the Tool Data Table column containing the parameter value to be passed to the pipeline. | yes      | `parameterColumn="value"`    |
+
+### Example
+
+Dynamic sources are used to pull parameter values from outside systems such as Galaxy [Tool Data Tables][]
+
+```xml
+<parameter name="kmer_db" required="true">
+    <dynamicSource>
+        <galaxyToolDataTable name="mentalist_databases" displayColumn="name" parameterColumn="value" />
+    </dynamicSource>
+    <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_call/0.1.3"
+        parameterName="kmer_db" />
+</parameter>
+
+```
+
 `<toolParameter>`
 -----------------
 
@@ -504,6 +537,7 @@ An example workflow description XML file is given below.
 
 [Galaxy Workflow]: https://wiki.galaxyproject.org/Learn/AdvancedWorkflow
 [Galaxy Tools]: https://toolshed.g2.bx.psu.edu/
+[Tool Data Tables]: (https://galaxyproject.org/admin/tools/data-tables/)
 [UUID]: http://en.wikipedia.org/wiki/Universally_unique_identifier
 [SNVPhyl Galaxy Workflow]: http://irida.corefacility.ca/gitlab/analysis-pipelines/snvphyl-galaxy/blob/v0.1/workflows/SNVPhyl/0.1/snvphyl_workflow.ga
 [PhyML Galaxy Tool XML]: http://irida.corefacility.ca/gitlab/analysis-pipelines/snvphyl-galaxy/blob/v0.1/tools/phyml/phyml.xml
