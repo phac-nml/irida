@@ -75,6 +75,7 @@ public class AutomatedSISTRUpdate implements CustomSqlChange {
 
 	@Override
 	public SqlStatement[] generateStatements(Database database) throws CustomChangeException {
+		logger.info("Reading existing automated SISTR results files to database.  This could take a while...");
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
 		Map<String, Long> metadataHeaderIds = new HashMap<>();
@@ -139,10 +140,6 @@ public class AutomatedSISTRUpdate implements CustomSqlChange {
 						if (result.containsKey(e.getKey()) && result.get(e.getKey()) != null) {
 							String value = result.get(e.getKey()).toString();
 
-							//check to see if this already exists for the sample
-							//TODO
-
-							logger.debug("Adding metadata_entry " + value);
 							// insert to metadata_entry
 							GeneratedKeyHolder holder = new GeneratedKeyHolder();
 							jdbcTemplate.update(new PreparedStatementCreator() {
@@ -159,15 +156,11 @@ public class AutomatedSISTRUpdate implements CustomSqlChange {
 							//save the new entry id
 							long entryId = holder.getKey().longValue();
 
-							logger.debug("Adding pipeline_metadata_entry " + entryId + ", " + sistrFileResult.submissionId);
-
 							//insert the pipeline_metadata_entry
 							jdbcTemplate.update("INSERT INTO pipeline_metadata_entry (id, submission_id) VALUES (?,?)",
 									entryId, sistrFileResult.submissionId);
 
-							logger.debug("Adding sample_metadata_entry " + sistrFileResult.sampleId + ", " + entryId + ", " + metadataHeaderIds.get(e.getKey()));
-
-							//remove existing entries for this metadata key
+							//remove existing entries for this metadata key and sample
 							jdbcTemplate
 									.update("DELETE FROM sample_metadata_entry WHERE sample_id=? AND metadata_KEY=?",
 											sistrFileResult.sampleId, metadataHeaderIds.get(e.getKey()));
