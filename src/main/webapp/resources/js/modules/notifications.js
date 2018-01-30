@@ -2,7 +2,7 @@ import Noty from "noty";
 import "noty/src/noty.scss";
 import "noty/src/themes/sunset.scss";
 
-export function showNotification({ text, type = "alert" }) {
+export function showNotification({ text, type = "success" }) {
   return new Noty({
     theme: "sunset",
     timeout: 3500, // [integer|boolean] delay for closing event in milliseconds. Set false for sticky notifications
