@@ -8,9 +8,15 @@
     "precommit": "lint-staged"
   },
   "lint-staged": {
-    "resources/**/*.{js,json,scss}": ["prettier --write", "git add"]
+    "resources/**/*.{js,json,scss}": [
+      "prettier --write",
+      "git add"
+    ]
   },
-  "browserslist": ["> 1%", "last 2 versions"],
+  "browserslist": [
+    "> 1%",
+    "last 2 versions"
+  ],
   "dependencies": {
     "@bassettsj/livestamp": "^2.0.0",
     "angular": "1.6.2",
@@ -44,7 +50,7 @@
     "lodash": "4.17.4",
     "moment": "^2.18.1",
     "ng-file-upload": "^12.2.12",
-    "noty": "v2.4.0",
+    "noty": "^3.2.0-beta",
     "phylocanvas": "^2.8.1",
     "phylocanvas-plugin-export-svg": "^1.0.0",
     "phylocanvas-plugin-metadata": "^2.0.1",
