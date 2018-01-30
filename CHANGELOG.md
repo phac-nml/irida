@@ -31,6 +31,7 @@ Changes
 * [UI]: Removed search box from sequencing run page.
 * [UI/Workflow]: Galaxy job error info retrieved from Galaxy if a workflow submission fails. Job error info is shown in Analyses table and on the Analysis page if it exists. 
 * [UI]: Fixed issue with Upload Sequence Files button when SequenceFiles page resized.
+* [UI]: Moved notifications to the bottom right of the page to prevent interference with navigation buttons.
 
 0.18.0 to 0.19.0
 ----------------
