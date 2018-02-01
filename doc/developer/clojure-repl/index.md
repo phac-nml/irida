@@ -4,6 +4,7 @@ layout: "default"
 
 Using a Clojure nREPL to interact with a live instance of IRIDA
 ===============================================================
+{:.no_toc}
 
 Have you ever wanted to interact with live running instance of IRIDA to see what data an object contains or what a function does or to run some one-off arbitrary code? Well, you can use a Clojure nREPL to do these things and more! 
 
@@ -17,6 +18,13 @@ With a `jvm-breakglass` Clojure nREPL, you can
 - you can explore the API of a library to see what kind of data you are able to retrieve from it 
     - e.g. using a blend4j `GalaxyInstance` object to see what kind of data you can retrieve from Galaxy 
 
+
+Contents
+--------
+{:.no_toc}
+
+* TOC
+{:toc}
 
 What is a REPL?
 ---------------
