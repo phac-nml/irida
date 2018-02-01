@@ -178,6 +178,54 @@ You can get IntelliJ auto-completion for `GalaxyInstance` objects by importing i
 If you type in the name of the Java class and press Enter, Cursive should automatically import the class into your namespace/environment.
 
 
+#### Enabling Admin User Security Context So You Can Do Anything (in IRIDA)!
+
+Copy-paste the following Clojure code into your REPL so that you can have admin privileges to access, create and persist any objects you want: 
+
+
+```clojure
+(do
+  (use 'cl-java-introspector.spring
+       'cl-java-introspector.core
+       'clojure.reflect 'clojure.pprint 'clojure.java.javadoc
+       'me.raynes.fs)
+  (import '(org.springframework.security.core.authority AuthorityUtils)
+          '(org.springframework.security.core.context SecurityContextHolder)
+          '(org.springframework.security.authentication UsernamePasswordAuthenticationToken))
+  (defn cfg-auth
+      "Configure security context and set up authentication to allow access to objects from Spring Service and Repository Beans"
+      [& {:keys [role principal]
+          :or   {role      "ROLE_ADMIN"
+                 principal "user"}}]
+      (let [roles-array (into-array String [role])
+            authorities (AuthorityUtils/createAuthorityList roles-array)
+            auth (new UsernamePasswordAuthenticationToken principal role authorities)
+            ctx (SecurityContextHolder/getContext)]
+        (.setAuthentication ctx auth)))
+  (def user-svc (get-bean "userServiceImpl"))
+  (cfg-auth)
+  (def admin-user (.loadUserByUsername user-svc "admin"))
+  (defn as-admin
+    "Setup principal user as the `admin-user` so that new objects can be persisted to the database"
+    [] (cfg-auth :principal admin-user)))
+```
+
+Execute `(as-admin)` before any code where you try to save to the database such as:
+
+```clojure
+(let [user (new User "peter" "peter@k.com" "Password1!" "Peter" "Kruczkiewicz" "12345")]
+  (pprint user)
+  (pprint (get-fields user))
+  ; calling as-admin to ensure we have admin user security context enabled!
+  (as-admin) 
+  ; saving user object to database using "userServiceImpl" Spring Bean
+  (.create user-svc user)
+  ; retrieving User object with username "peter" from database and printing
+  (as-admin)
+  (prn (.loadUserByUsername user-svc "peter")))
+```
+
+
 ### REPL tutorial 
 
 This tutorial should show you how to get use the Spring Beans to fetch or save objects to the database and how to interact with Galaxy through the blend4j library and GalaxyInstance Bean in IRIDA. 
@@ -271,14 +319,16 @@ This is how it should look in IntelliJ if you were to submit the first few forms
 
 ; To get around this exception, you will need to set your authentication at the appropriate role
 ; You can use the following functions to configure and set authentication
-(defn cfg-auth [& {:keys [role principal]
-                   :or   {role      "ROLE_ADMIN"
-                          principal "user"}}]
-  (let [roles-array (into-array String [role])
-        authorities (AuthorityUtils/createAuthorityList roles-array)
-        auth (new UsernamePasswordAuthenticationToken principal role authorities)
-        ctx (SecurityContextHolder/getContext)]
-    (.setAuthentication ctx auth)))
+(defn cfg-auth
+    "Configure security context and set up authentication to allow access to objects from Spring Service and Repository Beans"
+    [& {:keys [role principal]
+        :or   {role      "ROLE_ADMIN"
+               principal "user"}}]
+    (let [roles-array (into-array String [role])
+          authorities (AuthorityUtils/createAuthorityList roles-array)
+          auth (new UsernamePasswordAuthenticationToken principal role authorities)
+          ctx (SecurityContextHolder/getContext)]
+      (.setAuthentication ctx auth)))
 ; If you execute `as-admin` before the `loadUserByUsername` method then you will be able to access the requested user
 (cfg-auth)
 (.loadUserByUsername user-svc "admin")
