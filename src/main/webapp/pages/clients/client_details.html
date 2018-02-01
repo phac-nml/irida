@@ -15,7 +15,7 @@
                 <div class="sidebar__heading clearfix">
                 	<h2 class="pull-left client-details-heading" th:text="#{client.details.title}">_Client Details_</h2>
 					        <div class="btn-group-xs pull-right">
-				            <button id="remove-btn" class="btn btn-danger" data-toggle="modal" data-target="#js-remove-client-modal" th:text="#{client.remove.button}">Remove</button>
+				            <button id="remove-btn" class="t-client-remove-btn btn btn-danger" data-toggle="modal" data-target="#js-remove-client-modal" th:text="#{client.remove.button}">Remove</button>
                         <a href="#" th:href="@{/clients/{id}/edit(id=${client.getId()})}" id="edit-btn" class="btn btn-default" th:text="#{form.btn.edit}">Edit</a>
                 	</div>
                 </div>
@@ -135,7 +135,7 @@
 
                     <form id="removeForm" style="display: inline-block;" th:action="@{/clients/remove}" method="POST">
                         <input type="hidden" th:value="${client.getId()}" name="id"/>
-                        <button type="submit" class="js-remove-btn btn btn-primary" th:text="#{form.btn.confim}">REMOVE</button>
+                        <button type="submit" class="t-confirm-delete js-remove-btn btn btn-primary" th:text="#{form.btn.confim}">REMOVE</button>
                     </form>
                 </div>
             </div>
