@@ -92,7 +92,10 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 						.getMetadataMap(stringEntries);
 
 				//save metadata back to sample
-				samples.forEach(s -> sampleService.updateFields(s.getId(), ImmutableMap.of("metadata", metadataMap)));
+				samples.forEach(s -> {
+					s.mergeMetadata(metadataMap);
+					sampleService.updateFields(s.getId(), ImmutableMap.of("metadata", s.getMetadata()));
+				});
 
 			} else {
 				throw new PostProcessingException("SISTR results for file are not correctly formatted");
