@@ -25,13 +25,18 @@
             </column>
             <column name="submission_id" type="bigint(20)"/>
             <column name="REV" type="int(11)">
-                <constraints primaryKey="true" referencedColumnNames="id"
-                             referencedTableName="Revisions" foreignKeyName="FK_PIPELINE_METADATA_ENTRY_AUD"/>
+                <constraints primaryKey="true"/>
             </column>
         </createTable>
 
-        <modifyDataType columnName="value" newDataType="text" tableName="metadata_entry"/>
-        <modifyDataType columnName="value" newDataType="text" tableName="metadata_entry_AUD"/>
+        <addForeignKeyConstraint baseColumnNames="id, REV"
+                                 baseTableName="pipeline_metadata_entry_AUD"
+                                 constraintName="FK_PIPELINE_METADATA_ENTRY_AUD"
+                                 referencedColumnNames="id, REV"
+                                 referencedTableName="metadata_entry_AUD"/>
+
+        <modifyDataType columnName="value" newDataType="longtext" tableName="metadata_entry"/>
+        <modifyDataType columnName="value" newDataType="longtext" tableName="metadata_entry_AUD"/>
 
         <customChange
                 class="ca.corefacility.bioinformatics.irida.database.changesets.AutomatedSISTRUpdate"></customChange>
