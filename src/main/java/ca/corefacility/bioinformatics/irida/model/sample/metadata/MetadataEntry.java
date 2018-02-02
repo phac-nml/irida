@@ -23,10 +23,10 @@ public class MetadataEntry {
 	private Long id;
 
 	@NotNull
+	@Lob
 	private String value;
 
 	@NotNull
-	@Lob
 	private String type;
 
 	public MetadataEntry() {
