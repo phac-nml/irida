@@ -469,7 +469,7 @@ public class ProjectSamplesController {
 			q.addProjectSettings(p);
 			String status = q.getStatus()
 					.toString();
-			if (!status.equals("UNAVAILABLE")) {
+			if (q.getStatus() == QCEntry.QCEntryStatus.NEGATIVE) {
 				list.add(
 						messageSource.getMessage("sample.files.qc." + q.getType(), new Object[] { q.getMessage() }, locale));
 			}
