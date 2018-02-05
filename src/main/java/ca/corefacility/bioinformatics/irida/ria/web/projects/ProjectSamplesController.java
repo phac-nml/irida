@@ -426,7 +426,7 @@ public class ProjectSamplesController {
 	 * @param locale      for the current user.
 	 * @return {@link DTProjectSamples} that meet the requirements
 	 */
-	@RequestMapping(value = "/projects/{projectId}/ajax/samples", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+	@RequestMapping(value = "/projects/{projectId}/ajax/samples", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
 	@ResponseBody
 	public DataTablesResponse getProjectSamples(@PathVariable Long projectId,
 			@DataTablesRequest DataTablesParams params,
