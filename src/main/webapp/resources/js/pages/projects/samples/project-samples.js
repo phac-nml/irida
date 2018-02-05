@@ -298,8 +298,10 @@ const config = Object.assign({}, tableConfig, {
     /*
     Check if this sample has any quality control issues.
     If there are they will be displayed in a popover.
+    First filter out all the good entries.
      */
-    if (data.qcEntries.length) {
+    let qcEntries = data.qcEntries.filter(entry => entry.status === "NEGATIVE");
+    if (qcEntries.length) {
       $row.addClass("row-warning");
 
       const icon = $(".qc-warning-wrapper").clone();
@@ -307,7 +309,7 @@ const config = Object.assign({}, tableConfig, {
       Generate the content for the popover
        */
       const content = `<ul class="popover-list">
-          ${data.qcEntries.map(qc => `<li class="error">${qc}</li>`).join("")}
+          ${qcEntries.map(qc => `<li class="error">${qc}</li>`).join("")}
       </ul>`;
       icon.data("content", content);
       const td = $row.find(`td:nth-of-type(${COLUMNS.SAMPLE_NAME + 1})`);
