@@ -114,6 +114,20 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 	 * {@inheritDoc}
 	 */
 	@Override
+	public Future<AnalysisSubmission> postProcessResults(AnalysisSubmission analysisSubmission) {
+		checkArgument(AnalysisState.TRANSFERRED.equals(analysisSubmission.getAnalysisState()),
+				" analysis should be " + AnalysisState.TRANSFERRED);
+
+		analysisSubmission.setAnalysisState(AnalysisState.POST_PROCESSING);
+		analysisSubmission = analysisSubmissionService.update(analysisSubmission);
+
+		return analysisExecutionServiceGalaxyAsync.postProcessResults(analysisSubmission);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public GalaxyWorkflowStatus getWorkflowStatus(AnalysisSubmission submittedAnalysis) throws ExecutionManagerException {
 		checkNotNull(submittedAnalysis, "submittedAnalysis is null");
 		checkNotNull(submittedAnalysis.getRemoteAnalysisId(), "remote analysis id is null");
