@@ -517,12 +517,30 @@ public class AnalysisExecutionScheduledTaskImplIT {
 		// TRANSFER SUBMISSION RESULTS
 		submissionsFutureSet = analysisExecutionScheduledTask.transferAnalysesResults();
 		assertEquals(expectedSubmissionsToProcess, submissionsFutureSet.size());
+
+		int processingSubmissions = 0;
 		// wait until finished
 		for (Future<AnalysisSubmission> submissionFuture : submissionsFutureSet) {
 			AnalysisSubmission returnedSubmission = submissionFuture.get();
-			assertEquals(AnalysisState.COMPLETED, returnedSubmission.getAnalysisState());
+			if(returnedSubmission.getUpdateSamples()){
+				assertEquals(AnalysisState.TRANSFERRED, returnedSubmission.getAnalysisState());
+				processingSubmissions++;
+			}
+			else{
+				assertEquals(AnalysisState.COMPLETED, returnedSubmission.getAnalysisState());
+			}
+
 			assertEquals(analysisSubmitter, returnedSubmission.getSubmitter());
 			assertEquals("Submission was cleaned", AnalysisCleanedState.NOT_CLEANED, returnedSubmission.getAnalysisCleanedState());
+		}
+
+		//POST PROCESSING RESULTS
+		submissionsFutureSet = analysisExecutionScheduledTask.postProcessResults();
+		assertEquals(processingSubmissions, submissionsFutureSet.size());
+
+		for (Future<AnalysisSubmission> submissionFuture : submissionsFutureSet) {
+			AnalysisSubmission returnedSubmission = submissionFuture.get();
+			assertEquals(AnalysisState.COMPLETED, returnedSubmission.getAnalysisState());
 		}
 	}
 }
