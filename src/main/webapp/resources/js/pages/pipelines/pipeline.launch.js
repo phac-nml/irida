@@ -59,11 +59,22 @@
     /**
      * Determine when to enable the pipeline launch button.
      */
-    vm.armed = function() {
+    vm.disarmed = function() {
       return (
         !this.dynamicSources.availableSettings.no_dynamic_sources &&
         !this.selectedDynamicSource
       );
+    };
+
+    /**
+     * Provide a title for the launch button, depending on its armed/disarmed state.
+     */
+    vm.launchButtonTitle = function() {
+      if (this.disarmed()) {
+        return page.i18n.launchButtonTitleDisarmed;
+      } else {
+        return page.i18n.launchButtonTitleArmed;
+      }
     };
 
     /**

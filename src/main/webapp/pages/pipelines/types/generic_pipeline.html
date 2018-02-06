@@ -15,6 +15,8 @@
 			},
 			i18n: {
 				required  : /*[[#{workflow.no-name-provided}]]*/ 'Name Required',
+				launchButtonTitleArmed: /*[[#{workflow.launch.btn.title}]]*/ 'Button Armed',
+				launchButtonTitleDisarmed: /*[[#{workflow.launch.btn.title-disarmed}]]*/ 'Button Disarmed',
 			},
 			pipeline: {
 				parameters: /*[[${parameters}]]*/ [],
@@ -190,8 +192,8 @@
 
 						<div>
 							<button id="btn-launch" class="btn btn-xl btn-danger btn-action"
-									th:title="#{workflow.launch.btn.title}"
-									ng-disabled="pipeline.armed()"
+									ng-attr-title="{{ pipeline.launchButtonTitle() }}"
+									ng-disabled="pipeline.disarmed()"
 									ng-click="pipeline.launch()">
 								<span class="fa fa-rocket"></span>
 							</button>
