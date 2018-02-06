@@ -56,6 +56,13 @@
       );
     };
 
+    vm.armed = function() {
+      return (
+        !this.dynamicSources.availableSettings.no_dynamic_sources &&
+        !this.selectedDynamicSource
+      );
+    };
+
     /**
      * Launch the pipeline
      */

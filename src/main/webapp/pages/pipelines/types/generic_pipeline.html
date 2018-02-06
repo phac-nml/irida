@@ -109,7 +109,8 @@
 							</div>
 						</div>
 						<div class="form-group"
-							 th:if="${parameters} and ${#lists.size(parameters.?[id == 'default'][0].parameters)} != 0">
+							 th:if="${parameters} and ${#lists.size(parameters)} != 0 and
+							        ${#lists.size(parameters.?[id == 'default'][0].parameters)} != 0">
 							<label for="named-parameters" class="col-sm-2 control-label"
 								   th:text="#{workflow.parameters.select.label}">___Parameters___</label>
 
@@ -190,7 +191,7 @@
 						<div>
 							<button id="btn-launch" class="btn btn-xl btn-danger btn-action"
 									th:title="#{workflow.launch.btn.title}"
-									ng-disabled="!pipeline.dynamicSources.availableSettings.no_dynamic_sources && !pipeline.selectedDynamicSource"
+									ng-disabled="pipeline.armed()"
 									ng-click="pipeline.launch()">
 								<span class="fa fa-rocket"></span>
 							</button>
