@@ -56,6 +56,9 @@
       );
     };
 
+    /**
+     * Determine when to enable the pipeline launch button.
+     */
     vm.armed = function() {
       return (
         !this.dynamicSources.availableSettings.no_dynamic_sources &&
