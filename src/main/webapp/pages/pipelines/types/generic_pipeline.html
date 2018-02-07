@@ -190,9 +190,9 @@
 					<div ng-switch-when="false" class="ng-cloak text-center">
 						<h2 th:text="#{workflow.launch.btn}">Ready to Launch?</h2>
 
-						<div>
+						<div data-toggle="tooltip" data-placement="bottom" onmouseenter="$(this).tooltip('show')"
+							 data-original-title="{{ pipeline.launchButtonTitle() }}">
 							<button id="btn-launch" class="btn btn-xl btn-danger btn-action"
-									ng-attr-title="{{ pipeline.launchButtonTitle() }}"
 									ng-disabled="pipeline.disarmed()"
 									ng-click="pipeline.launch()">
 								<span class="fa fa-rocket"></span>
