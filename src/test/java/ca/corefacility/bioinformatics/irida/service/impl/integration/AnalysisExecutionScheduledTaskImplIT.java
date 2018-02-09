@@ -9,7 +9,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -50,7 +49,6 @@ import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisE
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.CleanupAnalysisSubmissionConditionAge;
 
-import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
@@ -149,7 +147,22 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testFullAnalysisRunSuccess() throws Exception {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
-				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
+				sequenceFilePath, referenceFilePath, validIridaWorkflowId, false);
+
+		validateFullAnalysisWithCleanup(Sets.newHashSet(analysisSubmission), 1);
+	}
+
+	/**
+	 * Tests out successfully executing an analysis submission, from newly
+	 * created to downloading results.  Adds a analysissampleupdater step
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testFullAnalysisRunSuccessWithSampleUpdates() throws Exception {
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
+				sequenceFilePath, referenceFilePath, validIridaWorkflowId, true);
 
 		validateFullAnalysisWithCleanup(Sets.newHashSet(analysisSubmission), 1);
 	}
@@ -168,7 +181,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 				galaxyJobErrorsService, jobErrorRepository);
 		
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
-				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
+				sequenceFilePath, referenceFilePath, validIridaWorkflowId, false);
 
 		validateFullAnalysis(Sets.newHashSet(analysisSubmission), 1);
 		validateCleanupAnalysis(Sets.newHashSet(analysisSubmissionRepository.findOne(analysisSubmission.getId())), 0);
@@ -187,9 +200,9 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testFullAnalysisRunSuccessTwoSubmissions() throws Exception {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
-				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
+				sequenceFilePath, referenceFilePath, validIridaWorkflowId, false);
 		AnalysisSubmission analysisSubmission2 = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
-				sequenceFilePath2, referenceFilePath2, validIridaWorkflowId);
+				sequenceFilePath2, referenceFilePath2, validIridaWorkflowId, false);
 
 		validateFullAnalysisWithCleanup(Sets.newHashSet(analysisSubmission, analysisSubmission2), 2);
 	}
@@ -215,9 +228,9 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testFullAnalysisRunSuccessOneSubmissionOneError() throws Exception {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
-				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
+				sequenceFilePath, referenceFilePath, validIridaWorkflowId, false);
 		AnalysisSubmission analysisSubmission2 = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
-				sequenceFilePath2, referenceFilePath2, validIridaWorkflowId);
+				sequenceFilePath2, referenceFilePath2, validIridaWorkflowId, false);
 		analysisSubmission2.setAnalysisState(AnalysisState.ERROR);
 		analysisSubmissionRepository.save(analysisSubmission2);
 
@@ -240,7 +253,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testFullAnalysisRunFailInvalidWorkflow() throws Throwable {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
-				sequenceFilePath, referenceFilePath, invalidIridaWorkflowId);
+				sequenceFilePath, referenceFilePath, invalidIridaWorkflowId, false);
 
 		try {
 			validateFullAnalysis(Sets.newHashSet(analysisSubmission), 1);
@@ -262,7 +275,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testFullAnalysisRunFailInvalidWorkflowStatus() throws Throwable {
 		analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L, sequenceFilePath, referenceFilePath,
-				validIridaWorkflowId);
+				validIridaWorkflowId, false);
 				
 		// PREPARE SUBMISSION
 		Set<Future<AnalysisSubmission>> submissionsFutureSet = analysisExecutionScheduledTask.prepareAnalyses();
@@ -304,7 +317,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testFullAnalysisRunCleanupFailInvalidRemoteAnalysisId() throws Throwable {
 		analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L, sequenceFilePath, referenceFilePath,
-				validIridaWorkflowId);
+				validIridaWorkflowId, false);
 		
 		// PREPARE SUBMISSION
 		Set<Future<AnalysisSubmission>> submissionsFutureSet = analysisExecutionScheduledTask.prepareAnalyses();
@@ -357,7 +370,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testFullAnalysisRunFailErrorWithJob() throws Throwable {
 		analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L, sequenceFilePath, referenceFilePath,
-				iridaWorkflowIdWithError);
+				iridaWorkflowIdWithError, false);
 		
 		// PREPARE SUBMISSION
 		Set<Future<AnalysisSubmission>> submissionsFutureSet = analysisExecutionScheduledTask.prepareAnalyses();
@@ -408,7 +421,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testFullAnalysisRunFailAuthentication() throws Exception {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
-				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
+				sequenceFilePath, referenceFilePath, validIridaWorkflowId, false);
 
 		SecurityContextHolder.clearContext();
 		validateFullAnalysis(Sets.newHashSet(analysisSubmission), 1);
@@ -504,12 +517,30 @@ public class AnalysisExecutionScheduledTaskImplIT {
 		// TRANSFER SUBMISSION RESULTS
 		submissionsFutureSet = analysisExecutionScheduledTask.transferAnalysesResults();
 		assertEquals(expectedSubmissionsToProcess, submissionsFutureSet.size());
+
+		int processingSubmissions = 0;
 		// wait until finished
 		for (Future<AnalysisSubmission> submissionFuture : submissionsFutureSet) {
 			AnalysisSubmission returnedSubmission = submissionFuture.get();
-			assertEquals(AnalysisState.COMPLETED, returnedSubmission.getAnalysisState());
+			if(returnedSubmission.getUpdateSamples()){
+				assertEquals(AnalysisState.TRANSFERRED, returnedSubmission.getAnalysisState());
+				processingSubmissions++;
+			}
+			else{
+				assertEquals(AnalysisState.COMPLETED, returnedSubmission.getAnalysisState());
+			}
+
 			assertEquals(analysisSubmitter, returnedSubmission.getSubmitter());
 			assertEquals("Submission was cleaned", AnalysisCleanedState.NOT_CLEANED, returnedSubmission.getAnalysisCleanedState());
+		}
+
+		//POST PROCESSING RESULTS
+		submissionsFutureSet = analysisExecutionScheduledTask.postProcessResults();
+		assertEquals(processingSubmissions, submissionsFutureSet.size());
+
+		for (Future<AnalysisSubmission> submissionFuture : submissionsFutureSet) {
+			AnalysisSubmission returnedSubmission = submissionFuture.get();
+			assertEquals(AnalysisState.COMPLETED, returnedSubmission.getAnalysisState());
 		}
 	}
 }

@@ -426,7 +426,7 @@ public class ProjectSamplesController {
 	 * @param locale      for the current user.
 	 * @return {@link DTProjectSamples} that meet the requirements
 	 */
-	@RequestMapping(value = "/projects/{projectId}/ajax/samples", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+	@RequestMapping(value = "/projects/{projectId}/ajax/samples", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
 	@ResponseBody
 	public DataTablesResponse getProjectSamples(@PathVariable Long projectId,
 			@DataTablesRequest DataTablesParams params,
@@ -469,7 +469,7 @@ public class ProjectSamplesController {
 			q.addProjectSettings(p);
 			String status = q.getStatus()
 					.toString();
-			if (!status.equals("UNAVAILABLE")) {
+			if (q.getStatus() == QCEntry.QCEntryStatus.NEGATIVE) {
 				list.add(
 						messageSource.getMessage("sample.files.qc." + q.getType(), new Object[] { q.getMessage() }, locale));
 			}

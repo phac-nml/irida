@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.pipeline.results.impl.integration;
 
 import static org.junit.Assert.assertEquals;
 
+import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +51,7 @@ public class AnalysisSubmissionSampleProcessorImplIT {
 
 	@Test
 	@WithMockUser(username = "fbristow", roles = "USER")
-	public void testUpdateSamplesSuccess() {
+	public void testUpdateSamplesSuccess() throws PostProcessingException {
 		AnalysisSubmission a = analysisSubmissionRepository.findOne(1L);
 		assertEquals("Should be no join between sample and assembly", 0, sampleGenomeAssemblyJoinRepository.count());
 
@@ -61,7 +62,7 @@ public class AnalysisSubmissionSampleProcessorImplIT {
 
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "fbristow", roles = "USER")
-	public void testUpdateFailPermissionNonSampleOwner() {
+	public void testUpdateFailPermissionNonSampleOwner() throws PostProcessingException {
 		AnalysisSubmission a = analysisSubmissionRepository.findOne(2L);
 
 		analysisSubmissionSampleProcessorImpl.updateSamples(a);
@@ -69,7 +70,7 @@ public class AnalysisSubmissionSampleProcessorImplIT {
 
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "dr-evil", roles = "USER")
-	public void testUpdateFailPermissionNonProjectOwner() {
+	public void testUpdateFailPermissionNonProjectOwner() throws PostProcessingException {
 		AnalysisSubmission a = analysisSubmissionRepository.findOne(2L);
 
 		analysisSubmissionSampleProcessorImpl.updateSamples(a);
@@ -84,7 +85,7 @@ public class AnalysisSubmissionSampleProcessorImplIT {
 	 */
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "fbristow", roles = "USER")
-	public void testUpdateSamplesFailAnalysisSubmittedNonProjectOwner() {
+	public void testUpdateSamplesFailAnalysisSubmittedNonProjectOwner() throws PostProcessingException {
 		AnalysisSubmission a = analysisSubmissionRepository.findOne(3L);
 
 		analysisSubmissionSampleProcessorImpl.updateSamples(a);

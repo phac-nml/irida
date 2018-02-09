@@ -179,6 +179,7 @@ const url = $table.data("url");
 const config = Object.assign({}, tableConfig, {
   ajax: {
     url,
+    type: "POST",
     data(d) {
       /*
       Add any extra parameters that need to be passed to the server

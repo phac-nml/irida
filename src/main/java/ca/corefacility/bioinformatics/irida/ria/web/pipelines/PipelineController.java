@@ -215,6 +215,7 @@ public class PipelineController extends BaseController {
 			List<Map<String, Object>> projectList = new ArrayList<>();
 			List<Map<String, Object>> addRefList = new ArrayList<>();
 			IridaWorkflowDescription description = flow.getWorkflowDescription();
+			final String workflowName = description.getName().toLowerCase();
 			for (Project project : cartMap.keySet()) {
 				// Check to see if it requires a reference file.
 				if (description.requiresReference()) {
@@ -279,7 +280,6 @@ public class PipelineController extends BaseController {
 			final List<Map<String, Object>> parameters = new ArrayList<>();
 			if (defaultWorkflowParameters != null) {
 				final List<Map<String, String>> defaultParameters = new ArrayList<>();
-				final String workflowName = description.getName().toLowerCase();
 				for (IridaWorkflowParameter p : defaultWorkflowParameters) {
 					defaultParameters.add(ImmutableMap.of(
 							"label",
@@ -322,6 +322,7 @@ public class PipelineController extends BaseController {
 			model.addAttribute("addRefProjects", addRefList);
 			model.addAttribute("projects", projectList);
 			model.addAttribute("canUpdateSamples", canUpdateAllSamples);
+			model.addAttribute("workflowName", workflowName);
 			response = URL_GENERIC_PIPELINE;
 		}
 
