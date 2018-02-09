@@ -8,8 +8,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
@@ -42,6 +44,9 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 @Controller
 @RequestMapping("/projects/{projectId}/linelist")
 public class ProjectLineListController {
+
+	private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ProjectLineListController.class);
+
 	private final ProjectService projectService;
 	private final SampleService sampleService;
 	private final MetadataTemplateService metadataTemplateService;
@@ -215,18 +220,14 @@ public class ProjectLineListController {
 		Project project = projectService.read(projectId);
 		Set<String> fields = new HashSet<>();
 
-		// Get all the fields from the metadata
-		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(project);
-		for (Join<Project, Sample> join : samplesForProject) {
-			Sample sample = join.getObject();
-			if (! sample.getMetadata().isEmpty()) {
-				Map<MetadataTemplateField, MetadataEntry> metadataFields = sample.getMetadata();
-				
-				//add the template keys to the field list
-				fields.addAll(metadataFields.keySet().stream().map(MetadataTemplateField::getLabel)
-						.collect(Collectors.toSet()));
-			}
-		}
+		logger.trace("Getting header list");
+		List<MetadataTemplateField> metadataFieldsForProject = metadataTemplateService
+				.getMetadataFieldsForProject(project);
+
+		fields.addAll(
+				metadataFieldsForProject.stream().map(MetadataTemplateField::getLabel).collect(Collectors.toSet()));
+
+		logger.trace("Done getting headers");
 
 		// Get all the fields from the templates.
 		List<ProjectMetadataTemplateJoin> metadataTemplateJoins = metadataTemplateService

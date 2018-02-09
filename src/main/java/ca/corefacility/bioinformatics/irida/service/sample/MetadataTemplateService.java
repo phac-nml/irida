@@ -100,4 +100,12 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	 * @return a Map of {@link MetadataTemplateField}s and {@link MetadataEntry}s
 	 */
 	public Map<MetadataTemplateField, MetadataEntry> getMetadataMap(Map<String, MetadataEntry> metadata);
+
+	/**
+	 * Get all the {@link MetadataTemplateField}s on a given {@link Project}
+	 *
+	 * @param project the Project to get fields for
+	 * @return a list of fields
+	 */
+	public List<MetadataTemplateField> getMetadataFieldsForProject(Project project);
 }
