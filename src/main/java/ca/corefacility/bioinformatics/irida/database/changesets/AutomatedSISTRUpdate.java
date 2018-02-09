@@ -80,6 +80,8 @@ public class AutomatedSISTRUpdate implements CustomSqlChange {
 
 		Map<String, Long> metadataHeaderIds = new HashMap<>();
 
+		int errorCount = 0;
+
 		// create the metadata headers
 		SISTR_FIELDS.entrySet().forEach(e -> {
 			GeneratedKeyHolder holder = new GeneratedKeyHolder();
@@ -117,68 +119,78 @@ public class AutomatedSISTRUpdate implements CustomSqlChange {
 			Path filePath = outputFileDirectory.resolve(sistrFileResult.filePath);
 
 			if (!filePath.toFile().exists()) {
-				throw new CustomChangeException("Output file does not exist: " + filePath);
-			}
+				logger.error("SISTR file " + filePath + " does not exist!");
+				errorCount++;
+			} else {
 
-			try {
-				//Read the JSON file from SISTR output
-				@SuppressWarnings("resouce")
-				String jsonFile = new Scanner(new BufferedReader(new FileReader(filePath.toFile()))).useDelimiter("\\Z")
-						.next();
+				try {
+					//Read the JSON file from SISTR output
+					@SuppressWarnings("resouce")
+					String jsonFile = new Scanner(new BufferedReader(new FileReader(filePath.toFile())))
+							.useDelimiter("\\Z").next();
 
-				// map the results into a Map
-				ObjectMapper mapper = new ObjectMapper();
-				List<Map<String, Object>> sistrResults = mapper
-						.readValue(jsonFile, new TypeReference<List<Map<String, Object>>>() {
+					// map the results into a Map
+					ObjectMapper mapper = new ObjectMapper();
+					List<Map<String, Object>> sistrResults = mapper
+							.readValue(jsonFile, new TypeReference<List<Map<String, Object>>>() {
+							});
+
+					if (sistrResults.size() > 0) {
+						Map<String, Object> result = sistrResults.get(0);
+
+						//loop through each of the requested fields and save the entries
+						SISTR_FIELDS.entrySet().forEach(e -> {
+							if (result.containsKey(e.getKey()) && result.get(e.getKey()) != null) {
+								String value = result.get(e.getKey()).toString();
+
+								// insert to metadata_entry
+								GeneratedKeyHolder holder = new GeneratedKeyHolder();
+								jdbcTemplate.update(new PreparedStatementCreator() {
+									@Override
+									public PreparedStatement createPreparedStatement(Connection con)
+											throws SQLException {
+										PreparedStatement statement = con.prepareStatement(
+												"INSERT INTO metadata_entry (type, value) VALUES ('text', ?)",
+												Statement.RETURN_GENERATED_KEYS);
+										statement.setString(1, value);
+										return statement;
+									}
+								}, holder);
+
+								//save the new entry id
+								long entryId = holder.getKey().longValue();
+
+								//insert the pipeline_metadata_entry
+								jdbcTemplate
+										.update("INSERT INTO pipeline_metadata_entry (id, submission_id) VALUES (?,?)",
+												entryId, sistrFileResult.submissionId);
+
+								//remove existing entries for this metadata key and sample
+								jdbcTemplate
+										.update("DELETE FROM sample_metadata_entry WHERE sample_id=? AND metadata_KEY=?",
+												sistrFileResult.sampleId, metadataHeaderIds.get(e.getKey()));
+
+								//associate with the sample
+								jdbcTemplate
+										.update("INSERT INTO sample_metadata_entry (sample_id, metadata_id, metadata_KEY) VALUES (?, ?,?)",
+												sistrFileResult.sampleId, entryId, metadataHeaderIds.get(e.getKey()));
+							}
 						});
 
-				if (sistrResults.size() > 0) {
-					Map<String, Object> result = sistrResults.get(0);
+					} else {
+						logger.error("SISTR results for file are not correctly formatted: " + filePath);
+					}
 
-					//loop through each of the requested fields and save the entries
-					SISTR_FIELDS.entrySet().forEach(e -> {
-						if (result.containsKey(e.getKey()) && result.get(e.getKey()) != null) {
-							String value = result.get(e.getKey()).toString();
-
-							// insert to metadata_entry
-							GeneratedKeyHolder holder = new GeneratedKeyHolder();
-							jdbcTemplate.update(new PreparedStatementCreator() {
-								@Override
-								public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-									PreparedStatement statement = con.prepareStatement(
-											"INSERT INTO metadata_entry (type, value) VALUES ('text', ?)",
-											Statement.RETURN_GENERATED_KEYS);
-									statement.setString(1, value);
-									return statement;
-								}
-							}, holder);
-
-							//save the new entry id
-							long entryId = holder.getKey().longValue();
-
-							//insert the pipeline_metadata_entry
-							jdbcTemplate.update("INSERT INTO pipeline_metadata_entry (id, submission_id) VALUES (?,?)",
-									entryId, sistrFileResult.submissionId);
-
-							//remove existing entries for this metadata key and sample
-							jdbcTemplate
-									.update("DELETE FROM sample_metadata_entry WHERE sample_id=? AND metadata_KEY=?",
-											sistrFileResult.sampleId, metadataHeaderIds.get(e.getKey()));
-
-							//associate with the sample
-							jdbcTemplate
-									.update("INSERT INTO sample_metadata_entry (sample_id, metadata_id, metadata_KEY) VALUES (?, ?,?)",
-											sistrFileResult.sampleId, entryId, metadataHeaderIds.get(e.getKey()));
-						}
-					});
-
-				} else {
-					logger.error("SISTR results for file are not correctly formatted: " + filePath);
+				} catch (IOException e) {
+					logger.error("Error parsing JSON from SISTR results", e);
 				}
-
-			} catch (IOException e) {
-				logger.error("Error parsing JSON from SISTR results", e);
 			}
+
+		}
+
+		if (errorCount > 0) {
+			logger.error("IRIDA could not read " + errorCount
+					+ " automated SISTR result files to update sample metadata.  If these results are essential, check your file paths, restore a database backup, and retry the upgrade.");
 		}
 
 		return new SqlStatement[0];
