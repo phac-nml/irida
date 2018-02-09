@@ -186,10 +186,11 @@ public class AutomatedSISTRUpdate implements CustomSqlChange {
 				}
 			}
 
-			if (errorCount > 0) {
-				logger.error("IRIDA could not read " + errorCount
-						+ " automated SISTR result files to update sample metadata.  If these results are essential, check your file paths, restore a database backup, and retry the upgrade.");
-			}
+		}
+
+		if (errorCount > 0) {
+			logger.error("IRIDA could not read " + errorCount
+					+ " automated SISTR result files to update sample metadata.  If these results are essential, check your file paths, restore a database backup, and retry the upgrade.");
 		}
 
 		return new SqlStatement[0];
