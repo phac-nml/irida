@@ -54,7 +54,7 @@ public class MetadataTemplateServiceImplIT {
 		List<MetadataTemplateField> metadataFieldsForProject = metadataTemplateService
 				.getMetadataFieldsForProject(project);
 
-		assertEquals(6, metadataFieldsForProject.size());
+		assertEquals(5, metadataFieldsForProject.size());
 
 		Set<String> fields = Sets.newHashSet();
 		fields.add("firstName");
@@ -62,7 +62,6 @@ public class MetadataTemplateServiceImplIT {
 		fields.add("healthAuthority");
 		fields.add("firstSymptom");
 		fields.add("serotype");
-		fields.add("phageType");
 
 		for (MetadataTemplateField metadataTemplateField : metadataFieldsForProject) {
 			assertTrue("should contain field", fields.contains(metadataTemplateField.getLabel()));
