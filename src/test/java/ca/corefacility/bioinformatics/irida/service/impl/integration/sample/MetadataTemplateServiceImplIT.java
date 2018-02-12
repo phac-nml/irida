@@ -72,7 +72,7 @@ public class MetadataTemplateServiceImplIT {
 		assertTrue("should have found all fields", fields.isEmpty());
 
 		//check a project with 1 field
-		project = projectService.read(3L);
+		project = projectService.read(2L);
 		metadataFieldsForProject = metadataTemplateService.getMetadataFieldsForProject(project);
 
 		assertEquals(1, metadataFieldsForProject.size());
