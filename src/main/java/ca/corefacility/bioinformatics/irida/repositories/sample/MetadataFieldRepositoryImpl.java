@@ -23,6 +23,7 @@ public class MetadataFieldRepositoryImpl implements MetadataFieldRepositoryCusto
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<MetadataTemplateField> getMetadataFieldsForProject(Project p) {
 
@@ -31,8 +32,6 @@ public class MetadataFieldRepositoryImpl implements MetadataFieldRepositoryCusto
 
 		nativeQuery.setParameter("project", p.getId());
 
-		List<MetadataTemplateField> resultList = nativeQuery.getResultList();
-
-		return resultList;
+		return nativeQuery.getResultList();
 	}
 }

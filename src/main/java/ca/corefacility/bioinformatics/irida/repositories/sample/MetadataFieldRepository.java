@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.repositories.sample;
 
-import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
 import org.springframework.data.jpa.repository.Query;

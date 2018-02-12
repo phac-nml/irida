@@ -1,31 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects.metadata;
 
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.google.common.collect.ImmutableMap;
-
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -37,6 +11,17 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUt
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import com.google.common.collect.ImmutableMap;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Handles requests for the metadata in a project
@@ -44,9 +29,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 @Controller
 @RequestMapping("/projects/{projectId}/linelist")
 public class ProjectLineListController {
-
-	private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ProjectLineListController.class);
-
+	
 	private final ProjectService projectService;
 	private final SampleService sampleService;
 	private final MetadataTemplateService metadataTemplateService;
@@ -220,14 +203,11 @@ public class ProjectLineListController {
 		Project project = projectService.read(projectId);
 		Set<String> fields = new HashSet<>();
 
-		logger.trace("Getting header list");
 		List<MetadataTemplateField> metadataFieldsForProject = metadataTemplateService
 				.getMetadataFieldsForProject(project);
 
 		fields.addAll(
 				metadataFieldsForProject.stream().map(MetadataTemplateField::getLabel).collect(Collectors.toSet()));
-
-		logger.trace("Done getting headers");
 
 		// Get all the fields from the templates.
 		List<ProjectMetadataTemplateJoin> metadataTemplateJoins = metadataTemplateService
