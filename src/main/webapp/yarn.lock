@@ -3638,11 +3638,19 @@ jquery-mousewheel@~3.1.13:
   version "3.1.13"
   resolved "https://registry.yarnpkg.com/jquery-mousewheel/-/jquery-mousewheel-3.1.13.tgz#06f0335f16e353a695e7206bf50503cb523a6ee5"
 
+jquery-ui@1.10.5:
+  version "1.10.5"
+  resolved "https://registry.yarnpkg.com/jquery-ui/-/jquery-ui-1.10.5.tgz#826aed3dd1f88d32ae75d74df48643dc431a5815"
+
 jquery-validation@^1.17.0:
   version "1.17.0"
   resolved "https://registry.yarnpkg.com/jquery-validation/-/jquery-validation-1.17.0.tgz#ab66b6b583d7740b9bbd148993e50e8ac041f35b"
   dependencies:
     jquery "^1.7 || ^2.0 || ^3.1"
+
+jquery@1.11.2:
+  version "1.11.2"
+  resolved "https://registry.yarnpkg.com/jquery/-/jquery-1.11.2.tgz#30ab26857211c37caa83da0f6903155fe49bb72d"
 
 jquery@>=1.10, jquery@>=1.11.0, jquery@>=1.7, jquery@>=1.9.0, "jquery@^1.7 || ^2.0 || ^3.1", jquery@^3.2.1:
   version "3.2.1"
@@ -6055,6 +6063,13 @@ slice-ansi@1.0.0:
   resolved "https://registry.yarnpkg.com/slice-ansi/-/slice-ansi-1.0.0.tgz#044f1a49d8842ff307aad6b505ed178bd950134d"
   dependencies:
     is-fullwidth-code-point "^2.0.0"
+
+slickgrid-6pac@^2.2.13:
+  version "2.2.13"
+  resolved "https://registry.yarnpkg.com/slickgrid-6pac/-/slickgrid-6pac-2.2.13.tgz#dc7932debbe75fac5c94353aa015b315bcab043e"
+  dependencies:
+    jquery "1.11.2"
+    jquery-ui "1.10.5"
 
 sntp@1.x.x:
   version "1.0.9"

@@ -8,9 +8,15 @@
     "precommit": "lint-staged"
   },
   "lint-staged": {
-    "resources/**/*.{js,json,scss}": ["prettier --write", "git add"]
+    "resources/**/*.{js,json,scss}": [
+      "prettier --write",
+      "git add"
+    ]
   },
-  "browserslist": ["> 1%", "last 2 versions"],
+  "browserslist": [
+    "> 1%",
+    "last 2 versions"
+  ],
   "dependencies": {
     "@bassettsj/livestamp": "^2.0.0",
     "angular": "1.6.2",
@@ -51,6 +57,7 @@
     "select2": "^4.0.3",
     "select2-bootstrap-theme": "^0.1.0-beta.10",
     "showdown": "^1.7.4",
+    "slickgrid-6pac": "^2.2.13",
     "sortablejs": "^1.5.1",
     "ui-select": "^0.19.6"
   },

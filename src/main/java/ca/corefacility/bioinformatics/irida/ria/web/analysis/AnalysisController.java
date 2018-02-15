@@ -1,13 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.Principal;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
@@ -64,6 +63,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Controller for Analysis.
@@ -260,6 +260,76 @@ public class AnalysisController {
 		}
 
 		return "redirect:/analysis/" + submissionId;
+	}
+
+	@RequestMapping(value = "/ajax/{id}/tabular-data", method = RequestMethod.GET)
+	@ResponseBody
+	public ImmutableMap<String, Object> getTabularText(@PathVariable Long id,
+			@RequestParam(required = false, defaultValue = "") String pattern) {
+
+		String TABULAR_FILE_REGEX = ".*\\.(tsv|tab|csv|tabular)$";
+		Pattern REGEX_PATTERN = Pattern.compile(TABULAR_FILE_REGEX);
+
+		AnalysisSubmission submission = analysisSubmissionService.read(id);
+		Analysis analysis = submission.getAnalysis();
+		Set<String> outputNames = analysis.getAnalysisOutputFileNames();
+		Set<String> filteredNames = outputNames.stream()
+				.map(String::toLowerCase)
+				.filter(s -> s.matches(".*" + pattern.toLowerCase() + ".*"))
+				.collect(Collectors.toSet());
+		if (filteredNames.isEmpty()) {
+			return ImmutableMap.of();
+		}
+		Set<String> collect = outputNames.stream()
+				.filter(x -> analysis.getAnalysisOutputFile(x)
+						.getFile()
+						.getFileName()
+						.toString()
+						.matches(TABULAR_FILE_REGEX))
+				.collect(Collectors.toSet());
+		collect.retainAll(filteredNames);
+		if (collect.isEmpty()) {
+			return ImmutableMap.of();
+		}
+
+		Map<String, Path> outputPaths = collect.stream()
+				.collect(Collectors.toMap(x -> x, x -> analysis.getAnalysisOutputFile(x)
+						.getFile()));
+		List<Map<String, Object>> outputs = new ArrayList<>();
+		outputPaths.forEach((outputName, path) -> {
+			try {
+				logger.debug("outputName: " + outputName);
+				logger.debug("path: " + path);
+				String filename = path.getFileName()
+						.toString();
+				logger.debug("filename: " + filename);
+				logger.debug("filename: " + filename
+						.matches(TABULAR_FILE_REGEX));
+
+				Matcher matcher = REGEX_PATTERN.matcher(filename);
+				logger.debug("matcher: " + matcher);
+				String ext = null;
+				if (matcher.matches()) {
+					logger.debug("MATCHES!!! " + matcher);
+					ext = matcher.group(1);
+					BufferedReader reader = new BufferedReader(new FileReader(new File(path.toString())));
+					List<String[]> collect1 = reader.lines()
+
+							.map(l -> l.split("\t"))
+							.collect(Collectors.toList());
+					outputs.add(ImmutableMap.of(
+							"extension", ext,
+							"outputName", outputName,
+							"filename", filename,
+							"content", collect1));
+				} else {
+					logger.error("Regex pattern matcher" + matcher + " doesn't match '" + filename + "'");
+				}
+			} catch (IllegalStateException | FileNotFoundException e) {
+				logger.error(e.getMessage());
+			}
+		});
+		return ImmutableMap.of("data", outputs);
 	}
 
 	/**

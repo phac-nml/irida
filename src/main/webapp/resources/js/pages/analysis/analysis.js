@@ -2,6 +2,12 @@ import angular from "angular";
 import { showNotification } from "../../modules/notifications";
 import { formatDate } from "../../utilities/date-utilities";
 import "../../../sass/pages/analysis.scss";
+import $ from "jquery";
+// import "../../vendor/datatables/datatables";
+// import "../../vendor/slickgrid/slickgrid";
+import "slickgrid-6pac/slick.core";
+import "slickgrid-6pac/slick.grid";
+import "slickgrid-6pac/slick.dataview";
 
 /**
  * Controller to download the analysis.
@@ -43,7 +49,7 @@ function FileDownloadController() {
  */
 function AnalysisService($http) {
   const svc = this;
-
+  svc._tabularData = null;
   /**
    * Call the server to get the status for the current analysis.
    * 'page.URLS.status' is on the `_base.html` page for the analysis.
@@ -85,6 +91,33 @@ function AnalysisService($http) {
         console.error(x);
       }
     );
+  };
+
+  /**
+   * Get tabular data info from server
+   * @param vm
+   * @returns {PromiseLike<T> | Promise<T> | *}
+   */
+  svc.getTabularData = function(vm) {
+    if (svc._tabularData === null) {
+      const url = window.PAGE.URLS.base + window.PAGE.ID + "/tabular-data";
+      return $http.get(url).then(
+        function successCallback(x) {
+          svc._tabularData = x.data;
+          return svc._tabularData;
+        },
+        function errorCallback(x) {
+          console.error(`Could not GET tabular data from "${url}"`);
+          console.error(x);
+        }
+      );
+    } else {
+      console.log("already fetched:", svc._tabularData);
+      const promise = new Promise(function(resolve, reject) {
+        resolve(svc._tabularData);
+      });
+      return promise;
+    }
   };
 
   /**
@@ -213,6 +246,89 @@ function SistrController(analysisService) {
   });
 }
 
+function TablesController(analysisService) {
+  const vm = this;
+  const $tablesContainer = $("#js-tables-container");
+  analysisService.getTabularData(vm).then(result => {
+    console.log("doing stuff with data!", result);
+    let count = 0;
+    for (const t of result.data) {
+      console.log("count", count, "t", t);
+      if (!t.hasOwnProperty("content")) {
+        continue;
+      }
+      const firstRow = t.content.slice(0, 1)[0];
+
+      let headers = [];
+      for (let i = 0; i < firstRow.length; i++) {
+        const row = firstRow[i];
+        // headers.push({ title: x });
+        headers.push({ id: i + "", field: i + "", name: row, sortable: true });
+      }
+      const data = t.content.slice(1);
+      for (let i = 0; i < data.length; i++) {
+        const row = data[i];
+        const d = { id: "id_" + i };
+        for (let j = 0; j < headers.length; j++) {
+          const cell = row[j];
+          const header = headers[j];
+          d[header.id] = cell;
+        }
+        data[i] = d;
+      }
+      console.info(headers);
+      console.info(data);
+      const $panel = $(
+        `<div id="js-panel-${count}" class="panel panel-default"/>`
+      );
+      const $panelHeading = $(
+        `<div class="panel-heading"><h3>${t.outputName} - ${
+          t.filename
+        }</h3></div>`
+      );
+      $panel.append($panelHeading);
+      const $panelBody = $(`<div class="panel-body"></div>`);
+      const gridId = `grid-${count}`;
+      const $table = $(`<div/>`, {
+        id: gridId,
+        class: "display",
+        height: "300px",
+        width: "100%"
+      });
+      $table.appendTo($panelBody);
+      $panel.append($panelBody);
+      $panel.appendTo($tablesContainer);
+      const dataView = new Slick.Data.DataView();
+      const grid = new Slick.Grid(`#${gridId}`, dataView, headers, {});
+      grid.onSort.subscribe((e, args) => {
+        const field = args.sortCol.field;
+        const isSortAsc = args.sortAsc;
+        console.log("onSort", field, isSortAsc, args);
+        dataView.sort((a, b) => {
+          const x = a[field];
+          const y = b[field];
+          return x === y ? 0 : x > y ? 1 : -1;
+        }, isSortAsc);
+        grid.invalidate();
+      });
+      dataView.onRowsChanged.subscribe((e, args) => {
+        grid.invalidateRows(args.rows);
+        grid.render();
+      });
+      dataView.beginUpdate();
+      dataView.setItems(data);
+      dataView.endUpdate();
+      grid.invalidate();
+      console.log(count, headers, $table, $tablesContainer);
+      // $table.DataTable({
+      //   data: data,
+      //   columns: headers
+      // });
+      count++;
+    }
+  });
+}
+
 /**
  * Angular Controller for handling Galaxy job errors
  * @param analysisService Service for retrieving JobError info from server
@@ -318,6 +434,10 @@ const iridaAnalysis = angular
     "$stateProvider",
     function($stateProvider) {
       $stateProvider
+        .state("tables", {
+          url: "/tables",
+          templateUrl: "tables.html"
+        })
         .state("preview", {
           url: "/preview",
           templateUrl: "preview.html"
@@ -351,6 +471,7 @@ const iridaAnalysis = angular
   .service("AnalysisService", ["$http", AnalysisService])
   .controller("FileDownloadController", [FileDownloadController])
   .controller("StateController", ["AnalysisService", StateController])
+  .controller("TablesController", ["AnalysisService", TablesController])
   .controller("PreviewController", [PreviewController])
   .controller("ProjectShareController", [
     "AnalysisService",
