@@ -247,6 +247,7 @@ function SistrController(analysisService) {
 }
 
 function TablesController(analysisService) {
+  const MAX_TABLE_HEIGHT = 300; //px
   const vm = this;
   const $tablesContainer = $("#js-tables-container");
   analysisService.getTabularData(vm).then(result => {
@@ -292,7 +293,7 @@ function TablesController(analysisService) {
       const $table = $(`<div/>`, {
         id: gridId,
         class: "display",
-        height: "300px",
+        height: `${MAX_TABLE_HEIGHT}px`,
         width: "100%"
       });
       $table.appendTo($panelBody);
@@ -320,6 +321,18 @@ function TablesController(analysisService) {
       dataView.endUpdate();
       grid.invalidate();
       console.log(count, headers, $table, $tablesContainer);
+
+      const $grid = $(`#${gridId}`);
+      let heightSum = $grid.find(".slick-header").height();
+      $grid
+        .find(".grid-canvas")
+        .children()
+        .each((i, x) => (heightSum += $(x).height()));
+      console.log("HEIGHT", heightSum);
+      if (heightSum < MAX_TABLE_HEIGHT) {
+        $table.height(heightSum);
+      }
+
       // $table.DataTable({
       //   data: data,
       //   columns: headers
