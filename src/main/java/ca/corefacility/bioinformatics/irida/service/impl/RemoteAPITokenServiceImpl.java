@@ -121,7 +121,7 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService {
 		} catch (EntityNotFoundException ex) {
 			logger.debug("Token not found for api " + api + ".  Cannot update access token.");
 		} catch (OAuthProblemException | OAuthSystemException ex) {
-			logger.error("Updating token by refresh token failed", ex);
+			logger.error("Updating token by refresh token failed", ex.getMessage());
 		}
 
 		return token;
