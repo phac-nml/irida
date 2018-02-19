@@ -864,21 +864,21 @@ public class ProjectSamplesController {
 		String query = "SELECT s.id as sample_id, " +
 				"s.sampleName as sample_name, " +
 				"a.id as analysis_id, " +
-				"a2.analysis_output_file_key, " +
-				"aof.file_path as file_path, " +
+				"aofmap.analysis_output_file_key, " +
+				"aof.file_path, " +
 				"aof.id as aof_id, " +
-				"a.analysis_type as analysis_type, " +
-				"a3.workflow_id as workflow_id, " +
-				"a3.id as analysis_submission_id " +
+				"a.analysis_type, " +
+				"asub.workflow_id, " +
+				"asub.id as analysis_submission_id " +
 				"FROM analysis_output_file aof "
-				+ "  INNER JOIN analysis_output_file_map a2 ON aof.id = a2.analysisOutputFilesMap_id"
-				+ "  INNER JOIN analysis a ON a2.analysis_id = a.id"
-				+ "  INNER JOIN analysis_submission a3 ON a.id = a3.analysis_id"
-				+ "  INNER JOIN analysis_submission_sequencing_object o ON a3.id = o.analysis_submission_id"
+				+ "  INNER JOIN analysis_output_file_map aofmap ON aof.id = aofmap.analysisOutputFilesMap_id"
+				+ "  INNER JOIN analysis a ON aofmap.analysis_id = a.id"
+				+ "  INNER JOIN analysis_submission asub ON a.id = asub.analysis_id"
+				+ "  INNER JOIN analysis_submission_sequencing_object o ON asub.id = o.analysis_submission_id"
 				+ "  INNER JOIN sample_sequencingobject sso on sso.sequencingobject_id = o.sequencing_object_id"
 				+ "  INNER JOIN sample s ON sso.sample_id = s.id"
-				+ "  INNER JOIN project_sample sample2 ON s.id = sample2.sample_id"
-				+ "  INNER JOIN project p ON sample2.project_id = p.id"
+				+ "  INNER JOIN project_sample psample ON s.id = psample.sample_id"
+				+ "  INNER JOIN project p ON psample.project_id = p.id"
 				+ "    WHERE p.id = " + projectId
 				+ "      and a.analysis_type NOT LIKE '%_COLLECTION'";
 		// Result of query is a list of maps ready for handling on the frontend (e.g. grouping by analysis type)
