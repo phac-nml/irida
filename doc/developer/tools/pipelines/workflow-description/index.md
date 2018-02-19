@@ -537,7 +537,7 @@ An example workflow description XML file is given below.
 
 [Galaxy Workflow]: https://wiki.galaxyproject.org/Learn/AdvancedWorkflow
 [Galaxy Tools]: https://toolshed.g2.bx.psu.edu/
-[Tool Data Tables]: (https://galaxyproject.org/admin/tools/data-tables/)
+[Tool Data Tables]: https://galaxyproject.org/admin/tools/data-tables/
 [UUID]: http://en.wikipedia.org/wiki/Universally_unique_identifier
 [SNVPhyl Galaxy Workflow]: http://irida.corefacility.ca/gitlab/analysis-pipelines/snvphyl-galaxy/blob/v0.1/workflows/SNVPhyl/0.1/snvphyl_workflow.ga
 [PhyML Galaxy Tool XML]: http://irida.corefacility.ca/gitlab/analysis-pipelines/snvphyl-galaxy/blob/v0.1/tools/phyml/phyml.xml
