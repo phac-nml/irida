@@ -24,6 +24,11 @@
          th:data-download-output-files="#{analysis.download-output-files}"
          th:data-analysis-type="#{analysis.table.type}"
          th:data-analysis-output-file-key="#{analysis.output-file-key}"
+         th:data-req-error="#{analysis.batch-download.ajax.error}"
+         th:data-error="#{error}"
+         th:data-status-code="#{error.request.status-code}"
+         th:data-status-text="#{error.request.status-text}"
+         th:data-request-url="#{error.request.url}"
          >
     </div>
 </main>
