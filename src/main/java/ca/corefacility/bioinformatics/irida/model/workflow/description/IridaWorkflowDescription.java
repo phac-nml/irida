@@ -49,10 +49,6 @@ public class IridaWorkflowDescription {
 	@XmlElement(name = "parameter")
 	private List<IridaWorkflowParameter> parameters;
 
-	@XmlElementWrapper(name = "parameters")
-	@XmlElement(name = "galaxyToolDataTable")
-	private List<IridaWorkflowGalaxyToolDataTable> galaxyToolDataTables;
-
 	@XmlElementWrapper(name = "toolRepositories")
 	@XmlElement(name = "repository")
 	private List<IridaWorkflowToolRepository> repository;
@@ -116,12 +112,18 @@ public class IridaWorkflowDescription {
 	}
 
 	/**
-	 * Whether or not this workflow requires a data from a galaxy tool data table.
+	 * Whether or not this workflow requires a data from a dynamic source such as a Galaxy Tool Data Table.
 	 *
-	 * @return True if this workflow requires a Tool Data Table field, false otherwise.
+	 * @return True if this workflow requires a parameter value from a dynamic source.
 	 */
-	public boolean requiresToolDataTable() {
-		return getInputs().getGalaxyToolDataTables().isPresent();
+	public boolean requiresDynamicSource() {
+		Boolean requiresDynamicSource = false;
+		for (IridaWorkflowParameter parameter : parameters) {
+			if (parameter.isRequired()) {
+				requiresDynamicSource = true;
+			}
+		}
+		return requiresDynamicSource;
 	}
 
 	/**

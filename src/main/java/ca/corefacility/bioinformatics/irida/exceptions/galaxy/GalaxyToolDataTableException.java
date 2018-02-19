@@ -2,6 +2,10 @@ package ca.corefacility.bioinformatics.irida.exceptions.galaxy;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 
+/**
+ * An exception that gets thrown when there a problem accessing a Galaxy Tool Data Table.
+ *
+ */
 public class GalaxyToolDataTableException extends ExecutionManagerException {
 
     private static final long serialVersionUID = 5892958304576147418L;
