@@ -3,7 +3,7 @@
       data-layout-decorate="~{projects/_base}">
 
 <head>
-    <title th:text="${project.label} + ' - ' + #{project.nav.analysis}"></title>
+    <title th:text="${project.label} + ' - ' + #{analysis.batch-download}"></title>
     <script>
         var PAGE = {
           URLS: {
@@ -20,8 +20,11 @@
     </div>
     <div id="js-messages" class="hidden"
          th:data-download="#{form.download}"
+         th:data-batch-download="#{analysis.batch-download}"
          th:data-download-output-files="#{analysis.download-output-files}"
          th:data-analysis-type="#{analysis.table.type}"
+         th:data-analysis-output-file-key="#{analysis.output-file-key}"
+         >
     </div>
 </main>
 </body>

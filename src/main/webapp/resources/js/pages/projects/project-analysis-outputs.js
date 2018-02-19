@@ -56,7 +56,11 @@ $.get(AJAX_URL, function(data) {
       const outputs = nameToOutputs[analysisOutputName];
       const firstOutput = outputs[0];
       const filename = firstOutput.file_path.replace(FILENAME_REGEX, "$1");
-      const $div = $(`<div><p>${analysisOutputName}</p></div>`);
+      const $div = $(
+        `<div><p>${
+          MESSAGES.analysisOutputFileKey
+        } - "${analysisOutputName}"</p></div>`
+      );
       const $button = $(
         `<button class="btn btn-default">${MESSAGES.download} ${filename} (N=${
           outputs.length

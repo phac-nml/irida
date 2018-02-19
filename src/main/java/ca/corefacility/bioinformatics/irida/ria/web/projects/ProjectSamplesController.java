@@ -839,9 +839,27 @@ public class ProjectSamplesController {
 		}
 	}
 
+	/**
+	 * Get analysis output file information for all analyses for a project.
+	 *
+	 * Return a list of maps with the {@link Sample} id ("sample_id"), {@link Sample} name ("sample_name"),
+	 * {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis} id ("analysis_id"),
+	 * {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile} file key ("analysis_output_file_key"),
+	 * {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile} file path ("file_path"),
+	 * {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile} id ("aof_id"),
+	 * {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis} type ("analysis_type"),
+	 * {@link ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission} workflow id ("workflow_id"),
+	 * {@link ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission} id ("analysis_submission_id")
+	 * for each {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile} in a {@link Project}
+	 *
+	 * @param projectId {@link Project} id
+	 * @return list of maps of {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile} info
+	 */
 	@RequestMapping(value = "/projects/{projectId}/ajax/analysis-outputs")
 	@ResponseBody
 	public List<Map<String, Object>> getAnalysisOutputForProject(@PathVariable Long projectId) {
+		// Using a JDBC template query for performance reasons. Trying to retrieve the necessary info with JPA takes a
+		// long time and produces a lot of intermediate objects.
 		JdbcTemplate tmpl = new JdbcTemplate(dataSource);
 		String query = "SELECT s.id as sample_id, " +
 				"s.sampleName as sample_name, " +
@@ -863,8 +881,8 @@ public class ProjectSamplesController {
 				+ "  INNER JOIN project p ON sample2.project_id = p.id"
 				+ "    WHERE p.id = " + projectId
 				+ "      and a.analysis_type NOT LIKE '%_COLLECTION'";
-		List<Map<String, Object>> maps = tmpl.queryForList(query);
-		return maps;
+		// Result of query is a list of maps ready for handling on the frontend (e.g. grouping by analysis type)
+		return tmpl.queryForList(query);
 	}
 
 
