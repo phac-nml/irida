@@ -1,5 +1,5 @@
 const angular = require("angular");
-require("ng-file-upload");
+require("./../../modules/utilities/file.utils");
 require("../../../sass/pages/sample-files.scss");
 
 /**
@@ -113,9 +113,7 @@ function FileUploadController(Upload, $timeout, $window, $uibModal) {
         files: files
       },
       arrayKey: ""
-    });
-
-    fileUpload.then(
+    }).then(
       function() {
         $window.onbeforeunload = undefined;
         $timeout(function() {
@@ -141,6 +139,8 @@ function FileUploadController(Upload, $timeout, $window, $uibModal) {
   }
 
   vm.uploadFiles = function($files) {
+    console.log(arguments);
+
     if ($files.length === 0) {
       return;
     }
@@ -201,7 +201,7 @@ function FileUploadController(Upload, $timeout, $window, $uibModal) {
   };
 
   vm.cancel = function() {
-    if (typeof fileUpload !== "undefined") {
+    if (fileUpload !== undefined) {
       fileUpload.abort();
       fileUpload = undefined;
       vm.uploading = false;
@@ -210,7 +210,12 @@ function FileUploadController(Upload, $timeout, $window, $uibModal) {
 }
 
 const filesModule = angular
-  .module("irida.sample.files", ["ngFileUpload", "ngAnimate", "ui.bootstrap"])
+  .module("irida.sample.files", [
+    "file.utils",
+    "ngAnimate",
+    "ui.bootstrap",
+    "ngFileUpload"
+  ])
   .controller("FileUploadController", [
     "Upload",
     "$timeout",

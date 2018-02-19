@@ -1,10 +1,6 @@
 Changes
 =======
 
-0.20.0 to 0.21.0
-----------------
-* [UI]: Fixed bug where user could not cancel the upload of a sequence file on the Sample Files page.
-
 0.19.0 to 0.20.0
 ----------------
 * [Developer]: Fixed exception being thrown related to permission denied for updating samples when a normal user (collaborator on a project) runs the assembly pipeline (0.19.1).
