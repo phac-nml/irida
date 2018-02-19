@@ -13,6 +13,7 @@ import java.util.zip.ZipOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.sql.DataSource;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
@@ -26,6 +27,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -85,15 +87,18 @@ public class ProjectSamplesController {
 	private final SequencingObjectService sequencingObjectService;
 	private MessageSource messageSource;
 
+	private final DataSource dataSource;
+
 	@Autowired
 	public ProjectSamplesController(ProjectService projectService, SampleService sampleService,
 			SequencingObjectService sequencingObjectService, ProjectControllerUtils projectControllerUtils,
-			MessageSource messageSource) {
+			MessageSource messageSource, DataSource dataSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.sequencingObjectService = sequencingObjectService;
 		this.projectControllerUtils = projectControllerUtils;
 		this.messageSource = messageSource;
+		this.dataSource = dataSource;
 	}
 
 	/**
@@ -833,6 +838,35 @@ public class ProjectSamplesController {
 			response.getOutputStream().close();
 		}
 	}
+
+	@RequestMapping(value = "/projects/{projectId}/ajax/analysis-outputs")
+	@ResponseBody
+	public List<Map<String, Object>> getAnalysisOutputForProject(@PathVariable Long projectId) {
+		JdbcTemplate tmpl = new JdbcTemplate(dataSource);
+		String query = "SELECT s.id as sample_id, " +
+				"s.sampleName as sample_name, " +
+				"a.id as analysis_id, " +
+				"a2.analysis_output_file_key, " +
+				"aof.file_path as file_path, " +
+				"aof.id as aof_id, " +
+				"a.analysis_type as analysis_type, " +
+				"a3.workflow_id as workflow_id, " +
+				"a3.id as analysis_submission_id " +
+				"FROM analysis_output_file aof "
+				+ "  INNER JOIN analysis_output_file_map a2 ON aof.id = a2.analysisOutputFilesMap_id"
+				+ "  INNER JOIN analysis a ON a2.analysis_id = a.id"
+				+ "  INNER JOIN analysis_submission a3 ON a.id = a3.analysis_id"
+				+ "  INNER JOIN analysis_submission_sequencing_object o ON a3.id = o.analysis_submission_id"
+				+ "  INNER JOIN sample_sequencingobject sso on sso.sequencingobject_id = o.sequencing_object_id"
+				+ "  INNER JOIN sample s ON sso.sample_id = s.id"
+				+ "  INNER JOIN project_sample sample2 ON s.id = sample2.sample_id"
+				+ "  INNER JOIN project p ON sample2.project_id = p.id"
+				+ "    WHERE p.id = " + projectId
+				+ "      and a.analysis_type NOT LIKE '%_COLLECTION'";
+		List<Map<String, Object>> maps = tmpl.queryForList(query);
+		return maps;
+	}
+
 
 	/**
 	 * Rename a filename {@code original} and ensure it doesn't exist in {@code usedNames}. Uses the windows style of

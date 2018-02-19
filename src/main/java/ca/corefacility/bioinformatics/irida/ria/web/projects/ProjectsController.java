@@ -93,6 +93,7 @@ public class ProjectsController {
 	private static final String ACTIVE_NAV_METADATA = "metadata";
 	private static final String ACTIVE_NAV_ACTIVITY = "activity";
 	private static final String ACTIVE_NAV_ANALYSES = "analyses";
+	private static final String ACTIVE_NAV_ANALYSIS_OUTPUTS = "outputs";
 
 	// Page Names
 	public static final String PROJECTS_DIR = "projects/";
@@ -428,6 +429,18 @@ public class ProjectsController {
 		model.addAttribute("analysisTypes", workflowsService.getRegisteredWorkflowTypes());
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ANALYSES);
 		return PROJECT_ANALYSES_PAGE;
+	}
+
+	@RequestMapping(value = "/projects/{projectId}/analysis-outputs", method = RequestMethod.GET)
+	public String getProjectAnalysisOutputsPage(@PathVariable Long projectId, Model model, Principal principal) {
+		Project project = projectService.read(projectId);
+		model.addAttribute("project", project);
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+		model.addAttribute("ajaxURL", "/projects/" + projectId + "/ajax/analysis-outputs");
+		model.addAttribute("states", AnalysisState.values());
+		model.addAttribute("analysisTypes", workflowsService.getRegisteredWorkflowTypes());
+		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ANALYSIS_OUTPUTS);
+		return "projects/project_analysis_outputs";
 	}
 
 	/**

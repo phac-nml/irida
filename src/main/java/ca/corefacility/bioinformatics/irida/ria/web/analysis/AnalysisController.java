@@ -571,7 +571,7 @@ public class AnalysisController {
 	 */
 	@RequestMapping(value = "/ajax/download/{analysisSubmissionId}/file/{fileId}")
 	public void getAjaxDownloadAnalysisSubmissionIndividualFile(@PathVariable Long analysisSubmissionId,
-			@PathVariable Long fileId, HttpServletResponse response) {
+			@PathVariable Long fileId, @RequestParam(defaultValue = "", required = false) String filename, HttpServletResponse response) {
 		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(analysisSubmissionId);
 
 		Analysis analysis = analysisSubmission.getAnalysis();
@@ -585,7 +585,11 @@ public class AnalysisController {
 			throw new EntityNotFoundException("Could not find file with id " + fileId);
 		}
 
-		FileUtilities.createSingleFileResponse(response, optFile.get());
+		if (filename != null && !filename.equals("")) {
+			FileUtilities.createSingleFileResponse(response, optFile.get(), filename);
+		} else {
+			FileUtilities.createSingleFileResponse(response, optFile.get());
+		}
 	}
 
 	/**

@@ -23,6 +23,9 @@
         <ul class="nav nav-tabs subnav" th:with="baseLink=${'/projects/' + project.getId()}">
             <li th:class="${activeNav} == 'samples' ? 'active'"><a th:href="@{${baseLink}}" th:text="#{project.nav.samples}">[Samples]</a></li>
             <li th:classappend="${activeNav} == 'linelist' ? 'active'"><a th:href="@{${baseLink} + '/linelist'}" th:text="#{project.nav.linelist}">[Line List]</a></li>
+            <li th:classappend="${activeNav} == 'outputs' ? 'active'">
+                <a href="" th:href="@{${baseLink} + '/analysis-outputs'}" th:text="#{analysis.download-output-files}">[Download Output Files]</a>
+            </li>
             <li th:classappend="${activeNav} == 'analyses' ? 'active'"><a href="" th:href="@{${baseLink} + '/analyses'}" th:text="#{project.nav.analysis}">[Analyses]</a></li>
             <li th:classappend="${activeNav} == 'metadata' ? 'active'"><a th:href="@{${baseLink} + '/metadata'}" th:text="#{project.nav.metadata}">[Metadata]</a></li>
             <li th:classappend="${activeNav} == 'export' ? 'active'"><a href="" th:href="@{${baseLink} + '/export'}" th:text="#{project.nav.exports}">[Exports]</a></li>

@@ -109,10 +109,9 @@ public class FileUtilities {
 	 *            {@link HttpServletResponse}
 	 * @param file
 	 *            Set of {@link AnalysisOutputFile}
+	 * @param fileName Filename
 	 */
-	public static void createSingleFileResponse(HttpServletResponse response, AnalysisOutputFile file) {
-		String fileName = file.getLabel();
-
+	public static void createSingleFileResponse(HttpServletResponse response, AnalysisOutputFile file, String fileName) {
 		fileName = fileName.replaceAll(" ", "_");
 		fileName = fileName.replaceAll(",", "");
 
@@ -132,6 +131,22 @@ public class FileUtilities {
 			logger.error("Download failed...", e);
 		}
 	}
+
+
+	/**
+	 * Utility method for download single file from an analysis.
+	 *
+	 * @param response
+	 *            {@link HttpServletResponse}
+	 * @param file
+	 *            Set of {@link AnalysisOutputFile}
+	 */
+	public static void createSingleFileResponse(HttpServletResponse response, AnalysisOutputFile file) {
+		String fileName = file.getLabel();
+		FileUtilities.createSingleFileResponse(response, file, fileName);
+	}
+
+
 
 	/**
 	 * Method to remove unwanted characters from the filename.
