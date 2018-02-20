@@ -1,6 +1,15 @@
 const angular = require("angular");
 require("ng-file-upload");
+import { convertFileSize } from "../../utilities/file.utilities";
 require("../../../sass/pages/sample-files.scss");
+
+/**
+ * Filter for formatting the files size.
+ * @return {function} filter for file size
+ */
+function humanReadableBytes() {
+  return convertFileSize;
+}
 
 /**
  * Controller for the modal to confirm removing a sequenceFile
@@ -213,6 +222,7 @@ function FileUploadController(Upload, $timeout, $window, $uibModal) {
 
 const filesModule = angular
   .module("irida.sample.files", ["ngAnimate", "ui.bootstrap", "ngFileUpload"])
+  .filter("humanReadableBytes", humanReadableBytes)
   .controller("FileUploadController", [
     "Upload",
     "$timeout",
