@@ -764,7 +764,7 @@ public class ProjectSamplesController {
 	 */
 	@RequestMapping(value = "/projects/{projectId}/download/prepare")
 	@ResponseBody
-	public Map<String, Object> downloadSamples(@PathVariable Long projectId, @RequestBody List<Long> ids) {
+	public Map<String, Object> prepareSampleDownload(@PathVariable Long projectId, @RequestBody List<Long> ids) {
 		FileWriter writer = null;
 		try {
 			File tempFile = File.createTempFile("irida-", ".tmp");
