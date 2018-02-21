@@ -761,6 +761,7 @@ public class ProjectSamplesController {
 	 *
 	 * @param projectId {@link Project} id
 	 * @param ids       {@link Sample} ids within the project
+	 * @return Map with temp file "path" to read {@link Sample} ids from
 	 */
 	@RequestMapping(value = "/projects/{projectId}/download/prepare")
 	@ResponseBody
