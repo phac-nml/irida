@@ -55,13 +55,31 @@ Initialize the sample export menu.
 const EXPORT_HANDLERS = {
   download() {
     // this is set by the object calling (i.e. download btn)
+    const prepareDownloadUrl = this.data("prepareUrl");
     const url = this.data("url");
     const selected = $dt.select.selected()[0];
     const ids = [];
     selected.forEach(s => {
-      ids.push(s.sample);
+      ids.push(parseInt(s.sample));
     });
-    download(`${url}?${$.param({ ids })}`);
+
+    $.ajax({
+      type: "POST",
+      url: prepareDownloadUrl,
+      contentType: "application/json; charset=utf-8",
+      data: JSON.stringify(ids),
+      success: function(response, status, request) {
+        download(`${url}?${$.param({ path: response.path })}`);
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        console.error(
+          "Could not prepare download of files",
+          jqXHR,
+          textStatus,
+          errorThrown
+        );
+      }
+    });
   },
   file() {
     // this is set by the object calling (i.e. download btn)

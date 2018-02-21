@@ -187,6 +187,8 @@
                             <li role="menuitem">
                                 <a href="#" class="js-sample-export-btn t-download-btn"
                                    data-enabled-at="1" data-toggle="tooltip" data-type="download"
+                                   data:project-id="${project.getId()}"
+                                   data:prepare-url="@{/projects/{id}/download/prepare(id=${project.getId()})}"
                                    data:url="@{/projects/{id}/download/files(id=${project.getId()})}"
                                    data:enabled-msg="#{project.samples.tooltip.download.requires-more-than-one}">
                                     <i class="fa fa-download fa-fw spaced-right__sm" aria-hidden="true"></i>
