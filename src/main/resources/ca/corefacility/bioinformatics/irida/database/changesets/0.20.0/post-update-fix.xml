@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="post-update-fix" author="tom">
+
+        <validCheckSum>7:fe424670afa75882a10c9178073eecc1</validCheckSum>
+        <validCheckSum>7:04d990c0430b5fd7bd63f5bfc462584b</validCheckSum>
+
+        <sql>
+            SELECT 1
+        </sql>
+
+    </changeSet>
+</databaseChangeLog>
