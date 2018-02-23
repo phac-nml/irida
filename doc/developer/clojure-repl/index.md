@@ -6,6 +6,8 @@ Using a Clojure nREPL to interact with a live instance of IRIDA
 ===============================================================
 {:.no_toc}
 
+<i class="fa fa-warning" style="color:Tomato"/> **The nREPL is to be used in development only! Use in production at your peril!** <i class="fa fa-"/>
+
 Have you ever wanted to interact with live running instance of IRIDA to see what data an object contains or what a function does or to run some one-off arbitrary code? Well, you can use a Clojure nREPL to do these things and more! 
 
 With the `jvm-breakglass` library (https://github.com/matlux/jvm-breakglass/), it is possible to use a Clojure REPL to interact with a live running Java Spring application like IRIDA.
