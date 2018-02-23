@@ -13,6 +13,8 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.jena.atlas.json.JSON;
+import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -211,7 +213,24 @@ public class AnalysisController {
 				} else if (analysisType.equals(AnalysisType.SISTR_TYPING)) {
 					model.addAttribute("sistr", true);
 				} else if (analysisType.equals(AnalysisType.SNV_SUBTYPING_COLLECTION)) {
-					model.addAttribute("bio_hansel", true);
+					Analysis analysis = submission.getAnalysis();
+					Path path = Paths.get("/home/mgopez/workspace/irida/TestJsonData/technician_results.tab.json");
+					//analysis.getAnalysisOutputFile("hansel_tech_results").getFile();
+					boolean isError = true;
+
+					try{
+						String json = new Scanner(new BufferedReader(new FileReader(path.toFile()))).useDelimiter("\\Z").next();
+						JSONArray data = new JSONArray(json);
+						isError = false;
+					}catch (Exception e){
+						logger.error("Could not parse "+path+" displaying error page!");
+					}
+
+					if(isError){
+						model.addAttribute("biohanselerror", true);
+					}else{
+						model.addAttribute("biohansel", true);
+					}
 				}
 			}
 
@@ -496,11 +515,10 @@ public class AnalysisController {
 
 
 	@SuppressWarnings("resource")
-	@RequestMapping("/ajax/bio_hansel/{id}") @ResponseBody public Map<String,Object> getBioHanselAnalysis(@PathVariable Long id) {
+	@RequestMapping("/ajax/bio_hansel/{id}") @ResponseBody public Map<String,List<Map<String,Object>>> getBioHanselAnalysis(@PathVariable Long id) {
 		AnalysisSubmission submission = analysisSubmissionService.read(id);
 		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubmission(submission);
-        Map<String,Object> result = new HashMap<>();
-        result.put("parse_results_error", true); //init with parsing error true
+        Map<String,List<Map<String,Object>>> result = new HashMap<>();
 
 		final String[] hanselOutputFiles = {"hansel_tech_results"};//, "hansel_match_results", "hansel_tech_results"};
 
@@ -518,38 +536,32 @@ public class AnalysisController {
 		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription().getAnalysisType();
 		if (analysisType.equals(AnalysisType.SNV_SUBTYPING_COLLECTION)) {
 
-			Analysis analysis = submission.getAnalysis();
+			Analysis analysis = submission.getAnalysis(); // Needed to get the tech_file_key which needs to be implemented later
             ObjectMapper mapper = new ObjectMapper();
-            List<Map<String,Object>> currResults;
-			Path currPath = Paths.get(""); //Init to pwd, in the very unlikely event we can't get the path.
-            String currJson;
-            boolean parseSuccess = true;
+            List<Map<String,Object>> techResults;
+			Path techPath = Paths.get(""); //Init to pwd, in the very unlikely event we can't get the path.
+            String techJSON;
 
             try {
-                for(String currFile : hanselOutputFiles){
-                    //currPath = analysis.getAnalysisOutputFile(currFile).getFile();
-                    currPath = Paths.get("/home/mgopez/workspace/irida/TestJsonData/technician_results.tab.json");
-                        logger.debug("Attempting to parse "+currPath+" as JSON.");
-                        currJson = new String(Files.readAllBytes(currPath));
-                        currResults = mapper.readValue(currJson, new TypeReference<List<Map<String,Object>>>(){});
 
-                        if(currResults.size() > 0){
-                            result.put(currFile, currResults);
-                        }else{
-                            logger.error("Possible malformed JSON. Could not parse "+currFile+"!");
-                        }
+				techPath = Paths.get("/home/mgopez/workspace/irida/TestJsonData/technician_results.tab.json");
+				logger.debug("Attempting to parse "+techPath+" as JSON.");
 
-                }
-                // #TODO: When all the files are implemented then ask if( all files exist and are length > 0 )
-                result.put("parse_results_error", false);
+				techJSON = new String(Files.readAllBytes(techPath));
+				techResults = mapper.readValue(techJSON, new TypeReference<List<Map<String,Object>>>(){});
 
+				if(techResults.size() > 0){
+					result.put("data", techResults);
+				}else{
+					logger.error("Possible malformed JSON. Could not parse "+ techPath +"!");
+				}
 
             } catch (JsonParseException | JsonMappingException e) {
-                logger.error("Error attempting to parse file [" + currPath + "] as JSON",e);
+                logger.error("Error attempting to parse file [" + techPath + "] as JSON",e);
             } catch (FileNotFoundException e) {
-                logger.error("File [" + currPath + "] not found",e);
+                logger.error("File [" + techPath + "] not found",e);
             } catch (IOException e) {
-                logger.error("Error reading file [" + currPath + "]", e);
+                logger.error("Error reading file [" + techPath + "]", e);
             }
 
 		}

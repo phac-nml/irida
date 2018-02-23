@@ -2,15 +2,8 @@ import angular from "angular";
 import { showNotification } from "../../modules/notifications";
 import "../../../sass/pages/analysis.scss";
 import "../../vendor/datatables/datatables";
-import "../../vendor/datatables/datatables-buttons";
-import $ from "jquery";
-import {
-  createItemLink,
-  generateColumnOrderInfo,
-  tableConfig,
-  wrapCellContents
-} from "./../../utilities/datatables-utilities";
 import { formatDate } from "./../../utilities/date-utilities";
+import {BioHanselController} from "./types/biohansel";
 
 /**
  * Controller to download the analysis.
@@ -172,35 +165,6 @@ function PreviewController() {
 }
 
 
-function BioHanselController(analysisService){
-  const vm = this;
-
-  analysisService.getBioHanselResults().then(function(result) {
-    if (result['parse_results_error']) {
-      vm.parse_results_error = true;
-    } else {
-
-    // TODO: This needs to be moved to another separate JS file as the DataTables stuff is heavy and shouldn't be loaded on every page.
-    for( var i = 0; i < result['hansel_tech_results'].length; i++ ){
-        result['hansel_tech_results'][i]['qc_message'] = JSON.parse(JSON.stringify(result['hansel_tech_results'][i]["qc_message"]).replace("FAIL: ", ""))
-    }
-    const COLUMNS = generateColumnOrderInfo("tech_results_table");
-    //Creating the DataTable used to show Bio Hansel's results.
-    $('#tech_results_table').DataTable( {
-        "data" : result["hansel_tech_results"],
-        "columns": [
-            { "data": "sample" },
-            { "data": "subtype" },
-            { "data": "qc_status" },
-            { "data": "qc_message" }
-        ],
-        "columnDefs": [{ "width": "20%", "targets": "QC MESSAGE" }]
-
-    } );
-    }
-   });
-}
-
 function SistrController(analysisService) {
   const vm = this;
 
@@ -258,9 +222,13 @@ const iridaAnalysis = angular
         })
         .state("bio_hansel", {
           url: "/bio_hansel",
-          templateUrl: "bio_hansel.html",
+          templateUrl: "biohansel.html",
           controllerAs: "bioHanselCtrl",
           controller: ["AnalysisService", BioHanselController]
+        })
+        .state("bio_hansel_error", {
+          url: "/bio_hansel_error",
+          templateUrl: "biohanselerror.html"
         })
         .state("provenance", {
           url: "/provenance",

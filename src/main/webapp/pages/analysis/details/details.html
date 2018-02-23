@@ -60,8 +60,9 @@
 					<sub-nav-item state="preview" data:text="#{analysis.tab.preview}"></sub-nav-item>
 				</th:block>
 				<sub-nav-item th:if="${sistr}" state="sistr" text="Sistr"></sub-nav-item>
-                <sub-nav-item th:if="${bio_hansel}" state="bio_hansel" text="Bio_Hansel Results"></sub-nav-item>
-                <sub-nav-item state="inputs" data:text="#{analysis.tab.input-files}"></sub-nav-item>
+                <sub-nav-item th:if="${biohansel}" state="bio_hansel" text="Bio_Hansel Results"></sub-nav-item>
+				<sub-nav-item th:if="${biohanselerror}" state="bio_hansel_error" text="Bio_Hansel Error"></sub-nav-item>
+				<sub-nav-item state="inputs" data:text="#{analysis.tab.input-files}"></sub-nav-item>
 				<th:block th:if="${isCompleted}">
 					<sub-nav-item state="provenance" data:text="#{analysis.tab.provenance}"></sub-nav-item>
 				</th:block>
@@ -213,28 +214,16 @@
 				</div>
 			</script>
 
-            <script type="text/ng-template" id="bio_hansel.html">
+            <script th:if="${biohansel}"  type="text/ng-template" id="biohansel.html">
+				<th:block th:replace="analysis/details/fragments/biohansel-table :: #biohansel-table"/>
+            </script>
 
 
-            	<div ng-hide="!bioHanselCtrl.parse_results_error">
+			<script th:if="${biohanselerror}" type="text/ng-template" id="biohanselerror.html">
+				<div>
 					<h2 th:text="#{analysis.details.bio_hansel.error}">_Bio_Hansel results unavailable._</h2>
 				</div>
-
-				<div ng-hide="bioHanselCtrl.parse_results_error">
-					<h2 th:text="#{analysis.details.bio_hansel.technician.summary}">Bio_Hansel Results Overview</h2>
-                    <table width="100%" class="table dataTable" style="overflow-y: scroll; max-width: 100%; display: block; white-space: word-wrap: break-word;" id="tech_results_table">
-                        <thead>
-                            <tr>
-                                <th>Sample</th>
-                                <th>Subtype</th>
-                                <th>QC Status</th>
-                                <th>QC Message</th>
-                            </tr>
-                        </thead>
-                    </table>
-				</div>
-
-            </script>
+			</script>
 
 			<script type="text/ng-template" id="inputs.html" th:with="fileCount = ${#lists.size(paired_end)}">
 				<th:block th:if="${referenceFile}">
