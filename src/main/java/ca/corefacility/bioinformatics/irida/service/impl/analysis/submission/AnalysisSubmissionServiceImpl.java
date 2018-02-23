@@ -86,7 +86,9 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 			put(AnalysisState.SUBMITTING,           15.0f).
 			put(AnalysisState.RUNNING,              20.0f).
 			put(AnalysisState.FINISHED_RUNNING,     90.0f).
-			put(AnalysisState.COMPLETING,           95.0f).
+			put(AnalysisState.COMPLETING,           92.0f).
+			put(AnalysisState.TRANSFERRED,          95.0f).
+			put(AnalysisState.POST_PROCESSING,      97.0f).
 			put(AnalysisState.COMPLETED,            100.0f).
 			build();
 	// @formatter:on
@@ -408,11 +410,13 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		if (description.acceptsSingleSequenceFiles()) {
 			final Map<Sample, SingleEndSequenceFile> samplesMap = sequencingObjectService
 					.getUniqueSamplesForSequencingObjects(Sets.newHashSet(sequenceFiles));
-			for (final Sample s : samplesMap.keySet()) {
+			for (final Map.Entry<Sample,SingleEndSequenceFile> entry : samplesMap.entrySet()) {
+				Sample s = entry.getKey();
+				SingleEndSequenceFile file = entry.getValue();
 				// Build the analysis submission
 				AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
 				builder.name(name + "_" + s.getSampleName());
-				builder.inputFiles(ImmutableSet.of(samplesMap.get(s)));
+				builder.inputFiles(ImmutableSet.of(file));
 				builder.updateSamples(writeResultsToSamples);
 				builder.priority(AnalysisSubmission.Priority.MEDIUM);
 
@@ -446,11 +450,14 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		if (description.acceptsPairedSequenceFiles()) {
 			final Map<Sample, SequenceFilePair> samplesMap = sequencingObjectService
 					.getUniqueSamplesForSequencingObjects(Sets.newHashSet(sequenceFilePairs));
-			for (final Sample s : samplesMap.keySet()) {
+
+			for (final Map.Entry<Sample,SequenceFilePair> entry : samplesMap.entrySet()) {
+				Sample s = entry.getKey();
+				SequenceFilePair filePair = entry.getValue();
 				// Build the analysis submission
 				AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
 				builder.name(name + "_" + s.getSampleName());
-				builder.inputFiles(ImmutableSet.of(samplesMap.get(s)));
+				builder.inputFiles(ImmutableSet.of(filePair));
 				builder.updateSamples(writeResultsToSamples);
 
 				// Add reference file
@@ -593,6 +600,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 			
 		case FINISHED_RUNNING:
 		case COMPLETING:
+		case TRANSFERRED:
+		case POST_PROCESSING:
 		case COMPLETED:
 			return STATE_PERCENTAGE.get(analysisState);
 		default:

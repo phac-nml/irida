@@ -17,7 +17,7 @@ import ca.corefacility.bioinformatics.irida.security.ProjectSynchronizationAuthe
 
 /**
  * Confirms that a given user is the owner of a project
- *
+ * 
  *
  */
 @Component
@@ -26,7 +26,7 @@ public class ProjectOwnerPermission extends ModifyProjectPermission {
 	private static final String PERMISSION_PROVIDED = "isProjectOwner";
 
 	/**
-	 * Construct an instance of {@link ReadProjectPermission}.
+	 * Construct an instance of {@link ProjectOwnerPermission}.
 	 *
 	 * @param projectRepository the project repository.
 	 * @param userRepository    the user repository.

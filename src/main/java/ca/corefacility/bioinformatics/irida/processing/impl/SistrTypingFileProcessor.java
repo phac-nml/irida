@@ -88,7 +88,7 @@ public class SistrTypingFileProcessor implements FileProcessor {
 			// build an AnalysisSubmission
 			Builder builder = new AnalysisSubmission.Builder(pipelineUUID);
 			AnalysisSubmission submission = builder.inputFiles(Sets.newHashSet((SequenceFilePair) sequencingObject))
-					.priority(AnalysisSubmission.Priority.LOW)
+					.priority(AnalysisSubmission.Priority.LOW).updateSamples(true)
 					.name("Automated SISTR Typing " + sequencingObject.toString()).build();
 			submission.setSubmitter(admin);
 

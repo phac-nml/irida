@@ -1,6 +1,10 @@
 Changes
 =======
 
+0.20.0 to 0.21.0
+----------------
+* [UI]: Fixed bug where user could not cancel the upload of a sequence file on the Sample Files page.
+
 0.19.0 to 0.20.0
 ----------------
 * [Developer]: Fixed exception being thrown related to permission denied for updating samples when a normal user (collaborator on a project) runs the assembly pipeline (0.19.1).
@@ -18,6 +22,7 @@ Changes
 * [UI]: Clean up of the main navigation bar code, and removed its dependency on angular-ui.
 * [UI]: Fixed reflow layout of pipeline launch page.
 * [UI]: Changed the wording of 'copying' samples to 'sharing' samples.
+* [UI]: Allow users to share (copy) samples from a remote project. Disabled menu items for move and merge.
 * [Developer]: Ran `prettier` on all javascript files within `resources/js`.
 * [Developer]: Ran `prettier` on all scss files within `resources/sass`.
 * [Developer]: Add a git pre-commit hook to ensure `prettier` formatting.
@@ -29,6 +34,8 @@ Changes
 * [UI]: Fixed issue where breadcrumbs not displaying on the Samples > File > QC Analsis pages.
 * [UI]: Removed search box from sequencing run page.
 * [UI/Workflow]: Galaxy job error info retrieved from Galaxy if a workflow submission fails. Job error info is shown in Analyses table and on the Analysis page if it exists. 
+* [UI]: Fixed issue with Upload Sequence Files button when SequenceFiles page resized.
+* [UI]: SISTR able to write metadata back to samples.
 
 0.18.0 to 0.19.0
 ----------------
