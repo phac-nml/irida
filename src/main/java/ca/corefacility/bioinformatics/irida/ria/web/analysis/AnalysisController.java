@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
+import ca.corefacility.bioinformatics.irida.exceptions.*;
+import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +26,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
-import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
@@ -93,13 +91,15 @@ public class AnalysisController {
 	private MetadataTemplateService metadataTemplateService;
 	private SequencingObjectService sequencingObjectService;
 	private AnalysesListingService analysesListingService;
+	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
 
 	@Autowired
 	public AnalysisController(AnalysisSubmissionService analysisSubmissionService,
 			IridaWorkflowsService iridaWorkflowsService, UserService userService, SampleService sampleService,
 			ProjectService projectService, UpdateAnalysisSubmissionPermission updateAnalysisPermission,
 			MetadataTemplateService metadataTemplateService, SequencingObjectService sequencingObjectService,
-			AnalysesListingService analysesListingService, MessageSource messageSource) {
+			AnalysesListingService analysesListingService,
+			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor, MessageSource messageSource) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
 		this.messageSource = messageSource;
@@ -110,6 +110,7 @@ public class AnalysisController {
 		this.metadataTemplateService = metadataTemplateService;
 		this.sequencingObjectService = sequencingObjectService;
 		this.analysesListingService = analysesListingService;
+		this.analysisSubmissionSampleProcessor = analysisSubmissionSampleProcessor;
 	}
 
 	// ************************************************************************************************
@@ -283,7 +284,7 @@ public class AnalysisController {
 
 	/**
 	 * Get the status of projects that can be shared with the given analysis
-	 * 
+	 *
 	 * @param submissionId
 	 *            the {@link AnalysisSubmission} id
 	 * @return a list of {@link AnalysisController.SharedProjectResponse}
@@ -359,6 +360,20 @@ public class AnalysisController {
 		}
 
 		return ImmutableMap.of("result", "success", "message", message);
+	}
+
+	@RequestMapping(value = "/ajax/{submissionId}/save-results", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<String,String> saveResultsToSamples(@PathVariable Long submissionId){
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+
+		try {
+			analysisSubmissionSampleProcessor.updateSamples(submission);
+		} catch (PostProcessingException e) {
+			return ImmutableMap.of("result", "error");
+		}
+
+		return ImmutableMap.of("result", "success");
 	}
 
 	/**
