@@ -6,13 +6,13 @@ export function showNotification({ text, type = "success" }) {
   return new Noty({
     theme: "relax",
     timeout: 3500, // [integer|boolean] delay for closing event in milliseconds. Set false for sticky notifications
-    layout: "bottomRight",
+    layout: "topCenter",
     progressBar: true,
     type,
     text,
     animation: {
-      open: "animated fadeInUp",
-      close: "animated fadeOutDown"
+      open: "animated fadeInDown",
+      close: "animated fadeOutUp"
     }
   }).show();
 }
