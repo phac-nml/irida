@@ -8,9 +8,15 @@
     "precommit": "lint-staged"
   },
   "lint-staged": {
-    "resources/**/*.{js,json,scss}": ["prettier --write", "git add"]
+    "resources/**/*.{js,json,scss}": [
+      "prettier --write",
+      "git add"
+    ]
   },
-  "browserslist": ["> 1%", "last 2 versions"],
+  "browserslist": [
+    "> 1%",
+    "last 2 versions"
+  ],
   "dependencies": {
     "@bassettsj/livestamp": "^2.0.0",
     "angular": "1.6.2",
@@ -22,6 +28,7 @@
     "angular-messages": "1.6.2",
     "angular-resource": "1.6.2",
     "angular-ui-router": "1.0.0-alpha.4",
+    "axios": "^0.18.0",
     "bootstrap-daterangepicker": "^2.1.25",
     "bootstrap-switch": "^3.3.4",
     "chroma-js": "^1.3.4",
