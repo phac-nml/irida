@@ -1,6 +1,10 @@
 Changes
 =======
 
+0.20.0 to 0.21.0
+----------------
+* [UI]: Moved the position of the notification system to top center.
+
 0.19.0 to 0.20.0
 ----------------
 * [Developer]: Fixed exception being thrown related to permission denied for updating samples when a normal user (collaborator on a project) runs the assembly pipeline (0.19.1).
