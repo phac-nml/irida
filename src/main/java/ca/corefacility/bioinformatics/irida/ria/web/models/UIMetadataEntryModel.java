@@ -3,6 +3,9 @@ package ca.corefacility.bioinformatics.irida.ria.web.models;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 
+/**
+ * Model for the user interface for a {@link MetadataEntry}
+ */
 public class UIMetadataEntryModel {
 	private Long fieldId;
 	private String value;
