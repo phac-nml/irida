@@ -7,10 +7,11 @@ import fetch from "cross-fetch";
 
 class MetadataApi {
   /**
+   *
    * Get all metadata belonging to samples in the current project.
    * These will be the table content
    * @param {number} projectId
-   * @returns {Promise<AxiosResponse<any>>}
+   * @returns {Promise}
    */
   static getAllMetadataEntries(projectId) {
     return fetch(
@@ -22,7 +23,7 @@ class MetadataApi {
    *  Get all the metadata fields belonging to the templates withing a project.
    * These will be the table headers.
    * @param {number} projectId
-   * @returns {Promise<AxiosResponse<any>>}
+   * @returns {Promise}
    */
   static getAllMetadataFields(projectId) {
     return fetch(
