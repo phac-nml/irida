@@ -116,6 +116,15 @@ function AnalysisService($http) {
     });
   };
 
+  /**
+   * Call the server to save results of a pipeline to the samples
+   */
+  svc.saveResults = function() {
+    return $http.post(window.PAGE.URLS.saveResults).then(function(response) {
+      return response.data;
+    });
+  };
+
   return svc;
 }
 
@@ -135,6 +144,12 @@ function ProjectShareController(AnalysisService) {
       project.project.identifier,
       project.shared
     ).then(function(response) {
+      showNotification({ text: response.message });
+    });
+  };
+
+  vm.saveResults = function() {
+    AnalysisService.saveResults().then(function(response) {
       showNotification({ text: response.message });
     });
   };

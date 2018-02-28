@@ -78,15 +78,26 @@
 
 			<div ui-view=""></div>
 
-			<script type="text/ng-template" id="share.html" th:if="${updatePermission}">
-				<h2 th:text="#{analysis.details.share.title}">_Share Results With Projects_</h2>
-				<div class="row" ng-controller="ProjectShareController as shareController">
-					<div class="col-md-6" ng-repeat="resp in shareController.projects">
-						<div class="checkbox">
-							<label>
-								<input type="checkbox" class="share-project" ng-model="resp.shared" ng-value="resp.project.identifier" ng-change="shareController.updateShared(resp)"/>
-								<span>{{resp.project.name}}</span>
-							</label>
+			<script type="text/ng-template" id="share.html">
+				<div ng-controller="ProjectShareController as shareController">
+					<div th:if="${updatePermission}">
+						<h2 th:text="#{analysis.details.share.title}">_Share Results With Projects_</h2>
+						<div class="row">
+							<div class="col-md-6" ng-repeat="resp in shareController.projects">
+								<div class="checkbox">
+									<label>
+										<input type="checkbox" class="share-project" ng-model="resp.shared" ng-value="resp.project.identifier" ng-change="shareController.updateShared(resp)"/>
+										<span>{{resp.project.name}}</span>
+									</label>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<h2 th:text="#{analysis.details.save.samples.title}">_Save results to samples_</h2>
+					<div class="row">
+						<div class="col-md-6">
+							<button class="btn btn-default" th:text="#{analysis.details.save.samples.button}" ng-click="shareController.saveResults()">_Save results_</button>
 						</div>
 					</div>
 				</div>

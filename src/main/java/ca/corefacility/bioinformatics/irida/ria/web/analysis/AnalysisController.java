@@ -362,7 +362,7 @@ public class AnalysisController {
 		return ImmutableMap.of("result", "success", "message", message);
 	}
 
-	@RequestMapping(value = "/ajax/{submissionId}/save-results", method = RequestMethod.GET)
+	@RequestMapping(value = "/ajax/{submissionId}/save-results", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String,String> saveResultsToSamples(@PathVariable Long submissionId){
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
@@ -373,7 +373,7 @@ public class AnalysisController {
 			return ImmutableMap.of("result", "error");
 		}
 
-		return ImmutableMap.of("result", "success");
+		return ImmutableMap.of("result", "success", "message", "didit");
 	}
 
 	/**
