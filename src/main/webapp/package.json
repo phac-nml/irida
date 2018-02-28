@@ -88,7 +88,6 @@
     "postcss-loader": "^2.0.6",
     "prettier": "^1.9.2",
     "progress-bar-webpack-plugin": "^1.10.0",
-    "redux": "^3.7.2",
     "resolve-url-loader": "^2.2.0",
     "sass-loader": "^6.0.6",
     "style-loader": "^0.19.0",
