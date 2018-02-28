@@ -89,7 +89,7 @@ public class LineListController {
 			Sample sample = join.getObject();
 			List<UIMetadataEntryModel> sampleModels = new ArrayList<>();
 			Map<MetadataTemplateField, MetadataEntry> sampleMetadata = sample.getMetadata();
-			sampleMetadata.forEach((metadataTemplateField, metadataEntry) -> sampleModels.add(new UIMetadataEntryModel(metadataEntry, metadataTemplateField)));
+			sampleMetadata.forEach((metadataTemplateField, metadataEntry) -> sampleModels.add(new UIMetadataEntryModel(project, sample, metadataEntry, metadataTemplateField)));
 			result.add(sampleModels);
 		}
 
