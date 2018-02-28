@@ -21,6 +21,9 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
+/**
+ * This controller is responsible for AJAX handling for the line list page, which displays sample metatdata.
+ */
 @Controller
 @RequestMapping("/linelist")
 public class LineListController {
@@ -29,8 +32,7 @@ public class LineListController {
 	private MetadataTemplateService metadataTemplateService;
 
 	@Autowired
-	public LineListController(ProjectService projectService, SampleService sampleService,
-			MetadataTemplateService metadataTemplateService) {
+	public LineListController(ProjectService projectService, SampleService sampleService, MetadataTemplateService metadataTemplateService) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.metadataTemplateService = metadataTemplateService;
@@ -87,8 +89,7 @@ public class LineListController {
 			Sample sample = join.getObject();
 			List<UIMetadataEntryModel> sampleModels = new ArrayList<>();
 			Map<MetadataTemplateField, MetadataEntry> sampleMetadata = sample.getMetadata();
-			sampleMetadata.forEach((metadataTemplateField, metadataEntry) -> sampleModels.add(
-					new UIMetadataEntryModel(metadataEntry, metadataTemplateField)));
+			sampleMetadata.forEach((metadataTemplateField, metadataEntry) -> sampleModels.add(new UIMetadataEntryModel(metadataEntry, metadataTemplateField)));
 			result.add(sampleModels);
 		}
 
