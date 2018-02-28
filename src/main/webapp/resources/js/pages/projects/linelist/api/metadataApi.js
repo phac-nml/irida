@@ -1,9 +1,9 @@
 /**
  * Class responsible for ajax call for project sample metadata.
- * THE `cross-fetch` to polyfill the natural fetch allowing for native es6 promises,
+ * The `axios` ajax library is used since it allows for the native es6 promises,
  * which will be used later on this page to handle multiple calls simultaneously.
  */
-import fetch from "cross-fetch";
+import axios from "axios";
 
 class MetadataApi {
   /**
@@ -14,9 +14,9 @@ class MetadataApi {
    * @returns {Promise}
    */
   static getAllMetadataEntries(projectId) {
-    return fetch(
-      `${window.TL.BASE_URL}linelist/entries?projectId=${projectId}`
-    ).then(response => response.json());
+    return axios
+      .get(`${window.TL.BASE_URL}linelist/entries?projectId=${projectId}`)
+      .then(response => response.data);
   }
 
   /**
@@ -26,9 +26,9 @@ class MetadataApi {
    * @returns {Promise}
    */
   static getAllMetadataFields(projectId) {
-    return fetch(
-      `${window.TL.BASE_URL}linelist/fields?projectId=${projectId}`
-    ).then(response => response.json());
+    return axios
+      .get(`${window.TL.BASE_URL}linelist/fields?projectId=${projectId}`)
+      .then(response => response.data);
   }
 }
 
