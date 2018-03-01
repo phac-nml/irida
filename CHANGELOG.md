@@ -4,6 +4,7 @@ Changes
 0.20.0 to 0.21.0
 ----------------
 * [UI]: Fixed bug where user could not cancel the upload of a sequence file on the Sample Files page.
+* [Developer]: Removed old gulp dependencies from the `package.json` file.
 
 0.19.0 to 0.20.0
 ----------------
