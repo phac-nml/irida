@@ -1,7 +1,7 @@
 /**
  * Root file for the linelist page.
  */
-import MetadataEntriesApi from "./api/metadataEntryApi";
+import MetadataEntriesApi from "./api/metadataEntriesApi";
 import MetadataFieldsApi from "./api/metadataFieldsApi";
 
 /**
