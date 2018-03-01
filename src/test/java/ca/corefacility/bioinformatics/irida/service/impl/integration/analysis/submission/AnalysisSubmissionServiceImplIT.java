@@ -12,11 +12,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +19,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
@@ -55,7 +49,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkf
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.WorkflowNamedParametersRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
-import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -752,17 +745,5 @@ public class AnalysisSubmissionServiceImplIT {
 		Set<Long> submissionIds = submissions.stream().map(AnalysisSubmission::getId).collect(Collectors.toSet());
 		assertEquals("Got incorrect analysis submissions", ImmutableSet.of(),
 				submissionIds);
-	}
-
-	/**
-	 * Test specification.
-	 * 
-	 *
-	 */
-	private class AnalysisSubmissionTestSpecification implements Specification<AnalysisSubmission> {
-		@Override
-		public Predicate toPredicate(Root<AnalysisSubmission> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-			return null;
-		}
 	}
 }

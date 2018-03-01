@@ -50,6 +50,8 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
@@ -63,7 +65,6 @@ import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
-
 
 /**
  * Controller for pipeline related views
@@ -216,6 +217,7 @@ public class PipelineController extends BaseController {
 			List<Map<String, Object>> projectList = new ArrayList<>();
 			List<Map<String, Object>> addRefList = new ArrayList<>();
 			IridaWorkflowDescription description = flow.getWorkflowDescription();
+			final String workflowName = description.getName().toLowerCase();
 			for (Project project : cartMap.keySet()) {
 				// Check to see if it requires a reference file.
 				if (description.requiresReference()) {
@@ -280,7 +282,6 @@ public class PipelineController extends BaseController {
 			final List<Map<String, Object>> parameters = new ArrayList<>();
 			if (defaultWorkflowParameters != null) {
 				final List<Map<String, String>> defaultParameters = new ArrayList<>();
-				final String workflowName = description.getName().toLowerCase();
 				for (IridaWorkflowParameter p : defaultWorkflowParameters) {
 					if (p.isRequired()) {
 						continue;
@@ -326,6 +327,7 @@ public class PipelineController extends BaseController {
 			model.addAttribute("addRefProjects", addRefList);
 			model.addAttribute("projects", projectList);
 			model.addAttribute("canUpdateSamples", canUpdateAllSamples);
+                        model.addAttribute("workflowName", workflowName);
 			model.addAttribute("dynamicSourceRequired", description.requiresDynamicSource());
 
 			final List<Map<String, Object>> dynamicSources = new ArrayList<>();
@@ -410,6 +412,7 @@ public class PipelineController extends BaseController {
 		try {
 			IridaWorkflow flow = workflowsService.getIridaWorkflow(pipelineId);
 			IridaWorkflowDescription description = flow.getWorkflowDescription();
+
 			// The pipeline needs to have a name.
 			if (Strings.isNullOrEmpty(name)) {
 				return ImmutableMap

@@ -10,11 +10,9 @@ import $ from "jquery";
  * Check the state of the calling button to see if it should be enabled or not.
  * @param count the number if samples currently selected.
  * @param hasAssociated if there are associated project currently displayed.
+ * @param isRemote If the project is a remote project.
  */
-function checkState(count, hasAssociated) {
-  // Remove the tooltip. A new one will be created based on the
-  // information provided.
-  this.$node.tooltip("destroy");
+function checkState(count, hasAssociated, isRemote) {
   if (hasAssociated && this.$node.data("associatedMsg")) {
     this.$node.parent().addClass("disabled");
     // Activate the tooltip
@@ -23,18 +21,26 @@ function checkState(count, hasAssociated) {
       placement: "right",
       title: this.$node.data("associatedMsg")
     });
+  } else if (isRemote && this.$node.data("remoteMsg")) {
+    this.$node.parent().addClass("disabled");
+    // Activate the tooltip
+    this.$node.tooltip({
+      container: "body",
+      placement: "right",
+      title: this.$node.data("remoteMsg")
+    });
+  } else if (count < this.$node.data("enabledAt")) {
+    this.$node.parent().addClass("disabled");
+    // Activate the tooltip
+    this.$node.tooltip({
+      container: "body",
+      placement: "right",
+      title: this.$node.data("enabledMsg")
+    });
   } else {
-    if (count < this.$node.data("enabledAt")) {
-      this.$node.parent().addClass("disabled");
-      // Activate the tooltip
-      this.$node.tooltip({
-        container: "body",
-        placement: "right",
-        title: this.$node.data("enabledMsg")
-      });
-    } else {
-      this.$node.parent().removeClass("disabled");
-    }
+    // Remove the tooltip.
+    this.$node.tooltip("destroy");
+    this.$node.parent().removeClass("disabled");
   }
 }
 
@@ -94,15 +100,16 @@ export class SampleExportButton {
    * Check the state the button should be in.
    * @param  {number} count current number of selected samples (defaults to 0)
    * @param {boolean} hasAssociated if associated projects are displayed in the table.
+   * @param {boolean} isRemote Whether the project is a remote project.
    */
-  checkState(count = 0, hasAssociated = false) {
-    checkState.call(this, count, hasAssociated);
+  checkState(count = 0, hasAssociated = false, isRemote = false) {
+    checkState.call(this, count, hasAssociated, isRemote);
   }
 }
 
 /**
  * This class represents the state and function of buttons within the
- * project > sample > Sample Tools dropdown menu.
+ * project > sample > Sample Tools dropdown menu which apply to individual samples.
  */
 export class SampleDropdownButton {
   /**
@@ -130,8 +137,45 @@ export class SampleDropdownButton {
    * number of currently selected samples
    * @param {number} count of selected samples
    * @param {boolean} hasAssociated whether associated projects are being displayed.
+   * @param {boolean} isRemote Whether the project is a remote project.
    */
-  checkState(count = 0, hasAssociated = false) {
-    checkState.call(this, count, hasAssociated);
+  checkState(count = 0, hasAssociated = false, isRemote = false) {
+    checkState.call(this, count, hasAssociated, isRemote);
+  }
+}
+
+/**
+ * This class represents the state and function of buttons within the
+ * project > sample > Sample Tools dropdown menu which apply to the entire project.
+ */
+export class SampleProjectDropdownButton {
+  /**
+   * Link the dom and the EventListener for a button.
+   * @param {node} node - actual button DOM node.
+   */
+  constructor(node, isRemote) {
+    const btn = this;
+    this.$node = $(node);
+
+    this.$node.on("click", function() {
+      btn.clickHandler();
+    });
+    this.checkState(undefined, undefined, isRemote);
+  }
+
+  clickHandler() {
+    if (!this.$node.parent().hasClass("disabled")) {
+      window.location.href = this.$node.attr("data-url");
+    }
+  }
+
+  /**
+   * Check to see if the button should be disabled based upon type of project.
+   * @param {number} count of selected samples
+   * @param {boolean} hasAssociated whether associated projects are being displayed.
+   * @param {boolean} isRemote Whether the project is a remote project.
+   */
+  checkState(count = 0, hasAssociated = false, isRemote = false) {
+    checkState.call(this, count, hasAssociated, isRemote);
   }
 }

@@ -2,8 +2,6 @@
 <dataset>
 	<!-- Tables *must* be listed in the order that they can be deleted to satisfy 
 		referential integrity -->
-	<sample />
-
 	<analysis />
 	<analysis_fastqc />
 	<overrepresented_sequence />
@@ -12,11 +10,14 @@
 	<sequence_file />
 	<sequence_file_properties />
 	<user />
+		
+	<remote_api />
+	<remote_status />
+	
+	<sample />
 	
 	<sequencing_run />
 	<miseq_run />
-	<remote_api />
-	<remote_status />
 	<project />
 	<related_project />
 

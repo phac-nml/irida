@@ -70,6 +70,9 @@ public class ProjectControllerUtils {
 
 		boolean isOwner = projectOwnerPermission.isAllowed(authentication, project);
 		model.addAttribute("isOwner", isOwner);
+		
+		boolean isOwnerAllowRemote = projectMembersPermission.isAllowed(authentication, project);
+		model.addAttribute("isOwnerAllowRemote", isOwnerAllowRemote);
 
 		boolean manageMembers = projectMembersPermission.isAllowed(authentication, project);
 		model.addAttribute("manageMembers", manageMembers);

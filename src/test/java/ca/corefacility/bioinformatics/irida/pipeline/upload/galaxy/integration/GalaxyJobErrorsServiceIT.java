@@ -103,7 +103,7 @@ public class GalaxyJobErrorsServiceIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testSuccessfulAnalysisReturnsNoJobErrors() throws Exception {
 		databaseSetupGalaxyITService.setupSubmissionInDatabase(1L, sequenceFilePath, referenceFilePath,
-				validIridaWorkflowId);
+				validIridaWorkflowId, false);
 
 		AnalysisSubmission submission = runAnalysis();
 		List<JobError> errors = galaxyJobErrorsService.createNewJobErrors(submission);
@@ -117,7 +117,7 @@ public class GalaxyJobErrorsServiceIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testFailingAnalysisReturnsJobError() throws Exception {
 		databaseSetupGalaxyITService.setupSubmissionInDatabase(1L, sequenceFilePath, referenceFilePath,
-				iridaWorkflowIdWithError);
+				iridaWorkflowIdWithError, false);
 		AnalysisSubmission submission = runAnalysis();
 		assertEquals(AnalysisState.ERROR, submission.getAnalysisState());
 

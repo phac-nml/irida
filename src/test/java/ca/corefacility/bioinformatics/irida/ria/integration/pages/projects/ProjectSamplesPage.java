@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -243,7 +244,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		return isAnchorElementEnabled(mergeBtn);
 	}
 
-	public boolean isCopyBtnEnabled() {
+	public boolean isShareBtnEnabled() {
 		return isAnchorElementEnabled(copyBtn);
 	}
 
@@ -336,13 +337,18 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		mergeBtnOK.click();
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("merge-modal")));
 	}
+	
+	public void waitUntilShareButtonVisible() {
+		WebDriverWait wait = openToolsDropdownAndWait();
+		wait.until(ExpectedConditions.visibilityOf(copyBtn));
+	}
 
-	public void copySamples(String project, boolean owner) {
+	public void shareSamples(String project, boolean owner) {
 		WebDriverWait wait = openToolsDropdownAndWait();
 		wait.until(ExpectedConditions.visibilityOf(copyBtn));
 		
 		copyBtn.click();
-		copyMoveSamples(project, owner);
+		shareMoveSamples(project, owner);
 	}
 
 	public void moveSamples(String projectNum) {
@@ -350,7 +356,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.visibilityOf(moveBtn));
 		moveBtn.click();
 		// Setting owner to false because we removed the checkbox from the move.
-		copyMoveSamples(projectNum, false);
+		shareMoveSamples(projectNum, false);
 	}
 
 	private void openFilterModal() {
@@ -425,19 +431,22 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		// Wait for select2 to be open properly.
 		waitForTime(500);
 		sendInputTextSlowly(value, select2Input);
-		WebDriverWait wait = new WebDriverWait(driver, 10);
 		// Wait needed to allow select2 to populate.
 		waitForTime(500);
 		select2Input.sendKeys(Keys.RETURN);
 	}
 
-	private void copyMoveSamples(String project, boolean owner) {
+	private void shareMoveSamples(String project, boolean owner) {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(ExpectedConditions.visibilityOf(copySamplesModal));
 		enterSelect2Value(project);
 		
-		if(owner){
-			giveOwnerBtn.click();
+		if(owner) {
+			try {
+				giveOwnerBtn.click();
+			} catch (NoSuchElementException e) {
+				throw new GiveOwnerNotDisplayedException();
+			}
 		}
 		
 		wait.until(ExpectedConditions.elementToBeClickable(copyModalConfirmBtn));
@@ -464,5 +473,14 @@ public class ProjectSamplesPage extends ProjectPageBase {
 			}
 		}
 		return locked;
+	}
+	
+	/**
+	 * Exception which is thrown when attempting to give owner to a sample
+	 * during copy/move and button is not displayed. Used for verifying no give
+	 * owner button when copying remote samples.
+	 */
+	@SuppressWarnings("serial")
+	public static class GiveOwnerNotDisplayedException extends RuntimeException {
 	}
 }

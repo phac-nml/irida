@@ -198,7 +198,13 @@ public class AnalysisExecutionServiceGalaxyAsync {
 		logger.trace("Saving results for " + submittedAnalysis);
 		Analysis savedAnalysis = analysisService.create(analysisResults);
 
-		submittedAnalysis.setAnalysisState(AnalysisState.COMPLETED);
+		// if samples should be updated, set to TRANSFERRED.  Otherwise just complete.
+		if (submittedAnalysis.getUpdateSamples()) {
+			submittedAnalysis.setAnalysisState(AnalysisState.TRANSFERRED);
+		} else {
+			submittedAnalysis.setAnalysisState(AnalysisState.COMPLETED);
+		}
+
 		try {
 			submittedAnalysis.setAnalysis(savedAnalysis);
 		} catch (AnalysisAlreadySetException e) {
@@ -206,15 +212,33 @@ public class AnalysisExecutionServiceGalaxyAsync {
 		}
 
 		AnalysisSubmission completedSubmission = analysisSubmissionService.update(submittedAnalysis);
-		
-		if (completedSubmission.getUpdateSamples()) {
+
+		return new AsyncResult<>(completedSubmission);
+	}
+
+	/**
+	 * Calls the {@link AnalysisSubmissionSampleProcessor} to perform any post processing required on a given {@link AnalysisSubmission}
+	 *
+	 * @param analysisSubmission the {@link AnalysisSubmission} to process
+	 * @return a Future {@link AnalysisSubmission}
+	 */
+	@Transactional
+	public Future<AnalysisSubmission> postProcessResults(AnalysisSubmission analysisSubmission) {
+		checkNotNull(analysisSubmission, "submittedAnalysis is null");
+
+		if (analysisSubmission.getUpdateSamples()) {
 			try {
-				analysisSubmissionSampleProcessor.updateSamples(completedSubmission);
+				analysisSubmissionSampleProcessor.updateSamples(analysisSubmission);
 			} catch (Exception e) {
-				logger.error("Error updating corresponding samples with analysis results for AnalysisSubmission = [" + completedSubmission.getId() + "]. Skipping this step.", e);
+				logger.error("Error updating corresponding samples with analysis results for AnalysisSubmission = ["
+						+ analysisSubmission.getId() + "]. Skipping this step.", e);
 			}
 		}
 
-		return new AsyncResult<>(completedSubmission);
+		analysisSubmission.setAnalysisState(AnalysisState.COMPLETED);
+
+		analysisSubmission = analysisSubmissionService.update(analysisSubmission);
+
+		return new AsyncResult<>(analysisSubmission);
 	}
 }

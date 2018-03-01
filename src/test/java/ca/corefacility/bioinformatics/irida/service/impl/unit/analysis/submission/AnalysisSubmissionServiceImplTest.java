@@ -226,7 +226,7 @@ public class AnalysisSubmissionServiceImplTest {
 	public void testGetPercentageCompleteStateCompleting() throws EntityNotFoundException, ExecutionManagerException {
 		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.COMPLETING);
 
-		assertEquals("invalid percent complete", 95.0f,
+		assertEquals("invalid percent complete", 92.0f,
 				analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA);
 	}
 
