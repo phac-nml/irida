@@ -1,15 +1,16 @@
 /**
  * Root file for the linelist page.
  */
-import MetadataApi from "./api/metadataApi";
+import MetadataEntriesApi from "./api/metadataEntryApi";
+import MetadataFieldsApi from "./api/metadataFieldsApi";
 
 /**
  * These are only here now to test the API.
  */
-MetadataApi.getAllMetadataEntries(window.project.id)
+MetadataEntriesApi.getAllMetadataEntries(window.project.id)
   .then(result => console.log(result))
   .catch(err => console.error(err));
 
-MetadataApi.getAllMetadataFields(window.project.id)
+MetadataFieldsApi.getAllMetadataFields(window.project.id)
   .then(result => console.log(result))
   .catch(err => console.error(err));
