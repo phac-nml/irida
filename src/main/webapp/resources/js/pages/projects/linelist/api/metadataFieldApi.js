@@ -3,7 +3,7 @@
  */
 import axios from "axios";
 
-class MetadataFieldsApi {
+class MetadataFieldApi {
   /**
    * Get all the MetadataTemplateFields belonging to the templates withing a
    * project.These will be the table headers.
@@ -17,4 +17,4 @@ class MetadataFieldsApi {
   }
 }
 
-export default MetadataFieldsApi;
+export default MetadataFieldApi;

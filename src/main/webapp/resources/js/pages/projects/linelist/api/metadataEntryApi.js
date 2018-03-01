@@ -3,7 +3,7 @@
  */
 import axios from "axios";
 
-class MetadataEntriesApi {
+class MetadataEntryApi {
   /**
    * Get all metadata belonging to samples in the current project.
    * These will be the table content
@@ -17,4 +17,4 @@ class MetadataEntriesApi {
   }
 }
 
-export default MetadataEntriesApi;
+export default MetadataEntryApi;
