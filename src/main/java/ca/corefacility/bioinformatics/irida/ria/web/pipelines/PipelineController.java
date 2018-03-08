@@ -2,15 +2,11 @@ package ca.corefacility.bioinformatics.irida.ria.web.pipelines;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
+
+
+import javax.validation.UnexpectedTypeException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +21,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -334,76 +329,115 @@ public class PipelineController extends BaseController {
 	// ************************************************************************************************
 
 	/**
+	 * Convert Object to List of Long values
+	 *
+	 * Jackson converts a JSON list of integers to type List<Integer>. This method gets around that.
+	 *
+	 * @param object Object to be converted to a list of Long
+	 * @return List of Long
+	 */
+	private List<Long> toLongList(Object object) {
+		if (!(object instanceof List)) {
+			throw new UnexpectedTypeException("Expected List<Long> for 'paired'" + object);
+		}
+		List<Long> out = new ArrayList<>();
+		for (Object x : (List) object) {
+			if (x instanceof Long) {
+				out.add((Long) x);
+			} else if (x instanceof Integer) {
+				out.add(((Integer) x).longValue());
+			} else if (x instanceof String) {
+				out.add(Long.parseLong((String) x));
+			} else {
+				throw new UnexpectedTypeException("Expected to convert '" + object + "' to List<Long>");
+			}
+		}
+		return out;
+	}
+
+	/**
+	 * Convert an Object to a Long
+	 * @param object Object to convert to Long
+	 * @return Long value of Object
+	 */
+	private Long toLong(Object object) {
+		if (object == null) {
+			return null;
+		}
+		if (object instanceof Integer) {
+			return ((Integer) object).longValue();
+		}
+		if (object instanceof Long) {
+			return (Long) object;
+		}
+		if (object instanceof String) {
+			return Long.parseLong((String) object);
+		}
+		throw new UnexpectedTypeException("Expected to convert '" + object + "' to Long");
+	}
+
+	/**
 	 * Launch a pipeline
 	 *
-	 * @param locale                the locale that the browser is using for the current request.
-	 * @param pipelineId            the id for the {@link IridaWorkflow}
-	 * @param single                a list of {@link SequenceFile} id's
-	 * @param paired                a list of {@link SequenceFilePair} id's
-	 * @param parameters            TODO: This is a hack! Update when fixing issue #100
-	 *                              {@link Map} of ALL parameters passed. Only want the 'paras'
-	 *                              object: a {@link Map} of pipeline parameters
-	 * @param ref                   the id for a {@link ReferenceFile}
-	 * @param name                  a user provided name for the {@link IridaWorkflow}
-	 * @param analysisDescription   Optional description of the analysis
-	 * @param sharedProjects        A list of {@link Project} ids to share the analysis submission
-	 *                              with
-	 * @param writeResultsToSamples Whether to save the results of the pipeline to the samples
+	 * @param locale     the locale that the browser is using for the current request.
+	 * @param pipelineId the id for the {@link IridaWorkflow}
+	 * @param map        Parsed JSON request body optionally containing key-values for
+	 *                   - analysis `name`,
+	 *                   - analysis `description`,
+	 *                   - list of `single` end sequencing file ids
+	 *                   - list of `paired` end sequencing file ids
+	 *                   - any `sharedProjects` to share analysis with
+	 *                   - `ref` genome id
+	 *                   - `selectedParameters` for the pipeline containing `id` and list of `parameter` key-values
 	 * @return a JSON response with the status and any messages.
 	 */
 	@RequestMapping(value = "/ajax/start/{pipelineId}", method = RequestMethod.POST)
-	public @ResponseBody Map<String, Object> ajaxStartPipeline(Locale locale, @PathVariable UUID pipelineId,
-			@RequestParam(required = false) List<Long> single, @RequestParam(required = false) List<Long> paired,
-			@RequestParam(required = false) Map<String, String> parameters, @RequestParam(required = false) Long ref,
-			@RequestParam String name, @RequestParam(name = "description", required = false) String analysisDescription,
-			@RequestParam(required = false) List<Long> sharedProjects, @RequestParam(required = false, defaultValue = "false") Boolean writeResultsToSamples) {
+	public @ResponseBody
+	Map<String, Object> ajaxStartBigPipeline(Locale locale, @PathVariable UUID pipelineId,
+			@RequestBody Map<String, Object> map) {
+		String name = (String) map.getOrDefault("name", null);
+		String analysisDescription = (String) map.getOrDefault("description", null);
+		Object single = map.getOrDefault("single", null);
+		Object paired = map.getOrDefault("paired", null);
+		Object sharedProjects = map.getOrDefault("sharedProjects", null);
+		Object ref = map.getOrDefault("ref", null);
+		Object selectedParameters = map.getOrDefault("selectedParameters", null);
 		Map<String, Object> result = ImmutableMap.of("success", true);
+		Boolean writeResultsToSamples = (Boolean) map.getOrDefault("writeResultsToSamples", false);
 		try {
 			IridaWorkflow flow = workflowsService.getIridaWorkflow(pipelineId);
 			IridaWorkflowDescription description = flow.getWorkflowDescription();
-
 			// The pipeline needs to have a name.
 			if (Strings.isNullOrEmpty(name)) {
-				return ImmutableMap
-						.of("error", messageSource.getMessage("workflow.no-name-provided", null, locale));
+				return ImmutableMap.of("error", messageSource.getMessage("workflow.no-name-provided", null, locale));
 			}
-
-
 			// Check to see if a reference file is required.
 			if (description.requiresReference() && ref == null) {
-				return ImmutableMap.of("error", messageSource.getMessage("pipeline.error.no-reference.pipeline-start", null, locale));
+				return ImmutableMap.of("error",
+						messageSource.getMessage("pipeline.error.no-reference.pipeline-start", null, locale));
 			}
-
 			// Get a list of the files to submit
 			List<SingleEndSequenceFile> singleEndFiles = new ArrayList<>();
 			List<SequenceFilePair> sequenceFilePairs = new ArrayList<>();
-
-			if (single != null) {
-				Iterable<SequencingObject> readMultiple = sequencingObjectService.readMultiple(single);
-				
+			if (single != null && single instanceof List) {
+				Iterable<SequencingObject> readMultiple = sequencingObjectService.readMultiple(toLongList(single));
 				readMultiple.forEach(f -> {
-					if (f instanceof SingleEndSequenceFile) {
-						throw new IllegalArgumentException("file " + f.getId() + " not a single end file");
+					if (!(f instanceof SingleEndSequenceFile)) {
+						throw new IllegalArgumentException("file " + f.getId() + " not a SingleEndSequenceFile");
 					}
-					
 					singleEndFiles.add((SingleEndSequenceFile) f);
 				});
-				
 				// Check the single files for duplicates in a sample, throws SampleAnalysisDuplicateException
 				sequencingObjectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(singleEndFiles));
 			}
-
-			if (paired != null) {
-				Iterable<SequencingObject> readMultiple = sequencingObjectService.readMultiple(paired);
-				
+			if (paired != null && paired instanceof List) {
+				Iterable<SequencingObject> readMultiple = sequencingObjectService.readMultiple(toLongList(paired));
 				readMultiple.forEach(f -> {
-					if (f instanceof SingleEndSequenceFile) {
-						throw new IllegalArgumentException("file " + f.getId() + " not a single end file");
+					if (!(f instanceof SequenceFilePair)) {
+						throw new IllegalArgumentException("file " + f.getId() + " not a SequenceFilePair");
 					}
-					
 					sequenceFilePairs.add((SequenceFilePair) f);
 				});
-				
 				// Check the pair files for duplicates in a sample, throws SampleAnalysisDuplicateException
 				sequencingObjectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(sequenceFilePairs));
 			}
@@ -411,12 +445,11 @@ public class PipelineController extends BaseController {
 			// Get the pipeline parameters
 			Map<String, String> params = new HashMap<>();
 			IridaWorkflowNamedParameters namedParameters = null;
-			if (parameters.containsKey("selectedParameters")) {
+			if (selectedParameters != null && (selectedParameters instanceof Map)) {
 				try {
-					final Map<String, Object> passedParameters = extractPipelineParameters(parameters
-							.get("selectedParameters"));
-					// we should only have *one* parameter set supplied.
-					final String selectedParametersId = passedParameters.get("id").toString();
+					@SuppressWarnings("unchecked") Map<String, Object> parameters = (Map<String, Object>) selectedParameters;
+					final String selectedParametersId = parameters.get("id")
+							.toString();
 					if (!DEFAULT_WORKFLOW_PARAMETERS_ID.equals(selectedParametersId)
 							&& !CUSTOM_UNSAVED_WORKFLOW_PARAMETERS_ID.equals(selectedParametersId)) {
 						// this means that a named parameter set was selected
@@ -425,38 +458,45 @@ public class PipelineController extends BaseController {
 						namedParameters = namedParameterService.read(Long.valueOf(selectedParametersId));
 					} else {
 						@SuppressWarnings("unchecked")
-						final List<Map<String, String>> unnamedParameters = (List<Map<String, String>>) passedParameters.get("parameters");
+						final List<Map<String, String>> unnamedParameters = (List<Map<String, String>>) parameters.get(
+								"parameters");
 						for (final Map<String, String> parameter : unnamedParameters) {
 							params.put(parameter.get("name"), parameter.get("value"));
 						}
 					}
-				} catch (final IOException e) {
-					return ImmutableMap
-							.of("parameterError", messageSource.getMessage("pipeline.parameters.error", null, locale));
+				} catch (Exception e) {
+					return ImmutableMap.of("parameterError",
+							messageSource.getMessage("pipeline.parameters.error", null, locale));
 				}
 			}
-			
+
 			List<Project> projectsToShare = new ArrayList<>();
-			if (sharedProjects != null && !sharedProjects.isEmpty()) {
-				projectsToShare = Lists.newArrayList(projectService.readMultiple(sharedProjects));
+			if (sharedProjects != null && (sharedProjects instanceof List)) {
+				List<Long> sharedProjects1 = toLongList(sharedProjects);
+				if (!sharedProjects1.isEmpty()) {
+					projectsToShare = Lists.newArrayList(projectService.readMultiple(sharedProjects1));
+				}
 			}
 
-			if (description.getInputs().requiresSingleSample()) {
-				analysisSubmissionService.createSingleSampleSubmission(flow, ref, singleEndFiles, sequenceFilePairs,
-						params, namedParameters, name, analysisDescription, projectsToShare, writeResultsToSamples);
+			if (description.getInputs()
+					.requiresSingleSample()) {
+				analysisSubmissionService.createSingleSampleSubmission(flow, toLong(ref), singleEndFiles,
+						sequenceFilePairs, params, namedParameters, name, analysisDescription, projectsToShare,
+						writeResultsToSamples);
 			} else {
-				analysisSubmissionService.createMultipleSampleSubmission(flow, ref, singleEndFiles, sequenceFilePairs,
-						params, namedParameters, name, analysisDescription, projectsToShare, writeResultsToSamples);
+				analysisSubmissionService.createMultipleSampleSubmission(flow, toLong(ref), singleEndFiles,
+						sequenceFilePairs, params, namedParameters, name, analysisDescription, projectsToShare,
+						writeResultsToSamples);
 			}
 
 		} catch (IridaWorkflowNotFoundException e) {
 			logger.error("Cannot file IridaWorkflow [" + pipelineId + "]", e);
-			result = ImmutableMap
-					.of("pipelineError", messageSource.getMessage("pipeline.error.invalid-pipeline", null, locale));
+			result = ImmutableMap.of("pipelineError",
+					messageSource.getMessage("pipeline.error.invalid-pipeline", null, locale));
 		} catch (DuplicateSampleException e) {
 			logger.error("Multiple files for Sample found", e);
-			result = ImmutableMap.of("pipelineError", messageSource.getMessage("pipeline.error.duplicate-samples",
-					null, locale));
+			result = ImmutableMap.of("pipelineError",
+					messageSource.getMessage("pipeline.error.duplicate-samples", null, locale));
 		}
 
 		return result;

@@ -89,54 +89,60 @@
         };
 
         // Create the parameter object;
-        var params = {};
+
+        const reqData = {};
         if ($.isNumeric(ref)) {
-          params["ref"] = ref;
+          reqData["ref"] = ref;
         }
         if (single.length > 0) {
-          params["single"] = single;
+          reqData["single"] = single;
         }
         if (paired.length > 0) {
-          params["paired"] = paired;
+          reqData["paired"] = paired;
         }
 
         if (
           Object.keys(selectedParameters).length > 0 &&
           selectedParameters.id !== "no_parameters"
         ) {
-          params["selectedParameters"] = selectedParameters;
+          reqData["selectedParameters"] = selectedParameters;
         }
-        params["name"] = name;
-        params["description"] = description;
-        params["writeResultsToSamples"] = writeResultsToSamples;
+        reqData["name"] = name;
+        reqData["description"] = description;
+        reqData["writeResultsToSamples"] = writeResultsToSamples;
 
         if (shared.length > 0) {
-          params["sharedProjects"] = shared;
+          reqData["sharedProjects"] = shared;
         }
 
-        $http({
+        $.ajax({
+          type: "POST",
           url: page.urls.startUrl,
-          method: "POST",
-          dataType: "json",
-          params: params,
-          headers: {
-            "Content-Type": "application/json"
-          }
-        }).then(function(response) {
-          var data = response.data;
-          if (data.success) {
-            vm.success = true;
-          } else {
-            if (data.error) {
-              vm.error = data.error;
-            } else if (data.parameterError) {
-              vm.paramError = data.parameters;
-            } else if (data.pipelineError) {
-              window.notifications.show({
-                type: "error",
-                text: data.pipelineError
-              });
+          contentType: "application/json; charset=utf-8",
+          data: JSON.stringify(reqData),
+          success: function(response, status, request) {
+            if (response.success) {
+              vm.success = true;
+            } else {
+              if (response.error) {
+                vm.error = response.error;
+              } else if (response.parameterError) {
+                vm.paramError = response.parameters;
+              } else if (response.pipelineError) {
+                window.notifications.show({
+                  type: "error",
+                  text: response.pipelineError
+                });
+              }
             }
+          },
+          error: function(response, status, request) {
+            alert(response);
+            console.error(response, status, request);
+            window.notifications.show({
+              type: "error",
+              text: JSON.stringify(response)
+            });
           }
         });
       }
