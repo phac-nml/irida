@@ -9,6 +9,7 @@
    */
   function PipelineController($scope, $http, CartService, ParameterService) {
     var vm = this;
+    window.vm = vm;
 
     vm.parameters = ParameterService.getOriginalSettings();
     vm.selectedParameters = ParameterService.getSelectedParameters();
@@ -25,6 +26,8 @@
 		 * Whether or not the page is waiting for a response from the server.
 		 */
     vm.loading = false;
+
+    vm.success = false;
 
     /**
      * Update the selected parameters in the parameter service
@@ -90,36 +93,36 @@
 
         // Create the parameter object;
 
-        const reqData = {};
+        const params = {};
         if ($.isNumeric(ref)) {
-          reqData["ref"] = ref;
+          params["ref"] = ref;
         }
         if (single.length > 0) {
-          reqData["single"] = single;
+          params["single"] = single;
         }
         if (paired.length > 0) {
-          reqData["paired"] = paired;
+          params["paired"] = paired;
         }
 
         if (
           Object.keys(selectedParameters).length > 0 &&
           selectedParameters.id !== "no_parameters"
         ) {
-          reqData["selectedParameters"] = selectedParameters;
+          params["selectedParameters"] = selectedParameters;
         }
-        reqData["name"] = name;
-        reqData["description"] = description;
-        reqData["writeResultsToSamples"] = writeResultsToSamples;
+        params["name"] = name;
+        params["description"] = description;
+        params["writeResultsToSamples"] = writeResultsToSamples;
 
         if (shared.length > 0) {
-          reqData["sharedProjects"] = shared;
+          params["sharedProjects"] = shared;
         }
 
         $.ajax({
           type: "POST",
           url: page.urls.startUrl,
           contentType: "application/json; charset=utf-8",
-          data: JSON.stringify(reqData),
+          data: JSON.stringify(params),
           success: function(response, status, request) {
             if (response.success) {
               vm.success = true;
@@ -135,6 +138,7 @@
                 });
               }
             }
+            $scope.$apply();
           },
           error: function(response, status, request) {
             alert(response);
@@ -143,6 +147,7 @@
               type: "error",
               text: JSON.stringify(response)
             });
+            $scope.$apply();
           }
         });
       }
