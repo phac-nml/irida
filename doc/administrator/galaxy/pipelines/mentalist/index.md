@@ -19,5 +19,7 @@ The install progress can be checked by monitoring the Galaxy log files `galaxy/*
 
 ## Step 3: Installing kmer Databases
 
+![mentalist-download-pubmlst][]
     
 [galaxy-config]: ../../setup#step-4-modify-configuration-file
+[mentalist-download-pubmlst]: ../test/mentalist/images/mentalist-download-pubmlst.png
