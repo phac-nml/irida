@@ -133,7 +133,8 @@
               } else if (response.pipelineError) {
                 window.notifications.show({
                   type: "error",
-                  text: response.pipelineError
+                  text: response.pipelineError,
+                  timeout: false
                 });
               }
             }
@@ -141,11 +142,10 @@
             $scope.$apply();
           },
           error: function(response, status, request) {
-            // trying to notify user that something went wrong
-            console.error(response, status, request);
             window.notifications.show({
               type: "error",
-              text: JSON.stringify(response)
+              text: request + " - " + JSON.stringify(response),
+              timeout: false
             });
             // trigger Angular digest with the following call
             $scope.$apply();
