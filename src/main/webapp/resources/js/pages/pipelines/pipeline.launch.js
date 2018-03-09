@@ -9,7 +9,6 @@
    */
   function PipelineController($scope, $http, CartService, ParameterService) {
     var vm = this;
-    window.vm = vm;
 
     vm.parameters = ParameterService.getOriginalSettings();
     vm.selectedParameters = ParameterService.getSelectedParameters();
@@ -92,7 +91,6 @@
         };
 
         // Create the parameter object;
-
         const params = {};
         if ($.isNumeric(ref)) {
           params["ref"] = ref;
@@ -117,7 +115,8 @@
         if (shared.length > 0) {
           params["sharedProjects"] = shared;
         }
-
+        // AJAX POST with jQuery instead of Angular $http object so that
+        // JSON request body is encoded properly
         $.ajax({
           type: "POST",
           url: page.urls.startUrl,
@@ -138,15 +137,17 @@
                 });
               }
             }
+            // trigger Angular digest with the following call
             $scope.$apply();
           },
           error: function(response, status, request) {
-            alert(response);
+            // trying to notify user that something went wrong
             console.error(response, status, request);
             window.notifications.show({
               type: "error",
               text: JSON.stringify(response)
             });
+            // trigger Angular digest with the following call
             $scope.$apply();
           }
         });
