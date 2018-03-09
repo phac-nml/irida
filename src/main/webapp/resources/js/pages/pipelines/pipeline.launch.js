@@ -2,6 +2,7 @@
   "use strict";
   /**
    * Main controller for the pipeline launch page.
+   * @param $scope Application model object
    * @param $http AngularJS http object
    * @param CartService a reference to the cart service (to clear it)
    * @param ParameterService for passing parameter information between modal and page
@@ -25,7 +26,10 @@
 		 * Whether or not the page is waiting for a response from the server.
 		 */
     vm.loading = false;
-
+    /**
+     * Analysis submission success?
+     * @type {boolean}
+     */
     vm.success = false;
 
     /**
@@ -126,6 +130,7 @@
             if (response.success) {
               vm.success = true;
             } else {
+              vm.loading = false;
               if (response.error) {
                 vm.error = response.error;
               } else if (response.parameterError) {
@@ -134,7 +139,9 @@
                 window.notifications.show({
                   type: "error",
                   text: response.pipelineError,
-                  timeout: false
+                  timeout: false,
+                  progressBar: false,
+                  closeWith: ["button"]
                 });
               }
             }
@@ -142,10 +149,21 @@
             $scope.$apply();
           },
           error: function(response, status, request) {
+            const errorMsg =
+              request +
+              "- HTTP " +
+              response.status +
+              " - " +
+              JSON.stringify(response.responseJSON);
+            vm.success = false;
+            vm.loading = false;
+            vm.error = errorMsg;
             window.notifications.show({
               type: "error",
-              text: request + " - " + JSON.stringify(response),
-              timeout: false
+              text: errorMsg,
+              timeout: false,
+              progressBar: false,
+              closeWith: ["button"]
             });
             // trigger Angular digest with the following call
             $scope.$apply();
