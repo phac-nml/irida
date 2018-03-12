@@ -38,7 +38,6 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
@@ -51,6 +50,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkf
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.CartController;
+import ca.corefacility.bioinformatics.irida.ria.web.pipelines.dto.PipelineStartParameters;
 import ca.corefacility.bioinformatics.irida.ria.web.pipelines.dto.WorkflowParametersToSave;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
@@ -327,91 +327,27 @@ public class PipelineController extends BaseController {
 	// ************************************************************************************************
 	// AJAX
 	// ************************************************************************************************
-
-	/**
-	 * Convert Object to List of Long values
-	 *
-	 * Jackson converts a JSON list of integers to type List<Integer>. This method gets around that.
-	 *
-	 * @param object Object to be converted to a list of Long
-	 * @return List of Long
-	 */
-	private List<Long> toLongList(Object object) {
-		if (!(object instanceof List)) {
-			throw new UnexpectedTypeException("Expected List<Long> for 'paired'" + object);
-		}
-		List<Long> out = new ArrayList<>();
-		for (Object x : (List) object) {
-			if (x instanceof Long) {
-				out.add((Long) x);
-			} else if (x instanceof Integer) {
-				out.add(((Integer) x).longValue());
-			} else if (x instanceof String) {
-				out.add(Long.parseLong((String) x));
-			} else {
-				throw new UnexpectedTypeException("Expected to convert '" + object + "' to List<Long>");
-			}
-		}
-		return out;
-	}
-
-	/**
-	 * Convert an Object to a Long
-	 * @param object Object to convert to Long
-	 * @return Long value of Object
-	 */
-	private Long toLong(Object object) {
-		if (object == null) {
-			return null;
-		}
-		if (object instanceof Integer) {
-			return ((Integer) object).longValue();
-		}
-		if (object instanceof Long) {
-			return (Long) object;
-		}
-		if (object instanceof String) {
-			return Long.parseLong((String) object);
-		}
-		throw new UnexpectedTypeException("Expected to convert '" + object + "' to Long");
-	}
-
 	/**
 	 * Launch a pipeline
 	 *
 	 * @param locale     the locale that the browser is using for the current request.
 	 * @param pipelineId the id for the {@link IridaWorkflow}
-	 * @param map        Parsed JSON request body optionally containing key-values for
-	 *                   - analysis `name`,
-	 *                   - analysis `description`,
-	 *                   - list of `single` end sequencing file ids
-	 *                   - list of `paired` end sequencing file ids
-	 *                   - any `sharedProjects` to share analysis with
-	 *                   - `ref` genome id
-	 *                   - `selectedParameters` for the pipeline containing `id` and list of `parameter` key-values
+	 * @param parameters DTO of pipeline start parameters
 	 * @return a JSON response with the status and any messages.
 	 */
 	@RequestMapping(value = "/ajax/start/{pipelineId}", method = RequestMethod.POST)
-	public @ResponseBody
-	Map<String, Object> ajaxStartBigPipeline(Locale locale, @PathVariable UUID pipelineId,
-			@RequestBody Map<String, Object> map) {
-		String name = (String) map.getOrDefault("name", null);
-		String analysisDescription = (String) map.getOrDefault("description", null);
-		Object single = map.getOrDefault("single", null);
-		Object paired = map.getOrDefault("paired", null);
-		Object sharedProjects = map.getOrDefault("sharedProjects", null);
-		Object ref = map.getOrDefault("ref", null);
-		Object selectedParameters = map.getOrDefault("selectedParameters", null);
-		Map<String, Object> result = ImmutableMap.of("success", true);
-		Boolean writeResultsToSamples = (Boolean) map.getOrDefault("writeResultsToSamples", false);
+	public @ResponseBody Map<String, Object> ajaxStartPipeline(Locale locale, @PathVariable UUID pipelineId,
+			@RequestBody final PipelineStartParameters parameters) {
 		try {
 			IridaWorkflow flow = workflowsService.getIridaWorkflow(pipelineId);
 			IridaWorkflowDescription description = flow.getWorkflowDescription();
 			// The pipeline needs to have a name.
+			String name = parameters.getName();
 			if (Strings.isNullOrEmpty(name)) {
 				return ImmutableMap.of("error", messageSource.getMessage("workflow.no-name-provided", null, locale));
 			}
 			// Check to see if a reference file is required.
+			Long ref = parameters.getRef();
 			if (description.requiresReference() && ref == null) {
 				return ImmutableMap.of("error",
 						messageSource.getMessage("pipeline.error.no-reference.pipeline-start", null, locale));
@@ -419,8 +355,9 @@ public class PipelineController extends BaseController {
 			// Get a list of the files to submit
 			List<SingleEndSequenceFile> singleEndFiles = new ArrayList<>();
 			List<SequenceFilePair> sequenceFilePairs = new ArrayList<>();
-			if (single != null && single instanceof List) {
-				Iterable<SequencingObject> readMultiple = sequencingObjectService.readMultiple(toLongList(single));
+			List<Long> single = parameters.getSingle();
+			if (single != null) {
+				Iterable<SequencingObject> readMultiple = sequencingObjectService.readMultiple(single);
 				readMultiple.forEach(f -> {
 					if (!(f instanceof SingleEndSequenceFile)) {
 						throw new IllegalArgumentException("file " + f.getId() + " not a SingleEndSequenceFile");
@@ -430,8 +367,9 @@ public class PipelineController extends BaseController {
 				// Check the single files for duplicates in a sample, throws SampleAnalysisDuplicateException
 				sequencingObjectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(singleEndFiles));
 			}
-			if (paired != null && paired instanceof List) {
-				Iterable<SequencingObject> readMultiple = sequencingObjectService.readMultiple(toLongList(paired));
+			List<Long> paired = parameters.getPaired();
+			if (paired != null) {
+				Iterable<SequencingObject> readMultiple = sequencingObjectService.readMultiple(paired);
 				readMultiple.forEach(f -> {
 					if (!(f instanceof SequenceFilePair)) {
 						throw new IllegalArgumentException("file " + f.getId() + " not a SequenceFilePair");
@@ -445,10 +383,10 @@ public class PipelineController extends BaseController {
 			// Get the pipeline parameters
 			Map<String, String> params = new HashMap<>();
 			IridaWorkflowNamedParameters namedParameters = null;
-			if (selectedParameters != null && (selectedParameters instanceof Map)) {
+			Map<String, Object> selectedParameters = parameters.getSelectedParameters();
+			if (selectedParameters != null) {
 				try {
-					@SuppressWarnings("unchecked") Map<String, Object> parameters = (Map<String, Object>) selectedParameters;
-					final String selectedParametersId = parameters.get("id")
+					final String selectedParametersId = selectedParameters.get("id")
 							.toString();
 					if (!DEFAULT_WORKFLOW_PARAMETERS_ID.equals(selectedParametersId)
 							&& !CUSTOM_UNSAVED_WORKFLOW_PARAMETERS_ID.equals(selectedParametersId)) {
@@ -457,8 +395,7 @@ public class PipelineController extends BaseController {
 						// to pass along.
 						namedParameters = namedParameterService.read(Long.valueOf(selectedParametersId));
 					} else {
-						@SuppressWarnings("unchecked")
-						final List<Map<String, String>> unnamedParameters = (List<Map<String, String>>) parameters.get(
+						@SuppressWarnings("unchecked") final List<Map<String, String>> unnamedParameters = (List<Map<String, String>>) selectedParameters.get(
 								"parameters");
 						for (final Map<String, String> parameter : unnamedParameters) {
 							params.put(parameter.get("name"), parameter.get("value"));
@@ -471,35 +408,32 @@ public class PipelineController extends BaseController {
 			}
 
 			List<Project> projectsToShare = new ArrayList<>();
-			if (sharedProjects != null && (sharedProjects instanceof List)) {
-				List<Long> sharedProjects1 = toLongList(sharedProjects);
-				if (!sharedProjects1.isEmpty()) {
-					projectsToShare = Lists.newArrayList(projectService.readMultiple(sharedProjects1));
-				}
+			List<Long> sharedProjects = parameters.getSharedProjects();
+			if (sharedProjects != null && !sharedProjects.isEmpty()) {
+				projectsToShare = Lists.newArrayList(projectService.readMultiple(sharedProjects));
 			}
 
+			String analysisDescription = parameters.getDescription();
+			Boolean writeResultsToSamples = parameters.getWriteResultsToSamples();
 			if (description.getInputs()
 					.requiresSingleSample()) {
-				analysisSubmissionService.createSingleSampleSubmission(flow, toLong(ref), singleEndFiles,
-						sequenceFilePairs, params, namedParameters, name, analysisDescription, projectsToShare,
-						writeResultsToSamples);
+				analysisSubmissionService.createSingleSampleSubmission(flow, ref, singleEndFiles, sequenceFilePairs,
+						params, namedParameters, name, analysisDescription, projectsToShare, writeResultsToSamples);
 			} else {
-				analysisSubmissionService.createMultipleSampleSubmission(flow, toLong(ref), singleEndFiles,
-						sequenceFilePairs, params, namedParameters, name, analysisDescription, projectsToShare,
-						writeResultsToSamples);
+				analysisSubmissionService.createMultipleSampleSubmission(flow, ref, singleEndFiles, sequenceFilePairs,
+						params, namedParameters, name, analysisDescription, projectsToShare, writeResultsToSamples);
 			}
-
 		} catch (IridaWorkflowNotFoundException e) {
-			logger.error("Cannot file IridaWorkflow [" + pipelineId + "]", e);
-			result = ImmutableMap.of("pipelineError",
+			logger.error("Cannot find IridaWorkflow [" + pipelineId + "]", e);
+			return ImmutableMap.of("pipelineError",
 					messageSource.getMessage("pipeline.error.invalid-pipeline", null, locale));
 		} catch (DuplicateSampleException e) {
 			logger.error("Multiple files for Sample found", e);
-			result = ImmutableMap.of("pipelineError",
+			return ImmutableMap.of("pipelineError",
 					messageSource.getMessage("pipeline.error.duplicate-samples", null, locale));
 		}
 
-		return result;
+		return ImmutableMap.of("success", true);
 	}
 	
 	/**
