@@ -1,6 +1,11 @@
 Changes
 =======
 
+0.20.0 to 0.21.0
+----------------
+* [UI]: Fixed bug where user could not cancel the upload of a sequence file on the Sample Files page.
+* [UI/Workflow]: Fixed bug where users could not submit large analyses due to an HTTP 414 "Request URI Too Long" error.
+
 0.19.0 to 0.20.0
 ----------------
 * [Developer]: Fixed exception being thrown related to permission denied for updating samples when a normal user (collaborator on a project) runs the assembly pipeline (0.19.1).
