@@ -7,7 +7,7 @@
     <analysisType>mlst-mentalist</analysisType>
     <inputs>
         <sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
-        <requiresSingleSample>true</requiresSingleSample>
+        <requiresSingleSample>false</requiresSingleSample>
     </inputs>
     <parameters>
         <parameter name="kmer_db" required="true">
