@@ -1,0 +1,167 @@
+{
+    "a_galaxy_workflow": "true", 
+    "annotation": "Find what NCBI RefSeq genomes most closely match or are contained in your sample", 
+    "format-version": "0.1", 
+    "name": "RefSeqMasher-paired_end_fastq_collection-v0.1.0", 
+    "steps": {
+        "0": {
+            "annotation": "", 
+            "content_id": null, 
+            "id": 0, 
+            "input_connections": {}, 
+            "inputs": [
+                {
+                    "description": "", 
+                    "name": "Input Dataset Collection"
+                }
+            ], 
+            "label": null, 
+            "name": "Input dataset collection", 
+            "outputs": [], 
+            "position": {
+                "left": 200, 
+                "top": 200
+            }, 
+            "tool_errors": null, 
+            "tool_id": null, 
+            "tool_state": "{\"collection_type\": \"list:paired\", \"name\": \"Input Dataset Collection\"}", 
+            "tool_version": null, 
+            "type": "data_collection_input", 
+            "uuid": "2be50d2d-f0e9-4c33-9c54-2195c1debd39", 
+            "workflow_outputs": []
+        }, 
+        "1": {
+            "annotation": "", 
+            "content_id": "toolshed.g2.bx.psu.edu/repos/nml/refseq_masher/refseq_masher_matches/0.1.1", 
+            "id": 1, 
+            "input_connections": {
+                "input|paired_collection": {
+                    "id": 0, 
+                    "output_name": "output"
+                }
+            }, 
+            "inputs": [
+                {
+                    "description": "runtime parameter for tool RefSeq Masher Matches", 
+                    "name": "input"
+                }
+            ], 
+            "label": null, 
+            "name": "RefSeq Masher Matches", 
+            "outputs": [
+                {
+                    "name": "output_path_csv", 
+                    "type": "csv"
+                }, 
+                {
+                    "name": "output_path_tab", 
+                    "type": "tabular"
+                }
+            ], 
+            "position": {
+                "left": 468, 
+                "top": 200
+            }, 
+            "post_job_actions": {
+                "HideDatasetActionoutput_path_csv": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "output_path_csv"
+                }, 
+                "RenameDatasetActionoutput_path_tab": {
+                    "action_arguments": {
+                        "newname": "refseq-masher-matches.tsv"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "output_path_tab"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/refseq_masher/refseq_masher_matches/0.1.1", 
+            "tool_shed_repository": {
+                "changeset_revision": "26df66c32861", 
+                "name": "refseq_masher", 
+                "owner": "nml", 
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            }, 
+            "tool_state": "{\"adv\": \"{\\\"output_type\\\": \\\"tab\\\", \\\"verbosity\\\": \\\"-vv\\\", \\\"min_kmer_threshold\\\": \\\"8\\\"}\", \"input\": \"{\\\"paired_collection\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"type\\\": \\\"paired_collection\\\", \\\"__current_case__\\\": 3}\", \"__rerun_remap_job_id__\": null, \"top_n_results\": \"\\\"20\\\"\", \"__page__\": 0}", 
+            "tool_version": "0.1.1", 
+            "type": "tool", 
+            "uuid": "fe4c2491-dbff-4499-98d5-4fc1d9b2f200", 
+            "workflow_outputs": [
+                {
+                    "label": null, 
+                    "output_name": "output_path_tab", 
+                    "uuid": "26fbfe67-da60-4825-a32d-c90e1ff9649a"
+                }
+            ]
+        }, 
+        "2": {
+            "annotation": "", 
+            "content_id": "toolshed.g2.bx.psu.edu/repos/nml/refseq_masher/refseq_masher_contains/0.1.1", 
+            "id": 2, 
+            "input_connections": {
+                "input|paired_collection": {
+                    "id": 0, 
+                    "output_name": "output"
+                }
+            }, 
+            "inputs": [
+                {
+                    "description": "runtime parameter for tool RefSeq Masher Contains", 
+                    "name": "input"
+                }
+            ], 
+            "label": null, 
+            "name": "RefSeq Masher Contains", 
+            "outputs": [
+                {
+                    "name": "output_path_csv", 
+                    "type": "csv"
+                }, 
+                {
+                    "name": "output_path_tab", 
+                    "type": "tabular"
+                }
+            ], 
+            "position": {
+                "left": 465, 
+                "top": 346
+            }, 
+            "post_job_actions": {
+                "HideDatasetActionoutput_path_csv": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "output_path_csv"
+                }, 
+                "RenameDatasetActionoutput_path_tab": {
+                    "action_arguments": {
+                        "newname": "refseq-masher-contains.tsv"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "output_path_tab"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/refseq_masher/refseq_masher_contains/0.1.1", 
+            "tool_shed_repository": {
+                "changeset_revision": "26df66c32861", 
+                "name": "refseq_masher", 
+                "owner": "nml", 
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            }, 
+            "tool_state": "{\"adv\": \"{\\\"max_pvalue\\\": \\\"0.01\\\", \\\"min_identity\\\": \\\"0.9\\\", \\\"verbosity\\\": \\\"-vv\\\", \\\"top_n_results\\\": \\\"0\\\", \\\"output_type\\\": \\\"tab\\\"}\", \"input\": \"{\\\"paired_collection\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"type\\\": \\\"paired_collection\\\", \\\"__current_case__\\\": 3}\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}", 
+            "tool_version": "0.1.1", 
+            "type": "tool", 
+            "uuid": "9ea5335b-60a6-4ef2-84ef-66c3b4218d8f", 
+            "workflow_outputs": [
+                {
+                    "label": null, 
+                    "output_name": "output_path_tab", 
+                    "uuid": "6be273cb-1b15-4dc4-99d2-83ba24a80317"
+                }
+            ]
+        }
+    }, 
+    "uuid": "402d061d-6ccb-4daf-85f2-0ffd188dba7b"
+}

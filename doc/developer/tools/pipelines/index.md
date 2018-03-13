@@ -137,6 +137,11 @@ This is an **XML** file which is used to link up a Galaxy workflow with IRIDA.  
 				toolId="my_tool"
 				parameterName="my_parameter" />
 		</parameter>
+		<parameter name="other_parameter" defaultValue="2">
+        	<toolParameter
+        		toolId="my_tool"
+        		parameterName="other_parameter" />
+        </parameter>
 	</parameters>
 	<outputs>
 		<output name="tree" fileName="phylogeneticTree.tre" />
@@ -163,6 +168,21 @@ A few things to note:
   6. `<toolRepositories>` defines the different Galaxy ToolSheds from which the dependency tools come from, as well as a revision number for the tool.
 
 For more information, please see the [IRIDA Workflow Description][] documentation.  This file must be named **irida_workflow.xml**.
+
+You can auto-generate an IRIDA Workflow Description `irida_workflow.xml` file from a Galaxy workflow `ga` file with [irida-wf-ga2xml][]:
+
+```bash
+java -jar irida-wf-ga2xml-0.1.0-standalone.jar \
+  -i irida_workflow_structure.ga \
+  -n WORKFLOW_NAME \
+  -t ANALYSIS_TYPE \
+  -W WORKFLOW_VERSION > irida_workflow.xml
+```
+
+* [Download irida-wf-ga2xml-0.1.0-SNAPSHOT-standalone.jar from Github][]
+
+*NOTE: You may need to edit the output from [irida-wf-ga2xml][] to ensure that only necessary tool parameters are kept in the **irida_workflow.xml** file and that the proper tool revision is used for each tool if this information is not embedded in your Galaxy Workflow `ga` file.*
+
 
 #### C. Move Workflow Definition
 
@@ -191,9 +211,31 @@ In this case, the **[analysis_type]** is *mypipeline*, which comes from the `<an
 
 #### B. Adding messages for the UI
 
-Some messages need to be defined in order to display the pipeline in the UI.  These are stored in the file `src/main/resources/i18n/messages_en.properties` and include messages for the title and description displayed in the UI as well as error messages for each parameter.  This should look similar to:
+Some messages need to be defined in order to display the pipeline in the UI.  These are stored in the file `src/main/resources/i18n/messages_en.properties` and include messages for the title and description displayed in the UI as well as messages for each workflow tool parameter (each `<parameter name="<parameter_name>" ... />` in `irida_workflow.xml`). 
 
+The format for these messages must be:
+
+```properties
+workflow.workflow-analysis-type.title=...
+workflow.workflow-analysis-type.description=...
+
+pipeline.title.workflow-directory-name=...
+pipeline.h1.workflow-directory-name=...
+
+pipeline.parameters.modal-title.workflow-directory-name=...
+# for each parameter defined in irida_workflow.xml
+pipeline.parameters.workflow-directory-name.parameter_name=...
 ```
+
+where 
+
+- `workflow-analysis-type` must be the `AnalysisType` enum you defined in `AnalysisType.java`
+- `workflow-directory-name` must be your directory name under `src/main/resources/ca/corefacility/bioinformatics/irida/model/enums/workflows/` (e.g. `MyPipeline` for the above example)
+- `parameter_name` is `<parameter_name>` in `<parameter name="<parameter_name>"` for each `<parameter/>` in `irida_workflow.xml`
+
+For the above example with **MyPipeline**, the messages would be similar to:
+
+```properties
 workflow.mypipeline.title=My Pipeline
 workflow.mypipeline.description=Run my custom pipeline.
 
@@ -202,7 +244,21 @@ pipeline.h1.MyPipeline=My Pipeline
 
 pipeline.parameters.modal-title.mypipeline=My Pipeline Parameters
 pipeline.parameters.mypipeline.my_parameter=My Parameter Description.
+pipeline.parameters.mypipeline.other_parameter=Other Parameter Description.
 ```
+
+
+#### C. [Optional] Customize the color of your pipeline
+
+Given your `AnalysisType`, add an entry to `src/main/webapp/resources/sass/pages/pipelines-selection.scss` where your `AnalysisType` is the CSS class. For example, with `mypipeline`, you would add: 
+
+```css
+.mypipeline {
+  background-color: #c8c8c8 !important;
+  color: #222 !important;
+}
+```
+
 
 ### 4. Run IRIDA
 
@@ -244,3 +300,5 @@ If you attempt to modify the parameters of this pipeline you should see:
 [my-pipeline-irida]: images/my-pipeline-irida.png
 [my-pipeline-launch]: images/my-pipeline-launch.png
 [my-pipeline-parameters]: images/my-pipeline-parameters.png
+[irida-wf-ga2xml]: https://github.com/phac-nml/irida-wf-ga2xml
+[Download irida-wf-ga2xml-0.1.0-SNAPSHOT-standalone.jar from Github]: https://github.com/phac-nml/irida-wf-ga2xml/releases/download/v0.1.0/irida-wf-ga2xml-0.1.0-SNAPSHOT-standalone.jar
