@@ -41,6 +41,7 @@ IRIDA has several different built-in pipelines for analyzing your data:
 1. [Assembling your sequencing data][assembly].
 2. [Whole-genome SNV Phylogeny][snvphyl].
 3. [*Salmonella in-silico* Typing (SISTR)][sistr].
+4. [MentaLiST MLST][mentalist].
 
 ### Getting your data out of IRIDA
 
@@ -74,6 +75,7 @@ If you are a system administrator or lab technician in a sequencing facility, yo
 [assembly]: tutorials/assembly/
 [snvphyl]: tutorials/snvphyl/
 [sistr]: tutorials/sistr/
+[mentalist]: tutorials/mentalist/
 [sharing]: tutorials/sharing/
 [sharing-some]: tutorials/sharing-some/
 [export-to-galaxy]: tutorials/export-to-galaxy/
