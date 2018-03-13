@@ -2,11 +2,17 @@ package ca.corefacility.bioinformatics.irida.ria.web.pipelines.dto;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
+import org.codehaus.jackson.map.deser.std.FromStringDeserializer;
 
 /**
  * DTO of pipeline start parameters from JSON {@link org.springframework.web.bind.annotation.RequestBody}
  */
 public class PipelineStartParameters {
+	@JsonDeserialize(contentUsing = FromStringDeserializer.UUIDDeserializer.class)
+	private UUID workflowId;
 	private String name;
 	private String description;
 	private List<Long> single;
@@ -17,6 +23,7 @@ public class PipelineStartParameters {
 	private Boolean writeResultsToSamples;
 
 	public PipelineStartParameters() {
+		workflowId = null;
 		name = null;
 		description = null;
 		single = null;
@@ -25,6 +32,14 @@ public class PipelineStartParameters {
 		ref = null;
 		selectedParameters = null;
 		writeResultsToSamples = null;
+	}
+
+	public UUID getWorkflowId() {
+		return workflowId;
+	}
+
+	public void setWorkflowId(UUID workflowId) {
+		this.workflowId = workflowId;
 	}
 
 	public String getName() {
@@ -89,5 +104,13 @@ public class PipelineStartParameters {
 
 	public void setWriteResultsToSamples(Boolean writeResultsToSamples) {
 		this.writeResultsToSamples = writeResultsToSamples;
+	}
+
+	@Override
+	public String toString() {
+		return "PipelineStartParameters{" + "workflowId=" + workflowId + ", name='" + name + '\'' + ", description='"
+				+ description + '\'' + ", single=" + single + ", paired=" + paired + ", sharedProjects="
+				+ sharedProjects + ", ref=" + ref + ", selectedParameters=" + selectedParameters
+				+ ", writeResultsToSamples=" + writeResultsToSamples + '}';
 	}
 }

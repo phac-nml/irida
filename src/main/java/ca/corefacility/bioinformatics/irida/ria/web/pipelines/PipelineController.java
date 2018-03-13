@@ -327,19 +327,19 @@ public class PipelineController extends BaseController {
 	// ************************************************************************************************
 	// AJAX
 	// ************************************************************************************************
+
 	/**
 	 * Launch a pipeline
 	 *
 	 * @param locale     the locale that the browser is using for the current request.
-	 * @param pipelineId the id for the {@link IridaWorkflow}
 	 * @param parameters DTO of pipeline start parameters
 	 * @return a JSON response with the status and any messages.
 	 */
-	@RequestMapping(value = "/ajax/start/{pipelineId}", method = RequestMethod.POST)
-	public @ResponseBody Map<String, Object> ajaxStartPipeline(Locale locale, @PathVariable UUID pipelineId,
-			@RequestBody final PipelineStartParameters parameters) {
+	@RequestMapping(value = "/ajax/start", method = RequestMethod.POST)
+	public @ResponseBody
+	Map<String, Object> ajaxStartPipeline(Locale locale, @RequestBody final PipelineStartParameters parameters) {
 		try {
-			IridaWorkflow flow = workflowsService.getIridaWorkflow(pipelineId);
+			IridaWorkflow flow = workflowsService.getIridaWorkflow(parameters.getWorkflowId());
 			IridaWorkflowDescription description = flow.getWorkflowDescription();
 			// The pipeline needs to have a name.
 			String name = parameters.getName();
@@ -424,7 +424,7 @@ public class PipelineController extends BaseController {
 						params, namedParameters, name, analysisDescription, projectsToShare, writeResultsToSamples);
 			}
 		} catch (IridaWorkflowNotFoundException e) {
-			logger.error("Cannot find IridaWorkflow [" + pipelineId + "]", e);
+			logger.error("Cannot find IridaWorkflow [" + parameters.getWorkflowId() + "]", e);
 			return ImmutableMap.of("pipelineError",
 					messageSource.getMessage("pipeline.error.invalid-pipeline", null, locale));
 		} catch (DuplicateSampleException e) {

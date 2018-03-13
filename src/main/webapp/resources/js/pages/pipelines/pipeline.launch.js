@@ -95,7 +95,7 @@
         };
 
         // Create the parameter object;
-        const params = {};
+        const params = { workflowId: window.PAGE.pipeline.pipelineId };
         if ($.isNumeric(ref)) {
           params["ref"] = ref;
         }
