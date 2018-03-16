@@ -3,8 +3,6 @@ import { showNotification } from "../../modules/notifications";
 import { formatDate } from "../../utilities/date-utilities";
 import "../../../sass/pages/analysis.scss";
 import $ from "jquery";
-// import "../../vendor/datatables/datatables";
-// import "../../vendor/slickgrid/slickgrid";
 import "slickgrid-6pac/slick.core";
 import "slickgrid-6pac/slick.grid";
 import "slickgrid-6pac/slick.dataview";
@@ -50,6 +48,7 @@ function FileDownloadController() {
 function AnalysisService($http) {
   const svc = this;
   svc._tabularData = null;
+  svc._outputsInfo = null;
   /**
    * Call the server to get the status for the current analysis.
    * 'page.URLS.status' is on the `_base.html` page for the analysis.
@@ -115,6 +114,33 @@ function AnalysisService($http) {
       console.log("already fetched:", svc._tabularData);
       const promise = new Promise(function(resolve, reject) {
         resolve(svc._tabularData);
+      });
+      return promise;
+    }
+  };
+
+  /**
+   * Get tabular data info from server
+   * @param vm
+   * @returns {PromiseLike<T> | Promise<T> | *}
+   */
+  svc.getOutputsInfo = function(vm) {
+    if (svc._outputsInfo === null) {
+      const url = `${window.PAGE.URLS.base}${window.PAGE.ID}/outputs`;
+      return $http.get(url).then(
+        function successCallback(x) {
+          svc._outputsInfo = x.data;
+          return svc._outputsInfo;
+        },
+        function errorCallback(x) {
+          console.error(`Could not GET outputs info from "${url}"`);
+          console.error(x);
+        }
+      );
+    } else {
+      console.log("already fetched:", svc._outputsInfo);
+      const promise = new Promise(function(resolve, reject) {
+        resolve(svc._outputsInfo);
       });
       return promise;
     }
@@ -248,44 +274,171 @@ function SistrController(analysisService) {
 
 function TablesController(analysisService) {
   const MAX_TABLE_HEIGHT = 300; //px
+  const TEXT_CHUNK_SIZE = 5000; //bytes
   const vm = this;
   const $tablesContainer = $("#js-tables-container");
-  analysisService.getTabularData(vm).then(result => {
-    console.log("doing stuff with data!", result);
+
+  analysisService.getOutputsInfo(vm).then(result => {
+    console.log("OUTPUTS", result);
     let count = 0;
-    for (const t of result.data) {
+    let options = {
+      rowHeight: 20,
+      editable: false,
+      enableAddRow: false,
+      enableCellNavigation: false
+    };
+    const setTabularExt = new Set(["tab", "tsv", "tabular"]);
+    for (const t of result) {
       console.log("count", count, "t", t);
-      if (!t.hasOwnProperty("content")) {
+      if (!t.hasOwnProperty("fileExt")) {
         continue;
       }
-      const firstRow = t.content.slice(0, 1)[0];
+      console.log(
+        "setTAB",
+        setTabularExt,
+        t.fileExt,
+        setTabularExt.has(t.fileExt)
+      );
+      if (!setTabularExt.has(t.fileExt)) {
+        const $panel = $(
+          `<div id="js-panel-${count}" class="panel panel-default"/>`
+        );
+        const $panelHeading = $(
+          `<div class="panel-heading"><h5>${t.outputName} - ${
+            t.filename
+          }</h5></div>`
+        );
+        $panel.append($panelHeading);
+        const $panelBody = $(`<div class="panel-body"></div>`);
+        const gridId = `js-text-${count}`;
+        const $table = $(`<pre/>`, {
+          id: gridId
+        });
+        $table.css({
+          "white-space": "pre-wrap",
+          resize: "both",
+          height: `${MAX_TABLE_HEIGHT}px`,
+          width: "100%"
+        });
+        const fileSizeBytes = t.fileSizeBytes;
+        const baseUrl = `${window.PAGE.URLS.base}${window.PAGE.ID}/outputs/${
+          t.id
+        }`;
+        const params = {
+          seek: 0,
+          chunk: Math.min(fileSizeBytes, TEXT_CHUNK_SIZE)
+        };
+        const url = `${baseUrl}?${$.param(params)}`;
+        let $showMore = null;
+        if (t.fileSizeBytes > TEXT_CHUNK_SIZE) {
+          $showMore = $(
+            `<button href="#" id="js-show-more-${
+              t.id
+            }" disabled="disabled" class="btn btn-default">SHOW MORE</button>`
+          );
+        }
+        let showMoreUrl = `${baseUrl}?${$.param(params)}`;
 
+        function onTextScroll() {
+          if (params.chunk === 0) {
+            console.log("no more to show!");
+            return;
+          }
+          if (
+            $(this).scrollTop() + $(this).innerHeight() >=
+            $(this)[0].scrollHeight
+          ) {
+            console.log("SHOWING MORE", showMoreUrl);
+            showMoreUrl = `${baseUrl}?${$.param(params)}`;
+            $.ajax({
+              url: showMoreUrl,
+              success: function(resp, statusText, xOpts) {
+                $table.text($table.text() + resp.text);
+                params.seek = resp.filePointer;
+                params.chunk = Math.min(
+                  fileSizeBytes - params.seek,
+                  TEXT_CHUNK_SIZE
+                );
+                if (params.chunk === 0) {
+                  $showMore.prop("disabled", true);
+                  $showMore.css({ display: "none" });
+                } else {
+                  $showMore.prop("disabled", false);
+                  showMoreUrl = `${baseUrl}?${$.param(params)}`;
+                }
+                console.log("SCROLLED", params, showMoreUrl);
+              }
+            });
+          }
+        }
+
+        $.ajax({
+          url: url,
+          success: (resp, statusText, xOpts) => {
+            $table.text(resp.text);
+            if ($showMore == null) return;
+            const seek = resp.filePointer;
+            params.seek = seek;
+            params.chunk = Math.min(fileSizeBytes - seek, TEXT_CHUNK_SIZE);
+            if (params.chunk === 0) {
+              $showMore.css({ display: "none" });
+            } else {
+              $table.on("scroll", onTextScroll);
+              $showMore.prop("disabled", false);
+              $showMore.on("click", () => {
+                $showMore.prop("disabled", true);
+                $.ajax({
+                  url: showMoreUrl,
+                  success: (resp, statusText, xOpts) => {
+                    $table.text($table.text() + resp.text);
+                    params.seek = resp.filePointer;
+                    params.chunk = Math.min(
+                      fileSizeBytes - params.seek,
+                      TEXT_CHUNK_SIZE
+                    );
+                    if (params.chunk === 0) {
+                      $showMore.prop("disabled", true);
+                      $showMore.css({ display: "none" });
+                    } else {
+                      $showMore.prop("disabled", false);
+                      showMoreUrl = `${baseUrl}?${$.param(params)}`;
+                    }
+                    console.log(
+                      "SHOW MORE BUTTON CLICKED",
+                      params,
+                      showMoreUrl
+                    );
+                  }
+                });
+              });
+            }
+          }
+        });
+
+        $panelBody.append($table);
+        if ($showMore !== null) {
+          $panelBody.append($showMore);
+        }
+        $panel.append($panelBody);
+        $tablesContainer.append($panel);
+
+        continue;
+      }
       let headers = [];
+      const firstRow = t.firstLine.split("\t");
       for (let i = 0; i < firstRow.length; i++) {
         const row = firstRow[i];
         // headers.push({ title: x });
         headers.push({ id: i + "", field: i + "", name: row, sortable: true });
       }
-      const data = t.content.slice(1);
-      for (let i = 0; i < data.length; i++) {
-        const row = data[i];
-        const d = { id: "id_" + i };
-        for (let j = 0; j < headers.length; j++) {
-          const cell = row[j];
-          const header = headers[j];
-          d[header.id] = cell;
-        }
-        data[i] = d;
-      }
-      console.info(headers);
-      console.info(data);
+      const loader = Slick.Data.RemoteModel(t.id, t.filePointer);
       const $panel = $(
         `<div id="js-panel-${count}" class="panel panel-default"/>`
       );
       const $panelHeading = $(
-        `<div class="panel-heading"><h3>${t.outputName} - ${
+        `<div class="panel-heading"><h5>${t.outputName} - ${
           t.filename
-        }</h3></div>`
+        }</h5></div>`
       );
       $panel.append($panelHeading);
       const $panelBody = $(`<div class="panel-body"></div>`);
@@ -299,44 +452,24 @@ function TablesController(analysisService) {
       $table.appendTo($panelBody);
       $panel.append($panelBody);
       $panel.appendTo($tablesContainer);
-      const dataView = new Slick.Data.DataView();
-      const grid = new Slick.Grid(`#${gridId}`, dataView, headers, {});
-      grid.onSort.subscribe((e, args) => {
-        const field = args.sortCol.field;
-        const isSortAsc = args.sortAsc;
-        console.log("onSort", field, isSortAsc, args);
-        dataView.sort((a, b) => {
-          const x = a[field];
-          const y = b[field];
-          return x === y ? 0 : x > y ? 1 : -1;
-        }, isSortAsc);
-        grid.invalidate();
+      // const dataView = new Slick.Data.DataView();
+      const grid = new Slick.Grid(`#${gridId}`, loader.data, headers, options);
+      grid.onViewportChanged.subscribe((e, args) => {
+        const vp = grid.getViewport();
+        loader.ensureData(vp.top, vp.bottom);
       });
-      dataView.onRowsChanged.subscribe((e, args) => {
-        grid.invalidateRows(args.rows);
+      loader.onDataLoading.subscribe(() => {
+        console.log("Loading!", t);
+      });
+      loader.onDataLoaded.subscribe((e, args) => {
+        for (let i = args.from; i <= args.to; i++) {
+          grid.invalidateRow(i);
+        }
+        grid.updateRowCount();
         grid.render();
+        console.log("LOADED!", e, args);
       });
-      dataView.beginUpdate();
-      dataView.setItems(data);
-      dataView.endUpdate();
-      grid.invalidate();
-      console.log(count, headers, $table, $tablesContainer);
-
-      const $grid = $(`#${gridId}`);
-      let heightSum = $grid.find(".slick-header").height();
-      $grid
-        .find(".grid-canvas")
-        .children()
-        .each((i, x) => (heightSum += $(x).height()));
-      console.log("HEIGHT", heightSum);
-      if (heightSum < MAX_TABLE_HEIGHT) {
-        $table.height(heightSum);
-      }
-
-      // $table.DataTable({
-      //   data: data,
-      //   columns: headers
-      // });
+      grid.onViewportChanged.notify();
       count++;
     }
   });

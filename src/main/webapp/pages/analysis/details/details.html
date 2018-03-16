@@ -3,6 +3,8 @@
       data-layout-decorate="~{analysis/details/_base}">
 
 <head>
+    <link rel="stylesheet" th:href="@{/node_modules/slickgrid-6pac/slick.grid.css}">
+    <link rel="stylesheet" th:href="@{/node_modules/slickgrid-6pac/slick-default-theme.css}">
 	<style>
 		.tool i {
 			font-size: .75em;
@@ -23,9 +25,11 @@
 		.tooltip-inner {
 			white-space: pre-wrap;
 		}
+        .slick-header-column.ui-state-default {
+            height: 20px;
+            line-height: 15px;
+        }
 	</style>
-	<link rel="stylesheet" th:href="@{/node_modules/slickgrid-6pac/slick.grid.css}">
-	<link rel="stylesheet" th:href="@{/node_modules/slickgrid-6pac/slick-default-theme.css}">
 </head>
 
 <body>
@@ -64,8 +68,8 @@
 		<div class="col-md-12 ng-cloak">
 
 			<sub-nav>
-				<th:block th:if="${isCompleted} and ${preview}">
-					<sub-nav-item state="tables" data:text="HI"></sub-nav-item>
+				<th:block th:if="${isCompleted}">
+					<sub-nav-item state="tables" data:text="TODO"></sub-nav-item>
 				</th:block>
 				<th:block th:if="${isCompleted} and ${preview}">
 					<sub-nav-item state="preview" data:text="#{analysis.tab.preview}"></sub-nav-item>
@@ -98,10 +102,10 @@
 			</script>
 
 			<script type="text/ng-template" id="tables.html">
-				<div th:if="${isCompleted} and ${preview}" ng-controller="TablesController as tablesController">
+				<div th:if="${isCompleted}" ng-controller="TablesController as tablesController">
 					<div id="js-tables-container"></div>
 				</div>
-				<div th:unless="${isCompleted} and ${preview}"></div>
+				<div th:unless="${isCompleted}"></div>
 			</script>
 
 			<script type="text/ng-template" id="preview.html">

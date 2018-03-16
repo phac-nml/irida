@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.*;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
@@ -41,6 +40,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
@@ -61,9 +61,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Controller for Analysis.
@@ -262,74 +260,154 @@ public class AnalysisController {
 		return "redirect:/analysis/" + submissionId;
 	}
 
-	@RequestMapping(value = "/ajax/{id}/tabular-data", method = RequestMethod.GET)
+	/**
+	 * For an {@link AnalysisSubmission}, get info about each {@link AnalysisOutputFile}
+	 *
+	 * @param id {@link AnalysisSubmission} id
+	 * @return map of info about each {@link AnalysisOutputFile}
+	 */
+	@RequestMapping(value = "/ajax/{id}/outputs", method = RequestMethod.GET)
 	@ResponseBody
-	public ImmutableMap<String, Object> getTabularText(@PathVariable Long id,
-			@RequestParam(required = false, defaultValue = "") String pattern) {
-
-		String TABULAR_FILE_REGEX = ".*\\.(tsv|tab|csv|tabular)$";
-		Pattern REGEX_PATTERN = Pattern.compile(TABULAR_FILE_REGEX);
-
+	public List<Map<String, Object>> getOutputFilesInfo(@PathVariable Long id) {
 		AnalysisSubmission submission = analysisSubmissionService.read(id);
 		Analysis analysis = submission.getAnalysis();
 		Set<String> outputNames = analysis.getAnalysisOutputFileNames();
-		Set<String> filteredNames = outputNames.stream()
-				.map(String::toLowerCase)
-				.filter(s -> s.matches(".*" + pattern.toLowerCase() + ".*"))
-				.collect(Collectors.toSet());
-		if (filteredNames.isEmpty()) {
-			return ImmutableMap.of();
-		}
-		Set<String> collect = outputNames.stream()
-				.filter(x -> analysis.getAnalysisOutputFile(x)
-						.getFile()
-						.getFileName()
-						.toString()
-						.matches(TABULAR_FILE_REGEX))
-				.collect(Collectors.toSet());
-		collect.retainAll(filteredNames);
-		if (collect.isEmpty()) {
-			return ImmutableMap.of();
-		}
-
-		Map<String, Path> outputPaths = collect.stream()
-				.collect(Collectors.toMap(x -> x, x -> analysis.getAnalysisOutputFile(x)
-						.getFile()));
-		List<Map<String, Object>> outputs = new ArrayList<>();
-		outputPaths.forEach((outputName, path) -> {
+		final List<Map<String, Object>> maps = new ArrayList<>();
+		for (String outputName : outputNames) {
+			final HashMap<String, Object> map = new HashMap<>();
+			final AnalysisOutputFile aof = analysis.getAnalysisOutputFile(outputName);
+			final Long aofId = aof.getId();
+			final String aofFilename = aof.getFile()
+					.getFileName()
+					.toString();
+			final ToolExecution tool = aof.getCreatedByTool();
+			final String toolName = tool.getToolName();
+			final String toolVersion = tool.getToolVersion();
+			map.put("id", aofId);
+			map.put("analysisSubmissionId", submission.getId());
+			map.put("analysisId", analysis.getId());
+			map.put("outputName", outputName);
+			map.put("filename", aofFilename);
+			map.put("fileSizeBytes", aof.getFile()
+					.toFile()
+					.length());
+			map.put("toolName", toolName);
+			map.put("toolVersion", toolVersion);
+			map.put("fileExt", FileUtilities.getFileExt(aofFilename));
+			RandomAccessFile reader = null;
 			try {
-				logger.debug("outputName: " + outputName);
-				logger.debug("path: " + path);
-				String filename = path.getFileName()
-						.toString();
-				logger.debug("filename: " + filename);
-				logger.debug("filename: " + filename
-						.matches(TABULAR_FILE_REGEX));
-
-				Matcher matcher = REGEX_PATTERN.matcher(filename);
-				logger.debug("matcher: " + matcher);
-				String ext = null;
-				if (matcher.matches()) {
-					logger.debug("MATCHES!!! " + matcher);
-					ext = matcher.group(1);
-					BufferedReader reader = new BufferedReader(new FileReader(new File(path.toString())));
-					List<String[]> collect1 = reader.lines()
-
-							.map(l -> l.split("\t"))
-							.collect(Collectors.toList());
-					outputs.add(ImmutableMap.of(
-							"extension", ext,
-							"outputName", outputName,
-							"filename", filename,
-							"content", collect1));
-				} else {
-					logger.error("Regex pattern matcher" + matcher + " doesn't match '" + filename + "'");
+				reader = new RandomAccessFile(aof.getFile()
+						.toFile(), "r");
+				map.put("firstLine", reader.readLine());
+				map.put("filePointer", reader.getFilePointer());
+			} catch (FileNotFoundException e) {
+				logger.error("Could not find file '" + aof.getFile() + "' " + e);
+			} catch (IOException e) {
+				logger.error("Could not read file '" + aof.getFile() + "' " + e);
+			} finally {
+				try {
+					if (reader != null) {
+						reader.close();
+					}
+				} catch (IOException e) {
+					logger.error("Could not close file handle for '" + aof.getFile() + "' " + e);
 				}
-			} catch (IllegalStateException | FileNotFoundException e) {
-				logger.error(e.getMessage());
 			}
-		});
-		return ImmutableMap.of("data", outputs);
+			maps.add(map);
+		}
+		return maps;
+	}
+
+	/**
+	 * Read some lines or text from an {@link AnalysisOutputFile}.
+	 *
+	 * @param id       {@link AnalysisSubmission} id
+	 * @param fileId   {@link AnalysisOutputFile} id
+	 * @param limit    Optional limit to number of lines to read from file
+	 * @param start    Optional line to start reading from
+	 * @param end      Optional line to stop reading at
+	 * @param seek     Optional file byte position to seek to and begin reading
+	 * @param chunk    Optional number of bytes to read from file
+	 * @param response HTTP response object
+	 * @return JSON with file text or lines as well as information about the file.
+	 */
+	@RequestMapping(value = "/ajax/{id}/outputs/{fileId}", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<String, Object> getOutputFile(@PathVariable Long id, @PathVariable Long fileId,
+			@RequestParam(defaultValue = "100", required = false) Long limit,
+			@RequestParam(required = false) Long start, @RequestParam(required = false) Long end,
+			@RequestParam(defaultValue = "0", required = false) Long seek, @RequestParam(required = false) Long chunk,
+			HttpServletResponse response) {
+		AnalysisSubmission submission = analysisSubmissionService.read(id);
+		Analysis analysis = submission.getAnalysis();
+		final Optional<AnalysisOutputFile> analysisOutputFile = analysis.getAnalysisOutputFiles()
+				.stream()
+				.filter(x -> Objects.equals(x.getId(), fileId))
+				.findFirst();
+		if (analysisOutputFile.isPresent()) {
+			final AnalysisOutputFile aof = analysisOutputFile.get();
+			final HashMap<String, Object> map = new HashMap<>();
+			final Path aofFile = aof.getFile();
+			final ToolExecution tool = aof.getCreatedByTool();
+			map.put("id", aof.getId());
+			map.put("analysisSubmissionId", submission.getId());
+			map.put("analysisId", analysis.getId());
+			map.put("filename", aofFile.getFileName()
+					.toString());
+			map.put("fileExt", FileUtilities.getFileExt(aofFile.getFileName()
+					.toString()));
+			map.put("fileSizeBytes", aof.getFile()
+					.toFile()
+					.length());
+			map.put("toolName", tool.getToolName());
+			map.put("toolVersion", tool.getToolVersion());
+			try {
+				final File file = aofFile.toFile();
+				final RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
+				final String firstLine = randomAccessFile.readLine();
+				map.put("firstLine", firstLine);
+				randomAccessFile.seek(seek);
+				if (seek == 0) {
+					if (chunk != null && chunk > 0) {
+						map.put("text", FileUtilities.readChunk(randomAccessFile, seek, chunk));
+						map.put("chunk", chunk);
+						map.put("startSeek", seek);
+						map.put("filePointer", randomAccessFile.getFilePointer());
+					} else {
+						final BufferedReader reader = new BufferedReader(new FileReader(randomAccessFile.getFD()));
+						final List<String> lines = FileUtilities.readLinesLimit(reader, limit, start, end);
+						map.put("lines", lines);
+						map.put("limit", lines.size());
+						map.put("start", start);
+						map.put("end", start + lines.size());
+					}
+				} else {
+					if (chunk != null && chunk > 0) {
+						map.put("text", FileUtilities.readChunk(randomAccessFile, seek, chunk));
+						map.put("chunk", chunk);
+						map.put("startSeek", seek);
+						map.put("filePointer", randomAccessFile.getFilePointer());
+					} else {
+						final List<String> lines = FileUtilities.readLinesFromFilePointer(randomAccessFile, limit);
+						map.put("lines", lines);
+						map.put("startSeek", seek);
+						map.put("filePointer", randomAccessFile.getFilePointer());
+						map.put("start", start);
+						map.put("limit", lines.size());
+					}
+				}
+				map.put("filePointer", randomAccessFile.getFilePointer());
+			} catch (IOException e) {
+				logger.error("Could not read output file '" + aof.getId() + "' " + e);
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				map.put("error", "Could not read output file");
+
+			}
+			return map;
+		} else {
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return ImmutableMap.of("error", "Could not find output file " + fileId);
+		}
 	}
 
 	/**
