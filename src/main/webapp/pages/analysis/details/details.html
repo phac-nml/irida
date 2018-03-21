@@ -68,13 +68,10 @@
 		<div class="col-md-12 ng-cloak">
 
 			<sub-nav>
+				<sub-nav-item th:if="${sistr}" state="sistr" text="Sistr"></sub-nav-item>
 				<th:block th:if="${isCompleted}">
-					<sub-nav-item state="tables" data:text="TODO"></sub-nav-item>
-				</th:block>
-				<th:block th:if="${isCompleted} and ${preview}">
 					<sub-nav-item state="preview" data:text="#{analysis.tab.preview}"></sub-nav-item>
 				</th:block>
-				<sub-nav-item th:if="${sistr}" state="sistr" text="Sistr"></sub-nav-item>
 				<sub-nav-item th:if="${isError}" state="joberrors" text="Job Errors"></sub-nav-item>
 				<sub-nav-item state="inputs" data:text="#{analysis.tab.input-files}"></sub-nav-item>
 				<th:block th:if="${isCompleted}">
@@ -102,14 +99,13 @@
 			</script>
 
 			<script type="text/ng-template" id="tables.html">
-				<div th:if="${isCompleted}" ng-controller="TablesController as tablesController">
-					<div id="js-tables-container"></div>
-				</div>
+
 				<div th:unless="${isCompleted}"></div>
 			</script>
 
 			<script type="text/ng-template" id="preview.html">
-				<div th:if="${isCompleted} and ${preview}" ng-controller="PreviewController as previewController">
+				<div th:if="${isCompleted}" ng-controller="PreviewController as previewController">
+					<div th:if="${preview == 'tree'}">
 					<phylocanvas
 						shape="circular" config="{}" newick="{{previewController.newick}}">
 						<phylocanvas-controls>
@@ -126,8 +122,11 @@
 						</phylocanvas-controls>
 						<div id="phylocanvas"></div>
 					</phylocanvas>
+					</div>
+					<div th:if="${isCompleted}" id="js-file-preview-container"></div>
+					<div th:if="${isCompleted}" id="js-messages" class="hidden"></div>
 				</div>
-				<div th:unless="${isCompleted} and ${preview}"></div>
+				<div th:unless="${isCompleted}"></div>
 			</script>
 
 			<script type="text/ng-template" id="sistr.html">

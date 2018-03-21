@@ -1,11 +1,16 @@
 import angular from "angular";
-import { showNotification } from "../../modules/notifications";
-import { formatDate } from "../../utilities/date-utilities";
-import "../../../sass/pages/analysis.scss";
 import $ from "jquery";
-import "slickgrid-6pac/slick.core";
-import "slickgrid-6pac/slick.grid";
-import "slickgrid-6pac/slick.dataview";
+import {
+  showNotification,
+  showErrorNotification
+} from "../../modules/notifications";
+import { formatDate } from "../../utilities/date-utilities";
+import { renderPlainTextPreview } from "./plaintext-preview";
+import "../../../sass/pages/analysis.scss";
+import { renderTabularPreview } from "./tabular-preview";
+
+const baseAjaxUrl = window.PAGE.URLS.base;
+const analysisSubmissionId = window.PAGE.ID;
 
 /**
  * Controller to download the analysis.
@@ -94,55 +99,27 @@ function AnalysisService($http) {
 
   /**
    * Get tabular data info from server
-   * @param vm
    * @returns {PromiseLike<T> | Promise<T> | *}
    */
-  svc.getTabularData = function(vm) {
-    if (svc._tabularData === null) {
-      const url = window.PAGE.URLS.base + window.PAGE.ID + "/tabular-data";
-      return $http.get(url).then(
-        function successCallback(x) {
-          svc._tabularData = x.data;
-          return svc._tabularData;
-        },
-        function errorCallback(x) {
-          console.error(`Could not GET tabular data from "${url}"`);
-          console.error(x);
-        }
-      );
-    } else {
-      console.log("already fetched:", svc._tabularData);
-      const promise = new Promise(function(resolve, reject) {
-        resolve(svc._tabularData);
-      });
-      return promise;
-    }
-  };
-
-  /**
-   * Get tabular data info from server
-   * @param vm
-   * @returns {PromiseLike<T> | Promise<T> | *}
-   */
-  svc.getOutputsInfo = function(vm) {
+  svc.getOutputsInfo = function() {
     if (svc._outputsInfo === null) {
-      const url = `${window.PAGE.URLS.base}${window.PAGE.ID}/outputs`;
+      const url = `${baseAjaxUrl}${analysisSubmissionId}/outputs`;
       return $http.get(url).then(
         function successCallback(x) {
           svc._outputsInfo = x.data;
           return svc._outputsInfo;
         },
         function errorCallback(x) {
-          console.error(`Could not GET outputs info from "${url}"`);
-          console.error(x);
+          //TODO: i18n
+          const errMsg = `Could not GET outputs info from "${url}". ${x}`;
+          console.error(errMsg);
+          showErrorNotification({ text: errMsg });
         }
       );
     } else {
-      console.log("already fetched:", svc._outputsInfo);
-      const promise = new Promise(function(resolve, reject) {
+      return new Promise(function(resolve, reject) {
         resolve(svc._outputsInfo);
       });
-      return promise;
     }
   };
 
@@ -235,8 +212,37 @@ function StateController(AnalysisService) {
   initialize();
 }
 
-function PreviewController() {
+function PreviewController(analysisService) {
   this.newick = window.PAGE.NEWICK;
+  const vm = this;
+  const $tablesContainer = $("#js-file-preview-container");
+  const tabExtSet = new Set(["tab", "tsv", "tabular"]);
+  console.log("HI");
+  analysisService.getOutputsInfo(vm).then(outputInfos => {
+    for (const outputInfo of outputInfos) {
+      if (
+        !outputInfo.hasOwnProperty("fileExt") ||
+        !outputInfo.hasOwnProperty("id")
+      ) {
+        continue;
+      }
+      if (tabExtSet.has(outputInfo.fileExt)) {
+        renderTabularPreview(
+          $tablesContainer,
+          baseAjaxUrl,
+          analysisSubmissionId,
+          outputInfo
+        );
+      } else {
+        renderPlainTextPreview(
+          $tablesContainer,
+          baseAjaxUrl,
+          analysisSubmissionId,
+          outputInfo
+        );
+      }
+    }
+  });
 }
 
 function SistrController(analysisService) {
@@ -268,209 +274,6 @@ function SistrController(analysisService) {
       vm.cgMLST_predictions = cgMLST_predictions;
       vm.mash_predictions = mash_predictions;
       vm.parse_results_error = result["parse_results_error"];
-    }
-  });
-}
-
-function TablesController(analysisService) {
-  const MAX_TABLE_HEIGHT = 300; //px
-  const TEXT_CHUNK_SIZE = 5000; //bytes
-  const vm = this;
-  const $tablesContainer = $("#js-tables-container");
-
-  analysisService.getOutputsInfo(vm).then(result => {
-    console.log("OUTPUTS", result);
-    let count = 0;
-    let options = {
-      rowHeight: 20,
-      editable: false,
-      enableAddRow: false,
-      enableCellNavigation: false
-    };
-    const setTabularExt = new Set(["tab", "tsv", "tabular"]);
-    for (const t of result) {
-      console.log("count", count, "t", t);
-      if (!t.hasOwnProperty("fileExt")) {
-        continue;
-      }
-      console.log(
-        "setTAB",
-        setTabularExt,
-        t.fileExt,
-        setTabularExt.has(t.fileExt)
-      );
-      if (!setTabularExt.has(t.fileExt)) {
-        const $panel = $(
-          `<div id="js-panel-${count}" class="panel panel-default"/>`
-        );
-        const $panelHeading = $(
-          `<div class="panel-heading"><h5>${t.outputName} - ${
-            t.filename
-          }</h5></div>`
-        );
-        $panel.append($panelHeading);
-        const $panelBody = $(`<div class="panel-body"></div>`);
-        const gridId = `js-text-${count}`;
-        const $table = $(`<pre/>`, {
-          id: gridId
-        });
-        $table.css({
-          "white-space": "pre-wrap",
-          resize: "both",
-          height: `${MAX_TABLE_HEIGHT}px`,
-          width: "100%"
-        });
-        const fileSizeBytes = t.fileSizeBytes;
-        const baseUrl = `${window.PAGE.URLS.base}${window.PAGE.ID}/outputs/${
-          t.id
-        }`;
-        const params = {
-          seek: 0,
-          chunk: Math.min(fileSizeBytes, TEXT_CHUNK_SIZE)
-        };
-        const url = `${baseUrl}?${$.param(params)}`;
-        let $showMore = null;
-        if (t.fileSizeBytes > TEXT_CHUNK_SIZE) {
-          $showMore = $(
-            `<button href="#" id="js-show-more-${
-              t.id
-            }" disabled="disabled" class="btn btn-default">SHOW MORE</button>`
-          );
-        }
-        let showMoreUrl = `${baseUrl}?${$.param(params)}`;
-
-        function onTextScroll() {
-          if (params.chunk === 0) {
-            console.log("no more to show!");
-            return;
-          }
-          if (
-            $(this).scrollTop() + $(this).innerHeight() >=
-            $(this)[0].scrollHeight
-          ) {
-            console.log("SHOWING MORE", showMoreUrl);
-            showMoreUrl = `${baseUrl}?${$.param(params)}`;
-            $.ajax({
-              url: showMoreUrl,
-              success: function(resp, statusText, xOpts) {
-                $table.text($table.text() + resp.text);
-                params.seek = resp.filePointer;
-                params.chunk = Math.min(
-                  fileSizeBytes - params.seek,
-                  TEXT_CHUNK_SIZE
-                );
-                if (params.chunk === 0) {
-                  $showMore.prop("disabled", true);
-                  $showMore.css({ display: "none" });
-                } else {
-                  $showMore.prop("disabled", false);
-                  showMoreUrl = `${baseUrl}?${$.param(params)}`;
-                }
-                console.log("SCROLLED", params, showMoreUrl);
-              }
-            });
-          }
-        }
-
-        $.ajax({
-          url: url,
-          success: (resp, statusText, xOpts) => {
-            $table.text(resp.text);
-            if ($showMore == null) return;
-            const seek = resp.filePointer;
-            params.seek = seek;
-            params.chunk = Math.min(fileSizeBytes - seek, TEXT_CHUNK_SIZE);
-            if (params.chunk === 0) {
-              $showMore.css({ display: "none" });
-            } else {
-              $table.on("scroll", onTextScroll);
-              $showMore.prop("disabled", false);
-              $showMore.on("click", () => {
-                $showMore.prop("disabled", true);
-                $.ajax({
-                  url: showMoreUrl,
-                  success: (resp, statusText, xOpts) => {
-                    $table.text($table.text() + resp.text);
-                    params.seek = resp.filePointer;
-                    params.chunk = Math.min(
-                      fileSizeBytes - params.seek,
-                      TEXT_CHUNK_SIZE
-                    );
-                    if (params.chunk === 0) {
-                      $showMore.prop("disabled", true);
-                      $showMore.css({ display: "none" });
-                    } else {
-                      $showMore.prop("disabled", false);
-                      showMoreUrl = `${baseUrl}?${$.param(params)}`;
-                    }
-                    console.log(
-                      "SHOW MORE BUTTON CLICKED",
-                      params,
-                      showMoreUrl
-                    );
-                  }
-                });
-              });
-            }
-          }
-        });
-
-        $panelBody.append($table);
-        if ($showMore !== null) {
-          $panelBody.append($showMore);
-        }
-        $panel.append($panelBody);
-        $tablesContainer.append($panel);
-
-        continue;
-      }
-      let headers = [];
-      const firstRow = t.firstLine.split("\t");
-      for (let i = 0; i < firstRow.length; i++) {
-        const row = firstRow[i];
-        // headers.push({ title: x });
-        headers.push({ id: i + "", field: i + "", name: row, sortable: true });
-      }
-      const loader = Slick.Data.RemoteModel(t.id, t.filePointer);
-      const $panel = $(
-        `<div id="js-panel-${count}" class="panel panel-default"/>`
-      );
-      const $panelHeading = $(
-        `<div class="panel-heading"><h5>${t.outputName} - ${
-          t.filename
-        }</h5></div>`
-      );
-      $panel.append($panelHeading);
-      const $panelBody = $(`<div class="panel-body"></div>`);
-      const gridId = `grid-${count}`;
-      const $table = $(`<div/>`, {
-        id: gridId,
-        class: "display",
-        height: `${MAX_TABLE_HEIGHT}px`,
-        width: "100%"
-      });
-      $table.appendTo($panelBody);
-      $panel.append($panelBody);
-      $panel.appendTo($tablesContainer);
-      // const dataView = new Slick.Data.DataView();
-      const grid = new Slick.Grid(`#${gridId}`, loader.data, headers, options);
-      grid.onViewportChanged.subscribe((e, args) => {
-        const vp = grid.getViewport();
-        loader.ensureData(vp.top, vp.bottom);
-      });
-      loader.onDataLoading.subscribe(() => {
-        console.log("Loading!", t);
-      });
-      loader.onDataLoaded.subscribe((e, args) => {
-        for (let i = args.from; i <= args.to; i++) {
-          grid.invalidateRow(i);
-        }
-        grid.updateRowCount();
-        grid.render();
-        console.log("LOADED!", e, args);
-      });
-      grid.onViewportChanged.notify();
-      count++;
     }
   });
 }
@@ -580,10 +383,6 @@ const iridaAnalysis = angular
     "$stateProvider",
     function($stateProvider) {
       $stateProvider
-        .state("tables", {
-          url: "/tables",
-          templateUrl: "tables.html"
-        })
         .state("preview", {
           url: "/preview",
           templateUrl: "preview.html"
@@ -617,8 +416,7 @@ const iridaAnalysis = angular
   .service("AnalysisService", ["$http", AnalysisService])
   .controller("FileDownloadController", [FileDownloadController])
   .controller("StateController", ["AnalysisService", StateController])
-  .controller("TablesController", ["AnalysisService", TablesController])
-  .controller("PreviewController", [PreviewController])
+  .controller("PreviewController", ["AnalysisService", PreviewController])
   .controller("ProjectShareController", [
     "AnalysisService",
     ProjectShareController

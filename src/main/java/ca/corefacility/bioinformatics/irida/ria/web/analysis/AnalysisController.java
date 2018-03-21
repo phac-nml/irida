@@ -62,6 +62,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Controller for Analysis.
@@ -274,48 +275,72 @@ public class AnalysisController {
 		Set<String> outputNames = analysis.getAnalysisOutputFileNames();
 		final List<Map<String, Object>> maps = new ArrayList<>();
 		for (String outputName : outputNames) {
-			final HashMap<String, Object> map = new HashMap<>();
-			final AnalysisOutputFile aof = analysis.getAnalysisOutputFile(outputName);
-			final Long aofId = aof.getId();
-			final String aofFilename = aof.getFile()
-					.getFileName()
-					.toString();
-			final ToolExecution tool = aof.getCreatedByTool();
-			final String toolName = tool.getToolName();
-			final String toolVersion = tool.getToolVersion();
-			map.put("id", aofId);
-			map.put("analysisSubmissionId", submission.getId());
-			map.put("analysisId", analysis.getId());
-			map.put("outputName", outputName);
-			map.put("filename", aofFilename);
-			map.put("fileSizeBytes", aof.getFile()
-					.toFile()
-					.length());
-			map.put("toolName", toolName);
-			map.put("toolVersion", toolVersion);
-			map.put("fileExt", FileUtilities.getFileExt(aofFilename));
-			RandomAccessFile reader = null;
-			try {
-				reader = new RandomAccessFile(aof.getFile()
-						.toFile(), "r");
-				map.put("firstLine", reader.readLine());
-				map.put("filePointer", reader.getFilePointer());
-			} catch (FileNotFoundException e) {
-				logger.error("Could not find file '" + aof.getFile() + "' " + e);
-			} catch (IOException e) {
-				logger.error("Could not read file '" + aof.getFile() + "' " + e);
-			} finally {
-				try {
-					if (reader != null) {
-						reader.close();
-					}
-				} catch (IOException e) {
-					logger.error("Could not close file handle for '" + aof.getFile() + "' " + e);
-				}
-			}
+			final HashMap<String, Object> map = getAnalysisOutputFileInfo(submission, analysis, outputName);
 			maps.add(map);
 		}
 		return maps;
+	}
+
+	/**
+	 * Get {@link AnalysisOutputFile} info.
+	 *
+	 * @param submission
+	 * @param analysis
+	 * @param outputName
+	 * @return
+	 */
+	private HashMap<String, Object> getAnalysisOutputFileInfo(AnalysisSubmission submission, Analysis analysis,
+			String outputName) {
+		// set of file extensions for indicating whether the first line of the file should be read
+		final ImmutableSet<String> FILE_EXT_READ_FIRST_LINE = ImmutableSet.of("tsv", "txt", "tabular", "csv", "tab");
+		final HashMap<String, Object> map = new HashMap<>();
+		final AnalysisOutputFile aof = analysis.getAnalysisOutputFile(outputName);
+		final Long aofId = aof.getId();
+		final String aofFilename = aof.getFile()
+				.getFileName()
+				.toString();
+		final ToolExecution tool = aof.getCreatedByTool();
+		final String toolName = tool.getToolName();
+		final String toolVersion = tool.getToolVersion();
+		map.put("id", aofId);
+		map.put("analysisSubmissionId", submission.getId());
+		map.put("analysisId", analysis.getId());
+		map.put("outputName", outputName);
+		map.put("filename", aofFilename);
+		map.put("fileSizeBytes", aof.getFile()
+				.toFile()
+				.length());
+		map.put("toolName", toolName);
+		map.put("toolVersion", toolVersion);
+		final String fileExt = FileUtilities.getFileExt(aofFilename);
+		map.put("fileExt", fileExt);
+		if (FILE_EXT_READ_FIRST_LINE.contains(fileExt))
+		{
+			getFirstLine(map, aof);
+		}
+		return map;
+	}
+
+	private void getFirstLine(HashMap<String, Object> map, AnalysisOutputFile aof) {
+		RandomAccessFile reader = null;
+		try {
+			reader = new RandomAccessFile(aof.getFile()
+					.toFile(), "r");
+			map.put("firstLine", reader.readLine());
+			map.put("filePointer", reader.getFilePointer());
+		} catch (FileNotFoundException e) {
+			logger.error("Could not find file '" + aof.getFile() + "' " + e);
+		} catch (IOException e) {
+			logger.error("Could not read file '" + aof.getFile() + "' " + e);
+		} finally {
+			try {
+				if (reader != null) {
+					reader.close();
+				}
+			} catch (IOException e) {
+				logger.error("Could not close file handle for '" + aof.getFile() + "' " + e);
+			}
+		}
 	}
 
 	/**
@@ -364,8 +389,6 @@ public class AnalysisController {
 			try {
 				final File file = aofFile.toFile();
 				final RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
-				final String firstLine = randomAccessFile.readLine();
-				map.put("firstLine", firstLine);
 				randomAccessFile.seek(seek);
 				if (seek == 0) {
 					if (chunk != null && chunk > 0) {

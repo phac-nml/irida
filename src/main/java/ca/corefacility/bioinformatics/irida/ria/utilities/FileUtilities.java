@@ -167,7 +167,7 @@ public class FileUtilities {
 		if (matcher.matches()) {
 			ext = matcher.group(1);
 		}
-		return ext;
+		return ext.toLowerCase();
 	}
 
 	/**
