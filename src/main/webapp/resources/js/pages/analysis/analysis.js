@@ -6,8 +6,8 @@ import {
 } from "../../modules/notifications";
 import { formatDate } from "../../utilities/date-utilities";
 import { renderPlainTextPreview } from "./plaintext-preview";
-import "../../../sass/pages/analysis.scss";
 import { renderTabularPreview } from "./tabular-preview";
+import "../../../sass/pages/analysis.scss";
 
 const baseAjaxUrl = window.PAGE.URLS.base;
 const analysisSubmissionId = window.PAGE.ID;
@@ -217,7 +217,7 @@ function PreviewController(analysisService) {
   const vm = this;
   const $tablesContainer = $("#js-file-preview-container");
   const tabExtSet = new Set(["tab", "tsv", "tabular"]);
-  console.log("HI");
+
   analysisService.getOutputsInfo(vm).then(outputInfos => {
     for (const outputInfo of outputInfos) {
       if (
@@ -227,19 +227,9 @@ function PreviewController(analysisService) {
         continue;
       }
       if (tabExtSet.has(outputInfo.fileExt)) {
-        renderTabularPreview(
-          $tablesContainer,
-          baseAjaxUrl,
-          analysisSubmissionId,
-          outputInfo
-        );
+        renderTabularPreview($tablesContainer, baseAjaxUrl, outputInfo);
       } else {
-        renderPlainTextPreview(
-          $tablesContainer,
-          baseAjaxUrl,
-          analysisSubmissionId,
-          outputInfo
-        );
+        renderPlainTextPreview($tablesContainer, baseAjaxUrl, outputInfo);
       }
     }
   });

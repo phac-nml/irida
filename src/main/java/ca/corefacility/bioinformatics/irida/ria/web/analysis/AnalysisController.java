@@ -5,8 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.Principal;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
@@ -273,21 +271,18 @@ public class AnalysisController {
 		AnalysisSubmission submission = analysisSubmissionService.read(id);
 		Analysis analysis = submission.getAnalysis();
 		Set<String> outputNames = analysis.getAnalysisOutputFileNames();
-		final List<Map<String, Object>> maps = new ArrayList<>();
-		for (String outputName : outputNames) {
-			final HashMap<String, Object> map = getAnalysisOutputFileInfo(submission, analysis, outputName);
-			maps.add(map);
-		}
-		return maps;
+		return outputNames.stream()
+				.map((outputName) -> getAnalysisOutputFileInfo(submission, analysis, outputName))
+				.collect(Collectors.toList());
 	}
 
 	/**
 	 * Get {@link AnalysisOutputFile} info.
 	 *
-	 * @param submission
-	 * @param analysis
-	 * @param outputName
-	 * @return
+	 * @param submission {@link AnalysisSubmission} of {@code analysis}
+	 * @param analysis   {@link Analysis} to get {@link AnalysisOutputFile}s from
+	 * @param outputName Workflow output name
+	 * @return Map of {@link AnalysisOutputFile} info
 	 */
 	private HashMap<String, Object> getAnalysisOutputFileInfo(AnalysisSubmission submission, Analysis analysis,
 			String outputName) {
@@ -314,31 +309,36 @@ public class AnalysisController {
 		map.put("toolVersion", toolVersion);
 		final String fileExt = FileUtilities.getFileExt(aofFilename);
 		map.put("fileExt", fileExt);
-		if (FILE_EXT_READ_FIRST_LINE.contains(fileExt))
-		{
-			getFirstLine(map, aof);
+		if (FILE_EXT_READ_FIRST_LINE.contains(fileExt)) {
+			addFirstLine(map, aof);
 		}
 		return map;
 	}
 
-	private void getFirstLine(HashMap<String, Object> map, AnalysisOutputFile aof) {
+	/**
+	 * Add the {@code firstLine} and {@code filePointer} file byte position after reading the first line of an {@link AnalysisOutputFile} to a Map.
+	 *
+	 * @param map Map to add {@code firstLine} and {@code filePointer} info to
+	 * @param aof {@link AnalysisOutputFile} to read from
+	 */
+	private void addFirstLine(HashMap<String, Object> map, AnalysisOutputFile aof) {
 		RandomAccessFile reader = null;
+		final Path aofFile = aof.getFile();
 		try {
-			reader = new RandomAccessFile(aof.getFile()
-					.toFile(), "r");
+			reader = new RandomAccessFile(aofFile.toFile(), "r");
 			map.put("firstLine", reader.readLine());
 			map.put("filePointer", reader.getFilePointer());
 		} catch (FileNotFoundException e) {
-			logger.error("Could not find file '" + aof.getFile() + "' " + e);
+			logger.error("Could not find file '" + aofFile + "' " + e);
 		} catch (IOException e) {
-			logger.error("Could not read file '" + aof.getFile() + "' " + e);
+			logger.error("Could not read file '" + aofFile + "' " + e);
 		} finally {
 			try {
 				if (reader != null) {
 					reader.close();
 				}
 			} catch (IOException e) {
-				logger.error("Could not close file handle for '" + aof.getFile() + "' " + e);
+				logger.error("Could not close file handle for '" + aofFile + "' " + e);
 			}
 		}
 	}

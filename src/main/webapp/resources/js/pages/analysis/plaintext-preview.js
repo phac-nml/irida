@@ -9,24 +9,30 @@ import { convertFileSize } from "../../utilities/file.utilities";
  * @returns {string}
  */
 const statusText = (byte, fileSizeBytes) =>
-  `Loaded ${convertFileSize(byte)}/${convertFileSize(fileSizeBytes)} (${(
+  `${convertFileSize(byte)} / ${convertFileSize(fileSizeBytes)} (${(
     byte /
     fileSizeBytes *
     100
   ).toFixed(1)}%)`;
 
+/**
+ * Render a preview of a plain-text AnalysisOutputFile
+ * @param {jQuery|HTMLElement} $container Container element to render preview in
+ * @param {string} baseUrl Base AJAX URL (e.g. /analysis/ajax/)
+ * @param {Object} aof AnalysisOutputFile info
+ * @param {number} height Preview container height
+ * @param {number} chunk_size Number of bytes to read from AnalysisOutputFile at a time
+ */
 export function renderPlainTextPreview(
   $container,
   baseUrl,
-  analysisSubmissionId,
-  { outputName, id, filename, fileSizeBytes },
-  MAX_TABLE_HEIGHT = 300,
-  TEXT_CHUNK_SIZE = 8192
+  aof,
+  height = 300,
+  chunk_size = 8192
 ) {
+  const { id, fileSizeBytes } = aof;
   const $panel = $(`<div id="js-panel-${id}" class="panel panel-default"/>`);
-  const $panelHeading = $(
-    panelHeading(baseUrl, analysisSubmissionId, id, outputName, filename)
-  );
+  const $panelHeading = $(panelHeading(baseUrl, aof));
   $panel.append($panelHeading);
   const $panelBody = $(`<div class="panel-body"></div>`);
   const elId = `js-text-${id}`;
@@ -36,10 +42,10 @@ export function renderPlainTextPreview(
   $textEl.css({
     "white-space": "pre-wrap",
     resize: "both",
-    height: `${MAX_TABLE_HEIGHT}px`,
+    height: `${height}px`,
     width: "100%"
   });
-  const apiUrl = analysisOutputFileApiUrl(baseUrl, analysisSubmissionId, id);
+  const apiUrl = analysisOutputFileApiUrl(baseUrl, aof);
   /**
    * AnalysisOutputFile text content GET request parameters.
    * - `seek` is the byte to seek to and begin reading at
@@ -48,7 +54,7 @@ export function renderPlainTextPreview(
    */
   const params = {
     seek: 0,
-    chunk: Math.min(fileSizeBytes, TEXT_CHUNK_SIZE)
+    chunk: Math.min(fileSizeBytes, chunk_size)
   };
   let $showMore = $(
     `<p class="small pull-right">${statusText(0, fileSizeBytes)}</p>`
@@ -75,7 +81,7 @@ export function renderPlainTextPreview(
           params.chunk = getNewChunkSize(
             params.seek,
             fileSizeBytes,
-            TEXT_CHUNK_SIZE
+            chunk_size
           );
           showMoreUrl =
             params.chunk === 0 ? "" : `${apiUrl}?${$.param(params)}`;
@@ -90,11 +96,7 @@ export function renderPlainTextPreview(
     success: ({ text, filePointer }) => {
       $textEl.text(text);
       params.seek = filePointer;
-      params.chunk = getNewChunkSize(
-        params.seek,
-        fileSizeBytes,
-        TEXT_CHUNK_SIZE
-      );
+      params.chunk = getNewChunkSize(params.seek, fileSizeBytes, chunk_size);
       $showMore.text(statusText(params.seek, fileSizeBytes));
       // if next chunk to fetch is 0, then no need to setup fetching of more
       // file text on text scroll

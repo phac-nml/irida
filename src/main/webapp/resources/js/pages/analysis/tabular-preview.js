@@ -10,7 +10,7 @@ import "ag-grid/dist/styles/ag-theme-balham.css";
  * @returns {Array<Object<string>>} Basic ag-grid column definitions
  */
 function parseHeadersTabDelimited(firstLine) {
-  let headers = [];
+  let headers = [{ headerName: "#", field: "index" }];
   const firstRow = firstLine.split("\t");
   for (let i = 0; i < firstRow.length; i++) {
     const row = firstRow[i];
@@ -25,13 +25,14 @@ function parseHeadersTabDelimited(firstLine) {
 /**
  * Split each line on tab characters.
  * @param {Array<string>} lines Tab-delimited lines
+ * @param {number} offset Index offset
  * @returns {Array<Object<string>>}
  */
-function parseRowsTabDelimited(lines) {
+function parseRowsTabDelimited(lines, offset = 0) {
   const rows = [];
   for (let i = 0; i < lines.length; i++) {
     const cells = lines[i].split("\t");
-    const row = {};
+    const row = { index: offset + i + 1 };
     for (let j = 0; j < cells.length; j++) {
       row[j + ""] = cells[j];
     }
@@ -43,25 +44,14 @@ function parseRowsTabDelimited(lines) {
 /**
  * Create Bootstrap Panel for ag-grid Grid.
  * @param {string} baseUrl Base AJAX URL
- * @param {number} analysisSubmissionId AnalysisSubmission id
- * @param {number} id AnalysisOutputFile id
- * @param {string} outputName AnalysisOutputFile output name
- * @param {string} filename AnalysisOutputFile filename
  * @param {number} height Panel body height
+ * @param {Object} aof AnalysisOutputFile info
  * @returns {{$panel: jQuery|HTMLElement, gridId: string, $status: jQuery|HTMLElement}}
  */
-function createGridPanel(
-  baseUrl,
-  analysisSubmissionId,
-  id,
-  outputName,
-  filename,
-  height = 300
-) {
+function createGridPanel(baseUrl, aof, height = 300) {
+  const { id } = aof;
   const $panel = $(`<div id="js-panel-${id}" class="panel panel-default"/>`);
-  const $panelHeading = $(
-    panelHeading(baseUrl, analysisSubmissionId, id, outputName, filename)
-  );
+  const $panelHeading = $(panelHeading(baseUrl, aof));
   const $panelBody = $(`<div class="panel-body"></div>`);
   const gridId = `grid-${id}`;
   const $grid = $(`<div/>`, {
@@ -86,6 +76,12 @@ function createGridPanel(
   return { $panel, gridId, $status };
 }
 
+function autoSizeAll({ columnApi }) {
+  const allColumnIds = [];
+  columnApi.getAllColumns().forEach(column => allColumnIds.push(column.colId));
+  columnApi.autoSizeColumns(allColumnIds);
+}
+
 /**
  * Initialize ag-grid Grid
  * @param {HTMLElement} $grid Element to create Grid in
@@ -106,12 +102,13 @@ function initAgGrid($grid, $status, headers, baseUrl, PAGE_SIZE = 100) {
       $.ajax({
         url: url,
         success: function onSuccess({ lines }) {
-          const rows = parseRowsTabDelimited(lines);
+          const rows = parseRowsTabDelimited(lines, startRow);
           let last = -1;
           if (rows.length < PAGE_SIZE) {
             last = startRow + rows.length;
           }
           successCallback(rows, last);
+          autoSizeAll(gridOptions);
         },
         error: function() {
           console.warn("error loading lines " + startRow + " to " + endRow);
@@ -123,7 +120,6 @@ function initAgGrid($grid, $status, headers, baseUrl, PAGE_SIZE = 100) {
   const gridOptions = {
     enableColResize: true,
     rowBuffer: 0,
-    debug: true,
     columnDefs: headers,
     rowModelType: "infinite",
     paginationPageSize: PAGE_SIZE,
@@ -131,18 +127,7 @@ function initAgGrid($grid, $status, headers, baseUrl, PAGE_SIZE = 100) {
     maxConcurrentDatasourceRequests: 2,
     infiniteInitialRowCount: 1,
     maxBlocksInCache: undefined,
-    onGridReady: () => {
-      gridOptions.api.setDatasource(dataSource);
-    },
-    onViewportChanged: ({ type, firstRow, lastRow, api, columnApi }) => {
-      if (api.rowModel.infiniteCache) {
-        //TODO: i18n
-        const statusText = `Showing ${firstRow + 1}-${lastRow + 1} of ${
-          api.rowModel.infiniteCache.virtualRowCount
-        } rows`;
-        $status.text(statusText);
-      }
-    }
+    onGridReady: () => gridOptions.api.setDatasource(dataSource)
   };
 
   new Grid($grid, gridOptions);
@@ -157,34 +142,22 @@ function initAgGrid($grid, $status, headers, baseUrl, PAGE_SIZE = 100) {
  *
  * @param {jQuery|HTMLElement} $container Container element
  * @param {string} baseUrl Base analysis AJAX url (e.g. /analysis/ajax/)
- * @param {number} analysisSubmissionId AnalysisSubmission id
- * @param {string} outputName Workflow output file name
- * @param {number} id AnalysisOutputFile id
- * @param {string} filename AnalysisOutputFile filename
- * @param {number} fileSizeBytes AnalysisOutputFile file size in bytes
- * @param {string} firstLine AnalysisOutputFile first line
  * @param {number} height Grid container height
  * @param {number} page_size Number of lines to fetch from server at a time
+ * @param {Object} aof AnalysisOutputFile info
  */
 export function renderTabularPreview(
   $container,
   baseUrl,
-  analysisSubmissionId,
-  { outputName, id, filename, fileSizeBytes, firstLine },
+  aof,
   height = 300,
   page_size = 100
 ) {
-  let headers = parseHeadersTabDelimited(firstLine);
-  const { $panel, gridId, $status } = createGridPanel(
-    baseUrl,
-    analysisSubmissionId,
-    id,
-    outputName,
-    filename,
-    height
-  );
+  const { firstLine } = aof;
+  const headers = parseHeadersTabDelimited(firstLine);
+  const { $panel, gridId, $status } = createGridPanel(baseUrl, aof, height);
   $container.append($panel);
-  const apiUrl = analysisOutputFileApiUrl(baseUrl, analysisSubmissionId, id);
+  const apiUrl = analysisOutputFileApiUrl(baseUrl, aof);
   initAgGrid(
     document.getElementById(gridId),
     $status,
