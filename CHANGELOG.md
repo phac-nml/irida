@@ -4,6 +4,8 @@ Changes
 0.20.0 to 0.21.0
 ----------------
 * [UI]: Fixed bug where user could not cancel the upload of a sequence file on the Sample Files page.
+* [UI/Workflow]: Fixed bug where users could not submit large analyses due to an HTTP 414 "Request URI Too Long" error.
+* [Developer]: Removed old gulp dependencies from the `package.json` file.
 * [UI]: Moved the position of the notification system to top center.
 
 0.19.0 to 0.20.0
