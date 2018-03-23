@@ -10,14 +10,14 @@ const defaultConfig = {
   type: "success",
   closeWith: ["click"], // String array with 'click' or 'button' or both
   animation: {
-    open: "animated bounceInRight",
-    close: "animated bounceOutRight"
+    open: "animated fadeIn",
+    close: "animated fadeOut"
   },
   text: ""
 };
 
 export function showNotification(params) {
-  return Noty(Object.assign({}, defaultConfig, params)).show();
+  return new Noty(Object.assign({}, defaultConfig, params)).show();
 }
 
 // TODO: Remove this after all notification usages are through a webpack bundle.
