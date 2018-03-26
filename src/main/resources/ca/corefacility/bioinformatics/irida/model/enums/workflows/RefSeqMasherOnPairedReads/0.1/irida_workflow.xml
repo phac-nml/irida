@@ -26,16 +26,10 @@
     </parameter>
   </parameters>
   <outputs>
-    <output name="output_path_tab" fileName="refseq-masher-matches.tsv"/>
-    <output name="output_path_tab" fileName="refseq-masher-contains.tsv"/>
+    <output name="refseq-masher-matches" fileName="refseq-masher-matches.tsv"/>
+    <output name="refseq-masher-contains" fileName="refseq-masher-contains.tsv"/>
   </outputs>
   <toolRepositories>
-    <repository>
-      <name>refseq_masher</name>
-      <owner>nml</owner>
-      <url>https://toolshed.g2.bx.psu.edu</url>
-      <revision>26df66c32861</revision>
-    </repository>
     <repository>
       <name>refseq_masher</name>
       <owner>nml</owner>

@@ -122,38 +122,38 @@ This is an **XML** file which is used to link up a Galaxy workflow with IRIDA.  
 <?xml version="1.0" encoding="UTF-8"?>
 
 <iridaWorkflow>
-	<id>49507566-e10c-41b2-ab6f-0fb5383be997</id>
-	<name>MyPipeline</name>
-	<version>0.1</version>
-	<analysisType>mypipeline</analysisType>
-	<inputs>
-		<sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
-		<reference>reference</reference>
-		<requiresSingleSample>false</requiresSingleSample>
-	</inputs>
-	<parameters>
-		<parameter name="my_parameter" defaultValue="1">
-			<toolParameter
-				toolId="my_tool"
-				parameterName="my_parameter" />
-		</parameter>
-		<parameter name="other_parameter" defaultValue="2">
-        	<toolParameter
-        		toolId="my_tool"
-        		parameterName="other_parameter" />
-        </parameter>
-	</parameters>
-	<outputs>
-		<output name="tree" fileName="phylogeneticTree.tre" />
-	</outputs>
-	<toolRepositories>
-		<repository>
-			<name>my_tool</name>
-			<owner>irida</owner>
-			<url>https://irida.corefacility.ca/galaxy-shed</url>
-			<revision>de3e46eaf5ba</revision>
-		</repository>
-	</toolRepositories>
+  <id>49507566-e10c-41b2-ab6f-0fb5383be997</id>
+  <name>MyPipeline</name>
+  <version>0.1</version>
+  <analysisType>mypipeline</analysisType>
+  <inputs>
+    <sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
+    <reference>reference</reference>
+    <requiresSingleSample>false</requiresSingleSample>
+  </inputs>
+  <parameters>
+    <parameter name="my_parameter" defaultValue="1">
+      <toolParameter
+        toolId="my_tool"
+        parameterName="my_parameter" />
+    </parameter>
+    <parameter name="other_parameter" defaultValue="2">
+      <toolParameter
+        toolId="my_tool"
+        parameterName="other_parameter" />
+    </parameter>
+  </parameters>
+  <outputs>
+    <output name="tree" fileName="phylogeneticTree.tre" />
+  </outputs>
+  <toolRepositories>
+    <repository>
+      <name>my_tool</name>
+      <owner>irida</owner>
+      <url>https://irida.corefacility.ca/galaxy-shed</url>
+      <revision>de3e46eaf5ba</revision>
+    </repository>
+  </toolRepositories>
 </iridaWorkflow>
 ```
 
@@ -172,14 +172,14 @@ For more information, please see the [IRIDA Workflow Description][] documentatio
 You can auto-generate an IRIDA Workflow Description `irida_workflow.xml` file from a Galaxy workflow `ga` file with [irida-wf-ga2xml][]:
 
 ```bash
-java -jar irida-wf-ga2xml-0.1.0-standalone.jar \
+java -jar irida-wf-ga2xml-0.1.1-standalone.jar \
   -i irida_workflow_structure.ga \
   -n WORKFLOW_NAME \
   -t ANALYSIS_TYPE \
   -W WORKFLOW_VERSION > irida_workflow.xml
 ```
 
-* [Download irida-wf-ga2xml-0.1.0-SNAPSHOT-standalone.jar from Github][]
+* [Download irida-wf-ga2xml-0.1.1-SNAPSHOT-standalone.jar from Github][]
 
 *NOTE: You may need to edit the output from [irida-wf-ga2xml][] to ensure that only necessary tool parameters are kept in the **irida_workflow.xml** file and that the proper tool revision is used for each tool if this information is not embedded in your Galaxy Workflow `ga` file.*
 
@@ -301,4 +301,4 @@ If you attempt to modify the parameters of this pipeline you should see:
 [my-pipeline-launch]: images/my-pipeline-launch.png
 [my-pipeline-parameters]: images/my-pipeline-parameters.png
 [irida-wf-ga2xml]: https://github.com/phac-nml/irida-wf-ga2xml
-[Download irida-wf-ga2xml-0.1.0-SNAPSHOT-standalone.jar from Github]: https://github.com/phac-nml/irida-wf-ga2xml/releases/download/v0.1.0/irida-wf-ga2xml-0.1.0-SNAPSHOT-standalone.jar
+[Download irida-wf-ga2xml-0.1.1-SNAPSHOT-standalone.jar from Github]: https://github.com/phac-nml/irida-wf-ga2xml/releases/download/v0.1.1/irida-wf-ga2xml-0.1.1-SNAPSHOT-standalone.jar

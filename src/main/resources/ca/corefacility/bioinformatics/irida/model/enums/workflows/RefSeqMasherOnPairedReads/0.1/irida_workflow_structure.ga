@@ -2,7 +2,7 @@
     "a_galaxy_workflow": "true", 
     "annotation": "Find what NCBI RefSeq genomes most closely match or are contained in your sample", 
     "format-version": "0.1", 
-    "name": "RefSeqMasher-paired_end_fastq_collection-v0.1.0", 
+    "name": "RefSeqMasher-sequence_reads_paired-v0.1.0",
     "steps": {
         "0": {
             "annotation": "", 
@@ -12,11 +12,11 @@
             "inputs": [
                 {
                     "description": "", 
-                    "name": "Input Dataset Collection"
+                    "name": "sequence_reads_paired"
                 }
             ], 
             "label": null, 
-            "name": "Input dataset collection", 
+            "name": "sequence_reads_paired",
             "outputs": [], 
             "position": {
                 "left": 200, 
@@ -24,7 +24,7 @@
             }, 
             "tool_errors": null, 
             "tool_id": null, 
-            "tool_state": "{\"collection_type\": \"list:paired\", \"name\": \"Input Dataset Collection\"}", 
+            "tool_state": "{\"collection_type\": \"list:paired\", \"name\": \"sequence_reads_paired\"}",
             "tool_version": null, 
             "type": "data_collection_input", 
             "uuid": "2be50d2d-f0e9-4c33-9c54-2195c1debd39", 
