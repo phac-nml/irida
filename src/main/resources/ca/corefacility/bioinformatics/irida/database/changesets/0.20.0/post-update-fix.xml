@@ -10,9 +10,51 @@
         <validCheckSum>7:fe424670afa75882a10c9178073eecc1</validCheckSum>
         <validCheckSum>7:04d990c0430b5fd7bd63f5bfc462584b</validCheckSum>
 
+        <renameColumn
+                columnDataType="bit(1)"
+                newColumnName="sistr_tmp"
+                oldColumnName="sistr_typing_uploads"
+                tableName="project"/>
+
+        <addColumn tableName="project">
+            <column name="sistr_typing_uploads" type="varchar(255)"/>
+        </addColumn>
+
         <sql>
-            SELECT 1
+            UPDATE project SET sistr_typing_uploads="AUTO" WHERE sistr_tmp=1
         </sql>
+
+        <sql>
+            UPDATE project SET sistr_typing_uploads="OFF" WHERE sistr_tmp=0
+        </sql>
+
+        <addNotNullConstraint
+                columnDataType="varchar(255)"
+                columnName="sistr_typing_uploads"
+                defaultNullValue="OFF"
+                tableName="project"/>
+
+        <dropColumn tableName="project" columnName="sistr_tmp"/>
+
+        <renameColumn
+                columnDataType="bit(1)"
+                newColumnName="sistr_tmp"
+                oldColumnName="sistr_typing_uploads"
+                tableName="project_AUD"/>
+
+        <addColumn tableName="project_AUD">
+            <column name="sistr_typing_uploads" type="varchar(255)"/>
+        </addColumn>
+
+        <sql>
+            UPDATE project_AUD SET sistr_typing_uploads="AUTO" WHERE sistr_tmp=1
+        </sql>
+
+        <sql>
+            UPDATE project_AUD SET sistr_typing_uploads="OFF" WHERE sistr_tmp=0
+        </sql>
+
+        <dropColumn tableName="project_AUD" columnName="sistr_tmp"/>
 
     </changeSet>
 </databaseChangeLog>
