@@ -11,11 +11,11 @@ The dialog that appears will provide you with a command that you can **copy** an
 Copy and paste the command into a terminal window and use the username and password that you use to log in to IRIDA:
 
 ```bash
-[user@waffles ~]$ ngsArchive.pl -p 4 -s 51
+[user@waffles ~]$ ngsArchiveLinker.pl -p 2 -s 5
 Writing files to /home/user
 Enter username: user
 Enter password: 
-Reading samples 1 from project 4
+Reading samples 5 from project 2
 Created 2 files for 1 samples in /home/user/Project
 [user@waffles ~]$ 
 ```

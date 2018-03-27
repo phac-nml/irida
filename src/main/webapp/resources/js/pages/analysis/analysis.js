@@ -30,18 +30,6 @@ function FileDownloadController() {
     }
     hiddenIFrame.src = window.PAGE.URLS.download + id;
   };
-
-  vm.getZipFile = function(id) {
-    var iFrameId = "hiddenDownloader";
-    var hiddenIFrame = document.getElementById(iFrameId);
-    if (hiddenIFrame === null) {
-      hiddenIFrame = document.createElement("iframe");
-      hiddenIFrame.id = iFrameId;
-      hiddenIFrame.style.display = "none";
-      document.body.appendChild(hiddenIFrame);
-    }
-    hiddenIFrame.src = page.URLS.download + id;
-  };
 }
 
 /**
