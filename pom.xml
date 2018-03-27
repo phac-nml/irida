@@ -1038,7 +1038,7 @@
 		<aspectj.version>1.8.1</aspectj.version>
 		<hibernate.validator.version>5.1.1.Final</hibernate.validator.version>
 		<el-ri.version>1.0</el-ri.version>
-		<com.github.jmchilton.blend4j.version>0.2.0-SNAPSHOT-fac9057d047377e679b6c14672b364a20b9a462b</com.github.jmchilton.blend4j.version>
+		<com.github.jmchilton.blend4j.version>0.2.0</com.github.jmchilton.blend4j.version>
 		<apache.jena.version>1.1.0</apache.jena.version>
 		<commons-csv.version>1.4</commons-csv.version>
 		<xml.apis.version>1.4.01</xml.apis.version>
@@ -1088,8 +1088,8 @@
 		<maven.site.plugin.version>3.4</maven.site.plugin.version>
 		<errorprone.version>2.5</errorprone.version>
 		<frontend-maven-plugin.version>1.6</frontend-maven-plugin.version>
-		<node.version>v8.6.0</node.version>
-		<yarn.version>v1.1.0</yarn.version>
+		<node.version>v8.10.0</node.version>
+		<yarn.version>v1.5.1</yarn.version>
 		<jgravatar.version>1.0</jgravatar.version>
 
 		<!-- project configuration -->
