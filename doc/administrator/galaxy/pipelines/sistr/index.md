@@ -7,7 +7,7 @@ description: "Install guide for the SISTR pipeline."
 SISTR Typing
 ============
 
-This workflow uses the software [sistr_cmd][] for typing of Salmonella genomes which are first assembled using [shovill], which uses [SPAdes] for assembly only.  The specific Galaxy tools are listed in the table below.
+This workflow uses the software [sistr_cmd][] for typing of Salmonella genomes which are first assembled using [shovill], which uses [SPAdes] for assembly only and performs pre-assembly read correction with [Lighter] and post-assembly correction with [BWA MEM] and [PILON].  The specific Galaxy tools are listed in the table below.
 
 | Tool Name                 | Owner    | Tool Revision | Toolshed Installable Revision | Toolshed             |
 |:-------------------------:|:--------:|:-------------:|:-----------------------------:|:--------------------:|
@@ -40,21 +40,22 @@ A Galaxy workflow and some test data has been included with this documentation t
     ![dataset-pair-screen][]
 
 4. This should have properly paired your data and named the sample **AE014613-699860**.  Enter the name of this paired dataset collection at the bottom and click **Create list**.
-5. Run the uploaded workflow by clicking on **Workflow**, clicking on the name of the workflow **SISTR Analyze Reads v0.1 (imported from uploaded file)** and clicking **Run**.  This should auto fill in the dataset collection.  At the very bottom of the screen click **Run workflow**.
+5. Run the uploaded workflow by clicking on **Workflow**, clicking on the name of the workflow **SISTR Analyze Reads v0.3 (imported from uploaded file)** and clicking **Run**.  This should auto fill in the dataset collection.  At the very bottom of the screen click **Run workflow**.
 6. If everything was installed correctly, you should see each of the tools run successfully (turn green).  On completion this should look like.
 
-    ![workflow-success][]
+    ![workflow-success]
 
     If you see any tool turn red, you can click on the view details icon ![view-details-icon][] for more information.
 
 If everything was successfull then all dependencies for this pipeline have been properly installed.
 
+[PILON]: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4237348/
+[BWA MEM]: https://github.com/lh3/bwa
+[Lighter]: https://genomebiology.biomedcentral.com/articles/10.1186/s13059-014-0509-9
 [SPAdes]: http://bioinf.spbau.ru/spades
 [shovill]: https://github.com/tseemann/shovill/
 [galaxy-config]: ../../setup#step-4-modify-configuration-file
 [Galaxy Main Shed]: http://toolshed.g2.bx.psu.edu/
-[IRIDA Toolshed]: https://irida.corefacility.ca/galaxy-shed
-[gnuplot]: http://www.gnuplot.info/
 [SISTR Typing Galaxy Workflow]: ../test/sistr/sistr.ga
 [upload-icon]: ../test/snvphyl/images/upload-icon.jpg
 [test/reads]: ../test/sistr/reads
