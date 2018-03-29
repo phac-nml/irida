@@ -7,40 +7,26 @@ description: "Install guide for the SISTR pipeline."
 SISTR Typing
 ============
 
-This workflow uses the software [sistr_cmd][] for typing of Salmonella genomes which are first assembled using [SPAdes][].  The specific Galaxy tools are listed in the table below.
+This workflow uses the software [sistr_cmd][] for typing of Salmonella genomes which are first assembled using [shovill], which uses [SPAdes] for assembly only.  The specific Galaxy tools are listed in the table below.
 
 | Tool Name                 | Owner    | Tool Revision | Toolshed Installable Revision | Toolshed             |
 |:-------------------------:|:--------:|:-------------:|:-----------------------------:|:--------------------:|
-| **flash**                 | irida    | 4287dd541327  | 0 (2015-05-05)                | [IRIDA Toolshed][]   |
-| **filter_spades_repeats** | irida    | f9fc830fa47c  | 0 (2015-05-05)                | [IRIDA Toolshed][]   |
-| **assemblystats**         | irida    | 51b76a5d78a5  | 1 (2015-05-07)                | [IRIDA Toolshed][]   |
-| **spades**                | nml      | 35cb17bd8bf9  | 4 (2016-08-08)                | [Galaxy Main Shed][] |
-| **regex_find_replace**    | jjohnson | 9ea374bb0350  | 0 (2014-03-29)                | [Galaxy Main Shed][] |
+| **shovill**               | iuc      | 57d5928f456e  | 1 (2018-03-07)                | [Galaxy Main Shed][] |
 | **sistr_cmd**             | nml      | 5c8ff92e38a9  | 3 (2017-06-14)                | [Galaxy Main Shed][] |
 
 To install these tools please proceed through the following steps.
 
-## Step 1: Install Dependencies
-
-Some of these tools require additional dependencies to be installed.  For a cluster environment please make sure these are available on all cluster nodes by installing to a shared directory. This can be done with conda (assuming Galaxy is configured to load up the environment `galaxy` for each tool execution using the `env.sh` file).
-
-```bash
-source activate galaxy
-conda install perl-xml-simple perl-time-piece perl-data-dumper
-source deactivate
-```
-
-## Step 2: Galaxy Conda Setup
+## Step 1: Galaxy Conda Setup
 
 Galaxy makes use of [Conda][conda] to automatically install some dependencies for SISTR.  Please verify that the version of Galaxy is >= v16.01 and has been setup to use conda (by modifying the appropriate configuration settings, see [here][galaxy-config] for additional details).  A method to get SISTR to work with a Galaxy version < v16.01 is available in [FAQ/Conda dependencies][].
 
-## Step 3: Install Galaxy Tools
+## Step 2: Install Galaxy Tools
 
 Please install all the Galaxy tools in the table above by logging into Galaxy, navigating to **Admin > Search and browse tool sheds**, searching for the appropriate **Tool Name** and installing the appropriate **Toolshed Installable Revision**.
 
 The install progress can be checked by monitoring the Galaxy log files `galaxy/*.log`.  On completion you should see a message of `Installed` next to the tool when going to **Admin > Manage installed tool shed repositories**.
 
-## Step 4: Testing Pipeline
+## Step 3: Testing Pipeline
 
 A Galaxy workflow and some test data has been included with this documentation to verify that all tools are installed correctly.  To test this pipeline, please proceed through the following steps.
 
@@ -64,6 +50,7 @@ A Galaxy workflow and some test data has been included with this documentation t
 If everything was successfull then all dependencies for this pipeline have been properly installed.
 
 [SPAdes]: http://bioinf.spbau.ru/spades
+[shovill]: https://github.com/tseemann/shovill/
 [galaxy-config]: ../../setup#step-4-modify-configuration-file
 [Galaxy Main Shed]: http://toolshed.g2.bx.psu.edu/
 [IRIDA Toolshed]: https://irida.corefacility.ca/galaxy-shed

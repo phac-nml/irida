@@ -174,31 +174,11 @@
                 "top": 200
             }, 
             "post_job_actions": {
-                "HideDatasetActionalleles_output": {
-                    "action_arguments": {}, 
-                    "action_type": "HideDatasetAction", 
-                    "output_name": "alleles_output"
-                }, 
-                "HideDatasetActioncgmlst_profiles": {
-                    "action_arguments": {}, 
-                    "action_type": "HideDatasetAction", 
-                    "output_name": "cgmlst_profiles"
-                }, 
-                "HideDatasetActionnovel_alleles": {
-                    "action_arguments": {}, 
-                    "action_type": "HideDatasetAction", 
-                    "output_name": "novel_alleles"
-                }, 
                 "HideDatasetActionoutput_prediction_csv": {
                     "action_arguments": {}, 
                     "action_type": "HideDatasetAction", 
                     "output_name": "output_prediction_csv"
-                }, 
-                "HideDatasetActionoutput_prediction_json": {
-                    "action_arguments": {}, 
-                    "action_type": "HideDatasetAction", 
-                    "output_name": "output_prediction_json"
-                }, 
+                },
                 "HideDatasetActionoutput_prediction_tab": {
                     "action_arguments": {}, 
                     "action_type": "HideDatasetAction", 
