@@ -11,14 +11,34 @@ This workflow uses the software [sistr_cmd][] for typing of Salmonella genomes w
 
 | Tool Name                 | Owner    | Tool Revision | Toolshed Installable Revision | Toolshed             |
 |:-------------------------:|:--------:|:-------------:|:-----------------------------:|:--------------------:|
-| **shovill**               | iuc      | 57d5928f456e  | 1 (2018-03-07)                | [Galaxy Main Shed][] |
-| **sistr_cmd**             | nml      | 5c8ff92e38a9  | 3 (2017-06-14)                | [Galaxy Main Shed][] |
+| **shovill**               | iuc      | [57d5928f456e]  | 1 (2018-03-07)                | [Galaxy Main Shed][] |
+| **sistr_cmd**             | nml      | [5c8ff92e38a9]  | 3 (2017-06-14)                | [Galaxy Main Shed][] |
 
 To install these tools please proceed through the following steps.
 
 ## Step 1: Galaxy Conda Setup
 
 Galaxy makes use of [Conda][conda] to automatically install some dependencies for SISTR.  Please verify that the version of Galaxy is >= v16.01 and has been setup to use conda (by modifying the appropriate configuration settings, see [here][galaxy-config] for additional details).  A method to get SISTR to work with a Galaxy version < v16.01 is available in [FAQ/Conda dependencies][].
+
+### Address shovill related issues 
+
+#### Error 256 from running `kmc`/`samtools` 
+
+You will need to install the correct versions of some dependencies for `kmc`/`samtools` so after installing `shovill`: 
+
+```bash
+# activate the Galaxy shovill conda env
+source galaxy/deps/_conda/bin/activate galaxy/deps/_conda/envs/__shovill@0.9.0
+# install ncurses and bzip2 from conda-forge channel
+conda install -c conda-forge ncurses bzip2
+```
+
+#### [PILON] Java/JVM heap allocation issues
+
+[PILON] is a Java application and may require the JVM heap size to be set (e.g. `_JAVA_OPTIONS=-Xmx4g`).
+If [shovill] under Galaxy submits jobs to a [SLURM] workload manager, it may be necessary to allot about 4G more through SLURM than through [shovill] `--ram` (default is `${SHOVILL_RAM:-4}` or 4G as of tool revision [57d5928f456e]) so if you give [shovill] 4G, give the SLURM job 8G.
+
+
 
 ## Step 2: Install Galaxy Tools
 
@@ -49,6 +69,10 @@ A Galaxy workflow and some test data has been included with this documentation t
 
 If everything was successfull then all dependencies for this pipeline have been properly installed.
 
+
+[57d5928f456e]: https://toolshed.g2.bx.psu.edu/repos/iuc/shovill/rev/57d5928f456e
+[5c8ff92e38a9]: https://toolshed.g2.bx.psu.edu/repos/nml/sistr_cmd/rev/5c8ff92e38a9
+[SLURM]: https://slurm.schedmd.com
 [PILON]: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4237348/
 [BWA MEM]: https://github.com/lh3/bwa
 [Lighter]: https://genomebiology.biomedcentral.com/articles/10.1186/s13059-014-0509-9
