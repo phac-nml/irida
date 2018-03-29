@@ -50,8 +50,8 @@
     </parameter>
   </parameters>
   <outputs>
-    <output name="shovill-contigs" fileName="shovill-contigs.fasta"/>
-    <output name="shovill-contigs" fileName="shovill-contigs.gfa"/>
+    <output name="shovill-contigs-fasta" fileName="shovill-contigs.fasta"/>
+    <output name="shovill-contigs-graph" fileName="shovill-contigs.gfa"/>
     <output name="shovill-std" fileName="shovill-std.log"/>
     <output name="sistr-alleles-out" fileName="sistr-alleles-out.json"/>
     <output name="sistr-cgmlst-profiles" fileName="sistr-cgmlst-profiles.csv"/>
