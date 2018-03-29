@@ -9,10 +9,7 @@
     <requiresSingleSample>true</requiresSingleSample>
   </inputs>
   <parameters>
-    <parameter name="shovill-1-library.lib_type" defaultValue="collection">
-      <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/0.9.0" parameterName="library.lib_type"/>
-    </parameter>
-    <parameter name="shovill-1-adv.nocorr" defaultValue="true">
+    <parameter name="shovill-1-adv.nocorr" defaultValue="false">
       <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/0.9.0" parameterName="adv.nocorr"/>
     </parameter>
     <parameter name="shovill-1-adv.mincov" defaultValue="2">
@@ -27,9 +24,6 @@
     <parameter name="shovill-1-adv.depth" defaultValue="100">
       <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/0.9.0" parameterName="adv.depth"/>
     </parameter>
-    <parameter name="shovill-1-log" defaultValue="true">
-      <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/0.9.0" parameterName="log"/>
-    </parameter>
     <parameter name="shovill-1-adv.gsize" defaultValue="">
       <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/0.9.0" parameterName="adv.gsize"/>
     </parameter>
@@ -42,32 +36,17 @@
     <parameter name="shovill-1-adv.minlen" defaultValue="0">
       <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/0.9.0" parameterName="adv.minlen"/>
     </parameter>
-    <parameter name="shovill-1-adv.asm" defaultValue="contigs">
-      <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/0.9.0" parameterName="adv.asm"/>
-    </parameter>
-    <parameter name="sistr_cmd-2-keep_tmp" defaultValue="false">
-      <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/nml/sistr_cmd/sistr_cmd/1.0.2" parameterName="keep_tmp"/>
-    </parameter>
-    <parameter name="sistr_cmd-2-output_format" defaultValue="json">
-      <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/nml/sistr_cmd/sistr_cmd/1.0.2" parameterName="output_format"/>
-    </parameter>
     <parameter name="sistr_cmd-2-run_mash" defaultValue="true">
       <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/nml/sistr_cmd/sistr_cmd/1.0.2" parameterName="run_mash"/>
     </parameter>
     <parameter name="sistr_cmd-2-more_output" defaultValue="-M">
       <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/nml/sistr_cmd/sistr_cmd/1.0.2" parameterName="more_output"/>
     </parameter>
-    <parameter name="sistr_cmd-2-verbosity" defaultValue="-vv">
-      <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/nml/sistr_cmd/sistr_cmd/1.0.2" parameterName="verbosity"/>
-    </parameter>
     <parameter name="sistr_cmd-2-use_full_cgmlst_db" defaultValue="false">
       <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/nml/sistr_cmd/sistr_cmd/1.0.2" parameterName="use_full_cgmlst_db"/>
     </parameter>
     <parameter name="sistr_cmd-2-qc" defaultValue="true">
       <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/nml/sistr_cmd/sistr_cmd/1.0.2" parameterName="qc"/>
-    </parameter>
-    <parameter name="sistr_cmd-2-no_cgmlst" defaultValue="false">
-      <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/nml/sistr_cmd/sistr_cmd/1.0.2" parameterName="no_cgmlst"/>
     </parameter>
   </parameters>
   <outputs>
