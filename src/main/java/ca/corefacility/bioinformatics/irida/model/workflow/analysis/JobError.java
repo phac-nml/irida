@@ -129,8 +129,8 @@ public class JobError extends IridaResourceSupport implements IridaThing, Compar
 	@Column(name = "exit_code")
 	private final int exitCode;
 
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinColumn(name = "analysis_submission_id")
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+	@JoinColumn(name = "analysis_submission_id", foreignKey = @ForeignKey(name = "FK_JOB_ERROR_ANALYSIS_SUBMISSION"))
 	private AnalysisSubmission analysisSubmission;
 
 	/**
