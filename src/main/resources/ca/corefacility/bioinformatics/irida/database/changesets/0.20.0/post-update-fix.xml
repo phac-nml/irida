@@ -7,9 +7,6 @@
 
     <changeSet id="post-update-fix" author="tom">
 
-        <validCheckSum>7:fe424670afa75882a10c9178073eecc1</validCheckSum>
-        <validCheckSum>7:04d990c0430b5fd7bd63f5bfc462584b</validCheckSum>
-
         <renameColumn
                 columnDataType="bit(1)"
                 newColumnName="sistr_tmp"
