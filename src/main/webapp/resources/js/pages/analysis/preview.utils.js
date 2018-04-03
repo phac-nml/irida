@@ -36,11 +36,10 @@ export const panelHeading = (
 ) =>
   `<div class="panel-heading">
      <h5 class="panel-title">
-       ${toolName} (${toolVersion}) - ${outputName} - ${filename} &nbsp; 
+       ${toolName} (${toolVersion}) - ${outputName} - ${filename}
        <a class="btn btn-default btn-xs pull-right" 
           href="${downloadUrl(baseUrl, analysisSubmissionId, id)}">
-         <i class="fa fa-download"></i> 
-         &nbsp; 
+         <i class="fa fa-download spaced-right__sm"></i> 
          ${filename} (${convertFileSize(fileSizeBytes)})
        </a>
      </h5>
