@@ -8,6 +8,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Type;
+import org.hibernate.envers.Audited;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
@@ -23,6 +24,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.Tool;
  * Galaxy Job failure information when a tool in a IRIDA workflow produces an error
  * state for an AnalysisSubmission
  */
+@Audited
 @Entity
 @Table(name = "job_error")
 @EntityListeners(AuditingEntityListener.class)
