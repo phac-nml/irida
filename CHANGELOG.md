@@ -7,6 +7,7 @@ Changes
 * [UI/Workflow]: Fixed bug where users could not submit large analyses due to an HTTP 414 "Request URI Too Long" error.
 * [Developer]: Removed old gulp dependencies from the `package.json` file.
 * [Developer]: Update to stable releases of `node` and `yarn`.
+* [UI/Workflow]: Preview analysis output files in a tabular or plain-text view in the analysis details page under the Preview tab. 
 
 0.19.0 to 0.20.0
 ----------------

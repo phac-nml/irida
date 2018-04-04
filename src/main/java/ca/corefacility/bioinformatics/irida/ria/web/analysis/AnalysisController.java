@@ -42,6 +42,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecutio
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisOutputFileInfo;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
@@ -267,7 +268,7 @@ public class AnalysisController {
 	 */
 	@RequestMapping(value = "/ajax/{id}/outputs", method = RequestMethod.GET)
 	@ResponseBody
-	public List<Map<String, Object>> getOutputFilesInfo(@PathVariable Long id) {
+	public List<AnalysisOutputFileInfo> getOutputFilesInfo(@PathVariable Long id) {
 		AnalysisSubmission submission = analysisSubmissionService.read(id);
 		Analysis analysis = submission.getAnalysis();
 		Set<String> outputNames = analysis.getAnalysisOutputFileNames();
@@ -277,18 +278,17 @@ public class AnalysisController {
 	}
 
 	/**
-	 * Get {@link AnalysisOutputFile} info.
+	 * Get {@link AnalysisOutputFileInfo}.
 	 *
 	 * @param submission {@link AnalysisSubmission} of {@code analysis}
 	 * @param analysis   {@link Analysis} to get {@link AnalysisOutputFile}s from
 	 * @param outputName Workflow output name
-	 * @return Map of {@link AnalysisOutputFile} info
+	 * @return {@link AnalysisOutputFile} info
 	 */
-	private HashMap<String, Object> getAnalysisOutputFileInfo(AnalysisSubmission submission, Analysis analysis,
+	private AnalysisOutputFileInfo getAnalysisOutputFileInfo(AnalysisSubmission submission, Analysis analysis,
 			String outputName) {
 		// set of file extensions for indicating whether the first line of the file should be read
 		final ImmutableSet<String> FILE_EXT_READ_FIRST_LINE = ImmutableSet.of("tsv", "txt", "tabular", "csv", "tab");
-		final HashMap<String, Object> map = new HashMap<>();
 		final AnalysisOutputFile aof = analysis.getAnalysisOutputFile(outputName);
 		final Long aofId = aof.getId();
 		final String aofFilename = aof.getFile()
@@ -297,37 +297,38 @@ public class AnalysisController {
 		final ToolExecution tool = aof.getCreatedByTool();
 		final String toolName = tool.getToolName();
 		final String toolVersion = tool.getToolVersion();
-		map.put("id", aofId);
-		map.put("analysisSubmissionId", submission.getId());
-		map.put("analysisId", analysis.getId());
-		map.put("outputName", outputName);
-		map.put("filename", aofFilename);
-		map.put("fileSizeBytes", aof.getFile()
+		final AnalysisOutputFileInfo info = new AnalysisOutputFileInfo();
+		info.setId(aofId);
+		info.setAnalysisSubmissionId(submission.getId());
+		info.setAnalysisId(analysis.getId());
+		info.setOutputName(outputName);
+		info.setFilename(aofFilename);
+		info.setFileSizeBytes(aof.getFile()
 				.toFile()
 				.length());
-		map.put("toolName", toolName);
-		map.put("toolVersion", toolVersion);
+		info.setToolName(toolName);
+		info.setToolVersion(toolVersion);
 		final String fileExt = FileUtilities.getFileExt(aofFilename);
-		map.put("fileExt", fileExt);
+		info.setFileExt(fileExt);
 		if (FILE_EXT_READ_FIRST_LINE.contains(fileExt)) {
-			addFirstLine(map, aof);
+			addFirstLine(info, aof);
 		}
-		return map;
+		return info;
 	}
 
 	/**
-	 * Add the {@code firstLine} and {@code filePointer} file byte position after reading the first line of an {@link AnalysisOutputFile} to a Map.
+	 * Add the {@code firstLine} and {@code filePointer} file byte position after reading the first line of an {@link AnalysisOutputFile} to a {@link AnalysisOutputFileInfo} object.
 	 *
-	 * @param map Map to add {@code firstLine} and {@code filePointer} info to
+	 * @param info Object to add {@code firstLine} and {@code filePointer} info to
 	 * @param aof {@link AnalysisOutputFile} to read from
 	 */
-	private void addFirstLine(HashMap<String, Object> map, AnalysisOutputFile aof) {
+	private void addFirstLine(AnalysisOutputFileInfo info, AnalysisOutputFile aof) {
 		RandomAccessFile reader = null;
 		final Path aofFile = aof.getFile();
 		try {
 			reader = new RandomAccessFile(aofFile.toFile(), "r");
-			map.put("firstLine", reader.readLine());
-			map.put("filePointer", reader.getFilePointer());
+			info.setFirstLine(reader.readLine());
+			info.setFilePointer(reader.getFilePointer());
 		} catch (FileNotFoundException e) {
 			logger.error("Could not find file '" + aofFile + "' " + e);
 		} catch (IOException e) {
@@ -358,7 +359,7 @@ public class AnalysisController {
 	 */
 	@RequestMapping(value = "/ajax/{id}/outputs/{fileId}", method = RequestMethod.GET)
 	@ResponseBody
-	public Map<String, Object> getOutputFile(@PathVariable Long id, @PathVariable Long fileId,
+	public AnalysisOutputFileInfo getOutputFile(@PathVariable Long id, @PathVariable Long fileId,
 			@RequestParam(defaultValue = "100", required = false) Long limit,
 			@RequestParam(required = false) Long start, @RequestParam(required = false) Long end,
 			@RequestParam(defaultValue = "0", required = false) Long seek, @RequestParam(required = false) Long chunk,
@@ -374,62 +375,59 @@ public class AnalysisController {
 			final HashMap<String, Object> map = new HashMap<>();
 			final Path aofFile = aof.getFile();
 			final ToolExecution tool = aof.getCreatedByTool();
-			map.put("id", aof.getId());
-			map.put("analysisSubmissionId", submission.getId());
-			map.put("analysisId", analysis.getId());
-			map.put("filename", aofFile.getFileName()
-					.toString());
-			map.put("fileExt", FileUtilities.getFileExt(aofFile.getFileName()
-					.toString()));
-			map.put("fileSizeBytes", aof.getFile()
-					.toFile()
-					.length());
-			map.put("toolName", tool.getToolName());
-			map.put("toolVersion", tool.getToolVersion());
+			final AnalysisOutputFileInfo contents = new AnalysisOutputFileInfo();
+			contents.setId(aof.getId());
+			contents.setAnalysisSubmissionId(submission.getId());
+			contents.setAnalysisId(analysis.getId());
+			contents.setFilename(aofFile.getFileName().toString());
+			contents.setFileExt(FileUtilities.getFileExt(aofFile.getFileName().toString()));
+			contents.setFileSizeBytes(aof.getFile().toFile().length());
+			contents.setToolName(tool.getToolName());
+			contents.setToolVersion(tool.getToolVersion());
 			try {
 				final File file = aofFile.toFile();
 				final RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
 				randomAccessFile.seek(seek);
 				if (seek == 0) {
 					if (chunk != null && chunk > 0) {
-						map.put("text", FileUtilities.readChunk(randomAccessFile, seek, chunk));
-						map.put("chunk", chunk);
-						map.put("startSeek", seek);
-						map.put("filePointer", randomAccessFile.getFilePointer());
+						contents.setText(FileUtilities.readChunk(randomAccessFile, seek, chunk));
+						contents.setChunk(chunk);
+						contents.setStartSeek(seek);
+						contents.setFilePointer(randomAccessFile.getFilePointer());
 					} else {
 						final BufferedReader reader = new BufferedReader(new FileReader(randomAccessFile.getFD()));
 						final List<String> lines = FileUtilities.readLinesLimit(reader, limit, start, end);
-						map.put("lines", lines);
-						map.put("limit", lines.size());
-						map.put("start", start);
-						map.put("end", start + lines.size());
+						contents.setLines(lines);
+						contents.setLimit((long) lines.size());
+						contents.setStart(start);
+						contents.setEnd(start + lines.size());
 					}
 				} else {
 					if (chunk != null && chunk > 0) {
-						map.put("text", FileUtilities.readChunk(randomAccessFile, seek, chunk));
-						map.put("chunk", chunk);
-						map.put("startSeek", seek);
-						map.put("filePointer", randomAccessFile.getFilePointer());
+						contents.setText(FileUtilities.readChunk(randomAccessFile, seek, chunk));
+						contents.setChunk(chunk);
+						contents.setStartSeek(seek);
+						contents.setFilePointer(randomAccessFile.getFilePointer());
 					} else {
 						final List<String> lines = FileUtilities.readLinesFromFilePointer(randomAccessFile, limit);
-						map.put("lines", lines);
-						map.put("startSeek", seek);
-						map.put("filePointer", randomAccessFile.getFilePointer());
-						map.put("start", start);
-						map.put("limit", lines.size());
+						contents.setLines(lines);
+						contents.setStartSeek(seek);
+						contents.setFilePointer(randomAccessFile.getFilePointer());
+						contents.setStart(start);
+						contents.setLimit((long) lines.size());
 					}
 				}
-				map.put("filePointer", randomAccessFile.getFilePointer());
+				contents.setFilePointer(randomAccessFile.getFilePointer());
 			} catch (IOException e) {
 				logger.error("Could not read output file '" + aof.getId() + "' " + e);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-				map.put("error", "Could not read output file");
+				contents.setError("Could not read output file");
 
 			}
-			return map;
+			return contents;
 		} else {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return ImmutableMap.of("error", "Could not find output file " + fileId);
+			return null;
 		}
 	}
 
