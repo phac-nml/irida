@@ -34,6 +34,17 @@ Choose your kmer size. The default kmer size of 31 should work well for most app
 
 ![mentalist-download-pubmlst][]
 
+A green result box will appear in the galaxy history once the database is complete:
+
+![mentalist-download-pubmlst-result][]
+
+To confirm that the database is installed, select **mentalist_databases** from the list of available Tool Data Tables:
+
+![mentalist-data-table-list][]
+
+Your new MentaLiST database will be listed in the table of available MentaLiST databases. If it doesn't appear, click the refresh button at the top of the table.
+
+![mentalist-database-available][]
 
 ## Step 4: Testing Pipeline
 
@@ -63,6 +74,9 @@ If everything was successfull then all dependencies for this pipeline have been 
 [galaxy-config]: ../../setup#step-4-modify-configuration-file
 [mentalist-data-managers]: ../test/mentalist/images/mentalist-data-managers.png
 [mentalist-download-pubmlst]: ../test/mentalist/images/mentalist-download-pubmlst.png
+[mentalist-download-pubmlst-result]: ../test/mentalist/images/mentalist-download-pubmlst-result.png
+[mentalist-data-table-list]: ../test/mentalist/images/mentalist-data-table-list.png
+[mentalist-database-available]: ../test/mentalist/images/mentalist-database-available.png
 [MentaLiST Galaxy Workflow]: ../test/mentalist/mentalist.ga
 [test/reads]: ../test/sistr/reads
 [upload-history]: ../test/mentalist/images/upload-history.png
