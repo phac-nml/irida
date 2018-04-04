@@ -27,3 +27,9 @@ input {
 .input-group button.btn-default {
   border-color: #cccccc !important;
 }
+
+// Change the color of the text on checkboxes that are disabled.
+input[type="checkbox"]:disabled + span {
+  color: #cdcdcd;
+  cursor: not-allowed;
+}
