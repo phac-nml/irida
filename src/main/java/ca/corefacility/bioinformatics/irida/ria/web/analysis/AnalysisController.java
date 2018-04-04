@@ -372,16 +372,19 @@ public class AnalysisController {
 				.findFirst();
 		if (analysisOutputFile.isPresent()) {
 			final AnalysisOutputFile aof = analysisOutputFile.get();
-			final HashMap<String, Object> map = new HashMap<>();
 			final Path aofFile = aof.getFile();
 			final ToolExecution tool = aof.getCreatedByTool();
 			final AnalysisOutputFileInfo contents = new AnalysisOutputFileInfo();
 			contents.setId(aof.getId());
 			contents.setAnalysisSubmissionId(submission.getId());
 			contents.setAnalysisId(analysis.getId());
-			contents.setFilename(aofFile.getFileName().toString());
-			contents.setFileExt(FileUtilities.getFileExt(aofFile.getFileName().toString()));
-			contents.setFileSizeBytes(aof.getFile().toFile().length());
+			contents.setFilename(aofFile.getFileName()
+					.toString());
+			contents.setFileExt(FileUtilities.getFileExt(aofFile.getFileName()
+					.toString()));
+			contents.setFileSizeBytes(aof.getFile()
+					.toFile()
+					.length());
 			contents.setToolName(tool.getToolName());
 			contents.setToolVersion(tool.getToolVersion());
 			try {
@@ -393,7 +396,6 @@ public class AnalysisController {
 						contents.setText(FileUtilities.readChunk(randomAccessFile, seek, chunk));
 						contents.setChunk(chunk);
 						contents.setStartSeek(seek);
-						contents.setFilePointer(randomAccessFile.getFilePointer());
 					} else {
 						final BufferedReader reader = new BufferedReader(new FileReader(randomAccessFile.getFD()));
 						final List<String> lines = FileUtilities.readLinesLimit(reader, limit, start, end);
@@ -407,12 +409,10 @@ public class AnalysisController {
 						contents.setText(FileUtilities.readChunk(randomAccessFile, seek, chunk));
 						contents.setChunk(chunk);
 						contents.setStartSeek(seek);
-						contents.setFilePointer(randomAccessFile.getFilePointer());
 					} else {
 						final List<String> lines = FileUtilities.readLinesFromFilePointer(randomAccessFile, limit);
 						contents.setLines(lines);
 						contents.setStartSeek(seek);
-						contents.setFilePointer(randomAccessFile.getFilePointer());
 						contents.setStart(start);
 						contents.setLimit((long) lines.size());
 					}
