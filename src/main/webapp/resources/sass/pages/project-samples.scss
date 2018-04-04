@@ -5,8 +5,10 @@
 // Used when a colour bar needs to be displayed next to a label
 // E.g. on the project samples page for a unique colour for each project.
 .label-bar-color {
+  position: absolute;
+  top: 0;
+  bottom: 0;
   width: 5px;
-  display: inline-block;
   background-color: RGB(176, 190, 197);
   margin-left: -15px;
   margin-right: 5px;
@@ -44,8 +46,9 @@
 
 .locked-wrapper {
   position: absolute;
-  top: 16px;
-  left: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 6px;
 }
 
 .panel-body__scroll {

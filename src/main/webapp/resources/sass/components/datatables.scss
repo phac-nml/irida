@@ -163,8 +163,8 @@ table.dataTable {
 }
 
 .dt-wrap-cell {
-  white-space: pre-wrap;
-  word-break: break-all;
+  position: relative;
+  white-space: pre-line;
   word-wrap: break-word;
 }
 
