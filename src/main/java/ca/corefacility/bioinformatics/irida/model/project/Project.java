@@ -169,9 +169,8 @@ public class Project extends IridaResourceSupport
 	public boolean equals(Object other) {
 		if (other instanceof Project) {
 			Project p = (Project) other;
-			return Objects.equals(createdDate, p.createdDate) && Objects.equals(modifiedDate, p.modifiedDate) && Objects
-					.equals(name, p.name) && Objects.equals(sistrTypingUploads, p.sistrTypingUploads) && Objects
-					.equals(assembleUploads, p.assembleUploads);
+			return Objects.equals(createdDate, p.createdDate) && Objects.equals(modifiedDate, modifiedDate) && Objects
+					.equals(name, p.name);
 		}
 
 		return false;
@@ -179,7 +178,7 @@ public class Project extends IridaResourceSupport
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(createdDate, modifiedDate, name, sistrTypingUploads, assembleUploads);
+		return Objects.hash(createdDate, modifiedDate, name);
 	}
 
 	public String getName() {
