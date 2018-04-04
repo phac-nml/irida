@@ -67,7 +67,6 @@ public class SistrTypingFileProcessor implements FileProcessor {
 	 * {@inheritDoc}
 	 */
 	@Override
-	@Transactional
 	public void process(SequencingObject sequencingObject) {
 		logger.debug("Setting up SISTR typing for sequence " + sequencingObject.getId());
 
