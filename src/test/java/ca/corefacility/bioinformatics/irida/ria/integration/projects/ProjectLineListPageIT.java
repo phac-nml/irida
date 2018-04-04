@@ -1,15 +1,16 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
-
-import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectLineListPage;
+
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * <p>
@@ -26,6 +27,7 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsManager(driver());
 	}
 
+	@Ignore
 	@Test
 	public void testTableSetup() {
 		ProjectLineListPage page = ProjectLineListPage.goToPage(driver(), 1);
@@ -43,6 +45,7 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Should have 2 less columns visible", initialCount - 2, page.getNumberTableColumns());
 	}
 
+	@Ignore
 	@Test
 	public void testTemplates() {
 		ProjectLineListPage page = ProjectLineListPage.goToPage(driver(), 1);
