@@ -1,7 +1,7 @@
-var projectSettings = (function(page, notifications) {
+const projectSettings = (function(page, notifications) {
   $("#assemble").change(function() {
-    var checkbox = $(this);
-    var assemble = checkbox.is(":checked");
+    const checkbox = $(this);
+    const assemble = checkbox.is(":checked");
 
     $.ajax({
       url: page.urls.assemble,
@@ -20,15 +20,42 @@ var projectSettings = (function(page, notifications) {
     });
   });
 
-  $("#sistr").change(function() {
-    var checkbox = $(this);
-    var sistr = checkbox.is(":checked");
+  // Sistr settings
+  const SISTR_TYPES = {
+    off: "OFF",
+    auto: "AUTO",
+    autoMetadata: "AUTO_METADATA"
+  };
 
+  $(".js-sistr-checkbox").on("change", function(e) {
+    const selected = $(e.target).prop("checked");
+    if (selected) {
+      $(".js-sistr-writes").removeAttr("disabled");
+      updateSistrSettings(SISTR_TYPES.auto);
+    } else {
+      $(".js-sistr-writes")
+        .removeAttr("checked")
+        .attr("disabled", true);
+      updateSistrSettings(SISTR_TYPES.off);
+    }
+  });
+
+  $(".js-sistr-writes").on("change", function(e) {
+    const selected = $(e.target).prop("checked");
+    if (selected) {
+      updateSistrSettings(SISTR_TYPES.autoMetadata);
+    } else {
+      updateSistrSettings(SISTR_TYPES.auto);
+    }
+  });
+
+  function updateSistrSettings(sistr) {
+    $(".js-sistr-checkbox").val(sistr);
     $.ajax({
       url: page.urls.sistr,
       type: "POST",
       data: {
-        sistr: sistr
+        sistr
       },
       statusCode: {
         200: function(response) {
@@ -39,12 +66,12 @@ var projectSettings = (function(page, notifications) {
         notifications.show({ text: page.i18n.error, type: "error" });
       }
     });
-  });
+  }
 
   $("#coverage-save").on("click", function() {
-    var genomeSize = $("#genome-size").val();
-    var minimumCoverage = $("#minimum-coverage").val();
-    var maximumCoverage = $("#maximum-coverage").val();
+    const genomeSize = $("#genome-size").val();
+    const minimumCoverage = $("#minimum-coverage").val();
+    const maximumCoverage = $("#maximum-coverage").val();
 
     $.ajax({
       url: page.urls.coverage,
