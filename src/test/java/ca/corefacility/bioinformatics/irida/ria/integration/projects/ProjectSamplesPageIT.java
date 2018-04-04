@@ -365,7 +365,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 
-		assertEquals("Should display the correct linker for entire project", "ngsArchive.pl -p 1",
+		assertEquals("Should display the correct linker for entire project", "ngsArchiveLinker.pl -p 1",
 				page.getLinkerText());
 	}
 
@@ -379,7 +379,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.selectSample(1);
 
 		// Open the linker modal
-		assertEquals("Should display the correct linker command", "ngsArchive.pl -p 1 -s 21 -s 20",
+		assertEquals("Should display the correct linker command", "ngsArchiveLinker.pl -p 1 -s 21 -s 20",
 				page.getLinkerText());
 	}
 }

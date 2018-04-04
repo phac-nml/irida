@@ -2,6 +2,7 @@
   "use strict";
   /**
    * Main controller for the pipeline launch page.
+   * @param $scope Application model object
    * @param $http AngularJS http object
    * @param CartService a reference to the cart service (to clear it)
    * @param ParameterService for passing parameter information between modal and page
@@ -34,6 +35,11 @@
 		 * Whether or not the page is waiting for a response from the server.
 		 */
     vm.loading = false;
+    /**
+     * Analysis submission success?
+     * @type {boolean}
+     */
+    vm.success = false;
 
     /**
      * Update the selected parameters in the parameter service
@@ -142,7 +148,7 @@
         }
 
         // Create the parameter object;
-        var params = {};
+        const params = { workflowId: window.PAGE.pipeline.pipelineId };
         if ($.isNumeric(ref)) {
           params["ref"] = ref;
         }
@@ -166,30 +172,54 @@
         if (shared.length > 0) {
           params["sharedProjects"] = shared;
         }
-
-        $http({
+        // AJAX POST with jQuery instead of Angular $http object so that
+        // JSON request body is encoded properly
+        $.ajax({
+          type: "POST",
           url: page.urls.startUrl,
-          method: "POST",
-          dataType: "json",
-          params: params,
-          headers: {
-            "Content-Type": "application/json"
-          }
-        }).then(function(response) {
-          var data = response.data;
-          if (data.success) {
-            vm.success = true;
-          } else {
-            if (data.error) {
-              vm.error = data.error;
-            } else if (data.parameterError) {
-              vm.paramError = data.parameters;
-            } else if (data.pipelineError) {
-              window.notifications.show({
-                type: "error",
-                text: data.pipelineError
-              });
+          contentType: "application/json; charset=utf-8",
+          data: JSON.stringify(params),
+          success: function(response, status, request) {
+            if (response.success) {
+              vm.success = true;
+            } else {
+              vm.loading = false;
+              if (response.error) {
+                vm.error = response.error;
+              } else if (response.parameterError) {
+                vm.paramError = response.parameters;
+              } else if (response.pipelineError) {
+                window.notifications.show({
+                  type: "error",
+                  text: response.pipelineError,
+                  timeout: false,
+                  progressBar: false,
+                  closeWith: ["button"]
+                });
+              }
             }
+            // trigger Angular digest with the following call
+            $scope.$apply();
+          },
+          error: function(response, status, request) {
+            const errorMsg =
+              request +
+              "- HTTP " +
+              response.status +
+              " - " +
+              JSON.stringify(response.responseJSON);
+            vm.success = false;
+            vm.loading = false;
+            vm.error = errorMsg;
+            window.notifications.show({
+              type: "error",
+              text: errorMsg,
+              timeout: false,
+              progressBar: false,
+              closeWith: ["button"]
+            });
+            // trigger Angular digest with the following call
+            $scope.$apply();
           }
         });
       }
