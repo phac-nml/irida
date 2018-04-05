@@ -65,6 +65,7 @@
     "babel-loader": "^7.1.2",
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.6.1",
+    "babel-preset-stage-2": "^6.24.1",
     "bootstrap-loader": "^2.2.0",
     "bootstrap-sass": "^3.3.7",
     "bower": "^1.7.7",
