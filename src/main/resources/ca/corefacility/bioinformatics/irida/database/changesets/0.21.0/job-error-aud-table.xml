@@ -6,8 +6,8 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
     <changeSet id="add-job-error-table" author="pkruczkiewicz">
         <createTable tableName="job_error_AUD">
-            <column autoIncrement="true" name="id" type="BIGINT">
-                <constraints primaryKey="true"/>
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="command_line" type="LONGTEXT">
                 <constraints nullable="false"/>
