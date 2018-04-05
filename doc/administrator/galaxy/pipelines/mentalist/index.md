@@ -60,7 +60,7 @@ A Galaxy workflow and some test data has been included with this documentation t
     ![dataset-pair-screen][]
 
 4. This should have properly paired your data and named the sample **AE014613-699860**.  Enter the name of this paired dataset collection at the bottom and click **Create list**.
-5. Run the uploaded workflow by clicking on **Workflow**, clicking on the name of the workflow **SISTR Analyze Reads v0.1 (imported from uploaded file)** and clicking **Run**.  This should auto fill in the dataset collection.  At the very bottom of the screen click **Run workflow**.
+5. Run the uploaded workflow by clicking on **Workflow**, clicking on the name of the workflow **MentaLiST MLST v0.1 (imported from uploaded file)** and clicking **Run**.  This should auto fill in the dataset collection.  At the very bottom of the screen click **Run workflow**.
 6. If everything was installed correctly, you should see each of the tools run successfully (turn green).  On completion this should look like.
 
     ![workflow-success][]
@@ -79,6 +79,10 @@ If everything was successfull then all dependencies for this pipeline have been 
 [mentalist-database-available]: ../test/mentalist/images/mentalist-database-available.png
 [MentaLiST Galaxy Workflow]: ../test/mentalist/mentalist.ga
 [test/reads]: ../test/sistr/reads
+[upload-icon]: ../test/mentalist/images/upload-icon.png
 [upload-history]: ../test/mentalist/images/upload-history.png
-[datasets-icon]: ../test/mentalist/images/datasets-icon.jpg
+[datasets-icon]: ../test/mentalist/images/datasets-icon.png
+[dataset-pair-screen]: ../test/mentalist/images/dataset-pair-screen.png
+[workflow-success]: ../test/mentalist/images/workflow-success.png
+[view-details-icon]: ../test/mentalist/images/view-details-icon.png
 [conda]: https://conda.io/docs/
