@@ -133,7 +133,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	private List<ProjectAnalysisSubmissionJoin> projects;
 
 	@NotAudited
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "analysisSubmission")
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH, mappedBy = "analysisSubmission")
 	private List<JobError> jobErrors;
 
 	@NotAudited
