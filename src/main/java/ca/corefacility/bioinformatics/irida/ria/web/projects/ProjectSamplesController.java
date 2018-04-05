@@ -168,6 +168,12 @@ public class ProjectSamplesController {
 	@RequestMapping(value = "/projects/{projectId}/samples/new", method = RequestMethod.POST)
 	public String createNewSample(@PathVariable Long projectId, Sample sample) {
 		Project project = projectService.read(projectId);
+
+		// Need a check to see if the Organism name was actually set.
+		if(sample.getOrganism().equals("")) {
+			sample.setOrganism(null);
+		}
+
 		try {
 			Join<Project, Sample> join = projectService.addSampleToProject(project, sample, true);
 			return "redirect:/projects/" + projectId + "/samples/" + join.getObject().getId();
