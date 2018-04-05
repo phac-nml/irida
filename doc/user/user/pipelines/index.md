@@ -163,10 +163,68 @@ You can either click on the <img src="images/download-icon.png" class="inline" a
 The analysis details page shows you more detailed information about your pipeline submission, including the names of the files that were produced by the analysis (on the left-hand side of the page), a preview of the outputs (if available), and some tabs to view more details about how the pipeline was submitted:
 
 ![Analysis details page.](images/analysis-details-page.png)
+<figcaption>Example SNVPhyl pipeline phylogenetic tree preview</figcaption>
+
+![view-results-preview-refseq-masher]
+<figcaption>Example `refseq_masher` tabular results preview</figcaption>
 
 To download output files, you can use the "Output Files" section from this page.  To download an individual file, click on the file name.  To download *all* the outputs produced by the pipeline, you can click on the "Download Files" button.
 
 ![Analysis download.](images/analysis-details-download.png)
+
+### Previewing analysis output files
+
+All analysis pipelines produce analysis output files. You can preview these output files under the **Preview** tab on the **Analysis Details** page:
+
+![view-results-preview-refseq-masher]
+<figcaption>Example `refseq_masher` tabular results preview</figcaption>
+
+For each analysis output file, you will see a panel and in each panel you will see:
+
+- a panel heading with the Galaxy tool name (e.g. "RefSeq Masher Matches") and version (e.g. "(0.1.1)"), internal IRIDA output name (e.g. "refseq-masher-matches") and output file name (e.g. "refseq-masher-matches.tsv")
+- a file download link
+- a preview of the file contents displayed as plain text or in a table
+
+#### Previewing tabular analysis output
+
+Some of the output files will be rendered in a table:
+
+
+![view-results-tabular-snvphyl-snv-table]
+<figcaption>SNVPhyl SNV  results shown in an interactive table.</figcaption>
+
+![view-results-tabular-refseq_masher-contains-default]
+<figcaption>`refseq_masher` results shown in an interactive table.</figcaption>
+
+
+
+When you scroll to the bottom row in the table, more lines will be fetched as they are needed. You can also resize the table by clicking and dragging the "resize icon"  in the corner of the panel:
+
+![view-results-resize]
+<figcaption>
+  The little forward slash thing that kind of looks like <span><icon class="fa fa-rss fa-flip-horizontal"/></span> 
+</figcaption>
+
+![view-results-refseq_masher-contains-resized]
+<figcaption>Resized `refseq_masher` results table</figcaption>
+
+#### Default plain text preview of analysis output
+
+Analysis output files with file extensions like `.log`, `.txt` or `.fasta` can be previewed in the browser as plain text:
+
+![view-results-plain-text-snvphyl-mapping]
+
+If an analysis output file is small enough like this log file, it will be loaded in its entirety:
+
+![view-results-plain-text-shovill-log]
+<figcaption>Notice that the `4.0 kB / 4.0 kB (100%)` indicates that 100% of the file has been loaded.</figcaption>
+
+If an analysis output file is fairly large like this FASTA file, it will be loaded in chunks as needed for viewing:
+
+![view-results-plain-text-shovill-fasta]
+<figcaption>Notice that the `24.0 kB / 693.9 kB (3.5%)` indicates that only 3.5% of the file has been loaded into this view. Scrolling to the end will trigger loading of the next chunk of this file into the view!</figcaption>
+
+
 
 ### Viewing the sequencing data submitted for analysis
 
@@ -255,3 +313,13 @@ If you follow the link to the analysis page, you can view all the job error info
 This information may be helpful for troubleshooting and communicating what went wrong in a particular analysis pipeline.   
 
 <a href="../samples/">Previous: Managing Samples</a>
+
+
+[view-results-plain-text-shovill-fasta]: images/view-results-plain-text-shovill-fasta.png
+[view-results-plain-text-shovill-log]: images/view-results-plain-text-shovill-log.png
+[view-results-plain-text-snvphyl-mapping]: images/view-results-plain-text-snvphyl-mapping.png
+[view-results-preview-refseq-masher]: images/view-results-preview-refseq-masher.png
+[view-results-refseq_masher-contains-resized]: images/view-results-refseq_masher-contains-resized.png
+[view-results-tabular-refseq_masher-contains-default]: images/view-results-tabular-refseq_masher-contains-default.png
+[view-results-tabular-snvphyl-snv-table]: images/view-results-tabular-snvphyl-snv-table.png
+[view-results-resize]: images/view-results-resize.png
