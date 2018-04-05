@@ -1,6 +1,5 @@
 import $ from "jquery";
 import "jquery-validation";
-import "./../../vendor/plugins/jquery/select2";
 import {
   validationConfig,
   sampleNameCharacterValidation
@@ -47,12 +46,13 @@ organismInput.select2({
     url: window.PAGE.urls.taxonomy,
     dataType: "json",
     delay: 250,
-    data(params) {
+    data(searchTerm) {
       return {
-        searchTerm: params.term
+        searchTerm
       };
     },
-    processResults(data) {
+    results(data) {
+      console.log(data);
       return {
         results: data
       };
