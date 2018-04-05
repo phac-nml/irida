@@ -1,8 +1,8 @@
 import $ from "jquery";
 import "jquery-validation";
 import {
-  validationConfig,
-  sampleNameCharacterValidation
+  sampleNameCharacterValidation,
+  validationConfig
 } from "../../utilities/form-validation";
 
 const form = $("#create-sample-form");
@@ -52,7 +52,6 @@ organismInput.select2({
       };
     },
     results(data) {
-      console.log(data);
       return {
         results: data
       };
