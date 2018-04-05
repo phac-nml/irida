@@ -7,7 +7,7 @@
     <analysisType>mlst-mentalist</analysisType>
     <inputs>
         <sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
-        <requiresSingleSample>true</requiresSingleSample>
+        <requiresSingleSample>false</requiresSingleSample>
     </inputs>
     <parameters>
         <parameter name="kmer_db" required="true">
@@ -28,6 +28,12 @@
             <owner>dfornika</owner>
             <url>https://toolshed.g2.bx.psu.edu/</url>
             <revision>1d9e3950ce61</revision>
+        </repository>
+        <repository>
+            <name>combine_tabular_collection</name>
+            <owner>nml</owner>
+            <url>https://toolshed.g2.bx.psu.edu/</url>
+            <revision>b815081988b5</revision>
         </repository>
     </toolRepositories>
 </iridaWorkflow>
