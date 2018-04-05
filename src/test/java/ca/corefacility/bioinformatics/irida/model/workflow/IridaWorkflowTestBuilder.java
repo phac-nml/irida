@@ -185,8 +185,7 @@ public class IridaWorkflowTestBuilder {
 			workflowInput = new IridaWorkflowInput(null, "sequence_reads_paired", reference, requiresSingleSample);
 			break;
 		case SINGLE_PAIRED:
-			workflowInput = new IridaWorkflowInput("sequence_reads", "sequence_reads_paired", reference,
-					requiresSingleSample);
+			workflowInput = new IridaWorkflowInput("sequence_reads", "sequence_reads_paired", reference, requiresSingleSample);
 			break;
 		}
 

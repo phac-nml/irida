@@ -11,6 +11,7 @@ import java.security.Principal;
 import java.util.Locale;
 import java.util.UUID;
 
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyToolDataService;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
@@ -55,6 +56,7 @@ public class PipelineControllerTest {
 	private WorkflowNamedParametersService namedParameterService;
 	private UpdateSamplePermission updateSamplePermission;
 	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
+	private GalaxyToolDataService galaxyToolDataService;
 
 	@Before
 	public void setUp() {
@@ -69,10 +71,11 @@ public class PipelineControllerTest {
 		namedParameterService = mock(WorkflowNamedParametersService.class);
 		updateSamplePermission = mock(UpdateSamplePermission.class);
 		analysisSubmissionSampleProcessor = mock(AnalysisSubmissionSampleProcessor.class);
+		galaxyToolDataService = mock(GalaxyToolDataService.class);
 
 		controller = new PipelineController(sequencingObjectService, referenceFileService, analysisSubmissionService,
 				workflowsService, projectService, userService, cartController, messageSource, namedParameterService,
-				updateSamplePermission, analysisSubmissionSampleProcessor);
+				updateSamplePermission, analysisSubmissionSampleProcessor, galaxyToolDataService);
 		when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 	}
 
