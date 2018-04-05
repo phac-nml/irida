@@ -3,6 +3,8 @@ Changes
 
 0.20.0 to 0.21.0
 ----------------
+* [Workflow]: Added version 0.1 of a pipeline for runing [MentaLiST](https://github.com/WGS-TB/MentaLiST) (version 0.1.3).
+* [Workflow]: Added version 0.1 of a pipeline for runing Mash against the refseq database [refseq_masher](https://github.com/phac-nml/refseq_masher).
 * [UI]: Fixed bug where user could not cancel the upload of a sequence file on the Sample Files page.
 * [UI/Workflow]: Fixed bug where users could not submit large analyses due to an HTTP 414 "Request URI Too Long" error.
 * [Developer]: Removed old gulp dependencies from the `package.json` file.
