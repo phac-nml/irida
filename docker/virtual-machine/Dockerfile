@@ -45,7 +45,10 @@ RUN /tool_deps/_conda/bin/conda config --add channels conda-forge && \
 # Install some example mentalist databases
 ADD data/tool-data.tar.gz /galaxy-central/
 
-RUN chown -R galaxy:galaxy /galaxy-central/tool-data/
+# Fix up permissions/mentalist erroring out on first execution
+RUN bash -c "source /tool_deps/_conda/envs/__mentalist\@0.1.3/bin/activate /tool_deps/_conda/envs/__mentalist\@0.1.3/ && mentalist -h 1>/dev/null 2>/dev/null" && \
+	chown -R galaxy:galaxy /galaxy-central/tool-data/ && \
+	chown -R galaxy:galaxy /tool_deps/_conda/
 
 # Expose port 80 (webserver), 21 (FTP server), 8800 (Proxy)
 EXPOSE :80
