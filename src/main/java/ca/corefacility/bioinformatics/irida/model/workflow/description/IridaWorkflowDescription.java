@@ -112,6 +112,21 @@ public class IridaWorkflowDescription {
 	}
 
 	/**
+	 * Whether or not this workflow requires a data from a dynamic source such as a Galaxy Tool Data Table.
+	 *
+	 * @return True if this workflow requires a parameter value from a dynamic source.
+	 */
+	public boolean requiresDynamicSource() {
+		Boolean requiresDynamicSource = false;
+		for (IridaWorkflowParameter parameter : parameters) {
+			if (parameter.isRequired()) {
+				requiresDynamicSource = true;
+			}
+		}
+		return requiresDynamicSource;
+	}
+
+	/**
 	 * Whether or not this workflow accepts single sequence files as input.
 	 * 
 	 * @return True if this workflow accepts single sequence files, false

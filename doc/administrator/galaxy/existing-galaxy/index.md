@@ -113,6 +113,8 @@ Alternatively, the necessary tools can be installed manually through the followi
 * [Assembly and Annotation][]
 * [Assembly and Annotation Collection][]
 * [SISTR Salmonella Typing][]
+* [refseq_masher]
+* [MentaLiST MLST][]
 
 Link up Galaxy with IRIDA
 -------------------------
@@ -132,6 +134,8 @@ Once you have configured IRIDA to connect to Galaxy you can attempt to execute a
 [SISTR Salmonella Typing]: ../pipelines/sistr/
 [Assembly and Annotation]: ../pipelines/assembly-annotation/
 [Assembly and Annotation Collection]: ../pipelines/assembly-annotation-collection/
+[refseq_masher]: ../pipelines/refseq_masher/
+[MentaLiST MLST]: ../pipelines/mentalist/
 [Purging Histories and Datasets]: https://galaxyproject.org/admin/config/performance/purge-histories-and-datasets/
 [Automated tools install]: https://github.com/phac-nml/irida/tree/development/packaging#automated-processupgrading
 [IRIDA releases]: https://github.com/phac-nml/irida/releases

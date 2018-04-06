@@ -82,7 +82,8 @@ public class Project extends IridaResourceSupport
 	
 	@NotNull
 	@Column(name="sistr_typing_uploads")
-	private boolean sistrTypingUploads;
+	@Enumerated(EnumType.STRING)
+	private AutomatedSISTRSetting sistrTypingUploads;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "project")
 	private List<ProjectUserJoin> users;
@@ -139,7 +140,7 @@ public class Project extends IridaResourceSupport
 
 	public Project() {
 		assembleUploads = false;
-		sistrTypingUploads = false;
+		sistrTypingUploads = AutomatedSISTRSetting.OFF;
 		createdDate = new Date();
 	}
 
@@ -168,7 +169,8 @@ public class Project extends IridaResourceSupport
 	public boolean equals(Object other) {
 		if (other instanceof Project) {
 			Project p = (Project) other;
-			return Objects.equals(createdDate, p.createdDate) && Objects.equals(name, p.name);
+			return Objects.equals(createdDate, p.createdDate) && Objects.equals(modifiedDate, modifiedDate) && Objects
+					.equals(name, p.name);
 		}
 
 		return false;
@@ -286,11 +288,23 @@ public class Project extends IridaResourceSupport
 		this.maximumCoverage = maximumCoverage;
 	}
 
-	public boolean getSistrTypingUploads() {
+	public AutomatedSISTRSetting getSistrTypingUploads() {
 		return sistrTypingUploads;
 	}
 	
-	public void setSistrTypingUploads(boolean sistrTypingUploads) {
+	public void setSistrTypingUploads(AutomatedSISTRSetting sistrTypingUploads) {
 		this.sistrTypingUploads = sistrTypingUploads;
+	}
+
+	/**
+	 * Setting for how to run automated SISTR analyses.
+	 * OFF - Do not run
+	 * AUTO - Run SISTR
+	 * AUTO_METADATA - Run and save results to metadata
+	 */
+	public enum AutomatedSISTRSetting {
+		OFF,
+		AUTO,
+		AUTO_METADATA
 	}
 }
