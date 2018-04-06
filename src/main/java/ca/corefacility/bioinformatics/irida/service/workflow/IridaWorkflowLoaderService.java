@@ -14,6 +14,7 @@ import java.util.Set;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowParameterException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -159,11 +160,19 @@ public class IridaWorkflowLoaderService {
 		} else {
 			if (workflowDescription.acceptsParameters()) {
 				for (IridaWorkflowParameter workflowParameter : workflowDescription.getParameters()) {
+					if (workflowParameter.getDefaultValue() == null && !workflowParameter.isRequired()) {
+						throw new IridaWorkflowLoadException("Parameters with no default value must set the \"required\" attribute to \"true\"." + descriptionFile);
+					}
+					if (workflowParameter.hasDynamicSource() && !workflowParameter.isRequired()) {
+						throw new IridaWorkflowLoadException("Parameters loaded from Dynamic Sources must set the \"required\" attribute to \"true\"." + descriptionFile);
+					}
+					if (workflowParameter.isRequired() && workflowParameter.getDefaultValue() != null) {
+						throw new IridaWorkflowLoadException("Required parameters should not have a default value." + descriptionFile);
+					}
 					try {
-						workflowParameter.getDefaultValue();
-					} catch (NullPointerException e) {
-						throw new IridaWorkflowLoadException("Workflow parameter" + workflowParameter
-								+ " has no default value set: " + descriptionFile, e);
+						workflowParameter.getDynamicSource();
+					} catch (IridaWorkflowParameterException e) {
+						throw new IridaWorkflowLoadException("Parameters may have no more than one Dynamic Source." + descriptionFile);
 					}
 				}
 			}

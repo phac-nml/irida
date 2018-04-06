@@ -3,7 +3,14 @@ Changes
 
 0.20.0 to 0.21.0
 ----------------
+* [Workflow]: Added version 0.1 of a pipeline for runing [MentaLiST](https://github.com/WGS-TB/MentaLiST) (version 0.1.3).
+* [Workflow]: Added version 0.1 of a pipeline for runing Mash against the refseq database [refseq_masher](https://github.com/phac-nml/refseq_masher).
+* [UI]: Fixed bug where user could not cancel the upload of a sequence file on the Sample Files page.
+* [UI/Workflow]: Fixed bug where users could not submit large analyses due to an HTTP 414 "Request URI Too Long" error.
+* [Developer]: Removed old gulp dependencies from the `package.json` file.
+* [Developer]: Update to stable releases of `node` and `yarn`.
 * [Administration]: Disabled automated SISTR results from saving to sample metadata.  Also disabled retrospective results from being added during the database update.  Installations that have already performed the 0.20.0 update will have their retrospective automated SISTR results automatically added to sample metadata.  Installations that jump directly to 0.20.1 and above will not have this data added to sample metadata. (0.20.1)
+* [UI/Workflow]: Preview analysis output files in a tabular or plain-text view in the analysis details page under the Preview tab. 
 
 0.19.0 to 0.20.0
 ----------------

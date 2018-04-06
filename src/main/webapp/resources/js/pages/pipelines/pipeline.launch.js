@@ -2,16 +2,26 @@
   "use strict";
   /**
    * Main controller for the pipeline launch page.
+   * @param $scope Application model object
    * @param $http AngularJS http object
    * @param CartService a reference to the cart service (to clear it)
    * @param ParameterService for passing parameter information between modal and page
+   * @param DynamicSourceService for selecting parameters from a Galaxy Tool Data Table
    * @constructor
    */
-  function PipelineController($scope, $http, CartService, ParameterService) {
+  function PipelineController(
+    $scope,
+    $http,
+    CartService,
+    ParameterService,
+    DynamicSourceService
+  ) {
     var vm = this;
 
     vm.parameters = ParameterService.getOriginalSettings();
     vm.selectedParameters = ParameterService.getSelectedParameters();
+    vm.dynamicSources = DynamicSourceService.getSettings();
+    vm.selectedDynamicSource = DynamicSourceService.getSelectedDynamicSourceValue();
 
     $scope.$on("PARAMETERS_SAVED", function() {
       vm.selectedParameters = ParameterService.getSelectedParameters();
@@ -25,6 +35,11 @@
 		 * Whether or not the page is waiting for a response from the server.
 		 */
     vm.loading = false;
+    /**
+     * Analysis submission success?
+     * @type {boolean}
+     */
+    vm.success = false;
 
     /**
      * Update the selected parameters in the parameter service
@@ -33,6 +48,39 @@
      */
     vm.parameterSelected = function() {
       ParameterService.setSelectedParameters(vm.selectedParameters);
+    };
+
+    /**
+     * Update the selected tool data table field in the tool data table service
+     * for the modal dialog whenever we select a new tool data table field
+     * from the drop-down.
+     */
+    vm.dynamicSourceValueSelected = function(dynamicSourceValue) {
+      DynamicSourceService.setSelectedDynamicSourceValue(
+        dynamicSourceValue,
+        vm.selectedDynamicSource
+      );
+    };
+
+    /**
+     * Determine when to enable the pipeline launch button.
+     */
+    vm.disarmed = function() {
+      return (
+        !this.dynamicSources.availableSettings.no_dynamic_sources &&
+        !this.selectedDynamicSource
+      );
+    };
+
+    /**
+     * Provide a title for the launch button, depending on its armed/disarmed state.
+     */
+    vm.launchButtonTitle = function() {
+      if (this.disarmed()) {
+        return page.i18n.launchButtonTitleDisarmed;
+      } else {
+        return page.i18n.launchButtonTitleArmed;
+      }
     };
 
     /**
@@ -83,13 +131,24 @@
 
         var currentSettings = ParameterService.getSelectedParameters()
           .currentSettings;
+        var currentDynamicSourceSettings = DynamicSourceService.getSettings()
+          .currentSettings;
+
         var selectedParameters = {
           id: currentSettings.id,
           parameters: currentSettings.parameters
         };
+        if (Object.keys(currentDynamicSourceSettings).length > 0) {
+          var dynamicSourceParameters = Object.values(
+            currentDynamicSourceSettings
+          ).map(({ label, value, name }) => ({ label, value, name }));
+          selectedParameters.parameters = selectedParameters.parameters.concat(
+            dynamicSourceParameters
+          );
+        }
 
         // Create the parameter object;
-        var params = {};
+        const params = { workflowId: window.PAGE.pipeline.pipelineId };
         if ($.isNumeric(ref)) {
           params["ref"] = ref;
         }
@@ -113,30 +172,54 @@
         if (shared.length > 0) {
           params["sharedProjects"] = shared;
         }
-
-        $http({
+        // AJAX POST with jQuery instead of Angular $http object so that
+        // JSON request body is encoded properly
+        $.ajax({
+          type: "POST",
           url: page.urls.startUrl,
-          method: "POST",
-          dataType: "json",
-          params: params,
-          headers: {
-            "Content-Type": "application/json"
-          }
-        }).then(function(response) {
-          var data = response.data;
-          if (data.success) {
-            vm.success = true;
-          } else {
-            if (data.error) {
-              vm.error = data.error;
-            } else if (data.parameterError) {
-              vm.paramError = data.parameters;
-            } else if (data.pipelineError) {
-              window.notifications.show({
-                type: "error",
-                text: data.pipelineError
-              });
+          contentType: "application/json; charset=utf-8",
+          data: JSON.stringify(params),
+          success: function(response, status, request) {
+            if (response.success) {
+              vm.success = true;
+            } else {
+              vm.loading = false;
+              if (response.error) {
+                vm.error = response.error;
+              } else if (response.parameterError) {
+                vm.paramError = response.parameters;
+              } else if (response.pipelineError) {
+                window.notifications.show({
+                  type: "error",
+                  text: response.pipelineError,
+                  timeout: false,
+                  progressBar: false,
+                  closeWith: ["button"]
+                });
+              }
             }
+            // trigger Angular digest with the following call
+            $scope.$apply();
+          },
+          error: function(response, status, request) {
+            const errorMsg =
+              request +
+              "- HTTP " +
+              response.status +
+              " - " +
+              JSON.stringify(response.responseJSON);
+            vm.success = false;
+            vm.loading = false;
+            vm.error = errorMsg;
+            window.notifications.show({
+              type: "error",
+              text: errorMsg,
+              timeout: false,
+              progressBar: false,
+              closeWith: ["button"]
+            });
+            // trigger Angular digest with the following call
+            $scope.$apply();
           }
         });
       }
@@ -382,6 +465,60 @@
     };
   }
 
+  /**
+   * Service for handling Galaxy Tool Data Tables.
+   */
+  function DynamicSourceService() {
+    var svc = this;
+
+    // Check to see if there are any tool data tables, if not put a default
+    if (page.pipeline.dynamicSources == null) {
+      page.pipeline.dynamicSources = [
+        {
+          id: "no_dynamic_sources",
+          label: "",
+          parameters: []
+        }
+      ];
+    }
+
+    var settings = {};
+    if (page.pipeline.dynamicSources != null) {
+      settings["currentSettings"] = {};
+      settings["availableSettings"] = {};
+      for (var i = 0; i < page.pipeline.dynamicSources.length; i++) {
+        settings.availableSettings[page.pipeline.dynamicSources[i].id] =
+          page.pipeline.dynamicSources[i];
+      }
+    }
+
+    /**
+     * Get the settings that the page currently has.
+     */
+    svc.getSettings = function() {
+      return settings;
+    };
+
+    /**
+     * Get the currently selected parameters from the page.
+     */
+    svc.getSelectedDynamicSourceValue = function(galaxyToolDataTable) {
+      return settings.currentSettings[galaxyToolDataTable];
+    };
+
+    /**
+     * Set the current tool data table field on the page.
+     * @param galaxyToolDataTable the Galaxy Tool Data Table to set
+     * @param currentSelection the tool data table field that is currently selected
+     */
+    svc.setSelectedDynamicSourceValue = function(
+      galaxyToolDataTable,
+      currentSelection
+    ) {
+      settings.currentSettings[galaxyToolDataTable] = currentSelection;
+    };
+  }
+
   function FileUploadCtrl($rootScope, Upload) {
     var vm = this;
 
@@ -427,6 +564,7 @@
       "$http",
       "CartService",
       "ParameterService",
+      "DynamicSourceService",
       PipelineController
     ])
     .controller("ParameterModalController", [
@@ -441,7 +579,8 @@
       ParameterController
     ])
     .controller("FileUploadCtrl", ["$rootScope", "Upload", FileUploadCtrl])
-    .service("ParameterService", [ParameterService]).name;
+    .service("ParameterService", [ParameterService])
+    .service("DynamicSourceService", [DynamicSourceService]).name;
 
   ng.module("irida").requires.push(pipelineModule);
 })(window.angular, window.jQuery, window.location, window.PAGE);
