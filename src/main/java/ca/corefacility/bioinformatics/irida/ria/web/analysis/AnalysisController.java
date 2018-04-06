@@ -274,6 +274,7 @@ public class AnalysisController {
 		Set<String> outputNames = analysis.getAnalysisOutputFileNames();
 		return outputNames.stream()
 				.map((outputName) -> getAnalysisOutputFileInfo(submission, analysis, outputName))
+				.filter(Objects::nonNull)
 				.collect(Collectors.toList());
 	}
 
@@ -287,6 +288,7 @@ public class AnalysisController {
 	 */
 	private AnalysisOutputFileInfo getAnalysisOutputFileInfo(AnalysisSubmission submission, Analysis analysis,
 			String outputName) {
+		final ImmutableSet<String> BLACKLIST_FILE_EXT = ImmutableSet.of("zip");
 		// set of file extensions for indicating whether the first line of the file should be read
 		final ImmutableSet<String> FILE_EXT_READ_FIRST_LINE = ImmutableSet.of("tsv", "txt", "tabular", "csv", "tab");
 		final AnalysisOutputFile aof = analysis.getAnalysisOutputFile(outputName);
@@ -294,10 +296,16 @@ public class AnalysisController {
 		final String aofFilename = aof.getFile()
 				.getFileName()
 				.toString();
+		final String fileExt = FileUtilities.getFileExt(aofFilename);
+		if (BLACKLIST_FILE_EXT.contains(fileExt))
+		{
+			return null;
+		}
 		final ToolExecution tool = aof.getCreatedByTool();
 		final String toolName = tool.getToolName();
 		final String toolVersion = tool.getToolVersion();
 		final AnalysisOutputFileInfo info = new AnalysisOutputFileInfo();
+
 		info.setId(aofId);
 		info.setAnalysisSubmissionId(submission.getId());
 		info.setAnalysisId(analysis.getId());
@@ -308,7 +316,6 @@ public class AnalysisController {
 				.length());
 		info.setToolName(toolName);
 		info.setToolVersion(toolVersion);
-		final String fileExt = FileUtilities.getFileExt(aofFilename);
 		info.setFileExt(fileExt);
 		if (FILE_EXT_READ_FIRST_LINE.contains(fileExt)) {
 			addFirstLine(info, aof);
