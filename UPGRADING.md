@@ -4,6 +4,11 @@ Upgrading
 This document summarizes the environmental changes that need to be made when
 upgrading IRIDA that cannot be automated.
 
+0.20.0 to 0.21.0
+----------------
+
+* Two new pipelines, [refseq_masher](https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/refseq_masher) and [MentaLiST](https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/mentalist), are included with this release.  Additional Galaxy tools will need to be installed.  Please see the linked installation details for each pipeline for more information.
+
 0.19.0 to 0.20.0
 ----------------
 
