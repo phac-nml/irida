@@ -21,6 +21,7 @@ import { FILTERS, SAMPLE_EVENTS } from "./constants";
 import { download } from "../../../utilities/file.utilities";
 import moment from "moment";
 import "../../../../sass/pages/project-samples.scss";
+import { showNotification } from "../../../modules/notifications";
 
 /*
 This is required to use select2 inside a modal.
@@ -72,12 +73,13 @@ const EXPORT_HANDLERS = {
         download(`${url}?${$.param({ path: response.path })}`);
       },
       error: function(jqXHR, textStatus, errorThrown) {
-        console.error(
-          "Could not prepare download of files",
-          jqXHR,
-          textStatus,
-          errorThrown
-        );
+        showNotification({
+          timeout: false,
+          progressBar: false,
+          type: "error",
+          closeWith: ["button"],
+          text: `${textStatus}: ${prepareDownloadUrl}: ${errorThrown}`
+        });
       }
     });
   },
