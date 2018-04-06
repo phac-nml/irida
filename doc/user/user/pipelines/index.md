@@ -202,7 +202,7 @@ When you scroll to the bottom row in the table, more lines will be fetched as th
 
 ![view-results-resize]
 <figcaption>
-  The little forward slash thing that kind of looks like <span><icon class="fa fa-rss fa-flip-horizontal"/></span> 
+  Click and drag the "resize icon" to resize the table. 
 </figcaption>
 
 ![view-results-refseq_masher-contains-resized]
