@@ -3,8 +3,12 @@
  */
 import { createStore, applyMiddleware, compose } from "redux";
 import createSagaMiddleware from "redux-saga";
-import tableReducer from "./containers/MetadataTable/reducer";
-import { initializeMetadataData } from "./containers/MetadataTable/actions";
+import reducers from "./reducers";
+import { fieldWatcherSaga } from "./sagas";
+import { initializeApp, play } from "./actions";
+
+// Get the project id from the window object:
+const PROJECT_ID = window.project.id;
 
 /*
 Allows us to use Redux Devtools
@@ -15,22 +19,14 @@ const composeEnhancers =
     ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({})
     : compose;
 
+/*
+Set up redux-saga's. {@link https://redux-saga.js.org/}
+This will be used for all asynchronous actions (fetching & updating the server)
+ */
 const sagaMiddleware = createSagaMiddleware();
 const enhancer = composeEnhancers(applyMiddleware(sagaMiddleware));
 
-const store = createStore(tableReducer, enhancer);
+const store = createStore(reducers, enhancer);
 
-sagaMiddleware.run(initializeMetadataData);
-
-/**
- * These are only here now to test the API.
- */
-// MetadataEntryApi.getAllMetadataEntries(window.project.id).then(
-//   result => console.log(result),
-//   err => console.error(err)
-// );
-//
-// MetadataFieldApi.getAllMetadataFields(window.project.id).then(
-//   result => console.log(result),
-//   err => console.error(err)
-// );
+sagaMiddleware.run(fieldWatcherSaga);
+store.dispatch(initializeApp(PROJECT_ID));

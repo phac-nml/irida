@@ -1,7 +1,7 @@
 /**
  * Service class for MetadataTemplateFields
  */
-import $ from "jquery";
+import axios from "axios";
 
 class MetadataFieldApi {
   /**
@@ -11,7 +11,10 @@ class MetadataFieldApi {
    * @returns {Promise}
    */
   static getAllMetadataFields(projectId) {
-    return $.get(`${window.TL.BASE_URL}linelist/fields?projectId=${projectId}`);
+    return axios({
+      method: "get",
+      url: `${window.TL.BASE_URL}linelist/fields?projectId=${projectId}`
+    });
   }
 }
 
