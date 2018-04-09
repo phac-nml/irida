@@ -8,6 +8,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Type;
+import org.hibernate.envers.Audited;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
@@ -23,6 +24,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.Tool;
  * Galaxy Job failure information when a tool in a IRIDA workflow produces an error
  * state for an AnalysisSubmission
  */
+@Audited
 @Entity
 @Table(name = "job_error")
 @EntityListeners(AuditingEntityListener.class)
@@ -130,7 +132,7 @@ public class JobError extends IridaResourceSupport implements IridaThing, Compar
 	private final int exitCode;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinColumn(name = "analysis_submission_id")
+	@JoinColumn(name = "analysis_submission_id", foreignKey = @ForeignKey(name = "FK_JOB_ERROR_ANALYSIS_SUBMISSION"))
 	private AnalysisSubmission analysisSubmission;
 
 	/**

@@ -144,4 +144,5 @@
 	<ncbi_export_submission_biosample_AUD/>
 	<ncbi_export_biosample_sequence_file_single_end_AUD/>
 	<ncbi_export_biosample_sequence_file_pair_AUD/>
+	<job_error_AUD />
 </dataset>
