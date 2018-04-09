@@ -3,7 +3,7 @@
  */
 import $ from "jquery";
 
-class MetadataEntryApi {
+class EntryApi {
   /**
    * Get all metadata belonging to samples in the current project.
    * These will be the table content
@@ -17,4 +17,4 @@ class MetadataEntryApi {
   }
 }
 
-export default MetadataEntryApi;
+export default EntryApi;

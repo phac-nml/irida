@@ -1,9 +1,14 @@
+/**
+ * @file This file specifies how the state of MetadataFields will change based
+ * on the actions that are sent to the store.
+ */
+
 import { defaultState } from "../defaultState";
 import {
   FIELD_API_CALL_ERROR,
   FIELD_API_CALL_REQUEST,
   FIELD_API_CALL_SUCCESS
-} from "../actions";
+} from "./constants";
 
 export function fieldReducer(state = defaultState.fields, action) {
   switch (action.type) {
