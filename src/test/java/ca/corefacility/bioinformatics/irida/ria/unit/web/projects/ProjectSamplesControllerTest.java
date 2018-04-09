@@ -337,7 +337,10 @@ public class ProjectSamplesControllerTest {
 		when(sampleService.readMultiple(ImmutableList.of(sample.getId()))).thenReturn(ImmutableList.of(sample));
 		when(sequencingObjectService.getSequencingObjectsForSample(sample)).thenReturn(filejoin);
 
-		controller.downloadSamples(project.getId(), ImmutableList.of(sample.getId()), response);
+		Map<String, Object> preparedDownloadMap = controller.prepareSampleDownload(project.getId(),
+				ImmutableList.of(sample.getId()));
+
+		controller.downloadSamples(project.getId(), (String) preparedDownloadMap.get("path"), response);
 
 		verify(projectService).read(project.getId());
 		verify(sampleService).readMultiple(ImmutableList.of(sample.getId()));
@@ -373,7 +376,9 @@ public class ProjectSamplesControllerTest {
 		when(sampleService.readMultiple(ImmutableList.of(sample.getId()))).thenReturn(ImmutableList.of(sample));
 		when(sequencingObjectService.getSequencingObjectsForSample(sample)).thenReturn(filejoin);
 
-		controller.downloadSamples(project.getId(), ImmutableList.of(sample.getId()), response);
+		Map<String, Object> preparedDownloadMap = controller.prepareSampleDownload(project.getId(),
+				ImmutableList.of(sample.getId()));
+		controller.downloadSamples(project.getId(), (String) preparedDownloadMap.get("path"), response);
 
 		verify(projectService).read(project.getId());
 		verify(sampleService).readMultiple(ImmutableList.of(sample.getId()));
