@@ -21,7 +21,6 @@ import { FILTERS, SAMPLE_EVENTS } from "./constants";
 import { download } from "../../../utilities/file.utilities";
 import moment from "moment";
 import "../../../../sass/pages/project-samples.scss";
-import { showNotification } from "../../../modules/notifications";
 
 /*
 This is required to use select2 inside a modal.
@@ -56,32 +55,13 @@ Initialize the sample export menu.
 const EXPORT_HANDLERS = {
   download() {
     // this is set by the object calling (i.e. download btn)
-    const prepareDownloadUrl = this.data("prepareUrl");
     const url = this.data("url");
     const selected = $dt.select.selected()[0];
     const ids = [];
     selected.forEach(s => {
-      ids.push(parseInt(s.sample));
+      ids.push(s.sample);
     });
-
-    $.ajax({
-      type: "POST",
-      url: prepareDownloadUrl,
-      contentType: "application/json; charset=utf-8",
-      data: JSON.stringify(ids),
-      success: function(response, status, request) {
-        download(`${url}?${$.param({ path: response.path })}`);
-      },
-      error: function(jqXHR, textStatus, errorThrown) {
-        showNotification({
-          timeout: false,
-          progressBar: false,
-          type: "error",
-          closeWith: ["button"],
-          text: `${textStatus}: ${prepareDownloadUrl}: ${errorThrown}`
-        });
-      }
-    });
+    download(`${url}?${$.param({ ids })}`);
   },
   file() {
     // this is set by the object calling (i.e. download btn)
