@@ -24,6 +24,7 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.springframework.data.annotation.CreatedDate;
@@ -288,10 +289,12 @@ public class Project extends IridaResourceSupport
 		this.maximumCoverage = maximumCoverage;
 	}
 
+	@JsonIgnore
 	public AutomatedSISTRSetting getSistrTypingUploads() {
 		return sistrTypingUploads;
 	}
-	
+
+	@JsonIgnore
 	public void setSistrTypingUploads(AutomatedSISTRSetting sistrTypingUploads) {
 		this.sistrTypingUploads = sistrTypingUploads;
 	}
