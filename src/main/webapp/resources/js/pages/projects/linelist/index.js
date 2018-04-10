@@ -1,17 +1,18 @@
 import createStore from "./redux/create";
-import { initializeApp } from "./app/actions";
 
-// Fields
-import fieldApi from "./apis/field";
-import { fieldWatcherSaga } from "./redux/modules/field";
+// Linelist Table
+import { fetchMetadataFields, fetchMetadataEntries } from "./apis";
+import { tableInitializer } from "./redux/modules/table";
 
 // Get the project id from the window object:
 const PROJECT_ID = window.project.id;
 
 const store = createStore();
-store.runSaga(fieldWatcherSaga, { api: fieldApi, id: PROJECT_ID });
 
-/*
-Initialize the application.
- */
-store.dispatch(initializeApp());
+// Initialize the linelist table.
+store.runSaga(
+  tableInitializer,
+  fetchMetadataFields,
+  fetchMetadataEntries,
+  PROJECT_ID
+);

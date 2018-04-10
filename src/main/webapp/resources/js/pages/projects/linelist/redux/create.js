@@ -3,11 +3,16 @@ The store ({@link https://redux.js.org/basics/store}) represents the facts
 about "what happened" and the reducers that update the state according
 to actions.
  */
-import { createStore as _createStore, applyMiddleware, combineReducers, compose } from "redux";
+import {
+  createStore as _createStore,
+  applyMiddleware,
+  combineReducers,
+  compose
+} from "redux";
 import createSagaMiddleware from "redux-saga";
 
 // Reducers
-import { reducer as fieldReducer } from "./modules/field";
+import { reducer as fieldReducer } from "./modules/table";
 
 export default function createStore(initialSate) {
   /*
@@ -26,6 +31,9 @@ export default function createStore(initialSate) {
   const sagaMiddleware = createSagaMiddleware();
   const enhancer = composeEnhancers(applyMiddleware(sagaMiddleware));
 
+  /*
+  Add the saga runner to the createStore object and return it as a single object.
+   */
   return {
     ..._createStore(combineReducers({ fieldReducer }), initialSate, enhancer),
     runSaga: sagaMiddleware.run
