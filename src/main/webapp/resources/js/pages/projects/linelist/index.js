@@ -8,7 +8,7 @@ import { fetchMetadataFields, fetchMetadataEntries } from "./apis";
 import { metadataLoadingSaga } from "./redux/modules/metadata";
 
 // UI
-import LineList from "./containers/App";
+import App from "./containers/App";
 
 // Get the project id from the window object:
 const PROJECT_ID = window.project.id;
@@ -25,7 +25,7 @@ store.runSaga(
 
 render(
   <Provider store={store}>
-    <LineList />
+    <App />
   </Provider>,
   document.querySelector("#root")
 );

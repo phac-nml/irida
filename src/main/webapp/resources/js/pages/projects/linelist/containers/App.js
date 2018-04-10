@@ -9,7 +9,7 @@ updated (in this case so far it is the loading state), the this connect
 method is what triggers the updates.
  */
 const mapStateToProps = state => ({
-  loading: state.table.fetching
+  loading: state.metadata.fetching
 });
 
 export default connect(mapStateToProps)(LineList);
