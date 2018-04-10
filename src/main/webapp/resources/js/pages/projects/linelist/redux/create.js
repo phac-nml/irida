@@ -12,7 +12,7 @@ import {
 import createSagaMiddleware from "redux-saga";
 
 // Reducers
-import { reducer as fieldReducer } from "./modules/table";
+import { reducer as table } from "./modules/table";
 
 export default function createStore(initialSate) {
   /*
@@ -35,7 +35,7 @@ export default function createStore(initialSate) {
   Add the saga runner to the createStore object and return it as a single object.
    */
   return {
-    ..._createStore(combineReducers({ fieldReducer }), initialSate, enhancer),
+    ..._createStore(combineReducers({ table }), initialSate, enhancer),
     runSaga: sagaMiddleware.run
   };
 }
