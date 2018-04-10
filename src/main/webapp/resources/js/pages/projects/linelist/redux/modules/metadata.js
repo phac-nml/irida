@@ -1,8 +1,8 @@
 import { call, put } from "redux-saga/effects";
 
-const LOAD = "linelist/table/LOAD_REQUEST";
-const LOAD_ERROR = "linelist/table/LOAD_ERROR";
-const LOAD_SUCCESS = "linelist/table/LOAD_SUCCESS";
+const LOAD = "linelist/metadata/LOAD_REQUEST";
+const LOAD_ERROR = "linelist/metadata/LOAD_ERROR";
+const LOAD_SUCCESS = "linelist/metadata/LOAD_SUCCESS";
 
 /*
 INITIAL STATE
@@ -79,7 +79,7 @@ SAGAS
  * @param {Number} projectId project identifier
  * @returns {IterableIterator<*>}
  */
-export function* tableInitializer(fetchFields, fetchEntries, projectId) {
+export function* metadataLoadingSaga(fetchFields, fetchEntries, projectId) {
   try {
     yield put(load());
     const { data: fields } = yield call(fetchFields, projectId);
