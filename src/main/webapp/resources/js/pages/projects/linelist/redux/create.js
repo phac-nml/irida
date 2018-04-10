@@ -12,7 +12,7 @@ import {
 import createSagaMiddleware from "redux-saga";
 
 // Reducers
-import { reducer as fieldReducer } from "./modules/table";
+import { reducer as fieldReducer } from "./modules/metadata";
 
 export default function createStore(initialSate) {
   /*
