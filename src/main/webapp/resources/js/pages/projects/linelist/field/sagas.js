@@ -13,10 +13,10 @@ import {
  * @returns {IterableIterator<*|ForkEffect>}
  */
 export function* fieldWatcherSaga(args = {}) {
-  yield takeLatest(INITIALIZE_APP, fieldWorkerSaga, args);
+  yield takeLatest(INITIALIZE_APP, fieldInitializerSaga, args);
 }
 
-function* fieldWorkerSaga(args) {
+function* fieldInitializerSaga(args) {
   try {
     yield put({
       type: FIELD_API_CALL_REQUEST
