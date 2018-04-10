@@ -56,6 +56,9 @@ public enum AnalysisType {
 	@XmlEnumValue("fastqc")
 	FASTQC("fastqc"),
 
+	@XmlEnumValue("mlst-mentalist")
+	MLST_MENTALIST("mlst-mentalist"),
+
 	/**
 	 * A default analysis type.
 	 */

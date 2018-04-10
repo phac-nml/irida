@@ -177,6 +177,17 @@ public class Analysis extends IridaResourceSupport implements IridaThing {
 		return false;
 	}
 
+	@Override
+	public String toString() {
+		return "Analysis{" + "id=" + id + 
+				", createdDate=" + createdDate +
+				", description='" + description +
+				'\'' + ", executionManagerAnalysisId='" + executionManagerAnalysisId + '\'' +
+				", additionalProperties=" + additionalProperties +
+				", analysisOutputFilesMap=" + analysisOutputFilesMap +
+				", analysisType=" + analysisType + '}';
+	}
+
 	/**
 	 * Get all output files produced by this {@link Analysis}.
 	 * 
@@ -185,6 +196,10 @@ public class Analysis extends IridaResourceSupport implements IridaThing {
 	@JsonIgnore
 	public Set<AnalysisOutputFile> getAnalysisOutputFiles() {
 		return ImmutableSet.copyOf(analysisOutputFilesMap.values());
+	}
+
+	public Map<String, AnalysisOutputFile> getAnalysisOutputFilesMap() {
+		return ImmutableMap.copyOf(this.analysisOutputFilesMap);
 	}
 
 	public String getDescription() {

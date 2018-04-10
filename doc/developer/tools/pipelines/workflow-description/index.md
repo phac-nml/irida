@@ -260,14 +260,15 @@ None.
 `<parameter>`
 -------------
 
-Contained in the `<parameters>` element tag.  This defines a single parameter for a workflow.  This must contain at least one `<toolParameter>` element which defines the specific Galaxy tool and parameter to override.  The `defaultValue` should also correspond to one of the acceptible Galaxy parameter values.
+Contained in the `<parameters>` element tag.  This defines a single parameter for a workflow.  This must contain at least one `<toolParameter>` element which defines the specific Galaxy tool and parameter to override.  The `defaultValue` should also correspond to one of the acceptible Galaxy parameter values. If no `defaultValue` can be specified, then the `required` attribute should be set to `true`, indicating that the user must input a parameter value before each pipeline run.
 
 ### Attributes
 
-| attribute        | type   | details                                                                                                                 | required | example              |
-|:-----------------|:-------|:------------------------------------------------------------------------------------------------------------------------|:---------|:---------------------|
-| **name**         | string | The name of the parameter.  This will be used in the IRIDA database and configuration files to refer to this parameter. | yes      | `name="myparameter"` |
-| **defaultValue** | string | The default value of the parameter.                                                                                     | yes      | `defaultValue="1"`   |
+| attribute        | type    | details                                                                                                                                    | required | example              |
+|:-----------------|:--------|:-------------------------------------------------------------------------------------------------------------------------------------------|:---------|:---------------------|
+| **name**         | string  | The name of the parameter.  This will be used in the IRIDA database and configuration files to refer to this parameter.                    | yes      | `name="myparameter"` |
+| **defaultValue** | string  | The default value of the parameter.                                                                                                        | yes      | `defaultValue="1"`   |
+| **required**     | boolean | "true" if no default value can be set for the parameter, so the user must select a value before launching. Defaults to "false" if not set. | no       | `required="true"`    |
 
 ### Example
 
@@ -278,6 +279,39 @@ To override the model parameter defined in the Galaxy version of PhyML in <http:
     <toolParameter toolId="irida.corefacility.ca/galaxy-shed/repos/irida/phyml/phyml1/3.1"
         parameterName="datatype_condition.model" />
 </parameter>
+```
+
+`<dynamicSource>`
+-----------------
+
+### Attributes
+
+(None)
+
+`<galaxyToolDataTable>`
+-----------------------
+
+### Attributes
+
+| attribute           | type   | details                                                                                             | required | example                      |
+|:--------------------|:-------|:----------------------------------------------------------------------------------------------------|:---------|:-----------------------------|
+| **name**            | string | Name of the Galaxy Tool Data Table from which parameter values will be pulled.                      | yes      | `name="mentalist_databases"` |
+| **displayColumn**   | string | The name of the Tool Data Table column containing a human-readable label for the parameter value.   | yes      | `displayColumn="name"`       |
+| **parameterColumn** | string | The name of the Tool Data Table column containing the parameter value to be passed to the pipeline. | yes      | `parameterColumn="value"`    |
+
+### Example
+
+Dynamic sources are used to pull parameter values from outside systems such as Galaxy [Tool Data Tables][]
+
+```xml
+<parameter name="kmer_db" required="true">
+    <dynamicSource>
+        <galaxyToolDataTable name="mentalist_databases" displayColumn="name" parameterColumn="value" />
+    </dynamicSource>
+    <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_call/0.1.3"
+        parameterName="kmer_db" />
+</parameter>
+
 ```
 
 `<toolParameter>`
@@ -503,6 +537,7 @@ An example workflow description XML file is given below.
 
 [Galaxy Workflow]: https://wiki.galaxyproject.org/Learn/AdvancedWorkflow
 [Galaxy Tools]: https://toolshed.g2.bx.psu.edu/
+[Tool Data Tables]: https://galaxyproject.org/admin/tools/data-tables/
 [UUID]: http://en.wikipedia.org/wiki/Universally_unique_identifier
 [SNVPhyl Galaxy Workflow]: http://irida.corefacility.ca/gitlab/analysis-pipelines/snvphyl-galaxy/blob/v0.1/workflows/SNVPhyl/0.1/snvphyl_workflow.ga
 [PhyML Galaxy Tool XML]: http://irida.corefacility.ca/gitlab/analysis-pipelines/snvphyl-galaxy/blob/v0.1/tools/phyml/phyml.xml
