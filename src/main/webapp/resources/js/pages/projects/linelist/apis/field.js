@@ -1,5 +1,5 @@
 /**
- * Service class for MetadataTemplateFields
+ * Class responsible for ajax call for project sample metadata fields.
  */
 import axios from "axios";
 

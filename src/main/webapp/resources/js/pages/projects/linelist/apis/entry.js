@@ -1,7 +1,7 @@
 /**
- * Class responsible for ajax call for project sample metadata.
+ * Class responsible for ajax call for project sample metadata entries.
  */
-import $ from "jquery";
+import axios from "axios";
 
 class EntryApi {
   /**
@@ -11,9 +11,10 @@ class EntryApi {
    * @returns {Promise}
    */
   static getAllMetadataEntries(projectId) {
-    return $.get(
-      `${window.TL.BASE_URL}linelist/entries?projectId=${projectId}`
-    );
+    return axios({
+      method: "get",
+      url: `${window.TL.BASE_URL}linelist/entries?projectId=${projectId}`
+    });
   }
 }
 
