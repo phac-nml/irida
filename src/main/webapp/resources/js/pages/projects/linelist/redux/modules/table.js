@@ -16,6 +16,8 @@ const initialState = {
 
 /*
 REDUCERS - Handle updating the state based on the action that is passed.
+This is the **ONLY** place the updates can be made to the state of metadata
+fields and entries.
  */
 export function reducer(state = initialState, action = {}) {
   switch (action.type) {
