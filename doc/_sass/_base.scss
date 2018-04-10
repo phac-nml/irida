@@ -47,10 +47,10 @@ ul, ol, dl, figure,
  * Images
  */
 img {
-    max-width: 80%;
+    max-width: 90%;
     margin-left: 30px;
     vertical-align: middle;
-    box-shadow: 5px 5px 5px #888888;
+    box-shadow: 2px 2px 2px #888888;
 }
 
 img.logo {
@@ -74,10 +74,22 @@ figure > img {
 }
 
 figcaption {
-    font-size: $small-font-size;
+    font-size: $smaller-font-size;
+    color: #888;
+    margin-left: 30px;
+    margin-bottom:20px;
+    margin-top: -10px;
+    max-width: 90%;
 }
 
-
+figcaption:before {
+    display: inline-block;
+    line-height: 1.2;
+    margin-right: 5px;
+    font-family: "FontAwesome"; 
+    content: "\f0d8";
+    color: #888;
+}
 
 /**
  * Lists

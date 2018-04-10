@@ -6,6 +6,8 @@
 <head>
   <title th:text="#{project.samples.new.title(${project.label})}">__NEW_SAMPLE__</title>
   <link rel="stylesheet" th:href="@{/resources/dist/css/project-add-sample.bundle.css}">
+  <link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2.css}">
+  <link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2-bootstrap.css}">
   <script th:inline="javascript">
     var PAGE = {
       urls: {
@@ -43,7 +45,7 @@
                 <div class="form-group">
                   <label for="organism" th:text="#{samples.details.organism}">ORGANISM_</label>
                   <small class="text-muted pull-right">(Optional)</small>
-                  <select id="organism" name="organism" class="form-control" th:field="*{organism}"></select>
+                  <input id="organism" name="organism" class="form-control" th:field="*{organism}" />
                 </div>
                 <button id="save-btn" class="btn btn-primary pull-right" type="submit" disabled="disabled"
                         th:text="#{project.samples.new.submit.form}">
@@ -57,6 +59,7 @@
   </div>
 
 <th:block layout:fragment="scripts">
+  <script th:src="@{/resources/bower_components/select2/select2.min.js}"></script>
   <script th:src="@{/resources/dist/js/project-add-sample.bundle.js}"></script>
 </th:block>
 </body>

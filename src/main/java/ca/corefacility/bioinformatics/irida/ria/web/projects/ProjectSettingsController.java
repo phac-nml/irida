@@ -301,7 +301,8 @@ public class ProjectSettingsController {
 	 */
 	@RequestMapping(value = "/sistr", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, String> updateSistrSetting(@PathVariable Long projectId, @RequestParam boolean sistr,
+	public Map<String, String> updateSistrSetting(@PathVariable Long projectId, @RequestParam
+			Project.AutomatedSISTRSetting sistr,
 			final Model model, Locale locale) {
 		Project read = projectService.read(projectId);
 
@@ -311,7 +312,7 @@ public class ProjectSettingsController {
 		projectService.updateProjectSettings(read, updates);
 
 		String message = null;
-		if (sistr) {
+		if (sistr.equals(Project.AutomatedSISTRSetting.AUTO) || sistr.equals(Project.AutomatedSISTRSetting.AUTO_METADATA)) {
 			message = messageSource.getMessage("project.settings.notifications.sistr.enabled",
 					new Object[] { read.getLabel() }, locale);
 		} else {
