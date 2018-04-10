@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -35,8 +36,11 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundExce
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErrorsService;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
@@ -76,6 +80,12 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	@Autowired
 	private UserRepository userRepository;
 
+	@Autowired
+	private GalaxyJobErrorsService galaxyJobErrorsService;
+
+	@Autowired
+	private JobErrorRepository jobErrorRepository;
+
 	private AnalysisExecutionScheduledTask analysisExecutionScheduledTask;
 
 	private Path sequenceFilePath;
@@ -86,7 +96,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	private UUID validIridaWorkflowId = UUID.fromString("1f9ea289-5053-4e4a-bc76-1f0c60b179f8");
 	private UUID iridaWorkflowIdWithError = UUID.fromString("9ac828e9-2ee4-409d-80dd-f1bf955fd8b9");
 	private UUID invalidIridaWorkflowId = UUID.fromString("8ec369e8-1b39-4b9a-97a1-70ac1f6cc9e6");
-	
+
 	private User analysisSubmitter;
 
 	/**
@@ -100,7 +110,8 @@ public class AnalysisExecutionScheduledTaskImplIT {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
-				analysisExecutionService, CleanupAnalysisSubmissionCondition.ALWAYS_CLEANUP);
+				analysisExecutionService, CleanupAnalysisSubmissionCondition.ALWAYS_CLEANUP,
+				galaxyJobErrorsService, jobErrorRepository);
 
 		Path sequenceFilePathReal = Paths
 				.get(DatabaseSetupGalaxyITService.class.getResource("testData1.fastq").toURI());
@@ -136,7 +147,22 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testFullAnalysisRunSuccess() throws Exception {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
-				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
+				sequenceFilePath, referenceFilePath, validIridaWorkflowId, false);
+
+		validateFullAnalysisWithCleanup(Sets.newHashSet(analysisSubmission), 1);
+	}
+
+	/**
+	 * Tests out successfully executing an analysis submission, from newly
+	 * created to downloading results.  Adds a analysissampleupdater step
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testFullAnalysisRunSuccessWithSampleUpdates() throws Exception {
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
+				sequenceFilePath, referenceFilePath, validIridaWorkflowId, true);
 
 		validateFullAnalysisWithCleanup(Sets.newHashSet(analysisSubmission), 1);
 	}
@@ -151,10 +177,11 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testFullAnalysisRunSuccessNoCleanupAge() throws Exception {
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
-				analysisExecutionService, new CleanupAnalysisSubmissionConditionAge(Duration.ofDays(1)));
+				analysisExecutionService, new CleanupAnalysisSubmissionConditionAge(Duration.ofDays(1)),
+				galaxyJobErrorsService, jobErrorRepository);
 		
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
-				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
+				sequenceFilePath, referenceFilePath, validIridaWorkflowId, false);
 
 		validateFullAnalysis(Sets.newHashSet(analysisSubmission), 1);
 		validateCleanupAnalysis(Sets.newHashSet(analysisSubmissionRepository.findOne(analysisSubmission.getId())), 0);
@@ -173,9 +200,9 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testFullAnalysisRunSuccessTwoSubmissions() throws Exception {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
-				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
+				sequenceFilePath, referenceFilePath, validIridaWorkflowId, false);
 		AnalysisSubmission analysisSubmission2 = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
-				sequenceFilePath2, referenceFilePath2, validIridaWorkflowId);
+				sequenceFilePath2, referenceFilePath2, validIridaWorkflowId, false);
 
 		validateFullAnalysisWithCleanup(Sets.newHashSet(analysisSubmission, analysisSubmission2), 2);
 	}
@@ -201,9 +228,9 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testFullAnalysisRunSuccessOneSubmissionOneError() throws Exception {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
-				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
+				sequenceFilePath, referenceFilePath, validIridaWorkflowId, false);
 		AnalysisSubmission analysisSubmission2 = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
-				sequenceFilePath2, referenceFilePath2, validIridaWorkflowId);
+				sequenceFilePath2, referenceFilePath2, validIridaWorkflowId, false);
 		analysisSubmission2.setAnalysisState(AnalysisState.ERROR);
 		analysisSubmissionRepository.save(analysisSubmission2);
 
@@ -226,7 +253,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testFullAnalysisRunFailInvalidWorkflow() throws Throwable {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
-				sequenceFilePath, referenceFilePath, invalidIridaWorkflowId);
+				sequenceFilePath, referenceFilePath, invalidIridaWorkflowId, false);
 
 		try {
 			validateFullAnalysis(Sets.newHashSet(analysisSubmission), 1);
@@ -248,7 +275,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testFullAnalysisRunFailInvalidWorkflowStatus() throws Throwable {
 		analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L, sequenceFilePath, referenceFilePath,
-				validIridaWorkflowId);
+				validIridaWorkflowId, false);
 				
 		// PREPARE SUBMISSION
 		Set<Future<AnalysisSubmission>> submissionsFutureSet = analysisExecutionScheduledTask.prepareAnalyses();
@@ -290,7 +317,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testFullAnalysisRunCleanupFailInvalidRemoteAnalysisId() throws Throwable {
 		analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L, sequenceFilePath, referenceFilePath,
-				validIridaWorkflowId);
+				validIridaWorkflowId, false);
 		
 		// PREPARE SUBMISSION
 		Set<Future<AnalysisSubmission>> submissionsFutureSet = analysisExecutionScheduledTask.prepareAnalyses();
@@ -343,7 +370,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testFullAnalysisRunFailErrorWithJob() throws Throwable {
 		analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L, sequenceFilePath, referenceFilePath,
-				iridaWorkflowIdWithError);
+				iridaWorkflowIdWithError, false);
 		
 		// PREPARE SUBMISSION
 		Set<Future<AnalysisSubmission>> submissionsFutureSet = analysisExecutionScheduledTask.prepareAnalyses();
@@ -368,6 +395,21 @@ public class AnalysisExecutionScheduledTaskImplIT {
 		assertEquals(1, submissionsFutureSet.size());
 		AnalysisSubmission returnedSubmission = submissionsFutureSet.iterator().next().get();
 		assertEquals(AnalysisState.ERROR, returnedSubmission.getAnalysisState());
+		List<JobError> jobErrors = jobErrorRepository.findAllByAnalysisSubmission(
+				returnedSubmission);
+		assertTrue("There should only be one JobError",
+				jobErrors.size() == 1);
+
+		JobError jobError = jobErrors.get(0);
+		assertTrue("JobError should have some stderr message",
+				jobError.getStandardError() != null &&
+						!jobError.getStandardError().equals(""));
+		assertTrue("JobError should be triggered by 'IndexError: list index out of range'",
+				jobError.getStandardError().contains("IndexError: list index out of range"));
+		assertTrue("JobError tool ID should be 'Filter1'",
+				jobError.getToolId().equals("Filter1"));
+		assertTrue("JobError exit code should be '1'",
+				jobError.getExitCode() == 1);
 	}
 
 	/**
@@ -379,7 +421,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testFullAnalysisRunFailAuthentication() throws Exception {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
-				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
+				sequenceFilePath, referenceFilePath, validIridaWorkflowId, false);
 
 		SecurityContextHolder.clearContext();
 		validateFullAnalysis(Sets.newHashSet(analysisSubmission), 1);
@@ -475,12 +517,30 @@ public class AnalysisExecutionScheduledTaskImplIT {
 		// TRANSFER SUBMISSION RESULTS
 		submissionsFutureSet = analysisExecutionScheduledTask.transferAnalysesResults();
 		assertEquals(expectedSubmissionsToProcess, submissionsFutureSet.size());
+
+		int processingSubmissions = 0;
 		// wait until finished
 		for (Future<AnalysisSubmission> submissionFuture : submissionsFutureSet) {
 			AnalysisSubmission returnedSubmission = submissionFuture.get();
-			assertEquals(AnalysisState.COMPLETED, returnedSubmission.getAnalysisState());
+			if(returnedSubmission.getUpdateSamples()){
+				assertEquals(AnalysisState.TRANSFERRED, returnedSubmission.getAnalysisState());
+				processingSubmissions++;
+			}
+			else{
+				assertEquals(AnalysisState.COMPLETED, returnedSubmission.getAnalysisState());
+			}
+
 			assertEquals(analysisSubmitter, returnedSubmission.getSubmitter());
 			assertEquals("Submission was cleaned", AnalysisCleanedState.NOT_CLEANED, returnedSubmission.getAnalysisCleanedState());
+		}
+
+		//POST PROCESSING RESULTS
+		submissionsFutureSet = analysisExecutionScheduledTask.postProcessResults();
+		assertEquals(processingSubmissions, submissionsFutureSet.size());
+
+		for (Future<AnalysisSubmission> submissionFuture : submissionsFutureSet) {
+			AnalysisSubmission returnedSubmission = submissionFuture.get();
+			assertEquals(AnalysisState.COMPLETED, returnedSubmission.getAnalysisState());
 		}
 	}
 }

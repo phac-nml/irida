@@ -2,19 +2,15 @@ package ca.corefacility.bioinformatics.irida.service.impl.analysis.submission;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.UUID;
 
 import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
 import org.hibernate.TransientPropertyValueException;
 import org.slf4j.Logger;
@@ -24,7 +20,6 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
@@ -91,7 +86,9 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 			put(AnalysisState.SUBMITTING,           15.0f).
 			put(AnalysisState.RUNNING,              20.0f).
 			put(AnalysisState.FINISHED_RUNNING,     90.0f).
-			put(AnalysisState.COMPLETING,           95.0f).
+			put(AnalysisState.COMPLETING,           92.0f).
+			put(AnalysisState.TRANSFERRED,          95.0f).
+			put(AnalysisState.POST_PROCESSING,      97.0f).
 			put(AnalysisState.COMPLETED,            100.0f).
 			build();
 	// @formatter:on
@@ -105,33 +102,33 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	private final ReferenceFileRepository referenceFileRepository;
 	private final GalaxyHistoriesService galaxyHistoriesService;
 	private final SequencingObjectService sequencingObjectService;
-	
+	private JobErrorRepository jobErrorRepository;
+
 	// required, but not constructor injected because we have circular dependencies :(
 	@Autowired
 	private AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionService;
 
 	/**
 	 * Builds a new AnalysisSubmissionServiceImpl with the given information.
-	 * 
-	 * @param analysisSubmissionRepository
-	 *            A repository for accessing analysis submissions.
-	 * @param userRepository
-	 *            A repository for accessing user information.
-	 * @param referenceFileRepository
-	 *            the reference file repository
-	 * @param sequencingObjectService
-	 *            the {@link SequencingObject} service.
-
-	 * @param galaxyHistoriesService
-	 *            The {@link GalaxyHistoriesService}.
-	 * @param validator
-	 *            A validator.
+	 *
+	 * @param analysisSubmissionRepository A repository for accessing analysis submissions.
+	 * @param userRepository               A repository for accessing user information.
+	 * @param referenceFileRepository      the reference file repository
+	 * @param sequencingObjectService      the {@link SequencingObject} service.
+	 * @param galaxyHistoriesService       The {@link GalaxyHistoriesService}.
+	 * @param validator                    A validator.
+	 * @param pasRepository                The {@link ProjectAnalysisSubmissionJoinRepository}
+	 * @param jobErrorRepository           A repository for accessing {@link JobError}
 	 */
 	@Autowired
 	public AnalysisSubmissionServiceImpl(AnalysisSubmissionRepository analysisSubmissionRepository,
-			UserRepository userRepository, final ReferenceFileRepository referenceFileRepository,
-			final SequencingObjectService sequencingObjectService, final GalaxyHistoriesService galaxyHistoriesService,
-			ProjectAnalysisSubmissionJoinRepository pasRepository, Validator validator) {
+			UserRepository userRepository,
+			final ReferenceFileRepository referenceFileRepository,
+			final SequencingObjectService sequencingObjectService,
+			final GalaxyHistoriesService galaxyHistoriesService,
+			ProjectAnalysisSubmissionJoinRepository pasRepository,
+			JobErrorRepository jobErrorRepository,
+			Validator validator) {
 		super(analysisSubmissionRepository, validator, AnalysisSubmission.class);
 		this.userRepository = userRepository;
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
@@ -139,6 +136,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.sequencingObjectService = sequencingObjectService;
 		this.pasRepository = pasRepository;
+		this.jobErrorRepository = jobErrorRepository;
 	}
 	
 	public void setAnalysisExecutionService(final AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionService) {
@@ -311,9 +309,27 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#object, 'canReadAnalysisSubmission')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#object, 'canUpdateAnalysisSubmission')")
 	public AnalysisSubmission update(AnalysisSubmission object) {
+		AnalysisSubmission readSubmission = read(object.getId());
+
+		// Throw an exception if trying to change analysis priority.  This must be done by the specific method.
+		if (!readSubmission.getPriority().equals(object.getPriority())) {
+			throw new IllegalArgumentException("Analysis priority must be updated by updatePriority method.");
+		}
+
 		return super.update(object);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public AnalysisSubmission updatePriority(AnalysisSubmission submission, AnalysisSubmission.Priority priority) {
+		submission.setPriority(priority);
+
+		return super.update(submission);
 	}
 
 	/**
@@ -394,12 +410,15 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		if (description.acceptsSingleSequenceFiles()) {
 			final Map<Sample, SingleEndSequenceFile> samplesMap = sequencingObjectService
 					.getUniqueSamplesForSequencingObjects(Sets.newHashSet(sequenceFiles));
-			for (final Sample s : samplesMap.keySet()) {
+			for (final Map.Entry<Sample,SingleEndSequenceFile> entry : samplesMap.entrySet()) {
+				Sample s = entry.getKey();
+				SingleEndSequenceFile file = entry.getValue();
 				// Build the analysis submission
 				AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
 				builder.name(name + "_" + s.getSampleName());
-				builder.inputFiles(ImmutableSet.of(samplesMap.get(s)));
+				builder.inputFiles(ImmutableSet.of(file));
 				builder.updateSamples(writeResultsToSamples);
+				builder.priority(AnalysisSubmission.Priority.MEDIUM);
 
 				// Add reference file
 				if (ref != null && description.requiresReference()) {
@@ -431,11 +450,14 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		if (description.acceptsPairedSequenceFiles()) {
 			final Map<Sample, SequenceFilePair> samplesMap = sequencingObjectService
 					.getUniqueSamplesForSequencingObjects(Sets.newHashSet(sequenceFilePairs));
-			for (final Sample s : samplesMap.keySet()) {
+
+			for (final Map.Entry<Sample,SequenceFilePair> entry : samplesMap.entrySet()) {
+				Sample s = entry.getKey();
+				SequenceFilePair filePair = entry.getValue();
 				// Build the analysis submission
 				AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
 				builder.name(name + "_" + s.getSampleName());
-				builder.inputFiles(ImmutableSet.of(samplesMap.get(s)));
+				builder.inputFiles(ImmutableSet.of(filePair));
 				builder.updateSamples(writeResultsToSamples);
 
 				// Add reference file
@@ -485,6 +507,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 			String newAnalysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples) {
 		AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
 		builder.name(name);
+		builder.priority(AnalysisSubmission.Priority.MEDIUM);
 		builder.updateSamples(writeResultsToSamples);
 		IridaWorkflowDescription description = workflow.getWorkflowDescription();
 
@@ -577,11 +600,33 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 			
 		case FINISHED_RUNNING:
 		case COMPLETING:
+		case TRANSFERRED:
+		case POST_PROCESSING:
 		case COMPLETED:
 			return STATE_PERCENTAGE.get(analysisState);
 		default:
 			throw new NoPercentageCompleteException("No valid percent complete for state " + analysisState);
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadAnalysisSubmission')")
+	public List<JobError> getJobErrors(Long id) throws EntityNotFoundException {
+		AnalysisSubmission analysisSubmission = read(id);
+		return jobErrorRepository.findAllByAnalysisSubmission(analysisSubmission);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadAnalysisSubmission')")
+	public JobError getFirstJobError(Long id) throws EntityNotFoundException {
+		AnalysisSubmission analysisSubmission = read(id);
+		return jobErrorRepository.findFirstByAnalysisSubmission(analysisSubmission);
 	}
 
 	/**

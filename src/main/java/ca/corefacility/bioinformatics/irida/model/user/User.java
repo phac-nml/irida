@@ -6,20 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -73,13 +60,14 @@ public class User extends IridaResourceSupport implements MutableIridaThing, Com
 	private String email;
 
 	@NotNull(message = "{user.password.notnull}")
-	// passwords must be at least six characters long, but prohibit passwords
+	// passwords must be at least 8 characters long, but prohibit passwords
 	// longer than 1024 (who's going to remember a password that long anyway?)
 	// to prevent DOS attacks on our password hashing.
-	@Size(min = 6, max = 1024, message = "{user.password.size}")
+	@Size(min = 8, max = 1024, message = "{user.password.size}")
 	@Pattern.List({ @Pattern(regexp = "^.*[A-Z].*$", message = "{user.password.uppercase}"),
 			@Pattern(regexp = "^.*[0-9].*$", message = "{user.password.number}"),
-			@Pattern(regexp = "^.*[a-z].*$", message = "{user.password.lowercase}") })
+			@Pattern(regexp = "^.*[a-z].*$", message = "{user.password.lowercase}"),
+			@Pattern(regexp = "^.*[!@#$%^&*()+?/<>=.\\\\{}].*$", message = "{user.password.special}") })
 	private String password;
 
 	@NotNull(message = "{user.firstName.notnull}")
@@ -97,9 +85,9 @@ public class User extends IridaResourceSupport implements MutableIridaThing, Com
 	@NotNull
 	private boolean enabled = true;
 
-	@ManyToOne
-	@JoinColumn(name = "system_role", nullable = false)
 	@NotNull(message = "{user.systemRole.notnull}")
+	@Enumerated(EnumType.STRING)
+	@Column(name = "system_role")
 	private Role systemRole;
 
 	@CreatedDate

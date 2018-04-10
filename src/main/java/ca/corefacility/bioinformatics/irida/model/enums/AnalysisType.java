@@ -43,12 +43,21 @@ public enum AnalysisType {
 	 */
 	@XmlEnumValue("assembly-annotation-collection")
 	ASSEMBLY_ANNOTATION_COLLECTION("assembly-annotation-collection"),
+
+	/**
+	 * refseq_masher genomic distance estimation and containment of sample to NCBI RefSeq genomes
+	 */
+	@XmlEnumValue("refseq_masher")
+	REFSEQ_MASHER("refseq_masher"),
 	
 	/**
 	 * A fastqc analysis type
 	 */
 	@XmlEnumValue("fastqc")
 	FASTQC("fastqc"),
+
+	@XmlEnumValue("mlst-mentalist")
+	MLST_MENTALIST("mlst-mentalist"),
 
 	/**
 	 * A default analysis type.
@@ -89,10 +98,10 @@ public enum AnalysisType {
 
 	/**
 	 * Generates an array of all {@link AnalysisType}s minus the
-	 * {@link AnalysisType.DEFAULT}.
+	 * {@code AnalysisType.DEFAULT}.
 	 * 
 	 * @return An array of all {@link AnalysisType}s minus the
-	 *         {@link AnalysisType.DEFAULT}
+	 *         {@code AnalysisType.DEFAULT}
 	 */
 	public static AnalysisType[] valuesMinusDefault() {
 		AnalysisType[] values = AnalysisType.values();

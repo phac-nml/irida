@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="template/base">
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  data-layout-decorate="~{template/base}">
 <head>
 	<title th:text="#{login.title}">THIS IS SOMETHING WRONG</title>
 	<style>
@@ -9,6 +9,15 @@
 			margin-top: 10px;
 			display: block;
 		}
+		.carousel-control {
+            opacity: 0;
+        }
+        .carousel-control:hover, .carousel-control:focus {
+            opacity: 0;
+        }
+        .carousel-indicators li {
+            visibility: hidden;
+        }
 	</style>
 </head>
 <body>

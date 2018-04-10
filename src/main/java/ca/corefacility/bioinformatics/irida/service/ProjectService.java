@@ -128,12 +128,10 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	/**
 	 * Add the specified {@link Sample} to the {@link Project}.
 	 *
-	 * @param project
-	 * 		the {@link Project} to add the {@link Sample} to.
-	 * @param sample
-	 * 		the {@link Sample} to add to the {@link Project}. If the {@link Sample} has not previously been persisted, the
-	 * 		service will persist the {@link Sample}.
-	 *
+	 * @param project the {@link Project} to add the {@link Sample} to.
+	 * @param sample  the {@link Sample} to add to the {@link Project}. If the {@link Sample} has not previously been persisted, the
+	 *                service will persist the {@link Sample}.
+	 * @param owner   Whether the project will have modification access for this sample
 	 * @return a reference to the relationship resource created between the two entities.
 	 */
 	public Join<Project, Sample> addSampleToProject(Project project, Sample sample, boolean owner);
@@ -155,23 +153,38 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	public ProjectSampleJoin moveSampleBetweenProjects(Project source, Project destination, Sample sample, boolean owner);
 	
 	/**
-	 * Copy or move a list of {@link Sample} between 2 {@link Project}
+	 * Share a list of {@link Sample}s between two {@link Project}s.
 	 * 
 	 * @param source
 	 *            the source {@link Project}
 	 * @param destination
-	 *            the {@link Project} being copied to
+	 *            the {@link Project} being shared into
 	 * @param samples
 	 *            a collection of {@link Sample}
-	 * @param move
-	 *            boolean whether to move or copy. true for move
 	 * @param giveOwner
 	 *            whether to give ownership rights to the destination
 	 *            {@link Project}
 	 * @return a list of new {@link ProjectSampleJoin}
 	 */
-	public List<ProjectSampleJoin> copyOrMoveSamples(Project source, Project destination, Collection<Sample> samples,
-			boolean move, boolean giveOwner);
+	public List<ProjectSampleJoin> shareSamples(Project source, Project destination, Collection<Sample> samples,
+			boolean giveOwner);
+	
+	/**
+	 * Move a list of {@link Sample}s between 2 {@link Project}
+	 * 
+	 * @param source
+	 *            the source {@link Project}
+	 * @param destination
+	 *            the {@link Project} being moved to
+	 * @param samples
+	 *            a collection of {@link Sample}s
+	 * @param giveOwner
+	 *            whether to give ownership rights to the destination
+	 *            {@link Project}
+	 * @return a list of new {@link ProjectSampleJoin}
+	 */
+	public List<ProjectSampleJoin> moveSamples(Project source, Project destination, Collection<Sample> samples,
+			boolean giveOwner);
 
 	/**
 	 * Remove the specified {@link Sample} from the {@link Project}. The {@link Sample} will also be deleted from the

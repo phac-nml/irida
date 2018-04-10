@@ -1,42 +1,8 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.submission;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.util.*;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -47,10 +13,6 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-
 import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
@@ -60,6 +22,14 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Defines a submission to an AnalysisService for executing a remote workflow.
@@ -163,6 +133,10 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	private List<ProjectAnalysisSubmissionJoin> projects;
 
 	@NotAudited
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "analysisSubmission")
+	private List<JobError> jobErrors;
+
+	@NotAudited
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "named_parameters_id")
 	private IridaWorkflowNamedParameters namedParameters;
@@ -180,6 +154,10 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	@Column(name = "analysis_description")
 	@Lob
 	private String analysisDescription;
+
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	private Priority priority;
 
 	/**
 	 * Builds a new {@link AnalysisSubmission} with the given {@link Builder}.
@@ -203,6 +181,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 		this.namedParameters = builder.namedParameters;
 		this.analysisDescription = (builder.analysisDescription);
 		this.updateSamples = builder.updateSamples;
+		this.priority = builder.priority;
 	}
 
 	/**
@@ -342,6 +321,14 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	@JsonIgnore
 	public User getSubmitter() {
 		return submitter;
+	}
+
+	public Priority getPriority() {
+		return priority;
+	}
+
+	public void setPriority(Priority priority) {
+		this.priority = priority;
 	}
 
 	/**
@@ -488,6 +475,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 		private IridaWorkflowNamedParameters namedParameters;
 		private String analysisDescription;
 		private boolean updateSamples = false;
+		private Priority priority = Priority.MEDIUM;
 
 		/**
 		 * Creates a new {@link Builder} with a workflow id.
@@ -613,6 +601,17 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 		}
 
 		/**
+		 * Sets the {@link Priority} of the analysis run
+		 *
+		 * @param priority the priority of the analysis
+		 * @return a {@link Builder}
+		 */
+		public Builder priority(final Priority priority){
+			this.priority = priority;
+			return this;
+		}
+
+		/**
 		 * Turns on/off updating of samples from results for this analysis
 		 * submission.
 		 * 
@@ -626,6 +625,10 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 			return this;
 		}
 
+		/**
+		 * Build the analysis submission from the set parameters
+		 * @return the new AnalysisSubmission
+		 */
 		public AnalysisSubmission build() {
 			checkArgument(inputFiles != null,
 					"input file collection is null.  You must supply at least one set of input files");
@@ -695,7 +698,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	@Override
 	public int hashCode() {
 		return Objects.hash(name, workflowId, remoteAnalysisId, remoteInputDataId, remoteWorkflowId, createdDate,
-				modifiedDate, analysisState, analysisCleanedState, analysis, referenceFile, namedParameters, submitter);
+				modifiedDate, analysisState, analysisCleanedState, analysis, referenceFile, namedParameters, submitter, priority);
 	}
 
 	@Override
@@ -709,8 +712,9 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 					&& Objects.equals(remoteWorkflowId, p.remoteWorkflowId)
 					&& Objects.equals(analysisState, p.analysisState)
 					&& Objects.equals(analysisCleanedState, p.analysisCleanedState)
-					&& Objects.equals(referenceFile, p.referenceFile)
-					&& Objects.equals(namedParameters, p.namedParameters) && Objects.equals(submitter, p.submitter);
+					&& Objects.equals(referenceFile, p.referenceFile) && Objects
+					.equals(namedParameters, p.namedParameters) && Objects.equals(submitter, p.submitter) && Objects
+					.equals(priority, p.priority);
 		}
 
 		return false;
@@ -719,5 +723,14 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	@Override
 	public int compareTo(AnalysisSubmission o) {
 		return modifiedDate.compareTo(o.modifiedDate);
+	}
+
+	/**
+	 * Enum encoding the priority of analysis submissions
+	 */
+	public enum Priority {
+		LOW,
+		MEDIUM,
+		HIGH;
 	}
 }

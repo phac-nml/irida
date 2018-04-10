@@ -1,21 +1,15 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html>
 <body>
-<main layout:fragment="main">
-        <h1 th:utext="#{remoteapi.status.connected.heading}"></h1>
-        <section th:utext="#{remoteapi.status.connected.message(${remoteApi.name})}"></section>
-</main>
-    
-<th:block layout:fragment="scripts" th:inline="javascript">
-    <script th:inline="javascript">
-		//refresh the page after 2 seconds if it's in an iframe
-		if(window.parent != window){
-			setTimeout(function(){
-					window.parent.closeNoty();
-			},2000);
-		}
+
+    <script>
+      /*
+      This is loaded into an iFrame.
+      Close the bootstrap modal on the parent page.
+       */
+      var modal = window.parent.document.querySelector("#remote-connect-wrapper");
+      modal.dataset.result = "success";
+      modal.querySelector(".close").click();
     </script>
-</th:block>
 </body>
 </html>

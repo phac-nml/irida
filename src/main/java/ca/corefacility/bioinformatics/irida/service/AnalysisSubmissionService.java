@@ -1,12 +1,9 @@
 package ca.corefacility.bioinformatics.irida.service;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerConfigurationException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
@@ -17,6 +14,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
@@ -155,7 +153,25 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 */
 	public float getPercentCompleteForAnalysisSubmission(Long id) throws EntityNotFoundException,
 			NoPercentageCompleteException, ExecutionManagerException;
-	
+
+	/**
+	 * Get the {@link JobError} objects for a {@link AnalysisSubmission} id
+	 * @param id {@link AnalysisSubmission} id
+	 * @return {@link JobError} objects for a {@link AnalysisSubmission}
+	 * @throws EntityNotFoundException If no such {@link AnalysisSubmission} exists.
+	 * @throws ExecutionManagerException If there was an issue contacting the execution manager.
+	 */
+	List<JobError> getJobErrors(Long id) throws EntityNotFoundException, ExecutionManagerException;
+
+	/**
+	 * Get first {@link JobError} for a {@link AnalysisSubmission} id
+	 * @param id {@link AnalysisSubmission} id
+	 * @return {@link JobError} object
+	 * @throws EntityNotFoundException If no such {@link AnalysisSubmission} exists.
+	 * @throws ExecutionManagerException If there was an issue contacting the execution manager.
+	 */
+	JobError getFirstJobError(Long id) throws  EntityNotFoundException, ExecutionManagerException;
+
 	/**
 	 * Share an {@link AnalysisSubmission} with a given {@link Project}
 	 * 
@@ -209,7 +225,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @param state       {@link AnalysisState} of the submission to search
 	 * @param workflowIds set of workflow UUIDs to search
 	 * @param project     {@link Project} to search in
-	 * @param pageRequest a {@link PageRequest} for the restults to show
+	 * @param pageRequest a {@link PageRequest} for the results to show
 	 * @return a page of {@link AnalysisSubmission}
 	 */
 	public Page<AnalysisSubmission> listSubmissionsForProject(String search, String name, AnalysisState state,
@@ -222,20 +238,32 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @param name        analysis submission name
 	 * @param state       {@link AnalysisState} of the submission to search
 	 * @param workflowIds set of workflow UUIDs to search
-	 * @param pageRequest a {@link PageRequest} for the restults to show
+	 * @param pageRequest a {@link PageRequest} for the results to show
 	 * @return a page of {@link AnalysisSubmission}
 	 */
 	public Page<AnalysisSubmission> listAllSubmissions(String search, String name, AnalysisState state,
 			Set<UUID> workflowIds, PageRequest pageRequest);
 
 	/**
+	 * Get a page of {@link AnalysisSubmission}s the given user has submitted.
+	 *
 	 * @param search      basic search string
 	 * @param name        analysis submission name
 	 * @param state       {@link AnalysisState} of the submission to search
 	 * @param user        the {@link User} to get submissions for
 	 * @param workflowIds set of workflow UUIDs to search
-	 * @param pageRequest a {@link PageRequest} for the restults to show	 * @return
+	 * @param pageRequest a {@link PageRequest} for the restults to show
+	 * @return a page of {@link AnalysisSubmission}s for the given user
 	 */
 	public Page<AnalysisSubmission> listSubmissionsForUser(String search, String name, AnalysisState state, User user,
 			Set<UUID> workflowIds, PageRequest pageRequest);
+
+	/**
+	 * Update the priority of an {@link AnalysisSubmission}
+	 *
+	 * @param submission the submission to update
+	 * @param priority   the new priority
+	 * @return the updated submission
+	 */
+	public AnalysisSubmission updatePriority(AnalysisSubmission submission, AnalysisSubmission.Priority priority);
 }

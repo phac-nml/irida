@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="analysis/details/_base">
+      data-layout-decorate="~{analysis/details/_base}">
 
-<head lang="en">
+<head>
 	<style>
 		.tool i {
 			font-size: .75em;
@@ -14,6 +14,14 @@
 		.progress, .progress-bar {
 			height: 4px!important;
 			border-radius: 0;
+		}
+		.log--resizeable {
+			height: 200px;
+			resize: both;
+			overflow: auto;
+		}
+		.tooltip-inner {
+			white-space: pre-wrap;
 		}
 	</style>
 </head>
@@ -54,10 +62,9 @@
 		<div class="col-md-12 ng-cloak">
 
 			<sub-nav>
-				<th:block th:if="${isCompleted} and ${preview}">
-					<sub-nav-item state="preview" data:text="#{analysis.tab.preview}"></sub-nav-item>
-				</th:block>
 				<sub-nav-item th:if="${sistr}" state="sistr" text="Sistr"></sub-nav-item>
+				<sub-nav-item th:if="${isCompleted}" state="preview" data:text="#{analysis.tab.preview}"></sub-nav-item>
+				<sub-nav-item th:if="${isError}" state="joberrors" data:text="#{analysis.joberror}"></sub-nav-item>
 				<sub-nav-item state="inputs" data:text="#{analysis.tab.input-files}"></sub-nav-item>
 				<th:block th:if="${isCompleted}">
 					<sub-nav-item state="provenance" data:text="#{analysis.tab.provenance}"></sub-nav-item>
@@ -84,7 +91,8 @@
 			</script>
 
 			<script type="text/ng-template" id="preview.html">
-				<div th:if="${isCompleted} and ${preview}" ng-controller="PreviewController as previewController">
+				<div th:if="${isCompleted}" ng-controller="PreviewController as previewController">
+					<div th:if="${preview == 'tree'}">
 					<phylocanvas
 						shape="circular" config="{}" newick="{{previewController.newick}}">
 						<phylocanvas-controls>
@@ -101,8 +109,11 @@
 						</phylocanvas-controls>
 						<div id="phylocanvas"></div>
 					</phylocanvas>
+					</div>
+					<div th:if="${isCompleted}" id="js-file-preview-container"></div>
+					<div th:if="${isCompleted}" id="js-messages" class="hidden"></div>
 				</div>
-				<div th:unless="${isCompleted} and ${preview}"></div>
+				<div th:unless="${isCompleted}"></div>
 			</script>
 
 			<script type="text/ng-template" id="sistr.html">
@@ -118,7 +129,7 @@
 						</tr>
 						<tr>
 							<th th:text="#{analysis.details.sistr.sample.information.qc.status}">_Status_</th>
-							<td ng-class="{'list-group-item-success' : sistrCtrl.sample_information.qc_pass, 
+							<td ng-class="{'list-group-item-success' : sistrCtrl.sample_information.qc_pass,
 								'list-group-item-warning' : sistrCtrl.sample_information.qc_warning, 'list-group-item-danger' : sistrCtrl.sample_information.qc_fail}" ng-bind="sistrCtrl.sample_information.qc_status">QC Status</td>
 						</tr>
 						<tr ng-if="!sistrCtrl.sample_information.qc_pass">
@@ -210,6 +221,8 @@
 				</div>
 			</script>
 
+            <div th:replace="~{analysis/details/ng-templates/joberror::main}"></div>
+
 			<script type="text/ng-template" id="inputs.html" th:with="fileCount = ${#lists.size(paired_end)}">
 				<th:block th:if="${referenceFile}">
 					<h2 th:text="#{analysis.details.reference}"></h2>
@@ -288,10 +301,18 @@
 				</div>
 				<form th:action="@{/analysis/{aid}/edit(aid=${analysisSubmission.getId()})}" method="POST">
 					<div class="modal-body">
-						<p th:text="#{analysis.edit.hint}">_Enter a new name for the analysis:_</p>
 						<div class="form-group">
 							<label for="analysis-name-input" th:text="#{analysis.edit.name}">_Analysis Name_</label>
 							<input type="text" class="form-control" id="analysis-name-input" name="name" th:value="${analysisSubmission.name}"/>
+						</div>
+						<div class="form-group" sec:authorize="hasRole('ROLE_ADMIN')" th:if="${analysisSubmission.analysisState == T(ca.corefacility.bioinformatics.irida.model.enums.AnalysisState).NEW}">
+								<label for="analysis-name-input" th:text="#{analysis.edit.priority}">_Analysis Name_</label>
+								
+								<select class="form-control" name="priority" id="analysis-edit-priority">
+										<option 
+										  th:each="priority : ${T(ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission.Priority).values()}" 
+										  th:text="${priority}" th:value="${priority}" th:selected="${analysisSubmission.priority == priority}">_High_</option>
+									  </select>
 						</div>
 					</div>
 					<div class="modal-footer">

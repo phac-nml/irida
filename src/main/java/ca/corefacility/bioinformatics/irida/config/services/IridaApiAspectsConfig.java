@@ -18,6 +18,9 @@ import ca.corefacility.bioinformatics.irida.service.analysis.annotations.RunAsUs
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceAspect;
 import ca.corefacility.bioinformatics.irida.validators.ValidMethodParametersAspect;
 
+/**
+ * Configures the aspects in IRIDA
+ */
 @Configuration
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class IridaApiAspectsConfig {

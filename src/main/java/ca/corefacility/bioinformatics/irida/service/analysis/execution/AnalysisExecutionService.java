@@ -90,6 +90,14 @@ public interface AnalysisExecutionService {
 			IridaWorkflowAnalysisTypeException;
 
 	/**
+	 * Performs any post processing required for an {@link AnalysisSubmission}.  Usually this will be a sample updater implementation.
+	 *
+	 * @param analysisSubmission the {@link AnalysisSubmission} to process
+	 * @return a Future {@link AnalysisSubmission}
+	 */
+	public Future<AnalysisSubmission> postProcessResults(AnalysisSubmission analysisSubmission);
+
+	/**
 	 * Cleans up any intermediate files in the execution manager for this
 	 * submission.
 	 * 

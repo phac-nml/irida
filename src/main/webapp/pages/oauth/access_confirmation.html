@@ -1,39 +1,53 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="template/base">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title th:text="#{auth.title}">IRIDA OAuth2 Approval Page</title>
+    <link rel="stylesheet" th:href="@{/resources/dist/css/bootstrap.bundle.css}">
+    <style>
+        .button-form {
+            display: inline-block;
+        }
+
+        .modal-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+    </style>
 </head>
 <body>
-<main layout:fragment="content" class="container main-area" role="main" property="mainContentOfPage">
+<section class="modal-body" style="margin-top: 0;">
+    <h3 style="margin-top: 0" th:text="#{auth.title}">_IRIDA OAuth2 Approval Page_</h3>
 
-  <h1 th:text="#{auth.title}">_IRIDA OAuth2 Approval Page_</h1>
-
-  <div id="content">
-      <h2 th:text="#{auth.subtitle(${auth_request.clientId})}">_Confirm access for clientID_</h2>
-	  <p th:text="#{auth.usermessage(${principal.name})}">_You are logged in as userName._</p>
-      <p th:text="#{auth.approvalmessage(${auth_request.clientId},${scopes})}">_The client clientId is requesting access to your data on this IRIDA site.  Approving this request will allow 
-      	clientId allowedScopes access to the following resources on this site:_</p>  
-      <ul>
-      	<li th:text="#{auth.projects}">Projects</li>
-      	<li th:text="#{auth.samples}">Samples</li>
+    <h4 th:text="#{auth.subtitle(${auth_request.clientId})}">_Confirm access for clientID_</h4>
+    <p th:text="#{auth.usermessage(${principal.name})}">_You are logged in as userName._</p>
+    <p th:text="#{auth.approvalmessage(${auth_request.clientId},${scopes})}">_The client clientId is requesting
+        access
+        to your data on this IRIDA site. Approving this request will allow
+        clientId allowedScopes access to the following resources on this site:_</p>
+    <ul>
+        <li th:text="#{auth.projects}">Projects</li>
+        <li th:text="#{auth.samples}">Samples</li>
         <li th:text="#{auth.sequenceFiles}">Sequence files</li>
-      </ul>
-      <p th:text="#{auth.adminmessage(${auth_request.clientId})}">_Note: clientId has been authorized as part of the IRIDA network by the site's administrators._</p>
+    </ul>
+    <p th:text="#{auth.adminmessage(${auth_request.clientId})}">_Note: clientId has been authorized as part of the
+        IRIDA
+        network by the site's administrators._</p></section>
 
-	  <form id='confirmationForm' name='confirmationForm' th:action='@{/api/oauth/authorize}' method='post'>
+<div class="modal-footer">
+    <form id='confirmationForm' class="button-form" name='confirmationForm' th:action='@{/api/oauth/authorize}' method='post'>
         <input th:each="scope : ${scopes}" type="hidden" th:name="${'scope.'+ scope}" value="true"/>
-	  	<input name='user_oauth_approval' value='true' type='hidden'/>
-	  	<input class="btn btn-default" name='authorize' id="authorize-btn" th:value="#{auth.authorize}" value='_Authorize_' type='submit'/>
-	  </form>
-	  <form id='denialForm' name='denialForm' th:action='@{/api/oauth/authorize}' method='post'>
-	  	<input th:each="scope : ${scopes}" type="hidden" th:name="${'scope.'+ scope}" value="false"/>
-	  	<input name='user_oauth_approval' value='false' type='hidden'/>
-	  	<input class="btn btn-danger" name='deny' th:value="#{auth.deny}" value='_Deny_' type='submit'/>
-	  </form>
-  </div>
+        <input name='user_oauth_approval' value='true' type='hidden'/>
+        <input class="btn btn-default" name='authorize' id="authorize-btn" th:value="#{auth.authorize}"
+               value='_Authorize_' type='submit'/>
+    </form>
+    <form id='denialForm' class="button-form" name='denialForm' th:action='@{/api/oauth/authorize}' method='post'>
+        <input th:each="scope : ${scopes}" type="hidden" th:name="${'scope.'+ scope}" value="false"/>
+        <input name='user_oauth_approval' value='false' type='hidden'/>
+        <input class="btn btn-danger" name='deny' th:value="#{auth.deny}" value='_Deny_' type='submit'/>
+    </form>
+</div>
 
-</main>
 </body>
 </html>

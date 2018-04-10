@@ -4,6 +4,23 @@ Upgrading
 This document summarizes the environmental changes that need to be made when
 upgrading IRIDA that cannot be automated.
 
+0.20.0 to 0.21.0
+----------------
+
+* This upgrade makes schema changes to the databases and cannot be parallel deployed.  Servlet container must be stopped before deploying the new `war` file.
+* Two new pipelines, [refseq_masher](https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/refseq_masher) and [MentaLiST](https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/mentalist), are included with this release.  Additional Galaxy tools will need to be installed.  Please see the linked installation details for each pipeline for more information.
+
+0.19.0 to 0.20.0
+----------------
+
+* This upgrade makes schema changes to the databases and cannot be parallel deployed.  Servlet container must be stopped before deploying the new `war` file.
+* This upgrade removes Dandelion framework from IRIDA.  `-Ddandelion.profile.active=prod"` should be removed from Tomcat settings.  Please see <https://irida.corefacility.ca/documentation/administrator/web/#servlet-container-configuration>.
+* You may configure the number of days a password is valid for before it needs reset.  Add the `security.password.expiry` key to `/etc/irida/irida.conf` to configure.  To disable password expiry, set to `-1` (default).  For example to set to 90 days, add the following:
+
+```
+security.password.expiry=90
+```
+
 0.18.0 to 0.19.0
 ----------------
 

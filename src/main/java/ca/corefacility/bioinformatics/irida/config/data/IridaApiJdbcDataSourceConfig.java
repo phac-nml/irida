@@ -21,6 +21,9 @@ import org.springframework.util.StringUtils;
 
 import liquibase.integration.spring.SpringLiquibase;
 
+/**
+ * Configuration for IRIDA's JDBC Datasource
+ */
 @Configuration
 @Profile({ "dev", "prod", "it" })
 public class IridaApiJdbcDataSourceConfig implements DataConfig {
@@ -45,7 +48,8 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 		public ApplicationContextAwareSpringLiquibase(final ApplicationContext applicationContext) {
 			this.applicationContext = applicationContext;
 		}
-		
+
+		@Override
 		protected SpringResourceOpener createResourceOpener() {
 			return new ApplicationContextSpringResourceOpener(getChangeLog());
 		}
@@ -72,14 +76,14 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 	 * going to be creating the database schema. The scenario should not come
 	 * up, however we will test to see if Hibernate is set to generate a schema
 	 * before executing.
-	 * 
-	 * @param dataSource
-	 *            the connection to use to migrate the database
+	 *
+	 * @param dataSource         the connection to use to migrate the database
+	 * @param applicationContext the Spring Application Context
 	 * @return an instance of {@link SpringLiquibase}.
 	 */
 	@Bean
 	@Profile({ "dev", "prod", "it" })
-	public SpringLiquibase springLiquibase(final DataSource dataSource, final ApplicationContext applicationContext) throws SQLException {
+	public SpringLiquibase springLiquibase(final DataSource dataSource, final ApplicationContext applicationContext) {
 
 		final ApplicationContextAwareSpringLiquibase springLiquibase = new ApplicationContextAwareSpringLiquibase(applicationContext);
 		springLiquibase.setDataSource(dataSource);

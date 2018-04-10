@@ -1,9 +1,52 @@
 Changes
 =======
 
+0.20.0 to 0.21.0
+----------------
+* [Workflow]: Added version 0.1 of a pipeline for runing [MentaLiST](https://github.com/WGS-TB/MentaLiST) (version 0.1.3).
+* [Workflow]: Added version 0.1 of a pipeline for runing Mash against the refseq database [refseq_masher](https://github.com/phac-nml/refseq_masher).
+* [UI]: Fixed bug where user could not cancel the upload of a sequence file on the Sample Files page.
+* [UI/Workflow]: Fixed bug where users could not submit large analyses due to an HTTP 414 "Request URI Too Long" error.
+* [Developer]: Removed old gulp dependencies from the `package.json` file.
+* [Developer]: Update to stable releases of `node` and `yarn`.
+* [Administration]: Disabled automated SISTR results from saving to sample metadata.  Also disabled retrospective results from being added during the database update.  Installations that have already performed the 0.20.0 update will have their retrospective automated SISTR results automatically added to sample metadata.  Installations that jump directly to 0.20.1 and above will not have this data added to sample metadata. (0.20.1)
+* [UI/Workflow]: Preview analysis output files in a tabular or plain-text view in the analysis details page under the Preview tab. 
+
+0.19.0 to 0.20.0
+----------------
+* [Developer]: Fixed exception being thrown related to permission denied for updating samples when a normal user (collaborator on a project) runs the assembly pipeline (0.19.1).
+* [UI]: Allowing admins to manually prioritize high importance analyses.
+* [Developer]: Removed dandelion from project > samples page.
+* [UI]: Fixed issue where Projects table could not be exported (0.19.2).
+* [UI]: Fixed user menu icons misaligning in Firefox (0.19.2).
+* [Developer]: Updated front end templating engine to Thymeleaf v3.
+* [Administration]: Added option to expire passwords after a configured number of days.  Set `security.password.expiry` in `/etc/irida/irida.conf` to configure.
+* [Administration]: Limiting users from reusing passwords.
+* [Developer]: Updated webpack compile path to be `resources/dist`.
+* [Developer]: Webpack now extracts `css` / `scss` into its own bundles.
+* [UI]: Added minification to production javascript.
+* [UI]: Fixed issue where delete project button was always enabled, and created an error when clicked. (0.19.3)
+* [UI]: Clean up of the main navigation bar code, and removed its dependency on angular-ui.
+* [UI]: Fixed reflow layout of pipeline launch page.
+* [UI]: Changed the wording of 'copying' samples to 'sharing' samples.
+* [UI]: Allow users to share (copy) samples from a remote project. Disabled menu items for move and merge.
+* [Developer]: Ran `prettier` on all javascript files within `resources/js`.
+* [Developer]: Ran `prettier` on all scss files within `resources/sass`.
+* [Developer]: Add a git pre-commit hook to ensure `prettier` formatting.
+* [UI]: Fixed issue where all activities page could not be displayed.
+* [UI]: Fixed issue where time stamps where not displayed on activities pages.
+* [UI]: Fixed issue where breadcrumbs were not displaying on the Project > Line List and Project > Analyses pages.
+* [UI]: Cleaned up sub-navigation elements on samples and files.
+* [UI]: Updated Remote API pages (datatables, and removed Noty modals).  
+* [UI]: Fixed issue where breadcrumbs not displaying on the Samples > File > QC Analsis pages.
+* [UI]: Removed search box from sequencing run page.
+* [UI/Workflow]: Galaxy job error info retrieved from Galaxy if a workflow submission fails. Job error info is shown in Analyses table and on the Analysis page if it exists. 
+* [UI]: Fixed issue with Upload Sequence Files button when SequenceFiles page resized.
+* [UI]: SISTR able to write metadata back to samples.
+
 0.18.0 to 0.19.0
 ----------------
-* [Developer] Removed the requirement for pipeline developers to add an `Analysis` subclass and database tables for pipelines.  All pipeline results can now be stored in the `Analysis` class.
+* [Developer]: Removed the requirement for pipeline developers to add an `Analysis` subclass and database tables for pipelines.  All pipeline results can now be stored in the `Analysis` class.
 * [Developer]: Fixed issue where bootstrap was being loaded twice onto the page. (0.18.1)
 * [UI]: Fixed URL for concatenation of sample sequence files. (0.18.1)
 * [Developer]: Removed dandelion from: Announcements, Cart, Sequencing Runs, Login, Project Settings - Landing, Events, Create Sample, Line List, Announcements - Create & Read, Livestampjs, Pipelines Launch, lodash, NCBI Export Page, Session Handler, Project Members and Groups Server Side,  NCBI export lists, Groups Listing, Group Members.

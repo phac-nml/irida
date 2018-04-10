@@ -39,7 +39,13 @@ public class AnalysisDetailsPage extends AbstractPage {
 	@FindBy(className = "paired_end")
 	private List<WebElement> pairedEndElements;
 
+	@FindBy(id = "editAnalysisButton")
+	private WebElement editButton;
+
 	private WebElement currentFile;
+
+	@FindBy(className = "it-has-job-error")
+	private List<WebElement> divHasJobError;
 
 	public AnalysisDetailsPage(WebDriver driver) {
 		super(driver);
@@ -74,6 +80,11 @@ public class AnalysisDetailsPage extends AbstractPage {
 		waitForElementVisible(By.className("share-project"));
 	}
 
+	public void displayInputTab() {
+		tabInputFiles.click();
+		waitForElementVisible(By.className("paired_end"));
+	}
+
 	public List<Long> getSharedProjectIds() {
 		return shareCheckboxes.stream().filter(s -> s.isSelected()).map(s -> Long.valueOf(s.getAttribute("value")))
 				.collect(Collectors.toList());
@@ -87,6 +98,18 @@ public class AnalysisDetailsPage extends AbstractPage {
 			throw new IllegalArgumentException("share box with id " + id + " doesn't exist");
 		}
 		checkbox.get().click();
+	}
+
+	/**
+	 * Click the edit button
+	 */
+	public void clickEditButton() {
+		editButton.click();
+		waitForTime(500);
+	}
+
+	public boolean priorityEditVisible() {
+		return !driver.findElements(By.id("analysis-edit-priority")).isEmpty();
 	}
 
 	/**
@@ -151,5 +174,9 @@ public class AnalysisDetailsPage extends AbstractPage {
 
 	public int getNumberOfPairedEndInputFiles() {
 		return pairedEndElements.size();
+	}
+
+	public boolean hasJobErrorInfo() {
+		return divHasJobError.size() > 0;
 	}
 }

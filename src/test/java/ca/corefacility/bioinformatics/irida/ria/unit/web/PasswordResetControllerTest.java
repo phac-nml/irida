@@ -85,7 +85,7 @@ public class PasswordResetControllerTest {
 		User user = new User(1L, username, email, null, null, null, null);
 		PasswordReset passwordReset = new PasswordReset(user);
 		String resetId = passwordReset.getId();
-		String password = "Password1";
+		String password = "Password1!";
 		ExtendedModelMap model = new ExtendedModelMap();
 
 		when(passwordResetService.read(resetId)).thenReturn(passwordReset);
@@ -108,7 +108,7 @@ public class PasswordResetControllerTest {
 		User user = new User(1L, "tom", null, null, null, null, null);
 		PasswordReset passwordReset = new PasswordReset(user);
 		String resetId = passwordReset.getId();
-		String password = "Password1";
+		String password = "Password1!";
 		ExtendedModelMap model = new ExtendedModelMap();
 
 		when(passwordResetService.read(resetId)).thenReturn(passwordReset);

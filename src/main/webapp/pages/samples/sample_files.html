@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="samples/_base">
-<head lang="en">
-	<meta charset="UTF-8"/>
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  data-layout-decorate="~{samples/_base}">
+<head>
 	<title th:text="#{samples.files.title(${sample.label})}">THIS IS SOMETHING WRONG</title>
-	<link rel="stylesheet" th:href="@{/resources/css/pages/sample_files.css}"/>
+	<link rel="stylesheet" th:href="@{/resources/dist/css/sample-files.bundle.css}">
 	<script th:inline="javascript">
 		var PAGE = {
 			sample: {
@@ -18,7 +17,6 @@
 			  upload: /*[[@{/samples/{id}/sequenceFiles/upload(id=${sample.getId()})}]]*/ ''
 			}
 		};
-		window.dependencies = ['irida.sample.files'];
 	</script>
 </head>
 <body>
@@ -60,7 +58,7 @@
 			<p>{{ fileUploadCtrl.errorMessage }}</p></div>
 	</div>
 	<div class="panel-body" th:if="${not #lists.isEmpty(single_end) or not #lists.isEmpty(paired_end)}">
-		<a th:href="${url + '/concatenate'}" class="btn btn-default btn-sm btn-block">
+		<a href="concatenate" class="btn btn-default btn-sm btn-block">
 			<th:block th:text="#{samples.files.concatenate.btn}"></th:block>
 			&nbsp;
 			<i class="fa fa-plus-square" aria-hidden="true"></i>
@@ -68,11 +66,9 @@
 	</div>
 </div>
 
-<main layout:fragment="main">
-	<div class="row">
-		<div class="col-md-12">
-			<h1 id="sample-page-title" th:text="#{samples.files.page-title(${sample.getLabel()})}"></h1>
-			<h2 id="sample-page-subtitle" th:text="#{samples.files.sequencefiles.title}"></h2>
+<div layout:fragment="main" class="col-md-9 col-md-push-3">
+	<div>
+		<div>
 			<div id="file-deleted-success" th:if="${fileDeletedMessage}" class="alert alert-success"
 			     role="alert">
 				<strong th:text="${fileDeletedMessage}"></strong>
@@ -297,7 +293,7 @@
 		</div>
 	</div>
 
-</main>
+</div>
 <th:block layout:fragment="scripts" th:inline="javascript">
 	<script type="text/ng-template" id="/upload-error.html">
 		<div class="modal-header">
@@ -394,7 +390,7 @@
 		</form>
 	</script>
 
-	<script th:src="@{/resources/js/build/sample-files.bundle.js}"></script>
+	<script th:src="@{/resources/dist/js/sample-files.bundle.js}"></script>
 </th:block>
 </body>
 </html>

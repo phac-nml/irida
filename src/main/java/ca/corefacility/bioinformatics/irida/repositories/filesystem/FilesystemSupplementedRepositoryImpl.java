@@ -31,7 +31,7 @@ import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
  * Custom implementation of a repository that writes the {@link Path} part of an
  * entity to disk.
  * 
- *
+ *	@param <Type> The type of object this repository is storing
  */
 public abstract class FilesystemSupplementedRepositoryImpl<Type extends VersionedFileFields<Long> & IridaThing>
 		implements FilesystemSupplementedRepository<Type> {
@@ -69,6 +69,11 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 			return Arrays.stream(type.getDeclaredFields()).filter(pathFilter).collect(Collectors.toSet());
 		}
 
+		/**
+		 * Add a base directory to safe files to
+		 * @param c The class for the base directory to save files
+		 * @param p the path to save files to
+		 */
 		public static void addBaseDirectory(final Class<?> c, final Path p) {
 			baseDirectories.put(c, p);
 		}

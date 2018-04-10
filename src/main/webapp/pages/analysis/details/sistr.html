@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="analysis/details/details">
+      data-layout-decorate="~{analysis/details/details}">
 
 <head>
     <title th:text="#{analysis.page.title} + ' - '+ ${analysisSubmission.getId()} + ' - ' + ${workflowName}">dsf</title>

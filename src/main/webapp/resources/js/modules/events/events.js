@@ -1,5 +1,11 @@
+/**
+ * @file Responsible for loading and setting a table of events..
+ * Used on both the Dashboard and Admin > Events pages.
+ */
+
 import angular from "angular";
-import "./../../../css/modules/events.css";
+import "@bassettsj/livestamp";
+import "../../../sass/modules/events.scss";
 
 /**
  * Service to get events DOM from server.
@@ -44,29 +50,34 @@ function events(svc, $compile) {
     },
     replace: true,
     controllerAs: "eventsCtrl",
-    controller: function($scope, $element) {
-      const vm = this;
+    controller: [
+      "$scope",
+      "$element",
+      function($scope, $element) {
+        const vm = this;
 
-      vm.size = 10;
-      $scope.$watch(
-        function() {
-          return vm.size;
-        },
-        function(n, o) {
-          if (n !== o) {
-            getEvents();
+        vm.size = 10;
+        $scope.$watch(
+          function() {
+            return vm.size;
+          },
+          function(n, o) {
+            if (n !== o) {
+              getEvents();
+            }
           }
+        );
+
+        function getEvents() {
+          svc.getEvents($scope.url, vm.size).then(function(data) {
+            $element.html($compile(data)($scope));
+            $('[data-toggle="tooltip"]').tooltip();
+          });
         }
-      );
 
-      function getEvents() {
-        svc.getEvents($scope.url, vm.size).then(function(data) {
-          $element.html($compile(data)($scope));
-        });
+        getEvents();
       }
-
-      getEvents();
-    }
+    ]
   };
 }
 

@@ -4,7 +4,7 @@ const parts = require("./configs/webpack/webpack.parts");
 const entries = require("./configs/webpack/entries.js");
 
 const PATHS = {
-  build: path.resolve(__dirname, "resources/js/build")
+  build: path.resolve(__dirname, "resources/dist")
 };
 
 /*
@@ -27,7 +27,21 @@ const commonConfig = merge([
     },
     output: {
       path: PATHS.build,
-      filename: "[name].bundle.js"
+      filename: "js/[name].bundle.js"
+    },
+    module: {
+      rules: [
+        {
+          test: /\.woff2?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+          use: {
+            loader: "url-loader"
+          }
+        },
+        {
+          test: /\.(ttf|eot|svg)(\?[\s\S]+)?$/,
+          use: "file-loader"
+        }
+      ]
     }
   },
   parts.loadJavaScript(),
@@ -39,6 +53,7 @@ const commonConfig = merge([
 ====================== */
 const productionConfig = merge([
   parts.progressBar(),
+  parts.compressJavaScript(),
   parts.clean([PATHS.build])
 ]);
 
@@ -48,23 +63,7 @@ const productionConfig = merge([
 const developmentConfig = merge([
   {
     devtool: "inline-source-map"
-  },
-  parts.devServer({
-    host: process.env.HOST,
-    port: 9090,
-    proxy: {
-      "/": {
-        target: "http://localhost:8080",
-        secure: false,
-        prependPath: false
-      }
-    },
-    publicPath: "http://localhost:9090/",
-    historyApiFallback: true
-  }),
-  // Add this back in after we format the entire project!
-  // parts.lintJavaScript(),
-  parts.writeFilePlugin()
+  }
 ]);
 
 module.exports = env => {

@@ -1,0 +1,13 @@
+.template-field-draggable {
+  cursor: move;
+  cursor: -webkit-grabbing; /* overrides 'move' */
+}
+
+[draggable="true"] {
+  cursor: move;
+}
+
+.sortable-ghost {
+  background-color: #222222 !important;
+  color: #fefefe;
+}

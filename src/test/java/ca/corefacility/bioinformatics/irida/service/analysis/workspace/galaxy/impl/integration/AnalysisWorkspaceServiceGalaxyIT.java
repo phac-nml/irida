@@ -304,7 +304,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
-				sequenceFilePathA, referenceFilePath, validWorkflowIdSingle);
+				sequenceFilePathA, referenceFilePath, validWorkflowIdSingle, false);
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
 
@@ -412,7 +412,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
-				pairSequenceFiles1A, pairSequenceFiles2A, referenceFilePath, validWorkflowIdPaired);
+				pairSequenceFiles1A, pairSequenceFiles2A, referenceFilePath, validWorkflowIdPaired, false);
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
 
@@ -546,7 +546,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
-				pairSequenceFiles1A, pairSequenceFiles2A, referenceFilePath, validWorkflowIdPairedWithParameters);
+				pairSequenceFiles1A, pairSequenceFiles2A, referenceFilePath, validWorkflowIdPairedWithParameters, false);
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
 
@@ -690,7 +690,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		// construct two pairs of sequence files with same sample (1L)
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
-				pairSequenceFiles1AB, pairSequenceFiles2AB, referenceFilePath, validWorkflowIdPaired);
+				pairSequenceFiles1AB, pairSequenceFiles2AB, referenceFilePath, validWorkflowIdPaired, false);
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
 
@@ -810,7 +810,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		History createdHistory = historiesClient.create(history);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
-				sequenceFilePathA, referenceFilePath, validWorkflowIdSingle);
+				sequenceFilePathA, referenceFilePath, validWorkflowIdSingle, false);
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId("invalid");
 
@@ -862,7 +862,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
-				sequenceFilePathA, referenceFilePath, validWorkflowIdSingle);
+				sequenceFilePathA, referenceFilePath, validWorkflowIdSingle, false);
 		
 		Set<SingleEndSequenceFile> submittedSf = sequencingObjectService
 				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SingleEndSequenceFile.class);
@@ -929,7 +929,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
-				sequenceFilePathA, referenceFilePath, validWorkflowIdSingleSingleSample);
+				sequenceFilePathA, referenceFilePath, validWorkflowIdSingleSingleSample, false);
 		
 		Set<SingleEndSequenceFile> submittedSf = sequencingObjectService
 				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SingleEndSequenceFile.class);
@@ -1000,7 +1000,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		paths2.add(sequenceFilePath2A);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
-				paths1, paths2, referenceFilePath, validWorkflowIdPaired);
+				paths1, paths2, referenceFilePath, validWorkflowIdPaired, false);
 		
 		Set<SingleEndSequenceFile> submittedSingleFiles = sequencingObjectService
 				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SingleEndSequenceFile.class);
@@ -1075,7 +1075,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		paths2.add(sequenceFilePath2A);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
-				paths1, paths2, referenceFilePath, validWorkflowIdPairedSingleSample);
+				paths1, paths2, referenceFilePath, validWorkflowIdPairedSingleSample, false);
 		
 		Set<SingleEndSequenceFile> submittedSingleFiles = sequencingObjectService
 				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SingleEndSequenceFile.class);
@@ -1150,7 +1150,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		paths2.add(sequenceFilePath2A);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
-				paths1, paths2, referenceFilePath, validWorkflowIdPairedSingleSample);
+				paths1, paths2, referenceFilePath, validWorkflowIdPairedSingleSample, false);
 		
 		sampleRepository.delete(1L);
 		assertTrue(!sampleService.exists(1L));
@@ -1289,7 +1289,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
-				sequenceFilePathA, referenceFilePath, phylogenomicsWorkflowId);
+				sequenceFilePathA, referenceFilePath, phylogenomicsWorkflowId, false);
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
 		analysisSubmission.setAnalysisState(AnalysisState.COMPLETING);
@@ -1349,7 +1349,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
-				sequenceFilePathA, referenceFilePath, validWorkflowIdSingle);
+				sequenceFilePathA, referenceFilePath, validWorkflowIdSingle, false);
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
 		analysisSubmission.setAnalysisState(AnalysisState.COMPLETING);

@@ -17,12 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.*;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.env.Environment;
@@ -38,29 +33,21 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.thymeleaf.spring4.SpringTemplateEngine;
-import org.thymeleaf.templatemode.StandardTemplateModeHandlers;
+import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.config.analysis.AnalysisExecutionServiceConfig;
 import ca.corefacility.bioinformatics.irida.config.analysis.ExecutionManagerConfig;
 import ca.corefacility.bioinformatics.irida.config.repository.ForbidJpqlUpdateDeletePostProcessor;
 import ca.corefacility.bioinformatics.irida.config.repository.IridaApiRepositoriesConfig;
 import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
+import ca.corefacility.bioinformatics.irida.config.services.conditions.NreplServerSpringCondition;
 import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsConfig;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
-import ca.corefacility.bioinformatics.irida.processing.impl.AssemblyFileProcessor;
-import ca.corefacility.bioinformatics.irida.processing.impl.ChecksumFileProcessor;
-import ca.corefacility.bioinformatics.irida.processing.impl.CoverageFileProcessor;
-import ca.corefacility.bioinformatics.irida.processing.impl.DefaultFileProcessingChain;
-import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
-import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
-import ca.corefacility.bioinformatics.irida.processing.impl.SistrTypingFileProcessor;
+import ca.corefacility.bioinformatics.irida.processing.impl.*;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
@@ -69,6 +56,10 @@ import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.impl.InMemoryTaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionCleanupServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import net.matlux.NreplServerSpring;
 
 /**
  * Configuration for the IRIDA platform.
@@ -120,6 +111,9 @@ public class IridaApiServicesConfig {
 	
 	@Value("${file.processing.queue.capacity}")
 	private int fpQueueCapacity;
+
+	@Value("${irida.debug.nrepl.server.port:#{null}}")
+	private Integer nreplPort;
 	
 	@Bean
 	public BeanPostProcessor forbidJpqlUpdateDeletePostProcessor() {
@@ -312,10 +306,19 @@ public class IridaApiServicesConfig {
 		classLoaderTemplateResolver.setPrefix("/ca/corefacility/bioinformatics/irida/export/");
 		classLoaderTemplateResolver.setSuffix(".xml");
 
-		classLoaderTemplateResolver.setTemplateMode(StandardTemplateModeHandlers.XML.getTemplateModeName());
+		classLoaderTemplateResolver.setTemplateMode(TemplateMode.XML);
 		classLoaderTemplateResolver.setCharacterEncoding("UTF-8");
 
 		exportUploadTemplateEngine.addTemplateResolver(classLoaderTemplateResolver);
 		return exportUploadTemplateEngine;
 	}
+
+	@Bean
+	@Profile("dev")
+	@Conditional(NreplServerSpringCondition.class)
+	public NreplServerSpring nRepl() {
+		return new NreplServerSpring(nreplPort);
+	}
+
 }
+

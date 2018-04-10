@@ -1,9 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.Principal;
@@ -27,7 +24,6 @@ import org.springframework.web.bind.annotation.*;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
@@ -41,9 +37,12 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisOutputFileInfo;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
@@ -62,6 +61,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Controller for Analysis.
@@ -116,9 +116,8 @@ public class AnalysisController {
 
 	/**
 	 * Get the admin all {@link Analysis} list page
-	 * 
-	 * @param model
-	 *            Model for view variables
+	 *
+	 * @param model Model for view variables
 	 * @return Name of the analysis page view
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -133,9 +132,8 @@ public class AnalysisController {
 
 	/**
 	 * Get the user {@link Analysis} list page
-	 * 
-	 * @param model
-	 *            Model for view variables
+	 *
+	 * @param model Model for view variables
 	 * @return Name of the analysis page view
 	 */
 	@RequestMapping()
@@ -149,13 +147,10 @@ public class AnalysisController {
 
 	/**
 	 * View details about an individual analysis submission
-	 * 
-	 * @param submissionId
-	 *            the ID of the submission
-	 * @param model
-	 *            Model for the view
-	 * @param locale
-	 *            User's locale
+	 *
+	 * @param submissionId the ID of the submission
+	 * @param model        Model for the view
+	 * @param locale       User's locale
 	 * @return name of the details page view
 	 */
 	@RequestMapping(value = "/{submissionId}", produces = MediaType.TEXT_HTML_VALUE)
@@ -176,26 +171,32 @@ public class AnalysisController {
 		}
 
 		// Get the name of the workflow
-		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription().getAnalysisType();
+		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription()
+				.getAnalysisType();
 		model.addAttribute("analysisType", analysisType);
 		String viewName = getViewForAnalysisType(analysisType);
 		String workflowName = messageSource.getMessage("workflow." + analysisType.toString() + ".title", null, locale);
 		model.addAttribute("workflowName", workflowName);
-		model.addAttribute("version", iridaWorkflow.getWorkflowDescription().getVersion());
+		model.addAttribute("version", iridaWorkflow.getWorkflowDescription()
+				.getVersion());
 
 		// Input files
 		// - Paired
-		Set<SequenceFilePair> inputFilePairs = sequencingObjectService
-				.getSequencingObjectsOfTypeForAnalysisSubmission(submission, SequenceFilePair.class);
+		Set<SequenceFilePair> inputFilePairs = sequencingObjectService.getSequencingObjectsOfTypeForAnalysisSubmission(
+				submission, SequenceFilePair.class);
 		model.addAttribute("paired_end", inputFilePairs);
 
 		// Check if user can update analysis
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Authentication authentication = SecurityContextHolder.getContext()
+				.getAuthentication();
 		model.addAttribute("updatePermission", updateAnalysisPermission.isAllowed(authentication, submission));
 
-		if (iridaWorkflow.getWorkflowDescription().requiresReference() && submission.getReferenceFile().isPresent()) {
+		if (iridaWorkflow.getWorkflowDescription()
+				.requiresReference() && submission.getReferenceFile()
+				.isPresent()) {
 			logger.debug("Adding reference file to page for submission with id [" + submission.getId() + "].");
-			model.addAttribute("referenceFile", submission.getReferenceFile().get());
+			model.addAttribute("referenceFile", submission.getReferenceFile()
+					.get());
 		} else {
 			logger.debug("No reference file required for workflow.");
 		}
@@ -204,7 +205,8 @@ public class AnalysisController {
 		 * Preview information
 		 */
 		try {
-			if (submission.getAnalysisState().equals(AnalysisState.COMPLETED)) {
+			if (submission.getAnalysisState()
+					.equals(AnalysisState.COMPLETED)) {
 				if (analysisType.equals(AnalysisType.PHYLOGENOMICS)) {
 					tree(submission, model);
 				} else if (analysisType.equals(AnalysisType.SISTR_TYPING)) {
@@ -214,7 +216,7 @@ public class AnalysisController {
 
 		} catch (IOException e) {
 			logger.error("Couldn't get preview for analysis", e);
-		} 
+		}
 
 		return viewName;
 	}
@@ -224,12 +226,14 @@ public class AnalysisController {
 	 *
 	 * @param submissionId ID of the submission to update
 	 * @param name         name to update the analysis to
+	 * @param priority     the priority to update the analysis to.  Note only admins will be allowed to update priority
 	 * @param model        model for view
 	 * @param locale       locale of the user
 	 * @return redirect to the analysis page after update
 	 */
 	@RequestMapping(value = "/{submissionId}/edit", produces = MediaType.TEXT_HTML_VALUE)
-	public String editAnalysisName(@PathVariable Long submissionId, @RequestParam String name, Model model,
+	public String editAnalysis(@PathVariable Long submissionId, @RequestParam String name,
+			@RequestParam(required = false, defaultValue = "") AnalysisSubmission.Priority priority, Model model,
 			Locale locale) {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 
@@ -239,8 +243,12 @@ public class AnalysisController {
 
 		try {
 			analysisSubmissionService.update(submission);
+			// Setting the priority as a separate call as it's not allowed to be updated with the normal update
+			if (priority != null) {
+				analysisSubmissionService.updatePriority(submission, priority);
+			}
 		} catch (Exception e) {
-			logger.error("Error while updating analysis name", e);
+			logger.error("Error while updating analysis", e);
 			error = true;
 		}
 
@@ -251,13 +259,210 @@ public class AnalysisController {
 
 		return "redirect:/analysis/" + submissionId;
 	}
-	
+
+	/**
+	 * For an {@link AnalysisSubmission}, get info about each {@link AnalysisOutputFile}
+	 *
+	 * @param id {@link AnalysisSubmission} id
+	 * @return map of info about each {@link AnalysisOutputFile}
+	 */
+	@RequestMapping(value = "/ajax/{id}/outputs", method = RequestMethod.GET)
+	@ResponseBody
+	public List<AnalysisOutputFileInfo> getOutputFilesInfo(@PathVariable Long id) {
+		AnalysisSubmission submission = analysisSubmissionService.read(id);
+		Analysis analysis = submission.getAnalysis();
+		Set<String> outputNames = analysis.getAnalysisOutputFileNames();
+		return outputNames.stream()
+				.map((outputName) -> getAnalysisOutputFileInfo(submission, analysis, outputName))
+				.filter(Objects::nonNull)
+				.collect(Collectors.toList());
+	}
+
+	/**
+	 * Get {@link AnalysisOutputFileInfo}.
+	 *
+	 * @param submission {@link AnalysisSubmission} of {@code analysis}
+	 * @param analysis   {@link Analysis} to get {@link AnalysisOutputFile}s from
+	 * @param outputName Workflow output name
+	 * @return {@link AnalysisOutputFile} info
+	 */
+	private AnalysisOutputFileInfo getAnalysisOutputFileInfo(AnalysisSubmission submission, Analysis analysis,
+			String outputName) {
+		final ImmutableSet<String> BLACKLIST_FILE_EXT = ImmutableSet.of("zip");
+		// set of file extensions for indicating whether the first line of the file should be read
+		final ImmutableSet<String> FILE_EXT_READ_FIRST_LINE = ImmutableSet.of("tsv", "txt", "tabular", "csv", "tab");
+		final AnalysisOutputFile aof = analysis.getAnalysisOutputFile(outputName);
+		final Long aofId = aof.getId();
+		final String aofFilename = aof.getFile()
+				.getFileName()
+				.toString();
+		final String fileExt = FileUtilities.getFileExt(aofFilename);
+		if (BLACKLIST_FILE_EXT.contains(fileExt))
+		{
+			return null;
+		}
+		final ToolExecution tool = aof.getCreatedByTool();
+		final String toolName = tool.getToolName();
+		final String toolVersion = tool.getToolVersion();
+		final AnalysisOutputFileInfo info = new AnalysisOutputFileInfo();
+
+		info.setId(aofId);
+		info.setAnalysisSubmissionId(submission.getId());
+		info.setAnalysisId(analysis.getId());
+		info.setOutputName(outputName);
+		info.setFilename(aofFilename);
+		info.setFileSizeBytes(aof.getFile()
+				.toFile()
+				.length());
+		info.setToolName(toolName);
+		info.setToolVersion(toolVersion);
+		info.setFileExt(fileExt);
+		if (FILE_EXT_READ_FIRST_LINE.contains(fileExt)) {
+			addFirstLine(info, aof);
+		}
+		return info;
+	}
+
+	/**
+	 * Add the {@code firstLine} and {@code filePointer} file byte position after reading the first line of an {@link AnalysisOutputFile} to a {@link AnalysisOutputFileInfo} object.
+	 *
+	 * @param info Object to add {@code firstLine} and {@code filePointer} info to
+	 * @param aof {@link AnalysisOutputFile} to read from
+	 */
+	private void addFirstLine(AnalysisOutputFileInfo info, AnalysisOutputFile aof) {
+		RandomAccessFile reader = null;
+		final Path aofFile = aof.getFile();
+		try {
+			reader = new RandomAccessFile(aofFile.toFile(), "r");
+			info.setFirstLine(reader.readLine());
+			info.setFilePointer(reader.getFilePointer());
+		} catch (FileNotFoundException e) {
+			logger.error("Could not find file '" + aofFile + "' " + e);
+		} catch (IOException e) {
+			logger.error("Could not read file '" + aofFile + "' " + e);
+		} finally {
+			try {
+				if (reader != null) {
+					reader.close();
+				}
+			} catch (IOException e) {
+				logger.error("Could not close file handle for '" + aofFile + "' " + e);
+			}
+		}
+	}
+
+	/**
+	 * Read some lines or text from an {@link AnalysisOutputFile}.
+	 *
+	 * @param id       {@link AnalysisSubmission} id
+	 * @param fileId   {@link AnalysisOutputFile} id
+	 * @param limit    Optional limit to number of lines to read from file
+	 * @param start    Optional line to start reading from
+	 * @param end      Optional line to stop reading at
+	 * @param seek     Optional file byte position to seek to and begin reading
+	 * @param chunk    Optional number of bytes to read from file
+	 * @param response HTTP response object
+	 * @return JSON with file text or lines as well as information about the file.
+	 */
+	@RequestMapping(value = "/ajax/{id}/outputs/{fileId}", method = RequestMethod.GET)
+	@ResponseBody
+	public AnalysisOutputFileInfo getOutputFile(@PathVariable Long id, @PathVariable Long fileId,
+			@RequestParam(defaultValue = "100", required = false) Long limit,
+			@RequestParam(required = false) Long start, @RequestParam(required = false) Long end,
+			@RequestParam(defaultValue = "0", required = false) Long seek, @RequestParam(required = false) Long chunk,
+			HttpServletResponse response) {
+		AnalysisSubmission submission = analysisSubmissionService.read(id);
+		Analysis analysis = submission.getAnalysis();
+		final Optional<AnalysisOutputFile> analysisOutputFile = analysis.getAnalysisOutputFiles()
+				.stream()
+				.filter(x -> Objects.equals(x.getId(), fileId))
+				.findFirst();
+		if (analysisOutputFile.isPresent()) {
+			final AnalysisOutputFile aof = analysisOutputFile.get();
+			final Path aofFile = aof.getFile();
+			final ToolExecution tool = aof.getCreatedByTool();
+			final AnalysisOutputFileInfo contents = new AnalysisOutputFileInfo();
+			contents.setId(aof.getId());
+			contents.setAnalysisSubmissionId(submission.getId());
+			contents.setAnalysisId(analysis.getId());
+			contents.setFilename(aofFile.getFileName()
+					.toString());
+			contents.setFileExt(FileUtilities.getFileExt(aofFile.getFileName()
+					.toString()));
+			contents.setFileSizeBytes(aof.getFile()
+					.toFile()
+					.length());
+			contents.setToolName(tool.getToolName());
+			contents.setToolVersion(tool.getToolVersion());
+			try {
+				final File file = aofFile.toFile();
+				final RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
+				randomAccessFile.seek(seek);
+				if (seek == 0) {
+					if (chunk != null && chunk > 0) {
+						contents.setText(FileUtilities.readChunk(randomAccessFile, seek, chunk));
+						contents.setChunk(chunk);
+						contents.setStartSeek(seek);
+					} else {
+						final BufferedReader reader = new BufferedReader(new FileReader(randomAccessFile.getFD()));
+						final List<String> lines = FileUtilities.readLinesLimit(reader, limit, start, end);
+						contents.setLines(lines);
+						contents.setLimit((long) lines.size());
+						contents.setStart(start);
+						contents.setEnd(start + lines.size());
+					}
+				} else {
+					if (chunk != null && chunk > 0) {
+						contents.setText(FileUtilities.readChunk(randomAccessFile, seek, chunk));
+						contents.setChunk(chunk);
+						contents.setStartSeek(seek);
+					} else {
+						final List<String> lines = FileUtilities.readLinesFromFilePointer(randomAccessFile, limit);
+						contents.setLines(lines);
+						contents.setStartSeek(seek);
+						contents.setStart(start);
+						contents.setLimit((long) lines.size());
+					}
+				}
+				contents.setFilePointer(randomAccessFile.getFilePointer());
+			} catch (IOException e) {
+				logger.error("Could not read output file '" + aof.getId() + "' " + e);
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				contents.setError("Could not read output file");
+
+			}
+			return contents;
+		} else {
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return null;
+		}
+	}
+
+	/**
+	 * Get a map with list of {@link JobError} for an {@link AnalysisSubmission} under key `jobErrors`
+	 * @param submissionId {@link AnalysisSubmission} id
+	 * @return map with list of {@link JobError} under key `jobErrors`
+	 */
+	@RequestMapping(value = "/ajax/{submissionId}/job-errors", method = RequestMethod.GET)
+	@ResponseBody
+	public ImmutableMap<String, Object> getJobErrors(@PathVariable Long submissionId) {
+		try {
+			List<JobError> jobErrors = analysisSubmissionService.getJobErrors(submissionId);
+			if (jobErrors != null && !jobErrors.isEmpty()) {
+				return ImmutableMap.of("jobErrors", jobErrors);
+			}
+		} catch (ExecutionManagerException e) {
+			logger.error("Error " + e);
+		}
+		return ImmutableMap.of("error", "No JobErrors for AnalysisSubmission [id=" + submissionId + "]");
+	}
+
 	/**
 	 * Get the status of projects that can be shared with the given analysis
 	 * 
 	 * @param submissionId
 	 *            the {@link AnalysisSubmission} id
-	 * @return a list of {@link SharedProjectResponse}
+	 * @return a list of {@link AnalysisController.SharedProjectResponse}
 	 */
 	@RequestMapping(value = "/ajax/{submissionId}/share", method = RequestMethod.GET)
 	@ResponseBody
@@ -265,84 +470,86 @@ public class AnalysisController {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		// Input files
 		// - Paired
-		Set<SequenceFilePair> inputFilePairs = sequencingObjectService
-				.getSequencingObjectsOfTypeForAnalysisSubmission(submission, SequenceFilePair.class);
+		Set<SequenceFilePair> inputFilePairs = sequencingObjectService.getSequencingObjectsOfTypeForAnalysisSubmission(
+				submission, SequenceFilePair.class);
 
 		// get projects already shared with submission
-		Set<Project> projectsShared = projectService.getProjectsForAnalysisSubmission(submission).stream()
-				.map(ProjectAnalysisSubmissionJoin::getSubject).collect(Collectors.toSet());
+		Set<Project> projectsShared = projectService.getProjectsForAnalysisSubmission(submission)
+				.stream()
+				.map(ProjectAnalysisSubmissionJoin::getSubject)
+				.collect(Collectors.toSet());
 
 		// get available projects
 		Set<Project> projectsInAnalysis = projectService.getProjectsForSequencingObjects(inputFilePairs);
 
 		List<SharedProjectResponse> projectResponses = projectsShared.stream()
-				.map(p -> new SharedProjectResponse(p, true)).collect(Collectors.toList());
+				.map(p -> new SharedProjectResponse(p, true))
+				.collect(Collectors.toList());
 
 		// Create response for shared projects
-		projectResponses.addAll(projectsInAnalysis.stream().filter(p -> !projectsShared.contains(p))
-				.map(p -> new SharedProjectResponse(p, false)).collect(Collectors.toList()));
-		
+		projectResponses.addAll(projectsInAnalysis.stream()
+				.filter(p -> !projectsShared.contains(p))
+				.map(p -> new SharedProjectResponse(p, false))
+				.collect(Collectors.toList()));
+
 		projectResponses.sort(new Comparator<SharedProjectResponse>() {
 
 			@Override
 			public int compare(SharedProjectResponse p1, SharedProjectResponse p2) {
-				return p1.getProject().getName().compareTo(p2.getProject().getName());
+				return p1.getProject()
+						.getName()
+						.compareTo(p2.getProject()
+								.getName());
 			}
 		});
 
 		return projectResponses;
 	}
-	
+
 	/**
 	 * Update the share status of a given {@link AnalysisSubmission} for a given
 	 * {@link Project}
-	 * 
-	 * @param submissionId
-	 *            the {@link AnalysisSubmission} id to share/unshare
-	 * @param projectId
-	 *            the {@link Project} id to share with
-	 * @param shareStatus
-	 *            whether or not to share the {@link AnalysisSubmission}
+	 *
+	 * @param submissionId the {@link AnalysisSubmission} id to share/unshare
+	 * @param projectId    the {@link Project} id to share with
+	 * @param shareStatus  whether or not to share the {@link AnalysisSubmission}
+	 * @param locale       Locale of the logged in user
 	 * @return Success message if successful
 	 */
 	@RequestMapping(value = "/ajax/{submissionId}/share", method = RequestMethod.POST)
 	public Map<String, String> updateProjectShare(@PathVariable Long submissionId,
-			@RequestParam("project") Long projectId,
-			@RequestParam("shared") boolean shareStatus, Locale locale) {
+			@RequestParam("project") Long projectId, @RequestParam("shared") boolean shareStatus, Locale locale) {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		Project project = projectService.read(projectId);
 
 		String message = "";
 		if (shareStatus) {
 			analysisSubmissionService.shareAnalysisSubmissionWithProject(submission, project);
-			
-			message = messageSource.getMessage("analysis.details.share.enable", new Object[] { project.getLabel() }, locale);
+
+			message = messageSource.getMessage("analysis.details.share.enable", new Object[] { project.getLabel() },
+					locale);
 		} else {
 			analysisSubmissionService.removeAnalysisProjectShare(submission, project);
-			message = messageSource.getMessage("analysis.details.share.remove", new Object[] { project.getLabel() }, locale);
+			message = messageSource.getMessage("analysis.details.share.remove", new Object[] { project.getLabel() },
+					locale);
 		}
-		
+
 		return ImmutableMap.of("result", "success", "message", message);
 	}
 
 	/**
 	 * Get the page for viewing advanced phylogenetic visualization
 	 *
-	 * @param submissionId
-	 * 		{@link Long} identifier for an {@link AnalysisSubmission}
-	 * @param model
-	 * 		{@link Model}
-	 *
+	 * @param submissionId {@link Long} identifier for an {@link AnalysisSubmission}
+	 * @param model        {@link Model}
 	 * @return {@link String} path to the page template.
 	 */
 	@RequestMapping("/{submissionId}/advanced-phylo")
-	public String getAdvancedPhylogeneticVisualizationPage(
-			@PathVariable Long submissionId, Model model){
+	public String getAdvancedPhylogeneticVisualizationPage(@PathVariable Long submissionId, Model model) {
 
 		model.addAttribute("submissionId", submissionId);
 		return BASE + "visualizations/phylocanvas-metadata";
 	}
-
 
 	// ************************************************************************************************
 	// Analysis view setup
@@ -351,17 +558,14 @@ public class AnalysisController {
 	/**
 	 * Construct the model parameters for an {@link AnalysisType#PHYLOGENOMICS}
 	 * {@link Analysis}
-	 * 
-	 * @param submission
-	 *            The analysis submission
-	 * @param model
-	 *            The model to add parameters
-	 * @throws IOException
-	 *             If the tree file couldn't be read
+	 *
+	 * @param submission The analysis submission
+	 * @param model      The model to add parameters
+	 * @throws IOException If the tree file couldn't be read
 	 */
 	private void tree(AnalysisSubmission submission, Model model) throws IOException {
 		final String treeFileKey = "tree";
-		
+
 		Analysis analysis = submission.getAnalysis();
 		AnalysisOutputFile file = analysis.getAnalysisOutputFile(treeFileKey);
 		List<String> lines = Files.readAllLines(file.getFile());
@@ -392,9 +596,9 @@ public class AnalysisController {
 	/**
 	 * DataTables request handler for a User listing all {@link AnalysisSubmission}
 	 *
-	 * @param params {@link DataTablesParams}
+	 * @param params    {@link DataTablesParams}
 	 * @param principal {@link Principal}
-	 * @param locale {@link Locale}
+	 * @param locale    {@link Locale}
 	 * @return {@link DataTablesResponse}
 	 * @throws IridaWorkflowNotFoundException If the requested workflow doesn't exist
 	 * @throws EntityNotFoundException        If the submission cannot be found
@@ -403,8 +607,7 @@ public class AnalysisController {
 	@RequestMapping("/ajax/list")
 	@ResponseBody
 	public DataTablesResponse getSubmissionsForUser(@DataTablesRequest DataTablesParams params, Principal principal,
-			Locale locale) throws IridaWorkflowNotFoundException, EntityNotFoundException,
-			ExecutionManagerException {
+			Locale locale) throws IridaWorkflowNotFoundException, EntityNotFoundException, ExecutionManagerException {
 		User user = userService.getUserByUsername(principal.getName());
 		return analysesListingService.getPagedSubmissions(params, locale, user, null);
 	}
@@ -412,33 +615,39 @@ public class AnalysisController {
 	/**
 	 * DataTables request handler for a User listing all {@link AnalysisSubmission}
 	 *
-	 * @param params {@link DataTablesParams}
+	 * @param params    {@link DataTablesParams}
 	 * @param projectId {@link Long}
 	 * @param principal {@link Principal}
-	 * @param locale {@link Locale}
+	 * @param locale    {@link Locale}
 	 * @return {@link DataTablesResponse}
 	 * @throws IridaWorkflowNotFoundException If the requested workflow doesn't exist
-	 * @throws EntityNotFoundException        If the submission cannot be found
 	 * @throws ExecutionManagerException      If the submission cannot be read properly
 	 */
 	@RequestMapping("/ajax/project/{projectId}/list")
 	@ResponseBody
 	public DataTablesResponse getSubmissionsForProject(@DataTablesRequest DataTablesParams params,
 			@PathVariable Long projectId, Principal principal, Locale locale)
-			throws IridaWorkflowNotFoundException, NoPercentageCompleteException, EntityNotFoundException,
-			ExecutionManagerException {
+			throws IridaWorkflowNotFoundException, ExecutionManagerException {
 		Project project = projectService.read(projectId);
 		return analysesListingService.getPagedSubmissions(params, locale, null, project);
 	}
 
+	/**
+	 * Get the sistr analysis information to display
+	 *
+	 * @param id ID of the analysis submission
+	 * @return Json results for the SISTR analysis
+	 */
 	@SuppressWarnings("resource")
-	@RequestMapping("/ajax/sistr/{id}") @ResponseBody public Map<String,Object> getSistrAnalysis(@PathVariable Long id) {
+	@RequestMapping("/ajax/sistr/{id}")
+	@ResponseBody
+	public Map<String,Object> getSistrAnalysis(@PathVariable Long id) {
 		AnalysisSubmission submission = analysisSubmissionService.read(id);
 		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubmission(submission);
-		Map<String,Object> result = ImmutableMap.of("parse_results_error", true);
-		
+		Map<String, Object> result = ImmutableMap.of("parse_results_error", true);
+
 		final String sistrFileKey = "sistr-predictions";
-		
+
 		// Get details about the workflow
 		UUID workflowUUID = submission.getWorkflowId();
 		IridaWorkflow iridaWorkflow;
@@ -448,25 +657,31 @@ public class AnalysisController {
 			logger.error("Error finding workflow, ", e);
 			throw new EntityNotFoundException("Couldn't find workflow for submission " + submission.getId(), e);
 		}
-		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription().getAnalysisType();
+		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription()
+				.getAnalysisType();
 		if (analysisType.equals(AnalysisType.SISTR_TYPING)) {
 			Analysis analysis = submission.getAnalysis();
-			Path path = analysis.getAnalysisOutputFile(sistrFileKey).getFile();
+			Path path = analysis.getAnalysisOutputFile(sistrFileKey)
+					.getFile();
 			try {
-				String json = new Scanner(new BufferedReader(new FileReader(path.toFile()))).useDelimiter("\\Z").next();
-				
+				String json = new Scanner(new BufferedReader(new FileReader(path.toFile()))).useDelimiter("\\Z")
+						.next();
+
 				// verify file is proper json file
 				ObjectMapper mapper = new ObjectMapper();
-				List<Map<String,Object>> sistrResults = mapper.readValue(json, new TypeReference<List<Map<String,Object>>>(){});
-				
+				List<Map<String, Object>> sistrResults = mapper.readValue(json,
+						new TypeReference<List<Map<String, Object>>>() {
+						});
+
 				if (sistrResults.size() > 0) {
 					// should only ever be one sample for these results
 					if (samples.size() == 1) {
-						Sample sample = samples.iterator().next();
+						Sample sample = samples.iterator()
+								.next();
 						result = sistrResults.get(0);
-						
+
 						result.put("parse_results_error", false);
-						
+
 						result.put("sample_name", sample.getSampleName());
 					} else {
 						logger.error("Invalid number of associated samles for submission " + submission);
@@ -475,9 +690,9 @@ public class AnalysisController {
 					logger.error("SISTR results for file [" + path + "] are not correctly formatted");
 				}
 			} catch (FileNotFoundException e) {
-				logger.error("File [" + path + "] not found",e);
+				logger.error("File [" + path + "] not found", e);
 			} catch (JsonParseException | JsonMappingException e) {
-				logger.error("Error attempting to parse file [" + path + "] as JSON",e);
+				logger.error("Error attempting to parse file [" + path + "] as JSON", e);
 			} catch (IOException e) {
 				logger.error("Error reading file [" + path + "]", e);
 			}
@@ -488,30 +703,30 @@ public class AnalysisController {
 	// ************************************************************************************************
 	// AJAX
 	// ************************************************************************************************
-	
+
 	/**
 	 * Delete an {@link AnalysisSubmission} by id.
-	 * 
-	 * @param analysisSubmissionId
-	 *            the submission ID to delete.
+	 *
+	 * @param analysisSubmissionId the submission ID to delete.
+	 * @param locale               Locale of the logged in user
+	 * @return A message stating the submission was deleted
 	 */
 	@RequestMapping("/ajax/delete/{analysisSubmissionId}")
 	@ResponseBody
-	public Map<String, String> deleteAjaxAnalysisSubmission(@PathVariable Long analysisSubmissionId, final Locale locale) {
+	public Map<String, String> deleteAjaxAnalysisSubmission(@PathVariable Long analysisSubmissionId,
+			final Locale locale) {
 		final AnalysisSubmission deletedSubmission = analysisSubmissionService.read(analysisSubmissionId);
 		analysisSubmissionService.delete(analysisSubmissionId);
-		return ImmutableMap.of(
-				"result", messageSource.getMessage("analysis.delete.message", new Object[]{ deletedSubmission.getLabel() }, locale)
-		);
+		return ImmutableMap.of("result",
+				messageSource.getMessage("analysis.delete.message", new Object[] { deletedSubmission.getLabel() },
+						locale));
 	}
 
 	/**
 	 * Download all output files from an {@link AnalysisSubmission}
 	 *
-	 * @param analysisSubmissionId
-	 *            Id for a {@link AnalysisSubmission}
-	 * @param response
-	 *            {@link HttpServletResponse}
+	 * @param analysisSubmissionId Id for a {@link AnalysisSubmission}
+	 * @param response             {@link HttpServletResponse}
 	 */
 	@RequestMapping(value = "/ajax/download/{analysisSubmissionId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public void getAjaxDownloadAnalysisSubmission(@PathVariable Long analysisSubmissionId,
@@ -526,12 +741,9 @@ public class AnalysisController {
 	/**
 	 * Download single output files from an {@link AnalysisSubmission}
 	 *
-	 * @param analysisSubmissionId
-	 *            Id for a {@link AnalysisSubmission}
-	 * @param fileId
-	 *            the id of the file to download
-	 * @param response
-	 *            {@link HttpServletResponse}
+	 * @param analysisSubmissionId Id for a {@link AnalysisSubmission}
+	 * @param fileId               the id of the file to download
+	 * @param response             {@link HttpServletResponse}
 	 */
 	@RequestMapping(value = "/ajax/download/{analysisSubmissionId}/file/{fileId}")
 	public void getAjaxDownloadAnalysisSubmissionIndividualFile(@PathVariable Long analysisSubmissionId,
@@ -541,7 +753,10 @@ public class AnalysisController {
 		Analysis analysis = analysisSubmission.getAnalysis();
 		Set<AnalysisOutputFile> files = analysis.getAnalysisOutputFiles();
 
-		Optional<AnalysisOutputFile> optFile = files.stream().filter(f -> f.getId().equals(fileId)).findAny();
+		Optional<AnalysisOutputFile> optFile = files.stream()
+				.filter(f -> f.getId()
+						.equals(fileId))
+				.findAny();
 		if (!optFile.isPresent()) {
 			throw new EntityNotFoundException("Could not find file with id " + fileId);
 		}
@@ -552,16 +767,13 @@ public class AnalysisController {
 	/**
 	 * Get the current status for a given {@link AnalysisSubmission}
 	 *
-	 * @param submissionId
-	 * 		The {@link UUID} id for a given {@link AnalysisSubmission}
-	 * @param locale
-	 * 		The users current {@link Locale}
-	 *
+	 * @param submissionId The {@link UUID} id for a given {@link AnalysisSubmission}
+	 * @param locale       The users current {@link Locale}
 	 * @return {@link HashMap} containing the status and the percent complete for the {@link AnalysisSubmission}
 	 */
 	@RequestMapping(value = "/ajax/status/{submissionId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<String, String> getAjaxStatusUpdateForAnalysisSubmission(@PathVariable Long submissionId,
-			Locale locale) {
+	public @ResponseBody
+	Map<String, String> getAjaxStatusUpdateForAnalysisSubmission(@PathVariable Long submissionId, Locale locale) {
 		Map<String, String> result = new HashMap<>();
 		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(submissionId);
 		AnalysisState state = analysisSubmission.getAnalysisState();
@@ -584,18 +796,15 @@ public class AnalysisController {
 	/**
 	 * Get a newick file associated with a specific {@link AnalysisSubmission}.
 	 *
-	 * @param submissionId
-	 * 		{@link Long} id for an {@link AnalysisSubmission}
-	 *
+	 * @param submissionId {@link Long} id for an {@link AnalysisSubmission}
 	 * @return {@link Map} containing the newick file contents.
-	 * @throws IOException
-	 * 		{@link IOException} if the newick file is not found
+	 * @throws IOException {@link IOException} if the newick file is not found
 	 */
 	@RequestMapping("/ajax/{submissionId}/newick")
 	@ResponseBody
 	public Map<String, Object> getNewickForAnalysis(@PathVariable Long submissionId) throws IOException {
 		final String treeFileKey = "tree";
-		
+
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		Analysis analysis = submission.getAnalysis();
 		AnalysisOutputFile file = analysis.getAnalysisOutputFile(treeFileKey);
@@ -606,15 +815,12 @@ public class AnalysisController {
 	/**
 	 * Get the metadata associated with a template for an analysis.
 	 *
-	 * @param submissionId
-	 * 		{@link Long} identifier for the {@link AnalysisSubmission}
-	 *
+	 * @param submissionId {@link Long} identifier for the {@link AnalysisSubmission}
 	 * @return {@link Map}
 	 */
 	@RequestMapping("/ajax/{submissionId}/metadata")
 	@ResponseBody
-	public Map<String, Object> getMetadataForAnalysisSamples(
-			@PathVariable Long submissionId) {
+	public Map<String, Object> getMetadataForAnalysisSamples(@PathVariable Long submissionId) {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubmission(submission);
 
@@ -632,11 +838,11 @@ public class AnalysisController {
 		Map<String, Object> metadata = new HashMap<>();
 		for (Sample sample : samples) {
 			Map<MetadataTemplateField, MetadataEntry> sampleMetadata = sample.getMetadata();
-			Map<String,MetadataEntry> stringMetadata = new HashMap<>();
+			Map<String, MetadataEntry> stringMetadata = new HashMap<>();
 			sampleMetadata.entrySet().forEach(e -> {
 				stringMetadata.put(e.getKey().getLabel(), e.getValue());
 			});
-			
+
 			Map<String, MetadataEntry> valuesMap = new HashMap<>();
 			for (String term : terms) {
 
@@ -660,7 +866,7 @@ public class AnalysisController {
 
 	/**
 	 * Get a list of all {@link MetadataTemplate}s for the {@link AnalysisSubmission}
-	 * 
+	 *
 	 * @param submissionId id of the {@link AnalysisSubmission}
 	 * @return a map of {@link MetadataTemplate}s
 	 */
@@ -695,15 +901,12 @@ public class AnalysisController {
 	/**
 	 * Generates a list of metadata fields for a five template.
 	 *
-	 * @param templateId
-	 * 		{@link Long} id for the {@link MetadataTemplate} that the fields are required.
-	 *
+	 * @param templateId {@link Long} id for the {@link MetadataTemplate} that the fields are required.
 	 * @return {@link Map}
 	 */
 	@RequestMapping("/ajax/{submissionId}/metadata-template-fields")
 	@ResponseBody
-	public Map<String, Object> getMetadataTemplateFields(
-			@RequestParam Long templateId){
+	public Map<String, Object> getMetadataTemplateFields(@RequestParam Long templateId) {
 		MetadataTemplate template = metadataTemplateService.read(templateId);
 		List<MetadataTemplateField> metadataFields = template.getFields();
 		List<String> fields = new ArrayList<>();
@@ -716,9 +919,7 @@ public class AnalysisController {
 	/**
 	 * Get the view name for different analysis types
 	 *
-	 * @param type
-	 * 		The {@link AnalysisType}
-	 *
+	 * @param type The {@link AnalysisType}
 	 * @return the view name to display
 	 */
 	private String getViewForAnalysisType(AnalysisType type) {
@@ -731,7 +932,7 @@ public class AnalysisController {
 
 		return viewName;
 	}
-	
+
 	/**
 	 * Response object storing a project and whether or not it's shared with a
 	 * given {@link AnalysisSubmission}

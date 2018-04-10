@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="projects/settings/_base">
+      data-layout-decorate="~{projects/settings/_base}">
 <head>
     <title th:text="#{project.settings.page.title.remote}">Title</title>
         <script th:inline="javascript">
@@ -23,17 +23,18 @@
             </button>
         </div>
     </div>
-    <div class="form-group">
+    <div class="form-group connection-wrapper">
         <label class="control-label" th:text="#{project.settings.api}">_API_</label>
         <div>
             <a href="#" th:href="@{/remote_api/{id}(id=${status.getApi().getId()})}"
                th:text="${status.getApi().getLabel()}">_api_</a>
-            <span id="api-status" class="api-status">
+            <span id="api-status" class="api-status js-status-wrapper">
                 <i class="fa fa-spinner fa-spin"></i>
             </span>
 
-            <button type="button" class="oauth-connect-link btn btn-default hidden" id="connect-button"
-                    th:text="#{remoteapi.status.connect.button}" th:attr="data-api-id=${status.getApi().getId()}">
+            <button type="button" class="oauth-connect-link btn btn-default hidden js-connect-btn" id="connect-button"
+                    data-toggle="modal" data-target="#remote-connect-wrapper"
+                    th:text="#{remoteapi.status.connect.button}" data:api-id="${status.getApi().getId()}">
                 _Connect_
             </button>
         </div>
@@ -62,8 +63,7 @@
 
 
 <th:block layout:fragment="scripts">
-          <th:block th:replace="remote_apis/remote_api_connect"/>
-          <script th:src="@{/resources/js/pages/projects/project-settings-basic.js}"></script>
+    <script th:src="@{/resources/dist/js/project-settings-remote.bundle.js}"></script>
 </th:block>
 </body>
 </html>

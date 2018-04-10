@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -33,7 +34,9 @@ public class ProjectAnalysisPageIT extends AbstractIridaUIITChromeDriver {
 		
 		// checking to ensure the user can see the analysis page
 		AnalysisDetailsPage analysisPage = AnalysisDetailsPage.initPage(driver(), 1L);
-		
+
+		assertTrue("This analysis submission should have job error info", analysisPage.hasJobErrorInfo());
+		analysisPage.displayInputFilesTab();
 		assertEquals("should be 2 files", 2, analysisPage.getNumberOfPairedEndInputFiles());
 	}
 	
@@ -46,7 +49,9 @@ public class ProjectAnalysisPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("should be 2 analyses", 2, page.getNumberOfAnalyses());
 		
 		AnalysisDetailsPage analysisPage = AnalysisDetailsPage.initPage(driver(), 1L);
-		
+
+		assertTrue("This analysis submission should have job error info", analysisPage.hasJobErrorInfo());
+		analysisPage.displayInputFilesTab();
 		assertEquals("should be 2 files", 2, analysisPage.getNumberOfPairedEndInputFiles());
 		
 		analysisPage.displayShareTab();

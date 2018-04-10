@@ -82,20 +82,16 @@ public class ProjectSampleMetadataController {
 	 * Upload Excel file containing sample metadata and extract the headers.  The file is stored in the session until
 	 * the column that corresponds to a {@link Sample} identifier has been sent.
 	 *
-	 * @param session
-	 * 		{@link HttpSession}
-	 * @param projectId
-	 * 		{@link Long} identifier for the current {@link Project}
-	 * @param file
-	 * 		{@link MultipartFile} The excel file containing the metadata.
-	 *
+	 * @param session   {@link HttpSession}
+	 * @param projectId {@link Long} identifier for the current {@link Project}
+	 * @param file      {@link MultipartFile} The excel file containing the metadata.
 	 * @return {@link Map} of headers and rows from the excel file for the user to select the header corresponding the
 	 * {@link Sample} identifier.
 	 */
 	@RequestMapping(value = "/upload/file", method = RequestMethod.POST)
 	@ResponseBody
 	public SampleMetadataStorage createProjectSampleMetadata(HttpSession session, @PathVariable long projectId,
-			@RequestParam("file") MultipartFile file) throws MetadataImportFileTypeNotSupportedError {
+			@RequestParam("file") MultipartFile file)  {
 		// We want to return a list of the table headers back to the UI.
 		SampleMetadataStorage storage = new SampleMetadataStorage();
 		try {
@@ -337,7 +333,7 @@ public class ProjectSampleMetadataController {
 	 * @param projectId
 	 * 		{@link Long} identifier for the current {@link Project}
 	 *
-	 * @return
+	 * @return the currently stored {@link SampleMetadataStorage}
 	 */
 	@RequestMapping("/upload/getMetadata")
 	@ResponseBody

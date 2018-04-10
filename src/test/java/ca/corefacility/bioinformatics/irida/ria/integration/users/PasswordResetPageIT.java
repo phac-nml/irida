@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.users;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
@@ -33,19 +34,24 @@ public class PasswordResetPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
 	public void testSetPassword() {
-		String password = "Password1";
+		String password = "Password1!";
 		passwordResetPage.getPasswordReset("XYZ");
 		passwordResetPage.enterPassword(password, password);
+		assertFalse("Password inputs should have no errors", passwordResetPage.hasErrors());
+		assertTrue("Submit button should be enabled", passwordResetPage.isSubmitEnabled());
+		passwordResetPage.clickSubmit();
 		assertTrue("Should have successfully reset password.", passwordResetPage.checkSuccess());
 	}
 
 	@Test
 	public void testSetUnequalPassword() {
-		String password = "Password1";
+		String password = "Password1!";
 		passwordResetPage.getPasswordReset("XYZ");
 		passwordResetPage.enterPassword(password, "different1");
-		assertTrue("Should **not** successfully reset password.",
-				passwordResetPage.checkFailure("Password and Confirm Password do not match."));
+		assertTrue("There should be elements with '.t-form-error' due to mismatching passwords",
+				passwordResetPage.hasErrors());
+		assertFalse("Submit button should be disabled",
+				passwordResetPage.isSubmitEnabled());
 	}
 
 	@Test
@@ -53,17 +59,21 @@ public class PasswordResetPageIT extends AbstractIridaUIITChromeDriver {
 		String password = "notcomplex";
 		passwordResetPage.getPasswordReset("XYZ");
 		passwordResetPage.enterPassword(password, password);
-		final Boolean badPasswordMessage = passwordResetPage.checkFailure("Password must contain at least one number.") ||
-				passwordResetPage.checkFailure("Password must contain at least one upper-case letter.");
-		assertTrue("Should **not** successfully reset password.", badPasswordMessage);
+		assertTrue("There should be elements with '.t-form-error' due to password not meeting requirements",
+				passwordResetPage.hasErrors());
+		assertFalse("Submit button should be disabled", passwordResetPage.isSubmitEnabled());
 	}
 
 	@Test
 	public void testChangedCredentials() {
-		String password = "Password1";
+		String password = "Password1!";
 		// reset password
 		passwordResetPage.getPasswordReset("XYZ");
 		passwordResetPage.enterPassword(password, password);
+		assertFalse("There should be no '.t-form-error' elements; password should meet all requirements",
+				passwordResetPage.hasErrors());
+		assertTrue("Submit button should be enabled", passwordResetPage.isSubmitEnabled());
+		passwordResetPage.clickSubmit();
 		assertTrue("Should have successfully reset password.", passwordResetPage.checkSuccess());
 
 		AbstractPage.logout(driver());
