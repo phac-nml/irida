@@ -1,8 +1,10 @@
 import { call, put } from "redux-saga/effects";
 
 const LOAD = "linelist/metadata/LOAD_REQUEST";
-const LOAD_ERROR = "linelist/metadata/LOAD_ERROR";
-const LOAD_SUCCESS = "linelist/metadata/LOAD_SUCCESS";
+const LOAD_FIELDS_ERROR = "linelist/metadata/LOAD_FIELDS_ERROR";
+const LOAD_FIELDS_SUCCESS = "linelist/metadata/LOAD_FIELDS_SUCCESS";
+const LOAD_ENTRIES_ERROR = "linelist/metadata/LOAD_ENTRIES_ERROR";
+const LOAD_ENTRIES_SUCCESS = "linelist/metadata/LOAD_ENTRIES_SUCCESS";
 
 /*
 INITIAL STATE
@@ -23,21 +25,19 @@ export function reducer(state = initialState, action = {}) {
   switch (action.type) {
     case LOAD:
       return { ...state, fetching: true, error: null };
-    case LOAD_SUCCESS:
+    case LOAD_FIELDS_SUCCESS:
       return {
         ...state,
         fetching: false,
         error: false,
-        fields: action.fields,
-        entries: action.entries
+        fields: action.fields
       };
-    case LOAD_ERROR:
+    case LOAD_FIELDS_ERROR:
       return {
         ...state,
         fetching: false,
         error: true,
-        fields: null,
-        entries: null
+        fields: null
       };
     default:
       return state;
@@ -53,17 +53,16 @@ function load() {
   };
 }
 
-function loadSuccess({ fields, entries }) {
+function loadFieldsSuccess(fields) {
   return {
-    type: LOAD_SUCCESS,
-    fields,
-    entries
+    type: LOAD_FIELDS_SUCCESS,
+    fields
   };
 }
 
-function loadError(error) {
+function loadFieldsError(error) {
   return {
-    type: LOAD_ERROR,
+    type: LOAD_FIELDS_ERROR,
     error
   };
 }
@@ -83,9 +82,8 @@ export function* metadataLoadingSaga(fetchFields, fetchEntries, projectId) {
   try {
     yield put(load());
     const { data: fields } = yield call(fetchFields, projectId);
-    const { data: entries } = yield call(fetchEntries, projectId);
-    yield put(loadSuccess({ fields, entries }));
+    yield put(loadFieldsSuccess(fields));
   } catch (error) {
-    yield put(loadError(error));
+    yield put(loadFieldsError(error));
   }
 }

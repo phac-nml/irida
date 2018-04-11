@@ -11,7 +11,8 @@ method is what triggers the updates.
 const mapStateToProps = state => ({
   loading: state.metadata.fetching,
   fields: state.metadata.fields,
-  entries: state.metadata.entries
+  entries: state.metadata.entries,
+  error: state.metadata.error
 });
 
 export default connect(mapStateToProps)(LineList);
