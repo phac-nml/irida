@@ -2,7 +2,7 @@
     "a_galaxy_workflow": "true", 
     "annotation": "", 
     "format-version": "0.1", 
-    "name": "MentaLiST MLST v0.1", 
+    "name": "MentaLiST MLST v0.1.5", 
     "steps": {
         "0": {
             "annotation": "", 
