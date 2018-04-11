@@ -17,8 +17,8 @@ const defaultConfig = {
   type: "success",
   closeWith: ["click"], // String array with 'click' or 'button' or both
   animation: {
-    open: "animated fadeIn",
-    close: "animated fadeOut"
+    open: "fadeInDown",
+    close: "fadeOutUp"
   },
   text: ""
 };
@@ -30,18 +30,12 @@ const defaultConfig = {
  *
  * @type {{theme: string, timeout: boolean, progressBar: boolean, type: string, closeWith: string[], animation: {open: string, close: string}, text: string}}
  */
-const defaultErrorConfig = {
-  theme: "metroui",
-  timeout: false, // [integer|boolean] delay for closing event in milliseconds. Set false for sticky notifications
+const defaultErrorConfig = Object.assign({}, defaultConfig, {
+  timeout: false,
   progressBar: false,
   type: "error",
-  closeWith: ["button"], // String array with 'click' or 'button' or both
-  animation: {
-    open: "animated bounceInRight",
-    close: "animated bounceOutRight"
-  },
-  text: "ERROR!"
-};
+  closeWith: ["button"]
+});
 
 /**
  * Show UI notification with default type "success" that is dismissed after 3.5 seconds or onClick event.
