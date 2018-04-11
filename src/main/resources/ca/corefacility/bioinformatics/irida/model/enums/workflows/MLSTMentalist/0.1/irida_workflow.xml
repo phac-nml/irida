@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <iridaWorkflow>
-    <id>beee0266-c141-45ef-8d3e-9c471a90de88</id>
+    <id>dc12ba90-afa7-4fb2-b826-9acb9f7be9e7</id>
     <name>MLSTMentalist</name>
     <version>0.1</version>
     <analysisType>mlst-mentalist</analysisType>
@@ -15,7 +15,7 @@
                 <galaxyToolDataTable name="mentalist_databases" displayColumn="name" parameterColumn="value" />
             </dynamicSource>
             <toolParameter
-                    toolId="toolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_call/0.1.3"
+                    toolId="toolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_call/0.1.5"
                     parameterName="kmer_db" />
         </parameter>
     </parameters>
@@ -27,7 +27,7 @@
             <name>mentalist</name>
             <owner>dfornika</owner>
             <url>https://toolshed.g2.bx.psu.edu/</url>
-            <revision>1d9e3950ce61</revision>
+            <revision>4ea71c8e2db0</revision>
         </repository>
         <repository>
             <name>combine_tabular_collection</name>
