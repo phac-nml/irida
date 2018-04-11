@@ -3,7 +3,7 @@
 <iridaWorkflow>
     <id>dc12ba90-afa7-4fb2-b826-9acb9f7be9e7</id>
     <name>MLSTMentalist</name>
-    <version>0.1</version>
+    <version>0.1.5</version>
     <analysisType>mlst-mentalist</analysisType>
     <inputs>
         <sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
