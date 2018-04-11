@@ -8,4 +8,8 @@
              relativeToChangelogFile="true"/>
     <include file="system-role-removal.xml"
              relativeToChangelogFile="true"/>
+    <include file="add-job-error-table.xml"
+             relativeToChangelogFile="true"/>
+    <include file="pipeline-metadata-entry.xml" relativeToChangelogFile="true"/>
+    <include file="post-update-fix.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

@@ -81,13 +81,11 @@ public class ReferenceFileController {
 	/**
 	 * Add a new reference file to a project.
 	 *
-	 * @param projectId
-	 *            The id of the project to add the file to.
-	 * @param files
-	 *            {@link List} of {@link MultipartFile} file being uploaded.
-	 * @param response
-	 *            {@link HttpServletResponse}
-	 *
+	 * @param projectId The id of the project to add the file to.
+	 * @param files     {@link List} of {@link MultipartFile} file being uploaded.
+	 * @param response  {@link HttpServletResponse}
+	 * @param locale    locale of the logged in user
+	 * @return Success message if file was successfully uploaded
 	 */
 	@RequestMapping("/project/{projectId}/new")
 	public @ResponseBody Map<String, String> addReferenceFileToProject(@PathVariable Long projectId,
@@ -126,11 +124,15 @@ public class ReferenceFileController {
 		// method so doesn't need to be i18n.
 		return ImmutableMap.of("success", "upload complete.");
 	}
-	
+
 	/**
 	 * Upload a transient reference file, to be used for a single analysis.
-	 * @param file the new reference file
+	 *
+	 * @param file     the new reference file
 	 * @param response the response to write errors to.
+	 * @param locale   Locale of the current user
+	 * @return Success message with uploaded file id and name
+	 * @throws IOException if the new reference file cannot be saved
 	 */
 	@RequestMapping("/new")
 	public Map<String, Object> addIndependentReferenceFile(

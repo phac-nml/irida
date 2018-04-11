@@ -26,6 +26,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -56,6 +57,9 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
+/**
+ * Controller for handling interactions with samples in a project
+ */
 @Controller
 public class ProjectSamplesController {
 	// From configuration.properties
@@ -164,6 +168,12 @@ public class ProjectSamplesController {
 	@RequestMapping(value = "/projects/{projectId}/samples/new", method = RequestMethod.POST)
 	public String createNewSample(@PathVariable Long projectId, Sample sample) {
 		Project project = projectService.read(projectId);
+
+		// Need a check to see if the Organism name was actually set.
+		if(sample.getOrganism().equals("")) {
+			sample.setOrganism(null);
+		}
+
 		try {
 			Join<Project, Sample> join = projectService.addSampleToProject(project, sample, true);
 			return "redirect:/projects/" + projectId + "/samples/" + join.getObject().getId();
@@ -259,32 +269,33 @@ public class ProjectSamplesController {
 	}
 
 	/**
-	 * Create a modal dialogue for moving or copying {@link Sample} to another {@link Project}
+	 * Create a modal dialogue for moving or sharing {@link Sample} to another {@link Project}
 	 *
 	 * @param ids       {@link List} of identifiers for {@link Sample}s to copy or move.
 	 * @param projectId Identifier for the current {@link Project}
 	 * @param model     UI Model
-	 * @param move      Whether or not to display copy or move wording.
-	 * @return Path to copy or move modal template.
+	 * @param move      Whether or not to display share or move wording.
+	 * @return Path to share or move modal template.
 	 */
 	@RequestMapping(value = "/projects/{projectId}/templates/copy-move-modal", produces = MediaType.TEXT_HTML_VALUE)
-	public String getCopySamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, @PathVariable Long projectId,
+	public String getShareSamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, @PathVariable Long projectId,
 			Model model, @RequestParam(required = false) boolean move) {
-		model.addAllAttributes(generateCopyMoveSamplesContent(projectId, ids));
+		Project project = projectService.read(projectId);
+		
+		model.addAllAttributes(generateShareMoveSamplesContent(project, ids));
 		model.addAttribute("projectId", projectId);
 		model.addAttribute("type", move ? "move" : "copy");
+		model.addAttribute("isRemoteProject", project.isRemote());
 		return PROJECT_TEMPLATE_DIR + "copy-move-modal.tmpl";
 	}
 
 	/**
 	 * Get the modal window for filtering project samples
 	 *
-	 * @param projectId
-	 * 		{@link Long} identifier for the current {@link Project}
-	 * @param filter {@link UISampleFilter} Current filter parameters.
-	 * @param model
-	 * 		UI Model
-	 *
+	 * @param projectId  {@link Long} identifier for the current {@link Project}
+	 * @param associated Which associated projects are enabled
+	 * @param filter     {@link UISampleFilter} Current filter parameters.
+	 * @param model      UI Model
 	 * @return {@link String} path to the modal template
 	 */
 	@RequestMapping(value = "/projects/{projectId}/template/samples-filter-modal", produces = MediaType.TEXT_HTML_VALUE)
@@ -323,16 +334,16 @@ public class ProjectSamplesController {
 	}
 
 	/**
-	 * Generate a {@link Map} of {@link Sample} to move or copy.
+	 * Generate a {@link Map} of {@link Sample} to move or share.
 	 *
+	 * @param project  The {@link Project}.
 	 * @param ids
 	 * 		{@link Long} of ids for {@link Sample}
 	 *
-	 * @return {@link Map} of samples to be moved or copied
+	 * @return {@link Map} of samples to be moved or shared.
 	 */
-	private Map<String, List<Sample>> generateCopyMoveSamplesContent(Long projectId, List<Long> ids) {
+	private Map<String, List<Sample>> generateShareMoveSamplesContent(Project project, List<Long> ids) {
 		Map<String, List<Sample>> model = new HashMap<>();
-		Project project = projectService.read(projectId);
 		List<Sample> samples = new ArrayList<>();
 		List<Sample> extraSamples = new ArrayList<>();
 		List<Sample> lockedSamples = new ArrayList<>();
@@ -365,7 +376,7 @@ public class ProjectSamplesController {
 	 * @param sampleNames {@link List} of sample names
 	 * @param projects    List of associated {@link Project} identifiers
 	 * @param locale      {@link Locale} local of current user
-	 * @return @{link Map} of Samples not in the current project
+	 * @return {@link Map} of Samples not in the current project
 	 */
 	@RequestMapping("/projects/{projectId}/ajax/samples/missing")
 	@ResponseBody
@@ -421,7 +432,7 @@ public class ProjectSamplesController {
 	 * @param locale      for the current user.
 	 * @return {@link DTProjectSamples} that meet the requirements
 	 */
-	@RequestMapping(value = "/projects/{projectId}/ajax/samples", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+	@RequestMapping(value = "/projects/{projectId}/ajax/samples", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
 	@ResponseBody
 	public DataTablesResponse getProjectSamples(@PathVariable Long projectId,
 			@DataTablesRequest DataTablesParams params,
@@ -464,7 +475,7 @@ public class ProjectSamplesController {
 			q.addProjectSettings(p);
 			String status = q.getStatus()
 					.toString();
-			if (!status.equals("UNAVAILABLE")) {
+			if (q.getStatus() == QCEntry.QCEntryStatus.NEGATIVE) {
 				list.add(
 						messageSource.getMessage("sample.files.qc." + q.getType(), new Object[] { q.getMessage() }, locale));
 			}
@@ -548,10 +559,10 @@ public class ProjectSamplesController {
 	}
 
 	/**
-	 * Copy or move samples from one project to another
+	 * Share or move samples from one project to another
 	 *
 	 * @param projectId    The original project id
-	 * @param sampleIds    the sample identifiers to copy
+	 * @param sampleIds    the sample identifiers to share
 	 * @param newProjectId The new project id
 	 * @param remove       true/false whether to remove the samples from the original  project
 	 * @param giveOwner    whether to give ownership of the sample to the new project
@@ -560,7 +571,7 @@ public class ProjectSamplesController {
 	 */
 	@RequestMapping(value = "/projects/{projectId}/ajax/samples/copy", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> copySampleToProject(@PathVariable Long projectId,
+	public Map<String, Object> shareSampleToProject(@PathVariable Long projectId,
 			@RequestParam(value = "sampleIds[]") List<Long> sampleIds, @RequestParam Long newProjectId,
 			@RequestParam(required = false) boolean remove,
 			@RequestParam(required = false, defaultValue = "false") boolean giveOwner, Locale locale) {
@@ -575,12 +586,20 @@ public class ProjectSamplesController {
 		List<ProjectSampleJoin> successful = new ArrayList<>();
 		try {
 
-			successful = projectService.copyOrMoveSamples(originalProject, newProject, Lists.newArrayList(samples),
-					remove, giveOwner);
+			if (remove) {
+				successful = projectService.moveSamples(originalProject, newProject, Lists.newArrayList(samples), giveOwner);
+			} else {
+				successful = projectService.shareSamples(originalProject, newProject, Lists.newArrayList(samples), giveOwner);
+			}
 
 		} catch (EntityExistsException ex) {
 			logger.warn("Attempt to add project to sample failed", ex);
 			warnings.add(ex.getLocalizedMessage());
+		} catch (AccessDeniedException ex) {
+			logger.warn("Access denied adding samples to project " + newProjectId, ex);
+			String msg = remove ? "project.samples.move.sample-denied" : "project.samples.copy.sample-denied";
+			warnings.add(
+					messageSource.getMessage(msg, new Object[] { newProject.getName() }, locale));
 		}
 
 		if (!warnings.isEmpty() || successful.size() == 0) {
@@ -854,7 +873,7 @@ public class ProjectSamplesController {
 	 * @param request     {@link HttpServletRequest}
 	 * @param response    {@link HttpServletResponse}
 	 * @param locale      of the current user.
-	 * @throws IOException
+	 * @throws IOException if the exported file cannot be written
 	 */
 	@RequestMapping(value = "/projects/{projectId}/samples/export")
 	public void exportProjectSamplesTable(

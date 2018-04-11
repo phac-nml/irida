@@ -1,7 +1,10 @@
 @import "../helpers/variables";
 @import "../animations/animations";
 
-.paired_end, .single_end, .file_info, .assembly_sample_info {
+.paired_end,
+.single_end,
+.file_info,
+.assembly_sample_info {
   background-color: $color-grey-light;
   td {
     border: none !important;
@@ -13,7 +16,7 @@
     background-color: $colour-paired-end;
     color: $color-grey-light;
   }
-  
+
   .assembly_row {
     border: 1px solid $colour-paired-end;
   }
@@ -44,34 +47,35 @@
 }
 
 .paired_end__assembly {
-  border: 1px solid #133B54;
+  border: 1px solid #133b54;
 }
 
 .paired_end__sistr_typing {
-  border: 1px solid #133B54;
+  border: 1px solid #133b54;
 }
 
 .file__qc {
-  border: 1px solid #133B54;
+  border: 1px solid #133b54;
 }
 
-.qc_icon, .assembly_sample_icon {
+.qc_icon,
+.assembly_sample_icon {
   vertical-align: middle !important;
 }
 
 .assembly_sample_icon {
-    background-color: $colour-paired-end;
-    color: $color-grey-light;
-    vertical-align: middle;
-    text-align: center;
+  background-color: $colour-paired-end;
+  color: $color-grey-light;
+  vertical-align: middle;
+  text-align: center;
 }
 
 .qc_list {
   margin-bottom: 0px;
 }
 
-.sequence_spacer{
-  border-top: 1px solid #133B54 !important;
+.sequence_spacer {
+  border-top: 1px solid #133b54 !important;
 }
 
 .single_end {
@@ -85,7 +89,8 @@
   }
 }
 
-.file_info, .assembly_sample_info {
+.file_info,
+.assembly_sample_info {
   border: 1px solid $colour-paired-end;
 }
 
@@ -109,6 +114,7 @@
   right: 0;
   margin: 0;
   padding: 0;
+  width: 100%;
   font-size: 20px;
   cursor: pointer;
   opacity: 0;
@@ -121,39 +127,44 @@
 
 .panel-file-upload .panel-body {
   h3 {
-    margin-top: 0!important;
+    margin-top: 0 !important;
   }
   .alert-info {
-    margin: 0!important;
-    padding: 2px 5px!important;
+    margin: 0 !important;
+    padding: 2px 5px !important;
   }
   .progress {
-    margin-right: .5em!important;
+    margin-right: 0.5em !important;
   }
 }
 
-.file-upload-progress, .file-upload-crunching, .file-upload-error {
-  display: none!important;
+.file-upload-progress,
+.file-upload-crunching,
+.file-upload-error {
+  display: none !important;
 }
 
-.file-upload-crunching, .file-upload-error, .file-upload-error {
+.file-upload-crunching,
+.file-upload-error,
+.file-upload-error {
   padding-bottom: 15px;
 }
 
 .file-upload-progress.fadeIn {
-  display: flex!important;
+  display: flex !important;
   h3 {
-    margin-top: 0!important;
+    margin-top: 0 !important;
   }
 }
 
-.file-upload-crunching.fadeIn, .file-upload-error.fadeIn {
-  display: block!important;
+.file-upload-crunching.fadeIn,
+.file-upload-error.fadeIn {
+  display: block !important;
 }
 
 .modal-body .alert {
-  margin: 7px 0!important;
-  padding: 0 14px!important;
+  margin: 7px 0 !important;
+  padding: 0 14px !important;
 }
 
 .modal-body .alert label {

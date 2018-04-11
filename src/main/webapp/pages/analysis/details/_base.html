@@ -12,13 +12,16 @@
   <script th:inline="javascript">
     var PAGE = {
       URLS: {
+        base: /*[[@{/analysis/ajax/}]]*/ '/analysis/ajax/',
         download: /*[[@{/analysis/ajax/download/}]]*/ '',
         sistr: /*[[@{/analysis/ajax/sistr/{id}(id=${analysisSubmission.getId()})}]]*/ '',
+        jobErrors: /*[[@{/analysis/ajax/{id}/job-errors/(id=${analysisSubmission.getId()})}]]*/ '',
         bio_hansel_error: /*[[@{/analysis/ajax/bio_hansel_error/{id}(id=${analysisSubmission.getId()})}]]*/ '',
         status: /*[[@{/analysis/ajax/status/{id}(id=${analysisSubmission.getId()})}]]*/ '/analysis/ajax/status',
         share: /*[[@{/analysis/ajax/{id}/share/(id=${analysisSubmission.getId()})}]]*/ '/analysis/ajax/share'
       },
-      NEWICK: /*[[${newick}]]*/ ''
+      NEWICK: /*[[${newick}]]*/ '',
+      ID: /*[[${analysisSubmission.getId().toString()}]]*/ '',
     };
   </script>
 </head>

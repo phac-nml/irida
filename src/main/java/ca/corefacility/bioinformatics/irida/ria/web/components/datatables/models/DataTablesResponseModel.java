@@ -12,8 +12,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public interface DataTablesResponseModel {
     public static final String ROW_ID_PREFIX = "row_";
+
+    /**
+     * Get the id of the object being displayed
+     * @return the Long id of the object
+     */
     public Long getId();
 
+    /**
+     * Get the datatables row prefixed id
+     * @return the datatables row prefixed id
+     */
     @JsonProperty("DT_RowId")
     public default String getDT_RowId() {
         return ROW_ID_PREFIX + getId();

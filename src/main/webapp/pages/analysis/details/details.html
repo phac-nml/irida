@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	  data-layout-decorate="~{analysis/details/_base}">
+      data-layout-decorate="~{analysis/details/_base}">
 
 <head>
 	<style>
@@ -14,6 +14,14 @@
 		.progress, .progress-bar {
 			height: 4px!important;
 			border-radius: 0;
+		}
+		.log--resizeable {
+			height: 200px;
+			resize: both;
+			overflow: auto;
+		}
+		.tooltip-inner {
+			white-space: pre-wrap;
 		}
 	</style>
 </head>
@@ -56,13 +64,12 @@
 		<div class="col-md-12 ng-cloak">
 
 			<sub-nav>
-				<th:block th:if="${isCompleted} and ${preview}">
-					<sub-nav-item state="preview" data:text="#{analysis.tab.preview}"></sub-nav-item>
-				</th:block>
 				<sub-nav-item th:if="${sistr}" state="sistr" text="Sistr"></sub-nav-item>
+				<sub-nav-item state="inputs" data:text="#{analysis.tab.input-files}"></sub-nav-item>
                 <sub-nav-item th:if="${biohansel}" state="bio_hansel" text="Bio_Hansel Results"></sub-nav-item>
 				<sub-nav-item th:if="${biohanselerror}" state="bio_hansel_error" text="Bio_Hansel Error"></sub-nav-item>
-				<sub-nav-item state="inputs" data:text="#{analysis.tab.input-files}"></sub-nav-item>
+				<sub-nav-item th:if="${isCompleted}" state="preview" data:text="#{analysis.tab.preview}"></sub-nav-item>
+				<sub-nav-item th:if="${isError}" state="joberrors" data:text="#{analysis.joberror}"></sub-nav-item>
 				<th:block th:if="${isCompleted}">
 					<sub-nav-item state="provenance" data:text="#{analysis.tab.provenance}"></sub-nav-item>
 				</th:block>
@@ -88,7 +95,8 @@
 			</script>
 
 			<script type="text/ng-template" id="preview.html">
-				<div th:if="${isCompleted} and ${preview}" ng-controller="PreviewController as previewController">
+				<div th:if="${isCompleted}" ng-controller="PreviewController as previewController">
+					<div th:if="${preview == 'tree'}">
 					<phylocanvas
 						shape="circular" config="{}" newick="{{previewController.newick}}">
 						<phylocanvas-controls>
@@ -105,8 +113,11 @@
 						</phylocanvas-controls>
 						<div id="phylocanvas"></div>
 					</phylocanvas>
+					</div>
+					<div th:if="${isCompleted}" id="js-file-preview-container"></div>
+					<div th:if="${isCompleted}" id="js-messages" class="hidden"></div>
 				</div>
-				<div th:unless="${isCompleted} and ${preview}"></div>
+				<div th:unless="${isCompleted}"></div>
 			</script>
 
 			<script type="text/ng-template" id="sistr.html">
@@ -122,7 +133,7 @@
 						</tr>
 						<tr>
 							<th th:text="#{analysis.details.sistr.sample.information.qc.status}">_Status_</th>
-							<td ng-class="{'list-group-item-success' : sistrCtrl.sample_information.qc_pass, 
+							<td ng-class="{'list-group-item-success' : sistrCtrl.sample_information.qc_pass,
 								'list-group-item-warning' : sistrCtrl.sample_information.qc_warning, 'list-group-item-danger' : sistrCtrl.sample_information.qc_fail}" ng-bind="sistrCtrl.sample_information.qc_status">QC Status</td>
 						</tr>
 						<tr ng-if="!sistrCtrl.sample_information.qc_pass">
@@ -224,6 +235,8 @@
 					<h2 th:text="#{analysis.details.bio_hansel.error}">_Bio_Hansel results unavailable._</h2>
 				</div>
 			</script>
+
+            <div th:replace="~{analysis/details/ng-templates/joberror::main}"></div>
 
 			<script type="text/ng-template" id="inputs.html" th:with="fileCount = ${#lists.size(paired_end)}">
 				<th:block th:if="${referenceFile}">

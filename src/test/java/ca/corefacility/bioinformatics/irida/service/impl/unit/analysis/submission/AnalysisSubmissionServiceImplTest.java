@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.Gala
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.ProjectAnalysisSubmissionJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
@@ -28,7 +29,7 @@ import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.An
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionServiceImpl;
 
 /**
- * Unit tests for {@link AnalysisSubmissinServiceImpl}.
+ * Unit tests for {@link AnalysisSubmissionServiceImpl}.
  */
 public class AnalysisSubmissionServiceImplTest {
 
@@ -57,7 +58,10 @@ public class AnalysisSubmissionServiceImplTest {
 	private GalaxyWorkflowStatus galaxyWorkflowStatus;
 
 	private AnalysisSubmissionServiceImpl analysisSubmissionServiceImpl;
-	
+
+	@Mock
+	private JobErrorRepository jobErrorRepository;
+
 	@Mock
 	private AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionService;
 	
@@ -73,7 +77,7 @@ public class AnalysisSubmissionServiceImplTest {
 
 		analysisSubmissionServiceImpl = new AnalysisSubmissionServiceImpl(analysisSubmissionRepository, userRepository,
 				referenceFileRepository, sequencingObjectService, galaxyHistoriesService, pasRepository,
-				validator);
+				jobErrorRepository, validator);
 		analysisSubmissionServiceImpl.setAnalysisExecutionService(analysisExecutionService);
 
 		when(analysisSubmissionRepository.findOne(ID)).thenReturn(analysisSubmission);
@@ -222,7 +226,7 @@ public class AnalysisSubmissionServiceImplTest {
 	public void testGetPercentageCompleteStateCompleting() throws EntityNotFoundException, ExecutionManagerException {
 		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.COMPLETING);
 
-		assertEquals("invalid percent complete", 95.0f,
+		assertEquals("invalid percent complete", 92.0f,
 				analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA);
 	}
 

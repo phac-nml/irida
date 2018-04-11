@@ -4,7 +4,7 @@
 	<groupId>ca.corefacility.bioinformatics</groupId>
 	<artifactId>irida</artifactId>
 	<packaging>war</packaging>
-	<version>0.20.0-SNAPSHOT</version>
+	<version>0.22.0-SNAPSHOT</version>
 	<name>irida</name>
 	<url>http://www.irida.ca</url>
 
@@ -68,6 +68,10 @@
 		<repository>
 			<id>spring-milestones</id>
 			<url>https://repo.spring.io/libs-milestone/</url>
+		</repository>
+		<repository>
+			<id>clojars.org</id>
+			<url>https://clojars.org/repo</url>
 		</repository>
 	</repositories>
 
@@ -595,6 +599,13 @@
 			<artifactId>imgscalr-lib</artifactId>
 			<version>${imgscalr.version}</version>
 		</dependency>
+
+		<!-- Clojure nREPL -->
+		<dependency>
+			<groupId>net.matlux</groupId>
+			<artifactId>jvm-breakglass</artifactId>
+			<version>${jvm-breakglass.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -728,7 +739,28 @@
 					<outputDirectory>doc/_site/developer/apidocs/</outputDirectory>
 					<reportOutputDirectory>doc/_site/developer/apidocs/</reportOutputDirectory>
 					<quiet>true</quiet>
+					<additionalparam>-Xdoclint:all</additionalparam>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>${maven.checkstyle.plugin.version}</version>
+				<executions>
+					<execution>
+						<id>validate</id>
+						<phase>pre-site</phase>
+						<configuration>
+							<configLocation>checkstyle.xml</configLocation>
+							<encoding>UTF-8</encoding>
+							<consoleOutput>true</consoleOutput>
+							<failsOnError>true</failsOnError>
+						</configuration>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.jacoco</groupId>
@@ -1026,7 +1058,7 @@
 		<aspectj.version>1.8.1</aspectj.version>
 		<hibernate.validator.version>5.1.1.Final</hibernate.validator.version>
 		<el-ri.version>1.0</el-ri.version>
-		<com.github.jmchilton.blend4j.version>0.2.0-SNAPSHOT-fac9057d047377e679b6c14672b364a20b9a462b</com.github.jmchilton.blend4j.version>
+		<com.github.jmchilton.blend4j.version>0.2.0</com.github.jmchilton.blend4j.version>
 		<apache.jena.version>1.1.0</apache.jena.version>
 		<commons-csv.version>1.4</commons-csv.version>
 		<xml.apis.version>1.4.01</xml.apis.version>
@@ -1057,11 +1089,13 @@
 		<jsonpath.version>2.4.0</jsonpath.version>
 		<imgscalr.version>4.2</imgscalr.version>
 		<jackson.dataformat.yaml.version>2.7.4</jackson.dataformat.yaml.version>
+		<jvm-breakglass.version>0.0.8</jvm-breakglass.version>
 
 		<!-- plugins -->
 		<maven.failsafe.plugin.version>2.19.1</maven.failsafe.plugin.version>
 		<maven.surefire.plugin.version>2.19.1</maven.surefire.plugin.version>
 		<maven.javadoc.plugin.version>2.10.1</maven.javadoc.plugin.version>
+		<maven.checkstyle.plugin.version>2.17</maven.checkstyle.plugin.version>
 		<maven.jacoco.plugin.version>0.7.1.201405082137</maven.jacoco.plugin.version>
 		<maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>
 		<maven.liquibase.plugin.version>${liquibase.version}</maven.liquibase.plugin.version>
@@ -1074,8 +1108,8 @@
 		<maven.site.plugin.version>3.4</maven.site.plugin.version>
 		<errorprone.version>2.5</errorprone.version>
 		<frontend-maven-plugin.version>1.6</frontend-maven-plugin.version>
-		<node.version>v8.6.0</node.version>
-		<yarn.version>v1.1.0</yarn.version>
+		<node.version>v8.10.0</node.version>
+		<yarn.version>v1.5.1</yarn.version>
 		<jgravatar.version>1.0</jgravatar.version>
 
 		<!-- project configuration -->

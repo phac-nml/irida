@@ -18,9 +18,9 @@ public class SequencingObjectConcatenatorFactory {
 
 	/**
 	 * Get a {@link SequencingObjectConcatenator} for the given class type
-	 * 
-	 * @param type
-	 *            the class to get a concatenator for
+	 *
+	 * @param type the class to get a concatenator for
+	 * @param <T>  The type this concatenator should act on
 	 * @return the new {@link SequencingObjectConcatenator}
 	 */
 	@SuppressWarnings("unchecked")
@@ -39,9 +39,8 @@ public class SequencingObjectConcatenatorFactory {
 	/**
 	 * Get a {@link SequencingObjectConcatenator} for a given collection of
 	 * {@link SequencingObject}s
-	 * 
-	 * @param objects
-	 *            the {@link SequencingObject}s to get the concatenator for
+	 *
+	 * @param objects the {@link SequencingObject}s to get the concatenator for
 	 * @return the new {@link SequencingObjectConcatenator}
 	 */
 	public static SequencingObjectConcatenator<? extends SequencingObject> getConcatenator(

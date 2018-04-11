@@ -53,6 +53,7 @@ export const tableConfig = {
   dom,
   processing: true,
   serverSide: true,
+  deferRender: true,
   createdRow(row) {
     $(row).tooltip({ selector: "[data-toggle='tooltip']" });
   }
@@ -203,8 +204,9 @@ export function createFilterTag({ text, type, handler }) {
   if (text) {
     const tag = `
   <button data-type="${type}" class="btn btn-default btn-xs filter-tags__tag">
-      <b>${type}</b> : ${text} ${createIcon({ icon: ICONS.remove, fixed: true })
-      .outerHTML}
+      <b>${type}</b> : ${text} ${
+      createIcon({ icon: ICONS.remove, fixed: true }).outerHTML
+    }
   </button>`;
     const $tag = $(tag);
     $tag.on("click", function() {

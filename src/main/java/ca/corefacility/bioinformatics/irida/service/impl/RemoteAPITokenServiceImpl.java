@@ -28,6 +28,9 @@ import ca.corefacility.bioinformatics.irida.repositories.RemoteApiTokenRepositor
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 
+/**
+ * Service implementation for storing and reading remote api tokens
+ */
 @Service
 public class RemoteAPITokenServiceImpl implements RemoteAPITokenService {
 	private static final Logger logger = LoggerFactory.getLogger(RemoteAPITokenServiceImpl.class);
@@ -118,12 +121,21 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService {
 		} catch (EntityNotFoundException ex) {
 			logger.debug("Token not found for api " + api + ".  Cannot update access token.");
 		} catch (OAuthProblemException | OAuthSystemException ex) {
-			logger.error("Updating token by refresh token failed", ex);
+			logger.error("Updating token by refresh token failed", ex.getMessage());
 		}
 
 		return token;
 	}
 
+	/**
+	 * Get a new token from the given auth code
+	 * @param authcode      the auth code to create a token for
+	 * @param remoteAPI     the remote api to get a token for
+	 * @param tokenRedirect a redirect url to get the token from
+	 * @return a new token
+	 * @throws OAuthSystemException If building the token request fails
+	 * @throws OAuthProblemException If the token request fails
+	 */
 	@Transactional
 	public RemoteAPIToken createTokenFromAuthCode(String authcode, RemoteAPI remoteAPI, String tokenRedirect)
 			throws OAuthSystemException, OAuthProblemException {

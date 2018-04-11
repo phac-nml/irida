@@ -17,7 +17,7 @@ clipboard.on("success", function() {
    */
   $(".js-linker-form").addClass("has-success");
 });
-clipboard.on('error', function() {
+clipboard.on("error", function() {
   /*
   Add "has-error" highlight the input as red and displays
   error message.

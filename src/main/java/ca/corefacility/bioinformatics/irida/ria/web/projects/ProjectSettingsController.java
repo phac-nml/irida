@@ -32,6 +32,9 @@ import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
+/**
+ * Handles basic settings pages for a project
+ */
 @Controller
 @RequestMapping("/projects/{projectId}/settings")
 public class ProjectSettingsController {
@@ -258,13 +261,10 @@ public class ProjectSettingsController {
 	/**
 	 * Update the project assembly setting for the {@link Project}
 	 *
-	 * @param projectId
-	 *            the ID of a {@link Project}
-	 * @param assemble
-	 *            Whether or not to do automated assemblies
-	 * @param model
-	 *            Model for the view
-	 *
+	 * @param projectId the ID of a {@link Project}
+	 * @param assemble  Whether or not to do automated assemblies
+	 * @param model     Model for the view
+	 * @param locale    Locale of the logged in user
 	 * @return success message if successful
 	 */
 	@RequestMapping(value = "/assemble", method = RequestMethod.POST)
@@ -289,21 +289,20 @@ public class ProjectSettingsController {
 
 		return ImmutableMap.of("result", message);
 	}
-	
+
 	/**
 	 * Update the project sistr setting for the {@link Project}
 	 *
-	 * @param projectId
-	 *            the ID of a {@link Project}
-	 * @param sistr
-	 *            Whether or not to do automated sistr typing.
-	 * @param model
-	 *            Model for the view
+	 * @param projectId the ID of a {@link Project}
+	 * @param sistr     Whether or not to do automated sistr typing.
+	 * @param model     Model for the view
+	 * @param locale    Locale of the logged in user
 	 * @return success message if successful
 	 */
 	@RequestMapping(value = "/sistr", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, String> updateSistrSetting(@PathVariable Long projectId, @RequestParam boolean sistr,
+	public Map<String, String> updateSistrSetting(@PathVariable Long projectId, @RequestParam
+			Project.AutomatedSISTRSetting sistr,
 			final Model model, Locale locale) {
 		Project read = projectService.read(projectId);
 
@@ -313,7 +312,7 @@ public class ProjectSettingsController {
 		projectService.updateProjectSettings(read, updates);
 
 		String message = null;
-		if (sistr) {
+		if (sistr.equals(Project.AutomatedSISTRSetting.AUTO) || sistr.equals(Project.AutomatedSISTRSetting.AUTO_METADATA)) {
 			message = messageSource.getMessage("project.settings.notifications.sistr.enabled",
 					new Object[] { read.getLabel() }, locale);
 		} else {

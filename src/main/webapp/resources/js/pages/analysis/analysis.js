@@ -1,9 +1,19 @@
 import angular from "angular";
-import { showNotification } from "../../modules/notifications";
+import $ from "jquery";
+import {
+  showNotification,
+  showErrorNotification
+} from "../../modules/notifications";
+import { formatDate } from "../../utilities/date-utilities";
+import { renderPlainTextPreview } from "./plaintext-preview";
+import { renderTabularPreview } from "./tabular-preview";
 import "../../../sass/pages/analysis.scss";
 import "../../vendor/datatables/datatables";
 import { formatDate } from "./../../utilities/date-utilities";
 import {BioHanselController} from "./types/biohansel";
+
+const baseAjaxUrl = window.PAGE.URLS.base;
+const analysisSubmissionId = window.PAGE.ID;
 
 /**
  * Controller to download the analysis.
@@ -23,18 +33,6 @@ function FileDownloadController() {
     }
     hiddenIFrame.src = window.PAGE.URLS.download + id;
   };
-
-  vm.getZipFile = function(id) {
-    var iFrameId = "hiddenDownloader";
-    var hiddenIFrame = document.getElementById(iFrameId);
-    if (hiddenIFrame === null) {
-      hiddenIFrame = document.createElement("iframe");
-      hiddenIFrame.id = iFrameId;
-      hiddenIFrame.style.display = "none";
-      document.body.appendChild(hiddenIFrame);
-    }
-    hiddenIFrame.src = page.URLS.download + id;
-  };
 }
 
 /**
@@ -45,7 +43,8 @@ function FileDownloadController() {
  */
 function AnalysisService($http) {
   const svc = this;
-
+  svc._tabularData = null;
+  svc._outputsInfo = null;
   /**
    * Call the server to get the status for the current analysis.
    * 'page.URLS.status' is on the `_base.html` page for the analysis.
@@ -71,6 +70,54 @@ function AnalysisService($http) {
       return result.data;
     });
   };
+  /**
+   * Get Galaxy JobError info from server
+   * @param vm JobErrorsController object for reporting progress of getting JobError info
+   * @returns {PromiseLike<T> | Promise<T> | *}
+   */
+  svc.getJobErrors = function(vm) {
+    vm.isInProgress = true;
+    return $http.get(window.PAGE.URLS.jobErrors).then(
+      function successCallback(x) {
+        vm.isInProgress = false;
+        return x.data;
+      },
+      function errorCallback(x) {
+        vm.isInProgress = false;
+        console.error(
+          "Could not GET job error(s) from '" + page.URLS.jobErrors + "'"
+        );
+        console.error(x);
+      }
+    );
+  };
+
+  /**
+   * Get tabular data info from server
+   * @returns {PromiseLike<T> | Promise<T> | *}
+   */
+  svc.getOutputsInfo = function() {
+    if (svc._outputsInfo === null) {
+      const url = `${baseAjaxUrl}${analysisSubmissionId}/outputs`;
+      return $http.get(url).then(
+        function successCallback(x) {
+          svc._outputsInfo = x.data;
+          return svc._outputsInfo;
+        },
+        function errorCallback(x) {
+          //TODO: i18n
+          const errMsg = `Could not GET outputs info from "${url}". ${x}`;
+          console.error(errMsg);
+          showErrorNotification({ text: errMsg });
+        }
+      );
+    } else {
+      return new Promise(function(resolve, reject) {
+        resolve(svc._outputsInfo);
+      });
+    }
+  };
+
   /**
    * Exported function to call the server for information about the current analysis.
    * @param fn Callback function with how to handle the results.
@@ -160,8 +207,27 @@ function StateController(AnalysisService) {
   initialize();
 }
 
-function PreviewController() {
+function PreviewController(analysisService) {
   this.newick = window.PAGE.NEWICK;
+  const vm = this;
+  const $tablesContainer = $("#js-file-preview-container");
+  const tabExtSet = new Set(["tab", "tsv", "tabular"]);
+
+  analysisService.getOutputsInfo(vm).then(outputInfos => {
+    for (const outputInfo of outputInfos) {
+      if (
+        !outputInfo.hasOwnProperty("fileExt") ||
+        !outputInfo.hasOwnProperty("id")
+      ) {
+        continue;
+      }
+      if (tabExtSet.has(outputInfo.fileExt)) {
+        renderTabularPreview($tablesContainer, baseAjaxUrl, outputInfo);
+      } else {
+        renderPlainTextPreview($tablesContainer, baseAjaxUrl, outputInfo);
+      }
+    }
+  });
 }
 
 
@@ -198,7 +264,104 @@ function SistrController(analysisService) {
   });
 }
 
-
+/**
+ * Angular Controller for handling Galaxy job errors
+ * @param analysisService Service for retrieving JobError info from server
+ * @constructor
+ */
+function JobErrorsController(analysisService) {
+  const vm = this;
+  vm.hasJobErrors = false;
+  vm.isInProgress = true;
+  /**
+   * Array of JobError objects
+   * @type {Array}
+   */
+  vm.jobErrors = [];
+  /**
+   * Reverse order of lines for a JobError attribute and set whether the
+   * attribute is reversed or not.
+   * @param jobError JobError object
+   * @param attr Attribute to reverse order of lines (e.g. "standardOutput")
+   */
+  vm.reverseLines = (jobError, attr) => {
+    jobError[attr] = jobError[attr]
+      .split("\n")
+      .reverse()
+      .join("\n")
+      .trim();
+    jobError.reversed[attr] = !jobError.reversed[attr];
+  };
+  /**
+   * Is JobError info being retrieved from the server?
+   * @returns {boolean}
+   */
+  vm.isLoading = () => !vm.hasJobErrors && vm.isInProgress;
+  /**
+   * Is there JobError info available?
+   * @returns {boolean}
+   */
+  vm.hasNoJobErrorInfoAvailable = () => !vm.hasJobErrors && !vm.isInProgress;
+  /**
+   * Transform parameters string into valid JSON and parse into Object
+   * @param jobError Object with JobError information
+   */
+  vm.jsonifyParameters = function(jobError) {
+    try {
+      if (jobError.hasOwnProperty("parameters")) {
+        jobError.parameters = JSON.parse(
+          jobError.parameters
+            .replace(/=/g, ":")
+            .replace(/(:)\s*([\w\-]+)/g, '$1"$2"')
+            .replace(/([\w|]+):/g, '"$1":')
+        );
+      }
+    } catch (e) {
+      console.error(e);
+      console.error("Could not JSONify 'parameters' for job error object");
+    }
+  };
+  /**
+   * Format JobError attribute as a human-readable date
+   * @param jobError JobError object
+   * @param attr Attribute containing date value (e.g. "createdDate")
+   */
+  vm.formatDate = function(jobError, attr) {
+    try {
+      if (jobError.hasOwnProperty(attr)) {
+        jobError[attr] = formatDate({ date: jobError[attr] });
+      }
+    } catch (e) {
+      console.error(e);
+      console.error(
+        "Could not format '" + attr + "' of job error object as Date"
+      );
+    }
+  };
+  analysisService.getJobErrors(vm).then(function(x) {
+    // `x` is request data object
+    if (typeof x === "undefined" || x === null) {
+      return;
+    }
+    if (typeof x.jobErrors === "undefined") {
+      return;
+    }
+    if (x.jobErrors.length === 0) {
+      return;
+    }
+    vm.jobErrors = x.jobErrors;
+    vm.hasJobErrors = true;
+    for (const jobError of vm.jobErrors) {
+      jobError.reversed = {};
+      jobError.reversed.standardError = false;
+      jobError.reversed.standardOutput = false;
+      vm.formatDate(jobError, "createdDate");
+      vm.formatDate(jobError, "updatedDate");
+      vm.jsonifyParameters(jobError);
+    }
+    vm.isInProgress = false;
+  });
+}
 
 const iridaAnalysis = angular
   .module("irida.analysis", ["ui.router", "subnav", "phylocanvas"])
@@ -215,6 +378,12 @@ const iridaAnalysis = angular
           templateUrl: "sistr.html",
           controllerAs: "sistrCtrl",
           controller: ["AnalysisService", SistrController]
+        })
+        .state("joberrors", {
+          url: "/joberrors",
+          templateUrl: "joberrors.html",
+          controllerAs: "jobErrorsCtrl",
+          controller: ["AnalysisService", JobErrorsController]
         })
         .state("inputs", {
           url: "/inputs",
@@ -243,11 +412,10 @@ const iridaAnalysis = angular
   .service("AnalysisService", ["$http", AnalysisService])
   .controller("FileDownloadController", [FileDownloadController])
   .controller("StateController", ["AnalysisService", StateController])
-  .controller("PreviewController", [PreviewController])
+  .controller("PreviewController", ["AnalysisService", PreviewController])
   .controller("ProjectShareController", [
     "AnalysisService",
     ProjectShareController
-  ])
-  .name;
+  ]).name;
 
 angular.module("irida").requires.push(iridaAnalysis);

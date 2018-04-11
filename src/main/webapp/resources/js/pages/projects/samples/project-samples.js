@@ -14,12 +14,10 @@ import { CART } from "../../../utilities/events-utilities";
 import {
   SampleCartButton,
   SampleDropdownButton,
-  SampleExportButton
+  SampleExportButton,
+  SampleProjectDropdownButton
 } from "./SampleButtons";
-import {
-  FILTERS,
-  SAMPLE_EVENTS
-} from "./constants";
+import { FILTERS, SAMPLE_EVENTS } from "./constants";
 import { download } from "../../../utilities/file.utilities";
 import moment from "moment";
 import "../../../../sass/pages/project-samples.scss";
@@ -40,6 +38,8 @@ const POPOVER_OPTIONS = {
   html: true,
   template: $("#popover-template").clone()
 };
+
+const IS_REMOTE_PROJECT = window.PAGE.isRemoteProject;
 
 /*
  Initialize the sample tools menu.  This is used to check the status of the buttons.
@@ -95,6 +95,11 @@ const EXPORT_HANDLERS = {
       "Sample Export buttons must have a data attribute of 'type'"
     );
   }
+});
+[...document.querySelectorAll(".js-sample-project-tool-btn")].forEach(elm => {
+  SAMPLE_TOOL_BUTTONS.push(
+    new SampleProjectDropdownButton(elm, IS_REMOTE_PROJECT)
+  );
 });
 
 /*
@@ -174,6 +179,7 @@ const url = $table.data("url");
 const config = Object.assign({}, tableConfig, {
   ajax: {
     url,
+    type: "POST",
     data(d) {
       /*
       Add any extra parameters that need to be passed to the server
@@ -248,7 +254,7 @@ const config = Object.assign({}, tableConfig, {
         return createItemLink({
           url: `${window.TL.BASE_URL}projects/${full.projectId}/samples/${
             full.id
-            }`,
+          }`,
           label: full.sampleName,
           classes: ["t-sample-label"]
         });
@@ -319,7 +325,7 @@ function checkToolButtonState(count = $dt.select.selected()[0].size) {
   Update the state of the buttons in the navbar.
    */
   for (const btn of SAMPLE_TOOL_BUTTONS) {
-    btn.checkState(count, ASSOCIATED_PROJECTS.size > 0);
+    btn.checkState(count, ASSOCIATED_PROJECTS.size > 0, IS_REMOTE_PROJECT);
   }
 }
 

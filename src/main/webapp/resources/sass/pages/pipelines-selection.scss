@@ -14,27 +14,22 @@
   background-color: rgba(239, 101, 72, 1) !important;
   color: #222 !important;
 }
-.snv-subtyping-collection {
-  background-color: rgba(250, 159, 181, 1) !important;
+.refseq_masher {
+  background-color: #eb93ff !important;
   color: #222 !important;
 }
 
-.flex-row {
-  display: flex;
-  justify-content: space-between;
+.mlst-mentalist {
+  background-color: rgba(154, 159, 226, 1) !important;
+  color: #222 !important;
 }
-.flex-row .panel-heading {
-  height: 60px;
-}
-.panel {
-  display: flex;
-  flex-direction: column;
-}
-.flex-panel .panel-body {
-  max-height: 250px;
-  overflow-y: auto;
-  flex-grow: 2;
-}
-.flex-panel {
-  width: 32% !important;
+
+.pipeline-panel {
+  .panel-heading {
+    height: 60px;
+  }
+  .panel-body {
+    height: 200px;
+    overflow-y: auto;
+  }
 }
