@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.database.changesets;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
+import com.google.common.collect.Lists;
 import liquibase.change.custom.CustomSqlChange;
 import liquibase.database.Database;
 import liquibase.exception.CustomChangeException;
@@ -38,65 +39,65 @@ public class FastqcToFilesystem implements CustomSqlChange {
 	public SqlStatement[] generateStatements(Database database) throws CustomChangeException {
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
-		int update = jdbcTemplate
-				.update("INSERT INTO analysis_output_file (created_date, execution_manager_file_id, file_path, analysis_id) SELECT createdDate, 'perBaseQualityScoreChart', rand(), id FROM analysis");
+		List<String> chartTypes = Lists
+				.newArrayList("perBaseQualityScoreChart", "perSequenceQualityScoreChart", "duplicationLevelChart");
 
-		logger.info("Inserted " + update + " temp output file entries");
+		//inserting empty output files for charts
 
-		List<AnalysisUpdate> analyses = jdbcTemplate
-				.query("SELECT f.id, o.id, f.perBaseQualityScoreChart FROM analysis_fastqc f INNER JOIN analysis_output_file o ON f.id=o.analysis_id",
-						new RowMapper<AnalysisUpdate>() {
-							@Override
-							public AnalysisUpdate mapRow(ResultSet rs, int rowNum) throws SQLException {
+		chartTypes.forEach(chart -> {
+			int update = jdbcTemplate
+					.update("INSERT INTO analysis_output_file (created_date, execution_manager_file_id, analysis_id) SELECT createdDate, '"
+							+ chart + "', a.id FROM analysis a INNER JOIN analysis_fastqc q ON a.id=q.id");
 
-								AnalysisUpdate analysisUpdate = new AnalysisUpdate();
-								analysisUpdate.id = rs.getLong(1);
-								analysisUpdate.chartId = rs.getLong(2);
-								analysisUpdate.perBaseQualityChart = rs.getBytes(3);
-
-								logger.info("Mapping analysis" + analysisUpdate.id);
-
-								return analysisUpdate;
-							}
-						});
-
-		logger.info("Looping through " + analyses.size() + " results");
-
-		List<Object[]> updates = new ArrayList<>(analyses.size());
+			logger.info("Inserted " + update + " temp output file entries for chart type " + chart);
+		});
 
 		String basePath = outputFileDirectory.toString();
 
-		for (AnalysisUpdate q : analyses) {
-			logger.info("Creating perBaseQualityScoreChart for " + q.id + " with id " + q.chartId);
+		chartTypes.forEach(chart -> {
+			writeFileForChartType(chart, basePath, jdbcTemplate);
 
-			Path newFileDirectory = outputFileDirectory.resolve(q.chartId.toString()).resolve("1");
-
-			try {
-				Files.createDirectories(newFileDirectory);
-				newFileDirectory = newFileDirectory.resolve("perBaseQualityScoreChart.png");
-				Files.write(newFileDirectory, q.perBaseQualityChart);
-			} catch (IOException e) {
-				throw new CustomChangeException("Couldn't create file", e);
-			}
-
-			// relativize the path
-			String fullPath = newFileDirectory.toString();
-
-			fullPath = fullPath.replaceFirst(basePath + "/", "");
-
-			updates.add(new Object[] { fullPath, q.chartId });
-		}
-
-		jdbcTemplate.batchUpdate("UPDATE analysis_output_file SET file_path=? WHERE id=?", updates);
+			jdbcTemplate.update("insert into analysis_output_file_map (analysis_id, analysisOutputFilesMap_id, analysis_output_file_key) SELECT analysis_id, id, '"+chart+"' FROM analysis_output_file where execution_manager_file_id='"+chart+"'");
+		});
 
 		return new SqlStatement[0];
 	}
 
-	private class AnalysisUpdate {
-		public Long id;
-		public Long chartId;
-		public byte[] perBaseQualityChart;
+	private void writeFileForChartType(String chartType, String basePath, JdbcTemplate jdbcTemplate) {
+		List<Object[]> updates = jdbcTemplate.query("SELECT f.id, o.id, f." + chartType
+						+ " FROM analysis_fastqc f INNER JOIN analysis_output_file o ON f.id=o.analysis_id WHERE o.execution_manager_file_id=?",
+				new Object[] { chartType }, new RowMapper<Object[]>() {
+					@Override
+					public Object[] mapRow(ResultSet rs, int rowNum) throws SQLException {
+
+						Long id = rs.getLong(1);
+						Long chartId = rs.getLong(2);
+						byte[] chart = rs.getBytes(3);
+
+						logger.info("Mapping analysis" + id);
+
+						Path newFileDirectory = outputFileDirectory.resolve(chartId.toString()).resolve("1");
+
+						try {
+							Files.createDirectories(newFileDirectory);
+							newFileDirectory = newFileDirectory.resolve(chartType + ".png");
+							Files.write(newFileDirectory, chart);
+						} catch (IOException e) {
+							throw new SQLException("Couldn't create file", e);
+						}
+
+						// relativize the path
+						String fullPath = newFileDirectory.toString();
+
+						fullPath = fullPath.replaceFirst(basePath + "/", "");
+
+						return new Object[] { fullPath, chartId };
+					}
+				});
+
+		jdbcTemplate.batchUpdate("UPDATE analysis_output_file SET file_path=? WHERE id=?", updates);
 	}
+
 
 	@Override
 	public String getConfirmationMessage() {

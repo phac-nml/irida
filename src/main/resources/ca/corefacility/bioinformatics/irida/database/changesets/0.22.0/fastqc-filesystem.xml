@@ -16,7 +16,11 @@
             <column name="analysis_id" type="bigint(20)"/>
         </addColumn>
 
+        <dropNotNullConstraint tableName="analysis_output_file" columnName="file_path" columnDataType="varchar(255)"/>
+
         <customChange
                 class="ca.corefacility.bioinformatics.irida.database.changesets.FastqcToFilesystem"/>
+
+        <addNotNullConstraint tableName="analysis_output_file" columnName="file_path" columnDataType="varchar(255)"/>
     </changeSet>
 </databaseChangeLog>
