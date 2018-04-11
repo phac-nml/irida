@@ -1,9 +1,17 @@
 package ca.corefacility.bioinformatics.irida.ria.utilities;
 
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -29,6 +37,7 @@ public class FileUtilities {
 	public static final String CONTENT_TYPE_APPLICATION_ZIP = "application/zip";
 	public static final String CONTENT_TYPE_TEXT = "text/plain";
 	public static final String EXTENSION_ZIP = ".zip";
+	private static final Pattern regexExt = Pattern.compile("^.*\\.(\\w+)$");
 
 	/**
 	 * Utility method for download a zip file containing all output files from
@@ -142,5 +151,84 @@ public class FileUtilities {
 	 */
 	private static String formatName(String name) {
 		return name.replace(" ", "_");
+	}
+
+	/**
+	 * Get file extension from filename.
+	 * <p>
+	 * Uses simple regex to parse file extension {@code ^.*\.(\w+)$}.
+	 *
+	 * @param filename Filename
+	 * @return File extension if found; otherwise empty string
+	 */
+	public static String getFileExt(String filename) {
+		Matcher matcher = regexExt.matcher(filename);
+		String ext = "";
+		if (matcher.matches()) {
+			ext = matcher.group(1);
+		}
+		return ext.toLowerCase();
+	}
+
+	/**
+	 * Read bytes of length {@code chunk} of a file starting at byte {@code seek}.
+	 *
+	 * @param raf   File reader
+	 * @param seek  FilePointer position to start reading at
+	 * @param chunk Number of bytes to read from file
+	 * @return Chunk of file as String
+	 * @throws IOException if error enountered while reading file
+	 */
+	public static String readChunk(RandomAccessFile raf, Long seek, Long chunk) throws IOException {
+		raf.seek(seek);
+		byte[] bytes = new byte[Math.toIntExact(chunk)];
+		final int bytesRead = raf.read(bytes);
+		if (bytesRead == -1) {
+			return "";
+		}
+		return new String(bytes, 0, bytesRead, Charset.defaultCharset());
+	}
+
+	/**
+	 * Read a specified number of lines from a file.
+	 *
+	 * @param reader File reader
+	 * @param limit  Limit to the number of lines to read
+	 * @param start  Optional line number to start reading at
+	 * @param end    Optional line number to read up to
+	 * @return Lines read from file
+	 */
+	public static List<String> readLinesLimit(BufferedReader reader, Long limit, Long start, Long end) {
+		Long linesLimit = (limit != null) ? limit : 100L;
+		start = (start == null) ? 0 : start;
+		if (end != null && end > start) {
+			linesLimit = end - start + 1;
+		}
+		return reader.lines()
+				.skip(start == 0 ? 1L : start)
+				.limit(linesLimit)
+				.collect(Collectors.toList());
+	}
+
+	/**
+	 * Read lines from file using a {@link RandomAccessFile}.
+	 * <p>
+	 * Use this method if preserving the {@link RandomAccessFile#getFilePointer()} for continuing reading is important.
+	 * For most use cases, {@link FileUtilities#readLinesLimit(BufferedReader, Long, Long, Long)} will perform better
+	 * due to bufffered reading.
+	 *
+	 * @param randomAccessFile File reader
+	 * @param limit            Limit to the number of lines to read
+	 * @return Lines read from file
+	 * @throws IOException if error enountered while reading file
+	 */
+	public static List<String> readLinesFromFilePointer(RandomAccessFile randomAccessFile, Long limit)
+			throws IOException {
+		ArrayList<String> lines = new ArrayList<>();
+		String line;
+		while (lines.size() < limit && (line = randomAccessFile.readLine()) != null) {
+			lines.add(line);
+		}
+		return lines;
 	}
 }

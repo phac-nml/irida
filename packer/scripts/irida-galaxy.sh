@@ -26,8 +26,7 @@ systemctl start docker
 
 # run the galaxy container, --restart=always makes sure it starts up on boot
 mkdir -p /home/irida/data/galaxy-export
-curl https://irida.corefacility.ca/downloads/docker/irida-galaxy-docker-0.17.0.tar.gz | gunzip -c | docker load
-docker run --name galaxy -d -p 9090:80 -v /home/irida/data/galaxy-export/:/export/ -v /home/irida/data/sequencing:/home/irida/data/sequencing phacnml/galaxy-irida-17.01:0.17.0
+docker run --name galaxy -d -p 9090:80 -v /home/irida/data/galaxy-export/:/export/ -v /home/irida/data/sequencing:/home/irida/data/sequencing phacnml/galaxy-irida-17.01:0.21.0
 
 # wait for galaxy to succeed starting up for the first time, so we don't have to wait for postgres to start up next time
 wait_for_galaxy
@@ -42,7 +41,7 @@ After=docker.service
 
 [Service]
 ExecStartPre=-/usr/bin/docker rm --force galaxy
-ExecStart=/usr/bin/docker run --name galaxy -d -p 9090:80 -v /home/irida/data/galaxy-export/:/export/ -v /home/irida/data/sequencing:/home/irida/data/sequencing phacnml/galaxy-irida-17.01:0.17.0
+ExecStart=/usr/bin/docker run --name galaxy -d -p 9090:80 -v /home/irida/data/galaxy-export/:/export/ -v /home/irida/data/sequencing:/home/irida/data/sequencing phacnml/galaxy-irida-17.01:0.21.0
 
 [Install]
 WantedBy=multi-user.target

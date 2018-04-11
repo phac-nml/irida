@@ -1,9 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.Principal;
@@ -27,7 +24,6 @@ import org.springframework.web.bind.annotation.*;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
@@ -42,9 +38,11 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisOutputFileInfo;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
@@ -62,8 +60,8 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Controller for Analysis.
@@ -260,6 +258,184 @@ public class AnalysisController {
 		}
 
 		return "redirect:/analysis/" + submissionId;
+	}
+
+	/**
+	 * For an {@link AnalysisSubmission}, get info about each {@link AnalysisOutputFile}
+	 *
+	 * @param id {@link AnalysisSubmission} id
+	 * @return map of info about each {@link AnalysisOutputFile}
+	 */
+	@RequestMapping(value = "/ajax/{id}/outputs", method = RequestMethod.GET)
+	@ResponseBody
+	public List<AnalysisOutputFileInfo> getOutputFilesInfo(@PathVariable Long id) {
+		AnalysisSubmission submission = analysisSubmissionService.read(id);
+		Analysis analysis = submission.getAnalysis();
+		Set<String> outputNames = analysis.getAnalysisOutputFileNames();
+		return outputNames.stream()
+				.map((outputName) -> getAnalysisOutputFileInfo(submission, analysis, outputName))
+				.filter(Objects::nonNull)
+				.collect(Collectors.toList());
+	}
+
+	/**
+	 * Get {@link AnalysisOutputFileInfo}.
+	 *
+	 * @param submission {@link AnalysisSubmission} of {@code analysis}
+	 * @param analysis   {@link Analysis} to get {@link AnalysisOutputFile}s from
+	 * @param outputName Workflow output name
+	 * @return {@link AnalysisOutputFile} info
+	 */
+	private AnalysisOutputFileInfo getAnalysisOutputFileInfo(AnalysisSubmission submission, Analysis analysis,
+			String outputName) {
+		final ImmutableSet<String> BLACKLIST_FILE_EXT = ImmutableSet.of("zip");
+		// set of file extensions for indicating whether the first line of the file should be read
+		final ImmutableSet<String> FILE_EXT_READ_FIRST_LINE = ImmutableSet.of("tsv", "txt", "tabular", "csv", "tab");
+		final AnalysisOutputFile aof = analysis.getAnalysisOutputFile(outputName);
+		final Long aofId = aof.getId();
+		final String aofFilename = aof.getFile()
+				.getFileName()
+				.toString();
+		final String fileExt = FileUtilities.getFileExt(aofFilename);
+		if (BLACKLIST_FILE_EXT.contains(fileExt))
+		{
+			return null;
+		}
+		final ToolExecution tool = aof.getCreatedByTool();
+		final String toolName = tool.getToolName();
+		final String toolVersion = tool.getToolVersion();
+		final AnalysisOutputFileInfo info = new AnalysisOutputFileInfo();
+
+		info.setId(aofId);
+		info.setAnalysisSubmissionId(submission.getId());
+		info.setAnalysisId(analysis.getId());
+		info.setOutputName(outputName);
+		info.setFilename(aofFilename);
+		info.setFileSizeBytes(aof.getFile()
+				.toFile()
+				.length());
+		info.setToolName(toolName);
+		info.setToolVersion(toolVersion);
+		info.setFileExt(fileExt);
+		if (FILE_EXT_READ_FIRST_LINE.contains(fileExt)) {
+			addFirstLine(info, aof);
+		}
+		return info;
+	}
+
+	/**
+	 * Add the {@code firstLine} and {@code filePointer} file byte position after reading the first line of an {@link AnalysisOutputFile} to a {@link AnalysisOutputFileInfo} object.
+	 *
+	 * @param info Object to add {@code firstLine} and {@code filePointer} info to
+	 * @param aof {@link AnalysisOutputFile} to read from
+	 */
+	private void addFirstLine(AnalysisOutputFileInfo info, AnalysisOutputFile aof) {
+		RandomAccessFile reader = null;
+		final Path aofFile = aof.getFile();
+		try {
+			reader = new RandomAccessFile(aofFile.toFile(), "r");
+			info.setFirstLine(reader.readLine());
+			info.setFilePointer(reader.getFilePointer());
+		} catch (FileNotFoundException e) {
+			logger.error("Could not find file '" + aofFile + "' " + e);
+		} catch (IOException e) {
+			logger.error("Could not read file '" + aofFile + "' " + e);
+		} finally {
+			try {
+				if (reader != null) {
+					reader.close();
+				}
+			} catch (IOException e) {
+				logger.error("Could not close file handle for '" + aofFile + "' " + e);
+			}
+		}
+	}
+
+	/**
+	 * Read some lines or text from an {@link AnalysisOutputFile}.
+	 *
+	 * @param id       {@link AnalysisSubmission} id
+	 * @param fileId   {@link AnalysisOutputFile} id
+	 * @param limit    Optional limit to number of lines to read from file
+	 * @param start    Optional line to start reading from
+	 * @param end      Optional line to stop reading at
+	 * @param seek     Optional file byte position to seek to and begin reading
+	 * @param chunk    Optional number of bytes to read from file
+	 * @param response HTTP response object
+	 * @return JSON with file text or lines as well as information about the file.
+	 */
+	@RequestMapping(value = "/ajax/{id}/outputs/{fileId}", method = RequestMethod.GET)
+	@ResponseBody
+	public AnalysisOutputFileInfo getOutputFile(@PathVariable Long id, @PathVariable Long fileId,
+			@RequestParam(defaultValue = "100", required = false) Long limit,
+			@RequestParam(required = false) Long start, @RequestParam(required = false) Long end,
+			@RequestParam(defaultValue = "0", required = false) Long seek, @RequestParam(required = false) Long chunk,
+			HttpServletResponse response) {
+		AnalysisSubmission submission = analysisSubmissionService.read(id);
+		Analysis analysis = submission.getAnalysis();
+		final Optional<AnalysisOutputFile> analysisOutputFile = analysis.getAnalysisOutputFiles()
+				.stream()
+				.filter(x -> Objects.equals(x.getId(), fileId))
+				.findFirst();
+		if (analysisOutputFile.isPresent()) {
+			final AnalysisOutputFile aof = analysisOutputFile.get();
+			final Path aofFile = aof.getFile();
+			final ToolExecution tool = aof.getCreatedByTool();
+			final AnalysisOutputFileInfo contents = new AnalysisOutputFileInfo();
+			contents.setId(aof.getId());
+			contents.setAnalysisSubmissionId(submission.getId());
+			contents.setAnalysisId(analysis.getId());
+			contents.setFilename(aofFile.getFileName()
+					.toString());
+			contents.setFileExt(FileUtilities.getFileExt(aofFile.getFileName()
+					.toString()));
+			contents.setFileSizeBytes(aof.getFile()
+					.toFile()
+					.length());
+			contents.setToolName(tool.getToolName());
+			contents.setToolVersion(tool.getToolVersion());
+			try {
+				final File file = aofFile.toFile();
+				final RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
+				randomAccessFile.seek(seek);
+				if (seek == 0) {
+					if (chunk != null && chunk > 0) {
+						contents.setText(FileUtilities.readChunk(randomAccessFile, seek, chunk));
+						contents.setChunk(chunk);
+						contents.setStartSeek(seek);
+					} else {
+						final BufferedReader reader = new BufferedReader(new FileReader(randomAccessFile.getFD()));
+						final List<String> lines = FileUtilities.readLinesLimit(reader, limit, start, end);
+						contents.setLines(lines);
+						contents.setLimit((long) lines.size());
+						contents.setStart(start);
+						contents.setEnd(start + lines.size());
+					}
+				} else {
+					if (chunk != null && chunk > 0) {
+						contents.setText(FileUtilities.readChunk(randomAccessFile, seek, chunk));
+						contents.setChunk(chunk);
+						contents.setStartSeek(seek);
+					} else {
+						final List<String> lines = FileUtilities.readLinesFromFilePointer(randomAccessFile, limit);
+						contents.setLines(lines);
+						contents.setStartSeek(seek);
+						contents.setStart(start);
+						contents.setLimit((long) lines.size());
+					}
+				}
+				contents.setFilePointer(randomAccessFile.getFilePointer());
+			} catch (IOException e) {
+				logger.error("Could not read output file '" + aof.getId() + "' " + e);
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				contents.setError("Could not read output file");
+
+			}
+			return contents;
+		} else {
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return null;
+		}
 	}
 
 	/**
