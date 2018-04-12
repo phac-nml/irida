@@ -285,3 +285,22 @@ ol.continue li:before {
   top: 5px;
   right: 0;
 }
+
+/****************************************************************************************
+* AG-GRID
+*****************************************************************************************/
+
+// OVERLAY
+.ag-overlay-loading-center {
+  border-color: #95d7fb !important;
+  background-color: #e7f7ff !important;
+}
+
+.overlay-icon {
+  margin-right: 1em;
+  color: #2e94f9;
+}
+
+.overlay-text {
+  color: rgba(0, 0, 0, 0.65);
+}

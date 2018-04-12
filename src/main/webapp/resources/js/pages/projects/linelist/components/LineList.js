@@ -18,7 +18,7 @@ export const LineList = props => {
       return <h3>Empty state message goes here!</h3>;
     } else {
       // CREATE TABLE
-      return <Table fields={props.fields} entries={props.entries} />;
+      return <Table fields={props.fields} />;
     }
   }
 };

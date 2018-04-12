@@ -1,27 +1,50 @@
 import React from "react";
-import "ag-grid";
-import { AgGridReact, AgGridColumn } from "ag-grid-react";
+import PropTypes from "prop-types";
+import { AgGridReact } from "ag-grid-react";
 import "ag-grid/dist/styles/ag-grid.css";
 import "ag-grid/dist/styles/ag-theme-balham.css";
 
+import LoadingOverlay from "./LoadingOverlay";
+
 const localeText = window.PAGE.i18n.agGrid;
 
+const formatColumns = cols =>
+  cols.map(f => ({
+    field: f.label,
+    headerName: f.label.toUpperCase()
+  }));
+
 const Table = props => {
-  let containerStyle = {
-    height: 131
+  const { fields } = props;
+
+  const containerStyle = {
+    boxSizing: "border-box",
+    height: 600,
+    width: "100%"
   };
 
+  // const frameworkComponents = {
+  //   loadingOverlay: LoadingOverlay
+  // };
+  //
+  // const loadingOverlay:
+
   return (
-    <div>
-      <div style={containerStyle} className="ag-theme-balham">
-        <AgGridReact localeText={localeText} rowData={null}>
-          {props.fields.map(f => (
-            <AgGridColumn key={f.label} field={f.label} />
-          ))}
-        </AgGridReact>
-      </div>
+    <div style={containerStyle} className="ag-theme-balham">
+      <AgGridReact
+        localeText={localeText}
+        columnDefs={formatColumns(fields)}
+        deltaRowDataMode={true}
+        frameworkComponents={{ LoadingOverlay }}
+        loadingOverlayComponent="LoadingOverlay"
+      />
     </div>
   );
+};
+
+Table.propTypes = {
+  fields: PropTypes.array.isRequired,
+  entries: PropTypes.array
 };
 
 export default Table;
