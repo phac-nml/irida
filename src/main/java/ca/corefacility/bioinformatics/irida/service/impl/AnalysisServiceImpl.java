@@ -65,7 +65,10 @@ public class AnalysisServiceImpl extends CRUDServiceImpl<Long, Analysis> impleme
 	public AnalysisFastQC getFastQCAnalysisForSequenceFile(SequencingObject object, Long fileId) {
 		SequenceFile fileWithId = object.getFileWithId(fileId);
 
-		return analysisRepository.findFastqcAnalysisForSequenceFile(fileWithId);
+		AnalysisFastQC qc = analysisRepository.findFastqcAnalysisForSequenceFile(fileWithId);
+
+		//re-reading as the fastqc object puled from the seq file above doesn't load the images for some reason
+		return (AnalysisFastQC) analysisRepository.findOne(qc.getId());
 	}
 
 }
