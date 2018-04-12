@@ -4,7 +4,7 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid/dist/styles/ag-grid.css";
 import "ag-grid/dist/styles/ag-theme-balham.css";
 
-import LoadingOverlay from "./LoadingOverlay";
+import LoadingOverlay from "../../../../modules/agGrid/LoadingOverlay";
 
 const localeText = window.PAGE.i18n.agGrid;
 
@@ -23,11 +23,7 @@ const Table = props => {
     width: "100%"
   };
 
-  // const frameworkComponents = {
-  //   loadingOverlay: LoadingOverlay
-  // };
-  //
-  // const loadingOverlay:
+  const frameworkComponents = { LoadingOverlay };
 
   return (
     <div style={containerStyle} className="ag-theme-balham">
@@ -35,7 +31,7 @@ const Table = props => {
         localeText={localeText}
         columnDefs={formatColumns(fields)}
         deltaRowDataMode={true}
-        frameworkComponents={{ LoadingOverlay }}
+        frameworkComponents={frameworkComponents}
         loadingOverlayComponent="LoadingOverlay"
       />
     </div>
