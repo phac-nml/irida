@@ -1,6 +1,6 @@
 import React from "react";
-import Loader from "./Loader";
-import Table from "./Table";
+import { Loader } from "./Loader";
+import { Table } from "./Table";
 
 export const LineList = props => {
   if (props.loading) {
@@ -18,7 +18,7 @@ export const LineList = props => {
       return <h3>Empty state message goes here!</h3>;
     } else {
       // CREATE TABLE
-      return <Table fields={props.fields} />;
+      return <Table fields={props.fields} entries={props.entries} />;
     }
   }
 };
