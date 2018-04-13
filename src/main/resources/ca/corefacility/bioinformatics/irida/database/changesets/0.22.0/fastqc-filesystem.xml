@@ -22,5 +22,9 @@
                 class="ca.corefacility.bioinformatics.irida.database.changesets.FastqcToFilesystem"/>
 
         <addNotNullConstraint tableName="analysis_output_file" columnName="file_path" columnDataType="varchar(255)"/>
+        
+        <dropColumn tableName="analysis_fastqc" columnName="duplicationLevelChart"/>
+        <dropColumn tableName="analysis_fastqc" columnName="perBaseQualityScoreChart"/>
+        <dropColumn tableName="analysis_fastqc" columnName="perSequenceQualityScoreChart"/>
     </changeSet>
 </databaseChangeLog>
