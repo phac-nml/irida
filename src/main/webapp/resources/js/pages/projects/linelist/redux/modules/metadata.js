@@ -47,25 +47,18 @@ export function reducer(state = initialState, action = {}) {
 /*
 ACTIONS
  */
-function load() {
-  return {
-    type: LOAD
-  };
-}
+const load = () => ({ type: LOAD });
 
-function loadFieldsSuccess(fields) {
-  return {
-    type: LOAD_FIELDS_SUCCESS,
-    fields
-  };
-}
+const loadSuccess = ({ fields, entries }) => ({
+  type: LOAD_SUCCESS,
+  fields,
+  entries
+});
 
-function loadFieldsError(error) {
-  return {
-    type: LOAD_FIELDS_ERROR,
-    error
-  };
-}
+const loadError = error => ({
+  type: LOAD_ERROR,
+  error
+});
 
 /*
 SAGAS
