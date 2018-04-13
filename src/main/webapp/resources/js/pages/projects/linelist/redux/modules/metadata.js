@@ -49,14 +49,13 @@ ACTIONS
  */
 const load = () => ({ type: LOAD });
 
-const loadSuccess = ({ fields, entries }) => ({
-  type: LOAD_SUCCESS,
-  fields,
-  entries
+const loadFieldsSuccess = fields => ({
+  type: LOAD_FIELDS_SUCCESS,
+  fields
 });
 
-const loadError = error => ({
-  type: LOAD_ERROR,
+const loadFieldsError = error => ({
+  type: LOAD_FIELDS_ERROR,
   error
 });
 
