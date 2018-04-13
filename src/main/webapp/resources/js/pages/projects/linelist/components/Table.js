@@ -23,6 +23,7 @@ const formatColumns = cols =>
 
     // Special handling for the sample name
     if (i === 0) {
+      column.sort = "asc";
       column.pinned = "left";
       column.lockPosition = true;
       column.cellRenderer = params =>
