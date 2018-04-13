@@ -14,7 +14,7 @@ import createSagaMiddleware from "redux-saga";
 // Reducers
 import { reducer as metadata } from "./modules/metadata";
 
-export default function createStore(initialSate) {
+export default function configureStore(initialSate) {
   /*
   Allows us to use Redux Devtools
   {@link https://github.com/zalmoxisus/redux-devtools-extension}
@@ -32,7 +32,7 @@ export default function createStore(initialSate) {
   const enhancer = composeEnhancers(applyMiddleware(sagaMiddleware));
 
   /*
-  Add the saga runner to the createStore object and return it as a single object.
+  Add the saga runner to the configureStore object and return it as a single object.
    */
   return {
     ..._createStore(combineReducers({ metadata }), initialSate, enhancer),

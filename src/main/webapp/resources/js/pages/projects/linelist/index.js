@@ -1,19 +1,16 @@
 import React from "react";
-import { Provider } from "react-redux";
 import { render } from "react-dom";
-import createStore from "./redux/create";
+import configureStore from "./redux/configureStore";
 
 // Linelist Table
+import Root from "./components/Root";
 import { fetchMetadataFields, fetchMetadataEntries } from "./apis";
 import { metadataLoadingSaga } from "./redux/modules/metadata";
-
-// UI
-import App from "./containers/App";
 
 // Get the project id from the window object:
 const PROJECT_ID = window.project.id;
 
-const store = createStore();
+const store = configureStore();
 
 // Initialize the linelist table.
 store.runSaga(
@@ -23,9 +20,4 @@ store.runSaga(
   PROJECT_ID
 );
 
-render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
-  document.querySelector("#root")
-);
+render(<Root store={store} />, document.querySelector("#root"));
