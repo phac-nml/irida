@@ -8,11 +8,31 @@ import LoadingOverlay from "../../../../modules/agGrid/LoadingOverlay";
 
 const localeText = window.PAGE.i18n.agGrid;
 
+class SampleCellRenderer {
+  constructor(props) {
+    this.props = props;
+  }
+}
+
 const formatColumns = cols =>
-  cols.map(f => ({
-    field: f.label,
-    headerName: f.label.toUpperCase()
-  }));
+  cols.map((f, i) => {
+    const column = {
+      field: f.label,
+      headerName: f.label.toUpperCase()
+    };
+
+    // Special handling for the sample name
+    if (i === 0) {
+      column.pinned = "left";
+      column.lockPosition = true;
+      column.cellRenderer = params =>
+        `<a href="${window.TL.BASE_URL}/samples/${Number(
+          params.data.sampleId
+        )}">${params.value}</a>`;
+    }
+
+    return column;
+  });
 
 const formatRows = rows => {
   if (rows !== null) {
