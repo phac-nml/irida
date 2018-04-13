@@ -4,7 +4,7 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid/dist/styles/ag-grid.css";
 import "ag-grid/dist/styles/ag-theme-balham.css";
 
-import LoadingOverlay from "../../../../../modules/agGrid/LoadingOverlay";
+import LoadingOverlay from "../../../../modules/agGrid/LoadingOverlay";
 
 const localeText = window.PAGE.i18n.agGrid;
 
