@@ -51,29 +51,19 @@ export function reducer(state = initialState, action = {}) {
 /*
 ACTIONS
  */
-function load() {
-  return {
-    type: LOAD
-  };
-}
+const load = () => ({ type: LOAD });
 
-function loadSuccess(payload) {
-  return {
-    type: LOAD_SUCCESS,
-    payload
-  };
-}
+const loadSuccess = payload => ({
+  type: LOAD_SUCCESS,
+  payload
+});
 
-function loadError(error) {
-  return {
-    type: LOAD_ERROR,
-    error
-  };
-}
+const loadError = error => ({
+  type: LOAD_ERROR,
+  error
+});
 
-function loadComplete() {
-  return { type: LOAD_COMPLETE };
-}
+const loadComplete = () => ({ type: LOAD_COMPLETE });
 
 /*
 SAGAS
