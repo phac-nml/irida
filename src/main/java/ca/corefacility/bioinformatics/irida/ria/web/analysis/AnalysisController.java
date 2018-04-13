@@ -729,7 +729,7 @@ public class AnalysisController {
 		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubmission(submission);
         Map<String,List<Map<String,Object>>> result = new HashMap<>();
 
-		final String[] hanselOutputFiles = {"hansel_tech_results"};//, "hansel_match_results", "hansel_tech_results"};
+		final String hanselFileKey = "hansel_tech_json_results";
 
 		// Get details about the workflow, to verify the correct Analysis Type.
 		UUID workflowUUID = submission.getWorkflowId();
@@ -753,7 +753,7 @@ public class AnalysisController {
 
             try {
 
-				techPath = Paths.get("/home/mgopez/workspace/irida/TestJsonData/technician_results.tab.json");
+				techPath = analysis.getAnalysisOutputFile(hanselFileKey).getFile();
 				logger.debug("Attempting to parse "+techPath+" as JSON.");
 
 				techJSON = new String(Files.readAllBytes(techPath));

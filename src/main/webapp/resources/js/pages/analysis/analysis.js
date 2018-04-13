@@ -9,8 +9,7 @@ import { renderPlainTextPreview } from "./plaintext-preview";
 import { renderTabularPreview } from "./tabular-preview";
 import "../../../sass/pages/analysis.scss";
 import "../../vendor/datatables/datatables";
-import { formatDate } from "./../../utilities/date-utilities";
-import {BioHanselController} from "./types/biohansel";
+import { BioHanselController } from "./types/biohansel";
 
 const baseAjaxUrl = window.PAGE.URLS.base;
 const analysisSubmissionId = window.PAGE.ID;
@@ -66,7 +65,7 @@ function AnalysisService($http) {
     });
   };
   svc.getBioHanselResults = function() {
-    return $http.get(window.PAGE.URLS.bio_hansel).then(function(result){
+    return $http.get(window.PAGE.URLS.bio_hansel).then(function(result) {
       return result.data;
     });
   };
@@ -229,7 +228,6 @@ function PreviewController(analysisService) {
     }
   });
 }
-
 
 function SistrController(analysisService) {
   const vm = this;

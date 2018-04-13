@@ -10,43 +10,60 @@
 		<requiresSingleSample>false</requiresSingleSample>
 	</inputs>
 	<parameters>
-		<parameter name="type_of_scheme" defaultValue="heidelberg">
-			<toolParameter
-				toolId="toolshed.g2.bx.psu.edu/repos/nml/bio_hansel/bio_hansel/0.1.3"
-				parameterName="type_of_scheme" />
+		<parameter name="bio_hansel_kmer_vals.kmer_min" defaultValue="8">
+			<toolParameter toolId="toolshed.g2.bx.psu.edu/repos/nml/bio_hansel/bio_hansel/1.3.0" parameterName="kmer_vals.kmer_min"/>
 		</parameter>
-		<parameter name="kmer_min" defaultValue="10">
-			<toolParameter
-				toolId="toolshed.g2.bx.psu.edu/repos/nml/bio_hansel/bio_hansel/0.1.3"
-				parameterName="kmer_min" />
+		<parameter name="bio_hansel_kmer_vals.kmer_max" defaultValue="1000">
+			<toolParameter toolId="toolshed.g2.bx.psu.edu/repos/nml/bio_hansel/bio_hansel/1.3.0" parameterName="kmer_vals.kmer_max"/>
 		</parameter>
-		<parameter name="kmer_max" defaultValue="200">
-			<toolParameter
-				toolId="toolshed.g2.bx.psu.edu/repos/nml/bio_hansel/bio_hansel/0.1.3"
-				parameterName="kmer_max" />
+		<parameter name="bio_hansel_type_of_scheme.scheme_type" defaultValue="heidelberg">
+			<toolParameter toolId="toolshed.g2.bx.psu.edu/repos/nml/bio_hansel/bio_hansel/1.3.0" parameterName="type_of_scheme.scheme_type"/>
+		</parameter>
+		<parameter name="bio_hansel_qc_vals.max_missing_tiles" defaultValue="0.05">
+			<toolParameter toolId="toolshed.g2.bx.psu.edu/repos/nml/bio_hansel/bio_hansel/1.3.0" parameterName="qc_vals.max_missing_tiles"/>
+		</parameter>
+		<parameter name="bio_hansel_qc_vals.max_intermediate_tiles" defaultValue="0.05">
+			<toolParameter toolId="toolshed.g2.bx.psu.edu/repos/nml/bio_hansel/bio_hansel/1.3.0" parameterName="qc_vals.max_intermediate_tiles"/>
+		</parameter>
+		<parameter name="bio_hansel_qc_vals.low_coverage_warning" defaultValue="20">
+			<toolParameter toolId="toolshed.g2.bx.psu.edu/repos/nml/bio_hansel/bio_hansel/1.3.0" parameterName="qc_vals.low_coverage_warning"/>
+		</parameter>
+		<parameter name="bio_hansel_qc_vals.min_ambiguous_tiles" defaultValue="3">
+			<toolParameter toolId="toolshed.g2.bx.psu.edu/repos/nml/bio_hansel/bio_hansel/1.3.0" parameterName="qc_vals.min_ambiguous_tiles"/>
+		</parameter>
+		<parameter name="bio_hansel_qc_vals.low_cov_depth_freq" defaultValue="20">
+			<toolParameter toolId="toolshed.g2.bx.psu.edu/repos/nml/bio_hansel/bio_hansel/1.3.0" parameterName="qc_vals.low_cov_depth_freq"/>
 		</parameter>
 	</parameters>
 	<outputs>
-		<output name="hansel_results" fileName="hansel_results.tab" />
-		<output name="hansel_match_results" fileName="hansel_match_results.tab" />
+		<output name="hansel_results" fileName="hansel_results.tab"/>
+		<output name="hansel_match_results" fileName="hansel_match_results.tab"/>
+		<output name="hansel_tech_results" fileName="hansel_tech_results.tab"/>
+		<output name="hansel_tech_json_results" fileName="hansel_tech_json_results.json"/>
 	</outputs>
 	<toolRepositories>
 		<repository>
 			<name>bio_hansel</name>
 			<owner>nml</owner>
-			<url>https://toolshed.g2.bx.psu.edu/</url>
-			<revision>09ebaa5192ab</revision>
+			<url>https://toolshed.g2.bx.psu.edu</url>
+			<revision>af59ac462926</revision>
 		</repository>
 		<repository>
 			<name>combine_tabular_collection</name>
 			<owner>nml</owner>
-			<url>https://toolshed.g2.bx.psu.edu/</url>
+			<url>https://toolshed.g2.bx.psu.edu</url>
 			<revision>b815081988b5</revision>
+		</repository>
+		<repository>
+			<name>combine_json</name>
+			<owner>nml</owner>
+			<url>https://toolshed.g2.bx.psu.edu</url>
+			<revision>661bc10b0612</revision>
 		</repository>
 		<repository>
 			<name>collapse_collections</name>
 			<owner>nml</owner>
-			<url>https://toolshed.g2.bx.psu.edu/</url>
+			<url>https://toolshed.g2.bx.psu.edu</url>
 			<revision>25136a2b0cfe</revision>
 		</repository>
 	</toolRepositories>
