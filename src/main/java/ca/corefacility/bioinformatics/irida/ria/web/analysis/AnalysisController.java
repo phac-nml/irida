@@ -216,8 +216,7 @@ public class AnalysisController {
 					model.addAttribute("sistr", true);
 				} else if (analysisType.equals(AnalysisType.SNV_SUBTYPING_COLLECTION)) {
 					Analysis analysis = submission.getAnalysis();
-					Path path = Paths.get("/home/mgopez/workspace/irida/TestJsonData/technician_results.tab.json");
-					//analysis.getAnalysisOutputFile("hansel_tech_results").getFile();
+					Path path = analysis.getAnalysisOutputFile("hansel_tech_json_results").getFile();
 					boolean isError = true;
 
 					try{
