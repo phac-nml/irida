@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <iridaWorkflow>
-    <id>2c532643-1127-4859-bde4-c56c6e672819</id>
+    <id>beee0266-c141-45ef-8d3e-9c471a90de88</id>
     <name>MLSTMentalist</name>
     <version>0.1.3</version>
     <analysisType>mlst-mentalist</analysisType>
