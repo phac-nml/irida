@@ -72,6 +72,8 @@ public class LineListController {
 
 		// Need the sample name.  This will enforce that it is in the first position.
 		fields.add(0, new MetadataTemplateField("sampleName", "text"));
+		// TODO: (Josh | 2018-04-16) Remove this once Organism is moved into the metadata
+		fields.add(1, new MetadataTemplateField("organism", "text"));
 		return fields;
 	}
 
@@ -93,6 +95,9 @@ public class LineListController {
 			// Need to have the sample name and Id
 			entries.put("sampleName", new MetadataEntry(sample.getLabel(), "text"));
 			entries.put("sampleId", new MetadataEntry(String.valueOf(sample.getId()), "number"));
+
+			// TODO: (Josh | 2018-04-16) Remove this once organism is part of the metadata
+			entries.put("organism", new MetadataEntry(sample.getOrganism(), "text"));
 
 			Map<MetadataTemplateField, MetadataEntry> sampleMetadata = sample.getMetadata();
 			for (MetadataTemplateField field : sampleMetadata.keySet()) {
