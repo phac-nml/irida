@@ -57,8 +57,7 @@ public class AnalysisOutputFile extends IridaResourceSupport implements IridaThi
 	@Column(name = "execution_manager_file_id")
 	private final String executionManagerFileId;
 
-	@NotNull
-	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, optional = false)
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "tool_execution_id")
 	private final ToolExecution createdByTool;
 	
