@@ -46,7 +46,7 @@ public class AnalysisServiceTest {
 	public void testCreateAnalysisWithOneOutputFile() throws IOException {
 		Path outputFile = Files.createTempFile(null, null);
 		AnalysisOutputFile report = new AnalysisOutputFile(outputFile, "", "", null);
-		AnalysisFastQC analysis = AnalysisFastQC.sloppyBuilder().description("something").fastQCReport(report).build();
+		AnalysisFastQC analysis = AnalysisFastQC.sloppyBuilder().description("something").build();
 
 		analysisService.create(analysis);
 

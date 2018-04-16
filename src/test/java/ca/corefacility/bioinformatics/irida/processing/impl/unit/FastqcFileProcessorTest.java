@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Iterator;
 
+import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisOutputFileRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -38,6 +39,7 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFi
 public class FastqcFileProcessorTest {
 	private FastqcFileProcessor fileProcessor;
 	private SequenceFileRepository sequenceFileRepository;
+	private AnalysisOutputFileRepository outputFileRepository;
 	private MessageSource messageSource;
 	private static final Logger logger = LoggerFactory.getLogger(FastqcFileProcessorTest.class);
 
@@ -50,7 +52,8 @@ public class FastqcFileProcessorTest {
 	public void setUp() {
 		messageSource = mock(MessageSource.class);
 		sequenceFileRepository = mock(SequenceFileRepository.class);
-		fileProcessor = new FastqcFileProcessor(messageSource, sequenceFileRepository);
+		outputFileRepository = mock(AnalysisOutputFileRepository.class);
+		fileProcessor = new FastqcFileProcessor(messageSource, sequenceFileRepository, outputFileRepository);
 	}
 
 	@Test(expected = FileProcessorException.class)
