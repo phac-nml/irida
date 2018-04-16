@@ -4,10 +4,15 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid/dist/styles/ag-grid.css";
 import "ag-grid/dist/styles/ag-theme-balham.css";
 
-import LoadingOverlay from "../../../../../modules/agGrid/LoadingOverlay";
-import { SampleAnchorCellRenderer } from "./SampleAnchorCellRenderer";
+import LoadingOverlay from "../../../../modules/agGrid/LoadingOverlay";
 
 const localeText = window.PAGE.i18n.agGrid;
+
+class SampleCellRenderer {
+  constructor(props) {
+    this.props = props;
+  }
+}
 
 const formatColumns = cols =>
   cols.map((f, i) => {
@@ -18,12 +23,13 @@ const formatColumns = cols =>
 
     // Special handling for the sample name
     if (i === 0) {
-      Object.assign(column, {
-        sort: "asc",
-        pinned: "left",
-        lockPosition: true,
-        cellRenderer: SampleAnchorCellRenderer
-      });
+      column.sort = "asc";
+      column.pinned = "left";
+      column.lockPosition = true;
+      column.cellRenderer = params =>
+        `<a href="${window.TL.BASE_URL}/samples/${Number(
+          params.data.sampleId
+        )}">${params.value}</a>`;
     }
 
     return column;
