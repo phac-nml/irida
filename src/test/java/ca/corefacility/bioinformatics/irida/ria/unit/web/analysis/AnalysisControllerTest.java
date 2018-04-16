@@ -1,15 +1,17 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.analysis;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.Optional;
 
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisOutputFileInfo;
 import ca.corefacility.bioinformatics.irida.ria.web.services.AnalysesListingService;
 import org.junit.Before;
 import org.junit.Test;
@@ -71,7 +73,7 @@ public class AnalysisControllerTest {
 		MessageSource messageSourceMock = mock(MessageSource.class);
 		analysisController = new AnalysisController(analysisSubmissionServiceMock, iridaWorkflowsServiceMock,
 				userServiceMock, sampleService, projectServiceMock, updatePermission, metadataTemplateService,
-				sequencingObjectService, analysesListingService, analysisSubmissionSampleProcessor, messageSourceMock);
+				sequencingObjectService, analysesListingService, messageSourceMock);
 	}
 
 	@Test
@@ -145,5 +147,96 @@ public class AnalysisControllerTest {
 		} catch (final Exception e) {
 			fail();
 		}
+	}
+
+	@Test
+	public void testGetOutputFileLines() {
+		final Long submissionId = 1L;
+		final MockHttpServletResponse response = new MockHttpServletResponse();
+		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(
+				TestDataFactory.constructAnalysisSubmission());
+		// get analysis output file summary info
+		final List<AnalysisOutputFileInfo> infos = analysisController.getOutputFilesInfo(submissionId);
+		assertEquals("Expecting 5 analysis output file info items", 5, infos.size());
+		final Optional<AnalysisOutputFileInfo> optInfo = infos.stream()
+				.filter(x -> Objects.equals(x.getOutputName(), "refseq-masher-matches"))
+				.findFirst();
+		assertTrue("Should be a refseq-masher-matches.tsv output file", optInfo.isPresent());
+		final AnalysisOutputFileInfo info = optInfo.get();
+		final String firstLine = "sample\ttop_taxonomy_name\tdistance\tpvalue\tmatching\tfull_taxonomy\ttaxonomic_subspecies\ttaxonomic_species\ttaxonomic_genus\ttaxonomic_family\ttaxonomic_order\ttaxonomic_class\ttaxonomic_phylum\ttaxonomic_superkingdom\tsubspecies\tserovar\tplasmid\tbioproject\tbiosample\ttaxid\tassembly_accession\tmatch_id";
+		assertEquals("First line of file should be read since it has a tabular file extension", firstLine,
+				info.getFirstLine());
+		final Long seekTo = 290L;
+		assertEquals("FilePointer should be first character of second line of file", seekTo, info.getFilePointer());
+		assertEquals("File size in bytes should be returned", Long.valueOf(61875), info.getFileSizeBytes());
+		final Long limit = 3L;
+		final AnalysisOutputFileInfo lineInfo = analysisController.getOutputFile(submissionId, info.getId(), limit, 0L,
+				null, 0L, null, response);
+		assertEquals(limit.intValue(), lineInfo.getLines()
+				.size());
+		String expLine = "SRR1203042\tSalmonella enterica subsp. enterica serovar Abony str. 0014\t0.00650877\t0.0\t328/400\tBacteria; Proteobacteria; Gammaproteobacteria; Enterobacterales; Enterobacteriaceae; Salmonella; enterica; subsp. enterica; serovar Abony; str. 0014\tSalmonella enterica subsp. enterica\tSalmonella enterica\tSalmonella\tEnterobacteriaceae\tEnterobacterales\tGammaproteobacteria\tProteobacteria\tBacteria\tenterica\tAbony\t\tPRJNA224116\tSAMN01823751\t1029983\tGCF_000487615.2\t./rcn/refseq-NZ-1029983-PRJNA224116-SAMN01823751-GCF_000487615.2-.-Salmonella_enterica_subsp._enterica_serovar_Abony_str._0014.fna";
+		assertEquals(expLine, lineInfo.getLines()
+				.get(0));
+		// begin reading lines after first line file pointer position
+		final AnalysisOutputFileInfo lineInfoRandomAccess = analysisController.getOutputFile(submissionId, info.getId(),
+				limit, 0L, null, info.getFilePointer(), null, response);
+		assertEquals(
+				"Using the RandomAccessFile reading method with seek>0, should give the same results as using a BufferedReader if both start reading at the same position",
+				limit.intValue(), lineInfoRandomAccess.getLines()
+						.size());
+		assertEquals(
+				"Using the RandomAccessFile reading method with seek>0, should give the same results as using a BufferedReader if both start reading at the same position",
+				expLine, lineInfoRandomAccess.getLines()
+						.get(0));
+	}
+
+	@Test
+	public void testGetOutputFileByteSizedChunks() {
+		final Long submissionId = 1L;
+		final MockHttpServletResponse response = new MockHttpServletResponse();
+		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(
+				TestDataFactory.constructAnalysisSubmission());
+		// get analysis output file summary info
+		final List<AnalysisOutputFileInfo> infos = analysisController.getOutputFilesInfo(submissionId);
+		assertEquals("Expecting 5 analysis output file info items", 5, infos.size());
+		final Optional<AnalysisOutputFileInfo> optInfo = infos.stream()
+				.filter(x -> Objects.equals(x.getOutputName(), "refseq-masher-matches"))
+				.findFirst();
+		assertTrue("Should be a refseq-masher-matches.tsv output file", optInfo.isPresent());
+		final AnalysisOutputFileInfo info = optInfo.get();
+		final String firstLine = "sample\ttop_taxonomy_name\tdistance\tpvalue\tmatching\tfull_taxonomy\ttaxonomic_subspecies\ttaxonomic_species\ttaxonomic_genus\ttaxonomic_family\ttaxonomic_order\ttaxonomic_class\ttaxonomic_phylum\ttaxonomic_superkingdom\tsubspecies\tserovar\tplasmid\tbioproject\tbiosample\ttaxid\tassembly_accession\tmatch_id";
+		assertEquals("First line of file should be read since it has a tabular file extension", firstLine,
+				info.getFirstLine());
+		final Long seekTo = 290L;
+		final Long expFileSize = 61875L;
+		assertEquals("FilePointer should be first character of second line of file", seekTo, info.getFilePointer());
+		assertEquals("File size in bytes should be returned", expFileSize, info.getFileSizeBytes());
+		final Long chunkSize = 10L;
+		final AnalysisOutputFileInfo chunkInfo = analysisController.getOutputFile(submissionId, info.getId(), null,
+				null, null, seekTo, chunkSize, response);
+		assertEquals("Should get the first 10 characters of the 2nd line starting at file pointer position 290",
+				"SRR1203042", chunkInfo.getText());
+		final long expFilePointer = seekTo + chunkSize;
+		assertEquals("After reading byte chunk of size x starting at position y, filePointer should be x+y",
+				expFilePointer, chunkInfo.getFilePointer()
+						.longValue());
+		String nextTextChunk = "\tSalmonella enterica subsp. enterica serovar Abony str. 0014";
+		final AnalysisOutputFileInfo nextChunkInfo = analysisController.getOutputFile(submissionId, info.getId(), null,
+				null, null, chunkInfo.getFilePointer(), (long) nextTextChunk.length(), response);
+		assertEquals("Should be able to continue reading from last file pointer position", nextTextChunk,
+				nextChunkInfo.getText());
+		final AnalysisOutputFileInfo lastChunkOfFile = analysisController.getOutputFile(submissionId, info.getId(), null,
+				null, null, expFileSize - chunkSize, chunkSize, response);
+		final String lastChunkText = "_str..fna\n";
+		assertEquals("Should have successfully read the last chunk of the file",
+				lastChunkText, lastChunkOfFile.getText());
+		final AnalysisOutputFileInfo chunkOutsideRangeOfFile = analysisController.getOutputFile(submissionId, info.getId(), null,
+				null, null, expFileSize + chunkSize, chunkSize, response);
+		assertEquals("Should return empty string since nothing can be read outside of file range",
+				"", chunkOutsideRangeOfFile.getText());
+		assertEquals("Should have seeked to an position of file size + chunkSize",
+				expFileSize + chunkSize, (long) chunkOutsideRangeOfFile.getStartSeek());
+		assertEquals("FilePointer shouldn't have changed from startSeek",
+				expFileSize + chunkSize, (long) chunkOutsideRangeOfFile.getFilePointer());
 	}
 }

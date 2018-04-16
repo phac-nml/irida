@@ -1,7 +1,16 @@
 import angular from "angular";
-import { showNotification } from "../../modules/notifications";
+import $ from "jquery";
+import {
+  showNotification,
+  showErrorNotification
+} from "../../modules/notifications";
 import { formatDate } from "../../utilities/date-utilities";
+import { renderPlainTextPreview } from "./plaintext-preview";
+import { renderTabularPreview } from "./tabular-preview";
 import "../../../sass/pages/analysis.scss";
+
+const baseAjaxUrl = window.PAGE.URLS.base;
+const analysisSubmissionId = window.PAGE.ID;
 
 /**
  * Controller to download the analysis.
@@ -21,18 +30,6 @@ function FileDownloadController() {
     }
     hiddenIFrame.src = window.PAGE.URLS.download + id;
   };
-
-  vm.getZipFile = function(id) {
-    var iFrameId = "hiddenDownloader";
-    var hiddenIFrame = document.getElementById(iFrameId);
-    if (hiddenIFrame === null) {
-      hiddenIFrame = document.createElement("iframe");
-      hiddenIFrame.id = iFrameId;
-      hiddenIFrame.style.display = "none";
-      document.body.appendChild(hiddenIFrame);
-    }
-    hiddenIFrame.src = page.URLS.download + id;
-  };
 }
 
 /**
@@ -43,7 +40,8 @@ function FileDownloadController() {
  */
 function AnalysisService($http) {
   const svc = this;
-
+  svc._tabularData = null;
+  svc._outputsInfo = null;
   /**
    * Call the server to get the status for the current analysis.
    * 'page.URLS.status' is on the `_base.html` page for the analysis.
@@ -85,6 +83,32 @@ function AnalysisService($http) {
         console.error(x);
       }
     );
+  };
+
+  /**
+   * Get tabular data info from server
+   * @returns {PromiseLike<T> | Promise<T> | *}
+   */
+  svc.getOutputsInfo = function() {
+    if (svc._outputsInfo === null) {
+      const url = `${baseAjaxUrl}${analysisSubmissionId}/outputs`;
+      return $http.get(url).then(
+        function successCallback(x) {
+          svc._outputsInfo = x.data;
+          return svc._outputsInfo;
+        },
+        function errorCallback(x) {
+          //TODO: i18n
+          const errMsg = `Could not GET outputs info from "${url}". ${x}`;
+          console.error(errMsg);
+          showErrorNotification({ text: errMsg });
+        }
+      );
+    } else {
+      return new Promise(function(resolve, reject) {
+        resolve(svc._outputsInfo);
+      });
+    }
   };
 
   /**
@@ -191,8 +215,27 @@ function StateController(AnalysisService) {
   initialize();
 }
 
-function PreviewController() {
+function PreviewController(analysisService) {
   this.newick = window.PAGE.NEWICK;
+  const vm = this;
+  const $tablesContainer = $("#js-file-preview-container");
+  const tabExtSet = new Set(["tab", "tsv", "tabular"]);
+
+  analysisService.getOutputsInfo(vm).then(outputInfos => {
+    for (const outputInfo of outputInfos) {
+      if (
+        !outputInfo.hasOwnProperty("fileExt") ||
+        !outputInfo.hasOwnProperty("id")
+      ) {
+        continue;
+      }
+      if (tabExtSet.has(outputInfo.fileExt)) {
+        renderTabularPreview($tablesContainer, baseAjaxUrl, outputInfo);
+      } else {
+        renderPlainTextPreview($tablesContainer, baseAjaxUrl, outputInfo);
+      }
+    }
+  });
 }
 
 function SistrController(analysisService) {
@@ -366,7 +409,7 @@ const iridaAnalysis = angular
   .service("AnalysisService", ["$http", AnalysisService])
   .controller("FileDownloadController", [FileDownloadController])
   .controller("StateController", ["AnalysisService", StateController])
-  .controller("PreviewController", [PreviewController])
+  .controller("PreviewController", ["AnalysisService", PreviewController])
   .controller("ProjectShareController", [
     "AnalysisService",
     ProjectShareController
