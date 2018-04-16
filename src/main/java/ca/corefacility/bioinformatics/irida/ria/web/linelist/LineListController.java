@@ -28,7 +28,8 @@ public class LineListController {
 	private MetadataTemplateService metadataTemplateService;
 
 	@Autowired
-	public LineListController(ProjectService projectService, SampleService sampleService, MetadataTemplateService metadataTemplateService) {
+	public LineListController(ProjectService projectService, SampleService sampleService,
+			MetadataTemplateService metadataTemplateService) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.metadataTemplateService = metadataTemplateService;
@@ -47,7 +48,8 @@ public class LineListController {
 	}
 
 	/**
-	 * Get a {@link List} of {@link MetadataEntry} for all {@link  Sample}s in a {@link Project}
+	 * Get a {@link List} of {@link Map} containing information from {@link MetadataEntry} for all
+	 * {@link  Sample}s in a {@link Project}
 	 *
 	 * @param projectId {@link Long} identifier for a {@link Project}
 	 * @return {@link List} of {@link List}s of all {@link Sample} metadata in a {@link Project}
@@ -74,7 +76,7 @@ public class LineListController {
 	}
 
 	/**
-	 * Get a {@link List} of {@link MetadataEntry} for all {@link  Sample}s in a {@link Project}
+	 * Get a {@link List} of {@link Map} for all {@link  Sample} {@link MetadataEntry}s in a {@link Project}
 	 *
 	 * @param projectId {@link Long} identifier for a {@link Project}
 	 * @return {@link List} of {@link List}s of all {@link Sample} metadata in a {@link Project}
@@ -82,8 +84,6 @@ public class LineListController {
 	private List<Map<String, MetadataEntry>> getAllProjectSamplesMetadataEntries(Long projectId) {
 		Project project = projectService.read(projectId);
 		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(project);
-		List<MetadataTemplateField> fields = getAllProjectMetadataFields(projectId);
-
 		List<Map<String, MetadataEntry>> result = new ArrayList<>(samplesForProject.size());
 
 		for (Join<Project, Sample> join : samplesForProject) {
@@ -95,7 +95,7 @@ public class LineListController {
 			entries.put("sampleId", new MetadataEntry(String.valueOf(sample.getId()), "number"));
 
 			Map<MetadataTemplateField, MetadataEntry> sampleMetadata = sample.getMetadata();
-			for(MetadataTemplateField field : sampleMetadata.keySet()) {
+			for (MetadataTemplateField field : sampleMetadata.keySet()) {
 				entries.put(field.getLabel(), sampleMetadata.getOrDefault(field, new MetadataEntry()));
 			}
 			result.add(entries);
