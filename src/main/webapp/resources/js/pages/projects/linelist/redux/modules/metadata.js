@@ -1,10 +1,8 @@
 import { call, put } from "redux-saga/effects";
 
 const LOAD = "linelist/metadata/LOAD_REQUEST";
-const LOAD_FIELDS_ERROR = "linelist/metadata/LOAD_FIELDS_ERROR";
-const LOAD_FIELDS_SUCCESS = "linelist/metadata/LOAD_FIELDS_SUCCESS";
-const LOAD_ENTRIES_ERROR = "linelist/metadata/LOAD_ENTRIES_ERROR";
-const LOAD_ENTRIES_SUCCESS = "linelist/metadata/LOAD_ENTRIES_SUCCESS";
+const LOAD_ERROR = "linelist/metadata/LOAD_ERROR";
+const LOAD_SUCCESS = "linelist/metadata/LOAD_SUCCESS";
 
 /*
 INITIAL STATE
@@ -25,19 +23,21 @@ export function reducer(state = initialState, action = {}) {
   switch (action.type) {
     case LOAD:
       return { ...state, fetching: true, error: null };
-    case LOAD_FIELDS_SUCCESS:
+    case LOAD_SUCCESS:
       return {
         ...state,
         fetching: false,
         error: false,
-        fields: action.fields
+        fields: action.fields,
+        entries: action.entries
       };
-    case LOAD_FIELDS_ERROR:
+    case LOAD_ERROR:
       return {
         ...state,
         fetching: false,
         error: true,
-        fields: null
+        fields: null,
+        entries: null
       };
     default:
       return state;
@@ -47,17 +47,26 @@ export function reducer(state = initialState, action = {}) {
 /*
 ACTIONS
  */
-const load = () => ({ type: LOAD });
+function load() {
+  return {
+    type: LOAD
+  };
+}
 
-const loadFieldsSuccess = fields => ({
-  type: LOAD_FIELDS_SUCCESS,
-  fields
-});
+function loadSuccess({ fields, entries }) {
+  return {
+    type: LOAD_SUCCESS,
+    fields,
+    entries
+  };
+}
 
-const loadFieldsError = error => ({
-  type: LOAD_FIELDS_ERROR,
-  error
-});
+function loadError(error) {
+  return {
+    type: LOAD_ERROR,
+    error
+  };
+}
 
 /*
 SAGAS
@@ -74,8 +83,9 @@ export function* metadataLoadingSaga(fetchFields, fetchEntries, projectId) {
   try {
     yield put(load());
     const { data: fields } = yield call(fetchFields, projectId);
-    yield put(loadFieldsSuccess(fields));
+    const { data: entries } = yield call(fetchEntries, projectId);
+    yield put(loadSuccess({ fields, entries }));
   } catch (error) {
-    yield put(loadFieldsError(error));
+    yield put(loadError(error));
   }
 }
