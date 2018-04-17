@@ -16,7 +16,7 @@ const sampleNameColumn = {
   sort: "asc",
   pinned: "left",
   lockPosition: true,
-  cellRenderer: SampleNameRenderer
+  cellRenderer: "SampleNameRenderer"
 };
 
 /**
@@ -52,7 +52,7 @@ export const Table = props => {
     width: "100%"
   };
 
-  const frameworkComponents = { LoadingOverlay };
+  const frameworkComponents = { LoadingOverlay, SampleNameRenderer };
 
   return (
     <div style={containerStyle} className="ag-theme-balham">
@@ -61,11 +61,10 @@ export const Table = props => {
         enableSorting={true}
         columnDefs={formatColumns(fields)}
         rowData={formatRows(entries)}
-        // deltaRowDataMode={true}
-        // getRowNodeId={data => data.id}
+        deltaRowDataMode={true}
+        getRowNodeId={data => data.code}
         frameworkComponents={frameworkComponents}
         loadingOverlayComponent="LoadingOverlay"
-        // onGridReady={params => params.api.sizeColumnsToFit()}
       />
     </div>
   );
