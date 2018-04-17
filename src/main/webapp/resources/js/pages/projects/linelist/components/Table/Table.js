@@ -3,37 +3,33 @@ import PropTypes from "prop-types";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid/dist/styles/ag-grid.css";
 import "ag-grid/dist/styles/ag-theme-balham.css";
+import SampleNameRenderer from "./renderers/SampleNameRenderer";
 
-import LoadingOverlay from "../../../../modules/agGrid/LoadingOverlay";
+import LoadingOverlay from "../../../../../modules/agGrid/LoadingOverlay";
 
 const localeText = window.PAGE.i18n.agGrid;
 
-class SampleCellRenderer {
-  constructor(props) {
-    this.props = props;
-  }
-}
+/*
+Special handler for formatting the sample Name Column;
+ */
+const sampleNameColumn = {
+  sort: "asc",
+  pinned: "left",
+  lockPosition: true,
+  cellRenderer: SampleNameRenderer
+};
 
+/**
+ * Format the column definitions.
+ * @param {array} cols
+ * @returns {*}
+ */
 const formatColumns = cols =>
-  cols.map((f, i) => {
-    const column = {
-      field: f.label,
-      headerName: f.label.toUpperCase()
-    };
-
-    // Special handling for the sample name
-    if (i === 0) {
-      column.sort = "asc";
-      column.pinned = "left";
-      column.lockPosition = true;
-      column.cellRenderer = params =>
-        `<a href="${window.TL.BASE_URL}/samples/${Number(
-          params.data.sampleId
-        )}">${params.value}</a>`;
-    }
-
-    return column;
-  });
+  cols.map((f, i) => ({
+    field: f.label,
+    headerName: f.label.toUpperCase(),
+    ...(i === 0 ? sampleNameColumn : {})
+  }));
 
 const formatRows = rows => {
   if (rows !== null) {
