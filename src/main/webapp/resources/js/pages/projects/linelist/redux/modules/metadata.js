@@ -1,8 +1,9 @@
 import { call, put } from "redux-saga/effects";
 
 const LOAD = "linelist/metadata/LOAD_REQUEST";
-const LOAD_ERROR = "linelist/metadata/LOAD_ERROR";
-const LOAD_SUCCESS = "linelist/metadata/LOAD_SUCCESS";
+const LOAD_ERROR = "linelist/metadata/field/LOAD_ERROR";
+const LOAD_FIELD_SUCCESS = "linelist/metadata/field/LOAD_FIELD_SUCCESS";
+const LOAD_ENTRY_SUCCESS = "linelist/metadata/entry/LOAD_ENTRY_SUCCESS";
 
 /*
 INITIAL STATE
@@ -23,12 +24,17 @@ export function reducer(state = initialState, action = {}) {
   switch (action.type) {
     case LOAD:
       return { ...state, fetching: true, error: null };
-    case LOAD_SUCCESS:
+    case LOAD_FIELD_SUCCESS:
       return {
         ...state,
         fetching: false,
         error: false,
         fields: action.fields,
+        entries: null
+      };
+    case LOAD_ENTRY_SUCCESS:
+      return {
+        ...state,
         entries: action.entries
       };
     case LOAD_ERROR:
@@ -53,10 +59,16 @@ function load() {
   };
 }
 
-function loadSuccess({ fields, entries }) {
+function loadFieldSuccess(fields) {
   return {
-    type: LOAD_SUCCESS,
-    fields,
+    type: LOAD_FIELD_SUCCESS,
+    fields
+  };
+}
+
+function loadEntrySuccess(entries) {
+  return {
+    type: LOAD_ENTRY_SUCCESS,
     entries
   };
 }
@@ -83,8 +95,9 @@ export function* metadataLoadingSaga(fetchFields, fetchEntries, projectId) {
   try {
     yield put(load());
     const { data: fields } = yield call(fetchFields, projectId);
+    yield put(loadFieldSuccess(fields));
     const { data: entries } = yield call(fetchEntries, projectId);
-    yield put(loadSuccess({ fields, entries }));
+    yield put(loadEntrySuccess(entries));
   } catch (error) {
     yield put(loadError(error));
   }
