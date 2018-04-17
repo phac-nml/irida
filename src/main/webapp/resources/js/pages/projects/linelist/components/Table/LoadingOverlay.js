@@ -13,7 +13,7 @@ export default class LoadingOverlay extends Component {
       <div className="ag-overlay-loading-center irida-ag-overlay">
         <div>
           <Spin style={{ marginRight: "1em" }} />
-          <span className="irida-ag-overlay-loading-text">{`${loading}`}</span>
+          <span className="irida-ag-overlay-loading-text">{loading}</span>
         </div>
       </div>
     );
