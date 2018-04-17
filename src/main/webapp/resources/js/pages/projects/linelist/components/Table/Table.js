@@ -3,9 +3,9 @@ import PropTypes from "prop-types";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid/dist/styles/ag-grid.css";
 import "ag-grid/dist/styles/ag-theme-balham.css";
-import SampleNameRenderer from "./renderers/SampleNameRenderer";
 
-import LoadingOverlay from "../../../../../modules/agGrid/LoadingOverlay";
+import SampleNameRenderer from "./renderers/SampleNameRenderer";
+import LoadingOverlay from "./LoadingOverlay";
 
 const localeText = window.PAGE.i18n.agGrid;
 
@@ -31,6 +31,11 @@ const formatColumns = cols =>
     ...(i === 0 ? sampleNameColumn : {})
   }));
 
+/**
+ * Format the row data.
+ * Row should be {key: value}
+ * @param {array} rows
+ */
 const formatRows = rows => {
   if (rows !== null) {
     return rows.map(r => {
