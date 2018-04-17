@@ -18,7 +18,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateServi
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 /**
- * This controller is responsible for AJAX handling for the line list page, which displays sample metatdata.
+ * This controller is responsible for AJAX handling for the line list page, which displays sample metadata.
  */
 @Controller
 @RequestMapping("/linelist")
