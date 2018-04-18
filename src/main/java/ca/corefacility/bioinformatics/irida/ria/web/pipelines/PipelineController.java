@@ -335,6 +335,7 @@ public class PipelineController extends BaseController {
 			model.addAttribute("canUpdateSamples", canUpdateAllSamples);
                         model.addAttribute("workflowName", workflowName);
 			model.addAttribute("dynamicSourceRequired", description.requiresDynamicSource());
+			model.addAttribute("analysisType", flow.getWorkflowDescription().getAnalysisType());
 
 			final List<Map<String, Object>> dynamicSources = new ArrayList<>();
 			if (description.requiresDynamicSource()) {
