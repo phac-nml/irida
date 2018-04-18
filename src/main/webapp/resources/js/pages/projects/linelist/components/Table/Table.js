@@ -54,7 +54,6 @@ export class Table extends Component {
     super(props);
 
     this.onGridReady = this.onGridReady.bind(this);
-    this.getColumnState = this.getColumnState.bind(this);
   }
 
   /*
