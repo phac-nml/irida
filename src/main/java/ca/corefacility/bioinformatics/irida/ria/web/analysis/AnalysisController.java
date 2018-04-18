@@ -161,6 +161,15 @@ public class AnalysisController {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		model.addAttribute("analysisSubmission", submission);
 
+		boolean canShareToSamples = false;
+		if (submission.getAnalysis() != null) {
+			canShareToSamples = analysisSubmissionSampleProcessor
+					.hasRegisteredAnalysisSampleUpdater(submission.getAnalysis().getAnalysisType());
+		}
+
+		model.addAttribute("canShareToSamples", canShareToSamples);
+
+
 		UUID workflowUUID = submission.getWorkflowId();
 		logger.trace("Workflow ID is " + workflowUUID);
 
