@@ -14,7 +14,9 @@ class SampleNameRenderer extends Component {
 }
 
 SampleNameRenderer.propTypes = {
-  data: PropTypes.object.isRequired,
+  data: PropTypes.shape({
+    sampleId: PropTypes.string.isRequired
+  }),
   value: PropTypes.string.isRequired
 };
 
