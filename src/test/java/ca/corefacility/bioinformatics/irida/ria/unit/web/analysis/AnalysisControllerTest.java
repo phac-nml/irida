@@ -68,6 +68,7 @@ public class AnalysisControllerTest {
 		sampleService = mock(SampleService.class);
 		sequencingObjectService = mock(SequencingObjectService.class);
 		analysesListingService = mock(AnalysesListingService.class);
+		analysisSubmissionSampleProcessor = mock(AnalysisSubmissionSampleProcessor.class);
 		MessageSource messageSourceMock = mock(MessageSource.class);
 		analysisController = new AnalysisController(analysisSubmissionServiceMock, iridaWorkflowsServiceMock,
 				userServiceMock, sampleService, projectServiceMock, updatePermission, metadataTemplateService,
