@@ -111,8 +111,8 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 		}
 
 		SequencingObject so = super.create(object);
-		fileProcessingChainExecutor.execute(new SequenceFileProcessorLauncher(fileProcessingChain, so.getId(),
-				SecurityContextHolder.getContext()));
+		//fileProcessingChainExecutor.execute(new SequenceFileProcessorLauncher(fileProcessingChain, so.getId(),
+		//		SecurityContextHolder.getContext()));
 		return so;
 	}
 

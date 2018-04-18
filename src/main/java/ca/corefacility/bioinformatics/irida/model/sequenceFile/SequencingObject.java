@@ -70,15 +70,18 @@ public abstract class SequencingObject extends IridaResourceSupport implements M
 	@OneToMany(mappedBy = "sequencingObject", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
 	@NotAudited
 	private Set<QCEntry> qcEntries;
-	
+
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH, mappedBy = "inputFiles")
 	private List<AnalysisSubmission> analysisSubmissions;
 
+	@NotAudited
 	@Enumerated(EnumType.STRING)
+	@Column(name="processing_state")
 	private ProcessingState processingState;
 
 	public SequencingObject() {
 		createdDate = new Date();
+		processingState = ProcessingState.UNPROCESSED;
 	}
 
 	public Long getId() {
@@ -195,6 +198,7 @@ public abstract class SequencingObject extends IridaResourceSupport implements M
 
 	public enum ProcessingState{
 		UNPROCESSED,
+		QUEUED,
 		PROCESSING,
 		FINISHED,
 		ERROR

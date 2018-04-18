@@ -95,6 +95,9 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 				// file processor *doesn't* modify the file, then continue with
 				// execution (show the error, but proceed).
 				if (fileProcessor.modifiesFile() || fastFail) {
+					sequencingObject.setProcessingState(SequencingObject.ProcessingState.ERROR);
+					sequencingObjectRepository.save(sequencingObject);
+
 					throw e;
 				} else {
 					ignoredExceptions.add(e);
@@ -103,6 +106,11 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 							+ "file would not be modified by the processor. Stack trace follows.", e);
 				}
 			}
+
+			SequencingObject sequencingObject = sequencingObjectRepository.findOne(sequencingObjectId);
+
+			sequencingObject.setProcessingState(SequencingObject.ProcessingState.FINISHED);
+			sequencingObjectRepository.save(sequencingObject);
 		}
 
 		return ignoredExceptions;

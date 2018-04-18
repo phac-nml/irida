@@ -6,6 +6,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectProcessingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,6 +79,9 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	private GalaxyJobErrorsService galaxyJobErrorsService;
 
 	@Autowired
+	private SequencingObjectProcessingService fileProcessingService;
+
+	@Autowired
 	private JobErrorRepository jobErrorRepository;
 	
 	@Value("${irida.scheduled.threads}")
@@ -107,6 +111,11 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	 */
 	@Value("${irida.analysis.cleanup.days}")
 	private Double daysToCleanup;
+
+	@Scheduled(fixedDelay = 5000)
+	public void processFiles(){
+		fileProcessingService.findFilesToProcess();
+	}
 
 	/**
 	 * Cycle through any submissions and prepare them for execution.
