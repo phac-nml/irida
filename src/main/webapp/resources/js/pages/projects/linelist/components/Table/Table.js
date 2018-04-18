@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid/dist/styles/ag-grid.css";
@@ -48,32 +48,47 @@ const formatRows = rows => {
   }
 };
 
-export const Table = props => {
-  const { fields, entries } = props;
+export class Table extends Component {
+  frameworkComponents = { LoadingOverlay, SampleNameRenderer };
+  constructor(props) {
+    super(props);
 
-  const containerStyle = {
-    boxSizing: "border-box",
-    height: 600,
-    width: "100%"
-  };
+    this.onGridReady = this.onGridReady.bind(this);
+    this.getColumnState = this.getColumnState.bind(this);
+  }
 
-  const frameworkComponents = { LoadingOverlay, SampleNameRenderer };
+  /*
+  Allow access to the grids API
+   */
+  onGridReady(params) {
+    this.api = params.api;
+    this.columnApi = params.columnApi;
+  }
 
-  return (
-    <div style={containerStyle} className="ag-theme-balham">
-      <AgGridReact
-        localeText={localeText}
-        enableSorting={true}
-        columnDefs={formatColumns(fields)}
-        rowData={formatRows(entries)}
-        deltaRowDataMode={true}
-        getRowNodeId={data => data.code}
-        frameworkComponents={frameworkComponents}
-        loadingOverlayComponent="LoadingOverlay"
-      />
-    </div>
-  );
-};
+  render() {
+    const { fields, entries } = this.props;
+    const containerStyle = {
+      boxSizing: "border-box",
+      height: 600,
+      width: "100%"
+    };
+    return (
+      <div style={containerStyle} className="ag-theme-balham">
+        <AgGridReact
+          localeText={localeText}
+          enableSorting={true}
+          columnDefs={formatColumns(fields)}
+          rowData={formatRows(entries)}
+          deltaRowDataMode={true}
+          getRowNodeId={data => data.code}
+          frameworkComponents={this.frameworkComponents}
+          loadingOverlayComponent="LoadingOverlay"
+          onGridReady={this.onGridReady}
+        />
+      </div>
+    );
+  }
+}
 
 Table.propTypes = {
   fields: PropTypes.array.isRequired,
