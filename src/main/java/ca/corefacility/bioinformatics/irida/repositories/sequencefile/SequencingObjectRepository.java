@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.repositories.sequencefile;
 
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.data.jpa.repository.Query;
@@ -34,4 +35,7 @@ public interface SequencingObjectRepository extends IridaJpaRepository<Sequencin
 	 */
 	@Query("select f from SequencingObject f where ?1 IN elements(f.analysisSubmissions)")
 	public Set<SequencingObject> findSequencingObjectsForAnalysisSubmission(AnalysisSubmission analysisSubmission);
+
+	@Query("SequencingObject f where f.processingState = ?1")
+	public List<SequencingObject> getSequencingObjectsWithProcessingState(SequencingObject.ProcessingState processingState);
 }
