@@ -5,24 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
@@ -90,6 +73,9 @@ public abstract class SequencingObject extends IridaResourceSupport implements M
 	
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH, mappedBy = "inputFiles")
 	private List<AnalysisSubmission> analysisSubmissions;
+
+	@Enumerated(EnumType.STRING)
+	private ProcessingState processingState;
 
 	public SequencingObject() {
 		createdDate = new Date();
@@ -197,5 +183,20 @@ public abstract class SequencingObject extends IridaResourceSupport implements M
 	@JsonIgnore
 	public void setQcEntries(Set<QCEntry> qcEntries) {
 		this.qcEntries = qcEntries;
+	}
+
+	public void setProcessingState(ProcessingState processingState){
+		this.processingState = processingState;
+	}
+
+	public ProcessingState getProcessingState() {
+		return processingState;
+	}
+
+	public enum ProcessingState{
+		UNPROCESSED,
+		PROCESSING,
+		FINISHED,
+		ERROR
 	}
 }
