@@ -541,16 +541,21 @@ public class AnalysisController {
 
 	@RequestMapping(value = "/ajax/{submissionId}/save-results", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String,String> saveResultsToSamples(@PathVariable Long submissionId){
+	public Map<String,String> saveResultsToSamples(@PathVariable Long submissionId, Locale locale){
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 
 		try {
 			analysisSubmissionSampleProcessor.updateSamples(submission);
+
+			submission.setUpdateSamples(true);
+			analysisSubmissionService.update(submission);
 		} catch (PostProcessingException e) {
 			return ImmutableMap.of("result", "error");
 		}
 
-		return ImmutableMap.of("result", "success", "message", "didit");
+		String message = messageSource.getMessage("analysis.details.save.response", null, locale);
+
+		return ImmutableMap.of("result", "success", "message", message);
 	}
 
 	/**
