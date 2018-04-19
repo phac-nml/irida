@@ -1,5 +1,9 @@
 Changes
 =======
+0.21.0 to 0.22.0
+----------------
+* [UI]: Fixed bug where `.xls` file could not be uploaded through the file picker on the metadata upload page. (0.21.1)
+* [UI]: Moved the position of the notification system to top center.
 
 0.20.0 to 0.21.0
 ----------------
@@ -11,7 +15,6 @@ Changes
 * [Developer]: Update to stable releases of `node` and `yarn`.
 * [Administration]: Disabled automated SISTR results from saving to sample metadata.  Also disabled retrospective results from being added during the database update.  Installations that have already performed the 0.20.0 update will have their retrospective automated SISTR results automatically added to sample metadata.  Installations that jump directly to 0.20.1 and above will not have this data added to sample metadata. (0.20.1)
 * [UI/Workflow]: Preview analysis output files in a tabular or plain-text view in the analysis details page under the Preview tab. 
-* [UI]: Moved the position of the notification system to top center.
 
 0.19.0 to 0.20.0
 ----------------
@@ -70,7 +73,7 @@ Changes
 * [UI]: Fixed issue with exporting `csv` and `excel` from Project > Samples pages (0.18.5).
 * [UI]: Fixed bug with importing large `excel` file that contained columns with only a header and no other data in column.
 * [UI]: Fixed project sync settings from resetting themselves.
-* [UI]: Moved notifications to the top center to prevent overlapping with the cart buttons.
+* [UI]: Removed `anugular-animate`.
 
 0.17.0 to 0.18.0
 ----------------
