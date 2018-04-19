@@ -19,17 +19,45 @@ const sampleNameColumn = {
   cellRenderer: "SampleNameRenderer"
 };
 
+const formatTemplateColumns = (cols, template) => {
+  const columns = [...cols];
+  const ordered = new Array(template.length);
+  const remainder = [];
+
+  // Always need to keep the sampleName first
+  const name = columns.shift();
+
+  columns.forEach(column => {
+    const i = template.findIndex(item => column.id === item.id);
+    if (-1 < i) {
+      column.hide = false;
+      ordered[i] = column;
+    } else {
+      column.hide = true;
+      remainder.push(column);
+    }
+  });
+
+  return [name, ...ordered, ...remainder];
+};
+
 /**
  * Format the column definitions.
  * @param {array} cols
+ * @param {array} template
  * @returns {*}
  */
-const formatColumns = cols =>
-  cols.map((f, i) => ({
-    field: f.label,
-    headerName: f.label.toUpperCase(),
+const formatColumns = (cols, template) => {
+  const columns =
+    template.length === 0 ? [...cols] : formatTemplateColumns(cols, template);
+
+  return columns.map((column, i) => ({
+    hide: template.length === 0 ? false : column.hide,
+    field: column.label,
+    headerName: column.label.toUpperCase(),
     ...(i === 0 ? sampleNameColumn : {})
   }));
+};
 
 /**
  * Format the row data.
@@ -65,7 +93,7 @@ export class Table extends Component {
   }
 
   render() {
-    const { fields, entries } = this.props;
+    const { fields, entries, template } = this.props;
     const containerStyle = {
       boxSizing: "border-box",
       height: 600,
@@ -76,7 +104,7 @@ export class Table extends Component {
         <AgGridReact
           localeText={localeText}
           enableSorting={true}
-          columnDefs={formatColumns(fields)}
+          columnDefs={formatColumns(fields, template)}
           rowData={formatRows(entries)}
           deltaRowDataMode={true}
           getRowNodeId={data => data.code}

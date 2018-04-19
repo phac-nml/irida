@@ -1,6 +1,7 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { Loader } from "./Loader";
 import { Table } from "./Table";
+import { TemplateSelect } from "./TemplateSelect";
 
 export const LineList = props => {
   if (props.loading) {
@@ -18,7 +19,22 @@ export const LineList = props => {
       return <h3>Empty state message goes here!</h3>;
     } else {
       // CREATE TABLE
-      return <Table fields={props.fields} entries={props.entries} />;
+      return (
+        <Fragment>
+          <div style={{ marginBottom: "1rem" }}>
+            <TemplateSelect
+              useTemplate={props.useTemplate}
+              current={props.current}
+              templates={props.templates}
+            />
+          </div>
+          <Table
+            fields={props.fields}
+            entries={props.entries}
+            template={props.template}
+          />
+        </Fragment>
+      );
     }
   }
 };

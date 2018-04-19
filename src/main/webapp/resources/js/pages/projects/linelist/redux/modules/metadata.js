@@ -1,4 +1,5 @@
 import { call, put } from "redux-saga/effects";
+import { fetchMetadataFields, fetchMetadataEntries } from "../../apis";
 
 const LOAD = "linelist/metadata/LOAD_REQUEST";
 const LOAD_ERROR = "linelist/metadata/field/LOAD_ERROR";
@@ -86,17 +87,15 @@ SAGAS
 
 /**
  * Fetch all the metadata fields and entries required to initialize the table.
- * @param {function} fetchFields api to fetch metadata fields for the project
- * @param {function} fetchEntries api to fetch metadata entries for the project.
  * @param {Number} projectId project identifier
  * @returns {IterableIterator<*>}
  */
-export function* metadataLoadingSaga(fetchFields, fetchEntries, projectId) {
+export function* metadataLoadingSaga(projectId) {
   try {
     yield put(load());
-    const { data: fields } = yield call(fetchFields, projectId);
+    const { data: fields } = yield call(fetchMetadataFields, projectId);
     yield put(loadFieldSuccess(fields));
-    const { data: entries } = yield call(fetchEntries, projectId);
+    const { data: entries } = yield call(fetchMetadataEntries, projectId);
     yield put(loadEntrySuccess(entries));
   } catch (error) {
     yield put(loadError(error));
