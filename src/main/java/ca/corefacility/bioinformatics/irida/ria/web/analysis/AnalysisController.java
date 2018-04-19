@@ -548,10 +548,21 @@ public class AnalysisController {
 		return ImmutableMap.of("result", "success", "message", message);
 	}
 
+	/**
+	 * Save the results of an analysis back to the samples
+	 *
+	 * @param submissionId ID of the {@link AnalysisSubmission}
+	 * @param locale       locale of the logged in user
+	 * @return success message
+	 */
 	@RequestMapping(value = "/ajax/{submissionId}/save-results", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String,String> saveResultsToSamples(@PathVariable Long submissionId, Locale locale){
+	public Map<String, String> saveResultsToSamples(@PathVariable Long submissionId, Locale locale) {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+
+		if(submission.getUpdateSamples()){
+			throw new IllegalArgumentException("Analysis result is already saved to the samples");
+		}
 
 		try {
 			analysisSubmissionSampleProcessor.updateSamples(submission);
