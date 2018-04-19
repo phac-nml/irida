@@ -32,7 +32,7 @@ import org.springframework.web.servlet.view.xml.MarshallingView;
 import com.fasterxml.jackson.datatype.jdk7.Jdk7Module;
 import com.google.common.collect.ImmutableMap;
 
-import ca.corefacility.bioinformatics.irida.config.services.IridaScheduledTasksConfig;
+import ca.corefacility.bioinformatics.irida.config.services.scheduled.IridaScheduledTasksConfig;
 import ca.corefacility.bioinformatics.irida.web.spring.view.CSVView;
 import ca.corefacility.bioinformatics.irida.web.spring.view.FastaView;
 import ca.corefacility.bioinformatics.irida.web.spring.view.FastqView;
