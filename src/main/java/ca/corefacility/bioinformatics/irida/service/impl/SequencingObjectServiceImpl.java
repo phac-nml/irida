@@ -60,22 +60,18 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 	
 	private final SampleSequencingObjectJoinRepository ssoRepository;
 	private final SequenceFileRepository sequenceFileRepository;
-	private TaskExecutor fileProcessingChainExecutor;
-	private FileProcessingChain fileProcessingChain;
+
 	private final SequencingObjectRepository repository;
 	private final SequenceConcatenationRepository concatenationRepository;
 
 	@Autowired
 	public SequencingObjectServiceImpl(SequencingObjectRepository repository,
 			SequenceFileRepository sequenceFileRepository, SampleSequencingObjectJoinRepository ssoRepository,
-			SequenceConcatenationRepository concatenationRepository,
-			@Qualifier("fileProcessingChainExecutor") TaskExecutor executor,
-			@Qualifier("uploadFileProcessingChain") FileProcessingChain fileProcessingChain, Validator validator) {
+			SequenceConcatenationRepository concatenationRepository, Validator validator) {
 		super(repository, validator, SequencingObject.class);
 		this.repository = repository;
 		this.ssoRepository = ssoRepository;
-		this.fileProcessingChainExecutor = executor;
-		this.fileProcessingChain = fileProcessingChain;
+
 		this.sequenceFileRepository = sequenceFileRepository;
 		this.concatenationRepository = concatenationRepository;
 	}
@@ -110,10 +106,7 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 			file = sequenceFileRepository.save(file);
 		}
 
-		SequencingObject so = super.create(object);
-		//fileProcessingChainExecutor.execute(new SequenceFileProcessorLauncher(fileProcessingChain, so.getId(),
-		//		SecurityContextHolder.getContext()));
-		return so;
+		return super.create(object);
 	}
 
 	/**

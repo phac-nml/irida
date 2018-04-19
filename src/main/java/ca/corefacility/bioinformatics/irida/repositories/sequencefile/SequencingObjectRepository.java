@@ -17,7 +17,7 @@ public interface SequencingObjectRepository extends IridaJpaRepository<Sequencin
 
 	/**
 	 * Get the {@link SequencingObject}s for a given {@link SequencingRun}
-	 * 
+	 *
 	 * @param sequencingRun
 	 *            the {@link SequencingRun}
 	 * @return a set of {@link SequencingObject}
@@ -28,7 +28,7 @@ public interface SequencingObjectRepository extends IridaJpaRepository<Sequencin
 	/**
 	 * Get the {@link SequencingObject}s associated with a given
 	 * {@link AnalysisSubmission}
-	 * 
+	 *
 	 * @param analysisSubmission
 	 *            the {@link AnalysisSubmission}
 	 * @return the set of associated {@link SequencingObject}s
@@ -36,6 +36,13 @@ public interface SequencingObjectRepository extends IridaJpaRepository<Sequencin
 	@Query("select f from SequencingObject f where ?1 IN elements(f.analysisSubmissions)")
 	public Set<SequencingObject> findSequencingObjectsForAnalysisSubmission(AnalysisSubmission analysisSubmission);
 
+	/**
+	 * Get all {@link SequencingObject}s with the given {@link ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject.ProcessingState}
+	 *
+	 * @param processingState the state to get files for
+	 * @return a list of {@link SequencingObject}
+	 */
 	@Query("FROM SequencingObject f where f.processingState = ?1")
-	public List<SequencingObject> getSequencingObjectsWithProcessingState(SequencingObject.ProcessingState processingState);
+	public List<SequencingObject> getSequencingObjectsWithProcessingState(
+			SequencingObject.ProcessingState processingState);
 }
