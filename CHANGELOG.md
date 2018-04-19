@@ -1,6 +1,6 @@
 Changes
 =======
-0.20.0 to 0.21.0
+0.21.0 to 0.22.0
 ----------------
 * [UI]: Fixed bug where `.xls` file could not be uploaded through the file picker on the metadata upload page. (0.21.1)
 
