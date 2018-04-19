@@ -112,6 +112,9 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	@Value("${irida.analysis.cleanup.days}")
 	private Double daysToCleanup;
 
+	/**
+	 * Check for newly uploaded files to process
+	 */
 	@Scheduled(fixedDelay = 5000)
 	public void processFiles(){
 		fileProcessingService.findFilesToProcess();
