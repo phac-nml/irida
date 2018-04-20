@@ -110,6 +110,7 @@ export class Table extends Component {
           getRowNodeId={data => data.code}
           frameworkComponents={this.frameworkComponents}
           loadingOverlayComponent="LoadingOverlay"
+          animateRows={true}
           onGridReady={this.onGridReady}
         />
       </div>
