@@ -4,6 +4,7 @@ Changes
 ----------------
 * [UI]: Fixed bug where `.xls` file could not be uploaded through the file picker on the metadata upload page. (0.21.1)
 * [UI]: Moved the position of the notification system to top center.
+* [Workflow]: Added version 0.3 of a pipeline for running [SISTR](https://github.com/peterk87/sistr_cmd/) which now makes use of [Shovill](https://github.com/tseemann/shovill) for genome assembly.
 
 0.20.0 to 0.21.0
 ----------------
