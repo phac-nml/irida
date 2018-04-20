@@ -1,8 +1,10 @@
-import { call, put } from "redux-saga/effects";
+import { call, put, take } from "redux-saga/effects";
+import { fetchMetadataFields } from "../../apis";
+import { INIT_APP } from "./app";
 
-const LOAD = "linelist/metadata/LOAD_REQUEST";
-const LOAD_ERROR = "linelist/metadata/LOAD_ERROR";
-const LOAD_SUCCESS = "linelist/metadata/LOAD_SUCCESS";
+const LOAD = "linelist/fields/LOAD_REQUEST";
+const LOAD_ERROR = "linelist/fields/LOAD_ERROR";
+const LOAD_SUCCESS = "linelist/fields/LOAD_SUCCESS";
 
 /*
 INITIAL STATE
@@ -10,8 +12,7 @@ INITIAL STATE
 const initialState = {
   fetching: false, // Is the API call currently being made
   error: null, // Was there an error making the api call}
-  fields: null, // List of metadata fields ==> used for table headers
-  entries: null // list of metadata entries ==> table content.
+  fields: null // List of metadata fields ==> used for table headers
 };
 
 /*
@@ -28,16 +29,14 @@ export function reducer(state = initialState, action = {}) {
         ...state,
         fetching: false,
         error: false,
-        fields: action.fields,
-        entries: action.entries
+        fields: action.fields
       };
     case LOAD_ERROR:
       return {
         ...state,
         fetching: false,
         error: true,
-        fields: null,
-        entries: null
+        fields: null
       };
     default:
       return state;
@@ -53,11 +52,10 @@ function load() {
   };
 }
 
-function loadSuccess({ fields, entries }) {
+function loadSuccess({ fields }) {
   return {
     type: LOAD_SUCCESS,
-    fields,
-    entries
+    fields
   };
 }
 
@@ -73,18 +71,15 @@ SAGAS
  */
 
 /**
- * Fetch all the metadata fields and entries required to initialize the table.
- * @param {function} fetchFields api to fetch metadata fields for the project
- * @param {function} fetchEntries api to fetch metadata entries for the project.
- * @param {Number} projectId project identifier
+ * Fetch all the metadata fields required to initialize the table.
  * @returns {IterableIterator<*>}
  */
-export function* metadataLoadingSaga(fetchFields, fetchEntries, projectId) {
+export function* metadataLoadingSaga() {
   try {
+    const { id } = yield take(INIT_APP);
     yield put(load());
-    const { data: fields } = yield call(fetchFields, projectId);
-    const { data: entries } = yield call(fetchEntries, projectId);
-    yield put(loadSuccess({ fields, entries }));
+    const { data: fields } = yield call(fetchMetadataFields, id);
+    yield put(loadSuccess({ fields }));
   } catch (error) {
     yield put(loadError(error));
   }
