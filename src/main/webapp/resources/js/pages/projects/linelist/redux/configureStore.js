@@ -10,9 +10,10 @@ import {
   compose
 } from "redux";
 import createSagaMiddleware from "redux-saga";
+import { initSagas } from "./initSagas";
 
 // Reducers
-import { reducer as metadata } from "./modules/metadata";
+import { reducer as fields } from "./modules/fields";
 
 export default function configureStore(initialSate) {
   /*
@@ -30,12 +31,12 @@ export default function configureStore(initialSate) {
  */
   const sagaMiddleware = createSagaMiddleware();
   const enhancer = composeEnhancers(applyMiddleware(sagaMiddleware));
+  const store = _createStore(
+    combineReducers({ fields }),
+    initialSate,
+    enhancer
+  );
+  initSagas(sagaMiddleware);
 
-  /*
-  Add the saga runner to the configureStore object and return it as a single object.
-   */
-  return {
-    ..._createStore(combineReducers({ metadata }), initialSate, enhancer),
-    runSaga: sagaMiddleware.run
-  };
+  return store;
 }
