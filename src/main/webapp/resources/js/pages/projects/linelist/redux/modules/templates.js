@@ -1,5 +1,6 @@
-import { call, put, takeLatest } from "redux-saga/effects";
+import { call, put, take, takeLatest } from "redux-saga/effects";
 import { fetchTemplates, fetchTemplate } from "../../apis";
+import { INIT_APP } from "./app";
 
 const LOAD = "linelist/templates/LOAD_REQUEST";
 const LOAD_ERROR = "linelist/templates/LOAD_ERROR";
@@ -57,10 +58,11 @@ export const actions = {
   useTemplate: id => ({ type: USE_TEMPLATE, id })
 };
 
-export function* templateLoadingSaga(projectId) {
+export function* templateLoadingSaga(id) {
   try {
+    const { id } = yield take(INIT_APP);
     yield put(load());
-    const { data: templates } = yield call(fetchTemplates, projectId);
+    const { data: templates } = yield call(fetchTemplates, id);
     yield put(loadSuccess(templates));
 
     /*
