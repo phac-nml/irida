@@ -4464,9 +4464,9 @@ normalize-url@^1.4.0:
     query-string "^4.1.0"
     sort-keys "^1.0.0"
 
-noty@v2.4.0:
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/noty/-/noty-2.4.0.tgz#e4eed6afed1661950631b8eed0c7fc23fc02da9a"
+noty@^3.2.0-beta:
+  version "3.2.0-beta"
+  resolved "https://registry.yarnpkg.com/noty/-/noty-3.2.0-beta.tgz#cd1117277a1b83c9b08dfc78f968c6c5960d3cfa"
 
 npm-path@^2.0.2:
   version "2.0.4"
