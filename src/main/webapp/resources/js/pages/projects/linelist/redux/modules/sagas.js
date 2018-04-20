@@ -1,1 +1,2 @@
-export { metadataLoadingSaga } from "./fields";
+export { fieldsLoadingSaga } from "./fields";
+export { entriesLoadingSaga } from "./entries";

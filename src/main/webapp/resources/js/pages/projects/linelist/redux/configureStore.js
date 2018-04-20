@@ -14,6 +14,7 @@ import { initSagas } from "./initSagas";
 
 // Reducers
 import { reducer as fields } from "./modules/fields";
+import { reducer as entries } from "./modules/entries";
 
 export default function configureStore(initialSate) {
   /*
@@ -32,7 +33,7 @@ export default function configureStore(initialSate) {
   const sagaMiddleware = createSagaMiddleware();
   const enhancer = composeEnhancers(applyMiddleware(sagaMiddleware));
   const store = _createStore(
-    combineReducers({ fields }),
+    combineReducers({ fields, entries }),
     initialSate,
     enhancer
   );

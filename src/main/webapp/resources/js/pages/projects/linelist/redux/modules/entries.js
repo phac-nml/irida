@@ -1,10 +1,10 @@
 import { call, put, take } from "redux-saga/effects";
-import { fetchMetadataFields } from "../../apis";
+import { fetchMetadataEntries } from "../../apis";
 import { INIT_APP } from "./app";
 
-const LOAD = "linelist/fields/LOAD_REQUEST";
-const LOAD_ERROR = "linelist/fields/LOAD_ERROR";
-const LOAD_SUCCESS = "linelist/fields/LOAD_SUCCESS";
+const LOAD = "linelist/entries/LOAD_REQUEST";
+const LOAD_ERROR = "linelist/entries/LOAD_ERROR";
+const LOAD_SUCCESS = "linelist/entries/LOAD_SUCCESS";
 
 /*
 INITIAL STATE
@@ -12,13 +12,11 @@ INITIAL STATE
 const initialState = {
   fetching: false, // Is the API call currently being made
   error: null, // Was there an error making the api call}
-  fields: null // List of metadata fields ==> used for table headers
+  entries: null // List of metadata entries
 };
 
 /*
-REDUCERS - Handle updating the state based on the action that is passed.
-This is the **ONLY** place the updates can be made to the state of metadata
-fields and entries.
+REDUCERS
  */
 export function reducer(state = initialState, action = {}) {
   switch (action.type) {
@@ -29,14 +27,14 @@ export function reducer(state = initialState, action = {}) {
         ...state,
         fetching: false,
         error: false,
-        fields: action.fields
+        entries: action.entries
       };
     case LOAD_ERROR:
       return {
         ...state,
         fetching: false,
         error: true,
-        fields: null
+        entries: null
       };
     default:
       return state;
@@ -52,10 +50,10 @@ function load() {
   };
 }
 
-function loadSuccess({ fields }) {
+function loadSuccess({ entries }) {
   return {
     type: LOAD_SUCCESS,
-    fields
+    entries
   };
 }
 
@@ -71,15 +69,15 @@ SAGAS
  */
 
 /**
- * Fetch all the metadata fields required to initialize the table.
+ * Fetch all the metadata entries required to initialize the table.
  * @returns {IterableIterator<*>}
  */
-export function* fieldsLoadingSaga() {
+export function* entriesLoadingSaga() {
   try {
     const { id } = yield take(INIT_APP);
     yield put(load());
-    const { data: fields } = yield call(fetchMetadataFields, id);
-    yield put(loadSuccess({ fields }));
+    const { data: entries } = yield call(fetchMetadataEntries, id);
+    yield put(loadSuccess({ entries }));
   } catch (error) {
     yield put(loadError(error));
   }
