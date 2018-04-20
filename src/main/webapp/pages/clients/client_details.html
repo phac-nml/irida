@@ -4,32 +4,18 @@
       data-layout-decorate="~{clients/_base}">
 <head>
     <title th:text="#{client.details.title(${client.clientId})}">_USER PAGE_</title>
-    <script th:inline="javascript">
-        var PAGE = {
-            buttons: {
-                ok: /*[[#{form.btn.confim}]]*/ 'OK',
-                cancel: /*[[#{form.btn.cancel}]]*/ 'Cancel'
-            },
-            removeNoty: {
-                text: /*[[#{client.remove.confirm(${client.clientId})}]]*/ "Remove client?"
-            },
-            revokeNoty: {
-                text: /*[[#{client.revoke.confirm(${client.clientId})}]]*/ "Revoke tokens?"
-            }
-        };
-    </script>
 </head>
 <body>
 <main layout:fragment="page">
     <h1 th:text="${client.clientId}">_Name_</h1>
-    <div class="row mrgn-tp-lg">
+    <div class="row">
     	<!-- User details -->
     	<div class="col-md-8">
             <div class="sidebar">
                 <div class="sidebar__heading clearfix">
                 	<h2 class="pull-left client-details-heading" th:text="#{client.details.title}">_Client Details_</h2>
 					        <div class="btn-group-xs pull-right">
-				            <div id="remove-btn" class="btn btn-danger" th:text="#{client.remove.button}">Remove</div>
+				            <button id="remove-btn" class="t-client-remove-btn btn btn-danger" data-toggle="modal" data-target="#js-remove-client-modal" th:text="#{client.remove.button}">Remove</button>
                         <a href="#" th:href="@{/clients/{id}/edit(id=${client.getId()})}" id="edit-btn" class="btn btn-default" th:text="#{form.btn.edit}">Edit</a>
                 	</div>
                 </div>
@@ -115,7 +101,9 @@
             <div class="panel-heading clearfix">
               <h3 class="panel-title pull-left" th:text="#{client.details.token.title}">_Tokens_</h3>
               <div class="btn-group-xs pull-right">
-                <button class="btn btn-default btn-xs" id="revoke-btn" th:text="#{client.details.token.revoke}">_Revoke Tokens_</button>
+                <button class="btn btn-default btn-xs" id="revoke-btn"
+                        data-toggle="modal" data-target="#js-revoke-client-modal"
+                        th:text="#{client.details.token.revoke}">_Revoke Tokens_</button>
               </div>
             </div>
             <div class="panel-body">
@@ -133,21 +121,46 @@
           </div>
         </div>
        </div>
-       <section>
-           <form id="removeForm" action="/clients/remove" th:action="@{/clients/remove}" method="POST">
-               <input type="hidden" th:value="${client.getId()}" name="id"/>
-           </form>
-       </section>
-  
-       <section>
-           <form id="revokeForm" action="/clients/revoke" th:action="@{/clients/revoke(id=${client.getId()})}" method="POST">
-               <input type="hidden" th:value="${client.id}" name="id"/>
-           </form>
-       </section>
 </main>
 
 <th:block layout:fragment="page-scripts">
-    <script th:src="@{/resources/js/pages/clients/client_details.js}"></script>
+    <div class="modal fade" id="js-remove-client-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" th:text="#{client.remove.confirm(${client.clientId})}">Modal title</h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" th:text="#{form.btn.cancel}">Close</button>
+
+                    <form id="removeForm" style="display: inline-block;" th:action="@{/clients/remove}" method="POST">
+                        <input type="hidden" th:value="${client.getId()}" name="id"/>
+                        <button type="submit" class="t-confirm-delete js-remove-btn btn btn-primary" th:text="#{form.btn.confim}">REMOVE</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="js-revoke-client-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" th:text="#{client.revoke.confirm(${client.clientId})}">Modal title</h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" th:text="#{form.btn.cancel}">
+                        Close
+                    </button>
+                    <form id="revokeForm" style="display: inline-block;" th:action="@{/clients/revoke(id=${client.getId()})}"
+                          method="POST">
+                        <input type="hidden" th:value="${client.id}" name="id"/>
+                        <button type="submit" class="js-revoke-btn btn btn-primary" th:text="#{form.btn.confim}">REVOKE
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </th:block>
 </body>
 </html>
