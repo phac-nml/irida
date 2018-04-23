@@ -196,11 +196,19 @@ public abstract class SequencingObject extends IridaResourceSupport implements M
 		return processingState;
 	}
 
-	public enum ProcessingState{
+	/**
+	 * The status of the file processing upon upload
+	 */
+	public enum ProcessingState {
+		// newly uploaded, no processing done
 		UNPROCESSED,
+		//picked up by file processor, waiting to process
 		QUEUED,
+		//currently processing
 		PROCESSING,
+		//done processing
 		FINISHED,
+		//error with file processing
 		ERROR
 	}
 }

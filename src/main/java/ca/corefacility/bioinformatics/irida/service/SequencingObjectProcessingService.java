@@ -13,6 +13,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Service used to run a {@link FileProcessingChain} on incoming {@link SequencingObject}s.
+ */
 @Service
 @Scope("singleton")
 public class SequencingObjectProcessingService {
@@ -30,16 +33,22 @@ public class SequencingObjectProcessingService {
 		this.fileProcessingChainExecutor = executor;
 	}
 
+	/**
+	 * Find new {@link SequencingObject}s to process and launch the {@link FileProcessingChain} on them.
+	 */
 	public synchronized void findFilesToProcess() {
+		// find new unprocessed files
 		List<SequencingObject> toProcess = sequencingObjectRepository
 				.getSequencingObjectsWithProcessingState(SequencingObject.ProcessingState.UNPROCESSED);
 
+		// set their state to queued
 		for (SequencingObject process : toProcess) {
 			process.setProcessingState(SequencingObject.ProcessingState.QUEUED);
 
 			sequencingObjectRepository.save(process);
 		}
 
+		// loop through the files and launch the file processing chain
 		for (SequencingObject process : toProcess) {
 			fileProcessingChainExecutor.execute(new SequenceFileProcessorLauncher(fileProcessingChain, process.getId(),
 					SecurityContextHolder.getContext()));
