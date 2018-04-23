@@ -44,7 +44,6 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 /**
  * Config for only activating scheduled tasks in certain profiles.
  */
-@Profile({ "prod" })
 @Configuration
 @EnableScheduling
 @Import({ AnalysisScheduledTaskConfig.class, EmailScheduledTaskConfig.class, FileProcessingScheduledTaskConfig.class,

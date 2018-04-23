@@ -3,11 +3,13 @@ package ca.corefacility.bioinformatics.irida.config.services.scheduled;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectSynchronizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 
 /**
  * Scheduled task configuration for synchronizing projects from other IRIDA installations
  */
+@Profile({ "prod" })
 @Configuration
 public class ProjectSyncScheduledTaskConfig {
 

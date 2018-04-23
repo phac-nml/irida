@@ -3,11 +3,13 @@ package ca.corefacility.bioinformatics.irida.config.services.scheduled;
 import ca.corefacility.bioinformatics.irida.service.ProjectEventEmailScheduledTask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 
 /**
  * Scheduled taks configuration for sending digest emails
  */
+@Profile({ "prod" })
 @Configuration
 public class EmailScheduledTaskConfig {
 

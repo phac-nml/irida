@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.time.Duration;
@@ -23,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Scheduled task configuration for running analysis pipelines
  */
+@Profile({ "prod" })
 @Configuration
 public class AnalysisScheduledTaskConfig {
 
