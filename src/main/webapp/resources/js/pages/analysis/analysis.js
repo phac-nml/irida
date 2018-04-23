@@ -175,7 +175,11 @@ function ProjectShareController(AnalysisService) {
 
   vm.saveResults = function() {
     AnalysisService.saveResults().then(function(response) {
-      showNotification({ text: response.message });
+      if (response.result === "success") {
+        showNotification({ text: response.message });
+      } else {
+        showErrorNotification({ text: response.message });
+      }
     });
   };
 

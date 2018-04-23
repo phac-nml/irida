@@ -561,7 +561,8 @@ public class AnalysisController {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 
 		if(submission.getUpdateSamples()){
-			throw new IllegalArgumentException("Analysis result is already saved to the samples");
+			String message = messageSource.getMessage("analysis.details.save.alreadysavederror", null, locale);
+			return ImmutableMap.of("result", "error", "message", message);
 		}
 
 		try {
@@ -570,7 +571,8 @@ public class AnalysisController {
 			submission.setUpdateSamples(true);
 			analysisSubmissionService.update(submission);
 		} catch (PostProcessingException e) {
-			return ImmutableMap.of("result", "error");
+			String message = messageSource.getMessage("analysis.details.save.processingerror", null, locale);
+			return ImmutableMap.of("result", "error", "message", message);
 		}
 
 		String message = messageSource.getMessage("analysis.details.save.response", null, locale);
