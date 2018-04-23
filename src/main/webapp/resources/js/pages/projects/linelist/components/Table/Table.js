@@ -1,36 +1,66 @@
-import React from "react";
+import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid/dist/styles/ag-grid.css";
 import "ag-grid/dist/styles/ag-theme-balham.css";
 
-import LoadingOverlay from "../../../../../modules/agGrid/LoadingOverlay";
+import { LoadingOverlay } from "../LoadingOverlay";
+import { SampleNameRenderer } from "./renderers/SampleNameRenderer";
 
 const localeText = window.PAGE.i18n.agGrid;
 
-export const Table = props => {
-  const { fields } = props;
+export class Table extends Component {
+  frameworkComponents = { LoadingOverlay, SampleNameRenderer };
 
-  const containerStyle = {
-    boxSizing: "border-box",
-    height: 600,
-    width: "100%"
-  };
+  constructor(props) {
+    super(props);
 
-  const frameworkComponents = { LoadingOverlay };
+    this.state = {
+      entries: props.entries,
+      fields: props.fields
+    };
 
-  return (
-    <div style={containerStyle} className="ag-theme-balham">
-      <AgGridReact
-        localeText={localeText}
-        columnDefs={fields}
-        deltaRowDataMode={true}
-        frameworkComponents={frameworkComponents}
-        loadingOverlayComponent="LoadingOverlay"
-      />
-    </div>
-  );
-};
+    this.onGridReady = this.onGridReady.bind(this);
+  }
+
+  /*
+  Allow access to the grids API
+   */
+  onGridReady(params) {
+    this.api = params.api;
+    this.columnApi = params.columnApi;
+  }
+
+  componentWillReceiveProps(nextProps) {
+    console.log(nextProps);
+    if (nextProps.entries !== null) {
+      this.setState({ entries: nextProps.entries });
+    }
+  }
+
+  render() {
+    const containerStyle = {
+      boxSizing: "border-box",
+      height: 600,
+      width: "100%"
+    };
+
+    return (
+      <div style={containerStyle} className="ag-theme-balham">
+        <AgGridReact
+          localeText={localeText}
+          columnDefs={this.state.fields}
+          rowData={this.state.entries}
+          deltaRowDataMode={true}
+          getRowNodeId={data => data.code}
+          frameworkComponents={this.frameworkComponents}
+          loadingOverlayComponent="LoadingOverlay"
+          onGridReady={this.onGridReady}
+        />
+      </div>
+    );
+  }
+}
 
 Table.propTypes = {
   fields: PropTypes.array.isRequired,

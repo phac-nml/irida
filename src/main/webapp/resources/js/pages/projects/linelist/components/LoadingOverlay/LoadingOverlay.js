@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Spin } from "antd";
 
 const { loading } = window.PAGE.i18n.agGrid;
-export default class LoadingOverlay extends Component {
+export class LoadingOverlay extends Component {
   render() {
     if (typeof loading === "undefined") {
       throw new Error(

@@ -15,15 +15,26 @@ const initialState = {
   fields: null // List of metadata fields ==> used for table headers
 };
 
+/*
+Special handler for formatting the sample Name Column;
+ */
+const sampleNameColumn = {
+  sort: "asc",
+  pinned: "left",
+  lockPosition: true,
+  cellRenderer: "SampleNameRenderer"
+};
+
 /**
- * Fields need to be formatted properly to go into the column headers.
+ * Format the column definitions.
  * @param {array} cols
  * @returns {*}
  */
 const formatColumns = cols =>
-  cols.map(f => ({
+  cols.map((f, i) => ({
     field: f.label,
-    headerName: f.label.toUpperCase()
+    headerName: f.label.toUpperCase(),
+    ...(i === 0 ? sampleNameColumn : {})
   }));
 
 /*
