@@ -15,6 +15,23 @@ const initialState = {
   entries: null // List of metadata entries
 };
 
+/**
+ * Format the row data.
+ * Row should be {key: value}
+ * @param {array} rows
+ */
+const formatRows = rows => {
+  if (rows !== null) {
+    return rows.map(r => {
+      const row = {};
+      Object.keys(r).forEach(item => {
+        row[item] = r[item].value;
+      });
+      return row;
+    });
+  }
+};
+
 /*
 REDUCERS
  */
@@ -76,7 +93,8 @@ export function* entriesLoadingSaga() {
   try {
     const { id } = yield take(INIT_APP);
     yield put(load());
-    const { data: entries } = yield call(fetchMetadataEntries, id);
+    const { data } = yield call(fetchMetadataEntries, id);
+    const entries = formatRows(data);
     yield put(loadSuccess({ entries }));
   } catch (error) {
     yield put(loadError(error));

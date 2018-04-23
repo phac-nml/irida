@@ -16,6 +16,28 @@ const initialState = {
 };
 
 /*
+Special handler for formatting the sample Name Column;
+ */
+const sampleNameColumn = {
+  sort: "asc",
+  pinned: "left",
+  lockPosition: true,
+  cellRenderer: "SampleNameRenderer"
+};
+
+/**
+ * Format the column definitions.
+ * @param {array} cols
+ * @returns {*}
+ */
+const formatColumns = cols =>
+  cols.map((f, i) => ({
+    field: f.label,
+    headerName: f.label.toUpperCase(),
+    ...(i === 0 ? sampleNameColumn : {})
+  }));
+
+/*
 REDUCERS - Handle updating the state based on the action that is passed.
 This is the **ONLY** place the updates can be made to the state of metadata
 fields and entries.
@@ -78,7 +100,8 @@ export function* fieldsLoadingSaga() {
   try {
     const { id } = yield take(INIT_APP);
     yield put(load());
-    const { data: fields } = yield call(fetchMetadataFields, id);
+    const { data } = yield call(fetchMetadataFields, id);
+    const fields = formatColumns(data);
     yield put(loadSuccess({ fields }));
   } catch (error) {
     yield put(loadError(error));
