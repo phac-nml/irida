@@ -15,6 +15,17 @@ const initialState = {
   fields: null // List of metadata fields ==> used for table headers
 };
 
+/**
+ * Fields need to be formatted properly to go into the column headers.
+ * @param {array} cols
+ * @returns {*}
+ */
+const formatColumns = cols =>
+  cols.map(f => ({
+    field: f.label,
+    headerName: f.label.toUpperCase()
+  }));
+
 /*
 REDUCERS - Handle updating the state based on the action that is passed.
 This is the **ONLY** place the updates can be made to the state of metadata
@@ -78,7 +89,8 @@ export function* metadataLoadingSaga() {
   try {
     const { id } = yield take(INIT_APP);
     yield put(load());
-    const { data: fields } = yield call(fetchMetadataFields, id);
+    const { data } = yield call(fetchMetadataFields, id);
+    const fields = formatColumns(data);
     yield put(loadSuccess({ fields }));
   } catch (error) {
     yield put(loadError(error));

@@ -2,7 +2,7 @@ import React from "react";
 import { Alert } from "antd";
 
 const { message, description } = window.PAGE.i18n.Loader;
-const Loader = () => (
+export const Loader = () => (
   <Alert
     message={message}
     description={description}
@@ -11,5 +11,3 @@ const Loader = () => (
     showIcon
   />
 );
-
-export default Loader;

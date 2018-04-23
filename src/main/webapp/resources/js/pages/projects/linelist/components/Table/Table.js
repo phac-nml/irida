@@ -4,17 +4,11 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid/dist/styles/ag-grid.css";
 import "ag-grid/dist/styles/ag-theme-balham.css";
 
-import LoadingOverlay from "../../../../modules/agGrid/LoadingOverlay";
+import LoadingOverlay from "../../../../../modules/agGrid/LoadingOverlay";
 
 const localeText = window.PAGE.i18n.agGrid;
 
-const formatColumns = cols =>
-  cols.map(f => ({
-    field: f.label,
-    headerName: f.label.toUpperCase()
-  }));
-
-const Table = props => {
+export const Table = props => {
   const { fields } = props;
 
   const containerStyle = {
@@ -29,7 +23,7 @@ const Table = props => {
     <div style={containerStyle} className="ag-theme-balham">
       <AgGridReact
         localeText={localeText}
-        columnDefs={formatColumns(fields)}
+        columnDefs={fields}
         deltaRowDataMode={true}
         frameworkComponents={frameworkComponents}
         loadingOverlayComponent="LoadingOverlay"
@@ -42,5 +36,3 @@ Table.propTypes = {
   fields: PropTypes.array.isRequired,
   entries: PropTypes.array
 };
-
-export default Table;
