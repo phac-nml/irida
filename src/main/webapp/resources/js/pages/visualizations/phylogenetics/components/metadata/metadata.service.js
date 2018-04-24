@@ -26,7 +26,7 @@ const formatMetadata = (metadata, metadataFieldLabels) => {
         // If not, get it a new one.
         colourMap[field] = colourMap[field] || {};
         colourMap[field][metadataLabel] =
-          colourMap[field][metadataLabel] || chroma.random();
+          colourMap[field][metadataLabel] || chroma.random().hex();
         result[sampleName][field] = {
           label: metadataLabel,
           colour: colourMap[field][metadataLabel]
