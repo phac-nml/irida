@@ -6,7 +6,7 @@ const renderSelect = props => (
   <Select
     defaultValue={"" + props.current}
     style={{ width: 250 }}
-    onSelect={id => props.useTemplate(id)}
+    onSelect={id => props.fetchTemplate(id)}
   >
     <Option value="-1">_None_</Option>
     {props.templates.map(t => (
