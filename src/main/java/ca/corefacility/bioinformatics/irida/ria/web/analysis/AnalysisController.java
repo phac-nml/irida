@@ -721,7 +721,12 @@ public class AnalysisController {
 		return result;
 	}
 
-
+	/**
+	 * Get the bio_hansel tech results information to display
+	 *
+	 * @param id ID of the analysis submission
+	 * @return Json results for the bio_hansel analysis
+	 */
 	@SuppressWarnings("resource")
 	@RequestMapping("/ajax/bio_hansel/{id}") @ResponseBody public Map<String,List<Map<String,Object>>> getBioHanselAnalysis(@PathVariable Long id) {
 		AnalysisSubmission submission = analysisSubmissionService.read(id);
@@ -744,7 +749,7 @@ public class AnalysisController {
 		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription().getAnalysisType();
 		if (analysisType.equals(AnalysisType.SNV_SUBTYPING_COLLECTION)) {
 
-			Analysis analysis = submission.getAnalysis(); // Needed to get the tech_file_key which needs to be implemented later
+			Analysis analysis = submission.getAnalysis();
             ObjectMapper mapper = new ObjectMapper();
             List<Map<String,Object>> techResults;
 			Path techPath = Paths.get(""); //Init to pwd, in the very unlikely event we can't get the path.
