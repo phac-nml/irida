@@ -3,6 +3,7 @@ Changes
 0.20.0 to 0.21.0
 ----------------
 * [UI]: Fixed bug where `.xls` file could not be uploaded through the file picker on the metadata upload page. (0.21.1)
+* [UI]: Fixed bug where concatenate files was POSTing to incorrect URL. (0.21.2)
 * [UI]: Fixed bug where SVG files could not be exported through the advanced visualization page. (0.21.2)
 * [UI]: Fixed bug where users could not share more than nine samples. (0.21.2)
 
