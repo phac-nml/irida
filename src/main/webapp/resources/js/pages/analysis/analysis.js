@@ -140,6 +140,16 @@ function AnalysisService($http) {
     });
   };
 
+  /**
+   * Call the server to save results of a pipeline to the samples
+   */
+  svc.saveResults = function() {
+    angular.element("#save-to-samples").prop("disabled", true);
+    return $http.post(window.PAGE.URLS.saveResults).then(function(response) {
+      return response.data;
+    });
+  };
+
   return svc;
 }
 
@@ -160,6 +170,16 @@ function ProjectShareController(AnalysisService) {
       project.shared
     ).then(function(response) {
       showNotification({ text: response.message });
+    });
+  };
+
+  vm.saveResults = function() {
+    AnalysisService.saveResults().then(function(response) {
+      if (response.result === "success") {
+        showNotification({ text: response.message });
+      } else {
+        showErrorNotification({ text: response.message });
+      }
     });
   };
 
