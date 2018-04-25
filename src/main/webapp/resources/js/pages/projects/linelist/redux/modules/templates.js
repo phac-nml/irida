@@ -10,7 +10,8 @@ const LOAD_TEMPLATES_SUCCESS = "linelist/templates/LOAD_TEMPLATES_SUCCESS";
 SPECIFIC TEMPLATES
  */
 const FETCH_TEMPLATE = "linelist/templates/FETCH_TEMPLATE";
-const TEMPLATE_FETCH_SUCCESS = "linelist/templates/TEMPLATE_FETCH_SUCCESS";
+export const TEMPLATE_FETCH_SUCCESS =
+  "linelist/templates/TEMPLATE_FETCH_SUCCESS";
 
 const initialState = {
   fetching: false,
