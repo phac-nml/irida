@@ -294,6 +294,10 @@ To save analysis results back to a sample, on submission of a pipeline please se
 
 ![save-results-to-samples](images/save-results-to-samples.png)
 
+Results can also be saved after a pipeline has completed.  To save analysis results after the pipeline has finished, click the `Share Results` tab on the pipeline results page.  If you are able to save the analysis results back to the sample, a `Save Results` section will be displayed.  Click the button to save the results to the related samples.
+
+![save-results-to-samples-after](images/save-results-to-samples-after.png)
+
 ## Errors when executing pipelines
 
 You may experience an analysis pipeline execution failure caused by an error in one or more tools within a pipeline.

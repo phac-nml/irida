@@ -1,5 +1,10 @@
 Changes
 =======
+0.21.0 to 0.22.0
+----------------
+* [UI]: Fixed bug where `.xls` file could not be uploaded through the file picker on the metadata upload page. (0.21.1)
+* [UI]: Moved the position of the notification system to top center.
+* [UI]: Users can save analysis results to samples after pipeline is done in "Share Results" tab.
 
 0.20.0 to 0.21.0
 ----------------
@@ -69,6 +74,7 @@ Changes
 * [UI]: Fixed issue with exporting `csv` and `excel` from Project > Samples pages (0.18.5).
 * [UI]: Fixed bug with importing large `excel` file that contained columns with only a header and no other data in column.
 * [UI]: Fixed project sync settings from resetting themselves.
+* [UI]: Removed `anugular-animate`.
 
 0.17.0 to 0.18.0
 ----------------
