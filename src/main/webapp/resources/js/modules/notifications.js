@@ -33,8 +33,7 @@ const defaultConfig = {
 const defaultErrorConfig = Object.assign({}, defaultConfig, {
   timeout: false,
   progressBar: false,
-  type: "error",
-  closeWith: ["button"]
+  type: "error"
 });
 
 /**
