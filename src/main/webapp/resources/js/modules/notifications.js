@@ -53,7 +53,7 @@ export function showNotification(params) {
  * @param params Object with `text` key containing error info, and overrides to default parameters.
  */
 export function showErrorNotification(params) {
-  return noty(Object.assign({}, defaultErrorConfig, params));
+  return new Noty(Object.assign({}, defaultErrorConfig, params)).show();
 }
 
 // TODO: Remove this after all notification usages are through a webpack bundle.
