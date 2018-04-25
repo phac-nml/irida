@@ -1,7 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages;
 
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
@@ -13,8 +14,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
 
 /**
  * <p>
@@ -78,7 +79,7 @@ public class ProjectMembersPage extends AbstractPage {
 		boolean present = false;
 		try {
 			(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
-					.className("noty_type_success")));
+					.className("noty_type__success")));
 			present = true;
 		} catch (NoSuchElementException e) {
 			present = false;
