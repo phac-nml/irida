@@ -35,6 +35,10 @@ export class Table extends Component {
     if (nextProps.entries !== null) {
       this.setState({ entries: nextProps.entries });
     }
+
+    if (nextProps.fields) {
+      this.setState({ fields: nextProps.fields });
+    }
   }
 
   render() {

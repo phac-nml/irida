@@ -16,6 +16,7 @@ export const TEMPLATE_FETCH_SUCCESS =
 const initialState = {
   fetching: false,
   error: null,
+  modified: false,
   templates: [],
   current: -1,
   loadingTemplate: false,
