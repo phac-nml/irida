@@ -1,0 +1,363 @@
+{
+    "a_galaxy_workflow": "true",
+    "annotation": "",
+    "format-version": "0.1",
+    "name": "Bio_Hansel",
+    "steps": {
+        "0": {
+            "annotation": "",
+            "content_id": null,
+            "id": 0,
+            "input_connections": {},
+            "inputs": [
+                {
+                    "description": "",
+                    "name": "sequence_reads_paired"
+                }
+            ],
+            "label": null,
+            "name": "Input dataset collection",
+            "outputs": [],
+            "position": {
+                "left": 252,
+                "top": 203
+            },
+            "tool_errors": null,
+            "tool_id": null,
+            "tool_state": "{\"collection_type\": \"list:paired\", \"name\": \"sequence_reads_paired\"}",
+            "tool_version": null,
+            "type": "data_collection_input",
+            "uuid": "2ff53d8f-e988-4344-9179-f1439f6f0d64",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "output",
+                    "uuid": "f3002491-5a5c-4168-892a-27d9d6261872"
+                }
+            ]
+        },
+        "1": {
+            "annotation": "",
+            "content_id": "toolshed.g2.bx.psu.edu/repos/nml/bio_hansel/bio_hansel/1.3.1",
+            "id": 1,
+            "input_connections": {
+                "data_type|fastq_input1": {
+                    "id": 0,
+                    "output_name": "output"
+                }
+            },
+            "inputs": [
+                {
+                    "description": "runtime parameter for tool Bio Hansel",
+                    "name": "data_type"
+                }
+            ],
+            "label": null,
+            "name": "Bio Hansel",
+            "outputs": [
+                {
+                    "name": "results.tab",
+                    "type": "tabular"
+                },
+                {
+                    "name": "match_results.tab",
+                    "type": "tabular"
+                },
+                {
+                    "name": "tech_results.tab",
+                    "type": "tabular"
+                },
+                {
+                    "name": "results.json",
+                    "type": "json"
+                },
+                {
+                    "name": "match_results.json",
+                    "type": "json"
+                },
+                {
+                    "name": "tech_results.json",
+                    "type": "json"
+                }
+            ],
+            "position": {
+                "left": 521.5,
+                "top": 197
+            },
+            "post_job_actions": {
+                "HideDatasetActionmatch_results.json": {
+                    "action_arguments": {},
+                    "action_type": "HideDatasetAction",
+                    "output_name": "match_results.json"
+                },
+                "HideDatasetActionmatch_results.tab": {
+                    "action_arguments": {},
+                    "action_type": "HideDatasetAction",
+                    "output_name": "match_results.tab"
+                },
+                "HideDatasetActionresults.json": {
+                    "action_arguments": {},
+                    "action_type": "HideDatasetAction",
+                    "output_name": "results.json"
+                },
+                "HideDatasetActionresults.tab": {
+                    "action_arguments": {},
+                    "action_type": "HideDatasetAction",
+                    "output_name": "results.tab"
+                },
+                "HideDatasetActiontech_results.json": {
+                    "action_arguments": {},
+                    "action_type": "HideDatasetAction",
+                    "output_name": "tech_results.json"
+                },
+                "HideDatasetActiontech_results.tab": {
+                    "action_arguments": {},
+                    "action_type": "HideDatasetAction",
+                    "output_name": "tech_results.tab"
+                }
+            },
+            "tool_errors": null,
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/bio_hansel/bio_hansel/1.3.1",
+            "tool_shed_repository": {
+                "changeset_revision": "e9fd173fc7ee",
+                "name": "bio_hansel",
+                "owner": "nml",
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            },
+            "tool_state": "{\"qc_vals\": \"{\\\"min_ambiguous_tiles\\\": \\\"3\\\", \\\"max_missing_tiles\\\": \\\"0.05\\\", \\\"low_cov_depth_freq\\\": \\\"20\\\", \\\"low_coverage_warning\\\": \\\"20\\\", \\\"max_intermediate_tiles\\\": \\\"0.05\\\"}\", \"kmer_vals\": \"{\\\"kmer_min\\\": \\\"8\\\", \\\"kmer_max\\\": \\\"1000\\\"}\", \"data_type\": \"{\\\"type\\\": \\\"collection\\\", \\\"__current_case__\\\": 2, \\\"fastq_input1\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}}\", \"__page__\": 0, \"type_of_scheme\": \"{\\\"scheme_type\\\": \\\"heidelberg\\\", \\\"__current_case__\\\": 0}\", \"__rerun_remap_job_id__\": null, \"dev_args\": \"{\\\"use_json\\\": \\\"yes\\\"}\"}",
+            "tool_version": "1.3.1",
+            "type": "tool",
+            "uuid": "e4d2da5b-3578-4c20-b3ee-562c9b369eb4",
+            "workflow_outputs": []
+        },
+        "2": {
+            "annotation": "",
+            "content_id": "toolshed.g2.bx.psu.edu/repos/nml/combine_tabular_collection/combine/0.1",
+            "id": 2,
+            "input_connections": {
+                "texts": {
+                    "id": 1,
+                    "output_name": "results.tab"
+                }
+            },
+            "inputs": [
+                {
+                    "description": "runtime parameter for tool Combine",
+                    "name": "texts"
+                }
+            ],
+            "label": null,
+            "name": "Combine",
+            "outputs": [
+                {
+                    "name": "output",
+                    "type": "tabular"
+                }
+            ],
+            "position": {
+                "left": 786.5,
+                "top": 195.5
+            },
+            "post_job_actions": {
+                "RenameDatasetActionoutput": {
+                    "action_arguments": {
+                        "newname": "hansel_results.tab"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "output"
+                }
+            },
+            "tool_errors": null,
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/combine_tabular_collection/combine/0.1",
+            "tool_shed_repository": {
+                "changeset_revision": "b815081988b5",
+                "name": "combine_tabular_collection",
+                "owner": "nml",
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            },
+            "tool_state": "{\"texts\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}",
+            "tool_version": "0.1",
+            "type": "tool",
+            "uuid": "487675e4-67c2-4939-9603-d11e4643dff1",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "output",
+                    "uuid": "37fc6ea7-3369-4234-9eac-025dce061670"
+                }
+            ]
+        },
+        "3": {
+            "annotation": "",
+            "content_id": "toolshed.g2.bx.psu.edu/repos/nml/collapse_collections/collapse_dataset/4.0",
+            "id": 3,
+            "input_connections": {
+                "input_list": {
+                    "id": 1,
+                    "output_name": "match_results.tab"
+                }
+            },
+            "inputs": [
+                {
+                    "description": "runtime parameter for tool Collapse Collection",
+                    "name": "input_list"
+                }
+            ],
+            "label": null,
+            "name": "Collapse Collection",
+            "outputs": [
+                {
+                    "name": "output",
+                    "type": "input"
+                }
+            ],
+            "position": {
+                "left": 784,
+                "top": 337
+            },
+            "post_job_actions": {
+                "RenameDatasetActionoutput": {
+                    "action_arguments": {
+                        "newname": "hansel_match_results.tab"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "output"
+                }
+            },
+            "tool_errors": null,
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/collapse_collections/collapse_dataset/4.0",
+            "tool_shed_repository": {
+                "changeset_revision": "25136a2b0cfe",
+                "name": "collapse_collections",
+                "owner": "nml",
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            },
+            "tool_state": "{\"__page__\": 0, \"__rerun_remap_job_id__\": null, \"input_list\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"one_header\": \"\\\"true\\\"\", \"filename\": \"{\\\"add_name\\\": \\\"true\\\", \\\"__current_case__\\\": 0, \\\"place_name\\\": \\\"above\\\"}\"}",
+            "tool_version": "4.0",
+            "type": "tool",
+            "uuid": "7fe52440-8dec-4973-bf1f-d5c714a00a67",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "output",
+                    "uuid": "55f53ccb-62f9-4a51-8274-c4b3086c73c8"
+                }
+            ]
+        },
+        "4": {
+            "annotation": "",
+            "content_id": "toolshed.g2.bx.psu.edu/repos/nml/collapse_collections/collapse_dataset/4.0",
+            "id": 4,
+            "input_connections": {
+                "input_list": {
+                    "id": 1,
+                    "output_name": "tech_results.tab"
+                }
+            },
+            "inputs": [
+                {
+                    "description": "runtime parameter for tool Collapse Collection",
+                    "name": "input_list"
+                }
+            ],
+            "label": null,
+            "name": "Collapse Collection",
+            "outputs": [
+                {
+                    "name": "output",
+                    "type": "input"
+                }
+            ],
+            "position": {
+                "left": 787,
+                "top": 461
+            },
+            "post_job_actions": {
+                "RenameDatasetActionoutput": {
+                    "action_arguments": {
+                        "newname": "hansel_tech_results.tab"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "output"
+                }
+            },
+            "tool_errors": null,
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/collapse_collections/collapse_dataset/4.0",
+            "tool_shed_repository": {
+                "changeset_revision": "25136a2b0cfe",
+                "name": "collapse_collections",
+                "owner": "nml",
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            },
+            "tool_state": "{\"__page__\": 0, \"__rerun_remap_job_id__\": null, \"input_list\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"one_header\": \"\\\"true\\\"\", \"filename\": \"{\\\"add_name\\\": \\\"true\\\", \\\"__current_case__\\\": 0, \\\"place_name\\\": \\\"same_once\\\"}\"}",
+            "tool_version": "4.0",
+            "type": "tool",
+            "uuid": "502f2f1e-77a5-4073-a6ae-dcf396f3402a",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "output",
+                    "uuid": "0588f54b-706d-4c2b-b601-a838c64aa408"
+                }
+            ]
+        },
+        "5": {
+            "annotation": "",
+            "content_id": "toolshed.g2.bx.psu.edu/repos/nml/combine_json/combine_json/0.1",
+            "id": 5,
+            "input_connections": {
+                "json_files": {
+                    "id": 1,
+                    "output_name": "tech_results.json"
+                }
+            },
+            "inputs": [
+                {
+                    "description": "runtime parameter for tool Combine Json",
+                    "name": "json_files"
+                }
+            ],
+            "label": null,
+            "name": "Combine Json",
+            "outputs": [
+                {
+                    "name": "jsoncombined.json",
+                    "type": "json"
+                }
+            ],
+            "position": {
+                "left": 788,
+                "top": 588
+            },
+            "post_job_actions": {
+                "RenameDatasetActionjsoncombined.json": {
+                    "action_arguments": {
+                        "newname": "hansel_tech_json_results.json"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "jsoncombined.json"
+                }
+            },
+            "tool_errors": null,
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/combine_json/combine_json/0.1",
+            "tool_shed_repository": {
+                "changeset_revision": "661bc10b0612",
+                "name": "combine_json",
+                "owner": "nml",
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            },
+            "tool_state": "{\"json_files\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__page__\": 0, \"__rerun_remap_job_id__\": null}",
+            "tool_version": "0.1",
+            "type": "tool",
+            "uuid": "e481424e-4213-45aa-a6be-bdc0ae71b00f",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "jsoncombined.json",
+                    "uuid": "2c3c8f93-b0e6-4151-9460-4239b78cb323"
+                }
+            ]
+        }
+    },
+    "uuid": "ef6cf1e3-c8ee-4d3c-806a-9731d5ea1e9c"
+}
