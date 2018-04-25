@@ -1,4 +1,0 @@
-Sample	sample	subtype	avg_tile_coverage	qc_status	qc_message
-SRR10052	SRR10052	2.2.2.2.1.4	49.766	PASS	
-Inconsistent_Reads_Sample	Inconsistent_Reads_Sample		60.000	FAIL	No subtype result!
-10-1358	10-1358	1	39.006	FAIL	"FAIL: Missing Tiles Error 1: 25.25% missing tiles; more than 5.00% missing tiles threshold. Okay coverage depth (41.3 >= 20.0 expected), but this may be the wrong serovar or species for scheme ""heidelberg"""
