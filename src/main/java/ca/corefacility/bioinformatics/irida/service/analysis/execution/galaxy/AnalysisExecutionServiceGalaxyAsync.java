@@ -223,6 +223,7 @@ public class AnalysisExecutionServiceGalaxyAsync {
 	 * @return a Future {@link AnalysisSubmission}
 	 */
 	@Transactional
+	@RunAsUser("#analysisSubmission.getSubmitter()")
 	public Future<AnalysisSubmission> postProcessResults(AnalysisSubmission analysisSubmission) {
 		checkNotNull(analysisSubmission, "submittedAnalysis is null");
 
