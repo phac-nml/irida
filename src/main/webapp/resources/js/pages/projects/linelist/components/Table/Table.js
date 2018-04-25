@@ -32,7 +32,6 @@ export class Table extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log(nextProps);
     if (nextProps.entries !== null) {
       this.setState({ entries: nextProps.entries });
     }
