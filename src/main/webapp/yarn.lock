@@ -3610,10 +3610,6 @@ jquery-validation@^1.17.0:
   dependencies:
     jquery "^1.7 || ^2.0 || ^3.1"
 
-jquery.tabulator@^3.3.2:
-  version "3.3.2"
-  resolved "https://registry.yarnpkg.com/jquery.tabulator/-/jquery.tabulator-3.3.2.tgz#c80046736d080ccf096539c108debdaf8cd66325"
-
 jquery@>=1.10, jquery@>=1.11.0, jquery@>=1.7, jquery@>=1.9.0, "jquery@^1.7 || ^2.0 || ^3.1", jquery@^3.2.1:
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.3.1.tgz#958ce29e81c9790f31be7792df5d4d95fc57fbca"

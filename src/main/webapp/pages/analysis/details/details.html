@@ -28,8 +28,6 @@
 
 <body>
 <main layout:fragment="main">
-
-
 		<div class="row">
 			<div class="col-md-11 ng-cloak">
 				<h1>
@@ -228,7 +226,6 @@
             <script th:if="${biohansel}"  type="text/ng-template" id="biohansel.html">
 				<th:block th:replace="analysis/details/fragments/biohansel-table :: #biohansel-table"/>
             </script>
-
 
 			<script th:if="${biohanselerror}" type="text/ng-template" id="biohanselerror.html">
 				<div>
