@@ -189,7 +189,7 @@ public class IridaApiServicesConfig {
 
 	@Bean(name = "fileProcessingChainExecutor")
 	@Profile({ "dev", "prod" })
-	public TaskExecutor fileProcessingChainExecutor() {
+	public ThreadPoolTaskExecutor fileProcessingChainExecutor() {
 		ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
 		taskExecutor.setCorePoolSize(fpCoreSize);
 		taskExecutor.setMaxPoolSize(fpMaxSize);
