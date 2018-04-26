@@ -110,12 +110,12 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 							+ "file would not be modified by the processor. Stack trace follows.", e);
 				}
 			}
-
-			statusObject = sequencingObjectRepository.findOne(sequencingObjectId);
-
-			statusObject.setProcessingState(SequencingObject.ProcessingState.FINISHED);
-			sequencingObjectRepository.save(statusObject);
 		}
+
+		statusObject = sequencingObjectRepository.findOne(sequencingObjectId);
+
+		statusObject.setProcessingState(SequencingObject.ProcessingState.FINISHED);
+		sequencingObjectRepository.save(statusObject);
 
 		return ignoredExceptions;
 	}
