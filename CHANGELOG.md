@@ -4,11 +4,12 @@ Changes
 ----------------
 * [UI]: Fixed bug where `.xls` file could not be uploaded through the file picker on the metadata upload page. (0.21.1)
 * [UI]: Moved the position of the notification system to top center.
+* [Workflow]: Added version 0.1 of a pipeline for running [bio_hansel](https://github.com/phac-nml/bio_hansel) (version 1.3.1)
 
 0.20.0 to 0.21.0
 ----------------
-* [Workflow]: Added version 0.1 of a pipeline for runing [MentaLiST](https://github.com/WGS-TB/MentaLiST) (version 0.1.3).
-* [Workflow]: Added version 0.1 of a pipeline for runing Mash against the refseq database [refseq_masher](https://github.com/phac-nml/refseq_masher).
+* [Workflow]: Added version 0.1 of a pipeline for running [MentaLiST](https://github.com/WGS-TB/MentaLiST) (version 0.1.3).
+* [Workflow]: Added version 0.1 of a pipeline for running Mash against the refseq database [refseq_masher](https://github.com/phac-nml/refseq_masher).
 * [UI]: Fixed bug where user could not cancel the upload of a sequence file on the Sample Files page.
 * [UI/Workflow]: Fixed bug where users could not submit large analyses due to an HTTP 414 "Request URI Too Long" error.
 * [Developer]: Removed old gulp dependencies from the `package.json` file.
