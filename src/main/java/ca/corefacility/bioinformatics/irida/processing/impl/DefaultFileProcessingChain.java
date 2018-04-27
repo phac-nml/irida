@@ -179,11 +179,13 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 			}
 
 			sequencingObject = sequencingObjectRepository.findOne(sequencingObjectId);
-			Set<SequenceFile> files = sequencingObject.getFiles();
 
-			filesNotSettled = files.stream().anyMatch(f -> {
-				return !Files.exists(f.getFile());
-			});
+			if(sequencingObject != null) {
+				Set<SequenceFile> files = sequencingObject.getFiles();
+				filesNotSettled = files.stream().anyMatch(f -> {
+					return !Files.exists(f.getFile());
+				});
+			}
 		} while (filesNotSettled);
 
 		return sequencingObject;
