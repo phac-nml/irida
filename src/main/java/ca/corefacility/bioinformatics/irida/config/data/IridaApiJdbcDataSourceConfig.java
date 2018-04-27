@@ -1,10 +1,13 @@
 package ca.corefacility.bioinformatics.irida.config.data;
 
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.sql.DataSource;
 
+import com.google.common.collect.Sets;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +17,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
@@ -111,6 +115,15 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 
 		springLiquibase.setShouldRun(liquibaseShouldRun);
 		springLiquibase.setIgnoreClasspathPrefix(true);
+
+		Set<String> profiles = Sets.newHashSet(applicationContext.getEnvironment().getActiveProfiles());
+
+		// IRIDA must have an admin user in the database for scheduled tasks.  Adding an admin user here so the servlet can start up before the scheduled tasks get going.
+		if (profiles.contains("it") || profiles.contains("test")) {
+			JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+			String userInsertSql = "insert into user (createdDate, credentialsNonExpired, email, enabled, firstName, lastName, password, phoneNumber, userName, system_role) values (now(),1,'admin@irida.ca',1,'admin','admin','xxxx','0000','admin','ROLE_ADMIN')";
+			jdbcTemplate.update(userInsertSql);
+		}
 
 		return springLiquibase;
 	}
