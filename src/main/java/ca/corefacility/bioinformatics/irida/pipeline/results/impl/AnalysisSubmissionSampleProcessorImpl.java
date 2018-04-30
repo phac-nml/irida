@@ -76,33 +76,29 @@ public class AnalysisSubmissionSampleProcessorImpl implements AnalysisSubmission
 	 * {@inheritDoc}
 	 */
 	@Override
-	@RunAsUser("#analysisSubmission.getSubmitter()")
-	@Transactional(propagation=Propagation.REQUIRES_NEW)
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	@PreAuthorize("hasPermission(#analysisSubmission, 'canUpdateSamplesFromAnalysisSubmission')")
 	public void updateSamples(AnalysisSubmission analysisSubmission) throws PostProcessingException {
-		if (!analysisSubmission.getUpdateSamples()) {
-			logger.trace("Will not update samples from results for submission=" + analysisSubmission);
+
+		logger.debug("Updating sample from results for submission=" + analysisSubmission);
+
+		Set<Sample> samples = sampleRepository.findSamplesForAnalysisSubmission(analysisSubmission);
+		Analysis analysis = analysisSubmission.getAnalysis();
+
+		checkNotNull(analysis, "No analysis associated with submission " + analysisSubmission);
+		checkNotNull(samples, "No samples associated with submission " + analysisSubmission);
+
+		AnalysisSampleUpdater analysisSampleUpdaterService = analysisSampleUpdaterMap.get(analysis.getAnalysisType());
+
+		if (analysisSampleUpdaterService != null) {
+			// re-reading submission to ensure file paths are correct
+			analysisSubmission = analysisSubmissionService.read(analysisSubmission.getId());
+
+			analysisSampleUpdaterService.update(samples, analysisSubmission);
 		} else {
-			logger.debug("Updating sample from results for submission=" + analysisSubmission);
-
-			Set<Sample> samples = sampleRepository.findSamplesForAnalysisSubmission(analysisSubmission);
-			Analysis analysis = analysisSubmission.getAnalysis();
-
-			checkNotNull(analysis, "No analysis associated with submission " + analysisSubmission);
-			checkNotNull(samples, "No samples associated with submission " + analysisSubmission);
-
-			AnalysisSampleUpdater analysisSampleUpdaterService = analysisSampleUpdaterMap
-					.get(analysis.getAnalysisType());
-
-			if (analysisSampleUpdaterService != null) {
-				// re-reading submission to ensure file paths are correct
-				analysisSubmission = analysisSubmissionService.read(analysisSubmission.getId());
-
-				analysisSampleUpdaterService.update(samples, analysisSubmission);
-			} else {
-				logger.debug(
-						"No associated object for updating samples for analysis of type " + analysis.getAnalysisType());
-			}
+			logger.debug(
+					"No associated object for updating samples for analysis of type " + analysis.getAnalysisType());
 		}
+
 	}
 }
