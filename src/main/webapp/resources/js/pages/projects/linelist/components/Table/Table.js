@@ -23,6 +23,13 @@ export class Table extends Component {
     this.onGridReady = this.onGridReady.bind(this);
   }
 
+  onColumnDropped = () => {
+    // TODO: update UI to have modified template displayed with save btn.
+    const colOrder = this.columnApi.getColumnState();
+    console.log(typeof this.props.templateModified);
+    this.props.templateModified();
+  };
+
   /*
   Allow access to the grids API
    */
@@ -61,6 +68,7 @@ export class Table extends Component {
           loadingOverlayComponent="LoadingOverlay"
           animateRows={true}
           onGridReady={this.onGridReady}
+          onDragStopped={this.onColumnDropped}
         />
       </div>
     );
@@ -69,5 +77,6 @@ export class Table extends Component {
 
 Table.propTypes = {
   fields: PropTypes.array.isRequired,
-  entries: PropTypes.array
+  entries: PropTypes.array,
+  templateModified: PropTypes.func.isRequired
 };

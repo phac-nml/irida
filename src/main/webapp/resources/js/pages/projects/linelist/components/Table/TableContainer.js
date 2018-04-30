@@ -1,5 +1,6 @@
 import { connect } from "react-redux";
 import { Table } from "./Table";
+import { actions } from "../../redux/modules/template";
 
 function formatFieldsByTemplate(fields, template) {
   if (template.length === 0) return fields;
@@ -31,11 +32,14 @@ function formatFieldsByTemplate(fields, template) {
 const mapStateToProps = state => ({
   fields: formatFieldsByTemplate(
     [...state.fields.fields],
-    [...state.templates.template]
+    [...state.template.fields]
   ),
   entries: state.entries.entries
 });
-const mapDispatchToProps = dispatch => ({});
+
+const mapDispatchToProps = dispatch => ({
+  templateModified: () => dispatch(actions.templateModified())
+});
 
 export const TableContainer = connect(mapStateToProps, mapDispatchToProps)(
   Table

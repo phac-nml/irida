@@ -1,16 +1,19 @@
 import { connect } from "react-redux";
-import { TemplateSelect } from "./TemplateSelect";
-import { actions } from "../../redux/modules/templates";
+import { Templates } from "./Templates";
+import { actions } from "../../redux/modules/template";
 
 const mapStateToProps = state => ({
   templates: state.templates.templates,
-  current: state.templates.current
+  current: state.template.id,
+  modified: state.template.modified,
+  validating: state.template.validating
 });
 
 const mapDispatchToProps = dispatch => ({
-  fetchTemplate: id => dispatch(actions.fetchTemplate(id))
+  fetchTemplate: id => dispatch(actions.fetchTemplate(id)),
+  validateTemplateName: name => dispatch(actions.validateTemplateName(name))
 });
 
 export const TemplatesContainer = connect(mapStateToProps, mapDispatchToProps)(
-  TemplateSelect
+  Templates
 );
