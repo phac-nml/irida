@@ -1,4 +1,6 @@
-import "noty";
+import Noty from "noty";
+import "noty/src/noty.scss";
+import "noty/src/themes/relax.scss";
 
 /**
  * Default noty notification library options object for initialization of notification of success.
@@ -8,14 +10,15 @@ import "noty";
  * @type {{theme: string, timeout: number, progressBar: boolean, type: string, closeWith: string[], animation: {open: string, close: string}, text: string}}
  */
 const defaultConfig = {
-  theme: "metroui",
-  timeout: 3500, // [integer|boolean] delay for closing event in milliseconds. Set false for sticky notifications
+  theme: "relax",
+  timeout: 3500,
+  layout: "topCenter",
   progressBar: true,
   type: "success",
   closeWith: ["click"], // String array with 'click' or 'button' or both
   animation: {
-    open: "animated bounceInRight",
-    close: "animated bounceOutRight"
+    open: "fadeInDown",
+    close: "fadeOutUp"
   },
   text: ""
 };
@@ -27,25 +30,18 @@ const defaultConfig = {
  *
  * @type {{theme: string, timeout: boolean, progressBar: boolean, type: string, closeWith: string[], animation: {open: string, close: string}, text: string}}
  */
-const defaultErrorConfig = {
-  theme: "metroui",
-  timeout: false, // [integer|boolean] delay for closing event in milliseconds. Set false for sticky notifications
+const defaultErrorConfig = Object.assign({}, defaultConfig, {
+  timeout: false,
   progressBar: false,
-  type: "error",
-  closeWith: ["button"], // String array with 'click' or 'button' or both
-  animation: {
-    open: "animated bounceInRight",
-    close: "animated bounceOutRight"
-  },
-  text: "ERROR!"
-};
+  type: "error"
+});
 
 /**
  * Show UI notification with default type "success" that is dismissed after 3.5 seconds or onClick event.
  * @param params Object with `text` key containing notification text, and overrides to default parameters.
  */
 export function showNotification(params) {
-  return noty(Object.assign({}, defaultConfig, params));
+  return new Noty(Object.assign({}, defaultConfig, params)).show();
 }
 
 /**
@@ -56,7 +52,7 @@ export function showNotification(params) {
  * @param params Object with `text` key containing error info, and overrides to default parameters.
  */
 export function showErrorNotification(params) {
-  return noty(Object.assign({}, defaultErrorConfig, params));
+  return new Noty(Object.assign({}, defaultErrorConfig, params)).show();
 }
 
 // TODO: Remove this after all notification usages are through a webpack bundle.

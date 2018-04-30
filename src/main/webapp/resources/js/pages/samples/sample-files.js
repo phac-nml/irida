@@ -221,7 +221,7 @@ function FileUploadController(Upload, $timeout, $window, $uibModal) {
 }
 
 const filesModule = angular
-  .module("irida.sample.files", ["ngAnimate", "ui.bootstrap", "ngFileUpload"])
+  .module("irida.sample.files", ["ui.bootstrap", "ngFileUpload"])
   .filter("humanReadableBytes", humanReadableBytes)
   .controller("FileUploadController", [
     "Upload",
