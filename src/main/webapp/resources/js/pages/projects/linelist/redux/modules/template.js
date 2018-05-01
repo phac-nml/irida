@@ -6,6 +6,7 @@ const TEMPLATE_MODIFIED = "linelist/template/TEMPLATE_MODIFIED";
 export const TEMPLATE_FETCH_SUCCESS =
   "linelist/template/TEMPLATE_FETCH_SUCCESS";
 const VALIDATE_TEMPLATE_NAME = "linelist/template/VALIDATE_TEMPLATE_NAME";
+const TEMPLATE_NAME_VALID = "linelist/template/TEMPLATE_NAME_VALID";
 
 const initialState = {
   id: 0,
@@ -80,6 +81,13 @@ export function* loadTemplate(action) {
   }
 }
 
-function* validateNameSaga(action) {
-  console.log(action);
+export function* validateNameSaga() {
+  yield takeLatest(VALIDATE_TEMPLATE_NAME, validateTemplateName);
+}
+
+function* validateTemplateName(action) {
+  const { name } = action;
+
+  console.log(name);
+  console.info("NEED TO IMPLEMENT THIS");
 }
