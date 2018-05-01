@@ -46,6 +46,7 @@ export class Table extends React.Component {
     return (
       <div style={containerStyle} className="ag-theme-balham">
         <AgGridReact
+          enableSorting={true}
           localeText={localeText}
           columnDefs={this.state.fields}
           rowData={this.state.entries}
@@ -66,7 +67,8 @@ Table.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  fields: state.fields.fields
+  fields: state.fields.fields,
+  entries: state.entries.entries
 });
 const mapDispatchToProps = dispatch => ({});
 
