@@ -1,6 +1,6 @@
 import React from "react";
 import { render } from "react-dom";
-import { App } from "./components/App";
+import { AppContainer } from "./containers/AppContainer";
 
 // Render the application
-render(<App />, document.querySelector("#root"));
+render(<AppContainer />, document.querySelector("#root"));

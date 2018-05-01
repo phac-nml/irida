@@ -2,13 +2,13 @@ import React from "react";
 import { Provider } from "react-redux";
 import { getStore } from "../../../../redux/getStore";
 import { actions } from "../../../../redux/reducers/app";
-import fields from "../reducers/fields";
-import { fieldsLoadingSaga } from "../sagas/fields";
-import LineList from "./LineList";
+import { fieldsReducer } from "../reducers/index";
+import { fieldsLoadingSaga } from "../sagas/index";
+import LineList from "./LineListContainer";
 
-const store = getStore({ fields }, { fieldsLoadingSaga });
+const store = getStore({ fields: fieldsReducer }, { fieldsLoadingSaga });
 
-export const App = () => (
+export const AppContainer = () => (
   <Provider store={store}>
     <LineList />
   </Provider>
