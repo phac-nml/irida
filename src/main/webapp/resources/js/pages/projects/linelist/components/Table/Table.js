@@ -1,15 +1,16 @@
-import React, { Component } from "react";
+import React from "react";
 import PropTypes from "prop-types";
+import { connect } from "react-redux";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid/dist/styles/ag-grid.css";
 import "ag-grid/dist/styles/ag-theme-balham.css";
 
-import { LoadingOverlay } from "../LoadingOverlay";
+import { LoadingOverlay } from "./LoadingOverlay";
 import { SampleNameRenderer } from "./renderers/SampleNameRenderer";
 
 const localeText = window.PAGE.i18n.agGrid;
 
-export class Table extends Component {
+export class Table extends React.Component {
   frameworkComponents = { LoadingOverlay, SampleNameRenderer };
 
   constructor(props) {
@@ -19,17 +20,15 @@ export class Table extends Component {
       entries: props.entries,
       fields: props.fields
     };
-
-    this.onGridReady = this.onGridReady.bind(this);
   }
 
   /*
   Allow access to the grids API
    */
-  onGridReady(params) {
+  onGridReady = params => {
     this.api = params.api;
     this.columnApi = params.columnApi;
-  }
+  };
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.entries !== null) {
@@ -65,3 +64,12 @@ Table.propTypes = {
   fields: PropTypes.array.isRequired,
   entries: PropTypes.array
 };
+
+const mapStateToProps = state => ({
+  fields: state.fields.fields
+});
+const mapDispatchToProps = dispatch => ({});
+
+export const TableContainer = connect(mapStateToProps, mapDispatchToProps)(
+  Table
+);
