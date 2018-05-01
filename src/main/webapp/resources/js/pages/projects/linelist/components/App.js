@@ -1,16 +1,18 @@
 import React from "react";
 import { Provider } from "react-redux";
-import { getStore } from "../redux/getStore";
-import { LineListContainer } from "./LineList";
-import { initializeApp } from "../redux/modules/app";
+import { getStore } from "../../../../redux/getStore";
+import { actions } from "../../../../redux/reducers/app";
+import fields from "../reducers/fields";
+import { fieldsLoadingSaga } from "../sagas/fields";
+import LineList from "./LineList";
 
-const store = getStore();
+const store = getStore({ fields }, { fieldsLoadingSaga });
 
 export const App = () => (
   <Provider store={store}>
-    <LineListContainer />
+    <LineList />
   </Provider>
 );
 
 const CURRENT_PROJECT_ID = window.project.id;
-store.dispatch(initializeApp(CURRENT_PROJECT_ID));
+store.dispatch(actions.initialize(CURRENT_PROJECT_ID));

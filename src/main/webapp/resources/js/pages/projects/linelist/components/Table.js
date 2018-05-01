@@ -1,10 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { connect } from "react-redux";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid/dist/styles/ag-grid.css";
 import "ag-grid/dist/styles/ag-theme-balham.css";
 
-import LoadingOverlay from "../../../../../modules/agGrid/LoadingOverlay";
+import LoadingOverlay from "../../../../modules/agGrid/LoadingOverlay";
 
 const localeText = window.PAGE.i18n.agGrid;
 
@@ -36,3 +37,10 @@ Table.propTypes = {
   fields: PropTypes.array.isRequired,
   entries: PropTypes.array
 };
+
+const mapStateToProps = state => ({
+  fields: state.fields.fields
+});
+const mapDispatchToProps = dispatch => ({});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Table);
