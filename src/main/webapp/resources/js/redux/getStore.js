@@ -3,18 +3,26 @@ The store ({@link https://redux.js.org/basics/store}) represents the facts
 about "what happened" and the reducers that update the state according
 to actions.
  */
-import {
-  createStore as _createStore,
-  applyMiddleware,
-  combineReducers,
-  compose
-} from "redux";
+import { createStore, applyMiddleware, combineReducers, compose } from "redux";
 import createSagaMiddleware from "redux-saga";
 
-// Reducers
-import { reducer as metadata } from "./modules/metadata";
+// Default reducers
+import appReducer from "./reducers/app";
 
-export default function createStore(initialSate) {
+/**
+ * Set up the redux store.
+ * Installs middle wear into redux for:
+ *  - Redux Devtools
+ *  - Redux Sagas
+ * @param {object} reducers
+ * @param {object} sagas
+ * @param initialState
+ * @returns {Store<any> & {dispatch: any}}
+ */
+export function getStore(reducers = {}, sagas = {}, initialState) {
+  // Add default application reducers
+  reducers.app = appReducer;
+
   /*
   Allows us to use Redux Devtools
   {@link https://github.com/zalmoxisus/redux-devtools-extension}
@@ -30,12 +38,9 @@ export default function createStore(initialSate) {
  */
   const sagaMiddleware = createSagaMiddleware();
   const enhancer = composeEnhancers(applyMiddleware(sagaMiddleware));
+  const store = createStore(combineReducers(reducers), initialState, enhancer);
+  // Bind the sagas to the saga middleware
+  Object.values(sagas).forEach(sagaMiddleware.run.bind(sagaMiddleware));
 
-  /*
-  Add the saga runner to the createStore object and return it as a single object.
-   */
-  return {
-    ..._createStore(combineReducers({ metadata }), initialSate, enhancer),
-    runSaga: sagaMiddleware.run
-  };
+  return store;
 }
