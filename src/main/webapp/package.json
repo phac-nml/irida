@@ -45,6 +45,7 @@
     "datatables.net-fixedcolumns-bs": "^3.2.2",
     "datatables.net-scroller": "^1.4.3",
     "datatables.net-scroller-bs": "^1.4.3",
+    "immutable": "^3.8.2",
     "install": "^0.8.9",
     "jquery": "^3.2.1",
     "jquery-validation": "^1.17.0",

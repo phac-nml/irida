@@ -1,3 +1,4 @@
+import { Map, List } from "immutable";
 import { call, put } from "redux-saga/effects";
 
 const LOAD = "linelist/metadata/LOAD_REQUEST";
@@ -7,12 +8,12 @@ const LOAD_SUCCESS = "linelist/metadata/LOAD_SUCCESS";
 /*
 INITIAL STATE
  */
-const initialState = {
+const initialState = Map({
   fetching: false, // Is the API call currently being made
-  error: null, // Was there an error making the api call}
-  fields: null, // List of metadata fields ==> used for table headers
-  entries: null // list of metadata entries ==> table content.
-};
+  error: false, // Was there an error making the api call}
+  fields: List(), // List of metadata fields ==> used for table headers
+  entries: List() // list of metadata entries ==> table content.
+});
 
 /*
 REDUCERS - Handle updating the state based on the action that is passed.
@@ -22,23 +23,19 @@ fields and entries.
 export function reducer(state = initialState, action = {}) {
   switch (action.type) {
     case LOAD:
-      return { ...state, fetching: true, error: null };
+      return state.set("fetching", true).set("error", false);
     case LOAD_SUCCESS:
-      return {
-        ...state,
-        fetching: false,
-        error: false,
-        fields: action.fields,
-        entries: action.entries
-      };
+      return state
+        .set("fetching", false)
+        .set("error", false)
+        .set("fields", action.fields)
+        .set("entries", action.entries);
     case LOAD_ERROR:
-      return {
-        ...state,
-        fetching: false,
-        error: true,
-        fields: null,
-        entries: null
-      };
+      return state
+        .set("fetching", false)
+        .set("error", false)
+        .set("fields", List())
+        .set("entries", List());
     default:
       return state;
   }
@@ -76,7 +73,9 @@ export function* metadataLoadingSaga(fetchFields, fetchEntries, projectId) {
     yield put(load());
     const { data: fields } = yield call(fetchFields, projectId);
     const { data: entries } = yield call(fetchEntries, projectId);
-    yield put(loadSuccess({ fields, entries }));
+    yield put(
+      loadSuccess({ fields: List.of(fields), entries: List.of(entries) })
+    );
   } catch (error) {
     yield put(loadError(error));
   }
