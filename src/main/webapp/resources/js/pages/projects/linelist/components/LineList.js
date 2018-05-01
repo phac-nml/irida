@@ -36,8 +36,8 @@ updated (in this case so far it is the loading state), the this connect
 method is what triggers the updates.
  */
 const mapStateToProps = state => ({
-  initializing: state.fields.initializing,
-  error: state.fields.error
+  initializing: state.fields.get("initializing"),
+  error: state.fields.get("error")
 });
 
 const mapDispatchToProps = dispatch => ({});
