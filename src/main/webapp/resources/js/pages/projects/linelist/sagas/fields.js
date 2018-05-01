@@ -13,7 +13,9 @@ export function* fieldsLoadingSaga() {
     const { id } = yield take(types.INIT_APP);
     // Let the page know that we are loading the fields
     yield put(actions.load());
+    // Wait for the API request to fetch the fields.
     const { data: fields } = yield call(fetchMetadataFields, id);
+    // Let the application know that the fields are available.
     yield put(actions.success(fields));
   } catch (error) {
     yield put(actions.error(error));
