@@ -140,7 +140,7 @@
 			</div>
 
 			<!-- User project table -->
-			<div class="col-md-6 ">
+			<div class="col-md-6" sec:authorize="hasRole('ROLE_ADMIN')">
 				<div class="panel panel-default">
 					<div class="panel-heading clearfix">
 						<h3 class="panel-title pull-left" th:text="#{user.projects.title}">_Projects_</h3>
