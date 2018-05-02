@@ -29,7 +29,6 @@ export const reducer = (state = initialState, action = {}) => {
       return state.set("initializing", true).set("error", false);
     case types.LOAD_SUCCESS:
       const fields = List.of(formatColumns(action.fields));
-      console.log(fields);
       return state
         .set("initializing", false)
         .set("error", false)
