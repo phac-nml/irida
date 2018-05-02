@@ -1,4 +1,5 @@
 import { call, put, take } from "redux-saga/effects";
+import { List } from "immutable";
 import { fetchMetadataFields } from "../../../../apis/metadata/field";
 import { types } from "../../../../redux/reducers/app";
 import { actions } from "../reducers/fields";
@@ -29,7 +30,7 @@ export function* fieldsLoadingSaga() {
     // Format the fields to work with ag-grid.
     const fields = formatColumns(data);
     // Let the application know that the fields are available.
-    yield put(actions.success(fields));
+    yield put(actions.success(List.of(fields)));
   } catch (error) {
     yield put(actions.error(error));
   }
