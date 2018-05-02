@@ -1,17 +1,21 @@
 package ca.corefacility.bioinformatics.irida.config.services.scheduled;
 
 import java.time.Duration;
+import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectProcessingService;
+import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
@@ -41,6 +45,8 @@ import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.Cle
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectSynchronizationService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
+import javax.sql.DataSource;
+
 /**
  * Config for only activating scheduled tasks in certain profiles.
  */
@@ -54,6 +60,9 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private ApplicationContext applicationContext;
 
 	@Value("${irida.scheduled.threads}")
 	private int threadCount = 2;
@@ -84,7 +93,14 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	 * @return A {@link SecurityContext} for the scheduled tasks.
 	 */
 	private SecurityContext createSchedulerSecurityContext() {
-		SecurityContext context = SecurityContextHolder.createEmptyContext();
+		Set<String> profiles = Sets.newHashSet(applicationContext.getEnvironment().getActiveProfiles());
+
+		// IRIDA must have an admin user in the database for scheduled tasks.  Adding an admin user here so the servlet can start up before the scheduled tasks get going.
+		if (profiles.contains("it") || profiles.contains("test")) {
+			addAdminUser();
+		}
+
+			SecurityContext context = SecurityContextHolder.createEmptyContext();
 
 		Authentication anonymousToken = new AnonymousAuthenticationToken("nobody", "nobody",
 				ImmutableList.of(Role.ROLE_ANONYMOUS));
@@ -100,5 +116,19 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 		context.setAuthentication(adminAuthentication);
 
 		return context;
+	}
+
+	/**
+	 * Add an administrative user to the database for test purposes
+	 */
+	private void addAdminUser() {
+		DataSource dataSource = applicationContext.getBean(DataSource.class);
+
+		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+
+		if (jdbcTemplate.queryForList("SELECT userName from USER where userName='admin'").isEmpty()) {
+			String userInsertSql = "insert into user (createdDate, credentialsNonExpired, email, enabled, firstName, lastName, password, phoneNumber, userName, system_role) values (now(),1,'admin@irida.ca',1,'admin','admin','xxxx','0000','admin','ROLE_ADMIN')";
+			jdbcTemplate.update(userInsertSql);
+		}
 	}
 }
