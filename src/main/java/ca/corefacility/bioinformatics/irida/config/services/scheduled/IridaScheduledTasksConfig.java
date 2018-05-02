@@ -126,7 +126,7 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
-		if (jdbcTemplate.queryForList("SELECT userName from USER where userName='admin'").isEmpty()) {
+		if (jdbcTemplate.queryForList("SELECT userName FROM user WHERE userName='admin'").isEmpty()) {
 			String userInsertSql = "insert into user (createdDate, credentialsNonExpired, email, enabled, firstName, lastName, password, phoneNumber, userName, system_role) values (now(),1,'admin@irida.ca',1,'admin','admin','xxxx','0000','admin','ROLE_ADMIN')";
 			jdbcTemplate.update(userInsertSql);
 		}
