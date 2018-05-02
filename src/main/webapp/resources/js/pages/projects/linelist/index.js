@@ -1,18 +1,18 @@
-/**
- * Root file for the linelist page.
- */
-import MetadataEntryApi from "./api/metadataEntryApi";
-import MetadataFieldApi from "./api/metadataFieldApi";
+import createStore from "./redux/create";
 
-/**
- * These are only here now to test the API.
- */
-MetadataEntryApi.getAllMetadataEntries(window.project.id).then(
-  result => console.log(result),
-  err => console.error(err)
-);
+// Linelist Table
+import { fetchMetadataFields, fetchMetadataEntries } from "./apis";
+import { metadataLoadingSaga } from "./redux/modules/metadata";
 
-MetadataFieldApi.getAllMetadataFields(window.project.id).then(
-  result => console.log(result),
-  err => console.error(err)
+// Get the project id from the window object:
+const PROJECT_ID = window.project.id;
+
+const store = createStore();
+
+// Initialize the linelist table.
+store.runSaga(
+  metadataLoadingSaga,
+  fetchMetadataFields,
+  fetchMetadataEntries,
+  PROJECT_ID
 );
