@@ -1,1 +1,0 @@
-export { TableContainer } from "./Table";

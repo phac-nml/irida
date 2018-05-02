@@ -1,33 +1,54 @@
+import { List, fromJS } from "immutable";
+
+/*
+Special handler for formatting the sample Name Column;
+ */
+const sampleNameColumn = {
+  sort: "asc",
+  pinned: "left",
+  lockPosition: true,
+  cellRenderer: "SampleNameRenderer"
+};
+
+/**
+ * Format the column definitions.
+ * @param {array} cols
+ * @returns {*}
+ */
+const formatColumns = cols =>
+  cols.map((f, i) => ({
+    field: f.label,
+    headerName: f.label.toUpperCase(),
+    ...(i === 0 ? sampleNameColumn : {})
+  }));
+
 export const types = {
   LOAD: "METADATA/FIELDS/LOAD_REQUEST",
   LOAD_ERROR: "METADATA/FIELDS/LOAD_ERROR",
   LOAD_SUCCESS: "METADATA/FIELDS/LOAD_SUCCESS"
 };
 
-export const initialState = {
+export const initialState = fromJS({
   initializing: true, // Is the API call currently being made
-  error: null, // Was there an error making the api call}
-  fields: null // List of metadata fields ==> used for table headers
-};
+  error: false, // Was there an error making the api call}
+  fields: List() // List of metadata fields ==> used for table headers
+});
 
-export default (state = initialState, action = {}) => {
+export const reducer = (state = initialState, action = {}) => {
   switch (action.type) {
     case types.LOAD:
-      return { ...state, initializing: true, error: null };
+      return state.set("initializing", true).set("error", false);
     case types.LOAD_SUCCESS:
-      return {
-        ...state,
-        initializing: false,
-        error: false,
-        fields: action.fields
-      };
+      return state
+        .set("initializing", false)
+        .set("error", false)
+        .delete("fields")
+        .set("fields", fromJS(formatColumns(action.fields)));
     case types.LOAD_ERROR:
-      return {
-        ...state,
-        initializing: false,
-        error: true,
-        fields: null
-      };
+      return state
+        .set("initializing", false)
+        .set("error", false)
+        .set("fields", List());
     default:
       return state;
   }

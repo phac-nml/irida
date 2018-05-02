@@ -1,6 +1,5 @@
 import React from "react";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
+import ImmutablePropTypes from "react-immutable-proptypes";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid/dist/styles/ag-grid.css";
 import "ag-grid/dist/styles/ag-theme-balham.css";
@@ -11,14 +10,20 @@ import { SampleNameRenderer } from "./renderers/SampleNameRenderer";
 const localeText = window.PAGE.i18n.agGrid;
 
 export class Table extends React.Component {
+  containerStyle = {
+    boxSizing: "border-box",
+    height: 600,
+    width: "100%"
+  };
   frameworkComponents = { LoadingOverlay, SampleNameRenderer };
 
   constructor(props) {
     super(props);
 
+    const { fields, entries } = props;
     this.state = {
-      entries: props.entries,
-      fields: props.fields
+      fields,
+      entries
     };
   }
 
@@ -31,25 +36,23 @@ export class Table extends React.Component {
   };
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.entries !== null) {
+    /*
+    Since entries is an immutable data source, this will only do a quick check!
+    Therefore should be fast.
+     */
+    if (!nextProps.entries.equals(this.state.entries)) {
       this.setState({ entries: nextProps.entries });
     }
   }
 
   render() {
-    const containerStyle = {
-      boxSizing: "border-box",
-      height: 600,
-      width: "100%"
-    };
-
     return (
-      <div style={containerStyle} className="ag-theme-balham">
+      <div style={this.containerStyle} className="ag-theme-balham">
         <AgGridReact
           enableSorting={true}
           localeText={localeText}
-          columnDefs={this.state.fields}
-          rowData={this.state.entries}
+          columnDefs={this.state.fields.toJS()}
+          rowData={this.state.entries.toJS()}
           deltaRowDataMode={true}
           getRowNodeId={data => data.code}
           frameworkComponents={this.frameworkComponents}
@@ -62,16 +65,6 @@ export class Table extends React.Component {
 }
 
 Table.propTypes = {
-  fields: PropTypes.array.isRequired,
-  entries: PropTypes.array
+  fields: ImmutablePropTypes.list.isRequired,
+  entries: ImmutablePropTypes.list
 };
-
-const mapStateToProps = state => ({
-  fields: state.fields.fields,
-  entries: state.entries.entries
-});
-const mapDispatchToProps = dispatch => ({});
-
-export const TableContainer = connect(mapStateToProps, mapDispatchToProps)(
-  Table
-);

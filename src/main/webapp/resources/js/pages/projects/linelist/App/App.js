@@ -2,11 +2,12 @@ import React from "react";
 import { Provider } from "react-redux";
 import { getStore } from "../../../../redux/getStore";
 import { actions } from "../../../../redux/reducers/app";
-import fields from "../reducers/fields";
-import entries from "../reducers/entries";
-import { fieldsLoadingSaga } from "../sagas/fields";
-import { entriesLoadingSaga } from "../sagas/entries";
-import LineList from "./LineList";
+import {
+  fieldsReducer as fields,
+  entriesReducer as entries
+} from "../reducers";
+import { fieldsLoadingSaga, entriesLoadingSaga } from "../sagas";
+import LineList from "../components/LineList/LineListContainer";
 
 const store = getStore(
   { fields, entries },
