@@ -1,17 +1,15 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { connect } from "react-redux";
+import ImmutablePropTypes from "react-immutable-proptypes";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid/dist/styles/ag-grid.css";
 import "ag-grid/dist/styles/ag-theme-balham.css";
 
-import LoadingOverlay from "../../../../modules/agGrid/LoadingOverlay";
+import LoadingOverlay from "../../../../../../modules/agGrid/LoadingOverlay";
 
 const localeText = window.PAGE.i18n.agGrid;
 
 export const Table = props => {
-  const { fields } = props;
-
   const containerStyle = {
     boxSizing: "border-box",
     height: 600,
@@ -19,6 +17,9 @@ export const Table = props => {
   };
 
   const frameworkComponents = { LoadingOverlay };
+
+  // Need to convert the immutable object here.
+  const fields = props.fields.toJSON()[0];
 
   return (
     <div style={containerStyle} className="ag-theme-balham">
@@ -34,13 +35,6 @@ export const Table = props => {
 };
 
 Table.propTypes = {
-  fields: PropTypes.array.isRequired,
+  fields: ImmutablePropTypes.list.isRequired,
   entries: PropTypes.array
 };
-
-const mapStateToProps = state => ({
-  fields: state.fields.fields
-});
-const mapDispatchToProps = dispatch => ({});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Table);
