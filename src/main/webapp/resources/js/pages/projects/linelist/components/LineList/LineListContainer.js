@@ -1,4 +1,4 @@
-import { LineList } from "../components/LineList";
+import { LineList } from "./LineList";
 import { connect } from "react-redux";
 
 /*
@@ -14,4 +14,6 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({});
 
-export default connect(mapStateToProps, mapDispatchToProps)(LineList);
+export const LineListContainer = connect(mapStateToProps, mapDispatchToProps)(
+  LineList
+);

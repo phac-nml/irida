@@ -12,7 +12,7 @@ export const initialState = Map({
   fields: List() // List of metadata fields ==> used for table headers
 });
 
-export function reducer(state = initialState, action = {}) {
+export const reducer = (state = initialState, action = {}) => {
   switch (action.type) {
     case types.LOAD:
       return state.set("initializing", true).set("error", false);
@@ -29,7 +29,7 @@ export function reducer(state = initialState, action = {}) {
     default:
       return state;
   }
-}
+};
 
 export const actions = {
   load: () => ({ type: types.LOAD }),

@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Loader } from "./Loader";
+import { Loader } from "../Loader";
 
 /**
  * Container class for the higher level states of the page:
