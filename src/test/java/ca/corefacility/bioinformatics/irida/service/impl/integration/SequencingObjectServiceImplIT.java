@@ -218,8 +218,8 @@ public class SequencingObjectServiceImplIT {
 
 		objectService.createSequencingObjectInSample(so, s);
 
-		// Wait 5 seconds. file processing should have failed by then.
-		Thread.sleep(5000);
+		// Wait 15 seconds. file processing should have failed by then.
+		Thread.sleep(15000);
 
 		Sample readSample = sampleService.read(s.getId());
 
