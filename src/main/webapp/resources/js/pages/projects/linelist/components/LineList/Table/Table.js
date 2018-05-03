@@ -19,12 +19,6 @@ export class Table extends React.Component {
 
   constructor(props) {
     super(props);
-
-    const { fields, entries } = props;
-    this.state = {
-      fields,
-      entries
-    };
   }
 
   /*
@@ -35,24 +29,14 @@ export class Table extends React.Component {
     this.columnApi = params.columnApi;
   };
 
-  componentWillReceiveProps(nextProps) {
-    /*
-    Since entries is an immutable data source, this will only do a quick check!
-    Therefore should be fast.
-     */
-    if (!nextProps.entries.equals(this.state.entries)) {
-      this.setState({ entries: nextProps.entries });
-    }
-  }
-
   render() {
     return (
       <div style={this.containerStyle} className="ag-theme-balham">
         <AgGridReact
           enableSorting={true}
           localeText={localeText}
-          columnDefs={this.state.fields.toJS()}
-          rowData={this.state.entries.toJS()}
+          columnDefs={this.props.fields.toJS()}
+          rowData={this.props.entries.toJS()}
           deltaRowDataMode={true}
           getRowNodeId={data => data.code}
           frameworkComponents={this.frameworkComponents}
