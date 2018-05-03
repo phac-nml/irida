@@ -9,7 +9,7 @@ export const types = {
 export const initialState = fromJS({
   fetching: false, // Is the API call currently being made
   error: false, // Was there an error making the api call}
-  entries: List() // List of metadata entriesfi
+  entries: null // List of metadata entries
 });
 
 /*

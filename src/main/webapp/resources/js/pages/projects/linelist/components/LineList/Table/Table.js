@@ -36,7 +36,11 @@ export class Table extends React.Component {
           enableSorting={true}
           localeText={localeText}
           columnDefs={this.props.fields.toJS()}
-          rowData={this.props.entries.toJS()}
+          rowData={
+            this.props.entries === null
+              ? this.props.entries
+              : this.props.entries.toJS()
+          }
           deltaRowDataMode={true}
           getRowNodeId={data => data.code}
           frameworkComponents={this.frameworkComponents}
