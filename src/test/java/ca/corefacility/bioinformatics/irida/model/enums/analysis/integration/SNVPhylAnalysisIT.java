@@ -268,7 +268,7 @@ public class SNVPhylAnalysisIT {
 	 * @throws Exception
 	 */
 	@Test
-	@WithMockUser(username = "aaron", roles = "ADMIN")
+	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testSNVPhylSuccess() throws Exception {
 		SequenceFilePair sequenceFilePairA = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(1L,
 				sequenceFilePathsA1List, sequenceFilePathsA2List).get(0);
@@ -395,7 +395,7 @@ public class SNVPhylAnalysisIT {
 	 * @throws Exception
 	 */
 	@Test
-	@WithMockUser(username = "aaron", roles = "ADMIN")
+	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testSNVPhylSuccessHigherSNVReadProportion() throws Exception {
 		SequenceFilePair sequenceFilePairA = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(1L,
 				sequenceFilePathsA1List, sequenceFilePathsA2List).get(0);
@@ -549,7 +549,7 @@ public class SNVPhylAnalysisIT {
 	 * @throws Exception
 	 */
 	@Test
-	@WithMockUser(username = "aaron", roles = "ADMIN")
+	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testSNVPhylSuccessRemoveSNVDensity() throws Exception {
 		SequenceFilePair sequenceFilePairA = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(1L,
 				sequenceFilePathsA1List, sequenceFilePathsA2List).get(0);
