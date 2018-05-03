@@ -1,13 +1,15 @@
 Changes
 =======
-0.20.0 to 0.21.0
+0.21.0 to 0.22.0
 ----------------
 * [UI]: Fixed bug where `.xls` file could not be uploaded through the file picker on the metadata upload page. (0.21.1)
 * [UI]: Fixed bug where concatenate files was POSTing to incorrect URL. (0.21.2)
 * [UI]: Fixed bug where SVG files could not be exported through the advanced visualization page. (0.21.2)
 * [UI]: Fixed bug where users could not share more than nine samples. (0.21.2)
 * [UI]: Moved the position of the notification system to top center.
+* [Workflow]: Added version 0.3 of a pipeline for running [SISTR](https://github.com/peterk87/sistr_cmd/) which now makes use of [Shovill](https://github.com/tseemann/shovill) for genome assembly.
 * [UI]: Users can save analysis results to samples after pipeline is done in "Share Results" tab.
+* [UI]: Fixed bug where edit groups page would throw a server exception. (0.21.3)
 
 0.20.0 to 0.21.0
 ----------------
