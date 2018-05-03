@@ -4,10 +4,13 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.service.impl.processor.SequenceFileProcessorLauncher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -19,14 +22,16 @@ import java.util.List;
 @Service
 @Scope("singleton")
 public class SequencingObjectProcessingService {
+	private static final Logger logger = LoggerFactory.getLogger(SequencingObjectProcessingService.class);
+
 	private SequencingObjectRepository sequencingObjectRepository;
 
 	private FileProcessingChain fileProcessingChain;
-	private TaskExecutor fileProcessingChainExecutor;
+	private ThreadPoolTaskExecutor fileProcessingChainExecutor;
 
 	@Autowired
 	public SequencingObjectProcessingService(SequencingObjectRepository sequencingObjectRepository,
-			@Qualifier("fileProcessingChainExecutor") TaskExecutor executor,
+			@Qualifier("fileProcessingChainExecutor") ThreadPoolTaskExecutor executor,
 			@Qualifier("uploadFileProcessingChain") FileProcessingChain fileProcessingChain) {
 		this.sequencingObjectRepository = sequencingObjectRepository;
 		this.fileProcessingChain = fileProcessingChain;
@@ -37,21 +42,27 @@ public class SequencingObjectProcessingService {
 	 * Find new {@link SequencingObject}s to process and launch the {@link FileProcessingChain} on them.
 	 */
 	public synchronized void findFilesToProcess() {
-		// find new unprocessed files
-		List<SequencingObject> toProcess = sequencingObjectRepository
-				.getSequencingObjectsWithProcessingState(SequencingObject.ProcessingState.UNPROCESSED);
 
-		// set their state to queued
-		for (SequencingObject process : toProcess) {
-			process.setProcessingState(SequencingObject.ProcessingState.QUEUED);
+		if (fileProcessingChainExecutor.getActiveCount() < fileProcessingChainExecutor.getCorePoolSize()) {
+			// find new unprocessed files
+			List<SequencingObject> toProcess = sequencingObjectRepository
+					.getSequencingObjectsWithProcessingState(SequencingObject.ProcessingState.UNPROCESSED);
 
-			sequencingObjectRepository.save(process);
-		}
+			// set their state to queued
+			for (SequencingObject process : toProcess) {
+				process.setProcessingState(SequencingObject.ProcessingState.QUEUED);
 
-		// loop through the files and launch the file processing chain
-		for (SequencingObject process : toProcess) {
-			fileProcessingChainExecutor.execute(new SequenceFileProcessorLauncher(fileProcessingChain, process.getId(),
-					SecurityContextHolder.getContext()));
+				sequencingObjectRepository.save(process);
+			}
+
+			// loop through the files and launch the file processing chain
+			for (SequencingObject process : toProcess) {
+				fileProcessingChainExecutor.execute(
+						new SequenceFileProcessorLauncher(fileProcessingChain, process.getId(),
+								SecurityContextHolder.getContext()));
+			}
+		} else {
+			logger.trace("Processing queue full.");
 		}
 
 	}

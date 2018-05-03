@@ -1,19 +1,13 @@
 package ca.corefacility.bioinformatics.irida.config.web;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
+import ca.corefacility.bioinformatics.irida.web.spring.view.*;
+import com.fasterxml.jackson.datatype.jdk7.Jdk7Module;
+import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.context.annotation.*;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.Ordered;
 import org.springframework.http.MediaType;
@@ -29,15 +23,9 @@ import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import org.springframework.web.servlet.view.xml.MarshallingView;
 
-import com.fasterxml.jackson.datatype.jdk7.Jdk7Module;
-import com.google.common.collect.ImmutableMap;
-
-import ca.corefacility.bioinformatics.irida.config.services.scheduled.IridaScheduledTasksConfig;
-import ca.corefacility.bioinformatics.irida.web.spring.view.CSVView;
-import ca.corefacility.bioinformatics.irida.web.spring.view.FastaView;
-import ca.corefacility.bioinformatics.irida.web.spring.view.FastqView;
-import ca.corefacility.bioinformatics.irida.web.spring.view.GenbankView;
-import ca.corefacility.bioinformatics.irida.web.spring.view.NewickFileView;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Configuration for IRIDA REST API.
@@ -47,7 +35,6 @@ import ca.corefacility.bioinformatics.irida.web.spring.view.NewickFileView;
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = { "ca.corefacility.bioinformatics.irida.web.controller.api" })
-@Import(IridaScheduledTasksConfig.class)
 public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
 
 	/** named constant for allowing unlimited upload sizes. */
