@@ -69,8 +69,8 @@
                 }
             ], 
             "position": {
-                "left": 465, 
-                "top": 199
+                "left": 464, 
+                "top": 200
             }, 
             "post_job_actions": {
                 "RenameDatasetActioncontigs": {
@@ -103,7 +103,7 @@
                 "owner": "iuc", 
                 "tool_shed": "toolshed.g2.bx.psu.edu"
             }, 
-            "tool_state": "{\"adv\": \"{\\\"asm\\\": \\\"contigs\\\", \\\"gsize\\\": \\\"\\\", \\\"kmers\\\": \\\"\\\", \\\"minlen\\\": \\\"0\\\", \\\"nocorr\\\": \\\"false\\\", \\\"depth\\\": \\\"100\\\", \\\"namefmt\\\": \\\"contig%05d\\\", \\\"mincov\\\": \\\"2\\\", \\\"opts\\\": \\\"\\\"}\", \"trim\": \"\\\"false\\\"\", \"log\": \"\\\"true\\\"\", \"__page__\": 0, \"__rerun_remap_job_id__\": null, \"library\": \"{\\\"lib_type\\\": \\\"collection\\\", \\\"input1\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"__current_case__\\\": 1}\"}",
+            "tool_state": "{\"adv\": \"{\\\"asm\\\": \\\"contigs\\\", \\\"gsize\\\": \\\"\\\", \\\"kmers\\\": \\\"\\\", \\\"minlen\\\": \\\"1000\\\", \\\"nocorr\\\": \\\"false\\\", \\\"depth\\\": \\\"100\\\", \\\"namefmt\\\": \\\"contig%05d\\\", \\\"mincov\\\": \\\"2\\\", \\\"opts\\\": \\\"\\\"}\", \"trim\": \"\\\"false\\\"\", \"log\": \"\\\"true\\\"\", \"__page__\": 0, \"__rerun_remap_job_id__\": null, \"library\": \"{\\\"lib_type\\\": \\\"collection\\\", \\\"input1\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"__current_case__\\\": 1}\"}", 
             "tool_version": "0.9.0", 
             "type": "tool", 
             "uuid": "a1207389-35e5-42da-9012-20b099205871", 
@@ -170,7 +170,7 @@
                 }
             ], 
             "position": {
-                "left": 689, 
+                "left": 692, 
                 "top": 200
             }, 
             "post_job_actions": {
@@ -178,7 +178,7 @@
                     "action_arguments": {}, 
                     "action_type": "HideDatasetAction", 
                     "output_name": "output_prediction_csv"
-                },
+                }, 
                 "HideDatasetActionoutput_prediction_tab": {
                     "action_arguments": {}, 
                     "action_type": "HideDatasetAction", 
@@ -221,12 +221,33 @@
                 "owner": "nml", 
                 "tool_shed": "toolshed.g2.bx.psu.edu"
             }, 
-            "tool_state": "{\"input_fastas\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"no_cgmlst\": \"\\\"false\\\"\", \"use_full_cgmlst_db\": \"\\\"false\\\"\", \"__page__\": 0, \"output_format\": \"\\\"json\\\"\", \"keep_tmp\": \"\\\"false\\\"\", \"run_mash\": \"\\\"true\\\"\", \"more_output\": \"\\\"-M\\\"\", \"__rerun_remap_job_id__\": null, \"qc\": \"\\\"true\\\"\", \"verbosity\": \"\\\"-vv\\\"\"}", 
+            "tool_state": "{\"input_fastas\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"no_cgmlst\": \"\\\"false\\\"\", \"use_full_cgmlst_db\": \"\\\"true\\\"\", \"__page__\": 0, \"output_format\": \"\\\"json\\\"\", \"keep_tmp\": \"\\\"false\\\"\", \"run_mash\": \"\\\"true\\\"\", \"more_output\": \"\\\"-M\\\"\", \"__rerun_remap_job_id__\": null, \"qc\": \"\\\"true\\\"\", \"verbosity\": \"\\\"-vv\\\"\"}", 
             "tool_version": "1.0.2", 
             "type": "tool", 
             "uuid": "3aa85dac-c737-44fc-8f97-8f7ed6cd798d", 
-            "workflow_outputs": []
+            "workflow_outputs": [
+                {
+                    "label": null, 
+                    "output_name": "alleles_output", 
+                    "uuid": "df0a5c3d-88b4-4fcd-b600-426f5d70a51e"
+                }, 
+                {
+                    "label": null, 
+                    "output_name": "output_prediction_json", 
+                    "uuid": "e1e0b7c6-5092-4ae0-ad6c-65ba843d1500"
+                }, 
+                {
+                    "label": null, 
+                    "output_name": "novel_alleles", 
+                    "uuid": "0d644afd-287a-4df9-a629-807836930136"
+                }, 
+                {
+                    "label": null, 
+                    "output_name": "cgmlst_profiles", 
+                    "uuid": "7a24c39b-b4a9-45db-aae8-f87938603cd7"
+                }
+            ]
         }
     }, 
-    "uuid": "4026ae09-6b2a-4f31-a192-cdc4234f5600"
+    "uuid": "74bfc18b-fa4f-4742-bbc9-fcd9ff750e8e"
 }
