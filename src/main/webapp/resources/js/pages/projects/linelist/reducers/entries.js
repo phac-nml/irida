@@ -1,36 +1,31 @@
+import { List, fromJS } from "immutable";
+
 export const types = {
   LOAD: "METADATA/ENTRIES/LOAD_REQUEST",
   LOAD_ERROR: "METADATA/ENTRIES/LOAD_ERROR",
   LOAD_SUCCESS: "METADATA/ENTRIES/LOAD_SUCCESS"
 };
 
-export const initialState = {
+export const initialState = fromJS({
   fetching: false, // Is the API call currently being made
-  error: null, // Was there an error making the api call}
+  error: false, // Was there an error making the api call}
   entries: null // List of metadata entries
-};
+});
 
 /*
 REDUCERS
  */
-export default (state = initialState, action = {}) => {
+export const reducer = (state = initialState, action = {}) => {
   switch (action.type) {
     case types.LOAD:
-      return { ...state, fetching: true, error: null };
+      return state.set("fetching", true).set("error", false);
     case types.LOAD_SUCCESS:
-      return {
-        ...state,
-        fetching: false,
-        error: false,
-        entries: action.entries
-      };
+      return state
+        .set("fetching", false)
+        .set("error", false)
+        .set("entries", fromJS(action.entries));
     case types.LOAD_ERROR:
-      return {
-        ...state,
-        fetching: false,
-        error: true,
-        entries: null
-      };
+      return state.set("fetching", false).set("error", true);
     default:
       return state;
   }
@@ -41,7 +36,3 @@ export const actions = {
   success: entries => ({ type: types.LOAD_SUCCESS, entries }),
   error: error => ({ type: types.LOAD_ERROR, error })
 };
-
-/*
-SAGAS
- */
