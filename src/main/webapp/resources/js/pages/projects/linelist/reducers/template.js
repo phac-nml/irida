@@ -1,4 +1,4 @@
-import { fromJS } from "immutable";
+import { fromJS, List } from "immutable";
 
 export const types = {
   LOAD: `METADATA/TEMPLATE/LOAD`,
@@ -6,7 +6,8 @@ export const types = {
 };
 
 export const initialState = fromJS({
-  current: -1
+  current: -1,
+  template: List()
 });
 
 export const reducer = (state = initialState, action = {}) => {
@@ -20,5 +21,9 @@ export const reducer = (state = initialState, action = {}) => {
 
 export const actions = {
   load: id => ({ type: types.LOAD, id }),
-  success: (template, id) => ({ type: types.SUCCESS, template, id })
+  success: (template, id) => ({
+    type: types.SUCCESS,
+    template: fromJS(template),
+    id
+  })
 };

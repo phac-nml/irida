@@ -13,11 +13,11 @@ export function* watchFetchTemplateSaga() {
 export function* loadTemplateSaga(action) {
   try {
     const id = Number(action.id);
-    if (-1 < id) {
+    if (-1 === id) {
+      yield put(actions.success([], id));
+    } else {
       const { data: template } = yield call(fetchTemplate, id);
       yield put(actions.success(template, id));
-    } else {
-      yield put(actions.success([], id));
     }
   } catch (error) {
     // TODO: (Josh | 2018-04-19) CATCH THIS

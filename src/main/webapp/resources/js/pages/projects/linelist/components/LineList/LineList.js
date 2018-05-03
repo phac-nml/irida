@@ -21,7 +21,9 @@ export const LineList = props => {
   }
   return (
     <React.Fragment>
-      <TemplatesContainer />
+      <div style={{ marginBottom: "1rem" }}>
+        <TemplatesContainer />
+      </div>
       <TableContainer />
     </React.Fragment>
   );

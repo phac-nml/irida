@@ -6,8 +6,33 @@ import "ag-grid/dist/styles/ag-theme-balham.css";
 
 import { LoadingOverlay } from "./LoadingOverlay";
 import { SampleNameRenderer } from "./renderers/SampleNameRenderer";
+import { fromJS } from "immutable";
 
 const localeText = window.PAGE.i18n.agGrid;
+
+// Format the fields based on a template
+const applyTemplate = (template, fields) => {
+  if (template.length === 0) {
+    return fields.map(f => {
+      f.hide = false;
+      return f;
+    });
+  }
+
+  // Need to keep sample name first
+  const sampleName = fields.shift();
+
+  const final = [];
+  template.forEach(t => {
+    const index = fields.findIndex(f => t.label === f.field);
+    if (index > -1) {
+      const field = fields.splice(index, 1)[0];
+      field.hide = false;
+      final.push(field);
+    }
+  });
+  return [sampleName, ...final];
+};
 
 export class Table extends React.Component {
   containerStyle = {
@@ -35,7 +60,10 @@ export class Table extends React.Component {
         <AgGridReact
           enableSorting={true}
           localeText={localeText}
-          columnDefs={this.props.fields.toJS()}
+          columnDefs={applyTemplate(
+            this.props.template.toJS(),
+            this.props.fields.toJS()
+          )}
           rowData={
             this.props.entries === null
               ? this.props.entries
