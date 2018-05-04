@@ -56,7 +56,9 @@ export class Table extends React.Component {
   onColumnDropped = () => {
     // TODO: update UI to have modified template displayed with save btn.
     const colOrder = this.columnApi.getColumnState();
-    console.log(colOrder);
+
+    // Remove the hidden ones and just get the filed identifiers
+    const list = colOrder.filter(c => !c.hide).map(c => c.colId);
     this.props.templateModified();
   };
 
