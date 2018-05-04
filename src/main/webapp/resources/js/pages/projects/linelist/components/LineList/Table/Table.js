@@ -6,7 +6,6 @@ import "ag-grid/dist/styles/ag-theme-balham.css";
 
 import { LoadingOverlay } from "./LoadingOverlay";
 import { SampleNameRenderer } from "./renderers/SampleNameRenderer";
-import { fromJS } from "immutable";
 
 const localeText = window.PAGE.i18n.agGrid;
 

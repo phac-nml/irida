@@ -10,7 +10,7 @@ import { TemplatesContainer } from "../Templates";
  * 2. Table
  * 3. Loading error.
  */
-export const LineList = props => {
+export function LineList(props) {
   const { initializing } = props;
   if (initializing) {
     return <Loader />;
@@ -27,7 +27,7 @@ export const LineList = props => {
       <TableContainer />
     </React.Fragment>
   );
-};
+}
 
 LineList.propTypes = {
   initializing: PropTypes.bool.isRequired,

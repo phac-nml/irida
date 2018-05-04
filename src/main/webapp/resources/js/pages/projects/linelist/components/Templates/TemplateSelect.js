@@ -2,7 +2,7 @@ import React from "react";
 import { Select } from "antd";
 const { Option } = Select;
 
-export const TemplateSelect = props => {
+export function TemplateSelect(props) {
   const templates = props.templates.toJS();
   if (templates.length) {
     return (
@@ -22,4 +22,4 @@ export const TemplateSelect = props => {
   } else {
     return <span />;
   }
-};
+}
