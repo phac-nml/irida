@@ -26,6 +26,8 @@ export const reducer = (state = initialState, action = {}) => {
         .set("modified", false);
     case types.TEMPLATE_MODIFIED:
       return state.set("modified", true).set("current", MODIFIED_SELECT_INDEX);
+    case types.VALIDATE_TEMPLATE_NAME:
+      return state.set("validating", true);
     default:
       return state;
   }

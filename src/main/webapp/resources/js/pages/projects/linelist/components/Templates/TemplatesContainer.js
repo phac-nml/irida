@@ -11,7 +11,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   fetchTemplate: id => dispatch(actions.load(id)),
-  validateTemplateName: name => dispatch(action.validateTemplateName(name))
+  validateTemplateName: name => dispatch(actions.validateTemplateName(name))
 });
 
 export const TemplatesContainer = connect(mapStateToProps, mapDispatchToProps)(

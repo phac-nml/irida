@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Button, Form, Input, Modal } from "antd";
+import { Alert, Button, Form, Input, Modal } from "antd";
 const FormItem = Form.Item;
 
 export class SaveTemplateModal extends React.Component {
@@ -89,6 +89,10 @@ export class SaveTemplateModal extends React.Component {
               <Input onKeyUp={this.validateTemplateName} ref={this.nameInput} />
             </FormItem>
           </Form>
+          <Alert
+            type="info"
+            message="__Only the column order and visibility will be saved__"
+          />
         </Modal>
       </React.Fragment>
     ) : null;
