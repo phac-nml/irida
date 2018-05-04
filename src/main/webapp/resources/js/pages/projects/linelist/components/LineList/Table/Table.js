@@ -56,6 +56,7 @@ export class Table extends React.Component {
   onColumnDropped = () => {
     // TODO: update UI to have modified template displayed with save btn.
     const colOrder = this.columnApi.getColumnState();
+    console.log(colOrder);
     this.props.templateModified();
   };
 
