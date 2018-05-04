@@ -6,10 +6,20 @@
 <head>
     <title th:text="#{linelist.page-title}">Title</title>
     <link rel="stylesheet" th:href="@{/resources/dist/css/project-linelist.bundle.css}">
+    <script th:inline="javascript">
+        window.PAGE = {
+          i18n: {
+            Loader: {
+              message: /*[[#{linelist.Loader.message}]]*/ "__Loading Metadata__",
+              description: /*[[#{linelist.Loader.description}]]*/ "__Checking for ...__"
+            }
+          }
+        };
+    </script>
 </head>
 <body>
 <main layout:fragment="main">
-
+<div id="root"></div>
 </main>
 
 <th:block layout:fragment="scripts">

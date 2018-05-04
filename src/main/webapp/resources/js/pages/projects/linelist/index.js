@@ -1,18 +1,6 @@
-import createStore from "./redux/create";
+import React from "react";
+import { render } from "react-dom";
+import { App } from "./components/App/App";
 
-// Linelist Table
-import { fetchMetadataFields, fetchMetadataEntries } from "./apis";
-import { metadataLoadingSaga } from "./redux/modules/metadata";
-
-// Get the project id from the window object:
-const PROJECT_ID = window.project.id;
-
-const store = createStore();
-
-// Initialize the linelist table.
-store.runSaga(
-  metadataLoadingSaga,
-  fetchMetadataFields,
-  fetchMetadataEntries,
-  PROJECT_ID
-);
+// Render the application
+render(<App />, document.querySelector("#root"));
