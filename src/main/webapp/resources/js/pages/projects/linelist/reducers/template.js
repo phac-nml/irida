@@ -1,5 +1,8 @@
 import { fromJS, List } from "immutable";
 
+export const NO_TEMPLATE_INDEX = -1;
+export const MODIFIED_SELECT_INDEX = -2;
+
 export const types = {
   LOAD: `METADATA/TEMPLATE/LOAD`,
   SUCCESS: `METADATA/TEMPLATE/SUCCESS`,
@@ -22,7 +25,7 @@ export const reducer = (state = initialState, action = {}) => {
         .set("current", action.id)
         .set("modified", false);
     case types.TEMPLATE_MODIFIED:
-      return state.set("modified", true);
+      return state.set("modified", true).set("current", MODIFIED_SELECT_INDEX);
     default:
       return state;
   }

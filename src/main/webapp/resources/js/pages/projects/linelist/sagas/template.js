@@ -1,5 +1,5 @@
 import { call, put, takeLatest } from "redux-saga/effects";
-import { actions, types } from "../reducers/template";
+import { actions, NO_TEMPLATE_INDEX, types } from "../reducers/template";
 import { fetchTemplate } from "../../../../apis/metadata/templates";
 
 /**
@@ -13,7 +13,7 @@ export function* watchFetchTemplateSaga() {
 export function* loadTemplateSaga(action) {
   try {
     const id = Number(action.id);
-    if (-1 === id) {
+    if (NO_TEMPLATE_INDEX === id) {
       yield put(actions.success([], id));
     } else {
       const { data: template } = yield call(fetchTemplate, id);
