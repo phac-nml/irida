@@ -67,7 +67,14 @@ Once the pipeline is complete, you will see the Bio_Hansel pipeline reuslts with
 
 ![bio_hansel_results][]
 
+Interpreting the Results
+========================
+
+For more information in interpreting the results, please see the [IRIDA Bio_Hansel Documentation][biohansel-doc] or the [Bio_Hansel GitHub page][biohansel-github]
+
 [Web Upload Tutorial]: ../web-upload/
+[biohansel-doc]: ../../user/bio_hansel/
+[biohansel-github]: https://github.com/phac-nml/bio_hansel
 [add-to-cart.png]: images/add-to-cart.png
 [cart-button.png]: images/cart-button.png
 [select-a-pipeline.png]: images/pipeline_selection.png
