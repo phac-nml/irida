@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { TemplateSelect } from "./TemplateSelect";
 import { SaveTemplateModal } from "./SaveTemplateModal";
 
-export const Templates = props => {
+export function Templates(props) {
   return (
     <div style={{ marginBottom: "1rem" }}>
       <TemplateSelect {...props} />
@@ -14,7 +14,7 @@ export const Templates = props => {
       />
     </div>
   );
-};
+}
 
 Templates.propTypes = {
   modified: PropTypes.bool.isRequired,

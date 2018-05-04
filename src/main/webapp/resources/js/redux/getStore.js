@@ -5,15 +5,24 @@ to actions.
  */
 import { createStore, applyMiddleware, combineReducers, compose } from "redux";
 import createSagaMiddleware from "redux-saga";
-import { initSagas } from "./initSagas";
 
-// Reducers
-import { reducer as fields } from "./modules/fields";
-import { reducer as entries } from "./modules/entries";
-import { reducer as templates } from "./modules/templates";
-import { reducer as template } from "./modules/template";
+// Default reducers
+import appReducer from "./reducers/app";
 
-export function getStore(initialSate) {
+/**
+ * Set up the redux store.
+ * Installs middle wear into redux for:
+ *  - Redux Devtools
+ *  - Redux Sagas
+ * @param {object} reducers
+ * @param {object} sagas
+ * @param initialState
+ * @returns {Store<any> & {dispatch: any}}
+ */
+export function getStore(reducers = {}, sagas = {}, initialState) {
+  // Add default application reducers
+  reducers.app = appReducer;
+
   /*
   Allows us to use Redux Devtools
   {@link https://github.com/zalmoxisus/redux-devtools-extension}
@@ -29,12 +38,9 @@ export function getStore(initialSate) {
  */
   const sagaMiddleware = createSagaMiddleware();
   const enhancer = composeEnhancers(applyMiddleware(sagaMiddleware));
-  const store = createStore(
-    combineReducers({ fields, entries, templates, template }),
-    initialSate,
-    enhancer
-  );
-  initSagas(sagaMiddleware);
+  const store = createStore(combineReducers(reducers), initialState, enhancer);
+  // Bind the sagas to the saga middleware
+  Object.values(sagas).forEach(sagaMiddleware.run.bind(sagaMiddleware));
 
   return store;
 }

@@ -1,1 +1,1 @@
-export { LoaderContainer } from "./LoaderContainer";
+export { Loader } from "./Loader";

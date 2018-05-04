@@ -16,6 +16,7 @@ RUN install-repository "-r 4287dd541327 --url https://irida.corefacility.ca/gala
 	install-repository "-r 9ea374bb0350 --url https://toolshed.g2.bx.psu.edu -o jjohnson --name regex_find_replace" && \
 	install-repository "-r 7bc329e1ada4 --url https://irida.corefacility.ca/galaxy-shed/ -o irida --name bundle_collections" && \
 	install-repository "-r c970d74729e9 --url https://irida.corefacility.ca/galaxy-shed/ -o irida --name combine_assembly_stats" && \
+	install-repository "-r 57d5928f456e --url https://toolshed.g2.bx.psu.edu -o iuc --name shovill" && \
 	install-repository "-r 5c8ff92e38a9 --url https://toolshed.g2.bx.psu.edu -o nml --name sistr_cmd" && \
 	install-repository "-r 26df66c32861 --url https://toolshed.g2.bx.psu.edu -o nml --name refseq_masher" && \
 	install-repository "-r b815081988b5 --url https://toolshed.g2.bx.psu.edu -o nml --name combine_tabular_collection" && \
@@ -35,6 +36,8 @@ RUN /tool_deps/_conda/bin/conda config --add channels conda-forge && \
     /tool_deps/_conda/bin/conda config --add channels defaults && \
     /tool_deps/_conda/bin/conda config --add channels r && \
     /tool_deps/_conda/bin/conda config --add channels bioconda && \
+    /tool_deps/_conda/bin/conda create -y --name __shovill@0.9.0 shovill=0.9.0 && \
+    /tool_deps/_conda/bin/conda install -y -c conda-forge --name __shovill@0.9.0 ncurses bzip2 && \
     /tool_deps/_conda/bin/conda create -y --name __sistr_cmd@1.0.2 sistr_cmd=1.0.2 && \
     /tool_deps/_conda/bin/conda create -y --name __mentalist@0.1.3 mentalist=0.1.3 && \
     /tool_deps/_conda/bin/conda create -y --name __refseq_masher@0.1.1 refseq_masher=0.1.1 && \
