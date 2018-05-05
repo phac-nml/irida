@@ -36,7 +36,7 @@ export const reducer = (state = initialState, action = {}) => {
     case types.LOAD_ERROR:
       return state
         .set("initializing", false)
-        .set("error", false)
+        .set("error", true)
         .set("fields", List());
     default:
       return state;
