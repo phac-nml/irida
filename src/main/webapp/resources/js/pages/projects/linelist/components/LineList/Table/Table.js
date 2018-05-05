@@ -7,7 +7,7 @@ import "ag-grid/dist/styles/ag-theme-balham.css";
 
 import LoadingOverlay from "../../../../../../modules/agGrid/LoadingOverlay";
 
-const localeText = window.PAGE.i18n.agGrid;
+const { i18n } = window.PAGE;
 
 export const Table = props => {
   const containerStyle = {
@@ -24,7 +24,7 @@ export const Table = props => {
   return (
     <div style={containerStyle} className="ag-theme-balham">
       <AgGridReact
-        localeText={localeText}
+        localeText={i18n.linelist.agGrid}
         columnDefs={fields}
         deltaRowDataMode={true}
         frameworkComponents={frameworkComponents}
