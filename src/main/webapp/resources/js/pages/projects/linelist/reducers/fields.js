@@ -1,4 +1,4 @@
-import { Map, List } from "immutable";
+import { List, Map } from "immutable";
 
 /**
  * Fields need to be formatted properly to go into the column headers.
@@ -8,7 +8,7 @@ import { Map, List } from "immutable";
 const formatColumns = cols =>
   cols.map(f => ({
     field: f.label,
-    headerName: f.label.toUpperCase()
+    headerName: f.label
   }));
 
 export const types = {
