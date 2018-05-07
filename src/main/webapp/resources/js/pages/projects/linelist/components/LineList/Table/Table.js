@@ -7,7 +7,7 @@ import "ag-grid/dist/styles/ag-theme-balham.css";
 import { LoadingOverlay } from "./LoadingOverlay";
 import { SampleNameRenderer } from "./renderers/SampleNameRenderer";
 
-const localeText = window.PAGE.i18n.agGrid;
+const { i18n } = window.PAGE;
 
 // Format the fields based on a template
 const applyTemplate = (template, fields) => {
@@ -58,7 +58,7 @@ export class Table extends React.Component {
       <div style={this.containerStyle} className="ag-theme-balham">
         <AgGridReact
           enableSorting={true}
-          localeText={localeText}
+          localeText={i18n.linelist.agGrid}
           columnDefs={applyTemplate(
             this.props.template.toJS(),
             this.props.fields.toJS()
