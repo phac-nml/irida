@@ -1,6 +1,6 @@
+const webpack = require("webpack");
 const CleanWebpackPlugin = require("clean-webpack-plugin");
 const ProgressBarPlugin = require("progress-bar-webpack-plugin");
-const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 /**
@@ -49,7 +49,11 @@ exports.lintJavaScript = () => ({
  */
 exports.compressJavaScript = () => {
   if (process.env.MIN_JS !== "false") {
-    return { plugins: [new UglifyJsPlugin({ cache: true, parallel: true })] };
+    return {
+      plugins: [
+        new webpack.optimize.UglifyJsPlugin()
+      ]
+    };
   }
 };
 
