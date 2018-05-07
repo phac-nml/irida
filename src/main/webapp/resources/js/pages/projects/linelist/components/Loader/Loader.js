@@ -1,15 +1,13 @@
 import React from "react";
 import { Alert } from "antd";
 
-const { message, description } = window.PAGE.i18n.Loader;
-export function Loader() {
-  return (
-    <Alert
-      message={message}
-      description={description}
-      type="info"
-      iconType="loading"
-      showIcon
-    />
-  );
-}
+const { i18n } = window.PAGE;
+export const Loader = () => (
+  <Alert
+    message={i18n.linelist.Loader.message}
+    description={i18n.linelist.Loader.description}
+    type="info"
+    iconType="loading"
+    showIcon
+  />
+);

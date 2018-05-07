@@ -1,4 +1,5 @@
 const path = require("path");
+const webpack = require("webpack");
 const merge = require("webpack-merge");
 const parts = require("./configs/webpack/webpack.parts");
 const entries = require("./configs/webpack/entries.js");
@@ -52,6 +53,13 @@ const commonConfig = merge([
  PRODUCTION CONFIGURATION
 ====================== */
 const productionConfig = merge([
+  {
+    plugins: [
+      new webpack.DefinePlugin({
+        "process.env.NODE_ENV": JSON.stringify("production")
+      })
+    ]
+  },
   parts.progressBar(),
   parts.compressJavaScript(),
   parts.clean([PATHS.build])

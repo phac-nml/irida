@@ -11,14 +11,14 @@ const sampleNameColumn = {
 };
 
 /**
- * Format the column definitions.
+ * Fields need to be formatted properly to go into the column headers.
  * @param {array} cols
  * @returns {*}
  */
 const formatColumns = cols =>
   cols.map((f, i) => ({
     field: f.label,
-    headerName: f.label.toUpperCase(),
+    headerName: f.label,
     ...(i === 0 ? sampleNameColumn : {})
   }));
 
@@ -47,7 +47,7 @@ export const reducer = (state = initialState, action = {}) => {
     case types.LOAD_ERROR:
       return state
         .set("initializing", false)
-        .set("error", false)
+        .set("error", true)
         .set("fields", List());
     default:
       return state;
