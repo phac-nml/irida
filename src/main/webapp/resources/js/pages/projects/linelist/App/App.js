@@ -6,13 +6,10 @@ import {
   fieldsReducer as fields,
   entriesReducer as entries
 } from "../reducers";
-import { fieldsLoadingSaga, entriesLoadingSaga } from "../sagas";
+import * as sagas from "../sagas";
 import LineList from "../components/LineList/LineListContainer";
 
-const store = getStore(
-  { fields, entries },
-  { fieldsLoadingSaga, entriesLoadingSaga }
-);
+const store = getStore({ fields, entries }, sagas);
 
 export const App = () => (
   <Provider store={store}>
