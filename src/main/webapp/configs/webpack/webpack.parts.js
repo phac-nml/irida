@@ -11,7 +11,7 @@ exports.loadJavaScript = () => ({
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.(js|jsx)$/,
         loader: "babel-loader",
         exclude: /node_modules/,
         options: {
@@ -35,7 +35,7 @@ exports.lintJavaScript = () => ({
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         loader: "eslint-loader"
       }
