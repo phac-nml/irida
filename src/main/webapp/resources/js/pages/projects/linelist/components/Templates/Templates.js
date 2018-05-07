@@ -6,9 +6,6 @@ import { SaveTemplateModal } from "./SaveTemplateModal";
 export function Templates(props) {
   return (
     <div style={{ marginBottom: "1rem" }}>
-      <div>
-        <strong>__Templates__</strong>
-      </div>
       <TemplateSelect {...props} />
       <SaveTemplateModal
         modified={props.modified}

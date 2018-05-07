@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { Alert, Button, Form, Input, Modal } from "antd";
 const FormItem = Form.Item;
 
+const { i18n } = window.PAGE;
 export class SaveTemplateModal extends React.Component {
   state = { visible: false, validation: { validateStatus: "", message: "" } };
   nameInput = React.createRef();
@@ -71,7 +72,7 @@ export class SaveTemplateModal extends React.Component {
           style={{ marginLeft: ".5rem", marginTop: ".5px" }}
           onClick={this.showModal}
         >
-          _SAVE_
+          {i18n.linelist.Select.saveModified}
         </Button>
         <Modal
           title="__SAVE_TEMPLATE__"

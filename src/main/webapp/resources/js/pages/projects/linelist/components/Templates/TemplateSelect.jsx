@@ -31,7 +31,9 @@ export class TemplateSelect extends React.Component {
         onSelect={this.templateSelected}
       >
         {this.props.modified ? (
-          <Option value={MODIFIED_SELECT_INDEX}>_Modified_</Option>
+          <Option value={MODIFIED_SELECT_INDEX}>
+            {i18n.linelist.Select.modified}
+          </Option>
         ) : null}
         <Option value={NO_TEMPLATE_INDEX} title="_NONE_">
           {i18n.linelist.Select.none}
