@@ -14,6 +14,4 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({});
 
-export const LineListContainer = connect(mapStateToProps, mapDispatchToProps)(
-  LineList
-);
+export default connect(mapStateToProps, mapDispatchToProps)(LineList);

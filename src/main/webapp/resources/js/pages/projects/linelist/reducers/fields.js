@@ -1,4 +1,15 @@
-import { Map, List } from "immutable";
+import { List, Map } from "immutable";
+
+/**
+ * Fields need to be formatted properly to go into the column headers.
+ * @param {array} cols
+ * @returns {*}
+ */
+const formatColumns = cols =>
+  cols.map(f => ({
+    field: f.label,
+    headerName: f.label
+  }));
 
 export const types = {
   LOAD: "METADATA/FIELDS/LOAD_REQUEST",
@@ -17,14 +28,15 @@ export const reducer = (state = initialState, action = {}) => {
     case types.LOAD:
       return state.set("initializing", true).set("error", false);
     case types.LOAD_SUCCESS:
+      const fields = List.of(formatColumns(action.fields));
       return state
         .set("initializing", false)
         .set("error", false)
-        .set("fields", action.fields);
+        .set("fields", fields);
     case types.LOAD_ERROR:
       return state
         .set("initializing", false)
-        .set("error", false)
+        .set("error", true)
         .set("fields", List());
     default:
       return state;
