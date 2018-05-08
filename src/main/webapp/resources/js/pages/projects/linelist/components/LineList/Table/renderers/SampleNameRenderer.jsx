@@ -9,7 +9,11 @@ export class SampleNameRenderer extends Component {
     this.name = props.value;
   }
   render() {
-    return <a href={this.href}> {this.name} </a>;
+    return (
+      <a target="_blank" href={this.href}>
+        {this.name}
+      </a>
+    );
   }
 }
 
