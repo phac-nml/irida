@@ -9,9 +9,9 @@ import { fetchTemplates } from "../../../../apis/metadata/templates";
  */
 export function* templatesLoadingSaga() {
   try {
-    const { id } = yield take(types.INIT_APP);
+    const { payload } = yield take(types.INIT_APP);
     yield put(actions.load());
-    const { data: templates } = yield call(fetchTemplates, id);
+    const { data: templates } = yield call(fetchTemplates, payload.id);
     yield put(actions.success(templates));
   } catch (error) {
     yield put(actions.error(error));

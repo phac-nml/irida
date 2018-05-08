@@ -15,4 +15,4 @@ export const App = () => (
 );
 
 const CURRENT_PROJECT_ID = window.project.id;
-store.dispatch(actions.initialize(CURRENT_PROJECT_ID));
+store.dispatch(actions.initialize({ id: CURRENT_PROJECT_ID }));

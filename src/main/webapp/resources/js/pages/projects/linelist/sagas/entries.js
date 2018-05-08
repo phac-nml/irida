@@ -26,9 +26,9 @@ const formatRows = rows => {
  */
 export function* entriesLoadingSaga() {
   try {
-    const { id } = yield take(types.INIT_APP);
+    const { payload } = yield take(types.INIT_APP);
     yield put(actions.load());
-    const { data } = yield call(fetchMetadataEntries, id);
+    const { data } = yield call(fetchMetadataEntries, payload.id);
     const entries = formatRows(data);
     yield put(actions.success(entries));
   } catch (error) {
