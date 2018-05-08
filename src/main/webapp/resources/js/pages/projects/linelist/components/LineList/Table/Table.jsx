@@ -58,6 +58,7 @@ export class Table extends React.Component {
       <div style={this.containerStyle} className="ag-theme-balham">
         <AgGridReact
           enableSorting={true}
+          enableColResize={true}
           localeText={i18n.linelist.agGrid}
           columnDefs={applyTemplate(
             this.props.template.toJS(),
