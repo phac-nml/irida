@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.ria.web.LineListController;
+import ca.corefacility.bioinformatics.irida.ria.web.linelist.LineListController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;

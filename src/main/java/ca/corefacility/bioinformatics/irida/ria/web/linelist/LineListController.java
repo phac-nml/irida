@@ -1,10 +1,6 @@
-package ca.corefacility.bioinformatics.irida.ria.web;
+package ca.corefacility.bioinformatics.irida.ria.web.linelist;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,7 +18,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateServi
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 /**
- * This controller is responsible for AJAX handling for the line list page, which displays sample metatdata.
+ * This controller is responsible for AJAX handling for the line list page, which displays sample metadata.
  */
 @Controller
 @RequestMapping("/linelist")
@@ -32,7 +28,8 @@ public class LineListController {
 	private MetadataTemplateService metadataTemplateService;
 
 	@Autowired
-	public LineListController(ProjectService projectService, SampleService sampleService, MetadataTemplateService metadataTemplateService) {
+	public LineListController(ProjectService projectService, SampleService sampleService,
+			MetadataTemplateService metadataTemplateService) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.metadataTemplateService = metadataTemplateService;
@@ -51,14 +48,15 @@ public class LineListController {
 	}
 
 	/**
-	 * Get a {@link List} of {@link MetadataEntry} for all {@link  Sample}s in a {@link Project}
+	 * Get a {@link List} of {@link Map} containing information from {@link MetadataEntry} for all
+	 * {@link  Sample}s in a {@link Project}
 	 *
 	 * @param projectId {@link Long} identifier for a {@link Project}
 	 * @return {@link List} of {@link List}s of all {@link Sample} metadata in a {@link Project}
 	 */
 	@RequestMapping("/entries")
 	@ResponseBody
-	public List<List<MetadataEntry>> getProjectSamplesMetadataEntries(@RequestParam long projectId) {
+	public List<Map<String, MetadataEntry>> getProjectSamplesMetadataEntries(@RequestParam long projectId) {
 		return getAllProjectSamplesMetadataEntries(projectId);
 	}
 
@@ -70,29 +68,36 @@ public class LineListController {
 	 */
 	private List<MetadataTemplateField> getAllProjectMetadataFields(Long projectId) {
 		Project project = projectService.read(projectId);
-		return metadataTemplateService.getMetadataFieldsForProject(project);
+		List<MetadataTemplateField> fields = metadataTemplateService.getMetadataFieldsForProject(project);
+
+		// Need the sample name.  This will enforce that it is in the first position.
+		fields.add(0, new MetadataTemplateField("sampleName", "text"));
+		return fields;
 	}
 
 	/**
-	 * Get a {@link List} of {@link MetadataEntry} for all {@link  Sample}s in a {@link Project}
+	 * Get a {@link List} of {@link Map} for all {@link  Sample} {@link MetadataEntry}s in a {@link Project}
 	 *
 	 * @param projectId {@link Long} identifier for a {@link Project}
 	 * @return {@link List} of {@link List}s of all {@link Sample} metadata in a {@link Project}
 	 */
-	private List<List<MetadataEntry>> getAllProjectSamplesMetadataEntries(Long projectId) {
+	private List<Map<String, MetadataEntry>> getAllProjectSamplesMetadataEntries(Long projectId) {
 		Project project = projectService.read(projectId);
 		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(project);
-
-		List<List<MetadataEntry>> result = new ArrayList<>(samplesForProject.size());
+		List<Map<String, MetadataEntry>> result = new ArrayList<>(samplesForProject.size());
 
 		for (Join<Project, Sample> join : samplesForProject) {
 			Sample sample = join.getObject();
-			List<MetadataEntry> entries;
+			Map<String, MetadataEntry> entries = new HashMap<>();
+
+			// Need to have the sample name and Id
+			entries.put("sampleName", new MetadataEntry(sample.getLabel(), "text"));
+			entries.put("sampleId", new MetadataEntry(String.valueOf(sample.getId()), "number"));
+
 			Map<MetadataTemplateField, MetadataEntry> sampleMetadata = sample.getMetadata();
-			entries = sampleMetadata.keySet()
-					.stream()
-					.map(sampleMetadata::get)
-					.collect(Collectors.toList());
+			for (MetadataTemplateField field : sampleMetadata.keySet()) {
+				entries.put(field.getLabel(), sampleMetadata.getOrDefault(field, new MetadataEntry()));
+			}
 			result.add(entries);
 		}
 

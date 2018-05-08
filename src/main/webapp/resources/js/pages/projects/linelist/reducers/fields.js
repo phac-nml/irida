@@ -1,4 +1,14 @@
-import { List, Map } from "immutable";
+import { List, fromJS } from "immutable";
+
+/*
+Special handler for formatting the sample Name Column;
+ */
+const sampleNameColumn = {
+  sort: "asc",
+  pinned: "left",
+  lockPosition: true,
+  cellRenderer: "SampleNameRenderer"
+};
 
 /**
  * Fields need to be formatted properly to go into the column headers.
@@ -6,9 +16,10 @@ import { List, Map } from "immutable";
  * @returns {*}
  */
 const formatColumns = cols =>
-  cols.map(f => ({
+  cols.map((f, i) => ({
     field: f.label,
-    headerName: f.label
+    headerName: f.label,
+    ...(i === 0 ? sampleNameColumn : {})
   }));
 
 export const types = {
@@ -17,7 +28,7 @@ export const types = {
   LOAD_SUCCESS: "METADATA/FIELDS/LOAD_SUCCESS"
 };
 
-export const initialState = Map({
+export const initialState = fromJS({
   initializing: true, // Is the API call currently being made
   error: false, // Was there an error making the api call}
   fields: List() // List of metadata fields ==> used for table headers
@@ -28,11 +39,11 @@ export const reducer = (state = initialState, action = {}) => {
     case types.LOAD:
       return state.set("initializing", true).set("error", false);
     case types.LOAD_SUCCESS:
-      const fields = List.of(formatColumns(action.fields));
       return state
         .set("initializing", false)
         .set("error", false)
-        .set("fields", fields);
+        .delete("fields")
+        .set("fields", fromJS(formatColumns(action.fields)));
     case types.LOAD_ERROR:
       return state
         .set("initializing", false)

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Spin } from "antd";
 
 const { i18n } = window.PAGE;
-export default class LoadingOverlay extends Component {
+export class LoadingOverlay extends Component {
   render() {
     if (typeof i18n.linelist.agGrid.loading === "undefined") {
       throw new Error(

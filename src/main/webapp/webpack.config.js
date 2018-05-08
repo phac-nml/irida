@@ -30,6 +30,9 @@ const commonConfig = merge([
       path: PATHS.build,
       filename: "js/[name].bundle.js"
     },
+    resolve: {
+      extensions: [".js", ".jsx"]
+    },
     module: {
       rules: [
         {
