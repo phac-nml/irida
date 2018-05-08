@@ -17,4 +17,3 @@ export function* templatesLoadingSaga() {
     yield put(actions.error(error));
   }
 }
-//
