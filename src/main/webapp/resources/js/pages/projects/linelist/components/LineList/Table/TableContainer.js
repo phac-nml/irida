@@ -8,7 +8,7 @@ const mapStateToProps = state => ({
   template: state.template.get("template")
 });
 const mapDispatchToProps = dispatch => ({
-  templateModified: () => dispatch(actions.modified())
+  templateModified: fields => dispatch(actions.modified(fields))
 });
 
 export const TableContainer = connect(mapStateToProps, mapDispatchToProps)(

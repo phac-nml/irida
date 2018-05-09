@@ -23,14 +23,3 @@ export function* loadTemplateSaga(action) {
     // TODO: (Josh | 2018-04-19) CATCH THIS
   }
 }
-
-export function* validateTemplateNameSaga() {
-  yield takeLatest(types.VALIDATE_TEMPLATE_NAME, validateTemplateName);
-}
-
-function* validateTemplateName(action) {
-  const { name } = action;
-
-  console.log(name);
-  console.info("NEED TO IMPLEMENT THIS");
-}

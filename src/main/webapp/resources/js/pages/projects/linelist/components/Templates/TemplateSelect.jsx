@@ -32,7 +32,7 @@ export class TemplateSelect extends React.Component {
           style={{ width: 250 }}
           onSelect={this.templateSelected}
         >
-          {this.props.modified ? (
+          {this.props.modified !== null ? (
             <Option value={MODIFIED_SELECT_INDEX}>
               {i18n.linelist.templates.Select.modified}
             </Option>
@@ -63,7 +63,7 @@ export class TemplateSelect extends React.Component {
 }
 
 TemplateSelect.propTypes = {
-  modified: PropTypes.bool.isRequired,
+  modified: PropTypes.object,
   templates: ImmutablePropTypes.list.isRequired,
   fetchTemplate: PropTypes.func.isRequired
 };

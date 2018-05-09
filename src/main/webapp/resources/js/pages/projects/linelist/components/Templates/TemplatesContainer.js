@@ -5,13 +5,11 @@ import { Templates } from "./Templates";
 const mapStateToProps = state => ({
   templates: state.templates.get("templates"),
   current: state.template.get("current"),
-  modified: state.template.get("modified"),
-  validating: state.template.get("validating")
+  modified: state.template.get("modified")
 });
 
 const mapDispatchToProps = dispatch => ({
-  fetchTemplate: id => dispatch(actions.load(id)),
-  validateTemplateName: name => dispatch(actions.validateTemplateName(name))
+  fetchTemplate: id => dispatch(actions.load(id))
 });
 
 export const TemplatesContainer = connect(mapStateToProps, mapDispatchToProps)(

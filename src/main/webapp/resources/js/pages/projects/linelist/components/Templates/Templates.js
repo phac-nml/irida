@@ -1,15 +1,19 @@
 import React from "react";
-import { Popover, Icon } from "antd";
 import PropTypes from "prop-types";
+import ImmutablePropTYpes from "react-immutable-proptypes";
 import { TemplateSelect } from "./TemplateSelect";
 import { SaveTemplateModal } from "./SaveTemplateModal";
+import {
+  PopoverContents,
+  HelpPopover
+} from "../../../../../components/popovers";
 const { i18n } = window.PAGE;
 
 const content = (
-  <div style={{ maxWidth: "250px" }}>
+  <React.Fragment>
     <p>{i18n.linelist.templates.Popover.content}</p>
     <p>{i18n.linelist.templates.Popover.description}</p>
-  </div>
+  </React.Fragment>
 );
 
 export function Templates(props) {
@@ -18,21 +22,17 @@ export function Templates(props) {
       <TemplateSelect {...props} />
       <SaveTemplateModal
         modified={props.modified}
-        validating={props.validating}
-        validateTemplateName={props.validateTemplateName}
+        templates={props.templates}
       />
-      <Popover content={content} title={i18n.linelist.templates.Popover.title}>
-        <Icon
-          type="question-circle-o"
-          style={{ color: "RGBA(46, 149, 248, 1.00)", margin: "0 .5rem" }}
-        />
-      </Popover>
+      <HelpPopover
+        content={<PopoverContents contents={content} />}
+        title={i18n.linelist.templates.Popover.title}
+      />
     </div>
   );
 }
 
 Templates.propTypes = {
-  modified: PropTypes.bool.isRequired,
-  validateTemplateName: PropTypes.func.isRequired,
-  validating: PropTypes.bool.isRequired
+  templates: ImmutablePropTYpes.list.isRequired,
+  modified: PropTypes.object
 };

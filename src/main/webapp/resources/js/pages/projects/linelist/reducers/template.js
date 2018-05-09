@@ -6,15 +6,13 @@ export const MODIFIED_SELECT_INDEX = -2;
 export const types = {
   LOAD: `METADATA/TEMPLATE/LOAD`,
   SUCCESS: `METADATA/TEMPLATE/SUCCESS`,
-  TEMPLATE_MODIFIED: `METADATA/TEMPLATE/TEMPLATE_MODIFIED`,
-  VALIDATE_TEMPLATE_NAME: `METADATA/TEMPLATE/VALIDATE_TEMPLATE_NAME`
+  TEMPLATE_MODIFIED: `METADATA/TEMPLATE/TEMPLATE_MODIFIED`
 };
 
 export const initialState = fromJS({
   current: -1,
   template: List(),
-  modified: false,
-  validating: false
+  modified: null
 });
 
 export const reducer = (state = initialState, action = {}) => {
@@ -23,11 +21,13 @@ export const reducer = (state = initialState, action = {}) => {
       return state
         .set("template", action.template)
         .set("current", action.id)
-        .set("modified", false);
+        .set("modified", null);
     case types.TEMPLATE_MODIFIED:
-      return state.set("modified", true).set("current", MODIFIED_SELECT_INDEX);
-    case types.VALIDATE_TEMPLATE_NAME:
-      return state.set("validating", true);
+      const { current, modified } = Object.assign({}, state.toJS());
+      const prevCurrent = modified || current;
+      return state
+        .set("modified", { id: prevCurrent, fields: action.fields })
+        .set("current", MODIFIED_SELECT_INDEX);
     default:
       return state;
   }
@@ -40,6 +40,5 @@ export const actions = {
     template: fromJS(template),
     id
   }),
-  validateTemplateName: name => ({ type: types.VALIDATE_TEMPLATE_NAME, name }),
-  modified: () => ({ type: types.TEMPLATE_MODIFIED })
+  modified: fields => ({ type: types.TEMPLATE_MODIFIED, fields })
 };

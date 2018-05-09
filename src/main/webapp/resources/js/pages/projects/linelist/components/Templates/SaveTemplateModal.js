@@ -1,6 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Alert, Button, Form, Input, Modal } from "antd";
+import ImmutablePropTypes from "react-immutable-proptypes";
+import { Button, Form, Input, Modal } from "antd";
+import { InfoAlert } from "../../../../../components/alerts";
 const FormItem = Form.Item;
 
 const { i18n } = window.PAGE;
@@ -54,7 +56,15 @@ export class SaveTemplateModal extends React.Component {
   }
 
   render() {
-    return this.props.modified ? (
+    const templates = this.props.templates.toJS();
+    let name = "";
+    if (this.props.modified !== null) {
+      const template = templates.filter(
+        t => t.id === this.props.modified.id
+      )[0];
+      name = typeof template === "undefined" ? "" : template.name;
+    }
+    return this.props.modified !== null ? (
       <React.Fragment>
         <Button
           className="primary"
@@ -65,25 +75,26 @@ export class SaveTemplateModal extends React.Component {
           {i18n.linelist.templates.saveModified}
         </Button>
         <Modal
-          title="__SAVE_TEMPLATE__"
+          title={i18n.linelist.templates.saveModal.title}
           visible={this.state.visible}
           onOk={this.handleOk}
           onCancel={this.handleCancel}
         >
           <Form layout="vertical">
             <FormItem
-              label="__Template Name__"
+              label={i18n.linelist.templates.saveModal.name}
               hasFeedback
               validateStatus={this.state.validation.validateStatus}
               help={this.state.validation.message}
             >
-              <Input onKeyUp={this.validateTemplateName} ref={this.nameInput} />
+              <Input
+                onKeyUp={this.validateTemplateName}
+                ref={this.nameInput}
+                defaultValue={name}
+              />
             </FormItem>
           </Form>
-          <Alert
-            type="info"
-            message="__Only the column order and visibility will be saved__"
-          />
+          <InfoAlert message={i18n.linelist.templates.saveModal.info} />
         </Modal>
       </React.Fragment>
     ) : null;
@@ -91,6 +102,6 @@ export class SaveTemplateModal extends React.Component {
 }
 
 SaveTemplateModal.propTypes = {
-  modified: PropTypes.bool.isRequired,
-  validateTemplateName: PropTypes.func.isRequired
+  modified: PropTypes.object,
+  templates: ImmutablePropTypes.list.isRequired
 };

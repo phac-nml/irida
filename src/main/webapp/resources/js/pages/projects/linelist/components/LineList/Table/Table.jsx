@@ -78,17 +78,13 @@ export class Table extends React.Component {
   onGridReady = params => {
     this.api = params.api;
     this.columnApi = params.columnApi;
-
-    this.api.sortChanged;
   };
 
   onColumnDropped = () => {
-    // TODO: update UI to have modified template displayed with save btn.
     const colOrder = this.columnApi.getColumnState();
-
-    // Remove the hidden ones and just get the filed identifiers
-    const list = colOrder.filter(c => !c.hide).map(c => c.colId);
-    this.props.templateModified();
+    // Remove the hidden ones and just get the field identifiers
+    const list = colOrder.filter(c => !c.hide).map(c => ({ label: c.colId }));
+    this.props.templateModified(list);
   };
 
   render() {
