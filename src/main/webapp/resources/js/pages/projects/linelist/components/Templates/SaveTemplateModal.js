@@ -54,16 +54,6 @@ export class SaveTemplateModal extends React.Component {
   }
 
   render() {
-    const form = (
-      <div>
-        <Form layout="vertical">
-          <FormItem validateStatus="error">
-            <Input type="text" />
-          </FormItem>
-        </Form>
-      </div>
-    );
-
     return this.props.modified ? (
       <React.Fragment>
         <Button
@@ -72,7 +62,7 @@ export class SaveTemplateModal extends React.Component {
           style={{ marginLeft: ".5rem", marginTop: ".5px" }}
           onClick={this.showModal}
         >
-          {i18n.linelist.Select.saveModified}
+          {i18n.linelist.templates.saveModified}
         </Button>
         <Modal
           title="__SAVE_TEMPLATE__"

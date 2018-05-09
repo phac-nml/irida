@@ -34,11 +34,11 @@ export class TemplateSelect extends React.Component {
         >
           {this.props.modified ? (
             <Option value={MODIFIED_SELECT_INDEX}>
-              {i18.linelist.templates.Select.modified}
+              {i18n.linelist.templates.Select.modified}
             </Option>
           ) : null}
           <Option value={NO_TEMPLATE_INDEX} title="_NONE_">
-            {i18.linelist.templates.Select.none}
+            {i18n.linelist.templates.Select.none}
           </Option>
           {templates.map(t => (
             <Option key={t.id} value={t.id}>
