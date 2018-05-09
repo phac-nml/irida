@@ -1,11 +1,14 @@
 import React from "react";
-import { Popover, Icon, Select } from "antd";
+import { Popover, Tag, Icon, Select } from "antd";
 const { Option } = Select;
 
 const { i18n } = window.PAGE;
 
 const content = (
-  <p style={{ maxWidth: "250px" }}>{i18n.linelist.Select.Popover.content}</p>
+  <div style={{ maxWidth: "250px" }}>
+    <p>{i18n.linelist.Select.Popover.content}</p>
+    <p>{i18n.linelist.Select.Popover.description}</p>
+  </div>
 );
 
 export function TemplateSelect(props) {
@@ -21,7 +24,18 @@ export function TemplateSelect(props) {
         <Option value="-1">{i18n.linelist.Select.none}</Option>
         {templates.map(t => (
           <Option key={t.id} value={t.id}>
-            {t.label}
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <span
+                style={{
+                  maxWidth: 170,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis"
+                }}
+              >
+                {t.name}
+              </span>{" "}
+              <Tag>{t.fields.length}</Tag>
+            </div>
           </Option>
         ))}
       </Select>
