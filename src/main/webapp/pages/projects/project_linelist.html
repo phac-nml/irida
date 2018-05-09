@@ -17,15 +17,27 @@
               agGrid: {
                 loading: /*[[#{linelist.agGrid.loading}]]*/ "__Loading data... this might take a while!__"
               },
-              Select: {
-                none: /*[[#{linelist.Select.none}]]*/ "__No Template Selected__",
-                modified: /*[[#{linelist.Select.modified}]]*/ "__No Template Selected__",
-                saveModified: /*[[#{linelist.Select.saveModified}]]*/ "__SAVE__"
+              templates: {
+                Select: {
+                  none: /*[[#{linelist.templates.Select.none}]]*/ "__No Template Selected__",
+                  modified: /*[[#{linelist.templates.Select.modified}]]*/ "__No Template Selected__"
+                },
+                saveModified: /*[[#{linelist.templates.saveModified}]]*/ "__SAVE__",
+                Popover: {
+                  title: /*[[#{linelist.templates.Popover.title}]]*/ "__POPOVER TITLE__",
+                  content: /*[[#{linelist.templates.Popover.content}]]*/ "__POPOVER CONTENT__",
+                  description: /*[[#{linelist.templates.Popover.description}]]*/ "__POPOVER DESCR__"
+                }
               }
             }
           }
         };
     </script>
+    <style>
+        .ant-select-selection-selected-value .ant-tag{
+            display: none;
+        }
+    </style>
 </head>
 <body>
 <main layout:fragment="main">
