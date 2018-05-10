@@ -1,5 +1,7 @@
 import { List, fromJS } from "immutable";
 
+const { i18n } = window.PAGE;
+
 export const types = {
   LOAD: "METADATA/TEMPLATES/LOAD_REQUEST",
   LOAD_ERROR: "METADATA/TEMPLATES/LOAD_TEMPLATES_ERROR",
@@ -7,11 +9,17 @@ export const types = {
   USE_TEMPLATE: "METADATA/TEMPLATES/USE_TEMPLATE"
 };
 
+const NO_TEMPLATE = {
+  name: i18n.linelist.Select.none,
+  id: -1,
+  fields: []
+};
+
 const initialState = fromJS({
   fetching: false,
   error: false,
   templates: List(),
-  current: -1
+  current: 0
 });
 
 export const reducer = (state = initialState, action = {}) => {
@@ -21,7 +29,7 @@ export const reducer = (state = initialState, action = {}) => {
     case types.LOAD_SUCCESS:
       return state
         .set("fetching", false)
-        .set("templates", fromJS(action.templates));
+        .set("templates", fromJS([NO_TEMPLATE, ...action.templates]));
     case types.LOAD_ERROR:
       return state.set("fetching", false).set("error", true);
     case types.USE_TEMPLATE:

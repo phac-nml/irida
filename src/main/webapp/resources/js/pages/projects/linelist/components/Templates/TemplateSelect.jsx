@@ -18,11 +18,10 @@ export function TemplateSelect(props) {
     <React.Fragment>
       <Select
         disabled={templates.length === 0}
-        defaultValue={"" + props.current}
+        defaultValue={props.current}
         style={{ width: 250 }}
         onSelect={index => props.useTemplate(index)}
       >
-        <Option value="-1">{i18n.linelist.Select.none}</Option>
         {templates.map((t, index) => (
           <Option key={t.id} value={index}>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -35,7 +34,7 @@ export function TemplateSelect(props) {
               >
                 {t.name}
               </span>{" "}
-              <Tag>{t.fields.length}</Tag>
+              {t.fields.length > 0 ? <Tag>{t.fields.length}</Tag> : null}
             </div>
           </Option>
         ))}
