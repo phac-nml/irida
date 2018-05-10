@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.linelist;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -9,10 +10,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.ria.web.models.UIMetadataTemplate;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -58,6 +62,22 @@ public class LineListController {
 	@ResponseBody
 	public List<Map<String, MetadataEntry>> getProjectSamplesMetadataEntries(@RequestParam long projectId) {
 		return getAllProjectSamplesMetadataEntries(projectId);
+	}
+
+	/**
+	 * Get a {@link List} of all {@link MetadataTemplate} associated with the project.
+	 *
+	 * @param projectId {@link Long} Identifier for the project to get id's for.
+	 * @return {@link List}
+	 */
+	@RequestMapping("/templates")
+	@ResponseBody
+	public List<UIMetadataTemplate> getLineListTemplates(@RequestParam long projectId) {
+		Project project = projectService.read(projectId);
+		List<ProjectMetadataTemplateJoin> joins = metadataTemplateService.getMetadataTemplatesForProject(project);
+		return joins.stream()
+				.map(join -> new UIMetadataTemplate(join.getObject()))
+				.collect(Collectors.toList());
 	}
 
 	/**

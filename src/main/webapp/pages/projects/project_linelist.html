@@ -16,11 +16,24 @@
               },
               agGrid: {
                 loading: /*[[#{linelist.agGrid.loading}]]*/ "__Loading data... this might take a while!__"
+              },
+              Select: {
+                none: /*[[#{linelist.Select.none}]]*/ "__No Template Selected__",
+                Popover: {
+                  title: /*[[#{linelist.Select.Popover.title}]]*/ "__POPOVER TITLE__",
+                  content: /*[[#{linelist.Select.Popover.content}]]*/ "__POPOVER CONTENT__",
+                  description: /*[[#{linelist.Select.Popover.description}]]*/ "__POPOVER DESCR__",
+                }
               }
             }
           }
         };
     </script>
+    <style>
+        .ant-select-selection-selected-value .ant-tag{
+            display: none;
+        }
+    </style>
 </head>
 <body>
 <main layout:fragment="main">

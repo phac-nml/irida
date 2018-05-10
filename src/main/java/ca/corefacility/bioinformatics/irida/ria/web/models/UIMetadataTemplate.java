@@ -1,10 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.web.models;
 
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 
 /**
  * User interface model for a {@link MetadataTemplate}
@@ -12,43 +12,41 @@ import java.util.List;
  * only lists {@link String} representations of them.
  */
 public class UIMetadataTemplate {
-    private Long id;
-    private String name;
-    private List<String> fields;
+	private Long id;
+	private String name;
+	private List<MetadataTemplateField> fields;
 
-    public UIMetadataTemplate() {
-    }
+	public UIMetadataTemplate() {
+	}
 
-    public UIMetadataTemplate(MetadataTemplate metadataTemplate) {
-        this.id = metadataTemplate.getId();
-        this.name = metadataTemplate.getName();
-        this.fields = new ArrayList<>();
-        for (MetadataTemplateField field : metadataTemplate.getFields()) {
-            this.fields.add(field.getLabel());
-        }
-    }
+	public UIMetadataTemplate(MetadataTemplate metadataTemplate) {
+		this.id = metadataTemplate.getId();
+		this.name = metadataTemplate.getName();
+		this.fields = new ArrayList<>();
+		this.fields.addAll(metadataTemplate.getFields());
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public List<String> getFields() {
-        return fields;
-    }
+	public List<MetadataTemplateField> getFields() {
+		return fields;
+	}
 
-    public void setFields(List<String> fields) {
-        this.fields = fields;
-    }
+	public void setFields(List<MetadataTemplateField> fields) {
+		this.fields = fields;
+	}
 }

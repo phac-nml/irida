@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Loader } from "../Loader";
 import { TableContainer } from "./Table";
+import { TemplatesContainer } from "../Templates";
 
 /**
  * Container class for the higher level states of the page:
@@ -9,7 +10,7 @@ import { TableContainer } from "./Table";
  * 2. Table
  * 3. Loading error.
  */
-export const LineList = props => {
+export function LineList(props) {
   const { initializing } = props;
   if (initializing) {
     return <Loader />;
@@ -18,8 +19,15 @@ export const LineList = props => {
     // TODO: (Josh | 2018-04-11) Create error component
     return <h3>A major error has occurred! Better find a 💣 shelter!</h3>;
   }
-  return <TableContainer />;
-};
+  return (
+    <React.Fragment>
+      <div style={{ marginBottom: "1rem" }}>
+        <TemplatesContainer />
+      </div>
+      <TableContainer />
+    </React.Fragment>
+  );
+}
 
 LineList.propTypes = {
   initializing: PropTypes.bool.isRequired,

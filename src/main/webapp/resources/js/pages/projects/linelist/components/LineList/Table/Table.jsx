@@ -1,4 +1,6 @@
 import React from "react";
+import { List } from "immutable";
+import PropTypes from "prop-types";
 import ImmutablePropTypes from "react-immutable-proptypes";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid/dist/styles/ag-grid.css";
@@ -20,6 +22,55 @@ export class Table extends React.Component {
   constructor(props) {
     super(props);
   }
+
+  shouldComponentUpdate(nextProps) {
+    if (!nextProps.fields.equals(this.props.fields)) {
+      return true;
+    }
+    if (
+      List.isList(nextProps.entries) &&
+      !nextProps.entries.equals(this.props.entries)
+    ) {
+      return true;
+    }
+    if (nextProps.current !== this.props.current) {
+      const template = nextProps.templates.get(nextProps.current).toJS();
+      this.applyTemplate(template.fields);
+    }
+    // If these have not been changed then don't update the entries;
+    return false;
+  }
+
+  applyTemplate = fields => {
+    const columnState = this.columnApi.getColumnState();
+
+    // If there are no fields, then there is no template :)
+    // Therefore just show all the fields.
+    if (fields.length === 0) {
+      const state = columnState.map(c => {
+        c.hide = false;
+        return c;
+      });
+      this.columnApi.setColumnState(state);
+      return;
+    }
+
+    // Need to keep sample name first
+    let final = [columnState.shift()];
+    fields.forEach(t => {
+      const index = columnState.findIndex(f => t.label === f.colId);
+      if (index > -1) {
+        const field = columnState.splice(index, 1)[0];
+        field.hide = false;
+        final.push(field);
+      }
+    });
+    const remainder = columnState.map(c => {
+      c.hide = true;
+      return c;
+    });
+    this.columnApi.setColumnState([...final, ...remainder]);
+  };
 
   /*
   Allow access to the grids API
@@ -46,6 +97,7 @@ export class Table extends React.Component {
           getRowNodeId={data => data.code}
           frameworkComponents={this.frameworkComponents}
           loadingOverlayComponent="LoadingOverlay"
+          animateRows={true}
           onGridReady={this.onGridReady}
         />
       </div>
@@ -55,5 +107,7 @@ export class Table extends React.Component {
 
 Table.propTypes = {
   fields: ImmutablePropTypes.list.isRequired,
-  entries: ImmutablePropTypes.list
+  entries: ImmutablePropTypes.list,
+  templates: ImmutablePropTypes.list,
+  current: PropTypes.number.isRequired
 };
