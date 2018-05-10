@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { Popover, Tag, Icon, Select } from "antd";
 const { Option } = Select;
 
@@ -19,11 +20,11 @@ export function TemplateSelect(props) {
         disabled={templates.length === 0}
         defaultValue={"" + props.current}
         style={{ width: 250 }}
-        onSelect={id => props.fetchTemplate(id)}
+        onSelect={index => props.useTemplate(index)}
       >
         <Option value="-1">{i18n.linelist.Select.none}</Option>
-        {templates.map(t => (
-          <Option key={t.id} value={t.id}>
+        {templates.map((t, index) => (
+          <Option key={t.id} value={index}>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <span
                 style={{
@@ -48,3 +49,8 @@ export function TemplateSelect(props) {
     </React.Fragment>
   );
 }
+
+TemplateSelect.propTypes = {
+  useTemplate: PropTypes.func.isRequired,
+  current: PropTypes.number.isRequired
+};

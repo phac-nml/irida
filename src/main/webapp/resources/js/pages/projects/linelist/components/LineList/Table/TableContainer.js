@@ -4,7 +4,7 @@ import { Table } from "./Table";
 const mapStateToProps = state => ({
   fields: state.fields.get("fields"),
   entries: state.entries.get("entries"),
-  template: state.template.get("template")
+  template: state.templates.get("templates").get(state.templates.get("current"))
 });
 const mapDispatchToProps = dispatch => ({});
 

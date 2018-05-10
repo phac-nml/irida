@@ -32,8 +32,9 @@ export class Table extends React.Component {
     ) {
       return true;
     }
-    if (!nextProps.template.equals(this.props.template)) {
+    if (nextProps.template && !nextProps.template.equals(this.props.template)) {
       // Update the table nothing else
+      console.log(nextProps.template);
       this.applyTemplate(nextProps.template);
     }
     // If these have not been changed then don't update the entries;
@@ -57,7 +58,7 @@ export class Table extends React.Component {
 
     // Need to keep sample name first
     let final = [columnState.shift()];
-    template.forEach(t => {
+    template.fields.forEach(t => {
       const index = columnState.findIndex(f => t.label === f.colId);
       if (index > -1) {
         const field = columnState.splice(index, 1)[0];
@@ -78,8 +79,6 @@ export class Table extends React.Component {
   onGridReady = params => {
     this.api = params.api;
     this.columnApi = params.columnApi;
-
-    this.api.sortChanged;
   };
 
   render() {
