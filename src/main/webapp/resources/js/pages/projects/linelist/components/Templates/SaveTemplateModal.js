@@ -56,14 +56,7 @@ export class SaveTemplateModal extends React.Component {
   }
 
   render() {
-    const templates = this.props.templates.toJS();
-    let name = "";
-    if (this.props.modified !== null) {
-      const template = templates.filter(
-        t => t.id === this.props.modified.id
-      )[0];
-      name = typeof template === "undefined" ? "" : template.name;
-    }
+    const { modified } = this.props;
     return this.props.modified !== null ? (
       <React.Fragment>
         <Button
@@ -90,7 +83,7 @@ export class SaveTemplateModal extends React.Component {
               <Input
                 onKeyUp={this.validateTemplateName}
                 ref={this.nameInput}
-                defaultValue={name}
+                defaultValue={modified.name}
               />
             </FormItem>
           </Form>

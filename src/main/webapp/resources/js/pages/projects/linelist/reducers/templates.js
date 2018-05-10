@@ -1,7 +1,9 @@
 import { List, fromJS } from "immutable";
 
-export const MODIFIED_SELECT_INDEX = -2;
-export const NO_TEMPLATE_INDEX = -1;
+const { i18n } = window.PAGE;
+
+export const MODIFIED_SELECT_INDEX = -1;
+export const NO_TEMPLATE_INDEX = 0;
 
 export const types = {
   LOAD: "METADATA/TEMPLATES/LOAD_REQUEST",
@@ -11,27 +13,35 @@ export const types = {
   TEMPLATE_MODIFIED: "METADATA/TEMPLATES/TEMPLATE_MODIFIED"
 };
 
+const NO_TEMPLATE = {
+  name: i18n.linelist.templates.Select.none,
+  id: -1,
+  fields: []
+};
+
 const initialState = fromJS({
   fetching: false,
   error: false,
   templates: List(),
-  current: -1,
-  modified: false
+  current: NO_TEMPLATE_INDEX,
+  modified: null
 });
 
 function setModifiedTemplate(state, fields) {
   const current = state.get("current");
-
-  // Check to see if it is a current template being modified
-  if (current > -1) {
-    const template = state.get("templates").get(current);
-    return state.set("modified", {
-      name: template.name,
-      id: template.id,
-      fields
-    });
-  }
-  return state.set("modified", { name: "", fields });
+  const template =
+    current === NO_TEMPLATE_INDEX
+      ? { name: "", id: null }
+      : state
+          .get("templates")
+          .get(current)
+          .toJS();
+  console.log(template);
+  return state.set("modified", {
+    name: template.name,
+    id: template.id,
+    fields
+  });
 }
 
 export const reducer = (state = initialState, action = {}) => {
@@ -41,11 +51,11 @@ export const reducer = (state = initialState, action = {}) => {
     case types.LOAD_SUCCESS:
       return state
         .set("fetching", false)
-        .set("templates", fromJS(action.templates));
+        .set("templates", fromJS([NO_TEMPLATE, ...action.templates]));
     case types.LOAD_ERROR:
       return state.set("fetching", false).set("error", true);
     case types.USE_TEMPLATE:
-      return state.set("current", action.index);
+      return state.set("current", action.index).set("modified", null);
     case types.TEMPLATE_MODIFIED:
       return setModifiedTemplate(state, action.fields);
     default:

@@ -1,5 +1,6 @@
 import React from "react";
 import { List } from "immutable";
+import PropTypes from "prop-types";
 import ImmutablePropTypes from "react-immutable-proptypes";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid/dist/styles/ag-grid.css";
@@ -32,21 +33,20 @@ export class Table extends React.Component {
     ) {
       return true;
     }
-    if (nextProps.template && !nextProps.template.equals(this.props.template)) {
-      // Update the table nothing else
-      this.applyTemplate(nextProps.template);
+    if (nextProps.current !== this.props.current) {
+      const template = nextProps.templates.get(nextProps.current).toJS();
+      this.applyTemplate(template.fields);
     }
     // If these have not been changed then don't update the entries;
     return false;
   }
 
-  applyTemplate = templateList => {
-    const template = templateList.toJS();
+  applyTemplate = fields => {
     const columnState = this.columnApi.getColumnState();
 
     // If there are no fields, then there is no template :)
     // Therefore just show all the fields.
-    if (template.length === 0) {
+    if (fields.length === 0) {
       const state = columnState.map(c => {
         c.hide = false;
         return c;
@@ -57,7 +57,7 @@ export class Table extends React.Component {
 
     // Need to keep sample name first
     let final = [columnState.shift()];
-    template.fields.forEach(t => {
+    fields.forEach(t => {
       const index = columnState.findIndex(f => t.label === f.colId);
       if (index > -1) {
         const field = columnState.splice(index, 1)[0];
@@ -115,5 +115,7 @@ export class Table extends React.Component {
 
 Table.propTypes = {
   fields: ImmutablePropTypes.list.isRequired,
-  entries: ImmutablePropTypes.list
+  entries: ImmutablePropTypes.list,
+  templates: ImmutablePropTypes.list,
+  current: PropTypes.number.isRequired
 };

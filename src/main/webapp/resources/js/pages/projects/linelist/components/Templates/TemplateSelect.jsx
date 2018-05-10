@@ -28,31 +28,32 @@ export class TemplateSelect extends React.Component {
       <React.Fragment>
         <Select
           disabled={templates.length === 0}
-          value={this.props.current}
+          value={
+            this.props.modified !== null
+              ? MODIFIED_SELECT_INDEX
+              : this.props.current
+          }
           style={{ width: 250 }}
           onSelect={this.templateSelected}
         >
-          {this.props.modified !== null ? (
+          {this.props.modified ? (
             <Option value={MODIFIED_SELECT_INDEX}>
               {i18n.linelist.templates.Select.modified}
             </Option>
           ) : null}
-          <Option value={NO_TEMPLATE_INDEX} title="_NONE_">
-            {i18n.linelist.templates.Select.none}
-          </Option>
           {templates.map((t, index) => (
             <Option key={t.id} value={index}>
               <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <span
-                style={{
-                  maxWidth: 170,
-                  overflow: "hidden",
-                  textOverflow: "ellipsis"
-                }}
-              >
-                {t.name}
-              </span>{" "}
-                <Tag>{t.fields.length}</Tag>
+                <span
+                  style={{
+                    maxWidth: 170,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis"
+                  }}
+                >
+                  {t.name}
+                </span>
+                {t.fields.length > 0 ? <Tag>{t.fields.length}</Tag> : null}
               </div>
             </Option>
           ))}
