@@ -32,7 +32,7 @@ export class Table extends React.Component {
     ) {
       return true;
     }
-    if (!nextProps.template.equals(this.props.template)) {
+    if (nextProps.template && !nextProps.template.equals(this.props.template)) {
       // Update the table nothing else
       this.applyTemplate(nextProps.template);
     }
@@ -57,7 +57,7 @@ export class Table extends React.Component {
 
     // Need to keep sample name first
     let final = [columnState.shift()];
-    template.forEach(t => {
+    template.fields.forEach(t => {
       const index = columnState.findIndex(f => t.label === f.colId);
       if (index > -1) {
         const field = columnState.splice(index, 1)[0];

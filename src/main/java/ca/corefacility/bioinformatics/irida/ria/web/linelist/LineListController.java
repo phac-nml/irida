@@ -80,13 +80,6 @@ public class LineListController {
 				.collect(Collectors.toList());
 	}
 
-	@RequestMapping("/template")
-	@ResponseBody
-	public List<MetadataTemplateField> getMetadataTemplate(@RequestParam long templateId) {
-		MetadataTemplate template = metadataTemplateService.read(templateId);
-		return template.getFields();
-	}
-
 	/**
 	 * Get the template the the line list table.  This becomes the table headers.
 	 *

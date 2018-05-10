@@ -1,11 +1,11 @@
 import React from "react";
-import { Tag, Select } from "antd";
-import ImmutablePropTypes from "react-immutable-proptypes";
 import PropTypes from "prop-types";
+import ImmutablePropTypes from "react-immutable-proptypes";
+import { Tag, Select } from "antd";
 import {
   MODIFIED_SELECT_INDEX,
   NO_TEMPLATE_INDEX
-} from "../../reducers/template";
+} from "../../reducers/templates";
 
 const { Option } = Select;
 const { i18n } = window.PAGE;
@@ -15,9 +15,9 @@ export class TemplateSelect extends React.Component {
     super(props);
   }
 
-  templateSelected = id => {
-    if (this.props.current !== id) {
-      this.props.fetchTemplate(id);
+  templateSelected = index => {
+    if (this.props.current !== index) {
+      this.props.useTemplate(index);
     }
   };
 
@@ -40,18 +40,18 @@ export class TemplateSelect extends React.Component {
           <Option value={NO_TEMPLATE_INDEX} title="_NONE_">
             {i18n.linelist.templates.Select.none}
           </Option>
-          {templates.map(t => (
-            <Option key={t.id} value={t.id}>
+          {templates.map((t, index) => (
+            <Option key={t.id} value={index}>
               <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <span
-                  style={{
-                    maxWidth: 170,
-                    overflow: "hidden",
-                    textOverflow: "ellipsis"
-                  }}
-                >
-                  {t.name}
-                </span>{" "}
+              <span
+                style={{
+                  maxWidth: 170,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis"
+                }}
+              >
+                {t.name}
+              </span>{" "}
                 <Tag>{t.fields.length}</Tag>
               </div>
             </Option>
@@ -63,7 +63,8 @@ export class TemplateSelect extends React.Component {
 }
 
 TemplateSelect.propTypes = {
+  current: PropTypes.number.isRequired,
   modified: PropTypes.object,
   templates: ImmutablePropTypes.list.isRequired,
-  fetchTemplate: PropTypes.func.isRequired
+  useTemplate: PropTypes.func.isRequired
 };
