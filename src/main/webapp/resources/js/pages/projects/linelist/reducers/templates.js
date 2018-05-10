@@ -36,7 +36,6 @@ function setModifiedTemplate(state, fields) {
           .get("templates")
           .get(current)
           .toJS();
-  console.log(template);
   return state.set("modified", {
     name: template.name,
     id: template.id,
