@@ -1,20 +1,30 @@
 import React from "react";
 import PropTypes from "prop-types";
 import ImmutablePropTypes from "react-immutable-proptypes";
-import { Button, Form, Input, Modal } from "antd";
-import { InfoAlert } from "../../../../../components/alerts";
+import { Button, Checkbox, Form, Input, Modal } from "antd";
 const FormItem = Form.Item;
 
 const { i18n } = window.PAGE;
+
+const validations = {
+  valid: { status: "success", message: "" },
+  validating: { status: "validating", message: "" },
+  exists: {
+    status: "warning",
+    message: "This name exists"
+  }
+};
+
 export class SaveTemplateModal extends React.Component {
-  state = { visible: false, validation: { validateStatus: "", message: "" } };
   nameInput = React.createRef();
 
   constructor(props) {
     super(props);
-  }
 
-  validateName = () => {};
+    this.state = {
+      overwrite: props.id !== null
+    };
+  }
 
   showModal = () => {
     this.setState({
@@ -37,26 +47,24 @@ export class SaveTemplateModal extends React.Component {
     });
   };
 
-  validateTemplateName = () => {
+  validateName = () => {
     const value = this.nameInput.current.input.value;
-    if (value.length > 1) {
-      this.props.validateTemplateName(value);
+    this.setState(validations.validating);
+
+    if (value === this.props.modified.name) {
+      this.setState(validations.exists);
+    } else {
+      this.setState(validations.valid);
     }
   };
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.validating) {
-      this.setState({
-        validation: {
-          validateStatus: "validating",
-          message: "_Validating template name_"
-        }
-      });
-    }
-  }
+  handleOverwriteChange = e => {
+    this.setState({ overwrite: e.target.checked });
+  };
 
   render() {
     const { modified } = this.props;
+
     return this.props.modified !== null ? (
       <React.Fragment>
         <Button
@@ -77,17 +85,26 @@ export class SaveTemplateModal extends React.Component {
             <FormItem
               label={i18n.linelist.templates.saveModal.name}
               hasFeedback
-              validateStatus={this.state.validation.validateStatus}
-              help={this.state.validation.message}
+              validateStatus={this.state.status}
+              help={this.state.message}
             >
               <Input
-                onKeyUp={this.validateTemplateName}
+                onKeyUp={this.validateName}
                 ref={this.nameInput}
                 defaultValue={modified.name}
               />
             </FormItem>
+            {modified.id !== null ? (
+              <FormItem>
+                <Checkbox
+                  checked={this.state.overwrite}
+                  onChange={this.handleOverwriteChange}
+                >
+                  Overwrite template
+                </Checkbox>
+              </FormItem>
+            ) : null}
           </Form>
-          <InfoAlert message={i18n.linelist.templates.saveModal.info} />
         </Modal>
       </React.Fragment>
     ) : null;
