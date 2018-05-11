@@ -2,10 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import ImmutablePropTypes from "react-immutable-proptypes";
 import { Tag, Select } from "antd";
-import {
-  MODIFIED_SELECT_INDEX,
-  NO_TEMPLATE_INDEX
-} from "../../reducers/templates";
+import { MODIFIED_SELECT_INDEX } from "../../reducers/templates";
 
 const { Option } = Select;
 const { i18n } = window.PAGE;
@@ -16,7 +13,7 @@ export class TemplateSelect extends React.Component {
   }
 
   templateSelected = index => {
-    if (this.props.current !== index) {
+    if (this.props.current !== index || (this.props.current === index && this.props.modified)) {
       this.props.useTemplate(index);
     }
   };

@@ -9,6 +9,12 @@
     <script th:inline="javascript">
         window.PAGE = {
           i18n: {
+            form: {
+              btn: {
+                save: /*[[#{form.btn.save}]]*/ "_SAVE_",
+                cancel: /*[[#{form.btn.cancel}]]*/ "_CANCEL_"
+              }
+            },
             linelist: {
               Loader: {
                 message: /*[[#{linelist.Loader.message}]]*/ "__Loading Metadata__",
@@ -26,7 +32,9 @@
                 saveModal: {
                   title: /*[[#{linelist.templates.saveModal.title}]]*/ '_SAVE TEMPLATE',
                   name: /*[[#{linelist.templates.saveModal.name}]]*/ '_TEMPLATE_NAME_',
-                  info: /*[[#{linelist.templates.saveModal.info}]]*/ '_TEMPLATE_INFO_'
+                  info: /*[[#{linelist.templates.saveModal.info}]]*/ '_TEMPLATE_INFO_',
+                  required: /*[[#{linelist.templates.saveModal.required}]]*/ '_TEMPLATE_NAME_REQUIRED',
+                  exists: /*[[#{linelist.templates.saveModal.exists}]]*/ '_TEMPLATE_NAME_EXISTS',
                 },
                 Popover: {
                   title: /*[[#{linelist.templates.Popover.title}]]*/ "__POPOVER TITLE__",
