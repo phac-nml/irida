@@ -1,44 +1,15 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.validation.ConstraintViolationException;
-import javax.validation.Validator;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.task.TaskExecutor;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.google.common.collect.ImmutableMap;
-
 import ca.corefacility.bioinformatics.irida.events.annotations.LaunchesProjectEvent;
-import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
-import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
-import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
+import ca.corefacility.bioinformatics.irida.exceptions.*;
 import ca.corefacility.bioinformatics.irida.model.event.DataAddedToSampleProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceConcatenation;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.concatenate.SequencingObjectConcatenator;
 import ca.corefacility.bioinformatics.irida.processing.concatenate.SequencingObjectConcatenatorFactory;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
@@ -47,7 +18,16 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFi
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.SampleSequencingObjectSpecification;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
-import ca.corefacility.bioinformatics.irida.service.impl.processor.SequenceFileProcessorLauncher;
+import com.google.common.collect.ImmutableMap;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of {@link SequencingObjectService} using a
