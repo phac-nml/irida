@@ -54,27 +54,27 @@ export class SaveTemplateModal extends React.Component {
     );
   };
 
-  showModal = () => {
-    this.setState({
-      visible: true
-    });
-  };
-
   handleOk = e => {
+    // Get the data
+    const { modified } = this.props;
+    const fields = modified.fields.map(f => f.label);
+    const name = this.state.value.trim();
+    const filtered = this.templates.filter(t => t.name === name);
+    const id = filtered.length === 1 ? filtered[0].id : null;
+    this.props.saveTemplate(name, fields, id);
     this.resetForm();
   };
 
   handleCancel = e => {
-    console.log(e);
     this.resetForm();
   };
 
   resetForm = () => {
     this.setState({
       value: "",
-      visible: false,
       ...validations.empty
     });
+    this.props.onClose();
   };
 
   onSearch = value => {
@@ -116,52 +116,43 @@ export class SaveTemplateModal extends React.Component {
   };
 
   render() {
-    return this.props.modified !== null ? (
-      <React.Fragment>
-        <Button
-          className="primary"
-          icon="save"
-          style={{ marginLeft: ".5rem", marginTop: ".5px" }}
-          onClick={this.showModal}
-        >
-          {i18n.linelist.templates.saveModified}
-        </Button>
-        <Modal
-          closable={false}
-          title={i18n.linelist.templates.saveModal.title}
-          visible={this.state.visible}
-          footer={
-            <Footer
-              disabled={!this.state.valid}
-              onCancel={this.handleCancel}
-              onClick={this.handleOk}
-            />
-          }
-        >
-          <Form layout="vertical">
-            <FormItem
-              hasFeedback
-              label={i18n.linelist.templates.saveModal.name}
-              validateStatus={this.state.status}
-              help={this.state.message}
+    return (
+      <Modal
+        closable={false}
+        title={i18n.linelist.templates.saveModal.title}
+        visible={this.props.visible}
+        footer={
+          <Footer
+            disabled={!this.state.valid}
+            onCancel={this.handleCancel}
+            onClick={this.handleOk}
+          />
+        }
+      >
+        <Form layout="vertical">
+          <FormItem
+            hasFeedback
+            label={i18n.linelist.templates.saveModal.name}
+            validateStatus={this.state.status}
+            help={this.state.message}
+          >
+            <AutoComplete
+              onSearch={this.onSearch}
+              onSelect={this.onSelect}
+              optionLabelProp="value"
+              value={this.state.value}
             >
-              <AutoComplete
-                onSearch={this.onSearch}
-                onSelect={this.onSelect}
-                optionLabelProp="value"
-                value={this.state.value}
-              >
-                {this.state.options}
-              </AutoComplete>
-            </FormItem>
-          </Form>
-        </Modal>
-      </React.Fragment>
-    ) : null;
+              {this.state.options}
+            </AutoComplete>
+          </FormItem>
+        </Form>
+      </Modal>
+    );
   }
 }
 
 SaveTemplateModal.propTypes = {
   modified: PropTypes.object,
+  onClose: PropTypes.func.isRequired,
   templates: ImmutablePropTypes.list.isRequired
 };

@@ -9,7 +9,9 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  useTemplate: index => dispatch(actions.use(index))
+  useTemplate: index => dispatch(actions.use(index)),
+  saveTemplate: (name, fields, id) =>
+    dispatch(actions.saveTemplate(name, fields, id))
 });
 
 export const TemplatesContainer = connect(mapStateToProps, mapDispatchToProps)(

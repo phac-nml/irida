@@ -5,9 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
@@ -17,6 +15,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.web.models.UIMetadataTemplate;
+import ca.corefacility.bioinformatics.irida.ria.web.models.UISaveMetadataTemplate;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -78,6 +77,34 @@ public class LineListController {
 		return joins.stream()
 				.map(join -> new UIMetadataTemplate(join.getObject()))
 				.collect(Collectors.toList());
+	}
+
+	@RequestMapping(value = "/templates", method = RequestMethod.POST)
+	public UIMetadataTemplate saveLineListTemplate(@RequestBody UISaveMetadataTemplate template) {
+
+		// Get or create the template fields.
+		List<MetadataTemplateField> fields = new ArrayList<>();
+		for (String label : template.getFields()) {
+			MetadataTemplateField field = metadataTemplateService.readMetadataFieldByLabel(label);
+			if (field == null) {
+				field = metadataTemplateService.saveMetadataField(new MetadataTemplateField(label, "text"));
+			}
+			fields.add(field);
+		}
+
+		// Save the template.
+		MetadataTemplate metadataTemplate;
+		if (template.getId() != null) {
+			metadataTemplate = metadataTemplateService.read(template.getId());
+			metadataTemplate.setFields(fields);
+		} else {
+			Project project = projectService.read(template.getProjectId());
+			metadataTemplate = new MetadataTemplate(template.getName(), fields);
+			ProjectMetadataTemplateJoin join = metadataTemplateService.createMetadataTemplateInProject(metadataTemplate,
+					project);
+			metadataTemplate = join.getObject();
+		}
+		return new UIMetadataTemplate(metadataTemplate);
 	}
 
 	/**

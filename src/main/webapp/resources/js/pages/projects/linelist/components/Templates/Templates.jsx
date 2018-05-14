@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import ImmutablePropTYpes from "react-immutable-proptypes";
 import { TemplateSelect } from "./TemplateSelect";
-import { SaveTemplateModal } from "./SaveTemplateModal";
+import { SaveTemplateButton } from "./SaveTempalteButton";
 import {
   PopoverContents,
   HelpPopover
@@ -20,10 +20,7 @@ export function Templates(props) {
   return (
     <div style={{ marginBottom: "1rem" }}>
       <TemplateSelect {...props} />
-      <SaveTemplateModal
-        modified={props.modified}
-        templates={props.templates}
-      />
+      <SaveTemplateButton {...props} />
       <HelpPopover
         content={<PopoverContents contents={content} />}
         title={i18n.linelist.templates.Popover.title}
@@ -33,6 +30,7 @@ export function Templates(props) {
 }
 
 Templates.propTypes = {
+  saveTemplate: PropTypes.func.isRequired,
   templates: ImmutablePropTYpes.list.isRequired,
   modified: PropTypes.object
 };

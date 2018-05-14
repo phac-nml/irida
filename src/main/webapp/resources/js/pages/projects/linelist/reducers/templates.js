@@ -10,7 +10,9 @@ export const types = {
   LOAD_ERROR: "METADATA/TEMPLATES/LOAD_TEMPLATES_ERROR",
   LOAD_SUCCESS: "METADATA/TEMPLATES/LOAD_TEMPLATES_SUCCESS",
   USE_TEMPLATE: "METADATA/TEMPLATES/USE_TEMPLATE",
-  TEMPLATE_MODIFIED: "METADATA/TEMPLATES/TEMPLATE_MODIFIED"
+  TEMPLATE_MODIFIED: "METADATA/TEMPLATES/TEMPLATE_MODIFIED",
+  SAVE_TEMPLATE: "METADATA/TEMPLATES/SAVE_TEMPLATE",
+  SAVING_TEMPLATE: "METADATA/TEMPLATES/SAVING_TEMPLATE"
 };
 
 const NO_TEMPLATE = {
@@ -67,5 +69,9 @@ export const actions = {
   success: templates => ({ type: types.LOAD_SUCCESS, templates }),
   error: error => ({ type: types.LOAD_ERROR, error }),
   use: index => ({ type: types.USE_TEMPLATE, index }),
-  modified: fields => ({ type: types.TEMPLATE_MODIFIED, fields })
+  modified: fields => ({ type: types.TEMPLATE_MODIFIED, fields }),
+  saveTemplate: (name, fields, id) => ({
+    type: types.SAVE_TEMPLATE,
+    data: { name, fields, id }
+  })
 };
