@@ -5,11 +5,11 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -20,7 +20,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
 import javax.sql.DataSource;
-import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -47,6 +46,7 @@ public class ExecutorConfig {
 	 */
 	@Bean(name = "scheduledTaskExecutor")
 	@Profile({ "prod", "dev" })
+	@DependsOn("springLiquibase")
 	public Executor productionExecutor() {
 		ScheduledExecutorService delegateExecutor = Executors.newScheduledThreadPool(threadCount);
 
@@ -61,20 +61,10 @@ public class ExecutorConfig {
 	 */
 	@Bean(name = "scheduledTaskExecutor")
 	@Profile({ "it", "test" })
+	@DependsOn("springLiquibase")
 	public Executor testExecutor() {
-		ScheduledExecutorService delegateExecutor = Executors.newScheduledThreadPool(threadCount);
 		addAdminUser();
 
-		SecurityContext schedulerContext = createSchedulerSecurityContext();
-		return new DelegatingSecurityContextScheduledExecutorService(delegateExecutor, schedulerContext);
-	}
-
-	/**
-	 * Builds a new Executor for scheduled tasks.
-	 *
-	 * @return A new Executor for scheduled tasks.
-	 */
-	private Executor taskExecutor() {
 		ScheduledExecutorService delegateExecutor = Executors.newScheduledThreadPool(threadCount);
 
 		SecurityContext schedulerContext = createSchedulerSecurityContext();
