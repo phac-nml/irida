@@ -63,8 +63,7 @@
 
 			<sub-nav>
 				<sub-nav-item th:if="${sistr}" state="sistr" text="Sistr"></sub-nav-item>
-                <sub-nav-item th:if="${biohansel}" state="bio_hansel" text="Bio_Hansel Results"></sub-nav-item>
-				<sub-nav-item th:if="${biohanselerror}" state="bio_hansel_error" text="Bio_Hansel Error"></sub-nav-item>
+				<sub-nav-item th:if="${bio_hansel}" state="bio_hansel" text="bio_hansel"></sub-nav-item>
 				<sub-nav-item th:if="${isCompleted}" state="preview" data:text="#{analysis.tab.preview}"></sub-nav-item>
 				<sub-nav-item state="inputs" data:text="#{analysis.tab.input-files}"></sub-nav-item>
 				<sub-nav-item th:if="${isError}" state="joberrors" data:text="#{analysis.joberror}"></sub-nav-item>
@@ -223,17 +222,8 @@
 				</div>
 			</script>
 
-            <script th:if="${biohansel}"  type="text/ng-template" id="biohansel.html">
-				<th:block th:replace="analysis/details/fragments/biohansel-table :: #biohansel-table"/>
-            </script>
-
-			<script th:if="${biohanselerror}" type="text/ng-template" id="biohanselerror.html">
-				<div>
-					<h2 th:text="#{analysis.details.bio_hansel.error}">_Bio_Hansel results unavailable._</h2>
-				</div>
-			</script>
-
             <div th:replace="~{analysis/details/ng-templates/joberror::main}"></div>
+			<div th:replace="~{analysis/details/ng-templates/bio_hansel::main}"></div>
 
 			<script type="text/ng-template" id="inputs.html" th:with="fileCount = ${#lists.size(paired_end)}">
 				<th:block th:if="${referenceFile}">

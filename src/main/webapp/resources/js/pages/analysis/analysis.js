@@ -9,7 +9,7 @@ import { renderPlainTextPreview } from "./plaintext-preview";
 import { renderTabularPreview } from "./tabular-preview";
 import "../../../sass/pages/analysis.scss";
 import "../../vendor/datatables/datatables";
-import { BioHanselController } from "./types/biohansel";
+import { BioHanselController } from "./controllers/bio_hansel";
 
 const baseAjaxUrl = window.PAGE.URLS.base;
 const analysisSubmissionId = window.PAGE.ID;
@@ -44,6 +44,7 @@ function AnalysisService($http) {
   const svc = this;
   svc._tabularData = null;
   svc._outputsInfo = null;
+  svc.baseAjaxUrl = baseAjaxUrl;
   /**
    * Call the server to get the status for the current analysis.
    * 'page.URLS.status' is on the `_base.html` page for the analysis.
@@ -61,11 +62,6 @@ function AnalysisService($http) {
    */
   svc.getSistrResults = function() {
     return $http.get(window.PAGE.URLS.sistr).then(function(result) {
-      return result.data;
-    });
-  };
-  svc.getBioHanselResults = function() {
-    return $http.get(window.PAGE.URLS.bio_hansel).then(function(result) {
       return result.data;
     });
   };
@@ -377,6 +373,12 @@ const iridaAnalysis = angular
           controllerAs: "sistrCtrl",
           controller: ["AnalysisService", SistrController]
         })
+        .state("bio_hansel", {
+          url: "/bio_hansel",
+          templateUrl: "bio_hansel.html",
+          controllerAs: "bioHanselCtrl",
+          controller: ["AnalysisService", BioHanselController]
+        })
         .state("joberrors", {
           url: "/joberrors",
           templateUrl: "joberrors.html",
@@ -386,16 +388,6 @@ const iridaAnalysis = angular
         .state("inputs", {
           url: "/inputs",
           templateUrl: "inputs.html"
-        })
-        .state("bio_hansel", {
-          url: "/bio_hansel",
-          templateUrl: "biohansel.html",
-          controllerAs: "bioHanselCtrl",
-          controller: ["AnalysisService", BioHanselController]
-        })
-        .state("bio_hansel_error", {
-          url: "/bio_hansel_error",
-          templateUrl: "biohanselerror.html"
         })
         .state("provenance", {
           url: "/provenance",

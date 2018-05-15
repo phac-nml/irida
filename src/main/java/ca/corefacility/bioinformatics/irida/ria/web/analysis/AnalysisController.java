@@ -3,15 +3,12 @@ package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.jena.atlas.json.JSON;
-import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -214,24 +211,8 @@ public class AnalysisController {
 					tree(submission, model);
 				} else if (analysisType.equals(AnalysisType.SISTR_TYPING)) {
 					model.addAttribute("sistr", true);
-				} else if (analysisType.equals(AnalysisType.SNV_SUBTYPING_COLLECTION)) {
-					Analysis analysis = submission.getAnalysis();
-					Path path = analysis.getAnalysisOutputFile("hansel_tech_json_results").getFile();
-					boolean isError = true;
-
-					try{
-						String json = new Scanner(new BufferedReader(new FileReader(path.toFile()))).useDelimiter("\\Z").next();
-						JSONArray data = new JSONArray(json);
-						isError = false;
-					}catch (Exception e){
-						logger.error("Could not parse "+path+" displaying error page!");
-					}
-
-					if(isError){
-						model.addAttribute("biohanselerror", true);
-					}else{
-						model.addAttribute("biohansel", true);
-					}
+				} else if (analysisType.equals(AnalysisType.BIO_HANSEL)) {
+					model.addAttribute("bio_hansel", true);
 				}
 			}
 
@@ -717,66 +698,6 @@ public class AnalysisController {
 			} catch (IOException e) {
 				logger.error("Error reading file [" + path + "]", e);
 			}
-		}
-		return result;
-	}
-
-	/**
-	 * Get the bio_hansel tech results information to display
-	 *
-	 * @param id ID of the analysis submission
-	 * @return Json results for the bio_hansel analysis
-	 */
-	@SuppressWarnings("resource")
-	@RequestMapping("/ajax/bio_hansel/{id}") @ResponseBody public Map<String,List<Map<String,Object>>> getBioHanselAnalysis(@PathVariable Long id) {
-		AnalysisSubmission submission = analysisSubmissionService.read(id);
-		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubmission(submission);
-        Map<String,List<Map<String,Object>>> result = new HashMap<>();
-
-		final String hanselFileKey = "hansel_tech_json_results";
-
-		// Get details about the workflow, to verify the correct Analysis Type.
-		UUID workflowUUID = submission.getWorkflowId();
-		IridaWorkflow iridaWorkflow;
-
-		try {
-			iridaWorkflow = workflowsService.getIridaWorkflow(workflowUUID);
-		} catch (IridaWorkflowNotFoundException e) {
-			logger.error("Error finding workflow, ", e);
-			throw new EntityNotFoundException("Couldn't find workflow for submission " + submission.getId(), e);
-		}
-
-		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription().getAnalysisType();
-		if (analysisType.equals(AnalysisType.SNV_SUBTYPING_COLLECTION)) {
-
-			Analysis analysis = submission.getAnalysis();
-            ObjectMapper mapper = new ObjectMapper();
-            List<Map<String,Object>> techResults;
-			Path techPath = Paths.get(""); //Init to pwd, in the very unlikely event we can't get the path.
-            String techJSON;
-
-            try {
-
-				techPath = analysis.getAnalysisOutputFile(hanselFileKey).getFile();
-				logger.debug("Attempting to parse "+techPath+" as JSON.");
-
-				techJSON = new String(Files.readAllBytes(techPath));
-				techResults = mapper.readValue(techJSON, new TypeReference<List<Map<String,Object>>>(){});
-
-				if(techResults.size() > 0){
-					result.put("data", techResults);
-				}else{
-					logger.error("Possible malformed JSON. Could not parse "+ techPath +"!");
-				}
-
-            } catch (JsonParseException | JsonMappingException e) {
-                logger.error("Error attempting to parse file [" + techPath + "] as JSON",e);
-            } catch (FileNotFoundException e) {
-                logger.error("File [" + techPath + "] not found",e);
-            } catch (IOException e) {
-                logger.error("Error reading file [" + techPath + "]", e);
-            }
-
 		}
 		return result;
 	}

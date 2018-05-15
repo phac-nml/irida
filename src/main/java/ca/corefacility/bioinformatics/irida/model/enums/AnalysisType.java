@@ -39,10 +39,10 @@ public enum AnalysisType {
 	ASSEMBLY_ANNOTATION("assembly-annotation"),
 
 	/**
-	 * SNV Subtyping for Salmonella Heidelberg, and Salmonella Enteritidis.
+	 * bio_hansel SNV subtyping
 	 */
-	@XmlEnumValue("snv-subtyping-collection")
-	SNV_SUBTYPING_COLLECTION("snv-subtyping-collection"),
+	@XmlEnumValue("bio_hansel")
+	BIO_HANSEL("bio_hansel"),
 
 	/**
 	 * An assembly and annotation analysis type on a collectio n of samples.

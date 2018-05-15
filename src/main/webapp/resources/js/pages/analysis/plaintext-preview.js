@@ -16,6 +16,38 @@ const statusText = (byte, fileSizeBytes) =>
   ).toFixed(1)}%)`;
 
 /**
+ * Convert some JS Object, Array or scalar value to basic HTML recursively.
+ * @param {Object|Array|number|string} x JS Object, Array or scalar
+ * @param {string} acc Accumulator for recursion.
+ * @returns {string} HTML string representation of `x`
+ */
+function jsToHtml(x, acc = "") {
+  const DIV_MARGIN = `<div class="border-1-gray" style="margin-left: 10px">`;
+  const DIV = `<div class="pad5 border-1-gray">`;
+  if ($.isArray(x)) {
+    if (x.length === 1) {
+      acc += jsToHtml(x[0], "");
+    } else {
+      acc += DIV_MARGIN;
+      for (const item of x) {
+        acc += `<div>${jsToHtml(item, "")}</div>`;
+      }
+      acc += "</div>";
+    }
+  } else if ($.isPlainObject(x)) {
+    acc += DIV_MARGIN;
+    for (const [k, v] of Object.entries(x)) {
+      acc += `${DIV}<b>${k}:</b> ${jsToHtml(v, "")}</div>`;
+    }
+    acc += `</div>`;
+  } else {
+    acc += `${x}`;
+  }
+
+  return acc;
+}
+
+/**
  * Render a preview of a plain-text AnalysisOutputFile
  * @param {jQuery|HTMLElement} $container Container element to render preview in
  * @param {string} baseUrl Base AJAX URL (e.g. /analysis/ajax/)
@@ -30,7 +62,7 @@ export function renderPlainTextPreview(
   height = 300,
   chunk_size = 8192
 ) {
-  const { id, fileSizeBytes } = aof;
+  const { id, fileSizeBytes, fileExt } = aof;
   const $panel = $(`<div id="js-panel-${id}" class="panel panel-default"/>`);
   const $panelHeading = $(panelHeading(baseUrl, aof));
   $panel.append($panelHeading);
@@ -65,18 +97,37 @@ export function renderPlainTextPreview(
     Math.min(fileSizeBytes - filePosition, chunkSize);
 
   function onTextScroll() {
+    if (this.fetching) {
+      return;
+    }
     if (params.chunk === 0) {
       return;
     }
+    this.fetching = false;
     if (
-      $(this).scrollTop() + $(this).innerHeight() >=
-      $(this)[0].scrollHeight
+      $(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight &&
+      getNewChunkSize(params.seek, fileSizeBytes, chunk_size) >= 0
     ) {
+      let that = this;
       showMoreUrl = `${apiUrl}?${$.param(params)}`;
+      that.fetching = true;
       $.ajax({
         url: showMoreUrl,
         success: function({ text, filePointer }) {
-          $textEl.text($textEl.text() + text);
+          that.fetching = false;
+          const moreText = $textEl.text() + text;
+          if (fileExt === "json") {
+            try {
+              $textEl.html(jsToHtml(JSON.parse(moreText)));
+              that.fetching = true;
+            } catch (e) {
+              $textEl.text(moreText);
+              that.fetching = false;
+            }
+          } else {
+            $textEl.text(moreText);
+            that.fetching = false;
+          }
           params.seek = filePointer;
           params.chunk = getNewChunkSize(
             params.seek,
@@ -85,6 +136,9 @@ export function renderPlainTextPreview(
           );
           showMoreUrl =
             params.chunk === 0 ? "" : `${apiUrl}?${$.param(params)}`;
+          if (showMoreUrl === "") {
+            that.fetching = true;
+          }
           $showMore.text(statusText(params.seek, fileSizeBytes));
         }
       });
@@ -94,7 +148,15 @@ export function renderPlainTextPreview(
   $.ajax({
     url: showMoreUrl,
     success: ({ text, filePointer }) => {
-      $textEl.text(text);
+      if (fileExt === "json") {
+        try {
+          $textEl.html(jsToHtml(JSON.parse(text)));
+        } catch (e) {
+          $textEl.text(text);
+        }
+      } else {
+        $textEl.text(text);
+      }
       params.seek = filePointer;
       params.chunk = getNewChunkSize(params.seek, fileSizeBytes, chunk_size);
       $showMore.text(statusText(params.seek, fileSizeBytes));
