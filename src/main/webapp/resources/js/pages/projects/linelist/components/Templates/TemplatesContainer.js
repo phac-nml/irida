@@ -5,7 +5,9 @@ import { Templates } from "./Templates";
 const mapStateToProps = state => ({
   templates: state.templates.get("templates"),
   current: state.templates.get("current"),
-  modified: state.templates.get("modified")
+  modified: state.templates.get("modified"),
+  saving: state.templates.get("saving"),
+  saved: state.templates.get("saved")
 });
 
 const mapDispatchToProps = dispatch => ({

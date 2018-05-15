@@ -1,22 +1,28 @@
 import React from "react";
 import PropTypes from "prop-types";
 import ImmutablePropTypes from "react-immutable-proptypes";
-import { Button, Form, AutoComplete, Modal, Tag } from "antd";
+import { Button, Form, Input, Modal } from "antd";
 const FormItem = Form.Item;
-const { Option } = AutoComplete;
 
 const { i18n } = window.PAGE;
 
 const validations = {
-  empty: { status: "", message: "" },
-  valid: { status: "success", message: "" },
+  empty: { status: "", message: "", valid: false },
+  valid: { status: "success", message: "", valid: true },
   required: {
     status: "error",
-    message: i18n.linelist.templates.saveModal.required
+    message: i18n.linelist.templates.saveModal.required,
+    valid: false
+  },
+  length: {
+    status: "error",
+    message: "__TEMPLATE NAMES MUST BE AT LEAST 5 CHARACERS__",
+    valid: false
   },
   exists: {
-    status: "warning",
-    message: i18n.linelist.templates.saveModal.exists
+    status: "error",
+    message: i18n.linelist.templates.saveModal.exists,
+    valid: false
   }
 };
 
@@ -32,36 +38,28 @@ function Footer(props) {
 }
 
 export class SaveTemplateModal extends React.Component {
+  inputRef = React.createRef();
+
   constructor(props) {
     super(props);
-    this.templates = props.templates.toJS().slice(1);
+
+    // Just get the template name for validation (don't want duplicate names)
+    // and remove the first one as it is "All Fields".
+    this.names = props.templates
+      .toJS()
+      .map(t => t.name)
+      .slice(1);
 
     this.state = {
-      options: this.templates.map(t => this.createTemplateOption(t)),
       valid: false,
       ...validations.empty
     };
   }
 
-  createTemplateOption = template => {
-    return (
-      <Option key={template.name}>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <strong>{template.name}</strong>
-          <Tag>{template.fields.length}</Tag>
-        </div>
-      </Option>
-    );
-  };
-
-  handleOk = e => {
-    // Get the data
-    const { modified } = this.props;
-    const fields = modified.fields.map(f => f.label);
-    const name = this.state.value.trim();
-    const filtered = this.templates.filter(t => t.name === name);
-    const id = filtered.length === 1 ? filtered[0].id : null;
-    this.props.saveTemplate(name, fields, id);
+  handleOk = () => {
+    const { fields } = this.props.modified;
+    const name = this.inputRef.current.input.value.trim();
+    this.props.saveTemplate(name, fields, null);
     this.resetForm();
   };
 
@@ -70,48 +68,21 @@ export class SaveTemplateModal extends React.Component {
   };
 
   resetForm = () => {
-    this.setState({
-      value: "",
-      ...validations.empty
-    });
+    this.inputRef.current.input.value = "";
+    this.setState(validations.empty);
     this.props.onClose();
   };
 
-  onSearch = value => {
-    let message;
-    let options;
-    let valid = true;
-    if (value.length) {
-      const filtered = this.templates.filter(t =>
-        t.name.toLowerCase().includes(value.toLowerCase().trim())
-      );
-      const exists = filtered.length === 1 && filtered[0].name === value.trim();
-      if (exists) {
-        filtered.shift();
-      }
-
-      options = [
-        <Option key={value}>{value}</Option>,
-        ...filtered.map(t => this.createTemplateOption(t))
-      ];
-      message = exists ? validations.exists : validations.valid;
+  onKeyUp = () => {
+    const value = this.inputRef.current.input.value.trim();
+    if (value.length === 0) {
+      this.setState(validations.required);
+    } else if (this.names.includes(value)) {
+      this.setState(validations.exists);
+    } else if (value.length < 5) {
+      this.setState(validations.length);
     } else {
-      options = this.templates.map(t => this.createTemplateOption(t));
-      message = validations.required;
-      valid = false;
-    }
-
-    this.setState({ value, valid, options, ...message });
-  };
-
-  onSelect = value => {
-    const filtered = this.templates.filter(t =>
-      t.name.toLowerCase().includes(value.toLowerCase())
-    );
-    if (filtered.length === 1 && filtered[0].name === value) {
-      this.setState({ value, ...validations.exists, valid: true });
-    } else {
-      this.setState({ value, ...validations.valid, valid: true });
+      this.setState(validations.valid);
     }
   };
 
@@ -136,14 +107,7 @@ export class SaveTemplateModal extends React.Component {
             validateStatus={this.state.status}
             help={this.state.message}
           >
-            <AutoComplete
-              onSearch={this.onSearch}
-              onSelect={this.onSelect}
-              optionLabelProp="value"
-              value={this.state.value}
-            >
-              {this.state.options}
-            </AutoComplete>
+            <Input onKeyUp={this.onKeyUp} ref={this.inputRef} />
           </FormItem>
         </Form>
       </Modal>
@@ -152,7 +116,6 @@ export class SaveTemplateModal extends React.Component {
 }
 
 SaveTemplateModal.propTypes = {
-  modified: PropTypes.object,
   onClose: PropTypes.func.isRequired,
   templates: ImmutablePropTypes.list.isRequired
 };

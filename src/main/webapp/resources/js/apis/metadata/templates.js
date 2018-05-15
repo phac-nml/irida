@@ -10,10 +10,9 @@ export function fetchTemplates(id) {
 }
 
 export function saveTemplate(data) {
-  data.projectId = projectId;
   return axios({
     method: "post",
-    url: `${window.TL.BASE_URL}linelist/templates`,
+    url: `${window.TL.BASE_URL}linelist/templates?projectId=${projectId}`,
     data
   });
 }

@@ -2,7 +2,6 @@ import { List, fromJS } from "immutable";
 
 const { i18n } = window.PAGE;
 
-export const MODIFIED_SELECT_INDEX = -1;
 export const NO_TEMPLATE_INDEX = 0;
 
 export const types = {
@@ -12,7 +11,9 @@ export const types = {
   USE_TEMPLATE: "METADATA/TEMPLATES/USE_TEMPLATE",
   TEMPLATE_MODIFIED: "METADATA/TEMPLATES/TEMPLATE_MODIFIED",
   SAVE_TEMPLATE: "METADATA/TEMPLATES/SAVE_TEMPLATE",
-  SAVING_TEMPLATE: "METADATA/TEMPLATES/SAVING_TEMPLATE"
+  SAVING_TEMPLATE: "METADATA/TEMPLATES/SAVING_TEMPLATE",
+  SAVED_TEMPLATE: "METADATA/TEMPLATES/SAVED_TEMPLATE",
+  SAVE_COMPLETE: "METADATA/TEMPLATES/SAVE_COMPLETE"
 };
 
 const NO_TEMPLATE = {
@@ -26,23 +27,19 @@ const initialState = fromJS({
   error: false,
   templates: List(),
   current: NO_TEMPLATE_INDEX,
-  modified: null
+  modified: null,
+  saving: false,
+  saved: false
 });
 
 function setModifiedTemplate(state, fields) {
   const current = state.get("current");
-  const template =
-    current === NO_TEMPLATE_INDEX
-      ? { name: "", id: null }
-      : state
-          .get("templates")
-          .get(current)
-          .toJS();
-  return state.set("modified", {
-    name: template.name,
-    id: template.id,
-    fields
-  });
+  const template = state
+    .get("templates")
+    .get(current)
+    .toJS();
+  template.fields = fields;
+  return state.set("modified", template);
 }
 
 export const reducer = (state = initialState, action = {}) => {
@@ -56,9 +53,32 @@ export const reducer = (state = initialState, action = {}) => {
     case types.LOAD_ERROR:
       return state.set("fetching", false).set("error", true);
     case types.USE_TEMPLATE:
-      return state.set("current", action.index).set("modified", null);
+      if (state.get("current") === action.index) return state;
+      else return state.set("current", action.index).set("modified", null);
     case types.TEMPLATE_MODIFIED:
       return setModifiedTemplate(state, action.fields);
+    case types.SAVE_TEMPLATE:
+      return state.set("saving", true);
+    case types.SAVED_TEMPLATE:
+      let template = action.template;
+      let index = state
+        .get("templates")
+        .findIndex(t => t.get("id") === template.id);
+      if (index > 0) {
+        state = state.setIn(["templates", index], fromJS(template));
+      } else {
+        state = state.update("templates", templates =>
+          templates.push(fromJS(template))
+        );
+        index = state.get("templates").size - 1;
+      }
+      return state
+        .set("saving", false)
+        .set("saved", true)
+        .set("modified", null)
+        .set("current", index);
+    case types.SAVE_COMPLETE:
+      return state.set("saved", false);
     default:
       return state;
   }
@@ -73,5 +93,7 @@ export const actions = {
   saveTemplate: (name, fields, id) => ({
     type: types.SAVE_TEMPLATE,
     data: { name, fields, id }
-  })
+  }),
+  savedTemplate: template => ({ type: types.SAVED_TEMPLATE, template }),
+  savedComplete: () => ({ type: types.SAVE_COMPLETE })
 };

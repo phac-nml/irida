@@ -15,7 +15,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.web.models.UIMetadataTemplate;
-import ca.corefacility.bioinformatics.irida.ria.web.models.UISaveMetadataTemplate;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -80,14 +79,13 @@ public class LineListController {
 	}
 
 	@RequestMapping(value = "/templates", method = RequestMethod.POST)
-	public UIMetadataTemplate saveLineListTemplate(@RequestBody UISaveMetadataTemplate template) {
+	public UIMetadataTemplate saveLineListTemplate(@RequestBody UIMetadataTemplate template, @RequestParam Long projectId) {
 
 		// Get or create the template fields.
 		List<MetadataTemplateField> fields = new ArrayList<>();
-		for (String label : template.getFields()) {
-			MetadataTemplateField field = metadataTemplateService.readMetadataFieldByLabel(label);
-			if (field == null) {
-				field = metadataTemplateService.saveMetadataField(new MetadataTemplateField(label, "text"));
+		for (MetadataTemplateField field : template.getFields()) {
+			if (field.getId() == null) {
+				field = metadataTemplateService.saveMetadataField(new MetadataTemplateField(field.getLabel(), "text"));
 			}
 			fields.add(field);
 		}
@@ -97,8 +95,9 @@ public class LineListController {
 		if (template.getId() != null) {
 			metadataTemplate = metadataTemplateService.read(template.getId());
 			metadataTemplate.setFields(fields);
+			metadataTemplate = metadataTemplateService.updateMetadataTemplateInProject(metadataTemplate);
 		} else {
-			Project project = projectService.read(template.getProjectId());
+			Project project = projectService.read(projectId);
 			metadataTemplate = new MetadataTemplate(template.getName(), fields);
 			ProjectMetadataTemplateJoin join = metadataTemplateService.createMetadataTemplateInProject(metadataTemplate,
 					project);
