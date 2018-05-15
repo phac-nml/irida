@@ -79,7 +79,6 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 	 * @return an instance of {@link SpringLiquibase}.
 	 */
 	@Bean
-	@Profile({ "dev", "prod", "it" })
 	public SpringLiquibase springLiquibase(final DataSource dataSource, final ApplicationContext applicationContext) {
 
 		final ApplicationContextAwareSpringLiquibase springLiquibase = new ApplicationContextAwareSpringLiquibase(applicationContext);
