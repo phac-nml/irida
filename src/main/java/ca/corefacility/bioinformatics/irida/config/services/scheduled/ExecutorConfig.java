@@ -62,9 +62,11 @@ public class ExecutorConfig {
 	@Bean(name = "scheduledTaskExecutor")
 	@Profile({ "it", "test" })
 	public Executor testExecutor() {
+		ScheduledExecutorService delegateExecutor = Executors.newScheduledThreadPool(threadCount);
 		addAdminUser();
 
-		return productionExecutor();
+		SecurityContext schedulerContext = createSchedulerSecurityContext();
+		return new DelegatingSecurityContextScheduledExecutorService(delegateExecutor, schedulerContext);
 	}
 
 	/**
