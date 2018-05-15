@@ -28,7 +28,7 @@ import ca.corefacility.bioinformatics.irida.util.RecursiveDeleteVisitor;
 
 @Configuration
 @Profile({ "test", "it" })
-public class IridaApiTestDataSourceConfig implements DataConfig {
+public class IridaApiTestDataSourceConfig extends IridaApiJdbcDataSourceConfig {
 	
 	private static final Logger logger = LoggerFactory.getLogger(IridaApiTestDataSourceConfig.class);
 
@@ -64,20 +64,6 @@ public class IridaApiTestDataSourceConfig implements DataConfig {
 		}
 		
 		return Paths.get(rootTempDirectory);
-	}
-
-	@Bean
-	public JpaVendorAdapter jpaVendorAdapter() {
-		HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
-		adapter.setShowSql(false);
-		adapter.setGenerateDdl(true);
-		adapter.setDatabase(Database.H2);
-		return adapter;
-	}
-
-	@Bean
-	public DataSource dataSource() {
-		return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2).build();
 	}
 
 	@Override
