@@ -46,7 +46,7 @@ export function TemplateSelectOption(props) {
             ? renderUpdateSave()
             : null}
           {index > 0 ? (
-            <Tag className="field-count">
+            <Tag className="templates-option--field-count">
               {/* - 1 Because the fields include the sample name itself. */}
               {fields.length - 1}
             </Tag>

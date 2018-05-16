@@ -9,6 +9,11 @@ export function fetchTemplates(id) {
   });
 }
 
+/**
+ * Save (or update) a Metadata Template
+ * @param {Object} data {name, id, fields}
+ * @returns {AxiosPromise}
+ */
 export function saveTemplate(data) {
   return axios({
     method: "post",

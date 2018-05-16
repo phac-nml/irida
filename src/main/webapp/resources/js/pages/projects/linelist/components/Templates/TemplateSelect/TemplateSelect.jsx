@@ -6,6 +6,10 @@ import { TemplateSelectOption } from "./TemplateSelectOption";
 
 const { Option } = Select;
 
+/**
+ * Component to render an [antd Select]{@link https://ant.design/components/select/}
+ * component to select a specific Metadata template.
+ */
 export function TemplateSelect(props) {
   const { current, useTemplate } = props;
   const templates = props.templates.toJS();

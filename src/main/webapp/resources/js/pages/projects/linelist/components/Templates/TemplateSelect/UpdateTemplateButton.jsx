@@ -4,6 +4,10 @@ import { Button, Popconfirm } from "antd";
 
 const { i18n } = window.PAGE;
 
+/**
+ * Component to render an [antd Button]{@link https://ant.design/components/button/}
+ * that will have updating the current Metadata Template.
+ */
 export class UpdateTemplateButton extends React.Component {
   constructor(props) {
     super(props);
@@ -23,11 +27,7 @@ export class UpdateTemplateButton extends React.Component {
         okText={i18n.linelist.templates.update.confirm}
         cancelText={i18n.linelist.templates.update.cancel}
       >
-        <Button
-          type="dashed"
-          size="small"
-          onClick={e => e.stopPropagation()}
-        >
+        <Button type="dashed" size="small" onClick={e => e.stopPropagation()}>
           {i18n.linelist.templates.update.button}
         </Button>
       </Popconfirm>

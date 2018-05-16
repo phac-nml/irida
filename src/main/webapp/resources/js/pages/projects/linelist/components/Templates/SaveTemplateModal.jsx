@@ -6,6 +6,9 @@ const FormItem = Form.Item;
 
 const { i18n } = window.PAGE;
 
+/*
+Internationalized messages for state of validation for the template name.
+ */
 const validations = {
   empty: { status: "", message: "", valid: false },
   valid: { status: "success", message: "", valid: true },
@@ -26,6 +29,10 @@ const validations = {
   }
 };
 
+/**
+ * Custom footer for the SaveTemplateModal allowing the save button to
+ * be disabled if the Template name is not valid.
+ */
 function Footer(props) {
   return (
     <div>
@@ -37,6 +44,10 @@ function Footer(props) {
   );
 }
 
+/**
+ * Component to render a [antd Modal]{@link https://ant.design/components/modal/}
+ * for save a new Metadata Template.
+ */
 export class SaveTemplateModal extends React.Component {
   inputRef = React.createRef();
 
