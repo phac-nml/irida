@@ -78,8 +78,16 @@ public class LineListController {
 				.collect(Collectors.toList());
 	}
 
+	/**
+	 * Save or update a {@link MetadataTemplate}
+	 *
+	 * @param template  {@link UIMetadataTemplate}
+	 * @param projectId {@link Long} project identifier
+	 * @return saved or updated {@link UIMetadataTemplate}
+	 */
 	@RequestMapping(value = "/templates", method = RequestMethod.POST)
-	public UIMetadataTemplate saveLineListTemplate(@RequestBody UIMetadataTemplate template, @RequestParam Long projectId) {
+	public UIMetadataTemplate saveLineListTemplate(@RequestBody UIMetadataTemplate template,
+			@RequestParam Long projectId) {
 
 		// Get or create the template fields.
 		List<MetadataTemplateField> fields = new ArrayList<>();
