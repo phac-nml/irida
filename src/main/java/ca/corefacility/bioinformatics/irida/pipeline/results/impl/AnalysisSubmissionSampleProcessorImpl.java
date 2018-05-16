@@ -9,7 +9,6 @@ import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSampleUpdat
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.analysis.annotations.RunAsUser;
 import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,7 +75,6 @@ public class AnalysisSubmissionSampleProcessorImpl implements AnalysisSubmission
 	 * {@inheritDoc}
 	 */
 	@Override
-	@RunAsUser("#analysisSubmission.getSubmitter()")
 	@Transactional(propagation=Propagation.REQUIRES_NEW)
 	@PreAuthorize("hasPermission(#analysisSubmission, 'canUpdateSamplesFromAnalysisSubmission')")
 	public void updateSamples(AnalysisSubmission analysisSubmission) throws PostProcessingException {
@@ -95,8 +93,6 @@ public class AnalysisSubmissionSampleProcessorImpl implements AnalysisSubmission
 					.get(analysis.getAnalysisType());
 
 			if (analysisSampleUpdaterService != null) {
-				// re-reading submission to ensure file paths are correct
-				analysisSubmission = analysisSubmissionService.read(analysisSubmission.getId());
 
 				analysisSampleUpdaterService.update(samples, analysisSubmission);
 			} else {
