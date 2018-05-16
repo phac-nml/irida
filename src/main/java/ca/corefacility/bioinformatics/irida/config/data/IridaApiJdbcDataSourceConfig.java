@@ -22,7 +22,6 @@ import java.util.Properties;
  * Configuration for IRIDA's JDBC Datasource
  */
 @Configuration
-@Profile({ "dev", "prod" })
 public class IridaApiJdbcDataSourceConfig implements DataConfig {
 
 	@Autowired

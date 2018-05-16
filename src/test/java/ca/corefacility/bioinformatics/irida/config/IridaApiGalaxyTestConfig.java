@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.config;
 
 import ca.corefacility.bioinformatics.irida.config.analysis.AnalysisExecutionServiceTestConfig;
 import ca.corefacility.bioinformatics.irida.config.analysis.GalaxyExecutionTestConfig;
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.NonWindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsLocalGalaxyConfig;
@@ -27,8 +28,9 @@ import java.util.concurrent.Executor;
  */
 @Configuration
 @Import({ GalaxyExecutionTestConfig.class, IridaApiServicesConfig.class, IridaApiTestDataSourceConfig.class,
-		NonWindowsLocalGalaxyConfig.class, WindowsLocalGalaxyConfig.class,
-		AnalysisExecutionServiceTestConfig.class, IridaWorkflowsTestConfig.class, IridaWorkflowsGalaxyIntegrationTestConfig.class })
+		IridaApiJdbcDataSourceConfig.class, NonWindowsLocalGalaxyConfig.class, WindowsLocalGalaxyConfig.class,
+		AnalysisExecutionServiceTestConfig.class, IridaWorkflowsTestConfig.class,
+		IridaWorkflowsGalaxyIntegrationTestConfig.class })
 @Profile("test")
 public class IridaApiGalaxyTestConfig {
 	

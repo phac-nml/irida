@@ -28,7 +28,7 @@ import ca.corefacility.bioinformatics.irida.util.RecursiveDeleteVisitor;
 
 @Configuration
 @Profile({ "test", "it" })
-public class IridaApiTestDataSourceConfig extends IridaApiJdbcDataSourceConfig {
+public class IridaApiTestDataSourceConfig  {
 	
 	private static final Logger logger = LoggerFactory.getLogger(IridaApiTestDataSourceConfig.class);
 
@@ -64,12 +64,6 @@ public class IridaApiTestDataSourceConfig extends IridaApiJdbcDataSourceConfig {
 		}
 		
 		return Paths.get(rootTempDirectory);
-	}
-
-	@Override
-	@Bean
-	public Properties getJpaProperties() {
-		return new Properties();
 	}
 
 	@Bean(name = "sequenceFileBaseDirectory")
