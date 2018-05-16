@@ -34,13 +34,21 @@
                   name: /*[[#{linelist.templates.saveModal.name}]]*/ '_TEMPLATE_NAME_',
                   info: /*[[#{linelist.templates.saveModal.info}]]*/ '_TEMPLATE_INFO_',
                   required: /*[[#{linelist.templates.saveModal.required}]]*/ '_TEMPLATE_NAME_REQUIRED',
+                  length: /*[[#{linelist.templates.saveModal.length}]]*/ '_TEMPLATE_NAME_LENGTH',
                   exists: /*[[#{linelist.templates.saveModal.exists}]]*/ '_TEMPLATE_NAME_EXISTS',
                 },
                 Popover: {
                   title: /*[[#{linelist.templates.Popover.title}]]*/ "__POPOVER TITLE__",
                   content: /*[[#{linelist.templates.Popover.content}]]*/ "__POPOVER CONTENT__",
                   description: /*[[#{linelist.templates.Popover.description}]]*/ "__POPOVER DESCR__"
-                }
+                },
+                update: {
+                  button: /*[[#{linelist.templates.update.button}]]*/ "__UPDATE_BUTTON__",
+                  title: /*[[#{linelist.templates.update.title}]]*/ "__UPDATE_TITLE__",
+                  confirm: /*[[#{linelist.templates.update.confirm}]]*/ "__UPDATE_CONFIRM__",
+                  cancel: /*[[#{linelist.templates.update.cancel}]]*/ "__UPDATE_CANCEL__"
+                },
+                saved: /*[[#{linelist.templates.saved}]]*/ "__SAVED__"
               }
             }
           }
@@ -55,7 +63,7 @@
         }
     </style>
 </head>
-<body>
+<body>me
 <main layout:fragment="main">
 <div id="root">
     <div><span class="ant-spin-dot ant-spin-dot-spin"><i></i><i></i><i></i><i></i></span>  <th:block th:text="#{linelist.page-initialization}"/> </div>

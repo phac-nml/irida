@@ -16,7 +16,7 @@ const validations = {
   },
   length: {
     status: "error",
-    message: "__TEMPLATE NAMES MUST BE AT LEAST 5 CHARACERS__",
+    message: i18n.linelist.templates.saveModal.length,
     valid: false
   },
   exists: {

@@ -15,13 +15,9 @@ export class SaveTemplateButton extends React.Component {
 
   render() {
     return this.props.modified !== null ? (
-      <React.Fragment>
-        <Button size="small" type="dashed" onClick={this.showSaveModal}>
-          {this.props.saving
-            ? "SAVING MOTHERFUCKER!"
-            : i18n.linelist.templates.saveModified}
-        </Button>
-      </React.Fragment>
+      <Button size="small" type="dashed" onClick={this.showSaveModal}>
+        {i18n.linelist.templates.saveModified}
+      </Button>
     ) : null;
   }
 }
