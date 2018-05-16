@@ -3,6 +3,7 @@ import { List, fromJS } from "immutable";
 const { i18n } = window.PAGE;
 
 export const NO_TEMPLATE_INDEX = 0;
+export const NO_TEMPLATE_ID = -1;
 
 export const types = {
   LOAD: "METADATA/TEMPLATES/LOAD_REQUEST",
@@ -18,7 +19,7 @@ export const types = {
 
 const NO_TEMPLATE = {
   name: i18n.linelist.templates.Select.none,
-  id: -1,
+  id: NO_TEMPLATE_ID,
   fields: []
 };
 

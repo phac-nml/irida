@@ -3,15 +3,25 @@ import PropTypes from "prop-types";
 import { Tag } from "antd";
 import { SaveTemplateButton } from "./SaveTemplateButton";
 import { UpdateTemplateButton } from "./UpdateTemplateButton";
+import { NO_TEMPLATE_ID } from "../../../reducers/templates";
 
 const { i18n } = window.PAGE;
 
+/**
+ * This class represents the contents of an option in an
+ * [antd Select]{@link https://ant.design/components/select/}
+ * for Metadata Templates
+ */
 export function TemplateSelectOption(props) {
   const { template, modified, index, current, saved } = props;
   const { name, fields, id } = template;
 
+  /**
+   * Render an update or save button depending on whether the option is for
+   * an existing template or a new one.
+   */
   function renderUpdateSave() {
-    if (id === -1) {
+    if (id === NO_TEMPLATE_ID) {
       return (
         <SaveTemplateButton
           showSaveModal={props.showSaveModal}
@@ -24,16 +34,8 @@ export function TemplateSelectOption(props) {
 
   return (
     <React.Fragment>
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <span
-          style={{
-            maxWidth: 170,
-            overflow: "hidden",
-            textOverflow: "ellipsis"
-          }}
-        >
-          {name}
-        </span>
+      <div className="templates-option">
+        <span className="template-option--name">{name}</span>
         <span>
           {saved && index === current ? (
             <Tag color="green">
@@ -44,7 +46,10 @@ export function TemplateSelectOption(props) {
             ? renderUpdateSave()
             : null}
           {index > 0 ? (
-            <Tag className="field-count">{fields.length}</Tag>
+            <Tag className="field-count">
+              {/* - 1 Because the fields include the sample name itself. */}
+              {fields.length - 1}
+            </Tag>
           ) : null}
         </span>
       </div>

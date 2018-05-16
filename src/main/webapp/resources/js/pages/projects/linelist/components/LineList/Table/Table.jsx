@@ -41,6 +41,11 @@ export class Table extends React.Component {
     return false;
   }
 
+  /**
+   * Apply a Metadata template to the table.  This will reorder the columns and
+   * toggle column visibility.
+   * @param fields
+   */
   applyTemplate = fields => {
     const columnState = this.columnApi.getColumnState();
 
@@ -55,7 +60,7 @@ export class Table extends React.Component {
       return;
     }
 
-    // Need to keep sample name first
+    // Need to keep sample name first since it is not actually metadata!
     let final = [columnState.shift()];
     fields.forEach(t => {
       const index = columnState.findIndex(f => t.label === f.colId);
@@ -80,6 +85,10 @@ export class Table extends React.Component {
     this.columnApi = params.columnApi;
   };
 
+  /**
+   * Event handler for if a user drags a column to a new spot on the current
+   * table.
+   */
   onColumnDropped = () => {
     const colOrder = this.columnApi.getColumnState();
     // Remove the hidden ones and just get the field identifiers

@@ -7,8 +7,13 @@ import {
   PopoverContents,
   HelpPopover
 } from "../../../../../components/popovers";
+
 const { i18n } = window.PAGE;
 
+/*
+The internationalized content of the help popover describing
+what a template is and how to use it.
+ */
 const content = (
   <React.Fragment>
     <p>{i18n.linelist.templates.Popover.content}</p>
@@ -16,9 +21,13 @@ const content = (
   </React.Fragment>
 );
 
+/**
+ * This component is responsible for rendering all components that handle
+ * user interaction with selecting and saving templates.
+ */
 export class Templates extends React.Component {
   state = {
-    visible: false
+    visible: false // If the save template modal is visisble
   };
 
   closeModal = () => {
@@ -36,10 +45,7 @@ export class Templates extends React.Component {
   render() {
     return (
       <div style={{ marginBottom: "1rem" }}>
-        <TemplateSelect
-          {...this.props}
-          showSaveModal={this.showSaveModal}
-        />
+        <TemplateSelect {...this.props} showSaveModal={this.showSaveModal} />
         <SaveTemplateModal
           visible={this.state.visible}
           onClose={this.closeModal}

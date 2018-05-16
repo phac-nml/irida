@@ -3,6 +3,10 @@ import { Button } from "antd";
 
 const { i18n } = window.PAGE;
 
+/**
+ * This components is part of the TemplateSelect.  Displays a save button
+ * if the "All Field" or no template is selected and columns modified.
+ */
 export class SaveTemplateButton extends React.Component {
   constructor(props) {
     super(props);
