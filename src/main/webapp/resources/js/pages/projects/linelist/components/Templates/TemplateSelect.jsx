@@ -5,7 +5,6 @@ import { Select } from "antd";
 import { TemplateSelectOption } from "./TemplateSelectOption";
 
 const { Option } = Select;
-const { i18n } = window.PAGE;
 
 export function TemplateSelect(props) {
   const { current, useTemplate } = props;
