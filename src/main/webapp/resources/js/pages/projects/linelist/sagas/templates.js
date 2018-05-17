@@ -26,6 +26,7 @@ export function* saveTemplateSaga() {
   while (true) {
     try {
       const { data } = yield take(types.SAVE_TEMPLATE);
+      data.fields = data.fields.filter(f => !f.hide);
       const { data: response } = yield call(saveTemplate, data);
       yield put(actions.savedTemplate(response.UIMetadataTemplate));
       // Delay allows for displaying the saved message

@@ -92,7 +92,7 @@ export class Table extends React.Component {
   onColumnDropped = () => {
     const colOrder = this.columnApi.getColumnState();
     // Remove the hidden ones and just get the field identifiers
-    const list = colOrder.filter(c => !c.hide).map(c => ({ label: c.colId }));
+    const list = colOrder.map(c => ({ label: c.colId, hide: c.hide }));
     this.props.tableModified(list);
   };
 
