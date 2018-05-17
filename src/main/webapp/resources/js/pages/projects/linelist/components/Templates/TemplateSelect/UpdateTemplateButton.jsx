@@ -15,7 +15,8 @@ export class UpdateTemplateButton extends React.Component {
 
   saveTemplate = e => {
     e.stopPropagation();
-    const { name, fields, id } = this.props.modified;
+    const { name, modified, id } = this.props.template;
+    const fields = modified.filter(f => !f.hide);
     this.props.saveTemplate(name, fields, id);
   };
 
@@ -36,6 +37,6 @@ export class UpdateTemplateButton extends React.Component {
 }
 
 UpdateTemplateButton.propTypes = {
-  modified: PropTypes.object.isRequired,
+  template: PropTypes.object.isRequired,
   saveTemplate: PropTypes.func.isRequired
 };

@@ -68,7 +68,9 @@ export class SaveTemplateModal extends React.Component {
   }
 
   handleOk = () => {
-    const { fields } = this.props.modified;
+    const template = this.props.templates.get(this.props.current).toJS();
+    console.log(template);
+    const fields = template.modified;
     const name = this.inputRef.current.input.value.trim();
     this.props.saveTemplate(name, fields, null);
     this.resetForm();

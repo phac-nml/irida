@@ -13,8 +13,9 @@ const { i18n } = window.PAGE;
  * for Metadata Templates
  */
 export function TemplateSelectOption(props) {
-  const { template, modified, index, current, saved } = props;
-  const { name, fields, id } = template;
+  const { template, index, current, saved } = props;
+  const { name, fields, id, modified } = template;
+  console.log(template);
 
   /**
    * Render an update or save button depending on whether the option is for
@@ -24,6 +25,7 @@ export function TemplateSelectOption(props) {
     if (id === NO_TEMPLATE_ID) {
       return (
         <SaveTemplateButton
+          template={props.template}
           showSaveModal={props.showSaveModal}
           saveTemplate={props.saveTemplate}
         />
@@ -42,9 +44,9 @@ export function TemplateSelectOption(props) {
               {i18n.linelist.templates.saved.toUpperCase()}
             </Tag>
           ) : null}
-          {modified !== null && modified.name === name
-            ? renderUpdateSave()
-            : null}
+          {typeof modified === "undefined" || modified === null
+            ? null
+            : renderUpdateSave()}
           {index > 0 ? (
             <Tag className="templates-option--field-count">
               {/* - 1 Because the fields include the sample name itself. */}
@@ -62,7 +64,6 @@ TemplateSelectOption.propTypes = {
   saved: PropTypes.bool.isRequired,
   current: PropTypes.number.isRequired,
   index: PropTypes.number.isRequired,
-  modified: PropTypes.object,
   saveTemplate: PropTypes.func.isRequired,
   showSaveModal: PropTypes.func.isRequired
 };

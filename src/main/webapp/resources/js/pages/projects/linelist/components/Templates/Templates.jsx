@@ -27,7 +27,7 @@ const content = (
  */
 export class Templates extends React.Component {
   state = {
-    visible: false // If the save template modal is visisble
+    visible: false // If the save template modal is visible
   };
 
   closeModal = () => {

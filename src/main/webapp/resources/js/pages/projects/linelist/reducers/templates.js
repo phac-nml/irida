@@ -21,7 +21,8 @@ export const types = {
 const NO_TEMPLATE = {
   name: i18n.linelist.templates.Select.none,
   id: NO_TEMPLATE_ID,
-  fields: []
+  fields: [],
+  modified: null
 };
 
 const initialState = fromJS({
@@ -29,20 +30,9 @@ const initialState = fromJS({
   error: false,
   templates: List(),
   current: NO_TEMPLATE_INDEX,
-  modified: null,
   saving: false,
   saved: false
 });
-
-function setModifiedTemplate(state, fields) {
-  const current = state.get("current");
-  const template = state
-    .get("templates")
-    .get(current)
-    .toJS();
-  template.fields = fields;
-  return state.set("modified", template);
-}
 
 export const reducer = (state = initialState, action = {}) => {
   switch (action.type) {
@@ -57,10 +47,17 @@ export const reducer = (state = initialState, action = {}) => {
     case types.LOAD_ERROR:
       return state.set("fetching", false).set("error", true);
     case types.USE_TEMPLATE:
-      if (state.get("current") === action.index) return state;
-      else return state.set("current", action.index).set("modified", null);
+      if (state.get("current") === action.index) {
+        return state.setIn(["templates", action.index, "modified"], null);
+      }
+      return state
+        .setIn(["templates", state.get("current"), "modified"], null)
+        .set("current", action.index);
     case types.TEMPLATE_MODIFIED:
-      return setModifiedTemplate(state, action.fields);
+      return state.setIn(
+        ["templates", state.get("current"), "modified"],
+        action.fields
+      );
     case types.SAVE_TEMPLATE:
       return state.set("saving", true);
     case types.SAVED_TEMPLATE:
