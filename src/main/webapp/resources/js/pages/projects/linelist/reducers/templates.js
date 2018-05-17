@@ -90,7 +90,7 @@ export const actions = {
   success: templates => ({ type: types.LOAD_SUCCESS, templates }),
   error: error => ({ type: types.LOAD_ERROR, error }),
   use: index => ({ type: types.USE_TEMPLATE, index }),
-  modified: fields => ({ type: types.TEMPLATE_MODIFIED, fields }),
+  tableModified: fields => ({ type: types.TEMPLATE_MODIFIED, fields }),
   saveTemplate: (name, fields, id) => ({
     type: types.SAVE_TEMPLATE,
     data: { name, fields, id }

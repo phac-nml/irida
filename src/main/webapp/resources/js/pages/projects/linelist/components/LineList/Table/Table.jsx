@@ -93,7 +93,7 @@ export class Table extends React.Component {
     const colOrder = this.columnApi.getColumnState();
     // Remove the hidden ones and just get the field identifiers
     const list = colOrder.filter(c => !c.hide).map(c => ({ label: c.colId }));
-    this.props.templateModified(list);
+    this.props.tableModified(list);
   };
 
   render() {
@@ -123,6 +123,7 @@ export class Table extends React.Component {
 }
 
 Table.propTypes = {
+  tableModified: PropTypes.func.isRequied,
   fields: ImmutablePropTypes.list.isRequired,
   entries: ImmutablePropTypes.list,
   templates: ImmutablePropTypes.list,
