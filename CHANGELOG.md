@@ -11,6 +11,7 @@ Changes
 * [UI]: Users can save analysis results to samples after pipeline is done in "Share Results" tab.
 * [UI]: Fixed bug where edit groups page would throw a server exception. (0.21.3)
 * [UI]: Hiding user page project list for non-admins.
+* [Workflow]: Fixed bug where auto updating metadata from analysis submission failed for non-admin user. (0.21.4)
 
 0.20.0 to 0.21.0
 ----------------
