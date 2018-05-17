@@ -11,13 +11,7 @@ files have been converted over to wekbpack builds.
  */
 import "./modules/notifications";
 
-const deps = [
-  "ngAria",
-  "ngAnimate",
-  "ui.bootstrap",
-  "irida.cart",
-  IridaSession
-];
+const deps = ["ngAria", "ui.bootstrap", "irida.cart", IridaSession];
 
 const app = angular.module("irida", deps).config([
   "$httpProvider",
