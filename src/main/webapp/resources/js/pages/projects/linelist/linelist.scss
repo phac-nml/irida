@@ -18,78 +18,47 @@
   display: none;
 }
 
-.linelist-wrapper {
-  width: 100%;
-}
+.ag-grid-tool-panel {
+  background-color: rgba(245, 247, 247, 1);
+  min-height: 100%;
+  padding: 1rem;
+  margin-right: 20px;
+  border-right: 1px solid #bdc3c7;
+  overflow-x: hidden;
+  width: 230px;
 
-.tool-panel__open {
-  .table-wrapper {
-    margin-right: 200px;
+  .ant-checkbox-wrapper {
+    font-weight: normal;
   }
 }
 
-.table-wrapper {
-  float: left;
+.ant-layout-sider-collapsed .ag-grid-tool-panel {
+  display: none;
 }
 
-.tool-panel {
-  float: right;
-  border: 1px solid rgba(189, 195, 199, 1);
-  padding: 5px;
+.ag-grid-tool-panel--buttons {
+  background-color: rgba(245, 247, 247, 1);
+  border-left: 1px solid #bdc3c7;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 20px;
 }
-//
-//.template-column-wrapper {
-//  background-color: RGBA(245, 247, 247, 1);
-//  width: 26px;
-//  min-height: 100%;
-//  position: relative;
-//}
-//
-//.template-column {
-//  border: 1px solid RGBA(189, 195, 199, 1);
-//  background-color: RGBA(245, 247, 247, 1);
-//  position: absolute;
-//  top: 0;
-//  bottom: 0;
-//  right: 0;
-//  left: 50px;
-//  z-index: 10;
-//}
-//
-//.template-column--fields {
-//  min-height: 100%;
-//  padding: 5px;
-//  overflow-x: hidden;
-//}
-//
-//.template-column--button--wrapper {
-//  position: absolute;
-//  top: 0;
-//  bottom: 0;
-//  right: 0;
-//  width: 25px;
-//}
-//
-//.template-column--button {
-//  transform: rotate(90deg) translateY(-25px);
-//  transform-origin: 0 0;
-//  border-radius: 0;
-//  border: none;
-//  border-right: 1px solid RGBA(189, 195, 199, 1);
-//  border-bottom: 1px solid RGBA(189, 195, 199, 1);
-//  height: 25px;
-//  line-height: 25px;
-//}
-//
-//.template-column--open {
-//  left: -159px;
-//}
-//
-//.template-column--closed {
-//  left: 0;
-//
-//  .template-column--fields {
-//    border-left: none;
-//    display: none;
-//  }
-//}
+
+.ag-grid-tool-panel--button {
+  background-color: transparent;
+  border-radius: 0;
+  border: 0;
+  border-right: 1px solid #bdc3c7;
+  color: rgba(0, 0, 0, 0.54);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  font-weight: normal;
+  height: 20px;
+  line-height: 20px;
+  width: 100px;
+  transform: rotate(90deg) translateY(-20px);
+  transform-origin: 0 0;
+  font-size: 12px;
+}
