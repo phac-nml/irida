@@ -8,6 +8,7 @@ const mapStateToProps = state => ({
   templates: state.templates.get("templates"),
   current: state.templates.get("current")
 });
+
 const mapDispatchToProps = dispatch => ({
   tableModified: fields => dispatch(actions.tableModified(fields))
 });

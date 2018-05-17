@@ -123,7 +123,7 @@ export class Table extends React.Component {
 }
 
 Table.propTypes = {
-  tableModified: PropTypes.func.isRequied,
+  tableModified: PropTypes.func.isRequired,
   fields: ImmutablePropTypes.list.isRequired,
   entries: ImmutablePropTypes.list,
   templates: ImmutablePropTypes.list,
