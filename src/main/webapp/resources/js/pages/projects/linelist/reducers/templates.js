@@ -1,4 +1,5 @@
 import { List, fromJS } from "immutable";
+import { types as fieldTypes } from "./fields";
 
 const { i18n } = window.PAGE;
 
@@ -45,6 +46,8 @@ function setModifiedTemplate(state, fields) {
 
 export const reducer = (state = initialState, action = {}) => {
   switch (action.type) {
+    case fieldTypes.LOAD_SUCCESS:
+      return state.setIn(["templates", 0, "fields"], action.fields);
     case types.LOAD:
       return state.set("fetching", true).set("error", false);
     case types.LOAD_SUCCESS:
