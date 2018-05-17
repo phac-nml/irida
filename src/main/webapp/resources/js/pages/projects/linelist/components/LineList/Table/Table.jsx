@@ -98,7 +98,7 @@ export class Table extends React.Component {
 
   render() {
     return (
-      <div style={this.containerStyle} className="ag-theme-balham">
+      <div style={this.containerStyle} className="ag-theme-balham table-wrapper">
         <AgGridReact
           enableSorting={true}
           enableColResize={true}

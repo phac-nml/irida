@@ -24,7 +24,7 @@ export class ToolPanel extends React.Component {
     console.log(classes);
     const fields = this.props.fields.toJS();
     return (
-      <div className="template-column-wrapper">
+      <div className="tool-panel">
         <div className={classes}>
           <div className="template-column--fields">
             <div>

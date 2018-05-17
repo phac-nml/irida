@@ -1,9 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Loader } from "../Loader";
-import { TableContainer } from "./Table";
 import { TemplatesContainer } from "../Templates";
-import { ToolPanelContainer } from "./ToolPanel";
+import { TableLayoutComponent } from "./TableLayoutComponent";
 
 /**
  * Container class for the higher level states of the page:
@@ -26,10 +25,7 @@ export function LineList(props) {
       <div style={{ marginBottom: "1rem" }}>
         <TemplatesContainer />
       </div>
-      <div className="table-wrapper">
-        <TableContainer />
-        <ToolPanelContainer />
-      </div>
+      <TableLayoutComponent />
     </React.Fragment>
   );
 }
