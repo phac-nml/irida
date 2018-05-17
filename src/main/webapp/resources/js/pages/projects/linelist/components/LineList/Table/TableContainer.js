@@ -9,7 +9,7 @@ const mapStateToProps = state => ({
   current: state.templates.get("current")
 });
 const mapDispatchToProps = dispatch => ({
-  templateModified: fields => dispatch(actions.modified(fields))
+  tableModified: fields => dispatch(actions.tableModified(fields))
 });
 
 export const TableContainer = connect(mapStateToProps, mapDispatchToProps)(
