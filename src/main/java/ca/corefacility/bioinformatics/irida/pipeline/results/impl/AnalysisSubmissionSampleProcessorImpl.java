@@ -8,8 +8,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSampleUpdater;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
-import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.analysis.annotations.RunAsUser;
 import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,33 +35,31 @@ public class AnalysisSubmissionSampleProcessorImpl implements AnalysisSubmission
 
 	private final Map<AnalysisType, AnalysisSampleUpdater> analysisSampleUpdaterMap;
 	private final SampleRepository sampleRepository;
-	private final AnalysisSubmissionService analysisSubmissionService;
 
 	/**
 	 * Builds a new {@link AnalysisSubmissionSampleProcessorImpl}.
 	 *
 	 * @param sampleRepository              The {@link SampleRepository}.
-	 * @param analysisSubmissionService     The {@link AnalysisSubmissionService}
 	 * @param analysisSampleUpdaterServices A list of {@link AnalysisSampleUpdater}s to use for updating
 	 *                                      samples.
 	 */
 	@Autowired
-	public AnalysisSubmissionSampleProcessorImpl(SampleRepository sampleRepository, AnalysisSubmissionService analysisSubmissionService,
+	public AnalysisSubmissionSampleProcessorImpl(SampleRepository sampleRepository,
 			List<AnalysisSampleUpdater> analysisSampleUpdaterServices) {
 		checkNotNull(analysisSampleUpdaterServices, "assemblySampleUpdaterService is null");
 		this.sampleRepository = sampleRepository;
 		this.analysisSampleUpdaterMap = Maps.newHashMap();
-		this.analysisSubmissionService = analysisSubmissionService;
 
 		for (AnalysisSampleUpdater analysisSampleUpdaterService : analysisSampleUpdaterServices) {
 			AnalysisType analysisType = analysisSampleUpdaterService.getAnalysisType();
 			checkArgument(!analysisSampleUpdaterMap.containsKey(analysisType),
-					"Error: already have registered " + analysisSampleUpdaterService.getClass() + " for AnalysisType " + analysisType);
+					"Error: already have registered " + analysisSampleUpdaterService.getClass() + " for AnalysisType "
+							+ analysisType);
 
 			analysisSampleUpdaterMap.put(analysisSampleUpdaterService.getAnalysisType(), analysisSampleUpdaterService);
 		}
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -76,8 +72,7 @@ public class AnalysisSubmissionSampleProcessorImpl implements AnalysisSubmission
 	 * {@inheritDoc}
 	 */
 	@Override
-	@RunAsUser("#analysisSubmission.getSubmitter()")
-	@Transactional(propagation=Propagation.REQUIRES_NEW)
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	@PreAuthorize("hasPermission(#analysisSubmission, 'canUpdateSamplesFromAnalysisSubmission')")
 	public void updateSamples(AnalysisSubmission analysisSubmission) throws PostProcessingException {
 		if (!analysisSubmission.getUpdateSamples()) {
@@ -95,8 +90,6 @@ public class AnalysisSubmissionSampleProcessorImpl implements AnalysisSubmission
 					.get(analysis.getAnalysisType());
 
 			if (analysisSampleUpdaterService != null) {
-				// re-reading submission to ensure file paths are correct
-				analysisSubmission = analysisSubmissionService.read(analysisSubmission.getId());
 
 				analysisSampleUpdaterService.update(samples, analysisSubmission);
 			} else {
