@@ -43,7 +43,7 @@ export function TemplateSelectOption(props) {
               {i18n.linelist.templates.saved.toUpperCase()}
             </Tag>
           ) : null}
-          {typeof modified === "undefined" || modified === null
+          {modified.length === 0
             ? null
             : renderUpdateSave()}
           {index > 0 ? (

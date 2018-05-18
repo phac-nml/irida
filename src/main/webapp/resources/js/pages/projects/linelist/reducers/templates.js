@@ -1,7 +1,5 @@
 import { List, fromJS } from "immutable";
 
-const { i18n } = window.PAGE;
-
 export const NO_TEMPLATE_INDEX = 0;
 
 export const types = {
@@ -9,11 +7,12 @@ export const types = {
   LOAD_ERROR: "METADATA/TEMPLATES/LOAD_TEMPLATES_ERROR",
   LOAD_SUCCESS: "METADATA/TEMPLATES/LOAD_TEMPLATES_SUCCESS",
   USE_TEMPLATE: "METADATA/TEMPLATES/USE_TEMPLATE",
-  TEMPLATE_MODIFIED: "METADATA/TEMPLATES/TEMPLATE_MODIFIED",
+  TABLE_MODIFIED: "METADATA/TEMPLATES/TABLE_MODIFIED",
   SAVE_TEMPLATE: "METADATA/TEMPLATES/SAVE_TEMPLATE",
   SAVING_TEMPLATE: "METADATA/TEMPLATES/SAVING_TEMPLATE",
   SAVED_TEMPLATE: "METADATA/TEMPLATES/SAVED_TEMPLATE",
-  SAVE_COMPLETE: "METADATA/TEMPLATES/SAVE_COMPLETE"
+  SAVE_COMPLETE: "METADATA/TEMPLATES/SAVE_COMPLETE",
+  TEMPLATE_MODIFIED: "METADATA/TEMPLATES/TEMPLATE_MODIFIED"
 };
 
 const initialState = fromJS({
@@ -30,19 +29,23 @@ export const reducer = (state = initialState, action = {}) => {
     case types.LOAD:
       return state.set("fetching", true).set("error", false);
     case types.LOAD_SUCCESS:
-      return state
-        .set("fetching", false)
-        .set("templates", fromJS(action.templates));
+      const templates = action.templates.map(t => {
+        t.modified = [];
+        return t;
+      });
+      return state.set("fetching", false).set("templates", fromJS(templates));
     case types.LOAD_ERROR:
       return state.set("fetching", false).set("error", true);
     case types.USE_TEMPLATE:
-      if (state.get("current") === action.index) {
-        return state.setIn(["templates", action.index, "modified"], null);
-      }
+      /*
+      Update teh current template to show unmodified
+      If the action.index == the current template the it will just
+      reset the modified state.
+       */
       return state
-        .setIn(["templates", state.get("current"), "modified"], null)
+        .setIn(["templates", state.get("current"), "modified"], [])
         .set("current", action.index);
-    case types.TEMPLATE_MODIFIED:
+    case types.TABLE_MODIFIED:
       return state.setIn(
         ["templates", state.get("current"), "modified"],
         action.fields
@@ -65,10 +68,15 @@ export const reducer = (state = initialState, action = {}) => {
       return state
         .set("saving", false)
         .set("saved", true)
-        .set("modified", null)
+        .set("modified", fromJS([]))
         .set("current", index);
     case types.SAVE_COMPLETE:
       return state.set("saved", false);
+    case types.TEMPLATE_MODIFIED:
+      return state.setIn(
+        ["templates", state.get("current"), "modified"],
+        action.fields
+      );
     default:
       return state;
   }
@@ -79,11 +87,12 @@ export const actions = {
   success: templates => ({ type: types.LOAD_SUCCESS, templates }),
   error: error => ({ type: types.LOAD_ERROR, error }),
   use: index => ({ type: types.USE_TEMPLATE, index }),
-  tableModified: fields => ({ type: types.TEMPLATE_MODIFIED, fields }),
+  tableModified: fields => ({ type: types.TABLE_MODIFIED, fields }),
   saveTemplate: (name, fields, id) => ({
     type: types.SAVE_TEMPLATE,
     data: { name, fields, id }
   }),
   savedTemplate: template => ({ type: types.SAVED_TEMPLATE, template }),
-  savedComplete: () => ({ type: types.SAVE_COMPLETE })
+  savedComplete: () => ({ type: types.SAVE_COMPLETE }),
+  templateModified: fields => ({ type: types.TEMPLATE_MODIFIED, fields })
 };

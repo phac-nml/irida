@@ -28,16 +28,44 @@ export class Table extends React.Component {
     if (!nextProps.fields.equals(this.props.fields)) {
       return true;
     }
+
     if (
       List.isList(nextProps.entries) &&
       !nextProps.entries.equals(this.props.entries)
     ) {
       return true;
     }
+
+    /*
+    The current template has changed.
+    Force the table to update to the new view based on the template fields.
+     */
     if (nextProps.current !== this.props.current) {
       const template = nextProps.templates.get(nextProps.current).toJS();
       this.applyTemplate(template.fields);
+      return false;
     }
+
+    /*
+    The field order for a template can change externally.  Check to see if that
+    order has been updated, and adjust the columns accordingly.
+     */
+    const oldTemplate = this.props.templates.getIn([
+      this.props.current,
+      "modified"
+    ]);
+    const newTemplate = nextProps.templates.getIn([
+      nextProps.current,
+      "modified"
+    ]);
+    if (
+      typeof oldTemplate !== "undefined" &&
+      !oldTemplate.equals(newTemplate)
+    ) {
+      this.applyTemplate(newTemplate);
+      return false
+    }
+
     // If these have not been changed then don't update the entries;
     return false;
   }
