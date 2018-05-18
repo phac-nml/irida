@@ -15,14 +15,13 @@ const { i18n } = window.PAGE;
 export function TemplateSelectOption(props) {
   const { template, index, current, saved } = props;
   const { name, fields, id, modified } = template;
-  console.log(template);
 
   /**
    * Render an update or save button depending on whether the option is for
    * an existing template or a new one.
    */
   function renderUpdateSave() {
-    if (id === NO_TEMPLATE_ID) {
+    if (id === null) {
       return (
         <SaveTemplateButton
           template={props.template}
@@ -49,8 +48,7 @@ export function TemplateSelectOption(props) {
             : renderUpdateSave()}
           {index > 0 ? (
             <Tag className="templates-option--field-count">
-              {/* - 1 Because the fields include the sample name itself. */}
-              {fields.length - 1}
+              {fields.filter(f => !f.hide).length}
             </Tag>
           ) : null}
         </span>

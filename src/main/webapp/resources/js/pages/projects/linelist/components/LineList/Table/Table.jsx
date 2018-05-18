@@ -8,6 +8,7 @@ import "ag-grid/dist/styles/ag-theme-balham.css";
 
 import { LoadingOverlay } from "./LoadingOverlay";
 import { SampleNameRenderer } from "./renderers/SampleNameRenderer";
+import { fields } from "../../../reducers";
 
 const { i18n } = window.PAGE;
 
@@ -48,33 +49,16 @@ export class Table extends React.Component {
    */
   applyTemplate = fields => {
     const columnState = this.columnApi.getColumnState();
-
-    // If there are no fields, then there is no template :)
-    // Therefore just show all the fields.
-    if (fields.length === 0) {
-      const state = columnState.map(c => {
-        c.hide = false;
-        return c;
+    const sample = columnState.shift();
+    const final = fields.map(field => {
+      const index = columnState.findIndex(c => {
+        return c.colId === field.label;
       });
-      this.columnApi.setColumnState(state);
-      return;
-    }
-
-    // Need to keep sample name first since it is not actually metadata!
-    let final = [columnState.shift()];
-    fields.forEach(t => {
-      const index = columnState.findIndex(f => t.label === f.colId);
-      if (index > -1) {
-        const field = columnState.splice(index, 1)[0];
-        field.hide = false;
-        final.push(field);
-      }
+      const col = columnState.splice(index, 1)[0];
+      col.hide = field.hide;
+      return col;
     });
-    const remainder = columnState.map(c => {
-      c.hide = true;
-      return c;
-    });
-    this.columnApi.setColumnState([...final, ...remainder]);
+    this.columnApi.setColumnState([sample, ...final]);
   };
 
   /*

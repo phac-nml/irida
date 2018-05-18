@@ -1,10 +1,8 @@
 import { List, fromJS } from "immutable";
-import { types as fieldTypes } from "./fields";
 
 const { i18n } = window.PAGE;
 
 export const NO_TEMPLATE_INDEX = 0;
-export const NO_TEMPLATE_ID = -1;
 
 export const types = {
   LOAD: "METADATA/TEMPLATES/LOAD_REQUEST",
@@ -18,13 +16,6 @@ export const types = {
   SAVE_COMPLETE: "METADATA/TEMPLATES/SAVE_COMPLETE"
 };
 
-const NO_TEMPLATE = {
-  name: i18n.linelist.templates.Select.none,
-  id: NO_TEMPLATE_ID,
-  fields: [],
-  modified: null
-};
-
 const initialState = fromJS({
   fetching: false,
   error: false,
@@ -36,14 +27,12 @@ const initialState = fromJS({
 
 export const reducer = (state = initialState, action = {}) => {
   switch (action.type) {
-    case fieldTypes.LOAD_SUCCESS:
-      return state.setIn(["templates", 0, "fields"], action.fields);
     case types.LOAD:
       return state.set("fetching", true).set("error", false);
     case types.LOAD_SUCCESS:
       return state
         .set("fetching", false)
-        .set("templates", fromJS([NO_TEMPLATE, ...action.templates]));
+        .set("templates", fromJS(action.templates));
     case types.LOAD_ERROR:
       return state.set("fetching", false).set("error", true);
     case types.USE_TEMPLATE:

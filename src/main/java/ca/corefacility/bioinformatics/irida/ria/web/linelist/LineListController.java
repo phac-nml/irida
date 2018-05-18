@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.web.models.UIMetadataTemplate;
+import ca.corefacility.bioinformatics.irida.ria.web.models.UIMetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -28,13 +30,15 @@ public class LineListController {
 	private ProjectService projectService;
 	private SampleService sampleService;
 	private MetadataTemplateService metadataTemplateService;
+	private MessageSource messageSource;
 
 	@Autowired
 	public LineListController(ProjectService projectService, SampleService sampleService,
-			MetadataTemplateService metadataTemplateService) {
+			MetadataTemplateService metadataTemplateService, MessageSource messageSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.metadataTemplateService = metadataTemplateService;
+		this.messageSource = messageSource;
 	}
 
 	/**
@@ -70,12 +74,20 @@ public class LineListController {
 	 */
 	@RequestMapping("/templates")
 	@ResponseBody
-	public List<UIMetadataTemplate> getLineListTemplates(@RequestParam long projectId) {
+	public List<UIMetadataTemplate> getLineListTemplates(@RequestParam long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
+		List<MetadataTemplateField> allFields = metadataTemplateService.getMetadataFieldsForProject(project);
 		List<ProjectMetadataTemplateJoin> joins = metadataTemplateService.getMetadataTemplatesForProject(project);
-		return joins.stream()
-				.map(join -> new UIMetadataTemplate(join.getObject()))
+		List<UIMetadataTemplate> templates = joins.stream()
+				.map(join -> new UIMetadataTemplate(join.getObject(), new ArrayList<>(allFields)))
 				.collect(Collectors.toList());
+
+		// Add a "Template" for all fields
+		templates.add(0, new UIMetadataTemplate(new MetadataTemplate(
+				messageSource.getMessage("linelist.templates.Select.none", new Object[] {}, locale), new ArrayList<>()),
+				new ArrayList<>(allFields)));
+
+		return templates;
 	}
 
 	/**
@@ -91,11 +103,19 @@ public class LineListController {
 
 		// Get or create the template fields.
 		List<MetadataTemplateField> fields = new ArrayList<>();
-		for (MetadataTemplateField field : template.getFields()) {
-			if (field.getId() == null) {
-				field = metadataTemplateService.saveMetadataField(new MetadataTemplateField(field.getLabel(), "text"));
+		MetadataTemplateField metadataTemplateField;
+		for (UIMetadataTemplateField field : template.getFields()) {
+			// Don't save the same name
+			if (!field.getLabel()
+					.equals("sampleName")) {
+				if (field.getId() == null) {
+					metadataTemplateField = metadataTemplateService.saveMetadataField(
+							new MetadataTemplateField(field.getLabel(), "text"));
+				} else {
+					metadataTemplateField = metadataTemplateService.readMetadataField(field.getId());
+				}
+				fields.add(metadataTemplateField);
 			}
-			fields.add(field);
 		}
 
 		// Save the template.
@@ -111,7 +131,7 @@ public class LineListController {
 					project);
 			metadataTemplate = join.getObject();
 		}
-		return new UIMetadataTemplate(metadataTemplate);
+		return new UIMetadataTemplate(metadataTemplate, getAllProjectMetadataFields(projectId));
 	}
 
 	/**

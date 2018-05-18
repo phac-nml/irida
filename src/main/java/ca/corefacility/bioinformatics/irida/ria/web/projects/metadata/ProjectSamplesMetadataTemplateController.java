@@ -17,7 +17,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
@@ -91,34 +90,6 @@ public class ProjectSamplesMetadataTemplateController {
 		UIMetadataTemplate template = new UIMetadataTemplate(metadataTemplate);
 		model.addAttribute("template", template);
 		return "projects/project_samples_metadata_template";
-	}
-
-	/**
-	 * Save or update a {@link MetadataTemplate} within a {@link Project}
-	 *
-	 * @param projectId
-	 * 		{@link Long} identifier for a {@link Project}
-	 * @param template
-	 * 		A {@link UIMetadataTemplate} to save to a {@link Project}
-	 *
-	 * @return {@link String} redirects to the template page.
-	 */
-	@RequestMapping(value = "/save", method = RequestMethod.POST)
-	public String saveMetadataTemplate(@PathVariable Long projectId, UIMetadataTemplate template) {
-		Project project = projectService.read(projectId);
-
-		MetadataTemplate metadataTemplate;
-		if (template.getId() != null) {
-			metadataTemplate = metadataTemplateService.read(template.getId());
-			metadataTemplate.setName(template.getName());
-			metadataTemplate.setFields(template.getFields());
-			metadataTemplateService.updateMetadataTemplateInProject(metadataTemplate);
-		} else {
-			ProjectMetadataTemplateJoin projectMetadataTemplateJoin = metadataTemplateService
-					.createMetadataTemplateInProject(new MetadataTemplate(template.getName(), template.getFields()), project);
-			metadataTemplate = projectMetadataTemplateJoin.getObject();
-		}
-		return "redirect:/projects/" + projectId + "/metadata-templates/" + metadataTemplate.getId();
 	}
 
 	/**

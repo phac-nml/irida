@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.MessageSource;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.LineListController;
@@ -19,14 +20,17 @@ public class LineListControllerTest {
 	private ProjectService projectService;
 	private MetadataTemplateService metadataTemplateService;
 	private SampleService sampleService;
+	private MessageSource messageSource;
 
 	@Before
 	public void setUp() {
 		projectService = mock(ProjectService.class);
 		sampleService = mock(SampleService.class);
 		metadataTemplateService = mock(MetadataTemplateService.class);
+		messageSource = mock(MessageSource.class);
 
-		lineListController = new LineListController(projectService, sampleService, metadataTemplateService);
+		lineListController = new LineListController(projectService, sampleService, metadataTemplateService,
+				messageSource);
 	}
 
 	@Test
