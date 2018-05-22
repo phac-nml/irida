@@ -8,16 +8,21 @@ import "ag-grid/dist/styles/ag-theme-balham.css";
 
 import { LoadingOverlay } from "./LoadingOverlay";
 import { SampleNameRenderer } from "./renderers/SampleNameRenderer";
-import { fields } from "../../../reducers";
 
 const { i18n } = window.PAGE;
 
 export class Table extends React.Component {
-  containerStyle = {
-    boxSizing: "border-box",
-    height: 600,
-    width: "100%"
-  };
+  /*
+  This is a flag for handling when a column is dragged and dropped on the table.
+  This is required because the table can be modified externally through the columns
+  panel.  If we don't flag this, it tries to update itself a second time throwing
+  errors.
+   */
+  colDropped = false;
+
+  /*
+  External custom components used by ag-grid.
+   */
   frameworkComponents = { LoadingOverlay, SampleNameRenderer };
 
   constructor(props) {
@@ -26,6 +31,10 @@ export class Table extends React.Component {
 
   shouldComponentUpdate(nextProps) {
     if (!nextProps.fields.equals(this.props.fields)) {
+      /*
+      This should only happen on the original loading of the table when the
+      complete list of UIMetadataTemplateFields are passed.
+       */
       return true;
     }
 
@@ -33,14 +42,18 @@ export class Table extends React.Component {
       List.isList(nextProps.entries) &&
       !nextProps.entries.equals(this.props.entries)
     ) {
+      /*
+      This should only happen on the original loading of the table when the
+      complete list of MetadataEntries are passed.
+       */
       return true;
     }
 
-    /*
-    The current template has changed.
-    Force the table to update to the new view based on the template fields.
-     */
     if (nextProps.current !== this.props.current) {
+      /*
+      The current template has changed.
+      Force the table to update to the new view based on the template fields.
+       */
       const template = nextProps.templates.get(nextProps.current).toJS();
       this.applyTemplate(template.fields);
       return false;
@@ -50,20 +63,26 @@ export class Table extends React.Component {
     The field order for a template can change externally.  Check to see if that
     order has been updated, and adjust the columns accordingly.
      */
-    const oldTemplate = this.props.templates.getIn([
+    const oldModified = this.props.templates.getIn([
       this.props.current,
       "modified"
     ]);
-    const newTemplate = nextProps.templates.getIn([
+    const newModified = nextProps.templates.getIn([
       nextProps.current,
       "modified"
     ]);
+
     if (
-      typeof oldTemplate !== "undefined" &&
-      !oldTemplate.equals(newTemplate)
+      typeof oldModified !== "undefined" &&
+      !newModified.equals(oldModified)
     ) {
-      this.applyTemplate(newTemplate);
-      return false
+      if (this.colDropped) {
+        // Clear the dropped flag as the next update might come from an external source
+        this.colDropped = false;
+      } else {
+        this.applyTemplate(newModified.toJS());
+      }
+      return false;
     }
 
     // If these have not been changed then don't update the entries;
@@ -73,19 +92,43 @@ export class Table extends React.Component {
   /**
    * Apply a Metadata template to the table.  This will reorder the columns and
    * toggle column visibility.
-   * @param fields
+   * @param {Array} templateFields
    */
-  applyTemplate = fields => {
+  applyTemplate = templateFields => {
+    /*
+    Get the current state of the table.  This hold critical information so we
+    only want to modify the order and visible of the columns.
+     */
     const columnState = this.columnApi.getColumnState();
+
+    /*
+    Sample name always needs to be first so let's take it off and re-add
+    it after we get everything sorted.
+     */
     const sample = columnState.shift();
-    const final = fields.map(field => {
+
+    /*
+   From the new template (or modified template) determine the order and
+   visibility of the columns.  All templates know all the available fields
+   in the table, if there are not visible they are just added to the end of
+   the template.
+    */
+    const final = templateFields.map(field => {
       const index = columnState.findIndex(c => {
         return c.colId === field.label;
       });
       const col = columnState.splice(index, 1)[0];
+
+      /*
+      Determine the visibility of the column based on the template field.
+       */
       col.hide = field.hide;
       return col;
     });
+
+    /*
+    Combine back the sample name plus the new ordered state for the table.
+     */
     this.columnApi.setColumnState([sample, ...final]);
   };
 
@@ -103,14 +146,22 @@ export class Table extends React.Component {
    */
   onColumnDropped = () => {
     const colOrder = this.columnApi.getColumnState();
-    // Remove the hidden ones and just get the field identifiers
-    const list = colOrder.map(c => ({ label: c.colId, hide: c.hide }));
+
+    /*
+    Remove the hidden ones and just get the field identifiers
+    and remove the sample name column since this is just for the table.
+     */
+    let list = colOrder.map(c => ({ label: c.colId, hide: c.hide }));
+    list.shift();
+
+    // Don't let the table perform a modified update since it handles it on its own
+    this.colDropped = true;
     this.props.tableModified(list);
   };
 
   render() {
     return (
-      <div style={this.containerStyle}>
+      <div className="ag-grid-table-wrapper">
         <AgGridReact
           enableSorting={true}
           enableColResize={true}

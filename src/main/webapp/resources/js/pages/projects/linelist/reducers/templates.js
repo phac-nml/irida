@@ -38,22 +38,23 @@ export const reducer = (state = initialState, action = {}) => {
       return state.set("fetching", false).set("error", true);
     case types.USE_TEMPLATE:
       /*
-      Update teh current template to show unmodified
+      Update the current template to show unmodified
       If the action.index == the current template the it will just
       reset the modified state.
        */
       return state
-        .setIn(["templates", state.get("current"), "modified"], [])
+        .setIn(["templates", state.get("current"), "modified"], List())
         .set("current", action.index);
     case types.TABLE_MODIFIED:
       return state.setIn(
         ["templates", state.get("current"), "modified"],
-        action.fields
+        fromJS(action.fields)
       );
     case types.SAVE_TEMPLATE:
       return state.set("saving", true);
     case types.SAVED_TEMPLATE:
       let template = action.template;
+      template.modified = [];
       let index = state
         .get("templates")
         .findIndex(t => t.get("id") === template.id);
@@ -68,15 +69,14 @@ export const reducer = (state = initialState, action = {}) => {
       return state
         .set("saving", false)
         .set("saved", true)
-        .set("modified", fromJS([]))
+        .set("modified", List())
         .set("current", index);
     case types.SAVE_COMPLETE:
       return state.set("saved", false);
     case types.TEMPLATE_MODIFIED:
-      return state.setIn(
-        ["templates", state.get("current"), "modified"],
-        action.fields
-      );
+      const t = state.getIn(["templates", state.get("current")]).toJS();
+      t.modified = [...action.fields];
+      return state.setIn(["templates", state.get("current")], fromJS(t));
     default:
       return state;
   }

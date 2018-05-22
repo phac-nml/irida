@@ -28,7 +28,7 @@ export class ToolPanel extends React.Component {
     return (
       <div className="ag-grid-tool-panel">
         {this.state.fields.map((f, index) => (
-          <div key={f.id} style={{ display: "block", width: 200 }}>
+          <div key={index} style={{ display: "block", width: 200 }}>
             <Checkbox
               value={index}
               checked={!f.hide}
