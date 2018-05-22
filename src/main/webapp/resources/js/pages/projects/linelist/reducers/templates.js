@@ -59,8 +59,14 @@ export const reducer = (state = initialState, action = {}) => {
         .get("templates")
         .findIndex(t => t.get("id") === template.id);
       if (index > 0) {
+        /*
+        This was a template update, update the current template.
+         */
         state = state.setIn(["templates", index], fromJS(template));
       } else {
+        /*
+        New template created, add it to the end of the list and set it as selected.
+         */
         state = state.update("templates", templates =>
           templates.push(fromJS(template))
         );
@@ -69,7 +75,6 @@ export const reducer = (state = initialState, action = {}) => {
       return state
         .set("saving", false)
         .set("saved", true)
-        .set("modified", List())
         .set("current", index);
     case types.SAVE_COMPLETE:
       return state.set("saved", false);

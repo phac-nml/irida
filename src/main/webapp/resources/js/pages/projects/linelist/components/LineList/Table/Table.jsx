@@ -30,6 +30,7 @@ export class Table extends React.Component {
   }
 
   shouldComponentUpdate(nextProps) {
+    console.log(nextProps.current, this.props.current);
     if (!nextProps.fields.equals(this.props.fields)) {
       /*
       This should only happen on the original loading of the table when the
@@ -80,7 +81,17 @@ export class Table extends React.Component {
         // Clear the dropped flag as the next update might come from an external source
         this.colDropped = false;
       } else {
-        this.applyTemplate(newModified.toJS());
+        const fields = newModified.toJS();
+
+        /*
+        If the length of the modified fields === 0, then the modified template
+        was saved ==> the table already reflected this state.  If not the
+        template was modified from an external event and therefore needs to
+        reflect the changes.
+         */
+        if (fields.length > 0) {
+          this.applyTemplate(fields);
+        }
       }
       return false;
     }
