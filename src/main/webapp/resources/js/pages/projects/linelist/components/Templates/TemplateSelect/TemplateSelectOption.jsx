@@ -36,21 +36,26 @@ export function TemplateSelectOption(props) {
   return (
     <React.Fragment>
       <div className="templates-option">
-        <span className="template-option--name">{name}</span>
+        <span
+          className="template-option--name"
+          style={{
+            maxWidth: 190,
+            overflow: "hidden",
+            textOverflow: "ellipsis"
+          }}
+        >
+          {name}
+        </span>
         <span>
           {saved && index === current ? (
             <Tag color="green">
               {i18n.linelist.templates.saved.toUpperCase()}
             </Tag>
           ) : null}
-          {modified.length === 0
-            ? null
-            : renderUpdateSave()}
-          {index > 0 ? (
-            <Tag className="templates-option--field-count">
-              {fields.filter(f => !f.hide).length}
-            </Tag>
-          ) : null}
+          {modified.length === 0 ? null : renderUpdateSave()}
+          <Tag className="templates-option--field-count">
+            {fields.filter(f => !f.hide).length}
+          </Tag>
         </span>
       </div>
     </React.Fragment>

@@ -53,7 +53,10 @@
 </head>
 <body>
 <main layout:fragment="main">
-<div id="root"></div>
+<div id="root">
+    <div class="ant-spin ant-spin-spinning"><span class="ant-spin-dot ant-spin-dot-spin"><i></i><i></i><i></i><i></i></span></div>
+    <span class="ant-alert-message" th:text="#{linelist.page-initialization}">Loading, hold your horses</span>
+</div>
 </main>
 
 <th:block layout:fragment="scripts">

@@ -2,6 +2,9 @@ package ca.corefacility.bioinformatics.irida.ria.web.models;
 
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 
+/**
+ * Represents a {@link MetadataTemplateField} in the Line List table.
+ */
 public class UIMetadataTemplateField {
 	private Long id;
 	private String label;
