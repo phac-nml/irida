@@ -7,15 +7,17 @@ const { Sider, Content } = Layout;
 
 export class TableLayoutComponent extends React.Component {
   state = {
-    collapsed: true
+    collapsed: true // Tool panel begin closed.
   };
 
   constructor(props) {
     super(props);
   }
 
-  toggle = () => {
-    console.log("TOGGLINE");
+  /**
+   * Toggle the open state of the tool panel.
+   */
+  toggleToolPanel = () => {
     this.setState({
       collapsed: !this.state.collapsed
     });
@@ -47,7 +49,7 @@ export class TableLayoutComponent extends React.Component {
           <div className="ag-grid-tool-panel--buttons">
             <button
               className="ag-grid-tool-panel--button"
-              onClick={this.toggle}
+              onClick={this.toggleToolPanel}
             >
               Columns
             </button>

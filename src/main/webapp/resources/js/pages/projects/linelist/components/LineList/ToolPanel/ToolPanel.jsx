@@ -1,6 +1,10 @@
 import React from "react";
 import { Checkbox } from "antd";
 
+/**
+ * Use to hold the column selection in a tool panel to the right of the
+ * ag-grid.
+ */
 export class ToolPanel extends React.Component {
   state = { fields: [] };
   constructor(props) {
@@ -8,6 +12,10 @@ export class ToolPanel extends React.Component {
   }
 
   static getDerivedStateFromProps(nextProps) {
+    /*
+    Make sure there are templates.  IF there are determine if you need to use
+    the actual template or its modified sate.
+     */
     if (nextProps.templates.size > 0) {
       const template = nextProps.templates.get(nextProps.current).toJS();
       const fields =
@@ -17,17 +25,25 @@ export class ToolPanel extends React.Component {
     return null;
   }
 
+  /**
+   * Handle togging of a check box.
+   * @param {object} e click event.
+   */
   fieldUpdated = e => {
     const { fields } = this.state;
     fields[e.target.value].hide = !e.target.checked;
     this.setState({ fields });
+
+    /*
+    Update the global state with the modified template.
+     */
     this.props.templateModified(fields);
   };
 
   render() {
     return (
       <div className="ag-grid-tool-panel">
-        {this.state.fields.map((f, index) => (
+        <div className="ag-grid-tool-panel--inner">{this.state.fields.map((f, index) => (
           <div key={index} style={{ display: "block", width: 200 }}>
             <Checkbox
               value={index}
@@ -37,7 +53,7 @@ export class ToolPanel extends React.Component {
               {f.label}
             </Checkbox>
           </div>
-        ))}
+        ))}</div>
       </div>
     );
   }

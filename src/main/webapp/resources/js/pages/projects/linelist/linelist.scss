@@ -1,3 +1,5 @@
+$table-height: 600px;
+
 .templates-option {
   display: flex;
   justify-content: space-between;
@@ -24,6 +26,11 @@
   .ant-checkbox-wrapper {
     font-weight: normal;
   }
+}
+
+.ag-grid-tool-panel {
+  overflow-y: scroll;
+  height: $table-height;
 }
 
 .ant-layout-sider-collapsed .ag-grid-tool-panel {
@@ -59,6 +66,6 @@
 
 .ag-grid-table-wrapper {
   box-sizing: border-box;
-  height: 600px;
+  height: $table-height;
   width: 100%;
 }
