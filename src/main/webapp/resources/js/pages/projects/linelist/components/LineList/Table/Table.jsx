@@ -11,6 +11,9 @@ import { SampleNameRenderer } from "./renderers/SampleNameRenderer";
 
 const { i18n } = window.PAGE;
 
+/**
+ * React component to render the ag-grid to the page.
+ */
 export class Table extends React.Component {
   /*
   This is a flag for handling when a column is dragged and dropped on the table.
@@ -30,7 +33,6 @@ export class Table extends React.Component {
   }
 
   shouldComponentUpdate(nextProps) {
-    console.log(nextProps.current, this.props.current);
     if (!nextProps.fields.equals(this.props.fields)) {
       /*
       This should only happen on the original loading of the table when the
@@ -174,6 +176,7 @@ export class Table extends React.Component {
     return (
       <div className="ag-grid-table-wrapper">
         <AgGridReact
+          enableFilter={true}
           enableSorting={true}
           enableColResize={true}
           localeText={i18n.linelist.agGrid}

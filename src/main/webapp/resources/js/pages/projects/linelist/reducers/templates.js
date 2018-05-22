@@ -16,25 +16,35 @@ export const types = {
 };
 
 const initialState = fromJS({
-  fetching: false,
-  error: false,
-  templates: List(),
-  current: NO_TEMPLATE_INDEX,
-  saving: false,
-  saved: false
+  fetching: false, // Whether there is an ajax request to fetch the list of UIMetadataTemplates
+  error: false, // Whether there was an error while fetching the UIMetadataTemplates
+  templates: List(), // The List of UIMetadataTemplates returned.
+  current: NO_TEMPLATE_INDEX, // Which template is currently being used.
+  saving: false, // Flag whether the current template is being actively saved to the server
+  saved: false // Flag whether the current template's save function has been completed.
 });
 
 export const reducer = (state = initialState, action = {}) => {
   switch (action.type) {
     case types.LOAD:
+      /*
+      Let the UI know that there has been a request for the MetadataTemplates
+       */
       return state.set("fetching", true).set("error", false);
     case types.LOAD_SUCCESS:
+      /*
+      Let the UI know that the templates were fetched successfully, and
+      pass the templates along.  Each template should have a modified state.
+       */
       const templates = action.templates.map(t => {
         t.modified = [];
         return t;
       });
       return state.set("fetching", false).set("templates", fromJS(templates));
     case types.LOAD_ERROR:
+      /*
+      Let the UI know that there was an error loading the MetadataTemplates.
+       */
       return state.set("fetching", false).set("error", true);
     case types.USE_TEMPLATE:
       /*
@@ -46,10 +56,20 @@ export const reducer = (state = initialState, action = {}) => {
         .setIn(["templates", state.get("current"), "modified"], List())
         .set("current", action.index);
     case types.TABLE_MODIFIED:
+      /*
+      This is a modification of the current template through ag-grid.
+       */
       return state.setIn(
         ["templates", state.get("current"), "modified"],
         fromJS(action.fields)
       );
+    case types.TEMPLATE_MODIFIED:
+      /*
+      A modification of the template from any source external to ag-grid.
+       */
+      const t = state.getIn(["templates", state.get("current")]).toJS();
+      t.modified = [...action.fields];
+      return state.setIn(["templates", state.get("current")], fromJS(t));
     case types.SAVE_TEMPLATE:
       return state.set("saving", true);
     case types.SAVED_TEMPLATE:
@@ -78,10 +98,6 @@ export const reducer = (state = initialState, action = {}) => {
         .set("current", index);
     case types.SAVE_COMPLETE:
       return state.set("saved", false);
-    case types.TEMPLATE_MODIFIED:
-      const t = state.getIn(["templates", state.get("current")]).toJS();
-      t.modified = [...action.fields];
-      return state.setIn(["templates", state.get("current")], fromJS(t));
     default:
       return state;
   }
