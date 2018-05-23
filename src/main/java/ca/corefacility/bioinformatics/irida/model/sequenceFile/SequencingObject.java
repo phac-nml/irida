@@ -71,10 +71,12 @@ public abstract class SequencingObject extends IridaResourceSupport implements M
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH, mappedBy = "inputFiles")
 	private List<AnalysisSubmission> analysisSubmissions;
 
-	@NotAudited
 	@Enumerated(EnumType.STRING)
 	@Column(name="processing_state")
 	private ProcessingState processingState;
+
+	@Column(name = "file_processor")
+	private String fileProcessor;
 
 	public SequencingObject() {
 		createdDate = new Date();
@@ -191,6 +193,14 @@ public abstract class SequencingObject extends IridaResourceSupport implements M
 
 	public ProcessingState getProcessingState() {
 		return processingState;
+	}
+
+	public void setFileProcessor(String fileProcessor) {
+		this.fileProcessor = fileProcessor;
+	}
+
+	public String getFileProcessor() {
+		return fileProcessor;
 	}
 
 	/**
