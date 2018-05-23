@@ -107,7 +107,7 @@
 										ng-model="pipeline.selectedDynamicSource"
 										ng-change="pipeline.dynamicSourceValueSelected('{{dynamicSource.id}}')"
 										ng-options="item.label for item in dynamicSource.parameters">
-									<option value="">Please select...</option>
+                                    <option value="" th:text="#{form.select.please-select}">__Please select__</option>
 								</select>
 							</div>
 						</div>
@@ -120,7 +120,7 @@
 										ng-model="pipeline.selectedChoiceParam[p.name]"
 										ng-change="pipeline.choiceParamChanged('{{p.name}}')"
 										ng-options="c.name for c in p.choices">
-									<option value="">Please select...</option>
+									<option value="" th:text="#{form.select.please-select}">__Please select__</option>
 								</select>
 							</div>
 						</div>

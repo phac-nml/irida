@@ -210,6 +210,15 @@ public class IridaWorkflowParameter {
 		return choices != null && choices.size() > 0;
 	}
 
+	/**
+	 * Is the list of choices empty?
+	 *
+	 * @return if the list of choices is empty
+	 */
+	public Boolean isChoicesEmpty() {
+		return choices != null && choices.isEmpty();
+	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(name, defaultValue, toolParameters, required, dynamicSource, choices);
