@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -381,10 +382,42 @@ public class PipelineController extends BaseController {
 				}
 				model.addAttribute("dynamicSources", dynamicSources);
 			}
+
+			final List<Map<String, Object>> paramsWithChoices = description.getParameters()
+					.stream()
+					.filter(IridaWorkflowParameter::hasChoices)
+					.map(x -> ImmutableMap.of("label", localizedParamLabel(locale, workflowName, x.getName()), "name",
+							x.getName(), "choices", x.getChoices()
+									.stream()
+									.map(c -> ImmutableMap.of("name", c.getName(), "value", c.getValue()))
+									.collect(Collectors.toList())))
+					.collect(Collectors.toList());
+			model.addAttribute("paramsWithChoices", paramsWithChoices);
 			response = URL_GENERIC_PIPELINE;
 		}
 
 		return response;
+	}
+
+	/**
+	 * Get localized workflow parameter label.
+	 *
+	 * If the localized workflow parameter label text is not found by the {@link MessageSource}, then log the
+	 * NoSuchMessageException and return the `paramName` as the localized parameter label.
+	 *
+	 * @param locale Message locale
+	 * @param workflowName Workflow name
+	 * @param paramName Parameter name
+	 * @return Localized parameter label if found in {@link MessageSource}; otherwise, return `paramName`.
+	 */
+	private String localizedParamLabel(Locale locale, String workflowName, String paramName) {
+		final String messageName = "pipeline.parameters." + workflowName + "." + paramName;
+		try {
+			return messageSource.getMessage(messageName, null, locale);
+		} catch (NoSuchMessageException e) {
+			logger.error("Couldn't find message for '" + messageName + "': ", e);
+			return paramName;
+		}
 	}
 
 	// ************************************************************************************************
