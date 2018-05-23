@@ -18,8 +18,7 @@ public interface SequencingObjectRepository extends IridaJpaRepository<Sequencin
 	/**
 	 * Get the {@link SequencingObject}s for a given {@link SequencingRun}
 	 *
-	 * @param sequencingRun
-	 *            the {@link SequencingRun}
+	 * @param sequencingRun the {@link SequencingRun}
 	 * @return a set of {@link SequencingObject}
 	 */
 	@Query("select f from SequencingObject f where f.sequencingRun = ?1")
@@ -29,8 +28,7 @@ public interface SequencingObjectRepository extends IridaJpaRepository<Sequencin
 	 * Get the {@link SequencingObject}s associated with a given
 	 * {@link AnalysisSubmission}
 	 *
-	 * @param analysisSubmission
-	 *            the {@link AnalysisSubmission}
+	 * @param analysisSubmission the {@link AnalysisSubmission}
 	 * @return the set of associated {@link SequencingObject}s
 	 */
 	@Query("select f from SequencingObject f where ?1 IN elements(f.analysisSubmissions)")
@@ -45,4 +43,15 @@ public interface SequencingObjectRepository extends IridaJpaRepository<Sequencin
 	@Query("FROM SequencingObject f where f.processingState = ?1")
 	public List<SequencingObject> getSequencingObjectsWithProcessingState(
 			SequencingObject.ProcessingState processingState);
+
+	/**
+	 * Get {@link SequencingObject}s with a given processing state and the given processor string
+	 *
+	 * @param processingState state to find
+	 * @param processor       processor string to find
+	 * @return a list of {@link SequencingObject}
+	 */
+	@Query("FROM SequencingObject f where f.processingState = ?1 AND f.fileProcessor = ?2")
+	public List<SequencingObject> getSequencingObjectsWithProcessingStateAndProcessor(
+			SequencingObject.ProcessingState processingState, String processor);
 }
