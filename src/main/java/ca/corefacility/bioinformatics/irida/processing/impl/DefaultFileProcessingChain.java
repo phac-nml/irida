@@ -78,10 +78,6 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 			}
 		}
 
-		SequencingObject statusObject = sequencingObjectRepository.findOne(sequencingObjectId);
-		statusObject.setProcessingState(SequencingObject.ProcessingState.PROCESSING);
-		sequencingObjectRepository.save(statusObject);
-
 		for (FileProcessor fileProcessor : fileProcessors) {
 			try {
 				if (fileProcessor.shouldProcessFile(sequencingObjectId)) {
@@ -112,7 +108,7 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 			}
 		}
 
-		statusObject = sequencingObjectRepository.findOne(sequencingObjectId);
+		SequencingObject statusObject = sequencingObjectRepository.findOne(sequencingObjectId);
 
 		statusObject.setProcessingState(SequencingObject.ProcessingState.FINISHED);
 		sequencingObjectRepository.save(statusObject);
