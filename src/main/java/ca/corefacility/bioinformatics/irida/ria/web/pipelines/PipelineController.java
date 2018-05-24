@@ -389,7 +389,7 @@ public class PipelineController extends BaseController {
 					.map(x -> ImmutableMap.of("label", localizedParamLabel(locale, workflowName, x.getName()), "name",
 							x.getName(), "choices", x.getChoices()
 									.stream()
-									.map(c -> ImmutableMap.of("name", c.getName(), "value", c.getValue()))
+									.map(c -> ImmutableMap.of("name", localizedParamOptionLabel(locale, workflowName, x.getName(), c.getName()), "value", c.getValue()))
 									.collect(Collectors.toList())))
 					.collect(Collectors.toList());
 			model.addAttribute("paramsWithChoices", paramsWithChoices);
@@ -419,6 +419,17 @@ public class PipelineController extends BaseController {
 			return paramName;
 		}
 	}
+
+	private String localizedParamOptionLabel(Locale locale, String workflowName, String paramName, String optionName) {
+		final String messageName = "pipeline.parameters." + workflowName + "." + paramName + "." + optionName;
+		try {
+			return messageSource.getMessage(messageName, null, locale);
+		} catch (NoSuchMessageException e) {
+			logger.error("Couldn't find message for '" + messageName + "': ", e);
+			return paramName + "." + optionName;
+		}
+	}
+
 
 	// ************************************************************************************************
 	// AJAX

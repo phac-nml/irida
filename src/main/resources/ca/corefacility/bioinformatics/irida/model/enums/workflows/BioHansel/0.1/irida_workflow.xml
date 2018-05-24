@@ -11,8 +11,8 @@
   <parameters>
     <parameter name="bio_hansel-1-type_of_scheme.scheme_type" required="true">
       <choices>
-        <choice name="Salmonella Heidelberg SNV Subtyping Scheme" value="heidelberg"/>
-        <choice name="Salmonella Enteritidis SNV Subtyping Scheme" value="enteritidis"/>
+        <choice name="heidelberg" value="heidelberg"/>
+        <choice name="enteritidis" value="enteritidis"/>
       </choices>
       <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/nml/bio_hansel/bio_hansel/2.0.0" parameterName="type_of_scheme.scheme_type"/>
     </parameter>
