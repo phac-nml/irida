@@ -16,7 +16,6 @@
         download: /*[[@{/analysis/ajax/download/}]]*/ '',
         sistr: /*[[@{/analysis/ajax/sistr/{id}(id=${analysisSubmission.getId()})}]]*/ '',
         jobErrors: /*[[@{/analysis/ajax/{id}/job-errors/(id=${analysisSubmission.getId()})}]]*/ '',
-        bio_hansel_error: /*[[@{/analysis/ajax/bio_hansel_error/{id}(id=${analysisSubmission.getId()})}]]*/ '',
         status: /*[[@{/analysis/ajax/status/{id}(id=${analysisSubmission.getId()})}]]*/ '/analysis/ajax/status',
         share: /*[[@{/analysis/ajax/{id}/share/(id=${analysisSubmission.getId()})}]]*/ '/analysis/ajax/share',
         saveResults: /*[[@{/analysis/ajax/{id}/save-results/(id=${analysisSubmission.getId()})}]]*/ '/analysis/ajax/save-results'
@@ -119,7 +118,6 @@
     <script th:src="@{/resources/js/modules/phylocanvas/PhyloCanvasDirective.js}"></script>
     <script th:src="@{/resources/js/modules/navs/SubNavDirective.js}"></script>
     <script th:src="@{/resources/dist/js/analysis.bundle.js}"></script>
-    <th:block layout:fragment="analysis_tables_script"/>
   </th:block>
 </body>
 
