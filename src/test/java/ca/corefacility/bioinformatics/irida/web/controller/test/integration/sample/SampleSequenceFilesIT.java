@@ -93,7 +93,7 @@ public class SampleSequenceFilesIT {
 				.getString("resource.links.find{it.rel == 'sequencefile/qc'}.href");
 
 		// Wait for FASTQC to finish
-		Thread.sleep(5000);
+		Thread.sleep(15000);
 
 		asUser().expect().statusCode(HttpStatus.OK.value()).when().get(qcPath);
 
