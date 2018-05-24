@@ -21,6 +21,9 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+
 /**
  * This controller is responsible for AJAX handling for the line list page, which displays sample metadata.
  */
@@ -143,8 +146,18 @@ public class LineListController {
 	 */
 	private List<MetadataTemplateField> getAllProjectMetadataFields(Long projectId) {
 		Project project = projectService.read(projectId);
-		List<MetadataTemplateField> fields = metadataTemplateService.getMetadataFieldsForProject(project);
+		Iterable<MetadataTemplateField> fieldCollection = metadataTemplateService.getMetadataFieldsForProject(project);
 
+		// Need to get all the fields from the templates too!
+		List<ProjectMetadataTemplateJoin> templateJoins = metadataTemplateService.getMetadataTemplatesForProject(
+				project);
+		for (ProjectMetadataTemplateJoin join : templateJoins) {
+			MetadataTemplate template = join.getObject();
+			Iterable<MetadataTemplateField> templateFields = template.getFields();
+			fieldCollection = Iterables.concat(fieldCollection, templateFields);
+		}
+
+		List<MetadataTemplateField> fields = Lists.newArrayList(fieldCollection);
 		// Need the sample name.  This will enforce that it is in the first position.
 		fields.add(0, new MetadataTemplateField("sampleName", "text"));
 		return fields;

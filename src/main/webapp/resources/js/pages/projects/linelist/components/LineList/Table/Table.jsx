@@ -118,7 +118,8 @@ export class Table extends React.Component {
     Sample name always needs to be first so let's take it off and re-add
     it after we get everything sorted.
      */
-    const sample = columnState.shift();
+    const sampleIndex = columnState.findIndex(c => c.colId === "sampleName");
+    const sample = columnState.splice(sampleIndex, 1)[0];
 
     /*
    From the new template (or modified template) determine the order and
