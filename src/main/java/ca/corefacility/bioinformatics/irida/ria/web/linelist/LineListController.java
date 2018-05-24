@@ -70,6 +70,7 @@ public class LineListController {
 	 * Get a {@link List} of all {@link MetadataTemplate} associated with the project.
 	 *
 	 * @param projectId {@link Long} Identifier for the project to get id's for.
+	 * @param locale    {@link Locale} Locale of the currently logged in user.
 	 * @return {@link List}
 	 */
 	@RequestMapping("/templates")
