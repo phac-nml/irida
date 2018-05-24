@@ -88,8 +88,7 @@ public class LineListController {
 
 		// Add a "Template" for all fields
 		templates.add(0, new UIMetadataTemplate(new MetadataTemplate(
-				messageSource.getMessage("linelist.templates.Select.none", new Object[] {}, locale), new ArrayList<>()),
-				new ArrayList<>(allFields)));
+				messageSource.getMessage("linelist.templates.Select.none", new Object[] {}, locale), allFields)));
 
 		return templates;
 	}

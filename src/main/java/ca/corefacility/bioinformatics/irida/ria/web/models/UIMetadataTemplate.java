@@ -1,8 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.web.models;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
@@ -23,42 +23,45 @@ public class UIMetadataTemplate {
 	public UIMetadataTemplate(MetadataTemplate metadataTemplate) {
 		this.id = metadataTemplate.getId();
 		this.name = metadataTemplate.getName();
-		this.fields = new ArrayList<>();
-		for (MetadataTemplateField field : metadataTemplate.getFields()) {
-			this.fields.add(new UIMetadataTemplateField(field, false));
+		this.fields = createDefaultFieldList(metadataTemplate.getFields());
+	}
+
+	public UIMetadataTemplate(MetadataTemplate template, List<MetadataTemplateField> allProjectFields) {
+		this.id = template.getId();
+		this.name = template.getName();
+		this.fields = createTemplateFieldList(template, allProjectFields);
+	}
+
+	private List<UIMetadataTemplateField> createTemplateFieldList(MetadataTemplate template,
+			List<MetadataTemplateField> allProjectFields) {
+		List<MetadataTemplateField> fields = template.getFields();
+		if (fields.isEmpty()) {
+			// This would be for the default "all fields" template
+			return createDefaultFieldList(fields);
+		} else {
+			return createTemplateFieldListFromTemplate(fields, allProjectFields);
 		}
 	}
 
-	public UIMetadataTemplate(MetadataTemplate metadataTemplate, List<MetadataTemplateField> allFields) {
-		this.id = metadataTemplate.getId();
-		this.name = metadataTemplate.getName();
-		List<MetadataTemplateField> templateFields = metadataTemplate.getFields();
+	private List<UIMetadataTemplateField> createTemplateFieldListFromTemplate(
+			List<MetadataTemplateField> templateFields, List<MetadataTemplateField> allProjectFields) {
 		List<UIMetadataTemplateField> fields = new ArrayList<>();
-		if (templateFields.isEmpty()) {
-			// This would be for the default "all fields" template
-			for (MetadataTemplateField field : allFields) {
-				fields.add(new UIMetadataTemplateField(field, false));
-			}
-		} else {
-			for (MetadataTemplateField field : templateFields) {
-				// Need to remove legacy sampleNames that should not have been added.
-				if (!field.getLabel()
-						.equals("sampleName")) {
-					fields.add(new UIMetadataTemplateField(field, false));
-					allFields.remove(field);
-				}
-			}
-			for (Iterator<MetadataTemplateField> fieldIT = allFields.iterator(); fieldIT.hasNext(); ) {
-				MetadataTemplateField field = fieldIT.next();
-				// Need to remove legacy sampleNames that should not have been added.
-				if (!field.getLabel()
-						.equals("sampleName")) {
-					fields.add(new UIMetadataTemplateField(field, true));
-					fieldIT.remove();
-				}
-			}
+		for (MetadataTemplateField field : templateFields) {
+			// Need to remove legacy sampleNames that should not have been added.
+			fields.add(new UIMetadataTemplateField(field, false));
+			allProjectFields.remove(field);
 		}
-		this.fields = fields;
+
+		fields.addAll(allProjectFields.stream()
+				.map(field -> new UIMetadataTemplateField(field, true))
+				.collect(Collectors.toList()));
+		return fields;
+	}
+
+	private List<UIMetadataTemplateField> createDefaultFieldList(List<MetadataTemplateField> templateFields) {
+		return templateFields.stream()
+				.map(field -> new UIMetadataTemplateField(field, false))
+				.collect(Collectors.toList());
 	}
 
 	public Long getId() {
