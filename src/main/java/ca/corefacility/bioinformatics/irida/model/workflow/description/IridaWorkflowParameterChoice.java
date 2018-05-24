@@ -4,6 +4,9 @@ import java.util.Objects;
 
 import javax.xml.bind.annotation.XmlAttribute;
 
+/**
+ * Defines a valid choice for a parameter of a workflow.
+ */
 public class IridaWorkflowParameterChoice {
 	@XmlAttribute
 	private String name;
@@ -16,7 +19,7 @@ public class IridaWorkflowParameterChoice {
 	/**
 	 * Parameter choice with informative name and acceptable Galaxy workflow value for the parameter
 	 *
-	 * @param name Human readable informative choice name
+	 * @param name  messages.properties key for human readable and informative description of choice for the parameter
 	 * @param value Galaxy workflow value for this choice
 	 */
 	public IridaWorkflowParameterChoice(String name, String value) {
@@ -25,9 +28,9 @@ public class IridaWorkflowParameterChoice {
 	}
 
 	/**
-	 * Get parameter choice informative name
+	 * Get parameter choice i18n key
 	 *
-	 * @return parameter choice informative name
+	 * @return parameter choice i18n key
 	 */
 	public String getName() {
 		return name;
