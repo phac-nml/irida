@@ -126,18 +126,22 @@ export class Table extends React.Component {
    in the table, if there are not visible they are just added to the end of
    the template.
     */
-    const final = templateFields.map(field => {
-      const index = columnState.findIndex(c => {
-        return c.colId === field.label;
-      });
-      const col = columnState.splice(index, 1)[0];
+    const final = templateFields
+      .map(field => {
+        const index = columnState.findIndex(c => {
+          return c.colId === field.label;
+        });
+        if (index > -1) {
+          const col = columnState.splice(index, 1)[0];
 
-      /*
-      Determine the visibility of the column based on the template field.
-       */
-      col.hide = field.hide;
-      return col;
-    });
+          /*
+          Determine the visibility of the column based on the template field.
+          */
+          col.hide = field.hide;
+          return col;
+        }
+      })
+      .filter(c => typeof c !== "undefined");
 
     /*
     Combine back the sample name plus the new ordered state for the table.
