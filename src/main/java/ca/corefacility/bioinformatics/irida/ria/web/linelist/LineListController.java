@@ -5,7 +5,6 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -150,7 +149,8 @@ public class LineListController {
 	 */
 	private List<MetadataTemplateField> getAllProjectMetadataFields(Long projectId) {
 		Project project = projectService.read(projectId);
-		List<MetadataTemplateField> fieldCollection = metadataTemplateService.getMetadataFieldsForProject(project);
+		List<MetadataTemplateField> metadataFieldsForProject = metadataTemplateService.getMetadataFieldsForProject(project);
+		Set<MetadataTemplateField> fieldSet = new HashSet<>(metadataFieldsForProject);
 
 		// Need to get all the fields from the templates too!
 		List<ProjectMetadataTemplateJoin> templateJoins = metadataTemplateService.getMetadataTemplatesForProject(
@@ -158,10 +158,10 @@ public class LineListController {
 		for (ProjectMetadataTemplateJoin join : templateJoins) {
 			MetadataTemplate template = join.getObject();
 			List<MetadataTemplateField> templateFields = template.getFields();
-			fieldCollection = ListUtils.union(fieldCollection, templateFields);
+			fieldSet.addAll(templateFields);
 		}
 
-		List<MetadataTemplateField> fields = Lists.newArrayList(fieldCollection);
+		List<MetadataTemplateField> fields = Lists.newArrayList(fieldSet);
 		// Need the sample name.  This will enforce that it is in the first position.
 		fields.add(0, new MetadataTemplateField("sampleName", "text"));
 		return fields;
