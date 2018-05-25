@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -23,7 +24,6 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 /**
@@ -150,15 +150,15 @@ public class LineListController {
 	 */
 	private List<MetadataTemplateField> getAllProjectMetadataFields(Long projectId) {
 		Project project = projectService.read(projectId);
-		Iterable<MetadataTemplateField> fieldCollection = metadataTemplateService.getMetadataFieldsForProject(project);
+		List<MetadataTemplateField> fieldCollection = metadataTemplateService.getMetadataFieldsForProject(project);
 
 		// Need to get all the fields from the templates too!
 		List<ProjectMetadataTemplateJoin> templateJoins = metadataTemplateService.getMetadataTemplatesForProject(
 				project);
 		for (ProjectMetadataTemplateJoin join : templateJoins) {
 			MetadataTemplate template = join.getObject();
-			Iterable<MetadataTemplateField> templateFields = template.getFields();
-			fieldCollection = Iterables.concat(fieldCollection, templateFields);
+			List<MetadataTemplateField> templateFields = template.getFields();
+			fieldCollection = ListUtils.union(fieldCollection, templateFields);
 		}
 
 		List<MetadataTemplateField> fields = Lists.newArrayList(fieldCollection);

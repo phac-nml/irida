@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.ListUtils;
+
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 
@@ -52,10 +54,11 @@ public class UIMetadataTemplate {
 			allProjectFields.remove(field);
 		}
 
-		fields.addAll(allProjectFields.stream()
-				.map(field -> new UIMetadataTemplateField(field, true))
-				.collect(Collectors.toList()));
-		return fields;
+		List<UIMetadataTemplateField> remainder = allProjectFields.stream()
+						.map(field -> new UIMetadataTemplateField(field, true))
+						.collect(Collectors.toList());
+
+		return ListUtils.union(fields, remainder);
 	}
 
 	private List<UIMetadataTemplateField> createDefaultFieldList(List<MetadataTemplateField> templateFields) {
