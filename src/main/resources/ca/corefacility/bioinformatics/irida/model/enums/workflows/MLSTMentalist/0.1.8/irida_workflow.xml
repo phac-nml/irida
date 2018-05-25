@@ -15,20 +15,20 @@
                 <galaxyToolDataTable name="mentalist_databases" displayColumn="name" parameterColumn="value" />
             </dynamicSource>
             <toolParameter
-                    toolId="testtoolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_call/0.1.8b"
+                    toolId="toolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_call/0.1.8"
                     parameterName="kmer_db" />
         </parameter>
     </parameters>
     <outputs>
         <output name="mlst-result" fileName="mentalist_call.tsv" />
-        <output name="distance-matrix" fileName="mentalist_distance_matrix.phylip" />
+        <output name="distance-matrix" fileName="mentalist_distance_matrix.tsv" />
     </outputs>
     <toolRepositories>
         <repository>
             <name>mentalist</name>
             <owner>dfornika</owner>
-            <url>https://testtoolshed.g2.bx.psu.edu/</url>
-            <revision>5c8b69161b3f</revision>
+            <url>https://toolshed.g2.bx.psu.edu/</url>
+            <revision>2c742bf44180</revision>
         </repository>
         <repository>
             <name>combine_tabular_collection</name>
