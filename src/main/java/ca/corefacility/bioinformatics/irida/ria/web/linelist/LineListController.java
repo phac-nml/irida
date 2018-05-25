@@ -3,6 +3,8 @@ package ca.corefacility.bioinformatics.irida.ria.web.linelist;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -102,7 +104,7 @@ public class LineListController {
 	 */
 	@RequestMapping(value = "/templates", method = RequestMethod.POST)
 	public UIMetadataTemplate saveLineListTemplate(@RequestBody UIMetadataTemplate template,
-			@RequestParam Long projectId) {
+			@RequestParam Long projectId, HttpServletResponse response) {
 
 		// Get or create the template fields.
 		List<MetadataTemplateField> fields = new ArrayList<>();
@@ -123,16 +125,19 @@ public class LineListController {
 
 		// Save the template.
 		MetadataTemplate metadataTemplate;
-		if (template.getId() != null) {
-			metadataTemplate = metadataTemplateService.read(template.getId());
-			metadataTemplate.setFields(fields);
-			metadataTemplate = metadataTemplateService.updateMetadataTemplateInProject(metadataTemplate);
-		} else {
+		if (template.getId() == null) {
+			// NO ID means that this is a new template
 			Project project = projectService.read(projectId);
 			metadataTemplate = new MetadataTemplate(template.getName(), fields);
 			ProjectMetadataTemplateJoin join = metadataTemplateService.createMetadataTemplateInProject(metadataTemplate,
 					project);
 			metadataTemplate = join.getObject();
+			response.setStatus(HttpServletResponse.SC_CREATED);
+		} else {
+			metadataTemplate = metadataTemplateService.read(template.getId());
+			metadataTemplate.setFields(fields);
+			metadataTemplate = metadataTemplateService.updateMetadataTemplateInProject(metadataTemplate);
+			response.setStatus(HttpServletResponse.SC_OK);
 		}
 		return new UIMetadataTemplate(metadataTemplate, getAllProjectMetadataFields(projectId));
 	}
