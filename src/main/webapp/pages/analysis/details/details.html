@@ -65,8 +65,8 @@
 				<sub-nav-item th:if="${sistr}" state="sistr" text="Sistr"></sub-nav-item>
 				<sub-nav-item th:if="${bio_hansel}" state="bio_hansel" text="bio_hansel"></sub-nav-item>
 				<sub-nav-item th:if="${isCompleted}" state="preview" data:text="#{analysis.tab.preview}"></sub-nav-item>
-				<sub-nav-item state="inputs" data:text="#{analysis.tab.input-files}"></sub-nav-item>
 				<sub-nav-item th:if="${isError}" state="joberrors" data:text="#{analysis.joberror}"></sub-nav-item>
+				<sub-nav-item state="inputs" data:text="#{analysis.tab.input-files}"></sub-nav-item>
 				<th:block th:if="${isCompleted}">
 					<sub-nav-item state="provenance" data:text="#{analysis.tab.provenance}"></sub-nav-item>
 				</th:block>
