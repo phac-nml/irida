@@ -11,7 +11,7 @@ This workflow uses the software [MentaLiST][] for typing of microbial samples di
 
 | Tool Name                      | Owner    | Tool Revision | Toolshed Installable Revision | Toolshed             |
 |:------------------------------:|:--------:|:-------------:|:-----------------------------:|:--------------------:|
-| **mentalist**                  | dfornika | 2c742bf44180  | 5 (2018-05-24)                | [Galaxy Main Shed][] |
+| **mentalist**                  | dfornika | 9b050fe0a6f4  | 6 (2018-05-25)                | [Galaxy Main Shed][] |
 | **combine_tabular_collection** | nml      | b815081988b5  | 0 (2017-02-06)                | [Galaxy Main Shed][] |
 
 ## Step 1: Galaxy Conda Setup

@@ -72,7 +72,7 @@
             "tool_errors": null, 
             "tool_id": "toolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_call/0.1.8", 
             "tool_shed_repository": {
-                "changeset_revision": "2c742bf44180", 
+                "changeset_revision": "9b050fe0a6f4", 
                 "name": "mentalist", 
                 "owner": "dfornika", 
                 "tool_shed": "toolshed.g2.bx.psu.edu"
@@ -186,7 +186,7 @@
             "tool_errors": null, 
             "tool_id": "toolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_distance/0.1.8", 
             "tool_shed_repository": {
-                "changeset_revision": "2c742bf44180", 
+                "changeset_revision": "9b050fe0a6f4", 
                 "name": "mentalist", 
                 "owner": "dfornika", 
                 "tool_shed": "toolshed.g2.bx.psu.edu"

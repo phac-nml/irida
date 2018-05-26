@@ -28,7 +28,7 @@
             <name>mentalist</name>
             <owner>dfornika</owner>
             <url>https://toolshed.g2.bx.psu.edu/</url>
-            <revision>2c742bf44180</revision>
+            <revision>9b050fe0a6f4</revision>
         </repository>
         <repository>
             <name>combine_tabular_collection</name>
