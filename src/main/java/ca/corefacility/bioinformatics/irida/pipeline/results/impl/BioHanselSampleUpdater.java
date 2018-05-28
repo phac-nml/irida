@@ -25,17 +25,17 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 
+/**
+ * {@link AnalysisSampleUpdater} for bio_hansel results to be written to metadata of {@link Sample}s.
+ */
 @Component
 public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 	private static final String BIO_HANSEL_RESULTS_FILE = "bio_hansel-results.json";
 	private static final String SCHEME_KEY = "scheme";
 	private static final String VERSION_KEY = "scheme_version";
-	private static Map<String, String> BIO_HANSEL_RESULTS_FIELDS = ImmutableMap.of(
-			"subtype", "bio_hansel/%1$s/v%2$s/Subtype",
-			"avg_tile_coverage", "bio_hansel/%1$s/v%2$s/Average Tile Coverage",
-			"qc_status", "bio_hansel/%1$s/v%2$s/QC Status",
-			"qc_message", "bio_hansel/%1$s/v%2$s/QC Message"
-	);
+	private static Map<String, String> BIO_HANSEL_RESULTS_FIELDS = ImmutableMap.of("subtype",
+			"bio_hansel/%1$s/v%2$s/Subtype", "avg_tile_coverage", "bio_hansel/%1$s/v%2$s/Average Tile Coverage",
+			"qc_status", "bio_hansel/%1$s/v%2$s/QC Status", "qc_message", "bio_hansel/%1$s/v%2$s/QC Message");
 	private MetadataTemplateService metadataTemplateService;
 	private SampleService sampleService;
 
@@ -50,7 +50,7 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 	}
 
 	/**
-	 * Updates a collection of samples with a particular analysis result.
+	 * Add bio_hansel results to the metadata of the given {@link Sample}s.
 	 *
 	 * @param samples  The samples to update.
 	 * @param analysis The {@link AnalysisSubmission} to use for updating.
@@ -58,22 +58,22 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 	 */
 	@Override
 	public void update(Collection<Sample> samples, AnalysisSubmission analysis) throws PostProcessingException {
-		AnalysisOutputFile aof = analysis.getAnalysis().getAnalysisOutputFile(BIO_HANSEL_RESULTS_FILE);
+		AnalysisOutputFile aof = analysis.getAnalysis()
+				.getAnalysisOutputFile(BIO_HANSEL_RESULTS_FILE);
 
 		Path filePath = aof.getFile();
 
 		Map<String, MetadataEntry> stringEntries = new HashMap<>();
 		try {
 			//Read the JSON file from SISTR output
-			@SuppressWarnings("resource")
-			String jsonText = new Scanner(new BufferedReader(new FileReader(filePath.toFile()))).useDelimiter("\\Z")
+			@SuppressWarnings("resource") String jsonText = new Scanner(
+					new BufferedReader(new FileReader(filePath.toFile()))).useDelimiter("\\Z")
 					.next();
 
 			// map the results into a Map
 			ObjectMapper mapper = new ObjectMapper();
-			List<Map<String, Object>> maps = mapper
-					.readValue(jsonText, new TypeReference<List<Map<String, Object>>>() {
-					});
+			List<Map<String, Object>> maps = mapper.readValue(jsonText, new TypeReference<List<Map<String, Object>>>() {
+			});
 
 			if (maps.size() > 0) {
 				Map<String, Object> result = maps.get(0);
@@ -84,7 +84,8 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 				//loop through each of the requested fields and save the entries
 				BIO_HANSEL_RESULTS_FIELDS.forEach((key, fieldFmt) -> {
 					if (result.containsKey(key) && result.get(key) != null) {
-						String value = result.get(key).toString();
+						String value = result.get(key)
+								.toString();
 						PipelineProvidedMetadataEntry metadataEntry = new PipelineProvidedMetadataEntry(value, "text",
 								analysis);
 						stringEntries.put(formatField(fieldFmt, scheme, version), metadataEntry);
@@ -92,8 +93,8 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 				});
 
 				// convert string map into metadata fields
-				Map<MetadataTemplateField, MetadataEntry> metadataMap = metadataTemplateService
-						.getMetadataMap(stringEntries);
+				Map<MetadataTemplateField, MetadataEntry> metadataMap = metadataTemplateService.getMetadataMap(
+						stringEntries);
 
 				//save metadata back to sample
 				samples.forEach(s -> {
