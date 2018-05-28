@@ -33,7 +33,7 @@ export function TemplateSelect(props) {
   return (
     <React.Fragment>
       <label>
-        __Metadata Field Templates__
+        {i18n.linelist.templates.title}
         <HelpPopover
           content={<PopoverContents contents={content} />}
           title={i18n.linelist.templates.Popover.title}
@@ -60,6 +60,7 @@ export function TemplateSelect(props) {
 }
 
 TemplateSelect.propTypes = {
+  current: PropTypes.number.isRequired,
   templates: ImmutablePropTypes.list.isRequired,
   useTemplate: PropTypes.func.isRequired
 };
