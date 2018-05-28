@@ -153,23 +153,26 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 	 */
 	private void createBioHanselMetadataTemplateForSampleProjects(Collection<Sample> samples, String tmplName,
 			List<String> tmplFields, Map<MetadataTemplateField, MetadataEntry> metadataMap) {
-		final Set<Project> samplesProjects = samples.stream()
-				.map(s -> projectService.getProjectsForSample(s)
-						.stream()
-						.map(Join::getSubject)
-						.collect(Collectors.toList()))
-				.flatMap(Collection::stream)
-				.collect(Collectors.toSet());
+		final Set<Project> samplesProjects = getProjects(samples);
 		final Map<String, MetadataTemplateField> fieldsMap = metadataMap.keySet()
 				.stream()
 				.collect(Collectors.toMap(MetadataTemplateField::getLabel, x -> x));
 		final List<MetadataTemplateField> fields = tmplFields.stream()
 				.map(fieldsMap::get)
 				.collect(Collectors.toList());
-
 		for (Project p : samplesProjects) {
 			createTemplate(p, tmplName, fields);
 		}
+	}
+
+	private Set<Project> getProjects(Collection<Sample> samples) {
+		return samples.stream()
+				.map(s -> projectService.getProjectsForSample(s)
+						.stream()
+						.map(Join::getSubject)
+						.collect(Collectors.toList()))
+				.flatMap(Collection::stream)
+				.collect(Collectors.toSet());
 	}
 
 	/**
@@ -183,15 +186,7 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 		final List<String> fieldLabels = templateFields.stream()
 				.map(MetadataTemplateField::getLabel)
 				.collect(Collectors.toList());
-		final List<MetadataTemplate> templates = metadataTemplateService.getMetadataTemplatesForProject(project)
-				.stream()
-				.map(ProjectMetadataTemplateJoin::getObject)
-				.filter(t -> Objects.equals(templateName, t.getLabel()))
-				.filter(t -> fieldLabels.equals(t.getFields()
-						.stream()
-						.map(MetadataTemplateField::getLabel)
-						.collect(Collectors.toList())))
-				.collect(Collectors.toList());
+		final List<MetadataTemplate> templates = getExistingMetadataTemplates(project, templateName, fieldLabels);
 		logger.debug("Project '" + project.getId() + "' found " + templates.size() + " template(s) " + templates
 				+ " with name '" + templateName + "' with fields '" + fieldLabels + "'");
 		if (!templates.isEmpty()) {
@@ -204,6 +199,19 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 				+ template.getLabel() + ", fields=" + template.getFields() + "]");
 		metadataTemplateService.createMetadataTemplateInProject(template, project);
 		logger.debug("Created template '" + template.getId() + "' for project '" + project.getId() + "'.");
+	}
+
+	private List<MetadataTemplate> getExistingMetadataTemplates(Project project, String templateName,
+			List<String> fieldLabels) {
+		return metadataTemplateService.getMetadataTemplatesForProject(project)
+				.stream()
+				.map(ProjectMetadataTemplateJoin::getObject)
+				.filter(t -> Objects.equals(templateName, t.getLabel()))
+				.filter(t -> fieldLabels.equals(t.getFields()
+						.stream()
+						.map(MetadataTemplateField::getLabel)
+						.collect(Collectors.toList())))
+				.collect(Collectors.toList());
 	}
 
 	/**
