@@ -1,7 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Loader } from "../Loader";
-import { TemplatesContainer } from "../Templates";
 import { TableLayoutComponent } from "./TableLayoutComponent";
 
 /**
@@ -20,14 +19,7 @@ export function LineList(props) {
     return <h3>A major error has occurred! Better find a 💣 shelter!</h3>;
   }
 
-  return (
-    <React.Fragment>
-      <div style={{ marginBottom: "1rem" }}>
-        <TemplatesContainer />
-      </div>
-      <TableLayoutComponent />
-    </React.Fragment>
-  );
+  return <TableLayoutComponent />;
 }
 
 LineList.propTypes = {

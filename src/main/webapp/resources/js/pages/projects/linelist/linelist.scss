@@ -1,4 +1,5 @@
 $table-height: 600px;
+$border-color: rgba(217, 220, 222, 1);
 
 .templates-option {
   display: flex;
@@ -14,37 +15,45 @@ $table-height: 600px;
   display: none;
 }
 
-.ag-grid-tool-panel {
+.tool-panel-slider {
   background-color: rgba(245, 247, 247, 1);
-  min-height: 100%;
-  padding: 1rem;
-  margin-right: 20px;
-  border-right: 1px solid #bdc3c7;
+  border: 1px solid rgba(189, 195, 199, 1);
+  border-left: none;
   overflow-x: hidden;
-  width: 230px;
+}
+
+.tool-panel-wrapper {
+  display: flex;
+}
+
+.ag-grid-tool-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: rgba(245, 247, 247, 1);
+  height: $table-height;
+  min-height: 100%;
+  width: 250px;
+}
+
+.ag-grid-tool-panel--inner {
+  overflow-y: auto;
+  padding-left: 1rem;
 
   .ant-checkbox-wrapper {
     font-weight: normal;
   }
 }
 
-.ag-grid-tool-panel {
-  overflow-y: scroll;
-  height: $table-height;
+.ag-grid-tool-panel--buttons {
+  background-color: rgba(245, 247, 247, 1);
+  border-left: 1px solid #bdc3c7;
+  width: 20px;
 }
 
 .ant-layout-sider-collapsed .ag-grid-tool-panel {
   display: none;
-}
-
-.ag-grid-tool-panel--buttons {
-  background-color: rgba(245, 247, 247, 1);
-  border-left: 1px solid #bdc3c7;
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 20px;
 }
 
 .ag-grid-tool-panel--button {

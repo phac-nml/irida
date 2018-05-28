@@ -2,8 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Tag } from "antd";
 import { SaveTemplateButton } from "./SaveTemplateButton";
-import { UpdateTemplateButton } from "./UpdateTemplateButton";
-import { NO_TEMPLATE_ID } from "../../../reducers/templates";
 
 const { i18n } = window.PAGE;
 
@@ -14,23 +12,20 @@ const { i18n } = window.PAGE;
  */
 export function TemplateSelectOption(props) {
   const { template, index, current, saved } = props;
-  const { name, fields, id, modified } = template;
+  const { name, fields, modified } = template;
 
   /**
    * Render an update or save button depending on whether the option is for
    * an existing template or a new one.
    */
   function renderUpdateSave() {
-    if (id === null) {
-      return (
-        <SaveTemplateButton
-          template={props.template}
-          showSaveModal={props.showSaveModal}
-          saveTemplate={props.saveTemplate}
-        />
-      );
-    }
-    return <UpdateTemplateButton {...props} />;
+    return (
+      <SaveTemplateButton
+        template={props.template}
+        showSaveModal={props.showSaveModal}
+        saveTemplate={props.saveTemplate}
+      />
+    );
   }
 
   return (

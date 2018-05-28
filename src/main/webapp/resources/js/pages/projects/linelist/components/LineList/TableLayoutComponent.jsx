@@ -7,7 +7,7 @@ const { Sider, Content } = Layout;
 
 export class TableLayoutComponent extends React.Component {
   state = {
-    collapsed: true // Tool panel begin closed.
+    collapsed: false
   };
 
   constructor(props) {
@@ -25,34 +25,28 @@ export class TableLayoutComponent extends React.Component {
 
   render() {
     return (
-      <Layout
-        className="ag-theme-balham"
-        style={{ minHeight: "100%" }}
-      >
+      <Layout className="ag-theme-balham" style={{ minHeight: "100%" }}>
         <Content>
           <TableContainer />
         </Content>
         <Sider
-          style={{
-            backgroundColor: "rgba(245, 247, 247, 1.00)",
-            border: "1px solid rgba(189, 195, 199, 1.00)",
-            position: "relative",
-            overflowX: "hidden"
-          }}
+          className="tool-panel-slider"
           trigger={null}
           collapsedWidth="20"
           width="250"
           collapsible
           collapsed={this.state.collapsed}
         >
-          <ToolPanelContainer />
-          <div className="ag-grid-tool-panel--buttons">
-            <button
-              className="ag-grid-tool-panel--button"
-              onClick={this.toggleToolPanel}
-            >
-              Columns
-            </button>
+          <div className="tool-panel-wrapper">
+            <ToolPanelContainer />
+            <div className="ag-grid-tool-panel--buttons">
+              <button
+                className="ag-grid-tool-panel--button"
+                onClick={this.toggleToolPanel}
+              >
+                Columns
+              </button>
+            </div>
           </div>
         </Sider>
       </Layout>

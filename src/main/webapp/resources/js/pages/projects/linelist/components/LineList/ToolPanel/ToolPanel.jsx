@@ -1,5 +1,6 @@
 import React from "react";
 import { Checkbox } from "antd";
+import { TemplatesContainer } from "../../Templates";
 
 /**
  * Use to hold the column selection in a tool panel to the right of the
@@ -43,17 +44,20 @@ export class ToolPanel extends React.Component {
   render() {
     return (
       <div className="ag-grid-tool-panel">
-        <div className="ag-grid-tool-panel--inner">{this.state.fields.map((f, index) => (
-          <div key={index} style={{ display: "block", width: 200 }}>
-            <Checkbox
-              value={index}
-              checked={!f.hide}
-              onChange={this.fieldUpdated}
-            >
-              {f.label}
-            </Checkbox>
-          </div>
-        ))}</div>
+        <TemplatesContainer />
+        <div className="ag-grid-tool-panel--inner">
+          {this.state.fields.map((f, index) => (
+            <div key={index} style={{ display: "block", width: 200 }}>
+              <Checkbox
+                value={index}
+                checked={!f.hide}
+                onChange={this.fieldUpdated}
+              >
+                {f.label}
+              </Checkbox>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }

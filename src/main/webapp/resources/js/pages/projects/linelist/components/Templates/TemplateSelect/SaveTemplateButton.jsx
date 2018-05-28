@@ -19,14 +19,20 @@ export class SaveTemplateButton extends React.Component {
   };
 
   render() {
-    return this.props.template.modified !== null ? (
-      <Button size="small" type="dashed" onClick={this.showSaveModal}>
+    return (
+      <Button
+        size="small"
+        type="primary"
+        onClick={this.showSaveModal}
+        disabled={typeof this.props.template === "undefined"}
+      >
         {i18n.linelist.templates.saveModified}
       </Button>
-    ) : null;
+    );
   }
 }
 
 SaveTemplateButton.propTypes = {
-  template: PropTypes.object.isRequired
+  template: PropTypes.object,
+  showSaveModal: PropTypes.func.isRequired
 };

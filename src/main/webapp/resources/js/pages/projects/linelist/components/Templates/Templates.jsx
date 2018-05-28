@@ -1,25 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
-import ImmutablePropTYpes from "react-immutable-proptypes";
+import ImmutablePropTypes from "react-immutable-proptypes";
 import { SaveTemplateModal } from "./SaveTemplateModal";
 import { TemplateSelect } from "./TemplateSelect";
-import {
-  PopoverContents,
-  HelpPopover
-} from "../../../../../components/popovers";
-
-const { i18n } = window.PAGE;
-
-/*
-The internationalized content of the help popover describing
-what a template is and how to use it.
- */
-const content = (
-  <React.Fragment>
-    <p>{i18n.linelist.templates.Popover.content}</p>
-    <p>{i18n.linelist.templates.Popover.description}</p>
-  </React.Fragment>
-);
 
 /**
  * This component is responsible for rendering all components that handle
@@ -43,17 +26,20 @@ export class Templates extends React.Component {
   }
 
   render() {
+    const { templates, current } = this.props;
+    const template =
+      typeof templates.get(current) === "undefined"
+        ? undefined
+        : templates.get(current).toJS();
+
     return (
-      <div style={{ marginBottom: "1rem" }}>
+      <div style={{ borderBottom: "1px solid rgba(189, 195, 199, 1.00)", padding: "1rem", marginBottom: "1rem" }}>
         <TemplateSelect {...this.props} showSaveModal={this.showSaveModal} />
         <SaveTemplateModal
+          template={template}
           visible={this.state.visible}
           onClose={this.closeModal}
           {...this.props}
-        />
-        <HelpPopover
-          content={<PopoverContents contents={content} />}
-          title={i18n.linelist.templates.Popover.title}
         />
       </div>
     );
@@ -61,7 +47,8 @@ export class Templates extends React.Component {
 }
 
 Templates.propTypes = {
+  current: PropTypes.number.isRequired,
   saveTemplate: PropTypes.func.isRequired,
-  templates: ImmutablePropTYpes.list.isRequired,
+  templates: ImmutablePropTypes.list.isRequired,
   modified: PropTypes.object
 };
