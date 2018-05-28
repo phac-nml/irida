@@ -19,8 +19,5 @@ export class SampleNameRenderer extends React.Component {
 }
 
 SampleNameRenderer.propTypes = {
-  data: PropTypes.shape({
-    sampleId: PropTypes.string.isRequired
-  }),
-  value: PropTypes.string.isRequired
+  data: PropTypes.array.isRequired
 };

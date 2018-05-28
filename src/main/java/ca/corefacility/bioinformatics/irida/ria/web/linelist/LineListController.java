@@ -19,6 +19,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.web.models.UIMetadataTemplate;
 import ca.corefacility.bioinformatics.irida.ria.web.models.UIMetadataTemplateField;
+import ca.corefacility.bioinformatics.irida.ria.web.models.UISampleMetadata;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -66,7 +67,7 @@ public class LineListController {
 	 */
 	@RequestMapping("/entries")
 	@ResponseBody
-	public List<Map<String, MetadataEntry>> getProjectSamplesMetadataEntries(@RequestParam long projectId) {
+	public List<UISampleMetadata> getProjectSamplesMetadataEntries(@RequestParam long projectId) {
 		return getAllProjectSamplesMetadataEntries(projectId);
 	}
 
@@ -173,24 +174,14 @@ public class LineListController {
 	 * @param projectId {@link Long} identifier for a {@link Project}
 	 * @return {@link List} of {@link List}s of all {@link Sample} metadata in a {@link Project}
 	 */
-	private List<Map<String, MetadataEntry>> getAllProjectSamplesMetadataEntries(Long projectId) {
+	private List<UISampleMetadata> getAllProjectSamplesMetadataEntries(Long projectId) {
 		Project project = projectService.read(projectId);
 		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(project);
-		List<Map<String, MetadataEntry>> result = new ArrayList<>(samplesForProject.size());
+		List<UISampleMetadata> result = new ArrayList<>(samplesForProject.size());
 
 		for (Join<Project, Sample> join : samplesForProject) {
 			Sample sample = join.getObject();
-			Map<String, MetadataEntry> entries = new HashMap<>();
-
-			// Need to have the sample name and Id
-			entries.put("sampleName", new MetadataEntry(sample.getLabel(), "text"));
-			entries.put("sampleId", new MetadataEntry(String.valueOf(sample.getId()), "number"));
-
-			Map<MetadataTemplateField, MetadataEntry> sampleMetadata = sample.getMetadata();
-			for (MetadataTemplateField field : sampleMetadata.keySet()) {
-				entries.put(field.getLabel(), sampleMetadata.getOrDefault(field, new MetadataEntry()));
-			}
-			result.add(entries);
+			result.add(new UISampleMetadata(sample));
 		}
 
 		return result;

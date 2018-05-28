@@ -33,7 +33,7 @@ export class TableLayoutComponent extends React.Component {
           className="tool-panel-slider"
           trigger={null}
           collapsedWidth="20"
-          width="250"
+          width="300"
           collapsible
           collapsed={this.state.collapsed}
         >

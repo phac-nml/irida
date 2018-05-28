@@ -30,6 +30,10 @@ export class Table extends React.Component {
 
   constructor(props) {
     super(props);
+
+    this.state = {
+      entries: null
+    };
   }
 
   shouldComponentUpdate(nextProps) {
@@ -164,18 +168,37 @@ export class Table extends React.Component {
    */
   onColumnDropped = () => {
     const colOrder = this.columnApi.getColumnState();
-
+  
     /*
     Remove the hidden ones and just get the field identifiers
     and remove the sample name column since this is just for the table.
      */
-    let list = colOrder.map(c => ({ label: c.colId, hide: c.hide }));
-    list.shift();
+    let list = colOrder
+      .map(c => ({ label: c.colId, hide: c.hide }))
+      .filter(c => (c.label !== "sampleName" && c.label !== "sampleId"));
 
     // Don't let the table perform a modified update since it handles it on its own
     this.colDropped = true;
     this.props.tableModified(list);
   };
+
+  static getDerivedStateFromProps(props, state) {
+    const { entries } = props;
+
+    if (entries !== null) {
+      /*
+      Format the sample metadata into a usable map.
+       */
+      state.entries = entries.toJS().map(entry => {
+        const metadata = entry.metadata;
+        metadata.sampleId = entry.id;
+        metadata.sampleName = entry.label;
+        return metadata;
+      });
+    }
+
+    return state;
+  }
 
   render() {
     return (
@@ -186,11 +209,7 @@ export class Table extends React.Component {
           enableColResize={true}
           localeText={i18n.linelist.agGrid}
           columnDefs={this.props.fields.toJS()}
-          rowData={
-            this.props.entries === null
-              ? this.props.entries
-              : this.props.entries.toJS()
-          }
+          rowData={this.state.entries}
           deltaRowDataMode={true}
           getRowNodeId={data => data.code}
           frameworkComponents={this.frameworkComponents}

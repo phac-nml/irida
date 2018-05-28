@@ -42,7 +42,7 @@ export function TemplateSelect(props) {
       <Select
         disabled={templates.length === 1}
         value={current}
-        style={{ width: 205 }}
+        style={{ width: "100%" }}
         onSelect={useTemplate}
       >
         {templates.map((template, index) => (
