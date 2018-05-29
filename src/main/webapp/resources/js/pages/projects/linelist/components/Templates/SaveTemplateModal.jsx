@@ -1,8 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 import ImmutablePropTypes from "react-immutable-proptypes";
-import { Button, Checkbox, Form, Input, Modal } from "antd";
-const FormItem = Form.Item;
+import { AutoComplete, Button, Checkbox, Form, Modal } from "antd";
+import { fromJS } from "immutable";
 
 const { i18n } = window.PAGE;
 
@@ -10,28 +10,34 @@ const { i18n } = window.PAGE;
 Internationalized messages for state of validation for the template name.
  */
 const validations = {
-  empty: { status: "", message: "", valid: false },
-  valid: { status: "success", message: "", valid: true },
+  empty: {
+    status: "",
+    message: "",
+    valid: false,
+    existing: false,
+    overwrite: false
+  },
+  valid: { status: "success", message: "", valid: true, existing: false },
   required: {
+    existing: false,
     status: "error",
     message: i18n.linelist.templates.saveModal.required,
-    valid: false
-  },
-  exists: {
-    status: "warning",
-    message:
-      "__ A template by this name already exists, saving will overwrite the existing template __",
-    valid: true
+    valid: false,
+    overwrite: false
   },
   length: {
+    existing: false,
     status: "error",
     message: i18n.linelist.templates.saveModal.length,
-    valid: false
+    valid: false,
+    overwrite: false
   },
-  existsError: {
+  nameExists: {
+    existing: true,
     status: "error",
-    message: i18n.linelist.templates.saveModal.exists,
-    valid: false
+    message: i18n.linelist.templates.saveModal.nameExists,
+    valid: false,
+    overwrite: false
   }
 };
 
@@ -55,25 +61,68 @@ function Footer(props) {
  * for save a new Metadata Template.
  */
 export class SaveTemplateModal extends React.Component {
-  inputRef = React.createRef();
-  state = { name: "", requiresOverwrite: false, overwrite: false };
+  state = {
+    name: "",
+    existing: false,
+    names: [],
+    status: "",
+    message: "",
+    overwrite: false
+  };
 
   constructor(props) {
     super(props);
-
-    // Just get the template name for validation (don't want duplicate names)
-    // and remove the first one as it is "All Fields".
-    this.names = props.templates
-      .toJS()
-      .map(t => t.name)
-      .slice(1);
   }
 
-  handleOk = () => {
+  static getDerivedStateFromProps(props, state) {
+    if (typeof props.template !== "undefined") {
+      if (props.template.id > 0) {
+        state.name = props.template.name;
+        Object.assign(state, {
+          editName: false,
+          fromTemplate: true
+        });
+      } else {
+        state.name = "";
+        Object.assign(state, {
+          editName: true,
+          fromTemplate: false,
+          ...validations.empty
+        });
+      }
+    }
+
+    if (props.templates.size > 0) {
+      // Just get the template name for validation (don't want duplicate names)
+      // and remove the first one as it is "All Fields".
+      const names = [];
+      props.templates.toJS().forEach(t => {
+        if (t.id !== null) {
+          names.push(t.name);
+        }
+      });
+      state.names = names;
+      state._names = fromJS(names); // This is to be kept is a clean state.
+    }
+
+    return state;
+  }
+
+  saveTemplate = () => {
     const template = this.props.templates.get(this.props.current).toJS();
-    const fields = template.modified;
-    const name = this.inputRef.current.input.value.trim();
-    this.props.saveTemplate(name, fields, null);
+    const fields = template.modified.filter(t => !t.hide);
+    const name = this.state.name;
+    const overwrite = this.state.overwrite;
+    let id = undefined;
+
+    console.log(fields, name, overwrite);
+    if (overwrite) {
+      // Get the template to overwrite because we need its id.
+      const t = this.props.templates.find(t => t.get("name") === name);
+      id = t.get("id");
+    }
+
+    this.props.saveTemplate(name, fields, id);
     this.resetForm();
   };
 
@@ -85,47 +134,44 @@ export class SaveTemplateModal extends React.Component {
     this.props.onClose();
   };
 
-  templateNameChange = () => {
-    const name = this.inputRef.current.input.value;
-    this.validateName(name);
-  };
-
   validateName = name => {
+    name = name.trim();
     if (name.length === 0) {
+      /*
+      All templates require a name.
+      Save button should be disabled.
+       */
       this.setState({ name, ...validations.required });
     } else if (name.length < 5) {
+      /*
+      Template names should be at least 5 characters long.
+      Save button should be disabled.
+       */
       this.setState({ name, ...validations.length });
-    } else if (this.names.includes(name)) {
-      this.setState({ name, ...validations.exists });
+    } else if (this.state.names.includes(name)) {
+      /*
+      A template already has this name.  There cannot be 2 templates with the
+      same name.
+       */
+      this.setState({ name, ...validations.nameExists });
     } else {
-      this.setState({ name, ...validations.valid });
+      const names = this.state._names.toJS();
+      names.unshift(name);
+      this.setState({ name, names, ...validations.valid });
     }
   };
 
-  static getDerivedStateFromProps(props, state) {
-    if (typeof props.template !== "undefined") {
-      if (props.template.id > 0) {
-        state.name = props.template.name;
-        Object.assign(state, {
-          requiresOverwrite: true,
-          ...validations.exists
-        });
-      } else {
-        state.name = "";
-        Object.assign(state, {
-          requiresOverwrite: false,
-          ...validations.empty
-        });
-      }
-    }
-    return state;
-  }
+  overwriteChange = e => {
+    const checked = e.target.checked;
+    this.setState({ valid: checked, overwrite: checked });
+  };
 
   render() {
     const { template } = this.props;
     if (typeof template === "undefined") {
       return null;
     }
+
     return (
       <Modal
         closable={false}
@@ -136,29 +182,26 @@ export class SaveTemplateModal extends React.Component {
           <Footer
             disabled={!this.state.valid}
             onCancel={this.handleCancel}
-            onClick={this.handleOk}
+            onClick={this.saveTemplate}
           />
         }
       >
         <Form layout="vertical">
-          <FormItem
+          <Form.Item
             hasFeedback
             label={i18n.linelist.templates.saveModal.name}
             validateStatus={this.state.status}
             help={this.state.message}
           >
-            <Input
-              onChange={this.templateNameChange}
-              ref={this.inputRef}
-              defaultValue={this.state.name}
+            <AutoComplete
+              dataSource={this.state.names}
+              onChange={this.validateName}
             />
-          </FormItem>
-          {this.state.requiresOverwrite ? (
-            <FormItem>
-              <Checkbox checked={this.state.overwrite}>
-                Overwrite existing template?
-              </Checkbox>
-            </FormItem>
+          </Form.Item>
+          {this.state.existing ? (
+            <Checkbox onChange={this.overwriteChange}>
+              {i18n.linelist.templates.saveModal.overwrite}
+            </Checkbox>
           ) : null}
         </Form>
       </Modal>
@@ -167,6 +210,7 @@ export class SaveTemplateModal extends React.Component {
 }
 
 SaveTemplateModal.propTypes = {
+  template: PropTypes.object,
   onClose: PropTypes.func.isRequired,
   current: PropTypes.number.isRequired,
   templates: ImmutablePropTypes.list.isRequired
