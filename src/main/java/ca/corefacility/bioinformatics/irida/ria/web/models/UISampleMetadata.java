@@ -7,6 +7,9 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 
+/**
+ * This represent a row entity in the Line List Page.
+ */
 public class UISampleMetadata {
 	private Long id;
 	private String label;
