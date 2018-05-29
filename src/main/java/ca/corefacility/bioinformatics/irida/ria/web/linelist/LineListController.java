@@ -63,7 +63,7 @@ public class LineListController {
 	 * {@link  Sample}s in a {@link Project}
 	 *
 	 * @param projectId {@link Long} identifier for a {@link Project}
-	 * @return {@link List} of {@link List}s of all {@link Sample} metadata in a {@link Project}
+	 * @return {@link List} of {@link UISampleMetadata}s of all {@link Sample} metadata in a {@link Project}
 	 */
 	@RequestMapping("/entries")
 	@ResponseBody
