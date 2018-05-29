@@ -1,6 +1,12 @@
 import axios from "axios";
 
 let projectId;
+
+/**
+ * Get a list of Metadata Templates for this project.
+ * @param {number} id
+ * @returns {AxiosPromise}
+ */
 export function fetchTemplates(id) {
   projectId = id;
   return axios({
