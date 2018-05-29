@@ -150,7 +150,8 @@ public class LineListController {
 	 */
 	private List<MetadataTemplateField> getAllProjectMetadataFields(Long projectId) {
 		Project project = projectService.read(projectId);
-		List<MetadataTemplateField> metadataFieldsForProject = metadataTemplateService.getMetadataFieldsForProject(project);
+		List<MetadataTemplateField> metadataFieldsForProject = metadataTemplateService.getMetadataFieldsForProject(
+				project);
 		Set<MetadataTemplateField> fieldSet = new HashSet<>(metadataFieldsForProject);
 
 		// Need to get all the fields from the templates too!
