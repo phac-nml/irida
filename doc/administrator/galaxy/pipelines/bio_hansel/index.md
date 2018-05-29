@@ -1,20 +1,17 @@
 ---
 layout: default
-search_title: "IRIDA Bio_Hansel Salmonella Subtyping"
-description: "Install guide for the Bio_Hansel Pipeline"
+search_title: "IRIDA bio_hansel SNV Subtyping"
+description: "Install guide for the bio_hansel Pipeline"
 ---
 
-Bio_Hansel
+bio_hansel
 ============
 
-This workflow uses the following software for the bio_hansel pipeline. The pipeline requires the following tools:
+This workflow uses the following software for the bio_hansel pipeline. The pipeline requires the following tool:
 
 | Tool Name                      | Owner    | Tool Revision | Toolshed Installable Revision | Toolshed             |
 |:------------------------------:|:--------:|:-------------:|:-----------------------------:|:--------------------:|
-| **bio_hansel**                 | nml      | [e9fd173fc7ee][]| 8 (2018-04-20)              | [Galaxy Main Shed][] |
-| **combine_tabular_collection** | nml      | [b815081988b5][]| 0 (2017-02-06)              | [Galaxy Main Shed][] |
-| **collapse_collections**       | nml      | [25136a2b0cfe][]| 4 (2017-03-10)              | [Galaxy Main Shed][] |
-| **combine_json**               | nml      | [661bc10b0612][]| 1 (2018-04-13)              | [Galaxy Main Shed][] |
+| **bio_hansel**                 | nml      | [4654c51dae72][]| 9 (2018-05-09)              | [Galaxy Main Shed][] |
 
 
 To install these tools please proceed through the following steps.
@@ -34,7 +31,7 @@ The install progress can be checked by monitoring the Galaxy log files `galaxy/*
 
 A Galaxy workflow and some test data has been included with this documentation to verify that all tools are installed correctly.  To test this pipeline, please proceed through the following steps.
 
-1. Upload the [Bio_Hansel Galaxy Workflow][] by going to **Workflow > Upload or import workflow**.
+1. Upload the [bio_hansel Galaxy Workflow][] by going to **Workflow > Upload or import workflow**.
 2. Upload the sequence reads by going to **Analyze Data** and then clicking on the **upload files from disk** icon ![upload-icon][].  Select the [test/reads][] files.  Make sure to change the **Type** of each file from **Auto-detect** to **fastqsanger**.  When uploaded you should see the following in your history.
 
     ![upload-history][]
@@ -44,7 +41,7 @@ A Galaxy workflow and some test data has been included with this documentation t
     ![dataset-pair-screen][]
 
 4. This should have properly paired your data. Enter the name of this paired dataset collection at the bottom and click **Create list**.
-5. Run the uploaded workflow by clicking on **Workflow**, clicking on the name of the workflow **Bio_Hansel (imported from uploaded file)** and clicking **Run**.  This should auto fill in the dataset collection.  At the very bottom of the screen click **Run workflow**.
+5. Run the uploaded workflow by clicking on **Workflow**, clicking on the name of the workflow **bio_hansel (imported from uploaded file)** and clicking **Run**.  This should auto fill in the dataset collection.  At the very bottom of the screen click **Run workflow**.
 6. If everything was installed correctly, you should see each of the tools run successfully (turn green).  On completion this should look like.
 
     ![workflow-success]
@@ -53,13 +50,10 @@ A Galaxy workflow and some test data has been included with this documentation t
 
 If everything was successful then all dependencies for this pipeline have been properly installed.
 
-[e9fd173fc7ee]: https://toolshed.g2.bx.psu.edu/view/nml/bio_hansel/e9fd173fc7ee
-[b815081988b5]: https://toolshed.g2.bx.psu.edu/view/nml/combine_tabular_collection/b815081988b5
-[25136a2b0cfe]: https://toolshed.g2.bx.psu.edu/view/nml/collapse_collections/25136a2b0cfe
-[661bc10b0612]: https://toolshed.g2.bx.psu.edu/view/nml/combine_json/661bc10b0612
+[4654c51dae72]: https://toolshed.g2.bx.psu.edu/view/nml/bio_hansel/4654c51dae72
 [galaxy-config]: ../../setup#step-4-modify-configuration-file
 [Galaxy Main Shed]: http://toolshed.g2.bx.psu.edu/
-[Bio_Hansel Galaxy Workflow]: ../test/bio_hansel/bio_hansel.ga
+[bio_hansel Galaxy Workflow]: ../test/bio_hansel/bio_hansel.ga
 [upload-icon]: ../test/snvphyl/images/upload-icon.jpg
 [test/reads]: ../test/bio_hansel/reads
 [upload-history]: ../test/bio_hansel/images/history.png

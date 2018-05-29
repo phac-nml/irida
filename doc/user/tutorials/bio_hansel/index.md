@@ -1,50 +1,58 @@
 ---
 layout: default
-title: "Bio_Hansel: Salmonella Subtyping"
-search_title: "Bio_Hansel: Salmonella Subtyping"
-description: "A tutorial on how to type data with Bio_Hansel"
+title: "bio_hansel: SNV Subtyping"
+search_title: "bio_hansel: SNV Subtyping"
+description: "A tutorial on how to subtype whole-genome sequencing data with bio_hansel"
 ---
 
-Subtyping *Salmonella* data with Bio_Hansel
+Subtyping *Salmonella* data with bio_hansel
 ============================================
 This is a quick tutorial on how to use IRIDA to analyze data with the bio_hansel pipeline.
 
 
-Initial Data
-============
+Tutorial Data
+=============
 
-The data for this tutorial comes from the IRIDA project directory at `/irida/doc/administrator/galaxy/pipelines/test/bio_hansel/reads`. It is assumed the sequence files in have been uploaded into an appropriate sample as described in the [Web Upload Tutorial][]. 
+The data for this tutorial comes from the EMBL-EBI ENA sequencing run sample [SRR1203042] (please download the [forward reads] and [reverse reads]). 
+It is assumed the [forward reads] and [reverse reads] in `fastq.gz` format have been uploaded into an appropriate sample as described in the [Web Upload Tutorial]. 
+
 
 Adding Samples to the Cart
 ==========================
 
 Before a pipeline can be run a set of samples and sequence read data must be selected and added to the cart. For this tutorial please select the single sample and click the **Add to Cart** button.
 
-![add-to-cart.png][]
+![](images/add-to-cart.png)
 
-Once the samples have been added to the cart, the samples can be reviewed by clicking on the **Cart** button at the top.
+Once the desired samples have been added to the cart, click the **Cart** button at the top navigation bar:
+![](images/cart-button.png)
 
-![cart-button.png][]
 
 Selecting a Pipeline
 ====================
 
 Once inside the cart, the **Select a Pipeline** button can be used to select a pipeline to run on the selected samples.
 
-![select-a-pipeline.png][]
+For this tutorial, we will select the **bio_hansel Pipeline**: 
+![](images/select-a-pipeline.png)
 
-For this tutorial, we will select the **Bio_Hansel Pipeline**.
 
 Selecting Parameters
 ====================
 
 Once the pipeline is selected, the next page provides an overview of all the input files, as well as the option to modify parameters.
 
-![bio_hansel_pipeline_screen.png][]
+![](images/bio_hansel-pipeline_launch-initial.png)
 
-We will use the default parameters. Please use the **Ready to Launch?** button to start the pipeline.
+You will be required to select a SNV subtyping scheme to use for your analysis.
+Please select the **Salmonella Heidelberg SNV Subtyping Scheme** and ensure that the **Save bio_hansel results to Project Linelist Metadata?** checkbox is checked:
 
-![ready-to-launch-button.png][]
+![](images/bio_hansel-pipeline_launch-selected_scheme-save_to_sample_metadata.png)
+
+You can leave the other parameters unmodified. 
+Please use the **Ready to Launch?** button to start the pipeline.
+
+![](images/launch.png)
 
 Once the button is selected you should see a screen showing that your pipeline has been launched.
 
@@ -54,32 +62,48 @@ Monitoring Pipeline Status
 
 To monitor the status of the launched pipeline, please select the **Analysis > Your Analyses** menu.
 
-![your-analyses-menu.png][]
+![](images/analysis.png)
 
 The will bring you to a page where you can monitor the status of each launched workflow.
 
-Clicking the pipeline name will bring you to a page for that analysis pipeline. This page will continue to refresh as the pipeline progresses through each stage.  
+Clicking the pipeline name will bring you to a page for that analysis pipeline. 
 
-Viewing the Results
-===================
 
-Once the pipeline is complete, you will see the Bio_Hansel pipeline reuslts within your browser and you will be given the option to download the results of the analysis.
+Viewing Individual Sample Results
+=================================
 
-![bio_hansel_results][]
+Once the pipeline is complete, you will be able to view the `bio_hansel` pipeline results and download the output files of the analysis.
+
+![](images/bio_hansel-analysis-details-SRR1203042.png)
+
+You can view the `bio_hansel` analysis output files:
+![](images/bio_hansel-analysis_details-SRR1203042-output-preview.png)
+
+You can view the detailed `bio_hansel` match results in a tabular view:
+![](images/bio_hansel-analysis_details-preview-match_results.png)
+
+
+Viewing Results For Multiple Samples
+====================================
+
+If you had checked the **Save bio_hansel results to Project Linelist Metadata?** checkbox on the `bio_hansel` pipeline launch page, you will be able to view the results of your analyses in the **Line List** table on the **Project** page:
+
+![](images/bio_hansel-line_list_table-3-samples.png)
+
+A **Metadata Template** (a named selection of metadata fields) with a name following the format `bio_hansel/<scheme>/<version>` will be created automatically so that you can conveniently view your `bio_hansel` results across multiple samples and analyses. 
+
 
 Interpreting the Results
 ========================
 
-For more information in interpreting the results, please see the [IRIDA Bio_Hansel Documentation][biohansel-doc] or the [Bio_Hansel GitHub page][biohansel-github]
+For more information on interpreting your `bio_hansel` results, please see:
+- the [IRIDA bio_hansel Documentation][docs] or 
+- the [bio_hansel GitHub] page.
 
+
+[SRR1203042]: https://www.ebi.ac.uk/ena/data/view/SRR1203042&display=html
+[forward reads]: ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR120/002/SRR1203042/SRR1203042_1.fastq.gz
+[reverse reads]: ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR120/002/SRR1203042/SRR1203042_2.fastq.gz
 [Web Upload Tutorial]: ../web-upload/
-[biohansel-doc]: ../../user/bio_hansel/
-[biohansel-github]: https://github.com/phac-nml/bio_hansel
-[add-to-cart.png]: images/add-to-cart.png
-[cart-button.png]: images/cart-button.png
-[select-a-pipeline.png]: images/pipeline_selection.png
-[bio_hansel_pipeline_screen.png]: images/bio_hansel_pipeline_screen.png
-[ready-to-launch-button.png]: images/launch.png
-[your-analyses-menu.png]: images/analysis.png
-[your-analyses-page.png]: images/your-analyses-page.png
-[bio_hansel_results]: images/analysis_complete.png
+[docs]: ../../user/bio_hansel/
+[bio_hansel GitHub]: https://github.com/phac-nml/bio_hansel

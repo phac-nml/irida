@@ -1,32 +1,49 @@
 ---
 layout: default
-search_title: "Using the Bio_Hansel Pipeline"
-description: "A guide on using the Bio_Hansel Pipeline."
+search_title: "About the bio_hansel Pipeline"
+description: "What can the bio_hansel Pipeline do for me and my Salmonella samples?"
 ---
 
-# Using the Bio_Hansel Pipeline
+# About the [bio_hansel] Pipeline
 
-## Pipeline Overview
+## Overview
 
-This guide describes the [Bio_Hansel][biohansel] pipeline within IRIDA. This pipeline enables rapid subtyping of *Salmonella enterica* subsp. enterica serovar Heidelberg and Enteritidis genomes using in-silico 33 bp k-mer SNP subtyping schemes. Input is provided in the form of sequence reads (in fastq format) and **Bio_Hansel** will produce output files containing the particular SNP subtypes found in the reads as well as data quality information to help guide interpretation of the results.
+The [bio_hansel] IRIDA pipeline enables rapid SNV-based subtyping of microbial organisms.
+It currently comes with two tested and validated schemes for: 
 
-## Running the Pipeline
+- *Salmonella enterica* subsp. enterica serovar Heidelberg 
+- *Salmonella enterica* subsp. enterica serovar Enteritidis 
 
-Details on running **Bio_Hansel** please see the [IRIDA/Bio_Hansel Tutorial][biohansel-tutorial]. 
+Based on the combination of SNV targeting k-mers present within an whole-genome sequencing (WGS) sample, `bio_hansel` is able to assign a hierarchical subtype, which can inform the user of the phylogentically derived subtype that a sample belongs to and what other subtypes it may be related to.
 
-## Bio_Hansel Results
+In addition to assignment of a subtype to a WGS sample, `bio_hansel` performs several quality control (QC) checks to help give you confidence in the results are obtaining. 
 
-The Bio_Hansel results page in IRIDA will look like the following.
+## Running the [bio_hansel] Pipeline
 
-![biohansel-results.png][]
+For details on running [bio_hansel] please see the [IRIDA bio_hansel tutorial][tutorial]. 
 
-Results are searchable (using the **Search** text box). Interpretation of the produced output is as follows:
+## bio_hansel Results
+
+Here is an example of the `bio_hansel` results page in IRIDA after analysis of an NCBI/ENA SRA sample [SRR1203042].
+
+![results][]
+
+What the results mean:
 
 * **Sample**: The name of the sample used within this analysis.
-* **Subtype**: The subtype calculated from the tool.
-* **QC Status**: The quality control module result from the analysis, either `PASS` or `FAIL`.
-* **QC Message**: The quality control message if there was a warning or error in the analysis.
+  - e.g. [SRR1203042] is the sample name.
+* **Scheme**: The name and version of the SNV subtyping scheme used in the analysis.
+  - e.g. `heidelberg` is the name of the scheme and `v0.5.0` is the version number.
+* **Subtype**: The hierarchical subtype predicted by `bio_hansel` for the selected SNV subtyping scheme.
+  - e.g. `2.2.1.1.2` is the subtype of [SRR1203042].
+* **Average Tile Frequency**: How often are the nucleotide tiles (k-mers) observed on average?
+  - e.g. the tiles are observed on average 27.4X in the sample. 
+* **QC Status**: QC of the results will produce a `PASS`, `WARNING` or `FAIL`.
+  - e.g. we have a QC `FAIL` for sample [SRR1203042]
+* **QC Details**:  Why did we get a QC `WARNING` or `FAIL`?
+  - e.g. we got a QC `FAIL` due to multiple reasons: too many missing tiles and a potentially mixed sample due to observing multiple incompatible subtypes.
 
-[biohansel]: https://github.com/phac-nml/bio_hansel
-[biohansel-tutorial]: ../../tutorials/bio_hansel/
-[biohansel-results.png]: images/biohansel-results.png
+[SRR1203042]: https://www.ebi.ac.uk/ena/data/view/SRR1203042&display=html
+[bio_hansel]: https://github.com/phac-nml/bio_hansel
+[tutorial]: ../../tutorials/bio_hansel/
+[results]: ../../tutorials/bio_hansel/images/bio_hansel-analysis-details-SRR1203042.png
