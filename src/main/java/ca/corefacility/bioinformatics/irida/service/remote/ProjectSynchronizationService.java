@@ -139,7 +139,7 @@ public class ProjectSynchronizationService {
 			User readBy = project.getRemoteStatus().getReadBy();
 			setAuthentication(readBy);
 
-			logger.debug("Syncing project at " + project.getRemoteStatus().getURL());
+			logger.trace("Syncing project at " + project.getRemoteStatus().getURL());
 
 			try {
 				RemoteAPI api = project.getRemoteStatus().getApi();
@@ -158,7 +158,7 @@ public class ProjectSynchronizationService {
 				// clear the context holder when you're done
 				SecurityContextHolder.clearContext();
 
-				logger.debug("Done project " + project.getRemoteStatus().getURL());
+				logger.trace("Done project " + project.getRemoteStatus().getURL());
 			}
 
 		}

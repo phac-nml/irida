@@ -2,7 +2,7 @@
     "a_galaxy_workflow": "true", 
     "annotation": "", 
     "format-version": "0.1", 
-    "name": "mentalist_call (imported from API)", 
+    "name": "MentaLiST MLST v0.1.3", 
     "steps": {
         "0": {
             "annotation": "", 
