@@ -590,7 +590,10 @@ public class AnalysisController {
 	@RequestMapping("/{submissionId}/advanced-phylo")
 	public String getAdvancedPhylogeneticVisualizationPage(@PathVariable Long submissionId, Model model) {
 
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+
 		model.addAttribute("submissionId", submissionId);
+		model.addAttribute("submission", submission);
 		return BASE + "visualizations/phylocanvas-metadata";
 	}
 

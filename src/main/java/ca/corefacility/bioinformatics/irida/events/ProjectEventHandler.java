@@ -126,7 +126,7 @@ public class ProjectEventHandler {
 					throw new IllegalArgumentException(
 							"Method annotated with @LaunchesProjectEvent(SampleAddedProjectEvent.class) must return one or more ProjectSampleJoin");
 				}
-				logger.debug("Adding multi sample " + singleElement.toString());
+				logger.trace("Adding multi sample " + singleElement.toString());
 
 				events.add(eventRepository.save(new SampleAddedProjectEvent((ProjectSampleJoin) singleElement)));
 			}
@@ -137,7 +137,7 @@ public class ProjectEventHandler {
 						"Method annotated with @LaunchesProjectEvent(DataAddedToSampleProjectEvent.class) must return one or more SampleSequenceFileJoins");
 			}
 
-			logger.debug("Adding single sample " + returnValue.toString());
+			logger.trace("Adding single sample " + returnValue.toString());
 
 			events.add(eventRepository.save(new SampleAddedProjectEvent((ProjectSampleJoin) returnValue)));
 		}
