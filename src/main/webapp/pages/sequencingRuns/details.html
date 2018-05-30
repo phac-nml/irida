@@ -6,8 +6,11 @@
     <div class="row">
         <div class="col-md-12">
             <div class="panel panel-info">
-                <div class="panel-heading">
-                    <b class="panel-title" th:text="#{sequencingruns.details.details}">Run Details</b>
+                <div class="panel-heading clearfix" ng-controller="DeleteModalCtrl as ctrl">
+                    <b class="panel-title pull-left" th:text="#{sequencingruns.details.details}">Run Details</b>
+                    <button sec:authorize="hasRole('ROLE_ADMIN')" id="remove-btn" class="btn btn-danger btn-xs pull-right"
+                            ng-click="ctrl.open()" th:text="#{form.btn.remove}">_Remove_
+                    </button>
                 </div>
                 <div class="panel-body">
                     <dl class="run-detail">
@@ -31,15 +34,15 @@
               <button class="btn btn-warning" type="button" ng-click="modal.cancel()">Cancel</button>
           </div>
       </script>
-      
+
       <script th:inline="javascript">
         var PAGE = {
-          urls: { 
+          urls: {
             remove: /*[[@{/sequencingRuns/{id}(id=${run.id})}]]*/ '/sequencingRuns',
             list: /*[[@{/sequencingRuns}]]*/ '/sequencingRuns',
           }
         };
-        
+
     	(function() {
 	        "use strict";
 
@@ -69,11 +72,11 @@
               vm.cancel = function(){
                 $uibModalInstance.dismiss('cancel');
               }
-              
+
             });
 
           angular.module("irida").requires.push(app.name);
-          
+
         })(window.angular, [angular]);
       </script>
     </th:block>

@@ -4,12 +4,8 @@
 <body>
     <div layout:fragment="page">
         <main class="col-md-9 col-md-push-3">
-            <div class="clearfix" ng-controller="DeleteModalCtrl as ctrl">
-                <h1 class="pull-left" th:text="#{sequencingruns.page-header(${run.getId()})}">_RUN_LABEL></h1>
-                <button sec:authorize="hasRole('ROLE_ADMIN')" id="remove-btn" class="btn btn-danger btn-small pull-right"
-                        ng-click="ctrl.open()" th:text="#{form.btn.remove}">_Remove_
-                </button>
-            </div>
+            <h1 th:text="#{sequencingruns.page-header(${run.getId()})}">_RUN_LABEL></h1>
+
             <ul class="nav nav-tabs subnav" th:with="baseLink=@{/sequencingRuns/{id}(id=${run.getId()})}">
                 <li th:class="${activeNav} == 'details' ? 'active'">
                     <a th:href="${baseLink}" href="#" th:text="#{samples.nav.details}">
