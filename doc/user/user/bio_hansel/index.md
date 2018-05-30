@@ -24,9 +24,30 @@ For details on running [bio_hansel] please see the [IRIDA bio_hansel tutorial][t
 
 ## bio_hansel Results
 
+### Example QC Passing Results
+
+Here is an example of the `bio_hansel` results page in IRIDA after analysis of an NCBI/ENA SRA sample [SRR5646583].
+
+![](images/bio_hansel-passing-results-SRR5646583.png)
+
+What the results mean:
+
+* **Sample**: The name of the sample used within this analysis.
+  - e.g. [SRR5646583] is the sample name.
+* **Scheme**: The name and version of the SNV subtyping scheme used in the analysis.
+  - e.g. `heidelberg` is the name of the scheme and `v0.5.0` is the version number.
+* **Subtype**: The hierarchical subtype predicted by `bio_hansel` for the selected SNV subtyping scheme.
+  - e.g. `2.2.1.1.1.1` is the subtype of [SRR5646583].
+* **Average Tile Frequency**: How often are the nucleotide tiles (k-mers) observed on average?
+  - e.g. the tiles are observed on average 42.6X in the sample. 
+* **QC Status**: QC of the results will produce a `PASS`, `WARNING` or `FAIL`.
+  - e.g. we have a QC `PASS` for sample [SRR5646583]
+
+### Example QC Failing Results
+
 Here is an example of the `bio_hansel` results page in IRIDA after analysis of an NCBI/ENA SRA sample [SRR1203042].
 
-![results][]
+![](images/bio_hansel-failing-results-SRR1203042.png)
 
 What the results mean:
 
@@ -43,7 +64,7 @@ What the results mean:
 * **QC Details**:  Why did we get a QC `WARNING` or `FAIL`?
   - e.g. we got a QC `FAIL` due to multiple reasons: too many missing tiles and a potentially mixed sample due to observing multiple incompatible subtypes.
 
+[SRR5646583]: https://www.ebi.ac.uk/ena/data/view/SRR5646583&display=html
 [SRR1203042]: https://www.ebi.ac.uk/ena/data/view/SRR1203042&display=html
 [bio_hansel]: https://github.com/phac-nml/bio_hansel
 [tutorial]: ../../tutorials/bio_hansel/
-[results]: ../../tutorials/bio_hansel/images/bio_hansel-analysis-details-SRR1203042.png

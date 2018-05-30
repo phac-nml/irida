@@ -2,7 +2,7 @@
 <iridaWorkflow>
   <id>0e8738e6-2aeb-4627-9d6e-15ae32f21c44</id>
   <name>bio_hansel</name>
-  <version>0.1.0</version>
+  <version>2.0.0</version>
   <analysisType>bio_hansel</analysisType>
   <inputs>
     <sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>

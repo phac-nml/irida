@@ -74,12 +74,12 @@ function toHtml(vm) {
     .join("");
 
   const qcMsgTableRow =
-    msgHtml > 0
-      ? `<tr>
-    <th>${i18n.qc_message}</th>
-    <td><ul>${msgHtml}</ul></td>
-  </tr>`
-      : "";
+    qc_message === ""
+      ? ""
+      : `<tr>
+      <th>${i18n.qc_message}</th>
+      <td><ul>${msgHtml}</ul></td>
+    </tr>`;
 
   return `
   <table class="table table-bordered table-condensed">

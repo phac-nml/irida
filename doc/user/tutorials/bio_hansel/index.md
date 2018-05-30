@@ -14,6 +14,7 @@ Tutorial Data
 =============
 
 The data for this tutorial comes from the EMBL-EBI ENA sequencing run sample [SRR1203042] (please download the [forward reads] and [reverse reads]). 
+
 It is assumed the [forward reads] and [reverse reads] in `fastq.gz` format have been uploaded into an appropriate sample as described in the [Web Upload Tutorial]. 
 
 
@@ -25,6 +26,7 @@ Before a pipeline can be run a set of samples and sequence read data must be sel
 ![](images/add-to-cart.png)
 
 Once the desired samples have been added to the cart, click the **Cart** button at the top navigation bar:
+
 ![](images/cart-button.png)
 
 
@@ -40,17 +42,15 @@ For this tutorial, we will select the **bio_hansel Pipeline**:
 Selecting Parameters
 ====================
 
-Once the pipeline is selected, the next page provides an overview of all the input files, as well as the option to modify parameters.
+Once the pipeline is selected, the next page provides an overview of all the input files, as well as the option to modify parameters. You will be required to **select a SNV subtyping scheme** to use for your analysis.
 
 ![](images/bio_hansel-pipeline_launch-initial.png)
 
-You will be required to select a SNV subtyping scheme to use for your analysis.
 Please select the **Salmonella Heidelberg SNV Subtyping Scheme** and ensure that the **Save bio_hansel results to Project Linelist Metadata?** checkbox is checked:
 
 ![](images/bio_hansel-pipeline_launch-selected_scheme-save_to_sample_metadata.png)
 
-You can leave the other parameters unmodified. 
-Please use the **Ready to Launch?** button to start the pipeline.
+You can leave the other parameters unmodified. Please use the **Ready to Launch?** button to start the pipeline.
 
 ![](images/launch.png)
 
@@ -77,9 +77,11 @@ Once the pipeline is complete, you will be able to view the `bio_hansel` pipelin
 ![](images/bio_hansel-analysis-details-SRR1203042.png)
 
 You can view the `bio_hansel` analysis output files:
+
 ![](images/bio_hansel-analysis_details-SRR1203042-output-preview.png)
 
 You can view the detailed `bio_hansel` match results in a tabular view:
+
 ![](images/bio_hansel-analysis_details-preview-match_results.png)
 
 
@@ -97,6 +99,7 @@ Interpreting the Results
 ========================
 
 For more information on interpreting your `bio_hansel` results, please see:
+
 - the [IRIDA bio_hansel Documentation][docs] or 
 - the [bio_hansel GitHub] page.
 

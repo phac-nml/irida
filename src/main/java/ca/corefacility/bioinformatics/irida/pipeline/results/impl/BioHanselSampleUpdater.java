@@ -89,6 +89,13 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 	 */
 	@Override
 	public void update(Collection<Sample> samples, AnalysisSubmission analysis) throws PostProcessingException {
+		if (samples.size() != 1) {
+			throw new PostProcessingException(
+					"Expected one sample; got '" + samples.size() + "' for analysis [id=" + analysis.getId() + "]");
+		}
+		final Sample sample = samples.iterator()
+				.next();
+
 		AnalysisOutputFile aof = analysis.getAnalysis()
 				.getAnalysisOutputFile(BIO_HANSEL_RESULTS_FILE);
 
@@ -127,12 +134,11 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 				});
 				Map<MetadataTemplateField, MetadataEntry> metadataMap = metadataTemplateService.getMetadataMap(
 						stringEntries);
-				samples.forEach(s -> {
-					s.mergeMetadata(metadataMap);
-					sampleService.updateFields(s.getId(), ImmutableMap.of("metadata", s.getMetadata()));
-				});
 
-				createBioHanselMetadataTemplateForSampleProjects(samples, baseNamespace, templateNamespacedFields,
+				sample.mergeMetadata(metadataMap);
+				sampleService.updateFields(sample.getId(), ImmutableMap.of("metadata", sample.getMetadata()));
+
+				createBioHanselMetadataTemplateForSampleProjects(sample, baseNamespace, templateNamespacedFields,
 						metadataMap);
 			} else {
 				throw new PostProcessingException(filePath + " not correctly formatted. Expected valid JSON.");
@@ -146,33 +152,30 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 	/**
 	 * Create a bio_hansel {@link MetadataTemplate} for each {@link Project} each Sample belongs to if one does not already exist.
 	 *
-	 * @param samples     {@link Sample}s for which a bio_hansel {@link MetadataTemplate} will be added to all {@link Project}s that the {@link Sample} belongs to, if one does not already exist.
+	 * @param sample      {@link Sample}s for which a bio_hansel {@link MetadataTemplate} will be added to all {@link Project}s that the {@link Sample} belongs to, if one does not already exist.
 	 * @param tmplName    {@link MetadataTemplate} label/name.
 	 * @param tmplFields  Ordered list of {@link MetadataTemplateField} labels
 	 * @param metadataMap Metadata field to entry map for fields and entries that have been saved to the DB.
 	 */
-	private void createBioHanselMetadataTemplateForSampleProjects(Collection<Sample> samples, String tmplName,
+	private void createBioHanselMetadataTemplateForSampleProjects(Sample sample, String tmplName,
 			List<String> tmplFields, Map<MetadataTemplateField, MetadataEntry> metadataMap) {
-		final Set<Project> samplesProjects = getProjects(samples);
+		final List<Project> projects = getProjects(sample);
 		final Map<String, MetadataTemplateField> fieldsMap = metadataMap.keySet()
 				.stream()
 				.collect(Collectors.toMap(MetadataTemplateField::getLabel, x -> x));
 		final List<MetadataTemplateField> fields = tmplFields.stream()
 				.map(fieldsMap::get)
 				.collect(Collectors.toList());
-		for (Project p : samplesProjects) {
+		for (Project p : projects) {
 			createTemplate(p, tmplName, fields);
 		}
 	}
 
-	private Set<Project> getProjects(Collection<Sample> samples) {
-		return samples.stream()
-				.map(s -> projectService.getProjectsForSample(s)
-						.stream()
-						.map(Join::getSubject)
-						.collect(Collectors.toList()))
-				.flatMap(Collection::stream)
-				.collect(Collectors.toSet());
+	private List<Project> getProjects(Sample sample) {
+		return projectService.getProjectsForSample(sample)
+				.stream()
+				.map(Join::getSubject)
+				.collect(Collectors.toList());
 	}
 
 	/**
