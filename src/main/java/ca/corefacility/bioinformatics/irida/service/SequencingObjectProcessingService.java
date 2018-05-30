@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.management.ManagementFactory;
 import java.util.Iterator;
@@ -47,7 +46,6 @@ public class SequencingObjectProcessingService {
 	/**
 	 * Process new {@link SequencingObject}s uploaded and find new sequences to process next time around
 	 */
-	@Transactional
 	public synchronized void runProcessingJob() {
 		processFiles();
 
