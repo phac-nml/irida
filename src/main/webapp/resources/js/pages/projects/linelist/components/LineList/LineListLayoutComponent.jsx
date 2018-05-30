@@ -5,7 +5,7 @@ import { ToolPanelContainer } from "./ToolPanel";
 
 const { Sider, Content } = Layout;
 
-export class TableLayoutComponent extends React.Component {
+export class LineListLayoutComponent extends React.Component {
   state = {
     collapsed: false
   };

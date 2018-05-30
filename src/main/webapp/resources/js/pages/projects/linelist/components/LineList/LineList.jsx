@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Loader } from "../Loader";
-import { TableLayoutComponent } from "./TableLayoutComponent";
+import { LineListLayoutComponent } from "./LineListLayoutComponent";
 
 /**
  * Container class for the higher level states of the page:
@@ -19,7 +19,7 @@ export function LineList(props) {
     return <h3>A major error has occurred! Better find a 💣 shelter!</h3>;
   }
 
-  return <TableLayoutComponent />;
+  return <LineListLayoutComponent />;
 }
 
 LineList.propTypes = {
