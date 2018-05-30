@@ -49,7 +49,7 @@ function toHtml(vm) {
   } = vm.results;
   const { i18n } = vm;
 
-  const QC_CLASS = { FAIL: "danger", WARNING: "warning", SUCCESS: "success" };
+  const QC_CLASS = { FAIL: "danger", WARNING: "warning", PASS: "success" };
 
   const msgs = qc_message.split("|");
 
@@ -65,8 +65,21 @@ function toHtml(vm) {
 
   const msgHtml = msgs
     .map(trim)
-    .map(msg => `<li class="${qcMsgClass(msg)}"><span>${msg}</span></li>`)
+    .map(
+      msg =>
+        msg.length
+          ? `<li class="${qcMsgClass(msg)}"><span>${msg}</span></li>`
+          : ""
+    )
     .join("");
+
+  const qcMsgTableRow =
+    msgHtml > 0
+      ? `<tr>
+    <th>${i18n.qc_message}</th>
+    <td><ul>${msgHtml}</ul></td>
+  </tr>`
+      : "";
 
   return `
   <table class="table table-bordered table-condensed">
@@ -93,10 +106,7 @@ function toHtml(vm) {
         <th>${i18n.qc_status}</th>
         <td class="${QC_CLASS[qc_status]}">${qc_status}</td>
       </tr>
-      <tr>
-        <th>${i18n.qc_message}</th>
-        <td><ul>${msgHtml}</ul></td>
-      </tr>
+      ${qcMsgTableRow}
     </tbody>
   </table>`;
 }
