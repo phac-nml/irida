@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web;
 
+import java.util.Locale;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
@@ -36,7 +38,7 @@ public class LineListControllerTest {
 	@Test
 	public void testGetProjectMetadataTemplateFields() {
 		long projectId = 1L;
-		lineListController.getProjectMetadataTemplateFields(projectId);
+		lineListController.getProjectMetadataTemplateFields(projectId, Locale.ENGLISH);
 		verify(projectService, times(1)).read(projectId);
 		verify(metadataTemplateService, times(1)).getMetadataFieldsForProject(any(Project.class));
 	}

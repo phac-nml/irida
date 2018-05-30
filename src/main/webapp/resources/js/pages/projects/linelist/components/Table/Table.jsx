@@ -122,7 +122,9 @@ export class Table extends React.Component {
     Sample name always needs to be first so let's take it off and re-add
     it after we get everything sorted.
      */
-    const sampleIndex = columnState.findIndex(c => c.colId === "sampleName");
+    const sampleIndex = columnState.findIndex(
+      c => c.colId === i18n.linelist.agGrid.sampleName
+    );
     const sample = columnState.splice(sampleIndex, 1)[0];
 
     /*
@@ -168,14 +170,16 @@ export class Table extends React.Component {
    */
   onColumnDropped = () => {
     const colOrder = this.columnApi.getColumnState();
-  
+
     /*
     Remove the hidden ones and just get the field identifiers
     and remove the sample name column since this is just for the table.
      */
     let list = colOrder
       .map(c => ({ label: c.colId, hide: c.hide }))
-      .filter(c => (c.label !== "sampleName" && c.label !== "sampleId"));
+      .filter(
+        c => c.label !== i18n.linelist.agGrid.sampleName && c.label !== "sampleId"
+      );
 
     // Don't let the table perform a modified update since it handles it on its own
     this.colDropped = true;
@@ -192,7 +196,7 @@ export class Table extends React.Component {
       state.entries = entries.toJS().map(entry => {
         const metadata = entry.metadata;
         metadata.sampleId = entry.id;
-        metadata.sampleName = entry.label;
+        metadata[i18n.linelist.agGrid.sampleName] = entry.label;
         return metadata;
       });
     }

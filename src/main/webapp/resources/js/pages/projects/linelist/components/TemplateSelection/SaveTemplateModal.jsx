@@ -6,41 +6,6 @@ import { fromJS } from "immutable";
 
 const { i18n } = window.PAGE;
 
-/*
-Internationalized messages for state of validation for the template name.
- */
-const validations = {
-  empty: {
-    status: "",
-    message: "",
-    valid: false,
-    existing: false,
-    overwrite: false
-  },
-  valid: { status: "success", message: "", valid: true, existing: false },
-  required: {
-    existing: false,
-    status: "error",
-    message: i18n.linelist.templates.saveModal.required,
-    valid: false,
-    overwrite: false
-  },
-  length: {
-    existing: false,
-    status: "error",
-    message: i18n.linelist.templates.saveModal.length,
-    valid: false,
-    overwrite: false
-  },
-  nameExists: {
-    existing: true,
-    status: "error",
-    message: i18n.linelist.templates.saveModal.nameExists,
-    valid: false,
-    overwrite: false
-  }
-};
-
 /**
  * Custom footer for the SaveTemplateModal allowing the save button to
  * be disabled if the Template name is not valid.
@@ -58,10 +23,12 @@ function Footer(props) {
 
 const defaultState = {
   name: "",
+  status: "",
+  message: "",
   existing: false,
   names: [],
-  ...validations.empty,
-  overwrite: false
+  overwrite: false,
+  valid: false
 };
 
 /**
@@ -70,6 +37,52 @@ const defaultState = {
  */
 export class SaveTemplateModal extends React.Component {
   state = defaultState;
+
+  validations = [
+    {
+      type: "required",
+      fn: name => name.length === 0,
+      state: {
+        existing: false,
+        status: "error",
+        message: i18n.linelist.templates.saveModal.required,
+        valid: false,
+        overwrite: false
+      }
+    },
+    {
+      type: "length",
+      fn: name => name.length < 5,
+      state: {
+        existing: false,
+        status: "error",
+        message: i18n.linelist.templates.saveModal.length,
+        valid: false,
+        overwrite: false
+      }
+    },
+    {
+      type: "nameExists",
+      fn: name => this.state.names.includes(name),
+      state: {
+        existing: true,
+        status: "error",
+        message: i18n.linelist.templates.saveModal.nameExists,
+        valid: false,
+        overwrite: false
+      }
+    },
+    {
+      type: "valid",
+      fn: name => {
+        const names = this.state._names.toJS();
+        names.unshift(name);
+        this.setState({ names });
+        return true;
+      },
+      state: { status: "success", message: "", valid: true, existing: false }
+    }
+  ];
 
   constructor(props) {
     super(props);
@@ -123,32 +136,11 @@ export class SaveTemplateModal extends React.Component {
 
   validateName = name => {
     name = name.trim();
-    if (name.length === 0) {
-      /*
-      All templates require a name.
-      Save button should be disabled.
-       */
-      this.setState({ name, ...validations.required });
-    } else if (name.length < 5) {
-      /*
-      Template names should be at least 5 characters long.
-      Save button should be disabled.
-       */
-      this.setState({ name, ...validations.length });
-    } else if (this.state.names.includes(name)) {
-      /*
-      A template already has this name.  There cannot be 2 templates with the
-      same name.
-       */
-      this.setState({ name, ...validations.nameExists }, () => console.log(this.state));
-    } else {
-      /*
-      New name, add it to the top of a new  list (if it is not a new list
-      it the list grows with every letter types === BAD)
-       */
-      const names = this.state._names.toJS();
-      names.unshift(name);
-      this.setState({ name, names, ...validations.valid });
+    for (const validation of this.validations) {
+      if (validation.fn(name)) {
+        this.setState({ name, ...validation.state });
+        break;
+      }
     }
   };
 
