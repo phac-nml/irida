@@ -36,9 +36,7 @@ public class SequencingObjectRepositoryImpl implements SequencingObjectRepositor
 		int changed = query.executeUpdate();
 
 		entityManager.flush();
-
-		entityManager.close();
-
+		
 		return changed;
 	}
 }
