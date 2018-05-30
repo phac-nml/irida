@@ -1,17 +1,13 @@
-.announcement-item,
-.announcement-icon,
-.announcement-content,
-.announcement-date,
-.announcement-time {
-  display: flex;
-  align-items: center;
+.announcement-info {
+  text-align: right;
+  line-height: 40px;
 }
+
 .announcement-icon .fa {
   font-size: 1.6em;
 }
 .announcement-date {
-  justify-content: flex-end;
-  flex: 1 0 90px;
+  display: inline-block;
   color: #666;
   font-size: 0.7em;
   text-align: right;
@@ -20,9 +16,15 @@
   line-height: 28px;
 }
 .announcement-content {
-  flex-grow: 1;
   line-height: 28px;
-  align-content: stretch;
+  h1 {
+    font-size: 1.6rem;
+    font-weight: bolder;
+  }
+  h2 {
+    font-size: 1.3rem;
+    font-weight: bolder;
+  }
 }
 .announcement-markread {
   margin-left: 5px;

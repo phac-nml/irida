@@ -2,19 +2,21 @@
     <div class="form-group" ng-controller="AnnouncementItemCtrl as aCtrl">
         <ul class="list-group" id="announcement-list">
             <li class="list-group-item announcement-item" th:each="ann : ${announcements}">
-                <div class="announcement-content">
-                    <marked th:inline="text">[[${ann.getMessage()}]]</marked>
-                </div>
-                <div class="announcement-date" th:with="dateFormat=#{locale.date.long}" >
+                <div class="announcement-info">
+                    <div class="announcement-date" th:with="dateFormat=#{locale.date.long}">
                     <span uib-tooltip-placement="top"
-                         data:uib-tooltip="${#dates.format(ann.getCreatedDate(), dateFormat)}"
-                         data:livestamp="${ann.createdDate}"></span>
-                </div>
-                <div class='btn-group pull-right announcement-markread'>
+                          data:uib-tooltip="${#dates.format(ann.getCreatedDate(), dateFormat)}"
+                          data:livestamp="${ann.createdDate}"></span>
+                    </div>
+                    <div class='btn-group announcement-markread'>
                     <span class="fa fa-check btn btn-default btn-xs pull-right"
                           data:uib-tooltip="#{announcement.markRead}"
                           tooltip-placement="top"
                           th:attr="ng-click='markRead(\'' + ${ann.getId()} + '\', $event);'"></span>
+                    </div>
+                </div>
+                <div class="announcement-content">
+                    <marked th:inline="text">[[${ann.getMessage()}]]</marked>
                 </div>
             </li>
             <li class="list-group-item" th:if="${#lists.isEmpty(announcements)}" th:text="#{announcement.no-new}"></li>
