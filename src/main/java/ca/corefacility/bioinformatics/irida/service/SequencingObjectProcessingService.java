@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
+import org.springframework.dao.CannotAcquireLockException;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -67,13 +68,21 @@ public class SequencingObjectProcessingService {
 
 		// individually loop through and mark the ones we're going to process.  Looping individually so 2 processes are less likely to write at the same time.
 		Iterator<SequencingObject> iterator = toProcess.iterator();
-		for (int i = 0; i < queueSpace && iterator.hasNext(); i++) {
+
+		while (queueSpace > 0 && iterator.hasNext()) {
 			SequencingObject sequencingObject = iterator.next();
 
 			logger.trace("File processor " + machineString + " is processing file " + sequencingObject.getId());
 
-			sequencingObjectRepository.markFileProcessor(sequencingObject.getId(), machineString,
-					SequencingObject.ProcessingState.QUEUED);
+			try {
+				sequencingObjectRepository.markFileProcessor(sequencingObject.getId(), machineString,
+						SequencingObject.ProcessingState.QUEUED);
+
+				queueSpace--;
+			} catch (CannotAcquireLockException ex) {
+				//If we can't get the lock, another processor is trying to pick up this file.  Let them have it.
+				logger.debug("Couldn't get transaction lock to mark file " + sequencingObject.getId());
+			}
 		}
 	}
 
