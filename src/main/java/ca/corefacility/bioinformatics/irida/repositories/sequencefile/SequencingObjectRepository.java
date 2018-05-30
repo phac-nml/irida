@@ -15,7 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Repository for storing and retrieving {@link SequencingObject}s
  */
-public interface SequencingObjectRepository extends IridaJpaRepository<SequencingObject, Long> {
+public interface SequencingObjectRepository
+		extends SequencingObjectRepositoryCustom, IridaJpaRepository<SequencingObject, Long> {
 
 	/**
 	 * Get the {@link SequencingObject}s for a given {@link SequencingRun}
@@ -56,16 +57,4 @@ public interface SequencingObjectRepository extends IridaJpaRepository<Sequencin
 	@Query("FROM SequencingObject f where f.processingState = ?1 AND f.fileProcessor = ?2")
 	public List<SequencingObject> getSequencingObjectsWithProcessingStateAndProcessor(
 			SequencingObject.ProcessingState processingState, String processor);
-
-	/**
-	 * Update a sequencing object's file processing state with the given status
-	 *
-	 * @param objectId        ID of the sequencing object
-	 * @param processor       File processor id string to set
-	 * @param processingState processing state to set
-	 */
-	@Transactional
-	@Modifying(clearAutomatically = true)
-	@Query("UPDATE SequencingObject f SET f.processingState = ?3, f.fileProcessor = ?2 WHERE f.id = ?1 AND f.fileProcessor = 'NULL'")
-	public void markFileProcessor(Long objectId, String processor, SequencingObject.ProcessingState processingState);
 }

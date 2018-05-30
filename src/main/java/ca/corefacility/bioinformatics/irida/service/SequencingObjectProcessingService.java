@@ -59,6 +59,8 @@ public class SequencingObjectProcessingService {
 		//check our queue space
 		int queueSpace = fileProcessingChainExecutor.getCorePoolSize() - fileProcessingChainExecutor.getActiveCount();
 
+		logger.trace("Processor " + machineString + " + has queuespace: " + queueSpace);
+
 		//check for any unprocessed files
 		List<SequencingObject> toProcess = sequencingObjectRepository
 				.getSequencingObjectsWithProcessingState(SequencingObject.ProcessingState.UNPROCESSED);
@@ -67,6 +69,8 @@ public class SequencingObjectProcessingService {
 		Iterator<SequencingObject> iterator = toProcess.iterator();
 		for (int i = 0; i < queueSpace && iterator.hasNext(); i++) {
 			SequencingObject sequencingObject = iterator.next();
+
+			logger.trace("File processor " + machineString + " is processing file " + sequencingObject.getId());
 
 			sequencingObjectRepository.markFileProcessor(sequencingObject.getId(), machineString,
 					SequencingObject.ProcessingState.QUEUED);
