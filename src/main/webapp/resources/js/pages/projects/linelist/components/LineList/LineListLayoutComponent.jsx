@@ -1,7 +1,7 @@
 import React from "react";
 import { Layout, Menu, Icon } from "antd";
-import { TableContainer } from "./Table";
-import { ToolPanelContainer } from "./ToolPanel";
+import { TableContainer } from "../Table";
+import { ToolPanelContainer } from "../ToolPanel";
 
 const { Sider, Content } = Layout;
 

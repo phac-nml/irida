@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 import { Table } from "./Table";
-import { actions } from "../../../reducers/templates";
+import { actions } from "../../reducers/templates";
 
 const mapStateToProps = state => ({
   fields: state.fields.get("fields"),

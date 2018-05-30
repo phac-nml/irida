@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 import { ToolPanel } from "./ToolPanel";
-import { actions } from "../../../reducers/templates";
+import { actions } from "../../reducers/templates";
 
 const mapStateToProps = state => ({
   templates: state.templates.get("templates"),

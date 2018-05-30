@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import ImmutablePropTypes from "react-immutable-proptypes";
 import { SaveTemplateModal } from "./SaveTemplateModal";
-import { TemplateSelect } from "./TemplateSelect";
+import { TemplateSelect } from "../TemplateSelect";
 
 /**
  * This component is responsible for rendering all components that handle
