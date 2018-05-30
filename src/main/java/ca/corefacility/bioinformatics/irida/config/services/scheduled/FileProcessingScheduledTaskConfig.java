@@ -19,6 +19,6 @@ public class FileProcessingScheduledTaskConfig {
 	 */
 	@Scheduled(fixedDelay = 5000)
 	public void processFiles() {
-		fileProcessingService.findFilesToProcess();
+		fileProcessingService.runProcessingJob();
 	}
 }
