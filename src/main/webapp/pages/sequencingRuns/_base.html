@@ -2,6 +2,9 @@
 <html
         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
         data-layout-decorate="~{template/page}">
+<head>
+    <title th:text="#{sequencingruns.page-header(${run.getId()})}">_Run_</title>
+</head>
 <body>
 
 <div layout:fragment="page">
