@@ -18,7 +18,7 @@ To install these tools please proceed through the following steps.
 
 ## Step 1: Galaxy Conda Setup
 
-Galaxy makes use of [Conda][conda] to automatically install the dependencies for bio_hansel.  Please verify that the version of Galaxy is >= v16.01 and that you have conda version >= 4.3. You can upgrade conda using `conda update conda`.  Make sure that Galaxy has been setup to use conda (by modifying the appropriate configuration settings, see [here][galaxy-config] for additional details.
+Galaxy makes use of [Conda][conda] to automatically install the dependencies for bio_hansel.  Please verify that the version of Galaxy is >= v16.01 and that you have conda version >= 4.3. You can upgrade conda using `conda update conda`.  Make sure that Galaxy has been setup to use conda by modifying the appropriate configuration settings, see [here][galaxy-config] for additional details.
 
 
 ## Step 2: Install Galaxy Tools
