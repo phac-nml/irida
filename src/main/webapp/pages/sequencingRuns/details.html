@@ -7,15 +7,6 @@
 <body>
     <main layout:fragment="main">
     <div class="row">
-        <div class="col-md-12" ng-controller="DeleteModalCtrl as ctrl">
-          <h1 role="heading">
-            <th:block th:text="#{sequencingruns.details.title(${run.id})}">__TITLE__</th:block>
-            <button sec:authorize="hasRole('ROLE_ADMIN')" id="remove-btn" class="btn btn-danger pull-right"  ng-click="ctrl.open()" th:text="#{form.btn.remove}">_Remove_</button>
-            
-          </h1>
-        </div>
-    </div>
-    <div class="row">
         <div class="col-md-12">
             <div class="panel panel-info">
                 <div class="panel-heading">
