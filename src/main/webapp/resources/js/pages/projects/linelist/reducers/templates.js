@@ -73,6 +73,11 @@ export const reducer = (state = initialState, action = {}) => {
     case types.SAVE_TEMPLATE:
       return state.set("saving", true);
     case types.SAVED_TEMPLATE:
+      // Clear modifications to the current template.
+      state = state.setIn(
+        ["templates", state.get("current"), "modified"],
+        List()
+      );
       let template = action.template;
       template.modified = [];
       let index = state

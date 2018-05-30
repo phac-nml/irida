@@ -140,7 +140,7 @@ export class SaveTemplateModal extends React.Component {
       A template already has this name.  There cannot be 2 templates with the
       same name.
        */
-      this.setState({ name, ...validations.nameExists });
+      this.setState({ name, ...validations.nameExists }, () => console.log(this.state));
     } else {
       /*
       New name, add it to the top of a new  list (if it is not a new list
