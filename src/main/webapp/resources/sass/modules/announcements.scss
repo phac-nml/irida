@@ -1,13 +1,17 @@
-.announcement-info {
-  text-align: right;
-  line-height: 40px;
+.announcement-item,
+.announcement-icon,
+.announcement-content,
+.announcement-date,
+.announcement-time {
+  display: flex;
+  align-items: center;
 }
-
 .announcement-icon .fa {
   font-size: 1.6em;
 }
 .announcement-date {
-  display: inline-block;
+  justify-content: flex-end;
+  flex: 1 0 90px;
   color: #666;
   font-size: 0.7em;
   text-align: right;
@@ -16,15 +20,9 @@
   line-height: 28px;
 }
 .announcement-content {
+  flex-grow: 1;
   line-height: 28px;
-  h1 {
-    font-size: 1.6rem;
-    font-weight: bolder;
-  }
-  h2 {
-    font-size: 1.3rem;
-    font-weight: bolder;
-  }
+  align-content: stretch;
 }
 .announcement-markread {
   margin-left: 5px;
