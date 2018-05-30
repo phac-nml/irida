@@ -100,6 +100,7 @@ public class LineListController {
 	 *
 	 * @param template  {@link UIMetadataTemplate}
 	 * @param projectId {@link Long} project identifier
+	 * @param response {@link HttpServletResponse}
 	 * @return saved or updated {@link UIMetadataTemplate}
 	 */
 	@RequestMapping(value = "/templates", method = RequestMethod.POST)
