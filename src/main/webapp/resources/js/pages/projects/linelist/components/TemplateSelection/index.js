@@ -1,1 +1,1 @@
-export { TemplatesContainer } from "./TemplatesContainer";
+export { TemplatesContainer } from "../TemplateSelect/TemplatesContainer";

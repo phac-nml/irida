@@ -1,6 +1,6 @@
 import React from "react";
 import { Checkbox } from "antd";
-import { TemplatesContainer } from "../Templates/index";
+import { TemplatesContainer } from "../TemplateSelect";
 
 /**
  * Use to hold the column selection in a tool panel to the right of the
@@ -47,7 +47,7 @@ export class ToolPanel extends React.Component {
         <TemplatesContainer />
         <div className="ag-grid-tool-panel--inner">
           {this.state.fields.map((f, index) => (
-            <div key={index} style={{ display: "block", width: 260 }}>
+            <div key={index} className="field-checkbox">
               <Checkbox
                 value={index}
                 checked={!f.hide}

@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 import { actions } from "../../reducers/templates";
-import { Templates } from "./Templates";
+import { Templates } from "../TemplateSelection/Templates";
 
 const mapStateToProps = state => ({
   templates: state.templates.get("templates"),

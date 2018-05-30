@@ -56,19 +56,20 @@ function Footer(props) {
   );
 }
 
+const defaultState = {
+  name: "",
+  existing: false,
+  names: [],
+  ...validations.empty,
+  overwrite: false
+};
+
 /**
  * Component to render a [antd Modal]{@link https://ant.design/components/modal/}
  * for save a new Metadata Template.
  */
 export class SaveTemplateModal extends React.Component {
-  state = {
-    name: "",
-    existing: false,
-    names: [],
-    status: "",
-    message: "",
-    overwrite: false
-  };
+  state = defaultState;
 
   constructor(props) {
     super(props);
@@ -76,20 +77,7 @@ export class SaveTemplateModal extends React.Component {
 
   static getDerivedStateFromProps(props, state) {
     if (typeof props.template !== "undefined") {
-      if (props.template.id > 0) {
-        state.name = props.template.name;
-        Object.assign(state, {
-          editName: false,
-          fromTemplate: true
-        });
-      } else {
-        state.name = "";
-        Object.assign(state, {
-          editName: true,
-          fromTemplate: false,
-          ...validations.empty
-        });
-      }
+      Object.assign(state, defaultState);
     }
 
     if (props.templates.size > 0) {
@@ -115,7 +103,6 @@ export class SaveTemplateModal extends React.Component {
     const overwrite = this.state.overwrite;
     let id = undefined;
 
-    console.log(fields, name, overwrite);
     if (overwrite) {
       // Get the template to overwrite because we need its id.
       const t = this.props.templates.find(t => t.get("name") === name);
@@ -155,6 +142,10 @@ export class SaveTemplateModal extends React.Component {
        */
       this.setState({ name, ...validations.nameExists });
     } else {
+      /*
+      New name, add it to the top of a new  list (if it is not a new list
+      it the list grows with every letter types === BAD)
+       */
       const names = this.state._names.toJS();
       names.unshift(name);
       this.setState({ name, names, ...validations.valid });
