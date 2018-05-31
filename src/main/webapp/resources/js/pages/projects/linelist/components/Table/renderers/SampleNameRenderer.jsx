@@ -1,8 +1,9 @@
-import React, { Component } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 
 const { BASE_URL } = window.TL;
-export class SampleNameRenderer extends Component {
+
+export class SampleNameRenderer extends React.Component {
   constructor(props) {
     super(props);
     this.href = `${BASE_URL}samples/${Number(props.data.sampleId)}`;
@@ -18,8 +19,6 @@ export class SampleNameRenderer extends Component {
 }
 
 SampleNameRenderer.propTypes = {
-  data: PropTypes.shape({
-    sampleId: PropTypes.string.isRequired
-  }),
+  data: PropTypes.object.isRequired,
   value: PropTypes.string.isRequired
 };
