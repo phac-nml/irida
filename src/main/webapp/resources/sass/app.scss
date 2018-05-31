@@ -10,7 +10,6 @@
 @import "components/cart";
 @import "components/forms";
 @import "components/modals";
-@import "components/navbar";
 @import "components/panels";
 @import "components/sidenav";
 @import "components/tables";
@@ -92,6 +91,15 @@ body {
 /****************************************************************************************
 * MAIN NAVIGATION
 *****************************************************************************************/
+.top-navigation {
+  margin-bottom: 0;
+  padding-right: 15px !important;
+}
+
+.body-content {
+  padding-top: 1rem;
+}
+
 .navbar-collapse {
   background-color: #222222;
 }
@@ -121,8 +129,7 @@ body {
 
 // Gravatar
 .nav-gravatar-wrapper {
-  margin-right: 15px;
-  padding: 14px 15px !important;
+  padding-right: 15px !important;
 }
 .nav-gravatar {
   border-radius: 50%;
