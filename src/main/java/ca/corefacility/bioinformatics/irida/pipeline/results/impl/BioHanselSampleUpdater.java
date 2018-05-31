@@ -79,12 +79,12 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 	}
 
 	/**
-	 * Add bio_hansel results to the metadata of the given {@link Sample}s.
+	 * Add bio_hansel results to the metadata of the given {@link Sample}.
 	 * <p>
-	 * Create a bio_hansel {@link MetadataTemplate} for each {@link Project} for each {@link Sample} if one doesn't exist.
+	 * Create a bio_hansel {@link MetadataTemplate} for each {@link Project} of the {@link Sample} if one doesn't exist.
 	 *
-	 * @param samples  The samples to update.
-	 * @param analysis The {@link AnalysisSubmission} to use for updating.
+	 * @param samples  The sample to update (collection should only have one {@link Sample} object).
+	 * @param analysis Use the results from this {@link AnalysisSubmission} to update the {@link Sample} metadata.
 	 * @throws PostProcessingException if the updater could not complete its processing
 	 */
 	@Override

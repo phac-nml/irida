@@ -2,7 +2,7 @@
     "a_galaxy_workflow": "true",
     "annotation": "",
     "format-version": "0.1",
-    "name": "bio_hansel-sequence_reads_paired-0.1",
+    "name": "bio_hansel-sequence_reads_paired-2.0.0",
     "steps": {
         "0": {
             "annotation": "",
