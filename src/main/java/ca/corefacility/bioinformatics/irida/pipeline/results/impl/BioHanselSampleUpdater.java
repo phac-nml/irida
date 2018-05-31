@@ -70,14 +70,6 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 		this.projectService = projectService;
 	}
 
-	private String getBaseNamespace(String scheme, String version) {
-		return String.format(TMPL_NAME_FMT, scheme, version);
-	}
-
-	private String getNamespacedField(String baseNamespace, String field) {
-		return baseNamespace + "/" + field;
-	}
-
 	/**
 	 * Add bio_hansel results to the metadata of the given {@link Sample}.
 	 * <p>
@@ -150,9 +142,44 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 	}
 
 	/**
+	 * Gets the {@link AnalysisType} this updater service handles.
+	 *
+	 * @return The {@link AnalysisType}.
+	 */
+	@Override
+	public AnalysisType getAnalysisType() {
+		return AnalysisType.BIO_HANSEL;
+	}
+
+	/**
+	 * Get the base bio_hansel metadata field namespace.
+	 * <p>
+	 * For example, `bio_hansel/heidelberg/v0.5.0`, so that metadata fields from different analyses of bio_hansel will
+	 * not clash, e.g. `bio_hansel/heidelberg/v0.5.0/Subtype` vs `bio_hansel/enteritidis/v0.7.0/Subtype`.
+	 *
+	 * @param scheme bio_hansel scheme name.
+	 * @param version bio_hansel scheme version.
+	 * @return Base bio_hansel metadata field namespace prefix.
+	 */
+	private String getBaseNamespace(String scheme, String version) {
+		return String.format(TMPL_NAME_FMT, scheme, version);
+	}
+
+	/**
+	 * Given a base bio_hansel metadata field namespace, get the namespaced metadata field name.
+	 *
+	 * @param baseNamespace The base bio_hansel metadata field namespace, e.g. `bio_hansel/enteritidis/v0.7.0`
+	 * @param field Metadata field, e.g. `Subtype`.
+	 * @return Namespaced metadata field, e.g. `bio_hansel/enteritidis/v0.7.0/Subtype`.
+	 */
+	private String getNamespacedField(String baseNamespace, String field) {
+		return baseNamespace + "/" + field;
+	}
+
+	/**
 	 * Create a bio_hansel {@link MetadataTemplate} for each {@link Project} each Sample belongs to if one does not already exist.
 	 *
-	 * @param sample      {@link Sample}s for which a bio_hansel {@link MetadataTemplate} will be added to all {@link Project}s that the {@link Sample} belongs to, if one does not already exist.
+	 * @param sample      {@link Sample} for which a bio_hansel {@link MetadataTemplate} will be added to all {@link Project}s that the {@link Sample} belongs to, if one does not already exist.
 	 * @param tmplName    {@link MetadataTemplate} label/name.
 	 * @param tmplFields  Ordered list of {@link MetadataTemplateField} labels
 	 * @param metadataMap Metadata field to entry map for fields and entries that have been saved to the DB.
@@ -160,15 +187,27 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 	private void createBioHanselMetadataTemplateForSampleProjects(Sample sample, String tmplName,
 			List<String> tmplFields, Map<MetadataTemplateField, MetadataEntry> metadataMap) {
 		final List<Project> projects = getProjects(sample);
-		final Map<String, MetadataTemplateField> fieldsMap = metadataMap.keySet()
-				.stream()
-				.collect(Collectors.toMap(MetadataTemplateField::getLabel, x -> x));
-		final List<MetadataTemplateField> fields = tmplFields.stream()
-				.map(fieldsMap::get)
-				.collect(Collectors.toList());
+		final List<MetadataTemplateField> fields = getMetadataTemplateFields(tmplFields, metadataMap);
 		for (Project p : projects) {
 			createTemplate(p, tmplName, fields);
 		}
+	}
+
+	/**
+	 * Given the {@link MetadataTemplateField}s and {@link MetadataEntry}s added to a {@link Sample}'s metadata, get the ordered list of {@link MetadataTemplateField}s.
+	 *
+	 * @param tmplFields Ordered metadata template fields.
+	 * @param metadataMap The {@link MetadataTemplateField}s and {@link MetadataEntry}s added to a {@link Sample}'s metadata.
+	 * @return Ordered list of {@link MetadataTemplateField}s
+	 */
+	private List<MetadataTemplateField> getMetadataTemplateFields(List<String> tmplFields,
+			Map<MetadataTemplateField, MetadataEntry> metadataMap) {
+		final Map<String, MetadataTemplateField> fieldsMap = metadataMap.keySet()
+				.stream()
+				.collect(Collectors.toMap(MetadataTemplateField::getLabel, x -> x));
+		return tmplFields.stream()
+				.map(fieldsMap::get)
+				.collect(Collectors.toList());
 	}
 
 	private List<Project> getProjects(Sample sample) {
@@ -204,6 +243,14 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 		logger.debug("Created template '" + template.getId() + "' for project '" + project.getId() + "'.");
 	}
 
+	/**
+	 * Get any {@link MetadataTemplate}s that match a metadata template name and list of field names in a given {@link Project}.
+	 *
+	 * @param project {@link Project} to try to find {@link MetadataTemplate} in.
+	 * @param templateName Name of metadata template.
+	 * @param fieldLabels Ordered metadata field labels.
+	 * @return Any matching {@link MetadataTemplate}s for the {@link Project}.
+	 */
 	private List<MetadataTemplate> getExistingMetadataTemplates(Project project, String templateName,
 			List<String> fieldLabels) {
 		return metadataTemplateService.getMetadataTemplatesForProject(project)
@@ -217,13 +264,4 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 				.collect(Collectors.toList());
 	}
 
-	/**
-	 * Gets the {@link AnalysisType} this updater service handles.
-	 *
-	 * @return The {@link AnalysisType}.
-	 */
-	@Override
-	public AnalysisType getAnalysisType() {
-		return AnalysisType.BIO_HANSEL;
-	}
 }
