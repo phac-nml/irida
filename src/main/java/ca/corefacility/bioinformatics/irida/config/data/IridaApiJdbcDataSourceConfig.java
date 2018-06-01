@@ -1,10 +1,6 @@
 package ca.corefacility.bioinformatics.irida.config.data;
 
-import java.sql.SQLException;
-import java.util.Properties;
-
-import javax.sql.DataSource;
-
+import liquibase.integration.spring.SpringLiquibase;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,13 +15,13 @@ import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.util.StringUtils;
 
-import liquibase.integration.spring.SpringLiquibase;
+import javax.sql.DataSource;
+import java.util.Properties;
 
 /**
  * Configuration for IRIDA's JDBC Datasource
  */
 @Configuration
-@Profile({ "dev", "prod", "it" })
 public class IridaApiJdbcDataSourceConfig implements DataConfig {
 
 	@Autowired
@@ -82,7 +78,6 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 	 * @return an instance of {@link SpringLiquibase}.
 	 */
 	@Bean
-	@Profile({ "dev", "prod", "it" })
 	public SpringLiquibase springLiquibase(final DataSource dataSource, final ApplicationContext applicationContext) {
 
 		final ApplicationContextAwareSpringLiquibase springLiquibase = new ApplicationContextAwareSpringLiquibase(applicationContext);
