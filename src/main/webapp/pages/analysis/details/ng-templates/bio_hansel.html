@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<script th:fragment="main" type="text/ng-template" id="bio_hansel.html">
+
+    <!--Container for table of bio_hansel results-->
+    <div class="js-bio-hansel"></div>
+    <!--i18n messages for bio_hansel-->
+    <div class="js-bio-hansel-messages hidden"
+      th:data-sample="#{analysis.details.bio_hansel.sample}"
+      th:data-scheme="#{analysis.details.bio_hansel.scheme}"
+      th:data-scheme_version="#{analysis.details.bio_hansel.scheme_version}"
+      th:data-subtype="#{analysis.details.bio_hansel.subtype}"
+      th:data-qc_status="#{analysis.details.bio_hansel.qc_status}"
+      th:data-qc_message="#{analysis.details.bio_hansel.qc_message}"
+      th:data-avg_tile_coverage="#{analysis.details.bio_hansel.avg_tile_coverage}">
+    </div>
+</script>
+
+</body>
+</html>

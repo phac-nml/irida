@@ -35,6 +35,8 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.concurrent.DelegatingSecurityContextScheduledExecutorService;
@@ -48,14 +50,18 @@ import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 import javax.validation.Validator;
+
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Configuration for the IRIDA platform.
@@ -127,7 +133,18 @@ public class IridaApiServicesConfig {
 		properties.setProperty("irida.version", iridaVersion);
 		
 		final ReloadableResourceBundleMessageSource source = new ReloadableResourceBundleMessageSource();
-		source.setBasenames(RESOURCE_LOCATIONS);
+
+		try {
+			final List<String> workflowMessageSources = findWorkflowMessageSources();
+			workflowMessageSources.addAll(Arrays.asList(RESOURCE_LOCATIONS));
+			final String[] allMessageSources = workflowMessageSources.toArray(new String[workflowMessageSources.size()]);
+			logger.debug("Setting message sources basenames: " + Arrays.toString(allMessageSources));
+			source.setBasenames(allMessageSources);
+		} catch (IOException e) {
+			logger.error("Could not set/load workflow message sources. " + e);
+			source.setBasenames(RESOURCE_LOCATIONS);
+		}
+
 		source.setFallbackToSystemLocale(false);
 		source.setDefaultEncoding(DEFAULT_ENCODING);
 		source.setCommonMessages(properties);
@@ -139,6 +156,35 @@ public class IridaApiServicesConfig {
 		}
 
 		return source;
+	}
+
+	private List<String> findWorkflowMessageSources() throws IOException {
+		final String WORKFLOWS_DIRECTORY = "/ca/corefacility/bioinformatics/irida/model/enums/workflows/";
+		final PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(this.getClass()
+				.getClassLoader());
+		final Resource[] resources = resolver.getResources(
+				"classpath:" + WORKFLOWS_DIRECTORY + "**/messages_en.properties");
+		final Pattern pattern = Pattern.compile(
+				String.format("^.+(%s.+\\/messages)_en.properties$", WORKFLOWS_DIRECTORY));
+		return Arrays.stream(resources)
+				.map(x -> getClasspathResourceBasename(pattern, x))
+				.filter(Objects::nonNull)
+				.sorted(Comparator.reverseOrder())
+				.collect(Collectors.toList());
+	}
+
+	private String getClasspathResourceBasename(Pattern pattern, Resource x) {
+		try {
+			final String path = x.getFile()
+					.getAbsolutePath();
+			final Matcher matcher = pattern.matcher(path);
+			if (matcher.matches() && matcher.groupCount() == 1) {
+				return "classpath:" + matcher.group(1);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	@Bean(name = "uploadFileProcessingChain")

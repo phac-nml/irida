@@ -31,7 +31,7 @@ public enum AnalysisType {
 	 */
 	@XmlEnumValue("sistr-typing")
 	SISTR_TYPING("sistr-typing"),
-	
+
 	/**
 	 * An assembly and annotation analysis type on a single sample.
 	 */
@@ -39,7 +39,13 @@ public enum AnalysisType {
 	ASSEMBLY_ANNOTATION("assembly-annotation"),
 
 	/**
-	 * An assembly and annotation analysis type on a collection of samples.
+	 * bio_hansel SNV subtyping
+	 */
+	@XmlEnumValue("bio_hansel")
+	BIO_HANSEL("bio_hansel"),
+
+	/**
+	 * An assembly and annotation analysis type on a collectio n of samples.
 	 */
 	@XmlEnumValue("assembly-annotation-collection")
 	ASSEMBLY_ANNOTATION_COLLECTION("assembly-annotation-collection"),
