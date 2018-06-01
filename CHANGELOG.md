@@ -14,7 +14,7 @@ Changes
 * [UI]: Hiding user page project list for non-admins.
 * [Workflow]: Fixed bug where auto updating metadata from analysis submission failed for non-admin user. (0.21.4)
 * [UI]: Fixed bug where admin dropdown menu was hidden behind sequencing run sub navigation.
-* [Developer]: Moved file processing chain outside of SequencingObjectService.  It now runs as a scheduled task.
+* [Developer]: Moved file processing chain outside of SequencingObjectService.  It now runs as a scheduled task.  This will help balance the processing load in multi-server deployments.
 
 0.20.0 to 0.21.0
 ----------------
