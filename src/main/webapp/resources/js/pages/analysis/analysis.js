@@ -10,6 +10,7 @@ import { renderTabularPreview } from "./tabular-preview";
 import "../../../sass/pages/analysis.scss";
 import "../../vendor/datatables/datatables";
 import { BioHanselController } from "./controllers/bio_hansel";
+import { renderJsonPreview } from "./json-preview";
 
 const baseAjaxUrl = window.PAGE.URLS.base;
 const analysisSubmissionId = window.PAGE.ID;
@@ -226,7 +227,8 @@ function PreviewController(analysisService) {
   this.newick = window.PAGE.NEWICK;
   const vm = this;
   const $tablesContainer = $("#js-file-preview-container");
-  const tabExtSet = new Set(["tab", "tsv", "tabular"]);
+  const tabExtSet = new Set(["tab", "tsv", "tabular", "csv"]);
+  const jsonExtSet = new Set(["json"]);
 
   analysisService.getOutputsInfo(vm).then(outputInfos => {
     for (const outputInfo of outputInfos) {
@@ -238,6 +240,8 @@ function PreviewController(analysisService) {
       }
       if (tabExtSet.has(outputInfo.fileExt)) {
         renderTabularPreview($tablesContainer, baseAjaxUrl, outputInfo);
+      } else if (jsonExtSet.has(outputInfo.fileExt)) {
+        renderJsonPreview($tablesContainer, baseAjaxUrl, outputInfo);
       } else {
         renderPlainTextPreview($tablesContainer, baseAjaxUrl, outputInfo);
       }

@@ -5,7 +5,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,8 +13,6 @@ import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
@@ -25,13 +22,11 @@ import ca.corefacility.bioinformatics.irida.model.sample.metadata.PipelineProvid
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSampleUpdater;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -45,29 +40,20 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 	private static final String VERSION_KEY = "scheme_version";
 	private static final String TMPL_NAME_FMT = "bio_hansel/%1$s/v%2$s";
 	// @formatter:off
-	private static final List<String> TMPL_FIELD_ORDER = ImmutableList.of(
-			"subtype",
-			"qc_status",
-			"qc_message",
-			"avg_tile_coverage"
-	);
 	private static Map<String, String> BIO_HANSEL_RESULTS_FIELDS = ImmutableMap.of(
 			"subtype", "Subtype",
-			"avg_tile_coverage", "Average Tile Coverage",
 			"qc_status", "QC Status",
-			"qc_message", "QC Message"
+			"qc_message", "QC Message",
+			"avg_tile_coverage", "Average Tile Coverage"
 	);
 	// @formatter:on
 	private MetadataTemplateService metadataTemplateService;
 	private SampleService sampleService;
-	private ProjectService projectService;
 
 	@Autowired
-	public BioHanselSampleUpdater(MetadataTemplateService metadataTemplateService, SampleService sampleService,
-			ProjectService projectService) {
+	public BioHanselSampleUpdater(MetadataTemplateService metadataTemplateService, SampleService sampleService) {
 		this.metadataTemplateService = metadataTemplateService;
 		this.sampleService = sampleService;
-		this.projectService = projectService;
 	}
 
 	/**
@@ -107,11 +93,8 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 				final String scheme = (String) result.get(SCHEME_KEY);
 				final String version = (String) result.get(VERSION_KEY);
 				final String baseNamespace = getBaseNamespace(scheme, version);
-				List<String> templateNamespacedFields = new ArrayList<>();
-				TMPL_FIELD_ORDER.forEach(key -> {
-					String field = BIO_HANSEL_RESULTS_FIELDS.get(key);
+				BIO_HANSEL_RESULTS_FIELDS.forEach((key, field) -> {
 					final String formattedField = getNamespacedField(baseNamespace, field);
-					templateNamespacedFields.add(formattedField);
 					if (result.containsKey(key)) {
 						String value = result.get(key)
 								.toString();
@@ -129,9 +112,6 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 
 				sample.mergeMetadata(metadataMap);
 				sampleService.updateFields(sample.getId(), ImmutableMap.of("metadata", sample.getMetadata()));
-
-				createBioHanselMetadataTemplateForSampleProjects(sample, baseNamespace, templateNamespacedFields,
-						metadataMap);
 			} else {
 				throw new PostProcessingException(filePath + " not correctly formatted. Expected valid JSON.");
 			}
@@ -175,93 +155,4 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 	private String getNamespacedField(String baseNamespace, String field) {
 		return baseNamespace + "/" + field;
 	}
-
-	/**
-	 * Create a bio_hansel {@link MetadataTemplate} for each {@link Project} each Sample belongs to if one does not already exist.
-	 *
-	 * @param sample      {@link Sample} for which a bio_hansel {@link MetadataTemplate} will be added to all {@link Project}s that the {@link Sample} belongs to, if one does not already exist.
-	 * @param tmplName    {@link MetadataTemplate} label/name.
-	 * @param tmplFields  Ordered list of {@link MetadataTemplateField} labels
-	 * @param metadataMap Metadata field to entry map for fields and entries that have been saved to the DB.
-	 */
-	private void createBioHanselMetadataTemplateForSampleProjects(Sample sample, String tmplName,
-			List<String> tmplFields, Map<MetadataTemplateField, MetadataEntry> metadataMap) {
-		final List<Project> projects = getProjects(sample);
-		final List<MetadataTemplateField> fields = getMetadataTemplateFields(tmplFields, metadataMap);
-		for (Project p : projects) {
-			createTemplate(p, tmplName, fields);
-		}
-	}
-
-	/**
-	 * Given the {@link MetadataTemplateField}s and {@link MetadataEntry}s added to a {@link Sample}'s metadata, get the ordered list of {@link MetadataTemplateField}s.
-	 *
-	 * @param tmplFields Ordered metadata template fields.
-	 * @param metadataMap The {@link MetadataTemplateField}s and {@link MetadataEntry}s added to a {@link Sample}'s metadata.
-	 * @return Ordered list of {@link MetadataTemplateField}s
-	 */
-	private List<MetadataTemplateField> getMetadataTemplateFields(List<String> tmplFields,
-			Map<MetadataTemplateField, MetadataEntry> metadataMap) {
-		final Map<String, MetadataTemplateField> fieldsMap = metadataMap.keySet()
-				.stream()
-				.collect(Collectors.toMap(MetadataTemplateField::getLabel, x -> x));
-		return tmplFields.stream()
-				.map(fieldsMap::get)
-				.collect(Collectors.toList());
-	}
-
-	private List<Project> getProjects(Sample sample) {
-		return projectService.getProjectsForSample(sample)
-				.stream()
-				.map(Join::getSubject)
-				.collect(Collectors.toList());
-	}
-
-	/**
-	 * Create and save a {@link MetadataTemplate} for bio_hansel for a {@link Project} if one does not already exist.
-	 *
-	 * @param project        Project to add template to if an identical one does not already exist
-	 * @param templateName   Template name
-	 * @param templateFields bio_hansel {@link MetadataTemplate} {@link MetadataTemplateField}s
-	 */
-	private void createTemplate(Project project, String templateName, List<MetadataTemplateField> templateFields) {
-		final List<String> fieldLabels = templateFields.stream()
-				.map(MetadataTemplateField::getLabel)
-				.collect(Collectors.toList());
-		final List<MetadataTemplate> templates = getExistingMetadataTemplates(project, templateName, fieldLabels);
-		logger.debug("Project '" + project.getId() + "' found " + templates.size() + " template(s) " + templates
-				+ " with name '" + templateName + "' with fields '" + fieldLabels + "'");
-		if (!templates.isEmpty()) {
-			logger.debug(
-					"Metadata template for bio_hansel already exists for project '" + project.getId() + "'. Skipping!");
-			return;
-		}
-		final MetadataTemplate template = new MetadataTemplate(templateName, templateFields);
-		logger.debug("No metadata template for project [" + project.getId() + "]. Setting template to ["
-				+ template.getLabel() + ", fields=" + template.getFields() + "]");
-		metadataTemplateService.createMetadataTemplateInProject(template, project);
-		logger.debug("Created template '" + template.getId() + "' for project '" + project.getId() + "'.");
-	}
-
-	/**
-	 * Get any {@link MetadataTemplate}s that match a metadata template name and list of field names in a given {@link Project}.
-	 *
-	 * @param project {@link Project} to try to find {@link MetadataTemplate} in.
-	 * @param templateName Name of metadata template.
-	 * @param fieldLabels Ordered metadata field labels.
-	 * @return Any matching {@link MetadataTemplate}s for the {@link Project}.
-	 */
-	private List<MetadataTemplate> getExistingMetadataTemplates(Project project, String templateName,
-			List<String> fieldLabels) {
-		return metadataTemplateService.getMetadataTemplatesForProject(project)
-				.stream()
-				.map(ProjectMetadataTemplateJoin::getObject)
-				.filter(t -> Objects.equals(templateName, t.getLabel()))
-				.filter(t -> fieldLabels.equals(t.getFields()
-						.stream()
-						.map(MetadataTemplateField::getLabel)
-						.collect(Collectors.toList())))
-				.collect(Collectors.toList());
-	}
-
 }
