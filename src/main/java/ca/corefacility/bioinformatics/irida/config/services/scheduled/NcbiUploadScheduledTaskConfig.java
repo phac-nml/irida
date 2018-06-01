@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.config.services.scheduled;
 
 import ca.corefacility.bioinformatics.irida.service.export.ExportUploadService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
