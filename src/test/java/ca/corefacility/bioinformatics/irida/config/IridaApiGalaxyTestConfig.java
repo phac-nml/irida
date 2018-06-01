@@ -1,7 +1,15 @@
 package ca.corefacility.bioinformatics.irida.config;
 
-import java.util.concurrent.Executor;
-
+import ca.corefacility.bioinformatics.irida.config.analysis.AnalysisExecutionServiceTestConfig;
+import ca.corefacility.bioinformatics.irida.config.analysis.GalaxyExecutionTestConfig;
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestFilesystemConfig;
+import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.NonWindowsLocalGalaxyConfig;
+import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsLocalGalaxyConfig;
+import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsGalaxyIntegrationTestConfig;
+import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsTestConfig;
+import com.google.common.util.concurrent.MoreExecutors;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -9,17 +17,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
-import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsGalaxyIntegrationTestConfig;
-import ca.corefacility.bioinformatics.irida.config.analysis.AnalysisExecutionServiceTestConfig;
-import ca.corefacility.bioinformatics.irida.config.analysis.GalaxyExecutionTestConfig;
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.NonWindowsLocalGalaxyConfig;
-import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsLocalGalaxyConfig;
-import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
-import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsTestConfig;
-
-import com.google.common.util.concurrent.MoreExecutors;
+import java.util.concurrent.Executor;
 
 /**
  * Configuration for any integration tests requiring the use of Galaxy. Used to
@@ -29,9 +27,10 @@ import com.google.common.util.concurrent.MoreExecutors;
  *
  */
 @Configuration
-@Import({ GalaxyExecutionTestConfig.class, IridaApiServicesConfig.class, IridaApiTestDataSourceConfig.class, IridaApiTestMultithreadingConfig.class,
-		NonWindowsLocalGalaxyConfig.class, WindowsLocalGalaxyConfig.class,
-		AnalysisExecutionServiceTestConfig.class, IridaWorkflowsTestConfig.class, IridaWorkflowsGalaxyIntegrationTestConfig.class })
+@Import({ GalaxyExecutionTestConfig.class, IridaApiServicesConfig.class, IridaApiTestFilesystemConfig.class,
+		IridaApiJdbcDataSourceConfig.class, NonWindowsLocalGalaxyConfig.class, WindowsLocalGalaxyConfig.class,
+		AnalysisExecutionServiceTestConfig.class, IridaWorkflowsTestConfig.class,
+		IridaWorkflowsGalaxyIntegrationTestConfig.class })
 @Profile("test")
 public class IridaApiGalaxyTestConfig {
 	
