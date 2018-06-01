@@ -350,3 +350,15 @@ ol.continue li:before {
 .irida-ag-overlay-loading-text {
   color: rgba(0, 0, 0, 0.65);
 }
+
+/****************************************************************************************
+* ANT DESIGN OVERRIDES
+*****************************************************************************************/
+
+.ant-form.ant-form-vertical {
+  label {
+    display: block !important;
+    margin: 0 !important;
+    font-weight: normal !important;
+  }
+}

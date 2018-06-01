@@ -1,8 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Loader } from "../Loader";
-import { TableContainer } from "./Table";
-import { TemplatesContainer } from "../Templates";
+import { LineListLayoutComponent } from "./LineListLayoutComponent";
 
 /**
  * Container class for the higher level states of the page:
@@ -19,14 +18,8 @@ export function LineList(props) {
     // TODO: (Josh | 2018-04-11) Create error component
     return <h3>A major error has occurred! Better find a 💣 shelter!</h3>;
   }
-  return (
-    <React.Fragment>
-      <div style={{ marginBottom: "1rem" }}>
-        <TemplatesContainer />
-      </div>
-      <TableContainer />
-    </React.Fragment>
-  );
+
+  return <LineListLayoutComponent />;
 }
 
 LineList.propTypes = {

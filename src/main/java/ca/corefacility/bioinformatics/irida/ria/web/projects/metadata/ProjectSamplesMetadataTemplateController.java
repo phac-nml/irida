@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.projects.metadata;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -96,30 +97,40 @@ public class ProjectSamplesMetadataTemplateController {
 	/**
 	 * Save or update a {@link MetadataTemplate} within a {@link Project}
 	 *
-	 * @param projectId
-	 * 		{@link Long} identifier for a {@link Project}
-	 * @param template
-	 * 		A {@link UIMetadataTemplate} to save to a {@link Project}
-	 *
-	 * @return {@link String} redirects to the template page.
+	 * @param projectId {@link Long} identifier for a project
+	 * @param id        {@link Long} identifier for a template
+	 * @param name      {@link String} name for the template
+	 * @param fields    {@link List} of fields names
+	 * @return {@link String} result
 	 */
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
-	public String saveMetadataTemplate(@PathVariable Long projectId, UIMetadataTemplate template) {
+	public String saveMetadataTemplate(@PathVariable Long projectId, @RequestParam Long id, @RequestParam String name,
+			@RequestParam List<String> fields) {
 		Project project = projectService.read(projectId);
+		List<MetadataTemplateField> templateFields = new ArrayList<>();
+		for (String field : fields) {
+			MetadataTemplateField f = metadataTemplateService.readMetadataFieldByLabel(field);
+			if (f == null) {
+				templateFields.add(new MetadataTemplateField(field, "text"));
+			} else {
+				templateFields.add(f);
+			}
+		}
 
 		MetadataTemplate metadataTemplate;
-		if (template.getId() != null) {
-			metadataTemplate = metadataTemplateService.read(template.getId());
-			metadataTemplate.setName(template.getName());
-			metadataTemplate.setFields(template.getFields());
+		if (id != null) {
+			metadataTemplate = metadataTemplateService.read(id);
+			metadataTemplate.setName(name);
+			metadataTemplate.setFields(templateFields);
 			metadataTemplateService.updateMetadataTemplateInProject(metadataTemplate);
 		} else {
-			ProjectMetadataTemplateJoin projectMetadataTemplateJoin = metadataTemplateService
-					.createMetadataTemplateInProject(new MetadataTemplate(template.getName(), template.getFields()), project);
+			ProjectMetadataTemplateJoin projectMetadataTemplateJoin = metadataTemplateService.createMetadataTemplateInProject(
+					new MetadataTemplate(name, templateFields), project);
 			metadataTemplate = projectMetadataTemplateJoin.getObject();
 		}
 		return "redirect:/projects/" + projectId + "/metadata-templates/" + metadataTemplate.getId();
 	}
+
 
 	/**
 	 * Delete a {@link MetadataTemplate} within a {@link Project}

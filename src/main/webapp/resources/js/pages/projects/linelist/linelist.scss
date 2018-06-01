@@ -1,0 +1,84 @@
+$table-height: 600px;
+$border: 1px solid rgba(189, 195, 199, 1);
+
+.templates-option {
+  display: flex;
+  justify-content: space-between;
+}
+
+.ant-select-selection-selected-value {
+  width: 100%;
+}
+
+.ant-select-dropdown-menu-item button,
+.ant-select-selection-selected-value .templates-option--field-count {
+  display: none;
+}
+
+.tool-panel-slider {
+  background-color: rgba(245, 247, 247, 1);
+  border: $border;
+  border-left-style: none;
+  overflow-x: hidden;
+}
+
+.tool-panel-wrapper {
+  display: flex;
+}
+
+.ag-grid-tool-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: rgba(245, 247, 247, 1);
+  border-right: $border;
+  height: $table-height;
+  min-height: 100%;
+  width: 300px;
+}
+
+.ag-grid-tool-panel--inner {
+  overflow-y: auto;
+  padding-left: 1rem;
+}
+
+.field-checkbox {
+  display: block;
+  width: 260px;
+  & > .ant-checkbox-wrapper {
+    font-weight: normal;
+  }
+}
+
+.ag-grid-tool-panel--buttons {
+  background-color: rgba(245, 247, 247, 1);
+  width: 20px;
+}
+
+.ant-layout-sider-collapsed .ag-grid-tool-panel {
+  display: none;
+}
+
+.ag-grid-tool-panel--button {
+  background-color: transparent;
+  border-radius: 0;
+  border: 0;
+  border-right: $border;
+  color: rgba(0, 0, 0, 0.54);
+  font-size: 12px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  font-weight: normal;
+  height: 20px;
+  line-height: 20px;
+  width: 100px;
+  transform: rotate(90deg) translateY(-20px);
+  transform-origin: 0 0;
+}
+
+.ag-grid-table-wrapper {
+  box-sizing: border-box;
+  height: $table-height;
+  width: 100%;
+}

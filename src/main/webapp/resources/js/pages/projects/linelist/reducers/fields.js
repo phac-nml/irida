@@ -6,7 +6,6 @@ Special handler for formatting the sample Name Column;
 const sampleNameColumn = {
   sort: "asc",
   pinned: "left",
-  lockPosition: true,
   cellRenderer: "SampleNameRenderer"
 };
 
@@ -19,6 +18,7 @@ const formatColumns = cols =>
   cols.map((f, i) => ({
     field: f.label,
     headerName: f.label,
+    lockPinned: true,
     ...(i === 0 ? sampleNameColumn : {})
   }));
 

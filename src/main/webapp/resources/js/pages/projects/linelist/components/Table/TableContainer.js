@@ -1,5 +1,6 @@
 import { connect } from "react-redux";
 import { Table } from "./Table";
+import { actions } from "../../reducers/templates";
 
 const mapStateToProps = state => ({
   fields: state.fields.get("fields"),
@@ -7,7 +8,10 @@ const mapStateToProps = state => ({
   templates: state.templates.get("templates"),
   current: state.templates.get("current")
 });
-const mapDispatchToProps = dispatch => ({});
+
+const mapDispatchToProps = dispatch => ({
+  tableModified: fields => dispatch(actions.tableModified(fields))
+});
 
 export const TableContainer = connect(mapStateToProps, mapDispatchToProps)(
   Table
