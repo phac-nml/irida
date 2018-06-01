@@ -88,7 +88,7 @@ You can view the detailed `bio_hansel` match results in a tabular view:
 Viewing Results For Multiple Samples
 ====================================
 
-If you had checked the **Save bio_hansel results to Project Linelist Metadata?** checkbox on the `bio_hansel` pipeline launch page, you will be able to view the results of your analyses in the **Line List** table on the **Project** page:
+If you had checked the **Save bio_hansel results to Project Line List Metadata** checkbox on the `bio_hansel` pipeline launch page, you will be able to view the results of your analyses in the **Line List** table on the **Project** page:
 
 ![](images/bio_hansel-line_list_table-3-samples.png)
 
