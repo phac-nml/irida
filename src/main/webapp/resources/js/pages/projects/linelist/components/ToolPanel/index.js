@@ -1,1 +1,1 @@
-export { ToolPanelContainer } from "./ToolPanelContainer";
+export { ToolPanel } from "./ToolPanel";

@@ -8,7 +8,7 @@ import { TemplateSelect } from "../TemplateSelect";
  * This component is responsible for rendering all components that handle
  * user interaction with selecting and saving templates.
  */
-export class Templates extends React.Component {
+export class TemplatesPanel extends React.Component {
   state = {
     visible: false // If the save template modal is visible
   };
@@ -46,7 +46,7 @@ export class Templates extends React.Component {
   }
 }
 
-Templates.propTypes = {
+TemplatesPanel.propTypes = {
   current: PropTypes.number.isRequired,
   saveTemplate: PropTypes.func.isRequired,
   templates: ImmutablePropTypes.list.isRequired,

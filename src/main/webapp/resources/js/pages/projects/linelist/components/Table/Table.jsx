@@ -178,7 +178,8 @@ export class Table extends React.Component {
     let list = colOrder
       .map(c => ({ label: c.colId, hide: c.hide }))
       .filter(
-        c => c.label !== i18n.linelist.agGrid.sampleName && c.label !== "sampleId"
+        c =>
+          c.label !== i18n.linelist.agGrid.sampleName && c.label !== "sampleId"
       );
 
     // Don't let the table perform a modified update since it handles it on its own
@@ -203,6 +204,13 @@ export class Table extends React.Component {
 
     return state;
   }
+
+  /**
+   * Export the currently visible columns as a CSV file.
+   */
+  exportCSV = () => {
+    this.api.exportDataAsCsv();
+  };
 
   render() {
     return (
