@@ -92,8 +92,6 @@ If you had checked the **Save bio_hansel results to Project Linelist Metadata?**
 
 ![](images/bio_hansel-line_list_table-3-samples.png)
 
-A **Metadata Template** (a named selection of metadata fields) with a name following the format `bio_hansel/<scheme>/<version>` will be created automatically so that you can conveniently view your `bio_hansel` results across multiple samples and analyses. 
-
 
 Interpreting the Results
 ========================
