@@ -1,6 +1,8 @@
 package ca.corefacility.bioinformatics.irida.config.services.scheduled;
 
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectProcessingService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +13,7 @@ import org.springframework.scheduling.annotation.Scheduled;
  */
 @Configuration
 public class FileProcessingScheduledTaskConfig {
+	private static final Logger logger = LoggerFactory.getLogger(FileProcessingScheduledTaskConfig.class);
 
 	@Autowired
 	private SequencingObjectProcessingService fileProcessingService;
@@ -25,6 +28,8 @@ public class FileProcessingScheduledTaskConfig {
 	public void processFiles() {
 		if (processFiles) {
 			fileProcessingService.runProcessingJob();
+		} else {
+			logger.trace("Skipping file processing.  It is disabled on this server.");
 		}
 	}
 }
