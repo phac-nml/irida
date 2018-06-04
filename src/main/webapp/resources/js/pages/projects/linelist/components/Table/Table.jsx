@@ -225,43 +225,14 @@ export class Table extends React.Component {
     return `${date}-${project}-${template}.${ext}`;
   };
 
-  /**
-   * Export the currently visible columns as a CSV file.
-   */
-  exportCSV = () => {
-    const fileName = this.generateFileName("csv");
-    this.api.exportDataAsCsv({
-      fileName
-    });
-
-    // Get only the required data
-    const { entries } = this.state;
-    const final = entries.reduce((rows, entry) => {
-      const row = colOrder.reduce(
-        (row, header) => {
-          if (!header.hide) {
-            row[header.colId] = entry[header.colId];
-          }
-          return row;
-        },
-        { "Sample ID": entry.sampleId }
-      );
-      rows.push(row);
-      return rows;
-    }, []);
-  };
-
-  /**
-   * Export the currently visible columns as an XLSX file.
-   */
-  exportXLSX = () => {
+  createFile = ext => {
     const { entries } = this.state;
     const colOrder = this.columnApi.getColumnState().filter(c => !c.hide);
 
     /*
     Set up the excel file
      */
-    const fileName = this.generateFileName("xlsx");
+    const fileName = this.generateFileName(ext);
     const workbook = {};
     workbook.Sheets = {};
     workbook.Props = {};
@@ -337,6 +308,20 @@ export class Table extends React.Component {
 
     /* write file */
     XLSX.writeFile(workbook, fileName);
+  };
+
+  /**
+   * Export the currently visible columns as a CSV file.
+   */
+  exportCSV = () => {
+    this.createFile("csv");
+  };
+
+  /**
+   * Export the currently visible columns as an XLSX file.
+   */
+  exportXLSX = () => {
+    this.createFile("xlsx");
   };
 
   render() {
