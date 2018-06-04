@@ -37,4 +37,10 @@
 		password="$2a$10$yvzFLxWA9m2wNQmHpJtWT.MRZv8qV8Mo3EMB6HTkDnUbi9aBrbWWW"
 		phoneNumber="867-5309" username="aaron" system_role="ROLE_ADMIN"
 		credentialsNonExpired="true" enabled="true" />
+
+	<user id="2" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
+		  email="admin@nowhere.com" firstName="Admin" lastName="Admin"
+		  password="$2a$10$yvzFLxWA9m2wNQmHpJtWT.MRZv8qV8Mo3EMB6HTkDnUbi9aBrbWWW"
+		  phoneNumber="0000" username="admin" system_role="ROLE_ADMIN"
+		  credentialsNonExpired="true" enabled="true" />
 </dataset>
