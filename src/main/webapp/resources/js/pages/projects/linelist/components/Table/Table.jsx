@@ -274,7 +274,7 @@ export class Table extends React.Component {
       if (range.e.r < row) range.e.r = row;
 
       // Need to add the sample identifier
-      const idCell = { v: entry.sampleId, t: "n" };
+      const idCell = { v: entry.sampleId, t: "n", z: "0" };
       const idRef = XLSX.utils.encode_cell({ c: 0, r: row });
       ws[idRef] = idCell;
 
