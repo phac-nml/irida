@@ -31,7 +31,8 @@ const commonConfig = merge([
       filename: "js/[name].bundle.js"
     },
     resolve: {
-      extensions: [".js", ".jsx"]
+      extensions: [".js", ".jsx"],
+      alias: { "./dist/cpexcel.js": "" }
     },
     module: {
       rules: [

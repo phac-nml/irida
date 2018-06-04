@@ -8,6 +8,7 @@
     <link rel="stylesheet" th:href="@{/resources/dist/css/project-linelist.bundle.css}">
     <script th:inline="javascript">
         window.PAGE = {
+          project: /*[[${project}]]*/ {},
           i18n: {
             form: {
               btn: {
@@ -22,6 +23,8 @@
               },
               toolbar: {
                 export: /*[[#{linelist.toolbar.export}]]*/ "export",
+                exportCsv: /*[[#{linelist.toolbar.exportCsv}]]*/ "exportCSV",
+                exportExcel: /*[[#{linelist.toolbar.exportExcel}]]*/ "exportXLSX",
               },
               agGrid: {
                 loading: /*[[#{linelist.agGrid.loading}]]*/ "__Loading data... this might take a while!__",

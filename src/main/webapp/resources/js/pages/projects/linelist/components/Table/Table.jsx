@@ -6,6 +6,9 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid/dist/styles/ag-grid.css";
 import "ag-grid/dist/styles/ag-theme-balham.css";
 
+// Excel export support
+import XLSX from "xlsx";
+
 import { LoadingOverlay } from "./LoadingOverlay";
 import { SampleNameRenderer } from "./renderers/SampleNameRenderer";
 
@@ -206,10 +209,62 @@ export class Table extends React.Component {
   }
 
   /**
+   * Generate the name for the type of file to be exported from the grid
+   * @param {string} ext extension for the file.
+   * @returns {string}
+   */
+  generateFileName = ext => {
+    // YYYY-MM-dd-project-X-<metadata template name>.csv
+    const fullDate = new Date();
+    const date = `${fullDate.getFullYear()}-${fullDate.getMonth() +
+      1}-${fullDate.getDate()}`;
+    const project = window.PAGE.project.label.replace(" ", "_");
+    const template = this.props.templates
+      .getIn([this.props.current, "name"])
+      .replace(" ", "_");
+    return `${date}-${project}-${template}.${ext}`;
+  };
+
+  /**
    * Export the currently visible columns as a CSV file.
    */
   exportCSV = () => {
-    this.api.exportDataAsCsv();
+    const fileName = this.generateFileName("csv");
+    this.api.exportDataAsCsv({
+      fileName
+    });
+  };
+
+  /**
+   * Export the currently visible columns as an XLSX file.
+   */
+  exportXLSX = () => {
+    const fileName = this.generateFileName("xlsx");
+    const workbook = XLSX.utils.book_new();
+
+    const colOrder = this.columnApi.getColumnState();
+
+    // Get only the required data
+    const { entries } = this.state;
+    const final = entries.reduce((rows, entry) => {
+      const row = colOrder.reduce(
+        (row, header) => {
+          if (!header.hide) {
+            row[header.colId] = entry[header.colId];
+          }
+          return row;
+        },
+        { "Sample ID": entry.sampleId }
+      );
+      rows.push(row);
+      return rows;
+    }, []);
+
+    const worksheet = XLSX.utils.json_to_sheet(final, {
+      header: ["Sample ID", ...colOrder.filter(c => !c.hide).map(c => c.colId)]
+    });
+    XLSX.utils.book_append_sheet(workbook, worksheet, "");
+    XLSX.writeFile(workbook, fileName);
   };
 
   render() {

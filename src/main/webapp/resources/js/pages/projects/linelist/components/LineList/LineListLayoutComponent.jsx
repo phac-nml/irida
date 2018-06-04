@@ -29,10 +29,14 @@ export class LineListLayoutComponent extends React.Component {
     this.tableRef.current.exportCSV();
   };
 
+  exportXLSX = () => {
+    this.tableRef.current.exportXLSX();
+  };
+
   render() {
     return (
       <React.Fragment>
-        <Toolbar exportCSV={this.exportCSV} />
+        <Toolbar exportCSV={this.exportCSV} exportXLSX={this.exportXLSX} />
         <Layout className="ag-theme-balham" style={{ minHeight: "100%" }}>
           <Content>
             <Table {...this.props} ref={this.tableRef} />
