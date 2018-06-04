@@ -20,7 +20,7 @@ export class Table extends React.Component {
   /*
   Regular expression to clean the project and template names for export.
    */
-  nameRegex = /([^a-z0-9]+)/gi;
+  nameRegex = /([^\w]+)/gi;
 
   /*
   This is a flag for handling when a column is dragged and dropped on the table.
