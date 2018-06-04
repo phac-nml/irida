@@ -63,6 +63,7 @@
 
 			<sub-nav>
 				<sub-nav-item th:if="${sistr}" state="sistr" text="Sistr"></sub-nav-item>
+				<sub-nav-item th:if="${bio_hansel}" state="bio_hansel" text="bio_hansel"></sub-nav-item>
 				<sub-nav-item th:if="${isCompleted}" state="preview" data:text="#{analysis.tab.preview}"></sub-nav-item>
 				<sub-nav-item th:if="${isError}" state="joberrors" data:text="#{analysis.joberror}"></sub-nav-item>
 				<sub-nav-item state="inputs" data:text="#{analysis.tab.input-files}"></sub-nav-item>
@@ -240,6 +241,7 @@
 			</script>
 
             <div th:replace="~{analysis/details/ng-templates/joberror::main}"></div>
+			<div th:replace="~{analysis/details/ng-templates/bio_hansel::main}"></div>
 
 			<script type="text/ng-template" id="inputs.html" th:with="fileCount = ${#lists.size(paired_end)}">
 				<th:block th:if="${referenceFile}">
@@ -342,7 +344,6 @@
 		</div>
 	</div>
 </main>
-
 
 </body>
 

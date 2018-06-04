@@ -169,6 +169,17 @@ public class IridaWorkflowLoaderService {
 					if (workflowParameter.isRequired() && workflowParameter.getDefaultValue() != null) {
 						throw new IridaWorkflowLoadException("Required parameters should not have a default value." + descriptionFile);
 					}
+					if (workflowParameter.hasChoices() && !workflowParameter.isRequired()) {
+						throw new IridaWorkflowLoadException("If parameter name='" + workflowParameter.getName()
+								+ "' has choices then the 'required' attribute must be set to 'true'. "
+								+ descriptionFile);
+					}
+					if (workflowParameter.isRequired() && workflowParameter.isChoicesEmpty()) {
+						throw new IridaWorkflowLoadException(
+								"Expected one or more <choice name='{name}' value='{value}'> tags within <choices> "
+										+ "tag for parameter name='" + workflowParameter.getName() + "'  in file "
+										+ descriptionFile);
+					}
 					try {
 						workflowParameter.getDynamicSource();
 					} catch (IridaWorkflowParameterException e) {

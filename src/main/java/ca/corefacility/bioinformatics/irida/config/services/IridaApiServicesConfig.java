@@ -1,47 +1,12 @@
 package ca.corefacility.bioinformatics.irida.config.services;
 
-import java.net.URISyntaxException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.Properties;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-
-import javax.validation.Validator;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.*;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.springframework.context.support.ResourceBundleMessageSource;
-import org.springframework.core.env.Environment;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.task.SimpleAsyncTaskExecutor;
-import org.springframework.core.task.TaskExecutor;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.concurrent.DelegatingSecurityContextScheduledExecutorService;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
-import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-import org.thymeleaf.spring4.SpringTemplateEngine;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
-
 import ca.corefacility.bioinformatics.irida.config.analysis.AnalysisExecutionServiceConfig;
 import ca.corefacility.bioinformatics.irida.config.analysis.ExecutionManagerConfig;
 import ca.corefacility.bioinformatics.irida.config.repository.ForbidJpqlUpdateDeletePostProcessor;
 import ca.corefacility.bioinformatics.irida.config.repository.IridaApiRepositoriesConfig;
 import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
 import ca.corefacility.bioinformatics.irida.config.services.conditions.NreplServerSpringCondition;
+import ca.corefacility.bioinformatics.irida.config.services.scheduled.IridaScheduledTasksConfig;
 import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsConfig;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -56,10 +21,47 @@ import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.impl.InMemoryTaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionCleanupServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import net.matlux.NreplServerSpring;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.*;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.core.env.Environment;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.concurrent.DelegatingSecurityContextScheduledExecutorService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.thymeleaf.spring4.SpringTemplateEngine;
+import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+
+import javax.validation.Validator;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Configuration for the IRIDA platform.
@@ -69,7 +71,7 @@ import net.matlux.NreplServerSpring;
 @Configuration
 @Import({ IridaApiSecurityConfig.class, IridaApiAspectsConfig.class, IridaApiRepositoriesConfig.class,
 		ExecutionManagerConfig.class, AnalysisExecutionServiceConfig.class, IridaWorkflowsConfig.class,
-		WebEmailConfig.class })
+		WebEmailConfig.class, IridaScheduledTasksConfig.class })
 @ComponentScan(basePackages = { "ca.corefacility.bioinformatics.irida.service",
 		"ca.corefacility.bioinformatics.irida.processing", "ca.corefacility.bioinformatics.irida.pipeline.results" })
 public class IridaApiServicesConfig {
@@ -131,7 +133,18 @@ public class IridaApiServicesConfig {
 		properties.setProperty("irida.version", iridaVersion);
 		
 		final ReloadableResourceBundleMessageSource source = new ReloadableResourceBundleMessageSource();
-		source.setBasenames(RESOURCE_LOCATIONS);
+
+		try {
+			final List<String> workflowMessageSources = findWorkflowMessageSources();
+			workflowMessageSources.addAll(Arrays.asList(RESOURCE_LOCATIONS));
+			final String[] allMessageSources = workflowMessageSources.toArray(new String[workflowMessageSources.size()]);
+			logger.debug("Setting message sources basenames: " + Arrays.toString(allMessageSources));
+			source.setBasenames(allMessageSources);
+		} catch (IOException e) {
+			logger.error("Could not set/load workflow message sources. " + e);
+			source.setBasenames(RESOURCE_LOCATIONS);
+		}
+
 		source.setFallbackToSystemLocale(false);
 		source.setDefaultEncoding(DEFAULT_ENCODING);
 		source.setCommonMessages(properties);
@@ -143,6 +156,35 @@ public class IridaApiServicesConfig {
 		}
 
 		return source;
+	}
+
+	private List<String> findWorkflowMessageSources() throws IOException {
+		final String WORKFLOWS_DIRECTORY = "/ca/corefacility/bioinformatics/irida/model/enums/workflows/";
+		final PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(this.getClass()
+				.getClassLoader());
+		final Resource[] resources = resolver.getResources(
+				"classpath:" + WORKFLOWS_DIRECTORY + "**/messages_en.properties");
+		final Pattern pattern = Pattern.compile(
+				String.format("^.+(%s.+\\/messages)_en.properties$", WORKFLOWS_DIRECTORY));
+		return Arrays.stream(resources)
+				.map(x -> getClasspathResourceBasename(pattern, x))
+				.filter(Objects::nonNull)
+				.sorted(Comparator.reverseOrder())
+				.collect(Collectors.toList());
+	}
+
+	private String getClasspathResourceBasename(Pattern pattern, Resource x) {
+		try {
+			final String path = x.getFile()
+					.getAbsolutePath();
+			final Matcher matcher = pattern.matcher(path);
+			if (matcher.matches() && matcher.groupCount() == 1) {
+				return "classpath:" + matcher.group(1);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	@Bean(name = "uploadFileProcessingChain")
@@ -164,32 +206,9 @@ public class IridaApiServicesConfig {
 
 		return new DefaultFileProcessingChain(sequencingObjectRepository, qcRepository, fileProcessors);
 	}
-	
-	/**
-	 * A separate {@link FileProcessingChain} to be used for re-running coverage
-	 * measurements
-	 * 
-	 * @param sequencingObjectRepository
-	 *            a {@link SequencingObjectRepository}
-	 * @param qcRepository
-	 *            a {@link QCEntryRepository}
-	 * @param coverageProcessor
-	 *            the {@link CoverageFileProcessor}
-	 * @return a {@link FileProcessingChain} which only contains
-	 *         {@link CoverageFileProcessor}
-	 */
-	@Bean(name = "coverageFileProcessingChain")
-	public FileProcessingChain coverageFileProcssingChain(SequencingObjectRepository sequencingObjectRepository,
-			QCEntryRepository qcRepository, CoverageFileProcessor coverageProcessor) {
-
-		final List<FileProcessor> fileProcessors = Lists.newArrayList(coverageProcessor);
-
-		return new DefaultFileProcessingChain(sequencingObjectRepository, qcRepository, fileProcessors);
-	}
 
 	@Bean(name = "fileProcessingChainExecutor")
-	@Profile({ "dev", "prod" })
-	public TaskExecutor fileProcessingChainExecutor() {
+	public ThreadPoolTaskExecutor fileProcessingChainExecutor() {
 		ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
 		taskExecutor.setCorePoolSize(fpCoreSize);
 		taskExecutor.setMaxPoolSize(fpMaxSize);
@@ -198,11 +217,6 @@ public class IridaApiServicesConfig {
 		return taskExecutor;
 	}
 
-	@Bean(name = "fileProcessingChainExecutor")
-	@Profile({ "it", "test" })
-	public TaskExecutor fileProcessingChainExecutorIntegrationTest() {
-		return new SimpleAsyncTaskExecutor();
-	}
 
 	@Bean
 	public Validator validator() {
@@ -229,7 +243,6 @@ public class IridaApiServicesConfig {
 	 */
 	@Bean
 	@DependsOn("springLiquibase")
-	@Profile({"prod", "dev"})
 	public Executor analysisTaskExecutor(UserService userService) {
 		ScheduledExecutorService delegateExecutor = Executors.newScheduledThreadPool(4);
 		SecurityContext schedulerContext = createAnalysisTaskSecurityContext(userService);

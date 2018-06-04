@@ -1,0 +1,178 @@
+{
+    "a_galaxy_workflow": "true", 
+    "annotation": "", 
+    "format-version": "0.1", 
+    "name": "bio_hansel-sequence_reads_paired-2.0.0",
+    "steps": {
+        "0": {
+            "annotation": "", 
+            "content_id": null, 
+            "id": 0, 
+            "input_connections": {}, 
+            "inputs": [
+                {
+                    "description": "", 
+                    "name": "sequence_reads_paired"
+                }
+            ], 
+            "label": null, 
+            "name": "Input dataset collection", 
+            "outputs": [], 
+            "position": {
+                "left": 200, 
+                "top": 235
+            }, 
+            "tool_errors": null, 
+            "tool_id": null, 
+            "tool_state": "{\"collection_type\": \"list:paired\", \"name\": \"sequence_reads_paired\"}", 
+            "tool_version": null, 
+            "type": "data_collection_input", 
+            "uuid": "2ff53d8f-e988-4344-9179-f1439f6f0d64", 
+            "workflow_outputs": [
+                {
+                    "label": null, 
+                    "output_name": "output", 
+                    "uuid": "f3002491-5a5c-4168-892a-27d9d6261872"
+                }
+            ]
+        }, 
+        "1": {
+            "annotation": "", 
+            "content_id": "toolshed.g2.bx.psu.edu/repos/nml/bio_hansel/bio_hansel/2.0.0", 
+            "id": 1, 
+            "input_connections": {
+                "input|paired_collection": {
+                    "id": 0, 
+                    "output_name": "output"
+                }
+            }, 
+            "inputs": [
+                {
+                    "description": "runtime parameter for tool bio_hansel", 
+                    "name": "input"
+                }
+            ], 
+            "label": null, 
+            "name": "bio_hansel", 
+            "outputs": [
+                {
+                    "name": "results.tab", 
+                    "type": "tabular"
+                }, 
+                {
+                    "name": "match_results.tab", 
+                    "type": "tabular"
+                }, 
+                {
+                    "name": "tech_results.tab", 
+                    "type": "tabular"
+                }, 
+                {
+                    "name": "results.json", 
+                    "type": "json"
+                }, 
+                {
+                    "name": "match_results.json", 
+                    "type": "json"
+                }, 
+                {
+                    "name": "tech_results.json", 
+                    "type": "json"
+                }
+            ], 
+            "position": {
+                "left": 464.33331298828125, 
+                "top": 236
+            }, 
+            "post_job_actions": {
+                "RenameDatasetActionmatch_results.json": {
+                    "action_arguments": {
+                        "newname": "bio_hansel-match_results.json"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "match_results.json"
+                }, 
+                "RenameDatasetActionmatch_results.tab": {
+                    "action_arguments": {
+                        "newname": "bio_hansel-match_results.tab"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "match_results.tab"
+                }, 
+                "RenameDatasetActionresults.json": {
+                    "action_arguments": {
+                        "newname": "bio_hansel-results.json"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "results.json"
+                }, 
+                "RenameDatasetActionresults.tab": {
+                    "action_arguments": {
+                        "newname": "bio_hansel-results.tab"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "results.tab"
+                }, 
+                "RenameDatasetActiontech_results.json": {
+                    "action_arguments": {
+                        "newname": "bio_hansel-tech_results.json"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "tech_results.json"
+                }, 
+                "RenameDatasetActiontech_results.tab": {
+                    "action_arguments": {
+                        "newname": "bio_hansel-tech_results.tab"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "tech_results.tab"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/bio_hansel/bio_hansel/2.0.0", 
+            "tool_shed_repository": {
+                "changeset_revision": "4654c51dae72", 
+                "name": "bio_hansel", 
+                "owner": "nml", 
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            }, 
+            "tool_state": "{\"qc_vals\": \"{\\\"min_ambiguous_tiles\\\": \\\"3\\\", \\\"max_missing_tiles\\\": \\\"0.05\\\", \\\"low_cov_depth_freq\\\": \\\"20\\\", \\\"low_coverage_warning\\\": \\\"20\\\", \\\"max_intermediate_tiles\\\": \\\"0.05\\\"}\", \"__page__\": 0, \"kmer_vals\": \"{\\\"kmer_min\\\": \\\"8\\\", \\\"kmer_max\\\": \\\"1000\\\"}\", \"type_of_scheme\": \"{\\\"scheme_type\\\": \\\"heidelberg\\\", \\\"__current_case__\\\": 0}\", \"__rerun_remap_job_id__\": null, \"dev_args\": \"{\\\"use_json\\\": \\\"true\\\"}\", \"input\": \"{\\\"paired_collection\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"type\\\": \\\"paired_collection\\\", \\\"__current_case__\\\": 3}\"}",
+            "tool_version": "2.0.0", 
+            "type": "tool", 
+            "uuid": "2b396dda-dfe0-4c3f-88e5-95ef1cd11f47", 
+            "workflow_outputs": [
+                {
+                    "label": null, 
+                    "output_name": "match_results.tab", 
+                    "uuid": "085cbc68-3596-42cf-b8ef-d02cc54ff6e8"
+                }, 
+                {
+                    "label": null, 
+                    "output_name": "results.json", 
+                    "uuid": "d25ffc93-cdac-48ab-ac3e-9cce2a1b4dfe"
+                }, 
+                {
+                    "label": null, 
+                    "output_name": "results.tab", 
+                    "uuid": "cf7747c9-0e94-40cb-a5ea-3de610a45b7c"
+                }, 
+                {
+                    "label": null, 
+                    "output_name": "tech_results.tab", 
+                    "uuid": "fcfe6c70-928b-4762-ba72-fa91dec14ed0"
+                }, 
+                {
+                    "label": null, 
+                    "output_name": "tech_results.json", 
+                    "uuid": "1f116c77-0326-4747-90ed-e6c43cc1800a"
+                }, 
+                {
+                    "label": null, 
+                    "output_name": "match_results.json", 
+                    "uuid": "84c05651-3a43-4b82-af52-025d65b1e327"
+                }
+            ]
+        }
+    }, 
+    "uuid": "7e75258a-fddc-40ec-974d-d76b8894a70a"
+}
