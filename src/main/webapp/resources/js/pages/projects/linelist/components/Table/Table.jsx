@@ -5,7 +5,6 @@ import ImmutablePropTypes from "react-immutable-proptypes";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid/dist/styles/ag-grid.css";
 import "ag-grid/dist/styles/ag-theme-balham.css";
-
 // Excel export support
 import XLSX from "xlsx";
 
@@ -18,6 +17,11 @@ const { i18n } = window.PAGE;
  * React component to render the ag-grid to the page.
  */
 export class Table extends React.Component {
+  /*
+  Regular expression to clean the project and template names for export.
+   */
+  nameRegex = /([^a-z0-9]+)/gi;
+
   /*
   This is a flag for handling when a column is dragged and dropped on the table.
   This is required because the table can be modified externally through the columns
@@ -217,11 +221,11 @@ export class Table extends React.Component {
     // YYYY-MM-dd-project-X-<metadata template name>.csv
     const fullDate = new Date();
     const date = `${fullDate.getFullYear()}-${fullDate.getMonth() +
-      1}-${fullDate.getDate()}`;
-    const project = window.PAGE.project.label.replace(" ", "_");
+    1}-${fullDate.getDate()}`;
+    const project = window.PAGE.project.label.replace(this.nameRegex, "_");
     const template = this.props.templates
       .getIn([this.props.current, "name"])
-      .replace(" ", "_");
+      .replace(this.nameRegex, "_");
     return `${date}-${project}-${template}.${ext}`;
   };
 
@@ -302,7 +306,7 @@ export class Table extends React.Component {
     /* add worksheet to workbook using the template name */
     const template = this.props.templates
       .getIn([this.props.current, "name"])
-      .replace(" ", "_");
+      .replace(this.nameRegex, "_");
     workbook.SheetNames.push(template);
     workbook.Sheets[template] = ws;
 
