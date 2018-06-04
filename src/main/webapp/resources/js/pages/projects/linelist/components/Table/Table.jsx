@@ -233,16 +233,6 @@ export class Table extends React.Component {
     this.api.exportDataAsCsv({
       fileName
     });
-  };
-
-  /**
-   * Export the currently visible columns as an XLSX file.
-   */
-  exportXLSX = () => {
-    const fileName = this.generateFileName("xlsx");
-    const workbook = XLSX.utils.book_new();
-
-    const colOrder = this.columnApi.getColumnState();
 
     // Get only the required data
     const { entries } = this.state;
@@ -259,11 +249,93 @@ export class Table extends React.Component {
       rows.push(row);
       return rows;
     }, []);
+  };
 
-    const worksheet = XLSX.utils.json_to_sheet(final, {
-      header: ["Sample ID", ...colOrder.filter(c => !c.hide).map(c => c.colId)]
+  /**
+   * Export the currently visible columns as an XLSX file.
+   */
+  exportXLSX = () => {
+    const { entries } = this.state;
+    const colOrder = this.columnApi.getColumnState().filter(c => !c.hide);
+
+    /*
+    Set up the excel file
+     */
+    const fileName = this.generateFileName("xlsx");
+    const workbook = {};
+    workbook.Sheets = {};
+    workbook.Props = {};
+    workbook.SSF = {};
+    workbook.SheetNames = [];
+    /* create worksheet: */
+    const ws = {};
+
+    /* the range object is used to keep track of the range of the sheet */
+    const range = { s: { c: 0, r: 0 }, e: { c: 0, r: 0 } };
+
+    /*
+    Add the headers
+     */
+    const cell = { v: "Sample Id", t: "s" };
+    const cell_ref = XLSX.utils.encode_cell({ c: 0, r: 0 });
+    ws[cell_ref] = cell;
+    colOrder.forEach((col, i) => {
+      const index = i + 1;
+      if (range.e.c < index) range.e.c = index;
+      const cell = { v: col.colId, t: "s" };
+      const cell_ref = XLSX.utils.encode_cell({ c: index, r: 0 });
+      ws[cell_ref] = cell;
     });
-    XLSX.utils.book_append_sheet(workbook, worksheet, "");
+
+    /*
+    Add all the entries
+     */
+    for (let r = 0; r < entries.length; r++) {
+      const entry = entries[r];
+      /*
+      Offset to allow for the header row.
+       */
+      const row = r + 1;
+      if (range.e.r < row) range.e.r = row;
+
+      // Need to add the sample identifier
+      const idCell = { v: entry.sampleId, t: "n" };
+      const idRef = XLSX.utils.encode_cell({ c: 0, r: row });
+      ws[idRef] = idCell;
+
+      for (let c = 0; c < colOrder.length; c++) {
+        const column = colOrder[c];
+        /*
+        Offset to allow for the sample id column
+         */
+        const col = c + 1;
+        /* create cell object: .v is the actual data */
+        const cell = { v: entry[column.colId] };
+        if (cell.v !== null) {
+          /* create the correct cell reference */
+          const cell_ref = XLSX.utils.encode_cell({ c: col, r: row });
+
+          /* determine the cell type */
+          if (typeof cell.v === "number") cell.t = "n";
+          else if (typeof cell.v === "boolean") cell.t = "b";
+          else cell.t = "s";
+
+          /* add to structure */
+          ws[cell_ref] = cell;
+        }
+      }
+    }
+
+    ws["!ref"] = XLSX.utils.encode_range(range);
+
+    /* add worksheet to workbook using the template name */
+    const template = this.props.templates
+      .getIn([this.props.current, "name"])
+      .replace(" ", "_");
+    workbook.SheetNames.push(template);
+    workbook.Sheets[template] = ws;
+
+    /* write file */
     XLSX.writeFile(workbook, fileName);
   };
 
