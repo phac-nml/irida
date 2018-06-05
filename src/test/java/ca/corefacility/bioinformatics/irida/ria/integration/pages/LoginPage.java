@@ -13,6 +13,7 @@ public class LoginPage extends AbstractPage {
 	public static final String MANAGER_USERNAME = "mrtest";
 	public static final String ADMIN_USERNAME = "admin";
 	public static final String USER_USERNAME = "testUser";
+	public static final String SEQUENCER_USERNAME = "sequencer";
 	public static final String GOOD_PASSWORD = "Password1!";
 	public static final String BAD_USERNAME = "badman";
 	public static final String BAD_PASSWORD = "notapassword";

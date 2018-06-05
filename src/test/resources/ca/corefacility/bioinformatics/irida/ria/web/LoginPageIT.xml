@@ -20,4 +20,9 @@
           password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
           phoneNumber="867-5309" username="expiredGuy" enabled="true" system_role="ROLE_USER"
           credentialsNonExpired="false" />
+    <user id="5" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
+          email="sequencer@nowhere.com" firstName="Sequencer" lastName="Sequencer"
+          password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
+          phoneNumber="867-5309" username="sequencer" enabled="true" system_role="ROLE_SEQUENCER"
+          credentialsNonExpired="true" />
 </dataset>
