@@ -5,6 +5,8 @@ import ImmutablePropTypes from "react-immutable-proptypes";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid/dist/styles/ag-grid.css";
 import "ag-grid/dist/styles/ag-theme-balham.css";
+// Excel export support
+import XLSX from "xlsx";
 
 import { LoadingOverlay } from "./LoadingOverlay";
 import { SampleNameRenderer } from "./renderers/SampleNameRenderer";
@@ -15,6 +17,11 @@ const { i18n } = window.PAGE;
  * React component to render the ag-grid to the page.
  */
 export class Table extends React.Component {
+  /*
+  Regular expression to clean the project and template names for export.
+   */
+  nameRegex = /([^\w]+)/gi;
+
   /*
   This is a flag for handling when a column is dragged and dropped on the table.
   This is required because the table can be modified externally through the columns
@@ -178,7 +185,8 @@ export class Table extends React.Component {
     let list = colOrder
       .map(c => ({ label: c.colId, hide: c.hide }))
       .filter(
-        c => c.label !== i18n.linelist.agGrid.sampleName && c.label !== "sampleId"
+        c =>
+          c.label !== i18n.linelist.agGrid.sampleName && c.label !== "sampleId"
       );
 
     // Don't let the table perform a modified update since it handles it on its own
@@ -203,6 +211,122 @@ export class Table extends React.Component {
 
     return state;
   }
+
+  /**
+   * Generate the name for the type of file to be exported from the grid
+   * @param {string} ext extension for the file.
+   * @returns {string}
+   */
+  generateFileName = ext => {
+    // YYYY-MM-dd-project-X-<metadata template name>.csv
+    const fullDate = new Date();
+    const date = `${fullDate.getFullYear()}-${fullDate.getMonth() +
+    1}-${fullDate.getDate()}`;
+    const project = window.PAGE.project.label.replace(this.nameRegex, "_");
+    const template = this.props.templates
+      .getIn([this.props.current, "name"])
+      .replace(this.nameRegex, "_");
+    return `${date}-${project}-${template}.${ext}`;
+  };
+
+  createFile = ext => {
+    const { entries } = this.state;
+    const colOrder = this.columnApi.getColumnState().filter(c => !c.hide);
+
+    /*
+    Set up the excel file
+     */
+    const fileName = this.generateFileName(ext);
+    const workbook = {};
+    workbook.Sheets = {};
+    workbook.Props = {};
+    workbook.SSF = {};
+    workbook.SheetNames = [];
+    /* create worksheet: */
+    const ws = {};
+
+    /* the range object is used to keep track of the range of the sheet */
+    const range = { s: { c: 0, r: 0 }, e: { c: 0, r: 0 } };
+
+    /*
+    Add the headers
+     */
+    const cell = { v: "Sample Id", t: "s" };
+    const cell_ref = XLSX.utils.encode_cell({ c: 0, r: 0 });
+    ws[cell_ref] = cell;
+    colOrder.forEach((col, i) => {
+      const index = i + 1;
+      if (range.e.c < index) range.e.c = index;
+      const cell = { v: col.colId, t: "s" };
+      const cell_ref = XLSX.utils.encode_cell({ c: index, r: 0 });
+      ws[cell_ref] = cell;
+    });
+
+    /*
+    Add all the entries
+     */
+    for (let r = 0; r < entries.length; r++) {
+      const entry = entries[r];
+      /*
+      Offset to allow for the header row.
+       */
+      const row = r + 1;
+      if (range.e.r < row) range.e.r = row;
+
+      // Need to add the sample identifier
+      const idCell = { v: entry.sampleId, t: "n", z: "0" };
+      const idRef = XLSX.utils.encode_cell({ c: 0, r: row });
+      ws[idRef] = idCell;
+
+      for (let c = 0; c < colOrder.length; c++) {
+        const column = colOrder[c];
+        /*
+        Offset to allow for the sample id column
+         */
+        const col = c + 1;
+        /* create cell object: .v is the actual data */
+        const cell = { v: entry[column.colId] };
+        if (cell.v !== null) {
+          /* create the correct cell reference */
+          const cell_ref = XLSX.utils.encode_cell({ c: col, r: row });
+
+          /* determine the cell type */
+          if (typeof cell.v === "number") cell.t = "n";
+          else if (typeof cell.v === "boolean") cell.t = "b";
+          else cell.t = "s";
+
+          /* add to structure */
+          ws[cell_ref] = cell;
+        }
+      }
+    }
+
+    ws["!ref"] = XLSX.utils.encode_range(range);
+
+    /* add worksheet to workbook using the template name */
+    const template = this.props.templates
+      .getIn([this.props.current, "name"])
+      .replace(this.nameRegex, "_");
+    workbook.SheetNames.push(template);
+    workbook.Sheets[template] = ws;
+
+    /* write file */
+    XLSX.writeFile(workbook, fileName);
+  };
+
+  /**
+   * Export the currently visible columns as a CSV file.
+   */
+  exportCSV = () => {
+    this.createFile("csv");
+  };
+
+  /**
+   * Export the currently visible columns as an XLSX file.
+   */
+  exportXLSX = () => {
+    this.createFile("xlsx");
+  };
 
   render() {
     return (

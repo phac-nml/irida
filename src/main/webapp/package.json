@@ -71,7 +71,8 @@
     "select2-bootstrap-theme": "^0.1.0-beta.10",
     "showdown": "^1.7.4",
     "sortablejs": "^1.5.1",
-    "ui-select": "^0.19.6"
+    "ui-select": "^0.19.6",
+    "xlsx": "^0.13.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",

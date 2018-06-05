@@ -19,7 +19,7 @@ export function LineList(props) {
     return <h3>A major error has occurred! Better find a 💣 shelter!</h3>;
   }
 
-  return <LineListLayoutComponent />;
+  return <LineListLayoutComponent {...props} />;
 }
 
 LineList.propTypes = {
