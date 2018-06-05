@@ -117,7 +117,7 @@ public class AnalysisSubmissionServiceImplIT {
 		String name = "My";
 		paged = analysisSubmissionService.listAllSubmissions(null, name, null, null,
 				new PageRequest(0, 10, new Sort(Direction.ASC, "createdDate")));
-		assertEquals(8, paged.getContent().size());
+		assertEquals(10, paged.getContent().size());
 
 		// Add a state filter
 		AnalysisState state = AnalysisState.COMPLETED;
