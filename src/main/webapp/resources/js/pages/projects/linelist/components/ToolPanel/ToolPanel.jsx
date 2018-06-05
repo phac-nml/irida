@@ -51,6 +51,7 @@ export class ToolPanel extends React.Component {
               <Checkbox
                 value={index}
                 checked={!f.hide}
+                className="t-field-toggle"
                 onChange={this.fieldUpdated}
               >
                 {f.label}
