@@ -20,7 +20,8 @@ RUN install-repository "-r 4287dd541327 --url https://irida.corefacility.ca/gala
 	install-repository "-r 5c8ff92e38a9 --url https://toolshed.g2.bx.psu.edu -o nml --name sistr_cmd" && \
 	install-repository "-r 26df66c32861 --url https://toolshed.g2.bx.psu.edu -o nml --name refseq_masher" && \
 	install-repository "-r b815081988b5 --url https://toolshed.g2.bx.psu.edu -o nml --name combine_tabular_collection" && \
-	install-repository "-r 1d9e3950ce61 --url https://toolshed.g2.bx.psu.edu -o dfornika --name mentalist" && \
+	install-repository "-r 243be7a79d9c --url https://toolshed.g2.bx.psu.edu -o dfornika --name mentalist" && \
+	install-repository "-r 4654c51dae72 --url https://toolshed.g2.bx.psu.edu -o nml --name bio_hansel" && \
 	find /galaxy-central/tool_deps/ -iname '.git' | xargs -I {} rm -rf {}
 
 RUN apt update && apt install --yes gnuplot && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
@@ -36,10 +37,12 @@ RUN /tool_deps/_conda/bin/conda config --add channels conda-forge && \
     /tool_deps/_conda/bin/conda config --add channels defaults && \
     /tool_deps/_conda/bin/conda config --add channels r && \
     /tool_deps/_conda/bin/conda config --add channels bioconda && \
+    /tool_deps/_conda/bin/conda update conda && \
     /tool_deps/_conda/bin/conda create -y --name __shovill@0.9.0 shovill=0.9.0 && \
     /tool_deps/_conda/bin/conda install -y -c conda-forge --name __shovill@0.9.0 ncurses bzip2 && \
     /tool_deps/_conda/bin/conda create -y --name __sistr_cmd@1.0.2 sistr_cmd=1.0.2 && \
-    /tool_deps/_conda/bin/conda create -y --name __mentalist@0.1.3 mentalist=0.1.3 && \
+    /tool_deps/_conda/bin/conda create -y --name __mentalist@0.1.8 mentalist=0.1.8 && \
+    /tool_deps/_conda/bin/conda create -y --name __bio_hansel@2.0.0 bio_hansel=2.0.0 && \
     /tool_deps/_conda/bin/conda create -y --name __refseq_masher@0.1.1 refseq_masher=0.1.1 && \
     /tool_deps/_conda/bin/conda create -y --name __samtools@_uv_ samtools && \
     /tool_deps/_conda/bin/conda clean -y -itps && \
@@ -51,7 +54,7 @@ ADD data/tool-data.tar.gz /galaxy-central/
 # Fix up permissions/mentalist erroring out on first execution by running mentalist during build
 RUN echo -e "@\nATCG\n+\nIIII" > /tmp/file_1.fastq && \
 	echo -e "@\nATCG\n+\nIIII" > /tmp/file_2.fastq && \
-	bash -c "source /tool_deps/_conda/envs/__mentalist\@0.1.3/bin/activate /tool_deps/_conda/envs/__mentalist\@0.1.3/ && mentalist call -o /tmp/mentalist-test -s x --db /galaxy-central/tool-data/mentalist_databases/salmonella_enterica_pubmlst_k31_2018-04-04/salmonella_enterica_pubmlst_k31_2018-04-04.jld /tmp/file_1.fastq /tmp/file_2.fastq" && \
+	bash -c "source /tool_deps/_conda/bin/activate /tool_deps/_conda/envs/__mentalist\@0.1.8/ && mentalist call -o /tmp/mentalist-test -s x --db /galaxy-central/tool-data/mentalist_databases/salmonella_enterica_pubmlst_k31_2018-04-04/salmonella_enterica_pubmlst_k31_2018-04-04.jld /tmp/file_1.fastq /tmp/file_2.fastq" && \
 	chown -R galaxy:galaxy /galaxy-central/tool-data/ && \
 	chown -R galaxy:galaxy /tool_deps/_conda/ && \
 	rm -rf /tmp/file_*.fastq
