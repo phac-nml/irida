@@ -15,7 +15,7 @@
 </head>
 
 <body>
-<main layout:fragment="page">
+<main class="col-md-12" layout:fragment="page">
   <h1 th:text="#{project.export.table.title}">_Project Exports_</h1>
   <table id="exportTable" data:url="@{/ajax/export/list}" class="table table-striped" cellspacing="0" width="100%">
     <thead>

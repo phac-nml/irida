@@ -4,6 +4,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import ca.corefacility.bioinformatics.irida.model.user.Role;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,7 +16,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 
 /**
- * Interceptor Adaptor to add the user to the {@link Model} each server call.
+ * Interceptor Adaptor to add the user to the {@link Model} each server call.  Also ensures {@link Role#ROLE_SEQUENCER} users cannot do anything in the UI.
  */
 public class UserSecurityInterceptor extends HandlerInterceptorAdapter {
 	public static final String CURRENT_USER_DETAILS = "CURRENT_USER_DETAILS";
@@ -31,6 +33,11 @@ public class UserSecurityInterceptor extends HandlerInterceptorAdapter {
 		if (userDetails == null && isAuthenticated()) {
 			UserDetails currentUserDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
 					.getPrincipal();
+
+			// Disallow SEQUENCER role from doing anything in the IRIDA UI
+			if (currentUserDetails.getAuthorities().contains(Role.ROLE_SEQUENCER)) {
+				throw new AccessDeniedException("Sequencer should not be able to interact with IRIDA UI");
+			}
 
 			session.setAttribute(CURRENT_USER_DETAILS, currentUserDetails);
 		}

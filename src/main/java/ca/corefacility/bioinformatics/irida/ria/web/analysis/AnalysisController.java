@@ -222,6 +222,8 @@ public class AnalysisController {
 					tree(submission, model);
 				} else if (analysisType.equals(AnalysisType.SISTR_TYPING)) {
 					model.addAttribute("sistr", true);
+				} else if (analysisType.equals(AnalysisType.BIO_HANSEL)) {
+					model.addAttribute("bio_hansel", true);
 				}
 			}
 
@@ -470,7 +472,7 @@ public class AnalysisController {
 
 	/**
 	 * Get the status of projects that can be shared with the given analysis
-	 * 
+	 *
 	 * @param submissionId
 	 *            the {@link AnalysisSubmission} id
 	 * @return a list of {@link AnalysisController.SharedProjectResponse}
@@ -590,7 +592,10 @@ public class AnalysisController {
 	@RequestMapping("/{submissionId}/advanced-phylo")
 	public String getAdvancedPhylogeneticVisualizationPage(@PathVariable Long submissionId, Model model) {
 
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+
 		model.addAttribute("submissionId", submissionId);
+		model.addAttribute("submission", submission);
 		return BASE + "visualizations/phylocanvas-metadata";
 	}
 
@@ -727,7 +732,7 @@ public class AnalysisController {
 
 						result.put("sample_name", sample.getSampleName());
 					} else {
-						logger.error("Invalid number of associated samles for submission " + submission);
+						logger.error("Invalid number of associated samples for submission " + submission);
 					}
 				} else {
 					logger.error("SISTR results for file [" + path + "] are not correctly formatted");
