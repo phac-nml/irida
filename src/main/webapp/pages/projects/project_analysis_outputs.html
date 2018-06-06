@@ -4,18 +4,20 @@
 
 <head>
     <title th:text="${project.label} + ' - ' + #{analysis.batch-download}"></title>
-    <script>
+    <link rel="stylesheet" th:href="@{/resources/dist/css/analysis.bundle.css}">
+    <script th:inline="javascript">
         var PAGE = {
           URLS: {
             base: /*[[@{/}]]*/ '/',
-          }
+          },
+          projectId: /*[[${ project.getId().toString() }]]*/ '666',
         }
     </script>
 </head>
 
 <body>
 <main layout:fragment="main">
-    <div class="alert alert-warning" th:text="#{analysis.batch-download-warning}"></div>
+    <!--<div class="alert alert-warning" th:text="#{analysis.batch-download-warning}"></div>-->
     <div id="app">
     </div>
     <div id="js-messages" class="hidden"

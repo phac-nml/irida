@@ -1,4 +1,8 @@
 import $ from "jquery";
+import { Grid } from "ag-grid/main";
+
+import "ag-grid/dist/styles/ag-grid.css";
+import "ag-grid/dist/styles/ag-theme-balham.css";
 
 /**
  * Internationalized text from div#messages.hidden
@@ -11,6 +15,8 @@ const MESSAGES = $("#js-messages").data();
  * @type {RegExp}
  */
 const FILENAME_REGEX = /.*\/(.+\.\w+)/;
+
+const BASE_URL = window.PAGE.URLS.base;
 
 /**
  * URL to get analysis output file info via AJAX for a project
@@ -27,43 +33,6 @@ const AJAX_URL = `${window.PAGE.URLS.base}projects/${
 const $app = $("#app");
 
 /**
- * Grouped analysis output file info - 2D map/dict
- * analysis type string => analysis output file key => analysis output file info
- * @type {null|Object}
- * @private
- */
-let _data = null;
-
-/**
- * Group list of maps of analysis output file info by analysis type and analysis
- * output file key name.
- * @param data List of maps of analysis output file info
- * @returns {{}} 2D dict of analysis output file info grouped by analysis type and output file key name
- */
-function groupAnalysisOutput(data) {
-  let groupedAnalysisOutput = {};
-  for (const x of data) {
-    const analysisType = x.analysis_type;
-    const analysisOutputFileKey = x.analysis_output_file_key;
-    if (groupedAnalysisOutput.hasOwnProperty(analysisType)) {
-      if (
-        groupedAnalysisOutput[analysisType].hasOwnProperty(
-          analysisOutputFileKey
-        )
-      ) {
-        groupedAnalysisOutput[analysisType][analysisOutputFileKey].push(x);
-      } else {
-        groupedAnalysisOutput[analysisType][analysisOutputFileKey] = [x];
-      }
-    } else {
-      groupedAnalysisOutput[analysisType] = {};
-      groupedAnalysisOutput[analysisType][analysisOutputFileKey] = [x];
-    }
-  }
-  return groupedAnalysisOutput;
-}
-
-/**
  * Get filename from path
  * @param path File path
  */
@@ -71,68 +40,169 @@ function getFilename(path) {
   return path.replace(FILENAME_REGEX, "$1");
 }
 
+/**
+ * Download analysis output files for selected rows in ag-grid table
+ * @param {Object} api ag-grid grid options API object
+ */
+function downloadSelected(api) {
+  const selectedNodes = api.getSelectedNodes();
+
+  const $a = document.createElement("a");
+  $a.style.display = "none";
+  document.body.appendChild($a);
+
+  for (const node of selectedNodes) {
+    const {
+      submission_id,
+      aof_id,
+      sample_name,
+      sample_id,
+      file_path
+    } = node.data;
+    let url = `${BASE_URL}analysis/ajax/download/${submission_id}/file/${aof_id}`;
+    const downloadName = `${sample_name}-sample_id-${sample_id}-submission_id-${submission_id}-${getFilename(
+      file_path
+    )}`;
+    url += "?" + $.param({ filename: downloadName });
+    $a.setAttribute("href", url);
+    $a.setAttribute("download", downloadName);
+    $a.click();
+  }
+  document.body.removeChild($a);
+}
+
+/**
+ * Initialize ag-grid Grid
+ * @param {HTMLElement} $grid Element to create Grid in
+ * @param {Array<Object<string>>} headers
+ * @param {Array<Object>} rows
+ * @param {jQuery|HTMLElement} $dlButton
+ */
+function initAgGrid($grid, headers, rows, $dlButton) {
+  const gridOptions = {
+    enableColResize: true,
+    columnDefs: headers,
+    rowData: rows,
+    rowDeselection: true,
+    enableSorting: true,
+    enableFilter: true,
+    rowSelection: "multiple",
+    onSelectionChanged: e => {
+      const selectedNodes = e.api.getSelectedNodes();
+      $dlButton.attr("disabled", selectedNodes.length > 0 ? null : "disabled");
+    }
+  };
+  new Grid($grid, gridOptions);
+  gridOptions.api.sizeColumnsToFit();
+  $dlButton.on("click", e => {
+    e.preventDefault();
+    downloadSelected(gridOptions.api);
+  });
+}
+
+function filterSingleSampleOutputs(data) {
+  const groupedDataByAofId = data.reduce((acc, x) => {
+    const aofId = x.aof_id;
+    if (acc.hasOwnProperty(aofId)) {
+      acc[aofId].push(x);
+    } else {
+      acc[aofId] = [x];
+    }
+    return acc;
+  }, {});
+  return Object.keys(groupedDataByAofId)
+    .filter(x => groupedDataByAofId[x].length === 1)
+    .map(x => groupedDataByAofId[x][0]);
+}
+
+function getWorkflowInfo(singleSampleOutputs) {
+  const workflowIds = singleSampleOutputs.reduce(
+    (acc, x) => Object.assign(acc, { [x.workflow_id]: null }),
+    {}
+  );
+  Object.keys(workflowIds).forEach(workflowId => {
+    $.get(`${BASE_URL}pipelines/ajax/${workflowId}`).done(
+      wfInfo => (workflowIds[workflowId] = wfInfo)
+    );
+  });
+  return workflowIds;
+}
+
 $.get(AJAX_URL)
   .done(data => {
-    _data = groupAnalysisOutput(data);
-    // for each analysis type
-    Object.keys(_data).forEach((analysisType, i) => {
-      const nameToOutputs = _data[analysisType];
-      console.debug(analysisType, i, nameToOutputs.length);
-      const $panel = $(
-        `<div class="panel panel-default" id="panel-${i}"></div>`
-      );
-      const $panelHeading = $(
-        `<div class="panel-heading"><h4>${
-          MESSAGES.analysisType
-        } - ${analysisType.toLocaleLowerCase()}</h4></div>`
-      );
-      const $panelBody = $(`<div class="panel-body"></div>`);
-      // for each analysis output file key name
-      Object.keys(nameToOutputs).forEach((analysisOutputName, j) => {
-        const outputs = nameToOutputs[analysisOutputName];
-        const firstOutput = outputs[0];
-        const filename = getFilename(firstOutput.file_path);
-        const $div = $(
-          `<div><p>${
-            MESSAGES.analysisOutputFileKey
-          } - "${analysisOutputName}"</p></div>`
-        );
-        // Batch download button for analysis type and output file key
-        const $button = $(
-          `<button class="btn btn-default">${
-            MESSAGES.download
-          } ${filename} (N=${outputs.length})</button>`
-        );
-        // on button click, create temporary hidden download link for each
-        // analysis output file and simulate click of download link
-        $button.on("click", e => {
-          e.preventDefault();
-          const aLink = document.createElement("a");
-          aLink.style.display = "none";
-          document.body.appendChild(aLink);
-          for (const output of outputs) {
-            let url = `${window.PAGE.URLS.base}analysis/ajax/download/${
-              output.analysis_submission_id
-            }/file/${output.aof_id}`;
-            const downloadName = `${output.sample_name}-sample_id-${
-              output.sample_id
-            }-submission_id-${
-              output.analysis_submission_id
-            }-${analysisOutputName}-${filename}`;
-            url += "?" + $.param({ filename: downloadName });
-            aLink.setAttribute("href", url);
-            aLink.setAttribute("download", downloadName);
-            aLink.click();
-          }
-          document.body.removeChild(aLink);
-        });
-        $div.append($button);
-        $panelBody.append($div);
-      });
-      $panel.append($panelHeading);
-      $panel.append($panelBody);
-      $panel.appendTo($app);
-    });
+    const singleSampleOutputs = filterSingleSampleOutputs(data);
+    const workflowIds = getWorkflowInfo(singleSampleOutputs);
+    const HEADERS = [
+      {
+        field: "sample_name",
+        headerName: "sample_name",
+        cellRenderer: p => {
+          return `<a href="${BASE_URL}projects/${
+            window.PAGE.projectId
+          }/samples/${p.data.sample_id}" target="_blank">${
+            p.data.sample_name
+          }</a>`;
+        }
+      },
+      {
+        field: "file_path",
+        headerName: "File",
+        cellRenderer: p => {
+          const REGEX = /^\d+\/\d+\/(.+)$/;
+          const groups = REGEX.exec(p.data.file_path);
+          if (groups === null) return p.data.file_path;
+          const filename = groups[1];
+
+          return `${filename} <small>(${p.data.analysis_output_file_key}, id=${
+            p.data.aof_id
+          })</small>`;
+        }
+      },
+      {
+        field: "analysis_type",
+        headerName: "Analysis Type"
+      },
+      {
+        field: "workflow_id",
+        headerName: "Pipeline",
+        cellRenderer: p => {
+          const wfInfo = workflowIds[p.data.workflow_id];
+          if (wfInfo === null) return p.data.workflow_id;
+          return `${wfInfo.name} (v${wfInfo.version})`;
+        }
+      },
+      {
+        field: "submission_name",
+        headerName: "Analysis Submission",
+        cellRenderer: p => {
+          return `<a href="${BASE_URL}analysis/${
+            p.data.submission_id
+          }" target="_blank">${p.data.submission_name}</a>`;
+        }
+      },
+      {
+        field: "created_date",
+        headerName: "Created",
+        cellRenderer: p => {
+          return new Date(p.data.created_date).toISOString();
+        }
+      }
+    ];
+    const gridId = `grid-outputs`;
+    const $grid = $(
+      `<div id="${gridId}" class="ag-theme-balham" style="height: 600px; width: 100%; resize: both;"/>`
+    );
+    const $dlButton = $(
+      `<button type="button" class="btn" disabled="disabled" >DOWNLOAD</button>`
+    );
+    $app.prepend($grid);
+    $app.prepend($dlButton);
+    initAgGrid(
+      document.getElementById(gridId),
+      HEADERS,
+      singleSampleOutputs,
+      $dlButton
+    );
   })
   .fail(function(xhr, error, exception) {
     const $alert = $(

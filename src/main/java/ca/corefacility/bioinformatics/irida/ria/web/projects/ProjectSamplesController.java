@@ -864,10 +864,12 @@ public class ProjectSamplesController {
 	@RequestMapping(value = "/projects/{projectId}/ajax/analysis-outputs")
 	@ResponseBody
 	public List<Map<String, Object>> getAnalysisOutputForProject(@PathVariable Long projectId) {
+		final Project project = projectService.read(projectId);
 		// Using a JDBC template query for performance reasons. Trying to retrieve the necessary info with JPA takes a
 		// long time and produces a lot of intermediate objects.
 		JdbcTemplate tmpl = new JdbcTemplate(dataSource);
-		String query = "SELECT s.id as sample_id, " +
+		String query = "SELECT " +
+				"s.id as sample_id, " +
 				"s.sampleName as sample_name, " +
 				"a.id as analysis_id, " +
 				"aofmap.analysis_output_file_key, " +
@@ -875,7 +877,9 @@ public class ProjectSamplesController {
 				"aof.id as aof_id, " +
 				"a.analysis_type, " +
 				"asub.workflow_id, " +
-				"asub.id as analysis_submission_id " +
+				"aof.created_date, " +
+				"asub.name AS submission_name, " +
+				"asub.id as submission_id " +
 				"FROM analysis_output_file aof "
 				+ "  INNER JOIN analysis_output_file_map aofmap ON aof.id = aofmap.analysisOutputFilesMap_id"
 				+ "  INNER JOIN analysis a ON aofmap.analysis_id = a.id"
@@ -885,7 +889,7 @@ public class ProjectSamplesController {
 				+ "  INNER JOIN sample s ON sso.sample_id = s.id"
 				+ "  INNER JOIN project_sample psample ON s.id = psample.sample_id"
 				+ "  INNER JOIN project p ON psample.project_id = p.id"
-				+ "    WHERE p.id = " + projectId
+				+ "    WHERE p.id = " + project.getId()
 				+ "      and a.analysis_type NOT LIKE '%_COLLECTION'";
 		// Result of query is a list of maps ready for handling on the frontend (e.g. grouping by analysis type)
 		return tmpl.queryForList(query);
