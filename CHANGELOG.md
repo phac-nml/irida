@@ -17,6 +17,7 @@ Changes
 * [UI]: Fixed bug where admin dropdown menu was hidden behind sequencing run sub navigation.
 * [Developer]: Moved file processing chain outside of SequencingObjectService.  It now runs as a scheduled task.  This will help balance the processing load in multi-server deployments.
 * [UI]: Ensuring `ROLE_SEQUENCER` users get "Access Denied" for any attempted UI interactions.
+* [UI]: Added the sample coverage to the table exported from the project samples page.
 
 0.20.0 to 0.21.0
 ----------------
