@@ -15,7 +15,7 @@
 <body>
 <main layout:fragment="page">
 	<input id="userId" type="hidden" th:value="${user.getId()}"/>
-	<div class="col-md-12">
+	<div class="col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1">
 		<div th:if="${mailFailure}" class="alert alert-warning" th:text="#{user.creation.activation.mail.failure}">
 		</div>
 		<div class="row">

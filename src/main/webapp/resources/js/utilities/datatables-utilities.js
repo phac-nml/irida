@@ -121,7 +121,7 @@ export function createButtonCell(buttons = []) {
  * @param {array} list of extra classes to add to the link
  * @return {*} anchor element containing link.
  */
-export function createItemLink({ url, label, width = "160px", classes = [] }) {
+export function createItemLink({ url, label, width, classes = [] }) {
   if (typeof url !== "undefined" && typeof label !== "undefined") {
     const link = document.createElement("a");
     link.classList.add("btn", "btn-link", "dt-wrap-cell", ...classes);
