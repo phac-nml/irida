@@ -8,6 +8,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 public class UIMetadataTemplateField {
 	private Long id;
 	private String label;
+	private String type; // TODO: This needs to be added to the MetadataTemplateField and removed from the Entry
 	private boolean hide;
 
 	public UIMetadataTemplateField() {
@@ -16,6 +17,7 @@ public class UIMetadataTemplateField {
 	public UIMetadataTemplateField(MetadataTemplateField field, boolean hide) {
 		this.id = field.getId();
 		this.label = field.getLabel();
+		this.type = "text";
 		this.hide = hide;
 	}
 
