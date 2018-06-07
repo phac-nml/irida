@@ -7,9 +7,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * Represents page found at url: /projects/{projectId}/linelist
@@ -17,36 +14,29 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class ProjectLineListPage extends ProjectPageBase {
 	private static final String RELATIVE_URL = "/projects/{projectId}/linelist";
 
-	@FindBy(css = "#linelist th")
-	private List<WebElement> tableHeaders;
+	@FindBy(className = "t-sample-name")
+	private List<WebElement> sampleNameLinks;
 
-	@FindBy(css = "#linelist tbody tr")
-	private List<WebElement> tableRows;
+	@FindBy(className = "t-field-toggle")
+	private List<WebElement> fieldToggles;
 
-	@FindBy(id = "col-vis-btn")
-	private WebElement metadataColVisBtn;
+	@FindBy(className = "ag-header-cell-text")
+	private List<WebElement> headerText;
 
-	@FindBy(css = ".metadata-open .modal-content")
-	private WebElement metadataColVisAside;
+	@FindBy(className = "ant-select-selection-selected-value")
+	private WebElement templateSelectToggle;
 
-	@FindBy(id = "close-aside-btn")
-	private WebElement closeAsideBtn;
+	@FindBy(className = "template-option--name")
+	private List<WebElement> templateOptions;
 
-	@FindBy(className = "bootstrap-switch-label")
-	private List<WebElement> colVisBtns;
+	@FindBy(className = "t-template-save-btn")
+	private WebElement templateSaveBtn;
 
-	@FindBy(id = "template-select")
-	private WebElement templateSelect;
-
-	@FindBy(id = "save-btn")
-	private WebElement saveBtn;
-
-	@FindBy(id = "template-name")
+	@FindBy(className = "ant-select-search__field")
 	private WebElement templateNameInput;
 
-
-	@FindBy(id = "complete-save")
-	private WebElement completeSaveBtn;
+	@FindBy(className = "t-modal-save-template-btn")
+	private WebElement modalSaveTemplateBtn;
 
 	public ProjectLineListPage(WebDriver driver) {
 		super(driver);
@@ -57,50 +47,38 @@ public class ProjectLineListPage extends ProjectPageBase {
 		return PageFactory.initElements(driver, ProjectLineListPage.class);
 	}
 
-	public int getNumberSamplesWithMetadata() {
-		return tableRows.size();
+	public int getNumberOfRowsInLineList() {
+		return sampleNameLinks.size();
 	}
 
-	public int getNumberTableColumns() {
-		return tableHeaders.size();
+	public int getNumberOfMetadataFields() {
+		return fieldToggles.size();
 	}
 
-	public void openColumnVisibilityPanel() {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		metadataColVisBtn.click();
-		wait.until(ExpectedConditions.visibilityOf(metadataColVisAside));
+	public int getNumberOfTableColumnsVisible() {
+		return headerText.size();
 	}
 
-	public void closeColumnVisibilityPanel() {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		closeAsideBtn.click();
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".modal.in-remove-active")));
+	public void toggleMetadataField (int field) {
+		fieldToggles.get(field).click();
 	}
 
-	public void toggleColumn(String buttonLabel) {
-		for (WebElement btn : colVisBtns) {
-			if (btn.getText().equalsIgnoreCase(buttonLabel)) {
-				btn.click();
-				waitForTime(300);
-				break;
+	public void selectTemplate(String template) {
+		templateSelectToggle.click();
+		waitForElementsVisible(By.className("ant-select-dropdown-menu"));
+		for (WebElement option : templateOptions) {
+			if (option.getText()
+					.equals(template)) {
+				option.click();
 			}
 		}
 	}
 
-	public void selectTemplate(String templateName) {
-		Select select = new Select(templateSelect);
-		select.selectByVisibleText(templateName);
-		waitForTime(1000);
-	}
-
-	public void saveTemplate(String templateName) {
-		saveBtn.click();
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		wait.until(ExpectedConditions.visibilityOf(templateNameInput));
-		waitForTime(1000);
-		templateNameInput.sendKeys(templateName);
-		wait.until(ExpectedConditions.elementToBeClickable(completeSaveBtn));
-		completeSaveBtn.click();
-		waitForTime(2000);
+	public void saveMetadataTemplate (String name) {
+		templateSaveBtn.click();
+		waitForElementsVisible(By.className("ant-modal"));
+		templateNameInput.sendKeys(name);
+		modalSaveTemplateBtn.click();
+		waitForTime(300);
 	}
 }

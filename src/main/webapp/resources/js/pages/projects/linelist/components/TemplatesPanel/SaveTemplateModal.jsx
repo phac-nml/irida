@@ -14,7 +14,7 @@ function Footer(props) {
   return (
     <div>
       <Button onClick={props.onCancel}>{i18n.form.btn.cancel}</Button>
-      <Button type="primary" disabled={props.disabled} onClick={props.onClick}>
+      <Button className="t-modal-save-template-btn" type="primary" disabled={props.disabled} onClick={props.onClick}>
         {i18n.form.btn.save}
       </Button>
     </div>
