@@ -69,6 +69,7 @@ The main configuration parameters you will need to change are:
   * `file.processing.core.size=4` - The initial number of threads available for file processing.
   * `file.processing.max.size=8` - The maximum number of available threads for file processing.  This number should not exceed the configured maximum number of JDBC threads.
   * `file.processing.queue.capacity=512` - The maximum number of file processing jobs that can be queued.
+  * `file.processing.process=true` - Whether to run the file processors on the current machine.  This can be set to false if you're running multiple IRIDA servers and want to improve UI performance on a machine.
 2. **Database connection information:**
   * `jdbc.url=jdbc:mysql://localhost:3306/irida_test`
   * `jdbc.username=test`

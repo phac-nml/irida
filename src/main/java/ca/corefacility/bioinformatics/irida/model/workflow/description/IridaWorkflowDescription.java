@@ -119,7 +119,7 @@ public class IridaWorkflowDescription {
 	public boolean requiresDynamicSource() {
 		Boolean requiresDynamicSource = false;
 		for (IridaWorkflowParameter parameter : parameters) {
-			if (parameter.isRequired()) {
+			if (parameter.isRequired() && parameter.hasDynamicSource()) {
 				requiresDynamicSource = true;
 			}
 		}

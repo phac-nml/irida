@@ -1,29 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.security.Principal;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
@@ -41,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
+import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisOutputFileInfo;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
@@ -55,13 +36,31 @@ import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateServi
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.Principal;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Controller for Analysis.
@@ -91,13 +90,15 @@ public class AnalysisController {
 	private MetadataTemplateService metadataTemplateService;
 	private SequencingObjectService sequencingObjectService;
 	private AnalysesListingService analysesListingService;
+	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
 
 	@Autowired
 	public AnalysisController(AnalysisSubmissionService analysisSubmissionService,
 			IridaWorkflowsService iridaWorkflowsService, UserService userService, SampleService sampleService,
 			ProjectService projectService, UpdateAnalysisSubmissionPermission updateAnalysisPermission,
 			MetadataTemplateService metadataTemplateService, SequencingObjectService sequencingObjectService,
-			AnalysesListingService analysesListingService, MessageSource messageSource) {
+			AnalysesListingService analysesListingService,
+			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor, MessageSource messageSource) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
 		this.messageSource = messageSource;
@@ -108,6 +109,7 @@ public class AnalysisController {
 		this.metadataTemplateService = metadataTemplateService;
 		this.sequencingObjectService = sequencingObjectService;
 		this.analysesListingService = analysesListingService;
+		this.analysisSubmissionSampleProcessor = analysisSubmissionSampleProcessor;
 	}
 
 	// ************************************************************************************************
@@ -158,6 +160,15 @@ public class AnalysisController {
 		logger.trace("reading analysis submission " + submissionId);
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		model.addAttribute("analysisSubmission", submission);
+
+		boolean canShareToSamples = false;
+		if (submission.getAnalysis() != null) {
+			canShareToSamples = analysisSubmissionSampleProcessor
+					.hasRegisteredAnalysisSampleUpdater(submission.getAnalysis().getAnalysisType());
+		}
+
+		model.addAttribute("canShareToSamples", canShareToSamples);
+
 
 		UUID workflowUUID = submission.getWorkflowId();
 		logger.trace("Workflow ID is " + workflowUUID);
@@ -211,6 +222,8 @@ public class AnalysisController {
 					tree(submission, model);
 				} else if (analysisType.equals(AnalysisType.SISTR_TYPING)) {
 					model.addAttribute("sistr", true);
+				} else if (analysisType.equals(AnalysisType.BIO_HANSEL)) {
+					model.addAttribute("bio_hansel", true);
 				}
 			}
 
@@ -459,7 +472,7 @@ public class AnalysisController {
 
 	/**
 	 * Get the status of projects that can be shared with the given analysis
-	 * 
+	 *
 	 * @param submissionId
 	 *            the {@link AnalysisSubmission} id
 	 * @return a list of {@link AnalysisController.SharedProjectResponse}
@@ -538,6 +551,38 @@ public class AnalysisController {
 	}
 
 	/**
+	 * Save the results of an analysis back to the samples
+	 *
+	 * @param submissionId ID of the {@link AnalysisSubmission}
+	 * @param locale       locale of the logged in user
+	 * @return success message
+	 */
+	@RequestMapping(value = "/ajax/{submissionId}/save-results", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, String> saveResultsToSamples(@PathVariable Long submissionId, Locale locale) {
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+
+		if(submission.getUpdateSamples()){
+			String message = messageSource.getMessage("analysis.details.save.alreadysavederror", null, locale);
+			return ImmutableMap.of("result", "error", "message", message);
+		}
+
+		try {
+			analysisSubmissionSampleProcessor.updateSamples(submission);
+
+			submission.setUpdateSamples(true);
+			analysisSubmissionService.update(submission);
+		} catch (PostProcessingException e) {
+			String message = messageSource.getMessage("analysis.details.save.processingerror", null, locale);
+			return ImmutableMap.of("result", "error", "message", message);
+		}
+
+		String message = messageSource.getMessage("analysis.details.save.response", null, locale);
+
+		return ImmutableMap.of("result", "success", "message", message);
+	}
+
+	/**
 	 * Get the page for viewing advanced phylogenetic visualization
 	 *
 	 * @param submissionId {@link Long} identifier for an {@link AnalysisSubmission}
@@ -547,7 +592,10 @@ public class AnalysisController {
 	@RequestMapping("/{submissionId}/advanced-phylo")
 	public String getAdvancedPhylogeneticVisualizationPage(@PathVariable Long submissionId, Model model) {
 
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+
 		model.addAttribute("submissionId", submissionId);
+		model.addAttribute("submission", submission);
 		return BASE + "visualizations/phylocanvas-metadata";
 	}
 
@@ -684,7 +732,7 @@ public class AnalysisController {
 
 						result.put("sample_name", sample.getSampleName());
 					} else {
-						logger.error("Invalid number of associated samles for submission " + submission);
+						logger.error("Invalid number of associated samples for submission " + submission);
 					}
 				} else {
 					logger.error("SISTR results for file [" + path + "] are not correctly formatted");

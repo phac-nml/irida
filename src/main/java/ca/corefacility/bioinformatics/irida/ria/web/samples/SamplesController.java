@@ -564,8 +564,8 @@ public class SamplesController extends BaseController {
 	 *            the incoming {@link HttpServletRequest}
 	 * @return redirect to the files page if successul
 	 */
-	@RequestMapping(value = { "/samples/{sampleId}/sequenceFiles/concatenate",
-			"/projects/{projectId}/samples/{sampleId}/sequenceFiles/concatenate" }, method = RequestMethod.POST)
+	@RequestMapping(value = { "/samples/{sampleId}/concatenate",
+			"/projects/{projectId}/samples/{sampleId}/concatenate" }, method = RequestMethod.POST)
 	public String concatenateSequenceFiles(@PathVariable Long sampleId, @RequestParam(name = "seq") Set<Long> objectIds,
 			@RequestParam(name = "filename") String filename,
 			@RequestParam(name = "remove", defaultValue = "false", required = false) boolean removeOriginals,

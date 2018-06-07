@@ -4,6 +4,11 @@ Upgrading
 This document summarizes the environmental changes that need to be made when
 upgrading IRIDA that cannot be automated.
 
+0.21.0 to 0.22.0
+----------------
+* This upgrade makes schema changes to the databases and cannot be parallel deployed.  Servlet container must be stopped before deploying the new `war` file.
+* This upgrade changes the way the file processors handle uploaded files.  File processing now takes place as a scheduled task rather than immediately after files are uploaded.  For deployments with multiple IRIDA servers running against the same database, prossing may not be performed by the IRIDA server the files were uploaded to and will instead be balanced among all the available servers.  If you want to disable file processing on an IRIDA server, set the following property in `/etc/irida/irida.conf` : `file.processing.process=false`.
+
 0.20.0 to 0.21.0
 ----------------
 
