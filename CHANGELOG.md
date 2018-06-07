@@ -17,6 +17,7 @@ Changes
 * [UI]: Fixed bug where admin dropdown menu was hidden behind sequencing run sub navigation.
 * [Developer]: Moved file processing chain outside of SequencingObjectService.  It now runs as a scheduled task.  This will help balance the processing load in multi-server deployments.
 * [UI]: Ensuring `ROLE_SEQUENCER` users get "Access Denied" for any attempted UI interactions.
+* [Developer]: Updated `yarn` to the current version.
 
 0.20.0 to 0.21.0
 ----------------
