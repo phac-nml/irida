@@ -13,10 +13,12 @@ export function InfoAlert(props) {
       showIcon
       iconType="info-circle-o"
       message={props.message}
+      description={props.description}
     />
   );
 }
 
 InfoAlert.propTypes = {
-  message: PropTypes.string.isRequired
+  message: PropTypes.string.isRequired,
+  description: PropTypes.string
 };
