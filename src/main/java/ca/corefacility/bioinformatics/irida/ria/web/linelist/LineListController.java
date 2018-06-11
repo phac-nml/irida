@@ -188,7 +188,7 @@ public class LineListController {
 
 		for (Join<Project, Sample> join : samplesForProject) {
 			Sample sample = join.getObject();
-			result.add(new UISampleMetadata(sample));
+			result.add(new UISampleMetadata(project, sample));
 		}
 
 		return result;

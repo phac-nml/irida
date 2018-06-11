@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.models;
 import java.util.HashMap;
 import java.util.Map;
 
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
@@ -13,11 +14,15 @@ import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 public class UISampleMetadata {
 	private Long id;
 	private String label;
+	private Long projectId;
+	private String projectLabel;
 	private Map<String, String> metadata;
 
-	public UISampleMetadata(Sample sample) {
+	public UISampleMetadata(Project project, Sample sample) {
 		this.id = sample.getId();
 		this.label = sample.getLabel();
+		this.projectId = project.getId();
+		this.projectLabel = project.getLabel();
 		this.metadata = getMetadataForSample(sample);
 	}
 
@@ -37,6 +42,14 @@ public class UISampleMetadata {
 
 	public String getLabel() {
 		return label;
+	}
+
+	public Long getProjectId() {
+		return projectId;
+	}
+
+	public String getProjectLabel() {
+		return projectLabel;
 	}
 
 	public Map<String, String> getMetadata() {

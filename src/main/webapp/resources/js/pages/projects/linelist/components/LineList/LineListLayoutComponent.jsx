@@ -25,6 +25,10 @@ export class LineListLayoutComponent extends React.Component {
     });
   };
 
+  addSamplesToCart = () => {
+    this.tableRef.current.addSamplesToCart();
+  };
+
   exportCSV = () => {
     this.tableRef.current.exportCSV();
   };
@@ -36,7 +40,11 @@ export class LineListLayoutComponent extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <Toolbar exportCSV={this.exportCSV} exportXLSX={this.exportXLSX} />
+        <Toolbar
+          exportCSV={this.exportCSV}
+          exportXLSX={this.exportXLSX}
+          addSamplesToCart={this.addSamplesToCart}
+        />
         <Layout className="ag-theme-balham" style={{ minHeight: "100%" }}>
           <Content>
             <Table {...this.props} ref={this.tableRef} />

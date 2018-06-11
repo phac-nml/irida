@@ -11,7 +11,11 @@ export class SampleNameRenderer extends React.Component {
   }
   render() {
     return (
-      <a target="_blank" className="t-sample-name" href={this.href}>
+      <a
+        target="_blank"
+        className="t-sample-name"
+        href={this.href}
+      >
         {this.name}
       </a>
     );

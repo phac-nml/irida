@@ -6,7 +6,10 @@ Special handler for formatting the sample Name Column;
 const sampleNameColumn = {
   sort: "asc",
   pinned: "left",
-  cellRenderer: "SampleNameRenderer"
+  cellRenderer: "SampleNameRenderer",
+  checkboxSelection: true,
+  headerCheckboxSelection: true,
+  headerCheckboxSelectionFilteredOnly: true
 };
 
 /**
