@@ -8,20 +8,17 @@ import { showNotification } from "../../modules/notifications";
  * @returns {IterableIterator<*>}
  */
 export function* addToCartSaga() {
-  try {
-    while (true) {
-      const { samples } = yield take(types.ADD);
-      if (samples.length > 0) {
-        const projectId = samples[0].projectId;
-        const sampleIds = samples.map(s => s.sampleId);
-        const { data } = yield call(putSampleInCart, projectId, sampleIds);
-        // This is a hack until the cart gets fully updated
-        const event = new Event("cart:updated");
-        document.dispatchEvent(event);
-        showNotification({ text: data.message });
-      }
+  while (true) {
+    const { samples } = yield take(types.ADD);
+    if (samples.length > 0) {
+      const projectId = samples[0].projectId;
+      const sampleIds = samples.map(s => s.sampleId);
+      const { data } = yield call(putSampleInCart, projectId, sampleIds);
+      // This is a hack until the cart gets fully updated
+      const event = new Event("cart:updated");
+      document.dispatchEvent(event);
+      // Display the notification.
+      showNotification({ text: data.message });
     }
-  } catch (error) {
-    console.error("COULD NOT ADD TO CART", error);
   }
 }
