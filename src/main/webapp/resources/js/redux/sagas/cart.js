@@ -3,6 +3,10 @@ import { types } from "../reducers/cart";
 import { putSampleInCart } from "../../apis/cart/cart";
 import { showNotification } from "../../modules/notifications";
 
+/**
+ * Saga to add samples to the global cart.
+ * @returns {IterableIterator<*>}
+ */
 export function* addToCartSaga() {
   try {
     while (true) {
