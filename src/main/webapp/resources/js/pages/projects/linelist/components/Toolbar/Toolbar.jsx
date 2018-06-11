@@ -1,18 +1,14 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { ExportDropDown } from "../Export/ExportDropdown";
-import { Button, Icon } from "antd";
+import { AddSamplesToCartButton } from "../AddToCartButton/AddSamplesToCart";
 
 export function Toolbar(props) {
   return (
     <div style={{ marginBottom: ".8rem" }}>
-      <Button
-        style={{ marginRight: "4px" }}
-        onClick={() => props.addSamplesToCart()}
-        icon="shopping-cart"
-      />
-    <ExportDropDown csv={props.exportCSV} excel={props.exportXLSX} />
-</div>
+      <ExportDropDown csv={props.exportCSV} excel={props.exportXLSX} />
+      <AddSamplesToCartButton addSamplesToCart={props.addSamplesToCart} />
+    </div>
   );
 }
 
