@@ -221,7 +221,7 @@ export class Table extends React.Component {
     // YYYY-MM-dd-project-X-<metadata template name>.csv
     const fullDate = new Date();
     const date = `${fullDate.getFullYear()}-${fullDate.getMonth() +
-    1}-${fullDate.getDate()}`;
+      1}-${fullDate.getDate()}`;
     const project = window.PAGE.project.label.replace(this.nameRegex, "_");
     const template = this.props.templates
       .getIn([this.props.current, "name"])
@@ -230,7 +230,6 @@ export class Table extends React.Component {
   };
 
   createFile = ext => {
-    const { entries } = this.state;
     const colOrder = this.columnApi.getColumnState().filter(c => !c.hide);
 
     /*
@@ -265,8 +264,8 @@ export class Table extends React.Component {
     /*
     Add all the entries
      */
-    for (let r = 0; r < entries.length; r++) {
-      const entry = entries[r];
+    this.api.forEachNodeAfterFilterAndSort((node, r) => {
+      const entry = node.data;
       /*
       Offset to allow for the header row.
        */
@@ -299,7 +298,7 @@ export class Table extends React.Component {
           ws[cell_ref] = cell;
         }
       }
-    }
+    });
 
     ws["!ref"] = XLSX.utils.encode_range(range);
 
