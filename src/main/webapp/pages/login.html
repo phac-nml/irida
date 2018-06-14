@@ -4,6 +4,7 @@
 	  data-layout-decorate="~{template/base}">
 <head>
 	<title th:text="#{login.title}">THIS IS SOMETHING WRONG</title>
+	<link rel="stylesheet" th:href="@{/resources/bower_components/bootstrap/dist/css/bootstrap.min.css}">
 	<style>
 		.login__links a {
 			margin-top: 10px;
@@ -75,8 +76,8 @@
 	<script src="/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"
 	        th:src="@{/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js}"></script>
 
-	<script th:inline="javascript">
-		/*<![CDATA[*/
+	<script th:inline="javascript">console.info($COMMENT$);$END$
+    /*<![CDATA[*/
 		var slideUrls = [
 			{'image': /*[[@{/resources/img/irida-logos-1.png}]]*/ "slide1"
 			},
