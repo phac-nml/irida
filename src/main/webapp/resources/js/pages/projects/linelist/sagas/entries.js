@@ -1,6 +1,10 @@
 import { call, put, take } from "redux-saga/effects";
-import { fetchMetadataEntries } from "../../../../apis/metadata/entry";
-import { types } from "../../../../redux/reducers/app";
+import {
+  fetchMetadataEntries,
+  saveMetadataEntryField
+} from "../../../../apis/metadata/entry";
+import { types as appTypes } from "../../../../redux/reducers/app";
+import { types } from "../reducers/entries";
 import { actions } from "../reducers/entries";
 
 /**
@@ -9,11 +13,19 @@ import { actions } from "../reducers/entries";
  */
 export function* entriesLoadingSaga() {
   try {
-    const { payload } = yield take(types.INIT_APP);
+    const { payload } = yield take(appTypes.INIT_APP);
     yield put(actions.load());
     const { data: entries } = yield call(fetchMetadataEntries, payload.id);
     yield put(actions.success(entries));
   } catch (error) {
     yield put(actions.error(error));
+  }
+}
+
+export function* entryEditedSaga() {
+  while (true) {
+    const { entry, field } = yield take(types.EDITED);
+    console.log(entry);
+    yield call(saveMetadataEntryField, entry.sampleId, entry[field], field);
   }
 }

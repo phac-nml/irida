@@ -3,7 +3,8 @@ import { List, fromJS } from "immutable";
 export const types = {
   LOAD: "METADATA/ENTRIES/LOAD_REQUEST",
   LOAD_ERROR: "METADATA/ENTRIES/LOAD_ERROR",
-  LOAD_SUCCESS: "METADATA/ENTRIES/LOAD_SUCCESS"
+  LOAD_SUCCESS: "METADATA/ENTRIES/LOAD_SUCCESS",
+  EDITED: "METADATA/ENTRIES/EDITED"
 };
 
 export const initialState = fromJS({
@@ -34,5 +35,6 @@ export const reducer = (state = initialState, action = {}) => {
 export const actions = {
   load: () => ({ type: types.LOAD }),
   success: entries => ({ type: types.LOAD_SUCCESS, entries }),
-  error: error => ({ type: types.LOAD_ERROR, error })
+  error: error => ({ type: types.LOAD_ERROR, error }),
+  edited: (entry, field) => ({ type: types.EDITED, entry, field })
 };

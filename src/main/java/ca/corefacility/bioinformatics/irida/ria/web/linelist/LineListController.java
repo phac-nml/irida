@@ -4,12 +4,17 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.sound.midi.MetaEventListener;
+import javax.validation.ConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -24,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 /**
@@ -70,6 +76,29 @@ public class LineListController {
 	@ResponseBody
 	public List<UISampleMetadata> getProjectSamplesMetadataEntries(@RequestParam long projectId) {
 		return getAllProjectSamplesMetadataEntries(projectId);
+	}
+
+	@RequestMapping(value = "/entries", method = RequestMethod.POST)
+	@ResponseBody
+	public String saveMetadataEntry(@RequestParam long sampleId, @RequestParam String label,
+			@RequestParam String value, HttpServletResponse response) {
+		Sample sample = sampleService.read(sampleId);
+		try {
+			Map<MetadataTemplateField, MetadataEntry> metadata = sample.getMetadata();
+			MetadataTemplateField templateField = metadataTemplateService.readMetadataFieldByLabel(label);
+			if (templateField == null) {
+				templateField = new MetadataTemplateField(label, "text");
+				metadataTemplateService.saveMetadataField(templateField);
+			}
+			MetadataEntry entry = new MetadataEntry(value, "string");
+			metadata.put(templateField, entry);
+			sampleService.updateFields(sampleId, ImmutableMap.of("metadata", metadata));
+			response.setStatus(HttpServletResponse.SC_OK);
+			return "SUCCESS";
+		} catch (EntityExistsException | EntityNotFoundException | ConstraintViolationException | InvalidPropertyException e) {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			return "ERROR";
+		}
 	}
 
 	/**

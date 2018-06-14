@@ -351,6 +351,18 @@ export class Table extends React.Component {
           animateRows={true}
           onGridReady={this.onGridReady}
           onDragStopped={this.onColumnDropped}
+          defaultColDef={{
+            editable: true
+          }}
+          onCellEditingStarted={event => {
+            this.cellEditedValue = event.value;
+          }}
+          onCellEditingStopped={event => {
+            if (this.cellEditedValue !== event.value) {
+              this.props.entryEdited(event.data, event.column.colId);
+            }
+            delete this.cellEditedValue;
+          }}
         />
       </div>
     );

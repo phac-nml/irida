@@ -9,7 +9,8 @@ const sampleNameColumn = {
   cellRenderer: "SampleNameRenderer",
   checkboxSelection: true,
   headerCheckboxSelection: true,
-  headerCheckboxSelectionFilteredOnly: true
+  headerCheckboxSelectionFilteredOnly: true,
+  editable: false
 };
 
 /**
