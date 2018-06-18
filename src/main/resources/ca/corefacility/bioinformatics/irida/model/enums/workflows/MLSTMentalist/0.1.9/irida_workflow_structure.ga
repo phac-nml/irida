@@ -242,7 +242,7 @@
             "post_job_actions": {
                 "RenameDatasetActionoutput": {
                     "action_arguments": {
-                        "newname": "mentalist_tree.newick"
+                        "newname": "mentalist_nj_tree.newick"
                     }, 
                     "action_type": "RenameDatasetAction", 
                     "output_name": "output"
@@ -269,5 +269,5 @@
             ]
         }
     }, 
-    "uuid": "9b83ef68-378f-42d7-88e1-6ec462afdd3b"
+    "uuid": "124565f8-a1e4-4314-8996-54e9432ae7fb"
 }
