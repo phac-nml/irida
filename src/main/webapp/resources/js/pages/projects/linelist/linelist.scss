@@ -88,3 +88,10 @@ $border: 1px solid rgba(189, 195, 199, 1);
 .ag-react-container {
   display: inline !important;
 }
+
+// Style the default editor within ag-grid
+.ag-cell-edit-input {
+  color: #222222;
+  font-size: 12px !important;
+  padding: 0 10px;
+}
