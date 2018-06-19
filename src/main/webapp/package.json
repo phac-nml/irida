@@ -2,8 +2,8 @@
   "name": "irida-ui",
   "version": "1.0.0",
   "scripts": {
-    "build": "webpack --env.production",
-    "start": "webpack -wd --env.dev",
+    "build": "webpack --mode production",
+    "start": "webpack -wd --mode development",
     "clean": "rm -r node* resources/dist/",
     "precommit": "lint-staged"
   },

@@ -79,10 +79,10 @@ const config = {
   ]
 };
 
-module.exports = env =>
+module.exports = (env, argv) =>
   merge(
     config,
-    env.production
+    argv.mode === "production"
       ? require("./configs/wepack.config.prod")
       : require("./configs/webpack.config.dev")
   );
