@@ -79,10 +79,10 @@ const config = {
   ]
 };
 
-module.exports = env => {
-  if (env.production) {
-    return merge(config, require("./configs/wepack.config.prod"));
-  } else {
-    return merge(config, require("./configs/webpack.config.dev"));
-  }
-};
+module.exports = env =>
+  merge(
+    config,
+    env.production
+      ? require("./configs/wepack.config.prod")
+      : require("./configs/webpack.config.dev")
+  );
