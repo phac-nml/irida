@@ -78,10 +78,19 @@ public class LineListController {
 		return getAllProjectSamplesMetadataEntries(projectId);
 	}
 
+	/**
+	 * Save an updated sample metadata entry
+	 *
+	 * @param sampleId {@link Long} identifier for a sample
+	 * @param label    {@link String} the name of the {@link MetadataTemplateField}
+	 * @param value    {@link String} the value to store in the {@link MetadataEntry}
+	 * @param response {@link HttpServletResponse}
+	 * @return The status of the request.
+	 */
 	@RequestMapping(value = "/entries", method = RequestMethod.POST)
 	@ResponseBody
-	public String saveMetadataEntry(@RequestParam long sampleId, @RequestParam String label,
-			@RequestParam String value, HttpServletResponse response) {
+	public String saveMetadataEntry(@RequestParam long sampleId, @RequestParam String label, @RequestParam String value,
+			HttpServletResponse response) {
 		Sample sample = sampleService.read(sampleId);
 		try {
 			Map<MetadataTemplateField, MetadataEntry> metadata = sample.getMetadata();
@@ -142,7 +151,7 @@ public class LineListController {
 		// Get or create the template fields.
 		List<MetadataTemplateField> fields = new ArrayList<>();
 		MetadataTemplateField metadataTemplateField;
-		for (UIMetadataTemplateField field : template.getFields()) {
+		for (UIMetadataTemplateField field: template.getFields()) {
 			// Don't save the same name column
 			if (!field.getLabel()
 					.equals(sampleNameColumn)) {
@@ -191,7 +200,7 @@ public class LineListController {
 		// Need to get all the fields from the templates too!
 		List<ProjectMetadataTemplateJoin> templateJoins = metadataTemplateService.getMetadataTemplatesForProject(
 				project);
-		for (ProjectMetadataTemplateJoin join : templateJoins) {
+		for (ProjectMetadataTemplateJoin join: templateJoins) {
 			MetadataTemplate template = join.getObject();
 			List<MetadataTemplateField> templateFields = template.getFields();
 			fieldSet.addAll(templateFields);
@@ -215,7 +224,7 @@ public class LineListController {
 		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(project);
 		List<UISampleMetadata> result = new ArrayList<>(samplesForProject.size());
 
-		for (Join<Project, Sample> join : samplesForProject) {
+		for (Join<Project, Sample> join: samplesForProject) {
 			Sample sample = join.getObject();
 			result.add(new UISampleMetadata(project, sample));
 		}
