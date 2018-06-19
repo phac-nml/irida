@@ -72,7 +72,7 @@ public class LineListController {
 	 * @param projectId {@link Long} identifier for a {@link Project}
 	 * @return {@link List} of {@link UISampleMetadata}s of all {@link Sample} metadata in a {@link Project}
 	 */
-	@RequestMapping("/entries")
+	@RequestMapping(value = "/entries", method = RequestMethod.GET)
 	@ResponseBody
 	public List<UISampleMetadata> getProjectSamplesMetadataEntries(@RequestParam long projectId) {
 		return getAllProjectSamplesMetadataEntries(projectId);
