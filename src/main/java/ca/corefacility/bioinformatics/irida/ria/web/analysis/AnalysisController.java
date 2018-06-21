@@ -617,6 +617,9 @@ public class AnalysisController {
 
 		Analysis analysis = submission.getAnalysis();
 		AnalysisOutputFile file = analysis.getAnalysisOutputFile(treeFileKey);
+		if (file == null) {
+			throw new IOException("No tree file for analysis :" + analysis.toString());
+		}
 		List<String> lines = Files.readAllLines(file.getFile());
 		model.addAttribute("analysis", analysis);
 		model.addAttribute("newick", lines.get(0));
