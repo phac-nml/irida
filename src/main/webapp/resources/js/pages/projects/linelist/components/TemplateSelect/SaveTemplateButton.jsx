@@ -21,6 +21,7 @@ export class SaveTemplateButton extends React.Component {
   render() {
     return (
       <Button
+        className="t-template-save-btn"
         size="small"
         type="primary"
         onClick={this.showSaveModal}
