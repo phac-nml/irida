@@ -2,6 +2,9 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Loader } from "../Loader";
 import { LineListLayoutComponent } from "./LineListLayoutComponent";
+import { ErrorAlert } from "../../../../../components/alerts/ErrorAlert";
+
+const { i18n } = window.PAGE;
 
 /**
  * Container class for the higher level states of the page:
@@ -14,9 +17,7 @@ export function LineList(props) {
   if (initializing) {
     return <Loader />;
   } else if (props.error) {
-    // ERROR STATE
-    // TODO: (Josh | 2018-04-11) Create error component
-    return <h3>A major error has occurred! Better find a 💣 shelter!</h3>;
+    return <ErrorAlert message={i18n.linelist.error.message} />;
   }
 
   return <LineListLayoutComponent {...props} />;

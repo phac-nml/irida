@@ -30,7 +30,7 @@
     "angular-messages": "1.6.2",
     "angular-resource": "1.6.2",
     "angular-ui-router": "1.0.0-alpha.4",
-    "antd": "^3.4.3",
+    "antd": "^3.6.1",
     "axios": "^0.18.0",
     "bootstrap-daterangepicker": "^2.1.25",
     "bootstrap-switch": "^3.3.4",
