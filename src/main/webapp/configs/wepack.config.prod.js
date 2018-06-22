@@ -16,20 +16,23 @@ module.exports = {
     new OptimizeCSSAssetsPlugin({
       cssProcessor: cssnano,
       cssProcessorOptions: {
-        options: {
-          discardComments: {
-            removeAll: true
-          },
-          // Run cssnano in safe mode to avoid
-          // potentially unsafe transformations.
-          safe: true
+        discardComments: {
+          removeAll: true
         },
+        // Run cssnano in safe mode to avoid
+        // potentially unsafe transformations.
+        safe: true,
         canPrint: false
       }
     })
   ],
   optimization: {
-    minimizer: [new UglifyWebpackPlugin({ sourceMap: true })]
+    minimizer: [
+      new UglifyWebpackPlugin({
+        sourceMap: true,
+        parallel: true
+      })
+    ]
     // splitChunks: {
     //   chunks: "initial"
     // }
