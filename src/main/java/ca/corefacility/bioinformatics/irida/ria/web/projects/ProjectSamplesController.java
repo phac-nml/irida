@@ -886,8 +886,11 @@ public class ProjectSamplesController {
 				+ "  INNER JOIN project_sample psample ON s.id = psample.sample_id"
 				+ "  INNER JOIN project p ON psample.project_id = p.id"
 				+ "  INNER JOIN user u ON asub.submitter = u.id"
-				+ "    WHERE p.id = " + project.getId()
-				+ "      and a.analysis_type NOT LIKE '%_COLLECTION'";
+				+ "  LEFT JOIN project_analysis_submission pasub ON asub.id = pasub.analysis_submission_id"
+				+ " WHERE"
+				+ "    p.id = " + project.getId()
+				+ "    AND a.analysis_type NOT LIKE '%_COLLECTION'"
+				+ "    AND (pasub.project_id = p.id OR u.username = 'admin')";
 		// Result of query is a list of maps ready for handling on the frontend (e.g. grouping by analysis type)
 		return tmpl.queryForList(query);
 	}
