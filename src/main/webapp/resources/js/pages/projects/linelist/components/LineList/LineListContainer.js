@@ -2,8 +2,8 @@ import React from "react";
 import { connect } from "react-redux";
 import { LineList } from "./LineList";
 import { actions } from "../../reducers/templates";
-import { actions as cartActions } from "../../../../../redux/reducers/cart";
 import { actions as entryActions } from "../../reducers/entries";
+import { actions as cartActions } from "../../../../../redux/reducers/cart";
 
 /*
 Default react-redux boiler plate to connect the current state of the
@@ -21,7 +21,8 @@ const mapStateToProps = state => ({
   current: state.templates.get("current"),
   modified: state.templates.get("modified"),
   saving: state.templates.get("saving"),
-  saved: state.templates.get("saved")
+  saved: state.templates.get("saved"),
+  selectedCount: state.entries.get("selected")
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -31,6 +32,7 @@ const mapDispatchToProps = dispatch => ({
   saveTemplate: (name, fields, id) =>
     dispatch(actions.saveTemplate(name, fields, id)),
   addSelectedToCart: samples => dispatch(cartActions.add(samples)),
+  selectionChange: count => dispatch(entryActions.selection(count)),
   entryEdited: (entry, field) => dispatch(entryActions.edited(entry, field))
 });
 

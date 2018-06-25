@@ -334,6 +334,10 @@ export class Table extends React.Component {
     this.createFile("xlsx");
   };
 
+  onSelectionChange = () => {
+    this.props.selectionChange(this.api.getSelectedNodes().length);
+  };
+
   render() {
     return (
       <div className="ag-grid-table-wrapper">
@@ -351,6 +355,7 @@ export class Table extends React.Component {
           animateRows={true}
           onGridReady={this.onGridReady}
           onDragStopped={this.onColumnDropped}
+          onSelectionChanged={this.onSelectionChange}
           defaultColDef={{
             editable: true
           }}

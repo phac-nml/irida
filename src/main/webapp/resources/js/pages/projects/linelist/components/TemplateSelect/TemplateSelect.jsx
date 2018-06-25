@@ -32,7 +32,7 @@ export function TemplateSelect(props) {
 
   return (
     <React.Fragment>
-      <label>
+      <label style={{color: "#707171"}}>
         {i18n.linelist.templates.title}
         <HelpPopover
           content={<PopoverContents contents={content} />}
