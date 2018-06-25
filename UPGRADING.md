@@ -29,7 +29,7 @@ upgrading IRIDA that cannot be automated.
         mkdir -p etc/conda/deactivate.d
 
         echo -e "export _OLD_SHOVILL_RAM=\$SHOVILL_RAM\nexport SHOVILL_RAM=8" >> etc/conda/activate.d/shovill-ram.sh
-        echo -e "export SHOVILL_RAM=\$_OLD_SHOVILL_RAM" >> etc/conda/activate.d/shovill-ram.sh
+        echo -e "export SHOVILL_RAM=\$_OLD_SHOVILL_RAM" >> etc/conda/deactivate.d/shovill-ram.sh
         ```
 
         Please change `8`GB to what works for you for `shovill` (or setup based on the `$GALAXY_MEMORY_MB` environment variable, see the linked instructions for more details).
