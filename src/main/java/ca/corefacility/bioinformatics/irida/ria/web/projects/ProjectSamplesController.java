@@ -847,16 +847,8 @@ public class ProjectSamplesController {
 
 	/**
 	 * Get analysis output file information for all analyses for a project.
-	 *
-	 * Return a list of maps with the {@link Sample} id ("sample_id"), {@link Sample} name ("sample_name"),
-	 * {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis} id ("analysis_id"),
-	 * {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile} file key ("analysis_output_file_key"),
-	 * {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile} file path ("file_path"),
-	 * {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile} id ("aof_id"),
-	 * {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis} type ("analysis_type"),
-	 * {@link ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission} workflow id ("workflow_id"),
-	 * {@link ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission} id ("analysis_submission_id")
-	 * for each {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile} in a {@link Project}
+	 * <p>
+	 * Return a list of maps with the analysis output file info and other pertinent info.
 	 *
 	 * @param projectId {@link Project} id
 	 * @return list of maps of {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile} info
@@ -865,6 +857,7 @@ public class ProjectSamplesController {
 	@ResponseBody
 	public List<Map<String, Object>> getAnalysisOutputForProject(@PathVariable Long projectId) {
 		final Project project = projectService.read(projectId);
+		// TODO: Hibernate/JPA (native) query for AOF info
 		// Using a JDBC template query for performance reasons. Trying to retrieve the necessary info with JPA takes a
 		// long time and produces a lot of intermediate objects.
 		JdbcTemplate tmpl = new JdbcTemplate(dataSource);
@@ -879,7 +872,10 @@ public class ProjectSamplesController {
 				"asub.workflow_id, " +
 				"aof.created_date, " +
 				"asub.name AS submission_name, " +
-				"asub.id as submission_id " +
+				"asub.id as submission_id, " +
+				"u.id as user_id, " +
+				"u.firstName as user_first_name, " +
+				"u.lastName as user_last_name " +
 				"FROM analysis_output_file aof "
 				+ "  INNER JOIN analysis_output_file_map aofmap ON aof.id = aofmap.analysisOutputFilesMap_id"
 				+ "  INNER JOIN analysis a ON aofmap.analysis_id = a.id"
@@ -889,12 +885,12 @@ public class ProjectSamplesController {
 				+ "  INNER JOIN sample s ON sso.sample_id = s.id"
 				+ "  INNER JOIN project_sample psample ON s.id = psample.sample_id"
 				+ "  INNER JOIN project p ON psample.project_id = p.id"
+				+ "  INNER JOIN user u ON asub.submitter = u.id"
 				+ "    WHERE p.id = " + project.getId()
 				+ "      and a.analysis_type NOT LIKE '%_COLLECTION'";
 		// Result of query is a list of maps ready for handling on the frontend (e.g. grouping by analysis type)
 		return tmpl.queryForList(query);
 	}
-
 
 	/**
 	 * Rename a filename {@code original} and ensure it doesn't exist in {@code usedNames}. Uses the windows style of

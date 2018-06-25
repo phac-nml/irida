@@ -105,14 +105,43 @@
             <h3 class="popover-title"></h3>
             <div class="popover-content"></div>
         </div>
-        <div id="js-messages" class="hidden"
-             th:data-standard-output="#{analysis.details.joberror.standardOutput}"
-             th:data-standard-error="#{analysis.details.joberror.standardError}"
-             th:data-go-to-submission="#{analysis.joberror.popover.goto-submission}"
-             th:data-job-error="#{analysis.joberror}"
-             th:data-truncated-output="#{analysis.joberror.popover.truncated-output}"
-             th:data-tooltip="#{analysis.joberror.popover.click-to-show}">
+    </div>
+</th:block>
+
+
+<th:block th:fragment="batch-download">
+    <!--<div class="alert alert-warning" th:text="#{analysis.batch-download-warning}"></div>-->
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title" th:text="#{analysis.batch-download}">__BATCH DOWNLOAD__</h3>
         </div>
+        <div class="panel-body">
+            <div id="app"></div>
+        </div>
+    </div>
+
+
+</th:block>
+
+<th:block th:fragment="messages">
+    <div id="js-messages" class="hidden"
+         th:data-standard-output="#{analysis.details.joberror.standardOutput}"
+         th:data-standard-error="#{analysis.details.joberror.standardError}"
+         th:data-go-to-submission="#{analysis.joberror.popover.goto-submission}"
+         th:data-job-error="#{analysis.joberror}"
+         th:data-truncated-output="#{analysis.joberror.popover.truncated-output}"
+         th:data-tooltip="#{analysis.joberror.popover.click-to-show}"
+         th:data-download="#{form.download}"
+         th:data-batch-download="#{analysis.batch-download}"
+         th:data-download-output-files="#{analysis.download-output-files}"
+         th:data-analysis-type="#{analysis.table.type}"
+         th:data-analysis-output-file-key="#{analysis.output-file-key}"
+         th:data-req-error="#{analysis.batch-download.ajax.error}"
+         th:data-error="#{error}"
+         th:data-status-code="#{error.request.status-code}"
+         th:data-status-text="#{error.request.status-text}"
+         th:data-request-url="#{error.request.url}"
+    >
     </div>
 </th:block>
 
@@ -120,6 +149,7 @@
     <script th:inline="javascript">
       var PAGE = {
         URLS: {
+          base: /*[[@{/}]]*/ '/',
           analyses: /*[[@{${ajaxURL}}]]*/ "",
           analysis: /*[[@{/analysis/}]]*/ "",
           download: /*[[@{/analysis/ajax/download/}]]*/ "",
@@ -127,10 +157,12 @@
         },
         i18n: {
           unexpectedDeleteError: /*[[#{analysis.delete.unexpected.exception}]]*/ ""
-        }
+        },
+        projectId: /*[[${ project.getId().toString() }]]*/ '666',
       };
     </script>
     <script th:src="@{/resources/dist/js/analyses-table.bundle.js}"></script>
+    <script th:src="@{/resources/dist/js/project-analysis-outputs.bundle.js}"></script>
 </th:block>
 </body>
 </html>

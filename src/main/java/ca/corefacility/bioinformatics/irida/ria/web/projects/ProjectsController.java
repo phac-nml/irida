@@ -431,18 +431,6 @@ public class ProjectsController {
 		return PROJECT_ANALYSES_PAGE;
 	}
 
-	@RequestMapping(value = "/projects/{projectId}/analysis-outputs", method = RequestMethod.GET)
-	public String getProjectAnalysisOutputsPage(@PathVariable Long projectId, Model model, Principal principal) {
-		Project project = projectService.read(projectId);
-		model.addAttribute("project", project);
-		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute("ajaxURL", "/projects/" + projectId + "/ajax/analysis-outputs");
-		model.addAttribute("states", AnalysisState.values());
-		model.addAttribute("analysisTypes", workflowsService.getRegisteredWorkflowTypes());
-		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ANALYSIS_OUTPUTS);
-		return "projects/project_analysis_outputs";
-	}
-
 	/**
 	 * Get the project edit page
 	 *
