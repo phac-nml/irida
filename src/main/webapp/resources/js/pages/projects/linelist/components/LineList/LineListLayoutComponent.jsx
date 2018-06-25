@@ -3,6 +3,7 @@ import { Layout } from "antd";
 import { Table } from "../Table";
 import { ToolPanel } from "../ToolPanel";
 import { Toolbar } from "../Toolbar";
+import { InfoBar } from "../InfoBar";
 
 const { Sider, Content } = Layout;
 
@@ -44,8 +45,9 @@ export class LineListLayoutComponent extends React.Component {
           exportCSV={this.exportCSV}
           exportXLSX={this.exportXLSX}
           addSamplesToCart={this.addSamplesToCart}
+          selectedCount={this.props.selectedCount}
         />
-        <Layout className="ag-theme-balham" style={{ minHeight: "100%" }}>
+        <Layout className="ag-theme-balham fucked-up">
           <Content>
             <Table {...this.props} ref={this.tableRef} />
           </Content>
@@ -70,6 +72,7 @@ export class LineListLayoutComponent extends React.Component {
             </div>
           </Sider>
         </Layout>
+        <InfoBar selectedCount={this.props.selectedCount} />
       </React.Fragment>
     );
   }
