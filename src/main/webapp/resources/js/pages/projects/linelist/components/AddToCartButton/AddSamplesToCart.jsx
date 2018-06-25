@@ -13,6 +13,7 @@ const { i18n } = window.PAGE;
 export function AddSamplesToCartButton(props) {
   return (
     <Button
+      disabled={props.selectedCount === 0}
       style={{ marginLeft: "4px" }}
       onClick={() => props.addSamplesToCart()}
       icon="shopping-cart"
@@ -23,5 +24,6 @@ export function AddSamplesToCartButton(props) {
 }
 
 AddSamplesToCartButton.propTypes = {
+  selectedCount: PropTypes.number.isRequired,
   addSamplesToCart: PropTypes.func.isRequired
 };

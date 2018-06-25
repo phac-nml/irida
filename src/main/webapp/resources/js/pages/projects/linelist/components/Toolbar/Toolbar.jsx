@@ -7,7 +7,7 @@ export function Toolbar(props) {
   return (
     <div style={{ marginBottom: ".8rem" }}>
       <ExportDropDown csv={props.exportCSV} excel={props.exportXLSX} />
-      <AddSamplesToCartButton addSamplesToCart={props.addSamplesToCart} />
+      <AddSamplesToCartButton selectedCount={props.selectedCount} addSamplesToCart={props.addSamplesToCart} />
     </div>
   );
 }
