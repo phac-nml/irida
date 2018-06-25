@@ -10,6 +10,7 @@
 <div class="col-md-12" layout:fragment="page">
     <h1 th:text="#{${userList} ? 'analyses.user.page-title' : 'analyses.admin.page-title'}">_Analyses_</h1>
     <th:block th:replace="analyses/analyses-table :: table"/>
+    <th:block th:replace="analyses/analyses-table :: messages"/>
 </div>
 <th:block layout:fragment="scripts">
     <th:block th:replace="analyses/analyses-table :: scripts"/>

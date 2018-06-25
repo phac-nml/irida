@@ -158,11 +158,15 @@
         i18n: {
           unexpectedDeleteError: /*[[#{analysis.delete.unexpected.exception}]]*/ ""
         },
-        projectId: /*[[${ project.getId().toString() }]]*/ '666',
+        projectId: /*[[${ project?.getId()?.toString() }]]*/ '666',
       };
     </script>
     <script th:src="@{/resources/dist/js/analyses-table.bundle.js}"></script>
+</th:block>
+
+<th:block th:fragment="batch-download-scripts">
     <script th:src="@{/resources/dist/js/project-analysis-outputs.bundle.js}"></script>
 </th:block>
+
 </body>
 </html>
