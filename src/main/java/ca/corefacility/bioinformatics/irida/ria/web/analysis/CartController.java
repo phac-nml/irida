@@ -1,17 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,26 +10,16 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.google.common.collect.ImmutableMap;
+import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller managing interactions with the selected sequences
@@ -55,17 +35,15 @@ public class CartController {
 	private final SampleService sampleService;
 	private final UserService userService;
 	private final ProjectService projectService;
-	private final SequencingObjectService sequencingObjectService;
-	
+
 	private final MessageSource messageSource;
 
 	@Autowired
 	public CartController(SampleService sampleService, UserService userService, ProjectService projectService,
-			SequencingObjectService sequencingObjectService, MessageSource messageSource) {
+			MessageSource messageSource) {
 		this.sampleService = sampleService;
 		this.projectService = projectService;
 		this.userService = userService;
-		this.sequencingObjectService = sequencingObjectService;
 		this.messageSource = messageSource;
 		selected = new HashMap<>();
 	}
@@ -262,9 +240,7 @@ public class CartController {
 	 * @return A Set of {@link Sample}s
 	 */
 	private Set<Sample> loadSamplesForProject(Project project, Set<Long> sampleIds) {
-		return sampleIds.stream().map((id) -> {
-			return sampleService.getSampleForProject(project, id).getObject();
-		}).collect(Collectors.toSet());
+		return new HashSet<>(sampleService.getSamplesInProject(project, new ArrayList<>(sampleIds)));
 
 	}
 
@@ -279,7 +255,7 @@ public class CartController {
 		List<Map<String, Object>> projectList = new ArrayList<>();
 		for (Project p : projects) {
 			Set<Sample> selectedSamplesForProject = selected.get(p);
-			List<Map<String, Object>> samples = getSamplesAsList(selectedSamplesForProject, p.getId());
+			List<Map<String, Object>> samples = getSamplesAsList(selectedSamplesForProject);
 
 			Map<String, Object> projectMap = ImmutableMap.of("id", p.getId(), "label", p.getLabel(), "samples",
 					samples);
@@ -297,48 +273,14 @@ public class CartController {
 	 * @return A List<Map<String,Object>> containing the relevant Sample
 	 *         information
 	 */
-	private List<Map<String, Object>> getSamplesAsList(Set<Sample> samples, Long projectId) {
+	private List<Map<String, Object>> getSamplesAsList(Set<Sample> samples) {
 		List<Map<String, Object>> sampleList = new ArrayList<>();
 		for (Sample s : samples) {
-			String sampleHref = linkTo(
-					methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, s.getId())).withSelfRel()
-							.getHref();
-
-			Map<String, Object> sampleMap = ImmutableMap.of("id", s.getId(), "label", s.getLabel(), "createdDate", s.getCreatedDate(), "sequenceFiles",
-					getSequenceFileList(s), "href", sampleHref);
+			Map<String, Object> sampleMap = ImmutableMap.of("id", s.getId(), "label", s.getLabel(), "createdDate", s.getCreatedDate());
 			sampleList.add(sampleMap);
 		}
 		return sampleList;
 	}
-	
-	/**
-	 * Get {@link SequenceFile}s as a List from a {@link Sample} for JSON serialization
-	 * 
-	 * @param samples
-	 *            The {@link Sample} set
-	 * @return A List<Map<String,Object>> containing the relevant SequenceFile
-	 *         information
-	 */
-	private List<Map<String, Object>> getSequenceFileList(Sample sample) {
-		Collection<SampleSequencingObjectJoin> sequencingObjectsForSample = sequencingObjectService
-				.getSequencingObjectsForSample(sample);
-
-		List<Map<String, Object>> sequenceFiles = new ArrayList<>();
-		for (SampleSequencingObjectJoin join : sequencingObjectsForSample) {
-			for (SequenceFile seq : join.getObject().getFiles()) {
-				String objectType = RESTSampleSequenceFilesController.objectLabels.get(join.getObject().getClass());
-				String seqFileLoc = linkTo(
-						methodOn(RESTSampleSequenceFilesController.class).readSequenceFileForSequencingObject(
-								sample.getId(), objectType, join.getObject().getId(), seq.getId())).withSelfRel()
-						.getHref();
-				Map<String, Object> seqMap = ImmutableMap.of("selfRef", seqFileLoc);
-				sequenceFiles.add(seqMap);
-			}
-		}
-
-		return sequenceFiles;
-	}
-	
 
 	private synchronized Set<Sample> getSelectedSamplesForProject(Project project) {
 		if (!selected.containsKey(project)) {

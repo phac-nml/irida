@@ -31,7 +31,6 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.CartController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
@@ -39,7 +38,6 @@ public class CartControllerTest {
 	SampleService sampleService;
 	ProjectService projectService;
 	UserService userService;
-	SequencingObjectService sequencingObjectService;
 	MessageSource messageSource;
 
 	CartController controller;
@@ -54,11 +52,9 @@ public class CartControllerTest {
 		sampleService = mock(SampleService.class);
 		projectService = mock(ProjectService.class);
 		userService = mock(UserService.class);
-		sequencingObjectService = mock(SequencingObjectService.class);
 		messageSource = mock(MessageSource.class);
 
-		controller = new CartController(sampleService, userService, projectService, sequencingObjectService,
-				messageSource);
+		controller = new CartController(sampleService, userService, projectService, messageSource);
 
 		testData();
 	}
@@ -208,7 +204,6 @@ public class CartControllerTest {
 		for (Map<String, Object> map : sList) {
 			assertTrue(map.containsKey("id"));
 			assertTrue(map.containsKey("label"));
-			assertTrue(map.containsKey("href"));
 		}
 	}
 
