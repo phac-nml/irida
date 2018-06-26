@@ -2,7 +2,7 @@
     "a_galaxy_workflow": "true", 
     "annotation": "", 
     "format-version": "0.1", 
-    "name": "MentaLiST MLST v0.1.9", 
+    "name": "MentaLiST MLST v0.1.9 (imported from API)", 
     "steps": {
         "0": {
             "annotation": "", 
@@ -80,7 +80,7 @@
             "tool_errors": null, 
             "tool_id": "toolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_call/0.1.9", 
             "tool_shed_repository": {
-                "changeset_revision": "f29e7738bb64", 
+                "changeset_revision": "a6cd59f35832", 
                 "name": "mentalist", 
                 "owner": "dfornika", 
                 "tool_shed": "toolshed.g2.bx.psu.edu"
@@ -194,7 +194,7 @@
             "tool_errors": null, 
             "tool_id": "toolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_distance/0.1.9", 
             "tool_shed_repository": {
-                "changeset_revision": "f29e7738bb64", 
+                "changeset_revision": "a6cd59f35832", 
                 "name": "mentalist", 
                 "owner": "dfornika", 
                 "tool_shed": "toolshed.g2.bx.psu.edu"
@@ -251,7 +251,7 @@
             "tool_errors": null, 
             "tool_id": "toolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_tree/0.1.9", 
             "tool_shed_repository": {
-                "changeset_revision": "f29e7738bb64", 
+                "changeset_revision": "a6cd59f35832", 
                 "name": "mentalist", 
                 "owner": "dfornika", 
                 "tool_shed": "toolshed.g2.bx.psu.edu"
