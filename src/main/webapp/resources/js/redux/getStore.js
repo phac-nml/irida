@@ -7,7 +7,8 @@ import { createStore, applyMiddleware, combineReducers, compose } from "redux";
 import createSagaMiddleware from "redux-saga";
 
 // Default reducers
-import appReducer from "./reducers/app";
+import * as defaultReducers from "./reducers";
+import * as defaultSagas from "./sagas";
 
 /**
  * Set up the redux store.
@@ -21,7 +22,8 @@ import appReducer from "./reducers/app";
  */
 export function getStore(reducers = {}, sagas = {}, initialState) {
   // Add default application reducers
-  reducers.app = appReducer;
+  Object.assign(reducers, defaultReducers);
+  Object.assign(sagas, defaultSagas);
 
   /*
   Allows us to use Redux Devtools

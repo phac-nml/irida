@@ -1,15 +1,17 @@
-import { List, fromJS } from "immutable";
+import { fromJS } from "immutable";
 
 export const types = {
   LOAD: "METADATA/ENTRIES/LOAD_REQUEST",
   LOAD_ERROR: "METADATA/ENTRIES/LOAD_ERROR",
-  LOAD_SUCCESS: "METADATA/ENTRIES/LOAD_SUCCESS"
+  LOAD_SUCCESS: "METADATA/ENTRIES/LOAD_SUCCESS",
+  SELECTION: "METADATA/ENTRIES/SELECTION"
 };
 
 export const initialState = fromJS({
   fetching: false, // Is the API call currently being made
   error: false, // Was there an error making the api call}
-  entries: null // List of metadata entries
+  entries: null, // List of metadata entries
+  selected: 0
 });
 
 /*
@@ -26,6 +28,8 @@ export const reducer = (state = initialState, action = {}) => {
         .set("entries", fromJS(action.entries));
     case types.LOAD_ERROR:
       return state.set("fetching", false).set("error", true);
+    case types.SELECTION:
+      return state.set("selected", action.count);
     default:
       return state;
   }
@@ -34,5 +38,9 @@ export const reducer = (state = initialState, action = {}) => {
 export const actions = {
   load: () => ({ type: types.LOAD }),
   success: entries => ({ type: types.LOAD_SUCCESS, entries }),
-  error: error => ({ type: types.LOAD_ERROR, error })
+  error: error => ({ type: types.LOAD_ERROR, error }),
+  selection: count => ({
+    type: types.SELECTION,
+    count
+  })
 };

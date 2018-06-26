@@ -205,6 +205,8 @@ export class Table extends React.Component {
         const metadata = entry.metadata;
         metadata.sampleId = entry.id;
         metadata[i18n.linelist.agGrid.sampleName] = entry.label;
+        metadata.projectId = entry.projectId;
+        metadata.projectLable = entry.projectLabel;
         return metadata;
       });
     }
@@ -313,6 +315,11 @@ export class Table extends React.Component {
     XLSX.writeFile(workbook, fileName);
   };
 
+  addSamplesToCart = () => {
+    const nodes = this.api.getSelectedNodes().map(n => n.data);
+    this.props.addSelectedToCart(nodes);
+  };
+
   /**
    * Export the currently visible columns as a CSV file.
    */
@@ -327,23 +334,29 @@ export class Table extends React.Component {
     this.createFile("xlsx");
   };
 
+  onSelectionChange = () => {
+    this.props.selectionChange(this.api.getSelectedNodes().length);
+  };
+
   render() {
     return (
       <div className="ag-grid-table-wrapper">
         <AgGridReact
+          id="linelist-grid"
+          rowSelection="multiple"
           enableFilter={true}
           enableSorting={true}
           enableColResize={true}
           localeText={i18n.linelist.agGrid}
           columnDefs={this.props.fields.toJS()}
           rowData={this.state.entries}
-          deltaRowDataMode={true}
-          getRowNodeId={data => data.code}
           frameworkComponents={this.frameworkComponents}
           loadingOverlayComponent="LoadingOverlay"
           animateRows={true}
           onGridReady={this.onGridReady}
           onDragStopped={this.onColumnDropped}
+          rowDeselection={true}
+          onSelectionChanged={this.onSelectionChange}
         />
       </div>
     );

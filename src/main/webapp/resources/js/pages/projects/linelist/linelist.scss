@@ -1,5 +1,16 @@
 $table-height: 600px;
 $border: 1px solid rgba(189, 195, 199, 1);
+$tableFont: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans,
+  Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+$bgColor: #f5f7f7;
+
+// Wrapper for the entire ag-grid
+// Does not wrap the side panel or bottom info box
+.ag-grid-table-wrapper {
+  box-sizing: border-box;
+  height: $table-height;
+  width: 100%;
+}
 
 .templates-option {
   display: flex;
@@ -16,7 +27,7 @@ $border: 1px solid rgba(189, 195, 199, 1);
 }
 
 .tool-panel-slider {
-  background-color: rgba(245, 247, 247, 1);
+  background-color: $bgColor;
   border: $border;
   border-left-style: none;
   overflow-x: hidden;
@@ -31,9 +42,9 @@ $border: 1px solid rgba(189, 195, 199, 1);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background-color: rgba(245, 247, 247, 1);
+  background-color: $bgColor;
   border-right: $border;
-  height: $table-height;
+  height: $table-height - 2px; // 2px to account for border on the .tool-panel-slider
   min-height: 100%;
   width: 300px;
 }
@@ -41,11 +52,13 @@ $border: 1px solid rgba(189, 195, 199, 1);
 .ag-grid-tool-panel--inner {
   overflow-y: auto;
   padding-left: 1rem;
+  padding-bottom: 0.5rem;
 }
 
 .field-checkbox {
   display: block;
   width: 260px;
+  color: #707171;
   & > .ant-checkbox-wrapper {
     font-weight: normal;
   }
@@ -67,8 +80,7 @@ $border: 1px solid rgba(189, 195, 199, 1);
   border-right: $border;
   color: rgba(0, 0, 0, 0.54);
   font-size: 12px;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  font-family: $tableFont;
   font-weight: normal;
   height: 20px;
   line-height: 20px;
@@ -77,8 +89,17 @@ $border: 1px solid rgba(189, 195, 199, 1);
   transform-origin: 0 0;
 }
 
-.ag-grid-table-wrapper {
-  box-sizing: border-box;
-  height: $table-height;
-  width: 100%;
+// Hack to display Custom Cell Renderer in React see ag-grid issue https://github.com/ag-grid/ag-grid/issues/2299
+.ag-react-container {
+  display: inline !important;
+}
+
+.ag-grid-info-panel {
+  height: 30px;
+  line-height: 30px;
+  padding-left: 1em;
+  font-family: $tableFont;
+  background-color: $bgColor;
+  border: $border;
+  border-top: none;
 }
