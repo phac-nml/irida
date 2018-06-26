@@ -355,6 +355,7 @@ export class Table extends React.Component {
           animateRows={true}
           onGridReady={this.onGridReady}
           onDragStopped={this.onColumnDropped}
+          rowDeselection={true}
           onSelectionChanged={this.onSelectionChange}
         />
       </div>
