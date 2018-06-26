@@ -279,6 +279,7 @@ public class AnalysisController {
 	 *
 	 * @param id {@link AnalysisSubmission} id
 	 * @return map of info about each {@link AnalysisOutputFile}
+	 * @throws IridaWorkflowNotFoundException if the specified workflow cannot be found.
 	 */
 	@RequestMapping(value = "/ajax/{id}/outputs", method = RequestMethod.GET)
 	@ResponseBody
