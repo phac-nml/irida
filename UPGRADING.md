@@ -24,7 +24,7 @@ upgrading IRIDA that cannot be automated.
     2. Set the `SHOVILL_RAM` environment variable in the conda environment:
 
         ```bash
-        cd galaxy/deps/_conda/bin/activate galaxy/deps/_conda/envs/__shovill@0.9.0
+        cd galaxy/deps/_conda/envs/__shovill@0.9.0
         mkdir -p etc/conda/activate.d
         mkdir -p etc/conda/deactivate.d
 
