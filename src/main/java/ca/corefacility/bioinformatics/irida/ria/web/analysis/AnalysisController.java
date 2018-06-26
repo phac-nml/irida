@@ -19,7 +19,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
-import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowOutput;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
@@ -287,12 +286,7 @@ public class AnalysisController {
 			throws IridaWorkflowNotFoundException {
 		AnalysisSubmission submission = analysisSubmissionService.read(id);
 		Analysis analysis = submission.getAnalysis();
-		final IridaWorkflow iridaWorkflow = workflowsService.getIridaWorkflow(submission.getWorkflowId());
-		final List<String> outputNames = iridaWorkflow.getWorkflowDescription()
-				.getOutputs()
-				.stream()
-				.map(IridaWorkflowOutput::getName)
-				.collect(Collectors.toList());
+		final List<String> outputNames = workflowsService.getOutputNames(submission.getWorkflowId());
 		return outputNames.stream()
 				.map((outputName) -> getAnalysisOutputFileInfo(submission, analysis, outputName))
 				.filter(Objects::nonNull)

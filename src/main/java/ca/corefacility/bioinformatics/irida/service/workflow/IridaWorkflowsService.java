@@ -2,11 +2,7 @@ package ca.corefacility.bioinformatics.irida.service.workflow;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -21,6 +17,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowIdSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowSet;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowOutput;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -254,6 +251,21 @@ public class IridaWorkflowsService {
 		} else {
 			throw new IridaWorkflowNotFoundException(workflowId);
 		}
+	}
+
+	/**
+	 * Get list of workflow output names.
+	 * @param workflowId Workflow UUID.
+	 * @return List of workflow output names.
+	 * @throws IridaWorkflowNotFoundException if no workflow with the given UUID found.
+	 */
+	public List<String> getOutputNames(UUID workflowId) throws IridaWorkflowNotFoundException {
+		final IridaWorkflow iridaWorkflow = getIridaWorkflow(workflowId);
+		return iridaWorkflow.getWorkflowDescription()
+				.getOutputs()
+				.stream()
+				.map(IridaWorkflowOutput::getName)
+				.collect(Collectors.toList());
 	}
 
 	/**
