@@ -1,16 +1,19 @@
 package ca.corefacility.bioinformatics.irida.pipeline.results.impl;
 
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.PipelineProvidedMetadataEntry;
+import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSampleUpdater;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
@@ -31,6 +34,7 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 	private static final String SISTR_FILE = "sistr-predictions";
 
 	private MetadataTemplateService metadataTemplateService;
+	private IridaWorkflowsService iridaWorkflowsService;
 	private SampleService sampleService;
 
 	// @formatter:off
@@ -48,9 +52,11 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 	// @formatter:on
 
 	@Autowired
-	public SISTRSampleUpdater(MetadataTemplateService metadataTemplateService, SampleService sampleService) {
+	public SISTRSampleUpdater(MetadataTemplateService metadataTemplateService, SampleService sampleService,
+							  IridaWorkflowsService iridaWorkflowsService) {
 		this.metadataTemplateService = metadataTemplateService;
 		this.sampleService = sampleService;
+		this.iridaWorkflowsService = iridaWorkflowsService;
 	}
 
 	/**
@@ -68,6 +74,9 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 
 		Map<String, MetadataEntry> stringEntries = new HashMap<>();
 		try {
+			IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(analysis.getWorkflowId());
+			String workflowVersion = iridaWorkflow.getWorkflowDescription().getVersion();
+
 			//Read the JSON file from SISTR output
 			@SuppressWarnings("resource")
 			String jsonFile = new Scanner(new BufferedReader(new FileReader(filePath.toFile()))).useDelimiter("\\Z")
@@ -88,7 +97,7 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 						String value = result.get(e.getKey()).toString();
 						PipelineProvidedMetadataEntry metadataEntry = new PipelineProvidedMetadataEntry(value, "text",
 								analysis);
-						stringEntries.put(e.getValue(), metadataEntry);
+						stringEntries.put(e.getValue() + " (v"+workflowVersion+")", metadataEntry);
 					}
 				});
 
@@ -108,6 +117,8 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 
 		} catch (IOException e) {
 			throw new PostProcessingException("Error parsing JSON from SISTR results", e);
+		} catch (IridaWorkflowNotFoundException e) {
+			throw new PostProcessingException("Workflow is not found", e);
 		}
 	}
 
