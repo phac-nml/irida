@@ -34,12 +34,17 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 	private SampleService sampleService;
 
 	// @formatter:off
-	private static Map<String, String> SISTR_FIELDS = ImmutableMap.of(
-		"serovar", "SISTR serovar",
-		"cgmlst_subspecies", "SISTR cgMLST Subspecies",
-		"cgmlst_ST", "SISTR cgMLST Sequence Type",
-		"qc_status", "SISTR QC Status"
-	);
+	private static Map<String, String> SISTR_FIELDS = ImmutableMap.<String,String>builder()
+		.put("serovar", "SISTR serovar")
+		.put("cgmlst_subspecies", "SISTR cgMLST Subspecies")
+		.put("cgmlst_ST", "SISTR cgMLST Sequence Type")
+		.put("qc_status", "SISTR QC Status")
+		.put("serogroup", "SISTR Serogroup")
+		.put("o_antigen", "SISTR O-antigen")
+		.put("h1", "SISTR H1")
+		.put("h2", "SISTR H2")
+		.put("cgmlst_matching_alleles", "SISTR cgMLST Alleles Matching Genome")
+		.build();
 	// @formatter:on
 
 	@Autowired
