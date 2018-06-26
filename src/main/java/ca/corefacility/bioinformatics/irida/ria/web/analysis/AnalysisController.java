@@ -19,6 +19,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowOutput;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
@@ -281,13 +282,20 @@ public class AnalysisController {
 	 */
 	@RequestMapping(value = "/ajax/{id}/outputs", method = RequestMethod.GET)
 	@ResponseBody
-	public List<AnalysisOutputFileInfo> getOutputFilesInfo(@PathVariable Long id) {
+	public List<AnalysisOutputFileInfo> getOutputFilesInfo(@PathVariable Long id)
+			throws IridaWorkflowNotFoundException {
 		AnalysisSubmission submission = analysisSubmissionService.read(id);
 		Analysis analysis = submission.getAnalysis();
-		Set<String> outputNames = analysis.getAnalysisOutputFileNames();
+		final IridaWorkflow iridaWorkflow = workflowsService.getIridaWorkflow(submission.getWorkflowId());
+		final List<String> outputNames = iridaWorkflow.getWorkflowDescription()
+				.getOutputs()
+				.stream()
+				.map(IridaWorkflowOutput::getName)
+				.collect(Collectors.toList());
 		return outputNames.stream()
 				.map((outputName) -> getAnalysisOutputFileInfo(submission, analysis, outputName))
 				.filter(Objects::nonNull)
+				.filter(x -> x.getFileSizeBytes() > 0L)
 				.collect(Collectors.toList());
 	}
 

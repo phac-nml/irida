@@ -149,7 +149,7 @@ public class AnalysisControllerTest {
 	}
 
 	@Test
-	public void testGetOutputFileLines() {
+	public void testGetOutputFileLines() throws IridaWorkflowNotFoundException {
 		final Long submissionId = 1L;
 		final MockHttpServletResponse response = new MockHttpServletResponse();
 		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(
@@ -190,7 +190,7 @@ public class AnalysisControllerTest {
 	}
 
 	@Test
-	public void testGetOutputFileByteSizedChunks() {
+	public void testGetOutputFileByteSizedChunks() throws IridaWorkflowNotFoundException {
 		final Long submissionId = 1L;
 		final MockHttpServletResponse response = new MockHttpServletResponse();
 		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(
