@@ -791,6 +791,7 @@ public class AnalysisController {
 	 *
 	 * @param analysisSubmissionId Id for a {@link AnalysisSubmission}
 	 * @param fileId               the id of the file to download
+	 * @param filename             Optional filename for file download.
 	 * @param response             {@link HttpServletResponse}
 	 */
 	@RequestMapping(value = "/ajax/download/{analysisSubmissionId}/file/{fileId}")
