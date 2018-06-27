@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "build": "webpack --mode production",
-    "start": "webpack -wd --mode development",
+    "start": "webpack --watch --progress --mode development",
     "clean": "rm -r node* resources/dist/",
     "precommit": "lint-staged"
   },
