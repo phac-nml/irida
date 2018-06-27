@@ -3,19 +3,23 @@ package ca.corefacility.bioinformatics.irida.pipeline.results.impl.unit;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.results.impl.SISTRSampleUpdater;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
+import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -57,27 +61,48 @@ public class SISTRSampleUpdaterTest {
 
 	private SampleService sampleService;
 	private MetadataTemplateService metadataTemplateService;
+	private IridaWorkflowsService iridaWorkflowsService;
+	private IridaWorkflow iridaWorkflow;
+	private IridaWorkflowDescription iridaWorkflowDescription;
+
+	private UUID uuid = UUID.randomUUID();
 
 	@Before
-	public void setUp() {
+	public void setUp() throws IridaWorkflowNotFoundException {
 		sampleService = mock(SampleService.class);
 		metadataTemplateService = mock(MetadataTemplateService.class);
+		iridaWorkflowsService = mock(IridaWorkflowsService.class);
+		iridaWorkflow = mock(IridaWorkflow.class);
+		iridaWorkflowDescription = mock(IridaWorkflowDescription.class);
 
-		updater = new SISTRSampleUpdater(metadataTemplateService, sampleService);
+		updater = new SISTRSampleUpdater(metadataTemplateService, sampleService, iridaWorkflowsService);
+
+		when(iridaWorkflowsService.getIridaWorkflow(uuid)).thenReturn(iridaWorkflow);
+
+		when(iridaWorkflow.getWorkflowDescription()).thenReturn(iridaWorkflowDescription);
+		when(iridaWorkflowDescription.getVersion()).thenReturn("0.1");
 	}
 
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testUpdaterPassed() throws PostProcessingException, AnalysisAlreadySetException {
-		ImmutableMap<String, String> expectedResults = ImmutableMap
-				.of("SISTR serovar", "Enteritidis", "SISTR cgMLST Subspecies", "enterica", "SISTR QC Status", "PASS");
+		ImmutableMap<String, String> expectedResults = ImmutableMap.<String,String>builder()
+				.put("SISTR serovar (v0.1)", "Enteritidis")
+				.put("SISTR cgMLST Subspecies (v0.1)", "enterica")
+				.put("SISTR QC Status (v0.1)", "PASS")
+				.put("SISTR O-antigen (v0.1)", "1,9,12")
+				.put("SISTR Serogroup (v0.1)", "D1")
+				.put("SISTR cgMLST Alleles Matching Genome (v0.1)", "317")
+				.put("SISTR H1 (v0.1)", "g,m")
+				.put("SISTR H2 (v0.1)", "-")
+				.build();
 
 		Path outputPath = Paths.get("src/test/resources/files/sistr-predictions-pass.json");
 
 		AnalysisOutputFile outputFile = new AnalysisOutputFile(outputPath, null, null, null);
 
 		Analysis analysis = new Analysis(null, ImmutableMap.of("sistr-predictions", outputFile), null, null);
-		AnalysisSubmission submission = AnalysisSubmission.builder(UUID.randomUUID())
+		AnalysisSubmission submission = AnalysisSubmission.builder(uuid)
 				.inputFiles(ImmutableSet.of(new SingleEndSequenceFile(null))).build();
 
 		submission.setAnalysis(analysis);
@@ -121,15 +146,12 @@ public class SISTRSampleUpdaterTest {
 
 	@Test(expected = PostProcessingException.class)
 	public void testUpdaterBadFile() throws PostProcessingException, AnalysisAlreadySetException {
-		ImmutableMap<String, String> expectedResults = ImmutableMap
-				.of("SISTR serovar", "Enteritidis", "SISTR cgMLST Subspecies", "enterica", "SISTR QC Status", "PASS");
-
 		Path outputPath = Paths.get("src/test/resources/files/snp_tree.tree");
 
 		AnalysisOutputFile outputFile = new AnalysisOutputFile(outputPath, null, null, null);
 
 		Analysis analysis = new Analysis(null, ImmutableMap.of("sistr-predictions", outputFile), null, null);
-		AnalysisSubmission submission = AnalysisSubmission.builder(UUID.randomUUID())
+		AnalysisSubmission submission = AnalysisSubmission.builder(uuid)
 				.inputFiles(ImmutableSet.of(new SingleEndSequenceFile(null))).build();
 
 		submission.setAnalysis(analysis);
@@ -142,15 +164,12 @@ public class SISTRSampleUpdaterTest {
 
 	@Test(expected = PostProcessingException.class)
 	public void testUpdaterNoFile() throws PostProcessingException, AnalysisAlreadySetException {
-		ImmutableMap<String, String> expectedResults = ImmutableMap
-				.of("SISTR serovar", "Enteritidis", "SISTR cgMLST Subspecies", "enterica", "SISTR QC Status", "PASS");
-
 		Path outputPath = Paths.get("src/test/resources/files/not_really_a_file.txt");
 
 		AnalysisOutputFile outputFile = new AnalysisOutputFile(outputPath, null, null, null);
 
 		Analysis analysis = new Analysis(null, ImmutableMap.of("sistr-predictions", outputFile), null, null);
-		AnalysisSubmission submission = AnalysisSubmission.builder(UUID.randomUUID())
+		AnalysisSubmission submission = AnalysisSubmission.builder(uuid)
 				.inputFiles(ImmutableSet.of(new SingleEndSequenceFile(null))).build();
 
 		submission.setAnalysis(analysis);
