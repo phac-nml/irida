@@ -10,6 +10,7 @@ Changes
 * [UI]: Moved the position of the notification system to top center.
 * [Workflow]: Added version 2.0.0 of a pipeline for running [bio_hansel](https://github.com/phac-nml/bio_hansel) (version 2.0.0)
 * [Workflow]: Added version 0.3 of a pipeline for running [SISTR](https://github.com/peterk87/sistr_cmd/) which now makes use of [Shovill](https://github.com/tseemann/shovill) for genome assembly.
+* [Workflow]: Updated SISTR pipeline to store the following additional fields in the metadata table: serogroup, O antigen, H1, H2, and alleles matching genome.
 * [UI]: Users can save analysis results to samples after pipeline is done in "Share Results" tab.
 * [UI]: Fixed bug where edit groups page would throw a server exception. (0.21.3)
 * [UI]: Hiding user page project list for non-admins.
@@ -17,6 +18,7 @@ Changes
 * [UI]: Fixed bug where admin dropdown menu was hidden behind sequencing run sub navigation.
 * [Developer]: Moved file processing chain outside of SequencingObjectService.  It now runs as a scheduled task.  This will help balance the processing load in multi-server deployments.
 * [UI]: Ensuring `ROLE_SEQUENCER` users get "Access Denied" for any attempted UI interactions.
+* [Developer]: Updated `yarn` to the current version.
 
 0.20.0 to 0.21.0
 ----------------
