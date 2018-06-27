@@ -71,7 +71,8 @@ public class AnalysisController {
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisController.class);
 	// PAGES
 	public static final Map<AnalysisType, String> PREVIEWS = ImmutableMap
-			.of(AnalysisType.PHYLOGENOMICS, "tree", AnalysisType.SISTR_TYPING, "sistr");
+			.of(AnalysisType.PHYLOGENOMICS, "tree", AnalysisType.SISTR_TYPING, "sistr",
+					AnalysisType.MLST_MENTALIST, "tree");
 	private static final String BASE = "analysis/";
 	public static final String PAGE_DETAILS_DIRECTORY = BASE + "details/";
 	public static final String PREVIEW_UNAVAILABLE = PAGE_DETAILS_DIRECTORY + "unavailable";
@@ -218,7 +219,7 @@ public class AnalysisController {
 		try {
 			if (submission.getAnalysisState()
 					.equals(AnalysisState.COMPLETED)) {
-				if (analysisType.equals(AnalysisType.PHYLOGENOMICS)) {
+				if (analysisType.equals(AnalysisType.PHYLOGENOMICS) || analysisType.equals(AnalysisType.MLST_MENTALIST)) {
 					tree(submission, model);
 				} else if (analysisType.equals(AnalysisType.SISTR_TYPING)) {
 					model.addAttribute("sistr", true);
@@ -604,7 +605,7 @@ public class AnalysisController {
 	// ************************************************************************************************
 
 	/**
-	 * Construct the model parameters for an {@link AnalysisType#PHYLOGENOMICS}
+	 * Construct the model parameters for an {@link AnalysisType#PHYLOGENOMICS} or {@link AnalysisType#MLST_MENTALIST}
 	 * {@link Analysis}
 	 *
 	 * @param submission The analysis submission
@@ -616,6 +617,9 @@ public class AnalysisController {
 
 		Analysis analysis = submission.getAnalysis();
 		AnalysisOutputFile file = analysis.getAnalysisOutputFile(treeFileKey);
+		if (file == null) {
+			throw new IOException("No tree file for analysis :" + analysis.toString());
+		}
 		List<String> lines = Files.readAllLines(file.getFile());
 		model.addAttribute("analysis", analysis);
 		model.addAttribute("newick", lines.get(0));
