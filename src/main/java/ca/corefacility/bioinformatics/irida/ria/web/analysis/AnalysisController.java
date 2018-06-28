@@ -617,18 +617,28 @@ public class AnalysisController {
 	 */
 	private void tree(AnalysisSubmission submission, Model model) throws IOException {
 		final String treeFileKey = "tree";
+		final String emptyTree = "();";
 
 		Analysis analysis = submission.getAnalysis();
 		AnalysisOutputFile file = analysis.getAnalysisOutputFile(treeFileKey);
 		if (file == null) {
-			throw new IOException("No tree file for analysis :" + analysis.toString());
+			throw new IOException("No tree file for analysis: " + submission);
 		}
 		List<String> lines = Files.readAllLines(file.getFile());
-		model.addAttribute("analysis", analysis);
-		model.addAttribute("newick", lines.get(0));
+		if (lines.size() > 1) {
+			logger.warn("Multiple lines in tree file, will only display first tree. For analysis: " + submission);
+		} else {
+			String tree = lines.get(0);
+			if (emptyTree.equals(tree)) {
+				logger.debug("Empty tree found, will hide tree preview. For analysis: " + submission);
+			} else {
+				model.addAttribute("analysis", analysis);
+				model.addAttribute("newick", tree);
 
-		// inform the view to display the tree preview
-		model.addAttribute("preview", "tree");
+				// inform the view to display the tree preview
+				model.addAttribute("preview", "tree");
+			}
+		}
 	}
 
 	/**
