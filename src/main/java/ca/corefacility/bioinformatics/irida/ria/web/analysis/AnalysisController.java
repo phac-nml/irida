@@ -279,16 +279,19 @@ public class AnalysisController {
 	 *
 	 * @param id {@link AnalysisSubmission} id
 	 * @return map of info about each {@link AnalysisOutputFile}
+	 * @throws IridaWorkflowNotFoundException if the specified workflow cannot be found.
 	 */
 	@RequestMapping(value = "/ajax/{id}/outputs", method = RequestMethod.GET)
 	@ResponseBody
-	public List<AnalysisOutputFileInfo> getOutputFilesInfo(@PathVariable Long id) {
+	public List<AnalysisOutputFileInfo> getOutputFilesInfo(@PathVariable Long id)
+			throws IridaWorkflowNotFoundException {
 		AnalysisSubmission submission = analysisSubmissionService.read(id);
 		Analysis analysis = submission.getAnalysis();
-		Set<String> outputNames = analysis.getAnalysisOutputFileNames();
+		final List<String> outputNames = workflowsService.getOutputNames(submission.getWorkflowId());
 		return outputNames.stream()
 				.map((outputName) -> getAnalysisOutputFileInfo(submission, analysis, outputName))
 				.filter(Objects::nonNull)
+				.filter(x -> x.getFileSizeBytes() > 0L)
 				.collect(Collectors.toList());
 	}
 
