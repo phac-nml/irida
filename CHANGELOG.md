@@ -20,6 +20,8 @@ Changes
 * [UI]: Ensuring `ROLE_SEQUENCER` users get "Access Denied" for any attempted UI interactions.
 * [Developer]: Updated `yarn` to the current version.
 * [UI/Workflow]: Pipeline analysis output files are rendered in the same order as they appear in the pipeline `irida_workflow.xml` in the `<outputs>` XML element.
+* [Developer]: Can now specify which `chromedriver` to use in UI testing with `-Dwebdriver.chrome.driver=/PATH/TO/chromedriver`.
+* [UI]: Fixes slow Sample cart. Quicker saving of large selections of samples to cart (`POST /cart/add/samples`) and loading of existing cart Samples (`GET /cart`).  
 
 0.20.0 to 0.21.0
 ----------------

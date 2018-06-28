@@ -104,11 +104,22 @@ function CartService(scope, $http) {
   const urls = {
     all: window.TL.BASE_URL + "cart",
     add: window.TL.BASE_URL + "cart/add/samples",
-    project: window.TL.BASE_URL + "cart/project/"
+    project: window.TL.BASE_URL + "cart/project/",
+    galaxy: window.TL.BASE_URL + "cart/galaxy-export"
   };
 
   svc.all = function() {
     return $http.get(urls.all).then(function(response) {
+      if (response.data) {
+        return { projects: response.data.projects };
+      } else {
+        return [];
+      }
+    });
+  };
+
+  svc.galaxy = function() {
+    return $http.get(urls.galaxy).then(function(response) {
       if (response.data) {
         return { projects: response.data.projects };
       } else {
@@ -256,7 +267,7 @@ function GalaxyExportService(CartService, $http, $q) {
   };
 
   svc.exportFromCart = function(args) {
-    return CartService.all().then(function(data) {
+    return CartService.galaxy().then(function(data) {
       const projects = data.projects;
       projects.forEach(function(project) {
         const samples = project.samples;
