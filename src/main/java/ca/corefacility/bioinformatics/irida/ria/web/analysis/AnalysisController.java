@@ -78,6 +78,9 @@ public class AnalysisController {
 	public static final String PREVIEW_UNAVAILABLE = PAGE_DETAILS_DIRECTORY + "unavailable";
 	public static final String PAGE_ANALYSIS_LIST = "analyses/analyses";
 
+	private static final String TREE_EXT = "newick";
+	private static final String EMPTY_TREE = "();";
+
 	/*
 	 * SERVICES
 	 */
@@ -292,6 +295,7 @@ public class AnalysisController {
 				.map((outputName) -> getAnalysisOutputFileInfo(submission, analysis, outputName))
 				.filter(Objects::nonNull)
 				.filter(x -> x.getFileSizeBytes() > 0L)
+				.filter(x -> !(TREE_EXT.equals(x.getFileExt()) && EMPTY_TREE.equals(x.getFirstLine())))
 				.collect(Collectors.toList());
 	}
 
@@ -307,7 +311,7 @@ public class AnalysisController {
 			String outputName) {
 		final ImmutableSet<String> BLACKLIST_FILE_EXT = ImmutableSet.of("zip");
 		// set of file extensions for indicating whether the first line of the file should be read
-		final ImmutableSet<String> FILE_EXT_READ_FIRST_LINE = ImmutableSet.of("tsv", "txt", "tabular", "csv", "tab");
+		final ImmutableSet<String> FILE_EXT_READ_FIRST_LINE = ImmutableSet.of("tsv", "txt", "tabular", "csv", "tab", TREE_EXT);
 		final AnalysisOutputFile aof = analysis.getAnalysisOutputFile(outputName);
 		final Long aofId = aof.getId();
 		final String aofFilename = aof.getFile()
@@ -617,7 +621,6 @@ public class AnalysisController {
 	 */
 	private void tree(AnalysisSubmission submission, Model model) throws IOException {
 		final String treeFileKey = "tree";
-		final String emptyTree = "();";
 
 		Analysis analysis = submission.getAnalysis();
 		AnalysisOutputFile file = analysis.getAnalysisOutputFile(treeFileKey);
@@ -625,14 +628,15 @@ public class AnalysisController {
 			throw new IOException("No tree file for analysis: " + submission);
 		}
 		List<String> lines = Files.readAllLines(file.getFile());
+		model.addAttribute("analysis", analysis);
+
 		if (lines.size() > 1) {
 			logger.warn("Multiple lines in tree file, will only display first tree. For analysis: " + submission);
 		} else {
 			String tree = lines.get(0);
-			if (emptyTree.equals(tree)) {
+			if (EMPTY_TREE.equals(tree)) {
 				logger.debug("Empty tree found, will hide tree preview. For analysis: " + submission);
 			} else {
-				model.addAttribute("analysis", analysis);
 				model.addAttribute("newick", tree);
 
 				// inform the view to display the tree preview
