@@ -11,6 +11,20 @@
 			userId: /*[[${user.getId()}]]*/ 1
 		};
 	</script>
+	<style>
+		#projectsTable {
+			table-layout: fixed;
+			width: 100% !important;
+		}
+
+		#projectsTable td,
+		#projectsTable th {
+			width: auto !important;
+			white-space: normal;
+			text-overflow: ellipsis;
+			overflow: hidden;
+		}
+	</style>
 </head>
 <body>
 <main layout:fragment="page">
