@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <iridaWorkflow>
-    <id>dc12ba90-afa7-4fb2-b826-9acb9f7be9e7</id>
+    <id>cdcbdf7b-7276-4845-b225-9ea41159e791</id>
     <name>MLSTMentalist</name>
-    <version>0.1.8</version>
+    <version>0.1.9</version>
     <analysisType>mlst-mentalist</analysisType>
     <inputs>
         <sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
@@ -15,20 +15,21 @@
                 <galaxyToolDataTable name="mentalist_databases" displayColumn="name" parameterColumn="value" />
             </dynamicSource>
             <toolParameter
-                    toolId="toolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_call/0.1.8"
+                    toolId="toolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_call/0.1.9"
                     parameterName="kmer_db" />
         </parameter>
     </parameters>
     <outputs>
         <output name="mlst-result" fileName="mentalist_call.tsv" />
         <output name="distance-matrix" fileName="mentalist_distance_matrix.tsv" />
+        <output name="tree" fileName="mentalist_nj_tree.newick" />
     </outputs>
     <toolRepositories>
         <repository>
             <name>mentalist</name>
             <owner>dfornika</owner>
             <url>https://toolshed.g2.bx.psu.edu/</url>
-            <revision>243be7a79d9c</revision>
+            <revision>a6cd59f35832</revision>
         </repository>
         <repository>
             <name>combine_tabular_collection</name>

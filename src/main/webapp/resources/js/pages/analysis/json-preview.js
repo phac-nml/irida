@@ -302,7 +302,13 @@ export function renderJsonPreview(
       try {
         $textEl.html(jsToHtml(JSON.parse(savedText)));
       } catch (e) {
-        $textEl.html(jsToHtml(repairMalformedJSON(savedText)));
+        try {
+          $textEl.html(jsToHtml(repairMalformedJSON(savedText)));
+        } catch (eep) {
+          console.warn(savedText.substr(savedText.length - 100));
+          console.error(eep);
+          $textEl.text(savedText);
+        }
       }
       params.seek = filePointer;
       params.chunk = getNewChunkSize(params.seek, fileSizeBytes, chunk_size);
