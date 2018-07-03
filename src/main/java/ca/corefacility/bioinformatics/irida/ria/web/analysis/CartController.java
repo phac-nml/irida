@@ -153,15 +153,16 @@ public class CartController {
 		Project project = projectService.read(projectId);
 		final Map<String, Sample> selectedNameToSample = selected.entrySet()
 				.stream()
-				.flatMap(x -> x.getValue()
+				.flatMap(entry -> entry.getValue()
 						.stream())
-				.collect(Collectors.toMap(Sample::getSampleName, x -> x));
+				.collect(Collectors.toMap(Sample::getSampleName, sample -> sample));
 		Set<Sample> samples = loadSamplesForProject(project, sampleIds);
 		final Set<Sample> selectedSamples = new HashSet<>(selectedNameToSample.values());
 		final boolean removedSamples = samples.removeAll(selectedSamples);
-		if (removedSamples) logger.debug("Removed Samples already in cart.");
+		if (removedSamples)
+			logger.debug("Removed Samples already in cart.");
 		final Map<String, Sample> nameToSample = samples.stream()
-				.collect(Collectors.toMap(Sample::getSampleName, x -> x));
+				.collect(Collectors.toMap(Sample::getSampleName, sample -> sample));
 		Set<Sample> dupSamples = new HashSet<>();
 		nameToSample.forEach((name, sample) -> {
 			if (selectedNameToSample.containsKey(name)) {
@@ -170,7 +171,8 @@ public class CartController {
 		});
 		if (!dupSamples.isEmpty()) {
 			samples.removeAll(dupSamples);
-			logger.debug("Samples with existing sample names (n=" + dupSamples.size() + " not added to cart: " + dupSamples);
+			logger.debug(
+					"Samples with existing sample names (n=" + dupSamples.size() + " not added to cart: " + dupSamples);
 		}
 
 		getSelectedSamplesForProject(project).addAll(samples);
@@ -182,7 +184,10 @@ public class CartController {
 		Map<String, Object> out = new HashMap<>();
 
 		if (!dupSamples.isEmpty()) {
-			out.put("excluded", dupSamples.stream().map(x -> x.getSampleName() + " (id=" + x.getId() + "; project='"+ project.getLabel() + "' (id=" + project.getId() + "))").collect(Collectors.toList()));
+			out.put("excluded", dupSamples.stream()
+					.map(sample -> sample.getSampleName() + " (id=" + sample.getId() + "; project='"
+							+ project.getLabel() + "' (id=" + project.getId() + "))")
+					.collect(Collectors.toList()));
 			message += " " + messageSource.getMessage("cart.excluded", null, locale);
 		}
 

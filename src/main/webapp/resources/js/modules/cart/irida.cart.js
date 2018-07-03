@@ -150,7 +150,7 @@ function CartService(scope, $http) {
                 text: `
                     <p>${message}<p>
                     <ul>${excluded
-                      .map(x => "<li>" + x + "</li>")
+                      .map(excludedSample => "<li>" + excludedSample + "</li>")
                       .join("")}</ul>`,
                 progressBar: false,
                 timeout: false,
