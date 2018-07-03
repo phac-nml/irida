@@ -182,7 +182,7 @@ public class CartController {
 		Map<String, Object> out = new HashMap<>();
 
 		if (!dupSamples.isEmpty()) {
-			out.put("excluded", dupSamples.stream().map(x -> x.getSampleName() + " (id=" + x.getId() + "; project'"+ project.getLabel() + "' (id=" + project.getId() + "))").collect(Collectors.toList()));
+			out.put("excluded", dupSamples.stream().map(x -> x.getSampleName() + " (id=" + x.getId() + "; project='"+ project.getLabel() + "' (id=" + project.getId() + "))").collect(Collectors.toList()));
 			message += " " + messageSource.getMessage("cart.excluded", null, locale);
 		}
 
