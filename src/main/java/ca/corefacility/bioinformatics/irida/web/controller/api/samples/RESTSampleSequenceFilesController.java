@@ -158,7 +158,7 @@ public class RESTSampleSequenceFilesController {
 	@RequestMapping(value = "/api/samples/{sampleId}/sequenceFiles", method = RequestMethod.GET)
 	public ModelMap getSampleSequenceFiles(@PathVariable Long sampleId) {
 		ModelMap modelMap = new ModelMap();
-		logger.debug("Reading seq files for sample " + sampleId);
+		logger.trace("Reading seq files for sample " + sampleId);
 		Sample sample = sampleService.read(sampleId);
 
 		Collection<SampleSequencingObjectJoin> sequencingObjectsForSample = sequencingObjectService
@@ -217,7 +217,7 @@ public class RESTSampleSequenceFilesController {
 	public ModelMap listSequencingObjectsOfTypeForSample(@PathVariable Long sampleId, @PathVariable String objectType) {
 		ModelMap modelMap = new ModelMap();
 
-		logger.debug("Reading seq file  for sample " + sampleId);
+		logger.trace("Reading seq file  for sample " + sampleId);
 		Sample sample = sampleService.read(sampleId);
 
 		Class<? extends SequencingObject> type = objectLabels.inverse().get(objectType);

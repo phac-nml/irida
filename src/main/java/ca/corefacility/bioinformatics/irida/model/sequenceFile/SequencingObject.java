@@ -1,38 +1,5 @@
 package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
-
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
-import org.hibernate.envers.RelationTargetAuditMode;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
@@ -42,6 +9,19 @@ import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * Objects that were obtained from some sequencing platform.
@@ -87,12 +67,20 @@ public abstract class SequencingObject extends IridaResourceSupport implements M
 	@OneToMany(mappedBy = "sequencingObject", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
 	@NotAudited
 	private Set<QCEntry> qcEntries;
-	
+
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH, mappedBy = "inputFiles")
 	private List<AnalysisSubmission> analysisSubmissions;
 
+	@Enumerated(EnumType.STRING)
+	@Column(name="processing_state")
+	private ProcessingState processingState;
+
+	@Column(name = "file_processor")
+	private String fileProcessor;
+
 	public SequencingObject() {
 		createdDate = new Date();
+		processingState = ProcessingState.UNPROCESSED;
 	}
 
 	public Long getId() {
@@ -197,5 +185,37 @@ public abstract class SequencingObject extends IridaResourceSupport implements M
 	@JsonIgnore
 	public void setQcEntries(Set<QCEntry> qcEntries) {
 		this.qcEntries = qcEntries;
+	}
+
+	public void setProcessingState(ProcessingState processingState){
+		this.processingState = processingState;
+	}
+
+	public ProcessingState getProcessingState() {
+		return processingState;
+	}
+
+	public void setFileProcessor(String fileProcessor) {
+		this.fileProcessor = fileProcessor;
+	}
+
+	public String getFileProcessor() {
+		return fileProcessor;
+	}
+
+	/**
+	 * The status of the file processing upon upload
+	 */
+	public enum ProcessingState {
+		// newly uploaded, no processing done
+		UNPROCESSED,
+		//picked up by file processor, waiting to process
+		QUEUED,
+		//currently processing
+		PROCESSING,
+		//done processing
+		FINISHED,
+		//error with file processing
+		ERROR
 	}
 }

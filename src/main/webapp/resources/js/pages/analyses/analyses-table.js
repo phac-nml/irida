@@ -273,7 +273,8 @@ const config = Object.assign(tableConfig, {
       render(data, type, full) {
         return createItemLink({
           url: `${window.PAGE.URLS.analysis}${full.id}`,
-          label: data
+          label: data,
+          width: undefined
         });
       }
     },
@@ -282,7 +283,7 @@ const config = Object.assign(tableConfig, {
     {
       targets: COLUMNS.WORKFLOW,
       render(data) {
-        return createRestrictedWidthContent({ text: data }).outerHTML;
+        return data;
       }
     },
     // Dates need to all be formatted properly.

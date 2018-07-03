@@ -2,7 +2,7 @@
     "a_galaxy_workflow": "true", 
     "annotation": "", 
     "format-version": "0.1", 
-    "name": "MentaLiST MLST v0.1",
+    "name": "MentaLiST MLST v0.1.9", 
     "steps": {
         "0": {
             "annotation": "", 
@@ -38,7 +38,7 @@
         }, 
         "1": {
             "annotation": "", 
-            "content_id": "toolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_call/0.1.3", 
+            "content_id": "toolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_call/0.1.9", 
             "id": 1, 
             "input_connections": {
                 "input_type|fastq_collection": {
@@ -65,29 +65,37 @@
                 }
             ], 
             "position": {
-                "left": 661.5, 
-                "top": 341
+                "left": 608, 
+                "top": 421
             }, 
             "post_job_actions": {
-                "HideDatasetActionoutput_file": {
-                    "action_arguments": {}, 
-                    "action_type": "HideDatasetAction", 
+                "ChangeDatatypeActionoutput_file": {
+                    "action_arguments": {
+                        "newtype": "tabular"
+                    }, 
+                    "action_type": "ChangeDatatypeAction", 
                     "output_name": "output_file"
                 }
             }, 
             "tool_errors": null, 
-            "tool_id": "toolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_call/0.1.3", 
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_call/0.1.9", 
             "tool_shed_repository": {
-                "changeset_revision": "1d9e3950ce61", 
+                "changeset_revision": "f29e7738bb64", 
                 "name": "mentalist", 
                 "owner": "dfornika", 
                 "tool_shed": "toolshed.g2.bx.psu.edu"
             }, 
             "tool_state": "{\"input_type\": \"{\\\"fastq_collection\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"sPaired\\\": \\\"collections\\\", \\\"__current_case__\\\": 1}\", \"__rerun_remap_job_id__\": null, \"kmer_db\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__page__\": 0}", 
-            "tool_version": "0.1.3", 
+            "tool_version": "0.1.9", 
             "type": "tool", 
-            "uuid": "d76873d7-ea1b-4b74-85d0-836ec51cbe27", 
-            "workflow_outputs": []
+            "uuid": "107c79f4-95d9-46a3-ba45-3cca6a0309e7", 
+            "workflow_outputs": [
+                {
+                    "label": null, 
+                    "output_name": "output_file", 
+                    "uuid": "048a4ce4-c211-4d7d-9074-d6b913c269f5"
+                }
+            ]
         }, 
         "2": {
             "annotation": "", 
@@ -114,8 +122,8 @@
                 }
             ], 
             "position": {
-                "left": 984.5, 
-                "top": 305
+                "left": 941.5, 
+                "top": 540
             }, 
             "post_job_actions": {
                 "RenameDatasetActionoutput": {
@@ -137,15 +145,129 @@
             "tool_state": "{\"texts\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}", 
             "tool_version": "0.1", 
             "type": "tool", 
-            "uuid": "c8205c15-2ed2-4a96-8144-136b18fbf2a1", 
+            "uuid": "877d3d0b-58bc-48a5-87aa-7cc1f0a69a84", 
             "workflow_outputs": [
                 {
                     "label": null, 
                     "output_name": "output", 
-                    "uuid": "98ae19b5-b90f-4934-bd21-995c1c8ccd60"
+                    "uuid": "e30ef8d2-0acd-4dc8-841a-ec87c48ec2f3"
+                }
+            ]
+        }, 
+        "3": {
+            "annotation": "", 
+            "content_id": "toolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_distance/0.1.9", 
+            "id": 3, 
+            "input_connections": {
+                "input": {
+                    "id": 2, 
+                    "output_name": "output"
+                }
+            }, 
+            "inputs": [
+                {
+                    "description": "runtime parameter for tool MentaLiST Distance Matrix", 
+                    "name": "input"
+                }
+            ], 
+            "label": null, 
+            "name": "MentaLiST Distance Matrix", 
+            "outputs": [
+                {
+                    "name": "output", 
+                    "type": "tabular"
+                }
+            ], 
+            "position": {
+                "left": 1243, 
+                "top": 435.5
+            }, 
+            "post_job_actions": {
+                "RenameDatasetActionoutput": {
+                    "action_arguments": {
+                        "newname": "mentalist_distance_matrix.tsv"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "output"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_distance/0.1.9", 
+            "tool_shed_repository": {
+                "changeset_revision": "f29e7738bb64", 
+                "name": "mentalist", 
+                "owner": "dfornika", 
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            }, 
+            "tool_state": "{\"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}", 
+            "tool_version": "0.1.9", 
+            "type": "tool", 
+            "uuid": "26f4ee0b-377f-43f9-9e57-fae677cb1b9c", 
+            "workflow_outputs": [
+                {
+                    "label": null, 
+                    "output_name": "output", 
+                    "uuid": "5364b385-5273-4642-b583-64a70ad86003"
+                }
+            ]
+        }, 
+        "4": {
+            "annotation": "", 
+            "content_id": "toolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_tree/0.1.9", 
+            "id": 4, 
+            "input_connections": {
+                "input": {
+                    "id": 3, 
+                    "output_name": "output"
+                }
+            }, 
+            "inputs": [
+                {
+                    "description": "runtime parameter for tool MentaLiST Tree", 
+                    "name": "input"
+                }
+            ], 
+            "label": null, 
+            "name": "MentaLiST Tree", 
+            "outputs": [
+                {
+                    "name": "output", 
+                    "type": "txt"
+                }
+            ], 
+            "position": {
+                "left": 1528.5, 
+                "top": 646
+            }, 
+            "post_job_actions": {
+                "RenameDatasetActionoutput": {
+                    "action_arguments": {
+                        "newname": "mentalist_nj_tree.newick"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "output"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/dfornika/mentalist/mentalist_tree/0.1.9", 
+            "tool_shed_repository": {
+                "changeset_revision": "f29e7738bb64", 
+                "name": "mentalist", 
+                "owner": "dfornika", 
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            }, 
+            "tool_state": "{\"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}", 
+            "tool_version": "0.1.9", 
+            "type": "tool", 
+            "uuid": "81837fd0-7458-4e19-afbd-3c03c97e3151", 
+            "workflow_outputs": [
+                {
+                    "label": null, 
+                    "output_name": "output", 
+                    "uuid": "b0e0f6d7-5c05-405b-9a02-4478480d6093"
                 }
             ]
         }
     }, 
-    "uuid": "2c532643-1127-4859-bde4-c56c6e672819"
+    "uuid": "124565f8-a1e4-4314-8996-54e9432ae7fb"
 }

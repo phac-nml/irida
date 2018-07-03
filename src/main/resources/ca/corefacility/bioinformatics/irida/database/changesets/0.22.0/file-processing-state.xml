@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="file-processing-state" author="tom">
+        <addColumn tableName="sequencing_object">
+            <column name="processing_state" type="varchar(255)"/>
+            <column name="file_processor" type="varchar(255)"/>
+        </addColumn>
+
+        <addColumn tableName="sequencing_object_AUD">
+            <column name="processing_state" type="varchar(255)"/>
+            <column name="file_processor" type="varchar(255)"/>
+        </addColumn>
+
+    </changeSet>
+</databaseChangeLog>

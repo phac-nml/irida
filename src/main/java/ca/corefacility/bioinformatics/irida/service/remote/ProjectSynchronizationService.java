@@ -139,7 +139,7 @@ public class ProjectSynchronizationService {
 			User readBy = project.getRemoteStatus().getReadBy();
 			setAuthentication(readBy);
 
-			logger.debug("Syncing project at " + project.getRemoteStatus().getURL());
+			logger.trace("Syncing project at " + project.getRemoteStatus().getURL());
 
 			try {
 				RemoteAPI api = project.getRemoteStatus().getApi();
@@ -158,7 +158,7 @@ public class ProjectSynchronizationService {
 				// clear the context holder when you're done
 				SecurityContextHolder.clearContext();
 
-				logger.debug("Done project " + project.getRemoteStatus().getURL());
+				logger.trace("Done project " + project.getRemoteStatus().getURL());
 			}
 
 		}
@@ -343,6 +343,9 @@ public class ProjectSynchronizationService {
 		try {
 			file = singleEndRemoteService.mirrorSequencingObject(file);
 
+			file.setProcessingState(SequencingObject.ProcessingState.UNPROCESSED);
+			file.setFileProcessor(null);
+
 			file.getSequenceFile().setId(null);
 			file.getSequenceFile().getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
 
@@ -371,6 +374,9 @@ public class ProjectSynchronizationService {
 		pair.getRemoteStatus().setSyncStatus(SyncStatus.UPDATING);
 		try {
 			pair = pairRemoteService.mirrorSequencingObject(pair);
+
+			pair.setProcessingState(SequencingObject.ProcessingState.UNPROCESSED);
+			pair.setFileProcessor(null);
 
 			pair.getFiles().forEach(s -> {
 				s.setId(null);
