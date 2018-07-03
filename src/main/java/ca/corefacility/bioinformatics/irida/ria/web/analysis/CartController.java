@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
@@ -50,6 +52,7 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampl
 @Scope("session")
 @RequestMapping("/cart")
 public class CartController {
+	private static final Logger logger = LoggerFactory.getLogger(CartController.class);
 	private Map<Project, Set<Sample>> selected;
 	
 	private final SampleService sampleService;
@@ -149,20 +152,30 @@ public class CartController {
 			@RequestParam(value = "sampleIds[]") Set<Long> sampleIds, Locale locale) {
 		Project project = projectService.read(projectId);
 		Set<Sample> samples = loadSamplesForProject(project, sampleIds);
+		final Map<String, Sample> nameToSample = samples.stream()
+				.collect(Collectors.toMap(Sample::getSampleName, x -> x));
+		final Map<String, Sample> selectedNameToSample = selected.entrySet()
+				.stream()
+				.flatMap(x -> x.getValue()
+						.stream())
+				.collect(Collectors.toMap(Sample::getSampleName, x -> x));
+		Set<Sample> dupSamples = new HashSet<>();
+		nameToSample.forEach((name, sample) -> {
+			if (selectedNameToSample.containsKey(name)) {
+				dupSamples.add(sample);
+			}
+		});
+		if (!dupSamples.isEmpty()) {
+			samples.removeAll(dupSamples);
+			logger.debug("Samples with existing sample names (n=" + dupSamples.size() + " not added to cart: " + dupSamples);
+		}
 
 		getSelectedSamplesForProject(project).addAll(samples);
 
-		String message;
-		if (sampleIds.size() == 1) {
-			message = messageSource.getMessage("cart.one-sample-added", new Object[] {
-				project.getLabel()
-			}, locale);
-		} else {
-			message = messageSource.getMessage("cart.many-samples-added", new Object[] {
-					sampleIds.size(),
-					project.getLabel()
-			}, locale);
-		}
+		String message = samples.size() == 1 ?
+				messageSource.getMessage("cart.one-sample-added", new Object[] { project.getLabel() }, locale) :
+				messageSource.getMessage("cart.many-samples-added", new Object[] { samples.size(), project.getLabel() },
+						locale);
 		return ImmutableMap.of("message", message);
 	}
 

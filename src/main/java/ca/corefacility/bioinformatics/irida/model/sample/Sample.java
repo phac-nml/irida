@@ -194,6 +194,12 @@ public class Sample extends IridaResourceSupport
 	}
 
 	@Override
+	public String toString() {
+		return "Sample{" + "id=" + id + ", createdDate=" + createdDate + ", modifiedDate=" + modifiedDate
+				+ ", sampleName='" + sampleName + '\'' + ", organism='" + organism + '\'' + '}';
+	}
+
+	@Override
 	public Long getId() {
 		return id;
 	}
