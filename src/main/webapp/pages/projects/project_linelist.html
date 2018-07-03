@@ -9,6 +9,9 @@
     <script th:inline="javascript">
         window.PAGE = {
           project: /*[[${project}]]*/ {},
+          urls: {
+            import: /*[[@{/projects/{id}/sample-metadata/upload(id=${project.getId()})}]]*/ "/projects/5/sample-metadata/upload"
+          },
           i18n: {
             form: {
               btn: {
@@ -18,6 +21,9 @@
             },
             linelist: {
               addToCart: /*[[#{linelist.addToCart}]]*/ "ADD TO CART",
+              importBtn: {
+                text: /*[[#{linelist.importBtn.text}]]*/ "IMPORT STUFF"
+              },
               selected: {
                 none: /*[[#{linelist.selected.none}]]*/ "No samples selected",
                 one: /*[[#{linelist.selected.one}]]*/ "One sample selected",

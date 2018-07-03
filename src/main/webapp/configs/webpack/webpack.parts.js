@@ -50,9 +50,7 @@ exports.lintJavaScript = () => ({
 exports.compressJavaScript = () => {
   if (process.env.MIN_JS !== "false") {
     return {
-      plugins: [
-        new webpack.optimize.UglifyJsPlugin()
-      ]
+      plugins: [new webpack.optimize.UglifyJsPlugin()]
     };
   }
 };
