@@ -144,9 +144,23 @@ function CartService(scope, $http) {
             /*
           Display a notification of what occurred on the server.
            */
-            showNotification({
-              text: response.message
-            });
+            const { message, excluded } = response;
+            if (excluded) {
+              showNotification({
+                text: `
+                    <p>${message}<p>
+                    <ul>${excluded
+                      .map(x => "<li>" + x + "</li>")
+                      .join("")}</ul>`,
+                progressBar: false,
+                timeout: false,
+                type: "warning"
+              });
+            } else {
+              showNotification({
+                text: message
+              });
+            }
           })
         );
       });

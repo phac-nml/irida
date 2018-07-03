@@ -151,13 +151,16 @@ public class CartController {
 	public Map<String, Object> addProjectSample(@RequestParam Long projectId,
 			@RequestParam(value = "sampleIds[]") Set<Long> sampleIds, Locale locale) {
 		Project project = projectService.read(projectId);
-		Set<Sample> samples = loadSamplesForProject(project, sampleIds);
-		final Map<String, Sample> nameToSample = samples.stream()
-				.collect(Collectors.toMap(Sample::getSampleName, x -> x));
 		final Map<String, Sample> selectedNameToSample = selected.entrySet()
 				.stream()
 				.flatMap(x -> x.getValue()
 						.stream())
+				.collect(Collectors.toMap(Sample::getSampleName, x -> x));
+		Set<Sample> samples = loadSamplesForProject(project, sampleIds);
+		final Set<Sample> selectedSamples = new HashSet<>(selectedNameToSample.values());
+		final boolean removedSamples = samples.removeAll(selectedSamples);
+		if (removedSamples) logger.debug("Removed Samples already in cart.");
+		final Map<String, Sample> nameToSample = samples.stream()
 				.collect(Collectors.toMap(Sample::getSampleName, x -> x));
 		Set<Sample> dupSamples = new HashSet<>();
 		nameToSample.forEach((name, sample) -> {
@@ -176,7 +179,15 @@ public class CartController {
 				messageSource.getMessage("cart.one-sample-added", new Object[] { project.getLabel() }, locale) :
 				messageSource.getMessage("cart.many-samples-added", new Object[] { samples.size(), project.getLabel() },
 						locale);
-		return ImmutableMap.of("message", message);
+		Map<String, Object> out = new HashMap<>();
+
+		if (!dupSamples.isEmpty()) {
+			out.put("excluded", dupSamples.stream().map(x -> x.getSampleName() + " (id=" + x.getId() + "; project'"+ project.getLabel() + "' (id=" + project.getId() + "))").collect(Collectors.toList()));
+			message += " " + messageSource.getMessage("cart.excluded", null, locale);
+		}
+
+		out.put("message", message);
+		return out;
 	}
 
 	/**
