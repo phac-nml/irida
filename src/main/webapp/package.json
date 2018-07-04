@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "build": "webpack --mode production",
-    "start": "webpack -wd --mode development",
+    "start": "webpack --watch --progress --mode development",
     "clean": "rm -r node* resources/dist/",
     "precommit": "lint-staged"
   },
@@ -93,7 +93,7 @@
     "eslint": "^4.19.1",
     "eslint-config-prettier": "^2.9.0",
     "eslint-loader": "2.0.0",
-    "eslint-plugin-prettier": "2.6.0",
+    "eslint-plugin-prettier": "2.6.1",
     "eslint-plugin-react": "^7.9.1",
     "file-loader": "^1.1.11",
     "husky": "^0.14.3",
