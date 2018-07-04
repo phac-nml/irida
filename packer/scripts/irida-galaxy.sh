@@ -27,7 +27,7 @@ systemctl start docker
 
 # run the galaxy container, --restart=always makes sure it starts up on boot
 mkdir -p /home/irida/data/galaxy-export
-docker pull phacnml/galaxy-irida-17.01:0.22.0
+docker pull phacnml/galaxy-irida-17.01
 docker run --name galaxy -d -p 9090:80 -v /home/irida/data/galaxy-export/:/export/ -v /home/irida/data/sequencing:/home/irida/data/sequencing phacnml/galaxy-irida-17.01
 
 # wait for galaxy to succeed starting up for the first time, so we don't have to wait for postgres to start up next time
