@@ -1,4 +1,3 @@
-import React from "react";
 import { connect } from "react-redux";
 import { LineList } from "./LineList";
 import { actions } from "../../reducers/templates";
@@ -35,4 +34,7 @@ const mapDispatchToProps = dispatch => ({
   selectionChange: count => dispatch(entryActions.selection(count))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(LineList);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(LineList);
