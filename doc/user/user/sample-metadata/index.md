@@ -68,6 +68,32 @@ A Metadata Line List is a table that summarize the all metadata associated with 
 
 ![Basic Line List](images/linelist_base.png)
 
+### Sorting Columns
+
+The initial sort is on the `Sample Name` column in ascending order. 
+
+Columns can be sorted by clicking on the column headers and the sort direction is indicated by an arrow next to the label.   Multiple columns can be sorted simultaneously by holding down the `Shift` key while clicking on the column header. 
+
+![Line List column sorting by clicking on the column headers](images/linelist_column_sort.gif)
+
+### Column Filtering
+
+Data within individual columns can be filtered.  Hovering the cursor over the column header displays a menu icon that, when clicked, displays filtering options.
+
+![Line List column filters](images/column_filter.gif)
+
+Filters can be set to be:
+- Equals: the text entered must exactly match the value in the column
+- Not equal: if the text entered matches the value in the column, the sample will be hidden
+- Start with: column value must start with the value entered
+- Ends with: column value must end with the value entered
+- Contains: the text entered can be found anywhere in the value in the column
+- Not contains: the text entered cannot ve found anywhere in the value in the column.
+
+Up to 2 separate filters can be applied to a column at a time.
+
+![Line List column filters](images/columns_two_filters.gif)
+
 ### Reorder Columns
 
 To make it easier to see related information, columns can be re-ordered by dragging the the column header to the required position.
