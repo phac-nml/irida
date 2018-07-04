@@ -45,7 +45,7 @@ public class ExecutorConfig {
 	 * @return a TaskExecutor
 	 */
 	@Bean(name = "scheduledTaskExecutor")
-	@Profile({ "prod", "dev" })
+	@Profile({ "prod", "dev", "ncbi", "analysis", "sync", "processing" })
 	@DependsOn("springLiquibase")
 	public Executor productionExecutor() {
 		ScheduledExecutorService delegateExecutor = Executors.newScheduledThreadPool(threadCount);

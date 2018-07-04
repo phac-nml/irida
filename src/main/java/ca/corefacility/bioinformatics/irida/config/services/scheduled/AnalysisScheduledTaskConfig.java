@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Scheduled task configuration for running analysis pipelines
  */
-@Profile({ "prod" })
+@Profile({ "prod", "analysis" })
 @Configuration
 public class AnalysisScheduledTaskConfig {
 
