@@ -160,7 +160,7 @@ public class CartController {
 		final Set<Sample> selectedSamples = new HashSet<>(selectedNameToSample.values());
 		final boolean removedSamples = samples.removeAll(selectedSamples);
 		if (removedSamples)
-			logger.debug("Removed Samples already in cart.");
+			logger.trace("Removed Samples already in cart.");
 		final Map<String, Sample> nameToSample = samples.stream()
 				.collect(Collectors.toMap(Sample::getSampleName, sample -> sample));
 		Set<Sample> dupSamples = new HashSet<>();
@@ -171,16 +171,21 @@ public class CartController {
 		});
 		if (!dupSamples.isEmpty()) {
 			samples.removeAll(dupSamples);
-			logger.debug(
+			logger.trace(
 					"Samples with existing sample names (n=" + dupSamples.size() + " not added to cart: " + dupSamples);
 		}
 
 		getSelectedSamplesForProject(project).addAll(samples);
 
-		String message = samples.size() == 1 ?
-				messageSource.getMessage("cart.one-sample-added", new Object[] { project.getLabel() }, locale) :
-				messageSource.getMessage("cart.many-samples-added", new Object[] { samples.size(), project.getLabel() },
-						locale);
+		final int samplesSize = samples.size();
+		String message;
+		if (samplesSize == 0) {
+			message = messageSource.getMessage("cart.no-samples-added", new Object[] { project.getLabel() }, locale);
+		} else if (samplesSize == 1)
+			message = messageSource.getMessage("cart.one-sample-added", new Object[] { project.getLabel() }, locale);
+		else
+			message = messageSource.getMessage("cart.many-samples-added",
+					new Object[] { samplesSize, project.getLabel() }, locale);
 		Map<String, Object> out = new HashMap<>();
 
 		if (!dupSamples.isEmpty()) {
