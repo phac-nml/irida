@@ -42,6 +42,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesExportToFile;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesExportTypes;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
@@ -55,6 +56,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ProjectSampl
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -83,22 +85,21 @@ public class ProjectSamplesController {
 	// Services
 	private final ProjectService projectService;
 	private final SampleService sampleService;
+	private final UserService userService;
 	private final ProjectControllerUtils projectControllerUtils;
 	private final SequencingObjectService sequencingObjectService;
 	private MessageSource messageSource;
 
-	private final DataSource dataSource;
-
 	@Autowired
-	public ProjectSamplesController(ProjectService projectService, SampleService sampleService,
+	public ProjectSamplesController(ProjectService projectService, SampleService sampleService, UserService userService,
 			SequencingObjectService sequencingObjectService, ProjectControllerUtils projectControllerUtils,
-			MessageSource messageSource, DataSource dataSource) {
+			MessageSource messageSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
+		this.userService = userService;
 		this.sequencingObjectService = sequencingObjectService;
 		this.projectControllerUtils = projectControllerUtils;
 		this.messageSource = messageSource;
-		this.dataSource = dataSource;
 	}
 
 	/**
@@ -853,8 +854,9 @@ public class ProjectSamplesController {
 	 */
 	@RequestMapping(value = "/projects/{projectId}/ajax/analysis-outputs")
 	@ResponseBody
-	public List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoForProject(@PathVariable Long projectId) {
-		return projectService.getAllAnalysisOutputInfoForProject(projectId);
+	public List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoForProject(@PathVariable Long projectId, Principal principal) {
+		final User user = userService.getUserByUsername(principal.getName());
+		return projectService.getAllAnalysisOutputInfoForProject(projectId, user.getId());
 	}
 
 	/**

@@ -987,10 +987,7 @@ public class ProjectServiceImplIT {
 		return s;
 	}
 
-	@Test
-	@WithMockUser(username = "thisguy", roles = "USER")
-	public void testGetAllAnalysisOutputInfoForProject() throws ParseException {
-		// Setup expected output
+	private List<ProjectSampleAnalysisOutputInfo> getExpectedOutputs() throws ParseException {
 		final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.S");
 		final Date date = dateFormat.parse("2018-07-04 10:00:00.0");
 		// @formatter:off
@@ -1050,18 +1047,48 @@ public class ProjectServiceImplIT {
 				5L,
 				"Ad",
 				"Min");
+		final ProjectSampleAnalysisOutputInfo outputInfo8 = new ProjectSampleAnalysisOutputInfo(6L,
+				"sample6",
+				999L,
+				"sistr",
+				"sistr2.json",
+				4040L,
+				AnalysisType.SISTR_TYPING,
+				UUID.fromString("92ecf046-ee09-4271-b849-7a82625d6b60"),
+				date,
+				"not sharing my sistr",
+				6666L,
+				10L,
+				"Other",
+				"Guy");
 		// @formatter:on
+		return ImmutableList.of(outputInfo4, outputInfo5, outputInfo6, outputInfo7, outputInfo8);
+	}
 
-		final List<ProjectSampleAnalysisOutputInfo> infos = projectService.getAllAnalysisOutputInfoForProject(12L);
+	private void checkAllOutputs(List<ProjectSampleAnalysisOutputInfo> outputs) throws ParseException {
+		final List<ProjectSampleAnalysisOutputInfo> expectedOutputs = getExpectedOutputs();
+		outputs.forEach(
+				output -> assertTrue("getAllAnalysisOutputInfoForProject output does not match any expected outputs! " + output,
+						expectedOutputs.stream()
+								.anyMatch(expectedOutput -> expectedOutput.equals(output))));
+	}
 
-		assertEquals("There should be 4 ProjectSampleAnalysisOutputInfo, but there were " + infos.size(), 4L, infos.size());
-		assertTrue("getAllAnalysisOutputInfoForProject output should contain " + outputInfo4, infos.stream()
-				.anyMatch(info -> info.equals(outputInfo4)));
-		assertTrue("getAllAnalysisOutputInfoForProject output should contain " + outputInfo5, infos.stream()
-				.anyMatch(info -> info.equals(outputInfo5)));
-		assertTrue("getAllAnalysisOutputInfoForProject output should contain " + outputInfo6, infos.stream()
-				.anyMatch(info -> info.equals(outputInfo6)));
-		assertTrue("getAllAnalysisOutputInfoForProject output should contain " + outputInfo7, infos.stream()
-				.anyMatch(info -> info.equals(outputInfo7)));
+	@Test
+	@WithMockUser(username = "thisguy", roles = "USER")
+	public void testGetAllAnalysisOutputInfoForProject() throws ParseException {
+		final List<ProjectSampleAnalysisOutputInfo> infos = projectService.getAllAnalysisOutputInfoForProject(12L, 9L);
+		assertEquals("There should be 4 ProjectSampleAnalysisOutputInfo, but there were " + infos.size(), 4L,
+				infos.size());
+		checkAllOutputs(infos);
+	}
+
+	@Test
+	@WithMockUser(username = "otherguy", roles = "USER")
+	public void testGetAllAnalysisOutputInfoForProjectWithUserAnalyses() throws ParseException {
+		final List<ProjectSampleAnalysisOutputInfo> infos = projectService.getAllAnalysisOutputInfoForProject(12L, 10L);
+		assertEquals("There should be 5 ProjectSampleAnalysisOutputInfo, but there were " + infos.size(), 5L,
+				infos.size());
+		checkAllOutputs(infos);
+
 	}
 }

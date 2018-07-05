@@ -10,7 +10,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.Principal;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -50,6 +49,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectSamplesContr
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -67,22 +67,22 @@ public class ProjectSamplesControllerTest {
 	private ProjectService projectService;
 	private ProjectSamplesController controller;
 	private SampleService sampleService;
+	private UserService userService;
 	private SequencingObjectService sequencingObjectService;
 	private MessageSource messageSource;
 	private ProjectControllerUtils projectUtils;
-	private DataSource dataSource;
 
 	@Before
 	public void setUp() {
 		projectService = mock(ProjectService.class);
 		sampleService = mock(SampleService.class);
+		userService = mock(UserService.class);
 		sequencingObjectService = mock(SequencingObjectService.class);
 		projectUtils = mock(ProjectControllerUtils.class);
 		messageSource = mock(MessageSource.class);
-		dataSource = mock(DataSource.class);
 
-		controller = new ProjectSamplesController(projectService, sampleService, sequencingObjectService,
-				projectUtils, messageSource, dataSource);
+		controller = new ProjectSamplesController(projectService, sampleService, userService, sequencingObjectService,
+				projectUtils, messageSource);
 		user.setId(1L);
 
 		mockSidebarInfo();

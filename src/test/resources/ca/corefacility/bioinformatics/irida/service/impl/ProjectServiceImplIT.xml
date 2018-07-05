@@ -133,6 +133,13 @@ _	<project_user id="11" project_id="11" user_id="3"
 		  password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
 		  phoneNumber="555-5555"
 		  enabled="true" credentialsNonExpired="true" />
+	<user id="10"
+		  username="otherguy" system_role="ROLE_USER"
+		  email="other@guy.ca" firstName="Other" lastName="Guy"
+		  createdDate="2018-07-04 10:00:0.0" modifiedDate="2018-07-04 10:00:0.0"
+		  password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
+		  phoneNumber="555-5555"
+		  enabled="true" credentialsNonExpired="true" />
 	<project id="12"
 			 name="project12"
 			 createdDate="2018-07-04 10:00:0.0"
@@ -141,6 +148,12 @@ _	<project_user id="11" project_id="11" user_id="3"
 	<project_user id="12"
 				  project_id="12"
 				  user_id="9"
+				  projectRole="PROJECT_USER"
+				  createdDate="2018-07-04 10:00:0.0"
+				  email_subscription="false" />
+	<project_user id="13"
+				  project_id="12"
+				  user_id="10"
 				  projectRole="PROJECT_USER"
 				  createdDate="2018-07-04 10:00:0.0"
 				  email_subscription="false" />
@@ -204,7 +217,9 @@ _	<project_user id="11" project_id="11" user_id="3"
 								 analysis_submission_id="999"
 								 created_date="2018-07-04 10:00:3.0"/>
     <!--END: analysis_submission 999-->
+
     <!--START: analysis_submission 9876-->
+	<!--automated assembly analysis-->
 	<tool_execution id="2" command_line="a" tool_name="y" tool_version="z"
 					execution_manager_identifier="test2"
 					created_date="2018-07-04 10:00:0.0"/>
@@ -234,6 +249,7 @@ _	<project_user id="11" project_id="11" user_id="3"
     <!--END: analysis_submission 9876-->
 
     <!--START: analysis_submission 5555-->
+	<!--automated sistr analysis-->
     <tool_execution id="33333" command_line="a" tool_name="y" tool_version="z"
                     execution_manager_identifier="test3"
                     created_date="2018-07-04 10:00:0.0"/>
@@ -261,6 +277,36 @@ _	<project_user id="11" project_id="11" user_id="3"
                          submitter="5"
                          analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" />
     <!--END: analysis_submission 5555-->
+
+	<!--START: analysis_submission 6666-->
+	<!--not shared to project by otherguy user-->
+	<tool_execution id="44444" command_line="a" tool_name="y" tool_version="z"
+					execution_manager_identifier="test4"
+					created_date="2018-07-04 10:00:0.0"/>
+	<tool_execution_parameters tool_id="44444"
+							   execution_parameter_key="key" execution_parameter_value="value" />
+	<analysis_output_file id="4040"
+						  file_path="sistr2.json"
+						  created_date="2018-07-04 10:00:0.0"
+						  execution_manager_file_id="test4"
+						  tool_execution_id="44444"/>
+	<analysis id="999"
+			  analysis_type="SISTR_TYPING"
+			  createdDate="2018-07-04 10:00:3.0"
+			  executionManagerAnalysisId="test4"/>
+	<analysis_output_file_map analysis_id="999"
+							  analysis_output_file_key="sistr"
+							  analysisOutputFilesMap_id="4040"/>
+	<analysis_submission id="6666"
+						 name="not sharing my sistr"
+						 analysis_id="999"
+						 update_samples="1"
+						 analysis_state="COMPLETED"
+						 created_date="2018-07-04 10:00:2.0"
+						 workflow_id="92ecf046-ee09-4271-b849-7a82625d6b60"
+						 submitter="10"
+						 analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" />
+	<!--END: analysis_submission 6666-->
 
 
 	<sequence_file id="5" created_date="2018-07-04 10:00:0.0"
@@ -319,6 +365,8 @@ _	<project_user id="11" project_id="11" user_id="3"
 										   analysis_submission_id="9876"/>
     <analysis_submission_sequencing_object sequencing_object_id="4"
                                            analysis_submission_id="5555"/>
+	<analysis_submission_sequencing_object sequencing_object_id="4"
+										   analysis_submission_id="6666"/>
 	<!-- END: data for ProjectServiceImplIT.xml#testGetAllAnalysisOutputInfoForProject-->
 
 

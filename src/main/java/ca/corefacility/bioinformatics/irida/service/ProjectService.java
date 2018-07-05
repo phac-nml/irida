@@ -445,7 +445,8 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * Only non-collection analysis type outputs from shared or automated analyses are returned.
 	 *
 	 * @param projectId {@link Project} id
+	 * @param userId    {@link User} id
 	 * @return a list of {@link ProjectSampleAnalysisOutputInfo}
 	 */
-	List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoForProject(Long projectId);
+	List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoForProject(Long projectId, Long userId);
 }

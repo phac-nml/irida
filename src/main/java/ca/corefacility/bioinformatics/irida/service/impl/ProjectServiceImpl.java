@@ -755,7 +755,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#projectId, 'canReadProject')")
-	public List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoForProject(Long projectId) {
+	public List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoForProject(Long projectId, Long userId) {
 		JdbcTemplate tmpl = new JdbcTemplate(dataSource);
 		// @formatter:off
 		String query =
@@ -794,13 +794,15 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 				// shared to the project by a user
 				"  AND (pasub.project_id = p.id " +
 				// or automated SISTR or assembly
-				"       OR (seqobj.sistr_typing = asub.id OR seqobj.automated_assembly = asub.id))";
+				"       OR (seqobj.sistr_typing = asub.id OR seqobj.automated_assembly = asub.id)" +
+				// or user's own analyses
+				"       OR u.id = ?)";
 		// @formatter:on
 
-		logger.trace("Getting all shared or automated analysis output file info for project id=" + projectId);
-		List<ProjectSampleAnalysisOutputInfo> infos = tmpl.query(query, new Object[] { projectId },
+		logger.trace("Getting all shared or automated analysis output file info for project id=" + projectId + " and user id=" + userId);
+		List<ProjectSampleAnalysisOutputInfo> infos = tmpl.query(query, new Object[] { projectId, userId},
 				new BeanPropertyRowMapper(ProjectSampleAnalysisOutputInfo.class));
-		logger.trace("Found " + infos.size() + " output files for project id=" + projectId);
+		logger.trace("Found " + infos.size() + " output files for project id=" + projectId + " and user id=" + userId);
 		return infos;
 	}
 
