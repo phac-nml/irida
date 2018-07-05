@@ -110,17 +110,14 @@
 
 
 <th:block th:fragment="batch-download">
-    <!--<div class="alert alert-warning" th:text="#{analysis.batch-download-warning}"></div>-->
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h3 class="panel-title" th:text="#{analysis.batch-download}">__BATCH DOWNLOAD__</h3>
+            <h3 class="panel-title" th:text="#{analysis.batch-download.title}">__BATCH DOWNLOAD__</h3>
         </div>
         <div class="panel-body">
             <div id="app"></div>
         </div>
     </div>
-
-
 </th:block>
 
 <th:block th:fragment="messages">
@@ -132,15 +129,18 @@
          th:data-truncated-output="#{analysis.joberror.popover.truncated-output}"
          th:data-tooltip="#{analysis.joberror.popover.click-to-show}"
          th:data-download="#{form.download}"
-         th:data-batch-download="#{analysis.batch-download}"
-         th:data-download-output-files="#{analysis.download-output-files}"
          th:data-analysis-type="#{analysis.table.type}"
-         th:data-analysis-output-file-key="#{analysis.output-file-key}"
          th:data-req-error="#{analysis.batch-download.ajax.error}"
          th:data-error="#{error}"
          th:data-status-code="#{error.request.status-code}"
          th:data-status-text="#{error.request.status-text}"
+         th:data-sample-name="#{sample.sampleName}"
          th:data-request-url="#{error.request.url}"
+         th:data-file="#{bc.file}"
+         th:data-pipeline="#{pipeline}"
+         th:data-created-date="#{analysis.date-created}"
+         th:data-submitter="#{analyses.submitter}"
+         th:data-analysis-submission-name="#{analysis-submission}"
     >
     </div>
 </th:block>

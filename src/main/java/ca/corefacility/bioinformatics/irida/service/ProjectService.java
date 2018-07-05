@@ -24,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ProjectSampleAnalysisOutputInfo;
 
 /**
  * A specialized service layer for projects.
@@ -437,4 +438,14 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @return the created {@link Project}
 	 */
 	public Project createProjectWithSamples(Project project, List<Long> sampleIds);
+
+	/**
+	 * Get all {@link ProjectSampleAnalysisOutputInfo} for a {@link Project}.
+	 * <p>
+	 * Only non-collection analysis type outputs from shared or automated analyses are returned.
+	 *
+	 * @param projectId {@link Project} id
+	 * @return a list of {@link ProjectSampleAnalysisOutputInfo}
+	 */
+	List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoForProject(Long projectId);
 }

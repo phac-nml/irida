@@ -9,7 +9,22 @@ import "ag-grid/dist/styles/ag-theme-balham.css";
  * Internationalized text from div#messages.hidden
  * @type {Object} map of data attribute key name to i18n text
  */
-const MESSAGES = $("#js-messages").data();
+let MESSAGES = {
+  sampleName: "SAMPLE NAME",
+  file: "FILE",
+  analysisType: "ANALYSIS TYPE",
+  pipeline: "PIPELINE",
+  analysisSubmissionName: "ANALYSIS SUBMISSION",
+  createdDate: "CREATED",
+  download: "DOWNLOAD",
+  submitter: "SUBMITTER",
+  statusCode: "STATUS CODE",
+  requestUrl: "REQUEST URL",
+  statusText: "STATUS TEXT",
+  reqError: "REQUEST ERROR",
+  error: "!!!ERROR!!!"
+};
+MESSAGES = Object.assign(MESSAGES, $("#js-messages").data());
 
 /**
  * Analysis output file path regex to capture filename with extension
@@ -23,13 +38,13 @@ const FILENAME_REGEX = /.*\/(.+\.\w+)/;
  */
 const BASE_URL = window.PAGE.URLS.base;
 
+const PROJECT_ID = window.project.id;
+
 /**
  * URL to get analysis output file info via AJAX for a project
  * @type {string}
  */
-const AJAX_URL = `${window.PAGE.URLS.base}projects/${
-  window.project.id
-}/ajax/analysis-outputs`;
+const AJAX_URL = `${BASE_URL}projects/${PROJECT_ID}/ajax/analysis-outputs`;
 
 /**
  * HTML container for dynamically generating UI for download of output files
@@ -82,15 +97,15 @@ function downloadSelected(api) {
   // trigger hidden <a> element download of each selected AOF
   for (const node of selectedNodes) {
     const {
-      submission_id,
-      aof_id,
-      sample_name,
-      sample_id,
-      file_path
+      analysisSubmissionId,
+      analysisOutputFileId,
+      sampleName,
+      sampleId,
+      filePath
     } = node.data;
-    let url = `${BASE_URL}analysis/ajax/download/${submission_id}/file/${aof_id}`;
-    const downloadName = `${sample_name}-sample_id-${sample_id}-submission_id-${submission_id}-${getFilename(
-      file_path
+    let url = `${BASE_URL}analysis/ajax/download/${analysisSubmissionId}/file/${analysisOutputFileId}`;
+    const downloadName = `${sampleName}-sampleId-${sampleId}-analysisSubmissionId-${analysisSubmissionId}-${getFilename(
+      filePath
     )}`;
     url += "?" + $.param({ filename: downloadName });
     $a.setAttribute("href", url);
@@ -124,7 +139,11 @@ function initAgGrid($grid, headers, rows, $dlButton) {
       const badge = selectionLength
         ? `<span class="badge">${selectionLength}</span>`
         : "";
-      $dlButton.html(`DOWNLOAD ${badge}`);
+      $dlButton.html(
+        `<i class="fa fa-download spaced-right__sm"></i> ${
+          MESSAGES.download
+        } ${badge}`
+      );
     }
   };
   const grid = new Grid($grid, gridOptions);
@@ -144,11 +163,11 @@ function initAgGrid($grid, headers, rows, $dlButton) {
 function filterSingleSampleOutputs(data) {
   // group analysis output file (AOF) info by AOF id
   const groupedDataByAofId = data.reduce((acc, x) => {
-    const aofId = x.aof_id;
-    if (acc.hasOwnProperty(aofId)) {
-      acc[aofId].push(x);
+    const { analysisOutputFileId } = x;
+    if (acc.hasOwnProperty(analysisOutputFileId)) {
+      acc[analysisOutputFileId].push(x);
     } else {
-      acc[aofId] = [x];
+      acc[analysisOutputFileId] = [x];
     }
     return acc;
   }, {});
@@ -166,7 +185,7 @@ function filterSingleSampleOutputs(data) {
  */
 function getWorkflowInfo(singleSampleOutputs) {
   const workflowIds = singleSampleOutputs.reduce(
-    (acc, x) => Object.assign(acc, { [x.workflow_id]: null }),
+    (acc, x) => Object.assign(acc, { [x.workflowId]: null }),
     {}
   );
   Object.keys(workflowIds).forEach(workflowId => {
@@ -193,63 +212,63 @@ $.get(AJAX_URL)
      */
     const HEADERS = [
       {
-        field: "sample_name",
-        headerName: "Sample",
+        field: "sampleName",
+        headerName: MESSAGES.sampleName,
         checkboxSelection: true,
         headerCheckboxSelection: true,
         headerCheckboxSelectionFilteredOnly: true,
         cellRenderer: p => {
-          return `<a href="${BASE_URL}projects/${
-            window.PAGE.projectId
-          }/samples/${p.data.sample_id}" target="_blank">${
-            p.data.sample_name
-          }</a>`;
+          const { sampleId, sampleName } = p.data;
+          return `<a href="${BASE_URL}projects/${PROJECT_ID}/samples/${sampleId}" target="_blank">${sampleName}</a>`;
         }
       },
       {
-        field: "file_path",
-        headerName: "File",
+        field: "filePath",
+        headerName: MESSAGES.file,
         cellRenderer: p => {
+          const {
+            filePath,
+            analysisOutputFileKey,
+            analysisOutputFileId
+          } = p.data;
           const REGEX = /^\d+\/\d+\/(.+)$/;
-          const groups = REGEX.exec(p.data.file_path);
-          if (groups === null) return p.data.file_path;
+          const groups = REGEX.exec(filePath);
+          if (groups === null) return filePath;
           const filename = groups[1];
 
-          return `${filename} <small>(${p.data.analysis_output_file_key}, id=${
-            p.data.aof_id
-          })</small>`;
+          return `${filename} <small>(${analysisOutputFileKey}, id=${analysisOutputFileId})</small>`;
         }
       },
       {
-        field: "analysis_type",
-        headerName: "Analysis Type"
+        field: "analysisType",
+        headerName: MESSAGES.analysisType
       },
       {
-        field: "workflow_id",
-        headerName: "Pipeline",
+        field: "workflowId",
+        headerName: MESSAGES.pipeline,
         cellRenderer: p => {
-          const wfInfo = workflowIds[p.data.workflow_id];
-          if (wfInfo === null) return p.data.workflow_id;
+          const wfInfo = workflowIds[p.data.workflowId];
+          if (wfInfo === null) return p.data.workflowId;
           return `${wfInfo.name} (v${wfInfo.version})`;
         }
       },
       {
-        field: "submission_name",
-        headerName: "Analysis Submission",
+        field: "analysisSubmissionName",
+        headerName: MESSAGES.analysisSubmissionName,
         cellRenderer: p =>
           `<a href="${BASE_URL}analysis/${
-            p.data.submission_id
-          }" target="_blank">${p.data.submission_name}</a>`
+            p.data.analysisSubmissionId
+          }" target="_blank">${p.data.analysisSubmissionName}</a>`
       },
       {
-        field: "user_id",
-        headerName: "Submitter",
-        cellRenderer: p => `${p.data.user_first_name} ${p.data.user_last_name}`
+        field: "userId",
+        headerName: MESSAGES.submitter,
+        cellRenderer: p => `${p.data.userFirstName} ${p.data.userLastName}`
       },
       {
-        field: "created_date",
-        headerName: "Created",
-        cellRenderer: p => formatDate({ date: p.data.created_date })
+        field: "createdDate",
+        headerName: MESSAGES.createdDate,
+        cellRenderer: p => formatDate({ date: p.data.createdDate })
       }
     ];
     const gridId = `grid-outputs`;
@@ -257,7 +276,10 @@ $.get(AJAX_URL)
       `<div id="${gridId}" class="ag-theme-balham" style="height: 600px; width: 100%; resize: both;"/>`
     );
     const $dlButton = $(
-      `<button type="button" class="btn" disabled="disabled" >DOWNLOAD</button>`
+      `<button type="button" class="btn" disabled="disabled">
+         <i class="fa fa-download spaced-right__sm"></i>
+         ${MESSAGES.download}
+       </button>`
     );
     $app.prepend($grid);
     $app.prepend($dlButton);
@@ -273,7 +295,7 @@ $.get(AJAX_URL)
       $dlButton
     );
   })
-  .fail(function(xhr, error, exception) {
+  .fail((xhr, error, exception) => {
     const $alert = $(
       `<div class="alert alert-danger"><h4>${MESSAGES.reqError}</h4></div>`
     );

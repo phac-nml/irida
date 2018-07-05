@@ -1,16 +1,13 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
@@ -35,11 +32,8 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
-import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.EntityRevisionDeletedException;
-import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
-import ca.corefacility.bioinformatics.irida.exceptions.UnsupportedReferenceFileContentError;
+import ca.corefacility.bioinformatics.irida.exceptions.*;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -50,6 +44,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ProjectSampleAnalysisOutputInfo;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
@@ -67,6 +62,8 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
+import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
@@ -118,7 +115,7 @@ public class ProjectServiceImplIT {
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testGetPagedProjectsForAdminWithGlobalSearch() {
 		final Page<Project> projects = projectService.findAllProjects("proj", 0, 10, new Sort(Direction.ASC, "id"));
-		assertEquals("Admin should have 9 projects for filter", 9, projects.getNumberOfElements());
+		assertEquals("Admin should have 10 projects for filter", 10, projects.getNumberOfElements());
 
 		final Page<Project> listeriaProjects = projectService.findAllProjects("lister", 0, 10,
 				new Sort(Direction.ASC, "id"));
@@ -407,7 +404,7 @@ public class ProjectServiceImplIT {
 	public void testFindAllProjectsAsAdmin() {
 		List<Project> projects = (List<Project>) projectService.findAll();
 
-		assertEquals("Wrong number of projects.", 11, projects.size());
+		assertEquals("Wrong number of projects.", 12, projects.size());
 	}
 
 	@Test
@@ -454,7 +451,7 @@ public class ProjectServiceImplIT {
 	public void testSearchProjects() {
 		// search for a number
 		final Page<Project> searchFor2 = projectService.findAllProjects("2", 0, 10, new Sort(Direction.ASC, "name"));
-		assertEquals(2, searchFor2.getTotalElements());
+		assertEquals(3, searchFor2.getTotalElements());
 		Project next = searchFor2.iterator().next();
 		assertTrue(next.getName().contains("2"));
 
@@ -988,5 +985,83 @@ public class ProjectServiceImplIT {
 		s.setDescription("Description");
 
 		return s;
+	}
+
+	@Test
+	@WithMockUser(username = "thisguy", roles = "USER")
+	public void testGetAllAnalysisOutputInfoForProject() throws ParseException {
+		// Setup expected output
+		final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.S");
+		final Date date = dateFormat.parse("2018-07-04 10:00:00.0");
+		// @formatter:off
+		final ProjectSampleAnalysisOutputInfo outputInfo4 = new ProjectSampleAnalysisOutputInfo(4L,
+				"sample4",
+				1234L,
+				"tree",
+				"testfile.fasta",
+				1L,
+				AnalysisType.ASSEMBLY_ANNOTATION,
+				UUID.fromString("b7c8b437-3c41-485e-92e5-72b67e37959f"),
+				date,
+				"sub1",
+				999L,
+				9L,
+				"This",
+				"Guy");
+		final ProjectSampleAnalysisOutputInfo outputInfo5 = new ProjectSampleAnalysisOutputInfo(5L,
+				"sample5",
+				1234L,
+				"tree",
+				"testfile.fasta",
+				1L,
+				AnalysisType.ASSEMBLY_ANNOTATION,
+				UUID.fromString("b7c8b437-3c41-485e-92e5-72b67e37959f"),
+				date,
+				"sub1",
+				999L,
+				9L,
+				"This",
+				"Guy");
+		final ProjectSampleAnalysisOutputInfo outputInfo6 = new ProjectSampleAnalysisOutputInfo(6L,
+				"sample6",
+				777L,
+				"contigs",
+				"testfile2.fasta",
+				2020L,
+				AnalysisType.ASSEMBLY_ANNOTATION,
+				UUID.fromString("87186c71-5c8a-4027-a9d9-b29850cebdb3"),
+				date,
+				"auto assembly",
+				9876L,
+				5L,
+				"Ad",
+				"Min");
+		final ProjectSampleAnalysisOutputInfo outputInfo7 = new ProjectSampleAnalysisOutputInfo(6L,
+				"sample6",
+				888L,
+				"sistr",
+				"sistr.json",
+				3030L,
+				AnalysisType.SISTR_TYPING,
+				UUID.fromString("92ecf046-ee09-4271-b849-7a82625d6b60"),
+				date,
+				"auto sistr",
+				5555L,
+				5L,
+				"Ad",
+				"Min");
+		// @formatter:on
+
+		final List<ProjectSampleAnalysisOutputInfo> infos = projectService.getAllAnalysisOutputInfoForProject(12L);
+
+		assertEquals("There should be 4 ProjectSampleAnalysisOutputInfo, but there were " + infos.size(), 4L, infos.size());
+		assertTrue("getAllAnalysisOutputInfoForProject output should contain " + outputInfo4, infos.stream()
+				.anyMatch(info -> info.equals(outputInfo4)));
+		assertTrue("getAllAnalysisOutputInfoForProject output should contain " + outputInfo5, infos.stream()
+				.anyMatch(info -> info.equals(outputInfo5)));
+		assertTrue("getAllAnalysisOutputInfoForProject output should contain " + outputInfo6, infos.stream()
+				.anyMatch(info -> info.equals(outputInfo6)));
+		assertTrue("getAllAnalysisOutputInfoForProject output should contain " + outputInfo7, infos.stream()
+				.anyMatch(info -> info.equals(outputInfo7)));
 	}
 }

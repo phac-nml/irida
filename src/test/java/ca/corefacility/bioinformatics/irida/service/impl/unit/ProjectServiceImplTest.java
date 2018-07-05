@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.sql.DataSource;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
@@ -85,6 +86,7 @@ public class ProjectServiceImplTest {
 	private SequencingObjectRepository sequencingObjectRepository;
 
 	private Validator validator;
+	private DataSource dataSource;
 
 	@Before
 	public void setUp() {
@@ -99,9 +101,10 @@ public class ProjectServiceImplTest {
 		prfjRepository = mock(ProjectReferenceFileJoinRepository.class);
 		ugpjRepository = mock(UserGroupProjectJoinRepository.class);
 		sequencingObjectRepository = mock(SequencingObjectRepository.class);
+		dataSource = mock(DataSource.class);
 		projectService = new ProjectServiceImpl(projectRepository, sampleRepository, userRepository, pujRepository,
 				psjRepository, relatedProjectRepository, referenceFileRepository, prfjRepository, ugpjRepository,
-				ssoRepository, pasRepository, sequencingObjectRepository, validator);
+				ssoRepository, pasRepository, sequencingObjectRepository, dataSource, validator);
 	}
 
 	@Test

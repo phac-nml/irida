@@ -27,7 +27,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.MediaType;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -52,6 +51,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.ProjectSampleModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.UISampleFilter;
 import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProjectSamples;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ProjectSampleAnalysisOutputInfo;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -847,52 +847,14 @@ public class ProjectSamplesController {
 
 	/**
 	 * Get analysis output file information for all analyses for a project.
-	 * <p>
-	 * Return a list of maps with the analysis output file info and other pertinent info.
 	 *
 	 * @param projectId {@link Project} id
-	 * @return list of maps of {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile} info
+	 * @return list of {@link ProjectSampleAnalysisOutputInfo}
 	 */
 	@RequestMapping(value = "/projects/{projectId}/ajax/analysis-outputs")
 	@ResponseBody
-	public List<Map<String, Object>> getAnalysisOutputForProject(@PathVariable Long projectId) {
-		final Project project = projectService.read(projectId);
-		// TODO: Hibernate/JPA (native) query for AOF info
-		// Using a JDBC template query for performance reasons. Trying to retrieve the necessary info with JPA takes a
-		// long time and produces a lot of intermediate objects.
-		JdbcTemplate tmpl = new JdbcTemplate(dataSource);
-		String query = "SELECT " +
-				"s.id as sample_id, " +
-				"s.sampleName as sample_name, " +
-				"a.id as analysis_id, " +
-				"aofmap.analysis_output_file_key, " +
-				"aof.file_path, " +
-				"aof.id as aof_id, " +
-				"a.analysis_type, " +
-				"asub.workflow_id, " +
-				"aof.created_date, " +
-				"asub.name AS submission_name, " +
-				"asub.id as submission_id, " +
-				"u.id as user_id, " +
-				"u.firstName as user_first_name, " +
-				"u.lastName as user_last_name " +
-				"FROM analysis_output_file aof "
-				+ "  INNER JOIN analysis_output_file_map aofmap ON aof.id = aofmap.analysisOutputFilesMap_id"
-				+ "  INNER JOIN analysis a ON aofmap.analysis_id = a.id"
-				+ "  INNER JOIN analysis_submission asub ON a.id = asub.analysis_id"
-				+ "  INNER JOIN analysis_submission_sequencing_object o ON asub.id = o.analysis_submission_id"
-				+ "  INNER JOIN sample_sequencingobject sso on sso.sequencingobject_id = o.sequencing_object_id"
-				+ "  INNER JOIN sample s ON sso.sample_id = s.id"
-				+ "  INNER JOIN project_sample psample ON s.id = psample.sample_id"
-				+ "  INNER JOIN project p ON psample.project_id = p.id"
-				+ "  INNER JOIN user u ON asub.submitter = u.id"
-				+ "  LEFT JOIN project_analysis_submission pasub ON asub.id = pasub.analysis_submission_id"
-				+ " WHERE"
-				+ "    p.id = " + project.getId()
-				+ "    AND a.analysis_type NOT LIKE '%_COLLECTION'"
-				+ "    AND (pasub.project_id = p.id OR u.username = 'admin')";
-		// Result of query is a list of maps ready for handling on the frontend (e.g. grouping by analysis type)
-		return tmpl.queryForList(query);
+	public List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoForProject(@PathVariable Long projectId) {
+		return projectService.getAllAnalysisOutputInfoForProject(projectId);
 	}
 
 	/**

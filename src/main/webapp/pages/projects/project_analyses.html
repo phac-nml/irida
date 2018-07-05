@@ -10,8 +10,8 @@
 <body>
 
 <main layout:fragment="main">
-	<th:block th:replace="analyses/analyses-table :: table"/>
 	<th:block th:replace="analyses/analyses-table :: batch-download"/>
+	<th:block th:replace="analyses/analyses-table :: table"/>
 	<th:block th:replace="analyses/analyses-table :: messages"/>
 </main>
 <th:block layout:fragment="scripts">
