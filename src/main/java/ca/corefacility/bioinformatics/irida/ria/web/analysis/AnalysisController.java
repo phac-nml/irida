@@ -15,15 +15,13 @@ import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.*;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisOutputFileInfo;
+import ca.corefacility.bioinformatics.irida.ria.web.components.AnalysisOutputFileDownloadManager;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
@@ -46,6 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -66,6 +65,7 @@ import java.util.stream.Collectors;
  * Controller for Analysis.
  */
 @Controller
+@Scope("session")
 @RequestMapping("/analysis")
 public class AnalysisController {
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisController.class);
@@ -91,6 +91,7 @@ public class AnalysisController {
 	private SequencingObjectService sequencingObjectService;
 	private AnalysesListingService analysesListingService;
 	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
+	private AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager;
 
 	@Autowired
 	public AnalysisController(AnalysisSubmissionService analysisSubmissionService,
@@ -98,9 +99,11 @@ public class AnalysisController {
 			ProjectService projectService, UpdateAnalysisSubmissionPermission updateAnalysisPermission,
 			MetadataTemplateService metadataTemplateService, SequencingObjectService sequencingObjectService,
 			AnalysesListingService analysesListingService,
-			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor, MessageSource messageSource) {
+			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor,
+			AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager, MessageSource messageSource) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
+		this.analysisOutputFileDownloadManager = analysisOutputFileDownloadManager;
 		this.messageSource = messageSource;
 		this.userService = userService;
 		this.updateAnalysisPermission = updateAnalysisPermission;
@@ -784,6 +787,34 @@ public class AnalysisController {
 		Analysis analysis = analysisSubmission.getAnalysis();
 		Set<AnalysisOutputFile> files = analysis.getAnalysisOutputFiles();
 		FileUtilities.createAnalysisOutputFileZippedResponse(response, analysisSubmission.getName(), files);
+	}
+
+	/**
+	 * Prepare the download of multiple {@link AnalysisOutputFile} by adding them to a selection.
+	 *
+	 * @param outputs Info for {@link AnalysisOutputFile} to download
+	 * @param response {@link HttpServletResponse}
+	 * @return Map with the size of the selection for download.
+	 */
+	@RequestMapping(value = "/ajax/download/prepare", method = RequestMethod.POST)
+	@ResponseBody
+	public Map prepareDownload(@RequestBody List<ProjectSampleAnalysisOutputInfo> outputs,
+			HttpServletResponse response) {
+		final Long selectionSize = analysisOutputFileDownloadManager.setSelection(outputs);
+		response.setStatus(HttpServletResponse.SC_CREATED);
+		return ImmutableMap.of("selectionSize", selectionSize);
+	}
+
+	/**
+	 * Download the selected {@link AnalysisOutputFile}.
+	 *
+	 * @param filename Optional filename for file download.
+	 * @param response {@link HttpServletResponse}
+	 */
+	@RequestMapping(value = "/ajax/download/selection", produces = MediaType.APPLICATION_JSON_VALUE)
+	public void downloadSelection(@RequestParam(required = false, defaultValue = "analysis-output-files-batch-download") String  filename, HttpServletResponse response) {
+		Map<ProjectSampleAnalysisOutputInfo, AnalysisOutputFile> files = analysisOutputFileDownloadManager.getSelection();
+		FileUtilities.createBatchAnalysisOutputFileZippedResponse(response, filename, files);
 	}
 
 	/**

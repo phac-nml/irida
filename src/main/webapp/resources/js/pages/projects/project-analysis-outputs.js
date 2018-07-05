@@ -22,7 +22,8 @@ let MESSAGES = {
   requestUrl: "REQUEST URL",
   statusText: "STATUS TEXT",
   reqError: "REQUEST ERROR",
-  error: "!!!ERROR!!!"
+  error: "!!!ERROR!!!",
+  preparing: "PREPARING DOWNLOAD"
 };
 MESSAGES = Object.assign(MESSAGES, $("#js-messages").data());
 
@@ -67,25 +68,12 @@ function getFilename(path) {
 }
 
 /**
- * Download analysis output files (AOFs) for selected rows in ag-grid table
+ * Download a file with a temporary hidden <a> element.
  *
- * Each selected AOF will be downloaded in a separate request. Multiple files
- * could be downloaded in the same request as a Zipped response stream, but that
- * would require coming up with a way to get around the limit on the query
- * string for an HTTP GET request:
- *
- * Revert "Merge branch 'fix-612-request-uri-too-long' into 'development'"
- * http://gitlab-irida.corefacility.ca/irida/irida/merge_requests/1297
- *
- * @param {Object} api ag-grid grid options API object
+ * @param {string} url URL for download
+ * @param {string} downloadName Download filename
  */
-function downloadSelected(api) {
-  /**
-   * Selected rows in the ag-grid Grid corresponding to AOFs
-   * @type {*|RowNode[]}
-   */
-  const selectedNodes = api.getSelectedNodes();
-
+function downloadFile(url, downloadName) {
   /**
    * Hidden <a> element for downloading each AOF
    * @type {HTMLAnchorElement}
@@ -93,26 +81,83 @@ function downloadSelected(api) {
   const $a = document.createElement("a");
   $a.style.display = "none";
   document.body.appendChild($a);
+  $a.setAttribute("href", url);
+  $a.setAttribute("download", downloadName);
+  $a.click();
+  document.body.removeChild($a);
+}
 
-  // trigger hidden <a> element download of each selected AOF
-  for (const node of selectedNodes) {
+/**
+ * Download analysis output files (AOFs) for selected rows in ag-grid table
+ *
+ * A single selected AOF will be downloaded unzipped.
+ * Multiple files are downloaded in the same request as a Zipped response
+ * stream.
+ *
+ * @param {Object} api ag-grid grid options API object
+ * @param {jQuery|HTMLElement} $dlButton
+ */
+function downloadSelected($dlButton, api) {
+  /**
+   * Selected rows in the ag-grid Grid corresponding to AOFs
+   * @type {*|RowNode[]}
+   */
+  const selectedNodes = api.getSelectedNodes();
+  setDownloadButtonHtml($dlButton, selectedNodes.length, true, true);
+  if (selectedNodes.length === 1) {
     const {
       analysisSubmissionId,
       analysisOutputFileId,
       sampleName,
       sampleId,
       filePath
-    } = node.data;
+    } = selectedNodes[0].data;
     let url = `${BASE_URL}analysis/ajax/download/${analysisSubmissionId}/file/${analysisOutputFileId}`;
     const downloadName = `${sampleName}-sampleId-${sampleId}-analysisSubmissionId-${analysisSubmissionId}-${getFilename(
       filePath
     )}`;
     url += "?" + $.param({ filename: downloadName });
-    $a.setAttribute("href", url);
-    $a.setAttribute("download", downloadName);
-    $a.click();
+    downloadFile(url, downloadName);
+  } else if (selectedNodes.length > 1) {
+    const outputs = selectedNodes.map(node => node.data);
+    let url = `${BASE_URL}analysis/ajax/download/prepare`;
+    let downloadUrl = `${BASE_URL}analysis/ajax/download/selection`;
+    $.ajax({
+      url,
+      type: "POST",
+      data: JSON.stringify(outputs),
+      contentType: "application/json",
+      dataType: "json",
+      success: ({ selectionSize }) => {
+        downloadUrl += `?filename=projectId-${PROJECT_ID}-batch-download-${selectionSize}-analysis-output-files`;
+        downloadFile(downloadUrl, "batch-download.zip");
+        setDownloadButtonHtml($dlButton, selectedNodes.length);
+      },
+      error: (jqXHR, textStatus, errorThrown) => {
+        console.error(jqXHR, textStatus, errorThrown);
+        setDownloadButtonHtml($dlButton, selectedNodes.length);
+      }
+    });
+  } else {
+    $dlButton.attr("disabled", null);
   }
-  document.body.removeChild($a);
+}
+
+function setDownloadButtonHtml(
+  $dlButton,
+  selectionLength,
+  isDisabled = false,
+  isPreparing = false
+) {
+  $dlButton.attr("disabled", isDisabled ? "disabled" : null);
+  const badge = selectionLength
+    ? `<span class="badge">${selectionLength}</span>`
+    : "";
+  $dlButton.html(
+    `<i class="fa fa-download spaced-right__sm"></i> ${
+      isPreparing ? MESSAGES.preparing : MESSAGES.download
+    } ${badge}`
+  );
 }
 
 /**
@@ -135,22 +180,14 @@ function initAgGrid($grid, headers, rows, $dlButton) {
     onSelectionChanged: e => {
       const selectedNodes = e.api.getSelectedNodes();
       const selectionLength = selectedNodes.length;
-      $dlButton.attr("disabled", selectionLength > 0 ? null : "disabled");
-      const badge = selectionLength
-        ? `<span class="badge">${selectionLength}</span>`
-        : "";
-      $dlButton.html(
-        `<i class="fa fa-download spaced-right__sm"></i> ${
-          MESSAGES.download
-        } ${badge}`
-      );
+      setDownloadButtonHtml($dlButton, selectionLength, selectionLength === 0);
     }
   };
   const grid = new Grid($grid, gridOptions);
   gridOptions.api.sizeColumnsToFit();
   $dlButton.on("click", e => {
     e.preventDefault();
-    downloadSelected(gridOptions.api);
+    downloadSelected($dlButton, gridOptions.api);
   });
   return grid;
 }
@@ -276,11 +313,9 @@ $.get(AJAX_URL)
       `<div id="${gridId}" class="ag-theme-balham" style="height: 600px; width: 100%; resize: both;"/>`
     );
     const $dlButton = $(
-      `<button type="button" class="btn" disabled="disabled">
-         <i class="fa fa-download spaced-right__sm"></i>
-         ${MESSAGES.download}
-       </button>`
+      `<button type="button" class="btn" disabled="disabled"></button>`
     );
+    setDownloadButtonHtml($dlButton, 0, true);
     $app.prepend($grid);
     $app.prepend($dlButton);
 

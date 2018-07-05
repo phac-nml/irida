@@ -8,6 +8,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ProjectSampleAnalysisOutputInfo;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 /**
@@ -95,6 +97,74 @@ public class FileUtilities {
 				byte[] bytes = objectMapper.writeValueAsBytes(file);
 				outputStream.putNextEntry(new ZipEntry(zipEntryName.toString() + "-prov.json"));
 				outputStream.write(bytes);
+				outputStream.closeEntry();
+			}
+
+			// Tell the output stream that you are finished downloading.
+			outputStream.finish();
+			outputStream.close();
+		} catch (IOException e) {
+			// this generally means that the user has cancelled the download
+			// from their web browser; we can safely ignore this
+			logger.debug("This *probably* means that the user cancelled the download, "
+					+ "but it might be something else, see the stack trace below for more information.", e);
+		} catch (Exception e) {
+			logger.error("Download failed...", e);
+		}
+	}
+
+	/**
+	 * Utility method for download a zip file containing all output files from
+	 * an analysis.
+	 *  @param response
+	 *            {@link HttpServletResponse}
+	 * @param fileName
+	 *            Name fo the file to create
+	 * @param files
+ *            Set of {@link AnalysisOutputFile}
+	 */
+	public static void createBatchAnalysisOutputFileZippedResponse(HttpServletResponse response, String fileName,
+			Map<ProjectSampleAnalysisOutputInfo, AnalysisOutputFile> files) {
+		/*
+		 * Replacing spaces and commas as they cause issues with
+		 * Content-disposition response header.
+		 */
+		fileName = fileName.replaceAll(" ", "_");
+		fileName = fileName.replaceAll(",", "");
+		logger.debug("Creating zipped file response. [" + fileName + "] with " + files.size() + " analysis output files.");
+
+		// set the response headers before we do *ANYTHING* so that the filename
+		// actually appears in the download dialog for zip file
+		response.setHeader(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + fileName + EXTENSION_ZIP);
+		response.setContentType(CONTENT_TYPE_APPLICATION_ZIP);
+
+		fileName = formatName(fileName);
+		try (ServletOutputStream responseStream = response.getOutputStream();
+				ZipOutputStream outputStream = new ZipOutputStream(responseStream)) {
+			for (Map.Entry<ProjectSampleAnalysisOutputInfo, AnalysisOutputFile> entry : files.entrySet()) {
+				final AnalysisOutputFile file = entry.getValue();
+				final ProjectSampleAnalysisOutputInfo outputInfo = entry.getKey();
+				if (!Files.exists(file.getFile())) {
+					response.setStatus(404);
+					throw new FileNotFoundException();
+				}
+				// 1) Build a folder/file name
+				// building similar filename for each analysis output file as:
+				// resources/js/pages/projects/project-analysis-outputs.js#downloadSelected
+				String outputFilename = file.getFile()
+						.getFileName()
+						.toString();
+				// trying to pack as much useful info into the filename as possible!
+				outputFilename = outputInfo.getSampleName() + "-sampleId-" + outputInfo.getSampleId() + "-analysisSubmissionId-" + outputInfo.getAnalysisSubmissionId() + "-" + outputFilename;
+				// 2) Tell the zip stream that we are starting a new entry in
+				// the archive.
+				outputStream.putNextEntry(new ZipEntry(fileName + "/" + outputFilename));
+
+				// 3) COPY all of thy bytes from the file to the output stream.
+				Files.copy(file.getFile(), outputStream);
+
+				// 4) Close the current entry in the archive in preparation for
+				// the next entry.
 				outputStream.closeEntry();
 			}
 

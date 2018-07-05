@@ -850,11 +850,13 @@ public class ProjectSamplesController {
 	 * Get analysis output file information for all analyses for a project.
 	 *
 	 * @param projectId {@link Project} id
+	 * @param principal Principal user
 	 * @return list of {@link ProjectSampleAnalysisOutputInfo}
 	 */
 	@RequestMapping(value = "/projects/{projectId}/ajax/analysis-outputs")
 	@ResponseBody
-	public List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoForProject(@PathVariable Long projectId, Principal principal) {
+	public List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoForProject(@PathVariable Long projectId,
+			Principal principal) {
 		final User user = userService.getUserByUsername(principal.getName());
 		return projectService.getAllAnalysisOutputInfoForProject(projectId, user.getId());
 	}

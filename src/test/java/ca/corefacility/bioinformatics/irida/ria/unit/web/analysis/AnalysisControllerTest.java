@@ -11,6 +11,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionS
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysisController;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisOutputFileInfo;
+import ca.corefacility.bioinformatics.irida.ria.web.components.AnalysisOutputFileDownloadManager;
 import ca.corefacility.bioinformatics.irida.ria.web.services.AnalysesListingService;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
@@ -58,6 +59,7 @@ public class AnalysisControllerTest {
 	private SequencingObjectService sequencingObjectService;
 	private AnalysesListingService analysesListingService;
 	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
+	private AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager;
 
 	@Before
 	public void init() {
@@ -69,10 +71,12 @@ public class AnalysisControllerTest {
 		sequencingObjectService = mock(SequencingObjectService.class);
 		analysesListingService = mock(AnalysesListingService.class);
 		analysisSubmissionSampleProcessor = mock(AnalysisSubmissionSampleProcessor.class);
+		analysisOutputFileDownloadManager = mock(AnalysisOutputFileDownloadManager.class);
 		MessageSource messageSourceMock = mock(MessageSource.class);
 		analysisController = new AnalysisController(analysisSubmissionServiceMock, iridaWorkflowsServiceMock,
 				userServiceMock, sampleService, projectServiceMock, updatePermission, metadataTemplateService,
-				sequencingObjectService, analysesListingService, analysisSubmissionSampleProcessor, messageSourceMock);
+				sequencingObjectService, analysesListingService, analysisSubmissionSampleProcessor,
+				analysisOutputFileDownloadManager, messageSourceMock);
 	}
 
 	@Test
