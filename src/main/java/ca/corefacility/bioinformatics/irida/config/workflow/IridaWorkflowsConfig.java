@@ -36,7 +36,6 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
  *
  */
 @Configuration
-@Profile({ "dev", "prod", "it", "analysis" })
 public class IridaWorkflowsConfig {
 
 	private static final Logger logger = LoggerFactory.getLogger(IridaWorkflowsConfig.class);

@@ -42,7 +42,7 @@ import ca.corefacility.bioinformatics.irida.service.EmailController;
  *
  */
 @Component
-@Profile({ "prod", "dev" , "email" })
+@Profile({ "prod", "dev" , "email", "analysis", "ncbi", "processing", "sync" })
 public class EmailControllerImpl implements EmailController {
 	private static final Logger logger = LoggerFactory.getLogger(EmailControllerImpl.class);
 
