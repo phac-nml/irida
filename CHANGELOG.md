@@ -1,5 +1,10 @@
 Changes
 =======
+
+0.22.0 to 0.23.0
+----------------
+* [UI]: Added the sample coverage to the table exported from the project samples page.
+
 0.21.0 to 0.22.0
 ----------------
 * [UI]: Fixed bug where `.xls` file could not be uploaded through the file picker on the metadata upload page. (0.21.1)
@@ -18,7 +23,6 @@ Changes
 * [Developer]: Moved file processing chain outside of SequencingObjectService.  It now runs as a scheduled task.  This will help balance the processing load in multi-server deployments.
 * [UI]: Ensuring `ROLE_SEQUENCER` users get "Access Denied" for any attempted UI interactions.
 * [Developer]: Updated `yarn` to the current version.
-* [UI]: Added the sample coverage to the table exported from the project samples page.
 
 0.20.0 to 0.21.0
 ----------------
