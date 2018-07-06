@@ -645,6 +645,7 @@
 							<systemPropertyVariables>
 								<jetty.port>${jetty.port}</jetty.port>
 								<spring.profiles.active>it</spring.profiles.active>
+								<irida.db.profile>it</irida.db.profile>
 								<jetty.port>${jetty.port}</jetty.port>
 								<server.base.url>http://localhost:${jetty.port}</server.base.url>
 							</systemPropertyVariables>
@@ -878,6 +879,12 @@
 									<!-- Setting spring profile for integration tests to "it". Also
 										done in failsafe plugin -->
 									<name>spring.profiles.active</name>
+									<value>it</value>
+								</systemProperty>
+								<systemProperty>
+									<!-- Setting spring profile for integration tests to "it". Also
+										done in failsafe plugin -->
+									<name>irida.db.profile</name>
 									<value>it</value>
 								</systemProperty>
 								<systemProperty>
