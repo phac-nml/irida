@@ -13,7 +13,7 @@ import org.springframework.scheduling.annotation.Scheduled;
  * Scheduled task configuration for running file processors
  */
 @Configuration
-@Profile({ "dev", "prod", "processing" })
+@Profile({ "dev", "prod", "it", "processing" })
 public class FileProcessingScheduledTaskConfig {
 	private static final Logger logger = LoggerFactory.getLogger(FileProcessingScheduledTaskConfig.class);
 
