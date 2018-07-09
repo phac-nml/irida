@@ -36,6 +36,7 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
  */
 @Configuration
 @EnableAsync(order = AnalysisExecutionServiceConfig.ASYNC_ORDER)
+@Profile({ "dev", "prod", "it", "analysis", "ncbi", "processing", "sync", "email" })
 public class AnalysisExecutionServiceConfig {
 
 	/**
