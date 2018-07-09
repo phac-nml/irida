@@ -38,6 +38,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
@@ -841,7 +842,7 @@ public class AnalysisController {
 			throw new EntityNotFoundException("Could not find file with id " + fileId);
 		}
 
-		if (filename != null && !filename.equals("")) {
+		if (Strings.isNullOrEmpty(filename)) {
 			FileUtilities.createSingleFileResponse(response, optFile.get(), filename);
 		} else {
 			FileUtilities.createSingleFileResponse(response, optFile.get());

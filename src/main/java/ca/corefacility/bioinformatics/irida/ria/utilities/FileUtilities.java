@@ -138,7 +138,6 @@ public class FileUtilities {
 		response.setHeader(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + fileName + EXTENSION_ZIP);
 		response.setContentType(CONTENT_TYPE_APPLICATION_ZIP);
 
-		fileName = formatName(fileName);
 		try (ServletOutputStream responseStream = response.getOutputStream();
 				ZipOutputStream outputStream = new ZipOutputStream(responseStream)) {
 			for (Map.Entry<ProjectSampleAnalysisOutputInfo, AnalysisOutputFile> entry : files.entrySet()) {
@@ -146,7 +145,7 @@ public class FileUtilities {
 				final ProjectSampleAnalysisOutputInfo outputInfo = entry.getKey();
 				if (!Files.exists(file.getFile())) {
 					response.setStatus(404);
-					throw new FileNotFoundException();
+					throw new FileNotFoundException("File '" + file.getFile().toFile().getAbsolutePath() + "' does not exist!");
 				}
 				// 1) Build a folder/file name
 				// building similar filename for each analysis output file as:

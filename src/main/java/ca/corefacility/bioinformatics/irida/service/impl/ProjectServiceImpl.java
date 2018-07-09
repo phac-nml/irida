@@ -1,11 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -13,7 +8,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
-import javax.sql.DataSource;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
@@ -30,8 +24,6 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -68,6 +60,7 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
+import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
@@ -84,6 +77,7 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.Sequencing
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ProjectSampleAnalysisOutputInfo;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -114,7 +108,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	private final ProjectAnalysisSubmissionJoinRepository pasRepository;
 	private final SequencingObjectRepository sequencingObjectRepository;
 	private final ProjectRepository projectRepository;
-	private final DataSource dataSource;
+	private final IridaWorkflowsService iridaWorkflowsService;
 
 	@Autowired
 	public ProjectServiceImpl(ProjectRepository projectRepository, SampleRepository sampleRepository,
@@ -123,7 +117,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			ReferenceFileRepository referenceFileRepository, ProjectReferenceFileJoinRepository prfjRepository,
 			final UserGroupProjectJoinRepository ugpjRepository, SampleSequencingObjectJoinRepository ssoRepository,
 			ProjectAnalysisSubmissionJoinRepository pasRepository,
-			SequencingObjectRepository sequencingObjectRepository, DataSource dataSource, Validator validator) {
+			SequencingObjectRepository sequencingObjectRepository, IridaWorkflowsService iridaWorkflowsService,
+			Validator validator) {
 		super(projectRepository, validator, Project.class);
 		this.projectRepository = projectRepository;
 		this.sampleRepository = sampleRepository;
@@ -137,7 +132,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		this.ssoRepository = ssoRepository;
 		this.pasRepository = pasRepository;
 		this.sequencingObjectRepository = sequencingObjectRepository;
-		this.dataSource = dataSource;
+		this.iridaWorkflowsService = iridaWorkflowsService;
 	}
 
 	/**
@@ -754,56 +749,24 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#projectId, 'canReadProject')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#projectId, 'canReadProject')")
 	public List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoForProject(Long projectId, Long userId) {
-		JdbcTemplate tmpl = new JdbcTemplate(dataSource);
-		// @formatter:off
-		String query =
-				"SELECT " +
-				"  s.id AS sampleId, " +
-				"  s.sampleName AS sampleName, " +
-				"  a.id AS analysisId, " +
-				"  aofmap.analysis_output_file_key AS analysisOutputFileKey, " +
-				"  aof.file_path AS filePath, " +
-				"  aof.id AS analysisOutputFileId, " +
-				"  a.analysis_type AS analysisType, " +
-				"  asub.workflow_id AS workflowId, " +
-				"  aof.created_date AS createdDate, " +
-				"  asub.name AS analysisSubmissionName, " +
-				"  asub.id AS analysisSubmissionId, " +
-				"  u.id AS userId, " +
-				"  u.firstName AS userFirstName, " +
-				"  u.lastName AS userLastName " +
-				"FROM analysis_output_file aof "+
-				"  INNER JOIN analysis_output_file_map aofmap ON aof.id = aofmap.analysisOutputFilesMap_id" +
-				"  INNER JOIN analysis a ON aofmap.analysis_id = a.id" +
-				"  INNER JOIN analysis_submission asub ON a.id = asub.analysis_id" +
-				"  INNER JOIN analysis_submission_sequencing_object o ON asub.id = o.analysis_submission_id" +
-				"  INNER JOIN sequencing_object seqobj ON o.sequencing_object_id = seqobj.id" +
-				"  INNER JOIN sample_sequencingobject sso on sso.sequencingobject_id = o.sequencing_object_id" +
-				"  INNER JOIN sample s ON sso.sample_id = s.id" +
-				"  INNER JOIN project_sample psample ON s.id = psample.sample_id" +
-				"  INNER JOIN project p ON psample.project_id = p.id" +
-				"  INNER JOIN user u ON asub.submitter = u.id" +
-				"  LEFT JOIN project_analysis_submission pasub ON asub.id = pasub.analysis_submission_id "+
-				"WHERE" +
-				// project id parameter goes here
-				"  p.id = ?"  +
-				// non-collection type analysis type
-				"  AND a.analysis_type NOT LIKE '%_COLLECTION'" +
-				// shared to the project by a user
-				"  AND (pasub.project_id = p.id " +
-				// or automated SISTR or assembly
-				"       OR (seqobj.sistr_typing = asub.id OR seqobj.automated_assembly = asub.id)" +
-				// or user's own analyses
-				"       OR u.id = ?)";
-		// @formatter:on
-
-		logger.trace("Getting all shared or automated analysis output file info for project id=" + projectId + " and user id=" + userId);
-		List<ProjectSampleAnalysisOutputInfo> infos = tmpl.query(query, new Object[] { projectId, userId},
-				new BeanPropertyRowMapper(ProjectSampleAnalysisOutputInfo.class));
+		final Set<UUID> singleSampleWorkflowIds = getSingleSampleWorkflows();
+		logger.trace("N=" + singleSampleWorkflowIds.size() + ", Single sample workflows: " + singleSampleWorkflowIds);
+		final List<ProjectSampleAnalysisOutputInfo> infos = projectRepository.getAllAnalysisOutputInfoForProject(
+				projectId, userId, singleSampleWorkflowIds);
 		logger.trace("Found " + infos.size() + " output files for project id=" + projectId + " and user id=" + userId);
 		return infos;
+	}
+
+	private Set<UUID> getSingleSampleWorkflows() {
+		return iridaWorkflowsService.getRegisteredWorkflows()
+				.stream()
+				.filter(workflow -> workflow.getWorkflowDescription()
+						.getInputs()
+						.requiresSingleSample())
+				.map(IridaWorkflow::getWorkflowIdentifier)
+				.collect(Collectors.toSet());
 	}
 
 	/**

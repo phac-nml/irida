@@ -67,6 +67,7 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.Sequencing
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.impl.ProjectServiceImpl;
+import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 /**
  */
@@ -84,9 +85,9 @@ public class ProjectServiceImplTest {
 	private SampleSequencingObjectJoinRepository ssoRepository;
 	private ProjectAnalysisSubmissionJoinRepository pasRepository;
 	private SequencingObjectRepository sequencingObjectRepository;
+	private IridaWorkflowsService iridaWorkflowsService;
 
 	private Validator validator;
-	private DataSource dataSource;
 
 	@Before
 	public void setUp() {
@@ -101,10 +102,11 @@ public class ProjectServiceImplTest {
 		prfjRepository = mock(ProjectReferenceFileJoinRepository.class);
 		ugpjRepository = mock(UserGroupProjectJoinRepository.class);
 		sequencingObjectRepository = mock(SequencingObjectRepository.class);
-		dataSource = mock(DataSource.class);
+		iridaWorkflowsService = mock(IridaWorkflowsService.class);
+
 		projectService = new ProjectServiceImpl(projectRepository, sampleRepository, userRepository, pujRepository,
 				psjRepository, relatedProjectRepository, referenceFileRepository, prfjRepository, ugpjRepository,
-				ssoRepository, pasRepository, sequencingObjectRepository, dataSource, validator);
+				ssoRepository, pasRepository, sequencingObjectRepository, iridaWorkflowsService, validator);
 	}
 
 	@Test
