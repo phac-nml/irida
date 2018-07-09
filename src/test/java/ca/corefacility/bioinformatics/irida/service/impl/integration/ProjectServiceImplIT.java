@@ -998,7 +998,7 @@ public class ProjectServiceImplIT {
 				"testfile.fasta",
 				1L,
 				AnalysisType.ASSEMBLY_ANNOTATION,
-				UUID.fromString("b7c8b437-3c41-485e-92e5-72b67e37959f"),
+				UUID.fromString("87186c71-5c8a-4027-a9d9-b29850cebdb3"),
 				date,
 				"sub1",
 				999L,
@@ -1012,7 +1012,7 @@ public class ProjectServiceImplIT {
 				"testfile.fasta",
 				1L,
 				AnalysisType.ASSEMBLY_ANNOTATION,
-				UUID.fromString("b7c8b437-3c41-485e-92e5-72b67e37959f"),
+				UUID.fromString("87186c71-5c8a-4027-a9d9-b29850cebdb3"),
 				date,
 				"sub1",
 				999L,
@@ -1066,11 +1066,10 @@ public class ProjectServiceImplIT {
 	}
 
 	private void checkAllOutputs(List<ProjectSampleAnalysisOutputInfo> outputs) throws ParseException {
-		final List<ProjectSampleAnalysisOutputInfo> expectedOutputs = getExpectedOutputs();
+		final Set<ProjectSampleAnalysisOutputInfo> expectedOutputs = new HashSet<>(getExpectedOutputs());
 		outputs.forEach(
 				output -> assertTrue("getAllAnalysisOutputInfoForProject output does not match any expected outputs! " + output,
-						expectedOutputs.stream()
-								.anyMatch(expectedOutput -> expectedOutput.equals(output))));
+						expectedOutputs.contains(output)));
 	}
 
 	@Test

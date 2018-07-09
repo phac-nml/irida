@@ -209,7 +209,7 @@ _	<project_user id="11" project_id="11" user_id="3"
 						 update_samples="1"
 						 analysis_state="COMPLETED"
 						 created_date="2018-07-04 10:00:2.0"
-						 workflow_id="b7c8b437-3c41-485e-92e5-72b67e37959f"
+						 workflow_id="87186c71-5c8a-4027-a9d9-b29850cebdb3"
 						 submitter="9"
 						 analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM"/>
 	<project_analysis_submission id="3"
