@@ -15,8 +15,12 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ProjectSampleAnalysisOutputInfo;
 
+/**
+ * Custom repository implementation for {@link Project}
+ */
 @Repository
 public class ProjectRepositoryImpl implements ProjectRepositoryCustom {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectRepositoryImpl.class);
