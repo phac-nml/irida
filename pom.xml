@@ -829,6 +829,7 @@
 				<configuration>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 					<packagingExcludes>node_modules/**/*</packagingExcludes>
+					<attachClasses>true</attachClasses>
 				</configuration>
 			</plugin>
 

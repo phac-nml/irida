@@ -3,6 +3,7 @@ Changes
 
 0.22.0 to 0.23.0
 ----------------
+* [Developer]: Added classes `.jar` maven export in build process.
 
 0.21.0 to 0.22.0
 ----------------
