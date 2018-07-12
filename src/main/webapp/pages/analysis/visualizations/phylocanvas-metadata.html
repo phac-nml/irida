@@ -44,6 +44,7 @@
             </div>
         </div>
         <section>
+            <div th:replace="templates/analysis_result_warning"></div>
             <div ng-show="$ctrl.metadataError &amp;&amp; !$ctrl.templateError" class="alert alert-danger">NO METADATA WARNING</div>
             <div ng-show="$ctrl.treeError" class="alert alert-danger">
                 <strong><i class="fa fa-exclamation-triangle" aria-hidden="true"></i></strong>

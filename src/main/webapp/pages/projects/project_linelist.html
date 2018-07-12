@@ -22,6 +22,7 @@
 <body>
 <main layout:fragment="main">
     <div th:if="not ${#lists.isEmpty(metadataList)}" ng-controller="lineListTableController as tableCtrl">
+        <div th:replace="templates/analysis_result_warning"></div>
         <linelist></linelist>
         <table id="linelist" class="table table-striped" cellspacing="0" width="100%">
             <thead>
