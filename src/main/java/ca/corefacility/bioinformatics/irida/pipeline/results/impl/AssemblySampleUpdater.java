@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssemblyFromAnalysis;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -59,6 +61,6 @@ public class AssemblySampleUpdater implements AnalysisSampleUpdater {
 	 */
 	@Override
 	public AnalysisType getAnalysisType() {
-		return AnalysisType.ASSEMBLY_ANNOTATION;
+		return AnalysisTypes.ASSEMBLY_ANNOTATION;
 	}
 }

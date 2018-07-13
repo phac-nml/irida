@@ -34,6 +34,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;

@@ -12,7 +12,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -81,7 +82,7 @@ public class SistrTypingFileProcessor implements FileProcessor {
 
 			// get the workflow
 			try {
-				defaultWorkflowByType = workflowsService.getDefaultWorkflowByType(AnalysisType.SISTR_TYPING);
+				defaultWorkflowByType = workflowsService.getDefaultWorkflowByType(AnalysisTypes.SISTR_TYPING);
 			} catch (IridaWorkflowNotFoundException e) {
 				throw new FileProcessorException("Cannot find assembly workflow", e);
 			}

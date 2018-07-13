@@ -4,6 +4,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
@@ -76,7 +77,7 @@ public class AnalysesListingService {
 		 */
 		Set<UUID> workflowIds = null;
 		if (searchMap.containsKey("workflow")) {
-			AnalysisType workflowType = AnalysisType.fromString(searchMap.get("workflow"));
+			AnalysisType workflowType = AnalysisTypes.fromString(searchMap.get("workflow"));
 			Set<IridaWorkflow> workflows = iridaWorkflowsService.getAllWorkflowsByType(workflowType);
 			workflowIds = workflows.stream().map(IridaWorkflow::getWorkflowIdentifier).collect(Collectors.toSet());
 		}

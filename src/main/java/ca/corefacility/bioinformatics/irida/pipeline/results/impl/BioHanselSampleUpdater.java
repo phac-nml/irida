@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
@@ -122,13 +124,13 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 	}
 
 	/**
-	 * Gets the {@link AnalysisType} this updater service handles.
+	 * Gets the {@link AnalysisTypeOld} this updater service handles.
 	 *
-	 * @return The {@link AnalysisType}.
+	 * @return The {@link AnalysisTypeOld}.
 	 */
 	@Override
 	public AnalysisType getAnalysisType() {
-		return AnalysisType.BIO_HANSEL;
+		return AnalysisTypes.BIO_HANSEL;
 	}
 
 	/**

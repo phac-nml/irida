@@ -3,6 +3,8 @@ package ca.corefacility.bioinformatics.irida.pipeline.results.impl;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
@@ -124,6 +126,6 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 
 	@Override
 	public AnalysisType getAnalysisType() {
-		return AnalysisType.SISTR_TYPING;
+		return AnalysisTypes.SISTR_TYPING;
 	}
 }

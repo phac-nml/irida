@@ -32,7 +32,8 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.TestAnalysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaToolParameter;
@@ -192,7 +193,7 @@ public class IridaWorkflowLoaderServiceIT {
 		parameters.add(parameter1);
 
 		IridaWorkflowDescription iridaWorkflow = new IridaWorkflowDescription(id, name, version,
-				AnalysisType.DEFAULT, new IridaWorkflowInput(sequenceReadsSingle, sequenceReadsPaired, "reference", requiresSingleSample),
+				AnalysisTypes.DEFAULT, new IridaWorkflowInput(sequenceReadsSingle, sequenceReadsPaired, "reference", requiresSingleSample),
 				outputs, tools, parameters);
 
 		return iridaWorkflow;

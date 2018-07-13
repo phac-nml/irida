@@ -67,7 +67,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.SampleAnalysisDuplicateEx
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
@@ -1297,7 +1297,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		Analysis analysis = analysisWorkspaceService.getAnalysisResults(analysisSubmission);
 		assertNotNull("the analysis results were not properly created", analysis);
-		assertEquals("the Analysis results class is invalid", AnalysisType.PHYLOGENOMICS, analysis.getAnalysisType());
+		assertEquals("the Analysis results class is invalid", AnalysisTypes.PHYLOGENOMICS, analysis.getAnalysisType());
 		assertEquals("the analysis results has an invalid number of output files", 3, analysis.getAnalysisOutputFiles()
 				.size());
 		assertEquals("the analysis results output file has an invalid name", Paths.get(TABLE_NAME), analysis

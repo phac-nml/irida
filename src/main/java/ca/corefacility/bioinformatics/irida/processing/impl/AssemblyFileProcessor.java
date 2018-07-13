@@ -10,7 +10,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -79,7 +80,7 @@ public class AssemblyFileProcessor implements FileProcessor {
 
 			// get the workflow
 			try {
-				defaultWorkflowByType = workflowsService.getDefaultWorkflowByType(AnalysisType.ASSEMBLY_ANNOTATION);
+				defaultWorkflowByType = workflowsService.getDefaultWorkflowByType(AnalysisTypes.ASSEMBLY_ANNOTATION);
 			} catch (IridaWorkflowNotFoundException e) {
 				throw new FileProcessorException("Cannot find assembly workflow", e);
 			}

@@ -27,6 +27,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
@@ -69,9 +71,9 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 
 	// available analysis types to filter for
 	public static Map<String, AnalysisType> ANALYSIS_TYPES = ImmutableMap.<String, AnalysisType>builder()
-			.put("phylogenomics", AnalysisType.PHYLOGENOMICS).put("assembly", AnalysisType.ASSEMBLY_ANNOTATION)
-			.put("assembly-collection", AnalysisType.ASSEMBLY_ANNOTATION_COLLECTION)
-			.put("sistr", AnalysisType.SISTR_TYPING).build();
+			.put("phylogenomics", AnalysisTypes.PHYLOGENOMICS).put("assembly", AnalysisTypes.ASSEMBLY_ANNOTATION)
+			.put("assembly-collection", AnalysisTypes.ASSEMBLY_ANNOTATION_COLLECTION)
+			.put("sistr", AnalysisTypes.SISTR_TYPING).build();
 
 	@Autowired
 	public RESTAnalysisSubmissionController(AnalysisSubmissionService analysisSubmissionService,

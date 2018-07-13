@@ -30,6 +30,8 @@ import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlac
 import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowToolRepository;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -62,7 +64,7 @@ public class ToolsListExporter {
 
 		IridaWorkflowsService iridaWorkflowsService = context.getBean(IridaWorkflowsService.class);
 		Map<AnalysisType, IridaWorkflow> workflows = iridaWorkflowsService
-				.getAllDefaultWorkflowsByType(Sets.newHashSet(AnalysisType.executableAnalysisTypes()));
+				.getAllDefaultWorkflowsByType(Sets.newHashSet(AnalysisTypes.executableAnalysisTypes()));
 
 		context.close();
 

@@ -24,6 +24,8 @@ import com.google.common.collect.Sets;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowIdSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowSet;
@@ -99,7 +101,7 @@ public class IridaWorkflowsConfig {
 	public IridaWorkflowIdSet defaultIridaWorkflows() {
 		Set<UUID> defaultWorkflowIds = Sets.newHashSet();
 
-		for (AnalysisType analysisType : AnalysisType.values()) {
+		for (AnalysisType analysisType : AnalysisTypes.values()) {
 			String analysisDefaultProperyName = IRIDA_DEFAULT_WORKFLOW_PREFIX + "." + analysisType;
 
 			logger.trace("Getting default workflow id from property '" + analysisDefaultProperyName + "'");

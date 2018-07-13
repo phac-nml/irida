@@ -12,6 +12,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowDefaultExcep
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowTestBuilder;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowIdSet;
@@ -169,7 +171,7 @@ public class IridaWorkflowsServiceTest {
 	@Test
 	public void testGetDefaultWorkflowByType() throws IridaWorkflowException {
 		iridaWorkflowsService.setDefaultWorkflow(iridaWorkflowId);
-		assertEquals(iridaWorkflow, iridaWorkflowsService.getDefaultWorkflowByType(AnalysisType.DEFAULT));
+		assertEquals(iridaWorkflow, iridaWorkflowsService.getDefaultWorkflowByType(AnalysisTypes.DEFAULT));
 	}
 
 	/**
@@ -180,7 +182,7 @@ public class IridaWorkflowsServiceTest {
 	@Test(expected = IridaWorkflowNotFoundException.class)
 	public void testGetDefaultWorkflowByTypeFail() throws IridaWorkflowException {
 		iridaWorkflowsService.setDefaultWorkflow(iridaWorkflowId);
-		iridaWorkflowsService.getDefaultWorkflowByType(AnalysisType.PHYLOGENOMICS);
+		iridaWorkflowsService.getDefaultWorkflowByType(AnalysisTypes.PHYLOGENOMICS);
 	}
 
 	/**
@@ -192,8 +194,8 @@ public class IridaWorkflowsServiceTest {
 	public void testGetAllDefaultWorkflowsByType() throws IridaWorkflowException {
 		iridaWorkflowsService.setDefaultWorkflow(iridaWorkflowId);
 		Map<AnalysisType, IridaWorkflow> defaultWorkflowsMap = iridaWorkflowsService.getAllDefaultWorkflowsByType(Sets
-				.newHashSet(AnalysisType.DEFAULT));
-		assertEquals("invalid type of workflow", ImmutableMap.of(AnalysisType.DEFAULT, iridaWorkflow), defaultWorkflowsMap);
+				.newHashSet(AnalysisTypes.DEFAULT));
+		assertEquals("invalid type of workflow", ImmutableMap.of(AnalysisTypes.DEFAULT, iridaWorkflow), defaultWorkflowsMap);
 	}
 
 	/**
@@ -203,8 +205,8 @@ public class IridaWorkflowsServiceTest {
 	 */
 	@Test
 	public void testGetAllWorkflowsByTypeSuccess() throws IridaWorkflowException {
-		assertEquals("invalid workflows by type " + AnalysisType.DEFAULT, Sets.newHashSet(iridaWorkflow, iridaWorkflow2),
-				iridaWorkflowsService.getAllWorkflowsByType(AnalysisType.DEFAULT));
+		assertEquals("invalid workflows by type " + AnalysisTypes.DEFAULT, Sets.newHashSet(iridaWorkflow, iridaWorkflow2),
+				iridaWorkflowsService.getAllWorkflowsByType(AnalysisTypes.DEFAULT));
 	}
 
 	/**
@@ -214,7 +216,7 @@ public class IridaWorkflowsServiceTest {
 	 */
 	@Test(expected = IridaWorkflowNotFoundException.class)
 	public void testGetAllWorkflowsByTypeFail() throws IridaWorkflowException {
-		iridaWorkflowsService.getAllWorkflowsByType(AnalysisType.PHYLOGENOMICS);
+		iridaWorkflowsService.getAllWorkflowsByType(AnalysisTypes.PHYLOGENOMICS);
 	}
 
 	/**
@@ -224,7 +226,7 @@ public class IridaWorkflowsServiceTest {
 	 */
 	@Test
 	public void testGetRegisteredWorkflowTypes() throws IridaWorkflowException {
-		assertEquals("invalid registered workflow types", Sets.newHashSet(AnalysisType.DEFAULT), iridaWorkflowsService.getRegisteredWorkflowTypes());
+		assertEquals("invalid registered workflow types", Sets.newHashSet(AnalysisTypes.DEFAULT), iridaWorkflowsService.getRegisteredWorkflowTypes());
 	}
 
 	/**

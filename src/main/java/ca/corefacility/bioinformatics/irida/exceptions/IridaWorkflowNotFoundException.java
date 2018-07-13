@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 
+
 /**
  * Exception that gets thrown if a workflow is not found.
  * 

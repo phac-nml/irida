@@ -6,6 +6,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundExce
 import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
@@ -71,8 +72,8 @@ public class AnalysisController {
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisController.class);
 	// PAGES
 	public static final Map<AnalysisType, String> PREVIEWS = ImmutableMap
-			.of(AnalysisType.PHYLOGENOMICS, "tree", AnalysisType.SISTR_TYPING, "sistr",
-					AnalysisType.MLST_MENTALIST, "tree");
+			.of(AnalysisTypes.PHYLOGENOMICS, "tree", AnalysisTypes.SISTR_TYPING, "sistr",
+					AnalysisTypes.MLST_MENTALIST, "tree");
 	private static final String BASE = "analysis/";
 	public static final String PAGE_DETAILS_DIRECTORY = BASE + "details/";
 	public static final String PREVIEW_UNAVAILABLE = PAGE_DETAILS_DIRECTORY + "unavailable";
@@ -190,7 +191,7 @@ public class AnalysisController {
 				.getAnalysisType();
 		model.addAttribute("analysisType", analysisType);
 		String viewName = getViewForAnalysisType(analysisType);
-		String workflowName = messageSource.getMessage("workflow." + analysisType.toString() + ".title", null, locale);
+		String workflowName = messageSource.getMessage("workflow." + analysisType.getName() + ".title", null, locale);
 		model.addAttribute("workflowName", workflowName);
 		model.addAttribute("version", iridaWorkflow.getWorkflowDescription()
 				.getVersion());
@@ -222,11 +223,11 @@ public class AnalysisController {
 		try {
 			if (submission.getAnalysisState()
 					.equals(AnalysisState.COMPLETED)) {
-				if (analysisType.equals(AnalysisType.PHYLOGENOMICS) || analysisType.equals(AnalysisType.MLST_MENTALIST)) {
+				if (analysisType.equals(AnalysisTypes.PHYLOGENOMICS) || analysisType.equals(AnalysisTypes.MLST_MENTALIST)) {
 					tree(submission, model);
-				} else if (analysisType.equals(AnalysisType.SISTR_TYPING)) {
+				} else if (analysisType.equals(AnalysisTypes.SISTR_TYPING)) {
 					model.addAttribute("sistr", true);
-				} else if (analysisType.equals(AnalysisType.BIO_HANSEL)) {
+				} else if (analysisType.equals(AnalysisTypes.BIO_HANSEL)) {
 					model.addAttribute("bio_hansel", true);
 				}
 			}
@@ -612,7 +613,7 @@ public class AnalysisController {
 	// ************************************************************************************************
 
 	/**
-	 * Construct the model parameters for an {@link AnalysisType#PHYLOGENOMICS} or {@link AnalysisType#MLST_MENTALIST}
+	 * Construct the model parameters for an {@link AnalysisTypeOld#PHYLOGENOMICS} or {@link AnalysisTypeOld#MLST_MENTALIST}
 	 * {@link Analysis}
 	 *
 	 * @param submission The analysis submission
@@ -728,7 +729,7 @@ public class AnalysisController {
 		}
 		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription()
 				.getAnalysisType();
-		if (analysisType.equals(AnalysisType.SISTR_TYPING)) {
+		if (analysisType.equals(AnalysisTypes.SISTR_TYPING)) {
 			Analysis analysis = submission.getAnalysis();
 			Path path = analysis.getAnalysisOutputFile(sistrFileKey)
 					.getFile();
@@ -988,7 +989,7 @@ public class AnalysisController {
 	/**
 	 * Get the view name for different analysis types
 	 *
-	 * @param type The {@link AnalysisType}
+	 * @param type The {@link AnalysisTypeOld}
 	 * @return the view name to display
 	 */
 	private String getViewForAnalysisType(AnalysisType type) {

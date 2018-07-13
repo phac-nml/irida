@@ -25,7 +25,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetExcepti
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssemblyFromAnalysis;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -125,7 +126,7 @@ public class TestDataFactory {
 				.put("contigs-with-repeats", constructAnalysisOutputFile("test_file.fasta", null))
 				.put("refseq-masher-matches", constructAnalysisOutputFile("refseq-masher-matches.tsv", 9000L))
 				.build();
-		Analysis analysis = new Analysis(FAKE_EXECUTION_MANAGER_ID, analysisOutputFiles, AnalysisType.PHYLOGENOMICS);
+		Analysis analysis = new Analysis(FAKE_EXECUTION_MANAGER_ID, analysisOutputFiles, AnalysisTypes.PHYLOGENOMICS);
 		return analysis;
 	}
 
@@ -174,7 +175,7 @@ public class TestDataFactory {
 		List<IridaWorkflowToolRepository> tools = ImmutableList.of();
 		List<IridaWorkflowParameter> parameters = ImmutableList.of();
 		IridaWorkflowDescription description = new IridaWorkflowDescription(id, "My Workflow", "V1",
-				AnalysisType.DEFAULT, input, outputs, tools, parameters);
+				AnalysisTypes.DEFAULT, input, outputs, tools, parameters);
 		IridaWorkflowStructure structure = new IridaWorkflowStructure(null);
 		return new IridaWorkflow(description, structure);
 	}

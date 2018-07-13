@@ -48,7 +48,7 @@ import com.google.common.collect.Sets;
 import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
@@ -292,7 +292,7 @@ public class SNVPhylAnalysisIT {
 
 		Analysis analysisPhylogenomics = submission.getAnalysis();
 		assertEquals("Should have generated a phylogenomics pipeline analysis type.",
-				AnalysisType.PHYLOGENOMICS, analysisPhylogenomics.getAnalysisType());
+				AnalysisTypes.PHYLOGENOMICS, analysisPhylogenomics.getAnalysisType());
 
 		assertEquals("the phylogenomics pipeline should have 8 output files.", 8, analysisPhylogenomics
 				.getAnalysisOutputFiles().size());
@@ -422,7 +422,7 @@ public class SNVPhylAnalysisIT {
 
 		Analysis analysisPhylogenomics = submission.getAnalysis();
 		assertEquals("Should have generated a phylogenomics pipeline analysis type.",
-				AnalysisType.PHYLOGENOMICS, analysisPhylogenomics.getAnalysisType());
+				AnalysisTypes.PHYLOGENOMICS, analysisPhylogenomics.getAnalysisType());
 
 		assertEquals("the phylogenomics pipeline should have 8 output files.", 8, analysisPhylogenomics
 				.getAnalysisOutputFiles().size());
@@ -572,7 +572,7 @@ public class SNVPhylAnalysisIT {
 
 		Analysis analysisPhylogenomics = submission.getAnalysis();
 		assertEquals("Should have generated a phylogenomics pipeline analysis type.",
-				AnalysisType.PHYLOGENOMICS, analysisPhylogenomics.getAnalysisType());
+				AnalysisTypes.PHYLOGENOMICS, analysisPhylogenomics.getAnalysisType());
 
 		assertEquals("the phylogenomics pipeline should have 8 output files.", 8, analysisPhylogenomics
 				.getAnalysisOutputFiles().size());

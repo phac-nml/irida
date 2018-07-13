@@ -75,7 +75,6 @@ public class Analysis extends IridaResourceSupport implements IridaThing {
 	private final Map<String, AnalysisOutputFile> analysisOutputFilesMap;
 
 	@NotNull
-	@Enumerated(EnumType.STRING)
 	@Column(name = "analysis_type")
 	private AnalysisType analysisType;
 	
@@ -98,7 +97,7 @@ public class Analysis extends IridaResourceSupport implements IridaThing {
 	 * @param executionManagerAnalysisId The id for an execution manager used with this analysis.
 	 * @param analysisOutputFilesMap     A {@link Map} of output file keys and
 	 *                                   {@link AnalysisOutputFile}s.
-	 * @param analysisType               The {@link AnalysisType} for this analysis
+	 * @param analysisType               The type for this analysis
 	 */
 	public Analysis(final String executionManagerAnalysisId,
 			final Map<String, AnalysisOutputFile> analysisOutputFilesMap, AnalysisType analysisType) {
