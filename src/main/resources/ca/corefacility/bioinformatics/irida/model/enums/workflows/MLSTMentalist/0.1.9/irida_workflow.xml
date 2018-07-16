@@ -4,7 +4,7 @@
     <id>cdcbdf7b-7276-4845-b225-9ea41159e791</id>
     <name>MLSTMentalist</name>
     <version>0.1.9</version>
-    <analysisType>mlst-mentalist</analysisType>
+    <analysisType>MLST_MENTALIST</analysisType>
     <inputs>
         <sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
         <requiresSingleSample>false</requiresSingleSample>

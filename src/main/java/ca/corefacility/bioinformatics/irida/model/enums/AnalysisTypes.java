@@ -9,23 +9,23 @@ import com.google.common.collect.Sets;
 
 public class AnalysisTypes {
 
-	public static final AnalysisType PHYLOGENOMICS = new AnalysisType("PHYLOGENOMICS", "phylogenomics");
+	public static final AnalysisType PHYLOGENOMICS = new AnalysisType("PHYLOGENOMICS");
 
-	public static final AnalysisType SISTR_TYPING = new AnalysisType("SISTR_TYPING", "sistr-typing");
+	public static final AnalysisType SISTR_TYPING = new AnalysisType("SISTR_TYPING");
 	
-	public static final AnalysisType ASSEMBLY_ANNOTATION = new AnalysisType("ASSEMBLY_ANNOTATION", "assembly-annotation");
+	public static final AnalysisType ASSEMBLY_ANNOTATION = new AnalysisType("ASSEMBLY_ANNOTATION");
 
-	public static final AnalysisType BIO_HANSEL = new AnalysisType("BIO_HANSEL", "bio_hansel");
+	public static final AnalysisType BIO_HANSEL = new AnalysisType("BIO_HANSEL");
 
-	public static final AnalysisType ASSEMBLY_ANNOTATION_COLLECTION = new AnalysisType("ASSEMBLY_ANNOTATION_COLLECTION", "assembly-annotation-collection");
+	public static final AnalysisType ASSEMBLY_ANNOTATION_COLLECTION = new AnalysisType("ASSEMBLY_ANNOTATION_COLLECTION");
 
-	public static final AnalysisType REFSEQ_MASHER = new AnalysisType("REFSEQ_MASHER", "refseq_masher");
+	public static final AnalysisType REFSEQ_MASHER = new AnalysisType("REFSEQ_MASHER");
 	
-	public static final AnalysisType FASTQC = new AnalysisType("FASTQC", "fastqc");
+	public static final AnalysisType FASTQC = new AnalysisType("FASTQC");
 
-	public static final AnalysisType MLST_MENTALIST = new AnalysisType("MLST_MENTALIST", "mlst-mentalist");
+	public static final AnalysisType MLST_MENTALIST = new AnalysisType("MLST_MENTALIST");
 
-	public static final AnalysisType DEFAULT = new AnalysisType("DEFAULT", "default");
+	public static final AnalysisType DEFAULT = new AnalysisType("DEFAULT");
 
 	public static Set<AnalysisType> executableAnalysisTypes() {
 		return Sets.newHashSet(PHYLOGENOMICS, SISTR_TYPING, ASSEMBLY_ANNOTATION, BIO_HANSEL, ASSEMBLY_ANNOTATION_COLLECTION, REFSEQ_MASHER, MLST_MENTALIST);

@@ -4,7 +4,7 @@
 	<id>3fd2719d-8729-4e91-bd01-c6c20b99874d</id>
 	<name>SNVPhyl</name>
 	<version>0.2</version>
-	<analysisType>phylogenomics</analysisType>
+	<analysisType>PHYLOGENOMICS</analysisType>
 	<inputs>
 		<sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
 		<reference>reference</reference>

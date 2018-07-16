@@ -3,7 +3,7 @@
   <id>1317f2dc-191f-48d0-a54c-2fccd3f9ab53</id>
   <name>RefSeqMasherOnPairedReads</name>
   <version>0.1.0</version>
-  <analysisType>refseq_masher</analysisType>
+  <analysisType>REFSEQ_MASHER</analysisType>
   <inputs>
     <sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
     <requiresSingleSample>true</requiresSingleSample>

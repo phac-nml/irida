@@ -4,7 +4,7 @@
 	<id>e8f9cc61-3264-48c6-81d9-02d9e84bccc7</id>
 	<name>SISTRTyping</name>
 	<version>0.2</version>
-	<analysisType>sistr-typing</analysisType>
+	<analysisType>SISTR_TYPING</analysisType>
 	<inputs>
 		<sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
 		<requiresSingleSample>true</requiresSingleSample>

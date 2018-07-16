@@ -4,17 +4,19 @@ import java.util.Objects;
 
 public class AnalysisType {
 	
-	private String typeDatabase;
-	private String typeXml;
+	private final String type;
 	
-	public AnalysisType(String typeDatabase, String typeXml) {
-		this.typeDatabase = typeDatabase;
-		this.typeXml = typeXml;
+	protected AnalysisType() {
+		this.type = null;
+	}
+	
+	public AnalysisType(String typeDatabase) {
+		this.type = typeDatabase;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(typeDatabase, typeXml);
+		return Objects.hash(type);
 	}
 
 	@Override
@@ -26,16 +28,15 @@ public class AnalysisType {
 		if (getClass() != obj.getClass())
 			return false;
 		AnalysisType other = (AnalysisType) obj;
-		return Objects.equals(this.typeDatabase, other.typeDatabase) &&
-				Objects.equals(this.typeXml, other.typeXml);
+		return Objects.equals(this.type, other.type);
 	}
 
 	@Override
 	public String toString() {
-		return "AnalysisType [typeDatabase=" + typeDatabase + ", typeXml=" + typeXml + "]";
+		return "AnalysisType [type=" + type + "]";
 	}
 
 	public String getName() {
-		return typeXml;
+		return type;
 	}
 }

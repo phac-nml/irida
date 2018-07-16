@@ -3,7 +3,7 @@
   <id>92ecf046-ee09-4271-b849-7a82625d6b60</id>
   <name>SISTRTyping</name>
   <version>0.3.0</version>
-  <analysisType>sistr-typing</analysisType>
+  <analysisType>SISTR_TYPING</analysisType>
   <inputs>
     <sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
     <requiresSingleSample>true</requiresSingleSample>

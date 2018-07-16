@@ -3,7 +3,7 @@
   <id>0e8738e6-2aeb-4627-9d6e-15ae32f21c44</id>
   <name>bio_hansel</name>
   <version>2.0.0</version>
-  <analysisType>bio_hansel</analysisType>
+  <analysisType>BIO_HANSEL</analysisType>
   <inputs>
     <sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
     <requiresSingleSample>true</requiresSingleSample>

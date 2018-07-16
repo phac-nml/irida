@@ -4,7 +4,7 @@
 	<id>af85cce7-c9ee-4bcd-a12d-73e65d8fe3ef</id>
 	<name>AssemblyAnnotationCollection</name>
 	<version>0.2</version>
-	<analysisType>assembly-annotation-collection</analysisType>
+	<analysisType>ASSEMBLY_ANNOTATION_COLLECTION</analysisType>
 	<inputs>
 		<sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
 	</inputs>
