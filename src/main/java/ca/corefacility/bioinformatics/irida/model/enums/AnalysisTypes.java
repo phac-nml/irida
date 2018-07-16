@@ -31,23 +31,33 @@ public class AnalysisTypes {
 		return Sets.newHashSet(PHYLOGENOMICS, SISTR_TYPING, ASSEMBLY_ANNOTATION, BIO_HANSEL, ASSEMBLY_ANNOTATION_COLLECTION, REFSEQ_MASHER, MLST_MENTALIST);
 	}
 	
-	private static Map<String, AnalysisType> typesMap = ImmutableMap.<String, AnalysisType>builder()
-			.put("phylogenomics", PHYLOGENOMICS)
-			.put("sistr-typing", SISTR_TYPING)
-			.put("assembly-annotation", ASSEMBLY_ANNOTATION)
-			.put("bio_hansel", BIO_HANSEL)
-			.put("assembly-annotation-collection", ASSEMBLY_ANNOTATION_COLLECTION)
-			.put("refseq-masher", REFSEQ_MASHER)
-			.put("fastqc", FASTQC)
-			.put("mlst-mentalist", MLST_MENTALIST)
-			.put("default", DEFAULT)
+	private static Map<String, AnalysisType> allTypesMap = ImmutableMap.<String, AnalysisType>builder()
+			.put(PHYLOGENOMICS.getName(), PHYLOGENOMICS)
+			.put(SISTR_TYPING.getName(), SISTR_TYPING)
+			.put(ASSEMBLY_ANNOTATION.getName(), ASSEMBLY_ANNOTATION)
+			.put(BIO_HANSEL.getName(), BIO_HANSEL)
+			.put(ASSEMBLY_ANNOTATION_COLLECTION.getName(), ASSEMBLY_ANNOTATION_COLLECTION)
+			.put(REFSEQ_MASHER.getName(), REFSEQ_MASHER)
+			.put(FASTQC.getName(), FASTQC)
+			.put(MLST_MENTALIST.getName(), MLST_MENTALIST)
+			.put(DEFAULT.getName(), DEFAULT)
+			.build();
+	
+	private static Map<String, AnalysisType> runnableTypesMap = ImmutableMap.<String, AnalysisType>builder()
+			.put(PHYLOGENOMICS.getName(), PHYLOGENOMICS)
+			.put(SISTR_TYPING.getName(), SISTR_TYPING)
+			.put(ASSEMBLY_ANNOTATION.getName(), ASSEMBLY_ANNOTATION)
+			.put(BIO_HANSEL.getName(), BIO_HANSEL)
+			.put(ASSEMBLY_ANNOTATION_COLLECTION.getName(), ASSEMBLY_ANNOTATION_COLLECTION)
+			.put(REFSEQ_MASHER.getName(), REFSEQ_MASHER)
+			.put(MLST_MENTALIST.getName(), MLST_MENTALIST)
 			.build();
 
 	public static AnalysisType fromString(String string) {
-		return typesMap.get(string);
+		return allTypesMap.get(string);
 	}
 
 	public static Collection<AnalysisType> values() {
-		return typesMap.values();
+		return runnableTypesMap.values();
 	}
 }

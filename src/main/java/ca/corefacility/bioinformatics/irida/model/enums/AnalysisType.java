@@ -2,8 +2,15 @@ package ca.corefacility.bioinformatics.irida.model.enums;
 
 import java.util.Objects;
 
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlValue;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
+@XmlType(name="analysisType")
 public class AnalysisType {
-	
+
+	@XmlValue
 	private final String type;
 	
 	protected AnalysisType() {
@@ -11,6 +18,8 @@ public class AnalysisType {
 	}
 	
 	public AnalysisType(String typeDatabase) {
+		checkNotNull(typeDatabase, "type cannot be null");
+		
 		this.type = typeDatabase;
 	}
 

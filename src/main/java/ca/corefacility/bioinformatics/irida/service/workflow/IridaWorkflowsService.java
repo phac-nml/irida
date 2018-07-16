@@ -138,6 +138,7 @@ public class IridaWorkflowsService {
 	public void registerWorkflow(IridaWorkflow iridaWorkflow) throws IridaWorkflowException {
 		checkNotNull(iridaWorkflow, "iridaWorkflow is null");
 		checkNotNull(iridaWorkflow.getWorkflowDescription().getAnalysisType(), "analysisType is null");
+		checkNotNull(iridaWorkflow.getWorkflowDescription().getAnalysisType().getName(), "analysisType name is null");
 
 		UUID workflowId = iridaWorkflow.getWorkflowDescription().getId();
 

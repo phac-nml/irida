@@ -102,7 +102,7 @@ public class IridaWorkflowsConfig {
 		Set<UUID> defaultWorkflowIds = Sets.newHashSet();
 
 		for (AnalysisType analysisType : AnalysisTypes.values()) {
-			String analysisDefaultProperyName = IRIDA_DEFAULT_WORKFLOW_PREFIX + "." + analysisType;
+			String analysisDefaultProperyName = IRIDA_DEFAULT_WORKFLOW_PREFIX + "." + analysisType.getName();
 
 			logger.trace("Getting default workflow id from property '" + analysisDefaultProperyName + "'");
 			String analysisDefaultId = environment.getProperty(analysisDefaultProperyName);
