@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.config.workflow;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.DirectoryStream;
@@ -8,10 +10,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -42,10 +46,17 @@ public class IridaWorkflowsConfig {
 	private static final Logger logger = LoggerFactory.getLogger(IridaWorkflowsConfig.class);
 
 	private static final String IRIDA_DEFAULT_WORKFLOW_PREFIX = "irida.workflow.default";
+	private static final String IRIDA_DISABLED_TYPES = "irida.workflow.types.disabled";
 
 	@Autowired
 	private Environment environment;
-
+		
+	private Set<AnalysisType> getEnabledAnalysisTypes(String[] disabledWorkflowTypes) {		
+		Set<AnalysisType> disabledAnalysisTypes = Sets.newHashSet(disabledWorkflowTypes).stream().map(t -> AnalysisType.fromString(t))
+				.collect(Collectors.toSet());
+		
+		return Sets.difference(Sets.newHashSet(AnalysisType.values()), disabledAnalysisTypes);
+	}
 
 	/**
 	 * Gets the {@link Path} for all IRIDA workflow types.
@@ -62,28 +73,40 @@ public class IridaWorkflowsConfig {
 	/**
 	 * Builds a set of workflows to load up into IRIDA.
 	 * 
-	 * @param iridaWorkflowTypesPath
-	 *            The parent directory containing sub-directories for all IRIDA
-	 *            workflow types.
+	 * @param iridaWorkflowTypesPath The parent directory containing sub-directories
+	 *                               for all IRIDA workflow types.
 	 * 
 	 * @return A set of workflows to load into IRIDA.
-	 * @throws IOException
-	 *             If an I/O error occured.
-	 * @throws IridaWorkflowLoadException
-	 *             If there was an issue loading a specific workflow.
+	 * @throws IOException                If an I/O error occured.
+	 * @throws IridaWorkflowLoadException If there was an issue loading a specific
+	 *                                    workflow.
 	 */
 	@Bean
 	public IridaWorkflowSet iridaWorkflows(Path iridaWorkflowTypesPath) throws IOException, IridaWorkflowLoadException {
 		Set<IridaWorkflow> iridaWorkflowsSet = Sets.newHashSet();
 
 		DirectoryStream<Path> workflowTypesStream = Files.newDirectoryStream(iridaWorkflowTypesPath);
+		
+		String[] disabledWorkflowTypes = environment.getProperty(IRIDA_DISABLED_TYPES, String[].class);
+		Set<AnalysisType> enabledAnalysisTypes = getEnabledAnalysisTypes(disabledWorkflowTypes);
 
 		for (Path workflowTypePath : workflowTypesStream) {
 			if (!Files.isDirectory(workflowTypePath)) {
-				logger.warn("Workflow type directory " + iridaWorkflowTypesPath + " contains a file "
-						+ workflowTypePath + " that is not a proper workflow directory.");
+				logger.warn("Workflow type directory " + iridaWorkflowTypesPath + " contains a file " + workflowTypePath
+						+ " that is not a proper workflow directory.");
 			} else {
-				iridaWorkflowsSet.addAll(iridaWorkflowLoaderService().loadAllWorkflowImplementations(workflowTypePath));
+				Set<IridaWorkflow> iridaWorkflows = iridaWorkflowLoaderService()
+						.loadAllWorkflowImplementations(workflowTypePath);
+				
+				for (IridaWorkflow workflow : iridaWorkflows) {
+					if (enabledAnalysisTypes.contains(workflow.getWorkflowDescription().getAnalysisType())) {
+						iridaWorkflowsSet.add(workflow);
+					} else {
+						logger.info("AnalysisType [" + workflow.getWorkflowDescription().getAnalysisType()
+								+ "] disabled by " + IRIDA_DISABLED_TYPES + "="
+								+ String.join(",", disabledWorkflowTypes));
+					}
+				}
 			}
 		}
 
@@ -98,8 +121,11 @@ public class IridaWorkflowsConfig {
 	@Bean
 	public IridaWorkflowIdSet defaultIridaWorkflows() {
 		Set<UUID> defaultWorkflowIds = Sets.newHashSet();
-
-		for (AnalysisType analysisType : AnalysisType.values()) {
+		
+		String[] disabledWorkflowTypes = environment.getProperty(IRIDA_DISABLED_TYPES, String[].class);
+		Set<AnalysisType> enabledAnalysisTypes = getEnabledAnalysisTypes(disabledWorkflowTypes);
+		
+		for (AnalysisType analysisType : enabledAnalysisTypes) {
 			String analysisDefaultProperyName = IRIDA_DEFAULT_WORKFLOW_PREFIX + "." + analysisType;
 
 			logger.trace("Getting default workflow id from property '" + analysisDefaultProperyName + "'");
