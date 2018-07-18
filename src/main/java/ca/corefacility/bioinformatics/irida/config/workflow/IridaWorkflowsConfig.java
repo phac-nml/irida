@@ -81,8 +81,8 @@ public class IridaWorkflowsConfig {
 
 		for (Path workflowTypePath : workflowTypesStream) {
 			if (!Files.isDirectory(workflowTypePath)) {
-				logger.warn("Workflow type directory " + iridaWorkflowTypesPath + " contains a file " + workflowTypePath
-						+ " that is not a proper workflow directory.");
+				logger.warn("Workflow type directory " + iridaWorkflowTypesPath + " contains a file "
+						+ workflowTypePath + " that is not a proper workflow directory.");
 			} else {
 				iridaWorkflowsSet.addAll(iridaWorkflowLoaderService().loadAllWorkflowImplementations(workflowTypePath));
 			}
@@ -99,7 +99,7 @@ public class IridaWorkflowsConfig {
 	@Bean
 	public IridaWorkflowIdSet defaultIridaWorkflows() {
 		Set<UUID> defaultWorkflowIds = Sets.newHashSet();
-		
+
 		for (AnalysisType analysisType : AnalysisType.values()) {
 			String analysisDefaultProperyName = IRIDA_DEFAULT_WORKFLOW_PREFIX + "." + analysisType;
 
