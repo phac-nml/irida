@@ -152,7 +152,7 @@ public class PipelineController extends BaseController {
 	 */
 	@RequestMapping
 	public String getPipelineLaunchPage(final Model model, Locale locale) {
-		Set<AnalysisType> workflows = workflowsService.getRegisteredWorkflowTypes();
+		Set<AnalysisType> workflows = workflowsService.getDisplayableWorkflowTypes();
 
 		List<Map<String, String>> flows = new ArrayList<>(workflows.size());
 		workflows.stream().forEach(type -> {

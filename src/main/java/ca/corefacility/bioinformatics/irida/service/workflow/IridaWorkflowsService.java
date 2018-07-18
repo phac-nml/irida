@@ -40,7 +40,9 @@ public class IridaWorkflowsService {
 	 * Stores the id of a default workflow for an analysis type.
 	 */
 	private Map<AnalysisType, UUID> defaultWorkflowForAnalysis;
-
+	
+	private Set<AnalysisType> disabledAnalysisTypes;
+	
 	/**
 	 * Builds a new {@link IridaWorkflowsService} for loading up installed
 	 * workflows.
@@ -57,6 +59,27 @@ public class IridaWorkflowsService {
 	@Autowired
 	public IridaWorkflowsService(IridaWorkflowSet iridaWorkflows, IridaWorkflowIdSet defaultIridaWorkflows)
 			throws IridaWorkflowException {
+		this(iridaWorkflows, defaultIridaWorkflows, Sets.newHashSet());
+	}
+
+	/**
+	 * Builds a new {@link IridaWorkflowsService} for loading up installed
+	 * workflows.
+	 * 
+	 * @param iridaWorkflows
+	 *            A {@link IridaWorkflowSet} of {@link IridaWorkflow}s to use in IRIDA.
+	 * @param defaultIridaWorkflows
+	 *            A {@link IridaWorkflowIdSet} of {@link UUID}s to use as the default
+	 *            workflows.
+	 * @param disabledAnalysisTypes
+	 *            A {@link Set} of disabled {@link AnalysisType}s.
+	 * @throws IridaWorkflowException
+	 *             If there was an issue when attempting to register the
+	 *             workflows.
+	 */
+	@Autowired
+	public IridaWorkflowsService(IridaWorkflowSet iridaWorkflows, IridaWorkflowIdSet defaultIridaWorkflows, Set<AnalysisType> disabledAnalysisTypes)
+			throws IridaWorkflowException {
 		checkNotNull(iridaWorkflows, "iridaWorkflows is null");
 		checkNotNull(defaultIridaWorkflows, "defaultWorkflows is null");
 
@@ -65,6 +88,8 @@ public class IridaWorkflowsService {
 
 		registerWorkflows(iridaWorkflows.getIridaWorkflows());
 		setDefaultWorkflows(defaultIridaWorkflows.getIridaWorkflowIds());
+		
+		this.disabledAnalysisTypes = disabledAnalysisTypes;
 	}
 
 	/**
@@ -232,6 +257,15 @@ public class IridaWorkflowsService {
 		}
 
 		return types;
+	}
+	
+	/**
+	 * Gets a {@link Set} of disabled {@link AnalysisType}s.
+	 * 
+	 * @return A {@link Set} of disabled {@link AnalysisType}s.
+	 */
+	public Set<AnalysisType> getDisplayableWorkflowTypes() {
+		return Sets.difference(getRegisteredWorkflowTypes(), disabledAnalysisTypes);
 	}
 
 	/**
