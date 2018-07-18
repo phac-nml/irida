@@ -63,13 +63,15 @@ public class IridaWorkflowsConfig {
 	/**
 	 * Builds a set of workflows to load up into IRIDA.
 	 * 
-	 * @param iridaWorkflowTypesPath The parent directory containing sub-directories
-	 *                               for all IRIDA workflow types.
+	 * @param iridaWorkflowTypesPath
+	 *            The parent directory containing sub-directories for all IRIDA
+	 *            workflow types.
 	 * 
 	 * @return A set of workflows to load into IRIDA.
-	 * @throws IOException                If an I/O error occured.
-	 * @throws IridaWorkflowLoadException If there was an issue loading a specific
-	 *                                    workflow.
+	 * @throws IOException
+	 *             If an I/O error occured.
+	 * @throws IridaWorkflowLoadException
+	 *             If there was an issue loading a specific workflow.
 	 */
 	@Bean
 	public IridaWorkflowSet iridaWorkflows(Path iridaWorkflowTypesPath) throws IOException, IridaWorkflowLoadException {
@@ -82,10 +84,7 @@ public class IridaWorkflowsConfig {
 				logger.warn("Workflow type directory " + iridaWorkflowTypesPath + " contains a file " + workflowTypePath
 						+ " that is not a proper workflow directory.");
 			} else {
-				Set<IridaWorkflow> iridaWorkflows = iridaWorkflowLoaderService()
-						.loadAllWorkflowImplementations(workflowTypePath);
-				
-				iridaWorkflowsSet.addAll(iridaWorkflows);
+				iridaWorkflowsSet.addAll(iridaWorkflowLoaderService().loadAllWorkflowImplementations(workflowTypePath));
 			}
 		}
 
