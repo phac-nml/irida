@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      data-layout-decorate="~{template/page}">
+<head>
+    <title th:text="#{analyses.user.page-title}">_Analyses_</title>
+    <link rel="stylesheet" th:href="@{/resources/dist/css/analyses-table.bundle.css}">
+    <link rel="stylesheet" th:href="@{/resources/dist/css/analysis.bundle.css}">
+</head>
+<body>
+<div class="col-md-12" layout:fragment="page">
+    <!--TODO: i18n-->
+    <h2>Your Analysis Outputs!</h2>
+    <th:block th:replace="analyses/analyses-table :: batch-download"/>
+    <th:block th:replace="analyses/analyses-table :: messages"/>
+</div>
+<th:block layout:fragment="scripts">
+    <script th:inline="javascript">
+      var PAGE = {
+        URLS: {
+          base: /*[[@{/}]]*/ '/',
+        }
+      };
+    </script>
+    <th:block th:replace="analyses/analyses-table :: batch-download-scripts"/>
+</th:block>
+</body>
+</html>

@@ -90,14 +90,21 @@ public interface ProjectRepository extends IridaJpaRepository<Project, Long> {
 	public List<Project> getRemoteProjects();
 
 	/**
-	 * Get all {@link ProjectSampleAnalysisOutputInfo} for a {@link Project}.
-	 * <p>
-	 * Only non-collection analysis type outputs from shared or automated analyses are returned.
+	 * Get all {@link ProjectSampleAnalysisOutputInfo} shared with a {@link Project}.
 	 *
 	 * @param projectId {@link Project} id
-	 * @param userId    {@link User} id
 	 * @param workflowIds Workflow UUIDs of workflow pipelines to get output files for
 	 * @return a list of {@link ProjectSampleAnalysisOutputInfo}
 	 */
-	List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoForProject(Long projectId, Long userId, Set<UUID> workflowIds);
+	List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoSharedWithProject(Long projectId, Set<UUID> workflowIds);
+
+	/**
+	 * Get all automated {@link ProjectSampleAnalysisOutputInfo} for a {@link Project}.
+	 *
+	 * @param projectId {@link Project} id
+	 * @param workflowIds Workflow UUIDs of workflow pipelines to get output files for
+	 * @return a list of {@link ProjectSampleAnalysisOutputInfo}
+	 */
+	List<ProjectSampleAnalysisOutputInfo> getAllAutomatedAnalysisOutputInfoForAProject(Long projectId,
+			Set<UUID> workflowIds);
 }

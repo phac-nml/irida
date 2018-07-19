@@ -8,6 +8,7 @@ import java.util.Set;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -406,7 +407,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @return a list of {@link ProjectAnalysisSubmissionJoin}s
 	 */
 	public List<ProjectAnalysisSubmissionJoin> getProjectsForAnalysisSubmission(AnalysisSubmission submission);
-	
+
 	/**
 	 * Get all {@link Project}s that have data used within an
 	 * {@link AnalysisSubmission}. Note that this differs from
@@ -441,12 +442,17 @@ public interface ProjectService extends CRUDService<Long, Project> {
 
 	/**
 	 * Get all {@link ProjectSampleAnalysisOutputInfo} for a {@link Project}.
-	 * <p>
-	 * Only non-collection analysis type outputs from shared or automated analyses are returned.
 	 *
 	 * @param projectId {@link Project} id
-	 * @param userId    {@link User} id
 	 * @return a list of {@link ProjectSampleAnalysisOutputInfo}
 	 */
-	List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoForProject(Long projectId, Long userId);
+	List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoSharedWithProject(Long projectId);
+
+	/**
+	 * Get all automated {@link ProjectSampleAnalysisOutputInfo} for a {@link Project}.
+	 *
+	 * @param projectId {@link Project} id
+	 * @return a list of {@link ProjectSampleAnalysisOutputInfo}
+	 */
+	List<ProjectSampleAnalysisOutputInfo> getAllAutomatedAnalysisOutputInfoForAProject(Long projectId);
 }

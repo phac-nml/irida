@@ -5,7 +5,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ProjectSampleAnalysisOutputInfo;
 
 /**
@@ -14,14 +13,21 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ProjectSampl
 public interface ProjectRepositoryCustom {
 
 	/**
-	 * Get all {@link ProjectSampleAnalysisOutputInfo} for a {@link Project}.
-	 * <p>
-	 * Only non-collection analysis type outputs from shared or automated analyses are returned.
+	 * Get all {@link ProjectSampleAnalysisOutputInfo} shared with a {@link Project}.
 	 *
 	 * @param projectId {@link Project} id
-	 * @param userId    {@link User} id
 	 * @param workflowIds Workflow UUIDs of workflow pipelines to get output files for
 	 * @return a list of {@link ProjectSampleAnalysisOutputInfo}
 	 */
-	List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoForProject(Long projectId, Long userId, Set<UUID> workflowIds);
+	List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoSharedWithProject(Long projectId, Set<UUID> workflowIds);
+
+	/**
+	 * Get all automated {@link ProjectSampleAnalysisOutputInfo} for a {@link Project}.
+	 *
+	 * @param projectId {@link Project} id
+	 * @param workflowIds Workflow UUIDs of workflow pipelines to get output files for
+	 * @return a list of {@link ProjectSampleAnalysisOutputInfo}
+	 */
+	List<ProjectSampleAnalysisOutputInfo> getAllAutomatedAnalysisOutputInfoForAProject(Long projectId,
+			Set<UUID> workflowIds);
 }

@@ -77,6 +77,7 @@ public class AnalysisController {
 	public static final String PAGE_DETAILS_DIRECTORY = BASE + "details/";
 	public static final String PREVIEW_UNAVAILABLE = PAGE_DETAILS_DIRECTORY + "unavailable";
 	public static final String PAGE_ANALYSIS_LIST = "analyses/analyses";
+	public static final String PAGE_USER_ANALYSIS_OUPUTS = "analyses/user-analysis-outputs";
 
 	/*
 	 * SERVICES
@@ -149,6 +150,33 @@ public class AnalysisController {
 		model.addAttribute("states", AnalysisState.values());
 		model.addAttribute("analysisTypes", workflowsService.getRegisteredWorkflowTypes());
 		return PAGE_ANALYSIS_LIST;
+	}
+
+
+	/**
+	 * Get the user {@link Analysis} list page
+	 *
+	 * @param model Model for view variables
+	 * @return Name of the analysis page view
+	 */
+	@RequestMapping("/user/analysis-outputs")
+	public String getUserAnalysisOutputsPage(Model model) {
+		return PAGE_USER_ANALYSIS_OUPUTS;
+	}
+
+
+	@RequestMapping(value = "/ajax/user/analysis-outputs")
+	@ResponseBody
+	public List<ProjectSampleAnalysisOutputInfo> getAllUserAnalysisOutputInfo(Principal principal) {
+		final User user = userService.getUserByUsername(principal.getName());
+		return analysisSubmissionService.getAllUserAnalysisOutputInfo(user);
+	}
+
+	@RequestMapping(value = "/ajax/user/{userId}/analysis-outputs")
+	@ResponseBody
+	public List<ProjectSampleAnalysisOutputInfo> getAllUserAnalysisOutputInfo(@PathVariable Long userId) {
+		final User user = userService.read(userId);
+		return analysisSubmissionService.getAllUserAnalysisOutputInfo(user);
 	}
 
 	/**

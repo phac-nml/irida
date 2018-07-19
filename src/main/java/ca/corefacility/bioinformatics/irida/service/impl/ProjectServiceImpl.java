@@ -750,12 +750,27 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#projectId, 'canReadProject')")
-	public List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoForProject(Long projectId, Long userId) {
+	public List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoSharedWithProject(Long projectId) {
 		final Set<UUID> singleSampleWorkflowIds = getSingleSampleWorkflows();
 		logger.trace("N=" + singleSampleWorkflowIds.size() + ", Single sample workflows: " + singleSampleWorkflowIds);
-		final List<ProjectSampleAnalysisOutputInfo> infos = projectRepository.getAllAnalysisOutputInfoForProject(
-				projectId, userId, singleSampleWorkflowIds);
-		logger.trace("Found " + infos.size() + " output files for project id=" + projectId + " and user id=" + userId);
+		final List<ProjectSampleAnalysisOutputInfo> infos = projectRepository.getAllAnalysisOutputInfoSharedWithProject(
+				projectId, singleSampleWorkflowIds);
+		logger.trace("Found " + infos.size() + " output files for project id=" + projectId);
+		return infos;
+	}
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#projectId, 'canReadProject')")
+	public List<ProjectSampleAnalysisOutputInfo> getAllAutomatedAnalysisOutputInfoForAProject(Long projectId) {
+		final Set<UUID> singleSampleWorkflowIds = getSingleSampleWorkflows();
+		logger.trace("N=" + singleSampleWorkflowIds.size() + ", Single sample workflows: " + singleSampleWorkflowIds);
+		final List<ProjectSampleAnalysisOutputInfo> infos = projectRepository.getAllAutomatedAnalysisOutputInfoForAProject(
+				projectId, singleSampleWorkflowIds);
+		logger.trace("Found " + infos.size() + " output files for project id=" + projectId);
 		return infos;
 	}
 

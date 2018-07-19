@@ -13,7 +13,6 @@ import java.util.zip.ZipOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.sql.DataSource;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
@@ -847,18 +846,27 @@ public class ProjectSamplesController {
 	}
 
 	/**
-	 * Get analysis output file information for all analyses for a project.
+	 * Get analysis output file information for all analyses shared with a {@link Project}.
 	 *
 	 * @param projectId {@link Project} id
-	 * @param principal Principal user
 	 * @return list of {@link ProjectSampleAnalysisOutputInfo}
 	 */
-	@RequestMapping(value = "/projects/{projectId}/ajax/analysis-outputs")
+	@RequestMapping(value = "/projects/{projectId}/ajax/shared-analysis-outputs")
 	@ResponseBody
-	public List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoForProject(@PathVariable Long projectId,
-			Principal principal) {
-		final User user = userService.getUserByUsername(principal.getName());
-		return projectService.getAllAnalysisOutputInfoForProject(projectId, user.getId());
+	public List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoSharedWithProject(@PathVariable Long projectId) {
+		return projectService.getAllAnalysisOutputInfoSharedWithProject(projectId);
+	}
+
+	/**
+	 * Get analysis output file information for all automated analyses for a {@link Project}.
+	 *
+	 * @param projectId {@link Project} id
+	 * @return list of {@link ProjectSampleAnalysisOutputInfo}
+	 */
+	@RequestMapping(value = "/projects/{projectId}/ajax/automated-analysis-outputs")
+	@ResponseBody
+	public List<ProjectSampleAnalysisOutputInfo> getAllAutomatedAnalysisOutputInfoForAProject(@PathVariable Long projectId) {
+		return projectService.getAllAutomatedAnalysisOutputInfoForAProject(projectId);
 	}
 
 	/**

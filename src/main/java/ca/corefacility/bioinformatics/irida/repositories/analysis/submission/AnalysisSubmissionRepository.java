@@ -13,6 +13,7 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ProjectSampleAnalysisOutputInfo;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
 
@@ -115,4 +116,12 @@ public interface AnalysisSubmissionRepository extends IridaJpaRepository<Analysi
 	 */
 	@Query("FROM AnalysisSubmission s WHERE ?1 = referenceFile")
 	public Set<AnalysisSubmission> findByReferenceFile(ReferenceFile file);
+
+	/**
+	 * Get all {@link ca.corefacility.bioinformatics.irida.model.user.User} generated analysis output information.
+	 *
+	 * @param userId {@link ca.corefacility.bioinformatics.irida.model.user.User} id
+	 * @return a list of {@link ProjectSampleAnalysisOutputInfo}
+	 */
+	List<ProjectSampleAnalysisOutputInfo> getAllUserAnalysisOutputInfo(Long userId);
 }

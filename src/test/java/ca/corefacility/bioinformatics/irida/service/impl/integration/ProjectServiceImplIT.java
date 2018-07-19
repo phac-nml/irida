@@ -1068,14 +1068,14 @@ public class ProjectServiceImplIT {
 	private void checkAllOutputs(List<ProjectSampleAnalysisOutputInfo> outputs) throws ParseException {
 		final Set<ProjectSampleAnalysisOutputInfo> expectedOutputs = new HashSet<>(getExpectedOutputs());
 		outputs.forEach(
-				output -> assertTrue("getAllAnalysisOutputInfoForProject output does not match any expected outputs! " + output,
+				output -> assertTrue("getAllAnalysisOutputInfoSharedWithProject output does not match any expected outputs! " + output,
 						expectedOutputs.contains(output)));
 	}
 
 	@Test
 	@WithMockUser(username = "thisguy", roles = "USER")
 	public void testGetAllAnalysisOutputInfoForProject() throws ParseException {
-		final List<ProjectSampleAnalysisOutputInfo> infos = projectService.getAllAnalysisOutputInfoForProject(12L, 9L);
+		final List<ProjectSampleAnalysisOutputInfo> infos = projectService.getAllAnalysisOutputInfoSharedWithProject(12L);
 		assertEquals("There should be 4 ProjectSampleAnalysisOutputInfo, but there were " + infos.size(), 4L,
 				infos.size());
 		checkAllOutputs(infos);
@@ -1084,7 +1084,7 @@ public class ProjectServiceImplIT {
 	@Test
 	@WithMockUser(username = "otherguy", roles = "USER")
 	public void testGetAllAnalysisOutputInfoForProjectWithUserAnalyses() throws ParseException {
-		final List<ProjectSampleAnalysisOutputInfo> infos = projectService.getAllAnalysisOutputInfoForProject(12L, 10L);
+		final List<ProjectSampleAnalysisOutputInfo> infos = projectService.getAllAnalysisOutputInfoSharedWithProject(12L);
 		assertEquals("There should be 5 ProjectSampleAnalysisOutputInfo, but there were " + infos.size(), 5L,
 				infos.size());
 		checkAllOutputs(infos);
