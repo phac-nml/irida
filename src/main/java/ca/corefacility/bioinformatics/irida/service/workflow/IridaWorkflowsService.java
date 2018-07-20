@@ -14,6 +14,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowDefaultExcep
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.enums.config.AnalysisTypeSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowIdSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowSet;
@@ -41,7 +42,7 @@ public class IridaWorkflowsService {
 	 */
 	private Map<AnalysisType, UUID> defaultWorkflowForAnalysis;
 	
-	private Set<AnalysisType> disabledAnalysisTypes;
+	private AnalysisTypeSet disabledAnalysisTypes;
 	
 	/**
 	 * Builds a new {@link IridaWorkflowsService} for loading up installed
@@ -56,10 +57,9 @@ public class IridaWorkflowsService {
 	 *             If there was an issue when attempting to register the
 	 *             workflows.
 	 */
-	@Autowired
 	public IridaWorkflowsService(IridaWorkflowSet iridaWorkflows, IridaWorkflowIdSet defaultIridaWorkflows)
 			throws IridaWorkflowException {
-		this(iridaWorkflows, defaultIridaWorkflows, Sets.newHashSet());
+		this(iridaWorkflows, defaultIridaWorkflows, new AnalysisTypeSet());
 	}
 
 	/**
@@ -78,7 +78,7 @@ public class IridaWorkflowsService {
 	 *             workflows.
 	 */
 	@Autowired
-	public IridaWorkflowsService(IridaWorkflowSet iridaWorkflows, IridaWorkflowIdSet defaultIridaWorkflows, Set<AnalysisType> disabledAnalysisTypes)
+	public IridaWorkflowsService(IridaWorkflowSet iridaWorkflows, IridaWorkflowIdSet defaultIridaWorkflows, AnalysisTypeSet disabledAnalysisTypes)
 			throws IridaWorkflowException {
 		checkNotNull(iridaWorkflows, "iridaWorkflows is null");
 		checkNotNull(defaultIridaWorkflows, "defaultWorkflows is null");
@@ -265,7 +265,7 @@ public class IridaWorkflowsService {
 	 * @return A {@link Set} of disabled {@link AnalysisType}s.
 	 */
 	public Set<AnalysisType> getDisplayableWorkflowTypes() {
-		return Sets.difference(getRegisteredWorkflowTypes(), disabledAnalysisTypes);
+		return Sets.difference(getRegisteredWorkflowTypes(), disabledAnalysisTypes.getAnalysisTypes());
 	}
 
 	/**
