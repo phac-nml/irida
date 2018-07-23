@@ -126,4 +126,4 @@ Data can be exported as either Excel or CSV formats.  Ony the fields currently i
 
 Hovering over the `Export` button which will reveal a dropdown where you can select from either `Export as Excel` or `Export as CSV`, the download will begin automatically.
 
-![Export Buttons](images/linelist_export.gif)
+![Export Buttons](images/linelist_export.png)
