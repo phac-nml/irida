@@ -3,6 +3,7 @@ Changes
 
 0.22.0 to 0.23.0
 ----------------
+* [UI]: Added the sample coverage to the table exported from the project samples page.
 
 0.21.0 to 0.22.0
 ----------------
