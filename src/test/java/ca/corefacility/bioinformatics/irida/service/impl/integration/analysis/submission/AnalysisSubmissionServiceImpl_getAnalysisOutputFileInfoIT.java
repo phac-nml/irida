@@ -31,7 +31,7 @@ import com.google.common.collect.ImmutableSet;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Tests for an analysis service.
+ * Tests for an analysis service methods for getting analysis output file info for projects and users.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class })

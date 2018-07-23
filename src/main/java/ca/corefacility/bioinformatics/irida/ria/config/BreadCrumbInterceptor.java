@@ -70,22 +70,9 @@ public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 
 					crumbs.add(
 							ImmutableMap.of(
-									"text", messageSource.getMessage("bc." + noun, null, locale),
+									"text", tryGetMessage(noun, locale),
 									"url", url.toString())
 					);
-
-					// Check to see if there is a next part, if there is it is expected to be an id.
-					if (parts.length > ++counter) {
-						String id = parts[counter];
-						url.append("/");
-						url.append(id);
-						crumbs.add(
-								ImmutableMap.of(
-										"text", id,
-										"url", url.toString()
-								)
-						);
-					}
 				}
 
 				// Add the breadcrumbs to the model
@@ -93,6 +80,21 @@ public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 			} catch (NoSuchMessageException e) {
 				logger.debug("Missing internationalization for breadcrumb", e.getMessage());
 			}
+		}
+	}
+
+	/**
+	 * Try to get the i18n message for a noun, if it doesn't exist, return the noun as is.
+	 *
+	 * @param noun Breadcrumb noun to get i18n message for (i.e. "bc.{noun}")
+	 * @param locale Locale
+	 * @return Internationalized message or original noun if message doesn't exist (e.g. noun is an id number)
+	 */
+	private String tryGetMessage(String noun, Locale locale) {
+		try {
+			return messageSource.getMessage("bc." + noun, null, locale);
+		} catch (NoSuchMessageException e) {
+			return noun;
 		}
 	}
 

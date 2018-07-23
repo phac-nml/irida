@@ -17,6 +17,9 @@ import org.springframework.stereotype.Repository;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ProjectSampleAnalysisOutputInfo;
 
+/**
+ * Implementation of {@link AnalysisSubmissionRepositoryCustom} with methods using native SQL queries to get {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile} info for {@link ca.corefacility.bioinformatics.irida.model.project.Project} and {@link ca.corefacility.bioinformatics.irida.model.user.User}
+ */
 @Repository
 public class AnalysisSubmissionRepositoryImpl implements AnalysisSubmissionRepositoryCustom {
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisSubmissionRepositoryImpl.class);

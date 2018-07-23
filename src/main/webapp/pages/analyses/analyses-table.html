@@ -110,13 +110,11 @@
 
 
 <th:block th:fragment="batch-download">
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title" th:text="#{analysis.batch-download.title}">__BATCH DOWNLOAD__</h3>
-        </div>
-        <div class="panel-body">
-            <div id="app"></div>
-        </div>
+    <div id="app">
+        <span>
+            <i class="fa fa-spinner fa-spin fa-2x spaced-left__sm" aria-hidden="true"></i>
+            <th:block th:text="#{visualization.phylogenomics.loading}"></th:block>
+        </span>
     </div>
 </th:block>
 
@@ -177,6 +175,7 @@
           automatedAnalyses: /*[[@{/analysis/ajax/project/{projectId}/automated-analysis-outputs(projectId=${project?.getId()?.toString()})}]]*/ ""
         },
         projectId: /*[[${ project?.getId()?.toString() }]]*/ '666',
+        page: /*[[${ page }]]*/ 'shared',
       });
     </script>
     <script th:src="@{/resources/dist/js/analysis-outputs-table.bundle.js}"></script>

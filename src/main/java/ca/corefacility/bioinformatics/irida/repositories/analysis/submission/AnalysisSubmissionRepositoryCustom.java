@@ -7,6 +7,9 @@ import java.util.UUID;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ProjectSampleAnalysisOutputInfo;
 
+/**
+ * Interface for methods using native SQL queries to get {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile} info for {@link ca.corefacility.bioinformatics.irida.model.project.Project} and {@link ca.corefacility.bioinformatics.irida.model.user.User}
+ */
 public interface AnalysisSubmissionRepositoryCustom {
 
 	/**

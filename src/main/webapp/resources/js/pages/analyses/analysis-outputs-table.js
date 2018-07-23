@@ -269,30 +269,6 @@ function getWorkflowInfo(singleSampleOutputs) {
 }
 
 /**
- * Create radio button toggle for showing
- *
- * @param {boolean} isShared Check shared outputs if true, show automated outputs if false
- */
-function createSharedOrAutomatedRadioButtons(isShared = true) {
-  const $toggleSharedOrAutomated = $(`<div>
-    <input type="radio" id="sharedAnalyses" value="shared" name="sharedOrAutomated" ${
-      isShared ? "checked" : ""
-    }>
-    <label for="sharedAnalyses">${MESSAGES.sharedAnalyses}</label>
-    <input type="radio" id="automatedAnalyses" value="automated" name="sharedOrAutomated" ${
-      isShared ? "" : "checked"
-    }>
-    <label for="automatedAnalyses">${MESSAGES.automatedAnalyses}</label>
-  </div>`);
-
-  $app.prepend($toggleSharedOrAutomated);
-
-  $("input[type=radio][name=sharedOrAutomated]").on("change", e => {
-    getTableData(e.target.value === "shared");
-  });
-}
-
-/**
  * Get analysis output file (AOF) table information and create table.
  * @param {boolean} isShared If project analyses to be shown, show outputs shared with project, otherwise show automated analyses.
  */
@@ -393,9 +369,6 @@ function getTableData(isShared = true) {
         singleSampleOutputs,
         $dlButton
       );
-      if (getProjectId()) {
-        createSharedOrAutomatedRadioButtons(isShared);
-      }
     })
     .fail((xhr, error, exception) => {
       const $alert = $(
@@ -416,4 +389,4 @@ function getTableData(isShared = true) {
 }
 
 // init table on page load with outputs shared to project
-getTableData();
+getTableData(window.PAGE.page === "shared");

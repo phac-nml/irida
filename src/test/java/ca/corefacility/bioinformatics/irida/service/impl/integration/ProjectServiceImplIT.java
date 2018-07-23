@@ -114,7 +114,7 @@ public class ProjectServiceImplIT {
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testGetPagedProjectsForAdminWithGlobalSearch() {
 		final Page<Project> projects = projectService.findAllProjects("proj", 0, 10, new Sort(Direction.ASC, "id"));
-		assertEquals("Admin should have 10 projects for filter", 10, projects.getNumberOfElements());
+		assertEquals("Admin should have 9 projects for filter", 9, projects.getNumberOfElements());
 
 		final Page<Project> listeriaProjects = projectService.findAllProjects("lister", 0, 10,
 				new Sort(Direction.ASC, "id"));
@@ -403,7 +403,7 @@ public class ProjectServiceImplIT {
 	public void testFindAllProjectsAsAdmin() {
 		List<Project> projects = (List<Project>) projectService.findAll();
 
-		assertEquals("Wrong number of projects.", 12, projects.size());
+		assertEquals("Wrong number of projects.", 11, projects.size());
 	}
 
 	@Test
@@ -450,7 +450,7 @@ public class ProjectServiceImplIT {
 	public void testSearchProjects() {
 		// search for a number
 		final Page<Project> searchFor2 = projectService.findAllProjects("2", 0, 10, new Sort(Direction.ASC, "name"));
-		assertEquals(3, searchFor2.getTotalElements());
+		assertEquals(2, searchFor2.getTotalElements());
 		Project next = searchFor2.iterator().next();
 		assertTrue(next.getName().contains("2"));
 
