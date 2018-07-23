@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowDefaultException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotDisplayableException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.enums.config.AnalysisTypeSet;
@@ -284,6 +285,27 @@ public class IridaWorkflowsService {
 			return allRegisteredWorkflows.get(workflowId);
 		} else {
 			throw new IridaWorkflowNotFoundException(workflowId);
+		}
+	}
+	
+	/**
+	 * Returns a workflow with the given id that is displayable.
+	 * 
+	 * @param workflowId The identifier of the workflow to get.
+	 * @return An {@link IridaWorkflow} with the given identifier that is
+	 *         displayable.
+	 * @throws IridaWorkflowNotDisplayableException If no workflow with the given
+	 *                                              identifier is not displayable.
+	 * @throws IridaWorkflowNotFoundException       If the workflow was not found.
+	 */
+	public IridaWorkflow getDisplayableIridaWorkflow(UUID workflowId)
+			throws IridaWorkflowNotDisplayableException, IridaWorkflowNotFoundException {
+		IridaWorkflow workflow = getIridaWorkflow(workflowId);
+
+		if (getDisplayableWorkflowTypes().contains(workflow.getWorkflowDescription().getAnalysisType())) {
+			return workflow;
+		} else {
+			throw new IridaWorkflowNotDisplayableException(workflowId);
 		}
 	}
 
