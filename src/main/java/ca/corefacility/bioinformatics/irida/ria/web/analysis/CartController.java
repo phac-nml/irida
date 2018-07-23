@@ -4,6 +4,8 @@ import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
@@ -38,6 +40,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @Scope("session")
 @RequestMapping("/cart")
 public class CartController {
+	private static final Logger logger = LoggerFactory.getLogger(CartController.class);
 	private Map<Project, Set<Sample>> selected;
 	
 	private final SampleService sampleService;
@@ -158,22 +161,53 @@ public class CartController {
 	public Map<String, Object> addProjectSample(@RequestParam Long projectId,
 			@RequestParam(value = "sampleIds[]") Set<Long> sampleIds, Locale locale) {
 		Project project = projectService.read(projectId);
+		final Map<String, Sample> selectedNameToSample = selected.entrySet()
+				.stream()
+				.flatMap(entry -> entry.getValue()
+						.stream())
+				.collect(Collectors.toMap(Sample::getSampleName, sample -> sample));
 		Set<Sample> samples = loadSamplesForProject(project, sampleIds);
+		final Set<Sample> selectedSamples = new HashSet<>(selectedNameToSample.values());
+		final boolean removedSamples = samples.removeAll(selectedSamples);
+		if (removedSamples)
+			logger.trace("Removed Samples already in cart.");
+		final Map<String, Sample> nameToSample = samples.stream()
+				.collect(Collectors.toMap(Sample::getSampleName, sample -> sample));
+		Set<Sample> dupSamples = new HashSet<>();
+		nameToSample.forEach((name, sample) -> {
+			if (selectedNameToSample.containsKey(name)) {
+				dupSamples.add(sample);
+			}
+		});
+		if (!dupSamples.isEmpty()) {
+			samples.removeAll(dupSamples);
+			logger.trace(
+					"Samples with existing sample names (n=" + dupSamples.size() + " not added to cart: " + dupSamples);
+		}
 
 		getSelectedSamplesForProject(project).addAll(samples);
 
+		final int samplesSize = samples.size();
 		String message;
-		if (sampleIds.size() == 1) {
-			message = messageSource.getMessage("cart.one-sample-added", new Object[] {
-				project.getLabel()
-			}, locale);
-		} else {
-			message = messageSource.getMessage("cart.many-samples-added", new Object[] {
-					sampleIds.size(),
-					project.getLabel()
-			}, locale);
+		if (samplesSize == 0) {
+			message = messageSource.getMessage("cart.no-samples-added", new Object[] { project.getLabel() }, locale);
+		} else if (samplesSize == 1)
+			message = messageSource.getMessage("cart.one-sample-added", new Object[] { project.getLabel() }, locale);
+		else
+			message = messageSource.getMessage("cart.many-samples-added",
+					new Object[] { samplesSize, project.getLabel() }, locale);
+		Map<String, Object> out = new HashMap<>();
+
+		if (!dupSamples.isEmpty()) {
+			out.put("excluded", dupSamples.stream()
+					.map(sample -> sample.getSampleName() + " (id=" + sample.getId() + "; project='"
+							+ project.getLabel() + "' (id=" + project.getId() + "))")
+					.collect(Collectors.toList()));
+			message += " " + messageSource.getMessage("cart.excluded", null, locale);
 		}
-		return ImmutableMap.of("message", message);
+
+		out.put("message", message);
+		return out;
 	}
 
 	/**
