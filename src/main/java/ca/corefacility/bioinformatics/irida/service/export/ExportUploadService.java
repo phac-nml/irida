@@ -533,7 +533,7 @@ public class ExportUploadService {
 	 * @throws UploadException
 	 *             if file could not be uploaded
 	 */
-	private void uploadString(FTPClient client, String filename, String content) throws UploadException {
+	private void uploadString(FTPClient client, String filename, String content) throws UploadException, IOException {
 		int tries = 0;
 		boolean done = false;
 
@@ -546,9 +546,15 @@ public class ExportUploadService {
 				done = true;
 			} catch (Exception e) {
 				String reply = client.getReplyString();
-				logger.error("Error uploading file: " + reply, e);
 				if (tries >= MAX_RETRIES) {
 					throw new UploadException("Could not upload file " + filename + " : " + reply, e);
+				}
+				logger.error("Error uploading file: " + reply, e);
+
+				try {
+					Thread.sleep(2000L);
+				} catch (InterruptedException e1) {
+					throw new UploadException("Sleep failed", e1);
 				}
 			}
 		} while (!done);
@@ -562,7 +568,7 @@ public class ExportUploadService {
 	 * @param path     {@link Path} to upload
 	 * @throws UploadException if file could not be uploaded
 	 */
-	private void uploadPath(FTPClient client, String filename, Path path) throws UploadException {
+	private void uploadPath(FTPClient client, String filename, Path path) throws UploadException, IOException {
 		int tries = 0;
 		boolean done = false;
 		do {
@@ -574,9 +580,15 @@ public class ExportUploadService {
 				done = true;
 			} catch (Exception e) {
 				String reply = client.getReplyString();
-				logger.error("Error uploading file: " + reply, e);
 				if (tries >= MAX_RETRIES) {
 					throw new UploadException("Could not upload file " + filename + " : " + reply, e);
+				}
+				logger.error("Error uploading file: " + reply, e);
+
+				try {
+					Thread.sleep(2000L);
+				} catch (InterruptedException e1) {
+					throw new UploadException("Sleep failed", e1);
 				}
 			}
 		} while (!done);
