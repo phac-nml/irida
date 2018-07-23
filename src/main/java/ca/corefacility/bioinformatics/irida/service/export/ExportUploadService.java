@@ -83,6 +83,8 @@ public class ExportUploadService {
 
 	private static final int MAX_RETRIES = 3;
 
+	private static final long WAIT_BETWEEN_RETRIES = 5000L;
+
 	// set of statuses that should be watched and update
 	private static Set<ExportUploadState> updateableStates = ImmutableSet.of(ExportUploadState.UPLOADED,
 			ExportUploadState.SUBMITTED, ExportUploadState.CREATED, ExportUploadState.QUEUED,
@@ -552,7 +554,7 @@ public class ExportUploadService {
 				logger.error("Error uploading file: " + reply, e);
 
 				try {
-					Thread.sleep(2000L);
+					Thread.sleep(WAIT_BETWEEN_RETRIES);
 				} catch (InterruptedException e1) {
 					throw new UploadException("Sleep failed", e1);
 				}
@@ -586,7 +588,7 @@ public class ExportUploadService {
 				logger.error("Error uploading file: " + reply, e);
 
 				try {
-					Thread.sleep(2000L);
+					Thread.sleep(WAIT_BETWEEN_RETRIES);
 				} catch (InterruptedException e1) {
 					throw new UploadException("Sleep failed", e1);
 				}
