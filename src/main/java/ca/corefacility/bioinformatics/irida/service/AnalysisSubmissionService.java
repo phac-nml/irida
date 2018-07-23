@@ -269,5 +269,26 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 */
 	public AnalysisSubmission updatePriority(AnalysisSubmission submission, AnalysisSubmission.Priority priority);
 
+	/**
+	 * Get all {@link User} generated {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile} info
+	 * @param user {@link User}
+	 * @return List of {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile} info
+	 */
 	List<ProjectSampleAnalysisOutputInfo> getAllUserAnalysisOutputInfo(User user);
+
+	/**
+	 * Get all {@link ProjectSampleAnalysisOutputInfo} for a {@link Project}.
+	 *
+	 * @param projectId {@link Project} id
+	 * @return a list of {@link ProjectSampleAnalysisOutputInfo}
+	 */
+	List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoSharedWithProject(Long projectId);
+
+	/**
+	 * Get all automated {@link ProjectSampleAnalysisOutputInfo} for a {@link Project}.
+	 *
+	 * @param projectId {@link Project} id
+	 * @return a list of {@link ProjectSampleAnalysisOutputInfo}
+	 */
+	List<ProjectSampleAnalysisOutputInfo> getAllAutomatedAnalysisOutputInfoForAProject(Long projectId);
 }

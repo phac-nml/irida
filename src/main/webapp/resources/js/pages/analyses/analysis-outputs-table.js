@@ -61,9 +61,9 @@ function getProjectId() {
 function getAjaxUrl(isShared = true) {
   const projectId = getProjectId();
   if (projectId) {
-    return `${BASE_URL}projects/${projectId}/ajax/${
-      isShared ? "shared" : "automated"
-    }-analysis-outputs`;
+    return isShared
+      ? window.PAGE.URLS.sharedAnalyses
+      : window.PAGE.URLS.automatedAnalyses;
   } else {
     return `${BASE_URL}analysis/ajax/user/analysis-outputs`;
   }

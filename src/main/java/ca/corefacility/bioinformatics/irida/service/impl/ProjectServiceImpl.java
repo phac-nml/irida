@@ -748,45 +748,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#projectId, 'canReadProject')")
-	public List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoSharedWithProject(Long projectId) {
-		final Set<UUID> singleSampleWorkflowIds = getSingleSampleWorkflows();
-		logger.trace("N=" + singleSampleWorkflowIds.size() + ", Single sample workflows: " + singleSampleWorkflowIds);
-		final List<ProjectSampleAnalysisOutputInfo> infos = projectRepository.getAllAnalysisOutputInfoSharedWithProject(
-				projectId, singleSampleWorkflowIds);
-		logger.trace("Found " + infos.size() + " output files for project id=" + projectId);
-		return infos;
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#projectId, 'canReadProject')")
-	public List<ProjectSampleAnalysisOutputInfo> getAllAutomatedAnalysisOutputInfoForAProject(Long projectId) {
-		final Set<UUID> singleSampleWorkflowIds = getSingleSampleWorkflows();
-		logger.trace("N=" + singleSampleWorkflowIds.size() + ", Single sample workflows: " + singleSampleWorkflowIds);
-		final List<ProjectSampleAnalysisOutputInfo> infos = projectRepository.getAllAutomatedAnalysisOutputInfoForAProject(
-				projectId, singleSampleWorkflowIds);
-		logger.trace("Found " + infos.size() + " output files for project id=" + projectId);
-		return infos;
-	}
-
-	private Set<UUID> getSingleSampleWorkflows() {
-		return iridaWorkflowsService.getRegisteredWorkflows()
-				.stream()
-				.filter(workflow -> workflow.getWorkflowDescription()
-						.getInputs()
-						.requiresSingleSample())
-				.map(IridaWorkflow::getWorkflowIdentifier)
-				.collect(Collectors.toSet());
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
 	@PreAuthorize("hasPermission(#submission, 'canReadAnalysisSubmission')")
 	@PostFilter("hasPermission(filterObject, 'canReadProject')")
 	@Override

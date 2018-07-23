@@ -164,7 +164,11 @@ public class AnalysisController {
 		return PAGE_USER_ANALYSIS_OUPUTS;
 	}
 
-
+	/**
+	 * Get all {@link User} generated {@link AnalysisOutputFile} info for principal User
+	 * @param principal Principal {@link User}
+	 * @return {@link User} generated {@link AnalysisOutputFile} info
+	 */
 	@RequestMapping(value = "/ajax/user/analysis-outputs")
 	@ResponseBody
 	public List<ProjectSampleAnalysisOutputInfo> getAllUserAnalysisOutputInfo(Principal principal) {
@@ -172,11 +176,41 @@ public class AnalysisController {
 		return analysisSubmissionService.getAllUserAnalysisOutputInfo(user);
 	}
 
+	/**
+	 * Get all {@link User} generated {@link AnalysisOutputFile} info
+	 * @param userId {@link User} id
+	 * @return {@link User} generated {@link AnalysisOutputFile} info
+	 */
 	@RequestMapping(value = "/ajax/user/{userId}/analysis-outputs")
 	@ResponseBody
 	public List<ProjectSampleAnalysisOutputInfo> getAllUserAnalysisOutputInfo(@PathVariable Long userId) {
 		final User user = userService.read(userId);
 		return analysisSubmissionService.getAllUserAnalysisOutputInfo(user);
+	}
+
+
+	/**
+	 * Get analysis output file information for all analyses shared with a {@link Project}.
+	 *
+	 * @param projectId {@link Project} id
+	 * @return list of {@link ProjectSampleAnalysisOutputInfo}
+	 */
+	@RequestMapping(value = "/ajax/project/{projectId}/shared-analysis-outputs")
+	@ResponseBody
+	public List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoSharedWithProject(@PathVariable Long projectId) {
+		return analysisSubmissionService.getAllAnalysisOutputInfoSharedWithProject(projectId);
+	}
+
+	/**
+	 * Get analysis output file information for all automated analyses for a {@link Project}.
+	 *
+	 * @param projectId {@link Project} id
+	 * @return list of {@link ProjectSampleAnalysisOutputInfo}
+	 */
+	@RequestMapping(value = "/ajax/project/{projectId}/automated-analysis-outputs")
+	@ResponseBody
+	public List<ProjectSampleAnalysisOutputInfo> getAllAutomatedAnalysisOutputInfoForAProject(@PathVariable Long projectId) {
+		return analysisSubmissionService.getAllAutomatedAnalysisOutputInfoForAProject(projectId);
 	}
 
 	/**

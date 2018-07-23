@@ -142,13 +142,15 @@
          th:data-submitter="#{analyses.submitter}"
          th:data-analysis-submission-name="#{analysis-submission}"
          th:data-preparing="#{analysis.batch-download.preparing}"
+         th:data-shared-analyses="#{analysis.shared-analyses}"
+         th:data-automated-analyses="#{analysis.automated-analyses}"
     >
     </div>
 </th:block>
 
 <th:block th:fragment="scripts">
     <script th:inline="javascript">
-      var PAGE = {
+      window.PAGE = Object.assign(window.PAGE || {}, {
         URLS: {
           base: /*[[@{/}]]*/ '/',
           analyses: /*[[@{${ajaxURL}}]]*/ "",
@@ -160,12 +162,23 @@
           unexpectedDeleteError: /*[[#{analysis.delete.unexpected.exception}]]*/ ""
         },
         projectId: /*[[${ project?.getId()?.toString() }]]*/ '666',
-      };
+      });
     </script>
     <script th:src="@{/resources/dist/js/analyses-table.bundle.js}"></script>
 </th:block>
 
 <th:block th:fragment="batch-download-scripts">
+    <script th:inline="javascript">
+      window.PAGE = Object.assign(window.PAGE || {}, {
+        URLS: {
+          base: /*[[@{/}]]*/ '/',
+          analyses: /*[[@{${ajaxURL}}]]*/ "",
+          sharedAnalyses: /*[[@{/analysis/ajax/project/{projectId}/shared-analysis-outputs(projectId=${project?.getId()?.toString()})}]]*/ "",
+          automatedAnalyses: /*[[@{/analysis/ajax/project/{projectId}/automated-analysis-outputs(projectId=${project?.getId()?.toString()})}]]*/ ""
+        },
+        projectId: /*[[${ project?.getId()?.toString() }]]*/ '666',
+      });
+    </script>
     <script th:src="@{/resources/dist/js/analysis-outputs-table.bundle.js}"></script>
 </th:block>
 

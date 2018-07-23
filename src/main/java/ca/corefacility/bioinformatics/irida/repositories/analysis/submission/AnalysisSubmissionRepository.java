@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -124,4 +125,23 @@ public interface AnalysisSubmissionRepository extends IridaJpaRepository<Analysi
 	 * @return a list of {@link ProjectSampleAnalysisOutputInfo}
 	 */
 	List<ProjectSampleAnalysisOutputInfo> getAllUserAnalysisOutputInfo(Long userId);
+
+	/**
+	 * Get all {@link ProjectSampleAnalysisOutputInfo} shared with a {@link Project}.
+	 *
+	 * @param projectId {@link Project} id
+	 * @param workflowIds Workflow UUIDs of workflow pipelines to get output files for
+	 * @return a list of {@link ProjectSampleAnalysisOutputInfo}
+	 */
+	List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoSharedWithProject(Long projectId, Set<UUID> workflowIds);
+
+	/**
+	 * Get all automated {@link ProjectSampleAnalysisOutputInfo} for a {@link Project}.
+	 *
+	 * @param projectId {@link Project} id
+	 * @param workflowIds Workflow UUIDs of workflow pipelines to get output files for
+	 * @return a list of {@link ProjectSampleAnalysisOutputInfo}
+	 */
+	List<ProjectSampleAnalysisOutputInfo> getAllAutomatedAnalysisOutputInfoForAProject(Long projectId,
+			Set<UUID> workflowIds);
 }

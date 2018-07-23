@@ -5,9 +5,10 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
@@ -33,7 +34,6 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.*;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -44,7 +44,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ProjectSampleAnalysisOutputInfo;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
@@ -985,109 +984,5 @@ public class ProjectServiceImplIT {
 		s.setDescription("Description");
 
 		return s;
-	}
-
-	private List<ProjectSampleAnalysisOutputInfo> getExpectedOutputs() throws ParseException {
-		final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.S");
-		final Date date = dateFormat.parse("2018-07-04 10:00:00.0");
-		// @formatter:off
-		final ProjectSampleAnalysisOutputInfo outputInfo4 = new ProjectSampleAnalysisOutputInfo(4L,
-				"sample4",
-				1234L,
-				"tree",
-				"testfile.fasta",
-				1L,
-				AnalysisType.ASSEMBLY_ANNOTATION,
-				UUID.fromString("87186c71-5c8a-4027-a9d9-b29850cebdb3"),
-				date,
-				"sub1",
-				999L,
-				9L,
-				"This",
-				"Guy");
-		final ProjectSampleAnalysisOutputInfo outputInfo5 = new ProjectSampleAnalysisOutputInfo(5L,
-				"sample5",
-				1234L,
-				"tree",
-				"testfile.fasta",
-				1L,
-				AnalysisType.ASSEMBLY_ANNOTATION,
-				UUID.fromString("87186c71-5c8a-4027-a9d9-b29850cebdb3"),
-				date,
-				"sub1",
-				999L,
-				9L,
-				"This",
-				"Guy");
-		final ProjectSampleAnalysisOutputInfo outputInfo6 = new ProjectSampleAnalysisOutputInfo(6L,
-				"sample6",
-				777L,
-				"contigs",
-				"testfile2.fasta",
-				2020L,
-				AnalysisType.ASSEMBLY_ANNOTATION,
-				UUID.fromString("87186c71-5c8a-4027-a9d9-b29850cebdb3"),
-				date,
-				"auto assembly",
-				9876L,
-				5L,
-				"Ad",
-				"Min");
-		final ProjectSampleAnalysisOutputInfo outputInfo7 = new ProjectSampleAnalysisOutputInfo(6L,
-				"sample6",
-				888L,
-				"sistr",
-				"sistr.json",
-				3030L,
-				AnalysisType.SISTR_TYPING,
-				UUID.fromString("92ecf046-ee09-4271-b849-7a82625d6b60"),
-				date,
-				"auto sistr",
-				5555L,
-				5L,
-				"Ad",
-				"Min");
-		final ProjectSampleAnalysisOutputInfo outputInfo8 = new ProjectSampleAnalysisOutputInfo(6L,
-				"sample6",
-				999L,
-				"sistr",
-				"sistr2.json",
-				4040L,
-				AnalysisType.SISTR_TYPING,
-				UUID.fromString("92ecf046-ee09-4271-b849-7a82625d6b60"),
-				date,
-				"not sharing my sistr",
-				6666L,
-				10L,
-				"Other",
-				"Guy");
-		// @formatter:on
-		return ImmutableList.of(outputInfo4, outputInfo5, outputInfo6, outputInfo7, outputInfo8);
-	}
-
-	private void checkAllOutputs(List<ProjectSampleAnalysisOutputInfo> outputs) throws ParseException {
-		final Set<ProjectSampleAnalysisOutputInfo> expectedOutputs = new HashSet<>(getExpectedOutputs());
-		outputs.forEach(
-				output -> assertTrue("getAllAnalysisOutputInfoSharedWithProject output does not match any expected outputs! " + output,
-						expectedOutputs.contains(output)));
-	}
-
-	@Test
-	@WithMockUser(username = "thisguy", roles = "USER")
-	public void testGetAllAnalysisOutputInfoForProject() throws ParseException {
-		final List<ProjectSampleAnalysisOutputInfo> infos = projectService.getAllAnalysisOutputInfoSharedWithProject(12L);
-		assertEquals("There should be 4 ProjectSampleAnalysisOutputInfo, but there were " + infos.size(), 4L,
-				infos.size());
-		checkAllOutputs(infos);
-	}
-
-	@Test
-	@WithMockUser(username = "otherguy", roles = "USER")
-	public void testGetAllAnalysisOutputInfoForProjectWithUserAnalyses() throws ParseException {
-		final List<ProjectSampleAnalysisOutputInfo> infos = projectService.getAllAnalysisOutputInfoSharedWithProject(12L);
-		assertEquals("There should be 5 ProjectSampleAnalysisOutputInfo, but there were " + infos.size(), 5L,
-				infos.size());
-		checkAllOutputs(infos);
-
 	}
 }

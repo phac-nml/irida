@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.repositories;
 
 import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +11,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ProjectSampleAnalysisOutputInfo;
 
 /**
  * Specialized repository for {@link Project}.
@@ -88,23 +85,4 @@ public interface ProjectRepository extends IridaJpaRepository<Project, Long> {
 	 */
 	@Query("FROM Project p WHERE p.remoteStatus != NULL")
 	public List<Project> getRemoteProjects();
-
-	/**
-	 * Get all {@link ProjectSampleAnalysisOutputInfo} shared with a {@link Project}.
-	 *
-	 * @param projectId {@link Project} id
-	 * @param workflowIds Workflow UUIDs of workflow pipelines to get output files for
-	 * @return a list of {@link ProjectSampleAnalysisOutputInfo}
-	 */
-	List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoSharedWithProject(Long projectId, Set<UUID> workflowIds);
-
-	/**
-	 * Get all automated {@link ProjectSampleAnalysisOutputInfo} for a {@link Project}.
-	 *
-	 * @param projectId {@link Project} id
-	 * @param workflowIds Workflow UUIDs of workflow pipelines to get output files for
-	 * @return a list of {@link ProjectSampleAnalysisOutputInfo}
-	 */
-	List<ProjectSampleAnalysisOutputInfo> getAllAutomatedAnalysisOutputInfoForAProject(Long projectId,
-			Set<UUID> workflowIds);
 }

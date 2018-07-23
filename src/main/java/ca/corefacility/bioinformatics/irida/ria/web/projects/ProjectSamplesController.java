@@ -846,30 +846,6 @@ public class ProjectSamplesController {
 	}
 
 	/**
-	 * Get analysis output file information for all analyses shared with a {@link Project}.
-	 *
-	 * @param projectId {@link Project} id
-	 * @return list of {@link ProjectSampleAnalysisOutputInfo}
-	 */
-	@RequestMapping(value = "/projects/{projectId}/ajax/shared-analysis-outputs")
-	@ResponseBody
-	public List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoSharedWithProject(@PathVariable Long projectId) {
-		return projectService.getAllAnalysisOutputInfoSharedWithProject(projectId);
-	}
-
-	/**
-	 * Get analysis output file information for all automated analyses for a {@link Project}.
-	 *
-	 * @param projectId {@link Project} id
-	 * @return list of {@link ProjectSampleAnalysisOutputInfo}
-	 */
-	@RequestMapping(value = "/projects/{projectId}/ajax/automated-analysis-outputs")
-	@ResponseBody
-	public List<ProjectSampleAnalysisOutputInfo> getAllAutomatedAnalysisOutputInfoForAProject(@PathVariable Long projectId) {
-		return projectService.getAllAutomatedAnalysisOutputInfoForAProject(projectId);
-	}
-
-	/**
 	 * Rename a filename {@code original} and ensure it doesn't exist in {@code usedNames}. Uses the windows style of
 	 * renaming file.ext to file (1).ext
 	 *

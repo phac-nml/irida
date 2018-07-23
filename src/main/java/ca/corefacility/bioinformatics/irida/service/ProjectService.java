@@ -439,20 +439,4 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @return the created {@link Project}
 	 */
 	public Project createProjectWithSamples(Project project, List<Long> sampleIds);
-
-	/**
-	 * Get all {@link ProjectSampleAnalysisOutputInfo} for a {@link Project}.
-	 *
-	 * @param projectId {@link Project} id
-	 * @return a list of {@link ProjectSampleAnalysisOutputInfo}
-	 */
-	List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoSharedWithProject(Long projectId);
-
-	/**
-	 * Get all automated {@link ProjectSampleAnalysisOutputInfo} for a {@link Project}.
-	 *
-	 * @param projectId {@link Project} id
-	 * @return a list of {@link ProjectSampleAnalysisOutputInfo}
-	 */
-	List<ProjectSampleAnalysisOutputInfo> getAllAutomatedAnalysisOutputInfoForAProject(Long projectId);
 }

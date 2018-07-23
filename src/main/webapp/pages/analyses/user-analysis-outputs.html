@@ -9,18 +9,17 @@
 </head>
 <body>
 <div class="col-md-12" layout:fragment="page">
-    <!--TODO: i18n-->
-    <h2>Your Analysis Outputs!</h2>
+    <h2 th:text="#{analysis.batch-download.user-title}">__YOUR_ANALYSIS_OUTPUTS__</h2>
     <th:block th:replace="analyses/analyses-table :: batch-download"/>
     <th:block th:replace="analyses/analyses-table :: messages"/>
 </div>
 <th:block layout:fragment="scripts">
     <script th:inline="javascript">
-      var PAGE = {
+      window.PAGE = Object.assign(window.PAGE || {}, {
         URLS: {
           base: /*[[@{/}]]*/ '/',
         }
-      };
+      });
     </script>
     <th:block th:replace="analyses/analyses-table :: batch-download-scripts"/>
 </th:block>

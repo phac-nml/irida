@@ -73,12 +73,6 @@
                                 User analysis outputs
                             </a>
                         </li>
-                        <li sec:authorize="hasAnyRole('ROLE_ADMIN')">
-                            <a th:href="@{/analysis/user/analysis-outputs/admin}"
-                               th:text="#{analysis.sidebar.output-files}">
-                                Admin user analysis outputs
-                            </a>
-                        </li>
                     </ul>
                 </li>
             </ul>
