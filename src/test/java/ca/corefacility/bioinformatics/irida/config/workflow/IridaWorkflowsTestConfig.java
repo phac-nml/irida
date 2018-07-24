@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Profile;
 import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
+import ca.corefacility.bioinformatics.irida.model.enums.config.AnalysisTypeSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.TestAnalysis;
@@ -56,5 +57,10 @@ public class IridaWorkflowsTestConfig {
 	@Bean
 	public IridaWorkflowIdSet defaultIridaWorkflows() {
 		return new IridaWorkflowIdSet(Sets.newHashSet(testAnalysisDefaultId, phylogenomicsPipelineDefaultId, assemblyAnnotationPipelineDefaultId));
+	}
+	
+	@Bean
+	public AnalysisTypeSet disabledAnalysisTypes() {
+		return new AnalysisTypeSet();
 	}
 }
