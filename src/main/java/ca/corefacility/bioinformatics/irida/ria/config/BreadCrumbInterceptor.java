@@ -67,7 +67,7 @@ public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 					String noun = parts[counter];
 					url.append("/");
 					url.append(noun);
-
+					
 					crumbs.add(
 							ImmutableMap.of(
 									"text", tryGetMessage(noun, locale),
@@ -92,7 +92,8 @@ public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 	 */
 	private String tryGetMessage(String noun, Locale locale) {
 		try {
-			return messageSource.getMessage("bc." + noun, null, locale);
+			final String message = messageSource.getMessage("bc." + noun, null, locale);
+			return Strings.isNullOrEmpty(message) ? noun : message;
 		} catch (NoSuchMessageException e) {
 			return noun;
 		}
