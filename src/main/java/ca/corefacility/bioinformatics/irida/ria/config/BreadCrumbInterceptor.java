@@ -1,9 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.config;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -51,8 +49,10 @@ public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 		String servletPath = request.getServletPath();
 
 		if (hasGoodPath(servletPath) && hasGoodModelAndView(modelAndView)) {
-			String[] parts = servletPath.split("/");
-			int counter = Strings.isNullOrEmpty(parts[0]) ? 1 : 0;
+			List<String> parts = Arrays.stream(servletPath.split("/"))
+					.filter(part -> !Strings.isNullOrEmpty(part))
+					.collect(Collectors.toList());
+
 			Locale locale = request.getLocale();
 			List<Map<String, String>> crumbs = new ArrayList<>();
 
@@ -62,21 +62,14 @@ public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 			StringBuilder url = new StringBuilder(contextPath);
 
 			try {
-				for (; counter < parts.length; counter++) {
-					// Should be a noun
-					String noun = parts[counter];
+				for (String noun : parts) {
 					url.append("/");
 					url.append(noun);
-					
-					crumbs.add(
-							ImmutableMap.of(
-									"text", tryGetMessage(noun, locale),
-									"url", url.toString())
-					);
+					crumbs.add(ImmutableMap.of("text", tryGetMessage(noun, locale), "url", url.toString()));
 				}
-
 				// Add the breadcrumbs to the model
-				modelAndView.getModelMap().put("crumbs", crumbs);
+				modelAndView.getModelMap()
+						.put("crumbs", crumbs);
 			} catch (NoSuchMessageException e) {
 				logger.debug("Missing internationalization for breadcrumb", e.getMessage());
 			}
@@ -86,7 +79,7 @@ public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 	/**
 	 * Try to get the i18n message for a noun, if it doesn't exist, return the noun as is.
 	 *
-	 * @param noun Breadcrumb noun to get i18n message for (i.e. "bc.{noun}")
+	 * @param noun   Breadcrumb noun to get i18n message for (i.e. "bc.{noun}")
 	 * @param locale Locale
 	 * @return Internationalized message or original noun if message doesn't exist (e.g. noun is an id number)
 	 */
