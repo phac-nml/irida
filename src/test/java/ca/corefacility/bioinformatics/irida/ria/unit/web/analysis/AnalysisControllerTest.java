@@ -29,10 +29,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.ui.ExtendedModelMap;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
@@ -60,6 +57,12 @@ public class AnalysisControllerTest {
 	private AnalysesListingService analysesListingService;
 	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
 	private AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager;
+
+	/**
+	 * Analysis Output File key names from {@link TestDataFactory#constructAnalysis()}
+	 */
+	private final List<String> outputNames = Lists.newArrayList("tree", "matrix", "table", "contigs-with-repeats",
+			"refseq-masher-matches");
 
 	@Before
 	public void init() {
@@ -153,11 +156,14 @@ public class AnalysisControllerTest {
 	}
 
 	@Test
-	public void testGetOutputFileLines() {
+	public void testGetOutputFileLines() throws IridaWorkflowNotFoundException {
 		final Long submissionId = 1L;
 		final MockHttpServletResponse response = new MockHttpServletResponse();
-		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(
-				TestDataFactory.constructAnalysisSubmission());
+		final AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
+		final UUID workflowId = submission.getWorkflowId();
+		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
+		when(iridaWorkflowsServiceMock.getOutputNames(workflowId)).thenReturn(
+				outputNames);
 		// get analysis output file summary info
 		final List<AnalysisOutputFileInfo> infos = analysisController.getOutputFilesInfo(submissionId);
 		assertEquals("Expecting 5 analysis output file info items", 5, infos.size());
@@ -194,11 +200,14 @@ public class AnalysisControllerTest {
 	}
 
 	@Test
-	public void testGetOutputFileByteSizedChunks() {
+	public void testGetOutputFileByteSizedChunks() throws IridaWorkflowNotFoundException {
 		final Long submissionId = 1L;
 		final MockHttpServletResponse response = new MockHttpServletResponse();
-		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(
-				TestDataFactory.constructAnalysisSubmission());
+		final AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
+		final UUID workflowId = submission.getWorkflowId();
+		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
+		when(iridaWorkflowsServiceMock.getOutputNames(workflowId)).thenReturn(
+				outputNames);
 		// get analysis output file summary info
 		final List<AnalysisOutputFileInfo> infos = analysisController.getOutputFilesInfo(submissionId);
 		assertEquals("Expecting 5 analysis output file info items", 5, infos.size());

@@ -238,7 +238,15 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	public List<Join<Project, Sample>> getSamplesForProject(Project project) {
 		return psjRepository.getSamplesForProject(project);
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Transactional(readOnly = true)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
+	public List<Sample> getSamplesInProject(Project project, List<Long> sampleIds) {
+		return psjRepository.getSamplesInProject(project, sampleIds);
+	}
 
 	/**
 	 * {@inheritDoc}

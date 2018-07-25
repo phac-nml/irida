@@ -1,15 +1,23 @@
 Changes
 =======
+
+0.22.0 to 0.23.0
+----------------
+* [UI]: Added the sample coverage to the table exported from the project samples page.
+* [UI/Workflow]: Added option to disable workflows/analysis types from display in IRIDA using `irida.workflow.types.disabled`. (0.22.1)
+* [Developer]: Added wait when NCBI Uploader fails before retrying. (0.22.1)
+
 0.21.0 to 0.22.0
 ----------------
 * [UI]: Fixed bug where `.xls` file could not be uploaded through the file picker on the metadata upload page. (0.21.1)
-* [Workflow]: Added version 0.1.8 of the [MentaLiST](https://github.com/WGS-TB/MentaLiST) pipeline, which includes a fix for downloading cgMLST schemes and a distance matrix output.
+* [Workflow]: Added version 0.1.9 of the [MentaLiST](https://github.com/WGS-TB/MentaLiST) pipeline, which includes a fix for downloading cgMLST schemes and a distance matrix output.
 * [UI]: Fixed bug where concatenate files was POSTing to incorrect URL. (0.21.2)
 * [UI]: Fixed bug where SVG files could not be exported through the advanced visualization page. (0.21.2)
 * [UI]: Fixed bug where users could not share more than nine samples. (0.21.2)
 * [UI]: Moved the position of the notification system to top center.
 * [Workflow]: Added version 2.0.0 of a pipeline for running [bio_hansel](https://github.com/phac-nml/bio_hansel) (version 2.0.0)
 * [Workflow]: Added version 0.3 of a pipeline for running [SISTR](https://github.com/peterk87/sistr_cmd/) which now makes use of [Shovill](https://github.com/tseemann/shovill) for genome assembly.
+* [Workflow]: Updated SISTR pipeline to store the following additional fields in the metadata table: serogroup, O antigen, H1, H2, and alleles matching genome.
 * [UI]: Users can save analysis results to samples after pipeline is done in "Share Results" tab.
 * [UI]: Fixed bug where edit groups page would throw a server exception. (0.21.3)
 * [UI]: Hiding user page project list for non-admins.
@@ -17,6 +25,10 @@ Changes
 * [UI]: Fixed bug where admin dropdown menu was hidden behind sequencing run sub navigation.
 * [Developer]: Moved file processing chain outside of SequencingObjectService.  It now runs as a scheduled task.  This will help balance the processing load in multi-server deployments.
 * [UI]: Ensuring `ROLE_SEQUENCER` users get "Access Denied" for any attempted UI interactions.
+* [Developer]: Updated `yarn` to the current version.
+* [UI/Workflow]: Pipeline analysis output files are rendered in the same order as they appear in the pipeline `irida_workflow.xml` in the `<outputs>` XML element.
+* [Developer]: Can now specify which `chromedriver` to use in UI testing with `-Dwebdriver.chrome.driver=/PATH/TO/chromedriver`.
+* [UI]: Fixes slow Sample cart. Quicker saving of large selections of samples to cart (`POST /cart/add/samples`) and loading of existing cart Samples (`GET /cart`).  
 
 0.20.0 to 0.21.0
 ----------------

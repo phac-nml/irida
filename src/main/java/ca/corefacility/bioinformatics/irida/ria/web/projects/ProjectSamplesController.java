@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
@@ -466,12 +467,22 @@ public class ProjectSamplesController {
 	 * @return a newly constructed {@link ProjectSampleModel}
 	 */
 	private DTProjectSamples buildProjectSampleDataTablesModel(ProjectSampleJoin sso, Locale locale) {
-		Project p = sso.getSubject();
-		
-		List<QCEntry> qcEntriesForSample = sampleService.getQCEntriesForSample(sso.getObject());
+		Project project = sso.getSubject();
+		Long genomeSize = project.getGenomeSize();
+		Sample sample = sso.getObject();
+		Double coverage = null;
+
+		if (genomeSize != null) {
+			try {
+				coverage = sampleService.estimateCoverageForSample(sample, genomeSize);
+			} catch (SequenceFileAnalysisException e) {
+				// Don't need to do anything here.
+			}
+		}
+		List<QCEntry> qcEntriesForSample = sampleService.getQCEntriesForSample(sample);
 		List<String> list = new ArrayList<>();
 		for (QCEntry q : qcEntriesForSample) {
-			q.addProjectSettings(p);
+			q.addProjectSettings(project);
 			String status = q.getStatus()
 					.toString();
 			if (q.getStatus() == QCEntry.QCEntryStatus.NEGATIVE) {
@@ -479,7 +490,7 @@ public class ProjectSamplesController {
 						messageSource.getMessage("sample.files.qc." + q.getType(), new Object[] { q.getMessage() }, locale));
 			}
 		}
-		return new DTProjectSamples(sso, list);
+		return new DTProjectSamples(sso, list, coverage);
 	}
 
 	/**

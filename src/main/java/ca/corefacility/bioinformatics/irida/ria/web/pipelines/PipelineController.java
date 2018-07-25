@@ -42,6 +42,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotDisplayableException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -152,7 +153,7 @@ public class PipelineController extends BaseController {
 	 */
 	@RequestMapping
 	public String getPipelineLaunchPage(final Model model, Locale locale) {
-		Set<AnalysisType> workflows = workflowsService.getRegisteredWorkflowTypes();
+		Set<AnalysisType> workflows = workflowsService.getDisplayableWorkflowTypes();
 
 		List<Map<String, String>> flows = new ArrayList<>(workflows.size());
 		workflows.stream().forEach(type -> {
@@ -208,9 +209,9 @@ public class PipelineController extends BaseController {
 
 			IridaWorkflow flow = null;
 			try {
-				flow = workflowsService.getIridaWorkflow(pipelineId);
-			} catch (IridaWorkflowNotFoundException e) {
-				logger.error("Workflow not found - See stack:", e);
+				flow = workflowsService.getDisplayableIridaWorkflow(pipelineId);
+			} catch (IridaWorkflowNotFoundException | IridaWorkflowNotDisplayableException e) {
+				logger.error("Workflow not found or not displayable - See stack:", e);
 				return "redirect:errors/not_found";
 			}
 			
@@ -446,7 +447,7 @@ public class PipelineController extends BaseController {
 	public @ResponseBody
 	Map<String, Object> ajaxStartPipeline(Locale locale, @RequestBody final PipelineStartParameters parameters) {
 		try {
-			IridaWorkflow flow = workflowsService.getIridaWorkflow(parameters.getWorkflowId());
+			IridaWorkflow flow = workflowsService.getDisplayableIridaWorkflow(parameters.getWorkflowId());
 			IridaWorkflowDescription description = flow.getWorkflowDescription();
 
 			// The pipeline needs to have a name.
@@ -541,8 +542,8 @@ public class PipelineController extends BaseController {
 						params, namedParameters, name, analysisDescription, projectsToShare, writeResultsToSamples);
 			}
 
-		} catch (IridaWorkflowNotFoundException e) {
-			logger.error("Cannot find IridaWorkflow [" + parameters.getWorkflowId() + "]", e);
+		} catch (IridaWorkflowNotFoundException | IridaWorkflowNotDisplayableException e) {
+			logger.error("Cannot find or cannot launch IridaWorkflow [" + parameters.getWorkflowId() + "]", e);
 			return ImmutableMap.of("pipelineError",
 					messageSource.getMessage("pipeline.error.invalid-pipeline", null, locale));
 		} catch (DuplicateSampleException e) {
