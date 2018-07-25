@@ -9,7 +9,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 /**
  * Scheduled taks configuration for sending digest emails
  */
-@Profile({ "prod", "email" })
+@Profile({ "prod", "web" })
 @Configuration
 public class EmailScheduledTaskConfig {
 
