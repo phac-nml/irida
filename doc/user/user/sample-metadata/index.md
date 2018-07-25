@@ -31,7 +31,7 @@ Links to the upload page can be found:
 2. On the `Project` > `Linelist` page:
 ![Bulk upload on project linelist page using link.](images/project_linelist_metadata_import_link.png)
 
-<strong style="background-color: rgba(240, 173, 78, 1.00); padding: 5px; font-weight: bold">Please not that this feature is still under development.</strong>
+<strong style="background-color: rgba(240, 173, 78, 1.00); padding: 5px; font-weight: bold">Please note that this feature is still under development.</strong>
 
 ![Excel Spreadsheet Example](images/spreadsheet.png)
 
