@@ -62,6 +62,7 @@ export function showUndoNotification(params, cb) {
       defaultConfig,
       {
         type: "alert",
+        timeout: 6000,
         buttons: [
           Noty.button(
             "UNDO",
