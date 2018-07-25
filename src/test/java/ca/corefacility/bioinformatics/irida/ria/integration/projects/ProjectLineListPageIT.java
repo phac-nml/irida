@@ -76,5 +76,11 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 		driver().navigate()
 				.refresh();
 		assertEquals("Should keep value on a page refresh", newValue, page.getCellContents(0, "serotype"));
+
+		// Let's test to make sure that the undo works.
+		String testValue = "THIS SHOULD BE GONE!";
+		page.editCellContents(0, "serotype", testValue);
+		page.cancelCellEdit();
+		assertEquals("Should keep value after undoing edit", newValue, page.getCellContents(0, "serotype"));
 	}
 }

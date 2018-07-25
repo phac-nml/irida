@@ -2,6 +2,7 @@ import React from "react";
 import { List } from "immutable";
 import PropTypes from "prop-types";
 import ImmutablePropTypes from "react-immutable-proptypes";
+import { showUndoNotification } from "../../../../../modules/notifications";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid/dist/styles/ag-grid.css";
 import "ag-grid/dist/styles/ag-theme-balham.css";
@@ -194,25 +195,10 @@ export class Table extends React.Component {
     this.props.tableModified(list);
   };
 
-  static getDerivedStateFromProps(props, state) {
-    const { entries } = props;
-
-    if (entries !== null) {
-      /*
-      Format the sample metadata into a usable map.
-       */
-      state.entries = entries.toJS().map(entry => {
-        const metadata = entry.metadata;
-        metadata.sampleId = entry.id;
-        metadata[i18n.linelist.agGrid.sampleName] = entry.label;
-        metadata.projectId = entry.projectId;
-        metadata.projectLable = entry.projectLabel;
-        return metadata;
-      });
-    }
-
-    return state;
-  }
+  undoEdit = (event, value, key) => {
+    event.node.setDataValue(event.colDef.field, value);
+    this.props.entryEdited(value, event.column.colId);
+  };
 
   /**
    * Generate the name for the type of file to be exported from the grid
@@ -338,6 +324,26 @@ export class Table extends React.Component {
     this.props.selectionChange(this.api.getSelectedNodes().length);
   };
 
+  static getDerivedStateFromProps(props, state) {
+    const { entries } = props;
+
+    if (entries !== null) {
+      /*
+      Format the sample metadata into a usable map.
+       */
+      state.entries = entries.toJS().map(entry => {
+        const metadata = entry.metadata;
+        metadata.sampleId = entry.id;
+        metadata[i18n.linelist.agGrid.sampleName] = entry.label;
+        metadata.projectId = entry.projectId;
+        metadata.projectLabel = entry.projectLabel;
+        return metadata;
+      });
+    }
+
+    return state;
+  }
+
   render() {
     return (
       <div className="ag-grid-table-wrapper">
@@ -364,8 +370,23 @@ export class Table extends React.Component {
             this.cellEditedValue = event.value;
           }}
           onCellEditingStopped={event => {
-            if (this.cellEditedValue !== event.value) {
-              this.props.entryEdited(event.data, event.column.colId);
+            console.log(event);
+            const field = event.column.colId;
+            const value = this.cellEditedValue;
+            const data = event.data;
+            if (value !== event.value) {
+              this.props.entryEdited(data, field);
+              showUndoNotification({
+                text: i18n.linelist.editing.undo
+                  .replace("[SAMPLE_NAME]", `<strong>${data[i18n.linelist.agGrid.sampleName]}</strong>`)
+                  .replace("[FIELD]", `<strong>${field}</strong>`)
+                  .replace("[ORIGINAL]", `<strong>${value}</strong>`)
+                  .replace("[NEW_VALUE]", `<strong>${data[field]}</strong>`)
+              }, () => {
+                data[field] = value;
+                this.props.entryEdited(data, field);
+                event.node.setDataValue(event.colDef.field, value);
+              });
             }
             delete this.cellEditedValue;
           }}

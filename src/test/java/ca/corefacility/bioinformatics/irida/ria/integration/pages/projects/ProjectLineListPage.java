@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 import java.util.List;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -37,6 +38,9 @@ public class ProjectLineListPage extends ProjectPageBase {
 
 	@FindBy(className = "t-modal-save-template-btn")
 	private WebElement modalSaveTemplateBtn;
+
+	@FindBy(className = "t-undo-edit")
+	private WebElement undoEditBtn;
 
 	public ProjectLineListPage(WebDriver driver) {
 		super(driver);
@@ -97,7 +101,11 @@ public class ProjectLineListPage extends ProjectPageBase {
 		WebElement cell = row.findElement(By.cssSelector("*[col-id='" + columnName + "']"));
 		cell.click();
 		cell.sendKeys(newValue);
-		row.findElement(By.cssSelector("*[col-id='firstName']"))
-				.click();
+		cell.sendKeys(Keys.ENTER);
+	}
+
+	public void cancelCellEdit() {
+		undoEditBtn.click();
+		waitForTime(300);
 	}
 }

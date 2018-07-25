@@ -55,6 +55,30 @@ export function showErrorNotification(params) {
   return new Noty(Object.assign({}, defaultErrorConfig, params)).show();
 }
 
+export function showUndoNotification(params, cb) {
+  const n = new Noty(
+    Object.assign(
+      {},
+      defaultConfig,
+      {
+        type: "alert",
+        buttons: [
+          Noty.button(
+            "UNDO",
+            "t-undo-edit btn btn-default btn-xs pull-right spaced-bottom",
+            () => {
+              cb();
+              n.close();
+            }
+          )
+        ]
+      },
+      params
+    )
+  );
+  return n.show();
+}
+
 // TODO: Remove this after all notification usages are through a webpack bundle.
 window.notifications = (function() {
   return { show: showNotification, showError: showErrorNotification };
