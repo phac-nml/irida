@@ -68,7 +68,7 @@ export function showUndoNotification(params, cb) {
             "UNDO",
             "t-undo-edit btn btn-default btn-xs pull-right spaced-bottom",
             () => {
-              cb();
+              typeof cb === "function" ? cb() : null;
               n.close();
             }
           )
