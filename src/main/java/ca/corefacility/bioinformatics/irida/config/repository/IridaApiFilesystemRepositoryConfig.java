@@ -52,7 +52,7 @@ public class IridaApiFilesystemRepositoryConfig {
 	}
 
 	@Bean(name = "referenceFileBaseDirectory")
-	public Path referenceFileBaseDirectoryProd() throws IOException {
+	public Path referenceFileBaseDirectory() throws IOException {
 		if (applicationContext.getEnvironment().acceptsProfiles("dev", "it", "test")) {
 			return configureDirectory(referenceFileBaseDirectory, "reference-file-dev");
 		}
@@ -69,7 +69,7 @@ public class IridaApiFilesystemRepositoryConfig {
 	}
 
 	@Bean(name = "outputFileBaseDirectory")
-	public Path outputFileBaseDirectoryProd() throws IOException {
+	public Path outputFileBaseDirectory() throws IOException {
 		if (applicationContext.getEnvironment().acceptsProfiles("dev", "it", "test")) {
 			return configureDirectory(outputFileBaseDirectory, "output-file-dev");
 		}
