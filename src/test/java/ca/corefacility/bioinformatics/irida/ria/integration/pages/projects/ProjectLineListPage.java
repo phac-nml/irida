@@ -81,4 +81,23 @@ public class ProjectLineListPage extends ProjectPageBase {
 		modalSaveTemplateBtn.click();
 		waitForTime(300);
 	}
+
+	public String getCellContents(int rowIndex, String columnName) {
+		// Need to get the seconds WebElement because the first will be the sample name row.
+		WebElement row = driver.findElements(By.cssSelector("*[row-index='" + rowIndex + "']"))
+				.get(1);
+		WebElement cell = row.findElement(By.cssSelector("*[col-id='" + columnName + "']"));
+		return cell.getText();
+	}
+
+	public void editCellContents(int rowIndex, String columnName, String newValue) {
+		// Need to get the seconds WebElement because the first will be the sample name row.
+		WebElement row = driver.findElements(By.cssSelector("*[row-index='" + rowIndex + "']"))
+				.get(1);
+		WebElement cell = row.findElement(By.cssSelector("*[col-id='" + columnName + "']"));
+		cell.click();
+		cell.sendKeys(newValue);
+		row.findElement(By.cssSelector("*[col-id='firstName']"))
+				.click();
+	}
 }
