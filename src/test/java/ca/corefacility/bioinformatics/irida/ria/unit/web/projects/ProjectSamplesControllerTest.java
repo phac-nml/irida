@@ -14,8 +14,6 @@ import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import javax.sql.DataSource;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -67,7 +65,6 @@ public class ProjectSamplesControllerTest {
 	private ProjectService projectService;
 	private ProjectSamplesController controller;
 	private SampleService sampleService;
-	private UserService userService;
 	private SequencingObjectService sequencingObjectService;
 	private MessageSource messageSource;
 	private ProjectControllerUtils projectUtils;
@@ -76,12 +73,11 @@ public class ProjectSamplesControllerTest {
 	public void setUp() {
 		projectService = mock(ProjectService.class);
 		sampleService = mock(SampleService.class);
-		userService = mock(UserService.class);
 		sequencingObjectService = mock(SequencingObjectService.class);
 		projectUtils = mock(ProjectControllerUtils.class);
 		messageSource = mock(MessageSource.class);
 
-		controller = new ProjectSamplesController(projectService, sampleService, userService, sequencingObjectService,
+		controller = new ProjectSamplesController(projectService, sampleService, sequencingObjectService,
 				projectUtils, messageSource);
 		user.setId(1L);
 

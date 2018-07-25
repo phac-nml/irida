@@ -41,7 +41,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesExportToFile;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesExportTypes;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
@@ -51,11 +50,9 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.ProjectSampleModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.UISampleFilter;
 import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProjectSamples;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ProjectSampleAnalysisOutputInfo;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -84,18 +81,15 @@ public class ProjectSamplesController {
 	// Services
 	private final ProjectService projectService;
 	private final SampleService sampleService;
-	private final UserService userService;
 	private final ProjectControllerUtils projectControllerUtils;
 	private final SequencingObjectService sequencingObjectService;
 	private MessageSource messageSource;
 
 	@Autowired
-	public ProjectSamplesController(ProjectService projectService, SampleService sampleService, UserService userService,
-			SequencingObjectService sequencingObjectService, ProjectControllerUtils projectControllerUtils,
+	public ProjectSamplesController(ProjectService projectService, SampleService sampleService, SequencingObjectService sequencingObjectService, ProjectControllerUtils projectControllerUtils,
 			MessageSource messageSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
-		this.userService = userService;
 		this.sequencingObjectService = sequencingObjectService;
 		this.projectControllerUtils = projectControllerUtils;
 		this.messageSource = messageSource;

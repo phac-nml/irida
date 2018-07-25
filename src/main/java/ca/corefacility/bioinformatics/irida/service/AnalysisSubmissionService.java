@@ -2,8 +2,10 @@ package ca.corefacility.bioinformatics.irida.service;
 
 import java.util.*;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerConfigurationException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
@@ -19,9 +21,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ProjectSampl
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.security.access.prepost.PreAuthorize;
 
 /**
  * A service for AnalysisSubmissions.
