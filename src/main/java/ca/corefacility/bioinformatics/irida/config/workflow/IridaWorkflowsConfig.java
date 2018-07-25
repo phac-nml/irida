@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,7 @@ import com.google.common.collect.Sets;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.enums.config.AnalysisTypeSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowIdSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowSet;
@@ -41,10 +43,10 @@ public class IridaWorkflowsConfig {
 	private static final Logger logger = LoggerFactory.getLogger(IridaWorkflowsConfig.class);
 
 	private static final String IRIDA_DEFAULT_WORKFLOW_PREFIX = "irida.workflow.default";
+	private static final String IRIDA_DISABLED_TYPES = "irida.workflow.types.disabled";
 
 	@Autowired
 	private Environment environment;
-
 
 	/**
 	 * Gets the {@link Path} for all IRIDA workflow types.
@@ -143,19 +145,31 @@ public class IridaWorkflowsConfig {
 	}
 
 	/**
+	 * Builds a {@link AnalysisTypeSet} of {@link AnalysisType}s which are to be disabled from
+	 * the UI.
+	 * 
+	 * @return A {@link AnalysisTypeSet} of {@link AnalysisType}s which are to be disabled from the UI.
+	 */
+	@Bean
+	public AnalysisTypeSet disabledAnalysisTypes() {
+		String[] disabledWorkflowTypes = environment.getProperty(IRIDA_DISABLED_TYPES, String[].class);
+		return new AnalysisTypeSet(Sets.newHashSet(disabledWorkflowTypes).stream().map(t -> AnalysisType.fromString(t))
+				.collect(Collectors.toSet()));
+	}
+
+	/**
 	 * Builds a new {@link IridaWorkflowsService}.
 	 * 
-	 * @param iridaWorkflows
-	 *            The set of IridaWorkflows to use.
-	 * @param defaultIridaWorkflows
-	 *            The set of ids for default workflows to use.
+	 * @param iridaWorkflows        The set of IridaWorkflows to use.
+	 * @param defaultIridaWorkflows The set of ids for default workflows to use.
+	 * @param disabledAnalysisTypes The set of disabled {@link AnalysisType}s.
 	 * @return A new {@link IridaWorkflowsService}.
-	 * @throws IridaWorkflowException
-	 *             If there was an error loading a workflow.
+	 * @throws IridaWorkflowException If there was an error loading a workflow.
 	 */
 	@Bean
 	public IridaWorkflowsService iridaWorkflowsService(IridaWorkflowSet iridaWorkflows,
-			IridaWorkflowIdSet defaultIridaWorkflows) throws IridaWorkflowException {
-		return new IridaWorkflowsService(iridaWorkflows, defaultIridaWorkflows);
+			IridaWorkflowIdSet defaultIridaWorkflows, AnalysisTypeSet disabledAnalysisTypes)
+			throws IridaWorkflowException {
+		return new IridaWorkflowsService(iridaWorkflows, defaultIridaWorkflows, disabledAnalysisTypes);
 	}
 }
