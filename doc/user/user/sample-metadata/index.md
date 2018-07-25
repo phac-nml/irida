@@ -132,4 +132,5 @@ Hovering over the `Export` button which will reveal a dropdown where you can sel
 
 #### Inline Editing
 
-Values within the metadata table can be updated by double clicking on the cell you want to modify, enter the new value and press enter.  The new value will be automatically saved.
+Values within the metadata table can be updated by double clicking on the cell you want to modify, enter the new value and press enter.  The new value will be automatically saved.  Once a cell has been edited, a notification will display with a "undo" button, that will revert the value back to the original.
+

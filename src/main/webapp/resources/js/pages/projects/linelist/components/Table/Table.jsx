@@ -380,7 +380,6 @@ export class Table extends React.Component {
                 text: i18n.linelist.editing.undo
                   .replace("[SAMPLE_NAME]", `<strong>${data[i18n.linelist.agGrid.sampleName]}</strong>`)
                   .replace("[FIELD]", `<strong>${field}</strong>`)
-                  .replace("[ORIGINAL]", `<strong>${value}</strong>`)
                   .replace("[NEW_VALUE]", `<strong>${data[field]}</strong>`)
               }, () => {
                 data[field] = value;
