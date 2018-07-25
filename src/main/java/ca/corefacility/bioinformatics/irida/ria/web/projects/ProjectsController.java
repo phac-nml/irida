@@ -93,7 +93,6 @@ public class ProjectsController {
 	private static final String ACTIVE_NAV_METADATA = "metadata";
 	private static final String ACTIVE_NAV_ACTIVITY = "activity";
 	private static final String ACTIVE_NAV_ANALYSES = "analyses";
-	private static final String ACTIVE_NAV_ANALYSIS_OUTPUTS = "outputs";
 
 	// Page Names
 	public static final String PROJECTS_DIR = "projects/";
@@ -106,7 +105,6 @@ public class ProjectsController {
 	public static final String PROJECT_METADATA_EDIT_PAGE = PROJECTS_DIR + "project_metadata_edit";
 	public static final String PROJECT_SAMPLES_PAGE = PROJECTS_DIR + "project_samples";
 	public static final String PROJECT_ACTIVITY_PAGE = PROJECTS_DIR + "project_details";
-	public static final String PROJECT_ANALYSES_PAGE = PROJECTS_DIR + "project_analyses";
 	private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
 
 	// Services
