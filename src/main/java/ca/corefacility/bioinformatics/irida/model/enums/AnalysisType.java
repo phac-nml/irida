@@ -2,15 +2,19 @@ package ca.corefacility.bioinformatics.irida.model.enums;
 
 import java.util.Objects;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+@Embeddable
 @XmlType(name="analysisType")
 public class AnalysisType {
 
 	@XmlValue
+	@Column(name = "analysis_type")
 	private final String type;
 	
 	protected AnalysisType() {
@@ -42,7 +46,7 @@ public class AnalysisType {
 
 	@Override
 	public String toString() {
-		return "AnalysisType [type=" + type + "]";
+		return getName();
 	}
 
 	public String getName() {
