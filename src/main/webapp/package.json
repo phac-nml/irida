@@ -102,7 +102,7 @@
     "node-sass": "^4.9.0",
     "optimize-css-assets-webpack-plugin": "^4.0.2",
     "postcss-loader": "^2.1.5",
-    "prettier": "^1.13.5",
+    "prettier": "^1.13.7",
     "prop-types": "^15.6.1",
     "resolve-url-loader": "^2.3.0",
     "sass-loader": "^7.0.3",

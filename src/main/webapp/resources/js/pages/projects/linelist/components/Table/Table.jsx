@@ -344,6 +344,30 @@ export class Table extends React.Component {
     return state;
   }
 
+  onCellEditingStarted = event => {
+    this.cellEditedValue = event.value;
+  };
+
+  onCellEditingStopped = event => {
+    const field = event.column.colId;
+    const value = this.cellEditedValue;
+    const data = event.data;
+    if (value !== event.value) {
+      this.props.entryEdited(data, field);
+      showUndoNotification({
+        text: i18n.linelist.editing.undo
+          .replace("[SAMPLE_NAME]", `<strong>${data[i18n.linelist.agGrid.sampleName]}</strong>`)
+          .replace("[FIELD]", `<strong>${field}</strong>`)
+          .replace("[NEW_VALUE]", `<strong>${data[field]}</strong>`)
+      }, () => {
+        data[field] = value;
+        this.props.entryEdited(data, field);
+        event.node.setDataValue(event.colDef.field, value);
+      });
+    }
+    delete this.cellEditedValue;
+  };
+
   render() {
     return (
       <div className="ag-grid-table-wrapper">
@@ -366,29 +390,8 @@ export class Table extends React.Component {
           defaultColDef={{
             editable: true
           }}
-          onCellEditingStarted={event => {
-            this.cellEditedValue = event.value;
-          }}
-          onCellEditingStopped={event => {
-            console.log(event);
-            const field = event.column.colId;
-            const value = this.cellEditedValue;
-            const data = event.data;
-            if (value !== event.value) {
-              this.props.entryEdited(data, field);
-              showUndoNotification({
-                text: i18n.linelist.editing.undo
-                  .replace("[SAMPLE_NAME]", `<strong>${data[i18n.linelist.agGrid.sampleName]}</strong>`)
-                  .replace("[FIELD]", `<strong>${field}</strong>`)
-                  .replace("[NEW_VALUE]", `<strong>${data[field]}</strong>`)
-              }, () => {
-                data[field] = value;
-                this.props.entryEdited(data, field);
-                event.node.setDataValue(event.colDef.field, value);
-              });
-            }
-            delete this.cellEditedValue;
-          }}
+          onCellEditingStarted={this.onCellEditingStarted}
+          onCellEditingStopped={this.onCellEditingStopped}
         />
       </div>
     );

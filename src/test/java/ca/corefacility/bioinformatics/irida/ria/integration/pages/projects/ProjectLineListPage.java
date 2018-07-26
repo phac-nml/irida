@@ -105,8 +105,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 	}
 
 	public void cancelCellEdit() {
-		waitForElementToBeClickable(undoEditBtn);
+		waitForTime(200);
 		undoEditBtn.click();
-		waitForTime(300);
 	}
 }
