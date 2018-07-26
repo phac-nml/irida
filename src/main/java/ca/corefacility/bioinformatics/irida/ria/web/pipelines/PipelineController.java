@@ -161,7 +161,7 @@ public class PipelineController extends BaseController {
 			try {
 				flow = workflowsService.getDefaultWorkflowByType(type);
 				IridaWorkflowDescription description = flow.getWorkflowDescription();
-				String name = type.getName();
+				String name = type.getType();
 				String key = "workflow." + name;
 				flows.add(ImmutableMap.of(
 						"name", name,

@@ -11,8 +11,6 @@ import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -98,7 +96,7 @@ public class Analysis extends IridaResourceSupport implements IridaThing {
 	 * @param executionManagerAnalysisId The id for an execution manager used with this analysis.
 	 * @param analysisOutputFilesMap     A {@link Map} of output file keys and
 	 *                                   {@link AnalysisOutputFile}s.
-	 * @param analysisType               The type for this analysis
+	 * @param analysisType               The {@link AnalysisType} for this analysis
 	 */
 	public Analysis(final String executionManagerAnalysisId,
 			final Map<String, AnalysisOutputFile> analysisOutputFilesMap, AnalysisType analysisType) {
