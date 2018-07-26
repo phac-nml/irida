@@ -174,7 +174,7 @@ public class IridaWorkflowsService {
 
 	/**
 	 * Gets all of the default workflows for a given {@link Set} of
-	 * {@link AnalysisTypeOld}s.
+	 * {@link AnalysisType}s.
 	 * 
 	 * @param analysisTypes
 	 *            A {@link Set} of {@link AnalysisType}s.
@@ -221,7 +221,7 @@ public class IridaWorkflowsService {
 	}
 	
 	/**
-	 * Gets a {@link Set} of all registered {@link AnalysisTypeOld} for all workflows.
+	 * Gets a {@link Set} of all registered {@link AnalysisType} for all workflows.
 	 * 
 	 * @return A {@link Set} of all the types of all installed workflows.
 	 */

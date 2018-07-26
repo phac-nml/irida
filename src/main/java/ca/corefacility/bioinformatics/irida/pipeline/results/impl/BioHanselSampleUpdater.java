@@ -124,9 +124,9 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 	}
 
 	/**
-	 * Gets the {@link AnalysisTypeOld} this updater service handles.
+	 * Gets the {@link AnalysisType} this updater service handles.
 	 *
-	 * @return The {@link AnalysisTypeOld}.
+	 * @return The {@link AnalysisType}.
 	 */
 	@Override
 	public AnalysisType getAnalysisType() {
