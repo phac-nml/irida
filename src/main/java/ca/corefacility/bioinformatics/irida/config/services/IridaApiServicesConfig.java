@@ -159,7 +159,7 @@ public class IridaApiServicesConfig {
 	}
 
 	private List<String> findWorkflowMessageSources() throws IOException {
-		final String WORKFLOWS_DIRECTORY = "/ca/corefacility/bioinformatics/irida/model/enums/workflows/";
+		final String WORKFLOWS_DIRECTORY = "/ca/corefacility/bioinformatics/irida/model/workflow/analysis/type/workflows/";
 		final PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(this.getClass()
 				.getClassLoader());
 		final Resource[] resources = resolver.getResources(
