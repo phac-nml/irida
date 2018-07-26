@@ -24,10 +24,10 @@ import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisTypes;
-import ca.corefacility.bioinformatics.irida.model.enums.config.AnalysisTypeSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisTypes;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.config.AnalysisTypeSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowIdSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowSet;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowLoaderService;

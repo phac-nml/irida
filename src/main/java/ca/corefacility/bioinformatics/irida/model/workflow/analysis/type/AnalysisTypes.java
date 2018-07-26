@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.model.enums;
+package ca.corefacility.bioinformatics.irida.model.workflow.analysis.type;
 
 import java.util.Collection;
 import java.util.Map;

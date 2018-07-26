@@ -1,9 +1,8 @@
 package ca.corefacility.bioinformatics.irida.pipeline.results;
 
 import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
-
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 /**

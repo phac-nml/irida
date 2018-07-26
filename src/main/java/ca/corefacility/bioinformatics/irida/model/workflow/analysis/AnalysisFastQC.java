@@ -15,8 +15,8 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.util.ReflectionUtils;
 
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisTypes;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableSet;

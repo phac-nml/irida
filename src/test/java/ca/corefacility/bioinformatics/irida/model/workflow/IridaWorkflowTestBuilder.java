@@ -9,9 +9,8 @@ import java.util.UUID;
 
 import com.google.common.collect.Lists;
 
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
-
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisTypes;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaToolParameter;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;

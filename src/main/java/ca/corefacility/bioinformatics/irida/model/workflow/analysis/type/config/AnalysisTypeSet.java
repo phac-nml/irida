@@ -1,10 +1,10 @@
-package ca.corefacility.bioinformatics.irida.model.enums.config;
+package ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.config;
 
 import java.util.Set;
 
 import com.google.common.collect.Sets;
 
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 
 /**
  * A class wrapping around {@link AnalysisType} to contain them in a set for
