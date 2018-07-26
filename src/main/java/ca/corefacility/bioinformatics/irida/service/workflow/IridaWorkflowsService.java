@@ -12,8 +12,10 @@ import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowDefaultException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotDisplayableException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.enums.config.AnalysisTypeSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowIdSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowSet;
@@ -40,7 +42,9 @@ public class IridaWorkflowsService {
 	 * Stores the id of a default workflow for an analysis type.
 	 */
 	private Map<AnalysisType, UUID> defaultWorkflowForAnalysis;
-
+	
+	private AnalysisTypeSet disabledAnalysisTypes;
+	
 	/**
 	 * Builds a new {@link IridaWorkflowsService} for loading up installed
 	 * workflows.
@@ -54,8 +58,28 @@ public class IridaWorkflowsService {
 	 *             If there was an issue when attempting to register the
 	 *             workflows.
 	 */
-	@Autowired
 	public IridaWorkflowsService(IridaWorkflowSet iridaWorkflows, IridaWorkflowIdSet defaultIridaWorkflows)
+			throws IridaWorkflowException {
+		this(iridaWorkflows, defaultIridaWorkflows, new AnalysisTypeSet());
+	}
+
+	/**
+	 * Builds a new {@link IridaWorkflowsService} for loading up installed
+	 * workflows.
+	 * 
+	 * @param iridaWorkflows
+	 *            A {@link IridaWorkflowSet} of {@link IridaWorkflow}s to use in IRIDA.
+	 * @param defaultIridaWorkflows
+	 *            A {@link IridaWorkflowIdSet} of {@link UUID}s to use as the default
+	 *            workflows.
+	 * @param disabledAnalysisTypes
+	 *            A {@link Set} of disabled {@link AnalysisType}s.
+	 * @throws IridaWorkflowException
+	 *             If there was an issue when attempting to register the
+	 *             workflows.
+	 */
+	@Autowired
+	public IridaWorkflowsService(IridaWorkflowSet iridaWorkflows, IridaWorkflowIdSet defaultIridaWorkflows, AnalysisTypeSet disabledAnalysisTypes)
 			throws IridaWorkflowException {
 		checkNotNull(iridaWorkflows, "iridaWorkflows is null");
 		checkNotNull(defaultIridaWorkflows, "defaultWorkflows is null");
@@ -65,6 +89,8 @@ public class IridaWorkflowsService {
 
 		registerWorkflows(iridaWorkflows.getIridaWorkflows());
 		setDefaultWorkflows(defaultIridaWorkflows.getIridaWorkflowIds());
+		
+		this.disabledAnalysisTypes = disabledAnalysisTypes;
 	}
 
 	/**
@@ -234,6 +260,15 @@ public class IridaWorkflowsService {
 
 		return types;
 	}
+	
+	/**
+	 * Gets a {@link Set} of disabled {@link AnalysisType}s.
+	 * 
+	 * @return A {@link Set} of disabled {@link AnalysisType}s.
+	 */
+	public Set<AnalysisType> getDisplayableWorkflowTypes() {
+		return Sets.difference(getRegisteredWorkflowTypes(), disabledAnalysisTypes.getAnalysisTypes());
+	}
 
 	/**
 	 * Returns a workflow with the given id.
@@ -251,6 +286,27 @@ public class IridaWorkflowsService {
 			return allRegisteredWorkflows.get(workflowId);
 		} else {
 			throw new IridaWorkflowNotFoundException(workflowId);
+		}
+	}
+	
+	/**
+	 * Returns a workflow with the given id that is displayable.
+	 * 
+	 * @param workflowId The identifier of the workflow to get.
+	 * @return An {@link IridaWorkflow} with the given identifier that is
+	 *         displayable.
+	 * @throws IridaWorkflowNotDisplayableException If no workflow with the given
+	 *                                              identifier is not displayable.
+	 * @throws IridaWorkflowNotFoundException       If the workflow was not found.
+	 */
+	public IridaWorkflow getDisplayableIridaWorkflow(UUID workflowId)
+			throws IridaWorkflowNotDisplayableException, IridaWorkflowNotFoundException {
+		IridaWorkflow workflow = getIridaWorkflow(workflowId);
+
+		if (getDisplayableWorkflowTypes().contains(workflow.getWorkflowDescription().getAnalysisType())) {
+			return workflow;
+		} else {
+			throw new IridaWorkflowNotDisplayableException(workflowId);
 		}
 	}
 
