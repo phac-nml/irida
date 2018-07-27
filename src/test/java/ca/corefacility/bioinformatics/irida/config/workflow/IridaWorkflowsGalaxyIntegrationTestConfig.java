@@ -38,7 +38,7 @@ public class IridaWorkflowsGalaxyIntegrationTestConfig {
 	@Autowired
 	private IridaWorkflowsService iridaWorkflowsService;
 
-	@Value("${irida.workflow.default.phylogenomics}")
+	@Value("${irida.workflow.default.PHYLOGENOMICS}")
 	private String snvPhylWorkflowId;
 
 	/**
