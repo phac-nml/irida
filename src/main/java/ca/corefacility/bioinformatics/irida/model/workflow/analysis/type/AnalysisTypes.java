@@ -86,4 +86,13 @@ public class AnalysisTypes {
 	public static Collection<AnalysisType> values() {
 		return runnableTypesMap.values();
 	}
+
+	/**
+	 * Whether or not this analysis type is valid (has been registered).
+	 * @param analysisType The {@link AnalysisType}.
+	 * @return True if valid, false otherwise.
+	 */
+	public static boolean isValid(AnalysisType analysisType) {
+		return analysisType != null && allTypesMap.containsValue(analysisType);
+	}
 }

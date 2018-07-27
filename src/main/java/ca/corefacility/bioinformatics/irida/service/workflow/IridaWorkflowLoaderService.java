@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
 import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkflowStructure;
@@ -155,8 +156,8 @@ public class IridaWorkflowLoaderService {
 
 		if (workflowDescription.getId() == null) {
 			throw new IridaWorkflowLoadException("No id for workflow description from file " + descriptionFile);
-		} else if (workflowDescription.getAnalysisType() == null) {
-			throw new IridaWorkflowLoadException("Invalid analysisType for workflow description from file " + descriptionFile);
+		} else if (!AnalysisTypes.isValid(workflowDescription.getAnalysisType())) {
+			throw new IridaWorkflowLoadException("Invalid analysisType=" + workflowDescription.getAnalysisType() + " for workflow description from file " + descriptionFile);
 		} else {
 			if (workflowDescription.acceptsParameters()) {
 				for (IridaWorkflowParameter workflowParameter : workflowDescription.getParameters()) {
