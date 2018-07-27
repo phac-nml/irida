@@ -11,6 +11,18 @@
     Trying to implement the "column sensing" with an ColumnSensingFlatXmlDataSetLoader class causes
     the sequencing_object table sistr_typing and automated_assembly columns to throw foreign key constraint
     exceptions when initializing the DB for tests.
+
+    Workflow UUID must be one of the following
+    "92ecf046-ee09-4271-b849-7a82625d6b60"
+    "f73cbfd2-5478-4c19-95f9-690f3712f84d"
+    "e8f9cc61-3264-48c6-81d9-02d9e84bccc7"
+    "87186c71-5c8a-4027-a9d9-b29850cebdb3"
+    "564a02d7-0cd8-4328-9090-dab1cff1b3f7"
+    "e559af58-a560-4bbd-997e-808bfbe026e2"
+    "0e8738e6-2aeb-4627-9d6e-15ae32f21c44"
+    "bac44f4b-46f9-4393-b247-de11a751410e"
+    "1317f2dc-191f-48d0-a54c-2fccd3f9ab53"
+    or any other registered production workflow (do not use unit test/IT workflows)
     -->
     <user id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
           email="admin@nowhere.com" firstName="Ad" lastName="Min"
@@ -106,7 +118,7 @@
                          update_samples="1"
                          analysis_state="COMPLETED"
                          created_date="2018-07-04 10:00:2.0"
-                         workflow_id="8c438951-484a-48da-be2b-93b7d29aa2a3"
+                         workflow_id="92ecf046-ee09-4271-b849-7a82625d6b60"
                          submitter="2"
                          analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM"/>
     <project_analysis_submission id="1"
@@ -140,7 +152,7 @@
                          update_samples="1"
                          analysis_state="COMPLETED"
                          created_date="2018-07-04 10:00:2.0"
-                         workflow_id="8c438951-484a-48da-be2b-93b7d29aa2a3"
+                         workflow_id="92ecf046-ee09-4271-b849-7a82625d6b60"
                          submitter="1"
                          analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" />
     <!--END: analysis_submission 2-->
@@ -170,7 +182,7 @@
                          update_samples="1"
                          analysis_state="COMPLETED"
                          created_date="2018-07-04 10:00:2.0"
-                         workflow_id="fc93b50d-c9dd-4000-98fc-4a70d46ddd36"
+                         workflow_id="f73cbfd2-5478-4c19-95f9-690f3712f84d"
                          submitter="1"
                          analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" />
     <!--END: analysis_submission 3-->
@@ -200,7 +212,7 @@
                          update_samples="1"
                          analysis_state="COMPLETED"
                          created_date="2018-07-04 10:00:2.0"
-                         workflow_id="fc93b50d-c9dd-4000-98fc-4a70d46ddd36"
+                         workflow_id="f73cbfd2-5478-4c19-95f9-690f3712f84d"
                          submitter="3"
                          analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" />
     <!--END: analysis_submission 4-->
@@ -230,7 +242,7 @@
                          update_samples="1"
                          analysis_state="COMPLETED"
                          created_date="2018-07-04 10:00:2.0"
-                         workflow_id="fc93b50d-c9dd-4000-98fc-4a70d46ddd36"
+                         workflow_id="f73cbfd2-5478-4c19-95f9-690f3712f84d"
                          submitter="3"
                          analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" />
     <project_analysis_submission id="2"
@@ -265,7 +277,7 @@
                          update_samples="1"
                          analysis_state="COMPLETED"
                          created_date="2018-07-04 10:00:2.0"
-                         workflow_id="8c438951-484a-48da-be2b-93b7d29aa2a3"
+                         workflow_id="92ecf046-ee09-4271-b849-7a82625d6b60"
                          submitter="1"
                          analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" />
     <!--END: analysis_submission 6-->
@@ -295,7 +307,7 @@
                          update_samples="1"
                          analysis_state="COMPLETED"
                          created_date="2018-07-04 10:00:2.0"
-                         workflow_id="fc93b50d-c9dd-4000-98fc-4a70d46ddd36"
+                         workflow_id="f73cbfd2-5478-4c19-95f9-690f3712f84d"
                          submitter="1"
                          analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" />
     <!--END: analysis_submission 7-->
@@ -326,7 +338,7 @@
                          update_samples="1"
                          analysis_state="COMPLETED"
                          created_date="2018-07-04 10:00:2.0"
-                         workflow_id="fc93b50d-c9dd-4000-98fc-4a70d46ddd36"
+                         workflow_id="f73cbfd2-5478-4c19-95f9-690f3712f84d"
                          submitter="3"
                          analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" />
     <!--END: analysis_submission 8-->
