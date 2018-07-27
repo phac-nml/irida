@@ -20,7 +20,7 @@ import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsTestCo
 @Configuration
 @Import({ IridaApiNoGalaxyTestConfig.class, IridaApiServicesConfig.class, IridaApiTestFilesystemConfig.class,
 		IridaApiJdbcDataSourceConfig.class, IridaWorkflowsTestConfig.class })
-@Profile("test")
+@Profile("it")
 public class IridaApiServiceTestConfig {
 
 	/**
