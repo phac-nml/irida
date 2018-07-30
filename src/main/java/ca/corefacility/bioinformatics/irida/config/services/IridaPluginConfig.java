@@ -21,6 +21,8 @@ public class IridaPluginConfig {
 
 	private static final Logger logger = LoggerFactory.getLogger(IridaPluginConfig.class);
 
+	private static final Path PIPELINE_PLUGIN_PATH = Paths.get("/etc/irida/plugins");
+
 	/**
 	 * Get the list of IRIDA pipeline plugins
 	 *
@@ -28,8 +30,7 @@ public class IridaPluginConfig {
 	 */
 	@Bean(name = "iridaPipelinePlugins")
 	public IridaPluginList iridaPipelinePlugins() {
-		Path path = Paths.get("/etc/irida/plugins");
-		PluginManager pluginManager = new DefaultPluginManager(path);
+		PluginManager pluginManager = new DefaultPluginManager(PIPELINE_PLUGIN_PATH);
 
 		//TODO: Add exception management here to more gracefully handle failed pipeline loads
 		pluginManager.loadPlugins();
