@@ -119,7 +119,7 @@ public class IridaApiServicesConfig {
 	private Integer nreplPort;
 
 	@Autowired
-	List<IridaPlugin> pipelinePlugins;
+	IridaPluginConfig.IridaPluginList pipelinePlugins;
 	
 	@Bean
 	public BeanPostProcessor forbidJpqlUpdateDeletePostProcessor() {
@@ -138,7 +138,7 @@ public class IridaApiServicesConfig {
 
 		// Get the messages from all of the IRIDA pipeline plugins
 		Properties pluginMessages = new Properties();
-		for(IridaPlugin plugin : pipelinePlugins){
+		for(IridaPlugin plugin : pipelinePlugins.getPlugins()){
 			Properties messagesFile = plugin.getMessages();
 			pluginMessages.putAll(messagesFile);
 		}

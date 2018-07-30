@@ -31,7 +31,6 @@ public class IridaPluginConfig {
 		Path path = Paths.get("/etc/irida/plugins");
 		PluginManager pluginManager = new DefaultPluginManager(path);
 
-
 		//TODO: Add exception management here to more gracefully handle failed pipeline loads
 		pluginManager.loadPlugins();
 		pluginManager.startPlugins();
@@ -47,7 +46,7 @@ public class IridaPluginConfig {
 	 * Class containing the list of all loaded {@link IridaPlugin}
 	 */
 	public class IridaPluginList {
-		List<IridaPlugin> plugins;
+		private List<IridaPlugin> plugins;
 
 		public IridaPluginList(List<IridaPlugin> plugins) {
 			this.plugins = plugins;
