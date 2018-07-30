@@ -1,7 +1,11 @@
 package ca.corefacility.bioinformatics.irida.plugins;
 
+import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSampleUpdater;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import org.pf4j.ExtensionPoint;
 
+import java.util.Optional;
 import java.util.Properties;
 
 /**
@@ -15,4 +19,14 @@ public interface IridaPlugin extends ExtensionPoint {
 	 * @return a {@link Properties} object containing the messages
 	 */
 	public Properties getMessages();
+
+	/**
+	 * Get the AnalysisSampleUpdater if available for this analysis pipeline
+	 *
+	 * @param metadataTemplateService a {@link MetadataTemplateService} for getting metadata fields
+	 * @param sampleService           a {@link SampleService} for updating samples
+	 * @return An {@link Optional} {@link AnalysisSampleUpdater} if one is available for this pipeline
+	 */
+	public Optional<AnalysisSampleUpdater> getUpdater(MetadataTemplateService metadataTemplateService,
+			SampleService sampleService);
 }
