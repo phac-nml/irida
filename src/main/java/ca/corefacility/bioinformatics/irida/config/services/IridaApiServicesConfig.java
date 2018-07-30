@@ -28,7 +28,6 @@ import net.matlux.NreplServerSpring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.MessageSource;
@@ -120,7 +119,7 @@ public class IridaApiServicesConfig {
 	private Integer nreplPort;
 
 	@Autowired
-	IridaPluginConfig.IridaPluginList pipelinePlugins;
+	List<IridaPlugin> pipelinePlugins;
 	
 	@Bean
 	public BeanPostProcessor forbidJpqlUpdateDeletePostProcessor() {
@@ -137,9 +136,10 @@ public class IridaApiServicesConfig {
 		properties.setProperty("help.contact.email", helpEmail);
 		properties.setProperty("irida.version", iridaVersion);
 
+		// Get the messages from all of the IRIDA pipeline plugins
 		Properties pluginMessages = new Properties();
-		for(IridaPlugin plugin : pipelinePlugins.getPlugins()){
-			Properties messagesFile = plugin.getMessagesFile();
+		for(IridaPlugin plugin : pipelinePlugins){
+			Properties messagesFile = plugin.getMessages();
 			pluginMessages.putAll(messagesFile);
 		}
 
@@ -156,6 +156,7 @@ public class IridaApiServicesConfig {
 			source.setBasenames(RESOURCE_LOCATIONS);
 		}
 
+		// add all the pipeline plugin messages
 		properties.putAll(pluginMessages);
 
 		source.setFallbackToSystemLocale(false);

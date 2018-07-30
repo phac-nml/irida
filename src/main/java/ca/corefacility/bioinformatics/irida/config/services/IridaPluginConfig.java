@@ -24,13 +24,15 @@ public class IridaPluginConfig {
 	/**
 	 * Get the list of IRIDA pipeline plugins
 	 *
-	 * @return a list of {@link IridaPlugin}
+	 * @return a {@link IridaPluginList} containing all the loaded {@link IridaPlugin}
 	 */
 	@Bean(name = "iridaPipelinePlugins")
 	public IridaPluginList iridaPipelinePlugins() {
 		Path path = Paths.get("/etc/irida/plugins");
 		PluginManager pluginManager = new DefaultPluginManager(path);
 
+
+		//TODO: Add exception management here to more gracefully handle failed pipeline loads
 		pluginManager.loadPlugins();
 		pluginManager.startPlugins();
 
@@ -41,6 +43,9 @@ public class IridaPluginConfig {
 		return new IridaPluginList(extensions);
 	}
 
+	/**
+	 * Class containing the list of all loaded {@link IridaPlugin}
+	 */
 	public class IridaPluginList {
 		List<IridaPlugin> plugins;
 
