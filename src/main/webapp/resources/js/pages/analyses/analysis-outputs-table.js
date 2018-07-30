@@ -353,7 +353,7 @@ function getTableData(isShared = true) {
         `<div id="${gridId}" class="ag-theme-balham" style="height: 600px; width: 100%; resize: both;"/>`
       );
       const $dlButton = $(
-        `<button type="button" class="btn" disabled="disabled"></button>`
+        `<button type="button" class="btn spaced-bottom" disabled="disabled"></button>`
       );
       setDownloadButtonHtml($dlButton, 0, true);
       $app.prepend($dlButton);
