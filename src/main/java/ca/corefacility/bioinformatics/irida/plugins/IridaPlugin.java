@@ -17,8 +17,9 @@ public interface IridaPlugin extends ExtensionPoint {
 	 * Get the messages to be displayed in the UI for an IRIDA pipeline plugin
 	 *
 	 * @return a {@link Properties} object containing the messages
+	 * @throws IridaPluginException if an error occurs when loading the pipeline messages
 	 */
-	public Properties getMessages();
+	public Properties getMessages() throws IridaPluginException;
 
 	/**
 	 * Get the AnalysisSampleUpdater if available for this analysis pipeline
@@ -26,7 +27,8 @@ public interface IridaPlugin extends ExtensionPoint {
 	 * @param metadataTemplateService a {@link MetadataTemplateService} for getting metadata fields
 	 * @param sampleService           a {@link SampleService} for updating samples
 	 * @return An {@link Optional} {@link AnalysisSampleUpdater} if one is available for this pipeline
+	 * @throws IridaPluginException if an error occurs when loading the {@link AnalysisSampleUpdater}
 	 */
 	public Optional<AnalysisSampleUpdater> getUpdater(MetadataTemplateService metadataTemplateService,
-			SampleService sampleService);
+			SampleService sampleService) throws IridaPluginException;
 }

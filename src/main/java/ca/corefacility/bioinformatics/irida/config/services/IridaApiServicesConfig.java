@@ -11,6 +11,7 @@ import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsConfig
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.plugins.IridaPlugin;
+import ca.corefacility.bioinformatics.irida.plugins.IridaPluginException;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.impl.*;
@@ -139,8 +140,12 @@ public class IridaApiServicesConfig {
 		// Get the messages from all of the IRIDA pipeline plugins
 		Properties pluginMessages = new Properties();
 		for(IridaPlugin plugin : pipelinePlugins.getPlugins()){
-			Properties messagesFile = plugin.getMessages();
-			pluginMessages.putAll(messagesFile);
+			try {
+				Properties messagesFile = plugin.getMessages();
+				pluginMessages.putAll(messagesFile);
+			} catch (IridaPluginException ex) {
+				logger.error("Could not load messages for plugin", ex);
+			}
 		}
 
 		final ReloadableResourceBundleMessageSource source = new ReloadableResourceBundleMessageSource();
