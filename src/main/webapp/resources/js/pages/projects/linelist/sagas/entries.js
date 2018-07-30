@@ -21,7 +21,12 @@ export function* entriesLoadingSaga() {
   }
 }
 
+/**
+ * Saga to handle updating the value of a metadata entry.
+ * @returns {IterableIterator<*>}
+ */
 export function* entryEditedSaga() {
+  // Always true, that way it can the listener is set up every time.
   while (true) {
     const { entry, field } = yield take(types.EDITED);
     yield call(saveMetadataEntryField, entry.sampleId, entry[field], field);

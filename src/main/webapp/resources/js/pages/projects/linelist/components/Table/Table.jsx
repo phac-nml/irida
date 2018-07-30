@@ -18,6 +18,10 @@ const { i18n } = window.PAGE;
  * React component to render the ag-grid to the page.
  */
 export class Table extends React.Component {
+  state = {
+    entries: null
+  };
+
   /*
   Regular expression to clean the project and template names for export.
    */
@@ -35,14 +39,6 @@ export class Table extends React.Component {
   External custom components used by ag-grid.
    */
   frameworkComponents = { LoadingOverlay, SampleNameRenderer };
-
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      entries: null
-    };
-  }
 
   shouldComponentUpdate(nextProps) {
     if (!nextProps.fields.equals(this.props.fields)) {
@@ -195,11 +191,6 @@ export class Table extends React.Component {
     this.props.tableModified(list);
   };
 
-  undoEdit = (event, value, key) => {
-    event.node.setDataValue(event.colDef.field, value);
-    this.props.entryEdited(value, event.column.colId);
-  };
-
   /**
    * Generate the name for the type of file to be exported from the grid
    * @param {string} ext extension for the file.
@@ -344,27 +335,49 @@ export class Table extends React.Component {
     return state;
   }
 
+  /**
+   * When a cell is edited, store the value in case it needs to be reversed
+   * @param {object} event - the cell edit event
+   */
   onCellEditingStarted = event => {
     this.cellEditedValue = event.value;
   };
 
+  /**
+   * After the cell has been edited give the user a chance to undo the edit.
+   * @param {object} event - cell edit event
+   */
   onCellEditingStopped = event => {
+    // Get the table header for the cell that was edited
     const field = event.column.colId;
-    const value = this.cellEditedValue;
+    // Get the previous value
+    const previousValue = this.cellEditedValue;
+    // Get the new value for the cell
     const data = event.data;
-    if (value !== event.value) {
+    if (previousValue !== event.value) {
+      /*
+      Update the value on the server (this way, if the user closes the page the
+      server already has the update.
+       */
       this.props.entryEdited(data, field);
+      /*
+      Show a notification that allows the user to reverse the change to the value.
+       */
       showUndoNotification({
         text: i18n.linelist.editing.undo
           .replace("[SAMPLE_NAME]", `<strong>${data[i18n.linelist.agGrid.sampleName]}</strong>`)
           .replace("[FIELD]", `<strong>${field}</strong>`)
           .replace("[NEW_VALUE]", `<strong>${data[field]}</strong>`)
       }, () => {
-        data[field] = value;
+        /**
+         * Callback to reverse the change.
+         */
+        data[field] = previousValue;
         this.props.entryEdited(data, field);
-        event.node.setDataValue(event.colDef.field, value);
+        event.node.setDataValue(event.colDef.field, previousValue);
       });
     }
+    // Remove the stored value for the cell
     delete this.cellEditedValue;
   };
 

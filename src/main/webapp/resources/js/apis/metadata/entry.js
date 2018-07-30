@@ -2,7 +2,6 @@
  * Class responsible for ajax call for project sample metadata entries.
  */
 import axios from "axios";
-import qs from "qs";
 
 const BASE_URL = `${window.TL.BASE_URL}linelist/entries`;
 
@@ -19,6 +18,13 @@ export function fetchMetadataEntries(projectId) {
   });
 }
 
+/**
+ * Save a metadata term back to a sample
+ * @param {number} sampleId - identifier for a sample
+ * @param {string} value - new metadata value
+ * @param {string} label - metadata term to update
+ * @returns {*}
+ */
 export function saveMetadataEntryField(sampleId, value, label) {
   const params = new URLSearchParams();
   params.append("sampleId", sampleId);

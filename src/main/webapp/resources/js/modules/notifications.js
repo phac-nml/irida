@@ -55,6 +55,11 @@ export function showErrorNotification(params) {
   return new Noty(Object.assign({}, defaultErrorConfig, params)).show();
 }
 
+/**
+ * Show UI notification when a value has been changed and provide the capability to undo it.
+ * @param {object} params - overwrite the default configuration
+ * @param {function} cb - undo callback
+ */
 export function showUndoNotification(params, cb) {
   const n = new Noty(
     Object.assign(
