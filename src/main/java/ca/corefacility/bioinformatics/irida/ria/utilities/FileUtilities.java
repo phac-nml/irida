@@ -58,8 +58,7 @@ public class FileUtilities {
 		 * Replacing spaces and commas as they cause issues with
 		 * Content-disposition response header.
 		 */
-		fileName = fileName.replaceAll(" ", "_");
-		fileName = fileName.replaceAll(",", "");
+		fileName = formatName(fileName);
 
 		logger.debug("Creating zipped file response. [" + fileName + "]");
 
@@ -78,7 +77,6 @@ public class FileUtilities {
 					throw new FileNotFoundException();
 				}
 				// 1) Build a folder/file name
-				fileName = formatName(fileName);
 				StringBuilder zipEntryName = new StringBuilder(fileName);
 				zipEntryName.append("/").append(file.getLabel());
 
@@ -129,8 +127,7 @@ public class FileUtilities {
 		 * Replacing spaces and commas as they cause issues with
 		 * Content-disposition response header.
 		 */
-		fileName = fileName.replaceAll(" ", "_");
-		fileName = fileName.replaceAll(",", "");
+		fileName = formatName(fileName);
 		logger.debug("Creating zipped file response. [" + fileName + "] with " + files.size() + " analysis output files.");
 
 		// set the response headers before we do *ANYTHING* so that the filename
@@ -190,8 +187,7 @@ public class FileUtilities {
 	 * @param fileName Filename
 	 */
 	public static void createSingleFileResponse(HttpServletResponse response, AnalysisOutputFile file, String fileName) {
-		fileName = fileName.replaceAll(" ", "_");
-		fileName = fileName.replaceAll(",", "");
+		fileName = formatName(fileName);
 
 		// set the response headers before we do *ANYTHING* so that the filename
 		// actually appears in the download dialog
@@ -234,7 +230,7 @@ public class FileUtilities {
 	 * @return The name with unwanted characters removed.
 	 */
 	private static String formatName(String name) {
-		return name.replace(" ", "_");
+		return name.replaceAll("\\s", "_").replaceAll(",", "");
 	}
 
 	/**
