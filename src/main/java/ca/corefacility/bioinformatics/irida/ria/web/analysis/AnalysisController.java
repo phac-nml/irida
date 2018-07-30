@@ -925,7 +925,7 @@ public class AnalysisController {
 			throw new EntityNotFoundException("Could not find file with id " + fileId);
 		}
 
-		if (Strings.isNullOrEmpty(filename)) {
+		if (!Strings.isNullOrEmpty(filename)) {
 			FileUtilities.createSingleFileResponse(response, optFile.get(), filename);
 		} else {
 			FileUtilities.createSingleFileResponse(response, optFile.get());
