@@ -47,7 +47,7 @@ export class LineListLayoutComponent extends React.Component {
           addSamplesToCart={this.addSamplesToCart}
           selectedCount={this.props.selectedCount}
         />
-        <Layout className="ag-theme-balham fucked-up">
+        <Layout className="ag-theme-balham">
           <Content>
             <Table {...this.props} ref={this.tableRef} />
           </Content>

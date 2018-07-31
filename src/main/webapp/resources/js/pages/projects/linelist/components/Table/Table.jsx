@@ -110,6 +110,7 @@ export class Table extends React.Component {
     return false;
   }
 
+
   /**
    * Apply a Metadata template to the table.  This will reorder the columns and
    * toggle column visibility.
