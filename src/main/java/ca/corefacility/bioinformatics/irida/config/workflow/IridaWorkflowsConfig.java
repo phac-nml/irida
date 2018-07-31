@@ -26,10 +26,10 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.config.AnalysisTypeSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowIdSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowSet;
+import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowLoaderService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
@@ -49,6 +49,9 @@ public class IridaWorkflowsConfig {
 
 	@Autowired
 	private Environment environment;
+	
+	@Autowired
+	private AnalysisTypesService analysisTypesService;
 
 	/**
 	 * Gets the {@link Path} for all IRIDA workflow types.
@@ -102,7 +105,7 @@ public class IridaWorkflowsConfig {
 	public IridaWorkflowIdSet defaultIridaWorkflows() {
 		Set<UUID> defaultWorkflowIds = Sets.newHashSet();
 
-		for (AnalysisType analysisType : AnalysisTypes.values()) {
+		for (AnalysisType analysisType : analysisTypesService.values()) {
 			String analysisDefaultProperyName = IRIDA_DEFAULT_WORKFLOW_PREFIX + "." + analysisType.getType();
 
 			logger.trace("Getting default workflow id from property '" + analysisDefaultProperyName + "'");
@@ -143,7 +146,7 @@ public class IridaWorkflowsConfig {
 	 */
 	@Bean
 	public IridaWorkflowLoaderService iridaWorkflowLoaderService() {
-		return new IridaWorkflowLoaderService(workflowDescriptionUnmarshaller());
+		return new IridaWorkflowLoaderService(workflowDescriptionUnmarshaller(), analysisTypesService);
 	}
 
 	/**
@@ -155,7 +158,7 @@ public class IridaWorkflowsConfig {
 	@Bean
 	public AnalysisTypeSet disabledAnalysisTypes() {
 		String[] disabledWorkflowTypes = environment.getProperty(IRIDA_DISABLED_TYPES, String[].class);
-		return new AnalysisTypeSet(Sets.newHashSet(disabledWorkflowTypes).stream().map(t -> AnalysisTypes.fromString(t))
+		return new AnalysisTypeSet(Sets.newHashSet(disabledWorkflowTypes).stream().map(t -> analysisTypesService.fromString(t))
 				.collect(Collectors.toSet()));
 	}
 

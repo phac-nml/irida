@@ -10,6 +10,8 @@ import ca.corefacility.bioinformatics.irida.config.services.scheduled.IridaSched
 import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsConfig;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisTypes;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.impl.*;
@@ -17,12 +19,16 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.Ana
 import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionCleanupService;
+import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
+import ca.corefacility.bioinformatics.irida.service.impl.AnalysisTypesServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.impl.InMemoryTaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionCleanupServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
 import net.matlux.NreplServerSpring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -332,6 +338,16 @@ public class IridaApiServicesConfig {
 	public NreplServerSpring nRepl() {
 		return new NreplServerSpring(nreplPort);
 	}
-
+	
+	@Bean
+	public AnalysisTypesService analysisTypesService() {
+		Set<AnalysisType> runnableAnalysisTypes = Sets.newHashSet(AnalysisTypes.PHYLOGENOMICS,
+				AnalysisTypes.SISTR_TYPING, AnalysisTypes.ASSEMBLY_ANNOTATION, AnalysisTypes.BIO_HANSEL,
+				AnalysisTypes.ASSEMBLY_ANNOTATION_COLLECTION, AnalysisTypes.REFSEQ_MASHER,
+				AnalysisTypes.MLST_MENTALIST);
+		Set<AnalysisType> otherAnalysisTypes = Sets.newHashSet(AnalysisTypes.DEFAULT, AnalysisTypes.FASTQC);
+		
+		return new AnalysisTypesServiceImpl(runnableAnalysisTypes, otherAnalysisTypes);
+	}
 }
 
