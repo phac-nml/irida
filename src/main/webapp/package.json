@@ -19,8 +19,8 @@
   ],
   "dependencies": {
     "@bassettsj/livestamp": "^2.0.0",
-    "ag-grid": "^18.0.1",
-    "ag-grid-react": "^18.0.0",
+    "ag-grid": "^18.1.2",
+    "ag-grid-react": "^18.1.0",
     "angular": "1.6.2",
     "angular-aside": "^1.3.2",
     "angular-bootstrap-lightbox": "^0.12.0",
