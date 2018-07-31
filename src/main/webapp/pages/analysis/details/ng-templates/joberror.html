@@ -88,7 +88,7 @@
                                 data-toggle="tooltip" data-placement="left"
                                 th:title="#{analysis.details.joberror.reverse-lines}"
                                 ng-click="jobErrorsCtrl.reverseLines(jobError, 'standardError')">
-                            <i class="fa fa-sort-amount-{{ jobError.reversed.standardError ? 'desc' : 'asc' }}"
+                            <i class="fas fa-sort-amount-{{ jobError.reversed.standardError ? 'down' : 'up' }}"
                                aria-hidden="true"></i>
                         </button>
                     </div>
@@ -109,7 +109,7 @@
                                 data-toggle="tooltip" data-placement="left"
                                 th:title="#{analysis.details.joberror.reverse-lines}"
                                 ng-click="jobErrorsCtrl.reverseLines(jobError, 'standardOutput')">
-                            <i class="fa fa-sort-amount-{{ jobError.reversed.standardOutput ? 'desc' : 'asc' }}"
+                            <i class="fas fa-sort-amount-{{ jobError.reversed.standardOutput ? 'down' : 'up' }}"
                                aria-hidden="true"></i>
                         </button>
                     </div>
