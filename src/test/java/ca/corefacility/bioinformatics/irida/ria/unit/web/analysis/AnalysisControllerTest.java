@@ -3,7 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.analysis;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisTypes;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -87,7 +87,7 @@ public class AnalysisControllerTest {
 		final IridaWorkflowInput input = new IridaWorkflowInput("single", "paired", "reference", true);
 		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
 		IridaWorkflowDescription description = new IridaWorkflowDescription(submission.getWorkflowId(), "My Workflow",
-				"V1", AnalysisTypes.PHYLOGENOMICS, input, Lists.newArrayList(), Lists.newArrayList(),
+				"V1", BuiltInAnalysisTypes.PHYLOGENOMICS, input, Lists.newArrayList(), Lists.newArrayList(),
 				Lists.newArrayList());
 		IridaWorkflow iridaWorkflow = new IridaWorkflow(description, null);
 		submission.setAnalysisState(AnalysisState.COMPLETED);
@@ -114,7 +114,7 @@ public class AnalysisControllerTest {
 		final IridaWorkflowInput input = new IridaWorkflowInput("single", "paired", "reference", true);
 		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
 		IridaWorkflowDescription description = new IridaWorkflowDescription(submission.getWorkflowId(), "My Workflow",
-				"V1", AnalysisTypes.PHYLOGENOMICS, input, Lists.newArrayList(), Lists.newArrayList(),
+				"V1", BuiltInAnalysisTypes.PHYLOGENOMICS, input, Lists.newArrayList(), Lists.newArrayList(),
 				Lists.newArrayList());
 		IridaWorkflow iridaWorkflow = new IridaWorkflow(description, null);
 		submission.setAnalysisState(AnalysisState.RUNNING);

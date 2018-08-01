@@ -20,7 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.PipelineProvidedMetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisTypes;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSampleUpdater;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
@@ -129,7 +129,7 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 	 */
 	@Override
 	public AnalysisType getAnalysisType() {
-		return AnalysisTypes.BIO_HANSEL;
+		return BuiltInAnalysisTypes.BIO_HANSEL;
 	}
 
 	/**

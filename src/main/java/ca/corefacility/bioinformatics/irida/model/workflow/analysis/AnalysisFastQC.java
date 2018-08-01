@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
 import org.springframework.util.ReflectionUtils;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisTypes;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableSet;
@@ -82,7 +82,7 @@ public class AnalysisFastQC extends Analysis {
 		this.overrepresentedSequences = null;
 		this.fastQCReport = null;
 		
-		this.setAnalysisType(AnalysisTypes.FASTQC);
+		this.setAnalysisType(BuiltInAnalysisTypes.FASTQC);
 	}
 
 	public AnalysisFastQC(final AnalysisFastQCBuilder builder) {
@@ -102,7 +102,7 @@ public class AnalysisFastQC extends Analysis {
 		this.overrepresentedSequences = builder.overrepresentedSequences;
 		this.fastQCReport = builder.fastQCReport;
 		
-		this.setAnalysisType(AnalysisTypes.FASTQC);
+		this.setAnalysisType(BuiltInAnalysisTypes.FASTQC);
 	}
 
 	/**

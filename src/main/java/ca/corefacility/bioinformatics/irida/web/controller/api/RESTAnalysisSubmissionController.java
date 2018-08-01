@@ -35,7 +35,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisTypes;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
@@ -70,9 +70,9 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 
 	// available analysis types to filter for
 	public static Map<String, AnalysisType> ANALYSIS_TYPES = ImmutableMap.<String, AnalysisType>builder()
-			.put("phylogenomics", AnalysisTypes.PHYLOGENOMICS).put("assembly", AnalysisTypes.ASSEMBLY_ANNOTATION)
-			.put("assembly-collection", AnalysisTypes.ASSEMBLY_ANNOTATION_COLLECTION)
-			.put("sistr", AnalysisTypes.SISTR_TYPING).build();
+			.put("phylogenomics", BuiltInAnalysisTypes.PHYLOGENOMICS).put("assembly", BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION)
+			.put("assembly-collection", BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION_COLLECTION)
+			.put("sistr", BuiltInAnalysisTypes.SISTR_TYPING).build();
 
 	@Autowired
 	public RESTAnalysisSubmissionController(AnalysisSubmissionService analysisSubmissionService,

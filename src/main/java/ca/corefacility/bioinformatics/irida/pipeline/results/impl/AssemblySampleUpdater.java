@@ -14,7 +14,7 @@ import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssemblyFromAna
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisTypes;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSampleUpdater;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.GenomeAssemblyRepository;
@@ -60,6 +60,6 @@ public class AssemblySampleUpdater implements AnalysisSampleUpdater {
 	 */
 	@Override
 	public AnalysisType getAnalysisType() {
-		return AnalysisTypes.ASSEMBLY_ANNOTATION;
+		return BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION;
 	}
 }

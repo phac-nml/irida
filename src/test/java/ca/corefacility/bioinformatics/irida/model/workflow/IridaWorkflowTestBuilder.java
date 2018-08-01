@@ -10,7 +10,7 @@ import java.util.UUID;
 import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisTypes;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaToolParameter;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
@@ -99,7 +99,7 @@ public class IridaWorkflowTestBuilder {
 
 	private static IridaWorkflowDescription buildTestDescription(UUID workflowId, Input input, String reference,
 			boolean requiresSingleSample) throws MalformedURLException {
-		return buildTestDescription(workflowId, "TestWorkflow", "1.0", AnalysisTypes.DEFAULT, input, reference, requiresSingleSample);
+		return buildTestDescription(workflowId, "TestWorkflow", "1.0", BuiltInAnalysisTypes.DEFAULT, input, reference, requiresSingleSample);
 	}
 
 	/**
@@ -144,7 +144,7 @@ public class IridaWorkflowTestBuilder {
 
 	private static IridaWorkflowDescription buildTestDescription(UUID workflowId, Input input, String reference)
 			throws MalformedURLException {
-		return buildTestDescription(workflowId, "TestWorkflow", "1.0", AnalysisTypes.DEFAULT, input, reference, true);
+		return buildTestDescription(workflowId, "TestWorkflow", "1.0", BuiltInAnalysisTypes.DEFAULT, input, reference, true);
 	}
 
 	/**

@@ -73,7 +73,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisTypes;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.PreparedWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.WorkflowInputsGalaxy;
@@ -1297,7 +1297,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		Analysis analysis = analysisWorkspaceService.getAnalysisResults(analysisSubmission);
 		assertNotNull("the analysis results were not properly created", analysis);
-		assertEquals("the Analysis results class is invalid", AnalysisTypes.PHYLOGENOMICS, analysis.getAnalysisType());
+		assertEquals("the Analysis results class is invalid", BuiltInAnalysisTypes.PHYLOGENOMICS, analysis.getAnalysisType());
 		assertEquals("the analysis results has an invalid number of output files", 3, analysis.getAnalysisOutputFiles()
 				.size());
 		assertEquals("the analysis results output file has an invalid name", Paths.get(TABLE_NAME), analysis

@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisTypes;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisTypesServiceImpl;
 
@@ -21,11 +21,11 @@ public class IridaAnalysisTypesServiceConfig {
 	
 	@Bean
 	public AnalysisTypesService analysisTypesService() {
-		Set<AnalysisType> runnableAnalysisTypes = Sets.newHashSet(AnalysisTypes.PHYLOGENOMICS,
-				AnalysisTypes.SISTR_TYPING, AnalysisTypes.ASSEMBLY_ANNOTATION, AnalysisTypes.BIO_HANSEL,
-				AnalysisTypes.ASSEMBLY_ANNOTATION_COLLECTION, AnalysisTypes.REFSEQ_MASHER,
-				AnalysisTypes.MLST_MENTALIST);
-		Set<AnalysisType> otherAnalysisTypes = Sets.newHashSet(AnalysisTypes.DEFAULT, AnalysisTypes.FASTQC);
+		Set<AnalysisType> runnableAnalysisTypes = Sets.newHashSet(BuiltInAnalysisTypes.PHYLOGENOMICS,
+				BuiltInAnalysisTypes.SISTR_TYPING, BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION, BuiltInAnalysisTypes.BIO_HANSEL,
+				BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION_COLLECTION, BuiltInAnalysisTypes.REFSEQ_MASHER,
+				BuiltInAnalysisTypes.MLST_MENTALIST);
+		Set<AnalysisType> otherAnalysisTypes = Sets.newHashSet(BuiltInAnalysisTypes.DEFAULT, BuiltInAnalysisTypes.FASTQC);
 		
 		return new AnalysisTypesServiceImpl(runnableAnalysisTypes, otherAnalysisTypes);
 	}

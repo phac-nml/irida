@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisTypes;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;
 
 /**
@@ -63,25 +63,25 @@ public class AnalysisTypesServiceImpl implements AnalysisTypesService {
 		allTypesMap = new HashMap<>();
 		runnableTypesMap = new HashMap<>();
 
-		allTypesMap.put(AnalysisTypes.PHYLOGENOMICS.getType(), AnalysisTypes.PHYLOGENOMICS);
-		allTypesMap.put(AnalysisTypes.SISTR_TYPING.getType(), AnalysisTypes.SISTR_TYPING);
-		allTypesMap.put(AnalysisTypes.ASSEMBLY_ANNOTATION.getType(), AnalysisTypes.ASSEMBLY_ANNOTATION);
-		allTypesMap.put(AnalysisTypes.BIO_HANSEL.getType(), AnalysisTypes.BIO_HANSEL);
-		allTypesMap.put(AnalysisTypes.ASSEMBLY_ANNOTATION_COLLECTION.getType(),
-				AnalysisTypes.ASSEMBLY_ANNOTATION_COLLECTION);
-		allTypesMap.put(AnalysisTypes.REFSEQ_MASHER.getType(), AnalysisTypes.REFSEQ_MASHER);
-		allTypesMap.put(AnalysisTypes.FASTQC.getType(), AnalysisTypes.FASTQC);
-		allTypesMap.put(AnalysisTypes.MLST_MENTALIST.getType(), AnalysisTypes.MLST_MENTALIST);
-		allTypesMap.put(AnalysisTypes.DEFAULT.getType(), AnalysisTypes.DEFAULT);
+		allTypesMap.put(BuiltInAnalysisTypes.PHYLOGENOMICS.getType(), BuiltInAnalysisTypes.PHYLOGENOMICS);
+		allTypesMap.put(BuiltInAnalysisTypes.SISTR_TYPING.getType(), BuiltInAnalysisTypes.SISTR_TYPING);
+		allTypesMap.put(BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION.getType(), BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION);
+		allTypesMap.put(BuiltInAnalysisTypes.BIO_HANSEL.getType(), BuiltInAnalysisTypes.BIO_HANSEL);
+		allTypesMap.put(BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION_COLLECTION.getType(),
+				BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION_COLLECTION);
+		allTypesMap.put(BuiltInAnalysisTypes.REFSEQ_MASHER.getType(), BuiltInAnalysisTypes.REFSEQ_MASHER);
+		allTypesMap.put(BuiltInAnalysisTypes.FASTQC.getType(), BuiltInAnalysisTypes.FASTQC);
+		allTypesMap.put(BuiltInAnalysisTypes.MLST_MENTALIST.getType(), BuiltInAnalysisTypes.MLST_MENTALIST);
+		allTypesMap.put(BuiltInAnalysisTypes.DEFAULT.getType(), BuiltInAnalysisTypes.DEFAULT);
 
-		runnableTypesMap.put(AnalysisTypes.PHYLOGENOMICS.getType(), AnalysisTypes.PHYLOGENOMICS);
-		runnableTypesMap.put(AnalysisTypes.SISTR_TYPING.getType(), AnalysisTypes.SISTR_TYPING);
-		runnableTypesMap.put(AnalysisTypes.ASSEMBLY_ANNOTATION.getType(), AnalysisTypes.ASSEMBLY_ANNOTATION);
-		runnableTypesMap.put(AnalysisTypes.BIO_HANSEL.getType(), AnalysisTypes.BIO_HANSEL);
-		runnableTypesMap.put(AnalysisTypes.ASSEMBLY_ANNOTATION_COLLECTION.getType(),
-				AnalysisTypes.ASSEMBLY_ANNOTATION_COLLECTION);
-		runnableTypesMap.put(AnalysisTypes.REFSEQ_MASHER.getType(), AnalysisTypes.REFSEQ_MASHER);
-		runnableTypesMap.put(AnalysisTypes.MLST_MENTALIST.getType(), AnalysisTypes.MLST_MENTALIST);
+		runnableTypesMap.put(BuiltInAnalysisTypes.PHYLOGENOMICS.getType(), BuiltInAnalysisTypes.PHYLOGENOMICS);
+		runnableTypesMap.put(BuiltInAnalysisTypes.SISTR_TYPING.getType(), BuiltInAnalysisTypes.SISTR_TYPING);
+		runnableTypesMap.put(BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION.getType(), BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION);
+		runnableTypesMap.put(BuiltInAnalysisTypes.BIO_HANSEL.getType(), BuiltInAnalysisTypes.BIO_HANSEL);
+		runnableTypesMap.put(BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION_COLLECTION.getType(),
+				BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION_COLLECTION);
+		runnableTypesMap.put(BuiltInAnalysisTypes.REFSEQ_MASHER.getType(), BuiltInAnalysisTypes.REFSEQ_MASHER);
+		runnableTypesMap.put(BuiltInAnalysisTypes.MLST_MENTALIST.getType(), BuiltInAnalysisTypes.MLST_MENTALIST);
 	}
 
 	/**

@@ -53,7 +53,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisTypes;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErrorsService;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
@@ -292,7 +292,7 @@ public class SNVPhylAnalysisIT {
 
 		Analysis analysisPhylogenomics = submission.getAnalysis();
 		assertEquals("Should have generated a phylogenomics pipeline analysis type.",
-				AnalysisTypes.PHYLOGENOMICS, analysisPhylogenomics.getAnalysisType());
+				BuiltInAnalysisTypes.PHYLOGENOMICS, analysisPhylogenomics.getAnalysisType());
 
 		assertEquals("the phylogenomics pipeline should have 8 output files.", 8, analysisPhylogenomics
 				.getAnalysisOutputFiles().size());
@@ -422,7 +422,7 @@ public class SNVPhylAnalysisIT {
 
 		Analysis analysisPhylogenomics = submission.getAnalysis();
 		assertEquals("Should have generated a phylogenomics pipeline analysis type.",
-				AnalysisTypes.PHYLOGENOMICS, analysisPhylogenomics.getAnalysisType());
+				BuiltInAnalysisTypes.PHYLOGENOMICS, analysisPhylogenomics.getAnalysisType());
 
 		assertEquals("the phylogenomics pipeline should have 8 output files.", 8, analysisPhylogenomics
 				.getAnalysisOutputFiles().size());
@@ -572,7 +572,7 @@ public class SNVPhylAnalysisIT {
 
 		Analysis analysisPhylogenomics = submission.getAnalysis();
 		assertEquals("Should have generated a phylogenomics pipeline analysis type.",
-				AnalysisTypes.PHYLOGENOMICS, analysisPhylogenomics.getAnalysisType());
+				BuiltInAnalysisTypes.PHYLOGENOMICS, analysisPhylogenomics.getAnalysisType());
 
 		assertEquals("the phylogenomics pipeline should have 8 output files.", 8, analysisPhylogenomics
 				.getAnalysisOutputFiles().size());

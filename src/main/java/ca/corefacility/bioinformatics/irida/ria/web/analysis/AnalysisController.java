@@ -19,7 +19,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutp
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisTypes;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
@@ -72,8 +72,8 @@ public class AnalysisController {
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisController.class);
 	// PAGES
 	public static final Map<AnalysisType, String> PREVIEWS = ImmutableMap
-			.of(AnalysisTypes.PHYLOGENOMICS, "tree", AnalysisTypes.SISTR_TYPING, "sistr",
-					AnalysisTypes.MLST_MENTALIST, "tree");
+			.of(BuiltInAnalysisTypes.PHYLOGENOMICS, "tree", BuiltInAnalysisTypes.SISTR_TYPING, "sistr",
+					BuiltInAnalysisTypes.MLST_MENTALIST, "tree");
 	private static final String BASE = "analysis/";
 	public static final String PAGE_DETAILS_DIRECTORY = BASE + "details/";
 	public static final String PREVIEW_UNAVAILABLE = PAGE_DETAILS_DIRECTORY + "unavailable";
@@ -223,11 +223,11 @@ public class AnalysisController {
 		try {
 			if (submission.getAnalysisState()
 					.equals(AnalysisState.COMPLETED)) {
-				if (analysisType.equals(AnalysisTypes.PHYLOGENOMICS) || analysisType.equals(AnalysisTypes.MLST_MENTALIST)) {
+				if (analysisType.equals(BuiltInAnalysisTypes.PHYLOGENOMICS) || analysisType.equals(BuiltInAnalysisTypes.MLST_MENTALIST)) {
 					tree(submission, model);
-				} else if (analysisType.equals(AnalysisTypes.SISTR_TYPING)) {
+				} else if (analysisType.equals(BuiltInAnalysisTypes.SISTR_TYPING)) {
 					model.addAttribute("sistr", true);
-				} else if (analysisType.equals(AnalysisTypes.BIO_HANSEL)) {
+				} else if (analysisType.equals(BuiltInAnalysisTypes.BIO_HANSEL)) {
 					model.addAttribute("bio_hansel", true);
 				}
 			}
@@ -729,7 +729,7 @@ public class AnalysisController {
 		}
 		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription()
 				.getAnalysisType();
-		if (analysisType.equals(AnalysisTypes.SISTR_TYPING)) {
+		if (analysisType.equals(BuiltInAnalysisTypes.SISTR_TYPING)) {
 			Analysis analysis = submission.getAnalysis();
 			Path path = analysis.getAnalysisOutputFile(sistrFileKey)
 					.getFile();

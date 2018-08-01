@@ -63,7 +63,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisTypes;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -519,7 +519,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 		assertEquals("analysis results in returned submission and from database should be the same",
 				analysisResults.getId(), analysisResultsDatabase.getId());
 
-		assertEquals(AnalysisTypes.PHYLOGENOMICS, analysisResults.getAnalysisType());
+		assertEquals(BuiltInAnalysisTypes.PHYLOGENOMICS, analysisResults.getAnalysisType());
 
 		String analysisId = analysisExecuted.getRemoteAnalysisId();
 		assertEquals("id should be set properly for analysis", analysisId,
@@ -547,7 +547,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 		assertNotNull(analysis);
 
 		Analysis savedAnalysisFromDatabase = analysisService.read(analysisResultsDatabase.getId());
-		assertEquals(AnalysisTypes.PHYLOGENOMICS, savedAnalysisFromDatabase.getAnalysisType());
+		assertEquals(BuiltInAnalysisTypes.PHYLOGENOMICS, savedAnalysisFromDatabase.getAnalysisType());
 
 		assertEquals("Analysis from submission and from database should be the same",
 				savedAnalysisFromDatabase.getId(), analysis.getId());
@@ -598,7 +598,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 				analysisResults.getId(), analysisResultsDatabase.getId());
 
 
-		assertEquals(AnalysisTypes.PHYLOGENOMICS, analysisResults.getAnalysisType());
+		assertEquals(BuiltInAnalysisTypes.PHYLOGENOMICS, analysisResults.getAnalysisType());
 
 		String analysisId = analysisExecuted.getRemoteAnalysisId();
 		assertEquals("id should be set properly for analysis", analysisId,
@@ -662,7 +662,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 		assertNotNull("analysis should not be null in submission", analysis);
 
 		Analysis savedAnalysisFromDatabase = analysisService.read(analysisResultsDatabase.getId());
-		assertEquals("saved analysis in submission is not correct class", AnalysisTypes.PHYLOGENOMICS,
+		assertEquals("saved analysis in submission is not correct class", BuiltInAnalysisTypes.PHYLOGENOMICS,
 				savedAnalysisFromDatabase.getAnalysisType());
 
 		assertEquals("Analysis from submission and from database should be the same",
@@ -722,7 +722,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		Analysis analysisResults = analysisSubmissionCompletedDatabase.getAnalysis();
 
-		assertEquals("analysis results is an invalid class", AnalysisTypes.PHYLOGENOMICS,
+		assertEquals("analysis results is an invalid class", BuiltInAnalysisTypes.PHYLOGENOMICS,
 				analysisResults.getAnalysisType());
 
 		assertEquals("invalid number of output files", 3, analysisResults.getAnalysisOutputFiles().size());
@@ -856,7 +856,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		Analysis analysisResults = analysisSubmissionCompletedDatabase.getAnalysis();
 
-		assertEquals("analysis results is an invalid class", AnalysisTypes.PHYLOGENOMICS,
+		assertEquals("analysis results is an invalid class", BuiltInAnalysisTypes.PHYLOGENOMICS,
 				analysisResults.getAnalysisType());
 
 		assertEquals("invalid number of output files", 3, analysisResults.getAnalysisOutputFiles().size());
@@ -993,7 +993,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		Analysis analysisResults = analysisSubmissionCompletedDatabase.getAnalysis();
 
-		assertEquals("analysis results is an invalid class", AnalysisTypes.PHYLOGENOMICS,
+		assertEquals("analysis results is an invalid class", BuiltInAnalysisTypes.PHYLOGENOMICS,
 				analysisResults.getAnalysisType());
 
 		assertEquals("invalid number of output files", 3, analysisResults.getAnalysisOutputFiles().size());
@@ -1132,7 +1132,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		Analysis analysisResults = analysisSubmissionCompletedDatabase.getAnalysis();
 
-		assertEquals("analysis results is an invalid class", AnalysisTypes.PHYLOGENOMICS,
+		assertEquals("analysis results is an invalid class", BuiltInAnalysisTypes.PHYLOGENOMICS,
 				analysisResults.getAnalysisType());
 
 		assertEquals("invalid number of output files", 3, analysisResults.getAnalysisOutputFiles().size());

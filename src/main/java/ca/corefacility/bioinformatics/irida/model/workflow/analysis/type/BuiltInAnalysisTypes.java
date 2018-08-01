@@ -4,7 +4,7 @@ package ca.corefacility.bioinformatics.irida.model.workflow.analysis.type;
  * Stores a number of constants for individual {@link AnalysisType}s.
  *
  */
-public class AnalysisTypes {
+public class BuiltInAnalysisTypes {
 
 	public static final AnalysisType PHYLOGENOMICS = new AnalysisType("PHYLOGENOMICS");
 

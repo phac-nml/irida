@@ -9,7 +9,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.metadata.PipelineProvid
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisTypes;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSampleUpdater;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
@@ -125,6 +125,6 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 
 	@Override
 	public AnalysisType getAnalysisType() {
-		return AnalysisTypes.SISTR_TYPING;
+		return BuiltInAnalysisTypes.SISTR_TYPING;
 	}
 }

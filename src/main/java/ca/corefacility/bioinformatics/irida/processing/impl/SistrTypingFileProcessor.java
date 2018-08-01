@@ -20,7 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisTypes;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission.Builder;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
@@ -81,7 +81,7 @@ public class SistrTypingFileProcessor implements FileProcessor {
 
 			// get the workflow
 			try {
-				defaultWorkflowByType = workflowsService.getDefaultWorkflowByType(AnalysisTypes.SISTR_TYPING);
+				defaultWorkflowByType = workflowsService.getDefaultWorkflowByType(BuiltInAnalysisTypes.SISTR_TYPING);
 			} catch (IridaWorkflowNotFoundException e) {
 				throw new FileProcessorException("Cannot find assembly workflow", e);
 			}
