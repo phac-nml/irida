@@ -12,6 +12,8 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisTypes;
+import ca.corefacility.bioinformatics.irida.plugins.IridaPlugin;
+import ca.corefacility.bioinformatics.irida.plugins.IridaPluginException;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.impl.*;
@@ -77,7 +79,7 @@ import java.util.stream.Collectors;
 @Configuration
 @Import({ IridaApiSecurityConfig.class, IridaApiAspectsConfig.class, IridaApiRepositoriesConfig.class,
 		ExecutionManagerConfig.class, AnalysisExecutionServiceConfig.class, IridaWorkflowsConfig.class,
-		WebEmailConfig.class, IridaScheduledTasksConfig.class })
+		WebEmailConfig.class, IridaScheduledTasksConfig.class, IridaPluginConfig.class})
 @ComponentScan(basePackages = { "ca.corefacility.bioinformatics.irida.service",
 		"ca.corefacility.bioinformatics.irida.processing", "ca.corefacility.bioinformatics.irida.pipeline.results" })
 public class IridaApiServicesConfig {
@@ -122,6 +124,9 @@ public class IridaApiServicesConfig {
 
 	@Value("${irida.debug.nrepl.server.port:#{null}}")
 	private Integer nreplPort;
+
+	@Autowired
+	IridaPluginConfig.IridaPluginList pipelinePlugins;
 	
 	@Bean
 	public BeanPostProcessor forbidJpqlUpdateDeletePostProcessor() {
@@ -137,7 +142,18 @@ public class IridaApiServicesConfig {
 		properties.setProperty("help.page.url", helpPageUrl);
 		properties.setProperty("help.contact.email", helpEmail);
 		properties.setProperty("irida.version", iridaVersion);
-		
+
+		// Get the messages from all of the IRIDA pipeline plugins
+		Properties pluginMessages = new Properties();
+		for(IridaPlugin plugin : pipelinePlugins.getPlugins()){
+			try {
+				Properties messagesFile = plugin.getMessages();
+				pluginMessages.putAll(messagesFile);
+			} catch (IridaPluginException ex) {
+				logger.error("Could not load messages for plugin", ex);
+			}
+		}
+
 		final ReloadableResourceBundleMessageSource source = new ReloadableResourceBundleMessageSource();
 
 		try {
@@ -150,6 +166,9 @@ public class IridaApiServicesConfig {
 			logger.error("Could not set/load workflow message sources. " + e);
 			source.setBasenames(RESOURCE_LOCATIONS);
 		}
+
+		// add all the pipeline plugin messages
+		properties.putAll(pluginMessages);
 
 		source.setFallbackToSystemLocale(false);
 		source.setDefaultEncoding(DEFAULT_ENCODING);
