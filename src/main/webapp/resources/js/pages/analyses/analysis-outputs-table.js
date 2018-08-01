@@ -1,6 +1,8 @@
 import $ from "jquery";
 import { Grid } from "ag-grid/main";
 import { formatDate } from "../../utilities/date-utilities";
+import { escapeHtml } from "../../utilities/html-utilities";
+import { download } from "../../utilities/file.utilities";
 
 import "ag-grid/dist/styles/ag-grid.css";
 import "ag-grid/dist/styles/ag-theme-balham.css";
@@ -25,9 +27,17 @@ let MESSAGES = {
   error: "!!!ERROR!!!",
   preparing: "PREPARING DOWNLOAD",
   automatedAnalyses: "AUTOMATED ANALYSES",
-  sharedAnalyses: "SHARED ANALYSES"
+  sharedAnalyses: "SHARED ANALYSES",
+  helpInfo: "SEND HELP"
 };
 MESSAGES = Object.assign(MESSAGES, $("#js-messages").data());
+
+const helpInfoIcon = `
+<i class="fa fa-2x fa-question-circle spaced-left__sm text-info" 
+   data-toggle="tooltip"
+   data-placement="auto right"
+   title="${escapeHtml(MESSAGES.helpInfo)}">
+</i>`;
 
 /**
  * Analysis output file path regex to capture filename with extension
@@ -90,26 +100,6 @@ function getFilename(path) {
 }
 
 /**
- * Download a file with a temporary hidden <a> element.
- *
- * @param {string} url URL for download
- * @param {string} downloadName Download filename
- */
-function downloadFile(url, downloadName) {
-  /**
-   * Hidden <a> element for downloading each AOF
-   * @type {HTMLAnchorElement}
-   */
-  const $a = document.createElement("a");
-  $a.style.display = "none";
-  document.body.appendChild($a);
-  $a.setAttribute("href", url);
-  $a.setAttribute("download", downloadName);
-  $a.click();
-  document.body.removeChild($a);
-}
-
-/**
  * Download analysis output files (AOFs) for selected rows in ag-grid table
  *
  * A single selected AOF will be downloaded unzipped.
@@ -139,7 +129,7 @@ function downloadSelected($dlButton, api) {
       filePath
     )}`;
     url += "?" + $.param({ filename: downloadName });
-    downloadFile(url, downloadName);
+    download(url);
     setDownloadButtonHtml($dlButton, selectedNodes.length);
   } else if (selectedNodes.length > 1) {
     const outputs = selectedNodes.map(node => node.data);
@@ -155,7 +145,7 @@ function downloadSelected($dlButton, api) {
         const projectId = getProjectId();
         const projectOrUser = projectId ? `projectId-${projectId}` : `user`;
         downloadUrl += `?filename=${projectOrUser}-batch-download-${selectionSize}-analysis-output-files`;
-        downloadFile(downloadUrl, "batch-download.zip");
+        download(downloadUrl);
         setDownloadButtonHtml($dlButton, selectedNodes.length);
       },
       error: (jqXHR, textStatus, errorThrown) => {
@@ -357,6 +347,9 @@ function getTableData(isShared = true) {
       );
       setDownloadButtonHtml($dlButton, 0, true);
       $app.prepend($dlButton);
+      const $helpIcon = $(helpInfoIcon);
+      $app.append($helpIcon);
+      $helpIcon.tooltip({ container: "body" });
       $app.append($grid);
 
       /**

@@ -7,7 +7,6 @@ import {
   createDownloadLink,
   createFilterTag,
   createItemLink,
-  createRestrictedWidthContent,
   generateColumnOrderInfo,
   tableConfig
 } from "../../utilities/datatables-utilities";
@@ -17,6 +16,7 @@ import {
 } from "../../utilities/date-utilities";
 import { deleteAnalysis } from "../analysis/analysis-service";
 import { showNotification } from "../../modules/notifications";
+import { escapeHtml } from "../../utilities/html-utilities";
 
 /**
  * Internationalized text from div#messages.hidden
@@ -49,31 +49,11 @@ const jobErrorIcon = `
    title="${MESSAGES.tooltip}">
 </i>`;
 
-const CHAR_TO_ESCAPED = {
-  "&": "&amp;",
-  "<": "&lt;",
-  ">": "&gt;",
-  '"': "&quot;",
-  "'": "&#39;",
-  "/": "&#x2F;",
-  "`": "&#x60;",
-  "=": "&#x3D;"
-};
-
 /**
  * Get a handle on the table
  * @type {*|jQuery|HTMLElement}
  */
 const $table = $("#analyses");
-
-/**
- * Replace special characters in a string with escaped characters
- * @param string String to escape
- * @returns {string} Escaped string
- */
-function escapeHtml(string) {
-  return String(string).replace(/[&<>"'`=\/]/g, s => CHAR_TO_ESCAPED[s]);
-}
 
 /**
  * Truncate a multiline string `s` to only the last `n` lines.
