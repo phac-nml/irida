@@ -110,8 +110,10 @@
                                 data-toggle="tooltip" data-placement="left"
                                 th:title="#{analysis.details.joberror.reverse-lines}"
                                 ng-click="jobErrorsCtrl.reverseLines(jobError, 'standardOutput')">
-                            <i class="fas fa-sort-amount-{{ jobError.reversed.standardOutput ? 'down' : 'up' }}"
-                               aria-hidden="true"></i>
+                            <span ng-show="jobError.reversed.standardOutput"><i
+                                    class="fas fa-sort-amount-down"></i></span>
+                            <span ng-show="!jobError.reversed.standardOutput"><i
+                                    class="fas fa-sort-amount-up"></i></span>
                         </button>
                     </div>
                 </div>
