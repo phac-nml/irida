@@ -24,8 +24,16 @@ export class LineListLayoutComponent extends React.Component {
    * the new height required and sets it into the state.
    */
   updateHeight = () => {
-    if (window.innerHeight > 700) {
-      const height = window.innerHeight - this.linelistRef.current.getBoundingClientRect().top - 90;
+    if (window.innerHeight > 600) {
+      const BOTTOM_BUFFER = 90;
+      /*
+      Determine the height the linelist should be based on the size of the window,
+      and a small buffer at the bottom of the page.
+       */
+      const height =
+        window.innerHeight -
+        this.linelistRef.current.getBoundingClientRect().top -
+        BOTTOM_BUFFER;
       this.setState({ height });
     } else {
       // Just preventing table from getting overly small!
@@ -83,8 +91,11 @@ export class LineListLayoutComponent extends React.Component {
         />
         <Layout className="ag-theme-balham">
           <Content>
-            <Table {...this.props} height={this.state.height}
-                   ref={this.tableRef}/>
+            <Table
+              {...this.props}
+              height={this.state.height}
+              ref={this.tableRef}
+            />
           </Content>
           <Sider
             className="tool-panel-slider"
@@ -94,8 +105,10 @@ export class LineListLayoutComponent extends React.Component {
             collapsible
             collapsed={this.state.collapsed}
           >
-            <div className="tool-panel-wrapper"
-                 style={{ height: this.state.height }}>
+            <div
+              className="tool-panel-wrapper"
+              style={{height: this.state.height}}
+            >
               <ToolPanel {...this.props} />
               <div className="ag-grid-tool-panel--buttons">
                 <button
