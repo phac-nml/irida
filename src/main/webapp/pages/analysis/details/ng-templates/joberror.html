@@ -3,7 +3,6 @@
 <body>
 
 <script th:fragment="main" type="text/ng-template" id="joberrors.html">
-
     <div ng-show="jobErrorsCtrl.hasNoJobErrorInfoAvailable()"
          class="it-has-job-error">
         <h2 th:text="#{analysis.details.joberror.unavailable}">_unavailable_</h2>
@@ -88,8 +87,8 @@
                                 data-toggle="tooltip" data-placement="left"
                                 th:title="#{analysis.details.joberror.reverse-lines}"
                                 ng-click="jobErrorsCtrl.reverseLines(jobError, 'standardError')">
-                            <i class="fas fa-sort-amount-{{ jobError.reversed.standardError ? 'down' : 'up' }}"
-                               aria-hidden="true"></i>
+                            <i ng-show="jobError.reversed.standardError" class="fas fa-sort-amount-down"></i>
+                            <i ng-show="!jobError.reversed.standardError" class="fas fa-sort-amount-up"></i>
                         </button>
                     </div>
                 </div>
