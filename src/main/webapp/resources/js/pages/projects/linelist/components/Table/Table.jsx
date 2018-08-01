@@ -345,7 +345,7 @@ export class Table extends React.Component {
    * @param {object} event - the cell edit event
    */
   onCellEditingStarted = event => {
-    this.cellEditedValue = event.value;
+    this.cellEditedValue = event.value || "";
   };
 
   /**
@@ -359,7 +359,9 @@ export class Table extends React.Component {
     const previousValue = this.cellEditedValue;
     // Get the new value for the cell
     const data = event.data;
-    if (previousValue !== event.value) {
+
+    // Make sure that the data for saving is valid.
+    if (typeof event.value !== "undefined" && previousValue !== event.value) {
       /*
       Update the value on the server (this way, if the user closes the page the
       server already has the update.
@@ -368,19 +370,29 @@ export class Table extends React.Component {
       /*
       Show a notification that allows the user to reverse the change to the value.
        */
-      showUndoNotification({
-        text: i18n.linelist.editing.undo
-          .replace("[SAMPLE_NAME]", `<strong>${data[i18n.linelist.agGrid.sampleName]}</strong>`)
-          .replace("[FIELD]", `<strong>${field}</strong>`)
-          .replace("[NEW_VALUE]", `<strong>${data[field]}</strong>`)
-      }, () => {
-        /**
-         * Callback to reverse the change.
-         */
-        data[field] = previousValue;
-        this.props.entryEdited(data, field);
-        event.node.setDataValue(event.colDef.field, previousValue);
-      });
+      console.warn(data[field]);
+      const text = Boolean(data[field])
+        ? i18n.linelist.editing.undo.full
+        : i18n.linelist.editing.undo.empty;
+      showUndoNotification(
+        {
+          text: text
+            .replace(
+              "[SAMPLE_NAME]",
+              `<strong>${data[i18n.linelist.agGrid.sampleName]}</strong>`
+            )
+            .replace("[FIELD]", `<strong>${field}</strong>`)
+            .replace("[NEW_VALUE]", `<strong>${data[field]}</strong>`)
+        },
+        () => {
+          /**
+           * Callback to reverse the change.
+           */
+          data[field] = previousValue;
+          this.props.entryEdited(data, field);
+          event.node.setDataValue(event.colDef.field, previousValue);
+        }
+      );
     }
     // Remove the stored value for the cell
     delete this.cellEditedValue;
