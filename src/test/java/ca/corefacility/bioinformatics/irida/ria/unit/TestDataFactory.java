@@ -25,7 +25,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetExcepti
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssemblyFromAnalysis;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -40,6 +39,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowOutput;
@@ -125,7 +125,7 @@ public class TestDataFactory {
 				.put("contigs-with-repeats", constructAnalysisOutputFile("test_file.fasta", null))
 				.put("refseq-masher-matches", constructAnalysisOutputFile("refseq-masher-matches.tsv", 9000L))
 				.build();
-		Analysis analysis = new Analysis(FAKE_EXECUTION_MANAGER_ID, analysisOutputFiles, AnalysisType.PHYLOGENOMICS);
+		Analysis analysis = new Analysis(FAKE_EXECUTION_MANAGER_ID, analysisOutputFiles, BuiltInAnalysisTypes.PHYLOGENOMICS);
 		return analysis;
 	}
 
@@ -174,7 +174,7 @@ public class TestDataFactory {
 		List<IridaWorkflowToolRepository> tools = ImmutableList.of();
 		List<IridaWorkflowParameter> parameters = ImmutableList.of();
 		IridaWorkflowDescription description = new IridaWorkflowDescription(id, "My Workflow", "V1",
-				AnalysisType.DEFAULT, input, outputs, tools, parameters);
+				BuiltInAnalysisTypes.DEFAULT, input, outputs, tools, parameters);
 		IridaWorkflowStructure structure = new IridaWorkflowStructure(null);
 		return new IridaWorkflow(description, structure);
 	}

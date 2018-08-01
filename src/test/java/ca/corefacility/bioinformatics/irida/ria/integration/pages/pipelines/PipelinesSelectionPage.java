@@ -15,10 +15,10 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 public class PipelinesSelectionPage extends AbstractPage {
 	private static final String RELATIVE_URL = "pipelines";
 
-	@FindBy(id = "phylogenomics_btn")
+	@FindBy(id = "PHYLOGENOMICS_btn")
 	private static WebElement phylogenomicsBtn;
 	
-	@FindBy(id = "assembly-annotation_btn")
+	@FindBy(id = "ASSEMBLY_ANNOTATION_btn")
 	private static WebElement asssemblyBtn;
 
 	public PipelinesSelectionPage(WebDriver driver) {

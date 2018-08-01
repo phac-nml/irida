@@ -28,10 +28,11 @@ import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConf
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowDefaultException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowTestBuilder;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.TestAnalysis;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowIdSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowSet;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowLoaderService;
@@ -120,7 +121,7 @@ public class IridaWorkflowsServiceIT {
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v2);
 		iridaWorkflowsService.setDefaultWorkflow(workflowId1v1);
-		assertEquals(testWorkflow1v1, iridaWorkflowsService.getDefaultWorkflowByType(AnalysisType.DEFAULT));
+		assertEquals(testWorkflow1v1, iridaWorkflowsService.getDefaultWorkflowByType(BuiltInAnalysisTypes.DEFAULT));
 	}
 
 	/**
@@ -137,8 +138,8 @@ public class IridaWorkflowsServiceIT {
 		iridaWorkflowsService.setDefaultWorkflow(workflowIdPhylogenomics);
 
 		Map<AnalysisType, IridaWorkflow> workflowsMap = iridaWorkflowsService.getAllDefaultWorkflowsByType(Sets
-				.newHashSet(AnalysisType.DEFAULT, AnalysisType.PHYLOGENOMICS));
-		assertEquals(ImmutableMap.of(AnalysisType.DEFAULT, testWorkflow1v1, AnalysisType.PHYLOGENOMICS,
+				.newHashSet(BuiltInAnalysisTypes.DEFAULT, BuiltInAnalysisTypes.PHYLOGENOMICS));
+		assertEquals(ImmutableMap.of(BuiltInAnalysisTypes.DEFAULT, testWorkflow1v1, BuiltInAnalysisTypes.PHYLOGENOMICS,
 				testWorkflowPhylogenomics), workflowsMap);
 	}
 
@@ -154,8 +155,8 @@ public class IridaWorkflowsServiceIT {
 		iridaWorkflowsService.registerWorkflow(testWorkflowPhylogenomics);
 		iridaWorkflowsService.setDefaultWorkflow(workflowId1v1);
 
-		iridaWorkflowsService.getAllDefaultWorkflowsByType(Sets.newHashSet(AnalysisType.DEFAULT,
-				AnalysisType.PHYLOGENOMICS));
+		iridaWorkflowsService.getAllDefaultWorkflowsByType(Sets.newHashSet(BuiltInAnalysisTypes.DEFAULT,
+				BuiltInAnalysisTypes.PHYLOGENOMICS));
 	}
 
 	/**
@@ -167,7 +168,7 @@ public class IridaWorkflowsServiceIT {
 	@Test(expected = IridaWorkflowNotFoundException.class)
 	public void testGetDefaultWorkflowByTypeFail() throws IridaWorkflowException {
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
-		iridaWorkflowsService.getDefaultWorkflowByType(AnalysisType.DEFAULT);
+		iridaWorkflowsService.getDefaultWorkflowByType(BuiltInAnalysisTypes.DEFAULT);
 	}
 
 	/**
@@ -178,7 +179,7 @@ public class IridaWorkflowsServiceIT {
 	 */
 	@Test(expected = IridaWorkflowNotFoundException.class)
 	public void testGetDefaultWorkflowByTypeFailNoType() throws IridaWorkflowException {
-		iridaWorkflowsService.getDefaultWorkflowByType(AnalysisType.DEFAULT);
+		iridaWorkflowsService.getDefaultWorkflowByType(BuiltInAnalysisTypes.DEFAULT);
 	}
 
 	/**
@@ -205,8 +206,8 @@ public class IridaWorkflowsServiceIT {
 		iridaWorkflowsService.registerWorkflows(Sets.newHashSet(testWorkflow1v1, testWorkflowPhylogenomics));
 		iridaWorkflowsService.setDefaultWorkflows(Sets.newHashSet(workflowId1v1, workflowIdPhylogenomics));
 
-		assertEquals(testWorkflow1v1, iridaWorkflowsService.getDefaultWorkflowByType(AnalysisType.DEFAULT));
-		assertEquals(testWorkflowPhylogenomics, iridaWorkflowsService.getDefaultWorkflowByType(AnalysisType.PHYLOGENOMICS));
+		assertEquals(testWorkflow1v1, iridaWorkflowsService.getDefaultWorkflowByType(BuiltInAnalysisTypes.DEFAULT));
+		assertEquals(testWorkflowPhylogenomics, iridaWorkflowsService.getDefaultWorkflowByType(BuiltInAnalysisTypes.PHYLOGENOMICS));
 	}
 
 	/**
@@ -270,7 +271,7 @@ public class IridaWorkflowsServiceIT {
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v2);
 
-		Set<IridaWorkflow> workflows = iridaWorkflowsService.getAllWorkflowsByType(AnalysisType.DEFAULT);
+		Set<IridaWorkflow> workflows = iridaWorkflowsService.getAllWorkflowsByType(BuiltInAnalysisTypes.DEFAULT);
 		assertEquals(2, workflows.size());
 	}
 	
@@ -284,7 +285,7 @@ public class IridaWorkflowsServiceIT {
 	public void testGetAllWorkflowsByTypeFailNoWorkflows() throws IridaWorkflowException {
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
 
-		iridaWorkflowsService.getAllWorkflowsByType(AnalysisType.PHYLOGENOMICS);
+		iridaWorkflowsService.getAllWorkflowsByType(BuiltInAnalysisTypes.PHYLOGENOMICS);
 	}
 	
 	/**
@@ -299,7 +300,7 @@ public class IridaWorkflowsServiceIT {
 		iridaWorkflowsService.registerWorkflow(testWorkflowPhylogenomics);
 
 		Set<AnalysisType> workflowTypes = iridaWorkflowsService.getRegisteredWorkflowTypes();
-		assertEquals(Sets.newHashSet(AnalysisType.DEFAULT, AnalysisType.PHYLOGENOMICS), workflowTypes);
+		assertEquals(Sets.newHashSet(BuiltInAnalysisTypes.DEFAULT, BuiltInAnalysisTypes.PHYLOGENOMICS), workflowTypes);
 	}
 	
 	/**
