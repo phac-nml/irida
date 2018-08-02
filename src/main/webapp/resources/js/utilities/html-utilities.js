@@ -15,9 +15,21 @@ const CHAR_TO_ESCAPED = {
 
 /**
  * Replace special characters in a string with escaped characters
- * @param string String to escape
+ * @param {string} htmlString String to escape
  * @returns {string} Escaped string
  */
-export function escapeHtml(string) {
-  return String(string).replace(/[&<>"'`=\/]/g, s => CHAR_TO_ESCAPED[s]);
+export function escapeHtml(htmlString) {
+  return String(htmlString).replace(/[&<>"'`=\/]/g, s => CHAR_TO_ESCAPED[s]);
+}
+
+/**
+ * Create a new HTML Element given some HTML string
+ *
+ * @param {string} htmlString HTML string
+ * @return {Element} HTML element
+ */
+export function newElement(htmlString) {
+  const $tmpDiv = document.createElement("div");
+  $tmpDiv.innerHTML = htmlString;
+  return $tmpDiv.children[0];
 }

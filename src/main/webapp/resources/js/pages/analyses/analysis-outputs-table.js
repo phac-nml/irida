@@ -1,7 +1,7 @@
-import $ from "jquery";
 import { Grid } from "ag-grid/main";
 import { formatDate } from "../../utilities/date-utilities";
-import { escapeHtml } from "../../utilities/html-utilities";
+import { escapeHtml, newElement } from "../../utilities/html-utilities";
+import { ajaxRequest } from "../../utilities/ajax-utilities";
 import { download } from "../../utilities/file.utilities";
 
 import "ag-grid/dist/styles/ag-grid.css";
@@ -24,7 +24,6 @@ let I18N = {
   "error.request.url": "REQUEST URL",
   "error.request.status-text": "STATUS TEXT",
   "analysis.batch-download.ajax.error": "REQUEST ERROR",
-  error: "!!!ERROR!!!",
   "analysis.batch-download.preparing": "PREPARING DOWNLOAD",
   "analysis.automated-analyses": "AUTOMATED ANALYSES",
   "analysis.shared-analyses": "SHARED ANALYSES",
@@ -34,8 +33,6 @@ I18N = Object.assign(I18N, window.PAGE.i18n);
 
 const helpInfoIcon = `
 <i class="fa fa-2x fa-question-circle spaced-left__sm text-info" 
-   data-toggle="tooltip"
-   data-placement="auto right"
    title="${escapeHtml(I18N["analysis.batch-download.help-info"])}">
 </i>`;
 
@@ -81,9 +78,9 @@ function getAjaxUrl(isShared = true) {
 
 /**
  * HTML container for dynamically generated table and other UI elements
- * @type {jQuery|HTMLElement}
+ * @type {HTMLElement}
  */
-const $app = $("#app");
+const $app = document.getElementById("app");
 
 /**
  * ag-grid Grid instance object
@@ -107,9 +104,9 @@ function getFilename(path) {
  * stream.
  *
  * @param {Object} api ag-grid grid options API object
- * @param {jQuery|HTMLElement} $dlButton
+ * @param {HTMLElement} $dlButton
  */
-function downloadSelected($dlButton, api) {
+async function downloadSelected($dlButton, api) {
   /**
    * Selected rows in the ag-grid Grid corresponding to AOFs
    * @type {*|RowNode[]}
@@ -130,36 +127,35 @@ function downloadSelected($dlButton, api) {
     )}`;
     url += "?" + $.param({ filename: downloadName });
     download(url);
-    setDownloadButtonHtml($dlButton, selectedNodes.length);
   } else if (selectedNodes.length > 1) {
     const outputs = selectedNodes.map(node => node.data);
     let url = `${BASE_URL}analysis/ajax/download/prepare`;
     let downloadUrl = `${BASE_URL}analysis/ajax/download/selection`;
-    $.ajax({
-      url,
-      type: "POST",
-      data: JSON.stringify(outputs),
-      contentType: "application/json",
-      dataType: "json",
-      success: ({ selectionSize }) => {
-        const projectOrUser = PROJECT_ID ? `projectId-${PROJECT_ID}` : `user`;
-        downloadUrl += `?filename=${projectOrUser}-batch-download-${selectionSize}-analysis-output-files`;
-        download(downloadUrl);
-        setDownloadButtonHtml($dlButton, selectedNodes.length);
-      },
-      error: (jqXHR, textStatus, errorThrown) => {
-        console.error(jqXHR, textStatus, errorThrown);
-        setDownloadButtonHtml($dlButton, selectedNodes.length);
-      }
-    });
-  } else {
-    $dlButton.attr("disabled", null);
+    try {
+      const { selectionSize } = JSON.parse(
+        await ajaxRequest({
+          url: url,
+          method: "post",
+          json: JSON.stringify(outputs)
+        })
+      );
+      const projectOrUser = PROJECT_ID ? `projectId-${PROJECT_ID}` : `user`;
+      downloadUrl += `?filename=${projectOrUser}-batch-download-${selectionSize}-analysis-output-files`;
+      download(downloadUrl);
+    } catch (e) {
+      console.error(I18N["analysis.batch-download.ajax.error"], e);
+    }
   }
+  setDownloadButtonHtml(
+    $dlButton,
+    selectedNodes.length,
+    selectedNodes.length === 0
+  );
 }
 
 /**
  * Set analysis output file download button inner HTML
- * @param {jQuery|HTMLElement} $dlButton Download button element
+ * @param {HTMLElement} $dlButton Download button element
  * @param {number} selectionLength Number of rows selected for download
  * @param {boolean} isDisabled Disable the download button?
  * @param {boolean} isPreparing Is the download being prepared? It's necessary to prepare downloads for large collections of analysis output files.
@@ -170,17 +166,20 @@ function setDownloadButtonHtml(
   isDisabled = false,
   isPreparing = false
 ) {
-  $dlButton.attr("disabled", isDisabled ? "disabled" : null);
+  if (isDisabled) {
+    $dlButton.setAttribute("disabled", "disabled");
+  } else {
+    $dlButton.removeAttribute("disabled");
+  }
+
   const badge = selectionLength
     ? `<span class="badge">${selectionLength}</span>`
     : "";
-  $dlButton.html(
-    `<i class="fa fa-download spaced-right__sm"></i> ${
-      isPreparing
-        ? I18N["analysis.batch-download.preparing"]
-        : I18N["form.download"]
-    } ${badge}`
-  );
+  $dlButton.innerHTML = `<i class="fa fa-download spaced-right__sm"></i> ${
+    isPreparing
+      ? I18N["analysis.batch-download.preparing"]
+      : I18N["form.download"]
+  } ${badge}`;
 }
 
 /**
@@ -208,7 +207,7 @@ function initAgGrid($grid, headers, rows, $dlButton) {
   };
   const grid = new Grid($grid, gridOptions);
   gridOptions.api.sizeColumnsToFit();
-  $dlButton.on("click", e => {
+  $dlButton.addEventListener("click", e => {
     e.preventDefault();
     downloadSelected($dlButton, gridOptions.api);
   });
@@ -248,13 +247,13 @@ function getWorkflowInfo(singleSampleOutputs) {
     (acc, x) => Object.assign(acc, { [x.workflowId]: null }),
     {}
   );
-  Object.keys(workflowIds).forEach(workflowId => {
-    $.get(`${BASE_URL}pipelines/ajax/${workflowId}`).done(wfInfo => {
-      workflowIds[workflowId] = wfInfo;
-      if (grid) {
-        grid.context.beans.gridApi.beanInstance.redrawRows();
-      }
-    });
+  Object.keys(workflowIds).forEach(async function(workflowId) {
+    workflowIds[workflowId] = JSON.parse(
+      await ajaxRequest({ url: `${BASE_URL}pipelines/ajax/${workflowId}` })
+    );
+    if (grid) {
+      grid.context.beans.gridApi.beanInstance.redrawRows();
+    }
   });
   return workflowIds;
 }
@@ -263,129 +262,111 @@ function getWorkflowInfo(singleSampleOutputs) {
  * Get analysis output file (AOF) table information and create table.
  * @param {boolean} isShared If project analyses to be shown, show outputs shared with project, otherwise show automated analyses.
  */
-function getTableData(isShared = true) {
-  $.get(getAjaxUrl(isShared))
-    .done(data => {
-      $app.html("");
-      const singleSampleOutputs = filterSingleSampleOutputs(data);
-      const workflowIds = getWorkflowInfo(singleSampleOutputs);
-      /**
-       * ag-grid Grid header definitions
-       * @type {*[]}
-       */
-      const HEADERS = [
-        {
-          field: "sampleName",
-          headerName: I18N["sample.sampleName"],
-          checkboxSelection: true,
-          headerCheckboxSelection: true,
-          headerCheckboxSelectionFilteredOnly: true,
-          cellRenderer: p => {
-            const { sampleId, sampleName } = p.data;
-            const projectUrlPrefix = PROJECT_ID
-              ? `projects/${PROJECT_ID}/`
-              : "";
-            return `<a href="${BASE_URL}${projectUrlPrefix}samples/${sampleId}" target="_blank">${sampleName}</a>`;
-          }
-        },
-        {
-          field: "filePath",
-          headerName: I18N["bc.file"],
-          cellRenderer: p => {
-            const {
-              filePath,
-              analysisOutputFileKey,
-              analysisOutputFileId
-            } = p.data;
-            const REGEX = /^\d+\/\d+\/(.+)$/;
-            const groups = REGEX.exec(filePath);
-            if (groups === null) return filePath;
-            const filename = groups[1];
-            return `${filename} <small>(${analysisOutputFileKey}, id=${analysisOutputFileId})</small>`;
-          }
-        },
-        {
-          field: "analysisType",
-          headerName: I18N["analysis.table.type"]
-        },
-        {
-          field: "workflowId",
-          headerName: I18N["pipeline"],
-          cellRenderer: p => {
-            const wfInfo = workflowIds[p.data.workflowId];
-            if (wfInfo === null) return p.data.workflowId;
-            return `${wfInfo.name} (v${wfInfo.version})`;
-          }
-        },
-        {
-          field: "analysisSubmissionName",
-          headerName: I18N["analysis-submission"],
-          cellRenderer: p =>
-            `<a href="${BASE_URL}analysis/${
-              p.data.analysisSubmissionId
-            }" target="_blank">${p.data.analysisSubmissionName}</a>`
-        },
-        PROJECT_ID
-          ? {
-              field: "userId",
-              headerName: I18N["project.export.submitter"],
-              cellRenderer: p =>
-                `${p.data.userFirstName} ${p.data.userLastName}`
-            }
-          : null,
-        {
-          field: "createdDate",
-          headerName: I18N["analysis.date-created"],
-          cellRenderer: p => formatDate({ date: p.data.createdDate })
+async function getTableData(isShared = true) {
+  try {
+    const data = JSON.parse(await ajaxRequest({ url: getAjaxUrl(isShared) }));
+    $app.innerHTML = "";
+    const singleSampleOutputs = filterSingleSampleOutputs(data);
+    const workflowIds = getWorkflowInfo(singleSampleOutputs);
+    /**
+     * ag-grid Grid header definitions
+     * @type {*[]}
+     */
+    const HEADERS = [
+      {
+        field: "sampleName",
+        headerName: I18N["sample.sampleName"],
+        checkboxSelection: true,
+        headerCheckboxSelection: true,
+        headerCheckboxSelectionFilteredOnly: true,
+        cellRenderer: p => {
+          const { sampleId, sampleName } = p.data;
+          const projectUrlPrefix = PROJECT_ID ? `projects/${PROJECT_ID}/` : "";
+          return `<a href="${BASE_URL}${projectUrlPrefix}samples/${sampleId}/details" target="_blank">${sampleName}</a>`;
         }
-      ].filter(header => header !== null);
-      const gridId = `grid-outputs`;
-      const $grid = $(
-        `<div id="${gridId}" class="ag-theme-balham" style="height: 600px; width: 100%; resize: both;"/>`
-      );
-      const $dlButton = $(
-        `<button type="button" class="btn spaced-bottom" disabled="disabled"></button>`
-      );
-      setDownloadButtonHtml($dlButton, 0, true);
-      $app.prepend($dlButton);
-      const $helpIcon = $(helpInfoIcon);
-      $app.append($helpIcon);
-      $helpIcon.tooltip({ container: "body" });
-      $app.append($grid);
+      },
+      {
+        field: "filePath",
+        headerName: I18N["bc.file"],
+        cellRenderer: p => {
+          const {
+            filePath,
+            analysisOutputFileKey,
+            analysisOutputFileId
+          } = p.data;
+          const REGEX = /^\d+\/\d+\/(.+)$/;
+          const groups = REGEX.exec(filePath);
+          if (groups === null) return filePath;
+          const filename = groups[1];
+          return `${filename} <small>(${analysisOutputFileKey}, id=${analysisOutputFileId})</small>`;
+        }
+      },
+      {
+        field: "analysisType",
+        headerName: I18N["analysis.table.type"]
+      },
+      {
+        field: "workflowId",
+        headerName: I18N["pipeline"],
+        cellRenderer: p => {
+          const wfInfo = workflowIds[p.data.workflowId];
+          if (wfInfo === null) return p.data.workflowId;
+          return `${wfInfo.name} (v${wfInfo.version})`;
+        }
+      },
+      {
+        field: "analysisSubmissionName",
+        headerName: I18N["analysis-submission"],
+        cellRenderer: p =>
+          `<a href="${BASE_URL}analysis/${
+            p.data.analysisSubmissionId
+          }" target="_blank">${p.data.analysisSubmissionName}</a>`
+      },
+      PROJECT_ID
+        ? {
+            field: "userId",
+            headerName: I18N["project.export.submitter"],
+            cellRenderer: p => `${p.data.userFirstName} ${p.data.userLastName}`
+          }
+        : null,
+      {
+        field: "createdDate",
+        headerName: I18N["analysis.date-created"],
+        cellRenderer: p => formatDate({ date: p.data.createdDate })
+      }
+    ].filter(header => header !== null);
+    const $grid = newElement(
+      `<div id="grid-outputs" class="ag-theme-balham" style="height: 600px; width: 100%; resize: both;"/>`
+    );
+    const $dlButton = newElement(
+      `<button type="button" class="btn spaced-bottom" disabled="disabled"></button>`
+    );
+    const $helpIcon = newElement(helpInfoIcon);
+    setDownloadButtonHtml($dlButton, 0, true);
+    $app.appendChild($dlButton);
+    $app.appendChild($helpIcon);
+    $app.appendChild($grid);
 
-      /**
-       * Set `grid` to initialized ag-grid Grid for access to Grid API.
-       * @type {Grid}
-       */
-      grid = initAgGrid(
-        document.getElementById(gridId),
-        HEADERS,
-        singleSampleOutputs,
-        $dlButton
-      );
-    })
-    .fail((xhr, error, exception) => {
-      const $alert = $(
-        `<div class="alert alert-danger"><h4>${
-          I18N["analysis.batch-download.ajax.error"]
-        }</h4></div>`
-      );
-      if (xhr !== null) {
-        $alert.append(
-          $(`<p>${I18N["error.request.status-code"]}: ${xhr.status}</p>`)
-        );
-        $alert.append($(`<p>${I18N["error.request.url"]}: ${AJAX_URL}</p>`));
-      }
-      if (exception !== null) {
-        $alert.append(
-          $(`<p>${I18N["error.request.status-text"]}: ${exception}</p>`)
-        );
-      }
-      if (error !== null) {
-        $alert.append($(`<p>${I18N["error"]}: "${error}"</p>`));
-      }
-      $app.append($alert);
-    });
+    /**
+     * Set `grid` to initialized ag-grid Grid for access to Grid API.
+     * @type {Grid}
+     */
+    grid = initAgGrid($grid, HEADERS, singleSampleOutputs, $dlButton);
+  } catch (xhr) {
+    const { status, responseURL, statusText } = xhr;
+    $app.innerHTML = "";
+    const $alert = newElement(
+      `<div class="alert alert-danger">
+         <h4>${I18N["analysis.batch-download.ajax.error"]}</h4>
+         <p>${I18N["error.request.status-text"]}: ${statusText}</p>
+         <p>${I18N["error.request.status-code"]}: ${status}</p>
+         <p>${
+           I18N["error.request.url"]
+         }: <a href="${responseURL}" target="_blank">${responseURL}</a></p>
+       </div>`
+    );
+    $app.appendChild($alert);
+  }
 }
 
 // init table on page load with outputs shared to project
