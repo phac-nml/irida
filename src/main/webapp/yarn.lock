@@ -6,6 +6,10 @@
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@bassettsj/livestamp/-/livestamp-2.0.0.tgz#87640e82bb241b820407fb39275c77436e1bcf85"
 
+"@fortawesome/fontawesome-free@^5.2.0":
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-free/-/fontawesome-free-5.2.0.tgz#50cd9856774351c56c0b1b0db4efe122d7913e58"
+
 abbrev@1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-1.1.1.tgz#f8f2c887ad10bf67f634f005b6987fed3179aac8"

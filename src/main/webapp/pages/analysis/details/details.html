@@ -37,7 +37,7 @@
 			</div>
 			<div class="col-md-1">
 				<button th:if="${updatePermission}" id="editAnalysisButton" data-toggle="modal" data-target="#editAnalysisModal" class="btn btn-sm btn-default btn-block">
-					<i class="fa fa-pencil" aria-hidden="true"></i>
+                    <i class="fas fa-pencil-alt"></i>
 				</button>
 			</div>
 		</div>
@@ -60,7 +60,7 @@
 
 	<div class="row">
 		<div class="col-md-12 ng-cloak">
-
+				<div th:replace="templates/analysis_result_warning"></div>
 			<sub-nav>
 				<sub-nav-item th:if="${sistr}" state="sistr" text="Sistr"></sub-nav-item>
 				<sub-nav-item th:if="${bio_hansel}" state="bio_hansel" text="bio_hansel"></sub-nav-item>
@@ -248,7 +248,8 @@
 					<h2 th:text="#{analysis.details.reference}"></h2>
 					<span th:text="${referenceFile.label}"></span>
 					<a class="btn btn-default btn-sm pull-right" th:href="@{/referenceFiles/download/{id}(id=${referenceFile.id})}">
-						<span class="fa fa-download" aria-hidden="true"></span>&nbsp;<th:block th:text="#{form.download}">__Download__</th:block>
+                        <i class="fas fa-download spaced-right__sm"></i>
+                        <th:block th:text="#{form.download}">__Download__</th:block>
 					</a>
 				</th:block>
 			
@@ -274,7 +275,7 @@
 					<accordion>
 						<accordion-group class="file-info" th:each="file : ${files}">
 							<accordion-heading class="filename">
-								<span class="fa fa-file-o" aria-hidden="true"></span>&nbsp;
+                                <i class="far fa-file spaced-right__sm"></i>
 								<span class="name" th:text="${file.getLabel()}"></span>
 							</accordion-heading>
 							<div th:include="analysis/details/details :: toolsLayout (${file.getCreatedByTool()})"></div>
@@ -285,8 +286,8 @@
 						     th:with="toolId=${'tool' + tool.getId()}"
 						     data:ng-init="${toolId + '=false'}">
 							<button data:ng-click="${toolId + '=!' + toolId}" class="btn btn-link tool">
-								<span class="fa fa-chevron-right" data:ng-hide="${toolId}" aria-hidden="true"></span>
-								<span class="fa fa-chevron-down" data:ng-show="${toolId}" aria-hidden="true"></span>
+                                <span class="fas fa-chevron-right" data:ng-hide="${toolId}" aria-hidden="true"></span>
+                                <span class="fas fa-chevron-down" data:ng-show="${toolId}" aria-hidden="true"></span>
 								&nbsp;<span th:text="${tool.getLabel()}"></span>
 							</button>
 

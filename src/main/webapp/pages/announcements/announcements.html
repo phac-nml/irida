@@ -11,10 +11,12 @@
                          data:livestamp="${ann.createdDate}">
                     </div>
                     <div class='btn-group pull-right announcement-markread'>
-                    <span class="fa fa-check btn btn-default btn-xs"
+                    <button class="btn btn-default btn-xs"
                           data:uib-tooltip="#{announcement.markRead}"
                           tooltip-placement="top"
-                          th:attr="ng-click='markRead(\'' + ${ann.getId()} + '\', $event);'"></span>
+                          th:attr="ng-click='markRead(\'' + ${ann.getId()} + '\', $event);'">
+                        <i class="fas fa-check"></i>
+                    </button>
                     </div>
                 </div>
             </li>

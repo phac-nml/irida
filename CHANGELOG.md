@@ -6,6 +6,7 @@ Changes
 * [UI]: Added the sample coverage to the table exported from the project samples page.
 * [UI/Workflow]: Added option to disable workflows/analysis types from display in IRIDA using `irida.workflow.types.disabled`. (0.22.1)
 * [Developer]: Added wait when NCBI Uploader fails before retrying. (0.22.1)
+* [UI]: Added configurable warning for analysis results and metadata pages.  Set the text for this warning with `irida.analysis.warning`.  This can be used to communicate that results of analyses may be preliminary.
 * [Admin]: Added new profiles to allow IRIDA web server to run in a clustered fashion.  See documentation at XXXX.
 
 0.21.0 to 0.22.0
