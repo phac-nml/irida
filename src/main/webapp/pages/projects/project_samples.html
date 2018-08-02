@@ -227,14 +227,14 @@
                             <li>
                                 <a href="#" class="js-sample-export-btn" data-file="excel" data-type="file"
                                    data:url="@{/projects/{id}/samples/export(id=${project.getId()})}">
-                                    <i class="fa fa-file-excel-o fa-fw spaced-right__sm" aria-hidden="true"></i>
+                                    <i class="far fa-file-excel spaced-right__sm"></i>
                                     <th:block th:text="#{project.samples.export-to-excel}"/>
                                 </a>
                             </li>
                             <li>
                                 <a href="#" class="js-sample-export-btn" data-file="csv" data-type="file"
                                    data:url="@{/projects/{id}/samples/export(id=${project.getId()})}">
-                                    <i class="fa fa-file-o fa-fw spaced-right__sm" aria-hidden="true"></i>
+                                    <i class="far fa-file-alt spaced-right__sm"></i>
                                     <th:block th:text="#{project.samples.export-to-csv}"/>
                                 </a></li>
                         </ul>
@@ -297,7 +297,7 @@
                        data-trigger="hover" data-container="body"
                        data:content="#{project.sample.filterByFile.modal.body}"
                        th:title="#{project.sample.filterByFile.modal.title}">
-                    <i class="fa fa-file-text-o fa-fw" aria-hidden="true"></i>
+                    <i class="far fa-file-alt"></i>
                     <input type="file" id="filter-by-file" style="display: none;"/>
                 </label>
             </div>
