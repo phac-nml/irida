@@ -99,7 +99,17 @@ public class LineListController {
 				templateField = new MetadataTemplateField(label, "text");
 				metadataTemplateService.saveMetadataField(templateField);
 			}
-			MetadataEntry entry = new MetadataEntry(value, "string");
+			MetadataEntry entry;
+			/*
+			 Check to see if the field exists already.  If it does, then just update it.
+			 If not create a new entry and carry on.
+			 */
+			if (metadata.containsKey(templateField)) {
+				entry = metadata.get(templateField);
+				entry.setValue(value);
+			} else {
+				entry = new MetadataEntry(value, "string");
+			}
 			metadata.put(templateField, entry);
 			sampleService.updateFields(sampleId, ImmutableMap.of("metadata", metadata));
 			response.setStatus(HttpServletResponse.SC_OK);
@@ -151,7 +161,7 @@ public class LineListController {
 		// Get or create the template fields.
 		List<MetadataTemplateField> fields = new ArrayList<>();
 		MetadataTemplateField metadataTemplateField;
-		for (UIMetadataTemplateField field: template.getFields()) {
+		for (UIMetadataTemplateField field : template.getFields()) {
 			// Don't save the same name column
 			if (!field.getLabel()
 					.equals(sampleNameColumn)) {
@@ -200,7 +210,7 @@ public class LineListController {
 		// Need to get all the fields from the templates too!
 		List<ProjectMetadataTemplateJoin> templateJoins = metadataTemplateService.getMetadataTemplatesForProject(
 				project);
-		for (ProjectMetadataTemplateJoin join: templateJoins) {
+		for (ProjectMetadataTemplateJoin join : templateJoins) {
 			MetadataTemplate template = join.getObject();
 			List<MetadataTemplateField> templateFields = template.getFields();
 			fieldSet.addAll(templateFields);
@@ -224,7 +234,7 @@ public class LineListController {
 		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(project);
 		List<UISampleMetadata> result = new ArrayList<>(samplesForProject.size());
 
-		for (Join<Project, Sample> join: samplesForProject) {
+		for (Join<Project, Sample> join : samplesForProject) {
 			Sample sample = join.getObject();
 			result.add(new UISampleMetadata(project, sample));
 		}
