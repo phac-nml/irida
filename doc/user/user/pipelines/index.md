@@ -305,7 +305,7 @@ You can download all of your single sample analysis output files in batch by cli
 
 ![](images/user-outputs.png) 
 
-You will see a table your single sample analysis output files:
+You will see a table of your single sample analysis output files:
 
 ![](images/batch-download-user-outputs.png)
 
