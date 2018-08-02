@@ -8,35 +8,35 @@ import "ag-grid/dist/styles/ag-grid.css";
 import "ag-grid/dist/styles/ag-theme-balham.css";
 
 /**
- * Internationalized text from div#messages.hidden
- * @type {Object} map of data attribute key name to i18n text
+ * Internationalized messages
+ * @type {Object} map of messages key name to i18n text
  */
-let MESSAGES = {
-  sampleName: "SAMPLE NAME",
-  file: "FILE",
-  analysisType: "ANALYSIS TYPE",
+let I18N = {
+  "sample.sampleName": "SAMPLE NAME",
+  "bc.file": "FILE",
+  "analysis.table.type": "ANALYSIS TYPE",
   pipeline: "PIPELINE",
-  analysisSubmissionName: "ANALYSIS SUBMISSION",
-  createdDate: "CREATED",
-  download: "DOWNLOAD",
-  submitter: "SUBMITTER",
-  statusCode: "STATUS CODE",
-  requestUrl: "REQUEST URL",
-  statusText: "STATUS TEXT",
-  reqError: "REQUEST ERROR",
+  "analysis-submission": "ANALYSIS SUBMISSION",
+  "analysis.date-created": "CREATED",
+  "form.download": "DOWNLOAD",
+  "project.export.submitter": "SUBMITTER",
+  "error.request.status-code": "STATUS CODE",
+  "error.request.url": "REQUEST URL",
+  "error.request.status-text": "STATUS TEXT",
+  "analysis.batch-download.ajax.error": "REQUEST ERROR",
   error: "!!!ERROR!!!",
-  preparing: "PREPARING DOWNLOAD",
-  automatedAnalyses: "AUTOMATED ANALYSES",
-  sharedAnalyses: "SHARED ANALYSES",
-  helpInfo: "SEND HELP"
+  "analysis.batch-download.preparing": "PREPARING DOWNLOAD",
+  "analysis.automated-analyses": "AUTOMATED ANALYSES",
+  "analysis.shared-analyses": "SHARED ANALYSES",
+  "analysis.batch-download.help-info": "SEND HELP"
 };
-MESSAGES = Object.assign(MESSAGES, $("#js-messages").data());
+I18N = Object.assign(I18N, window.PAGE.i18n);
 
 const helpInfoIcon = `
 <i class="fa fa-2x fa-question-circle spaced-left__sm text-info" 
    data-toggle="tooltip"
    data-placement="auto right"
-   title="${escapeHtml(MESSAGES.helpInfo)}">
+   title="${escapeHtml(I18N["analysis.batch-download.help-info"])}">
 </i>`;
 
 /**
@@ -52,16 +52,17 @@ const FILENAME_REGEX = /.*\/(.+\.\w+)/;
 const BASE_URL = window.PAGE.URLS.base;
 
 /**
- * Get the project id if on Project Analysis Outputs page; null if on User Analysis Outputs page
- * @return {?number} Project id if on Project Analysis Outputs page; null if on User Analysis Outputs page
+ * Project id if on Project Analysis Outputs page; null if on User Analysis Outputs page
+ * @type {?number}
  */
-function getProjectId() {
+const PROJECT_ID = (() => {
   try {
     return window.project.id;
   } catch (e) {
+    // No window.project.id? Then we must be on the User Analysis Outputs page!
     return null;
   }
-}
+})();
 
 /**
  * URL to get analysis output file info via AJAX for a project or user
@@ -69,8 +70,7 @@ function getProjectId() {
  * @return {string} AJAX URL to get analysis output file info
  */
 function getAjaxUrl(isShared = true) {
-  const projectId = getProjectId();
-  if (projectId) {
+  if (PROJECT_ID) {
     return isShared
       ? window.PAGE.URLS.sharedAnalyses
       : window.PAGE.URLS.automatedAnalyses;
@@ -142,7 +142,7 @@ function downloadSelected($dlButton, api) {
       contentType: "application/json",
       dataType: "json",
       success: ({ selectionSize }) => {
-        const projectId = getProjectId();
+        const projectId = PROJECT_ID;
         const projectOrUser = projectId ? `projectId-${projectId}` : `user`;
         downloadUrl += `?filename=${projectOrUser}-batch-download-${selectionSize}-analysis-output-files`;
         download(downloadUrl);
@@ -177,7 +177,9 @@ function setDownloadButtonHtml(
     : "";
   $dlButton.html(
     `<i class="fa fa-download spaced-right__sm"></i> ${
-      isPreparing ? MESSAGES.preparing : MESSAGES.download
+      isPreparing
+        ? I18N["analysis.batch-download.preparing"]
+        : I18N["form.download"]
     } ${badge}`
   );
 }
@@ -275,20 +277,21 @@ function getTableData(isShared = true) {
       const HEADERS = [
         {
           field: "sampleName",
-          headerName: MESSAGES.sampleName,
+          headerName: I18N["sample.sampleName"],
           checkboxSelection: true,
           headerCheckboxSelection: true,
           headerCheckboxSelectionFilteredOnly: true,
           cellRenderer: p => {
             const { sampleId, sampleName } = p.data;
-            const projectId = getProjectId();
-            const projectUrlPrefix = projectId ? `projects/${projectId}/` : "";
+            const projectUrlPrefix = PROJECT_ID
+              ? `projects/${PROJECT_ID}/`
+              : "";
             return `<a href="${BASE_URL}${projectUrlPrefix}samples/${sampleId}" target="_blank">${sampleName}</a>`;
           }
         },
         {
           field: "filePath",
-          headerName: MESSAGES.file,
+          headerName: I18N["bc.file"],
           cellRenderer: p => {
             const {
               filePath,
@@ -299,17 +302,16 @@ function getTableData(isShared = true) {
             const groups = REGEX.exec(filePath);
             if (groups === null) return filePath;
             const filename = groups[1];
-
             return `${filename} <small>(${analysisOutputFileKey}, id=${analysisOutputFileId})</small>`;
           }
         },
         {
           field: "analysisType",
-          headerName: MESSAGES.analysisType
+          headerName: I18N["analysis.table.type"]
         },
         {
           field: "workflowId",
-          headerName: MESSAGES.pipeline,
+          headerName: I18N["pipeline"],
           cellRenderer: p => {
             const wfInfo = workflowIds[p.data.workflowId];
             if (wfInfo === null) return p.data.workflowId;
@@ -318,23 +320,23 @@ function getTableData(isShared = true) {
         },
         {
           field: "analysisSubmissionName",
-          headerName: MESSAGES.analysisSubmissionName,
+          headerName: I18N["analysis-submission"],
           cellRenderer: p =>
             `<a href="${BASE_URL}analysis/${
               p.data.analysisSubmissionId
             }" target="_blank">${p.data.analysisSubmissionName}</a>`
         },
-        getProjectId()
+        PROJECT_ID
           ? {
               field: "userId",
-              headerName: MESSAGES.submitter,
+              headerName: I18N["project.export.submitter"],
               cellRenderer: p =>
                 `${p.data.userFirstName} ${p.data.userLastName}`
             }
           : null,
         {
           field: "createdDate",
-          headerName: MESSAGES.createdDate,
+          headerName: I18N["analysis.date-created"],
           cellRenderer: p => formatDate({ date: p.data.createdDate })
         }
       ].filter(header => header !== null);
@@ -365,17 +367,23 @@ function getTableData(isShared = true) {
     })
     .fail((xhr, error, exception) => {
       const $alert = $(
-        `<div class="alert alert-danger"><h4>${MESSAGES.reqError}</h4></div>`
+        `<div class="alert alert-danger"><h4>${
+          I18N["analysis.batch-download.ajax.error"]
+        }</h4></div>`
       );
       if (xhr !== null) {
-        $alert.append($(`<p>${MESSAGES.statusCode}: ${xhr.status}</p>`));
-        $alert.append($(`<p>${MESSAGES.requestUrl}: ${AJAX_URL}</p>`));
+        $alert.append(
+          $(`<p>${I18N["error.request.status-code"]}: ${xhr.status}</p>`)
+        );
+        $alert.append($(`<p>${I18N["error.request.url"]}: ${AJAX_URL}</p>`));
       }
       if (exception !== null) {
-        $alert.append($(`<p>${MESSAGES.statusText}: ${exception}</p>`));
+        $alert.append(
+          $(`<p>${I18N["error.request.status-text"]}: ${exception}</p>`)
+        );
       }
       if (error !== null) {
-        $alert.append($(`<p>${MESSAGES.error}: "${error}"</p>`));
+        $alert.append($(`<p>${I18N["error"]}: "${error}"</p>`));
       }
       $app.append($alert);
     });
