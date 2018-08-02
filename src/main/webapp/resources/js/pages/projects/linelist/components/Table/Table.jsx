@@ -416,6 +416,7 @@ export class Table extends React.Component {
           onGridReady={this.onGridReady}
           onDragStopped={this.onColumnDropped}
           rowDeselection={true}
+          suppressRowClickSelection={true}
           onSelectionChanged={this.onSelectionChange}
           defaultColDef={{
             editable: true
