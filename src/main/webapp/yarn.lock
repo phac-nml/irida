@@ -220,15 +220,15 @@ adler-32@~1.2.0:
     exit-on-epipe "~1.0.1"
     printj "~1.1.0"
 
-ag-grid-react@^18.0.0:
-  version "18.0.0"
-  resolved "https://registry.yarnpkg.com/ag-grid-react/-/ag-grid-react-18.0.0.tgz#6d277bc4974a32c5a4953702fe27f3f14ee68651"
+ag-grid-react@^18.1.0:
+  version "18.1.0"
+  resolved "https://registry.yarnpkg.com/ag-grid-react/-/ag-grid-react-18.1.0.tgz#ecbdb14ebb8880dd233ab8956c08003f35f9e1e0"
   dependencies:
     prop-types "15.6.0"
 
-ag-grid@^18.0.1:
-  version "18.0.1"
-  resolved "https://registry.yarnpkg.com/ag-grid/-/ag-grid-18.0.1.tgz#e72ee2f7cd79063466fc99fa22f7f4e9880adda2"
+ag-grid@^18.1.2:
+  version "18.1.2"
+  resolved "https://registry.yarnpkg.com/ag-grid/-/ag-grid-18.1.2.tgz#d98b3dd824b9cb82d9f638e4bab5a5771513869b"
 
 ajv-keywords@^2.1.0:
   version "2.1.1"
@@ -351,9 +351,9 @@ ansi-styles@^3.2.0, ansi-styles@^3.2.1:
   dependencies:
     color-convert "^1.9.0"
 
-antd@^3.7.1:
-  version "3.7.1"
-  resolved "https://registry.yarnpkg.com/antd/-/antd-3.7.1.tgz#e18fee3f54fe1c499cc848223fd3bd581d87ed00"
+antd@^3.7.3:
+  version "3.7.3"
+  resolved "https://registry.yarnpkg.com/antd/-/antd-3.7.3.tgz#4f99b9aa23ab95d7b6ebb7405c25d80a8914f28c"
   dependencies:
     array-tree-filter "^2.0.0"
     babel-runtime "6.x"
@@ -375,7 +375,7 @@ antd@^3.7.1:
     rc-checkbox "~2.1.5"
     rc-collapse "~1.9.0"
     rc-dialog "~7.1.0"
-    rc-drawer "~1.5.9"
+    rc-drawer "~1.6.2"
     rc-dropdown "~2.2.0"
     rc-editor-mention "^1.0.2"
     rc-form "^2.1.0"
@@ -5560,9 +5560,9 @@ rc-dialog@~7.1.0:
     rc-animate "2.x"
     rc-util "^4.4.0"
 
-rc-drawer@~1.5.9:
-  version "1.5.9"
-  resolved "https://registry.yarnpkg.com/rc-drawer/-/rc-drawer-1.5.9.tgz#e75662b2e27211d1401055fb97280591a7668d2d"
+rc-drawer@~1.6.2:
+  version "1.6.3"
+  resolved "https://registry.yarnpkg.com/rc-drawer/-/rc-drawer-1.6.3.tgz#f866b7fbde2d307b59cfd06c015ae697017db388"
   dependencies:
     babel-runtime "6.x"
     classnames "^2.2.5"
