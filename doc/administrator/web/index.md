@@ -166,11 +166,12 @@ Note: The `prod`, `dev` profiles and cluster configuration profiles below **cann
 
 The different application profiles and their functions are the following:
 
-* `web` - The IRIDA user interface and REST API web application servers plus any email server tasks for sending welcome emails, password resets, project subscriptions, etc.  Minimum number of servers: 1, Recommended: 1, max: unlimited.
-* `analysis` - Run the IRIDA analysis engine.  This profile launches and monitors progress of all analysis pipelines in IRIDA.  Required to be active on 1 server.
+* `web` - The IRIDA user interface and REST API web application servers.  This is the portal for user interactions.  Minimum number of servers: 1, Recommended: 1, max: unlimited.
+* `email` - Run the email subscription service.  This will send email digests out to users on a scheduled basis.   Required to be active on exactly 1 server.
+* `analysis` - Run the IRIDA analysis engine.  This profile launches and monitors progress of all analysis pipelines in IRIDA.  Required to be active on exactly 1 server.
 * `processing` - File processing pipeline for uploaded sequencing data.  This is the highest load profile as it performs all file management for uploaded sequencing data.  Adding additional servers for this profile will speed up file processing for higher load installations.  Minimum number of servers: 1, recommended: 2, max: 5.
-* `sync` - Synchronizing remote projects.  This profile performs the remote api project synchronization task to pull remote sequencing data and metadata to a local installation.  Required to be active on 1 server.
-* `ncbi` - Uploading data to NCBI.  This profile runs the NCBI SRA uploader task to send project and sample data to NCBI's SRA.  Required to be active on 1 server.
+* `sync` - Synchronizing remote projects.  This profile performs the remote api project synchronization task to pull remote sequencing data and metadata to a local installation.  Required to be active on exactly 1 server.
+* `ncbi` - Uploading data to NCBI.  This profile runs the NCBI SRA uploader task to send project and sample data to NCBI's SRA.  Required to be active on exactly 1 server.
 
 To launch an IRIDA application server with one (or more) of these profiles, you must enable the profile with the `spring.profiles.active` variable in your Tomcat configuration.  For example to run an IRIDA server with the `web` and `analysis` profiles active, you would set the following configuration:
 
@@ -180,14 +181,14 @@ See the [Servlet Container Configuration](#servlet-container-configuration) sect
 
 #### Example moderate load deployment:
 
-* Server 1 - `web`, `sync`, `ncbi`, `analysis`
+* Server 1 - `web`, `email`, `sync`, `ncbi`, `analysis`
 * Server 2 - `processing`
 
 A deployment of this style provides an additional server for file processing, while maintaining high performance for users of the web server.
 
 #### Example high load deployment:
 
-* Server 1 - `web`
+* Server 1 - `web`, `email`
 * Server 2 - `processing`
 * Server 3 - `processing`
 * Server 4 - `sync`, `ncbi`, `analysis`
