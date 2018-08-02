@@ -112,7 +112,7 @@ export class LineListLayoutComponent extends React.Component {
               <ToolPanel {...this.props} />
               <div className="ag-grid-tool-panel--buttons">
                 <button
-                  className="ag-grid-tool-panel--button"
+                  className="t-columns-panel-toggle ag-grid-tool-panel--button"
                   onClick={this.toggleToolPanel}
                 >
                   Columns
