@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.sound.midi.MetaEventListener;
 import javax.validation.ConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,6 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 /**
@@ -111,7 +109,7 @@ public class LineListController {
 				entry = new MetadataEntry(value, "string");
 			}
 			metadata.put(templateField, entry);
-			sampleService.updateFields(sampleId, ImmutableMap.of("metadata", metadata));
+			sampleService.update(sample);
 			response.setStatus(HttpServletResponse.SC_OK);
 			return "SUCCESS";
 		} catch (EntityExistsException | EntityNotFoundException | ConstraintViolationException | InvalidPropertyException e) {
