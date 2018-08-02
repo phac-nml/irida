@@ -142,8 +142,7 @@ function downloadSelected($dlButton, api) {
       contentType: "application/json",
       dataType: "json",
       success: ({ selectionSize }) => {
-        const projectId = PROJECT_ID;
-        const projectOrUser = projectId ? `projectId-${projectId}` : `user`;
+        const projectOrUser = PROJECT_ID ? `projectId-${PROJECT_ID}` : `user`;
         downloadUrl += `?filename=${projectOrUser}-batch-download-${selectionSize}-analysis-output-files`;
         download(downloadUrl);
         setDownloadButtonHtml($dlButton, selectedNodes.length);
