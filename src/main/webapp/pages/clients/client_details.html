@@ -63,7 +63,7 @@
 
                             <div class="sidebar__item">
                                 <div class="sidebar__icon">
-                                    <i class="fa fa-fw fa-pencil" aria-hidden="true"></i>
+                                    <i class="fas fa-pencil-alt"></i>
                                 </div>
                                 <div th:text="#{client.scopes}">_ID_</div>
                                 <div class="sidebar__value" id="client-scopes" th:text="${scopes}">_Scopes_</div>
@@ -71,7 +71,7 @@
 
                             <div class="sidebar__item">
                                 <div class="sidebar__icon">
-                                    <i class="fa fa-fw fa-pencil" aria-hidden="true"></i>
+                                    <i class="fas fa-pencil-alt"></i>
                                 </div>
                                 <div th:text="#{client.autoScopes}">_ID_</div>
                                 <div class="sidebar__value" id="client-auto-approvable-scopes"
@@ -81,7 +81,7 @@
 
                             <div class="sidebar__item">
                                 <div class="sidebar__icon">
-                                    <i class="fa fa-fw fa-clock-o" aria-hidden="true"></i>
+                                    <i class="far fa-clock"></i>
                                 </div>
                                 <div th:text="#{client.details.tokenValidity}">_ID_</div>
                                 <div class="sidebar__value tokenValidityInSeconds" id="client-token-validity"
@@ -90,7 +90,7 @@
                             </div>
                             <div class="sidebar__item" th:if="${client.refreshTokenValiditySeconds > 0}">
                                 <div class="sidebar__icon">
-                                    <i class="fa fa-fw fa-clock-o" aria-hidden="true"></i>
+                                    <i class="far fa-clock"></i>
                                 </div>
                                 <div th:text="#{client.details.refreshValidity}">_ID_</div>
                                 <div class="sidebar__value tokenValidityInSeconds" id="refresh-token-validity"

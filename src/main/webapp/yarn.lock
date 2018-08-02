@@ -21,6 +21,10 @@
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@bassettsj/livestamp/-/livestamp-2.0.0.tgz#87640e82bb241b820407fb39275c77436e1bcf85"
 
+"@fortawesome/fontawesome-free@^5.2.0":
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-free/-/fontawesome-free-5.2.0.tgz#50cd9856774351c56c0b1b0db4efe122d7913e58"
+
 "@samverschueren/stream-to-observable@^0.3.0":
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/@samverschueren/stream-to-observable/-/stream-to-observable-0.3.0.tgz#ecdf48d532c58ea477acfcab80348424f8d0662f"
@@ -347,9 +351,9 @@ ansi-styles@^3.2.0, ansi-styles@^3.2.1:
   dependencies:
     color-convert "^1.9.0"
 
-antd@^3.7.1:
-  version "3.7.1"
-  resolved "https://registry.yarnpkg.com/antd/-/antd-3.7.1.tgz#e18fee3f54fe1c499cc848223fd3bd581d87ed00"
+antd@^3.7.3:
+  version "3.7.3"
+  resolved "https://registry.yarnpkg.com/antd/-/antd-3.7.3.tgz#4f99b9aa23ab95d7b6ebb7405c25d80a8914f28c"
   dependencies:
     array-tree-filter "^2.0.0"
     babel-runtime "6.x"
@@ -371,7 +375,7 @@ antd@^3.7.1:
     rc-checkbox "~2.1.5"
     rc-collapse "~1.9.0"
     rc-dialog "~7.1.0"
-    rc-drawer "~1.5.9"
+    rc-drawer "~1.6.2"
     rc-dropdown "~2.2.0"
     rc-editor-mention "^1.0.2"
     rc-form "^2.1.0"
@@ -5556,9 +5560,9 @@ rc-dialog@~7.1.0:
     rc-animate "2.x"
     rc-util "^4.4.0"
 
-rc-drawer@~1.5.9:
-  version "1.5.9"
-  resolved "https://registry.yarnpkg.com/rc-drawer/-/rc-drawer-1.5.9.tgz#e75662b2e27211d1401055fb97280591a7668d2d"
+rc-drawer@~1.6.2:
+  version "1.6.3"
+  resolved "https://registry.yarnpkg.com/rc-drawer/-/rc-drawer-1.6.3.tgz#f866b7fbde2d307b59cfd06c015ae697017db388"
   dependencies:
     babel-runtime "6.x"
     classnames "^2.2.5"
