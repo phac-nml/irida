@@ -127,8 +127,9 @@ Any arguments added after `run.sh` will be proxied to the `mvn ...` command.
 
 #### Spring profiles
 
-Spring allows us to set profiles in the application that can be used to set up certain services for running in different environments.  IRIDA has the following profiles:
+Spring allows us to set profiles in the application that can be used to set up certain services for running in different environments.
 
+##### Basic profiles
 * `prod` - Production mode.  
   * Hibernate will not be allowed to make changes to the database schema.  
   * Database will be managed by Liquibase.  
@@ -138,6 +139,19 @@ Spring allows us to set profiles in the application that can be used to set up c
   * Hibernate to attempt to update the IRIDA database as you make code changes.
   * No galaxy connection.
   * No scheduled tasks.
+
+##### Advanced profiles
+
+The advanced profiles allow you to configure your server to run specific components of the IRIDA application.  The different profiles enable specific scheduled tasks which are used to run many of IRIDA's analysis, processing, or data transfer tools.  For more information on setting up an IRIDA server to run in multi-server mode, see the [installation documentation](../../administrator/web/#multi-web-server-configuration).
+
+* `web` - Run the IRIDA user interface and REST API web application servers.  
+* `email` - Run the email subscription service.  This will send email digests out to users on a scheduled basis.
+* `analysis` - Run the IRIDA analysis engine.  This profile launches and monitors progress of all analysis pipelines in IRIDA.
+* `processing` - File processing pipeline for uploaded sequencing data.
+* `sync` - Synchronizing remote projects.
+* `ncbi` - Uploading data to NCBI.
+
+##### Testing profiles
 * `it` - Integration test.
   * Liquibase used for database setup, but should only be used for integration testing.
 * `test` - This profile is generally used when testing connecting to Galaxy.
