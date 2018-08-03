@@ -5,9 +5,12 @@ const { i18n } = window.PAGE;
 export const Loader = () => (
   <Alert
     message={i18n.linelist.Loader.message}
-    description={i18n.linelist.Loader.description}
+    description={
+      <div>
+        <i className="fas fa-spinner fa-pulse spaced-right__sm"/>
+        {i18n.linelist.Loader.description}
+      </div>
+    }
     type="info"
-    iconType="loading"
-    showIcon
   />
 );

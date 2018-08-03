@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Button, Dropdown, Icon, Menu } from "antd";
+import { Button, Dropdown, Menu } from "antd";
 
 const { i18n } = window.PAGE;
 
@@ -22,7 +22,11 @@ export function ExportDropDown(props) {
   return (
     <Dropdown overlay={menu}>
       <Button>
-        {i18n.linelist.toolbar.export} <Icon type="down" />
+        {i18n.linelist.toolbar.export}
+        <i
+          className="fas fa-chevron-down spaced-left__sm"
+          data-fa-transform="shrink-4"
+        />
       </Button>
     </Dropdown>
   );
