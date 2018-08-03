@@ -62,21 +62,21 @@
           </div>
           <div class="sidebar__item">
             <div class="sidebar__icon">
-              <span class="fa fa-code-fork fa-fw" aria-hidden="true"></span>
+                <i class="fas fa-fw fa-code-branch"></i>
             </div>
             <div th:text="#{analysis.details.state}">_State_</div>
             <div class="sidebar__value" ng-bind="stateController.stateLang"></div>
           </div>
           <div class="sidebar__item">
             <div class="sidebar__icon">
-              <span class="fa fa-calendar-o fa-fw" aria-hidden="true"></span>
+                <i class="far fa-calendar-alt fa-fw"></i>
             </div>
             <div th:text="#{iridaThing.timestamp}">Created</div>
             <div class="sidebar__value" th:text="${#calendars.format(analysisSubmission.getCreatedDate(), 'dd MMM yyyy')}"></div>
           </div>
           <div class="sidebar__item" sec:authorize="hasRole('ROLE_ADMIN')">
             <div class="sidebar__icon">
-              <i class="fa fa-sort-numeric-asc" aria-hidden="true"></i>
+                <i class="fas fa-sort-amount-up fa-fw"></i>
             </div>
             <div th:text="#{analysis.details.priority}">_Priority_</div>
             <div class="sidebar__value" th:text="${analysisSubmission.priority}">_High_</div>
@@ -91,7 +91,7 @@
         <div class="sidebar__body">
           <div class="sidebar__item" th:each="file : ${files}">
             <div class="sidebar__icon">
-              <span class="fa fa-file-o fa-fw" aria-hidden="true"></span>
+                <i class="far fa-file-alt fa-fw"></i>
             </div>
             <a href="#" th:href="@{/analysis/ajax/download/{aid}/file/{fid}(aid=${analysisSubmission.id},fid=${file.id})}" th:text="${file.getLabel()}">_filename_</a>
           </div>
