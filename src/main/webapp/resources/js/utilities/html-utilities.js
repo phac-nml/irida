@@ -23,13 +23,12 @@ export function escapeHtml(htmlString) {
 }
 
 /**
- * Create a new HTML Element given some HTML string
+ * Create a new HTML element node given some HTML string
  *
  * @param {string} htmlString HTML string
- * @return {Element} HTML element
+ * @return {Node} HTML node element
  */
 export function newElement(htmlString) {
-  const $tmpDiv = document.createElement("div");
-  $tmpDiv.innerHTML = htmlString;
-  return $tmpDiv.children[0];
+  const frag = document.createRange().createContextualFragment(htmlString);
+  return frag.firstChild;
 }
