@@ -106,7 +106,7 @@ public class LineListController {
 				entry = metadata.get(templateField);
 				entry.setValue(value);
 			} else {
-				entry = new MetadataEntry(value, "string");
+				entry = new MetadataEntry(value, "text");
 			}
 			metadata.put(templateField, entry);
 			sampleService.update(sample);
