@@ -166,10 +166,10 @@ Note: The `prod`, `dev` profiles and cluster configuration profiles below **cann
 
 The different application profiles and their functions are the following:
 
-* `web` - The IRIDA user interface and REST API web application servers.  This is the portal for user interactions.  Minimum number of servers: 1, Recommended: 1, max: unlimited.
+* `web` - The IRIDA user interface and REST API web application servers.  This is the portal for user interactions.  If using more than 1 `web` server, users & REST API clients must somehow be routed to the other servers.  Minimum number of servers: 1, Recommended: 1, max: unlimited.
 * `email` - Run the email subscription service.  This will send email digests out to users on a scheduled basis.   Required to be active on exactly 1 server.
 * `analysis` - Run the IRIDA analysis engine.  This profile launches and monitors progress of all analysis pipelines in IRIDA.  Required to be active on exactly 1 server.
-* `processing` - File processing pipeline for uploaded sequencing data.  This is the highest load profile as it performs all file management for uploaded sequencing data.  Adding additional servers for this profile will speed up file processing for higher load installations.  Minimum number of servers: 1, recommended: 2, max: 5.
+* `processing` - File processing pipeline for uploaded sequencing data.  This is the highest load profile as it performs all file management for uploaded sequencing data.  Adding additional servers for this profile will speed up file processing for higher load installations.  Minimum number of servers: 1, recommended: 2, max: unlimited but diminishing returns with higher numbers of servers.
 * `sync` - Synchronizing remote projects.  This profile performs the remote api project synchronization task to pull remote sequencing data and metadata to a local installation.  Required to be active on exactly 1 server.
 * `ncbi` - Uploading data to NCBI.  This profile runs the NCBI SRA uploader task to send project and sample data to NCBI's SRA.  Required to be active on exactly 1 server.
 
