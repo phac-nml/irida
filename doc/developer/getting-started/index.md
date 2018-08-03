@@ -138,7 +138,7 @@ Spring allows us to set profiles in the application that can be used to set up c
 * `dev` - Development mode.  
   * Hibernate to attempt to update the IRIDA database as you make code changes.
   * No galaxy connection.
-  * No scheduled tasks.
+  * Run only the file processing scheduled task.
 
 ##### Advanced profiles
 
