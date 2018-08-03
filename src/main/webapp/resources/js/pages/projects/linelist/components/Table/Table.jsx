@@ -41,6 +41,10 @@ export class Table extends React.Component {
   frameworkComponents = { LoadingOverlay, SampleNameRenderer };
 
   shouldComponentUpdate(nextProps) {
+    /**
+     * Check to see if the height of the table needs to be updated.
+     * This will only happen  on initial load or if the window height has changed
+     */
     if (nextProps.height !== this.props.height) {
       return true;
     }
