@@ -1,3 +1,3 @@
 export { fieldsLoadingSaga } from "./fields";
-export { entriesLoadingSaga } from "./entries";
+export { entriesLoadingSaga, entryEditedSaga } from "./entries";
 export { templatesLoadingSaga, saveTemplateSaga } from "./templates";

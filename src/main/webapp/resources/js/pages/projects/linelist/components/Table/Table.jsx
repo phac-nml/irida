@@ -2,6 +2,7 @@ import React from "react";
 import { List } from "immutable";
 import PropTypes from "prop-types";
 import ImmutablePropTypes from "react-immutable-proptypes";
+import { showUndoNotification } from "../../../../../modules/notifications";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid/dist/styles/ag-grid.css";
 import "ag-grid/dist/styles/ag-theme-balham.css";
@@ -17,6 +18,10 @@ const { i18n } = window.PAGE;
  * React component to render the ag-grid to the page.
  */
 export class Table extends React.Component {
+  state = {
+    entries: null
+  };
+
   /*
   Regular expression to clean the project and template names for export.
    */
@@ -34,14 +39,6 @@ export class Table extends React.Component {
   External custom components used by ag-grid.
    */
   frameworkComponents = { LoadingOverlay, SampleNameRenderer };
-
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      entries: null
-    };
-  }
 
   shouldComponentUpdate(nextProps) {
     if (!nextProps.fields.equals(this.props.fields)) {
@@ -194,26 +191,6 @@ export class Table extends React.Component {
     this.props.tableModified(list);
   };
 
-  static getDerivedStateFromProps(props, state) {
-    const { entries } = props;
-
-    if (entries !== null) {
-      /*
-      Format the sample metadata into a usable map.
-       */
-      state.entries = entries.toJS().map(entry => {
-        const metadata = entry.metadata;
-        metadata.sampleId = entry.id;
-        metadata[i18n.linelist.agGrid.sampleName] = entry.label;
-        metadata.projectId = entry.projectId;
-        metadata.projectLable = entry.projectLabel;
-        return metadata;
-      });
-    }
-
-    return state;
-  }
-
   /**
    * Generate the name for the type of file to be exported from the grid
    * @param {string} ext extension for the file.
@@ -338,6 +315,83 @@ export class Table extends React.Component {
     this.props.selectionChange(this.api.getSelectedNodes().length);
   };
 
+  static getDerivedStateFromProps(props, state) {
+    const { entries } = props;
+
+    if (entries !== null) {
+      /*
+      Format the sample metadata into a usable map.
+       */
+      state.entries = entries.toJS().map(entry => {
+        const metadata = entry.metadata;
+        metadata.sampleId = entry.id;
+        metadata[i18n.linelist.agGrid.sampleName] = entry.label;
+        metadata.projectId = entry.projectId;
+        metadata.projectLabel = entry.projectLabel;
+        return metadata;
+      });
+    }
+
+    return state;
+  }
+
+  /**
+   * When a cell is edited, store the value in case it needs to be reversed
+   * @param {object} event - the cell edit event
+   */
+  onCellEditingStarted = event => {
+    this.cellEditedValue = event.value || "";
+  };
+
+  /**
+   * After the cell has been edited give the user a chance to undo the edit.
+   * @param {object} event - cell edit event
+   */
+  onCellEditingStopped = event => {
+    // Get the table header for the cell that was edited
+    const field = event.column.colId;
+    // Get the previous value
+    const previousValue = this.cellEditedValue;
+    // Get the new value for the cell
+    const data = event.data;
+
+    // Make sure that the data for saving is valid.
+    if (typeof event.value !== "undefined" && previousValue !== event.value) {
+      /*
+      Update the value on the server (this way, if the user closes the page the
+      server already has the update.
+       */
+      this.props.entryEdited(data, field);
+      /*
+      Show a notification that allows the user to reverse the change to the value.
+       */
+      const text = Boolean(data[field])
+        ? i18n.linelist.editing.undo.full
+        : i18n.linelist.editing.undo.empty;
+      showUndoNotification(
+        {
+          text: text
+            .replace(
+              "[SAMPLE_NAME]",
+              `<strong>${data[i18n.linelist.agGrid.sampleName]}</strong>`
+            )
+            .replace("[FIELD]", `<strong>${field}</strong>`)
+            .replace("[NEW_VALUE]", `<strong>${data[field]}</strong>`)
+        },
+        () => {
+          /**
+           * Callback to reverse the change.
+           */
+          data[field] = previousValue;
+          this.props.entryEdited(data, field);
+          event.node.setDataValue(event.colDef.field, previousValue);
+        }
+      );
+    }
+    // Remove the stored value for the cell
+    delete this.cellEditedValue;
+  };
+
   render() {
     return (
       <div className="ag-grid-table-wrapper">
@@ -356,7 +410,13 @@ export class Table extends React.Component {
           onGridReady={this.onGridReady}
           onDragStopped={this.onColumnDropped}
           rowDeselection={true}
+          suppressRowClickSelection={true}
           onSelectionChanged={this.onSelectionChange}
+          defaultColDef={{
+            editable: true
+          }}
+          onCellEditingStarted={this.onCellEditingStarted}
+          onCellEditingStopped={this.onCellEditingStopped}
         />
       </div>
     );

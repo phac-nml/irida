@@ -4,12 +4,16 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.ConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -66,10 +70,52 @@ public class LineListController {
 	 * @param projectId {@link Long} identifier for a {@link Project}
 	 * @return {@link List} of {@link UISampleMetadata}s of all {@link Sample} metadata in a {@link Project}
 	 */
-	@RequestMapping("/entries")
+	@RequestMapping(value = "/entries", method = RequestMethod.GET)
 	@ResponseBody
 	public List<UISampleMetadata> getProjectSamplesMetadataEntries(@RequestParam long projectId) {
 		return getAllProjectSamplesMetadataEntries(projectId);
+	}
+
+	/**
+	 * Save an updated sample metadata entry
+	 *
+	 * @param sampleId {@link Long} identifier for a sample
+	 * @param label    {@link String} the name of the {@link MetadataTemplateField}
+	 * @param value    {@link String} the value to store in the {@link MetadataEntry}
+	 * @param response {@link HttpServletResponse}
+	 * @return The status of the request.
+	 */
+	@RequestMapping(value = "/entries", method = RequestMethod.POST)
+	@ResponseBody
+	public String saveMetadataEntry(@RequestParam long sampleId, @RequestParam String label, @RequestParam String value,
+			HttpServletResponse response) {
+		Sample sample = sampleService.read(sampleId);
+		try {
+			Map<MetadataTemplateField, MetadataEntry> metadata = sample.getMetadata();
+			MetadataTemplateField templateField = metadataTemplateService.readMetadataFieldByLabel(label);
+			if (templateField == null) {
+				templateField = new MetadataTemplateField(label, "text");
+				metadataTemplateService.saveMetadataField(templateField);
+			}
+			MetadataEntry entry;
+			/*
+			 Check to see if the field exists already.  If it does, then just update it.
+			 If not create a new entry and carry on.
+			 */
+			if (metadata.containsKey(templateField)) {
+				entry = metadata.get(templateField);
+				entry.setValue(value);
+			} else {
+				entry = new MetadataEntry(value, "text");
+			}
+			metadata.put(templateField, entry);
+			sampleService.update(sample);
+			response.setStatus(HttpServletResponse.SC_OK);
+			return "SUCCESS";
+		} catch (EntityExistsException | EntityNotFoundException | ConstraintViolationException | InvalidPropertyException e) {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			return "ERROR";
+		}
 	}
 
 	/**

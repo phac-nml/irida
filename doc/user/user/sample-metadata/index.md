@@ -127,3 +127,10 @@ Data can be exported as either Excel or CSV formats.  Ony the fields currently i
 Hovering over the `Export` button which will reveal a dropdown where you can select from either `Export as Excel` or `Export as CSV`, the download will begin automatically.
 
 ![Export Buttons](images/linelist_export.png)
+
+### Editing Metadata
+
+#### Inline Editing
+
+Values within the metadata table can be updated by double clicking on the cell you want to modify, enter the new value and press enter.  The new value will be automatically saved.  Once a cell has been edited, a notification will display with a "undo" button, that will revert the value back to the original.
+

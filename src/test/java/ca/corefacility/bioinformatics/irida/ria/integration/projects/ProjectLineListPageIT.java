@@ -29,6 +29,9 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testTableSetup() {
 		ProjectLineListPage page = ProjectLineListPage.goToPage(driver(), 1);
+		driver().manage()
+				.window()
+				.maximize(); // Make sure we can see everything.
 		assertEquals("Should be on the correct page.", "Line List", page.getActivePage());
 		assertEquals("Should be 21 samples", 21, page.getNumberOfRowsInLineList());
 		assertEquals("Should be 5 fields to toggle", 5, page.getNumberOfMetadataFields());
@@ -61,5 +64,23 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 		// Switch back to new template
 		page.selectTemplate(TEMPLATE_NAME);
 		assertEquals("Should have 3 columns visible", 3, page.getNumberOfTableColumnsVisible());
+
+		// Test inline editing
+		String cellContents = page.getCellContents(0, "serotype");
+		assertEquals("AB-1001", cellContents);
+
+		String newValue = "FOOBAR";
+		page.editCellContents(0, "serotype", newValue);
+		assertEquals("Cell should contain the new edited value", newValue, page.getCellContents(0, "serotype"));
+
+		driver().navigate()
+				.refresh();
+		assertEquals("Should keep value on a page refresh", newValue, page.getCellContents(0, "serotype"));
+
+		// Let's test to make sure that the undo works.
+		String testValue = "THIS SHOULD BE GONE!";
+		page.editCellContents(0, "serotype", testValue);
+		page.cancelCellEdit();
+		assertEquals("Should keep value after undoing edit", newValue, page.getCellContents(0, "serotype"));
 	}
 }

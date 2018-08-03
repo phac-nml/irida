@@ -4,7 +4,8 @@ export const types = {
   LOAD: "METADATA/ENTRIES/LOAD_REQUEST",
   LOAD_ERROR: "METADATA/ENTRIES/LOAD_ERROR",
   LOAD_SUCCESS: "METADATA/ENTRIES/LOAD_SUCCESS",
-  SELECTION: "METADATA/ENTRIES/SELECTION"
+  SELECTION: "METADATA/ENTRIES/SELECTION",
+  EDITED: "METADATA/ENTRIES/EDITED"
 };
 
 export const initialState = fromJS({
@@ -42,5 +43,6 @@ export const actions = {
   selection: count => ({
     type: types.SELECTION,
     count
-  })
+  }),
+  edited: (entry, field) => ({ type: types.EDITED, entry, field })
 };

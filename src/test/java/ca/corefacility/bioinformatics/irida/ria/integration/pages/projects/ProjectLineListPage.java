@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 import java.util.List;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -37,6 +38,9 @@ public class ProjectLineListPage extends ProjectPageBase {
 
 	@FindBy(className = "t-modal-save-template-btn")
 	private WebElement modalSaveTemplateBtn;
+
+	@FindBy(className = "t-undo-edit")
+	private WebElement undoEditBtn;
 
 	public ProjectLineListPage(WebDriver driver) {
 		super(driver);
@@ -80,5 +84,28 @@ public class ProjectLineListPage extends ProjectPageBase {
 		templateNameInput.sendKeys(name);
 		modalSaveTemplateBtn.click();
 		waitForTime(300);
+	}
+
+	public String getCellContents(int rowIndex, String columnName) {
+		// Need to get the seconds WebElement because the first will be the sample name row.
+		WebElement row = driver.findElements(By.cssSelector("*[row-index='" + rowIndex + "']"))
+				.get(1);
+		WebElement cell = row.findElement(By.cssSelector("*[col-id='" + columnName + "']"));
+		return cell.getText();
+	}
+
+	public void editCellContents(int rowIndex, String columnName, String newValue) {
+		// Need to get the seconds WebElement because the first will be the sample name row.
+		WebElement row = driver.findElements(By.cssSelector("*[row-index='" + rowIndex + "']"))
+				.get(1);
+		WebElement cell = row.findElement(By.cssSelector("*[col-id='" + columnName + "']"));
+		cell.click();
+		cell.sendKeys(newValue);
+		cell.sendKeys(Keys.ENTER);
+	}
+
+	public void cancelCellEdit() {
+		waitForTime(200);
+		undoEditBtn.click();
 	}
 }

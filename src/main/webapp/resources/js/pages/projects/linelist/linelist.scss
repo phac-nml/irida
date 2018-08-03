@@ -103,3 +103,10 @@ $bgColor: #f5f7f7;
   border: $border;
   border-top: none;
 }
+
+// Style the default editor within ag-grid
+.ag-cell-edit-input {
+  color: #222222;
+  font-size: 12px !important;
+  padding: 0 10px;
+}
