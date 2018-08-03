@@ -61,7 +61,7 @@ public class IridaApiFilesystemRepositoryConfig {
 	}
 
 	@Bean(name = "sequenceFileBaseDirectory")
-	public Path sequenceFileBaseDirectoryProd() throws IOException {
+	public Path sequenceFileBaseDirectory() throws IOException {
 		if (applicationContext.getEnvironment().acceptsProfiles("dev", "it", "test")) {
 			return configureDirectory(sequenceFileBaseDirectory, "sequence-file-dev");
 		}
