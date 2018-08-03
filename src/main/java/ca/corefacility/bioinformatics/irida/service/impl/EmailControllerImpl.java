@@ -39,10 +39,10 @@ import ca.corefacility.bioinformatics.irida.service.EmailController;
 /**
  * This class is responsible for all email sent to the server that are templated
  * with Thymeleaf.
- * 
+ *
  */
 @Component
-@Profile({ "prod", "dev" })
+@Profile({ "prod", "dev" , "web", "analysis", "ncbi", "processing", "sync" })
 public class EmailControllerImpl implements EmailController {
 	private static final Logger logger = LoggerFactory.getLogger(EmailControllerImpl.class);
 
@@ -183,7 +183,7 @@ public class EmailControllerImpl implements EmailController {
 
 	/**
 	 * Convert the Page of events to the list expected in the model
-	 * 
+	 *
 	 * @param events
 	 *            Page of {@link ProjectEvent}s
 	 * @return A List<Map<String,Object>> containing the events and fragment
