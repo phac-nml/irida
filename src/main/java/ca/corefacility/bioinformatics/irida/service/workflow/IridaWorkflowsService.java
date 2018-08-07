@@ -16,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotDisplayab
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.enums.config.AnalysisTypeSet;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowIdSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowSet;
@@ -331,5 +332,26 @@ public class IridaWorkflowsService {
 	 */
 	public Set<IridaWorkflow> getRegisteredWorkflows() {
 		return Sets.newHashSet(allRegisteredWorkflows.values());
+	}
+
+	/**
+	 * Get all registered single-sample workflow UUIDs for retrieving {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile} info with a 1-to-1 mapping to a {@link Sample}
+	 * <p>
+	 * Since all automated analyses and many other pipelines at this time produce results that map 1-to-1 to a
+	 * {@link Sample} and it is trivial to download multi-sample, collection-type
+	 * {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile}s (they are zipped and
+	 * contain all output for all Sample inputs), we want to enable easy retrieval of results for single-sample
+	 * pipelines for batch download.
+	 *
+	 * @return UUIDs for single-sample workflows
+	 */
+	public Set<UUID> getSingleSampleWorkflows() {
+		return getRegisteredWorkflows()
+				.stream()
+				.filter(workflow -> workflow.getWorkflowDescription()
+						.getInputs()
+						.requiresSingleSample())
+				.map(IridaWorkflow::getWorkflowIdentifier)
+				.collect(Collectors.toSet());
 	}
 }

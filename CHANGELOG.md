@@ -6,6 +6,7 @@ Changes
 * [UI]: Added the sample coverage to the table exported from the project samples page.
 * [UI/Workflow]: Added option to disable workflows/analysis types from display in IRIDA using `irida.workflow.types.disabled`. (0.22.1)
 * [Developer]: Added wait when NCBI Uploader fails before retrying. (0.22.1)
+* [UI]: Users can now download in batch their user-generated, shared with project and automated project single sample analysis output files by selecting the files they wish to download from tables on the `/analysis/user/analysis-outputs`, `/projects/<id>/analyses/shared-outputs`, and `/projects/<id>/analyses/automated-outputs` pages, respectively.
 * [UI]: Added configurable warning for analysis results and metadata pages.  Set the text for this warning with `irida.analysis.warning`.  This can be used to communicate that results of analyses may be preliminary.
 * [Admin]: Added new profiles to allow IRIDA web server to run in a clustered fashion.  See documentation at https://irida.corefacility.ca/documentation/administrator/web/#multi-web-server-configuration
 

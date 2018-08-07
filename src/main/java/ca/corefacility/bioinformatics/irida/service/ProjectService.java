@@ -405,7 +405,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @return a list of {@link ProjectAnalysisSubmissionJoin}s
 	 */
 	public List<ProjectAnalysisSubmissionJoin> getProjectsForAnalysisSubmission(AnalysisSubmission submission);
-	
+
 	/**
 	 * Get all {@link Project}s that have data used within an
 	 * {@link AnalysisSubmission}. Note that this differs from

@@ -87,8 +87,7 @@ public class ProjectSamplesController {
 	private MessageSource messageSource;
 
 	@Autowired
-	public ProjectSamplesController(ProjectService projectService, SampleService sampleService,
-			SequencingObjectService sequencingObjectService, ProjectControllerUtils projectControllerUtils,
+	public ProjectSamplesController(ProjectService projectService, SampleService sampleService, SequencingObjectService sequencingObjectService, ProjectControllerUtils projectControllerUtils,
 			MessageSource messageSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;

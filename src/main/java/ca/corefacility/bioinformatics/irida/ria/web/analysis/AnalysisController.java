@@ -15,15 +15,13 @@ import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.*;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisOutputFileInfo;
+import ca.corefacility.bioinformatics.irida.ria.web.components.AnalysisOutputFileDownloadManager;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
@@ -40,12 +38,14 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -66,6 +66,7 @@ import java.util.stream.Collectors;
  * Controller for Analysis.
  */
 @Controller
+@Scope("session")
 @RequestMapping("/analysis")
 public class AnalysisController {
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisController.class);
@@ -77,6 +78,7 @@ public class AnalysisController {
 	public static final String PAGE_DETAILS_DIRECTORY = BASE + "details/";
 	public static final String PREVIEW_UNAVAILABLE = PAGE_DETAILS_DIRECTORY + "unavailable";
 	public static final String PAGE_ANALYSIS_LIST = "analyses/analyses";
+	public static final String PAGE_USER_ANALYSIS_OUPUTS = "analyses/user-analysis-outputs";
 
 	private static final String TREE_EXT = "newick";
 	private static final String EMPTY_TREE = "();";
@@ -95,6 +97,7 @@ public class AnalysisController {
 	private SequencingObjectService sequencingObjectService;
 	private AnalysesListingService analysesListingService;
 	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
+	private AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager;
 
 	@Autowired
 	public AnalysisController(AnalysisSubmissionService analysisSubmissionService,
@@ -102,9 +105,11 @@ public class AnalysisController {
 			ProjectService projectService, UpdateAnalysisSubmissionPermission updateAnalysisPermission,
 			MetadataTemplateService metadataTemplateService, SequencingObjectService sequencingObjectService,
 			AnalysesListingService analysesListingService,
-			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor, MessageSource messageSource) {
+			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor,
+			AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager, MessageSource messageSource) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
+		this.analysisOutputFileDownloadManager = analysisOutputFileDownloadManager;
 		this.messageSource = messageSource;
 		this.userService = userService;
 		this.updateAnalysisPermission = updateAnalysisPermission;
@@ -149,6 +154,67 @@ public class AnalysisController {
 		model.addAttribute("states", AnalysisState.values());
 		model.addAttribute("analysisTypes", workflowsService.getRegisteredWorkflowTypes());
 		return PAGE_ANALYSIS_LIST;
+	}
+
+
+	/**
+	 * Get the user {@link Analysis} list page
+	 *
+	 * @param model Model for view variables
+	 * @return Name of the analysis page view
+	 */
+	@RequestMapping("/user/analysis-outputs")
+	public String getUserAnalysisOutputsPage(Model model) {
+		return PAGE_USER_ANALYSIS_OUPUTS;
+	}
+
+	/**
+	 * Get all {@link User} generated {@link AnalysisOutputFile} info for principal User
+	 * @param principal Principal {@link User}
+	 * @return {@link User} generated {@link AnalysisOutputFile} info
+	 */
+	@RequestMapping(value = "/ajax/user/analysis-outputs")
+	@ResponseBody
+	public List<ProjectSampleAnalysisOutputInfo> getAllUserAnalysisOutputInfo(Principal principal) {
+		final User user = userService.getUserByUsername(principal.getName());
+		return analysisSubmissionService.getAllUserAnalysisOutputInfo(user);
+	}
+
+	/**
+	 * Get all {@link User} generated {@link AnalysisOutputFile} info
+	 * @param userId {@link User} id
+	 * @return {@link User} generated {@link AnalysisOutputFile} info
+	 */
+	@RequestMapping(value = "/ajax/user/{userId}/analysis-outputs")
+	@ResponseBody
+	public List<ProjectSampleAnalysisOutputInfo> getAllUserAnalysisOutputInfo(@PathVariable Long userId) {
+		final User user = userService.read(userId);
+		return analysisSubmissionService.getAllUserAnalysisOutputInfo(user);
+	}
+
+
+	/**
+	 * Get analysis output file information for all analyses shared with a {@link Project}.
+	 *
+	 * @param projectId {@link Project} id
+	 * @return list of {@link ProjectSampleAnalysisOutputInfo}
+	 */
+	@RequestMapping(value = "/ajax/project/{projectId}/shared-analysis-outputs")
+	@ResponseBody
+	public List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoSharedWithProject(@PathVariable Long projectId) {
+		return analysisSubmissionService.getAllAnalysisOutputInfoSharedWithProject(projectId);
+	}
+
+	/**
+	 * Get analysis output file information for all automated analyses for a {@link Project}.
+	 *
+	 * @param projectId {@link Project} id
+	 * @return list of {@link ProjectSampleAnalysisOutputInfo}
+	 */
+	@RequestMapping(value = "/ajax/project/{projectId}/automated-analysis-outputs")
+	@ResponseBody
+	public List<ProjectSampleAnalysisOutputInfo> getAllAutomatedAnalysisOutputInfoForAProject(@PathVariable Long projectId) {
+		return analysisSubmissionService.getAllAutomatedAnalysisOutputInfoForAProject(projectId);
 	}
 
 	/**
@@ -808,15 +874,44 @@ public class AnalysisController {
 	}
 
 	/**
+	 * Prepare the download of multiple {@link AnalysisOutputFile} by adding them to a selection.
+	 *
+	 * @param outputs Info for {@link AnalysisOutputFile} to download
+	 * @param response {@link HttpServletResponse}
+	 * @return Map with the size of the selection for download.
+	 */
+	@RequestMapping(value = "/ajax/download/prepare", method = RequestMethod.POST)
+	@ResponseBody
+	public Map prepareDownload(@RequestBody List<ProjectSampleAnalysisOutputInfo> outputs,
+			HttpServletResponse response) {
+		final Long selectionSize = analysisOutputFileDownloadManager.setSelection(outputs);
+		response.setStatus(HttpServletResponse.SC_CREATED);
+		return ImmutableMap.of("selectionSize", selectionSize);
+	}
+
+	/**
+	 * Download the selected {@link AnalysisOutputFile}.
+	 *
+	 * @param filename Optional filename for file download.
+	 * @param response {@link HttpServletResponse}
+	 */
+	@RequestMapping(value = "/ajax/download/selection", produces = MediaType.APPLICATION_JSON_VALUE)
+	public void downloadSelection(@RequestParam(required = false, defaultValue = "analysis-output-files-batch-download") String  filename, HttpServletResponse response) {
+		Map<ProjectSampleAnalysisOutputInfo, AnalysisOutputFile> files = analysisOutputFileDownloadManager.getSelection();
+		FileUtilities.createBatchAnalysisOutputFileZippedResponse(response, filename, files);
+	}
+
+	/**
 	 * Download single output files from an {@link AnalysisSubmission}
 	 *
 	 * @param analysisSubmissionId Id for a {@link AnalysisSubmission}
 	 * @param fileId               the id of the file to download
+	 * @param filename             Optional filename for file download.
 	 * @param response             {@link HttpServletResponse}
 	 */
 	@RequestMapping(value = "/ajax/download/{analysisSubmissionId}/file/{fileId}")
 	public void getAjaxDownloadAnalysisSubmissionIndividualFile(@PathVariable Long analysisSubmissionId,
-			@PathVariable Long fileId, HttpServletResponse response) {
+			@PathVariable Long fileId, @RequestParam(defaultValue = "", required = false) String filename, HttpServletResponse response) {
 		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(analysisSubmissionId);
 
 		Analysis analysis = analysisSubmission.getAnalysis();
@@ -830,7 +925,11 @@ public class AnalysisController {
 			throw new EntityNotFoundException("Could not find file with id " + fileId);
 		}
 
-		FileUtilities.createSingleFileResponse(response, optFile.get());
+		if (!Strings.isNullOrEmpty(filename)) {
+			FileUtilities.createSingleFileResponse(response, optFile.get(), filename);
+		} else {
+			FileUtilities.createSingleFileResponse(response, optFile.get());
+		}
 	}
 
 	/**
