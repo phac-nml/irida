@@ -754,14 +754,14 @@ public class ProjectServiceImplIT {
 
 	@Test
 	@WithMockUser(username = "user1", roles = "USER")
-	public void testMoveSamplesWithOwner() {
+	public void testMoveSamples() {
 		Project source = projectService.read(2L);
 		Project destination = projectService.read(10L);
 
 		Sample sample1 = sampleService.read(1L);
 		Set<Sample> samples = Sets.newHashSet(sample1);
 
-		List<ProjectSampleJoin> movedSamples = projectService.moveSamples(source, destination, samples, true);
+		List<ProjectSampleJoin> movedSamples = projectService.moveSamples(source, destination, samples);
 
 		assertEquals(samples.size(), movedSamples.size());
 
@@ -792,7 +792,7 @@ public class ProjectServiceImplIT {
 
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "user1", roles = "USER")
-	public void testMoveSamplesWithOwnerRemoteFail() {
+	public void testMoveSamplesRemoteFail() {
 		Project source = projectService.read(11L);
 		Project destination = projectService.read(10L);
 
@@ -802,7 +802,7 @@ public class ProjectServiceImplIT {
 		Sample sample = sampleService.read(3L);
 		Set<Sample> samples = Sets.newHashSet(sample);
 
-		projectService.moveSamples(source, destination, samples, true);
+		projectService.moveSamples(source, destination, samples);
 	}
 
 	@Test
@@ -831,30 +831,6 @@ public class ProjectServiceImplIT {
 						.collect(Collectors.toSet()));
 	}
 
-	@Test
-	@WithMockUser(username = "user1", roles = "USER")
-	public void testMoveSamplesWithoutOwner() {
-		Project source = projectService.read(2L);
-		Project destination = projectService.read(10L);
-
-		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(source);
-
-		Set<Sample> samples = samplesForProject.stream().map(j -> j.getObject()).collect(Collectors.toSet());
-
-		List<ProjectSampleJoin> movedSamples = projectService.moveSamples(source, destination, samples, false);
-
-		assertEquals(samples.size(), movedSamples.size());
-
-		movedSamples.forEach(j -> {
-			assertFalse("Project shouldn't be owner for sample", j.isOwner());
-		});
-
-		assertEquals("Samples should not exist in source project", Long.valueOf(0L),
-				projectSampleJoinRepository.countSamplesForProject(source));
-		assertEquals("Samples should exist in destination project", Sets.newHashSet(1L, 2L),
-				projectSampleJoinRepository.getSamplesForProject(destination).stream().map(j -> j.getObject().getId())
-						.collect(Collectors.toSet()));
-	}
 
 	@Test
 	@WithMockUser(username = "user1", roles = "USER")
@@ -880,21 +856,6 @@ public class ProjectServiceImplIT {
 				projectSampleJoinRepository.readSampleForProject(source, sample));
 		assertNotNull("Sample should exist in destination project",
 				projectSampleJoinRepository.readSampleForProject(destination, sample));
-	}
-
-	@Test(expected = AccessDeniedException.class)
-	@WithMockUser(username = "user1", roles = "USER")
-	public void testMoveSamplesWithoutOwnerRemoteFail() {
-		Project source = projectService.read(11L);
-		Project destination = projectService.read(10L);
-
-		assertTrue("Source project should be a remote project for the test", source.isRemote());
-		assertFalse("Destination project should not be a remote project for the test", destination.isRemote());
-
-		Sample sample = sampleService.read(3L);
-		Set<Sample> samples = Sets.newHashSet(sample);
-
-		projectService.moveSamples(source, destination, samples, false);
 	}
 
 	@Test
@@ -933,7 +894,7 @@ public class ProjectServiceImplIT {
 
 		Set<Sample> samples = samplesForProject.stream().map(j -> j.getObject()).collect(Collectors.toSet());
 
-		List<ProjectSampleJoin> movedSamples = projectService.moveSamples(source, destination, samples, false);
+		List<ProjectSampleJoin> movedSamples = projectService.moveSamples(source, destination, samples);
 
 		assertEquals(samples.size(), movedSamples.size());
 
@@ -963,7 +924,7 @@ public class ProjectServiceImplIT {
 
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "user1", roles = "USER")
-	public void testMoveLockedSamplesWithOwnerFail() {
+	public void testMoveLockedSamplesFail() {
 		Project source = projectService.read(2L);
 		Project destination = projectService.read(10L);
 
@@ -971,7 +932,7 @@ public class ProjectServiceImplIT {
 
 		Set<Sample> samples = samplesForProject.stream().map(j -> j.getObject()).collect(Collectors.toSet());
 
-		projectService.moveSamples(source, destination, samples, true);
+		projectService.moveSamples(source, destination, samples);
 	}
 
 	private Project p() {

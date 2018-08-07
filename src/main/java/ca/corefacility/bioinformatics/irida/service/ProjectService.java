@@ -145,12 +145,9 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @param destination
 	 *            Destination {@link Project}
 	 * @param sample
-	 *            {@link Sample} to be moved
-	 * @param owner
-	 *            Should the new project be an owner?
 	 * @return Newly created {@link ProjectSampleJoin}
 	 */
-	public ProjectSampleJoin moveSampleBetweenProjects(Project source, Project destination, Sample sample, boolean owner);
+	public ProjectSampleJoin moveSampleBetweenProjects(Project source, Project destination, Sample sample);
 	
 	/**
 	 * Share a list of {@link Sample}s between two {@link Project}s.
@@ -178,13 +175,10 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 *            the {@link Project} being moved to
 	 * @param samples
 	 *            a collection of {@link Sample}s
-	 * @param giveOwner
-	 *            whether to give ownership rights to the destination
 	 *            {@link Project}
 	 * @return a list of new {@link ProjectSampleJoin}
 	 */
-	public List<ProjectSampleJoin> moveSamples(Project source, Project destination, Collection<Sample> samples,
-			boolean giveOwner);
+	public List<ProjectSampleJoin> moveSamples(Project source, Project destination, Collection<Sample> samples);
 
 	/**
 	 * Remove the specified {@link Sample} from the {@link Project}. The {@link Sample} will also be deleted from the
