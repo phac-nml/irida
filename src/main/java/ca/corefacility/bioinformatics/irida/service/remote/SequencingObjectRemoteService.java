@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.remote;
 
+import ca.corefacility.bioinformatics.irida.exceptions.FileTransferException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 
 /**
@@ -16,6 +17,7 @@ public interface SequencingObjectRemoteService<Type extends SequencingObject> ex
 	 * @param seqObject
 	 *            a SequencingObject read from a remote source
 	 * @return The locally mirrored {@link SequencingObject}
+	 * @throws FileTransferException When there is an error transffering the file.
 	 */
-	public Type mirrorSequencingObject(Type seqObject);
+	public Type mirrorSequencingObject(Type seqObject) throws FileTransferException;
 }

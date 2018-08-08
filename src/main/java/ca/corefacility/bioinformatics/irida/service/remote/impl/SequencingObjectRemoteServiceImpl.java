@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.service.remote.impl;
 import java.nio.file.Path;
 import java.util.Set;
 
+import ca.corefacility.bioinformatics.irida.exceptions.FileTransferException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
@@ -26,7 +27,7 @@ public class SequencingObjectRemoteServiceImpl<Type extends SequencingObject> ex
 	}
 
 	@Override
-	public Type mirrorSequencingObject(Type seqObject) {
+	public Type mirrorSequencingObject(Type seqObject) throws FileTransferException {
 
 		Set<SequenceFile> files = seqObject.getFiles();
 

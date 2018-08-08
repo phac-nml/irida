@@ -15,6 +15,7 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.security.core.token.TokenService;
 import org.springframework.stereotype.Repository;
 
+import ca.corefacility.bioinformatics.irida.exceptions.FileTransferException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.ListResourceWrapper;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.ResourceWrapper;
@@ -60,9 +61,10 @@ public class SequenceFileRemoteRepositoryImpl extends RemoteRepositoryImpl<Seque
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Path downloadRemoteSequenceFile(String uri, RemoteAPI remoteAPI, MediaType... mediaTypes) {
+	public Path downloadRemoteSequenceFile(String uri, RemoteAPI remoteAPI, MediaType... mediaTypes)
+			throws FileTransferException {
 		SequenceFile file = read(uri, remoteAPI);
-		
+
 		OAuthTokenRestTemplate restTemplate = new OAuthTokenRestTemplate(tokenService, remoteAPI);
 
 		// add the sequence file message converter
@@ -77,6 +79,14 @@ public class SequenceFileRemoteRepositoryImpl extends RemoteRepositoryImpl<Seque
 
 		// get the file
 		ResponseEntity<Path> exchange = restTemplate.exchange(uri, HttpMethod.GET, requestEntity, Path.class);
+		long expectedSize = exchange.getHeaders().getContentLength();
+		Path filePath = exchange.getBody();
+
+		if (filePath.toFile().length() != expectedSize) {
+			throw new FileTransferException("Error when getting file at uri=[" + uri + "], expectedSize ["
+					+ expectedSize + "] != actual size [" + filePath.toFile().length() + "]");
+		}
+
 		return exchange.getBody();
 	}
 
@@ -84,7 +94,7 @@ public class SequenceFileRemoteRepositoryImpl extends RemoteRepositoryImpl<Seque
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Path downloadRemoteSequenceFile(String uri, RemoteAPI remoteAPI) {
+	public Path downloadRemoteSequenceFile(String uri, RemoteAPI remoteAPI) throws FileTransferException {
 		return downloadRemoteSequenceFile(uri, remoteAPI, DEFAULT_DOWNLOAD_MEDIA_TYPE);
 	}
 
