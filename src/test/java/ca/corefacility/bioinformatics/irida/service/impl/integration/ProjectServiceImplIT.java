@@ -890,9 +890,9 @@ public class ProjectServiceImplIT {
 		Project source = projectService.read(2L);
 		Project destination = projectService.read(10L);
 
-		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(source);
+		Sample sample2 = sampleService.read(2L);
 
-		Set<Sample> samples = samplesForProject.stream().map(j -> j.getObject()).collect(Collectors.toSet());
+		Set<Sample> samples = Sets.newHashSet(sample2);
 
 		List<ProjectSampleJoin> movedSamples = projectService.moveSamples(source, destination, samples);
 
@@ -902,11 +902,14 @@ public class ProjectServiceImplIT {
 			assertFalse("Project shouldn't be owner for sample", j.isOwner());
 		});
 
-		assertEquals("Samples should not exist in source project", Long.valueOf(0L),
+		assertEquals("Samples should not exist in source project", Long.valueOf(1L),
 				projectSampleJoinRepository.countSamplesForProject(source));
-		assertEquals("Samples should exist in destination project", Sets.newHashSet(1L, 2L),
-				projectSampleJoinRepository.getSamplesForProject(destination).stream().map(j -> j.getObject().getId())
-						.collect(Collectors.toSet()));
+
+		List<Join<Project, Sample>> samplesForProject = projectSampleJoinRepository.getSamplesForProject(destination);
+		assertEquals("Should be 1 sample", 1, samplesForProject.size());
+		ProjectSampleJoin join = (ProjectSampleJoin) samplesForProject.iterator().next();
+		assertFalse("Project should not be owner", join.isOwner());
+
 	}
 
 	@Test(expected = AccessDeniedException.class)
@@ -920,19 +923,6 @@ public class ProjectServiceImplIT {
 		Set<Sample> samples = samplesForProject.stream().map(j -> j.getObject()).collect(Collectors.toSet());
 
 		projectService.shareSamples(source, destination, samples, true);
-	}
-
-	@Test(expected = AccessDeniedException.class)
-	@WithMockUser(username = "user1", roles = "USER")
-	public void testMoveLockedSamplesFail() {
-		Project source = projectService.read(2L);
-		Project destination = projectService.read(10L);
-
-		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(source);
-
-		Set<Sample> samples = samplesForProject.stream().map(j -> j.getObject()).collect(Collectors.toSet());
-
-		projectService.moveSamples(source, destination, samples);
 	}
 
 	private Project p() {

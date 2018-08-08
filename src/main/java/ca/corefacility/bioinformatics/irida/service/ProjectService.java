@@ -135,16 +135,13 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @return a reference to the relationship resource created between the two entities.
 	 */
 	public Join<Project, Sample> addSampleToProject(Project project, Sample sample, boolean owner);
-	
-	
+
 	/**
 	 * Move a {@link Sample} from one {@link Project} to another
-	 * 
-	 * @param source
-	 *            the source {@link Project}
-	 * @param destination
-	 *            Destination {@link Project}
-	 * @param sample
+	 *
+	 * @param source      the source {@link Project}
+	 * @param destination Destination {@link Project}
+	 * @param sample      The sample to move
 	 * @return Newly created {@link ProjectSampleJoin}
 	 */
 	public ProjectSampleJoin moveSampleBetweenProjects(Project source, Project destination, Sample sample);
