@@ -87,8 +87,7 @@ public class ProjectSamplesController {
 	private MessageSource messageSource;
 
 	@Autowired
-	public ProjectSamplesController(ProjectService projectService, SampleService sampleService,
-			SequencingObjectService sequencingObjectService, ProjectControllerUtils projectControllerUtils,
+	public ProjectSamplesController(ProjectService projectService, SampleService sampleService, SequencingObjectService sequencingObjectService, ProjectControllerUtils projectControllerUtils,
 			MessageSource messageSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
@@ -598,7 +597,7 @@ public class ProjectSamplesController {
 		try {
 
 			if (remove) {
-				successful = projectService.moveSamples(originalProject, newProject, Lists.newArrayList(samples), giveOwner);
+				successful = projectService.moveSamples(originalProject, newProject, Lists.newArrayList(samples));
 			} else {
 				successful = projectService.shareSamples(originalProject, newProject, Lists.newArrayList(samples), giveOwner);
 			}
