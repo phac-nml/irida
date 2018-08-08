@@ -6,11 +6,7 @@ import java.io.InputStream;
 import java.net.ConnectException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,6 +18,14 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import com.google.common.base.Strings;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.slf4j.Logger;
@@ -59,7 +63,11 @@ public class ExportUploadService {
 
 	private static final String NCBI_TEMPLATE = "ncbi";
 
+	public static final String NCBI_ACCESSION_METADATA_LABEL = "NCBI SRA Accession";
+
 	private NcbiExportSubmissionService exportSubmissionService;
+	private SampleService sampleService;
+	private MetadataTemplateService metadataTemplateService;
 	private TemplateEngine templateEngine;
 	private EmailController emailController;
 
@@ -91,9 +99,12 @@ public class ExportUploadService {
 			ExportUploadState.PROCESSING, ExportUploadState.WAITING);
 
 	@Autowired
-	public ExportUploadService(NcbiExportSubmissionService exportSubmissionService,
+	public ExportUploadService(NcbiExportSubmissionService exportSubmissionService, SampleService sampleService,
+			MetadataTemplateService metadataTemplateService,
 			@Qualifier("exportUploadTemplateEngine") TemplateEngine templateEngine, EmailController emailController) {
 		this.exportSubmissionService = exportSubmissionService;
+		this.sampleService = sampleService;
+		this.metadataTemplateService = metadataTemplateService;
 		this.templateEngine = templateEngine;
 		this.emailController = emailController;
 	}
@@ -183,6 +194,12 @@ public class ExportUploadService {
 						exportSubmissionService.update(updateSubmissionForXml);
 
 						xmlStream.close();
+
+						//If we're done processing, add the accessions
+						if (updateSubmissionForXml.getUploadState().equals(ExportUploadState.PROCESSED_OK)) {
+							addSampleAccessions(submission);
+						}
+
 					}
 				} catch (NcbiXmlParseException e) {
 					logger.error("Error getting response", e);
@@ -594,5 +611,50 @@ public class ExportUploadService {
 				}
 			}
 		} while (!done);
+	}
+
+	/**
+	 * Add the accession numbers for uploaded NCBI data to the associated {@link Sample}
+	 *
+	 * @param submission an {@link NcbiExportSubmission} with associated accessions
+	 */
+	private void addSampleAccessions(NcbiExportSubmission submission) {
+		//get all samplefile objects for the submission
+		for (NcbiBioSampleFiles file : submission.getBioSampleFiles()) {
+			//read the accession
+			String accession = file.getAccession();
+
+			//if an accession exists
+			if (!Strings.isNullOrEmpty(accession)) {
+				//build a metadata map entry
+				Map<String, MetadataEntry> metadata = new HashMap<>();
+				metadata.put(NCBI_ACCESSION_METADATA_LABEL, new MetadataEntry(accession, "text"));
+				Map<MetadataTemplateField, MetadataEntry> metadataMap = metadataTemplateService
+						.getMetadataMap(metadata);
+
+				//get all the sequencing objects involved
+				Set<SequencingObject> objects = new HashSet();
+				if (!file.getPairs().isEmpty()) {
+					objects.addAll(file.getPairs());
+				} else if (!file.getFiles().isEmpty()) {
+					objects.addAll(file.getFiles());
+				}
+
+				// get all the samples for those sequencing objects
+				Set<Sample> samples = new HashSet<>();
+				for (SequencingObject object : objects) {
+					SampleSequencingObjectJoin join = sampleService.getSampleForSequencingObject(object);
+
+					samples.add(join.getSubject());
+				}
+
+				//update the samples with the accession
+				for (Sample s : samples) {
+					s.mergeMetadata(metadataMap);
+
+					sampleService.update(s);
+				}
+			}
+		}
 	}
 }
