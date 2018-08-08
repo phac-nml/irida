@@ -87,7 +87,7 @@ public class SequenceFileRemoteRepositoryImpl extends RemoteRepositoryImpl<Seque
 					+ expectedSize + "] != actual size [" + filePath.toFile().length() + "]");
 		}
 
-		return exchange.getBody();
+		return filePath;
 	}
 
 	/**
