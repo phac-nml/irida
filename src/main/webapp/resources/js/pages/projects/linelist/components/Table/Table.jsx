@@ -1,5 +1,4 @@
 import React from "react";
-import { List } from "immutable";
 import PropTypes from "prop-types";
 import ImmutablePropTypes from "react-immutable-proptypes";
 import { showUndoNotification } from "../../../../../modules/notifications";
@@ -39,85 +38,6 @@ export class Table extends React.Component {
   External custom components used by ag-grid.
    */
   frameworkComponents = { LoadingOverlay, SampleNameRenderer };
-
-  shouldComponentUpdate(nextProps) {
-    /**
-     * Check to see if the height of the table needs to be updated.
-     * This will only happen  on initial load or if the window height has changed
-     */
-    if (nextProps.height !== this.props.height) {
-      return true;
-    }
-
-    if (!nextProps.fields.equals(this.props.fields)) {
-      /*
-      This should only happen on the original loading of the table when the
-      complete list of UIMetadataTemplateFields are passed.
-       */
-      return true;
-    }
-
-    if (
-      List.isList(nextProps.entries) &&
-      !nextProps.entries.equals(this.props.entries)
-    ) {
-      /*
-      This should only happen on the original loading of the table when the
-      complete list of MetadataEntries are passed.
-       */
-      return true;
-    }
-
-    if (nextProps.current !== this.props.current) {
-      /*
-      The current template has changed.
-      Force the table to update to the new view based on the template fields.
-       */
-      const template = nextProps.templates.get(nextProps.current).toJS();
-      this.applyTemplate(template.fields);
-      return false;
-    }
-
-    /*
-    The field order for a template can change externally.  Check to see if that
-    order has been updated, and adjust the columns accordingly.
-     */
-    const oldModified = this.props.templates.getIn([
-      this.props.current,
-      "modified"
-    ]);
-    const newModified = nextProps.templates.getIn([
-      nextProps.current,
-      "modified"
-    ]);
-
-    if (
-      typeof oldModified !== "undefined" &&
-      !newModified.equals(oldModified)
-    ) {
-      if (this.colDropped) {
-        // Clear the dropped flag as the next update might come from an external source
-        this.colDropped = false;
-      } else {
-        const fields = newModified.toJS();
-
-        /*
-        If the length of the modified fields === 0, then the modified template
-        was saved ==> the table already reflected this state.  If not the
-        template was modified from an external event and therefore needs to
-        reflect the changes.
-         */
-        if (fields.length > 0) {
-          this.applyTemplate(fields);
-        }
-      }
-      return false;
-    }
-
-    // If these have not been changed then don't update the entries;
-    return false;
-  }
-
 
   /**
    * Apply a Metadata template to the table.  This will reorder the columns and
@@ -425,6 +345,7 @@ export class Table extends React.Component {
           defaultColDef={{
             editable: true
           }}
+          enableCellChangeFlash={true}
           onCellEditingStarted={this.onCellEditingStarted}
           onCellEditingStopped={this.onCellEditingStopped}
         />
