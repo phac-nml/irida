@@ -5,7 +5,8 @@ Changes
 ----------------
 * [UI/Workflow]: Added option to disable workflows/analysis types from display in IRIDA using `irida.workflow.types.disabled`. (0.22.1)
 * [Developer]: Added wait when NCBI Uploader fails before retrying. (0.22.1)
-* [UI/Developer]: Updated to lodash v4.17.10 to fix security issue. (0.22.2)
+* [UI]: Fixed bug where all moved samples were locked. (0.22.2)
+* [UI/Developer]: Updated to lodash v4.17.10 to fix security issue. (0.22.3)
 
 0.21.0 to 0.22.0
 ----------------
