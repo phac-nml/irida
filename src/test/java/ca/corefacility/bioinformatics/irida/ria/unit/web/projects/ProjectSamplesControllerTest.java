@@ -124,7 +124,7 @@ public class ProjectSamplesControllerTest {
 		when(projectService.read(projectId)).thenReturn(oldProject);
 		when(projectService.read(newProjectId)).thenReturn(newProject);
 		when(sampleService.readMultiple(any(Iterable.class))).thenReturn(sampleList);
-		when(projectService.moveSamples(oldProject, newProject, sampleList, owner)).thenReturn(joins);
+		when(projectService.moveSamples(oldProject, newProject, sampleList)).thenReturn(joins);
 
 		Map<String, Object> result = controller.shareSampleToProject(projectId, sampleIds, newProjectId,
 				removeFromOriginal, true, Locale.US);
@@ -135,7 +135,7 @@ public class ProjectSamplesControllerTest {
 		verify(projectService).read(projectId);
 		verify(projectService).read(newProjectId);
 
-		verify(projectService).moveSamples(oldProject, newProject, sampleList, owner);
+		verify(projectService).moveSamples(oldProject, newProject, sampleList);
 
 	}
 

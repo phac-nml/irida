@@ -597,7 +597,7 @@ public class ProjectSamplesController {
 		try {
 
 			if (remove) {
-				successful = projectService.moveSamples(originalProject, newProject, Lists.newArrayList(samples), giveOwner);
+				successful = projectService.moveSamples(originalProject, newProject, Lists.newArrayList(samples));
 			} else {
 				successful = projectService.shareSamples(originalProject, newProject, Lists.newArrayList(samples), giveOwner);
 			}

@@ -397,8 +397,14 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Transactional
 	@LaunchesProjectEvent(SampleAddedProjectEvent.class)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or ( hasPermission(#source, 'isProjectOwner') and hasPermission(#destination, 'isProjectOwner'))")
-	public ProjectSampleJoin moveSampleBetweenProjects(Project source, Project destination, Sample sample, boolean owner) {
-		ProjectSampleJoin join = addSampleToProject(destination, sample, owner);
+	public ProjectSampleJoin moveSampleBetweenProjects(Project source, Project destination, Sample sample) {
+		//read the existing ProjectSampleJoin to see if we're the owner
+		ProjectSampleJoin projectSampleJoin = psjRepository.readSampleForProject(source, sample);
+
+		//set the ownership on the sample given the existing permissions
+		ProjectSampleJoin join = addSampleToProject(destination, sample, projectSampleJoin.isOwner());
+
+		//remove the old join
 		removeSampleFromProject(source, sample);
 
 		return join;
@@ -437,16 +443,14 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Transactional
 	@LaunchesProjectEvent(SampleAddedProjectEvent.class)
 	@PreAuthorize("hasPermission(#source, 'isProjectOwner') and hasPermission(#destination, 'isProjectOwner') "
-			+ "and hasPermission(#samples, 'canReadSample') "
-			+ "and ((not #giveOwner) or hasPermission(#samples, 'canUpdateSample') )")
-	public List<ProjectSampleJoin> moveSamples(Project source, Project destination, Collection<Sample> samples,
-			boolean giveOwner) {
+			+ "and hasPermission(#samples, 'canReadSample') ")
+	public List<ProjectSampleJoin> moveSamples(Project source, Project destination, Collection<Sample> samples) {
 
 		List<ProjectSampleJoin> newJoins = new ArrayList<>();
 
 		for (Sample sample : samples) {
-			ProjectSampleJoin newJoin = moveSampleBetweenProjects(source, destination, sample, giveOwner);
-			
+			ProjectSampleJoin newJoin = moveSampleBetweenProjects(source, destination, sample);
+
 			logger.trace("Moved sample " + sample.getId() + " to project " + destination.getId());
 
 			newJoins.add(newJoin);
