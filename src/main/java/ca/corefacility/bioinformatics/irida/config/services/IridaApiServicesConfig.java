@@ -238,7 +238,6 @@ public class IridaApiServicesConfig {
 		final PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(classLoader);
 		final Resource[] resources = resolver.getResources(
 				"classpath:" + workflowsDirectory + "**/messages_en.properties");
-		logger.debug("resources " + Arrays.toString(resources));
 		final Pattern pattern = Pattern.compile(
 				String.format("^.+(%s.+\\/messages)_en.properties$", workflowsDirectory));
 		return Arrays.stream(resources)
@@ -250,10 +249,7 @@ public class IridaApiServicesConfig {
 
 	private String getClasspathResourceBasename(Pattern pattern, Resource x) {
 		try {
-//			final String path = x.getFile()
-//					.getAbsolutePath();
 			final String path = x.getURI().toString();
-			logger.debug("classpathresourcebasename " + path);
 			final Matcher matcher = pattern.matcher(path);
 			if (matcher.matches() && matcher.groupCount() == 1) {
 				return "classpath:" + matcher.group(1);
