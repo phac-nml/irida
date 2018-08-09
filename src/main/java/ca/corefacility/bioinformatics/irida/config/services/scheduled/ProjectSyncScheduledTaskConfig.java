@@ -17,7 +17,7 @@ public class ProjectSyncScheduledTaskConfig {
 	private ProjectSynchronizationService projectSyncService;
 
 	// rate in MS of the upload status checking
-	private static final long PROJECT_SYNC_RATE = 300000; // 5 minutes
+	private static final long PROJECT_SYNC_RATE = 30*1000; // 5 minutes
 
 	/**
 	 * Find projects which must be synchronized from remote sites

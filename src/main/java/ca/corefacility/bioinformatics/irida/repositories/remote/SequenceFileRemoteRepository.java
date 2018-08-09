@@ -4,7 +4,6 @@ import java.nio.file.Path;
 
 import org.springframework.http.MediaType;
 
-import ca.corefacility.bioinformatics.irida.exceptions.FileTransferException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
@@ -21,9 +20,8 @@ public interface SequenceFileRemoteRepository extends RemoteRepository<SequenceF
 	 * @param uri The URI to get sequence data for
 	 * @param api The {@link RemoteAPI} this file resides on
 	 * @return A temporary {@link Path} to the sequence file data
-	 * @throws FileTransferException When there is an error transferring the file.
 	 */
-	public Path downloadRemoteSequenceFile(String uri, RemoteAPI api) throws FileTransferException;
+	public Path downloadRemoteSequenceFile(String uri, RemoteAPI api);
 
 	/**
 	 * Get a local copy of a {@link SequenceFile}
@@ -32,8 +30,6 @@ public interface SequenceFileRemoteRepository extends RemoteRepository<SequenceF
 	 * @param api        The {@link RemoteAPI} this file resides on
 	 * @param mediaTypes The media types to request from the remote API
 	 * @return A temporary {@link Path} to the sequence file data
-	 * @throws FileTransferException When there is an error transferring the file.
 	 */
-	public Path downloadRemoteSequenceFile(String uri, RemoteAPI api, MediaType... mediaTypes)
-			throws FileTransferException;
+	public Path downloadRemoteSequenceFile(String uri, RemoteAPI api, MediaType... mediaTypes);
 }

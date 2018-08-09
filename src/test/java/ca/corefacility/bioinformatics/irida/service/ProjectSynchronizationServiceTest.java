@@ -17,7 +17,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import ca.corefacility.bioinformatics.irida.exceptions.FileTransferException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectSynchronizationException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -164,7 +163,7 @@ public class ProjectSynchronizationServiceTest {
 	}
 	
 	@Test
-	public void testSyncFiles() throws FileTransferException {
+	public void testSyncFiles() {
 		Sample sample = new Sample();
 		
 		SequenceFilePair pair = new SequenceFilePair();
@@ -181,7 +180,7 @@ public class ProjectSynchronizationServiceTest {
 	}
 	
 	@Test(expected = ProjectSynchronizationException.class)
-	public void testSyncFilesError() throws FileTransferException {
+	public void testSyncFilesError() {
 		Sample sample = new Sample();
 		
 		SequenceFilePair pair = new SequenceFilePair();
