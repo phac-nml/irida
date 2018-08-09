@@ -10,6 +10,7 @@ const { Sider, Content } = Layout;
 export class LineListLayoutComponent extends React.Component {
   linelistRef = React.createRef();
   tableRef = React.createRef();
+
   state = {
     collapsed: true,
     height: 800
@@ -68,22 +69,19 @@ export class LineListLayoutComponent extends React.Component {
     });
   };
 
-  addSamplesToCart = () => {
-    this.tableRef.current.addSamplesToCart();
-  };
+  addSamplesToCart = () => this.tableRef.current.addSamplesToCart();
 
-  exportCSV = () => {
-    this.tableRef.current.exportCSV();
-  };
+  exportCSV = () => this.tableRef.current.exportCSV();
 
-  exportXLSX = () => {
-    this.tableRef.current.exportXLSX();
-  };
+  exportXLSX = () => this.tableRef.current.exportXLSX();
+
+  quickSearch = value => this.tableRef.current.quickSearch(value);
 
   render() {
     return (
       <div ref={this.linelistRef}>
         <Toolbar
+          quickSearch={this.quickSearch}
           exportCSV={this.exportCSV}
           exportXLSX={this.exportXLSX}
           addSamplesToCart={this.addSamplesToCart}
@@ -121,7 +119,7 @@ export class LineListLayoutComponent extends React.Component {
             </div>
           </Sider>
         </Layout>
-        <InfoBar selectedCount={this.props.selectedCount}/>
+        <InfoBar selectedCount={this.props.selectedCount} />
       </div>
     );
   }
