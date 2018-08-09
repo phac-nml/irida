@@ -400,6 +400,10 @@ export class Table extends React.Component {
     delete this.cellEditedValue;
   };
 
+  /**
+   * Search the entire table for a value.
+   * @param {string} value
+   */
   quickSearch = value => this.api.setQuickFilter(value);
 
   render() {
