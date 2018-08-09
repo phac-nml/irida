@@ -107,7 +107,7 @@ export class LineListLayoutComponent extends React.Component {
           >
             <div
               className="tool-panel-wrapper"
-              style={{height: this.state.height}}
+              style={{ height: this.state.height }}
             >
               <ToolPanel {...this.props} />
               <div className="ag-grid-tool-panel--buttons">

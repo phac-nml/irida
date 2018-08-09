@@ -1,6 +1,6 @@
 import React from "react";
 import { Checkbox } from "antd";
-import {TemplatesPanel} from "../TemplatesPanel";
+import { TemplatesPanel } from "../TemplatesPanel";
 
 /**
  * Use to hold the column selection in a tool panel to the right of the

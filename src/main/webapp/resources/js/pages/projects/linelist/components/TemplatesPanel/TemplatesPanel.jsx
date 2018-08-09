@@ -33,7 +33,13 @@ export class TemplatesPanel extends React.Component {
         : templates.get(current).toJS();
 
     return (
-      <div style={{ borderBottom: "1px solid rgba(189, 195, 199, 1.00)", padding: "1rem", marginBottom: "1rem" }}>
+      <div
+        style={{
+          borderBottom: "1px solid rgba(189, 195, 199, 1.00)",
+          padding: "1rem",
+          marginBottom: "1rem"
+        }}
+      >
         <TemplateSelect {...this.props} showSaveModal={this.showSaveModal} />
         <SaveTemplateModal
           template={template}

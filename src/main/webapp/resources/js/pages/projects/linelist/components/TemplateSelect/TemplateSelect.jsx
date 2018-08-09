@@ -4,8 +4,8 @@ import ImmutablePropTypes from "react-immutable-proptypes";
 import { Select } from "antd";
 import { TemplateSelectOption } from "./TemplateSelectOption";
 import {
-  PopoverContents,
-  HelpPopover
+  HelpPopover,
+  PopoverContents
 } from "../../../../../components/popovers/index";
 
 const { Option } = Select;
@@ -32,7 +32,7 @@ export function TemplateSelect(props) {
 
   return (
     <React.Fragment>
-      <label style={{color: "#707171"}}>
+      <label style={{ color: "#707171" }}>
         {i18n.linelist.templates.title}
         <HelpPopover
           content={<PopoverContents contents={content} />}
