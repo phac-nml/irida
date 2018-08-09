@@ -41,6 +41,14 @@ export class Table extends React.Component {
   frameworkComponents = { LoadingOverlay, SampleNameRenderer };
 
   shouldComponentUpdate(nextProps) {
+    /**
+     * Check to see if the height of the table needs to be updated.
+     * This will only happen  on initial load or if the window height has changed
+     */
+    if (nextProps.height !== this.props.height) {
+      return true;
+    }
+
     if (!nextProps.fields.equals(this.props.fields)) {
       /*
       This should only happen on the original loading of the table when the
@@ -394,7 +402,10 @@ export class Table extends React.Component {
 
   render() {
     return (
-      <div className="ag-grid-table-wrapper">
+      <div
+        className="ag-grid-table-wrapper"
+        style={{ height: this.props.height }}
+      >
         <AgGridReact
           id="linelist-grid"
           rowSelection="multiple"
@@ -415,6 +426,7 @@ export class Table extends React.Component {
           defaultColDef={{
             editable: true
           }}
+          enableCellChangeFlash={true}
           onCellEditingStarted={this.onCellEditingStarted}
           onCellEditingStopped={this.onCellEditingStopped}
         />
@@ -424,6 +436,7 @@ export class Table extends React.Component {
 }
 
 Table.propTypes = {
+  height: PropTypes.number.isRequired,
   tableModified: PropTypes.func.isRequired,
   fields: ImmutablePropTypes.list.isRequired,
   entries: ImmutablePropTypes.list,

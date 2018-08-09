@@ -42,6 +42,9 @@ public class ProjectLineListPage extends ProjectPageBase {
 	@FindBy(className = "t-undo-edit")
 	private WebElement undoEditBtn;
 
+	@FindBy(className = "t-columns-panel-toggle")
+	private WebElement columnsPanelToggle;
+
 	public ProjectLineListPage(WebDriver driver) {
 		super(driver);
 	}
@@ -49,6 +52,10 @@ public class ProjectLineListPage extends ProjectPageBase {
 	public static ProjectLineListPage goToPage(WebDriver driver, int projectId) {
 		get(driver, RELATIVE_URL.replace("{projectId}", String.valueOf(projectId)));
 		return PageFactory.initElements(driver, ProjectLineListPage.class);
+	}
+
+	public void openColumnsPaenl() {
+		columnsPanelToggle.click();
 	}
 
 	public int getNumberOfRowsInLineList() {

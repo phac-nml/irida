@@ -32,6 +32,8 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 		driver().manage()
 				.window()
 				.maximize(); // Make sure we can see everything.
+		// OPen the column panel
+		page.openColumnsPaenl();
 		assertEquals("Should be on the correct page.", "Line List", page.getActivePage());
 		assertEquals("Should be 21 samples", 21, page.getNumberOfRowsInLineList());
 		assertEquals("Should be 5 fields to toggle", 5, page.getNumberOfMetadataFields());

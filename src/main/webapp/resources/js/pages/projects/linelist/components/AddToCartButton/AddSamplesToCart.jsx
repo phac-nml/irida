@@ -16,8 +16,8 @@ export function AddSamplesToCartButton(props) {
       disabled={props.selectedCount === 0}
       style={{ marginLeft: "4px" }}
       onClick={() => props.addSamplesToCart()}
-      icon="shopping-cart"
     >
+      <i className="fas fa-cart-plus spaced-right__sm"/>
       {i18n.linelist.addToCart}
     </Button>
   );
