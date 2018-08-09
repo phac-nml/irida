@@ -86,6 +86,7 @@ public class IridaWorkflowsConfig {
 		for (IridaPlugin plugin : iridaPipelinePlugins.getPlugins()) {
 			Optional<String> pluginStyle = plugin.getPipelineStyle();
 
+			// place style for each plugin under a CSS class based on the analysis type
 			if (pluginStyle.isPresent()) {
 				style += "." + plugin.getAnalysisType().getType() + " {" + pluginStyle.get() + "}";
 			}
@@ -106,7 +107,7 @@ public class IridaWorkflowsConfig {
 	 *             If an I/O error occured.
 	 * @throws IridaWorkflowLoadException
 	 *             If there was an issue loading a specific workflow.
-	 * @throws IridaPluginException 
+	 * @throws IridaPluginException If there was an issue when loading pipeline plugin workflows.
 	 */
 	@Bean
 	public IridaWorkflowSet iridaWorkflows(Path iridaWorkflowTypesPath) throws IOException, IridaWorkflowLoadException, IridaPluginException {

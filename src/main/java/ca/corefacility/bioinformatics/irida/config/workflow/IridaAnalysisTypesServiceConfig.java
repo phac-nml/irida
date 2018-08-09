@@ -17,28 +17,30 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisTypesServiceImpl;
 
 /**
- * Class to load up {@link AnalysisTypesService}. Separated into separate class to handle Spring dependencies better.
+ * Class to load up {@link AnalysisTypesService}. Separated into separate class
+ * to handle Spring dependencies better.
  *
  */
 @Configuration
 @Import({ IridaPluginConfig.class })
 public class IridaAnalysisTypesServiceConfig {
-	
+
 	@Autowired
 	private IridaPluginConfig.IridaPluginList iridaPipelinePlugins;
-	
+
 	@Bean
 	public AnalysisTypesService analysisTypesService() {
 		Set<AnalysisType> runnableAnalysisTypes = Sets.newHashSet(BuiltInAnalysisTypes.PHYLOGENOMICS,
-				BuiltInAnalysisTypes.SISTR_TYPING, BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION, BuiltInAnalysisTypes.BIO_HANSEL,
-				BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION_COLLECTION, BuiltInAnalysisTypes.REFSEQ_MASHER,
-				BuiltInAnalysisTypes.MLST_MENTALIST);
-		Set<AnalysisType> otherAnalysisTypes = Sets.newHashSet(BuiltInAnalysisTypes.DEFAULT, BuiltInAnalysisTypes.FASTQC);
-	
+				BuiltInAnalysisTypes.SISTR_TYPING, BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION,
+				BuiltInAnalysisTypes.BIO_HANSEL, BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION_COLLECTION,
+				BuiltInAnalysisTypes.REFSEQ_MASHER, BuiltInAnalysisTypes.MLST_MENTALIST);
+		Set<AnalysisType> otherAnalysisTypes = Sets.newHashSet(BuiltInAnalysisTypes.DEFAULT,
+				BuiltInAnalysisTypes.FASTQC);
+
 		for (IridaPlugin plugin : iridaPipelinePlugins.getPlugins()) {
 			runnableAnalysisTypes.add(plugin.getAnalysisType());
 		}
-		
+
 		return new AnalysisTypesServiceImpl(runnableAnalysisTypes, otherAnalysisTypes);
 	}
 }

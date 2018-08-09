@@ -119,6 +119,9 @@ public class PipelineController extends BaseController {
 	 */
 	private CartController cartController;
 	
+	/*
+	 * Additional variables
+	 */
 	private String iridaPipelinePluginStyle;
 
 	@Autowired
