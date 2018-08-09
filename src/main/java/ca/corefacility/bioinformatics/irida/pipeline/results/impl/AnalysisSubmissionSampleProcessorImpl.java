@@ -5,8 +5,8 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSampleUpdater;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
+import ca.corefacility.bioinformatics.irida.pipeline.results.updater.AnalysisSampleUpdater;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import com.google.common.collect.Maps;
 import org.slf4j.Logger;
@@ -43,7 +43,6 @@ public class AnalysisSubmissionSampleProcessorImpl implements AnalysisSubmission
 	 * @param analysisSampleUpdaterServices A list of {@link AnalysisSampleUpdater}s to use for updating
 	 *                                      samples.
 	 */
-	@Autowired
 	public AnalysisSubmissionSampleProcessorImpl(SampleRepository sampleRepository,
 			List<AnalysisSampleUpdater> analysisSampleUpdaterServices) {
 		checkNotNull(analysisSampleUpdaterServices, "assemblySampleUpdaterService is null");

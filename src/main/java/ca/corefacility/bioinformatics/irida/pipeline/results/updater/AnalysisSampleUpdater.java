@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.pipeline.results;
+package ca.corefacility.bioinformatics.irida.pipeline.results.updater;
 
 import java.util.Collection;
 

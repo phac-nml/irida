@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -35,6 +36,7 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.ClassRelativeResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -62,6 +64,9 @@ import ca.corefacility.bioinformatics.irida.config.services.scheduled.IridaSched
 import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsConfig;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
+import ca.corefacility.bioinformatics.irida.pipeline.results.impl.AnalysisSubmissionSampleProcessorImpl;
+import ca.corefacility.bioinformatics.irida.pipeline.results.updater.AnalysisSampleUpdater;
 import ca.corefacility.bioinformatics.irida.plugins.IridaPlugin;
 import ca.corefacility.bioinformatics.irida.plugins.IridaPluginException;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
@@ -75,11 +80,14 @@ import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.impl.SistrTypingFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionCleanupService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.impl.InMemoryTaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionCleanupServiceImpl;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import net.matlux.NreplServerSpring;
 
@@ -90,10 +98,10 @@ import net.matlux.NreplServerSpring;
  */
 @Configuration
 @Import({ IridaApiSecurityConfig.class, IridaApiAspectsConfig.class, IridaApiRepositoriesConfig.class,
-		ExecutionManagerConfig.class, AnalysisExecutionServiceConfig.class, IridaWorkflowsConfig.class,
-		WebEmailConfig.class, IridaScheduledTasksConfig.class, IridaPluginConfig.class})
+		ExecutionManagerConfig.class, AnalysisExecutionServiceConfig.class,
+		WebEmailConfig.class, IridaScheduledTasksConfig.class, IridaPluginConfig.class, IridaWorkflowsConfig.class})
 @ComponentScan(basePackages = { "ca.corefacility.bioinformatics.irida.service",
-		"ca.corefacility.bioinformatics.irida.processing", "ca.corefacility.bioinformatics.irida.pipeline.results" })
+		"ca.corefacility.bioinformatics.irida.processing", "ca.corefacility.bioinformatics.irida.pipeline.results.updater" })
 public class IridaApiServicesConfig {
 	private static final Logger logger = LoggerFactory.getLogger(IridaApiServicesConfig.class);
 	
@@ -138,7 +146,19 @@ public class IridaApiServicesConfig {
 	private Integer nreplPort;
 
 	@Autowired
-	IridaPluginConfig.IridaPluginList pipelinePlugins;
+	private IridaPluginConfig.IridaPluginList pipelinePlugins;
+	
+	@Autowired
+	private List<AnalysisSampleUpdater> defaultAnalysisSampleUpdaters;
+	
+	@Autowired
+	private SampleRepository sampleRepository;
+	
+	@Autowired
+	private MetadataTemplateService metadataTemplateService;
+	
+	@Autowired
+	private SampleService sampleService;
 	
 	@Bean
 	public BeanPostProcessor forbidJpqlUpdateDeletePostProcessor() {
@@ -155,32 +175,18 @@ public class IridaApiServicesConfig {
 		properties.setProperty("help.contact.email", helpEmail);
 		properties.setProperty("irida.version", iridaVersion);
 
-		// Get the messages from all of the IRIDA pipeline plugins
-		Properties pluginMessages = new Properties();
-		for(IridaPlugin plugin : pipelinePlugins.getPlugins()){
-			try {
-				Properties messagesFile = plugin.getMessages();
-				pluginMessages.putAll(messagesFile);
-			} catch (IridaPluginException ex) {
-				logger.error("Could not load messages for plugin", ex);
-			}
-		}
-
-		final ReloadableResourceBundleMessageSource source = new ReloadableResourceBundleMessageSource();
+		ReloadableResourceBundleMessageSource source = new ReloadableResourceBundleMessageSource();
 
 		try {
-			final List<String> workflowMessageSources = findWorkflowMessageSources();
-			workflowMessageSources.addAll(Arrays.asList(RESOURCE_LOCATIONS));
+			final String WORKFLOWS_DIRECTORY = "/ca/corefacility/bioinformatics/irida/model/workflow/analysis/type/workflows/";
+			final List<String> workflowMessageSources = findWorkflowMessageSources(this.getClass().getClassLoader(), WORKFLOWS_DIRECTORY);
+			workflowMessageSources.addAll(Arrays.asList(RESOURCE_LOCATIONS));			
 			final String[] allMessageSources = workflowMessageSources.toArray(new String[workflowMessageSources.size()]);
-			logger.debug("Setting message sources basenames: " + Arrays.toString(allMessageSources));
 			source.setBasenames(allMessageSources);
 		} catch (IOException e) {
 			logger.error("Could not set/load workflow message sources. " + e);
 			source.setBasenames(RESOURCE_LOCATIONS);
 		}
-
-		// add all the pipeline plugin messages
-		properties.putAll(pluginMessages);
 
 		source.setFallbackToSystemLocale(false);
 		source.setDefaultEncoding(DEFAULT_ENCODING);
@@ -191,18 +197,50 @@ public class IridaApiServicesConfig {
 		if (!env.acceptsProfiles("prod")) {
 			source.setCacheSeconds(0);
 		}
+		
+		try {
+			MessageSource pluginSources = buildIridaPluginMessageSources();
+			
+			if (pluginSources != null) {
+				source.setParentMessageSource(pluginSources);
+			}
+		} catch (IridaPluginException | IOException e) {
+			logger.error("Could not set/load workflow message sources from plugins. " + e);
+		}
 
 		return source;
 	}
+	
+	private MessageSource buildIridaPluginMessageSources() throws IOException, IridaPluginException {
+		List<MessageSource> iridaPluginMessageSources = Lists.newArrayList();
+		for (IridaPlugin plugin : pipelinePlugins.getPlugins()) {
+			logger.trace("Plugin " + plugin + ", workflow path " + plugin.getWorkflowsPath());
+			List<String> pluginMessageBasenames = findWorkflowMessageSources(plugin.getClass().getClassLoader(), plugin.getWorkflowsPath().toString());
+			ReloadableResourceBundleMessageSource pluginSource = new ReloadableResourceBundleMessageSource();
+			pluginSource.setResourceLoader(new ClassRelativeResourceLoader(plugin.getClass()));
+			pluginSource.setBasenames(pluginMessageBasenames.toArray(new String[pluginMessageBasenames.size()]));
+				
+			iridaPluginMessageSources.add(pluginSource);
+		}
+		
+		if (iridaPluginMessageSources.size() > 0) {
+			return new IridaPluginMessageSource(iridaPluginMessageSources);
+		} else {
+			return null;
+		}
+	}
 
-	private List<String> findWorkflowMessageSources() throws IOException {
-		final String WORKFLOWS_DIRECTORY = "/ca/corefacility/bioinformatics/irida/model/workflow/analysis/type/workflows/";
-		final PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(this.getClass()
-				.getClassLoader());
+	private List<String> findWorkflowMessageSources(ClassLoader classLoader, String workflowsDirectory) throws IOException {
+		if (!workflowsDirectory.endsWith("/")) {
+			workflowsDirectory += "/";
+		}
+		
+		final PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(classLoader);
 		final Resource[] resources = resolver.getResources(
-				"classpath:" + WORKFLOWS_DIRECTORY + "**/messages_en.properties");
+				"classpath:" + workflowsDirectory + "**/messages_en.properties");
+		logger.debug("resources " + Arrays.toString(resources));
 		final Pattern pattern = Pattern.compile(
-				String.format("^.+(%s.+\\/messages)_en.properties$", WORKFLOWS_DIRECTORY));
+				String.format("^.+(%s.+\\/messages)_en.properties$", workflowsDirectory));
 		return Arrays.stream(resources)
 				.map(x -> getClasspathResourceBasename(pattern, x))
 				.filter(Objects::nonNull)
@@ -212,8 +250,10 @@ public class IridaApiServicesConfig {
 
 	private String getClasspathResourceBasename(Pattern pattern, Resource x) {
 		try {
-			final String path = x.getFile()
-					.getAbsolutePath();
+//			final String path = x.getFile()
+//					.getAbsolutePath();
+			final String path = x.getURI().toString();
+			logger.debug("classpathresourcebasename " + path);
 			final Matcher matcher = pattern.matcher(path);
 			if (matcher.matches() && matcher.groupCount() == 1) {
 				return "classpath:" + matcher.group(1);
@@ -368,6 +408,32 @@ public class IridaApiServicesConfig {
 	@Conditional(NreplServerSpringCondition.class)
 	public NreplServerSpring nRepl() {
 		return new NreplServerSpring(nreplPort);
+	}
+	
+	private List<AnalysisSampleUpdater> loadPluginAnalysisSampleUpdaters() {
+		List<AnalysisSampleUpdater> pluginUpdaters = Lists.newLinkedList();
+		
+		for (IridaPlugin plugin : pipelinePlugins.getPlugins()) {
+			try {
+				Optional<AnalysisSampleUpdater> analysisSampleUpdaterOption = plugin.getUpdater(metadataTemplateService, sampleService);
+				if (analysisSampleUpdaterOption.isPresent()) {
+					pluginUpdaters.add(analysisSampleUpdaterOption.get());
+				}
+			} catch (IridaPluginException e) {
+				logger.error("Could not load AnalysisSampleUpdater for plugin " + plugin + ", skipping", e);
+			}
+		}
+		
+		return pluginUpdaters;
+	}
+
+	@Bean
+	public AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor() {
+		List<AnalysisSampleUpdater> analysisSampleUpdaters = Lists.newLinkedList();
+		analysisSampleUpdaters.addAll(defaultAnalysisSampleUpdaters);
+		analysisSampleUpdaters.addAll(loadPluginAnalysisSampleUpdaters());
+		
+		return new AnalysisSubmissionSampleProcessorImpl(sampleRepository, analysisSampleUpdaters);
 	}
 }
 

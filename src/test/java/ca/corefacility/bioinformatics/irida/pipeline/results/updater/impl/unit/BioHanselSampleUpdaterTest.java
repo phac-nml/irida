@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.pipeline.results.impl.unit;
+package ca.corefacility.bioinformatics.irida.pipeline.results.updater.impl.unit;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,7 +21,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.pipeline.results.impl.BioHanselSampleUpdater;
+import ca.corefacility.bioinformatics.irida.pipeline.results.updater.impl.BioHanselSampleUpdater;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 

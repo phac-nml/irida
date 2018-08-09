@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.pipeline.results.impl.integration;
+package ca.corefacility.bioinformatics.irida.pipeline.results.updater.impl.integration;
 
 import static org.junit.Assert.*;
 
@@ -24,7 +24,7 @@ import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConf
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.pipeline.results.impl.AssemblySampleUpdater;
+import ca.corefacility.bioinformatics.irida.pipeline.results.updater.impl.AssemblySampleUpdater;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGenomeAssemblyJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
