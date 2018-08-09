@@ -89,6 +89,7 @@ import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.Ana
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import ca.corefacility.bioinformatics.irida.util.IridaPluginMessageSource;
 import net.matlux.NreplServerSpring;
 
 /**
