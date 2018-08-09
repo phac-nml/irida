@@ -270,7 +270,7 @@
          data:script="@{/resources/dist/js/project-samples-filter.bundle.js}"></div>
 
     <div class="hidden">
-        <span class="qc-warning-wrapper" data-toggle="popover"
+        <span class="qc-warning-wrapper js-qc-warning-wrapper" data-toggle="popover"
               th:title="#{sample.files.qc.popover-label}">
             <i class="fa fa-fw fa-exclamation-triangle"></i>
         </span>
@@ -279,7 +279,7 @@
             <h3 class="popover-title"></h3>
             <div class="popover-content"></div>
         </div>
-        <span class="locked-wrapper" data-toggle="popover" th:title="#{project.samples.locked-title}"
+        <span class="locked-wrapper js-locked-wrapper" data-toggle="popover" th:title="#{project.samples.locked-title}"
               data:content="#{project.samples.locked-content}">
             <i class="fa fa-fw fa-lock"></i>
         </span>
