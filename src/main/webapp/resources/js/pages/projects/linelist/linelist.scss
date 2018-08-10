@@ -104,13 +104,31 @@ $bgColor: #f5f7f7;
   border-top: none;
 }
 
+.toolbar {
+  margin-bottom: 0.8rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.toolbar-group {
+  display: inline-block;
+
+  .ant-form-item {
+    margin-right: 4px !important;
+  }
+
+  .ant-form-item:last-of-type {
+    margin-right: 0 !important;
+  }
+}
+
+.table-filter > input.ant-input {
+  margin-top: 3px !important;
+}
+
 // Style the default editor within ag-grid
 .ag-cell-edit-input {
   color: #222222;
   font-size: 12px !important;
   padding: 0 10px;
-}
-
-.table-filter input {
-  margin-top: 1px;
 }
