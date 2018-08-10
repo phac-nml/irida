@@ -243,7 +243,7 @@ public class ProjectSynchronizationService {
 	 *                        from a remote api.
 	 * @param project         The {@link Project} the {@link Sample} belongs in.
 	 * @param existingSamples A map of samples that have already been synchronized.  These will be checked to see if they've been updated
-	 * @return List<ProjectSynchronizationException> A list of {@link ProjectSynchronizationException}s, empty if no errors.
+	 * @return A list of {@link ProjectSynchronizationException}s, empty if no errors.
 	 */
 	public List<ProjectSynchronizationException> syncSample(Sample sample, Project project, Map<String, Sample> existingSamples) {
 		Sample localSample;
