@@ -245,6 +245,11 @@ const config = Object.assign({}, tableConfig, {
       data: null,
       render(data, type, full) {
         const checkbox = `<input class="t-row-select" type="checkbox"/>`;
+
+        /**
+         * If the project does not have privileges on the sample
+         * display a locked symbol.
+         */
         if (!full.owner) {
           const icon = document
             .querySelector(".js-locked-wrapper")
