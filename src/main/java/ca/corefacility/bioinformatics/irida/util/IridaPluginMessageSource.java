@@ -30,7 +30,7 @@ public class IridaPluginMessageSource implements MessageSource, HierarchicalMess
 	 * Builds a new {@link IridaPluginMessageSource} which makes use of the given
 	 * sources.
 	 * 
-	 * @param pluginSources
+	 * @param pluginSources A list of {@link MessageSource}s to use for the plugin message source.
 	 */
 	public IridaPluginMessageSource(List<MessageSource> pluginSources) {
 		checkNotNull(pluginSources, "pluginSources is null");

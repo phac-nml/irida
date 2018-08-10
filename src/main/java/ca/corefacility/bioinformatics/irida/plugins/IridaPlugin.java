@@ -35,13 +35,14 @@ public interface IridaPlugin extends ExtensionPoint {
 	 * Gets a {@link Path} to a directory containing the workflows to load.
 	 * 
 	 * @return The workflows path.
+	 * @throws IridaPluginException If there was an exception getting the workflow paths.
 	 */
 	public Path getWorkflowsPath() throws IridaPluginException;
 
 	/**
 	 * Gets the particular {@link AnalysisType} of the workflow to load.
 	 * 
-	 * @return The {@AnalysisType} of the workflow.
+	 * @return The {@link AnalysisType} of the workflow.
 	 */
 	public AnalysisType getAnalysisType();
 
