@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -64,9 +63,6 @@ import ca.corefacility.bioinformatics.irida.config.services.scheduled.IridaSched
 import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsConfig;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
-import ca.corefacility.bioinformatics.irida.pipeline.results.impl.AnalysisSubmissionSampleProcessorImpl;
-import ca.corefacility.bioinformatics.irida.pipeline.results.updater.AnalysisSampleUpdater;
 import ca.corefacility.bioinformatics.irida.plugins.IridaPlugin;
 import ca.corefacility.bioinformatics.irida.plugins.IridaPluginException;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
@@ -80,14 +76,11 @@ import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.impl.SistrTypingFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionCleanupService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.impl.InMemoryTaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionCleanupServiceImpl;
-import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
-import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.util.IridaPluginMessageSource;
 import net.matlux.NreplServerSpring;
@@ -148,18 +141,6 @@ public class IridaApiServicesConfig {
 
 	@Autowired
 	private IridaPluginConfig.IridaPluginList pipelinePlugins;
-	
-	@Autowired
-	private List<AnalysisSampleUpdater> defaultAnalysisSampleUpdaters;
-	
-	@Autowired
-	private SampleRepository sampleRepository;
-	
-	@Autowired
-	private MetadataTemplateService metadataTemplateService;
-	
-	@Autowired
-	private SampleService sampleService;
 	
 	@Bean
 	public BeanPostProcessor forbidJpqlUpdateDeletePostProcessor() {
@@ -405,32 +386,6 @@ public class IridaApiServicesConfig {
 	@Conditional(NreplServerSpringCondition.class)
 	public NreplServerSpring nRepl() {
 		return new NreplServerSpring(nreplPort);
-	}
-	
-	private List<AnalysisSampleUpdater> loadPluginAnalysisSampleUpdaters() {
-		List<AnalysisSampleUpdater> pluginUpdaters = Lists.newLinkedList();
-		
-		for (IridaPlugin plugin : pipelinePlugins.getPlugins()) {
-			try {
-				Optional<AnalysisSampleUpdater> analysisSampleUpdaterOption = plugin.getUpdater(metadataTemplateService, sampleService);
-				if (analysisSampleUpdaterOption.isPresent()) {
-					pluginUpdaters.add(analysisSampleUpdaterOption.get());
-				}
-			} catch (IridaPluginException e) {
-				logger.error("Could not load AnalysisSampleUpdater for plugin " + plugin + ", skipping", e);
-			}
-		}
-		
-		return pluginUpdaters;
-	}
-
-	@Bean
-	public AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor() {
-		List<AnalysisSampleUpdater> analysisSampleUpdaters = Lists.newLinkedList();
-		analysisSampleUpdaters.addAll(defaultAnalysisSampleUpdaters);
-		analysisSampleUpdaters.addAll(loadPluginAnalysisSampleUpdaters());
-		
-		return new AnalysisSubmissionSampleProcessorImpl(sampleRepository, analysisSampleUpdaters);
 	}
 }
 

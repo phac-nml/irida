@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Configuration;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * Configuration file for loading IRIDA plugins
