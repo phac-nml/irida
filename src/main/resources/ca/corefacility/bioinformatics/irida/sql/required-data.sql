@@ -660,7 +660,7 @@ INSERT INTO `metadata_field` (id, label, type) VALUES (1, "PFGE-XbaI-pattern", "
 INSERT INTO `metadata_field` (id, label, type) VALUES (2, "PFGE-BlnI-pattern", "text");
 INSERT INTO `metadata_field` (id, label, type) VALUES (3, "Province", "text");
 INSERT INTO `metadata_field` (id, label, type) VALUES (4, "SourceSite", "text");
-INSERT INTO `metadata_field` (id, label, type) VALUES (5, "Genus", "date");
+INSERT INTO `metadata_field` (id, label, type) VALUES (5, "Genus", "text");
 INSERT INTO `metadata_field` (id, label, type) VALUES (6, "Serotype", "text");
 INSERT INTO `metadata_field` (id, label, type) VALUES (7, "onsetDate", "date");
 INSERT INTO `metadata_field` (id, label, type) VALUES (8, "species", "text");
@@ -670,7 +670,7 @@ INSERT INTO `metadata_field` (id, label, type) VALUES (12, "id", "text");
 INSERT INTO `metadata_field` (id, label, type) VALUES (13, "lastName", "text");
 INSERT INTO `metadata_field` (id, label, type) VALUES (14, "firstName", "text");
 INSERT INTO `metadata_field` (id, label, type) VALUES (15, "secondaryPfge", "text");
-INSERT INTO `metadata_field` (id, label, type) VALUES (16, "birthDate", "text");
+INSERT INTO `metadata_field` (id, label, type) VALUES (16, "birthDate", "date");
 INSERT INTO `metadata_field` (id, label, type) VALUES (17, "healthAuthority", "text");
 INSERT INTO `metadata_field` (id, label, type) VALUES (18, "firstSymptom", "text");
 INSERT INTO `metadata_field` (id, label, type) VALUES (19, "city", "text");

@@ -1,7 +1,8 @@
 module.exports = {
-  plugins: ["prettier"],
+  extends: ["plugin:react/recommended", "prettier", "prettier/react"],
+  plugins: ["prettier", "react"],
   parserOptions: {
-    ecmaVersion: 6,
+    ecmaVersion: 2018,
     sourceType: "module"
   },
   env: {

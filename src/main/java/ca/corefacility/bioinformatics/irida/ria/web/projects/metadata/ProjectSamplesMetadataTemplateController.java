@@ -16,11 +16,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -101,39 +97,40 @@ public class ProjectSamplesMetadataTemplateController {
 	/**
 	 * Save or update a {@link MetadataTemplate} within a {@link Project}
 	 *
-	 * @param projectId
-	 * 		{@link Long} identifier for a {@link Project}
-	 * @param template
-	 * 		A {@link UIMetadataTemplate} to save to a {@link Project}
-	 *
-	 * @return {@link String} redirects to the template page.
+	 * @param projectId {@link Long} identifier for a project
+	 * @param id        {@link Long} identifier for a template
+	 * @param name      {@link String} name for the template
+	 * @param fields    {@link List} of fields names
+	 * @return {@link String} result
 	 */
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
-	public String saveMetadataTemplate(@PathVariable Long projectId, UIMetadataTemplate template) {
+	public String saveMetadataTemplate(@PathVariable Long projectId, @RequestParam Long id, @RequestParam String name,
+			@RequestParam List<String> fields) {
 		Project project = projectService.read(projectId);
-		List<MetadataTemplateField> metadataFields = new ArrayList<>();
-		for (String field : template.getFields()) {
-			MetadataTemplateField metadataTemplateField = metadataTemplateService.readMetadataFieldByLabel(field);
-			if (metadataTemplateField == null) {
-				metadataTemplateField = new MetadataTemplateField(field, "text");
-				metadataTemplateService.saveMetadataField(metadataTemplateField);
+		List<MetadataTemplateField> templateFields = new ArrayList<>();
+		for (String field : fields) {
+			MetadataTemplateField f = metadataTemplateService.readMetadataFieldByLabel(field);
+			if (f == null) {
+				templateFields.add(new MetadataTemplateField(field, "text"));
+			} else {
+				templateFields.add(f);
 			}
-			metadataFields.add(metadataTemplateField);
 		}
 
 		MetadataTemplate metadataTemplate;
-		if (template.getId() != null) {
-			metadataTemplate = metadataTemplateService.read(template.getId());
-			metadataTemplate.setName(template.getName());
-			metadataTemplate.setFields(metadataFields);
+		if (id != null) {
+			metadataTemplate = metadataTemplateService.read(id);
+			metadataTemplate.setName(name);
+			metadataTemplate.setFields(templateFields);
 			metadataTemplateService.updateMetadataTemplateInProject(metadataTemplate);
 		} else {
-			ProjectMetadataTemplateJoin projectMetadataTemplateJoin = metadataTemplateService
-					.createMetadataTemplateInProject(new MetadataTemplate(template.getName(), metadataFields), project);
+			ProjectMetadataTemplateJoin projectMetadataTemplateJoin = metadataTemplateService.createMetadataTemplateInProject(
+					new MetadataTemplate(name, templateFields), project);
 			metadataTemplate = projectMetadataTemplateJoin.getObject();
 		}
 		return "redirect:/projects/" + projectId + "/metadata-templates/" + metadataTemplate.getId();
 	}
+
 
 	/**
 	 * Delete a {@link MetadataTemplate} within a {@link Project}

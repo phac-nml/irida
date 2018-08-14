@@ -11,6 +11,7 @@ Changes
 * [Admin]: Added new profiles to allow IRIDA web server to run in a clustered fashion.  See documentation at https://irida.corefacility.ca/documentation/administrator/web/#multi-web-server-configuration
 * [UI]: Fixed bug where all moved samples were locked. (0.22.2)
 * [UI/Developer]: Updated to lodash v4.17.10 to fix security issue. (0.22.2)
+* [UI]: New project line list page with inline editing.
 
 0.21.0 to 0.22.0
 ----------------
