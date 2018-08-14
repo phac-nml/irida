@@ -11,6 +11,7 @@ const sampleNameColumn = {
   headerCheckboxSelection: true,
   headerCheckboxSelectionFilteredOnly: true,
   editable: false,
+  lockPosition: true,
   lockPinned: true
 };
 
