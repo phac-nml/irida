@@ -1,4 +1,4 @@
-import { List, fromJS } from "immutable";
+import { fromJS, List } from "immutable";
 
 /*
 Special handler for formatting the sample Name Column;
@@ -10,7 +10,8 @@ const sampleNameColumn = {
   checkboxSelection: true,
   headerCheckboxSelection: true,
   headerCheckboxSelectionFilteredOnly: true,
-  editable: false
+  editable: false,
+  lockPinned: true
 };
 
 /**
@@ -22,7 +23,6 @@ const formatColumns = cols =>
   cols.map((f, i) => ({
     field: f.label,
     headerName: f.label,
-    lockPinned: true,
     ...(i === 0 ? sampleNameColumn : {})
   }));
 
