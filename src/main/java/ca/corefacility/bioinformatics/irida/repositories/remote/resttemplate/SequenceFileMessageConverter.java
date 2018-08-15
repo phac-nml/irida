@@ -63,15 +63,23 @@ public class SequenceFileMessageConverter implements HttpMessageConverter<Path> 
 	}
 
 	@Override
-	public Path read(Class<? extends Path> clazz, HttpInputMessage inputMessage) throws IOException,
-			HttpMessageNotReadableException {
+	public Path read(Class<? extends Path> clazz, HttpInputMessage inputMessage)
+			throws IOException, HttpMessageNotReadableException {
 		logger.debug("Converting  response to " + clazz);
 		InputStream inputStream = inputMessage.getBody();
 		Path fileDirectory = Files.createTempDirectory(null);
 		Path tempFile = fileDirectory.resolve(fileName);
 		tempFile = Files.createFile(tempFile);
 		try (OutputStream outputStream = Files.newOutputStream(tempFile)) {
-			IOUtils.copy(inputStream, outputStream);
+			long fileSize = IOUtils.copyLarge(inputStream, outputStream);
+
+			long expectedSize = inputMessage.getHeaders()
+					.getContentLength();
+			if (fileSize != expectedSize) {
+				throw new IOException(
+						"Error when writing remote file [" + fileName + "], to path [" + tempFile + "], expectedSize ["
+								+ expectedSize + "] != actual size [" + fileSize + "]");
+			}
 		}
 
 		return tempFile;

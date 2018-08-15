@@ -409,6 +409,10 @@ export class Table extends React.Component {
     this.api.setQuickFilter(value);
   };
 
+  /**
+   * Update parent components of the revised filter status.
+   * @returns {*}
+   */
   setFilterCount = () =>
     this.props.onFilter(
       this.api.getModel().rootNode.childrenAfterFilter.length
