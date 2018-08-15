@@ -1,11 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.remote;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
@@ -226,9 +221,11 @@ public class ProjectSynchronizationService {
 		project.setRemoteStatus(readProject.getRemoteStatus());
 
 		if (syncExceptions.isEmpty()) {
-			project.getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
+			project.getRemoteStatus()
+					.setSyncStatus(SyncStatus.SYNCHRONIZED);
 		} else {
-			project.getRemoteStatus().setSyncStatus(SyncStatus.ERROR);
+			project.getRemoteStatus()
+					.setSyncStatus(SyncStatus.ERROR);
 
 			logger.error("Error syncing project " + project.getId() + " setting sync status to ERROR");
 		}
@@ -245,7 +242,8 @@ public class ProjectSynchronizationService {
 	 * @param existingSamples A map of samples that have already been synchronized.  These will be checked to see if they've been updated
 	 * @return A list of {@link ProjectSynchronizationException}s, empty if no errors.
 	 */
-	public List<ProjectSynchronizationException> syncSample(Sample sample, Project project, Map<String, Sample> existingSamples) {
+	public List<ProjectSynchronizationException> syncSample(Sample sample, Project project,
+			Map<String, Sample> existingSamples) {
 		Sample localSample;
 		if (existingSamples.containsKey(sample.getRemoteStatus().getURL())) {
 			// if the sample already exists check if it's been updated

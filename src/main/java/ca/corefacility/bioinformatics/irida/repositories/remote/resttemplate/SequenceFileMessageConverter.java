@@ -73,10 +73,12 @@ public class SequenceFileMessageConverter implements HttpMessageConverter<Path> 
 		try (OutputStream outputStream = Files.newOutputStream(tempFile)) {
 			long fileSize = IOUtils.copyLarge(inputStream, outputStream);
 
-			long expectedSize = inputMessage.getHeaders().getContentLength();
+			long expectedSize = inputMessage.getHeaders()
+					.getContentLength();
 			if (fileSize != expectedSize) {
-				throw new IOException("Error when writing remote file [" + fileName + "], to path [" + tempFile
-						+ "], expectedSize [" + expectedSize + "] != actual size [" + fileSize + "]");
+				throw new IOException(
+						"Error when writing remote file [" + fileName + "], to path [" + tempFile + "], expectedSize ["
+								+ expectedSize + "] != actual size [" + fileSize + "]");
 			}
 		}
 
