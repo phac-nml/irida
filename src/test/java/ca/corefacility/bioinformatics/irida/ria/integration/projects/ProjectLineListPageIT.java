@@ -84,5 +84,11 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 		page.editCellContents(0, "serotype", testValue);
 		page.cancelCellEdit();
 		assertEquals("Should keep value after undoing edit", newValue, page.getCellContents(0, "serotype"));
+
+		// Test table filtering
+		page.filterTable(newValue);
+		assertEquals("Should be only one row with the new value", 1, page.getNumberOfRowsInLineList());
+		page.clearTableFilter();
+		assertEquals("Should be 21 samples", 21, page.getNumberOfRowsInLineList());
 	}
 }

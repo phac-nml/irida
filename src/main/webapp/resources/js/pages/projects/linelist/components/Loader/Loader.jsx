@@ -7,7 +7,7 @@ export const Loader = () => (
     message={i18n.linelist.Loader.message}
     description={
       <div>
-        <i className="fas fa-spinner fa-pulse spaced-right__sm"/>
+        <i className="fas fa-spinner fa-pulse spaced-right__sm" />
         {i18n.linelist.Loader.description}
       </div>
     }

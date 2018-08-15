@@ -45,6 +45,9 @@ public class ProjectLineListPage extends ProjectPageBase {
 	@FindBy(className = "t-columns-panel-toggle")
 	private WebElement columnsPanelToggle;
 
+	@FindBy(css = ".t-table-filter input")
+	private WebElement tableFilterInput;
+
 	public ProjectLineListPage(WebDriver driver) {
 		super(driver);
 	}
@@ -114,5 +117,16 @@ public class ProjectLineListPage extends ProjectPageBase {
 	public void cancelCellEdit() {
 		waitForTime(200);
 		undoEditBtn.click();
+	}
+
+	public void filterTable(String filter) {
+		tableFilterInput.sendKeys(filter);
+		waitForTime(500);
+	}
+
+	public void clearTableFilter() {
+		tableFilterInput.clear();
+		tableFilterInput.sendKeys(Keys.BACK_SPACE);
+		waitForTime(500);
 	}
 }

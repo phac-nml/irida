@@ -35,4 +35,7 @@ const mapDispatchToProps = dispatch => ({
   entryEdited: (entry, field) => dispatch(entryActions.edited(entry, field))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(LineList);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(LineList);
