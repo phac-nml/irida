@@ -163,7 +163,7 @@ public class ProjectSynchronizationServiceTest {
 	}
 	
 	@Test
-	public void testSyncFiles(){
+	public void testSyncFiles() {
 		Sample sample = new Sample();
 		
 		SequenceFilePair pair = new SequenceFilePair();
@@ -180,7 +180,7 @@ public class ProjectSynchronizationServiceTest {
 	}
 	
 	@Test(expected = ProjectSynchronizationException.class)
-	public void testSyncFilesError(){
+	public void testSyncFilesError() {
 		Sample sample = new Sample();
 		
 		SequenceFilePair pair = new SequenceFilePair();
