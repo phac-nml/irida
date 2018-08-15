@@ -5,7 +5,7 @@ const { i18n } = window.PAGE;
 export function InfoBar(props) {
   return (
     <div className="ag-grid-info-panel">
-      <span>
+      <span tour="tour-counts">
         {props.selectedCount === 0
           ? i18n.linelist.selected.none
           : props.selectedCount === 1
@@ -15,7 +15,7 @@ export function InfoBar(props) {
                 props.selectedCount
               )}
       </span>
-      <span>
+      <span tour="tour-filter-counts">
         {i18n.linelist.infobar.filterCounts
           .replace("[FILTER_COUNT]", props.filterCount)
           .replace("[TOTAL]", props.totalSamples)}
