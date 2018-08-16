@@ -14,10 +14,9 @@ export function AddSamplesToCartButton(props) {
   return (
     <Button
       disabled={props.selectedCount === 0}
-      style={{ marginLeft: "4px" }}
       onClick={() => props.addSamplesToCart()}
     >
-      <i className="fas fa-cart-plus spaced-right__sm"/>
+      <i className="fas fa-cart-plus spaced-right__sm" />
       {i18n.linelist.addToCart}
     </Button>
   );

@@ -1,11 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.remote;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
@@ -214,14 +209,26 @@ public class ProjectSynchronizationService {
 
 		List<Sample> readSamplesForProject = sampleRemoteService.getSamplesForProject(readProject);
 
+		List<ProjectSynchronizationException> syncExceptions = new ArrayList<>();
 		for (Sample s : readSamplesForProject) {
 			s.setId(null);
 			s = syncSampleMetadata(s);
-			syncSample(s, project, samplesByUrl);
+			List<ProjectSynchronizationException> syncExceptionsSample = syncSample(s, project, samplesByUrl);
+
+			syncExceptions.addAll(syncExceptionsSample);
 		}
 
 		project.setRemoteStatus(readProject.getRemoteStatus());
-		project.getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
+
+		if (syncExceptions.isEmpty()) {
+			project.getRemoteStatus()
+					.setSyncStatus(SyncStatus.SYNCHRONIZED);
+		} else {
+			project.getRemoteStatus()
+					.setSyncStatus(SyncStatus.ERROR);
+
+			logger.error("Error syncing project " + project.getId() + " setting sync status to ERROR");
+		}
 
 		projectService.update(project);
 	}
@@ -233,8 +240,10 @@ public class ProjectSynchronizationService {
 	 *                        from a remote api.
 	 * @param project         The {@link Project} the {@link Sample} belongs in.
 	 * @param existingSamples A map of samples that have already been synchronized.  These will be checked to see if they've been updated
+	 * @return A list of {@link ProjectSynchronizationException}s, empty if no errors.
 	 */
-	public void syncSample(Sample sample, Project project, Map<String, Sample> existingSamples) {
+	public List<ProjectSynchronizationException> syncSample(Sample sample, Project project,
+			Map<String, Sample> existingSamples) {
 		Sample localSample;
 		if (existingSamples.containsKey(sample.getRemoteStatus().getURL())) {
 			// if the sample already exists check if it's been updated
@@ -307,11 +316,14 @@ public class ProjectSynchronizationService {
 			localSample.getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
 		} else {
 			localSample.getRemoteStatus().setSyncStatus(SyncStatus.ERROR);
+
 			logger.error(
-					"Setting sample " + localSample.getId() + "sync status to ERROR due to sync errors with files");
+					"Setting sample " + localSample.getId() + " sync status to ERROR due to sync errors with files");
 		}
-		
+
 		sampleService.update(localSample);
+
+		return syncErrors;
 	}
 
 	/**
