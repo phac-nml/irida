@@ -90,6 +90,10 @@ export class LineListLayoutComponent extends React.Component {
    */
   quickSearch = value => this.tableRef.current.quickSearch(value);
 
+  updateFilterCount = count => {
+    this.setState({ filterCount: count });
+  };
+
   render() {
     return (
       <div ref={this.linelistRef}>
@@ -104,6 +108,7 @@ export class LineListLayoutComponent extends React.Component {
           <Content>
             <Table
               {...this.props}
+              onFilter={this.updateFilterCount}
               height={this.state.height}
               ref={this.tableRef}
             />
@@ -132,7 +137,17 @@ export class LineListLayoutComponent extends React.Component {
             </div>
           </Sider>
         </Layout>
-        <InfoBar selectedCount={this.props.selectedCount} />
+        <InfoBar
+          selectedCount={this.props.selectedCount}
+          filterCount={
+            this.state.filterCount
+              ? this.state.filterCount
+              : this.props.entries
+                ? this.props.entries.size
+                : 0
+          }
+          totalSamples={this.props.entries ? this.props.entries.size : 0}
+        />
       </div>
     );
   }

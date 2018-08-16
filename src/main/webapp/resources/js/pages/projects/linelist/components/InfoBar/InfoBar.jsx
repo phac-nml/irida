@@ -1,18 +1,25 @@
 import React from "react";
+import PropTypes from "prop-types";
+import { FilteredCounts } from "./FilteredCounts";
+import { SelectedCount } from "./SelectedCount";
 
-const { i18n } = window.PAGE;
-
+/**
+ * Displays selected counts and filtered counts at the bottom of the table.
+ */
 export function InfoBar(props) {
   return (
     <div className="ag-grid-info-panel">
-      {props.selectedCount === 0
-        ? i18n.linelist.selected.none
-        : props.selectedCount === 1
-          ? i18n.linelist.selected.one
-          : i18n.linelist.selected.multiple.replace(
-              "_COUNT_",
-              props.selectedCount
-            )}
+      <SelectedCount count={props.selectedCount}/>
+      <FilteredCounts
+        filterCount={props.filterCount}
+        totalSamples={props.totalSamples}
+      />
     </div>
   );
 }
+
+InfoBar.propTypes = {
+  selectedCount: PropTypes.number,
+  filterCount: PropTypes.number.isRequired,
+  totalSamples: PropTypes.number.isRequired
+};
