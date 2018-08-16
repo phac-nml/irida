@@ -102,6 +102,7 @@ export class Toolbar extends Component {
                 arrowPointAtCenter
               >
                 <Button
+                  title={i18n.linelist.tour.title}
                   className="js-tour-button"
                   shape="circle"
                   icon="question"
