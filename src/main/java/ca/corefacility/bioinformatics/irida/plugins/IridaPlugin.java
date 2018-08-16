@@ -1,6 +1,8 @@
 package ca.corefacility.bioinformatics.irida.plugins;
 
+import java.net.URISyntaxException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -32,14 +34,6 @@ public interface IridaPlugin extends ExtensionPoint {
 			SampleService sampleService) throws IridaPluginException;
 
 	/**
-	 * Gets a {@link Path} to a directory containing the workflows to load.
-	 * 
-	 * @return The workflows path.
-	 * @throws IridaPluginException If there was an exception getting the workflow paths.
-	 */
-	public Path getWorkflowsPath() throws IridaPluginException;
-
-	/**
 	 * Gets the particular {@link AnalysisType} of the workflow to load.
 	 * 
 	 * @return The {@link AnalysisType} of the workflow.
@@ -61,4 +55,21 @@ public interface IridaPlugin extends ExtensionPoint {
 	 *         Optional.empty() if no style exists.
 	 */
 	public Optional<String> getPipelineStyle();
+
+	/**
+	 * Gets a {@link Path} to a directory containing the workflows to load.
+	 * 
+	 * @param pluginClass The particular plugin class to load the workflows path.
+	 * 
+	 * @return The workflows path.
+	 * @throws IridaPluginException If there was an exception getting the workflow
+	 *                              paths.
+	 */
+	public static Path getWorkflowsPath(Class<? extends IridaPlugin> pluginClass) throws IridaPluginException {
+		try {
+			return Paths.get(pluginClass.getResource("/workflows/").toURI());
+		} catch (URISyntaxException e) {
+			throw new IridaPluginException("Error converting path to workflows", e);
+		}
+	}
 }

@@ -133,7 +133,7 @@ public class IridaWorkflowsConfig {
 		Set<IridaWorkflow> iridaWorkflowsSet = Sets.newHashSet();
 		
 		for (IridaPlugin plugin : iridaPipelinePlugins.getPlugins()) {
-			Path iridaWorkflowVersionsDir = plugin.getWorkflowsPath();
+			Path iridaWorkflowVersionsDir = IridaPlugin.getWorkflowsPath(plugin.getClass());
 			
 			if (!Files.isDirectory(iridaWorkflowVersionsDir)) {
 				logger.warn("Plugin workflow directory " + iridaWorkflowVersionsDir + " is not a proper workflow directory.");

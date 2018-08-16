@@ -64,6 +64,12 @@ public class IridaPluginConfig {
 			boolean foundAllMethods = true;
 
 			for (Method method : iridaPluginInterfaceMethods) {
+				
+				// skip checking the static method 'getWorkflowsPath'
+				if (method.getName().equals("getWorkflowsPath")) {
+					continue;
+				}
+				
 				if (!isMethodImplemented(method, plugin.getClass())) {
 					logger.trace("Method [" + method + "] is not implemented in class [" + plugin.getClass() + "]");
 					foundAllMethods = false;
