@@ -18,8 +18,18 @@ export class Toolbar extends Component {
       if (!window.localStorage.getItem("linelist-tour")) {
         window.localStorage.setItem("linelist-tour", "complete");
         this.setState({ showTourPopover: true });
+        this.timer = window.setTimeout(() => {
+          this.setState({ showTourPopover: false });
+        }, 10000);
       }
     }
+  }
+
+  componentWillUnmount() {
+    /*
+    Clear the timer if it is there to prevent any memory leakages.
+     */
+    window.clearInterval(this.timer);
   }
 
   closeTour = () => this.setState({ tourOpen: false });
@@ -81,6 +91,7 @@ export class Toolbar extends Component {
                 arrowPointAtCenter
               >
                 <Button
+                  className="js-tour-button"
                   shape="circle"
                   icon="question"
                   onClick={this.openTour}

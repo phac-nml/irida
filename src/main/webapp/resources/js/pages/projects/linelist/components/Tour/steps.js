@@ -146,5 +146,15 @@ export const steps = [
         </div>
       );
     }
+  },
+  {
+    selector: ".js-tour-button",
+    content() {
+      return (
+        <div>
+          <strong>{tour.end}</strong>
+        </div>
+      );
+    }
   }
 ];
