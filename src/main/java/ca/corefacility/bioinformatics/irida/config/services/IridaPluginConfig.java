@@ -61,9 +61,9 @@ public class IridaPluginConfig {
 		List<IridaPlugin> validPlugins = Lists.newArrayList();
 
 		// get all declared methods from IridaPlugin interface to use for verifying that the passed plugins implement all these methods
-		// we are skipping the static method 'getWorkflowsPath()' and any default methods
+		// we are skipping any default methods
 		List<Method> iridaPluginInterfaceMethods = Arrays.stream(IridaPlugin.class.getDeclaredMethods())
-				.filter(t -> !t.isDefault() && !t.getName().equals("getWorkflowsPath")).collect(Collectors.toList());
+				.filter(t -> !t.isDefault()).collect(Collectors.toList());
 
 		// for each plugin, verify it implements all the required methods from the IridaPlugin interface
 		for (IridaPlugin plugin : plugins) {

@@ -49,7 +49,7 @@ public interface IridaPlugin extends ExtensionPoint {
 	 * @return The {@link UUID} of the workflow.
 	 */
 	public UUID getDefaultWorkflowUUID();
-	
+
 	/**
 	 * Gets an optional {@link Color} object used to modify the background color in
 	 * the "Select a Pipeline" page.
@@ -73,15 +73,13 @@ public interface IridaPlugin extends ExtensionPoint {
 	/**
 	 * Gets a {@link Path} to a directory containing the workflows to load.
 	 * 
-	 * @param pluginClass The particular plugin class to load the workflows path.
-	 * 
 	 * @return The workflows path.
 	 * @throws IridaPluginException If there was an exception getting the workflow
 	 *                              paths.
 	 */
-	public static Path getWorkflowsPath(Class<? extends IridaPlugin> pluginClass) throws IridaPluginException {
+	public default Path getWorkflowsPath() throws IridaPluginException {
 		try {
-			return Paths.get(pluginClass.getResource("/workflows/").toURI());
+			return Paths.get(this.getClass().getResource("/workflows/").toURI());
 		} catch (URISyntaxException e) {
 			throw new IridaPluginException("Error converting path to workflows", e);
 		}

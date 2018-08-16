@@ -210,7 +210,7 @@ public class IridaApiServicesConfig {
 		// for every plugin, build a new MessageSource for the messages and add to the
 		// iridaPluginMessageSources list
 		for (IridaPlugin plugin : pipelinePlugins.getPlugins()) {
-			Path pluginWorkflowsPath = IridaPlugin.getWorkflowsPath(plugin.getClass());
+			Path pluginWorkflowsPath = plugin.getWorkflowsPath();
 			logger.trace("Plugin " + plugin + ", workflow path " + pluginWorkflowsPath);
 
 			// finds resource paths for all the plugin messages.properties files
