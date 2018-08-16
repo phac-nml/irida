@@ -193,18 +193,31 @@ public class IridaApiServicesConfig {
 		return source;
 	}
 	
+	/**
+	 * Builds a {@link MessageSource} containing messages for all IRIDA plugins.
+	 * 
+	 * @return A {@link MessageSource} for all IRIDA plugins.
+	 */
 	private MessageSource buildIridaPluginMessageSources() throws IOException, IridaPluginException {
 		List<MessageSource> iridaPluginMessageSources = Lists.newArrayList();
+
+		// for every plugin, build a new MessageSource for the messages and add to the
+		// iridaPluginMessageSources list
 		for (IridaPlugin plugin : pipelinePlugins.getPlugins()) {
 			logger.trace("Plugin " + plugin + ", workflow path " + plugin.getWorkflowsPath());
-			List<String> pluginMessageBasenames = findWorkflowMessageSources(plugin.getClass().getClassLoader(), plugin.getWorkflowsPath().toString());
+
+			// finds resource paths for all the plugin messages.properties files
+			List<String> pluginMessageBasenames = findWorkflowMessageSources(plugin.getClass().getClassLoader(),
+					plugin.getWorkflowsPath().toString());
+
+			// builds new MessageSource out of the resource paths
 			ReloadableResourceBundleMessageSource pluginSource = new ReloadableResourceBundleMessageSource();
 			pluginSource.setResourceLoader(new ClassRelativeResourceLoader(plugin.getClass()));
 			pluginSource.setBasenames(pluginMessageBasenames.toArray(new String[pluginMessageBasenames.size()]));
-				
+
 			iridaPluginMessageSources.add(pluginSource);
 		}
-		
+
 		if (iridaPluginMessageSources.size() > 0) {
 			return new IridaPluginMessageSource(iridaPluginMessageSources);
 		} else {
@@ -212,23 +225,48 @@ public class IridaApiServicesConfig {
 		}
 	}
 
-	private List<String> findWorkflowMessageSources(ClassLoader classLoader, String workflowsDirectory) throws IOException {
+	/**
+	 * Finds a list of resource paths to directories containing message.properties
+	 * files.
+	 * 
+	 * @param classLoader        The {@link ClassLoader} used to get resource paths.
+	 * @param workflowsDirectory The directory containing the workflow files (and
+	 *                           messages.properties files).
+	 * 
+	 * @return A {@link List} of resource paths to directories containing
+	 *         message.properties files.
+	 */
+	private List<String> findWorkflowMessageSources(ClassLoader classLoader, String workflowsDirectory)
+			throws IOException {
+
 		if (!workflowsDirectory.endsWith("/")) {
 			workflowsDirectory += "/";
 		}
-		
+
+		// gets the classpath resource paths to any 'messages_en.properties' files under
+		// workflowsDirectory
 		final PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(classLoader);
-		final Resource[] resources = resolver.getResources(
-				"classpath:" + workflowsDirectory + "**/messages_en.properties");
-		final Pattern pattern = Pattern.compile(
-				String.format("^.+(%s.+\\/messages)_en.properties$", workflowsDirectory));
-		return Arrays.stream(resources)
-				.map(x -> getClasspathResourceBasename(pattern, x))
-				.filter(Objects::nonNull)
-				.sorted(Comparator.reverseOrder())
-				.collect(Collectors.toList());
+		final Resource[] resources = resolver
+				.getResources("classpath:" + workflowsDirectory + "**/messages_en.properties");
+
+		// extracts and returns the basenames for the paths to the
+		// 'messages_en.properties' files
+		final Pattern pattern = Pattern
+				.compile(String.format("^.+(%s.+\\/messages)_en.properties$", workflowsDirectory));
+		return Arrays.stream(resources).map(x -> getClasspathResourceBasename(pattern, x)).filter(Objects::nonNull)
+				.sorted(Comparator.reverseOrder()).collect(Collectors.toList());
 	}
 
+	/**
+	 * Gets the basename to a classpath resource path given a particular pattern to
+	 * match for the file name.
+	 * 
+	 * @param pattern The {@link Pattern} to use for stripping off the filename.
+	 * @param x       The resource to extract the path name from.
+	 * 
+	 * @return The basename for a classpath resource path, or null if the pattern
+	 *         does not match the resource.
+	 */
 	private String getClasspathResourceBasename(Pattern pattern, Resource x) {
 		try {
 			final String path = x.getURI().toString();

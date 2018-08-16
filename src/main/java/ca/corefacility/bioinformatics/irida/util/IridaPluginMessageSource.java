@@ -19,7 +19,7 @@ import org.springframework.context.support.DefaultMessageSourceResolvable;
  * {@link MessageSource}s for IRIDA Plugins.
  *
  */
-public class IridaPluginMessageSource implements MessageSource, HierarchicalMessageSource {
+public class IridaPluginMessageSource implements HierarchicalMessageSource {
 
 	private static final Logger logger = LoggerFactory.getLogger(IridaPluginMessageSource.class);
 

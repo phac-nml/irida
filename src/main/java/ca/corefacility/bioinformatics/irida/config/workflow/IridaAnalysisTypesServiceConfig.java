@@ -28,8 +28,13 @@ public class IridaAnalysisTypesServiceConfig {
 	@Autowired
 	private IridaPluginConfig.IridaPluginList iridaPipelinePlugins;
 
+	/**
+	 * Builds a new bean for a {@link AnalysisTypesService} to handle registered {@link AnalysisType}s.
+	 * @return The {@link AnalysisTypesService}.
+	 */
 	@Bean
 	public AnalysisTypesService analysisTypesService() {
+		// defines AnalysisTypes built into IRIDA
 		Set<AnalysisType> runnableAnalysisTypes = Sets.newHashSet(BuiltInAnalysisTypes.PHYLOGENOMICS,
 				BuiltInAnalysisTypes.SISTR_TYPING, BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION,
 				BuiltInAnalysisTypes.BIO_HANSEL, BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION_COLLECTION,
@@ -37,6 +42,7 @@ public class IridaAnalysisTypesServiceConfig {
 		Set<AnalysisType> otherAnalysisTypes = Sets.newHashSet(BuiltInAnalysisTypes.DEFAULT,
 				BuiltInAnalysisTypes.FASTQC);
 
+		// adds additional analysis types for each loaded plugin
 		for (IridaPlugin plugin : iridaPipelinePlugins.getPlugins()) {
 			runnableAnalysisTypes.add(plugin.getAnalysisType());
 		}
