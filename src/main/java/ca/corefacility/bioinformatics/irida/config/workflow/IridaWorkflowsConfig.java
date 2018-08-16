@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.config.workflow;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.DirectoryStream;
@@ -84,15 +85,39 @@ public class IridaWorkflowsConfig {
 		String style = "";
 
 		for (IridaPlugin plugin : iridaPipelinePlugins.getPlugins()) {
-			Optional<String> pluginStyle = plugin.getPipelineStyle();
+			Optional<Color> backgroundColor = plugin.getBackgroundColor();
+			Optional<Color> textColor = plugin.getTextColor();
 
-			// place style for each plugin under a CSS class based on the analysis type
-			if (pluginStyle.isPresent()) {
-				style += "." + plugin.getAnalysisType().getType() + " {" + pluginStyle.get() + "}";
+			if (backgroundColor.isPresent() || textColor.isPresent()) {
+				style += "." + plugin.getAnalysisType().getType() + " {";
+
+				if (backgroundColor.isPresent()) {
+					style += "background-color: " + colorToCSS(backgroundColor.get()) + " !important; ";
+					
+					logger.trace("For plugin " + plugin.getClass() + ", setting background color to " + backgroundColor.get());
+				}
+
+				if (textColor.isPresent()) {
+					style += "color: " + colorToCSS(textColor.get()) + " !important;";
+					
+					logger.trace("For plugin " + plugin.getClass() + ", setting text color to " + textColor.get());
+				}
+
+				style += " }";
 			}
 		}
 
 		return style;
+	}
+
+	/**
+	 * Given a color returns a CSS/style String representing this color.
+	 * 
+	 * @param c The color to represent.
+	 * @return The CSS/style String.
+	 */
+	private String colorToCSS(Color c) {
+		return "rgb(" + c.getRed() + ", " + c.getGreen() + ", " + c.getBlue() + ")";
 	}
 
 	/**

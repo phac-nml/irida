@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.plugins;
 
+import java.awt.Color;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -46,15 +47,22 @@ public interface IridaPlugin extends ExtensionPoint {
 	 * @return The {@link UUID} of the workflow.
 	 */
 	public UUID getDefaultWorkflowUUID();
+	
+	/**
+	 * Gets an optional {@link Color} object used to modify the background color in
+	 * the "Select a Pipeline" page.
+	 * 
+	 * @return The color for the pipeline in the "Select a Pipeline" page.
+	 */
+	public Optional<Color> getBackgroundColor();
 
 	/**
-	 * Gets a CSS String containing information used to style the "Select a
-	 * Pipeline" page.
+	 * Gets an optional {@link Color} object used to modify the text color in the
+	 * "Select a Pipeline" page.
 	 * 
-	 * @return A String containing CSS used to style the select pipeline page, or
-	 *         Optional.empty() if no style exists.
+	 * @return The text color for the pipeline in the "Select a Pipeline" page.
 	 */
-	public Optional<String> getPipelineStyle();
+	public Optional<Color> getTextColor();
 
 	/**
 	 * Gets a {@link Path} to a directory containing the workflows to load.
