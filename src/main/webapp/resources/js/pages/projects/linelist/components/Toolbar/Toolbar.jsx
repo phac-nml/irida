@@ -11,7 +11,6 @@ const { i18n, urls } = window.PAGE;
 
 export class Toolbar extends Component {
   state = { tourOpen: false, showTourPopover: false };
-  openTour = () => this.setState({ tourOpen: true, showTourPopover: false });
 
   componentDidMount() {
     if (typeof window.localStorage === "object") {
@@ -25,14 +24,20 @@ export class Toolbar extends Component {
     }
   }
 
+  openTour = () => this.setState({ tourOpen: true, showTourPopover: false });
+  closePopover = () => {
+    window.clearTimeout(this.timer);
+    this.setState({ showTourPopover: false });
+  };
+
+  closeTour = () => this.setState({ tourOpen: false });
+
   componentWillUnmount() {
     /*
     Clear the timer if it is there to prevent any memory leakages.
      */
-    window.clearInterval(this.timer);
+    window.clearTimeout(this.timer);
   }
-
-  closeTour = () => this.setState({ tourOpen: false });
 
   render() {
     return (
@@ -82,7 +87,13 @@ export class Toolbar extends Component {
               />
               <Popover
                 content={
-                  <strong style={{ borderBottom: "2px solid orange" }}>
+                  <strong
+                    style={{
+                      borderBottom: "2px solid orange",
+                      cursor: "pointer"
+                    }}
+                    onClick={this.closePopover}
+                  >
                     {i18n.linelist.tour.popover}
                   </strong>
                 }
