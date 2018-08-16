@@ -13,7 +13,9 @@ import com.google.common.collect.Lists;
 import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Configuration file for loading IRIDA plugins
@@ -58,18 +60,16 @@ public class IridaPluginConfig {
 	private List<IridaPlugin> getValidPlugins(List<IridaPlugin> plugins) {
 		List<IridaPlugin> validPlugins = Lists.newArrayList();
 
-		Method[] iridaPluginInterfaceMethods = IridaPlugin.class.getDeclaredMethods();
+		// get all declared methods from IridaPlugin interface to use for verifying that the passed plugins implement all these methods
+		// we are skipping the static method 'getWorkflowsPath()' and any default methods
+		List<Method> iridaPluginInterfaceMethods = Arrays.stream(IridaPlugin.class.getDeclaredMethods())
+				.filter(t -> !t.isDefault() && !t.getName().equals("getWorkflowsPath")).collect(Collectors.toList());
 
+		// for each plugin, verify it implements all the required methods from the IridaPlugin interface
 		for (IridaPlugin plugin : plugins) {
 			boolean foundAllMethods = true;
 
 			for (Method method : iridaPluginInterfaceMethods) {
-				
-				// skip checking the static method 'getWorkflowsPath'
-				if (method.getName().equals("getWorkflowsPath")) {
-					continue;
-				}
-				
 				if (!isMethodImplemented(method, plugin.getClass())) {
 					logger.trace("Method [" + method + "] is not implemented in class [" + plugin.getClass() + "]");
 					foundAllMethods = false;

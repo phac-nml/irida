@@ -31,8 +31,10 @@ public interface IridaPlugin extends ExtensionPoint {
 	 * @throws IridaPluginException if an error occurs when loading the
 	 *                              {@link AnalysisSampleUpdater}
 	 */
-	public Optional<AnalysisSampleUpdater> getUpdater(MetadataTemplateService metadataTemplateService,
-			SampleService sampleService) throws IridaPluginException;
+	public default Optional<AnalysisSampleUpdater> getUpdater(MetadataTemplateService metadataTemplateService,
+			SampleService sampleService) throws IridaPluginException {
+		return Optional.empty();
+	}
 
 	/**
 	 * Gets the particular {@link AnalysisType} of the workflow to load.
@@ -54,7 +56,9 @@ public interface IridaPlugin extends ExtensionPoint {
 	 * 
 	 * @return The color for the pipeline in the "Select a Pipeline" page.
 	 */
-	public Optional<Color> getBackgroundColor();
+	public default Optional<Color> getBackgroundColor() {
+		return Optional.empty();
+	}
 
 	/**
 	 * Gets an optional {@link Color} object used to modify the text color in the
@@ -62,7 +66,9 @@ public interface IridaPlugin extends ExtensionPoint {
 	 * 
 	 * @return The text color for the pipeline in the "Select a Pipeline" page.
 	 */
-	public Optional<Color> getTextColor();
+	public default Optional<Color> getTextColor() {
+		return Optional.empty();
+	}
 
 	/**
 	 * Gets a {@link Path} to a directory containing the workflows to load.
