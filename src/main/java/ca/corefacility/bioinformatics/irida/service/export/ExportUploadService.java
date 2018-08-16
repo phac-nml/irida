@@ -1,31 +1,23 @@
 package ca.corefacility.bioinformatics.irida.service.export;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.ConnectException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
+import ca.corefacility.bioinformatics.irida.exceptions.NcbiXmlParseException;
+import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
+import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
+import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableSet;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.slf4j.Logger;
@@ -42,17 +34,22 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.google.common.collect.ImmutableSet;
-
-import ca.corefacility.bioinformatics.irida.exceptions.NcbiXmlParseException;
-import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
-import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
-import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
-import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
-import ca.corefacility.bioinformatics.irida.service.EmailController;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.ConnectException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Class which handles uploading a {@link NcbiExportSubmission} to NCBI
@@ -111,7 +108,7 @@ public class ExportUploadService {
 
 	/**
 	 * Manually configure connection details for this service
-	 * 
+	 *
 	 * @param ftpHost
 	 *            The hostname to connect to
 	 * @param ftpPort
@@ -224,7 +221,7 @@ public class ExportUploadService {
 
 	/**
 	 * Create the XML for an {@link NcbiExportSubmission}
-	 * 
+	 *
 	 * @param submission
 	 *            the {@link NcbiExportSubmission} to create submission xml for
 	 * @return String content of the xml
@@ -242,7 +239,7 @@ public class ExportUploadService {
 	/**
 	 * Upload an {@link NcbiExportSubmission}'s files and submission xml to the
 	 * configured ftp site
-	 * 
+	 *
 	 * @param submission
 	 *            The {@link NcbiExportSubmission} to upload
 	 * @param xml
@@ -330,7 +327,7 @@ public class ExportUploadService {
 
 	/**
 	 * Get the latest result.#.xml file for the given submission
-	 * 
+	 *
 	 * @param client
 	 *            {@link FTPClient} to use for the connection
 	 * @param submission
@@ -387,7 +384,7 @@ public class ExportUploadService {
 	/**
 	 * Get the updates from the result.#.xml file for the given submission and
 	 * update the object. XML will look like the following:
-	 * 
+	 *
 	 * <pre>
 	 * <?xml version='1.0' encoding='utf-8'?>
 	 * <SubmissionStatus submission_id="SUB1234" status="processed-ok">
@@ -402,7 +399,7 @@ public class ExportUploadService {
 	 *   </Action>
 	 * </SubmissionStatus>
 	 * </pre>
-	 * 
+	 *
 	 * @param submission
 	 *            {@link NcbiExportSubmission} to update
 	 * @param xml
@@ -481,7 +478,7 @@ public class ExportUploadService {
 	/**
 	 * Get a Map of {@link NcbiBioSampleFiles} for a
 	 * {@link NcbiExportSubmission} indexed by the submitted sample ids
-	 * 
+	 *
 	 * @param submission
 	 *            Submission to get the {@link NcbiBioSampleFiles} for
 	 * @return A Map of String => {@link NcbiBioSampleFiles}
@@ -497,7 +494,7 @@ public class ExportUploadService {
 
 	/**
 	 * Connect an {@link FTPClient} with the configured connection details
-	 * 
+	 *
 	 * @return a connected {@link FTPClient}
 	 * @throws IOException
 	 *             if a connection error occurred
@@ -526,7 +523,7 @@ public class ExportUploadService {
 	/**
 	 * Disconnect an {@link FTPClient} if it's connected. Just doing this to
 	 * avoid the old try-catch-in-finally mess.
-	 * 
+	 *
 	 * @param client
 	 *            An {@link FTPClient} to shut down if it's connected
 	 */
@@ -542,7 +539,7 @@ public class ExportUploadService {
 
 	/**
 	 * Upload a string to remote ftp client
-	 * 
+	 *
 	 * @param client
 	 *            {@link FTPClient} to use for upload
 	 * @param filename
@@ -633,7 +630,7 @@ public class ExportUploadService {
 						.getMetadataMap(metadata);
 
 				//get all the sequencing objects involved
-				Set<SequencingObject> objects = new HashSet();
+				Set<SequencingObject> objects = new HashSet<>();
 				if (!file.getPairs().isEmpty()) {
 					objects.addAll(file.getPairs());
 				} else if (!file.getFiles().isEmpty()) {
