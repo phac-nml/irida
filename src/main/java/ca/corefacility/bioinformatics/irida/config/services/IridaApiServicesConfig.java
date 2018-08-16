@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.context.HierarchicalMessageSource;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -181,9 +182,14 @@ public class IridaApiServicesConfig {
 		}
 		
 		try {
-			MessageSource pluginSources = buildIridaPluginMessageSources();
+			HierarchicalMessageSource pluginSources = buildIridaPluginMessageSources();
 			
 			if (pluginSources != null) {
+				// preserve parent of source MessageSource
+				if (source.getParentMessageSource() != null) {
+					pluginSources.setParentMessageSource(source.getParentMessageSource());
+				}
+				
 				source.setParentMessageSource(pluginSources);
 			}
 		} catch (IridaPluginException | IOException e) {
@@ -194,11 +200,11 @@ public class IridaApiServicesConfig {
 	}
 	
 	/**
-	 * Builds a {@link MessageSource} containing messages for all IRIDA plugins.
+	 * Builds a {@link HierarchicalMessageSource} containing messages for all IRIDA plugins.
 	 * 
-	 * @return A {@link MessageSource} for all IRIDA plugins.
+	 * @return A {@link HierarchicalMessageSource} for all IRIDA plugins.
 	 */
-	private MessageSource buildIridaPluginMessageSources() throws IOException, IridaPluginException {
+	private HierarchicalMessageSource buildIridaPluginMessageSources() throws IOException, IridaPluginException {
 		List<MessageSource> iridaPluginMessageSources = Lists.newArrayList();
 
 		// for every plugin, build a new MessageSource for the messages and add to the
