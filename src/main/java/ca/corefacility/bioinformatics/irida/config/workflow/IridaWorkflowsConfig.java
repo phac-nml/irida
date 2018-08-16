@@ -79,7 +79,7 @@ public class IridaWorkflowsConfig {
 	 * 
 	 * @return A CSS String containing pipeline plugin styles.
 	 */
-	@Bean
+	@Bean(name = "iridaPipelinePluginStyle")
 	public String iridaPipelinePluginStyle() {
 		String style = "";
 
