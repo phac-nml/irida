@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { ExportDropDown } from "../Export/ExportDropdown";
 import { AddSamplesToCartButton } from "../AddToCartButton/AddSamplesToCart";
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, Popover } from "antd";
 import LineListTour from "../Tour/LineListTour";
 
 const { Search } = Input;
@@ -10,9 +10,17 @@ const { Search } = Input;
 const { i18n, urls } = window.PAGE;
 
 export class Toolbar extends Component {
-  state = { tourOpen: false };
+  state = { tourOpen: false, showTourPopover: false };
+  openTour = () => this.setState({ tourOpen: true, showTourPopover: false });
 
-  openTour = () => this.setState({ tourOpen: true });
+  componentDidMount() {
+    if (typeof window.localStorage === "object") {
+      if (!window.localStorage.getItem("linelist-tour")) {
+        window.localStorage.setItem("linelist-tour", "complete");
+        this.setState({ showTourPopover: true });
+      }
+    }
+  }
 
   closeTour = () => this.setState({ tourOpen: false });
 
@@ -58,9 +66,26 @@ export class Toolbar extends Component {
               />
             </Form.Item>
             <Form.Item>
-              <LineListTour isOpen={this.state.tourOpen}
-                            closeTour={this.closeTour}/>
-              <Button shape="circle" icon="question" onClick={this.openTour}/>
+              <LineListTour
+                isOpen={this.state.tourOpen}
+                closeTour={this.closeTour}
+              />
+              <Popover
+                content={
+                  <strong style={{ borderBottom: "2px solid orange" }}>
+                    {i18n.linelist.tour.popover}
+                  </strong>
+                }
+                visible={this.state.showTourPopover}
+                placement="topLeft"
+                arrowPointAtCenter
+              >
+                <Button
+                  shape="circle"
+                  icon="question"
+                  onClick={this.openTour}
+                />
+              </Popover>
             </Form.Item>
           </Form>
         </div>
