@@ -16,11 +16,16 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotDisplayab
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.config.AnalysisTypeSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowIdSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowSet;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowOutput;
+import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkflowStructure;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
@@ -32,6 +37,8 @@ import com.google.common.collect.Sets;
 @Service
 public class IridaWorkflowsService {
 	private static final Logger logger = LoggerFactory.getLogger(IridaWorkflowsService.class);
+	
+	private final IridaWorkflow UNKNOWN_WORKFLOW;
 
 	/**
 	 * Stores registered workflows within IRIDA.
@@ -91,6 +98,13 @@ public class IridaWorkflowsService {
 		setDefaultWorkflows(defaultIridaWorkflows.getIridaWorkflowIds());
 		
 		this.disabledAnalysisTypes = disabledAnalysisTypes;
+		
+		IridaWorkflowDescription unknownWorkflowDescription = new IridaWorkflowDescription(
+				UUID.fromString("d129e2c3-b78d-44ad-917b-1306af7de4b6"), "unknown", "unknown",
+				BuiltInAnalysisTypes.DEFAULT, new IridaWorkflowInput(), Lists.newLinkedList(), Lists.newLinkedList(),
+				Lists.newLinkedList());
+		IridaWorkflowStructure emptyStructure = new IridaWorkflowStructure(null);
+		UNKNOWN_WORKFLOW = new IridaWorkflow(unknownWorkflowDescription, emptyStructure);
 	}
 
 	/**
@@ -332,5 +346,13 @@ public class IridaWorkflowsService {
 	 */
 	public Set<IridaWorkflow> getRegisteredWorkflows() {
 		return Sets.newHashSet(allRegisteredWorkflows.values());
+	}
+	
+	/**
+	 * Gets an {@link IridaWorkflow} representing an unknown workflow.
+	 * @return The unknown workflow.
+	 */
+	public IridaWorkflow getUnknownWorkflow() {
+		return UNKNOWN_WORKFLOW;
 	}
 }

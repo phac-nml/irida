@@ -17,6 +17,9 @@ import ca.corefacility.bioinformatics.irida.security.permissions.analysis.Update
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
@@ -35,6 +38,8 @@ import java.util.stream.Collectors;
  */
 @Component
 public class AnalysesListingService {
+	private static final Logger logger = LoggerFactory.getLogger(AnalysesListingService.class);
+	
 	private AnalysisSubmissionService analysisSubmissionService;
 	private IridaWorkflowsService iridaWorkflowsService;
 	private UpdateAnalysisSubmissionPermission updateAnalysisPermission;
@@ -137,8 +142,15 @@ public class AnalysesListingService {
 			percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(submission.getId());
 		}
 
-		String workflowType = iridaWorkflowsService.getIridaWorkflow(submission.getWorkflowId()).getWorkflowDescription()
-				.getAnalysisType().toString();
+		String workflowType;
+		try {
+			workflowType = iridaWorkflowsService.getIridaWorkflow(submission.getWorkflowId()).getWorkflowDescription()
+					.getAnalysisType().toString();
+		} catch (IridaWorkflowNotFoundException e) {
+			logger.warn("Could not find workflow associated with [" + submission.getWorkflowId() + "], using default");
+			workflowType = iridaWorkflowsService.getUnknownWorkflow().getWorkflowDescription().getAnalysisType().toString();
+		}
+		
 		String workflow = messageSource.getMessage("workflow." + workflowType + ".title", null, locale);
 		String state = messageSource.getMessage("analysis.state." + analysisState
 				.toString(), null, locale);
