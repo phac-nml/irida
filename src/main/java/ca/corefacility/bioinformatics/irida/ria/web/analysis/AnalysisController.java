@@ -43,6 +43,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -182,8 +184,8 @@ public class AnalysisController {
 		try {
 			iridaWorkflow = workflowsService.getIridaWorkflow(workflowUUID);
 		} catch (IridaWorkflowNotFoundException e) {
-			logger.error("Error finding workflow, ", e);
-			throw new EntityNotFoundException("Couldn't find workflow for submission " + submission.getId(), e);
+			logger.error("Error finding workflow for [" + workflowUUID + "], using default");
+			iridaWorkflow = workflowsService.getUnknownWorkflow();
 		}
 
 		// Get the name of the workflow
@@ -283,15 +285,20 @@ public class AnalysisController {
 	 *
 	 * @param id {@link AnalysisSubmission} id
 	 * @return map of info about each {@link AnalysisOutputFile}
-	 * @throws IridaWorkflowNotFoundException if the specified workflow cannot be found.
 	 */
 	@RequestMapping(value = "/ajax/{id}/outputs", method = RequestMethod.GET)
 	@ResponseBody
-	public List<AnalysisOutputFileInfo> getOutputFilesInfo(@PathVariable Long id)
-			throws IridaWorkflowNotFoundException {
+	public List<AnalysisOutputFileInfo> getOutputFilesInfo(@PathVariable Long id) {
 		AnalysisSubmission submission = analysisSubmissionService.read(id);
 		Analysis analysis = submission.getAnalysis();
-		final List<String> outputNames = workflowsService.getOutputNames(submission.getWorkflowId());
+		List<String> outputNames;
+		try {
+			outputNames = workflowsService.getOutputNames(submission.getWorkflowId());
+		} catch (IridaWorkflowNotFoundException e) {
+			outputNames = Lists.newArrayList(analysis.getAnalysisOutputFileNames());
+			Collections.sort(outputNames);
+		}
+		
 		return outputNames.stream()
 				.map((outputName) -> getAnalysisOutputFileInfo(submission, analysis, outputName))
 				.filter(Objects::nonNull)
