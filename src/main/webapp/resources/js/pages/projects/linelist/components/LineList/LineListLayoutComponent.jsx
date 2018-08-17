@@ -90,8 +90,19 @@ export class LineListLayoutComponent extends React.Component {
    */
   quickSearch = value => this.tableRef.current.quickSearch(value);
 
+  /**
+   * Update the state of the filter
+   * @param count
+   */
   updateFilterCount = count => {
     this.setState({ filterCount: count });
+  };
+
+  /**
+   * Scroll the table to the top.
+   */
+  scrollTableToTop = () => {
+    this.tableRef.current.scrollToTop();
   };
 
   render() {
@@ -103,6 +114,7 @@ export class LineListLayoutComponent extends React.Component {
           exportXLSX={this.exportXLSX}
           addSamplesToCart={this.addSamplesToCart}
           selectedCount={this.props.selectedCount}
+          scrollTableToTop={this.scrollTableToTop}
         />
         <Layout className="ag-theme-balham">
           <Content>

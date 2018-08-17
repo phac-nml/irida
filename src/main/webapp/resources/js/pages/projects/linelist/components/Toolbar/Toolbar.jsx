@@ -24,7 +24,11 @@ export class Toolbar extends Component {
     }
   }
 
-  openTour = () => this.setState({ tourOpen: true, showTourPopover: false });
+  openTour = () => {
+    this.props.scrollTableToTop();
+    this.setState({ tourOpen: true, showTourPopover: false });
+  };
+
   closePopover = () => {
     window.clearTimeout(this.timer);
     this.setState({ showTourPopover: false });
@@ -122,5 +126,6 @@ Toolbar.propTypes = {
   exportCSV: PropTypes.func.isRequired,
   exportXLSX: PropTypes.func.isRequired,
   addSamplesToCart: PropTypes.func.isRequired,
-  quickSearch: PropTypes.func.isRequired
+  quickSearch: PropTypes.func.isRequired,
+  scrollTableToTop: PropTypes.func.isRequired
 };
