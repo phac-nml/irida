@@ -13,6 +13,7 @@ const { i18n } = window.PAGE;
 export function AddSamplesToCartButton(props) {
   return (
     <Button
+      tour="tour-cart"
       disabled={props.selectedCount === 0}
       onClick={() => props.addSamplesToCart()}
     >

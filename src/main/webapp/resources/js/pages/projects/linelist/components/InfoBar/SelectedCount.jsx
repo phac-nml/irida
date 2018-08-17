@@ -8,7 +8,7 @@ const { i18n } = window.PAGE;
  */
 export function SelectedCount(props) {
   return (
-    <span>
+    <span tour="tour-counts">
       {props.count === 0
         ? i18n.linelist.selected.none
         : props.count === 1
