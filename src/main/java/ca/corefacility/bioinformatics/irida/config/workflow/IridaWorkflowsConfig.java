@@ -23,6 +23,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.config.services.IridaPluginConfig;
@@ -30,9 +31,13 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.config.AnalysisTypeSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowIdSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowSet;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
+import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkflowStructure;
 import ca.corefacility.bioinformatics.irida.plugins.IridaPlugin;
 import ca.corefacility.bioinformatics.irida.plugins.IridaPluginException;
 import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;
@@ -48,6 +53,12 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
 @Profile({ "dev", "prod", "it" })
 @Import({ IridaPluginConfig.class, IridaAnalysisTypesServiceConfig.class })
 public class IridaWorkflowsConfig {
+	
+	public static final IridaWorkflow UNKNOWN_WORKFLOW = new IridaWorkflow(
+			new IridaWorkflowDescription(UUID.fromString("00000000-0000-0000-0000-000000000000"), "unknown", "unknown",
+					BuiltInAnalysisTypes.UNKNOWN, new IridaWorkflowInput(), Lists.newLinkedList(),
+					Lists.newLinkedList(), Lists.newLinkedList()),
+			new IridaWorkflowStructure(null));
 
 	private static final Logger logger = LoggerFactory.getLogger(IridaWorkflowsConfig.class);
 
@@ -261,6 +272,7 @@ public class IridaWorkflowsConfig {
 	public IridaWorkflowsService iridaWorkflowsService(IridaWorkflowSet iridaWorkflows,
 			IridaWorkflowIdSet defaultIridaWorkflows, AnalysisTypeSet disabledAnalysisTypes)
 			throws IridaWorkflowException {
-		return new IridaWorkflowsService(iridaWorkflows, defaultIridaWorkflows, disabledAnalysisTypes);
+		return new IridaWorkflowsService(iridaWorkflows, defaultIridaWorkflows, disabledAnalysisTypes,
+				UNKNOWN_WORKFLOW);
 	}
 }

@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.analysis;
 
+import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
@@ -103,6 +104,8 @@ public class AnalysisControllerTest {
 		assertEquals("submission should be in model", submission, model.get("analysisSubmission"));
 		
 		assertEquals("submission reference file should be in model.", submission.getReferenceFile().get(), model.get("referenceFile"));
+		
+		assertEquals("analysisType should be PHYLOGENOMICS", BuiltInAnalysisTypes.PHYLOGENOMICS, model.get("analysisType"));
 	}
 
 	@Test
@@ -128,6 +131,30 @@ public class AnalysisControllerTest {
 		assertFalse("No preview should be available", model.containsAttribute("preview"));
 
 		assertEquals("submission should be in model", submission, model.get("analysisSubmission"));
+	}
+	
+	@Test
+	public void testGetAnalysisDetailsMissingPipeline() throws IOException, IridaWorkflowNotFoundException {
+		Long submissionId = 1L;
+		ExtendedModelMap model = new ExtendedModelMap();
+		Locale locale = Locale.ENGLISH;
+
+		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
+		submission.setAnalysisState(AnalysisState.COMPLETED);
+
+		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
+		when(iridaWorkflowsServiceMock.getIridaWorkflow(submission.getWorkflowId())).thenThrow(new IridaWorkflowNotFoundException(""));
+		when(iridaWorkflowsServiceMock.getUnknownWorkflow()).thenReturn(IridaWorkflowsConfig.UNKNOWN_WORKFLOW);
+
+		String detailsPage = analysisController.getDetailsPage(submissionId, model, locale);
+		assertEquals("should be details page", AnalysisController.PAGE_DETAILS_DIRECTORY + "unavailable", detailsPage);
+
+		assertFalse("No preview should be set",  model.containsAttribute("preview"));
+
+		assertEquals("submission should be in model", submission, model.get("analysisSubmission"));
+		
+		assertEquals("version should be unknown", "unknown", model.get("version"));
+		assertEquals("analysisType should be UNKNOWN", BuiltInAnalysisTypes.UNKNOWN, model.get("analysisType"));
 	}
 
 	// ************************************************************************************************
