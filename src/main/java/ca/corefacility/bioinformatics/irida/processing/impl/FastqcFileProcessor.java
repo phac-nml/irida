@@ -144,8 +144,8 @@ public class FastqcFileProcessor implements FileProcessor {
 		analysis.encoding(PhredEncoding.getFastQEncodingOffset(stats.getLowestChar()).name());
 		analysis.minLength(stats.getMinLength());
 		analysis.maxLength(stats.getMaxLength());
-		analysis.totalSequences(stats.getActualCount());
-		analysis.filteredSequences(stats.getFilteredCount());
+		analysis.totalSequences((int) stats.getActualCount());
+		analysis.filteredSequences((int) stats.getFilteredCount());
 		analysis.gcContent(stats.getGCContent());
 		analysis.totalBases(
 				stats.getACount() + stats.getGCount() + stats.getCCount() + stats.getTCount() + stats.getNCount());
