@@ -20,6 +20,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import uk.ac.babraham.FastQC.FastQCApplication;
 import uk.ac.babraham.FastQC.Graphs.LineGraph;
 import uk.ac.babraham.FastQC.Graphs.QualityBoxPlot;
 import uk.ac.babraham.FastQC.Modules.BasicStats;
@@ -93,8 +94,9 @@ public class FastqcFileProcessor implements FileProcessor {
 	private void processSingleFile(SequenceFile sequenceFile) throws FileProcessorException {
 		Path fileToProcess = sequenceFile.getFile();
 		AnalysisFastQC.AnalysisFastQCBuilder analysis = AnalysisFastQC.builder()
-				.executionManagerAnalysisId(EXECUTION_MANAGER_ANALYSIS_ID).description(messageSource.getMessage(
-						"fastqc.file.processor.analysis.description", null, LocaleContextHolder.getLocale()));
+				.fastqcVersion(FastQCApplication.VERSION).executionManagerAnalysisId(EXECUTION_MANAGER_ANALYSIS_ID)
+				.description(messageSource.getMessage("fastqc.file.processor.analysis.description", null,
+						LocaleContextHolder.getLocale()));
 		try {
 			uk.ac.babraham.FastQC.Sequence.SequenceFile fastQCSequenceFile = SequenceFactory
 					.getSequenceFile(fileToProcess.toFile());
