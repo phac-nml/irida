@@ -73,6 +73,7 @@ public class AnalysisTypesServiceImpl implements AnalysisTypesService {
 		allTypesMap.put(BuiltInAnalysisTypes.FASTQC.getType(), BuiltInAnalysisTypes.FASTQC);
 		allTypesMap.put(BuiltInAnalysisTypes.MLST_MENTALIST.getType(), BuiltInAnalysisTypes.MLST_MENTALIST);
 		allTypesMap.put(BuiltInAnalysisTypes.DEFAULT.getType(), BuiltInAnalysisTypes.DEFAULT);
+		allTypesMap.put(BuiltInAnalysisTypes.UNKNOWN.getType(), BuiltInAnalysisTypes.UNKNOWN);
 
 		runnableTypesMap.put(BuiltInAnalysisTypes.PHYLOGENOMICS.getType(), BuiltInAnalysisTypes.PHYLOGENOMICS);
 		runnableTypesMap.put(BuiltInAnalysisTypes.SISTR_TYPING.getType(), BuiltInAnalysisTypes.SISTR_TYPING);

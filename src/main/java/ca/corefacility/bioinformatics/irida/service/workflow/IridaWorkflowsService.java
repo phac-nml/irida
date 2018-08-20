@@ -100,8 +100,8 @@ public class IridaWorkflowsService {
 		this.disabledAnalysisTypes = disabledAnalysisTypes;
 		
 		IridaWorkflowDescription unknownWorkflowDescription = new IridaWorkflowDescription(
-				UUID.fromString("d129e2c3-b78d-44ad-917b-1306af7de4b6"), "unknown", "unknown",
-				BuiltInAnalysisTypes.DEFAULT, new IridaWorkflowInput(), Lists.newLinkedList(), Lists.newLinkedList(),
+				UUID.fromString("00000000-0000-0000-0000-000000000000"), "unknown", "unknown",
+				BuiltInAnalysisTypes.UNKNOWN, new IridaWorkflowInput(), Lists.newLinkedList(), Lists.newLinkedList(),
 				Lists.newLinkedList());
 		IridaWorkflowStructure emptyStructure = new IridaWorkflowStructure(null);
 		UNKNOWN_WORKFLOW = new IridaWorkflow(unknownWorkflowDescription, emptyStructure);

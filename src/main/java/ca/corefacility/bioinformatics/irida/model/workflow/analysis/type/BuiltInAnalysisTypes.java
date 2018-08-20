@@ -24,4 +24,6 @@ public class BuiltInAnalysisTypes {
 	public static final AnalysisType MLST_MENTALIST = new AnalysisType("MLST_MENTALIST");
 
 	public static final AnalysisType DEFAULT = new AnalysisType("DEFAULT");
+	
+	public static final AnalysisType UNKNOWN = new AnalysisType("UNKNOWN");
 }
