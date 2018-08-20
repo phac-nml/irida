@@ -13,6 +13,7 @@ Changes
 * [UI/Developer]: Updated to lodash v4.17.10 to fix security issue. (0.22.2)
 * [UI]: Fixed bug where project samples page would freeze if there where numerous QC Issues. (0.22.3)
 * [UI]: Fixed error where synchronizing sequence files could lead to truncated files without generating an error. (0.22.3)
+* [Developer]: Updated FastQC to 0.11.7.
 
 0.21.0 to 0.22.0
 ----------------
