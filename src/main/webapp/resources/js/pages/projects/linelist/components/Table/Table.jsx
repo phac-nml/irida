@@ -418,6 +418,17 @@ export class Table extends React.Component {
       this.api.getModel().rootNode.childrenAfterFilter.length
     );
 
+  /**
+   * Scroll table to the top left most position.
+   */
+  scrollToTop = () => {
+    // Scroll to top
+    this.api.ensureIndexVisible(0);
+    // Ensure the column is scrolled all the way to the left.
+    this.api.ensureColumnVisible(this.columnApi.getColumnState()[1].colId);
+  };
+  
+
   render() {
     return (
       <div
