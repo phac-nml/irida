@@ -37,8 +37,6 @@ public class IridaPluginConfig {
 	public IridaPluginList iridaPipelinePlugins() {
 		PluginManager pluginManager = new DefaultPluginManager(PIPELINE_PLUGIN_PATH);
 
-		// TODO: Add exception management here to more gracefully handle failed pipeline
-		// loads
 		pluginManager.loadPlugins();
 		pluginManager.startPlugins();
 
