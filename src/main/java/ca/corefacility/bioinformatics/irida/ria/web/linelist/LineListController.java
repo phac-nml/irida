@@ -192,6 +192,12 @@ public class LineListController {
 		return new UIMetadataTemplate(metadataTemplate, getAllProjectMetadataFieldsWithSampleId(projectId, locale));
 	}
 
+	/**
+	 * Get a {@link List} of {@link MetadataTemplateField}s for a {@link Project}
+	 *
+	 * @param projectId {@link Long} Identifier for the project.
+	 * @return {@link List} of {@link MetadataTemplateField}
+	 */
 	private List<MetadataTemplateField> getAllProjectMetadataFields(Long projectId) {
 		Project project = projectService.read(projectId);
 		List<MetadataTemplateField> metadataFieldsForProject = metadataTemplateService.getMetadataFieldsForProject(
@@ -199,8 +205,7 @@ public class LineListController {
 		Set<MetadataTemplateField> fieldSet = new HashSet<>(metadataFieldsForProject);
 
 		// Need to get all the fields from the templates too!
-		List<ProjectMetadataTemplateJoin> templateJoins = metadataTemplateService.getMetadataTemplatesForProject(
-				project);
+		List<ProjectMetadataTemplateJoin> templateJoins = metadataTemplateService.getMetadataTemplatesForProject(project);
 		for (ProjectMetadataTemplateJoin join : templateJoins) {
 			MetadataTemplate template = join.getObject();
 			List<MetadataTemplateField> templateFields = template.getFields();
