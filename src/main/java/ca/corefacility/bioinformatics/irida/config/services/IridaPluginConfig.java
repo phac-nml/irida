@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.config.services;
 
 import ca.corefacility.bioinformatics.irida.plugins.IridaPlugin;
 import org.pf4j.DefaultPluginManager;
-import org.pf4j.PluginManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -35,7 +34,9 @@ public class IridaPluginConfig {
 	 */
 	@Bean(name = "iridaPipelinePlugins")
 	public IridaPluginList iridaPipelinePlugins() {
-		PluginManager pluginManager = new DefaultPluginManager(PIPELINE_PLUGIN_PATH);
+		DefaultPluginManager pluginManager = new DefaultPluginManager(PIPELINE_PLUGIN_PATH);
+		pluginManager.setSystemVersion(IridaPlugin.PLUGIN_API_VERSION);
+		pluginManager.setExactVersionAllowed(true);
 
 		pluginManager.loadPlugins();
 		pluginManager.startPlugins();
