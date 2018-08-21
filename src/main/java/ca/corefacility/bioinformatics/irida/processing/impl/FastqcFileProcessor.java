@@ -95,8 +95,8 @@ public class FastqcFileProcessor implements FileProcessor {
 		Path fileToProcess = sequenceFile.getFile();
 		AnalysisFastQC.AnalysisFastQCBuilder analysis = AnalysisFastQC.builder()
 				.fastqcVersion(FastQCApplication.VERSION).executionManagerAnalysisId(EXECUTION_MANAGER_ANALYSIS_ID)
-				.description(messageSource.getMessage("fastqc.file.processor.analysis.description", null,
-						LocaleContextHolder.getLocale()));
+				.description(messageSource.getMessage("fastqc.file.processor.analysis.description",
+						new Object[] { FastQCApplication.VERSION }, LocaleContextHolder.getLocale()));
 		try {
 			uk.ac.babraham.FastQC.Sequence.SequenceFile fastQCSequenceFile = SequenceFactory
 					.getSequenceFile(fileToProcess.toFile());
