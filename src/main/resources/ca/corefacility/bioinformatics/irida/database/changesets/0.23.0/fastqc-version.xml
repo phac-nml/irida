@@ -6,12 +6,12 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
     <changeSet id="file-processing-state" author="tom">
         <addColumn tableName="analysis_fastqc">
-            <column name="fastqc_version" type="varchar(255)"/>
+            <column name="fastqcVersion" type="varchar(255)"/>
         </addColumn>
 
-        <sql>UPDATE analysis_fastqc SET fastqc_version="0.10.1"</sql>
+        <sql>UPDATE analysis_fastqc SET fastqcVersion="0.10.1"</sql>
 
-        <addNotNullConstraint tableName="analysis_fastqc" columnName="fastqc_version" columnDataType="varchar(255)"/>
+        <addNotNullConstraint tableName="analysis_fastqc" columnName="fastqcVersion" columnDataType="varchar(255)"/>
 
     </changeSet>
 </databaseChangeLog>
