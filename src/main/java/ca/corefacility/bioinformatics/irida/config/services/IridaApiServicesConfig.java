@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.context.HierarchicalMessageSource;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -35,6 +36,7 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.ClassRelativeResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -81,6 +83,7 @@ import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.impl.InMemoryTaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionCleanupServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import ca.corefacility.bioinformatics.irida.util.IridaPluginMessageSource;
 import net.matlux.NreplServerSpring;
 
 /**
@@ -90,10 +93,10 @@ import net.matlux.NreplServerSpring;
  */
 @Configuration
 @Import({ IridaApiSecurityConfig.class, IridaApiAspectsConfig.class, IridaApiRepositoriesConfig.class,
-		ExecutionManagerConfig.class, AnalysisExecutionServiceConfig.class, IridaWorkflowsConfig.class,
-		WebEmailConfig.class, IridaScheduledTasksConfig.class, IridaPluginConfig.class})
+		ExecutionManagerConfig.class, AnalysisExecutionServiceConfig.class,
+		WebEmailConfig.class, IridaScheduledTasksConfig.class, IridaPluginConfig.class, IridaWorkflowsConfig.class})
 @ComponentScan(basePackages = { "ca.corefacility.bioinformatics.irida.service",
-		"ca.corefacility.bioinformatics.irida.processing", "ca.corefacility.bioinformatics.irida.pipeline.results" })
+		"ca.corefacility.bioinformatics.irida.processing", "ca.corefacility.bioinformatics.irida.pipeline.results.updater" })
 public class IridaApiServicesConfig {
 	private static final Logger logger = LoggerFactory.getLogger(IridaApiServicesConfig.class);
 	
@@ -138,7 +141,7 @@ public class IridaApiServicesConfig {
 	private Integer nreplPort;
 
 	@Autowired
-	IridaPluginConfig.IridaPluginList pipelinePlugins;
+	private IridaPluginConfig.IridaPluginList pipelinePlugins;
 	
 	@Bean
 	public BeanPostProcessor forbidJpqlUpdateDeletePostProcessor() {
@@ -155,32 +158,18 @@ public class IridaApiServicesConfig {
 		properties.setProperty("help.contact.email", helpEmail);
 		properties.setProperty("irida.version", iridaVersion);
 
-		// Get the messages from all of the IRIDA pipeline plugins
-		Properties pluginMessages = new Properties();
-		for(IridaPlugin plugin : pipelinePlugins.getPlugins()){
-			try {
-				Properties messagesFile = plugin.getMessages();
-				pluginMessages.putAll(messagesFile);
-			} catch (IridaPluginException ex) {
-				logger.error("Could not load messages for plugin", ex);
-			}
-		}
-
-		final ReloadableResourceBundleMessageSource source = new ReloadableResourceBundleMessageSource();
+		ReloadableResourceBundleMessageSource source = new ReloadableResourceBundleMessageSource();
 
 		try {
-			final List<String> workflowMessageSources = findWorkflowMessageSources();
-			workflowMessageSources.addAll(Arrays.asList(RESOURCE_LOCATIONS));
+			final String WORKFLOWS_DIRECTORY = "/ca/corefacility/bioinformatics/irida/model/workflow/analysis/type/workflows/";
+			final List<String> workflowMessageSources = findWorkflowMessageSources(this.getClass().getClassLoader(), WORKFLOWS_DIRECTORY);
+			workflowMessageSources.addAll(Arrays.asList(RESOURCE_LOCATIONS));			
 			final String[] allMessageSources = workflowMessageSources.toArray(new String[workflowMessageSources.size()]);
-			logger.debug("Setting message sources basenames: " + Arrays.toString(allMessageSources));
 			source.setBasenames(allMessageSources);
 		} catch (IOException e) {
 			logger.error("Could not set/load workflow message sources. " + e);
 			source.setBasenames(RESOURCE_LOCATIONS);
 		}
-
-		// add all the pipeline plugin messages
-		properties.putAll(pluginMessages);
 
 		source.setFallbackToSystemLocale(false);
 		source.setDefaultEncoding(DEFAULT_ENCODING);
@@ -191,29 +180,103 @@ public class IridaApiServicesConfig {
 		if (!env.acceptsProfiles("prod")) {
 			source.setCacheSeconds(0);
 		}
+		
+		try {
+			HierarchicalMessageSource pluginSources = buildIridaPluginMessageSources();
+			
+			if (pluginSources != null) {
+				// preserve parent of source MessageSource
+				if (source.getParentMessageSource() != null) {
+					pluginSources.setParentMessageSource(source.getParentMessageSource());
+				}
+				
+				source.setParentMessageSource(pluginSources);
+			}
+		} catch (IridaPluginException | IOException e) {
+			logger.error("Could not set/load workflow message sources from plugins. " + e);
+		}
 
 		return source;
 	}
+	
+	/**
+	 * Builds a {@link HierarchicalMessageSource} containing messages for all IRIDA plugins.
+	 * 
+	 * @return A {@link HierarchicalMessageSource} for all IRIDA plugins.
+	 */
+	private HierarchicalMessageSource buildIridaPluginMessageSources() throws IOException, IridaPluginException {
+		List<MessageSource> iridaPluginMessageSources = Lists.newArrayList();
 
-	private List<String> findWorkflowMessageSources() throws IOException {
-		final String WORKFLOWS_DIRECTORY = "/ca/corefacility/bioinformatics/irida/model/workflow/analysis/type/workflows/";
-		final PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(this.getClass()
-				.getClassLoader());
-		final Resource[] resources = resolver.getResources(
-				"classpath:" + WORKFLOWS_DIRECTORY + "**/messages_en.properties");
-		final Pattern pattern = Pattern.compile(
-				String.format("^.+(%s.+\\/messages)_en.properties$", WORKFLOWS_DIRECTORY));
-		return Arrays.stream(resources)
-				.map(x -> getClasspathResourceBasename(pattern, x))
-				.filter(Objects::nonNull)
-				.sorted(Comparator.reverseOrder())
-				.collect(Collectors.toList());
+		// for every plugin, build a new MessageSource for the messages and add to the
+		// iridaPluginMessageSources list
+		for (IridaPlugin plugin : pipelinePlugins.getPlugins()) {
+			Path pluginWorkflowsPath = plugin.getWorkflowsPath();
+			logger.trace("Plugin " + plugin + ", workflow path " + pluginWorkflowsPath);
+
+			// finds resource paths for all the plugin messages.properties files
+			List<String> pluginMessageBasenames = findWorkflowMessageSources(plugin.getClass().getClassLoader(),
+					pluginWorkflowsPath.toString());
+
+			// builds new MessageSource out of the resource paths
+			ReloadableResourceBundleMessageSource pluginSource = new ReloadableResourceBundleMessageSource();
+			pluginSource.setResourceLoader(new ClassRelativeResourceLoader(plugin.getClass()));
+			pluginSource.setBasenames(pluginMessageBasenames.toArray(new String[pluginMessageBasenames.size()]));
+
+			iridaPluginMessageSources.add(pluginSource);
+		}
+
+		if (iridaPluginMessageSources.size() > 0) {
+			return new IridaPluginMessageSource(iridaPluginMessageSources);
+		} else {
+			return null;
+		}
 	}
 
+	/**
+	 * Finds a list of resource paths to directories containing message.properties
+	 * files.
+	 * 
+	 * @param classLoader        The {@link ClassLoader} used to get resource paths.
+	 * @param workflowsDirectory The directory containing the workflow files (and
+	 *                           messages.properties files).
+	 * 
+	 * @return A {@link List} of resource paths to directories containing
+	 *         message.properties files.
+	 */
+	private List<String> findWorkflowMessageSources(ClassLoader classLoader, String workflowsDirectory)
+			throws IOException {
+
+		if (!workflowsDirectory.endsWith("/")) {
+			workflowsDirectory += "/";
+		}
+
+		// gets the classpath resource paths to any 'messages_en.properties' files under
+		// workflowsDirectory
+		final PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(classLoader);
+		final Resource[] resources = resolver
+				.getResources("classpath:" + workflowsDirectory + "**/messages_en.properties");
+
+		// extracts and returns the basenames for the paths to the
+		// 'messages_en.properties' files
+		final Pattern pattern = Pattern
+				.compile(String.format("^.+(%s.+\\/messages)_en.properties$", workflowsDirectory));
+		return Arrays.stream(resources).map(x -> getClasspathResourceBasename(pattern, x)).filter(Objects::nonNull)
+				.sorted(Comparator.reverseOrder()).collect(Collectors.toList());
+	}
+
+	/**
+	 * Gets the basename to a classpath resource path given a particular pattern to
+	 * match for the file name.
+	 * 
+	 * @param pattern The {@link Pattern} to use for stripping off the filename.
+	 * @param x       The resource to extract the path name from.
+	 * 
+	 * @return The basename for a classpath resource path, or null if the pattern
+	 *         does not match the resource.
+	 */
 	private String getClasspathResourceBasename(Pattern pattern, Resource x) {
 		try {
-			final String path = x.getFile()
-					.getAbsolutePath();
+			final String path = x.getURI().toString();
 			final Matcher matcher = pattern.matcher(path);
 			if (matcher.matches() && matcher.groupCount() == 1) {
 				return "classpath:" + matcher.group(1);

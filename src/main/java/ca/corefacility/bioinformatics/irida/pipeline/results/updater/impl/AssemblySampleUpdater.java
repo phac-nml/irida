@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.pipeline.results.impl;
+package ca.corefacility.bioinformatics.irida.pipeline.results.updater.impl;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -16,7 +16,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSampleUpdater;
+import ca.corefacility.bioinformatics.irida.pipeline.results.updater.AnalysisSampleUpdater;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.GenomeAssemblyRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGenomeAssemblyJoinRepository;
 
