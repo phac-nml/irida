@@ -9,7 +9,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 /**
  * Scheduled task configuration for uploading to NCBI
  */
-@Profile({ "prod" })
+@Profile({ "prod", "ncbi" })
 @Configuration
 public class NcbiUploadScheduledTaskConfig {
 

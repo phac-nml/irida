@@ -563,6 +563,18 @@ public class PipelineController extends BaseController {
 
 		return ImmutableMap.of("success", true);
 	}
+
+	/**
+	 * Get {@link IridaWorkflowDescription} for a workflow/pipeline UUID.
+	 * @param pipelineUUID Workflow/Pipeline UUID
+	 * @return Map corresponding to a {@link IridaWorkflowDescription}.
+	 * @throws IridaWorkflowNotFoundException if workflow could not be found.
+	 */
+	@RequestMapping(value = "/ajax/{pipelineUUID}")
+	@ResponseBody
+	public IridaWorkflowDescription getPipelineInfo(@PathVariable UUID pipelineUUID) throws IridaWorkflowNotFoundException {
+		return workflowsService.getIridaWorkflow(pipelineUUID).getWorkflowDescription();
+	}
 	
 	/**
 	 * Save a set of {@link IridaWorkflowNamedParameters} and respond with the

@@ -26,21 +26,22 @@
     padding-left: 1.3em;
   }
 
-  li.error:before {
-    content: "\f00d"; /* FontAwesome Unicode for X */
-    font-family: FontAwesome;
+  li.error svg {
     color: #d9534f;
     display: inline-block;
     margin-left: -1.3em;
-    width: 1.3em;
   }
+}
+
+.icon-wrapper {
+  position: relative;
 }
 
 .qc-warning-wrapper {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  left: 0;
+  left: -15px;
   color: #d9534f;
 }
 
@@ -48,7 +49,7 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  left: 6px;
+  left: 0;
 }
 
 .panel-body__scroll {

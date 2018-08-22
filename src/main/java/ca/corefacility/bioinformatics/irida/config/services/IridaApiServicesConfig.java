@@ -351,7 +351,7 @@ public class IridaApiServicesConfig {
 	
 	@Bean
 	@DependsOn("springLiquibase")
-	@Profile({ "prod" })
+	@Profile({ "prod", "analysis" })
 	public AnalysisSubmissionCleanupService analysisSubmissionCleanupService(
 			AnalysisSubmissionRepository analysisSubmissionRepository, UserService userService) {
 		AnalysisSubmissionCleanupService analysisSubmissionCleanupService = new AnalysisSubmissionCleanupServiceImpl(

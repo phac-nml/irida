@@ -652,6 +652,7 @@
 							<systemPropertyVariables>
 								<jetty.port>${jetty.port}</jetty.port>
 								<spring.profiles.active>it</spring.profiles.active>
+								<irida.db.profile>it</irida.db.profile>
 								<jetty.port>${jetty.port}</jetty.port>
 								<server.base.url>http://localhost:${jetty.port}</server.base.url>
 							</systemPropertyVariables>
@@ -889,6 +890,12 @@
 									<value>it</value>
 								</systemProperty>
 								<systemProperty>
+									<!-- Setting spring profile for integration tests to "it". Also
+										done in failsafe plugin -->
+									<name>irida.db.profile</name>
+									<value>it</value>
+								</systemProperty>
+								<systemProperty>
 									<name>jetty.port</name>
 									<value>${jetty.port}</value>
 								</systemProperty>
@@ -1035,7 +1042,7 @@
 		<dbunit.version>2.4.9</dbunit.version>
 		<commons.dbcp.version>2.0.1</commons.dbcp.version>
 		<commons.net.version>3.3</commons.net.version>
-		<fastqc.version>0.10.1-nml-custom</fastqc.version>
+		<fastqc.version>0.11.7-nml-custom</fastqc.version>
 		<aspectj.version>1.8.1</aspectj.version>
 		<hibernate.validator.version>5.1.1.Final</hibernate.validator.version>
 		<el-ri.version>1.0</el-ri.version>

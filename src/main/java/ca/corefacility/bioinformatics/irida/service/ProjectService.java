@@ -135,22 +135,16 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @return a reference to the relationship resource created between the two entities.
 	 */
 	public Join<Project, Sample> addSampleToProject(Project project, Sample sample, boolean owner);
-	
-	
+
 	/**
 	 * Move a {@link Sample} from one {@link Project} to another
-	 * 
-	 * @param source
-	 *            the source {@link Project}
-	 * @param destination
-	 *            Destination {@link Project}
-	 * @param sample
-	 *            {@link Sample} to be moved
-	 * @param owner
-	 *            Should the new project be an owner?
+	 *
+	 * @param source      the source {@link Project}
+	 * @param destination Destination {@link Project}
+	 * @param sample      The sample to move
 	 * @return Newly created {@link ProjectSampleJoin}
 	 */
-	public ProjectSampleJoin moveSampleBetweenProjects(Project source, Project destination, Sample sample, boolean owner);
+	public ProjectSampleJoin moveSampleBetweenProjects(Project source, Project destination, Sample sample);
 	
 	/**
 	 * Share a list of {@link Sample}s between two {@link Project}s.
@@ -178,13 +172,10 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 *            the {@link Project} being moved to
 	 * @param samples
 	 *            a collection of {@link Sample}s
-	 * @param giveOwner
-	 *            whether to give ownership rights to the destination
 	 *            {@link Project}
 	 * @return a list of new {@link ProjectSampleJoin}
 	 */
-	public List<ProjectSampleJoin> moveSamples(Project source, Project destination, Collection<Sample> samples,
-			boolean giveOwner);
+	public List<ProjectSampleJoin> moveSamples(Project source, Project destination, Collection<Sample> samples);
 
 	/**
 	 * Remove the specified {@link Sample} from the {@link Project}. The {@link Sample} will also be deleted from the
@@ -405,7 +396,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @return a list of {@link ProjectAnalysisSubmissionJoin}s
 	 */
 	public List<ProjectAnalysisSubmissionJoin> getProjectsForAnalysisSubmission(AnalysisSubmission submission);
-	
+
 	/**
 	 * Get all {@link Project}s that have data used within an
 	 * {@link AnalysisSubmission}. Note that this differs from
