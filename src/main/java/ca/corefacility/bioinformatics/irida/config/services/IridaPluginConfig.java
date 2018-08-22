@@ -72,7 +72,7 @@ public class IridaPluginConfig {
 							+ "] does not properly implement all required methods. Disabling the plugin.");
 				}
 			} catch (IridaPluginException | AbstractMethodError e) {
-				logger.error("Error validating plugin [" + plugin.getClass() + "]. Disabling the plugin.");
+				logger.error("Error validating plugin [" + plugin.getClass() + "]. Disabling the plugin.", e);
 			}
 		}
 
