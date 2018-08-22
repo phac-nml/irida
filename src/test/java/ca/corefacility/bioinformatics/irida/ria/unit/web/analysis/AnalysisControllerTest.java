@@ -157,6 +157,42 @@ public class AnalysisControllerTest {
 		assertEquals("analysisType should be UNKNOWN", BuiltInAnalysisTypes.UNKNOWN, model.get("analysisType"));
 	}
 
+	@Test
+	public void getOutputFilesInfoSuccess() throws IridaWorkflowNotFoundException {
+		Long submissionId = 1L;
+
+		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
+		submission.setAnalysisState(AnalysisState.COMPLETED);
+
+		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
+		when(iridaWorkflowsServiceMock.getOutputNames(submission.getWorkflowId()))
+				.thenReturn(Lists.newArrayList("tree"));
+
+		List<AnalysisOutputFileInfo> outputInfos = analysisController.getOutputFilesInfo(submissionId);
+
+		assertEquals("Should only be one output", 1, outputInfos.size());
+
+		AnalysisOutputFileInfo info = outputInfos.get(0);
+
+		assertEquals("Should have proper filename", "snp_tree.tree", info.getFilename());
+	}
+
+	@Test
+	public void getOutputFilesInfoSuccessNoWorkflow() throws IridaWorkflowNotFoundException {
+		Long submissionId = 1L;
+
+		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
+		submission.setAnalysisState(AnalysisState.COMPLETED);
+
+		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
+		when(iridaWorkflowsServiceMock.getOutputNames(submission.getWorkflowId()))
+				.thenThrow(new IridaWorkflowNotFoundException(""));
+
+		List<AnalysisOutputFileInfo> outputInfos = analysisController.getOutputFilesInfo(submissionId);
+
+		assertEquals("Should be 5 outputs", 5, outputInfos.size());
+	}
+
 	// ************************************************************************************************
 	// AJAX TESTS
 	// ************************************************************************************************
