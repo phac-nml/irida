@@ -1,6 +1,9 @@
 package ca.corefacility.bioinformatics.irida.config.services;
 
-import ca.corefacility.bioinformatics.irida.plugins.IridaPlugin;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+
 import org.pf4j.DefaultPluginManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,12 +12,8 @@ import org.springframework.context.annotation.Configuration;
 
 import com.google.common.collect.Lists;
 
-import java.lang.reflect.Method;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import ca.corefacility.bioinformatics.irida.plugins.IridaPlugin;
+import ca.corefacility.bioinformatics.irida.plugins.IridaPluginException;
 
 /**
  * Configuration file for loading IRIDA plugins
@@ -43,7 +42,7 @@ public class IridaPluginConfig {
 
 		List<IridaPlugin> extensions = getValidPlugins(pluginManager.getExtensions(IridaPlugin.class));
 
-		logger.debug("Loaded " + extensions.size() + " pipeline plugins.");
+		logger.debug("Loaded " + extensions.size() + " valid pipeline plugins.");
 
 		return new IridaPluginList(extensions);
 	}
@@ -59,55 +58,25 @@ public class IridaPluginConfig {
 	private List<IridaPlugin> getValidPlugins(List<IridaPlugin> plugins) {
 		List<IridaPlugin> validPlugins = Lists.newArrayList();
 
-		// get all declared methods from IridaPlugin interface to use for verifying that the passed plugins implement all these methods
-		// we are skipping any default methods
-		List<Method> iridaPluginInterfaceMethods = Arrays.stream(IridaPlugin.class.getDeclaredMethods())
-				.filter(t -> !t.isDefault()).collect(Collectors.toList());
-
-		// for each plugin, verify it implements all the required methods from the IridaPlugin interface
+		// for each plugin, verify it properly implements all required methods
 		for (IridaPlugin plugin : plugins) {
-			boolean foundAllMethods = true;
+			try {
+				if (plugin.getAnalysisType() != null && plugin.getDefaultWorkflowUUID() != null
+						&& plugin.getUpdater(null, null) != null && plugin.getWorkflowsPath() != null
+						&& plugin.getBackgroundColor() != null && plugin.getTextColor() != null) {
+					logger.trace("Irida plugin [" + plugin.getClass() + "] is valid");
 
-			for (Method method : iridaPluginInterfaceMethods) {
-				if (!isMethodImplemented(method, plugin.getClass())) {
-					logger.trace("Method [" + method + "] is not implemented in class [" + plugin.getClass() + "]");
-					foundAllMethods = false;
-					break;
+					validPlugins.add(plugin);
+				} else {
+					logger.error("Plugin [" + plugin.getClass()
+							+ "] does not properly implement all required methods. Disabling the plugin.");
 				}
-			}
-
-			if (foundAllMethods) {
-				validPlugins.add(plugin);
-			} else {
-				logger.error("Plugin [" + plugin.getClass()
-						+ "] does not properly implement all required methods. Disabling the plugin.");
+			} catch (IridaPluginException | AbstractMethodError e) {
+				logger.error("Error validating plugin [" + plugin.getClass() + "]. Disabling the plugin.");
 			}
 		}
 
 		return validPlugins;
-	}
-
-	/**
-	 * Checks if the given method is implemented in the passed class or any superclass.
-	 * 
-	 * @param method The method to check.
-	 * @param clazz  The class to check.
-	 * @return True if the method is defined, False otherwise.
-	 */
-	private boolean isMethodImplemented(Method method, Class<?> clazz) {
-		// base case, if no class there is no method
-		if (clazz == null) {
-			return false;
-		} else {
-			try {
-				Method pluginMethod = clazz.getDeclaredMethod(method.getName(), method.getParameterTypes());
-				return pluginMethod != null;
-			} catch (NoSuchMethodException | SecurityException e) {
-				// if method is not implemented strictly on this class we need to move up the
-				// hierarchy and check if method is implemented on superclass
-				return isMethodImplemented(method, clazz.getSuperclass());
-			}
-		}
 	}
 
 	/**
