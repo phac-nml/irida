@@ -203,6 +203,11 @@ public class AnalysisFastQC extends Analysis {
 			return this;
 		}
 
+		/**
+		 * Set the fastqc version used in the analysis
+		 * @param fastqcVersion the version of fastqc used
+		 * @return the builder
+		 */
 		public AnalysisFastQCBuilder fastqcVersion(String fastqcVersion) {
 			this.fastqcVersion = fastqcVersion;
 			return this;
