@@ -19,6 +19,20 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
  * plugin
  */
 public interface IridaPlugin extends ExtensionPoint {
+	
+	/**
+	 * Defines the particular IRIDA Plugin API version.
+	 * 
+	 * Please use this version in your plugin's <strong>pom.xml</strong> file as:
+	 * 
+	 * <pre>
+	 *     {@code <Plugin-Requires>1.0.0</Plugin-Requires>}
+	 * </pre>
+	 * 
+	 * If there are breaking changes to the IRIDA Plugin API this version will change, 
+	 * giving you an indication of when to update your plugin.
+	 */
+	public static final String PLUGIN_API_VERSION = "1.0.0";
 
 	/**
 	 * Get the AnalysisSampleUpdater if available for this analysis pipeline
