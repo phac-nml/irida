@@ -20,6 +20,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import uk.ac.babraham.FastQC.FastQCApplication;
 import uk.ac.babraham.FastQC.Graphs.LineGraph;
 import uk.ac.babraham.FastQC.Graphs.QualityBoxPlot;
 import uk.ac.babraham.FastQC.Modules.BasicStats;
@@ -93,8 +94,9 @@ public class FastqcFileProcessor implements FileProcessor {
 	private void processSingleFile(SequenceFile sequenceFile) throws FileProcessorException {
 		Path fileToProcess = sequenceFile.getFile();
 		AnalysisFastQC.AnalysisFastQCBuilder analysis = AnalysisFastQC.builder()
-				.executionManagerAnalysisId(EXECUTION_MANAGER_ANALYSIS_ID).description(messageSource.getMessage(
-						"fastqc.file.processor.analysis.description", null, LocaleContextHolder.getLocale()));
+				.fastqcVersion(FastQCApplication.VERSION).executionManagerAnalysisId(EXECUTION_MANAGER_ANALYSIS_ID)
+				.description(messageSource.getMessage("fastqc.file.processor.analysis.description",
+						new Object[] { FastQCApplication.VERSION }, LocaleContextHolder.getLocale()));
 		try {
 			uk.ac.babraham.FastQC.Sequence.SequenceFile fastQCSequenceFile = SequenceFactory
 					.getSequenceFile(fileToProcess.toFile());
@@ -144,8 +146,8 @@ public class FastqcFileProcessor implements FileProcessor {
 		analysis.encoding(PhredEncoding.getFastQEncodingOffset(stats.getLowestChar()).name());
 		analysis.minLength(stats.getMinLength());
 		analysis.maxLength(stats.getMaxLength());
-		analysis.totalSequences(stats.getActualCount());
-		analysis.filteredSequences(stats.getFilteredCount());
+		analysis.totalSequences((int) stats.getActualCount());
+		analysis.filteredSequences((int) stats.getFilteredCount());
 		analysis.gcContent(stats.getGCContent());
 		analysis.totalBases(
 				stats.getACount() + stats.getGCount() + stats.getCCount() + stats.getTCount() + stats.getNCount());
