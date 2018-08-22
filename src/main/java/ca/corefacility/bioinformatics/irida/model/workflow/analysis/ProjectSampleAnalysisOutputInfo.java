@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 
 /**
  * Class to store basic {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile} and associated {@link ca.corefacility.bioinformatics.irida.model.sample.Sample}, {@link ca.corefacility.bioinformatics.irida.model.project.Project} and {@link ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission} information from a native SQL query.
