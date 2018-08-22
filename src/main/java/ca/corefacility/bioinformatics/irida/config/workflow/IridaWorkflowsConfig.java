@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.config.workflow;
 
-import java.awt.Color;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.DirectoryStream;
@@ -28,6 +27,8 @@ import com.google.common.collect.Sets;
 import ca.corefacility.bioinformatics.irida.config.services.IridaPluginConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.enums.config.AnalysisTypeSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.config.AnalysisTypeSet;
@@ -45,7 +46,6 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
  *
  */
 @Configuration
-@Profile({ "dev", "prod", "it" })
 @Import({ IridaPluginConfig.class, IridaAnalysisTypesServiceConfig.class })
 public class IridaWorkflowsConfig {
 

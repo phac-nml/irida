@@ -10,7 +10,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.Principal;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -48,6 +47,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectSamplesContr
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -124,7 +124,7 @@ public class ProjectSamplesControllerTest {
 		when(projectService.read(projectId)).thenReturn(oldProject);
 		when(projectService.read(newProjectId)).thenReturn(newProject);
 		when(sampleService.readMultiple(any(Iterable.class))).thenReturn(sampleList);
-		when(projectService.moveSamples(oldProject, newProject, sampleList, owner)).thenReturn(joins);
+		when(projectService.moveSamples(oldProject, newProject, sampleList)).thenReturn(joins);
 
 		Map<String, Object> result = controller.shareSampleToProject(projectId, sampleIds, newProjectId,
 				removeFromOriginal, true, Locale.US);
@@ -135,7 +135,7 @@ public class ProjectSamplesControllerTest {
 		verify(projectService).read(projectId);
 		verify(projectService).read(newProjectId);
 
-		verify(projectService).moveSamples(oldProject, newProject, sampleList, owner);
+		verify(projectService).moveSamples(oldProject, newProject, sampleList);
 
 	}
 

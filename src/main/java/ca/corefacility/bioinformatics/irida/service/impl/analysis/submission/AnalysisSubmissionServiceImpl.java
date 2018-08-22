@@ -10,6 +10,7 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ProjectSampleAnalysisOutputInfo;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
 import org.hibernate.TransientPropertyValueException;
@@ -63,6 +64,7 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyCleanupAsync;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
+import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 /**
  * Implementation of an AnalysisSubmissionService.
@@ -102,6 +104,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	private final ReferenceFileRepository referenceFileRepository;
 	private final GalaxyHistoriesService galaxyHistoriesService;
 	private final SequencingObjectService sequencingObjectService;
+	private final IridaWorkflowsService iridaWorkflowsService;
 	private JobErrorRepository jobErrorRepository;
 
 	// required, but not constructor injected because we have circular dependencies :(
@@ -110,25 +113,22 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 
 	/**
 	 * Builds a new AnalysisSubmissionServiceImpl with the given information.
-	 *
-	 * @param analysisSubmissionRepository A repository for accessing analysis submissions.
+	 *  @param analysisSubmissionRepository A repository for accessing analysis submissions.
 	 * @param userRepository               A repository for accessing user information.
 	 * @param referenceFileRepository      the reference file repository
 	 * @param sequencingObjectService      the {@link SequencingObject} service.
 	 * @param galaxyHistoriesService       The {@link GalaxyHistoriesService}.
-	 * @param validator                    A validator.
 	 * @param pasRepository                The {@link ProjectAnalysisSubmissionJoinRepository}
 	 * @param jobErrorRepository           A repository for accessing {@link JobError}
+	 * @param iridaWorkflowsService		   The {@link IridaWorkflowsService}
+	 * @param validator                    A validator.
 	 */
 	@Autowired
 	public AnalysisSubmissionServiceImpl(AnalysisSubmissionRepository analysisSubmissionRepository,
-			UserRepository userRepository,
-			final ReferenceFileRepository referenceFileRepository,
-			final SequencingObjectService sequencingObjectService,
-			final GalaxyHistoriesService galaxyHistoriesService,
-			ProjectAnalysisSubmissionJoinRepository pasRepository,
-			JobErrorRepository jobErrorRepository,
-			Validator validator) {
+			UserRepository userRepository, final ReferenceFileRepository referenceFileRepository,
+			final SequencingObjectService sequencingObjectService, final GalaxyHistoriesService galaxyHistoriesService,
+			ProjectAnalysisSubmissionJoinRepository pasRepository, JobErrorRepository jobErrorRepository,
+			IridaWorkflowsService iridaWorkflowsService, Validator validator) {
 		super(analysisSubmissionRepository, validator, AnalysisSubmission.class);
 		this.userRepository = userRepository;
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
@@ -137,6 +137,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		this.sequencingObjectService = sequencingObjectService;
 		this.pasRepository = pasRepository;
 		this.jobErrorRepository = jobErrorRepository;
+		this.iridaWorkflowsService = iridaWorkflowsService;
 	}
 	
 	public void setAnalysisExecutionService(final AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionService) {
@@ -330,6 +331,41 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		submission.setPriority(priority);
 
 		return super.update(submission);
+	}
+
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or authentication.name == #user.username")
+	public List<ProjectSampleAnalysisOutputInfo> getAllUserAnalysisOutputInfo(User user) {
+		return analysisSubmissionRepository.getAllUserAnalysisOutputInfo(user.getId());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#projectId, 'canReadProject')")
+	public List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoSharedWithProject(Long projectId) {
+		final Set<UUID> singleSampleWorkflowIds = iridaWorkflowsService.getSingleSampleWorkflows();
+		logger.trace("N=" + singleSampleWorkflowIds.size() + ", Single sample workflows: " + singleSampleWorkflowIds);
+		final List<ProjectSampleAnalysisOutputInfo> infos = analysisSubmissionRepository.getAllAnalysisOutputInfoSharedWithProject(
+				projectId, singleSampleWorkflowIds);
+		logger.trace("Found " + infos.size() + " output files for project id=" + projectId);
+		return infos;
+	}
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#projectId, 'canReadProject')")
+	public List<ProjectSampleAnalysisOutputInfo> getAllAutomatedAnalysisOutputInfoForAProject(Long projectId) {
+		final Set<UUID> singleSampleWorkflowIds = iridaWorkflowsService.getSingleSampleWorkflows();
+		logger.trace("N=" + singleSampleWorkflowIds.size() + ", Single sample workflows: " + singleSampleWorkflowIds);
+		final List<ProjectSampleAnalysisOutputInfo> infos = analysisSubmissionRepository.getAllAutomatedAnalysisOutputInfoForAProject(
+				projectId, singleSampleWorkflowIds);
+		logger.trace("Found " + infos.size() + " output files for project id=" + projectId);
+		return infos;
 	}
 
 	/**
@@ -668,4 +704,6 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		return pasRepository.getSubmissionsForProject(project).stream().map(ProjectAnalysisSubmissionJoin::getObject)
 				.collect(Collectors.toSet());
 	}
+
+
 }

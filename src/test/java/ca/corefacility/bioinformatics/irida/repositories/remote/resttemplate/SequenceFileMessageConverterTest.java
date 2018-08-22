@@ -62,7 +62,9 @@ public class SequenceFileMessageConverterTest {
 	@Test
 	public void testRead() throws HttpMessageNotReadableException, IOException {
 		String message = "Some fastq file";
-		HttpInputMessage inputMessage = new MockHttpInputMessage(message.getBytes());
+		byte[] messageBytes = message.getBytes();
+		HttpInputMessage inputMessage = new MockHttpInputMessage(messageBytes);
+		inputMessage.getHeaders().add("Content-Length", Long.toString(messageBytes.length));
 		Path read = converter.read(Path.class, inputMessage);
 		assertTrue(Files.exists(read));
 
@@ -70,6 +72,15 @@ public class SequenceFileMessageConverterTest {
 		assertEquals(message, new String(fileBytes));
 
 		Files.delete(read);
+	}
+	
+	@Test(expected=IOException.class)
+	public void testReadPartialFile() throws HttpMessageNotReadableException, IOException {
+		String message = "Some fastq file";
+		byte[] messageBytes = message.getBytes();
+		HttpInputMessage inputMessage = new MockHttpInputMessage(messageBytes);
+		inputMessage.getHeaders().add("Content-Length", Long.toString(messageBytes.length+1));
+		converter.read(Path.class, inputMessage);
 	}
 
 	@Test
