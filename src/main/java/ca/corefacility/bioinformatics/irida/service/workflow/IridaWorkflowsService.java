@@ -377,7 +377,7 @@ public class IridaWorkflowsService {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkNotNull(analysisSubmission.getWorkflowId(), "analysisSubmission workflowId is null");
 
-		if (AnalysisState.COMPLETED.equals(analysisSubmission) && analysisSubmission.getAnalysis() != null) {
+		if (AnalysisState.COMPLETED.equals(analysisSubmission.getAnalysisState()) && analysisSubmission.getAnalysis() != null) {
 			return createUnknownWorkflow(analysisSubmission.getWorkflowId(),
 					analysisSubmission.getAnalysis().getAnalysisType());
 		} else {

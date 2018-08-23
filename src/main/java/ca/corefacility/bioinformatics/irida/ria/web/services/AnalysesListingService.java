@@ -142,20 +142,19 @@ public class AnalysesListingService {
 			percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(submission.getId());
 		}
 
-		String workflow;
+		IridaWorkflow iridaWorkflow;
 		try {
-			String workflowType = iridaWorkflowsService.getIridaWorkflow(submission.getWorkflowId()).getWorkflowDescription()
-					.getAnalysisType().toString();
-			workflow = messageSource.getMessage("workflow." + workflowType + ".title", null, locale);
+			iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(submission.getWorkflowId());
 		} catch (IridaWorkflowNotFoundException e) {
 			logger.warn("Could not find workflow associated with [" + submission.getWorkflowId() + "], defaulting to 'unknown' workflow");
 			
-			IridaWorkflow iridaWorkflow = iridaWorkflowsService.createUnknownWorkflow(submission);
-			workflow = iridaWorkflow.getWorkflowDescription().getAnalysisType().getType();
+			iridaWorkflow = iridaWorkflowsService.createUnknownWorkflow(submission);
 		}
 		
+		String workflowType = iridaWorkflow.getWorkflowDescription().getAnalysisType().getType();
 		String state = messageSource.getMessage("analysis.state." + analysisState
 				.toString(), null, locale);
+		String workflow = messageSource.getMessage("workflow." + workflowType + ".title", null, workflowType, locale);
 		Long duration = 0L;
 		if (analysisState.equals(AnalysisState.COMPLETED)) {
 			duration = getDurationInMilliseconds(submission.getCreatedDate(), submission.getAnalysis().getCreatedDate());

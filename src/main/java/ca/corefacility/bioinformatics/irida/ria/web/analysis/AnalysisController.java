@@ -260,7 +260,7 @@ public class AnalysisController {
 				.getAnalysisType();
 		model.addAttribute("analysisType", analysisType);
 		String viewName = getViewForAnalysisType(analysisType);
-		String workflowName = messageSource.getMessage("workflow." + analysisType.getType() + ".title", null, locale);
+		String workflowName = messageSource.getMessage("workflow." + analysisType.getType() + ".title", null, analysisType.getType(), locale);
 		model.addAttribute("workflowName", workflowName);
 		model.addAttribute("version", iridaWorkflow.getWorkflowDescription()
 				.getVersion());
