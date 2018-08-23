@@ -366,6 +366,27 @@ public class IridaWorkflowsService {
 	}
 	
 	/**
+	 * Returns a workflow associated with the given {@link UUID}, attempting to fill
+	 * in as many details as possible if the workflow can't be found.
+	 * 
+	 * @param iridaWorkflowId The {@link UUID} object to search for a workflow.
+	 * @return An {@link IridaWorkflow} with the given submission, or an 'unknown'
+	 *         workflow object if the associated workflow is not found.
+	 */
+	public IridaWorkflow getIridaWorkflowOrUnknown(UUID iridaWorkflowId) {
+		checkNotNull(iridaWorkflowId, "iridaWorkflowId is null");
+
+		try {
+			return getIridaWorkflow(iridaWorkflowId);
+		} catch (IridaWorkflowNotFoundException e) {
+			logger.warn(
+					"Could not find workflow for [" + iridaWorkflowId + "], defaulting to 'unknown' for many details");
+
+			return createUnknownWorkflow(iridaWorkflowId, BuiltInAnalysisTypes.UNKNOWN);
+		}
+	}
+
+	/**
 	 * Returns a workflow associated with the given {@link AnalysisSubmission},
 	 * attempting to fill in as many details as possible if the workflow can't be
 	 * found.
@@ -393,9 +414,14 @@ public class IridaWorkflowsService {
 				type = BuiltInAnalysisTypes.UNKNOWN;
 			}
 
-			return new IridaWorkflow(new IridaWorkflowDescription(analysisSubmission.getWorkflowId(), "unknown",
-					"unknown", type, new IridaWorkflowInput(), Lists.newLinkedList(), Lists.newLinkedList(),
-					Lists.newLinkedList()), new IridaWorkflowStructure(null));
+			return createUnknownWorkflow(analysisSubmission.getWorkflowId(), type);
 		}
+	}
+
+	private IridaWorkflow createUnknownWorkflow(UUID workflowId, AnalysisType analysisType) {
+		return new IridaWorkflow(
+				new IridaWorkflowDescription(workflowId, "unknown", "unknown", analysisType, new IridaWorkflowInput(),
+						Lists.newLinkedList(), Lists.newLinkedList(), Lists.newLinkedList()),
+				new IridaWorkflowStructure(null));
 	}
 }
