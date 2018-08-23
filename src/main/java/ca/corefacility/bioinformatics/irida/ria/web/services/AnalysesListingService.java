@@ -150,13 +150,7 @@ public class AnalysesListingService {
 		} catch (IridaWorkflowNotFoundException e) {
 			logger.warn("Could not find workflow associated with [" + submission.getWorkflowId() + "], defaulting to 'unknown' workflow");
 			
-			IridaWorkflow iridaWorkflow;
-			if (analysisState.equals(AnalysisState.COMPLETED)) {
-				iridaWorkflow = iridaWorkflowsService.createUnknownWorkflow(submission.getWorkflowId(), submission.getAnalysis().getAnalysisType());
-			} else {
-				iridaWorkflow = iridaWorkflowsService.createUnknownWorkflow(submission.getWorkflowId());
-			}
-			
+			IridaWorkflow iridaWorkflow = iridaWorkflowsService.createUnknownWorkflow(submission);
 			workflow = iridaWorkflow.getWorkflowDescription().getAnalysisType().getType();
 		}
 		

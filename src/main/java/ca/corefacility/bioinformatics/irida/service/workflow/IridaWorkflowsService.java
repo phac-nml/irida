@@ -23,6 +23,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowDefaultExcep
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotDisplayableException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
@@ -34,6 +35,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWork
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowOutput;
 import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkflowStructure;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 /**
  * Class used to load up installed workflows in IRIDA.
@@ -361,6 +363,26 @@ public class IridaWorkflowsService {
 						.requiresSingleSample())
 				.map(IridaWorkflow::getWorkflowIdentifier)
 				.collect(Collectors.toSet());
+	}
+	
+	/**
+	 * Builds a workflow with missing/unknown details.
+	 * 
+	 * @param analysisSubmission The {@link AnalysisSubmission} to use to build an
+	 *                           unknown workflow.
+	 * @return A workflow with as much information from the
+	 *         {@link AnalysisSubmission} as possible, but missing some details.
+	 */
+	public IridaWorkflow createUnknownWorkflow(AnalysisSubmission analysisSubmission) {
+		checkNotNull(analysisSubmission, "analysisSubmission is null");
+		checkNotNull(analysisSubmission.getWorkflowId(), "analysisSubmission workflowId is null");
+
+		if (AnalysisState.COMPLETED.equals(analysisSubmission) && analysisSubmission.getAnalysis() != null) {
+			return createUnknownWorkflow(analysisSubmission.getWorkflowId(),
+					analysisSubmission.getAnalysis().getAnalysisType());
+		} else {
+			return createUnknownWorkflow(analysisSubmission.getWorkflowId());
+		}
 	}
 
 	/**
