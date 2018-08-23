@@ -69,7 +69,7 @@ public class ProjectSampleAnalysisOutputInfo {
 				that.getSampleName()) && Objects.equals(getAnalysisId(), that.getAnalysisId()) && Objects.equals(
 				getAnalysisOutputFileKey(), that.getAnalysisOutputFileKey()) && Objects.equals(getFilePath(),
 				that.getFilePath()) && Objects.equals(getAnalysisOutputFileId(), that.getAnalysisOutputFileId())
-				&& getAnalysisType() == that.getAnalysisType() && Objects.equals(getWorkflowId(), that.getWorkflowId())
+				&& Objects.equals(getAnalysisType(), that.getAnalysisType()) && Objects.equals(getWorkflowId(), that.getWorkflowId())
 				&& Objects.equals(getCreatedDate().getTime(), that.getCreatedDate().getTime()) && Objects.equals(
 				getAnalysisSubmissionName(), that.getAnalysisSubmissionName()) && Objects.equals(
 				getAnalysisSubmissionId(), that.getAnalysisSubmissionId()) && Objects.equals(getUserId(),
