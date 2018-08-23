@@ -1,12 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.analysis;
 
-import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
+import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkflowStructure;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
@@ -142,13 +142,14 @@ public class AnalysisControllerTest {
 		Long submissionId = 1L;
 		ExtendedModelMap model = new ExtendedModelMap();
 		Locale locale = Locale.ENGLISH;
+		UUID workflowId = UUID.randomUUID();
 
-		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
+		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission(workflowId);
 		submission.setAnalysisState(AnalysisState.COMPLETED);
 
 		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
 		when(iridaWorkflowsServiceMock.getIridaWorkflow(submission.getWorkflowId())).thenThrow(new IridaWorkflowNotFoundException(""));
-		when(iridaWorkflowsServiceMock.getUnknownWorkflow()).thenReturn(IridaWorkflowsConfig.UNKNOWN_WORKFLOW);
+		when(iridaWorkflowsServiceMock.createUnknownWorkflow(workflowId)).thenReturn(createUnknownWorkflow(workflowId));
 
 		String detailsPage = analysisController.getDetailsPage(submissionId, model, locale);
 		assertEquals("should be details page", AnalysisController.PAGE_DETAILS_DIRECTORY + "unavailable", detailsPage);
@@ -159,6 +160,13 @@ public class AnalysisControllerTest {
 		
 		assertEquals("version should be unknown", "unknown", model.get("version"));
 		assertEquals("analysisType should be UNKNOWN", BuiltInAnalysisTypes.UNKNOWN, model.get("analysisType"));
+	}
+	
+	private IridaWorkflow createUnknownWorkflow(UUID workflowId) {
+		return new IridaWorkflow(
+				new IridaWorkflowDescription(workflowId, "unknown", "unknown", BuiltInAnalysisTypes.UNKNOWN, new IridaWorkflowInput(),
+						Lists.newLinkedList(), Lists.newLinkedList(), Lists.newLinkedList()),
+				new IridaWorkflowStructure(null));
 	}
 
 	@Test

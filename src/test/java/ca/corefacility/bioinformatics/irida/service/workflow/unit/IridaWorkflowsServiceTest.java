@@ -8,7 +8,6 @@ import java.util.UUID;
 import org.junit.Before;
 import org.junit.Test;
 
-import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowDefaultException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
@@ -52,7 +51,7 @@ public class IridaWorkflowsServiceTest {
 		iridaWorkflowSet = new IridaWorkflowSet(Sets.newHashSet(iridaWorkflow, iridaWorkflow2));
 		defaultIridaWorkflowIdSet = new IridaWorkflowIdSet(Sets.newHashSet());
 
-		iridaWorkflowsService = new IridaWorkflowsService(iridaWorkflowSet, defaultIridaWorkflowIdSet, IridaWorkflowsConfig.UNKNOWN_WORKFLOW);
+		iridaWorkflowsService = new IridaWorkflowsService(iridaWorkflowSet, defaultIridaWorkflowIdSet);
 	}
 
 	/**

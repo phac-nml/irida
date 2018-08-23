@@ -93,14 +93,18 @@ public class TestDataFactory {
 		AnalysisSubmission submission = constructAnalysisSubmission();
 		return new GenomeAssemblyFromAnalysis(submission);
 	}
-
+	
 	public static AnalysisSubmission constructAnalysisSubmission() {
+		return constructAnalysisSubmission(UUID.randomUUID());
+	}
+
+	public static AnalysisSubmission constructAnalysisSubmission(UUID workflowId) {
 		Set<SequencingObject> files = new HashSet<>();
 		files.add(constructSingleEndSequenceFile());
 		Long id = 5L;
 		final ReferenceFile rf = new ReferenceFile(files.iterator().next().getFiles().iterator().next().getFile());
 		rf.setId(id);
-		AnalysisSubmission analysisSubmission = AnalysisSubmission.builder(UUID.randomUUID())
+		AnalysisSubmission analysisSubmission = AnalysisSubmission.builder(workflowId)
 				.name("submission-" + id)
 				.inputFiles(files)
 				.referenceFile(rf)

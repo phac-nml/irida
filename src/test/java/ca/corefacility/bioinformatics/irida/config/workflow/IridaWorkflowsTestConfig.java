@@ -19,7 +19,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadExceptio
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.TestAnalysis;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.config.AnalysisTypeSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowIdSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowSet;
@@ -71,7 +70,6 @@ public class IridaWorkflowsTestConfig {
 	public IridaWorkflowsService iridaWorkflowsService(IridaWorkflowSet iridaWorkflows,
 			IridaWorkflowIdSet defaultIridaWorkflows, AnalysisTypeSet disabledAnalysisTypes)
 			throws IridaWorkflowException {
-		return new IridaWorkflowsService(iridaWorkflows, defaultIridaWorkflows, disabledAnalysisTypes,
-				IridaWorkflowsConfig.UNKNOWN_WORKFLOW);
+		return new IridaWorkflowsService(iridaWorkflows, defaultIridaWorkflows, disabledAnalysisTypes);
 	}
 }

@@ -44,8 +44,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkfl
 public class IridaWorkflowsService {
 	private static final Logger logger = LoggerFactory.getLogger(IridaWorkflowsService.class);
 	
-	private final IridaWorkflow UNKNOWN_WORKFLOW;
-
 	/**
 	 * Stores registered workflows within IRIDA.
 	 */
@@ -67,14 +65,13 @@ public class IridaWorkflowsService {
 	 * @param defaultIridaWorkflows
 	 *            A {@link IridaWorkflowIdSet} of {@link UUID}s to use as the default
 	 *            workflows.
-	 * @param unknownWorkflow A workflow to use as a placeholder for an unknown workflow/analysis type.
 	 * @throws IridaWorkflowException
 	 *             If there was an issue when attempting to register the
 	 *             workflows.
 	 */
-	public IridaWorkflowsService(IridaWorkflowSet iridaWorkflows, IridaWorkflowIdSet defaultIridaWorkflows, IridaWorkflow unknownWorkflow)
+	public IridaWorkflowsService(IridaWorkflowSet iridaWorkflows, IridaWorkflowIdSet defaultIridaWorkflows)
 			throws IridaWorkflowException {
-		this(iridaWorkflows, defaultIridaWorkflows, new AnalysisTypeSet(), unknownWorkflow);
+		this(iridaWorkflows, defaultIridaWorkflows, new AnalysisTypeSet());
 	}
 
 	/**
@@ -86,14 +83,12 @@ public class IridaWorkflowsService {
 	 * @param defaultIridaWorkflows A {@link IridaWorkflowIdSet} of {@link UUID}s to
 	 *                              use as the default workflows.
 	 * @param disabledAnalysisTypes A {@link Set} of disabled {@link AnalysisType}s.
-	 * @param unknownWorkflow       A workflow to use as a placeholder for an
-	 *                              unknown workflow/analysis type.
 	 * @throws IridaWorkflowException If there was an issue when attempting to
 	 *                                register the workflows.
 	 */
 	@Autowired
 	public IridaWorkflowsService(IridaWorkflowSet iridaWorkflows, IridaWorkflowIdSet defaultIridaWorkflows,
-			AnalysisTypeSet disabledAnalysisTypes, IridaWorkflow unknownWorkflow) throws IridaWorkflowException {
+			AnalysisTypeSet disabledAnalysisTypes) throws IridaWorkflowException {
 		checkNotNull(iridaWorkflows, "iridaWorkflows is null");
 		checkNotNull(defaultIridaWorkflows, "defaultWorkflows is null");
 
@@ -104,8 +99,6 @@ public class IridaWorkflowsService {
 		setDefaultWorkflows(defaultIridaWorkflows.getIridaWorkflowIds());
 
 		this.disabledAnalysisTypes = disabledAnalysisTypes;
-
-		this.UNKNOWN_WORKFLOW = unknownWorkflow;
 	}
 
 	/**
@@ -368,15 +361,6 @@ public class IridaWorkflowsService {
 						.requiresSingleSample())
 				.map(IridaWorkflow::getWorkflowIdentifier)
 				.collect(Collectors.toSet());
-	}
-
-	
-	/**
-	 * Gets an {@link IridaWorkflow} representing an unknown workflow.
-	 * @return The unknown workflow.
-	 */
-	public IridaWorkflow getUnknownWorkflow() {
-		return UNKNOWN_WORKFLOW;
 	}
 
 	/**

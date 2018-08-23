@@ -51,12 +51,6 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
 @Configuration
 @Import({ IridaPluginConfig.class, IridaAnalysisTypesServiceConfig.class })
 public class IridaWorkflowsConfig {
-	
-	public static final IridaWorkflow UNKNOWN_WORKFLOW = new IridaWorkflow(
-			new IridaWorkflowDescription(UUID.fromString("00000000-0000-0000-0000-000000000000"), "unknown", "unknown",
-					BuiltInAnalysisTypes.UNKNOWN, new IridaWorkflowInput(), Lists.newLinkedList(),
-					Lists.newLinkedList(), Lists.newLinkedList()),
-			new IridaWorkflowStructure(null));
 
 	private static final Logger logger = LoggerFactory.getLogger(IridaWorkflowsConfig.class);
 
@@ -270,7 +264,6 @@ public class IridaWorkflowsConfig {
 	public IridaWorkflowsService iridaWorkflowsService(IridaWorkflowSet iridaWorkflows,
 			IridaWorkflowIdSet defaultIridaWorkflows, AnalysisTypeSet disabledAnalysisTypes)
 			throws IridaWorkflowException {
-		return new IridaWorkflowsService(iridaWorkflows, defaultIridaWorkflows, disabledAnalysisTypes,
-				UNKNOWN_WORKFLOW);
+		return new IridaWorkflowsService(iridaWorkflows, defaultIridaWorkflows, disabledAnalysisTypes);
 	}
 }
