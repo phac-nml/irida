@@ -250,8 +250,8 @@ public class AnalysisController {
 		try {
 			iridaWorkflow = workflowsService.getIridaWorkflow(workflowUUID);
 		} catch (IridaWorkflowNotFoundException e) {
-			logger.warn("Error finding workflow for [" + workflowUUID + "], using default");
-			iridaWorkflow = workflowsService.getUnknownWorkflow();
+			logger.warn("Error finding workflow for [" + workflowUUID + "], defaulting to 'unknown' for many details");
+			iridaWorkflow = workflowsService.createUnknownWorkflow(workflowUUID);
 		}
 
 		// Get the name of the workflow

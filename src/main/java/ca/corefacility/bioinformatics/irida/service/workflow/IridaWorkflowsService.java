@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
@@ -25,10 +26,14 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundExce
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.config.AnalysisTypeSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowIdSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowSet;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowOutput;
+import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkflowStructure;
 
 /**
  * Class used to load up installed workflows in IRIDA.
@@ -372,5 +377,30 @@ public class IridaWorkflowsService {
 	 */
 	public IridaWorkflow getUnknownWorkflow() {
 		return UNKNOWN_WORKFLOW;
+	}
+
+	/**
+	 * Builds a workflow with missing/unknown details.
+	 * 
+	 * @param workflowUUID The UUID to assign to this workflow.
+	 * @return A workflow with the given UUID, but missing other details.
+	 */
+	public IridaWorkflow createUnknownWorkflow(UUID workflowUUID) {
+		return createUnknownWorkflow(workflowUUID, BuiltInAnalysisTypes.UNKNOWN);
+	}
+
+	/**
+	 * Builds a workflow with missing/unknown details.
+	 * 
+	 * @param workflowUUID The UUID to assign to this workflow.
+	 * @param analysisType The particular {@link AnalysisType}.
+	 * @return A workflow with the given UUID and {@link AnalysisType}, but missing
+	 *         other details.
+	 */
+	public IridaWorkflow createUnknownWorkflow(UUID workflowUUID, AnalysisType analysisType) {
+		return new IridaWorkflow(
+				new IridaWorkflowDescription(workflowUUID, "unknown", "unknown", analysisType, new IridaWorkflowInput(),
+						Lists.newLinkedList(), Lists.newLinkedList(), Lists.newLinkedList()),
+				new IridaWorkflowStructure(null));
 	}
 }
