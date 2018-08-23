@@ -32,6 +32,8 @@ import com.google.common.collect.ImmutableSet;
 public class AnalysisFastQC extends Analysis {
 
 	@NotNull
+	private final String fastqcVersion;
+	@NotNull
 	private final String fileType;
 	@NotNull
 	private final String encoding;
@@ -81,6 +83,7 @@ public class AnalysisFastQC extends Analysis {
 		this.duplicationLevelChart = null;
 		this.overrepresentedSequences = null;
 		this.fastQCReport = null;
+		this.fastqcVersion = null;
 		
 		this.setAnalysisType(BuiltInAnalysisTypes.FASTQC);
 	}
@@ -101,6 +104,7 @@ public class AnalysisFastQC extends Analysis {
 		this.duplicationLevelChart = builder.duplicationLevelChart;
 		this.overrepresentedSequences = builder.overrepresentedSequences;
 		this.fastQCReport = builder.fastQCReport;
+		this.fastqcVersion = builder.fastqcVersion;
 		
 		this.setAnalysisType(BuiltInAnalysisTypes.FASTQC);
 	}
@@ -126,6 +130,7 @@ public class AnalysisFastQC extends Analysis {
 	 * can optionally check if all required fields are set.
 	 */
 	public static class AnalysisFastQCBuilder {
+		private String fastqcVersion;
 		private String fileType;
 		private String encoding;
 		private Integer totalSequences;
@@ -195,6 +200,16 @@ public class AnalysisFastQC extends Analysis {
 		 */
 		public AnalysisFastQCBuilder executionManagerAnalysisId(final String executionManagerAnalysisId) {
 			this.executionManagerAnalysisId = executionManagerAnalysisId;
+			return this;
+		}
+
+		/**
+		 * Set the fastqc version used in the analysis
+		 * @param fastqcVersion the version of fastqc used
+		 * @return the builder
+		 */
+		public AnalysisFastQCBuilder fastqcVersion(String fastqcVersion) {
+			this.fastqcVersion = fastqcVersion;
 			return this;
 		}
 
@@ -407,6 +422,10 @@ public class AnalysisFastQC extends Analysis {
 	@JsonIgnore
 	public byte[] getDuplicationLevelChart() {
 		return duplicationLevelChart;
+	}
+
+	public String getFastqcVersion() {
+		return fastqcVersion;
 	}
 
 	public String getFileType() {

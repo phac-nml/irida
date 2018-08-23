@@ -21,7 +21,6 @@
     "angular-ui-router": "0.2.13",
     "datatables": "^1.10.15",
     "angular-bootstrap-switch": "0.4.0",
-    "font-awesome": "4.3.0",
     "ng-file-upload": "5.0.8",
     "marked": "0.3.3",
     "angular-marked": "0.0.18",
@@ -44,7 +43,6 @@
     "angular": "1.6.2",
     "angular-animate": "1.6.2",
     "moment": "2.15.0",
-    "font-awesome": "^4.7.0",
     "datatables": "^1.10.15",
     "angular-bootstrap": "0.14.3"
   }

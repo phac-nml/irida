@@ -227,14 +227,14 @@
                             <li>
                                 <a href="#" class="js-sample-export-btn" data-file="excel" data-type="file"
                                    data:url="@{/projects/{id}/samples/export(id=${project.getId()})}">
-                                    <i class="fa fa-file-excel-o fa-fw spaced-right__sm" aria-hidden="true"></i>
+                                    <i class="far fa-file-excel spaced-right__sm"></i>
                                     <th:block th:text="#{project.samples.export-to-excel}"/>
                                 </a>
                             </li>
                             <li>
                                 <a href="#" class="js-sample-export-btn" data-file="csv" data-type="file"
                                    data:url="@{/projects/{id}/samples/export(id=${project.getId()})}">
-                                    <i class="fa fa-file-o fa-fw spaced-right__sm" aria-hidden="true"></i>
+                                    <i class="far fa-file-alt spaced-right__sm"></i>
                                     <th:block th:text="#{project.samples.export-to-csv}"/>
                                 </a></li>
                         </ul>
@@ -270,7 +270,7 @@
          data:script="@{/resources/dist/js/project-samples-filter.bundle.js}"></div>
 
     <div class="hidden">
-        <span class="qc-warning-wrapper" data-toggle="popover"
+        <span class="qc-warning-wrapper js-qc-warning-wrapper" data-toggle="popover"
               th:title="#{sample.files.qc.popover-label}">
             <i class="fa fa-fw fa-exclamation-triangle"></i>
         </span>
@@ -279,7 +279,7 @@
             <h3 class="popover-title"></h3>
             <div class="popover-content"></div>
         </div>
-        <span class="locked-wrapper" data-toggle="popover" th:title="#{project.samples.locked-title}"
+        <span class="locked-wrapper js-locked-wrapper" data-toggle="popover" th:title="#{project.samples.locked-title}"
               data:content="#{project.samples.locked-content}">
             <i class="fa fa-fw fa-lock"></i>
         </span>
@@ -297,7 +297,7 @@
                        data-trigger="hover" data-container="body"
                        data:content="#{project.sample.filterByFile.modal.body}"
                        th:title="#{project.sample.filterByFile.modal.title}">
-                    <i class="fa fa-file-text-o fa-fw" aria-hidden="true"></i>
+                    <i class="far fa-file-alt"></i>
                     <input type="file" id="filter-by-file" style="display: none;"/>
                 </label>
             </div>

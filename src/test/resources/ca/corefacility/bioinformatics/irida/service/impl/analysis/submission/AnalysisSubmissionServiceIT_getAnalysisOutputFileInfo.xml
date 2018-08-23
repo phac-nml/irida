@@ -1,0 +1,428 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+    <!--
+    Need to arrange table entries in order of more attributes to less so that attrs are not ignored
+    and set	to null.
+    See here for more on this issue:
+    https://www.petrikainulainen.net/programming/spring-framework/spring-from-the-trenches-using-null-values-in-dbunit-datasets/
+
+    "DbUnit uses the first tag for a table to define the columns to be populated. If the following records for this table contain extra columns, these ones will therefore not be populated."
+
+    Trying to implement the "column sensing" with an ColumnSensingFlatXmlDataSetLoader class causes
+    the sequencing_object table sistr_typing and automated_assembly columns to throw foreign key constraint
+    exceptions when initializing the DB for tests.
+
+    Workflow UUID must be one of the following
+    "92ecf046-ee09-4271-b849-7a82625d6b60"
+    "f73cbfd2-5478-4c19-95f9-690f3712f84d"
+    "e8f9cc61-3264-48c6-81d9-02d9e84bccc7"
+    "87186c71-5c8a-4027-a9d9-b29850cebdb3"
+    "564a02d7-0cd8-4328-9090-dab1cff1b3f7"
+    "e559af58-a560-4bbd-997e-808bfbe026e2"
+    "0e8738e6-2aeb-4627-9d6e-15ae32f21c44"
+    "bac44f4b-46f9-4393-b247-de11a751410e"
+    "1317f2dc-191f-48d0-a54c-2fccd3f9ab53"
+    or any other registered production workflow (do not use unit test/IT workflows)
+    -->
+    <user id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
+          email="admin@nowhere.com" firstName="Ad" lastName="Min"
+          password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
+          phoneNumber="867-5309" username="admin" enabled="true" system_role="ROLE_ADMIN"
+          credentialsNonExpired="true" />
+    <user id="2"
+          username="thisguy" system_role="ROLE_USER"
+          email="this@guy.ca" firstName="This" lastName="Guy"
+          createdDate="2018-07-04 10:00:0.0" modifiedDate="2018-07-04 10:00:0.0"
+          password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
+          phoneNumber="555-5555"
+          enabled="true" credentialsNonExpired="true" />
+    <user id="3"
+          username="otherguy" system_role="ROLE_USER"
+          email="other@guy.ca" firstName="Other" lastName="Guy"
+          createdDate="2018-07-04 10:00:0.0" modifiedDate="2018-07-04 10:00:0.0"
+          password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
+          phoneNumber="555-5555"
+          enabled="true" credentialsNonExpired="true" />
+
+    <project id="1"
+             name="project1"
+             createdDate="2018-07-04 10:00:0.0"
+             organism="Salmonella"
+             sistr_typing_uploads="OFF"
+             assemble_uploads="0"/>
+    <project_user id="1"
+                  project_id="1"
+                  user_id="2"
+                  projectRole="PROJECT_USER"
+                  createdDate="2018-07-04 10:00:0.0"
+                  email_subscription="false" />
+    <project_user id="2"
+                  project_id="1"
+                  user_id="3"
+                  projectRole="PROJECT_USER"
+                  createdDate="2018-07-04 10:00:0.0"
+                  email_subscription="false" />
+    <sample id="1"
+            sampleName="sample1"
+            createdDate="2018-07-04 10:00:0.0" />
+    <sample id="2"
+            sampleName="sample2"
+            createdDate="2018-07-04 10:00:0.0" />
+    <sample id="3"
+            sampleName="sample3"
+            createdDate="2018-07-04 10:00:0.0" />
+    <!--sample 4 is not associated with a project but has analyses run by otherguy user-->
+    <sample id="4"
+            sampleName="sample3"
+            createdDate="2018-07-04 10:00:0.0" />
+    <project_sample id="1"
+                    project_id="1"
+                    sample_id="1"
+                    createdDate="2018-07-04 10:00:0.0"
+                    owner="true" />
+    <project_sample id="2"
+                    project_id="1"
+                    sample_id="2"
+                    createdDate="2018-07-04 10:00:0.0"
+                    owner="true" />
+    <project_sample id="3"
+                    project_id="1"
+                    sample_id="3"
+                    createdDate="2018-07-04 10:00:0.0"
+                    owner="true" />
+
+    <!--START: analysis_submission 1-->
+    <tool_execution id="1" command_line="a" tool_name="b" tool_version="c"
+                    execution_manager_identifier="test1"
+                    created_date="2018-07-04 10:00:0.0"/>
+    <tool_execution_parameters tool_id="1"
+                               execution_parameter_key="k" execution_parameter_value="v"/>
+    <analysis_output_file id="1"
+                          file_path="contigs.fasta"
+                          created_date="2018-07-04 10:00:0.0"
+                          execution_manager_file_id="test1"
+                          tool_execution_id="1"/>
+    <analysis id="1"
+              analysis_type="ASSEMBLY_ANNOTATION"
+              createdDate="2018-07-04 10:00:3.0"
+              executionManagerAnalysisId="test1"/>
+    <analysis_output_file_map analysis_id="1"
+                              analysis_output_file_key="contigs"
+                              analysisOutputFilesMap_id="1"/>
+    <analysis_submission id="1"
+                         name="sub1"
+                         analysis_id="1"
+                         remote_analysis_id="1"
+                         remote_workflow_id="1"
+                         remote_input_data_id="1"
+                         update_samples="1"
+                         analysis_state="COMPLETED"
+                         created_date="2018-07-04 10:00:2.0"
+                         workflow_id="92ecf046-ee09-4271-b849-7a82625d6b60"
+                         submitter="2"
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM"/>
+    <project_analysis_submission id="1"
+                                 project_id="1"
+                                 analysis_submission_id="1"
+                                 created_date="2018-07-04 10:00:3.0"/>
+    <!--END: analysis_submission 1-->
+
+    <!--START: analysis_submission 2-->
+    <!--automated assembly analysis-->
+    <tool_execution id="2" command_line="a" tool_name="b" tool_version="c"
+                    execution_manager_identifier="test2"
+                    created_date="2018-07-04 10:00:0.0"/>
+    <tool_execution_parameters tool_id="2"
+                               execution_parameter_key="k" execution_parameter_value="v" />
+    <analysis_output_file id="2"
+                          file_path="contigs2.fasta"
+                          created_date="2018-07-04 10:00:0.0"
+                          execution_manager_file_id="test2"
+                          tool_execution_id="2"/>
+    <analysis id="2"
+              analysis_type="ASSEMBLY_ANNOTATION"
+              createdDate="2018-07-04 10:00:3.0"
+              executionManagerAnalysisId="test2"/>
+    <analysis_output_file_map analysis_id="2"
+                              analysis_output_file_key="contigs"
+                              analysisOutputFilesMap_id="2"/>
+    <analysis_submission id="2"
+                         name="auto assembly"
+                         analysis_id="2"
+                         update_samples="1"
+                         analysis_state="COMPLETED"
+                         created_date="2018-07-04 10:00:2.0"
+                         workflow_id="92ecf046-ee09-4271-b849-7a82625d6b60"
+                         submitter="1"
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" />
+    <!--END: analysis_submission 2-->
+
+    <!--START: analysis_submission 3-->
+    <!--automated sistr analysis-->
+    <tool_execution id="3" command_line="a" tool_name="b" tool_version="c"
+                    execution_manager_identifier="test3"
+                    created_date="2018-07-04 10:00:0.0"/>
+    <tool_execution_parameters tool_id="3"
+                               execution_parameter_key="k" execution_parameter_value="v" />
+    <analysis_output_file id="3"
+                          file_path="sistr.json"
+                          created_date="2018-07-04 10:00:0.0"
+                          execution_manager_file_id="test3"
+                          tool_execution_id="3"/>
+    <analysis id="3"
+              analysis_type="SISTR_TYPING"
+              createdDate="2018-07-04 10:00:3.0"
+              executionManagerAnalysisId="test3"/>
+    <analysis_output_file_map analysis_id="3"
+                              analysis_output_file_key="sistr"
+                              analysisOutputFilesMap_id="3"/>
+    <analysis_submission id="3"
+                         name="auto sistr"
+                         analysis_id="3"
+                         update_samples="1"
+                         analysis_state="COMPLETED"
+                         created_date="2018-07-04 10:00:2.0"
+                         workflow_id="f73cbfd2-5478-4c19-95f9-690f3712f84d"
+                         submitter="1"
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" />
+    <!--END: analysis_submission 3-->
+
+    <!--START: analysis_submission 4-->
+    <!--not shared to project by otherguy user-->
+    <tool_execution id="4" command_line="a" tool_name="b" tool_version="c"
+                    execution_manager_identifier="test4"
+                    created_date="2018-07-04 10:00:0.0"/>
+    <tool_execution_parameters tool_id="4"
+                               execution_parameter_key="k" execution_parameter_value="v" />
+    <analysis_output_file id="4"
+                          file_path="sistr2.json"
+                          created_date="2018-07-04 10:00:0.0"
+                          execution_manager_file_id="test4"
+                          tool_execution_id="4"/>
+    <analysis id="4"
+              analysis_type="SISTR_TYPING"
+              createdDate="2018-07-04 10:00:3.0"
+              executionManagerAnalysisId="test4"/>
+    <analysis_output_file_map analysis_id="4"
+                              analysis_output_file_key="sistr"
+                              analysisOutputFilesMap_id="4"/>
+    <analysis_submission id="4"
+                         name="not sharing my sistr"
+                         analysis_id="4"
+                         update_samples="1"
+                         analysis_state="COMPLETED"
+                         created_date="2018-07-04 10:00:2.0"
+                         workflow_id="f73cbfd2-5478-4c19-95f9-690f3712f84d"
+                         submitter="3"
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" />
+    <!--END: analysis_submission 4-->
+
+    <!--START: analysis_submission 5-->
+    <!--shared to project 1 by otherguy user-->
+    <tool_execution id="5" command_line="a" tool_name="b" tool_version="c"
+                    execution_manager_identifier="test4"
+                    created_date="2018-07-04 10:00:0.0"/>
+    <tool_execution_parameters tool_id="5"
+                               execution_parameter_key="k" execution_parameter_value="v" />
+    <analysis_output_file id="5"
+                          file_path="sistr3.json"
+                          created_date="2018-07-04 10:00:0.0"
+                          execution_manager_file_id="test4"
+                          tool_execution_id="5"/>
+    <analysis id="5"
+              analysis_type="SISTR_TYPING"
+              createdDate="2018-07-04 10:00:3.0"
+              executionManagerAnalysisId="test4"/>
+    <analysis_output_file_map analysis_id="5"
+                              analysis_output_file_key="sistr"
+                              analysisOutputFilesMap_id="5"/>
+    <analysis_submission id="5"
+                         name="sistr shared"
+                         analysis_id="5"
+                         update_samples="1"
+                         analysis_state="COMPLETED"
+                         created_date="2018-07-04 10:00:2.0"
+                         workflow_id="f73cbfd2-5478-4c19-95f9-690f3712f84d"
+                         submitter="3"
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" />
+    <project_analysis_submission id="2"
+                                 project_id="1"
+                                 analysis_submission_id="5"
+                                 created_date="2018-07-04 10:00:3.0"/>
+    <!--END: analysis_submission 5-->
+
+
+    <!--START: analysis_submission 6-->
+    <!--automated assembly analysis-->
+    <tool_execution id="6" command_line="a" tool_name="b" tool_version="c"
+                    execution_manager_identifier="test6"
+                    created_date="2018-07-04 10:00:0.0"/>
+    <tool_execution_parameters tool_id="6"
+                               execution_parameter_key="k" execution_parameter_value="v" />
+    <analysis_output_file id="6"
+                          file_path="contigs6.fasta"
+                          created_date="2018-07-04 10:00:0.0"
+                          execution_manager_file_id="test6"
+                          tool_execution_id="6"/>
+    <analysis id="6"
+              analysis_type="ASSEMBLY_ANNOTATION"
+              createdDate="2018-07-04 10:00:3.0"
+              executionManagerAnalysisId="test6"/>
+    <analysis_output_file_map analysis_id="6"
+                              analysis_output_file_key="contigs"
+                              analysisOutputFilesMap_id="6"/>
+    <analysis_submission id="6"
+                         name="auto assembly 6"
+                         analysis_id="6"
+                         update_samples="1"
+                         analysis_state="COMPLETED"
+                         created_date="2018-07-04 10:00:2.0"
+                         workflow_id="92ecf046-ee09-4271-b849-7a82625d6b60"
+                         submitter="1"
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" />
+    <!--END: analysis_submission 6-->
+
+    <!--START: analysis_submission 7-->
+    <!--automated sistr analysis-->
+    <tool_execution id="7" command_line="a" tool_name="b" tool_version="c"
+                    execution_manager_identifier="test7"
+                    created_date="2018-07-04 10:00:0.0"/>
+    <tool_execution_parameters tool_id="7"
+                               execution_parameter_key="k" execution_parameter_value="v" />
+    <analysis_output_file id="7"
+                          file_path="sistr7.json"
+                          created_date="2018-07-04 10:00:0.0"
+                          execution_manager_file_id="test7"
+                          tool_execution_id="7"/>
+    <analysis id="7"
+              analysis_type="SISTR_TYPING"
+              createdDate="2018-07-04 10:00:3.0"
+              executionManagerAnalysisId="test7"/>
+    <analysis_output_file_map analysis_id="7"
+                              analysis_output_file_key="sistr"
+                              analysisOutputFilesMap_id="7"/>
+    <analysis_submission id="7"
+                         name="auto sistr 7"
+                         analysis_id="7"
+                         update_samples="1"
+                         analysis_state="COMPLETED"
+                         created_date="2018-07-04 10:00:2.0"
+                         workflow_id="f73cbfd2-5478-4c19-95f9-690f3712f84d"
+                         submitter="1"
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" />
+    <!--END: analysis_submission 7-->
+
+
+    <!--START: analysis_submission 8-->
+    <!--not shared to project by otherguy user for a sample not associated with a project-->
+    <tool_execution id="8" command_line="a" tool_name="b" tool_version="c"
+                    execution_manager_identifier="test8"
+                    created_date="2018-07-04 10:00:0.0"/>
+    <tool_execution_parameters tool_id="8"
+                               execution_parameter_key="k" execution_parameter_value="v" />
+    <analysis_output_file id="8"
+                          file_path="sistr8.json"
+                          created_date="2018-07-04 10:00:0.0"
+                          execution_manager_file_id="test8"
+                          tool_execution_id="8"/>
+    <analysis id="8"
+              analysis_type="SISTR_TYPING"
+              createdDate="2018-07-04 10:00:3.0"
+              executionManagerAnalysisId="test8"/>
+    <analysis_output_file_map analysis_id="8"
+                              analysis_output_file_key="sistr"
+                              analysisOutputFilesMap_id="8"/>
+    <analysis_submission id="8"
+                         name="not sharing my sistr 8"
+                         analysis_id="8"
+                         update_samples="1"
+                         analysis_state="COMPLETED"
+                         created_date="2018-07-04 10:00:2.0"
+                         workflow_id="f73cbfd2-5478-4c19-95f9-690f3712f84d"
+                         submitter="3"
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" />
+    <!--END: analysis_submission 8-->
+
+    <sequence_file id="1" created_date="2018-07-04 10:00:0.0"
+                   file_path="/sequenceFile1" />
+    <sequence_file id="2" created_date="2018-07-04 10:00:0.0"
+                   file_path="/sequenceFile2" />
+    <sequencing_object id="1" created_date="2018-07-04 10:00:2.0"
+                       automated_assembly="6" sistr_typing="7"/>
+    <sequence_file_pair id="1"/>
+    <sequence_file_pair_files pair_id="1"
+                              files_id="1"/>
+    <sequence_file_pair_files pair_id="1"
+                              files_id="2"/>
+    <sample_sequencingobject id="1"
+                             sample_id="1"
+                             sequencingobject_id="1"
+                             created_date="2018-07-04 10:00:2.0"/>
+
+
+    <sequence_file id="3" created_date="2018-07-04 10:00:0.0"
+                   file_path="/sequenceFile3"/>
+    <sequence_file id="4" created_date="2018-07-04 10:00:0.0"
+                   file_path="/sequenceFile4"/>
+    <sequencing_object id="2" created_date="2018-07-04 10:00:0.0"
+                       automated_assembly="2" sistr_typing="3"/>
+    <sequence_file_pair id="2"/>
+    <sequence_file_pair_files pair_id="2"
+                              files_id="3"/>
+    <sequence_file_pair_files pair_id="2"
+                              files_id="4"/>
+    <sample_sequencingobject id="2"
+                             sample_id="2"
+                             sequencingobject_id="2"
+                             created_date="2018-07-04 10:00:0.0"/>
+
+    <sequence_file id="5" created_date="2018-07-04 10:00:0.0"
+                   file_path="/sequenceFile5"/>
+    <sequence_file id="6" created_date="2018-07-04 10:00:0.0"
+                   file_path="/sequenceFile6"/>
+    <sequencing_object id="3" created_date="2018-07-04 10:00:1.0"/>
+    <sequence_file_pair id="3"/>
+    <sequence_file_pair_files pair_id="3"
+                              files_id="5"/>
+    <sequence_file_pair_files pair_id="3"
+                              files_id="6"/>
+    <sample_sequencingobject id="3"
+                             sample_id="3"
+                             sequencingobject_id="3"
+                             created_date="2018-07-04 10:00:1.0"/>
+
+    <!--sequencing_object 4 is linked to sample 4 which is not associated with a project-->
+    <sequence_file id="7" created_date="2018-07-04 10:00:0.0"
+                   file_path="/sequenceFile7"/>
+    <sequence_file id="8" created_date="2018-07-04 10:00:0.0"
+                   file_path="/sequenceFile8"/>
+    <sequencing_object id="4" created_date="2018-07-04 10:00:1.0"/>
+    <sequence_file_pair id="4"/>
+    <sequence_file_pair_files pair_id="4"
+                              files_id="7"/>
+    <sequence_file_pair_files pair_id="4"
+                              files_id="8"/>
+    <sample_sequencingobject id="4"
+                             sample_id="4"
+                             sequencingobject_id="4"
+                             created_date="2018-07-04 10:00:1.0"/>
+
+
+    <analysis_submission_sequencing_object sequencing_object_id="1"
+                                           analysis_submission_id="1"/>
+    <analysis_submission_sequencing_object sequencing_object_id="1"
+                                           analysis_submission_id="6"/>
+    <analysis_submission_sequencing_object sequencing_object_id="1"
+                                           analysis_submission_id="7"/>
+    <analysis_submission_sequencing_object sequencing_object_id="2"
+                                           analysis_submission_id="1"/>
+    <analysis_submission_sequencing_object sequencing_object_id="2"
+                                           analysis_submission_id="2"/>
+    <analysis_submission_sequencing_object sequencing_object_id="2"
+                                           analysis_submission_id="3"/>
+    <analysis_submission_sequencing_object sequencing_object_id="2"
+                                           analysis_submission_id="4"/>
+    <!--sequencing_object 4 has analysis_submission 8 which is a non-shared analysis by user otherguy-->
+    <analysis_submission_sequencing_object sequencing_object_id="4"
+                                           analysis_submission_id="8"/>
+</dataset>
