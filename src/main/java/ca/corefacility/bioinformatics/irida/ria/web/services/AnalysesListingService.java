@@ -18,8 +18,6 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
@@ -38,7 +36,6 @@ import java.util.stream.Collectors;
  */
 @Component
 public class AnalysesListingService {
-	private static final Logger logger = LoggerFactory.getLogger(AnalysesListingService.class);
 	
 	private AnalysisSubmissionService analysisSubmissionService;
 	private IridaWorkflowsService iridaWorkflowsService;
@@ -142,14 +139,7 @@ public class AnalysesListingService {
 			percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(submission.getId());
 		}
 
-		IridaWorkflow iridaWorkflow;
-		try {
-			iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(submission.getWorkflowId());
-		} catch (IridaWorkflowNotFoundException e) {
-			logger.warn("Could not find workflow associated with [" + submission.getWorkflowId() + "], defaulting to 'unknown' workflow");
-			
-			iridaWorkflow = iridaWorkflowsService.createUnknownWorkflow(submission);
-		}
+		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflowOrUnknown(submission);
 		
 		String workflowType = iridaWorkflow.getWorkflowDescription().getAnalysisType().getType();
 		String state = messageSource.getMessage("analysis.state." + analysisState

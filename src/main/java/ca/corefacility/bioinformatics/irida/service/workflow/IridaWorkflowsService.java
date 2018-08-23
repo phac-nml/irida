@@ -366,47 +366,36 @@ public class IridaWorkflowsService {
 	}
 	
 	/**
-	 * Builds a workflow with missing/unknown details.
+	 * Returns a workflow associated with the given {@link AnalysisSubmission},
+	 * attempting to fill in as many details as possible if the workflow can't be
+	 * found.
 	 * 
-	 * @param analysisSubmission The {@link AnalysisSubmission} to use to build an
-	 *                           unknown workflow.
-	 * @return A workflow with as much information from the
-	 *         {@link AnalysisSubmission} as possible, but missing some details.
+	 * @param analysisSubmission The {@link AnalysisSubmission} object to search for
+	 *                           a workflow.
+	 * @return An {@link IridaWorkflow} with the given submission, or an 'unknown'
+	 *         workflow object if the associated workflow is not found.
 	 */
-	public IridaWorkflow createUnknownWorkflow(AnalysisSubmission analysisSubmission) {
+	public IridaWorkflow getIridaWorkflowOrUnknown(AnalysisSubmission analysisSubmission) {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkNotNull(analysisSubmission.getWorkflowId(), "analysisSubmission workflowId is null");
 
-		if (AnalysisState.COMPLETED.equals(analysisSubmission.getAnalysisState()) && analysisSubmission.getAnalysis() != null) {
-			return createUnknownWorkflow(analysisSubmission.getWorkflowId(),
-					analysisSubmission.getAnalysis().getAnalysisType());
-		} else {
-			return createUnknownWorkflow(analysisSubmission.getWorkflowId());
+		try {
+			return getIridaWorkflow(analysisSubmission.getWorkflowId());
+		} catch (IridaWorkflowNotFoundException e) {
+			logger.warn("Could not find workflow for [" + analysisSubmission.getWorkflowId()
+					+ "], defaulting to 'unknown' for many details");
+
+			AnalysisType type;
+			if (AnalysisState.COMPLETED.equals(analysisSubmission.getAnalysisState())
+					&& analysisSubmission.getAnalysis() != null) {
+				type = analysisSubmission.getAnalysis().getAnalysisType();
+			} else {
+				type = BuiltInAnalysisTypes.UNKNOWN;
+			}
+
+			return new IridaWorkflow(new IridaWorkflowDescription(analysisSubmission.getWorkflowId(), "unknown",
+					"unknown", type, new IridaWorkflowInput(), Lists.newLinkedList(), Lists.newLinkedList(),
+					Lists.newLinkedList()), new IridaWorkflowStructure(null));
 		}
-	}
-
-	/**
-	 * Builds a workflow with missing/unknown details.
-	 * 
-	 * @param workflowUUID The UUID to assign to this workflow.
-	 * @return A workflow with the given UUID, but missing other details.
-	 */
-	public IridaWorkflow createUnknownWorkflow(UUID workflowUUID) {
-		return createUnknownWorkflow(workflowUUID, BuiltInAnalysisTypes.UNKNOWN);
-	}
-
-	/**
-	 * Builds a workflow with missing/unknown details.
-	 * 
-	 * @param workflowUUID The UUID to assign to this workflow.
-	 * @param analysisType The particular {@link AnalysisType}.
-	 * @return A workflow with the given UUID and {@link AnalysisType}, but missing
-	 *         other details.
-	 */
-	public IridaWorkflow createUnknownWorkflow(UUID workflowUUID, AnalysisType analysisType) {
-		return new IridaWorkflow(
-				new IridaWorkflowDescription(workflowUUID, "unknown", "unknown", analysisType, new IridaWorkflowInput(),
-						Lists.newLinkedList(), Lists.newLinkedList(), Lists.newLinkedList()),
-				new IridaWorkflowStructure(null));
 	}
 }

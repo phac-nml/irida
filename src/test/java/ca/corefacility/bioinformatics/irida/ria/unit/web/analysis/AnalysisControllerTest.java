@@ -98,7 +98,7 @@ public class AnalysisControllerTest {
 		submission.setAnalysisState(AnalysisState.COMPLETED);
 
 		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
-		when(iridaWorkflowsServiceMock.getIridaWorkflow(submission.getWorkflowId())).thenReturn(iridaWorkflow);
+		when(iridaWorkflowsServiceMock.getIridaWorkflowOrUnknown(submission)).thenReturn(iridaWorkflow);
 
 		String detailsPage = analysisController.getDetailsPage(submissionId, model, locale);
 		assertEquals("should be details page", AnalysisController.PAGE_DETAILS_DIRECTORY + "tree", detailsPage);
@@ -127,7 +127,7 @@ public class AnalysisControllerTest {
 		submission.setAnalysisState(AnalysisState.RUNNING);
 
 		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
-		when(iridaWorkflowsServiceMock.getIridaWorkflow(submission.getWorkflowId())).thenReturn(iridaWorkflow);
+		when(iridaWorkflowsServiceMock.getIridaWorkflowOrUnknown(submission)).thenReturn(iridaWorkflow);
 
 		String detailsPage = analysisController.getDetailsPage(submissionId, model, locale);
 		assertEquals("should be details page", AnalysisController.PAGE_DETAILS_DIRECTORY + "tree", detailsPage);
@@ -148,8 +148,7 @@ public class AnalysisControllerTest {
 		submission.setAnalysisState(AnalysisState.COMPLETED);
 
 		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
-		when(iridaWorkflowsServiceMock.getIridaWorkflow(submission.getWorkflowId())).thenThrow(new IridaWorkflowNotFoundException(""));
-		when(iridaWorkflowsServiceMock.createUnknownWorkflow(submission)).thenReturn(createUnknownWorkflow(workflowId));
+		when(iridaWorkflowsServiceMock.getIridaWorkflowOrUnknown(submission)).thenReturn(createUnknownWorkflow(workflowId));
 
 		String detailsPage = analysisController.getDetailsPage(submissionId, model, locale);
 		assertEquals("should be details page", AnalysisController.PAGE_DETAILS_DIRECTORY + "unavailable", detailsPage);
