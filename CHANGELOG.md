@@ -14,6 +14,7 @@ Changes
 * [UI]: Fixed bug where project samples page would freeze if there where numerous QC Issues. (0.22.3)
 * [UI]: Fixed error where synchronizing sequence files could lead to truncated files without generating an error. (0.22.3)
 * [UI]: Adding NCBI SRA accession to sample metadata when uploading data to NCBI.
+* [Developer]: Updated FastQC to 0.11.7.
 * [UI]: New project line list page with inline editing.
 
 0.21.0 to 0.22.0
