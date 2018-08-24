@@ -313,12 +313,15 @@ async function getTableData(isShared = true) {
     },
     {
       field: "analysisType",
-      headerName: I18N["analysis.table.type"]
+      headerName: I18N["analysis.table.type"],
+      valueGetter: function(p) {
+        return p.data.analysisType.type;
+      }
     },
     {
       field: "workflowId",
       headerName: I18N["pipeline"],
-      cellRenderer: p => {
+      valueGetter: function(p) {
         const wfInfo = workflowIds[p.data.workflowId];
         if (wfInfo === null) return p.data.workflowId;
         return `${wfInfo.name} (v${wfInfo.version})`;
