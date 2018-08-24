@@ -22,7 +22,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.config.services.IridaPluginConfig;
@@ -30,13 +29,9 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.config.AnalysisTypeSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowIdSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowSet;
-import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
-import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
-import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkflowStructure;
 import ca.corefacility.bioinformatics.irida.plugins.IridaPlugin;
 import ca.corefacility.bioinformatics.irida.plugins.IridaPluginException;
 import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;

@@ -36,7 +36,6 @@ import java.util.stream.Collectors;
  */
 @Component
 public class AnalysesListingService {
-	
 	private AnalysisSubmissionService analysisSubmissionService;
 	private IridaWorkflowsService iridaWorkflowsService;
 	private UpdateAnalysisSubmissionPermission updateAnalysisPermission;
@@ -140,10 +139,9 @@ public class AnalysesListingService {
 		}
 
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflowOrUnknown(submission);
-		
+
 		String workflowType = iridaWorkflow.getWorkflowDescription().getAnalysisType().getType();
-		String state = messageSource.getMessage("analysis.state." + analysisState
-				.toString(), null, locale);
+		String state = messageSource.getMessage("analysis.state." + analysisState.toString(), null, locale);
 		String workflow = messageSource.getMessage("workflow." + workflowType + ".title", null, workflowType, locale);
 		Long duration = 0L;
 		if (analysisState.equals(AnalysisState.COMPLETED)) {

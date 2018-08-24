@@ -108,8 +108,9 @@ public class AnalysisControllerTest {
 		assertEquals("submission should be in model", submission, model.get("analysisSubmission"));
 		
 		assertEquals("submission reference file should be in model.", submission.getReferenceFile().get(), model.get("referenceFile"));
-		
-		assertEquals("analysisType should be PHYLOGENOMICS", BuiltInAnalysisTypes.PHYLOGENOMICS, model.get("analysisType"));
+
+		assertEquals("analysisType should be PHYLOGENOMICS", BuiltInAnalysisTypes.PHYLOGENOMICS,
+				model.get("analysisType"));
 	}
 
 	@Test
@@ -136,7 +137,7 @@ public class AnalysisControllerTest {
 
 		assertEquals("submission should be in model", submission, model.get("analysisSubmission"));
 	}
-	
+
 	@Test
 	public void testGetAnalysisDetailsMissingPipeline() throws IOException, IridaWorkflowNotFoundException {
 		Long submissionId = 1L;
@@ -148,23 +149,24 @@ public class AnalysisControllerTest {
 		submission.setAnalysisState(AnalysisState.COMPLETED);
 
 		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
-		when(iridaWorkflowsServiceMock.getIridaWorkflowOrUnknown(submission)).thenReturn(createUnknownWorkflow(workflowId));
+		when(iridaWorkflowsServiceMock.getIridaWorkflowOrUnknown(submission))
+				.thenReturn(createUnknownWorkflow(workflowId));
 
 		String detailsPage = analysisController.getDetailsPage(submissionId, model, locale);
 		assertEquals("should be details page", AnalysisController.PAGE_DETAILS_DIRECTORY + "unavailable", detailsPage);
 
-		assertFalse("No preview should be set",  model.containsAttribute("preview"));
+		assertFalse("No preview should be set", model.containsAttribute("preview"));
 
 		assertEquals("submission should be in model", submission, model.get("analysisSubmission"));
-		
+
 		assertEquals("version should be unknown", "unknown", model.get("version"));
 		assertEquals("analysisType should be UNKNOWN", BuiltInAnalysisTypes.UNKNOWN, model.get("analysisType"));
 	}
-	
+
 	private IridaWorkflow createUnknownWorkflow(UUID workflowId) {
 		return new IridaWorkflow(
-				new IridaWorkflowDescription(workflowId, "unknown", "unknown", BuiltInAnalysisTypes.UNKNOWN, new IridaWorkflowInput(),
-						Lists.newLinkedList(), Lists.newLinkedList(), Lists.newLinkedList()),
+				new IridaWorkflowDescription(workflowId, "unknown", "unknown", BuiltInAnalysisTypes.UNKNOWN,
+						new IridaWorkflowInput(), Lists.newLinkedList(), Lists.newLinkedList(), Lists.newLinkedList()),
 				new IridaWorkflowStructure(null));
 	}
 

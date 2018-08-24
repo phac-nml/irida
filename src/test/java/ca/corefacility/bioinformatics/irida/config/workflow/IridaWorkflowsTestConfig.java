@@ -58,14 +58,15 @@ public class IridaWorkflowsTestConfig {
 
 	@Bean
 	public IridaWorkflowIdSet defaultIridaWorkflows() {
-		return new IridaWorkflowIdSet(Sets.newHashSet(testAnalysisDefaultId, phylogenomicsPipelineDefaultId, assemblyAnnotationPipelineDefaultId));
+		return new IridaWorkflowIdSet(Sets.newHashSet(testAnalysisDefaultId, phylogenomicsPipelineDefaultId,
+				assemblyAnnotationPipelineDefaultId));
 	}
-	
+
 	@Bean
 	public AnalysisTypeSet disabledAnalysisTypes() {
 		return new AnalysisTypeSet();
 	}
-	
+
 	@Bean
 	public IridaWorkflowsService iridaWorkflowsService(IridaWorkflowSet iridaWorkflows,
 			IridaWorkflowIdSet defaultIridaWorkflows, AnalysisTypeSet disabledAnalysisTypes)

@@ -89,8 +89,8 @@ public class IridaWorkflowsService {
 	 *                                register the workflows.
 	 */
 	@Autowired
-	public IridaWorkflowsService(IridaWorkflowSet iridaWorkflows, IridaWorkflowIdSet defaultIridaWorkflows,
-			AnalysisTypeSet disabledAnalysisTypes) throws IridaWorkflowException {
+	public IridaWorkflowsService(IridaWorkflowSet iridaWorkflows, IridaWorkflowIdSet defaultIridaWorkflows, AnalysisTypeSet disabledAnalysisTypes)
+			throws IridaWorkflowException {
 		checkNotNull(iridaWorkflows, "iridaWorkflows is null");
 		checkNotNull(defaultIridaWorkflows, "defaultWorkflows is null");
 

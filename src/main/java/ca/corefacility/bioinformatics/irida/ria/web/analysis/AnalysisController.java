@@ -358,7 +358,7 @@ public class AnalysisController {
 			outputNames = Lists.newArrayList(analysis.getAnalysisOutputFileNames());
 			Collections.sort(outputNames);
 		}
-		
+
 		return outputNames.stream()
 				.map((outputName) -> getAnalysisOutputFileInfo(submission, analysis, outputName))
 				.filter(Objects::nonNull)
