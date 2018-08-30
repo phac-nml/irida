@@ -26,59 +26,6 @@ $bgColor: #f5f7f7;
   display: none;
 }
 
-.tool-panel-slider {
-  background-color: $bgColor;
-  border: $border;
-  border-left-style: none;
-  overflow-x: hidden;
-}
-
-.tool-panel-wrapper {
-  display: flex;
-}
-
-.ag-grid-tool-panel {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  background-color: $bgColor;
-  border-right: $border;
-  height: $table-height - 2px; // 2px to account for border on the .tool-panel-slider
-  min-height: 100%;
-  width: 300px;
-}
-
-.ag-grid-tool-panel--inner {
-  overflow-y: auto;
-  padding-bottom: 0.5rem;
-}
-
-.ag-grid-tool-panel--buttons {
-  background-color: rgba(245, 247, 247, 1);
-  width: 20px;
-}
-
-.ant-layout-sider-collapsed .ag-grid-tool-panel {
-  display: none;
-}
-
-.ag-grid-tool-panel--button {
-  background-color: transparent;
-  border-radius: 0;
-  border: 0;
-  border-right: $border;
-  color: rgba(0, 0, 0, 0.54);
-  font-size: 12px;
-  font-family: $tableFont;
-  font-weight: normal;
-  height: 20px;
-  line-height: 20px;
-  width: 100px;
-  transform: rotate(90deg) translateY(-20px);
-  transform-origin: 0 0;
-}
-
 // Hack to display Custom Cell Renderer in React see ag-grid issue https://github.com/ag-grid/ag-grid/issues/2299
 .ag-react-container {
   display: inline !important;
@@ -125,3 +72,38 @@ $bgColor: #f5f7f7;
   font-size: 12px !important;
   padding: 0 10px;
 }
+
+/******************************************************************************
+* TABLE CONTROL PANEL
+******************************************************************************/
+
+.control-panel {
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  background-color: $bgColor;
+  border: $border;
+  border-left: none;
+}
+
+.control-panel--content {
+  overflow-x: hidden;
+  width: 258px;
+  margin-right: 42px;
+}
+
+.control-panel--buttons {
+  background-color: #f5f7f7;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  padding: 5px;
+  border-left: 1px solid #bdc3c7;
+
+  button {
+    color: rgba(0, 0, 0, 0.54);
+  }
+}
+
+/*****************************************************************************/

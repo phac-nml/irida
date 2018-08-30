@@ -1,11 +1,13 @@
 import React from "react";
+import PropTypes from "prop-types";
 import ImmutablePropTypes from "react-immutable-proptypes";
 import { Switch, List } from "antd";
 
 export default class ColumnVisibility extends React.Component {
   static propTypes = {
-    columns: ImmutablePropTypes.list.isRequired,
-    templates: ImmutablePropTypes.list.isRequired
+    templates: ImmutablePropTypes.list.isRequired,
+    current: PropTypes.number.isRequired,
+    templateModified: PropTypes.func.isRequired
   };
 
   /**
@@ -34,24 +36,26 @@ export default class ColumnVisibility extends React.Component {
     return (
       <div className="ag-grid-tool-panel--inner">
         {typeof columns !== "undefined" ? (
-          <List
-            dataSource={columns}
-            renderItem={item => (
-              <List.Item
-                actions={[
-                  <Switch
-                    size="small"
-                    checked={!item.hide}
-                    onChange={checked =>
-                      this.fieldUpdated(item, checked, columns)
-                    }
-                  />
-                ]}
-              >
-                <span style={{ marginLeft: 10 }}>{item.label}</span>
-              </List.Item>
-            )}
-          />
+          <div style={{ overflowY: "auto" }}>
+            <List
+              dataSource={columns}
+              renderItem={item => (
+                <List.Item
+                  actions={[
+                    <Switch
+                      size="small"
+                      checked={!item.hide}
+                      onChange={checked =>
+                        this.fieldUpdated(item, checked, columns)
+                      }
+                    />
+                  ]}
+                >
+                  <span style={{ marginLeft: 10 }}>{item.label}</span>
+                </List.Item>
+              )}
+            />
+          </div>
         ) : null}
       </div>
     );
