@@ -324,7 +324,11 @@ async function getTableData(isShared = true) {
       valueGetter: function(p) {
         const wfInfo = workflowIds[p.data.workflowId];
         if (wfInfo === null) return p.data.workflowId;
-        return `${wfInfo.name} (v${wfInfo.version})`;
+        const version =
+          wfInfo.version === "unknown"
+            ? I18N["analysis.table.version.unknown"]
+            : "v" + wfInfo.version;
+        return `${wfInfo.name} (${version})`;
       }
     },
     {
