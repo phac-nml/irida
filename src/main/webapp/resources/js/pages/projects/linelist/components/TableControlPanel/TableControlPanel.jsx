@@ -19,7 +19,11 @@ export default class TableControlPanel extends React.Component {
         </div>
         <div className="control-panel--buttons">
           <Tooltip title="COLUMN VISIBILITY" placement="left">
-            <Button shape="circle" onClick={this.props.togglePanel}>
+            <Button
+              tour="tour-columns"
+              shape="circle"
+              onClick={this.props.togglePanel}
+            >
               <i className="fas fa-columns" />
             </Button>
           </Tooltip>
