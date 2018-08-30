@@ -328,7 +328,11 @@ async function getTableData(isShared = true) {
           wfInfo.version === "unknown"
             ? I18N["analysis.table.version.unknown"]
             : "v" + wfInfo.version;
-        return `${wfInfo.name} (${version})`;
+        const name =
+          wfInfo.name === "unknown"
+            ? I18N["analysis.table.name.unknown"]
+            : wfInfo.name;
+        return `${name} (${version})`;
       }
     },
     {
