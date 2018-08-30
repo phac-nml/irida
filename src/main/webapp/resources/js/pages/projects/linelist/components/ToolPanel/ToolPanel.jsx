@@ -1,6 +1,6 @@
 import React from "react";
-import { TemplatesPanel } from "../TemplatesPanel";
-import ColumnVisibility from "./ColumnVisibility";
+import { TemplatesPanel } from "../TableControlPanel/TemplatesPanel";
+import ColumnVisibility from "../TableControlPanel/Columns/ColumnVisibility";
 
 /**
  * Use to hold the column selection in a tool panel to the right of the

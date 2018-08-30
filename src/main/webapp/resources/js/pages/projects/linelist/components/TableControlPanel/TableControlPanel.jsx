@@ -1,8 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
-import ColumnVisibility from "../ToolPanel/ColumnVisibility";
+import ColumnVisibility from "./Columns/ColumnVisibility";
 import { Button, Tooltip } from "antd";
-import { TemplatesPanel } from "../TemplatesPanel";
+import { TemplatesPanel } from "./TemplatesPanel";
+import Columns from "./Columns/Columns";
 
 export default class TableControlPanel extends React.Component {
   static propTypes = {
@@ -14,13 +15,7 @@ export default class TableControlPanel extends React.Component {
     return (
       <div className="control-panel">
         <div className="control-panel--content">
-          <TemplatesPanel {...this.props} />
-          <ColumnVisibility
-            height={this.props.height}
-            templates={this.props.templates}
-            current={this.props.current}
-            templateModified={this.props.templateModified}
-          />
+          <Columns {...this.props} />
         </div>
         <div className="control-panel--buttons">
           <Tooltip title="COLUMN VISIBILITY" placement="left">
