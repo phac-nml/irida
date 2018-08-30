@@ -35,6 +35,7 @@ export class TemplatesPanel extends React.Component {
     return (
       <div
         style={{
+          height: 75,
           borderBottom: "1px solid rgba(189, 195, 199, 1.00)",
           padding: "1rem"
         }}

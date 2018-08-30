@@ -131,6 +131,7 @@ export class LineListLayoutComponent extends React.Component {
             collapsed={this.state.collapsed}
           >
             <TableControlPanel
+              height={this.state.height}
               saved={this.props.saved}
               saveTemplate={this.props.saveTemplate}
               useTemplate={this.props.useTemplate}

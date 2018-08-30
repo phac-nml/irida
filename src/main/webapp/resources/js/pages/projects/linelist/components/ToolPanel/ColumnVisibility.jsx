@@ -7,7 +7,8 @@ export default class ColumnVisibility extends React.Component {
   static propTypes = {
     templates: ImmutablePropTypes.list.isRequired,
     current: PropTypes.number.isRequired,
-    templateModified: PropTypes.func.isRequired
+    templateModified: PropTypes.func.isRequired,
+    height: PropTypes.number.isRequired
   };
 
   /**
@@ -36,7 +37,7 @@ export default class ColumnVisibility extends React.Component {
     return (
       <div className="ag-grid-tool-panel--inner">
         {typeof columns !== "undefined" ? (
-          <div style={{ overflowY: "auto" }}>
+          <div style={{ overflowY: "auto", height: this.props.height - 77 }}>
             <List
               dataSource={columns}
               renderItem={item => (
