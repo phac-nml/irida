@@ -13,14 +13,9 @@ This document describes the necessary steps for integrating new pipelines into I
 Introduction
 ------------
 
-Pipelines in IRIDA take as input data managed by IRIDA and run through a collection of tools to produce some meaningful result.  Pipelines are implemented as a [Galaxy Workflow][] and executed using an instance of [Galaxy][] that has been setup for IRIDA.  Pipelines are versioned and are stored and distributed along with the IRIDA software.  Tools used by a pipeline are versioned and are stored and distributed using [Galaxy Toolsheds][].  In particular, the [Galaxy Main Toolshed][] and the [IRIDA Toolshed][] are used to store and distribute tools for a pipeline.
+Pipelines in IRIDA take as input data managed by IRIDA and run through a collection of tools to produce some meaningful result.  Pipelines are implemented as a [Galaxy Workflow][] and executed using an instance of [Galaxy][] that has been setup for IRIDA.  Pipelines are versioned and are stored and distributed either along with the IRIDA software, or as a separate plugin compiled into a Java JAR file.  Tools used by a pipeline are versioned and are stored and distributed using [Galaxy Toolsheds][].  In particular, the [Galaxy Main Toolshed][] and the [IRIDA Toolshed][] are used to store and distribute tools for a pipeline.
 
 ![irida-pipelines][]
-
-Currently, there are two pipelines integrated into IRIDA:
-
-1. A pipeline for constructing whole genome phylogenies.
-2. A pipeline for performing *de novo* assembly and annotation on genomes.
 
 IRIDA provides support for developing and integrating additional pipelines from Galaxy.  This process can be divided into two stages: **Galaxy Workflow Development** and **IRIDA Integration**.  The necessary steps, in brief, are:
 
@@ -29,10 +24,10 @@ IRIDA provides support for developing and integrating additional pipelines from 
     2. Upload dependency tools to a Galaxy Toolshed
     3. Export Workflow
 2. IRIDA Integration
-    1. Pipeline Data Model
-    2. IRIDA Workflow Description
-    3. Additional IRIDA Updates
-    4. Run IRIDA
+    1. Write IRIDA workflow files (or run [irida-wf-ga2xml][])
+    2. Write IRIDA workflow plugin
+    3. Build plugin JAR and move to `/etc/irida/plugins` directory
+    4. Start IRIDA
 
 Galaxy Workflow Development
 ---------------------------
@@ -86,102 +81,44 @@ Once the workflow is written in Galaxy, it can be exported to a file by going to
 IRIDA Integration
 -----------------
 
-### 1. Pipeline Data Model
+### 1. Write IRIDA workflow files
 
-The [Analysis][] class is the root class for all analyses. In IRIDA, this class will be used to store the output files once an analysis is complete.  No modification or extension is needed for this class unless your pipeline is storing special results which need to be stored in the database.
+IRIDA makes use of two files `irida_workflow.xml` and `irida_workflow_structure.ga` to define the workflow and associated metadata about the workflow.
 
-In order to properly integrate the workflow with IRIDA your pipeline may require adding a new [AnalysisType][].  The [AnalysisType][] enum defines the different types of analyses/pipelines available in IRIDA.  You will need to add a new constant here for your particular analysis type.  For example:
-
-```java
-@XmlEnumValue("mypipeline")
-MY_PIPELINE("mypipeline")
-```
-
-This links the constant `AnalysisType.MY_PIPELINE` to the string `mypipeline`.
-
-### 2. IRIDA Workflow Definition
-
-In order to integrate the Galaxy workflow with IRIDA, two files must be defined: (a) a **Workflow Structure** and (b) a **Workflow Description** file.  Both these files should be placed in a directory structure defining the name and version of the workflow.  For example, for the  pipeline version **0.1**, the directory structure should look like:
-
-```
-MyPipeline
-└── 0.1
-    ├── irida_workflow_structure.ga
-    └── irida_workflow.xml
-```
-
-#### A. Workflow Structure
-
-This is the __*.ga__ that that was exported from Galaxy in a previous step.  This file must be named **irida_workflow_structure.ga**.
-
-#### B. Workflow Description
-
-This is an **XML** file which is used to link up a Galaxy workflow with IRIDA.  It defines the particular **Analysis Type** a workflow belongs to as well as any dependency tools needed to be installed in an instance of Galaxy.  For a very simple workflow, this file would look like:
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-
-<iridaWorkflow>
-  <id>49507566-e10c-41b2-ab6f-0fb5383be997</id>
-  <name>MyPipeline</name>
-  <version>0.1</version>
-  <analysisType>mypipeline</analysisType>
-  <inputs>
-    <sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
-    <reference>reference</reference>
-    <requiresSingleSample>false</requiresSingleSample>
-  </inputs>
-  <parameters>
-    <parameter name="my_parameter" defaultValue="1">
-      <toolParameter
-        toolId="my_tool"
-        parameterName="my_parameter" />
-    </parameter>
-    <parameter name="other_parameter" defaultValue="2">
-      <toolParameter
-        toolId="my_tool"
-        parameterName="other_parameter" />
-    </parameter>
-  </parameters>
-  <outputs>
-    <output name="tree" fileName="phylogeneticTree.tre" />
-  </outputs>
-  <toolRepositories>
-    <repository>
-      <name>my_tool</name>
-      <owner>irida</owner>
-      <url>https://irida.corefacility.ca/galaxy-shed</url>
-      <revision>de3e46eaf5ba</revision>
-    </repository>
-  </toolRepositories>
-</iridaWorkflow>
-```
-
-A few things to note:
-
-  1. `<id>` defines a unique id for the workflow.  This must be a UUID.  A quick way to generate a random UUID on linux is the command `uuid -v 4`.
-  2. `<analysisType>` defines what type of analysis this workflow belongs to.  This string should match the string defined for the custom [AnalysisType][] above.
-  2. `<sequenceReadsPaired>` defines the name of the input dataset in Galaxy for the paired-end sequence reads chosen previously.  In this case it is *sequence_reads_paired*.
-  3. `<reference>` defines the name of the input dataset in Galaxy for the reference file.  In this case it is *reference*.
-  4. `<toolParameter>` defines how to map parameters a user selects in IRIDA to those in Galaxy (defined in the **irida_workflow_structure.ga** file).
-  5. `<output>` defines, for an output file, a data model name in IRIDA and maps it to the name of the file in Galaxy that was chosen previously.  In this case it is *phylogeneticTree.tre*.
-  6. `<toolRepositories>` defines the different Galaxy ToolSheds from which the dependency tools come from, as well as a revision number for the tool.
-
-For more information, please see the [IRIDA Workflow Description][] documentation.  This file must be named **irida_workflow.xml**.
-
-You can auto-generate an IRIDA Workflow Description `irida_workflow.xml` file from a Galaxy workflow `ga` file with [irida-wf-ga2xml][]:
+The easiest way to generate these files is to make use of the [irida-wf-ga2xml][] program. Assuming you already have a `galaxy_workflow.ga` file exported from the steps above, you can generate the necessary additional files for IRIDA with:
 
 ```bash
-java -jar irida-wf-ga2xml-0.1.1-standalone.jar \
-  -i irida_workflow_structure.ga \
+java -jar irida-wf-ga2xml-1.0.0-SNAPSHOT-standalone.jar \
+  -i galaxy_workflow.ga \
   -n WORKFLOW_NAME \
   -t ANALYSIS_TYPE \
-  -W WORKFLOW_VERSION > irida_workflow.xml
+  -W WORKFLOW_VERSION \
+  -o output
 ```
 
-* [Download irida-wf-ga2xml-0.1.1-SNAPSHOT-standalone.jar from Github][]
+This will build the necesary files under `output/`.  As an example:
+
+```bash
+java -jar irida-wf-ga2xml-1.0.0-SNAPSHOT-standalone.jar -i src/main/resources/ca/corefacility/bioinformatics/irida/model/workflow/analysis/type/workflows/SISTRTyping/0.3/irida_workflow_structure.ga -n SISTRTyping -t SISTR_TYPING -W 0.1.0 -o output
+```
+
+This will produce the following directory structure:
+
+```
+output
+└── SISTRTyping
+    └── 0.1.0
+        ├── irida_workflow_structure.ga
+        ├── irida_workflow.xml
+        └── messages_en.properties
+```
 
 *NOTE: You may need to edit the output from [irida-wf-ga2xml][] to ensure that only necessary tool parameters are kept in the **irida_workflow.xml** file and that the proper tool revision is used for each tool if this information is not embedded in your Galaxy Workflow `ga` file.*
+
+### 2. Write IRIDA workflow plugin
+
+IRIDA includes a mechanism for packaging up all the above workflow files into a single JAR file which can be distributed and installed independently of the main IRIDA software. To package up the IRIDA workflow into a JAR file you can start with a template plugin located at [github plugin].
+
 
 
 #### C. Move Workflow Definition
@@ -301,4 +238,3 @@ If you attempt to modify the parameters of this pipeline you should see:
 [my-pipeline-launch]: images/my-pipeline-launch.png
 [my-pipeline-parameters]: images/my-pipeline-parameters.png
 [irida-wf-ga2xml]: https://github.com/phac-nml/irida-wf-ga2xml
-[Download irida-wf-ga2xml-0.1.1-SNAPSHOT-standalone.jar from Github]: https://github.com/phac-nml/irida-wf-ga2xml/releases/download/v0.1.1/irida-wf-ga2xml-0.1.1-SNAPSHOT-standalone.jar
