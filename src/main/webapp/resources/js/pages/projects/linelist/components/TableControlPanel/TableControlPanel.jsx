@@ -22,6 +22,7 @@ export default class TableControlPanel extends React.Component {
             <Button
               tour="tour-columns"
               shape="circle"
+              className="t-columns-panel-toggle"
               onClick={this.props.togglePanel}
             >
               <i className="fas fa-columns" />
