@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.integration.security;
 
 import static com.jayway.restassured.RestAssured.expect;
-import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 
 import org.apache.http.HttpStatus;
