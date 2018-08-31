@@ -18,8 +18,8 @@ public class ProjectLineListPage extends ProjectPageBase {
 	@FindBy(className = "t-sample-name")
 	private List<WebElement> sampleNameLinks;
 
-	@FindBy(className = "t-field-toggle")
-	private List<WebElement> fieldToggles;
+	@FindBy(className = "t-field-switch")
+	private List<WebElement> fieldSwitches;
 
 	@FindBy(className = "ag-header-cell-text")
 	private List<WebElement> headerText;
@@ -66,7 +66,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 	}
 
 	public int getNumberOfMetadataFields() {
-		return fieldToggles.size();
+		return fieldSwitches.size();
 	}
 
 	public int getNumberOfTableColumnsVisible() {
@@ -74,7 +74,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 	}
 
 	public void toggleMetadataField (int field) {
-		fieldToggles.get(field).click();
+		fieldSwitches.get(field).click();
 	}
 
 	public void selectTemplate(String template) {

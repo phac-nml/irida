@@ -45,6 +45,7 @@ export default class ColumnVisibility extends React.Component {
                   actions={[
                     <Switch
                       size="small"
+                      className="t-field-switch"
                       checked={!item.hide}
                       onChange={checked =>
                         this.fieldUpdated(item, checked, columns)
