@@ -13,13 +13,14 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.Analysi
 import ca.corefacility.bioinformatics.irida.pipeline.results.updater.AnalysisSampleUpdater;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 /**
  * Interface describing the methods which must be exposed by an IRIDA pipeline
  * plugin
  */
 public interface IridaPlugin extends ExtensionPoint {
-	
+
 	/**
 	 * Defines the particular IRIDA Plugin API version.
 	 * 
@@ -29,8 +30,8 @@ public interface IridaPlugin extends ExtensionPoint {
 	 *     {@code <Plugin-Requires>1.0.0</Plugin-Requires>}
 	 * </pre>
 	 * 
-	 * If there are breaking changes to the IRIDA Plugin API this version will change, 
-	 * giving you an indication of when to update your plugin.
+	 * If there are breaking changes to the IRIDA Plugin API this version will
+	 * change, giving you an indication of when to update your plugin.
 	 */
 	public static final String PLUGIN_API_VERSION = "1.0.0";
 
@@ -40,13 +41,15 @@ public interface IridaPlugin extends ExtensionPoint {
 	 * @param metadataTemplateService a {@link MetadataTemplateService} for getting
 	 *                                metadata fields
 	 * @param sampleService           a {@link SampleService} for updating samples
+	 * @param iridaWorkflowsService   The {@link IridaWorkflowsService} for getting
+	 *                                information about a workflow.
 	 * @return An {@link Optional} {@link AnalysisSampleUpdater} if one is available
 	 *         for this pipeline
 	 * @throws IridaPluginException if an error occurs when loading the
 	 *                              {@link AnalysisSampleUpdater}
 	 */
 	public default Optional<AnalysisSampleUpdater> getUpdater(MetadataTemplateService metadataTemplateService,
-			SampleService sampleService) throws IridaPluginException {
+			SampleService sampleService, IridaWorkflowsService iridaWorkflowsService) throws IridaPluginException {
 		return Optional.empty();
 	}
 

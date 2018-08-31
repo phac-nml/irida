@@ -111,7 +111,7 @@ public class AnalysisExecutionServiceConfig {
 		for (IridaPlugin plugin : pipelinePlugins.getPlugins()) {
 			try {
 				Optional<AnalysisSampleUpdater> analysisSampleUpdaterOption = plugin.getUpdater(metadataTemplateService,
-						sampleService);
+						sampleService, iridaWorkflowsService);
 				if (analysisSampleUpdaterOption.isPresent()) {
 					pluginUpdaters.add(analysisSampleUpdaterOption.get());
 				}
