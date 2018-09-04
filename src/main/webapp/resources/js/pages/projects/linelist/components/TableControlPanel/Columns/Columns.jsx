@@ -1,11 +1,13 @@
 import React from "react";
-import PropTypes from "prop-types";
 import ColumnVisibility from "./ColumnVisibility";
 import { TemplatesPanel } from "../TemplatesPanel";
 
+/**
+ * Component to display all components related to column visibility.
+ * this included managing and selecting templates and toggling
+ * individual column visibility.
+ */
 export default class Columns extends React.Component {
-  static propTypes = {};
-
   render() {
     return (
       <React.Fragment>
