@@ -1,7 +1,6 @@
 import React from "react";
 import { Layout } from "antd";
 import { Table } from "../Table";
-import { ToolPanel } from "../ToolPanel";
 import { Toolbar } from "../Toolbar";
 import { InfoBar } from "../InfoBar";
 import TableControlPanel from "../TableControlPanel/TableControlPanel";
