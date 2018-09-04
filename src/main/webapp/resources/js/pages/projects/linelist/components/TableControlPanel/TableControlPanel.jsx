@@ -5,31 +5,42 @@ import { Button, Tooltip } from "antd";
 import { TemplatesPanel } from "./TemplatesPanel";
 import Columns from "./Columns/Columns";
 
-export default class TableControlPanel extends React.Component {
-  static propTypes = {
-    togglePanel: PropTypes.func.isRequired,
-    height: PropTypes.number.isRequired
-  };
+const { i18n } = window.PAGE;
 
-  render() {
-    return (
-      <div className="control-panel">
-        <div className="control-panel--content">
-          <Columns {...this.props} />
-        </div>
-        <div className="control-panel--buttons">
-          <Tooltip title="COLUMN VISIBILITY" placement="left">
-            <Button
-              tour="tour-columns"
-              shape="circle"
-              className="t-columns-panel-toggle"
-              onClick={this.props.togglePanel}
-            >
-              <i className="fas fa-columns" />
-            </Button>
-          </Tooltip>
-        </div>
+/**
+ * Component to handle any controls that affect the table.  This includes
+ * column visibility.
+ */
+export default function TableControlPanel(props) {
+  return (
+    <div className="control-panel">
+      <div className="control-panel--content">
+        <Columns {...props} />
       </div>
-    );
-  }
+      <div className="control-panel--buttons">
+        <Tooltip title={i18n.controlPanel.columns.title} placement="left">
+          <Button
+            tour="tour-columns"
+            shape="circle"
+            className="t-columns-panel-toggle"
+            onClick={props.togglePanel}
+          >
+            <i className="fas fa-columns" />
+          </Button>
+        </Tooltip>
+      </div>
+    </div>
+  );
 }
+
+TableControlPanel.propTypes = {
+  /**
+   * Function to handle opening and closing the panel
+   */
+  togglePanel: PropTypes.func.isRequired,
+  /**
+   * The height of the table.  Requires because the user can change the window height
+   * which will affect the table and control panel components.
+   */
+  height: PropTypes.number.isRequired
+};
