@@ -42,6 +42,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -244,20 +246,14 @@ public class AnalysisController {
 		UUID workflowUUID = submission.getWorkflowId();
 		logger.trace("Workflow ID is " + workflowUUID);
 
-		IridaWorkflow iridaWorkflow;
-		try {
-			iridaWorkflow = workflowsService.getIridaWorkflow(workflowUUID);
-		} catch (IridaWorkflowNotFoundException e) {
-			logger.error("Error finding workflow, ", e);
-			throw new EntityNotFoundException("Couldn't find workflow for submission " + submission.getId(), e);
-		}
+		IridaWorkflow iridaWorkflow = workflowsService.getIridaWorkflowOrUnknown(submission);
 
 		// Get the name of the workflow
 		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription()
 				.getAnalysisType();
 		model.addAttribute("analysisType", analysisType);
 		String viewName = getViewForAnalysisType(analysisType);
-		String workflowName = messageSource.getMessage("workflow." + analysisType.getType() + ".title", null, locale);
+		String workflowName = messageSource.getMessage("workflow." + analysisType.getType() + ".title", null, analysisType.getType(), locale);
 		model.addAttribute("workflowName", workflowName);
 		model.addAttribute("version", iridaWorkflow.getWorkflowDescription()
 				.getVersion());
@@ -349,15 +345,20 @@ public class AnalysisController {
 	 *
 	 * @param id {@link AnalysisSubmission} id
 	 * @return map of info about each {@link AnalysisOutputFile}
-	 * @throws IridaWorkflowNotFoundException if the specified workflow cannot be found.
 	 */
 	@RequestMapping(value = "/ajax/{id}/outputs", method = RequestMethod.GET)
 	@ResponseBody
-	public List<AnalysisOutputFileInfo> getOutputFilesInfo(@PathVariable Long id)
-			throws IridaWorkflowNotFoundException {
+	public List<AnalysisOutputFileInfo> getOutputFilesInfo(@PathVariable Long id) {
 		AnalysisSubmission submission = analysisSubmissionService.read(id);
 		Analysis analysis = submission.getAnalysis();
-		final List<String> outputNames = workflowsService.getOutputNames(submission.getWorkflowId());
+		List<String> outputNames;
+		try {
+			outputNames = workflowsService.getOutputNames(submission.getWorkflowId());
+		} catch (IridaWorkflowNotFoundException e) {
+			outputNames = Lists.newArrayList(analysis.getAnalysisOutputFileNames());
+			Collections.sort(outputNames);
+		}
+
 		return outputNames.stream()
 				.map((outputName) -> getAnalysisOutputFileInfo(submission, analysis, outputName))
 				.filter(Objects::nonNull)

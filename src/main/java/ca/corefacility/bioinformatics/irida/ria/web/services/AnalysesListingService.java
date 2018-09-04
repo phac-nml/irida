@@ -17,6 +17,7 @@ import ca.corefacility.bioinformatics.irida.security.permissions.analysis.Update
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
@@ -137,11 +138,11 @@ public class AnalysesListingService {
 			percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(submission.getId());
 		}
 
-		String workflowType = iridaWorkflowsService.getIridaWorkflow(submission.getWorkflowId()).getWorkflowDescription()
-				.getAnalysisType().toString();
-		String workflow = messageSource.getMessage("workflow." + workflowType + ".title", null, locale);
-		String state = messageSource.getMessage("analysis.state." + analysisState
-				.toString(), null, locale);
+		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflowOrUnknown(submission);
+
+		String workflowType = iridaWorkflow.getWorkflowDescription().getAnalysisType().getType();
+		String state = messageSource.getMessage("analysis.state." + analysisState.toString(), null, locale);
+		String workflow = messageSource.getMessage("workflow." + workflowType + ".title", null, workflowType, locale);
 		Long duration = 0L;
 		if (analysisState.equals(AnalysisState.COMPLETED)) {
 			duration = getDurationInMilliseconds(submission.getCreatedDate(), submission.getAnalysis().getCreatedDate());

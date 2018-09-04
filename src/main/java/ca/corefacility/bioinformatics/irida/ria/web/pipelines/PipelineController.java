@@ -573,7 +573,7 @@ public class PipelineController extends BaseController {
 	@RequestMapping(value = "/ajax/{pipelineUUID}")
 	@ResponseBody
 	public IridaWorkflowDescription getPipelineInfo(@PathVariable UUID pipelineUUID) throws IridaWorkflowNotFoundException {
-		return workflowsService.getIridaWorkflow(pipelineUUID).getWorkflowDescription();
+		return workflowsService.getIridaWorkflowOrUnknown(pipelineUUID).getWorkflowDescription();
 	}
 	
 	/**

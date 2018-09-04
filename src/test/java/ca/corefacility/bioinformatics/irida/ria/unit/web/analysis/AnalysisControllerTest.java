@@ -6,6 +6,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
+import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkflowStructure;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
@@ -97,7 +98,7 @@ public class AnalysisControllerTest {
 		submission.setAnalysisState(AnalysisState.COMPLETED);
 
 		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
-		when(iridaWorkflowsServiceMock.getIridaWorkflow(submission.getWorkflowId())).thenReturn(iridaWorkflow);
+		when(iridaWorkflowsServiceMock.getIridaWorkflowOrUnknown(submission)).thenReturn(iridaWorkflow);
 
 		String detailsPage = analysisController.getDetailsPage(submissionId, model, locale);
 		assertEquals("should be details page", AnalysisController.PAGE_DETAILS_DIRECTORY + "tree", detailsPage);
@@ -107,6 +108,9 @@ public class AnalysisControllerTest {
 		assertEquals("submission should be in model", submission, model.get("analysisSubmission"));
 		
 		assertEquals("submission reference file should be in model.", submission.getReferenceFile().get(), model.get("referenceFile"));
+
+		assertEquals("analysisType should be PHYLOGENOMICS", BuiltInAnalysisTypes.PHYLOGENOMICS,
+				model.get("analysisType"));
 	}
 
 	@Test
@@ -124,7 +128,7 @@ public class AnalysisControllerTest {
 		submission.setAnalysisState(AnalysisState.RUNNING);
 
 		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
-		when(iridaWorkflowsServiceMock.getIridaWorkflow(submission.getWorkflowId())).thenReturn(iridaWorkflow);
+		when(iridaWorkflowsServiceMock.getIridaWorkflowOrUnknown(submission)).thenReturn(iridaWorkflow);
 
 		String detailsPage = analysisController.getDetailsPage(submissionId, model, locale);
 		assertEquals("should be details page", AnalysisController.PAGE_DETAILS_DIRECTORY + "tree", detailsPage);
@@ -132,6 +136,74 @@ public class AnalysisControllerTest {
 		assertFalse("No preview should be available", model.containsAttribute("preview"));
 
 		assertEquals("submission should be in model", submission, model.get("analysisSubmission"));
+	}
+
+	@Test
+	public void testGetAnalysisDetailsMissingPipeline() throws IOException, IridaWorkflowNotFoundException {
+		Long submissionId = 1L;
+		ExtendedModelMap model = new ExtendedModelMap();
+		Locale locale = Locale.ENGLISH;
+		UUID workflowId = UUID.randomUUID();
+
+		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission(workflowId);
+		submission.setAnalysisState(AnalysisState.COMPLETED);
+
+		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
+		when(iridaWorkflowsServiceMock.getIridaWorkflowOrUnknown(submission))
+				.thenReturn(createUnknownWorkflow(workflowId));
+
+		String detailsPage = analysisController.getDetailsPage(submissionId, model, locale);
+		assertEquals("should be details page", AnalysisController.PAGE_DETAILS_DIRECTORY + "unavailable", detailsPage);
+
+		assertFalse("No preview should be set", model.containsAttribute("preview"));
+
+		assertEquals("submission should be in model", submission, model.get("analysisSubmission"));
+
+		assertEquals("version should be unknown", "unknown", model.get("version"));
+		assertEquals("analysisType should be UNKNOWN", BuiltInAnalysisTypes.UNKNOWN, model.get("analysisType"));
+	}
+
+	private IridaWorkflow createUnknownWorkflow(UUID workflowId) {
+		return new IridaWorkflow(
+				new IridaWorkflowDescription(workflowId, "unknown", "unknown", BuiltInAnalysisTypes.UNKNOWN,
+						new IridaWorkflowInput(), Lists.newLinkedList(), Lists.newLinkedList(), Lists.newLinkedList()),
+				new IridaWorkflowStructure(null));
+	}
+
+	@Test
+	public void getOutputFilesInfoSuccess() throws IridaWorkflowNotFoundException {
+		Long submissionId = 1L;
+
+		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
+		submission.setAnalysisState(AnalysisState.COMPLETED);
+
+		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
+		when(iridaWorkflowsServiceMock.getOutputNames(submission.getWorkflowId()))
+				.thenReturn(Lists.newArrayList("tree"));
+
+		List<AnalysisOutputFileInfo> outputInfos = analysisController.getOutputFilesInfo(submissionId);
+
+		assertEquals("Should only be one output", 1, outputInfos.size());
+
+		AnalysisOutputFileInfo info = outputInfos.get(0);
+
+		assertEquals("Should have proper filename", "snp_tree.tree", info.getFilename());
+	}
+
+	@Test
+	public void getOutputFilesInfoSuccessNoWorkflow() throws IridaWorkflowNotFoundException {
+		Long submissionId = 1L;
+
+		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
+		submission.setAnalysisState(AnalysisState.COMPLETED);
+
+		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
+		when(iridaWorkflowsServiceMock.getOutputNames(submission.getWorkflowId()))
+				.thenThrow(new IridaWorkflowNotFoundException(""));
+
+		List<AnalysisOutputFileInfo> outputInfos = analysisController.getOutputFilesInfo(submissionId);
+
+		assertEquals("Should be 5 outputs", 5, outputInfos.size());
 	}
 
 	// ************************************************************************************************

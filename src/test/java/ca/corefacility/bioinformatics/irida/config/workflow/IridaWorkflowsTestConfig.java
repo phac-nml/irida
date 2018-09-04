@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Profile;
 
 import com.google.common.collect.Sets;
 
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
@@ -22,6 +23,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.config.
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowIdSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowSet;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowLoaderService;
+import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 /**
  * Class used to load up test workflows.
@@ -56,11 +58,19 @@ public class IridaWorkflowsTestConfig {
 
 	@Bean
 	public IridaWorkflowIdSet defaultIridaWorkflows() {
-		return new IridaWorkflowIdSet(Sets.newHashSet(testAnalysisDefaultId, phylogenomicsPipelineDefaultId, assemblyAnnotationPipelineDefaultId));
+		return new IridaWorkflowIdSet(Sets.newHashSet(testAnalysisDefaultId, phylogenomicsPipelineDefaultId,
+				assemblyAnnotationPipelineDefaultId));
 	}
-	
+
 	@Bean
 	public AnalysisTypeSet disabledAnalysisTypes() {
 		return new AnalysisTypeSet();
+	}
+
+	@Bean
+	public IridaWorkflowsService iridaWorkflowsService(IridaWorkflowSet iridaWorkflows,
+			IridaWorkflowIdSet defaultIridaWorkflows, AnalysisTypeSet disabledAnalysisTypes)
+			throws IridaWorkflowException {
+		return new IridaWorkflowsService(iridaWorkflows, defaultIridaWorkflows, disabledAnalysisTypes);
 	}
 }

@@ -25,21 +25,27 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowDefaultException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowTestBuilder;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.TestAnalysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowIdSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowSet;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowLoaderService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -69,6 +75,8 @@ public class IridaWorkflowsServiceIT {
 	private static final UUID workflowId1v2 = UUID.fromString("c5f29cb2-1b68-4d34-9b93-609266af7551");
 	private static final UUID workflowIdPhylogenomics = UUID.fromString("1f9ea289-5053-4e4a-bc76-1f0c60b179f8");
 	private static final UUID invalidWorkflowId = UUID.fromString("dca0bcc1-cc02-4c08-bd13-c6937d56cf70");
+	
+	private static final SequenceFilePair filePair = new SequenceFilePair();
 
 	@Before
 	public void setup() throws IOException, URISyntaxException, IridaWorkflowException {
@@ -83,7 +91,7 @@ public class IridaWorkflowsServiceIT {
 
 		testWorkflow1v1 = iridaWorkflowLoaderService.loadIridaWorkflowFromDirectory(workflowVersion1DirectoryPath);
 		testWorkflow1v2 = iridaWorkflowLoaderService.loadIridaWorkflowFromDirectory(workflowVersion2DirectoryPath);
-		testWorkflowPhylogenomics = iridaWorkflowLoaderService.loadIridaWorkflowFromDirectory(workflowPhylogenomicsDirectoryPath);
+		testWorkflowPhylogenomics = iridaWorkflowLoaderService.loadIridaWorkflowFromDirectory(workflowPhylogenomicsDirectoryPath);		
 	}
 
 	/**
@@ -108,6 +116,95 @@ public class IridaWorkflowsServiceIT {
 	public void testGetIridaWorkflowFail() throws IridaWorkflowException {
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
 		iridaWorkflowsService.getIridaWorkflow(invalidWorkflowId);
+	}
+	
+	/**
+	 * Tests getting a valid workflow.
+	 * 
+	 * @throws IridaWorkflowException
+	 */
+	@Test
+	public void testGetIridaWorkflowOrUnknownExistingWorkflow() throws IridaWorkflowException {
+		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
+		assertEquals("Workflows are not equal", testWorkflow1v1,
+				iridaWorkflowsService.getIridaWorkflowOrUnknown(workflowId1v1));
+	}
+
+	/**
+	 * Tests getting an unknown workflow.
+	 * 
+	 * @throws IridaWorkflowException
+	 */
+	@Test
+	public void testGetIridaWorkflowOrUnknownWithUnknownWorkflow() throws IridaWorkflowException {
+		IridaWorkflow workflow = iridaWorkflowsService.getIridaWorkflowOrUnknown(workflowId1v1);
+
+		assertEquals("Workflow type is not unknown", BuiltInAnalysisTypes.UNKNOWN,
+				workflow.getWorkflowDescription().getAnalysisType());
+		assertEquals("Workflow version is not unknown", "unknown", workflow.getWorkflowDescription().getVersion());
+	}
+
+	/**
+	 * Tests getting a valid workflow from an {@link AnalysisSubmission}.
+	 * 
+	 * @throws IridaWorkflowException
+	 */
+	@Test
+	public void testGetIridaWorkflowOrUnknownFromAnalysisSubmissionSuccess() throws IridaWorkflowException {
+		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
+
+		AnalysisSubmission submission = new AnalysisSubmission.Builder(workflowId1v1)
+				.inputFiles(Sets.newHashSet(filePair)).build();
+
+		assertEquals("Workflows are not equal", testWorkflow1v1,
+				iridaWorkflowsService.getIridaWorkflowOrUnknown(submission));
+	}
+
+	/**
+	 * Tests getting an invalid workflow from an {@link AnalysisSubmission}, but is
+	 * completed.
+	 * 
+	 * @throws IridaWorkflowException
+	 * @throws AnalysisAlreadySetException
+	 */
+	@Test
+	public void testGetIridaWorkflowOrUnknownFromAnalysisSubmissionInvalidCompleted()
+			throws IridaWorkflowException, AnalysisAlreadySetException {
+		AnalysisSubmission submission = new AnalysisSubmission.Builder(workflowId1v1)
+				.inputFiles(Sets.newHashSet(filePair)).build();
+		submission.setAnalysisState(AnalysisState.COMPLETED);
+
+		Analysis analysis = new Analysis("analysis", Maps.newHashMap(), BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION);
+		submission.setAnalysis(analysis);
+
+		IridaWorkflow workflow = iridaWorkflowsService.getIridaWorkflowOrUnknown(submission);
+
+		assertEquals("Workflow ids are not equal", workflowId1v1, workflow.getWorkflowDescription().getId());
+		assertEquals("Workflow types are not equal", BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION,
+				workflow.getWorkflowDescription().getAnalysisType());
+		assertEquals("Workflow versions are not equal", "unknown", workflow.getWorkflowDescription().getVersion());
+	}
+
+	/**
+	 * Tests getting an invalid workflow from an {@link AnalysisSubmission}, but is
+	 * not completed.
+	 * 
+	 * @throws IridaWorkflowException
+	 * @throws AnalysisAlreadySetException
+	 */
+	@Test
+	public void testGetIridaWorkflowOrUnknownFromAnalysisSubmissionInvalidNotCompleted()
+			throws IridaWorkflowException, AnalysisAlreadySetException {
+		AnalysisSubmission submission = new AnalysisSubmission.Builder(workflowId1v1)
+				.inputFiles(Sets.newHashSet(filePair)).build();
+		submission.setAnalysisState(AnalysisState.RUNNING);
+
+		IridaWorkflow workflow = iridaWorkflowsService.getIridaWorkflowOrUnknown(submission);
+
+		assertEquals("Workflow ids are not equal", workflowId1v1, workflow.getWorkflowDescription().getId());
+		assertEquals("Workflow types are not equal", BuiltInAnalysisTypes.UNKNOWN,
+				workflow.getWorkflowDescription().getAnalysisType());
+		assertEquals("Workflow versions are not equal", "unknown", workflow.getWorkflowDescription().getVersion());
 	}
 
 	/**
