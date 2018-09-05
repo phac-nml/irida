@@ -228,9 +228,16 @@ public class LineListController {
 	 */
 	private List<MetadataTemplateField> getAllProjectMetadataFieldsWithSampleId(Long projectId, Locale locale) {
 		List<MetadataTemplateField> fields = getAllProjectMetadataFields(projectId);
+		return addDefaultTemplateFields(fields, locale);
+	}
+
+	private List<MetadataTemplateField> addDefaultTemplateFields(List<MetadataTemplateField> f, Locale locale) {
+		List<MetadataTemplateField> fields = Lists.newArrayList(f);
 		// Need the sample name.  This will enforce that it is in the first position.
 		fields.add(0, new MetadataTemplateField(
 				messageSource.getMessage("linelist.agGrid.sampleName", new Object[] {}, locale), "text"));
+		fields.add(new MetadataTemplateField("Created Date", "date"));
+		fields.add(new MetadataTemplateField("Modified Date", "date"));
 		return fields;
 	}
 

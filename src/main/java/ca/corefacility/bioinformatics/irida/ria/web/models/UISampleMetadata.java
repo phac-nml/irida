@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.models;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,6 +17,8 @@ public class UISampleMetadata {
 	private String label;
 	private Long projectId;
 	private String projectLabel;
+	private Date createdDate;
+	private Date modifiedDate;
 	private Map<String, String> metadata;
 
 	public UISampleMetadata(Project project, Sample sample) {
@@ -23,6 +26,8 @@ public class UISampleMetadata {
 		this.label = sample.getLabel();
 		this.projectId = project.getId();
 		this.projectLabel = project.getLabel();
+		this.createdDate = sample.getCreatedDate();
+		this.modifiedDate = sample.getModifiedDate();
 		this.metadata = getMetadataForSample(sample);
 	}
 
