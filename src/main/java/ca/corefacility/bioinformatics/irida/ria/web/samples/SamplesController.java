@@ -195,16 +195,14 @@ public class SamplesController extends BaseController {
 		Map<String, Object> updatedValues = new HashMap<>();
 		for (String field : FIELDS) {
 			String fieldValue = params.get(field);
-			if (!Strings.isNullOrEmpty(fieldValue)) {
-				updatedValues.put(field, fieldValue);
-				model.addAttribute(field, fieldValue);
-			}
+			updatedValues.put(field, fieldValue);
+			model.addAttribute(field, fieldValue);
 		}
+		
 		// Special case because it is a date field.
-		if (collectionDate != null) {
-			updatedValues.put(COLLECTION_DATE, collectionDate);
-			model.addAttribute(COLLECTION_DATE, collectionDate);
-		}
+		updatedValues.put(COLLECTION_DATE, collectionDate);
+		model.addAttribute(COLLECTION_DATE, collectionDate);
+
 
 		/**
 		 * If there's sample metadata to add, add it here.
