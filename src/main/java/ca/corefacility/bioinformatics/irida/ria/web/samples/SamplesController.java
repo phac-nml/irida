@@ -195,7 +195,12 @@ public class SamplesController extends BaseController {
 		Map<String, Object> updatedValues = new HashMap<>();
 		for (String field : FIELDS) {
 			String fieldValue = params.get(field);
+			if(Strings.isNullOrEmpty(fieldValue)){
+				fieldValue = null;
+			}
+
 			updatedValues.put(field, fieldValue);
+			
 			if (fieldValue != null) {
 				model.addAttribute(field, fieldValue);
 			}
