@@ -62,7 +62,7 @@ public class IridaPluginConfig {
 		for (IridaPlugin plugin : plugins) {
 			try {
 				if (plugin.getAnalysisType() != null && plugin.getDefaultWorkflowUUID() != null
-						&& plugin.getUpdater(null, null) != null && plugin.getWorkflowsPath() != null
+						&& plugin.getUpdater(null, null, null) != null && plugin.getWorkflowsPath() != null
 						&& plugin.getBackgroundColor() != null && plugin.getTextColor() != null) {
 					logger.trace("Irida plugin [" + plugin.getClass() + "] is valid");
 

@@ -135,7 +135,7 @@ public class ToolExecution implements IridaThing {
 		}
 		this.executionTimeParameters = addExecutionTimeParameters(executionTimeParameters);
 		this.createdDate = new Date();
-		this.commandLine = commandLine;
+		this.commandLine = (commandLine == null) ? "null" : commandLine;
 	}
 
 	/**
