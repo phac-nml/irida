@@ -7,7 +7,7 @@ export class SampleNameRenderer extends React.Component {
   constructor(props) {
     super(props);
     this.href = `${BASE_URL}samples/${Number(props.data.sampleId)}`;
-    this.name = props.value;
+    this.name = props.data.sampleName;
   }
   render() {
     return (
@@ -19,6 +19,5 @@ export class SampleNameRenderer extends React.Component {
 }
 
 SampleNameRenderer.propTypes = {
-  data: PropTypes.object.isRequired,
-  value: PropTypes.string.isRequired
+  data: PropTypes.object.isRequired
 };

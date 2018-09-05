@@ -29,6 +29,10 @@ public class UIMetadataTemplateField {
 		return label;
 	}
 
+	public String getType() {
+		return type;
+	}
+
 	public boolean isHide() {
 		return hide;
 	}

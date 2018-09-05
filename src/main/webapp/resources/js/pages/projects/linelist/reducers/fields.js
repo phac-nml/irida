@@ -1,4 +1,5 @@
 import { fromJS, List } from "immutable";
+import { isDate } from "../../../../utilities/date-utilities";
 
 /*
 Special handler for formatting the sample Name Column;
@@ -15,6 +16,35 @@ const sampleNameColumn = {
   lockPinned: true
 };
 
+/*
+Formatting for date fields
+ */
+const dateColumn = {
+  cellRenderer: "DateCellRenderer",
+  filter: "agDateColumnFilter",
+  cellStyle(params) {
+    if (!params.value || isDate(params.value)) {
+      return {
+        paddingRight: 2,
+        backgroundColor: "transparent"
+      };
+    }
+    return {
+      paddingRight: 2,
+      backgroundColor: "#FFF1F0"
+    };
+  },
+  comparator(d1, d2) {
+    if (typeof d1 === "undefined" || !isDate(d1)) {
+      return 1;
+    } else if (typeof d2 === "undefined" || !isDate(d2)) {
+      return -1;
+    } else {
+      return new Date(d2) - new Date(d1);
+    }
+  }
+};
+
 /**
  * Fields need to be formatted properly to go into the column headers.
  * @param {array} cols
@@ -24,7 +54,8 @@ const formatColumns = cols =>
   cols.map((f, i) => ({
     field: f.label,
     headerName: f.label,
-    ...(i === 0 ? sampleNameColumn : {})
+    ...(i === 0 ? sampleNameColumn : {}),
+    ...(f.type === "date" ? dateColumn : {})
   }));
 
 export const types = {

@@ -23,7 +23,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.web.models.UIMetadataTemplate;
 import ca.corefacility.bioinformatics.irida.ria.web.models.UIMetadataTemplateField;
-import ca.corefacility.bioinformatics.irida.ria.web.models.UISampleMetadata;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -68,11 +67,11 @@ public class LineListController {
 	 * {@link  Sample}s in a {@link Project}
 	 *
 	 * @param projectId {@link Long} identifier for a {@link Project}
-	 * @return {@link List} of {@link UISampleMetadata}s of all {@link Sample} metadata in a {@link Project}
+	 * @return {@link List} of {@link Map}s of all {@link Sample} metadata in a {@link Project}
 	 */
 	@RequestMapping(value = "/entries", method = RequestMethod.GET)
 	@ResponseBody
-	public List<UISampleMetadata> getProjectSamplesMetadataEntries(@RequestParam long projectId) {
+	public List<Map<String, String>> getProjectSamplesMetadataEntries(@RequestParam long projectId) {
 		return getAllProjectSamplesMetadataEntries(projectId);
 	}
 
@@ -213,6 +212,10 @@ public class LineListController {
 		}
 		List<MetadataTemplateField> fields = Lists.newArrayList(fieldSet);
 
+		// Add the created and modified dates
+		fields.add(new MetadataTemplateField("createdDate", "date"));
+		fields.add(new MetadataTemplateField("modifiedDate", "date"));
+
 		// Sort so they always return in the same order
 		fields.sort((f1, f2) -> f1.getLabel()
 				.compareToIgnoreCase(f2.getLabel()));
@@ -236,8 +239,8 @@ public class LineListController {
 		// Need the sample name.  This will enforce that it is in the first position.
 		fields.add(0, new MetadataTemplateField(
 				messageSource.getMessage("linelist.agGrid.sampleName", new Object[] {}, locale), "text"));
-		fields.add(new MetadataTemplateField("Created Date", "date"));
-		fields.add(new MetadataTemplateField("Modified Date", "date"));
+		fields.add(new MetadataTemplateField("createdDate", "date"));
+		fields.add(new MetadataTemplateField("modifiedDate", "date"));
 		return fields;
 	}
 
@@ -247,16 +250,33 @@ public class LineListController {
 	 * @param projectId {@link Long} identifier for a {@link Project}
 	 * @return {@link List} of {@link List}s of all {@link Sample} metadata in a {@link Project}
 	 */
-	private List<UISampleMetadata> getAllProjectSamplesMetadataEntries(Long projectId) {
+	private List<Map<String, String>> getAllProjectSamplesMetadataEntries(Long projectId) {
 		Project project = projectService.read(projectId);
 		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(project);
-		List<UISampleMetadata> result = new ArrayList<>(samplesForProject.size());
+		List<Map<String, String>> result = new ArrayList<>(samplesForProject.size());
 
 		for (Join<Project, Sample> join : samplesForProject) {
 			Sample sample = join.getObject();
-			result.add(new UISampleMetadata(project, sample));
+			Map<String, String> metadata = getMetadataForSample(sample);
+			metadata.put("sampleId", String.valueOf(sample.getId()));
+			metadata.put("sampleName", sample.getSampleName());
+			metadata.put("projectId", String.valueOf(projectId));
+			metadata.put("projectName", project.getLabel());
+			metadata.put("createdDate", String.valueOf(sample.getCreatedDate()));
+			metadata.put("modifiedDate", String.valueOf(sample.getCreatedDate()));
+			result.add(metadata);
 		}
 
 		return result;
+	}
+
+	private Map<String, String> getMetadataForSample(Sample sample) {
+		Map<String, String> entries = new HashMap<>();
+		Map<MetadataTemplateField, MetadataEntry> sampleMetadata = sample.getMetadata();
+		for (MetadataTemplateField field : sampleMetadata.keySet()) {
+			MetadataEntry entry = sampleMetadata.getOrDefault(field, new MetadataEntry());
+			entries.put(field.getLabel(), entry.getValue());
+		}
+		return entries;
 	}
 }
