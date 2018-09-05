@@ -191,17 +191,21 @@ public class SamplesController extends BaseController {
 			@RequestParam(name = "metadata") String metadataString, @RequestParam Map<String, String> params,
 			HttpServletRequest request) {
 		logger.debug("Updating sample [" + sampleId + "]");
-		
+
 		Map<String, Object> updatedValues = new HashMap<>();
 		for (String field : FIELDS) {
 			String fieldValue = params.get(field);
 			updatedValues.put(field, fieldValue);
-			model.addAttribute(field, fieldValue);
+			if (fieldValue != null) {
+				model.addAttribute(field, fieldValue);
+			}
 		}
-		
+
 		// Special case because it is a date field.
 		updatedValues.put(COLLECTION_DATE, collectionDate);
-		model.addAttribute(COLLECTION_DATE, collectionDate);
+		if (collectionDate != null) {
+			model.addAttribute(COLLECTION_DATE, collectionDate);
+		}
 
 
 		/**
