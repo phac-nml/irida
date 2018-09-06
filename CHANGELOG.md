@@ -15,6 +15,7 @@ Changes
 * [UI]: Fixed error where synchronizing sequence files could lead to truncated files without generating an error. (0.22.3)
 * [UI]: Adding NCBI SRA accession to sample metadata when uploading data to NCBI.
 * [Developer]: Updated FastQC to 0.11.7.
+* [UI]: Fixed bug in sample edit page that didn't allow users to clear a field in the sample.
 * [Workflow]: Updated the AssemblyAnnotation pipeline to v0.5 and the AssemblyAnnotationCollection pipeline to v0.4. Both pipelines now use Shovill for assembly and QUAST for assembly quality assessment in addition to Prokka for annotation.
 
 0.21.0 to 0.22.0
