@@ -69,26 +69,26 @@
         </parameter>
     </parameters>
     <outputs>
-        <output name="quast-contig_size_viewer.html" fileName="quast-contig_size_viewer.html"/>
-        <output name="quast.log" fileName="quast.log"/>
         <output name="quast.tsv" fileName="quast.tsv"/>
-        <output name="quast.html" fileName="quast.html"/>
-        <output name="quast.pdf" fileName="quast.pdf"/>
-        <output name="shovill.log.zip" fileName="shovill.log.zip"/>
+        <output name="prokka.txt.zip" fileName="prokka.txt.zip"/>
         <output name="contigs.fasta.zip" fileName="contigs.fasta.zip"/>
+        <output name="prokka.tsv.zip" fileName="prokka.tsv.zip"/>
+        <output name="prokka.gbk.zip" fileName="prokka.gbk.zip"/>
         <output name="contigs.fastg.zip" fileName="contigs.fastg.zip"/>
         <output name="prokka.gff.zip" fileName="prokka.gff.zip"/>
-        <output name="prokka.gbk.zip" fileName="prokka.gbk.zip"/>
         <output name="prokka.fna.zip" fileName="prokka.fna.zip"/>
-        <output name="prokka.faa.zip" fileName="prokka.faa.zip"/>
         <output name="prokka.ffn.zip" fileName="prokka.ffn.zip"/>
-        <output name="prokka.sqn.zip" fileName="prokka.sqn.zip"/>
+        <output name="prokka.faa.zip" fileName="prokka.faa.zip"/>
         <output name="prokka.fsa.zip" fileName="prokka.fsa.zip"/>
+        <output name="prokka.sqn.zip" fileName="prokka.sqn.zip"/>
         <output name="prokka.tbl.zip" fileName="prokka.tbl.zip"/>
-        <output name="prokka.tsv.zip" fileName="prokka.tsv.zip"/>
-        <output name="prokka.err.zip" fileName="prokka.err.zip"/>
-        <output name="prokka.txt.zip" fileName="prokka.txt.zip"/>
+        <output name="quast.html.zip" fileName="quast.html.zip"/>
+        <output name="quast-contig_size_viewer.html.zip" fileName="quast-contig_size_viewer.html.zip"/>
+        <output name="quast.pdf" fileName="quast.pdf"/>
+        <output name="shovill.log.zip" fileName="shovill.log.zip"/>
+        <output name="quast.log" fileName="quast.log"/>
         <output name="prokka.log.zip" fileName="prokka.log.zip"/>
+        <output name="prokka.err.zip" fileName="prokka.err.zip"/>
     </outputs>
     <toolRepositories>
         <repository>

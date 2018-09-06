@@ -69,26 +69,26 @@
         </parameter>
     </parameters>
     <outputs>
+        <output name="quast.tsv" fileName="quast.tsv"/>
+        <output name="prokka.txt" fileName="prokka.txt"/>
         <output name="contigs.fasta" fileName="contigs.fasta"/>
         <output name="prokka.tsv" fileName="prokka.tsv"/>
-        <output name="quast.tsv" fileName="quast.tsv"/>
-        <output name="quast.html" fileName="quast.html"/>
-        <output name="quast-contig_size_viewer.html" fileName="quast-contig_size_viewer.html"/>
         <output name="prokka.gbk" fileName="prokka.gbk"/>
+        <output name="contigs.fastg" fileName="contigs.fastg"/>
         <output name="prokka.gff" fileName="prokka.gff"/>
-        <output name="prokka.faa" fileName="prokka.faa"/>
+        <output name="prokka.fna" fileName="prokka.fna"/>
         <output name="prokka.ffn" fileName="prokka.ffn"/>
+        <output name="prokka.faa" fileName="prokka.faa"/>
+        <output name="prokka.fsa" fileName="prokka.fsa"/>
         <output name="prokka.sqn" fileName="prokka.sqn"/>
         <output name="prokka.tbl" fileName="prokka.tbl"/>
-        <output name="prokka.txt" fileName="prokka.txt"/>
+        <output name="quast.html.zip" fileName="quast.html.zip"/>
+        <output name="quast-contig_size_viewer.html.zip" fileName="quast-contig_size_viewer.html.zip"/>
+        <output name="quast.pdf" fileName="quast.pdf"/>
+        <output name="shovill.log" fileName="shovill.log"/>
+        <output name="quast.log" fileName="quast.log"/>
         <output name="prokka.log" fileName="prokka.log"/>
         <output name="prokka.err" fileName="prokka.err"/>
-        <output name="prokka.fna" fileName="prokka.fna"/>
-        <output name="prokka.fsa" fileName="prokka.fsa"/>
-        <output name="shovill.log" fileName="shovill.log"/>
-        <output name="contigs.fastg" fileName="contigs.fastg"/>
-        <output name="quast.pdf" fileName="quast.pdf"/>
-        <output name="quast.log" fileName="quast.log"/>
     </outputs>
     <toolRepositories>
         <repository>
