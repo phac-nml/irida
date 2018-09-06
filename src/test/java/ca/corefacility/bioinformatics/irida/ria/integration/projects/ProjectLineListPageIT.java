@@ -43,7 +43,7 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Toggle one of the fields and make sure the table updates;
 		page.toggleMetadataField(2);
-		assertEquals("Should now only display 5 fields", 5, page.getNumberOfTableColumnsVisible());
+		assertEquals("Should now only display 6 fields", 5, page.getNumberOfTableColumnsVisible());
 		page.toggleMetadataField(2);
 		assertEquals("Should now only display 5 fields", 5, page.getNumberOfTableColumnsVisible());
 
