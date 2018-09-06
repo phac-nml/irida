@@ -97,7 +97,7 @@
         "owner": "iuc",
         "tool_shed": "toolshed.g2.bx.psu.edu"
       },
-      "tool_state": "{\"adv\": \"{\\\"asm\\\": \\\"contigs\\\", \\\"gsize\\\": \\\"\\\", \\\"kmers\\\": \\\"\\\", \\\"minlen\\\": \\\"0\\\", \\\"nocorr\\\": \\\"true\\\", \\\"depth\\\": \\\"100\\\", \\\"namefmt\\\": \\\"contig%05d\\\", \\\"mincov\\\": \\\"2\\\", \\\"opts\\\": \\\"\\\"}\", \"trim\": \"\\\"false\\\"\", \"log\": \"\\\"true\\\"\", \"__page__\": 0, \"__rerun_remap_job_id__\": null, \"library\": \"{\\\"lib_type\\\": \\\"collection\\\", \\\"input1\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"__current_case__\\\": 1}\"}",
+      "tool_state": "{\"adv\": \"{\\\"asm\\\": \\\"contigs\\\", \\\"gsize\\\": \\\"\\\", \\\"kmers\\\": \\\"\\\", \\\"minlen\\\": \\\"0\\\", \\\"nocorr\\\": \\\"false\\\", \\\"depth\\\": \\\"100\\\", \\\"namefmt\\\": \\\"contig%05d\\\", \\\"mincov\\\": \\\"2\\\", \\\"opts\\\": \\\"\\\"}\", \"trim\": \"\\\"false\\\"\", \"log\": \"\\\"true\\\"\", \"__page__\": 0, \"__rerun_remap_job_id__\": null, \"library\": \"{\\\"lib_type\\\": \\\"collection\\\", \\\"input1\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"__current_case__\\\": 1}\"}",
       "tool_version": "0.9.0",
       "type": "tool",
       "uuid": "b9b506b8-bedf-4d23-994a-25d45cdf0343",
