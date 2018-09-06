@@ -189,7 +189,7 @@
                 }, 
                 "RenameDatasetActioncontig_size_viewer": {
                     "action_arguments": {
-                        "newname": "quast-contig_size_viewer.html"
+                        "newname": "quast-contig_size_viewer.html.zip"
                     }, 
                     "action_type": "RenameDatasetAction", 
                     "output_name": "contig_size_viewer"
@@ -210,7 +210,7 @@
                 }, 
                 "RenameDatasetActionreport_html": {
                     "action_arguments": {
-                        "newname": "quast.html"
+                        "newname": "quast.html.zip"
                     }, 
                     "action_type": "RenameDatasetAction", 
                     "output_name": "report_html"
