@@ -36,17 +36,15 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 		page.openColumnsPaenl();
 		assertEquals("Should be on the correct page.", "Line List", page.getActivePage());
 		assertEquals("Should be 21 samples", 21, page.getNumberOfRowsInLineList());
-		assertEquals("Should be 5 fields to toggle", 5, page.getNumberOfMetadataFields());
+		assertEquals("Should be 7 fields to toggle", 7, page.getNumberOfMetadataFields());
 
 		// There will be an extra header because you cannot toggle the sample column.
-		assertEquals("Should be 6 table headers", 6, page.getNumberOfTableColumnsVisible());
+		assertEquals("Should be 5 table headers", 5, page.getNumberOfTableColumnsVisible());
 
 		// Toggle one of the fields and make sure the table updates;
-		page.toggleMetadataField(3);
+		page.toggleMetadataField(2);
 		assertEquals("Should now only display 5 fields", 5, page.getNumberOfTableColumnsVisible());
-		page.toggleMetadataField(1);
-		assertEquals("Should now only display 4 fields", 4, page.getNumberOfTableColumnsVisible());
-		page.toggleMetadataField(3);
+		page.toggleMetadataField(2);
 		assertEquals("Should now only display 5 fields", 5, page.getNumberOfTableColumnsVisible());
 
 		// Test selecting templates
@@ -77,6 +75,8 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 
 		driver().navigate()
 				.refresh();
+		page.openColumnsPaenl();
+		page.selectTemplate(TEMPLATE_NAME);
 		assertEquals("Should keep value on a page refresh", newValue, page.getCellContents(0, "serotype"));
 
 		// Let's test to make sure that the undo works.
