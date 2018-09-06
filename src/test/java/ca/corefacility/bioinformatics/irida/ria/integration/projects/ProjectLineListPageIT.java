@@ -39,7 +39,7 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Should be 7 fields to toggle", 7, page.getNumberOfMetadataFields());
 
 		// There will be an extra header because you cannot toggle the sample column.
-		assertEquals("Should be 5 table headers", 5, page.getNumberOfTableColumnsVisible());
+		assertEquals("Should be 6 table headers", 6, page.getNumberOfTableColumnsVisible());
 
 		// Toggle one of the fields and make sure the table updates;
 		page.toggleMetadataField(2);
