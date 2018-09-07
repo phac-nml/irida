@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.Dimension;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
@@ -24,14 +25,14 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 	@Before
 	public void init() {
 		LoginPage.loginAsManager(driver());
+		driver().manage()
+				.window()
+				.setSize(new Dimension(1800, 900)); // Make sure we can see everything.
 	}
 
 	@Test
 	public void testTableSetup() {
 		ProjectLineListPage page = ProjectLineListPage.goToPage(driver(), 1);
-		driver().manage()
-				.window()
-				.maximize(); // Make sure we can see everything.
 		// OPen the column panel
 		page.openColumnsPaenl();
 		assertEquals("Should be on the correct page.", "Line List", page.getActivePage());
@@ -39,13 +40,13 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Should be 7 fields to toggle", 7, page.getNumberOfMetadataFields());
 
 		// There will be an extra header because you cannot toggle the sample column.
-		assertEquals("Should be 6 table headers", 6, page.getNumberOfTableColumnsVisible());
+		assertEquals("Should be 8 table headers", 8, page.getNumberOfTableColumnsVisible());
 
 		// Toggle one of the fields and make sure the table updates;
 		page.toggleMetadataField(2);
-		assertEquals("Should now only display 6 fields", 5, page.getNumberOfTableColumnsVisible());
+		assertEquals("Should now only display 7 fields", 7, page.getNumberOfTableColumnsVisible());
 		page.toggleMetadataField(2);
-		assertEquals("Should now only display 5 fields", 5, page.getNumberOfTableColumnsVisible());
+		assertEquals("Should now only display 8 fields", 8, page.getNumberOfTableColumnsVisible());
 
 		// Test selecting templates
 		page.selectTemplate(TEMPLATE_1);
