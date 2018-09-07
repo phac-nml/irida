@@ -1,11 +1,22 @@
 import React from "react";
-import { formatDate, isDate } from "../../../../../../utilities/date-utilities";
-import { Icon, Popover } from "antd";
+import {
+  formatDate,
+  isDate
+} from "../../../../../../utilities/date-utilities";
+import {
+  Icon,
+  Popover
+} from "antd";
 
+const { i18n } = window.PAGE;
+
+/**
+ * Component to properly display dates in the ag-grid
+ */
 export class DateCellRenderer extends React.Component {
   render() {
     const content = (
-      <div>Expected to be a proper date e.g. January 12, 2018</div>
+      <div>{i18n.dateCell.tooltip}</div>
     );
 
     if (!this.props.value) {
@@ -20,7 +31,7 @@ export class DateCellRenderer extends React.Component {
             content={content}
             title={
               <span>
-                <Icon type="exclamation-circle-o" /> Date format error
+                <Icon type="exclamation-circle-o"/> Date format error
               </span>
             }
           >
