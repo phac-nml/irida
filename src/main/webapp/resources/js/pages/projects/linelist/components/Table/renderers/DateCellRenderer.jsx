@@ -16,9 +16,8 @@ const { i18n } = window.PAGE;
 export class DateCellRenderer extends React.Component {
   render() {
     const content = (
-      <div>{i18n.dateCell.tooltip}</div>
+      <div>{i18n.linelist.dateCell.tooltip}</div>
     );
-
     if (!this.props.value) {
       return "";
     } else if (isDate(this.props.value)) {
