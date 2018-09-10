@@ -1,12 +1,6 @@
 import React from "react";
-import {
-  formatDate,
-  isDate
-} from "../../../../../../utilities/date-utilities";
-import {
-  Icon,
-  Popover
-} from "antd";
+import { formatDate, isDate } from "../../../../../../utilities/date-utilities";
+import { Icon, Popover } from "antd";
 
 const { i18n } = window.PAGE;
 
@@ -15,9 +9,7 @@ const { i18n } = window.PAGE;
  */
 export class DateCellRenderer extends React.Component {
   render() {
-    const content = (
-      <div>{i18n.linelist.dateCell.tooltip}</div>
-    );
+    const content = <div>{i18n.linelist.dateCell.tooltip}</div>;
     if (!this.props.value) {
       return "";
     } else if (isDate(this.props.value)) {
@@ -30,7 +22,8 @@ export class DateCellRenderer extends React.Component {
             content={content}
             title={
               <span>
-                <Icon type="exclamation-circle-o"/> {i18n.linelist.dateCell.popover.title}
+                <Icon type="exclamation-circle-o" />{" "}
+                {i18n.linelist.dateCell.popover.title}
               </span>
             }
           >

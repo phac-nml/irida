@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.linelist;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
@@ -212,6 +213,12 @@ public class LineListController {
 		}
 		List<MetadataTemplateField> fields = Lists.newArrayList(fieldSet);
 
+		// THere are some legacy created an modified dates added by users already,
+		Predicate<MetadataTemplateField> createdPredicate = f -> f.getLabel().equalsIgnoreCase("createdDate");
+		fields.removeIf(createdPredicate);
+		Predicate<MetadataTemplateField> modifiedPredicate = f -> f.getLabel().equalsIgnoreCase("modifiedDate");
+		fields.removeIf(modifiedPredicate);
+
 		// Add the created and modified dates
 		fields.add(new MetadataTemplateField("createdDate", "date"));
 		fields.add(new MetadataTemplateField("modifiedDate", "date"));
@@ -231,16 +238,8 @@ public class LineListController {
 	 */
 	private List<MetadataTemplateField> getAllProjectMetadataFieldsWithSampleId(Long projectId, Locale locale) {
 		List<MetadataTemplateField> fields = getAllProjectMetadataFields(projectId);
-		return addDefaultTemplateFields(fields, locale);
-	}
-
-	private List<MetadataTemplateField> addDefaultTemplateFields(List<MetadataTemplateField> f, Locale locale) {
-		List<MetadataTemplateField> fields = Lists.newArrayList(f);
-		// Need the sample name.  This will enforce that it is in the first position.
 		fields.add(0, new MetadataTemplateField(
 				messageSource.getMessage("linelist.agGrid.sampleName", new Object[] {}, locale), "text"));
-		fields.add(new MetadataTemplateField("createdDate", "date"));
-		fields.add(new MetadataTemplateField("modifiedDate", "date"));
 		return fields;
 	}
 
