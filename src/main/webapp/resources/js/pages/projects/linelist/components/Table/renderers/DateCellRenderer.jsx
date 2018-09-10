@@ -30,7 +30,7 @@ export class DateCellRenderer extends React.Component {
             content={content}
             title={
               <span>
-                <Icon type="exclamation-circle-o"/> Date format error
+                <Icon type="exclamation-circle-o"/> {i18n.linelist.dateCell.popover.title}
               </span>
             }
           >
