@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.linelist;
 
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
@@ -205,19 +204,14 @@ public class LineListController {
 		Set<MetadataTemplateField> fieldSet = new HashSet<>(metadataFieldsForProject);
 
 		// Need to get all the fields from the templates too!
-		List<ProjectMetadataTemplateJoin> templateJoins = metadataTemplateService.getMetadataTemplatesForProject(project);
+		List<ProjectMetadataTemplateJoin> templateJoins = metadataTemplateService.getMetadataTemplatesForProject(
+				project);
 		for (ProjectMetadataTemplateJoin join : templateJoins) {
 			MetadataTemplate template = join.getObject();
 			List<MetadataTemplateField> templateFields = template.getFields();
 			fieldSet.addAll(templateFields);
 		}
 		List<MetadataTemplateField> fields = Lists.newArrayList(fieldSet);
-
-		// THere are some legacy created an modified dates added by users already,
-		Predicate<MetadataTemplateField> createdPredicate = f -> f.getLabel().equalsIgnoreCase("createdDate");
-		fields.removeIf(createdPredicate);
-		Predicate<MetadataTemplateField> modifiedPredicate = f -> f.getLabel().equalsIgnoreCase("modifiedDate");
-		fields.removeIf(modifiedPredicate);
 
 		// Add the created and modified dates
 		fields.add(new MetadataTemplateField("createdDate", "date"));
