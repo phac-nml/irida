@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.linelist;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,8 +50,17 @@ public class LineListComponent {
 	public List<UIMetadataTemplateField> getProjectMetadataFields(Long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
 		List<MetadataTemplateField> metadataFieldsForProject = templateService.getMetadataFieldsForProject(project);
+		Set<MetadataTemplateField> fieldSet = new HashSet<>(metadataFieldsForProject);
 
-		List<UIMetadataTemplateField> fields = metadataFieldsForProject.stream()
+		// Need to get all the fields from the templates too!
+		List<ProjectMetadataTemplateJoin> templateJoins = templateService.getMetadataTemplatesForProject(project);
+		for (ProjectMetadataTemplateJoin join : templateJoins) {
+			MetadataTemplate template = join.getObject();
+			List<MetadataTemplateField> templateFields = template.getFields();
+			fieldSet.addAll(templateFields);
+		}
+
+		List<UIMetadataTemplateField> fields = fieldSet.stream()
 				.map(f -> formatMetadataTemplateField(f, locale))
 				.sorted((f1, f2) -> f1.getHeaderName()
 						.compareToIgnoreCase(f2.getHeaderName()))
