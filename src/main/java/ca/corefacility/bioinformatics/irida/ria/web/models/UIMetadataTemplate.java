@@ -22,72 +22,21 @@ public class UIMetadataTemplate {
 	public UIMetadataTemplate() {
 	}
 
-	public UIMetadataTemplate(MetadataTemplate metadataTemplate) {
-		this.id = metadataTemplate.getId();
-		this.name = metadataTemplate.getName();
-		this.fields = createDefaultFieldList(metadataTemplate.getFields());
-	}
-
-	public UIMetadataTemplate(MetadataTemplate template, List<MetadataTemplateField> allProjectFields) {
-		this.id = template.getId();
-		this.name = template.getName();
-		this.fields = createTemplateFieldList(template, allProjectFields);
-	}
-
-	private List<UIMetadataTemplateField> createTemplateFieldList(MetadataTemplate template,
-			List<MetadataTemplateField> allProjectFields) {
-		List<MetadataTemplateField> fields = template.getFields();
-		if (fields.isEmpty()) {
-			// This would be for the default "all fields" template
-			return createDefaultFieldList(fields);
-		} else {
-			return createTemplateFieldListFromTemplate(fields, allProjectFields);
-		}
-	}
-
-	private List<UIMetadataTemplateField> createTemplateFieldListFromTemplate(
-			List<MetadataTemplateField> templateFields, List<MetadataTemplateField> allProjectFields) {
-		List<UIMetadataTemplateField> fields = new ArrayList<>();
-		for (MetadataTemplateField field : templateFields) {
-			// Need to remove legacy sampleNames that should not have been added.
-			fields.add(new UIMetadataTemplateField(field, false));
-			allProjectFields.remove(field);
-		}
-
-		List<UIMetadataTemplateField> remainder = allProjectFields.stream()
-						.map(field -> new UIMetadataTemplateField(field, true))
-						.collect(Collectors.toList());
-
-		return ListUtils.union(fields, remainder);
-	}
-
-	private List<UIMetadataTemplateField> createDefaultFieldList(List<MetadataTemplateField> templateFields) {
-		return templateFields.stream()
-				.map(field -> new UIMetadataTemplateField(field, false))
-				.collect(Collectors.toList());
+	public UIMetadataTemplate(Long id, String name, List<UIMetadataTemplateField> fields) {
+		this.id = id;
+		this.name = name;
+		this.fields = fields;
 	}
 
 	public Long getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	public List<UIMetadataTemplateField> getFields() {
 		return fields;
-	}
-
-	public void setFields(List<UIMetadataTemplateField> fields) {
-		this.fields = fields;
 	}
 }
