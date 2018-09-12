@@ -67,24 +67,24 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Should have 7 columns visible", 7, page.getNumberOfTableColumnsVisible());
 
 		// Test inline editing
-		String cellContents = page.getCellContents(0, "serotype");
+		String cellContents = page.getCellContents(0, "symptom");
 		assertEquals("Sneezing", cellContents);
 
 		String newValue = "FOOBAR";
-		page.editCellContents(0, "serotype", newValue);
-		assertEquals("Cell should contain the new edited value", newValue, page.getCellContents(0, "serotype"));
+		page.editCellContents(0, "symptom", newValue);
+		assertEquals("Cell should contain the new edited value", newValue, page.getCellContents(0, "symptom"));
 
 		driver().navigate()
 				.refresh();
 		page.openColumnsPaenl();
 		page.selectTemplate(TEMPLATE_NAME);
-		assertEquals("Should keep value on a page refresh", newValue, page.getCellContents(0, "serotype"));
+		assertEquals("Should keep value on a page refresh", newValue, page.getCellContents(0, "symptom"));
 
 		// Let's test to make sure that the undo works.
 		String testValue = "THIS SHOULD BE GONE!";
-		page.editCellContents(0, "serotype", testValue);
+		page.editCellContents(0, "symptom", testValue);
 		page.cancelCellEdit();
-		assertEquals("Should keep value after undoing edit", newValue, page.getCellContents(0, "serotype"));
+		assertEquals("Should keep value after undoing edit", newValue, page.getCellContents(0, "symptom"));
 
 		// Test table filtering
 		page.filterTable(newValue);
