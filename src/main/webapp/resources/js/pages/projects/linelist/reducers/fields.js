@@ -52,10 +52,10 @@ const dateColumn = {
  */
 const formatColumns = cols =>
   cols.map((f, i) => ({
-    field: f.label,
-    headerName: f.label,
-    ...(i === 0 ? sampleNameColumn : {}),
-    ...(f.type === "date" ? dateColumn : {})
+    ...f,
+    ...(f.type === "date" ? dateColumn : {}),
+    type: undefined, // ag-grid does not like having type on object
+    ...(f.field === "sampleLabel" ? sampleNameColumn : {})
   }));
 
 export const types = {

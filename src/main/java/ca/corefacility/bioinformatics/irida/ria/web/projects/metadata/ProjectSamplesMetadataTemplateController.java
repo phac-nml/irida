@@ -48,13 +48,9 @@ public class ProjectSamplesMetadataTemplateController {
 	/**
 	 * Get the page to create a new {@link MetadataTemplate}
 	 *
-	 * @param projectId
-	 * 		{@link Long} identifier for a {@link Project}
-	 * @param model
-	 * 		{@link Model} spring page model
-	 * @param principal
-	 * 		{@link Principal} currently logged in user
-	 *
+	 * @param projectId {@link Long} identifier for a {@link Project}
+	 * @param model     {@link Model} spring page model
+	 * @param principal {@link Principal} currently logged in user
 	 * @return {@link String} path to the new template page
 	 */
 	@RequestMapping("/new")
@@ -72,15 +68,10 @@ public class ProjectSamplesMetadataTemplateController {
 	/**
 	 * Get a the page for a specific {@link MetadataTemplate}
 	 *
-	 * @param projectId
-	 * 		{@link Long} identifier for a {@link Project}
-	 * @param templateId
-	 * 		{@link Long} identifier for a {@link MetadataTemplate}
-	 * @param principal
-	 * 		{@link Principal} currently logged in user
-	 * @param model
-	 * 		{@link Model} spring page model
-	 *
+	 * @param projectId  {@link Long} identifier for a {@link Project}
+	 * @param templateId {@link Long} identifier for a {@link MetadataTemplate}
+	 * @param principal  {@link Principal} currently logged in user
+	 * @param model      {@link Model} spring page model
 	 * @return {@link String} path to template page
 	 */
 	@RequestMapping("/{templateId}")
@@ -89,8 +80,7 @@ public class ProjectSamplesMetadataTemplateController {
 		Project project = projectService.read(projectId);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		MetadataTemplate metadataTemplate = metadataTemplateService.read(templateId);
-		UIMetadataTemplate template = new UIMetadataTemplate(metadataTemplate);
-		model.addAttribute("template", template);
+		model.addAttribute("template", metadataTemplate);
 		return "projects/project_samples_metadata_template";
 	}
 
@@ -131,15 +121,11 @@ public class ProjectSamplesMetadataTemplateController {
 		return "redirect:/projects/" + projectId + "/metadata-templates/" + metadataTemplate.getId();
 	}
 
-
 	/**
 	 * Delete a {@link MetadataTemplate} within a {@link Project}
 	 *
-	 * @param projectId
-	 * 		{@link Long} identifier for a {@link Project}
-	 * @param templateId
-	 * 		{@link Long} identifier for a {@link MetadataTemplate}
-	 *
+	 * @param projectId  {@link Long} identifier for a {@link Project}
+	 * @param templateId {@link Long} identifier for a {@link MetadataTemplate}
 	 * @return {@link String} redirects to project - settings - metadata templates
 	 */
 	@RequestMapping(value = "/delete/{templateId}", method = RequestMethod.POST)
@@ -152,20 +138,19 @@ public class ProjectSamplesMetadataTemplateController {
 	/**
 	 * Download a {@link MetadataTemplate} as an Excel file.
 	 *
-	 * @param templateId
-	 * 		{@link Long} identifier for a {@link MetadataTemplate}
-	 * @param response
-	 * 		{@link HttpServletResponse}
-	 *
-	 * @throws IOException
-	 * 		thrown if output stream cannot be used.
+	 * @param templateId {@link Long} identifier for a {@link MetadataTemplate}
+	 * @param response   {@link HttpServletResponse}
+	 * @throws IOException thrown if output stream cannot be used.
 	 */
 	@RequestMapping(value = "/{templateId}/excel")
 	public void downloadTemplate(@PathVariable Long templateId, HttpServletResponse response) throws IOException {
 		MetadataTemplate template = metadataTemplateService.read(templateId);
 		List<MetadataTemplateField> fields = template.getFields();
-		List<String> headers = fields.stream().map(MetadataTemplateField::getLabel).collect(Collectors.toList());
-		String label = template.getLabel().replace(" ", "_");
+		List<String> headers = fields.stream()
+				.map(MetadataTemplateField::getLabel)
+				.collect(Collectors.toList());
+		String label = template.getLabel()
+				.replace(" ", "_");
 		//Blank workbook
 		XSSFWorkbook workbook = new XSSFWorkbook();
 
@@ -192,15 +177,15 @@ public class ProjectSamplesMetadataTemplateController {
 	/**
 	 * Search all Metadata keys available for adding to a template.
 	 *
-	 * @param query
-	 * 		the query to search for
-	 *
+	 * @param query the query to search for
 	 * @return a list of keys matching the query
 	 */
 	@RequestMapping("/fields")
 	@ResponseBody
 	public List<String> getMetadataKeysForProject(@RequestParam(value = "q") String query) {
-		return metadataTemplateService.getAllMetadataFieldsByQueryString(query).stream()
-				.map(MetadataTemplateField::getLabel).collect(Collectors.toList());
+		return metadataTemplateService.getAllMetadataFieldsByQueryString(query)
+				.stream()
+				.map(MetadataTemplateField::getLabel)
+				.collect(Collectors.toList());
 	}
 }

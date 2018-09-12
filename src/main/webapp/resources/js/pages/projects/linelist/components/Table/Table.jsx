@@ -139,9 +139,7 @@ export class Table extends React.Component {
     Sample name always needs to be first so let's take it off and re-add
     it after we get everything sorted.
      */
-    const sampleIndex = columnState.findIndex(
-      c => c.colId === i18n.linelist.agGrid.sampleName
-    );
+    const sampleIndex = columnState.findIndex(c => c.colId === "sampleLabel");
     const sample = columnState.splice(sampleIndex, 1)[0];
 
     /*
@@ -152,9 +150,7 @@ export class Table extends React.Component {
     */
     const final = templateFields
       .map(field => {
-        const index = columnState.findIndex(c => {
-          return c.colId === field.label;
-        });
+        const index = columnState.findIndex(c => c.colId === field.field);
         if (index > -1) {
           const col = columnState.splice(index, 1)[0];
 
@@ -186,18 +182,20 @@ export class Table extends React.Component {
    * table.
    */
   onColumnDropped = () => {
-    const colOrder = this.columnApi.getColumnState();
+    const colOrder = [...this.columnApi.getColumnState()];
+    // Remove sample name
+    colOrder.shift();
+
+    const fields = this.props.fields.toJS();
 
     /*
     Remove the hidden ones and just get the field identifiers
-    and remove the sample name column since this is just for the table.
      */
-    let list = colOrder
-      .map(c => ({ label: c.colId, hide: c.hide }))
-      .filter(
-        c =>
-          c.label !== i18n.linelist.agGrid.sampleName && c.label !== "sampleId"
-      );
+    let list = colOrder.map(c => {
+      // Get the header name
+      const field = fields.find(f => f.field === c.colId);
+      return { ...field };
+    });
 
     // Don't let the table perform a modified update since it handles it on its own
     this.colDropped = true;

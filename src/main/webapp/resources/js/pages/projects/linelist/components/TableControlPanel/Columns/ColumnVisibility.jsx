@@ -73,7 +73,7 @@ export default class ColumnVisibility extends React.Component {
                     />
                   ]}
                 >
-                  <span style={{ marginLeft: 10 }}>{item.label}</span>
+                  <span style={{ marginLeft: 10 }}>{item.headerName}</span>
                 </List.Item>
               )}
             />
