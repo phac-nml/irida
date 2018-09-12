@@ -49,7 +49,7 @@ public class LineListComponent {
 	 * @param locale    {@link Locale}
 	 * @return {@link List} of {@link UIMetadataTemplateField}
 	 */
-	List<UIMetadataTemplateField> getProjectMetadataFields(Long projectId, Locale locale) {
+	public List<UIMetadataTemplateField> getProjectMetadataFields(Long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
 		List<MetadataTemplateField> metadataFieldsForProject = templateService.getMetadataFieldsForProject(project);
 
@@ -89,7 +89,7 @@ public class LineListComponent {
 	 * @param projectId {@link Long} identifier for a {@link Project}
 	 * @return {@link List} of {@link UISampleMetadata}
 	 */
-	List<UISampleMetadata> getProjectSampleMetadata(Long projectId) {
+	public List<UISampleMetadata> getProjectSampleMetadata(Long projectId) {
 		Project project = projectService.read(projectId);
 		List<Join<Project, Sample>> projectSamples = sampleService.getSamplesForProject(project);
 		return projectSamples.stream()

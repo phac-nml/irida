@@ -16,30 +16,29 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import static org.mockito.Mockito.*;
 
 /**
- * Unit test for {@link LineListController}
+ * Unit test for {@link LineListComponent}
  */
-public class LineListControllerTest {
-	private LineListController lineListController;
+public class LineListComponentTest {
 	private ProjectService projectService;
 	private MetadataTemplateService metadataTemplateService;
 	private LineListComponent lineListComponent;
 	private SampleService sampleService;
+	private MessageSource messageSource;
 
 	@Before
 	public void setUp() {
 		projectService = mock(ProjectService.class);
 		sampleService = mock(SampleService.class);
 		metadataTemplateService = mock(MetadataTemplateService.class);
-		lineListComponent = mock(LineListComponent.class);
-
-		lineListController = new LineListController(projectService, sampleService, metadataTemplateService,
-				lineListComponent);
+		messageSource = mock(MessageSource.class);
+		lineListComponent = new LineListComponent(projectService, sampleService, metadataTemplateService,
+				messageSource);
 	}
 
 	@Test
 	public void testGetProjectMetadataTemplateFields() {
 		long projectId = 1L;
-		lineListController.getProjectMetadataTemplateFields(projectId, Locale.ENGLISH);
+		lineListComponent.getProjectMetadataFields(projectId, Locale.ENGLISH);
 		verify(projectService, times(1)).read(projectId);
 		verify(metadataTemplateService, times(1)).getMetadataFieldsForProject(any(Project.class));
 	}
@@ -47,6 +46,7 @@ public class LineListControllerTest {
 	@Test
 	public void testGetAllProjectMetadataEntries() {
 		long projectId = 1L;
-		lineListController.getProjectSamplesMetadataEntries(projectId);
+		lineListComponent.getProjectSampleMetadata(projectId);
+		verify(sampleService, times(1)).getSamplesForProject(any(Project.class));
 	}
 }
