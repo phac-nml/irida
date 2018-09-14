@@ -36,7 +36,7 @@ public class UISampleMetadata {
 		Map<MetadataTemplateField, MetadataEntry> sampleMetadata = sample.getMetadata();
 		for (MetadataTemplateField field : sampleMetadata.keySet()) {
 			MetadataEntry entry = sampleMetadata.getOrDefault(field, new MetadataEntry());
-			entries.put(field.getLabel(), entry.getValue());
+			entries.put(UIMetadataTemplateField.stripLabelToField(field.getLabel()), entry.getValue());
 		}
 		return entries;
 	}

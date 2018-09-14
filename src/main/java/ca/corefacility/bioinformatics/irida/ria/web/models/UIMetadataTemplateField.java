@@ -16,11 +16,15 @@ public class UIMetadataTemplateField {
 	}
 
 	public UIMetadataTemplateField(MetadataTemplateField field, String headerName, boolean editable, boolean hide) {
-		this.field = field.getLabel();
+		this.field = UIMetadataTemplateField.stripLabelToField(field.getLabel());
 		this.headerName = headerName;
 		this.type = field.getType();
 		this.hide = hide;
 		this.editable = editable;
+	}
+
+	static String stripLabelToField(String field) {
+		return field.replaceAll("[^a-zA-Z0-9]+", "-");
 	}
 
 	public String getField() {
