@@ -1,13 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.web.models;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import org.apache.commons.collections4.ListUtils;
 
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
+import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataField;
 
 /**
  * User interface model for a {@link MetadataTemplate}
@@ -17,12 +14,12 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 public class UIMetadataTemplate {
 	private Long id;
 	private String name;
-	private List<UIMetadataTemplateField> fields;
+	private List<UIMetadataField> fields;
 
 	public UIMetadataTemplate() {
 	}
 
-	public UIMetadataTemplate(Long id, String name, List<UIMetadataTemplateField> fields) {
+	public UIMetadataTemplate(Long id, String name, List<UIMetadataField> fields) {
 		this.id = id;
 		this.name = name;
 		this.fields = fields;
@@ -36,7 +33,7 @@ public class UIMetadataTemplate {
 		return name;
 	}
 
-	public List<UIMetadataTemplateField> getFields() {
+	public List<UIMetadataField> getFields() {
 		return fields;
 	}
 }

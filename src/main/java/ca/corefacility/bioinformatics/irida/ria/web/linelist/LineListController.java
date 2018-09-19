@@ -22,8 +22,9 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataField;
+import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIDefaultMetadataField;
 import ca.corefacility.bioinformatics.irida.ria.web.models.UIMetadataTemplate;
-import ca.corefacility.bioinformatics.irida.ria.web.models.UIMetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.ria.web.models.UISampleMetadata;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
@@ -54,11 +55,11 @@ public class LineListController {
 	 *
 	 * @param projectId {@link Long} identifier for a {@link Project}
 	 * @param locale    {@link Locale}
-	 * @return {@link List} of {@link UIMetadataTemplateField}
+	 * @return {@link List} of {@link UIMetadataField}
 	 */
 	@RequestMapping("/fields")
 	@ResponseBody
-	public List<UIMetadataTemplateField> getProjectMetadataTemplateFields(@RequestParam long projectId, Locale locale) {
+	public List<UIMetadataField> getProjectMetadataTemplateFields(@RequestParam long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
 		List<MetadataTemplateField> metadataFieldsForProject = metadataTemplateService.getMetadataFieldsForProject(project);
 		Set<MetadataTemplateField> fieldSet = new HashSet<>(metadataFieldsForProject);
@@ -71,32 +72,21 @@ public class LineListController {
 			fieldSet.addAll(templateFields);
 		}
 
-		List<UIMetadataTemplateField> fields = fieldSet.stream()
+		List<UIMetadataField> fields = fieldSet.stream()
 				.map(f -> formatMetadataTemplateField(f, locale))
 				.sorted((f1, f2) -> f1.getHeaderName()
 						.compareToIgnoreCase(f2.getHeaderName()))
 				.collect(Collectors.toList());
 
 		// Add the sample name, project name, created date and the modified date
-		MetadataTemplateField sampleLabelField = new MetadataTemplateField("sampleLabel", "text");
-		UIMetadataTemplateField uiSampleField = new UIMetadataTemplateField(sampleLabelField,
-				messages.getMessage("linelist.field.sampleLabel", new Object[] {}, locale), false, false);
-		fields.add(0, uiSampleField);
-
-		MetadataTemplateField projectLabelField = new MetadataTemplateField("projectLabel", "text");
-		UIMetadataTemplateField uiProjectField = new UIMetadataTemplateField(projectLabelField,
-				messages.getMessage("linelist.field.projectLabel", new Object[] {}, locale), false, true);
-		fields.add(0, uiProjectField);
-
-		MetadataTemplateField createdField = new MetadataTemplateField("created", "date");
-		UIMetadataTemplateField uiCreatedField = new UIMetadataTemplateField(createdField,
-				messages.getMessage("linelist.field.created", new Object[] {}, locale), false, false);
-		fields.add(0, uiCreatedField);
-
-		MetadataTemplateField modifiedField = new MetadataTemplateField("modified", "date");
-		UIMetadataTemplateField uiModifiedField = new UIMetadataTemplateField(modifiedField,
-				messages.getMessage("linelist.field.modified", new Object[] {}, locale), false, false);
-		fields.add(0, uiModifiedField);
+		fields.add(0, new UIDefaultMetadataField("sampleLabel",
+				messages.getMessage("linelist.field.sampleLabel", new Object[] {}, locale), "text"));
+		fields.add(0, new UIDefaultMetadataField("projectLabel",
+				messages.getMessage("linelist.field.projectLabel", new Object[] {}, locale), "text"));
+		fields.add(0, new UIDefaultMetadataField("created",
+				messages.getMessage("linelist.field.created", new Object[] {}, locale), "date"));
+		fields.add(0, new UIDefaultMetadataField("modified",
+				messages.getMessage("linelist.field.modified", new Object[] {}, locale), "date"));
 
 		return fields;
 	}
@@ -171,7 +161,7 @@ public class LineListController {
 	@ResponseBody
 	public List<UIMetadataTemplate> getLineListTemplates(@RequestParam long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
-		List<UIMetadataTemplateField> allFields = this.getProjectMetadataTemplateFields(projectId, locale);
+		List<UIMetadataField> allFields = this.getProjectMetadataTemplateFields(projectId, locale);
 		List<ProjectMetadataTemplateJoin> templateJoins = metadataTemplateService.getMetadataTemplatesForProject(project);
 		List<UIMetadataTemplate> templates = new ArrayList<>();
 
@@ -181,7 +171,7 @@ public class LineListController {
 
 		for (ProjectMetadataTemplateJoin join : templateJoins) {
 			MetadataTemplate template = join.getObject();
-			List<UIMetadataTemplateField> fields = template.getFields()
+			List<UIMetadataField> fields = template.getFields()
 					.stream()
 					.map(f -> this.formatMetadataTemplateField(f, locale))
 					.collect(Collectors.toList());
@@ -205,7 +195,7 @@ public class LineListController {
 			@RequestParam Long projectId, HttpServletResponse response, Locale locale) {
 		// Get or create the template fields.
 		List<MetadataTemplateField> fields = new ArrayList<>();
-		for (UIMetadataTemplateField field : template.getFields()) {
+		for (UIMetadataField field : template.getFields()) {
 
 			if (!field.getField().equals("sampleLabel")) {
 				MetadataTemplateField metadataTemplateField = metadataTemplateService.readMetadataFieldByLabel(field.getField());
@@ -238,20 +228,20 @@ public class LineListController {
 	}
 
 	/**
-	 * Format a {@link UIMetadataTemplateField} from a {@link MetadataTemplateField}
+	 * Format a {@link UIMetadataField} from a {@link MetadataTemplateField}
 	 *
 	 * @param field  {@link MetadataTemplateField}
 	 * @param locale {@link Locale}
-	 * @return {@link UIMetadataTemplateField}
+	 * @return {@link UIMetadataField}
 	 */
-	private UIMetadataTemplateField formatMetadataTemplateField(MetadataTemplateField field, Locale locale) {
+	private UIMetadataField formatMetadataTemplateField(MetadataTemplateField field, Locale locale) {
 		String headerName;
 		try {
 			headerName = messages.getMessage("linelist.field." + field.getLabel(), new Object[] {}, locale);
 		} catch (NoSuchMessageException e) {
 			headerName = field.getLabel();
 		}
-		return new UIMetadataTemplateField(field, headerName, true, false);
+		return new UIMetadataField(field.getLabel(), headerName, field.getType(), false, true);
 	}
 
 	/**

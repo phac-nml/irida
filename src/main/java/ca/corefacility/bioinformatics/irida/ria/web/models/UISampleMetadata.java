@@ -8,6 +8,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataEntry;
 
 /**
  * Represents {@link Sample} metadata in the linelist table.
@@ -35,8 +36,9 @@ public class UISampleMetadata {
 		Map<String, String> entries = new HashMap<>();
 		Map<MetadataTemplateField, MetadataEntry> sampleMetadata = sample.getMetadata();
 		for (MetadataTemplateField field : sampleMetadata.keySet()) {
-			MetadataEntry entry = sampleMetadata.getOrDefault(field, new MetadataEntry());
-			entries.put(UIMetadataTemplateField.stripLabelToField(field.getLabel()), entry.getValue());
+			UIMetadataEntry entry = new UIMetadataEntry(field,
+					sampleMetadata.getOrDefault(field, new MetadataEntry("", "text"))) ;
+			entries.put(entry.getField(), entry.getValue());
 		}
 		return entries;
 	}
