@@ -1,9 +1,9 @@
 import React from "react";
 import { Layout } from "antd";
 import { Table } from "../Table";
-import { ToolPanel } from "../ToolPanel";
 import { Toolbar } from "../Toolbar";
 import { InfoBar } from "../InfoBar";
+import TableControlPanel from "../TableControlPanel/TableControlPanel";
 
 const { Sider, Content } = Layout;
 
@@ -15,10 +15,6 @@ export class LineListLayoutComponent extends React.Component {
     collapsed: true,
     height: 800
   };
-
-  constructor(props) {
-    super(props);
-  }
 
   /**
    * Multiple components need to be updated when the window height changes.  This determines
@@ -63,7 +59,7 @@ export class LineListLayoutComponent extends React.Component {
   /**
    * Toggle the open state of the tool panel.
    */
-  toggleToolPanel = () => {
+  toggleTableControlPanel = () => {
     this.setState({
       collapsed: !this.state.collapsed
     });
@@ -90,6 +86,21 @@ export class LineListLayoutComponent extends React.Component {
    */
   quickSearch = value => this.tableRef.current.quickSearch(value);
 
+  /**
+   * Update the state of the filter
+   * @param count
+   */
+  updateFilterCount = count => {
+    this.setState({ filterCount: count });
+  };
+
+  /**
+   * Scroll the table to the top.
+   */
+  scrollTableToTop = () => {
+    this.tableRef.current.scrollToTop();
+  };
+
   render() {
     return (
       <div ref={this.linelistRef}>
@@ -99,11 +110,13 @@ export class LineListLayoutComponent extends React.Component {
           exportXLSX={this.exportXLSX}
           addSamplesToCart={this.addSamplesToCart}
           selectedCount={this.props.selectedCount}
+          scrollTableToTop={this.scrollTableToTop}
         />
         <Layout className="ag-theme-balham">
           <Content>
             <Table
               {...this.props}
+              onFilter={this.updateFilterCount}
               height={this.state.height}
               ref={this.tableRef}
             />
@@ -111,28 +124,34 @@ export class LineListLayoutComponent extends React.Component {
           <Sider
             className="tool-panel-slider"
             trigger={null}
-            collapsedWidth="20"
+            collapsedWidth="42"
             width="300"
             collapsible
             collapsed={this.state.collapsed}
           >
-            <div
-              className="tool-panel-wrapper"
-              style={{ height: this.state.height }}
-            >
-              <ToolPanel {...this.props} />
-              <div className="ag-grid-tool-panel--buttons">
-                <button
-                  className="t-columns-panel-toggle ag-grid-tool-panel--button"
-                  onClick={this.toggleToolPanel}
-                >
-                  Columns
-                </button>
-              </div>
-            </div>
+            <TableControlPanel
+              height={this.state.height}
+              saved={this.props.saved}
+              saveTemplate={this.props.saveTemplate}
+              useTemplate={this.props.useTemplate}
+              togglePanel={this.toggleTableControlPanel}
+              templates={this.props.templates}
+              current={this.props.current}
+              templateModified={this.props.templateModified}
+            />
           </Sider>
         </Layout>
-        <InfoBar selectedCount={this.props.selectedCount} />
+        <InfoBar
+          selectedCount={this.props.selectedCount}
+          filterCount={
+            this.state.filterCount
+              ? this.state.filterCount
+              : this.props.entries
+                ? this.props.entries.size
+                : 0
+          }
+          totalSamples={this.props.entries ? this.props.entries.size : 0}
+        />
       </div>
     );
   }

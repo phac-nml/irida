@@ -60,7 +60,7 @@ public class LineListController {
 	@RequestMapping("/fields")
 	@ResponseBody
 	public List<MetadataTemplateField> getProjectMetadataTemplateFields(@RequestParam long projectId, Locale locale) {
-		return getAllProjectMetadataFields(projectId, locale);
+		return getAllProjectMetadataFieldsWithSampleId(projectId, locale);
 	}
 
 	/**
@@ -129,7 +129,7 @@ public class LineListController {
 	@ResponseBody
 	public List<UIMetadataTemplate> getLineListTemplates(@RequestParam long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
-		List<MetadataTemplateField> allFields = metadataTemplateService.getMetadataFieldsForProject(project);
+		List<MetadataTemplateField> allFields = getAllProjectMetadataFields(projectId);
 		List<ProjectMetadataTemplateJoin> joins = metadataTemplateService.getMetadataTemplatesForProject(project);
 		List<UIMetadataTemplate> templates = joins.stream()
 				.map(join -> new UIMetadataTemplate(join.getObject(), new ArrayList<>(allFields)))
@@ -189,7 +189,34 @@ public class LineListController {
 			metadataTemplate = metadataTemplateService.updateMetadataTemplateInProject(metadataTemplate);
 			response.setStatus(HttpServletResponse.SC_OK);
 		}
-		return new UIMetadataTemplate(metadataTemplate, getAllProjectMetadataFields(projectId, locale));
+		return new UIMetadataTemplate(metadataTemplate, getAllProjectMetadataFieldsWithSampleId(projectId, locale));
+	}
+
+	/**
+	 * Get a {@link List} of {@link MetadataTemplateField}s for a {@link Project}
+	 *
+	 * @param projectId {@link Long} Identifier for the project.
+	 * @return {@link List} of {@link MetadataTemplateField}
+	 */
+	private List<MetadataTemplateField> getAllProjectMetadataFields(Long projectId) {
+		Project project = projectService.read(projectId);
+		List<MetadataTemplateField> metadataFieldsForProject = metadataTemplateService.getMetadataFieldsForProject(
+				project);
+		Set<MetadataTemplateField> fieldSet = new HashSet<>(metadataFieldsForProject);
+
+		// Need to get all the fields from the templates too!
+		List<ProjectMetadataTemplateJoin> templateJoins = metadataTemplateService.getMetadataTemplatesForProject(project);
+		for (ProjectMetadataTemplateJoin join : templateJoins) {
+			MetadataTemplate template = join.getObject();
+			List<MetadataTemplateField> templateFields = template.getFields();
+			fieldSet.addAll(templateFields);
+		}
+		List<MetadataTemplateField> fields = Lists.newArrayList(fieldSet);
+
+		// Sort so they always return in the same order
+		fields.sort((f1, f2) -> f1.getLabel()
+				.compareToIgnoreCase(f2.getLabel()));
+		return fields;
 	}
 
 	/**
@@ -199,22 +226,8 @@ public class LineListController {
 	 * @param locale    {@link Locale}
 	 * @return {@link Set} containing unique metadata fields
 	 */
-	private List<MetadataTemplateField> getAllProjectMetadataFields(Long projectId, Locale locale) {
-		Project project = projectService.read(projectId);
-		List<MetadataTemplateField> metadataFieldsForProject = metadataTemplateService.getMetadataFieldsForProject(
-				project);
-		Set<MetadataTemplateField> fieldSet = new HashSet<>(metadataFieldsForProject);
-
-		// Need to get all the fields from the templates too!
-		List<ProjectMetadataTemplateJoin> templateJoins = metadataTemplateService.getMetadataTemplatesForProject(
-				project);
-		for (ProjectMetadataTemplateJoin join : templateJoins) {
-			MetadataTemplate template = join.getObject();
-			List<MetadataTemplateField> templateFields = template.getFields();
-			fieldSet.addAll(templateFields);
-		}
-
-		List<MetadataTemplateField> fields = Lists.newArrayList(fieldSet);
+	private List<MetadataTemplateField> getAllProjectMetadataFieldsWithSampleId(Long projectId, Locale locale) {
+		List<MetadataTemplateField> fields = getAllProjectMetadataFields(projectId);
 		// Need the sample name.  This will enforce that it is in the first position.
 		fields.add(0, new MetadataTemplateField(
 				messageSource.getMessage("linelist.agGrid.sampleName", new Object[] {}, locale), "text"));

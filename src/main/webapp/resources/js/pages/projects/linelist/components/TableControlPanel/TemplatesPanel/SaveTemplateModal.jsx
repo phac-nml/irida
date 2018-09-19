@@ -94,10 +94,6 @@ export class SaveTemplateModal extends React.Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    if (typeof props.template !== "undefined") {
-      Object.assign(state, defaultState);
-    }
-
     if (props.templates.size > 0) {
       // Just get the template name for validation (don't want duplicate names)
       // and remove the first one as it is "All Fields".
@@ -108,9 +104,8 @@ export class SaveTemplateModal extends React.Component {
         }
       });
       state.names = names;
-      state._names = fromJS(names); // This is to be kept is a clean state.
+      state._names = fromJS(names);
     }
-
     return state;
   }
 
@@ -155,11 +150,6 @@ export class SaveTemplateModal extends React.Component {
   };
 
   render() {
-    const { template } = this.props;
-    if (typeof template === "undefined") {
-      return null;
-    }
-
     return (
       <Modal
         closable={false}

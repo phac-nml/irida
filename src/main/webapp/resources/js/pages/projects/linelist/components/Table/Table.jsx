@@ -19,7 +19,8 @@ const { i18n } = window.PAGE;
  */
 export class Table extends React.Component {
   state = {
-    entries: null
+    entries: null,
+    filterCount: 0
   };
 
   /*
@@ -404,7 +405,29 @@ export class Table extends React.Component {
    * Search the entire table for a value.
    * @param {string} value
    */
-  quickSearch = value => this.api.setQuickFilter(value);
+  quickSearch = value => {
+    this.api.setQuickFilter(value);
+  };
+
+  /**
+   * Update parent components of the revised filter status.
+   * @returns {*}
+   */
+  setFilterCount = () =>
+    this.props.onFilter(
+      this.api.getModel().rootNode.childrenAfterFilter.length
+    );
+
+  /**
+   * Scroll table to the top left most position.
+   */
+  scrollToTop = () => {
+    // Scroll to top
+    this.api.ensureIndexVisible(0);
+    // Ensure the column is scrolled all the way to the left.
+    this.api.ensureColumnVisible(this.columnApi.getColumnState()[1].colId);
+  };
+  
 
   render() {
     return (
@@ -416,6 +439,7 @@ export class Table extends React.Component {
           id="linelist-grid"
           rowSelection="multiple"
           enableFilter={true}
+          onFilterChanged={this.setFilterCount}
           enableSorting={true}
           enableColResize={true}
           localeText={i18n.linelist.agGrid}
@@ -447,5 +471,6 @@ Table.propTypes = {
   fields: ImmutablePropTypes.list.isRequired,
   entries: ImmutablePropTypes.list,
   templates: ImmutablePropTypes.list,
-  current: PropTypes.number.isRequired
+  current: PropTypes.number.isRequired,
+  onFilter: PropTypes.func.isRequired
 };

@@ -6,7 +6,7 @@ import { TemplateSelectOption } from "./TemplateSelectOption";
 import {
   HelpPopover,
   PopoverContents
-} from "../../../../../components/popovers/index";
+} from "../../../../../../../components/popovers/index";
 
 const { Option } = Select;
 const { i18n } = window.PAGE;

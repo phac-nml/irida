@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import ImmutablePropTypes from "react-immutable-proptypes";
 import { SaveTemplateModal } from "./SaveTemplateModal";
-import { TemplateSelect } from "../TemplateSelect";
+import { TemplateSelect } from "./TemplateSelect/TemplateSelect";
 
 /**
  * This component is responsible for rendering all components that handle
@@ -35,9 +35,9 @@ export class TemplatesPanel extends React.Component {
     return (
       <div
         style={{
+          height: 75,
           borderBottom: "1px solid rgba(189, 195, 199, 1.00)",
-          padding: "1rem",
-          marginBottom: "1rem"
+          padding: "1rem"
         }}
       >
         <TemplateSelect {...this.props} showSaveModal={this.showSaveModal} />

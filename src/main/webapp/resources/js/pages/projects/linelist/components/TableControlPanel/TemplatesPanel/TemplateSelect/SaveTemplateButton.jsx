@@ -24,6 +24,7 @@ export class SaveTemplateButton extends React.Component {
         className="t-template-save-btn"
         size="small"
         type="primary"
+        ghost
         onClick={this.showSaveModal}
         disabled={typeof this.props.template === "undefined"}
       >
