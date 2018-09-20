@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.web.models;
+package ca.corefacility.bioinformatics.irida.ria.web.linelist.dto;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -8,7 +8,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
-import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataEntry;
+import ca.corefacility.bioinformatics.irida.ria.web.components.agGrid.AgGridUtilities;
 
 /**
  * Represents {@link Sample} metadata in the linelist table.
@@ -36,9 +36,8 @@ public class UISampleMetadata {
 		Map<String, String> entries = new HashMap<>();
 		Map<MetadataTemplateField, MetadataEntry> sampleMetadata = sample.getMetadata();
 		for (MetadataTemplateField field : sampleMetadata.keySet()) {
-			UIMetadataEntry entry = new UIMetadataEntry(field,
-					sampleMetadata.getOrDefault(field, new MetadataEntry("", "text"))) ;
-			entries.put(entry.getField(), entry.getValue());
+			MetadataEntry entry = sampleMetadata.get(field);
+			entries.put(AgGridUtilities.formatFieldLabel(field.getLabel()), entry.getValue());
 		}
 		return entries;
 	}

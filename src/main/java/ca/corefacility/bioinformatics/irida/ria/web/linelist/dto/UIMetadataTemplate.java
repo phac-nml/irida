@@ -1,10 +1,10 @@
-package ca.corefacility.bioinformatics.irida.ria.web.models;
+package ca.corefacility.bioinformatics.irida.ria.web.linelist.dto;
 
 import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
-import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataField;
+import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.AbstractUIMetadataField;
 
 /**
  * User interface model for a {@link MetadataTemplate}
@@ -14,12 +14,12 @@ import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataField
 public class UIMetadataTemplate {
 	private Long id;
 	private String name;
-	private List<UIMetadataField> fields;
+	private List<AbstractUIMetadataField> fields;
 
 	public UIMetadataTemplate() {
 	}
 
-	public UIMetadataTemplate(Long id, String name, List<UIMetadataField> fields) {
+	public UIMetadataTemplate(Long id, String name, List<AbstractUIMetadataField> fields) {
 		this.id = id;
 		this.name = name;
 		this.fields = fields;
@@ -33,7 +33,7 @@ public class UIMetadataTemplate {
 		return name;
 	}
 
-	public List<UIMetadataField> getFields() {
+	public List<AbstractUIMetadataField> getFields() {
 		return fields;
 	}
 }
