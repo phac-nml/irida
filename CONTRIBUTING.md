@@ -16,7 +16,7 @@ Contributing to IRIDA
 
 ### Reporting a bug
 
-Reporting a bug is the easiest (and possibly most useful) way you can contribute to IRIDA.  IRIDA uses GitHub to track our issues.
+Reporting a bug is the easiest (and possibly most useful) way you can contribute to IRIDA.  IRIDA uses a [GitHub issues board]([GitHub issues board](https://github.com/phac-nml/irida/issues) to track our issues.
 
 Note: IRIDA's GitHub issue board is for bug reports or feature requests only.  You should not use it for usage issues, problems with analyzing your data, or problems setting up IRIDA.  For issues of this nature, please contact the IRIDA team by one of the other means described at the top of this document.
 
@@ -31,10 +31,20 @@ If you do not find a similar issue, please create a new issue with (at least) th
 
 When you're done, please label the new issue as a `bug` and we will triage it as soon as we can.
 
+### Suggesting a feature
+
+Before writing a bunch of code for a new feature, we would love to discuss the feature you're trying to build!  First you should search our [GitHub issue board](https://github.com/phac-nml/irida/issues) for your feature.  We may have a similar feature in the works where you can contribute.
+
+If you cannot find an existing issue that details your feature suggestion, we would love to hear your ideas!  Please create a GitHub issue detailing your idea, how you would expect a user to interact with your new feature, and how you would expect your feature to work.
+
+When you're done, please label the new issue as a `request and we will triage it as soon as we can.
+
 
 ### Contributing Code
 
 Before contributing any code, you should read our development guide and set up an IRIDA development environment so you can test your changes.  A good place to start is the [IRIDA Development Primer](https://irida.corefacility.ca/documentation/developer/getting-started/) in the IRIDA developer documentation.
+
+Once your development environment is set up, 
 
 #### Code submission requirements
 
@@ -51,17 +61,9 @@ For JavaScript or HTML submissions, the standards are similar:
 * Document all files, functions, and complicated code blocks.
 * Write tests for your bugfix or feature.  If the change is anything user facing, an integration test should be written to test the change.
 
-#### Fixing a bug
-
-If there is an issue in IRIDA
-
-
-#### Submitting a feature
-
-Before writing a bunch of code for a new feature, we would love to discuss the feature you're trying to build!  We may have a similar feature in the works where you can help contribute.
-
 #### Submitting a pull request
 
-Once your code meets all the standards and requirements outlined above,
+Once your code meets all the standards and requirements outlined above, you can submit it to the project to review as a GitHub pull request.  You should reference the issue from IRIDA's [GitHub issue board](https://github.com/phac-nml/irida/issues) in your pull request.  The core development team will review the content of the merge request and may suggest changes.
 
 **The final decision on whether to accept a pull request comes from the core IRIDA development team.**
+
