@@ -1,12 +1,13 @@
 Contributing to IRIDA
 =====================
 
-Thank you for your interest in contributing to the Integrated Rapid Infectious Disease Analysis (IRIDA) project.  IRIDA is primarily developed as by the IRIDA consortium, but the development team is happy to accept contributions from the community.  If you have changes or additions you would like to suggest we would love to talk about it!
+Thank you for your interest in contributing to the Integrated Rapid Infectious Disease Analysis (IRIDA) project.  IRIDA is primarily developed by the IRIDA consortium, but the development team is happy to accept contributions from the community.  If you have changes or additions you would like to suggest we would love to talk about it!
 
 
 Contacting the IRIDA Team
 -------------------------
 * Ask usage questions on __ADD FORUM LINK HERE__
+* Email the IRIDA developers at IRIDA-mail@sfu.ca
 * Report bugs, suggest features, or contribute code at on [GitHub](http://github.com/phac-nml/irida)
 * Chat with the developers on [Gitter](https://gitter.im/irida-project/)
 
@@ -16,7 +17,9 @@ Contributing to IRIDA
 
 ### Reporting a bug
 
-Reporting a bug is the easiest (and possibly most useful) way you can contribute to IRIDA.  IRIDA uses a [GitHub issues board]([GitHub issues board](https://github.com/phac-nml/irida/issues) to track our issues.
+Reporting a bug is the easiest (and possibly most useful) way you can contribute to IRIDA.  IRIDA uses a [GitHub issue board] to track our issues.
+
+If you find a security vulnerability, please contact the IRIDA team by email.
 
 Note: IRIDA's GitHub issue board is for bug reports or feature requests only.  You should not use it for usage issues, problems with analyzing your data, or problems setting up IRIDA.  For issues of this nature, please contact the IRIDA team by one of the other means described at the top of this document.
 
@@ -33,7 +36,7 @@ When you're done, please label the new issue as a `bug` and we will triage it as
 
 ### Suggesting a feature
 
-Before writing a bunch of code for a new feature, we would love to discuss the feature you're trying to build!  First you should search our [GitHub issue board](https://github.com/phac-nml/irida/issues) for your feature.  We may have a similar feature in the works where you can contribute.
+Before writing a bunch of code for a new feature, we would love to discuss the feature you're trying to build!  First you should search our [GitHub issue board] for your feature.  We may have a similar feature in the works where you can contribute.
 
 If you cannot find an existing issue that details your feature suggestion, we would love to hear your ideas!  Please create a GitHub issue detailing your idea, how you would expect a user to interact with your new feature, and how you would expect your feature to work.
 
@@ -44,7 +47,7 @@ When you're done, please label the new issue as a `request and we will triage it
 
 Before contributing any code, you should read our development guide and set up an IRIDA development environment so you can test your changes.  A good place to start is the [IRIDA Development Primer](https://irida.corefacility.ca/documentation/developer/getting-started/) in the IRIDA developer documentation.
 
-Once your development environment is set up, 
+Once your development environment is set up, you can find an issue on our [GitHub issue board].  It is expected that **all pull requests should reference a GitHub issue**.
 
 #### Code submission requirements
 
@@ -52,7 +55,7 @@ The IRIDA team works to maintain a uniform style, development standards, and for
 
 For Java code submissions, we require the following:
 * Use one of the IDE specific code formatter files.  [Eclipse](https://irida.corefacility.ca/documentation/developer/files/eclipse-code-formatter.xml) or [IntelliJ Idea](https://irida.corefacility.ca/documentation/developer/files/intellij-code-style-schemes.xml).
-* Write full JavaDoc for all functions, classes, and files you add or edit.  Our continuous integration suite will automatically fail for missing or incorrect JavaDoc.
+* Write JavaDoc for all functions, classes, and files you add or edit.  Our continuous integration suite will fail for missing or invalid JavaDoc.
 * Write inline documentation for any complicated code blocks.
 * Write tests for your bugfix or feature.  If the change is anything user facing, a full integration test should be written to test the change.  See more about our testing environment in the [IRIDA Development Primer](https://irida.corefacility.ca/documentation/developer/getting-started/).
 
@@ -63,7 +66,8 @@ For JavaScript or HTML submissions, the standards are similar:
 
 #### Submitting a pull request
 
-Once your code meets all the standards and requirements outlined above, you can submit it to the project to review as a GitHub pull request.  You should reference the issue from IRIDA's [GitHub issue board](https://github.com/phac-nml/irida/issues) in your pull request.  The core development team will review the content of the merge request and may suggest changes.
+When you have completed development on your issue, you can submit it to the project for review as a GitHub pull request.  You should reference the issue you were working on from IRIDA's [GitHub issue board] in your pull request.  The core IRIDA development team will review the content of the merge for functionality, fit-for-purpose of IRIDA's priorities, and coding standards listed above.  All tests in the CI suite must be passing before a pull request is merged.  After review the core development team may suggest changes to your submission.  After feedback if the development team's questions or suggestions are not addressed in a timely manner, your pull request may be closed.
 
 **The final decision on whether to accept a pull request comes from the core IRIDA development team.**
 
+[GitHub issue board]: https://github.com/phac-nml/irida/issues
