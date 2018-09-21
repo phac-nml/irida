@@ -1,12 +1,21 @@
 package ca.corefacility.bioinformatics.irida.ria.web.linelist.dto;
 
+import ca.corefacility.bioinformatics.irida.ria.web.components.agGrid.AgGridColumn;
+
 /**
- * {@link UIMetadataFieldDefault}s are metadata fields that must be present on
- * the line list page.
+ * Represents metadata fields that are not part of the sample metadata, but are included
+ * on the line list page.
  */
-public class UIMetadataFieldDefault extends AbstractUIMetadataField {
+public class UIMetadataFieldDefault extends AgGridColumn {
+	private String field;
 
 	public UIMetadataFieldDefault(String field, String headerName, String type) {
-		super(field, headerName, type, false, false);
+		super(headerName, type, false, false);
+		this.field = field;
+	}
+
+	@Override
+	public String getField() {
+		return field;
 	}
 }

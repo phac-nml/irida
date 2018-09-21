@@ -32,12 +32,19 @@ public class UISampleMetadata {
 		this.metadata = getMetadataForSample(sample);
 	}
 
+	/**
+	 * Convert the sample metadata into a format that can be consumed by Ag Grid.
+	 *
+	 * @param sample {@link Sample}
+	 * @return {@link Map} of {@link String} field and {@link String} value
+	 */
 	private Map<String, String> getMetadataForSample(Sample sample) {
 		Map<String, String> entries = new HashMap<>();
 		Map<MetadataTemplateField, MetadataEntry> sampleMetadata = sample.getMetadata();
 		for (MetadataTemplateField field : sampleMetadata.keySet()) {
 			MetadataEntry entry = sampleMetadata.get(field);
-			entries.put(AgGridUtilities.formatFieldLabel(field.getLabel()), entry.getValue());
+			// Label must be converted into the proper format for client side look up purposes in Ag Grid.
+			entries.put(AgGridUtilities.convertHeaderNameToField(field.getLabel()), entry.getValue());
 		}
 		return entries;
 	}

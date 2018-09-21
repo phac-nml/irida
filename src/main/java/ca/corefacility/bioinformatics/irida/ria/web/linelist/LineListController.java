@@ -22,7 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.web.components.agGrid.AgGridUtilities;
-import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.AbstractUIMetadataField;
+import ca.corefacility.bioinformatics.irida.ria.web.components.agGrid.AgGridColumn;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataFieldDefault;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataField;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataTemplate;
@@ -60,7 +60,7 @@ public class LineListController {
 	 */
 	@RequestMapping("/fields")
 	@ResponseBody
-	public List<AbstractUIMetadataField> getProjectMetadataTemplateFields(@RequestParam long projectId, Locale locale) {
+	public List<AgGridColumn> getProjectMetadataTemplateFields(@RequestParam long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
 		List<MetadataTemplateField> metadataFieldsForProject = metadataTemplateService.getMetadataFieldsForProject(
 				project);
@@ -75,7 +75,7 @@ public class LineListController {
 			fieldSet.addAll(templateFields);
 		}
 
-		List<AbstractUIMetadataField> fields = fieldSet.stream()
+		List<AgGridColumn> fields = fieldSet.stream()
 				.map(f -> new UIMetadataField(f, false, true))
 				.sorted((f1, f2) -> f1.getHeaderName()
 						.compareToIgnoreCase(f2.getHeaderName()))
@@ -125,7 +125,10 @@ public class LineListController {
 	public String saveMetadataEntry(@RequestParam long sampleId, @RequestParam String label, @RequestParam String value,
 			HttpServletResponse response) {
 		Sample sample = sampleService.read(sampleId);
-		String field = AgGridUtilities.getField(label);
+
+		// The field label was transformed before passing it to the UI,
+		// We must convert it back to its original state for look up.
+		String field = AgGridUtilities.convertFieldToHeaderName(label);
 		try {
 			Map<MetadataTemplateField, MetadataEntry> metadata = sample.getMetadata();
 			MetadataTemplateField templateField = metadataTemplateService.readMetadataFieldByLabel(field);
@@ -165,7 +168,7 @@ public class LineListController {
 	@ResponseBody
 	public List<UIMetadataTemplate> getLineListTemplates(@RequestParam long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
-		List<AbstractUIMetadataField> allFields = this.getProjectMetadataTemplateFields(projectId, locale);
+		List<AgGridColumn> allFields = this.getProjectMetadataTemplateFields(projectId, locale);
 		List<ProjectMetadataTemplateJoin> templateJoins = metadataTemplateService.getMetadataTemplatesForProject(
 				project);
 		List<UIMetadataTemplate> templates = new ArrayList<>();
@@ -176,7 +179,7 @@ public class LineListController {
 
 		for (ProjectMetadataTemplateJoin join : templateJoins) {
 			MetadataTemplate template = join.getObject();
-			List<AbstractUIMetadataField> fields = template.getFields()
+			List<AgGridColumn> fields = template.getFields()
 					.stream()
 					.map(f -> new UIMetadataField(f, false, true))
 					.collect(Collectors.toList());
@@ -202,7 +205,7 @@ public class LineListController {
 
 		// Get or create the template fields.
 		List<MetadataTemplateField> fields = new ArrayList<>();
-		for (AbstractUIMetadataField field : template.getFields()) {
+		for (AgGridColumn field : template.getFields()) {
 
 			if (!field.getHeaderName()
 					.equals(sampleLabel)) {
