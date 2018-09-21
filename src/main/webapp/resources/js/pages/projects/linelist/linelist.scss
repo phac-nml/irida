@@ -107,4 +107,20 @@ $bgColor: #f5f7f7;
   }
 }
 
+.column-list-item {
+  width: 256px;
+
+  .ant-list-item-action {
+    margin-left: 10px;
+  }
+}
+
+.column-list-item--text {
+  margin-left: 10px;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+  width: 100%;
+}
+
 /*****************************************************************************/

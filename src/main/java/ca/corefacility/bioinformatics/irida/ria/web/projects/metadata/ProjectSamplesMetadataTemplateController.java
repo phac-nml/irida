@@ -22,7 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemp
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
-import ca.corefacility.bioinformatics.irida.ria.web.models.UIMetadataTemplate;
+import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataTemplate;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
