@@ -21,7 +21,7 @@ Reporting a bug is the easiest, and one of the most useful, ways you can contrib
 
 If you find a security vulnerability, please contact the IRIDA team by email.
 
-Note: IRIDA's GitHub issue board is for bug reports or feature requests only.  You should not use it for usage issues, problems with analyzing your data, or problems setting up IRIDA.  For issues of this nature, please contact the IRIDA team by one of the other means above.
+Note: IRIDA's GitHub issue board is for bug reports or feature requests only.  You should not use it for usage issues, problems with analyzing your data, or problems setting up IRIDA.  For issues of this nature, please contact the IRIDA team by one of the other options in the [Contacting the IRIDA Team](#contacting-the-irida-team) section.
 
 If you find an issue while using IRIDA that you feel is a problem with the software, first check out our [GitHub issue board] to see if someone has already reported the issue.  If you find a similar issue, we would still like to hear about your problem.  Add a comment to the issue stating how your problem occurred.
 
@@ -71,6 +71,9 @@ For JavaScript or HTML submissions, the standards are similar:
 When you have completed development on your issue, you can submit it to the project for review as a GitHub pull request.  You should reference the issue you were working on from IRIDA's [GitHub issue board] in your pull request.  The core IRIDA development team will review the content of the merge for functionality, fit-for-purpose of IRIDA's priorities, and coding standards listed above.  All tests in the CI suite must be passing before a pull request is merged.  After review the core development team may suggest changes to your submission.  After feedback if the development team's questions or suggestions are not addressed in a timely manner, your pull request may be closed.
 
 **The final decision on whether to accept a pull request comes from the core IRIDA development team.**
+
+
+Thank you for your interest in contributing to IRIDA.  For any questions or comments on this guide, or other ways you can help contribute to IRIDA, please contact the development team through one of the options outlined in the [Contacting the IRIDA Team](#contacting-the-irida-team) section.
 
 [GitHub issue board]: https://github.com/phac-nml/irida/issues
 [IRIDA Development Primer]: https://irida.corefacility.ca/documentation/developer/getting-started/
