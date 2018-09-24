@@ -1,7 +1,7 @@
 Contributing to IRIDA
 =====================
 
-Thank you for your interest in contributing to the Integrated Rapid Infectious Disease Analysis (IRIDA) project.  IRIDA is primarily developed by the IRIDA consortium, but the development team is happy to accept contributions from the community.  If you have changes or additions you would like to make we would love to talk about it!  Before contributing code, please first discuss the change you are planning to make with us by creating or commenting on a GitHub issue, or you can contact the us by one of the other options below.
+Thank you for your interest in contributing to the Integrated Rapid Infectious Disease Analysis (IRIDA) project.  IRIDA is primarily developed by the IRIDA consortium, but the development team is happy to accept contributions from the community.  If you have changes or additions you would like to make we would love to talk about it!  Before contributing code, please first discuss the change you are planning to make with us by creating or commenting on a GitHub issue, or you can contact us by one of the other options below.
 
 
 Contacting the IRIDA Team
