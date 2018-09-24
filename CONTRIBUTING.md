@@ -1,7 +1,7 @@
 Contributing to IRIDA
 =====================
 
-Thank you for your interest in contributing to the Integrated Rapid Infectious Disease Analysis (IRIDA) project.  IRIDA is primarily developed by the IRIDA consortium, but the development team is happy to accept contributions from the community.  If you have changes or additions you would like to suggest we would love to talk about it!
+Thank you for your interest in contributing to the Integrated Rapid Infectious Disease Analysis (IRIDA) project.  IRIDA is primarily developed by the IRIDA consortium, but the development team is happy to accept contributions from the community.  If you have changes or additions you would like to make we would love to talk about it!  Before contributing code, please first discuss the change you are planning to make with us by creating or commenting on a GitHub issue, or you can contact the us by one of the other options below.
 
 
 Contacting the IRIDA Team
@@ -17,11 +17,11 @@ Contributing to IRIDA
 
 ### Reporting a bug
 
-Reporting a bug is the easiest (and possibly most useful) way you can contribute to IRIDA.  IRIDA uses a [GitHub issue board] to track our issues.
+Reporting a bug is the easiest, and one of th emost useful, ways you can contribute to IRIDA.  IRIDA uses a [GitHub issue board] to track our issues.
 
 If you find a security vulnerability, please contact the IRIDA team by email.
 
-Note: IRIDA's GitHub issue board is for bug reports or feature requests only.  You should not use it for usage issues, problems with analyzing your data, or problems setting up IRIDA.  For issues of this nature, please contact the IRIDA team by one of the other means described at the top of this document.
+Note: IRIDA's GitHub issue board is for bug reports or feature requests only.  You should not use it for usage issues, problems with analyzing your data, or problems setting up IRIDA.  For issues of this nature, please contact the IRIDA team by one of the other means above.
 
 If you find an issue while using IRIDA that you feel is a problem with the software, first check out our [GitHub issues board](https://github.com/phac-nml/irida/issues) to see if someone has already reported the issue.  If you find a similar issue, we would still like to hear about your specific problem.  Add a comment to the issue stating how your problem occurred.
 
@@ -36,11 +36,11 @@ When you're done, please label the new issue as a `bug` and we will triage it as
 
 ### Suggesting a feature
 
-Before writing a bunch of code for a new feature, we would love to discuss the feature you're trying to build!  First you should search our [GitHub issue board] for your feature.  We may have a similar feature in the works where you can contribute.
+Before writing a bunch of code for a new feature, we would love to discuss the feature you're trying to build!  First you should search our [GitHub issue board] to see if anyone else has suggested your feature.  We may have a similar feature in the works where you can contribute.
 
-If you cannot find an existing issue that details your feature suggestion, we would love to hear your ideas!  Please create a GitHub issue detailing your idea, how you would expect a user to interact with your new feature, and how you would expect your feature to work.
+If you cannot find an existing issue that details your suggestion, we would love to hear your ideas!  Please create a GitHub issue detailing your idea, how you would expect a user to interact with the new feature, and how you would expect your feature to work.
 
-When you're done, please label the new issue as a `request and we will triage it as soon as we can.
+When you're done, please label the new issue as a `request` and we will triage it as soon as we can.
 
 
 ### Contributing Code
@@ -53,14 +53,16 @@ Once your development environment is set up, you can find an issue on our [GitHu
 
 The IRIDA team works to maintain a uniform style, development standards, and formatting across the project.  This includes specific code formatting options, comment guidelines, and testing requirements.
 
+For any changes, a message should be added to our `CHANGELOG.md` file briefly detailing the change.
+
 For Java code submissions, we require the following:
-* Use one of the IDE specific code formatter files.  [Eclipse](https://irida.corefacility.ca/documentation/developer/files/eclipse-code-formatter.xml) or [IntelliJ Idea](https://irida.corefacility.ca/documentation/developer/files/intellij-code-style-schemes.xml).
+* Use one of the IDE specific code formatter files.  [Eclipse](https://irida.corefacility.ca/documentation/developer/files/eclipse-code-formatter.xml) or [IntelliJ Idea](https://irida.corefacility.ca/documentation/developer/files/intellij-code-style-schemes.xml) to ensure a consistent code style is applied.
 * Write JavaDoc for all functions, classes, and files you add or edit.  Our continuous integration suite will fail for missing or invalid JavaDoc.
 * Write inline documentation for any complicated code blocks.
 * Write tests for your bugfix or feature.  If the change is anything user facing, a full integration test should be written to test the change.  See more about our testing environment in the [IRIDA Development Primer](https://irida.corefacility.ca/documentation/developer/getting-started/).
 
 For JavaScript or HTML submissions, the standards are similar:
-* `prettier` is automatically run on commit to format your JavaScript files.
+* `prettier` is automatically run on commit to format your JavaScript files when you make a commit to ensure a consistent code style is applied.
 * Document all files, functions, and complicated code blocks.
 * Write tests for your bugfix or feature.  If the change is anything user facing, an integration test should be written to test the change.
 
