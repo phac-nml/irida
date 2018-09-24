@@ -17,13 +17,13 @@ Contributing to IRIDA
 
 ### Reporting a bug
 
-Reporting a bug is the easiest, and one of th emost useful, ways you can contribute to IRIDA.  IRIDA uses a [GitHub issue board] to track our issues.
+Reporting a bug is the easiest, and one of the most useful, ways you can contribute to IRIDA.  IRIDA uses a [GitHub issue board] to track our issues.
 
 If you find a security vulnerability, please contact the IRIDA team by email.
 
 Note: IRIDA's GitHub issue board is for bug reports or feature requests only.  You should not use it for usage issues, problems with analyzing your data, or problems setting up IRIDA.  For issues of this nature, please contact the IRIDA team by one of the other means above.
 
-If you find an issue while using IRIDA that you feel is a problem with the software, first check out our [GitHub issues board](https://github.com/phac-nml/irida/issues) to see if someone has already reported the issue.  If you find a similar issue, we would still like to hear about your specific problem.  Add a comment to the issue stating how your problem occurred.
+If you find an issue while using IRIDA that you feel is a problem with the software, first check out our [GitHub issue board] to see if someone has already reported the issue.  If you find a similar issue, we would still like to hear about your problem.  Add a comment to the issue stating how your problem occurred.
 
 If you do not find a similar issue, please create a new issue with (at least) the following information:
 
@@ -45,7 +45,7 @@ When you're done, please label the new issue as a `request` and we will triage i
 
 ### Contributing Code
 
-Before contributing any code, you should read our development guide and set up an IRIDA development environment so you can test your changes.  A good place to start is the [IRIDA Development Primer](https://irida.corefacility.ca/documentation/developer/getting-started/) in the IRIDA developer documentation.
+Before contributing any code, you should read our development guide and set up an IRIDA development environment so you can test your changes.  A good place to start is the [IRIDA Development Primer] in the IRIDA developer documentation.
 
 Once your development environment is set up, you can find an issue on our [GitHub issue board].  It is expected that **all pull requests should reference a GitHub issue**.
 
@@ -59,7 +59,7 @@ For Java code submissions, we require the following:
 * Use one of the IDE specific code formatter files.  [Eclipse](https://irida.corefacility.ca/documentation/developer/files/eclipse-code-formatter.xml) or [IntelliJ Idea](https://irida.corefacility.ca/documentation/developer/files/intellij-code-style-schemes.xml) to ensure a consistent code style is applied.
 * Write JavaDoc for all functions, classes, and files you add or edit.  Our continuous integration suite will fail for missing or invalid JavaDoc.
 * Write inline documentation for any complicated code blocks.
-* Write tests for your bugfix or feature.  If the change is anything user facing, a full integration test should be written to test the change.  See more about our testing environment in the [IRIDA Development Primer](https://irida.corefacility.ca/documentation/developer/getting-started/).
+* Write tests for your bugfix or feature.  If the change is anything user facing, a full integration test should be written to test the change.  See more about our testing environment in the [IRIDA Development Primer].
 
 For JavaScript or HTML submissions, the standards are similar:
 * `prettier` is automatically run on commit to format your JavaScript files when you make a commit to ensure a consistent code style is applied.
@@ -73,3 +73,4 @@ When you have completed development on your issue, you can submit it to the proj
 **The final decision on whether to accept a pull request comes from the core IRIDA development team.**
 
 [GitHub issue board]: https://github.com/phac-nml/irida/issues
+[IRIDA Development Primer]: https://irida.corefacility.ca/documentation/developer/getting-started/
