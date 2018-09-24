@@ -34,6 +34,10 @@ If you do not find a similar issue, please create a new issue with (at least) th
 
 When you're done, please label the new issue as a `bug` and we will triage it as soon as we can.
 
+### Contributing an analysis pipeline
+
+If you have an analysis tool that you would like to build for IRIDA we'd like to hear about it!  IRIDA has a plug-in style system for analysis workflows.  This helps make it easier for tool developers to get the benefits of IRIDA's data management system and easy to use interface and incorporate their analysis workflows into IRIDA's growing suite of tools.  For an analysis pipeline to be used in IRIDA, it must be developed as a Galaxy workflow and operate on sequencing reads.  Read more about building tools for IRIDA in the [IRIDA Pipeline Development Guide](https://irida.corefacility.ca/documentation/developer/tools/pipelines/).
+
 ### Suggesting a feature
 
 Before writing a bunch of code for a new feature, we would love to discuss the feature you're trying to build!  First you should search our [GitHub issue board] to see if anyone else has suggested your feature.  We may have a similar feature in the works where you can contribute.
