@@ -21,14 +21,15 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
-import ca.corefacility.bioinformatics.irida.ria.web.models.UIMetadataTemplate;
-import ca.corefacility.bioinformatics.irida.ria.web.models.UIMetadataTemplateField;
-import ca.corefacility.bioinformatics.irida.ria.web.models.UISampleMetadata;
+import ca.corefacility.bioinformatics.irida.ria.web.components.agGrid.AgGridUtilities;
+import ca.corefacility.bioinformatics.irida.ria.web.components.agGrid.AgGridColumn;
+import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataFieldDefault;
+import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataField;
+import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataTemplate;
+import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UISampleMetadata;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-
-import com.google.common.collect.Lists;
 
 /**
  * This controller is responsible for AJAX handling for the line list page, which displays sample metadata.
@@ -39,7 +40,7 @@ public class LineListController {
 	private ProjectService projectService;
 	private SampleService sampleService;
 	private MetadataTemplateService metadataTemplateService;
-	private MessageSource messageSource;
+	private MessageSource messages;
 
 	@Autowired
 	public LineListController(ProjectService projectService, SampleService sampleService,
@@ -47,7 +48,7 @@ public class LineListController {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.metadataTemplateService = metadataTemplateService;
-		this.messageSource = messageSource;
+		this.messages = messageSource;
 	}
 
 	/**
@@ -55,12 +56,40 @@ public class LineListController {
 	 *
 	 * @param projectId {@link Long} identifier for a {@link Project}
 	 * @param locale    {@link Locale}
-	 * @return {@link List} of {@link MetadataTemplateField}
+	 * @return {@link List} of {@link UIMetadataField}
 	 */
 	@RequestMapping("/fields")
 	@ResponseBody
-	public List<MetadataTemplateField> getProjectMetadataTemplateFields(@RequestParam long projectId, Locale locale) {
-		return getAllProjectMetadataFieldsWithSampleId(projectId, locale);
+	public List<AgGridColumn> getProjectMetadataTemplateFields(@RequestParam long projectId, Locale locale) {
+		Project project = projectService.read(projectId);
+		List<MetadataTemplateField> metadataFieldsForProject = metadataTemplateService.getMetadataFieldsForProject(
+				project);
+		Set<MetadataTemplateField> fieldSet = new HashSet<>(metadataFieldsForProject);
+
+		// Need to get all the fields from the templates too!
+		List<ProjectMetadataTemplateJoin> templateJoins = metadataTemplateService.getMetadataTemplatesForProject(
+				project);
+		for (ProjectMetadataTemplateJoin join : templateJoins) {
+			MetadataTemplate template = join.getObject();
+			List<MetadataTemplateField> templateFields = template.getFields();
+			fieldSet.addAll(templateFields);
+		}
+
+		List<AgGridColumn> fields = fieldSet.stream()
+				.map(f -> new UIMetadataField(f, false, true))
+				.sorted((f1, f2) -> f1.getHeaderName()
+						.compareToIgnoreCase(f2.getHeaderName()))
+				.collect(Collectors.toList());
+
+		// Add the sample name, project name, created date and the modified date
+		fields.add(0, new UIMetadataFieldDefault("sampleLabel",
+				messages.getMessage("linelist.field.sampleLabel", new Object[] {}, locale), "text"));
+		fields.add(0, new UIMetadataFieldDefault("created",
+				messages.getMessage("linelist.field.created", new Object[] {}, locale), "date"));
+		fields.add(0, new UIMetadataFieldDefault("modified",
+				messages.getMessage("linelist.field.modified", new Object[] {}, locale), "date"));
+
+		return fields;
 	}
 
 	/**
@@ -73,7 +102,11 @@ public class LineListController {
 	@RequestMapping(value = "/entries", method = RequestMethod.GET)
 	@ResponseBody
 	public List<UISampleMetadata> getProjectSamplesMetadataEntries(@RequestParam long projectId) {
-		return getAllProjectSamplesMetadataEntries(projectId);
+		Project project = projectService.read(projectId);
+		List<Join<Project, Sample>> projectSamples = sampleService.getSamplesForProject(project);
+		return projectSamples.stream()
+				.map(this::formatSampleMetadata)
+				.collect(Collectors.toList());
 	}
 
 	/**
@@ -90,11 +123,15 @@ public class LineListController {
 	public String saveMetadataEntry(@RequestParam long sampleId, @RequestParam String label, @RequestParam String value,
 			HttpServletResponse response) {
 		Sample sample = sampleService.read(sampleId);
+
+		// The field label was transformed before passing it to the UI,
+		// We must convert it back to its original state for look up.
+		String field = AgGridUtilities.convertFieldToHeaderName(label);
 		try {
 			Map<MetadataTemplateField, MetadataEntry> metadata = sample.getMetadata();
-			MetadataTemplateField templateField = metadataTemplateService.readMetadataFieldByLabel(label);
+			MetadataTemplateField templateField = metadataTemplateService.readMetadataFieldByLabel(field);
 			if (templateField == null) {
-				templateField = new MetadataTemplateField(label, "text");
+				templateField = new MetadataTemplateField(field, "text");
 				metadataTemplateService.saveMetadataField(templateField);
 			}
 			MetadataEntry entry;
@@ -129,15 +166,23 @@ public class LineListController {
 	@ResponseBody
 	public List<UIMetadataTemplate> getLineListTemplates(@RequestParam long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
-		List<MetadataTemplateField> allFields = getAllProjectMetadataFields(projectId);
-		List<ProjectMetadataTemplateJoin> joins = metadataTemplateService.getMetadataTemplatesForProject(project);
-		List<UIMetadataTemplate> templates = joins.stream()
-				.map(join -> new UIMetadataTemplate(join.getObject(), new ArrayList<>(allFields)))
-				.collect(Collectors.toList());
+		List<AgGridColumn> allFields = this.getProjectMetadataTemplateFields(projectId, locale);
+		List<ProjectMetadataTemplateJoin> templateJoins = metadataTemplateService.getMetadataTemplatesForProject(
+				project);
+		List<UIMetadataTemplate> templates = new ArrayList<>();
 
 		// Add a "Template" for all fields
-		templates.add(0, new UIMetadataTemplate(new MetadataTemplate(
-				messageSource.getMessage("linelist.templates.Select.none", new Object[] {}, locale), allFields)));
+		templates.add(new UIMetadataTemplate(-1L,
+				messages.getMessage("linelist.templates.Select.none", new Object[] {}, locale), allFields));
+
+		for (ProjectMetadataTemplateJoin join : templateJoins) {
+			MetadataTemplate template = join.getObject();
+			List<AgGridColumn> fields = template.getFields()
+					.stream()
+					.map(f -> new UIMetadataField(f, false, true))
+					.collect(Collectors.toList());
+			templates.add(new UIMetadataTemplate(template.getId(), template.getName(), fields));
+		}
 
 		return templates;
 	}
@@ -154,20 +199,19 @@ public class LineListController {
 	@RequestMapping(value = "/templates", method = RequestMethod.POST)
 	public UIMetadataTemplate saveLineListTemplate(@RequestBody UIMetadataTemplate template,
 			@RequestParam Long projectId, HttpServletResponse response, Locale locale) {
-		String sampleNameColumn = messageSource.getMessage("linelist.agGrid.sampleName", new Object[] {}, locale);
+		String sampleLabel = messages.getMessage("linelist.field.sampleLabel", new Object[] {}, locale);
 
 		// Get or create the template fields.
 		List<MetadataTemplateField> fields = new ArrayList<>();
-		MetadataTemplateField metadataTemplateField;
-		for (UIMetadataTemplateField field : template.getFields()) {
-			// Don't save the same name column
-			if (!field.getLabel()
-					.equals(sampleNameColumn)) {
-				if (field.getId() == null) {
+		for (AgGridColumn field : template.getFields()) {
+
+			if (!field.getHeaderName()
+					.equals(sampleLabel)) {
+				MetadataTemplateField metadataTemplateField = metadataTemplateService.readMetadataFieldByLabel(
+						field.getField());
+				if (metadataTemplateField == null) {
 					metadataTemplateField = metadataTemplateService.saveMetadataField(
-							new MetadataTemplateField(field.getLabel(), "text"));
-				} else {
-					metadataTemplateField = metadataTemplateService.readMetadataField(field.getId());
+							new MetadataTemplateField(field.getField(), "text"));
 				}
 				fields.add(metadataTemplateField);
 			}
@@ -189,67 +233,17 @@ public class LineListController {
 			metadataTemplate = metadataTemplateService.updateMetadataTemplateInProject(metadataTemplate);
 			response.setStatus(HttpServletResponse.SC_OK);
 		}
-		return new UIMetadataTemplate(metadataTemplate, getAllProjectMetadataFieldsWithSampleId(projectId, locale));
+		return new UIMetadataTemplate(metadataTemplate.getId(), metadataTemplate.getName(),
+				this.getProjectMetadataTemplateFields(projectId, locale));
 	}
 
 	/**
-	 * Get a {@link List} of {@link MetadataTemplateField}s for a {@link Project}
+	 * Create a {@link UISampleMetadata} from a {@link Join}
 	 *
-	 * @param projectId {@link Long} Identifier for the project.
-	 * @return {@link List} of {@link MetadataTemplateField}
+	 * @param projectSampleJoin {@link Join} of {@link Project} and {@link Sample}
+	 * @return {@link UISampleMetadata}
 	 */
-	private List<MetadataTemplateField> getAllProjectMetadataFields(Long projectId) {
-		Project project = projectService.read(projectId);
-		List<MetadataTemplateField> metadataFieldsForProject = metadataTemplateService.getMetadataFieldsForProject(
-				project);
-		Set<MetadataTemplateField> fieldSet = new HashSet<>(metadataFieldsForProject);
-
-		// Need to get all the fields from the templates too!
-		List<ProjectMetadataTemplateJoin> templateJoins = metadataTemplateService.getMetadataTemplatesForProject(project);
-		for (ProjectMetadataTemplateJoin join : templateJoins) {
-			MetadataTemplate template = join.getObject();
-			List<MetadataTemplateField> templateFields = template.getFields();
-			fieldSet.addAll(templateFields);
-		}
-		List<MetadataTemplateField> fields = Lists.newArrayList(fieldSet);
-
-		// Sort so they always return in the same order
-		fields.sort((f1, f2) -> f1.getLabel()
-				.compareToIgnoreCase(f2.getLabel()));
-		return fields;
-	}
-
-	/**
-	 * Get the template the the line list table.  This becomes the table headers.
-	 *
-	 * @param projectId {@link Long} identifier of the current {@link Project}
-	 * @param locale    {@link Locale}
-	 * @return {@link Set} containing unique metadata fields
-	 */
-	private List<MetadataTemplateField> getAllProjectMetadataFieldsWithSampleId(Long projectId, Locale locale) {
-		List<MetadataTemplateField> fields = getAllProjectMetadataFields(projectId);
-		// Need the sample name.  This will enforce that it is in the first position.
-		fields.add(0, new MetadataTemplateField(
-				messageSource.getMessage("linelist.agGrid.sampleName", new Object[] {}, locale), "text"));
-		return fields;
-	}
-
-	/**
-	 * Get a {@link List} of {@link Map} for all {@link  Sample} {@link MetadataEntry}s in a {@link Project}
-	 *
-	 * @param projectId {@link Long} identifier for a {@link Project}
-	 * @return {@link List} of {@link List}s of all {@link Sample} metadata in a {@link Project}
-	 */
-	private List<UISampleMetadata> getAllProjectSamplesMetadataEntries(Long projectId) {
-		Project project = projectService.read(projectId);
-		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(project);
-		List<UISampleMetadata> result = new ArrayList<>(samplesForProject.size());
-
-		for (Join<Project, Sample> join : samplesForProject) {
-			Sample sample = join.getObject();
-			result.add(new UISampleMetadata(project, sample));
-		}
-
-		return result;
+	private UISampleMetadata formatSampleMetadata(Join<Project, Sample> projectSampleJoin) {
+		return new UISampleMetadata(projectSampleJoin.getSubject(), projectSampleJoin.getObject());
 	}
 }
