@@ -5,7 +5,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.components.agGrid;
  *
  * @see <a href="https://www.ag-grid.com/javascript-grid-column-properties/">Column Properties</a>
  */
-public abstract class AgGridColumn {
+public class AgGridColumn {
 	/**
 	 * The name to render in the column header.
 	 */

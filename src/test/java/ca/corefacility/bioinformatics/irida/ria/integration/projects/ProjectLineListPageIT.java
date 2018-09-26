@@ -37,16 +37,13 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 		page.openColumnsPaenl();
 		assertEquals("Should be on the correct page.", "Line List", page.getActivePage());
 		assertEquals("Should be 21 samples", 21, page.getNumberOfRowsInLineList());
-		assertEquals("Should be 8 fields to toggle", 8, page.getNumberOfMetadataFields());
-
-		// There will be an extra header because you cannot toggle the sample column.
-		assertEquals("Should be 8 table headers", 8, page.getNumberOfTableColumnsVisible());
+		assertEquals("Should be 6 fields to toggle", 6, page.getNumberOfMetadataFields());
 
 		// Toggle one of the fields and make sure the table updates;
 		page.toggleMetadataField(1);
-		assertEquals("Should now only display 7 fields", 7, page.getNumberOfTableColumnsVisible());
-		page.toggleMetadataField(2);
 		assertEquals("Should now only display 6 fields", 6, page.getNumberOfTableColumnsVisible());
+		page.toggleMetadataField(2);
+		assertEquals("Should now only display 5 fields", 5, page.getNumberOfTableColumnsVisible());
 
 		// Test selecting templates
 		page.selectTemplate(TEMPLATE_1);
@@ -64,7 +61,7 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Switch back to new template
 		page.selectTemplate(TEMPLATE_NAME);
-		assertEquals("Should have 8 columns visible", 8, page.getNumberOfTableColumnsVisible());
+		assertEquals("Should have 7 columns visible", 7, page.getNumberOfTableColumnsVisible());
 
 		// Test inline editing
 		String cellContents = page.getCellContents(0, "symptom");
