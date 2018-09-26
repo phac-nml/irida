@@ -84,8 +84,6 @@ public class LineListController {
 		// Add the sample name, project name, created date and the modified date
 		fields.add(0, new UIMetadataFieldDefault("sampleLabel",
 				messages.getMessage("linelist.field.sampleLabel", new Object[] {}, locale), "text"));
-		fields.add(0, new UIMetadataFieldDefault("projectLabel",
-				messages.getMessage("linelist.field.projectLabel", new Object[] {}, locale), "text"));
 		fields.add(0, new UIMetadataFieldDefault("created",
 				messages.getMessage("linelist.field.created", new Object[] {}, locale), "date"));
 		fields.add(0, new UIMetadataFieldDefault("modified",
