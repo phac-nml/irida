@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.Dimension;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
@@ -24,29 +25,24 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 	@Before
 	public void init() {
 		LoginPage.loginAsManager(driver());
+		driver().manage()
+				.window()
+				.setSize(new Dimension(1800, 900)); // Make sure we can see everything.
 	}
 
 	@Test
 	public void testTableSetup() {
 		ProjectLineListPage page = ProjectLineListPage.goToPage(driver(), 1);
-		driver().manage()
-				.window()
-				.maximize(); // Make sure we can see everything.
 		// OPen the column panel
 		page.openColumnsPaenl();
 		assertEquals("Should be on the correct page.", "Line List", page.getActivePage());
 		assertEquals("Should be 21 samples", 21, page.getNumberOfRowsInLineList());
-		assertEquals("Should be 5 fields to toggle", 5, page.getNumberOfMetadataFields());
-
-		// There will be an extra header because you cannot toggle the sample column.
-		assertEquals("Should be 6 table headers", 6, page.getNumberOfTableColumnsVisible());
+		assertEquals("Should be 6 fields to toggle", 6, page.getNumberOfMetadataFields());
 
 		// Toggle one of the fields and make sure the table updates;
-		page.toggleMetadataField(3);
-		assertEquals("Should now only display 5 fields", 5, page.getNumberOfTableColumnsVisible());
 		page.toggleMetadataField(1);
-		assertEquals("Should now only display 4 fields", 4, page.getNumberOfTableColumnsVisible());
-		page.toggleMetadataField(3);
+		assertEquals("Should now only display 6 fields", 6, page.getNumberOfTableColumnsVisible());
+		page.toggleMetadataField(2);
 		assertEquals("Should now only display 5 fields", 5, page.getNumberOfTableColumnsVisible());
 
 		// Test selecting templates
@@ -65,25 +61,27 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Switch back to new template
 		page.selectTemplate(TEMPLATE_NAME);
-		assertEquals("Should have 3 columns visible", 3, page.getNumberOfTableColumnsVisible());
+		assertEquals("Should have 7 columns visible", 7, page.getNumberOfTableColumnsVisible());
 
 		// Test inline editing
-		String cellContents = page.getCellContents(0, "serotype");
-		assertEquals("AB-1001", cellContents);
+		String cellContents = page.getCellContents(0, "symptom");
+		assertEquals("Sneezing", cellContents);
 
 		String newValue = "FOOBAR";
-		page.editCellContents(0, "serotype", newValue);
-		assertEquals("Cell should contain the new edited value", newValue, page.getCellContents(0, "serotype"));
+		page.editCellContents(0, "symptom", newValue);
+		assertEquals("Cell should contain the new edited value", newValue, page.getCellContents(0, "symptom"));
 
 		driver().navigate()
 				.refresh();
-		assertEquals("Should keep value on a page refresh", newValue, page.getCellContents(0, "serotype"));
+		page.openColumnsPaenl();
+		page.selectTemplate(TEMPLATE_NAME);
+		assertEquals("Should keep value on a page refresh", newValue, page.getCellContents(0, "symptom"));
 
 		// Let's test to make sure that the undo works.
 		String testValue = "THIS SHOULD BE GONE!";
-		page.editCellContents(0, "serotype", testValue);
+		page.editCellContents(0, "symptom", testValue);
 		page.cancelCellEdit();
-		assertEquals("Should keep value after undoing edit", newValue, page.getCellContents(0, "serotype"));
+		assertEquals("Should keep value after undoing edit", newValue, page.getCellContents(0, "symptom"));
 
 		// Test table filtering
 		page.filterTable(newValue);

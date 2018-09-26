@@ -617,7 +617,7 @@
           file: files[0]
         })
           .progress(function(evt) {
-            vm.progress = parseInt(100.0 * evt.loaded / evt.total);
+            vm.progress = parseInt((100.0 * evt.loaded) / evt.total);
           })
           .then(
             function(response) {

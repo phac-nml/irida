@@ -30,7 +30,6 @@ public class LineListControllerTest {
 		sampleService = mock(SampleService.class);
 		metadataTemplateService = mock(MetadataTemplateService.class);
 		messageSource = mock(MessageSource.class);
-
 		lineListController = new LineListController(projectService, sampleService, metadataTemplateService,
 				messageSource);
 	}
@@ -47,5 +46,6 @@ public class LineListControllerTest {
 	public void testGetAllProjectMetadataEntries() {
 		long projectId = 1L;
 		lineListController.getProjectSamplesMetadataEntries(projectId);
+		verify(sampleService, times(1)).getSamplesForProject(any(Project.class));
 	}
 }

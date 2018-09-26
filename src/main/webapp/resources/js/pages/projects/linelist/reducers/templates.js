@@ -67,9 +67,10 @@ export const reducer = (state = initialState, action = {}) => {
       /*
       A modification of the template from any source external to ag-grid.
        */
-      const t = state.getIn(["templates", state.get("current")]).toJS();
-      t.modified = [...action.fields];
-      return state.setIn(["templates", state.get("current")], fromJS(t));
+      return state.setIn(
+        ["templates", state.get("current"), "modified"],
+        fromJS(action.fields)
+      );
     case types.SAVE_TEMPLATE:
       return state.set("saving", true);
     case types.SAVED_TEMPLATE:
