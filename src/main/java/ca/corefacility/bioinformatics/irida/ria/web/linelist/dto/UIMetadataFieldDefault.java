@@ -11,6 +11,8 @@ public class UIMetadataFieldDefault extends AgGridColumn {
 
 	public UIMetadataFieldDefault(String field, String headerName, String type) {
 		super(headerName, type, false, false);
+		this.setLockPinned(true);
+		this.setLockPosition(true);
 		this.field = field;
 	}
 

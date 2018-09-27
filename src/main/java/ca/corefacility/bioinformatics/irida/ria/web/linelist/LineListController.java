@@ -21,15 +21,17 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
-import ca.corefacility.bioinformatics.irida.ria.web.components.agGrid.AgGridUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.components.agGrid.AgGridColumn;
-import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataFieldDefault;
+import ca.corefacility.bioinformatics.irida.ria.web.components.agGrid.AgGridUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataField;
+import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataFieldDefault;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataTemplate;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UISampleMetadata;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * This controller is responsible for AJAX handling for the line list page, which displays sample metadata.
@@ -81,13 +83,18 @@ public class LineListController {
 						.compareToIgnoreCase(f2.getHeaderName()))
 				.collect(Collectors.toList());
 
-		// Add the sample name, project name, created date and the modified date
-		fields.add(0, new UIMetadataFieldDefault("sampleLabel",
-				messages.getMessage("linelist.field.sampleLabel", new Object[] {}, locale), "text"));
+
+		// Add the sample name, created date and the modified date
+		UIMetadataFieldDefault sampleField = new UIMetadataFieldDefault("sampleLabel",
+				messages.getMessage("linelist.field.sampleLabel", new Object[] {}, locale), "text");
+		sampleField.setPinned("left");
+		fields.add(0, sampleField);
 		fields.add(0, new UIMetadataFieldDefault("created",
 				messages.getMessage("linelist.field.created", new Object[] {}, locale), "date"));
-		fields.add(0, new UIMetadataFieldDefault("modified",
-				messages.getMessage("linelist.field.modified", new Object[] {}, locale), "date"));
+		UIMetadataFieldDefault modifiedField = new UIMetadataFieldDefault("modified",
+				messages.getMessage("linelist.field.modified", new Object[] {}, locale), "date");
+		modifiedField.setSort("asc");
+		fields.add(0, modifiedField);
 
 		return fields;
 	}
@@ -199,14 +206,19 @@ public class LineListController {
 	@RequestMapping(value = "/templates", method = RequestMethod.POST)
 	public UIMetadataTemplate saveLineListTemplate(@RequestBody UIMetadataTemplate template,
 			@RequestParam Long projectId, HttpServletResponse response, Locale locale) {
-		String sampleLabel = messages.getMessage("linelist.field.sampleLabel", new Object[] {}, locale);
+		// Don't save the sample name, created or modified dates.
+		Map<String, Boolean> restrictedColumns = ImmutableMap.of(
+				messages.getMessage("linelist.field.sampleLabel", new Object[] {}, locale), true,
+				messages.getMessage("linelist.field.created", new Object[] {}, locale), true,
+				messages.getMessage("linelist.field.modified", new Object[] {}, locale), true
+		);
 
 		// Get or create the template fields.
 		List<MetadataTemplateField> fields = new ArrayList<>();
 		for (AgGridColumn field : template.getFields()) {
-
-			if (!field.getHeaderName()
-					.equals(sampleLabel)) {
+			// If the field is locked, then if cannot be saved into the template.  This should only include
+			// sample name, created and modified dates.
+			if (!field.isLockPosition()) {
 				MetadataTemplateField metadataTemplateField = metadataTemplateService.readMetadataFieldByLabel(
 						field.getField());
 				if (metadataTemplateField == null) {

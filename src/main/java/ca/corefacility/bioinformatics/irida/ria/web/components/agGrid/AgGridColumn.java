@@ -27,6 +27,26 @@ public class AgGridColumn {
 	 */
 	private boolean editable;
 
+	/**
+	 * Set 'left' or 'right' to pin the that side of table
+	 */
+	private String pinned;
+
+	/**
+	 * Set to true to always have column displayed first.
+	 */
+	private boolean lockPosition;
+
+	/**
+	 * Set to true block pinning column via the UI
+	 */
+	private boolean lockPinned;
+
+	/**
+	 * Set to 'asc' or 'desc' to sort by this column by default.
+	 */
+	private String sort;
+
 	public AgGridColumn() {
 	}
 
@@ -63,5 +83,37 @@ public class AgGridColumn {
 
 	public boolean isEditable() {
 		return editable;
+	}
+
+	public String getPinned() {
+		return pinned;
+	}
+
+	public void setPinned(String position) {
+		this.pinned = position;
+	}
+
+	public boolean isLockPosition() {
+		return lockPosition;
+	}
+
+	public void setLockPosition(boolean lockPosition) {
+		this.lockPosition = lockPosition;
+	}
+
+	public boolean isLockPinned() {
+		return lockPinned;
+	}
+
+	public void setLockPinned(boolean lockPinned) {
+		this.lockPinned = lockPinned;
+	}
+
+	public String getSort() {
+		return sort;
+	}
+
+	public void setSort(String sort) {
+		this.sort = sort;
 	}
 }
