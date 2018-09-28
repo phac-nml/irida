@@ -59,7 +59,7 @@ export default class ColumnVisibility extends React.Component {
         {typeof columns !== "undefined" ? (
           <div style={{ overflowY: "auto", height: this.props.height - 77 }}>
             <List
-              dataSource={columns.filter(f => f.field !== "sampleLabel")}
+              dataSource={columns.filter(f => f.field !== "sample")}
               renderItem={item => (
                 <List.Item
                   actions={[

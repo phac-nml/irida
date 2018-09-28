@@ -52,7 +52,7 @@ function getColumnDefinition(col) {
 
   if (type === "date") {
     Object.assign(col, dateColumn);
-  } else if (col.field === "sampleLabel") {
+  } else if (col.field === "sample") {
     Object.assign(col, sampleNameColumn);
   }
   return col;

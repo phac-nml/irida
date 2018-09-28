@@ -61,11 +61,12 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Switch back to new template
 		page.selectTemplate(TEMPLATE_NAME);
-		assertEquals("Should have 7 columns visible", 7, page.getNumberOfTableColumnsVisible());
+		assertEquals("Should have 3 columns visible", 3, page.getNumberOfTableColumnsVisible());
 
 		// Test inline editing
+		page.selectTemplate("All Fields");
 		String cellContents = page.getCellContents(0, "symptom");
-		assertEquals("Sneezing", cellContents);
+		assertEquals("", cellContents);
 
 		String newValue = "FOOBAR";
 		page.editCellContents(0, "symptom", newValue);
