@@ -32,7 +32,7 @@
                         NAME</label>
                     <input id="template-name" type="text" class="form-control" th:field="*{name}"
                            minlength="5" required="required" th:disabled="!${isOwner}"
-                           data:msg-minlength="#{linelist.create-template.templateName.minlength}"/>
+                           data:msg-minlength="#{metadata-template.template.template.name-minlength}"/>
                 </div>
                 <hr/>
                 <div class="row spaced-bottom">
@@ -49,7 +49,7 @@
                     </div>
                 </div>
                 <div id="field-count-warning" class="spaced-top spaced-bottom alert alert-danger hidden">
-                    <strong th:text="#{linelist.create-template.required-fields}">Must have at least 1 template
+                    <strong th:text="#{metadata-template.required-fields}">Must have at least 1 template
                         field</strong>
                 </div>
                 <ul class="list-group template-fields">
@@ -132,7 +132,7 @@
                                         <th:block th:text="#{metadata-template.name}"/>
                                     </label>
                                     <span class="text-muted pull-right" ng-show="$ctrl.template.identifier">
-                                        <strong><th:block th:text="#{linelist.template.identifier}"/>:</strong> <span
+                                        <strong><th:block th:text="#{metadata-template.template.identifier}"/>:</strong> <span
                                             id="template-id">{{$ctrl.template.identifier}}</span>
                                     </span>
                                 </div>
@@ -148,14 +148,14 @@
                                 <div ng-messages="$ctrl.createTemplateForm.templateName.$error"
                                      ng-show="$ctrl.createTemplateForm.templateName.$dirty">
                                     <p class="label label-danger" ng-message="required"
-                                       th:text="#{linelist.create-template.templateName.required}">_This is a required
+                                       th:text="#{metadata-template.template.template.name-required}">_This is a required
                                         field_</p>
                                     <p class="label label-danger" ng-message="minlength"
-                                       th:text="#{linelist.create-template.templateName.minlength}">_Templage name must
+                                       th:text="#{metadata-template.template.template.name-minlength}">_Templage name must
                                         be 5
                                         letters long_</p>
                                     <p class="label label-danger" ng-message="unique"
-                                       th:text="#{linelist.create-template.saving.error.unique}">
+                                       th:text="#{metadata-template.template.template.saving.error.unique}">
                                         This field already exists.
                                     </p>
                                 </div>
@@ -210,10 +210,6 @@
                                     ng-click="$ctrl.saveTemplate()"
                                     th:text="#{metadata-template.save}">_Save_
                             </button>
-                            <p class="spaced-top text-muted"
-                               ng-hide="$ctrl.templateIsModified()"
-                               th:text="#{linelist.create-template.not-modified}">_This template has not been
-                                modified_</p>
                         </div>
                     </div>
                 </div>
