@@ -77,6 +77,10 @@ public class AgGridColumn {
 		return type;
 	}
 
+	public void setHide(boolean hide) {
+		this.hide = hide;
+	}
+
 	public boolean isHide() {
 		return hide;
 	}

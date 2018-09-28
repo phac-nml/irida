@@ -189,21 +189,46 @@ public class LineListController {
 	@ResponseBody
 	public List<UIMetadataTemplate> getLineListTemplates(@RequestParam long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
+		List<UIMetadataTemplate> templates = new ArrayList<>();
+
+		/*
+		Need all MetadataTemplate fields (either already on the project, or in templates associated with the project).
+		 */
 		List<AgGridColumn> allFields = this.getProjectMetadataTemplateFields(projectId, locale);
 		List<ProjectMetadataTemplateJoin> templateJoins = metadataTemplateService.getMetadataTemplatesForProject(
 				project);
-		List<UIMetadataTemplate> templates = new ArrayList<>();
 
 		// Add a "Template" for all fields
 		templates.add(new UIMetadataTemplate(-1L,
 				messages.getMessage("linelist.templates.Select.none", new Object[] {}, locale), allFields));
 
+		/*
+		Use all the fields as a base
+		 */
+		List<String> allFieldLabels = allFields.stream().map(AgGridColumn::getHeaderName).collect(Collectors.toList());
 		for (ProjectMetadataTemplateJoin join : templateJoins) {
 			MetadataTemplate template = join.getObject();
-			List<AgGridColumn> fields = template.getFields()
-					.stream()
-					.map(f -> new UIMetadataField(f, false, true))
-					.collect(Collectors.toList());
+			List<AgGridColumn> allFieldsCopy = new ArrayList<>(allFields);
+			List<String> allLabelsCopy = new ArrayList<>(allFieldLabels);
+			List<AgGridColumn> fields = new ArrayList<>();
+
+			/*
+			Go through the template fields and remove it from the copy of allFields.  At the end, this should
+			leave only the fields that need to be hidden.
+			 */
+			for (MetadataTemplateField field : template.getFields()) {
+				// Find out where the field is in all the fields;
+				int index = allLabelsCopy.indexOf(field.getLabel());
+				allLabelsCopy.remove(index);
+				allFieldsCopy.remove(index);
+				fields.add(new UIMetadataField(field, false, true));
+			}
+
+			/*
+			Set the remainder of the fields to hidden
+			 */
+			allFieldsCopy.forEach(field -> field.setHide(true));
+			fields.addAll(allFieldsCopy);
 			templates.add(new UIMetadataTemplate(template.getId(), template.getName(), fields));
 		}
 
