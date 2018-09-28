@@ -108,8 +108,7 @@ $bgColor: #f5f7f7;
 }
 
 .column-list-item {
-  width: 256px;
-
+  width: 100%;
   .ant-list-item-action {
     margin-left: 10px;
   }
@@ -119,6 +118,7 @@ $bgColor: #f5f7f7;
   margin-left: 10px;
   overflow-wrap: break-word;
   word-wrap: break-word;
+  word-break: break-all;
   hyphens: auto;
   width: 100%;
 }
