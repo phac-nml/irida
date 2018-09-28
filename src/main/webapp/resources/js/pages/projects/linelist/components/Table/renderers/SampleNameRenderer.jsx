@@ -9,7 +9,7 @@ export class SampleNameRenderer extends React.Component {
     this.href = `${BASE_URL}projects/${Number(
       props.data.projectId
     )}/samples/${Number(props.data.sampleId)}`;
-    this.name = props.data.sampleLabel;
+    this.name = props.data.sample;
   }
 
   render() {
