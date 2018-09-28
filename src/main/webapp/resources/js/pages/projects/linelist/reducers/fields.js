@@ -83,7 +83,6 @@ export const reducer = (state = initialState, action = {}) => {
     case types.LOAD:
       return state.set("initializing", true).set("error", false);
     case templateActionTypes.LOAD_SUCCESS:
-      console.log(action.templates[0].fields);
       return state
         .set("initializing", false)
         .set("error", false)
