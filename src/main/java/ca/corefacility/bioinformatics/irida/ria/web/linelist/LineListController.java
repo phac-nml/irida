@@ -71,10 +71,27 @@ public class LineListController {
 		// Need to get all the fields from the templates too!
 		List<ProjectMetadataTemplateJoin> templateJoins = metadataTemplateService.getMetadataTemplatesForProject(
 				project);
+
+		/*
+		IGNORED TEMPLATE FIELDS:
+		These fields are ignored here because they are not part of sample metadata, but instead part of the
+		sample object itself.  They are allowed to be saved into the template, but will be added separately below
+		to ensure that they are displayed correctly in the UI.  These fields will be included in the templates
+		sent down to the UI.
+		 */
+		Map<String, Boolean> IGNORED_TEMPLATE_FIELDS = ImmutableMap.of("Created Date", true, "Modified Date", true);
+
+		/*
+		Get all unique fields from the templates.
+		 */
 		for (ProjectMetadataTemplateJoin join : templateJoins) {
 			MetadataTemplate template = join.getObject();
 			List<MetadataTemplateField> templateFields = template.getFields();
-			fieldSet.addAll(templateFields);
+			for (MetadataTemplateField field : templateFields) {
+				if (!IGNORED_TEMPLATE_FIELDS.containsKey(field.getLabel())) {
+					fieldSet.add(field);
+				}
+			}
 		}
 
 		List<AgGridColumn> fields = fieldSet.stream()
@@ -83,15 +100,17 @@ public class LineListController {
 						.compareToIgnoreCase(f2.getHeaderName()))
 				.collect(Collectors.toList());
 
-
 		// Add the sample name, created date and the modified date
-		UIMetadataFieldDefault sampleField = new UIMetadataFieldDefault("sampleLabel",
+		UIMetadataFieldDefault sampleField = new UIMetadataFieldDefault(
 				messages.getMessage("linelist.field.sampleLabel", new Object[] {}, locale), "text");
 		sampleField.setPinned("left");
+		sampleField.setLockPinned(true);
+		sampleField.setLockPosition(true);
+
 		fields.add(0, sampleField);
-		fields.add(0, new UIMetadataFieldDefault("created",
-				messages.getMessage("linelist.field.created", new Object[] {}, locale), "date"));
-		UIMetadataFieldDefault modifiedField = new UIMetadataFieldDefault("modified",
+		fields.add(0, new UIMetadataFieldDefault(messages.getMessage("linelist.field.created", new Object[] {}, locale),
+				"date"));
+		UIMetadataFieldDefault modifiedField = new UIMetadataFieldDefault(
 				messages.getMessage("linelist.field.modified", new Object[] {}, locale), "date");
 		modifiedField.setSort("asc");
 		fields.add(0, modifiedField);
@@ -131,14 +150,11 @@ public class LineListController {
 			HttpServletResponse response) {
 		Sample sample = sampleService.read(sampleId);
 
-		// The field label was transformed before passing it to the UI,
-		// We must convert it back to its original state for look up.
-		String field = AgGridUtilities.convertFieldToHeaderName(label);
 		try {
 			Map<MetadataTemplateField, MetadataEntry> metadata = sample.getMetadata();
-			MetadataTemplateField templateField = metadataTemplateService.readMetadataFieldByLabel(field);
+			MetadataTemplateField templateField = metadataTemplateService.readMetadataFieldByLabel(label);
 			if (templateField == null) {
-				templateField = new MetadataTemplateField(field, "text");
+				templateField = new MetadataTemplateField(label, "text");
 				metadataTemplateService.saveMetadataField(templateField);
 			}
 			MetadataEntry entry;
@@ -206,24 +222,17 @@ public class LineListController {
 	@RequestMapping(value = "/templates", method = RequestMethod.POST)
 	public UIMetadataTemplate saveLineListTemplate(@RequestBody UIMetadataTemplate template,
 			@RequestParam Long projectId, HttpServletResponse response, Locale locale) {
-		// Don't save the sample name, created or modified dates.
-		Map<String, Boolean> restrictedColumns = ImmutableMap.of(
-				messages.getMessage("linelist.field.sampleLabel", new Object[] {}, locale), true,
-				messages.getMessage("linelist.field.created", new Object[] {}, locale), true,
-				messages.getMessage("linelist.field.modified", new Object[] {}, locale), true
-		);
-
 		// Get or create the template fields.
 		List<MetadataTemplateField> fields = new ArrayList<>();
 		for (AgGridColumn field : template.getFields()) {
-			// If the field is locked, then if cannot be saved into the template.  This should only include
-			// sample name, created and modified dates.
-			if (!field.isLockPosition()) {
+			// Don't save the sample label
+			if (!field.getField()
+					.equals("sample")) {
 				MetadataTemplateField metadataTemplateField = metadataTemplateService.readMetadataFieldByLabel(
-						field.getField());
+						field.getHeaderName());
 				if (metadataTemplateField == null) {
 					metadataTemplateField = metadataTemplateService.saveMetadataField(
-							new MetadataTemplateField(field.getField(), "text"));
+							new MetadataTemplateField(field.getHeaderName(), "text"));
 				}
 				fields.add(metadataTemplateField);
 			}
@@ -246,7 +255,7 @@ public class LineListController {
 			response.setStatus(HttpServletResponse.SC_OK);
 		}
 		return new UIMetadataTemplate(metadataTemplate.getId(), metadataTemplate.getName(),
-				this.getProjectMetadataTemplateFields(projectId, locale));
+				template.getFields());
 	}
 
 	/**
