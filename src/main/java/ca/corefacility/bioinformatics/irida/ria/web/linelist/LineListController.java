@@ -101,19 +101,19 @@ public class LineListController {
 				.collect(Collectors.toList());
 
 		// Add the sample name, created date and the modified date
-		UIMetadataFieldDefault sampleField = new UIMetadataFieldDefault(
-				messages.getMessage("linelist.field.sampleLabel", new Object[] {}, locale), "text");
-		sampleField.setPinned("left");
-		sampleField.setLockPinned(true);
-		sampleField.setLockPosition(true);
-
-		fields.add(0, sampleField);
 		fields.add(0, new UIMetadataFieldDefault(messages.getMessage("linelist.field.created", new Object[] {}, locale),
 				"date"));
 		UIMetadataFieldDefault modifiedField = new UIMetadataFieldDefault(
 				messages.getMessage("linelist.field.modified", new Object[] {}, locale), "date");
 		modifiedField.setSort("asc");
 		fields.add(0, modifiedField);
+
+		UIMetadataFieldDefault sampleField = new UIMetadataFieldDefault(
+				messages.getMessage("linelist.field.sampleLabel", new Object[] {}, locale), "text");
+		sampleField.setPinned("left");
+		sampleField.setLockPinned(true);
+		sampleField.setLockPosition(true);
+		fields.add(0, sampleField);
 
 		return fields;
 	}
