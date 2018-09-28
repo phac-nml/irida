@@ -40,6 +40,12 @@ const dateColumn = {
   }
 };
 
+/**
+ * Based on the MetadataTemplateFields create the appropriate
+ * column type
+ * @param {array} col
+ * @returns {*}
+ */
 function getColumnDefinition(col) {
   const { type } = col;
   delete col.type; // Cannot have a type as an attribute on the columnDef.
