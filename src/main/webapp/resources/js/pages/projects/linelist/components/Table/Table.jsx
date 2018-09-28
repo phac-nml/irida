@@ -139,7 +139,7 @@ export class Table extends React.Component {
     Sample name always needs to be first so let's take it off and re-add
     it after we get everything sorted.
      */
-    const sampleIndex = columnState.findIndex(c => c.colId === "sampleLabel");
+    const sampleIndex = columnState.findIndex(c => c.colId === "sample");
     const sample = columnState.splice(sampleIndex, 1)[0];
 
     /*
@@ -340,7 +340,7 @@ export class Table extends React.Component {
    */
   onCellEditingStopped = event => {
     // Get the table header for the cell that was edited
-    const field = event.column.colId;
+    const field = event.column.colDef.headerName;
     // Get the previous value
     const previousValue = this.cellEditedValue;
     // Get the new value for the cell
