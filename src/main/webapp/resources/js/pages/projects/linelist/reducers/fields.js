@@ -1,4 +1,5 @@
 import { fromJS, List } from "immutable";
+import { types as templateActionTypes } from "./templates";
 import { isDate } from "../../../../utilities/date-utilities";
 
 /*
@@ -81,12 +82,13 @@ export const reducer = (state = initialState, action = {}) => {
   switch (action.type) {
     case types.LOAD:
       return state.set("initializing", true).set("error", false);
-    case types.LOAD_SUCCESS:
+    case templateActionTypes.LOAD_SUCCESS:
+      console.log(action.templates[0].fields);
       return state
         .set("initializing", false)
         .set("error", false)
         .delete("fields")
-        .set("fields", fromJS(formatColumns(action.fields)));
+        .set("fields", fromJS(formatColumns(action.templates[0].fields)));
     case types.LOAD_ERROR:
       return state
         .set("initializing", false)

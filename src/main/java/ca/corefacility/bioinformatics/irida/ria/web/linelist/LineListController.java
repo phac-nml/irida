@@ -60,8 +60,6 @@ public class LineListController {
 	 * @param locale    {@link Locale}
 	 * @return {@link List} of {@link UIMetadataField}
 	 */
-	@RequestMapping("/fields")
-	@ResponseBody
 	public List<AgGridColumn> getProjectMetadataTemplateFields(@RequestParam long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
 		List<MetadataTemplateField> metadataFieldsForProject = metadataTemplateService.getMetadataFieldsForProject(
@@ -205,34 +203,44 @@ public class LineListController {
 		/*
 		Use all the fields as a base
 		 */
-		List<String> allFieldLabels = allFields.stream().map(AgGridColumn::getHeaderName).collect(Collectors.toList());
+
 		for (ProjectMetadataTemplateJoin join : templateJoins) {
 			MetadataTemplate template = join.getObject();
-			List<AgGridColumn> allFieldsCopy = new ArrayList<>(allFields);
-			List<String> allLabelsCopy = new ArrayList<>(allFieldLabels);
-			List<AgGridColumn> fields = new ArrayList<>();
-
-			/*
-			Go through the template fields and remove it from the copy of allFields.  At the end, this should
-			leave only the fields that need to be hidden.
-			 */
-			for (MetadataTemplateField field : template.getFields()) {
-				// Find out where the field is in all the fields;
-				int index = allLabelsCopy.indexOf(field.getLabel());
-				allLabelsCopy.remove(index);
-				allFieldsCopy.remove(index);
-				fields.add(new UIMetadataField(field, false, true));
-			}
-
-			/*
-			Set the remainder of the fields to hidden
-			 */
-			allFieldsCopy.forEach(field -> field.setHide(true));
-			fields.addAll(allFieldsCopy);
+			List<AgGridColumn> allFieldsCopy = this.getProjectMetadataTemplateFields(projectId, locale);
+			List<AgGridColumn> fields = formatTemplateForUI(template, allFieldsCopy);
 			templates.add(new UIMetadataTemplate(template.getId(), template.getName(), fields));
 		}
 
 		return templates;
+	}
+
+	private List<AgGridColumn> formatTemplateForUI(MetadataTemplate template, List<AgGridColumn> allFields) {
+		/*
+		Need to remove the sample since allFields begins with the sample.
+		 */
+		allFields.remove(0);
+		List<String> labels = allFields.stream().map(AgGridColumn::getHeaderName).collect(Collectors.toList());
+
+		List<AgGridColumn> fields = new ArrayList<>();
+
+		/*
+		Go through the template fields and remove it from the copy of allFields.  At the end, this should
+		leave only the fields that need to be hidden.
+		 */
+		for (MetadataTemplateField field : template.getFields()) {
+			// Find out where the field is in all the fields;
+			int index = labels.indexOf(field.getLabel());
+			allFields.remove(index);
+			labels.remove(index);
+			fields.add(new UIMetadataField(field, false, true));
+		}
+
+		/*
+		Set the remainder of the fields to hidden
+		 */
+		allFields.forEach(field -> field.setHide(true));
+		fields.addAll(allFields);
+		return fields;
 	}
 
 	/**
@@ -280,7 +288,7 @@ public class LineListController {
 			response.setStatus(HttpServletResponse.SC_OK);
 		}
 		return new UIMetadataTemplate(metadataTemplate.getId(), metadataTemplate.getName(),
-				template.getFields());
+				formatTemplateForUI(metadataTemplate, getProjectMetadataTemplateFields(projectId, locale)));
 	}
 
 	/**
