@@ -15,20 +15,20 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.agGrid.AgGridUtil
  */
 public class UISampleMetadata {
 	private Long sampleId;
-	private String sampleLabel;
+	private String sample;
 	private Long projectId;
 	private String projectLabel;
-	private Date created;
-	private Date modified;
+	private Date createdDate;
+	private Date modifiedDate;
 	private Map<String, String> metadata;
 
 	public UISampleMetadata(Project project, Sample sample) {
 		this.sampleId = sample.getId();
-		this.sampleLabel = sample.getLabel();
+		this.sample = sample.getLabel();
 		this.projectId = project.getId();
 		this.projectLabel = project.getLabel();
-		this.created = sample.getCreatedDate();
-		this.modified = sample.getModifiedDate();
+		this.createdDate = sample.getCreatedDate();
+		this.modifiedDate = sample.getModifiedDate();
 		this.metadata = getMetadataForSample(sample);
 	}
 
@@ -53,8 +53,8 @@ public class UISampleMetadata {
 		return sampleId;
 	}
 
-	public String getSampleLabel() {
-		return sampleLabel;
+	public String getSample() {
+		return sample;
 	}
 
 	public Long getProjectId() {
@@ -65,12 +65,12 @@ public class UISampleMetadata {
 		return projectLabel;
 	}
 
-	public Date getCreated() {
-		return created;
+	public Date getCreatedDate() {
+		return createdDate;
 	}
 
-	public Date getModified() {
-		return modified;
+	public Date getModifiedDate() {
+		return modifiedDate;
 	}
 
 	public Map<String, String> getMetadata() {
