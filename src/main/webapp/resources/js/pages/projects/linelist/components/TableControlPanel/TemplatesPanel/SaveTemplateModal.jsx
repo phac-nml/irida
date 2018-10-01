@@ -1,10 +1,19 @@
 import React from "react";
 import PropTypes from "prop-types";
 import ImmutablePropTypes from "react-immutable-proptypes";
-import { AutoComplete, Button, Checkbox, Form, Modal } from "antd";
-import { fromJS } from "immutable";
+import { Button, Checkbox, Form, Modal, Select } from "antd";
 
+const { Item } = Form;
+const { Option } = Select;
 const { i18n } = window.PAGE;
+
+const sortNames = (a, b) => {
+  const A = a.toUpperCase();
+  const B = b.toUpperCase();
+  if (A < B) return -1;
+  if (A > B) return 1;
+  return 0;
+};
 
 /**
  * Custom footer for the SaveTemplateModal allowing the save button to
@@ -26,94 +35,138 @@ function Footer(props) {
   );
 }
 
-const defaultState = {
-  name: "",
-  status: "",
-  message: "",
-  existing: false,
-  names: [],
-  overwrite: false,
-  valid: false
-};
-
-/**
- * Component to render a [antd Modal]{@link https://ant.design/components/modal/}
- * for save a new Metadata Template.
- */
 export class SaveTemplateModal extends React.Component {
-  state = defaultState;
+  static propTypes = {
+    template: PropTypes.object,
+    onClose: PropTypes.func.isRequired,
+    current: PropTypes.number.isRequired,
+    templates: ImmutablePropTypes.list.isRequired
+  };
 
   validations = [
     {
       type: "required",
       fn: name => name.length === 0,
       state: {
-        existing: false,
+        existingTemplate: false,
         status: "error",
         message: i18n.linelist.templates.saveModal.required,
         valid: false,
-        overwrite: false
+        overwriteTemplate: false
       }
     },
     {
       type: "length",
       fn: name => name.length < 5,
       state: {
-        existing: false,
         status: "error",
         message: i18n.linelist.templates.saveModal.length,
         valid: false,
-        overwrite: false
+        existingTemplate: false,
+        overwriteTemplate: false
       }
     },
     {
       type: "nameExists",
-      fn: name => this.state.names.includes(name),
+      fn: name => this._options.findIndex(o => o === name) > -1,
       state: {
-        existing: true,
         status: "error",
         message: i18n.linelist.templates.saveModal.nameExists,
         valid: false,
-        overwrite: false
+        existingTemplate: true,
+        overwriteTemplate: false
       }
     },
     {
       type: "valid",
-      fn: name => {
-        const names = this.state._names.toJS();
-        names.unshift(name);
-        this.setState({ names });
-        return true;
-      },
-      state: { status: "success", message: "", valid: true, existing: false }
+      fn: () => true,
+      state: {
+        status: "success",
+        message: "",
+        valid: true,
+        existingTemplate: false
+      }
     }
   ];
 
   constructor(props) {
     super(props);
+    this._options = this.props.templates
+      .map(t => t.get("name"))
+      .sort(sortNames);
+
+    this.state = {
+      options: this._options,
+      disabledLabel: this._options.get(0) // Name of the "all fields" option. Cannot save by that name.
+    };
   }
 
-  static getDerivedStateFromProps(props, state) {
-    if (props.templates.size > 0) {
-      // Just get the template name for validation (don't want duplicate names)
-      // and remove the first one as it is "All Fields".
-      const names = [];
-      props.templates.toJS().forEach(t => {
-        if (t.id !== null) {
-          names.push(t.name);
-        }
+  componentDidUpdate(prevProps) {
+    const template = this.props.template;
+    if (prevProps.template !== template) {
+      const existingTemplate = template.id > -1;
+      const value = existingTemplate ? template.name : undefined;
+      this.setState({
+        value,
+        existingTemplate,
+        overwriteTemplate: !existingTemplate,
+        valid: !existingTemplate
       });
-      state.names = names;
-      state._names = fromJS(names);
     }
-    return state;
   }
 
+  /**
+   * Handle hiding the current modal.
+   */
+  hideModal = () => {
+    this.setState({
+      visible: false
+    });
+  };
+
+  /**
+   * What to do when searching the templates.
+   * @param {string} value - Value user searched in the select
+   */
+  onSearch = value => {
+    let options = Array.from(this._options);
+    if (value) {
+      // Determine if the name is in the current list of templates
+      const index = options.findIndex(o => o === value);
+      if (index === -1) {
+        options.unshift(value);
+      }
+    }
+
+    // Validate the field to make sure that the template name is usable
+    for (const validation of this.validations) {
+      if (validation.fn(value)) {
+        this.setState({ value, options, ...validation.state });
+        break;
+      }
+    }
+  };
+
+  /**
+   * How to filter each option in the select group
+   * @param {string} inputValue - Value entered by user
+   * @param {object} option - current select option to filter
+   * @returns {boolean}
+   */
+  filterOption = (inputValue, option) => {
+    return option.props.children
+      .toLowerCase()
+      .includes(inputValue.toLowerCase());
+  };
+
+  /**
+   * Save the current template using the entered name.
+   */
   saveTemplate = () => {
     const template = this.props.templates.get(this.props.current).toJS();
     const fields = template.modified.filter(t => !t.hide);
-    const name = this.state.name;
-    const overwrite = this.state.overwrite;
+    const name = this.state.value;
+    const overwrite = this.state.overwriteTemplate;
     let id = undefined;
 
     if (overwrite) {
@@ -123,83 +176,73 @@ export class SaveTemplateModal extends React.Component {
     }
 
     this.props.saveTemplate(name, fields, id);
-    this.resetForm();
-  };
-
-  handleCancel = e => {
-    this.resetForm();
-  };
-
-  resetForm = () => {
     this.props.onClose();
   };
 
-  validateName = name => {
-    name = name.trim();
-    for (const validation of this.validations) {
-      if (validation.fn(name)) {
-        this.setState({ name, ...validation.state });
-        break;
-      }
-    }
-  };
-
-  overwriteChange = e => {
-    const checked = e.target.checked;
-    this.setState({ valid: checked, overwrite: checked });
+  /**
+   * Event handler for when a user selects to overwrite and existing template.
+   * @param {object} e - Checkbox event
+   */
+  onExistingChange = e => {
+    this.setState({
+      valid: true,
+      overwriteTemplate: true
+    });
   };
 
   render() {
+    const { existingTemplate, options, overwriteTemplate, value } = this.state;
+
     return (
       <Modal
         closable={false}
-        title={i18n.linelist.templates.saveModal.title}
+        title="Modal"
         visible={this.props.visible}
-        destroyOnClose={true}
         footer={
           <Footer
             disabled={!this.state.valid}
-            onCancel={this.handleCancel}
+            onCancel={this.props.onClose}
             onClick={this.saveTemplate}
           />
         }
       >
-        <Form layout="inline">
-          <Form.Item
-            hasFeedback
+        <Form>
+          <Item
             label={i18n.linelist.templates.saveModal.name}
+            hasFeedback
             validateStatus={this.state.status}
             help={this.state.message}
           >
-            <AutoComplete
-              dataSource={this.state.names}
-              onChange={this.validateName}
-            />
-          </Form.Item>
-          <Form.Itewm>
-
-            <Button
-              className="t-modal-save-template-btn"
-              type="primary"
-              disabled={props.disabled}
-              onClick={props.onClick}
+            <Select
+              showSearch
+              value={value}
+              style={{ width: "100%" }}
+              filterOption={this.filterOption}
+              onSearch={this.onSearch}
+              onChange={this.onSearch}
             >
-              {i18n.form.btn.save}
-            </Button></Form.Itewm>
-          {this.state.existing ? (
-            <Checkbox onChange={this.overwriteChange}>
-              {i18n.linelist.templates.saveModal.overwrite}
-            </Checkbox>
+              {options.map(template => (
+                <Option
+                  disabled={template === this.state.disabledLabel}
+                  key={template}
+                >
+                  {template}
+                </Option>
+              ))}
+            </Select>
+          </Item>
+          {existingTemplate ? (
+            <Item>
+              <Checkbox
+                checked={overwriteTemplate}
+                onChange={this.onExistingChange}
+              >
+                Overwrite Existing Template
+              </Checkbox>
+            </Item>
           ) : null}
         </Form>
       </Modal>
     );
   }
 }
-
-SaveTemplateModal.propTypes = {
-  template: PropTypes.object,
-  onClose: PropTypes.func.isRequired,
-  current: PropTypes.number.isRequired,
-  templates: ImmutablePropTypes.list.isRequired
-};
