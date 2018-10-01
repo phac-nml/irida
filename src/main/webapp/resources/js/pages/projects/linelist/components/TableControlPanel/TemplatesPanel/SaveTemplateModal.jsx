@@ -164,7 +164,7 @@ export class SaveTemplateModal extends React.Component {
           />
         }
       >
-        <Form layout="vertical">
+        <Form layout="inline">
           <Form.Item
             hasFeedback
             label={i18n.linelist.templates.saveModal.name}
@@ -176,6 +176,16 @@ export class SaveTemplateModal extends React.Component {
               onChange={this.validateName}
             />
           </Form.Item>
+          <Form.Itewm>
+
+            <Button
+              className="t-modal-save-template-btn"
+              type="primary"
+              disabled={props.disabled}
+              onClick={props.onClick}
+            >
+              {i18n.form.btn.save}
+            </Button></Form.Itewm>
           {this.state.existing ? (
             <Checkbox onChange={this.overwriteChange}>
               {i18n.linelist.templates.saveModal.overwrite}
