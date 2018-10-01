@@ -62,6 +62,7 @@ export default class ColumnVisibility extends React.Component {
               dataSource={columns.filter(f => f.field !== "sample")}
               renderItem={item => (
                 <List.Item
+                  className="column-list-item"
                   actions={[
                     <Switch
                       size="small"
@@ -73,7 +74,9 @@ export default class ColumnVisibility extends React.Component {
                     />
                   ]}
                 >
-                  <span style={{ marginLeft: 10 }}>{item.headerName}</span>
+                  <span className="column-list-item--text">
+                    {item.headerName}
+                  </span>
                 </List.Item>
               )}
             />
