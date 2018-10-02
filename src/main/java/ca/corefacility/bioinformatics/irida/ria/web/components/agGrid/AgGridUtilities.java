@@ -17,9 +17,12 @@ public class AgGridUtilities {
 	 */
 	public static String convertHeaderNameToField(String headerName) {
 		/*
-		Converting to camelcase to help with class attribute in {@link UISampleMetadata},
-		most importantly to ensure that createdDate and modifiedDate will match up properly
-		with what is store in a metadata template.
+		Fields are attributes on AgGrid column definitions which tells the table which field in the
+		row object (UISampleMetadata) to use as the data for that particular column.  By converting
+		the header to camel case it facilitate the direct change from the MetadataTemplateField label
+		to the field definition for AgGrid.
+		E.g. The label "Created Date" will be converted into the field "createdDate" which would match
+		with a UISampleMetadata object attribute "createdDate" when serialized to JSON.
 		 */
 		return CaseUtils.toCamelCase(headerName.replaceAll(FIND, REPLACEMENT), false);
 	}
