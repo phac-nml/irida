@@ -17,13 +17,9 @@ Contributing to IRIDA
 
 ### Reporting a bug
 
-Reporting a bug is the easiest, and one of the most useful, ways you can contribute to IRIDA.  IRIDA uses a [GitHub issue board] to track our issues.
+Reporting a bug is the easiest, and one of the most useful ways you can contribute to IRIDA.  IRIDA uses a [GitHub issue board] to track our issues.  If you find an issue while using IRIDA that you feel is a problem with the software, first check out our [GitHub issue board] to see if someone has already reported the issue.  If you find a similar issue, we would still like to hear about your problem.  Add a comment to the issue stating how your problem occurred.
 
-If you find a security vulnerability, please contact the IRIDA team by email.
-
-Note: IRIDA's GitHub issue board is for bug reports or feature requests only.  You should not use it for usage issues, problems with analyzing your data, or problems setting up IRIDA.  For issues of this nature, please contact the IRIDA team by one of the other options in the [Contacting the IRIDA Team](#contacting-the-irida-team) section.
-
-If you find an issue while using IRIDA that you feel is a problem with the software, first check out our [GitHub issue board] to see if someone has already reported the issue.  If you find a similar issue, we would still like to hear about your problem.  Add a comment to the issue stating how your problem occurred.
+**If you find a security vulnerability, please contact the IRIDA team by email.**
 
 If you do not find a similar issue, please create a new issue with (at least) the following information:
 
@@ -34,15 +30,17 @@ If you do not find a similar issue, please create a new issue with (at least) th
 
 When you're done, please label the new issue as a `bug` and we will triage it as soon as we can.
 
+Note: IRIDA's GitHub issue board is for bug reports or feature requests only.  You should not use it for usage issues, problems with analyzing your data, or problems setting up IRIDA.  For issues of this nature, please contact the IRIDA team by one of the other options in the [Contacting the IRIDA Team](#contacting-the-irida-team) section.
+
 ### Contributing an analysis pipeline
 
 If you have an analysis tool that you would like to build for IRIDA we'd like to hear about it!  IRIDA has a plug-in style system for analysis workflows.  This helps make it easier for tool developers to get the benefits of IRIDA's data management system and easy to use interface and incorporate their analysis workflows into IRIDA's growing suite of tools.  For an analysis pipeline to be used in IRIDA, it must be developed as a Galaxy workflow and operate on sequencing reads.  Read more about building tools for IRIDA in the [IRIDA Pipeline Development Guide](https://irida.corefacility.ca/documentation/developer/tools/pipelines/).
 
 ### Suggesting a feature
 
-Before writing a bunch of code for a new feature, we would love to discuss the feature you're trying to build!  First you should search our [GitHub issue board] to see if anyone else has suggested your feature.  We may have a similar feature in the works where you can contribute.
+Before writing code for a new feature, we would love to discuss the feature you're trying to build!  First you should search our [GitHub issue board] to see if anyone else has suggested your feature.  We may have a similar feature in the works where you can contribute.
 
-If you cannot find an existing issue that details your suggestion, we would love to hear your ideas!  Please create a GitHub issue detailing your idea, how you would expect a user to interact with the new feature, and how you would expect your feature to work.
+If you cannot find an existing issue that details your suggestion, please create a GitHub issue detailing your idea, how you would expect a user to interact with the new feature, and how you would expect your feature to work.
 
 When you're done, please label the new issue as a `request` and we will triage it as soon as we can.
 
@@ -66,13 +64,13 @@ For Java code submissions, we require the following:
 * Write tests for your bugfix or feature.  If the change is anything user facing, a full integration test should be written to test the change.  See more about our testing environment in the [IRIDA Development Primer].
 
 For JavaScript or HTML submissions, the standards are similar:
-* `prettier` is automatically run on commit to format your JavaScript files when you make a commit to ensure a consistent code style is applied.
+* [Prettier](https://prettier.io/) is automatically run on commit to format your JavaScript files when you make a commit to ensure a consistent code style is applied.
 * Document all files, functions, and complicated code blocks.
 * Write tests for your bugfix or feature.  If the change is anything user facing, an integration test should be written to test the change.
 
 #### Submitting a pull request
 
-When you have completed development on your issue, you can submit it to the project for review as a GitHub pull request.  You should reference the issue you were working on from IRIDA's [GitHub issue board] in your pull request.  The core IRIDA development team will review the content of the merge for functionality, fit-for-purpose of IRIDA's priorities, and coding standards listed above.  All tests in the CI suite must be passing before a pull request is merged.  After review the core development team may suggest changes to your submission.  After feedback if the development team's questions or suggestions are not addressed in a timely manner, your pull request may be closed.
+When you have completed development on your issue, you can submit it to the project for review as a GitHub pull request.  You should reference the issue you were working on from IRIDA's [GitHub issue board] in your pull request.  The core IRIDA development team will review the content of the merge for functionality, fit to IRIDA's priorities, and coding standards listed above.  All tests in the CI suite must pass before before a pull request is merged.  After review the core development team may suggest changes to your submission.  After feedback, if the development team's questions or suggestions are not addressed in a timely manner, your pull request may be closed.
 
 **The final decision on whether to accept a pull request comes from the core IRIDA development team.**
 
