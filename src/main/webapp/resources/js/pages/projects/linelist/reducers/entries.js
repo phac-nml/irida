@@ -44,5 +44,5 @@ export const actions = {
     type: types.SELECTION,
     count
   }),
-  edited: (entry, field) => ({ type: types.EDITED, entry, field })
+  edited: (entry, field, label) => ({ type: types.EDITED, entry, field, label })
 };
