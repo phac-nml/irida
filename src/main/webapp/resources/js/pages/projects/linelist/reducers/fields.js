@@ -1,5 +1,6 @@
 import { fromJS, List } from "immutable";
 import { isDate } from "../../../../utilities/date-utilities";
+import { FIELDS } from "../constants";
 
 /*
 Special handler for formatting the sample Name Column;
@@ -52,7 +53,7 @@ function getColumnDefinition(col) {
 
   if (type === "date") {
     Object.assign(col, dateColumn);
-  } else if (col.field === "sample") {
+  } else if (col.field === FIELDS.sampleName) {
     Object.assign(col, sampleNameColumn);
   }
   return col;

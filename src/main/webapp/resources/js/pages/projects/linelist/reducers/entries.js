@@ -15,14 +15,6 @@ export const initialState = fromJS({
   selected: 0
 });
 
-const formatEntries = entries => {
-  return entries.map(entry => {
-    const { metadata } = entry;
-    delete entry.metadata;
-    return { ...entry, ...metadata };
-  });
-};
-
 /*
 REDUCERS
  */
@@ -34,7 +26,7 @@ export const reducer = (state = initialState, action = {}) => {
       return state
         .set("fetching", false)
         .set("error", false)
-        .set("entries", fromJS(formatEntries(action.entries)));
+        .set("entries", fromJS(action.entries));
     case types.LOAD_ERROR:
       return state.set("fetching", false).set("error", true);
     case types.SELECTION:

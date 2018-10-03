@@ -11,6 +11,7 @@ import XLSX from "xlsx";
 
 import { LoadingOverlay } from "./LoadingOverlay";
 import { SampleNameRenderer, DateCellRenderer } from "./renderers";
+import { FIELDS } from "../../constants";
 
 const { i18n } = window.PAGE;
 
@@ -139,7 +140,7 @@ export class Table extends React.Component {
     Sample name always needs to be first so let's take it off and re-add
     it after we get everything sorted.
      */
-    const sampleIndex = columnState.findIndex(c => c.colId === "sample");
+    const sampleIndex = columnState.findIndex(c => c.colId === FIELDS.sampleName);
     const sample = columnState.splice(sampleIndex, 1)[0];
 
     /*
