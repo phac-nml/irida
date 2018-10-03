@@ -16,7 +16,7 @@ Important Links
 
 Contributing to IRIDA
 ---------------------
-IRIDA is primarily developed by the IRIDA consortium, but the development team is happy to accept contributions from the community.  See our [Contributing Guide](https://github.com/phac-nml/irida/blob/development/CONTRIBUTING.md) fore more information.
+IRIDA is primarily developed by the IRIDA consortium, but the development team is happy to accept contributions from the community.  See [CONTRIBUTING.md] for more information.
 
 Contact the IRIDA Team
 ----------------------
