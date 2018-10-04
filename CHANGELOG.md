@@ -3,6 +3,7 @@ Changes
 
 0.22.0 to 0.23.0
 ----------------
+* [Workflow]: Fixed issue where duplicate filenames were found after running Galaxy workflow in newer Galaxy versions. (0.22.4)
 * [UI/Workflow]: Added option to disable workflows/analysis types from display in IRIDA using `irida.workflow.types.disabled`. (0.22.1)
 * [Developer]: Added wait when NCBI Uploader fails before retrying. (0.22.1)
 * [UI]: Fixed bug where all moved samples were locked. (0.22.2)
