@@ -56,6 +56,8 @@ public class GalaxyHistoriesService {
 	
 	private static final Logger logger = LoggerFactory
 			.getLogger(GalaxyHistoriesService.class);
+	
+	private static final String COLLECTION = "collection";
 
 	private HistoriesClient historiesClient;
 	private ToolsClient toolsClient;
@@ -258,15 +260,17 @@ public class GalaxyHistoriesService {
 				
 		List<HistoryContents> historyContentsList =
 				historiesClient.showHistoryContents(historyId);
-
-		List<HistoryContents> matchingHistoryContents = historyContentsList.stream().
-				filter((historyContents) -> filename.equals(historyContents.getName())).collect(Collectors.toList());
 		
+		List<HistoryContents> matchingHistoryContents = historyContentsList.stream()
+				.filter((historyContents) -> filename.equals(historyContents.getName())
+						&& !COLLECTION.equals(historyContents.getType()))
+				.collect(Collectors.toList());
+
 		// if more than one matching history item
 		if (matchingHistoryContents.size() > 1) {
 			String historyIds = "[";
 			for (HistoryContents content : matchingHistoryContents) {
-				historyIds += content.getId() + ",";
+				historyIds += " id="+content.getId() + " type="+content.getType() + ",";
 			}
 			historyIds += "]";
 			throw new GalaxyDatasetException("Found " + matchingHistoryContents.size() + " datasets for file "
