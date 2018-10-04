@@ -8,15 +8,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.agGrid.AgGridColu
  * in a line list.
  */
 public class UIMetadataField extends AgGridColumn {
-	private MetadataTemplateField field;
-
 	public UIMetadataField(MetadataTemplateField field, boolean hide, boolean editable) {
-		super(field.getLabel(), field.getType(), hide, editable);
-		this.field = field;
-	}
-
-	@Override
-	public String getHeaderName() {
-		return field.getLabel();
+		super(field.getLabel(), UISampleMetadata.PREFIX + field.getId(), field.getType(), hide, editable);
 	}
 }

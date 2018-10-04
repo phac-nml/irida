@@ -22,7 +22,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.web.components.agGrid.AgGridColumn;
-import ca.corefacility.bioinformatics.irida.ria.web.components.agGrid.AgGridUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataField;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataFieldDefault;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataTemplate;
@@ -98,16 +97,17 @@ public class LineListController {
 						.compareToIgnoreCase(f2.getHeaderName()))
 				.collect(Collectors.toList());
 
-		// Add the sample name, created date and the modified date
 		fields.add(0, new UIMetadataFieldDefault(messages.getMessage("linelist.field.created", new Object[] {}, locale),
-				"date"));
+				UISampleMetadata.CREATED_DATE, "date"));
 		UIMetadataFieldDefault modifiedField = new UIMetadataFieldDefault(
-				messages.getMessage("linelist.field.modified", new Object[] {}, locale), "date");
+				messages.getMessage("linelist.field.modified", new Object[] {}, locale), UISampleMetadata.MODIFIED_DATE,
+				"date");
 		modifiedField.setSort("asc");
 		fields.add(0, modifiedField);
 
 		UIMetadataFieldDefault sampleField = new UIMetadataFieldDefault(
-				messages.getMessage("linelist.field.sampleLabel", new Object[] {}, locale), "text");
+				messages.getMessage("linelist.field.sampleLabel", new Object[] {}, locale),
+				UISampleMetadata.SAMPLE_NAME, "text");
 		sampleField.setPinned("left");
 		sampleField.setLockPinned(true);
 		sampleField.setLockPosition(true);
@@ -200,26 +200,50 @@ public class LineListController {
 		templates.add(new UIMetadataTemplate(-1L,
 				messages.getMessage("linelist.templates.Select.none", new Object[] {}, locale), allFields));
 
-		/*
-		Use all the fields as a base
-		 */
-
 		for (ProjectMetadataTemplateJoin join : templateJoins) {
 			MetadataTemplate template = join.getObject();
 			List<AgGridColumn> allFieldsCopy = this.getProjectMetadataTemplateFields(projectId, locale);
-			List<AgGridColumn> fields = formatTemplateForUI(template, allFieldsCopy);
+			List<AgGridColumn> fields = formatTemplateForUI(template, allFieldsCopy, locale);
 			templates.add(new UIMetadataTemplate(template.getId(), template.getName(), fields));
 		}
 
 		return templates;
 	}
 
-	private List<AgGridColumn> formatTemplateForUI(MetadataTemplate template, List<AgGridColumn> allFields) {
+	/**
+	 * If there are any {@link UIMetadataFieldDefault} in a template that they are sent to the UI in a form that
+	 * the interface knows how to handle (e.g. a "Created Date" that is saved to a template will have an ID, but
+	 * the table will be looking for the field "irida-created" instead of "irida-##").
+	 *
+	 * @param field        {@link MetadataTemplateField}
+	 * @param staticFields {@link Map} containing the label of known fields that should be made {@link UIMetadataFieldDefault}
+	 * @return {@link AgGridColumn} of either {@link UIMetadataField} or {@link UIMetadataFieldDefault}
+	 */
+	private AgGridColumn mapFieldToColumn(MetadataTemplateField field, Map<String, String> staticFields) {
+		if (staticFields.containsKey(field.getLabel())) {
+			return new UIMetadataFieldDefault(field.getLabel(), staticFields.get(field.getLabel()), "date");
+		} else {
+			return new UIMetadataField(field, false, true);
+		}
+	}
+
+	private List<AgGridColumn> formatTemplateForUI(MetadataTemplate template, List<AgGridColumn> allFields,
+			Locale locale) {
 		/*
 		Need to remove the sample since allFields begins with the sample.
 		 */
 		allFields.remove(0);
-		List<String> labels = allFields.stream().map(AgGridColumn::getHeaderName).collect(Collectors.toList());
+		List<String> labels = allFields.stream()
+				.map(AgGridColumn::getHeaderName)
+				.collect(Collectors.toList());
+
+		/*
+		These fields are fields that can occur in the template but are from the Sample object itself.
+		 */
+		Map<String, String> staticSampleFields = ImmutableMap.of(
+				messages.getMessage("linelist.field.created", new Object[] {}, locale), UISampleMetadata.CREATED_DATE,
+				messages.getMessage("linelist.field.modified", new Object[] {}, locale),
+				UISampleMetadata.MODIFIED_DATE);
 
 		List<AgGridColumn> fields = new ArrayList<>();
 
@@ -232,7 +256,7 @@ public class LineListController {
 			int index = labels.indexOf(field.getLabel());
 			allFields.remove(index);
 			labels.remove(index);
-			fields.add(new UIMetadataField(field, false, true));
+			fields.add(mapFieldToColumn(field, staticSampleFields));
 		}
 
 		/*
@@ -260,7 +284,7 @@ public class LineListController {
 		for (AgGridColumn field : template.getFields()) {
 			// Don't save the sample label
 			if (!field.getField()
-					.equals("sample")) {
+					.equals(UISampleMetadata.SAMPLE_NAME)) {
 				MetadataTemplateField metadataTemplateField = metadataTemplateService.readMetadataFieldByLabel(
 						field.getHeaderName());
 				if (metadataTemplateField == null) {
@@ -288,7 +312,7 @@ public class LineListController {
 			response.setStatus(HttpServletResponse.SC_OK);
 		}
 		return new UIMetadataTemplate(metadataTemplate.getId(), metadataTemplate.getName(),
-				formatTemplateForUI(metadataTemplate, getProjectMetadataTemplateFields(projectId, locale)));
+				formatTemplateForUI(metadataTemplate, getProjectMetadataTemplateFields(projectId, locale), locale));
 	}
 
 	/**

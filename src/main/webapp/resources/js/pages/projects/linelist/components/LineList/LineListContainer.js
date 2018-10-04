@@ -32,7 +32,8 @@ const mapDispatchToProps = dispatch => ({
     dispatch(actions.saveTemplate(name, fields, id)),
   addSelectedToCart: samples => dispatch(cartActions.add(samples)),
   selectionChange: count => dispatch(entryActions.selection(count)),
-  entryEdited: (entry, field) => dispatch(entryActions.edited(entry, field))
+  entryEdited: (entry, field, label) =>
+    dispatch(entryActions.edited(entry, field, label))
 });
 
 export default connect(
