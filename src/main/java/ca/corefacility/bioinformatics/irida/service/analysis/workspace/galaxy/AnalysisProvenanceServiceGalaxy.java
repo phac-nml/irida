@@ -45,7 +45,7 @@ public class AnalysisProvenanceServiceGalaxy {
 	private static final String EMPTY_VALUE_PLACEHOLDER = null;
 	private static final ObjectMapper mapper = new ObjectMapper();
 	
-	private static final String COLLECTION = "collection";
+	private static final String COLLECTION = "dataset_collection";
 
 	private final GalaxyHistoriesService galaxyHistoriesService;
 	private final ToolsClient toolsClient;
@@ -89,7 +89,7 @@ public class AnalysisProvenanceServiceGalaxy {
 		// group the history contents by name. The names that we're interested
 		// in starting from should match the filename of the output file.
 		final Map<String, List<HistoryContents>> historyContentsByName = historyContents.stream().
-				filter(content -> !COLLECTION.equals(content.getType())).
+				filter(content -> !COLLECTION.equals(content.getHistoryContentType())).
 				collect(Collectors.groupingBy(HistoryContents::getName));
 
 		final List<HistoryContents> currentContents = historyContentsByName.get(analysisOutputFilename);
