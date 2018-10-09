@@ -74,6 +74,14 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	public MetadataTemplateField readMetadataFieldByLabel(String label);
 
 	/**
+	 * Read a {@link MetadataTemplateField} by its key
+	 *
+	 * @param key key for the field
+	 * @return a {@link MetadataTemplateField}
+	 */
+	public MetadataTemplateField readMetadataFieldByKey(String key);
+
+	/**
 	 * Save a new metadata fields
 	 *
 	 * @param field

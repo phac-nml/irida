@@ -5,6 +5,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemp
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
+import ca.corefacility.bioinformatics.irida.model.sample.StaticMetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectMetadataTemplateJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataFieldRepository;
@@ -103,6 +104,17 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 	@Override
 	public MetadataTemplateField readMetadataFieldByLabel(String label) {
 		return fieldRepository.findMetadataFieldByLabel(label);
+	}
+
+	@PreAuthorize("permitAll()")
+	public MetadataTemplateField readMetadataFieldByKey(String key) {
+		if (key.startsWith(StaticMetadataTemplateField.STATIC_FIELD_PREFIX)) {
+			String stripped = key.replaceFirst(StaticMetadataTemplateField.STATIC_FIELD_PREFIX, "");
+			return fieldRepository.findMetadataFieldByStaticId(stripped);
+		} else {
+			String stripped = key.replaceFirst(MetadataTemplateField.DYNAMIC_FIELD_PREFIX, "");
+			return fieldRepository.findOne(Long.parseLong(key));
+		}
 	}
 
 	@PreAuthorize("permitAll()")
