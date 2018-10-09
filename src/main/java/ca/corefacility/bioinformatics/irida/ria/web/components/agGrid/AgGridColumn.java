@@ -12,6 +12,11 @@ public class AgGridColumn {
 	private String headerName;
 
 	/**
+	 * The field of the row to get the cells data from
+	 */
+	private String field;
+
+	/**
 	 * Which type of column to render (data, text, etc...)
 	 * TODO: Convert this into an enum?
 	 */
@@ -54,19 +59,21 @@ public class AgGridColumn {
 	 * Create a column header for a UI Ag Grid instance
 	 *
 	 * @param headerName {@link String} the text to display in the column header
+	 * @param field      {@link String} the key to the row data
 	 * @param type       {@link String} the type of column (date, text)
 	 * @param hide       {@link Boolean} whether the column is visible or not
 	 * @param editable   {@link Boolean} whether the contents of the cells in the column are editable.
 	 */
-	public AgGridColumn(String headerName, String type, boolean hide, boolean editable) {
+	public AgGridColumn(String headerName, String field, String type, boolean hide, boolean editable) {
 		this.headerName = headerName;
+		this.field = field;
 		this.type = type;
 		this.hide = hide;
 		this.editable = editable;
 	}
 
 	public String getField() {
-		return AgGridUtilities.convertHeaderNameToField(headerName);
+		return field;
 	}
 
 	public String getHeaderName() {

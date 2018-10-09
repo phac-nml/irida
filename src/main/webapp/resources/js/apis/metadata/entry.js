@@ -26,6 +26,7 @@ export function fetchMetadataEntries(projectId) {
  * @returns {*}
  */
 export function saveMetadataEntryField(sampleId, value, label) {
+  console.log(sampleId, value, label);
   const params = new URLSearchParams();
   params.append("sampleId", sampleId);
   params.append("value", value);

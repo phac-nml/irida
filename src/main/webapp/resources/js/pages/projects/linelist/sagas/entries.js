@@ -5,6 +5,7 @@ import {
 } from "../../../../apis/metadata/entry";
 import { types as appTypes } from "../../../../redux/reducers/app";
 import { actions, types } from "../reducers/entries";
+import { FIELDS } from "../constants";
 
 /**
  * Fetch all the metadata entries required to initialize the table.
@@ -28,7 +29,13 @@ export function* entriesLoadingSaga() {
 export function* entryEditedSaga() {
   // Always true, that way it can the listener is set up every time.
   while (true) {
-    const { entry, field } = yield take(types.EDITED);
-    yield call(saveMetadataEntryField, entry.sampleId, entry[field], field);
+    const { entry, label, field } = yield take(types.EDITED);
+    console.log(entry, label, field);
+    yield call(
+      saveMetadataEntryField,
+      entry[FIELDS.sampleId],
+      entry[field],
+      label
+    );
   }
 }
