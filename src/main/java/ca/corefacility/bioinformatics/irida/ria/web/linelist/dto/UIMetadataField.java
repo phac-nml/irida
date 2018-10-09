@@ -9,6 +9,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.agGrid.AgGridColu
  */
 public class UIMetadataField extends AgGridColumn {
 	public UIMetadataField(MetadataTemplateField field, boolean hide, boolean editable) {
-		super(field.getLabel(), UISampleMetadata.PREFIX + field.getId(), field.getType(), hide, editable);
+		super(field.getLabel(), field.getFieldKey(), field.getType(), hide, editable);
 	}
 }
