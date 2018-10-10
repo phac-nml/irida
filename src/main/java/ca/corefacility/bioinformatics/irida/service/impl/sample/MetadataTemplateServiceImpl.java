@@ -107,6 +107,7 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 	}
 
 	@PreAuthorize("permitAll()")
+	@Override
 	public MetadataTemplateField readMetadataFieldByKey(String key) {
 		if (key.startsWith(StaticMetadataTemplateField.STATIC_FIELD_PREFIX)) {
 			String stripped = key.replaceFirst(StaticMetadataTemplateField.STATIC_FIELD_PREFIX, "");
@@ -115,6 +116,12 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 			String stripped = key.replaceFirst(MetadataTemplateField.DYNAMIC_FIELD_PREFIX, "");
 			return fieldRepository.findOne(Long.parseLong(key));
 		}
+	}
+
+	@PreAuthorize("permitAll()")
+	@Override
+	public List<StaticMetadataTemplateField> getStaticMetadataFields() {
+		return fieldRepository.findStaticMetadataFields();
 	}
 
 	@PreAuthorize("permitAll()")
