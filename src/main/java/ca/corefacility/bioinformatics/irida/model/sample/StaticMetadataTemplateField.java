@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.model.sample;
 
+import liquibase.datatype.DataTypeInfo;
+import org.hibernate.envers.Audited;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
@@ -13,6 +16,7 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Audited
 public class StaticMetadataTemplateField extends MetadataTemplateField {
 
 	public static String STATIC_FIELD_PREFIX = "irida-static-";
