@@ -82,6 +82,11 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	 */
 	public MetadataTemplateField readMetadataFieldByKey(String key);
 
+	/**
+	 * Get a list of all {@link StaticMetadataTemplateField}s available
+	 *
+	 * @return a list of {@link StaticMetadataTemplateField}
+	 */
 	public List<StaticMetadataTemplateField> getStaticMetadataFields();
 
 	/**

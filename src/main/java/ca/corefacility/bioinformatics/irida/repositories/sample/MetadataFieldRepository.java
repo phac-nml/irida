@@ -32,9 +32,20 @@ public interface MetadataFieldRepository
 	@Query("FROM MetadataTemplateField m where m.label LIKE %:query%")
 	public List<MetadataTemplateField> findAllMetadataFieldsByLabelQuery(@Param("query") String query);
 
+	/**
+	 * Read a {@link StaticMetadataTemplateField} by its staticId
+	 *
+	 * @param staticId the static ID fo the field
+	 * @return the read field
+	 */
 	@Query("from StaticMetadataTemplateField m where m.staticId = ?1")
 	public StaticMetadataTemplateField findMetadataFieldByStaticId(String staticId);
 
+	/**
+	 * Get a list of all {@link StaticMetadataTemplateField}s
+	 *
+	 * @return the list of {@link StaticMetadataTemplateField}s
+	 */
 	@Query("from StaticMetadataTemplateField m where TYPE(m) = StaticMetadataTemplateField")
 	public List<StaticMetadataTemplateField> findStaticMetadataFields();
 }

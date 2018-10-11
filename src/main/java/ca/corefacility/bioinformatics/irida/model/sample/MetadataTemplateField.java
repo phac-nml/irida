@@ -82,6 +82,10 @@ public class MetadataTemplateField {
 		return false;
 	}
 
+	/**
+	 * Key for displaying the field in the UI
+	 * @return the key of the field.
+	 */
 	public String getFieldKey() {
 		return DYNAMIC_FIELD_PREFIX + id;
 	}
