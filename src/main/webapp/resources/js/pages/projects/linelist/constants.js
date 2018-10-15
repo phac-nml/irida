@@ -1,6 +1,6 @@
 export const FIELDS = {
-  sampleName: "irida-sample-name",
-  sampleId: "irida-sample-id",
-  projectName: "irida-project-name",
-  projectId: "irida-project-id"
+  sampleName: "irida-static-sample-name",
+  sampleId: "irida-static-sample-id",
+  projectName: "irida-static-project-name",
+  projectId: "irida-static-project-id"
 };

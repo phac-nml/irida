@@ -6,4 +6,6 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
     <include file="fastqc-version.xml"
              relativeToChangelogFile="true"/>
+    <include file="static-metadata-field.xml"
+             relativeToChangelogFile="true"/>
 </databaseChangeLog>
