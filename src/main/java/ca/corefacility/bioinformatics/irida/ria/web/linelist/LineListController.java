@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 
+import ca.corefacility.bioinformatics.irida.model.sample.StaticMetadataTemplateField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -78,7 +79,7 @@ public class LineListController {
 		to ensure that they are displayed correctly in the UI.  These fields will be included in the templates
 		sent down to the UI.
 		 */
-		Map<String, Boolean> IGNORED_TEMPLATE_FIELDS = ImmutableMap.of("Created Date", true, "Modified Date", true);
+		List<StaticMetadataTemplateField> staticMetadataFields = metadataTemplateService.getStaticMetadataFields();
 
 		/*
 		Get all unique fields from the templates.
@@ -87,7 +88,7 @@ public class LineListController {
 			MetadataTemplate template = join.getObject();
 			List<MetadataTemplateField> templateFields = template.getFields();
 			for (MetadataTemplateField field : templateFields) {
-				if (!IGNORED_TEMPLATE_FIELDS.containsKey(field.getLabel())) {
+				if (!staticMetadataFields.contains(field)) {
 					fieldSet.add(field);
 				}
 			}
