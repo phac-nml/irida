@@ -10,7 +10,7 @@ import "ag-grid/dist/styles/ag-theme-balham.css";
 import XLSX from "xlsx";
 
 import { LoadingOverlay } from "./LoadingOverlay";
-import { SampleNameRenderer, DateCellRenderer } from "./renderers";
+import { DateCellRenderer, SampleNameRenderer } from "./renderers";
 import { FIELDS } from "../../constants";
 
 const { i18n } = window.PAGE;
@@ -197,6 +197,7 @@ export class Table extends React.Component {
     let list = colOrder.map(c => {
       // Get the header name
       const field = fields.find(f => f.field === c.colId);
+      field.hide = c.hide;
       return { ...field };
     });
 
