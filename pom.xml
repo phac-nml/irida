@@ -212,11 +212,6 @@
 			<version>${commons.net.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-text</artifactId>
-			<version>${commons.text.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>javax.interceptor</groupId>
 			<artifactId>javax.interceptor-api</artifactId>
 			<version>${javax.interceptor-api.version}</version>
@@ -1044,7 +1039,6 @@
 		<dbunit.version>2.4.9</dbunit.version>
 		<commons.dbcp.version>2.0.1</commons.dbcp.version>
 		<commons.net.version>3.3</commons.net.version>
-		<commons.text.version>1.4</commons.text.version>
 		<fastqc.version>0.11.7-nml-custom</fastqc.version>
 		<aspectj.version>1.8.1</aspectj.version>
 		<hibernate.validator.version>5.1.1.Final</hibernate.validator.version>
