@@ -215,6 +215,7 @@ export class SaveTemplateModal extends React.Component {
           >
             <Select
               showSearch
+              className="t-template-name"
               value={value}
               style={{ width: "100%" }}
               filterOption={this.filterOption}
