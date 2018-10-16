@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.description;
 
 import javax.xml.bind.annotation.XmlAttribute;
-import java.util.List;
 import java.util.Objects;
 
 /**
