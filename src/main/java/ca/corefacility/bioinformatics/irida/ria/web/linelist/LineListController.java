@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 
-import ca.corefacility.bioinformatics.irida.model.sample.StaticMetadataTemplateField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -21,12 +20,10 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.StaticMetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.web.components.agGrid.AgGridColumn;
-import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataField;
-import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataFieldDefault;
-import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataTemplate;
-import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UISampleMetadata;
+import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.*;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -43,6 +40,12 @@ public class LineListController {
 	private SampleService sampleService;
 	private MetadataTemplateService metadataTemplateService;
 	private MessageSource messages;
+
+	/*
+	STATIC FIELDS (I.E. not modifiable through the UI.
+	 */
+	private final UIStaticField STATIC_CREATED_DATE = new UIStaticField(UISampleMetadata.CREATED_DATE, "date");
+	private final UIStaticField STATIC_MODIFIED_DATE = new UIStaticField(UISampleMetadata.MODIFIED_DATE, "date");
 
 	@Autowired
 	public LineListController(ProjectService projectService, SampleService sampleService,
@@ -200,10 +203,9 @@ public class LineListController {
 		templates.add(new UIMetadataTemplate(-1L,
 				messages.getMessage("linelist.templates.Select.none", new Object[] {}, locale), allFields));
 
-		Map<String, String> staticFields = ImmutableMap.of(
-				messages.getMessage("linelist.field.created", new Object[] {}, locale), UISampleMetadata.CREATED_DATE,
-				messages.getMessage("linelist.field.modified", new Object[] {}, locale),
-				UISampleMetadata.MODIFIED_DATE);
+		Map<String, UIStaticField> staticFields = ImmutableMap.of(
+				messages.getMessage("linelist.field.created", new Object[] {}, locale), STATIC_CREATED_DATE,
+				messages.getMessage("linelist.field.modified", new Object[] {}, locale), STATIC_MODIFIED_DATE);
 
 		for (ProjectMetadataTemplateJoin join : templateJoins) {
 			MetadataTemplate template = join.getObject();
@@ -226,9 +228,10 @@ public class LineListController {
 	 * @param staticFields {@link Map} containing the label of known fields that should be made {@link UIMetadataFieldDefault}
 	 * @return {@link AgGridColumn} of either {@link UIMetadataField} or {@link UIMetadataFieldDefault}
 	 */
-	private AgGridColumn mapFieldToColumn(MetadataTemplateField field, Map<String, String> staticFields) {
+	private AgGridColumn mapFieldToColumn(MetadataTemplateField field, Map<String, UIStaticField> staticFields) {
 		if (staticFields.containsKey(field.getLabel())) {
-			return new UIMetadataFieldDefault(field.getLabel(), staticFields.get(field.getLabel()), "date");
+			UIStaticField staticField = staticFields.get(field.getLabel());
+			return new UIMetadataFieldDefault(field.getLabel(), staticField.getField(), staticField.getType());
 		} else {
 			return new UIMetadataField(field, false, true);
 		}
