@@ -192,6 +192,9 @@ public class SamplesController extends BaseController {
 			HttpServletRequest request) {
 		logger.debug("Updating sample [" + sampleId + "]");
 
+		Object sampleObject = sampleService.read(sampleId);
+		Class<?> sampleClass = sampleObject.getClass();
+
 		Map<String, Object> updatedValues = new HashMap<>();
 		for (String field : FIELDS) {
 			String fieldValue = params.get(field);
