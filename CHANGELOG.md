@@ -19,6 +19,7 @@ Changes
 * [Workflow]: Updated the AssemblyAnnotation pipeline to v0.5 and the AssemblyAnnotationCollection pipeline to v0.4. Both pipelines now use Shovill for assembly and QUAST for assembly quality assessment in addition to Prokka for annotation.
 * [API]: Fixed REST endpoint mapping for current user and user projects.
 * [Workflow]: Fixed issue where duplicate filenames were found after running Galaxy workflow in newer Galaxy versions. (0.22.4)
+* [Developer]: Added unused import checking to checkstyle config.  The `mvn site` build will throw an error if unused imports are present.
 
 0.21.0 to 0.22.0
 ----------------
