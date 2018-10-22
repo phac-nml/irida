@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.models.datatables;
 
-import ca.corefacility.bioinformatics.irida.model.enums.SequencingRunUploadStatus;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
