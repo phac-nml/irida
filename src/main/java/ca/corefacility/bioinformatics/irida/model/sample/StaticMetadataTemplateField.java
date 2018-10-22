@@ -1,13 +1,12 @@
 package ca.corefacility.bioinformatics.irida.model.sample;
 
-import liquibase.datatype.DataTypeInfo;
-import org.hibernate.envers.Audited;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.validation.constraints.NotNull;
+
+import org.hibernate.envers.Audited;
 
 /**
  * A {@link MetadataTemplateField} with a special key "irida-static-*" to specify that it is statically added to a
@@ -25,6 +24,10 @@ public class StaticMetadataTemplateField extends MetadataTemplateField {
 	@NotNull
 	@Column(name = "static_id")
 	private String staticId;
+
+	public StaticMetadataTemplateField() {
+		super();
+	}
 
 	public StaticMetadataTemplateField(String label, String type, String staticId) {
 		super(label, type);
