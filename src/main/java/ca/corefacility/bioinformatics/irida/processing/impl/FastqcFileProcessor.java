@@ -1,38 +1,5 @@
 package ca.corefacility.bioinformatics.irida.processing.impl;
 
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.nio.file.Path;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.imageio.ImageIO;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import uk.ac.babraham.FastQC.FastQCApplication;
-import uk.ac.babraham.FastQC.Graphs.LineGraph;
-import uk.ac.babraham.FastQC.Graphs.QualityBoxPlot;
-import uk.ac.babraham.FastQC.Modules.BasicStats;
-import uk.ac.babraham.FastQC.Modules.DuplicationLevel;
-import uk.ac.babraham.FastQC.Modules.OverRepresentedSeqs;
-import uk.ac.babraham.FastQC.Modules.OverRepresentedSeqs.OverrepresentedSeq;
-import uk.ac.babraham.FastQC.Modules.PerBaseQualityScores;
-import uk.ac.babraham.FastQC.Modules.PerSequenceQualityScores;
-import uk.ac.babraham.FastQC.Modules.QCModule;
-import uk.ac.babraham.FastQC.Sequence.Sequence;
-import uk.ac.babraham.FastQC.Sequence.SequenceFactory;
-import uk.ac.babraham.FastQC.Sequence.QualityEncoding.PhredEncoding;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
@@ -41,7 +8,32 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFast
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import uk.ac.babraham.FastQC.FastQCApplication;
+import uk.ac.babraham.FastQC.Graphs.LineGraph;
+import uk.ac.babraham.FastQC.Graphs.QualityBoxPlot;
+import uk.ac.babraham.FastQC.Modules.*;
+import uk.ac.babraham.FastQC.Modules.OverRepresentedSeqs.OverrepresentedSeq;
+import uk.ac.babraham.FastQC.Sequence.QualityEncoding.PhredEncoding;
+import uk.ac.babraham.FastQC.Sequence.Sequence;
+import uk.ac.babraham.FastQC.Sequence.SequenceFactory;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.nio.file.Path;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Executes FastQC on a {@link SequenceFile} and stores the report in the

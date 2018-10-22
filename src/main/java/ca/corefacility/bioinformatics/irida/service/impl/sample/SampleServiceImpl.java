@@ -62,7 +62,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Service class for managing {@link Sample}.
- * 
  */
 @Service
 public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements SampleService {
@@ -78,18 +77,18 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@link ProjectSampleJoin}.
 	 */
 	private ProjectSampleJoinRepository psjRepository;
-	
+
 	private SampleSequencingObjectJoinRepository ssoRepository;
-	
+
 	private QCEntryRepository qcEntryRepository;
-	
+
 	private SequencingObjectRepository sequencingObjectRepository;
 
 	/**
 	 * Reference to {@link AnalysisRepository}.
 	 */
 	private final AnalysisRepository analysisRepository;
-	
+
 	private final SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository;
 
 	private final UserRepository userRepository;
@@ -111,7 +110,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	public SampleServiceImpl(SampleRepository sampleRepository, ProjectSampleJoinRepository psjRepository,
 			final AnalysisRepository analysisRepository, SampleSequencingObjectJoinRepository ssoRepository,
 			QCEntryRepository qcEntryRepository, SequencingObjectRepository sequencingObjectRepository,
-			SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository, UserRepository userRepository, Validator validator) {
+			SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository, UserRepository userRepository,
+			Validator validator) {
 		super(sampleRepository, validator, Sample.class);
 		this.sampleRepository = sampleRepository;
 		this.psjRepository = psjRepository;
@@ -122,7 +122,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		this.userRepository = userRepository;
 		this.sampleGenomeAssemblyJoinRepository = sampleGenomeAssemblyJoinRepository;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -132,7 +132,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	public Iterable<Sample> readMultiple(Iterable<Long> idents) {
 		return super.readMultiple(idents);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -142,7 +142,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	public Boolean exists(Long id) {
 		return super.exists(id);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -151,17 +151,98 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	public Sample create(final @Valid Sample s) {
 		return super.create(s);
 	}
-	
+
 	/**
-	 * {@inheritDoc}
+	 * Specification for searching {@link Sample}s
+	 *
+	 * @param user        the {@link User} to get samples for.  If this property is null, will serch for all users.
+	 * @param queryString the query string to search for
+	 * @return a {@link Specification} for {@link ProjectSampleJoin}
 	 */
-	@Override
-	@PreAuthorize("hasPermission(#id, 'canUpdateSample')")
-	public Sample updateFields(Long id, Map<String, Object> updatedFields) throws ConstraintViolationException,
-			ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException, InvalidPropertyException {
-		return super.updateFields(id, updatedFields);
+	private static Specification<ProjectSampleJoin> sampleForUserSpecification(final User user,
+			final String queryString) {
+		return new Specification<ProjectSampleJoin>() {
+
+			@Override
+			public Predicate toPredicate(Root<ProjectSampleJoin> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				Predicate search;
+				if (user != null) {
+					Predicate sampleAccess = cb.or(individualProjectMembership(root, query, cb),
+							groupProjectMembership(root, query, cb));
+					search = cb.and(sampleAccess, sampleProperties(root, query, cb));
+				} else {
+					search = sampleProperties(root, query, cb);
+				}
+
+				return search;
+			}
+
+			/**
+			 * Search with the given query for sample properties
+			 *
+			 * @param root  root for ProjectSampleJoin
+			 * @param query criteria query
+			 * @param cb    criteria query builder
+			 * @return a predicate
+			 */
+			private Predicate sampleProperties(final Root<ProjectSampleJoin> root, final CriteriaQuery<?> query,
+					final CriteriaBuilder cb) {
+
+				return cb.or(cb.like(root.get("sample")
+						.get("sampleName"), "%" + queryString + "%"), cb.equal(root.get("sample")
+						.get("id")
+						.as(String.class), queryString));
+			}
+
+			/**
+			 * This {@link Predicate} filters out {@link Project}s for the
+			 * specific user where they are assigned individually as a member.
+			 *
+			 * @param root  the root of the query
+			 * @param query the query
+			 * @param cb    the builder
+			 * @return a {@link Predicate} that filters {@link Project}s where
+			 * users are individually assigned.
+			 */
+			private Predicate individualProjectMembership(final Root<ProjectSampleJoin> root,
+					final CriteriaQuery<?> query, final CriteriaBuilder cb) {
+				final Subquery<Long> userMemberSelect = query.subquery(Long.class);
+				final Root<ProjectUserJoin> userMemberJoin = userMemberSelect.from(ProjectUserJoin.class);
+				userMemberSelect.select(userMemberJoin.get("project")
+						.get("id"))
+						.where(cb.equal(userMemberJoin.get("user"), user));
+				return cb.in(root.get("project"))
+						.value(userMemberSelect);
+			}
+
+			/**
+			 * This {@link Predicate} filters out {@link Project}s for the
+			 * specific user where they are assigned transitively through a
+			 * {@link UserGroup}.
+			 *
+			 * @param root  the root of the query
+			 * @param query the query
+			 * @param cb    the builder
+			 * @return a {@link Predicate} that filters {@link Project}s where
+			 * users are assigned transitively through {@link UserGroup}
+			 * .
+			 */
+			private Predicate groupProjectMembership(final Root<ProjectSampleJoin> root, final CriteriaQuery<?> query,
+					final CriteriaBuilder cb) {
+				final Subquery<Long> groupMemberSelect = query.subquery(Long.class);
+				final Root<UserGroupProjectJoin> groupMemberJoin = groupMemberSelect.from(UserGroupProjectJoin.class);
+				groupMemberSelect.select(groupMemberJoin.get("project")
+						.get("id"))
+						.where(cb.equal(groupMemberJoin.join("userGroup")
+								.join("users")
+								.get("user"), user));
+				return cb.in(root.get("project"))
+						.value(groupMemberSelect);
+			}
+
+		};
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -171,7 +252,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		object.setModifiedDate(new Date());
 		return super.update(object);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -187,7 +268,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		}
 		return join;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -210,18 +291,35 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@inheritDoc}
 	 */
 	@Override
-	@Transactional(readOnly = true)
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#project, 'canReadProject')")
-	public Sample getSampleBySampleName(Project project, String sampleId) {
-		Sample s = sampleRepository.getSampleBySampleName(project, sampleId);
-		if (s != null) {
-			return s;
-		} else {
-			throw new EntityNotFoundException("No sample with external id [" + sampleId + "] in project ["
-					+ project.getId() + "]");
+	@PreAuthorize("hasPermission(#id, 'canUpdateSample')")
+	public Sample updateFields(Long id, Map<String, Object> updatedFields)
+			throws ConstraintViolationException, ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException,
+			InvalidPropertyException {
+		/*
+		Need to make sure that the user is not renaming the sample to a name that is already in one of the
+		projects the sample is in.
+		 */
+		if (updatedFields.containsKey("sampleName")) {
+			String sampleName = (String) updatedFields.get("sampleName");
+			Sample sample = sampleRepository.findOne(id);
+			List<Join<Project, Sample>> psj = psjRepository.getProjectForSample(sample);
+			for (Join<Project, Sample> join : psj) {
+				Project project = join.getSubject();
+				try {
+					sampleRepository.getSampleBySampleName(project, sampleName);
+					throw new InvalidPropertyException(
+							"Sample names can not be duplicated within projects.  Updated sample name exists in project "
+									+ project.getLabel());
+				} catch (EntityNotFoundException e) {
+					// This is actually where we want to hit, it means that the new sample name is not found
+					// in the project.  Just ignore this exception.
+				}
+			}
 		}
+
+		return super.updateFields(id, updatedFields);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -265,14 +363,31 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@inheritDoc}
 	 */
 	@Override
+	@Transactional(readOnly = true)
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#project, 'canReadProject')")
+	public Sample getSampleBySampleName(Project project, String sampleId) {
+		Sample s = sampleRepository.getSampleBySampleName(project, sampleId);
+		if (s != null) {
+			return s;
+		} else {
+			throw new EntityNotFoundException(
+					"No sample with external id [" + sampleId + "] in project [" + project.getId() + "]");
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	@Transactional
 	@PreAuthorize("hasPermission(#project, 'isProjectOwner') and hasPermission(#mergeInto, 'canUpdateSample') and hasPermission(#toMerge, 'canUpdateSample')")
 	public Sample mergeSamples(Project project, Sample mergeInto, Collection<Sample> toMerge) {
 		// confirm that all samples are part of the same project:
 		confirmProjectSampleJoin(project, mergeInto);
 
-		logger.debug("Merging samples " + toMerge.stream().map(t -> t.getId()).collect(Collectors.toList())
-				+ " into sample [" + mergeInto.getId() + "]");
+		logger.debug("Merging samples " + toMerge.stream()
+				.map(t -> t.getId())
+				.collect(Collectors.toList()) + " into sample [" + mergeInto.getId() + "]");
 
 		for (Sample s : toMerge) {
 			confirmProjectSampleJoin(project, s);
@@ -287,8 +402,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			for (SampleGenomeAssemblyJoin join : genomeAssemblyJoins) {
 				GenomeAssembly genomeAssembly = join.getObject();
 
-				logger.trace(
-						"Removing genome assembly [" + genomeAssembly.getId() + "] from sample [" + s.getId() + "]");
+				logger.trace("Removing genome assembly [" + genomeAssembly.getId() + "] from sample [" + s.getId() + "]");
 				sampleGenomeAssemblyJoinRepository.delete(join);
 
 				logger.trace("Adding genome assembly [" + genomeAssembly.getId() + "] to sample [" + mergeInto.getId()
@@ -303,29 +417,6 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			sampleRepository.delete(s.getId());
 		}
 		return mergeInto;
-	}
-
-	/**
-	 * Confirm that a {@link ProjectSampleJoin} exists between the given
-	 * {@link Project} and {@link Sample}.
-	 * 
-	 * @param project
-	 *            the {@link Project} to check
-	 * @param sample
-	 *            the {@link Sample} to check
-	 * @throws IllegalArgumentException
-	 *             if join does not exist
-	 */
-	private void confirmProjectSampleJoin(Project project, Sample sample) throws IllegalArgumentException{
-		Set<Project> projects = new HashSet<>();
-		List<Join<Project, Sample>> sampleProjects = psjRepository.getProjectForSample(sample);
-		for (Join<Project, Sample> p : sampleProjects) {
-			projects.add(p.getSubject());
-		}
-		if (!projects.contains(project)) {
-			throw new IllegalArgumentException("Cannot merge sample [" + sample.getId()
-					+ "] with other samples; the sample does not belong to project [" + project.getId() + "]");
-		}
 	}
 
 	/**
@@ -351,30 +442,23 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Confirm that a {@link ProjectSampleJoin} exists between the given
+	 * {@link Project} and {@link Sample}.
+	 *
+	 * @param project the {@link Project} to check
+	 * @param sample  the {@link Sample} to check
+	 * @throws IllegalArgumentException if join does not exist
 	 */
-	@Override
-	@Transactional(readOnly = true)
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
-	public Long getTotalBasesForSample(Sample sample) throws SequenceFileAnalysisException {
-		checkNotNull(sample, "sample is null");
-
-		long totalBases = 0;
-
-		List<SampleSequencingObjectJoin> sequencesForSample = ssoRepository.getSequencesForSample(sample);
-		for (SampleSequencingObjectJoin join : sequencesForSample) {
-			for (SequenceFile sequenceFile : join.getObject().getFiles()) {
-				final AnalysisFastQC sequenceFileFastQC = analysisRepository
-						.findFastqcAnalysisForSequenceFile(sequenceFile);
-				if (sequenceFileFastQC == null || sequenceFileFastQC.getTotalBases() == null) {
-					throw new SequenceFileAnalysisException("Missing FastQC analysis for SequenceFile ["
-							+ sequenceFile.getId() + "]");
-				}
-				totalBases += sequenceFileFastQC.getTotalBases();
-			}
+	private void confirmProjectSampleJoin(Project project, Sample sample) throws IllegalArgumentException {
+		Set<Project> projects = new HashSet<>();
+		List<Join<Project, Sample>> sampleProjects = psjRepository.getProjectForSample(sample);
+		for (Join<Project, Sample> p : sampleProjects) {
+			projects.add(p.getSubject());
 		}
-
-		return totalBases;
+		if (!projects.contains(project)) {
+			throw new IllegalArgumentException("Cannot merge sample [" + sample.getId()
+					+ "] with other samples; the sample does not belong to project [" + project.getId() + "]");
+		}
 	}
 
 	/**
@@ -406,13 +490,39 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
+	public Long getTotalBasesForSample(Sample sample) throws SequenceFileAnalysisException {
+		checkNotNull(sample, "sample is null");
+
+		long totalBases = 0;
+
+		List<SampleSequencingObjectJoin> sequencesForSample = ssoRepository.getSequencesForSample(sample);
+		for (SampleSequencingObjectJoin join : sequencesForSample) {
+			for (SequenceFile sequenceFile : join.getObject()
+					.getFiles()) {
+				final AnalysisFastQC sequenceFileFastQC = analysisRepository.findFastqcAnalysisForSequenceFile(
+						sequenceFile);
+				if (sequenceFileFastQC == null || sequenceFileFastQC.getTotalBases() == null) {
+					throw new SequenceFileAnalysisException(
+							"Missing FastQC analysis for SequenceFile [" + sequenceFile.getId() + "]");
+				}
+				totalBases += sequenceFileFastQC.getTotalBases();
+			}
+		}
+
+		return totalBases;
+	}
+
+	/**
 	 * Add a {@link SequencingObject} to a {@link Sample} after testing if it
 	 * exists in a {@link Sample} already
-	 * 
-	 * @param sample
-	 *            {@link Sample} to add to
-	 * @param seqObject
-	 *            {@link SequencingObject} to add
+	 *
+	 * @param sample    {@link Sample} to add to
+	 * @param seqObject {@link SequencingObject} to add
 	 * @return a {@link SampleSequencingObjectJoin}
 	 */
 	@Transactional
@@ -432,26 +542,12 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Override
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#projects, 'canReadProject')")
-	public Page<ProjectSampleJoin> getFilteredSamplesForProjects(List<Project> projects, List<String> sampleNames, String sampleName, String searchTerm,
-			String organism, Date minDate, Date maxDate, int currentPage, int pageSize, Sort sort) {
-		return psjRepository
-				.findAll(ProjectSampleSpecification.getSamples(projects, sampleNames, sampleName, searchTerm, organism, minDate, maxDate),
-						new PageRequest(currentPage, pageSize, sort));
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@PreAuthorize("hasPermission(#submission, 'canReadAnalysisSubmission')")
-	@PostFilter("hasPermission(filterObject, 'canReadSample')")
-	public Collection<Sample> getSamplesForAnalysisSubmission(AnalysisSubmission submission) {
-		Set<SequencingObject> objectsForAnalysisSubmission = sequencingObjectRepository
-				.findSequencingObjectsForAnalysisSubmission(submission);
-
-		Set<Sample> samples = objectsForAnalysisSubmission.stream()
-				.map(s -> ssoRepository.getSampleForSequencingObject(s).getSubject()).collect(Collectors.toSet());
-		return samples;
+	public Page<ProjectSampleJoin> getFilteredSamplesForProjects(List<Project> projects, List<String> sampleNames,
+			String sampleName, String searchTerm, String organism, Date minDate, Date maxDate, int currentPage,
+			int pageSize, Sort sort) {
+		return psjRepository.findAll(
+				ProjectSampleSpecification.getSamples(projects, sampleNames, sampleName, searchTerm, organism, minDate,
+						maxDate), new PageRequest(currentPage, pageSize, sort));
 	}
 
 	/**
@@ -463,7 +559,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	public List<QCEntry> getQCEntriesForSample(Sample sample) {
 		return qcEntryRepository.getQCEntriesForSample(sample);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -472,21 +568,22 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	public List<Sample> updateMultiple(Collection<Sample> objects) {
 		return super.updateMultiple(objects);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
-	@PreAuthorize("permitAll()")
 	@Override
-	public Page<ProjectSampleJoin> searchSamplesForUser(String query, final Integer page, final Integer count,
-			final Sort sort) {
-		final UserDetails loggedInDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
-				.getPrincipal();
-		final User loggedIn = userRepository.loadUserByUsername(loggedInDetails.getUsername());
+	@PreAuthorize("hasPermission(#submission, 'canReadAnalysisSubmission')")
+	@PostFilter("hasPermission(filterObject, 'canReadSample')")
+	public Collection<Sample> getSamplesForAnalysisSubmission(AnalysisSubmission submission) {
+		Set<SequencingObject> objectsForAnalysisSubmission = sequencingObjectRepository.findSequencingObjectsForAnalysisSubmission(
+				submission);
 
-		final PageRequest pr = new PageRequest(page, count, sort);
-
-		return psjRepository.findAll(sampleForUserSpecification(loggedIn, query), pr);
+		Set<Sample> samples = objectsForAnalysisSubmission.stream()
+				.map(s -> ssoRepository.getSampleForSequencingObject(s)
+						.getSubject())
+				.collect(Collectors.toSet());
+		return samples;
 	}
 
 	/**
@@ -500,24 +597,49 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 		return psjRepository.findAll(sampleForUserSpecification(null, query), pr);
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("permitAll()")
+	@Override
+	public Page<ProjectSampleJoin> searchSamplesForUser(String query, final Integer page, final Integer count,
+			final Sort sort) {
+		final UserDetails loggedInDetails = (UserDetails) SecurityContextHolder.getContext()
+				.getAuthentication()
+				.getPrincipal();
+		final User loggedIn = userRepository.loadUserByUsername(loggedInDetails.getUsername());
+
+		final PageRequest pr = new PageRequest(page, count, sort);
+
+		return psjRepository.findAll(sampleForUserSpecification(loggedIn, query), pr);
+	}
+
 	/**
 	 * Verify that the given sort properties array is not null or empty. If it
 	 * is, give a default sort property.
-	 * 
-	 * @param sortProperties
-	 *            The given sort properites
+	 *
+	 * @param sortProperties The given sort properites
 	 * @return The corrected sort properties
 	 */
 	private String[] verifySortProperties(String[] sortProperties) {
 		// if the sort properties are null, empty, or are an empty string, use
 		// CREATED_DATE
-		if (sortProperties == null || sortProperties.length == 0
-				|| (sortProperties.length == 1 && sortProperties[0].equals(""))) {
+		if (sortProperties == null || sortProperties.length == 0 || (sortProperties.length == 1
+				&& sortProperties[0].equals(""))) {
 			sortProperties = new String[] { CREATED_DATE_SORT_PROPERTY };
 		}
 
 		return sortProperties;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasPermission(#sample, 'canReadSample')")
+	@Override
+	public Collection<SampleGenomeAssemblyJoin> getAssembliesForSample(Sample sample) {
+		return sampleGenomeAssemblyJoinRepository.findBySample(sample);
 	}
 
 	/**
@@ -533,17 +655,9 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			logger.debug("Removing genome assembly [" + genomeAssemblyId + "] from sample [" + sample.getId() + "]");
 			sampleGenomeAssemblyJoinRepository.delete(join.getId());
 		} else {
-			logger.trace("Genome assembly [" + genomeAssemblyId + "] is not associated with sample [" + sample.getId() + "]. Ignoring.");
+			logger.trace("Genome assembly [" + genomeAssemblyId + "] is not associated with sample [" + sample.getId()
+					+ "]. Ignoring.");
 		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@PreAuthorize("hasPermission(#sample, 'canReadSample')")
-	@Override
-	public Collection<SampleGenomeAssemblyJoin> getAssembliesForSample(Sample sample) {
-		return sampleGenomeAssemblyJoinRepository.findBySample(sample);
 	}
 
 	/**
@@ -555,100 +669,11 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		SampleGenomeAssemblyJoin join = sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(sample.getId(),
 				genomeAssemblyId);
 		if (join == null) {
-			throw new EntityNotFoundException("No join found between sample [" + sample.getId() + "] and genome assembly [" + genomeAssemblyId + "]");
+			throw new EntityNotFoundException(
+					"No join found between sample [" + sample.getId() + "] and genome assembly [" + genomeAssemblyId
+							+ "]");
 		}
-		
+
 		return join.getObject();
-	}
-	
-	/**
-	 * Specification for searching {@link Sample}s
-	 * @param user the {@link User} to get samples for.  If this property is null, will serch for all users.
-	 * @param queryString the query string to search for
-	 * @return a {@link Specification} for {@link ProjectSampleJoin}
-	 */
-	private static Specification<ProjectSampleJoin> sampleForUserSpecification(final User user,
-			final String queryString) {
-		return new Specification<ProjectSampleJoin>() {
-
-			@Override
-			public Predicate toPredicate(Root<ProjectSampleJoin> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-				Predicate search;
-				if (user != null) {
-					Predicate sampleAccess = cb.or(individualProjectMembership(root, query, cb),
-							groupProjectMembership(root, query, cb));
-					search = cb.and(sampleAccess, sampleProperties(root, query, cb));
-				} else {
-					search = sampleProperties(root, query, cb);
-				}
-
-				return search;
-			}
-
-			/**
-			 * Search with the given query for sample properties
-			 * 
-			 * @param root
-			 *            root for ProjectSampleJoin
-			 * @param query
-			 *            criteria query
-			 * @param cb
-			 *            criteria query builder
-			 * @return a predicate
-			 */
-			private Predicate sampleProperties(final Root<ProjectSampleJoin> root, final CriteriaQuery<?> query,
-					final CriteriaBuilder cb) {
-
-				return cb.or(cb.like(root.get("sample").get("sampleName"), "%" + queryString + "%"),
-						cb.equal(root.get("sample").get("id").as(String.class), queryString));
-			}
-
-			/**
-			 * This {@link Predicate} filters out {@link Project}s for the
-			 * specific user where they are assigned individually as a member.
-			 * 
-			 * @param root
-			 *            the root of the query
-			 * @param query
-			 *            the query
-			 * @param cb
-			 *            the builder
-			 * @return a {@link Predicate} that filters {@link Project}s where
-			 *         users are individually assigned.
-			 */
-			private Predicate individualProjectMembership(final Root<ProjectSampleJoin> root,
-					final CriteriaQuery<?> query, final CriteriaBuilder cb) {
-				final Subquery<Long> userMemberSelect = query.subquery(Long.class);
-				final Root<ProjectUserJoin> userMemberJoin = userMemberSelect.from(ProjectUserJoin.class);
-				userMemberSelect.select(userMemberJoin.get("project").get("id"))
-						.where(cb.equal(userMemberJoin.get("user"), user));
-				return cb.in(root.get("project")).value(userMemberSelect);
-			}
-
-			/**
-			 * This {@link Predicate} filters out {@link Project}s for the
-			 * specific user where they are assigned transitively through a
-			 * {@link UserGroup}.
-			 * 
-			 * @param root
-			 *            the root of the query
-			 * @param query
-			 *            the query
-			 * @param cb
-			 *            the builder
-			 * @return a {@link Predicate} that filters {@link Project}s where
-			 *         users are assigned transitively through {@link UserGroup}
-			 *         .
-			 */
-			private Predicate groupProjectMembership(final Root<ProjectSampleJoin> root, final CriteriaQuery<?> query,
-					final CriteriaBuilder cb) {
-				final Subquery<Long> groupMemberSelect = query.subquery(Long.class);
-				final Root<UserGroupProjectJoin> groupMemberJoin = groupMemberSelect.from(UserGroupProjectJoin.class);
-				groupMemberSelect.select(groupMemberJoin.get("project").get("id"))
-						.where(cb.equal(groupMemberJoin.join("userGroup").join("users").get("user"), user));
-				return cb.in(root.get("project")).value(groupMemberSelect);
-			}
-
-		};
 	}
 }
