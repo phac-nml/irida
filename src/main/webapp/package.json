@@ -74,6 +74,7 @@
     "select2-bootstrap-theme": "0.1.0-beta.10",
     "showdown": "^1.7.4",
     "sortablejs": "^1.5.1",
+    "styled-components": "^4.0.2",
     "ui-select": "^0.19.6",
     "xlsx": "^0.13.0"
   },
@@ -97,7 +98,7 @@
     "babel-plugin-import": "^1.7.0",
     "bootstrap-sass": "^3.3.7",
     "bower": "^1.7.7",
-    "chromedriver": "2.42.1",
+    "chromedriver": "2.33",
     "clean-webpack-plugin": "^0.1.19",
     "css-loader": "^0.28.11",
     "cssnano": "^3.10.0",
