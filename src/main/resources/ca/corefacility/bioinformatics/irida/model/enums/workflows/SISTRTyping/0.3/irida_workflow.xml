@@ -9,7 +9,7 @@
     <requiresSingleSample>true</requiresSingleSample>
   </inputs>
   <parameters>
-    <parameter name="shovill-1-adv.mincov" defaultValue="2">
+    <parameter name="shovill-1-adv.mincov" defaultValue="1">
       <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/0.9.0" parameterName="adv.mincov"/>
     </parameter>
     <parameter name="shovill-1-trim" defaultValue="false">
@@ -30,7 +30,7 @@
     <parameter name="shovill-1-adv.opts" defaultValue="">
       <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/0.9.0" parameterName="adv.opts"/>
     </parameter>
-    <parameter name="shovill-1-adv.minlen" defaultValue="1000">
+    <parameter name="shovill-1-adv.minlen" defaultValue="1">
       <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/0.9.0" parameterName="adv.minlen"/>
     </parameter>
     <parameter name="sistr_cmd-2-use_full_cgmlst_db" defaultValue="true">
