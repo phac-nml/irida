@@ -9,7 +9,7 @@ import { SelectedCount } from "./SelectedCount";
 export function InfoBar(props) {
   return (
     <div className="ag-grid-info-panel">
-      <SelectedCount count={props.selectedCount}/>
+      <SelectedCount count={props.selectedCount} />
       <FilteredCounts
         filterCount={props.filterCount}
         totalSamples={props.totalSamples}
