@@ -674,10 +674,8 @@ INSERT INTO `metadata_field` (id, label, type, DTYPE) VALUES (16, "birthDate", "
 INSERT INTO `metadata_field` (id, label, type, DTYPE) VALUES (17, "healthAuthority", "text", "MetadataTemplateField");
 INSERT INTO `metadata_field` (id, label, type, DTYPE) VALUES (18, "firstSymptom", "text", "MetadataTemplateField");
 INSERT INTO `metadata_field` (id, label, type, DTYPE) VALUES (19, "city", "text", "MetadataTemplateField");
-INSERT INTO `metadata_field` (id, label, type, DTYPE, static_id)
-VALUES (20, "Created Date", "date", "StaticMetadataTemplateField", "created");
-INSERT INTO `metadata_field` (id, label, type, DTYPE, static_id)
-VALUES (21, "Modified Date", "date", "StaticMetadataTemplateField", "modified");
+INSERT INTO `metadata_field` (id, label, type, DTYPE, static_id) VALUES (20, "Created Date", "date", "StaticMetadataTemplateField", "created");
+INSERT INTO `metadata_field` (id, label, type, DTYPE, static_id) VALUES (21, "Modified Date", "date", "StaticMetadataTemplateField", "modified");
 
 
 -- METADATA TEMPLATES
