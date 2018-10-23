@@ -20,7 +20,6 @@ IRIDA provides support for developing and integrating additional pipelines from 
 * Galaxy Workflow Development
     * Integrate tools into Galaxy
     * Develop a Galaxy Workflow
-    * Upload dependency tools to a Galaxy Toolshed
     * Export Workflow
 * IRIDA Integration
     * Write IRIDA workflow files (or run [irida-wf-ga2xml][])
@@ -34,7 +33,7 @@ Galaxy provides the ability to organize different bioinformatics tools together 
 
 ## 2.1. Integrate tools into Galaxy
 
-The first step to constructing a pipeline for IRIDA is to make sure the underlying bioinformatics tool is available in Galaxy. You can check the [Galaxy Main Toolshed][] to see if the software you wish to use is available.
+The first step to constructing a pipeline for IRIDA is to make sure the underlying bioinformatics tools are available in Galaxy. You can check the [Galaxy Main Toolshed][] to see if the software you wish to use is available.
 
 If the software does not already exist as an installable tool in Galaxy, then you may have to package the necessary files to integrate into Galaxy yourself. The software package [Planemo][] can be used to construct the necessary wrappers for tools in Galaxy and integrate these into the Galaxy environment. More information on how to develop Galaxy tools with Planemo can be found in the [Planemo Building Galaxy Tools][] section.
 
@@ -42,7 +41,7 @@ Once the necessary wrappers are constructed for Galaxy, these should be integrat
 
 ## 2.2. Develop a Galaxy Workflow
 
-Galaxy provides a built-in editor for constructing and modifying workflows.
+Tools in Galaxy can be linked together to construct a workflow. Galaxy provides a built-in editor for constructing and modifying workflows.
 
 ![galaxy-workflow-editor][]
 
@@ -54,11 +53,11 @@ In order for a workflow to properly be integrated into IRIDA, the input and outp
 
 IRIDA currently only supports two types of input files: a collection of **paired-end sequence reads** in *FASTQ* format, and an optional **reference genome** in FASTA format.
 
-For the **paired-end sequence reads** this must be a dataset collection of type **list:paired**.
+For the **paired-end sequence reads** this must be a dataset collection of type **list:paired**, which will correspond to a list of paired-end FASTQ sequence reads (one entry in the list per each sample/pair of fastq files transferred from IRIDA).
 
 ![sequence-reads-input-editor][]
 
-For the optional **reference genome**, if you wish to use a reference genome, the type must be an **input dataset**, not a dataset collection.
+For the optional **reference genome**, if you wish to use a reference genome, the type must be an **input dataset**, not a dataset collection. Currently, IRIDA only supports reference genomes in FASTA format.
 
 ![reference-input-editor][]
 
@@ -118,7 +117,26 @@ output
 
 IRIDA includes a mechanism for packaging up all the above workflow files into a single JAR file which can be distributed and installed independently of the main IRIDA software. To package up the IRIDA workflow into a JAR file you can start with a template plugin located in [irida-plugin-example][]. An overview of the changes you will need to make is as follows.
 
-### 3.2.1. Copy workflow files above from `output/` to [src/main/resources/workflows][workflows-dir]
+### 3.2.1. Install IRIDA to local Maven repository
+
+In order to compile the IRIDA plugin, you will have to install the main IRIDA code (<https://github.com/phac-nml/irida>) to your local Maven repository. This can be accomplished with:
+
+```bash
+git clone https://github.com/phac-nml/irida.git
+cd irida
+mvn clean install -DskipTests
+```
+
+### 3.2.2. Download IRIDA plugin example
+
+Once you've installed IRIDA to your local Maven repository, you can download the IRIDA example plugin to your machine and begin modifying the files in this project to suite your needs.
+
+```bash
+git clone https://github.com/phac-nml/irida-plugin-example
+cd irida-plugin-example
+```
+
+### 3.2.3. Copy workflow files above from `output/` to [src/main/resources/workflows][workflows-dir]
 
 You will need to copy over the files generated above to `src/main/resources/workflows`. The directory structure you should end up with will be:
 
@@ -132,12 +150,12 @@ workflows/
 
 * The directory `0.1.0` corresponds to all files for a particular version of a pipeline (in this case `0.1.0`). Previous versions of the pipeline should each be kept in their own numbered directory (e.g., `0.1.0`, `0.2.0`) so that IRIDA can load up information about these pipelines.
 * The file `irida_workflow_structure.ga` is a [Galaxy][] workflow file which is uploaded to a Galaxy instance by IRIDA before execution.
-* The file `irida_workflow.xml` contains information about this particular pipeline used by IRIDA.
+* The file `irida_workflow.xml` contains information about the particular pipeline used by IRIDA.
 * The file `messages_en.properties` contains messages which will be displayed in the IRIDA UI.
 
 You may (or may not) need to modify these files from the automatically generated versions. A description of each of these files is as follows.
 
-#### 3.2.1.1. `irida_workflow_structure.ga`
+#### 3.2.3.1. `irida_workflow_structure.ga`
 
 The `irida_workflow_structure.ga` file contains the workflow structure (generated from [Galaxy][]). An example of the format is as follows:
 
@@ -185,7 +203,7 @@ The `irida_workflow_structure.ga` file contains the workflow structure (generate
 
 Normally you will not be required to modify this file.
 
-#### 3.2.1.2. `irida_workflow.xml`
+#### 3.2.3.2. `irida_workflow.xml`
 
 This file contains information about the particular pipeline installed in IRIDA. An example would be:
 
@@ -224,7 +242,7 @@ Normally this file will be properly auto-generated for you. A few key elements a
 
 Additional details and a description of the syntax of this file can be found in the [IRIDA Workflow Description][] documentation.
 
-#### 3.2.1.3. `messages_en.properties`
+#### 3.2.3.3. `messages_en.properties`
 
 This file contains information on the text to display in the IRIDA UI for each pipeline (specifically the *en* or English text, other languages can be stored in other `messages_xx.properties` files). An example of this file is:
 
@@ -257,7 +275,7 @@ The `Grep1-4-pattern` part corresponds to the **name** attribute under a `<param
 </parameter>
 ```
 
-### 3.2.2. Write a `Plugin.java` class defining some key properties of the pipeline
+### 3.2.4. Write a `Plugin.java` class defining some key properties of the pipeline
 
 This is a class which defines configuration for the pipeline and allows IRIDA to load the necessary files. When implementing the pipeline as a plugin this class can be located in any package you wish, and can have any name you wish. You will want to implement the two methods which are indicated as **required** in this file. You can also override the methods indicated as **optional** in the file for additional configuration. For an example of a class you can look at [ExamplePlugin.java][]. This should look like:
 
@@ -318,7 +336,7 @@ The purpose of each method is as follows:
    
 * `getUpdater()`: Gets an instance of a class used for post-processing on pipeline results (e.g., updating the IRIDA metadata). This is **optional**. Additional documentation about this class is described below.
 
-### 3.2.3. (Optional) Implement an [Updater][irida-updater] class
+### 3.2.5. (Optional) Implement an [Updater][irida-updater] class
 
 An [Updater][irida-updater] class is used to perform post-processing on the resulting files, primarily intended to write back pipeline results into the IRIDA metadata system. Please see the [ExamplePluginUpdater.java][irida-updater] for an example implementation, or the built-in implementations in <https://github.com/phac-nml/irida/tree/development/src/main/java/ca/corefacility/bioinformatics/irida/pipeline/results/impl>. Implementing this class is optional for your pipeline.
 
