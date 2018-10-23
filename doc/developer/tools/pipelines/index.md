@@ -18,6 +18,7 @@ Pipelines in IRIDA take as input data managed by IRIDA and run through a collect
 IRIDA provides support for developing and integrating additional pipelines from Galaxy.  This process can be divided into two stages: **Galaxy Workflow Development** and **IRIDA Integration**.  The necessary steps, in brief, are:
 
 * Galaxy Workflow Development
+    * Integrate tools into Galaxy
     * Develop a Galaxy Workflow
     * Upload dependency tools to a Galaxy Toolshed
     * Export Workflow
@@ -31,7 +32,15 @@ IRIDA provides support for developing and integrating additional pipelines from 
 
 Galaxy provides the ability to organize different bioinformatics tools together into a single workflow for producing specific results.  These workflows can make use of already existing bioinformatics tools in Galaxy, or can include customized tools which can be distributed using a [Galaxy Toolshed][Galaxy Toolsheds].
 
-## 2.1. Develop a Galaxy Workflow
+## 2.1. Integrate tools into Galaxy
+
+The first step to constructing a pipeline for IRIDA is to make sure the underlying bioinformatics tool is available in Galaxy. You can check the [Galaxy Main Toolshed][] to see if the software you wish to use is available.
+
+If the software does not already exist as an installable tool in Galaxy, then you may have to package the necessary files to integrate into Galaxy yourself. The software package [Planemo][] can be used to construct the necessary wrappers for tools in Galaxy and integrate these into the Galaxy environment. More information on how to develop Galaxy tools with Planemo can be found in the [Planemo Building Galaxy Tools][] section.
+
+Once the necessary wrappers are constructed for Galaxy, these should be integrated into [Galaxy Toolshed][Galaxy Toolsheds]. This step will allow anyone to install the Galaxy tools into their local Galaxy instance. On upload of a Galaxy tool to the Galaxy Toolshed, a unique id will be assigned to each tool, which is used by IRIDA to specify the exact software to be run in Galaxy. For example, the id for Prokka, which is used for annotation of genomes, is `toolshed.g2.bx.psu.edu/repos/crs4/prokka/prokka/1.4.0`, which includes the name of the toolshed where Prokka can be found <https://toolshed.g2.bx.psu.edu/>.
+
+## 2.2. Develop a Galaxy Workflow
 
 Galaxy provides a built-in editor for constructing and modifying workflows.
 
@@ -41,7 +50,7 @@ This editor allows for the definition of input files and file types, tools and p
 
 In order for a workflow to properly be integrated into IRIDA, the input and output to this workflow must be in a specific format.
 
-### 2.1.1. Input Format
+### 2.2.1. Input Format
 
 IRIDA currently only supports two types of input files: a collection of **paired-end sequence reads** in *FASTQ* format, and an optional **reference genome** in FASTA format.
 
@@ -55,19 +64,13 @@ For the optional **reference genome**, if you wish to use a reference genome, th
 
 Please also make note of the names given to each input dataset, in this case *sequence_reads_paired* and *reference*, as the names will be used to link up data sent from IRIDA to the Galaxy workflow.
 
-### 2.1.2. Output Format
+### 2.2.2. Output Format
 
 Output datasets within IRIDA can be of any file type and there can be many outputs for each workflow.  Each output should have a consistent name which will be used by IRIDA to find and download the appropriate file from Galaxy.  This can be accomplished by adding a **Rename Dataset** action to each output file.  In this case, for the tool **PhyML** the name is **phylogeneticTree.tre**.
 
 ![output-editor][]
 
 In addition, each output dataset should be marked as a **workflow output** by selecting the asterix `*` icon, in this case both the **output_tree** and the **csv** files from the PhyML and SNP Matrix tools have been selected as output.
-
-## 2.2. Upload dependency tools to a Galaxy Toolshed
-
-If the workflow being developed includes custom tools that do not already exist in Galaxy these tools should be uploaded to a [Galaxy ToolShed][Galaxy Toolsheds] to allow for distribution of this workflow.  This should be done before building and exporting the final workflow __*.ga__ file, since the ids of each tool in the Galaxy workflow include the name of the toolshed.  For example, the id for Prokka, which is used for annotation of genomes, is `toolshed.g2.bx.psu.edu/repos/crs4/prokka/prokka/1.4.0`, which includes the name of the toolshed where Prokka can be found <https://toolshed.g2.bx.psu.edu/>.
-
-More information on developing a tool for Galaxy can be found in the [Galaxy Tool Development][] documentation.
 
 ## 2.3. Export Workflow
 
@@ -424,3 +427,5 @@ DEBUG ca.corefacility.bioinformatics.irida.config.services.IridaPluginConfig:45 
 [pf4j-start]: https://pf4j.org/doc/getting-started.html
 [pom.xml]: https://github.com/phac-nml/irida-plugin-example/tree/master/pom.xml
 [irida-plugin-java]: https://github.com/phac-nml/irida/tree/development/src/main/java/ca/corefacility/bioinformatics/irida/plugins/IridaPlugin.java
+[Planemo]: https://planemo.readthedocs.io
+[Planemo Building Galaxy Tools]: https://planemo.readthedocs.io/en/latest/writing_standalone.html
