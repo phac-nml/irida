@@ -82,6 +82,7 @@ public class GalaxyHistoriesServiceIT {
 	private GalaxyHistoriesService galaxyHistory;
 	private GalaxyInstance galaxyInstanceAdmin;
 	private GalaxyLibrariesService galaxyLibrariesService;
+	private HistoriesClient historiesClient;
 	
 	private Path dataFile;
 	private Path dataFile2;
@@ -113,7 +114,7 @@ public class GalaxyHistoriesServiceIT {
 		setupDataFiles();
 		
 		galaxyInstanceAdmin = localGalaxy.getGalaxyInstanceAdmin();
-		HistoriesClient historiesClient = galaxyInstanceAdmin.getHistoriesClient();
+		historiesClient = galaxyInstanceAdmin.getHistoriesClient();
 		ToolsClient toolsClient = galaxyInstanceAdmin.getToolsClient();
 		LibrariesClient librariesClient = galaxyInstanceAdmin.getLibrariesClient();
 		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT, 1);
@@ -140,6 +141,7 @@ public class GalaxyHistoriesServiceIT {
 	 * @throws CreateLibraryException
 	 * @throws ExecutionManagerObjectNotFoundException
 	 */
+	@SuppressWarnings("deprecation")
 	private String setupLibraries(Library testLibrary, GalaxyInstance galaxyInstanceAdmin) throws CreateLibraryException, ExecutionManagerObjectNotFoundException {
 		LibrariesClient librariesClient = galaxyInstanceAdmin.getLibrariesClient();
 		
@@ -156,7 +158,6 @@ public class GalaxyHistoriesServiceIT {
 
 		assertEquals(ClientResponse.Status.OK,
 				librariesClient.uploadFilesystemPathsRequest(testLibrary.getId(), upload)
-		
 				.getClientResponseStatus());
 		List<LibraryContent> libraryContents = librariesClient.getLibraryContents(testLibrary.getId());
 		Map<String, List<LibraryContent>> libraryContent = libraryContents.stream().collect(Collectors.groupingBy(LibraryContent::getName));
@@ -514,6 +515,32 @@ public class GalaxyHistoriesServiceIT {
 		History history = galaxyHistory.newHistoryForWorkflow();
 		Dataset dataset = galaxyHistory.fileToHistory(dataFile, InputFileType.FASTQ_SANGER, history);
 		String datasetName = dataset.getName();
+		
+		Dataset actualDataset = galaxyHistory.getDatasetForFileInHistory(datasetName, history.getId());
+		assertEquals("actual output dataset id should equal dataset created id", dataset.getId(), actualDataset.getId());
+	}
+	
+	/**
+	 * Tests getting a dataset for a file in the history when there is a dataset collection with the same name.
+	 * @throws UploadException 
+	 * @throws GalaxyDatasetException 
+	 */
+	@Test
+	public void testGetDatasetForFileInHistorySuccessWithCollection() throws UploadException, GalaxyDatasetException {
+		
+		History history = galaxyHistory.newHistoryForWorkflow();
+		Dataset dataset = galaxyHistory.fileToHistory(dataFile, InputFileType.FASTQ_SANGER, history);
+		String datasetName = dataset.getName();
+		
+		CollectionDescription collectionDescription = new CollectionDescription();
+		collectionDescription.setCollectionType(DatasetCollectionType.LIST.toString());
+		collectionDescription.setName(datasetName);
+		
+	    HistoryDatasetElement historyElement = new HistoryDatasetElement();
+	    historyElement.setId(dataset.getId());
+	    historyElement.setName("element");
+		collectionDescription.addDatasetElement(historyElement);
+		historiesClient.createDatasetCollection(history.getId(), collectionDescription);
 		
 		Dataset actualDataset = galaxyHistory.getDatasetForFileInHistory(datasetName, history.getId());
 		assertEquals("actual output dataset id should equal dataset created id", dataset.getId(), actualDataset.getId());
