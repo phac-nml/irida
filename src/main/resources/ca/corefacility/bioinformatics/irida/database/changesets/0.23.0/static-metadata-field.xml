@@ -32,6 +32,21 @@
         <addColumn tableName="metadata_field_AUD">
             <column name="static_id" type="varchar(255)"/>
         </addColumn>
+        
+        <!-- Add Created and Modified Date Metadata Template Fields -->
+        <insert tableName="metadata_field">
+            <column name="label" value="Created Date" />
+            <column name="type" value="date" />
+            <column name="DTYPE" value="StaticMetadataTemplateField" />
+            <column name="static_id" value="created" />
+        </insert>
+
+        <insert tableName="metadata_field">
+            <column name="label" value="Modified Date" />
+            <column name="type" value="date" />
+            <column name="DTYPE" value="StaticMetadataTemplateField" />
+            <column name="static_id" value="modified" />
+        </insert>
 
     </changeSet>
 </databaseChangeLog>
