@@ -97,7 +97,7 @@ public class RESTUsersController extends RESTGenericController<User> {
 	 *            the username for the desired user.
 	 * @return a model containing the collection of projects for that user.
 	 */
-	@RequestMapping(value = "/api/{username}/projects", method = RequestMethod.GET)
+	@RequestMapping(value = "/{username}/projects", method = RequestMethod.GET)
 	public ModelMap getUserProjects(@PathVariable String username) {
 		logger.debug("Loading projects for user [" + username + "]");
 		ModelMap mav = new ModelMap();
@@ -132,7 +132,7 @@ public class RESTUsersController extends RESTGenericController<User> {
 	 * 
 	 * @return a representation of the currently logged in user.
 	 */
-	@RequestMapping(value = "/api/current", method = RequestMethod.GET)
+	@RequestMapping(value = "/current", method = RequestMethod.GET)
 	public ModelMap getCurrentUser() {
 		// get the current user from Spring Security.
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
