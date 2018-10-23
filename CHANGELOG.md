@@ -21,6 +21,7 @@ Changes
 * [API]: Fixed REST endpoint mapping for current user and user projects.
 * [Workflow]: Fixed issue where duplicate filenames were found after running Galaxy workflow in newer Galaxy versions. (0.22.4)
 * [Developer]: Added unused import checking to checkstyle config.  The `mvn site` build will throw an error if unused imports are present.
+* [Developer/Workflow]: Added the ability build pipelines into independent JAR files to be loaded in IRIDA as a plugin (after placing in `/etc/irida/plugins`). Please see <https://github.com/phac-nml/irida-plugin-example> and <https://irida.corefacility.ca/documentation/developer/tools/pipelines/> for more details.
 
 0.21.0 to 0.22.0
 ----------------
