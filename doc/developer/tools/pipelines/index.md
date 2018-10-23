@@ -113,7 +113,7 @@ output
 
 ## 3.2. Write IRIDA workflow plugin
 
-IRIDA includes a mechanism for packaging up all the above workflow files into a single JAR file which can be distributed and installed independently of the main IRIDA software. To package up the IRIDA workflow into a JAR file you can start with a template plugin located in [irida-example-plugin][]. An overview of the changes you will need to make is as follows.
+IRIDA includes a mechanism for packaging up all the above workflow files into a single JAR file which can be distributed and installed independently of the main IRIDA software. To package up the IRIDA workflow into a JAR file you can start with a template plugin located in [irida-plugin-example][]. An overview of the changes you will need to make is as follows.
 
 ### 3.2.1. Copy workflow files above from `output/` to [src/main/resources/workflows][workflows-dir]
 
@@ -413,14 +413,14 @@ DEBUG ca.corefacility.bioinformatics.irida.config.services.IridaPluginConfig:45 
 [my-pipeline-launch]: images/my-pipeline-launch.png
 [my-pipeline-parameters]: images/my-pipeline-parameters.png
 [irida-wf-ga2xml]: https://github.com/phac-nml/irida-wf-ga2xml
-[irida-example-plugin]: https://github.com/phac-nml/irida-example-plugin
-[workflows-dir]: https://github.com/phac-nml/irida-example-plugin/tree/development/src/main/resources/workflows
-[ExamplePlugin.java]: https://github.com/phac-nml/irida-example-plugin/tree/development/src/main/java/ca/corefacility/bioinformatics/irida/ExamplePlugin.java
+[irida-plugin-example]: https://github.com/phac-nml/irida-plugin-example
+[workflows-dir]: https://github.com/phac-nml/irida-plugin-example/tree/master/src/main/resources/workflows
+[ExamplePlugin.java]: https://github.com/phac-nml/irida-plugin-example/tree/master/src/main/java/ca/corefacility/bioinformatics/irida/plugins/ExamplePlugin.java
 [pipeline-parameters]: images/pipeline-parameters.png
-[irida-updater]: https://github.com/phac-nml/irida-example-plugin/tree/development/src/main/java/ca/corefacility/bioinformatics/irida/plugins/ExamplePluginUpdater.java
+[irida-updater]: https://github.com/phac-nml/irida-plugin-example/tree/master/src/main/java/ca/corefacility/bioinformatics/irida/plugins/ExamplePluginUpdater.java
 [example-plugin-save-results.png]: images/example-plugin-save-results.png
 [example-plugin-pipeline.png]: images/example-plugin-pipeline.png
 [maven-min-pom]: https://maven.apache.org/guides/introduction/introduction-to-the-pom.html#Minimal_POM
 [pf4j-start]: https://pf4j.org/doc/getting-started.html
-[pom.xml]: https://github.com/phac-nml/irida-example-plugin/tree/development/pom.xml
+[pom.xml]: https://github.com/phac-nml/irida-plugin-example/tree/master/pom.xml
 [irida-plugin-java]: https://github.com/phac-nml/irida/tree/development/src/main/java/ca/corefacility/bioinformatics/irida/plugins/IridaPlugin.java
