@@ -62,6 +62,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Service class for managing {@link Sample}.
+ * 
  */
 @Service
 public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements SampleService {
@@ -154,8 +155,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 	/**
 	 * Specification for searching {@link Sample}s
-	 *
-	 * @param user        the {@link User} to get samples for.  If this property is null, will serch for all users.
+	 * @param user the {@link User} to get samples for.  If this property is null, will serch for all users.
 	 * @param queryString the query string to search for
 	 * @return a {@link Specification} for {@link ProjectSampleJoin}
 	 */
@@ -180,9 +180,12 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			/**
 			 * Search with the given query for sample properties
 			 *
-			 * @param root  root for ProjectSampleJoin
-			 * @param query criteria query
-			 * @param cb    criteria query builder
+			 * @param root
+			 *            root for ProjectSampleJoin
+			 * @param query
+			 *            criteria query
+			 * @param cb
+			 *            criteria query builder
 			 * @return a predicate
 			 */
 			private Predicate sampleProperties(final Root<ProjectSampleJoin> root, final CriteriaQuery<?> query,
@@ -198,11 +201,14 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			 * This {@link Predicate} filters out {@link Project}s for the
 			 * specific user where they are assigned individually as a member.
 			 *
-			 * @param root  the root of the query
-			 * @param query the query
-			 * @param cb    the builder
+			 * @param root
+			 *            the root of the query
+			 * @param query
+			 *            the query
+			 * @param cb
+			 *            the builder
 			 * @return a {@link Predicate} that filters {@link Project}s where
-			 * users are individually assigned.
+			 *         users are individually assigned.
 			 */
 			private Predicate individualProjectMembership(final Root<ProjectSampleJoin> root,
 					final CriteriaQuery<?> query, final CriteriaBuilder cb) {
@@ -220,12 +226,15 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			 * specific user where they are assigned transitively through a
 			 * {@link UserGroup}.
 			 *
-			 * @param root  the root of the query
-			 * @param query the query
-			 * @param cb    the builder
+			 * @param root
+			 *            the root of the query
+			 * @param query
+			 *            the query
+			 * @param cb
+			 *            the builder
 			 * @return a {@link Predicate} that filters {@link Project}s where
-			 * users are assigned transitively through {@link UserGroup}
-			 * .
+			 *         users are assigned transitively through {@link UserGroup}
+			 *         .
 			 */
 			private Predicate groupProjectMembership(final Root<ProjectSampleJoin> root, final CriteriaQuery<?> query,
 					final CriteriaBuilder cb) {
@@ -423,22 +432,28 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#id, 'canReadSample')")
-	public Sample read(Long id) {
-		return super.read(id);
+	@Transactional(readOnly = true)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
+	public Double estimateCoverageForSample(Sample sample, long referenceFileLength)
+			throws SequenceFileAnalysisException {
+		checkNotNull(sample, "sample is null");
+		checkArgument(referenceFileLength > 0, "referenceFileLength (" + referenceFileLength + ") must be positive");
+
+		return getTotalBasesForSample(sample) / (double) referenceFileLength;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
-	public Page<ProjectSampleJoin> getSamplesForProjectWithName(Project project, String name, int page, int size,
-			Direction order, String... sortProperties) {
-		sortProperties = verifySortProperties(sortProperties);
+	@Transactional(readOnly = true)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
+	public Double estimateCoverageForSample(Sample sample, ReferenceFile referenceFile)
+			throws SequenceFileAnalysisException {
+		checkNotNull(sample, "sample is null");
+		checkNotNull(referenceFile, "referenceFile is null");
 
-		return psjRepository.findAll(ProjectSampleJoinSpecification.searchSampleWithNameInProject(name, project),
-				new PageRequest(page, size, order, sortProperties));
+		return estimateCoverageForSample(sample, referenceFile.getFileLength());
 	}
 
 	/**
@@ -536,7 +551,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(sample, seqObject);
 		return ssoRepository.save(join);
 	}
-
+	
 	/**
 	 * {@inheritDoc}
 	 */
