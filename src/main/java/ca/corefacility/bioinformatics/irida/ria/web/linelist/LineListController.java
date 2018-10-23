@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 
-import ca.corefacility.bioinformatics.irida.model.sample.StaticMetadataTemplateField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -21,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.StaticMetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.web.components.agGrid.AgGridColumn;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataField;
@@ -30,8 +30,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UISampleMetadat
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-
-import com.google.common.collect.ImmutableMap;
 
 /**
  * This controller is responsible for AJAX handling for the line list page, which displays sample metadata.
@@ -60,6 +58,8 @@ public class LineListController {
 	 * @param locale    {@link Locale}
 	 * @return {@link List} of {@link UIMetadataField}
 	 */
+	@RequestMapping("/fields")
+	@ResponseBody
 	public List<AgGridColumn> getProjectMetadataTemplateFields(@RequestParam long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
 		List<MetadataTemplateField> metadataFieldsForProject = metadataTemplateService.getMetadataFieldsForProject(
@@ -201,6 +201,14 @@ public class LineListController {
 		templates.add(new UIMetadataTemplate(-1L,
 				messages.getMessage("linelist.templates.Select.none", new Object[] {}, locale), allFields));
 
+		/*
+		STATIC FIELDS.
+		 */
+		List<String> staticFields = metadataTemplateService.getStaticMetadataFields()
+				.stream()
+				.map(StaticMetadataTemplateField::getFieldKey)
+				.collect(Collectors.toList());
+
 		for (ProjectMetadataTemplateJoin join : templateJoins) {
 			MetadataTemplate template = join.getObject();
 			List<AgGridColumn> allFieldsCopy = this.getProjectMetadataTemplateFields(projectId, locale);
@@ -220,9 +228,9 @@ public class LineListController {
 	 * @param staticFields {@link Map} containing the label of known fields that should be made {@link UIMetadataFieldDefault}
 	 * @return {@link AgGridColumn} of either {@link UIMetadataField} or {@link UIMetadataFieldDefault}
 	 */
-	private AgGridColumn mapFieldToColumn(MetadataTemplateField field, Map<String, String> staticFields) {
-		if (staticFields.containsKey(field.getLabel())) {
-			return new UIMetadataFieldDefault(field.getLabel(), staticFields.get(field.getLabel()), "date");
+	private AgGridColumn mapFieldToColumn(MetadataTemplateField field, List<String> staticFields) {
+		if (staticFields.contains(field.getFieldKey())) {
+			return new UIMetadataFieldDefault(field.getLabel(), field.getFieldKey(), field.getType());
 		} else {
 			return new UIMetadataField(field, false, true);
 		}
@@ -274,23 +282,22 @@ public class LineListController {
 	 * @param template  {@link UIMetadataTemplate}
 	 * @param projectId {@link Long} project identifier
 	 * @param response  {@link HttpServletResponse}
-	 * @param locale    {@link Locale}
 	 * @return saved or updated {@link UIMetadataTemplate}
 	 */
 	@RequestMapping(value = "/templates", method = RequestMethod.POST)
 	public UIMetadataTemplate saveLineListTemplate(@RequestBody UIMetadataTemplate template,
-			@RequestParam Long projectId, HttpServletResponse response, Locale locale) {
+			@RequestParam Long projectId, HttpServletResponse response) {
 		// Get or create the template fields.
 		List<MetadataTemplateField> fields = new ArrayList<>();
 		for (AgGridColumn field : template.getFields()) {
 			// Don't save the sample label
 			if (!field.getField()
 					.equals(UISampleMetadata.SAMPLE_NAME)) {
-				MetadataTemplateField metadataTemplateField = metadataTemplateService.readMetadataFieldByLabel(
-						field.getHeaderName());
+				MetadataTemplateField metadataTemplateField = metadataTemplateService.readMetadataFieldByKey(
+						field.getField());
 				if (metadataTemplateField == null) {
 					metadataTemplateField = metadataTemplateService.saveMetadataField(
-							new MetadataTemplateField(field.getHeaderName(), "text"));
+							new MetadataTemplateField(field.getHeaderName(), field.getType()));
 				}
 				fields.add(metadataTemplateField);
 			}
