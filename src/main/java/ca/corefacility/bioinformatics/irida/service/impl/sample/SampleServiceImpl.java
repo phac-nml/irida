@@ -62,7 +62,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Service class for managing {@link Sample}.
- * 
+ *
  */
 @Service
 public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements SampleService {
@@ -78,18 +78,18 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@link ProjectSampleJoin}.
 	 */
 	private ProjectSampleJoinRepository psjRepository;
-	
+
 	private SampleSequencingObjectJoinRepository ssoRepository;
-	
+
 	private QCEntryRepository qcEntryRepository;
-	
+
 	private SequencingObjectRepository sequencingObjectRepository;
 
 	/**
 	 * Reference to {@link AnalysisRepository}.
 	 */
 	private final AnalysisRepository analysisRepository;
-	
+
 	private final SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository;
 
 	private final UserRepository userRepository;
@@ -122,7 +122,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		this.userRepository = userRepository;
 		this.sampleGenomeAssemblyJoinRepository = sampleGenomeAssemblyJoinRepository;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -132,7 +132,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	public Iterable<Sample> readMultiple(Iterable<Long> idents) {
 		return super.readMultiple(idents);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -142,7 +142,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	public Boolean exists(Long id) {
 		return super.exists(id);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -151,7 +151,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	public Sample create(final @Valid Sample s) {
 		return super.create(s);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -161,7 +161,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException, InvalidPropertyException {
 		return super.updateFields(id, updatedFields);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -171,7 +171,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		object.setModifiedDate(new Date());
 		return super.update(object);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -187,7 +187,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		}
 		return join;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -221,7 +221,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 					+ project.getId() + "]");
 		}
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -308,7 +308,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	/**
 	 * Confirm that a {@link ProjectSampleJoin} exists between the given
 	 * {@link Project} and {@link Sample}.
-	 * 
+	 *
 	 * @param project
 	 *            the {@link Project} to check
 	 * @param sample
@@ -408,7 +408,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	/**
 	 * Add a {@link SequencingObject} to a {@link Sample} after testing if it
 	 * exists in a {@link Sample} already
-	 * 
+	 *
 	 * @param sample
 	 *            {@link Sample} to add to
 	 * @param seqObject
@@ -438,7 +438,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 				.findAll(ProjectSampleSpecification.getSamples(projects, sampleNames, sampleName, searchTerm, organism, minDate, maxDate),
 						new PageRequest(currentPage, pageSize, sort));
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -463,7 +463,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	public List<QCEntry> getQCEntriesForSample(Sample sample) {
 		return qcEntryRepository.getQCEntriesForSample(sample);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -472,7 +472,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	public List<Sample> updateMultiple(Collection<Sample> objects) {
 		return super.updateMultiple(objects);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -500,11 +500,11 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 		return psjRepository.findAll(sampleForUserSpecification(null, query), pr);
 	}
-	
+
 	/**
 	 * Verify that the given sort properties array is not null or empty. If it
 	 * is, give a default sort property.
-	 * 
+	 *
 	 * @param sortProperties
 	 *            The given sort properites
 	 * @return The corrected sort properties
@@ -557,10 +557,10 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		if (join == null) {
 			throw new EntityNotFoundException("No join found between sample [" + sample.getId() + "] and genome assembly [" + genomeAssemblyId + "]");
 		}
-		
+
 		return join.getObject();
 	}
-	
+
 	/**
 	 * Specification for searching {@link Sample}s
 	 * @param user the {@link User} to get samples for.  If this property is null, will serch for all users.
@@ -587,7 +587,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 			/**
 			 * Search with the given query for sample properties
-			 * 
+			 *
 			 * @param root
 			 *            root for ProjectSampleJoin
 			 * @param query
@@ -606,7 +606,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			/**
 			 * This {@link Predicate} filters out {@link Project}s for the
 			 * specific user where they are assigned individually as a member.
-			 * 
+			 *
 			 * @param root
 			 *            the root of the query
 			 * @param query
@@ -629,7 +629,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			 * This {@link Predicate} filters out {@link Project}s for the
 			 * specific user where they are assigned transitively through a
 			 * {@link UserGroup}.
-			 * 
+			 *
 			 * @param root
 			 *            the root of the query
 			 * @param query

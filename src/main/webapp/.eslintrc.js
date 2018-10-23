@@ -1,11 +1,26 @@
 module.exports = {
-  extends: ["plugin:react/recommended", "prettier", "prettier/react"],
-  plugins: ["prettier", "react"],
+  extends: [
+    "eslint:recommended",
+    "plugin:import/errors",
+    "plugin:react/recommended",
+    "plugin:jsx-a11y/recommended",
+    "prettier",
+    "prettier/react"
+  ],
+  plugins: [
+    "react",
+    "import",
+    "jsx-a11y"
+  ],
   parserOptions: {
     ecmaVersion: 2018,
-    sourceType: "module"
+    sourceType: "module",
+    ecmaFeatures: {
+      jsx: true
+    }
   },
   env: {
+    es6: true,
     browser: true,
     node: true
   },
