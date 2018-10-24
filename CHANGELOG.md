@@ -20,7 +20,7 @@ Changes
 * [API]: Fixed REST endpoint mapping for current user and user projects.
 * [Workflow]: Fixed issue where duplicate filenames were found after running Galaxy workflow in newer Galaxy versions. (0.22.4)
 * [Developer]: Added unused import checking to checkstyle config.  The `mvn site` build will throw an error if unused imports are present.
-* [Developer]: Added better default FTP buffer size to improve connection speed to NCBI FTP (defaults to `33554432`). Changable with `ncbi.upload.bufferSize`.
+* [Developer]: Added additional FTP settings for NCBI uploads: `ncbi.upload.bufferSize`, `ncbi.upload.controlKeepAliveTimeout`, and `ncbi.upload.controlKeepAliveReplyTimeoutMilliseconds`.
 
 0.21.0 to 0.22.0
 ----------------

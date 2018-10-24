@@ -85,6 +85,12 @@ public class ExportUploadService {
 	
 	@Value("${ncbi.upload.bufferSize}")
 	private int uploadBufferSize;
+	
+	@Value("${ncbi.upload.controlKeepAliveTimeoutSeconds}")
+	private int controlKeepAliveTimeout;
+	
+	@Value("${ncbi.upload.controlKeepAliveReplyTimeoutMilliseconds}")
+	private int controlKeepAliveReplyTimeout;
 
 	@Value("${irida.administrative.notifications.email}")
 	private String notificationAdminEmail;
@@ -499,8 +505,7 @@ public class ExportUploadService {
 	 * Connect an {@link FTPClient} with the configured connection details
 	 *
 	 * @return a connected {@link FTPClient}
-	 * @throws IOException
-	 *             if a connection error occurred
+	 * @throws IOException if a connection error occurred
 	 */
 	private FTPClient getFtpClient() throws IOException {
 		FTPClient client = new FTPClient();
@@ -519,12 +524,21 @@ public class ExportUploadService {
 		}
 
 		logger.trace(client.getStatus());
-		
+
 		if (uploadBufferSize < 0) {
 			throw new IllegalArgumentException("Error: uploadBufferSize [" + uploadBufferSize + "] < 0");
 		} else {
 			logger.trace("Using upload bufferSize=" + uploadBufferSize);
 			client.setBufferSize(uploadBufferSize);
+		}
+
+		if (controlKeepAliveTimeout < 0 || controlKeepAliveReplyTimeout < 0) {
+			throw new IllegalArgumentException("Error: controlKeepAliveTimeout [" + controlKeepAliveTimeout
+					+ "] or controlKeepAliveReplyTimeout [" + controlKeepAliveReplyTimeout + "] < 0");
+		} else {
+			logger.trace("Using controlKeepAliveTimeout=" + controlKeepAliveTimeout + ", controlKeepAliveReplyTimeout="
+					+ controlKeepAliveReplyTimeout);
+			client.setControlKeepAliveTimeout(controlKeepAliveTimeout);
 		}
 
 		return client;
