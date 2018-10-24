@@ -18,6 +18,8 @@ import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateServi
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
+
+import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.slf4j.Logger;
@@ -576,6 +578,8 @@ public class ExportUploadService {
 	private void uploadString(FTPClient client, String filename, String content) throws UploadException, IOException {
 		int tries = 0;
 		boolean done = false;
+		
+		client.setFileType(FTP.ASCII_FILE_TYPE);
 
 		do {
 			tries++;
@@ -611,6 +615,9 @@ public class ExportUploadService {
 	private void uploadPath(FTPClient client, String filename, Path path) throws UploadException, IOException {
 		int tries = 0;
 		boolean done = false;
+		
+		client.setFileType(FTP.BINARY_FILE_TYPE);
+		
 		do {
 			tries++;
 
