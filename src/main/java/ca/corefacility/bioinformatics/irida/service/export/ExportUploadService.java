@@ -542,6 +542,8 @@ public class ExportUploadService {
 					+ controlKeepAliveReplyTimeout);
 			client.setControlKeepAliveTimeout(controlKeepAliveTimeout);
 		}
+		
+		client.setFileTransferMode(FTP.BLOCK_TRANSFER_MODE);
 
 		return client;
 	}

@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 
 /**
@@ -42,7 +43,9 @@ public class FTPClientNCBIManualTestConnectionSpeed {
 		ftp.makeDirectory(UPLOAD_FOLDER);
 		ftp.changeWorkingDirectory(UPLOAD_FOLDER);
 
-		//ftp.setBufferSize(33554432);
+		ftp.setBufferSize(33554432);
+		ftp.setFileType(FTP.BINARY_FILE_TYPE);
+		ftp.setFileTransferMode(FTP.BLOCK_TRANSFER_MODE);
 
 		String fileName = file.toFile().getName();
 
