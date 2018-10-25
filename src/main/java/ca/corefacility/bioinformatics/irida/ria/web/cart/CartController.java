@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.web.analysis;
+package ca.corefacility.bioinformatics.irida.ria.web.cart;
 
 import java.security.Principal;
 import java.util.*;
@@ -19,6 +19,9 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.components.Cart;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartResponse;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -42,6 +45,8 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 public class CartController {
 	private static final Logger logger = LoggerFactory.getLogger(CartController.class);
 	private Map<Project, Set<Sample>> selected;
+
+	private Cart cart;
 	
 	private final SampleService sampleService;
 	private final UserService userService;
@@ -51,12 +56,13 @@ public class CartController {
 
 	@Autowired
 	public CartController(SampleService sampleService, UserService userService, ProjectService projectService,
-			SequencingObjectService sequencingObjectService, MessageSource messageSource) {
+			SequencingObjectService sequencingObjectService, Cart cart, MessageSource messageSource) {
 		this.sampleService = sampleService;
 		this.projectService = projectService;
 		this.userService = userService;
 		this.sequencingObjectService = sequencingObjectService;
 		this.messageSource = messageSource;
+		this.cart = cart;
 		selected = new HashMap<>();
 	}
 
@@ -156,58 +162,10 @@ public class CartController {
 	 * @param locale    Locale of the logged in user
 	 * @return a map stating success
 	 */
-	@RequestMapping(value = "/add/samples", method = RequestMethod.POST)
+	@RequestMapping(value = "/add/samples", method = RequestMethod.PUT)
 	@ResponseBody
-	public Map<String, Object> addProjectSample(@RequestParam Long projectId,
-			@RequestParam(value = "sampleIds[]") Set<Long> sampleIds, Locale locale) {
-		Project project = projectService.read(projectId);
-		final Map<String, Sample> selectedNameToSample = selected.entrySet()
-				.stream()
-				.flatMap(entry -> entry.getValue()
-						.stream())
-				.collect(Collectors.toMap(Sample::getSampleName, sample -> sample));
-		Set<Sample> samples = loadSamplesForProject(project, sampleIds);
-		final Set<Sample> selectedSamples = new HashSet<>(selectedNameToSample.values());
-		final boolean removedSamples = samples.removeAll(selectedSamples);
-		if (removedSamples)
-			logger.trace("Removed Samples already in cart.");
-		final Map<String, Sample> nameToSample = samples.stream()
-				.collect(Collectors.toMap(Sample::getSampleName, sample -> sample));
-		Set<Sample> dupSamples = new HashSet<>();
-		nameToSample.forEach((name, sample) -> {
-			if (selectedNameToSample.containsKey(name)) {
-				dupSamples.add(sample);
-			}
-		});
-		if (!dupSamples.isEmpty()) {
-			samples.removeAll(dupSamples);
-			logger.trace(
-					"Samples with existing sample names (n=" + dupSamples.size() + " not added to cart: " + dupSamples);
-		}
-
-		getSelectedSamplesForProject(project).addAll(samples);
-
-		final int samplesSize = samples.size();
-		String message;
-		if (samplesSize == 0) {
-			message = messageSource.getMessage("cart.no-samples-added", new Object[] { project.getLabel() }, locale);
-		} else if (samplesSize == 1)
-			message = messageSource.getMessage("cart.one-sample-added", new Object[] { project.getLabel() }, locale);
-		else
-			message = messageSource.getMessage("cart.many-samples-added",
-					new Object[] { samplesSize, project.getLabel() }, locale);
-		Map<String, Object> out = new HashMap<>();
-
-		if (!dupSamples.isEmpty()) {
-			out.put("excluded", dupSamples.stream()
-					.map(sample -> sample.getSampleName() + " (id=" + sample.getId() + "; project='"
-							+ project.getLabel() + "' (id=" + project.getId() + "))")
-					.collect(Collectors.toList()));
-			message += " " + messageSource.getMessage("cart.excluded", null, locale);
-		}
-
-		out.put("message", message);
-		return out;
+	public CartResponse addProjectSample(@RequestBody CartRequest cartRequest, Locale locale) {
+		return this.cart.addProjectSamplesToCart(cartRequest, locale);
 	}
 
 	/**

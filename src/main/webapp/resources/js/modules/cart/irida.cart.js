@@ -5,7 +5,7 @@ import { CART } from "../../utilities/events-utilities";
 import $ from "jquery";
 import { showNotification } from "../notifications";
 
-function CartController(cart) {
+function CartController($scope) {
   const vm = this;
   vm.show = false;
   vm.projects = [];
@@ -17,28 +17,32 @@ function CartController(cart) {
   This is here since this has been updated to use a standard Event,
   and not handled through angularjs.
    */
-  document.addEventListener(CART.UPDATED, function() {
-    getCart(false);
+  document.addEventListener(CART.UPDATED, e => {
+    vm.count = typeof e.detail.count === "undefined" ? 0 : +e.detail.count;
+    $scope.$apply();
   });
 
-  function getCart(collapse) {
-    cart.all().then(function(data) {
-      vm.count = 0;
-      vm.projects = data.projects;
-      vm.projects.forEach(function(p) {
-        vm.count += p.samples.length;
-        // Sort the samples by created date.
-        p.samples.sort(function(a, b) {
-          return b.createdDate - a.createdDate > 0;
-        });
-        if (collapse) {
-          vm.collapsed[p.id] = true;
-        }
-      });
-    });
+  function getCart(count) {
+    vm.count = count;
+    // TODO: This is the function that is causing all the slowness.
+
+    // cart.all().then(function(data) {
+    //   vm.count = 0;
+    //   vm.projects = data.projects;
+    //   vm.projects.forEach(function(p) {
+    //     vm.count += p.samples.length;
+    //     // Sort the samples by created date.
+    //     p.samples.sort(function(a, b) {
+    //       return b.createdDate - a.createdDate > 0;
+    //     });
+    //     if (collapse) {
+    //       vm.collapsed[p.id] = true;
+    //     }
+    //   });
+    // });
   }
 
-  getCart(true);
+  getCart(0);
 }
 
 /**
@@ -95,7 +99,7 @@ function CartDirective() {
     templateUrl: "/cart.html",
     replace: true,
     controllerAs: "cart",
-    controller: ["CartService", CartController]
+    controller: ["$scope", CartController]
   };
 }
 

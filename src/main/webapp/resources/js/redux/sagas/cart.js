@@ -1,7 +1,6 @@
 import { call, put, take } from "redux-saga/effects";
-import { types } from "../reducers/cart";
+import { actions, types } from "../reducers/cart";
 import { putSampleInCart } from "../../apis/cart/cart";
-import { showNotification } from "../../modules/notifications";
 
 /**
  * Saga to add samples to the global cart.
@@ -12,13 +11,22 @@ export function* addToCartSaga() {
     const { samples } = yield take(types.ADD);
     if (samples.length > 0) {
       const projectId = samples[0].projectId;
-      const sampleIds = samples.map(s => s.sampleId);
+      const sampleIds = samples.map(s => ({
+        id: s.sampleId,
+        label: s.sampleLabel
+      }));
+
       const { data } = yield call(putSampleInCart, projectId, sampleIds);
-      // This is a hack until the cart gets fully updated
-      const event = new Event("cart:updated");
-      document.dispatchEvent(event);
-      // Display the notification.
-      showNotification({ text: data.message });
+
+      if (data.count) {
+        yield put(actions.updated(data.count));
+      }
+
+      // // This is a hack until the cart gets fully updated
+      // const event = new Event("cart:updated");
+      // document.dispatchEvent(event);
+      // // Display the notification.
+      // showNotification({ text: data.message });
     }
   }
 }
