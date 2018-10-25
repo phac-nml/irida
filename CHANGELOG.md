@@ -21,6 +21,7 @@ Changes
 * [Workflow]: Fixed issue where duplicate filenames were found after running Galaxy workflow in newer Galaxy versions. (0.22.4)
 * [Developer]: Added unused import checking to checkstyle config.  The `mvn site` build will throw an error if unused imports are present.
 * [Developer]: Added additional FTP settings for NCBI uploads: `ncbi.upload.controlKeepAliveTimeout`, and `ncbi.upload.controlKeepAliveReplyTimeoutMilliseconds`.
+* [Developer]: Fixed issue with some settings in `/etc/irida/irida.conf` not being detected properly.
 
 0.21.0 to 0.22.0
 ----------------
