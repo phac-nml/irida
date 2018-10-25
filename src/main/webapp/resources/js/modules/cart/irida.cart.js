@@ -18,8 +18,30 @@ function CartController($scope) {
   and not handled through angularjs.
    */
   document.addEventListener(CART.UPDATED, e => {
-    vm.count = typeof e.detail.count === "undefined" ? 0 : +e.detail.count;
+    const { count, added, duplicates, existing } = e.detail;
+    vm.count = typeof count === "undefined" ? 0 : +count;
     $scope.$apply();
+
+    // Display notifications
+    if (added) {
+      showNotification({
+        text: added
+      });
+    }
+
+    if (duplicates) {
+      showNotification({
+        text: duplicates,
+        type: "warning"
+      });
+    }
+
+    if (existing) {
+      showNotification({
+        text: existing,
+        type: "info"
+      });
+    }
   });
 
   function getCart(count) {
@@ -156,26 +178,31 @@ function CartService(scope, $http) {
             projectId,
             sampleIds: projects[projectId]
           }).then(response => {
+            document.dispatchEvent(
+              new CustomEvent(CART.UPDATED, {
+                detail: response
+              })
+            );
             /*
           Display a notification of what occurred on the server.
            */
-            const { message, excluded } = response;
-            if (excluded) {
-              showNotification({
-                text: `
-                    <p>${message}<p>
-                    <ul>${excluded
-                      .map(excludedSample => "<li>" + excludedSample + "</li>")
-                      .join("")}</ul>`,
-                progressBar: false,
-                timeout: false,
-                type: "warning"
-              });
-            } else {
-              showNotification({
-                text: message
-              });
-            }
+            // const { message, excluded } = response;
+            // if (excluded) {
+            //   showNotification({
+            //     text: `
+            //         <p>${message}<p>
+            //         <ul>${excluded
+            //           .map(excludedSample => "<li>" + excludedSample + "</li>")
+            //           .join("")}</ul>`,
+            //     progressBar: false,
+            //     timeout: false,
+            //     type: "warning"
+            //   });
+            // } else {
+            //   showNotification({
+            //     text: message
+            //   });
+            // }
           })
         );
       });
@@ -184,10 +211,10 @@ function CartService(scope, $http) {
     Wait until all the projects have been added to the server cart, and
     then notify the UI that this has occurred.
      */
-      $.when.apply($, promises).done(function() {
-        const event = new Event(CART.UPDATED);
-        document.dispatchEvent(event);
-      });
+      // $.when.apply($, promises).done(function() {
+      //   const event = new Event(CART.UPDATED);
+      //   document.dispatchEvent(event);
+      // });
     },
     false
   );

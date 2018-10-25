@@ -15,12 +15,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.components.Cart;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartRequestSample;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartResponse;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
@@ -162,9 +164,32 @@ public class CartController {
 	 * @param locale    Locale of the logged in user
 	 * @return a map stating success
 	 */
-	@RequestMapping(value = "/add/samples", method = RequestMethod.PUT)
+	@RequestMapping(value = "/add/samples", method = RequestMethod.POST)
 	@ResponseBody
-	public CartResponse addProjectSample(@RequestBody CartRequest cartRequest, Locale locale) {
+	public CartResponse addProjectSample(@RequestParam Long projectId,
+			@RequestParam(value = "sampleIds[]") Set<Long> sampleIds, Locale locale) {
+		Project project = projectService.read(projectId);
+		Set<CartRequestSample> samples = sampleIds.stream()
+				.map(id -> {
+					ProjectSampleJoin join = sampleService.getSampleForProject(project, id);
+					Sample sample = join.getObject();
+					return new CartRequestSample(sample.getId(), sample.getLabel());
+				})
+				.collect(Collectors.toSet());
+		CartRequest cartRequest = new CartRequest(projectId, samples);
+		return this.cart.addProjectSamplesToCart(cartRequest, locale);
+	}
+
+	/**
+	 * Update add samples to cart for the new LineList page.
+	 *
+	 * @param cartRequest {@link CartRequest} contains the {@link Project} identifier and list of {@link Sample} data to add to the cart
+	 * @param locale      {@link Locale}
+	 * @return {@link CartResponse}
+	 */
+	@RequestMapping(method = RequestMethod.PUT)
+	@ResponseBody
+	public CartResponse addSamplesToCart(@RequestBody CartRequest cartRequest, Locale locale) {
 		return this.cart.addProjectSamplesToCart(cartRequest, locale);
 	}
 

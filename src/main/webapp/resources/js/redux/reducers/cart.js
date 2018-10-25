@@ -18,12 +18,10 @@ export const reducer = (state = initialState, action = {}) => {
        */
       document.dispatchEvent(
         new CustomEvent(CART.UPDATED, {
-          detail: {
-            count: action.count
-          }
+          detail: action.response
         })
       );
-      return state.setIn(["count"], action.count);
+      return state.setIn(["count"], action.response.count);
     default:
       return state;
   }
@@ -31,5 +29,5 @@ export const reducer = (state = initialState, action = {}) => {
 
 export const actions = {
   add: samples => ({ type: types.ADD, samples }),
-  updated: count => ({ type: types.UPDATED, count })
+  updated: response => ({ type: types.UPDATED, response })
 };

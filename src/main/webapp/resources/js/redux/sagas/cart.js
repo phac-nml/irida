@@ -19,7 +19,7 @@ export function* addToCartSaga() {
       const { data } = yield call(putSampleInCart, projectId, sampleIds);
 
       if (data.count) {
-        yield put(actions.updated(data.count));
+        yield put(actions.updated(data));
       }
 
       // // This is a hack until the cart gets fully updated

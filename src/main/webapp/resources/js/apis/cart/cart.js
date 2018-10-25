@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const url = `${window.TL.BASE_URL}cart/add/samples`;
+const url = `${window.TL.BASE_URL}cart`;
 
 /**
  * Add samples for a project to the cart.
