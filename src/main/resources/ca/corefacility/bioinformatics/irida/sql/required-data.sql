@@ -656,24 +656,26 @@ INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VAL
 INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (19, now(), 6, 3);
 INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (20, now(), 6, 5);
 
-INSERT INTO `metadata_field` (id, label, type) VALUES (1, "PFGE-XbaI-pattern", "text");
-INSERT INTO `metadata_field` (id, label, type) VALUES (2, "PFGE-BlnI-pattern", "text");
-INSERT INTO `metadata_field` (id, label, type) VALUES (3, "Province", "text");
-INSERT INTO `metadata_field` (id, label, type) VALUES (4, "SourceSite", "text");
-INSERT INTO `metadata_field` (id, label, type) VALUES (5, "Genus", "text");
-INSERT INTO `metadata_field` (id, label, type) VALUES (6, "Serotype", "text");
-INSERT INTO `metadata_field` (id, label, type) VALUES (7, "onsetDate", "date");
-INSERT INTO `metadata_field` (id, label, type) VALUES (8, "species", "text");
-INSERT INTO `metadata_field` (id, label, type) VALUES (10, "primaryPfge", "text");
-INSERT INTO `metadata_field` (id, label, type) VALUES (11, "phageType", "text");
-INSERT INTO `metadata_field` (id, label, type) VALUES (12, "id", "text");
-INSERT INTO `metadata_field` (id, label, type) VALUES (13, "lastName", "text");
-INSERT INTO `metadata_field` (id, label, type) VALUES (14, "firstName", "text");
-INSERT INTO `metadata_field` (id, label, type) VALUES (15, "secondaryPfge", "text");
-INSERT INTO `metadata_field` (id, label, type) VALUES (16, "birthDate", "date");
-INSERT INTO `metadata_field` (id, label, type) VALUES (17, "healthAuthority", "text");
-INSERT INTO `metadata_field` (id, label, type) VALUES (18, "firstSymptom", "text");
-INSERT INTO `metadata_field` (id, label, type) VALUES (19, "city", "text");
+INSERT INTO `metadata_field` (id, label, type, DTYPE) VALUES (1, "PFGE-XbaI-pattern", "text", "MetadataTemplateField");
+INSERT INTO `metadata_field` (id, label, type, DTYPE) VALUES (2, "PFGE-BlnI-pattern", "text", "MetadataTemplateField");
+INSERT INTO `metadata_field` (id, label, type, DTYPE) VALUES (3, "Province", "text", "MetadataTemplateField");
+INSERT INTO `metadata_field` (id, label, type, DTYPE) VALUES (4, "SourceSite", "text", "MetadataTemplateField");
+INSERT INTO `metadata_field` (id, label, type, DTYPE) VALUES (5, "Genus", "text", "MetadataTemplateField");
+INSERT INTO `metadata_field` (id, label, type, DTYPE) VALUES (6, "Serotype", "text", "MetadataTemplateField");
+INSERT INTO `metadata_field` (id, label, type, DTYPE) VALUES (7, "onsetDate", "date", "MetadataTemplateField");
+INSERT INTO `metadata_field` (id, label, type, DTYPE) VALUES (8, "species", "text", "MetadataTemplateField");
+INSERT INTO `metadata_field` (id, label, type, DTYPE) VALUES (10, "primaryPfge", "text", "MetadataTemplateField");
+INSERT INTO `metadata_field` (id, label, type, DTYPE) VALUES (11, "phageType", "text", "MetadataTemplateField");
+INSERT INTO `metadata_field` (id, label, type, DTYPE) VALUES (12, "id", "text", "MetadataTemplateField");
+INSERT INTO `metadata_field` (id, label, type, DTYPE) VALUES (13, "lastName", "text", "MetadataTemplateField");
+INSERT INTO `metadata_field` (id, label, type, DTYPE) VALUES (14, "firstName", "text", "MetadataTemplateField");
+INSERT INTO `metadata_field` (id, label, type, DTYPE) VALUES (15, "secondaryPfge", "text", "MetadataTemplateField");
+INSERT INTO `metadata_field` (id, label, type, DTYPE) VALUES (16, "birthDate", "date", "MetadataTemplateField");
+INSERT INTO `metadata_field` (id, label, type, DTYPE) VALUES (17, "healthAuthority", "text", "MetadataTemplateField");
+INSERT INTO `metadata_field` (id, label, type, DTYPE) VALUES (18, "firstSymptom", "text", "MetadataTemplateField");
+INSERT INTO `metadata_field` (id, label, type, DTYPE) VALUES (19, "city", "text", "MetadataTemplateField");
+INSERT INTO `metadata_field` (id, label, type, DTYPE, static_id) VALUES (20, "Created Date", "date", "StaticMetadataTemplateField", "created");
+INSERT INTO `metadata_field` (id, label, type, DTYPE, static_id) VALUES (21, "Modified Date", "date", "StaticMetadataTemplateField", "modified");
 
 
 -- METADATA TEMPLATES

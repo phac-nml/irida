@@ -4,6 +4,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemp
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
+import ca.corefacility.bioinformatics.irida.model.sample.StaticMetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
@@ -72,6 +73,21 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	 * @return {@link MetadataTemplateField}
 	 */
 	public MetadataTemplateField readMetadataFieldByLabel(String label);
+
+	/**
+	 * Read a {@link MetadataTemplateField} by its key
+	 *
+	 * @param key key for the field
+	 * @return a {@link MetadataTemplateField}
+	 */
+	public MetadataTemplateField readMetadataFieldByKey(String key);
+
+	/**
+	 * Get a list of all {@link StaticMetadataTemplateField}s available
+	 *
+	 * @return a list of {@link StaticMetadataTemplateField}
+	 */
+	public List<StaticMetadataTemplateField> getStaticMetadataFields();
 
 	/**
 	 * Save a new metadata fields

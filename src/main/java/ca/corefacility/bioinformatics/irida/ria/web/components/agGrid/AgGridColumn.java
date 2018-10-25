@@ -12,6 +12,11 @@ public class AgGridColumn {
 	private String headerName;
 
 	/**
+	 * The field of the row to get the cells data from
+	 */
+	private String field;
+
+	/**
 	 * Which type of column to render (data, text, etc...)
 	 * TODO: Convert this into an enum?
 	 */
@@ -27,6 +32,26 @@ public class AgGridColumn {
 	 */
 	private boolean editable;
 
+	/**
+	 * Set 'left' or 'right' to pin the that side of table
+	 */
+	private String pinned;
+
+	/**
+	 * Set to true to always have column displayed first.
+	 */
+	private boolean lockPosition;
+
+	/**
+	 * Set to true block pinning column via the UI
+	 */
+	private boolean lockPinned;
+
+	/**
+	 * Set to 'asc' or 'desc' to sort by this column by default.
+	 */
+	private String sort;
+
 	public AgGridColumn() {
 	}
 
@@ -34,19 +59,21 @@ public class AgGridColumn {
 	 * Create a column header for a UI Ag Grid instance
 	 *
 	 * @param headerName {@link String} the text to display in the column header
+	 * @param field      {@link String} the key to the row data
 	 * @param type       {@link String} the type of column (date, text)
 	 * @param hide       {@link Boolean} whether the column is visible or not
 	 * @param editable   {@link Boolean} whether the contents of the cells in the column are editable.
 	 */
-	public AgGridColumn(String headerName, String type, boolean hide, boolean editable) {
+	public AgGridColumn(String headerName, String field, String type, boolean hide, boolean editable) {
 		this.headerName = headerName;
+		this.field = field;
 		this.type = type;
 		this.hide = hide;
 		this.editable = editable;
 	}
 
 	public String getField() {
-		return AgGridUtilities.convertHeaderNameToField(headerName);
+		return field;
 	}
 
 	public String getHeaderName() {
@@ -63,5 +90,37 @@ public class AgGridColumn {
 
 	public boolean isEditable() {
 		return editable;
+	}
+
+	public String getPinned() {
+		return pinned;
+	}
+
+	public void setPinned(String position) {
+		this.pinned = position;
+	}
+
+	public boolean isLockPosition() {
+		return lockPosition;
+	}
+
+	public void setLockPosition(boolean lockPosition) {
+		this.lockPosition = lockPosition;
+	}
+
+	public boolean isLockPinned() {
+		return lockPinned;
+	}
+
+	public void setLockPinned(boolean lockPinned) {
+		this.lockPinned = lockPinned;
+	}
+
+	public String getSort() {
+		return sort;
+	}
+
+	public void setSort(String sort) {
+		this.sort = sort;
 	}
 }
