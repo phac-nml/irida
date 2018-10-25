@@ -49,7 +49,7 @@ public class CartController {
 	private Map<Project, Set<Sample>> selected;
 
 	private Cart cart;
-	
+
 	private final SampleService sampleService;
 	private final UserService userService;
 	private final ProjectService projectService;
@@ -126,7 +126,7 @@ public class CartController {
 
 	/**
 	 * Clear the cart
-	 * 
+	 *
 	 * @return Success message
 	 */
 	@RequestMapping(method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -139,7 +139,7 @@ public class CartController {
 	/**
 	 * Get the cart object. This method should only be accessed
 	 * programmatically.
-	 * 
+	 *
 	 * @return The cart map
 	 */
 	public Map<Project, Set<Sample>> getSelected() {
@@ -148,7 +148,7 @@ public class CartController {
 
 	/**
 	 * Set the cart object programatically. Used mostly for testing.
-	 * 
+	 *
 	 * @param selected
 	 *            A {@code Map<Project,Set<Sample>>} of selected samples
 	 */
@@ -195,7 +195,7 @@ public class CartController {
 
 	/**
 	 * Delete a {@link Sample} from the cart from a given {@link Project}
-	 * 
+	 *
 	 * @param projectId
 	 *            The {@link Project} ID
 	 * @param sampleIds
@@ -219,7 +219,7 @@ public class CartController {
 
 	/**
 	 * Remove a single sample from the cart
-	 * 
+	 *
 	 * @param projectId
 	 *            The project id of the sample
 	 * @param sampleId
@@ -244,7 +244,7 @@ public class CartController {
 
 	/**
 	 * Add an entire {@link Project} to the cart
-	 * 
+	 *
 	 * @param projectId
 	 *            The ID of the {@link Project}
 	 * @return a map stating success
@@ -265,7 +265,7 @@ public class CartController {
 
 	/**
 	 * Delete an entire project from the cart
-	 * 
+	 *
 	 * @param projectId
 	 *            The ID of the {@link Project} to delete
 	 * @return a map stating success
@@ -281,7 +281,7 @@ public class CartController {
 
 	/**
 	 * Get the {@link Sample}s in a {@link Project} with the given IDs
-	 * 
+	 *
 	 * @param project
 	 *            The {@link Project} to get {@link Sample}s for
 	 * @param sampleIds
@@ -295,7 +295,7 @@ public class CartController {
 
 	/**
 	 * Get the {@link Project}s in the cart as a List for JSON serialization
-	 * 
+	 *
 	 * @return A List<Map<String,Object>> containing the relevant Project and
 	 *         Sample information
 	 */
@@ -316,7 +316,7 @@ public class CartController {
 
 	/**
 	 * Get the set of given {@link Sample}s as a List for JSON serialization
-	 * 
+	 *
 	 * @param samples
 	 *            The {@link Sample} set
 	 * @return A List<Map<String,Object>> containing the relevant Sample

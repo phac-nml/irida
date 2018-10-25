@@ -43,28 +43,6 @@ function CartController($scope) {
       });
     }
   });
-
-  function getCart(count) {
-    vm.count = count;
-    // TODO: This is the function that is causing all the slowness.
-
-    // cart.all().then(function(data) {
-    //   vm.count = 0;
-    //   vm.projects = data.projects;
-    //   vm.projects.forEach(function(p) {
-    //     vm.count += p.samples.length;
-    //     // Sort the samples by created date.
-    //     p.samples.sort(function(a, b) {
-    //       return b.createdDate - a.createdDate > 0;
-    //     });
-    //     if (collapse) {
-    //       vm.collapsed[p.id] = true;
-    //     }
-    //   });
-    // });
-  }
-
-  getCart(0);
 }
 
 /**

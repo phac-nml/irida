@@ -16,11 +16,15 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.CartController;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.components.Cart;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartRequestSample;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartResponse;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -49,7 +53,7 @@ public class CartControllerTest {
 		userService = mock(UserService.class);
 		messageSource = mock(MessageSource.class);
 		sequencingObjectService = mock(SequencingObjectService.class);
-		cart = mock(Cart.class);
+		cart = new Cart(projectService, messageSource);
 
 		controller = new CartController(sampleService, userService, projectService, sequencingObjectService, cart, messageSource);
 
@@ -58,21 +62,26 @@ public class CartControllerTest {
 
 	@Test
 	public void testAddProjectSample() {
-//		Set<Long> subIds = Sets.newHashSet(sampleIds.iterator().next());
-//		when(messageSource.getMessage("cart.one-sample-added", new Object[] { "project"}, Locale.US)).thenReturn("1 sample was added to the cart from project.");
-//		controller.addProjectSample(projectId, subIds, Locale.US);
-//
-//		verify(projectService).read(projectId);
-//		verify(sampleService).getSamplesInProject(project, new ArrayList<>(subIds));
-//
-//		Map<Project, Set<Sample>> selected = controller.getSelected();
-//		assertEquals(1, selected.keySet().size());
-//		Project projectKey = selected.keySet().iterator().next();
-//		assertEquals(project, projectKey);
-//		for (Sample s : selected.get(projectKey)) {
-//			assertTrue(subIds.contains(s.getId()));
-//		}
+		CartRequest request = new CartRequest(1L,
+				ImmutableSet.of(new CartRequestSample(1L, "sample1"), new CartRequestSample(2L, "sample2"),
+						new CartRequestSample(3L, "sample3")));
+		CartResponse response = controller.addSamplesToCart(request, Locale.ENGLISH);
+		assertEquals("Should have 3 samples in the cart", 3, response.getCount());
+		assertNull("Should be no duplicated", response.getDuplicate());
+		assertNull("Should be no existing", response.getExisting());
 
+		// Try adding a sample the second time.
+		CartRequest secondRequest = new CartRequest(1L, ImmutableSet.of(new CartRequestSample(1L, "sample1"), new CartRequestSample(4L, "sample4")));
+		CartResponse secondsResponse = controller.addSamplesToCart(secondRequest, Locale.ENGLISH);
+		assertNotNull("Should indicate that there was an existing sample added", secondsResponse.getExisting());
+		assertEquals("Should now be 4 samples in the cart", 4, secondsResponse.getCount());
+		assertNull("Should be no duplicated", response.getDuplicate());
+
+		// Try adding a sample with a duplicate sample name, but different ID.
+		CartRequest thirdRequest = new CartRequest(1L, ImmutableSet.of(new CartRequestSample(5L, "sample1")));
+		CartResponse thirdResponse = controller.addSamplesToCart(thirdRequest, Locale.ENGLISH);
+		assertNotNull("Should give a duplicate sample name message", thirdResponse);
+		assertEquals("Should not have added the diplicate to the cart", 4, thirdResponse.getCount());
 	}
 
 	@Test
@@ -212,6 +221,12 @@ public class CartControllerTest {
 			when(sampleService.getSampleForProject(project, id)).thenReturn(new ProjectSampleJoin(project,sample, true));
 		}
 		final ArrayList<Long> ids = new ArrayList<>(sampleIds);
+
+		when(messageSource.getMessage("cart.in-cart", new Object[] {}, Locale.ENGLISH)).thenReturn(
+				"Sample already in cart");
+
+		when(messageSource.getMessage("cart.excluded", new Object[] { "sample1" }, Locale.ENGLISH)).thenReturn(
+				"Sample name is already in the cart, no duplicate names please.");
 
 		when(sampleService.getSamplesInProject(project, ids)).thenReturn(new ArrayList<>(samples));
 		ArrayList<Long> subIds = Lists.newArrayList(sampleIds.iterator().next());
