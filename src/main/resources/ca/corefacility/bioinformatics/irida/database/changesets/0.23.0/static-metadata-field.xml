@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="static-metadata-field" author="tom">
+
+        <!-- Add DTYPE column -->
+        <addColumn tableName="metadata_field">
+            <column name="DTYPE" type="varchar(31)"/>
+        </addColumn>
+
+        <sql>UPDATE metadata_field SET DTYPE="MetadataTemplateField"</sql>
+
+        <addNotNullConstraint tableName="metadata_field" columnName="DTYPE" columnDataType="varchar(31)"/>
+
+        <addColumn tableName="metadata_field_AUD">
+            <column name="DTYPE" type="varchar(31)"/>
+        </addColumn>
+
+        <sql>UPDATE metadata_field_AUD SET DTYPE="MetadataTemplateField"</sql>
+
+        <addNotNullConstraint tableName="metadata_field_AUD" columnName="DTYPE" columnDataType="varchar(31)"/>
+
+
+        <!-- Add static id column -->
+        <addColumn tableName="metadata_field">
+            <column name="static_id" type="varchar(255)"/>
+        </addColumn>
+
+        <addColumn tableName="metadata_field_AUD">
+            <column name="static_id" type="varchar(255)"/>
+        </addColumn>
+        
+        <!-- Add Created and Modified Date Metadata Template Fields -->
+        <insert tableName="metadata_field">
+            <column name="label" value="Created Date" />
+            <column name="type" value="date" />
+            <column name="DTYPE" value="StaticMetadataTemplateField" />
+            <column name="static_id" value="created" />
+        </insert>
+
+        <insert tableName="metadata_field">
+            <column name="label" value="Modified Date" />
+            <column name="type" value="date" />
+            <column name="DTYPE" value="StaticMetadataTemplateField" />
+            <column name="static_id" value="modified" />
+        </insert>
+
+    </changeSet>
+</databaseChangeLog>

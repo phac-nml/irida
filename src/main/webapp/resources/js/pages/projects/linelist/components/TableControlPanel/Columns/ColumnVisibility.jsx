@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import ImmutablePropTypes from "react-immutable-proptypes";
 import { List, Switch } from "antd";
+import { FIELDS } from "../../../constants";
 
 /**
  * Component to display a list of switches which control the column
@@ -59,7 +60,7 @@ export default class ColumnVisibility extends React.Component {
         {typeof columns !== "undefined" ? (
           <div style={{ overflowY: "auto", height: this.props.height - 77 }}>
             <List
-              dataSource={columns.filter(f => f.field !== "sampleLabel")}
+              dataSource={columns.filter(f => f.field !== FIELDS.sampleName)}
               renderItem={item => (
                 <List.Item
                   className="column-list-item"

@@ -22,6 +22,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 public class MetadataTemplateField {
 
+	public static String DYNAMIC_FIELD_PREFIX = "irida-";
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
@@ -78,5 +80,13 @@ public class MetadataTemplateField {
 			return Objects.equals(label.toLowerCase(), other.label.toLowerCase()) && Objects.equals(type, other.type);
 		}
 		return false;
+	}
+
+	/**
+	 * Key for displaying the field in the UI
+	 * @return the key of the field.
+	 */
+	public String getFieldKey() {
+		return DYNAMIC_FIELD_PREFIX + id;
 	}
 }
