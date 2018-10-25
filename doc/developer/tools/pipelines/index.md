@@ -231,7 +231,7 @@ This file contains information about the particular pipeline installed in IRIDA.
 </iridaWorkflow>
 ```
 
-Normally this file will be properly auto-generated for you. A few key elements are:
+Normally this file will be generated for you by `irida-wf-ga2xml`. A few key elements are:
 
 1. `<id>` defines a unique id for the workflow.  This must be a UUID.  A quick way to generate a random UUID on linux is the command `uuid -v 4`.
 2. `<analysisType>` defines what type of analysis this workflow belongs to.  This string should match the string defined for the `AnalysisType` in the Java plugin class defined below.
@@ -275,7 +275,7 @@ The `Grep1-4-pattern` part corresponds to the **name** attribute under a `<param
 </parameter>
 ```
 
-### 3.2.4. Write a `Plugin.java` class defining some key properties of the pipeline
+### 3.2.4. Write a `Plugin` implementation defining some key properties of the pipeline
 
 This is a class which defines configuration for the pipeline and allows IRIDA to load the necessary files. When implementing the pipeline as a plugin this class can be located in any package you wish, and can have any name you wish. You will want to implement the two methods which are indicated as **required** in this file. You can also override the methods indicated as **optional** in the file for additional configuration. For an example of a class you can look at [ExamplePlugin.java][]. This should look like:
 
