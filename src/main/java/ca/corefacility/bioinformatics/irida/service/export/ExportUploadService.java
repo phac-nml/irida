@@ -85,9 +85,6 @@ public class ExportUploadService {
 	@Value("${ncbi.upload.baseDirectory}")
 	private String baseDirectory;
 	
-	@Value("${ncbi.upload.bufferSize}")
-	private int uploadBufferSize;
-	
 	@Value("${ncbi.upload.controlKeepAliveTimeoutSeconds}")
 	private int controlKeepAliveTimeout;
 	
@@ -526,13 +523,6 @@ public class ExportUploadService {
 		}
 
 		logger.trace(client.getStatus());
-
-		if (uploadBufferSize < 0) {
-			throw new IllegalArgumentException("Error: uploadBufferSize [" + uploadBufferSize + "] < 0");
-		} else {
-			logger.trace("Using upload bufferSize=" + uploadBufferSize);
-			client.setBufferSize(uploadBufferSize);
-		}
 
 		if (controlKeepAliveTimeout < 0 || controlKeepAliveReplyTimeout < 0) {
 			throw new IllegalArgumentException("Error: controlKeepAliveTimeout [" + controlKeepAliveTimeout
