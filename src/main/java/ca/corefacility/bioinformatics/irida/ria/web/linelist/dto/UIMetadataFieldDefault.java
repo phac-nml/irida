@@ -7,15 +7,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.agGrid.AgGridColu
  * on the line list page.
  */
 public class UIMetadataFieldDefault extends AgGridColumn {
-	private String field;
-
-	public UIMetadataFieldDefault(String field, String headerName, String type) {
-		super(headerName, type, false, false);
-		this.field = field;
-	}
-
-	@Override
-	public String getField() {
-		return field;
+	public UIMetadataFieldDefault(String headerName, String field, String type) {
+		super(headerName, field, type, false, false);
 	}
 }

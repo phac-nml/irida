@@ -70,7 +70,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 	}
 
 	public int getNumberOfTableColumnsVisible() {
-		return headerText.size();
+		return headerText.size() - 1;  // -1 for sample name column
 	}
 
 	public void toggleMetadataField (int field) {

@@ -1,25 +1,28 @@
 package ca.corefacility.bioinformatics.irida.service.impl.sample;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.transaction.Transactional;
+import javax.validation.Validator;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Service;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
+import ca.corefacility.bioinformatics.irida.model.sample.StaticMetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectMetadataTemplateJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataFieldRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataTemplateRepository;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
-import javax.validation.Validator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Service for storing and reading {@link MetadataTemplate}s
@@ -103,6 +106,24 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 	@Override
 	public MetadataTemplateField readMetadataFieldByLabel(String label) {
 		return fieldRepository.findMetadataFieldByLabel(label);
+	}
+
+	@PreAuthorize("permitAll()")
+	@Override
+	public MetadataTemplateField readMetadataFieldByKey(String key) {
+		if (key.startsWith(StaticMetadataTemplateField.STATIC_FIELD_PREFIX)) {
+			String stripped = key.replaceFirst(StaticMetadataTemplateField.STATIC_FIELD_PREFIX, "");
+			return fieldRepository.findMetadataFieldByStaticId(stripped);
+		} else {
+			String stripped = key.replaceFirst(MetadataTemplateField.DYNAMIC_FIELD_PREFIX, "");
+			return fieldRepository.findOne(Long.parseLong(stripped));
+		}
+	}
+
+	@PreAuthorize("permitAll()")
+	@Override
+	public List<StaticMetadataTemplateField> getStaticMetadataFields() {
+		return fieldRepository.findStaticMetadataFields();
 	}
 
 	@PreAuthorize("permitAll()")
