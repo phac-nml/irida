@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.analysis;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -60,7 +61,7 @@ public class CartControllerIT {
 
 	@Before
 	public void setUp() {
-		controller.addProject(1L);
+		controller.addProject(1L,  Locale.ENGLISH);
 	}
 
 	@After
@@ -88,7 +89,7 @@ public class CartControllerIT {
 	public void testAddProject() {
 		Long projectId = 2L;
 		Project project = projectService.read(projectId);
-		Map<String, Object> addProjectSample = controller.addProject(projectId);
+		Map<String, Object> addProjectSample = controller.addProject(projectId, Locale.ENGLISH);
 		assertTrue((boolean) addProjectSample.get("success"));
 
 		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(project);

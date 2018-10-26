@@ -55,7 +55,7 @@ public class CartControllerTest {
 		sequencingObjectService = mock(SequencingObjectService.class);
 		cart = new Cart(projectService, messageSource);
 
-		controller = new CartController(sampleService, userService, projectService, sequencingObjectService, cart, messageSource);
+		controller = new CartController(sampleService, userService, projectService, sequencingObjectService, cart);
 
 		testData();
 	}

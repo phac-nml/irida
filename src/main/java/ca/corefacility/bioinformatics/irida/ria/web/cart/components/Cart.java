@@ -94,4 +94,38 @@ public class Cart {
 		cart.put(cartRequest.getProjectId(), ids);
 		return response;
 	}
+
+	public void removeProjectSamples(Long projectId, Set<Long> currentSampleIds) {
+		cart.get(projectId)
+				.removeAll(currentSampleIds);
+		if (cart.get(projectId)
+				.size() == 0) {
+			cart.remove(projectId);
+		}
+	}
+
+	public void removeProject(Long projectId) {
+		cart.remove(projectId);
+	}
+
+	public Map<Long, Set<Long>> get() {
+		return cart;
+	}
+
+	public void empty() {
+		this.cart.clear();
+	}
+
+	public int getNumberOfProjects() {
+		return cart.keySet()
+				.size();
+	}
+
+	public int getNumberOfSamples() {
+		return cart.keySet()
+				.stream()
+				.map(i -> cart.get(i)
+						.size())
+				.reduce(0, (a, b) -> a + b);
+	}
 }
