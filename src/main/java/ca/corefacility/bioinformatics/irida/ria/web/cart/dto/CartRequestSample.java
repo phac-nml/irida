@@ -1,7 +1,20 @@
 package ca.corefacility.bioinformatics.irida.ria.web.cart.dto;
 
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+
+/**
+ * Object to handle samples that have been sent to the server to be added to the
+ * cart.
+ */
 public class CartRequestSample {
+	/**
+	 * {@link Sample} identifier.
+	 */
 	private Long id;
+
+	/**
+	 * {@link Sample} label.
+	 */
 	private String label;
 
 	public CartRequestSample() {

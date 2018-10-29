@@ -12,9 +12,9 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.CartController;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.components.Cart;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartRequestSample;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartResponse;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -58,24 +58,24 @@ public class CartControllerTest {
 
 	@Test
 	public void testAddProjectSample() {
-		CartRequest request = new CartRequest(1L,
+		AddToCartRequest request = new AddToCartRequest(1L,
 				ImmutableSet.of(new CartRequestSample(1L, "sample1"), new CartRequestSample(2L, "sample2"),
 						new CartRequestSample(3L, "sample3")));
-		CartResponse response = controller.addSamplesToCart(request, Locale.ENGLISH);
+		AddToCartResponse response = controller.addSamplesToCart(request, Locale.ENGLISH);
 		assertEquals("Should have 3 samples in the cart", 3, response.getCount());
 		assertNull("Should be no duplicated", response.getDuplicate());
 		assertNull("Should be no existing", response.getExisting());
 
 		// Try adding a sample the second time.
-		CartRequest secondRequest = new CartRequest(1L, ImmutableSet.of(new CartRequestSample(1L, "sample1"), new CartRequestSample(4L, "sample4")));
-		CartResponse secondsResponse = controller.addSamplesToCart(secondRequest, Locale.ENGLISH);
+		AddToCartRequest secondRequest = new AddToCartRequest(1L, ImmutableSet.of(new CartRequestSample(1L, "sample1"), new CartRequestSample(4L, "sample4")));
+		AddToCartResponse secondsResponse = controller.addSamplesToCart(secondRequest, Locale.ENGLISH);
 		assertNotNull("Should indicate that there was an existing sample added", secondsResponse.getExisting());
 		assertEquals("Should now be 4 samples in the cart", 4, secondsResponse.getCount());
 		assertNull("Should be no duplicated", response.getDuplicate());
 
 		// Try adding a sample with a duplicate sample name, but different ID.
-		CartRequest thirdRequest = new CartRequest(1L, ImmutableSet.of(new CartRequestSample(5L, "sample1")));
-		CartResponse thirdResponse = controller.addSamplesToCart(thirdRequest, Locale.ENGLISH);
+		AddToCartRequest thirdRequest = new AddToCartRequest(1L, ImmutableSet.of(new CartRequestSample(5L, "sample1")));
+		AddToCartResponse thirdResponse = controller.addSamplesToCart(thirdRequest, Locale.ENGLISH);
 		assertNotNull("Should give a duplicate sample name message", thirdResponse);
 		assertEquals("Should not have added the diplicate to the cart", 4, thirdResponse.getCount());
 	}

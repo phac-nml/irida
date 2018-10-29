@@ -9,11 +9,14 @@ import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartRequestSample;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartResponse;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 
+/**
+ * "Cart" to represent samples that have been selected to perform a future action on (e.g. run a pipeline).
+ */
 @Component
 @Scope("session")
 public class Cart {
@@ -42,14 +45,21 @@ public class Cart {
 		this.messageSource = messageSource;
 	}
 
-	public CartResponse addProjectSamplesToCart(CartRequest cartRequest, Locale locale) {
-		CartResponse response = new CartResponse();
-		Set<Long> ids = cart.getOrDefault(cartRequest.getProjectId(), new HashSet<>());
+	/**
+	 * Add {@link Sample} to the cart.
+	 *
+	 * @param addToCartRequest {@link AddToCartRequest} containing identifiers for {@link Sample}s to add.
+	 * @param locale           {@link Locale}
+	 * @return {@link AddToCartResponse} containing the result of the action.
+	 */
+	public AddToCartResponse addProjectSamplesToCart(AddToCartRequest addToCartRequest, Locale locale) {
+		AddToCartResponse response = new AddToCartResponse();
+		Set<Long> ids = cart.getOrDefault(addToCartRequest.getProjectId(), new HashSet<>());
 		int added = 0;
 		List<String> duplicates = new ArrayList<>();
 		List<String> existing = new ArrayList<>();
 
-		for (CartRequestSample sample : cartRequest.getSamples()) {
+		for (CartRequestSample sample : addToCartRequest.getSamples()) {
 			/*
 			First lets see if the id is here, t
 			 */
@@ -68,7 +78,7 @@ public class Cart {
 		/*
 		Get a count of how many samples where added to the cart
 		 */
-		Project project = projectService.read(cartRequest.getProjectId());
+		Project project = projectService.read(addToCartRequest.getProjectId());
 		if (added == 1) {
 			response.setAdded(
 					messageSource.getMessage("cart.one-sample-added", new Object[] { project.getLabel() }, locale));
@@ -91,10 +101,15 @@ public class Cart {
 
 		response.setCount(this.currentSampleLabels.size());
 
-		cart.put(cartRequest.getProjectId(), ids);
+		cart.put(addToCartRequest.getProjectId(), ids);
 		return response;
 	}
 
+	/**
+	 * Remove {@link Sample}s from the cart
+	 * @param projectId {@link Long} identifier for the {@link Project} the {@link Sample}s belong to.
+	 * @param currentSampleIds {@link Set} of {@link Long} identifiers for {@link Sample}s to remove from the cart.
+	 */
 	public void removeProjectSamples(Long projectId, Set<Long> currentSampleIds) {
 		cart.get(projectId)
 				.removeAll(currentSampleIds);
@@ -104,23 +119,43 @@ public class Cart {
 		}
 	}
 
+	/**
+	 * Remove a all the {@link Sample}s from a particular {@link Project}
+	 * @param projectId {@link Long} identifier for a {@link Project} to remove.
+	 */
 	public void removeProject(Long projectId) {
 		cart.remove(projectId);
 	}
 
+	/**
+	 * Get a copy of the cart.
+	 * @return {@link Map} of that contains {@link Long} {@link Project} identifiers as key
+	 * and {@link Set} of {@link Long} {@link Sample} identifiers as value
+	 */
 	public Map<Long, Set<Long>> get() {
 		return cart;
 	}
 
+	/**
+	 * Remove all {@link Sample}s / {@link Project}s from the cart.
+	 */
 	public void empty() {
 		this.cart.clear();
 	}
 
+	/**
+	 * Get the number of {@link Project}s in the cart.
+	 * @return {@link int}
+	 */
 	public int getNumberOfProjects() {
 		return cart.keySet()
 				.size();
 	}
 
+	/**
+	 * Get the number of {@link Sample}s total in the cart.
+	 * @return {@link int}
+	 */
 	public int getNumberOfSamples() {
 		return cart.keySet()
 				.stream()

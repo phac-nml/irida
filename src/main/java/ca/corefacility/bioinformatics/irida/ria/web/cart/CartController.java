@@ -18,9 +18,9 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.components.Cart;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartRequestSample;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartResponse;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -166,7 +166,7 @@ public class CartController {
 			Since this is for testing purposes only we will just pass in the English locale.
 			Don't need to handle the response.
 			 */
-			cart.addProjectSamplesToCart(new CartRequest(project.getId(), cartRequestSamples), Locale.ENGLISH);
+			cart.addProjectSamplesToCart(new AddToCartRequest(project.getId(), cartRequestSamples), Locale.ENGLISH);
 		}
 	}
 
@@ -180,7 +180,7 @@ public class CartController {
 	 */
 	@RequestMapping(value = "/add/samples", method = RequestMethod.POST)
 	@ResponseBody
-	public CartResponse addProjectSample(@RequestParam Long projectId,
+	public AddToCartResponse addProjectSample(@RequestParam Long projectId,
 			@RequestParam(value = "sampleIds[]") Set<Long> sampleIds, Locale locale) {
 		Project project = projectService.read(projectId);
 		Set<CartRequestSample> samples = sampleIds.stream()
@@ -190,21 +190,21 @@ public class CartController {
 					return new CartRequestSample(sample.getId(), sample.getLabel());
 				})
 				.collect(Collectors.toSet());
-		CartRequest cartRequest = new CartRequest(projectId, samples);
-		return this.cart.addProjectSamplesToCart(cartRequest, locale);
+		AddToCartRequest addToCartRequest = new AddToCartRequest(projectId, samples);
+		return this.cart.addProjectSamplesToCart(addToCartRequest, locale);
 	}
 
 	/**
 	 * Update add samples to cart for the new LineList page.
 	 *
-	 * @param cartRequest {@link CartRequest} contains the {@link Project} identifier and list of {@link Sample} data to add to the cart
+	 * @param addToCartRequest {@link AddToCartRequest} contains the {@link Project} identifier and list of {@link Sample} data to add to the cart
 	 * @param locale      {@link Locale}
-	 * @return {@link CartResponse}
+	 * @return {@link AddToCartResponse}
 	 */
 	@RequestMapping(method = RequestMethod.PUT)
 	@ResponseBody
-	public CartResponse addSamplesToCart(@RequestBody CartRequest cartRequest, Locale locale) {
-		return this.cart.addProjectSamplesToCart(cartRequest, locale);
+	public AddToCartResponse addSamplesToCart(@RequestBody AddToCartRequest addToCartRequest, Locale locale) {
+		return this.cart.addProjectSamplesToCart(addToCartRequest, locale);
 	}
 
 	/**
@@ -254,7 +254,7 @@ public class CartController {
 		Set<CartRequestSample> samples = samplesForProject.stream()
 				.map(j -> new CartRequestSample(j.getId(), j.getLabel()))
 				.collect(Collectors.toSet());
-		cart.addProjectSamplesToCart(new CartRequest(projectId, samples), locale);
+		cart.addProjectSamplesToCart(new AddToCartRequest(projectId, samples), locale);
 		return ImmutableMap.of("success", true);
 	}
 

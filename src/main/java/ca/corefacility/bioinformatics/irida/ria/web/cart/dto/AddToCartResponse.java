@@ -1,9 +1,29 @@
 package ca.corefacility.bioinformatics.irida.ria.web.cart.dto;
 
-public class CartResponse {
+/**
+ * Return value for adding samples to the samples cart.
+ */
+public class AddToCartResponse {
+	/**
+	 * Success message for indicating what was added to the cart.
+	 */
 	private String added;
+
+	/**
+	 * Information message for indicating if a sample (with the same id) is
+	 * already in the cart.
+	 */
 	private String existing;
+
+	/**
+	 * Error message indicating samples that have the same name but different ids
+	 * were added to the cart.
+	 */
 	private String duplicate;
+
+	/**
+	 * Total number of samples in the cart after the update.
+	 */
 	private int count;
 
 	public int getCount() {
