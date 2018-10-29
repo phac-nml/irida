@@ -27,29 +27,40 @@ const editApp = angular
       };
 
       self.removeAssociatedStatus = function(params) {
-        return $http
-          .delete(page.urls.local.remove, {
-            params: params
-          })
-          .then(result => result.data);
+        return $http({
+          method: "POST",
+          url: page.urls.local.remove,
+          data: $.param(params),
+          headers: { "Content-Type": "application/x-www-form-urlencoded" }
+        }).then(result => result.data);
       };
 
       self.addAssociatedProject = function(params) {
-        return $http
-          .post(page.urls.local.add, params)
-          .then(result => result.data);
+        console.log(params);
+        return $http({
+          method: "POST",
+          url: page.urls.local.add,
+          data: $.param(params),
+          headers: { "Content-Type": "application/x-www-form-urlencoded" }
+        }).then(result => result.data);
       };
 
       self.addRemoteAssociatedProject = function(params) {
-        return $http
-          .post(page.urls.remote.add, params)
-          .then(result => result.data);
+        return $http({
+          method: "POST",
+          url: page.urls.remote.add,
+          data: $.param(params),
+          headers: { "Content-Type": "application/x-www-form-urlencoded" }
+        }).then(result => result.data);
       };
 
       self.removeRemoteAssociatedStatus = function(params) {
-        return $http
-          .post(page.urls.remote.remove, params)
-          .then(result => result.data);
+        return $http({
+          method: "POST",
+          url: page.urls.remote.remove,
+          data: $.param(params),
+          headers: { "Content-Type": "application/x-www-form-urlencoded" }
+        }).then(result => result.data);
       };
 
       return self;
