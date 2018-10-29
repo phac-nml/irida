@@ -248,7 +248,7 @@ case "$1" in
 	galaxy_pipeline_testing)
 		shift
 		pretest_cleanup
-		test_galaxy $@
+		test_galaxy_pipelines $@
 		exit_code=$?
 		posttest_cleanup
 	;;
