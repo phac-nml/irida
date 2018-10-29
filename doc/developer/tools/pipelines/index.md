@@ -231,7 +231,7 @@ This file contains information about the particular pipeline installed in IRIDA.
 </iridaWorkflow>
 ```
 
-Normally this file will be generated for you by `irida-wf-ga2xml`. A few key elements are:
+Normally this file will be generated for you by [irida-wf-ga2xml][]. A few key elements are:
 
 1. `<id>` defines a unique id for the workflow.  This must be a UUID.  A quick way to generate a random UUID on linux is the command `uuid -v 4`.
 2. `<analysisType>` defines what type of analysis this workflow belongs to.  This string should match the string defined for the `AnalysisType` in the Java plugin class defined below.
