@@ -22,6 +22,7 @@ Changes
 * [Developer]: Added unused import checking to checkstyle config.  The `mvn site` build will throw an error if unused imports are present.
 * [Developer]: Added additional FTP settings for NCBI uploads: `ncbi.upload.controlKeepAliveTimeout`, and `ncbi.upload.controlKeepAliveReplyTimeoutMilliseconds`.
 * [Developer]: Fixed issue with some settings in `/etc/irida/irida.conf` not being detected properly.
+* [Developer]: Added ability to adjust `jdbc.pool.maxWait` through an environment variable `DB_MAX_WAIT_MILLIS` for fixing timeout issues for tests.
 
 0.21.0 to 0.22.0
 ----------------
