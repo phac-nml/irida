@@ -9,6 +9,7 @@ env:
     - "DB_MAX_WAIT_MILLIS=30000"
   matrix:
     - "TEST_SUITE=galaxy_testing"
+    - "TEST_SUITE=galaxy_pipeline_testing"
     - "TEST_SUITE=ui_testing"
     - "TEST_SUITE=doc_testing"
     - "TEST_SUITE=service_testing"
