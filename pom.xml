@@ -1134,6 +1134,7 @@
 				<include.tests>
 					**/service/impl/integration/**/*IT.java,
 					**/service/workflow/integration/**/*IT.java,
+					**/pipeline/results/**/*IT.java,
 					**/repositories/**/*IT.java
 				</include.tests>
 				<exclude.tests>**/*Galaxy*IT.java,
@@ -1156,7 +1157,11 @@
 				<integration.test.listener>ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationTestListener</integration.test.listener>
 				<include.tests>
 					**/*Galaxy*IT.java,
+					**/AnalysisSubmissionServiceImplIT.java,
 				</include.tests>
+				<exclude.tests>
+					**/AnalysisExecutionServiceGalaxyIT.java,
+				</exclude.tests>
 				<jetty.skip>true</jetty.skip>
 			</properties>
 		</profile>
@@ -1166,7 +1171,7 @@
 				<integration.test.listener>ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationTestListener</integration.test.listener>
 				<include.tests>
 					**/AnalysisExecutionScheduledTaskImplIT.java,
-					**/AnalysisSubmissionServiceImplIT.java,
+					**/AnalysisExecutionServiceGalaxyIT.java,
 					**/SNVPhylAnalysisIT.java,
 				</include.tests>
 				<jetty.skip>true</jetty.skip>
