@@ -1,19 +1,15 @@
 import { fromJS, List } from "immutable";
 import { isDate } from "../../../../utilities/date-utilities";
+import { FIELDS } from "../constants";
 
 /*
 Special handler for formatting the sample Name Column;
  */
 const sampleNameColumn = {
-  sort: "asc",
-  pinned: "left",
   cellRenderer: "SampleNameRenderer",
   checkboxSelection: true,
   headerCheckboxSelection: true,
-  headerCheckboxSelectionFilteredOnly: true,
-  editable: false,
-  lockPosition: true,
-  lockPinned: true
+  headerCheckboxSelectionFilteredOnly: true
 };
 
 /*
@@ -46,17 +42,29 @@ const dateColumn = {
 };
 
 /**
+ * Based on the MetadataTemplateFields create the appropriate
+ * column type
+ * @param {array} col
+ * @returns {*}
+ */
+function getColumnDefinition(col) {
+  const { type } = col;
+  delete col.type; // Cannot have a type as an attribute on the columnDef.
+
+  if (type === "date") {
+    Object.assign(col, dateColumn);
+  } else if (col.field === FIELDS.sampleName) {
+    Object.assign(col, sampleNameColumn);
+  }
+  return col;
+}
+
+/**
  * Fields need to be formatted properly to go into the column headers.
  * @param {array} cols
  * @returns {*}
  */
-const formatColumns = cols =>
-  cols.map((f, i) => ({
-    ...f,
-    ...(f.type === "date" ? dateColumn : {}),
-    type: undefined, // ag-grid does not like having type on object
-    ...(f.field === "sampleLabel" ? sampleNameColumn : {})
-  }));
+const formatColumns = cols => cols.map(getColumnDefinition);
 
 export const types = {
   LOAD: "METADATA/FIELDS/LOAD_REQUEST",

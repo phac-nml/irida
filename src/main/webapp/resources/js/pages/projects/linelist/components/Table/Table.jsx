@@ -11,6 +11,7 @@ import XLSX from "xlsx";
 
 import { LoadingOverlay } from "./LoadingOverlay";
 import { SampleNameRenderer, DateCellRenderer } from "./renderers";
+import { FIELDS } from "../../constants";
 
 const { i18n } = window.PAGE;
 
@@ -139,7 +140,9 @@ export class Table extends React.Component {
     Sample name always needs to be first so let's take it off and re-add
     it after we get everything sorted.
      */
-    const sampleIndex = columnState.findIndex(c => c.colId === "sampleLabel");
+    const sampleIndex = columnState.findIndex(
+      c => c.colId === FIELDS.sampleName
+    );
     const sample = columnState.splice(sampleIndex, 1)[0];
 
     /*
@@ -340,7 +343,8 @@ export class Table extends React.Component {
    */
   onCellEditingStopped = event => {
     // Get the table header for the cell that was edited
-    const field = event.column.colId;
+
+    const { field, headerName } = event.column.colDef;
     // Get the previous value
     const previousValue = this.cellEditedValue;
     // Get the new value for the cell
@@ -352,7 +356,7 @@ export class Table extends React.Component {
       Update the value on the server (this way, if the user closes the page the
       server already has the update.
        */
-      this.props.entryEdited(data, field);
+      this.props.entryEdited(data, field, headerName);
       /*
       Show a notification that allows the user to reverse the change to the value.
        */
@@ -364,9 +368,9 @@ export class Table extends React.Component {
           text: text
             .replace(
               "[SAMPLE_NAME]",
-              `<strong>${data[i18n.linelist.agGrid.sampleName]}</strong>`
+              `<strong>${data[FIELDS.sampleName]}</strong>`
             )
-            .replace("[FIELD]", `<strong>${field}</strong>`)
+            .replace("[FIELD]", `<strong>${headerName}</strong>`)
             .replace("[NEW_VALUE]", `<strong>${data[field]}</strong>`)
         },
         () => {
@@ -374,8 +378,8 @@ export class Table extends React.Component {
            * Callback to reverse the change.
            */
           data[field] = previousValue;
-          this.props.entryEdited(data, field);
-          event.node.setDataValue(event.colDef.field, previousValue);
+          this.props.entryEdited(data, field, headerName);
+          event.node.setDataValue(field, previousValue);
         }
       );
     }

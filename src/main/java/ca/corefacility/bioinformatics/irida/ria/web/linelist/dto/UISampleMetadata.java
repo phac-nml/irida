@@ -1,35 +1,36 @@
 package ca.corefacility.bioinformatics.irida.ria.web.linelist.dto;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.StaticMetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
-import ca.corefacility.bioinformatics.irida.ria.web.components.agGrid.AgGridUtilities;
 
 /**
  * Represents {@link Sample} metadata in the linelist table.
  */
-public class UISampleMetadata {
-	private Long sampleId;
-	private String sampleLabel;
-	private Long projectId;
-	private String projectLabel;
-	private Date created;
-	private Date modified;
-	private Map<String, String> metadata;
+public class UISampleMetadata extends HashMap<String, String> {
+	public static final String PREFIX = StaticMetadataTemplateField.STATIC_FIELD_PREFIX;
+	public static final String SAMPLE_NAME = PREFIX + "sample-name";
+	public static final String SAMPLE_ID = PREFIX + "sample-id";
+	public static final String PROJECT_NAME = PREFIX + "project-name";
+	public static final String PROJECT_ID = PREFIX + "project-id";
+	public static final String CREATED_DATE = PREFIX + "created";
+	public static final String MODIFIED_DATE = PREFIX + "modified";
 
 	public UISampleMetadata(Project project, Sample sample) {
-		this.sampleId = sample.getId();
-		this.sampleLabel = sample.getLabel();
-		this.projectId = project.getId();
-		this.projectLabel = project.getLabel();
-		this.created = sample.getCreatedDate();
-		this.modified = sample.getModifiedDate();
-		this.metadata = getMetadataForSample(sample);
+		this.put(SAMPLE_ID, String.valueOf(sample.getId()));
+		this.put(SAMPLE_NAME, sample.getLabel());
+		this.put(PROJECT_ID, String.valueOf(project.getId()));
+		this.put(PROJECT_NAME, project.getLabel());
+		this.put(CREATED_DATE, sample.getCreatedDate()
+				.toString());
+		this.put(MODIFIED_DATE, sample.getModifiedDate()
+				.toString());
+		this.putAll(getAllMetadataForSample(sample));
 	}
 
 	/**
@@ -38,42 +39,15 @@ public class UISampleMetadata {
 	 * @param sample {@link Sample}
 	 * @return {@link Map} of {@link String} field and {@link String} value
 	 */
-	private Map<String, String> getMetadataForSample(Sample sample) {
+	private Map<String, String> getAllMetadataForSample(Sample sample) {
 		Map<String, String> entries = new HashMap<>();
 		Map<MetadataTemplateField, MetadataEntry> sampleMetadata = sample.getMetadata();
 		for (MetadataTemplateField field : sampleMetadata.keySet()) {
 			MetadataEntry entry = sampleMetadata.get(field);
 			// Label must be converted into the proper format for client side look up purposes in Ag Grid.
-			entries.put(AgGridUtilities.convertHeaderNameToField(field.getLabel()), entry.getValue());
+			entries.put(field.getFieldKey(), entry.getValue());
 		}
 		return entries;
 	}
 
-	public Long getSampleId() {
-		return sampleId;
-	}
-
-	public String getSampleLabel() {
-		return sampleLabel;
-	}
-
-	public Long getProjectId() {
-		return projectId;
-	}
-
-	public String getProjectLabel() {
-		return projectLabel;
-	}
-
-	public Date getCreated() {
-		return created;
-	}
-
-	public Date getModified() {
-		return modified;
-	}
-
-	public Map<String, String> getMetadata() {
-		return metadata;
-	}
 }

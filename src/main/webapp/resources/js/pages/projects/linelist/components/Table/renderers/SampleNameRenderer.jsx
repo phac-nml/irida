@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { FIELDS } from "../../../constants";
 
 const { BASE_URL } = window.TL;
 
@@ -7,9 +8,9 @@ export class SampleNameRenderer extends React.Component {
   constructor(props) {
     super(props);
     this.href = `${BASE_URL}projects/${Number(
-      props.data.projectId
-    )}/samples/${Number(props.data.sampleId)}`;
-    this.name = props.data.sampleLabel;
+      props.data[FIELDS.projectId]
+    )}/samples/${Number(props.data[FIELDS.sampleId])}`;
+    this.name = props.data[FIELDS.sampleName];
   }
 
   render() {
