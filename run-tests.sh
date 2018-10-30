@@ -115,13 +115,13 @@ test_ui() {
 }
 
 test_galaxy() {
-	test_galaxy_internal galaxy_testing
+	test_galaxy_internal galaxy_testing $@
 	exit_code=$?
 	return $exit_code
 }
 
 test_galaxy_pipelines() {
-	test_galaxy_internal galaxy_pipeline_testing
+	test_galaxy_internal galaxy_pipeline_testing $@
 	exit_code=$?
 	return $exit_code
 }
