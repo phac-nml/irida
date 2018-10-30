@@ -46,7 +46,7 @@ public class AssemblySampleUpdater implements AnalysisSampleUpdater {
 
 		Sample sample = samples.iterator().next();
 
-		GenomeAssembly genomeAssembly = genomeAssemblyRepository.save(new GenomeAssemblyFromAnalysis(analysis));
+		GenomeAssembly genomeAssembly = new GenomeAssemblyFromAnalysis(analysis);
 		SampleGenomeAssemblyJoin sampleGenomeAssemblyJoin = new SampleGenomeAssemblyJoin(sample, genomeAssembly);
 
 		logger.trace(
