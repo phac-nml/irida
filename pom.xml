@@ -1134,7 +1134,6 @@
 				<include.tests>
 					**/service/impl/integration/**/*IT.java,
 					**/service/workflow/integration/**/*IT.java,
-					**/pipeline/results/**/*IT.java,
 					**/repositories/**/*IT.java
 				</include.tests>
 				<exclude.tests>**/*Galaxy*IT.java,
