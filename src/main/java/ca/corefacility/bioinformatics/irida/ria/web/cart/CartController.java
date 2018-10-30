@@ -244,6 +244,7 @@ public class CartController {
 	 *
 	 * @param projectId
 	 *            The ID of the {@link Project}
+	 * @param locale {@link Locale}
 	 * @return a map stating success
 	 */
 	@RequestMapping(value = "/project/{projectId}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
