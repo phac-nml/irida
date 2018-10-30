@@ -416,6 +416,8 @@ public class CartController {
 	 *
 	 * @return {@link Integer} number of samples in the cart.
 	 */
+	@RequestMapping("/count")
+	@ResponseBody
 	public int getNumberOfSamples() {
 		return cart.getNumberOfSamples();
 	}

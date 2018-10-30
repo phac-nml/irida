@@ -3,105 +3,6 @@ import find from "lodash/find";
 import filter from "lodash/filter";
 import { CART } from "../../utilities/events-utilities";
 import $ from "jquery";
-import { showNotification } from "../notifications";
-
-function CartController($scope) {
-  const vm = this;
-  vm.show = false;
-  vm.projects = [];
-  vm.count = 0;
-  vm.collapsed = {};
-  vm.term = "";
-
-  /*
-  This is here since this has been updated to use a standard Event,
-  and not handled through angularjs.
-   */
-  document.addEventListener(CART.UPDATED, e => {
-    const { count, added, duplicates, existing } = e.detail;
-    vm.count = typeof count === "undefined" ? 0 : +count;
-    $scope.$apply();
-
-    // Display notifications
-    if (added) {
-      showNotification({
-        text: added
-      });
-    }
-
-    if (duplicates) {
-      showNotification({
-        text: duplicates,
-        type: "warning"
-      });
-    }
-
-    if (existing) {
-      showNotification({
-        text: existing,
-        type: "info"
-      });
-    }
-  });
-}
-
-/**
- * Controller for functions on the cart slider
- * @param CartService The cart service to communicate with the server
- */
-function CartSliderController(CartService, $uibModal) {
-  const vm = this;
-
-  vm.clear = function() {
-    CartService.clear();
-  };
-
-  vm.removeProject = function(projectId) {
-    CartService.removeProject(projectId);
-  };
-
-  vm.removeSample = function(projectId, sampleId) {
-    CartService.removeSample(projectId, sampleId);
-  };
-
-  vm.exportToGalaxy = function() {
-    CartService.all().then(function(data) {
-      if (data !== null) {
-        const firstProjID = data.projects[0].id;
-
-        $uibModal.open({
-          templateUrl:
-            window.TL.BASE_URL + "cart/template/galaxy/project/" + firstProjID,
-          controller: "GalaxyDialogCtrl as gCtrl",
-          resolve: {
-            openedByCart: function() {
-              return true;
-            },
-            multiProject: function() {
-              return data.length > 1;
-            },
-            sampleIds: function() {
-              return false;
-            },
-            projectId: function() {
-              return false;
-            }
-          }
-        });
-      }
-    });
-  };
-}
-
-function CartDirective() {
-  return {
-    restrict: "E",
-    templateUrl: "/cart.html",
-    replace: true,
-    controllerAs: "cart",
-    controller: ["$scope", CartController]
-  };
-}
 
 function CartService(scope, $http) {
   const svc = this;
@@ -469,11 +370,6 @@ function CartFilter() {
 angular
   .module("irida.cart", [])
   .service("CartService", ["$rootScope", "$http", CartService])
-  .controller("CartSliderController", [
-    "CartService",
-    "$uibModal",
-    CartSliderController
-  ])
   .controller("GalaxyDialogCtrl", [
     "$uibModalInstance",
     "$timeout",
@@ -492,5 +388,4 @@ angular
     "$q",
     GalaxyExportService
   ])
-  .directive("cart", [CartDirective])
   .filter("cartFilter", [CartFilter]);
