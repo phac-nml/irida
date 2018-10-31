@@ -12,28 +12,18 @@
 </head>
 <body>
 <th:block layout:fragment="content">
-	<div style="height: 100%;">
-		<div style="height: 100%;" class="st-container" ng-class="{'cart-open':cart.show}">
-			<div class="st-content">
-				<div class="st-content-inner">
-					<nav th:replace="template/main-navigation.html :: #topnav"></nav>
-					<div th:if="${crumbs != null and #lists.size(crumbs) > 1}" class="breadcrumbs">
-						<div class="container-fluid">
-							<ol>
-								<li th:each="crumb : ${crumbs} ">
-									<a th:href="${crumb.url}" th:text="${crumb.text}"></a>
-								</li>
-							</ol>
-						</div>
-					</div>
-					<th:block layout:fragment="subnav"></th:block>
-					<div class="container-fluid body-content">
-						<div class="row" layout:fragment="page"></div>
-					</div>
-				</div>
-			</div>
-			<cart></cart>
+	<nav th:replace="template/main-navigation.html :: #topnav"></nav>
+	<div th:if="${crumbs != null and #lists.size(crumbs) > 1}" class="breadcrumbs">
+		<div class="container-fluid">
+			<ol>
+				<li th:each="crumb : ${crumbs} ">
+					<a th:href="${crumb.url}" th:text="${crumb.text}"></a>
+				</li>
+			</ol>
 		</div>
+	</div>
+	<div class="container-fluid body-content">
+		<div class="row" layout:fragment="page"></div>
 	</div>
 
 	<script type="text/ng-template" id="/session-modal.html">
