@@ -195,4 +195,20 @@ A deployment of this style provides an additional server for file processing, wh
 
 A deployment of this style provides multiple servers for file processing, while maintaining high performance for users of the web server.  It also offloads any networking lag introduced by synchronization jobs, uploading to NCBI, or analysis jobs.
 
+Deployment Tips
+---------------
+Since IRIDA often deals with large sequence files, you can occasionally run into issues with file upload sizes being too large for the server IRIDA is running on.  There are 2 directories where Tomcat stores temporary files as they're being uploaded which can be configured to run on some larger shared storage.
+
+First is Tomcat's "temp" directory.  You can configure Tomcat to use another directory by setting the `CATALINA_TMPDIR` variable in `tomcat.conf` (on Centos this can be found in `/etc/tomcat`):
+```
+CATALINA_TMPDIR=/Some/Larger/Shared/Storage/temp
+```
+
+The second is Tomcat's "work" directory.  This can be configured in `server.xml` (on Centos this can be found in `/etc/tomcat`).  You can set the `workDir` variable in the `<Host>` section.  Be careful not to modify any other variables:
+```xml
+<Host ... workDir="/Some/Larger/Shared/Storage/work">
+...
+</Host>
+```
+
 [Postfix]: http://www.postfix.org/
