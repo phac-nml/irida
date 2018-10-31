@@ -155,7 +155,7 @@ public class CartController {
 	 * @param selected
 	 *            A {@code Map<Project,Set<Sample>>} of selected samples
 	 */
-	public void setSelected(Map<Project, Set<Sample>> selected) {
+	public void addSelected(Map<Project, Set<Sample>> selected) {
 		// this.selected = selected;
 		for (Project project : selected.keySet()) {
 			Set<CartRequestSample> cartRequestSamples = selected.get(project)
@@ -187,7 +187,7 @@ public class CartController {
 				.map(id -> {
 					ProjectSampleJoin join = sampleService.getSampleForProject(project, id);
 					Sample sample = join.getObject();
-					return new CartRequestSample(sample.getId(), sample.getLabel());
+					return new CartRequestSample(sample.getId(), sample.getSampleName());
 				})
 				.collect(Collectors.toSet());
 		AddToCartRequest addToCartRequest = new AddToCartRequest(projectId, samples);

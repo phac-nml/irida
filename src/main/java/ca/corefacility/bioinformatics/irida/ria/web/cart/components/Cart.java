@@ -26,7 +26,7 @@ public class Cart {
 	private Map<Long, Set<Long>> cart = new HashMap<>();
 
 	/**
-	 * Cannot have the sample sample in the cart twice, this is here to ensure that the sample was not added via
+	 * Cannot have the same sample in the cart twice, this is here to ensure that the sample was not added via
 	 * another project.
 	 */
 	private Set<Long> currentSampleIds = new HashSet<>();
@@ -54,7 +54,7 @@ public class Cart {
 	 */
 	public AddToCartResponse addProjectSamplesToCart(AddToCartRequest addToCartRequest, Locale locale) {
 		AddToCartResponse response = new AddToCartResponse();
-		Set<Long> ids = cart.getOrDefault(addToCartRequest.getProjectId(), new HashSet<>());
+		Set<Long> sampleIdsInCart = cart.getOrDefault(addToCartRequest.getProjectId(), new HashSet<>());
 		int added = 0;
 		List<String> duplicates = new ArrayList<>();
 		List<String> existing = new ArrayList<>();
@@ -68,7 +68,7 @@ public class Cart {
 			} else if (currentSampleLabels.contains(sample.getLabel())) {
 				duplicates.add(sample.getLabel());
 			} else {
-				ids.add(sample.getId());
+				sampleIdsInCart.add(sample.getId());
 				currentSampleLabels.add(sample.getLabel());
 				currentSampleIds.add(sample.getId());
 				added++;
@@ -88,7 +88,7 @@ public class Cart {
 		}
 
 		if (duplicates.size() > 0) {
-			response.setAdded(
+			response.setDuplicate(
 					messageSource.getMessage("cart.excluded", new Object[] { String.join(", ", duplicates) }, locale));
 		}
 
@@ -101,7 +101,7 @@ public class Cart {
 
 		response.setCount(this.currentSampleLabels.size());
 
-		cart.put(addToCartRequest.getProjectId(), ids);
+		cart.put(addToCartRequest.getProjectId(), sampleIdsInCart);
 		return response;
 	}
 
@@ -120,7 +120,7 @@ public class Cart {
 	}
 
 	/**
-	 * Remove a all the {@link Sample}s from a particular {@link Project}
+	 * Remove all {@link Sample}s from a particular {@link Project}
 	 * @param projectId {@link Long} identifier for a {@link Project} to remove.
 	 */
 	public void removeProject(Long projectId) {
@@ -159,8 +159,8 @@ public class Cart {
 	public int getNumberOfSamples() {
 		return cart.keySet()
 				.stream()
-				.map(i -> cart.get(i)
+				.mapToInt(i -> cart.get(i)
 						.size())
-				.reduce(0, (a, b) -> a + b);
+				.sum();
 	}
 }
