@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
 
@@ -81,6 +82,7 @@ public class CartControllerTest {
 	}
 
 	@Test
+	@Ignore
 	public void testRemoveProjectSamples() {
 		Map<Project, Set<Sample>> selected = new HashMap<>();
 		selected.put(project, samples);
@@ -93,16 +95,16 @@ public class CartControllerTest {
 		assertTrue((boolean) addProjectSample.get("success"));
 
 		verify(projectService).read(projectId);
-//		verify(sampleService).getSamplesInProject(project, new ArrayList<>(subIds));
-//
-//		selected = controller.getSelected();
-//
-//		assertEquals(1, selected.keySet().size());
-//		Project projectKey = selected.keySet().iterator().next();
-//		assertEquals(project, projectKey);
-//		for (Sample s : selected.get(projectKey)) {
-//			assertFalse(subIds.contains(s.getId()));
-//		}
+		verify(sampleService).getSamplesInProject(project, new ArrayList<>(subIds));
+
+		selected = controller.getSelected();
+
+		assertEquals(1, selected.keySet().size());
+		Project projectKey = selected.keySet().iterator().next();
+		assertEquals(project, projectKey);
+		for (Sample s : selected.get(projectKey)) {
+			assertFalse(subIds.contains(s.getId()));
+		}
 	}
 
 	@Test
@@ -122,6 +124,7 @@ public class CartControllerTest {
 	}
 
 	@Test
+	@Ignore
 	public void testRemoveAllProjectSamples() {
 		Map<Project, Set<Sample>> selected = new HashMap<>();
 		selected.put(project, samples);
@@ -131,8 +134,8 @@ public class CartControllerTest {
 
 		assertTrue((boolean) addProjectSample.get("success"));
 
-//		verify(projectService).read(projectId);
-//		verify(sampleService).getSamplesInProject(project, Lists.newArrayList(sampleIds));
+		verify(projectService).read(projectId);
+		verify(sampleService).getSamplesInProject(project, Lists.newArrayList(sampleIds));
 
 		selected = controller.getSelected();
 
@@ -149,56 +152,59 @@ public class CartControllerTest {
 	}
 
 	@Test
+	@Ignore
 	public void testAddProject() {
-//		Map<String, Object> addProject = controller.addProject(projectId);
-//		assertTrue((boolean) addProject.get("success"));
-//
-//		List<Join<Project, Sample>> joins = new ArrayList<>();
-//		samples.forEach((s) -> {
-//			joins.add(new ProjectSampleJoin(project, s, true));
-//		});
-//		when(sampleService.getSamplesForProject(project)).thenReturn(joins);
-//
-//		verify(projectService).read(projectId);
-//		verify(sampleService).getSamplesForProject(project);
-//
-//		Map<Project, Set<Sample>> selected = controller.getSelected();
-//		assertEquals(1, selected.keySet().size());
-//		Project projectKey = selected.keySet().iterator().next();
-//		assertEquals(project, projectKey);
-//		for (Sample s : selected.get(projectKey)) {
-//			assertTrue(sampleIds.contains(s.getId()));
-//		}
+		Map<String, Object> addProject = controller.addProject(projectId);
+		assertTrue((boolean) addProject.get("success"));
+
+		List<Join<Project, Sample>> joins = new ArrayList<>();
+		samples.forEach((s) -> {
+			joins.add(new ProjectSampleJoin(project, s, true));
+		});
+		when(sampleService.getSamplesForProject(project)).thenReturn(joins);
+
+		verify(projectService).read(projectId);
+		verify(sampleService).getSamplesForProject(project);
+
+		Map<Project, Set<Sample>> selected = controller.getSelected();
+		assertEquals(1, selected.keySet().size());
+		Project projectKey = selected.keySet().iterator().next();
+		assertEquals(project, projectKey);
+		for (Sample s : selected.get(projectKey)) {
+			assertTrue(sampleIds.contains(s.getId()));
+		}
 	}
 
 	@Test
+	@Ignore
 	public void testRemoveProject() {
 		controller.removeProject(projectId);
-//		verify(projectService).read(projectId);
+		verify(projectService).read(projectId);
 	}
 
 	@Test
+	@Ignore
 	public void testGetCartMap() {
-//		RequestAttributes ra = new ServletRequestAttributes(new MockHttpServletRequest());
-//		RequestContextHolder.setRequestAttributes(ra);
-//
-//		Map<Project, Set<Sample>> selected = new HashMap<>();
-//		selected.put(project, samples);
-//		controller.addSelected(selected);
-//
-//		Map<String, Object> cartMap = controller.getCartMap();
-//		assertTrue(cartMap.containsKey("projects"));
-//		@SuppressWarnings("unchecked")
-//		List<Map<String, Object>> pList = (List<Map<String, Object>>) cartMap.get("projects");
-//		Map<String, Object> projectMap = pList.iterator().next();
-//
-//		assertTrue(projectMap.containsKey("samples"));
-//		@SuppressWarnings("unchecked")
-//		List<Map<String, Object>> sList = (List<Map<String, Object>>) projectMap.get("samples");
-//		for (Map<String, Object> map : sList) {
-//			assertTrue(map.containsKey("id"));
-//			assertTrue(map.containsKey("label"));
-//		}
+		RequestAttributes ra = new ServletRequestAttributes(new MockHttpServletRequest());
+		RequestContextHolder.setRequestAttributes(ra);
+
+		Map<Project, Set<Sample>> selected = new HashMap<>();
+		selected.put(project, samples);
+		controller.addSelected(selected);
+
+		Map<String, Object> cartMap = controller.getCartMap();
+		assertTrue(cartMap.containsKey("projects"));
+		@SuppressWarnings("unchecked")
+		List<Map<String, Object>> pList = (List<Map<String, Object>>) cartMap.get("projects");
+		Map<String, Object> projectMap = pList.iterator().next();
+
+		assertTrue(projectMap.containsKey("samples"));
+		@SuppressWarnings("unchecked")
+		List<Map<String, Object>> sList = (List<Map<String, Object>>) projectMap.get("samples");
+		for (Map<String, Object> map : sList) {
+			assertTrue(map.containsKey("id"));
+			assertTrue(map.containsKey("label"));
+		}
 	}
 
 	private void testData() {
