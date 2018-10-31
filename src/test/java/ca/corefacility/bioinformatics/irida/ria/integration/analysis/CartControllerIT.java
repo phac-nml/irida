@@ -30,13 +30,16 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.CartController;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartResponse;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.Sets;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -49,7 +52,6 @@ import static org.junit.Assert.assertTrue;
 @WebAppConfiguration
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/analysis/CartControllerIT.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
-@Ignore
 public class CartControllerIT {
 
 	@Autowired
@@ -73,17 +75,18 @@ public class CartControllerIT {
 
 	@Test
 	@WithMockUser(username = "mrtest", roles = "ADMIN")
+	@Ignore
 	public void testAddProjectSample() {
-//		Long projectId = 2L;
-//		Project project = projectService.read(projectId);
-//		Set<Long> sampleIds = Sets.newHashSet(4L);
-//		Map<String, Object> addProjectSample = controller.addProjectSample(projectId, sampleIds, Locale.US);
-//		assertEquals("Should be 1 sample in the cart", "1 sample was added to the cart from project2.",  addProjectSample.get("message"));
-//
-//		Set<Sample> selectedSamplesForProject = controller.getSelected().get(project);
-//		for (Sample s : selectedSamplesForProject) {
-//			assertTrue(sampleIds.contains(s.getId()));
-//		}
+		Long projectId = 2L;
+		Project project = projectService.read(projectId);
+		Set<Long> sampleIds = Sets.newHashSet(4L);
+		AddToCartResponse addProjectSample = controller.addProjectSample(projectId, sampleIds, Locale.US);
+		assertEquals("Should be 1 sample in the cart", "1 sample was added to the cart from project2.",  addProjectSample.getAdded());
+
+		Set<Sample> selectedSamplesForProject = controller.getSelected().get(project);
+		for (Sample s : selectedSamplesForProject) {
+			assertTrue(sampleIds.contains(s.getId()));
+		}
 	}
 
 	@Test
