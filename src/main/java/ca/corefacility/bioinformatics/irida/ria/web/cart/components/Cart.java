@@ -54,7 +54,7 @@ public class Cart {
 	 */
 	public AddToCartResponse addProjectSamplesToCart(AddToCartRequest addToCartRequest, Locale locale) {
 		AddToCartResponse response = new AddToCartResponse();
-		Set<Long> ids = cart.getOrDefault(addToCartRequest.getProjectId(), new HashSet<>());
+		Set<Long> sampleIdsInCart = cart.getOrDefault(addToCartRequest.getProjectId(), new HashSet<>());
 		int added = 0;
 		List<String> duplicates = new ArrayList<>();
 		List<String> existing = new ArrayList<>();
@@ -68,7 +68,7 @@ public class Cart {
 			} else if (currentSampleLabels.contains(sample.getLabel())) {
 				duplicates.add(sample.getLabel());
 			} else {
-				ids.add(sample.getId());
+				sampleIdsInCart.add(sample.getId());
 				currentSampleLabels.add(sample.getLabel());
 				currentSampleIds.add(sample.getId());
 				added++;
@@ -101,7 +101,7 @@ public class Cart {
 
 		response.setCount(this.currentSampleLabels.size());
 
-		cart.put(addToCartRequest.getProjectId(), ids);
+		cart.put(addToCartRequest.getProjectId(), sampleIdsInCart);
 		return response;
 	}
 
