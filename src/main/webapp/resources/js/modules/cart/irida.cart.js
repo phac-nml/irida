@@ -2,13 +2,10 @@ import angular from "angular";
 import find from "lodash/find";
 import filter from "lodash/filter";
 import { CART } from "../../utilities/events-utilities";
-import $ from "jquery";
 
 function CartService(scope, $http) {
   const svc = this;
   const urls = {
-    all: window.TL.BASE_URL + "cart",
-    add: window.TL.BASE_URL + "cart/add/samples",
     project: window.TL.BASE_URL + "cart/project/",
     galaxy: window.TL.BASE_URL + "cart/galaxy-export"
   };
@@ -33,70 +30,7 @@ function CartService(scope, $http) {
     });
   };
 
-  /*
-  Add Samples to the global cart
-  Event Listener for adding samples to the global cart.
-  Expects an object with project ids references an array of sample ids
-  { projectId: [sampleIds] }
-   */
-  document.addEventListener(
-    CART.ADD,
-    function(e) {
-      const projects = e.detail.projects;
-      if (typeof projects === "undefined") {
-        return;
-      }
-      const promises = [];
-      /*
-    For each project that has samples, post the project/samples to
-    and store the promise.
-     */
-      Object.keys(projects).forEach(projectId => {
-        promises.push(
-          $.post(window.TL.URLS.cart.add, {
-            projectId,
-            sampleIds: projects[projectId]
-          }).then(response => {
-            document.dispatchEvent(
-              new CustomEvent(CART.UPDATED, {
-                detail: response
-              })
-            );
-            /*
-          Display a notification of what occurred on the server.
-           */
-            // const { message, excluded } = response;
-            // if (excluded) {
-            //   showNotification({
-            //     text: `
-            //         <p>${message}<p>
-            //         <ul>${excluded
-            //           .map(excludedSample => "<li>" + excludedSample + "</li>")
-            //           .join("")}</ul>`,
-            //     progressBar: false,
-            //     timeout: false,
-            //     type: "warning"
-            //   });
-            // } else {
-            //   showNotification({
-            //     text: message
-            //   });
-            // }
-          })
-        );
-      });
 
-      /*
-    Wait until all the projects have been added to the server cart, and
-    then notify the UI that this has occurred.
-     */
-      // $.when.apply($, promises).done(function() {
-      //   const event = new Event(CART.UPDATED);
-      //   document.dispatchEvent(event);
-      // });
-    },
-    false
-  );
 
   svc.clear = function() {
     //fire a DELETE to the server on the cart then broadcast the cart update event
