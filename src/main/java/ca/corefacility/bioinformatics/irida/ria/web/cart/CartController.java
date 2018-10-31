@@ -155,7 +155,7 @@ public class CartController {
 	 * @param selected
 	 *            A {@code Map<Project,Set<Sample>>} of selected samples
 	 */
-	public void setSelected(Map<Project, Set<Sample>> selected) {
+	public void addSelected(Map<Project, Set<Sample>> selected) {
 		// this.selected = selected;
 		for (Project project : selected.keySet()) {
 			Set<CartRequestSample> cartRequestSamples = selected.get(project)
