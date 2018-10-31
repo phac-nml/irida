@@ -187,7 +187,7 @@ public class CartController {
 				.map(id -> {
 					ProjectSampleJoin join = sampleService.getSampleForProject(project, id);
 					Sample sample = join.getObject();
-					return new CartRequestSample(sample.getId(), sample.getLabel());
+					return new CartRequestSample(sample.getId(), sample.getSampleName());
 				})
 				.collect(Collectors.toSet());
 		AddToCartRequest addToCartRequest = new AddToCartRequest(projectId, samples);
