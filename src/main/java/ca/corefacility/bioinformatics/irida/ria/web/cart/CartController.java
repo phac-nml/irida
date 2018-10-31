@@ -154,19 +154,16 @@ public class CartController {
 	 *
 	 * @param selected
 	 *            A {@code Map<Project,Set<Sample>>} of selected samples
+	 * @param locale {@link Locale}
 	 */
-	public void addSelected(Map<Project, Set<Sample>> selected) {
+	public void addSelected(Map<Project, Set<Sample>> selected, Locale locale) {
 		// this.selected = selected;
 		for (Project project : selected.keySet()) {
 			Set<CartRequestSample> cartRequestSamples = selected.get(project)
 					.stream()
 					.map(s -> new CartRequestSample(s.getId(), s.getLabel()))
 					.collect(Collectors.toSet());
-			/*
-			Since this is for testing purposes only we will just pass in the English locale.
-			Don't need to handle the response.
-			 */
-			cart.addProjectSamplesToCart(new AddToCartRequest(project.getId(), cartRequestSamples), Locale.ENGLISH);
+			cart.addProjectSamplesToCart(new AddToCartRequest(project.getId(), cartRequestSamples), locale);
 		}
 	}
 

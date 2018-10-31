@@ -91,7 +91,7 @@ public class CartControllerTest {
 	public void testRemoveProjectSamples() {
 		Map<Project, Set<Sample>> selected = new HashMap<>();
 		selected.put(project, samples);
-		controller.addSelected(selected);
+		controller.addSelected(selected, Locale.ENGLISH);
 
 		Set<Long> subIds = Sets.newHashSet(sampleIds.iterator().next());
 
@@ -117,7 +117,7 @@ public class CartControllerTest {
 	public void testRemoveProjectSample() {
 		Map<Project, Set<Sample>> selected = new HashMap<>();
 		selected.put(project, samples);
-		controller.addSelected(selected);
+		controller.addSelected(selected, Locale.ENGLISH);
 		Sample sample = samples.iterator().next();
 		Map<String, Object> removeProjectSample = controller.removeProjectSample(projectId, sample.getId());
 
@@ -134,7 +134,7 @@ public class CartControllerTest {
 	public void testRemoveAllProjectSamples() {
 		Map<Project, Set<Sample>> selected = new HashMap<>();
 		selected.put(project, samples);
-		controller.addSelected(selected);
+		controller.addSelected(selected, Locale.ENGLISH);
 
 		Map<String, Object> addProjectSample = controller.removeProjectSamples(projectId, sampleIds);
 
@@ -196,7 +196,7 @@ public class CartControllerTest {
 
 		Map<Project, Set<Sample>> selected = new HashMap<>();
 		selected.put(project, samples);
-		controller.addSelected(selected);
+		controller.addSelected(selected, Locale.ENGLISH);
 
 		Map<String, Object> cartMap = controller.getCartMap();
 		assertTrue(cartMap.containsKey("projects"));
