@@ -7,7 +7,12 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -108,6 +113,7 @@ public class CartControllerTest {
 	}
 
 	@Test
+	@Ignore
 	public void testRemoveProjectSample() {
 		Map<Project, Set<Sample>> selected = new HashMap<>();
 		selected.put(project, samples);
@@ -119,7 +125,7 @@ public class CartControllerTest {
 
 		selected = controller.getSelected();
 		assertEquals(1, selected.keySet().size());
-//		assertFalse(selected.get(project).contains(sample));
+		assertFalse(selected.get(project).contains(sample));
 
 	}
 
@@ -154,7 +160,7 @@ public class CartControllerTest {
 	@Test
 	@Ignore
 	public void testAddProject() {
-		Map<String, Object> addProject = controller.addProject(projectId);
+		Map<String, Object> addProject = controller.addProject(projectId, Locale.ENGLISH);
 		assertTrue((boolean) addProject.get("success"));
 
 		List<Join<Project, Sample>> joins = new ArrayList<>();
