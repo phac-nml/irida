@@ -161,6 +161,14 @@ public class LineListController {
 		}
 	}
 
+	/**
+	 * Format a {@link MetadataTemplate} to be consumed by a UI instance of AgGrid.
+	 *
+	 * @param template  {@link MetadataTemplate}
+	 * @param allFields {@link List} of {@link AgGridColumn} - this is the "All Fields" template for the {@link Project}
+	 * @return {@link List} of {@link AgGridColumn} that has all the fields in the project, but ones for this template are first
+	 * and are the only ones that are not hidden in the UI
+	 */
 	private List<AgGridColumn> formatTemplateForUI(MetadataTemplate template, List<AgGridColumn> allFields) {
 		/*
 		Need to remove the sample since allFields begins with the sample.
