@@ -124,6 +124,8 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 		basicDataSource.setTestOnReturn(environment.getProperty("jdbc.pool.testOnReturn", Boolean.class));
 		basicDataSource.setTestWhileIdle(environment.getProperty("jdbc.pool.testWhileIdle", Boolean.class));
 		basicDataSource.setValidationQuery(environment.getProperty("jdbc.pool.validationQuery"));
+		
+		logger.debug("database maxWaitMillis [" + basicDataSource.getMaxWaitMillis() + "]");
 
 		return basicDataSource;
 	}
