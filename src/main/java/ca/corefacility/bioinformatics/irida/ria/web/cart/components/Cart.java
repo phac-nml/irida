@@ -88,7 +88,7 @@ public class Cart {
 		}
 
 		if (duplicates.size() > 0) {
-			response.setAdded(
+			response.setDuplicate(
 					messageSource.getMessage("cart.excluded", new Object[] { String.join(", ", duplicates) }, locale));
 		}
 
