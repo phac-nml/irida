@@ -165,39 +165,51 @@ public class LineListController {
 	 * Format a {@link MetadataTemplate} to be consumed by a UI instance of AgGrid.
 	 *
 	 * @param template  {@link MetadataTemplate}
-	 * @param allFields {@link List} of {@link AgGridColumn} - this is the "All Fields" template for the {@link Project}
+	 * @param allFieldsAgGridColumns {@link List} of {@link AgGridColumn} - this is the "All Fields" template for the {@link Project}
 	 * @return {@link List} of {@link AgGridColumn} that has all the fields in the project, but ones for this template are first
 	 * and are the only ones that are not hidden in the UI
 	 */
-	private List<AgGridColumn> formatTemplateForUI(MetadataTemplate template, List<AgGridColumn> allFields) {
+	private List<AgGridColumn> formatTemplateForUI(MetadataTemplate template, List<AgGridColumn> allFieldsAgGridColumns) {
 		/*
 		Need to remove the sample since allFields begins with the sample.
 		 */
-		allFields.remove(0);
-		List<String> labels = allFields.stream()
+		allFieldsAgGridColumns.remove(0);
+
+		/*
+		Get a list of all the column labels to facilitate faster look ups.
+		 */
+		List<String> allFieldsLabels = allFieldsAgGridColumns.stream()
 				.map(AgGridColumn::getHeaderName)
 				.collect(Collectors.toList());
 
-		List<AgGridColumn> fields = new ArrayList<>();
+		/*
+		Create the new UI AgGridColumn template.
+		 */
+		List<AgGridColumn> templateAgGridColumns = new ArrayList<>();
 
 		/*
-		Go through the template fields and remove it from the copy of allFields.  At the end, this should
-		leave only the fields that need to be hidden.
+		For each field in the template:
+		1. find out where it is the the default template.
+		2. Remove that column from the default template (allFieldsAgGridColumns) (any remaining at the end will be marked as hidden).
+		3. Remove the label from the allFieldsLabels to maintain proper indexing.
+		4. Create an AgGridColumn for the field and add it to the template.
 		 */
 		for (MetadataTemplateField field : template.getFields()) {
-			// Find out where the field is in all the fields;
-			int index = labels.indexOf(field.getLabel());
-			allFields.remove(index);
-			labels.remove(index);
-			fields.add(mapFieldToColumn(field));
+			int index = allFieldsLabels.indexOf(field.getLabel());
+			allFieldsAgGridColumns.remove(index);
+			allFieldsLabels.remove(index);
+			templateAgGridColumns.add(mapFieldToColumn(field));
 		}
 
 		/*
-		Set the remainder of the fields to hidden
+		Since it the previous for loop we removed all of the current template fields from allFieldsAgGridColumns,
+		we can assume the rest should be hidden and then just appended to the end of the template.
 		 */
-		allFields.forEach(field -> field.setHide(true));
-		fields.addAll(allFields);
-		return fields;
+		allFieldsAgGridColumns.forEach(field -> {
+			field.setHide(true);
+			templateAgGridColumns.add(field);
+		});
+		return templateAgGridColumns;
 	}
 
 	/**
