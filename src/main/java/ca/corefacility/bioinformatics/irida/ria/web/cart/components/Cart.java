@@ -26,7 +26,7 @@ public class Cart {
 	private Map<Long, Set<Long>> cart = new HashMap<>();
 
 	/**
-	 * Cannot have the sample sample in the cart twice, this is here to ensure that the sample was not added via
+	 * Cannot have the same sample in the cart twice, this is here to ensure that the sample was not added via
 	 * another project.
 	 */
 	private Set<Long> currentSampleIds = new HashSet<>();
@@ -159,8 +159,8 @@ public class Cart {
 	public int getNumberOfSamples() {
 		return cart.keySet()
 				.stream()
-				.map(i -> cart.get(i)
+				.mapToInt(i -> cart.get(i)
 						.size())
-				.reduce(0, (a, b) -> a + b);
+				.sum();
 	}
 }
