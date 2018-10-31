@@ -120,7 +120,7 @@ public class Cart {
 	}
 
 	/**
-	 * Remove a all the {@link Sample}s from a particular {@link Project}
+	 * Remove all {@link Sample}s from a particular {@link Project}
 	 * @param projectId {@link Long} identifier for a {@link Project} to remove.
 	 */
 	public void removeProject(Long projectId) {
