@@ -21,6 +21,7 @@ Changes
 * [Workflow]: Fixed issue where duplicate filenames were found after running Galaxy workflow in newer Galaxy versions. (0.22.4)
 * [Developer]: Added unused import checking to checkstyle config.  The `mvn site` build will throw an error if unused imports are present.
 * [Developer]: Added ability to adjust `jdbc.pool.maxWait` through an environment variable `DB_MAX_WAIT_MILLIS` for fixing timeout issues for tests.
+* [Workflow]: Decreased the default thresholds for contig size and coverage for contigs for the SISTR pipeline.
 
 0.21.0 to 0.22.0
 ----------------
