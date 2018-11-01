@@ -1,13 +1,10 @@
-package ca.corefacility.bioinformatics.irida.ria.web.analysis;
+package ca.corefacility.bioinformatics.irida.ria.web.cart;
 
 import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -15,10 +12,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.components.Cart;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartRequestSample;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -27,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProj
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -40,24 +43,21 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @Scope("session")
 @RequestMapping("/cart")
 public class CartController {
-	private static final Logger logger = LoggerFactory.getLogger(CartController.class);
-	private Map<Project, Set<Sample>> selected;
-	
+	private Cart cart;
+
 	private final SampleService sampleService;
 	private final UserService userService;
 	private final ProjectService projectService;
 	private final SequencingObjectService sequencingObjectService;
-	private final MessageSource messageSource;
 
 	@Autowired
 	public CartController(SampleService sampleService, UserService userService, ProjectService projectService,
-			SequencingObjectService sequencingObjectService, MessageSource messageSource) {
+			SequencingObjectService sequencingObjectService, Cart cart) {
 		this.sampleService = sampleService;
 		this.projectService = projectService;
 		this.userService = userService;
 		this.sequencingObjectService = sequencingObjectService;
-		this.messageSource = messageSource;
-		selected = new HashMap<>();
+		this.cart = cart;
 	}
 
 	/**
@@ -118,34 +118,53 @@ public class CartController {
 
 	/**
 	 * Clear the cart
-	 * 
+	 *
 	 * @return Success message
 	 */
 	@RequestMapping(method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public Map<String, Object> clearCart() {
-		selected.clear();
+		cart.empty();
 		return ImmutableMap.of("success", true);
 	}
 
 	/**
 	 * Get the cart object. This method should only be accessed
 	 * programmatically.
-	 * 
+	 *
 	 * @return The cart map
 	 */
 	public Map<Project, Set<Sample>> getSelected() {
-		return selected;
+		/*
+		Inflating the whole cart here.  This is going to be a serious performance hit!
+		 */
+		Map<Long, Set<Long>> projects = cart.get();
+		Map<Project, Set<Sample>> result = new HashMap<>();
+
+		for (Long id : projects.keySet()) {
+			Project project = projectService.read(id);
+			Set<Sample> samples = (Set<Sample>) sampleService.readMultiple(projects.get(id));
+			result.put(project, samples);
+		}
+		return result;
 	}
 
 	/**
-	 * Set the cart object programatically. Used mostly for testing.
-	 * 
+	 * Set the cart object programmatically. Used mostly for testing.
+	 *
 	 * @param selected
 	 *            A {@code Map<Project,Set<Sample>>} of selected samples
+	 * @param locale {@link Locale}
 	 */
-	public void setSelected(Map<Project, Set<Sample>> selected) {
-		this.selected = selected;
+	public void addSelected(Map<Project, Set<Sample>> selected, Locale locale) {
+		// this.selected = selected;
+		for (Project project : selected.keySet()) {
+			Set<CartRequestSample> cartRequestSamples = selected.get(project)
+					.stream()
+					.map(s -> new CartRequestSample(s.getId(), s.getLabel()))
+					.collect(Collectors.toSet());
+			cart.addProjectSamplesToCart(new AddToCartRequest(project.getId(), cartRequestSamples), locale);
+		}
 	}
 
 	/**
@@ -158,61 +177,36 @@ public class CartController {
 	 */
 	@RequestMapping(value = "/add/samples", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> addProjectSample(@RequestParam Long projectId,
+	public AddToCartResponse addProjectSample(@RequestParam Long projectId,
 			@RequestParam(value = "sampleIds[]") Set<Long> sampleIds, Locale locale) {
 		Project project = projectService.read(projectId);
-		final Map<String, Sample> selectedNameToSample = selected.entrySet()
-				.stream()
-				.flatMap(entry -> entry.getValue()
-						.stream())
-				.collect(Collectors.toMap(Sample::getSampleName, sample -> sample));
-		Set<Sample> samples = loadSamplesForProject(project, sampleIds);
-		final Set<Sample> selectedSamples = new HashSet<>(selectedNameToSample.values());
-		final boolean removedSamples = samples.removeAll(selectedSamples);
-		if (removedSamples)
-			logger.trace("Removed Samples already in cart.");
-		final Map<String, Sample> nameToSample = samples.stream()
-				.collect(Collectors.toMap(Sample::getSampleName, sample -> sample));
-		Set<Sample> dupSamples = new HashSet<>();
-		nameToSample.forEach((name, sample) -> {
-			if (selectedNameToSample.containsKey(name)) {
-				dupSamples.add(sample);
-			}
-		});
-		if (!dupSamples.isEmpty()) {
-			samples.removeAll(dupSamples);
-			logger.trace(
-					"Samples with existing sample names (n=" + dupSamples.size() + " not added to cart: " + dupSamples);
-		}
+		Set<CartRequestSample> samples = sampleIds.stream()
+				.map(id -> {
+					ProjectSampleJoin join = sampleService.getSampleForProject(project, id);
+					Sample sample = join.getObject();
+					return new CartRequestSample(sample.getId(), sample.getSampleName());
+				})
+				.collect(Collectors.toSet());
+		AddToCartRequest addToCartRequest = new AddToCartRequest(projectId, samples);
+		return this.cart.addProjectSamplesToCart(addToCartRequest, locale);
+	}
 
-		getSelectedSamplesForProject(project).addAll(samples);
-
-		final int samplesSize = samples.size();
-		String message;
-		if (samplesSize == 0) {
-			message = messageSource.getMessage("cart.no-samples-added", new Object[] { project.getLabel() }, locale);
-		} else if (samplesSize == 1)
-			message = messageSource.getMessage("cart.one-sample-added", new Object[] { project.getLabel() }, locale);
-		else
-			message = messageSource.getMessage("cart.many-samples-added",
-					new Object[] { samplesSize, project.getLabel() }, locale);
-		Map<String, Object> out = new HashMap<>();
-
-		if (!dupSamples.isEmpty()) {
-			out.put("excluded", dupSamples.stream()
-					.map(sample -> sample.getSampleName() + " (id=" + sample.getId() + "; project='"
-							+ project.getLabel() + "' (id=" + project.getId() + "))")
-					.collect(Collectors.toList()));
-			message += " " + messageSource.getMessage("cart.excluded", null, locale);
-		}
-
-		out.put("message", message);
-		return out;
+	/**
+	 * Update add samples to cart for the new LineList page.
+	 *
+	 * @param addToCartRequest {@link AddToCartRequest} contains the {@link Project} identifier and list of {@link Sample} data to add to the cart
+	 * @param locale      {@link Locale}
+	 * @return {@link AddToCartResponse}
+	 */
+	@RequestMapping(method = RequestMethod.PUT)
+	@ResponseBody
+	public AddToCartResponse addSamplesToCart(@RequestBody AddToCartRequest addToCartRequest, Locale locale) {
+		return this.cart.addProjectSamplesToCart(addToCartRequest, locale);
 	}
 
 	/**
 	 * Delete a {@link Sample} from the cart from a given {@link Project}
-	 * 
+	 *
 	 * @param projectId
 	 *            The {@link Project} ID
 	 * @param sampleIds
@@ -222,21 +216,13 @@ public class CartController {
 	@RequestMapping(value = "/project/{projectId}/samples", method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public Map<String, Object> removeProjectSamples(@PathVariable Long projectId, @RequestBody Set<Long> sampleIds) {
-		Project project = projectService.read(projectId);
-		Set<Sample> samples = loadSamplesForProject(project, sampleIds);
-		Set<Sample> selectedSamplesForProject = getSelectedSamplesForProject(project);
-		selectedSamplesForProject.removeAll(samples);
-
-		if (selectedSamplesForProject.isEmpty()) {
-			selected.remove(project);
-		}
-
+		cart.removeProjectSamples(projectId, sampleIds);
 		return ImmutableMap.of("success", true);
 	}
 
 	/**
 	 * Remove a single sample from the cart
-	 * 
+	 *
 	 * @param projectId
 	 *            The project id of the sample
 	 * @param sampleId
@@ -246,43 +232,33 @@ public class CartController {
 	@RequestMapping(value = "/project/{projectId}/samples/{sampleId}", method = RequestMethod.DELETE)
 	@ResponseBody
 	public Map<String, Object> removeProjectSample(@PathVariable Long projectId, @PathVariable Long sampleId) {
-		Project project = projectService.read(projectId);
-		Sample sampleForProject = sampleService.getSampleForProject(project, sampleId).getObject();
-		Set<Sample> selectedSamplesForProject = getSelectedSamplesForProject(project);
-
-		selectedSamplesForProject.remove(sampleForProject);
-
-		if (selectedSamplesForProject.isEmpty()) {
-			selected.remove(project);
-		}
-
+		cart.removeProjectSamples(projectId, ImmutableSet.of(sampleId));
 		return ImmutableMap.of("success", true);
 	}
 
 	/**
 	 * Add an entire {@link Project} to the cart
-	 * 
+	 *
 	 * @param projectId
 	 *            The ID of the {@link Project}
+	 * @param locale {@link Locale}
 	 * @return a map stating success
 	 */
 	@RequestMapping(value = "/project/{projectId}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public Map<String, Object> addProject(@PathVariable Long projectId) {
+	public Map<String, Object> addProject(@PathVariable Long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
 		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(project);
-		Set<Sample> samples = samplesForProject.stream().map((j) -> {
-			return j.getObject();
-		}).collect(Collectors.toSet());
-
-		getSelectedSamplesForProject(project).addAll(samples);
-
+		Set<CartRequestSample> samples = samplesForProject.stream()
+				.map(j -> new CartRequestSample(j.getId(), j.getLabel()))
+				.collect(Collectors.toSet());
+		cart.addProjectSamplesToCart(new AddToCartRequest(projectId, samples), locale);
 		return ImmutableMap.of("success", true);
 	}
 
 	/**
 	 * Delete an entire project from the cart
-	 * 
+	 *
 	 * @param projectId
 	 *            The ID of the {@link Project} to delete
 	 * @return a map stating success
@@ -290,15 +266,13 @@ public class CartController {
 	@RequestMapping(value = "/project/{projectId}", method = RequestMethod.DELETE)
 	@ResponseBody
 	public Map<String, Object> removeProject(@PathVariable Long projectId) {
-		Project project = projectService.read(projectId);
-		selected.remove(project);
-
+		cart.removeProject(projectId);
 		return ImmutableMap.of("success", true);
 	}
 
 	/**
 	 * Get the {@link Sample}s in a {@link Project} with the given IDs
-	 * 
+	 *
 	 * @param project
 	 *            The {@link Project} to get {@link Sample}s for
 	 * @param sampleIds
@@ -312,15 +286,19 @@ public class CartController {
 
 	/**
 	 * Get the {@link Project}s in the cart as a List for JSON serialization
-	 * 
+	 *
 	 * @return A List<Map<String,Object>> containing the relevant Project and
 	 *         Sample information
 	 */
 	private List<Map<String, Object>> getProjectsAsList() {
-		Set<Project> projects = selected.keySet();
+		Map<Long, Set<Long>> currentCart = cart.get();
 		List<Map<String, Object>> projectList = new ArrayList<>();
-		for (Project p : projects) {
-			Set<Sample> selectedSamplesForProject = selected.get(p);
+		for (Long id : currentCart.keySet()) {
+			Project p = projectService.read(id);
+			Set<Sample> selectedSamplesForProject = currentCart.get(id)
+					.stream()
+					.map(sampleService::read)
+					.collect(Collectors.toSet());
 			List<Map<String, Object>> samples = getSamplesAsList(selectedSamplesForProject);
 
 			Map<String, Object> projectMap = ImmutableMap.of("id", p.getId(), "label", p.getLabel(), "samples",
@@ -333,7 +311,7 @@ public class CartController {
 
 	/**
 	 * Get the set of given {@link Sample}s as a List for JSON serialization
-	 * 
+	 *
 	 * @param samples
 	 *            The {@link Sample} set
 	 * @return A List<Map<String,Object>> containing the relevant Sample
@@ -355,12 +333,15 @@ public class CartController {
 	 * Sample information
 	 */
 	private List<Map<String, Object>> getProjectsAsListForGalaxy() {
-		Set<Project> projects = selected.keySet();
+		Map<Long, Set<Long>> currentCart = cart.get();
 		List<Map<String, Object>> projectList = new ArrayList<>();
-		for (Project p : projects) {
-			Set<Sample> selectedSamplesForProject = selected.get(p);
-			List<Map<String, Object>> samples = getSamplesAsListForGalaxy(selectedSamplesForProject, p.getId());
-
+		for (Long id : currentCart.keySet()) {
+			Set<Sample> selectedSamplesForProject = currentCart.get(id)
+					.stream()
+					.map(sampleService::read)
+					.collect(Collectors.toSet());
+			List<Map<String, Object>> samples = getSamplesAsListForGalaxy(selectedSamplesForProject, id);
+			Project p = projectService.read(id);
 			Map<String, Object> projectMap = ImmutableMap.of("id", p.getId(), "label", p.getLabel(), "samples",
 					samples);
 			projectList.add(projectMap);
@@ -418,21 +399,13 @@ public class CartController {
 		return sequenceFiles;
 	}
 
-	private synchronized Set<Sample> getSelectedSamplesForProject(Project project) {
-		if (!selected.containsKey(project)) {
-			selected.put(project, new HashSet<>());
-		}
-
-		return selected.get(project);
-	}
-
 	/**
 	 * Get the number of projects contained in the cart.
 	 *
 	 * @return {@link Integer} number of projects in the cart.
 	 */
 	public int getNumberOfProjects() {
-		return this.selected.keySet().size();
+		return cart.getNumberOfProjects();
 	}
 
 	/**
@@ -441,12 +414,7 @@ public class CartController {
 	 * @return {@link Integer} number of samples in the cart.
 	 */
 	public int getNumberOfSamples() {
-		int count = 0;
-		for (Project project : selected.keySet()) {
-			count += selected.get(project).size();
-		}
-
-		return count;
+		return cart.getNumberOfSamples();
 	}
 
 }

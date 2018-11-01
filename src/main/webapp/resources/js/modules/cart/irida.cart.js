@@ -5,7 +5,7 @@ import { CART } from "../../utilities/events-utilities";
 import $ from "jquery";
 import { showNotification } from "../notifications";
 
-function CartController(cart) {
+function CartController($scope) {
   const vm = this;
   vm.show = false;
   vm.projects = [];
@@ -17,28 +17,32 @@ function CartController(cart) {
   This is here since this has been updated to use a standard Event,
   and not handled through angularjs.
    */
-  document.addEventListener(CART.UPDATED, function() {
-    getCart(false);
-  });
+  document.addEventListener(CART.UPDATED, e => {
+    const { count, added, duplicates, existing } = e.detail;
+    vm.count = typeof count === "undefined" ? 0 : +count;
+    $scope.$apply();
 
-  function getCart(collapse) {
-    cart.all().then(function(data) {
-      vm.count = 0;
-      vm.projects = data.projects;
-      vm.projects.forEach(function(p) {
-        vm.count += p.samples.length;
-        // Sort the samples by created date.
-        p.samples.sort(function(a, b) {
-          return b.createdDate - a.createdDate > 0;
-        });
-        if (collapse) {
-          vm.collapsed[p.id] = true;
-        }
+    // Display notifications
+    if (added) {
+      showNotification({
+        text: added
       });
-    });
-  }
+    }
 
-  getCart(true);
+    if (duplicates) {
+      showNotification({
+        text: duplicates,
+        type: "warning"
+      });
+    }
+
+    if (existing) {
+      showNotification({
+        text: existing,
+        type: "info"
+      });
+    }
+  });
 }
 
 /**
@@ -95,7 +99,7 @@ function CartDirective() {
     templateUrl: "/cart.html",
     replace: true,
     controllerAs: "cart",
-    controller: ["CartService", CartController]
+    controller: ["$scope", CartController]
   };
 }
 
@@ -152,26 +156,31 @@ function CartService(scope, $http) {
             projectId,
             sampleIds: projects[projectId]
           }).then(response => {
+            document.dispatchEvent(
+              new CustomEvent(CART.UPDATED, {
+                detail: response
+              })
+            );
             /*
           Display a notification of what occurred on the server.
            */
-            const { message, excluded } = response;
-            if (excluded) {
-              showNotification({
-                text: `
-                    <p>${message}<p>
-                    <ul>${excluded
-                      .map(excludedSample => "<li>" + excludedSample + "</li>")
-                      .join("")}</ul>`,
-                progressBar: false,
-                timeout: false,
-                type: "warning"
-              });
-            } else {
-              showNotification({
-                text: message
-              });
-            }
+            // const { message, excluded } = response;
+            // if (excluded) {
+            //   showNotification({
+            //     text: `
+            //         <p>${message}<p>
+            //         <ul>${excluded
+            //           .map(excludedSample => "<li>" + excludedSample + "</li>")
+            //           .join("")}</ul>`,
+            //     progressBar: false,
+            //     timeout: false,
+            //     type: "warning"
+            //   });
+            // } else {
+            //   showNotification({
+            //     text: message
+            //   });
+            // }
           })
         );
       });
@@ -180,10 +189,10 @@ function CartService(scope, $http) {
     Wait until all the projects have been added to the server cart, and
     then notify the UI that this has occurred.
      */
-      $.when.apply($, promises).done(function() {
-        const event = new Event(CART.UPDATED);
-        document.dispatchEvent(event);
-      });
+      // $.when.apply($, promises).done(function() {
+      //   const event = new Event(CART.UPDATED);
+      //   document.dispatchEvent(event);
+      // });
     },
     false
   );
