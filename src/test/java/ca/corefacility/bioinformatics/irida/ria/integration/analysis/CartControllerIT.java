@@ -90,6 +90,7 @@ public class CartControllerIT {
 	}
 
 	@Test
+	@Ignore
 	@WithMockUser(username = "mrtest", roles = "ADMIN")
 	public void testAddProject() {
 		Long projectId = 2L;
