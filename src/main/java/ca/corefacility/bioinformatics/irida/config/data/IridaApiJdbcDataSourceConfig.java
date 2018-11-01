@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.Database;
@@ -125,6 +124,8 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 		basicDataSource.setTestOnReturn(environment.getProperty("jdbc.pool.testOnReturn", Boolean.class));
 		basicDataSource.setTestWhileIdle(environment.getProperty("jdbc.pool.testWhileIdle", Boolean.class));
 		basicDataSource.setValidationQuery(environment.getProperty("jdbc.pool.validationQuery"));
+		
+		logger.debug("database maxWaitMillis [" + basicDataSource.getMaxWaitMillis() + "]");
 
 		return basicDataSource;
 	}
