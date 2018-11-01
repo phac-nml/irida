@@ -12,8 +12,8 @@ Contacting the IRIDA Team
 * Chat with the developers on [Gitter](https://gitter.im/irida-project/)
 
 
-Contributing to IRIDA
----------------------
+Types of Contributions
+----------------------
 
 ### Reporting a bug
 
