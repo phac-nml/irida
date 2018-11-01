@@ -176,10 +176,10 @@ public class LineListController {
 		allFieldsAgGridColumns.remove(0);
 
 		/*
-		Get a list of all the column labels to facilitate faster look ups.
+		Get a list of all the column field keys to facilitate faster look ups.
 		 */
 		List<String> allFieldsLabels = allFieldsAgGridColumns.stream()
-				.map(AgGridColumn::getHeaderName)
+				.map(AgGridColumn::getField)
 				.collect(Collectors.toList());
 
 		/*
@@ -195,7 +195,7 @@ public class LineListController {
 		4. Create an AgGridColumn for the field and add it to the template.
 		 */
 		for (MetadataTemplateField field : template.getFields()) {
-			int index = allFieldsLabels.indexOf(field.getLabel());
+			int index = allFieldsLabels.indexOf(field.getFieldKey());
 			allFieldsAgGridColumns.remove(index);
 			allFieldsLabels.remove(index);
 			templateAgGridColumns.add(mapFieldToColumn(field));
