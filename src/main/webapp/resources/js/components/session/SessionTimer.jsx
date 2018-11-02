@@ -39,7 +39,7 @@ export default class SessionTimer extends React.Component {
    * @type {number}
    * @private
    */
-  _SESSION_LENGTH = window.TL.SESSION_LENGTH * 1000; // Session length originally in seconds
+  _SESSION_LENGTH = window.TL.session.SESSION_LENGTH * 1000; // Session length originally in seconds
 
   state = {
     visible: false
@@ -100,13 +100,14 @@ export default class SessionTimer extends React.Component {
   resetTimeout = () => {
     this.clearTimeout();
     this.setTimeout();
+    this.setState({ visible: false });
   };
 
   render() {
     return this.state.visible ? (
       <LoadableModal
         resetTimeout={this.resetTimeout}
-        time={this._MODAL_TIMEOUT + 2000}
+        time={this._MODAL_TIMEOUT}
       />
     ) : null;
   }

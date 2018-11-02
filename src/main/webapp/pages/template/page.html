@@ -110,7 +110,14 @@
 			    add: /*[[@{/cart/add/samples}]]*/ "/cart/add/samples"
 			  }
 			},
-			SESSION_LENGTH: /*[[${#httpSession.getAttribute('SESSION_TIMEOUT')}]]*/ 1800,
+			session: {
+			  SESSION_LENGTH: /*[[${#httpSession.getAttribute('SESSION_TIMEOUT')}]]*/ 1800,
+			  i18n: {
+			    title: /*[[#{SessionModal.title}]]*/ 'Session timeout modal title',
+			    logout: /*[[#{SessionModal.logout}]]*/ 'Logout',
+			    keep: /*[[#{SessionModal.keep}]]*/ 'Keep Session'
+			  }
+			},
 			lang          : {
 				page  : {
 					"first": /*[[#{table.first}]]*/ 'First',
@@ -129,6 +136,15 @@
 			galaxyClientID: /*[[${#httpSession.getAttribute('galaxyExportToolClientID')}]]*/ ""
 		};
 	</script>
+
+	<th:blcok th:if="${@environment.getActiveProfiles()[0] == 'prod'}">
+		<script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+		<script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+	</th:blcok>
+	<th:blcok th:if="${@environment.getActiveProfiles()[0] == 'dev'}">
+		<script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+		<script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+	</th:blcok>
 
 	<script th:src="@{/resources/dist/js/vendor.bundle.js}"></script>
 	<script th:src="@{/resources/bower_components/jquery/dist/jquery.min.js}"></script>

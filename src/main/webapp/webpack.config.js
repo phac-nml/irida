@@ -10,7 +10,9 @@ const config = {
   externals: {
     jquery: "jQuery",
     angular: "angular",
-    moment: "moment"
+    moment: "moment",
+    react: "React",
+    "react-dom": "ReactDOM"
   },
   stats: {
     children: false,
@@ -23,7 +25,7 @@ const config = {
   entry: entries,
   output: {
     path: BUILD_PATH,
-    publicPath: `resources/dist/`,
+    publicPath: `/resources/dist/`,
     filename: "js/[name].bundle.js"
   },
   module: {

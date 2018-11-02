@@ -3,6 +3,8 @@ import PropTypes from "prop-types";
 import { Modal } from "antd";
 import axios from "axios";
 
+const { i18n } = window.TL.session;
+
 export default class SessionModal extends React.Component {
   static propTypes = {
     resetTimeout: PropTypes.func.isRequired,
@@ -15,8 +17,9 @@ export default class SessionModal extends React.Component {
     // the user to return to the same page when they login again.
     this._timeout = window.setTimeout(
       () => window.location.reload(false),
-      this.props.time
+      this.props.time + 2000 // 2 seconds added to make sure that the server session has expired
     );
+    this.showModal();
   }
 
   componentWillUnmount() {
@@ -37,18 +40,18 @@ export default class SessionModal extends React.Component {
     });
   };
 
+  showModal = () => {
+    Modal.confirm({
+      okType: "warning",
+      title: i18n.title,
+      onOk: this.keepSession,
+      onCancel: this.logout,
+      okText: i18n.keep,
+      cancelText: i18n.logout
+    });
+  };
+
   render() {
-    return (
-      <Modal
-        title="TITLE HERE PLEASE!"
-        visible={true}
-        onOk={this.keepSession}
-        onCancel={this.logout}
-        okText="Keep me here"
-        cancelText="Log me out"
-      >
-        ajsfdkjasdlkfjalksdf
-      </Modal>
-    );
+    return <div />;
   }
 }
