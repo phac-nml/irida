@@ -174,6 +174,7 @@ public class ProjectSynchronizationService {
 	 */
 	private void syncProject(Project project) {
 		project.getRemoteStatus().setSyncStatus(SyncStatus.UPDATING);
+		project.getRemoteStatus().setLastUpdate(new Date());
 		projectService.update(project);
 
 		String projectURL = project.getRemoteStatus().getURL();
