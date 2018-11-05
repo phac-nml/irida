@@ -105,8 +105,18 @@ export class SaveTemplateModal extends React.Component {
     };
   }
 
+  /**
+   * React function immediately after updating occurs.  Used to check if an update
+   * to the UI is required.
+   * @param {object} prevProps
+   */
   componentDidUpdate(prevProps) {
     const template = this.props.template;
+
+    /*
+    Check to see if there is a new template being used, the new template
+    will require a refresh to the UI.
+     */
     if (prevProps.template !== template) {
       const existingTemplate = template.id > -1;
       const value = existingTemplate ? template.name : undefined;
