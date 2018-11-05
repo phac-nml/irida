@@ -1,11 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.remote;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
@@ -212,7 +208,25 @@ public class ProjectSynchronizationService {
 			}
 		});
 
+		//read the remote samples from the remote API
 		List<Sample> readSamplesForProject = sampleRemoteService.getSamplesForProject(readProject);
+
+		//get the remote URLs
+		Set<String> remoteUrls = readSamplesForProject.stream()
+				.map(s -> s.getRemoteStatus()
+						.getURL())
+				.collect(Collectors.toSet());
+
+		// Check for local samples which no longer exist by URL
+		Set<String> localUrls = samplesByUrl.keySet();
+		remoteUrls.forEach(s -> {
+			localUrls.remove(s);
+		});
+
+		// if any URLs still exist in localUrls, it must have been deleted remotely
+		for (String localUrl : localUrls) {
+			projectService.removeSampleFromProject(project, samplesByUrl.get(localUrl));
+		}
 
 		List<ProjectSynchronizationException> syncExceptions = new ArrayList<>();
 		for (Sample s : readSamplesForProject) {
