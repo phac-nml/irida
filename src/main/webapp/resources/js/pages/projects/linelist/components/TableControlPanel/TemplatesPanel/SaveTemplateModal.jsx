@@ -35,6 +35,10 @@ function Footer(props) {
   );
 }
 
+/**
+ * Component to render a modal for the user to save the current state of the
+ * linelist as a new MetadataTemplate.
+ */
 export class SaveTemplateModal extends React.Component {
   static propTypes = {
     template: PropTypes.object,
