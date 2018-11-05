@@ -42,7 +42,7 @@ export default class SessionTimer extends React.Component {
   _SESSION_LENGTH = window.TL.session.SESSION_LENGTH * 1000; // Session length originally in seconds
 
   state = {
-    visible: false
+    visible: false // Whether the modal should be displayed or not.
   };
 
   /**
