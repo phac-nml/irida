@@ -4,11 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
@@ -298,7 +294,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		addToCartBtn.click();
 		// Make sure the item were added to the cart.
 		waitForElementVisible(
-				By.cssSelector("#cart-count"));
+				By.className("js-cart-count"));
 		// If the cart count is already visible this can go too fast,
 		// wait for the cart to fully update it's total.
 		waitForTime(500);
