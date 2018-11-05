@@ -7,13 +7,13 @@ const { Item } = Form;
 const { Option } = Select;
 const { i18n } = window.PAGE;
 
-const sortNames = (a, b) => {
-  const A = a.toUpperCase();
-  const B = b.toUpperCase();
-  if (A < B) return -1;
-  if (A > B) return 1;
-  return 0;
-};
+/**
+ * Utility method to sort array of strings case insensitively.
+ * @param {string} a
+ * @param {string} b
+ * @returns {number}
+ */
+const sortNames = (a, b) => a.toLowerCase().localeCompare(b.toLowerCase());
 
 /**
  * Custom footer for the SaveTemplateModal allowing the save button to
