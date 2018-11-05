@@ -211,21 +211,25 @@ public class ProjectSynchronizationService {
 		//read the remote samples from the remote API
 		List<Sample> readSamplesForProject = sampleRemoteService.getSamplesForProject(readProject);
 
-		//get the remote URLs
+		//get a list of all remote URLs in the project
 		Set<String> remoteUrls = readSamplesForProject.stream()
 				.map(s -> s.getRemoteStatus()
 						.getURL())
 				.collect(Collectors.toSet());
 
 		// Check for local samples which no longer exist by URL
-		Set<String> localUrls = samplesByUrl.keySet();
+		Set<String> localUrls = new HashSet<>(samplesByUrl.keySet());
+		//remove any URL from the local list that we've seen remotely
 		remoteUrls.forEach(s -> {
 			localUrls.remove(s);
 		});
 
 		// if any URLs still exist in localUrls, it must have been deleted remotely
 		for (String localUrl : localUrls) {
+			logger.trace("Sample " + localUrl + " has been removed remotely.  Removing from local project.");
+
 			projectService.removeSampleFromProject(project, samplesByUrl.get(localUrl));
+			samplesByUrl.remove(localUrl);
 		}
 
 		List<ProjectSynchronizationException> syncExceptions = new ArrayList<>();
