@@ -228,6 +228,8 @@ public class ProjectSynchronizationService {
 			syncExceptions.addAll(syncExceptionsSample);
 		}
 
+		// re-read project to ensure any updates are reflected
+		project = projectService.read(project.getId());
 		project.setRemoteStatus(readProject.getRemoteStatus());
 
 		if (syncExceptions.isEmpty()) {
