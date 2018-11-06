@@ -19,7 +19,7 @@
   ],
   "dependencies": {
     "@bassettsj/livestamp": "^2.0.0",
-    "@fortawesome/fontawesome-free": "^5.2.0",
+    "@fortawesome/fontawesome-free": "^5.5.0",
     "ag-grid": "^18.1.2",
     "ag-grid-react": "^18.1.0",
     "angular": "1.6.2",
@@ -31,7 +31,7 @@
     "angular-messages": "1.6.2",
     "angular-resource": "1.6.2",
     "angular-ui-router": "1.0.0-alpha.4",
-    "antd": "^3.10.2",
+    "antd": "^3.10.4",
     "axios": "^0.18.0",
     "bootstrap-daterangepicker": "^2.1.25",
     "bootstrap-switch": "^3.3.4",
