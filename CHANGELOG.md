@@ -25,6 +25,7 @@ Changes
 * [Developer]: Added ability to adjust `jdbc.pool.maxWait` through an environment variable `DB_MAX_WAIT_MILLIS` for fixing timeout issues for tests.
 * [Developer]: Split Galaxy testing into `galaxy_testing` and `galaxy_pipeline_testing` to reduce the time it takes for all Galaxy tests to complete.
 * [Developer]: Fixed up test cases for genome assemblies and simplified saving to database.
+* [Sync]: Project sync date will be updated at start of sync job to stop quickly repeating errored syncs.
 
 0.21.0 to 0.22.0
 ----------------
