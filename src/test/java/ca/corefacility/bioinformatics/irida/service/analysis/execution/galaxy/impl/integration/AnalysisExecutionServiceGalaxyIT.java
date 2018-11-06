@@ -373,14 +373,17 @@ public class AnalysisExecutionServiceGalaxyIT {
 	 * @throws ExecutionManagerException
 	 * @throws IOException
 	 * @throws IridaWorkflowException 
+	 * @throws ExecutionException 
+	 * @throws InterruptedException 
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testExecuteAnalysisFailState() throws NoSuchValueException, ExecutionManagerException, IOException, IridaWorkflowException {
+	public void testExecuteAnalysisFailState() throws NoSuchValueException, ExecutionManagerException, IOException, IridaWorkflowException, InterruptedException, ExecutionException {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId, false);
 
-		analysisExecutionService.prepareSubmission(analysisSubmission);
+		analysisExecutionService.prepareSubmission(analysisSubmission).get();
+		
 		AnalysisSubmission analysisSubmitted = analysisSubmissionRepository.findOne(analysisSubmission.getId());
 
 		analysisSubmitted.setAnalysisState(AnalysisState.NEW);
