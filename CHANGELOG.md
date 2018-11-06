@@ -20,6 +20,8 @@ Changes
 * [API]: Fixed REST endpoint mapping for current user and user projects.
 * [Workflow]: Fixed issue where duplicate filenames were found after running Galaxy workflow in newer Galaxy versions. (0.22.4)
 * [Developer]: Added unused import checking to checkstyle config.  The `mvn site` build will throw an error if unused imports are present.
+* [Developer]: Added additional FTP settings for NCBI uploads: `ncbi.upload.controlKeepAliveTimeout`, and `ncbi.upload.controlKeepAliveReplyTimeoutMilliseconds`.
+* [Developer]: Fixed issue with some settings in `/etc/irida/irida.conf` not being detected properly.
 * [Developer]: Added ability to adjust `jdbc.pool.maxWait` through an environment variable `DB_MAX_WAIT_MILLIS` for fixing timeout issues for tests.
 * [Developer]: Split Galaxy testing into `galaxy_testing` and `galaxy_pipeline_testing` to reduce the time it takes for all Galaxy tests to complete.
 * [Developer]: Fixed up test cases for genome assemblies and simplified saving to database.
