@@ -148,10 +148,14 @@ public class ProjectSynchronizationService {
 				syncProject(project);
 			} catch (IridaOAuthException e) {
 				logger.trace("Can't sync project " + project.getRemoteStatus().getURL() + " due to oauth error:", e);
+				//re-reading project to get updated version
+				project = projectService.read(project.getId());
 				project.getRemoteStatus().setSyncStatus(SyncStatus.UNAUTHORIZED);
 				projectService.update(project);
 			} catch (Exception e) {
 				logger.debug("An error occurred while synchronizing project " + project.getRemoteStatus().getURL(), e);
+				//re-reading project to get updated version
+				project = projectService.read(project.getId());
 				project.getRemoteStatus().setSyncStatus(SyncStatus.ERROR);
 				projectService.update(project);
 			} finally {
@@ -248,6 +252,7 @@ public class ProjectSynchronizationService {
 	 */
 	public List<ProjectSynchronizationException> syncSample(Sample sample, Project project, Map<String, Sample> existingSamples) {
 		Sample localSample;
+
 		if (existingSamples.containsKey(sample.getRemoteStatus().getURL())) {
 			// if the sample already exists check if it's been updated
 			localSample = existingSamples.get(sample.getRemoteStatus().getURL());
