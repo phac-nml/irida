@@ -4,7 +4,7 @@
   <id>8c438951-484a-48da-be2b-93b7d29aa2a3</id>
   <name>AssemblyAnnotationTest</name>
   <version>0.1</version>
-  <analysisType>assembly-annotation</analysisType>
+  <analysisType>ASSEMBLY_ANNOTATION</analysisType>
   <inputs>
     <sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
     <requiresSingleSample>true</requiresSingleSample>

@@ -2,7 +2,12 @@ package ca.corefacility.bioinformatics.irida.service.workflow;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -10,20 +15,27 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowDefaultException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotDisplayableException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
-import ca.corefacility.bioinformatics.irida.model.enums.config.AnalysisTypeSet;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.config.AnalysisTypeSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowIdSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowSet;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowOutput;
-
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkflowStructure;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 /**
  * Class used to load up installed workflows in IRIDA.
@@ -33,7 +45,7 @@ import com.google.common.collect.Sets;
 @Service
 public class IridaWorkflowsService {
 	private static final Logger logger = LoggerFactory.getLogger(IridaWorkflowsService.class);
-
+	
 	/**
 	 * Stores registered workflows within IRIDA.
 	 */
@@ -68,16 +80,13 @@ public class IridaWorkflowsService {
 	 * Builds a new {@link IridaWorkflowsService} for loading up installed
 	 * workflows.
 	 * 
-	 * @param iridaWorkflows
-	 *            A {@link IridaWorkflowSet} of {@link IridaWorkflow}s to use in IRIDA.
-	 * @param defaultIridaWorkflows
-	 *            A {@link IridaWorkflowIdSet} of {@link UUID}s to use as the default
-	 *            workflows.
-	 * @param disabledAnalysisTypes
-	 *            A {@link Set} of disabled {@link AnalysisType}s.
-	 * @throws IridaWorkflowException
-	 *             If there was an issue when attempting to register the
-	 *             workflows.
+	 * @param iridaWorkflows        A {@link IridaWorkflowSet} of
+	 *                              {@link IridaWorkflow}s to use in IRIDA.
+	 * @param defaultIridaWorkflows A {@link IridaWorkflowIdSet} of {@link UUID}s to
+	 *                              use as the default workflows.
+	 * @param disabledAnalysisTypes A {@link Set} of disabled {@link AnalysisType}s.
+	 * @throws IridaWorkflowException If there was an issue when attempting to
+	 *                                register the workflows.
 	 */
 	@Autowired
 	public IridaWorkflowsService(IridaWorkflowSet iridaWorkflows, IridaWorkflowIdSet defaultIridaWorkflows, AnalysisTypeSet disabledAnalysisTypes)
@@ -90,7 +99,7 @@ public class IridaWorkflowsService {
 
 		registerWorkflows(iridaWorkflows.getIridaWorkflows());
 		setDefaultWorkflows(defaultIridaWorkflows.getIridaWorkflowIds());
-		
+
 		this.disabledAnalysisTypes = disabledAnalysisTypes;
 	}
 
@@ -165,6 +174,7 @@ public class IridaWorkflowsService {
 	public void registerWorkflow(IridaWorkflow iridaWorkflow) throws IridaWorkflowException {
 		checkNotNull(iridaWorkflow, "iridaWorkflow is null");
 		checkNotNull(iridaWorkflow.getWorkflowDescription().getAnalysisType(), "analysisType is null");
+		checkNotNull(iridaWorkflow.getWorkflowDescription().getAnalysisType().getType(), "analysisType name is null");
 
 		UUID workflowId = iridaWorkflow.getWorkflowDescription().getId();
 
@@ -353,5 +363,65 @@ public class IridaWorkflowsService {
 						.requiresSingleSample())
 				.map(IridaWorkflow::getWorkflowIdentifier)
 				.collect(Collectors.toSet());
+	}
+	
+	/**
+	 * Returns a workflow associated with the given {@link UUID}, attempting to fill
+	 * in as many details as possible if the workflow can't be found.
+	 * 
+	 * @param iridaWorkflowId The {@link UUID} object to search for a workflow.
+	 * @return An {@link IridaWorkflow} with the given submission, or an 'unknown'
+	 *         workflow object if the associated workflow is not found.
+	 */
+	public IridaWorkflow getIridaWorkflowOrUnknown(UUID iridaWorkflowId) {
+		checkNotNull(iridaWorkflowId, "iridaWorkflowId is null");
+
+		try {
+			return getIridaWorkflow(iridaWorkflowId);
+		} catch (IridaWorkflowNotFoundException e) {
+			logger.warn(
+					"Could not find workflow for [" + iridaWorkflowId + "], defaulting to 'unknown' for many details");
+
+			return createUnknownWorkflow(iridaWorkflowId, BuiltInAnalysisTypes.UNKNOWN);
+		}
+	}
+
+	/**
+	 * Returns a workflow associated with the given {@link AnalysisSubmission},
+	 * attempting to fill in as many details as possible if the workflow can't be
+	 * found.
+	 * 
+	 * @param analysisSubmission The {@link AnalysisSubmission} object to search for
+	 *                           a workflow.
+	 * @return An {@link IridaWorkflow} with the given submission, or an 'unknown'
+	 *         workflow object if the associated workflow is not found.
+	 */
+	public IridaWorkflow getIridaWorkflowOrUnknown(AnalysisSubmission analysisSubmission) {
+		checkNotNull(analysisSubmission, "analysisSubmission is null");
+		checkNotNull(analysisSubmission.getWorkflowId(), "analysisSubmission workflowId is null");
+
+		try {
+			return getIridaWorkflow(analysisSubmission.getWorkflowId());
+		} catch (IridaWorkflowNotFoundException e) {
+			logger.warn("Could not find workflow for [" + analysisSubmission.getWorkflowId()
+					+ "], defaulting to 'unknown' for many details");
+
+			AnalysisType type;
+			if (AnalysisState.COMPLETED.equals(analysisSubmission.getAnalysisState())
+					&& analysisSubmission.getAnalysis() != null) {
+				type = analysisSubmission.getAnalysis().getAnalysisType();
+			} else {
+				type = BuiltInAnalysisTypes.UNKNOWN;
+			}
+
+			return createUnknownWorkflow(analysisSubmission.getWorkflowId(), type);
+		}
+	}
+
+	private IridaWorkflow createUnknownWorkflow(UUID workflowId, AnalysisType analysisType) {
+		return new IridaWorkflow(
+				new IridaWorkflowDescription(workflowId, "unknown", "unknown", analysisType, new IridaWorkflowInput(),
+						Lists.newLinkedList(), Lists.newLinkedList(), Lists.newLinkedList()),
+				new IridaWorkflowStructure(null));
 	}
 }

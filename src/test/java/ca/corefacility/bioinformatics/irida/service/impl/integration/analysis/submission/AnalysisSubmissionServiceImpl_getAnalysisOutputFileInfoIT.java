@@ -18,9 +18,10 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+import ca.corefacility.bioinformatics.irida.config.workflow.IridaAnalysisTypesServiceConfig;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ProjectSampleAnalysisOutputInfo;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 
@@ -36,7 +37,7 @@ import static org.junit.Assert.assertEquals;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
-		IridaApiJdbcDataSourceConfig.class })
+		IridaApiJdbcDataSourceConfig.class, IridaAnalysisTypesServiceConfig.class })
 @ActiveProfiles("it")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
 		WithSecurityContextTestExcecutionListener.class })
@@ -73,10 +74,10 @@ public class AnalysisSubmissionServiceImpl_getAnalysisOutputFileInfoIT {
 	private Set<ProjectSampleAnalysisOutputInfo> expectedUserOutputs() throws ParseException {
 		final Date date = getDate();
 		return ImmutableSet.of(new ProjectSampleAnalysisOutputInfo(2L, "sample2", 4L, "sistr", "sistr2.json", 4L,
-						AnalysisType.SISTR_TYPING, UUID.fromString("f73cbfd2-5478-4c19-95f9-690f3712f84d"), date,
+						BuiltInAnalysisTypes.SISTR_TYPING, UUID.fromString("f73cbfd2-5478-4c19-95f9-690f3712f84d"), date,
 						"not sharing my sistr", 4L, null, null, null),
 				new ProjectSampleAnalysisOutputInfo(4L, "sample3", 8L, "sistr", "sistr8.json", 8L,
-						AnalysisType.SISTR_TYPING, UUID.fromString("f73cbfd2-5478-4c19-95f9-690f3712f84d"), date,
+						BuiltInAnalysisTypes.SISTR_TYPING, UUID.fromString("f73cbfd2-5478-4c19-95f9-690f3712f84d"), date,
 						"not sharing my sistr 8", 8L, null, null, null));
 	}
 
@@ -94,26 +95,26 @@ public class AnalysisSubmissionServiceImpl_getAnalysisOutputFileInfoIT {
 	private Set<ProjectSampleAnalysisOutputInfo> expectedSharedOutputsForProject1() throws ParseException {
 		final Date date = getDate();
 		return ImmutableSet.of(new ProjectSampleAnalysisOutputInfo(1L, "sample1", 1L, "contigs", "contigs.fasta", 1L,
-						AnalysisType.ASSEMBLY_ANNOTATION, UUID.fromString("92ecf046-ee09-4271-b849-7a82625d6b60"), date, "sub1",
+				BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION, UUID.fromString("92ecf046-ee09-4271-b849-7a82625d6b60"), date, "sub1",
 						1L, 2L, "This", "Guy"),
 				new ProjectSampleAnalysisOutputInfo(2L, "sample2", 1L, "contigs", "contigs.fasta", 1L,
-						AnalysisType.ASSEMBLY_ANNOTATION, UUID.fromString("92ecf046-ee09-4271-b849-7a82625d6b60"), date,
+						BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION, UUID.fromString("92ecf046-ee09-4271-b849-7a82625d6b60"), date,
 						"sub1", 1L, 2L, "This", "Guy"));
 	}
 
 	private Set<ProjectSampleAnalysisOutputInfo> expectedAutomatedOutputsForProject1() throws ParseException {
 		final Date date = getDate();
 		return ImmutableSet.of(new ProjectSampleAnalysisOutputInfo(1L, "sample1", 6L, "contigs", "contigs6.fasta", 6L,
-						AnalysisType.ASSEMBLY_ANNOTATION, UUID.fromString("92ecf046-ee09-4271-b849-7a82625d6b60"), date,
+				BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION, UUID.fromString("92ecf046-ee09-4271-b849-7a82625d6b60"), date,
 						"auto assembly 6", 6L, 1L, "Ad", "Min"),
 				new ProjectSampleAnalysisOutputInfo(1L, "sample1", 7L, "sistr", "sistr7.json", 7L,
-						AnalysisType.SISTR_TYPING, UUID.fromString("f73cbfd2-5478-4c19-95f9-690f3712f84d"), date,
+						BuiltInAnalysisTypes.SISTR_TYPING, UUID.fromString("f73cbfd2-5478-4c19-95f9-690f3712f84d"), date,
 						"auto sistr 7", 7L, 1L, "Ad", "Min"),
 				new ProjectSampleAnalysisOutputInfo(2L, "sample2", 2L, "contigs", "contigs2.fasta", 2L,
-						AnalysisType.ASSEMBLY_ANNOTATION, UUID.fromString("92ecf046-ee09-4271-b849-7a82625d6b60"), date,
+						BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION, UUID.fromString("92ecf046-ee09-4271-b849-7a82625d6b60"), date,
 						"auto assembly", 2L, 1L, "Ad", "Min"),
 				new ProjectSampleAnalysisOutputInfo(2L, "sample2", 3L, "sistr", "sistr.json", 3L,
-						AnalysisType.SISTR_TYPING, UUID.fromString("f73cbfd2-5478-4c19-95f9-690f3712f84d"), date,
+						BuiltInAnalysisTypes.SISTR_TYPING, UUID.fromString("f73cbfd2-5478-4c19-95f9-690f3712f84d"), date,
 						"auto sistr", 3L, 1L, "Ad", "Min"));
 	}
 
