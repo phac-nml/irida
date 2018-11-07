@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -26,7 +26,7 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
  * 
  */
 @Configuration
-@PropertySource(value = { "classpath:configuration.properties", "file:/etc/irida/web.conf" }, ignoreResourceNotFound = true)
+@Import({ IridaApiPropertyPlaceholderConfig.class })
 public class WebEmailConfig {
 
 	private static final String MAIL_TEMPLATE_PREFIX = "/mail/";
