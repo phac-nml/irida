@@ -1047,7 +1047,7 @@
 		<spring.test.dbunit.version>1.1.0</spring.test.dbunit.version>
 		<dbunit.version>2.4.9</dbunit.version>
 		<commons.dbcp.version>2.0.1</commons.dbcp.version>
-		<commons.net.version>3.3</commons.net.version>
+		<commons.net.version>3.6</commons.net.version>
 		<fastqc.version>0.11.7-nml-custom</fastqc.version>
 		<aspectj.version>1.8.1</aspectj.version>
 		<hibernate.validator.version>5.1.1.Final</hibernate.validator.version>
@@ -1143,6 +1143,7 @@
 				<include.tests>
 					**/service/impl/integration/**/*IT.java,
 					**/service/workflow/integration/**/*IT.java,
+					**/pipeline/results/**/*IT.java,
 					**/repositories/**/*IT.java
 				</include.tests>
 				<exclude.tests>**/*Galaxy*IT.java,
@@ -1165,8 +1166,21 @@
 				<integration.test.listener>ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationTestListener</integration.test.listener>
 				<include.tests>
 					**/*Galaxy*IT.java,
-					**/AnalysisExecutionScheduledTaskImplIT.java,
 					**/AnalysisSubmissionServiceImplIT.java,
+				</include.tests>
+				<exclude.tests>
+					**/AnalysisExecutionServiceGalaxyIT.java,
+				</exclude.tests>
+				<jetty.skip>true</jetty.skip>
+			</properties>
+		</profile>
+		<profile>
+			<id>galaxy_pipeline_testing</id>
+			<properties>
+				<integration.test.listener>ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationTestListener</integration.test.listener>
+				<include.tests>
+					**/AnalysisExecutionScheduledTaskImplIT.java,
+					**/AnalysisExecutionServiceGalaxyIT.java,
 					**/SNVPhylAnalysisIT.java,
 				</include.tests>
 				<jetty.skip>true</jetty.skip>

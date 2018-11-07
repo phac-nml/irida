@@ -17,7 +17,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.Analysi
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.results.updater.AnalysisSampleUpdater;
-import ca.corefacility.bioinformatics.irida.repositories.joins.sample.GenomeAssemblyRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGenomeAssemblyJoinRepository;
 
 /**
@@ -28,14 +27,11 @@ public class AssemblySampleUpdater implements AnalysisSampleUpdater {
 
 	private static final Logger logger = LoggerFactory.getLogger(AssemblySampleUpdater.class);
 
-	private final GenomeAssemblyRepository genomeAssemblyRepository;
 	private final SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository;
 
 	@Autowired
-	public AssemblySampleUpdater(GenomeAssemblyRepository genomeAssemblyRepository,
-			SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository) {
+	public AssemblySampleUpdater(SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository) {
 		this.sampleGenomeAssemblyJoinRepository = sampleGenomeAssemblyJoinRepository;
-		this.genomeAssemblyRepository = genomeAssemblyRepository;
 	}
 
 	/**
@@ -47,7 +43,7 @@ public class AssemblySampleUpdater implements AnalysisSampleUpdater {
 
 		Sample sample = samples.iterator().next();
 
-		GenomeAssembly genomeAssembly = genomeAssemblyRepository.save(new GenomeAssemblyFromAnalysis(analysis));
+		GenomeAssembly genomeAssembly = new GenomeAssemblyFromAnalysis(analysis);
 		SampleGenomeAssemblyJoin sampleGenomeAssemblyJoin = new SampleGenomeAssemblyJoin(sample, genomeAssembly);
 
 		logger.trace(
