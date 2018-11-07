@@ -4,7 +4,7 @@
   <id>1f9ea289-5053-4e4a-bc76-1f0c60b179f8</id>
   <name>SNVPhylTest</name>
   <version>0.1</version>
-  <analysisType>phylogenomics</analysisType>
+  <analysisType>PHYLOGENOMICS</analysisType>
   <inputs>
     <sequenceReadsSingle>sequence_reads</sequenceReadsSingle>
     <reference>reference</reference>
