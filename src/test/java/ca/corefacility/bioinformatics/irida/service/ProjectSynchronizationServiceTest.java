@@ -107,6 +107,7 @@ public class ProjectSynchronizationServiceTest {
 	@Test
 	public void testSyncProjects() {
 		expired.getRemoteStatus().setSyncStatus(SyncStatus.MARKED);
+		when(projectService.read(expired.getId())).thenReturn(expired);
 		Project remoteProject = new Project();
 		remoteProject.setRemoteStatus(expired.getRemoteStatus());
 		User readBy = new User();

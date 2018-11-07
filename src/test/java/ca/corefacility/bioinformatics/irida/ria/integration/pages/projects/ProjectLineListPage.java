@@ -33,6 +33,9 @@ public class ProjectLineListPage extends ProjectPageBase {
 	@FindBy(className = "t-template-save-btn")
 	private WebElement templateSaveBtn;
 
+	@FindBy(className = "t-template-name")
+	private WebElement templateNameInputWrapper;
+
 	@FindBy(className = "ant-select-search__field")
 	private WebElement templateNameInput;
 
@@ -90,7 +93,8 @@ public class ProjectLineListPage extends ProjectPageBase {
 
 	public void saveMetadataTemplate (String name) {
 		templateSaveBtn.click();
-		waitForElementsVisible(By.className("ant-modal"));
+		waitForElementsVisible(By.className("ant-select-selection__rendered"));
+		templateNameInputWrapper.click();
 		templateNameInput.sendKeys(name);
 		modalSaveTemplateBtn.click();
 		waitForTime(300);
