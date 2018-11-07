@@ -3,6 +3,7 @@ Changes
 
 0.22.0 to 0.23.0
 ----------------
+* [Developer]: Added classes `.jar` maven export in build process.
 * [UI]: Added the sample coverage to the table exported from the project samples page.
 * [UI/Workflow]: Added option to disable workflows/analysis types from display in IRIDA using `irida.workflow.types.disabled`. (0.22.1)
 * [Developer]: Added wait when NCBI Uploader fails before retrying. (0.22.1)
@@ -20,6 +21,7 @@ Changes
 * [API]: Fixed REST endpoint mapping for current user and user projects.
 * [Workflow]: Fixed issue where duplicate filenames were found after running Galaxy workflow in newer Galaxy versions. (0.22.4)
 * [Developer]: Added unused import checking to checkstyle config.  The `mvn site` build will throw an error if unused imports are present.
+* [Developer/Workflow]: Added the ability build pipelines into independent JAR files to be loaded in IRIDA as a plugin (after placing in `/etc/irida/plugins`). Please see <https://github.com/phac-nml/irida-plugin-example> and <https://irida.corefacility.ca/documentation/developer/tools/pipelines/> for more details.
 * [Developer]: Added additional FTP settings for NCBI uploads: `ncbi.upload.controlKeepAliveTimeout`, and `ncbi.upload.controlKeepAliveReplyTimeoutMilliseconds`.
 * [Developer]: Fixed issue with some settings in `/etc/irida/irida.conf` not being detected properly.
 * [Developer]: Added ability to adjust `jdbc.pool.maxWait` through an environment variable `DB_MAX_WAIT_MILLIS` for fixing timeout issues for tests.

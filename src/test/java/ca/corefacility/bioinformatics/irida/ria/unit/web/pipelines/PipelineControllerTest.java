@@ -58,6 +58,7 @@ public class PipelineControllerTest {
 	private UpdateSamplePermission updateSamplePermission;
 	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
 	private GalaxyToolDataService galaxyToolDataService;
+	private String iridaPipelinePluginStyle = "";
 
 	@Before
 	public void setUp() {
@@ -73,10 +74,11 @@ public class PipelineControllerTest {
 		updateSamplePermission = mock(UpdateSamplePermission.class);
 		analysisSubmissionSampleProcessor = mock(AnalysisSubmissionSampleProcessor.class);
 		galaxyToolDataService = mock(GalaxyToolDataService.class);
+		
 
 		controller = new PipelineController(sequencingObjectService, referenceFileService, analysisSubmissionService,
 				workflowsService, projectService, userService, cartController, messageSource, namedParameterService,
-				updateSamplePermission, analysisSubmissionSampleProcessor, galaxyToolDataService);
+				updateSamplePermission, analysisSubmissionSampleProcessor, galaxyToolDataService, iridaPipelinePluginStyle);
 		when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 	}
 
