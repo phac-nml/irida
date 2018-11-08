@@ -11,8 +11,6 @@ const config = {
     jquery: "jQuery",
     angular: "angular",
     moment: "moment",
-    react: "React",
-    "react-dom": "ReactDOM"
   },
   stats: {
     children: false,
@@ -74,6 +72,18 @@ const config = {
         use: "file-loader"
       }
     ]
+  },
+  optimization: {
+    runtimeChunk: "single",
+    splitChunks: {
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: "vendors",
+          chunks: "all"
+        }
+      }
+    }
   },
   plugins: [
     new MiniCssExtractPlugin({

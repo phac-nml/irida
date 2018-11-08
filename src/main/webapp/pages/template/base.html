@@ -10,6 +10,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
     <link rel="icon" href="/resources/img/favicon.ico" th:href="@{/resources/img/favicon.ico}" />
 	<link rel="stylesheet" th:href="@{/resources/bower_components/bootstrap/dist/css/bootstrap.min.css}">
+	<link rel="stylesheet" href="/resources/dist/css/vendors.bundle.css">
 </head>
 <body vocab="http://schema.org/" typeof="WebPage" ng-app="irida">
 <th:block layout:fragment="content">
@@ -18,5 +19,8 @@
 <th:block th:if="${analytics}">
 	<th:block th:utext="${analytics}"></th:block>
 </th:block>
+
+<script src="/resources/dist/js/runtime.bundle.js"></script>
+<script src="/resources/dist/js/vendors.bundle.js"></script>
 </body>
 </html>

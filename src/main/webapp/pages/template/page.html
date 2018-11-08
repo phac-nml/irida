@@ -137,15 +137,6 @@
 		};
 	</script>
 
-	<th:block th:if="${@environment.getActiveProfiles()[0] == 'prod' || @environment.getActiveProfiles()[0] == 'it'}">
-		<script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
-		<script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
-	</th:block>
-	<th:block th:if="${@environment.getActiveProfiles()[0] == 'dev'}">
-		<script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
-		<script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
-	</th:block>
-
 	<script th:src="@{/resources/dist/js/vendor.bundle.js}"></script>
 	<script th:src="@{/resources/bower_components/jquery/dist/jquery.min.js}"></script>
 	<script th:src="@{/resources/bower_components/bootstrap/dist/js/bootstrap.min.js}"></script>
