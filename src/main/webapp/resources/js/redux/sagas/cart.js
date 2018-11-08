@@ -22,12 +22,6 @@ export function* addToCartSaga() {
       if (data.count) {
         yield put(actions.updated(data));
       }
-
-      // // This is a hack until the cart gets fully updated
-      // const event = new Event("cart:updated");
-      // document.dispatchEvent(event);
-      // // Display the notification.
-      // showNotification({ text: data.message });
     }
   }
 }

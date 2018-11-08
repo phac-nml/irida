@@ -13,3 +13,11 @@ export const putSampleInCart = async (projectId, samples) =>
     projectId,
     samples
   });
+
+/**
+ * Get the current number of samples in the cart
+ * @returns {Promise<void>}
+ */
+export const getCartCount = async () => {
+  return axios.get(`${url}/count`).then(response => ({ count: response.data }));
+};
