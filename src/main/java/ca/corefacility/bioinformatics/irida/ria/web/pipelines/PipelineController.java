@@ -22,6 +22,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.TabularToolDataTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.annotation.Scope;
@@ -44,7 +45,6 @@ import com.google.common.collect.Sets;
 import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotDisplayableException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -57,6 +57,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
@@ -118,6 +119,11 @@ public class PipelineController extends BaseController {
 	 * CONTROLLERS
 	 */
 	private CartController cartController;
+	
+	/*
+	 * Additional variables
+	 */
+	private String iridaPipelinePluginStyle;
 
 	@Autowired
 	public PipelineController(SequencingObjectService sequencingObjectService,
@@ -126,7 +132,8 @@ public class PipelineController extends BaseController {
 			CartController cartController, MessageSource messageSource,
 			final WorkflowNamedParametersService namedParameterService,
 			UpdateSamplePermission updateSamplePermission,
-			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor, GalaxyToolDataService galaxyToolDataService) {
+			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor, GalaxyToolDataService galaxyToolDataService,
+			@Qualifier("iridaPipelinePluginStyle") String iridaPipelinePluginStyle) {
 		this.sequencingObjectService = sequencingObjectService;
 		this.referenceFileService = referenceFileService;
 		this.analysisSubmissionService = analysisSubmissionService;
@@ -139,6 +146,7 @@ public class PipelineController extends BaseController {
 		this.updateSamplePermission = updateSamplePermission;
 		this.analysisSubmissionSampleProcessor = analysisSubmissionSampleProcessor;
 		this.galaxyToolDataService = galaxyToolDataService;
+		this.iridaPipelinePluginStyle = iridaPipelinePluginStyle;
 	}
 
 	/**
@@ -161,7 +169,7 @@ public class PipelineController extends BaseController {
 			try {
 				flow = workflowsService.getDefaultWorkflowByType(type);
 				IridaWorkflowDescription description = flow.getWorkflowDescription();
-				String name = type.toString();
+				String name = type.getType();
 				String key = "workflow." + name;
 				flows.add(ImmutableMap.of(
 						"name", name,
@@ -181,6 +189,7 @@ public class PipelineController extends BaseController {
 		flows.sort((f1, f2) -> f1.get("name").compareTo(f2.get("name")));
 		model.addAttribute("counts", getCartSummaryMap());
 		model.addAttribute("workflows", flows);
+		model.addAttribute("pipeline_plugin_style", iridaPipelinePluginStyle);
 		return URL_LAUNCH;
 	}
 
@@ -564,7 +573,7 @@ public class PipelineController extends BaseController {
 	@RequestMapping(value = "/ajax/{pipelineUUID}")
 	@ResponseBody
 	public IridaWorkflowDescription getPipelineInfo(@PathVariable UUID pipelineUUID) throws IridaWorkflowNotFoundException {
-		return workflowsService.getIridaWorkflow(pipelineUUID).getWorkflowDescription();
+		return workflowsService.getIridaWorkflowOrUnknown(pipelineUUID).getWorkflowDescription();
 	}
 	
 	/**

@@ -4,7 +4,7 @@
   <id>b8c3916c-846e-4a78-96a9-9630911257cd</id>
   <name>SNVPhylTestPaired</name>
   <version>0.1-paired</version>
-  <analysisType>phylogenomics</analysisType>
+  <analysisType>PHYLOGENOMICS</analysisType>
   <inputs>
     <sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
     <reference>reference</reference>

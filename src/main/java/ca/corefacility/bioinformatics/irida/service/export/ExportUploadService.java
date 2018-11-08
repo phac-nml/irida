@@ -18,6 +18,8 @@ import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateServi
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
+
+import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.slf4j.Logger;
@@ -82,6 +84,12 @@ public class ExportUploadService {
 
 	@Value("${ncbi.upload.baseDirectory}")
 	private String baseDirectory;
+	
+	@Value("${ncbi.upload.controlKeepAliveTimeoutSeconds}")
+	private int controlKeepAliveTimeout;
+	
+	@Value("${ncbi.upload.controlKeepAliveReplyTimeoutMilliseconds}")
+	private int controlKeepAliveReplyTimeout;
 
 	@Value("${irida.administrative.notifications.email}")
 	private String notificationAdminEmail;
@@ -496,8 +504,7 @@ public class ExportUploadService {
 	 * Connect an {@link FTPClient} with the configured connection details
 	 *
 	 * @return a connected {@link FTPClient}
-	 * @throws IOException
-	 *             if a connection error occurred
+	 * @throws IOException if a connection error occurred
 	 */
 	private FTPClient getFtpClient() throws IOException {
 		FTPClient client = new FTPClient();
@@ -517,6 +524,15 @@ public class ExportUploadService {
 
 		logger.trace(client.getStatus());
 
+		if (controlKeepAliveTimeout < 0 || controlKeepAliveReplyTimeout < 0) {
+			throw new IllegalArgumentException("Error: controlKeepAliveTimeout [" + controlKeepAliveTimeout
+					+ "] or controlKeepAliveReplyTimeout [" + controlKeepAliveReplyTimeout + "] < 0");
+		} else {
+			logger.trace("Using controlKeepAliveTimeout=" + controlKeepAliveTimeout + ", controlKeepAliveReplyTimeout="
+					+ controlKeepAliveReplyTimeout);
+			client.setControlKeepAliveTimeout(controlKeepAliveTimeout);
+		}
+		
 		return client;
 	}
 
@@ -552,6 +568,8 @@ public class ExportUploadService {
 	private void uploadString(FTPClient client, String filename, String content) throws UploadException, IOException {
 		int tries = 0;
 		boolean done = false;
+		
+		client.setFileType(FTP.ASCII_FILE_TYPE);
 
 		do {
 			tries++;
@@ -587,6 +605,9 @@ public class ExportUploadService {
 	private void uploadPath(FTPClient client, String filename, Path path) throws UploadException, IOException {
 		int tries = 0;
 		boolean done = false;
+		
+		client.setFileType(FTP.BINARY_FILE_TYPE);
+		
 		do {
 			tries++;
 
