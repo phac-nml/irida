@@ -7,6 +7,8 @@ import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.MediaType;
@@ -211,13 +213,12 @@ public class CartController {
 	 *            The {@link Project} ID
 	 * @param sampleIds
 	 *            The {@link Sample} ID
-	 * @return a map stating success
 	 */
 	@RequestMapping(value = "/project/{projectId}/samples", method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public Map<String, Object> removeProjectSamples(@PathVariable Long projectId, @RequestBody Set<Long> sampleIds) {
+	public void removeProjectSamples(@PathVariable Long projectId, @RequestBody Set<Long> sampleIds, HttpServletResponse response) {
 		cart.removeProjectSamples(projectId, sampleIds);
-		return ImmutableMap.of("success", true);
+		response.setStatus(HttpServletResponse.SC_OK);
 	}
 
 	/**
@@ -227,13 +228,12 @@ public class CartController {
 	 *            The project id of the sample
 	 * @param sampleId
 	 *            the id of the sample
-	 * @return Success if the sample was successfully removed
 	 */
 	@RequestMapping(value = "/project/{projectId}/samples/{sampleId}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public Map<String, Object> removeProjectSample(@PathVariable Long projectId, @PathVariable Long sampleId) {
+	public void removeProjectSample(@PathVariable Long projectId, @PathVariable Long sampleId, HttpServletResponse response) {
 		cart.removeProjectSamples(projectId, ImmutableSet.of(sampleId));
-		return ImmutableMap.of("success", true);
+		response.setStatus(HttpServletResponse.SC_OK);
 	}
 
 	/**
