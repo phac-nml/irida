@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.analysis;
 
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -11,6 +14,10 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -25,13 +32,6 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 public class CartControllerTest {
 	SampleService sampleService;
@@ -95,9 +95,7 @@ public class CartControllerTest {
 
 		Set<Long> subIds = Sets.newHashSet(sampleIds.iterator().next());
 
-		Map<String, Object> addProjectSample = controller.removeProjectSamples(projectId, subIds);
-
-		assertTrue((boolean) addProjectSample.get("success"));
+		controller.removeProjectSamples(projectId, subIds);
 
 		verify(projectService).read(projectId);
 		verify(sampleService).getSamplesInProject(project, new ArrayList<>(subIds));
@@ -119,9 +117,8 @@ public class CartControllerTest {
 		selected.put(project, samples);
 		controller.addSelected(selected, Locale.ENGLISH);
 		Sample sample = samples.iterator().next();
-		Map<String, Object> removeProjectSample = controller.removeProjectSample(projectId, sample.getId());
 
-		assertTrue((boolean) removeProjectSample.get("success"));
+		controller.removeProjectSample(projectId, sample.getId());
 
 		selected = controller.getSelected();
 		assertEquals(1, selected.keySet().size());
@@ -136,9 +133,7 @@ public class CartControllerTest {
 		selected.put(project, samples);
 		controller.addSelected(selected, Locale.ENGLISH);
 
-		Map<String, Object> addProjectSample = controller.removeProjectSamples(projectId, sampleIds);
-
-		assertTrue((boolean) addProjectSample.get("success"));
+		controller.removeProjectSamples(projectId, sampleIds);
 
 		verify(projectService).read(projectId);
 		verify(sampleService).getSamplesInProject(project, Lists.newArrayList(sampleIds));

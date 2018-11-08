@@ -7,8 +7,6 @@ import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.MediaType;
@@ -216,9 +214,8 @@ public class CartController {
 	 */
 	@RequestMapping(value = "/project/{projectId}/samples", method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public void removeProjectSamples(@PathVariable Long projectId, @RequestBody Set<Long> sampleIds, HttpServletResponse response) {
+	public void removeProjectSamples(@PathVariable Long projectId, @RequestBody Set<Long> sampleIds) {
 		cart.removeProjectSamples(projectId, sampleIds);
-		response.setStatus(HttpServletResponse.SC_OK);
 	}
 
 	/**
@@ -231,9 +228,8 @@ public class CartController {
 	 */
 	@RequestMapping(value = "/project/{projectId}/samples/{sampleId}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public void removeProjectSample(@PathVariable Long projectId, @PathVariable Long sampleId, HttpServletResponse response) {
+	public void removeProjectSample(@PathVariable Long projectId, @PathVariable Long sampleId) {
 		cart.removeProjectSamples(projectId, ImmutableSet.of(sampleId));
-		response.setStatus(HttpServletResponse.SC_OK);
 	}
 
 	/**
