@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.web.cart;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+
 import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -10,6 +13,9 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -27,12 +33,6 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 /**
  * Controller managing interactions with the selected sequences
@@ -413,7 +413,7 @@ public class CartController {
 	 *
 	 * @return {@link Integer} number of samples in the cart.
 	 */
-	@RequestMapping("/count")
+	@RequestMapping(value = "/count", method = RequestMethod.GET)
 	@ResponseBody
 	public int getNumberOfSamples() {
 		return cart.getNumberOfSamples();
