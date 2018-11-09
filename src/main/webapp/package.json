@@ -18,6 +18,7 @@
     "last 2 versions"
   ],
   "dependencies": {
+    "@babel/polyfill": "^7.0.0",
     "@bassettsj/livestamp": "^2.0.0",
     "@fortawesome/fontawesome-free": "^5.2.0",
     "ag-grid": "^18.1.2",
