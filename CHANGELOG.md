@@ -29,6 +29,7 @@ Changes
 * [Developer]: Fixed up test cases for genome assemblies and simplified saving to database.
 * [Sync]: Project sync date will be updated at start of sync job to stop quickly repeating errored syncs.
 * [UI]: IRIDA will now remove local samples when a synchronized remote sample is removed at its source.
+* [UI]: New project line list page with inline editing.
 
 0.21.0 to 0.22.0
 ----------------

@@ -1,11 +1,14 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
+import org.junit.Ignore;
+import org.junit.Test;
+
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectMetadataTemplatePage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSettingsMetadataTemplatesPage;
+
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import org.junit.Test;
 
 import static org.junit.Assert.*;
 
@@ -23,6 +26,7 @@ public class ProjectMetadataTemplateIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
+	@Ignore
 	public void testCreatingNewTemplate() {
 		LoginPage.loginAsManager(driver());
 
@@ -44,6 +48,7 @@ public class ProjectMetadataTemplateIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
+	@Ignore
 	public void testModifyExistingTemplate() {
 		LoginPage.loginAsManager(driver());
 		ProjectMetadataTemplatePage page = ProjectMetadataTemplatePage.goToPage(driver(), PROJECT_ID, TEMPLATE_ID);
