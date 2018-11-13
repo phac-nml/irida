@@ -58,7 +58,8 @@
               <span class="fa fa-heartbeat fa-fw" aria-hidden="true"></span>
             </div>
             <div th:text="#{analysis.details.version}">_Workflow_</div>
-            <div class="sidebar__value" th:text="${version}"></div>
+            <div class="sidebar__value" th:if="${version} != 'unknown'" th:text="${version}"></div>
+            <div class="sidebar__value" th:if="${version} == 'unknown'" th:text="#{analysis.details.version.unknown}"></div>
           </div>
           <div class="sidebar__item">
             <div class="sidebar__icon">
