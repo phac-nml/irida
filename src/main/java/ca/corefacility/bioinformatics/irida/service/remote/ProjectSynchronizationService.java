@@ -1,15 +1,5 @@
 package ca.corefacility.bioinformatics.irida.service.remote;
 
-import java.util.*;
-
-import org.apache.commons.lang3.time.DateUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectSynchronizationException;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
@@ -34,6 +24,16 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import org.apache.commons.lang3.time.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Service class to run a project synchornization task. Ths class will be
@@ -212,7 +212,29 @@ public class ProjectSynchronizationService {
 			}
 		});
 
+		//read the remote samples from the remote API
 		List<Sample> readSamplesForProject = sampleRemoteService.getSamplesForProject(readProject);
+
+		//get a list of all remote URLs in the project
+		Set<String> remoteUrls = readSamplesForProject.stream()
+				.map(s -> s.getRemoteStatus()
+						.getURL())
+				.collect(Collectors.toSet());
+
+		// Check for local samples which no longer exist by URL
+		Set<String> localUrls = new HashSet<>(samplesByUrl.keySet());
+		//remove any URL from the local list that we've seen remotely
+		remoteUrls.forEach(s -> {
+			localUrls.remove(s);
+		});
+
+		// if any URLs still exist in localUrls, it must have been deleted remotely
+		for (String localUrl : localUrls) {
+			logger.trace("Sample " + localUrl + " has been removed remotely.  Removing from local project.");
+
+			projectService.removeSampleFromProject(project, samplesByUrl.get(localUrl));
+			samplesByUrl.remove(localUrl);
+		}
 
 		List<ProjectSynchronizationException> syncExceptions = new ArrayList<>();
 		for (Sample s : readSamplesForProject) {
@@ -228,11 +250,9 @@ public class ProjectSynchronizationService {
 		project.setRemoteStatus(readProject.getRemoteStatus());
 
 		if (syncExceptions.isEmpty()) {
-			project.getRemoteStatus()
-					.setSyncStatus(SyncStatus.SYNCHRONIZED);
+			project.getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
 		} else {
-			project.getRemoteStatus()
-					.setSyncStatus(SyncStatus.ERROR);
+			project.getRemoteStatus().setSyncStatus(SyncStatus.ERROR);
 
 			logger.error("Error syncing project " + project.getId() + " setting sync status to ERROR");
 		}
@@ -249,8 +269,7 @@ public class ProjectSynchronizationService {
 	 * @param existingSamples A map of samples that have already been synchronized.  These will be checked to see if they've been updated
 	 * @return A list of {@link ProjectSynchronizationException}s, empty if no errors.
 	 */
-	public List<ProjectSynchronizationException> syncSample(Sample sample, Project project,
-			Map<String, Sample> existingSamples) {
+	public List<ProjectSynchronizationException> syncSample(Sample sample, Project project, Map<String, Sample> existingSamples) {
 		Sample localSample;
 
 		if (existingSamples.containsKey(sample.getRemoteStatus().getURL())) {
@@ -449,7 +468,7 @@ public class ProjectSynchronizationService {
 	/**
 	 * Set the given user's authentication in the SecurityContextHolder
 	 * 
-	 * @param userAuthentication
+	 * @param user
 	 *            The {@link User} to set in the context holder
 	 */
 	private void setAuthentication(User user) {

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<iridaWorkflow>
+  <id>1317f2dc-191f-48d0-a54c-2fccd3f9ab53</id>
+  <name>RefSeqMasherOnPairedReads</name>
+  <version>0.1.0</version>
+  <analysisType>REFSEQ_MASHER</analysisType>
+  <inputs>
+    <sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
+    <requiresSingleSample>true</requiresSingleSample>
+  </inputs>
+  <parameters>
+    <parameter name="refseq_masher-1-adv.min_kmer_threshold" defaultValue="8">
+      <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/nml/refseq_masher/refseq_masher_matches/0.1.1" parameterName="adv.min_kmer_threshold"/>
+    </parameter>
+    <parameter name="refseq_masher-1-top_n_results" defaultValue="20">
+      <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/nml/refseq_masher/refseq_masher_matches/0.1.1" parameterName="top_n_results"/>
+    </parameter>
+    <parameter name="refseq_masher-2-adv.max_pvalue" defaultValue="0.01">
+      <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/nml/refseq_masher/refseq_masher_contains/0.1.1" parameterName="adv.max_pvalue"/>
+    </parameter>
+    <parameter name="refseq_masher-2-adv.min_identity" defaultValue="0.9">
+      <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/nml/refseq_masher/refseq_masher_contains/0.1.1" parameterName="adv.min_identity"/>
+    </parameter>
+    <parameter name="refseq_masher-2-adv.top_n_results" defaultValue="0">
+      <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/nml/refseq_masher/refseq_masher_contains/0.1.1" parameterName="adv.top_n_results"/>
+    </parameter>
+  </parameters>
+  <outputs>
+    <output name="refseq-masher-matches" fileName="refseq-masher-matches.tsv"/>
+    <output name="refseq-masher-contains" fileName="refseq-masher-contains.tsv"/>
+  </outputs>
+  <toolRepositories>
+    <repository>
+      <name>refseq_masher</name>
+      <owner>nml</owner>
+      <url>https://toolshed.g2.bx.psu.edu</url>
+      <revision>26df66c32861</revision>
+    </repository>
+  </toolRepositories>
+</iridaWorkflow>
+
