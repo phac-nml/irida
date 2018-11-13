@@ -268,8 +268,8 @@ async function getTableData(isShared = true) {
   const { data, error } = await (PROJECT_ID === null
     ? getPrincipalUserSingleSampleAnalysisOutputs()
     : isShared
-      ? getProjectSharedSingleSampleAnalysisOutputs(PROJECT_ID)
-      : getProjectAutomatedSingleSampleAnalysisOutputs(PROJECT_ID));
+    ? getProjectSharedSingleSampleAnalysisOutputs(PROJECT_ID)
+    : getProjectAutomatedSingleSampleAnalysisOutputs(PROJECT_ID));
   if (error) {
     displayErrorAlert(error);
     return;
@@ -313,15 +313,26 @@ async function getTableData(isShared = true) {
     },
     {
       field: "analysisType",
-      headerName: I18N["analysis.table.type"]
+      headerName: I18N["analysis.table.type"],
+      valueGetter: function(p) {
+        return p.data.analysisType.type;
+      }
     },
     {
       field: "workflowId",
       headerName: I18N["pipeline"],
-      cellRenderer: p => {
+      valueGetter: function(p) {
         const wfInfo = workflowIds[p.data.workflowId];
         if (wfInfo === null) return p.data.workflowId;
-        return `${wfInfo.name} (v${wfInfo.version})`;
+        const version =
+          wfInfo.version === "unknown"
+            ? I18N["analysis.table.version.unknown"]
+            : "v" + wfInfo.version;
+        const name =
+          wfInfo.name === "unknown"
+            ? I18N["analysis.table.name.unknown"]
+            : wfInfo.name;
+        return `${name} (${version})`;
       }
     },
     {

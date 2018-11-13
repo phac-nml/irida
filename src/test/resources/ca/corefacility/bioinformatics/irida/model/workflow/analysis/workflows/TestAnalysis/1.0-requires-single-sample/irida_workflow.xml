@@ -4,7 +4,7 @@
 	<id>a9692a52-5bc6-4da2-a89d-d880bb35bfe4</id>
 	<name>TestWorkflow</name>
 	<version>1.0-requires-single-sample</version>
-	<analysisType>default</analysisType>
+	<analysisType>DEFAULT</analysisType>
 	<inputs>
 		<sequenceReadsSingle>sequence_reads_single</sequenceReadsSingle>
 		<sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
