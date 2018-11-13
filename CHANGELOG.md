@@ -27,6 +27,7 @@ Changes
 * [Developer]: Fixed up test cases for genome assemblies and simplified saving to database.
 * [Sync]: Project sync date will be updated at start of sync job to stop quickly repeating errored syncs.
 * [UI]: New project line list page with inline editing.
+* [Developer]: Updated Node, Yarn, and front-end webpack packages.
 
 0.21.0 to 0.22.0
 ----------------
