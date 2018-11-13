@@ -31,7 +31,7 @@ Links to the upload page can be found:
 2. On the `Project` > `Linelist` page:
 ![Bulk upload on project linelist page using link.](images/project_linelist_metadata_import_link.png)
 
-<strong style="background-color: rgba(240, 173, 78, 1.00); padding: 5px; font-weight: bold">Please not that this feature is still under development.</strong>
+<strong style="background-color: rgba(240, 173, 78, 1.00); padding: 5px; font-weight: bold">Please note that this feature is still under development.</strong>
 
 ![Excel Spreadsheet Example](images/spreadsheet.png)
 
@@ -64,9 +64,35 @@ Metadata that do not have matching sample names are listed in the table `Rows no
 Project Metadata Line List
 --------------------------
 
-Line lists are tables that summarize the available metadata for samples within a project.  Only samples **that have associated metadata** will not be shown in this table.
+A Metadata Line List is a table that summarizes all metadata associated with samples in a project.  
 
 ![Basic Line List](images/linelist_base.png)
+
+### Sorting Columns
+
+The initial sort is on the `Sample Name` column in ascending order. 
+
+Columns can be sorted by clicking on the column headers and the sort direction is indicated by an arrow next to the label.   Multiple columns can be sorted simultaneously by holding down the `Shift` key while clicking on the column header. 
+
+![Line List column sorting by clicking on the column headers](images/linelist_column_sort.gif)
+
+### Column Filtering
+
+Data within individual columns can be filtered.  Hovering the cursor over the column header displays a menu icon that, when clicked, displays filtering options.
+
+![Line List column filters](images/column_filter.gif)
+
+Filters can be set to be:
+- Equals: the text entered must exactly match the value in the column
+- Not equal: if the text entered matches the value in the column, the sample will be hidden
+- Start with: column value must start with the value entered
+- Ends with: column value must end with the value entered
+- Contains: the text entered can be found anywhere in the value in the column
+- Not contains: the text entered cannot ve found anywhere in the value in the column.
+
+Up to 2 separate filters can be applied to a column at a time.
+
+![Line List column filters](images/columns_two_filters.gif)
 
 ### Reorder Columns
 
@@ -76,30 +102,21 @@ To make it easier to see related information, columns can be re-ordered by dragg
 
 ### Toggle Metadata Columns
 
-Some columns might not have information that is useful in a particular analysis.  You can toggle any metadata field by clicking the `Toggle Metadata Columns` button, which will open a side panel where metadata fields can be toggled on and off.
+Some columns might not have information that is useful in a particular analysis.  Columns can be toggled on and off in the right hand side panel of the table.  If the panel is closed, or needs to be opened, click the `Columns` button on the right hand side of the table.
 
-![Line List Metadata Toggle](images/toggle_metadata_button.png)
+![Line List Metadata Toggle](images/toggle_metadata_button.gif)
 
-**Note:** the first column cannot be toggled off directly.  If that field needs to be hidden, drag it to a different column and then toggle the field.
+Columns can be toggled on and off by selecting the checkbox with the column name in it.  If the checkbox is checked, the column will be visible.
 
-![Toggling metadata column](images/toggle_metadata_panel.png)
-
-Once all the column visibility has been set, click the close button at the top of the side panel to hide these options.
-
-![Closing metadata panel by clicking 'close' button](images/metadata_panel_close.png)
+![Line List Toggle Columns using checkbox](images/toggle_metadata_column.gif)
 
 ### Saving Column Order and Visible Metadata
 
 Updating the column order and which metadata is visible can be saved as a **Template** so that the next time the line list is viewed the same settings can be applied quickly.  Click the `Save Template` button which will open a dialog window.  Add a name for the template (this cannot match the name of another template within the project).
 
-![Save Template Dialog](images/linelist_save_template.png)
+![Save Template Dialog](images/linelist_save_template.gif)
 
-The name given to the template should be descriptive and must be more than 5 letters.  The name must also not be used for another template within the project.
-
-A warning is displayed if the name given for the template is too short or if the name is already used for a template within the current project.
-
-After a unique name with more than 5 letters is provided the `Save` button will become enabled.  Clicking it will save the template to the project.
-
+A template can up updated by selecting its name in the dropdown.  The checkbox must be selected stating that the existing template will be overwritten.
 
 After a template is created it can me modified or deleted under [Project Settings > Sample Metadata Templates](../sample-metadata-templates)
 
@@ -107,6 +124,13 @@ After a template is created it can me modified or deleted under [Project Setting
 
 Data can be exported as either Excel or CSV formats.  Ony the fields currently in the table will be exported.
 
-Clicking on the `Export` button which will reveal a dropdown where you can select from either `CSV` or `Excel`, the download will begin automatically.
+Hovering over the `Export` button which will reveal a dropdown where you can select from either `Export as Excel` or `Export as CSV`, the download will begin automatically.
 
-![Export Buttons](images/export_btns.png)
+![Export Buttons](images/linelist_export.png)
+
+### Editing Metadata
+
+#### Inline Editing
+
+Values within the metadata table can be updated by double clicking on the cell you want to modify, enter the new value and press enter.  The new value will be automatically saved.  Once a cell has been edited, a notification will display with a "undo" button, that will revert the value back to the original.
+

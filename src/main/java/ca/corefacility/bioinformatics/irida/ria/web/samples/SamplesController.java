@@ -213,7 +213,7 @@ public class SamplesController extends BaseController {
 		}
 
 
-		/**
+		/*
 		 * If there's sample metadata to add, add it here.
 		 */
 		Map<String, MetadataEntry> metadataMap;

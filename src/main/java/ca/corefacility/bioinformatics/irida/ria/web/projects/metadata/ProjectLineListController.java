@@ -1,17 +1,11 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects.metadata;
 
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
-import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
-import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import com.google.common.collect.ImmutableMap;
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
@@ -19,9 +13,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
-import java.util.*;
-import java.util.stream.Collectors;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Handles requests for the metadata in a project
@@ -31,16 +31,14 @@ import java.util.stream.Collectors;
 public class ProjectLineListController {
 	
 	private final ProjectService projectService;
-	private final SampleService sampleService;
 	private final MetadataTemplateService metadataTemplateService;
 	private final ProjectControllerUtils projectControllerUtils;
 	private final MessageSource messageSource;
 
 	@Autowired
-	public ProjectLineListController(ProjectService projectService, SampleService sampleService,
-			MetadataTemplateService metadataTemplateService, ProjectControllerUtils utils, MessageSource messageSource) {
+	public ProjectLineListController(ProjectService projectService, MetadataTemplateService metadataTemplateService,
+			ProjectControllerUtils utils, MessageSource messageSource) {
 		this.projectService = projectService;
-		this.sampleService = sampleService;
 		this.metadataTemplateService = metadataTemplateService;
 		this.projectControllerUtils = utils;
 		this.messageSource = messageSource;
@@ -55,8 +53,6 @@ public class ProjectLineListController {
 	 * 		{@link Long} id for the current template
 	 * @param model
 	 * 		{@link Model}
-	 * @param locale
-	 * 		{@link Locale}
 	 * @param principal
 	 * 		{@link Principal} currently logged in user.
 	 *
@@ -64,7 +60,7 @@ public class ProjectLineListController {
 	 */
 	@RequestMapping("")
 	public String getLineListPage(@PathVariable Long projectId, @RequestParam(required = false) Long templateId,
-			Model model, Locale locale, Principal principal) {
+			Model model, Principal principal) {
 		// Set up the template information
 		Project project = projectService.read(projectId);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
@@ -76,37 +72,6 @@ public class ProjectLineListController {
 			model.addAttribute("currentTemplate", templateId);
 		}
 
-		// Get the headers (metadata fields)
-		List<String> headers = getAllProjectMetadataFields(projectId, locale);
-		model.addAttribute("headers", headers);
-
-		// Get all the metadata for each sample in the project
-		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(project);
-		List<Map<String, Object>> metadataList = new ArrayList<>(samplesForProject.size());
-		for (Join<Project, Sample> join : samplesForProject) {
-			Sample sample = join.getObject();
-			Map<String, Object> fullMetadata = new HashMap<>();
-
-			if (!sample.getMetadata().isEmpty()) {
-				Map<MetadataTemplateField, MetadataEntry> metadata = sample.getMetadata();
-				
-				Map<String,MetadataEntry> stringMetadata = new HashMap<>();
-				metadata.forEach((key, value) -> stringMetadata.put(key.getLabel(), value));
-
-				for (String header : headers) {
-					fullMetadata.put(header, stringMetadata.getOrDefault(header, new MetadataEntry("", "")));
-				}
-
-				// Id and Label must be defaults in all metadata.
-				fullMetadata.put("id", ImmutableMap.of("value", sample.getId()));
-				fullMetadata.put("irida-sample-name", ImmutableMap.of("value", sample.getSampleName()));
-
-				// Put this here to avoid showing samples that do not have
-				// any metadata associated with them.
-				metadataList.add(fullMetadata);
-			}
-		}
-		model.addAttribute("metadataList", metadataList);
 		return "projects/project_linelist";
 	}
 
@@ -189,36 +154,6 @@ public class ProjectLineListController {
 				.createMetadataTemplateInProject(metadataTemplate, project);
 
 		return ImmutableMap.of("templateId", projectMetadataTemplateJoin.getObject().getId());
-	}
-
-	/**
-	 * Get the template the the line list table.  This becomes the table headers.
-	 *
-	 * @param projectId
-	 * 		{@link Long} identifier of the current {@link Project}
-	 *
-	 * @return {@link Set} containing unique metadata fields
-	 */
-	private List<String> getAllProjectMetadataFields(Long projectId, Locale locale) {
-		Project project = projectService.read(projectId);
-		Set<String> fields = new HashSet<>();
-
-		List<MetadataTemplateField> metadataFieldsForProject = metadataTemplateService
-				.getMetadataFieldsForProject(project);
-
-		fields.addAll(
-				metadataFieldsForProject.stream().map(MetadataTemplateField::getLabel).collect(Collectors.toSet()));
-
-		// Get all the fields from the templates.
-		List<ProjectMetadataTemplateJoin> metadataTemplateJoins = metadataTemplateService
-				.getMetadataTemplatesForProject(project);
-		for (ProjectMetadataTemplateJoin join : metadataTemplateJoins) {
-			MetadataTemplate template = join.getObject();
-			fields.addAll(template.getFields().stream().map(MetadataTemplateField::getLabel)
-					.collect(Collectors.toSet()));
-		}
-
-		return new ArrayList<>(fields);
 	}
 
 	/**
