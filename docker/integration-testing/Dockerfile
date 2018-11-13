@@ -17,14 +17,3 @@ ADD ./galaxy/core_pipeline_outputs_paired_with_multi_level_parameters.xml /galax
 ADD ./galaxy/core_pipeline_outputs_paired_with_parameters.xml /galaxy-central/tools/irida/core_pipeline_outputs_paired_with_parameters.xml
 ADD ./galaxy/core_pipeline_outputs_single_paired.xml /galaxy-central/tools/irida/core_pipeline_outputs_single_paired.xml
 ADD ./galaxy/sleep.xml /galaxy-central/tools/irida/sleep.xml
-
-# Mark folders as imported from the host.
-VOLUME ["/export/", "/data/", "/var/lib/docker"]
-
-# Expose port 80 (webserver), 21 (FTP server), 8800 (Proxy)
-EXPOSE :80
-EXPOSE :21
-EXPOSE :8800
-
-# Autostart script that is invoked during container start
-CMD ["/usr/bin/startup"]
