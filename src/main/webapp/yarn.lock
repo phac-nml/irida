@@ -1094,11 +1094,6 @@ angular-bootstrap-switch@^0.5.1:
     bootstrap-switch "3.3.2"
     jquery ">=1.9.0"
 
-angular-drag-and-drop-lists@^1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/angular-drag-and-drop-lists/-/angular-drag-and-drop-lists-1.4.0.tgz#291104c935e10a42f8459696ed30069509d79bfc"
-  integrity sha1-KREEyTXhCkL4RZaW7TAGlQnXm/w=
-
 angular-messages@1.6.2:
   version "1.6.2"
   resolved "https://registry.yarnpkg.com/angular-messages/-/angular-messages-1.6.2.tgz#03838b7ec5cc8671153035a59068f2fbd4e37ce4"
