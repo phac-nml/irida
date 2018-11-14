@@ -33,7 +33,6 @@ export default class SessionModal extends React.Component {
    * To prevent any possible memory leaks in the future, when this component
    * is removed from the page, clear the timeout.
    */
-  componen;
   componentWillUnmount() {
     window.clearTimeout(this._timeout);
   }
@@ -62,7 +61,7 @@ export default class SessionModal extends React.Component {
    * Display the modal to the user.
    */
   showModal = () => {
-    Modal.warning({
+    Modal.confirm({
       title: i18n.title.replace("[TIME]", this.props.time / 60000), // Convert time to minutes.
       onOk: this.keepSession,
       onCancel: this.logout,
