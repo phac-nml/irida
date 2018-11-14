@@ -6,8 +6,7 @@ Thank you for your interest in contributing to the Integrated Rapid Infectious D
 
 Contacting the IRIDA Team
 -------------------------
-* Ask usage questions on __ADD FORUM LINK HERE__
-* Email the IRIDA developers at IRIDA-mail@sfu.ca
+* To ask general or usage questions, email the IRIDA team at IRIDA-mail@sfu.ca
 * Report bugs, suggest features, or contribute code on [GitHub](http://github.com/phac-nml/irida)
 * Chat with the developers on [Gitter](https://gitter.im/irida-project/)
 
