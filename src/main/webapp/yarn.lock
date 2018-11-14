@@ -1114,11 +1114,6 @@ angular-messages@1.6.2:
   resolved "https://registry.yarnpkg.com/angular-messages/-/angular-messages-1.6.2.tgz#03838b7ec5cc8671153035a59068f2fbd4e37ce4"
   integrity sha1-A4OLfsXMhnEVMDWlkGjy+9TjfOQ=
 
-angular-resource@1.6.2:
-  version "1.6.2"
-  resolved "https://registry.yarnpkg.com/angular-resource/-/angular-resource-1.6.2.tgz#fe09e3a723cd7a046b8871382e44f4f83f38557a"
-  integrity sha1-/gnjpyPNegRriHE4LkT0+D84VXo=
-
 angular-ui-router@1.0.0-alpha.4:
   version "1.0.0-alpha.4"
   resolved "https://registry.yarnpkg.com/angular-ui-router/-/angular-ui-router-1.0.0-alpha.4.tgz#2ef99e114d6af1cc680c9b2dcf2273ba4c5bbb5a"

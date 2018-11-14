@@ -29,7 +29,6 @@
     "angular-datatables": "^0.6.0",
     "angular-drag-and-drop-lists": "^1.4.0",
     "angular-messages": "1.6.2",
-    "angular-resource": "1.6.2",
     "angular-ui-router": "1.0.0-alpha.4",
     "antd": "^3.10.2",
     "axios": "^0.18.0",
