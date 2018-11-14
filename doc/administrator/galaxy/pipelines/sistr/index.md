@@ -9,9 +9,9 @@ SISTR Typing
 
 This workflow uses the software [sistr_cmd][] for typing of Salmonella genomes which are first assembled using [shovill], which uses [SPAdes] for assembly only and performs pre-assembly read correction with [Lighter] and post-assembly correction with [BWA MEM] and [PILON].  The specific Galaxy tools are listed in the table below.
 
-| Tool Name                 | Owner    | Tool Revision | Toolshed Installable Revision | Toolshed             |
-|:-------------------------:|:--------:|:-------------:|:-----------------------------:|:--------------------:|
-| **shovill**               | iuc      | [57d5928f456e]  | 1 (2018-03-07)                | [Galaxy Main Shed][] |
+| Tool Name                 | Owner    | Tool Revision   | Toolshed Installable Revision | Toolshed             |
+|:-------------------------:|:--------:|:---------------:|:-----------------------------:|:--------------------:|
+| **shovill**               | iuc      | [865119fcb694]  | 3 (2018-11-13)                | [Galaxy Main Shed][] |
 | **sistr_cmd**             | nml      | [5c8ff92e38a9]  | 3 (2017-06-14)                | [Galaxy Main Shed][] |
 
 To install these tools please proceed through the following steps.
@@ -52,7 +52,7 @@ A Galaxy workflow and some test data has been included with this documentation t
 If everything was successfull then all dependencies for this pipeline have been properly installed.
 
 
-[57d5928f456e]: https://toolshed.g2.bx.psu.edu/repos/iuc/shovill/rev/57d5928f456e
+[865119fcb694]: https://toolshed.g2.bx.psu.edu/repos/iuc/shovill/rev/865119fcb694
 [5c8ff92e38a9]: https://toolshed.g2.bx.psu.edu/repos/nml/sistr_cmd/rev/5c8ff92e38a9
 [SLURM]: https://slurm.schedmd.com
 [PILON]: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4237348/
