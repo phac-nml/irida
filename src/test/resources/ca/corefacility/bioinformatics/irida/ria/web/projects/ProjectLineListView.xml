@@ -127,18 +127,16 @@
     <project_sample id="22" project_id="6" sample_id="21" createdDate="2013-07-18 14:42:19.0"/>
     <project_sample id="23" project_id="3" sample_id="21" createdDate="2013-07-18 14:42:19.0"/>
 
-    <metadata_field id="1" label="firstName" type="text" />
-    <metadata_field id="2" label="lastName" type="text" />
-    <metadata_field id="3" label="healthAuthority" type="text" />
-    <metadata_field id="4" label="firstSymptom" type="text" />
-    <metadata_field id="5" label="serotype" type="text" />
-    <metadata_field id="6" label="phageType" type="text" />
+    <metadata_field id="1" label="firstName" type="text" DTYPE="MetadataTemplateField" />
+    <metadata_field id="2" label="lastName" type="text" DTYPE="MetadataTemplateField" />
+    <metadata_field id="3" label="healthAuthority" type="text" DTYPE="MetadataTemplateField" />
+    <metadata_field id="4" label="symptom" type="text" DTYPE="MetadataTemplateField" />
 
     <metadata_template id="1" created_date="2016-06-10 08:05:53" modified_date="2016-06-10 08:05:53" name="Testing Template 1" />
 
     <metadata_template_metadata_field metadata_template_id="1" fields_id="1"/>
     <metadata_template_metadata_field metadata_template_id="1" fields_id="2"/>
-    <metadata_template_metadata_field metadata_template_id="1" fields_id="5"/>
+    <metadata_template_metadata_field metadata_template_id="1" fields_id="4"/>
 
     <project_metadata_template id="1" created_date="2016-06-10 08:05:53" project_id="1" template_id="1" />
 
@@ -164,18 +162,15 @@
     <sample_metadata_entry sample_id="1" metadata_id="2"  metadata_KEY="2"/>
     <sample_metadata_entry sample_id="1" metadata_id="3"  metadata_KEY="3"/>
     <sample_metadata_entry sample_id="1" metadata_id="4"  metadata_KEY="4"/>
-    <sample_metadata_entry sample_id="1" metadata_id="5"  metadata_KEY="5"/>
 
     <sample_metadata_entry sample_id="2" metadata_id="6"  metadata_KEY="1"/>
     <sample_metadata_entry sample_id="2" metadata_id="7"  metadata_KEY="2"/>
     <sample_metadata_entry sample_id="2" metadata_id="8"  metadata_KEY="3"/>
     <sample_metadata_entry sample_id="2" metadata_id="9"  metadata_KEY="4"/>
-    <sample_metadata_entry sample_id="2" metadata_id="10"  metadata_KEY="5"/>
 
     <sample_metadata_entry sample_id="3" metadata_id="11"  metadata_KEY="1"/>
     <sample_metadata_entry sample_id="3" metadata_id="12"  metadata_KEY="2"/>
     <sample_metadata_entry sample_id="3" metadata_id="13"  metadata_KEY="3"/>
     <sample_metadata_entry sample_id="3" metadata_id="14"  metadata_KEY="4"/>
-    <sample_metadata_entry sample_id="3" metadata_id="15"  metadata_KEY="5"/>
 
 </dataset>

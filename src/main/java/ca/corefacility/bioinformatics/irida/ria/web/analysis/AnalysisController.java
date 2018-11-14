@@ -5,7 +5,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
@@ -16,6 +15,8 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.*;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
@@ -41,6 +42,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,8 +75,8 @@ public class AnalysisController {
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisController.class);
 	// PAGES
 	public static final Map<AnalysisType, String> PREVIEWS = ImmutableMap
-			.of(AnalysisType.PHYLOGENOMICS, "tree", AnalysisType.SISTR_TYPING, "sistr",
-					AnalysisType.MLST_MENTALIST, "tree");
+			.of(BuiltInAnalysisTypes.PHYLOGENOMICS, "tree", BuiltInAnalysisTypes.SISTR_TYPING, "sistr",
+					BuiltInAnalysisTypes.MLST_MENTALIST, "tree");
 	private static final String BASE = "analysis/";
 	public static final String PAGE_DETAILS_DIRECTORY = BASE + "details/";
 	public static final String PREVIEW_UNAVAILABLE = PAGE_DETAILS_DIRECTORY + "unavailable";
@@ -243,20 +246,14 @@ public class AnalysisController {
 		UUID workflowUUID = submission.getWorkflowId();
 		logger.trace("Workflow ID is " + workflowUUID);
 
-		IridaWorkflow iridaWorkflow;
-		try {
-			iridaWorkflow = workflowsService.getIridaWorkflow(workflowUUID);
-		} catch (IridaWorkflowNotFoundException e) {
-			logger.error("Error finding workflow, ", e);
-			throw new EntityNotFoundException("Couldn't find workflow for submission " + submission.getId(), e);
-		}
+		IridaWorkflow iridaWorkflow = workflowsService.getIridaWorkflowOrUnknown(submission);
 
 		// Get the name of the workflow
 		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription()
 				.getAnalysisType();
 		model.addAttribute("analysisType", analysisType);
 		String viewName = getViewForAnalysisType(analysisType);
-		String workflowName = messageSource.getMessage("workflow." + analysisType.toString() + ".title", null, locale);
+		String workflowName = messageSource.getMessage("workflow." + analysisType.getType() + ".title", null, analysisType.getType(), locale);
 		model.addAttribute("workflowName", workflowName);
 		model.addAttribute("version", iridaWorkflow.getWorkflowDescription()
 				.getVersion());
@@ -288,11 +285,11 @@ public class AnalysisController {
 		try {
 			if (submission.getAnalysisState()
 					.equals(AnalysisState.COMPLETED)) {
-				if (analysisType.equals(AnalysisType.PHYLOGENOMICS) || analysisType.equals(AnalysisType.MLST_MENTALIST)) {
+				if (analysisType.equals(BuiltInAnalysisTypes.PHYLOGENOMICS) || analysisType.equals(BuiltInAnalysisTypes.MLST_MENTALIST)) {
 					tree(submission, model);
-				} else if (analysisType.equals(AnalysisType.SISTR_TYPING)) {
+				} else if (analysisType.equals(BuiltInAnalysisTypes.SISTR_TYPING)) {
 					model.addAttribute("sistr", true);
-				} else if (analysisType.equals(AnalysisType.BIO_HANSEL)) {
+				} else if (analysisType.equals(BuiltInAnalysisTypes.BIO_HANSEL)) {
 					model.addAttribute("bio_hansel", true);
 				}
 			}
@@ -348,15 +345,20 @@ public class AnalysisController {
 	 *
 	 * @param id {@link AnalysisSubmission} id
 	 * @return map of info about each {@link AnalysisOutputFile}
-	 * @throws IridaWorkflowNotFoundException if the specified workflow cannot be found.
 	 */
 	@RequestMapping(value = "/ajax/{id}/outputs", method = RequestMethod.GET)
 	@ResponseBody
-	public List<AnalysisOutputFileInfo> getOutputFilesInfo(@PathVariable Long id)
-			throws IridaWorkflowNotFoundException {
+	public List<AnalysisOutputFileInfo> getOutputFilesInfo(@PathVariable Long id) {
 		AnalysisSubmission submission = analysisSubmissionService.read(id);
 		Analysis analysis = submission.getAnalysis();
-		final List<String> outputNames = workflowsService.getOutputNames(submission.getWorkflowId());
+		List<String> outputNames;
+		try {
+			outputNames = workflowsService.getOutputNames(submission.getWorkflowId());
+		} catch (IridaWorkflowNotFoundException e) {
+			outputNames = Lists.newArrayList(analysis.getAnalysisOutputFileNames());
+			Collections.sort(outputNames);
+		}
+
 		return outputNames.stream()
 				.map((outputName) -> getAnalysisOutputFileInfo(submission, analysis, outputName))
 				.filter(Objects::nonNull)
@@ -678,7 +680,7 @@ public class AnalysisController {
 	// ************************************************************************************************
 
 	/**
-	 * Construct the model parameters for an {@link AnalysisType#PHYLOGENOMICS} or {@link AnalysisType#MLST_MENTALIST}
+	 * Construct the model parameters for PHYLOGENOMICS or MLST_MENTALIST
 	 * {@link Analysis}
 	 *
 	 * @param submission The analysis submission
@@ -794,7 +796,7 @@ public class AnalysisController {
 		}
 		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription()
 				.getAnalysisType();
-		if (analysisType.equals(AnalysisType.SISTR_TYPING)) {
+		if (analysisType.equals(BuiltInAnalysisTypes.SISTR_TYPING)) {
 			Analysis analysis = submission.getAnalysis();
 			Path path = analysis.getAnalysisOutputFile(sistrFileKey)
 					.getFile();
