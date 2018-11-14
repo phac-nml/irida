@@ -30,7 +30,7 @@ Changes
 * [Sync]: Project sync date will be updated at start of sync job to stop quickly repeating errored syncs.
 * [UI]: IRIDA will now remove local samples when a synchronized remote sample is removed at its source.
 * [UI]: New project line list page with inline editing.
-* [UI]: Removed angular-resource, angular-sanitize, and angular-animate.
+* [UI]: Removed angular-resource, angular-sanitize, angular-animate, angular-datatables, ng-table and angular-drag-and-drop-lists.
 
 0.21.0 to 0.22.0
 ----------------
