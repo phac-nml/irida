@@ -10,7 +10,7 @@ const config = {
   externals: {
     jquery: "jQuery",
     angular: "angular",
-    moment: "moment",
+    moment: "moment"
   },
   stats: {
     children: false,
