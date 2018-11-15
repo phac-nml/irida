@@ -15,7 +15,7 @@
     <div class="col-md-12">
         <h1><th:block th:text="${project.label}"/>&nbsp;<small th:text="#{project.id}"/>&nbsp;<span id="projectIdDisplay" th:text="${project.getId()}"/></h1>
         <div class="remote-hint" th:if="${project.isRemote()}" th:with="status=${project.getRemoteStatus()}">
-            <span><i class="fa fa-exchange fa-fw" aria-hidden="true"></i> <span th:text="#{project.sync.source}">_Project source _</span>: <a href="#" th:href="@{/remote_api/{id}(id=${status.getApi().getId()})}" th:text="${status.getApi().getLabel()}">_api_</a></span>
+            <span><i class="fas fa-exchange-alt fa-fw" aria-hidden="true"></i> <span th:text="#{project.sync.source}">_Project source _</span>: <a href="#" th:href="@{/remote_api/{id}(id=${status.getApi().getId()})}" th:text="${status.getApi().getLabel()}">_api_</a></span>
             &nbsp;
             <span><i class="fa fa-heartbeat fa-fw" aria-hidden="true"></i> <span th:text="#{project.sync.status}">_Status: _</span>: <span th:text="#{'project.sync.status.'+${status.getSyncStatus()}}">_api_</span></span>
         </div>
