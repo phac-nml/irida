@@ -67,7 +67,7 @@
     "react-dom-factories": "^1.0.2",
     "react-immutable-proptypes": "^2.1.0",
     "react-redux": "^5.0.7",
-    "reactour": "^1.8.4",
+    "reactour": "^1.9.1",
     "redux": "4.0.1",
     "redux-saga": "^0.16.0",
     "select2": "4.0.3",

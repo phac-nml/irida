@@ -6826,10 +6826,10 @@ react@16.6.0:
     prop-types "^15.6.2"
     scheduler "^0.10.0"
 
-reactour@^1.8.4:
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/reactour/-/reactour-1.9.0.tgz#79e31c4ebe79af1d36105cca3e7b6dbbc28d5b2e"
-  integrity sha512-qq5z0c7d6UEP2LRBZ09r5Dw5RErnPdfrj3kGfuvKkHzH3VmpLkzMDcYbsw24UaXuLetXsf/nrfc9xJUw9J9RPA==
+reactour@^1.9.1:
+  version "1.9.1"
+  resolved "https://registry.yarnpkg.com/reactour/-/reactour-1.9.1.tgz#c9a94e6951ed3053804a20d2ff78b41ccbf25558"
+  integrity sha512-hHNO7AvOr1BAFY1QF0wQqjCNgs5vfhWQMRO9Q0D1RaH2YNpGLnCox3OO+00UKRSY1ygn2I9FK+h3MEyUGi1K/A==
   dependencies:
     classnames "2.2.6"
     exenv "1.2.2"
