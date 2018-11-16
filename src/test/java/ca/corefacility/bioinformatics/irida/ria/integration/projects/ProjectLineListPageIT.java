@@ -1,16 +1,16 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.Dimension;
 
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectLineListPage;
-
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * <p>
@@ -33,6 +33,15 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testTableSetup() {
 		ProjectLineListPage page = ProjectLineListPage.goToPage(driver(), 1);
+
+		// Test the tour to make sure everything is functional.
+		page.openTour();
+		assertEquals("Should be on the first step of the tour", 1, page.getTourStep());
+		page.goToNextTourStage();
+		assertEquals("Should be on the second step of the tour", 2, page.getTourStep());
+		page.closeTour();
+		// If we reached this far the tour is good to go
+
 		// OPen the column panel
 		page.openColumnsPaenl();
 		assertEquals("Should be on the correct page.", "Line List", page.getActivePage());
