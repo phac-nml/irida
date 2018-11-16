@@ -11,7 +11,7 @@ This workflow uses the software [sistr_cmd][] for typing of Salmonella genomes w
 
 | Tool Name                 | Owner    | Tool Revision   | Toolshed Installable Revision | Toolshed             |
 |:-------------------------:|:--------:|:---------------:|:-----------------------------:|:--------------------:|
-| **shovill**               | iuc      | [f698c7604b3b]  | 3 (2018-10-07)                | [Galaxy Main Shed][] |
+| **shovill**               | iuc      | [f698c7604b3b]  | 2 (2018-10-07)                | [Galaxy Main Shed][] |
 | **sistr_cmd**             | nml      | [5c8ff92e38a9]  | 3 (2017-06-14)                | [Galaxy Main Shed][] |
 
 To install these tools please proceed through the following steps.
@@ -52,8 +52,8 @@ A Galaxy workflow and some test data has been included with this documentation t
 If everything was successfull then all dependencies for this pipeline have been properly installed.
 
 
-[f698c7604b3b]: https://toolshed.g2.bx.psu.edu/repos/iuc/shovill/rev/f698c7604b3b
-[5c8ff92e38a9]: https://toolshed.g2.bx.psu.edu/repos/nml/sistr_cmd/rev/5c8ff92e38a9
+[f698c7604b3b]: https://toolshed.g2.bx.psu.edu/view/iuc/shovill/f698c7604b3b
+[5c8ff92e38a9]: https://toolshed.g2.bx.psu.edu/view/nml/sistr_cmd/5c8ff92e38a9
 [SLURM]: https://slurm.schedmd.com
 [PILON]: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4237348/
 [BWA MEM]: https://github.com/lh3/bwa
