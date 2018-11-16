@@ -32,6 +32,7 @@ Changes
 * [UI]: IRIDA will now remove local samples when a synchronized remote sample is removed at its source.
 * [UI]: New project line list page with inline editing.
 * [Developer]: Updated Node, Yarn, and front-end webpack packages.
+* [Workflow]: Updated SISTR workflow to 0.3.1 (updated default thresholds for Shovill to perform minimal filtering of contigs and updated Shovill Galaxy tool revision).
 
 0.21.0 to 0.22.0
 ----------------
