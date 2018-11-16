@@ -33,7 +33,7 @@ Note: IRIDA's GitHub issue board is for bug reports or feature requests only.  Y
 
 ### Contributing an analysis pipeline
 
-If you have an analysis tool that you would like to build for IRIDA we'd like to hear about it!  IRIDA has a plug-in style system for analysis workflows.  This helps make it easier for tool developers to get the benefits of IRIDA's data management system and easy to use interface and incorporate their analysis workflows into IRIDA's growing suite of tools.  For an analysis pipeline to be used in IRIDA, it must be developed as a Galaxy workflow and operate on sequencing reads.  Read more about building tools for IRIDA in the [IRIDA Pipeline Development Guide](https://irida.corefacility.ca/documentation/developer/tools/pipelines/).
+If you have an analysis tool that you would like to build for IRIDA we'd like to hear about it!  IRIDA has a plug-in style system for analysis workflows.  This helps make it easier for tool developers to get the benefits of IRIDA's data management system and easy to use interface and incorporate their analysis workflows into IRIDA's growing suite of tools.  For an analysis pipeline to be used in IRIDA, it must be developed as a Galaxy workflow and operate on sequencing reads.  Read more about building tools for IRIDA in the [IRIDA Pipeline Development Guide](https://irida.corefacility.ca/documentation/developer/tools/pipelines/).  An example plugin pipeline and additional documentation can be found at [IRIDA Example Pipeline Plugin GitHub repository](https://github.com/phac-nml/irida-plugin-example).
 
 ### Suggesting a feature
 
@@ -69,7 +69,7 @@ For JavaScript or HTML submissions, the standards are similar:
 
 #### Submitting a pull request
 
-When you have completed development on your issue, you can submit it to the project for review as a GitHub pull request.  You should reference the issue you were working on from IRIDA's [GitHub issue board] in your pull request.  The core IRIDA development team will review the content of the merge for functionality, fit to IRIDA's priorities, and coding standards listed above.  All tests in the CI suite must pass before before a pull request is merged.  After review the core development team may suggest changes to your submission.  After feedback, if the development team's questions or suggestions are not addressed in a timely manner, your pull request may be closed.
+When you have completed development on your issue, you can submit it to the project for review as a GitHub pull request.  You should reference the issue you were working on from IRIDA's [GitHub issue board] in your pull request.  The core IRIDA development team will review the content of the merge for functionality, fit to IRIDA's priorities, and coding standards listed above.  All tests in the CI suite must pass before a pull request is merged.  After review the core development team may suggest changes to your submission.  After feedback, if the development team's questions or suggestions are not addressed in a timely manner, your pull request may be closed.
 
 **The final decision on whether to accept a pull request comes from the core IRIDA development team.**
 
