@@ -1,16 +1,6 @@
 import React from "react";
 import { render } from "react-dom";
-import Loadable from "react-loadable";
-
-/**
- * Using react-loader to only load the modal when it is needed. since most users
- * will not reach the timeout, there is no point in having it loaded onto the page.
- * THe modal code and css does not need to be loaded at this time.
- */
-const LoadableModal = Loadable({
-  loader: () => import(/* webpackChunkName: 'SessionModal' */ "./SessionModal"),
-  loading: () => <div style={{ display: "none" }} /> // Requires something.
-});
+import SessionModal from "./SessionModal";
 
 /**
  * Component to keep track of whether or not the user has made any interactive
@@ -105,7 +95,7 @@ export default class SessionTimer extends React.Component {
 
   render() {
     return this.state.visible ? (
-      <LoadableModal
+      <SessionModal
         resetTimeout={this.resetTimeout}
         time={this._MODAL_TIMEOUT}
       />
