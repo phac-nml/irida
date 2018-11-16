@@ -249,8 +249,10 @@ export class Table extends React.Component {
     ws[cell_ref] = cell;
     colOrder.forEach((col, i) => {
       const index = i + 1;
+      const column = this.columnApi.getColumn(col.colId);
+      const name = this.columnApi.getDisplayNameForColumn(column);
       if (range.e.c < index) range.e.c = index;
-      const cell = { v: col.colId, t: "s" };
+      const cell = { v: name, t: "s" };
       const cell_ref = XLSX.utils.encode_cell({ c: index, r: 0 });
       ws[cell_ref] = cell;
     });
@@ -267,7 +269,7 @@ export class Table extends React.Component {
       if (range.e.r < row) range.e.r = row;
 
       // Need to add the sample identifier
-      const idCell = { v: entry.sampleId, t: "n", z: "0" };
+      const idCell = { v: entry[FIELDS.sampleId], t: "n", z: "0" };
       const idRef = XLSX.utils.encode_cell({ c: 0, r: row });
       ws[idRef] = idCell;
 
