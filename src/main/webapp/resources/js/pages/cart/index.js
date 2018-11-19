@@ -1,10 +1,15 @@
 import React, { Component } from "react";
 import { render } from "react-dom";
-import { getCart } from "../../apis/cart/cart";
+import { getCart, getProjectsInCart } from "../../apis/cart/cart";
 import { List, Skeleton } from "antd";
 
 class CartProject extends React.Component {
   state = { loading: true };
+
+  componentDidMount() {
+    const { id, samples } = this.props.project;
+    console.log(id, samples);
+  }
 
   render() {
     const { loading } = this.state;
@@ -12,10 +17,12 @@ class CartProject extends React.Component {
 
     return (
       <List.Item key={id} actions={[<a>Remove</a>]}>
-        <List.Item.Meta
-          title={label}
-          description={<Skeleton active={true} title={false} />}
-        />
+        <Skeleton loading={loading}>
+          <List.Item.Meta
+            title={label}
+            description={<Skeleton active={true} title={false} />}
+          />
+        </Skeleton>
       </List.Item>
     );
   }
@@ -24,8 +31,8 @@ class CartProject extends React.Component {
 class Cart extends Component {
   state = { projects: [] };
   componentDidMount() {
-    getCart().then(data => {
-      this.setState({ projects: data.projects });
+    getProjectsInCart().then(data => {
+      this.setState({ projects: data });
     });
   }
 

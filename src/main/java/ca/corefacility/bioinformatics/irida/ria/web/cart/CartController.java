@@ -102,6 +102,12 @@ public class CartController {
 		return ImmutableMap.of("projects", projects);
 	}
 
+	@RequestMapping(value = "/projects", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public Set<Long> getProjectsInCart() {
+		return cart.getProjectsInCart();
+	}
+
 	/**
 	 * Get a Json representation of what's in the cart for export to Galaxy.
 	 * <p>

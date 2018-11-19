@@ -28,3 +28,6 @@ export const getCartCount = async () => {
  */
 export const getCart = async () =>
   axios.get(`${url}`).then(response => response.data);
+
+export const getProjectsInCart = async () =>
+  axios.get(`${url}/projects`).then(response => response.data);
