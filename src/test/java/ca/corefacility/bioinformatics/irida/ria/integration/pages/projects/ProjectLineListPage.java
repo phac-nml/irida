@@ -90,7 +90,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 	}
 
 	public void selectTemplate(String template) {
-		waitForElementInvisible(By.className("t-select-option"));
+		waitForElementToBeClickable(templateSelectToggle);
 		templateSelectToggle.click();
 		waitForElementsVisible(By.className("ant-select-dropdown-menu"));
 		for (WebElement option : templateOptions) {
