@@ -88,6 +88,8 @@ public class SISTRSampleUpdaterTest {
 	public void testUpdaterPassed() throws PostProcessingException, AnalysisAlreadySetException {
 		ImmutableMap<String, String> expectedResults = ImmutableMap.<String,String>builder()
 				.put("SISTR serovar (v0.1)", "Enteritidis")
+				.put("SISTR serovar cgMLST (v0.1)", "Enteritidis")
+				.put("SISTR serovar antigen (v0.1)", "Blegdam|Dublin|Enteritidis|Gueuletapee|Hillingdon|Kiel|Moscow|Naestved|Nitra|Rostock")
 				.put("SISTR cgMLST Subspecies (v0.1)", "enterica")
 				.put("SISTR QC Status (v0.1)", "PASS")
 				.put("SISTR O-antigen (v0.1)", "1,9,12")
