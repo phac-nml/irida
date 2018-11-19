@@ -32,7 +32,9 @@ export function TemplateSelectOption(props) {
     <React.Fragment>
       <div className="templates-option">
         <span
-          className="template-option--name"
+          className={`template-option--name ${
+            index === current ? "t-select-option" : ""
+          }`}
           style={{
             maxWidth: 190,
             overflow: "hidden",

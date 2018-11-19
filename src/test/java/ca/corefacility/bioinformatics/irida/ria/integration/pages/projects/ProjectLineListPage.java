@@ -24,7 +24,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 	@FindBy(className = "ag-header-cell-text")
 	private List<WebElement> headerText;
 
-	@FindBy(className = "ant-select-selection-selected-value")
+	@FindBy(className = "t-select-option")
 	private WebElement templateSelectToggle;
 
 	@FindBy(className = "template-option--name")
@@ -90,6 +90,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 	}
 
 	public void selectTemplate(String template) {
+		waitForElementToBeClickable(templateSelectToggle);
 		templateSelectToggle.click();
 		waitForElementsVisible(By.className("ant-select-dropdown-menu"));
 		for (WebElement option : templateOptions) {
