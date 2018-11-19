@@ -24,7 +24,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 	@FindBy(className = "ag-header-cell-text")
 	private List<WebElement> headerText;
 
-	@FindBy(className = "t-select-option")
+	@FindBy(css = ".template-option--name:first-of-type")
 	private WebElement templateSelectToggle;
 
 	@FindBy(className = "template-option--name")
