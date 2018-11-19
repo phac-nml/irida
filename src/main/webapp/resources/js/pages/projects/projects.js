@@ -62,7 +62,7 @@ const config = Object.assign(tableConfig, {
             full.remote
               ? `<div aria-hidden="true" data-toggle="tooltip" data-placement="top" title="${
                   window.PAGE.i18n.remote
-                }">${data}&nbsp;<i style="color: #000;" class="fa fa-exchange pull-right"></i></div>`
+                }">${data}&nbsp;<i style="color: #000;" class="fas fa-exchange-alt pull-right"></i></div>`
               : data
           }`,
           width: "200px"

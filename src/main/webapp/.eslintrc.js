@@ -3,15 +3,11 @@ module.exports = {
     "eslint:recommended",
     "plugin:import/errors",
     "plugin:react/recommended",
+    "plugin:prettier/recommended",
     "plugin:jsx-a11y/recommended",
-    "prettier",
     "prettier/react"
   ],
-  plugins: [
-    "react",
-    "import",
-    "jsx-a11y"
-  ],
+  plugins: ["react", "import", "jsx-a11y"],
   parserOptions: {
     ecmaVersion: 2018,
     sourceType: "module",
