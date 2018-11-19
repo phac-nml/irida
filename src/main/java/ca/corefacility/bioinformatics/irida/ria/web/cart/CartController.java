@@ -60,6 +60,11 @@ public class CartController {
 		this.cart = cart;
 	}
 
+	@RequestMapping("")
+	public String getCartPage() {
+		return "cart";
+	}
+
 	/**
 	 * Get a modal dialog in order to export sample files to Galaxy
 	 * @param model
