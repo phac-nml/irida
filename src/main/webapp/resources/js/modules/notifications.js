@@ -55,6 +55,36 @@ export function showErrorNotification(params) {
   return new Noty(Object.assign({}, defaultErrorConfig, params)).show();
 }
 
+/**
+ * Show UI notification when a value has been changed and provide the capability to undo it.
+ * @param {object} params - overwrite the default configuration
+ * @param {function} cb - undo callback
+ */
+export function showUndoNotification(params, cb) {
+  const n = new Noty(
+    Object.assign(
+      {},
+      defaultConfig,
+      {
+        type: "alert",
+        timeout: 6000,
+        buttons: [
+          Noty.button(
+            "UNDO",
+            "t-undo-edit btn btn-default btn-xs pull-right spaced-bottom",
+            () => {
+              typeof cb === "function" ? cb() : null;
+              n.close();
+            }
+          )
+        ]
+      },
+      params
+    )
+  );
+  return n.show();
+}
+
 // TODO: Remove this after all notification usages are through a webpack bundle.
 window.notifications = (function() {
   return { show: showNotification, showError: showErrorNotification };

@@ -53,18 +53,21 @@ function ReferenceFileService($rootScope, $uibModal, $http) {
     });
 
     modalInstance.result.then(function() {
-      $http
-        .post(window.PAGE.urls.remove, {
+      $http({
+        method: "POST",
+        url: window.PAGE.urls.remove,
+        data: $.param({
           fileId: file.id,
           projectId: window.project.id
-        })
-        .then(function(response) {
-          showNotification({
-            text: response.data.msg,
-            type: response.data.result
-          });
-          $rootScope.$broadcast("FILE_DELETED", { id: file.id });
+        }),
+        headers: { "Content-Type": "application/x-www-form-urlencoded" }
+      }).then(function(response) {
+        showNotification({
+          text: response.data.msg,
+          type: response.data.result
         });
+        $rootScope.$broadcast("FILE_DELETED", { id: file.id });
+      });
     });
   };
 }

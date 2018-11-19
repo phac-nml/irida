@@ -211,7 +211,6 @@
 			<artifactId>commons-net</artifactId>
 			<version>${commons.net.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>javax.interceptor</groupId>
 			<artifactId>javax.interceptor-api</artifactId>
@@ -553,6 +552,13 @@
 			<version>1.1.11</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.pf4j</groupId>
+			<artifactId>pf4j</artifactId>
+			<version>${pf4j.version}</version>
+		</dependency>
+
+
 		<!-- Validation API -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -836,6 +842,7 @@
 				<configuration>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 					<packagingExcludes>node_modules/**/*</packagingExcludes>
+					<attachClasses>true</attachClasses>
 				</configuration>
 			</plugin>
 
@@ -1039,7 +1046,7 @@
 		<spring.test.dbunit.version>1.1.0</spring.test.dbunit.version>
 		<dbunit.version>2.4.9</dbunit.version>
 		<commons.dbcp.version>2.0.1</commons.dbcp.version>
-		<commons.net.version>3.3</commons.net.version>
+		<commons.net.version>3.6</commons.net.version>
 		<fastqc.version>0.11.7-nml-custom</fastqc.version>
 		<aspectj.version>1.8.1</aspectj.version>
 		<hibernate.validator.version>5.1.1.Final</hibernate.validator.version>
@@ -1076,6 +1083,7 @@
 		<imgscalr.version>4.2</imgscalr.version>
 		<jackson.dataformat.yaml.version>2.7.4</jackson.dataformat.yaml.version>
 		<jvm-breakglass.version>0.0.8</jvm-breakglass.version>
+		<pf4j.version>2.4.0</pf4j.version>
 		<hamcrest.version>1.3</hamcrest.version>
 
 		<!-- plugins -->
@@ -1095,8 +1103,8 @@
 		<maven.site.plugin.version>3.4</maven.site.plugin.version>
 		<errorprone.version>2.5</errorprone.version>
 		<frontend-maven-plugin.version>1.6</frontend-maven-plugin.version>
-		<node.version>v8.10.0</node.version>
-		<yarn.version>v1.7.0</yarn.version>
+		<node.version>v10.13.0</node.version>
+		<yarn.version>v1.12.3</yarn.version>
 		<jgravatar.version>1.0</jgravatar.version>
 
 		<!-- project configuration -->
@@ -1134,6 +1142,7 @@
 				<include.tests>
 					**/service/impl/integration/**/*IT.java,
 					**/service/workflow/integration/**/*IT.java,
+					**/pipeline/results/**/*IT.java,
 					**/repositories/**/*IT.java
 				</include.tests>
 				<exclude.tests>**/*Galaxy*IT.java,

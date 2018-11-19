@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 
 /**
  * Class to store basic {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile} and associated {@link ca.corefacility.bioinformatics.irida.model.sample.Sample}, {@link ca.corefacility.bioinformatics.irida.model.project.Project} and {@link ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission} information from a native SQL query.
@@ -69,7 +69,7 @@ public class ProjectSampleAnalysisOutputInfo {
 				that.getSampleName()) && Objects.equals(getAnalysisId(), that.getAnalysisId()) && Objects.equals(
 				getAnalysisOutputFileKey(), that.getAnalysisOutputFileKey()) && Objects.equals(getFilePath(),
 				that.getFilePath()) && Objects.equals(getAnalysisOutputFileId(), that.getAnalysisOutputFileId())
-				&& getAnalysisType() == that.getAnalysisType() && Objects.equals(getWorkflowId(), that.getWorkflowId())
+				&& Objects.equals(getAnalysisType(), that.getAnalysisType()) && Objects.equals(getWorkflowId(), that.getWorkflowId())
 				&& Objects.equals(getCreatedDate().getTime(), that.getCreatedDate().getTime()) && Objects.equals(
 				getAnalysisSubmissionName(), that.getAnalysisSubmissionName()) && Objects.equals(
 				getAnalysisSubmissionId(), that.getAnalysisSubmissionId()) && Objects.equals(getUserId(),

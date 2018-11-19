@@ -36,9 +36,12 @@ export function sampleMetadataService($http, $window, Upload) {
    * @return {object} ajax promise
    */
   const setSampleIdColumn = sampleNameColumn => {
-    return $http
-      .post(`${URL}/setSampleColumn`, { sampleNameColumn })
-      .then(response => response);
+    return $http({
+      method: "POST",
+      url: `${URL}/setSampleColumn`,
+      data: $.param({ sampleNameColumn }),
+      headers: { "Content-Type": "application/x-www-form-urlencoded" }
+    }).then(response => response);
   };
 
   /**
