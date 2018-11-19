@@ -31,6 +31,7 @@ Changes
 * [UI]: IRIDA will now remove local samples when a synchronized remote sample is removed at its source.
 * [UI]: New project line list page with inline editing.
 * [Developer]: Updated Node, Yarn, and front-end webpack packages.
+* [Documentation]: Changed references from GitLab to GitHub in docs.
 
 0.21.0 to 0.22.0
 ----------------
