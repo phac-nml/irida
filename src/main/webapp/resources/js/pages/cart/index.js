@@ -11,8 +11,11 @@ class CartProject extends React.Component {
     const { id, label } = this.props.project;
 
     return (
-      <List.Item key={id} actions={[<a>edit</a>, <a>more</a>]}>
-        <List.Item.Meta title={label} description={<Skeleton active={true} title={false} />} />
+      <List.Item key={id} actions={[<a>Remove</a>]}>
+        <List.Item.Meta
+          title={label}
+          description={<Skeleton active={true} title={false} />}
+        />
       </List.Item>
     );
   }
