@@ -3,29 +3,33 @@ import { render } from "react-dom";
 import { getCart, getProjectsInCart } from "../../apis/cart/cart";
 import { List, Skeleton } from "antd";
 
-class CartProject extends React.Component {
-  state = { loading: true };
+// class CartProject extends React.Component {
+//   state = { loading: true };
+//
+//   componentDidMount() {
+//     const { id } = this.props;
+//     console.log(id);
+//   }
+//
+//   render() {
+//     const { loading } = this.state;
+//     const { id } = this.props;
+//
+//     return (
+//       <List.Item key={id} actions={[<a>Remove</a>]}>
+//         <Skeleton loading={loading} active>
+//           <List.Item.Meta
+//             title={this.state.title}
+//             description={<Skeleton active={true} title={false} />}
+//           />
+//         </Skeleton>
+//       </List.Item>
+//     );
+//   }
+// }
 
-  componentDidMount() {
-    const { id, samples } = this.props.project;
-    console.log(id, samples);
-  }
-
-  render() {
-    const { loading } = this.state;
-    const { id, label } = this.props.project;
-
-    return (
-      <List.Item key={id} actions={[<a>Remove</a>]}>
-        <Skeleton loading={loading}>
-          <List.Item.Meta
-            title={label}
-            description={<Skeleton active={true} title={false} />}
-          />
-        </Skeleton>
-      </List.Item>
-    );
-  }
+function EmptyCartState() {
+  return;
 }
 
 class Cart extends Component {
@@ -40,8 +44,8 @@ class Cart extends Component {
     const { projects } = this.state;
     return (
       <List>
-        {projects.map(project => (
-          <CartProject key={project.id} project={project} />
+        {projects.map(id => (
+          <CartProject key={id} id={id} />
         ))}
       </List>
     );
