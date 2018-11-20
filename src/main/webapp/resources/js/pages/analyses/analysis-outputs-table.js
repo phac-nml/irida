@@ -268,8 +268,8 @@ async function getTableData(isShared = true) {
   const { data, error } = await (PROJECT_ID === null
     ? getPrincipalUserSingleSampleAnalysisOutputs()
     : isShared
-      ? getProjectSharedSingleSampleAnalysisOutputs(PROJECT_ID)
-      : getProjectAutomatedSingleSampleAnalysisOutputs(PROJECT_ID));
+    ? getProjectSharedSingleSampleAnalysisOutputs(PROJECT_ID)
+    : getProjectAutomatedSingleSampleAnalysisOutputs(PROJECT_ID));
   if (error) {
     displayErrorAlert(error);
     return;

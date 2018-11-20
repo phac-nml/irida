@@ -10,7 +10,6 @@ import { formatDate } from "../../../utilities/date-utilities";
 import "./../../../vendor/datatables/datatables";
 import "./../../../vendor/datatables/datatables-buttons";
 import "./../../../vendor/datatables/datatables-rowSelection";
-import { CART } from "../../../utilities/events-utilities";
 import {
   SampleCartButton,
   SampleDropdownButton,
@@ -21,6 +20,8 @@ import { FILTERS, SAMPLE_EVENTS } from "./constants";
 import { download } from "../../../utilities/file.utilities";
 import moment from "moment";
 import "../../../../sass/pages/project-samples.scss";
+import { putSampleInCart } from "../../../apis/cart/cart";
+import { cartNotification } from "../../../utilities/events-utilities";
 
 /*
 This is required to use select2 inside a modal.
@@ -106,21 +107,22 @@ const EXPORT_HANDLERS = {
 Initialize the add to cart button
  */
 const cartBtn = new SampleCartButton($(".js-cart-btn"), function() {
-  const selected = $dt.select.selected()[0];
-  /*
-  Selected data needs to be formatted into an object: {projectId => [sampleIds]}
-   */
   const projects = {};
-  selected.forEach(item => {
-    projects[item.project] = projects[item.project] || [];
-    projects[item.project].push(item.sample);
-  });
+  const selected = $dt.select.selected()[0].keys();
+  let next = selected.next();
+  while (!next.done) {
+    const data = $dt.row(`#${next.value}`).data();
+    projects[data.projectId] = projects[data.projectId] || [];
+    projects[data.projectId].push({ id: data.id, label: data.sampleName });
+    next = selected.next();
+  }
 
-  /*
-  Update the cart with the new samples.
-   */
-  const event = new CustomEvent(CART.ADD, { detail: { projects } });
-  document.dispatchEvent(event);
+  // Updated post method
+  Object.keys(projects).forEach(id => {
+    putSampleInCart(+id, projects[id]).then(response => {
+      cartNotification(response.data);
+    });
+  });
 });
 SAMPLE_TOOL_BUTTONS.push(cartBtn);
 

@@ -2,108 +2,10 @@ import angular from "angular";
 import find from "lodash/find";
 import filter from "lodash/filter";
 import { CART } from "../../utilities/events-utilities";
-import $ from "jquery";
-import { showNotification } from "../notifications";
-
-function CartController(cart) {
-  const vm = this;
-  vm.show = false;
-  vm.projects = [];
-  vm.count = 0;
-  vm.collapsed = {};
-  vm.term = "";
-
-  /*
-  This is here since this has been updated to use a standard Event,
-  and not handled through angularjs.
-   */
-  document.addEventListener(CART.UPDATED, function() {
-    getCart(false);
-  });
-
-  function getCart(collapse) {
-    cart.all().then(function(data) {
-      vm.count = 0;
-      vm.projects = data.projects;
-      vm.projects.forEach(function(p) {
-        vm.count += p.samples.length;
-        // Sort the samples by created date.
-        p.samples.sort(function(a, b) {
-          return b.createdDate - a.createdDate > 0;
-        });
-        if (collapse) {
-          vm.collapsed[p.id] = true;
-        }
-      });
-    });
-  }
-
-  getCart(true);
-}
-
-/**
- * Controller for functions on the cart slider
- * @param CartService The cart service to communicate with the server
- */
-function CartSliderController(CartService, $uibModal) {
-  const vm = this;
-
-  vm.clear = function() {
-    CartService.clear();
-  };
-
-  vm.removeProject = function(projectId) {
-    CartService.removeProject(projectId);
-  };
-
-  vm.removeSample = function(projectId, sampleId) {
-    CartService.removeSample(projectId, sampleId);
-  };
-
-  vm.exportToGalaxy = function() {
-    CartService.all().then(function(data) {
-      if (data !== null) {
-        const firstProjID = data.projects[0].id;
-
-        $uibModal.open({
-          templateUrl:
-            window.TL.BASE_URL + "cart/template/galaxy/project/" + firstProjID,
-          controller: "GalaxyDialogCtrl as gCtrl",
-          resolve: {
-            openedByCart: function() {
-              return true;
-            },
-            multiProject: function() {
-              return data.length > 1;
-            },
-            sampleIds: function() {
-              return false;
-            },
-            projectId: function() {
-              return false;
-            }
-          }
-        });
-      }
-    });
-  };
-}
-
-function CartDirective() {
-  return {
-    restrict: "E",
-    templateUrl: "/cart.html",
-    replace: true,
-    controllerAs: "cart",
-    controller: ["CartService", CartController]
-  };
-}
 
 function CartService(scope, $http) {
   const svc = this;
   const urls = {
-    all: window.TL.BASE_URL + "cart",
-    add: window.TL.BASE_URL + "cart/add/samples",
     project: window.TL.BASE_URL + "cart/project/",
     galaxy: window.TL.BASE_URL + "cart/galaxy-export"
   };
@@ -128,65 +30,7 @@ function CartService(scope, $http) {
     });
   };
 
-  /*
-  Add Samples to the global cart
-  Event Listener for adding samples to the global cart.
-  Expects an object with project ids references an array of sample ids
-  { projectId: [sampleIds] }
-   */
-  document.addEventListener(
-    CART.ADD,
-    function(e) {
-      const projects = e.detail.projects;
-      if (typeof projects === "undefined") {
-        return;
-      }
-      const promises = [];
-      /*
-    For each project that has samples, post the project/samples to
-    and store the promise.
-     */
-      Object.keys(projects).forEach(projectId => {
-        promises.push(
-          $.post(window.TL.URLS.cart.add, {
-            projectId,
-            sampleIds: projects[projectId]
-          }).then(response => {
-            /*
-          Display a notification of what occurred on the server.
-           */
-            const { message, excluded } = response;
-            if (excluded) {
-              showNotification({
-                text: `
-                    <p>${message}<p>
-                    <ul>${excluded
-                      .map(excludedSample => "<li>" + excludedSample + "</li>")
-                      .join("")}</ul>`,
-                progressBar: false,
-                timeout: false,
-                type: "warning"
-              });
-            } else {
-              showNotification({
-                text: message
-              });
-            }
-          })
-        );
-      });
 
-      /*
-    Wait until all the projects have been added to the server cart, and
-    then notify the UI that this has occurred.
-     */
-      $.when.apply($, promises).done(function() {
-        const event = new Event(CART.UPDATED);
-        document.dispatchEvent(event);
-      });
-    },
-    false
-  );
 
   svc.clear = function() {
     //fire a DELETE to the server on the cart then broadcast the cart update event
@@ -460,11 +304,6 @@ function CartFilter() {
 angular
   .module("irida.cart", [])
   .service("CartService", ["$rootScope", "$http", CartService])
-  .controller("CartSliderController", [
-    "CartService",
-    "$uibModal",
-    CartSliderController
-  ])
   .controller("GalaxyDialogCtrl", [
     "$uibModalInstance",
     "$timeout",
@@ -483,5 +322,4 @@ angular
     "$q",
     GalaxyExportService
   ])
-  .directive("cart", [CartDirective])
   .filter("cartFilter", [CartFilter]);

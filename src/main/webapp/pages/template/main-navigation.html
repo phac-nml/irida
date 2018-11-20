@@ -148,10 +148,9 @@
                         </ul>
                     </li>
                     <li>
-                        <a href="#" id="cart-show-btn" class="nav-icon-wrapper" ng-click="cart.show=!cart.show">
+                        <a href="#" id="cart-show-btn" class="nav-icon-wrapper">
                             <i class="fa fa-fw fa-shopping-cart nav-icon"></i>
-                            <span id="cart-count" ng-show="cart.count > 0" class="btn__badge"
-                                  ng-bind="cart.count"></span>
+                            <span style="display: none;" class="js-cart-count btn__badge"></span>
                         </a>
                     </li>
 
