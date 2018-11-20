@@ -79,49 +79,64 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 		try {
 			IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(analysis.getWorkflowId());
 			String workflowVersion = iridaWorkflow.getWorkflowDescription().getVersion();
+			
+			Map<String, String> mapOfSISTRResults = buildMapOfSISTRResults(SISTR_FIELDS, iridaWorkflow, filePath);
+			
+			mapOfSISTRResults.entrySet().forEach(e -> {
+				PipelineProvidedMetadataEntry metadataEntry = new PipelineProvidedMetadataEntry(e.getValue(), "text",
+						analysis);
+				stringEntries.put(e.getKey(), metadataEntry);
+			});
 
+			// convert string map into metadata fields
+			Map<MetadataTemplateField, MetadataEntry> metadataMap = metadataTemplateService
+					.getMetadataMap(stringEntries);
+
+			//save metadata back to sample
+			samples.forEach(s -> {
+				s.mergeMetadata(metadataMap);
+				sampleService.updateFields(s.getId(), ImmutableMap.of("metadata", s.getMetadata()));
+			});
+
+		} catch (IridaWorkflowNotFoundException e) {
+			throw new PostProcessingException("Workflow is not found", e);
+		}
+	}
+	
+	public static Map<String, String> buildMapOfSISTRResults(final Map<String,String> sistrFields, final IridaWorkflow iridaWorkflow, Path sistrResultsFile) throws PostProcessingException {
+		try {
+			Map<String, String> sistrResultsMetadata = new HashMap<>();
+			
+			String workflowVersion = iridaWorkflow.getWorkflowDescription().getVersion();
+	
 			//Read the JSON file from SISTR output
 			@SuppressWarnings("resource")
-			String jsonFile = new Scanner(new BufferedReader(new FileReader(filePath.toFile()))).useDelimiter("\\Z")
+			String jsonFile = new Scanner(new BufferedReader(new FileReader(sistrResultsFile.toFile()))).useDelimiter("\\Z")
 					.next();
-
+	
 			// map the results into a Map
 			ObjectMapper mapper = new ObjectMapper();
 			List<Map<String, Object>> sistrResults = mapper
 					.readValue(jsonFile, new TypeReference<List<Map<String, Object>>>() {
 					});
-
+	
 			if (sistrResults.size() > 0) {
 				Map<String, Object> result = sistrResults.get(0);
-
+	
 				//loop through each of the requested fields and save the entries
-				SISTR_FIELDS.entrySet().forEach(e -> {
+				sistrFields.entrySet().forEach(e -> {
 					if (result.containsKey(e.getKey()) && result.get(e.getKey()) != null) {
 						String value = result.get(e.getKey()).toString();
-						PipelineProvidedMetadataEntry metadataEntry = new PipelineProvidedMetadataEntry(value, "text",
-								analysis);
-						stringEntries.put(e.getValue() + " (v"+workflowVersion+")", metadataEntry);
+						sistrResultsMetadata.put(e.getValue() + " (v"+workflowVersion+")", value);
 					}
 				});
-
-				// convert string map into metadata fields
-				Map<MetadataTemplateField, MetadataEntry> metadataMap = metadataTemplateService
-						.getMetadataMap(stringEntries);
-
-				//save metadata back to sample
-				samples.forEach(s -> {
-					s.mergeMetadata(metadataMap);
-					sampleService.updateFields(s.getId(), ImmutableMap.of("metadata", s.getMetadata()));
-				});
-
 			} else {
-				throw new PostProcessingException("SISTR results for file are not correctly formatted");
+				throw new PostProcessingException("SISTR results for file [" + sistrResultsFile + "] are not correctly formatted");
 			}
-
+			
+			return sistrResultsMetadata;
 		} catch (IOException e) {
-			throw new PostProcessingException("Error parsing JSON from SISTR results", e);
-		} catch (IridaWorkflowNotFoundException e) {
-			throw new PostProcessingException("Workflow is not found", e);
+			throw new PostProcessingException("Error parsing JSON from SISTR results [" + sistrResultsFile + "]", e);
 		}
 	}
 
