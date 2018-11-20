@@ -28,7 +28,8 @@ import java.nio.file.Path;
 import java.util.*;
 
 /**
- * {@link AnalysisSampleUpdater} that adds a number of results from a SISTR run to the metadata of a {@link Sample}
+ * {@link AnalysisSampleUpdater} that adds a number of results from a SISTR run
+ * to the metadata of a {@link Sample}
  */
 @Component
 public class SISTRSampleUpdater implements AnalysisSampleUpdater {
@@ -39,24 +40,17 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 	private SampleService sampleService;
 
 	// @formatter:off
-	private static Map<String, String> SISTR_FIELDS = ImmutableMap.<String,String>builder()
-		.put("serovar", "SISTR serovar")
-		.put("serovar_cgmlst", "SISTR serovar cgMLST")
-		.put("serovar_antigen", "SISTR serovar antigen")
-		.put("cgmlst_subspecies", "SISTR cgMLST Subspecies")
-		.put("cgmlst_ST", "SISTR cgMLST Sequence Type")
-		.put("qc_status", "SISTR QC Status")
-		.put("serogroup", "SISTR Serogroup")
-		.put("o_antigen", "SISTR O-antigen")
-		.put("h1", "SISTR H1")
-		.put("h2", "SISTR H2")
-		.put("cgmlst_matching_alleles", "SISTR cgMLST Alleles Matching Genome")
-		.build();
+	private static Map<String, String> SISTR_FIELDS = ImmutableMap.<String, String>builder()
+			.put("serovar", "SISTR serovar").put("serovar_cgmlst", "SISTR serovar cgMLST")
+			.put("serovar_antigen", "SISTR serovar antigen").put("cgmlst_subspecies", "SISTR cgMLST Subspecies")
+			.put("cgmlst_ST", "SISTR cgMLST Sequence Type").put("qc_status", "SISTR QC Status")
+			.put("serogroup", "SISTR Serogroup").put("o_antigen", "SISTR O-antigen").put("h1", "SISTR H1")
+			.put("h2", "SISTR H2").put("cgmlst_matching_alleles", "SISTR cgMLST Alleles Matching Genome").build();
 	// @formatter:on
 
 	@Autowired
 	public SISTRSampleUpdater(MetadataTemplateService metadataTemplateService, SampleService sampleService,
-							  IridaWorkflowsService iridaWorkflowsService) {
+			IridaWorkflowsService iridaWorkflowsService) {
 		this.metadataTemplateService = metadataTemplateService;
 		this.sampleService = sampleService;
 		this.iridaWorkflowsService = iridaWorkflowsService;
@@ -67,7 +61,8 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 	 *
 	 * @param samples  The samples to update.
 	 * @param analysis the {@link AnalysisSubmission} to apply to the samples
-	 * @throws PostProcessingException if the method cannot read the "sistr-predictions" output file
+	 * @throws PostProcessingException if the method cannot read the
+	 *                                 "sistr-predictions" output file
 	 */
 	@Override
 	public void update(Collection<Sample> samples, AnalysisSubmission analysis) throws PostProcessingException {
@@ -79,9 +74,9 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 		try {
 			IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(analysis.getWorkflowId());
 			String workflowVersion = iridaWorkflow.getWorkflowDescription().getVersion();
-			
-			Map<String, String> mapOfSISTRResults = buildMapOfSISTRResults(SISTR_FIELDS, iridaWorkflow, filePath);
-			
+
+			Map<String, String> mapOfSISTRResults = buildMapOfSISTRResults(SISTR_FIELDS, workflowVersion, filePath);
+
 			mapOfSISTRResults.entrySet().forEach(e -> {
 				PipelineProvidedMetadataEntry metadataEntry = new PipelineProvidedMetadataEntry(e.getValue(), "text",
 						analysis);
@@ -92,7 +87,7 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 			Map<MetadataTemplateField, MetadataEntry> metadataMap = metadataTemplateService
 					.getMetadataMap(stringEntries);
 
-			//save metadata back to sample
+			// save metadata back to sample
 			samples.forEach(s -> {
 				s.mergeMetadata(metadataMap);
 				sampleService.updateFields(s.getId(), ImmutableMap.of("metadata", s.getMetadata()));
@@ -102,38 +97,51 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 			throw new PostProcessingException("Workflow is not found", e);
 		}
 	}
-	
-	public static Map<String, String> buildMapOfSISTRResults(final Map<String,String> sistrFields, final IridaWorkflow iridaWorkflow, Path sistrResultsFile) throws PostProcessingException {
+
+	/**
+	 * Reads in the SISTR results JSON file and builds a map of key/value pairs for
+	 * the selected SISTR fields.
+	 * 
+	 * @param sistrFields      The key/value pairs for what to select from the SISTR
+	 *                         JSON file (and what name to assign).
+	 * @param workflowVersion  The version of the IRIDA workflow.
+	 * @param sistrResultsFile The JSON file.
+	 * @return A {@link Map} linking the IRIDA metadata field name to the SISTR
+	 *         result value.
+	 * @throws PostProcessingException If there was an error processing the SISTR
+	 *                                 results.
+	 */
+	public static Map<String, String> buildMapOfSISTRResults(final Map<String, String> sistrFields,
+			final String workflowVersion, Path sistrResultsFile) throws PostProcessingException {
 		try {
 			Map<String, String> sistrResultsMetadata = new HashMap<>();
-			
-			String workflowVersion = iridaWorkflow.getWorkflowDescription().getVersion();
-	
-			//Read the JSON file from SISTR output
+
+			// Read the JSON file from SISTR output
 			@SuppressWarnings("resource")
-			String jsonFile = new Scanner(new BufferedReader(new FileReader(sistrResultsFile.toFile()))).useDelimiter("\\Z")
-					.next();
-	
+			String jsonFile = new Scanner(new BufferedReader(new FileReader(sistrResultsFile.toFile())))
+					.useDelimiter("\\Z").next();
+
 			// map the results into a Map
 			ObjectMapper mapper = new ObjectMapper();
-			List<Map<String, Object>> sistrResults = mapper
-					.readValue(jsonFile, new TypeReference<List<Map<String, Object>>>() {
+			List<Map<String, Object>> sistrResults = mapper.readValue(jsonFile,
+					new TypeReference<List<Map<String, Object>>>() {
 					});
-	
+
 			if (sistrResults.size() > 0) {
 				Map<String, Object> result = sistrResults.get(0);
-	
-				//loop through each of the requested fields and save the entries
+
+				// loop through each of the requested fields and save the entries
 				sistrFields.entrySet().forEach(e -> {
 					if (result.containsKey(e.getKey()) && result.get(e.getKey()) != null) {
 						String value = result.get(e.getKey()).toString();
-						sistrResultsMetadata.put(e.getValue() + " (v"+workflowVersion+")", value);
+						sistrResultsMetadata.put(e.getValue() + " (v" + workflowVersion + ")", value);
 					}
 				});
 			} else {
-				throw new PostProcessingException("SISTR results for file [" + sistrResultsFile + "] are not correctly formatted");
+				throw new PostProcessingException(
+						"SISTR results for file [" + sistrResultsFile + "] are not correctly formatted");
 			}
-			
+
 			return sistrResultsMetadata;
 		} catch (IOException e) {
 			throw new PostProcessingException("Error parsing JSON from SISTR results [" + sistrResultsFile + "]", e);
