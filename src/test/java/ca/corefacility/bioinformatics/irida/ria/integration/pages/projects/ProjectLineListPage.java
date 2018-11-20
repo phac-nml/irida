@@ -107,7 +107,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 		templateNameInputWrapper.click();
 		templateNameInput.sendKeys(name);
 		modalSaveTemplateBtn.click();
-		waitForTime(300);
+		waitForElementInvisible(By.className("ant-modal-wrap "));
 	}
 
 	public String getCellContents(int rowIndex, String columnName) {
