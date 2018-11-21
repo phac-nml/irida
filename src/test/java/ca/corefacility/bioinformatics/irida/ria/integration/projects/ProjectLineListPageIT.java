@@ -33,15 +33,6 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testTableSetup() {
 		ProjectLineListPage page = ProjectLineListPage.goToPage(driver(), 1);
-
-		// Test the tour to make sure everything is functional.
-		page.openTour();
-		assertEquals("Should be on the first step of the tour", 1, page.getTourStep());
-		page.goToNextTourStage();
-		assertEquals("Should be on the second step of the tour", 2, page.getTourStep());
-		page.closeTour();
-		// If we reached this far the tour is good to go
-
 		// OPen the column panel
 		page.openColumnsPaenl();
 		assertEquals("Should be on the correct page.", "Line List", page.getActivePage());
@@ -50,27 +41,27 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Toggle one of the fields and make sure the table updates;
 		page.toggleMetadataField(1);
-		assertEquals("Should now only display 5 fields", 5, page.getNumberOfTableColumnsVisible());
+		assertEquals("Should now only display 6 fields", 6, page.getNumberOfTableColumnsVisible());
 		page.toggleMetadataField(2);
-		assertEquals("Should now only display 4 fields", 4, page.getNumberOfTableColumnsVisible());
+		assertEquals("Should now only display 5 fields", 5, page.getNumberOfTableColumnsVisible());
 
 		// Test selecting templates
 		page.selectTemplate(TEMPLATE_1);
-		assertEquals("Should be 3 fields visible including the sample name", 3, page.getNumberOfTableColumnsVisible());
+		assertEquals("Should be 4 fields visible including the sample name", 4, page.getNumberOfTableColumnsVisible());
 
 		// Test saving a template
 		page.toggleMetadataField(1);
 
-		assertEquals("Should have 2 columns visible", 2, page.getNumberOfTableColumnsVisible());
+		assertEquals("Should have 3 columns visible", 3, page.getNumberOfTableColumnsVisible());
 		page.saveMetadataTemplate(TEMPLATE_NAME);
 
 		// Switch to a different template
 		page.selectTemplate(TEMPLATE_1);
-		assertEquals("Should have 3 columns visible", 3, page.getNumberOfTableColumnsVisible());
+		assertEquals("Should have 4 columns visible", 4, page.getNumberOfTableColumnsVisible());
 
 		// Switch back to new template
 		page.selectTemplate(TEMPLATE_NAME);
-		assertEquals("Should have 2 columns visible", 2, page.getNumberOfTableColumnsVisible());
+		assertEquals("Should have 3 columns visible", 3, page.getNumberOfTableColumnsVisible());
 
 		// Test inline editing
 		page.selectTemplate("All Fields");

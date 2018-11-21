@@ -1,17 +1,7 @@
 import { fromJS, List } from "immutable";
 import { types as templateActionTypes } from "./templates";
 import { isDate } from "../../../../utilities/date-utilities";
-import { FIELDS } from "../constants";
-
-/*
-Special handler for formatting the sample Name Column;
- */
-const sampleNameColumn = {
-  cellRenderer: "SampleNameRenderer",
-  checkboxSelection: true,
-  headerCheckboxSelection: true,
-  headerCheckboxSelectionFilteredOnly: true
-};
+import { FIELDS, TYPES } from "../constants";
 
 /*
 Formatting for date fields
@@ -49,14 +39,33 @@ const dateColumn = {
  * @returns {*}
  */
 function getColumnDefinition(col) {
-  const { type } = col;
+  const { type, field } = col;
   delete col.type; // Cannot have a type as an attribute on the columnDef.
 
-  if (type === "date") {
+  let cellRenderer;
+  if (field === FIELDS.icons) {
+    Object.assign(col, {
+      cellRenderer: "IconCellRenderer"
+    });
+  } else if (type === TYPES.date) {
     Object.assign(col, dateColumn);
-  } else if (col.field === FIELDS.sampleName) {
-    Object.assign(col, sampleNameColumn);
+  } else if (field === FIELDS.sampleName) {
+    Object.assign(col, {
+      cellRenderer: "SampleNameRenderer"
+    });
   }
+  /*
+  Set editability of the cell
+   */
+  Object.assign(col, {
+    editable: params => {
+      if (!JSON.parse(params.data.owner)) {
+        // Cannot edit anything if they don't own it.
+        return false;
+      }
+      return col.editable;
+    }
+  });
   return col;
 }
 

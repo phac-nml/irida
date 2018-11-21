@@ -8,14 +8,20 @@ import javax.validation.ConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import com.google.common.collect.ImmutableList;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
@@ -27,6 +33,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataField
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataFieldDefault;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataTemplate;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UISampleMetadata;
+import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -41,13 +48,16 @@ public class LineListController {
 	private SampleService sampleService;
 	private MetadataTemplateService metadataTemplateService;
 	private MessageSource messages;
+	private UpdateSamplePermission updateSamplePermission;
 
 	@Autowired
 	public LineListController(ProjectService projectService, SampleService sampleService,
-			MetadataTemplateService metadataTemplateService, MessageSource messageSource) {
+			MetadataTemplateService metadataTemplateService, UpdateSamplePermission updateSamplePermission,
+			MessageSource messageSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.metadataTemplateService = metadataTemplateService;
+		this.updateSamplePermission = updateSamplePermission;
 		this.messages = messageSource;
 	}
 
@@ -61,10 +71,14 @@ public class LineListController {
 	@RequestMapping(value = "/entries", method = RequestMethod.GET)
 	@ResponseBody
 	public List<UISampleMetadata> getProjectSamplesMetadataEntries(@RequestParam long projectId) {
+		Authentication authentication = SecurityContextHolder.getContext()
+				.getAuthentication();
 		Project project = projectService.read(projectId);
-		List<Join<Project, Sample>> projectSamples = sampleService.getSamplesForProject(project);
-		return projectSamples.stream()
-				.map(this::formatSampleMetadata)
+		Page<ProjectSampleJoin> projectSamples = sampleService.getFilteredSamplesForProjects(
+				ImmutableList.of(project), ImmutableList.of(), null, null, null, null, null, 0, 100000,
+				new Sort(Sort.Direction.DESC, "createdDate"));
+		return projectSamples.getContent().stream()
+				.map(join -> new UISampleMetadata(join, !updateSamplePermission.isAllowed(authentication, join.getObject())))
 				.collect(Collectors.toList());
 	}
 
@@ -261,16 +275,6 @@ public class LineListController {
 	}
 
 	/**
-	 * Create a {@link UISampleMetadata} from a {@link Join}
-	 *
-	 * @param projectSampleJoin {@link Join} of {@link Project} and {@link Sample}
-	 * @return {@link UISampleMetadata}
-	 */
-	private UISampleMetadata formatSampleMetadata(Join<Project, Sample> projectSampleJoin) {
-		return new UISampleMetadata(projectSampleJoin.getSubject(), projectSampleJoin.getObject());
-	}
-
-	/**
 	 * Get a list of all {@link MetadataTemplateField}s on a {@link Project}
 	 *
 	 * @param projectId {@link Long} identifier for a {@link Project}
@@ -330,6 +334,19 @@ public class LineListController {
 		sampleField.setLockPinned(true);
 		sampleField.setLockPosition(true);
 		fields.add(0, sampleField);
+
+		/*
+		This field is to display to the user any notification icons that they might have (e.g. sample is locked).
+		 */
+		UIMetadataFieldDefault iconField = new UIMetadataFieldDefault("", "icons", "text");
+		iconField.setPinned("left");
+		iconField.setLockPinned(true);
+		iconField.setLockPosition(true);
+		iconField.setCheckboxSelection(true);
+		iconField.setHeaderCheckboxSelection(true);
+		iconField.setSuppressFilter(true);
+		iconField.setSuppressResize(true);
+		fields.add(0, iconField);
 
 		return fields;
 	}
