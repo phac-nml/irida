@@ -44,11 +44,4 @@ public class LineListControllerTest {
 		verify(projectService, times(1)).read(projectId);
 		verify(metadataTemplateService, times(1)).getMetadataFieldsForProject(any(Project.class));
 	}
-
-	@Test
-	public void testGetAllProjectMetadataEntries() {
-		long projectId = 1L;
-		lineListController.getProjectSamplesMetadataEntries(projectId);
-		verify(sampleService, times(1)).getSamplesForProject(any(Project.class));
-	}
 }
