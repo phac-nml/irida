@@ -74,8 +74,13 @@ public class LineListController {
 		Authentication authentication = SecurityContextHolder.getContext()
 				.getAuthentication();
 		Project project = projectService.read(projectId);
+
+		/*
+		I used this method so that I could get the true ProjectSampleJoin which is needed to know the the project
+		has ownership of the sample.
+		 */
 		Page<ProjectSampleJoin> projectSamples = sampleService.getFilteredSamplesForProjects(
-				ImmutableList.of(project), ImmutableList.of(), null, null, null, null, null, 0, 100000,
+				ImmutableList.of(project), ImmutableList.of(), null, null, null, null, null, 0, Integer.MAX_VALUE,
 				new Sort(Sort.Direction.DESC, "createdDate"));
 		return projectSamples.getContent().stream()
 				.map(join -> new UISampleMetadata(join, !updateSamplePermission.isAllowed(authentication, join.getObject())))
