@@ -51,6 +51,15 @@ public class ProjectLineListPage extends ProjectPageBase {
 	@FindBy(css = ".t-table-filter input")
 	private WebElement tableFilterInput;
 
+	@FindBy(className = "t-tour-button")
+	private WebElement tourLaunchButton;
+
+	@FindBy(css = "button[data-tour-elem=\"right-arrow\"]")
+	private WebElement tourNextButton;
+
+	@FindBy(css = "span[data-tour-elem=\"badge\"")
+	private WebElement tourStepBadge;
+
 	public ProjectLineListPage(WebDriver driver) {
 		super(driver);
 	}
@@ -133,5 +142,23 @@ public class ProjectLineListPage extends ProjectPageBase {
 		tableFilterInput.clear();
 		tableFilterInput.sendKeys(Keys.BACK_SPACE);
 		waitForTime(500);
+	}
+
+	public void openTour() {
+		tourLaunchButton.click();
+		waitForElementVisible(By.className("reactour__helper--is-open"));
+	}
+
+	public void goToNextTourStage() {
+		tourNextButton.click();
+	}
+
+	public void closeTour() {
+		driver.findElement(By.cssSelector("body")).sendKeys(Keys.ESCAPE);
+		waitForElementInvisible(By.className("reactour__helper--is-open"));
+	}
+
+	public int getTourStep() {
+		return Integer.parseInt(tourStepBadge.getText());
 	}
 }

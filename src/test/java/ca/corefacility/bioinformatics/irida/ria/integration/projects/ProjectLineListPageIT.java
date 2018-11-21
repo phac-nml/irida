@@ -33,6 +33,16 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testTableSetup() {
 		ProjectLineListPage page = ProjectLineListPage.goToPage(driver(), 1);
+
+
+		// Test the tour to make sure everything is functional.
+		page.openTour();
+		assertEquals("Should be on the first step of the tour", 1, page.getTourStep());
+		page.goToNextTourStage();
+		assertEquals("Should be on the second step of the tour", 2, page.getTourStep());
+		page.closeTour();
+		// If we reached this far the tour is good to go
+
 		// OPen the column panel
 		page.openColumnsPaenl();
 		assertEquals("Should be on the correct page.", "Line List", page.getActivePage());
