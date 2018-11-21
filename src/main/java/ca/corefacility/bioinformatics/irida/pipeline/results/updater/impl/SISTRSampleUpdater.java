@@ -1,5 +1,23 @@
 package ca.corefacility.bioinformatics.irida.pipeline.results.updater.impl;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableMap;
+
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
@@ -15,17 +33,6 @@ import ca.corefacility.bioinformatics.irida.pipeline.results.updater.AnalysisSam
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableMap;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.*;
 
 /**
  * {@link AnalysisSampleUpdater} that adds a number of results from a SISTR run
@@ -75,7 +82,9 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 			IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(analysis.getWorkflowId());
 			String workflowVersion = iridaWorkflow.getWorkflowDescription().getVersion();
 
-			Map<String, String> mapOfSISTRResults = buildMapOfSISTRResults(SISTR_FIELDS, workflowVersion, filePath);
+			Map<String, String> sistrFieldsWithVersion = SISTR_FIELDS.entrySet().stream()
+					.collect(Collectors.toMap(Map.Entry::getKey, v -> v.getValue() + " (v" + workflowVersion + ")"));
+			Map<String, String> mapOfSISTRResults = buildMapOfSISTRResults(sistrFieldsWithVersion, filePath);
 
 			mapOfSISTRResults.entrySet().forEach(e -> {
 				PipelineProvidedMetadataEntry metadataEntry = new PipelineProvidedMetadataEntry(e.getValue(), "text",
@@ -104,7 +113,6 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 	 * 
 	 * @param sistrFields      The key/value pairs for what to select from the SISTR
 	 *                         JSON file (and what name to assign).
-	 * @param workflowVersion  The version of the IRIDA workflow.
 	 * @param sistrResultsFile The JSON file.
 	 * @return A {@link Map} linking the IRIDA metadata field name to the SISTR
 	 *         result value.
@@ -112,7 +120,7 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 	 *                                 results.
 	 */
 	public static Map<String, String> buildMapOfSISTRResults(final Map<String, String> sistrFields,
-			final String workflowVersion, Path sistrResultsFile) throws PostProcessingException {
+			Path sistrResultsFile) throws PostProcessingException {
 		try {
 			Map<String, String> sistrResultsMetadata = new HashMap<>();
 
@@ -134,7 +142,7 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 				sistrFields.entrySet().forEach(e -> {
 					if (result.containsKey(e.getKey()) && result.get(e.getKey()) != null) {
 						String value = result.get(e.getKey()).toString();
-						sistrResultsMetadata.put(e.getValue() + " (v" + workflowVersion + ")", value);
+						sistrResultsMetadata.put(e.getValue(), value);
 					}
 				});
 			} else {
