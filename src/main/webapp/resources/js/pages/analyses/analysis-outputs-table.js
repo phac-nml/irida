@@ -1,4 +1,4 @@
-import { Grid } from "ag-grid/main";
+import { Grid } from "ag-grid-community/main";
 import { formatDate } from "../../utilities/date-utilities";
 import { escapeHtml, newElement } from "../../utilities/html-utilities";
 import { download } from "../../utilities/file.utilities";
@@ -10,8 +10,8 @@ import {
 } from "../../apis/analysis/analysis";
 import { getIridaWorkflowDescription } from "../../apis/pipelines/pipelines";
 
-import "ag-grid/dist/styles/ag-grid.css";
-import "ag-grid/dist/styles/ag-theme-balham.css";
+import "ag-grid-community/dist/styles/ag-grid.css";
+import "ag-grid-community/dist/styles/ag-theme-balham.css";
 
 /**
  * Internationalized messages

@@ -22,6 +22,7 @@ Important links
 * IRIDA GitHub - [https://github.com/phac-nml/irida](https://github.com/phac-nml/irida)
 * IRIDA GitLab - [http://gitlab-irida.corefacility.ca/](http://gitlab-irida.corefacility.ca/) (only accessible from NML network)
 * Documentation site - [https://irida.corefacility.ca/documentation/](https://irida.corefacility.ca/documentation/)
+* Contributing guide - [https://github.com/phac-nml/irida/blob/development/CONTRIBUTING.md](https://github.com/phac-nml/irida/blob/development/CONTRIBUTING.md)
 * Public information website - [https://irida.ca](https://irida.ca)
 
 Languages and Libraries
