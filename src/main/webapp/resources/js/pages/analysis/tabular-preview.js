@@ -1,8 +1,8 @@
 import $ from "jquery";
-import { Grid } from "ag-grid/main";
+import { Grid } from "ag-grid-community/main";
 import { analysisOutputFileApiUrl, panelHeading } from "./preview.utils";
-import "ag-grid/dist/styles/ag-grid.css";
-import "ag-grid/dist/styles/ag-theme-balham.css";
+import "ag-grid-community/dist/styles/ag-grid.css";
+import "ag-grid-community/dist/styles/ag-theme-balham.css";
 
 /**
  * Parse CSV line into cell values array.
