@@ -101,20 +101,20 @@ For Java, we recommend that you use [Spring Security OAuth2](http://projects.spr
 ### Python
 {:.no_toc}
 
-For Python, we recommend that you use [Rauth](http://rauth.readthedocs.org/en/latest/) or [Requests-OAuthlib](https://requests-oauthlib.readthedocs.org/en/latest/). Both libraries are straightforward to use, so we provide some quick examples for both.
+For Python, we recommend that you use [Rauth](http://rauth.readthedocs.org/en/latest/) or [Requests-OAuthlib](https://requests-oauthlib.readthedocs.org/en/latest/).
 
-A complete application that uses Rauth is the [command-line concatenater](https://irida.corefacility.ca/gitlab/irida/irida-tools/blob/development/scripts/ngsArchiveLinker/ngs2galaxy.py) for IRIDA.
+A complete application that uses Rauth is the [IRIDA SISTR results exporter](https://github.com/phac-nml/irida-sistr-results) for IRIDA.
 
 Another option for using Python with IRIDA is the [Requests-OAuthlib](https://requests-oauthlib.readthedocs.org/en/latest/).
 
-A complete example application that uses Requests-OAuthlib is the [IRIDA Galaxy Import Tool](https://irida.corefacility.ca/gitlab/irida/import-tool-for-galaxy). This application uses the authorization code flow.
+A complete example application that uses Requests-OAuthlib is the [IRIDA Galaxy Import Tool](https://github.com/phac-nml/irida-galaxy-importer). This application uses the authorization code flow.
 
 ### Perl
 {:.no_toc}
 
 For Perl, we recommend that you use the [`OAuth::Lite2::Client::UsernameAndPassword`](https://metacpan.org/pod/OAuth::Lite2::Client::UsernameAndPassword) package. 
 
-A complete application that uses `OAuth::Lite2::Client::UsernameAndPassword` is the [command-line](https://irida.corefacility.ca/gitlab/irida/irida-tools/blob/development/scripts/ngsArchiveLinker/ngsArchiveLinker.pl) tool for IRIDA.
+A complete application that uses `OAuth::Lite2::Client::UsernameAndPassword` is the [command-line linker](https://github.com/phac-nml/irida-linker) tool for IRIDA.
 
 ### HTTP
 {:.no_toc}
