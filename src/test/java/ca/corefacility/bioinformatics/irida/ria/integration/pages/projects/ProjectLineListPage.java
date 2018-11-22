@@ -24,7 +24,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 	@FindBy(className = "ag-header-cell-text")
 	private List<WebElement> headerText;
 
-	@FindBy(className = "ant-select-selection-selected-value")
+	@FindBy(css = ".template-option--name:first-of-type")
 	private WebElement templateSelectToggle;
 
 	@FindBy(className = "template-option--name")
@@ -90,6 +90,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 	}
 
 	public void selectTemplate(String template) {
+		waitForElementToBeClickable(templateSelectToggle);
 		templateSelectToggle.click();
 		waitForElementsVisible(By.className("ant-select-dropdown-menu"));
 		for (WebElement option : templateOptions) {
@@ -106,7 +107,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 		templateNameInputWrapper.click();
 		templateNameInput.sendKeys(name);
 		modalSaveTemplateBtn.click();
-		waitForTime(300);
+		waitForElementInvisible(By.className("ant-modal-wrap "));
 	}
 
 	public String getCellContents(int rowIndex, String columnName) {
