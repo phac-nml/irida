@@ -8,18 +8,15 @@ import javax.validation.ConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import com.google.common.collect.ImmutableList;
-
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -75,15 +72,12 @@ public class LineListController {
 				.getAuthentication();
 		Project project = projectService.read(projectId);
 
-		/*
-		I used this method so that I could get the true ProjectSampleJoin which is needed to know the the project
-		has ownership of the sample.
-		 */
-		Page<ProjectSampleJoin> projectSamples = sampleService.getFilteredSamplesForProjects(
-				ImmutableList.of(project), ImmutableList.of(), null, null, null, null, null, 0, Integer.MAX_VALUE,
-				new Sort(Sort.Direction.DESC, "createdDate"));
-		return projectSamples.getContent().stream()
-				.map(join -> new UISampleMetadata(join, !updateSamplePermission.isAllowed(authentication, join.getObject())))
+		List<Join<Project, Sample>> projectSamples = sampleService.getSamplesForProject(project);
+		return projectSamples.stream()
+				.map(join -> {
+					ProjectSampleJoin psj = (ProjectSampleJoin)join;
+					return new UISampleMetadata(psj, !updateSamplePermission.isAllowed(authentication, psj.getObject()));
+				})
 				.collect(Collectors.toList());
 	}
 
