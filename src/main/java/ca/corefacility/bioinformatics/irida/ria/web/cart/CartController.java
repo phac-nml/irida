@@ -213,7 +213,6 @@ public class CartController {
 	 *            The {@link Sample} ID
 	 */
 	@RequestMapping(value = "/project/{projectId}/samples", method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
 	public void removeProjectSamples(@PathVariable Long projectId, @RequestBody Set<Long> sampleIds) {
 		cart.removeProjectSamples(projectId, sampleIds);
 	}
@@ -227,7 +226,6 @@ public class CartController {
 	 *            the id of the sample
 	 */
 	@RequestMapping(value = "/project/{projectId}/samples/{sampleId}", method = RequestMethod.DELETE)
-	@ResponseBody
 	public void removeProjectSample(@PathVariable Long projectId, @PathVariable Long sampleId) {
 		cart.removeProjectSamples(projectId, ImmutableSet.of(sampleId));
 	}
@@ -241,7 +239,6 @@ public class CartController {
 	 * @return a map stating success
 	 */
 	@RequestMapping(value = "/project/{projectId}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
 	public Map<String, Object> addProject(@PathVariable Long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
 		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(project);
