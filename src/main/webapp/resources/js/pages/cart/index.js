@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { render } from "react-dom";
-import { Row, Col, Icon } from "antd";
+import { Row } from "antd";
 import { getProjectsInCart } from "../../apis/cart/cart";
 
 const { i18n } = window.PAGE;
@@ -17,7 +17,7 @@ function EmptyCartState() {
       <img
         height="300px"
         src={`${BASE_URL}resources/img/empty-cart.svg`}
-        alt="The cart is empty"
+        alt={i18n.cart.imageAlt}
       />
       <p
         style={{
@@ -29,7 +29,12 @@ function EmptyCartState() {
       >
         {i18n.cart.empty}
       </p>
-      <p style={{ color: "#222222" }}>{i18n.cart.emptySub}</p>
+      <a
+        href={`${BASE_URL}projects`}
+        style={{ borderBottom: "2px solid #1890ff" }}
+      >
+        {i18n.cart.emptySub}
+      </a>
     </Row>
   );
 }

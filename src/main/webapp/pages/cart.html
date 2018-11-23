@@ -7,12 +7,14 @@
   <head>
     <title>MY AWESOME CART</title>
     <link rel="stylesheet" th:href="@{/resources/dist/css/cart.bundle.css}" />
-    <script>
+    <script th:inline="javascript">
       window.PAGE = {
         i18n: {
           cart: {
             empty: /*[[#{cart.empty}]]*/ "Your cart is empty",
-            emptySub: /*[[#{cart.emptySub}]]*/ "Add some samples to it to make it happy :)"
+            emptySub:
+              /*[[#{cart.emptySub}]]*/ "Add some samples to it to make it happy :)",
+            imageAlt: /*[[#{cart.imageAlt}]]*/ "Empty Cart"
           }
         }
       };
