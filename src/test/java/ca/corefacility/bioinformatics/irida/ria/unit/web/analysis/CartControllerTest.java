@@ -155,8 +155,7 @@ public class CartControllerTest {
 	@Test
 	@Ignore
 	public void testAddProject() {
-		Map<String, Object> addProject = controller.addProject(projectId, Locale.ENGLISH);
-		assertTrue((boolean) addProject.get("success"));
+		controller.addProject(projectId, Locale.ENGLISH);
 
 		List<Join<Project, Sample>> joins = new ArrayList<>();
 		samples.forEach((s) -> {
