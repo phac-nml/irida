@@ -32,6 +32,8 @@ Changes
 * [UI]: New project line list page with inline editing.
 * [Developer]: Updated Node, Yarn, and front-end webpack packages.
 * [Workflow]: Updated default thresholds in SISTR workflow to perform minimal filtering of contigs. Fixed Shovill Galaxy tool revision.
+* [Developer]: Update to ag-grid-community v.19.1.2.
+* [Documentation]: Changed references from GitLab to GitHub in docs.
 
 0.21.0 to 0.22.0
 ----------------
