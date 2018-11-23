@@ -236,17 +236,15 @@ public class CartController {
 	 * @param projectId
 	 *            The ID of the {@link Project}
 	 * @param locale {@link Locale}
-	 * @return a map stating success
 	 */
 	@RequestMapping(value = "/project/{projectId}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public Map<String, Object> addProject(@PathVariable Long projectId, Locale locale) {
+	public void addProject(@PathVariable Long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
 		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(project);
 		Set<CartRequestSample> samples = samplesForProject.stream()
 				.map(j -> new CartRequestSample(j.getId(), j.getLabel()))
 				.collect(Collectors.toSet());
 		cart.addProjectSamplesToCart(new AddToCartRequest(projectId, samples), locale);
-		return ImmutableMap.of("success", true);
 	}
 
 	/**
