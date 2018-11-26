@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.analysis;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -21,6 +24,11 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.web.AnnotationConfigWebContextLoader;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.Sets;
+
 import ca.corefacility.bioinformatics.irida.config.IridaWebTestScopeConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
@@ -33,14 +41,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.cart.CartController;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartResponse;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.google.common.collect.Sets;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigWebContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
@@ -95,8 +95,7 @@ public class CartControllerIT {
 	public void testAddProject() {
 		Long projectId = 2L;
 		Project project = projectService.read(projectId);
-		Map<String, Object> addProjectSample = controller.addProject(projectId, Locale.ENGLISH);
-		assertTrue((boolean) addProjectSample.get("success"));
+		controller.addProject(projectId, Locale.ENGLISH);
 
 		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(project);
 

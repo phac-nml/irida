@@ -211,13 +211,10 @@ public class CartController {
 	 *            The {@link Project} ID
 	 * @param sampleIds
 	 *            The {@link Sample} ID
-	 * @return a map stating success
 	 */
 	@RequestMapping(value = "/project/{projectId}/samples", method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public Map<String, Object> removeProjectSamples(@PathVariable Long projectId, @RequestBody Set<Long> sampleIds) {
+	public void removeProjectSamples(@PathVariable Long projectId, @RequestBody Set<Long> sampleIds) {
 		cart.removeProjectSamples(projectId, sampleIds);
-		return ImmutableMap.of("success", true);
 	}
 
 	/**
@@ -227,13 +224,10 @@ public class CartController {
 	 *            The project id of the sample
 	 * @param sampleId
 	 *            the id of the sample
-	 * @return Success if the sample was successfully removed
 	 */
 	@RequestMapping(value = "/project/{projectId}/samples/{sampleId}", method = RequestMethod.DELETE)
-	@ResponseBody
-	public Map<String, Object> removeProjectSample(@PathVariable Long projectId, @PathVariable Long sampleId) {
+	public void removeProjectSample(@PathVariable Long projectId, @PathVariable Long sampleId) {
 		cart.removeProjectSamples(projectId, ImmutableSet.of(sampleId));
-		return ImmutableMap.of("success", true);
 	}
 
 	/**
@@ -242,18 +236,15 @@ public class CartController {
 	 * @param projectId
 	 *            The ID of the {@link Project}
 	 * @param locale {@link Locale}
-	 * @return a map stating success
 	 */
 	@RequestMapping(value = "/project/{projectId}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public Map<String, Object> addProject(@PathVariable Long projectId, Locale locale) {
+	public void addProject(@PathVariable Long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
 		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(project);
 		Set<CartRequestSample> samples = samplesForProject.stream()
 				.map(j -> new CartRequestSample(j.getId(), j.getLabel()))
 				.collect(Collectors.toSet());
 		cart.addProjectSamplesToCart(new AddToCartRequest(projectId, samples), locale);
-		return ImmutableMap.of("success", true);
 	}
 
 	/**
