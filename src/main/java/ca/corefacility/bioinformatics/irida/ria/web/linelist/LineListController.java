@@ -76,7 +76,7 @@ public class LineListController {
 		return projectSamples.stream()
 				.map(join -> {
 					ProjectSampleJoin psj = (ProjectSampleJoin)join;
-					return new UISampleMetadata(psj, !updateSamplePermission.isAllowed(authentication, psj.getObject()));
+					return new UISampleMetadata(psj, updateSamplePermission.isAllowed(authentication, psj.getObject()));
 				})
 				.collect(Collectors.toList());
 	}
