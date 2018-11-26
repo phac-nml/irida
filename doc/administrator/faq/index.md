@@ -159,3 +159,6 @@ __`50-server.cnf`__
 character-set-server = utf8
 collation-server = utf8_general_ci
 ```
+
+You will need to drop your databases, restart your mysql service, and then recreate your databases before re-running IRIDA for the changes to take effect.
+
