@@ -59,7 +59,7 @@ function getColumnDefinition(col) {
    */
   Object.assign(col, {
     editable: params => {
-      if (!JSON.parse(params.data.owner) && !JSON.parse(params.data.editable)) {
+      if (!JSON.parse(params.data.owner) || !JSON.parse(params.data.editable)) {
         // Cannot edit anything if they don't own it.
         return false;
       }

@@ -1,8 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.Dimension;
 
@@ -21,17 +20,28 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Proje
 public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 	private final String TEMPLATE_1 = "Testing Template 1";
 	private final String TEMPLATE_NAME = "TESTER";
+	private final String COLUMN_ID = "irida-4"; // This is is based on the id of the MetadataField.
 
-	@Before
-	public void init() {
-		LoginPage.loginAsManager(driver());
+	@Test
+	public void testTableEditAsCollaborator() {
+		LoginPage.loginAsUser(driver());
 		driver().manage()
 				.window()
 				.setSize(new Dimension(1800, 900)); // Make sure we can see everything.
+		ProjectLineListPage page = ProjectLineListPage.goToPage(driver(), 1);
+
+		String newValue = "FOOBAR";
+		page.editCellContents(0, COLUMN_ID, newValue);
+		assertNotEquals("Cell should not have been updated", newValue, page.getCellContents(0, COLUMN_ID));
 	}
 
 	@Test
 	public void testTableSetup() {
+		LoginPage.loginAsManager(driver());
+		driver().manage()
+				.window()
+				.setSize(new Dimension(1800, 900)); // Make sure we can see everything.
+
 		ProjectLineListPage page = ProjectLineListPage.goToPage(driver(), 1);
 
 
@@ -75,7 +85,6 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Test inline editing
 		page.selectTemplate("All Fields");
-		String COLUMN_ID = "irida-4"; // This is is based on the id of the MetadataField.
 		String cellContents = page.getCellContents(0, COLUMN_ID);
 		assertEquals("", cellContents);
 
