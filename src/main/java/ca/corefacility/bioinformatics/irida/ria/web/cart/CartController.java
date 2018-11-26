@@ -60,6 +60,11 @@ public class CartController {
 		this.cart = cart;
 	}
 
+	@RequestMapping("")
+	public String getCartPage() {
+		return "cart";
+	}
+
 	/**
 	 * Get a modal dialog in order to export sample files to Galaxy
 	 * @param model
@@ -95,6 +100,12 @@ public class CartController {
 	public Map<String, Object> getCartMap() {
 		List<Map<String, Object>> projects = getProjectsAsList();
 		return ImmutableMap.of("projects", projects);
+	}
+
+	@RequestMapping(value = "/projects", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public Set<Long> getProjectsInCart() {
+		return cart.getProjectsInCart();
 	}
 
 	/**

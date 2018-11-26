@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  data-layout-decorate="~{template/page}"
+>
+  <head>
+    <title>MY AWESOME CART</title>
+    <link rel="stylesheet" th:href="@{/resources/dist/css/cart.bundle.css}" />
+    <script th:inline="javascript">
+      window.PAGE = {
+        i18n: {
+          cart: {
+            empty: /*[[#{cart.empty}]]*/ "Your cart is empty",
+            emptySub:
+              /*[[#{cart.emptySub}]]*/ "Add some samples to it to make it happy :)",
+            imageAlt: /*[[#{cart.imageAlt}]]*/ "Empty Cart"
+          }
+        }
+      };
+    </script>
+  </head>
+  <body>
+    <div id="root" style="padding: 100px;" layout:fragment="page"></div>
+
+    <th:block layout:fragment="scripts">
+      <script src="/resources/dist/js/cart.bundle.js"></script>
+    </th:block>
+  </body>
+</html>
