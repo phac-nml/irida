@@ -10,7 +10,7 @@ export default function EmptyCart() {
       type="flex"
       justify="center"
       align="middle"
-      style={{ height: "100%", flexDirection: "column" }}
+      style={{ height: "100%", flexDirection: "column", padding: 100 }}
     >
       <img
         height="300px"
