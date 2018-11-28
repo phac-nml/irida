@@ -103,7 +103,16 @@ public class AddSISTRSerovarFields implements CustomSqlChange {
 
 		// get all the version 0.3.0 sistr results
 		List<SISTRFileResult> sistrFileResults = jdbcTemplate.query(
-				"SELECT a.id, sso.sample_id, aof.file_path from pipeline_metadata_entry pme INNER JOIN analysis_submission a ON pme.submission_id = a.id INNER JOIN analysis_submission_sequencing_object asso ON a.id = asso.analysis_submission_id INNER JOIN sample_sequencingobject sso ON asso.sequencing_object_id = sso.sequencingobject_id INNER JOIN analysis_output_file_map aofm ON aofm.analysis_id=a.analysis_id INNER JOIN analysis_output_file aof ON aofm.analysisOutputFilesMap_id = aof.id WHERE aofm.analysis_output_file_key='sistr-predictions' GROUP BY a.id,sso.sample_id",
+				"SELECT a.id, sso.sample_id, aof.file_path FROM "
+					+ "pipeline_metadata_entry pme "
+					+ "INNER JOIN analysis_submission a ON pme.submission_id = a.id "
+					+ "INNER JOIN analysis_submission_sequencing_object asso ON a.id = asso.analysis_submission_id "
+					+ "INNER JOIN sample_sequencingobject sso ON asso.sequencing_object_id = sso.sequencingobject_id "
+					+ "INNER JOIN analysis_output_file_map aofm ON aofm.analysis_id=a.analysis_id "
+					+ "INNER JOIN analysis_output_file aof ON aofm.analysisOutputFilesMap_id = aof.id "
+				+ "WHERE aofm.analysis_output_file_key='sistr-predictions' "
+					+ "AND a.workflow_id IN ('92ecf046-ee09-4271-b849-7a82625d6b60') " // SISTR Pipeline version 0.3.0
+				+ "GROUP BY a.id,sso.sample_id",
 				new RowMapper<SISTRFileResult>() {
 					@Override
 					public SISTRFileResult mapRow(ResultSet rs, int rowNum) throws SQLException {
