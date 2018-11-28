@@ -40,10 +40,9 @@ import liquibase.statement.SqlStatement;
  */
 public class AddSISTRSerovarFields implements CustomSqlChange {
 	private static final Logger logger = LoggerFactory.getLogger(AddSISTRSerovarFields.class);
-	
+
 	// @formatter:off
-	private static Map<String, String> SISTR_FIELDS = ImmutableMap.of(
-			"serovar_cgmlst", "SISTR serovar cgMLST (v0.3.0)",
+	private static Map<String, String> SISTR_FIELDS = ImmutableMap.of("serovar_cgmlst", "SISTR serovar cgMLST (v0.3.0)",
 			"serovar_antigen", "SISTR serovar antigen (v0.3.0)");
 	// @formatter:on
 
@@ -100,6 +99,7 @@ public class AddSISTRSerovarFields implements CustomSqlChange {
 			// save the metadata header ids
 			metadataHeaderIds.put(e.getValue(), holder.getKey().longValue());
 		});
+		logger.debug("metadataHeaderIds " + metadataHeaderIds);
 
 		// get all the version 0.3.0 sistr results
 		List<SISTRFileResult> sistrFileResults = jdbcTemplate.query(
@@ -115,11 +115,10 @@ public class AddSISTRSerovarFields implements CustomSqlChange {
 					}
 				});
 
-		logger.debug("metadataHeaderIds " + metadataHeaderIds);
 		// for each sistr result get the metadata
 		for (SISTRFileResult sistrFileResult : sistrFileResults) {
 			logger.debug("sistrFileResult " + sistrFileResult);
-			
+
 			Path filePath = outputFileDirectory.resolve(sistrFileResult.filePath);
 
 			if (!filePath.toFile().exists()) {
@@ -127,9 +126,8 @@ public class AddSISTRSerovarFields implements CustomSqlChange {
 				errorCount++;
 			} else {
 				try {
-					Map<String, String> sistrFields = SISTRSampleUpdater.buildMapOfSISTRResults(SISTR_FIELDS,
-							filePath);
-					
+					Map<String, String> sistrFields = SISTRSampleUpdater.buildMapOfSISTRResults(SISTR_FIELDS, filePath);
+
 					logger.debug("sistrFields " + sistrFields);
 
 					// loop through each of the requested fields and save the entries
@@ -154,7 +152,9 @@ public class AddSISTRSerovarFields implements CustomSqlChange {
 						jdbcTemplate.update("INSERT INTO pipeline_metadata_entry (id, submission_id) VALUES (?,?)",
 								entryId, sistrFileResult.submissionId);
 
-						logger.debug("sistrFields key [" + e.getKey() + "], value=[" + e.getValue() + "] metadata_KEY [" +  metadataHeaderIds.get(e.getKey()) + "]");
+						logger.debug("sistrFields key [" + e.getKey() + "], value=[" + e.getValue()
+								+ "], metadata_KEY [" + metadataHeaderIds.get(e.getKey()) + "], sampleId ["
+								+ sistrFileResult.sampleId + "], entryId [" + entryId + "]");
 						// associate with the sample
 						jdbcTemplate.update(
 								"INSERT INTO sample_metadata_entry (sample_id, metadata_id, metadata_KEY) VALUES (?,?,?)",
@@ -198,7 +198,7 @@ public class AddSISTRSerovarFields implements CustomSqlChange {
 		Long submissionId;
 		Long sampleId;
 		Path filePath;
-		
+
 		@Override
 		public String toString() {
 			return "SISTRFileResult [submissionId=" + submissionId + ", sampleId=" + sampleId + ", filePath=" + filePath
