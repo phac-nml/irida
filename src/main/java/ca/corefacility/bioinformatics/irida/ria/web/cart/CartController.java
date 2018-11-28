@@ -36,8 +36,6 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampl
 
 /**
  * Controller managing interactions with the selected sequences
- * 
- *
  */
 @Controller
 @Scope("session")
@@ -63,6 +61,11 @@ public class CartController {
 	@RequestMapping("")
 	public String getCartPage() {
 		return "cart";
+	}
+
+	@RequestMapping(value = "/ids", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public Set<Long> getSampleIdsInCart() {
+		return cart.getSampleIdsInCart();
 	}
 
 	/**
@@ -100,12 +103,6 @@ public class CartController {
 	public Map<String, Object> getCartMap() {
 		List<Map<String, Object>> projects = getProjectsAsList();
 		return ImmutableMap.of("projects", projects);
-	}
-
-	@RequestMapping(value = "/projects", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public Set<Long> getProjectsInCart() {
-		return cart.getProjectsInCart();
 	}
 
 	/**

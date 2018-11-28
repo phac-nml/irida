@@ -165,11 +165,12 @@ public class Cart {
 	}
 
 	/**
-	 * Get list of {@link Project} identifiers in the cart.
-	 *
-	 * @return {@link Set} of {@link Project} identifiers
+	 * Get the identifiers for samples in the cart
 	 */
-	public Set<Long> getProjectsInCart() {
-		return cart.keySet();
+	public Set<Long> getSampleIdsInCart() {
+		Set<Long> ids = new HashSet<>();
+		cart.values()
+				.forEach(ids::addAll);
+		return ids;
 	}
 }
