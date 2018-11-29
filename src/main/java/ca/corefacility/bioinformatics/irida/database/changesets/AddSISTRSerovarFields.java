@@ -73,7 +73,7 @@ public class AddSISTRSerovarFields implements CustomSqlChange {
 
 	@Override
 	public SqlStatement[] generateStatements(Database database) throws CustomChangeException {
-		logger.info("Reading existing SISTR results files to database.  This could take a while...");
+		logger.info("Updating existing SISTR results. This could take a while...");
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
 		Map<String, Long> metadataHeaderIds = new HashMap<>();
