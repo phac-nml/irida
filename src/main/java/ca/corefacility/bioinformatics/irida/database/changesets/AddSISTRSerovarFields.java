@@ -41,10 +41,8 @@ import liquibase.statement.SqlStatement;
 public class AddSISTRSerovarFields implements CustomSqlChange {
 	private static final Logger logger = LoggerFactory.getLogger(AddSISTRSerovarFields.class);
 
-	// @formatter:off
 	private static Map<String, String> SISTR_FIELDS = ImmutableMap.of("serovar_cgmlst", "SISTR serovar cgMLST (v0.3.0)",
 			"serovar_antigen", "SISTR serovar antigen (v0.3.0)");
-	// @formatter:on
 
 	private DataSource dataSource;
 	private Path outputFileDirectory;
@@ -81,6 +79,7 @@ public class AddSISTRSerovarFields implements CustomSqlChange {
 		Map<String, Long> metadataHeaderIds = new HashMap<>();
 
 		int errorCount = 0;
+		int parseErrorCount = 0;
 
 		// create the metadata headers
 		SISTR_FIELDS.entrySet().forEach(e -> {
@@ -99,12 +98,12 @@ public class AddSISTRSerovarFields implements CustomSqlChange {
 			// save the metadata header ids
 			metadataHeaderIds.put(e.getValue(), holder.getKey().longValue());
 		});
-		logger.debug("metadataHeaderIds " + metadataHeaderIds);
+		logger.trace("metadataHeaderIds " + metadataHeaderIds);
 
 		// get all the version 0.3.0 sistr results
 		List<SISTRFileResult> sistrFileResults = jdbcTemplate.query(
-				"SELECT a.id, sso.sample_id, aof.file_path FROM "
-					+ "pipeline_metadata_entry pme "
+				"SELECT a.id, sso.sample_id, aof.file_path "
+				+ "FROM pipeline_metadata_entry pme "
 					+ "INNER JOIN analysis_submission a ON pme.submission_id = a.id "
 					+ "INNER JOIN analysis_submission_sequencing_object asso ON a.id = asso.analysis_submission_id "
 					+ "INNER JOIN sample_sequencingobject sso ON asso.sequencing_object_id = sso.sequencingobject_id "
@@ -112,23 +111,22 @@ public class AddSISTRSerovarFields implements CustomSqlChange {
 					+ "INNER JOIN analysis_output_file aof ON aofm.analysisOutputFilesMap_id = aof.id "
 				+ "WHERE aofm.analysis_output_file_key='sistr-predictions' "
 					+ "AND a.workflow_id IN ('92ecf046-ee09-4271-b849-7a82625d6b60') " // SISTR Pipeline version 0.3.0
-				+ "GROUP BY a.id,sso.sample_id",
-				new RowMapper<SISTRFileResult>() {
+				+ "GROUP BY a.id,sso.sample_id", new RowMapper<SISTRFileResult>() {
 					@Override
 					public SISTRFileResult mapRow(ResultSet rs, int rowNum) throws SQLException {
 						SISTRFileResult sistrFileResult = new SISTRFileResult();
 						sistrFileResult.submissionId = rs.getLong(1);
 						sistrFileResult.sampleId = rs.getLong(2);
-						sistrFileResult.filePath = Paths.get(rs.getString(3));
+						sistrFileResult.sistrFilePath = Paths.get(rs.getString(3));
 						return sistrFileResult;
 					}
 				});
 
 		// for each sistr result get the metadata
 		for (SISTRFileResult sistrFileResult : sistrFileResults) {
-			logger.debug("sistrFileResult " + sistrFileResult);
+			logger.debug("Updating " + sistrFileResult);
 
-			Path filePath = outputFileDirectory.resolve(sistrFileResult.filePath);
+			Path filePath = outputFileDirectory.resolve(sistrFileResult.sistrFilePath);
 
 			if (!filePath.toFile().exists()) {
 				logger.error("SISTR file " + filePath + " does not exist!");
@@ -137,7 +135,7 @@ public class AddSISTRSerovarFields implements CustomSqlChange {
 				try {
 					Map<String, String> sistrFields = SISTRSampleUpdater.buildMapOfSISTRResults(SISTR_FIELDS, filePath);
 
-					logger.debug("sistrFields " + sistrFields);
+					logger.trace("sistrFields " + sistrFields);
 
 					// loop through each of the requested fields and save the entries
 					sistrFields.entrySet().forEach(e -> {
@@ -161,7 +159,7 @@ public class AddSISTRSerovarFields implements CustomSqlChange {
 						jdbcTemplate.update("INSERT INTO pipeline_metadata_entry (id, submission_id) VALUES (?,?)",
 								entryId, sistrFileResult.submissionId);
 
-						logger.debug("sistrFields key [" + e.getKey() + "], value=[" + e.getValue()
+						logger.trace("sistrFields key [" + e.getKey() + "], value=[" + e.getValue()
 								+ "], metadata_KEY [" + metadataHeaderIds.get(e.getKey()) + "], sampleId ["
 								+ sistrFileResult.sampleId + "], entryId [" + entryId + "]");
 						// associate with the sample
@@ -171,7 +169,8 @@ public class AddSISTRSerovarFields implements CustomSqlChange {
 					});
 
 				} catch (PostProcessingException e) {
-					logger.error("Error parsing SISTR results", e);
+					logger.error("Error parsing SISTR results for file [" + filePath + "]", e);
+					parseErrorCount++;
 				}
 			}
 		}
@@ -181,17 +180,22 @@ public class AddSISTRSerovarFields implements CustomSqlChange {
 					+ " automated SISTR result files to update sample metadata.  If these results are essential, check your file paths, restore a database backup, and retry the upgrade.");
 		}
 
+		if (parseErrorCount > 0) {
+			logger.error("Error parsing " + parseErrorCount
+					+ " automated SISTR result files to update sample metadata.  If these results are essential please check the problematic files, restore a database backup, and retry the upgrade.");
+		}
+
 		return new SqlStatement[0];
 	}
 
 	@Override
 	public String getConfirmationMessage() {
-		return "SISTR predictions (version 0.3.0) updated.";
+		return "SISTR predictions metadata updated.";
 	}
 
 	@Override
 	public void setUp() throws SetupException {
-		logger.info("Updating metadata SISTR predictions (version 0.3.0)");
+		logger.info("Updating SISTR predictions metadata to include: " + SISTR_FIELDS.values());
 	}
 
 	@Override
@@ -206,12 +210,12 @@ public class AddSISTRSerovarFields implements CustomSqlChange {
 	private class SISTRFileResult {
 		Long submissionId;
 		Long sampleId;
-		Path filePath;
+		Path sistrFilePath;
 
 		@Override
 		public String toString() {
-			return "SISTRFileResult [submissionId=" + submissionId + ", sampleId=" + sampleId + ", filePath=" + filePath
-					+ "]";
+			return "SISTRFileResult [submissionId=" + submissionId + ", sampleId=" + sampleId + ", sistrFilePath="
+					+ sistrFilePath + "]";
 		}
 	}
 }
