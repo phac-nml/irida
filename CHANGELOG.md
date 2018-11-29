@@ -32,6 +32,7 @@ Changes
 * [UI]: New project line list page with inline editing.
 * [Developer]: Updated Node, Yarn, and front-end webpack packages.
 * [Workflow]: Updated default thresholds in SISTR workflow to perform minimal filtering of contigs. Fixed Shovill Galaxy tool revision.
+* [Workflow/UI]: Added two additional columns in metadata for SISTR results `SISTR serovar cgMLST (v0.3.0)` and `SISTR serovar antigen (v0.3.0)`. Existing SISTR results will be updated to include values for these columns.
 * [Developer]: Update to ag-grid-community v.19.1.2.
 * [Documentation]: Changed references from GitLab to GitHub in docs.
 
