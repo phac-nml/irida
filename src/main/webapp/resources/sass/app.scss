@@ -15,9 +15,13 @@
 @import "components/typography";
 
 html,
-body,
-.container-fluid {
+body {
   height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
 }
 
 /****************************************************************************************
@@ -97,7 +101,8 @@ body,
 }
 
 .body-content {
-  padding-top: 1rem;
+  flex-grow: 1;
+  width: 100%;
 }
 
 .navbar-collapse {
