@@ -75,26 +75,24 @@ export default class Cart extends React.Component {
     }
   ];
 
-  state = {
-    samples: []
-  };
+  constructor(props) {
+    super(props);
+    /*
+    To show some default state to the user we fill an empty array with the amount
+    of samples in the cart, with a not loaded indication.
+     */
+    const samples = new Array(props.total).fill({ loaded: false });
+    this.state = { samples };
+  }
 
   componentDidMount() {
-    const samples = this.props.ids.map(ids => ({
-      id: ids.sampleId,
-      projectId: ids.projectId,
-      loaded: false
-    }));
-    this.setState({ samples });
+
   }
 
   onGridReady = params => {
     this.gridApi = params.api;
     this.columnApi = params.columnApi;
     params.api.sizeColumnsToFit();
-    setTimeout(function() {
-      params.api.resetRowHeights();
-    }, 500);
   };
 
   render() {

@@ -1,26 +1,27 @@
 import React, { Component } from "react";
 import { render } from "react-dom";
 import EmptyCart from "./components/EmptyCart";
-import { getCartIds } from "../../apis/cart/cart";
+import { getCartCount } from "../../apis/cart/cart";
 import CartContainer from "./components/CartContainer";
 
 class CartPage extends Component {
-  state = {};
+  state = { loading: true };
 
   componentDidMount() {
-    getCartIds().then(ids => {
-      this.setState({ total: ids.length, ids });
+    getCartCount().then(response => {
+      this.setState({ loading: false, total: response.count });
     });
   }
 
   render() {
-    const { total, ids } = this.state;
-    if (typeof total === "undefined") {
+    const { total, loading } = this.state;
+
+    if (loading) {
       return <div>Loading...</div>;
-    } else if (total.length === 0) {
+    } else if (total === 0) {
       return <EmptyCart />;
     }
-    return <CartContainer total={total} ids={ids} />;
+    return <CartContainer total={total} />;
   }
 }
 
