@@ -15,14 +15,14 @@ public class AddToCartRequest {
 	private Long projectId;
 
 	/**
-	 * Set of {@link CartRequestSample} that mapping to a {@link Sample} to add to the cart.
+	 * Set of {@link CartSampleRequest} that mapping to a {@link Sample} to add to the cart.
 	 */
-	private Set<CartRequestSample> samples;
+	private Set<CartSampleRequest> samples;
 
 	public AddToCartRequest() {
 	}
 
-	public AddToCartRequest(Long projectId, Set<CartRequestSample> samples) {
+	public AddToCartRequest(Long projectId, Set<CartSampleRequest> samples) {
 		this.projectId = projectId;
 		this.samples = samples;
 	}
@@ -31,7 +31,7 @@ public class AddToCartRequest {
 		return projectId;
 	}
 
-	public Set<CartRequestSample> getSamples() {
+	public Set<CartSampleRequest> getSamples() {
 		return samples;
 	}
 
@@ -39,7 +39,7 @@ public class AddToCartRequest {
 		this.projectId = projectId;
 	}
 
-	public void setSamples(Set<CartRequestSample> samples) {
+	public void setSamples(Set<CartSampleRequest> samples) {
 		this.samples = samples;
 	}
 }

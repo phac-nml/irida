@@ -29,7 +29,10 @@ export const getCartCount = async () => {
 export const getCart = async () =>
   axios.get(`${url}`).then(response => response.data);
 
-export const getCartSampleIds = async () =>
-  axios.get(`${url}/ids`).then(response => ({
-    ids: response.data.longList
-  }));
+export const getCartIds = async () =>
+  axios.get(`${url}/ids`).then(response => response.data.cartIdResponseList);
+
+export const getSampleInfo = async (projectId, sampleId) =>
+  axios
+    .get(`${url}/sample?projectId=${projectId}&sampleId=${sampleId}`)
+    .then(response => response.data);

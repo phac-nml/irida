@@ -1,14 +1,14 @@
 import React, { Component } from "react";
 import { render } from "react-dom";
 import EmptyCart from "./components/EmptyCart";
-import { getCartSampleIds } from "../../apis/cart/cart";
+import { getCartIds } from "../../apis/cart/cart";
 import CartContainer from "./components/CartContainer";
 
 class CartPage extends Component {
   state = {};
 
   componentDidMount() {
-    getCartSampleIds().then(({ ids }) => {
+    getCartIds().then(ids => {
       this.setState({ total: ids.length, ids });
     });
   }

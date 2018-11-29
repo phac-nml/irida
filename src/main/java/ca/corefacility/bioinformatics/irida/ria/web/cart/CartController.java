@@ -24,9 +24,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.components.Cart;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartRequestSample;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.*;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -58,14 +56,20 @@ public class CartController {
 		this.cart = cart;
 	}
 
-	@RequestMapping("")
+	@RequestMapping(value = "", produces = MediaType.TEXT_HTML_VALUE)
 	public String getCartPage() {
 		return "cart";
 	}
 
 	@RequestMapping(value = "/ids", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public Set<Long> getSampleIdsInCart() {
-		return cart.getSampleIdsInCart();
+	public List<CartIdResponse> getCart() {
+		return cart.getIdsInCart();
+	}
+
+	@RequestMapping("/sample")
+	@ResponseBody
+	public CartSampleResponse getCartSample(@RequestParam Long projectId, @RequestParam Long sampleId) {
+		return new CartSampleResponse(projectService.read(projectId), sampleService.read(sampleId));
 	}
 
 	/**
@@ -167,11 +171,11 @@ public class CartController {
 	public void addSelected(Map<Project, Set<Sample>> selected, Locale locale) {
 		// this.selected = selected;
 		for (Project project : selected.keySet()) {
-			Set<CartRequestSample> cartRequestSamples = selected.get(project)
+			Set<CartSampleRequest> cartSampleRequests = selected.get(project)
 					.stream()
-					.map(s -> new CartRequestSample(s.getId(), s.getLabel()))
+					.map(s -> new CartSampleRequest(s.getId(), s.getLabel()))
 					.collect(Collectors.toSet());
-			cart.addProjectSamplesToCart(new AddToCartRequest(project.getId(), cartRequestSamples), locale);
+			cart.addProjectSamplesToCart(new AddToCartRequest(project.getId(), cartSampleRequests), locale);
 		}
 	}
 
@@ -188,11 +192,11 @@ public class CartController {
 	public AddToCartResponse addProjectSample(@RequestParam Long projectId,
 			@RequestParam(value = "sampleIds[]") Set<Long> sampleIds, Locale locale) {
 		Project project = projectService.read(projectId);
-		Set<CartRequestSample> samples = sampleIds.stream()
+		Set<CartSampleRequest> samples = sampleIds.stream()
 				.map(id -> {
 					ProjectSampleJoin join = sampleService.getSampleForProject(project, id);
 					Sample sample = join.getObject();
-					return new CartRequestSample(sample.getId(), sample.getSampleName());
+					return new CartSampleRequest(sample.getId(), sample.getSampleName());
 				})
 				.collect(Collectors.toSet());
 		AddToCartRequest addToCartRequest = new AddToCartRequest(projectId, samples);
@@ -249,8 +253,8 @@ public class CartController {
 	public void addProject(@PathVariable Long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
 		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(project);
-		Set<CartRequestSample> samples = samplesForProject.stream()
-				.map(j -> new CartRequestSample(j.getId(), j.getLabel()))
+		Set<CartSampleRequest> samples = samplesForProject.stream()
+				.map(j -> new CartSampleRequest(j.getId(), j.getLabel()))
 				.collect(Collectors.toSet());
 		cart.addProjectSamplesToCart(new AddToCartRequest(projectId, samples), locale);
 	}

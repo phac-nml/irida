@@ -9,9 +9,7 @@ import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartRequestSample;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.*;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 
 /**
@@ -59,7 +57,7 @@ public class Cart {
 		List<String> duplicates = new ArrayList<>();
 		List<String> existing = new ArrayList<>();
 
-		for (CartRequestSample sample : addToCartRequest.getSamples()) {
+		for (CartSampleRequest sample : addToCartRequest.getSamples()) {
 			/*
 			First lets see if the id is here, t
 			 */
@@ -167,10 +165,13 @@ public class Cart {
 	/**
 	 * Get the identifiers for samples in the cart
 	 */
-	public Set<Long> getSampleIdsInCart() {
-		Set<Long> ids = new HashSet<>();
-		cart.values()
-				.forEach(ids::addAll);
-		return ids;
+	public List<CartIdResponse> getIdsInCart() {
+		List<CartIdResponse> response = new ArrayList<>();
+		for (Long pId : cart.keySet()) {
+			for (Long sId : cart.get(pId)) {
+				response.add(new CartIdResponse(pId, sId));
+			}
+		}
+		return response;
 	}
 }
