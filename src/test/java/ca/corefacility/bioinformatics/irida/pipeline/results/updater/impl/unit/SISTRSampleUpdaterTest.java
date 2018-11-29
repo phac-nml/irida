@@ -1,7 +1,25 @@
 package ca.corefacility.bioinformatics.irida.pipeline.results.updater.impl.unit;
 
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Map;
+import java.util.UUID;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+
 import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
@@ -15,45 +33,9 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutp
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.results.updater.impl.SISTRSampleUpdater;
-import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
-import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
-import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 public class SISTRSampleUpdaterTest {
 
@@ -83,21 +65,61 @@ public class SISTRSampleUpdaterTest {
 		when(iridaWorkflowDescription.getVersion()).thenReturn("0.1");
 	}
 
+	@Test
+	public void testBuildMapOfSISTRResultsTwoFields() throws PostProcessingException {
+		Path outputPath = Paths.get("src/test/resources/files/sistr-predictions-pass.json");
+		Map<String, String> sistrFields = ImmutableMap.<String, String>builder().put("serovar", "SISTR serovar")
+				.put("serovar_antigen", "SISTR serovar antigen").build();
+
+		Map<String, String> results = SISTRSampleUpdater.buildMapOfSISTRResults(sistrFields, outputPath);
+
+		ImmutableMap<String, String> expectedResults = ImmutableMap.<String, String>builder()
+				.put("SISTR serovar", "Enteritidis").put("SISTR serovar antigen",
+						"Blegdam|Dublin|Enteritidis|Gueuletapee|Hillingdon|Kiel|Moscow|Naestved|Nitra|Rostock")
+				.build();
+
+		assertEquals("should have gotten expected results", results, expectedResults);
+	}
+
+	@Test
+	public void testBuildMapOfSISTRResultsThreeFields() throws PostProcessingException {
+		Path outputPath = Paths.get("src/test/resources/files/sistr-predictions-pass.json");
+		Map<String, String> sistrFields = ImmutableMap.<String, String>builder().put("serovar", "SISTR serovar")
+				.put("serovar_antigen", "SISTR serovar antigen")
+				.put("cgmlst_matching_alleles", "SISTR cgMLST Alleles Matching Genome").build();
+
+		Map<String, String> results = SISTRSampleUpdater.buildMapOfSISTRResults(sistrFields, outputPath);
+
+		ImmutableMap<String, String> expectedResults = ImmutableMap.<String, String>builder()
+				.put("SISTR serovar", "Enteritidis")
+				.put("SISTR serovar antigen",
+						"Blegdam|Dublin|Enteritidis|Gueuletapee|Hillingdon|Kiel|Moscow|Naestved|Nitra|Rostock")
+				.put("SISTR cgMLST Alleles Matching Genome", "317").build();
+
+		assertEquals("should have gotten expected results", results, expectedResults);
+	}
+
+	@Test(expected = PostProcessingException.class)
+	public void testBuildMapOfSISTRResultsNoFile() throws PostProcessingException {
+		Path outputPath = Paths.get("src/test/resources/files/sistr-predictions-pass.NOFILE");
+		Map<String, String> sistrFields = ImmutableMap.<String, String>builder().put("serovar", "SISTR serovar")
+				.put("serovar_antigen", "SISTR serovar antigen")
+				.put("cgmlst_matching_alleles", "SISTR cgMLST Alleles Matching Genome").build();
+
+		SISTRSampleUpdater.buildMapOfSISTRResults(sistrFields, outputPath);
+	}
+
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testUpdaterPassed() throws PostProcessingException, AnalysisAlreadySetException {
-		ImmutableMap<String, String> expectedResults = ImmutableMap.<String,String>builder()
-				.put("SISTR serovar (v0.1)", "Enteritidis")
-				.put("SISTR serovar cgMLST (v0.1)", "Enteritidis")
-				.put("SISTR serovar antigen (v0.1)", "Blegdam|Dublin|Enteritidis|Gueuletapee|Hillingdon|Kiel|Moscow|Naestved|Nitra|Rostock")
-				.put("SISTR cgMLST Subspecies (v0.1)", "enterica")
-				.put("SISTR QC Status (v0.1)", "PASS")
-				.put("SISTR O-antigen (v0.1)", "1,9,12")
-				.put("SISTR Serogroup (v0.1)", "D1")
-				.put("SISTR cgMLST Alleles Matching Genome (v0.1)", "317")
-				.put("SISTR H1 (v0.1)", "g,m")
-				.put("SISTR H2 (v0.1)", "-")
-				.build();
+		ImmutableMap<String, String> expectedResults = ImmutableMap.<String, String>builder()
+				.put("SISTR serovar (v0.1)", "Enteritidis").put("SISTR serovar cgMLST (v0.1)", "Enteritidis")
+				.put("SISTR serovar antigen (v0.1)",
+						"Blegdam|Dublin|Enteritidis|Gueuletapee|Hillingdon|Kiel|Moscow|Naestved|Nitra|Rostock")
+				.put("SISTR cgMLST Subspecies (v0.1)", "enterica").put("SISTR QC Status (v0.1)", "PASS")
+				.put("SISTR O-antigen (v0.1)", "1,9,12").put("SISTR Serogroup (v0.1)", "D1")
+				.put("SISTR cgMLST Alleles Matching Genome (v0.1)", "317").put("SISTR H1 (v0.1)", "g,m")
+				.put("SISTR H2 (v0.1)", "-").build();
 
 		Path outputPath = Paths.get("src/test/resources/files/sistr-predictions-pass.json");
 
@@ -118,9 +140,11 @@ public class SISTRSampleUpdaterTest {
 
 		updater.update(Lists.newArrayList(sample), submission);
 
+		@SuppressWarnings("rawtypes")
 		ArgumentCaptor<Map> mapCaptor = ArgumentCaptor.forClass(Map.class);
 
-		//this is the important bit.  Ensures the correct values got pulled from the file
+		// this is the important bit. Ensures the correct values got pulled from the
+		// file
 		verify(metadataTemplateService).getMetadataMap(mapCaptor.capture());
 		Map<String, MetadataEntry> metadata = mapCaptor.getValue();
 

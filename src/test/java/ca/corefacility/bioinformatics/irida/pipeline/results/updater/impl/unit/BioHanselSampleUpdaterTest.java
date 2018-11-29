@@ -84,6 +84,7 @@ public class BioHanselSampleUpdaterTest {
 		when(metadataTemplateService.getMetadataMap(any(Map.class))).thenReturn(metadataMap);
 		bioHanselSampleUpdater.update(Lists.newArrayList(sample), submission);
 
+		@SuppressWarnings("rawtypes")
 		ArgumentCaptor<Map> mapCaptor = ArgumentCaptor.forClass(Map.class);
 
 		//this is the important bit.  Ensures the correct values got pulled from the file
