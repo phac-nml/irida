@@ -24,7 +24,9 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.components.Cart;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.*;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartSampleRequest;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -59,17 +61,6 @@ public class CartController {
 	@RequestMapping(value = "", produces = MediaType.TEXT_HTML_VALUE)
 	public String getCartPage() {
 		return "cart";
-	}
-
-	@RequestMapping(value = "/ids", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<CartIdResponse> getCart() {
-		return cart.getIdsInCart();
-	}
-
-	@RequestMapping("/sample")
-	@ResponseBody
-	public CartSample getCartSample(@RequestParam Long projectId, @RequestParam Long sampleId) {
-		return new CartSample(projectService.read(projectId), sampleService.read(sampleId));
 	}
 
 	/**
@@ -150,15 +141,16 @@ public class CartController {
 		/*
 		Inflating the whole cart here.  This is going to be a serious performance hit!
 		 */
-		Map<Long, Set<Long>> projects = cart.get();
-		Map<Project, Set<Sample>> result = new HashMap<>();
-
-		for (Long id : projects.keySet()) {
-			Project project = projectService.read(id);
-			Set<Sample> samples = (Set<Sample>) sampleService.readMultiple(projects.get(id));
-			result.put(project, samples);
-		}
-		return result;
+//		Map<Long, Set<Long>> projects = cart.get();
+//		Map<Project, Set<Sample>> result = new HashMap<>();
+//
+//		for (Long id : projects.keySet()) {
+//			Project project = projectService.read(id);
+//			Set<Sample> samples = (Set<Sample>) sampleService.readMultiple(projects.get(id));
+//			result.put(project, samples);
+//		}
+//		return result;
+		return null;
 	}
 
 	/**
@@ -294,22 +286,23 @@ public class CartController {
 	 *         Sample information
 	 */
 	private List<Map<String, Object>> getProjectsAsList() {
-		Map<Long, Set<Long>> currentCart = cart.get();
-		List<Map<String, Object>> projectList = new ArrayList<>();
-		for (Long id : currentCart.keySet()) {
-			Project p = projectService.read(id);
-			Set<Sample> selectedSamplesForProject = currentCart.get(id)
-					.stream()
-					.map(sampleService::read)
-					.collect(Collectors.toSet());
-			List<Map<String, Object>> samples = getSamplesAsList(selectedSamplesForProject);
-
-			Map<String, Object> projectMap = ImmutableMap.of("id", p.getId(), "label", p.getLabel(), "samples",
-					samples);
-			projectList.add(projectMap);
-		}
-
-		return projectList;
+//		Map<Long, Set<Long>> currentCart = cart.get();
+//		List<Map<String, Object>> projectList = new ArrayList<>();
+//		for (Long id : currentCart.keySet()) {
+//			Project p = projectService.read(id);
+//			Set<Sample> selectedSamplesForProject = currentCart.get(id)
+//					.stream()
+//					.map(sampleService::read)
+//					.collect(Collectors.toSet());
+//			List<Map<String, Object>> samples = getSamplesAsList(selectedSamplesForProject);
+//
+//			Map<String, Object> projectMap = ImmutableMap.of("id", p.getId(), "label", p.getLabel(), "samples",
+//					samples);
+//			projectList.add(projectMap);
+//		}
+//
+//		return projectList;
+		return null;
 	}
 
 	/**
@@ -336,21 +329,22 @@ public class CartController {
 	 * Sample information
 	 */
 	private List<Map<String, Object>> getProjectsAsListForGalaxy() {
-		Map<Long, Set<Long>> currentCart = cart.get();
-		List<Map<String, Object>> projectList = new ArrayList<>();
-		for (Long id : currentCart.keySet()) {
-			Set<Sample> selectedSamplesForProject = currentCart.get(id)
-					.stream()
-					.map(sampleService::read)
-					.collect(Collectors.toSet());
-			List<Map<String, Object>> samples = getSamplesAsListForGalaxy(selectedSamplesForProject, id);
-			Project p = projectService.read(id);
-			Map<String, Object> projectMap = ImmutableMap.of("id", p.getId(), "label", p.getLabel(), "samples",
-					samples);
-			projectList.add(projectMap);
-		}
-
-		return projectList;
+//		Map<Long, Set<Long>> currentCart = cart.get();
+//		List<Map<String, Object>> projectList = new ArrayList<>();
+//		for (Long id : currentCart.keySet()) {
+//			Set<Sample> selectedSamplesForProject = currentCart.get(id)
+//					.stream()
+//					.map(sampleService::read)
+//					.collect(Collectors.toSet());
+//			List<Map<String, Object>> samples = getSamplesAsListForGalaxy(selectedSamplesForProject, id);
+//			Project p = projectService.read(id);
+//			Map<String, Object> projectMap = ImmutableMap.of("id", p.getId(), "label", p.getLabel(), "samples",
+//					samples);
+//			projectList.add(projectMap);
+//		}
+//
+//		return projectList;
+		return null;
 	}
 
 	/**
