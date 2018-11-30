@@ -1,13 +1,11 @@
 package ca.corefacility.bioinformatics.irida.ria.web.cart.dto;
 
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-
-public class CartSampleResponse {
+public class CartSample {
 	private Long id;
 	private String label;
 	private Project project;
 
-	public CartSampleResponse(ca.corefacility.bioinformatics.irida.model.project.Project project, Sample sample) {
+	public CartSample(ca.corefacility.bioinformatics.irida.model.project.Project project, CartSampleRequest sample) {
 		this.id = sample.getId();
 		this.label = sample.getLabel();
 		this.project = new Project(project);

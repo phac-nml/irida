@@ -13,17 +13,17 @@ class SampleRenderer extends React.Component {
   }
 
   componentDidMount() {
-    const { node } = this.props;
-    const data = {};
-    Object.assign(data, this.state);
-    if (!data.loaded) {
-      getSampleInfo(data.projectId, data.id).then(response => {
-        Object.assign(data, response);
-        data.loaded = true;
-        node.setData(data);
-        this.setState(data);
-      });
-    }
+      // const { node } = this.props;
+      // const data = {};
+      // Object.assign(data, this.state);
+      // if (!data.loaded) {
+      //   getSampleInfo(data.projectId, data.id).then(response => {
+      //     Object.assign(data, response);
+      //     data.loaded = true;
+      //     node.setData(data);
+      //     this.setState(data);
+      //   });
+      // }
   }
 
   render() {

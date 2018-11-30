@@ -68,8 +68,8 @@ public class CartController {
 
 	@RequestMapping("/sample")
 	@ResponseBody
-	public CartSampleResponse getCartSample(@RequestParam Long projectId, @RequestParam Long sampleId) {
-		return new CartSampleResponse(projectService.read(projectId), sampleService.read(sampleId));
+	public CartSample getCartSample(@RequestParam Long projectId, @RequestParam Long sampleId) {
+		return new CartSample(projectService.read(projectId), sampleService.read(sampleId));
 	}
 
 	/**
