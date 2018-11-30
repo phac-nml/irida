@@ -8,8 +8,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.sql.DataSource;
 
@@ -102,7 +104,7 @@ public class AddSISTRSerovarFields implements CustomSqlChange {
 
 		// get all the version 0.3.0 sistr results
 		List<SISTRFileResult> sistrFileResults = jdbcTemplate.query(
-				"SELECT a.id, sso.sample_id, aof.file_path "
+				"SELECT DISTINCT a.id, sso.sample_id, aof.file_path "
 				+ "FROM pipeline_metadata_entry pme "
 					+ "INNER JOIN analysis_submission a ON pme.submission_id = a.id "
 					+ "INNER JOIN analysis_submission_sequencing_object asso ON a.id = asso.analysis_submission_id "
@@ -111,7 +113,8 @@ public class AddSISTRSerovarFields implements CustomSqlChange {
 					+ "INNER JOIN analysis_output_file aof ON aofm.analysisOutputFilesMap_id = aof.id "
 				+ "WHERE aofm.analysis_output_file_key='sistr-predictions' "
 					+ "AND a.workflow_id IN ('92ecf046-ee09-4271-b849-7a82625d6b60') " // SISTR Pipeline version 0.3.0
-				+ "GROUP BY a.id,sso.sample_id", new RowMapper<SISTRFileResult>() {
+				+ "ORDER BY a.id DESC", // descending order of analysis submission means that the newest sistr results associated with a sample are updated first
+				new RowMapper<SISTRFileResult>() {
 					@Override
 					public SISTRFileResult mapRow(ResultSet rs, int rowNum) throws SQLException {
 						SISTRFileResult sistrFileResult = new SISTRFileResult();
@@ -122,9 +125,18 @@ public class AddSISTRSerovarFields implements CustomSqlChange {
 					}
 				});
 
+		Set<Long> updatedSamples = new HashSet<>();
 		// for each sistr result get the metadata
 		for (SISTRFileResult sistrFileResult : sistrFileResults) {
-			logger.debug("Updating " + sistrFileResult);
+			
+			// verify we haven't updated the sample already, since it's possible that multiple SISTR results are associated with each sample
+			if (updatedSamples.contains(sistrFileResult.sampleId)) {
+				logger.debug("Already updated sample [" + sistrFileResult.sampleId + "], skipping " + sistrFileResult);
+				continue;
+			} else {
+				logger.debug("Updating " + sistrFileResult);
+				updatedSamples.add(sistrFileResult.sampleId);
+			}
 
 			Path filePath = outputFileDirectory.resolve(sistrFileResult.sistrFilePath);
 
