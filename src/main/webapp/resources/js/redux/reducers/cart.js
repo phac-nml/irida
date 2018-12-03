@@ -1,15 +1,17 @@
-import { fromJS } from "immutable";
 import { CART } from "../../utilities/events-utilities";
 
 export const types = {
+  INITIALIZED: "CART/INITIALIZED",
   ADD: "CART/ADD",
   UPDATED: "CART/UPDATED"
 };
 
-const initialState = fromJS({ count: 0 });
+const initialState = { count: 0, initialized: false };
 
 export const reducer = (state = initialState, action = {}) => {
   switch (action.type) {
+    case types.INITIALIZED:
+      return { ...state, ...{ count: action.count, initialized: true } };
     case types.UPDATED:
       /*
       Since the cart is not currently a react component, setting the state does
@@ -21,13 +23,14 @@ export const reducer = (state = initialState, action = {}) => {
           detail: action.response
         })
       );
-      return state.setIn(["count"], action.response.count);
+      return { ...state, ...{ count: action.response.count } };
     default:
-      return state;
+      return { ...state };
   }
 };
 
 export const actions = {
+  initialized: count => ({ type: types.INITIALIZED, count }),
   add: samples => ({ type: types.ADD, samples }),
   updated: response => ({ type: types.UPDATED, response })
 };

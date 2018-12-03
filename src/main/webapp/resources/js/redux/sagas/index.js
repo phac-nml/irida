@@ -1,1 +1,1 @@
-export { addToCartSaga } from "./cart";
+export { initializeCartPage, addToCartSaga } from "./cart";

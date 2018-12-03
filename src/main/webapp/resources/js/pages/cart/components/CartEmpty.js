@@ -4,7 +4,7 @@ import { Row } from "antd";
 const { i18n } = window.PAGE;
 const { BASE_URL } = window.TL;
 
-export default function EmptyCart() {
+export default function CartEmpty() {
   return (
     <Row
       type="flex"

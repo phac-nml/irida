@@ -9,7 +9,7 @@ export const reducer = (state = initialState, action = {}) => {
     case types.INIT_APP:
       return { ...state, ...action.payload };
     default:
-      return state;
+      return { ...state };
   }
 };
 
