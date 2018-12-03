@@ -1,13 +1,15 @@
 import { call, put, take } from "redux-saga/effects";
 import { TYPES, actions } from "./reducer";
-import { getCartCount } from "../../apis/cart/cart";
+import { types as cartTypes } from "../../redux/reducers/cart";
+import { getCartIds } from "../../apis/cart/cart";
 
-export function* initializeCartPage() {
-  try {
-    yield take(TYPES.CART_INITIALIZE);
-    const { count } = yield call(getCartCount);
-    yield put(actions.initialized(count));
-  } catch (e) {
-    console.log("LOADING TOTAL ERROR", e);
+export function* getCarProjectIds() {
+  const { count } = yield take(cartTypes.INITIALIZED);
+  if (count > 0) {
+    const { ids } = yield call(getCartIds);
+    for (let id of ids) {
+      console.log(id);
+      yield call(getCartIds);
+    }
   }
 }

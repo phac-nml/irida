@@ -416,4 +416,19 @@ public class CartController {
 		return cart.getNumberOfSamples();
 	}
 
+	/**
+	 * Get a {@link Set} of {@link Project} identifiers
+	 *
+	 * @return {@link Set} of {@link Long}
+	 */
+	@RequestMapping("/ids")
+	@ResponseBody
+	public Set<Long> getProjectIdsInCart() {
+		return cart.getProjectIdsInCart();
+	}
+
+	@RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public
+
 }

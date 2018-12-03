@@ -30,7 +30,7 @@ export const getCart = async () =>
   axios.get(`${url}`).then(response => response.data);
 
 export const getCartIds = async () =>
-  axios.get(`${url}/ids`).then(response => response.data.cartIdResponseList);
+  axios.get(`${url}/ids`).then(response => ({ ids: response.data }));
 
 export const getSampleInfo = async (projectId, sampleId) =>
   axios

@@ -167,4 +167,13 @@ public class Cart {
 						.size())
 				.sum();
 	}
+
+	/**
+	 * Get a set of all {@link Project} identifiers in the cart.
+	 *
+	 * @return {@link Set} of {@link Long}
+	 */
+	public Set<Long> getProjectIdsInCart() {
+		return cart.keySet();
+	}
 }
