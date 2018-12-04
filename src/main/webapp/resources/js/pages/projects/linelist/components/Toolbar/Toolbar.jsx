@@ -1,9 +1,9 @@
-import React, { Component } from "react";
+import React, { Component, Suspense } from "react";
 import PropTypes from "prop-types";
 import { ExportDropDown } from "../Export/ExportDropdown";
 import { AddSamplesToCartButton } from "../AddToCartButton/AddSamplesToCart";
 import { Button, Form, Input, Popover } from "antd";
-import LineListTour from "../Tour/LineListTour";
+const LineListTour = React.lazy(() => import("../Tour/LineListTour"));
 
 const { Search } = Input;
 
@@ -85,10 +85,12 @@ export class Toolbar extends Component {
               />
             </Form.Item>
             <Form.Item>
-              <LineListTour
-                isOpen={this.state.tourOpen}
-                closeTour={this.closeTour}
-              />
+              <Suspense fallback={<div />}>
+                <LineListTour
+                  isOpen={this.state.tourOpen}
+                  closeTour={this.closeTour}
+                />
+              </Suspense>
               <Popover
                 content={
                   <strong
