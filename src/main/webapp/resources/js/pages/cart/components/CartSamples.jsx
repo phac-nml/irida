@@ -1,70 +1,83 @@
 import React from "react";
+import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-balham.css";
-import { Row, Col, Icon, List, Skeleton, Tag } from "antd";
-import { getSampleInfo } from "../../../apis/cart/cart";
+import { Row, Col, Drawer, Icon, List, Tag } from "antd";
+
+const colors = {};
 
 class SampleRenderer extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = props.data;
-  }
+  state = { details: false };
 
-  componentDidMount() {
-      // const { node } = this.props;
-      // const data = {};
-      // Object.assign(data, this.state);
-      // if (!data.loaded) {
-      //   getSampleInfo(data.projectId, data.id).then(response => {
-      //     Object.assign(data, response);
-      //     data.loaded = true;
-      //     node.setData(data);
-      //     this.setState(data);
-      //   });
-      // }
-  }
+  generateColor = id => {
+    colors[id] =
+      colors[id] ||
+      `rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(
+        Math.random() * 256
+      )}, ${Math.floor(Math.random() * 256)})`;
+    return colors[id];
+  };
 
   render() {
-    const { loaded } = this.state;
-
+    const sample = this.props.data;
     return (
       <Row type="flex" align="middle">
         <Col span={2}>
-          {!loaded ? (
-            <Icon type="loading" />
-          ) : (
-            <Icon
-              style={{ fontSize: 20 }}
-              type="check-circle"
-              theme="twoTone"
-              twoToneColor="#52c41a"
-            />
-          )}
+          <Icon
+            style={{ fontSize: 20 }}
+            type="check-circle"
+            theme="twoTone"
+            twoToneColor="#52c41a"
+          />
         </Col>
         <Col span={22}>
-          <Skeleton paragraph={false} loading={!loaded} active>
-            {loaded ? (
-              <List.Item actions={[<a>Remove</a>]}>
-                <List.Item.Meta
-                  title={this.state.label}
-                  description={
-                    <Tag color="magenta">{this.state.project.label}</Tag>
+          <List.Item
+            actions={[
+              <a>
+                <Icon
+                  type="info-circle"
+                  theme="twoTone"
+                  onClick={() =>
+                    this.setState({ details: true })
                   }
                 />
-              </List.Item>
-            ) : null}
-          </Skeleton>
+                <Drawer
+                  title={sample.label}
+                  placement="right"
+                  width={500}
+                  closable={true}
+                  onClose={() => this.setState({ details: false })}
+                  visible={this.state.details}
+                >
+                  <h3>JELLO GOES IN HERE</h3>
+                </Drawer>
+              </a>,
+              <a onClick={() => console.log(sample)}>
+                <Icon type="close"/>
+              </a>
+            ]}
+          >
+            <List.Item.Meta
+              title={sample.label}
+              description={
+                <Tag color={this.generateColor(sample.project.id)}>
+                  {sample.project.label}
+                </Tag>
+              }
+            />
+          </List.Item>
         </Col>
       </Row>
     );
   }
 }
 
-export default class CartSamples extends React.Component {
+class CartSamplesComponent extends React.Component {
   static propTypes = {
-    count: PropTypes.number.isRequired
+    count: PropTypes.number.isRequired,
+    samples: PropTypes.array.isRequired
   };
 
   columnDefs = [
@@ -81,8 +94,14 @@ export default class CartSamples extends React.Component {
     To show some default state to the user we fill an empty array with the amount
     of samples in the cart, with a not loaded indication.
      */
-    const samples = new Array(props.count).fill({ loaded: false });
+    const samples = new Array(props.count);
     this.state = { samples };
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (this.props.samples.length > prevProps.samples.length) {
+      this.setState({ samples: this.props.samples });
+    }
   }
 
   onGridReady = params => {
@@ -110,3 +129,15 @@ export default class CartSamples extends React.Component {
     );
   }
 }
+
+const mapStateToProps = state => ({
+  count: state.cart.count,
+  samples: state.cartPageReducer.samples
+});
+
+const mapDispatchToProps = dispatch => ({});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(CartSamplesComponent);

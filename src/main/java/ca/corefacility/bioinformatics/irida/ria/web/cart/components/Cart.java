@@ -176,4 +176,11 @@ public class Cart {
 	public Set<Long> getProjectIdsInCart() {
 		return cart.keySet();
 	}
+
+	public List<CartSample> getCartSamplesForProject(Long projectId) {
+		if (cart.containsKey(projectId)) {
+			return new ArrayList<>(cart.get(projectId).values());
+		}
+		return new ArrayList<>();
+	}
 }

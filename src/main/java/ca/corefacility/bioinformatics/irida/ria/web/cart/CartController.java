@@ -26,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.components.Cart;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartSample;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartSampleRequest;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
@@ -80,43 +81,6 @@ public class CartController {
 		String orgName = projectService.read(projectId).getOrganism() + "-" + principal.getName();
 		model.addAttribute("orgName", orgName);
 		return "templates/galaxy.tmpl";
-	}
-
-	/**
-	 * Get a Json representation of what's in the cart.
-	 * <p>
-	 * Format:
-	 * {@code
-	 * 'projects' : [ { 'id': '5', 'label': 'project', 'samples': [ { 'id': '6',
-	 * 'label': 'a sample' } ] } ]
-	 * }
-	 *
-	 * @return a {@code Map<String,Object>} containing the cart information.
-	 */
-	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public Map<String, Object> getCartMap() {
-		List<Map<String, Object>> projects = getProjectsAsList();
-		return ImmutableMap.of("projects", projects);
-	}
-
-	/**
-	 * Get a Json representation of what's in the cart for export to Galaxy.
-	 * <p>
-	 * Format:
-	 * {@code
-	 * 'projects' : [ { 'id': '5', 'label': 'project', 'samples': [ { 'id': '6',
-	 * 'label': 'a sample', 'sequenceFiles': [ { 'selfRef' :
-	 * 'http://localhost/projects/1/samples/1/sequenceFiles/1' } ] } ] } ]
-	 * }
-	 *
-	 * @return a {@code Map<String,Object>} containing the cart information.
-	 */
-	@RequestMapping(value = "/galaxy-export", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public Map<String, Object> getCartMapForGalaxy() {
-		List<Map<String, Object>> projects = getProjectsAsListForGalaxy();
-		return ImmutableMap.of("projects", projects);
 	}
 
 	/**
@@ -429,6 +393,8 @@ public class CartController {
 
 	@RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public
+	public List<CartSample> getCartSamplesForProject(@RequestParam Long projectId) {
+		return cart.getCartSamplesForProject(projectId);
+	}
 
 }
