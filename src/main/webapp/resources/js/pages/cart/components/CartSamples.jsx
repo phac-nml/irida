@@ -39,9 +39,7 @@ class SampleRenderer extends React.Component {
                 <Icon
                   type="info-circle"
                   theme="twoTone"
-                  onClick={() =>
-                    this.setState({ details: true })
-                  }
+                  onClick={() => this.setState({ details: true })}
                 />
                 <Drawer
                   title={sample.label}
@@ -52,10 +50,11 @@ class SampleRenderer extends React.Component {
                   visible={this.state.details}
                 >
                   <h3>JELLO GOES IN HERE</h3>
+                  <p>THere could be a detailed breakdown of the sample including QC, files, etc...</p>
                 </Drawer>
               </a>,
               <a onClick={() => console.log(sample)}>
-                <Icon type="close"/>
+                <Icon type="close" />
               </a>
             ]}
           >
