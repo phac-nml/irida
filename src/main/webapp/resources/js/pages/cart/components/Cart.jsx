@@ -1,6 +1,8 @@
 import React from "react";
 import { Layout } from "antd";
 import CartSamples from "./CartSamples";
+import SampleDetails from "./SampleDetailsContainer";
+
 
 const { Content, Sider } = Layout;
 
@@ -15,6 +17,7 @@ export default function Cart({ count }) {
           Cart has stuff in it: <strong>{count} in fact</strong>
         </Content>
       </Layout>
+      <SampleDetails/>
     </Layout>
   );
 }

@@ -4,7 +4,8 @@ import PropTypes from "prop-types";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-balham.css";
-import { Row, Col, Drawer, Icon, List, Tag } from "antd";
+import { Button, Row, Col, Drawer, Icon, List, Tag } from "antd";
+import { actions } from "../reducer";
 
 const colors = {};
 
@@ -35,27 +36,18 @@ class SampleRenderer extends React.Component {
         <Col span={22}>
           <List.Item
             actions={[
-              <a>
-                <Icon
-                  type="info-circle"
-                  theme="twoTone"
-                  onClick={() => this.setState({ details: true })}
-                />
-                <Drawer
-                  title={sample.label}
-                  placement="right"
-                  width={500}
-                  closable={true}
-                  onClose={() => this.setState({ details: false })}
-                  visible={this.state.details}
-                >
-                  <h3>JELLO GOES IN HERE</h3>
-                  <p>THere could be a detailed breakdown of the sample including QC, files, etc...</p>
-                </Drawer>
-              </a>,
-              <a onClick={() => console.log(sample)}>
-                <Icon type="close" />
-              </a>
+              <Button
+                icon="info"
+                shape="circle"
+                size="small"
+                onClick={sample.displayFn}
+              />,
+              <Button
+                shape="circle"
+                icon="close"
+                size="small"
+                onClick={() => console.log(sample)}
+              />
             ]}
           >
             <List.Item.Meta
@@ -76,7 +68,8 @@ class SampleRenderer extends React.Component {
 class CartSamplesComponent extends React.Component {
   static propTypes = {
     count: PropTypes.number.isRequired,
-    samples: PropTypes.array.isRequired
+    samples: PropTypes.array.isRequired,
+    displaySample: PropTypes.func.isRequired
   };
 
   columnDefs = [
@@ -99,7 +92,12 @@ class CartSamplesComponent extends React.Component {
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (this.props.samples.length > prevProps.samples.length) {
-      this.setState({ samples: this.props.samples });
+      const samples = this.props.samples.map(s => ({
+        ...s,
+        displayFn: () => this.props.displaySample(s)
+      }));
+      console.log(samples);
+      this.setState({ samples });
     }
   }
 
@@ -111,10 +109,7 @@ class CartSamplesComponent extends React.Component {
 
   render() {
     return (
-      <div
-        className="ag-theme-balham"
-        style={{ width: "100%", height: "100%" }}
-      >
+      <div className="ag-theme-balham" style={{ width: 400, height: "100%" }}>
         <AgGridReact
           headerHeight={0}
           columnDefs={this.columnDefs}
@@ -134,7 +129,9 @@ const mapStateToProps = state => ({
   samples: state.cartPageReducer.samples
 });
 
-const mapDispatchToProps = dispatch => ({});
+const mapDispatchToProps = dispatch => ({
+  displaySample: sample => dispatch(actions.displaySample(sample))
+});
 
 export default connect(
   mapStateToProps,
