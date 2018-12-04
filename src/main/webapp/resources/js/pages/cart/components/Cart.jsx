@@ -11,8 +11,8 @@ export default function Cart({ count }) {
         <Sider theme="light" width={400}>
           <CartSamples count={count} />
         </Sider>
-        <Content>
-          Cart Has STuff: <strong>{count} in fact</strong>
+        <Content style={{ padding: 10 }}>
+          Cart has stuff in it: <strong>{count} in fact</strong>
         </Content>
       </Layout>
     </Layout>
