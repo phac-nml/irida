@@ -2,7 +2,7 @@ const path = require("path");
 const merge = require("webpack-merge");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
-const entries = require("./configs/entries.js");
+const entries = require("./webpack.entries.js");
 
 const BUILD_PATH = path.resolve(__dirname, "resources/dist");
 
@@ -83,6 +83,6 @@ module.exports = (env, argv) =>
   merge(
     config,
     argv.mode === "production"
-      ? require("./configs/wepack.config.prod")
-      : require("./configs/webpack.config.dev")
+      ? require("./webpack.config.prod")
+      : require("./webpack.config.dev")
   );
