@@ -35,6 +35,7 @@ Changes
 * [Workflow/UI]: Added two additional columns in metadata for SISTR results `SISTR serovar cgMLST (v0.3.0)` and `SISTR serovar antigen (v0.3.0)`. Existing SISTR results will be updated to include values for these columns.
 * [Developer]: Update to ag-grid-community v.19.1.2.
 * [Documentation]: Changed references from GitLab to GitHub in docs.
+* [UI]: Removed angular-resource, angular-messages, angular-sanitize, angular-animate, angular-datatables, ng-table and angular-drag-and-drop-lists.
 
 0.21.0 to 0.22.0
 ----------------
