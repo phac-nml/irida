@@ -33,6 +33,7 @@ Changes
 * [Developer]: Updated Node, Yarn, and front-end webpack packages.
 * [Developer]: Update to ag-grid-community v.19.1.2.
 * [Documentation]: Changed references from GitLab to GitHub in docs.
+* [UI]: Removed angular-resource, angular-messages, angular-sanitize, angular-animate, angular-datatables, ng-table and angular-drag-and-drop-lists.
 * [UI]: Update UI session handler.  Now uses ant.design modal with no other global dependencies.
 
 0.21.0 to 0.22.0

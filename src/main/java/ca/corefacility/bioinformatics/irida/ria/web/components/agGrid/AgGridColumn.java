@@ -48,6 +48,26 @@ public class AgGridColumn {
 	private boolean lockPinned;
 
 	/**
+	 * Set to true to render a selection checkbox in the column.
+	 */
+	private boolean checkboxSelection;
+
+	/**
+	 * Set to true to render a select all /  none checkbox in the column header
+	 */
+	private boolean headerCheckboxSelection;
+
+	/**
+	 * Suppress the filter on this column
+	 */
+	private boolean suppressFilter;
+
+	/**
+	 * Suppress the ability to resize this column
+	 */
+	private boolean suppressResize;
+
+	/**
 	 * Set to 'asc' or 'desc' to sort by this column by default.
 	 */
 	private String sort;
@@ -126,5 +146,37 @@ public class AgGridColumn {
 
 	public void setSort(String sort) {
 		this.sort = sort;
+	}
+
+	public boolean isCheckboxSelection() {
+		return checkboxSelection;
+	}
+
+	public void setCheckboxSelection(boolean checkboxSelection) {
+		this.checkboxSelection = checkboxSelection;
+	}
+
+	public boolean isHeaderCheckboxSelection() {
+		return headerCheckboxSelection;
+	}
+
+	public void setHeaderCheckboxSelection(boolean headerCheckboxSelection) {
+		this.headerCheckboxSelection = headerCheckboxSelection;
+	}
+
+	public boolean isSuppressFilter() {
+		return suppressFilter;
+	}
+
+	public void setSuppressFilter(boolean suppressFilter) {
+		this.suppressFilter = suppressFilter;
+	}
+
+	public boolean isSuppressResize() {
+		return suppressResize;
+	}
+
+	public void setSuppressResize(boolean suppressResize) {
+		this.suppressResize = suppressResize;
 	}
 }

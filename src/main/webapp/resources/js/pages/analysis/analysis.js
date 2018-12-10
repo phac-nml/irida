@@ -1,8 +1,8 @@
 import angular from "angular";
 import $ from "jquery";
 import {
-  showNotification,
-  showErrorNotification
+  showErrorNotification,
+  showNotification
 } from "../../modules/notifications";
 import { formatDate } from "../../utilities/date-utilities";
 import { renderPlainTextPreview } from "./plaintext-preview";
@@ -128,7 +128,7 @@ function AnalysisService($http) {
    * Call the server to update the shared status of the current analysis.
    */
   svc.updateProjectShare = function(project, shared) {
-    const data = { project: project, shared: shared };
+    const data = { projectId: Number(project), shareStatus: Boolean(shared) };
     return $http.post(window.PAGE.URLS.share, data).then(function(response) {
       return response.data;
     });
