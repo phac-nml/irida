@@ -347,17 +347,18 @@ public class Sample extends IridaResourceSupport
 	public void mergeMetadata(Map<MetadataTemplateField, MetadataEntry> inputMetadata) {
 		// loop through entry set and see if it already exists
 		for (Entry<MetadataTemplateField, MetadataEntry> entry : inputMetadata.entrySet()) {
+			MetadataEntry newMetadataEntry = entry.getValue();
 
 			// if the value isn't empty
-			if (!entry.getValue().getValue().isEmpty()) {
+			if (!newMetadataEntry.getValue().isEmpty()) {
 
 				// if the key is found, replace the entry
 				if (metadata.containsKey(entry.getKey())) {
-					MetadataEntry metadataEntry = metadata.get(entry.getKey());
-					metadataEntry.setValue(entry.getValue().getValue());
+					MetadataEntry originalMetadataEntry = metadata.get(entry.getKey());
+					originalMetadataEntry.merge(newMetadataEntry);
 				} else {
 					// otherwise add the new entry
-					metadata.put(entry.getKey(), entry.getValue());
+					metadata.put(entry.getKey(), newMetadataEntry);
 				}
 			}
 		}
