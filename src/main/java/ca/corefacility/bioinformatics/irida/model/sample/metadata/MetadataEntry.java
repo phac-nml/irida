@@ -64,7 +64,7 @@ public class MetadataEntry {
 	
 	/**
 	 * Merges the passed metadata entry into this metadata entry.
-	 * @param newMetadataEntry
+	 * @param metadataEntry The new metadata entry.
 	 */
 	public void merge(MetadataEntry metadataEntry) {
 		checkNotNull(metadataEntry, "metadataEntry is null");
