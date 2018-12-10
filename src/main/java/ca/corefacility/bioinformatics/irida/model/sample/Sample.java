@@ -338,28 +338,30 @@ public class Sample extends IridaResourceSupport
 	}
 	
 	/**
-	 * Merge {@link MetadataEntry} into the sample's existing metadata collection. Duplicate
-	 * keys will be overwritten.
+	 * Merge {@link MetadataEntry} into the sample's existing metadata collection.
+	 * Duplicate keys will be overwritten.
 	 * 
-	 * @param inputMetadata
-	 *            the metadata to merge into the sample
+	 * @param inputMetadata the metadata to merge into the sample
 	 */
 	public void mergeMetadata(Map<MetadataTemplateField, MetadataEntry> inputMetadata) {
 		// loop through entry set and see if it already exists
 		for (Entry<MetadataTemplateField, MetadataEntry> entry : inputMetadata.entrySet()) {
 			MetadataEntry newMetadataEntry = entry.getValue();
 
-			// if the value isn't empty
-			if (!newMetadataEntry.getValue().isEmpty()) {
+			// if the key is found, replace the entry
+			if (metadata.containsKey(entry.getKey())) {
+				MetadataEntry originalMetadataEntry = metadata.get(entry.getKey());
 
-				// if the key is found, replace the entry
-				if (metadata.containsKey(entry.getKey())) {
-					MetadataEntry originalMetadataEntry = metadata.get(entry.getKey());
+				// if the metadata entries are of the same type, I can directly merge
+				if (originalMetadataEntry.getClass().equals(newMetadataEntry.getClass())) {
 					originalMetadataEntry.merge(newMetadataEntry);
 				} else {
-					// otherwise add the new entry
-					metadata.put(entry.getKey(), newMetadataEntry);
+					throw new IllegalArgumentException("Error, originalMetadataEntry " + originalMetadataEntry
+							+ " is of different type from newMetaDataEntry " + newMetadataEntry + ". Cannot merge");
 				}
+			} else {
+				// otherwise add the new entry
+				metadata.put(entry.getKey(), newMetadataEntry);
 			}
 		}
 	}
