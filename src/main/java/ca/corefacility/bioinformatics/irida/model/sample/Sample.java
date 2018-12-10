@@ -356,8 +356,8 @@ public class Sample extends IridaResourceSupport
 				if (originalMetadataEntry.getClass().equals(newMetadataEntry.getClass())) {
 					originalMetadataEntry.merge(newMetadataEntry);
 				} else {
-					throw new IllegalArgumentException("Error, originalMetadataEntry " + originalMetadataEntry
-							+ " is of different type from newMetaDataEntry " + newMetadataEntry + ". Cannot merge");
+					// if they are different types, I need to replace the metadata entry instead of merging
+					metadata.put(entry.getKey(), newMetadataEntry);
 				}
 			} else {
 				// otherwise add the new entry

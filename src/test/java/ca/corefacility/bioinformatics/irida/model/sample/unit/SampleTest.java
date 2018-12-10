@@ -104,15 +104,24 @@ public class SampleTest {
 		assertEquals("Non-updated metadata entry does not match", this.pipelineEntry2,
 				sample2.getMetadata().get(field2));
 	}
-	
-	@Test(expected=IllegalArgumentException.class)
-	public void testMergeMetadataPipelineFailIncompatibleEntries() {
+
+	@Test
+	public void testMergeMetadataPipelineDifferentEntryTypes() {
 		Map<MetadataTemplateField, MetadataEntry> inputMetadata = Maps.newHashMap();
+
+		AnalysisSubmission submission = AnalysisSubmission.builder(UUID.randomUUID())
+				.inputFiles(Sets.newHashSet(new SequenceFilePair())).build();
+		submission.setId(2L);
 
 		MetadataEntry entry = new MetadataEntry("entry2", "text");
 
 		inputMetadata.put(field1, entry);
 
 		sample2.mergeMetadata(inputMetadata);
+
+		assertEquals("Metadata map does not have correct number of entries", 2, sample2.getMetadata().size());
+		assertEquals("Updated metadata entry does not match", entry, sample2.getMetadata().get(field1));
+		assertEquals("Non-updated metadata entry does not match", this.pipelineEntry2,
+				sample2.getMetadata().get(field2));
 	}
 }
