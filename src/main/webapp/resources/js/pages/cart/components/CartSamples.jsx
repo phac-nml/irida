@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-balham.css";
-import { Button, Row, Col, Drawer, Icon, List, Tag } from "antd";
+import { Button, Col, Icon, List, Row, Tag } from "antd";
 import { actions } from "../reducer";
 
 const colors = {};
@@ -46,7 +46,9 @@ class SampleRenderer extends React.Component {
                 shape="circle"
                 icon="close"
                 size="small"
-                onClick={() => console.log(sample)}
+                onClick={() =>
+                  console.info("Handle removing a sample from the cart", sample)
+                }
               />
             ]}
           >
@@ -96,7 +98,6 @@ class CartSamplesComponent extends React.Component {
         ...s,
         displayFn: () => this.props.displaySample(s)
       }));
-      console.log(samples);
       this.setState({ samples });
     }
   }
