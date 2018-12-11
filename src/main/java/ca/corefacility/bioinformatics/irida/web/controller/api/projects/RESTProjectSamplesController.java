@@ -9,6 +9,8 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
@@ -45,6 +47,9 @@ import com.google.common.net.HttpHeaders;
  */
 @Controller
 public class RESTProjectSamplesController {
+
+	private static final Logger logger = LoggerFactory.getLogger(RESTProjectSamplesController.class);
+
 	/**
 	 * Rel to get to the project that this sample belongs to.
 	 */
@@ -182,13 +187,11 @@ public class RESTProjectSamplesController {
 
 		ModelMap modelMap = new ModelMap();
 		Project p = projectService.read(projectId);
-		List<Join<Project, Sample>> relationships = sampleService.getSamplesForProject(p);
+		List<Sample> samples = sampleService.getSamplesForProjectShallow(p);
 
-		ResourceCollection<Sample> sampleResources = new ResourceCollection<>(relationships.size());
+		ResourceCollection<Sample> sampleResources = new ResourceCollection<>(samples.size());
 
-		for (Join<Project, Sample> r : relationships) {
-			Sample sample = r.getObject();
-
+		for (Sample sample : samples) {
 			addLinksForSample(Optional.of(p), sample);
 			sampleResources.add(sample);
 		}
