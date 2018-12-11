@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.sample.metadata;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.Objects;
 
@@ -64,10 +65,13 @@ public class MetadataEntry {
 	
 	/**
 	 * Merges the passed metadata entry into this metadata entry.
+	 * 
 	 * @param metadataEntry The new metadata entry.
 	 */
 	public void merge(MetadataEntry metadataEntry) {
 		checkNotNull(metadataEntry, "metadataEntry is null");
+		checkArgument(metadataEntry.getClass().isAssignableFrom(this.getClass()),
+				"Cannot merge " + metadataEntry + " into " + this);
 
 		this.type = metadataEntry.getType();
 		this.value = metadataEntry.getValue();
