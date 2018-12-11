@@ -42,6 +42,25 @@ public class MetadataEntryTest {
 		assertEquals("Metadata entries did not merge", "e2", e1.getValue());
 		assertEquals("Metadata entries did not merge", new Long(2L), e1.getSubmission().getId());
 	}
+	
+	@Test
+	public void testMergeSamePipelineMetadataEntryDifferentTypes() {
+		AnalysisSubmission s1 = AnalysisSubmission.builder(UUID.randomUUID())
+				.inputFiles(Sets.newHashSet(new SequenceFilePair())).build();
+		s1.setId(1L);
+		AnalysisSubmission s2 = AnalysisSubmission.builder(UUID.randomUUID())
+				.inputFiles(Sets.newHashSet(new SequenceFilePair())).build();
+		s2.setId(2L);
+
+		PipelineProvidedMetadataEntry e1 = new PipelineProvidedMetadataEntry("e1", "text1", s1);
+		PipelineProvidedMetadataEntry e2 = new PipelineProvidedMetadataEntry("e2", "text2", s2);
+
+		e1.merge(e2);
+
+		assertEquals("Metadata entries did not merge", "e2", e1.getValue());
+		assertEquals("Metadata entries did not merge", "text2", e1.getType());
+		assertEquals("Metadata entries did not merge", new Long(2L), e1.getSubmission().getId());
+	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testMergeDifferentEntryPipeline() {

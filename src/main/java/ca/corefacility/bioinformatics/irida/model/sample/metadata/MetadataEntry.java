@@ -70,7 +70,7 @@ public class MetadataEntry {
 	 */
 	public void merge(MetadataEntry metadataEntry) {
 		checkNotNull(metadataEntry, "metadataEntry is null");
-		checkArgument(metadataEntry.getClass().isAssignableFrom(this.getClass()),
+		checkArgument(this.getClass().equals(metadataEntry.getClass()),
 				"Cannot merge " + metadataEntry + " into " + this);
 
 		this.type = metadataEntry.getType();

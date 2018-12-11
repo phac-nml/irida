@@ -55,11 +55,13 @@ public class PipelineProvidedMetadataEntry extends MetadataEntry {
 	@Override
 	public void merge(MetadataEntry metadataEntry) {
 		checkArgument(metadataEntry instanceof PipelineProvidedMetadataEntry,
-				"You cannot merge a non-PipelineProvidedMetadataEntry into a PipelineProvidedMetadataEntry: metadataEntry=" + metadataEntry);
-		
+				"You cannot merge a non-PipelineProvidedMetadataEntry into a PipelineProvidedMetadataEntry: metadataEntry="
+						+ metadataEntry);
+
 		PipelineProvidedMetadataEntry pipelineMetadataEntry = (PipelineProvidedMetadataEntry) metadataEntry;
 
-		super.merge(metadataEntry);
+		setType(metadataEntry.getType());
+		setValue(metadataEntry.getValue());
 
 		this.submission = pipelineMetadataEntry.getSubmission();
 	}
