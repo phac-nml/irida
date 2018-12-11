@@ -3,7 +3,7 @@ Changes
 
 0.22.0 to 0.23.0
 ----------------
-* [Database]: Fixed an issue where metadata entries derived from pipelines were not updating the assciated analysis submission and ignorning blank entries. (0.23.5)
+* [Database]: Fixed an issue where metadata entries derived from pipelines were not updating the associated analysis submission and ignorning blank entries. (0.23.5)
 * [Workflow]: Fixed issue where duplicate filenames were found after running Galaxy workflow in newer Galaxy versions. (0.22.4)
 * [UI/Workflow]: Added option to disable workflows/analysis types from display in IRIDA using `irida.workflow.types.disabled`. (0.22.1)
 * [Developer]: Added wait when NCBI Uploader fails before retrying. (0.22.1)
