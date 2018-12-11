@@ -242,6 +242,16 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		return psjRepository.getSamplesForProject(project);
 	}
 
+	@Transactional(readOnly = true)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
+	@Override
+	public List<Sample> getSamplesForProjectShallow(Project project) {
+		logger.debug("Listing samples for project");
+		List<Sample> samplesForProjectShallow = sampleRepository.getSamplesForProjectShallow(project);
+		logger.debug("Done listing samples");
+		return samplesForProjectShallow;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
