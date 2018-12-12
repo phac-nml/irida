@@ -42,7 +42,6 @@ function getColumnDefinition(col) {
   const { type, field } = col;
   delete col.type; // Cannot have a type as an attribute on the columnDef.
 
-  let cellRenderer;
   if (field === FIELDS.icons) {
     Object.assign(col, {
       cellRenderer: "IconCellRenderer"
@@ -53,19 +52,23 @@ function getColumnDefinition(col) {
     Object.assign(col, {
       cellRenderer: "SampleNameRenderer"
     });
-  }
-  /*
-  Set editability of the cell
-   */
-  Object.assign(col, {
-    editable: params => {
-      if (!JSON.parse(params.data.owner) || !JSON.parse(params.data.editable)) {
-        // Cannot edit anything if they don't own it.
-        return false;
+  } else {
+    /*
+    Set editability of the cell
+     */
+    Object.assign(col, {
+      editable: params => {
+        if (
+          !JSON.parse(params.data.owner) ||
+          !JSON.parse(params.data.editable)
+        ) {
+          // Cannot edit anything if they don't own it.
+          return false;
+        }
+        return col.editable;
       }
-      return col.editable;
-    }
-  });
+    });
+  }
   return col;
 }
 
