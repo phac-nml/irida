@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.model.sample.metadata;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import java.util.Objects;
 
 import javax.persistence.Entity;
