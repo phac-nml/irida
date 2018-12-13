@@ -210,7 +210,6 @@ public class CartControllerTest {
 		for (Long id : sampleIds) {
 			Sample sample = new Sample("sample" + id);
 			sample.setId(id);
-			sample.setCreatedDate(new Date());
 			samples.add(sample);
 			when(sampleService.getSampleForProject(project, id)).thenReturn(new ProjectSampleJoin(project,sample, true));
 		}

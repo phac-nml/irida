@@ -127,6 +127,7 @@ public class Sample extends IridaResourceSupport
 	private List<SampleGenomeAssemblyJoin> genomeAssemblies;
 
 	public Sample() {
+		createdDate = new Date();
 		metadata = new HashMap<>();
 	}
 
