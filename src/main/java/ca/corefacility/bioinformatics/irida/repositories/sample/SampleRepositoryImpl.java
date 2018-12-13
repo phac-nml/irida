@@ -3,11 +3,13 @@ package ca.corefacility.bioinformatics.irida.repositories.sample;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.sql.DataSource;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -34,6 +36,31 @@ public class SampleRepositoryImpl implements SampleRepositoryCustom {
 
 		parameters.addValue("project", project.getId());
 
-		return tmpl.query(queryString, parameters, new BeanPropertyRowMapper(Sample.class));
+		List<Sample> results = tmpl.query(queryString, parameters, new RowMapper<Sample>() {
+
+			@Override
+			public Sample mapRow(ResultSet rs, int rowNum) throws SQLException {
+				Sample s = new Sample();
+
+				s.setId(rs.getLong("s.id"));
+				s.setCreatedDate(rs.getTimestamp("s.createdDate"));
+				s.setModifiedDate(rs.getTimestamp("s.modifiedDate"));
+				s.setDescription(rs.getString("s.description"));
+				s.setSampleName(rs.getString("s.sampleName"));
+				s.setCollectedBy(rs.getString("s.collectedBy"));
+				s.setGeographicLocationName(rs.getString("s.geographicLocationName"));
+				s.setIsolate(rs.getString("s.isolate"));
+				s.setIsolationSource(rs.getString("s.isolationSource"));
+				s.setLatitude(rs.getString("s.latitude"));
+				s.setLongitude(rs.getString("s.longitude"));
+				s.setOrganism(rs.getString("s.organism"));
+				s.setStrain(rs.getString("s.strain"));
+				s.setCollectionDate(rs.getDate("s.collectionDate"));
+
+				return s;
+			}
+		});
+
+		return results;
 	}
 }
