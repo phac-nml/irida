@@ -52,21 +52,18 @@ function getColumnDefinition(col) {
     Object.assign(col, {
       cellRenderer: "SampleNameRenderer"
     });
-  } else {
-    /*
-    Set editability of the cell
+  }
+
+  /*
+    Set editability of the cell.
+    1) If the column is not editable then the cell is not editable at all.
+    2) If the user is not the owner the the data, then it is not editable.
+    3) If the data itself is not editable, then it cannot be edited either.
      */
+  if (col.editable) {
     Object.assign(col, {
-      editable: params => {
-        if (
-          !JSON.parse(params.data.owner) ||
-          !JSON.parse(params.data.editable)
-        ) {
-          // Cannot edit anything if they don't own it.
-          return false;
-        }
-        return col.editable;
-      }
+      editable: params =>
+        JSON.parse(params.data.owner) && JSON.stringify(params.data.editable)
     });
   }
   return col;
