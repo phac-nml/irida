@@ -83,7 +83,7 @@ public class SISTRSampleUpdaterTest {
 		when(iridaWorkflowDescription.getVersion()).thenReturn("0.1");
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Test
 	public void testUpdaterPassed() throws PostProcessingException, AnalysisAlreadySetException {
 		ImmutableMap<String, String> expectedResults = ImmutableMap.<String,String>builder()
@@ -98,6 +98,61 @@ public class SISTRSampleUpdaterTest {
 				.build();
 
 		Path outputPath = Paths.get("src/test/resources/files/sistr-predictions-pass.json");
+
+		AnalysisOutputFile outputFile = new AnalysisOutputFile(outputPath, null, null, null);
+
+		Analysis analysis = new Analysis(null, ImmutableMap.of("sistr-predictions", outputFile), null, null);
+		AnalysisSubmission submission = AnalysisSubmission.builder(uuid)
+				.inputFiles(ImmutableSet.of(new SingleEndSequenceFile(null))).build();
+
+		submission.setAnalysis(analysis);
+
+		Sample sample = new Sample();
+		sample.setId(1L);
+
+		ImmutableMap<MetadataTemplateField, MetadataEntry> metadataMap = ImmutableMap
+				.of(new MetadataTemplateField("SISTR Field", "text"), new MetadataEntry("Value1", "text"));
+		when(metadataTemplateService.getMetadataMap(any(Map.class))).thenReturn(metadataMap);
+
+		updater.update(Lists.newArrayList(sample), submission);
+
+		ArgumentCaptor<Map> mapCaptor = ArgumentCaptor.forClass(Map.class);
+
+		//this is the important bit.  Ensures the correct values got pulled from the file
+		verify(metadataTemplateService).getMetadataMap(mapCaptor.capture());
+		Map<String, MetadataEntry> metadata = mapCaptor.getValue();
+
+		int found = 0;
+		for (Map.Entry<String, MetadataEntry> e : metadata.entrySet()) {
+
+			if (expectedResults.containsKey(e.getKey())) {
+				String expected = expectedResults.get(e.getKey());
+
+				MetadataEntry value = e.getValue();
+
+				assertEquals("metadata values should match", expected, value.getValue());
+				found++;
+			}
+		}
+		assertEquals("should have found the same number of results", expectedResults.keySet().size(), found);
+
+		// this bit just ensures the merged data got saved
+		verify(sampleService).updateFields(eq(sample.getId()), mapCaptor.capture());
+		Map<MetadataTemplateField, MetadataEntry> value = (Map<MetadataTemplateField, MetadataEntry>) mapCaptor
+				.getValue().get("metadata");
+
+		assertEquals(metadataMap.keySet().iterator().next(), value.keySet().iterator().next());
+	}
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Test
+	public void testUpdateFailResultsNullST() throws PostProcessingException, AnalysisAlreadySetException {
+		ImmutableMap<String, String> expectedResults = ImmutableMap.<String,String>builder()
+				.put("SISTR serovar (v0.1)", "-:-:-")
+				.put("SISTR QC Status (v0.1)", "FAIL")
+				.put("SISTR cgMLST Sequence Type (v0.1)", "")
+				.build();
+
+		Path outputPath = Paths.get("src/test/resources/files/sistr-predictions-fail-null-cgmlstst.json");
 
 		AnalysisOutputFile outputFile = new AnalysisOutputFile(outputPath, null, null, null);
 
