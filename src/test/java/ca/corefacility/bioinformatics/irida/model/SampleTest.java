@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.model;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Date;
 import java.util.Set;
 
 import javax.validation.Configuration;
@@ -38,6 +39,7 @@ public class SampleTest {
 	@Test
 	public void testNullSampleName() {
 		Sample s = new Sample();
+		s.setCreatedDate(new Date());
 		s.setSampleName(null);
 
 		Set<ConstraintViolation<Sample>> violations = validator.validate(s);
@@ -48,6 +50,7 @@ public class SampleTest {
 	@Test
 	public void testEmptySampleName() {
 		Sample s = new Sample();
+		s.setCreatedDate(new Date());
 		s.setSampleName("");
 
 		Set<ConstraintViolation<Sample>> violations = validator.validate(s);
@@ -57,6 +60,7 @@ public class SampleTest {
 	@Test
 	public void testInvalidSampleName() {
 		Sample s = new Sample();
+		s.setCreatedDate(new Date());
 		s.setSampleName("This name has a single quote ' and spaces and a period.");
 
 		Set<ConstraintViolation<Sample>> violations = validator.validate(s);
@@ -72,6 +76,7 @@ public class SampleTest {
 	private void testBlacklists(char[] blacklist) {
 		for (char c : blacklist) {
 			Sample s = new Sample();
+			s.setCreatedDate(new Date());
 			s.setSampleName("ATLEAST3" + c);
 			Set<ConstraintViolation<Sample>> violations = validator.validate(s);
 			assertEquals("Wrong number of violations.", 1, violations.size());

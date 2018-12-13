@@ -66,7 +66,7 @@ public class Sample extends IridaResourceSupport
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	private final Date createdDate;
+	private Date createdDate;
 
 	@LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)
@@ -148,7 +148,6 @@ public class Sample extends IridaResourceSupport
 	private List<SampleGenomeAssemblyJoin> genomeAssemblies;
 
 	public Sample() {
-		createdDate = new Date();
 		metadata = new HashMap<>();
 	}
 
@@ -243,6 +242,10 @@ public class Sample extends IridaResourceSupport
 	@Override
 	public void setModifiedDate(Date modifiedDate) {
 		this.modifiedDate = modifiedDate;
+	}
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
 	}
 
 	public Date getCreatedDate() {
