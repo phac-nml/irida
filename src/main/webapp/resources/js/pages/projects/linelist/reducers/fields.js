@@ -62,8 +62,11 @@ function getColumnDefinition(col) {
      */
   if (col.editable) {
     Object.assign(col, {
-      editable: params =>
-        JSON.parse(params.data.owner) && JSON.stringify(params.data.editable)
+      editable: params => {
+        return (
+          JSON.parse(params.data.owner) && JSON.parse(params.data.editable)
+        );
+      }
     });
   }
   return col;
