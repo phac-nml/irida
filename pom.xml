@@ -10,13 +10,13 @@
 
 	<issueManagement>
 		<system>GitLab</system>
-		<url>http://irida.corefacility.ca/gitlab/irida/irida/issues</url>
+		<url>https://github.com/phac-nml/irida/issues</url>
 	</issueManagement>
 
 	<scm>
-		<connection>scm:git:http://irida.corefacility.ca/gitlab/irida/irida.git</connection>
-		<developerConnection>scm:git:ssh://git@irida.corefacility.ca/gitlab/irida/irida.git</developerConnection>
-		<url>http://irida.corefacility.ca/gitlab/irida/irida</url>
+		<connection>scm:git:https://github.com/phac-nml/irida.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com:phac-nml/irida.git</developerConnection>
+		<url>https://github.com/phac-nml/irida</url>
 	</scm>
 
 	<inceptionYear>2013</inceptionYear>
@@ -670,6 +670,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>${maven.surefire.plugin.version}</version>
 				<configuration>
+					<useSystemClassLoader>false</useSystemClassLoader>
 					<properties>
 						<property>
 							<name>listener</name>

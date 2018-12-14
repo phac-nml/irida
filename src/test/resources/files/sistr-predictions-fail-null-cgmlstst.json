@@ -1,0 +1,24 @@
+[
+    {
+        "cgmlst_ST": null,
+        "cgmlst_distance": 0.8333333333333334,
+        "cgmlst_genome_match": "5902",
+        "cgmlst_matching_alleles": 55,
+        "cgmlst_subspecies": "enterica",
+        "fasta_filepath": "/export/galaxy-central/database/files/000/dataset_35.dat",
+        "genome": "contigs-with-repeats",
+        "h1": "-",
+        "h2": "-",
+        "mash_distance": 0.0639874,
+        "mash_genome": "60369",
+        "mash_match": 150,
+        "mash_serovar": "Typhi",
+        "o_antigen": "-",
+        "qc_messages": "FAIL: Large number of cgMLST330 loci missing (n=272 > 30) | FAIL: Wzx/Wzy genes missing. Cannot determine O-antigen group/serogroup. Cannot accurately predict serovar from antigen genes. | WARNING: H1 antigen gene (fliC) missing. Cannot determine H1 antigen. Cannot accurately predict serovar from antigen genes. | WARNING: Input genome size (696454 bp) not within expected range of 4000000-6000000 (bp) for Salmonella | WARNING: Only matched 55 cgMLST330 loci. Min threshold for confident serovar prediction from cgMLST is 297.0",
+        "qc_status": "FAIL",
+        "serogroup": "-",
+        "serovar": "-:-:-",
+        "serovar_antigen": "-:-:-",
+        "serovar_cgmlst": "Typhi"
+    }
+]

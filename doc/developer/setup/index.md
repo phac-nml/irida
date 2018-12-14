@@ -50,8 +50,7 @@ Once you've installed all of the prerequisites with your package manager (or man
 
 You've *probably* already figured out how to clone IRIDA if you're reading this documentation. Nevertheless, for completeness sake, you can clone IRIDA on the command-line like so:
 
-    git clone http://irida.corefacility.ca/gitlab/irida/irida.git
-    # Or, alternatively, git clone https://github.com/phac-nml/irida.git
+    git clone https://github.com/phac-nml/irida.git
 
 Importing IRIDA into an IDE is left to the developer.
 

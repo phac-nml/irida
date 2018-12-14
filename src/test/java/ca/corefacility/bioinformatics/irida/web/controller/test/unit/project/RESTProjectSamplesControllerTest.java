@@ -130,17 +130,16 @@ public class RESTProjectSamplesControllerTest {
 	public void testGetProjectSamples() {
 		Project p = TestDataFactory.constructProject();
 		Sample s = TestDataFactory.constructSample();
-		Join<Project, Sample> r = new ProjectSampleJoin(p, s, true);
 
 		@SuppressWarnings("unchecked")
-		List<Join<Project, Sample>> relationships = Lists.newArrayList(r);
+		List<Sample> relationships = Lists.newArrayList(s);
 
-		when(sampleService.getSamplesForProject(p)).thenReturn(relationships);
+		when(sampleService.getSamplesForProjectShallow(p)).thenReturn(relationships);
 		when(projectService.read(p.getId())).thenReturn(p);
 
 		ModelMap modelMap = controller.getProjectSamples(p.getId());
 
-		verify(sampleService, times(1)).getSamplesForProject(p);
+		verify(sampleService, times(1)).getSamplesForProjectShallow(p);
 		verify(projectService, times(1)).read(p.getId());
 
 		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);

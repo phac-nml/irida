@@ -39,7 +39,7 @@ Building IRIDA
 The IRIDA source code is hosted at the NML:
 
 ```bash
-git clone http://irida.corefacility.ca/gitlab/irida/irida.git
+git clone https://github.com/phac-nml/irida.git
 ```
 
 ### Installing dependencies

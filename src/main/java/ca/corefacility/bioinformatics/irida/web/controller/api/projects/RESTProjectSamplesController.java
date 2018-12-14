@@ -1,27 +1,5 @@
 package ca.corefacility.bioinformatics.irida.web.controller.api.projects;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Link;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
-
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -35,8 +13,27 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleMetadataController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
-
 import com.google.common.net.HttpHeaders;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 /**
  * Controller for managing relationships between {@link Project} and
@@ -45,6 +42,7 @@ import com.google.common.net.HttpHeaders;
  */
 @Controller
 public class RESTProjectSamplesController {
+	
 	/**
 	 * Rel to get to the project that this sample belongs to.
 	 */
@@ -182,13 +180,11 @@ public class RESTProjectSamplesController {
 
 		ModelMap modelMap = new ModelMap();
 		Project p = projectService.read(projectId);
-		List<Join<Project, Sample>> relationships = sampleService.getSamplesForProject(p);
+		List<Sample> samples = sampleService.getSamplesForProjectShallow(p);
 
-		ResourceCollection<Sample> sampleResources = new ResourceCollection<>(relationships.size());
+		ResourceCollection<Sample> sampleResources = new ResourceCollection<>(samples.size());
 
-		for (Join<Project, Sample> r : relationships) {
-			Sample sample = r.getObject();
-
+		for (Sample sample : samples) {
 			addLinksForSample(Optional.of(p), sample);
 			sampleResources.add(sample);
 		}
