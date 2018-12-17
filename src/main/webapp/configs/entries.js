@@ -5,6 +5,7 @@
  */
 module.exports = {
   vendor: ["@babel/polyfill"],
+  cart: "./resources/js/pages/cart/index.js",
   activities: "./resources/js/pages/activities/activities.js",
   announcements: "./resources/js/pages/announcement/announcements.js",
   analysis: "./resources/js/pages/analysis/analysis.js",
