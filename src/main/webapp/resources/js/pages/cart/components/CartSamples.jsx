@@ -12,21 +12,12 @@ const {Search} = Input;
 const colors = {};
 
 class SampleRenderer extends React.Component {
-  state = { details: false };
-
-  generateColor = id => {
-    colors[id] =
-      colors[id] ||
-      `rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(
-        Math.random() * 256
-      )}, ${Math.floor(Math.random() * 256)})`;
-    return colors[id];
-  };
+  state = { details: false, filter: "" };
 
   render() {
     const sample = this.props.data;
     return (
-      <Row type="flex" align="middle">
+      <Row type="flex" align="middle" className="sample-listing">
         <Col span={2}>
           <Icon
             style={{ fontSize: 20 }}
@@ -57,7 +48,7 @@ class SampleRenderer extends React.Component {
             <List.Item.Meta
               title={sample.label}
               description={
-                <Tag color={this.generateColor(sample.project.id)}>
+                <Tag>
                   {sample.project.label}
                 </Tag>
               }
@@ -80,7 +71,8 @@ class CartSamplesComponent extends React.Component {
     {
       headerName: "",
       field: "label",
-      cellRenderer: "SampleRenderer"
+      cellRenderer: "SampleRenderer",
+      width: 360
     }
   ];
 
@@ -112,11 +104,19 @@ class CartSamplesComponent extends React.Component {
     params.api.sizeColumnsToFit();
   };
 
+  onSearch = e => {
+    const filter = e.target.value;
+
+    this.setState({ filter }, () => {
+      this.setState({ samples: this.props.samples.filter(s => s.label.includes(filter))})
+    });
+  };
+
   render() {
     return (
       <div style={{ display: "flex", flexDirection: "column", width: 400, height: "100%", overflowX: "hidden" }}>
         <div className="sample-search">
-          <Search />
+          <Search onChange={this.onSearch} value={this.state.filter} />
         </div>
         <div className="ag-theme-balham" style={{ flexGrow: 1 }}>
           <AgGridReact
@@ -127,6 +127,7 @@ class CartSamplesComponent extends React.Component {
             onGridReady={this.onGridReady}
             rowHeight={80}
             enableFilter={true}
+            suppressHorizontalScroll={true}
           />
         </div>
       </div>
