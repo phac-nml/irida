@@ -4,8 +4,10 @@ import PropTypes from "prop-types";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-balham.css";
-import { Button, Col, Icon, List, Row, Tag } from "antd";
+import { Button, Col, Icon, Input, List, Row, Tag } from "antd";
 import { actions } from "../reducer";
+
+const {Search} = Input;
 
 const colors = {};
 
@@ -96,7 +98,9 @@ class CartSamplesComponent extends React.Component {
     if (this.props.samples.length > prevProps.samples.length) {
       const samples = this.props.samples.map(s => ({
         ...s,
-        displayFn: () => this.props.displaySample(s)
+        displayFn: () => {
+          this.props.displaySample(s);
+        }
       }));
       this.setState({ samples });
     }
@@ -110,16 +114,21 @@ class CartSamplesComponent extends React.Component {
 
   render() {
     return (
-      <div className="ag-theme-balham" style={{ width: 400, height: "100%" }}>
-        <AgGridReact
-          headerHeight={0}
-          columnDefs={this.columnDefs}
-          rowData={this.state.samples}
-          frameworkComponents={{ SampleRenderer }}
-          onGridReady={this.onGridReady}
-          rowHeight={80}
-          enableFilter={true}
-        />
+      <div style={{ display: "flex", flexDirection: "column", width: 400, height: "100%", overflowX: "hidden" }}>
+        <div className="sample-search">
+          <Search />
+        </div>
+        <div className="ag-theme-balham" style={{ flexGrow: 1 }}>
+          <AgGridReact
+            headerHeight={0}
+            columnDefs={this.columnDefs}
+            rowData={this.state.samples}
+            frameworkComponents={{ SampleRenderer }}
+            onGridReady={this.onGridReady}
+            rowHeight={80}
+            enableFilter={true}
+          />
+        </div>
       </div>
     );
   }

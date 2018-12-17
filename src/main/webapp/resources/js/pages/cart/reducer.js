@@ -6,7 +6,8 @@ export const TYPES = {
 
 const initialState = {
   samples: [],
-  sampleVisible: false
+  sampleVisible: false,
+  sample: undefined
 };
 
 export const reducer = (state = initialState, action = {}) => {
@@ -14,9 +15,9 @@ export const reducer = (state = initialState, action = {}) => {
     case TYPES.SAMPLES_LOADED:
       return { ...state, samples: [...state.samples, ...action.samples] };
     case TYPES.SAMPLE_SHOW:
-      return { ...state, sampleVisible: true };
+      return { ...state, sample: action.sample, sampleVisible: true };
     case TYPES.SAMPLE_HIDE:
-      return { ...state, sampleVisible: false };
+      return { ...state, sample: undefined, sampleVisible: false };
     default:
       return { ...state };
   }
