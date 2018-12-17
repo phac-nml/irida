@@ -61,7 +61,7 @@ export default class SessionModal extends React.Component {
    * Display the modal to the user.
    */
   showModal = () => {
-    Modal.confirm({
+    Modal.warning({
       title: i18n.title.replace("[TIME]", this.props.time / 60000), // Convert time to minutes.
       onOk: this.keepSession,
       onCancel: this.logout,

@@ -1103,31 +1103,6 @@ angular-bootstrap-switch@^0.5.1:
     bootstrap-switch "3.3.2"
     jquery ">=1.9.0"
 
-angular-datatables@^0.6.0:
-  version "0.6.4"
-  resolved "https://registry.yarnpkg.com/angular-datatables/-/angular-datatables-0.6.4.tgz#370f3d000dc7f025bb10f4be13424123731d664f"
-  integrity sha512-c+pODkVd18ZKyJ1RJeu+uqV4IviEAG+a0OgXLDRdDRyqfREEGdi02wg0f3u79+CpjY8vYRGYv36MsAuQf6SQyA==
-  dependencies:
-    angular ">=1.7.0"
-    datatables.net "^1.10.11"
-    datatables.net-dt "^1.10.11"
-    jquery ">=1.11.0"
-
-angular-drag-and-drop-lists@^1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/angular-drag-and-drop-lists/-/angular-drag-and-drop-lists-1.4.0.tgz#291104c935e10a42f8459696ed30069509d79bfc"
-  integrity sha1-KREEyTXhCkL4RZaW7TAGlQnXm/w=
-
-angular-messages@1.6.2:
-  version "1.6.2"
-  resolved "https://registry.yarnpkg.com/angular-messages/-/angular-messages-1.6.2.tgz#03838b7ec5cc8671153035a59068f2fbd4e37ce4"
-  integrity sha1-A4OLfsXMhnEVMDWlkGjy+9TjfOQ=
-
-angular-resource@1.6.2:
-  version "1.6.2"
-  resolved "https://registry.yarnpkg.com/angular-resource/-/angular-resource-1.6.2.tgz#fe09e3a723cd7a046b8871382e44f4f83f38557a"
-  integrity sha1-/gnjpyPNegRriHE4LkT0+D84VXo=
-
 angular-ui-router@1.0.0-alpha.4:
   version "1.0.0-alpha.4"
   resolved "https://registry.yarnpkg.com/angular-ui-router/-/angular-ui-router-1.0.0-alpha.4.tgz#2ef99e114d6af1cc680c9b2dcf2273ba4c5bbb5a"
@@ -1138,7 +1113,7 @@ angular@1.6.2:
   resolved "https://registry.yarnpkg.com/angular/-/angular-1.6.2.tgz#d0b677242ac4bf9ae81424297c6320973af4bb5a"
   integrity sha1-0LZ3JCrEv5roFCQpfGMglzr0u1o=
 
-angular@>=1.4.0, angular@>=1.7.0:
+angular@>=1.4.0:
   version "1.7.5"
   resolved "https://registry.yarnpkg.com/angular/-/angular-1.7.5.tgz#d1c1c01c6f5dc835638f3f9aa51012857bdac49e"
   integrity sha512-760183yxtGzni740IBTieNuWLtPNAoMqvmC0Z62UoU0I3nqk+VJuO3JbQAXOyvo3Oy/ZsdNQwrSTh/B0OQZjNw==
@@ -2780,14 +2755,6 @@ datatables.net-colreorder@1.5.1, datatables.net-colreorder@^1.4.1:
     datatables.net "^1.10.15"
     jquery ">=1.7"
 
-datatables.net-dt@^1.10.11:
-  version "1.10.19"
-  resolved "https://registry.yarnpkg.com/datatables.net-dt/-/datatables.net-dt-1.10.19.tgz#fc668e4942ac6e331be2707975d0f33e01afb60f"
-  integrity sha512-joFHYjLYvr9VnC9Fx3e+8jtXnQ/fP/mPFWt9p0NhZ3Zm5N0jlYyWhJQbnLkihOLuDcDFMaGdBQSvmIdTVdgGyw==
-  dependencies:
-    datatables.net "1.10.19"
-    jquery ">=1.7"
-
 datatables.net-fixedcolumns-bs@^3.2.2:
   version "3.2.6"
   resolved "https://registry.yarnpkg.com/datatables.net-fixedcolumns-bs/-/datatables.net-fixedcolumns-bs-3.2.6.tgz#c0963962ae4ee0fb4905bbf3ad3dc6df3dc2295c"
@@ -2822,7 +2789,7 @@ datatables.net-scroller@1.5.1, datatables.net-scroller@^1.4.3:
     datatables.net "^1.10.15"
     jquery ">=1.7"
 
-datatables.net@1.10.19, datatables.net@^1.10.11, datatables.net@^1.10.15, datatables.net@^1.10.16:
+datatables.net@1.10.19, datatables.net@^1.10.15, datatables.net@^1.10.16:
   version "1.10.19"
   resolved "https://registry.yarnpkg.com/datatables.net/-/datatables.net-1.10.19.tgz#97a1ed41c85e62d61040603481b59790a172dd1f"
   integrity sha512-+ljXcI6Pj3PTGy5pesp3E5Dr3x3AV45EZe0o1r0gKENN2gafBKXodVnk2ypKwl2tTmivjxbkiqoWnipTefyBTA==
@@ -4691,7 +4658,7 @@ jquery-validation@^1.17.0:
   dependencies:
     jquery "^1.7 || ^2.0 || ^3.1"
 
-jquery@>=1.10, jquery@>=1.11.0, jquery@>=1.7, jquery@>=1.9.0, "jquery@^1.7 || ^2.0 || ^3.1", jquery@^3.2.1:
+jquery@>=1.10, jquery@>=1.7, jquery@>=1.9.0, "jquery@^1.7 || ^2.0 || ^3.1", jquery@^3.2.1:
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.3.1.tgz#958ce29e81c9790f31be7792df5d4d95fc57fbca"
   integrity sha512-Ubldcmxp5np52/ENotGxlLe6aGMvmF4R8S6tZjsP6Knsaxd/xp3Zrh50cG93lR6nPXyUFwzN3ZSOQI0wRJNdGg==
