@@ -4,10 +4,10 @@ import PropTypes from "prop-types";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-balham.css";
-import { Button, Col, Icon, Input, List, Row, Tag } from "antd";
+import { Button, Badge, Col, Dropdown, Icon, Input, Tooltip, Row } from "antd";
 import { actions } from "../reducer";
 
-const {Search} = Input;
+const { Search } = Input;
 
 const colors = {};
 
@@ -17,43 +17,33 @@ class SampleRenderer extends React.Component {
   render() {
     const sample = this.props.data;
     return (
-      <Row type="flex" align="middle" className="sample-listing">
-        <Col span={2}>
-          <Icon
-            style={{ fontSize: 20 }}
-            type="check-circle"
-            theme="twoTone"
-            twoToneColor="#52c41a"
-          />
-        </Col>
-        <Col span={22}>
-          <List.Item
-            actions={[
-              <Button
-                icon="info"
-                shape="circle"
-                size="small"
-                onClick={sample.displayFn}
-              />,
-              <Button
-                shape="circle"
-                icon="close"
-                size="small"
-                onClick={() =>
-                  console.info("Handle removing a sample from the cart", sample)
-                }
-              />
-            ]}
-          >
-            <List.Item.Meta
-              title={sample.label}
-              description={
-                <Tag>
-                  {sample.project.label}
-                </Tag>
-              }
+      <Row
+        type="flex"
+        align="top"
+        justify="space-between"
+        className="sample-listing"
+      >
+        <Col>
+          <a href="#" onClick={sample.displayFn}>
+            <Badge
+              status="success"
+              style={{ fontSize: 18 }}
+              text={sample.label}
             />
-          </List.Item>
+          </a>
+          <div style={{ color: "#b0bec4" }}>{sample.project.label}</div>
+        </Col>
+        <Col>
+          <Tooltip title="Remove from cart">
+            <Button
+              ghost
+              shape="circle"
+              size="small"
+              style={{ border: "none" }}
+            >
+              <Icon type="close-circle" style={{ color: "#222" }} />
+            </Button>
+          </Tooltip>
         </Col>
       </Row>
     );
@@ -108,16 +98,31 @@ class CartSamplesComponent extends React.Component {
     const filter = e.target.value;
 
     this.setState({ filter }, () => {
-      this.setState({ samples: this.props.samples.filter(s => s.label.includes(filter))})
+      this.setState({
+        samples: this.props.samples.filter(s => s.label.includes(filter))
+      });
     });
   };
 
   render() {
     return (
-      <div style={{ display: "flex", flexDirection: "column", width: 400, height: "100%", overflowX: "hidden" }}>
-        <div className="sample-search">
-          <Search onChange={this.onSearch} value={this.state.filter} />
-        </div>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          width: 400,
+          height: "100%",
+          overflowX: "hidden"
+        }}
+      >
+        <Row type="flex" justify="space-between" className="sample-search">
+          <Col style={{ width: 290 }}>
+            <Search onChange={this.onSearch} value={this.state.filter} />
+          </Col>
+          <Col>
+            <Button onClick={this.props.emptyCart}>Empty</Button>
+          </Col>
+        </Row>
         <div className="ag-theme-balham" style={{ flexGrow: 1 }}>
           <AgGridReact
             headerHeight={0}
@@ -141,7 +146,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  displaySample: sample => dispatch(actions.displaySample(sample))
+  displaySample: sample => dispatch(actions.displaySample(sample)),
+  emptyCart: () => dispatch(actions.emptyCart())
 });
 
 export default connect(

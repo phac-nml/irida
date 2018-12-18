@@ -1,4 +1,5 @@
 import { CART } from "../../utilities/events-utilities";
+import { TYPES as cartPageTypes } from "../../pages/cart/reducer";
 
 export const types = {
   INITIALIZED: "CART/INITIALIZED",
@@ -24,6 +25,8 @@ export const reducer = (state = initialState, action = {}) => {
         })
       );
       return { ...state, ...{ count: action.response.count } };
+    case cartPageTypes.CART_EMPTY_SUCCESS:
+      return { ...state, count: 0 };
     default:
       return { ...state };
   }

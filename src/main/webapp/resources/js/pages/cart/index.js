@@ -4,13 +4,10 @@ import { Provider } from "react-redux";
 import { getStore } from "../../redux/getStore";
 import { reducer as cartPageReducer } from "./reducer";
 import { actions } from "../../redux/reducers/app";
-import { getCartProjectIds } from "./sagas";
+import { getCartProjectIds, empty } from "./sagas";
 import CartPage from "./components/CartPage";
 
-const store = getStore(
-  { cartPageReducer },
-  { getCarProjectIds: getCartProjectIds }
-);
+const store = getStore({ cartPageReducer }, { getCartProjectIds, empty });
 
 render(
   <Provider store={store}>

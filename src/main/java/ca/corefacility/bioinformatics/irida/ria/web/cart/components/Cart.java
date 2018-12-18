@@ -61,7 +61,7 @@ public class Cart {
 		List<String> duplicates = new ArrayList<>();
 		List<String> existing = new ArrayList<>();
 
-		for (CartSampleRequest sample : addToCartRequest.getSamples()) {
+ 		for (CartSampleRequest sample : addToCartRequest.getSamples()) {
 			/*
 			First lets see if the id is here, t
 			 */
@@ -145,6 +145,8 @@ public class Cart {
 	 */
 	public void empty() {
 		this.cart.clear();
+		this.currentSampleIds.clear();
+		this.currentSampleLabels.clear();
 	}
 
 	/**
