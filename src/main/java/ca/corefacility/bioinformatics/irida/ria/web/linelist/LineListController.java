@@ -216,7 +216,7 @@ public class LineListController {
 			int index = allFieldsLabels.indexOf(field.getFieldKey());
 			allFieldsAgGridColumns.remove(index);
 			allFieldsLabels.remove(index);
-			// NEed to add parameter for if they have permissions to edit.
+			// Need to add parameter for if they have permissions to edit.
 			templateAgGridColumns.add(mapFieldToColumn(field, canEdit));
 		}
 
