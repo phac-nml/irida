@@ -25,8 +25,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.StaticMetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
-import ca.corefacility.bioinformatics.irida.model.user.Role;
-import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.components.agGrid.AgGridColumn;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataField;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataFieldDefault;
@@ -369,8 +367,6 @@ public class LineListController {
 	private boolean canUserEdit(Project project) {
 		Authentication authentication = SecurityContextHolder.getContext()
 				.getAuthentication();
-		User user = (User) authentication.getPrincipal();
-		return user.getSystemRole()
-				.equals(Role.ROLE_ADMIN) || projectOwnerPermission.isAllowed(authentication, project);
+		return projectOwnerPermission.isAllowed(authentication, project);
 	}
 }
