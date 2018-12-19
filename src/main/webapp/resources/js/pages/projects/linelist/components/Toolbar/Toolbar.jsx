@@ -107,7 +107,7 @@ export class Toolbar extends Component {
               >
                 <Button
                   title={i18n.linelist.tour.title}
-                  className="js-tour-button tour-button"
+                  className="js-tour-button t-tour-button tour-button"
                   shape="circle"
                   icon="question"
                   onClick={this.openTour}

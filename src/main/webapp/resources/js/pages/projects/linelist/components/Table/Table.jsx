@@ -4,13 +4,17 @@ import PropTypes from "prop-types";
 import ImmutablePropTypes from "react-immutable-proptypes";
 import { showUndoNotification } from "../../../../../modules/notifications";
 import { AgGridReact } from "ag-grid-react";
-import "ag-grid/dist/styles/ag-grid.css";
-import "ag-grid/dist/styles/ag-theme-balham.css";
+import "ag-grid-community/dist/styles/ag-grid.css";
+import "ag-grid-community/dist/styles/ag-theme-balham.css";
 // Excel export support
 import XLSX from "xlsx";
 
 import { LoadingOverlay } from "./LoadingOverlay";
-import { DateCellRenderer, SampleNameRenderer } from "./renderers";
+import {
+  DateCellRenderer,
+  IconCellRenderer,
+  SampleNameRenderer
+} from "./renderers";
 import { FIELDS } from "../../constants";
 
 const { i18n } = window.PAGE;
@@ -43,6 +47,7 @@ export class Table extends React.Component {
   frameworkComponents = {
     LoadingOverlay,
     SampleNameRenderer,
+    IconCellRenderer,
     DateCellRenderer
   };
 
@@ -136,14 +141,8 @@ export class Table extends React.Component {
      */
     const columnState = this.columnApi.getColumnState();
 
-    /*
-    Sample name always needs to be first so let's take it off and re-add
-    it after we get everything sorted.
-     */
-    const sampleIndex = columnState.findIndex(
-      c => c.colId === FIELDS.sampleName
-    );
-    const sample = columnState.splice(sampleIndex, 1)[0];
+    // Keep the icons
+    const defaults = columnState.splice(0, 2);
 
     /*
    From the new template (or modified template) determine the order and
@@ -169,7 +168,7 @@ export class Table extends React.Component {
     /*
     Combine back the sample name plus the new ordered state for the table.
      */
-    this.columnApi.setColumnState([sample, ...final]);
+    this.columnApi.setColumnState([...defaults, ...final]);
   };
 
   /*
@@ -178,6 +177,10 @@ export class Table extends React.Component {
   onGridReady = params => {
     this.api = params.api;
     this.columnApi = params.columnApi;
+    /*
+    Resize the icons since no extra space is needed.
+     */
+    this.columnApi.autoSizeColumns([FIELDS.icons]);
   };
 
   /**
@@ -249,8 +252,10 @@ export class Table extends React.Component {
     ws[cell_ref] = cell;
     colOrder.forEach((col, i) => {
       const index = i + 1;
+      const column = this.columnApi.getColumn(col.colId);
+      const name = this.columnApi.getDisplayNameForColumn(column);
       if (range.e.c < index) range.e.c = index;
-      const cell = { v: col.colId, t: "s" };
+      const cell = { v: name, t: "s" };
       const cell_ref = XLSX.utils.encode_cell({ c: index, r: 0 });
       ws[cell_ref] = cell;
     });
@@ -267,7 +272,7 @@ export class Table extends React.Component {
       if (range.e.r < row) range.e.r = row;
 
       // Need to add the sample identifier
-      const idCell = { v: entry.sampleId, t: "n", z: "0" };
+      const idCell = { v: entry[FIELDS.sampleId], t: "n", z: "0" };
       const idRef = XLSX.utils.encode_cell({ c: 0, r: row });
       ws[idRef] = idCell;
 
@@ -442,7 +447,7 @@ export class Table extends React.Component {
           suppressRowClickSelection={true}
           onSelectionChanged={this.onSelectionChange}
           defaultColDef={{
-            editable: true
+            headerCheckboxSelectionFilteredOnly: true
           }}
           enableCellChangeFlash={true}
           onCellEditingStarted={this.onCellEditingStarted}

@@ -1,12 +1,14 @@
 package ca.corefacility.bioinformatics.irida.model.sample.metadata;
 
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import org.hibernate.envers.Audited;
+import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.util.Objects;
+
+import org.hibernate.envers.Audited;
+
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 /**
  * {@link MetadataEntry} that has been created by an analysis pipeline
@@ -15,6 +17,7 @@ import java.util.Objects;
 @Audited
 @Table(name = "pipeline_metadata_entry")
 public class PipelineProvidedMetadataEntry extends MetadataEntry {
+
 	@ManyToOne
 	private AnalysisSubmission submission;
 
@@ -42,6 +45,18 @@ public class PipelineProvidedMetadataEntry extends MetadataEntry {
 	 */
 	public AnalysisSubmission getSubmission() {
 		return submission;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void merge(MetadataEntry metadataEntry) {
+		super.merge(metadataEntry);
+
+		PipelineProvidedMetadataEntry pipelineMetadataEntry = (PipelineProvidedMetadataEntry) metadataEntry;
+
+		this.submission = pipelineMetadataEntry.getSubmission();
 	}
 
 	@Override

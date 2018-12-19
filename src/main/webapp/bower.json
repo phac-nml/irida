@@ -13,11 +13,7 @@
     "bootstrap": "3.3.7",
     "bower": "*",
     "angular": "1.6.2",
-    "angular-animate": "1.6.2",
-    "angular-sanitize": "1.6.2",
     "angular-aria": "1.6.2",
-    "angular-messages": "1.6.2",
-    "ng-table": "0.5.2",
     "angular-ui-router": "0.2.13",
     "datatables": "^1.10.15",
     "angular-bootstrap-switch": "0.4.0",
@@ -41,7 +37,6 @@
   "devDependencies": {},
   "resolutions": {
     "angular": "1.6.2",
-    "angular-animate": "1.6.2",
     "moment": "2.15.0",
     "datatables": "^1.10.15",
     "angular-bootstrap": "0.14.3"

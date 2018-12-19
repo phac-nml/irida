@@ -24,7 +24,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 	@FindBy(className = "ag-header-cell-text")
 	private List<WebElement> headerText;
 
-	@FindBy(className = "ant-select-selection-selected-value")
+	@FindBy(css = ".template-option--name:first-of-type")
 	private WebElement templateSelectToggle;
 
 	@FindBy(className = "template-option--name")
@@ -50,6 +50,15 @@ public class ProjectLineListPage extends ProjectPageBase {
 
 	@FindBy(css = ".t-table-filter input")
 	private WebElement tableFilterInput;
+
+	@FindBy(className = "t-tour-button")
+	private WebElement tourLaunchButton;
+
+	@FindBy(css = "button[data-tour-elem=\"right-arrow\"]")
+	private WebElement tourNextButton;
+
+	@FindBy(css = "span[data-tour-elem=\"badge\"")
+	private WebElement tourStepBadge;
 
 	public ProjectLineListPage(WebDriver driver) {
 		super(driver);
@@ -81,6 +90,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 	}
 
 	public void selectTemplate(String template) {
+		waitForElementToBeClickable(templateSelectToggle);
 		templateSelectToggle.click();
 		waitForElementsVisible(By.className("ant-select-dropdown-menu"));
 		for (WebElement option : templateOptions) {
@@ -97,7 +107,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 		templateNameInputWrapper.click();
 		templateNameInput.sendKeys(name);
 		modalSaveTemplateBtn.click();
-		waitForTime(300);
+		waitForElementInvisible(By.className("ant-modal-wrap "));
 	}
 
 	public String getCellContents(int rowIndex, String columnName) {
@@ -132,5 +142,23 @@ public class ProjectLineListPage extends ProjectPageBase {
 		tableFilterInput.clear();
 		tableFilterInput.sendKeys(Keys.BACK_SPACE);
 		waitForTime(500);
+	}
+
+	public void openTour() {
+		tourLaunchButton.click();
+		waitForElementVisible(By.className("reactour__helper--is-open"));
+	}
+
+	public void goToNextTourStage() {
+		tourNextButton.click();
+	}
+
+	public void closeTour() {
+		driver.findElement(By.cssSelector("body")).sendKeys(Keys.ESCAPE);
+		waitForElementInvisible(By.className("reactour__helper--is-open"));
+	}
+
+	public int getTourStep() {
+		return Integer.parseInt(tourStepBadge.getText());
 	}
 }

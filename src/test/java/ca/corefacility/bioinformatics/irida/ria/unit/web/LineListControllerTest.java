@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web;
 
+import static org.mockito.Mockito.*;
+
 import java.util.Locale;
 
 import org.junit.Before;
@@ -8,11 +10,10 @@ import org.springframework.context.MessageSource;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.LineListController;
+import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-
-import static org.mockito.Mockito.*;
 
 /**
  * Unit test for {@link LineListController}
@@ -22,6 +23,7 @@ public class LineListControllerTest {
 	private ProjectService projectService;
 	private MetadataTemplateService metadataTemplateService;
 	private SampleService sampleService;
+	private UpdateSamplePermission updateSamplePermission;
 	private MessageSource messageSource;
 
 	@Before
@@ -29,9 +31,10 @@ public class LineListControllerTest {
 		projectService = mock(ProjectService.class);
 		sampleService = mock(SampleService.class);
 		metadataTemplateService = mock(MetadataTemplateService.class);
+		updateSamplePermission = mock(UpdateSamplePermission.class);
 		messageSource = mock(MessageSource.class);
 		lineListController = new LineListController(projectService, sampleService, metadataTemplateService,
-				messageSource);
+				updateSamplePermission, messageSource);
 	}
 
 	@Test
