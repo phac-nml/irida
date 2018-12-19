@@ -3,3 +3,8 @@ What did you change in this pull request?  Provide a description of files change
 
 ## Related issue
 Link to the GitHub issue this pull request addresses using the `#issuenum` format.  If it completes an issue, use `Fixes #issuenum` to automatically close the issue.
+
+## Checklist
+* [ ] CHANGELOG.md (and UPGRADING.md if necessary) updated with information for new change.
+* [ ] Tests have been added for any new features.
+* [ ] User documentation updated for UI or technical changes.
