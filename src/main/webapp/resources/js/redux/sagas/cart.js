@@ -25,7 +25,8 @@ export function* addToCartSaga() {
       const projectId = samples[0][FIELDS.projectId];
       const sampleIds = samples.map(s => ({
         id: s[FIELDS.sampleId],
-        label: s[FIELDS.sampleName]
+        label: s[FIELDS.sampleName],
+        editable: s.editable
       }));
 
       const { data } = yield call(putSampleInCart, projectId, sampleIds);

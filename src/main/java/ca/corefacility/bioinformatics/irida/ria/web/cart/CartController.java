@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +30,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartSample;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartSampleRequest;
+import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -48,14 +51,16 @@ public class CartController {
 	private final UserService userService;
 	private final ProjectService projectService;
 	private final SequencingObjectService sequencingObjectService;
+	private UpdateSamplePermission updateSamplePermission;
 
 	@Autowired
 	public CartController(SampleService sampleService, UserService userService, ProjectService projectService,
-			SequencingObjectService sequencingObjectService, Cart cart) {
+			SequencingObjectService sequencingObjectService, UpdateSamplePermission updateSamplePermission, Cart cart) {
 		this.sampleService = sampleService;
 		this.projectService = projectService;
 		this.userService = userService;
 		this.sequencingObjectService = sequencingObjectService;
+		this.updateSamplePermission = updateSamplePermission;
 		this.cart = cart;
 	}
 
@@ -125,11 +130,14 @@ public class CartController {
 	 * @param locale {@link Locale}
 	 */
 	public void addSelected(Map<Project, Set<Sample>> selected, Locale locale) {
+		Authentication authentication = SecurityContextHolder.getContext()
+				.getAuthentication();
 		// this.selected = selected;
 		for (Project project : selected.keySet()) {
 			Set<CartSampleRequest> cartSampleRequests = selected.get(project)
 					.stream()
-					.map(s -> new CartSampleRequest(s.getId(), s.getLabel()))
+					.map(s -> new CartSampleRequest(s.getId(), s.getLabel(),
+							this.updateSamplePermission.isAllowed(authentication, s)))
 					.collect(Collectors.toSet());
 			cart.addProjectSamplesToCart(new AddToCartRequest(project.getId(), cartSampleRequests), locale);
 		}
@@ -147,12 +155,15 @@ public class CartController {
 	@ResponseBody
 	public AddToCartResponse addProjectSample(@RequestParam Long projectId,
 			@RequestParam(value = "sampleIds[]") Set<Long> sampleIds, Locale locale) {
+		Authentication authentication = SecurityContextHolder.getContext()
+				.getAuthentication();
 		Project project = projectService.read(projectId);
 		Set<CartSampleRequest> samples = sampleIds.stream()
 				.map(id -> {
 					ProjectSampleJoin join = sampleService.getSampleForProject(project, id);
 					Sample sample = join.getObject();
-					return new CartSampleRequest(sample.getId(), sample.getSampleName());
+					return new CartSampleRequest(sample.getId(), sample.getSampleName(),
+							this.updateSamplePermission.isAllowed(authentication, sample));
 				})
 				.collect(Collectors.toSet());
 		AddToCartRequest addToCartRequest = new AddToCartRequest(projectId, samples);
@@ -207,10 +218,13 @@ public class CartController {
 	 */
 	@RequestMapping(value = "/project/{projectId}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public void addProject(@PathVariable Long projectId, Locale locale) {
+		Authentication authentication = SecurityContextHolder.getContext()
+				.getAuthentication();
 		Project project = projectService.read(projectId);
 		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(project);
 		Set<CartSampleRequest> samples = samplesForProject.stream()
-				.map(j -> new CartSampleRequest(j.getId(), j.getLabel()))
+				.map(j -> new CartSampleRequest(j.getId(), j.getLabel(),
+						this.updateSamplePermission.isAllowed(authentication, j.getObject())))
 				.collect(Collectors.toSet());
 		cart.addProjectSamplesToCart(new AddToCartRequest(projectId, samples), locale);
 	}

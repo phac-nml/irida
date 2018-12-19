@@ -3,11 +3,13 @@ package ca.corefacility.bioinformatics.irida.ria.web.cart.dto;
 public class CartSample {
 	private Long id;
 	private String label;
+	private boolean editable;
 	private Project project;
 
 	public CartSample(ca.corefacility.bioinformatics.irida.model.project.Project project, CartSampleRequest sample) {
 		this.id = sample.getId();
 		this.label = sample.getLabel();
+		this.editable = sample.isEditable();
 		this.project = new Project(project);
 	}
 
@@ -17,6 +19,10 @@ public class CartSample {
 
 	public String getLabel() {
 		return label;
+	}
+
+	public boolean isEditable() {
+		return editable;
 	}
 
 	public Project getProject() {
