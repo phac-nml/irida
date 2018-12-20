@@ -1,5 +1,36 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.Principal;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Scope;
+import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
@@ -22,6 +53,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAna
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisOutputFileInfo;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisProjectShare;
 import ca.corefacility.bioinformatics.irida.ria.web.components.AnalysisOutputFileDownloadManager;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
@@ -35,35 +67,6 @@ import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateServi
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Scope;
-import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.security.Principal;
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Controller for Analysis.
@@ -600,19 +603,18 @@ public class AnalysisController {
 	 * {@link Project}
 	 *
 	 * @param submissionId the {@link AnalysisSubmission} id to share/unshare
-	 * @param projectId    the {@link Project} id to share with
-	 * @param shareStatus  whether or not to share the {@link AnalysisSubmission}
+	 * @param projectShare {@link AnalysisProjectShare} describes of the project and the share status.
 	 * @param locale       Locale of the logged in user
 	 * @return Success message if successful
 	 */
 	@RequestMapping(value = "/ajax/{submissionId}/share", method = RequestMethod.POST)
 	public Map<String, String> updateProjectShare(@PathVariable Long submissionId,
-			@RequestParam("project") Long projectId, @RequestParam("shared") boolean shareStatus, Locale locale) {
+			@RequestBody AnalysisProjectShare projectShare, Locale locale) {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
-		Project project = projectService.read(projectId);
+		Project project = projectService.read(projectShare.getProjectId());
 
 		String message = "";
-		if (shareStatus) {
+		if (projectShare.isShareStatus()) {
 			analysisSubmissionService.shareAnalysisSubmissionWithProject(submission, project);
 
 			message = messageSource.getMessage("analysis.details.share.enable", new Object[] { project.getLabel() },

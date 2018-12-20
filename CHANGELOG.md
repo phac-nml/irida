@@ -3,6 +3,7 @@ Changes
 
 0.22.0 to 0.23.0
 ----------------
+* [Database]: Fixed an issue where metadata entries derived from pipelines were not updating the associated analysis submission and ignorning blank entries. (0.23.5)
 * [Developer]: Added classes `.jar` maven export in build process.
 * [UI]: Added the sample coverage to the table exported from the project samples page.
 * [UI/Workflow]: Added option to disable workflows/analysis types from display in IRIDA using `irida.workflow.types.disabled`. (0.22.1)
@@ -34,6 +35,7 @@ Changes
 * [Developer]: Update to ag-grid-community v.19.1.2.
 * [Documentation]: Changed references from GitLab to GitHub in docs.
 * [UI]: Removed angular-resource, angular-messages, angular-sanitize, angular-animate, angular-datatables, ng-table and angular-drag-and-drop-lists.
+* [REST]: Added method to greatly increase speed of listing samples in a project.  This was becoming an issue for projects with metadata and >5k samples.
 
 0.21.0 to 0.22.0
 ----------------
