@@ -85,7 +85,6 @@
         <output name="prokka.sqn" fileName="prokka.sqn"/>
         <output name="prokka.tbl" fileName="prokka.tbl"/>
         <output name="quast.html.zip" fileName="quast.html.zip"/>
-        <output name="quast-contig_size_viewer.html.zip" fileName="quast-contig_size_viewer.html.zip"/>
         <output name="quast.pdf" fileName="quast.pdf"/>
         <output name="shovill.log" fileName="shovill.log"/>
         <output name="quast.log" fileName="quast.log"/>

@@ -197,13 +197,6 @@
                     "action_type": "HideDatasetAction",
                     "output_name": "unalign_tsv"
                 },
-                "RenameDatasetActioncontig_size_viewer": {
-                    "action_arguments": {
-                        "newname": "quast-contig_size_viewer.html.zip"
-                    },
-                    "action_type": "RenameDatasetAction",
-                    "output_name": "contig_size_viewer"
-                },
                 "RenameDatasetActionlog_txt": {
                     "action_arguments": {
                         "newname": "quast.log"
@@ -252,13 +245,13 @@
                 },
                 {
                     "label": null,
-                    "output_name": "report_html",
-                    "uuid": "0af7f227-1225-472b-8451-a45ba19a871c"
+                    "output_name": "quast_tsv",
+                    "uuid": "d01b4235-7321-4604-992b-f62d72c0fbc2"
                 },
                 {
                     "label": null,
-                    "output_name": "quast_tsv",
-                    "uuid": "d01b4235-7321-4604-992b-f62d72c0fbc2"
+                    "output_name": "report_html",
+                    "uuid": "0af7f227-1225-472b-8451-a45ba19a871c"
                 },
                 {
                     "label": null,
@@ -444,8 +437,8 @@
             "workflow_outputs": [
                 {
                     "label": null,
-                    "output_name": "out_sqn",
-                    "uuid": "c016c419-7723-4841-97a6-d80e4e6f1a95"
+                    "output_name": "out_tbl",
+                    "uuid": "e38a6e06-02b3-4365-93cb-59499c9d3fba"
                 },
                 {
                     "label": null,
@@ -454,8 +447,8 @@
                 },
                 {
                     "label": null,
-                    "output_name": "out_tbl",
-                    "uuid": "e38a6e06-02b3-4365-93cb-59499c9d3fba"
+                    "output_name": "out_sqn",
+                    "uuid": "c016c419-7723-4841-97a6-d80e4e6f1a95"
                 },
                 {
                     "label": null,
