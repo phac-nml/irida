@@ -20,7 +20,7 @@ To install these tools please proceed through the following steps.
 
 Galaxy makes use of [Conda][conda] to automatically install some dependencies for SISTR.  Please verify that the version of Galaxy is >= v16.01 and has been setup to use conda (by modifying the appropriate configuration settings, see [here][galaxy-config] for additional details).  A method to get SISTR to work with a Galaxy version < v16.01 is available in [FAQ/Conda dependencies][].
 
-{% include administrator/galaxy/pipelines/shovill.md %}
+{% include administrator/galaxy/pipelines/shovill-0.9.0.md %}
 
 ## Step 2: Install Galaxy Tools
 
