@@ -1,25 +1,17 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.analysis;
 
-import java.lang.reflect.Field;
-import java.util.Map;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Lob;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-
-import org.springframework.util.ReflectionUtils;
-
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableSet;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Specific implementation of {@link Analysis} for storing properties created by
@@ -349,13 +341,6 @@ public class AnalysisFastQC extends Analysis {
 			}*/
 			return new AnalysisFastQC(this);
 		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public Set<AnalysisOutputFile> getAnalysisOutputFiles() {
-		return ImmutableSet.of(fastQCReport);
 	}
 
 	/**
