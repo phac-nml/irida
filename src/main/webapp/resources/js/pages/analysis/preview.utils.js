@@ -1,6 +1,15 @@
 import { convertFileSize } from "../../utilities/file.utilities";
 
 /**
+ * Trim whitespace from a string
+ * @param {string} s String to trim
+ * @returns {string} with no leading or trailing whitespace
+ */
+export function trim(s) {
+  return s.replace(/^\s+|\s+$/g, "");
+}
+
+/**
  * Build AnalysisOutputFile download URL
  * @param {string} baseUrl Base analysis AJAX URL (e.g. /analysis/ajax/)
  * @param {number} analysisSubmissionId AnalysisSubmission id for AnalysisOutputFile

@@ -272,7 +272,7 @@ Contained in the `<parameters>` element tag.  This defines a single parameter fo
 
 ### Example
 
-To override the model parameter defined in the Galaxy version of PhyML in <http://irida.corefacility.ca/gitlab/analysis-pipelines/snvphyl-galaxy/blob/v0.1/tools/phyml/phyml.xml>, the following entry can be used.  The `defaultValue="HKY85"` must correspond to the value defined in the Galaxy PhyML Tool (see [phyml.xml#L38][]).
+To override the model parameter defined in the Galaxy version of PhyML in <https://github.com/phac-nml/snvphyl-galaxy/blob/v0.1/tools/phyml/phyml.xml>, the following entry can be used.  The `defaultValue="HKY85"` must correspond to the value defined in the Galaxy PhyML Tool (see [phyml.xml#L38][]).
 
 ```xml
 <parameter name="myparameter" defaultValue="HKY85">
@@ -539,13 +539,13 @@ An example workflow description XML file is given below.
 [Galaxy Tools]: https://toolshed.g2.bx.psu.edu/
 [Tool Data Tables]: https://galaxyproject.org/admin/tools/data-tables/
 [UUID]: http://en.wikipedia.org/wiki/Universally_unique_identifier
-[SNVPhyl Galaxy Workflow]: http://irida.corefacility.ca/gitlab/analysis-pipelines/snvphyl-galaxy/blob/v0.1/workflows/SNVPhyl/0.1/snvphyl_workflow.ga
-[PhyML Galaxy Tool XML]: http://irida.corefacility.ca/gitlab/analysis-pipelines/snvphyl-galaxy/blob/v0.1/tools/phyml/phyml.xml
-[phyml.xml#L1]: http://irida.corefacility.ca/gitlab/analysis-pipelines/snvphyl-galaxy/blob/v0.1/tools/phyml/phyml.xml#L1
-[snvphyl-workflow.ga#L506]: http://irida.corefacility.ca/gitlab/analysis-pipelines/snvphyl-galaxy/blob/v0.1/workflows/SNVPhyl/0.1/snvphyl_workflow.ga#L506
-[snvphyl-workflow.ga#L507]: http://irida.corefacility.ca/gitlab/analysis-pipelines/snvphyl-galaxy/blob/v0.1/workflows/SNVPhyl/0.1/snvphyl_workflow.ga#L507
-[phyml.xml#L6]: http://irida.corefacility.ca/gitlab/analysis-pipelines/snvphyl-galaxy/blob/v0.1/tools/phyml/phyml.xml#L6
-[phyml.xml#L38]: http://irida.corefacility.ca/gitlab/analysis-pipelines/snvphyl-galaxy/blob/v0.1/tools/phyml/phyml.xml#L38
+[SNVPhyl Galaxy Workflow]: https://github.com/phac-nml/snvphyl-galaxy/blob/v0.1/workflows/SNVPhyl/0.1/snvphyl_workflow.ga
+[PhyML Galaxy Tool XML]: https://github.com/phac-nml/snvphyl-galaxy/blob/v0.1/tools/phyml/phyml.xml
+[phyml.xml#L1]: https://github.com/phac-nml/snvphyl-galaxy/blob/v0.1/tools/phyml/phyml.xml#L1
+[snvphyl-workflow.ga#L506]: https://github.com/phac-nml/snvphyl-galaxy/blob/v0.1/workflows/SNVPhyl/0.1/snvphyl_workflow.ga#L506
+[snvphyl-workflow.ga#L507]: https://github.com/phac-nml/snvphyl-galaxy/blob/v0.1/workflows/SNVPhyl/0.1/snvphyl_workflow.ga#L507
+[phyml.xml#L6]: https://github.com/phac-nml/snvphyl-galaxy/blob/v0.1/tools/phyml/phyml.xml#L6
+[phyml.xml#L38]: https://github.com/phac-nml/snvphyl-galaxy/blob/v0.1/tools/phyml/phyml.xml#L38
 [AnalysisType JavaDoc]: ../../../apidocs/ca/corefacility/bioinformatics/irida/model/enums/AnalysisType.html
 [galaxy-paired-input]: images/galaxy-paired-input.png
 [galaxy-single-input]: images/galaxy-single-input.png

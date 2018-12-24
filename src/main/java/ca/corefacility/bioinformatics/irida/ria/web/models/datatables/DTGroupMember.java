@@ -1,11 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.web.models.datatables;
 
-import java.util.Date;
-
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
-import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
+
+import java.util.Date;
 
 /**
  * User interface model for DataTables for {@link ca.corefacility.bioinformatics.irida.model.user.group.UserGroup} member

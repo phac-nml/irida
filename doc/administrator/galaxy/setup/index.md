@@ -273,6 +273,7 @@ Alternatively, the necessary tools can be installed manually through the followi
 * [SISTR Salmonella Typing][]
 * [refseq_masher]
 * [MentaLiST MLST][]
+* [Bio_Hansel][]
 
 Each of these will step through installing the necessary tools in IRIDA.  These steps will involve going to Galaxy, navigating to **Admin > Search tool sheds**, finding the appropriate tool and installing.  On completion, you should be able to go to **Admin > Manage installed tools** to check the status of each tool.  For a successfull install, you should see a status of `Installed`.  If there is an error, you can click on each tool for more details.
 
@@ -314,6 +315,7 @@ Each workflow in IRIDA is run using Galaxy, and it's possible to monitor the sta
 [Assembly and Annotation Collection]: ../pipelines/assembly-annotation-collection/
 [refseq_masher]: ../pipelines/refseq_masher/
 [MentaLiST MLST]: ../pipelines/mentalist/
+[Bio_Hansel]: ../pipelines/bio_hansel/
 [Galaxy Job Config]: https://wiki.galaxyproject.org/Admin/Config/Jobs
 [saved-histories.jpg]: ../images/saved-histories.jpg
 [galaxy-installed-repositories.jpg]: ../images/galaxy-installed-repositories.jpg

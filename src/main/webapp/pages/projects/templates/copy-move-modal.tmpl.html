@@ -28,12 +28,14 @@
                                 </li>
                             </th:block>
                         </ol>
-                        <button class="btn btn-link" th:if="${extraCount &gt; 4}"
-                                th:text="#{project.samples.modal.extra-btn(${extraCount})}"
-                                data-toggle="popover" data-placement="right">BUTTON
-                        </button>
-                        <script th:if="${extraCount > 4}" type="text/ng-template" id="extraSamples.tmpl">
-                            <div>
+                        <th:block th:if="${extraCount > 4}">
+                            <button class="btn btn-default" type="button"
+                                    data-toggle="collapse" href="#extraSamples" aria-expanded="false"
+                                    aria-controls="collapseExample">
+                                <i class="fa fa-angle-down spaced-left__sm" aria-hidden="true"></i>
+                                <th:block th:text="#{project.samples.modal.extra-btn(${extraCount})}"></th:block>
+                            </button>
+                            <div class="collapse" id="extraSamples">
                                 <ol class="continue">
                                     <li th:each="sample : ${extraSamples}">
                                         <input type="hidden" th:value="${sample.getId()}" name="sampleIds[]"/>
@@ -41,7 +43,7 @@
                                     </li>
                                 </ol>
                             </div>
-                        </script>
+                        </th:block>
                     </th:block>
                     <div class="form-group">
                         <label for="js-projectsSelect"
@@ -49,7 +51,7 @@
                         <select name="newProjectId" data:url="@{/projects/{id}/ajax/samples/available_projects(id=${projectId})}"
                                 id="js-projectsSelect" class="form-control" style="width: 100%;"></select>
                     </div>
-                    <div class="alert alert-warning" th:if="${#lists.size(lockedSamples) > 0}">
+                    <div class="alert alert-warning" th:if="${#lists.size(lockedSamples) > 0 and #strings.equals(type, 'copy')}">
                         <span th:text="#{${prefix} + '.locked'}">_The following samples will be read only as this project does not have modification access_</span>
                         <input type="hidden" value="false" name="giveOwner" id="giveOwner" />
                     </div>

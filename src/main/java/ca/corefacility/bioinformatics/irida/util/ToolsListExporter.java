@@ -24,14 +24,15 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowToolRepository;
+import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;
+import ca.corefacility.bioinformatics.irida.service.impl.AnalysisTypesServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 /**
@@ -52,6 +53,8 @@ public class ToolsListExporter {
 	private static final Pattern regexPattern = Pattern.compile("- " + toolsSectionName + ": \"([^\"]+)\"");
 
 	private static final String defaultToolPanelId = "irida";
+	
+	private static final AnalysisTypesService analysisTypesService = new AnalysisTypesServiceImpl();
 
 	private static Map<AnalysisType, IridaWorkflow> getDefaultWorkflows() throws IridaWorkflowNotFoundException {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
@@ -62,7 +65,7 @@ public class ToolsListExporter {
 
 		IridaWorkflowsService iridaWorkflowsService = context.getBean(IridaWorkflowsService.class);
 		Map<AnalysisType, IridaWorkflow> workflows = iridaWorkflowsService
-				.getAllDefaultWorkflowsByType(Sets.newHashSet(AnalysisType.executableAnalysisTypes()));
+				.getAllDefaultWorkflowsByType(analysisTypesService.executableAnalysisTypes());
 
 		context.close();
 

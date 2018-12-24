@@ -8,6 +8,9 @@ import { formatDate } from "../../utilities/date-utilities";
 import { renderPlainTextPreview } from "./plaintext-preview";
 import { renderTabularPreview } from "./tabular-preview";
 import "../../../sass/pages/analysis.scss";
+import "../../vendor/datatables/datatables";
+import { BioHanselController } from "./controllers/bio_hansel";
+import { renderJsonPreview } from "./json-preview";
 
 const baseAjaxUrl = window.PAGE.URLS.base;
 const analysisSubmissionId = window.PAGE.ID;
@@ -42,6 +45,7 @@ function AnalysisService($http) {
   const svc = this;
   svc._tabularData = null;
   svc._outputsInfo = null;
+  svc.baseAjaxUrl = baseAjaxUrl;
   /**
    * Call the server to get the status for the current analysis.
    * 'page.URLS.status' is on the `_base.html` page for the analysis.
@@ -62,7 +66,6 @@ function AnalysisService($http) {
       return result.data;
     });
   };
-
   /**
    * Get Galaxy JobError info from server
    * @param vm JobErrorsController object for reporting progress of getting JobError info
@@ -125,7 +128,7 @@ function AnalysisService($http) {
    * Call the server to update the shared status of the current analysis.
    */
   svc.updateProjectShare = function(project, shared) {
-    const data = { project: project, shared: shared };
+    const data = { projectId: Number(project), shareStatus: Boolean(shared) };
     return $http.post(window.PAGE.URLS.share, data).then(function(response) {
       return response.data;
     });
@@ -136,6 +139,16 @@ function AnalysisService($http) {
    */
   svc.getSharedProjects = function() {
     return $http.get(window.PAGE.URLS.share).then(function(response) {
+      return response.data;
+    });
+  };
+
+  /**
+   * Call the server to save results of a pipeline to the samples
+   */
+  svc.saveResults = function() {
+    angular.element("#save-to-samples").prop("disabled", true);
+    return $http.post(window.PAGE.URLS.saveResults).then(function(response) {
       return response.data;
     });
   };
@@ -160,6 +173,16 @@ function ProjectShareController(AnalysisService) {
       project.shared
     ).then(function(response) {
       showNotification({ text: response.message });
+    });
+  };
+
+  vm.saveResults = function() {
+    AnalysisService.saveResults().then(function(response) {
+      if (response.result === "success") {
+        showNotification({ text: response.message });
+      } else {
+        showErrorNotification({ text: response.message });
+      }
     });
   };
 
@@ -204,7 +227,8 @@ function PreviewController(analysisService) {
   this.newick = window.PAGE.NEWICK;
   const vm = this;
   const $tablesContainer = $("#js-file-preview-container");
-  const tabExtSet = new Set(["tab", "tsv", "tabular"]);
+  const tabExtSet = new Set(["tab", "tsv", "tabular", "csv"]);
+  const jsonExtSet = new Set(["json"]);
 
   analysisService.getOutputsInfo(vm).then(outputInfos => {
     for (const outputInfo of outputInfos) {
@@ -216,6 +240,8 @@ function PreviewController(analysisService) {
       }
       if (tabExtSet.has(outputInfo.fileExt)) {
         renderTabularPreview($tablesContainer, baseAjaxUrl, outputInfo);
+      } else if (jsonExtSet.has(outputInfo.fileExt)) {
+        renderJsonPreview($tablesContainer, baseAjaxUrl, outputInfo);
       } else {
         renderPlainTextPreview($tablesContainer, baseAjaxUrl, outputInfo);
       }
@@ -370,6 +396,12 @@ const iridaAnalysis = angular
           templateUrl: "sistr.html",
           controllerAs: "sistrCtrl",
           controller: ["AnalysisService", SistrController]
+        })
+        .state("bio_hansel", {
+          url: "/bio_hansel",
+          templateUrl: "bio_hansel.html",
+          controllerAs: "bioHanselCtrl",
+          controller: ["AnalysisService", BioHanselController]
         })
         .state("joberrors", {
           url: "/joberrors",

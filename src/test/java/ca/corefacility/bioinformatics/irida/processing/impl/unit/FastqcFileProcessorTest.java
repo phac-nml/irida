@@ -100,7 +100,7 @@ public class FastqcFileProcessorTest {
 		assertEquals("Max length was not correct.", Integer.valueOf(SEQUENCE.length()), updated.getMaxLength());
 		assertEquals("Min length was not correct.", Integer.valueOf(SEQUENCE.length()), updated.getMinLength());
 		assertEquals("Total sequences was not correct.", Integer.valueOf(2), updated.getTotalSequences());
-		assertEquals("Encoding was not correct.", "Illumina <1.3", updated.getEncoding());
+		assertEquals("Encoding was not correct.", "Sanger / Illumina 1.9", updated.getEncoding());
 		assertEquals("Total number of bases was not correct.", Long.valueOf(SEQUENCE.length() * 2),
 				updated.getTotalBases());
 

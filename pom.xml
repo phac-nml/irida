@@ -4,19 +4,19 @@
 	<groupId>ca.corefacility.bioinformatics</groupId>
 	<artifactId>irida</artifactId>
 	<packaging>war</packaging>
-	<version>0.22.0-SNAPSHOT</version>
+	<version>0.23.0-SNAPSHOT</version>
 	<name>irida</name>
 	<url>http://www.irida.ca</url>
 
 	<issueManagement>
 		<system>GitLab</system>
-		<url>http://irida.corefacility.ca/gitlab/irida/irida/issues</url>
+		<url>https://github.com/phac-nml/irida/issues</url>
 	</issueManagement>
 
 	<scm>
-		<connection>scm:git:http://irida.corefacility.ca/gitlab/irida/irida.git</connection>
-		<developerConnection>scm:git:ssh://git@irida.corefacility.ca/gitlab/irida/irida.git</developerConnection>
-		<url>http://irida.corefacility.ca/gitlab/irida/irida</url>
+		<connection>scm:git:https://github.com/phac-nml/irida.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com:phac-nml/irida.git</developerConnection>
+		<url>https://github.com/phac-nml/irida</url>
 	</scm>
 
 	<inceptionYear>2013</inceptionYear>
@@ -211,7 +211,6 @@
 			<artifactId>commons-net</artifactId>
 			<version>${commons.net.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>javax.interceptor</groupId>
 			<artifactId>javax.interceptor-api</artifactId>
@@ -378,6 +377,12 @@
 
 		<!-- Testing -->
 		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-core</artifactId>
+			<version>${hamcrest.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>${junit.version}</version>
@@ -405,12 +410,6 @@
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
 			<version>${mockito.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<version>${h2.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -553,6 +552,13 @@
 			<version>1.1.11</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.pf4j</groupId>
+			<artifactId>pf4j</artifactId>
+			<version>${pf4j.version}</version>
+		</dependency>
+
+
 		<!-- Validation API -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -651,6 +657,7 @@
 							<systemPropertyVariables>
 								<jetty.port>${jetty.port}</jetty.port>
 								<spring.profiles.active>it</spring.profiles.active>
+								<irida.db.profile>it</irida.db.profile>
 								<jetty.port>${jetty.port}</jetty.port>
 								<server.base.url>http://localhost:${jetty.port}</server.base.url>
 							</systemPropertyVariables>
@@ -663,6 +670,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>${maven.surefire.plugin.version}</version>
 				<configuration>
+					<useSystemClassLoader>false</useSystemClassLoader>
 					<properties>
 						<property>
 							<name>listener</name>
@@ -835,6 +843,7 @@
 				<configuration>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 					<packagingExcludes>node_modules/**/*</packagingExcludes>
+					<attachClasses>true</attachClasses>
 				</configuration>
 			</plugin>
 
@@ -884,6 +893,12 @@
 									<!-- Setting spring profile for integration tests to "it". Also
 										done in failsafe plugin -->
 									<name>spring.profiles.active</name>
+									<value>it</value>
+								</systemProperty>
+								<systemProperty>
+									<!-- Setting spring profile for integration tests to "it". Also
+										done in failsafe plugin -->
+									<name>irida.db.profile</name>
 									<value>it</value>
 								</systemProperty>
 								<systemProperty>
@@ -1028,13 +1043,12 @@
 		<mockito.version>1.10.19</mockito.version>
 		<mysql.connector.version>5.1.31</mysql.connector.version>
 		<hibernate.version>4.3.11.Final</hibernate.version>
-		<h2.version>1.4.180</h2.version>
 		<jsr250.api.version>1.0</jsr250.api.version>
 		<spring.test.dbunit.version>1.1.0</spring.test.dbunit.version>
 		<dbunit.version>2.4.9</dbunit.version>
 		<commons.dbcp.version>2.0.1</commons.dbcp.version>
-		<commons.net.version>3.3</commons.net.version>
-		<fastqc.version>0.10.1-nml-custom</fastqc.version>
+		<commons.net.version>3.6</commons.net.version>
+		<fastqc.version>0.11.7-nml-custom</fastqc.version>
 		<aspectj.version>1.8.1</aspectj.version>
 		<hibernate.validator.version>5.1.1.Final</hibernate.validator.version>
 		<el-ri.version>1.0</el-ri.version>
@@ -1070,6 +1084,8 @@
 		<imgscalr.version>4.2</imgscalr.version>
 		<jackson.dataformat.yaml.version>2.7.4</jackson.dataformat.yaml.version>
 		<jvm-breakglass.version>0.0.8</jvm-breakglass.version>
+		<pf4j.version>2.4.0</pf4j.version>
+		<hamcrest.version>1.3</hamcrest.version>
 
 		<!-- plugins -->
 		<maven.failsafe.plugin.version>2.19.1</maven.failsafe.plugin.version>
@@ -1088,8 +1104,8 @@
 		<maven.site.plugin.version>3.4</maven.site.plugin.version>
 		<errorprone.version>2.5</errorprone.version>
 		<frontend-maven-plugin.version>1.6</frontend-maven-plugin.version>
-		<node.version>v8.10.0</node.version>
-		<yarn.version>v1.5.1</yarn.version>
+		<node.version>v10.13.0</node.version>
+		<yarn.version>v1.12.3</yarn.version>
 		<jgravatar.version>1.0</jgravatar.version>
 
 		<!-- project configuration -->
@@ -1127,6 +1143,7 @@
 				<include.tests>
 					**/service/impl/integration/**/*IT.java,
 					**/service/workflow/integration/**/*IT.java,
+					**/pipeline/results/**/*IT.java,
 					**/repositories/**/*IT.java
 				</include.tests>
 				<exclude.tests>**/*Galaxy*IT.java,
@@ -1149,8 +1166,21 @@
 				<integration.test.listener>ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationTestListener</integration.test.listener>
 				<include.tests>
 					**/*Galaxy*IT.java,
-					**/AnalysisExecutionScheduledTaskImplIT.java,
 					**/AnalysisSubmissionServiceImplIT.java,
+				</include.tests>
+				<exclude.tests>
+					**/AnalysisExecutionServiceGalaxyIT.java,
+				</exclude.tests>
+				<jetty.skip>true</jetty.skip>
+			</properties>
+		</profile>
+		<profile>
+			<id>galaxy_pipeline_testing</id>
+			<properties>
+				<integration.test.listener>ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationTestListener</integration.test.listener>
+				<include.tests>
+					**/AnalysisExecutionScheduledTaskImplIT.java,
+					**/AnalysisExecutionServiceGalaxyIT.java,
 					**/SNVPhylAnalysisIT.java,
 				</include.tests>
 				<jetty.skip>true</jetty.skip>

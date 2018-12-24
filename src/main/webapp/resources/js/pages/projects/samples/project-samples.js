@@ -243,21 +243,55 @@ const config = Object.assign({}, tableConfig, {
     {
       orderable: false,
       data: null,
-      render() {
-        return `<input class="t-row-select" type="checkbox"/>`;
+      render(data, type, full) {
+        const checkbox = `<input class="t-row-select" type="checkbox"/>`;
+
+        /**
+         * If the project does not have privileges on the sample
+         * display a locked symbol.
+         */
+        if (!full.owner) {
+          const icon = document
+            .querySelector(".js-locked-wrapper")
+            .cloneNode(true).outerHTML;
+          return `<div class="icon-wrapper">
+              ${icon}${checkbox}
+            </div>`;
+        }
+        return checkbox;
       },
       targets: 0
     },
     {
       targets: [COLUMNS.SAMPLE_NAME],
       render(data, type, full) {
-        return createItemLink({
+        const link = createItemLink({
           url: `${window.TL.BASE_URL}projects/${full.projectId}/samples/${
             full.id
           }`,
           label: full.sampleName,
           classes: ["t-sample-label"]
         });
+
+        /*
+        Display a notification if there are any issues with QC.
+         */
+        if (full.qcEntries.length) {
+          const icon = document
+            .querySelector(".js-qc-warning-wrapper")
+            .cloneNode(true);
+          /*
+          Generate the content for the popover
+           */
+          const content = `<ul class="popover-list">
+              ${full.qcEntries
+                .map(qc => `<li class="error">${qc}</li>`)
+                .join("")}
+          </ul>`;
+          icon.setAttribute("data-content", content);
+          return `<div class="icon-wrapper">${icon.outerHTML}${link}</div>`;
+        }
+        return link;
       }
     },
     {
@@ -288,32 +322,11 @@ const config = Object.assign({}, tableConfig, {
       project: data.projectId,
       sample: data.id
     });
-
-    if (!data.owner) {
-      const icon = $(".locked-wrapper").clone();
-      const td = $row.find("td:first-of-type");
-      td.css("position", "relative");
-      icon.appendTo(td);
-    }
-
     /*
-    Check if this sample has any quality control issues.
-    If there are they will be displayed in a popover.
+    If there are QC errors, highlight the row
      */
     if (data.qcEntries.length) {
       $row.addClass("row-warning");
-
-      const icon = $(".qc-warning-wrapper").clone();
-      /*
-      Generate the content for the popover
-       */
-      const content = `<ul class="popover-list">
-          ${data.qcEntries.map(qc => `<li class="error">${qc}</li>`).join("")}
-      </ul>`;
-      icon.data("content", content);
-      const td = $row.find(`td:nth-of-type(${COLUMNS.SAMPLE_NAME + 1})`);
-      td.css("position", "relative");
-      icon.appendTo(td);
     }
   }
 });

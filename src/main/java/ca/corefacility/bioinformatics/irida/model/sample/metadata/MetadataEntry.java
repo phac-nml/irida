@@ -1,8 +1,18 @@
 package ca.corefacility.bioinformatics.irida.model.sample.metadata;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.util.Objects;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Lob;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
@@ -45,12 +55,30 @@ public class MetadataEntry {
 		this.value = value;
 	}
 
+	public Long getId() {
+		return id;
+	}
+
 	public String getType() {
 		return type;
 	}
 
 	public String getValue() {
 		return value;
+	}
+	
+	/**
+	 * Merges the passed metadata entry into this metadata entry.
+	 * 
+	 * @param metadataEntry The new metadata entry.
+	 */
+	public void merge(MetadataEntry metadataEntry) {
+		checkNotNull(metadataEntry, "metadataEntry is null");
+		checkArgument(this.getClass().equals(metadataEntry.getClass()),
+				"Cannot merge " + metadataEntry + " into " + this);
+
+		this.type = metadataEntry.getType();
+		this.value = metadataEntry.getValue();
 	}
 
 	@Override

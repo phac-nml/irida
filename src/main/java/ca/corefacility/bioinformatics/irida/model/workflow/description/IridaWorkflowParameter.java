@@ -40,6 +40,10 @@ public class IridaWorkflowParameter {
 	// in the workflow definition .xml file
 	private List<IridaWorkflowDynamicSourceGalaxy> dynamicSource;
 
+	@XmlElementWrapper(name = "choices")
+	@XmlElements({@XmlElement(name = "choice", type = IridaWorkflowParameterChoice.class)})
+	private List<IridaWorkflowParameterChoice> choices;
+
 
 	@XmlElement(name = "toolParameter")
 	private List<IridaToolParameter> toolParameters;
@@ -96,6 +100,27 @@ public class IridaWorkflowParameter {
 		this.dynamicSource = Collections.singletonList(dynamicSource);
 		this.defaultValue = null;
 
+	}
+
+	/**
+	 * Creates a new {@link IridaWorkflowParameter} which maps to the given tool
+	 * parameters.
+	 *
+	 * @param name Parameter name.
+	 * @param required Is the parameter required?
+	 * @param choices Restricted set of choices for values of parameter.
+	 * @param toolParameters Tool parameters for this named parameter.
+	 */
+	public IridaWorkflowParameter(String name, boolean required,
+			List<IridaWorkflowParameterChoice> choices, List<IridaToolParameter> toolParameters) {
+		checkNotNull(name, "name is null");
+		checkNotNull(toolParameters, "toolParameters is null");
+		checkArgument(toolParameters.size() > 0, "toolParameters has no elements");
+
+		this.name = name;
+		this.required = required;
+		this.choices = choices;
+		this.toolParameters = toolParameters;
 	}
 
 	/**
@@ -158,6 +183,15 @@ public class IridaWorkflowParameter {
 	}
 
 	/**
+	 * Get the list of choices for this parameter
+	 *
+	 * @return list of choices for this parameter
+	 */
+	public List<IridaWorkflowParameterChoice> getChoices() {
+		return choices;
+	}
+
+	/**
 	 * Whether or not this parameter pulls its value from a Dynamic Source (eg. a Galaxy Tool Data Table)
 	 *
 	 * @return Boolean representing whether or not this parameter has a dynamic source
@@ -166,9 +200,28 @@ public class IridaWorkflowParameter {
 		return dynamicSource != null && dynamicSource.size() > 0;
 	}
 
+
+	/**
+	 * Does this parameter have a set of restricted choices?
+	 *
+	 * @return If this parameter has a list of choices
+	 */
+	public Boolean hasChoices() {
+		return choices != null && choices.size() > 0;
+	}
+
+	/**
+	 * Is the list of choices empty?
+	 *
+	 * @return if the list of choices is empty
+	 */
+	public Boolean isChoicesEmpty() {
+		return choices != null && choices.isEmpty();
+	}
+
 	@Override
 	public int hashCode() {
-		return Objects.hash(name, defaultValue, toolParameters, required, dynamicSource);
+		return Objects.hash(name, defaultValue, toolParameters, required, dynamicSource, choices);
 	}
 
 	@Override
@@ -181,7 +234,8 @@ public class IridaWorkflowParameter {
 			return Objects.equals(name, other.name) && Objects.equals(defaultValue, other.defaultValue)
 					&& Objects.equals(toolParameters, other.toolParameters)
 					&& Objects.equals(required, other.required)
-			        && Objects.equals(dynamicSource, other.dynamicSource);
+			        && Objects.equals(dynamicSource, other.dynamicSource)
+					&& Objects.equals(choices, other.choices);
 		}
 
 		return false;
@@ -189,12 +243,11 @@ public class IridaWorkflowParameter {
 
 	@Override
 	public String toString() {
-			String msg = "IridaWorkflowParameter [" +
-					"name=" + name +
-					", required=" + required +
-					", defaultValue=" + ((defaultValue == null) ? "null" : defaultValue) +
-					", dynamicSource=" + ((dynamicSource == null) ? "null" : dynamicSource.get(0).toString()) +
-					"]";
-			return msg;
+		return "IridaWorkflowParameter [name=" + name +
+				", required=" + required +
+				", defaultValue=" + ((defaultValue == null) ? "null" : defaultValue) +
+				", dynamicSource=" + ((dynamicSource == null) ? "null" : dynamicSource.get(0).toString()) +
+				", choices=" + ((choices == null) ? "null" : choices.toString()) +
+				"]";
 	}
 }

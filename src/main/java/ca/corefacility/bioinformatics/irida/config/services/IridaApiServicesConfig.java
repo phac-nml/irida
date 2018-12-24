@@ -1,13 +1,20 @@
 package ca.corefacility.bioinformatics.irida.config.services;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.validation.Validator;
 
@@ -16,14 +23,22 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.context.HierarchicalMessageSource;
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Conditional;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.task.SimpleAsyncTaskExecutor;
-import org.springframework.core.task.TaskExecutor;
+import org.springframework.core.io.ClassRelativeResourceLoader;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.concurrent.DelegatingSecurityContextScheduledExecutorService;
@@ -36,18 +51,30 @@ import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+
 import ca.corefacility.bioinformatics.irida.config.analysis.AnalysisExecutionServiceConfig;
 import ca.corefacility.bioinformatics.irida.config.analysis.ExecutionManagerConfig;
 import ca.corefacility.bioinformatics.irida.config.repository.ForbidJpqlUpdateDeletePostProcessor;
 import ca.corefacility.bioinformatics.irida.config.repository.IridaApiRepositoriesConfig;
 import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
 import ca.corefacility.bioinformatics.irida.config.services.conditions.NreplServerSpringCondition;
+import ca.corefacility.bioinformatics.irida.config.services.scheduled.IridaScheduledTasksConfig;
 import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsConfig;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.plugins.IridaPlugin;
+import ca.corefacility.bioinformatics.irida.plugins.IridaPluginException;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
-import ca.corefacility.bioinformatics.irida.processing.impl.*;
+import ca.corefacility.bioinformatics.irida.processing.impl.AssemblyFileProcessor;
+import ca.corefacility.bioinformatics.irida.processing.impl.ChecksumFileProcessor;
+import ca.corefacility.bioinformatics.irida.processing.impl.CoverageFileProcessor;
+import ca.corefacility.bioinformatics.irida.processing.impl.DefaultFileProcessingChain;
+import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
+import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
+import ca.corefacility.bioinformatics.irida.processing.impl.SistrTypingFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
@@ -56,9 +83,7 @@ import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.impl.InMemoryTaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionCleanupServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
+import ca.corefacility.bioinformatics.irida.util.IridaPluginMessageSource;
 import net.matlux.NreplServerSpring;
 
 /**
@@ -68,10 +93,10 @@ import net.matlux.NreplServerSpring;
  */
 @Configuration
 @Import({ IridaApiSecurityConfig.class, IridaApiAspectsConfig.class, IridaApiRepositoriesConfig.class,
-		ExecutionManagerConfig.class, AnalysisExecutionServiceConfig.class, IridaWorkflowsConfig.class,
-		WebEmailConfig.class })
+		ExecutionManagerConfig.class, AnalysisExecutionServiceConfig.class,
+		WebEmailConfig.class, IridaScheduledTasksConfig.class, IridaPluginConfig.class, IridaWorkflowsConfig.class})
 @ComponentScan(basePackages = { "ca.corefacility.bioinformatics.irida.service",
-		"ca.corefacility.bioinformatics.irida.processing", "ca.corefacility.bioinformatics.irida.pipeline.results" })
+		"ca.corefacility.bioinformatics.irida.processing", "ca.corefacility.bioinformatics.irida.pipeline.results.updater" })
 public class IridaApiServicesConfig {
 	private static final Logger logger = LoggerFactory.getLogger(IridaApiServicesConfig.class);
 	
@@ -114,6 +139,9 @@ public class IridaApiServicesConfig {
 
 	@Value("${irida.debug.nrepl.server.port:#{null}}")
 	private Integer nreplPort;
+
+	@Autowired
+	private IridaPluginConfig.IridaPluginList pipelinePlugins;
 	
 	@Bean
 	public BeanPostProcessor forbidJpqlUpdateDeletePostProcessor() {
@@ -129,9 +157,20 @@ public class IridaApiServicesConfig {
 		properties.setProperty("help.page.url", helpPageUrl);
 		properties.setProperty("help.contact.email", helpEmail);
 		properties.setProperty("irida.version", iridaVersion);
-		
-		final ReloadableResourceBundleMessageSource source = new ReloadableResourceBundleMessageSource();
-		source.setBasenames(RESOURCE_LOCATIONS);
+
+		ReloadableResourceBundleMessageSource source = new ReloadableResourceBundleMessageSource();
+
+		try {
+			final String WORKFLOWS_DIRECTORY = "/ca/corefacility/bioinformatics/irida/model/workflow/analysis/type/workflows/";
+			final List<String> workflowMessageSources = findWorkflowMessageSources(this.getClass().getClassLoader(), WORKFLOWS_DIRECTORY);
+			workflowMessageSources.addAll(Arrays.asList(RESOURCE_LOCATIONS));			
+			final String[] allMessageSources = workflowMessageSources.toArray(new String[workflowMessageSources.size()]);
+			source.setBasenames(allMessageSources);
+		} catch (IOException e) {
+			logger.error("Could not set/load workflow message sources. " + e);
+			source.setBasenames(RESOURCE_LOCATIONS);
+		}
+
 		source.setFallbackToSystemLocale(false);
 		source.setDefaultEncoding(DEFAULT_ENCODING);
 		source.setCommonMessages(properties);
@@ -141,8 +180,111 @@ public class IridaApiServicesConfig {
 		if (!env.acceptsProfiles("prod")) {
 			source.setCacheSeconds(0);
 		}
+		
+		try {
+			HierarchicalMessageSource pluginSources = buildIridaPluginMessageSources();
+			
+			if (pluginSources != null) {
+				// preserve parent of source MessageSource
+				if (source.getParentMessageSource() != null) {
+					pluginSources.setParentMessageSource(source.getParentMessageSource());
+				}
+				
+				source.setParentMessageSource(pluginSources);
+			}
+		} catch (IridaPluginException | IOException e) {
+			logger.error("Could not set/load workflow message sources from plugins. " + e);
+		}
 
 		return source;
+	}
+	
+	/**
+	 * Builds a {@link HierarchicalMessageSource} containing messages for all IRIDA plugins.
+	 * 
+	 * @return A {@link HierarchicalMessageSource} for all IRIDA plugins.
+	 */
+	private HierarchicalMessageSource buildIridaPluginMessageSources() throws IOException, IridaPluginException {
+		List<MessageSource> iridaPluginMessageSources = Lists.newArrayList();
+
+		// for every plugin, build a new MessageSource for the messages and add to the
+		// iridaPluginMessageSources list
+		for (IridaPlugin plugin : pipelinePlugins.getPlugins()) {
+			Path pluginWorkflowsPath = plugin.getWorkflowsPath();
+			logger.trace("Plugin " + plugin + ", workflow path " + pluginWorkflowsPath);
+
+			// finds resource paths for all the plugin messages.properties files
+			List<String> pluginMessageBasenames = findWorkflowMessageSources(plugin.getClass().getClassLoader(),
+					pluginWorkflowsPath.toString());
+
+			// builds new MessageSource out of the resource paths
+			ReloadableResourceBundleMessageSource pluginSource = new ReloadableResourceBundleMessageSource();
+			pluginSource.setResourceLoader(new ClassRelativeResourceLoader(plugin.getClass()));
+			pluginSource.setBasenames(pluginMessageBasenames.toArray(new String[pluginMessageBasenames.size()]));
+
+			iridaPluginMessageSources.add(pluginSource);
+		}
+
+		if (iridaPluginMessageSources.size() > 0) {
+			return new IridaPluginMessageSource(iridaPluginMessageSources);
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * Finds a list of resource paths to directories containing message.properties
+	 * files.
+	 * 
+	 * @param classLoader        The {@link ClassLoader} used to get resource paths.
+	 * @param workflowsDirectory The directory containing the workflow files (and
+	 *                           messages.properties files).
+	 * 
+	 * @return A {@link List} of resource paths to directories containing
+	 *         message.properties files.
+	 */
+	private List<String> findWorkflowMessageSources(ClassLoader classLoader, String workflowsDirectory)
+			throws IOException {
+
+		if (!workflowsDirectory.endsWith("/")) {
+			workflowsDirectory += "/";
+		}
+
+		// gets the classpath resource paths to any 'messages_en.properties' files under
+		// workflowsDirectory
+		final PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(classLoader);
+		final Resource[] resources = resolver
+				.getResources("classpath:" + workflowsDirectory + "**/messages_en.properties");
+
+		// extracts and returns the basenames for the paths to the
+		// 'messages_en.properties' files
+		final Pattern pattern = Pattern
+				.compile(String.format("^.+(%s.+\\/messages)_en.properties$", workflowsDirectory));
+		return Arrays.stream(resources).map(x -> getClasspathResourceBasename(pattern, x)).filter(Objects::nonNull)
+				.sorted(Comparator.reverseOrder()).collect(Collectors.toList());
+	}
+
+	/**
+	 * Gets the basename to a classpath resource path given a particular pattern to
+	 * match for the file name.
+	 * 
+	 * @param pattern The {@link Pattern} to use for stripping off the filename.
+	 * @param x       The resource to extract the path name from.
+	 * 
+	 * @return The basename for a classpath resource path, or null if the pattern
+	 *         does not match the resource.
+	 */
+	private String getClasspathResourceBasename(Pattern pattern, Resource x) {
+		try {
+			final String path = x.getURI().toString();
+			final Matcher matcher = pattern.matcher(path);
+			if (matcher.matches() && matcher.groupCount() == 1) {
+				return "classpath:" + matcher.group(1);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	@Bean(name = "uploadFileProcessingChain")
@@ -164,32 +306,9 @@ public class IridaApiServicesConfig {
 
 		return new DefaultFileProcessingChain(sequencingObjectRepository, qcRepository, fileProcessors);
 	}
-	
-	/**
-	 * A separate {@link FileProcessingChain} to be used for re-running coverage
-	 * measurements
-	 * 
-	 * @param sequencingObjectRepository
-	 *            a {@link SequencingObjectRepository}
-	 * @param qcRepository
-	 *            a {@link QCEntryRepository}
-	 * @param coverageProcessor
-	 *            the {@link CoverageFileProcessor}
-	 * @return a {@link FileProcessingChain} which only contains
-	 *         {@link CoverageFileProcessor}
-	 */
-	@Bean(name = "coverageFileProcessingChain")
-	public FileProcessingChain coverageFileProcssingChain(SequencingObjectRepository sequencingObjectRepository,
-			QCEntryRepository qcRepository, CoverageFileProcessor coverageProcessor) {
-
-		final List<FileProcessor> fileProcessors = Lists.newArrayList(coverageProcessor);
-
-		return new DefaultFileProcessingChain(sequencingObjectRepository, qcRepository, fileProcessors);
-	}
 
 	@Bean(name = "fileProcessingChainExecutor")
-	@Profile({ "dev", "prod" })
-	public TaskExecutor fileProcessingChainExecutor() {
+	public ThreadPoolTaskExecutor fileProcessingChainExecutor() {
 		ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
 		taskExecutor.setCorePoolSize(fpCoreSize);
 		taskExecutor.setMaxPoolSize(fpMaxSize);
@@ -198,11 +317,6 @@ public class IridaApiServicesConfig {
 		return taskExecutor;
 	}
 
-	@Bean(name = "fileProcessingChainExecutor")
-	@Profile({ "it", "test" })
-	public TaskExecutor fileProcessingChainExecutorIntegrationTest() {
-		return new SimpleAsyncTaskExecutor();
-	}
 
 	@Bean
 	public Validator validator() {
@@ -229,7 +343,6 @@ public class IridaApiServicesConfig {
 	 */
 	@Bean
 	@DependsOn("springLiquibase")
-	@Profile({"prod", "dev"})
 	public Executor analysisTaskExecutor(UserService userService) {
 		ScheduledExecutorService delegateExecutor = Executors.newScheduledThreadPool(4);
 		SecurityContext schedulerContext = createAnalysisTaskSecurityContext(userService);
@@ -238,7 +351,7 @@ public class IridaApiServicesConfig {
 	
 	@Bean
 	@DependsOn("springLiquibase")
-	@Profile({ "prod" })
+	@Profile({ "prod", "analysis" })
 	public AnalysisSubmissionCleanupService analysisSubmissionCleanupService(
 			AnalysisSubmissionRepository analysisSubmissionRepository, UserService userService) {
 		AnalysisSubmissionCleanupService analysisSubmissionCleanupService = new AnalysisSubmissionCleanupServiceImpl(
@@ -319,6 +432,5 @@ public class IridaApiServicesConfig {
 	public NreplServerSpring nRepl() {
 		return new NreplServerSpring(nreplPort);
 	}
-
 }
 

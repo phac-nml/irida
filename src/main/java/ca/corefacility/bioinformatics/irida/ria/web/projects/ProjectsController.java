@@ -105,7 +105,6 @@ public class ProjectsController {
 	public static final String PROJECT_METADATA_EDIT_PAGE = PROJECTS_DIR + "project_metadata_edit";
 	public static final String PROJECT_SAMPLES_PAGE = PROJECTS_DIR + "project_samples";
 	public static final String PROJECT_ACTIVITY_PAGE = PROJECTS_DIR + "project_details";
-	public static final String PROJECT_ANALYSES_PAGE = PROJECTS_DIR + "project_analyses";
 	private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
 
 	// Services
@@ -427,7 +426,52 @@ public class ProjectsController {
 		model.addAttribute("states", AnalysisState.values());
 		model.addAttribute("analysisTypes", workflowsService.getRegisteredWorkflowTypes());
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ANALYSES);
-		return PROJECT_ANALYSES_PAGE;
+		model.addAttribute("page", "analyses");
+		return "projects/analyses/pages/analyses_table.html";
+	}
+
+	/**
+	 * Get the page for analysis output files shared with a given {@link Project}
+	 *
+	 * @param projectId
+	 *            the ID of the {@link Project}
+	 * @param principal
+	 *            the logged in user
+	 * @param model
+	 *            model for view variables
+	 * @return name of the analysis view page
+	 */
+	@RequestMapping("/projects/{projectId}/analyses/shared-outputs")
+	public String getProjectSharedOutputFilesPage(@PathVariable Long projectId, Principal principal, Model model) {
+		Project project = projectService.read(projectId);
+		model.addAttribute("project", project);
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+		model.addAttribute("ajaxURL", "/analysis/ajax/project/" + projectId + "/list");
+		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ANALYSES);
+		model.addAttribute("page", "shared");
+		return "projects/analyses/pages/outputs.html";
+	}
+
+	/**
+	 * Get the page for automated analysis output files shared with a given {@link Project}
+	 *
+	 * @param projectId
+	 *            the ID of the {@link Project}
+	 * @param principal
+	 *            the logged in user
+	 * @param model
+	 *            model for view variables
+	 * @return name of the analysis view page
+	 */
+	@RequestMapping("/projects/{projectId}/analyses/automated-outputs")
+	public String getProjectAutomatedOutputFilesPage(@PathVariable Long projectId, Principal principal, Model model) {
+		Project project = projectService.read(projectId);
+		model.addAttribute("project", project);
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+		model.addAttribute("ajaxURL", "/analysis/ajax/project/" + projectId + "/list");
+		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ANALYSES);
+		model.addAttribute("page", "automated");
+		return "projects/analyses/pages/outputs.html";
 	}
 
 	/**

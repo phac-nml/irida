@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.exceptions;
 /**
  * Spring data envers barfs when revisions are attempted to be loaded for a
  * deleted resource. Please see
- * https://irida.corefacility.ca/gitlab/irida/irida/issues/41 and
  * https://github.com/spring-projects/spring-data-envers/issues/13 for more
  * information.
  * 

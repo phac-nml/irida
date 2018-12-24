@@ -59,7 +59,7 @@ public class PageUtilities {
 	}
 
 	public boolean checkSuccessNotification() {
-		return checkNotyNotification("noty_type_success");
+		return checkNotyNotification("noty_type__success");
 	}
 
 	public boolean checkWarningNotification() {

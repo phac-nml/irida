@@ -1,21 +1,22 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.analysis;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
-import java.nio.file.Files;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Lob;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import org.springframework.util.ReflectionUtils;
 
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableSet;
@@ -30,6 +31,8 @@ import com.google.common.collect.ImmutableSet;
 @Table(name = "analysis_fastqc")
 public class AnalysisFastQC extends Analysis {
 
+	@NotNull
+	private final String fastqcVersion;
 	@NotNull
 	private final String fileType;
 	@NotNull
@@ -66,12 +69,13 @@ public class AnalysisFastQC extends Analysis {
 		this.maxLength = null;
 		this.gcContent = null;
 		this.overrepresentedSequences = null;
-
-		this.setAnalysisType(AnalysisType.FASTQC);
+		this.fastqcVersion = null;
+		
+		this.setAnalysisType(BuiltInAnalysisTypes.FASTQC);
 	}
 
 	public AnalysisFastQC(final AnalysisFastQCBuilder builder) {
-		super(builder.executionManagerAnalysisId, builder.images, builder.description, builder.additionalProperties);
+				super(builder.executionManagerAnalysisId, builder.images, builder.description, builder.additionalProperties);
 		this.fileType = builder.fileType;
 		this.encoding = builder.encoding;
 		this.totalSequences = builder.totalSequences;
@@ -80,10 +84,10 @@ public class AnalysisFastQC extends Analysis {
 		this.minLength = builder.minLength;
 		this.maxLength = builder.maxLength;
 		this.gcContent = builder.gcContent;
-
 		this.overrepresentedSequences = builder.overrepresentedSequences;
-
-		this.setAnalysisType(AnalysisType.FASTQC);
+		this.fastqcVersion = builder.fastqcVersion;
+		
+		this.setAnalysisType(BuiltInAnalysisTypes.FASTQC);
 	}
 
 	/**
@@ -93,8 +97,8 @@ public class AnalysisFastQC extends Analysis {
 	public static AnalysisFastQCBuilder builder() {
 		return new AnalysisFastQCBuilder();
 	}
-	/**
 
+	/**
 	 * Get a AnalysisFastQCBuilder sloppy builder that doesn't check fields
 	 * @return a AnalysisFastQCBuilder
 	 */
@@ -107,6 +111,7 @@ public class AnalysisFastQC extends Analysis {
 	 * can optionally check if all required fields are set.
 	 */
 	public static class AnalysisFastQCBuilder {
+		private String fastqcVersion;
 		private String fileType;
 		private String encoding;
 		private Integer totalSequences;
@@ -119,10 +124,10 @@ public class AnalysisFastQC extends Analysis {
 		private AnalysisOutputFile perSequenceQualityScoreChart;
 		private AnalysisOutputFile duplicationLevelChart;
 		private Set<OverrepresentedSequence> overrepresentedSequences;
+		private AnalysisOutputFile fastQCReport;
 		private String description;
 		private String executionManagerAnalysisId;
 		private Map<String, String> additionalProperties;
-
 		private Map<String,AnalysisOutputFile> images;
 
 		private final boolean enforceRequiredFieldCheck;
@@ -150,7 +155,6 @@ public class AnalysisFastQC extends Analysis {
 		}
 
 
-
 		/**
 		 * set the additionalProperties
 		 * @param additionalProperties the additionalProperties
@@ -172,6 +176,16 @@ public class AnalysisFastQC extends Analysis {
 		}
 
 		/**
+		 * Set the fastqc version used in the analysis
+		 * @param fastqcVersion the version of fastqc used
+		 * @return the builder
+		 */
+		public AnalysisFastQCBuilder fastqcVersion(String fastqcVersion) {
+			this.fastqcVersion = fastqcVersion;
+			return this;
+		}
+
+		/**
 		 * set the description
 		 * @param description the description
 		 * @return the builder
@@ -180,7 +194,6 @@ public class AnalysisFastQC extends Analysis {
 			this.description = description;
 			return this;
 		}
-
 
 		/**
 		 * set the overrepresentedSequences
@@ -309,7 +322,6 @@ public class AnalysisFastQC extends Analysis {
 		 * @return the new AnalysisFastQC
 		 */
 		public AnalysisFastQC build() {
-
 			images = new HashMap<>();
 			images.put("perBaseQualityScoreChart", perBaseQualityScoreChart);
 			images.put("perSequenceQualityScoreChart", perSequenceQualityScoreChart);
@@ -337,6 +349,13 @@ public class AnalysisFastQC extends Analysis {
 			}*/
 			return new AnalysisFastQC(this);
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public Set<AnalysisOutputFile> getAnalysisOutputFiles() {
+		return ImmutableSet.of(fastQCReport);
 	}
 
 	/**
@@ -370,6 +389,10 @@ public class AnalysisFastQC extends Analysis {
 	@JsonIgnore
 	public byte[] getDuplicationLevelChart() throws IOException {
 		return getBytesForFile("duplicationLevelChart");
+	}
+
+	public String getFastqcVersion() {
+		return fastqcVersion;
 	}
 
 	private byte[] getBytesForFile(String key) throws IOException {
@@ -413,5 +436,4 @@ public class AnalysisFastQC extends Analysis {
 	public Set<OverrepresentedSequence> getOverrepresentedSequences() {
 		return ImmutableSet.copyOf(overrepresentedSequences);
 	}
-
 }

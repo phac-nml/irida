@@ -294,6 +294,45 @@ To save analysis results back to a sample, on submission of a pipeline please se
 
 ![save-results-to-samples](images/save-results-to-samples.png)
 
+Results can also be saved after a pipeline has completed.  To save analysis results after the pipeline has finished, click the `Share Results` tab on the pipeline results page.  If you are able to save the analysis results back to the sample, a `Save Results` section will be displayed.  Click the button to save the results to the related samples.
+
+![save-results-to-samples-after](images/save-results-to-samples-after.png)
+
+
+## Downloading single sample analysis output files in batch
+
+You can download all of your single sample analysis output files in batch by clicking **Analyses>Output Files** in the top navigation bar:
+
+![](images/user-outputs.png) 
+
+You will see a table of your single sample analysis output files:
+
+![](images/batch-download-user-outputs.png)
+
+You can apply filters to any columns by clicking the column menu icon, for example, applying a filter to the `File` column:
+
+![](images/batch-download-column-filter-open.png)
+
+Filtering for files with `contigs` in the filename:
+
+![](images/batch-download-filtering-on-contains-contigs.png)
+
+You will then see a filter icon displayed beside the column name ![](images/batch-download-column-filter-icon.png)
+
+You can select the files you wish to download using the checkboxes or by holding the `Ctrl` or `Shift` keys as you click on the rows for the files you wish to download. 
+
+![](images/batch-download-multiselect-refine.png)
+
+Or you can click the checkbox in the leftmost column header to select all files displayed:
+
+![](images/batch-download-select-all.png) 
+
+Click **Download** to download. Depending on the number of files you have selected, preparation of the download may take a moment. 
+
+Single files will be downloaded as is, while multiple files will downloaded bundled together in ZIP file. 
+
+![](images/download-confirmation-ff.png) 
+
 ## Errors when executing pipelines
 
 You may experience an analysis pipeline execution failure caused by an error in one or more tools within a pipeline.

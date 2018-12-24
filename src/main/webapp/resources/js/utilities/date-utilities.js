@@ -43,12 +43,22 @@ export function fromNow({ date }) {
 /**
  * Format unix timestamp as human readable string.
  * @param  {Number} date unix timestamp
+ * @param {String} format defaults to "lll" which is mmm dd, YYYY h:mm AM
  * @return {string} formatted date
  */
-export function formatDate({ date }) {
+export function formatDate({ date, format = "lll" }) {
   const t = new Date(date);
   if (moment.isDate(t)) {
-    return moment(t).format("lll");
+    return moment(t).format(format);
   }
   return "";
+}
+
+/**
+ * Utility function to determine if a string is a date.
+ * @param {string} date
+ * @returns {boolean}
+ */
+export function isDate(date) {
+  return moment.isDate(new Date(date));
 }

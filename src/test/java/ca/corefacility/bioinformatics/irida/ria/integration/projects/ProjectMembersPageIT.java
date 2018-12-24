@@ -46,7 +46,7 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 			),
 			ImmutableMap.of(
 					"href", "/projects/1/settings/members",
-					"text", "members"
+					"text", "Members"
 			)
 	);
 

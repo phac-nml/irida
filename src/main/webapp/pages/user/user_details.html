@@ -11,11 +11,25 @@
 			userId: /*[[${user.getId()}]]*/ 1
 		};
 	</script>
+	<style>
+		#projectsTable {
+			table-layout: fixed;
+			width: 100% !important;
+		}
+
+		#projectsTable td,
+		#projectsTable th {
+			width: auto !important;
+			white-space: normal;
+			text-overflow: ellipsis;
+			overflow: hidden;
+		}
+	</style>
 </head>
 <body>
 <main layout:fragment="page">
 	<input id="userId" type="hidden" th:value="${user.getId()}"/>
-	<div class="col-md-12">
+    <div class="col-lg-8 col-lg-offset-2 col-md-12">
 		<div th:if="${mailFailure}" class="alert alert-warning" th:text="#{user.creation.activation.mail.failure}">
 		</div>
 		<div class="row">
@@ -29,7 +43,7 @@
 		</div>
 		<div class="row">
 			<!-- User details -->
-			<div class="col-md-6" ng-controller="DetailsCtrl as details">
+            <div class="col-md-4" ng-controller="DetailsCtrl as details">
 				<div class="sidebar">
 					<div class="sidebar__heading clearfix">
 						<h2 class="pull-left" th:text="#{user.details}">_User Details_</h2>
@@ -129,7 +143,7 @@
 							
 							<div class="sidebar__item">
 									<div class="sidebar__icon">
-										<i class="fa fa-clock-o" aria-hidden="true"></i>
+                                        <i class="far fa-clock"></i>
 									</div>
 									<div th:text="#{user.last-login}">_phone</div>
 									<div class="sidebar__value" id="user-last-login" th:if="${user.lastLogin}"
@@ -138,9 +152,8 @@
 					</div>
 				</div>
 			</div>
-
 			<!-- User project table -->
-			<div class="col-md-6 ">
+            <div class="col-md-8" th:if="${canEditUser}">
 				<div class="panel panel-default">
 					<div class="panel-heading clearfix">
 						<h3 class="panel-title pull-left" th:text="#{user.projects.title}">_Projects_</h3>

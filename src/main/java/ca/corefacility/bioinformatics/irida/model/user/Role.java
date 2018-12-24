@@ -1,13 +1,5 @@
 package ca.corefacility.bioinformatics.irida.model.user;
 
-import java.util.Objects;
-
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-
-import org.hibernate.envers.Audited;
 import org.springframework.security.core.GrantedAuthority;
 
 /**

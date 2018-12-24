@@ -114,9 +114,9 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService {
 				delete(api);
 				token = create(token);
 
-				logger.debug("Token for api " + api + " updated by refresh token.");
+				logger.trace("Token for api " + api + " updated by refresh token.");
 			} else {
-				logger.debug("No refresh token for api " + api + ". Cannot update access token.");
+				logger.trace("No refresh token for api " + api + ". Cannot update access token.");
 			}
 		} catch (EntityNotFoundException ex) {
 			logger.debug("Token not found for api " + api + ".  Cannot update access token.");
@@ -143,7 +143,7 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService {
 
 		// Build the token location for this service
 		URI serviceTokenLocation = UriBuilder.fromUri(serviceURI).path("oauth").path("token").build();
-		logger.debug("Remote token location: " + serviceTokenLocation);
+		logger.trace("Remote token location: " + serviceTokenLocation);
 
 		// Create the token request form the given auth code
 		OAuthClientRequest tokenRequest = OAuthClientRequest.tokenLocation(serviceTokenLocation.toString())
@@ -164,7 +164,7 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService {
 		Long expiresIn = accessTokenResponse.getExpiresIn();
 		Long currentTime = System.currentTimeMillis();
 		Date expiry = new Date(currentTime + (expiresIn * ONE_SECOND_IN_MS));
-		logger.debug("Token expiry: " + expiry);
+		logger.trace("Token expiry: " + expiry);
 
 		// create the OAuth2 token and store it
 		RemoteAPIToken token = new RemoteAPIToken(accessToken, refreshToken, remoteAPI, expiry);
@@ -221,7 +221,7 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService {
 		Long expiresIn = accessTokenResponse.getExpiresIn();
 		Long currentTime = System.currentTimeMillis();
 		Date expiry = new Date(currentTime + (expiresIn * ONE_SECOND_IN_MS));
-		logger.debug("Token expiry: " + expiry);
+		logger.trace("Token expiry: " + expiry);
 
 		// create the OAuth2 token
 		return new RemoteAPIToken(accessToken, refreshToken, remoteAPI, expiry);

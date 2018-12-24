@@ -1,17 +1,77 @@
 import $ from "jquery";
-import { Grid } from "ag-grid/main";
+import { Grid } from "ag-grid-community/main";
 import { analysisOutputFileApiUrl, panelHeading } from "./preview.utils";
-import "ag-grid/dist/styles/ag-grid.css";
-import "ag-grid/dist/styles/ag-theme-balham.css";
+import "ag-grid-community/dist/styles/ag-grid.css";
+import "ag-grid-community/dist/styles/ag-theme-balham.css";
+
+/**
+ * Parse CSV line into cell values array.
+ *
+ * Try to take into account the potential for value quoting and that commas can
+ * be present within quoted values.
+ *
+ * @param line A line from a comma-separated values file.
+ * @returns {Array} Cell values from the CSV line.
+ */
+function parseCsvLine(line) {
+  function* gen(x) {
+    yield* x;
+  }
+  const genLine = gen(line);
+  const cells = [];
+  let currCell = "";
+  let isInQuote = false;
+  let lastValue = null;
+  while (true) {
+    const next = genLine.next();
+    if (next.done) {
+      cells.push(currCell);
+      break;
+    }
+    const value = next.value;
+    switch (value) {
+      case ",":
+        if (isInQuote) {
+          currCell += value;
+          break;
+        }
+        cells.push(currCell);
+        currCell = "";
+        break;
+      case '"':
+        if (isInQuote && lastValue === "\\") {
+          currCell += value;
+          break;
+        }
+        if (lastValue === ",") {
+          isInQuote = true;
+          break;
+        }
+        isInQuote = false;
+        break;
+      default:
+        currCell += value;
+    }
+    lastValue = value;
+  }
+  return cells;
+}
+
+function parseTabDelimitedLine(line) {
+  return line.split("\t");
+}
 
 /**
  * Get basic ag-grid column definitions from a tab-delimited string
  * @param {string} firstLine Tab-delimited first line of an AnalysisOutputFile
+ * @param {boolean} isCSV Is CSV format? Assume tab-delimited if false.
  * @returns {Array<Object<string>>} Basic ag-grid column definitions
  */
-function parseHeadersTabDelimited(firstLine) {
+function parseHeader(firstLine, isCSV = false) {
   let headers = [{ headerName: "#", field: "index" }];
-  const firstRow = firstLine.split("\t");
+  const firstRow = isCSV
+    ? parseCsvLine(firstLine)
+    : parseTabDelimitedLine(firstLine);
   for (let i = 0; i < firstRow.length; i++) {
     const row = firstRow[i];
     headers.push({
@@ -26,12 +86,14 @@ function parseHeadersTabDelimited(firstLine) {
  * Split each line on tab characters.
  * @param {Array<string>} lines Tab-delimited lines
  * @param {number} offset Index offset
+ * @param {boolean} isCSV Is CSV formatted line? Assume tab-delimited if false.
  * @returns {Array<Object<string>>}
  */
-function parseRowsTabDelimited(lines, offset = 0) {
+function parseRows(lines, offset = 0, isCSV = false) {
   const rows = [];
   for (let i = 0; i < lines.length; i++) {
-    const cells = lines[i].split("\t");
+    const line = lines[i];
+    const cells = isCSV ? parseCsvLine(line) : parseTabDelimitedLine(line);
     const row = { index: offset + i + 1 };
     for (let j = 0; j < cells.length; j++) {
       row[j + ""] = cells[j];
@@ -88,9 +150,17 @@ function autoSizeAll({ columnApi }) {
  * @param {jQuery|HTMLElement} $status Status
  * @param {Array<Object<string>>} headers
  * @param {string} baseUrl
+ * @param {boolean} isCSV
  * @param {number} PAGE_SIZE
  */
-function initAgGrid($grid, $status, headers, baseUrl, PAGE_SIZE = 100) {
+function initAgGrid(
+  $grid,
+  $status,
+  headers,
+  baseUrl,
+  isCSV = false,
+  PAGE_SIZE = 100
+) {
   const dataSource = {
     rowCount: null,
     getRows: function({ startRow, endRow, successCallback }) {
@@ -102,7 +172,7 @@ function initAgGrid($grid, $status, headers, baseUrl, PAGE_SIZE = 100) {
       $.ajax({
         url: url,
         success: function onSuccess({ lines }) {
-          const rows = parseRowsTabDelimited(lines, startRow);
+          const rows = parseRows(lines, startRow, isCSV);
           let last = -1;
           if (rows.length < PAGE_SIZE) {
             last = startRow + rows.length;
@@ -153,8 +223,9 @@ export function renderTabularPreview(
   height = 300,
   page_size = 100
 ) {
-  const { firstLine } = aof;
-  const headers = parseHeadersTabDelimited(firstLine);
+  const { firstLine, fileExt } = aof;
+  const isCSV = fileExt === "csv";
+  const headers = parseHeader(firstLine, isCSV);
   const { $panel, gridId, $status } = createGridPanel(baseUrl, aof, height);
   $container.append($panel);
   const apiUrl = analysisOutputFileApiUrl(baseUrl, aof);
@@ -163,6 +234,7 @@ export function renderTabularPreview(
     $status,
     headers,
     apiUrl,
+    isCSV,
     page_size
   );
 }

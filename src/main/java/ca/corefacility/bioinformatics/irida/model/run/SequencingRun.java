@@ -63,7 +63,7 @@ public abstract class SequencingRun extends IridaResourceSupport implements Muta
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
 
-	@OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE }, mappedBy = "sequencingRun")
+	@OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.DETACH }, mappedBy = "sequencingRun")
 	private Set<SequencingObject> sequencingObject;
 
 	@NotNull

@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -21,11 +22,20 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
@@ -35,14 +45,16 @@ import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.*;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
+import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisOutputFileInfo;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisProjectShare;
+import ca.corefacility.bioinformatics.irida.ria.web.components.AnalysisOutputFileDownloadManager;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
@@ -56,27 +68,26 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-
 /**
  * Controller for Analysis.
  */
 @Controller
+@Scope("session")
 @RequestMapping("/analysis")
 public class AnalysisController {
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisController.class);
 	// PAGES
 	public static final Map<AnalysisType, String> PREVIEWS = ImmutableMap
-			.of(AnalysisType.PHYLOGENOMICS, "tree", AnalysisType.SISTR_TYPING, "sistr");
+			.of(BuiltInAnalysisTypes.PHYLOGENOMICS, "tree", BuiltInAnalysisTypes.SISTR_TYPING, "sistr",
+					BuiltInAnalysisTypes.MLST_MENTALIST, "tree");
 	private static final String BASE = "analysis/";
 	public static final String PAGE_DETAILS_DIRECTORY = BASE + "details/";
 	public static final String PREVIEW_UNAVAILABLE = PAGE_DETAILS_DIRECTORY + "unavailable";
 	public static final String PAGE_ANALYSIS_LIST = "analyses/analyses";
+	public static final String PAGE_USER_ANALYSIS_OUPUTS = "analyses/user-analysis-outputs";
+
+	private static final String TREE_EXT = "newick";
+	private static final String EMPTY_TREE = "();";
 
 	/*
 	 * SERVICES
@@ -91,15 +102,20 @@ public class AnalysisController {
 	private MetadataTemplateService metadataTemplateService;
 	private SequencingObjectService sequencingObjectService;
 	private AnalysesListingService analysesListingService;
+	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
+	private AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager;
 
 	@Autowired
 	public AnalysisController(AnalysisSubmissionService analysisSubmissionService,
 			IridaWorkflowsService iridaWorkflowsService, UserService userService, SampleService sampleService,
 			ProjectService projectService, UpdateAnalysisSubmissionPermission updateAnalysisPermission,
 			MetadataTemplateService metadataTemplateService, SequencingObjectService sequencingObjectService,
-			AnalysesListingService analysesListingService, MessageSource messageSource) {
+			AnalysesListingService analysesListingService,
+			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor,
+			AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager, MessageSource messageSource) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
+		this.analysisOutputFileDownloadManager = analysisOutputFileDownloadManager;
 		this.messageSource = messageSource;
 		this.userService = userService;
 		this.updateAnalysisPermission = updateAnalysisPermission;
@@ -108,6 +124,7 @@ public class AnalysisController {
 		this.metadataTemplateService = metadataTemplateService;
 		this.sequencingObjectService = sequencingObjectService;
 		this.analysesListingService = analysesListingService;
+		this.analysisSubmissionSampleProcessor = analysisSubmissionSampleProcessor;
 	}
 
 	// ************************************************************************************************
@@ -145,6 +162,67 @@ public class AnalysisController {
 		return PAGE_ANALYSIS_LIST;
 	}
 
+
+	/**
+	 * Get the user {@link Analysis} list page
+	 *
+	 * @param model Model for view variables
+	 * @return Name of the analysis page view
+	 */
+	@RequestMapping("/user/analysis-outputs")
+	public String getUserAnalysisOutputsPage(Model model) {
+		return PAGE_USER_ANALYSIS_OUPUTS;
+	}
+
+	/**
+	 * Get all {@link User} generated {@link AnalysisOutputFile} info for principal User
+	 * @param principal Principal {@link User}
+	 * @return {@link User} generated {@link AnalysisOutputFile} info
+	 */
+	@RequestMapping(value = "/ajax/user/analysis-outputs")
+	@ResponseBody
+	public List<ProjectSampleAnalysisOutputInfo> getAllUserAnalysisOutputInfo(Principal principal) {
+		final User user = userService.getUserByUsername(principal.getName());
+		return analysisSubmissionService.getAllUserAnalysisOutputInfo(user);
+	}
+
+	/**
+	 * Get all {@link User} generated {@link AnalysisOutputFile} info
+	 * @param userId {@link User} id
+	 * @return {@link User} generated {@link AnalysisOutputFile} info
+	 */
+	@RequestMapping(value = "/ajax/user/{userId}/analysis-outputs")
+	@ResponseBody
+	public List<ProjectSampleAnalysisOutputInfo> getAllUserAnalysisOutputInfo(@PathVariable Long userId) {
+		final User user = userService.read(userId);
+		return analysisSubmissionService.getAllUserAnalysisOutputInfo(user);
+	}
+
+
+	/**
+	 * Get analysis output file information for all analyses shared with a {@link Project}.
+	 *
+	 * @param projectId {@link Project} id
+	 * @return list of {@link ProjectSampleAnalysisOutputInfo}
+	 */
+	@RequestMapping(value = "/ajax/project/{projectId}/shared-analysis-outputs")
+	@ResponseBody
+	public List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoSharedWithProject(@PathVariable Long projectId) {
+		return analysisSubmissionService.getAllAnalysisOutputInfoSharedWithProject(projectId);
+	}
+
+	/**
+	 * Get analysis output file information for all automated analyses for a {@link Project}.
+	 *
+	 * @param projectId {@link Project} id
+	 * @return list of {@link ProjectSampleAnalysisOutputInfo}
+	 */
+	@RequestMapping(value = "/ajax/project/{projectId}/automated-analysis-outputs")
+	@ResponseBody
+	public List<ProjectSampleAnalysisOutputInfo> getAllAutomatedAnalysisOutputInfoForAProject(@PathVariable Long projectId) {
+		return analysisSubmissionService.getAllAutomatedAnalysisOutputInfoForAProject(projectId);
+	}
+
 	/**
 	 * View details about an individual analysis submission
 	 *
@@ -159,23 +237,26 @@ public class AnalysisController {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		model.addAttribute("analysisSubmission", submission);
 
+		boolean canShareToSamples = false;
+		if (submission.getAnalysis() != null) {
+			canShareToSamples = analysisSubmissionSampleProcessor
+					.hasRegisteredAnalysisSampleUpdater(submission.getAnalysis().getAnalysisType());
+		}
+
+		model.addAttribute("canShareToSamples", canShareToSamples);
+
+
 		UUID workflowUUID = submission.getWorkflowId();
 		logger.trace("Workflow ID is " + workflowUUID);
 
-		IridaWorkflow iridaWorkflow;
-		try {
-			iridaWorkflow = workflowsService.getIridaWorkflow(workflowUUID);
-		} catch (IridaWorkflowNotFoundException e) {
-			logger.error("Error finding workflow, ", e);
-			throw new EntityNotFoundException("Couldn't find workflow for submission " + submission.getId(), e);
-		}
+		IridaWorkflow iridaWorkflow = workflowsService.getIridaWorkflowOrUnknown(submission);
 
 		// Get the name of the workflow
 		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription()
 				.getAnalysisType();
 		model.addAttribute("analysisType", analysisType);
 		String viewName = getViewForAnalysisType(analysisType);
-		String workflowName = messageSource.getMessage("workflow." + analysisType.toString() + ".title", null, locale);
+		String workflowName = messageSource.getMessage("workflow." + analysisType.getType() + ".title", null, analysisType.getType(), locale);
 		model.addAttribute("workflowName", workflowName);
 		model.addAttribute("version", iridaWorkflow.getWorkflowDescription()
 				.getVersion());
@@ -207,10 +288,12 @@ public class AnalysisController {
 		try {
 			if (submission.getAnalysisState()
 					.equals(AnalysisState.COMPLETED)) {
-				if (analysisType.equals(AnalysisType.PHYLOGENOMICS)) {
+				if (analysisType.equals(BuiltInAnalysisTypes.PHYLOGENOMICS) || analysisType.equals(BuiltInAnalysisTypes.MLST_MENTALIST)) {
 					tree(submission, model);
-				} else if (analysisType.equals(AnalysisType.SISTR_TYPING)) {
+				} else if (analysisType.equals(BuiltInAnalysisTypes.SISTR_TYPING)) {
 					model.addAttribute("sistr", true);
+				} else if (analysisType.equals(BuiltInAnalysisTypes.BIO_HANSEL)) {
+					model.addAttribute("bio_hansel", true);
 				}
 			}
 
@@ -271,10 +354,19 @@ public class AnalysisController {
 	public List<AnalysisOutputFileInfo> getOutputFilesInfo(@PathVariable Long id) {
 		AnalysisSubmission submission = analysisSubmissionService.read(id);
 		Analysis analysis = submission.getAnalysis();
-		Set<String> outputNames = analysis.getAnalysisOutputFileNames();
+		List<String> outputNames;
+		try {
+			outputNames = workflowsService.getOutputNames(submission.getWorkflowId());
+		} catch (IridaWorkflowNotFoundException e) {
+			outputNames = Lists.newArrayList(analysis.getAnalysisOutputFileNames());
+			Collections.sort(outputNames);
+		}
+
 		return outputNames.stream()
 				.map((outputName) -> getAnalysisOutputFileInfo(submission, analysis, outputName))
 				.filter(Objects::nonNull)
+				.filter(x -> x.getFileSizeBytes() > 0L)
+				.filter(x -> !(TREE_EXT.equals(x.getFileExt()) && EMPTY_TREE.equals(x.getFirstLine())))
 				.collect(Collectors.toList());
 	}
 
@@ -288,9 +380,9 @@ public class AnalysisController {
 	 */
 	private AnalysisOutputFileInfo getAnalysisOutputFileInfo(AnalysisSubmission submission, Analysis analysis,
 			String outputName) {
-		final ImmutableSet<String> BLACKLIST_FILE_EXT = ImmutableSet.of("zip");
+		final ImmutableSet<String> BLACKLIST_FILE_EXT = ImmutableSet.of("zip", "pdf", "html");
 		// set of file extensions for indicating whether the first line of the file should be read
-		final ImmutableSet<String> FILE_EXT_READ_FIRST_LINE = ImmutableSet.of("tsv", "txt", "tabular", "csv", "tab");
+		final ImmutableSet<String> FILE_EXT_READ_FIRST_LINE = ImmutableSet.of("tsv", "txt", "tabular", "csv", "tab", TREE_EXT);
 		final AnalysisOutputFile aof = analysis.getAnalysisOutputFile(outputName);
 		final Long aofId = aof.getId();
 		final String aofFilename = aof.getFile()
@@ -459,7 +551,7 @@ public class AnalysisController {
 
 	/**
 	 * Get the status of projects that can be shared with the given analysis
-	 * 
+	 *
 	 * @param submissionId
 	 *            the {@link AnalysisSubmission} id
 	 * @return a list of {@link AnalysisController.SharedProjectResponse}
@@ -511,19 +603,18 @@ public class AnalysisController {
 	 * {@link Project}
 	 *
 	 * @param submissionId the {@link AnalysisSubmission} id to share/unshare
-	 * @param projectId    the {@link Project} id to share with
-	 * @param shareStatus  whether or not to share the {@link AnalysisSubmission}
+	 * @param projectShare {@link AnalysisProjectShare} describes of the project and the share status.
 	 * @param locale       Locale of the logged in user
 	 * @return Success message if successful
 	 */
 	@RequestMapping(value = "/ajax/{submissionId}/share", method = RequestMethod.POST)
 	public Map<String, String> updateProjectShare(@PathVariable Long submissionId,
-			@RequestParam("project") Long projectId, @RequestParam("shared") boolean shareStatus, Locale locale) {
+			@RequestBody AnalysisProjectShare projectShare, Locale locale) {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
-		Project project = projectService.read(projectId);
+		Project project = projectService.read(projectShare.getProjectId());
 
 		String message = "";
-		if (shareStatus) {
+		if (projectShare.isShareStatus()) {
 			analysisSubmissionService.shareAnalysisSubmissionWithProject(submission, project);
 
 			message = messageSource.getMessage("analysis.details.share.enable", new Object[] { project.getLabel() },
@@ -538,6 +629,38 @@ public class AnalysisController {
 	}
 
 	/**
+	 * Save the results of an analysis back to the samples
+	 *
+	 * @param submissionId ID of the {@link AnalysisSubmission}
+	 * @param locale       locale of the logged in user
+	 * @return success message
+	 */
+	@RequestMapping(value = "/ajax/{submissionId}/save-results", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, String> saveResultsToSamples(@PathVariable Long submissionId, Locale locale) {
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+
+		if(submission.getUpdateSamples()){
+			String message = messageSource.getMessage("analysis.details.save.alreadysavederror", null, locale);
+			return ImmutableMap.of("result", "error", "message", message);
+		}
+
+		try {
+			analysisSubmissionSampleProcessor.updateSamples(submission);
+
+			submission.setUpdateSamples(true);
+			analysisSubmissionService.update(submission);
+		} catch (PostProcessingException e) {
+			String message = messageSource.getMessage("analysis.details.save.processingerror", null, locale);
+			return ImmutableMap.of("result", "error", "message", message);
+		}
+
+		String message = messageSource.getMessage("analysis.details.save.response", null, locale);
+
+		return ImmutableMap.of("result", "success", "message", message);
+	}
+
+	/**
 	 * Get the page for viewing advanced phylogenetic visualization
 	 *
 	 * @param submissionId {@link Long} identifier for an {@link AnalysisSubmission}
@@ -547,7 +670,10 @@ public class AnalysisController {
 	@RequestMapping("/{submissionId}/advanced-phylo")
 	public String getAdvancedPhylogeneticVisualizationPage(@PathVariable Long submissionId, Model model) {
 
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+
 		model.addAttribute("submissionId", submissionId);
+		model.addAttribute("submission", submission);
 		return BASE + "visualizations/phylocanvas-metadata";
 	}
 
@@ -556,7 +682,7 @@ public class AnalysisController {
 	// ************************************************************************************************
 
 	/**
-	 * Construct the model parameters for an {@link AnalysisType#PHYLOGENOMICS}
+	 * Construct the model parameters for PHYLOGENOMICS or MLST_MENTALIST
 	 * {@link Analysis}
 	 *
 	 * @param submission The analysis submission
@@ -568,12 +694,25 @@ public class AnalysisController {
 
 		Analysis analysis = submission.getAnalysis();
 		AnalysisOutputFile file = analysis.getAnalysisOutputFile(treeFileKey);
+		if (file == null) {
+			throw new IOException("No tree file for analysis: " + submission);
+		}
 		List<String> lines = Files.readAllLines(file.getFile());
 		model.addAttribute("analysis", analysis);
-		model.addAttribute("newick", lines.get(0));
 
-		// inform the view to display the tree preview
-		model.addAttribute("preview", "tree");
+		if (lines.size() > 1) {
+			logger.warn("Multiple lines in tree file, will only display first tree. For analysis: " + submission);
+		} else {
+			String tree = lines.get(0);
+			if (EMPTY_TREE.equals(tree)) {
+				logger.debug("Empty tree found, will hide tree preview. For analysis: " + submission);
+			} else {
+				model.addAttribute("newick", tree);
+
+				// inform the view to display the tree preview
+				model.addAttribute("preview", "tree");
+			}
+		}
 	}
 
 	/**
@@ -659,7 +798,7 @@ public class AnalysisController {
 		}
 		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription()
 				.getAnalysisType();
-		if (analysisType.equals(AnalysisType.SISTR_TYPING)) {
+		if (analysisType.equals(BuiltInAnalysisTypes.SISTR_TYPING)) {
 			Analysis analysis = submission.getAnalysis();
 			Path path = analysis.getAnalysisOutputFile(sistrFileKey)
 					.getFile();
@@ -684,7 +823,7 @@ public class AnalysisController {
 
 						result.put("sample_name", sample.getSampleName());
 					} else {
-						logger.error("Invalid number of associated samles for submission " + submission);
+						logger.error("Invalid number of associated samples for submission " + submission);
 					}
 				} else {
 					logger.error("SISTR results for file [" + path + "] are not correctly formatted");
@@ -739,15 +878,44 @@ public class AnalysisController {
 	}
 
 	/**
+	 * Prepare the download of multiple {@link AnalysisOutputFile} by adding them to a selection.
+	 *
+	 * @param outputs Info for {@link AnalysisOutputFile} to download
+	 * @param response {@link HttpServletResponse}
+	 * @return Map with the size of the selection for download.
+	 */
+	@RequestMapping(value = "/ajax/download/prepare", method = RequestMethod.POST)
+	@ResponseBody
+	public Map prepareDownload(@RequestBody List<ProjectSampleAnalysisOutputInfo> outputs,
+			HttpServletResponse response) {
+		final Long selectionSize = analysisOutputFileDownloadManager.setSelection(outputs);
+		response.setStatus(HttpServletResponse.SC_CREATED);
+		return ImmutableMap.of("selectionSize", selectionSize);
+	}
+
+	/**
+	 * Download the selected {@link AnalysisOutputFile}.
+	 *
+	 * @param filename Optional filename for file download.
+	 * @param response {@link HttpServletResponse}
+	 */
+	@RequestMapping(value = "/ajax/download/selection", produces = MediaType.APPLICATION_JSON_VALUE)
+	public void downloadSelection(@RequestParam(required = false, defaultValue = "analysis-output-files-batch-download") String  filename, HttpServletResponse response) {
+		Map<ProjectSampleAnalysisOutputInfo, AnalysisOutputFile> files = analysisOutputFileDownloadManager.getSelection();
+		FileUtilities.createBatchAnalysisOutputFileZippedResponse(response, filename, files);
+	}
+
+	/**
 	 * Download single output files from an {@link AnalysisSubmission}
 	 *
 	 * @param analysisSubmissionId Id for a {@link AnalysisSubmission}
 	 * @param fileId               the id of the file to download
+	 * @param filename             Optional filename for file download.
 	 * @param response             {@link HttpServletResponse}
 	 */
 	@RequestMapping(value = "/ajax/download/{analysisSubmissionId}/file/{fileId}")
 	public void getAjaxDownloadAnalysisSubmissionIndividualFile(@PathVariable Long analysisSubmissionId,
-			@PathVariable Long fileId, HttpServletResponse response) {
+			@PathVariable Long fileId, @RequestParam(defaultValue = "", required = false) String filename, HttpServletResponse response) {
 		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(analysisSubmissionId);
 
 		Analysis analysis = analysisSubmission.getAnalysis();
@@ -761,7 +929,11 @@ public class AnalysisController {
 			throw new EntityNotFoundException("Could not find file with id " + fileId);
 		}
 
-		FileUtilities.createSingleFileResponse(response, optFile.get());
+		if (!Strings.isNullOrEmpty(filename)) {
+			FileUtilities.createSingleFileResponse(response, optFile.get(), filename);
+		} else {
+			FileUtilities.createSingleFileResponse(response, optFile.get());
+		}
 	}
 
 	/**

@@ -1,18 +1,15 @@
 package ca.corefacility.bioinformatics.irida.ria.web.samples;
 
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
+import com.sksamuel.diffpatch.DiffMatchPatch;
+import com.sksamuel.diffpatch.DiffMatchPatch.Diff;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
-import com.sksamuel.diffpatch.DiffMatchPatch;
-import com.sksamuel.diffpatch.DiffMatchPatch.Diff;
 
-import java.io.IOException;
 import java.nio.file.Path;
-
 import java.util.*;
 import java.util.stream.Stream;
-
-import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFilePair;
 
 /**
 * 	Utility class for pairing up sequence files with

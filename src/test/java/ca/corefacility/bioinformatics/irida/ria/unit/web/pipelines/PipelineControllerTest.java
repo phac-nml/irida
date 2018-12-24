@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.ui.ExtendedModelMap;
 
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotDisplayableException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -57,6 +58,7 @@ public class PipelineControllerTest {
 	private UpdateSamplePermission updateSamplePermission;
 	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
 	private GalaxyToolDataService galaxyToolDataService;
+	private String iridaPipelinePluginStyle = "";
 
 	@Before
 	public void setUp() {
@@ -72,10 +74,11 @@ public class PipelineControllerTest {
 		updateSamplePermission = mock(UpdateSamplePermission.class);
 		analysisSubmissionSampleProcessor = mock(AnalysisSubmissionSampleProcessor.class);
 		galaxyToolDataService = mock(GalaxyToolDataService.class);
+		
 
 		controller = new PipelineController(sequencingObjectService, referenceFileService, analysisSubmissionService,
 				workflowsService, projectService, userService, cartController, messageSource, namedParameterService,
-				updateSamplePermission, analysisSubmissionSampleProcessor, galaxyToolDataService);
+				updateSamplePermission, analysisSubmissionSampleProcessor, galaxyToolDataService, iridaPipelinePluginStyle);
 		when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 	}
 
@@ -99,7 +102,7 @@ public class PipelineControllerTest {
 	}
 
 	@Test
-	public void testGetPhylogenomicsPageWithCart() throws IridaWorkflowNotFoundException {
+	public void testGetPhylogenomicsPageWithCart() throws IridaWorkflowNotFoundException, IridaWorkflowNotDisplayableException {
 		ExtendedModelMap model = new ExtendedModelMap();
 		String username = "FRED";
 		Principal principal = () -> username;
@@ -113,7 +116,7 @@ public class PipelineControllerTest {
 		when(sequencingObjectService.getSequencesForSampleOfType(any(Sample.class), eq(SingleEndSequenceFile.class)))
 				.thenReturn(TestDataFactory.generateSequencingObjectsForSample(TestDataFactory.constructSample()));
 
-		when(workflowsService.getIridaWorkflow(id)).thenReturn(TestDataFactory.getIridaWorkflow(id));
+		when(workflowsService.getDisplayableIridaWorkflow(id)).thenReturn(TestDataFactory.getIridaWorkflow(id));
 		String response = controller.getSpecifiedPipelinePage(model, principal, Locale.US, id);
 		assertEquals("Response should be the path to the phylogenomics template",
 				PipelineController.URL_GENERIC_PIPELINE, response);

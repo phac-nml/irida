@@ -98,7 +98,7 @@ public class FastqcFileProcessor implements FileProcessor {
 	private void processSingleFile(SequenceFile sequenceFile) throws FileProcessorException {
 		Path fileToProcess = sequenceFile.getFile();
 		AnalysisFastQC.AnalysisFastQCBuilder analysis = AnalysisFastQC.builder()
-				.executionManagerAnalysisId(EXECUTION_MANAGER_ANALYSIS_ID).description(messageSource.getMessage(
+				.fastqcVersion(FastQCApplication.VERSION).executionManagerAnalysisId(EXECUTION_MANAGER_ANALYSIS_ID).description(messageSource.getMessage(
 						"fastqc.file.processor.analysis.description", null, LocaleContextHolder.getLocale()));
 		try {
 			uk.ac.babraham.FastQC.Sequence.SequenceFile fastQCSequenceFile = SequenceFactory
@@ -154,8 +154,8 @@ public class FastqcFileProcessor implements FileProcessor {
 		analysis.encoding(PhredEncoding.getFastQEncodingOffset(stats.getLowestChar()).name());
 		analysis.minLength(stats.getMinLength());
 		analysis.maxLength(stats.getMaxLength());
-		analysis.totalSequences(stats.getActualCount());
-		analysis.filteredSequences(stats.getFilteredCount());
+		analysis.totalSequences((int) stats.getActualCount());
+		analysis.filteredSequences((int) stats.getFilteredCount());
 		analysis.gcContent(stats.getGCContent());
 		analysis.totalBases(
 				stats.getACount() + stats.getGCount() + stats.getCCount() + stats.getTCount() + stats.getNCount());

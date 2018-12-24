@@ -20,6 +20,11 @@
         password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
         phoneNumber="867-5309" username="tech" system_role="ROLE_TECHNICIAN"
         credentialsNonExpired="true" enabled="true" />
+	<user id="5" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
+		  email="admin@irida.com" firstName="admin" lastName="admin"
+		  password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
+		  phoneNumber="867-5309" username="admin" system_role="ROLE_ADMIN"
+		  credentialsNonExpired="true" enabled="true" />
 
 	<sequencing_run id="1" createdDate="2013-07-18 14:20:19.0"
 		upload_status="COMPLETE" layout_type="PAIRED_END" user_id="3" />

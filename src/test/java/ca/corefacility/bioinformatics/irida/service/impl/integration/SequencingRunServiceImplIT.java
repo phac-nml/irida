@@ -129,6 +129,9 @@ public class SequencingRunServiceImplIT {
 				.getSequencingObjectsForSequencingRun(saved);
 		assertTrue("Saved miseq run should have seqence file", sequencingObjectsForSequencingRun.contains(so));
 
+		int maxWait = 20;
+		int waits = 0;
+
 		if (SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
 				.anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"))) {
 			AnalysisFastQC analysis = null;
@@ -138,6 +141,11 @@ public class SequencingRunServiceImplIT {
 					SequenceFile readFile = readObject.getFiles().iterator().next();
 					analysis = analysisService.getFastQCAnalysisForSequenceFile(readObject, readFile.getId());
 				} catch (final EntityNotFoundException e) {
+					waits++;
+					if (waits > maxWait) {
+						throw new RuntimeException("Waited too long for fastqc to run");
+					}
+					
 					logger.info("Fastqc still isn't finished, sleeping a bit.");
 					Thread.sleep(1000);
 				}

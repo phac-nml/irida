@@ -18,7 +18,6 @@ import org.mockito.MockitoAnnotations;
 import com.google.common.collect.ImmutableList;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -27,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.processing.impl.AssemblyFileProcessor;
@@ -65,7 +65,7 @@ public class AssemblyFileProcessorTest {
 				null, ImmutableList.of(), ImmutableList.of(), ImmutableList.of());
 		IridaWorkflow workflow = new IridaWorkflow(workflowDescription, null);
 
-		when(workflowsService.getDefaultWorkflowByType(AnalysisType.ASSEMBLY_ANNOTATION)).thenReturn(workflow);
+		when(workflowsService.getDefaultWorkflowByType(BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION)).thenReturn(workflow);
 		when(userRepository.loadUserByUsername("admin")).thenReturn(new User());
 
 	}

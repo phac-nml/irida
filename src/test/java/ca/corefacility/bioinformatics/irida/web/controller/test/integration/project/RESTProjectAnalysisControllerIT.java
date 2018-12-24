@@ -3,7 +3,7 @@ package ca.corefacility.bioinformatics.irida.web.controller.test.integration.pro
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asAdmin;
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asOtherUser;
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asUser;
-import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.Matchers.hasItems;
 
 import org.eclipse.jetty.http.HttpStatus;
 import org.junit.Test;

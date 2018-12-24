@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<iridaWorkflow>
+  <id>0e8738e6-2aeb-4627-9d6e-15ae32f21c44</id>
+  <name>bio_hansel</name>
+  <version>2.0.0</version>
+  <analysisType>BIO_HANSEL</analysisType>
+  <inputs>
+    <sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
+    <requiresSingleSample>true</requiresSingleSample>
+  </inputs>
+  <parameters>
+    <parameter name="bio_hansel-1-type_of_scheme.scheme_type" required="true">
+      <choices>
+        <choice name="heidelberg" value="heidelberg"/>
+        <choice name="enteritidis" value="enteritidis"/>
+      </choices>
+      <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/nml/bio_hansel/bio_hansel/2.0.0" parameterName="type_of_scheme.scheme_type"/>
+    </parameter>
+    <parameter name="bio_hansel-1-kmer_vals.kmer_min" defaultValue="8">
+      <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/nml/bio_hansel/bio_hansel/2.0.0" parameterName="kmer_vals.kmer_min"/>
+    </parameter>
+    <parameter name="bio_hansel-1-kmer_vals.kmer_max" defaultValue="1000">
+      <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/nml/bio_hansel/bio_hansel/2.0.0" parameterName="kmer_vals.kmer_max"/>
+    </parameter>
+    <parameter name="bio_hansel-1-qc_vals.max_missing_tiles" defaultValue="0.05">
+      <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/nml/bio_hansel/bio_hansel/2.0.0" parameterName="qc_vals.max_missing_tiles"/>
+    </parameter>
+    <parameter name="bio_hansel-1-qc_vals.low_coverage_warning" defaultValue="20">
+      <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/nml/bio_hansel/bio_hansel/2.0.0" parameterName="qc_vals.low_coverage_warning"/>
+    </parameter>
+    <parameter name="bio_hansel-1-qc_vals.low_cov_depth_freq" defaultValue="20">
+      <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/nml/bio_hansel/bio_hansel/2.0.0" parameterName="qc_vals.low_cov_depth_freq"/>
+    </parameter>
+    <parameter name="bio_hansel-1-qc_vals.min_ambiguous_tiles" defaultValue="3">
+      <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/nml/bio_hansel/bio_hansel/2.0.0" parameterName="qc_vals.min_ambiguous_tiles"/>
+    </parameter>
+    <parameter name="bio_hansel-1-qc_vals.max_intermediate_tiles" defaultValue="0.05">
+      <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/nml/bio_hansel/bio_hansel/2.0.0" parameterName="qc_vals.max_intermediate_tiles"/>
+    </parameter>
+  </parameters>
+  <outputs>
+    <output name="bio_hansel-match_results.json" fileName="bio_hansel-match_results.json"/>
+    <output name="bio_hansel-match_results.tab" fileName="bio_hansel-match_results.tab"/>
+    <output name="bio_hansel-results.json" fileName="bio_hansel-results.json"/>
+    <output name="bio_hansel-results.tab" fileName="bio_hansel-results.tab"/>
+    <output name="bio_hansel-tech_results.json" fileName="bio_hansel-tech_results.json"/>
+    <output name="bio_hansel-tech_results.tab" fileName="bio_hansel-tech_results.tab"/>
+  </outputs>
+  <toolRepositories>
+    <repository>
+      <name>bio_hansel</name>
+      <owner>nml</owner>
+      <url>https://toolshed.g2.bx.psu.edu</url>
+      <revision>4654c51dae72</revision>
+    </repository>
+  </toolRepositories>
+</iridaWorkflow>
+

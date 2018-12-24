@@ -13,8 +13,11 @@ import javax.persistence.Table;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Defines a genome assembly from an IRIDA-based analysis.
@@ -46,8 +49,23 @@ public class GenomeAssemblyFromAnalysis extends GenomeAssembly {
 		this.assembly = assembly;
 	}
 
+	/**
+	 * Get genome assembly {@link AnalysisOutputFile}.
+	 * @return {@link AnalysisOutputFile} for a genome assembly {@link AnalysisSubmission}
+	 */
 	public AnalysisOutputFile getAssemblyOutput() {
-		return assembly.getAnalysis().getAnalysisOutputFile("contigs-with-repeats");
+		// Probably need a better way of telling what's the assembly than a hardcoded set of output
+		// file key names. Annotate the workflow output? Wouldn't the GBK file be considered an
+		// assembly albeit an annotated one?
+		final ImmutableSet<String> ASSEMBLY_OUTPUT_KEYS = ImmutableSet.of("contigs.fasta", "contigs-with-repeats");
+		final Analysis analysis = assembly.getAnalysis();
+		for (String assemblyOutputKey : ASSEMBLY_OUTPUT_KEYS) {
+			final AnalysisOutputFile outputFile = analysis.getAnalysisOutputFile(assemblyOutputKey);
+			if (outputFile != null) {
+				return outputFile;
+			}
+		}
+		return null;
 	}
 
 	/**

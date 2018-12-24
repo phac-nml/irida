@@ -56,6 +56,8 @@ public class GalaxyHistoriesService {
 	
 	private static final Logger logger = LoggerFactory
 			.getLogger(GalaxyHistoriesService.class);
+	
+	private static final String COLLECTION = "dataset_collection";
 
 	private HistoriesClient historiesClient;
 	private ToolsClient toolsClient;
@@ -140,6 +142,7 @@ public class GalaxyHistoriesService {
 	 * @throws GalaxyDatasetException  If there was an issue finding the corresponding Dataset for the file
 	 * 	in the history.
 	 */
+	@SuppressWarnings("deprecation")
 	public Dataset fileToHistory(Path path, InputFileType fileType, History history) throws UploadException, GalaxyDatasetException {
 		checkNotNull(path, "path is null");
 		checkNotNull(fileType, "fileType is null");
@@ -258,15 +261,17 @@ public class GalaxyHistoriesService {
 				
 		List<HistoryContents> historyContentsList =
 				historiesClient.showHistoryContents(historyId);
-
-		List<HistoryContents> matchingHistoryContents = historyContentsList.stream().
-				filter((historyContents) -> filename.equals(historyContents.getName())).collect(Collectors.toList());
 		
+		List<HistoryContents> matchingHistoryContents = historyContentsList.stream()
+				.filter((historyContents) -> filename.equals(historyContents.getName())
+						&& !COLLECTION.equals(historyContents.getHistoryContentType()))
+				.collect(Collectors.toList());
+
 		// if more than one matching history item
 		if (matchingHistoryContents.size() > 1) {
 			String historyIds = "[";
 			for (HistoryContents content : matchingHistoryContents) {
-				historyIds += content.getId() + ",";
+				historyIds += " id="+content.getId() + " type="+content.getHistoryContentType() + ",";
 			}
 			historyIds += "]";
 			throw new GalaxyDatasetException("Found " + matchingHistoryContents.size() + " datasets for file "

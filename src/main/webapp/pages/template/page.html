@@ -3,8 +3,6 @@
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	  data-layout-decorate="~{template/base}">
 <head>
-	<link rel="stylesheet" th:href="@{/resources/bower_components/font-awesome/css/font-awesome.min.css}"/>
-	<link rel="stylesheet" th:href="@{/resources/bower_components/animate.css/animate.min.css}"/>
 	<link rel="stylesheet" th:href="@{/resources/dist/css/app.bundle.css}">
 	<style>
 		.ng-cloak {
@@ -20,7 +18,7 @@
 				<div class="st-content-inner">
 					<nav th:replace="template/main-navigation.html :: #topnav"></nav>
 					<div th:if="${crumbs != null and #lists.size(crumbs) > 1}" class="breadcrumbs">
-						<div class="container">
+						<div class="container-fluid">
 							<ol>
 								<li th:each="crumb : ${crumbs} ">
 									<a th:href="${crumb.url}" th:text="${crumb.text}"></a>
@@ -29,7 +27,7 @@
 						</div>
 					</div>
 					<th:block layout:fragment="subnav"></th:block>
-					<div class="container">
+					<div class="container-fluid body-content">
 						<div class="row" layout:fragment="page"></div>
 					</div>
 				</div>
@@ -68,7 +66,7 @@
 								<button class="btn-icon" ng-click="cartCtrl.removeProject(p.id)"
 								        ng-attr-id="{{'remove-project-'+p.id}}"
 								        th:title="#{cart.tooltip.removeProject}">
-									<i class="fa fa-remove remove-icon"></i>
+                                    <i class="fas fa-times remove-icon"></i>
 								</button>
 							</div>
 						</div>
@@ -78,7 +76,7 @@
 								<button class="btn-icon pull-right remove-sample-btn"
 								        ng-click="cartCtrl.removeSample(p.id,s.id)"
 								        th:title="#{cart.tooltip.removeSample}">
-									<i class="fa fa-remove remove-icon"></i>
+                                    <i class="fas fa-times remove-icon"></i>
 								</button>
 							</li>
 						</ul>
@@ -148,12 +146,11 @@
 
 	<script th:src="@{/resources/dist/js/vendor.bundle.js}"></script>
 	<script th:src="@{/resources/bower_components/jquery/dist/jquery.min.js}"></script>
+	<script th:src="@{/resources/bower_components/bootstrap/dist/js/bootstrap.min.js}"></script>
 	<script th:src="@{/resources/bower_components/moment/moment.js}"></script>
 	<script th:src="@{/resources/bower_components/angular/angular.min.js}"></script>
 	<script th:src="@{/resources/bower_components/angular-aria/angular-aria.min.js}"></script>
-	<script th:src="@{/resources/bower_components/angular-animate/angular-animate.min.js}"></script>
 	<script th:src="@{/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js}"></script>
-	<script th:src="@{/resources/dist/js/bootstrap.bundle.js}"></script>
 	<script th:src="@{/resources/dist/js/app.bundle.js}"></script>
 
 	<th:block layout:fragment="scripts">

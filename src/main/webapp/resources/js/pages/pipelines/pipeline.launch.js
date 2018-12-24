@@ -4,9 +4,10 @@
    * Main controller for the pipeline launch page.
    * @param $scope Application model object
    * @param $http AngularJS http object
-   * @param CartService a reference to the cart service (to clear it)
-   * @param ParameterService for passing parameter information between modal and page
-   * @param DynamicSourceService for selecting parameters from a Galaxy Tool Data Table
+   * @param CartService {CartService} a reference to the cart service (to clear it)
+   * @param ParameterService {ParameterService} for passing parameter information between modal and page
+   * @param DynamicSourceService {DynamicSourceService} for selecting parameters from a Galaxy Tool Data Table
+   * @param ParametersWithChoicesService {ParametersWithChoicesService} for handling required parameters with a restricted set of choices
    * @constructor
    */
   function PipelineController(
@@ -14,14 +15,18 @@
     $http,
     CartService,
     ParameterService,
-    DynamicSourceService
+    DynamicSourceService,
+    ParametersWithChoicesService
   ) {
-    var vm = this;
+    const vm = this;
 
     vm.parameters = ParameterService.getOriginalSettings();
     vm.selectedParameters = ParameterService.getSelectedParameters();
     vm.dynamicSources = DynamicSourceService.getSettings();
     vm.selectedDynamicSource = DynamicSourceService.getSelectedDynamicSourceValue();
+    vm.selectedChoiceParam = {};
+    vm.paramsWithChoices = ParametersWithChoicesService.getParameters();
+    vm.choiceParams = ParametersWithChoicesService.getDefaultSelectedParameters();
 
     $scope.$on("PARAMETERS_SAVED", function() {
       vm.selectedParameters = ParameterService.getSelectedParameters();
@@ -32,8 +37,8 @@
     });
 
     /*
-		 * Whether or not the page is waiting for a response from the server.
-		 */
+     * Whether or not the page is waiting for a response from the server.
+     */
     vm.loading = false;
     /**
      * Analysis submission success?
@@ -63,20 +68,65 @@
     };
 
     /**
-     * Determine when to enable the pipeline launch button.
+     * On change event handler for choice parameter with `name`.
+     *
+     * When the selected choice parameter is changed, update the selected
+     * parameter value.
+     *
+     * @param name {string} Name of choice parameter corresponding to XML name attribute for <parameter> tag
      */
-    vm.disarmed = function() {
+    vm.choiceParamChanged = function(name) {
+      const selectValueObj = vm.selectedChoiceParam[name];
+      if (
+        typeof selectValueObj === "undefined" ||
+        selectValueObj === null ||
+        selectValueObj === ""
+      ) {
+        vm.choiceParams[name] = null;
+      } else {
+        if (selectValueObj.hasOwnProperty("value")) {
+          vm.choiceParams[name] = selectValueObj.value;
+        }
+      }
+    };
+
+    /**
+     * Is any object empty or have any null values?
+     *
+     * @param o {object} Plain key-value object
+     * @returns {boolean} If object is empty or has null values
+     */
+    function anyNull(o) {
+      if ($.isEmptyObject(o)) {
+        return true;
+      }
+      return Object.values(o).reduce((acc, x) => {
+        acc = acc || x === null || x === "";
+        return acc;
+      }, false);
+    }
+
+    /**
+     * Should the pipeline launch button be disabled?
+     *
+     * Disable the launch button if there are any choice parameters with no
+     * values set or if a Galaxy dynamic source is required, but not set.
+     */
+    vm.shouldDisableLaunch = function() {
       return (
-        !this.dynamicSources.availableSettings.no_dynamic_sources &&
-        !this.selectedDynamicSource
+        (!$.isEmptyObject(vm.choiceParams) && anyNull(vm.choiceParams)) ||
+        !(
+          this.dynamicSources.availableSettings.no_dynamic_sources ||
+          this.selectedDynamicSource
+        )
       );
     };
 
     /**
-     * Provide a title for the launch button, depending on its armed/disarmed state.
+     * Provide a title for the launch button, depending on this.shouldDisableLaunch().
      */
     vm.launchButtonTitle = function() {
-      if (this.disarmed()) {
+      if (this.shouldDisableLaunch()) {
         return page.i18n.launchButtonTitleDisarmed;
       } else {
         return page.i18n.launchButtonTitleArmed;
@@ -145,6 +195,15 @@
           selectedParameters.parameters = selectedParameters.parameters.concat(
             dynamicSourceParameters
           );
+        }
+        // If there are any parameters with choices, then add them to the list of selected parameters
+        if (!$.isEmptyObject(vm.choiceParams)) {
+          Object.keys(vm.choiceParams).forEach(k => {
+            selectedParameters.parameters.push({
+              name: k,
+              value: vm.choiceParams[k]
+            });
+          });
         }
 
         // Create the parameter object;
@@ -519,6 +578,32 @@
     };
   }
 
+  /**
+   * Service for handling parameters with a restricted set of choices
+   */
+  function ParametersWithChoicesService() {
+    const svc = this;
+    const params = {};
+    if (page.pipeline.paramsWithChoices != null) {
+      for (let p of page.pipeline.paramsWithChoices) {
+        params[p.name] = {
+          label: p.label,
+          name: p.name,
+          choices: ng.copy(p.choices)
+        };
+      }
+    }
+    svc.getParameters = function() {
+      return params;
+    };
+    svc.getDefaultSelectedParameters = function() {
+      return Object.keys(params).reduce((acc, x) => {
+        acc[x] = null;
+        return acc;
+      }, {});
+    };
+  }
+
   function FileUploadCtrl($rootScope, Upload) {
     var vm = this;
 
@@ -532,7 +617,7 @@
           file: files[0]
         })
           .progress(function(evt) {
-            vm.progress = parseInt(100.0 * evt.loaded / evt.total);
+            vm.progress = parseInt((100.0 * evt.loaded) / evt.total);
           })
           .then(
             function(response) {
@@ -565,6 +650,7 @@
       "CartService",
       "ParameterService",
       "DynamicSourceService",
+      "ParametersWithChoicesService",
       PipelineController
     ])
     .controller("ParameterModalController", [
@@ -580,7 +666,9 @@
     ])
     .controller("FileUploadCtrl", ["$rootScope", "Upload", FileUploadCtrl])
     .service("ParameterService", [ParameterService])
-    .service("DynamicSourceService", [DynamicSourceService]).name;
+    .service("DynamicSourceService", [DynamicSourceService])
+    .service("ParametersWithChoicesService", [ParametersWithChoicesService])
+    .name;
 
   ng.module("irida").requires.push(pipelineModule);
 })(window.angular, window.jQuery, window.location, window.PAGE);

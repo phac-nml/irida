@@ -54,6 +54,15 @@ public interface ProjectSampleJoinRepository extends PagingAndSortingRepository<
 	public List<Join<Project, Sample>> getSamplesForProject(Project project);
 
 	/**
+	 * Get {@link Sample} in a {@link Project} given a list of Sample ids.
+	 * @param project {@link Project} to get samples for.
+	 * @param sampleIds {@link Sample} ids
+	 * @return List of {@link Sample}
+	 */
+	@Query("select j.sample from ProjectSampleJoin j where j.project = ?1 and j.sample.id in ?2")
+	List<Sample> getSamplesInProject(Project project, List<Long> sampleIds);
+
+	/**
 	 * Get a list of the organism fields stored for all {@link Sample}s in a
 	 * {@link Project}
 	 * 

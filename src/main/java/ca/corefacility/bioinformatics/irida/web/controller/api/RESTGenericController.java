@@ -140,7 +140,7 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 	public ModelMap getResource(@PathVariable Long identifier) {
 		ModelMap model = new ModelMap();
 
-		logger.debug("Getting resource with id [" + identifier + "]");
+		logger.trace("Getting resource with id [" + identifier + "]");
 		// construct a new instance of an identifier as specified by the client
 
 		// try to retrieve a resource from the database using the identifier
@@ -189,7 +189,7 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 		// layer. We'll use this identifier to tell the client where to find the
 		// persisted resource.
 		Long id = resource.getId();
-		logger.debug("Created resource with ID [" + resource.getId() + "]");
+		logger.trace("Created resource with ID [" + resource.getId() + "]");
 		
 		// In order to obtain a correct created date, the persisted resource is
 		// accessed from the service/database layer.
@@ -263,7 +263,7 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 		// possibly updated location.
 		Type resource = crudService.updateFields(identifier, representation);
 		Long id = resource.getId();
-		logger.debug("Updated resource with ID [" + resource.getId() + "]");
+		logger.trace("Updated resource with ID [" + resource.getId() + "]");
 
 		// construct the possibly updated location of the resource using the id
 		// of the resource as returned by the service after updating.

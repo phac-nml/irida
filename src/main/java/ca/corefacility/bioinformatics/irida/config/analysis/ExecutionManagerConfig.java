@@ -46,7 +46,7 @@ import com.google.common.collect.ImmutableMap;
  *
  */
 @Configuration
-@Profile({ "dev", "prod", "it" })
+@Profile({ "dev", "prod", "it", "analysis", "ncbi", "processing", "sync", "email", "web"})
 public class ExecutionManagerConfig {
 	private static final Logger logger = LoggerFactory
 			.getLogger(ExecutionManagerConfig.class);

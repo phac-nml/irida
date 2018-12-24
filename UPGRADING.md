@@ -4,6 +4,43 @@ Upgrading
 This document summarizes the environmental changes that need to be made when
 upgrading IRIDA that cannot be automated.
 
+0.22.0 to 0.23.0
+----------------
+* A new configuration value is avaliable to display a warning on analysis result and metadata pages to communicate that an analysis result should be considered preliminiary.  Add a warning message `irida.analysis.warning` in `/etc/irida/web.conf` to display on all analysis result and metadata pages.
+* New Spring profiles are available for running IRIDA in a multi-server mode.  This will help distribute the load in high-usage installations.  See the documentation for more details at https://irida.corefacility.ca/documentation/administrator/web/#multi-web-server-configuration.
+* The [AssemblyAnnotation](https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/assembly-annotation/) and [AssemblyAnnotationCollection](https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/assembly-annotation-collection/) pipelines have been upgraded to make use of [shovill](https://github.com/tseemann/shovill) for assembly and [QUAST](http://quast.sourceforge.net/quast.html) for assembly quality assessment. Please ensure that the `shovill` and `quast` Galaxy tools are installed for these pipelines. If you haven't already, please follow [the instructions for installing `shovill`](https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/assembly-annotation/#address-shovill-related-issues) and see the instructions for upgrading the [SISTR](https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/sistr/) pipeline from 0.21.0 to 0.22.0 for more info.
+* A method of installing pipeline plugins has been included in this release of IRIDA. These are distributed as independent JAR files. If you wish to install a plugin, please copy the JAR file to `/etc/irida/plugins` and restart IRIDA. See <https://irida.corefacility.ca/documentation/developer/tools/pipelines/> and <https://github.com/phac-nml/irida-plugin-example> for details on constructing plugins.
+
+0.21.0 to 0.22.0
+----------------
+* This upgrade makes schema changes to the databases and cannot be parallel deployed.  Servlet container must be stopped before deploying the new `war` file.
+* This upgrade changes the way the file processors handle uploaded files.  File processing now takes place as a scheduled task rather than immediately after files are uploaded.  For deployments with multiple IRIDA servers running against the same database, prossing may not be performed by the IRIDA server the files were uploaded to and will instead be balanced among all the available servers.  If you want to disable file processing on an IRIDA server, set the following property in `/etc/irida/irida.conf` : `file.processing.process=false`.
+* A new pipeline, [bio_hansel](https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/bio_hansel/), has been included. You will have to make sure to install the necessary Galaxy tools listed in the documentation.
+* The [MentaLiST](https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/mentalist/) pipeline has been ugpraded. Please make sure to install the necessary tools in Galaxy.
+* The [SISTR](https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/sistr/) pipeline has been upgraded to make use of [shovill](https://github.com/tseemann/shovill) for assembly. Please make sure to install the `shovill` Galaxy tool. Also, please make sure to follow the additional instructions in <https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/sistr/#address-shovill-related-issues>, which involves some modifications of the conda environment for `shovill`. In particular, you must:
+
+    1. Install the proper `ncurses` and `bzip2` packages from the **conda-forge** channel.
+
+        ```bash
+        # activate the Galaxy shovill conda env
+        source galaxy/deps/_conda/bin/activate galaxy/deps/_conda/envs/__shovill@0.9.0
+        # install ncurses and bzip2 from conda-forge channel
+        conda install -c conda-forge ncurses bzip2
+        ```
+
+    2. Set the `SHOVILL_RAM` environment variable in the conda environment:
+
+        ```bash
+        cd galaxy/deps/_conda/envs/__shovill@0.9.0
+        mkdir -p etc/conda/activate.d
+        mkdir -p etc/conda/deactivate.d
+
+        echo -e "export _OLD_SHOVILL_RAM=\$SHOVILL_RAM\nexport SHOVILL_RAM=8" >> etc/conda/activate.d/shovill-ram.sh
+        echo -e "export SHOVILL_RAM=\$_OLD_SHOVILL_RAM" >> etc/conda/deactivate.d/shovill-ram.sh
+        ```
+
+        Please change `8`GB to what works for you for `shovill` (or setup based on the `$GALAXY_MEMORY_MB` environment variable, see the linked instructions for more details).
+
 0.20.0 to 0.21.0
 ----------------
 

@@ -36,7 +36,7 @@
 
 <main layout:fragment="main">
 
-    <p class="lead" th:text="${fastQC.description}">...</p>
+    <p class="lead" th:text="#{fastqc.file.processor.analysis.description(${fastQC.fastqcVersion})}">...</p>
 
     <section class="sequenceFile">
         <h2 th:text="#{sf.quality-charts}">__Quality_Charts__</h2>

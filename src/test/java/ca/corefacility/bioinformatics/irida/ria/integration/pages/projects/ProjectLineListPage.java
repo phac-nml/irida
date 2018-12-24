@@ -3,13 +3,11 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 import java.util.List;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * Represents page found at url: /projects/{projectId}/linelist
@@ -17,36 +15,50 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class ProjectLineListPage extends ProjectPageBase {
 	private static final String RELATIVE_URL = "/projects/{projectId}/linelist";
 
-	@FindBy(css = "#linelist th")
-	private List<WebElement> tableHeaders;
+	@FindBy(className = "t-sample-name")
+	private List<WebElement> sampleNameLinks;
 
-	@FindBy(css = "#linelist tbody tr")
-	private List<WebElement> tableRows;
+	@FindBy(className = "t-field-switch")
+	private List<WebElement> fieldSwitches;
 
-	@FindBy(id = "col-vis-btn")
-	private WebElement metadataColVisBtn;
+	@FindBy(className = "ag-header-cell-text")
+	private List<WebElement> headerText;
 
-	@FindBy(css = ".metadata-open .modal-content")
-	private WebElement metadataColVisAside;
+	@FindBy(css = ".template-option--name:first-of-type")
+	private WebElement templateSelectToggle;
 
-	@FindBy(id = "close-aside-btn")
-	private WebElement closeAsideBtn;
+	@FindBy(className = "template-option--name")
+	private List<WebElement> templateOptions;
 
-	@FindBy(className = "bootstrap-switch-label")
-	private List<WebElement> colVisBtns;
+	@FindBy(className = "t-template-save-btn")
+	private WebElement templateSaveBtn;
 
-	@FindBy(id = "template-select")
-	private WebElement templateSelect;
+	@FindBy(className = "t-template-name")
+	private WebElement templateNameInputWrapper;
 
-	@FindBy(id = "save-btn")
-	private WebElement saveBtn;
-
-	@FindBy(id = "template-name")
+	@FindBy(className = "ant-select-search__field")
 	private WebElement templateNameInput;
 
+	@FindBy(className = "t-modal-save-template-btn")
+	private WebElement modalSaveTemplateBtn;
 
-	@FindBy(id = "complete-save")
-	private WebElement completeSaveBtn;
+	@FindBy(className = "t-undo-edit")
+	private WebElement undoEditBtn;
+
+	@FindBy(className = "t-columns-panel-toggle")
+	private WebElement columnsPanelToggle;
+
+	@FindBy(css = ".t-table-filter input")
+	private WebElement tableFilterInput;
+
+	@FindBy(className = "t-tour-button")
+	private WebElement tourLaunchButton;
+
+	@FindBy(css = "button[data-tour-elem=\"right-arrow\"]")
+	private WebElement tourNextButton;
+
+	@FindBy(css = "span[data-tour-elem=\"badge\"")
+	private WebElement tourStepBadge;
 
 	public ProjectLineListPage(WebDriver driver) {
 		super(driver);
@@ -57,50 +69,96 @@ public class ProjectLineListPage extends ProjectPageBase {
 		return PageFactory.initElements(driver, ProjectLineListPage.class);
 	}
 
-	public int getNumberSamplesWithMetadata() {
-		return tableRows.size();
+	public void openColumnsPaenl() {
+		columnsPanelToggle.click();
 	}
 
-	public int getNumberTableColumns() {
-		return tableHeaders.size();
+	public int getNumberOfRowsInLineList() {
+		return sampleNameLinks.size();
 	}
 
-	public void openColumnVisibilityPanel() {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		metadataColVisBtn.click();
-		wait.until(ExpectedConditions.visibilityOf(metadataColVisAside));
+	public int getNumberOfMetadataFields() {
+		return fieldSwitches.size();
 	}
 
-	public void closeColumnVisibilityPanel() {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		closeAsideBtn.click();
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".modal.in-remove-active")));
+	public int getNumberOfTableColumnsVisible() {
+		return headerText.size() - 1;  // -1 for sample name column
 	}
 
-	public void toggleColumn(String buttonLabel) {
-		for (WebElement btn : colVisBtns) {
-			if (btn.getText().equalsIgnoreCase(buttonLabel)) {
-				btn.click();
-				waitForTime(300);
-				break;
+	public void toggleMetadataField (int field) {
+		fieldSwitches.get(field).click();
+	}
+
+	public void selectTemplate(String template) {
+		waitForElementToBeClickable(templateSelectToggle);
+		templateSelectToggle.click();
+		waitForElementsVisible(By.className("ant-select-dropdown-menu"));
+		for (WebElement option : templateOptions) {
+			if (option.getText()
+					.equals(template)) {
+				option.click();
 			}
 		}
 	}
 
-	public void selectTemplate(String templateName) {
-		Select select = new Select(templateSelect);
-		select.selectByVisibleText(templateName);
-		waitForTime(1000);
+	public void saveMetadataTemplate (String name) {
+		templateSaveBtn.click();
+		waitForElementsVisible(By.className("ant-select-selection__rendered"));
+		templateNameInputWrapper.click();
+		templateNameInput.sendKeys(name);
+		modalSaveTemplateBtn.click();
+		waitForElementInvisible(By.className("ant-modal-wrap "));
 	}
 
-	public void saveTemplate(String templateName) {
-		saveBtn.click();
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		wait.until(ExpectedConditions.visibilityOf(templateNameInput));
-		waitForTime(1000);
-		templateNameInput.sendKeys(templateName);
-		wait.until(ExpectedConditions.elementToBeClickable(completeSaveBtn));
-		completeSaveBtn.click();
-		waitForTime(2000);
+	public String getCellContents(int rowIndex, String columnName) {
+		// Need to get the seconds WebElement because the first will be the sample name row.
+		WebElement row = driver.findElements(By.cssSelector("*[row-index='" + rowIndex + "']"))
+				.get(1);
+		WebElement cell = row.findElement(By.cssSelector("*[col-id='" + columnName + "']"));
+		return cell.getText();
+	}
+
+	public void editCellContents(int rowIndex, String columnName, String newValue) {
+		// Need to get the seconds WebElement because the first will be the sample name row.
+		WebElement row = driver.findElements(By.cssSelector("*[row-index='" + rowIndex + "']"))
+				.get(1);
+		WebElement cell = row.findElement(By.cssSelector("*[col-id='" + columnName + "']"));
+		cell.click();
+		cell.sendKeys(newValue);
+		cell.sendKeys(Keys.ENTER);
+	}
+
+	public void cancelCellEdit() {
+		waitForTime(200);
+		undoEditBtn.click();
+	}
+
+	public void filterTable(String filter) {
+		tableFilterInput.sendKeys(filter);
+		waitForTime(500);
+	}
+
+	public void clearTableFilter() {
+		tableFilterInput.clear();
+		tableFilterInput.sendKeys(Keys.BACK_SPACE);
+		waitForTime(500);
+	}
+
+	public void openTour() {
+		tourLaunchButton.click();
+		waitForElementVisible(By.className("reactour__helper--is-open"));
+	}
+
+	public void goToNextTourStage() {
+		tourNextButton.click();
+	}
+
+	public void closeTour() {
+		driver.findElement(By.cssSelector("body")).sendKeys(Keys.ESCAPE);
+		waitForElementInvisible(By.className("reactour__helper--is-open"));
+	}
+
+	public int getTourStep() {
+		return Integer.parseInt(tourStepBadge.getText());
 	}
 }

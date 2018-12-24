@@ -30,10 +30,10 @@ import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -78,7 +78,7 @@ public class AnalysisServiceImplIT {
 		Map<String, AnalysisOutputFile> analysisOutputFiles = new ImmutableMap.Builder<String, AnalysisOutputFile>()
 				.put("tree", tree).put("matrix", matrix).put("table", table).build();
 		Analysis pipeline = new Analysis(EXECUTION_MANAGER_ID,
-				analysisOutputFiles, AnalysisType.PHYLOGENOMICS);
+				analysisOutputFiles, BuiltInAnalysisTypes.PHYLOGENOMICS);
 
 		// make sure that we're not falsely putting the files into the correct
 		// directory in the first place.
@@ -93,7 +93,7 @@ public class AnalysisServiceImplIT {
 
 		// make sure that we put the analysis output files into the correct
 		// directory.
-		assertEquals("returned analysis was of the wrong type.", AnalysisType.PHYLOGENOMICS,
+		assertEquals("returned analysis was of the wrong type.", BuiltInAnalysisTypes.PHYLOGENOMICS,
 				analysis.getAnalysisType());
 		assertTrue("file was stored in the wrong directory.",
 				analysis.getAnalysisOutputFile(TREE_KEY).getFile().startsWith(outputFileBaseDirectory));

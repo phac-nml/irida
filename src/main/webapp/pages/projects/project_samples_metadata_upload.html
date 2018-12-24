@@ -37,8 +37,8 @@
         <div class="">
             <input type="file" id="file-upload-button" name="files" class="inputfile blocked"
                    ngf-change="$ctrl.uploadFiles($files)"
-                   ngf-pattern="'.xlsx'"
-                   accept=".xlsx"
+                   ngf-pattern="'.xlsx,.xls'"
+                   accept=".xlsx, .xls"
                    ngf-select="" />
             <label for="file-upload-button"
                    ngf-drop="$ctrl.uploadFiles($files)">

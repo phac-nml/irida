@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<iridaWorkflow>
+	<id>bac44f4b-46f9-4393-b247-de11a751410e</id>
+	<name>AssemblyAnnotation</name>
+	<version>0.1</version>
+	<analysisType>ASSEMBLY_ANNOTATION</analysisType>
+	<inputs>
+		<sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
+		<requiresSingleSample>true</requiresSingleSample>
+	</inputs>
+	<parameters>
+		<parameter name="assembly-kmers" defaultValue="21,33,55,77,99,127">
+			<toolParameter
+				toolId="toolshed.g2.bx.psu.edu/repos/lionelguy/spades/spades/1.0"
+				parameterName="kmers" />
+		</parameter>
+		<parameter name="assembly-contig-min-length" defaultValue="1000">
+			<toolParameter
+				toolId="toolshed.g2.bx.psu.edu/repos/lionelguy/spades/filter_spades_output/0.1"
+				parameterName="length_co" />
+		</parameter>
+		<parameter name="assembly-contig-min-coverage" defaultValue="10">
+			<toolParameter
+				toolId="toolshed.g2.bx.psu.edu/repos/lionelguy/spades/filter_spades_output/0.1"
+				parameterName="coverage_co" />
+		</parameter>
+		<parameter name="annotation-similarity-e-value-cutoff"
+			defaultValue="1e-06">
+			<toolParameter
+				toolId="toolshed.g2.bx.psu.edu/repos/crs4/prokka/prokka/1.4.0"
+				parameterName="evalue" />
+		</parameter>
+	</parameters>
+	<outputs>
+		<output name="assembly-log" fileName="spades.log" />
+		<output name="contigs" fileName="contigs.fasta" />
+		<output name="annotations-genbank" fileName="genome.gbk" />
+		<output name="annotations-stats" fileName="prokka_stats.txt" />
+		<output name="annotations-log" fileName="prokka.log" />
+		<output name="annotations-error" fileName="prokka.err" />
+	</outputs>
+	<toolRepositories>
+		<repository>
+			<name>spades</name>
+			<owner>lionelguy</owner>
+			<url>http://toolshed.g2.bx.psu.edu/</url>
+			<revision>21734680d921</revision>
+		</repository>
+		<repository>
+			<name>prokka</name>
+			<owner>crs4</owner>
+			<url>http://toolshed.g2.bx.psu.edu/</url>
+			<revision>3ad7ef0ba385</revision>
+		</repository>
+	</toolRepositories>
+</iridaWorkflow>

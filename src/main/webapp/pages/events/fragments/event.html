@@ -41,7 +41,7 @@ can be internationalized.
 </th:block>
 
 <th:block class="event-text" th:fragment="sample-removed-event (event)">
-    <div class="event-icon"><i class="fa fa-trash-o fa-fw" aria-hidden="true"></i></div>
+    <div class="event-icon"><i class="far fa-trash-alt fa-fw" aria-hidden="true"></i></div>
     <div class="event-content sample-removed-event"
             th:with="projectHref=@{/projects/{pid}(pid=${event.project.getId()})},
             projectLink=${'&lt;a href='+ projectHref +'&gt;'+ event.project.label +'&lt;/a&gt; '}">
@@ -49,7 +49,7 @@ can be internationalized.
 </th:block>
 
 <th:block class="event-text" th:fragment="data-added-event (event)">
-    <div class="event-icon"><i class="fa fa-file-o fa-fw" aria-hidden="true"></i></div>
+    <div class="event-icon"><i class="far fa-file"></i></div>
     <div class="event-content data-added-event"
             th:with="sampleHref=@{/projects/{pid}/samples/{sid}/sequenceFiles(sid=${event.sample.getId()}, pid=${event.project.getId()})},
             sampleLink=${'&lt;a href='+ sampleHref +'&gt;'+ event.sample.label +'&lt;/a&gt; '},

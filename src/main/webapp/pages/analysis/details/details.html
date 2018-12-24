@@ -37,7 +37,7 @@
 			</div>
 			<div class="col-md-1">
 				<button th:if="${updatePermission}" id="editAnalysisButton" data-toggle="modal" data-target="#editAnalysisModal" class="btn btn-sm btn-default btn-block">
-					<i class="fa fa-pencil" aria-hidden="true"></i>
+                    <i class="fas fa-pencil-alt"></i>
 				</button>
 			</div>
 		</div>
@@ -60,9 +60,10 @@
 
 	<div class="row">
 		<div class="col-md-12 ng-cloak">
-
+				<div th:replace="templates/analysis_result_warning"></div>
 			<sub-nav>
 				<sub-nav-item th:if="${sistr}" state="sistr" text="Sistr"></sub-nav-item>
+				<sub-nav-item th:if="${bio_hansel}" state="bio_hansel" text="bio_hansel"></sub-nav-item>
 				<sub-nav-item th:if="${isCompleted}" state="preview" data:text="#{analysis.tab.preview}"></sub-nav-item>
 				<sub-nav-item th:if="${isError}" state="joberrors" data:text="#{analysis.joberror}"></sub-nav-item>
 				<sub-nav-item state="inputs" data:text="#{analysis.tab.input-files}"></sub-nav-item>
@@ -76,15 +77,33 @@
 
 			<div ui-view=""></div>
 
-			<script type="text/ng-template" id="share.html" th:if="${updatePermission}">
-				<h2 th:text="#{analysis.details.share.title}">_Share Results With Projects_</h2>
-				<div class="row" ng-controller="ProjectShareController as shareController">
-					<div class="col-md-6" ng-repeat="resp in shareController.projects">
-						<div class="checkbox">
-							<label>
-								<input type="checkbox" class="share-project" ng-model="resp.shared" ng-value="resp.project.identifier" ng-change="shareController.updateShared(resp)"/>
-								<span>{{resp.project.name}}</span>
-							</label>
+			<script type="text/ng-template" id="share.html">
+				<div ng-controller="ProjectShareController as shareController">
+					<div class="panel panel-default" th:if="${updatePermission}">
+						<div class="panel-heading">
+							<div class="panel-title" th:text="#{analysis.details.share.title}">_Share Results With Projects_</div>
+						</div>
+						<ul class="list-group">
+							<li class="list-group-item" ng-repeat="resp in shareController.projects">
+								<div class="checkbox">
+									<label>
+										<input type="checkbox" class="share-project" ng-model="resp.shared" ng-value="resp.project.identifier" ng-change="shareController.updateShared(resp)"/>
+										<span>{{resp.project.name}}</span>
+									</label>
+								</div>
+							</li>
+						</ul>
+					</div>
+
+					<div class="panel panel-default" th:if="${updatePermission and canShareToSamples}">
+						<div class="panel-heading">
+							<div class="panel-title" th:text="#{analysis.details.save.samples.title}">_Save results to samples_</div>
+						</div>
+						<div class="panel-body">
+								<p th:text="#{'workflow.label.share-analysis-samples.'+${analysisType}}">_Info_</p>
+								<div th:if="${analysisSubmission.updateSamples}" th:text="#{analysis.details.save.complete}" class="alert alert-info">_Results have already been saved to the sample_</div>
+								<button id="save-to-samples" class="btn btn-default" th:text="#{analysis.details.save.samples.button}" th:disabled="${analysisSubmission.updateSamples}" ng-click="shareController.saveResults()">_Save results_</button>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -222,13 +241,15 @@
 			</script>
 
             <div th:replace="~{analysis/details/ng-templates/joberror::main}"></div>
+			<div th:replace="~{analysis/details/ng-templates/bio_hansel::main}"></div>
 
 			<script type="text/ng-template" id="inputs.html" th:with="fileCount = ${#lists.size(paired_end)}">
 				<th:block th:if="${referenceFile}">
 					<h2 th:text="#{analysis.details.reference}"></h2>
 					<span th:text="${referenceFile.label}"></span>
 					<a class="btn btn-default btn-sm pull-right" th:href="@{/referenceFiles/download/{id}(id=${referenceFile.id})}">
-						<span class="fa fa-download" aria-hidden="true"></span>&nbsp;<th:block th:text="#{form.download}">__Download__</th:block>
+                        <i class="fas fa-download spaced-right__sm"></i>
+                        <th:block th:text="#{form.download}">__Download__</th:block>
 					</a>
 				</th:block>
 			
@@ -254,7 +275,7 @@
 					<accordion>
 						<accordion-group class="file-info" th:each="file : ${files}">
 							<accordion-heading class="filename">
-								<span class="fa fa-file-o" aria-hidden="true"></span>&nbsp;
+                                <i class="far fa-file spaced-right__sm"></i>
 								<span class="name" th:text="${file.getLabel()}"></span>
 							</accordion-heading>
 							<div th:include="analysis/details/details :: toolsLayout (${file.getCreatedByTool()})"></div>
@@ -265,8 +286,8 @@
 						     th:with="toolId=${'tool' + tool.getId()}"
 						     data:ng-init="${toolId + '=false'}">
 							<button data:ng-click="${toolId + '=!' + toolId}" class="btn btn-link tool">
-								<span class="fa fa-chevron-right" data:ng-hide="${toolId}" aria-hidden="true"></span>
-								<span class="fa fa-chevron-down" data:ng-show="${toolId}" aria-hidden="true"></span>
+                                <span class="fas fa-chevron-right" data:ng-hide="${toolId}" aria-hidden="true"></span>
+                                <span class="fas fa-chevron-down" data:ng-show="${toolId}" aria-hidden="true"></span>
 								&nbsp;<span th:text="${tool.getLabel()}"></span>
 							</button>
 
@@ -324,7 +345,6 @@
 		</div>
 	</div>
 </main>
-
 
 </body>
 

@@ -5,11 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
@@ -117,7 +113,7 @@ public class AnalysisSubmissionServiceImplIT {
 		String name = "My";
 		paged = analysisSubmissionService.listAllSubmissions(null, name, null, null,
 				new PageRequest(0, 10, new Sort(Direction.ASC, "createdDate")));
-		assertEquals(8, paged.getContent().size());
+		assertEquals(10, paged.getContent().size());
 
 		// Add a state filter
 		AnalysisState state = AnalysisState.COMPLETED;

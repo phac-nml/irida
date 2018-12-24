@@ -191,22 +191,29 @@ public class SamplesController extends BaseController {
 			@RequestParam(name = "metadata") String metadataString, @RequestParam Map<String, String> params,
 			HttpServletRequest request) {
 		logger.debug("Updating sample [" + sampleId + "]");
-		
+
 		Map<String, Object> updatedValues = new HashMap<>();
 		for (String field : FIELDS) {
 			String fieldValue = params.get(field);
-			if (!Strings.isNullOrEmpty(fieldValue)) {
-				updatedValues.put(field, fieldValue);
+			if(Strings.isNullOrEmpty(fieldValue)){
+				fieldValue = null;
+			}
+
+			updatedValues.put(field, fieldValue);
+			
+			if (fieldValue != null) {
 				model.addAttribute(field, fieldValue);
 			}
 		}
+
 		// Special case because it is a date field.
+		updatedValues.put(COLLECTION_DATE, collectionDate);
 		if (collectionDate != null) {
-			updatedValues.put(COLLECTION_DATE, collectionDate);
 			model.addAttribute(COLLECTION_DATE, collectionDate);
 		}
 
-		/**
+
+		/*
 		 * If there's sample metadata to add, add it here.
 		 */
 		Map<String, MetadataEntry> metadataMap;
@@ -564,8 +571,8 @@ public class SamplesController extends BaseController {
 	 *            the incoming {@link HttpServletRequest}
 	 * @return redirect to the files page if successul
 	 */
-	@RequestMapping(value = { "/samples/{sampleId}/sequenceFiles/concatenate",
-			"/projects/{projectId}/samples/{sampleId}/sequenceFiles/concatenate" }, method = RequestMethod.POST)
+	@RequestMapping(value = { "/samples/{sampleId}/concatenate",
+			"/projects/{projectId}/samples/{sampleId}/concatenate" }, method = RequestMethod.POST)
 	public String concatenateSequenceFiles(@PathVariable Long sampleId, @RequestParam(name = "seq") Set<Long> objectIds,
 			@RequestParam(name = "filename") String filename,
 			@RequestParam(name = "remove", defaultValue = "false", required = false) boolean removeOriginals,

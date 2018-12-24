@@ -5,14 +5,14 @@
     <table id="analyses" class="table table-striped" cellspacing="0" width="100%">
         <thead>
         <tr>
-            <th data-data="id" width="20" th:text="#{analyses.id}">ID</th>
-            <th data-data="state" data-name="analysisState" th:text="#{analyses.state}">_State_</th>
-            <th data-data="name" width="160" th:text="#{analyses.analysis-name}">_Name_</th>
-            <th data-data="workflow" data-orderable="false" th:text="#{analyses.type}">_Workflow_</th>
-            <th data-data="submitter" th:text="#{analyses.submitter}">_Submitter_</th>
-            <th data-data="createdDate" th:text="#{analysis.date-created}">_Created Date_</th>
-            <th data-data="duration" width="160" data-orderable="false" th:text="#{analysis.duration}">_Duration_</th>
-            <th data-data="buttons"></th>
+            <th data-data="id" width="10" th:text="#{analyses.id}">ID</th>
+            <th data-data="state" width="40" data-name="analysisState" th:text="#{analyses.state}">_State_</th>
+            <th data-data="name" width="100" th:text="#{analyses.analysis-name}">_Name_</th>
+            <th data-data="workflow" width="80" data-orderable="false" th:text="#{analyses.type}">_Workflow_</th>
+            <th data-data="submitter" width="80" th:text="#{analyses.submitter}">_Submitter_</th>
+            <th data-data="createdDate" width="60" th:text="#{analysis.date-created}">_Created Date_</th>
+            <th data-data="duration" width="40" data-orderable="false" th:text="#{analysis.duration}">_Duration_</th>
+            <th data-data="buttons" width="20"></th>
         </tr>
         </thead>
     </table>
@@ -105,32 +105,82 @@
             <h3 class="popover-title"></h3>
             <div class="popover-content"></div>
         </div>
-        <div id="js-messages" class="hidden"
-             th:data-standard-output="#{analysis.details.joberror.standardOutput}"
-             th:data-standard-error="#{analysis.details.joberror.standardError}"
-             th:data-go-to-submission="#{analysis.joberror.popover.goto-submission}"
-             th:data-job-error="#{analysis.joberror}"
-             th:data-truncated-output="#{analysis.joberror.popover.truncated-output}"
-             th:data-tooltip="#{analysis.joberror.popover.click-to-show}">
-        </div>
     </div>
 </th:block>
 
+
+<th:block th:fragment="batch-download">
+    <div id="app">
+        <span>
+            <i class="fa fa-spinner fa-spin fa-2x spaced-left__sm" aria-hidden="true"></i>
+            <th:block th:text="#{analysis.batch-download.loading}"></th:block>
+        </span>
+    </div>
+</th:block>
+
+
 <th:block th:fragment="scripts">
     <script th:inline="javascript">
-      var PAGE = {
+      window.PAGE = Object.assign(window.PAGE || {}, {
         URLS: {
+          base: /*[[@{/}]]*/ '/',
           analyses: /*[[@{${ajaxURL}}]]*/ "",
           analysis: /*[[@{/analysis/}]]*/ "",
           download: /*[[@{/analysis/ajax/download/}]]*/ "",
           deleteUrl: /*[[@{/analysis/ajax/delete/}]]*/ ""
         },
         i18n: {
-          unexpectedDeleteError: /*[[#{analysis.delete.unexpected.exception}]]*/ ""
-        }
-      };
+          unexpectedDeleteError: /*[[#{analysis.delete.unexpected.exception}]]*/ "",
+          "analysis.details.joberror.standardOutput": /*[[#{analysis.details.joberror.standardOutput}]]*/ "STDOUT",
+          "analysis.details.joberror.standardError": /*[[#{analysis.details.joberror.standardError}]]*/ "STDERR",
+          "analysis.joberror.popover.goto-submission": /*[[#{analysis.joberror.popover.goto-submission}]]*/ "GOTO SUBMISSION {0}",
+          "analysis.joberror": /*[[#{analysis.joberror}]]*/ "JOBERROR",
+          "analysis.joberror.popover.truncated-output": /*[[#{analysis.joberror.popover.truncated-output}]]*/ "TRUNCATED",
+          "analysis.joberror.popover.click-to-show": /*[[#{analysis.joberror.popover.click-to-show}]]*/ "CLICK IT"
+        },
+        projectId: /*[[${ project?.getId()?.toString() }]]*/ '666',
+      });
     </script>
     <script th:src="@{/resources/dist/js/analyses-table.bundle.js}"></script>
 </th:block>
+
+
+<th:block th:fragment="batch-download-scripts">
+    <script th:inline="javascript">
+      window.PAGE = Object.assign(window.PAGE || {}, {
+        URLS: {
+          base: /*[[@{/}]]*/ '/',
+          analyses: /*[[@{${ajaxURL}}]]*/ "",
+          sharedAnalyses: /*[[@{/analysis/ajax/project/{projectId}/shared-analysis-outputs(projectId=${project?.getId()?.toString()})}]]*/ "",
+          automatedAnalyses: /*[[@{/analysis/ajax/project/{projectId}/automated-analysis-outputs(projectId=${project?.getId()?.toString()})}]]*/ ""
+        },
+        projectId: /*[[${ project?.getId()?.toString() }]]*/ '666',
+        page: /*[[${ page }]]*/ 'shared',
+        i18n: {
+          "sample.sampleName": /*[[#{sample.sampleName}]]*/ "SAMPLE NAME",
+          "bc.file": /*[[#{bc.file}]]*/ "FILE",
+          "analysis.table.type": /*[[#{analysis.table.type}]]*/ "ANALYSIS TYPE",
+          "analysis.table.version.unknown": /*[[#{analysis.table.version.unknown}]]*/ "UNKNOWN VERSION",
+          "analysis.table.name.unknown": /*[[#{analysis.table.name.unknown}]]*/ "UNKNOWN NAME",
+          "pipeline": /*[[#{pipeline}]]*/ "PIPELINE",
+          "analysis-submission": /*[[#{analysis-submission}]]*/ "ANALYSIS SUBMISSION",
+          "analysis.date-created": /*[[#{analysis.date-created}]]*/ "CREATED",
+          "form.download": /*[[#{form.download}]]*/ "DOWNLOAD",
+          "project.export.submitter": /*[[#{project.export.submitter}]]*/ "SUBMITTER",
+          "error.request.status-code": /*[[#{error.request.status-code}]]*/ "STATUS CODE",
+          "error.request.url": /*[[#{error.request.url}]]*/ "REQUEST URL",
+          "error.request.status-text": /*[[#{error.request.status-text}]]*/ "STATUS TEXT",
+          "analysis.batch-download.ajax.error": /*[[#{analysis.batch-download.ajax.error}]]*/ "REQUEST ERROR",
+          "error": /*[[#{error}]]*/ "!!!ERROR!!!",
+          "analysis.batch-download.preparing": /*[[#{analysis.batch-download.preparing}]]*/ "PREPARING DOWNLOAD",
+          "analysis.automated-analyses": /*[[#{analysis.automated-analyses}]]*/ "AUTOMATED ANALYSES",
+          "analysis.shared-analyses": /*[[#{analysis.shared-analyses}]]*/ "SHARED ANALYSES",
+          "analysis.batch-download.help-info": /*[[#{analysis.batch-download.help-info}]]*/ "SEND HELP"
+        }
+      });
+    </script>
+    <script th:src="@{/resources/dist/js/analysis-outputs-table.bundle.js}"></script>
+</th:block>
+
 </body>
 </html>

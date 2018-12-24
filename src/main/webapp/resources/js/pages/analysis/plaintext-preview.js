@@ -10,8 +10,7 @@ import { convertFileSize } from "../../utilities/file.utilities";
  */
 const statusText = (byte, fileSizeBytes) =>
   `${convertFileSize(byte)} / ${convertFileSize(fileSizeBytes)} (${(
-    byte /
-    fileSizeBytes *
+    (byte / fileSizeBytes) *
     100
   ).toFixed(1)}%)`;
 
@@ -64,19 +63,30 @@ export function renderPlainTextPreview(
   const getNewChunkSize = (filePosition, fileSizeBytes, chunkSize) =>
     Math.min(fileSizeBytes - filePosition, chunkSize);
 
+  let savedText = "";
+
   function onTextScroll() {
+    if (this.fetching) {
+      return;
+    }
     if (params.chunk === 0) {
       return;
     }
+    this.fetching = false;
     if (
-      $(this).scrollTop() + $(this).innerHeight() >=
-      $(this)[0].scrollHeight
+      $(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight &&
+      getNewChunkSize(params.seek, fileSizeBytes, chunk_size) >= 0
     ) {
+      let that = this;
       showMoreUrl = `${apiUrl}?${$.param(params)}`;
+      that.fetching = true;
       $.ajax({
         url: showMoreUrl,
         success: function({ text, filePointer }) {
-          $textEl.text($textEl.text() + text);
+          that.fetching = false;
+          savedText += text;
+          $textEl.text(savedText);
+          that.fetching = false;
           params.seek = filePointer;
           params.chunk = getNewChunkSize(
             params.seek,
@@ -85,6 +95,9 @@ export function renderPlainTextPreview(
           );
           showMoreUrl =
             params.chunk === 0 ? "" : `${apiUrl}?${$.param(params)}`;
+          if (showMoreUrl === "") {
+            that.fetching = true;
+          }
           $showMore.text(statusText(params.seek, fileSizeBytes));
         }
       });
@@ -94,7 +107,8 @@ export function renderPlainTextPreview(
   $.ajax({
     url: showMoreUrl,
     success: ({ text, filePointer }) => {
-      $textEl.text(text);
+      savedText = text;
+      $textEl.text(savedText);
       params.seek = filePointer;
       params.chunk = getNewChunkSize(params.seek, fileSizeBytes, chunk_size);
       $showMore.text(statusText(params.seek, fileSizeBytes));

@@ -1,27 +1,25 @@
 package ca.corefacility.bioinformatics.irida.service.export;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.ConnectException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import ca.corefacility.bioinformatics.irida.exceptions.NcbiXmlParseException;
+import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
+import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
+import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.service.EmailController;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableSet;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
+import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.slf4j.Logger;
@@ -38,17 +36,22 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.google.common.collect.ImmutableSet;
-
-import ca.corefacility.bioinformatics.irida.exceptions.NcbiXmlParseException;
-import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
-import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
-import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
-import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
-import ca.corefacility.bioinformatics.irida.service.EmailController;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.ConnectException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Class which handles uploading a {@link NcbiExportSubmission} to NCBI
@@ -59,7 +62,11 @@ public class ExportUploadService {
 
 	private static final String NCBI_TEMPLATE = "ncbi";
 
+	public static final String NCBI_ACCESSION_METADATA_LABEL = "NCBI SRA Accession";
+
 	private NcbiExportSubmissionService exportSubmissionService;
+	private SampleService sampleService;
+	private MetadataTemplateService metadataTemplateService;
 	private TemplateEngine templateEngine;
 	private EmailController emailController;
 
@@ -77,11 +84,19 @@ public class ExportUploadService {
 
 	@Value("${ncbi.upload.baseDirectory}")
 	private String baseDirectory;
+	
+	@Value("${ncbi.upload.controlKeepAliveTimeoutSeconds}")
+	private int controlKeepAliveTimeout;
+	
+	@Value("${ncbi.upload.controlKeepAliveReplyTimeoutMilliseconds}")
+	private int controlKeepAliveReplyTimeout;
 
 	@Value("${irida.administrative.notifications.email}")
 	private String notificationAdminEmail;
 
 	private static final int MAX_RETRIES = 3;
+
+	private static final long WAIT_BETWEEN_RETRIES = 5000L;
 
 	// set of statuses that should be watched and update
 	private static Set<ExportUploadState> updateableStates = ImmutableSet.of(ExportUploadState.UPLOADED,
@@ -89,16 +104,19 @@ public class ExportUploadService {
 			ExportUploadState.PROCESSING, ExportUploadState.WAITING);
 
 	@Autowired
-	public ExportUploadService(NcbiExportSubmissionService exportSubmissionService,
+	public ExportUploadService(NcbiExportSubmissionService exportSubmissionService, SampleService sampleService,
+			MetadataTemplateService metadataTemplateService,
 			@Qualifier("exportUploadTemplateEngine") TemplateEngine templateEngine, EmailController emailController) {
 		this.exportSubmissionService = exportSubmissionService;
+		this.sampleService = sampleService;
+		this.metadataTemplateService = metadataTemplateService;
 		this.templateEngine = templateEngine;
 		this.emailController = emailController;
 	}
 
 	/**
 	 * Manually configure connection details for this service
-	 * 
+	 *
 	 * @param ftpHost
 	 *            The hostname to connect to
 	 * @param ftpPort
@@ -181,6 +199,12 @@ public class ExportUploadService {
 						exportSubmissionService.update(updateSubmissionForXml);
 
 						xmlStream.close();
+
+						//If we're done processing, add the accessions
+						if (updateSubmissionForXml.getUploadState().equals(ExportUploadState.PROCESSED_OK)) {
+							addSampleAccessions(submission);
+						}
+
 					}
 				} catch (NcbiXmlParseException e) {
 					logger.error("Error getting response", e);
@@ -205,7 +229,7 @@ public class ExportUploadService {
 
 	/**
 	 * Create the XML for an {@link NcbiExportSubmission}
-	 * 
+	 *
 	 * @param submission
 	 *            the {@link NcbiExportSubmission} to create submission xml for
 	 * @return String content of the xml
@@ -223,7 +247,7 @@ public class ExportUploadService {
 	/**
 	 * Upload an {@link NcbiExportSubmission}'s files and submission xml to the
 	 * configured ftp site
-	 * 
+	 *
 	 * @param submission
 	 *            The {@link NcbiExportSubmission} to upload
 	 * @param xml
@@ -311,7 +335,7 @@ public class ExportUploadService {
 
 	/**
 	 * Get the latest result.#.xml file for the given submission
-	 * 
+	 *
 	 * @param client
 	 *            {@link FTPClient} to use for the connection
 	 * @param submission
@@ -368,7 +392,7 @@ public class ExportUploadService {
 	/**
 	 * Get the updates from the result.#.xml file for the given submission and
 	 * update the object. XML will look like the following:
-	 * 
+	 *
 	 * <pre>
 	 * <?xml version='1.0' encoding='utf-8'?>
 	 * <SubmissionStatus submission_id="SUB1234" status="processed-ok">
@@ -383,7 +407,7 @@ public class ExportUploadService {
 	 *   </Action>
 	 * </SubmissionStatus>
 	 * </pre>
-	 * 
+	 *
 	 * @param submission
 	 *            {@link NcbiExportSubmission} to update
 	 * @param xml
@@ -462,7 +486,7 @@ public class ExportUploadService {
 	/**
 	 * Get a Map of {@link NcbiBioSampleFiles} for a
 	 * {@link NcbiExportSubmission} indexed by the submitted sample ids
-	 * 
+	 *
 	 * @param submission
 	 *            Submission to get the {@link NcbiBioSampleFiles} for
 	 * @return A Map of String => {@link NcbiBioSampleFiles}
@@ -478,10 +502,9 @@ public class ExportUploadService {
 
 	/**
 	 * Connect an {@link FTPClient} with the configured connection details
-	 * 
+	 *
 	 * @return a connected {@link FTPClient}
-	 * @throws IOException
-	 *             if a connection error occurred
+	 * @throws IOException if a connection error occurred
 	 */
 	private FTPClient getFtpClient() throws IOException {
 		FTPClient client = new FTPClient();
@@ -501,13 +524,22 @@ public class ExportUploadService {
 
 		logger.trace(client.getStatus());
 
+		if (controlKeepAliveTimeout < 0 || controlKeepAliveReplyTimeout < 0) {
+			throw new IllegalArgumentException("Error: controlKeepAliveTimeout [" + controlKeepAliveTimeout
+					+ "] or controlKeepAliveReplyTimeout [" + controlKeepAliveReplyTimeout + "] < 0");
+		} else {
+			logger.trace("Using controlKeepAliveTimeout=" + controlKeepAliveTimeout + ", controlKeepAliveReplyTimeout="
+					+ controlKeepAliveReplyTimeout);
+			client.setControlKeepAliveTimeout(controlKeepAliveTimeout);
+		}
+		
 		return client;
 	}
 
 	/**
 	 * Disconnect an {@link FTPClient} if it's connected. Just doing this to
 	 * avoid the old try-catch-in-finally mess.
-	 * 
+	 *
 	 * @param client
 	 *            An {@link FTPClient} to shut down if it's connected
 	 */
@@ -523,7 +555,7 @@ public class ExportUploadService {
 
 	/**
 	 * Upload a string to remote ftp client
-	 * 
+	 *
 	 * @param client
 	 *            {@link FTPClient} to use for upload
 	 * @param filename
@@ -533,9 +565,11 @@ public class ExportUploadService {
 	 * @throws UploadException
 	 *             if file could not be uploaded
 	 */
-	private void uploadString(FTPClient client, String filename, String content) throws UploadException {
+	private void uploadString(FTPClient client, String filename, String content) throws UploadException, IOException {
 		int tries = 0;
 		boolean done = false;
+		
+		client.setFileType(FTP.ASCII_FILE_TYPE);
 
 		do {
 			tries++;
@@ -546,9 +580,15 @@ public class ExportUploadService {
 				done = true;
 			} catch (Exception e) {
 				String reply = client.getReplyString();
-				logger.error("Error uploading file: " + reply, e);
 				if (tries >= MAX_RETRIES) {
 					throw new UploadException("Could not upload file " + filename + " : " + reply, e);
+				}
+				logger.error("Error uploading file: " + reply, e);
+
+				try {
+					Thread.sleep(WAIT_BETWEEN_RETRIES);
+				} catch (InterruptedException e1) {
+					throw new UploadException("Sleep failed", e1);
 				}
 			}
 		} while (!done);
@@ -562,9 +602,12 @@ public class ExportUploadService {
 	 * @param path     {@link Path} to upload
 	 * @throws UploadException if file could not be uploaded
 	 */
-	private void uploadPath(FTPClient client, String filename, Path path) throws UploadException {
+	private void uploadPath(FTPClient client, String filename, Path path) throws UploadException, IOException {
 		int tries = 0;
 		boolean done = false;
+		
+		client.setFileType(FTP.BINARY_FILE_TYPE);
+		
 		do {
 			tries++;
 
@@ -574,11 +617,62 @@ public class ExportUploadService {
 				done = true;
 			} catch (Exception e) {
 				String reply = client.getReplyString();
-				logger.error("Error uploading file: " + reply, e);
 				if (tries >= MAX_RETRIES) {
 					throw new UploadException("Could not upload file " + filename + " : " + reply, e);
 				}
+				logger.error("Error uploading file: " + reply, e);
+
+				try {
+					Thread.sleep(WAIT_BETWEEN_RETRIES);
+				} catch (InterruptedException e1) {
+					throw new UploadException("Sleep failed", e1);
+				}
 			}
 		} while (!done);
+	}
+
+	/**
+	 * Add the accession numbers for uploaded NCBI data to the associated {@link Sample}
+	 *
+	 * @param submission an {@link NcbiExportSubmission} with associated accessions
+	 */
+	private void addSampleAccessions(NcbiExportSubmission submission) {
+		//get all samplefile objects for the submission
+		for (NcbiBioSampleFiles file : submission.getBioSampleFiles()) {
+			//read the accession
+			String accession = file.getAccession();
+
+			//if an accession exists
+			if (!Strings.isNullOrEmpty(accession)) {
+				//build a metadata map entry
+				Map<String, MetadataEntry> metadata = new HashMap<>();
+				metadata.put(NCBI_ACCESSION_METADATA_LABEL, new MetadataEntry(accession, "text"));
+				Map<MetadataTemplateField, MetadataEntry> metadataMap = metadataTemplateService
+						.getMetadataMap(metadata);
+
+				//get all the sequencing objects involved
+				Set<SequencingObject> objects = new HashSet<>();
+				if (!file.getPairs().isEmpty()) {
+					objects.addAll(file.getPairs());
+				} else if (!file.getFiles().isEmpty()) {
+					objects.addAll(file.getFiles());
+				}
+
+				// get all the samples for those sequencing objects
+				Set<Sample> samples = new HashSet<>();
+				for (SequencingObject object : objects) {
+					SampleSequencingObjectJoin join = sampleService.getSampleForSequencingObject(object);
+
+					samples.add(join.getSubject());
+				}
+
+				//update the samples with the accession
+				for (Sample s : samples) {
+					s.mergeMetadata(metadataMap);
+
+					sampleService.update(s);
+				}
+			}
+		}
 	}
 }

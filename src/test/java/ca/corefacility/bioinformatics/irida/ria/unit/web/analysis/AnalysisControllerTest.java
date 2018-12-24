@@ -1,34 +1,19 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.analysis;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Optional;
-
-import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisOutputFileInfo;
-import ca.corefacility.bioinformatics.irida.ria.web.services.AnalysesListingService;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.context.MessageSource;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.ui.ExtendedModelMap;
-
-import com.google.common.collect.Lists;
-
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
+import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkflowStructure;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysisController;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisOutputFileInfo;
+import ca.corefacility.bioinformatics.irida.ria.web.components.AnalysisOutputFileDownloadManager;
+import ca.corefacility.bioinformatics.irida.ria.web.services.AnalysesListingService;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -37,6 +22,19 @@ import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateServi
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
+import com.google.common.collect.Lists;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.context.MessageSource;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.ui.ExtendedModelMap;
+
+import java.io.IOException;
+import java.util.*;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  */
@@ -58,6 +56,14 @@ public class AnalysisControllerTest {
 	private MetadataTemplateService metadataTemplateService;
 	private SequencingObjectService sequencingObjectService;
 	private AnalysesListingService analysesListingService;
+	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
+	private AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager;
+
+	/**
+	 * Analysis Output File key names from {@link TestDataFactory#constructAnalysis()}
+	 */
+	private final List<String> outputNames = Lists.newArrayList("tree", "matrix", "table", "contigs-with-repeats",
+			"refseq-masher-matches");
 
 	@Before
 	public void init() {
@@ -68,10 +74,13 @@ public class AnalysisControllerTest {
 		sampleService = mock(SampleService.class);
 		sequencingObjectService = mock(SequencingObjectService.class);
 		analysesListingService = mock(AnalysesListingService.class);
+		analysisSubmissionSampleProcessor = mock(AnalysisSubmissionSampleProcessor.class);
+		analysisOutputFileDownloadManager = mock(AnalysisOutputFileDownloadManager.class);
 		MessageSource messageSourceMock = mock(MessageSource.class);
 		analysisController = new AnalysisController(analysisSubmissionServiceMock, iridaWorkflowsServiceMock,
 				userServiceMock, sampleService, projectServiceMock, updatePermission, metadataTemplateService,
-				sequencingObjectService, analysesListingService, messageSourceMock);
+				sequencingObjectService, analysesListingService, analysisSubmissionSampleProcessor,
+				analysisOutputFileDownloadManager, messageSourceMock);
 	}
 
 	@Test
@@ -83,13 +92,13 @@ public class AnalysisControllerTest {
 		final IridaWorkflowInput input = new IridaWorkflowInput("single", "paired", "reference", true);
 		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
 		IridaWorkflowDescription description = new IridaWorkflowDescription(submission.getWorkflowId(), "My Workflow",
-				"V1", AnalysisType.PHYLOGENOMICS, input, Lists.newArrayList(), Lists.newArrayList(),
+				"V1", BuiltInAnalysisTypes.PHYLOGENOMICS, input, Lists.newArrayList(), Lists.newArrayList(),
 				Lists.newArrayList());
 		IridaWorkflow iridaWorkflow = new IridaWorkflow(description, null);
 		submission.setAnalysisState(AnalysisState.COMPLETED);
 
 		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
-		when(iridaWorkflowsServiceMock.getIridaWorkflow(submission.getWorkflowId())).thenReturn(iridaWorkflow);
+		when(iridaWorkflowsServiceMock.getIridaWorkflowOrUnknown(submission)).thenReturn(iridaWorkflow);
 
 		String detailsPage = analysisController.getDetailsPage(submissionId, model, locale);
 		assertEquals("should be details page", AnalysisController.PAGE_DETAILS_DIRECTORY + "tree", detailsPage);
@@ -99,6 +108,9 @@ public class AnalysisControllerTest {
 		assertEquals("submission should be in model", submission, model.get("analysisSubmission"));
 		
 		assertEquals("submission reference file should be in model.", submission.getReferenceFile().get(), model.get("referenceFile"));
+
+		assertEquals("analysisType should be PHYLOGENOMICS", BuiltInAnalysisTypes.PHYLOGENOMICS,
+				model.get("analysisType"));
 	}
 
 	@Test
@@ -110,13 +122,13 @@ public class AnalysisControllerTest {
 		final IridaWorkflowInput input = new IridaWorkflowInput("single", "paired", "reference", true);
 		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
 		IridaWorkflowDescription description = new IridaWorkflowDescription(submission.getWorkflowId(), "My Workflow",
-				"V1", AnalysisType.PHYLOGENOMICS, input, Lists.newArrayList(), Lists.newArrayList(),
+				"V1", BuiltInAnalysisTypes.PHYLOGENOMICS, input, Lists.newArrayList(), Lists.newArrayList(),
 				Lists.newArrayList());
 		IridaWorkflow iridaWorkflow = new IridaWorkflow(description, null);
 		submission.setAnalysisState(AnalysisState.RUNNING);
 
 		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
-		when(iridaWorkflowsServiceMock.getIridaWorkflow(submission.getWorkflowId())).thenReturn(iridaWorkflow);
+		when(iridaWorkflowsServiceMock.getIridaWorkflowOrUnknown(submission)).thenReturn(iridaWorkflow);
 
 		String detailsPage = analysisController.getDetailsPage(submissionId, model, locale);
 		assertEquals("should be details page", AnalysisController.PAGE_DETAILS_DIRECTORY + "tree", detailsPage);
@@ -124,6 +136,74 @@ public class AnalysisControllerTest {
 		assertFalse("No preview should be available", model.containsAttribute("preview"));
 
 		assertEquals("submission should be in model", submission, model.get("analysisSubmission"));
+	}
+
+	@Test
+	public void testGetAnalysisDetailsMissingPipeline() throws IOException, IridaWorkflowNotFoundException {
+		Long submissionId = 1L;
+		ExtendedModelMap model = new ExtendedModelMap();
+		Locale locale = Locale.ENGLISH;
+		UUID workflowId = UUID.randomUUID();
+
+		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission(workflowId);
+		submission.setAnalysisState(AnalysisState.COMPLETED);
+
+		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
+		when(iridaWorkflowsServiceMock.getIridaWorkflowOrUnknown(submission))
+				.thenReturn(createUnknownWorkflow(workflowId));
+
+		String detailsPage = analysisController.getDetailsPage(submissionId, model, locale);
+		assertEquals("should be details page", AnalysisController.PAGE_DETAILS_DIRECTORY + "unavailable", detailsPage);
+
+		assertFalse("No preview should be set", model.containsAttribute("preview"));
+
+		assertEquals("submission should be in model", submission, model.get("analysisSubmission"));
+
+		assertEquals("version should be unknown", "unknown", model.get("version"));
+		assertEquals("analysisType should be UNKNOWN", BuiltInAnalysisTypes.UNKNOWN, model.get("analysisType"));
+	}
+
+	private IridaWorkflow createUnknownWorkflow(UUID workflowId) {
+		return new IridaWorkflow(
+				new IridaWorkflowDescription(workflowId, "unknown", "unknown", BuiltInAnalysisTypes.UNKNOWN,
+						new IridaWorkflowInput(), Lists.newLinkedList(), Lists.newLinkedList(), Lists.newLinkedList()),
+				new IridaWorkflowStructure(null));
+	}
+
+	@Test
+	public void getOutputFilesInfoSuccess() throws IridaWorkflowNotFoundException {
+		Long submissionId = 1L;
+
+		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
+		submission.setAnalysisState(AnalysisState.COMPLETED);
+
+		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
+		when(iridaWorkflowsServiceMock.getOutputNames(submission.getWorkflowId()))
+				.thenReturn(Lists.newArrayList("tree"));
+
+		List<AnalysisOutputFileInfo> outputInfos = analysisController.getOutputFilesInfo(submissionId);
+
+		assertEquals("Should only be one output", 1, outputInfos.size());
+
+		AnalysisOutputFileInfo info = outputInfos.get(0);
+
+		assertEquals("Should have proper filename", "snp_tree.tree", info.getFilename());
+	}
+
+	@Test
+	public void getOutputFilesInfoSuccessNoWorkflow() throws IridaWorkflowNotFoundException {
+		Long submissionId = 1L;
+
+		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
+		submission.setAnalysisState(AnalysisState.COMPLETED);
+
+		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
+		when(iridaWorkflowsServiceMock.getOutputNames(submission.getWorkflowId()))
+				.thenThrow(new IridaWorkflowNotFoundException(""));
+
+		List<AnalysisOutputFileInfo> outputInfos = analysisController.getOutputFilesInfo(submissionId);
+
+		assertEquals("Should be 5 outputs", 5, outputInfos.size());
 	}
 
 	// ************************************************************************************************
@@ -148,11 +228,14 @@ public class AnalysisControllerTest {
 	}
 
 	@Test
-	public void testGetOutputFileLines() {
+	public void testGetOutputFileLines() throws IridaWorkflowNotFoundException {
 		final Long submissionId = 1L;
 		final MockHttpServletResponse response = new MockHttpServletResponse();
-		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(
-				TestDataFactory.constructAnalysisSubmission());
+		final AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
+		final UUID workflowId = submission.getWorkflowId();
+		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
+		when(iridaWorkflowsServiceMock.getOutputNames(workflowId)).thenReturn(
+				outputNames);
 		// get analysis output file summary info
 		final List<AnalysisOutputFileInfo> infos = analysisController.getOutputFilesInfo(submissionId);
 		assertEquals("Expecting 5 analysis output file info items", 5, infos.size());
@@ -189,11 +272,14 @@ public class AnalysisControllerTest {
 	}
 
 	@Test
-	public void testGetOutputFileByteSizedChunks() {
+	public void testGetOutputFileByteSizedChunks() throws IridaWorkflowNotFoundException {
 		final Long submissionId = 1L;
 		final MockHttpServletResponse response = new MockHttpServletResponse();
-		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(
-				TestDataFactory.constructAnalysisSubmission());
+		final AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
+		final UUID workflowId = submission.getWorkflowId();
+		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
+		when(iridaWorkflowsServiceMock.getOutputNames(workflowId)).thenReturn(
+				outputNames);
 		// get analysis output file summary info
 		final List<AnalysisOutputFileInfo> infos = analysisController.getOutputFilesInfo(submissionId);
 		assertEquals("Expecting 5 analysis output file info items", 5, infos.size());

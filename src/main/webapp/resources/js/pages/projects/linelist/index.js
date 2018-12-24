@@ -1,6 +1,7 @@
-import angular from "angular";
-import { LinelistModule } from "./linelist.module";
-import "../../../../sass/pages/project-linelist.scss";
+import React from "react";
+import { render } from "react-dom";
+import { App } from "./App";
+import "./linelist.scss";
 
-const app = angular.module("irida");
-app.requires.push(LinelistModule);
+// Render the application
+render(<App />, document.querySelector("#root"));

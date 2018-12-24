@@ -1,10 +1,70 @@
 Changes
 =======
 
+0.22.0 to 0.23.0
+----------------
+* [Database]: Fixed an issue where metadata entries derived from pipelines were not updating the associated analysis submission and ignorning blank entries. (0.23.5)
+* [Developer]: Added classes `.jar` maven export in build process.
+* [UI]: Added the sample coverage to the table exported from the project samples page.
+* [UI/Workflow]: Added option to disable workflows/analysis types from display in IRIDA using `irida.workflow.types.disabled`. (0.22.1)
+* [Developer]: Added wait when NCBI Uploader fails before retrying. (0.22.1)
+* [UI]: Users can now download in batch their user-generated, shared with project and automated project single sample analysis output files by selecting the files they wish to download from tables on the `/analysis/user/analysis-outputs`, `/projects/<id>/analyses/shared-outputs`, and `/projects/<id>/analyses/automated-outputs` pages, respectively.
+* [UI]: Added configurable warning for analysis results and metadata pages.  Set the text for this warning with `irida.analysis.warning`.  This can be used to communicate that results of analyses may be preliminary.
+* [Admin]: Added new profiles to allow IRIDA web server to run in a clustered fashion.  See documentation at https://irida.corefacility.ca/documentation/administrator/web/#multi-web-server-configuration
+* [UI]: Fixed bug where all moved samples were locked. (0.22.2)
+* [UI/Developer]: Updated to lodash v4.17.10 to fix security issue. (0.22.2)
+* [UI]: Fixed bug where project samples page would freeze if there where numerous QC Issues. (0.22.3)
+* [UI]: Fixed error where synchronizing sequence files could lead to truncated files without generating an error. (0.22.3)
+* [UI]: Adding NCBI SRA accession to sample metadata when uploading data to NCBI.
+* [Developer]: Updated FastQC to 0.11.7.
+* [UI]: Fixed bug in sample edit page that didn't allow users to clear a field in the sample.
+* [Workflow]: Updated the AssemblyAnnotation pipeline to v0.5 and the AssemblyAnnotationCollection pipeline to v0.4. Both pipelines now use Shovill for assembly and QUAST for assembly quality assessment in addition to Prokka for annotation.
+* [API]: Fixed REST endpoint mapping for current user and user projects.
+* [Workflow]: Fixed issue where duplicate filenames were found after running Galaxy workflow in newer Galaxy versions. (0.22.4)
+* [Developer]: Added unused import checking to checkstyle config.  The `mvn site` build will throw an error if unused imports are present.
+* [Developer/Workflow]: Added the ability build pipelines into independent JAR files to be loaded in IRIDA as a plugin (after placing in `/etc/irida/plugins`). Please see <https://github.com/phac-nml/irida-plugin-example> and <https://irida.corefacility.ca/documentation/developer/tools/pipelines/> for more details.
+* [Developer]: Added additional FTP settings for NCBI uploads: `ncbi.upload.controlKeepAliveTimeout`, and `ncbi.upload.controlKeepAliveReplyTimeoutMilliseconds`.
+* [Developer]: Fixed issue with some settings in `/etc/irida/irida.conf` not being detected properly.
+* [Developer]: Added ability to adjust `jdbc.pool.maxWait` through an environment variable `DB_MAX_WAIT_MILLIS` for fixing timeout issues for tests.
+* [Developer]: Split Galaxy testing into `galaxy_testing` and `galaxy_pipeline_testing` to reduce the time it takes for all Galaxy tests to complete.
+* [Developer]: Fixed up test cases for genome assemblies and simplified saving to database.
+* [Sync]: Project sync date will be updated at start of sync job to stop quickly repeating errored syncs.
+* [UI]: IRIDA will now remove local samples when a synchronized remote sample is removed at its source.
+* [UI]: New project line list page with inline editing.
+* [Developer]: Updated Node, Yarn, and front-end webpack packages.
+* [Developer]: Update to ag-grid-community v.19.1.2.
+* [Documentation]: Changed references from GitLab to GitHub in docs.
+* [UI]: Removed angular-resource, angular-messages, angular-sanitize, angular-animate, angular-datatables, ng-table and angular-drag-and-drop-lists.
+* [REST]: Added method to greatly increase speed of listing samples in a project.  This was becoming an issue for projects with metadata and >5k samples.
+* [Developer]: Added pull request and issue templates for github.
+
+0.21.0 to 0.22.0
+----------------
+* [UI]: Fixed bug where `.xls` file could not be uploaded through the file picker on the metadata upload page. (0.21.1)
+* [Workflow]: Added version 0.1.9 of the [MentaLiST](https://github.com/WGS-TB/MentaLiST) pipeline, which includes a fix for downloading cgMLST schemes and a distance matrix output.
+* [UI]: Fixed bug where concatenate files was POSTing to incorrect URL. (0.21.2)
+* [UI]: Fixed bug where SVG files could not be exported through the advanced visualization page. (0.21.2)
+* [UI]: Fixed bug where users could not share more than nine samples. (0.21.2)
+* [UI]: Moved the position of the notification system to top center.
+* [Workflow]: Added version 2.0.0 of a pipeline for running [bio_hansel](https://github.com/phac-nml/bio_hansel) (version 2.0.0)
+* [Workflow]: Added version 0.3 of a pipeline for running [SISTR](https://github.com/peterk87/sistr_cmd/) which now makes use of [Shovill](https://github.com/tseemann/shovill) for genome assembly.
+* [Workflow]: Updated SISTR pipeline to store the following additional fields in the metadata table: serogroup, O antigen, H1, H2, and alleles matching genome.
+* [UI]: Users can save analysis results to samples after pipeline is done in "Share Results" tab.
+* [UI]: Fixed bug where edit groups page would throw a server exception. (0.21.3)
+* [UI]: Hiding user page project list for non-admins.
+* [Workflow]: Fixed bug where auto updating metadata from analysis submission failed for non-admin user. (0.21.4)
+* [UI]: Fixed bug where admin dropdown menu was hidden behind sequencing run sub navigation.
+* [Developer]: Moved file processing chain outside of SequencingObjectService.  It now runs as a scheduled task.  This will help balance the processing load in multi-server deployments.
+* [UI]: Ensuring `ROLE_SEQUENCER` users get "Access Denied" for any attempted UI interactions.
+* [Developer]: Updated `yarn` to the current version.
+* [UI/Workflow]: Pipeline analysis output files are rendered in the same order as they appear in the pipeline `irida_workflow.xml` in the `<outputs>` XML element.
+* [Developer]: Can now specify which `chromedriver` to use in UI testing with `-Dwebdriver.chrome.driver=/PATH/TO/chromedriver`.
+* [UI]: Fixes slow Sample cart. Quicker saving of large selections of samples to cart (`POST /cart/add/samples`) and loading of existing cart Samples (`GET /cart`).  
+
 0.20.0 to 0.21.0
 ----------------
-* [Workflow]: Added version 0.1 of a pipeline for runing [MentaLiST](https://github.com/WGS-TB/MentaLiST) (version 0.1.3).
-* [Workflow]: Added version 0.1 of a pipeline for runing Mash against the refseq database [refseq_masher](https://github.com/phac-nml/refseq_masher).
+* [Workflow]: Added version 0.1 of a pipeline for running [MentaLiST](https://github.com/WGS-TB/MentaLiST) (version 0.1.3).
+* [Workflow]: Added version 0.1 of a pipeline for running Mash against the refseq database [refseq_masher](https://github.com/phac-nml/refseq_masher).
 * [UI]: Fixed bug where user could not cancel the upload of a sequence file on the Sample Files page.
 * [UI/Workflow]: Fixed bug where users could not submit large analyses due to an HTTP 414 "Request URI Too Long" error.
 * [Developer]: Removed old gulp dependencies from the `package.json` file.

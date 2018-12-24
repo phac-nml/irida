@@ -108,7 +108,7 @@
           local: {
             get: /*[[@{/projects/{id}/settings/associated/ajax/available(id=${project.getId()})}]]*/ '/projects/1/associated/ajax/available',
             add: /*[[@{/projects/{id}/settings/associated/(id=${project.getId()})}]]*/ '/projects/1/associated/',
-            remove: /*[[@{/projects/{id}/settings/associated/(id=${project.getId()})}]]*/ '/projects/1/associated/'
+            remove: /*[[@{/projects/{id}/settings/associated/remove(id=${project.getId()})}]]*/ "/projects/1/associated/"
           }
         }
       };

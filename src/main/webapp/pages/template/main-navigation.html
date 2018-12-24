@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
-<nav id="topnav" class="navbar navbar-inverse navbar-static-top" role="navigation">
-    <div class="container">
+<nav id="topnav" class="navbar navbar-inverse navbar-static-top top-navigation" role="navigation">
+    <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
@@ -66,10 +66,17 @@
                                th:text="#{nav.main.analysis-admin-all}">List All Analysis
                             </a>
                         </li>
+                        <li role="separator" class="divider"></li>
+                        <li>
+                            <a th:href="@{/analysis/user/analysis-outputs}"
+                               th:text="#{analysis.sidebar.output-files}">
+                                User analysis outputs
+                            </a>
+                        </li>
                     </ul>
                 </li>
             </ul>
-            <div class="nav navbar-nav navbar-right">
+            <span class="nav navbar-nav navbar-right">
                 <form id="global-search" class="navbar-form navbar-left" th:action="@{/search}" method="GET"
                       role="search">
                     <div class="form-group">
@@ -132,7 +139,7 @@
                             </li>
                             <li>
                                 <a href="http://www.irida.ca" target="_blank">
-                                    <i class="fa fa-external-link-square fa-fw spaced-right__sm" aria-hidden="true"></i>
+                                    <i class="fas fa-external-link-alt spaced-right__sm"></i>
                                     <th:block th:text="#{generic.irida.website}"/>
                                 </a>
                             </li>
@@ -219,21 +226,21 @@
                         <ul class="dropdown-menu">
                             <li>
                                 <a th:href="@{/users/current}">
-                                    <i class="fa fa-fw fa-user spaced-right__sm" aria-hidden="true"></i>
+                                    <i class="fa fa-user spaced-right__sm" aria-hidden="true"></i>
                                     <th:block th:text="#{nav.main.account}"/>
                                 </a>
                             </li>
                             </li>
                             <li>
                                 <a th:href="@{/logout}">
-                                    <i class="fa fa-fw fa-sign-out spaced-right__sm"></i>
+                                   <i class="fas fa-sign-out-alt spaced-right__sm"></i>
                                     <th:block th:text="#{nav.main.logout}"/>
                                 </a>
                             </li>
                         </ul>
                     </li>
                 </ul>
-            </div>
+            </span>
         </div>
         <!-- /.navbar-collapse -->
     </div>

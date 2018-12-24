@@ -140,7 +140,7 @@ function FileUploadController(Upload, $timeout, $window, $uibModal) {
         vm.errorMessage = data.error_message;
       },
       function(evt) {
-        vm.progress = parseInt(100.0 * evt.loaded / evt.total, 0);
+        vm.progress = parseInt((100.0 * evt.loaded) / evt.total, 0);
         if (vm.progress >= 99) {
           vm.uploading = false;
           vm.processing = true;
@@ -221,7 +221,7 @@ function FileUploadController(Upload, $timeout, $window, $uibModal) {
 }
 
 const filesModule = angular
-  .module("irida.sample.files", ["ngAnimate", "ui.bootstrap", "ngFileUpload"])
+  .module("irida.sample.files", ["ui.bootstrap", "ngFileUpload"])
   .filter("humanReadableBytes", humanReadableBytes)
   .controller("FileUploadController", [
     "Upload",

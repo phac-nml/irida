@@ -1,0 +1,9 @@
+<div th:with="message=${@environment.getProperty('irida.analysis.warning')}">
+    <div class="alert alert-warning alert-sm alert-dismissible" role="alert" th:if=${message}>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <i class="fa fa-info-circle"></i>
+        <span th:text="${message}"></span>
+    </div>
+</div>

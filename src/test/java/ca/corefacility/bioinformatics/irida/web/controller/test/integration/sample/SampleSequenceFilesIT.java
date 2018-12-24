@@ -3,7 +3,7 @@ package ca.corefacility.bioinformatics.irida.web.controller.test.integration.sam
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asAdmin;
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asUser;
 import static com.jayway.restassured.path.json.JsonPath.from;
-import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.both;
 import static org.hamcrest.Matchers.equalTo;
@@ -93,7 +93,7 @@ public class SampleSequenceFilesIT {
 				.getString("resource.links.find{it.rel == 'sequencefile/qc'}.href");
 
 		// Wait for FASTQC to finish
-		Thread.sleep(5000);
+		Thread.sleep(15000);
 
 		asUser().expect().statusCode(HttpStatus.OK.value()).when().get(qcPath);
 

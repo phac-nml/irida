@@ -7,13 +7,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -23,6 +18,7 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -39,10 +35,10 @@ public class CartControllerTest {
 	SampleService sampleService;
 	ProjectService projectService;
 	UserService userService;
-	SequencingObjectService sequencingObjectService;
 	MessageSource messageSource;
 
 	CartController controller;
+	SequencingObjectService sequencingObjectService;
 
 	private Long projectId;
 	Set<Long> sampleIds;
@@ -54,11 +50,10 @@ public class CartControllerTest {
 		sampleService = mock(SampleService.class);
 		projectService = mock(ProjectService.class);
 		userService = mock(UserService.class);
-		sequencingObjectService = mock(SequencingObjectService.class);
 		messageSource = mock(MessageSource.class);
+		sequencingObjectService = mock(SequencingObjectService.class);
 
-		controller = new CartController(sampleService, userService, projectService, sequencingObjectService,
-				messageSource);
+		controller = new CartController(sampleService, userService, projectService, sequencingObjectService, messageSource);
 
 		testData();
 	}
@@ -70,9 +65,7 @@ public class CartControllerTest {
 		controller.addProjectSample(projectId, subIds, Locale.US);
 
 		verify(projectService).read(projectId);
-		for (Long id : subIds) {
-			verify(sampleService).getSampleForProject(project, id);
-		}
+		verify(sampleService).getSamplesInProject(project, new ArrayList<>(subIds));
 
 		Map<Project, Set<Sample>> selected = controller.getSelected();
 		assertEquals(1, selected.keySet().size());
@@ -97,9 +90,7 @@ public class CartControllerTest {
 		assertTrue((boolean) addProjectSample.get("success"));
 
 		verify(projectService).read(projectId);
-		for (Long id : subIds) {
-			verify(sampleService).getSampleForProject(project, id);
-		}
+		verify(sampleService).getSamplesInProject(project, new ArrayList<>(subIds));
 
 		selected = controller.getSelected();
 
@@ -116,9 +107,7 @@ public class CartControllerTest {
 		Map<Project, Set<Sample>> selected = new HashMap<>();
 		selected.put(project, samples);
 		controller.setSelected(selected);
-
 		Sample sample = samples.iterator().next();
-
 		Map<String, Object> removeProjectSample = controller.removeProjectSample(projectId, sample.getId());
 
 		assertTrue((boolean) removeProjectSample.get("success"));
@@ -140,9 +129,7 @@ public class CartControllerTest {
 		assertTrue((boolean) addProjectSample.get("success"));
 
 		verify(projectService).read(projectId);
-		for (Long id : sampleIds) {
-			verify(sampleService).getSampleForProject(project, id);
-		}
+		verify(sampleService).getSamplesInProject(project, Lists.newArrayList(sampleIds));
 
 		selected = controller.getSelected();
 
@@ -208,7 +195,6 @@ public class CartControllerTest {
 		for (Map<String, Object> map : sList) {
 			assertTrue(map.containsKey("id"));
 			assertTrue(map.containsKey("label"));
-			assertTrue(map.containsKey("href"));
 		}
 	}
 
@@ -227,5 +213,12 @@ public class CartControllerTest {
 			samples.add(sample);
 			when(sampleService.getSampleForProject(project, id)).thenReturn(new ProjectSampleJoin(project,sample, true));
 		}
+		final ArrayList<Long> ids = new ArrayList<>(sampleIds);
+
+		when(sampleService.getSamplesInProject(project, ids)).thenReturn(new ArrayList<>(samples));
+		ArrayList<Long> subIds = Lists.newArrayList(sampleIds.iterator().next());
+		when(sampleService.getSamplesInProject(project, subIds)).thenReturn(samples.stream().filter(x -> Objects.equals(
+				x.getId(), subIds.get(0))).collect(
+				Collectors.toList()));
 	}
 }

@@ -27,6 +27,7 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyCleanupAsync;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionServiceImpl;
+import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 /**
  * Unit tests for {@link AnalysisSubmissionServiceImpl}.
@@ -60,11 +61,14 @@ public class AnalysisSubmissionServiceImplTest {
 	private AnalysisSubmissionServiceImpl analysisSubmissionServiceImpl;
 
 	@Mock
+	private IridaWorkflowsService iridaWorkflowsService;
+
+	@Mock
 	private JobErrorRepository jobErrorRepository;
 
 	@Mock
 	private AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionService;
-	
+
 	private static final Long ID = 1L;
 	private static final String HISTORY_ID = "1";
 
@@ -77,7 +81,7 @@ public class AnalysisSubmissionServiceImplTest {
 
 		analysisSubmissionServiceImpl = new AnalysisSubmissionServiceImpl(analysisSubmissionRepository, userRepository,
 				referenceFileRepository, sequencingObjectService, galaxyHistoriesService, pasRepository,
-				jobErrorRepository, validator);
+				jobErrorRepository, iridaWorkflowsService, validator);
 		analysisSubmissionServiceImpl.setAnalysisExecutionService(analysisExecutionService);
 
 		when(analysisSubmissionRepository.findOne(ID)).thenReturn(analysisSubmission);

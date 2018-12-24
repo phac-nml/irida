@@ -66,7 +66,7 @@
 	</div>
 </div>
 
-<div layout:fragment="main" class="col-md-9 col-md-push-3">
+<div layout:fragment="main">
 	<div>
 		<div>
 			<div id="file-deleted-success" th:if="${fileDeletedMessage}" class="alert alert-success"
@@ -82,7 +82,7 @@
 		<div class="panel-body">
 			<div class="media">
 				<div class="media-left">
-					<i class="fa fa-file-o media-object" style="font-size: 10rem;"></i>
+					<i class="far fa-file media-object" style="font-size: 10rem;"></i>
 				</div>
 				<div class="media-body">
 					<h4 class="media-heading" th:text="#{samples.files.empty.title}"></h4>

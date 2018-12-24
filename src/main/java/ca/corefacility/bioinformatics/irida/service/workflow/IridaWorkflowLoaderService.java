@@ -26,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
 import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkflowStructure;
+import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;
 
 /**
  * Used to load up IRIDA workflows.
@@ -41,6 +42,8 @@ public class IridaWorkflowLoaderService {
 	private static final String WORKFLOW_STRUCTURE_FILE = "irida_workflow_structure.ga";
 
 	private Unmarshaller workflowDescriptionUnmarshaller;
+	
+	private AnalysisTypesService analysisTypesService;
 
 	/**
 	 * Builds a new {@link IridaWorkflowLoaderService} with the given
@@ -48,10 +51,12 @@ public class IridaWorkflowLoaderService {
 	 * 
 	 * @param workflowDescriptionUnmarshaller
 	 *            The unmarshaller to use.
+	 * @param analysisTypesService The {@link AnalysisTypesService} to use.
 	 */
 	@Autowired
-	public IridaWorkflowLoaderService(Unmarshaller workflowDescriptionUnmarshaller) {
+	public IridaWorkflowLoaderService(Unmarshaller workflowDescriptionUnmarshaller, AnalysisTypesService analysisTypesService) {
 		this.workflowDescriptionUnmarshaller = workflowDescriptionUnmarshaller;
+		this.analysisTypesService = analysisTypesService;
 	}
 
 	/**
@@ -155,8 +160,8 @@ public class IridaWorkflowLoaderService {
 
 		if (workflowDescription.getId() == null) {
 			throw new IridaWorkflowLoadException("No id for workflow description from file " + descriptionFile);
-		} else if (workflowDescription.getAnalysisType() == null) {
-			throw new IridaWorkflowLoadException("Invalid analysisType for workflow description from file " + descriptionFile);
+		} else if (!analysisTypesService.isValid(workflowDescription.getAnalysisType())) {
+			throw new IridaWorkflowLoadException("Invalid analysisType=" + workflowDescription.getAnalysisType() + " for workflow description from file " + descriptionFile);
 		} else {
 			if (workflowDescription.acceptsParameters()) {
 				for (IridaWorkflowParameter workflowParameter : workflowDescription.getParameters()) {
@@ -168,6 +173,17 @@ public class IridaWorkflowLoaderService {
 					}
 					if (workflowParameter.isRequired() && workflowParameter.getDefaultValue() != null) {
 						throw new IridaWorkflowLoadException("Required parameters should not have a default value." + descriptionFile);
+					}
+					if (workflowParameter.hasChoices() && !workflowParameter.isRequired()) {
+						throw new IridaWorkflowLoadException("If parameter name='" + workflowParameter.getName()
+								+ "' has choices then the 'required' attribute must be set to 'true'. "
+								+ descriptionFile);
+					}
+					if (workflowParameter.isRequired() && workflowParameter.isChoicesEmpty()) {
+						throw new IridaWorkflowLoadException(
+								"Expected one or more <choice name='{name}' value='{value}'> tags within <choices> "
+										+ "tag for parameter name='" + workflowParameter.getName() + "'  in file "
+										+ descriptionFile);
 					}
 					try {
 						workflowParameter.getDynamicSource();

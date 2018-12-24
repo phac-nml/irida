@@ -3,11 +3,11 @@ package ca.corefacility.bioinformatics.irida.ria.web.services;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
@@ -15,7 +15,9 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models
 import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTAnalysis;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
@@ -38,15 +40,17 @@ public class AnalysesListingService {
 	private IridaWorkflowsService iridaWorkflowsService;
 	private UpdateAnalysisSubmissionPermission updateAnalysisPermission;
 	private MessageSource messageSource;
+	private AnalysisTypesService analysisTypesService;
 
 	@Autowired
 	public AnalysesListingService(AnalysisSubmissionService analysisSubmissionService,
 			IridaWorkflowsService iridaWorkflowsService, UpdateAnalysisSubmissionPermission updateAnalysisPermission,
-			MessageSource messageSource) {
+			MessageSource messageSource, AnalysisTypesService analysisTypesService) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.iridaWorkflowsService = iridaWorkflowsService;
 		this.updateAnalysisPermission = updateAnalysisPermission;
 		this.messageSource = messageSource;
+		this.analysisTypesService = analysisTypesService;
 	}
 
 	/**
@@ -76,7 +80,7 @@ public class AnalysesListingService {
 		 */
 		Set<UUID> workflowIds = null;
 		if (searchMap.containsKey("workflow")) {
-			AnalysisType workflowType = AnalysisType.fromString(searchMap.get("workflow"));
+			AnalysisType workflowType = analysisTypesService.fromString(searchMap.get("workflow"));
 			Set<IridaWorkflow> workflows = iridaWorkflowsService.getAllWorkflowsByType(workflowType);
 			workflowIds = workflows.stream().map(IridaWorkflow::getWorkflowIdentifier).collect(Collectors.toSet());
 		}
@@ -134,11 +138,11 @@ public class AnalysesListingService {
 			percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(submission.getId());
 		}
 
-		String workflowType = iridaWorkflowsService.getIridaWorkflow(submission.getWorkflowId()).getWorkflowDescription()
-				.getAnalysisType().toString();
-		String workflow = messageSource.getMessage("workflow." + workflowType + ".title", null, locale);
-		String state = messageSource.getMessage("analysis.state." + analysisState
-				.toString(), null, locale);
+		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflowOrUnknown(submission);
+
+		String workflowType = iridaWorkflow.getWorkflowDescription().getAnalysisType().getType();
+		String state = messageSource.getMessage("analysis.state." + analysisState.toString(), null, locale);
+		String workflow = messageSource.getMessage("workflow." + workflowType + ".title", null, workflowType, locale);
 		Long duration = 0L;
 		if (analysisState.equals(AnalysisState.COMPLETED)) {
 			duration = getDurationInMilliseconds(submission.getCreatedDate(), submission.getAnalysis().getCreatedDate());

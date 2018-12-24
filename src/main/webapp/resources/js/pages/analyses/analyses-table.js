@@ -7,7 +7,6 @@ import {
   createDownloadLink,
   createFilterTag,
   createItemLink,
-  createRestrictedWidthContent,
   generateColumnOrderInfo,
   tableConfig
 } from "../../utilities/datatables-utilities";
@@ -17,12 +16,21 @@ import {
 } from "../../utilities/date-utilities";
 import { deleteAnalysis } from "../analysis/analysis-service";
 import { showNotification } from "../../modules/notifications";
+import { escapeHtml } from "../../utilities/html-utilities";
 
 /**
- * Internationalized text from div#messages.hidden
- * @type {Object} map of data attribute key name to i18n text
+ * Internationalized messages
+ * @type {Object} map of messages key name to i18n text
  */
-const MESSAGES = $("#js-messages").data();
+let I18N = {
+  "analysis.details.joberror.standardOutput": "STDOUT",
+  "analysis.details.joberror.standardError": "STDERR",
+  "analysis.joberror.popover.goto-submission": "GOTO SUBMISSION {0}",
+  "analysis.joberror": "JOBERROR",
+  "analysis.joberror.popover.truncated-output": "TRUNCATED",
+  "analysis.joberror.popover.click-to-show": "CLICK IT"
+};
+I18N = Object.assign(I18N, window.PAGE.i18n);
 
 /*
 Get the table headers and create a look up table for them.
@@ -46,34 +54,14 @@ const jobErrorIcon = `
 <i class="fa fa-fw fa-question-circle js-job-error-tooltip" 
    data-toggle="tooltip"
    data-placement="auto right"
-   title="${MESSAGES.tooltip}">
+   title="${I18N["analysis.joberror.popover.click-to-show"]}">
 </i>`;
-
-const CHAR_TO_ESCAPED = {
-  "&": "&amp;",
-  "<": "&lt;",
-  ">": "&gt;",
-  '"': "&quot;",
-  "'": "&#39;",
-  "/": "&#x2F;",
-  "`": "&#x60;",
-  "=": "&#x3D;"
-};
 
 /**
  * Get a handle on the table
  * @type {*|jQuery|HTMLElement}
  */
 const $table = $("#analyses");
-
-/**
- * Replace special characters in a string with escaped characters
- * @param string String to escape
- * @returns {string} Escaped string
- */
-function escapeHtml(string) {
-  return String(string).replace(/[&<>"'`=\/]/g, s => CHAR_TO_ESCAPED[s]);
-}
 
 /**
  * Truncate a multiline string `s` to only the last `n` lines.
@@ -91,7 +79,7 @@ const truncateOutput = (s, n = 5, delimiter = "\n") => {
     .slice(split.length - n - 1, split.length)
     .join(delimiter)
     .trim();
-  return `[...${MESSAGES.truncatedOutput}...]
+  return `[...${I18N["analysis.joberror.popover.truncated-output"]}...]
 ${out}`;
 };
 
@@ -189,19 +177,22 @@ const setupJobErrorPopoverUI = ({ jobError }, row) => {
       "href"
     )}">${$link.html()}</a>`;
     // text and link for "Go to {analysis submission page} for more info"
-    const goto = MESSAGES.goToSubmission.replace("{0}", linkToSubmission);
+    const goto = I18N["analysis.joberror.popover.goto-submission"].replace(
+      "{0}",
+      linkToSubmission
+    );
     // popover main content
     const content = `
 <div>
-  <h5>${MESSAGES.standardError}</h5>
+  <h5>${I18N["analysis.details.joberror.standardError"]}</h5>
   <pre>${escapeHtml(standardError)}</pre>
-  <h5>${MESSAGES.standardOutput}</h5>
+  <h5>${I18N["analysis.details.joberror.standardOutput"]}</h5>
   <pre>${escapeHtml(standardOutput)}</pre>
   <p>${goto}</p>
 </div>`;
     const title = `
 <span>
-  ${MESSAGES.jobError} - ${jobError.toolName} (v${jobError.toolVersion}) 
+  ${I18N["analysis.joberror"]} - ${jobError.toolName} (v${jobError.toolVersion})
 </span>
 <i class="pull-right fa fa-fw fa-times text-danger js-close-popover" />
 `;
@@ -273,7 +264,8 @@ const config = Object.assign(tableConfig, {
       render(data, type, full) {
         return createItemLink({
           url: `${window.PAGE.URLS.analysis}${full.id}`,
-          label: data
+          label: data,
+          width: undefined
         });
       }
     },
@@ -282,7 +274,7 @@ const config = Object.assign(tableConfig, {
     {
       targets: COLUMNS.WORKFLOW,
       render(data) {
-        return createRestrictedWidthContent({ text: data }).outerHTML;
+        return data;
       }
     },
     // Dates need to all be formatted properly.

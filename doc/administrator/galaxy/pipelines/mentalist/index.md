@@ -11,7 +11,7 @@ This workflow uses the software [MentaLiST][] for typing of microbial samples di
 
 | Tool Name                      | Owner    | Tool Revision | Toolshed Installable Revision | Toolshed             |
 |:------------------------------:|:--------:|:-------------:|:-----------------------------:|:--------------------:|
-| **mentalist**                  | dfornika | 1d9e3950ce61  | 0 (2017-12-20)                | [Galaxy Main Shed][] |
+| **mentalist**                  | dfornika | a6cd59f35832  | 9 (2018-06-26)                | [Galaxy Main Shed][] |
 | **combine_tabular_collection** | nml      | b815081988b5  | 0 (2017-02-06)                | [Galaxy Main Shed][] |
 
 ## Step 1: Galaxy Conda Setup
@@ -69,6 +69,16 @@ A Galaxy workflow and some test data has been included with this documentation t
 
 If everything was successfull then all dependencies for this pipeline have been properly installed.
 
+## Note: Duplicate Data Managers
+
+If multiple versions of the `mentalist` tool have been installed, there will be multiple entries for each Data Manager tool. The **Admin > Local Data** page may look like this:
+
+![mentalist-duplicate-data-managers]
+
+If that is the case, you can remove the duplicates by deactivating mentalist `0.1.3` or any other older versions that may be installed:
+
+![mentalist-deactivate-old-version]
+
 [MentaLiST]: https://github.com/WGS-TB/MentaLiST
 [Galaxy Main Shed]: http://toolshed.g2.bx.psu.edu/
 [galaxy-config]: ../../setup#step-4-modify-configuration-file
@@ -77,6 +87,8 @@ If everything was successfull then all dependencies for this pipeline have been 
 [mentalist-download-pubmlst-result]: ../test/mentalist/images/mentalist-download-pubmlst-result.png
 [mentalist-data-table-list]: ../test/mentalist/images/mentalist-data-table-list.png
 [mentalist-database-available]: ../test/mentalist/images/mentalist-database-available.png
+[mentalist-duplicate-data-managers]: ../test/mentalist/images/mentalist-duplicate-data-managers.png
+[mentalist-deactivate-old-version]: ../test/mentalist/images/mentalist-deactivate-old-version.png
 [MentaLiST Galaxy Workflow]: ../test/mentalist/mentalist.ga
 [test/reads]: ../test/sistr/reads
 [upload-icon]: ../test/mentalist/images/upload-icon.png

@@ -7,177 +7,180 @@
     <title th:text="#{linelist.page-title}">Title</title>
     <link rel="stylesheet" th:href="@{/resources/dist/css/project-linelist.bundle.css}">
     <script th:inline="javascript">
-      var PAGE = {
-        urls: {
-          templates: /*[[@{/projects/{id}/linelist/templates/:id(id=${project.getId()})}]]*/ '',
-          sample: /*[[@{/samples/}]]*/ ''
-        },
-        i18n: {
-          allFields: /*[[#{linelist.templates.all}]]*/ 'All Fields',
-          exportTable: /*[[#{linelist.export}]]*/ 'Export'
-        }
-      };
+        window.PAGE = {
+          project: /*[[${project}]]*/ {},
+          urls: {
+            import: /*[[@{/projects/{id}/sample-metadata/upload(id=${project.getId()})}]]*/ "/projects/5/sample-metadata/upload"
+          },
+          i18n: {
+            form: {
+              btn: {
+                save: /*[[#{form.btn.save}]]*/ "_SAVE_",
+                cancel: /*[[#{form.btn.cancel}]]*/ "_CANCEL_"
+              }
+            },
+            controlPanel: {
+              columns: {
+                title: /*[[#{linelist.controlPanel.columns.title}]]*/ "COLUMN VISIBILITY"
+              }
+            },
+            linelist: {
+              icons: {
+                locked: /*[[#{project.samples.locked-title}]]*/ "LOCKED FROM MODIFICATION"
+              },
+              dateCell: {
+                tooltip: /*[[#{linelist.dateCell.tooltip}]]*/ "DATE TOOLTIP",
+                popover: { title: /*[[#{linelist.dateCell.popover.title}]]*/ "DATE POPOVER TITLE" }
+              },
+              tour: {
+                title: /*[[#{linelist.tour.title}]]*/ "TOUR TITLE",
+                end: /*[[#{linelist.tour.end}]]*/ "TOUR END",
+                popover: /*[[#{linelist.tour.popover}]]*/ "TOUR POPOVER",
+                table: {
+                  title: /*[[#{linelist.tour.table.title}]]*/"TABLE TITLE",
+                  content: /*[[#{linelist.tour.table.content}]]*/"TABLE CONTENT"
+                },
+                headers: {
+                  title: /*[[#{linelist.tour.headers.title}]]*/ "HEADER TITLE",
+                  content: {
+                    intro: /*[[#{linelist.tour.headers.content.intro}]]*/ "HEADER INTRO",
+                    li1: /*[[#{linelist.tour.headers.content.li1}]]*/ "HEADER LI1",
+                    li2: {
+                      title: /*[[#{linelist.tour.headers.content.li2.title}]]*/ "HEADER LI2",
+                      content: {
+                        li1: /*[[#{linelist.tour.headers.content.li2.content.li1}]]*/ "HEADER LI2 LI1",
+                        li2: /*[[#{linelist.tour.headers.content.li2.content.li2}]]*/ "HEADER LI2 LI2"
+                      }
+                    },
+                    li3: /*[[#{linelist.tour.headers.content.li3}]]*/ "HEADER LI3"
+                  }
+                },
+                columns: {
+                  title: /*[[#{linelist.tour.columns.title}]]*/ "COLUMNS TITLE",
+                  content: {
+                    intro: /*[[#{linelist.tour.columns.content.intro}]]*/ "COLUMNS INTRO",
+                    li1: /*[[#{linelist.tour.columns.content.li1}]]*/ "COLUMNS LI1",
+                    li2: /*[[#{linelist.tour.columns.content.li2}]]*/ "COLUMNS LI2",
+                    end: /*[[#{linelist.tour.columns.content.end}]]*/ "COLUMNS END"
+                  }
+                },
+                edit: {
+                  title: /*[[#{linelist.tour.edit.title}]]*/ "EDIT TITLE",
+                  content: {
+                    intro: /*[[#{linelist.tour.edit.content.intro}]]*/ "EDIT INTRO",
+                    undo: /*[[#{linelist.tour.edit.content.undo}]]*/ "EDIT UNDO",
+                    cancel: /*[[#{linelist.tour.edit.content.cancel}]]*/ "EDIT CANCEL"
+                  }
+                },
+                search: {
+                  title: /*[[#{linelist.tour.search.title}]]*/ "SEARCH TITLE",
+                  content: /*[[#{linelist.tour.search.content}]]*/ "SEARCH CONTENT"
+                },
+                filterCounts: {
+                  title: /*[[#{linelist.tour.filterCounts.title}]]*/ "FILTER TITLE",
+                  content: {
+                    intro: /*[[#{linelist.tour.filterCounts.content.intro}]]*/ "FILTER DESC",
+                    example: /*[[#{linelist.tour.filterCounts.content.example}]]*/ "FILTER EXAMPLE"
+                  }
+                },
+                export: {
+                  title: /*[[#{linelist.tour.export.title}]]*/ "EXPORT TITLE",
+                  content: /*[[#{linelist.tour.export.content}]]*/ "EXPORT CONTENT"
+                },
+                import: {
+                  title: /*[[#{linelist.tour.import.title}]]*/ "IMPORT TITLE",
+                  content: {
+                    intro: /*[[#{linelist.tour.import.content.intro}]]*/ "IMPORT CONTENT INTRO",
+                    li1: /*[[#{linelist.tour.import.content.li1}]]*/ "IMPORT CONTENT LI1",
+                    li2: /*[[#{linelist.tour.import.content.li2}]]*/ "IMPORT CONTENT LI2"
+                  }
+                },
+                select: {
+                  title: /*[[#{linelist.tour.select.title}]]*/ "SELECT TITLE",
+                  content: /*[[#{linelist.tour.select.content}]]*/ "SELECT CONTENT"
+                },
+                selectCounts: {
+                  title: /*[[#{linelist.tour.selectCounts.title}]]*/ "SELECT COUNTS TITLE",
+                  content: /*[[#{linelist.tour.selectCounts.content}]]*/ "SELECT COUNTS CONTENT"
+                },
+                cart: {
+                  title: /*[[#{linelist.tour.cart.title}]]*/ "CART TITLE",
+                  content: /*[[#{linelist.tour.cart.content}]]*/ "CART CONTENT"
+                }
+              },
+              addToCart: /*[[#{linelist.addToCart}]]*/ "ADD TO CART",
+              importBtn: {
+                text: /*[[#{linelist.importBtn.text}]]*/ "IMPORT STUFF"
+              },
+              editing: {
+                undo: {
+                  full: /*[[#{linelist.editing.undo.full}]]*/ "The sample has been updated with a new value",
+                  empty: /*[[#{linelist.editing.undo.empty}]]*/ "The samples metadata was removed"
+                }
+              },
+              selected: {
+                none: /*[[#{linelist.selected.none}]]*/ "No samples selected",
+                one: /*[[#{linelist.selected.one}]]*/ "One sample selected",
+                multiple: /*[[#{linelist.selected.multiple}]]*/ "Many samples selected"
+              },
+              error: {
+                message: /*[[#{linelist.error.message(${project.getLabel()})}]]*/ "DANGER WILL ROBINSON"
+              },
+              Loader: {
+                message: /*[[#{linelist.Loader.message}]]*/ "__Loading Metadata__",
+                description: /*[[#{linelist.Loader.description}]]*/ "__Checking for ...__"
+              },
+              toolbar: {
+                export: /*[[#{linelist.toolbar.export}]]*/ "export",
+                exportCsv: /*[[#{linelist.toolbar.exportCsv}]]*/ "exportCSV",
+                exportExcel: /*[[#{linelist.toolbar.exportExcel}]]*/ "exportXLSX",
+              },
+              agGrid: {
+                loading: /*[[#{linelist.agGrid.loading}]]*/ "__Loading data... this might take a while!__",
+                sampleName: /*[[#{linelist.agGrid.sampleName}]]*/ "Sample Name"
+              },
+              infobar: {
+                filterCounts: /*[[#{linelist.infobar.filterCounts}]]*/ "Displaying x of X"
+              },
+              templates: {
+                saveModified: /*[[#{linelist.templates.saveModified}]]*/ "__SAVE__",
+                title: /*[[#{linelist.templates.title}]]*/ '__Metadata Field Templates_',
+                saveModal: {
+                  title: /*[[#{linelist.templates.saveModal.title}]]*/ '_SAVE TEMPLATE',
+                  name: /*[[#{linelist.templates.saveModal.name}]]*/ '_TEMPLATE_NAME_',
+                  overwrite: /*[[#{linelist.templates.saveModal.overwrite}]]*/ '_TEMPLATE_INFO_',
+                  required: /*[[#{linelist.templates.saveModal.required}]]*/ '_TEMPLATE_NAME_REQUIRED',
+                  length: /*[[#{linelist.templates.saveModal.length}]]*/ '_TEMPLATE_NAME_LENGTH',
+                  nameExists: /*[[#{linelist.templates.saveModal.nameExists}]]*/ '_TEMPLATE_NAME_EXISTS',
+                },
+                Popover: {
+                  title: /*[[#{linelist.templates.Popover.title}]]*/ "__POPOVER TITLE__",
+                  content: /*[[#{linelist.templates.Popover.content}]]*/ "__POPOVER CONTENT__",
+                  description: /*[[#{linelist.templates.Popover.description}]]*/ "__POPOVER DESCR__"
+                },
+                update: {
+                  button: /*[[#{linelist.templates.update.button}]]*/ "__UPDATE_BUTTON__",
+                  title: /*[[#{linelist.templates.update.title}]]*/ "__UPDATE_TITLE__",
+                  confirm: /*[[#{linelist.templates.update.confirm}]]*/ "__UPDATE_CONFIRM__",
+                  cancel: /*[[#{linelist.templates.update.cancel}]]*/ "__UPDATE_CANCEL__"
+                },
+                saved: /*[[#{linelist.templates.saved}]]*/ "__SAVED__"
+              }
+            }
+          }
+        };
     </script>
 </head>
 <body>
 <main layout:fragment="main">
-    <div th:if="not ${#lists.isEmpty(metadataList)}" ng-controller="lineListTableController as tableCtrl">
-        <linelist></linelist>
-        <table id="linelist" class="table table-striped" cellspacing="0" width="100%">
-            <thead>
-            <tr>
-                <!-- Fixed DataTables column with the Sample label -->
-                <th data-data="irida-sample-name" th:text="#{linelist.table.header.sampleName}"></th>
-                <th th:each="header : ${headers}" th:text="${header}"></th>
-            </tr>
-            </thead>
-        </table>
+<div id="root">
+    <div class="ant-alert-message">
+        <th:block th:text="#{linelist.page-initialization}"/>
     </div>
-    <div class="panel panel-info" th:if="${#lists.isEmpty(metadataList)}">
-        <div class="panel-body">
-            <div class="media">
-                <div class="media-left">
-                    <i class="fa fa-list-alt media-object" style="font-size: 10rem;"></i>
-                </div>
-                <div class="media-body">
-                    <h4 class="media-heading" style="padding-top: 6px;" th:text="#{linelist.empty-table.title}"></h4>
-                    <p class="lead" th:text="#{linelist.empty-table.warning}"></p>
-                    <div class="clearfix">
-                        <a th:href="@{/projects/{id}/sample-metadata/upload(id=${project.getId()})}"
-                           class="btn btn-primary pull-right"><i class="fa fa-upload"></i> <th:block th:text="#{linelist.add-metadata.btn}" /></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+</div>
 </main>
 
 <th:block layout:fragment="scripts">
-    <script th:inline="javascript">
-      var metadataList = /*[[${metadataList}]]*/ [];
-    </script>
-    <script type="text/ng-template" id="linelist.tmpl.html">
-        <metadata-component
-                fields="$ctrl.fields">
-        </metadata-component>
-        <linelist-table
-                fields="$ctrl.fields">
-        </linelist-table>
-    </script>
-    <script type="text/ng-template" id="metadata.button.tmpl">
-        <div class="btn-toolbar spaced-bottom clearfix" role="toolbar">
-            <div class="btn-group pull-left" role="group">
-                <button id="col-vis-btn"
-                        class="btn btn-default"
-                        ng-click="$ctrl.showMetadataTemplator()">
-                    <i class="fa fa-list fa-fw" aria-hidden="true"></i>
-                    <th:block
-                            th:text="#{linelist.datatable.column-select.button}"/>
-                </button>
-            </div>
-            <div class="btn-group form-inline">
-                <div class="form-group">
-                    <label>Templates</label>
-                    <select class="form-control"
-                            style="width: 200px;"
-                            name="template"
-                            id="template-select"
-                            ng-show="$ctrl.templates.length"
-                            ng-model="$ctrl.selectedTemplate"
-                            ng-change="$ctrl.templateSelected()"
-                            ng-options="template.label for template in $ctrl.templates track by template.identifier">
-                    </select>
-                </div>
-            </div>
-            <div class="btn-group">
-                <button id="save-btn" class="btn btn-default" ng-click="$ctrl.saveTemplate()" ng-disabled="$ctrl.saving">
-                    <i class="fa fa-save fa-fw" aria-hidden="true"></i>
-                    <th:block
-                            th:text="#{linelist.create-template.save-template}"/>
-                </button>
-            </div>
-            <div th:if="${isOwner || isAdmin}" class="btn-group pull-right">
-                <a class="btn btn-link"
-                   th:href="@{/projects/{id}/sample-metadata/upload(id=${project.getId()})}">
-                    <i class="fa fa-upload fw" aria-hidden="true"></i>&nbsp;<span
-                        th:text="#{linelist.add-metadata.btn}"></span></a>
-            </div>
-        </div>
-    </script>
-    <script type="text/ng-template" id="metadata.aside.tmpl">
-        <aside class="metadata-aside">
-            <div class="metadata-aside__btns text-right">
-                <button id="close-aside-btn" class="btn btn-default"
-                        ng-click="$ctrl.close()">Close</button>
-            </div>
-            <div class="metadata-aside__switches">
-                <div class="row spaced-bottom"
-                     ng-repeat="field in $ctrl.fields track by $index">
-                    <div class="col-sm-12">
-                        <input type="checkbox"
-                               bs-switch=""
-                               switch-size="small"
-                               ng-model="field.visible"
-                               ng-change="$ctrl.toggleColumn(field, $index)"
-                               switch-label-width="200"
-                               switch-label="{{ field.label }}"
-                        />
-                    </div>
-                </div>
-            </div>
-        </aside>
-    </script>
-
-    <script type="text/ng-template" id="save-template.tmpl.html">
-        <div class="modal-header">
-            <h3 class="modal-title" th:text="#{linelist.create-template.saving.modal.title}">_Save_Template_As_</h3>
-        </div>
-        <div class="modal-body">
-            <form name="templateNameForm">
-                <div class="form-group"
-                     ng-class="{'has-error': !templateNameForm.templateName.$pristine &amp;&amp; !templateNameForm.templateName.$valid}">
-                    <label for="template-name" th:text="#{linelist.create-template.saving.modal.label}">_Name for
-                        Template_</label>
-                    <input
-                            id="template-name"
-                            class="form-control"
-                            name="templateName"
-                            required="required"
-                            type="text"
-                            minlength="5"
-                            existing-templates="$modal.templates"
-                            metadata-template-name=""
-                            ng-model="$modal.template.name"/>
-                    <div ng-show="!templateNameForm.templateName.$pristine"
-                         ng-messages="templateNameForm.templateName.$error">
-                        <span ng-message="unique"
-                              class="help-block"
-                              th:text="#{linelist.create-template.saving.error.unique}"></span>
-                        <span class="help-block"
-                              ng-message="required"
-                              th:text="#{linelist.create-template.templateName.required}"></span>
-                        <span class="help-block"
-                              ng-message="minlength"
-                              th:text="#{linelist.create-template.templateName.minlength}"></span>
-                    </div>
-                </div>
-            </form>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-default"
-                    th:text="#{form.btn.cancel}"
-                    ng-click="$modal.cancel()">_Cancel_
-            </button>
-            <button ng-disabled="templateNameForm.$invalid"
-                    id="complete-save"
-                    class="btn btn-default"
-                    th:text="#{form.btn.save}"
-                    ng-click="$modal.save()">_Save_
-            </button>
-        </div>
-    </script>
-
-    <script th:src="@{/resources/bower_components/jszip/dist/jszip.min.js}"></script>
     <script th:src="@{/resources/dist/js/project-linelist.bundle.js}"></script>
 </th:block>
 </body>

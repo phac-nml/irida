@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration;
 
+import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -65,5 +66,12 @@ public class LoginPageIT extends AbstractIridaUIITChromeDriver {
 		page = LoginPage.to(driver());
 		page.login(EXPIRED_USERNAME, newPassword);
 		assertTrue("The user is logged in and redirected.", driver().getTitle().contains("Dashboard"));
+	}
+
+	@Test
+	public void testSequencerLogin() throws Exception {
+		LoginPage.login(driver(), LoginPage.SEQUENCER_USERNAME, LoginPage.GOOD_PASSWORD);
+		assertFalse("The sequencer user should not be able to see the dashboard", driver().getTitle().contains("Dashboard"));
+		assertTrue("The sequencer user should get access denied", driver().getTitle().contains("Access Denied"));
 	}
 }

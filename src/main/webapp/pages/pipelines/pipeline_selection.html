@@ -4,10 +4,11 @@
 <head>
     <title th:text="#{pipeline.launch.page-title}">Pipelines - Launch</title>
     <link rel="stylesheet" th:href="@{/resources/dist/css/pipeline-selection.bundle.css}">
+    <style th:text="${pipeline_plugin_style}"></style>
 </head>
 <body>
-<div layout:fragment="page">
-    <h1><span th:text="#{pipeline.launch.title}">Select a Pipeline</span></h1>
+<div class="container" layout:fragment="page">
+    <div class="col-md-23"><h1 th:text="#{pipeline.launch.title}">Select a Pipeline</h1>
     <div th:replace="pipelines/fragments/i18n :: cart-summary(${counts})"></div>
     <div class="row">
         <div class="col-xs-12 col-sm-6 col-md-4" th:each="flow : ${workflows}">
@@ -23,7 +24,7 @@
                 </a>
             </div>
         </div></div>
-    </div>
+    </div></div>
 </div>
 </body>
 </html>

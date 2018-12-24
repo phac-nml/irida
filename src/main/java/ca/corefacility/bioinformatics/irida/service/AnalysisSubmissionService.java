@@ -2,8 +2,10 @@ package ca.corefacility.bioinformatics.irida.service;
 
 import java.util.*;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerConfigurationException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
@@ -15,11 +17,10 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ProjectSampleAnalysisOutputInfo;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 
 /**
  * A service for AnalysisSubmissions.
@@ -38,7 +39,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 *             If the corresponding analysis cannot be found.
 	 */
 	public AnalysisState getStateForAnalysisSubmission(Long analysisSubmissionId) throws EntityNotFoundException;
-	
+
 	/**
 	 * Gets a {@link Set} of {@link AnalysisSubmission}s for a {@link User}.
 	 * 
@@ -266,4 +267,27 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @return the updated submission
 	 */
 	public AnalysisSubmission updatePriority(AnalysisSubmission submission, AnalysisSubmission.Priority priority);
+
+	/**
+	 * Get all {@link User} generated {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile} info
+	 * @param user {@link User}
+	 * @return List of {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile} info
+	 */
+	List<ProjectSampleAnalysisOutputInfo> getAllUserAnalysisOutputInfo(User user);
+
+	/**
+	 * Get all {@link ProjectSampleAnalysisOutputInfo} for a {@link Project}.
+	 *
+	 * @param projectId {@link Project} id
+	 * @return a list of {@link ProjectSampleAnalysisOutputInfo}
+	 */
+	List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoSharedWithProject(Long projectId);
+
+	/**
+	 * Get all automated {@link ProjectSampleAnalysisOutputInfo} for a {@link Project}.
+	 *
+	 * @param projectId {@link Project} id
+	 * @return a list of {@link ProjectSampleAnalysisOutputInfo}
+	 */
+	List<ProjectSampleAnalysisOutputInfo> getAllAutomatedAnalysisOutputInfoForAProject(Long projectId);
 }

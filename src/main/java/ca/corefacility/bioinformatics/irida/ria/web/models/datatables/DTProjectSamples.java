@@ -27,9 +27,10 @@ public class DTProjectSamples implements DataTablesResponseModel, DataTablesExpo
 	private Date createdDate;
 	private Date modifiedDate;
 	private List<String> qcEntries;
+	private Double coverage;
 	private boolean owner;
 
-	public DTProjectSamples(ProjectSampleJoin projectSampleJoin, List<String> qcEntries) {
+	public DTProjectSamples(ProjectSampleJoin projectSampleJoin, List<String> qcEntries, Double coverage) {
 		Project project = projectSampleJoin.getSubject();
 		Sample sample = projectSampleJoin.getObject();
 
@@ -41,6 +42,7 @@ public class DTProjectSamples implements DataTablesResponseModel, DataTablesExpo
 		this.createdDate = sample.getCreatedDate();
 		this.modifiedDate = sample.getModifiedDate();
 		this.qcEntries = qcEntries;
+		this.coverage = coverage;
 		this.owner = projectSampleJoin.isOwner();
 	}
 
@@ -75,7 +77,11 @@ public class DTProjectSamples implements DataTablesResponseModel, DataTablesExpo
 	public List<String> getQcEntries() {
 		return qcEntries;
 	}
-	
+
+	public Double getCoverage() {
+		return coverage;
+	}
+
 	public boolean isOwner(){
 		return owner;
 	}
@@ -93,6 +99,7 @@ public class DTProjectSamples implements DataTablesResponseModel, DataTablesExpo
 		data.add(this.getProjectName());
 		data.add(this.getCreatedDate() != null ? dateFormatter.format(this.getCreatedDate()) : "");
 		data.add(this.getModifiedDate() != null ? dateFormatter.format(this.getModifiedDate()) : "");
+		data.add(this.getCoverage() != null ? String.valueOf(this.getCoverage()) : "");
 		return data;
 	}
 
@@ -109,6 +116,7 @@ public class DTProjectSamples implements DataTablesResponseModel, DataTablesExpo
 		headers.add(messageSource.getMessage("project.samples.table.project", new Object[] {}, locale));
 		headers.add(messageSource.getMessage("project.samples.table.created", new Object[] {}, locale));
 		headers.add(messageSource.getMessage("project.samples.table.modified", new Object[] {}, locale));
+		headers.add(messageSource.getMessage("project.samples.table.coverage", new Object[] {}, locale));
 		return headers;
 	}
 }

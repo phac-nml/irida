@@ -47,7 +47,7 @@ rest_job:
   - mvn clean verify -Prest_testing -B -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY
   stage: test
 galaxy_job:
-#lastly, run all tests involving Galaxy
+#run initial set of Galaxy tests
   tags:
   - docker
   image: docker.corefacility.ca:5000/irida-testing:latest
@@ -56,6 +56,17 @@ galaxy_job:
     - phacnml/galaxy-irida-17.01:0.17.0-it
   script:
   - mvn clean verify -B -Pgalaxy_testing -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dtest.galaxy.url=$GALAXY_URL -Dtest.galaxy.invalid.url=$GALAXY_INVALID_URL -Dtest.galaxy.invalid.url2=$GALAXY_INVALID_URL2
+  stage: test
+galaxy_pipelines_job:
+#lastly, run all Galaxy pipeline-related tests
+  tags:
+  - docker
+  image: docker.corefacility.ca:5000/irida-testing:latest
+  services:
+    - mariadb:10.0
+    - phacnml/galaxy-irida-17.01:0.17.0-it
+  script:
+  - mvn clean verify -B -Pgalaxy_pipeline_testing -Djdbc.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dtest.galaxy.url=$GALAXY_URL -Dtest.galaxy.invalid.url=$GALAXY_INVALID_URL -Dtest.galaxy.invalid.url2=$GALAXY_INVALID_URL2
   stage: test
 build-docs_job:
   tags:
