@@ -8,4 +8,6 @@
              relativeToChangelogFile="true"/>
     <include file="static-metadata-field.xml"
              relativeToChangelogFile="true"/>
+    <include file="fastqc-filesystem.xml"
+             relativeToChangelogFile="true"/>
 </databaseChangeLog>
