@@ -39,14 +39,14 @@ public class FastqcToFilesystem implements CustomSqlChange {
 	public SqlStatement[] generateStatements(Database database) throws CustomChangeException {
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
-		List<String> chartTypes = Lists
-				.newArrayList("perBaseQualityScoreChart", "perSequenceQualityScoreChart", "duplicationLevelChart");
+		List<String> chartTypes = Lists.newArrayList("perBaseQualityScoreChart", "perSequenceQualityScoreChart",
+				"duplicationLevelChart");
 
 		//inserting empty output files for charts
 
 		chartTypes.forEach(chart -> {
-			int update = jdbcTemplate
-					.update("INSERT INTO analysis_output_file (created_date, execution_manager_file_id, analysis_id) SELECT createdDate, '"
+			int update = jdbcTemplate.update(
+					"INSERT INTO analysis_output_file (created_date, execution_manager_file_id, analysis_id) SELECT createdDate, '"
 							+ chart + "', a.id FROM analysis a INNER JOIN analysis_fastqc q ON a.id=q.id");
 
 			logger.info("Inserted " + update + " temp output file entries for chart type " + chart);
@@ -57,7 +57,10 @@ public class FastqcToFilesystem implements CustomSqlChange {
 		chartTypes.forEach(chart -> {
 			writeFileForChartType(chart, basePath, jdbcTemplate);
 
-			jdbcTemplate.update("insert into analysis_output_file_map (analysis_id, analysisOutputFilesMap_id, analysis_output_file_key) SELECT analysis_id, id, '"+chart+"' FROM analysis_output_file where execution_manager_file_id='"+chart+"'");
+			jdbcTemplate.update(
+					"insert into analysis_output_file_map (analysis_id, analysisOutputFilesMap_id, analysis_output_file_key) SELECT analysis_id, id, '"
+							+ chart + "' FROM analysis_output_file where execution_manager_file_id='" + chart
+							+ ".png'");
 		});
 
 		return new SqlStatement[0];
@@ -76,7 +79,8 @@ public class FastqcToFilesystem implements CustomSqlChange {
 
 						logger.info("Mapping analysis" + id);
 
-						Path newFileDirectory = outputFileDirectory.resolve(chartId.toString()).resolve("1");
+						Path newFileDirectory = outputFileDirectory.resolve(chartId.toString())
+								.resolve("1");
 
 						try {
 							Files.createDirectories(newFileDirectory);
@@ -98,7 +102,6 @@ public class FastqcToFilesystem implements CustomSqlChange {
 		jdbcTemplate.batchUpdate("UPDATE analysis_output_file SET file_path=? WHERE id=?", updates);
 	}
 
-
 	@Override
 	public String getConfirmationMessage() {
 		return "Moved FastQC results to filesystem";
@@ -114,8 +117,7 @@ public class FastqcToFilesystem implements CustomSqlChange {
 		logger.info("The resource accessor is of type [" + resourceAccessor.getClass() + "]");
 		final ApplicationContext applicationContext;
 		if (resourceAccessor instanceof IridaApiJdbcDataSourceConfig.ApplicationContextAwareSpringLiquibase.ApplicationContextSpringResourceOpener) {
-			applicationContext = ((IridaApiJdbcDataSourceConfig.ApplicationContextAwareSpringLiquibase.ApplicationContextSpringResourceOpener) resourceAccessor)
-					.getApplicationContext();
+			applicationContext = ((IridaApiJdbcDataSourceConfig.ApplicationContextAwareSpringLiquibase.ApplicationContextSpringResourceOpener) resourceAccessor).getApplicationContext();
 		} else {
 			applicationContext = null;
 		}
