@@ -356,6 +356,7 @@ public class AnalysisFastQC extends Analysis {
 	 * Box and whisker plot showing per-base quality scores as a PNG-formatted image in a byte array.
 	 *
 	 * @return a PNG-formatted byte array for per-base quality score.
+	 * @throws IOException if the file does not exist
 	 */
 	@JsonIgnore
 	public byte[] getPerBaseQualityScoreChart() throws IOException {
@@ -366,6 +367,7 @@ public class AnalysisFastQC extends Analysis {
 	 * Line chartshowing per-sequence quality scores as a PNG-formatted image in a byte array.
 	 *
 	 * @return a PNG-formatted byte array for per-sequence quality score.
+	 * @throws IOException if the file does not exist
 	 */
 	@JsonIgnore
 	public byte[] getPerSequenceQualityScoreChart() throws IOException {
@@ -376,6 +378,7 @@ public class AnalysisFastQC extends Analysis {
 	 * Line chartshowing duplication-level as a PNG-formatted image in a byte array.
 	 *
 	 * @return a PNG-formatted byte array for duplication levels.
+	 * @throws IOException if the file does not exist
 	 */
 	@JsonIgnore
 	public byte[] getDuplicationLevelChart() throws IOException {

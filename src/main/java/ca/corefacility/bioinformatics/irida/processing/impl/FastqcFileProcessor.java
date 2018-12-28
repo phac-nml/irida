@@ -1,6 +1,33 @@
 package ca.corefacility.bioinformatics.irida.processing.impl;
 
-import java.awt.Graphics;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC.AnalysisFastQCBuilder;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
+import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
+import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisOutputFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import uk.ac.babraham.FastQC.FastQCApplication;
+import uk.ac.babraham.FastQC.Graphs.LineGraph;
+import uk.ac.babraham.FastQC.Graphs.QualityBoxPlot;
+import uk.ac.babraham.FastQC.Modules.*;
+import uk.ac.babraham.FastQC.Modules.OverRepresentedSeqs.OverrepresentedSeq;
+import uk.ac.babraham.FastQC.Sequence.QualityEncoding.PhredEncoding;
+import uk.ac.babraham.FastQC.Sequence.Sequence;
+import uk.ac.babraham.FastQC.Sequence.SequenceFactory;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -11,48 +38,10 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.imageio.ImageIO;
-
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
-import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisOutputFileRepository;
-import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import uk.ac.babraham.FastQC.FastQCApplication;
-import uk.ac.babraham.FastQC.Graphs.LineGraph;
-import uk.ac.babraham.FastQC.Graphs.QualityBoxPlot;
-import uk.ac.babraham.FastQC.Modules.BasicStats;
-import uk.ac.babraham.FastQC.Modules.DuplicationLevel;
-import uk.ac.babraham.FastQC.Modules.OverRepresentedSeqs;
-import uk.ac.babraham.FastQC.Modules.OverRepresentedSeqs.OverrepresentedSeq;
-import uk.ac.babraham.FastQC.Modules.PerBaseQualityScores;
-import uk.ac.babraham.FastQC.Modules.PerSequenceQualityScores;
-import uk.ac.babraham.FastQC.Modules.QCModule;
-import uk.ac.babraham.FastQC.Sequence.Sequence;
-import uk.ac.babraham.FastQC.Sequence.SequenceFactory;
-import uk.ac.babraham.FastQC.Sequence.QualityEncoding.PhredEncoding;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC.AnalysisFastQCBuilder;
-import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
-import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
-import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
-
 /**
- * Executes FastQC on a {@link SequenceFile} and stores the report in the
- * database. This is a terrible, ugly, hacky class because most of the internal
- * statistics computed by FastQC are <code>private</code> fields, so we reflect
- * on those fields and make them <code>public</code> to get the values.
- * 
- * 
+ * Executes FastQC on a {@link SequenceFile} and stores the report in the database. This is a terrible, ugly, hacky
+ * class because most of the internal statistics computed by FastQC are <code>private</code> fields, so we reflect on
+ * those fields and make them <code>public</code> to get the values.
  */
 @Component
 public class FastqcFileProcessor implements FileProcessor {
@@ -66,11 +55,11 @@ public class FastqcFileProcessor implements FileProcessor {
 
 	/**
 	 * Create a new {@link FastqcFileProcessor}
-	 *  @param messageSource
-	 *            the message source for i18n (used to add an internationalized
-	 *            description for the analysis).
-	 * @param sequenceFileRepository
-	 * @param outputFileRepository
+	 *
+	 * @param messageSource          the message source for i18n (used to add an internationalized description for the
+	 *                               analysis).
+	 * @param sequenceFileRepository Repository for storing sequence files
+	 * @param outputFileRepository   Repository for storing analysis output files
 	 */
 	@Autowired
 	public FastqcFileProcessor(final MessageSource messageSource, final SequenceFileRepository sequenceFileRepository,
@@ -90,20 +79,20 @@ public class FastqcFileProcessor implements FileProcessor {
 
 	/**
 	 * Process a single {@link SequenceFile}
-	 * 
-	 * @param sequenceFile
-	 *            file to process
-	 * @throws FileProcessorException
-	 *             if an error occurs while processing
+	 *
+	 * @param sequenceFile file to process
+	 * @throws FileProcessorException if an error occurs while processing
 	 */
 	private void processSingleFile(SequenceFile sequenceFile) throws FileProcessorException {
 		Path fileToProcess = sequenceFile.getFile();
 		AnalysisFastQC.AnalysisFastQCBuilder analysis = AnalysisFastQC.builder()
-				.fastqcVersion(FastQCApplication.VERSION).executionManagerAnalysisId(EXECUTION_MANAGER_ANALYSIS_ID).description(messageSource.getMessage(
-						"fastqc.file.processor.analysis.description", null, LocaleContextHolder.getLocale()));
+				.fastqcVersion(FastQCApplication.VERSION)
+				.executionManagerAnalysisId(EXECUTION_MANAGER_ANALYSIS_ID)
+				.description(messageSource.getMessage("fastqc.file.processor.analysis.description", null,
+						LocaleContextHolder.getLocale()));
 		try {
-			uk.ac.babraham.FastQC.Sequence.SequenceFile fastQCSequenceFile = SequenceFactory
-					.getSequenceFile(fileToProcess.toFile());
+			uk.ac.babraham.FastQC.Sequence.SequenceFile fastQCSequenceFile = SequenceFactory.getSequenceFile(
+					fileToProcess.toFile());
 			BasicStats basicStats = new BasicStats();
 			PerBaseQualityScores pbqs = new PerBaseQualityScores();
 			PerSequenceQualityScores psqs = new PerSequenceQualityScores();
@@ -144,15 +133,14 @@ public class FastqcFileProcessor implements FileProcessor {
 
 	/**
 	 * Handle writing the {@link BasicStats} to the database.
-	 * 
-	 * @param stats
-	 *            the {@link BasicStats} computed by fastqc.
-	 * @param analysis
-	 *            the {@link AnalysisFastQCBuilder} to update.
+	 *
+	 * @param stats    the {@link BasicStats} computed by fastqc.
+	 * @param analysis the {@link AnalysisFastQCBuilder} to update.
 	 */
 	private void handleBasicStats(BasicStats stats, AnalysisFastQCBuilder analysis) {
 		analysis.fileType(stats.getFileType());
-		analysis.encoding(PhredEncoding.getFastQEncodingOffset(stats.getLowestChar()).name());
+		analysis.encoding(PhredEncoding.getFastQEncodingOffset(stats.getLowestChar())
+				.name());
 		analysis.minLength(stats.getMinLength());
 		analysis.maxLength(stats.getMaxLength());
 		analysis.totalSequences((int) stats.getActualCount());
@@ -164,14 +152,12 @@ public class FastqcFileProcessor implements FileProcessor {
 
 	/**
 	 * Handle writing the {@link PerBaseQualityScores} to the database.
-	 * 
-	 * @param scores
-	 *            the {@link PerBaseQualityScores} computed by fastqc.
-	 * @param analysis
-	 *            the {@link AnalysisFastQCBuilder} to update.
+	 *
+	 * @param scores   the {@link PerBaseQualityScores} computed by fastqc.
+	 * @param analysis the {@link AnalysisFastQCBuilder} to update.
 	 */
-	private void handlePerBaseQualityScores(PerBaseQualityScores scores, AnalysisFastQCBuilder analysis, Path tempDirectory)
-			throws IOException {
+	private void handlePerBaseQualityScores(PerBaseQualityScores scores, AnalysisFastQCBuilder analysis,
+			Path tempDirectory) throws IOException {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		QualityBoxPlot bp = (QualityBoxPlot) scores.getResultsPanel();
 		BufferedImage b = new BufferedImage(800, 600, BufferedImage.TYPE_INT_RGB);
@@ -184,14 +170,12 @@ public class FastqcFileProcessor implements FileProcessor {
 
 	/**
 	 * Handle writing the {@link PerSequenceQualityScores} to the database.
-	 * 
-	 * @param scores
-	 *            the {@link PerSequenceQualityScores} computed by fastqc.
-	 * @param analysis
-	 *            the {@link AnalysisFastQCBuilder} to update.
+	 *
+	 * @param scores   the {@link PerSequenceQualityScores} computed by fastqc.
+	 * @param analysis the {@link AnalysisFastQCBuilder} to update.
 	 */
-	private void handlePerSequenceQualityScores(PerSequenceQualityScores scores, AnalysisFastQCBuilder analysis, Path tempDirectory)
-			throws IOException {
+	private void handlePerSequenceQualityScores(PerSequenceQualityScores scores, AnalysisFastQCBuilder analysis,
+			Path tempDirectory) throws IOException {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		LineGraph lg = (LineGraph) scores.getResultsPanel();
 		BufferedImage b = new BufferedImage(800, 600, BufferedImage.TYPE_INT_RGB);
@@ -204,14 +188,12 @@ public class FastqcFileProcessor implements FileProcessor {
 
 	/**
 	 * Handle writing the {@link DuplicationLevel} to the database.
-	 * 
-	 * @param duplicationLevel
-	 *            the {@link DuplicationLevel} calculated by fastqc.
-	 * @param analysis
-	 *            the {@link AnalysisFastQCBuilder} to update.
+	 *
+	 * @param duplicationLevel the {@link DuplicationLevel} calculated by fastqc.
+	 * @param analysis         the {@link AnalysisFastQCBuilder} to update.
 	 */
-	private void handleDuplicationLevel(DuplicationLevel duplicationLevel, AnalysisFastQCBuilder analysis, Path tempDirectory)
-			throws IOException {
+	private void handleDuplicationLevel(DuplicationLevel duplicationLevel, AnalysisFastQCBuilder analysis,
+			Path tempDirectory) throws IOException {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		LineGraph lg = (LineGraph) duplicationLevel.getResultsPanel();
 		BufferedImage b = new BufferedImage(800, 600, BufferedImage.TYPE_INT_RGB);
@@ -224,11 +206,9 @@ public class FastqcFileProcessor implements FileProcessor {
 
 	/**
 	 * Handle getting over represented sequences from fastqc.
-	 * 
-	 * @param seqs
-	 *            overrepresented sequences.
-	 * @return a collection of {@link OverrepresentedSequence} corresponding to
-	 *         the FastQC {@link OverRepresentedSeqs}.
+	 *
+	 * @param seqs overrepresented sequences.
+	 * @return a collection of {@link OverrepresentedSequence} corresponding to the FastQC {@link OverRepresentedSeqs}.
 	 */
 	private Set<OverrepresentedSequence> handleOverRepresentedSequences(OverRepresentedSeqs seqs) {
 
@@ -250,12 +230,14 @@ public class FastqcFileProcessor implements FileProcessor {
 		return overrepresentedSequences;
 	}
 
-	private AnalysisOutputFile writeImageToFile(Path tempDirectory, BufferedImage imageBuffer, String fileName) throws IOException {
+	private AnalysisOutputFile writeImageToFile(Path tempDirectory, BufferedImage imageBuffer, String fileName)
+			throws IOException {
 		Path filePath = tempDirectory.resolve(fileName);
 
 		ImageIO.write(imageBuffer, "PNG", filePath.toFile());
 
-		AnalysisOutputFile analysisOutputFile = outputFileRepository.save(new AnalysisOutputFile(filePath, null, fileName, null));
+		AnalysisOutputFile analysisOutputFile = outputFileRepository.save(
+				new AnalysisOutputFile(filePath, null, fileName, null));
 
 		return analysisOutputFile;
 	}

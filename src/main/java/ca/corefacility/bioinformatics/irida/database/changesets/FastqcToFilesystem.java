@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.database.changesets;
 
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import com.google.common.collect.Lists;
 import liquibase.change.custom.CustomSqlChange;
 import liquibase.database.Database;
@@ -15,19 +13,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
 
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.*;
-import java.util.ArrayList;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * Liquibase update class for moving the fastqc analysis results off the {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC}
+ * class (and out of the database).  This will instead save them to the filesystem as an {@link
+ * ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile}.  This should greatly decrease the
+ * size of the database for large IRIDA installs and speed up loading of the {@link
+ * ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC} class.
+ */
 public class FastqcToFilesystem implements CustomSqlChange {
 
 	private static final Logger logger = LoggerFactory.getLogger(FastqcToFilesystem.class);
