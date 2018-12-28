@@ -54,11 +54,11 @@ public class FastqcToFilesystem implements CustomSqlChange {
 			logger.info("Inserted " + update + " temp output file entries for chart type " + chart);
 		});
 
-		String basePath = outputFileDirectory.toString();
-
 		chartTypes.forEach(chart -> {
-			writeFileForChartType(chart, basePath, jdbcTemplate);
+			//write the files and update the analysis_output_file directory
+			writeFileForChartType(chart, jdbcTemplate);
 
+			//Add entries to analysis_output_file_map linking to the new analysis_output_file entries
 			jdbcTemplate.update(
 					"insert into analysis_output_file_map (analysis_id, analysisOutputFilesMap_id, analysis_output_file_key) SELECT analysis_id, id, '"
 							+ chart + "' FROM analysis_output_file where execution_manager_file_id='" + chart
@@ -68,9 +68,15 @@ public class FastqcToFilesystem implements CustomSqlChange {
 		return new SqlStatement[0];
 	}
 
-	private void writeFileForChartType(String chartType, String basePath, JdbcTemplate jdbcTemplate) {
+	/**
+	 * Create the files in the output file directory and update the "analysis_output_file" entries
+	 *
+	 * @param chartType    the type of chart we're writing to the file system
+	 * @param jdbcTemplate {@link JdbcTemplate} to use for SQL
+	 */
+	private void writeFileForChartType(String chartType, JdbcTemplate jdbcTemplate) {
 
-		//going to do the updates in batches to ensure things go smoothly
+		//going to do the updates in batches so things go smoothly
 		long batchsize = 10000;
 
 		//first get the count of analysis_fastqc entries we need to do for this chart type
@@ -118,6 +124,9 @@ public class FastqcToFilesystem implements CustomSqlChange {
 
 							// get the path as a string
 							String fullPath = newFileDirectory.toString();
+
+							//get a string representation of the output file directory
+							String basePath = outputFileDirectory.toString();
 
 							// relativize the path by stripping the base file path
 							fullPath = fullPath.replaceFirst(basePath + "/", "");
