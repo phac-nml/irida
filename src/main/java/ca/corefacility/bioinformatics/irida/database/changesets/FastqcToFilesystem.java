@@ -39,15 +39,15 @@ public class FastqcToFilesystem implements CustomSqlChange {
 	public SqlStatement[] generateStatements(Database database) throws CustomChangeException {
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
+		//the chart types we're taking out of the database
 		List<String> chartTypes = Lists.newArrayList("perBaseQualityScoreChart", "perSequenceQualityScoreChart",
 				"duplicationLevelChart");
 
 		//inserting empty output files for charts
-
 		chartTypes.forEach(chart -> {
 			int update = jdbcTemplate.update(
 					"INSERT INTO analysis_output_file (created_date, execution_manager_file_id, analysis_id) SELECT createdDate, '"
-							+ chart + "', a.id FROM analysis a INNER JOIN analysis_fastqc q ON a.id=q.id");
+							+ chart + ".png', a.id FROM analysis a INNER JOIN analysis_fastqc q ON a.id=q.id");
 
 			logger.info("Inserted " + update + " temp output file entries for chart type " + chart);
 		});
@@ -67,39 +67,72 @@ public class FastqcToFilesystem implements CustomSqlChange {
 	}
 
 	private void writeFileForChartType(String chartType, String basePath, JdbcTemplate jdbcTemplate) {
-		List<Object[]> updates = jdbcTemplate.query("SELECT f.id, o.id, f." + chartType
-						+ " FROM analysis_fastqc f INNER JOIN analysis_output_file o ON f.id=o.analysis_id WHERE o.execution_manager_file_id=?",
-				new Object[] { chartType }, new RowMapper<Object[]>() {
-					@Override
-					public Object[] mapRow(ResultSet rs, int rowNum) throws SQLException {
 
-						Long id = rs.getLong(1);
-						Long chartId = rs.getLong(2);
-						byte[] chart = rs.getBytes(3);
+		//going to do the updates in batches to ensure things go smoothly
+		long batchsize = 10000;
 
-						logger.info("Mapping analysis" + id);
+		//first get the count of analysis_fastqc entries we need to do for this chart type
+		String sql = "SELECT count(o.id) FROM analysis_fastqc f INNER JOIN analysis_output_file o ON f.id=o.analysis_id WHERE o.execution_manager_file_id=?";
+		Long entries = jdbcTemplate.queryForObject(sql, new Object[] { chartType + ".png" }, Long.class);
+		logger.info("Going to write " + entries + " entires for chart type " + chartType);
 
-						Path newFileDirectory = outputFileDirectory.resolve(chartId.toString())
-								.resolve("1");
+		//doing this in a for loop to batch the entries
+		for (long offset = 0; offset < entries; offset += batchsize) {
 
-						try {
-							Files.createDirectories(newFileDirectory);
-							newFileDirectory = newFileDirectory.resolve(chartType + ".png");
-							Files.write(newFileDirectory, chart);
-						} catch (IOException e) {
-							throw new SQLException("Couldn't create file", e);
+			//get a chunk of entries for this chart type
+			sql = "SELECT f.id, o.id, f." + chartType
+					+ " FROM analysis_fastqc f INNER JOIN analysis_output_file o ON f.id=o.analysis_id WHERE o.execution_manager_file_id=? limit "
+					+ batchsize + " offset " + offset;
+
+			List<Object[]> updates = jdbcTemplate.query(sql, new Object[] { chartType + ".png" },
+					//this mapper will look at the temp output file entry and write a file to the file system
+					new RowMapper<Object[]>() {
+						@Override
+						public Object[] mapRow(ResultSet rs, int rowNum) throws SQLException {
+
+							Long id = rs.getLong(1); //the analysis id
+							Long chartId = rs.getLong(2); //the analysis_output_file id
+							byte[] chart = rs.getBytes(3); //the chart type
+
+							//only writing progress for mod1000 results or the log gets crazy
+							if (id % 1000 == 0) {
+								logger.info("Mapping analysis " + id);
+							}
+
+							//get a path for <output files base dir>/<output file id>/1/
+							Path newFileDirectory = outputFileDirectory.resolve(chartId.toString())
+									.resolve("1");
+
+							try {
+								//create the directory
+								Files.createDirectories(newFileDirectory);
+								//get a path to the file
+								newFileDirectory = newFileDirectory.resolve(chartType + ".png");
+								//write the chart bytes to file
+								Files.write(newFileDirectory, chart);
+							} catch (IOException e) {
+								throw new SQLException("Couldn't create file", e);
+							}
+
+							// get the path as a string
+							String fullPath = newFileDirectory.toString();
+
+							// relativize the path by stripping the base file path
+							fullPath = fullPath.replaceFirst(basePath + "/", "");
+
+							//return the file path and chart id
+							return new Object[] { fullPath, chartId };
 						}
+					});
 
-						// relativize the path
-						String fullPath = newFileDirectory.toString();
+			logger.info("Executing update for " + updates.size() + " entries");
 
-						fullPath = fullPath.replaceFirst(basePath + "/", "");
+			//update to add the file path to the ouptut file entry
+			String updatesql = "UPDATE analysis_output_file SET file_path=? WHERE id=?";
+			jdbcTemplate.batchUpdate(updatesql, updates);
 
-						return new Object[] { fullPath, chartId };
-					}
-				});
+		}
 
-		jdbcTemplate.batchUpdate("UPDATE analysis_output_file SET file_path=? WHERE id=?", updates);
 	}
 
 	@Override
@@ -114,6 +147,7 @@ public class FastqcToFilesystem implements CustomSqlChange {
 
 	@Override
 	public void setFileOpener(ResourceAccessor resourceAccessor) {
+		//file opener to get the application context
 		logger.info("The resource accessor is of type [" + resourceAccessor.getClass() + "]");
 		final ApplicationContext applicationContext;
 		if (resourceAccessor instanceof IridaApiJdbcDataSourceConfig.ApplicationContextAwareSpringLiquibase.ApplicationContextSpringResourceOpener) {
@@ -124,6 +158,7 @@ public class FastqcToFilesystem implements CustomSqlChange {
 
 		if (applicationContext != null) {
 			logger.info("We're running inside of a spring instance, getting the existing application context.");
+			//get the analysis output file directory
 			this.outputFileDirectory = applicationContext.getBean("outputFileBaseDirectory", Path.class);
 
 			this.dataSource = applicationContext.getBean(DataSource.class);
