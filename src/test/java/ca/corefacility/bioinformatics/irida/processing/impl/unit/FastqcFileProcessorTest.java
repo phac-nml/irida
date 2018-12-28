@@ -4,7 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
@@ -14,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Iterator;
 
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisOutputFileRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -104,16 +107,13 @@ public class FastqcFileProcessorTest {
 		assertEquals("Total number of bases was not correct.", Long.valueOf(SEQUENCE.length() * 2),
 				updated.getTotalBases());
 
-		assertNotNull("Per-base quality score chart was not created.", updated.getPerBaseQualityScoreChart());
-		assertTrue("Per-base quality score chart was created, but was empty.",
-				((byte[]) updated.getPerBaseQualityScoreChart()).length > 0);
+		verify(outputFileRepository,times(3)).save(any(AnalysisOutputFile.class));
 
-		assertNotNull("Per-sequence quality score chart was not created.", updated.getPerSequenceQualityScoreChart());
-		assertTrue("Per-sequence quality score chart was created, but was empty.",
-				((byte[]) updated.getPerSequenceQualityScoreChart()).length > 0);
+		assertNotNull("Per-base quality score chart was not created.", updated.getAnalysisOutputFileNames().contains("perBaseQualityScoreChart"));
 
-		assertNotNull("Duplication level chart was not created.", updated.getDuplicationLevelChart());
-		assertTrue("Duplication level chart was not created.", ((byte[]) updated.getDuplicationLevelChart()).length > 0);
+		assertNotNull("Per-sequence quality score chart was not created.", updated.getAnalysisOutputFileNames().contains("perSequenceQualityScoreChart"));
+
+		assertNotNull("Duplication level chart was not created.", updated.getAnalysisOutputFileNames().contains("duplicationLevelChart"));
 
 		Iterator<OverrepresentedSequence> ovrs = updated.getOverrepresentedSequences().iterator();
 		assertTrue("No overrepresented sequences added to analysis.", ovrs.hasNext());
