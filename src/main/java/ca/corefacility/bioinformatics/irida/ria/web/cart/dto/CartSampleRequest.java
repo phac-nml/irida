@@ -17,12 +17,18 @@ public class CartSampleRequest {
 	 */
 	private String label;
 
+	/**
+	 * {@link boolean} whether the sample is editable by the current user.
+	 */
+	private boolean editable;
+
 	public CartSampleRequest() {
 	}
 
-	public CartSampleRequest(Long id, String label) {
+	public CartSampleRequest(Long id, String label, boolean editable) {
 		this.id = id;
 		this.label = label;
+		this.editable = editable;
 	}
 
 	public Long getId() {
@@ -39,5 +45,13 @@ public class CartSampleRequest {
 
 	public void setLabel(String label) {
 		this.label = label;
+	}
+
+	public boolean isEditable() {
+		return editable;
+	}
+
+	public void setEditable(boolean editable) {
+		this.editable = editable;
 	}
 }

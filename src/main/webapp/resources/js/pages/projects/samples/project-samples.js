@@ -113,7 +113,11 @@ const cartBtn = new SampleCartButton($(".js-cart-btn"), function() {
   while (!next.done) {
     const data = $dt.row(`#${next.value}`).data();
     projects[data.projectId] = projects[data.projectId] || [];
-    projects[data.projectId].push({ id: data.id, label: data.sampleName });
+    projects[data.projectId].push({
+      id: data.id,
+      label: data.sampleName,
+      editable: data.owner
+    });
     next = selected.next();
   }
 
