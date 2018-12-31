@@ -101,20 +101,18 @@ public class CartController {
 	 *
 	 * @return The cart map
 	 */
-	public Map<Project, Set<Sample>> getSelected() {
-		/*
-		Inflating the whole cart here.  This is going to be a serious performance hit!
-		 */
-//		Map<Long, Set<Long>> projects = cart.get();
-//		Map<Project, Set<Sample>> result = new HashMap<>();
-//
-//		for (Long id : projects.keySet()) {
-//			Project project = projectService.read(id);
-//			Set<Sample> samples = (Set<Sample>) sampleService.readMultiple(projects.get(id));
-//			result.put(project, samples);
-//		}
-//		return result;
-		return null;
+	public Map<Project, List<Sample>> getSelected() {
+		Map<Project, List<Sample>> hydrated = new HashMap<>();
+		Map<Long, Map<Long, CartSample>> contents = cart.get();
+		List<Project> projects = (List<Project>) projectService.readMultiple(contents.keySet());
+
+		for (Project project : projects) {
+			List<Sample> samples = (List<Sample>) sampleService.readMultiple(contents.get(project.getId())
+					.keySet());
+			hydrated.put(project, samples);
+		}
+
+		return hydrated;
 	}
 
 	/**
@@ -125,7 +123,6 @@ public class CartController {
 	 * @param locale {@link Locale}
 	 */
 	public void addSelected(Map<Project, Set<Sample>> selected, Locale locale) {
-		// this.selected = selected;
 		for (Project project : selected.keySet()) {
 			Set<CartSampleRequest> cartSampleRequests = selected.get(project)
 					.stream()

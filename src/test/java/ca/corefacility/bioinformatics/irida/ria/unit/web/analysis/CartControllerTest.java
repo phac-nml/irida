@@ -100,9 +100,9 @@ public class CartControllerTest {
 		verify(projectService).read(projectId);
 		verify(sampleService).getSamplesInProject(project, new ArrayList<>(subIds));
 
-		selected = controller.getSelected();
+		Map<Project, List<Sample>> response = controller.getSelected();
 
-		assertEquals(1, selected.keySet().size());
+		assertEquals(1, response.keySet().size());
 		Project projectKey = selected.keySet().iterator().next();
 		assertEquals(project, projectKey);
 		for (Sample s : selected.get(projectKey)) {
@@ -120,9 +120,9 @@ public class CartControllerTest {
 
 		controller.removeProjectSample(projectId, sample.getId());
 
-		selected = controller.getSelected();
-		assertEquals(1, selected.keySet().size());
-		assertFalse(selected.get(project).contains(sample));
+		Map<Project, List<Sample>> response = controller.getSelected();
+		assertEquals(1, response.keySet().size());
+		assertFalse(response.get(project).contains(sample));
 
 	}
 
@@ -138,7 +138,7 @@ public class CartControllerTest {
 		verify(projectService).read(projectId);
 		verify(sampleService).getSamplesInProject(project, Lists.newArrayList(sampleIds));
 
-		selected = controller.getSelected();
+		Map<Project, List<Sample>> response = controller.getSelected();
 
 		assertFalse("project should have been removed because all samples were removed", selected.containsKey(project));
 	}
@@ -149,7 +149,7 @@ public class CartControllerTest {
 		Map<String, Object> clearCart = controller.clearCart();
 		assertTrue((boolean) clearCart.get("success"));
 
-		Map<Project, Set<Sample>> selected = controller.getSelected();
+		Map<Project, List<Sample>> selected = controller.getSelected();
 		assertTrue(selected.isEmpty());
 	}
 
@@ -167,7 +167,7 @@ public class CartControllerTest {
 		verify(projectService).read(projectId);
 		verify(sampleService).getSamplesForProject(project);
 
-		Map<Project, Set<Sample>> selected = controller.getSelected();
+		Map<Project, List<Sample>> selected = controller.getSelected();
 		assertEquals(1, selected.keySet().size());
 		Project projectKey = selected.keySet().iterator().next();
 		assertEquals(project, projectKey);

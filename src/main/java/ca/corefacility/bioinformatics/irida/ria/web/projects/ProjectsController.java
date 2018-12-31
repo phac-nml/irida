@@ -40,6 +40,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+
 import ca.corefacility.bioinformatics.irida.config.web.IridaRestApiWebConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
@@ -71,10 +75,6 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.util.TreeNode;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for project related views
@@ -241,7 +241,7 @@ public class ProjectsController {
 			final Model model) {
 		model.addAttribute("useCartSamples", useCartSamples);
 
-		Map<Project, Set<Sample>> selected = cartController.getSelected();
+		Map<Project, List<Sample>> selected = cartController.getSelected();
 
 		// Check which samples they can modify
 		Set<Sample> allowed = new HashSet<>();
@@ -359,7 +359,7 @@ public class ProjectsController {
 
 		try {
 			if (useCartSamples) {
-				Map<Project, Set<Sample>> selected = cartController.getSelected();
+				Map<Project, List<Sample>> selected = cartController.getSelected();
 
 				List<Long> sampleIds = selected.entrySet().stream().flatMap(e -> e.getValue().stream().filter(s -> {
 					return canModifySample(s);

@@ -83,7 +83,7 @@ public class CartControllerIT {
 		AddToCartResponse addProjectSample = controller.addProjectSample(projectId, sampleIds, Locale.US);
 		assertEquals("Should be 1 sample in the cart", "1 sample was added to the cart from project2.",  addProjectSample.getAdded());
 
-		Set<Sample> selectedSamplesForProject = controller.getSelected().get(project);
+		List<Sample> selectedSamplesForProject = controller.getSelected().get(project);
 		for (Sample s : selectedSamplesForProject) {
 			assertTrue(sampleIds.contains(s.getId()));
 		}
@@ -99,7 +99,7 @@ public class CartControllerIT {
 
 		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(project);
 
-		Set<Sample> selectedSamplesForProject = controller.getSelected().get(project);
+		List<Sample> selectedSamplesForProject = controller.getSelected().get(project);
 		for (Join<Project, Sample> j : samplesForProject) {
 			assertTrue(selectedSamplesForProject.contains(j.getObject()));
 		}
