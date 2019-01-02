@@ -179,6 +179,12 @@ public class Cart {
 		return cart.keySet();
 	}
 
+	/**
+	 * Get a {@link List} of {@link CartSample} belonging to a specific project.
+	 *
+	 * @param projectId {@link Long} identifier for a {@link Project}
+	 * @return {@link List} of {@link CartSample} for a specific {@link Project}
+	 */
 	public List<CartSample> getCartSamplesForProject(Long projectId) {
 		if (cart.containsKey(projectId)) {
 			return new ArrayList<>(cart.get(projectId).values());

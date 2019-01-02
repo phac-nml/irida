@@ -59,6 +59,11 @@ public class CartController {
 		this.cart = cart;
 	}
 
+	/**
+	 * Get the dedicated page for the Cart
+	 *
+	 * @return {@link String} path to the cart page template
+	 */
 	@RequestMapping(value = "", produces = MediaType.TEXT_HTML_VALUE)
 	public String getCartPage() {
 		return "cart";
@@ -388,6 +393,12 @@ public class CartController {
 		return cart.getProjectIdsInCart();
 	}
 
+	/**
+	 * Get {@link Sample}s in the cart for a specific {@link Project}
+	 *
+	 * @param projectId {@link Long} identifier for a project
+	 * @return {@link List} of {@link CartSample}s belonging to the {@link Project}
+	 */
 	@RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public List<CartSample> getCartSamplesForProject(@RequestParam Long projectId) {

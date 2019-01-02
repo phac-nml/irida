@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.web.cart.dto;
 
+/**
+ * Used to represent a {@link ca.corefacility.bioinformatics.irida.model.sample.Sample} on the UI Cart Page.
+ */
 public class CartSample {
 	private Long id;
 	private String label;
@@ -23,6 +26,9 @@ public class CartSample {
 		return project;
 	}
 
+	/**
+	 * The sample needs to know what project it is from.
+	 */
 	class Project {
 		private Long id;
 		private String label;
