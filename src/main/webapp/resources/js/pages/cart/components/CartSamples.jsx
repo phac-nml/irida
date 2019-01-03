@@ -4,12 +4,10 @@ import PropTypes from "prop-types";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-balham.css";
-import { Button, Badge, Col, Dropdown, Icon, Input, Tooltip, Row } from "antd";
+import { Badge, Button, Col, Icon, Input, Row, Tooltip } from "antd";
 import { actions } from "../reducer";
 
 const { Search } = Input;
-
-const colors = {};
 
 class SampleRenderer extends React.Component {
   state = { details: false, filter: "" };
@@ -31,7 +29,7 @@ class SampleRenderer extends React.Component {
               text={sample.label}
             />
           </a>
-          <div style={{ color: "#b0bec4" }}>{sample.project.label}</div>
+          <div style={{ color: "#b0bec4", marginLeft: 15 }}>{sample.project.label}</div>
         </Col>
         <Col>
           <Tooltip title="Remove from cart">
