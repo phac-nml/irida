@@ -41,7 +41,6 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -266,8 +265,7 @@ public class AnalysisController {
 		// - Paired
 		Set<SequenceFilePair> inputFilePairs = sequencingObjectService.getSequencingObjectsOfTypeForAnalysisSubmission(
 				submission, SequenceFilePair.class);
-		Set<SampleFiles> sampleFiles = inputFilePairs.stream().map(SampleFiles::new).collect(Collectors.toSet());
-		model.addAttribute("paired_end", sampleFiles);
+		model.addAttribute("paired_end", inputFilePairs);
 
 		// Check if user can update analysis
 		Authentication authentication = SecurityContextHolder.getContext()
@@ -1127,32 +1125,6 @@ public class AnalysisController {
 
 		public boolean isShared() {
 			return shared;
-		}
-	}
-
-	private class SampleFiles {
-		private Long id;
-		private Sample sample;
-		private SequenceFilePair sequenceFilePair;
-
-		SampleFiles(SequenceFilePair sequenceFilePair) {
-			this.id = sequenceFilePair.getId();
-			this.sequenceFilePair = sequenceFilePair;
-			SampleSequencingObjectJoin sampleSequencingObjectJoin = sampleService.getSampleForSequencingObject(
-					sequenceFilePair);
-			this.sample = sampleSequencingObjectJoin.getSubject();
-		}
-
-		public Long getId() {
-			return id;
-		}
-
-		public Sample getSample() {
-			return sample;
-		}
-
-		public SequenceFilePair getSequenceFilePair() {
-			return sequenceFilePair;
 		}
 	}
 }
