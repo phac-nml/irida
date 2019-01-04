@@ -98,12 +98,12 @@
             "tool_errors": null, 
             "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/0.9.0", 
             "tool_shed_repository": {
-                "changeset_revision": "57d5928f456e", 
+                "changeset_revision": "f698c7604b3b",
                 "name": "shovill", 
                 "owner": "iuc", 
                 "tool_shed": "toolshed.g2.bx.psu.edu"
             }, 
-            "tool_state": "{\"adv\": \"{\\\"asm\\\": \\\"contigs\\\", \\\"gsize\\\": \\\"\\\", \\\"kmers\\\": \\\"\\\", \\\"minlen\\\": \\\"1000\\\", \\\"nocorr\\\": \\\"false\\\", \\\"depth\\\": \\\"100\\\", \\\"namefmt\\\": \\\"contig%05d\\\", \\\"mincov\\\": \\\"2\\\", \\\"opts\\\": \\\"\\\"}\", \"trim\": \"\\\"false\\\"\", \"log\": \"\\\"true\\\"\", \"__page__\": 0, \"__rerun_remap_job_id__\": null, \"library\": \"{\\\"lib_type\\\": \\\"collection\\\", \\\"input1\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"__current_case__\\\": 1}\"}", 
+            "tool_state": "{\"adv\": \"{\\\"asm\\\": \\\"contigs\\\", \\\"gsize\\\": \\\"\\\", \\\"kmers\\\": \\\"\\\", \\\"minlen\\\": \\\"1\\\", \\\"nocorr\\\": \\\"false\\\", \\\"depth\\\": \\\"100\\\", \\\"namefmt\\\": \\\"contig%05d\\\", \\\"mincov\\\": \\\"1\\\", \\\"opts\\\": \\\"\\\"}\", \"trim\": \"\\\"false\\\"\", \"log\": \"\\\"true\\\"\", \"__page__\": 0, \"__rerun_remap_job_id__\": null, \"library\": \"{\\\"lib_type\\\": \\\"collection\\\", \\\"input1\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"__current_case__\\\": 1}\"}",
             "tool_version": "0.9.0", 
             "type": "tool", 
             "uuid": "a1207389-35e5-42da-9012-20b099205871", 
@@ -249,5 +249,5 @@
             ]
         }
     }, 
-    "uuid": "74bfc18b-fa4f-4742-bbc9-fcd9ff750e8e"
+    "uuid": "9d1d4bb6-dcc1-46d2-8a01-978f13a2feda"
 }

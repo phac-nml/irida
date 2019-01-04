@@ -1,1203 +1,1251 @@
 {
-    "a_galaxy_workflow": "true", 
-    "annotation": "Shovill assembly, Prokka annotation with ZIP bundling of outputs", 
-    "format-version": "0.1", 
-    "name": "AssemblyAnnotationCollection-shovill-prokka-paired_reads-v0.4", 
+    "a_galaxy_workflow": "true",
+    "annotation": "Shovill assembly, Prokka annotation with ZIP bundling of outputs",
+    "format-version": "0.1",
+    "name": "AssemblyAnnotationCollection-shovill-prokka-paired_reads-v0.4",
     "steps": {
         "0": {
-            "annotation": "", 
-            "content_id": null, 
-            "id": 0, 
-            "input_connections": {}, 
+            "annotation": "",
+            "content_id": null,
+            "errors": null,
+            "id": 0,
+            "input_connections": {},
             "inputs": [
                 {
-                    "description": "", 
+                    "description": "",
                     "name": "sequence_reads_paired"
                 }
-            ], 
-            "label": null, 
-            "name": "Input dataset collection", 
-            "outputs": [], 
+            ],
+            "label": "sequence_reads_paired",
+            "name": "Input dataset collection",
+            "outputs": [],
             "position": {
-                "left": 200, 
+                "left": 200,
                 "top": 200
-            }, 
-            "tool_errors": null, 
-            "tool_id": null, 
-            "tool_state": "{\"collection_type\": \"list:paired\", \"name\": \"sequence_reads_paired\"}", 
-            "tool_version": null, 
-            "type": "data_collection_input", 
-            "uuid": "917f2843-92b8-4ba7-9a1a-5f886154980c", 
+            },
+            "tool_id": null,
+            "tool_state": "{\"collection_type\": \"list:paired\", \"name\": \"sequence_reads_paired\"}",
+            "tool_version": null,
+            "type": "data_collection_input",
+            "uuid": "917f2843-92b8-4ba7-9a1a-5f886154980c",
             "workflow_outputs": [
                 {
-                    "label": null, 
-                    "output_name": "output", 
+                    "label": null,
+                    "output_name": "output",
                     "uuid": "51587fae-8a73-46f0-91af-4f65377b59e7"
                 }
             ]
-        }, 
+        },
         "1": {
-            "annotation": "", 
-            "content_id": "toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/0.9.0", 
-            "id": 1, 
+            "annotation": "",
+            "content_id": "toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4",
+            "errors": null,
+            "id": 1,
             "input_connections": {
                 "library|input1": {
-                    "id": 0, 
+                    "id": 0,
                     "output_name": "output"
                 }
-            }, 
+            },
             "inputs": [
                 {
-                    "description": "runtime parameter for tool Shovill", 
+                    "description": "runtime parameter for tool Shovill",
                     "name": "library"
                 }
-            ], 
-            "label": null, 
-            "name": "Shovill", 
+            ],
+            "label": null,
+            "name": "Shovill",
             "outputs": [
                 {
-                    "name": "shovill_std_log", 
+                    "name": "shovill_std_log",
                     "type": "txt"
-                }, 
+                },
                 {
-                    "name": "contigs", 
+                    "name": "contigs",
                     "type": "fasta"
-                }, 
+                },
                 {
-                    "name": "contigs_graph", 
+                    "name": "contigs_graph",
                     "type": "txt"
                 }
-            ], 
+            ],
             "position": {
-                "left": 473.5, 
+                "left": 477,
                 "top": 200
-            }, 
-            "post_job_actions": {}, 
-            "tool_errors": null, 
-            "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/0.9.0", 
+            },
+            "post_job_actions": {},
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4",
             "tool_shed_repository": {
-                "changeset_revision": "57d5928f456e", 
-                "name": "shovill", 
-                "owner": "iuc", 
+                "changeset_revision": "865119fcb694",
+                "name": "shovill",
+                "owner": "iuc",
                 "tool_shed": "toolshed.g2.bx.psu.edu"
-            }, 
-            "tool_state": "{\"adv\": \"{\\\"asm\\\": \\\"contigs\\\", \\\"gsize\\\": \\\"\\\", \\\"kmers\\\": \\\"\\\", \\\"minlen\\\": \\\"0\\\", \\\"nocorr\\\": \\\"false\\\", \\\"depth\\\": \\\"100\\\", \\\"namefmt\\\": \\\"contig%05d\\\", \\\"mincov\\\": \\\"2\\\", \\\"opts\\\": \\\"\\\"}\", \"trim\": \"\\\"false\\\"\", \"log\": \"\\\"true\\\"\", \"__page__\": 0, \"__rerun_remap_job_id__\": null, \"library\": \"{\\\"lib_type\\\": \\\"collection\\\", \\\"input1\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"__current_case__\\\": 1}\"}",
-            "tool_version": "0.9.0", 
-            "type": "tool", 
-            "uuid": "04e633cb-5bfc-4afd-935e-ee49cc18c6c4", 
+            },
+            "tool_state": "{\"adv\": \"{\\\"gsize\\\": \\\"\\\", \\\"kmers\\\": \\\"\\\", \\\"minlen\\\": \\\"0\\\", \\\"nocorr\\\": \\\"false\\\", \\\"depth\\\": \\\"100\\\", \\\"namefmt\\\": \\\"contig%05d\\\", \\\"mincov\\\": \\\"2\\\", \\\"opts\\\": \\\"\\\"}\", \"trim\": \"\\\"false\\\"\", \"log\": \"\\\"true\\\"\", \"__page__\": null, \"__rerun_remap_job_id__\": null, \"assembler\": \"\\\"spades\\\"\", \"library\": \"{\\\"lib_type\\\": \\\"collection\\\", \\\"input1\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"__current_case__\\\": 1}\"}",
+            "tool_version": "1.0.4",
+            "type": "tool",
+            "uuid": "04e633cb-5bfc-4afd-935e-ee49cc18c6c4",
             "workflow_outputs": [
                 {
-                    "label": null, 
-                    "output_name": "contigs", 
+                    "label": null,
+                    "output_name": "contigs",
                     "uuid": "19150b18-02d2-422f-be0b-0314689cf5a1"
-                }, 
+                },
                 {
-                    "label": null, 
-                    "output_name": "shovill_std_log", 
+                    "label": null,
+                    "output_name": "shovill_std_log",
                     "uuid": "fa188ec7-4b52-4d52-8241-c9afa1f13fec"
-                }, 
+                },
                 {
-                    "label": null, 
-                    "output_name": "contigs_graph", 
+                    "label": null,
+                    "output_name": "contigs_graph",
                     "uuid": "d572f4c0-d087-439c-b2b0-ccebc983f92e"
                 }
             ]
-        }, 
-        "2": {
-            "annotation": "", 
-            "content_id": "toolshed.g2.bx.psu.edu/repos/iuc/quast/quast/4.6.3", 
-            "id": 2, 
-            "input_connections": {
-                "input": {
-                    "id": 1, 
-                    "output_name": "contigs"
-                }
-            }, 
-            "inputs": [
-                {
-                    "description": "runtime parameter for tool Quast", 
-                    "name": "input_operon"
-                }, 
-                {
-                    "description": "runtime parameter for tool Quast", 
-                    "name": "annot"
-                }, 
-                {
-                    "description": "runtime parameter for tool Quast", 
-                    "name": "input"
-                }, 
-                {
-                    "description": "runtime parameter for tool Quast", 
-                    "name": "input_ref"
-                }
-            ], 
-            "label": null, 
-            "name": "Quast", 
-            "outputs": [
-                {
-                    "name": "log_txt", 
-                    "type": "txt"
-                }, 
-                {
-                    "name": "mis_ass_tsv", 
-                    "type": "tabular"
-                }, 
-                {
-                    "name": "unalign_tsv", 
-                    "type": "tabular"
-                }, 
-                {
-                    "name": "contig_size_viewer", 
-                    "type": "html"
-                }, 
-                {
-                    "name": "alignment_viewer", 
-                    "type": "html"
-                }, 
-                {
-                    "name": "quast_tsv", 
-                    "type": "tabular"
-                }, 
-                {
-                    "name": "report_html", 
-                    "type": "html"
-                }, 
-                {
-                    "name": "report_pdf", 
-                    "type": "pdf"
-                }
-            ], 
-            "position": {
-                "left": 701, 
-                "top": 200
-            }, 
-            "post_job_actions": {
-                "HideDatasetActionalignment_viewer": {
-                    "action_arguments": {}, 
-                    "action_type": "HideDatasetAction", 
-                    "output_name": "alignment_viewer"
-                }, 
-                "HideDatasetActionmis_ass_tsv": {
-                    "action_arguments": {}, 
-                    "action_type": "HideDatasetAction", 
-                    "output_name": "mis_ass_tsv"
-                }, 
-                "HideDatasetActionunalign_tsv": {
-                    "action_arguments": {}, 
-                    "action_type": "HideDatasetAction", 
-                    "output_name": "unalign_tsv"
-                }, 
-                "RenameDatasetActioncontig_size_viewer": {
-                    "action_arguments": {
-                        "newname": "quast-contig_size_viewer.html.zip"
-                    }, 
-                    "action_type": "RenameDatasetAction", 
-                    "output_name": "contig_size_viewer"
-                }, 
-                "RenameDatasetActionlog_txt": {
-                    "action_arguments": {
-                        "newname": "quast.log"
-                    }, 
-                    "action_type": "RenameDatasetAction", 
-                    "output_name": "log_txt"
-                }, 
-                "RenameDatasetActionquast_tsv": {
-                    "action_arguments": {
-                        "newname": "quast.tsv"
-                    }, 
-                    "action_type": "RenameDatasetAction", 
-                    "output_name": "quast_tsv"
-                }, 
-                "RenameDatasetActionreport_html": {
-                    "action_arguments": {
-                        "newname": "quast.html.zip"
-                    }, 
-                    "action_type": "RenameDatasetAction", 
-                    "output_name": "report_html"
-                }, 
-                "RenameDatasetActionreport_pdf": {
-                    "action_arguments": {
-                        "newname": "quast.pdf"
-                    }, 
-                    "action_type": "RenameDatasetAction", 
-                    "output_name": "report_pdf"
-                }
-            }, 
-            "tool_errors": null, 
-            "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/quast/quast/4.6.3", 
-            "tool_shed_repository": {
-                "changeset_revision": "0834c823d4b9", 
-                "name": "quast", 
-                "owner": "iuc", 
-                "tool_shed": "toolshed.g2.bx.psu.edu"
-            }, 
-            "tool_state": "{\"input_operon\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__page__\": 0, \"threshold_contig\": \"\\\"0,1000\\\"\", \"__rerun_remap_job_id__\": null, \"annot\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"type_file\": \"\\\"contig\\\"\", \"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"input_size\": \"\\\"\\\"\", \"input_ref\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"min_contig\": \"\\\"500\\\"\", \"gene_selection\": \"\\\"prokaryotes\\\"\"}", 
-            "tool_version": "4.6.3", 
-            "type": "tool", 
-            "uuid": "fd139253-df91-4972-abb3-31d7128cea28", 
-            "workflow_outputs": [
-                {
-                    "label": null, 
-                    "output_name": "log_txt", 
-                    "uuid": "3ffd7b9c-5365-43f7-9a0a-3dfb1f7b0835"
-                }, 
-                {
-                    "label": null, 
-                    "output_name": "report_html", 
-                    "uuid": "91b3939e-6f1f-4b19-912c-fd2e8e3b2832"
-                }, 
-                {
-                    "label": null, 
-                    "output_name": "report_pdf", 
-                    "uuid": "492aaa31-84ca-4736-8893-8263debd0e35"
-                }, 
-                {
-                    "label": null, 
-                    "output_name": "quast_tsv", 
-                    "uuid": "9646badc-8576-4d14-806d-79e7d5befd7a"
-                }, 
-                {
-                    "label": null, 
-                    "output_name": "contig_size_viewer", 
-                    "uuid": "a8f1ce10-8e7c-4ce6-b2fd-47c058559353"
-                }
-            ]
-        }, 
-        "3": {
-            "annotation": "", 
-            "content_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
-            "id": 3, 
-            "input_connections": {
-                "input": {
-                    "id": 1, 
-                    "output_name": "shovill_std_log"
-                }
-            }, 
-            "inputs": [
-                {
-                    "description": "runtime parameter for tool Bundle Collection", 
-                    "name": "input"
-                }
-            ], 
-            "label": null, 
-            "name": "Bundle Collection", 
-            "outputs": [
-                {
-                    "name": "html_file", 
-                    "type": "html"
-                }
-            ], 
-            "position": {
-                "left": 701, 
-                "top": 602.5
-            }, 
-            "post_job_actions": {
-                "RenameDatasetActionhtml_file": {
-                    "action_arguments": {
-                        "newname": "shovill.log.zip"
-                    }, 
-                    "action_type": "RenameDatasetAction", 
-                    "output_name": "html_file"
-                }
-            }, 
-            "tool_errors": null, 
-            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
-            "tool_shed_repository": {
-                "changeset_revision": "7bc329e1ada4", 
-                "name": "bundle_collections", 
-                "owner": "irida", 
-                "tool_shed": "irida.corefacility.ca/galaxy-shed"
-            }, 
-            "tool_state": "{\"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}", 
-            "tool_version": "1.0.2", 
-            "type": "tool", 
-            "uuid": "2209d263-f797-4f14-9c2d-b75fa2418ae1", 
-            "workflow_outputs": [
-                {
-                    "label": null, 
-                    "output_name": "html_file", 
-                    "uuid": "77e7db8f-63d4-427b-bfb2-f31f1c4aced5"
-                }
-            ]
-        }, 
-        "4": {
-            "annotation": "", 
-            "content_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
-            "id": 4, 
-            "input_connections": {
-                "input": {
-                    "id": 1, 
-                    "output_name": "contigs"
-                }
-            }, 
-            "inputs": [
-                {
-                    "description": "runtime parameter for tool Bundle Collection", 
-                    "name": "input"
-                }
-            ], 
-            "label": null, 
-            "name": "Bundle Collection", 
-            "outputs": [
-                {
-                    "name": "html_file", 
-                    "type": "html"
-                }
-            ], 
-            "position": {
-                "left": 701, 
-                "top": 716
-            }, 
-            "post_job_actions": {
-                "RenameDatasetActionhtml_file": {
-                    "action_arguments": {
-                        "newname": "contigs.fasta.zip"
-                    }, 
-                    "action_type": "RenameDatasetAction", 
-                    "output_name": "html_file"
-                }
-            }, 
-            "tool_errors": null, 
-            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
-            "tool_shed_repository": {
-                "changeset_revision": "7bc329e1ada4", 
-                "name": "bundle_collections", 
-                "owner": "irida", 
-                "tool_shed": "irida.corefacility.ca/galaxy-shed"
-            }, 
-            "tool_state": "{\"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}", 
-            "tool_version": "1.0.2", 
-            "type": "tool", 
-            "uuid": "07ebb3e9-53ce-44a1-935c-87bda0164fbf", 
-            "workflow_outputs": [
-                {
-                    "label": null, 
-                    "output_name": "html_file", 
-                    "uuid": "f6b6790d-b1db-419e-9837-ad00522e1287"
-                }
-            ]
-        }, 
-        "5": {
-            "annotation": "", 
-            "content_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
-            "id": 5, 
-            "input_connections": {
-                "input": {
-                    "id": 1, 
-                    "output_name": "contigs_graph"
-                }
-            }, 
-            "inputs": [
-                {
-                    "description": "runtime parameter for tool Bundle Collection", 
-                    "name": "input"
-                }
-            ], 
-            "label": null, 
-            "name": "Bundle Collection", 
-            "outputs": [
-                {
-                    "name": "html_file", 
-                    "type": "html"
-                }
-            ], 
-            "position": {
-                "left": 701, 
-                "top": 829.5
-            }, 
-            "post_job_actions": {
-                "RenameDatasetActionhtml_file": {
-                    "action_arguments": {
-                        "newname": "contigs.fastg.zip"
-                    }, 
-                    "action_type": "RenameDatasetAction", 
-                    "output_name": "html_file"
-                }
-            }, 
-            "tool_errors": null, 
-            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
-            "tool_shed_repository": {
-                "changeset_revision": "7bc329e1ada4", 
-                "name": "bundle_collections", 
-                "owner": "irida", 
-                "tool_shed": "irida.corefacility.ca/galaxy-shed"
-            }, 
-            "tool_state": "{\"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}", 
-            "tool_version": "1.0.2", 
-            "type": "tool", 
-            "uuid": "fdbe0c4a-272b-4bff-bf1e-4e0a4dee1567", 
-            "workflow_outputs": [
-                {
-                    "label": null, 
-                    "output_name": "html_file", 
-                    "uuid": "885c5cbe-c8d4-4799-8552-7eb00704840b"
-                }
-            ]
-        }, 
-        "6": {
-            "annotation": "", 
-            "content_id": "toolshed.g2.bx.psu.edu/repos/crs4/prokka/prokka/1.13", 
-            "id": 6, 
-            "input_connections": {
-                "input": {
-                    "id": 1, 
-                    "output_name": "contigs"
-                }
-            }, 
-            "inputs": [
-                {
-                    "description": "runtime parameter for tool Prokka", 
-                    "name": "proteins"
-                }, 
-                {
-                    "description": "runtime parameter for tool Prokka", 
-                    "name": "input"
-                }
-            ], 
-            "label": null, 
-            "name": "Prokka", 
-            "outputs": [
-                {
-                    "name": "out_gff", 
-                    "type": "gff"
-                }, 
-                {
-                    "name": "out_gbk", 
-                    "type": "txt"
-                }, 
-                {
-                    "name": "out_fna", 
-                    "type": "fasta"
-                }, 
-                {
-                    "name": "out_faa", 
-                    "type": "fasta"
-                }, 
-                {
-                    "name": "out_ffn", 
-                    "type": "fasta"
-                }, 
-                {
-                    "name": "out_sqn", 
-                    "type": "asn1"
-                }, 
-                {
-                    "name": "out_fsa", 
-                    "type": "fasta"
-                }, 
-                {
-                    "name": "out_tbl", 
-                    "type": "txt"
-                }, 
-                {
-                    "name": "out_tsv", 
-                    "type": "tabular"
-                }, 
-                {
-                    "name": "out_err", 
-                    "type": "txt"
-                }, 
-                {
-                    "name": "out_txt", 
-                    "type": "txt"
-                }, 
-                {
-                    "name": "out_log", 
-                    "type": "txt"
-                }
-            ], 
-            "position": {
-                "left": 701, 
-                "top": 943
-            }, 
-            "post_job_actions": {}, 
-            "tool_errors": null, 
-            "tool_id": "toolshed.g2.bx.psu.edu/repos/crs4/prokka/prokka/1.13", 
-            "tool_shed_repository": {
-                "changeset_revision": "eaee459f3d69", 
-                "name": "prokka", 
-                "owner": "crs4", 
-                "tool_shed": "toolshed.g2.bx.psu.edu"
-            }, 
-            "tool_state": "{\"strain\": \"\\\"\\\"\", \"increment\": \"\\\"1\\\"\", \"species\": \"\\\"\\\"\", \"__page__\": 0, \"usegenus\": \"\\\"false\\\"\", \"evalue\": \"\\\"1e-06\\\"\", \"locustag\": \"\\\"P\\\"\", \"fast\": \"\\\"false\\\"\", \"compliant\": \"{\\\"mincontig\\\": \\\"200\\\", \\\"__current_case__\\\": 0, \\\"compliant_select\\\": \\\"no\\\", \\\"addgenes\\\": \\\"false\\\"}\", \"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"kingdom\": \"{\\\"gcode\\\": \\\"11\\\", \\\"kingdom_select\\\": \\\"Bacteria\\\", \\\"__current_case__\\\": 1}\", \"metagenome\": \"\\\"false\\\"\", \"centre\": \"\\\"\\\"\", \"outputs\": \"[\\\"gff\\\", \\\"gbk\\\", \\\"fna\\\", \\\"faa\\\", \\\"ffn\\\", \\\"sqn\\\", \\\"fsa\\\", \\\"tbl\\\", \\\"tsv\\\", \\\"err\\\", \\\"txt\\\"]\", \"gffver\": \"\\\"3\\\"\", \"norrna\": \"\\\"false\\\"\", \"proteins\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"notrna\": \"\\\"false\\\"\", \"plasmid\": \"\\\"\\\"\", \"rfam\": \"\\\"false\\\"\", \"genus\": \"\\\"\\\"\", \"__rerun_remap_job_id__\": null}", 
-            "tool_version": "1.13", 
-            "type": "tool", 
-            "uuid": "e355cb1c-66a5-4708-ad35-2f6bfd9b0792", 
-            "workflow_outputs": [
-                {
-                    "label": null, 
-                    "output_name": "out_sqn", 
-                    "uuid": "2cbcde13-eefb-49eb-89c9-7105984b2815"
-                }, 
-                {
-                    "label": null, 
-                    "output_name": "out_txt", 
-                    "uuid": "caac8a9c-51e2-4aa4-82ad-8359644637f0"
-                }, 
-                {
-                    "label": null, 
-                    "output_name": "out_tbl", 
-                    "uuid": "0832cb3d-4597-46c7-9af1-9102000beebc"
-                }, 
-                {
-                    "label": null, 
-                    "output_name": "out_err", 
-                    "uuid": "625b1480-ed12-46cd-b894-8281c97b39ed"
-                }, 
-                {
-                    "label": null, 
-                    "output_name": "out_ffn", 
-                    "uuid": "38e6cbaf-13a0-4d3e-aea4-7b815ac4d853"
-                }, 
-                {
-                    "label": null, 
-                    "output_name": "out_fsa", 
-                    "uuid": "2c9a0c67-d4f8-4d37-8a98-fc6e05ad8543"
-                }, 
-                {
-                    "label": null, 
-                    "output_name": "out_tsv", 
-                    "uuid": "7d26c219-4e56-4e84-ab66-e79a6d666bec"
-                }, 
-                {
-                    "label": null, 
-                    "output_name": "out_fna", 
-                    "uuid": "f413d5e1-cebe-4292-b7f5-afce45132fd2"
-                }, 
-                {
-                    "label": null, 
-                    "output_name": "out_log", 
-                    "uuid": "7559d94d-3be5-4ef3-8a28-9cebe1b5946d"
-                }, 
-                {
-                    "label": null, 
-                    "output_name": "out_faa", 
-                    "uuid": "0fed3b0b-444a-432f-ad72-3306741f8b07"
-                }, 
-                {
-                    "label": null, 
-                    "output_name": "out_gbk", 
-                    "uuid": "bafc2e72-a025-45f1-8f22-d1ac441d85bd"
-                }, 
-                {
-                    "label": null, 
-                    "output_name": "out_gff", 
-                    "uuid": "5f5f3f9d-72f6-43bd-b98f-3ee1c79efc41"
-                }
-            ]
-        }, 
-        "7": {
-            "annotation": "", 
-            "content_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
-            "id": 7, 
-            "input_connections": {
-                "input": {
-                    "id": 6, 
-                    "output_name": "out_gff"
-                }
-            }, 
-            "inputs": [
-                {
-                    "description": "runtime parameter for tool Bundle Collection", 
-                    "name": "input"
-                }
-            ], 
-            "label": null, 
-            "name": "Bundle Collection", 
-            "outputs": [
-                {
-                    "name": "html_file", 
-                    "type": "html"
-                }
-            ], 
-            "position": {
-                "left": 1028.5, 
-                "top": 200
-            }, 
-            "post_job_actions": {
-                "RenameDatasetActionhtml_file": {
-                    "action_arguments": {
-                        "newname": "prokka.gff.zip"
-                    }, 
-                    "action_type": "RenameDatasetAction", 
-                    "output_name": "html_file"
-                }
-            }, 
-            "tool_errors": null, 
-            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
-            "tool_shed_repository": {
-                "changeset_revision": "7bc329e1ada4", 
-                "name": "bundle_collections", 
-                "owner": "irida", 
-                "tool_shed": "irida.corefacility.ca/galaxy-shed"
-            }, 
-            "tool_state": "{\"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}", 
-            "tool_version": "1.0.2", 
-            "type": "tool", 
-            "uuid": "b8ab8941-6b8d-4fbb-939e-22942e155901", 
-            "workflow_outputs": []
-        }, 
-        "8": {
-            "annotation": "", 
-            "content_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
-            "id": 8, 
-            "input_connections": {
-                "input": {
-                    "id": 6, 
-                    "output_name": "out_gbk"
-                }
-            }, 
-            "inputs": [
-                {
-                    "description": "runtime parameter for tool Bundle Collection", 
-                    "name": "input"
-                }
-            ], 
-            "label": null, 
-            "name": "Bundle Collection", 
-            "outputs": [
-                {
-                    "name": "html_file", 
-                    "type": "html"
-                }
-            ], 
-            "position": {
-                "left": 1028.5, 
-                "top": 311.5
-            }, 
-            "post_job_actions": {
-                "RenameDatasetActionhtml_file": {
-                    "action_arguments": {
-                        "newname": "prokka.gbk.zip"
-                    }, 
-                    "action_type": "RenameDatasetAction", 
-                    "output_name": "html_file"
-                }
-            }, 
-            "tool_errors": null, 
-            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
-            "tool_shed_repository": {
-                "changeset_revision": "7bc329e1ada4", 
-                "name": "bundle_collections", 
-                "owner": "irida", 
-                "tool_shed": "irida.corefacility.ca/galaxy-shed"
-            }, 
-            "tool_state": "{\"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}", 
-            "tool_version": "1.0.2", 
-            "type": "tool", 
-            "uuid": "71caf9ec-7617-48f6-bf56-84a094003b11", 
-            "workflow_outputs": []
-        }, 
-        "9": {
-            "annotation": "", 
-            "content_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
-            "id": 9, 
-            "input_connections": {
-                "input": {
-                    "id": 6, 
-                    "output_name": "out_fna"
-                }
-            }, 
-            "inputs": [
-                {
-                    "description": "runtime parameter for tool Bundle Collection", 
-                    "name": "input"
-                }
-            ], 
-            "label": null, 
-            "name": "Bundle Collection", 
-            "outputs": [
-                {
-                    "name": "html_file", 
-                    "type": "html"
-                }
-            ], 
-            "position": {
-                "left": 1028.5, 
-                "top": 427
-            }, 
-            "post_job_actions": {
-                "RenameDatasetActionhtml_file": {
-                    "action_arguments": {
-                        "newname": "prokka.fna.zip"
-                    }, 
-                    "action_type": "RenameDatasetAction", 
-                    "output_name": "html_file"
-                }
-            }, 
-            "tool_errors": null, 
-            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
-            "tool_shed_repository": {
-                "changeset_revision": "7bc329e1ada4", 
-                "name": "bundle_collections", 
-                "owner": "irida", 
-                "tool_shed": "irida.corefacility.ca/galaxy-shed"
-            }, 
-            "tool_state": "{\"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}", 
-            "tool_version": "1.0.2", 
-            "type": "tool", 
-            "uuid": "27efe604-26c4-4c56-9825-b737f63f0fb6", 
-            "workflow_outputs": []
-        }, 
+        },
         "10": {
-            "annotation": "", 
-            "content_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
-            "id": 10, 
+            "annotation": "",
+            "content_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2",
+            "errors": null,
+            "id": 10,
             "input_connections": {
                 "input": {
-                    "id": 6, 
+                    "id": 6,
                     "output_name": "out_faa"
                 }
-            }, 
+            },
             "inputs": [
                 {
-                    "description": "runtime parameter for tool Bundle Collection", 
+                    "description": "runtime parameter for tool Bundle Collection",
                     "name": "input"
                 }
-            ], 
-            "label": null, 
-            "name": "Bundle Collection", 
+            ],
+            "label": null,
+            "name": "Bundle Collection",
             "outputs": [
                 {
-                    "name": "html_file", 
+                    "name": "html_file",
                     "type": "html"
                 }
-            ], 
+            ],
             "position": {
-                "left": 1028.5, 
-                "top": 540.5
-            }, 
+                "left": 1050,
+                "top": 548
+            },
             "post_job_actions": {
                 "RenameDatasetActionhtml_file": {
                     "action_arguments": {
                         "newname": "prokka.faa.zip"
-                    }, 
-                    "action_type": "RenameDatasetAction", 
+                    },
+                    "action_type": "RenameDatasetAction",
                     "output_name": "html_file"
                 }
-            }, 
-            "tool_errors": null, 
-            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
+            },
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2",
             "tool_shed_repository": {
-                "changeset_revision": "7bc329e1ada4", 
-                "name": "bundle_collections", 
-                "owner": "irida", 
+                "changeset_revision": "7bc329e1ada4",
+                "name": "bundle_collections",
+                "owner": "irida",
                 "tool_shed": "irida.corefacility.ca/galaxy-shed"
-            }, 
-            "tool_state": "{\"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}", 
-            "tool_version": "1.0.2", 
-            "type": "tool", 
-            "uuid": "0ed11ee3-26c2-4fca-a194-a4df13527fe0", 
-            "workflow_outputs": []
-        }, 
+            },
+            "tool_state": "{\"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}",
+            "tool_version": "1.0.2",
+            "type": "tool",
+            "uuid": "0ed11ee3-26c2-4fca-a194-a4df13527fe0",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "html_file",
+                    "uuid": "0d9e987b-558e-427e-aa1c-4e2d0cb4ac7c"
+                }
+            ]
+        },
         "11": {
-            "annotation": "", 
-            "content_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
-            "id": 11, 
+            "annotation": "",
+            "content_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2",
+            "errors": null,
+            "id": 11,
             "input_connections": {
                 "input": {
-                    "id": 6, 
+                    "id": 6,
                     "output_name": "out_ffn"
                 }
-            }, 
+            },
             "inputs": [
                 {
-                    "description": "runtime parameter for tool Bundle Collection", 
+                    "description": "runtime parameter for tool Bundle Collection",
                     "name": "input"
                 }
-            ], 
-            "label": null, 
-            "name": "Bundle Collection", 
+            ],
+            "label": null,
+            "name": "Bundle Collection",
             "outputs": [
                 {
-                    "name": "html_file", 
+                    "name": "html_file",
                     "type": "html"
                 }
-            ], 
+            ],
             "position": {
-                "left": 1028.5, 
-                "top": 654
-            }, 
+                "left": 1050,
+                "top": 664
+            },
             "post_job_actions": {
                 "RenameDatasetActionhtml_file": {
                     "action_arguments": {
                         "newname": "prokka.ffn.zip"
-                    }, 
-                    "action_type": "RenameDatasetAction", 
+                    },
+                    "action_type": "RenameDatasetAction",
                     "output_name": "html_file"
                 }
-            }, 
-            "tool_errors": null, 
-            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
+            },
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2",
             "tool_shed_repository": {
-                "changeset_revision": "7bc329e1ada4", 
-                "name": "bundle_collections", 
-                "owner": "irida", 
+                "changeset_revision": "7bc329e1ada4",
+                "name": "bundle_collections",
+                "owner": "irida",
                 "tool_shed": "irida.corefacility.ca/galaxy-shed"
-            }, 
-            "tool_state": "{\"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}", 
-            "tool_version": "1.0.2", 
-            "type": "tool", 
-            "uuid": "1cc97fa3-77bc-4b78-a664-556b958d091b", 
-            "workflow_outputs": []
-        }, 
+            },
+            "tool_state": "{\"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}",
+            "tool_version": "1.0.2",
+            "type": "tool",
+            "uuid": "1cc97fa3-77bc-4b78-a664-556b958d091b",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "html_file",
+                    "uuid": "0037fd99-0b8b-424d-a85c-6b9e4849d144"
+                }
+            ]
+        },
         "12": {
-            "annotation": "", 
-            "content_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
-            "id": 12, 
+            "annotation": "",
+            "content_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2",
+            "errors": null,
+            "id": 12,
             "input_connections": {
                 "input": {
-                    "id": 6, 
+                    "id": 6,
                     "output_name": "out_sqn"
                 }
-            }, 
+            },
             "inputs": [
                 {
-                    "description": "runtime parameter for tool Bundle Collection", 
+                    "description": "runtime parameter for tool Bundle Collection",
                     "name": "input"
                 }
-            ], 
-            "label": null, 
-            "name": "Bundle Collection", 
+            ],
+            "label": null,
+            "name": "Bundle Collection",
             "outputs": [
                 {
-                    "name": "html_file", 
+                    "name": "html_file",
                     "type": "html"
                 }
-            ], 
+            ],
             "position": {
-                "left": 1028.5, 
-                "top": 767.5
-            }, 
+                "left": 1050,
+                "top": 780
+            },
             "post_job_actions": {
                 "RenameDatasetActionhtml_file": {
                     "action_arguments": {
                         "newname": "prokka.sqn.zip"
-                    }, 
-                    "action_type": "RenameDatasetAction", 
+                    },
+                    "action_type": "RenameDatasetAction",
                     "output_name": "html_file"
                 }
-            }, 
-            "tool_errors": null, 
-            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
+            },
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2",
             "tool_shed_repository": {
-                "changeset_revision": "7bc329e1ada4", 
-                "name": "bundle_collections", 
-                "owner": "irida", 
+                "changeset_revision": "7bc329e1ada4",
+                "name": "bundle_collections",
+                "owner": "irida",
                 "tool_shed": "irida.corefacility.ca/galaxy-shed"
-            }, 
-            "tool_state": "{\"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}", 
-            "tool_version": "1.0.2", 
-            "type": "tool", 
-            "uuid": "4b69b32e-8362-4c9b-915a-52390e6eabd2", 
-            "workflow_outputs": []
-        }, 
+            },
+            "tool_state": "{\"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}",
+            "tool_version": "1.0.2",
+            "type": "tool",
+            "uuid": "4b69b32e-8362-4c9b-915a-52390e6eabd2",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "html_file",
+                    "uuid": "ddffec4d-d9f2-4e4b-9dea-e7c586cc1d9d"
+                }
+            ]
+        },
         "13": {
-            "annotation": "", 
-            "content_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
-            "id": 13, 
+            "annotation": "",
+            "content_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2",
+            "errors": null,
+            "id": 13,
             "input_connections": {
                 "input": {
-                    "id": 6, 
+                    "id": 6,
                     "output_name": "out_fsa"
                 }
-            }, 
+            },
             "inputs": [
                 {
-                    "description": "runtime parameter for tool Bundle Collection", 
+                    "description": "runtime parameter for tool Bundle Collection",
                     "name": "input"
                 }
-            ], 
-            "label": null, 
-            "name": "Bundle Collection", 
+            ],
+            "label": null,
+            "name": "Bundle Collection",
             "outputs": [
                 {
-                    "name": "html_file", 
+                    "name": "html_file",
                     "type": "html"
                 }
-            ], 
+            ],
             "position": {
-                "left": 1028.5, 
-                "top": 881
-            }, 
+                "left": 1050,
+                "top": 896
+            },
             "post_job_actions": {
                 "RenameDatasetActionhtml_file": {
                     "action_arguments": {
                         "newname": "prokka.fsa.zip"
-                    }, 
-                    "action_type": "RenameDatasetAction", 
+                    },
+                    "action_type": "RenameDatasetAction",
                     "output_name": "html_file"
                 }
-            }, 
-            "tool_errors": null, 
-            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
+            },
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2",
             "tool_shed_repository": {
-                "changeset_revision": "7bc329e1ada4", 
-                "name": "bundle_collections", 
-                "owner": "irida", 
+                "changeset_revision": "7bc329e1ada4",
+                "name": "bundle_collections",
+                "owner": "irida",
                 "tool_shed": "irida.corefacility.ca/galaxy-shed"
-            }, 
-            "tool_state": "{\"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}", 
-            "tool_version": "1.0.2", 
-            "type": "tool", 
-            "uuid": "57e48c2b-810c-4d76-b5f5-2a026d636040", 
-            "workflow_outputs": []
-        }, 
+            },
+            "tool_state": "{\"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}",
+            "tool_version": "1.0.2",
+            "type": "tool",
+            "uuid": "57e48c2b-810c-4d76-b5f5-2a026d636040",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "html_file",
+                    "uuid": "217cc6b8-463c-446f-8a00-f43d6452034c"
+                }
+            ]
+        },
         "14": {
-            "annotation": "", 
-            "content_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
-            "id": 14, 
+            "annotation": "",
+            "content_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2",
+            "errors": null,
+            "id": 14,
             "input_connections": {
                 "input": {
-                    "id": 6, 
+                    "id": 6,
                     "output_name": "out_tbl"
                 }
-            }, 
+            },
             "inputs": [
                 {
-                    "description": "runtime parameter for tool Bundle Collection", 
+                    "description": "runtime parameter for tool Bundle Collection",
                     "name": "input"
                 }
-            ], 
-            "label": null, 
-            "name": "Bundle Collection", 
+            ],
+            "label": null,
+            "name": "Bundle Collection",
             "outputs": [
                 {
-                    "name": "html_file", 
+                    "name": "html_file",
                     "type": "html"
                 }
-            ], 
+            ],
             "position": {
-                "left": 1028.5, 
-                "top": 994.5
-            }, 
+                "left": 1050,
+                "top": 1012
+            },
             "post_job_actions": {
                 "RenameDatasetActionhtml_file": {
                     "action_arguments": {
                         "newname": "prokka.tbl.zip"
-                    }, 
-                    "action_type": "RenameDatasetAction", 
+                    },
+                    "action_type": "RenameDatasetAction",
                     "output_name": "html_file"
                 }
-            }, 
-            "tool_errors": null, 
-            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
+            },
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2",
             "tool_shed_repository": {
-                "changeset_revision": "7bc329e1ada4", 
-                "name": "bundle_collections", 
-                "owner": "irida", 
+                "changeset_revision": "7bc329e1ada4",
+                "name": "bundle_collections",
+                "owner": "irida",
                 "tool_shed": "irida.corefacility.ca/galaxy-shed"
-            }, 
-            "tool_state": "{\"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}", 
-            "tool_version": "1.0.2", 
-            "type": "tool", 
-            "uuid": "323512ed-6d5e-467b-a9d0-bdf871f1661d", 
-            "workflow_outputs": []
-        }, 
+            },
+            "tool_state": "{\"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}",
+            "tool_version": "1.0.2",
+            "type": "tool",
+            "uuid": "323512ed-6d5e-467b-a9d0-bdf871f1661d",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "html_file",
+                    "uuid": "49b9ca01-95fe-46b3-a936-23c0f32a449d"
+                }
+            ]
+        },
         "15": {
-            "annotation": "", 
-            "content_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
-            "id": 15, 
+            "annotation": "",
+            "content_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2",
+            "errors": null,
+            "id": 15,
             "input_connections": {
                 "input": {
-                    "id": 6, 
+                    "id": 6,
                     "output_name": "out_tsv"
                 }
-            }, 
+            },
             "inputs": [
                 {
-                    "description": "runtime parameter for tool Bundle Collection", 
+                    "description": "runtime parameter for tool Bundle Collection",
                     "name": "input"
                 }
-            ], 
-            "label": null, 
-            "name": "Bundle Collection", 
+            ],
+            "label": null,
+            "name": "Bundle Collection",
             "outputs": [
                 {
-                    "name": "html_file", 
+                    "name": "html_file",
                     "type": "html"
                 }
-            ], 
+            ],
             "position": {
-                "left": 1028.5, 
-                "top": 1108
-            }, 
+                "left": 1050,
+                "top": 1128
+            },
             "post_job_actions": {
                 "RenameDatasetActionhtml_file": {
                     "action_arguments": {
                         "newname": "prokka.tsv.zip"
-                    }, 
-                    "action_type": "RenameDatasetAction", 
+                    },
+                    "action_type": "RenameDatasetAction",
                     "output_name": "html_file"
                 }
-            }, 
-            "tool_errors": null, 
-            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
+            },
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2",
             "tool_shed_repository": {
-                "changeset_revision": "7bc329e1ada4", 
-                "name": "bundle_collections", 
-                "owner": "irida", 
+                "changeset_revision": "7bc329e1ada4",
+                "name": "bundle_collections",
+                "owner": "irida",
                 "tool_shed": "irida.corefacility.ca/galaxy-shed"
-            }, 
-            "tool_state": "{\"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}", 
-            "tool_version": "1.0.2", 
-            "type": "tool", 
-            "uuid": "4cee50fc-a38f-40a9-82c2-a9743f758a05", 
-            "workflow_outputs": []
-        }, 
+            },
+            "tool_state": "{\"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}",
+            "tool_version": "1.0.2",
+            "type": "tool",
+            "uuid": "4cee50fc-a38f-40a9-82c2-a9743f758a05",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "html_file",
+                    "uuid": "43d1fdc1-d87c-4673-844c-1f6116964089"
+                }
+            ]
+        },
         "16": {
-            "annotation": "", 
-            "content_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
-            "id": 16, 
+            "annotation": "",
+            "content_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2",
+            "errors": null,
+            "id": 16,
             "input_connections": {
                 "input": {
-                    "id": 6, 
+                    "id": 6,
                     "output_name": "out_err"
                 }
-            }, 
+            },
             "inputs": [
                 {
-                    "description": "runtime parameter for tool Bundle Collection", 
+                    "description": "runtime parameter for tool Bundle Collection",
                     "name": "input"
                 }
-            ], 
-            "label": null, 
-            "name": "Bundle Collection", 
+            ],
+            "label": null,
+            "name": "Bundle Collection",
             "outputs": [
                 {
-                    "name": "html_file", 
+                    "name": "html_file",
                     "type": "html"
                 }
-            ], 
+            ],
             "position": {
-                "left": 1028.5, 
-                "top": 1221.5
-            }, 
+                "left": 1050,
+                "top": 1244
+            },
             "post_job_actions": {
                 "RenameDatasetActionhtml_file": {
                     "action_arguments": {
                         "newname": "prokka.err.zip"
-                    }, 
-                    "action_type": "RenameDatasetAction", 
+                    },
+                    "action_type": "RenameDatasetAction",
                     "output_name": "html_file"
                 }
-            }, 
-            "tool_errors": null, 
-            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
+            },
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2",
             "tool_shed_repository": {
-                "changeset_revision": "7bc329e1ada4", 
-                "name": "bundle_collections", 
-                "owner": "irida", 
+                "changeset_revision": "7bc329e1ada4",
+                "name": "bundle_collections",
+                "owner": "irida",
                 "tool_shed": "irida.corefacility.ca/galaxy-shed"
-            }, 
-            "tool_state": "{\"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}", 
-            "tool_version": "1.0.2", 
-            "type": "tool", 
-            "uuid": "695ff9b7-39ff-4bfb-bb4f-cc8fb2b35b6a", 
-            "workflow_outputs": []
-        }, 
+            },
+            "tool_state": "{\"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}",
+            "tool_version": "1.0.2",
+            "type": "tool",
+            "uuid": "695ff9b7-39ff-4bfb-bb4f-cc8fb2b35b6a",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "html_file",
+                    "uuid": "bca71bad-127a-47e8-b40d-cb4fcb97384d"
+                }
+            ]
+        },
         "17": {
-            "annotation": "", 
-            "content_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
-            "id": 17, 
+            "annotation": "",
+            "content_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2",
+            "errors": null,
+            "id": 17,
             "input_connections": {
                 "input": {
-                    "id": 6, 
+                    "id": 6,
                     "output_name": "out_txt"
                 }
-            }, 
+            },
             "inputs": [
                 {
-                    "description": "runtime parameter for tool Bundle Collection", 
+                    "description": "runtime parameter for tool Bundle Collection",
                     "name": "input"
                 }
-            ], 
-            "label": null, 
-            "name": "Bundle Collection", 
+            ],
+            "label": null,
+            "name": "Bundle Collection",
             "outputs": [
                 {
-                    "name": "html_file", 
+                    "name": "html_file",
                     "type": "html"
                 }
-            ], 
+            ],
             "position": {
-                "left": 1028.5, 
-                "top": 1335
-            }, 
+                "left": 1050,
+                "top": 1360
+            },
             "post_job_actions": {
                 "RenameDatasetActionhtml_file": {
                     "action_arguments": {
                         "newname": "prokka.txt.zip"
-                    }, 
-                    "action_type": "RenameDatasetAction", 
+                    },
+                    "action_type": "RenameDatasetAction",
                     "output_name": "html_file"
                 }
-            }, 
-            "tool_errors": null, 
-            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
+            },
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2",
             "tool_shed_repository": {
-                "changeset_revision": "7bc329e1ada4", 
-                "name": "bundle_collections", 
-                "owner": "irida", 
+                "changeset_revision": "7bc329e1ada4",
+                "name": "bundle_collections",
+                "owner": "irida",
                 "tool_shed": "irida.corefacility.ca/galaxy-shed"
-            }, 
-            "tool_state": "{\"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}", 
-            "tool_version": "1.0.2", 
-            "type": "tool", 
-            "uuid": "4f48ee38-7c67-4d9c-8668-d3bf8d87480b", 
-            "workflow_outputs": []
-        }, 
+            },
+            "tool_state": "{\"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}",
+            "tool_version": "1.0.2",
+            "type": "tool",
+            "uuid": "4f48ee38-7c67-4d9c-8668-d3bf8d87480b",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "html_file",
+                    "uuid": "a688ecf0-ae83-42a1-bd08-3e709e3357a2"
+                }
+            ]
+        },
         "18": {
-            "annotation": "", 
-            "content_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
-            "id": 18, 
+            "annotation": "",
+            "content_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2",
+            "errors": null,
+            "id": 18,
             "input_connections": {
                 "input": {
-                    "id": 6, 
+                    "id": 6,
                     "output_name": "out_log"
                 }
-            }, 
+            },
             "inputs": [
                 {
-                    "description": "runtime parameter for tool Bundle Collection", 
+                    "description": "runtime parameter for tool Bundle Collection",
                     "name": "input"
                 }
-            ], 
-            "label": null, 
-            "name": "Bundle Collection", 
+            ],
+            "label": null,
+            "name": "Bundle Collection",
             "outputs": [
                 {
-                    "name": "html_file", 
+                    "name": "html_file",
                     "type": "html"
                 }
-            ], 
+            ],
             "position": {
-                "left": 1028.5, 
-                "top": 1448.5
-            }, 
+                "left": 1050,
+                "top": 1476
+            },
             "post_job_actions": {
                 "RenameDatasetActionhtml_file": {
                     "action_arguments": {
                         "newname": "prokka.log.zip"
-                    }, 
-                    "action_type": "RenameDatasetAction", 
+                    },
+                    "action_type": "RenameDatasetAction",
                     "output_name": "html_file"
                 }
-            }, 
-            "tool_errors": null, 
-            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2", 
+            },
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2",
             "tool_shed_repository": {
-                "changeset_revision": "7bc329e1ada4", 
-                "name": "bundle_collections", 
-                "owner": "irida", 
+                "changeset_revision": "7bc329e1ada4",
+                "name": "bundle_collections",
+                "owner": "irida",
                 "tool_shed": "irida.corefacility.ca/galaxy-shed"
-            }, 
-            "tool_state": "{\"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}", 
-            "tool_version": "1.0.2", 
-            "type": "tool", 
-            "uuid": "9297d102-1149-4a15-bcdf-35c2c38b965e", 
-            "workflow_outputs": []
+            },
+            "tool_state": "{\"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}",
+            "tool_version": "1.0.2",
+            "type": "tool",
+            "uuid": "9297d102-1149-4a15-bcdf-35c2c38b965e",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "html_file",
+                    "uuid": "d18a738a-435f-4522-9fc6-254ec928191a"
+                }
+            ]
+        },
+        "2": {
+            "annotation": "",
+            "content_id": "toolshed.g2.bx.psu.edu/repos/iuc/quast/quast/5.0.2",
+            "errors": null,
+            "id": 2,
+            "input_connections": {
+                "input": {
+                    "id": 1,
+                    "output_name": "contigs"
+                }
+            },
+            "inputs": [
+                {
+                    "description": "runtime parameter for tool Quast",
+                    "name": "input_operon"
+                },
+                {
+                    "description": "runtime parameter for tool Quast",
+                    "name": "annot"
+                },
+                {
+                    "description": "runtime parameter for tool Quast",
+                    "name": "input"
+                },
+                {
+                    "description": "runtime parameter for tool Quast",
+                    "name": "input_ref"
+                }
+            ],
+            "label": null,
+            "name": "Quast",
+            "outputs": [
+                {
+                    "name": "log_txt",
+                    "type": "txt"
+                },
+                {
+                    "name": "mis_ass_tsv",
+                    "type": "tabular"
+                },
+                {
+                    "name": "unalign_tsv",
+                    "type": "tabular"
+                },
+                {
+                    "name": "quast_tsv",
+                    "type": "tabular"
+                },
+                {
+                    "name": "report_html",
+                    "type": "html"
+                },
+                {
+                    "name": "report_pdf",
+                    "type": "pdf"
+                }
+            ],
+            "position": {
+                "left": 722,
+                "top": 200
+            },
+            "post_job_actions": {
+                "HideDatasetActionmis_ass_tsv": {
+                    "action_arguments": {},
+                    "action_type": "HideDatasetAction",
+                    "output_name": "mis_ass_tsv"
+                },
+                "HideDatasetActionunalign_tsv": {
+                    "action_arguments": {},
+                    "action_type": "HideDatasetAction",
+                    "output_name": "unalign_tsv"
+                },
+                "RenameDatasetActionlog_txt": {
+                    "action_arguments": {
+                        "newname": "quast.log"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "log_txt"
+                },
+                "RenameDatasetActionquast_tsv": {
+                    "action_arguments": {
+                        "newname": "quast.tsv"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "quast_tsv"
+                },
+                "RenameDatasetActionreport_html": {
+                    "action_arguments": {
+                        "newname": "quast.html.zip"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "report_html"
+                },
+                "RenameDatasetActionreport_pdf": {
+                    "action_arguments": {
+                        "newname": "quast.pdf"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "report_pdf"
+                }
+            },
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/quast/quast/5.0.2",
+            "tool_shed_repository": {
+                "changeset_revision": "81df4950d65b",
+                "name": "quast",
+                "owner": "iuc",
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            },
+            "tool_state": "{\"input_operon\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__page__\": null, \"threshold_contig\": \"\\\"0,1000\\\"\", \"__rerun_remap_job_id__\": null, \"annot\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"large\": \"\\\"false\\\"\", \"type_file\": \"\\\"contig\\\"\", \"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"input_size\": \"\\\"\\\"\", \"input_ref\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"min_contig\": \"\\\"500\\\"\", \"gene_selection\": \"\\\"prokaryotes\\\"\"}",
+            "tool_version": "5.0.2",
+            "type": "tool",
+            "uuid": "fd139253-df91-4972-abb3-31d7128cea28",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "log_txt",
+                    "uuid": "3ffd7b9c-5365-43f7-9a0a-3dfb1f7b0835"
+                },
+                {
+                    "label": null,
+                    "output_name": "report_html",
+                    "uuid": "91b3939e-6f1f-4b19-912c-fd2e8e3b2832"
+                },
+                {
+                    "label": null,
+                    "output_name": "quast_tsv",
+                    "uuid": "9646badc-8576-4d14-806d-79e7d5befd7a"
+                },
+                {
+                    "label": null,
+                    "output_name": "report_pdf",
+                    "uuid": "492aaa31-84ca-4736-8893-8263debd0e35"
+                }
+            ]
+        },
+        "3": {
+            "annotation": "",
+            "content_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2",
+            "errors": null,
+            "id": 3,
+            "input_connections": {
+                "input": {
+                    "id": 1,
+                    "output_name": "shovill_std_log"
+                }
+            },
+            "inputs": [
+                {
+                    "description": "runtime parameter for tool Bundle Collection",
+                    "name": "input"
+                }
+            ],
+            "label": null,
+            "name": "Bundle Collection",
+            "outputs": [
+                {
+                    "name": "html_file",
+                    "type": "html"
+                }
+            ],
+            "position": {
+                "left": 722,
+                "top": 540
+            },
+            "post_job_actions": {
+                "RenameDatasetActionhtml_file": {
+                    "action_arguments": {
+                        "newname": "shovill.log.zip"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "html_file"
+                }
+            },
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2",
+            "tool_shed_repository": {
+                "changeset_revision": "7bc329e1ada4",
+                "name": "bundle_collections",
+                "owner": "irida",
+                "tool_shed": "irida.corefacility.ca/galaxy-shed"
+            },
+            "tool_state": "{\"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}",
+            "tool_version": "1.0.2",
+            "type": "tool",
+            "uuid": "2209d263-f797-4f14-9c2d-b75fa2418ae1",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "html_file",
+                    "uuid": "77e7db8f-63d4-427b-bfb2-f31f1c4aced5"
+                }
+            ]
+        },
+        "4": {
+            "annotation": "",
+            "content_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2",
+            "errors": null,
+            "id": 4,
+            "input_connections": {
+                "input": {
+                    "id": 1,
+                    "output_name": "contigs"
+                }
+            },
+            "inputs": [
+                {
+                    "description": "runtime parameter for tool Bundle Collection",
+                    "name": "input"
+                }
+            ],
+            "label": null,
+            "name": "Bundle Collection",
+            "outputs": [
+                {
+                    "name": "html_file",
+                    "type": "html"
+                }
+            ],
+            "position": {
+                "left": 722,
+                "top": 656
+            },
+            "post_job_actions": {
+                "RenameDatasetActionhtml_file": {
+                    "action_arguments": {
+                        "newname": "contigs.fasta.zip"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "html_file"
+                }
+            },
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2",
+            "tool_shed_repository": {
+                "changeset_revision": "7bc329e1ada4",
+                "name": "bundle_collections",
+                "owner": "irida",
+                "tool_shed": "irida.corefacility.ca/galaxy-shed"
+            },
+            "tool_state": "{\"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}",
+            "tool_version": "1.0.2",
+            "type": "tool",
+            "uuid": "07ebb3e9-53ce-44a1-935c-87bda0164fbf",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "html_file",
+                    "uuid": "f6b6790d-b1db-419e-9837-ad00522e1287"
+                }
+            ]
+        },
+        "5": {
+            "annotation": "",
+            "content_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2",
+            "errors": null,
+            "id": 5,
+            "input_connections": {
+                "input": {
+                    "id": 1,
+                    "output_name": "contigs_graph"
+                }
+            },
+            "inputs": [
+                {
+                    "description": "runtime parameter for tool Bundle Collection",
+                    "name": "input"
+                }
+            ],
+            "label": null,
+            "name": "Bundle Collection",
+            "outputs": [
+                {
+                    "name": "html_file",
+                    "type": "html"
+                }
+            ],
+            "position": {
+                "left": 722,
+                "top": 772
+            },
+            "post_job_actions": {
+                "RenameDatasetActionhtml_file": {
+                    "action_arguments": {
+                        "newname": "contigs.fastg.zip"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "html_file"
+                }
+            },
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2",
+            "tool_shed_repository": {
+                "changeset_revision": "7bc329e1ada4",
+                "name": "bundle_collections",
+                "owner": "irida",
+                "tool_shed": "irida.corefacility.ca/galaxy-shed"
+            },
+            "tool_state": "{\"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}",
+            "tool_version": "1.0.2",
+            "type": "tool",
+            "uuid": "fdbe0c4a-272b-4bff-bf1e-4e0a4dee1567",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "html_file",
+                    "uuid": "885c5cbe-c8d4-4799-8552-7eb00704840b"
+                }
+            ]
+        },
+        "6": {
+            "annotation": "",
+            "content_id": "toolshed.g2.bx.psu.edu/repos/crs4/prokka/prokka/1.13",
+            "errors": null,
+            "id": 6,
+            "input_connections": {
+                "input": {
+                    "id": 1,
+                    "output_name": "contigs"
+                }
+            },
+            "inputs": [
+                {
+                    "description": "runtime parameter for tool Prokka",
+                    "name": "proteins"
+                },
+                {
+                    "description": "runtime parameter for tool Prokka",
+                    "name": "input"
+                }
+            ],
+            "label": null,
+            "name": "Prokka",
+            "outputs": [
+                {
+                    "name": "out_gff",
+                    "type": "gff"
+                },
+                {
+                    "name": "out_gbk",
+                    "type": "txt"
+                },
+                {
+                    "name": "out_fna",
+                    "type": "fasta"
+                },
+                {
+                    "name": "out_faa",
+                    "type": "fasta"
+                },
+                {
+                    "name": "out_ffn",
+                    "type": "fasta"
+                },
+                {
+                    "name": "out_sqn",
+                    "type": "asn1"
+                },
+                {
+                    "name": "out_fsa",
+                    "type": "fasta"
+                },
+                {
+                    "name": "out_tbl",
+                    "type": "txt"
+                },
+                {
+                    "name": "out_tsv",
+                    "type": "tabular"
+                },
+                {
+                    "name": "out_err",
+                    "type": "txt"
+                },
+                {
+                    "name": "out_txt",
+                    "type": "txt"
+                },
+                {
+                    "name": "out_log",
+                    "type": "txt"
+                }
+            ],
+            "position": {
+                "left": 722,
+                "top": 888
+            },
+            "post_job_actions": {},
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/crs4/prokka/prokka/1.13",
+            "tool_shed_repository": {
+                "changeset_revision": "eaee459f3d69",
+                "name": "prokka",
+                "owner": "crs4",
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            },
+            "tool_state": "{\"strain\": \"\\\"\\\"\", \"increment\": \"\\\"1\\\"\", \"species\": \"\\\"\\\"\", \"__page__\": 0, \"usegenus\": \"\\\"false\\\"\", \"evalue\": \"\\\"1e-06\\\"\", \"locustag\": \"\\\"P\\\"\", \"fast\": \"\\\"false\\\"\", \"compliant\": \"{\\\"mincontig\\\": \\\"200\\\", \\\"__current_case__\\\": 0, \\\"compliant_select\\\": \\\"no\\\", \\\"addgenes\\\": \\\"false\\\"}\", \"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"kingdom\": \"{\\\"gcode\\\": \\\"11\\\", \\\"kingdom_select\\\": \\\"Bacteria\\\", \\\"__current_case__\\\": 1}\", \"metagenome\": \"\\\"false\\\"\", \"centre\": \"\\\"\\\"\", \"outputs\": \"[\\\"gff\\\", \\\"gbk\\\", \\\"fna\\\", \\\"faa\\\", \\\"ffn\\\", \\\"sqn\\\", \\\"fsa\\\", \\\"tbl\\\", \\\"tsv\\\", \\\"err\\\", \\\"txt\\\"]\", \"gffver\": \"\\\"3\\\"\", \"norrna\": \"\\\"false\\\"\", \"proteins\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"notrna\": \"\\\"false\\\"\", \"plasmid\": \"\\\"\\\"\", \"rfam\": \"\\\"false\\\"\", \"genus\": \"\\\"\\\"\", \"__rerun_remap_job_id__\": null}",
+            "tool_version": "1.13",
+            "type": "tool",
+            "uuid": "e355cb1c-66a5-4708-ad35-2f6bfd9b0792",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "out_tbl",
+                    "uuid": "0832cb3d-4597-46c7-9af1-9102000beebc"
+                },
+                {
+                    "label": null,
+                    "output_name": "out_txt",
+                    "uuid": "caac8a9c-51e2-4aa4-82ad-8359644637f0"
+                },
+                {
+                    "label": null,
+                    "output_name": "out_sqn",
+                    "uuid": "2cbcde13-eefb-49eb-89c9-7105984b2815"
+                },
+                {
+                    "label": null,
+                    "output_name": "out_err",
+                    "uuid": "625b1480-ed12-46cd-b894-8281c97b39ed"
+                },
+                {
+                    "label": null,
+                    "output_name": "out_ffn",
+                    "uuid": "38e6cbaf-13a0-4d3e-aea4-7b815ac4d853"
+                },
+                {
+                    "label": null,
+                    "output_name": "out_fsa",
+                    "uuid": "2c9a0c67-d4f8-4d37-8a98-fc6e05ad8543"
+                },
+                {
+                    "label": null,
+                    "output_name": "out_tsv",
+                    "uuid": "7d26c219-4e56-4e84-ab66-e79a6d666bec"
+                },
+                {
+                    "label": null,
+                    "output_name": "out_fna",
+                    "uuid": "f413d5e1-cebe-4292-b7f5-afce45132fd2"
+                },
+                {
+                    "label": null,
+                    "output_name": "out_log",
+                    "uuid": "7559d94d-3be5-4ef3-8a28-9cebe1b5946d"
+                },
+                {
+                    "label": null,
+                    "output_name": "out_faa",
+                    "uuid": "0fed3b0b-444a-432f-ad72-3306741f8b07"
+                },
+                {
+                    "label": null,
+                    "output_name": "out_gbk",
+                    "uuid": "bafc2e72-a025-45f1-8f22-d1ac441d85bd"
+                },
+                {
+                    "label": null,
+                    "output_name": "out_gff",
+                    "uuid": "5f5f3f9d-72f6-43bd-b98f-3ee1c79efc41"
+                }
+            ]
+        },
+        "7": {
+            "annotation": "",
+            "content_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2",
+            "errors": null,
+            "id": 7,
+            "input_connections": {
+                "input": {
+                    "id": 6,
+                    "output_name": "out_gff"
+                }
+            },
+            "inputs": [
+                {
+                    "description": "runtime parameter for tool Bundle Collection",
+                    "name": "input"
+                }
+            ],
+            "label": null,
+            "name": "Bundle Collection",
+            "outputs": [
+                {
+                    "name": "html_file",
+                    "type": "html"
+                }
+            ],
+            "position": {
+                "left": 1050,
+                "top": 200
+            },
+            "post_job_actions": {
+                "RenameDatasetActionhtml_file": {
+                    "action_arguments": {
+                        "newname": "prokka.gff.zip"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "html_file"
+                }
+            },
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2",
+            "tool_shed_repository": {
+                "changeset_revision": "7bc329e1ada4",
+                "name": "bundle_collections",
+                "owner": "irida",
+                "tool_shed": "irida.corefacility.ca/galaxy-shed"
+            },
+            "tool_state": "{\"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}",
+            "tool_version": "1.0.2",
+            "type": "tool",
+            "uuid": "b8ab8941-6b8d-4fbb-939e-22942e155901",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "html_file",
+                    "uuid": "3c061105-763e-4170-bdea-16b7c5ca504a"
+                }
+            ]
+        },
+        "8": {
+            "annotation": "",
+            "content_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2",
+            "errors": null,
+            "id": 8,
+            "input_connections": {
+                "input": {
+                    "id": 6,
+                    "output_name": "out_gbk"
+                }
+            },
+            "inputs": [
+                {
+                    "description": "runtime parameter for tool Bundle Collection",
+                    "name": "input"
+                }
+            ],
+            "label": null,
+            "name": "Bundle Collection",
+            "outputs": [
+                {
+                    "name": "html_file",
+                    "type": "html"
+                }
+            ],
+            "position": {
+                "left": 1050,
+                "top": 316
+            },
+            "post_job_actions": {
+                "RenameDatasetActionhtml_file": {
+                    "action_arguments": {
+                        "newname": "prokka.gbk.zip"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "html_file"
+                }
+            },
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2",
+            "tool_shed_repository": {
+                "changeset_revision": "7bc329e1ada4",
+                "name": "bundle_collections",
+                "owner": "irida",
+                "tool_shed": "irida.corefacility.ca/galaxy-shed"
+            },
+            "tool_state": "{\"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}",
+            "tool_version": "1.0.2",
+            "type": "tool",
+            "uuid": "71caf9ec-7617-48f6-bf56-84a094003b11",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "html_file",
+                    "uuid": "8aeae62b-fe23-4f0f-8c7d-995b4aa74918"
+                }
+            ]
+        },
+        "9": {
+            "annotation": "",
+            "content_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2",
+            "errors": null,
+            "id": 9,
+            "input_connections": {
+                "input": {
+                    "id": 6,
+                    "output_name": "out_fna"
+                }
+            },
+            "inputs": [
+                {
+                    "description": "runtime parameter for tool Bundle Collection",
+                    "name": "input"
+                }
+            ],
+            "label": null,
+            "name": "Bundle Collection",
+            "outputs": [
+                {
+                    "name": "html_file",
+                    "type": "html"
+                }
+            ],
+            "position": {
+                "left": 1050,
+                "top": 432
+            },
+            "post_job_actions": {
+                "RenameDatasetActionhtml_file": {
+                    "action_arguments": {
+                        "newname": "prokka.fna.zip"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "html_file"
+                }
+            },
+            "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/bundle_collections/bundle_collection/1.0.2",
+            "tool_shed_repository": {
+                "changeset_revision": "7bc329e1ada4",
+                "name": "bundle_collections",
+                "owner": "irida",
+                "tool_shed": "irida.corefacility.ca/galaxy-shed"
+            },
+            "tool_state": "{\"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__rerun_remap_job_id__\": null, \"__page__\": 0}",
+            "tool_version": "1.0.2",
+            "type": "tool",
+            "uuid": "27efe604-26c4-4c56-9825-b737f63f0fb6",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "html_file",
+                    "uuid": "8766b0ea-83a6-4f64-893a-c2598099fbd8"
+                }
+            ]
         }
-    }, 
-    "uuid": "f62ba5f5-78c9-4cfb-a93e-893af376a743"
+    },
+    "tags": [],
+    "uuid": "788d2011-3779-4f98-afe8-8ad232088551"
 }
