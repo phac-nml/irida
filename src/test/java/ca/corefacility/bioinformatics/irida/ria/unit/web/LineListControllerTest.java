@@ -10,6 +10,7 @@ import org.springframework.context.MessageSource;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.LineListController;
+import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
@@ -24,6 +25,7 @@ public class LineListControllerTest {
 	private MetadataTemplateService metadataTemplateService;
 	private SampleService sampleService;
 	private UpdateSamplePermission updateSamplePermission;
+	private ProjectOwnerPermission ownerPermission;
 	private MessageSource messageSource;
 
 	@Before
@@ -33,8 +35,9 @@ public class LineListControllerTest {
 		metadataTemplateService = mock(MetadataTemplateService.class);
 		updateSamplePermission = mock(UpdateSamplePermission.class);
 		messageSource = mock(MessageSource.class);
+		ownerPermission = mock(ProjectOwnerPermission.class);
 		lineListController = new LineListController(projectService, sampleService, metadataTemplateService,
-				updateSamplePermission, messageSource);
+				updateSamplePermission, ownerPermission, messageSource);
 	}
 
 	@Test
