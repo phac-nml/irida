@@ -5,4 +5,4 @@ tools:
   tool_shed_url: "https://irida.corefacility.ca/galaxy-shed/"
   revision: "4841b7148c44"
   tool_panel_section_id: "irida"
-  install_tool_dependencies: True
+  install_tool_dependencies: true
