@@ -1,6 +1,6 @@
 # Galaxy - IRIDA Integration Testing Image
 
-FROM phacnml/galaxy-irida-18.05:base 
+FROM phacnml/galaxy-irida-18.09:base 
 
 # Add test tool configs
 ADD ./galaxy/tool_conf_irida.xml /galaxy-central/config/tool_conf.xml

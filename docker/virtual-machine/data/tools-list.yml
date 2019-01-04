@@ -8,7 +8,7 @@ tools:
 - name: "shovill"
   owner: "iuc"
   tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
-  revision: "57d5928f456e"
+  revision: "865119fcb694"
   tool_panel_section_id: "irida"
   install_tool_dependencies: true
 - name: "prokka"
@@ -20,7 +20,7 @@ tools:
 - name: "quast"
   owner: "iuc"
   tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
-  revision: "0834c823d4b9"
+  revision: "81df4950d65b"
   tool_panel_section_id: "irida"
   install_tool_dependencies: true
 
@@ -63,6 +63,12 @@ tools:
   owner: "nml"
   tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
   revision: "5c8ff92e38a9"
+  tool_panel_section_id: "irida"
+  install_tool_dependencies: true
+- name: "shovill"
+  owner: "iuc"
+  tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
+  revision: "f698c7604b3b"
   tool_panel_section_id: "irida"
   install_tool_dependencies: true
 

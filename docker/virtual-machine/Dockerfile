@@ -1,6 +1,6 @@
 # Galaxy - IRIDA Galaxy Image
 
-FROM phacnml/galaxy-irida-18.05:base
+FROM phacnml/galaxy-irida-18.09:base
 
 RUN apt update && apt install --yes gnuplot && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
