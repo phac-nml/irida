@@ -2,8 +2,6 @@
 
 FROM phacnml/galaxy-irida-18.09:base
 
-RUN apt update && apt install --yes gnuplot && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
 ADD ./data/tools-list.yml $GALAXY_ROOT/irida-tools.yml
 RUN install-tools $GALAXY_ROOT/irida-tools.yml
 
