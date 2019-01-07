@@ -336,31 +336,31 @@
             id="inputs.html"
             th:with="fileCount = ${#lists.size(paired_end)}"
           >
-                     <th:block th:if="${referenceFile}">
-                     	<h2 th:text="#{analysis.details.reference}"></h2>
-                     	<span th:text="${referenceFile.label}"></span>
-                     	<a class="btn btn-default btn-sm pull-right"
-                     	   th:href="@{/referenceFiles/download/{id}(id=${referenceFile.id})}">
-                     		<i class="fas fa-download spaced-right__sm"></i>
-                     		<th:block th:text="#{form.download}">__Download__</th:block>
-                     	</a>
-                     </th:block>
+			  <th:block th:if="${referenceFile}">
+				  <h2 th:text="#{analysis.details.reference}"></h2>
+				  <span th:text="${referenceFile.label}"></span>
+				  <a class="btn btn-default btn-sm pull-right"
+					 th:href="@{/referenceFiles/download/{id}(id=${referenceFile.id})}">
+					  <i class="fas fa-download spaced-right__sm"></i>
+					  <th:block th:text="#{form.download}">__Download__</th:block>
+				  </a>
+			  </th:block>
 
-                     <h2 th:text="#{analysis.details.reads}"></h2>
-                     <div th:if="${fileCount > 0}">
-                     	<ul class="list-group">
-                     		<li class="list-group-item" th:each="pair : ${paired_end}">
-                     			<h4 class="list-group-item-heading" th:if="${pair.sample}">
-            	<a target="_blank" th:href="@{/samples/{id}/details(id=${pair.sample.id})}">
-            		<i class="fas fa-flask"></i>
-            		<span th:text="${pair.sample.sampleName}"></span>
-            	</a>
-                     			</h4>
-            <h4 th:unless="${pair.sample}">
-            	<i class="far fa-times-circle"></i>
-            	<span th:text="#{analyiss.details.input.no-sample}">_NO_ONE_HOME_</span>
-            </h4>
-            <hr>
+			  <h2 th:text="#{analysis.details.reads}"></h2>
+			  <div th:if="${fileCount > 0}">
+				  <ul class="list-group">
+					  <li class="list-group-item t-paired-end" th:each="pair : ${paired_end}">
+						  <h4 class="list-group-item-heading" th:if="${pair.sample}">
+							  <a target="_blank" th:href="@{/samples/{id}/details(id=${pair.sample.id})}">
+								  <i class="fas fa-flask"></i>
+								  <span th:text="${pair.sample.sampleName}"></span>
+							  </a>
+						  </h4>
+						  <h4 th:unless="${pair.sample}">
+							  <i class="far fa-times-circle"></i>
+							  <span th:text="#{analyiss.details.input.no-sample}">_NO_ONE_HOME_</span>
+						  </h4>
+            <hr style="margin: 10px 0">
                      			<div th:with="forward=${pair.sequenceFilePair.getForwardSequenceFile()}" class="sequence-file">
                      				<i class="fas fa-arrow-right sequence-file__icon"></i> <span class="sequence-file__name"><a
                  th:href="@{/sequenceFiles/{id}/file/{fileId}/summary(id=${pair.id}, fileId=${forward.id})}"

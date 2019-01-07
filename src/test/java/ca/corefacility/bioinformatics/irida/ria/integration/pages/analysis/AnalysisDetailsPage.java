@@ -36,7 +36,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 	@FindBy(className = "share-project")
 	List<WebElement> shareCheckboxes;
 
-	@FindBy(className = "paired_end")
+	@FindBy(className = "t-paired-end")
 	private List<WebElement> pairedEndElements;
 
 	@FindBy(id = "editAnalysisButton")
