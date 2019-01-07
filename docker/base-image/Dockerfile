@@ -18,6 +18,7 @@ ADD ./galaxy/tool_sheds_conf.xml /home/galaxy/tool_sheds_conf.xml
 # Install IRIDA tools
 ADD ./galaxy/irida-tools.yml $GALAXY_ROOT/irida-tools.yml
 RUN install-tools $GALAXY_ROOT/irida-tools.yml
+RUN chown -R galaxy:galaxy /tool_deps
 
 RUN sed -i -e 's/#\( *allow_path_paste:\).*/\1 True/' /etc/galaxy/galaxy.yml
 
