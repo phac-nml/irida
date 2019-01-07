@@ -162,7 +162,7 @@ public class ToolsListExporter {
 							.put("name", toolRepository.getName())
 							.put("owner", toolRepository.getOwner())
 							.put("tool_shed_url", toolRepositoryURLString)
-							.put("revision", toolRepository.getRevision())
+							.put("revisions", Lists.newArrayList(toolRepository.getRevision()))
 							.put("tool_panel_section_id", defaultToolPanelId)
 							.put("install_tool_dependencies", true).build());
 					// @formatter:on

@@ -8,19 +8,22 @@ tools:
 - name: "shovill"
   owner: "iuc"
   tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
-  revision: "865119fcb694"
+  revisions:
+  - "865119fcb694"
   tool_panel_section_id: "irida"
   install_tool_dependencies: true
 - name: "prokka"
   owner: "crs4"
   tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
-  revision: "eaee459f3d69"
+  revisions:
+  - "eaee459f3d69"
   tool_panel_section_id: "irida"
   install_tool_dependencies: true
 - name: "quast"
   owner: "iuc"
   tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
-  revision: "81df4950d65b"
+  revisions:
+  - "81df4950d65b"
   tool_panel_section_id: "irida"
   install_tool_dependencies: true
 
@@ -29,7 +32,8 @@ tools:
 - name: "bundle_collections"
   owner: "irida"
   tool_shed_url: "https://irida.corefacility.ca/galaxy-shed/"
-  revision: "7bc329e1ada4"
+  revisions:
+  - "7bc329e1ada4"
   tool_panel_section_id: "irida"
   install_tool_dependencies: true
 
@@ -38,13 +42,15 @@ tools:
 - name: "mentalist"
   owner: "dfornika"
   tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
-  revision: "a6cd59f35832"
+  revisions:
+  - "a6cd59f35832"
   tool_panel_section_id: "irida"
   install_tool_dependencies: true
 - name: "combine_tabular_collection"
   owner: "nml"
   tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
-  revision: "b815081988b5"
+  revisions:
+  - "b815081988b5"
   tool_panel_section_id: "irida"
   install_tool_dependencies: true
 
@@ -53,7 +59,8 @@ tools:
 - name: "refseq_masher"
   owner: "nml"
   tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
-  revision: "26df66c32861"
+  revisions:
+  - "26df66c32861"
   tool_panel_section_id: "irida"
   install_tool_dependencies: true
 
@@ -62,13 +69,15 @@ tools:
 - name: "sistr_cmd"
   owner: "nml"
   tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
-  revision: "5c8ff92e38a9"
+  revisions:
+  - "5c8ff92e38a9"
   tool_panel_section_id: "irida"
   install_tool_dependencies: true
 - name: "shovill"
   owner: "iuc"
   tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
-  revision: "f698c7604b3b"
+  revisions:
+  - "f698c7604b3b"
   tool_panel_section_id: "irida"
   install_tool_dependencies: true
 
@@ -77,7 +86,8 @@ tools:
 - name: "suite_snvphyl_1_0_1"
   owner: "nml"
   tool_shed_url: "https://irida.corefacility.ca/galaxy-shed/"
-  revision: "4841b7148c44"
+  revisions:
+  - "4841b7148c44"
   tool_panel_section_id: "irida"
   install_tool_dependencies: true
 
@@ -86,6 +96,7 @@ tools:
 - name: "bio_hansel"
   owner: "nml"
   tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
-  revision: "4654c51dae72"
+  revisions:
+  - "4654c51dae72"
   tool_panel_section_id: "irida"
   install_tool_dependencies: true
