@@ -197,7 +197,7 @@ public class PipelineController extends BaseController {
 		String response = URL_EMPTY_CART_REDIRECT;
 		boolean canUpdateAllSamples;
 
-		Map<Project, Set<Sample>> cartMap = cartController.getSelected();
+		Map<Project, List<Sample>> cartMap = cartController.getSelected();
 		// Cannot run a pipeline on an empty cart!
 		if (!cartMap.isEmpty()) {
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -244,7 +244,7 @@ public class PipelineController extends BaseController {
 					}
 				}
 
-				Set<Sample> samples = cartMap.get(project);
+				List<Sample> samples = cartMap.get(project);
 				Map<String, Object> projectMap = new HashMap<>();
 				List<Map<String, Object>> sampleList = new ArrayList<>();
 				for (Sample sample : samples) {

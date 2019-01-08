@@ -6,7 +6,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
  * Object to handle samples that have been sent to the server to be added to the
  * cart.
  */
-public class CartRequestSample {
+public class CartSampleRequest {
 	/**
 	 * {@link Sample} identifier.
 	 */
@@ -17,10 +17,10 @@ public class CartRequestSample {
 	 */
 	private String label;
 
-	public CartRequestSample() {
+	public CartSampleRequest() {
 	}
 
-	public CartRequestSample(Long id, String label) {
+	public CartSampleRequest(Long id, String label) {
 		this.id = id;
 		this.label = label;
 	}

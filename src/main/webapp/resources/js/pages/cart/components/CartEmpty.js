@@ -4,13 +4,13 @@ import { Row } from "antd";
 const { i18n } = window.PAGE;
 const { BASE_URL } = window.TL;
 
-export default function EmptyCart() {
+export default function CartEmpty() {
   return (
     <Row
       type="flex"
       justify="center"
       align="middle"
-      style={{ height: "100%", flexDirection: "column" }}
+      style={{ height: "100%", flexDirection: "column", padding: 100 }}
     >
       <img
         height="300px"

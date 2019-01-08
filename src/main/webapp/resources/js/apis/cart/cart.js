@@ -29,5 +29,13 @@ export const getCartCount = async () => {
 export const getCart = async () =>
   axios.get(`${url}`).then(response => response.data);
 
-export const getProjectsInCart = async () =>
-  axios.get(`${url}/projects`).then(response => response.data);
+export const getCartIds = async () =>
+  axios.get(`${url}/ids`).then(response => ({ ids: response.data }));
+
+export const getSamplesForProject = async projectId =>
+  axios.get(`${url}?projectId=${projectId}`).then(response => response.data);
+
+/**
+ * Remove all samples from the cart
+ */
+export const emptyCart = async () => axios.delete(`${url}`);

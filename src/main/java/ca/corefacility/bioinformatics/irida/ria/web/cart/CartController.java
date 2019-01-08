@@ -26,7 +26,8 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.components.Cart;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartRequestSample;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartSample;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartSampleRequest;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -36,8 +37,6 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampl
 
 /**
  * Controller managing interactions with the selected sequences
- * 
- *
  */
 @Controller
 @Scope("session")
@@ -60,7 +59,12 @@ public class CartController {
 		this.cart = cart;
 	}
 
-	@RequestMapping("")
+	/**
+	 * Get the dedicated page for the Cart
+	 *
+	 * @return {@link String} path to the cart page template
+	 */
+	@RequestMapping(value = "", produces = MediaType.TEXT_HTML_VALUE)
 	public String getCartPage() {
 		return "cart";
 	}
@@ -85,49 +89,6 @@ public class CartController {
 	}
 
 	/**
-	 * Get a Json representation of what's in the cart.
-	 * <p>
-	 * Format:
-	 * {@code
-	 * 'projects' : [ { 'id': '5', 'label': 'project', 'samples': [ { 'id': '6',
-	 * 'label': 'a sample' } ] } ]
-	 * }
-	 *
-	 * @return a {@code Map<String,Object>} containing the cart information.
-	 */
-	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public Map<String, Object> getCartMap() {
-		List<Map<String, Object>> projects = getProjectsAsList();
-		return ImmutableMap.of("projects", projects);
-	}
-
-	@RequestMapping(value = "/projects", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public Set<Long> getProjectsInCart() {
-		return cart.getProjectsInCart();
-	}
-
-	/**
-	 * Get a Json representation of what's in the cart for export to Galaxy.
-	 * <p>
-	 * Format:
-	 * {@code
-	 * 'projects' : [ { 'id': '5', 'label': 'project', 'samples': [ { 'id': '6',
-	 * 'label': 'a sample', 'sequenceFiles': [ { 'selfRef' :
-	 * 'http://localhost/projects/1/samples/1/sequenceFiles/1' } ] } ] } ]
-	 * }
-	 *
-	 * @return a {@code Map<String,Object>} containing the cart information.
-	 */
-	@RequestMapping(value = "/galaxy-export", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public Map<String, Object> getCartMapForGalaxy() {
-		List<Map<String, Object>> projects = getProjectsAsListForGalaxy();
-		return ImmutableMap.of("projects", projects);
-	}
-
-	/**
 	 * Clear the cart
 	 *
 	 * @return Success message
@@ -145,19 +106,18 @@ public class CartController {
 	 *
 	 * @return The cart map
 	 */
-	public Map<Project, Set<Sample>> getSelected() {
-		/*
-		Inflating the whole cart here.  This is going to be a serious performance hit!
-		 */
-		Map<Long, Set<Long>> projects = cart.get();
-		Map<Project, Set<Sample>> result = new HashMap<>();
+	public Map<Project, List<Sample>> getSelected() {
+		Map<Project, List<Sample>> hydrated = new HashMap<>();
+		Map<Long, Map<Long, CartSample>> contents = cart.get();
+		List<Project> projects = (List<Project>) projectService.readMultiple(contents.keySet());
 
-		for (Long id : projects.keySet()) {
-			Project project = projectService.read(id);
-			Set<Sample> samples = (Set<Sample>) sampleService.readMultiple(projects.get(id));
-			result.put(project, samples);
+		for (Project project : projects) {
+			List<Sample> samples = (List<Sample>) sampleService.readMultiple(contents.get(project.getId())
+					.keySet());
+			hydrated.put(project, samples);
 		}
-		return result;
+
+		return hydrated;
 	}
 
 	/**
@@ -168,13 +128,12 @@ public class CartController {
 	 * @param locale {@link Locale}
 	 */
 	public void addSelected(Map<Project, Set<Sample>> selected, Locale locale) {
-		// this.selected = selected;
 		for (Project project : selected.keySet()) {
-			Set<CartRequestSample> cartRequestSamples = selected.get(project)
+			Set<CartSampleRequest> cartSampleRequests = selected.get(project)
 					.stream()
-					.map(s -> new CartRequestSample(s.getId(), s.getLabel()))
+					.map(s -> new CartSampleRequest(s.getId(), s.getLabel()))
 					.collect(Collectors.toSet());
-			cart.addProjectSamplesToCart(new AddToCartRequest(project.getId(), cartRequestSamples), locale);
+			cart.addProjectSamplesToCart(new AddToCartRequest(project.getId(), cartSampleRequests), locale);
 		}
 	}
 
@@ -191,11 +150,11 @@ public class CartController {
 	public AddToCartResponse addProjectSample(@RequestParam Long projectId,
 			@RequestParam(value = "sampleIds[]") Set<Long> sampleIds, Locale locale) {
 		Project project = projectService.read(projectId);
-		Set<CartRequestSample> samples = sampleIds.stream()
+		Set<CartSampleRequest> samples = sampleIds.stream()
 				.map(id -> {
 					ProjectSampleJoin join = sampleService.getSampleForProject(project, id);
 					Sample sample = join.getObject();
-					return new CartRequestSample(sample.getId(), sample.getSampleName());
+					return new CartSampleRequest(sample.getId(), sample.getSampleName());
 				})
 				.collect(Collectors.toSet());
 		AddToCartRequest addToCartRequest = new AddToCartRequest(projectId, samples);
@@ -252,8 +211,8 @@ public class CartController {
 	public void addProject(@PathVariable Long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
 		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(project);
-		Set<CartRequestSample> samples = samplesForProject.stream()
-				.map(j -> new CartRequestSample(j.getId(), j.getLabel()))
+		Set<CartSampleRequest> samples = samplesForProject.stream()
+				.map(j -> new CartSampleRequest(j.getId(), j.getLabel()))
 				.collect(Collectors.toSet());
 		cart.addProjectSamplesToCart(new AddToCartRequest(projectId, samples), locale);
 	}
@@ -293,22 +252,23 @@ public class CartController {
 	 *         Sample information
 	 */
 	private List<Map<String, Object>> getProjectsAsList() {
-		Map<Long, Set<Long>> currentCart = cart.get();
-		List<Map<String, Object>> projectList = new ArrayList<>();
-		for (Long id : currentCart.keySet()) {
-			Project p = projectService.read(id);
-			Set<Sample> selectedSamplesForProject = currentCart.get(id)
-					.stream()
-					.map(sampleService::read)
-					.collect(Collectors.toSet());
-			List<Map<String, Object>> samples = getSamplesAsList(selectedSamplesForProject);
-
-			Map<String, Object> projectMap = ImmutableMap.of("id", p.getId(), "label", p.getLabel(), "samples",
-					samples);
-			projectList.add(projectMap);
-		}
-
-		return projectList;
+//		Map<Long, Set<Long>> currentCart = cart.get();
+//		List<Map<String, Object>> projectList = new ArrayList<>();
+//		for (Long id : currentCart.keySet()) {
+//			Project p = projectService.read(id);
+//			Set<Sample> selectedSamplesForProject = currentCart.get(id)
+//					.stream()
+//					.map(sampleService::read)
+//					.collect(Collectors.toSet());
+//			List<Map<String, Object>> samples = getSamplesAsList(selectedSamplesForProject);
+//
+//			Map<String, Object> projectMap = ImmutableMap.of("id", p.getId(), "label", p.getLabel(), "samples",
+//					samples);
+//			projectList.add(projectMap);
+//		}
+//
+//		return projectList;
+		return null;
 	}
 
 	/**
@@ -335,21 +295,22 @@ public class CartController {
 	 * Sample information
 	 */
 	private List<Map<String, Object>> getProjectsAsListForGalaxy() {
-		Map<Long, Set<Long>> currentCart = cart.get();
-		List<Map<String, Object>> projectList = new ArrayList<>();
-		for (Long id : currentCart.keySet()) {
-			Set<Sample> selectedSamplesForProject = currentCart.get(id)
-					.stream()
-					.map(sampleService::read)
-					.collect(Collectors.toSet());
-			List<Map<String, Object>> samples = getSamplesAsListForGalaxy(selectedSamplesForProject, id);
-			Project p = projectService.read(id);
-			Map<String, Object> projectMap = ImmutableMap.of("id", p.getId(), "label", p.getLabel(), "samples",
-					samples);
-			projectList.add(projectMap);
-		}
-
-		return projectList;
+//		Map<Long, Set<Long>> currentCart = cart.get();
+//		List<Map<String, Object>> projectList = new ArrayList<>();
+//		for (Long id : currentCart.keySet()) {
+//			Set<Sample> selectedSamplesForProject = currentCart.get(id)
+//					.stream()
+//					.map(sampleService::read)
+//					.collect(Collectors.toSet());
+//			List<Map<String, Object>> samples = getSamplesAsListForGalaxy(selectedSamplesForProject, id);
+//			Project p = projectService.read(id);
+//			Map<String, Object> projectMap = ImmutableMap.of("id", p.getId(), "label", p.getLabel(), "samples",
+//					samples);
+//			projectList.add(projectMap);
+//		}
+//
+//		return projectList;
+		return null;
 	}
 
 	/**
@@ -419,6 +380,29 @@ public class CartController {
 	@ResponseBody
 	public int getNumberOfSamples() {
 		return cart.getNumberOfSamples();
+	}
+
+	/**
+	 * Get a {@link Set} of {@link Project} identifiers
+	 *
+	 * @return {@link Set} of {@link Long}
+	 */
+	@RequestMapping("/ids")
+	@ResponseBody
+	public Set<Long> getProjectIdsInCart() {
+		return cart.getProjectIdsInCart();
+	}
+
+	/**
+	 * Get {@link Sample}s in the cart for a specific {@link Project}
+	 *
+	 * @param projectId {@link Long} identifier for a project
+	 * @return {@link List} of {@link CartSample}s belonging to the {@link Project}
+	 */
+	@RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public List<CartSample> getCartSamplesForProject(@RequestParam Long projectId) {
+		return cart.getCartSamplesForProject(projectId);
 	}
 
 }
