@@ -116,7 +116,7 @@ public class Cart {
 		for (Long id : currentSampleIds) {
 			project.remove(id);
 		}
-		if (project.size() == 0) {
+		if (project.isEmpty()) {
 			cart.remove(projectId);
 		} else {
 			cart.put(projectId, project);
