@@ -55,10 +55,6 @@ public class MetadataEntry {
 		this.value = value;
 	}
 
-	public Long getId() {
-		return id;
-	}
-
 	public String getType() {
 		return type;
 	}
