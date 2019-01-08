@@ -94,8 +94,9 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 
 				//loop through each of the requested fields and save the entries
 				SISTR_FIELDS.entrySet().forEach(e -> {
-					if (result.containsKey(e.getKey()) && result.get(e.getKey()) != null) {
-						String value = result.get(e.getKey()).toString();
+					if (result.containsKey(e.getKey())) {
+						Object valueObject = result.get(e.getKey());
+						String value = (valueObject != null ? valueObject.toString() : "");
 						PipelineProvidedMetadataEntry metadataEntry = new PipelineProvidedMetadataEntry(value, "text",
 								analysis);
 						stringEntries.put(e.getValue() + " (v"+workflowVersion+")", metadataEntry);
