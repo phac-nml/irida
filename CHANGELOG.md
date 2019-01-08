@@ -36,6 +36,7 @@ Changes
 * [Documentation]: Changed references from GitLab to GitHub in docs.
 * [UI]: Removed angular-resource, angular-messages, angular-sanitize, angular-animate, angular-datatables, ng-table and angular-drag-and-drop-lists.
 * [REST]: Added method to greatly increase speed of listing samples in a project.  This was becoming an issue for projects with metadata and >5k samples.
+* [Developer]: Added pull request and issue templates for github.
 
 0.21.0 to 0.22.0
 ----------------
