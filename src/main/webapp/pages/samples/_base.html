@@ -18,10 +18,10 @@
         <nav class="col-md-12"
              th:with="baseLink=@{'/samples/' + ${sample.getId()}}">
             <ul class="nav nav-tabs">
-                <li th:class="${activeNav} == 'details' ? 'active'"><a href="details"
+                <li th:class="${activeNav} == 'details' ? 'active'"><a th:href="${URLS.details}"
                                                                        th:text="#{samples.nav.details}">Details</a>
                 </li>
-                <li th:class="${activeNav} == 'files' ? 'active'"><a href="sequenceFiles"
+                <li th:class="${activeNav} == 'files' ? 'active'"><a th:href="${URLS.sequenceFiles}"
                                                                      th:text="#{samples.nav.files}">Files</a></li>
             </ul>
         </nav>
