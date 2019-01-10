@@ -1,27 +1,19 @@
 import { types as globalCartTypes } from "../../redux/reducers/cart";
 
-export const TYPES = {
+export const cartPageTypes = {
   SAMPLES_LOADED: "CART/SAMPLES_LOADED",
-  SAMPLE_SHOW: "CART/SHOW_SAMPLE",
-  SAMPLE_HIDE: "CART/HIDE_SAMPLE",
   CART_EMPTY: "CART/EMPTY",
   CART_EMPTY_SUCCESS: "CART/EMPTY_SUCCESS"
 };
 
 const initialState = {
-  samples: [],
-  sampleVisible: false,
-  sample: undefined
+  samples: []
 };
 
-export const reducer = (state = initialState, action = {}) => {
+export const cartPageReducer = (state = initialState, action = {}) => {
   switch (action.type) {
-    case TYPES.SAMPLES_LOADED:
+    case cartPageTypes.SAMPLES_LOADED:
       return { ...state, samples: [...state.samples, ...action.samples] };
-    case TYPES.SAMPLE_SHOW:
-      return { ...state, sample: action.sample, sampleVisible: true };
-    case TYPES.SAMPLE_HIDE:
-      return { ...state, sample: undefined, sampleVisible: false };
     case globalCartTypes.UPDATED:
       return { ...state, samples: [] };
     default:
@@ -29,9 +21,7 @@ export const reducer = (state = initialState, action = {}) => {
   }
 };
 
-export const actions = {
-  samplesLoaded: samples => ({ type: TYPES.SAMPLES_LOADED, samples }),
-  displaySample: sample => ({ type: TYPES.SAMPLE_SHOW, sample }),
-  hideSample: () => ({ type: TYPES.SAMPLE_HIDE }),
-  emptyCart: () => ({ type: TYPES.CART_EMPTY })
+export const cartPageActions = {
+  samplesLoaded: samples => ({ type: cartPageTypes.SAMPLES_LOADED, samples }),
+  emptyCart: () => ({ type: cartPageTypes.CART_EMPTY })
 };

@@ -5,7 +5,8 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-balham.css";
 import { Badge, Button, Col, Icon, Input, Row, Tooltip } from "antd";
-import { actions } from "../reducer";
+import { cartPageActions } from "../reducer";
+import { sampleDetailsActions } from "../../../components/SampleDetails/reducer";
 
 const { Search } = Input;
 
@@ -144,8 +145,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  displaySample: sample => dispatch(actions.displaySample(sample)),
-  emptyCart: () => dispatch(actions.emptyCart())
+  displaySample: sample => dispatch(sampleDetailsActions.displaySample(sample)),
+  emptyCart: () => dispatch(cartPageActions.emptyCart())
 });
 
 export default connect(
