@@ -146,6 +146,12 @@ public class SamplesController extends BaseController {
 		return SAMPLE_PAGE;
 	}
 
+	/**
+	 * Get {@link Sample} details for a specific sample.
+	 *
+	 * @param id {@link Long} identifier for a sample.
+	 * @return {@link SampleDetails} for the {@link Sample}
+	 */
 	@RequestMapping(value = "/samples", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public SampleDetails getSampleDetails(@RequestParam Long id) {
