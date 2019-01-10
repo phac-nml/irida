@@ -31,6 +31,7 @@ const CartSamplesWrapper = styled.div`
   height: 100%;
   overflow-x: hidden;
 
+  /* Hide default table styles to allow for custom layout */
   .ag-root.ag-font-style.ag-layout-normal,
   .ag-row,
   .ag-header.ag-pivot-off {
@@ -52,11 +53,11 @@ const CartSamplesWrapper = styled.div`
 
 const CartTools = styled(Row)`
   padding: ${spacing.DEFAULT};
-  
+
   .ant-input {
-        border: none;
-        background-color: hsl(210, 9%, 96%);
-      }
+    border: none;
+    background-color: hsl(210, 9%, 96%);
+  }
 `;
 
 class SampleRenderer extends React.Component {
