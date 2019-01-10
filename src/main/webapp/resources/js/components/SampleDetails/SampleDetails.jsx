@@ -2,10 +2,41 @@ import React from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { Drawer, Form } from "antd";
+import styled from "@emotion/styled";
+import { colours, spacing } from "./../../styles";
 import { sampleDetailsActions } from "./reducer";
 import { formatDate } from "../../utilities/date-utilities";
 
 const { Item } = Form;
+
+/*
+Need to overwrite some of the default css in the Drawer component
+to allow for scrolling of the body panel only. I want to keep the
+sample name always visible.
+ */
+const StyledDrawer = styled(Drawer)`
+  .ant-drawer-wrapper-body {
+    overflow-y: hidden !important;
+  }
+  .ant-drawer-body {
+    overflow-y: auto !important;
+    height: 100%;
+    padding-bottom: 100px;
+  }
+`;
+
+const DetailsHeading = styled.h4`
+  font-weight: 600;
+  color: ${colours.PRIMARY};
+  margin-bottom: ${spacing.DEFAULT};
+`;
+
+const DetailValue = styled.div`
+  font-size: 14px;
+  line-height: 30px;
+  height: 30px;
+  padding-left: 11px;
+`;
 
 /**
  * Use this component to display a drawer on the side of the screen displaying the
@@ -22,7 +53,7 @@ class SampleDetails extends React.Component {
     if (typeof sample === "undefined") return null;
     const metadataKeys = Object.keys(metadata);
     return (
-      <Drawer
+      <StyledDrawer
         title={sample.label}
         placement="right"
         width={600}
@@ -30,44 +61,40 @@ class SampleDetails extends React.Component {
         onClose={this.props.hideDetails}
         visible={visible}
       >
-        <div className="sample-details-wrapper">
-          <Form layout="vertical">
-            <div className="sample-details-heading">_General</div>
-            <Item label="_Description">
-              <div className="sample-detail">{sample.description}</div>
-            </Item>
-            <Item label="_Organism">
-              <div className="sample-detail">{sample.organism}</div>
-            </Item>
-            <Item label="_Created">
-              <div className="sample-detail">
-                {formatDate({ date: sample.createdDate })}
-              </div>
-            </Item>
-            <Item label="_Modified">
-              <div className="sample-detail">
-                {formatDate({ date: sample.modifiedDate })}
-              </div>
-            </Item>
-            <hr />
-            {metadataKeys.length === 0 ? null : (
-              <div>
-                <div className="sample-details-heading">_Metadata</div>
-                {metadataKeys.map((key, i) => {
-                  const item = metadata[key];
-                  return (
-                    <Item label={key} key={item.id}>
-                      <div className="sample-detail sample-detail__editable">
-                        {item.value}
-                      </div>
-                    </Item>
-                  );
-                })}
-              </div>
-            )}
-          </Form>
-        </div>
-      </Drawer>
+        <Form layout="vertical">
+          <DetailsHeading>_General</DetailsHeading>
+          <Item label="_Description">
+            <DetailValue>{sample.description}</DetailValue>
+          </Item>
+          <Item label="_Organism">
+            <DetailValue>{sample.organism}</DetailValue>
+          </Item>
+          <Item label="_Created">
+            <DetailValue>
+              {formatDate({ date: sample.createdDate })}
+            </DetailValue>
+          </Item>
+          <Item label="_Modified">
+            <DetailValue>
+              {formatDate({ date: sample.modifiedDate })}
+            </DetailValue>
+          </Item>
+          <hr />
+          {metadataKeys.length === 0 ? null : (
+            <div>
+              <DetailsHeading>_Metadata</DetailsHeading>
+              {metadataKeys.map((key, i) => {
+                const item = metadata[key];
+                return (
+                  <Item label={key} key={item.id}>
+                    <DetailValue>{item.value}</DetailValue>
+                  </Item>
+                );
+              })}
+            </div>
+          )}
+        </Form>
+      </StyledDrawer>
     );
   }
 }
