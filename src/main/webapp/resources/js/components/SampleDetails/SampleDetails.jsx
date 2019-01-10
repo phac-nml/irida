@@ -9,6 +9,8 @@ import { formatDate } from "../../utilities/date-utilities";
 
 const { Item } = Form;
 
+const { sampleDetails: i18n } = window.PAGE.i18n;
+
 /*
 Need to overwrite some of the default css in the Drawer component
 to allow for scrolling of the body panel only. I want to keep the
@@ -62,19 +64,19 @@ class SampleDetails extends React.Component {
         visible={visible}
       >
         <Form layout="vertical">
-          <DetailsHeading>_General</DetailsHeading>
-          <Item label="_Description">
+          <DetailsHeading>{i18n.general}</DetailsHeading>
+          <Item label={i18n.description}>
             <DetailValue>{sample.description}</DetailValue>
           </Item>
-          <Item label="_Organism">
+          <Item label={i18n.organism}>
             <DetailValue>{sample.organism}</DetailValue>
           </Item>
-          <Item label="_Created">
+          <Item label={i18n.createdDate}>
             <DetailValue>
               {formatDate({ date: sample.createdDate })}
             </DetailValue>
           </Item>
-          <Item label="_Modified">
+          <Item label={i18n.modifiedDate}>
             <DetailValue>
               {formatDate({ date: sample.modifiedDate })}
             </DetailValue>
@@ -82,7 +84,7 @@ class SampleDetails extends React.Component {
           <hr />
           {metadataKeys.length === 0 ? null : (
             <div>
-              <DetailsHeading>_Metadata</DetailsHeading>
+              <DetailsHeading>{i18n.metadata}</DetailsHeading>
               {metadataKeys.map((key, i) => {
                 const item = metadata[key];
                 return (
