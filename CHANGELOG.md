@@ -37,6 +37,7 @@ Changes
 * [UI]: Removed angular-resource, angular-messages, angular-sanitize, angular-animate, angular-datatables, ng-table and angular-drag-and-drop-lists.
 * [REST]: Added method to greatly increase speed of listing samples in a project.  This was becoming an issue for projects with metadata and >5k samples.
 * [Developer]: Added pull request and issue templates for github.
+* [UI]: Add link back to sample for analysis input files on the Analsysis Details Page.
 
 0.21.0 to 0.22.0
 ----------------
