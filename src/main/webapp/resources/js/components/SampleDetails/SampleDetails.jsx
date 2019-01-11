@@ -28,7 +28,7 @@ const StyledDrawer = styled(Drawer)`
 `;
 
 const DetailsHeading = styled.h4`
-  font-weight: 600;
+  font-weight: 300;
   color: ${colours.PRIMARY};
   margin-bottom: ${spacing.DEFAULT};
 `;
@@ -39,6 +39,16 @@ const DetailValue = styled.div`
   height: 30px;
   padding-left: 11px;
 `;
+
+const IdWrapper = styled.span`
+  margin-left: ${spacing.SMALL};
+  font-weight: 300;
+  font-size: 14px;
+  background-color: ${colours.LIGHT_GRAY};
+  padding: ${spacing.XSMALL};
+  border-radius: 4px;
+`;
+
 
 /**
  * Use this component to display a drawer on the side of the screen displaying the
@@ -56,7 +66,7 @@ class SampleDetails extends React.Component {
     const metadataKeys = Object.keys(metadata);
     return (
       <StyledDrawer
-        title={sample.label}
+        title={<div>{sample.label}<IdWrapper>ID: {sample.identifier}</IdWrapper></div>}
         placement="right"
         width={600}
         closable={true}
