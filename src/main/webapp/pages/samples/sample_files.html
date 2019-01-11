@@ -58,7 +58,7 @@
 			<p>{{ fileUploadCtrl.errorMessage }}</p></div>
 	</div>
 	<div class="panel-body" th:if="${not #lists.isEmpty(single_end) or not #lists.isEmpty(paired_end)}">
-		<a href="concatenate" class="btn btn-default btn-sm btn-block">
+		<a th:href="${URLS.concatenate}" class="btn btn-default btn-sm btn-block">
 			<th:block th:text="#{samples.files.concatenate.btn}"></th:block>
 			&nbsp;
 			<i class="fa fa-plus-square" aria-hidden="true"></i>
