@@ -142,7 +142,7 @@ public class SamplesController extends BaseController {
 		Sample sample = sampleService.read(sampleId);
 		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
 		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_DETAILS);
-		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isProjectManagerForSample(sample));
+		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isSampleModifiable(sample));
 		return SAMPLE_PAGE;
 	}
 
@@ -156,7 +156,7 @@ public class SamplesController extends BaseController {
 	@ResponseBody
 	public SampleDetails getSampleDetails(@RequestParam Long id) {
 		Sample sample = sampleService.read(id);
-		boolean modifiable = this.isProjectManagerForSample(sample);
+		boolean modifiable = this.isSampleModifiable(sample);
 		return new SampleDetails(sample, modifiable);
 	}
 
@@ -319,7 +319,7 @@ public class SamplesController extends BaseController {
 		model.addAttribute("assemblies", genomeAssemblies);
 
 		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
-		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isProjectManagerForSample(sample));
+		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isSampleModifiable(sample));
 		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_FILES);
 		return SAMPLE_FILES_PAGE;
 	}
@@ -565,7 +565,7 @@ public class SamplesController extends BaseController {
 		model.addAttribute("single_end", singleFileJoins);
 
 		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
-		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isProjectManagerForSample(sample));
+		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isSampleModifiable(sample));
 		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_FILES);
 		return FILES_CONCATENATE_PAGE;
 	}
@@ -669,7 +669,7 @@ public class SamplesController extends BaseController {
 	 *            The sample to test
 	 * @return true/false if they have management permissions for the sample
 	 */
-	private boolean isProjectManagerForSample(Sample sample) {
+	private boolean isSampleModifiable(Sample sample) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
 		return updateSamplePermission.isAllowed(authentication, sample);
