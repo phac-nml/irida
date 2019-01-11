@@ -6,6 +6,9 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 
+/**
+ * Used to based details of a {@link Sample} back to the user interface.
+ */
 public class SampleDetails {
 	private Sample sample;
 	private Map<MetadataTemplateField, MetadataEntry> metadata;
