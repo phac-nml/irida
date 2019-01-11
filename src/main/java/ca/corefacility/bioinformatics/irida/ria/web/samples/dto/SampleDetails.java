@@ -7,7 +7,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 
 /**
- * Used to based details of a {@link Sample} back to the user interface.
+ * Used to return details of a {@link Sample} back to the user interface.
  */
 public class SampleDetails {
 	private Sample sample;
