@@ -10,5 +10,6 @@ const DEFAULT_SIZE = 14;
 export default {
   DEFAULT: `${DEFAULT_SIZE}px`,
   SMALL: `${DEFAULT_SIZE * 0.6}px`,
+  XSMALL: `${DEFAULT_SIZE * 0.3}px`,
   LARGE: `${DEFAULT_SIZE * 1.8}px`
 };
