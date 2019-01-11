@@ -1,15 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.samples;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -110,7 +104,7 @@ public class SamplesControllerTest {
 		Model model = new ExtendedModelMap();
 		Sample sample = TestDataFactory.constructSample();
 		when(sampleService.read(sample.getId())).thenReturn(sample);
-		String result = controller.getEditSampleSpecificPage(model, sample.getId());
+		String result = controller.getEditSampleSpecificPage(model, sample.getId(), new MockHttpServletRequest());
 		assertEquals("Returns the correct page name", "samples/sample_edit", result);
 		assertTrue("Model contains the sample", model.containsAttribute("sample"));
 		assertTrue("Model should ALWAYS have an error attribute", model.containsAttribute("errors"));

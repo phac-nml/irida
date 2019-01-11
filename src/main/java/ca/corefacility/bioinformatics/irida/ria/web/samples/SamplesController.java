@@ -146,30 +146,24 @@ public class SamplesController extends BaseController {
 
 	private Map<String, String> getSampleDetailURLS(StringBuffer url, String current) {
 		int index = url.lastIndexOf("/");
-		String detailsURL;
-		String sequenceFilesURL;
-		if (current.equals("details")) {
-			detailsURL = url.toString();
-			sequenceFilesURL = url.replace(index, url.length(), "/sequenceFiles").toString();
-		} else {
-			detailsURL = url.replace(index, url.length(), "/details").toString();
-			sequenceFilesURL = url.toString();
-		}
-		return ImmutableMap.of("details", detailsURL, "sequenceFiles", sequenceFilesURL);
+		return ImmutableMap.of("edit", url.replace(index, url.length(), "/edit")
+				.toString(), "details", url.replace(index, url.length(), "/details")
+				.toString(), "sequenceFiles", url.replace(index, url.length(), "/sequenceFiles")
+				.toString());
 	}
 
 	/**
 	 * Get the sample edit page
 	 *
-	 * @param model
-	 *            Spring {@link Model}
-	 * @param sampleId
-	 *            The id for the sample
+	 * @param model    Spring {@link Model}
+	 * @param sampleId The id for the sample
 	 * @return The name of the edit page
 	 */
 	@RequestMapping(value = { "/samples/{sampleId}/edit",
 			"/projects/{projectId}/samples/{sampleId}/edit" }, method = RequestMethod.GET)
-	public String getEditSampleSpecificPage(final Model model, @PathVariable Long sampleId) {
+	public String getEditSampleSpecificPage(final Model model, @PathVariable Long sampleId,
+			HttpServletRequest request) {
+		model.addAttribute("URLS", getSampleDetailURLS(request.getRequestURL(), "details"));
 		logger.debug("Getting sample edit for sample [" + sampleId + "]");
 		if (!model.containsAttribute(MODEL_ERROR_ATTR)) {
 			model.addAttribute(MODEL_ERROR_ATTR, new HashMap<>());
@@ -204,7 +198,6 @@ public class SamplesController extends BaseController {
 			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date collectionDate,
 			@RequestParam(name = "metadata") String metadataString, @RequestParam Map<String, String> params,
 			HttpServletRequest request) {
-		logger.debug("Updating sample [" + sampleId + "]");
 
 		Map<String, Object> updatedValues = new HashMap<>();
 		for (String field : FIELDS) {
@@ -251,7 +244,7 @@ public class SamplesController extends BaseController {
 				sampleService.updateFields(sampleId, updatedValues);
 			} catch (ConstraintViolationException e) {
 				model.addAttribute(MODEL_ERROR_ATTR, getErrorsFromViolationException(e));
-				return getEditSampleSpecificPage(model, sampleId);
+				return getEditSampleSpecificPage(model, sampleId, request);
 			}
 		}
 
