@@ -1,5 +1,5 @@
 import { call, put, take } from "redux-saga/effects";
-import { TYPES, actions } from "./reducer";
+import { cartPageTypes, cartPageActions } from "./reducer";
 import {
   types as globalCartTypes,
   actions as globalCartActions
@@ -16,13 +16,13 @@ export function* getCartProjectIds() {
     const { ids } = yield call(getCartIds);
     for (let id of ids) {
       const samples = yield call(getSamplesForProject, id);
-      yield put(actions.samplesLoaded(samples));
+      yield put(cartPageActions.samplesLoaded(samples));
     }
   }
 }
 
 export function* empty() {
-  yield take(TYPES.CART_EMPTY);
+  yield take(cartPageTypes.CART_EMPTY);
   yield call(emptyCart);
   yield put(globalCartActions.updated({ count: 0 }));
 }

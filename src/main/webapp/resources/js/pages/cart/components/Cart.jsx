@@ -1,7 +1,7 @@
 import React from "react";
 import { Layout } from "antd";
 import CartSamples from "./CartSamples";
-import SampleDetails from "./SampleDetailsContainer";
+import SampleDetails from "../../../components/SampleDetails";
 
 
 const { Content, Sider } = Layout;

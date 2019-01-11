@@ -1,5 +1,5 @@
 import { CART } from "../../utilities/events-utilities";
-import { TYPES as cartPageTypes } from "../../pages/cart/reducer";
+import { cartPageTypes } from "../../pages/cart/reducer";
 
 export const types = {
   INITIALIZED: "CART/INITIALIZED",

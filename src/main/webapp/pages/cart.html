@@ -15,48 +15,18 @@
             emptySub:
               /*[[#{cart.emptySub}]]*/ "Add some samples to it to make it happy :)",
             imageAlt: /*[[#{cart.imageAlt}]]*/ "Empty Cart"
+          },
+          sampleDetails: {
+            general: /*[[#{sampleDetails.general}]]*/ "_GEN",
+            metadata: /*[[#{sampleDetails.metadata}]]*/ "_META",
+            description: /*[[#{sampleDetails.description}]]*/ "_DESC",
+            organism: /*[[#{sampleDetails.organism}]]*/ "_ORG",
+            createdDate: /*[[#{sampleDetails.createdDate}]]*/ "_CREATED",
+            modifiedDate: /*[[#{sampleDetails.modifiedDate}]]*/ "_MODIFIED",
           }
         }
       };
     </script>
-    <style>
-      .ag-root.ag-font-style.ag-layout-normal, .ag-row, .ag-header.ag-pivot-off {
-        border: none!important;
-      }
-
-      .sample-search {
-        padding: 1em;
-      }
-
-      .sample-search .ant-input {
-        border: none;
-        background-color: hsl(210, 9%, 96%);
-      }
-
-      .ag-cell {
-        padding: 0!important;
-      }
-
-      .ag-cell.ag-cell-focus {
-        border: none!important;
-      }
-
-      .ag-row.ag-row-hover {
-        background-color: transparent!important;
-      }
-
-      .sample-listing {
-        width: 375px;
-        border-radius: 5px;
-        margin: 5px;
-        padding: 10px;
-        transition: background-color 0.1s ease-in-out;
-      }
-
-      .sample-listing:hover {
-        background-color: hsl(210, 9%, 96%);
-      }
-    </style>
   </head>
   <body>
     <div
