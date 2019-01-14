@@ -39,6 +39,7 @@ Changes
 * [REST]: Added method to greatly increase speed of listing samples in a project.  This was becoming an issue for projects with metadata and >5k samples.
 * [Developer]: Added pull request and issue templates for github.
 * [Developer]: Update Docker Galaxy container to Galaxy 18.09.
+* [Administration]: Updated method for automatically installing tools in Galaxy to use [Ephemeris](https://ephemeris.readthedocs.io/en/latest/readme.html).
 
 0.21.0 to 0.22.0
 ----------------
