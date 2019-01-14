@@ -42,7 +42,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		// Ensure the input files are displayed
 		// 2 Files expected since they are a pair.
 		page.displayInputFilesTab();
-		assertEquals("Should display 2 pairs of paired end files", 2, page.getNumberOfPairedEndInputFiles());
+		assertEquals("Should display 2 pairs of paired end files", 2, page.getNumberOfSamplesInAnalysis());
 		assertEquals("Sample 1 should not be related to a sample", "Unknown Sample", page.getLabelForSample(0));
 	}
 

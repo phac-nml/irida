@@ -175,7 +175,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 		}
 	}
 
-	public int getNumberOfPairedEndInputFiles() {
+	public int getNumberOfSamplesInAnalysis() {
 		return pairedEndElements.size();
 	}
 
