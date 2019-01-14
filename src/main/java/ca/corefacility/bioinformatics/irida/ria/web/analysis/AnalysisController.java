@@ -266,7 +266,15 @@ public class AnalysisController {
 		// - Paired
 		Set<SequenceFilePair> inputFilePairs = sequencingObjectService.getSequencingObjectsOfTypeForAnalysisSubmission(
 				submission, SequenceFilePair.class);
-		Set<SampleFiles> sampleFiles = inputFilePairs.stream().map(SampleFiles::new).collect(Collectors.toSet());
+		List<SampleFiles> sampleFiles = inputFilePairs.stream().map(SampleFiles::new).sorted((a, b) -> {
+			if (a.sample == null) {
+				return -1;
+			} else if (b.sample == null) {
+				return 1;
+			}
+			return a.sample.getLabel()
+					.compareTo(b.sample.getLabel());
+		}).collect(Collectors.toList());
 		model.addAttribute("paired_end", sampleFiles);
 
 		// Check if user can update analysis
@@ -1130,15 +1138,22 @@ public class AnalysisController {
 		}
 	}
 
+	/**
+	 * UI Model to return a pair aof Sequence files with its accompanying sample.
+	 */
 	private class SampleFiles {
 		private Sample sample;
 		private SequenceFilePair sequenceFilePair;
 
 		SampleFiles(SequenceFilePair sequenceFilePair) {
 			this.sequenceFilePair = sequenceFilePair;
-			SampleSequencingObjectJoin sampleSequencingObjectJoin = sampleService.getSampleForSequencingObject(
-					sequenceFilePair);
-			this.sample = sampleSequencingObjectJoin.getSubject();
+			try {
+				SampleSequencingObjectJoin sampleSequencingObjectJoin = sampleService.getSampleForSequencingObject(
+						sequenceFilePair);
+				this.sample = sampleSequencingObjectJoin.getSubject();
+			} catch (Exception e) {
+				// IGNORE: Sample no longer exists, let the UI handle displaying the results.
+			}
 		}
 
 		public Long getId() {
