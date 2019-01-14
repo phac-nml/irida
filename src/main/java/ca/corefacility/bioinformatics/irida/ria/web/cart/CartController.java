@@ -64,7 +64,7 @@ public class CartController {
 	 *
 	 * @return {@link String} path to the cart page template
 	 */
-	@RequestMapping(value = "", produces = MediaType.TEXT_HTML_VALUE)
+	@RequestMapping(value = {"", "/*"}, produces = MediaType.TEXT_HTML_VALUE)
 	public String getCartPage() {
 		return "cart";
 	}
