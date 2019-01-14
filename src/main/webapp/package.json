@@ -21,6 +21,7 @@
     "@babel/polyfill": "^7.0.0",
     "@bassettsj/livestamp": "^2.0.0",
     "@fortawesome/fontawesome-free": "^5.5.0",
+    "@reach/router": "^1.2.1",
     "ag-grid-community": "^19.1.2",
     "ag-grid-react": "^19.1.2",
     "angular": "1.6.2",
