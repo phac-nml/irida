@@ -1131,12 +1131,10 @@ public class AnalysisController {
 	}
 
 	private class SampleFiles {
-		private Long id;
 		private Sample sample;
 		private SequenceFilePair sequenceFilePair;
 
 		SampleFiles(SequenceFilePair sequenceFilePair) {
-			this.id = sequenceFilePair.getId();
 			this.sequenceFilePair = sequenceFilePair;
 			SampleSequencingObjectJoin sampleSequencingObjectJoin = sampleService.getSampleForSequencingObject(
 					sequenceFilePair);
@@ -1144,7 +1142,7 @@ public class AnalysisController {
 		}
 
 		public Long getId() {
-			return id;
+			return sequenceFilePair.getId();
 		}
 
 		public Sample getSample() {
