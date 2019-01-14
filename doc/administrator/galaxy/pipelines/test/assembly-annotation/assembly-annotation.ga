@@ -1,521 +1,503 @@
 {
-  "a_galaxy_workflow": "true",
-  "annotation": "Shovill assembly, Prokka annotation, QUAST assembly quality assessment",
-  "format-version": "0.1",
-  "name": "AssemblyAnnotation-shovill-prokka-quast-paired_reads-v0.5",
-  "steps": {
-    "0": {
-      "annotation": "",
-      "content_id": null,
-      "id": 0,
-      "input_connections": {},
-      "inputs": [
-        {
-          "description": "",
-          "name": "sequence_reads_paired"
+    "a_galaxy_workflow": "true",
+    "annotation": "Shovill assembly, Prokka annotation, QUAST assembly quality assessment",
+    "format-version": "0.1",
+    "name": "AssemblyAnnotation-shovill-prokka-quast-paired_reads-v0.5",
+    "steps": {
+        "0": {
+            "annotation": "",
+            "content_id": null,
+            "errors": null,
+            "id": 0,
+            "input_connections": {},
+            "inputs": [
+                {
+                    "description": "",
+                    "name": "sequence_reads_paired"
+                }
+            ],
+            "label": "sequence_reads_paired",
+            "name": "Input dataset collection",
+            "outputs": [],
+            "position": {
+                "left": 200,
+                "top": 200
+            },
+            "tool_id": null,
+            "tool_state": "{\"collection_type\": \"list:paired\", \"name\": \"sequence_reads_paired\"}",
+            "tool_version": null,
+            "type": "data_collection_input",
+            "uuid": "fea5daef-3cd9-447d-897f-adb65613f24a",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "output",
+                    "uuid": "700b6799-701a-4779-afe4-916a19707c08"
+                }
+            ]
+        },
+        "1": {
+            "annotation": "",
+            "content_id": "toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4",
+            "errors": null,
+            "id": 1,
+            "input_connections": {
+                "library|input1": {
+                    "id": 0,
+                    "output_name": "output"
+                }
+            },
+            "inputs": [
+                {
+                    "description": "runtime parameter for tool Shovill",
+                    "name": "library"
+                }
+            ],
+            "label": null,
+            "name": "Shovill",
+            "outputs": [
+                {
+                    "name": "shovill_std_log",
+                    "type": "txt"
+                },
+                {
+                    "name": "contigs",
+                    "type": "fasta"
+                },
+                {
+                    "name": "contigs_graph",
+                    "type": "txt"
+                }
+            ],
+            "position": {
+                "left": 477,
+                "top": 200
+            },
+            "post_job_actions": {
+                "RenameDatasetActioncontigs": {
+                    "action_arguments": {
+                        "newname": "contigs.fasta"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "contigs"
+                },
+                "RenameDatasetActioncontigs_graph": {
+                    "action_arguments": {
+                        "newname": "contigs.fastg"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "contigs_graph"
+                },
+                "RenameDatasetActionshovill_std_log": {
+                    "action_arguments": {
+                        "newname": "shovill.log"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "shovill_std_log"
+                }
+            },
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4",
+            "tool_shed_repository": {
+                "changeset_revision": "865119fcb694",
+                "name": "shovill",
+                "owner": "iuc",
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            },
+            "tool_state": "{\"adv\": \"{\\\"gsize\\\": \\\"\\\", \\\"kmers\\\": \\\"\\\", \\\"minlen\\\": \\\"0\\\", \\\"nocorr\\\": \\\"false\\\", \\\"depth\\\": \\\"100\\\", \\\"namefmt\\\": \\\"contig%05d\\\", \\\"mincov\\\": \\\"2\\\", \\\"opts\\\": \\\"\\\"}\", \"trim\": \"\\\"false\\\"\", \"log\": \"\\\"true\\\"\", \"__page__\": null, \"__rerun_remap_job_id__\": null, \"assembler\": \"\\\"spades\\\"\", \"library\": \"{\\\"lib_type\\\": \\\"collection\\\", \\\"input1\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"__current_case__\\\": 1}\"}",
+            "tool_version": "1.0.4",
+            "type": "tool",
+            "uuid": "b9b506b8-bedf-4d23-994a-25d45cdf0343",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "contigs",
+                    "uuid": "a2f6b1bc-9ab0-40f8-bc33-c19c67d31b41"
+                },
+                {
+                    "label": null,
+                    "output_name": "shovill_std_log",
+                    "uuid": "323c43d3-5674-421f-a42b-1ca6b4d9ba54"
+                },
+                {
+                    "label": null,
+                    "output_name": "contigs_graph",
+                    "uuid": "cb09f353-90a5-41d1-94e1-1c5c822ccef6"
+                }
+            ]
+        },
+        "2": {
+            "annotation": "",
+            "content_id": "toolshed.g2.bx.psu.edu/repos/iuc/quast/quast/5.0.2",
+            "errors": null,
+            "id": 2,
+            "input_connections": {
+                "input": {
+                    "id": 1,
+                    "output_name": "contigs"
+                }
+            },
+            "inputs": [
+                {
+                    "description": "runtime parameter for tool Quast",
+                    "name": "input_operon"
+                },
+                {
+                    "description": "runtime parameter for tool Quast",
+                    "name": "annot"
+                },
+                {
+                    "description": "runtime parameter for tool Quast",
+                    "name": "input"
+                },
+                {
+                    "description": "runtime parameter for tool Quast",
+                    "name": "input_ref"
+                }
+            ],
+            "label": null,
+            "name": "Quast",
+            "outputs": [
+                {
+                    "name": "log_txt",
+                    "type": "txt"
+                },
+                {
+                    "name": "mis_ass_tsv",
+                    "type": "tabular"
+                },
+                {
+                    "name": "unalign_tsv",
+                    "type": "tabular"
+                },
+                {
+                    "name": "quast_tsv",
+                    "type": "tabular"
+                },
+                {
+                    "name": "report_html",
+                    "type": "html"
+                },
+                {
+                    "name": "report_pdf",
+                    "type": "pdf"
+                }
+            ],
+            "position": {
+                "left": 722,
+                "top": 200
+            },
+            "post_job_actions": {
+                "HideDatasetActionmis_ass_tsv": {
+                    "action_arguments": {},
+                    "action_type": "HideDatasetAction",
+                    "output_name": "mis_ass_tsv"
+                },
+                "HideDatasetActionunalign_tsv": {
+                    "action_arguments": {},
+                    "action_type": "HideDatasetAction",
+                    "output_name": "unalign_tsv"
+                },
+                "RenameDatasetActionlog_txt": {
+                    "action_arguments": {
+                        "newname": "quast.log"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "log_txt"
+                },
+                "RenameDatasetActionquast_tsv": {
+                    "action_arguments": {
+                        "newname": "quast.tsv"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "quast_tsv"
+                },
+                "RenameDatasetActionreport_html": {
+                    "action_arguments": {
+                        "newname": "quast.html.zip"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "report_html"
+                },
+                "RenameDatasetActionreport_pdf": {
+                    "action_arguments": {
+                        "newname": "quast.pdf"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "report_pdf"
+                }
+            },
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/quast/quast/5.0.2",
+            "tool_shed_repository": {
+                "changeset_revision": "81df4950d65b",
+                "name": "quast",
+                "owner": "iuc",
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            },
+            "tool_state": "{\"input_operon\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__page__\": null, \"threshold_contig\": \"\\\"0,1000\\\"\", \"__rerun_remap_job_id__\": null, \"annot\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"large\": \"\\\"false\\\"\", \"type_file\": \"\\\"contig\\\"\", \"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"input_size\": \"\\\"\\\"\", \"input_ref\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"min_contig\": \"\\\"500\\\"\", \"gene_selection\": \"\\\"prokaryotes\\\"\"}",
+            "tool_version": "5.0.2",
+            "type": "tool",
+            "uuid": "6881a990-0501-444f-beb0-2620fa961710",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "log_txt",
+                    "uuid": "37762347-7b6f-46d8-9cdb-ad79bdbb759d"
+                },
+                {
+                    "label": null,
+                    "output_name": "quast_tsv",
+                    "uuid": "d01b4235-7321-4604-992b-f62d72c0fbc2"
+                },
+                {
+                    "label": null,
+                    "output_name": "report_html",
+                    "uuid": "0af7f227-1225-472b-8451-a45ba19a871c"
+                },
+                {
+                    "label": null,
+                    "output_name": "report_pdf",
+                    "uuid": "6f0a51e9-8e5d-41a3-9a68-5965e43f43b2"
+                }
+            ]
+        },
+        "3": {
+            "annotation": "",
+            "content_id": "toolshed.g2.bx.psu.edu/repos/crs4/prokka/prokka/1.13",
+            "errors": null,
+            "id": 3,
+            "input_connections": {
+                "input": {
+                    "id": 1,
+                    "output_name": "contigs"
+                }
+            },
+            "inputs": [
+                {
+                    "description": "runtime parameter for tool Prokka",
+                    "name": "proteins"
+                },
+                {
+                    "description": "runtime parameter for tool Prokka",
+                    "name": "input"
+                }
+            ],
+            "label": null,
+            "name": "Prokka",
+            "outputs": [
+                {
+                    "name": "out_gff",
+                    "type": "gff"
+                },
+                {
+                    "name": "out_gbk",
+                    "type": "txt"
+                },
+                {
+                    "name": "out_fna",
+                    "type": "fasta"
+                },
+                {
+                    "name": "out_faa",
+                    "type": "fasta"
+                },
+                {
+                    "name": "out_ffn",
+                    "type": "fasta"
+                },
+                {
+                    "name": "out_sqn",
+                    "type": "asn1"
+                },
+                {
+                    "name": "out_fsa",
+                    "type": "fasta"
+                },
+                {
+                    "name": "out_tbl",
+                    "type": "txt"
+                },
+                {
+                    "name": "out_tsv",
+                    "type": "tabular"
+                },
+                {
+                    "name": "out_err",
+                    "type": "txt"
+                },
+                {
+                    "name": "out_txt",
+                    "type": "txt"
+                },
+                {
+                    "name": "out_log",
+                    "type": "txt"
+                }
+            ],
+            "position": {
+                "left": 722,
+                "top": 558
+            },
+            "post_job_actions": {
+                "RenameDatasetActionout_err": {
+                    "action_arguments": {
+                        "newname": "prokka.err"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "out_err"
+                },
+                "RenameDatasetActionout_faa": {
+                    "action_arguments": {
+                        "newname": "prokka.faa"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "out_faa"
+                },
+                "RenameDatasetActionout_ffn": {
+                    "action_arguments": {
+                        "newname": "prokka.ffn"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "out_ffn"
+                },
+                "RenameDatasetActionout_fna": {
+                    "action_arguments": {
+                        "newname": "prokka.fna"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "out_fna"
+                },
+                "RenameDatasetActionout_fsa": {
+                    "action_arguments": {
+                        "newname": "prokka.fsa"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "out_fsa"
+                },
+                "RenameDatasetActionout_gbk": {
+                    "action_arguments": {
+                        "newname": "prokka.gbk"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "out_gbk"
+                },
+                "RenameDatasetActionout_gff": {
+                    "action_arguments": {
+                        "newname": "prokka.gff"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "out_gff"
+                },
+                "RenameDatasetActionout_log": {
+                    "action_arguments": {
+                        "newname": "prokka.log"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "out_log"
+                },
+                "RenameDatasetActionout_sqn": {
+                    "action_arguments": {
+                        "newname": "prokka.sqn"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "out_sqn"
+                },
+                "RenameDatasetActionout_tbl": {
+                    "action_arguments": {
+                        "newname": "prokka.tbl"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "out_tbl"
+                },
+                "RenameDatasetActionout_tsv": {
+                    "action_arguments": {
+                        "newname": "prokka.tsv"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "out_tsv"
+                },
+                "RenameDatasetActionout_txt": {
+                    "action_arguments": {
+                        "newname": "prokka.txt"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "out_txt"
+                }
+            },
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/crs4/prokka/prokka/1.13",
+            "tool_shed_repository": {
+                "changeset_revision": "eaee459f3d69",
+                "name": "prokka",
+                "owner": "crs4",
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            },
+            "tool_state": "{\"strain\": \"\\\"\\\"\", \"increment\": \"\\\"1\\\"\", \"species\": \"\\\"\\\"\", \"__page__\": 0, \"usegenus\": \"\\\"false\\\"\", \"evalue\": \"\\\"1e-06\\\"\", \"locustag\": \"\\\"P\\\"\", \"fast\": \"\\\"false\\\"\", \"compliant\": \"{\\\"mincontig\\\": \\\"200\\\", \\\"__current_case__\\\": 0, \\\"compliant_select\\\": \\\"no\\\", \\\"addgenes\\\": \\\"false\\\"}\", \"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"kingdom\": \"{\\\"gcode\\\": \\\"11\\\", \\\"kingdom_select\\\": \\\"Bacteria\\\", \\\"__current_case__\\\": 1}\", \"metagenome\": \"\\\"false\\\"\", \"centre\": \"\\\"\\\"\", \"outputs\": \"[\\\"gff\\\", \\\"gbk\\\", \\\"fna\\\", \\\"faa\\\", \\\"ffn\\\", \\\"sqn\\\", \\\"fsa\\\", \\\"tbl\\\", \\\"tsv\\\", \\\"err\\\", \\\"txt\\\"]\", \"gffver\": \"\\\"3\\\"\", \"norrna\": \"\\\"false\\\"\", \"proteins\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"notrna\": \"\\\"false\\\"\", \"plasmid\": \"\\\"\\\"\", \"rfam\": \"\\\"false\\\"\", \"genus\": \"\\\"\\\"\", \"__rerun_remap_job_id__\": null}",
+            "tool_version": "1.13",
+            "type": "tool",
+            "uuid": "59fa82cd-0d65-4133-a89c-a6d52e6fb74d",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "out_tbl",
+                    "uuid": "e38a6e06-02b3-4365-93cb-59499c9d3fba"
+                },
+                {
+                    "label": null,
+                    "output_name": "out_txt",
+                    "uuid": "1449e454-0d24-41b6-b5eb-72bbb34d1240"
+                },
+                {
+                    "label": null,
+                    "output_name": "out_sqn",
+                    "uuid": "c016c419-7723-4841-97a6-d80e4e6f1a95"
+                },
+                {
+                    "label": null,
+                    "output_name": "out_err",
+                    "uuid": "8bffdc94-c952-4584-949f-66487f283eec"
+                },
+                {
+                    "label": null,
+                    "output_name": "out_ffn",
+                    "uuid": "f5f00b59-7a2b-4073-b599-61e75b34ae2a"
+                },
+                {
+                    "label": null,
+                    "output_name": "out_fsa",
+                    "uuid": "64a34b3e-b547-4d22-a171-42875959820e"
+                },
+                {
+                    "label": null,
+                    "output_name": "out_tsv",
+                    "uuid": "98de1a0f-4c69-432a-9d88-d6edb1000381"
+                },
+                {
+                    "label": null,
+                    "output_name": "out_fna",
+                    "uuid": "51814215-c82e-4c8d-bc84-4887b5eedb1a"
+                },
+                {
+                    "label": null,
+                    "output_name": "out_log",
+                    "uuid": "db4d5ecf-cea0-48da-b911-46704ab34647"
+                },
+                {
+                    "label": null,
+                    "output_name": "out_faa",
+                    "uuid": "5c922311-7874-4dd4-88e1-b0f59b69692a"
+                },
+                {
+                    "label": null,
+                    "output_name": "out_gbk",
+                    "uuid": "3e791f60-5c80-43d6-b750-8b87120a6ed0"
+                },
+                {
+                    "label": null,
+                    "output_name": "out_gff",
+                    "uuid": "101158d5-014a-41bb-9573-4e44a7a7b63a"
+                }
+            ]
         }
-      ],
-      "label": null,
-      "name": "Input dataset collection",
-      "outputs": [],
-      "position": {
-        "left": 200,
-        "top": 200
-      },
-      "tool_errors": null,
-      "tool_id": null,
-      "tool_state": "{\"collection_type\": \"list:paired\", \"name\": \"sequence_reads_paired\"}",
-      "tool_version": null,
-      "type": "data_collection_input",
-      "uuid": "fea5daef-3cd9-447d-897f-adb65613f24a",
-      "workflow_outputs": []
     },
-    "1": {
-      "annotation": "",
-      "content_id": "toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/0.9.0",
-      "id": 1,
-      "input_connections": {
-        "library|input1": {
-          "id": 0,
-          "output_name": "output"
-        }
-      },
-      "inputs": [
-        {
-          "description": "runtime parameter for tool Shovill",
-          "name": "library"
-        }
-      ],
-      "label": null,
-      "name": "Shovill",
-      "outputs": [
-        {
-          "name": "shovill_std_log",
-          "type": "txt"
-        },
-        {
-          "name": "contigs",
-          "type": "fasta"
-        },
-        {
-          "name": "contigs_graph",
-          "type": "txt"
-        }
-      ],
-      "position": {
-        "left": 466,
-        "top": 200
-      },
-      "post_job_actions": {
-        "RenameDatasetActioncontigs": {
-          "action_arguments": {
-            "newname": "contigs.fasta"
-          },
-          "action_type": "RenameDatasetAction",
-          "output_name": "contigs"
-        },
-        "RenameDatasetActioncontigs_graph": {
-          "action_arguments": {
-            "newname": "contigs.fastg"
-          },
-          "action_type": "RenameDatasetAction",
-          "output_name": "contigs_graph"
-        },
-        "RenameDatasetActionshovill_std_log": {
-          "action_arguments": {
-            "newname": "shovill.log"
-          },
-          "action_type": "RenameDatasetAction",
-          "output_name": "shovill_std_log"
-        }
-      },
-      "tool_errors": null,
-      "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/0.9.0",
-      "tool_shed_repository": {
-        "changeset_revision": "57d5928f456e",
-        "name": "shovill",
-        "owner": "iuc",
-        "tool_shed": "toolshed.g2.bx.psu.edu"
-      },
-      "tool_state": "{\"adv\": \"{\\\"asm\\\": \\\"contigs\\\", \\\"gsize\\\": \\\"\\\", \\\"kmers\\\": \\\"\\\", \\\"minlen\\\": \\\"0\\\", \\\"nocorr\\\": \\\"false\\\", \\\"depth\\\": \\\"100\\\", \\\"namefmt\\\": \\\"contig%05d\\\", \\\"mincov\\\": \\\"2\\\", \\\"opts\\\": \\\"\\\"}\", \"trim\": \"\\\"false\\\"\", \"log\": \"\\\"true\\\"\", \"__page__\": 0, \"__rerun_remap_job_id__\": null, \"library\": \"{\\\"lib_type\\\": \\\"collection\\\", \\\"input1\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"__current_case__\\\": 1}\"}",
-      "tool_version": "0.9.0",
-      "type": "tool",
-      "uuid": "b9b506b8-bedf-4d23-994a-25d45cdf0343",
-      "workflow_outputs": [
-        {
-          "label": null,
-          "output_name": "contigs",
-          "uuid": "a2f6b1bc-9ab0-40f8-bc33-c19c67d31b41"
-        },
-        {
-          "label": null,
-          "output_name": "shovill_std_log",
-          "uuid": "323c43d3-5674-421f-a42b-1ca6b4d9ba54"
-        },
-        {
-          "label": null,
-          "output_name": "contigs_graph",
-          "uuid": "cb09f353-90a5-41d1-94e1-1c5c822ccef6"
-        }
-      ]
-    },
-    "2": {
-      "annotation": "",
-      "content_id": "toolshed.g2.bx.psu.edu/repos/iuc/quast/quast/4.6.3",
-      "id": 2,
-      "input_connections": {
-        "input": {
-          "id": 1,
-          "output_name": "contigs"
-        }
-      },
-      "inputs": [
-        {
-          "description": "runtime parameter for tool Quast",
-          "name": "input_operon"
-        },
-        {
-          "description": "runtime parameter for tool Quast",
-          "name": "annot"
-        },
-        {
-          "description": "runtime parameter for tool Quast",
-          "name": "input"
-        },
-        {
-          "description": "runtime parameter for tool Quast",
-          "name": "input_ref"
-        }
-      ],
-      "label": null,
-      "name": "Quast",
-      "outputs": [
-        {
-          "name": "log_txt",
-          "type": "txt"
-        },
-        {
-          "name": "mis_ass_tsv",
-          "type": "tabular"
-        },
-        {
-          "name": "unalign_tsv",
-          "type": "tabular"
-        },
-        {
-          "name": "contig_size_viewer",
-          "type": "html"
-        },
-        {
-          "name": "alignment_viewer",
-          "type": "html"
-        },
-        {
-          "name": "quast_tsv",
-          "type": "tabular"
-        },
-        {
-          "name": "report_html",
-          "type": "html"
-        },
-        {
-          "name": "report_pdf",
-          "type": "pdf"
-        }
-      ],
-      "position": {
-        "left": 694,
-        "top": 200
-      },
-      "post_job_actions": {
-        "HideDatasetActionalignment_viewer": {
-          "action_arguments": {},
-          "action_type": "HideDatasetAction",
-          "output_name": "alignment_viewer"
-        },
-        "HideDatasetActionmis_ass_tsv": {
-          "action_arguments": {},
-          "action_type": "HideDatasetAction",
-          "output_name": "mis_ass_tsv"
-        },
-        "HideDatasetActionunalign_tsv": {
-          "action_arguments": {},
-          "action_type": "HideDatasetAction",
-          "output_name": "unalign_tsv"
-        },
-        "RenameDatasetActioncontig_size_viewer": {
-          "action_arguments": {
-            "newname": "quast-contig_size_viewer.html.zip"
-          },
-          "action_type": "RenameDatasetAction",
-          "output_name": "contig_size_viewer"
-        },
-        "RenameDatasetActionlog_txt": {
-          "action_arguments": {
-            "newname": "quast.log"
-          },
-          "action_type": "RenameDatasetAction",
-          "output_name": "log_txt"
-        },
-        "RenameDatasetActionquast_tsv": {
-          "action_arguments": {
-            "newname": "quast.tsv"
-          },
-          "action_type": "RenameDatasetAction",
-          "output_name": "quast_tsv"
-        },
-        "RenameDatasetActionreport_html": {
-          "action_arguments": {
-            "newname": "quast.html.zip"
-          },
-          "action_type": "RenameDatasetAction",
-          "output_name": "report_html"
-        },
-        "RenameDatasetActionreport_pdf": {
-          "action_arguments": {
-            "newname": "quast.pdf"
-          },
-          "action_type": "RenameDatasetAction",
-          "output_name": "report_pdf"
-        }
-      },
-      "tool_errors": null,
-      "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/quast/quast/4.6.3",
-      "tool_shed_repository": {
-        "changeset_revision": "0834c823d4b9",
-        "name": "quast",
-        "owner": "iuc",
-        "tool_shed": "toolshed.g2.bx.psu.edu"
-      },
-      "tool_state": "{\"input_operon\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"__page__\": 0, \"threshold_contig\": \"\\\"0,1000\\\"\", \"__rerun_remap_job_id__\": null, \"annot\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"type_file\": \"\\\"contig\\\"\", \"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"input_size\": \"\\\"\\\"\", \"input_ref\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"min_contig\": \"\\\"500\\\"\", \"gene_selection\": \"\\\"prokaryotes\\\"\"}",
-      "tool_version": "4.6.3",
-      "type": "tool",
-      "uuid": "6881a990-0501-444f-beb0-2620fa961710",
-      "workflow_outputs": [
-        {
-          "label": null,
-          "output_name": "log_txt",
-          "uuid": "37762347-7b6f-46d8-9cdb-ad79bdbb759d"
-        },
-        {
-          "label": null,
-          "output_name": "report_html",
-          "uuid": "0af7f227-1225-472b-8451-a45ba19a871c"
-        },
-        {
-          "label": null,
-          "output_name": "report_pdf",
-          "uuid": "6f0a51e9-8e5d-41a3-9a68-5965e43f43b2"
-        },
-        {
-          "label": null,
-          "output_name": "quast_tsv",
-          "uuid": "d01b4235-7321-4604-992b-f62d72c0fbc2"
-        },
-        {
-          "label": null,
-          "output_name": "contig_size_viewer",
-          "uuid": "8f16d5b9-4c1c-4aa3-b5e7-531fb232013d"
-        }
-      ]
-    },
-    "3": {
-      "annotation": "",
-      "content_id": "toolshed.g2.bx.psu.edu/repos/crs4/prokka/prokka/1.13",
-      "id": 3,
-      "input_connections": {
-        "input": {
-          "id": 1,
-          "output_name": "contigs"
-        }
-      },
-      "inputs": [
-        {
-          "description": "runtime parameter for tool Prokka",
-          "name": "proteins"
-        },
-        {
-          "description": "runtime parameter for tool Prokka",
-          "name": "input"
-        }
-      ],
-      "label": null,
-      "name": "Prokka",
-      "outputs": [
-        {
-          "name": "out_gff",
-          "type": "gff"
-        },
-        {
-          "name": "out_gbk",
-          "type": "txt"
-        },
-        {
-          "name": "out_fna",
-          "type": "fasta"
-        },
-        {
-          "name": "out_faa",
-          "type": "fasta"
-        },
-        {
-          "name": "out_ffn",
-          "type": "fasta"
-        },
-        {
-          "name": "out_sqn",
-          "type": "asn1"
-        },
-        {
-          "name": "out_fsa",
-          "type": "fasta"
-        },
-        {
-          "name": "out_tbl",
-          "type": "txt"
-        },
-        {
-          "name": "out_tsv",
-          "type": "tabular"
-        },
-        {
-          "name": "out_err",
-          "type": "txt"
-        },
-        {
-          "name": "out_txt",
-          "type": "txt"
-        },
-        {
-          "name": "out_log",
-          "type": "txt"
-        }
-      ],
-      "position": {
-        "left": 694,
-        "top": 583
-      },
-      "post_job_actions": {
-        "RenameDatasetActionout_err": {
-          "action_arguments": {
-            "newname": "prokka.err"
-          },
-          "action_type": "RenameDatasetAction",
-          "output_name": "out_err"
-        },
-        "RenameDatasetActionout_faa": {
-          "action_arguments": {
-            "newname": "prokka.faa"
-          },
-          "action_type": "RenameDatasetAction",
-          "output_name": "out_faa"
-        },
-        "RenameDatasetActionout_ffn": {
-          "action_arguments": {
-            "newname": "prokka.ffn"
-          },
-          "action_type": "RenameDatasetAction",
-          "output_name": "out_ffn"
-        },
-        "RenameDatasetActionout_fna": {
-          "action_arguments": {
-            "newname": "prokka.fna"
-          },
-          "action_type": "RenameDatasetAction",
-          "output_name": "out_fna"
-        },
-        "RenameDatasetActionout_fsa": {
-          "action_arguments": {
-            "newname": "prokka.fsa"
-          },
-          "action_type": "RenameDatasetAction",
-          "output_name": "out_fsa"
-        },
-        "RenameDatasetActionout_gbk": {
-          "action_arguments": {
-            "newname": "prokka.gbk"
-          },
-          "action_type": "RenameDatasetAction",
-          "output_name": "out_gbk"
-        },
-        "RenameDatasetActionout_gff": {
-          "action_arguments": {
-            "newname": "prokka.gff"
-          },
-          "action_type": "RenameDatasetAction",
-          "output_name": "out_gff"
-        },
-        "RenameDatasetActionout_log": {
-          "action_arguments": {
-            "newname": "prokka.log"
-          },
-          "action_type": "RenameDatasetAction",
-          "output_name": "out_log"
-        },
-        "RenameDatasetActionout_sqn": {
-          "action_arguments": {
-            "newname": "prokka.sqn"
-          },
-          "action_type": "RenameDatasetAction",
-          "output_name": "out_sqn"
-        },
-        "RenameDatasetActionout_tbl": {
-          "action_arguments": {
-            "newname": "prokka.tbl"
-          },
-          "action_type": "RenameDatasetAction",
-          "output_name": "out_tbl"
-        },
-        "RenameDatasetActionout_tsv": {
-          "action_arguments": {
-            "newname": "prokka.tsv"
-          },
-          "action_type": "RenameDatasetAction",
-          "output_name": "out_tsv"
-        },
-        "RenameDatasetActionout_txt": {
-          "action_arguments": {
-            "newname": "prokka.txt"
-          },
-          "action_type": "RenameDatasetAction",
-          "output_name": "out_txt"
-        }
-      },
-      "tool_errors": null,
-      "tool_id": "toolshed.g2.bx.psu.edu/repos/crs4/prokka/prokka/1.13",
-      "tool_shed_repository": {
-        "changeset_revision": "eaee459f3d69",
-        "name": "prokka",
-        "owner": "crs4",
-        "tool_shed": "toolshed.g2.bx.psu.edu"
-      },
-      "tool_state": "{\"strain\": \"\\\"\\\"\", \"increment\": \"\\\"1\\\"\", \"species\": \"\\\"\\\"\", \"__page__\": 0, \"usegenus\": \"\\\"false\\\"\", \"evalue\": \"\\\"1e-06\\\"\", \"locustag\": \"\\\"P\\\"\", \"fast\": \"\\\"false\\\"\", \"compliant\": \"{\\\"mincontig\\\": \\\"200\\\", \\\"__current_case__\\\": 0, \\\"compliant_select\\\": \\\"no\\\", \\\"addgenes\\\": \\\"false\\\"}\", \"input\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"kingdom\": \"{\\\"gcode\\\": \\\"11\\\", \\\"kingdom_select\\\": \\\"Bacteria\\\", \\\"__current_case__\\\": 1}\", \"metagenome\": \"\\\"false\\\"\", \"centre\": \"\\\"\\\"\", \"outputs\": \"[\\\"gff\\\", \\\"gbk\\\", \\\"fna\\\", \\\"faa\\\", \\\"ffn\\\", \\\"sqn\\\", \\\"fsa\\\", \\\"tbl\\\", \\\"tsv\\\", \\\"err\\\", \\\"txt\\\"]\", \"gffver\": \"\\\"3\\\"\", \"norrna\": \"\\\"false\\\"\", \"proteins\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"notrna\": \"\\\"false\\\"\", \"plasmid\": \"\\\"\\\"\", \"rfam\": \"\\\"false\\\"\", \"genus\": \"\\\"\\\"\", \"__rerun_remap_job_id__\": null}",
-      "tool_version": "1.13",
-      "type": "tool",
-      "uuid": "59fa82cd-0d65-4133-a89c-a6d52e6fb74d",
-      "workflow_outputs": [
-        {
-          "label": null,
-          "output_name": "out_txt",
-          "uuid": "1449e454-0d24-41b6-b5eb-72bbb34d1240"
-        },
-        {
-          "label": null,
-          "output_name": "out_sqn",
-          "uuid": "c016c419-7723-4841-97a6-d80e4e6f1a95"
-        },
-        {
-          "label": null,
-          "output_name": "out_err",
-          "uuid": "8bffdc94-c952-4584-949f-66487f283eec"
-        },
-        {
-          "label": null,
-          "output_name": "out_ffn",
-          "uuid": "f5f00b59-7a2b-4073-b599-61e75b34ae2a"
-        },
-        {
-          "label": null,
-          "output_name": "out_fsa",
-          "uuid": "64a34b3e-b547-4d22-a171-42875959820e"
-        },
-        {
-          "label": null,
-          "output_name": "out_tsv",
-          "uuid": "98de1a0f-4c69-432a-9d88-d6edb1000381"
-        },
-        {
-          "label": null,
-          "output_name": "out_fna",
-          "uuid": "51814215-c82e-4c8d-bc84-4887b5eedb1a"
-        },
-        {
-          "label": null,
-          "output_name": "out_log",
-          "uuid": "db4d5ecf-cea0-48da-b911-46704ab34647"
-        },
-        {
-          "label": null,
-          "output_name": "out_faa",
-          "uuid": "5c922311-7874-4dd4-88e1-b0f59b69692a"
-        },
-        {
-          "label": null,
-          "output_name": "out_gbk",
-          "uuid": "3e791f60-5c80-43d6-b750-8b87120a6ed0"
-        },
-        {
-          "label": null,
-          "output_name": "out_tbl",
-          "uuid": "e38a6e06-02b3-4365-93cb-59499c9d3fba"
-        },
-        {
-          "label": null,
-          "output_name": "out_gff",
-          "uuid": "101158d5-014a-41bb-9573-4e44a7a7b63a"
-        }
-      ]
-    }
-  },
-  "uuid": "3ac2b8af-26c9-442f-9981-dabe00e13ba4"
+    "tags": [],
+    "uuid": "c73b901c-4ece-4cc8-9a86-0ac9db8b60b1"
 }
