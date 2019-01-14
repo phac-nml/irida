@@ -585,6 +585,7 @@ public class SamplesController extends BaseController {
 			@RequestParam(name = "filename") String filename,
 			@RequestParam(name = "remove", defaultValue = "false", required = false) boolean removeOriginals,
 			Model model, HttpServletRequest request) {
+		model.addAttribute("URLS", getSampleDetailURLS(request.getRequestURL()));
 		Sample sample = sampleService.read(sampleId);
 
 		Iterable<SequencingObject> readMultiple = sequencingObjectService.readMultiple(objectIds);
