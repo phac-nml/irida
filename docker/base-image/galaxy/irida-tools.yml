@@ -1,0 +1,9 @@
+---
+tools:
+- name: "suite_snvphyl_1_0_1"
+  owner: "nml"
+  tool_shed_url: "https://irida.corefacility.ca/galaxy-shed/"
+  revisions:
+  - "4841b7148c44"
+  tool_panel_section_id: "irida"
+  install_tool_dependencies: true

@@ -10,8 +10,6 @@ The following is a list of files within this package.
 
 * `*.war`:  The IRIDA Java WAR file.
 * `tools-list.yml`:  A list of tools required to exist within a [Galaxy](https://galaxyproject.org/) instance before IRIDA can be deployed.
-* `install_tool_shed_tools.py`: A script for installing tools in a Galaxy instance.  Originally from <https://github.com/galaxyproject/ansible-galaxy-tools/blob/7787f210c37963bf09a83f757487770e8fa2df32/files/install_tool_shed_tools.py> with a few small modifications.
-* `LICENSE.install_tool_shed_tools`: License for tool installation script.
 * `CHANGELOG.md`:  The log of most recent changes.
 * `UPGRADING.md`: A list of specific instructions for upgrading between IRIDA versions.
 * `LICENSE`:  The license IRIDA is distributed under.
@@ -27,38 +25,29 @@ This directory includes files to quickly install all necessary tools within an e
 Some additional dependencies will need to be installed outside of Galaxy in order to get all tools to build.  These include:
 
 * [Perl 5](https://www.perl.org/)
-* Perl modules - `Readonly Time::Piece XML::Simple Data::Dumper Bio::Perl`
-* [Java](https://java.com/) 1.6+
-* [Gnuplot](http://www.gnuplot.info/)
+* Perl modules - `Readonly`
 
-More information can be found at <https://irida.corefacility.ca/documentation/administrator/galaxy/#galaxy-tools-installation>.
+More information can be found at <https://irida.corefacility.ca/documentation/administrator/galaxy/setup/#galaxy-tools-installation>.
 
 ### Automated Process/Upgrading
 
-To install any required Galaxy tools for this IRIDA version please run the following:
+To install all required Galaxy tools for this IRIDA version you can make use of [Ephemeris](https://ephemeris.readthedocs.io). To install Ephemeris, you can either use [Conda](https://conda.io/) or Python Pip. For example `conda install -c bioconda ephemeris` or `pip install ephemeris`. Please see the [Installation](https://ephemeris.readthedocs.io/en/latest/installation.html) instructions for more details.
+
+Once Ephemeris is installed, please run the following to install all Galaxy tools for IRIDA:
 
 ```bash
-# Installs dependency modules for script
-pip install -r install-tools-requirements.txt
-
-# Do installation of Galaxy tools
-python install_tool_shed_tools.py --toolsfile tools-list.yml --galaxy [http://url-to-galaxy] --apikey [api key]
-```
-Where `[http://url-to-galaxy]` is the URL to your Galaxy instance for IRIDA and `[api key]` is the API key for your IRIDA Galaxy instance.
-
-Following installation/upgrade of tools, some small updates to software may need to be applied.  In particular the software `tbl2asn`, used by Prokka, needs to be kept up to date with the latest copy at least once per year.  If `tbl2asn` is not kept up to date, eventually a Prokka run will report an error message when running tbl2asn that it has expired.
-
-The most recently updated version is available at <http://www.ncbi.nlm.nih.gov/genbank/tbl2asn2/>.  To update, please log into the Galaxy server and run:
-
-```bash
-find tool_dependencies/ -wholename '*tbl2asn'
+shed-tools --toolsfile tools-list.yml --galaxy [http://url-to-galaxy] --api_key [api key]
 ```
 
-Where **tool_dependencies/** is the Galaxy directory storing tool dependencies.  This will list all the `tbl2asn` binaries currently installed.  To enable these to run they must be updated to the latest version from NCBI.  More information can be found at <https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/assembly-annotation/#step-2-install-galaxy-tools>.
+Where `[http://url-to-galaxy]` is the URL to your Galaxy instance for IRIDA and `[api key]` is the API key for your IRIDA Galaxy instance. Please see the [usage of shed-tools](https://ephemeris.readthedocs.io/en/latest/commands/shed-tools.html#usage) for more details.
+
+Following installation/upgrade of tools, some small updates/configurations to software may need to be applied. One such configuration change is modification of the memory given to the genome assembler Shovill if running on a cluster. Please see the [SISTR Pipeline Documentation](https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/sistr/) as well as documentation for each tool in IRIDA <https://irida.corefacility.ca/documentation/administrator/galaxy/setup/#manual-installation-of-tools> for more details about this particular issue.
+
+In addition the software `tbl2asn`, used by Prokka, needs to be kept up to date with the latest copy at least once per year. If `tbl2asn` is not kept up to date, eventually a Prokka run will report an error message when running tbl2asn that it has expired. If `tbl2asn` is not working for you when running the Assembly/Annotation pipeline, please refer to the [IRIDA Installation FAQ](https://irida.corefacility.ca/documentation/administrator/faq/#tbl2asn-out-of-date) for details on how to update `tbl2asn`.
 
 ### Manual Process
 
-If the automated installation process does not work, or to test out the tools, please see the online documentation at <https://irida.corefacility.ca/documentation/administrator/galaxy/>.
+If the automated installation process does not work, or to test out the tools, please see the online documentation at <https://irida.corefacility.ca/documentation/administrator/galaxy/setup/#manual-installation-of-tools>.
 
 Installing IRIDA
 ----------------
