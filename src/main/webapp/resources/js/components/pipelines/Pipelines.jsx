@@ -3,6 +3,7 @@ import { Col, Row } from "antd";
 import { fetchIridaAnalysisWorkflows } from "../../apis/pipelines/pipelines";
 import Pipeline from "../pipeline/Pipeline";
 import { spacing } from "../../styles";
+import "./pipelines.scss";
 
 export default class Pipelines extends React.Component {
   static propTypes = {};
@@ -32,6 +33,7 @@ export default class Pipelines extends React.Component {
               id={pipeline.id}
               name={pipeline.name}
               description={pipeline.description}
+              styleName={pipeline.styleName}
             />
           </Col>
         ))}

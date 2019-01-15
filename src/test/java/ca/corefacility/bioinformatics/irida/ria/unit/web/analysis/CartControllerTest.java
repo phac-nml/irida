@@ -56,8 +56,10 @@ public class CartControllerTest {
 		messageSource = mock(MessageSource.class);
 		sequencingObjectService = mock(SequencingObjectService.class);
 		cart = new Cart(projectService, messageSource);
+		String iridaPipelinePluginStyle = "";
 
-		controller = new CartController(sampleService, userService, projectService, sequencingObjectService, cart);
+		controller = new CartController(sampleService, userService, projectService, sequencingObjectService,
+				iridaPipelinePluginStyle, cart);
 
 		testData();
 	}

@@ -8,6 +8,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -48,14 +49,20 @@ public class CartController {
 	private final UserService userService;
 	private final ProjectService projectService;
 	private final SequencingObjectService sequencingObjectService;
+	/*
+	 * Additional variables
+	 */
+	private String iridaPipelinePluginStyle;
 
 	@Autowired
 	public CartController(SampleService sampleService, UserService userService, ProjectService projectService,
-			SequencingObjectService sequencingObjectService, Cart cart) {
+			SequencingObjectService sequencingObjectService,
+			@Qualifier("iridaPipelinePluginStyle") String iridaPipelinePluginStyle, Cart cart) {
 		this.sampleService = sampleService;
 		this.projectService = projectService;
 		this.userService = userService;
 		this.sequencingObjectService = sequencingObjectService;
+		this.iridaPipelinePluginStyle = iridaPipelinePluginStyle;
 		this.cart = cart;
 	}
 
@@ -65,7 +72,8 @@ public class CartController {
 	 * @return {@link String} path to the cart page template
 	 */
 	@RequestMapping(value = {"", "/*"}, produces = MediaType.TEXT_HTML_VALUE)
-	public String getCartPage() {
+	public String getCartPage(Model model) {
+		model.addAttribute("pipeline_plugin_style", iridaPipelinePluginStyle);
 		return "cart";
 	}
 

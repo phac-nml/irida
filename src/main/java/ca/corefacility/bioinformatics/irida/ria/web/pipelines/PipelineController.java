@@ -638,14 +638,17 @@ public class PipelineController extends BaseController {
 		private String name;
 		private String description;
 		private UUID id;
+		private String styleName;
 
 		public Pipeline(AnalysisType analysisType, Locale locale) throws IridaWorkflowNotFoundException {
 			IridaWorkflowDescription description = workflowsService.getDefaultWorkflowByType(analysisType)
 					.getWorkflowDescription();
-			this.name = description.getName();
-			this.description = messageSource.getMessage("workflow." + analysisType.getType() + ".description",
+			String prefix = "workflow." + analysisType.getType();
+			this.name = messageSource.getMessage(prefix + ".title", new Object[] {}, locale);
+			this.description = messageSource.getMessage(prefix + ".description",
 					new Object[] {}, locale);
 			this.id = description.getId();
+			this.styleName = analysisType.getType();
 		}
 
 		public String getName() {
@@ -658,6 +661,10 @@ public class PipelineController extends BaseController {
 
 		public UUID getId() {
 			return id;
+		}
+
+		public String getStyleName() {
+			return styleName;
 		}
 	}
 }
