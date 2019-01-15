@@ -1,30 +1,26 @@
 # Galaxy - IRIDA Base Image
 
-FROM bgruening/galaxy-stable:17.01
+FROM bgruening/galaxy-stable:18.09
 
-Label maintainer Aaron Petkau, aaron.petkau@phac-aspc.gc.ca
+MAINTAINER Aaron Petkau, aaron.petkau@canada.ca
 
-ENV GALAXY_CONFIG_BRAND IRIDA Galaxy (17.01)
+ENV GALAXY_CONFIG_BRAND IRIDA Galaxy (18.09)
 
 WORKDIR /galaxy-central
 
 ENV GALAXY_CONFIG_TOOL_SHEDS_CONFIG_FILE /etc/galaxy/tool_sheds_conf.xml
+
 ADD ./galaxy/tool_sheds_conf.xml /etc/galaxy/tool_sheds_conf.xml
 
-RUN cpan App::cpanminus && rm -rf ~/.cpan
-RUN cpanm Time::Piece XML::Simple Data::Dumper Bio::SeqIO && rm -rf ~/.cpanm
+# Add my custom toolshed to /home/galaxy so that install-tools will work with IRIDA toolshed
+ADD ./galaxy/tool_sheds_conf.xml /home/galaxy/tool_sheds_conf.xml
 
-RUN sed -i -e 's/#allow_library_path_paste = False/allow_library_path_paste = True/' /etc/galaxy/galaxy.ini && \
-        sed -i -e 's/force_beta_workflow_scheduled_for_collections=True/force_beta_workflow_scheduled_for_collections=False/' /etc/galaxy/galaxy.ini && \
-        sed -i -e 's@^#conda_prefix.*@conda_prefix = /tool_deps/_conda@' /etc/galaxy/galaxy.ini && \
-        sed -i -e 's@^#conda_ensure_channels@conda_ensure_channels@' /etc/galaxy/galaxy.ini && \
-        sed -i -e 's@^#use_cached_dependency_manager = False@use_cached_dependency_manager = True@' /etc/galaxy/galaxy.ini && \
-        sed -i -e 's/ --share//' /etc/galaxy/job_conf.xml
+# Install IRIDA tools
+ADD ./galaxy/irida-tools.yml $GALAXY_ROOT/irida-tools.yml
+RUN install-tools $GALAXY_ROOT/irida-tools.yml
+RUN chown -R galaxy:galaxy /tool_deps
 
-# Install SNVPhyl
-RUN install-repository \
-    "-r 4841b7148c44 --url https://irida.corefacility.ca/galaxy-shed/ -o nml --name suite_snvphyl_1_0_1 --panel-section-id SNVPhyl" && \
-    find /galaxy-central/tool_deps/ -iname '.git' | xargs -I {} rm -rf {}
+RUN sed -i -e 's/#\( *allow_path_paste:\).*/\1 True/' /etc/galaxy/galaxy.yml
 
 # Mark folders as imported from the host.
 VOLUME ["/export/", "/data/", "/var/lib/docker"]

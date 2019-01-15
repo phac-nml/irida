@@ -1,0 +1,102 @@
+---
+api_key: "<Galaxy Admin user API key>"
+galaxy_instance: "<IP address for target Galaxy instance>"
+tools:
+
+  ### Tools for AssemblyAnnotation v0.5.0 ###
+
+- name: "shovill"
+  owner: "iuc"
+  tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
+  revisions:
+  - "865119fcb694"
+  tool_panel_section_id: "irida"
+  install_tool_dependencies: true
+- name: "prokka"
+  owner: "crs4"
+  tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
+  revisions:
+  - "eaee459f3d69"
+  tool_panel_section_id: "irida"
+  install_tool_dependencies: true
+- name: "quast"
+  owner: "iuc"
+  tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
+  revisions:
+  - "81df4950d65b"
+  tool_panel_section_id: "irida"
+  install_tool_dependencies: true
+
+  ### Tools for AssemblyAnnotationCollection v0.4.0 ###
+
+- name: "bundle_collections"
+  owner: "irida"
+  tool_shed_url: "https://irida.corefacility.ca/galaxy-shed/"
+  revisions:
+  - "7bc329e1ada4"
+  tool_panel_section_id: "irida"
+  install_tool_dependencies: true
+
+  ### Tools for MLSTMentalist v0.1.9 ###
+
+- name: "mentalist"
+  owner: "dfornika"
+  tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
+  revisions:
+  - "a6cd59f35832"
+  tool_panel_section_id: "irida"
+  install_tool_dependencies: true
+- name: "combine_tabular_collection"
+  owner: "nml"
+  tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
+  revisions:
+  - "b815081988b5"
+  tool_panel_section_id: "irida"
+  install_tool_dependencies: true
+
+  ### Tools for RefSeqMasherOnPairedReads v0.1.0 ###
+
+- name: "refseq_masher"
+  owner: "nml"
+  tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
+  revisions:
+  - "26df66c32861"
+  tool_panel_section_id: "irida"
+  install_tool_dependencies: true
+
+  ### Tools for SISTRTyping v0.3.0 ###
+
+- name: "sistr_cmd"
+  owner: "nml"
+  tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
+  revisions:
+  - "5c8ff92e38a9"
+  tool_panel_section_id: "irida"
+  install_tool_dependencies: true
+- name: "shovill"
+  owner: "iuc"
+  tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
+  revisions:
+  - "f698c7604b3b"
+  tool_panel_section_id: "irida"
+  install_tool_dependencies: true
+
+  ### Tools for SNVPhyl v1.0.1 ###
+
+- name: "suite_snvphyl_1_0_1"
+  owner: "nml"
+  tool_shed_url: "https://irida.corefacility.ca/galaxy-shed/"
+  revisions:
+  - "4841b7148c44"
+  tool_panel_section_id: "irida"
+  install_tool_dependencies: true
+
+  ### Tools for bio_hansel v2.0.0 ###
+
+- name: "bio_hansel"
+  owner: "nml"
+  tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
+  revisions:
+  - "4654c51dae72"
+  tool_panel_section_id: "irida"
+  install_tool_dependencies: true
