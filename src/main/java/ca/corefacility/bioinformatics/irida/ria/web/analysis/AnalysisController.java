@@ -1154,7 +1154,7 @@ public class AnalysisController {
 						sequenceFilePair);
 				this.sample = sampleSequencingObjectJoin.getSubject();
 			} catch (Exception e) {
-				logger.error(
+				logger.debug(
 						"Sequence file pair [" + sequenceFilePair.getIdentifier() + "] does not have a parent sample", e);
 				sample = null;
 			}
