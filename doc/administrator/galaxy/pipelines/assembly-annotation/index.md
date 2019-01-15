@@ -11,9 +11,9 @@ This workflow uses the [shovill] and [Prokka][] software for assembly and annota
 
 | Tool Name                  | Owner    | Tool Revision  | Toolshed Installable Revision | Toolshed             |
 |:--------------------------:|:--------:|:--------------:|:-----------------------------:|:--------------------:|
-| **shovill**                | iuc      | [57d5928f456e] | 1 (2018-03-07)                | [Galaxy Main Shed][] |
+| **shovill**                | iuc      | [865119fcb694] | 3 (2018-11-13)                | [Galaxy Main Shed][] |
 | **prokka**                 | crs4     | [eaee459f3d69] | 14 (2018-03-28)               | [Galaxy Main Shed][] |
-| **quast**                  | iuc      | [0834c823d4b9] | 4 (2018-02-12)                | [Galaxy Main Shed][] |
+| **quast**                  | iuc      | [81df4950d65b] | 5 (2018-12-04)                | [Galaxy Main Shed][] |
 
 
 To install these tools please proceed through the following steps.
@@ -22,7 +22,7 @@ To install these tools please proceed through the following steps.
 
 Galaxy makes use of [Conda][conda] to automatically install some dependencies for this workflow.  Please verify that the version of Galaxy is >= v16.01 and has been setup to use conda (by modifying the appropriate configuration settings, see [here][galaxy-config] for additional details).  A method to get this workflow to work with a Galaxy version < v16.01 is available in [FAQ/Conda dependencies][].
 
-{% include administrator/galaxy/pipelines/shovill.md %}
+{% include administrator/galaxy/pipelines/shovill-1.0.4.md %}
 
 ## Step 2: Install Galaxy Tools
 
@@ -60,9 +60,9 @@ A Galaxy workflow and some test data has been included with this documentation t
 
 If everything was successful then all dependencies for this pipeline have been properly installed.
 
-[57d5928f456e]: https://toolshed.g2.bx.psu.edu/repos/iuc/shovill/rev/57d5928f456e
+[865119fcb694]: https://toolshed.g2.bx.psu.edu/view/iuc/shovill/865119fcb694
 [eaee459f3d69]: https://toolshed.g2.bx.psu.edu/view/crs4/prokka/eaee459f3d69
-[0834c823d4b9]: https://toolshed.g2.bx.psu.edu/view/iuc/quast/0834c823d4b9
+[81df4950d65b]: https://toolshed.g2.bx.psu.edu/view/iuc/quast/81df4950d65b
 [galaxy-config]: ../../setup#step-4-modify-configuration-file
 [SLURM]: https://slurm.schedmd.com
 [PILON]: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4237348/

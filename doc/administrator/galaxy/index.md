@@ -28,7 +28,7 @@ The easiest way to get Galaxy up and running for use with IRIDA is to use a cust
 # curl -sSL https://get.docker.com/ | sh
 
 # Run IRIDA/Galaxy docker
-docker run -d -p 48888:80 -v /path/to/irida/data:/path/to/irida/data phacnml/galaxy-irida-17.01
+docker run -d -p 48888:80 -v /path/to/irida/data:/path/to/irida/data phacnml/galaxy-irida-18.09
 ```
 
 Where `48888` is the port on your local system where Galaxy should be accessible, and `/path/to/irida/data` should point to the location where the sequencing data for IRIDA is stored (i.e., the parent directory of `{sequence,reference,output}.file.base.directory` in [/etc/irida/irida.conf][irida-conf]).
