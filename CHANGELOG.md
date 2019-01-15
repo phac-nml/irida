@@ -32,11 +32,14 @@ Changes
 * [UI]: IRIDA will now remove local samples when a synchronized remote sample is removed at its source.
 * [UI]: New project line list page with inline editing.
 * [Developer]: Updated Node, Yarn, and front-end webpack packages.
+* [Workflow]: Fixed Shovill Galaxy tool revision for SISTR and Assembly/Annotation pipelines.
 * [Developer]: Update to ag-grid-community v.19.1.2.
 * [Documentation]: Changed references from GitLab to GitHub in docs.
 * [UI]: Removed angular-resource, angular-messages, angular-sanitize, angular-animate, angular-datatables, ng-table and angular-drag-and-drop-lists.
 * [REST]: Added method to greatly increase speed of listing samples in a project.  This was becoming an issue for projects with metadata and >5k samples.
 * [Developer]: Added pull request and issue templates for github.
+* [Developer]: Update Docker Galaxy container to Galaxy 18.09.
+* [Administration]: Updated method for automatically installing tools in Galaxy to use [Ephemeris](https://ephemeris.readthedocs.io/en/latest/readme.html).
 
 0.21.0 to 0.22.0
 ----------------
