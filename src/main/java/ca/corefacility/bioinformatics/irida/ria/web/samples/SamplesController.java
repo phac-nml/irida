@@ -132,6 +132,7 @@ public class SamplesController extends BaseController {
 	 *            Spring {@link Model}
 	 * @param sampleId
 	 *            The id for the sample
+	 * @param request {@link HttpServletRequest}
 	 * @return The name of the page.
 	 */
 	@RequestMapping(value = { "/samples/{sampleId}/details", "/projects/{projectId}/samples/{sampleId}/details" })
@@ -158,6 +159,7 @@ public class SamplesController extends BaseController {
 	 *
 	 * @param model    Spring {@link Model}
 	 * @param sampleId The id for the sample
+	 * @param request {@link HttpServletRequest}
 	 * @return The name of the edit page
 	 */
 	@RequestMapping(value = { "/samples/{sampleId}/edit",
@@ -266,6 +268,7 @@ public class SamplesController extends BaseController {
 	 * @param model     Spring {@link Model}
 	 * @param projectId the id of the {@link Project} the sample is in
 	 * @param sampleId  Sample id
+	 * @param request {@link HttpServletRequest}
 	 * @return a Map representing all files (pairs and singles) for the sample.
 	 */
 	@RequestMapping(value = { "/projects/{projectId}/samples/{sampleId}/sequenceFiles" })
@@ -349,6 +352,7 @@ public class SamplesController extends BaseController {
 	 *            Spring {@link Model}
 	 * @param sampleId
 	 *            Sample id
+	 * @param request {@link HttpServletRequest}
 	 * @return a Map representing all files (pairs and singles) for the sample.
 	 */
 	@RequestMapping("/samples/{sampleId}/sequenceFiles")
@@ -534,6 +538,7 @@ public class SamplesController extends BaseController {
 	 *
 	 * @param sampleId the {@link Sample} to get files for
 	 * @param model    model for the view
+	 * @param request {@link HttpServletRequest}
 	 * @return name of the files concatenate page
 	 */
 	@RequestMapping(value = { "/samples/{sampleId}/concatenate",
@@ -577,7 +582,7 @@ public class SamplesController extends BaseController {
 	 *            model for the view
 	 * @param request
 	 *            the incoming {@link HttpServletRequest}
-	 * @return redirect to the files page if successul
+	 * @return redirect to the files page if successful
 	 */
 	@RequestMapping(value = { "/samples/{sampleId}/concatenate",
 			"/projects/{projectId}/samples/{sampleId}/concatenate" }, method = RequestMethod.POST)
