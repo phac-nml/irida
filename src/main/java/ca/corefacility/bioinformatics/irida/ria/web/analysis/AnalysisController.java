@@ -1152,7 +1152,9 @@ public class AnalysisController {
 						sequenceFilePair);
 				this.sample = sampleSequencingObjectJoin.getSubject();
 			} catch (Exception e) {
-				// IGNORE: Sample no longer exists, let the UI handle displaying the results.
+				logger.error(
+						"Sequence file pair [" + sequenceFilePair.getIdentifier() + "] does not have a parent sample");
+				sample = null;
 			}
 		}
 
