@@ -267,7 +267,9 @@ public class AnalysisController {
 		Set<SequenceFilePair> inputFilePairs = sequencingObjectService.getSequencingObjectsOfTypeForAnalysisSubmission(
 				submission, SequenceFilePair.class);
 		List<SampleFiles> sampleFiles = inputFilePairs.stream().map(SampleFiles::new).sorted((a, b) -> {
-			if (a.sample == null) {
+			if (a.sample == null && b.sample == null) {
+				return 0;
+			} else if (a.sample == null) {
 				return -1;
 			} else if (b.sample == null) {
 				return 1;
