@@ -20,7 +20,7 @@ const PipelineCard = styled(Card)`
 
 const Heading = styled.h4`
   margin: 0;
-  padding: 8px 15px;
+  padding: 0 15px;
   overflow-x: hidden;
   word-break: break-word;
   height: 50px;
