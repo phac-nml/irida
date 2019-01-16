@@ -69,6 +69,7 @@ public class CartController {
 	/**
 	 * Get the dedicated page for the Cart
 	 *
+	 * @param model {@link Model}
 	 * @return {@link String} path to the cart page template
 	 */
 	@RequestMapping(value = {"", "/*"}, produces = MediaType.TEXT_HTML_VALUE)
