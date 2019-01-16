@@ -36,7 +36,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 	@FindBy(className = "share-project")
 	List<WebElement> shareCheckboxes;
 
-	@FindBy(className = "paired_end")
+	@FindBy(className = "t-paired-end")
 	private List<WebElement> pairedEndElements;
 
 	@FindBy(id = "editAnalysisButton")
@@ -46,6 +46,9 @@ public class AnalysisDetailsPage extends AbstractPage {
 
 	@FindBy(className = "it-has-job-error")
 	private List<WebElement> divHasJobError;
+
+	@FindBy(css = ".t-paired-end h4 span")
+	private List<WebElement> sampleLabels;
 
 	public AnalysisDetailsPage(WebDriver driver) {
 		super(driver);
@@ -172,11 +175,15 @@ public class AnalysisDetailsPage extends AbstractPage {
 		}
 	}
 
-	public int getNumberOfPairedEndInputFiles() {
+	public int getNumberOfSamplesInAnalysis() {
 		return pairedEndElements.size();
 	}
 
 	public boolean hasJobErrorInfo() {
 		return divHasJobError.size() > 0;
+	}
+
+	public String getLabelForSample(int index) {
+		return sampleLabels.get(index).getText();
 	}
 }
