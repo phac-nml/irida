@@ -158,7 +158,7 @@ class CartSamplesComponent extends React.Component {
     return (
       <CartSamplesWrapper>
         <CartTools type="flex" justify="space-between">
-          <Col style={{ width: 290 }}>
+          <Col style={{ width: 260 }}>
             <Search onChange={this.onSearch} value={this.state.filter} />
           </Col>
           <Col>
