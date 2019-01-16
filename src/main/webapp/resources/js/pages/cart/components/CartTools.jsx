@@ -1,7 +1,7 @@
 import React from "react";
 import { Router, Link, Location } from "@reach/router";
 import { Col, Row, Menu } from "antd";
-import { spacing } from "../../../styles";
+import { SPACING } from "../../../styles";
 import styled from "styled-components";
 import Pipelines from "../../../components/pipelines/Pipelines";
 
@@ -14,7 +14,7 @@ const ToolsWrapper = styled(Row)`
 `;
 
 const ToolsInner = styled.div`
-  padding: ${spacing.DEFAULT};
+  padding: ${SPACING.DEFAULT};
   position: absolute;
   top: 50px;
   right: 0;
@@ -30,7 +30,7 @@ export default class CartTools extends React.Component {
         <Location>
           {({ location }) => (
             <>
-              <Col span={24} style={{ paddingBottom: spacing.DEFAULT }}>
+              <Col span={24} style={{ paddingBottom: SPACING.DEFAULT }}>
                 <Menu mode="horizontal" selectedKeys={[location.pathname]}>
                   <Menu.Item key="/cart/pipelines">
                     <Link to="cart/pipelines">{pipelines.label}</Link>

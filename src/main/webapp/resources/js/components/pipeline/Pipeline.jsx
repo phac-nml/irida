@@ -2,14 +2,18 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Card } from "antd";
 import styled from "styled-components";
+import { BREAK_POINTS } from "./../../styles";
 
 const PipelineCard = styled(Card)`
   .ant-card-body {
-    @media (min-width: 0) and (max-width: 1200px) {
+    @media (${BREAK_POINTS.SM}) {
       height: 150px;
     }
-    @media (min-width: 1201px) {
+    @media (${BREAK_POINTS.MD}) {
       height: 200px;
+    }
+    @media (${BREAK_POINTS.XL}) {
+      height: 200px !important;
     }
   }
 `;
@@ -17,6 +21,9 @@ const PipelineCard = styled(Card)`
 const Heading = styled.h4`
   margin: 0;
   padding: 8px 15px;
+  overflow-x: hidden;
+  word-break: break-word;
+  height: 50px;
 `;
 
 export default class Pipeline extends React.Component {
@@ -31,11 +38,14 @@ export default class Pipeline extends React.Component {
     return (
       <PipelineCard
         cover={
-          <div style={{
-            padding: 10,
-            borderTopLeftRadius: 2,
-            borderTopRightRadius: 2,
-          }} className={this.props.styleName}>
+          <div
+            style={{
+              padding: 10,
+              borderTopLeftRadius: 2,
+              borderTopRightRadius: 2
+            }}
+            className={this.props.styleName}
+          >
             <Heading>{this.props.name}</Heading>
           </div>
         }

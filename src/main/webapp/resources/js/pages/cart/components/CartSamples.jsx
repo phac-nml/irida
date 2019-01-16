@@ -8,7 +8,7 @@ import { Badge, Button, Col, Icon, Input, Row, Tooltip } from "antd";
 import styled from "styled-components";
 import { cartPageActions } from "../reducer";
 import { sampleDetailsActions } from "../../../components/SampleDetails/reducer";
-import { spacing } from "../../../styles";
+import { SPACING } from "../../../styles";
 
 const { Search } = Input;
 
@@ -52,7 +52,7 @@ const CartSamplesWrapper = styled.div`
 `;
 
 const CartTools = styled(Row)`
-  padding: ${spacing.DEFAULT};
+  padding: ${SPACING.DEFAULT};
 
   .ant-input {
     border: none;
