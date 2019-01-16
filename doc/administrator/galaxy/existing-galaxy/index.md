@@ -89,21 +89,7 @@ The workflows used by IRIDA make use of external tools that can be installed usi
 
 #### Automated installation of tools
 
-An automated script (`install_tool_shed_tools.py`) to install all necessary tools for the different pipelines to run in Galaxy is provided with the `irida-[version].zip` download. This can be found on the [IRIDA releases][] page.  Instructions can be accessed on the [Automated tools install][] page.
-
-To run this script, please do the following (replacing **url-to-galaxy** and **api key** with appropriate values for your Galaxy instance).
-
-```
-# Installs dependency modules for script
-pip install -r install-tools-requirements.txt
-
-# Do installation of Galaxy tools
-python install_tool_shed_tools.py --toolsfile tools-list.yml --galaxy [http://url-to-galaxy] --apikey [api key]
-```
-
-You may want to monitor the Galaxy log files (e.g., `galaxy/*.log`) as the installation is proceeding.  This may take a while to download, build, and install all tools.
-
-*Note: please make sure to check if `tbl2asn` requires updating. You can read more about this issue in our [FAQ][faq-tbl2asn]. Also please take a look through the __Manual installation of tools__ instructions to see if there are any additional dependencies you may need to install.  These can be added to the conda __galaxy__ environment setup previously.*
+{%include administrator/galaxy/setup/automated-tool-install.md %}
 
 #### Manual installation of tools
 
@@ -139,11 +125,8 @@ Once you have configured IRIDA to connect to Galaxy you can attempt to execute a
 [MentaLiST MLST]: ../pipelines/mentalist/
 [Bio_Hansel]: ../pipelines/bio_hansel/
 [Purging Histories and Datasets]: https://galaxyproject.org/admin/config/performance/purge-histories-and-datasets/
-[Automated tools install]: https://github.com/phac-nml/irida/tree/development/packaging#automated-processupgrading
-[IRIDA releases]: https://github.com/phac-nml/irida/releases
 [PostgreSQL]: https://www.postgresql.org/
 [MySQL/MariaDB]: https://mariadb.org/
 [irida-sample-data.zip]: https://irida.corefacility.ca/downloads/data/irida-sample-data.zip
 [faq-conda]: ../../faq/#installing-conda-dependencies-in-galaxy-versions--v1601
-[faq-tbl2asn]: ../../faq/#tbl2asn-out-of-date
 [web]: ../../web
