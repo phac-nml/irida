@@ -1,232 +1,253 @@
 {
-    "a_galaxy_workflow": "true",
-    "annotation": "",
-    "format-version": "0.1",
-    "name": "SISTR Analyze Reads v0.3",
+    "a_galaxy_workflow": "true", 
+    "annotation": "", 
+    "format-version": "0.1", 
+    "name": "SISTR Analyze Reads v0.3", 
     "steps": {
         "0": {
-            "annotation": "",
-            "content_id": null,
-            "id": 0,
-            "input_connections": {},
+            "annotation": "", 
+            "content_id": null, 
+            "id": 0, 
+            "input_connections": {}, 
             "inputs": [
                 {
-                    "description": "",
+                    "description": "", 
                     "name": "sequence_reads_paired"
                 }
-            ],
-            "label": null,
-            "name": "Input dataset collection",
-            "outputs": [],
+            ], 
+            "label": null, 
+            "name": "Input dataset collection", 
+            "outputs": [], 
             "position": {
-                "left": 200,
+                "left": 200, 
                 "top": 200
-            },
-            "tool_errors": null,
-            "tool_id": null,
-            "tool_state": "{\"collection_type\": \"list:paired\", \"name\": \"sequence_reads_paired\"}",
-            "tool_version": null,
-            "type": "data_collection_input",
-            "uuid": "f39af4f6-29a6-4358-84b4-3319899cbb12",
+            }, 
+            "tool_errors": null, 
+            "tool_id": null, 
+            "tool_state": "{\"collection_type\": \"list:paired\", \"name\": \"sequence_reads_paired\"}", 
+            "tool_version": null, 
+            "type": "data_collection_input", 
+            "uuid": "f39af4f6-29a6-4358-84b4-3319899cbb12", 
             "workflow_outputs": [
                 {
-                    "label": null,
-                    "output_name": "output",
+                    "label": null, 
+                    "output_name": "output", 
                     "uuid": "e68f5ed4-ef69-4726-b65d-a158f9ee9037"
                 }
             ]
-        },
+        }, 
         "1": {
-            "annotation": "",
-            "content_id": "toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/0.9.0",
-            "id": 1,
+            "annotation": "", 
+            "content_id": "toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/0.9.0", 
+            "id": 1, 
             "input_connections": {
                 "library|input1": {
-                    "id": 0,
+                    "id": 0, 
                     "output_name": "output"
                 }
-            },
+            }, 
             "inputs": [
                 {
-                    "description": "runtime parameter for tool Shovill",
+                    "description": "runtime parameter for tool Shovill", 
                     "name": "library"
                 }
-            ],
-            "label": null,
-            "name": "Shovill",
+            ], 
+            "label": null, 
+            "name": "Shovill", 
             "outputs": [
                 {
-                    "name": "shovill_std_log",
+                    "name": "shovill_std_log", 
                     "type": "txt"
-                },
+                }, 
                 {
-                    "name": "contigs",
+                    "name": "contigs", 
                     "type": "fasta"
-                },
+                }, 
                 {
-                    "name": "contigs_graph",
+                    "name": "contigs_graph", 
                     "type": "txt"
                 }
-            ],
+            ], 
             "position": {
-                "left": 465,
-                "top": 199
-            },
+                "left": 464, 
+                "top": 200
+            }, 
             "post_job_actions": {
                 "RenameDatasetActioncontigs": {
                     "action_arguments": {
                         "newname": "shovill-contigs.fasta"
-                    },
-                    "action_type": "RenameDatasetAction",
+                    }, 
+                    "action_type": "RenameDatasetAction", 
                     "output_name": "contigs"
-                },
+                }, 
                 "RenameDatasetActioncontigs_graph": {
                     "action_arguments": {
                         "newname": "shovill-contigs.gfa"
-                    },
-                    "action_type": "RenameDatasetAction",
+                    }, 
+                    "action_type": "RenameDatasetAction", 
                     "output_name": "contigs_graph"
-                },
+                }, 
                 "RenameDatasetActionshovill_std_log": {
                     "action_arguments": {
                         "newname": "shovill-std.log"
-                    },
-                    "action_type": "RenameDatasetAction",
+                    }, 
+                    "action_type": "RenameDatasetAction", 
                     "output_name": "shovill_std_log"
                 }
-            },
-            "tool_errors": null,
-            "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/0.9.0",
+            }, 
+            "tool_errors": null, 
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/0.9.0", 
             "tool_shed_repository": {
-                "changeset_revision": "57d5928f456e",
-                "name": "shovill",
-                "owner": "iuc",
+                "changeset_revision": "f698c7604b3b",
+                "name": "shovill", 
+                "owner": "iuc", 
                 "tool_shed": "toolshed.g2.bx.psu.edu"
-            },
-            "tool_state": "{\"adv\": \"{\\\"asm\\\": \\\"contigs\\\", \\\"gsize\\\": \\\"\\\", \\\"kmers\\\": \\\"\\\", \\\"minlen\\\": \\\"0\\\", \\\"nocorr\\\": \\\"false\\\", \\\"depth\\\": \\\"100\\\", \\\"namefmt\\\": \\\"contig%05d\\\", \\\"mincov\\\": \\\"2\\\", \\\"opts\\\": \\\"\\\"}\", \"trim\": \"\\\"false\\\"\", \"log\": \"\\\"true\\\"\", \"__page__\": 0, \"__rerun_remap_job_id__\": null, \"library\": \"{\\\"lib_type\\\": \\\"collection\\\", \\\"input1\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"__current_case__\\\": 1}\"}",
-            "tool_version": "0.9.0",
-            "type": "tool",
-            "uuid": "a1207389-35e5-42da-9012-20b099205871",
+            }, 
+            "tool_state": "{\"adv\": \"{\\\"asm\\\": \\\"contigs\\\", \\\"gsize\\\": \\\"\\\", \\\"kmers\\\": \\\"\\\", \\\"minlen\\\": \\\"1\\\", \\\"nocorr\\\": \\\"false\\\", \\\"depth\\\": \\\"100\\\", \\\"namefmt\\\": \\\"contig%05d\\\", \\\"mincov\\\": \\\"1\\\", \\\"opts\\\": \\\"\\\"}\", \"trim\": \"\\\"false\\\"\", \"log\": \"\\\"true\\\"\", \"__page__\": 0, \"__rerun_remap_job_id__\": null, \"library\": \"{\\\"lib_type\\\": \\\"collection\\\", \\\"input1\\\": {\\\"__class__\\\": \\\"RuntimeValue\\\"}, \\\"__current_case__\\\": 1}\"}",
+            "tool_version": "0.9.0", 
+            "type": "tool", 
+            "uuid": "a1207389-35e5-42da-9012-20b099205871", 
             "workflow_outputs": [
                 {
-                    "label": null,
-                    "output_name": "contigs",
+                    "label": null, 
+                    "output_name": "contigs", 
                     "uuid": "276cd805-a60b-4075-9176-330801cda242"
-                },
+                }, 
                 {
-                    "label": null,
-                    "output_name": "shovill_std_log",
+                    "label": null, 
+                    "output_name": "shovill_std_log", 
                     "uuid": "b71fabd9-e639-41ea-8d8d-7ef105854fa6"
-                },
+                }, 
                 {
-                    "label": null,
-                    "output_name": "contigs_graph",
+                    "label": null, 
+                    "output_name": "contigs_graph", 
                     "uuid": "6986c11d-5876-43eb-889c-aa1153dfaec4"
                 }
             ]
-        },
+        }, 
         "2": {
-            "annotation": "",
-            "content_id": "toolshed.g2.bx.psu.edu/repos/nml/sistr_cmd/sistr_cmd/1.0.2",
-            "id": 2,
+            "annotation": "", 
+            "content_id": "toolshed.g2.bx.psu.edu/repos/nml/sistr_cmd/sistr_cmd/1.0.2", 
+            "id": 2, 
             "input_connections": {
                 "input_fastas": {
-                    "id": 1,
+                    "id": 1, 
                     "output_name": "contigs"
                 }
-            },
+            }, 
             "inputs": [
                 {
-                    "description": "runtime parameter for tool sistr_cmd",
+                    "description": "runtime parameter for tool sistr_cmd", 
                     "name": "input_fastas"
                 }
-            ],
-            "label": null,
-            "name": "sistr_cmd",
+            ], 
+            "label": null, 
+            "name": "sistr_cmd", 
             "outputs": [
                 {
-                    "name": "output_prediction_csv",
+                    "name": "output_prediction_csv", 
                     "type": "csv"
-                },
+                }, 
                 {
-                    "name": "output_prediction_json",
+                    "name": "output_prediction_json", 
                     "type": "json"
-                },
+                }, 
                 {
-                    "name": "output_prediction_tab",
+                    "name": "output_prediction_tab", 
                     "type": "tabular"
-                },
+                }, 
                 {
-                    "name": "cgmlst_profiles",
+                    "name": "cgmlst_profiles", 
                     "type": "csv"
-                },
+                }, 
                 {
-                    "name": "novel_alleles",
+                    "name": "novel_alleles", 
                     "type": "fasta"
-                },
+                }, 
                 {
-                    "name": "alleles_output",
+                    "name": "alleles_output", 
                     "type": "json"
                 }
-            ],
+            ], 
             "position": {
-                "left": 689,
+                "left": 692, 
                 "top": 200
-            },
+            }, 
             "post_job_actions": {
                 "HideDatasetActionoutput_prediction_csv": {
-                    "action_arguments": {},
-                    "action_type": "HideDatasetAction",
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
                     "output_name": "output_prediction_csv"
-                },
+                }, 
                 "HideDatasetActionoutput_prediction_tab": {
-                    "action_arguments": {},
-                    "action_type": "HideDatasetAction",
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
                     "output_name": "output_prediction_tab"
-                },
+                }, 
                 "RenameDatasetActionalleles_output": {
                     "action_arguments": {
                         "newname": "sistr-alleles-out.json"
-                    },
-                    "action_type": "RenameDatasetAction",
+                    }, 
+                    "action_type": "RenameDatasetAction", 
                     "output_name": "alleles_output"
-                },
+                }, 
                 "RenameDatasetActioncgmlst_profiles": {
                     "action_arguments": {
                         "newname": "sistr-cgmlst-profiles.csv"
-                    },
-                    "action_type": "RenameDatasetAction",
+                    }, 
+                    "action_type": "RenameDatasetAction", 
                     "output_name": "cgmlst_profiles"
-                },
+                }, 
                 "RenameDatasetActionnovel_alleles": {
                     "action_arguments": {
                         "newname": "sistr-novel-alleles.fasta"
-                    },
-                    "action_type": "RenameDatasetAction",
+                    }, 
+                    "action_type": "RenameDatasetAction", 
                     "output_name": "novel_alleles"
-                },
+                }, 
                 "RenameDatasetActionoutput_prediction_json": {
                     "action_arguments": {
                         "newname": "sistr-predictions.json"
-                    },
-                    "action_type": "RenameDatasetAction",
+                    }, 
+                    "action_type": "RenameDatasetAction", 
                     "output_name": "output_prediction_json"
                 }
-            },
-            "tool_errors": null,
-            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/sistr_cmd/sistr_cmd/1.0.2",
+            }, 
+            "tool_errors": null, 
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/sistr_cmd/sistr_cmd/1.0.2", 
             "tool_shed_repository": {
-                "changeset_revision": "5c8ff92e38a9",
-                "name": "sistr_cmd",
-                "owner": "nml",
+                "changeset_revision": "5c8ff92e38a9", 
+                "name": "sistr_cmd", 
+                "owner": "nml", 
                 "tool_shed": "toolshed.g2.bx.psu.edu"
-            },
-            "tool_state": "{\"input_fastas\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"no_cgmlst\": \"\\\"false\\\"\", \"use_full_cgmlst_db\": \"\\\"false\\\"\", \"__page__\": 0, \"output_format\": \"\\\"json\\\"\", \"keep_tmp\": \"\\\"false\\\"\", \"run_mash\": \"\\\"true\\\"\", \"more_output\": \"\\\"-M\\\"\", \"__rerun_remap_job_id__\": null, \"qc\": \"\\\"true\\\"\", \"verbosity\": \"\\\"-vv\\\"\"}",
-            "tool_version": "1.0.2",
-            "type": "tool",
-            "uuid": "3aa85dac-c737-44fc-8f97-8f7ed6cd798d",
-            "workflow_outputs": []
+            }, 
+            "tool_state": "{\"input_fastas\": \"{\\\"__class__\\\": \\\"RuntimeValue\\\"}\", \"no_cgmlst\": \"\\\"false\\\"\", \"use_full_cgmlst_db\": \"\\\"true\\\"\", \"__page__\": 0, \"output_format\": \"\\\"json\\\"\", \"keep_tmp\": \"\\\"false\\\"\", \"run_mash\": \"\\\"true\\\"\", \"more_output\": \"\\\"-M\\\"\", \"__rerun_remap_job_id__\": null, \"qc\": \"\\\"true\\\"\", \"verbosity\": \"\\\"-vv\\\"\"}", 
+            "tool_version": "1.0.2", 
+            "type": "tool", 
+            "uuid": "3aa85dac-c737-44fc-8f97-8f7ed6cd798d", 
+            "workflow_outputs": [
+                {
+                    "label": null, 
+                    "output_name": "alleles_output", 
+                    "uuid": "df0a5c3d-88b4-4fcd-b600-426f5d70a51e"
+                }, 
+                {
+                    "label": null, 
+                    "output_name": "output_prediction_json", 
+                    "uuid": "e1e0b7c6-5092-4ae0-ad6c-65ba843d1500"
+                }, 
+                {
+                    "label": null, 
+                    "output_name": "novel_alleles", 
+                    "uuid": "0d644afd-287a-4df9-a629-807836930136"
+                }, 
+                {
+                    "label": null, 
+                    "output_name": "cgmlst_profiles", 
+                    "uuid": "7a24c39b-b4a9-45db-aae8-f87938603cd7"
+                }
+            ]
         }
-    },
-    "uuid": "4026ae09-6b2a-4f31-a192-cdc4234f5600"
+    }, 
+    "uuid": "9d1d4bb6-dcc1-46d2-8a01-978f13a2feda"
 }

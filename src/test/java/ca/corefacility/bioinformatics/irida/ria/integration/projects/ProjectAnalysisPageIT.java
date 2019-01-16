@@ -37,7 +37,7 @@ public class ProjectAnalysisPageIT extends AbstractIridaUIITChromeDriver {
 
 		assertTrue("This analysis submission should have job error info", analysisPage.hasJobErrorInfo());
 		analysisPage.displayInputFilesTab();
-		assertEquals("should be 2 files", 2, analysisPage.getNumberOfPairedEndInputFiles());
+		assertEquals("should be 1 pair of files", 1, analysisPage.getNumberOfSamplesInAnalysis());
 	}
 	
 	@Test
@@ -52,7 +52,7 @@ public class ProjectAnalysisPageIT extends AbstractIridaUIITChromeDriver {
 
 		assertTrue("This analysis submission should have job error info", analysisPage.hasJobErrorInfo());
 		analysisPage.displayInputFilesTab();
-		assertEquals("should be 2 files", 2, analysisPage.getNumberOfPairedEndInputFiles());
+		assertEquals("should be 1 pair of files", 1, analysisPage.getNumberOfSamplesInAnalysis());
 		
 		analysisPage.displayShareTab();
 		
