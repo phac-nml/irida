@@ -41,6 +41,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -265,7 +266,18 @@ public class AnalysisController {
 		// - Paired
 		Set<SequenceFilePair> inputFilePairs = sequencingObjectService.getSequencingObjectsOfTypeForAnalysisSubmission(
 				submission, SequenceFilePair.class);
-		model.addAttribute("paired_end", inputFilePairs);
+		List<SampleFiles> sampleFiles = inputFilePairs.stream().map(SampleFiles::new).sorted((a, b) -> {
+			if (a.sample == null && b.sample == null) {
+				return 0;
+			} else if (a.sample == null) {
+				return -1;
+			} else if (b.sample == null) {
+				return 1;
+			}
+			return a.sample.getLabel()
+					.compareTo(b.sample.getLabel());
+		}).collect(Collectors.toList());
+		model.addAttribute("paired_end", sampleFiles);
 
 		// Check if user can update analysis
 		Authentication authentication = SecurityContextHolder.getContext()
@@ -1125,6 +1137,39 @@ public class AnalysisController {
 
 		public boolean isShared() {
 			return shared;
+		}
+	}
+
+	/**
+	 * UI Model to return a pair aof Sequence files with its accompanying sample.
+	 */
+	private class SampleFiles {
+		private Sample sample;
+		private SequenceFilePair sequenceFilePair;
+
+		SampleFiles(SequenceFilePair sequenceFilePair) {
+			this.sequenceFilePair = sequenceFilePair;
+			try {
+				SampleSequencingObjectJoin sampleSequencingObjectJoin = sampleService.getSampleForSequencingObject(
+						sequenceFilePair);
+				this.sample = sampleSequencingObjectJoin.getSubject();
+			} catch (Exception e) {
+				logger.debug(
+						"Sequence file pair [" + sequenceFilePair.getIdentifier() + "] does not have a parent sample", e);
+				sample = null;
+			}
+		}
+
+		public Long getId() {
+			return sequenceFilePair.getId();
+		}
+
+		public Sample getSample() {
+			return sample;
+		}
+
+		public SequenceFilePair getSequenceFilePair() {
+			return sequenceFilePair;
 		}
 	}
 }
