@@ -40,6 +40,7 @@ Changes
 * [Developer]: Added pull request and issue templates for github.
 * [Developer]: Update Docker Galaxy container to Galaxy 18.09.
 * [Administration]: Updated method for automatically installing tools in Galaxy to use [Ephemeris](https://ephemeris.readthedocs.io/en/latest/readme.html).
+* [Developer]: Updated to version 20.0.0 of ag-grid UI component.
 * [UI]: Add link back to sample for analysis input files on the Analsysis Details Page.
 
 0.21.0 to 0.22.0
