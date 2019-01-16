@@ -1,351 +1,516 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      data-layout-decorate="~{analysis/details/_base}">
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  data-layout-decorate="~{analysis/details/_base}"
+>
+  <head>
+    <style>
+      .tool i {
+        font-size: 0.75em;
+        color: #d5d5d5;
+      }
 
-<head>
-	<style>
-		.tool i {
-			font-size: .75em;
-			color: #d5d5d5;
-		}
-		.progress {
-			margin-bottom: 1rem!important;
-		}
-		.progress, .progress-bar {
-			height: 4px!important;
-			border-radius: 0;
-		}
-		.log--resizeable {
-			height: 200px;
-			resize: both;
-			overflow: auto;
-		}
-		.tooltip-inner {
-			white-space: pre-wrap;
-		}
-	</style>
-</head>
+      .progress {
+        margin-bottom: 1rem !important;
+      }
 
-<body>
-<main layout:fragment="main">
-		<div class="row">
-			<div class="col-md-11 ng-cloak">
-				<h1>
-					<th:block th:text="${analysisSubmission.label}"></th:block>
-					<small ng-hide="stateController.state === 'ERROR'" ng-bind="stateController.percentage + '%'"></small>
-				</h1>
-			</div>
-			<div class="col-md-1">
-				<button th:if="${updatePermission}" id="editAnalysisButton" data-toggle="modal" data-target="#editAnalysisModal" class="btn btn-sm btn-default btn-block">
-                    <i class="fas fa-pencil-alt"></i>
-				</button>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-12">
-				<uib-progressbar ng-hide="stateController.state === 'ERROR'" class="active" value="stateController.percentage"></uib-progressbar>
-			</div>
-		</div>
-		<div class="row" th:if="${updateError}">
-			<div class="col-md-12">
-				<div class="alert alert-danger" role="alert" th:text="#{analysis.edit.update-failed}">_Name update failed_</div>
-			</div>
-		</div>
+      .progress,
+      .progress-bar {
+        height: 4px !important;
+        border-radius: 0;
+      }
 
-	<div class="row">
-		<div class="col-md-12">
-			<p th:text="${analysisSubmission.analysisDescription}">__Analysis Description__</p>
-		</div>
-	</div>
+      .log--resizeable {
+        height: 200px;
+        resize: both;
+        overflow: auto;
+      }
 
-	<div class="row">
-		<div class="col-md-12 ng-cloak">
-				<div th:replace="templates/analysis_result_warning"></div>
-			<sub-nav>
-				<sub-nav-item th:if="${sistr}" state="sistr" text="Sistr"></sub-nav-item>
-				<sub-nav-item th:if="${bio_hansel}" state="bio_hansel" text="bio_hansel"></sub-nav-item>
-				<sub-nav-item th:if="${isCompleted}" state="preview" data:text="#{analysis.tab.preview}"></sub-nav-item>
-				<sub-nav-item th:if="${isError}" state="joberrors" data:text="#{analysis.joberror}"></sub-nav-item>
-				<sub-nav-item state="inputs" data:text="#{analysis.tab.input-files}"></sub-nav-item>
-				<th:block th:if="${isCompleted}">
-					<sub-nav-item state="provenance" data:text="#{analysis.tab.provenance}"></sub-nav-item>
-				</th:block>
-				<th:block th:if="${updatePermission}">
-					<sub-nav-item state="share" data:text="#{analysis.tab.share-results}"></sub-nav-item>
-				</th:block>
-			</sub-nav>
+      .tooltip-inner {
+        white-space: pre-wrap;
+      }
 
-			<div ui-view=""></div>
+      .sequence-file {
+        display: flex;
+        align-items: center;
+      }
 
-			<script type="text/ng-template" id="share.html">
-				<div ng-controller="ProjectShareController as shareController">
-					<div class="panel panel-default" th:if="${updatePermission}">
-						<div class="panel-heading">
-							<div class="panel-title" th:text="#{analysis.details.share.title}">_Share Results With Projects_</div>
-						</div>
-						<ul class="list-group">
-							<li class="list-group-item" ng-repeat="resp in shareController.projects">
-								<div class="checkbox">
-									<label>
-										<input type="checkbox" class="share-project" ng-model="resp.shared" ng-value="resp.project.identifier" ng-change="shareController.updateShared(resp)"/>
-										<span>{{resp.project.name}}</span>
-									</label>
-								</div>
-							</li>
-						</ul>
-					</div>
+      .sequence-file__icon {
+        margin-right: 10px;
+      }
 
-					<div class="panel panel-default" th:if="${updatePermission and canShareToSamples}">
-						<div class="panel-heading">
-							<div class="panel-title" th:text="#{analysis.details.save.samples.title}">_Save results to samples_</div>
-						</div>
-						<div class="panel-body">
-								<p th:text="#{'workflow.label.share-analysis-samples.'+${analysisType}}">_Info_</p>
-								<div th:if="${analysisSubmission.updateSamples}" th:text="#{analysis.details.save.complete}" class="alert alert-info">_Results have already been saved to the sample_</div>
-								<button id="save-to-samples" class="btn btn-default" th:text="#{analysis.details.save.samples.button}" th:disabled="${analysisSubmission.updateSamples}" ng-click="shareController.saveResults()">_Save results_</button>
-							</div>
-						</div>
-					</div>
-				</div>
-			</script>
+      .sequence-file__name {
+        flex-grow: 1;
+      }
+    </style>
+  </head>
 
-			<script type="text/ng-template" id="preview.html">
-				<div th:if="${isCompleted}" ng-controller="PreviewController as previewController">
-					<div th:if="${preview == 'tree'}">
-					<phylocanvas
-						shape="circular" config="{}" newick="{{previewController.newick}}">
-						<phylocanvas-controls>
-							<phylocanvas-control shape="rectangular"
-							                     data:text="#{phylocanvas.shape.rectangular}"></phylocanvas-control>
-							<phylocanvas-control shape="circular"
-							                     data:text="#{phylocanvas.shape.circular}"></phylocanvas-control>
-							<phylocanvas-control shape="radial"
-							                     data:text="#{phylocanvas.shape.radial}"></phylocanvas-control>
-							<phylocanvas-control shape="diagonal"
-							                     data:text="#{phylocanvas.shape.diagonal}"></phylocanvas-control>
-							<phylocanvas-control shape="hierarchy"
-							                     data:text="#{phylocanvas.shape.hierarchy}"></phylocanvas-control>
-						</phylocanvas-controls>
-						<div id="phylocanvas"></div>
-					</phylocanvas>
-					</div>
-					<div th:if="${isCompleted}" id="js-file-preview-container"></div>
-					<div th:if="${isCompleted}" id="js-messages" class="hidden"></div>
-				</div>
-				<div th:unless="${isCompleted}"></div>
-			</script>
+  <body>
+    <main layout:fragment="main">
+      <div class="row">
+        <div class="col-md-11 ng-cloak">
+          <h1>
+            <th:block th:text="${analysisSubmission.label}"></th:block>
+            <small
+              ng-hide="stateController.state === 'ERROR'"
+              ng-bind="stateController.percentage + '%'"
+            ></small>
+          </h1>
+        </div>
+        <div class="col-md-1">
+          <button
+            th:if="${updatePermission}"
+            id="editAnalysisButton"
+            data-toggle="modal"
+            data-target="#editAnalysisModal"
+            class="btn btn-sm btn-default btn-block"
+          >
+            <i class="fas fa-pencil-alt"></i>
+          </button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <uib-progressbar
+            ng-hide="stateController.state === 'ERROR'"
+            class="active"
+            value="stateController.percentage"
+          ></uib-progressbar>
+        </div>
+      </div>
+      <div class="row" th:if="${updateError}">
+        <div class="col-md-12">
+          <div
+            class="alert alert-danger"
+            role="alert"
+            th:text="#{analysis.edit.update-failed}"
+          >
+            _Name update failed_
+          </div>
+        </div>
+      </div>
 
-			<script type="text/ng-template" id="sistr.html">
-				<div ng-hide="!sistrCtrl.parse_results_error">
-					<h2 th:text="#{analysis.details.sistr.error}">_SISTR results unavailable._</h2>
-				</div>
-				<div ng-hide="sistrCtrl.parse_results_error">
-					<h2 th:text="#{analysis.details.sistr.sample.information}">_Sample information_</h2>
-					<table class="table table-bordered sistr-report">
-						<tr>
-							<th th:text="#{analysis.details.sistr.sample.information.name}">_Name_</th>
-							<td ng-bind="sistrCtrl.sample_information['name']"/>
-						</tr>
-						<tr>
-							<th th:text="#{analysis.details.sistr.sample.information.qc.status}">_Status_</th>
-							<td ng-class="{'list-group-item-success' : sistrCtrl.sample_information.qc_pass,
-								'list-group-item-warning' : sistrCtrl.sample_information.qc_warning, 'list-group-item-danger' : sistrCtrl.sample_information.qc_fail}" ng-bind="sistrCtrl.sample_information.qc_status">QC Status</td>
-						</tr>
-						<tr ng-if="!sistrCtrl.sample_information.qc_pass">
-							<th th:text="#{analysis.details.sistr.sample.information.qc.details}">_Details_</th>
-							<td>
-								<ul ng-repeat="item in sistrCtrl.sample_information.qc_messages">
-									<li ng-bind="item"/>
-								</ul>
-							</td>
-						</tr>
-					</table>
-					<br/>
-					<h2 th:text="#{analysis.details.sistr.serovar}">_Serovar Prediction_</h2>
-					<table class="table table-bordered sistr-report">
-						<tr>
-							<th th:text="#{analysis.details.sistr.serovar.overall}">_Serovar (overall)_</th>
-							<td ng-bind="sistrCtrl.result['serovar']"/>
-						</tr>
-						<tr>
-							<th th:text="#{analysis.details.sistr.serovar.antigen}">_Serovar (antigen)_</th>
-							<td ng-bind="sistrCtrl.result['serovar_antigen']"/>
-						</tr>
-						<tr>
-							<th th:text="#{analysis.details.sistr.serovar.cgmlst}">_Serovar (cgMLST)_</th>
-							<td ng-bind="sistrCtrl.result['serovar_cgmlst']"/>
-						</tr>
-						<tr>
-							<th th:text="#{analysis.details.sistr.serovar.serogroup}">_Serogroup_</th>
-							<td ng-bind="sistrCtrl.result['serogroup']"/>
-						</tr>
-						<tr>
-							<th th:text="#{analysis.details.sistr.serovar.h1}">_H1_</th>
-							<td ng-bind="sistrCtrl.result['h1']"/>
-						</tr>
-						<tr>
-							<th th:text="#{analysis.details.sistr.serovar.h2}">_H2_</th>
-							<td ng-bind="sistrCtrl.result['h2']"/>
-						</tr>
-						<tr>
-							<th th:text="#{analysis.details.sistr.serovar.o-antigen}">_O-antigen_</th>
-							<td ng-bind="sistrCtrl.result['o_antigen']"/>
-						</tr>
-					</table>
-					<h2 th:text="#{analysis.details.sistr.cgmlst}">_cgMLST330_</h2>
-					<table class="table table-bordered sistr-report">
-						<tr>
-							<th th:text="#{analysis.details.sistr.cgmlst.subspecies}">_Subspecies_</th>
-							<td ng-bind="sistrCtrl.result['cgmlst_subspecies']"/>
-						</tr>
-						<tr>
-							<th th:text="#{analysis.details.sistr.cgmlst.genome.name}">_Matching genome name_</th>
-							<td ng-bind="sistrCtrl.result['cgmlst_genome_match']"/>
-						</tr>
-						<tr>
-							<th th:text="#{analysis.details.sistr.cgmlst.alleles}">_Alleles matching genome_</th>
-							<td ng-bind="sistrCtrl.cgMLST_predictions['matching_alleles']"/>
-						</tr>
-						<tr>
-							<th th:text="#{analysis.details.sistr.cgmlst.percent}">_Percent matching_</th>
-							<td ng-bind="sistrCtrl.cgMLST_predictions['percent_matching']"/>
-						</tr>
-						<tr>
-							<th th:text="#{analysis.details.sistr.cgmlst.st}">_cgMLST Sequence Type_</th>
-							<td ng-bind="sistrCtrl.result['cgmlst_ST']"/>
-						</tr>
-					</table>
-					<h2 th:text="#{analysis.details.sistr.mash}">_Mash_</h2>
-					<table class="table table-bordered sistr-report">
-						<tr>
-							<th th:text="#{analysis.details.sistr.mash.subspecies}">_Subspecies_</th>
-							<td ng-bind="sistrCtrl.result['mash_subspecies']"/>
-						</tr>
-						<tr>
-							<th th:text="#{analysis.details.sistr.mash.serovar}">_Serovar_</th>
-							<td ng-bind="sistrCtrl.result['mash_serovar']"/>
-						</tr>
-						<tr>
-							<th th:text="#{analysis.details.sistr.mash.genome.name}">_Matching genome name_</th>
-							<td ng-bind="sistrCtrl.result['mash_genome']"/>
-						</tr>
-						<tr>
-							<th th:text="#{analysis.details.sistr.mash.distance}">_Mash distance_</th>
-							<td ng-bind="sistrCtrl.mash_predictions['distance']"/>
-						</tr>
-					</table>
-					<br/>
-					<h2 th:text="#{analysis.details.sistr.citation}">_Citation_</h2>
-					<p><a href="https://doi.org/10.1371/journal.pone.0147101">The <i>Salmonella In Silico</i> Typing Resource (SISTR): an open web-accessible tool for rapidly typing and subtyping draft Salmonella genome assemblies. Catherine Yoshida, Peter Kruczkiewicz, Chad R. Laing, Erika J. Lingohr, Victor P.J. Gannon, John H.E. Nash, Eduardo N. Taboada. <cite>PLoS ONE 11(1): e0147101. doi: 10.1371/journal.pone.0147101</cite></a></p>
-				</div>
-			</script>
+      <div class="row">
+        <div class="col-md-12">
+          <p th:text="${analysisSubmission.analysisDescription}">
+            __Analysis Description__
+          </p>
+        </div>
+      </div>
 
-            <div th:replace="~{analysis/details/ng-templates/joberror::main}"></div>
-			<div th:replace="~{analysis/details/ng-templates/bio_hansel::main}"></div>
+      <div class="row">
+        <div class="col-md-12 ng-cloak">
+          <div th:replace="templates/analysis_result_warning"></div>
+          <sub-nav>
+            <sub-nav-item
+              th:if="${sistr}"
+              state="sistr"
+              text="Sistr"
+            ></sub-nav-item>
+            <sub-nav-item
+              th:if="${bio_hansel}"
+              state="bio_hansel"
+              text="bio_hansel"
+            ></sub-nav-item>
+            <sub-nav-item
+              th:if="${isCompleted}"
+              state="preview"
+              data:text="#{analysis.tab.preview}"
+            ></sub-nav-item>
+            <sub-nav-item
+              th:if="${isError}"
+              state="joberrors"
+              data:text="#{analysis.joberror}"
+            ></sub-nav-item>
+            <sub-nav-item
+              state="inputs"
+              data:text="#{analysis.tab.input-files}"
+            ></sub-nav-item>
+            <th:block th:if="${isCompleted}">
+              <sub-nav-item
+                state="provenance"
+                data:text="#{analysis.tab.provenance}"
+              ></sub-nav-item>
+            </th:block>
+            <th:block th:if="${updatePermission}">
+              <sub-nav-item
+                state="share"
+                data:text="#{analysis.tab.share-results}"
+              ></sub-nav-item>
+            </th:block>
+          </sub-nav>
 
-			<script type="text/ng-template" id="inputs.html" th:with="fileCount = ${#lists.size(paired_end)}">
-				<th:block th:if="${referenceFile}">
-					<h2 th:text="#{analysis.details.reference}"></h2>
-					<span th:text="${referenceFile.label}"></span>
-					<a class="btn btn-default btn-sm pull-right" th:href="@{/referenceFiles/download/{id}(id=${referenceFile.id})}">
-                        <i class="fas fa-download spaced-right__sm"></i>
-                        <th:block th:text="#{form.download}">__Download__</th:block>
-					</a>
-				</th:block>
-			
-				<h2 th:text="#{analysis.details.reads}"></h2>
-				<table th:if="${fileCount > 0}" class="table">
-					<th:block th:each="pair : ${paired_end}">
-						<tr class="paired_end paired_end__forward">
-							<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${pair},file=${pair.getForwardSequenceFile()},icon='forward',relative='false')"></td>
-						</tr>
-						<tr class="paired_end paired_end__reverse">
-							<td th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${pair},file=${pair.getReverseSequenceFile()},icon='reverse',relative='false')"></td>
-						</tr>
-					</th:block>
-				</table>
-				<div class="alert alert-info" th:unless="${fileCount > 0}" th:text="#{analysis.input-files.no-paired-end}">
-					__NO_PAIRED_END_DATA_
-				</div>
+          <div ui-view=""></div>
 
-			</script>
+          <script type="text/ng-template" id="share.html">
+            <div ng-controller="ProjectShareController as shareController">
+            	<div class="panel panel-default" th:if="${updatePermission}">
+            		<div class="panel-heading">
+            			<div class="panel-title" th:text="#{analysis.details.share.title}">_Share Results With
+            				Projects_
+            			</div>
+            		</div>
+            		<ul class="list-group">
+            			<li class="list-group-item" ng-repeat="resp in shareController.projects">
+            				<div class="checkbox">
+            					<label>
+            						<input type="checkbox" class="share-project" ng-model="resp.shared"
+            							   ng-value="resp.project.identifier"
+            							   ng-change="shareController.updateShared(resp)"/>
+            						<span>{{resp.project.name}}</span>
+            					</label>
+            				</div>
+            			</li>
+            		</ul>
+            	</div>
 
-			<script type="text/ng-template" id="provenance.html">
-				<div th:if="${isCompleted}" th:with="files=${analysis.getAnalysisOutputFiles()}">
-					<accordion>
-						<accordion-group class="file-info" th:each="file : ${files}">
-							<accordion-heading class="filename">
-                                <i class="far fa-file spaced-right__sm"></i>
-								<span class="name" th:text="${file.getLabel()}"></span>
-							</accordion-heading>
-							<div th:include="analysis/details/details :: toolsLayout (${file.getCreatedByTool()})"></div>
-						</accordion-group>
-					</accordion>
-					<div th:fragment="toolsLayout (tools)">
-						<div th:each="tool : ${tools}" style="margin-left: 2rem;"
-						     th:with="toolId=${'tool' + tool.getId()}"
-						     data:ng-init="${toolId + '=false'}">
-							<button data:ng-click="${toolId + '=!' + toolId}" class="btn btn-link tool">
-                                <span class="fas fa-chevron-right" data:ng-hide="${toolId}" aria-hidden="true"></span>
-                                <span class="fas fa-chevron-down" data:ng-show="${toolId}" aria-hidden="true"></span>
-								&nbsp;<span th:text="${tool.getLabel()}"></span>
-							</button>
+            	<div class="panel panel-default" th:if="${updatePermission and canShareToSamples}">
+            		<div class="panel-heading">
+            			<div class="panel-title" th:text="#{analysis.details.save.samples.title}">_Save results to
+            				samples_
+            			</div>
+            		</div>
+            		<div class="panel-body">
+            			<p th:text="#{'workflow.label.share-analysis-samples.'+${analysisType}}">_Info_</p>
+            			<div th:if="${analysisSubmission.updateSamples}" th:text="#{analysis.details.save.complete}"
+            				 class="alert alert-info">_Results have already been saved to the sample_
+            			</div>
+            			<button id="save-to-samples" class="btn btn-default"
+            					th:text="#{analysis.details.save.samples.button}"
+            					th:disabled="${analysisSubmission.updateSamples}"
+            					ng-click="shareController.saveResults()">_Save results_
+            			</button>
+            		</div>
+            	</div>
+            </div>
+            </div>
+          </script>
 
-							<!--/*
-								For every tool used to create the analysis, Thymeleaf will load this template, recursively finding
-								all tools and their parameters.
-								Initial tool: AnalysisOutputFile.createByTool
-							*/-->
-							<div data:ng-show="${toolId}" class="parameters">
-								<table class="table">
-									<tr class="parameter" th:each="parameter : ${tool.getExecutionTimeParameters()}">
-										<td class="para-key" th:text="${parameter.key}"></td>
-										<td class="para-value" th:text="${parameter.value}"></td>
-									</tr>
-								</table>
-							</div>
-							<div th:include="analysis/details/details :: toolsLayout (${tool.previousSteps})"></div>
-						</div>
-					</div>
-				</div>
-				<div th:unless="${isCompleted}"></div>
-			</script>
-		</div>
-	</div>
+          <script type="text/ng-template" id="preview.html">
+            <div th:if="${isCompleted}" ng-controller="PreviewController as previewController">
+            	<div th:if="${preview == 'tree'}">
+            		<phylocanvas
+            				shape="circular" config="{}" newick="{{previewController.newick}}">
+            			<phylocanvas-controls>
+            				<phylocanvas-control shape="rectangular"
+            									 data:text="#{phylocanvas.shape.rectangular}"></phylocanvas-control>
+            				<phylocanvas-control shape="circular"
+            									 data:text="#{phylocanvas.shape.circular}"></phylocanvas-control>
+            				<phylocanvas-control shape="radial"
+            									 data:text="#{phylocanvas.shape.radial}"></phylocanvas-control>
+            				<phylocanvas-control shape="diagonal"
+            									 data:text="#{phylocanvas.shape.diagonal}"></phylocanvas-control>
+            				<phylocanvas-control shape="hierarchy"
+            									 data:text="#{phylocanvas.shape.hierarchy}"></phylocanvas-control>
+            			</phylocanvas-controls>
+            			<div id="phylocanvas"></div>
+            		</phylocanvas>
+            	</div>
+            	<div th:if="${isCompleted}" id="js-file-preview-container"></div>
+            	<div th:if="${isCompleted}" id="js-messages" class="hidden"></div>
+            </div>
+            <div th:unless="${isCompleted}"></div>
+          </script>
 
-	<div class="modal fade" id="editAnalysisModal" tabindex="-1" role="dialog">
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<h4 class="modal-title" th:text="#{analysis.edit.title}">_Edit Analysis Name_</h4>
-				</div>
-				<form th:action="@{/analysis/{aid}/edit(aid=${analysisSubmission.getId()})}" method="POST">
-					<div class="modal-body">
-						<div class="form-group">
-							<label for="analysis-name-input" th:text="#{analysis.edit.name}">_Analysis Name_</label>
-							<input type="text" class="form-control" id="analysis-name-input" name="name" th:value="${analysisSubmission.name}"/>
-						</div>
-						<div class="form-group" sec:authorize="hasRole('ROLE_ADMIN')" th:if="${analysisSubmission.analysisState == T(ca.corefacility.bioinformatics.irida.model.enums.AnalysisState).NEW}">
-								<label for="analysis-name-input" th:text="#{analysis.edit.priority}">_Analysis Name_</label>
-								
-								<select class="form-control" name="priority" id="analysis-edit-priority">
-										<option 
-										  th:each="priority : ${T(ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission.Priority).values()}" 
-										  th:text="${priority}" th:value="${priority}" th:selected="${analysisSubmission.priority == priority}">_High_</option>
-									  </select>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal" th:text="#{form.btn.cancel}">Close</button>
-						<button type="submit" class="btn btn-primary" th:text="#{form.btn.update}">_Update_</button>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-</main>
+          <script type="text/ng-template" id="sistr.html">
+            <div ng-hide="!sistrCtrl.parse_results_error">
+            	<h2 th:text="#{analysis.details.sistr.error}">_SISTR results unavailable._</h2>
+            </div>
+            <div ng-hide="sistrCtrl.parse_results_error">
+            	<h2 th:text="#{analysis.details.sistr.sample.information}">_Sample information_</h2>
+            	<table class="table table-bordered sistr-report">
+            		<tr>
+            			<th th:text="#{analysis.details.sistr.sample.information.name}">_Name_</th>
+            			<td ng-bind="sistrCtrl.sample_information['name']"/>
+            		</tr>
+            		<tr>
+            			<th th:text="#{analysis.details.sistr.sample.information.qc.status}">_Status_</th>
+            			<td ng-class="{'list-group-item-success' : sistrCtrl.sample_information.qc_pass,
+                    				'list-group-item-warning' : sistrCtrl.sample_information.qc_warning, 'list-group-item-danger' : sistrCtrl.sample_information.qc_fail}"
+            				ng-bind="sistrCtrl.sample_information.qc_status">QC Status
+            			</td>
+            		</tr>
+            		<tr ng-if="!sistrCtrl.sample_information.qc_pass">
+            			<th th:text="#{analysis.details.sistr.sample.information.qc.details}">_Details_</th>
+            			<td>
+            				<ul ng-repeat="item in sistrCtrl.sample_information.qc_messages">
+            					<li ng-bind="item"/>
+            				</ul>
+            			</td>
+            		</tr>
+            	</table>
+            	<br/>
+            	<h2 th:text="#{analysis.details.sistr.serovar}">_Serovar Prediction_</h2>
+            	<table class="table table-bordered sistr-report">
+            		<tr>
+            			<th th:text="#{analysis.details.sistr.serovar.overall}">_Serovar (overall)_</th>
+            			<td ng-bind="sistrCtrl.result['serovar']"/>
+            		</tr>
+            		<tr>
+            			<th th:text="#{analysis.details.sistr.serovar.antigen}">_Serovar (antigen)_</th>
+            			<td ng-bind="sistrCtrl.result['serovar_antigen']"/>
+            		</tr>
+            		<tr>
+            			<th th:text="#{analysis.details.sistr.serovar.cgmlst}">_Serovar (cgMLST)_</th>
+            			<td ng-bind="sistrCtrl.result['serovar_cgmlst']"/>
+            		</tr>
+            		<tr>
+            			<th th:text="#{analysis.details.sistr.serovar.serogroup}">_Serogroup_</th>
+            			<td ng-bind="sistrCtrl.result['serogroup']"/>
+            		</tr>
+            		<tr>
+            			<th th:text="#{analysis.details.sistr.serovar.h1}">_H1_</th>
+            			<td ng-bind="sistrCtrl.result['h1']"/>
+            		</tr>
+            		<tr>
+            			<th th:text="#{analysis.details.sistr.serovar.h2}">_H2_</th>
+            			<td ng-bind="sistrCtrl.result['h2']"/>
+            		</tr>
+            		<tr>
+            			<th th:text="#{analysis.details.sistr.serovar.o-antigen}">_O-antigen_</th>
+            			<td ng-bind="sistrCtrl.result['o_antigen']"/>
+            		</tr>
+            	</table>
+            	<h2 th:text="#{analysis.details.sistr.cgmlst}">_cgMLST330_</h2>
+            	<table class="table table-bordered sistr-report">
+            		<tr>
+            			<th th:text="#{analysis.details.sistr.cgmlst.subspecies}">_Subspecies_</th>
+            			<td ng-bind="sistrCtrl.result['cgmlst_subspecies']"/>
+            		</tr>
+            		<tr>
+            			<th th:text="#{analysis.details.sistr.cgmlst.genome.name}">_Matching genome name_</th>
+            			<td ng-bind="sistrCtrl.result['cgmlst_genome_match']"/>
+            		</tr>
+            		<tr>
+            			<th th:text="#{analysis.details.sistr.cgmlst.alleles}">_Alleles matching genome_</th>
+            			<td ng-bind="sistrCtrl.cgMLST_predictions['matching_alleles']"/>
+            		</tr>
+            		<tr>
+            			<th th:text="#{analysis.details.sistr.cgmlst.percent}">_Percent matching_</th>
+            			<td ng-bind="sistrCtrl.cgMLST_predictions['percent_matching']"/>
+            		</tr>
+            		<tr>
+            			<th th:text="#{analysis.details.sistr.cgmlst.st}">_cgMLST Sequence Type_</th>
+            			<td ng-bind="sistrCtrl.result['cgmlst_ST']"/>
+            		</tr>
+            	</table>
+            	<h2 th:text="#{analysis.details.sistr.mash}">_Mash_</h2>
+            	<table class="table table-bordered sistr-report">
+            		<tr>
+            			<th th:text="#{analysis.details.sistr.mash.subspecies}">_Subspecies_</th>
+            			<td ng-bind="sistrCtrl.result['mash_subspecies']"/>
+            		</tr>
+            		<tr>
+            			<th th:text="#{analysis.details.sistr.mash.serovar}">_Serovar_</th>
+            			<td ng-bind="sistrCtrl.result['mash_serovar']"/>
+            		</tr>
+            		<tr>
+            			<th th:text="#{analysis.details.sistr.mash.genome.name}">_Matching genome name_</th>
+            			<td ng-bind="sistrCtrl.result['mash_genome']"/>
+            		</tr>
+            		<tr>
+            			<th th:text="#{analysis.details.sistr.mash.distance}">_Mash distance_</th>
+            			<td ng-bind="sistrCtrl.mash_predictions['distance']"/>
+            		</tr>
+            	</table>
+            	<br/>
+            	<h2 th:text="#{analysis.details.sistr.citation}">_Citation_</h2>
+            	<p><a href="https://doi.org/10.1371/journal.pone.0147101">The <i>Salmonella In Silico</i> Typing
+            		Resource (SISTR): an open web-accessible tool for rapidly typing and subtyping draft Salmonella
+            		genome assemblies. Catherine Yoshida, Peter Kruczkiewicz, Chad R. Laing, Erika J. Lingohr,
+            		Victor P.J. Gannon, John H.E. Nash, Eduardo N. Taboada. <cite>PLoS ONE 11(1): e0147101. doi:
+            			10.1371/journal.pone.0147101</cite></a></p>
+            </div>
+          </script>
 
-</body>
+          <div
+            th:replace="~{analysis/details/ng-templates/joberror::main}"
+          ></div>
+          <div
+            th:replace="~{analysis/details/ng-templates/bio_hansel::main}"
+          ></div>
 
+          <script
+            type="text/ng-template"
+            id="inputs.html"
+            th:with="fileCount = ${#lists.size(paired_end)}"
+          >
+			  <th:block th:if="${referenceFile}">
+				  <h2 th:text="#{analysis.details.reference}"></h2>
+				  <span th:text="${referenceFile.label}"></span>
+				  <a class="btn btn-default btn-sm pull-right"
+					 th:href="@{/referenceFiles/download/{id}(id=${referenceFile.id})}">
+					  <i class="fas fa-download spaced-right__sm"></i>
+					  <th:block th:text="#{form.download}">__Download__</th:block>
+				  </a>
+			  </th:block>
+
+			  <h2 th:text="#{analysis.details.reads}"></h2>
+			  <div th:if="${fileCount > 0}">
+				  <ul class="list-group">
+					  <li class="list-group-item t-paired-end" th:each="pair : ${paired_end}">
+						  <h4 class="list-group-item-heading" th:if="${pair.sample}">
+							  <a target="_blank" th:href="@{/samples/{id}/details(id=${pair.sample.id})}">
+								  <i class="fas fa-flask"></i>
+								  <span th:text="${pair.sample.sampleName}"></span>
+							  </a>
+						  </h4>
+						  <h4 th:unless="${pair.sample}">
+							  <i class="far fa-times-circle"></i>
+							  <span th:text="#{analysis.details.input.no-sample}">_NO_ONE_HOME_</span>
+						  </h4>
+            <hr style="margin: 10px 0">
+                     			<div th:with="forward=${pair.sequenceFilePair.getForwardSequenceFile()}" class="sequence-file">
+                     				<i class="fas fa-arrow-right sequence-file__icon"></i> <span class="sequence-file__name"><a
+                 th:href="@{/sequenceFiles/{id}/file/{fileId}/summary(id=${pair.id}, fileId=${forward.id})}"
+                 th:text="${forward.label}"></a></span>
+                     				<span th:text="${forward.getFileSize()}"></span>
+                     			</div>
+                     			<div th:with="reverse=${pair.sequenceFilePair.getReverseSequenceFile()}" class="sequence-file">
+                     				<i class="fas fa-arrow-left sequence-file__icon"></i> <span class="sequence-file__name"><a
+                 th:href="@{/sequenceFiles/{id}/file/{fileId}/summary(id=${pair.id}, fileId=${reverse.id})}"
+                 th:text="${reverse.label}"></a></span> <span th:text="${reverse.getFileSize()}"></span>
+                     			</div>
+                     		</li>
+                     	</ul>
+                     </div>
+                     <div class="alert alert-info" th:unless="${fileCount > 0}"
+                     	 th:text="#{analysis.input-files.no-paired-end}">
+                     	__NO_PAIRED_END_DATA_
+                     </div>
+          </script>
+
+          <script type="text/ng-template" id="provenance.html">
+            <div th:if="${isCompleted}" th:with="files=${analysis.getAnalysisOutputFiles()}">
+            	<accordion>
+            		<accordion-group class="file-info" th:each="file : ${files}">
+            			<accordion-heading class="filename">
+            				<i class="far fa-file spaced-right__sm"></i>
+            				<span class="name" th:text="${file.getLabel()}"></span>
+            			</accordion-heading>
+            			<div th:include="analysis/details/details :: toolsLayout (${file.getCreatedByTool()})"></div>
+            		</accordion-group>
+            	</accordion>
+            	<div th:fragment="toolsLayout (tools)">
+            		<div th:each="tool : ${tools}" style="margin-left: 2rem;"
+            			 th:with="toolId=${'tool' + tool.getId()}"
+            			 data:ng-init="${toolId + '=false'}">
+            			<button data:ng-click="${toolId + '=!' + toolId}" class="btn btn-link tool">
+            				<span class="fas fa-chevron-right" data:ng-hide="${toolId}" aria-hidden="true"></span>
+            				<span class="fas fa-chevron-down" data:ng-show="${toolId}" aria-hidden="true"></span>
+            				&nbsp;<span th:text="${tool.getLabel()}"></span>
+            			</button>
+
+            			<!--/*
+                                        For every tool used to create the analysis, Thymeleaf will load this template, recursively finding
+                                        all tools and their parameters.
+                                        Initial tool: AnalysisOutputFile.createByTool
+                                    */-->
+            			<div data:ng-show="${toolId}" class="parameters">
+            				<table class="table">
+            					<tr class="parameter" th:each="parameter : ${tool.getExecutionTimeParameters()}">
+            						<td class="para-key" th:text="${parameter.key}"></td>
+            						<td class="para-value" th:text="${parameter.value}"></td>
+            					</tr>
+            				</table>
+            			</div>
+            			<div th:include="analysis/details/details :: toolsLayout (${tool.previousSteps})"></div>
+            		</div>
+            	</div>
+            </div>
+            <div th:unless="${isCompleted}"></div>
+          </script>
+        </div>
+      </div>
+
+      <div
+        class="modal fade"
+        id="editAnalysisModal"
+        tabindex="-1"
+        role="dialog"
+      >
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+              <h4 class="modal-title" th:text="#{analysis.edit.title}">
+                _Edit Analysis Name_
+              </h4>
+            </div>
+            <form
+              th:action="@{/analysis/{aid}/edit(aid=${analysisSubmission.getId()})}"
+              method="POST"
+            >
+              <div class="modal-body">
+                <div class="form-group">
+                  <label
+                    for="analysis-name-input"
+                    th:text="#{analysis.edit.name}"
+                    >_Analysis Name_</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="analysis-name-input"
+                    name="name"
+                    th:value="${analysisSubmission.name}"
+                  />
+                </div>
+                <div
+                  class="form-group"
+                  sec:authorize="hasRole('ROLE_ADMIN')"
+                  th:if="${analysisSubmission.analysisState == T(ca.corefacility.bioinformatics.irida.model.enums.AnalysisState).NEW}"
+                >
+                  <label
+                    for="analysis-name-input"
+                    th:text="#{analysis.edit.priority}"
+                    >_Analysis Name_</label
+                  >
+
+                  <select
+                    class="form-control"
+                    name="priority"
+                    id="analysis-edit-priority"
+                  >
+                    <option
+                      th:each="priority : ${T(ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission.Priority).values()}"
+                      th:text="${priority}"
+                      th:value="${priority}"
+                      th:selected="${analysisSubmission.priority == priority}"
+                      >_High_
+                    </option>
+                  </select>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-default"
+                  data-dismiss="modal"
+                  th:text="#{form.btn.cancel}"
+                >
+                  Close
+                </button>
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  th:text="#{form.btn.update}"
+                >
+                  _Update_
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
 </html>

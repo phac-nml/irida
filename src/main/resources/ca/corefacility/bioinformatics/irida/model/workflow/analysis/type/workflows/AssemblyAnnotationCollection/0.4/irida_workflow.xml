@@ -10,38 +10,40 @@
     </inputs>
     <parameters>
         <parameter name="shovill-1-adv.mincov" defaultValue="2">
-            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/0.9.0" parameterName="adv.mincov"/>
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4" parameterName="adv.mincov"/>
         </parameter>
         <parameter name="shovill-1-adv.depth" defaultValue="100">
-            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/0.9.0" parameterName="adv.depth"/>
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4" parameterName="adv.depth"/>
         </parameter>
-        <parameter name="shovill-1-nocorr" defaultValue="false">
-            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/0.9.0" parameterName="nocorr"/>
+        <parameter name="shovill-1-adv.nocorr" defaultValue="false">
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4" parameterName="adv.nocorr"/>
         </parameter>
         <parameter name="shovill-1-trim" defaultValue="false">
-            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/0.9.0" parameterName="trim"/>
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4" parameterName="trim"/>
         </parameter>
         <parameter name="shovill-1-adv.gsize" defaultValue="">
-            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/0.9.0" parameterName="adv.gsize"/>
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4" parameterName="adv.gsize"/>
         </parameter>
         <parameter name="shovill-1-adv.kmers" defaultValue="">
-            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/0.9.0" parameterName="adv.kmers"/>
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4" parameterName="adv.kmers"/>
         </parameter>
         <parameter name="shovill-1-adv.minlen" defaultValue="0">
-            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/0.9.0" parameterName="adv.minlen"/>
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4" parameterName="adv.minlen"/>
         </parameter>
         <parameter name="shovill-1-adv.namefmt" defaultValue="contig%05d">
-            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/0.9.0" parameterName="adv.namefmt"/>
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4" parameterName="adv.namefmt"/>
         </parameter>
         <parameter name="shovill-1-adv.opts" defaultValue="">
-            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/0.9.0" parameterName="adv.opts"/>
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4" parameterName="adv.opts"/>
+        </parameter>
+        <parameter name="shovill-1-assembler" defaultValue="spades">
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4" parameterName="assembler"/>
         </parameter>
         <parameter name="quast-2-min_contig" defaultValue="500">
-            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/quast/quast/4.6.3" parameterName="min_contig"/>
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/quast/quast/5.0.2" parameterName="min_contig"/>
         </parameter>
         <parameter name="quast-2-threshold_contig" defaultValue="0,1000">
-            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/quast/quast/4.6.3"
-                           parameterName="threshold_contig"/>
+            <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/iuc/quast/quast/5.0.2" parameterName="threshold_contig"/>
         </parameter>
         <parameter name="prokka-6-evalue" defaultValue="1e-06">
             <toolParameter toolId="toolshed.g2.bx.psu.edu/repos/crs4/prokka/prokka/1.13" parameterName="evalue"/>
@@ -83,7 +85,6 @@
         <output name="prokka.sqn.zip" fileName="prokka.sqn.zip"/>
         <output name="prokka.tbl.zip" fileName="prokka.tbl.zip"/>
         <output name="quast.html.zip" fileName="quast.html.zip"/>
-        <output name="quast-contig_size_viewer.html.zip" fileName="quast-contig_size_viewer.html.zip"/>
         <output name="quast.pdf" fileName="quast.pdf"/>
         <output name="shovill.log.zip" fileName="shovill.log.zip"/>
         <output name="quast.log" fileName="quast.log"/>
@@ -95,7 +96,13 @@
             <name>shovill</name>
             <owner>iuc</owner>
             <url>https://toolshed.g2.bx.psu.edu</url>
-            <revision>57d5928f456e</revision>
+            <revision>865119fcb694</revision>
+        </repository>
+        <repository>
+            <name>quast</name>
+            <owner>iuc</owner>
+            <url>https://toolshed.g2.bx.psu.edu</url>
+            <revision>81df4950d65b</revision>
         </repository>
         <repository>
             <name>bundle_collections</name>
@@ -108,12 +115,6 @@
             <owner>crs4</owner>
             <url>https://toolshed.g2.bx.psu.edu</url>
             <revision>eaee459f3d69</revision>
-        </repository>
-        <repository>
-            <name>quast</name>
-            <owner>iuc</owner>
-            <url>https://toolshed.g2.bx.psu.edu</url>
-            <revision>0834c823d4b9</revision>
         </repository>
     </toolRepositories>
 </iridaWorkflow>
