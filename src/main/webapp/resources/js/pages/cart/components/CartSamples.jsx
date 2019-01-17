@@ -173,7 +173,7 @@ class CartSamplesComponent extends React.Component {
             frameworkComponents={{ SampleRenderer }}
             onGridReady={this.onGridReady}
             rowHeight={80}
-            enableFilter={true}
+            filter={true}
             suppressHorizontalScroll={true}
           />
         </div>
