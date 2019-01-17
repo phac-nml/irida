@@ -23,7 +23,7 @@ const Heading = styled.h4`
   padding: 0 15px;
   overflow-x: hidden;
   word-break: break-word;
-  height: 50px;
+  height: 42px;
 `;
 
 export default class Pipeline extends React.Component {
