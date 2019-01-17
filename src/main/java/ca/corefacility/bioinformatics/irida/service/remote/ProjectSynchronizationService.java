@@ -361,6 +361,9 @@ public class ProjectSynchronizationService {
 	 */
 	public Sample syncSampleMetadata(Sample sample){
 		Map<String, MetadataEntry> sampleMetadata = sampleRemoteService.getSampleMetadata(sample);
+		
+		sampleMetadata.values().forEach(e -> e.setId(null));
+		
 		Map<MetadataTemplateField, MetadataEntry> metadata = metadataTemplateService.getMetadataMap(sampleMetadata);
 		sample.setMetadata(metadata);
 		

@@ -31,6 +31,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
@@ -54,9 +57,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProjectS
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 
 /**
  * Controller for handling interactions with samples in a project
@@ -497,6 +497,7 @@ public class ProjectSamplesController {
 	 * Get a list of all {@link Sample} ids in a {@link Project}
 	 *
 	 * @param projectId            Identifier for the current project
+	 * @param params               {@link DataTablesParams}
 	 * @param sampleNames          {@link List} of sample names that the {@link Project} {@link Sample}s is currently filtered by.
 	 * @param associatedProjectIds {@link List} of associated {@link Project} identifiers
 	 * @param search               The global filter for the table
@@ -506,6 +507,7 @@ public class ProjectSamplesController {
 	@RequestMapping(value = "/projects/{projectId}/ajax/sampleIds", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, List<String>> getAllProjectSampleIds(@PathVariable Long projectId,
+			@DataTablesRequest DataTablesParams params,
 			@RequestParam(required = false, defaultValue = "", value = "sampleNames[]") List<String> sampleNames,
 			@RequestParam(value = "associated[]", required = false, defaultValue = "") List<Long> associatedProjectIds,
 			@RequestParam(required = false, defaultValue = "") String search, UISampleFilter filter) {
@@ -518,8 +520,8 @@ public class ProjectSamplesController {
 
 		Sort sort = new Sort(Direction.ASC, "id");
 		final Page<ProjectSampleJoin> page = sampleService.getFilteredSamplesForProjects(projects, sampleNames,
-				filter.getName(), search, filter.getOrganism(), filter.getStartDate(), filter.getEndDate(), 0,
-				Integer.MAX_VALUE, sort);
+				filter.getName(), params.getSearchValue(), filter.getOrganism(), filter.getStartDate(),
+				filter.getEndDate(), 0, Integer.MAX_VALUE, params.getSort());
 
 		// Converting everything to a string for consumption by the UI.
 		Map<String, List<String>> result = new HashMap<>();
