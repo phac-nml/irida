@@ -351,8 +351,8 @@ public class LineListController {
 		iconField.setLockPosition(true);
 		iconField.setCheckboxSelection(true);
 		iconField.setHeaderCheckboxSelection(true);
-		iconField.setSuppressFilter(true);
-		iconField.setSuppressResize(true);
+		iconField.setFilter(false);
+		iconField.setResizable(false);
 		fields.add(0, iconField);
 
 		return fields;
