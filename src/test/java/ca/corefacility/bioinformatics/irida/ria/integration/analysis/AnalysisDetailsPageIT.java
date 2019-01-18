@@ -1,19 +1,21 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.analysis;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis.AnalysisDetailsPage;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static junit.framework.TestCase.assertFalse;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import static junit.framework.TestCase.assertFalse;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis.AnalysisDetailsPage;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/analysis/AnalysisAdminView.xml")
 public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
@@ -40,7 +42,8 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		// Ensure the input files are displayed
 		// 2 Files expected since they are a pair.
 		page.displayInputFilesTab();
-		assertEquals("Should display 1 pair of paired end files", 2, page.getNumberOfPairedEndInputFiles());
+		assertEquals("Should display 2 pairs of paired end files", 2, page.getNumberOfSamplesInAnalysis());
+		assertEquals("Sample 1 should not be related to a sample", "Unknown Sample", page.getLabelForSample(0));
 	}
 
 	@Test

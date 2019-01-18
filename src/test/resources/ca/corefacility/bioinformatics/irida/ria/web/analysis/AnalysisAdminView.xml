@@ -5,6 +5,8 @@
 
     <sample id="1" createdDate="2013-07-18 14:20:19.0" description="description1"
              sampleName="sample1"/>
+    <sample id="2" createdDate="2013-07-18 14:20:19.0" description="description1"
+            sampleName="sample2"/>
 
     <project_sample id="1" createdDate="2013-07-18 14:20:19.0"
                     project_id="1" sample_id="1" owner="true" />
@@ -28,6 +30,14 @@
 		file_revision_number="1" modified_date="2014-08-06 10:01:03"
 		file_path="src/test/resources/files/sequence-files/02-2222_S1_L001_R2_001.fastq" />
 
+    <sequence_file id="3" created_date="2013-08-20 14:21:19.0"
+                   modified_date="2013-07-18 14:20:19.0"
+                   file_path="src/test/resources/files/sequence-files/03-3333_S1_L001_R1_001.fastq"
+                   file_revision_number="1"/>
+    <sequence_file id="4" created_date="2014-08-20 08:24:34"
+                   file_revision_number="1" modified_date="2014-08-06 10:01:03"
+                   file_path="src/test/resources/files/sequence-files/03-3333_S1_L001_F2_001.fastq"/>
+
     <user id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
           email="manager@nowhere.com" firstName="Mr." lastName="Manager"
           password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
@@ -42,12 +52,17 @@
 
 	<sequencing_object id="1" created_date="2014-07-30 08:24:34"
 		sequencing_run_id="1" />
+    <sequencing_object id="2" created_date="2014-08-01 08:24:34"
+		sequencing_run_id="1" />
 	<sequence_file_pair id="1" />
-	
+	<sequence_file_pair id="2" />
+
 	<sample_sequencingobject id="1" sample_id="1" sequencingobject_id="1" created_date="2013-07-18 14:20:19.0" />
 
     <sequence_file_pair_files pair_id="1" files_id="1" />
     <sequence_file_pair_files pair_id="1" files_id="2" />
+    <sequence_file_pair_files pair_id="2" files_id="3"/>
+    <sequence_file_pair_files pair_id="2" files_id="4"/>
 
 	<analysis id="1" createdDate="2014-02-06 12:01:02"
 		executionManagerAnalysisId="Whole Genome Phylogenomics Pipeline"
@@ -108,4 +123,5 @@
     <analysis_output_file_map analysis_id="1" analysisOutputFilesMap_id="1" analysis_output_file_key="tree" />
 
     <analysis_submission_sequencing_object analysis_submission_id="4" sequencing_object_id="1" />
+    <analysis_submission_sequencing_object analysis_submission_id="4" sequencing_object_id="2" />
 </dataset>
