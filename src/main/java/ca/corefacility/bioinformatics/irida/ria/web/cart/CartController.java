@@ -107,8 +107,8 @@ public class CartController {
 
 	@RequestMapping(value = "/sample", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public void removeSamplesFromCart(@RequestBody RemoveSampleRequest removeSampleRequest) {
-		cart.removeSampleFromCart(removeSampleRequest);
+	public RemoveSampleResponse removeSamplesFromCart(@RequestBody RemoveSampleRequest removeSampleRequest) {
+		return cart.removeSampleFromCart(removeSampleRequest);
 	}
 
 	/**

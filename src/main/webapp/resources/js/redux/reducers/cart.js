@@ -1,10 +1,12 @@
 import { CART } from "../../utilities/events-utilities";
-import { cartPageTypes } from "../../pages/cart/reducer";
 
 export const types = {
   INITIALIZED: "CART/INITIALIZED",
   ADD: "CART/ADD",
-  UPDATED: "CART/UPDATED"
+  UPDATED: "CART/UPDATED",
+  CART_EMPTY: "CART/EMPTY",
+  CART_EMPTY_SUCCESS: "CART/EMPTY_SUCCESS",
+  REMOVE_SAMPLE: "CART/REMOVE_SAMPLE"
 };
 
 const initialState = { count: 0, initialized: false };
@@ -25,7 +27,7 @@ export const reducer = (state = initialState, action = {}) => {
         })
       );
       return { ...state, ...{ count: action.response.count } };
-    case cartPageTypes.CART_EMPTY_SUCCESS:
+    case types.CART_EMPTY_SUCCESS:
       return { ...state, count: 0 };
     default:
       return { ...state };
@@ -35,5 +37,13 @@ export const reducer = (state = initialState, action = {}) => {
 export const actions = {
   initialized: count => ({ type: types.INITIALIZED, count }),
   add: samples => ({ type: types.ADD, samples }),
-  updated: response => ({ type: types.UPDATED, response })
+  updated: response => ({ type: types.UPDATED, response }),
+  emptyCart: () => ({ types: cartPageTypes.CART_EMPTY }),
+  removeSample: (projectId, sampleId) => ({
+    type: types.REMOVE_SAMPLE,
+    payload: {
+      projectId,
+      sampleId
+    }
+  })
 };

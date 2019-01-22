@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { sampleDetailsActions } from "../../../components/SampleDetails";
-import { cartPageActions } from "../reducer";
+import { actions } from "../../../redux/reducers/cart";
 import { Button, Col, Icon, Row, Tooltip } from "antd";
 import { COLOURS } from "../../../styles";
 
@@ -10,11 +10,7 @@ export default class SampleRenderer extends React.Component {
 
   displaySample = () => this.props.displaySample(this.props.data);
 
-  removeSample = () =>
-    this.props.removeSample({
-      sampleId: this.props.data.id,
-      projectId: this.props.data.project.id
-    });
+  removeSample = () => this.props.api.removeSample(this.props.rowIndex, this.props.data);
 
   render() {
     const sample = this.props.data;
@@ -50,8 +46,7 @@ const mapStateToProps = state => ({});
 
 const mapDispatchToProps = dispatch => ({
   displaySample: sample => dispatch(sampleDetailsActions.displaySample(sample)),
-  emptyCart: () => dispatch(cartPageActions.emptyCart()),
-  removeSample: data => dispatch(cartPageActions.removeSample(data))
+  emptyCart: () => dispatch(actions.emptyCart())
 });
 
 const CartSampleRenderer = connect(

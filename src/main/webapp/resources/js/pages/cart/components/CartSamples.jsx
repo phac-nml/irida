@@ -6,10 +6,11 @@ import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-balham.css";
 import { Button, Col, Input, Row } from "antd";
 import styled from "styled-components";
-import { cartPageActions } from "../reducer";
+import { actions } from "../../../redux/reducers/cart";
 import { sampleDetailsActions } from "../../../components/SampleDetails/reducer";
 import { CartSampleRenderer } from "./SampleRenderer";
 import { COLOURS, SPACING } from "../../../styles";
+import { getCartIds, getSamplesForProject } from "../../../apis/cart/cart";
 
 const { Search } = Input;
 
@@ -37,7 +38,6 @@ const CartTools = styled(Row)`
 class CartSamplesComponent extends React.Component {
   static propTypes = {
     count: PropTypes.number.isRequired,
-    samples: PropTypes.array.isRequired,
     displaySample: PropTypes.func.isRequired
   };
 
@@ -53,20 +53,38 @@ class CartSamplesComponent extends React.Component {
     }
   ];
 
-  state = { filter: "", samples: null };
+  state = { filter: "", samples: [] };
 
   onGridReady = params => {
     this.gridApi = params.api;
     this.columnApi = params.columnApi;
+
+    // Create a method to remove a sample
+    this.gridApi.removeSample = this.removeSample;
+
+    // Fetch the samples, since no samples will be added we do not need redux for them.
+    getCartIds().then(({ ids }) =>
+      ids.forEach(id => {
+        getSamplesForProject(id).then(samples =>
+          this.setState(prevState => ({
+            samples: [...prevState.samples, ...samples]
+          }))
+        );
+      })
+    );
   };
 
-  onSearch = e => {
-    const filter = e.target.value;
-    this.setState({ filter });
+  removeSample = (index, sample) => {
+    this.props.removeSample(sample.project.id, sample.id);
+    const row = this.gridApi.getRowNode(sample.id);
+    this.gridApi.updateRowData({ remove: [row] });
+
   };
+
+  onSearch = e => this.setState({ filter: e.target.value });
 
   render() {
-    const samples = this.props.samples.filter(s =>
+    const samples = this.state.samples.filter(s =>
       s.label.includes(this.state.filter)
     );
     return (
@@ -90,6 +108,8 @@ class CartSamplesComponent extends React.Component {
         </CartTools>
         <CartSamplesWrapper className="ag-theme-material">
           <AgGridReact
+            getRowNodeId={data => data.id}
+            animateRows={true}
             headerHeight={0}
             columnDefs={this.columnDefs}
             rowData={samples}
@@ -106,13 +126,13 @@ class CartSamplesComponent extends React.Component {
 
 const mapStateToProps = state => ({
   count: state.cart.count,
-  samples: state.cartPageReducer.samples
 });
 
 const mapDispatchToProps = dispatch => ({
   displaySample: sample => dispatch(sampleDetailsActions.displaySample(sample)),
-  emptyCart: () => dispatch(cartPageActions.emptyCart()),
-  removeSample: id => dispatch(cartPageActions.removeSample(id))
+  emptyCart: () => dispatch(actions.emptyCart()),
+  removeSample: (projectId, sampleId) =>
+    dispatch(actions.removeSample(projectId, sampleId))
 });
 
 export default connect(

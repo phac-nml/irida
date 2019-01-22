@@ -172,7 +172,7 @@ public class Cart {
 		return new ArrayList<>();
 	}
 
-	public String removeSampleFromCart(RemoveSampleRequest removeSampleRequest) {
+	public RemoveSampleResponse removeSampleFromCart(RemoveSampleRequest removeSampleRequest) {
 		// 1. Make sure that the project is still in the cart.
 		if (cart.containsKey(removeSampleRequest.getProjectId())) {
 			Map<Long, CartSample> cartProject = cart.get(removeSampleRequest.getProjectId());
@@ -194,6 +194,6 @@ public class Cart {
 		} else {
 			// This should also not be able to happen!
 		}
-		return "FOOBAR";
+		return new RemoveSampleResponse(this.getNumberOfSamples());
 	}
 }

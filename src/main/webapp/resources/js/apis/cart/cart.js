@@ -41,9 +41,11 @@ export const getSamplesForProject = async projectId =>
 export const emptyCart = async () => axios.delete(`${url}`);
 
 export const removeSample = async (projectId, sampleId) =>
-  axios.delete(`${url}/sample`, {
-    data: {
-      projectId,
-      sampleId
-    }
-  });
+  axios
+    .delete(`${url}/sample`, {
+      data: {
+        projectId,
+        sampleId
+      }
+    })
+    .then(response => response.data);
