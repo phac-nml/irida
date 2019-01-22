@@ -4,97 +4,35 @@ import PropTypes from "prop-types";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-balham.css";
-import { Badge, Button, Col, Icon, Input, Row, Tooltip } from "antd";
+import { Button, Col, Input, Row } from "antd";
 import styled from "styled-components";
 import { cartPageActions } from "../reducer";
 import { sampleDetailsActions } from "../../../components/SampleDetails/reducer";
-import { SPACING } from "../../../styles";
+import { CartSampleRenderer } from "./SampleRenderer";
+import { COLOURS, SPACING } from "../../../styles";
 
 const { Search } = Input;
 
-const CartSample = styled(Row)`
-  width: 375px;
-  border-radius: 5px;
-  margin: 5px;
-  padding: 10px;
-  transition: background-color 0.1s ease-in-out;
-
-  &:hover {
-    background-color: hsl(210, 9%, 96%);
-  }
-`;
-
 const CartSamplesWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 400px;
   height: 100%;
-  overflow-x: hidden;
-
-  /* Hide default table styles to allow for custom layout */
-  .ag-root.ag-font-style.ag-layout-normal,
-  .ag-row,
-  .ag-header.ag-pivot-off {
-    border: none !important;
-  }
-
-  .ag-cell {
-    padding: 0 !important;
-  }
-
-  .ag-cell.ag-cell-focus {
-    border: none !important;
-  }
-
-  .ag-row.ag-row-hover {
-    background-color: transparent !important;
-  }
+  width: 100%;
+  padding-top: 65px;
 `;
 
 const CartTools = styled(Row)`
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
   padding: ${SPACING.DEFAULT};
+  border-bottom: 2px solid ${COLOURS.LIGHT_GRAY};
+  height: 65px;
 
   .ant-input {
     border: none;
     background-color: hsl(210, 9%, 96%);
   }
 `;
-
-class SampleRenderer extends React.Component {
-  state = { details: false, filter: "" };
-
-  render() {
-    const sample = this.props.data;
-    return (
-      <CartSample type="flex" align="top" justify="space-between">
-        <Col>
-          <a href="#" onClick={sample.displayFn}>
-            <Badge
-              status="success"
-              style={{ fontSize: 18 }}
-              text={sample.label}
-            />
-          </a>
-          <div style={{ color: "#b0bec4", marginLeft: 15 }}>
-            {sample.project.label}
-          </div>
-        </Col>
-        <Col>
-          <Tooltip title="Remove from cart">
-            <Button
-              ghost
-              shape="circle"
-              size="small"
-              style={{ border: "none" }}
-            >
-              <Icon type="close-circle" style={{ color: "#222" }} />
-            </Button>
-          </Tooltip>
-        </Col>
-      </CartSample>
-    );
-  }
-}
 
 class CartSamplesComponent extends React.Component {
   static propTypes = {
@@ -107,77 +45,61 @@ class CartSamplesComponent extends React.Component {
     {
       headerName: "",
       field: "label",
-      cellRenderer: "SampleRenderer",
-      width: 360,
+      cellRenderer: "CartSampleRenderer",
       cellStyle: {
-        padding: 0,
-        backgroundColor: "transparent"
+        padding: SPACING.DEFAULT,
+        width: "380px"
       }
     }
   ];
 
-  constructor(props) {
-    super(props);
-    /*
-    To show some default state to the user we fill an empty array with the amount
-    of samples in the cart, with a not loaded indication.
-     */
-    const samples = new Array(props.count);
-    this.state = { samples };
-  }
-
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    if (this.props.samples.length > prevProps.samples.length) {
-      const samples = this.props.samples.map(s => ({
-        ...s,
-        displayFn: () => {
-          this.props.displaySample(s);
-        }
-      }));
-      this.setState({ samples });
-    }
-  }
+  state = { filter: "", samples: null };
 
   onGridReady = params => {
     this.gridApi = params.api;
     this.columnApi = params.columnApi;
-    params.api.sizeColumnsToFit();
   };
 
   onSearch = e => {
     const filter = e.target.value;
-
-    this.setState({ filter }, () => {
-      this.setState({
-        samples: this.props.samples.filter(s => s.label.includes(filter))
-      });
-    });
+    this.setState({ filter });
   };
 
   render() {
+    const samples = this.props.samples.filter(s =>
+      s.label.includes(this.state.filter)
+    );
     return (
-      <CartSamplesWrapper>
+      <div
+        style={{
+          height: "100%",
+          position: "relative"
+        }}
+      >
         <CartTools type="flex" justify="space-between">
-          <Col style={{ width: 260 }}>
-            <Search onChange={this.onSearch} value={this.state.filter} />
+          <Col>
+            <Search
+              style={{ width: 285 }}
+              onChange={this.onSearch}
+              value={this.state.filter}
+            />
           </Col>
           <Col>
             <Button onClick={this.props.emptyCart}>Empty</Button>
           </Col>
         </CartTools>
-        <div className="ag-theme-balham" style={{ flexGrow: 1 }}>
+        <CartSamplesWrapper className="ag-theme-material">
           <AgGridReact
             headerHeight={0}
             columnDefs={this.columnDefs}
-            rowData={this.state.samples}
-            frameworkComponents={{ SampleRenderer }}
+            rowData={samples}
+            frameworkComponents={{ CartSampleRenderer }}
             onGridReady={this.onGridReady}
             rowHeight={80}
             filter={true}
-            suppressHorizontalScroll={true}
           />
-        </div>
-      </CartSamplesWrapper>
+        </CartSamplesWrapper>
+      </div>
     );
   }
 }
@@ -189,7 +111,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   displaySample: sample => dispatch(sampleDetailsActions.displaySample(sample)),
-  emptyCart: () => dispatch(cartPageActions.emptyCart())
+  emptyCart: () => dispatch(cartPageActions.emptyCart()),
+  removeSample: id => dispatch(cartPageActions.removeSample(id))
 });
 
 export default connect(

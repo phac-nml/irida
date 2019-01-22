@@ -1,25 +1,37 @@
 import React from "react";
-import { Layout } from "antd";
+import styled from "styled-components";
 import CartSamples from "./CartSamples";
 import SampleDetails from "../../../components/SampleDetails";
 import CartTools from "./CartTools";
-import { SPACING } from "../../../styles";
+import { COLOURS, SPACING } from "../../../styles";
 
+const Wrapper = styled.div`
+  display: flex;
+  height: 100%;
+`;
 
-const { Content, Sider } = Layout;
+const Sidebar = styled.div`
+  height: 100%;
+  width: 400px;
+`;
+
+const Content = styled.div`
+  height: 100%;
+  flex-grow: 1;
+  background-color: ${COLOURS.LIGHT_GRAY};
+  padding: ${SPACING.DEFAULT};
+`;
 
 export default function Cart({ count }) {
   return (
-    <Layout style={{ height: "100%" }}>
-      <Layout>
-        <Sider theme="light" width={400}>
-          <CartSamples count={count} />
-        </Sider>
-        <Content style={{ padding: SPACING.DEFAULT }}>
-          <CartTools />
-        </Content>
-      </Layout>
-      <SampleDetails/>
-    </Layout>
+    <Wrapper>
+      <Sidebar>
+        <CartSamples count={count} />
+      </Sidebar>
+      <Content>
+        <CartTools />
+      </Content>
+      <SampleDetails />
+    </Wrapper>
   );
 }

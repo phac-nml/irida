@@ -1,13 +1,14 @@
 import { call, put, take } from "redux-saga/effects";
-import { cartPageTypes, cartPageActions } from "./reducer";
+import { cartPageActions, cartPageTypes } from "./reducer";
 import {
-  types as globalCartTypes,
-  actions as globalCartActions
+  actions as globalCartActions,
+  types as globalCartTypes
 } from "../../redux/reducers/cart";
 import {
-  getCartIds,
   emptyCart,
-  getSamplesForProject
+  getCartIds,
+  getSamplesForProject,
+  removeSample
 } from "../../apis/cart/cart";
 
 export function* getCartProjectIds() {
@@ -25,4 +26,12 @@ export function* empty() {
   yield take(cartPageTypes.CART_EMPTY);
   yield call(emptyCart);
   yield put(globalCartActions.updated({ count: 0 }));
+}
+
+export function* removeSampleFromCart() {
+  while (true) {
+    const { sampleId, projectId } = yield take(cartPageTypes.REMOVE_SAMPLE);
+    yield call(removeSample, projectId, sampleId);
+    yield put(cartPageActions.sampleRemovedSuccess(sampleId));
+  }
 }

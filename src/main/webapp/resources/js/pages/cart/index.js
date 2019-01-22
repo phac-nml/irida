@@ -4,16 +4,16 @@ import { Provider } from "react-redux";
 import { getStore } from "../../redux/getStore";
 import { cartPageReducer } from "./reducer";
 import {
-  sampleDetailsReducer,
-  getDetailsForSample
+  getDetailsForSample,
+  sampleDetailsReducer
 } from "../../components/SampleDetails";
 import { actions } from "../../redux/reducers/app";
-import { getCartProjectIds, empty } from "./sagas";
+import { empty, getCartProjectIds, removeSampleFromCart } from "./sagas";
 import CartPage from "./components/CartPage";
 
 const store = getStore(
   { cartPageReducer, sampleDetailsReducer },
-  { getCartProjectIds, empty, getDetailsForSample }
+  { getCartProjectIds, empty, getDetailsForSample, removeSampleFromCart }
 );
 
 render(

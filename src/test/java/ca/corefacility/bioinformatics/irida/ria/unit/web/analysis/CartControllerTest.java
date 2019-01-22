@@ -91,58 +91,58 @@ public class CartControllerTest {
 	@Test
 	@Ignore
 	public void testRemoveProjectSamples() {
-		Map<Project, Set<Sample>> selected = new HashMap<>();
-		selected.put(project, samples);
-		controller.addSelected(selected, Locale.ENGLISH);
-
-		Set<Long> subIds = Sets.newHashSet(sampleIds.iterator().next());
-
-		controller.removeProjectSamples(projectId, subIds);
-
-		verify(projectService).read(projectId);
-		verify(sampleService).getSamplesInProject(project, new ArrayList<>(subIds));
-
-		Map<Project, List<Sample>> response = controller.getSelected();
-
-		assertEquals(1, response.keySet().size());
-		Project projectKey = selected.keySet().iterator().next();
-		assertEquals(project, projectKey);
-		for (Sample s : selected.get(projectKey)) {
-			assertFalse(subIds.contains(s.getId()));
-		}
+//		Map<Project, Set<Sample>> selected = new HashMap<>();
+//		selected.put(project, samples);
+//		controller.addSelected(selected, Locale.ENGLISH);
+//
+//		Set<Long> subIds = Sets.newHashSet(sampleIds.iterator().next());
+//
+//		controller.removeProjectSamples(projectId, subIds);
+//
+//		verify(projectService).read(projectId);
+//		verify(sampleService).getSamplesInProject(project, new ArrayList<>(subIds));
+//
+//		Map<Project, List<Sample>> response = controller.getSelected();
+//
+//		assertEquals(1, response.keySet().size());
+//		Project projectKey = selected.keySet().iterator().next();
+//		assertEquals(project, projectKey);
+//		for (Sample s : selected.get(projectKey)) {
+//			assertFalse(subIds.contains(s.getId()));
+//		}
 	}
 
 	@Test
 	@Ignore
 	public void testRemoveProjectSample() {
-		Map<Project, Set<Sample>> selected = new HashMap<>();
-		selected.put(project, samples);
-		controller.addSelected(selected, Locale.ENGLISH);
-		Sample sample = samples.iterator().next();
-
-		controller.removeProjectSample(projectId, sample.getId());
-
-		Map<Project, List<Sample>> response = controller.getSelected();
-		assertEquals(1, response.keySet().size());
-		assertFalse(response.get(project).contains(sample));
+//		Map<Project, Set<Sample>> selected = new HashMap<>();
+//		selected.put(project, samples);
+//		controller.addSelected(selected, Locale.ENGLISH);
+//		Sample sample = samples.iterator().next();
+//
+//		controller.removeProjectSample(projectId, sample.getId());
+//
+//		Map<Project, List<Sample>> response = controller.getSelected();
+//		assertEquals(1, response.keySet().size());
+//		assertFalse(response.get(project).contains(sample));
 
 	}
 
 	@Test
 	@Ignore
 	public void testRemoveAllProjectSamples() {
-		Map<Project, Set<Sample>> selected = new HashMap<>();
-		selected.put(project, samples);
-		controller.addSelected(selected, Locale.ENGLISH);
-
-		controller.removeProjectSamples(projectId, sampleIds);
-
-		verify(projectService).read(projectId);
-		verify(sampleService).getSamplesInProject(project, Lists.newArrayList(sampleIds));
-
-		Map<Project, List<Sample>> response = controller.getSelected();
-
-		assertFalse("project should have been removed because all samples were removed", selected.containsKey(project));
+//		Map<Project, Set<Sample>> selected = new HashMap<>();
+//		selected.put(project, samples);
+//		controller.addSelected(selected, Locale.ENGLISH);
+//
+//		controller.removeProjectSamples(projectId, sampleIds);
+//
+//		verify(projectService).read(projectId);
+//		verify(sampleService).getSamplesInProject(project, Lists.newArrayList(sampleIds));
+//
+//		Map<Project, List<Sample>> response = controller.getSelected();
+//
+//		assertFalse("project should have been removed because all samples were removed", selected.containsKey(project));
 	}
 
 	@Test
@@ -181,8 +181,8 @@ public class CartControllerTest {
 	@Test
 	@Ignore
 	public void testRemoveProject() {
-		controller.removeProject(projectId);
-		verify(projectService).read(projectId);
+//		controller.removeProject(projectId);
+//		verify(projectService).read(projectId);
 	}
 
 	@Test
