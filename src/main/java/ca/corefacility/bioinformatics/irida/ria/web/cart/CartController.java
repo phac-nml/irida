@@ -105,6 +105,12 @@ public class CartController {
 		return ImmutableMap.of("success", true);
 	}
 
+	/**
+	 * Remove a single {@link Sample} from the cart.
+	 *
+	 * @param removeSampleRequest {@link RemoveSampleRequest} contains information about the sample to be removed.
+	 * @return {@link RemoveSampleResponse} contains the state the UI needs to update to.
+	 */
 	@RequestMapping(value = "/sample", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public RemoveSampleResponse removeSamplesFromCart(@RequestBody RemoveSampleRequest removeSampleRequest) {

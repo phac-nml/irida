@@ -172,6 +172,12 @@ public class Cart {
 		return new ArrayList<>();
 	}
 
+	/**
+	 * Remove a single {@link Sample} from the cart.
+	 *
+	 * @param removeSampleRequest {@link RemoveSampleRequest} contains information about the sample to be removed.
+	 * @return {@link RemoveSampleResponse} contains the state the UI needs to update to.
+	 */
 	public RemoveSampleResponse removeSampleFromCart(RemoveSampleRequest removeSampleRequest) {
 		// 1. Make sure that the project is still in the cart.
 		if (cart.containsKey(removeSampleRequest.getProjectId())) {
