@@ -431,23 +431,21 @@ export class Table extends React.Component {
         <AgGridReact
           id="linelist-grid"
           rowSelection="multiple"
-          enableFilter={true}
           onFilterChanged={this.setFilterCount}
-          enableSorting={true}
-          enableColResize={true}
           localeText={i18n.linelist.agGrid}
           columnDefs={this.props.fields.toJS()}
           rowData={rowData}
           frameworkComponents={this.frameworkComponents}
           loadingOverlayComponent="LoadingOverlay"
-          animateRows={true}
           onGridReady={this.onGridReady}
           onDragStopped={this.onColumnDropped}
           rowDeselection={true}
           suppressRowClickSelection={true}
           onSelectionChanged={this.onSelectionChange}
           defaultColDef={{
-            headerCheckboxSelectionFilteredOnly: true
+            headerCheckboxSelectionFilteredOnly: true,
+            sortable: true,
+            filter: true
           }}
           enableCellChangeFlash={true}
           onCellEditingStarted={this.onCellEditingStarted}
