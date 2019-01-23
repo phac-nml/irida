@@ -214,7 +214,7 @@ You can quickly create an aggregated view of all of the samples in this project 
 
 ![Sample type selector](images/display-sample-type.png)
 
-Associated samples will be displayed in the project samples table designated with the same COLOURS.
+Associated samples will be displayed in the project samples table designated with the same colours.
 
 ![Sample table with associated and remote samples](images/associated-display.png)
 
