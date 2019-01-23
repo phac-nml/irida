@@ -38,7 +38,7 @@ export const actions = {
   initialized: count => ({ type: types.INITIALIZED, count }),
   add: samples => ({ type: types.ADD, samples }),
   updated: response => ({ type: types.UPDATED, response }),
-  emptyCart: () => ({ types: cartPageTypes.CART_EMPTY }),
+  emptyCart: () => ({ type: types.CART_EMPTY }),
   removeSample: (projectId, sampleId) => ({
     type: types.REMOVE_SAMPLE,
     payload: {

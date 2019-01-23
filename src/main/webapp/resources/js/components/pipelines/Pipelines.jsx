@@ -5,7 +5,7 @@ import Pipeline from "../pipeline/Pipeline";
 import { SPACING } from "../../styles";
 import "./styles.css";
 
-export default class Pipelines extends React.Component {
+export class Pipelines extends React.Component {
   static propTypes = {};
   state = {
     pipelines: [],

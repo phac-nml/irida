@@ -20,6 +20,7 @@ const CartSamplesWrapper = styled.div`
   padding-top: 65px;
 `;
 
+
 const CartTools = styled(Row)`
   position: absolute;
   top: 0;

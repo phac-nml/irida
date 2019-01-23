@@ -1,9 +1,9 @@
 import React from "react";
-import { Router, Link, Location } from "@reach/router";
-import { Col, Row, Menu } from "antd";
+import { Link, Location, Router } from "@reach/router";
+import { Col, Menu, Row } from "antd";
 import { SPACING } from "../../../styles";
 import styled from "styled-components";
-import Pipelines from "../../../components/pipelines/Pipelines";
+import { Pipelines } from "../../../components/pipelines/Pipelines";
 
 const { pipelines } = window.PAGE.i18n;
 
