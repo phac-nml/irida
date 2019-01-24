@@ -179,27 +179,11 @@ public class Cart {
 	 * @return {@link RemoveSampleResponse} contains the state the UI needs to update to.
 	 */
 	public RemoveSampleResponse removeSampleFromCart(RemoveSampleRequest removeSampleRequest) {
-		// 1. Make sure that the project is still in the cart.
-		if (cart.containsKey(removeSampleRequest.getProjectId())) {
-			Map<Long, CartSample> cartProject = cart.get(removeSampleRequest.getProjectId());
-			// 2. Make sure the sample is in the cart.
-			if (cartProject.containsKey(removeSampleRequest.getSampleId())) {
-				CartSample sample = cartProject.get(removeSampleRequest.getSampleId());
-				currentSampleIds.remove(removeSampleRequest.getSampleId());
-				currentSampleLabels.remove(sample.getLabel());
-				cartProject.remove(removeSampleRequest.getSampleId());
-
-				// Remove the
-				if (cartProject.isEmpty()) {
-					cart.remove(removeSampleRequest.getProjectId());
-				}
-			} else {
-				// This should never be but let's handle it any way.
-				// TODO: Handle this error
-			}
-		} else {
-			// This should also not be able to happen!
-		}
+		Map<Long, CartSample> cartProject = cart.get(removeSampleRequest.getProjectId());
+		CartSample sample = cartProject.get(removeSampleRequest.getSampleId());
+		currentSampleIds.remove(removeSampleRequest.getSampleId());
+		currentSampleLabels.remove(sample.getLabel());
+		cartProject.remove(removeSampleRequest.getSampleId());
 		return new RemoveSampleResponse(this.getNumberOfSamples());
 	}
 }
