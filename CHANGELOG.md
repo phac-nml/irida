@@ -42,6 +42,8 @@ Changes
 * [Administration]: Updated method for automatically installing tools in Galaxy to use [Ephemeris](https://ephemeris.readthedocs.io/en/latest/readme.html).
 * [Developer]: Updated to version 20.0.0 of ag-grid UI component.
 * [UI]: Add link back to sample for analysis input files on the Analsysis Details Page.
+* [UI]: Fixes issue where attempting to select all samples with a filter applied selected all samples in project.
+* [REST]: Fixes issue where the Sample collection date was synchronized incorrectly, leading to the synced date up to one day off from the original date.
 
 0.21.0 to 0.22.0
 ----------------
