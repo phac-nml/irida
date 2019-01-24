@@ -2,6 +2,7 @@ import angular from "angular";
 import find from "lodash/find";
 import filter from "lodash/filter";
 import { CART } from "../../utilities/events-utilities";
+import { removeSample } from "../../apis/cart/cart";
 
 function CartService(scope, $http) {
   const svc = this;
@@ -30,8 +31,6 @@ function CartService(scope, $http) {
     });
   };
 
-
-
   svc.clear = function() {
     //fire a DELETE to the server on the cart then broadcast the cart update event
     return $http.delete(urls.all).then(function() {
@@ -48,14 +47,14 @@ function CartService(scope, $http) {
   };
 
   svc.removeSample = function(projectId, sampleId) {
-    return $http
-      .delete(urls.project + projectId + "/samples/" + sampleId)
-      .then(function() {
-        const event = new Event(CART.UPDATED);
-        document.dispatchEvent(event);
-      });
+    return removeSample(projectId, sampleId).then(detail => updateCart(detail));
   };
 }
+
+const updateCart = detail => {
+  const event = new CustomEvent(CART.UPDATED, { detail });
+  document.dispatchEvent(event);
+};
 
 function GalaxyExportService(CartService, $http, $q) {
   const svc = this,
