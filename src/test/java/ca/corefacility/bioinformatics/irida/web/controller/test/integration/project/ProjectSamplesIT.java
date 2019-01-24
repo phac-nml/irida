@@ -232,7 +232,7 @@ public class ProjectSamplesIT {
 		String projectUri = ITestSystemProperties.BASE_URL + "/api/projects/5";
 		String projectSampleUri = projectUri + "/samples/1";
 		
-		asAdmin().expect().body("resource.collectionDate", is("1548309600000"))
+		asAdmin().expect().body("resource.collectionDate", is(java.sql.Date.valueOf("2019-01-24").getTime()))
 				.when().get(projectSampleUri);
 	}
 	
