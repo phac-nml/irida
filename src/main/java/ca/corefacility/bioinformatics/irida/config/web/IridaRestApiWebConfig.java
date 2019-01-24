@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.config.web;
 
 import ca.corefacility.bioinformatics.irida.web.spring.view.*;
-import com.fasterxml.jackson.datatype.jdk7.Jdk7Module;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,7 +74,7 @@ public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
 		jsonView.setPrettyPrint(true);
 
 		// add support for serializing Path data
-		jsonView.getObjectMapper().registerModule(new Jdk7Module());
+		jsonView.getObjectMapper().registerModule(new Jdk8Module());
 
 		views.add(jsonView);
 		Jaxb2Marshaller jaxb2marshaller = new Jaxb2Marshaller();

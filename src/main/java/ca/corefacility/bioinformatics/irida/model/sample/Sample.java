@@ -9,7 +9,12 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssembl
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.springframework.data.annotation.CreatedDate;
@@ -82,6 +87,8 @@ public class Sample extends IridaResourceSupport
 	 * Date of sampling
 	 */
 	@Temporal(TemporalType.DATE)
+	@JsonSerialize(as=java.sql.Date.class)
+	@JsonDeserialize(as=java.sql.Date.class)
 	private Date collectionDate;
 
 	/**
@@ -239,7 +246,7 @@ public class Sample extends IridaResourceSupport
 	public void setStrain(String strain) {
 		this.strain = strain;
 	}
-
+	
 	public Date getCollectionDate() {
 		return collectionDate;
 	}

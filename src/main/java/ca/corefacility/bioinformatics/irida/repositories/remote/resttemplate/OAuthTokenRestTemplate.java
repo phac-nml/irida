@@ -11,7 +11,7 @@ import org.springframework.security.core.token.TokenService;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.datatype.jdk7.Jdk7Module;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
@@ -47,7 +47,7 @@ public class OAuthTokenRestTemplate extends RestTemplate {
 		//enable Path deserialization
 		for(HttpMessageConverter<?> conv : getMessageConverters()){
 			if(conv instanceof MappingJackson2HttpMessageConverter){
-				((MappingJackson2HttpMessageConverter) conv).getObjectMapper().registerModule(new Jdk7Module());
+				((MappingJackson2HttpMessageConverter) conv).getObjectMapper().registerModule(new Jdk8Module());
 			}
 		}
 		
