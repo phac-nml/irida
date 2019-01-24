@@ -43,6 +43,7 @@ Changes
 * [Developer]: Updated to version 20.0.0 of ag-grid UI component.
 * [UI]: Add link back to sample for analysis input files on the Analsysis Details Page.
 * [UI]: Fixes issue where attempting to select all samples with a filter applied selected all samples in project.
+* [UI]: Fixed issue with exporting samples to galaxy through project/samples page failing.
 
 0.21.0 to 0.22.0
 ----------------
