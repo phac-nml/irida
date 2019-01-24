@@ -7,6 +7,7 @@
   <head>
     <title>MY AWESOME CART</title>
     <link rel="stylesheet" th:href="@{/resources/dist/css/cart.bundle.css}" />
+    <style th:text="${pipeline_plugin_style}"></style>
     <script th:inline="javascript">
       window.PAGE = {
         i18n: {
@@ -23,10 +24,25 @@
             organism: /*[[#{sampleDetails.organism}]]*/ "_ORG",
             createdDate: /*[[#{sampleDetails.createdDate}]]*/ "_CREATED",
             modifiedDate: /*[[#{sampleDetails.modifiedDate}]]*/ "_MODIFIED",
+          },
+          pipelines: {
+            label:/*[[#{pipelines.label}]]*/ "_PIPELINES"
           }
         }
       };
     </script>
+    <style>
+      body {
+        position: relative;
+      }
+      .body-content {
+        position: absolute;
+        top: 53px;
+        right: 0;
+        left: 0;
+        bottom: 0;
+      }
+    </style>
   </head>
   <body>
     <div

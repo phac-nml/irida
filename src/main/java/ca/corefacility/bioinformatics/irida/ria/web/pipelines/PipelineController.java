@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -608,5 +609,62 @@ public class PipelineController extends BaseController {
 				"projects", cartController.getNumberOfProjects(),
 				"samples", cartController.getNumberOfSamples()
 		);
+	}
+
+	/**
+	 * Get a {@link List} of all {@link AnalysisType}s
+	 *
+	 * @param locale {@link Locale} of the current user
+	 * @return {@link List} of localized {@link AnalysisType}
+	 */
+	@RequestMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<Pipeline> getWorkflowTypes(Locale locale) {
+		Set<AnalysisType> analysisTypes = workflowsService.getDisplayableWorkflowTypes();
+		List<Pipeline> pipelines = new ArrayList<>();
+		for (AnalysisType type : analysisTypes) {
+			try {
+				Pipeline workflow = new Pipeline(type, locale);
+				pipelines.add(workflow);
+			} catch (IridaWorkflowNotFoundException e) {
+				logger.error("Cannot find IridaWorkFlow for '" + type.getType() + "'", e);
+			}
+		}
+		return pipelines.stream()
+				.sorted(Comparator.comparing(Pipeline::getName))
+				.collect(Collectors.toList());
+	}
+
+	class Pipeline {
+		private String name;
+		private String description;
+		private UUID id;
+		private String styleName;
+
+		public Pipeline(AnalysisType analysisType, Locale locale) throws IridaWorkflowNotFoundException {
+			IridaWorkflowDescription description = workflowsService.getDefaultWorkflowByType(analysisType)
+					.getWorkflowDescription();
+			String prefix = "workflow." + analysisType.getType();
+			this.name = messageSource.getMessage(prefix + ".title", new Object[] {}, locale);
+			this.description = messageSource.getMessage(prefix + ".description",
+					new Object[] {}, locale);
+			this.id = description.getId();
+			this.styleName = analysisType.getType();
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+		public UUID getId() {
+			return id;
+		}
+
+		public String getStyleName() {
+			return styleName;
+		}
 	}
 }

@@ -1,4 +1,5 @@
-import colours from "./colours";
-import spacing from "./spacing";
+import BREAK_POINTS from "./break-points";
+import COLOURS from "./colours";
+import SPACING from "./spacing";
 
-export { colours, spacing };
+export { BREAK_POINTS, COLOURS, SPACING };

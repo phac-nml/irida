@@ -3,6 +3,8 @@
  */
 import axios from "axios";
 
+const URL = `${window.TL.BASE_URL}pipelines`;
+
 /**
  * Get the IRIDA workflow description info for a workflow
  * @param workflowUUID Workflow UUID
@@ -12,10 +14,13 @@ export async function getIridaWorkflowDescription(workflowUUID) {
   try {
     const { data } = await axios({
       method: "get",
-      url: `${window.PAGE.URLS.base}pipelines/ajax/${workflowUUID}`
+      url: `${URL}/ajax/${workflowUUID}`
     });
     return { data };
   } catch (error) {
     return { error: error };
   }
 }
+
+export const fetchIridaAnalysisWorkflows = async () =>
+  axios.get(URL).then(response => response.data);

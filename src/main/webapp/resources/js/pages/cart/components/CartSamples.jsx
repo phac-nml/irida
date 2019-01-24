@@ -8,7 +8,7 @@ import { Badge, Button, Col, Icon, Input, Row, Tooltip } from "antd";
 import styled from "styled-components";
 import { cartPageActions } from "../reducer";
 import { sampleDetailsActions } from "../../../components/SampleDetails/reducer";
-import { spacing } from "../../../styles";
+import { SPACING } from "../../../styles";
 
 const { Search } = Input;
 
@@ -52,7 +52,7 @@ const CartSamplesWrapper = styled.div`
 `;
 
 const CartTools = styled(Row)`
-  padding: ${spacing.DEFAULT};
+  padding: ${SPACING.DEFAULT};
 
   .ant-input {
     border: none;
@@ -158,7 +158,7 @@ class CartSamplesComponent extends React.Component {
     return (
       <CartSamplesWrapper>
         <CartTools type="flex" justify="space-between">
-          <Col style={{ width: 290 }}>
+          <Col style={{ width: 260 }}>
             <Search onChange={this.onSearch} value={this.state.filter} />
           </Col>
           <Col>
@@ -173,7 +173,7 @@ class CartSamplesComponent extends React.Component {
             frameworkComponents={{ SampleRenderer }}
             onGridReady={this.onGridReady}
             rowHeight={80}
-            enableFilter={true}
+            filter={true}
             suppressHorizontalScroll={true}
           />
         </div>
