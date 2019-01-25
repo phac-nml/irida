@@ -79,8 +79,7 @@ const config = {
   ]
 };
 
-module.exports = (env, argv) => {
-  const mode = env.mode || "development";
+module.exports = ({ mode = "development" }) => {
   return merge(
     { mode },
     config,
