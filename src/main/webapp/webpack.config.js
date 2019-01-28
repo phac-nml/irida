@@ -80,11 +80,11 @@ const config = {
 };
 
 module.exports = ({ mode = "development" }) => {
+  const dev = require("./webpack.config.dev");
+  const prod = require("./wepack.config.prod");
   return merge(
     { mode },
     config,
-    mode === "production"
-      ? require("./wepack.config.prod")
-      : require("./webpack.config.dev")
+    mode === "production" ? prod.config : dev.config
   );
 };

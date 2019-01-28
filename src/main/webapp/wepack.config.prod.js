@@ -6,7 +6,7 @@ const cssnano = require("cssnano");
 const CleanWebpackPlugin = require("clean-webpack-plugin");
 
 const BUILD_PATH = path.resolve(__dirname, "resources/dist");
-module.exports = {
+exports.config = {
   devtool: "source-map",
   plugins: [
     new webpack.DefinePlugin({
