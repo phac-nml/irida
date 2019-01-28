@@ -3,6 +3,7 @@ Changes
 
 19.01 to 19.04
 ---------------
+* [UI/Developer]: Lazy load front end components to decrease initial load times.
 
 0.22.0 to 19.01
 ----------------
