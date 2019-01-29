@@ -20,7 +20,6 @@ const CartSamplesWrapper = styled.div`
   padding-top: 65px;
 `;
 
-
 const CartTools = styled(Row)`
   position: absolute;
   top: 0;
@@ -79,7 +78,6 @@ class CartSamplesComponent extends React.Component {
     this.props.removeSample(sample.project.id, sample.id);
     const row = this.gridApi.getRowNode(sample.id);
     this.gridApi.updateRowData({ remove: [row] });
-
   };
 
   onSearch = e => this.setState({ filter: e.target.value });
@@ -126,7 +124,7 @@ class CartSamplesComponent extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  count: state.cart.count,
+  count: state.cart.count
 });
 
 const mapDispatchToProps = dispatch => ({

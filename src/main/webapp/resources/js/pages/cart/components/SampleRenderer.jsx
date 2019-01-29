@@ -10,7 +10,8 @@ export default class SampleRenderer extends React.Component {
 
   displaySample = () => this.props.displaySample(this.props.data);
 
-  removeSample = () => this.props.api.removeSample(this.props.rowIndex, this.props.data);
+  removeSample = () =>
+    this.props.api.removeSample(this.props.rowIndex, this.props.data);
 
   render() {
     const sample = this.props.data;
