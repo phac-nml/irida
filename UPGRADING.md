@@ -4,7 +4,10 @@ Upgrading
 This document summarizes the environmental changes that need to be made when
 upgrading IRIDA that cannot be automated.
 
-0.22.0 to 0.23.0
+19.01 to 19.04
+--------------
+
+0.22.0 to 19.01
 ----------------
 * A new configuration value is avaliable to display a warning on analysis result and metadata pages to communicate that an analysis result should be considered preliminiary.  Add a warning message `irida.analysis.warning` in `/etc/irida/web.conf` to display on all analysis result and metadata pages.
 * New Spring profiles are available for running IRIDA in a multi-server mode.  This will help distribute the load in high-usage installations.  See the documentation for more details at https://irida.corefacility.ca/documentation/administrator/web/#multi-web-server-configuration.
