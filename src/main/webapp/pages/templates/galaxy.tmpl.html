@@ -41,7 +41,7 @@
 	<div class="modal-footer" ng-hide="gCtrl.showOauthIframe">
 		<button class="btn btn-default" ng-click="gCtrl.close()" th:text="#{form.btn.close}">Close</button>
 		<button ng-disabled="gCtrl.uploading" class="btn btn-primary" ng-click="gCtrl.upload()">
-			<span class="fa fa-fw" ng-class="gCtrl.uploading ? 'fa-spinner fa-spin' : 'fa-cloud-upload'"></span>
+			<span class="fa fa-fw" ng-class="gCtrl.uploading ? 'fa-spinner fa-spin' : 'fa-cloud-upload-alt'"></span>
 			&nbsp;<span th:text="#{galaxy.btn.upload}"></span>
 		</button>
 	</div>
