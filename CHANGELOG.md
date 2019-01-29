@@ -1,8 +1,12 @@
 Changes
 =======
 
-0.22.0 to 0.23.0
+19.01 to 19.04
+---------------
+
+0.22.0 to 19.01
 ----------------
+* [Admin]: Updated versioning to a [CalVer](https://calver.org/) scheme of YY.0M.MICRO.  New feature releases will have the appropriate the year and month fields, where bugfixes will increment the MICRO field.
 * [Database]: Fixed an issue where metadata entries derived from pipelines were not updating the associated analysis submission and ignorning blank entries. (0.23.5)
 * [Developer]: Added classes `.jar` maven export in build process.
 * [UI]: Added the sample coverage to the table exported from the project samples page.
