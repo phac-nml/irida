@@ -64,7 +64,8 @@ class CartSamplesComponent extends React.Component {
     this.gridApi = params.api;
     this.columnApi = params.columnApi;
 
-    // Create a method to remove a sample
+    // Add methods for handling the sample
+    this.gridApi.displaySample = this.props.displaySample;
     this.gridApi.removeSample = this.removeSample;
     this.gridApi.removeProject = this.removeProject;
 

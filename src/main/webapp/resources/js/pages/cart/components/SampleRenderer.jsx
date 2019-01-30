@@ -16,7 +16,7 @@ const DeleteMenu = ({ removeSample, removeProject }) => (
 export class SampleRenderer extends React.Component {
   static propTypes = {};
 
-  displaySample = () => this.props.displaySample(this.props.data);
+  displaySample = () => this.props.api.displaySample(this.props.data);
 
   removeSample = () =>
     this.props.api.removeSample(this.props.rowIndex, this.props.data);
