@@ -18,6 +18,11 @@ const CartSamplesWrapper = styled.div`
   height: 100%;
   width: 100%;
   padding-top: 65px;
+  
+  .ag-root {
+    border: none!important;
+  }
+  
   .ag-center-cols-container {
     width: 100%!important;
   }
