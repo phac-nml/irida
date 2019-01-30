@@ -18,6 +18,9 @@ const CartSamplesWrapper = styled.div`
   height: 100%;
   width: 100%;
   padding-top: 65px;
+  .ag-center-cols-container {
+    width: 100%!important;
+  }
 `;
 
 const CartTools = styled(Row)`
@@ -123,7 +126,6 @@ class CartSamplesComponent extends React.Component {
         </CartTools>
         <CartSamplesWrapper
           className="ag-theme-balham"
-          style={{ overflowX: "hidden" }}
         >
           <AgGridReact
             getRowNodeId={data => data.id}
@@ -134,7 +136,7 @@ class CartSamplesComponent extends React.Component {
             frameworkComponents={{ SampleRenderer }}
             onGridReady={this.onGridReady}
             rowHeight={80}
-            rowStyle={{ width: "385px" }}
+            rowStyle={{ width: "100%" }}
             filter={true}
           />
         </CartSamplesWrapper>
