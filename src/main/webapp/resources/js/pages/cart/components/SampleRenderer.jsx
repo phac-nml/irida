@@ -1,8 +1,5 @@
 import React from "react";
-import { connect } from "react-redux";
-import { sampleDetailsActions } from "../../../components/SampleDetails";
-import { actions } from "../../../redux/reducers/cart";
-import { Button, Col, Dropdown, Icon, Row, Menu } from "antd";
+import { Button, Col, Dropdown, Icon, Menu, Row } from "antd";
 import { COLOURS } from "../../../styles";
 
 const DeleteMenu = ({ removeSample, removeProject }) => (
@@ -48,7 +45,7 @@ export class SampleRenderer extends React.Component {
             trigger={["click"]}
           >
             <Button ghost shape="circle" size="small">
-              <Icon type="close-circle" style={{ color: COLOURS.DARK_GRAY }} />
+              <Icon type="ellipsis" style={{ color: COLOURS.DARK_GRAY }} />
             </Button>
           </Dropdown>
         </Col>
