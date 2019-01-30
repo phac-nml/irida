@@ -91,7 +91,7 @@ public class Cart {
 		}
 
 		if (existing.size() == 1) {
-			response.setExisting(messageSource.getMessage("cart.in-cart", new Object[] {}, locale));
+			response.setExisting(messageSource.getMessage("cart.in-cart", new Object[] {existing.get(0)}, locale));
 		} else if (existing.size() > 1) {
 			response.setExisting(
 					messageSource.getMessage("cart.in-cart-multiple", new Object[] { existing.size() }, locale));
