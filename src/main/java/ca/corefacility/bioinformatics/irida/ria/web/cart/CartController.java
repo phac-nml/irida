@@ -16,7 +16,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -25,10 +24,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.components.Cart;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartSample;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartSampleRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.*;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -110,6 +106,18 @@ public class CartController {
 	}
 
 	/**
+	 * Remove a single {@link Sample} from the cart.
+	 *
+	 * @param removeSampleRequest {@link RemoveSampleRequest} contains information about the sample to be removed.
+	 * @return {@link RemoveSampleResponse} contains the state the UI needs to update to.
+	 */
+	@RequestMapping(value = "/sample", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public RemoveSampleResponse removeSamplesFromCart(@RequestBody RemoveSampleRequest removeSampleRequest) {
+		return cart.removeSampleFromCart(removeSampleRequest);
+	}
+
+	/**
 	 * Get the cart object. This method should only be accessed
 	 * programmatically.
 	 *
@@ -184,32 +192,6 @@ public class CartController {
 	}
 
 	/**
-	 * Delete a {@link Sample} from the cart from a given {@link Project}
-	 *
-	 * @param projectId
-	 *            The {@link Project} ID
-	 * @param sampleIds
-	 *            The {@link Sample} ID
-	 */
-	@RequestMapping(value = "/project/{projectId}/samples", method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public void removeProjectSamples(@PathVariable Long projectId, @RequestBody Set<Long> sampleIds) {
-		cart.removeProjectSamples(projectId, sampleIds);
-	}
-
-	/**
-	 * Remove a single sample from the cart
-	 *
-	 * @param projectId
-	 *            The project id of the sample
-	 * @param sampleId
-	 *            the id of the sample
-	 */
-	@RequestMapping(value = "/project/{projectId}/samples/{sampleId}", method = RequestMethod.DELETE)
-	public void removeProjectSample(@PathVariable Long projectId, @PathVariable Long sampleId) {
-		cart.removeProjectSamples(projectId, ImmutableSet.of(sampleId));
-	}
-
-	/**
 	 * Add an entire {@link Project} to the cart
 	 *
 	 * @param projectId
@@ -224,20 +206,6 @@ public class CartController {
 				.map(j -> new CartSampleRequest(j.getId(), j.getLabel()))
 				.collect(Collectors.toSet());
 		cart.addProjectSamplesToCart(new AddToCartRequest(projectId, samples), locale);
-	}
-
-	/**
-	 * Delete an entire project from the cart
-	 *
-	 * @param projectId
-	 *            The ID of the {@link Project} to delete
-	 * @return a map stating success
-	 */
-	@RequestMapping(value = "/project/{projectId}", method = RequestMethod.DELETE)
-	@ResponseBody
-	public Map<String, Object> removeProject(@PathVariable Long projectId) {
-		cart.removeProject(projectId);
-		return ImmutableMap.of("success", true);
 	}
 
 	/**

@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Card } from "antd";
 import styled from "styled-components";
-import { BREAK_POINTS } from "./../../styles";
+import { BREAK_POINTS, SPACING } from "./../../styles";
 
 const PipelineCard = styled(Card)`
   .ant-card-body {
@@ -19,11 +19,23 @@ const PipelineCard = styled(Card)`
 `;
 
 const Heading = styled.h4`
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
   margin: 0;
-  padding: 0 15px;
-  overflow-x: hidden;
+  padding: ${SPACING.SMALL};
+  height: 40px;
+  line-height: 20px;
   word-break: break-word;
-  height: 42px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  @media (${BREAK_POINTS.SM}) {
+    font-size: 12px !important;
+  }
+  @media (${BREAK_POINTS.XL}) {
+    font-size: 16px !important;
+  }
 `;
 
 export default class Pipeline extends React.Component {
@@ -38,18 +50,11 @@ export default class Pipeline extends React.Component {
     return (
       <PipelineCard
         cover={
-          <div
-            style={{
-              padding: 10,
-              borderTopLeftRadius: 2,
-              borderTopRightRadius: 2
-            }}
-            className={this.props.styleName}
-          >
-            <Heading>{this.props.name}</Heading>
-          </div>
+          <Heading className={this.props.styleName} title={this.props.name}>
+            {this.props.name}
+          </Heading>
         }
-        bodyStyle={{ overflowX: "auto" }}
+        bodyStyle={{ overflowX: "auto", padding: SPACING.SMALL }}
         actions={[
           <a href={`${window.TL.BASE_URL}pipelines/${this.props.id}`}>Select</a>
         ]}

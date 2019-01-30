@@ -7,7 +7,7 @@
  */
 export default {
   PRIMARY: "#265182",
-  TEXT_PRIMARY: "hsl(212, 56% 16%)",
-  TEXT_SECONDARY: "hsl(212, 18%, 35%)",
+  TEXT_PRIMARY: "hsl(202, 57%, 15%)",
+  TEXT_SECONDARY: "hsl(203, 15%, 47%)",
   LIGHT_GRAY: "hsl(210, 38%, 97%)"
 };

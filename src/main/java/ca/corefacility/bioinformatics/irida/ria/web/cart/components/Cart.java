@@ -9,10 +9,7 @@ import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartSample;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartSampleRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.*;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 
 /**
@@ -94,7 +91,7 @@ public class Cart {
 		}
 
 		if (existing.size() == 1) {
-			response.setExisting(messageSource.getMessage("cart.in-cart", new Object[] {}, locale));
+			response.setExisting(messageSource.getMessage("cart.in-cart", new Object[] {existing.get(0)}, locale));
 		} else if (existing.size() > 1) {
 			response.setExisting(
 					messageSource.getMessage("cart.in-cart-multiple", new Object[] { existing.size() }, locale));
@@ -104,23 +101,6 @@ public class Cart {
 
 		cart.put(addToCartRequest.getProjectId(), sampleIdsInCart);
 		return response;
-	}
-
-	/**
-	 * Remove {@link Sample}s from the cart
-	 * @param projectId {@link Long} identifier for the {@link Project} the {@link Sample}s belong to.
-	 * @param currentSampleIds {@link Set} of {@link Long} identifiers for {@link Sample}s to remove from the cart.
-	 */
-	public void removeProjectSamples(Long projectId, Set<Long> currentSampleIds) {
-		Map<Long, CartSample> project = cart.get(projectId);
-		for (Long id : currentSampleIds) {
-			project.remove(id);
-		}
-		if (project.isEmpty()) {
-			cart.remove(projectId);
-		} else {
-			cart.put(projectId, project);
-		}
 	}
 
 	/**
@@ -190,5 +170,20 @@ public class Cart {
 			return new ArrayList<>(cart.get(projectId).values());
 		}
 		return new ArrayList<>();
+	}
+
+	/**
+	 * Remove a single {@link Sample} from the cart.
+	 *
+	 * @param removeSampleRequest {@link RemoveSampleRequest} contains information about the sample to be removed.
+	 * @return {@link RemoveSampleResponse} contains the state the UI needs to update to.
+	 */
+	public RemoveSampleResponse removeSampleFromCart(RemoveSampleRequest removeSampleRequest) {
+		Map<Long, CartSample> cartProject = cart.get(removeSampleRequest.getProjectId());
+		CartSample sample = cartProject.get(removeSampleRequest.getSampleId());
+		currentSampleIds.remove(removeSampleRequest.getSampleId());
+		currentSampleLabels.remove(sample.getLabel());
+		cartProject.remove(removeSampleRequest.getSampleId());
+		return new RemoveSampleResponse(this.getNumberOfSamples());
 	}
 }

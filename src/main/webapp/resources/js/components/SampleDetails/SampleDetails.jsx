@@ -49,7 +49,6 @@ const IdWrapper = styled.span`
   border-radius: 4px;
 `;
 
-
 /**
  * Use this component to display a drawer on the side of the screen displaying the
  * details of a sample.
@@ -66,7 +65,12 @@ class SampleDetails extends React.Component {
     const metadataKeys = Object.keys(metadata);
     return (
       <StyledDrawer
-        title={<div>{sample.label}<IdWrapper>ID: {sample.identifier}</IdWrapper></div>}
+        title={
+          <div>
+            {sample.label}
+            <IdWrapper>ID: {sample.identifier}</IdWrapper>
+          </div>
+        }
         placement="right"
         width={600}
         closable={true}
