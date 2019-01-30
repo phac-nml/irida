@@ -1,8 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.analysis;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -14,10 +11,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -32,6 +25,13 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 public class CartControllerTest {
 	SampleService sampleService;
@@ -62,6 +62,9 @@ public class CartControllerTest {
 				iridaPipelinePluginStyle, cart);
 
 		testData();
+
+		// Set up messages
+		when(messageSource.getMessage(anyString(), any(Object[].class), any(Locale.class))).thenReturn("A i18n string has been returned");
 	}
 
 	@Test
