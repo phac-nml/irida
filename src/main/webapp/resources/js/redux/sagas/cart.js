@@ -5,7 +5,8 @@ import {
   emptyCart,
   getCartCount,
   putSampleInCart,
-  removeSample
+  removeSample,
+  removeProject
 } from "../../apis/cart/cart";
 import { FIELDS } from "../../pages/projects/linelist/constants";
 
@@ -64,6 +65,13 @@ export function* removeSampleFromCart() {
       payload.projectId,
       payload.sampleId
     );
+    yield put(actions.updated({ count }));
+  }
+}
+export function* removeProjectFromCart() {
+  while (true) {
+    const { payload } = yield take(types.REMOVE_PROJECT);
+    const { count } = yield call(removeProject, payload.id);
     yield put(actions.updated({ count }));
   }
 }

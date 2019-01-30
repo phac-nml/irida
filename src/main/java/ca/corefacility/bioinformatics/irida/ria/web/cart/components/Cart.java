@@ -186,4 +186,15 @@ public class Cart {
 		cartProject.remove(removeSampleRequest.getSampleId());
 		return new RemoveSampleResponse(this.getNumberOfSamples());
 	}
+
+	/**
+	 * Remove all {@link Sample}s from a specific {@link Project} from the cart.
+	 *
+	 * @param id {@link Long} identifier for a {@link Project} in the cart.
+	 * @return {@link RemoveSampleResponse} contains the state the UI needs to update to.
+	 */
+	public RemoveSampleResponse removeProjectFromCart(Long id) {
+		cart.remove(id);
+		return new RemoveSampleResponse(this.getNumberOfSamples());
+	}
 }

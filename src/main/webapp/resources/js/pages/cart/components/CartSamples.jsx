@@ -8,7 +8,7 @@ import { Button, Col, Input, Row } from "antd";
 import styled from "styled-components";
 import { actions } from "../../../redux/reducers/cart";
 import { sampleDetailsActions } from "../../../components/SampleDetails/reducer";
-import { CartSampleRenderer } from "./SampleRenderer";
+import { SampleRenderer } from "./SampleRenderer";
 import { COLOURS, SPACING } from "../../../styles";
 import { getCartIds, getSamplesForProject } from "../../../apis/cart/cart";
 
@@ -38,14 +38,16 @@ const CartTools = styled(Row)`
 class CartSamplesComponent extends React.Component {
   static propTypes = {
     count: PropTypes.number.isRequired,
-    displaySample: PropTypes.func.isRequired
+    displaySample: PropTypes.func.isRequired,
+    removeSample: PropTypes.func.isRequired,
+    removeProject: PropTypes.func.isRequired,
   };
 
   columnDefs = [
     {
       headerName: "",
       field: "label",
-      cellRenderer: "CartSampleRenderer",
+      cellRenderer: "SampleRenderer",
       cellStyle: {
         padding: SPACING.DEFAULT,
         width: "380px"
@@ -61,6 +63,7 @@ class CartSamplesComponent extends React.Component {
 
     // Create a method to remove a sample
     this.gridApi.removeSample = this.removeSample;
+    this.gridApi.removeProject = this.removeProject;
 
     // Fetch the samples, since no samples will be added we do not need redux for them.
     getCartIds().then(({ ids }) =>
@@ -78,6 +81,19 @@ class CartSamplesComponent extends React.Component {
     this.props.removeSample(sample.project.id, sample.id);
     const row = this.gridApi.getRowNode(sample.id);
     this.gridApi.updateRowData({ remove: [row] });
+  };
+
+  removeProject = id => {
+    this.props.removeProject(id);
+    const rows = [];
+    this.gridApi.forEachNode((node, index) => {
+      if (node.data.project.id === id) {
+        rows.push(node);
+      }
+    });
+    if (rows.length) {
+      this.gridApi.updateRowData({ remove: rows });
+    }
   };
 
   onSearch = e => this.setState({ filter: e.target.value });
@@ -105,16 +121,20 @@ class CartSamplesComponent extends React.Component {
             <Button onClick={this.props.emptyCart}>Empty</Button>
           </Col>
         </CartTools>
-        <CartSamplesWrapper className="ag-theme-material">
+        <CartSamplesWrapper
+          className="ag-theme-balham"
+          style={{ overflowX: "hidden" }}
+        >
           <AgGridReact
             getRowNodeId={data => data.id}
             animateRows={true}
             headerHeight={0}
             columnDefs={this.columnDefs}
             rowData={samples}
-            frameworkComponents={{ CartSampleRenderer }}
+            frameworkComponents={{ SampleRenderer }}
             onGridReady={this.onGridReady}
             rowHeight={80}
+            rowStyle={{ width: "385px" }}
             filter={true}
           />
         </CartSamplesWrapper>
@@ -131,7 +151,8 @@ const mapDispatchToProps = dispatch => ({
   displaySample: sample => dispatch(sampleDetailsActions.displaySample(sample)),
   emptyCart: () => dispatch(actions.emptyCart()),
   removeSample: (projectId, sampleId) =>
-    dispatch(actions.removeSample(projectId, sampleId))
+    dispatch(actions.removeSample(projectId, sampleId)),
+  removeProject: id => dispatch(actions.removeProject(id))
 });
 
 export default connect(

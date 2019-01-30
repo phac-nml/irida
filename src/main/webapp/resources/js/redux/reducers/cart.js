@@ -6,7 +6,8 @@ export const types = {
   UPDATED: "CART/UPDATED",
   CART_EMPTY: "CART/EMPTY",
   CART_EMPTY_SUCCESS: "CART/EMPTY_SUCCESS",
-  REMOVE_SAMPLE: "CART/REMOVE_SAMPLE"
+  REMOVE_SAMPLE: "CART/REMOVE_SAMPLE",
+  REMOVE_PROJECT: "CART/REMOVE_PROJECT"
 };
 
 const initialState = { count: 0, initialized: false };
@@ -44,6 +45,12 @@ export const actions = {
     payload: {
       projectId,
       sampleId
+    }
+  }),
+  removeProject: id => ({
+    type: types.REMOVE_PROJECT,
+    payload: {
+      id
     }
   })
 };

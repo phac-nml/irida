@@ -118,6 +118,18 @@ public class CartController {
 	}
 
 	/**
+	 * Remove all {@link Sample}s from a specific {@link Project} from the cart.
+	 *
+	 * @param id {@link Long} identifier for a {@link Project} in the cart.
+	 * @return {@link RemoveSampleResponse} contains the state the UI needs to update to.
+	 */
+	@RequestMapping(value = "/project", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public RemoveSampleResponse removeProjectFromCart(@RequestParam Long id) {
+		return cart.removeProjectFromCart(id);
+	}
+
+	/**
 	 * Get the cart object. This method should only be accessed
 	 * programmatically.
 	 *

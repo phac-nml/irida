@@ -40,6 +40,12 @@ export const getSamplesForProject = async projectId =>
  */
 export const emptyCart = async () => axios.delete(`${url}`);
 
+/**
+ * Remove an individual sample from the cart.
+ * @param {number} projectId - Identifier for a project
+ * @param {number} sampleId - Identifier for a sample
+ * @returns {Promise<* | never>}
+ */
 export const removeSample = async (projectId, sampleId) =>
   axios
     .delete(`${url}/sample`, {
@@ -49,3 +55,11 @@ export const removeSample = async (projectId, sampleId) =>
       }
     })
     .then(response => response.data);
+
+/**
+ * Remove an entire project from the cart.
+ * @param {number} id - Identifier for a sample
+ * @returns {Promise<AxiosPromise>}
+ */
+export const removeProject = async id =>
+  axios.delete(`${url}/project?id=${id}`);

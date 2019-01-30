@@ -7,12 +7,16 @@ import {
   sampleDetailsReducer
 } from "../../components/SampleDetails";
 import { actions } from "../../redux/reducers/app";
-import { empty, removeSampleFromCart } from "../../redux/sagas/cart";
+import {
+  empty,
+  removeSampleFromCart,
+  removeProjectFromCart
+} from "../../redux/sagas/cart";
 import CartPage from "./components/CartPage";
 
 const store = getStore(
   { sampleDetailsReducer },
-  { empty, getDetailsForSample, removeSampleFromCart }
+  { empty, getDetailsForSample, removeSampleFromCart, removeProjectFromCart }
 );
 
 render(
