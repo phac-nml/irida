@@ -62,4 +62,4 @@ export const removeSample = async (projectId, sampleId) =>
  * @returns {Promise<AxiosPromise>}
  */
 export const removeProject = async id =>
-  axios.delete(`${url}/project?id=${id}`);
+  axios.delete(`${url}/project?id=${id}`).then(response => response.data);
