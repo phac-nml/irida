@@ -9,7 +9,6 @@
   "dependencies": {
     "livestampjs": "1.1.2",
     "select2": "3.5.0",
-    "jquery": "2.1.1",
     "bootstrap": "3.3.7",
     "bower": "*",
     "angular": "1.6.2",
