@@ -2,7 +2,8 @@ Changes
 =======
 
 19.01 to 19.04
----------------
+--------------
+* [UI/Developer]: Use webpack to load global dependencies.
 
 0.22.0 to 19.01
 ----------------
