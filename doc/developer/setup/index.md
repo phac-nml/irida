@@ -146,22 +146,6 @@ Setting up Galaxy
 
 Please refer to the [Galaxy Install Guide][galaxy-install] for information on setting up Galaxy to use with IRIDA. The simplest method is to use Docker, but if new tools are being developed for Galaxy and integrated into IRIDA it is recommended to install a non-Docker version of Galaxy.
 
-Front End Development Setup
----------------------------
-
-IRIDA uses [Yarn](https://yarnpkg.com) for front-end dependency management.  [Install yarn](https://yarnpkg.com/en/docs/install) by following the directions for your machine.  For production, it is automatically installed during the build process.
-
-From within `src/main/webapp/`:
-
-You will need to run `yarn install` to install all dependencies required to run the following from the command line.
-
-Tasks
-=====
-
-* `yarn sass` - compile all `.scss` files into `.css` files, with sourcemaps.
-* `yarn build` - compile all es6 files to es2015.
-* `yarn start` - use when developing front end code.  Webpack will monitor for changes to the entry files, compile them, and then updates the browser with the changes.
-
 JavaScript and SCSS Code Formatting and Linting
 ===============================================
 

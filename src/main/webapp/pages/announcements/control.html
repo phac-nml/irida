@@ -23,7 +23,7 @@
         <h1 th:text="#{announcement.admin-menu}"></h1>
       <div id="create-btn-wrapper" class="hidden"><a class="btn btn-sm btn-default" id="create-announcement"
                                                      th:text="#{announcement.create.title}"
-                                                     th:href="@{create}">_Create NEW_</a></div>
+                                                     th:href="@{/announcements/create}">_Create NEW_</a></div>
         <table id="announcementTable" class="table table-striped" cellspacing="0" width="100%" data:url="@{/announcements/control/ajax/list}">
             <thead>
                 <tr role="row">

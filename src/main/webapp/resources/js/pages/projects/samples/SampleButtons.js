@@ -157,7 +157,7 @@ export class SampleProjectDropdownButton {
     const btn = this;
     this.$node = $(node);
 
-    this.$node.on("click", function() {
+    this.$node.on("click", function(e) {
       btn.clickHandler();
     });
     this.checkState(undefined, undefined, isRemote);

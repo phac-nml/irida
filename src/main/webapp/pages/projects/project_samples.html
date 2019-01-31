@@ -67,7 +67,7 @@
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="sample-tools">
                             <li role="menuitem">
-                                <a href="#" class="js-sample-tool-btn t-merge-btn"
+                                <a href="" class="js-sample-tool-btn t-merge-btn"
                                    data-enabled-at="2" data-toggle="tooltip"
                                    data:enabled-msg="#{project.samples.tooltip.merge.requires-more-than-one}"
                                    data:remote-msg="#{project.samples.tooltip.merge.remote-project}"
@@ -79,7 +79,7 @@
                                 </a>
                             </li>
                             <li role="menuitem">
-                                <a href="#" class="js-sample-tool-btn t-copy-btn"
+                                <a href="" class="js-sample-tool-btn t-copy-btn"
                                    data-enabled-at="1" data-toggle="tooltip"
                                    data:enabled-msg="#{project.samples.tooltip.share.requires-more-than-one}"
                                    data:associated-msg="#{project.samples.only-for-project-tooltip}"
@@ -91,7 +91,7 @@
                                 </a>
                             </li>
                             <li role="menuitem">
-                                <a href="#" class="js-sample-tool-btn t-move-btn"
+                                <a href="" class="js-sample-tool-btn t-move-btn"
                                    data-enabled-at="1" data-params="{&quot;move&quot;: true}"
                                    data-toggle="tooltip"
                                    data:enabled-msg="#{project.samples.tooltip.move.requires-more-than-one}"
@@ -104,7 +104,7 @@
                                 </a>
                             </li>
                             <li role="menuitem">
-                                <a href="#" class="js-sample-tool-btn t-remove-btn"
+                                <a href="" class="js-sample-tool-btn t-remove-btn"
                                    data-enabled-at="1" data-toggle="tooltip"
                                    data:enabled-msg="#{project.samples.tooltip.remove.requires-more-than-one}"
                                    data:associated-msg="#{project.samples.only-for-project-tooltip}"
@@ -119,7 +119,7 @@
 
                             <!-- IMPORT METADATA LINK-->
                             <li role="menuitem">
-                                <a href="#"
+                                <a href=""
                                 	class="js-sample-project-tool-btn t-import-metadata-btn"
                                 	data:url="@{/projects/{id}/sample-metadata/upload(id=${project.getId()})}"
                                 	data-enabled-at="0" data-toggle="tooltip"
@@ -132,7 +132,7 @@
 
                             <!-- NEW SAMPLE LINK -->
                             <li role="menuitem">
-                                <a href="#"
+                                <a href=""
                                   	class="js-sample-project-tool-btn t-new-sample-btn"
                                 	data:url="@{/projects/{id}/samples/new(id=${project.getId()})}"
                                 	data-enabled-at="0" data-toggle="tooltip"
@@ -155,7 +155,7 @@
                         <ul id="associated-dropdown" class="dropdown-menu t-associated-dropdown"
                             aria-labelledby="associated-btn">
                             <li role="menuitem">
-                                <a href="#">
+                                <a href="">
                                     <div class="checkbox"><input id="select-all-cb" value="ALL" type="checkbox"/>&nbsp;
                                         <th:block th:text="#{project.samples.nav.associated-selectAll}"/>
                                     </div>
@@ -165,7 +165,7 @@
                             <li>
                                 <ul>
                                     <li role="menuitem" th:each="item : ${associatedProjects}">
-                                        <a href="#" class="associated-cb t-associated-cb">
+                                        <a href="" class="associated-cb t-associated-cb">
                                             <div class="checkbox">
                                                 <input type="checkbox" class="spaced-right__sm" th:value="${item.getIdentifier()}"/>
                                                 <th:block th:text="${item.getName()}"/>
@@ -185,7 +185,7 @@
                         </button>
                         <ul class="dropdown-menu" role="menu" aria-labelledby="export-samples-btn">
                             <li role="menuitem">
-                                <a href="#" class="js-sample-export-btn t-download-btn"
+                                <a href="" class="js-sample-export-btn t-download-btn"
                                    data-enabled-at="1" data-toggle="tooltip" data-type="download"
                                    data:url="@{/projects/{id}/download/files(id=${project.getId()})}"
                                    data:enabled-msg="#{project.samples.tooltip.download.requires-more-than-one}">
@@ -194,7 +194,7 @@
                                 </a>
                             </li>
                             <li th:if="${linkerAvailable}" role="menuitem">
-                                <a href="#" class="js-sample-tool-btn t-linker-btn"
+                                <a href="" class="js-sample-tool-btn t-linker-btn"
                                    data-toggle="tooltip" data-enabled-at="0"
                                    data:url="@{/projects/{projectId}/templates/linker-modal(projectId=${project.getId()})}"
                                    data:script="@{/resources/dist/js/project-samples-linker.bundle.js}"
@@ -205,7 +205,7 @@
                             </li>
 
                             <li th:if="${galaxyCallback}" role="menuitem" ng-controller="GalaxyExportController as gExportCtrl">
-                                <a href="#" ng-click="gExportCtrl.exportToGalaxy($event)"
+                                <a href="" ng-click="gExportCtrl.exportToGalaxy($event)"
                                    data:url="@{/cart/template/galaxy/project/{projectId}(projectId=${project.getId()})}"
                                    data:project-id="${project.getId()}"
                                    data:associated-msg="#{project.samples.only-for-project-tooltip}">
@@ -214,7 +214,7 @@
                                 </a>
                             </li>
                             <li role="menuitem">
-                                <a href="#" class="js-sample-export-btn t-ncbi-export-btn"
+                                <a href="" class="js-sample-export-btn t-ncbi-export-btn"
                                    data-toggle="tooltip" data-enabled-at="1" data-type="ncbi"
                                    data:url="@{/projects/{id}/export/ncbi(id=${project.getId()})}"
                                    data:enabled-msg="#{project.samples.tooltip.ncbi.requires-more-than-one}"
@@ -225,14 +225,14 @@
                             </li>
                             <li role="separator" class="divider"></li>
                             <li>
-                                <a href="#" class="js-sample-export-btn" data-file="excel" data-type="file"
+                                <a href="" class="js-sample-export-btn" data-file="excel" data-type="file"
                                    data:url="@{/projects/{id}/samples/export(id=${project.getId()})}">
                                     <i class="far fa-file-excel spaced-right__sm"></i>
                                     <th:block th:text="#{project.samples.export-to-excel}"/>
                                 </a>
                             </li>
                             <li>
-                                <a href="#" class="js-sample-export-btn" data-file="csv" data-type="file"
+                                <a href="" class="js-sample-export-btn" data-file="csv" data-type="file"
                                    data:url="@{/projects/{id}/samples/export(id=${project.getId()})}">
                                     <i class="far fa-file-alt spaced-right__sm"></i>
                                     <th:block th:text="#{project.samples.export-to-csv}"/>
