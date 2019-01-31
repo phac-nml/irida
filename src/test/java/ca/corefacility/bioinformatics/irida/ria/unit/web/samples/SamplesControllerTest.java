@@ -1,15 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.samples;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -100,7 +94,7 @@ public class SamplesControllerTest {
 		Model model = new ExtendedModelMap();
 		Sample sample = TestDataFactory.constructSample();
 		when(sampleService.read(sample.getId())).thenReturn(sample);
-		String result = controller.getSampleSpecificPage(model, sample.getId());
+		String result = controller.getSampleSpecificPage(model, sample.getId(), new MockHttpServletRequest());
 		assertEquals("Returns the correct page name", "samples/sample", result);
 		assertTrue("Model contains the sample", model.containsAttribute("sample"));
 	}
@@ -110,7 +104,7 @@ public class SamplesControllerTest {
 		Model model = new ExtendedModelMap();
 		Sample sample = TestDataFactory.constructSample();
 		when(sampleService.read(sample.getId())).thenReturn(sample);
-		String result = controller.getEditSampleSpecificPage(model, sample.getId());
+		String result = controller.getEditSampleSpecificPage(model, sample.getId(), new MockHttpServletRequest());
 		assertEquals("Returns the correct page name", "samples/sample_edit", result);
 		assertTrue("Model contains the sample", model.containsAttribute("sample"));
 		assertTrue("Model should ALWAYS have an error attribute", model.containsAttribute("errors"));
@@ -164,7 +158,7 @@ public class SamplesControllerTest {
 				Lists.newArrayList(new ProjectSampleJoin(project, sample, true)));
 		when(updateSamplePermission.isAllowed(any(Authentication.class), eq(sample))).thenReturn(true);
 
-		String sampleFiles = controller.getSampleFilesWithoutProject(model, sampleId);
+		String sampleFiles = controller.getSampleFilesWithoutProject(model, sampleId, new MockHttpServletRequest());
 
 		assertEquals(SamplesController.SAMPLE_FILES_PAGE, sampleFiles);
 		assertTrue((boolean) model.get(SamplesController.MODEL_ATTR_CAN_MANAGE_SAMPLE));
@@ -190,7 +184,7 @@ public class SamplesControllerTest {
 				.thenReturn(files);
 		when(updateSamplePermission.isAllowed(any(Authentication.class), eq(sample))).thenReturn(true);
 
-		String sampleFiles = controller.getSampleFilesWithoutProject(model, sampleId);
+		String sampleFiles = controller.getSampleFilesWithoutProject(model, sampleId, new MockHttpServletRequest());
 
 		assertEquals(SamplesController.SAMPLE_FILES_PAGE, sampleFiles);
 		assertTrue((boolean) model.get(SamplesController.MODEL_ATTR_CAN_MANAGE_SAMPLE));
@@ -225,7 +219,7 @@ public class SamplesControllerTest {
 		when(projectService.getProjectsForSample(sample)).thenReturn(
 				Lists.newArrayList(new ProjectSampleJoin(project, sample, true)));
 
-		String sampleFiles = controller.getSampleFilesWithoutProject(model, sampleId);
+		String sampleFiles = controller.getSampleFilesWithoutProject(model, sampleId, new MockHttpServletRequest());
 
 		assertEquals(SamplesController.SAMPLE_FILES_PAGE, sampleFiles);
 		assertFalse((boolean) model.get(SamplesController.MODEL_ATTR_CAN_MANAGE_SAMPLE));

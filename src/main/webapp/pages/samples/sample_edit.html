@@ -10,7 +10,7 @@
 <div layout:fragment="main">
     <div class="row">
         <div class="col-md-12">
-            <form id="edit-form" role="form" action="edit" method="post">
+            <form id="edit-form" role="form" th:action="${URLS.edit}" method="post">
                 <div class="panel panel-info">
                     <div class="panel-heading">
                         <b class="panel-title" th:text="#{samples.edit.page-title(${sample.getLabel()})}">__TITLE__</b>
@@ -153,7 +153,7 @@
                         <input class="hidden" type="text" id="metadata" name="metadata"/>
                     </div>
                     <div class="panel-footer text-right">
-                        <a href="details" class="btn btn-default" th:text="#{form.btn.cancel}">Cancel</a>
+                        <a href="${URLS.details}" class="btn btn-default" th:text="#{form.btn.cancel}">Cancel</a>
                         <button id="submitBtn" class="btn btn-primary" th:text="#{form.btn.update}">Update</button>
                     </div>
                 </div>
