@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.cart.components;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -184,6 +185,23 @@ public class Cart {
 		currentSampleIds.remove(removeSampleRequest.getSampleId());
 		currentSampleLabels.remove(sample.getLabel());
 		cartProject.remove(removeSampleRequest.getSampleId());
+		return new RemoveSampleResponse(this.getNumberOfSamples());
+	}
+
+	/**
+	 * Remove all {@link Sample}s from a specific {@link Project} from the cart.
+	 *
+	 * @param id {@link Long} identifier for a {@link Project} in the cart.
+	 * @return {@link RemoveSampleResponse} contains the state the UI needs to update to.
+	 */
+	public RemoveSampleResponse removeProjectFromCart(Long id) {
+		Map<Long, CartSample> sampleMap = cart.get(id);
+		currentSampleIds.removeAll(sampleMap.keySet());
+		currentSampleLabels.removeAll(sampleMap.values()
+				.stream()
+				.map(CartSample::getLabel)
+				.collect(Collectors.toSet()));
+		cart.remove(id);
 		return new RemoveSampleResponse(this.getNumberOfSamples());
 	}
 }

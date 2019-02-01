@@ -1,17 +1,29 @@
 import React from "react";
-import { connect } from "react-redux";
-import { sampleDetailsActions } from "../../../components/SampleDetails";
-import { actions } from "../../../redux/reducers/cart";
-import { Button, Col, Icon, Row, Tooltip } from "antd";
+import { Button, Col, Dropdown, Icon, Menu, Row } from "antd";
 import { COLOURS } from "../../../styles";
+import { getI18N } from "../../../utilities/i18n-utilties";
 
-export default class SampleRenderer extends React.Component {
+const DeleteMenu = ({ removeSample, removeProject }) => (
+  <Menu>
+    <Menu.Item>
+      <div onClick={removeSample}>{getI18N("SampleRenderer.remove.sample")}</div>
+    </Menu.Item>
+    <Menu.Item>
+      <div onClick={removeProject}>{getI18N("SampleRenderer.remove.project")}</div>
+    </Menu.Item>
+  </Menu>
+);
+
+export class SampleRenderer extends React.Component {
   static propTypes = {};
 
-  displaySample = () => this.props.displaySample(this.props.data);
+  displaySample = () => this.props.api.displaySample(this.props.data);
 
   removeSample = () =>
     this.props.api.removeSample(this.props.rowIndex, this.props.data);
+
+  removeProject = () =>
+    this.props.api.removeProject(this.props.data.project.id);
 
   render() {
     const sample = this.props.data;
@@ -24,35 +36,21 @@ export default class SampleRenderer extends React.Component {
           </div>
         </Col>
         <Col>
-          <Tooltip title="Remove from cart">
-            <Button
-              ghost
-              shape="circle"
-              size="small"
-              onClick={this.removeSample}
-            >
-              <Icon
-                type="close-circle"
-                style={{ color: COLOURS.TEXT_PRIMARY }}
+          <Dropdown
+            overlay={
+              <DeleteMenu
+                removeSample={this.removeSample}
+                removeProject={this.removeProject}
               />
+            }
+            trigger={["click"]}
+          >
+            <Button ghost shape="circle" size="small">
+              <Icon type="ellipsis" style={{ color: COLOURS.DARK_GRAY }} />
             </Button>
-          </Tooltip>
+          </Dropdown>
         </Col>
       </Row>
     );
   }
 }
-
-const mapStateToProps = state => ({});
-
-const mapDispatchToProps = dispatch => ({
-  displaySample: sample => dispatch(sampleDetailsActions.displaySample(sample)),
-  emptyCart: () => dispatch(actions.emptyCart())
-});
-
-const CartSampleRenderer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(SampleRenderer);
-
-export { CartSampleRenderer };

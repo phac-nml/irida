@@ -5,29 +5,24 @@
   data-layout-decorate="~{template/page}"
 >
   <head>
-    <title>MY AWESOME CART</title>
+    <title th:text="#{page.cart.title}">MY AWESOME CART</title>
     <link rel="stylesheet" th:href="@{/resources/dist/css/cart.bundle.css}" />
     <style th:text="${pipeline_plugin_style}"></style>
     <script th:inline="javascript">
       window.PAGE = {
         i18n: {
-          cart: {
-            empty: /*[[#{cart.empty}]]*/ "Your cart is empty",
-            emptySub:
-              /*[[#{cart.emptySub}]]*/ "Add some samples to it to make it happy :)",
-            imageAlt: /*[[#{cart.imageAlt}]]*/ "Empty Cart"
-          },
-          sampleDetails: {
-            general: /*[[#{sampleDetails.general}]]*/ "_GEN",
-            metadata: /*[[#{sampleDetails.metadata}]]*/ "_META",
-            description: /*[[#{sampleDetails.description}]]*/ "_DESC",
-            organism: /*[[#{sampleDetails.organism}]]*/ "_ORG",
-            createdDate: /*[[#{sampleDetails.createdDate}]]*/ "_CREATED",
-            modifiedDate: /*[[#{sampleDetails.modifiedDate}]]*/ "_MODIFIED",
-          },
-          pipelines: {
-            label:/*[[#{pipelines.label}]]*/ "_PIPELINES"
-          }
+          "CartEmpty.heading": /*[[#{CartEmpty.heading}]]*/ "Your cart is empty",
+          "CartEmpty.subheading": /*[[#{CartEmpty.subheading}]]*/ "Add some samples to it to make it happy :)",
+          "CartEmpty.imageAlt": /*[[#{CartEmpty.imageAlt}]]*/ "Empty Cart",
+          "SampleRenderer.remove.sample": /*[[#{SampleRenderer.remove.sample}]]*/ "_Remove Sample_",
+          "SampleRenderer.remove.project": /*[[#{SampleRenderer.remove.project}]]*/ "_Remove Project_",
+          "SampleDetails.general": /*[[#{SampleDetails.general}]]*/ "_GEN",
+          "SampleDetails.metadata": /*[[#{SampleDetails.metadata}]]*/ "_META",
+          "SampleDetails.description": /*[[#{SampleDetails.description}]]*/ "_DESC",
+          "SampleDetails.organism": /*[[#{SampleDetails.organism}]]*/ "_ORG",
+          "SampleDetails.createdDate": /*[[#{SampleDetails.createdDate}]]*/ "_CREATED",
+          "SampleDetails.modifiedDate": /*[[#{SampleDetails.modifiedDate}]]*/ "_MODIFIED",
+          "CartTools.menu.pipelines": /*[[#{CartTools.menu.pipelines}]]*/ "_PIPELINES"
         }
       };
     </script>

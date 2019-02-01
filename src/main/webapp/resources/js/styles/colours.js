@@ -6,8 +6,9 @@
  * LEAD ON INTERFACE DESIGN.
  */
 export default {
-  PRIMARY: "#265182",
+  PRIMARY: "hsl(209,99%,55%)",
   TEXT_PRIMARY: "hsl(202, 57%, 15%)",
-  TEXT_SECONDARY: "hsl(203, 15%, 47%)",
-  LIGHT_GRAY: "hsl(210, 38%, 97%)"
+  TEXT_SECONDARY: "hsl(211,9%,50%)",
+  LIGHT_GRAY: "hsl(210, 38%, 97%)",
+  DARK_GRAY: "hsl(240,4%,26%)"
 };

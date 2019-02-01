@@ -6,10 +6,9 @@ import styled from "styled-components";
 import { COLOURS, SPACING } from "./../../styles";
 import { sampleDetailsActions } from "./reducer";
 import { formatDate } from "../../utilities/date-utilities";
+import { getI18N } from "../../utilities/i18n-utilties";
 
 const { Item } = Form;
-
-const { sampleDetails: i18n } = window.PAGE.i18n;
 
 /*
 Need to overwrite some of the default css in the Drawer component
@@ -78,19 +77,19 @@ class SampleDetails extends React.Component {
         visible={visible}
       >
         <Form layout="vertical">
-          <DetailsHeading>{i18n.general}</DetailsHeading>
-          <Item label={i18n.description}>
+          <DetailsHeading>{getI18N("SampleDetails.general")}</DetailsHeading>
+          <Item label={getI18N("SampleDetails.description")}>
             <DetailValue>{sample.description}</DetailValue>
           </Item>
-          <Item label={i18n.organism}>
+          <Item label={getI18N("SampleDetails.organism")}>
             <DetailValue>{sample.organism}</DetailValue>
           </Item>
-          <Item label={i18n.createdDate}>
+          <Item label={getI18N("SampleDetails.createdDate")}>
             <DetailValue>
               {formatDate({ date: sample.createdDate })}
             </DetailValue>
           </Item>
-          <Item label={i18n.modifiedDate}>
+          <Item label={getI18N("SampleDetails.modifiedDate")}>
             <DetailValue>
               {formatDate({ date: sample.modifiedDate })}
             </DetailValue>
@@ -98,7 +97,7 @@ class SampleDetails extends React.Component {
           <hr />
           {metadataKeys.length === 0 ? null : (
             <div>
-              <DetailsHeading>{i18n.metadata}</DetailsHeading>
+              <DetailsHeading>{getI18N("SampleDetails.metadata")}</DetailsHeading>
               {metadataKeys.map((key, i) => {
                 const item = metadata[key];
                 return (

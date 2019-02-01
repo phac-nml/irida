@@ -24,7 +24,7 @@ This is here since this has been updated to use a standard Event,
 and not handled through angularjs.
  */
 document.addEventListener(CART.UPDATED, e => {
-  const { count, added, duplicates, existing } = e.detail;
+  const { count, added, duplicate, existing } = e.detail;
 
   const counter = document.querySelector(".js-cart-count");
   if (+count > 0) {
@@ -41,9 +41,9 @@ document.addEventListener(CART.UPDATED, e => {
     });
   }
 
-  if (duplicates) {
+  if (duplicate) {
     showNotification({
-      text: duplicates,
+      text: duplicate,
       type: "warning"
     });
   }
