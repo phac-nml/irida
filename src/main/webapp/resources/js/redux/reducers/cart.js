@@ -24,10 +24,10 @@ export const reducer = (state = initialState, action = {}) => {
        */
       document.dispatchEvent(
         new CustomEvent(CART.UPDATED, {
-          detail: action.response
+          detail: action.payload
         })
       );
-      return { ...state, ...{ count: action.response.count } };
+      return { ...state, ...{ count: action.payload.count } };
     case types.CART_EMPTY_SUCCESS:
       return { ...state, count: 0 };
     default:
@@ -38,7 +38,7 @@ export const reducer = (state = initialState, action = {}) => {
 export const actions = {
   initialized: count => ({ type: types.INITIALIZED, count }),
   add: samples => ({ type: types.ADD, samples }),
-  updated: response => ({ type: types.UPDATED, response }),
+  updated: response => ({ type: types.UPDATED, payload: response }),
   emptyCart: () => ({ type: types.CART_EMPTY }),
   removeSample: (projectId, sampleId) => ({
     type: types.REMOVE_SAMPLE,
