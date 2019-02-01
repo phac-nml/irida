@@ -1,14 +1,15 @@
 import React from "react";
 import { Button, Col, Dropdown, Icon, Menu, Row } from "antd";
 import { COLOURS } from "../../../styles";
+import { getI18N } from "../../../utilities/i18n-utilties";
 
 const DeleteMenu = ({ removeSample, removeProject }) => (
   <Menu>
     <Menu.Item>
-      <div onClick={removeSample}>Remove Sample</div>
+      <div onClick={removeSample}>{getI18N("SampleRenderer.remove.sample")}</div>
     </Menu.Item>
     <Menu.Item>
-      <div onClick={removeProject}>Remove Project</div>
+      <div onClick={removeProject}>{getI18N("SampleRenderer.remove.project")}</div>
     </Menu.Item>
   </Menu>
 );

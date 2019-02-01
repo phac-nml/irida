@@ -4,8 +4,7 @@ import { Col, Menu, Row } from "antd";
 import { SPACING } from "../../../styles";
 import styled from "styled-components";
 import { Pipelines } from "../../../components/pipelines/Pipelines";
-
-const { pipelines } = window.PAGE.i18n;
+import { getI18N } from "../../../utilities/i18n-utilties";
 
 const ToolsWrapper = styled(Row)`
   height: 100%;
@@ -33,7 +32,9 @@ export default class CartTools extends React.Component {
               <Col span={24} style={{ paddingBottom: SPACING.DEFAULT }}>
                 <Menu mode="horizontal" selectedKeys={[location.pathname]}>
                   <Menu.Item key="/cart/pipelines">
-                    <Link to="cart/pipelines">{pipelines.label}</Link>
+                    <Link to="cart/pipelines">
+                      {getI18N("CartTools.menu.pipelines")}
+                    </Link>
                   </Menu.Item>
                 </Menu>
               </Col>

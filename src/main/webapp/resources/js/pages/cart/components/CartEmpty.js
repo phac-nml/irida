@@ -1,7 +1,7 @@
 import React from "react";
 import { Row } from "antd";
+import { getI18N } from "../../../utilities/i18n-utilties";
 
-const { i18n } = window.PAGE;
 const { BASE_URL } = window.TL;
 
 export default function CartEmpty() {
@@ -15,7 +15,7 @@ export default function CartEmpty() {
       <img
         height="300px"
         src={`${BASE_URL}resources/img/empty-cart.svg`}
-        alt={i18n.cart.imageAlt}
+        alt={getI18N("CartEmpty.imageAlt")}
       />
       <p
         style={{
@@ -25,13 +25,13 @@ export default function CartEmpty() {
           marginBottom: ".5em"
         }}
       >
-        {i18n.cart.empty}
+        {getI18N("CartEmpty.heading")}
       </p>
       <a
         href={`${BASE_URL}projects`}
         style={{ borderBottom: "2px solid #1890ff" }}
       >
-        {i18n.cart.emptySub}
+        {getI18N("CartEmpty.subheading")}
       </a>
     </Row>
   );
