@@ -18,7 +18,7 @@ const PipelineCard = styled(Card)`
   }
 `;
 
-const Heading = styled.h4`
+const Heading = styled.span`
   border-top-left-radius: 2px;
   border-top-right-radius: 2px;
   margin: 0;
@@ -29,20 +29,23 @@ const Heading = styled.h4`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-
-  @media (${BREAK_POINTS.SM}) {
-    font-size: 12px !important;
-  }
-  @media (${BREAK_POINTS.XL}) {
-    font-size: 16px !important;
-  }
+  font-weight: 700;
+  font-size: 1.4rem;
 `;
 
+/**
+ * Component to display a Pipeline Label, description, and the ability to select
+ * the pipeline.
+ */
 export default class Pipeline extends React.Component {
   static propTypes = {
+    /** Pipeline identifier */
     id: PropTypes.string.isRequired,
+    /** Pipeline name */
     name: PropTypes.string.isRequired,
+    /**  Pipeline description */
     description: PropTypes.string.isRequired,
+    /** Styles specific for this pipeline.  Affects the way the pipeline name is displayed */
     styleName: PropTypes.string.isRequired
   };
 
