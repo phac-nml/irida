@@ -3,6 +3,7 @@ Changes
 
 19.01 to 19.04
 ---------------
+* Added the CalVer updates to the documentation getting started guide.
 
 0.22.0 to 19.01
 ----------------
