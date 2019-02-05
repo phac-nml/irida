@@ -1,6 +1,7 @@
 import React from "react";
 import { Row } from "antd";
 import { getI18N } from "../../../utilities/i18n-utilties";
+import { COLOURS, FONTS } from "../../../styles";
 
 const { BASE_URL } = window.TL;
 
@@ -19,9 +20,9 @@ export default function CartEmpty() {
       />
       <p
         style={{
-          fontSize: "1.4em",
-          fontWeight: 600,
-          color: "#1890ff",
+          fontSize: FONTS.SIZE_LG,
+          fontWeight: FONTS.WEIGHT_HEAVY,
+          color: COLOURS.TEXT_HIGHLIGHTED,
           marginBottom: ".5em"
         }}
       >
@@ -29,7 +30,7 @@ export default function CartEmpty() {
       </p>
       <a
         href={`${BASE_URL}projects`}
-        style={{ borderBottom: "2px solid #1890ff" }}
+        style={{ borderBottom: `2px solid ${COLOURS.TEXT_HIGHLIGHTED}` }}
       >
         {getI18N("CartEmpty.subheading")}
       </a>
