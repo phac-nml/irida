@@ -7,7 +7,7 @@
  */
 
 const DEFAULT_SIZE = 14;
-export default {
+export const SPACING = {
   DEFAULT: `${DEFAULT_SIZE}px`,
   SMALL: `${DEFAULT_SIZE * 0.6}px`,
   XSMALL: `${DEFAULT_SIZE * 0.3}px`,

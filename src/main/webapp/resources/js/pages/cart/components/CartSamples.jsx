@@ -34,12 +34,12 @@ const CartTools = styled(Row)`
   right: 0;
   left: 0;
   padding: ${SPACING.DEFAULT};
-  border-bottom: 2px solid ${COLOURS.LIGHT_GRAY};
+  border-bottom: 2px solid ${COLOURS.BG_LIGHT};
   height: 65px;
 
   .ant-input {
     border: none;
-    background-color: hsl(210, 9%, 96%);
+    background-color: ${COLOURS.BG_LIGHT};
   }
 `;
 
@@ -58,7 +58,7 @@ class CartSamplesComponent extends React.Component {
       cellRenderer: "SampleRenderer",
       cellStyle: {
         padding: SPACING.DEFAULT,
-        width: "380px"
+        width: "100%"
       }
     }
   ];

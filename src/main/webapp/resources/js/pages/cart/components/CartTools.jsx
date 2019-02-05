@@ -1,14 +1,16 @@
 import React from "react";
-import { Link, Location, Router } from "@reach/router";
-import { Col, Menu, Row } from "antd";
-import { SPACING } from "../../../styles";
+import { Location, Router } from "@reach/router";
+import { Row } from "antd";
+import { COLOURS, SPACING } from "../../../styles";
 import styled from "styled-components";
 import { Pipelines } from "../../../components/pipelines/Pipelines";
 import { getI18N } from "../../../utilities/i18n-utilties";
+import { CartToolsMenu } from "./CartToolsMenu";
 
 const ToolsWrapper = styled(Row)`
   height: 100%;
-  background-color: white;
+  width: 100%;
+  background-color: ${COLOURS.BG_LIGHTEST};
   position: relative;
 `;
 
@@ -22,26 +24,33 @@ const ToolsInner = styled.div`
   overflow-x: auto;
 `;
 
+/**
+ * Wrapper component for functionality available in the cart.
+ */
 export default class CartTools extends React.Component {
+  /*
+   * Update here to add new tab items to the page.
+   */
+  paths = [
+    {
+      key: "/cart/pipelines",
+      link: "cart/pipelines",
+      text: getI18N("CartTools.menu.pipelines"),
+      component: (
+        <Pipelines key="cart/pipelines" path="cart/pipelines" default />
+      )
+    }
+  ];
+
   render() {
     return (
       <ToolsWrapper>
         <Location>
           {({ location }) => (
             <>
-              <Col span={24} style={{ paddingBottom: SPACING.DEFAULT }}>
-                <Menu mode="horizontal" selectedKeys={[location.pathname]}>
-                  <Menu.Item key="/cart/pipelines">
-                    <Link to="cart/pipelines">
-                      {getI18N("CartTools.menu.pipelines")}
-                    </Link>
-                  </Menu.Item>
-                </Menu>
-              </Col>
+              <CartToolsMenu pathname={location.pathname} paths={this.paths} />
               <ToolsInner>
-                <Router>
-                  <Pipelines path="cart/pipelines" default />
-                </Router>
+                <Router>{this.paths.map(path => path.component)}</Router>
               </ToolsInner>
             </>
           )}

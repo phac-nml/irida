@@ -19,7 +19,7 @@ const Sidebar = styled.div`
 const Content = styled.div`
   height: 100%;
   flex-grow: 1;
-  background-color: ${COLOURS.LIGHT_GRAY};
+  background-color: ${COLOURS.BG_LIGHT};
   padding: ${SPACING.DEFAULT};
 `;
 

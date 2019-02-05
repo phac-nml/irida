@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { Drawer, Form } from "antd";
 import styled from "styled-components";
-import { COLOURS, SPACING } from "./../../styles";
+import { COLOURS, FONTS, SPACING } from "./../../styles";
 import { sampleDetailsActions } from "./reducer";
 import { formatDate } from "../../utilities/date-utilities";
 import { getI18N } from "../../utilities/i18n-utilties";
@@ -27,13 +27,14 @@ const StyledDrawer = styled(Drawer)`
 `;
 
 const DetailsHeading = styled.h4`
-  font-weight: 300;
-  color: ${COLOURS.PRIMARY};
+  font-weight: ${FONTS.WEIGHT_HEAVY};
+  font-size: ${FONTS.SIZE_LG};
+  color: ${COLOURS.TEXT_HIGHLIGHTED};
   margin-bottom: ${SPACING.DEFAULT};
 `;
 
 const DetailValue = styled.div`
-  font-size: 14px;
+  font-size: ${FONTS.SIZE_DEFAULT};
   line-height: 30px;
   height: 30px;
   padding-left: 11px;
@@ -41,9 +42,9 @@ const DetailValue = styled.div`
 
 const IdWrapper = styled.span`
   margin-left: ${SPACING.SMALL};
-  font-weight: 300;
+  font-weight: ${FONTS.WEIGHT_DEFAULT};
   font-size: 14px;
-  background-color: ${COLOURS.LIGHT_GRAY};
+  background-color: ${COLOURS.BG_LIGHT};
   padding: ${SPACING.XSMALL};
   border-radius: 4px;
 `;

@@ -2,16 +2,19 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Button, Col, Dropdown, Icon, Menu, Row } from "antd";
 import styled from "styled-components";
-import { COLOURS } from "../../../styles";
+import { COLOURS, FONTS } from "../../../styles";
 import { getI18N } from "../../../utilities/i18n-utilties";
 
 const SampleLink = styled.a`
   font-size: 1.4rem;
   font-weight: 700;
+  color: ${COLOURS.TEXT_HIGHLIGHTED};
 `;
 
 const ProjectLink = styled.a`
-  color: ${COLOURS.TEXT_SECONDARY};
+  display: block;
+  color: ${COLOURS.TEXT_MUTED};
+  font-size: ${FONTS.SIZE_DEFAULT};
   text-decoration: underline;
 `;
 
@@ -70,15 +73,11 @@ export class SampleRenderer extends React.Component {
       <Row type="flex" align="top" justify="space-between">
         <Col>
           <SampleLink onClick={this.displaySample}>{sample.label}</SampleLink>
-          <div style={{ color: COLOURS.TEXT_SECONDARY }}>
-            <ProjectLink
-              href={`${window.TL.BASE_URL}projects/${
-                sample.project.id
-                }/linelist`}
-            >
-              {sample.project.label}
-            </ProjectLink>
-          </div>
+          <ProjectLink
+            href={`${window.TL.BASE_URL}projects/${sample.project.id}/linelist`}
+          >
+            {sample.project.label}
+          </ProjectLink>
         </Col>
         <Col>
           <Dropdown
@@ -91,7 +90,7 @@ export class SampleRenderer extends React.Component {
             trigger={["click"]}
           >
             <Button ghost shape="circle" size="small">
-              <Icon type="ellipsis" style={{ color: COLOURS.DARK_GRAY }} />
+              <Icon type="ellipsis" style={{ color: COLOURS.TEXT_MUTED }} />
             </Button>
           </Dropdown>
         </Col>

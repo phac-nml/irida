@@ -2,18 +2,20 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Card } from "antd";
 import styled from "styled-components";
-import { BREAK_POINTS, SPACING } from "./../../styles";
+import { BREAK_POINTS, FONTS, SPACING } from "./../../styles";
 
 const PipelineCard = styled(Card)`
   .ant-card-body {
-    @media (${BREAK_POINTS.SM}) {
-      height: 150px;
-    }
-    @media (${BREAK_POINTS.MD}) {
-      height: 200px;
+    height: 150px;
+    overflow-x: auto;
+    padding: ${SPACING.SMALL};
+    font-size: ${FONTS.SIZE_DEFAULT};
+    line-height: 24px;
+    @media (${BREAK_POINTS.LG}) {
+      height: 250px;
     }
     @media (${BREAK_POINTS.XL}) {
-      height: 200px !important;
+      height: 200px;
     }
   }
 `;
@@ -29,8 +31,8 @@ const Heading = styled.span`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-weight: 700;
-  font-size: 1.4rem;
+  font-weight: ${FONTS.WEIGHT_HEAVY};
+  font-size: ${FONTS.SIZE_LG};
 `;
 
 /**
@@ -57,7 +59,6 @@ export default class Pipeline extends React.Component {
             {this.props.name}
           </Heading>
         }
-        bodyStyle={{ overflowX: "auto", padding: SPACING.SMALL }}
         actions={[
           <a href={`${window.TL.BASE_URL}pipelines/${this.props.id}`}>Select</a>
         ]}
