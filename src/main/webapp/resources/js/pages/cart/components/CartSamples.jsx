@@ -34,7 +34,6 @@ const CartTools = styled(Row)`
   right: 0;
   left: 0;
   padding: ${SPACING.DEFAULT};
-  border-bottom: 2px solid ${COLOURS.BG_LIGHT};
   height: 65px;
 
   .ant-input {

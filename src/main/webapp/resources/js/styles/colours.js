@@ -60,7 +60,7 @@ const colours = {
 
 export const COLOURS = {
   TEXT_DARK: colours.neutral9,
-  TEXT_HIGHLIGHTED: colours.primary5,
+  TEXT_HIGHLIGHTED: colours.primary3,
   TEXT_MUTED: colours.neutral4,
   BG_LIGHT: colours.neutral1,
   BG_LIGHTEST: colours.neutral0
