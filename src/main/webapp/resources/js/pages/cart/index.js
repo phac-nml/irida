@@ -9,10 +9,10 @@ import {
 import { actions } from "../../redux/reducers/app";
 import {
   empty,
-  removeSampleFromCart,
-  removeProjectFromCart
+  removeProjectFromCart,
+  removeSampleFromCart
 } from "../../redux/sagas/cart";
-import CartPage from "./components/CartPage";
+import { CartPage } from "./components/CartPage";
 
 const store = getStore(
   { sampleDetailsReducer },

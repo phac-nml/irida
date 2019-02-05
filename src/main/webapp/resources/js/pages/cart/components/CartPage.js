@@ -25,7 +25,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({});
 
-export default connect(
+export const CartPage = connect(
   mapStateToProps,
   mapDispatchToProps
 )(CartPageComponent);
