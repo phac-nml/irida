@@ -53,7 +53,7 @@ const IdWrapper = styled.span`
  * Use this component to display a drawer on the side of the screen displaying the
  * details of a sample.
  */
-class SampleDetails extends React.Component {
+class SampleDetailsComponent extends React.Component {
   static propTypes = {
     visible: PropTypes.bool.isRequired,
     hideDetails: PropTypes.func.isRequired
@@ -126,7 +126,7 @@ const mapDispatchToProps = dispatch => ({
   hideDetails: () => dispatch(sampleDetailsActions.closeDisplay())
 });
 
-export default connect(
+export const SampleDetails = connect(
   mapStateToProps,
   mapDispatchToProps
-)(SampleDetails);
+)(SampleDetailsComponent);

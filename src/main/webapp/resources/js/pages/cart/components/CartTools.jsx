@@ -27,7 +27,7 @@ const ToolsInner = styled.div`
 /**
  * Wrapper component for functionality available in the cart.
  */
-export default class CartTools extends React.Component {
+export class CartTools extends React.Component {
   /*
    * Update here to add new tab items to the page.
    */

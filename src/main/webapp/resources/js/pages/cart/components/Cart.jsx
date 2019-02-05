@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components";
-import CartSamples from "./CartSamples";
-import SampleDetails from "../../../components/SampleDetails";
-import CartTools from "./CartTools";
+import { CartSamples } from "./CartSamples";
+import { SampleDetails } from "../../../components/SampleDetails";
+import { CartTools } from "./CartTools";
 import { COLOURS, SPACING } from "../../../styles";
 
 const Wrapper = styled.div`

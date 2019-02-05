@@ -163,7 +163,7 @@ const mapDispatchToProps = dispatch => ({
   removeProject: id => dispatch(actions.removeProject(id))
 });
 
-export default connect(
+export const CartSamples = connect(
   mapStateToProps,
   mapDispatchToProps
 )(CartSamplesComponent);
