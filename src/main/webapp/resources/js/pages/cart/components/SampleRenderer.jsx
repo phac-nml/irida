@@ -72,7 +72,13 @@ export class SampleRenderer extends React.Component {
     return (
       <Row type="flex" align="top" justify="space-between">
         <Col>
-          <SampleLink onClick={this.displaySample}>{sample.label}</SampleLink>
+          <Button
+            shape="round"
+            size="small"
+            onClick={this.displaySample}
+          >
+            {sample.label}
+          </Button>
           <ProjectLink
             href={`${window.TL.BASE_URL}projects/${sample.project.id}/linelist`}
           >

@@ -2,66 +2,67 @@
  * @fileOverview Colours used in .js and .jsx files need to be standardized
  * using the values contained in this file.
  *
+ * This is the color palette from [ant.design](https://ant.design/docs/spec/colors)
+ *
  * PLEASE TO NOT ADD TO OR CHANGE VALUES IN THIS FILE WITHOUT SPEAKING TO THE
  * LEAD ON INTERFACE DESIGN.
  */
-const colours = {
-  primary9: "hsl(234, 62%, 26%)",
-  primary8: "hsl(232, 51%, 36%)",
-  primary7: "hsl(230, 49%, 41%)",
-  primary6: "hsl(228, 45%, 45%)",
-  primary5: "hsl(227, 42%, 51%)",
-  primary4: "hsl(227, 50%, 59%)",
-  primary3: "hsl(225, 57%, 67%)",
-  primary2: "hsl(224, 67%, 76%)",
-  primary1: "hsl(221, 78%, 86%)",
-  primary0: "hsl(221, 68%, 93%)",
-  neutral9: "hsl(210, 24%, 16%)",
-  neutral8: "hsl(209, 20%, 25%)",
-  neutral7: "hsl(209, 18%, 30%)",
-  neutral6: "hsl(209, 14%, 37%)",
-  neutral5: "hsl(211, 12%, 43%)",
-  neutral4: "hsl(211, 10%, 53%)",
-  neutral3: "hsl(211, 13%, 65%)",
-  neutral2: "hsl(210, 16%, 82%)",
-  neutral1: "hsl(214, 15%, 91%)",
-  neutral0: "hsl(216, 33%, 97%)",
-  red9: "hsl(348, 94%, 20%)",
-  red8: "hsl(350, 94%, 28%)",
-  red7: "hsl(352, 90%, 35%)",
-  red6: "hsl(354, 85%, 44%)",
-  red5: "hsl(356, 75%, 53%)",
-  red4: "hsl(360, 83%, 62%)",
-  red3: "hsl(360, 91%, 69%)",
-  red2: "hsl(360, 100%, 80%)",
-  red1: "hsl(360, 100%, 87%)",
-  red0: "hsl(360, 100%, 95%)",
-  green9: "hsl(170, 97%, 15%)",
-  green8: "hsl(168, 80%, 23%)",
-  green7: "hsl(166, 72%, 28%)",
-  green6: "hsl(164, 71%, 34%)",
-  green5: "hsl(162, 63%, 41%)",
-  green4: "hsl(160, 51%, 49%)",
-  green3: "hsl(158, 58%, 62%)",
-  green2: "hsl(156, 73%, 74%)",
-  green1: "hsl(154, 75%, 87%)",
-  green0: "hsl(152, 68%, 96%)",
-  yellow9: "hsl(15, 86%, 30%)",
-  yellow8: "hsl(22, 82%, 39%)",
-  yellow7: "hsl(29, 80%, 44%)",
-  yellow6: "hsl(36, 77%, 49%)",
-  yellow5: "hsl(42, 87%, 55%)",
-  yellow4: "hsl(44, 92%, 63%)",
-  yellow3: "hsl(48, 94%, 68%)",
-  yellow2: "hsl(48, 95%, 76%)",
-  yellow1: "hsl(48, 100%, 88%)",
-  yellow0: "hsl(49, 100%, 96%)"
-};
+
+export const blue10 = "hsl(217,100%,20%)";
+export const blue9 = "hsl(215,100%,28%)";
+export const blue8 = "hsl(213,100%,35%)";
+export const blue7 = "hsl(211,92%,44%)";
+export const blue6 = "hsl(209,100%,55%)";
+export const blue5 = "hsl(207,100%,62%)";
+export const blue4 = "hsl(205,99%,71%)";
+export const blue3 = "hsl(203,100%,79%)";
+export const blue2 = "hsl(201,100%,86%)";
+export const blue1 = "hsl(199,100%,95%)";
+export const grey10 = "hsl(0,0%,0%)";
+export const grey9 = "hsl(116,0%,15%)";
+export const grey8 = "hsl(116,0%,35%)";
+export const grey7 = "hsl(116,0%,55%)";
+export const grey6 = "hsl(116,0%,75%)";
+export const grey5 = "hsl(116,0%,85%)";
+export const grey4 = "hsl(116,0%,91%)";
+export const grey3 = "hsl(116,0%,96%)";
+export const grey2 = "hsl(116,0%,98%)";
+export const grey1 = "hsl(115,100%,100%)";
+export const red10 = "hsl(349,99%,18%)";
+export const red9 = "hsl(351,100%,26%)";
+export const red8 = "hsl(353,93%,34%)";
+export const red7 = "hsl(355,83%,44%)";
+export const red6 = "hsl(357,91%,55%)";
+export const red5 = "hsl(359,100%,65%)";
+export const red4 = "hsl(1,100%,73%)";
+export const red3 = "hsl(3,100%,81%)";
+export const red2 = "hsl(5,100%,89%)";
+export const red1 = "hsl(5,100%,97%)";
+export const green10 = "hsl(108,100%,8%)";
+export const green9 = "hsl(106,100%,16%)";
+export const green8 = "hsl(104,94%,24%)";
+export const green7 = "hsl(102,85%,33%)";
+export const green6 = "hsl(100,77%,43%)";
+export const green5 = "hsl(98,61%,53%)";
+export const green4 = "hsl(96,65%,63%)";
+export const green3 = "hsl(94,69%,74%)";
+export const green2 = "hsl(92,78%,86%)";
+export const green1 = "hsl(91,100%,97%)";
+export const yellow10 = "hsl(44,100%,19%)";
+export const yellow9 = "hsl(46,100%,26%)";
+export const yellow8 = "hsl(48,100%,34%)";
+export const yellow7 = "hsl(50,95%,43%)";
+export const yellow6 = "hsl(52,96%,53%)";
+export const yellow5 = "hsl(54,100%,62%)";
+export const yellow4 = "hsl(56,99%,70%)";
+export const yellow3 = "hsl(58,100%,78%)";
+export const yellow2 = "hsl(60,100%,86%)";
+export const yellow1 = "hsl(62,100%,95%)";
 
 export const COLOURS = {
-  TEXT_DARK: colours.neutral9,
-  TEXT_HIGHLIGHTED: colours.primary3,
-  TEXT_MUTED: colours.neutral4,
-  BG_LIGHT: colours.neutral1,
-  BG_LIGHTEST: colours.neutral0
+  TEXT_DARK: grey9,
+  TEXT_HIGHLIGHTED: blue6,
+  TEXT_MUTED: grey6,
+  BG_LIGHT: grey4,
+  BG_LIGHTEST: grey2
 };
