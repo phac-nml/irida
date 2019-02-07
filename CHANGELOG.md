@@ -1,6 +1,10 @@
 Changes
 =======
 
+19.04 to 19.06
+---------------
+* Added note with link to NGS Linker installation documentation to Command-line Linker modal
+
 19.01 to 19.04
 ---------------
 * Added the CalVer updates to the documentation getting started guide.
