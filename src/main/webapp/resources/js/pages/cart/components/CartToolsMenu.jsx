@@ -1,8 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { SPACING } from "../../../styles";
 import { Col, Menu } from "antd";
 import { Link } from "@reach/router";
+import { SPACE_MD } from "../../../styles/spacing";
 
 /**
  * Stateless UI component for creating tbs in the CartTools.
@@ -12,7 +12,7 @@ import { Link } from "@reach/router";
  */
 export function CartToolsMenu({ pathname, paths }) {
   return (
-    <Col span={24} style={{ paddingBottom: SPACING.DEFAULT }}>
+    <Col span={24} style={{ paddingBottom: SPACE_MD }}>
       <Menu mode="horizontal" selectedKeys={[pathname]}>
         {paths.map(path => (
           <Menu.Item key={path.key}>

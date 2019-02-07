@@ -10,7 +10,7 @@ import { actions } from "../../../redux/reducers/cart";
 import { sampleDetailsActions } from "../../../components/SampleDetails/reducer";
 import { SampleRenderer } from "./SampleRenderer";
 import { getCartIds, getSamplesForProject } from "../../../apis/cart/cart";
-import { COLOR_BACKGROUND_LIGHT } from "../../../styles/colours";
+import { COLOR_BACKGROUND_LIGHT } from "../../../styles/colors";
 import { SPACE_MD } from "../../../styles/spacing";
 
 const { Search } = Input;

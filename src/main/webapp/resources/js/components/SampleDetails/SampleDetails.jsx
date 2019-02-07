@@ -13,7 +13,7 @@ import {
   FONT_WEIGHT_DEFAULT
 } from "../../styles/fonts";
 import { SPACE_SM, SPACE_XS } from "../../styles/spacing";
-import { COLOR_BACKGROUND_LIGHT } from "../../styles/colours";
+import { COLOR_BACKGROUND_LIGHT } from "../../styles/colors";
 
 const { Item } = Form;
 

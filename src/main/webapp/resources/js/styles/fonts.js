@@ -1,4 +1,4 @@
-import { blue6, gold6, grey7, grey9, red6 } from "./colours";
+import { blue6, gold6, grey7, grey9, red6 } from "./colors";
 
 /*
 SIZES

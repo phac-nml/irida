@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { CartSamples } from "./CartSamples";
 import { SampleDetails } from "../../../components/SampleDetails";
 import { CartTools } from "./CartTools";
-import { COLOR_BACKGROUND_LIGHT } from "../../../styles/colours";
+import { COLOR_BACKGROUND_LIGHT } from "../../../styles/colors";
 import { SPACE_MD } from "../../../styles/spacing";
 
 const Wrapper = styled.div`

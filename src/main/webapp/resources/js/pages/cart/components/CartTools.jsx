@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { Pipelines } from "../../../components/pipelines/Pipelines";
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { CartToolsMenu } from "./CartToolsMenu";
-import { COLOR_BACKGROUND_LIGHTEST } from "../../../styles/colours";
+import { COLOR_BACKGROUND_LIGHTEST } from "../../../styles/colors";
 import { SPACE_MD } from "../../../styles/spacing";
 
 const ToolsWrapper = styled(Row)`
