@@ -2,19 +2,17 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Button, Col, Dropdown, Icon, Menu, Row } from "antd";
 import styled from "styled-components";
-import { COLOURS, FONTS } from "../../../styles";
 import { getI18N } from "../../../utilities/i18n-utilties";
-
-const SampleLink = styled.a`
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: ${COLOURS.TEXT_HIGHLIGHTED};
-`;
+import {
+  FONT_COLOR_MUTED,
+  FONT_COLOR_PRIMARY,
+  FONT_SIZE_SMALL
+} from "../../../styles/fonts";
 
 const ProjectLink = styled.a`
   display: block;
-  color: ${COLOURS.TEXT_MUTED};
-  font-size: ${FONTS.SIZE_DEFAULT};
+  color: ${FONT_COLOR_MUTED};
+  font-size: ${FONT_SIZE_SMALL};
   text-decoration: underline;
 `;
 
@@ -72,11 +70,7 @@ export class SampleRenderer extends React.Component {
     return (
       <Row type="flex" align="top" justify="space-between">
         <Col>
-          <Button
-            shape="round"
-            size="small"
-            onClick={this.displaySample}
-          >
+          <Button shape="round" size="small" onClick={this.displaySample}>
             {sample.label}
           </Button>
           <ProjectLink
@@ -96,7 +90,7 @@ export class SampleRenderer extends React.Component {
             trigger={["click"]}
           >
             <Button ghost shape="circle" size="small">
-              <Icon type="ellipsis" style={{ color: COLOURS.TEXT_MUTED }} />
+              <Icon type="ellipsis" style={{ color: FONT_COLOR_PRIMARY }} />
             </Button>
           </Dropdown>
         </Col>

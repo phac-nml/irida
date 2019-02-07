@@ -2,19 +2,21 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Card } from "antd";
 import styled from "styled-components";
-import { BREAK_POINTS, FONTS, SPACING } from "./../../styles";
+import { FONT_SIZE_DEFAULT, FONT_WEIGHT_HEAVY } from "../../styles/fonts";
+import { SPACE_SM } from "../../styles/spacing";
+import { BREAK_MD_MAX, BREAK_XL_MAX } from "../../styles/break-points";
 
 const PipelineCard = styled(Card)`
   .ant-card-body {
     height: 150px;
     overflow-x: auto;
-    padding: ${SPACING.SMALL};
-    font-size: ${FONTS.SIZE_DEFAULT};
+    padding: ${SPACE_SM};
+    font-size: ${FONT_SIZE_DEFAULT};
     line-height: 24px;
-    @media (${BREAK_POINTS.LG}) {
+    @media (${BREAK_MD_MAX}) {
       height: 250px;
     }
-    @media (${BREAK_POINTS.XL}) {
+    @media (${BREAK_XL_MAX}) {
       height: 200px;
     }
   }
@@ -24,15 +26,15 @@ const Heading = styled.span`
   border-top-left-radius: 2px;
   border-top-right-radius: 2px;
   margin: 0;
-  padding: ${SPACING.SMALL};
+  padding: ${SPACE_SM};
   height: 40px;
   line-height: 20px;
   word-break: break-word;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-weight: ${FONTS.WEIGHT_HEAVY};
-  font-size: ${FONTS.SIZE_LG};
+  font-size: ${FONT_SIZE_DEFAULT};
+  font-weight: ${FONT_WEIGHT_HEAVY};
 `;
 
 /**

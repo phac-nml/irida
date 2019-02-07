@@ -58,11 +58,17 @@ export const yellow4 = "hsl(56,99%,70%)";
 export const yellow3 = "hsl(58,100%,78%)";
 export const yellow2 = "hsl(60,100%,86%)";
 export const yellow1 = "hsl(62,100%,95%)";
+export const gold10 = "hsl(32,99%,19%)";
+export const gold9 = "hsl(34,100%,27%)";
+export const gold8 = "hsl(36,100%,34%)";
+export const gold7 = "hsl(38,94%,43%)";
+export const gold6 = "hsl(40,96%,53%)";
+export const gold5 = "hsl(42,100%,62%)";
+export const gold4 = "hsl(44,100%,70%)";
+export const gold3 = "hsl(46,100%,78%)";
+export const gold2 = "hsl(48,100%,86%)";
+export const gold1 = "hsl(51,100%,95%)";
 
-export const COLOURS = {
-  TEXT_DARK: grey9,
-  TEXT_HIGHLIGHTED: blue6,
-  TEXT_MUTED: grey6,
-  BG_LIGHT: grey4,
-  BG_LIGHTEST: grey2
-};
+export const COLOR_BACKGROUND_LIGHTEST = grey1;
+export const COLOR_BACKGROUND_LIGHT = grey4;
+export const COLOR_BACKGROUND_DARK = grey8;

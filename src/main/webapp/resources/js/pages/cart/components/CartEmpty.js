@@ -1,7 +1,12 @@
 import React from "react";
 import { Row } from "antd";
 import { getI18N } from "../../../utilities/i18n-utilties";
-import { COLOURS, FONTS, SPACING } from "../../../styles";
+import {
+  FONT_COLOR_PRIMARY,
+  FONT_SIZE_LARGE,
+  FONT_WEIGHT_HEAVY
+} from "../../../styles/fonts";
+import { SPACE_SM } from "../../../styles/spacing";
 
 const { BASE_URL } = window.TL;
 
@@ -20,10 +25,10 @@ export default function CartEmpty() {
       />
       <p
         style={{
-          fontSize: FONTS.SIZE_LG,
-          fontWeight: FONTS.WEIGHT_HEAVY,
-          color: COLOURS.TEXT_HIGHLIGHTED,
-          marginBottom: SPACING.DEFAULT
+          fontSize: FONT_SIZE_LARGE,
+          fontWeight: FONT_WEIGHT_HEAVY,
+          color: FONT_COLOR_PRIMARY,
+          marginBottom: SPACE_SM
         }}
       >
         {getI18N("CartEmpty.heading")}
@@ -31,8 +36,8 @@ export default function CartEmpty() {
       <a
         href={`${BASE_URL}projects`}
         style={{
-          borderBottom: `2px solid ${COLOURS.TEXT_HIGHLIGHTED}`,
-          color: COLOURS.TEXT_HIGHLIGHTED
+          borderBottom: `2px solid ${FONT_COLOR_PRIMARY}`,
+          color: FONT_COLOR_PRIMARY
         }}
       >
         {getI18N("CartEmpty.subheading")}

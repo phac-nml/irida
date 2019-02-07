@@ -1,21 +1,22 @@
 import React from "react";
 import { Location, Router } from "@reach/router";
 import { Row } from "antd";
-import { COLOURS, SPACING } from "../../../styles";
 import styled from "styled-components";
 import { Pipelines } from "../../../components/pipelines/Pipelines";
 import { getI18N } from "../../../utilities/i18n-utilties";
 import { CartToolsMenu } from "./CartToolsMenu";
+import { COLOR_BACKGROUND_LIGHTEST } from "../../../styles/colours";
+import { SPACE_MD } from "../../../styles/spacing";
 
 const ToolsWrapper = styled(Row)`
   height: 100%;
   width: 100%;
-  background-color: ${COLOURS.BG_LIGHTEST};
+  background-color: ${COLOR_BACKGROUND_LIGHTEST};
   position: relative;
 `;
 
 const ToolsInner = styled.div`
-  padding: ${SPACING.DEFAULT};
+  padding: ${SPACE_MD};
   position: absolute;
   top: 50px;
   right: 0;
