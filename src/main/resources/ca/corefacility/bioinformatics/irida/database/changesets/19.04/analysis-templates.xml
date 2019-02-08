@@ -9,12 +9,17 @@
             <column name="DTYPE" type="varchar(31)" value="AnalysisSubmission">
                 <constraints nullable="false"/>
             </column>
+            <column name="submitted_project_id" type="bigint(20)">
+                <constraints foreignKeyName="FK_ANALYSIS_TEMPLATE_PROJECT" referencedColumnNames="id"
+                             referencedTableName="project"/>
+            </column>
         </addColumn>
 
         <addColumn tableName="analysis_submission_AUD">
             <column name="DTYPE" type="varchar(31)" value="AnalysisSubmission">
                 <constraints nullable="false"/>
             </column>
+            <column name="submitted_project_id" type="bigint(20)"/>
         </addColumn>
     </changeSet>
 </databaseChangeLog>
