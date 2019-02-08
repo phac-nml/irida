@@ -1,6 +1,10 @@
 Changes
 =======
 
+19.01 to 19.04
+--------------
+* [UI/Developer]: Updated to lodash v4.17.11 to fix security issue. (19.01.1)
+
 0.22.0 to 19.01
 ----------------
 * [Admin]: Updated versioning to a [CalVer](https://calver.org/) scheme of YY.0M.MICRO.  New feature releases will have the appropriate the year and month fields, where bugfixes will increment the MICRO field.
