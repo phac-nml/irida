@@ -429,10 +429,12 @@ IRIDA's branch structure is loosely based on the [GitFlow](http://nvie.com/posts
 #### Release tags & versioning scheme
 {:.no_toc}
 
+IRIDA uses a [CalVer](https://calver.org/) style versioning scheme.  This means the release version number is based on the year and month that it was released.  The scheme used is `YY.0M.minor`.  First segment is last 2 digits of the year, 2nd is 2 digit month, and 3rd is the number of bugfix release (optional).  For example a major release in January 2019 would be `19.01`.  If a bugfix release was performed for that version, it would be `19.01.1`.
+
 Whenever code is merged into *master*, a release should be created.  To mark the release the person merging the code should create a git tag at the point of the merge.
 
 ```bash
-git tag 0.version.subversion
+git tag YY.MM.minor
 ```
 
 Don't forget to push the tag when you're finished.
