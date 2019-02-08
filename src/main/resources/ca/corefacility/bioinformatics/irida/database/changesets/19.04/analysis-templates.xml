@@ -10,5 +10,11 @@
                 <constraints nullable="false"/>
             </column>
         </addColumn>
+
+        <addColumn tableName="analysis_submission_AUD">
+            <column name="DTYPE" type="varchar(31)" value="AnalysisSubmission">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
     </changeSet>
 </databaseChangeLog>
