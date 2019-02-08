@@ -1,9 +1,11 @@
 import React from "react";
 import styled from "styled-components";
-import CartSamples from "./CartSamples";
-import SampleDetails from "../../../components/SampleDetails";
-import CartTools from "./CartTools";
-import { COLOURS, SPACING } from "../../../styles";
+import PropTypes from "prop-types";
+import { CartSamples } from "./CartSamples";
+import { SampleDetails } from "../../../components/SampleDetails";
+import { CartTools } from "./CartTools";
+import { COLOR_BACKGROUND_LIGHT } from "../../../styles/colors";
+import { SPACE_MD } from "../../../styles/spacing";
 
 const Wrapper = styled.div`
   display: flex;
@@ -19,8 +21,8 @@ const Sidebar = styled.div`
 const Content = styled.div`
   height: 100%;
   flex-grow: 1;
-  background-color: ${COLOURS.LIGHT_GRAY};
-  padding: ${SPACING.DEFAULT};
+  background-color: ${COLOR_BACKGROUND_LIGHT};
+  padding: ${SPACE_MD};
 `;
 
 export default function Cart({ count }) {
@@ -36,3 +38,7 @@ export default function Cart({ count }) {
     </Wrapper>
   );
 }
+
+Cart.propTypes = {
+  count: PropTypes.number
+};

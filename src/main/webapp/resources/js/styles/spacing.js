@@ -6,10 +6,7 @@
  * LEAD ON INTERFACE DESIGN.
  */
 
-const DEFAULT_SIZE = 14;
-export default {
-  DEFAULT: `${DEFAULT_SIZE}px`,
-  SMALL: `${DEFAULT_SIZE * 0.6}px`,
-  XSMALL: `${DEFAULT_SIZE * 0.3}px`,
-  LARGE: `${DEFAULT_SIZE * 1.8}px`
-};
+export const SPACE_MD = "16px";
+export const SPACE_SM = "12px";
+export const SPACE_XS = "8px";
+export const SPACE_LG = "24px";

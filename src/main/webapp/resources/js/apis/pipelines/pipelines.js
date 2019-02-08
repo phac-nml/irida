@@ -18,9 +18,13 @@ export async function getIridaWorkflowDescription(workflowUUID) {
     });
     return { data };
   } catch (error) {
-    return { error: error };
+    return { error };
   }
 }
 
+/**
+ * Get a listing of all Pipelines in IRIDA.
+ * @returns {Promise<AxiosResponse<any> | never>}
+ */
 export const fetchIridaAnalysisWorkflows = async () =>
   axios.get(URL).then(response => response.data);

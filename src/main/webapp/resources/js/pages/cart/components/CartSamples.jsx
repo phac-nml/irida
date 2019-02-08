@@ -9,8 +9,9 @@ import styled from "styled-components";
 import { actions } from "../../../redux/reducers/cart";
 import { sampleDetailsActions } from "../../../components/SampleDetails/reducer";
 import { SampleRenderer } from "./SampleRenderer";
-import { COLOURS, SPACING } from "../../../styles";
 import { getCartIds, getSamplesForProject } from "../../../apis/cart/cart";
+import { COLOR_BACKGROUND_LIGHT } from "../../../styles/colors";
+import { SPACE_MD } from "../../../styles/spacing";
 
 const { Search } = Input;
 
@@ -18,13 +19,13 @@ const CartSamplesWrapper = styled.div`
   height: 100%;
   width: 100%;
   padding-top: 65px;
-  
+
   .ag-root {
-    border: none!important;
+    border: none !important;
   }
-  
+
   .ag-center-cols-container {
-    width: 100%!important;
+    width: 100% !important;
   }
 `;
 
@@ -33,13 +34,12 @@ const CartTools = styled(Row)`
   top: 0;
   right: 0;
   left: 0;
-  padding: ${SPACING.DEFAULT};
-  border-bottom: 2px solid ${COLOURS.LIGHT_GRAY};
+  padding: ${SPACE_MD};
   height: 65px;
 
   .ant-input {
     border: none;
-    background-color: hsl(210, 9%, 96%);
+    background-color: ${COLOR_BACKGROUND_LIGHT};
   }
 `;
 
@@ -48,7 +48,7 @@ class CartSamplesComponent extends React.Component {
     count: PropTypes.number.isRequired,
     displaySample: PropTypes.func.isRequired,
     removeSample: PropTypes.func.isRequired,
-    removeProject: PropTypes.func.isRequired,
+    removeProject: PropTypes.func.isRequired
   };
 
   columnDefs = [
@@ -57,8 +57,8 @@ class CartSamplesComponent extends React.Component {
       field: "label",
       cellRenderer: "SampleRenderer",
       cellStyle: {
-        padding: SPACING.DEFAULT,
-        width: "380px"
+        padding: SPACE_MD,
+        width: "100%"
       }
     }
   ];
@@ -130,9 +130,7 @@ class CartSamplesComponent extends React.Component {
             <Button onClick={this.props.emptyCart}>Empty</Button>
           </Col>
         </CartTools>
-        <CartSamplesWrapper
-          className="ag-theme-balham"
-        >
+        <CartSamplesWrapper className="ag-theme-balham">
           <AgGridReact
             getRowNodeId={data => data.id}
             animateRows={true}
@@ -163,7 +161,7 @@ const mapDispatchToProps = dispatch => ({
   removeProject: id => dispatch(actions.removeProject(id))
 });
 
-export default connect(
+export const CartSamples = connect(
   mapStateToProps,
   mapDispatchToProps
 )(CartSamplesComponent);

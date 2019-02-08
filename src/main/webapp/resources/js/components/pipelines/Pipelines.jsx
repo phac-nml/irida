@@ -2,11 +2,13 @@ import React from "react";
 import { Col, Row } from "antd";
 import { fetchIridaAnalysisWorkflows } from "../../apis/pipelines/pipelines";
 import Pipeline from "../pipeline/Pipeline";
-import { SPACING } from "../../styles";
 import "./styles.css";
+import { SPACE_MD } from "../../styles/spacing";
 
+/**
+ * Component to render all analysis pipeline for the user to select.
+ */
 export class Pipelines extends React.Component {
-  static propTypes = {};
   state = {
     pipelines: [],
     loaded: false
@@ -27,7 +29,7 @@ export class Pipelines extends React.Component {
             lg={12}
             xl={8}
             key={pipeline.id}
-            style={{ marginBottom: SPACING.DEFAULT }}
+            style={{ marginBottom: SPACE_MD }}
           >
             <Pipeline
               id={pipeline.id}

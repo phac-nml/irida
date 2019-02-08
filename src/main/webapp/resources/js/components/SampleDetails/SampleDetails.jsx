@@ -3,10 +3,17 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { Drawer, Form } from "antd";
 import styled from "styled-components";
-import { COLOURS, SPACING } from "./../../styles";
 import { sampleDetailsActions } from "./reducer";
 import { formatDate } from "../../utilities/date-utilities";
 import { getI18N } from "../../utilities/i18n-utilties";
+import {
+  FONT_COLOR_PRIMARY,
+  FONT_SIZE_DEFAULT,
+  FONT_SIZE_LARGE,
+  FONT_WEIGHT_DEFAULT
+} from "../../styles/fonts";
+import { SPACE_SM, SPACE_XS } from "../../styles/spacing";
+import { COLOR_BACKGROUND_LIGHT } from "../../styles/colors";
 
 const { Item } = Form;
 
@@ -27,24 +34,25 @@ const StyledDrawer = styled(Drawer)`
 `;
 
 const DetailsHeading = styled.h4`
-  font-weight: 300;
-  color: ${COLOURS.PRIMARY};
-  margin-bottom: ${SPACING.DEFAULT};
+  font-weight: ${FONT_WEIGHT_DEFAULT};
+  font-size: ${FONT_SIZE_LARGE};
+  color: ${FONT_COLOR_PRIMARY};
+  border-bottom: 1px solid ${FONT_COLOR_PRIMARY};
 `;
 
 const DetailValue = styled.div`
-  font-size: 14px;
+  font-size: ${FONT_SIZE_DEFAULT};
   line-height: 30px;
   height: 30px;
   padding-left: 11px;
 `;
 
 const IdWrapper = styled.span`
-  margin-left: ${SPACING.SMALL};
-  font-weight: 300;
-  font-size: 14px;
-  background-color: ${COLOURS.LIGHT_GRAY};
-  padding: ${SPACING.XSMALL};
+  margin-left: ${SPACE_SM};
+  font-weight: ${FONT_WEIGHT_DEFAULT};
+  font-size: ${FONT_SIZE_DEFAULT};
+  background-color: ${COLOR_BACKGROUND_LIGHT};
+  padding: ${SPACE_XS} ${SPACE_SM};
   border-radius: 4px;
 `;
 
@@ -52,7 +60,7 @@ const IdWrapper = styled.span`
  * Use this component to display a drawer on the side of the screen displaying the
  * details of a sample.
  */
-class SampleDetails extends React.Component {
+class SampleDetailsComponent extends React.Component {
   static propTypes = {
     visible: PropTypes.bool.isRequired,
     hideDetails: PropTypes.func.isRequired
@@ -97,8 +105,10 @@ class SampleDetails extends React.Component {
           <hr />
           {metadataKeys.length === 0 ? null : (
             <div>
-              <DetailsHeading>{getI18N("SampleDetails.metadata")}</DetailsHeading>
-              {metadataKeys.map((key, i) => {
+              <DetailsHeading>
+                {getI18N("SampleDetails.metadata")}
+              </DetailsHeading>
+              {metadataKeys.map(key => {
                 const item = metadata[key];
                 return (
                   <Item label={key} key={item.id}>
@@ -125,7 +135,7 @@ const mapDispatchToProps = dispatch => ({
   hideDetails: () => dispatch(sampleDetailsActions.closeDisplay())
 });
 
-export default connect(
+export const SampleDetails = connect(
   mapStateToProps,
   mapDispatchToProps
-)(SampleDetails);
+)(SampleDetailsComponent);
