@@ -297,10 +297,6 @@ public abstract class AbstractAnalysisSubmission extends IridaResourceSupport im
 		return false;
 	}
 
-	public int compareTo(AbstractAnalysisSubmission o) {
-		return modifiedDate.compareTo(o.modifiedDate);
-	}
-
 	/**
 	 * Enum encoding the priority of analysis submissions
 	 */
