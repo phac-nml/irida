@@ -4,6 +4,7 @@ Changes
 19.01 to 19.04
 --------------
 * [UI/Developer]: Updated to lodash v4.17.11 to fix security issue. (19.01.1)
+* [REST]: Fixes issue where the Sample collection date was synchronized incorrectly, leading to the synced date up to one day off from the original date. (19.01.2)
 
 0.22.0 to 19.01
 ----------------
@@ -49,7 +50,6 @@ Changes
 * [UI]: Add link back to sample for analysis input files on the Analsysis Details Page.
 * [UI]: Fixes issue where attempting to select all samples with a filter applied selected all samples in project.
 * [UI]: Fixed issue with exporting samples to galaxy through project/samples page failing.
-* [REST]: Fixes issue where the Sample collection date was synchronized incorrectly, leading to the synced date up to one day off from the original date.
 
 0.21.0 to 0.22.0
 ----------------
