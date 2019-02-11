@@ -9,6 +9,8 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssembl
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.web.controller.api.json.DateJson;
+import ca.corefacility.bioinformatics.irida.web.controller.api.json.DateJson.DateSerializer;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -86,8 +88,8 @@ public class Sample extends IridaResourceSupport
 	 * Date of sampling
 	 */
 	@Temporal(TemporalType.DATE)
-	@JsonSerialize(as=java.sql.Date.class)
-	@JsonDeserialize(as=java.sql.Date.class)
+	@JsonSerialize(as=java.sql.Date.class, using = DateJson.DateSerializer.class)
+	@JsonDeserialize(as=java.sql.Date.class, using = DateJson.DateDeserializer.class)
 	private Date collectionDate;
 
 	/**
