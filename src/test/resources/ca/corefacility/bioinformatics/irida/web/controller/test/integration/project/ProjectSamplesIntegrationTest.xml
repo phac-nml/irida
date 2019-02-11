@@ -30,7 +30,7 @@
 	<sample id="2"  sampleName="sample2"
 		createdDate="2013-07-18 14:20:19.0" />
 	<sample id="3"  sampleName="sample2"
-		createdDate="2013-07-18 14:20:19.0" />
+		createdDate="2013-07-18 14:20:19.0" collectionDate="1999-12-05" />
 
 	<project_sample id="1" project_id="1" sample_id="1"
 		createdDate="2013-07-18 14:20:19.0" owner="true" />
