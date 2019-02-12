@@ -19,6 +19,7 @@ public class PipelineStartParameters {
 	private List<Long> paired;
 	private List<Long> sharedProjects;
 	private Long ref;
+	private Long automatedProject;
 	private Map<String, Object> selectedParameters;
 	private Boolean writeResultsToSamples;
 
@@ -104,6 +105,14 @@ public class PipelineStartParameters {
 
 	public void setWriteResultsToSamples(Boolean writeResultsToSamples) {
 		this.writeResultsToSamples = writeResultsToSamples;
+	}
+
+	public void setAutomatedProject(Long automatedProject) {
+		this.automatedProject = automatedProject;
+	}
+
+	public Long getAutomatedProject() {
+		return automatedProject;
 	}
 
 	@Override

@@ -22,7 +22,8 @@
           parameters: /*[[${parameters}]]*/ [],
           pipelineId: /*[[${pipelineId}]]*/ "pipelineId",
           dynamicSources: /*[[${dynamicSources}]]*/ [],
-          paramsWithChoices: /*[[${paramsWithChoices}]]*/ []
+          paramsWithChoices: /*[[${paramsWithChoices}]]*/ [],
+          automatedProjectId: /*[[${automatedProjectId}]]*/ 0
         }
       };
       /*]]>*/
@@ -196,7 +197,7 @@
                                 <label class="col-sm-2 control-label" th:text="#{workflow.label.share}">_Share results
                                     with
                                     project_</label>
-                                <div class="col-sm-10">
+                                <div class="col-sm-10" th:if="${automatedProject == null}">
                                     <div class="row">
                                         <div class="col-md-6 checkbox" th:each="project : ${projects}">
                                             <label>
@@ -207,13 +208,19 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-sm-10" th:if="${automatedProject != null}">
+                                    <div class="row">
+                                        <span th:text="#{workflow.automated.project-share(${automatedProject.name})}">_Analysis results will be automatically shared with Project 1_</span>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- SAMPLES -->
-                <div class="row">
+                <div class="row" th:if="${automatedProject == null}">
                     <div class="col-md-12">
                         <label class="col-sm-2 control-label" th:text="#{workflow.label.files}">Files</label>
 
@@ -290,19 +297,26 @@
                         </div>
                     </div>
                 </div>
+                <div class="row" th:if="${automatedProject != null}">
+                    <div class="col-md-12">
+                        <span class="lead" th:text="#{workflow.automated.file-message(${automatedProject.name})}">_This pipeline will be run automatically for any files uploaded to project XXXX_</span>
+                    </div>
+                </div>
             </div>
 
             <div class="col-lg-3 col-sm-3" ng-switch="pipeline.loading">
                 <!-- BUTTONS ON THE SIDE -->
                 <div ng-switch-when="false" class="ng-cloak text-center">
-                    <h2 th:text="#{workflow.launch.btn}">Ready to Launch?</h2>
+                    <h2 th:if="${automatedProject == null}" th:text="#{workflow.launch.btn}">Ready to Launch?</h2>
+                    <h2 th:if="${automatedProject != null}" th:text="#{workflow.automated.launch.btn}">Ready to Launch?</h2>
 
                     <div data-toggle="tooltip" data-placement="bottom" onmouseenter="$(this).tooltip('show')"
                          data-original-title="{{ pipeline.launchButtonTitle() }}">
                         <button id="btn-launch" class="btn btn-xl btn-danger btn-action"
                                 ng-disabled="pipeline.shouldDisableLaunch()"
                                 ng-click="pipeline.launch()">
-                            <span class="fa fa-rocket"></span>
+                            <span th:if="${automatedProject == null}" class="fas fa-rocket"></span>
+                            <span th:if="${automatedProject != null}" class="fas fa-save"></span>
                         </button>
                     </div>
                 </div>
@@ -324,6 +338,12 @@
                                 ng-click="pipeline.clearAndRedirect()"
                                 th:text="#{workflow.submitted-clear-btn}">Clear the cart and start over!
                         </button>
+                    </div>
+                </div>
+                <div id="automated-pipeline-created" class="ng-cloak" ng-switch-when="true">
+                    <div ng-hide="pipeline.success" class="alert alert-info">
+                        <strong class="fa fa-2x fa-fw fa-coffee"></strong>&nbsp;
+                        <span th:text="#{workflow.pipeline-kickoff-message}"></span>
                     </div>
                 </div>
             </div>

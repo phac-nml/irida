@@ -37,8 +37,8 @@
     });
 
     /*
-		 * Whether or not the page is waiting for a response from the server.
-		 */
+     * Whether or not the page is waiting for a response from the server.
+     */
     vm.loading = false;
     /**
      * Analysis submission success?
@@ -216,6 +216,10 @@
         }
         if (paired.length > 0) {
           params["paired"] = paired;
+        }
+
+        if (window.PAGE.pipeline.automatedProjectId != null) {
+          params["automatedProject"] = window.PAGE.pipeline.automatedProjectId;
         }
 
         if (

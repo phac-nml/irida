@@ -1,10 +1,5 @@
 package ca.corefacility.bioinformatics.irida.service;
 
-import java.util.*;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
@@ -19,8 +14,13 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ProjectSampleAnalysisOutputInfo;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTemplate;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+
+import java.util.*;
 
 /**
  * A service for AnalysisSubmissions.
@@ -136,6 +136,12 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
 			Map<String, String> unnamedParameters, IridaWorkflowNamedParameters namedParameters, String name,
 			String analysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples);
+
+	public AnalysisSubmissionTemplate createSingleSampleSubmissionTemplate(IridaWorkflow workflow, Long referenceFileId,
+			Map<String, String> params, IridaWorkflowNamedParameters namedParameters, String submissionName,
+			String analysisDescription, Project projectsToShare, boolean writeResultsToSamples);
+
+	public List<AnalysisSubmissionTemplate> getAnalysisTemplatesForProject(Project project);
 
 	/**
 	 * Given the id of an {@link AnalysisSubmission} gets the percentage
