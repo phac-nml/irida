@@ -1,48 +1,13 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
-import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
-import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.*;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
-import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
-import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
-import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisOutputFileInfo;
-import ca.corefacility.bioinformatics.irida.ria.web.components.AnalysisOutputFileDownloadManager;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.services.AnalysesListingService;
-import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
-import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
-import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
-import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
-import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.Principal;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,13 +22,52 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.security.Principal;
-import java.util.*;
-import java.util.stream.Collectors;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.*;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
+import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
+import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisOutputFileInfo;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisProjectShare;
+import ca.corefacility.bioinformatics.irida.ria.web.components.AnalysisOutputFileDownloadManager;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.services.AnalysesListingService;
+import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
+import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 /**
  * Controller for Analysis.
@@ -262,7 +266,18 @@ public class AnalysisController {
 		// - Paired
 		Set<SequenceFilePair> inputFilePairs = sequencingObjectService.getSequencingObjectsOfTypeForAnalysisSubmission(
 				submission, SequenceFilePair.class);
-		model.addAttribute("paired_end", inputFilePairs);
+		List<SampleFiles> sampleFiles = inputFilePairs.stream().map(SampleFiles::new).sorted((a, b) -> {
+			if (a.sample == null && b.sample == null) {
+				return 0;
+			} else if (a.sample == null) {
+				return -1;
+			} else if (b.sample == null) {
+				return 1;
+			}
+			return a.sample.getLabel()
+					.compareTo(b.sample.getLabel());
+		}).collect(Collectors.toList());
+		model.addAttribute("paired_end", sampleFiles);
 
 		// Check if user can update analysis
 		Authentication authentication = SecurityContextHolder.getContext()
@@ -600,19 +615,18 @@ public class AnalysisController {
 	 * {@link Project}
 	 *
 	 * @param submissionId the {@link AnalysisSubmission} id to share/unshare
-	 * @param projectId    the {@link Project} id to share with
-	 * @param shareStatus  whether or not to share the {@link AnalysisSubmission}
+	 * @param projectShare {@link AnalysisProjectShare} describes of the project and the share status.
 	 * @param locale       Locale of the logged in user
 	 * @return Success message if successful
 	 */
 	@RequestMapping(value = "/ajax/{submissionId}/share", method = RequestMethod.POST)
 	public Map<String, String> updateProjectShare(@PathVariable Long submissionId,
-			@RequestParam("project") Long projectId, @RequestParam("shared") boolean shareStatus, Locale locale) {
+			@RequestBody AnalysisProjectShare projectShare, Locale locale) {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
-		Project project = projectService.read(projectId);
+		Project project = projectService.read(projectShare.getProjectId());
 
 		String message = "";
-		if (shareStatus) {
+		if (projectShare.isShareStatus()) {
 			analysisSubmissionService.shareAnalysisSubmissionWithProject(submission, project);
 
 			message = messageSource.getMessage("analysis.details.share.enable", new Object[] { project.getLabel() },
@@ -1123,6 +1137,39 @@ public class AnalysisController {
 
 		public boolean isShared() {
 			return shared;
+		}
+	}
+
+	/**
+	 * UI Model to return a pair aof Sequence files with its accompanying sample.
+	 */
+	private class SampleFiles {
+		private Sample sample;
+		private SequenceFilePair sequenceFilePair;
+
+		SampleFiles(SequenceFilePair sequenceFilePair) {
+			this.sequenceFilePair = sequenceFilePair;
+			try {
+				SampleSequencingObjectJoin sampleSequencingObjectJoin = sampleService.getSampleForSequencingObject(
+						sequenceFilePair);
+				this.sample = sampleSequencingObjectJoin.getSubject();
+			} catch (Exception e) {
+				logger.debug(
+						"Sequence file pair [" + sequenceFilePair.getIdentifier() + "] does not have a parent sample", e);
+				sample = null;
+			}
+		}
+
+		public Long getId() {
+			return sequenceFilePair.getId();
+		}
+
+		public Sample getSample() {
+			return sample;
+		}
+
+		public SequenceFilePair getSequenceFilePair() {
+			return sequenceFilePair;
 		}
 	}
 }

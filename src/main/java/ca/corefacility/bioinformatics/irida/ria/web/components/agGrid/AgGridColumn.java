@@ -48,6 +48,26 @@ public class AgGridColumn {
 	private boolean lockPinned;
 
 	/**
+	 * Set to true to render a selection checkbox in the column.
+	 */
+	private boolean checkboxSelection;
+
+	/**
+	 * Set to true to render a select all /  none checkbox in the column header
+	 */
+	private boolean headerCheckboxSelection;
+
+	/**
+	 * Suppress the filter on this column
+	 */
+	private boolean filter;
+
+	/**
+	 * Suppress the ability to resize this column
+	 */
+	private boolean resizable;
+
+	/**
 	 * Set to 'asc' or 'desc' to sort by this column by default.
 	 */
 	private String sort;
@@ -70,6 +90,8 @@ public class AgGridColumn {
 		this.type = type;
 		this.hide = hide;
 		this.editable = editable;
+		// Default to be resizable unless explicitly set.
+		this.resizable = true;
 	}
 
 	public String getField() {
@@ -126,5 +148,37 @@ public class AgGridColumn {
 
 	public void setSort(String sort) {
 		this.sort = sort;
+	}
+
+	public boolean isCheckboxSelection() {
+		return checkboxSelection;
+	}
+
+	public void setCheckboxSelection(boolean checkboxSelection) {
+		this.checkboxSelection = checkboxSelection;
+	}
+
+	public boolean isHeaderCheckboxSelection() {
+		return headerCheckboxSelection;
+	}
+
+	public void setHeaderCheckboxSelection(boolean headerCheckboxSelection) {
+		this.headerCheckboxSelection = headerCheckboxSelection;
+	}
+
+	public boolean isFilter() {
+		return filter;
+	}
+
+	public void setFilter(boolean filter) {
+		this.filter = filter;
+	}
+
+	public boolean isResizable() {
+		return resizable;
+	}
+
+	public void setResizable(boolean resizable) {
+		this.resizable = resizable;
 	}
 }

@@ -10,7 +10,11 @@ import "ag-grid-community/dist/styles/ag-theme-balham.css";
 import XLSX from "xlsx";
 
 import { LoadingOverlay } from "./LoadingOverlay";
-import { DateCellRenderer, SampleNameRenderer } from "./renderers";
+import {
+  DateCellRenderer,
+  IconCellRenderer,
+  SampleNameRenderer
+} from "./renderers";
 import { FIELDS } from "../../constants";
 
 const { i18n } = window.PAGE;
@@ -43,6 +47,7 @@ export class Table extends React.Component {
   frameworkComponents = {
     LoadingOverlay,
     SampleNameRenderer,
+    IconCellRenderer,
     DateCellRenderer
   };
 
@@ -136,14 +141,8 @@ export class Table extends React.Component {
      */
     const columnState = this.columnApi.getColumnState();
 
-    /*
-    Sample name always needs to be first so let's take it off and re-add
-    it after we get everything sorted.
-     */
-    const sampleIndex = columnState.findIndex(
-      c => c.colId === FIELDS.sampleName
-    );
-    const sample = columnState.splice(sampleIndex, 1)[0];
+    // Keep the icons
+    const defaults = columnState.splice(0, 2);
 
     /*
    From the new template (or modified template) determine the order and
@@ -169,7 +168,7 @@ export class Table extends React.Component {
     /*
     Combine back the sample name plus the new ordered state for the table.
      */
-    this.columnApi.setColumnState([sample, ...final]);
+    this.columnApi.setColumnState([...defaults, ...final]);
   };
 
   /*
@@ -178,6 +177,10 @@ export class Table extends React.Component {
   onGridReady = params => {
     this.api = params.api;
     this.columnApi = params.columnApi;
+    /*
+    Resize the icons since no extra space is needed.
+     */
+    this.columnApi.autoSizeColumns([FIELDS.icons]);
   };
 
   /**
@@ -428,23 +431,21 @@ export class Table extends React.Component {
         <AgGridReact
           id="linelist-grid"
           rowSelection="multiple"
-          enableFilter={true}
           onFilterChanged={this.setFilterCount}
-          enableSorting={true}
-          enableColResize={true}
           localeText={i18n.linelist.agGrid}
           columnDefs={this.props.fields.toJS()}
           rowData={rowData}
           frameworkComponents={this.frameworkComponents}
           loadingOverlayComponent="LoadingOverlay"
-          animateRows={true}
           onGridReady={this.onGridReady}
           onDragStopped={this.onColumnDropped}
           rowDeselection={true}
           suppressRowClickSelection={true}
           onSelectionChanged={this.onSelectionChange}
           defaultColDef={{
-            editable: true
+            headerCheckboxSelectionFilteredOnly: true,
+            sortable: true,
+            filter: true
           }}
           enableCellChangeFlash={true}
           onCellEditingStarted={this.onCellEditingStarted}

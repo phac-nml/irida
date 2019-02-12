@@ -1,17 +1,7 @@
 import { fromJS, List } from "immutable";
 import { types as templateActionTypes } from "./templates";
 import { isDate } from "../../../../utilities/date-utilities";
-import { FIELDS } from "../constants";
-
-/*
-Special handler for formatting the sample Name Column;
- */
-const sampleNameColumn = {
-  cellRenderer: "SampleNameRenderer",
-  checkboxSelection: true,
-  headerCheckboxSelection: true,
-  headerCheckboxSelectionFilteredOnly: true
-};
+import { FIELDS, TYPES } from "../constants";
 
 /*
 Formatting for date fields
@@ -49,13 +39,35 @@ const dateColumn = {
  * @returns {*}
  */
 function getColumnDefinition(col) {
-  const { type } = col;
+  const { type, field } = col;
   delete col.type; // Cannot have a type as an attribute on the columnDef.
 
-  if (type === "date") {
+  if (field === FIELDS.icons) {
+    Object.assign(col, {
+      cellRenderer: "IconCellRenderer"
+    });
+  } else if (type === TYPES.date) {
     Object.assign(col, dateColumn);
-  } else if (col.field === FIELDS.sampleName) {
-    Object.assign(col, sampleNameColumn);
+  } else if (field === FIELDS.sampleName) {
+    Object.assign(col, {
+      cellRenderer: "SampleNameRenderer"
+    });
+  }
+
+  /*
+    Set editability of the cell.
+    1) If the column is not editable then the cell is not editable at all.
+    2) If the user is not the owner the the data, then it is not editable.
+    3) If the data itself is not editable, then it cannot be edited either.
+     */
+  if (col.editable) {
+    Object.assign(col, {
+      editable: params => {
+        return (
+          JSON.parse(params.data.owner) && JSON.parse(params.data.editable)
+        );
+      }
+    });
   }
   return col;
 }

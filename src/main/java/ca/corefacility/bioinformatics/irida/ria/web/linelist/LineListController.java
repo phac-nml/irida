@@ -8,6 +8,8 @@ import javax.validation.ConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +18,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
@@ -27,6 +30,8 @@ import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataField
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataFieldDefault;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataTemplate;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UISampleMetadata;
+import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
+import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -41,13 +46,18 @@ public class LineListController {
 	private SampleService sampleService;
 	private MetadataTemplateService metadataTemplateService;
 	private MessageSource messages;
+	private UpdateSamplePermission updateSamplePermission;
+	private ProjectOwnerPermission projectOwnerPermission;
 
 	@Autowired
 	public LineListController(ProjectService projectService, SampleService sampleService,
-			MetadataTemplateService metadataTemplateService, MessageSource messageSource) {
+			MetadataTemplateService metadataTemplateService, UpdateSamplePermission updateSamplePermission,
+			ProjectOwnerPermission projectOwnerPermission, MessageSource messageSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.metadataTemplateService = metadataTemplateService;
+		this.updateSamplePermission = updateSamplePermission;
+		this.projectOwnerPermission = projectOwnerPermission;
 		this.messages = messageSource;
 	}
 
@@ -61,10 +71,16 @@ public class LineListController {
 	@RequestMapping(value = "/entries", method = RequestMethod.GET)
 	@ResponseBody
 	public List<UISampleMetadata> getProjectSamplesMetadataEntries(@RequestParam long projectId) {
+		Authentication authentication = SecurityContextHolder.getContext()
+				.getAuthentication();
 		Project project = projectService.read(projectId);
+
 		List<Join<Project, Sample>> projectSamples = sampleService.getSamplesForProject(project);
 		return projectSamples.stream()
-				.map(this::formatSampleMetadata)
+				.map(join -> {
+					ProjectSampleJoin psj = (ProjectSampleJoin)join;
+					return new UISampleMetadata(psj, updateSamplePermission.isAllowed(authentication, psj.getObject()));
+				})
 				.collect(Collectors.toList());
 	}
 
@@ -122,6 +138,7 @@ public class LineListController {
 	@ResponseBody
 	public List<UIMetadataTemplate> getLineListTemplates(@RequestParam long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
+		boolean canEdit = canUserEdit(project);
 		List<UIMetadataTemplate> templates = new ArrayList<>();
 
 		/*
@@ -138,7 +155,7 @@ public class LineListController {
 		for (ProjectMetadataTemplateJoin join : templateJoins) {
 			MetadataTemplate template = join.getObject();
 			List<AgGridColumn> allFieldsCopy = this.getProjectMetadataTemplateFields(projectId, locale);
-			List<AgGridColumn> fields = formatTemplateForUI(template, allFieldsCopy);
+			List<AgGridColumn> fields = formatTemplateForUI(template, allFieldsCopy, canEdit);
 			templates.add(new UIMetadataTemplate(template.getId(), template.getName(), fields));
 		}
 
@@ -153,11 +170,11 @@ public class LineListController {
 	 * @param field        {@link MetadataTemplateField}
 	 * @return {@link AgGridColumn} of either {@link UIMetadataField} or {@link UIMetadataFieldDefault}
 	 */
-	private AgGridColumn mapFieldToColumn(MetadataTemplateField field) {
+	private AgGridColumn mapFieldToColumn(MetadataTemplateField field, boolean canEdit) {
 		if (field instanceof StaticMetadataTemplateField) {
 			return new UIMetadataFieldDefault(field.getLabel(), field.getFieldKey(), field.getType());
 		} else {
-			return new UIMetadataField(field, false, true);
+			return new UIMetadataField(field, false, canEdit);
 		}
 	}
 
@@ -169,7 +186,8 @@ public class LineListController {
 	 * @return {@link List} of {@link AgGridColumn} that has all the fields in the project, but ones for this template are first
 	 * and are the only ones that are not hidden in the UI
 	 */
-	private List<AgGridColumn> formatTemplateForUI(MetadataTemplate template, List<AgGridColumn> allFieldsAgGridColumns) {
+	private List<AgGridColumn> formatTemplateForUI(MetadataTemplate template, List<AgGridColumn> allFieldsAgGridColumns,
+			boolean canEdit) {
 		/*
 		Need to remove the sample since allFields begins with the sample.
 		 */
@@ -198,7 +216,8 @@ public class LineListController {
 			int index = allFieldsLabels.indexOf(field.getFieldKey());
 			allFieldsAgGridColumns.remove(index);
 			allFieldsLabels.remove(index);
-			templateAgGridColumns.add(mapFieldToColumn(field));
+			// Need to add parameter for if they have permissions to edit.
+			templateAgGridColumns.add(mapFieldToColumn(field, canEdit));
 		}
 
 		/*
@@ -224,6 +243,8 @@ public class LineListController {
 	@RequestMapping(value = "/templates", method = RequestMethod.POST)
 	public UIMetadataTemplate saveLineListTemplate(@RequestBody UIMetadataTemplate template,
 			@RequestParam Long projectId, Locale locale, HttpServletResponse response) {
+		Project project = projectService.read(projectId);
+
 		// Get or create the template fields.
 		List<MetadataTemplateField> fields = new ArrayList<>();
 		for (AgGridColumn field : template.getFields()) {
@@ -244,7 +265,6 @@ public class LineListController {
 		MetadataTemplate metadataTemplate;
 		if (template.getId() == null) {
 			// NO ID means that this is a new template
-			Project project = projectService.read(projectId);
 			metadataTemplate = new MetadataTemplate(template.getName(), fields);
 			ProjectMetadataTemplateJoin join = metadataTemplateService.createMetadataTemplateInProject(metadataTemplate,
 					project);
@@ -257,17 +277,8 @@ public class LineListController {
 			response.setStatus(HttpServletResponse.SC_OK);
 		}
 		return new UIMetadataTemplate(metadataTemplate.getId(), metadataTemplate.getName(),
-				formatTemplateForUI(metadataTemplate, getProjectMetadataTemplateFields(projectId, locale)));
-	}
-
-	/**
-	 * Create a {@link UISampleMetadata} from a {@link Join}
-	 *
-	 * @param projectSampleJoin {@link Join} of {@link Project} and {@link Sample}
-	 * @return {@link UISampleMetadata}
-	 */
-	private UISampleMetadata formatSampleMetadata(Join<Project, Sample> projectSampleJoin) {
-		return new UISampleMetadata(projectSampleJoin.getSubject(), projectSampleJoin.getObject());
+				formatTemplateForUI(metadataTemplate, getProjectMetadataTemplateFields(projectId, locale),
+						canUserEdit(project)));
 	}
 
 	/**
@@ -331,6 +342,31 @@ public class LineListController {
 		sampleField.setLockPosition(true);
 		fields.add(0, sampleField);
 
+		/*
+		This field is to display to the user any notification icons that they might have (e.g. sample is locked).
+		 */
+		UIMetadataFieldDefault iconField = new UIMetadataFieldDefault("", "icons", "text");
+		iconField.setPinned("left");
+		iconField.setLockPinned(true);
+		iconField.setLockPosition(true);
+		iconField.setCheckboxSelection(true);
+		iconField.setHeaderCheckboxSelection(true);
+		iconField.setFilter(false);
+		iconField.setResizable(false);
+		fields.add(0, iconField);
+
 		return fields;
+	}
+
+	/**
+	 * Check to see if the currently logged in user has permission to edit {@link MetadataEntry} on the current project
+	 *
+	 * @param project {@link Project}
+	 * @return {@link Boolean} true if user can edit on the current project
+	 */
+	private boolean canUserEdit(Project project) {
+		Authentication authentication = SecurityContextHolder.getContext()
+				.getAuthentication();
+		return projectOwnerPermission.isAllowed(authentication, project);
 	}
 }

@@ -31,20 +31,8 @@
 			<destName>LICENSE</destName>
 		</file>
 		<file>
-			<source>${basedir}/packaging/LICENSE.install_tool_shed_tools</source>
-			<destName>LICENSE.install_tool_shed_tools</destName>
-		</file>
-		<file>
 			<source>${project.build.directory}/tools-list.yml</source>
 			<destName>tools-list.yml</destName>
-		</file>
-		<file>
-			<source>${basedir}/packaging/install_tool_shed_tools.py</source>
-			<destName>install_tool_shed_tools.py</destName>
-		</file>
-		<file>
-			<source>${basedir}/packaging/install-tools-requirements.txt</source>
-			<destName>install-tools-requirements.txt</destName>
 		</file>
 	</files>
 </assembly>

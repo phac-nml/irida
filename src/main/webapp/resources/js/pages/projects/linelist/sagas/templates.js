@@ -6,6 +6,7 @@ import {
   fetchTemplates,
   saveTemplate
 } from "../../../../apis/metadata/templates";
+import { FIELDS } from "../constants";
 
 /**
  * Initialize templates in the line list
@@ -28,9 +29,12 @@ export function* saveTemplateSaga() {
       const { data } = yield take(types.SAVE_TEMPLATE);
 
       /*
-      Remove hidden fields and the sample label
+      Remove hidden fields and the sample label or any icons
       */
-      data.fields = data.fields.filter(f => !f.hide && f.field !== "sample");
+      data.fields = data.fields.filter(
+        f =>
+          !f.hide && f.field !== FIELDS.sampleName && f.field !== FIELDS.icons
+      );
 
       /*
       Post to new template to the server

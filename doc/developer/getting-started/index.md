@@ -6,7 +6,7 @@ IRIDA Development Primer
 ========================
 {:.no_toc}
 
-This guide is for new developers to the IRIDA project to get a basic understanding of the layout of the project.
+This guide is for new developers to the IRIDA project to get a basic understanding of the layout of the project.  Before getting started, new developers should read our [Contributing][] page.
 
 * This comment becomes the table of contents
 {:toc}
@@ -20,7 +20,6 @@ Document History
 Important links
 ---------------
 * IRIDA GitHub - [https://github.com/phac-nml/irida](https://github.com/phac-nml/irida)
-* IRIDA GitLab - [http://gitlab-irida.corefacility.ca/](http://gitlab-irida.corefacility.ca/) (only accessible from NML network)
 * Documentation site - [https://irida.corefacility.ca/documentation/](https://irida.corefacility.ca/documentation/)
 * Contributing guide - [https://github.com/phac-nml/irida/blob/development/CONTRIBUTING.md](https://github.com/phac-nml/irida/blob/development/CONTRIBUTING.md)
 * Public information website - [https://irida.ca](https://irida.ca)
@@ -95,7 +94,7 @@ Quick start development requirements
 
 An (incomplete) set of instructions for getting the IRIDA service layer and web front up and running for development on your Linux machine.  To include Galaxy and all the pipeline requirements, see the main IRIDA documentation.
 
-* Clone IRIDA from the IRIDA [GitLab][] or [GitHub][].
+* Clone IRIDA from the IRIDA [GitHub][].
 * Install the following dependencies from your chosen package manager:
   * MariaDB
   * Java 8 JDK
@@ -187,7 +186,7 @@ When running IRIDA from the command line, a profile can be set by adding the fol
 
 #### Running IRIDA tests locally
 
-While GitLab CI runs all IRIDA's testing on every git push, it is often useful to run IRIDA's test suite locally for debugging or development.  IRIDA's test suite can be run with Maven using the `test` and `verify` goals.
+While Travis CI on GitHub runs all IRIDA's testing on every git push, it is often useful to run IRIDA's test suite locally for debugging or development.  IRIDA's test suite can be run with Maven using the `test` and `verify` goals.
 
 See the [IRIDA tests](#irida-tests) section for more on how IRIDA's tests are developed.
 
@@ -205,12 +204,13 @@ Maven will download all required dependencies and run the full suite of unit tes
 ##### Integration tests
 {:.no_toc}
 
-IRIDA has 4 integration test profiles which splits the integration test suite into functional groups.  This allows GitLab CI to run the tests in parallel, and local test executions to only run the required portion of the test suite.  The 4 profiles are the following:
+IRIDA has 5 integration test profiles which splits the integration test suite into functional groups.  This allows Travis CI to run the tests in parallel, and local test executions to only run the required portion of the test suite.  The 5 profiles are the following:
 
 * `service_testing` - Runs the service layer and repository testing.
 * `ui_testing` - Integration tests for IRIDA's web interface.
 * `rest_testing` - Tests IRIDA's REST API.
-* `galaxy_testing` - Runs all tests requiring a functional Galaxy instance.  This includes all analysis submission and pipeline tests.  This profile will automatically start a test galaxy instance to test with.
+* `galaxy_testing` - Runs tests for IRIDA communicating with Galaxy.  This profile will automatically start a test galaxy instance to test with.
+* `galaxy_pipeline_testing` - Runs tests for running a pipeline with Galaxy.  This profile will automatically start a test galaxy instance to test with.
 
 See the `<profiles>` section of the `pom.xml` file to see how the profiles are defined.
 
@@ -370,16 +370,16 @@ This code will ensure the logged in user can read each of the `Project`s being r
 Building new features
 ---------------------
 
-#### GitLab Issues
+#### GitHub Issues
 
-Any time a request comes in from a user for a new feature, or a bug is found, an *issue* should be created on [GitLab][].  The IRIDA project uses GitLab's issues list as it's main project tracking system.  The issue should be documented as fully as possible with the following:
+Any time a request comes in from a user for a new feature, or a bug is found, an *issue* should be created on [GitHub][].  The IRIDA project uses GitHub's issues list as it's main project tracking system.  The issue should be documented as fully as possible with the following:
 
 * A general description of the problem/feature.
 * What the expected functionality should be.
 * Steps to reproduce the issue or how the feature should work.
 * Who reported the bug or feature request.
 
-Once an issue is completed it should be referenced in a [merge request](#merge-requests) in GitLab so the reviewer can know the full scope of the issue.
+Once an issue is completed it should be referenced in a [pull request](#pull-requests) in GitHub so the reviewer can know the full scope of the issue.
 
 ### Informing users of changes
 
@@ -418,7 +418,7 @@ While in development we use Hibernate to manage our database changes, in product
 
 Liquibase allows you to create changesets for an application's database in incremental, database agnostic XML files.  In practice IRIDA requires MariaDB or MySQL, but it's still worthwhile to use a tool to properly manage the updates.  Liquibase ensures that all changes to the database are performed in the correct order, and manages this by keeping track of a hashcode of the last applied changeset.  When IRIDA is started, liquibase runs first to check if there are new changesets to be applied, and also that the current state of the database is in the format that IRIDA will be expecting.
 
-When we're doing development, Liquibase is generally not used.  Instead we generally rely on Hibernate's HBM2DDL module which allows us to directly make changes to the model classes and those changes will be reflected into the database.This can be enabled by running IRIDA in the `dev` Spring profile.  Additionally when running in the `dev` profile example data from `src/main/resounrces/ca/corefacility/bioinformatics/irida/sql` will be loaded into the database for test purpose.  Since HBM2DDL is not to be used in production environments, before creating a merge request you should add any changes that are made to the database to a new changeset XML file and test that the database is correctly built in the `prod` Spring profile.  If you've modified any tables in the database it's also worth testing whether those changes can be properly migrated from an existing production database.  To do this you should take a dump of a production IRIDA database, load the dump up on your development machine, and run a server in `prod` profile to ensure the database upgrades correctly.
+When we're doing development, Liquibase is generally not used.  Instead we generally rely on Hibernate's HBM2DDL module which allows us to directly make changes to the model classes and those changes will be reflected into the database.This can be enabled by running IRIDA in the `dev` Spring profile.  Additionally when running in the `dev` profile example data from `src/main/resounrces/ca/corefacility/bioinformatics/irida/sql` will be loaded into the database for test purpose.  Since HBM2DDL is not to be used in production environments, before creating a pull request you should add any changes that are made to the database to a new changeset XML file and test that the database is correctly built in the `prod` Spring profile.  If you've modified any tables in the database it's also worth testing whether those changes can be properly migrated from an existing production database.  To do this you should take a dump of a production IRIDA database, load the dump up on your development machine, and run a server in `prod` profile to ensure the database upgrades correctly.
 
 You can find the existing Liquibase changeset files in `/src/manin/resounces/ca/corefacility/bioinformatics/irida/database/changesets`.
 
@@ -433,14 +433,12 @@ Developer documentation is also necessary for all Java classes, methods, code bl
 Version control
 ---------------
 
-The IRIDA project uses Git, [GitLab][], and [GitHub][] for version control purposes.  The main development server used is the NML's [GitLab][] site.  We use an internal repository so that we have greater control over how the code is managed, greater control over the testing servers, and allows us to have private conversations about issues.  Once a feature is pushed to the *development* or *master* branches of the project, it is automatically mirrored to our [GitHub][] site to give access to public users.
-
-External collaborators are welcomed to develop new features and should submit pull requests on IRIDA's [GitHub][] page.  Note that if we receive a GitHub pull request, NML IRIDA developers should pull the branch locally, then push it up to GitLab before merging to ensure the GitHub and GitLab repositories don't get out of sync.
+The IRIDA project uses Git and [GitHub][] for version control purposes.  External collaborators are welcomed to develop new features and should submit pull requests on IRIDA's [GitHub][] page.  See the [Contributing][] guide for more information on contributing to IRIDA.
 
 ### Branch structure
 {:.no_toc}
 
-IRIDA's branch structure is loosely based on the [GitFlow](http://nvie.com/posts/a-successful-git-branching-model) branch model.  This model allows the team to develop multiple features in parallel without contaminating the main development branch, keeping merge requests sane, and allows for stable and patchable releases.
+IRIDA's branch structure is loosely based on the [GitFlow](http://nvie.com/posts/a-successful-git-branching-model) branch model.  This model allows the team to develop multiple features in parallel without contaminating the main development branch, keeping pull requests sane, and allows for stable and patchable releases.
 
 #### Branches
 {:.no_toc}
@@ -453,10 +451,12 @@ IRIDA's branch structure is loosely based on the [GitFlow](http://nvie.com/posts
 #### Release tags & versioning scheme
 {:.no_toc}
 
+IRIDA uses a [CalVer](https://calver.org/) style versioning scheme.  This means the release version number is based on the year and month that it was released.  The scheme used is `YY.0M.minor`.  First segment is last 2 digits of the year, 2nd is 2 digit month, and 3rd is the number of bugfix release (optional).  For example a major release in January 2019 would be `19.01`.  If a bugfix release was performed for that version, it would be `19.01.1`.
+
 Whenever code is merged into *master*, a release should be created.  To mark the release the person merging the code should create a git tag at the point of the merge.
 
 ```bash
-git tag 0.version.subversion
+git tag YY.MM.minor
 ```
 
 Don't forget to push the tag when you're finished.
@@ -472,10 +472,10 @@ Example workflow:
 
 ![Git workflow](git-flow.png)
 
-#### Merge requests
+#### Pull requests
 {:.no_toc}
 
-Code is not to be merged into the *development* or *master* branches by the developer who wrote the code.  Instead a merge request should be made on [GitLab][] and assigned to another developer on the project.  The reviewer should look over the code for issues, and anything that needs to be fixed should be mentioned in a comment in the merge request.  Once an issue has been fixed, the developer should push the changes to the merge request branch and mention the commit id in the comment so the reviewer can track the changes.
+Code is not to be merged into the *development* or *master* branches by the developer who wrote the code.  Instead a merge request should be made on [GitHub][] and assigned to another developer on the project.  The reviewer should look over the code for issues, and anything that needs to be fixed should be mentioned in a comment in the merge request.  Once an issue has been fixed, the developer should push the changes to the merge request branch and mention the commit id in the comment so the reviewer can track the changes.
 
 The reviewer of a merge request should ensure the following:
 
@@ -486,18 +486,13 @@ The reviewer of a merge request should ensure the following:
 * New code is properly formatted using IRIDA's code formatter file.
 * New code does not produce any Java errors or warnings.  Acceptable warnings may include *deprecated* warnings for methods or classes which should be refactored out.  See Eclipse's *Problems* panel for warnings produced.
 
-If a merge request is a fix for an issue that is being tracked in [GitLab][], the developer should mention the issue number in the merge request with the format `Fixes #1234` so that the merge request will be linked to the issue and it will be automatically closed once the merge is complete.
+If a merge request is a fix for an issue that is being tracked in [GitHub][], the developer should mention the issue number in the merge request with the format `Fixes #1234` so that the merge request will be linked to the issue and it will be automatically closed once the merge is complete.
 
-When the reviewer is satisfied with the state of the branch to be merged, they should merge it into the *development* branch in [GitLab][] to close the request.
-
-#### Performing a release
-{:.no_toc}
-
-After building a new `master` branch and releasing a tag, it is time to release a new version of IRIDA on its production servers.  To see more about the IRIDA release plan, see the following [GitLab][] snippet: http://gitlab-irida.corefacility.ca/snippets/30
+When the reviewer is satisfied with the state of the branch to be merged, they should merge it into the *development* branch in [GitHub][] to close the request.
 
 
 [GitHub]: https://github.com/phac-nml/irida
-[GitLab]: http://gitlab-irida.corefacility.ca/
+[Contributing]: https://github.com/phac-nml/irida/blob/development/CONTRIBUTING.md
 [Spring Data JPA]: http://projects.spring.io/spring-data-jpa/
 [Spring Security]: https://projects.spring.io/spring-security/
 [Liquibase]: http://www.liquibase.org/documentation/

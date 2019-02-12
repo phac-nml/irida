@@ -1,8 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import ColumnVisibility from "./Columns/ColumnVisibility";
 import { Button, Tooltip } from "antd";
-import { TemplatesPanel } from "./TemplatesPanel";
 import Columns from "./Columns/Columns";
 
 const { i18n } = window.PAGE;

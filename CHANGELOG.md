@@ -1,8 +1,16 @@
 Changes
 =======
 
-0.22.0 to 0.23.0
+19.01 to 19.04
+---------------
+* [Documentation]: Added the CalVer updates to the documentation getting started guide.
+* [Documentation]: Added note with link to NGS Linker installation documentation to Command-line Linker modal
+* [UI/Developer]: Updated to lodash v4.17.11 to fix security issue. (19.01.1)
+
+0.22.0 to 19.01
 ----------------
+* [Admin]: Updated versioning to a [CalVer](https://calver.org/) scheme of YY.0M.MICRO.  New feature releases will have the appropriate the year and month fields, where bugfixes will increment the MICRO field.
+* [Database]: Fixed an issue where metadata entries derived from pipelines were not updating the associated analysis submission and ignorning blank entries. (0.23.5)
 * [Developer]: Added classes `.jar` maven export in build process.
 * [UI]: Added the sample coverage to the table exported from the project samples page.
 * [UI/Workflow]: Added option to disable workflows/analysis types from display in IRIDA using `irida.workflow.types.disabled`. (0.22.1)
@@ -31,7 +39,18 @@ Changes
 * [UI]: IRIDA will now remove local samples when a synchronized remote sample is removed at its source.
 * [UI]: New project line list page with inline editing.
 * [Developer]: Updated Node, Yarn, and front-end webpack packages.
+* [Workflow]: Fixed Shovill Galaxy tool revision for SISTR and Assembly/Annotation pipelines.
 * [Developer]: Update to ag-grid-community v.19.1.2.
+* [Documentation]: Changed references from GitLab to GitHub in docs.
+* [UI]: Removed angular-resource, angular-messages, angular-sanitize, angular-animate, angular-datatables, ng-table and angular-drag-and-drop-lists.
+* [REST]: Added method to greatly increase speed of listing samples in a project.  This was becoming an issue for projects with metadata and >5k samples.
+* [Developer]: Added pull request and issue templates for github.
+* [Developer]: Update Docker Galaxy container to Galaxy 18.09.
+* [Administration]: Updated method for automatically installing tools in Galaxy to use [Ephemeris](https://ephemeris.readthedocs.io/en/latest/readme.html).
+* [Developer]: Updated to version 20.0.0 of ag-grid UI component.
+* [UI]: Add link back to sample for analysis input files on the Analsysis Details Page.
+* [UI]: Fixes issue where attempting to select all samples with a filter applied selected all samples in project.
+* [UI]: Fixed issue with exporting samples to galaxy through project/samples page failing.
 
 0.21.0 to 0.22.0
 ----------------
