@@ -109,14 +109,16 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 
 	/**
 	 * Builds a new AnalysisSubmissionServiceImpl with the given information.
-	 *  @param analysisSubmissionRepository A repository for accessing analysis submissions.
+	 *
+	 * @param analysisSubmissionRepository A repository for accessing analysis submissions.
+	 * @param analysisTemplateRepository   repository for {@link AnalysisSubmissionTemplate}s
 	 * @param userRepository               A repository for accessing user information.
 	 * @param referenceFileRepository      the reference file repository
 	 * @param sequencingObjectService      the {@link SequencingObject} service.
 	 * @param galaxyHistoriesService       The {@link GalaxyHistoriesService}.
 	 * @param pasRepository                The {@link ProjectAnalysisSubmissionJoinRepository}
 	 * @param jobErrorRepository           A repository for accessing {@link JobError}
-	 * @param iridaWorkflowsService		   The {@link IridaWorkflowsService}
+	 * @param iridaWorkflowsService        The {@link IridaWorkflowsService}
 	 * @param validator                    A validator.
 	 */
 	@Autowired
@@ -420,6 +422,9 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		return getAnalysisSubmissionsForUser(user);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@PostFilter("hasPermission(filterObject, 'canReadAnalysisSubmission')")
@@ -427,12 +432,18 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		return analysisSubmissionRepository.findByWorkflowIds(workflowIds);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
 	public List<AnalysisSubmissionTemplate> getAnalysisTemplatesForProject(Project project) {
 		return analysisTemplateRepository.getAnalysisSubmissionTemplatesForProject(project);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@PreAuthorize("hasPermission(#projectsToShare, 'canManageLocalProjectSettings')")
 	public AnalysisSubmissionTemplate createSingleSampleSubmissionTemplate(IridaWorkflow workflow, Long referenceFileId,
 			Map<String, String> params, IridaWorkflowNamedParameters namedParameters, String submissionName,

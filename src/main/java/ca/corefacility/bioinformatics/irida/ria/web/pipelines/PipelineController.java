@@ -180,15 +180,13 @@ public class PipelineController extends BaseController {
 
 	/**
 	 * Get a generic pipeline page.
-	 * 
-	 * @param model
-	 *            the the model for the current request
-	 * @param principal
-	 *            the user in the current request
-	 * @param locale
-	 *            the locale that the user is using
-	 * @param pipelineId
-	 *            the pipeline to load
+	 *
+	 * @param model      the the model for the current request
+	 * @param principal  the user in the current request
+	 * @param locale     the locale that the user is using
+	 * @param pipelineId the pipeline to load
+	 * @param projectId  Project ID to add a {@link ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTemplate}
+	 *                   if necessary (not required)
 	 * @return a page reference or redirect to load.
 	 */
 	@RequestMapping(value = "/{pipelineId}")

@@ -137,10 +137,30 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 			Map<String, String> unnamedParameters, IridaWorkflowNamedParameters namedParameters, String name,
 			String analysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples);
 
+	/**
+	 * Create a new {@link AnalysisSubmissionTemplate} for a project with the given settings
+	 *
+	 * @param workflow              {@link IridaWorkflow} that the files will be run on
+	 * @param referenceFileId       {@link Long} id for a {@link ReferenceFile}
+	 * @param params                {@link Map} of parameters specific for the pipeline
+	 * @param namedParameters       the named parameters to use for the workflow.
+	 * @param submissionName        {@link String} the name for the analysis
+	 * @param analysisDescription   {@link String} the description of the analysis being submitted
+	 * @param projectsToShare       The {@link Project} to save the analysis to
+	 * @param writeResultsToSamples If true, results of this pipeline will be saved back to the samples on successful
+	 *                              completion.
+	 * @return the newly created {@link AnalysisSubmissionTemplate}
+	 */
 	public AnalysisSubmissionTemplate createSingleSampleSubmissionTemplate(IridaWorkflow workflow, Long referenceFileId,
 			Map<String, String> params, IridaWorkflowNamedParameters namedParameters, String submissionName,
 			String analysisDescription, Project projectsToShare, boolean writeResultsToSamples);
 
+	/**
+	 * Get all the {@link AnalysisSubmissionTemplate}s for a given {@link Project}
+	 *
+	 * @param project the {@link Project} to get templates for
+	 * @return a list of all {@link AnalysisSubmissionTemplate}s
+	 */
 	public List<AnalysisSubmissionTemplate> getAnalysisTemplatesForProject(Project project);
 
 	/**
