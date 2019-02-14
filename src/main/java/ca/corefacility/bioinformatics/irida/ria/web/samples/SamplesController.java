@@ -1,8 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.samples;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,13 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -57,6 +47,16 @@ import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 /**
  * Controller for all sample related views
@@ -145,13 +145,19 @@ public class SamplesController extends BaseController {
 		return SAMPLE_PAGE;
 	}
 
+	/**
+	 * Create URLs for the the individual samples pages (Sequence Files, Details, Edit, and Concatenate)
+	 * that reflect the request URL (since there is more than one way to get to a sample details page).
+	 *
+	 * @param url The current {@link HttpServletRequest} url
+	 * @return {@link Map} of the updated URLs.
+	 */
 	private Map<String, String> getSampleDetailURLS(StringBuffer url) {
 		int index = url.lastIndexOf("/");
-		return ImmutableMap.of("edit", url.replace(index, url.length(), "/edit")
-				.toString(), "details", url.replace(index, url.length(), "/details")
-				.toString(), "sequenceFiles", url.replace(index, url.length(), "/sequenceFiles")
-				.toString(), "concatenate", url.replace(index, url.length(), "/concatenate")
-				.toString());
+		String newUrl = url.replace(index, url.length(), "")
+				.toString();
+		return ImmutableMap.of("edit", newUrl + "/edit", "details", newUrl + "/details", "sequenceFiles",
+				newUrl + "/sequenceFiles", "concatenate", newUrl + "/concatenate");
 	}
 
 	/**
