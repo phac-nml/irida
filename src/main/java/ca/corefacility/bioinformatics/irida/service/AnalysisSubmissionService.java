@@ -96,12 +96,16 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @param writeResultsToSamples
 	 *            If true, results of this pipeline will be saved back to the
 	 *            samples on successful completion.
+	 * @param emailPipelineResult
+	 * 						If true, user will be emailed if a pipelines successfully
+	 * 						completes or if it errors
+	 *
 	 * @return the {@link AnalysisSubmission} created for the files.
 	 */
 	public AnalysisSubmission createMultipleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
 			Map<String, String> unnamedParameters, IridaWorkflowNamedParameters namedParameters, String name,
-			String analysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples);
+			String analysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples, boolean emailPipelineResult);
 
 	/**
 	 * Submit {@link AnalysisSubmission} for workflows requiring only one
@@ -129,13 +133,16 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @param writeResultsToSamples
 	 *            If true, results of this pipeline will be saved back to the
 	 *            samples on successful completion.
+	 * @param emailPipelineResult
+	 * 						If true, user will be emailed if a pipelines successfully
+	 * 						completes or if it errors
 	 * @return the {@link Collection} of {@link AnalysisSubmission} created for
 	 *         the supplied files.
 	 */
 	public Collection<AnalysisSubmission> createSingleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
 			Map<String, String> unnamedParameters, IridaWorkflowNamedParameters namedParameters, String name,
-			String analysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples);
+			String analysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples, boolean emailPipelineResult);
 
 	/**
 	 * Given the id of an {@link AnalysisSubmission} gets the percentage

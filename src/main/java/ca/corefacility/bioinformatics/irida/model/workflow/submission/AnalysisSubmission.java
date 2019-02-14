@@ -155,6 +155,9 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 	@Lob
 	private String analysisDescription;
 
+	@Column(name = "emailPipelineResult")
+	private boolean emailPipelineResult;
+
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	private Priority priority;
@@ -180,6 +183,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 		this.workflowId = builder.workflowId;
 		this.namedParameters = builder.namedParameters;
 		this.analysisDescription = (builder.analysisDescription);
+		this.emailPipelineResult = (builder.emailPipelineResult);
 		this.updateSamples = builder.updateSamples;
 		this.priority = builder.priority;
 	}
@@ -462,6 +466,25 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 		this.analysisDescription = description;
 	}
 
+
+	/**
+	 * Get if user should be emailed on pipeline
+	 * completion or error
+	 * @return If user should be emailed
+	 * */
+				public boolean getEmailPipelineResult() {
+				return this.emailPipelineResult;
+				}
+		/**
+	 * Set if user should be able on pipeline
+	 * completion or error
+	 * @param emailPipelineResult
+	 * 				If user should be emailed or not
+		 */
+		public void setEmailPipelineResult(boolean emailPipelineResult) {
+			this.emailPipelineResult = emailPipelineResult;
+		}
+
 	/**
 	 * Used to build up an {@link AnalysisSubmission}.
 	 * 
@@ -476,6 +499,7 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 		private String analysisDescription;
 		private boolean updateSamples = false;
 		private Priority priority = Priority.MEDIUM;
+		private boolean emailPipelineResult;
 
 		/**
 		 * Creates a new {@link Builder} with a workflow id.
@@ -621,6 +645,20 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 		 */
 		public Builder updateSamples(boolean updateSamples) {
 			this.updateSamples = updateSamples;
+
+			return this;
+		}
+
+
+		/**
+		 * Sets if user should be emailed on
+		 * pipeline completion or error
+		 * @param emailPipelineResult
+		 * 				If user should be emailed or not
+		     * @return A {@link Builder}
+		     */
+		public Builder emailPipelineResult(final boolean emailPipelineResult) {
+			this.emailPipelineResult = emailPipelineResult;
 
 			return this;
 		}

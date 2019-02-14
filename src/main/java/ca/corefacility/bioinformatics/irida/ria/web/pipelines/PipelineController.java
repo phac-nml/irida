@@ -542,13 +542,14 @@ public class PipelineController extends BaseController {
 
 			String analysisDescription = parameters.getDescription();
 			Boolean writeResultsToSamples = parameters.getWriteResultsToSamples();
+			Boolean emailPipelineResult = parameters.getEmailPipelineResult();
 			if (description.getInputs()
 					.requiresSingleSample()) {
 				analysisSubmissionService.createSingleSampleSubmission(flow, ref, singleEndFiles, sequenceFilePairs,
-						params, namedParameters, name, analysisDescription, projectsToShare, writeResultsToSamples);
+						params, namedParameters, name, analysisDescription, projectsToShare, writeResultsToSamples, emailPipelineResult);
 			} else {
 				analysisSubmissionService.createMultipleSampleSubmission(flow, ref, singleEndFiles, sequenceFilePairs,
-						params, namedParameters, name, analysisDescription, projectsToShare, writeResultsToSamples);
+						params, namedParameters, name, analysisDescription, projectsToShare, writeResultsToSamples, emailPipelineResult);
 			}
 
 		} catch (IridaWorkflowNotFoundException | IridaWorkflowNotDisplayableException e) {

@@ -25,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.Job
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
+import ca.corefacility.bioinformatics.irida.service.EmailController;
 
 import com.google.common.collect.Sets;
 
@@ -49,6 +50,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	private final CleanupAnalysisSubmissionCondition cleanupCondition;
 	private GalaxyJobErrorsService galaxyJobErrorsService;
 	private JobErrorRepository jobErrorRepository;
+	private final EmailController emailController;
 
 	/**
 	 * Builds a new AnalysisExecutionScheduledTaskImpl with the given service
@@ -66,12 +68,14 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 			AnalysisExecutionService analysisExecutionServiceGalaxy,
 			CleanupAnalysisSubmissionCondition cleanupCondition,
 			GalaxyJobErrorsService galaxyJobErrorsService,
-			JobErrorRepository jobErrorRepository) {
+			JobErrorRepository jobErrorRepository,
+		    EmailController emailController) {
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
 		this.analysisExecutionService = analysisExecutionServiceGalaxy;
 		this.cleanupCondition = cleanupCondition;
 		this.galaxyJobErrorsService = galaxyJobErrorsService;
 		this.jobErrorRepository = jobErrorRepository;
+		this.emailController = emailController;
 	}
 
 	/**
@@ -280,6 +284,11 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 			analysisSubmission.setAnalysisState(AnalysisState.ERROR);
 			returnedSubmission = new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission));
 			handleJobErrors(analysisSubmission);
+		}
+
+		if(!workflowStatus.isRunning()) {
+			User user = userService.read(analysisSubmission.submitter);
+			emailController.sendPipelineStatusEmail(user, analysisSubmission);
 		}
 
 		return returnedSubmission;

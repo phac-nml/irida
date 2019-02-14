@@ -37,8 +37,8 @@
     });
 
     /*
-		 * Whether or not the page is waiting for a response from the server.
-		 */
+     * Whether or not the page is waiting for a response from the server.
+     */
     vm.loading = false;
     /**
      * Analysis submission success?
@@ -148,6 +148,8 @@
         writeResultsToSamples = $("#share-results-samples").is(":checked"),
         // All the selected sample single or pair-end files
         radioBtns = ng.element("input[type='radio']:checked"),
+        // Whether or not to email user on pipeline completion
+        emailUponCompletion = $("#email-pipeline-result").is(":checked"),
         // Holds all the ids for the selected single-end
         single = [],
         // Holds all the ids for the selected paired-end
@@ -227,6 +229,7 @@
         params["name"] = name;
         params["description"] = description;
         params["writeResultsToSamples"] = writeResultsToSamples;
+        params["emailPipelineResult"] = emailUponCompletion;
 
         if (shared.length > 0) {
           params["sharedProjects"] = shared;
