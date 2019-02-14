@@ -203,8 +203,7 @@
                                     <th:block th:text="#{project.samples.export.linker}"/>
                                 </a>
                             </li>
-
-                            <li th:if="${galaxyCallback}" role="menuitem" ng-controller="GalaxyExportController as gExportCtrl">
+                            <li th:if="${#httpSession.getAttribute('galaxyExportToolCallbackURL')} != null" role="menuitem" ng-controller="GalaxyExportController as gExportCtrl">
                                 <a href="#" ng-click="gExportCtrl.exportToGalaxy($event)"
                                    data:url="@{/cart/template/galaxy/project/{projectId}(projectId=${project.getId()})}"
                                    data:project-id="${project.getId()}"

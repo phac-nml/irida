@@ -7,6 +7,7 @@ import { getI18N } from "../../../utilities/i18n-utilties";
 import { CartToolsMenu } from "./CartToolsMenu";
 import { COLOR_BACKGROUND_LIGHTEST } from "../../../styles/colors";
 import { SPACE_MD } from "../../../styles/spacing";
+import { GalaxyExport } from "../../../components/galaxy/GalaxyExport";
 
 const ToolsWrapper = styled(Row)`
   height: 100%;
@@ -40,8 +41,20 @@ export class CartTools extends React.Component {
       component: (
         <Pipelines key="cart/pipelines" path="cart/pipelines" default />
       )
-    }
-  ];
+    },
+    ...[
+      window.PAGE.galaxyCallback
+        ? {
+            key: "/cart/galaxy",
+            link: "cart/galaxy",
+            text: getI18N("CartTools.menu.galaxy"),
+            component: (
+              <GalaxyExport key="cart/galaxy" path="cart/galaxy" />
+            )
+          }
+        : null
+    ]
+  ].filter(i => i !== null);
 
   render() {
     return (
