@@ -1104,8 +1104,8 @@
 		<maven.site.plugin.version>3.4</maven.site.plugin.version>
 		<errorprone.version>2.5</errorprone.version>
 		<frontend-maven-plugin.version>1.6</frontend-maven-plugin.version>
-		<node.version>v10.13.0</node.version>
-		<yarn.version>v1.12.3</yarn.version>
+		<node.version>v11.10.0</node.version>
+		<yarn.version>v1.13.0</yarn.version>
 		<jgravatar.version>1.0</jgravatar.version>
 
 		<!-- project configuration -->
