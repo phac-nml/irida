@@ -9,7 +9,10 @@
 <body>
 <div class="container" layout:fragment="page">
     <div class="col-md-23"><h1 th:text="#{pipeline.launch.title}">Select a Pipeline</h1>
-    <div th:replace="pipelines/fragments/i18n :: cart-summary(${counts})"></div>
+    <th:block th:if="${automatedProject == null}">
+        <div th:replace="pipelines/fragments/i18n :: cart-summary(${counts})"></div>
+    </th:block>
+    <span th:if="${automatedProject != null}" class="description" th:text=#{pipeline.launch.auto-description}>_Select a pipeline for automated analysis.  Note some pipelines may be unavailable`_</span>
     <div class="row">
         <div class="col-xs-12 col-sm-6 col-md-4" th:each="flow : ${workflows}">
             <div class="pipeline-panel t-pipeline panel panel-default"><div class="panel-heading" th:classappend="${flow.name}">

@@ -155,16 +155,14 @@ public class PipelineController extends BaseController {
 				IridaWorkflowDescription description = flow.getWorkflowDescription();
 				String name = type.getType();
 				String key = "workflow." + name;
-				flows.add(ImmutableMap.of(
-						"name", name,
-						"id", description.getId().toString(),
-						"title",
-						messageSource
-								.getMessage(key + ".title", null, locale),
-						"description",
-						messageSource
-								.getMessage(key + ".description", null, locale)
-				));
+
+				//if we're setting up an automated project, strip out all the multi-sample pipelines
+				if (automatedProject == null || (description.getInputs()
+						.requiresSingleSample())) {
+					flows.add(ImmutableMap.of("name", name, "id", description.getId()
+									.toString(), "title", messageSource.getMessage(key + ".title", null, locale), "description",
+							messageSource.getMessage(key + ".description", null, locale)));
+				}
 			} catch (IridaWorkflowNotFoundException e) {
 				logger.error("Workflow not found - See stack:", e);
 			}
