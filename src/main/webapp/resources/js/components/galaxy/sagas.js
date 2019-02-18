@@ -20,7 +20,7 @@ export function* checkOauthStatusSaga() {
       getGalaxyClientAuthentication,
       window.PAGE.galaxyClientID
     );
-    console.log(authenticated);
+
     if (authenticated) {
       yield put(actions.oauthComplete());
     }
