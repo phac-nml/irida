@@ -167,7 +167,7 @@ public abstract class AbstractAnalysisSubmission extends IridaResourceSupport im
 	@Override
 	public String toString() {
 		String userName = (submitter == null) ? "null" : submitter.getUsername();
-		return "AnalysisSubmission [id=" + id + ", name=" + name + ", submitter=" + userName + ", workflowId="
+		return this.getClass().getName() + " [id=" + id + ", name=" + name + ", submitter=" + userName + ", workflowId="
 				+ workflowId + "]";
 	}
 

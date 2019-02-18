@@ -63,14 +63,7 @@ public class AnalysisSubmissionTemplate extends AbstractAnalysisSubmission
 	public void setReferenceFile(ReferenceFile referenceFile) {
 		this.referenceFile = referenceFile;
 	}
-
-	@Override
-	public String toString() {
-		String userName = (submitter == null) ? "null" : submitter.getUsername();
-		return "AnalysisSubmissionTemplate [id=" + id + ", name=" + name + ", submitter=" + userName + ", workflowId="
-				+ workflowId + "]";
-	}
-
+	
 	public Project getSubmittedProject() {
 		return submittedProject;
 	}
