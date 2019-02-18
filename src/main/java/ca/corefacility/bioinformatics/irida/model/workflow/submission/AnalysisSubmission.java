@@ -65,6 +65,10 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 	@NotAudited
 	private Analysis analysis;
 
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+	@JoinTable(name = "analysis_submission_sequencing_object", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "sequencing_object_id", nullable = false))
+	protected Set<SequencingObject> inputFiles;
+
 	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "analysisSubmission")
 	private List<ProjectAnalysisSubmissionJoin> projects;
 
