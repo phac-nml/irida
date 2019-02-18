@@ -1,78 +1,66 @@
 import React, { Component } from "react";
-import { Button, Checkbox, Form, Input } from "antd";
+import { Checkbox, Form, Input } from "antd";
 import { getI18N } from "../../utilities/i18n-utilties";
-import { getGalaxyDetails } from "../../apis/galaxy/galaxy";
+import { connect } from "react-redux";
+import { actions } from "./reducer";
+import { validateEmail } from "../../utilities/validation-utilities";
 
+/**
+ * Component to display a form containing all required and user
+ * modifiable fields.
+ */
 class ExportToGalaxyFormComponent extends Component {
-  state = {
-    submitting: false
-  };
 
-  componentDidMount() {
-    getGalaxyDetails().then(data =>
-      this.props.form.setFields({
-        email: {
-          value: data.email
-        }
-      })
-    );
-  }
+  updateEmail = e => this.props.updateEmail(e.target.value);
 
-  setSamples = samples => this.setState({ samples });
-
-  setOauth = oauth2 => this.setState({ oauth2 });
-
-  handleGalaxySubmit = e => {
-    e.preventDefault();
-    this.props.handleSubmitToGalaxy(this.props.form.getFieldsValue())
-  };
+  updatedMakePairedCollection = e => this.props.updateMakePairedCollection(e.target.checked);
 
   render() {
-    const { getFieldDecorator, getFieldError } = this.props.form;
-
-    const emailError = getFieldError("email") || false;
+    const validEmail = validateEmail(this.props.email);
 
     return (
-      <Form
-        layout="vertical"
-        onSubmit={this.handleGalaxySubmit}
-        hideRequiredMark
-      >
+      <Form layout="vertical" hideRequiredMark>
         <Form.Item
           label={getI18N("ExportToGalaxyForm.email")}
-          validateStatus={emailError ? "error" : ""}
+          validateStatus={validEmail ? "success" : "error"}
+          validateMessage="DSafsfd"
           help={getI18N("ExportToGalaxyForm.email.help")}
-          hasFeedback
         >
-          {getFieldDecorator("email", {
-            rules: [
-              {
-                required: true,
-                message: getI18N("ExportToGalaxyForm.email.warning")
-              }
-            ]
-          })(<Input />)}
+          <Input
+            onChange={this.updateEmail}
+            value={this.props.email}
+          />
         </Form.Item>
         <Form.Item
-          help={getI18N(
-            "ExportToGalaxyForm.makepairedcollection.help"
-          )}
+          help={getI18N("ExportToGalaxyForm.makepairedcollection.help")}
         >
-          {getFieldDecorator("makepairedcollection", {
-            valuePropName: "checked",
-            initialValue: true
-          })(<Checkbox>{getI18N("ExportToGalaxyForm.makepairedcollection")}</Checkbox>)}
-        </Form.Item>
-        <Form.Item>
-          <Button type="primary" htmlType="submit" disabled={emailError}>
-            {getI18N("ExportToGalaxyForm.submit")}
-          </Button>
+          <Checkbox
+            onChange={this.updatedMakePairedCollection}
+            checked={this.props.makepairedcollection}
+          >
+            {getI18N("ExportToGalaxyForm.makepairedcollection")}
+          </Checkbox>
         </Form.Item>
       </Form>
     );
   }
 }
 
-export const GalaxyDetailsForm = Form.create({ name: "galaxy_export" })(
-  ExportToGalaxyFormComponent
-);
+/*
+Connect the component to redux to get all the required values and functions.
+ */
+const mapStateToProps = state => ({
+  email: state.galaxyReducer.email,
+  makepairedcollection: state.galaxyReducer.makepairedcollection
+});
+
+const mapDispatchToProps = dispatch => ({
+  updateEmail: email => dispatch(actions.setEmail(email)),
+  updateMakePairedCollection: value =>
+    dispatch(actions.setMakePairedCollection(value))
+});
+
+export const GalaxyDetailsForm = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ExportToGalaxyFormComponent);

@@ -1,8 +1,5 @@
 import axios from "axios";
 
-export const getGalaxyDetails = clientId =>
-  axios.get(`${window.TL.BASE_URL}ajax/galaxy-export`).then(({ data }) => data);
-
 export const getGalaxyClientAuthentication = clientId =>
   axios
     .get(
@@ -15,11 +12,36 @@ export const getGalaxySamples = () =>
     .get(`${window.TL.BASE_URL}ajax/galaxy-export/samples`)
     .then(({ data }) => data);
 
-export const exportToGalaxy = async (
-  name,
+export const exportToGalaxy = (
   email,
-  addtohistory = true,
-  makepairedcollection = true
+  makepairedcollection,
+  oauthCode,
+  oauthRedirect,
+  samples
 ) => {
-  // Get the form from the server.
+  const name = `IRIDA-${Math.random()
+    .toString()
+    .slice(2, 14)}`;
+  const params = {
+    _embedded: {
+      library: { name },
+      user: { email },
+      addtohistory: true, // Default according to Phil Mabon
+      makepairedcollection,
+      oauth2: {
+        code: oauthCode,
+        redirect: oauthRedirect
+      },
+      samples
+    }
+  };
+
+  const form = document.forms["js-galaxy-form"];
+  if (typeof form === "undefined") {
+    throw new Error(`Expecting the galaxy form with name "js-galaxy-form"`);
+  } else {
+    const input = form.elements["js-query"];
+    input.value = JSON.stringify(params);
+    form.submit();
+  }
 };

@@ -2,7 +2,6 @@ const createHref = (clientId, redirectUrl) =>
   `${
     window.TL.BASE_URL
   }api/oauth/authorize?client_id=${clientId}&response_type=code&scope=read&redirect_uri=${redirectUrl}`;
-
 /**
  * Create a DOMString containing a comma-separated list of window features for the pop up window.
  * @returns {string}
@@ -11,12 +10,32 @@ const getWindowFeatures = () => {
   /*
   Center the opened window within the current browser.
    */
-  const height = 400;
-  const width = 400;
-  const left = window.innerWidth / 2 - width / 2;
-  const top = window.innerHeight / 2 - height / 2;
+  const popupHeight = 400;
+  const popupWidth = 400;
 
-  return `top=${top},left=${left},width=${width},height=${height},scrollbars=no,status=1`;
+  // Fixes dual-screen position Most browsers Firefox
+  const dualScreenLeft =
+    typeof window.screenLeft != "undefined"
+      ? window.screenLeft
+      : window.screenX;
+  const dualScreenTop =
+    typeof window.screenTop != "undefined" ? window.screenTop : window.screenY;
+
+  const width = window.innerWidth
+    ? window.innerWidth
+    : document.documentElement.clientWidth
+    ? document.documentElement.clientWidth
+    : screen.width;
+  const height = window.innerHeight
+    ? window.innerHeight
+    : document.documentElement.clientHeight
+    ? document.documentElement.clientHeight
+    : screen.height;
+
+  const left = (width - popupWidth) / 2 + dualScreenLeft;
+  const top = (height - popupHeight) / 2 + dualScreenTop;
+
+  return `top=${top},left=${left},width=${popupHeight},height=${popupHeight},scrollbars=no,status=1`;
 };
 
 export async function authenticateOauthClient(clientId, redirectUrl) {

@@ -11,6 +11,7 @@
     <style th:text="${pipeline_plugin_style}"></style>
     <script th:inline="javascript">
       window.PAGE = {
+        user: /*[[${#authentication.getPrincipal().getEmail()}]]*/ "user@nowhere.org",
         i18n: {
           "CartEmpty.heading": /*[[#{CartEmpty.heading}]]*/ "Your cart is empty",
           "CartEmpty.subheading": /*[[#{CartEmpty.subheading}]]*/ "Add some samples to it to make it happy :)",
@@ -30,11 +31,11 @@
           "ExportToGalaxyForm.email.warning": /*[[#{ExportToGalaxyForm.email.warning}]]*/ "_EMAIL_WARNING_",
           "ExportToGalaxyForm.makepairedcollection": /*[[#{ExportToGalaxyForm.makepairedcollection}]]*/ "_MAKE_PAIRED_COLLECTION_",
           "ExportToGalaxyForm.makepairedcollection.help": /*[[#{ExportToGalaxyForm.makepairedcollection.help}]]*/ "_COLLECTION_HELP_",
-          "ExportToGalaxyForm.submit": /*[[#{ExportToGalaxyForm.submit}]]*/ "_SUBMIT_",
-          "GalaxyFinalSubmission.submitting": /*[[#{GalaxyFinalSubmission.submitting}]]*/ "_SENDING_",
-          "GalaxyOauth.authenticated": /*[[#{GalaxyOauth.authenticated}]]*/ "_AUTHENTICATED_",
-          "GalaxyOauth.authenticating": /*[[#{GalaxyOauth.authenticating}]]*/ "_AUTHENTICATING_CLIENT_",
-          "GalaxyOauth.error": /*[[#{GalaxyOauth.error}]]*/ "_AUTHENTICATE_ERROR_",
+          "GalaxyFinalSubmission.submit": /*[[#{GalaxyFinalSubmission.submit}]]*/ "_EXPORT_",
+          "GalaxyStepOauth.authenticated": /*[[#{GalaxyStepOauth.authenticated}]]*/ "_AUTHENTICATED_",
+          "GalaxyStepOauth.authenticate": /*[[#{GalaxyStepOauth.authenticate}]]*/ "_AUTHENTICATE_",
+          "GalaxyStepOauth.authenticating": /*[[#{GalaxyStepOauth.authenticating}]]*/ "_AUTHENTICATING_CLIENT_",
+          "GalaxyStepOauth.error": /*[[#{GalaxyStepOauth.error}]]*/ "_AUTHENTICATE_ERROR_",
           "GalaxySamples.ready": /*[[#{GalaxySamples.ready}]]*/ "_SAMPLES_READY_",
           "GalaxySamples.processing": /*[[#{GalaxySamples.processing}]]*/ "_SAMPLES_PREPARING_"
 

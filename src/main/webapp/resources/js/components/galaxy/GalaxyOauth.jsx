@@ -1,65 +1,50 @@
 import React from "react";
-import PropTypes from "prop-types";
-import { getGalaxyClientAuthentication } from "../../apis/galaxy/galaxy";
-import { authenticateOauthClient } from "../../apis/oauth/oauth";
-import { green6, red6 } from "../../styles/colors";
+import { Button } from "antd";
+import { actions } from "./reducer";
+import { connect } from "react-redux";
 import { getI18N } from "../../utilities/i18n-utilties";
-import { SubmitIcon, SubmitIconProcessing, SubmitStep } from "./components";
+import { SPACE_SM } from "../../styles/spacing";
 
-export class GalaxyOauth extends React.Component {
-  static propTypes = {
-    setOauth: PropTypes.func.isRequired
+class GalaxyOauthComponent extends React.Component {
+  static propTypes = {};
+
+  state = {
+    authenticating: false
   };
 
-  state = { processing: true, authorized: false };
-
-  componentDidMount() {
-    getGalaxyClientAuthentication(window.PAGE.galaxyClientID).then(data => {
-      const authorized = data.isAuthorized;
-      if (authorized) {
-        this.setState({ authorized });
-      } else {
-        this.authenticate();
-      }
-    });
-  }
-
-  authenticate = () => {
-    const redirect = `${window.TL.BASE_URL}galaxy/auth_code`;
-    authenticateOauthClient(window.PAGE.galaxyClientID, redirect)
-      .then(code =>
-        this.setState({ authError: false }, () =>
-          this.props.setOauth({
-            code,
-            redirect
-          })
-        )
-      )
-      .catch(() => {
-        this.setState({ authError: true });
-      });
-  };
+  authenticate = () =>
+    this.setState({ authenticating: true }, this.props.authenticateOauthClient);
 
   render() {
-    return this.state.authenticated ? (
-      <SubmitStep>
-        <SubmitIcon type="check-circle" theme="twoTone" twoToneColor={green6} />
-        {getI18N("GalaxyOauth.authenticated")}
-      </SubmitStep>
-    ) : this.state.authError ? (
-      <SubmitStep>
-        <SubmitIcon
-          type="exclamation-circle"
-          theme="twoTone"
-          twoToneColor={red6}
-        />
-        {getI18N("GalaxyOauth.error")}
-      </SubmitStep>
-    ) : (
-      <SubmitStep>
-        <SubmitIconProcessing type="loading" />
-        {getI18N("GalaxyOauth.authenticating")}
-      </SubmitStep>
+    return (
+      <div>
+        <div style={{ marginBottom: SPACE_SM }}>
+          Galaxy Authentication Required
+        </div>
+        <Button block
+          onClick={this.authenticate}
+          loading={this.state.authenticating}
+          disabled={this.state.authenticating}
+        >
+          {this.state.authenticating
+            ? getI18N("GalaxyStepOauth.authenticating")
+            : getI18N("GalaxyStepOauth.authenticate")}
+        </Button>
+      </div>
     );
   }
 }
+
+/*
+Connect the component to redux to get all the required values and functions.
+ */
+const mapStateToProps = state => ({});
+
+const mapDispatchToProps = dispatch => ({
+  authenticateOauthClient: () => dispatch(actions.authenticateOauthClient())
+});
+
+export const GalaxyOauth = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(GalaxyOauthComponent);

@@ -1,38 +1,42 @@
 import React from "react";
-import PropTypes from "prop-types";
-import { getGalaxySamples } from "../../apis/galaxy/galaxy";
-import { green6 } from "../../styles/colors";
+import { connect } from "react-redux";
+import { Alert, Icon } from "antd";
 import { getI18N } from "../../utilities/i18n-utilties";
-import { SubmitIcon, SubmitIconProcessing, SubmitStep } from "./components";
+import { SPACE_SM } from "../../styles/spacing";
 
-export class GalaxySamples extends React.Component {
-  propTypes = {
-    setSamples: PropTypes.func.isRequired
-  };
-
-  state = {
-    finished: false
-  };
-
-  componentDidMount() {
-    getGalaxySamples().then(samples => {
-      this.setState({ finished: true }, () => {
-        this.props.setSamples(samples);
-      });
-    });
-  }
-
+class GalaxySamplesComponent extends React.Component {
   render() {
-    return this.state.finished ? (
-      <SubmitStep>
-        <SubmitIcon type="check-circle" theme="twoTone" twoToneColor={green6} />
-        {getI18N("GalaxySamples.ready")}
-      </SubmitStep>
-    ) : (
-      <SubmitStep>
-        <SubmitIconProcessing type="loading" />
-        {getI18N("GalaxySamples.processing")}
-      </SubmitStep>
+    return (
+      <div style={{ marginBottom: SPACE_SM }}>
+        {this.props.finished ? (
+          <Alert
+            message={getI18N("GalaxySamples.ready")}
+            type="success"
+            showIcon
+          />
+        ) : (
+          <Alert
+            message={getI18N("GalaxySamples.processing")}
+            icon={<Icon type="loading" />}
+            showIcon
+            type="info"
+          />
+        )}
+      </div>
     );
   }
 }
+
+/*
+Connect the component to redux to get all the required values and functions.
+ */
+const mapStateToProps = state => ({
+  finished: typeof state.galaxyReducer.samples !== "undefined"
+});
+
+const mapDispatchToProps = dispatch => ({});
+
+export const GalaxySamples = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(GalaxySamplesComponent);

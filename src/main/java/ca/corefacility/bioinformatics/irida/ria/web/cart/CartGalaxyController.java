@@ -6,19 +6,15 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.components.Cart;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartSample;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.GalaxyExportAuthentication;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.GalaxyExportDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.GalaxyExportSample;
 import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -37,14 +33,6 @@ public class CartGalaxyController {
 		this.clientDetailsService = clientDetailsService;
 		this.sampleService = sampleService;
 		this.cart = cart;
-	}
-
-	@RequestMapping("")
-	public GalaxyExportDetails getGalaxyExportDetails() {
-		Authentication authentication = SecurityContextHolder.getContext()
-				.getAuthentication();
-		User user = (User) authentication.getPrincipal();
-		return new GalaxyExportDetails(user.getEmail());
 	}
 
 	@RequestMapping("/authorized")
