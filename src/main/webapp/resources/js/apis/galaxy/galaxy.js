@@ -38,6 +38,12 @@ export const exportToGalaxy = (
     }
   };
 
+  /*
+  On the cart.html page, there is a form with the name "js-galaxy-form" that
+  get populated with the action (galaxy url).  It has a hidden input (#js-query)
+  that we set the stringified version of the galaxy parameters to.  After updating
+  the value, we submit the form, which will redirect us back to Galaxy.
+   */
   const form = document.forms["js-galaxy-form"];
   if (typeof form === "undefined") {
     throw new Error(`Expecting the galaxy form with name "js-galaxy-form"`);
