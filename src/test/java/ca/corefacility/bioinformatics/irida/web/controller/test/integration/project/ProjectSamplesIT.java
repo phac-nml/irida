@@ -25,8 +25,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import javax.ws.rs.core.MediaType;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -47,7 +45,6 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.net.HttpHeaders;
 import com.jayway.restassured.http.ContentType;
@@ -234,26 +231,18 @@ public class ProjectSamplesIT {
 	public void testReadSampleCollectionDate() {
 		String projectUri = ITestSystemProperties.BASE_URL + "/api/projects/5";
 		String projectSampleUri = projectUri + "/samples/1";
-
-		asAdmin().expect().body("resource.collectionDate", is("2019-01-24")).when().get(projectSampleUri);
+		
+		asAdmin().expect().body("resource.collectionDate", is("2019-01-24"))
+				.when().get(projectSampleUri);
 	}
-
+	
 	@Test
-	public void testPatchSampleCollectionDate() {
+	public void testReadSampleCollectionDate2() {
 		String projectUri = ITestSystemProperties.BASE_URL + "/api/projects/5";
 		String projectSampleUri = projectUri + "/samples/3";
-
-		String sampleUri = ITestSystemProperties.BASE_URL + "/api/samples/3";
-
-		// check date initially
-		asAdmin().expect().body("resource.collectionDate", is("1999-12-05")).when().get(projectSampleUri);
-
-		// modify date
-		asAdmin().given().contentType(MediaType.APPLICATION_JSON).body(ImmutableMap.of("collectionDate", "2018-11-22"))
-				.when().patch(sampleUri).then().statusCode(200);
-
-		// verify the date has been changed.
-		asAdmin().expect().body("resource.collectionDate", is("2018-11-22")).when().get(projectSampleUri);
+		
+		asAdmin().expect().body("resource.collectionDate", is("1999-12-05"))
+				.when().get(projectSampleUri);
 	}
 	
 	@Test
