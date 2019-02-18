@@ -19,9 +19,11 @@ export const exportToGalaxy = (
   oauthRedirect,
   samples
 ) => {
-  const name = `IRIDA-${Math.random()
-    .toString()
-    .slice(2, 14)}`;
+  const name = `IRIDA-${Date.now()}`;
+
+  /*
+  This structure is expected by galaxy.
+   */
   const params = {
     _embedded: {
       library: { name },
