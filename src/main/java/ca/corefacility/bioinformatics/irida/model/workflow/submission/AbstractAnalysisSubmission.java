@@ -245,16 +245,6 @@ public abstract class AbstractAnalysisSubmission extends IridaResourceSupport im
 	}
 
 	/**
-	 * Gets a {@link AnalysisSubmission.Builder}.
-	 *
-	 * @param workflowId The id of the workflow to submit.
-	 * @return A {@link AnalysisSubmission.Builder}.
-	 */
-	public static AnalysisSubmission.Builder builder(UUID workflowId) {
-		return new AnalysisSubmission.Builder(workflowId);
-	}
-
-	/**
 	 * Sets flag to indicate whether or not samples in the submission should be updated with analysis results following
 	 * completion.
 	 *
