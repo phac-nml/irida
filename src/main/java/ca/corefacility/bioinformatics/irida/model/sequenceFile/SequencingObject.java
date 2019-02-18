@@ -69,7 +69,7 @@ public abstract class SequencingObject extends IridaResourceSupport implements M
 	@NotAudited
 	private Set<QCEntry> qcEntries;
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH, mappedBy = "inputFiles", targetEntity = AbstractAnalysisSubmission.class)
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH, mappedBy = "inputFiles")
 	private List<AnalysisSubmission> analysisSubmissions;
 
 	@Enumerated(EnumType.STRING)
