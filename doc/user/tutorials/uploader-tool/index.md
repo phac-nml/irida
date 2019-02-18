@@ -36,6 +36,8 @@ Development is being done on a new Command Line Uploader.
 
 If you would prefer using the command line to upload data, you can download it here <https://github.com/phac-nml/irida-uploader>
 
+Please Note: The tutorial expects that you will be using the GUI uploader.
+
 Launching the Uploader
 ----------------------
 
