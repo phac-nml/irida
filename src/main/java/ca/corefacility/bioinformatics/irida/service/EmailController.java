@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.service;
 
 import java.util.List;
 
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import org.springframework.mail.MailSendException;
 
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
@@ -74,13 +75,13 @@ public interface EmailController {
 	public Boolean isMailConfigured();
 
 	/**
-	 * Send piepline status email to a user when a pipeline that they have
+	 * Send pipeline status email to a user when a pipeline that they have
 	 * launched is completed or has an error
 	 *
-	 * @param user          The {@link User} that should be emailed the pipeline status
 	 * @param submission    The {@link AnalysisSubmission} that the pipeline status email
 	 * 											will be sent for
+	 *
 	 * @throws MailSendException if the email failed to send
 	 */
-	public void sendPipelineStatusEmail(User user, AnalysisSubmission submission) throws MailSendException;
+	public void sendPipelineStatusEmail(AnalysisSubmission submission) throws MailSendException;
 }

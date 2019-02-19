@@ -178,6 +178,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 					logger.error("Error checking state for " + analysisSubmission, e);
 					analysisSubmission.setAnalysisState(AnalysisState.ERROR);
 					submissions.add(new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission)));
+					emailController.sendPipelineStatusEmail(analysisSubmission);
 				}
 			}
 
@@ -286,9 +287,10 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 			handleJobErrors(analysisSubmission);
 		}
 
-		if(!workflowStatus.isRunning()) {
-			User user = userService.read(analysisSubmission.submitter);
-			emailController.sendPipelineStatusEmail(user, analysisSubmission);
+		if (!workflowStatus.isRunning()) {
+			if (workflowStatus.completedSuccessfully() || workflowStatus.errorOccurred()) {
+				emailController.sendPipelineStatusEmail(analysisSubmission);
+			}
 		}
 
 		return returnedSubmission;

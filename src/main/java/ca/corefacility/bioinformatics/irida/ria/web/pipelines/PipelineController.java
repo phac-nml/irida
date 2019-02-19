@@ -543,6 +543,7 @@ public class PipelineController extends BaseController {
 			String analysisDescription = parameters.getDescription();
 			Boolean writeResultsToSamples = parameters.getWriteResultsToSamples();
 			Boolean emailPipelineResult = parameters.getEmailPipelineResult();
+
 			if (description.getInputs()
 					.requiresSingleSample()) {
 				analysisSubmissionService.createSingleSampleSubmission(flow, ref, singleEndFiles, sequenceFilePairs,

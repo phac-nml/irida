@@ -61,6 +61,7 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.Job
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
+import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl;
@@ -115,6 +116,9 @@ public class SNVPhylAnalysisIT {
 	@Autowired
 	private JobErrorRepository jobErrorRepository;
 
+	@Autowired
+	private EmailController emailController;
+
 	private AnalysisExecutionScheduledTask analysisExecutionScheduledTask;
 
 	private Path sequenceFilePathA1;
@@ -161,7 +165,7 @@ public class SNVPhylAnalysisIT {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
-				analysisExecutionService, CleanupAnalysisSubmissionCondition.NEVER_CLEANUP, galaxyJobErrorsService, jobErrorRepository);
+				analysisExecutionService, CleanupAnalysisSubmissionCondition.NEVER_CLEANUP, galaxyJobErrorsService, jobErrorRepository, emailController);
 
 		Path tempDir = Files.createTempDirectory(rootTempDirectory, "snvphylTest");
 

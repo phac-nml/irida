@@ -36,7 +36,7 @@ import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
-
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 /**
  * This class is responsible for all email sent to the server that are templated
  * with Thymeleaf.
@@ -253,23 +253,24 @@ public class EmailControllerImpl implements EmailController {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void sendPipelineStatusEmail(User user, AnalysisSubmission submission) throws MailSendException {
-		logger.debug("Sending pipeline status email to " + user.getEmail());
+	public void sendPipelineStatusEmail(AnalysisSubmission submission) throws MailSendException {
+		logger.debug("Sending pipeline status email to " + submission.getSubmitter().getEmail());
 
 		Locale locale = LocaleContextHolder.getLocale();
 
 		final Context ctx = new Context(locale);
 
 		ctx.setVariable("serverURL", serverURL);
-		ctx.setVariable("pipeline_status", submission.getEmailPipelineResult());
+		ctx.setVariable("pipeline_status", submission.getAnalysisState().equals(AnalysisState.ERROR) ? "ERROR" : "COMPLETED");
+		ctx.setVariable("analysisName", submission.getName());
 		ctx.setVariable("analysisSubmissionURL", (serverURL + "/analysis/" + (submission.getId())));
 
 		try {
 			final MimeMessage mimeMessage = this.javaMailSender.createMimeMessage();
 			final MimeMessageHelper message = new MimeMessageHelper(mimeMessage, "UTF-8");
-			message.setSubject(messageSource.getMessage("email.piepline.subject", null, locale));
+			message.setSubject(messageSource.getMessage("email.pipeline.status", null, locale));
 			message.setFrom(serverEmail);
-			message.setTo(user.getEmail());
+			message.setTo(submission.getSubmitter().getEmail());
 
 			final String htmlContent = templateEngine.process(PIPELINE_STATUS_TEMPLATE, ctx);
 			message.setText(htmlContent, true);
