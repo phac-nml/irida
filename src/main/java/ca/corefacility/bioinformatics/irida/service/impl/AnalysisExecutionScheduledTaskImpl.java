@@ -69,7 +69,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 			CleanupAnalysisSubmissionCondition cleanupCondition,
 			GalaxyJobErrorsService galaxyJobErrorsService,
 			JobErrorRepository jobErrorRepository,
-		    EmailController emailController) {
+			EmailController emailController) {
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
 		this.analysisExecutionService = analysisExecutionServiceGalaxy;
 		this.cleanupCondition = cleanupCondition;

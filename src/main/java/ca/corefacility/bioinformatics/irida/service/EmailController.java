@@ -78,8 +78,7 @@ public interface EmailController {
 	 * Send pipeline status email to a user when a pipeline that they have
 	 * launched is completed or has an error
 	 *
-	 * @param submission    The {@link AnalysisSubmission} that the pipeline status email
-	 * 											will be sent for
+	 * @param submission    The {@link AnalysisSubmission} that the pipeline status email will be sent for
 	 *
 	 * @throws MailSendException if the email failed to send
 	 */

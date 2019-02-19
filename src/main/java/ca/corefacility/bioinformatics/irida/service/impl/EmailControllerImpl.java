@@ -261,8 +261,8 @@ public class EmailControllerImpl implements EmailController {
 		final Context ctx = new Context(locale);
 
 		ctx.setVariable("serverURL", serverURL);
-		ctx.setVariable("pipeline_status", submission.getAnalysisState().equals(AnalysisState.ERROR) ? "ERROR" : "COMPLETED");
-		ctx.setVariable("analysisName", submission.getName());
+		ctx.setVariable("pipelineStatus", submission.getAnalysisState().equals(AnalysisState.ERROR) ? "ERROR" : "COMPLETED");
+		ctx.setVariable("pipelineName", submission.getName());
 		ctx.setVariable("analysisSubmissionURL", (serverURL + "/analysis/" + (submission.getId())));
 
 		try {
