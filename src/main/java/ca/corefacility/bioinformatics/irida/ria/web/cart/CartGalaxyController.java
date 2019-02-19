@@ -35,6 +35,12 @@ public class CartGalaxyController {
 		this.cart = cart;
 	}
 
+	/**
+	 * This is a check to see if the is currently an authentication token for the Galaxy client.
+	 *
+	 * @param clientId {@link String} The clientId for the Galaxy client
+	 * @return {@link GalaxyExportAuthentication} which contains the status for the client.
+	 */
 	@RequestMapping("/authorized")
 	public GalaxyExportAuthentication isGalaxyClientAuthenticated(@RequestParam String clientId) {
 		IridaClientDetails details = (IridaClientDetails) clientDetailsService.loadClientByClientId(clientId);
@@ -42,10 +48,13 @@ public class CartGalaxyController {
 		return new GalaxyExportAuthentication(0 < activeTokensForClient);
 	}
 
+	/**
+	 * Get a list of links for all {@link Sample} to be exported to the Galaxy Client.
+	 * @return {@link List} of {@link Sample} links.
+	 */
 	@RequestMapping("/samples")
 	public List<GalaxyExportSample> getGalaxyExportForm() {
 		Map<Long, Map<Long, CartSample>> contents = cart.get();
-		List<Long> ids = new ArrayList<>();
 		List<GalaxyExportSample> result = new ArrayList<>();
 		for (Long projectId : contents.keySet()) {
 			Iterable<Sample> samples = sampleService.readMultiple(contents.get(projectId)
