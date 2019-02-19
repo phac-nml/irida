@@ -447,8 +447,9 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 					remoteAnalysisId, p.remoteAnalysisId) && Objects.equals(remoteInputDataId, p.remoteInputDataId)
 					&& Objects.equals(remoteWorkflowId, p.remoteWorkflowId) && Objects.equals(analysisState,
 					p.analysisState) && Objects.equals(analysisCleanedState, p.analysisCleanedState) && Objects.equals(
-					referenceFile, p.referenceFile) && Objects.equals(namedParameters, p.namedParameters)
-					&& Objects.equals(submitter, p.submitter) && Objects.equals(priority, p.priority);
+					referenceFile, p.referenceFile) && Objects.equals(analysis, p.analysis) && Objects.equals(
+					namedParameters, p.namedParameters) && Objects.equals(submitter, p.submitter) && Objects.equals(
+					priority, p.priority);
 		}
 
 		return false;
