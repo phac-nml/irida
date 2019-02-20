@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.service;
 
 import java.util.List;
 
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import org.springframework.mail.MailSendException;
 
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
