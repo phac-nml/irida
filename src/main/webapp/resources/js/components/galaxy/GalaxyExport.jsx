@@ -8,41 +8,29 @@ import { GalaxySubmission } from "./GalaxySubmission";
 import { GalaxySamples } from "./GalaxySamples";
 import { GalaxyStepOauth } from "./GalaxyStepOauth";
 
+/**
+ * Main UI component to render the export to galaxy component to the interface.
+ */
 export class GalaxyExportComponent extends React.Component {
   static propTypes = {
     getGalaxySamples: PropTypes.func.isRequired
   };
-  // checkSubmission = () => {
-  //   const completed =
-  //     this.state.samples !== undefined && this.state.oauth2 !== undefined;
-  //   if (completed) {
-  //     const library = `IRIDA-${Math.random()
-  //       .toString()
-  //       .slice(2, 14)}`;
-  //     const query = {
-  //       _embedded: {
-  //         library: { name: library },
-  //         user: { email: this.state.email },
-  //         addtohistory: true, // Default according to Phil Mabon
-  //         makepairedcollection: this.state.makepairedcollection,
-  //         oauth2: this.state.oauth2,
-  //         samples: this.state.samples
-  //       }
-  //     };
-  //     this.setState({ query });
-  //   }
-  // };
+
   componentDidMount() {
+    /*
+    As soon as the page renders start asking for the samples to be foramtted.
+    This will get a list of link to the samples to be transferred to galaxy.
+     */
     this.props.getGalaxySamples();
   }
 
   render() {
     return (
       <Row>
-        <Col span={12}>
+        <Col lg={12} md={24}>
           <GalaxyDetailsForm />
-          <GalaxySamples/>
-          <GalaxyStepOauth/>
+          <GalaxySamples />
+          <GalaxyStepOauth />
           <GalaxySubmission />
         </Col>
       </Row>
