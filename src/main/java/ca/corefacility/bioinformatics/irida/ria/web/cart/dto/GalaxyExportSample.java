@@ -21,13 +21,13 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
  *         "_links" : { "self" : { "href" : ""} },
  *         "_embedded" : {
  *             "sample_files" : [
- *             	{
+ *                {
  *             	    "_links" : {
  *             	        "self" : {
  *             	            "href" : "http://samples_href"
- *             	        }
- *             	    }
- *             	}, ...
+ *                        }
+ *                    }
+ *                }, ...
  *             ]
  *         }
  *     }]
@@ -59,10 +59,20 @@ public class GalaxyExportSample {
 		return name;
 	}
 
+	/**
+	 * Get the {@link Map} for this sample
+	 *
+	 * @return {@link Map} of links
+	 */
 	public Map<String, Map<String, String>> get_links() {
 		return _links;
 	}
 
+	/**
+	 * Get a {@link Map} of all the file links
+	 *
+	 * @return {@link Map} of file links
+	 */
 	public Map<String, List<Map<String, Map<String, Map<String, String>>>>> get_embedded() {
 		return _embedded;
 	}
