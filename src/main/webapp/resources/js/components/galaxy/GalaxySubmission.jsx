@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { Button } from "antd";
 import { getI18N } from "../../utilities/i18n-utilties";
 import { connect } from "react-redux";
-import { exportToGalaxy } from "../../apis/galaxy/galaxy";
+import { exportToGalaxy } from "../../apis/galaxy/oauth";
 
 export class GalaxySubmissionComponent extends Component {
   static propTypes = {
