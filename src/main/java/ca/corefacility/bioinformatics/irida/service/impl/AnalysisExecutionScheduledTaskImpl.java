@@ -62,6 +62,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	 *                                       should be cleaned up.
 	 * @param galaxyJobErrorsService		 {@link GalaxyJobErrorsService} for getting {@link JobError} objects
 	 * @param jobErrorRepository             {@link JobErrorRepository} for {@link JobError} objects
+	 * @param emailController				{@link EmailController} for sending completion/error emails for {@link AnalysisSubmission}s
 	 */
 	@Autowired
 	public AnalysisExecutionScheduledTaskImpl(AnalysisSubmissionRepository analysisSubmissionRepository,

@@ -43,7 +43,7 @@ import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCon
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.CleanupAnalysisSubmissionConditionAge;
-import ca.corefacility.bioinformatics.irida.service.EmailController;
+import ca.corefacility.bioinformatics.irida.service.impl.TestEmailController;
 
 /**
  * Tests out scheduling analysis tasks.
@@ -85,7 +85,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	private JobErrorRepository jobErrorRepository;
 
 	@Mock
-	private EmailController emailController;
+	private TestEmailController emailController;
 
 	private static final String ANALYSIS_ID = "1";
 	private static final Long INTERNAL_ID = 1L;
@@ -247,6 +247,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		assertEquals(AnalysisState.FINISHED_RUNNING, analysisSubmission.getAnalysisState());
 		verify(analysisSubmissionRepository).save(analysisSubmission);
+		verify(emailController).sendPipelineStatusEmail(analysisSubmission);
 	}
 
 	/**
@@ -323,6 +324,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		assertEquals(AnalysisState.ERROR, analysisSubmission.getAnalysisState());
 		verify(analysisSubmissionRepository).save(analysisSubmission);
+		verify(emailController).sendPipelineStatusEmail(analysisSubmission);
 	}
 	
 	/**
@@ -345,6 +347,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		assertEquals(AnalysisState.ERROR, analysisSubmission.getAnalysisState());
 		verify(analysisSubmissionRepository).save(analysisSubmission);
+		verify(emailController).sendPipelineStatusEmail(analysisSubmission);
 	}
 
 	/**
@@ -371,6 +374,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		assertEquals(AnalysisState.ERROR, analysisSubmission.getAnalysisState());
 		verify(analysisSubmissionRepository).save(analysisSubmission);
+		verify(emailController).sendPipelineStatusEmail(analysisSubmission);
 	}
 
 	/**
