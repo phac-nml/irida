@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import PropTypes from "prop-types";
 import { Button } from "antd";
 import { actions } from "./reducer";
 import { connect } from "react-redux";
@@ -10,36 +11,37 @@ import { SPACE_SM } from "../../styles/spacing";
  * If the client is not authorized, the user is presented a button which
  * will commence the Oauth2 process.
  */
-class GalaxyOauthComponent extends React.Component {
-  static propTypes = {};
+function GalaxyOauthComponent({ authenticateOauthClient }) {
+  const [authenticating, setAuthenticating] = useState(false);
 
-  state = {
-    authenticating: false
+  const authenticate = () => {
+    setAuthenticating(true);
+    authenticateOauthClient();
   };
 
-  authenticate = () =>
-    this.setState({ authenticating: true }, this.props.authenticateOauthClient);
-
-  render() {
-    return (
-      <div>
-        <div style={{ marginBottom: SPACE_SM }}>
-          Galaxy Authentication Required
-        </div>
-        <Button
-          block
-          onClick={this.authenticate}
-          loading={this.state.authenticating}
-          disabled={this.state.authenticating}
-        >
-          {this.state.authenticating
-            ? getI18N("GalaxyStepOauth.authenticating")
-            : getI18N("GalaxyStepOauth.authenticate")}
-        </Button>
+  return (
+    <div>
+      <div style={{ marginBottom: SPACE_SM }}>
+        {getI18N("GalaxyOauth.Authentication.Required")}
       </div>
-    );
-  }
+      <Button
+        block
+        onClick={authenticate}
+        loading={authenticating}
+        disabled={authenticating}
+        icon="lock"
+      >
+        {authenticating
+          ? getI18N("GalaxyStepOauth.authenticating")
+          : getI18N("GalaxyStepOauth.authenticate")}
+      </Button>
+    </div>
+  );
 }
+
+GalaxyOauthComponent.propTypes = {
+  authenticateOauthClient: PropTypes.func.isRequired
+};
 
 /*
 Connect the component to redux to get all the required values and functions.

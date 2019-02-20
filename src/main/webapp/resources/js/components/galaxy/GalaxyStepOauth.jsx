@@ -30,21 +30,6 @@ export class GalaxyStepOauthComponent extends React.Component {
         )}
       </div>
     );
-    // this.state.authError ? (
-    //   <SubmitStep>
-    //     <SubmitIcon
-    //       type="exclamation-circle"
-    //       theme="twoTone"
-    //       twoToneColor={red6}
-    //     />
-    //     {getI18N("GalaxyStepOauth.error")}
-    //   </SubmitStep>
-    // ) : (
-    //   <SubmitStep>
-    //     <SubmitIconProcessing type="loading" />
-    //     {getI18N("GalaxyStepOauth.authenticating")}
-    //   </SubmitStep>
-    // );
   }
 }
 
