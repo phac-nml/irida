@@ -1,5 +1,4 @@
-import { call, put, take } from "redux-saga/effects";
-import { delay } from "redux-saga";
+import { call, delay, put, take } from "redux-saga/effects";
 import { types as appTypes } from "../../../../redux/reducers/app";
 import { actions, types } from "../reducers/templates";
 import {
