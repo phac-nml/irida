@@ -374,7 +374,6 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		assertEquals(AnalysisState.ERROR, analysisSubmission.getAnalysisState());
 		verify(analysisSubmissionRepository).save(analysisSubmission);
-		verify(emailController).sendPipelineStatusEmail(analysisSubmission);
 	}
 
 	/**
