@@ -65,6 +65,10 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 	@NotAudited
 	private Analysis analysis;
 
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+	@JoinTable(name = "analysis_submission_sequencing_object", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "sequencing_object_id", nullable = false))
+	protected Set<SequencingObject> inputFiles;
+
 	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "analysisSubmission")
 	private List<ProjectAnalysisSubmissionJoin> projects;
 
@@ -443,8 +447,9 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 					remoteAnalysisId, p.remoteAnalysisId) && Objects.equals(remoteInputDataId, p.remoteInputDataId)
 					&& Objects.equals(remoteWorkflowId, p.remoteWorkflowId) && Objects.equals(analysisState,
 					p.analysisState) && Objects.equals(analysisCleanedState, p.analysisCleanedState) && Objects.equals(
-					referenceFile, p.referenceFile) && Objects.equals(namedParameters, p.namedParameters)
-					&& Objects.equals(submitter, p.submitter) && Objects.equals(priority, p.priority);
+					referenceFile, p.referenceFile) && Objects.equals(analysis, p.analysis) && Objects.equals(
+					namedParameters, p.namedParameters) && Objects.equals(submitter, p.submitter) && Objects.equals(
+					priority, p.priority);
 		}
 
 		return false;

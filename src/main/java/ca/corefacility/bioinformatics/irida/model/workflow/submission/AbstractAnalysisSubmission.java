@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.model.workflow.submission;
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Type;
@@ -50,10 +49,6 @@ public abstract class AbstractAnalysisSubmission extends IridaResourceSupport im
 	@Column(name = "workflow_id")
 	@Type(type = "uuid-char")
 	protected UUID workflowId;
-
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
-	@JoinTable(name = "analysis_submission_sequencing_object", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "sequencing_object_id", nullable = false))
-	protected Set<SequencingObject> inputFiles;
 
 	@ElementCollection(fetch = FetchType.EAGER)
 	@MapKeyColumn(name = "name", nullable = false)
@@ -172,7 +167,7 @@ public abstract class AbstractAnalysisSubmission extends IridaResourceSupport im
 	@Override
 	public String toString() {
 		String userName = (submitter == null) ? "null" : submitter.getUsername();
-		return "AnalysisSubmission [id=" + id + ", name=" + name + ", submitter=" + userName + ", workflowId="
+		return this.getClass().getName() + " [id=" + id + ", name=" + name + ", submitter=" + userName + ", workflowId="
 				+ workflowId + "]";
 	}
 
@@ -247,16 +242,6 @@ public abstract class AbstractAnalysisSubmission extends IridaResourceSupport im
 	 */
 	public void setAnalysisDescription(String description) {
 		this.analysisDescription = description;
-	}
-
-	/**
-	 * Gets a {@link AnalysisSubmission.Builder}.
-	 *
-	 * @param workflowId The id of the workflow to submit.
-	 * @return A {@link AnalysisSubmission.Builder}.
-	 */
-	public static AnalysisSubmission.Builder builder(UUID workflowId) {
-		return new AnalysisSubmission.Builder(workflowId);
 	}
 
 	/**
