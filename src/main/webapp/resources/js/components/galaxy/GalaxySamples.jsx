@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { Alert, Icon } from "antd";
 import { getI18N } from "../../utilities/i18n-utilties";
@@ -7,43 +7,39 @@ import { actions } from "./reducer";
 import PropTypes from "prop-types";
 
 /**
- * Component to
+ * Component to display the status of fetching samples in the proper Galaxy format.
+ * @param {function} getGalaxySamples
+ * @param {boolean} finished
  */
-class GalaxySamplesComponent extends React.Component {
-  static propTypes = {
-    getGalaxySamples: PropTypes.func.isRequired,
-    finished: PropTypes.bool.isRequired
-  };
+function GalaxySamplesComponent({ getGalaxySamples, finished }) {
+  useEffect(() => {
+    getGalaxySamples();
+  }, []);
 
-  componentDidMount() {
-    /*
-    As soon as the page renders start asking for the samples to be formatted.
-    This will get a list of link to the samples to be transferred to galaxy.
-     */
-    this.props.getGalaxySamples();
-  }
-
-  render() {
-    return (
-      <div style={{ marginBottom: SPACE_SM }}>
-        {this.props.finished ? (
-          <Alert
-            message={getI18N("GalaxySamples.ready")}
-            type="success"
-            showIcon
-          />
-        ) : (
-          <Alert
-            message={getI18N("GalaxySamples.processing")}
-            icon={<Icon type="loading" />}
-            showIcon
-            type="info"
-          />
-        )}
-      </div>
-    );
-  }
+  return (
+    <div style={{ marginBottom: SPACE_SM }}>
+      {finished ? (
+        <Alert
+          message={getI18N("GalaxySamples.ready")}
+          type="success"
+          showIcon
+        />
+      ) : (
+        <Alert
+          message={getI18N("GalaxySamples.processing")}
+          icon={<Icon type="loading" />}
+          showIcon
+          type="info"
+        />
+      )}
+    </div>
+  );
 }
+
+GalaxySamplesComponent.propTypes = {
+  getGalaxySamples: PropTypes.func.isRequired,
+  finished: PropTypes.bool.isRequired
+};
 
 /*
 Connect the component to redux to get all the required values and functions.

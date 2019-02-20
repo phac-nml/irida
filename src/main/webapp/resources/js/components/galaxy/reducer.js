@@ -87,5 +87,8 @@ export const actions = {
   }),
   enableSubmit: () => ({
     type: types.SUBMITTABLE
+  }),
+  submit: () => ({
+    type: types.SUBMIT
   })
 };

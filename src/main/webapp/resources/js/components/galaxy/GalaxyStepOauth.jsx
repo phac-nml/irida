@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import { Alert } from "antd";
 import { getI18N } from "../../utilities/i18n-utilties";
@@ -7,31 +7,35 @@ import { actions } from "./reducer";
 import { connect } from "react-redux";
 import { SPACE_SM } from "../../styles/spacing";
 
-export class GalaxyStepOauthComponent extends React.Component {
-  static propTypes = {
-    checkOauthStatus: PropTypes.func.isRequired
-  };
+/**
+ * Component to display the status of the Galaxy Oauth2 token.
+ * @param {boolean} authorized - true if the Galaxy Client is authorized
+ * @param {function} checkOauthStatus - to check the status of the client.
+ */
+export function GalaxyStepOauthComponent({ authorized, checkOauthStatus }) {
+  useEffect(() => {
+    checkOauthStatus();
+  }, []);
 
-  componentDidMount() {
-    this.props.checkOauthStatus();
-  }
-
-  render() {
-    return (
-      <div style={{ marginBottom: SPACE_SM }}>
-        {this.props.authorized ? (
-          <Alert
-            message={getI18N("GalaxyStepOauth.authenticated")}
-            type="success"
-            showIcon
-          />
-        ) : (
-          <Alert message={<GalaxyOauth />} showIcon type="warning" />
-        )}
-      </div>
-    );
-  }
+  return (
+    <div style={{ marginBottom: SPACE_SM }}>
+      {authorized ? (
+        <Alert
+          message={getI18N("GalaxyStepOauth.authenticated")}
+          type="success"
+          showIcon
+        />
+      ) : (
+        <Alert message={<GalaxyOauth />} showIcon type="warning" />
+      )}
+    </div>
+  );
 }
+
+GalaxyStepOauthComponent.propTypes = {
+  authorized: PropTypes.bool,
+  checkOauthStatus: PropTypes.func.isRequired
+};
 
 /*
 Connect the component to redux to get all the required values and functions.
