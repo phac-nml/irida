@@ -12,6 +12,27 @@ import com.google.common.collect.ImmutableMap;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+/**
+ * UI Model to return sample links in the format that galaxy expects:
+ *
+ * <pre>
+ *     [{
+ *         "name" : "sample_name",
+ *         "_links" : { "self" : { "href" : ""} },
+ *         "_embedded" : {
+ *             "sample_files" : [
+ *             	{
+ *             	    "_links" : {
+ *             	        "self" : {
+ *             	            "href" : "http://samples_href"
+ *             	        }
+ *             	    }
+ *             	}, ...
+ *             ]
+ *         }
+ *     }]
+ * </pre>
+ */
 public class GalaxyExportSample {
 	private String name;
 	private Map<String, Map<String, String>> _links;
