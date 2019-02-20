@@ -3771,6 +3771,11 @@ expand-tilde@^2.0.0, expand-tilde@^2.0.2:
   dependencies:
     homedir-polyfill "^1.0.1"
 
+expose-loader@^0.7.5:
+  version "0.7.5"
+  resolved "https://registry.yarnpkg.com/expose-loader/-/expose-loader-0.7.5.tgz#e29ea2d9aeeed3254a3faa1b35f502db9f9c3f6f"
+  integrity sha512-iPowgKUZkTPX5PznYsmifVj9Bob0w2wTHVkt/eYNPSzyebkUgIedmskf/kcfEIWpiWjg3JRjnW+a17XypySMuw==
+
 express@^4.16.2:
   version "4.16.4"
   resolved "https://registry.yarnpkg.com/express/-/express-4.16.4.tgz#fddef61926109e24c515ea97fd2f1bdbf62df12e"
@@ -5148,7 +5153,12 @@ jquery-validation@^1.17.0:
   dependencies:
     jquery "^1.7 || ^2.0 || ^3.1"
 
-jquery@>=1.10, jquery@>=1.7, jquery@>=1.9.0, "jquery@^1.7 || ^2.0 || ^3.1", jquery@^3.2.1:
+jquery@2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/jquery/-/jquery-2.1.1.tgz#828fc60f50f7ee5983363ef4eb01c5f70af4bd5b"
+  integrity sha1-go/GD1D37lmDNj706wHF9wr0vVs=
+
+jquery@>=1.10, jquery@>=1.7, jquery@>=1.9.0, "jquery@^1.7 || ^2.0 || ^3.1":
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.3.1.tgz#958ce29e81c9790f31be7792df5d4d95fc57fbca"
   integrity sha512-Ubldcmxp5np52/ENotGxlLe6aGMvmF4R8S6tZjsP6Knsaxd/xp3Zrh50cG93lR6nPXyUFwzN3ZSOQI0wRJNdGg==
