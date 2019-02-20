@@ -5,6 +5,11 @@ import { connect } from "react-redux";
 import { getI18N } from "../../utilities/i18n-utilties";
 import { SPACE_SM } from "../../styles/spacing";
 
+/**
+ * Component to display the authentication status of the galaxy client.
+ * If the client is not authorized, the user is presented a button which
+ * will commence the Oauth2 process.
+ */
 class GalaxyOauthComponent extends React.Component {
   static propTypes = {};
 
@@ -21,7 +26,8 @@ class GalaxyOauthComponent extends React.Component {
         <div style={{ marginBottom: SPACE_SM }}>
           Galaxy Authentication Required
         </div>
-        <Button block
+        <Button
+          block
           onClick={this.authenticate}
           loading={this.state.authenticating}
           disabled={this.state.authenticating}
