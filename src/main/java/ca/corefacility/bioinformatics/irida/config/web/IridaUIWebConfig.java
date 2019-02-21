@@ -135,7 +135,6 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements Applica
 		registry.addViewController("/projects/templates/copy").setViewName("projects/templates/copy");
 		registry.addViewController("/projects/templates/move").setViewName("projects/templates/move");
 		registry.addViewController("/projects/templates/remove").setViewName("projects/templates/remove-modal.tmpl");
-		registry.addViewController("/cart/templates/galaxy").setViewName("cart/templates/galaxy");
 		registry.addViewController("/projects/templates/referenceFiles/delete")
 				.setViewName("projects/templates/referenceFiles/delete");
 	}
