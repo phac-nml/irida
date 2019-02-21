@@ -89,7 +89,7 @@ const config = {
         }
       }
     }
-  },
+  }
 };
 
 module.exports = ({ mode = "development" }) => {
