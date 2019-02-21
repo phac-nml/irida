@@ -23,8 +23,8 @@ const config = {
   entry: entries,
   output: {
     path: BUILD_PATH,
-    filename: "js/[name].bundle.js",
-    chunkFilename: "js/[name].bundle.js"
+    publicPath: `/resources/dist/`,
+    filename: "js/[name].bundle.js"
   },
   module: {
     rules: [
@@ -73,11 +73,6 @@ const config = {
       }
     ]
   },
-  plugins: [
-    new MiniCssExtractPlugin({
-      filename: "css/[name].bundle.css"
-    })
-  ],
   optimization: {
     runtimeChunk: "single",
     splitChunks: {
@@ -89,7 +84,12 @@ const config = {
         }
       }
     }
-  }
+  },
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: "css/[name].bundle.css"
+    })
+  ]
 };
 
 module.exports = ({ mode = "development" }) => {
