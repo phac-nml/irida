@@ -1,9 +1,17 @@
-import React, { Component } from "react";
+import React, { Component, Suspense } from "react";
 import PropTypes from "prop-types";
 import { ExportDropDown } from "../Export/ExportDropdown";
 import { AddSamplesToCartButton } from "../AddToCartButton/AddSamplesToCart";
 import { Button, Form, Input, Popover } from "antd";
-import LineListTour from "../Tour/LineListTour";
+
+/*
+WEBPACK PUBLIC PATH:
+Webpack does not now what the servlet context path is.  To fix this, webpack exposed
+the variable `__webpack_public_path__`
+See: https://webpack.js.org/guides/public-path/#on-the-fly
+ */
+__webpack_public_path__ = `${window.TL.BASE_URL}resources/dist/`;
+const LineListTour = React.lazy(() => import("../Tour/LineListTour"));
 
 const { Search } = Input;
 
@@ -85,10 +93,10 @@ export class Toolbar extends Component {
               />
             </Form.Item>
             <Form.Item>
-              <LineListTour
+              <Suspense fallback={<span/>}><LineListTour
                 isOpen={this.state.tourOpen}
                 closeTour={this.closeTour}
-              />
+              /></Suspense>
               <Popover
                 content={
                   <strong

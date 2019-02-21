@@ -23,7 +23,8 @@ const config = {
   entry: entries,
   output: {
     path: BUILD_PATH,
-    filename: "js/[name].bundle.js"
+    filename: "js/[name].bundle.js",
+    chunkFilename: "js/[name].bundle.js"
   },
   module: {
     rules: [
