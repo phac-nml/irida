@@ -11,6 +11,7 @@ the variable `__webpack_public_path__`
 See: https://webpack.js.org/guides/public-path/#on-the-fly
  */
 __webpack_public_path__ = `${window.TL.BASE_URL}resources/dist/`;
+
 const LineListTour = React.lazy(() => import("../Tour/LineListTour"));
 
 const { Search } = Input;

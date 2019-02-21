@@ -77,7 +77,19 @@ const config = {
     new MiniCssExtractPlugin({
       filename: "css/[name].bundle.css"
     })
-  ]
+  ],
+  optimization: {
+    runtimeChunk: "single",
+    splitChunks: {
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: "vendors",
+          chunks: "all"
+        }
+      }
+    }
+  },
 };
 
 module.exports = ({ mode = "development" }) => {
