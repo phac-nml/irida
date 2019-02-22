@@ -12,6 +12,7 @@
                 columnName="tool_execution_id"
                 tableName="analysis_output_file"/>
 
+        <!--Adding temporary column for mapping between the output file and original analysis -->
         <addColumn tableName="analysis_output_file">
             <column name="analysis_id" type="bigint(20)"/>
         </addColumn>
@@ -22,9 +23,13 @@
                 class="ca.corefacility.bioinformatics.irida.database.changesets.FastqcToFilesystem"/>
 
         <addNotNullConstraint tableName="analysis_output_file" columnName="file_path" columnDataType="varchar(255)"/>
-        
+
+        <!--Removing old file chart columns-->
         <dropColumn tableName="analysis_fastqc" columnName="duplicationLevelChart"/>
         <dropColumn tableName="analysis_fastqc" columnName="perBaseQualityScoreChart"/>
         <dropColumn tableName="analysis_fastqc" columnName="perSequenceQualityScoreChart"/>
+
+        <!--removing temp column-->
+        <dropColumn tableName="analysis_output_file" columnName="analysis_id"/>
     </changeSet>
 </databaseChangeLog>
