@@ -254,23 +254,31 @@ public class EmailControllerImpl implements EmailController {
 	 */
 	@Override
 	public void sendPipelineStatusEmail(AnalysisSubmission submission) throws MailSendException {
-		logger.debug("Sending pipeline status email to " + submission.getSubmitter().getEmail());
+		logger.debug("Sending pipeline status email to " + submission.getSubmitter()
+				.getEmail());
 
 		Locale locale = LocaleContextHolder.getLocale();
 
 		final Context ctx = new Context(locale);
-
+		String pipelineStatus = submission.getAnalysisState()
+				.equals(AnalysisState.ERROR) ?
+				messageSource.getMessage("email.pipeline.ERROR", null, locale) :
+				messageSource.getMessage("email.pipeline.COMPLETED", null, locale);
+		String emailSubject =
+				messageSource.getMessage("email.pipeline.status", null, locale) + " - " + submission.getName() + " - "
+						+ pipelineStatus;
 		ctx.setVariable("serverURL", serverURL);
-		ctx.setVariable("pipelineStatus", submission.getAnalysisState().equals(AnalysisState.ERROR) ? "ERROR" : "COMPLETED");
+		ctx.setVariable("pipelineStatus", pipelineStatus);
 		ctx.setVariable("pipelineName", submission.getName());
 		ctx.setVariable("analysisSubmissionURL", (serverURL + "/analysis/" + (submission.getId())));
 
 		try {
 			final MimeMessage mimeMessage = this.javaMailSender.createMimeMessage();
 			final MimeMessageHelper message = new MimeMessageHelper(mimeMessage, "UTF-8");
-			message.setSubject(messageSource.getMessage("email.pipeline.status", null, locale));
+			message.setSubject(emailSubject);
 			message.setFrom(serverEmail);
-			message.setTo(submission.getSubmitter().getEmail());
+			message.setTo(submission.getSubmitter()
+					.getEmail());
 
 			final String htmlContent = templateEngine.process(PIPELINE_STATUS_TEMPLATE, ctx);
 			message.setText(htmlContent, true);

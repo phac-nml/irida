@@ -179,7 +179,9 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 					logger.error("Error checking state for " + analysisSubmission, e);
 					analysisSubmission.setAnalysisState(AnalysisState.ERROR);
 					submissions.add(new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission)));
-					emailController.sendPipelineStatusEmail(analysisSubmission);
+					if (analysisSubmission.getEmailPipelineResult()) {
+						emailController.sendPipelineStatusEmail(analysisSubmission);
+					}
 				}
 			}
 
@@ -264,17 +266,21 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 			AnalysisSubmission analysisSubmission) {
 		Future<AnalysisSubmission> returnedSubmission;
 
+		boolean final_workflow_status_set = false;
+
 		// Immediately switch overall workflow state to "ERROR" if an error occurred, even if some tools are still running.
 		if (workflowStatus.errorOccurred()) {
 			logger.error("Workflow for analysis " + analysisSubmission + " in error state " + workflowStatus);
 			analysisSubmission.setAnalysisState(AnalysisState.ERROR);
 			returnedSubmission = new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission));
 			handleJobErrors(analysisSubmission);
+			final_workflow_status_set = true;
 		} else if (workflowStatus.completedSuccessfully()) {
 			logger.debug("Analysis finished " + analysisSubmission);
 
 			analysisSubmission.setAnalysisState(AnalysisState.FINISHED_RUNNING);
 			returnedSubmission = new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission));
+			final_workflow_status_set = true;
 		} else if (workflowStatus.isRunning()) {
 			logger.trace("Workflow for analysis " + analysisSubmission + " is running: proportion complete "
 					+ workflowStatus.getProportionComplete());
@@ -286,12 +292,11 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 			analysisSubmission.setAnalysisState(AnalysisState.ERROR);
 			returnedSubmission = new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission));
 			handleJobErrors(analysisSubmission);
+			final_workflow_status_set = true;
 		}
 
-		if (!workflowStatus.isRunning()) {
-			if (workflowStatus.completedSuccessfully() || workflowStatus.errorOccurred()) {
-				emailController.sendPipelineStatusEmail(analysisSubmission);
-			}
+		if (final_workflow_status_set && analysisSubmission.getEmailPipelineResult()) {
+			emailController.sendPipelineStatusEmail(analysisSubmission);
 		}
 
 		return returnedSubmission;

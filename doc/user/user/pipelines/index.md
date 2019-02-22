@@ -300,7 +300,7 @@ Results can also be saved after a pipeline has completed.  To save analysis resu
 
 ## Receive email upon pipeline completion or error
 
-When launching a pipeline you can select the checkbox to receive an email upon pipeline completion or on error
+When launching a pipeline you can select the checkbox to receive an email upon pipeline completion or on error.
 
 ## Downloading single sample analysis output files in batch
 

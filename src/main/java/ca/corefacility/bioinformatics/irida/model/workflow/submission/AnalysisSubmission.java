@@ -632,14 +632,13 @@ public class AnalysisSubmission extends IridaResourceSupport implements MutableI
 			return this;
 		}
 
-
 		/**
 		 * Sets if user should be emailed on
 		 * pipeline completion or error
-		 * @param emailPipelineResult
-		 * 				If user should be emailed or not
-		     * @return A {@link Builder}
-		     */
+		 *
+		 * @param emailPipelineResult If user should be emailed or not
+		 * @return A {@link Builder}
+		 */
 		public Builder emailPipelineResult(boolean emailPipelineResult) {
 			this.emailPipelineResult = emailPipelineResult;
 
