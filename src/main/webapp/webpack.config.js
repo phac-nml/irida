@@ -2,7 +2,7 @@ const path = require("path");
 const merge = require("webpack-merge");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
-const entries = require("./configs/entries.js");
+const entries = require("./entries.js");
 
 const BUILD_PATH = path.resolve(__dirname, "resources/dist");
 
@@ -69,6 +69,19 @@ const config = {
       {
         test: /\.(ttf|eot|svg)(\?[\s\S]+)?$/,
         use: "file-loader"
+      },
+      {
+        test: require.resolve("jquery"),
+        use: [
+          {
+            loader: "expose-loader",
+            options: "$"
+          },
+          {
+            loader: "expose-loader",
+            options: "jQuery"
+          }
+        ]
       }
     ]
   },
@@ -79,10 +92,12 @@ const config = {
   ]
 };
 
-module.exports = (env, argv) =>
-  merge(
+module.exports = ({ mode = "development" }) => {
+  const dev = require("./webpack.config.dev");
+  const prod = require("./wepack.config.prod");
+  return merge(
+    { mode },
     config,
-    argv.mode === "production"
-      ? require("./configs/wepack.config.prod")
-      : require("./configs/webpack.config.dev")
+    mode === "production" ? prod.config : dev.config
   );
+};

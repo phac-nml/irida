@@ -118,7 +118,7 @@ public class ToolsListExporter {
 		yamlMap.put("api_key", "<Galaxy Admin user API key>");
 		yamlMap.put("galaxy_instance", "<IP address for target Galaxy instance>");
 
-		List<Map<String, String>> tools = Lists.newArrayList();
+		List<Map<String, Object>> tools = Lists.newArrayList();
 		yamlMap.put("tools", tools);
 
 		List<IridaWorkflow> workflowsSorted = workflows.values().stream().sorted(new Comparator<IridaWorkflow>() {
@@ -158,12 +158,13 @@ public class ToolsListExporter {
 					uniqueToolRepositories.add(toolRepository);
 
 					// @formatter:off
-					tools.add(ImmutableMap.<String, String>builder()
+					tools.add(ImmutableMap.<String, Object>builder()
 							.put("name", toolRepository.getName())
 							.put("owner", toolRepository.getOwner())
 							.put("tool_shed_url", toolRepositoryURLString)
-							.put("revision", toolRepository.getRevision())
-							.put("tool_panel_section_id", defaultToolPanelId).build());
+							.put("revisions", Lists.newArrayList(toolRepository.getRevision()))
+							.put("tool_panel_section_id", defaultToolPanelId)
+							.put("install_tool_dependencies", true).build());
 					// @formatter:on
 				}
 			}

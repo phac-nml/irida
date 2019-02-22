@@ -266,13 +266,16 @@ function GalaxyExportService(CartService, $http, $q) {
     const promises = [];
     Object.keys(ids).map(function(id) {
       promises.push(
-        $http
-          .post(PAGE.urls.samples.idList, { sampleIds: ids[id], projectId: id })
-          .then(function(result) {
-            result.data.samples.forEach(function(sample) {
-              addSampleFile(sample.label, sample.href);
-            });
-          })
+        $http({
+          method: "POST",
+          url: PAGE.urls.samples.idList,
+          data: $.param({ sampleIds: ids[id], projectId: id }),
+          headers: { "Content-Type": "application/x-www-form-urlencoded" }
+        }).then(function(result) {
+          result.data.samples.forEach(function(sample) {
+            addSampleFile(sample.label, sample.href);
+          });
+        })
       );
     });
     return $q.all(promises).then(function() {

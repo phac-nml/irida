@@ -48,7 +48,7 @@
 		</div>
 		<div class="alert alert-info file-upload-crunching"
 			ng-class="{fadeIn: fileUploadCtrl.processing, fadeOut: !fileUploadCtrl.processing}">
-			<i class="fa fa-circle-o-notch fa-spin fa-fw"></i>
+			<i class="fa fa-circle-notch fa-spin fa-fw"></i>
 				&nbsp;<th:block th:text="#{samples.files.upload.progress.processing}"></th:block>
 		</div>
 		<div class="alert alert-danger file-upload-error"
@@ -246,7 +246,7 @@
 				ng-controller="AssemblyFileController as fileCtrl">
 				<tr class="assembly_row" th:each="assembly : ${assemblies}" th:with="dateFormat=#{locale.date.short}">
 					<td class="td_icon assembly_sample_icon"><i
-						data:uib-tooltip="#{sf.tooltip.assembly}" class="fa fa-file-text-o"></i></td>
+						data:uib-tooltip="#{sf.tooltip.assembly}" class="far fa-file-alt"></i></td>
 					<td th:switch="${assembly instanceof T(ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssemblyFromAnalysis)}">
 						<a class="btn btn-default btn-sm file-name" href="#"
 							th:case="true"

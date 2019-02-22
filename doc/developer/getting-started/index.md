@@ -108,6 +108,32 @@ bash install-libs.sh
 * Create a test database in MariaDB with the name `irida_test` and user `test` with password `test`.
 * Create a second test database in MariaDB with the name `irida_integration_test` and user `test` with password `test` (for running local integration tests).
 
+```bash
+# Setup databases example
+# These steps may differ depending on your installation
+
+# log into mysql as root
+sudo mysql -u root
+```
+
+```SQL
+# create databases
+create database irida_test;
+create database irida_integration_test;
+
+# give test user access
+grant all privileges on irida_test.* to 'test'@'localhost' identified by 'test';
+grant all privileges on irida_integration_test.* to 'test'@'localhost' identified by 'test';
+
+# exit
+quit
+```
+
+```bash
+# check that test user has access
+mysql -u test -p irida_test
+```
+
 From here you should be able to run the IRIDA service layer, REST API, and web UI using Jetty.
 
 Running and building IRIDA
@@ -429,10 +455,12 @@ IRIDA's branch structure is loosely based on the [GitFlow](http://nvie.com/posts
 #### Release tags & versioning scheme
 {:.no_toc}
 
+IRIDA uses a [CalVer](https://calver.org/) style versioning scheme.  This means the release version number is based on the year and month that it was released.  The scheme used is `YY.0M.minor`.  First segment is last 2 digits of the year, 2nd is 2 digit month, and 3rd is the number of bugfix release (optional).  For example a major release in January 2019 would be `19.01`.  If a bugfix release was performed for that version, it would be `19.01.1`.
+
 Whenever code is merged into *master*, a release should be created.  To mark the release the person merging the code should create a git tag at the point of the merge.
 
 ```bash
-git tag 0.version.subversion
+git tag YY.MM.minor
 ```
 
 Don't forget to push the tag when you're finished.

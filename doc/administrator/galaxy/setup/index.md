@@ -247,21 +247,7 @@ Now, re-start Galaxy with `service galaxy restart`.  If you log into Galaxy as t
 
 #### Automated installation of tools
 
-An automated script (`install_tool_shed_tools.py`) to install all necessary tools (in `tools-list.yml`) for the different pipelines to run in Galaxy is provided with the `irida-[version].zip` download. This can be found on the [IRIDA releases][] page.  Instructions can be accessed at [Automated tools install][].
-
-To run this script, please do the following:
-
-```
-# Installs dependency modules for script
-pip install -r install-tools-requirements.txt
-
-# Do installation of Galaxy tools
-python install_tool_shed_tools.py --toolsfile tools-list.yml --galaxy [http://url-to-galaxy] --apikey [api key]
-```
-
-You may want to monitor the Galaxy log file in `paster.log` as the installation is proceeding.  This may take a while to download, build, and install all tools.
-
-*Note: please make sure to check if `tbl2asn` requires updating. You can read more about this issue in our [FAQ][faq-tbl2asn].*
+{%include administrator/galaxy/setup/automated-tool-install.md %}
 
 #### Manual installation of tools
 
@@ -323,10 +309,7 @@ Each workflow in IRIDA is run using Galaxy, and it's possible to monitor the sta
 [conda]: https://conda.io/docs/
 [miniconda]: https://conda.io/miniconda.html
 [galaxy-production]: https://galaxyproject.org/admin/config/performance/production-server/#groundwork-for-scalability
-[Automated tools install]: https://github.com/phac-nml/irida/tree/development/packaging#automated-processupgrading
-[IRIDA releases]: https://github.com/phac-nml/irida/releases
 [SQLite]: https://www.sqlite.org/
 [updating tbl2asn]: ../pipelines/assembly-annotation/#updating-tbl2asn
 [faq-conda]: ../../faq/#installing-conda-dependencies-in-galaxy-versions--v1601
-[faq-tbl2asn]: ../../faq/#tbl2asn-out-of-date
 [web]: ../../web
