@@ -87,15 +87,6 @@ public class AnalysisFastQC extends Analysis {
 	}
 
 	/**
-	 * Get a AnalysisFastQCBuilder sloppy builder that doesn't check fields
-	 *
-	 * @return a AnalysisFastQCBuilder
-	 */
-	public static AnalysisFastQCBuilder sloppyBuilder() {
-		return new AnalysisFastQCBuilder(false);
-	}
-
-	/**
 	 * Builder for creating instances of {@link AnalysisFastQC}. This builder can optionally check if all required
 	 * fields are set.
 	 */
@@ -119,24 +110,10 @@ public class AnalysisFastQC extends Analysis {
 		private Map<String, String> additionalProperties;
 		private Map<String, AnalysisOutputFile> images;
 
-		private final boolean enforceRequiredFieldCheck;
-
 		/**
-		 * Create an instance of AnalysisFastQCBuilder, and enforce checking required fields by default.
+		 * Create an instance of AnalysisFastQCBuilder,
 		 */
 		public AnalysisFastQCBuilder() {
-			this.enforceRequiredFieldCheck = true;
-		}
-
-		/**
-		 * Create an instance of AnalysisFastQCBuilder, only enforcing checking required fields if requested.
-		 *
-		 * @param enforceRequiredFieldCheck if true, the `build()` method will throw an exception if all required fields
-		 *                                  are not set; if false, the `build()` method will not. NOTE: This setting
-		 *                                  does **NOT** affect database-level constraints.
-		 */
-		public AnalysisFastQCBuilder(final boolean enforceRequiredFieldCheck) {
-			this.enforceRequiredFieldCheck = enforceRequiredFieldCheck;
 		}
 
 		/**
@@ -328,26 +305,6 @@ public class AnalysisFastQC extends Analysis {
 			images.put("perSequenceQualityScoreChart", perSequenceQualityScoreChart);
 			images.put("duplicationLevelChart", duplicationLevelChart);
 
-			/*if (enforceRequiredFieldCheck) {
-				final Field[] fields = AnalysisFastQCBuilder.class.getDeclaredFields();
-				for (final Field field : fields) {
-					try {
-						if (field.getName().equals("enforceRequiredFieldCheck")) {
-							continue;
-						}
-						
-						final Field analysisFastQCField = ReflectionUtils.findField(AnalysisFastQC.class,
-								field.getName());
-						if (analysisFastQCField.getAnnotation(NotNull.class) != null && field.get(this) == null) {
-							throw new IllegalStateException("The field AnalaysisFastQC." + field.getName()
-									+ " is not nullable.");
-						}
-					} catch (IllegalArgumentException | IllegalAccessException | SecurityException e) {
-						throw new IllegalStateException("The field AnalaysisFastQC." + field.getName()
-								+ " is not accessible.", e);
-					}
-				}
-			}*/
 			return new AnalysisFastQC(this);
 		}
 	}
