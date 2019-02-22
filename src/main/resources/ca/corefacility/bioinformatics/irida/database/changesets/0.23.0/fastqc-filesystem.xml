@@ -28,6 +28,8 @@
         <dropColumn tableName="analysis_fastqc" columnName="duplicationLevelChart"/>
         <dropColumn tableName="analysis_fastqc" columnName="perBaseQualityScoreChart"/>
         <dropColumn tableName="analysis_fastqc" columnName="perSequenceQualityScoreChart"/>
+        <dropColumn tableName="analysis_fastqc" columnName="fastQCReport_id"/>
+
 
         <!--removing temp column-->
         <dropColumn tableName="analysis_output_file" columnName="analysis_id"/>

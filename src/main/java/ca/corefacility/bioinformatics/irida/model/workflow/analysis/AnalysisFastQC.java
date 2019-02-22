@@ -104,7 +104,6 @@ public class AnalysisFastQC extends Analysis {
 		private AnalysisOutputFile perSequenceQualityScoreChart;
 		private AnalysisOutputFile duplicationLevelChart;
 		private Set<OverrepresentedSequence> overrepresentedSequences;
-		private AnalysisOutputFile fastQCReport;
 		private String description;
 		private String executionManagerAnalysisId;
 		private Map<String, String> additionalProperties;
