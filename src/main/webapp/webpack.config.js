@@ -8,6 +8,7 @@ const BUILD_PATH = path.resolve(__dirname, "resources/dist");
 
 const config = {
   externals: {
+    jquery: "jQuery",
     angular: "angular",
     moment: "moment"
   },
