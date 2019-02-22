@@ -162,7 +162,7 @@
 						<tr class="paired_end file__qc"
 							th:each="qc : ${pair.getQcEntries()}">
 							<td class="td_icon qc_icon"><i
-								data:uib-tooltip="#{sf.tooltip.qc}" class="fa fa-bar-chart"></i>
+								data:uib-tooltip="#{sf.tooltip.qc}" class="far fa-chart-bar"></i>
 							</td>
 							<td colspan="4">
 								<ul class="list-group qc_list">
@@ -207,7 +207,7 @@
 					<th:block th:if="${not #lists.isEmpty(file.getQcEntries())}">
 						<tr class="single_end file__qc">
 							<td class="td_icon qc_icon"><i
-								data:uib-tooltip="#{sf.tooltip.qc}" class="fa fa-bar-chart"></i>
+								data:uib-tooltip="#{sf.tooltip.qc}" class="far fa-chart-bar"></i>
 							</td>
 							<td colspan="4">
 								<ul class="list-group qc_list">
