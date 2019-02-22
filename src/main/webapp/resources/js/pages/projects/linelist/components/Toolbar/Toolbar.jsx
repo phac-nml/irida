@@ -13,7 +13,7 @@ const { i18n, urls } = window.PAGE;
 export class Toolbar extends Component {
   state = { tourOpen: false, showTourPopover: false };
 
-  componentDidMount() {
+    componentDidMount() {
     if (typeof window.localStorage === "object") {
       if (!window.localStorage.getItem("linelist-tour")) {
         window.localStorage.setItem("linelist-tour", "complete");
