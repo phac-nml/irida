@@ -29,7 +29,6 @@ import uk.ac.babraham.FastQC.Sequence.SequenceFactory;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
@@ -158,7 +157,6 @@ public class FastqcFileProcessor implements FileProcessor {
 	 */
 	private void handlePerBaseQualityScores(PerBaseQualityScores scores, AnalysisFastQCBuilder analysis,
 			Path tempDirectory) throws IOException {
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		QualityBoxPlot bp = (QualityBoxPlot) scores.getResultsPanel();
 		BufferedImage b = new BufferedImage(800, 600, BufferedImage.TYPE_INT_RGB);
 		Graphics g = b.getGraphics();
@@ -176,7 +174,6 @@ public class FastqcFileProcessor implements FileProcessor {
 	 */
 	private void handlePerSequenceQualityScores(PerSequenceQualityScores scores, AnalysisFastQCBuilder analysis,
 			Path tempDirectory) throws IOException {
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		LineGraph lg = (LineGraph) scores.getResultsPanel();
 		BufferedImage b = new BufferedImage(800, 600, BufferedImage.TYPE_INT_RGB);
 		Graphics g = b.getGraphics();
@@ -194,7 +191,6 @@ public class FastqcFileProcessor implements FileProcessor {
 	 */
 	private void handleDuplicationLevel(DuplicationLevel duplicationLevel, AnalysisFastQCBuilder analysis,
 			Path tempDirectory) throws IOException {
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		LineGraph lg = (LineGraph) duplicationLevel.getResultsPanel();
 		BufferedImage b = new BufferedImage(800, 600, BufferedImage.TYPE_INT_RGB);
 		Graphics g = b.getGraphics();
