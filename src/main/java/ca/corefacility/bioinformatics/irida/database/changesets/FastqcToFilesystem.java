@@ -104,7 +104,7 @@ public class FastqcToFilesystem implements CustomSqlChange {
 
 							//only writing progress for mod1000 results or the log gets crazy
 							if (id % 1000 == 0) {
-								logger.info("Mapping analysis " + id);
+								logger.info("Progress: Writing " + chartType + " number " + id + "/" + entries);
 							}
 
 							//get a path for <output files base dir>/<output file id>/1/
@@ -153,7 +153,8 @@ public class FastqcToFilesystem implements CustomSqlChange {
 
 	@Override
 	public void setUp() throws SetupException {
-		logger.info("Setting up FastQC translation");
+		logger.info(
+				"Setting up FastQC translation.  This changeset may take a long time.  Writing charts perBaseQualityScoreChart, perSequenceQualityScoreChart, duplicationLevelChart to filesystem");
 	}
 
 	@Override
