@@ -108,6 +108,32 @@ bash install-libs.sh
 * Create a test database in MariaDB with the name `irida_test` and user `test` with password `test`.
 * Create a second test database in MariaDB with the name `irida_integration_test` and user `test` with password `test` (for running local integration tests).
 
+```bash
+# Setup databases example
+# These steps may differ depending on your installation
+
+# log into mysql as root
+sudo mysql -u root
+```
+
+```SQL
+# create databases
+create database irida_test;
+create database irida_integration_test;
+
+# give test user access
+grant all privileges on irida_test.* to 'test'@'localhost' identified by 'test';
+grant all privileges on irida_integration_test.* to 'test'@'localhost' identified by 'test';
+
+# exit
+quit
+```
+
+```bash
+# check that test user has access
+mysql -u test -p irida_test
+```
+
 From here you should be able to run the IRIDA service layer, REST API, and web UI using Jetty.
 
 Running and building IRIDA

@@ -70,6 +70,19 @@ const config = {
       {
         test: /\.(ttf|eot|svg)(\?[\s\S]+)?$/,
         use: "file-loader"
+      },
+      {
+        test: require.resolve("jquery"),
+        use: [
+          {
+            loader: "expose-loader",
+            options: "$"
+          },
+          {
+            loader: "expose-loader",
+            options: "jQuery"
+          }
+        ]
       }
     ]
   },
