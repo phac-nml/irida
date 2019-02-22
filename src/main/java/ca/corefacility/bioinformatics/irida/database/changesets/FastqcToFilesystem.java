@@ -119,7 +119,7 @@ public class FastqcToFilesystem implements CustomSqlChange {
 								//write the chart bytes to file
 								Files.write(newFileDirectory, chart);
 							} catch (IOException e) {
-								throw new SQLException("Couldn't create file", e);
+								throw new SQLException("Couldn't create " + chartType + " file for analysis " + id, e);
 							}
 
 							// get the path as a string
