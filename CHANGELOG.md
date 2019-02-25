@@ -8,6 +8,7 @@ Changes
 * [UI/Developer]: Updated to lodash v4.17.11 to fix security issue. (19.01.1)
 * [UI/Developer]: Updated yarn to (1.13.0) and node to (11.10.0).
 * [UI/Developer]: Added expose loader to load external dependencies through the vendor bundle.
+* [UI/Developer]: Updated jquery to v3.3.1 to fix security issue.
 
 0.22.0 to 19.01
 ----------------
