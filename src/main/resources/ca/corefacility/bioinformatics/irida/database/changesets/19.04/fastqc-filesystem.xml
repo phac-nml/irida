@@ -28,6 +28,8 @@
         <dropColumn tableName="analysis_fastqc" columnName="duplicationLevelChart"/>
         <dropColumn tableName="analysis_fastqc" columnName="perBaseQualityScoreChart"/>
         <dropColumn tableName="analysis_fastqc" columnName="perSequenceQualityScoreChart"/>
+
+        <dropForeignKeyConstraint baseTableName="analysis_fastqc" constraintName="FK_ANALYSIS_FASTQC_REPORT"/>
         <dropColumn tableName="analysis_fastqc" columnName="fastQCReport_id"/>
 
 
