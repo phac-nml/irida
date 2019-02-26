@@ -39,13 +39,7 @@ const config = {
         test: /\.(css|sass|scss)$/,
         use: [
           MiniCssExtractPlugin.loader,
-          {
-            loader: "css-loader",
-            options: {
-              importLoaders: 2,
-              sourceMap: true
-            }
-          },
+          "css-loader",
           {
             loader: "postcss-loader",
             options: {
@@ -53,12 +47,7 @@ const config = {
               sourceMap: true
             }
           },
-          {
-            loader: "sass-loader",
-            options: {
-              sourceMap: true
-            }
-          }
+          "sass-loader"
         ]
       },
       {
@@ -85,18 +74,6 @@ const config = {
         ]
       }
     ]
-  },
-  optimization: {
-    runtimeChunk: "single",
-    splitChunks: {
-      cacheGroups: {
-        vendor: {
-          test: /[\\/]node_modules[\\/]/,
-          name: "vendors",
-          chunks: "all"
-        }
-      }
-    }
   },
   plugins: [
     new MiniCssExtractPlugin({
