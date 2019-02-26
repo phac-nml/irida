@@ -982,20 +982,24 @@
 				<executions>
 					<execution>
 						<goals>
-							<goal>install-node-and-npm</goal>
+							<goal>install-node-and-yarn</goal>
 						</goals>
 						<configuration>
 							<nodeVersion>${node.version}</nodeVersion>
-							<npmVersion>${npm.version}</npmVersion>
+							<yarnVersion>${yarn.version}</yarnVersion>
 						</configuration>
 					</execution>
 
 					<execution>
-						<id>npm install</id>
+						<id>yarn install</id>
 						<goals>
-							<goal>npm</goal>
+							<goal>yarn</goal>
 						</goals>
 						<configuration>
+							<!-- optional: The default argument is actually
+                            "install", so unless you need to run some other yarn command,
+                            you can remove this whole <configuration> section.
+                            -->
 							<arguments>install</arguments>
 						</configuration>
 					</execution>
@@ -1009,12 +1013,12 @@
 						</configuration>
 					</execution>
 					<execution>
-						<id>npm build production</id>
+						<id>yarn build production</id>
 						<goals>
-							<goal>npm</goal>
+							<goal>yarn</goal>
 						</goals>
 						<configuration>
-							<arguments>run build</arguments>
+							<arguments>build</arguments>
 						</configuration>
 					</execution>
 				</executions>
@@ -1101,7 +1105,7 @@
 		<errorprone.version>2.5</errorprone.version>
 		<frontend-maven-plugin.version>1.6</frontend-maven-plugin.version>
 		<node.version>v11.10.0</node.version>
-		<npm.version>6.7.0</npm.version>
+		<yarn.version>v1.13.0</yarn.version>
 		<jgravatar.version>1.0</jgravatar.version>
 
 		<!-- project configuration -->
