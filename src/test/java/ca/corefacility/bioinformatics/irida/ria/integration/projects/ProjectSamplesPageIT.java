@@ -1,18 +1,18 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import static org.junit.Assert.*;
-
 import java.util.List;
 
 import org.junit.Test;
+
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
+import static org.junit.Assert.*;
 
 /**
  * <p>
@@ -338,7 +338,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	public void testFilteringWithDates() {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
-		page.filterByDateRange("07/06/2015", "07/09/2015");
+		page.filterByDateRange("07/06/2015 - 07/09/2015");
 		assertEquals("Should ignore case when filtering", "Showing 1 to 4 of 4 entries", page.getTableInfo());
 
 		// Make sure that when the filter is applied, only the correct number of samples are selected.
@@ -382,7 +382,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 
-		page.filterByDateRange("07/06/2015", "07/09/2015");
+		page.filterByDateRange("07/06/2015 - 07/09/2015");
 		assertEquals("Should ignore case when filtering", "Showing 1 to 4 of 4 entries", page.getTableInfo());
 
 		// Make sure that when the filter is applied, only the correct number of samples are selected.
