@@ -43,11 +43,11 @@ Deploying IRIDA mainly involves deploying the `WAR` file into your Servlet conta
 
 Servlet Container Configuration
 -------------------------------
-An environment variable needs to be set in your Servlet container for IRIDA to function correctly: `spring.profiles.active=prod`.
+Two environment variables needs to be set in your Servlet container for IRIDA to function correctly: `spring.profiles.active=prod` and `irida.db.profile=prod`.
 
 You can adjust these variables in Tomcat by editing (depending on your distribution) `/etc/tomcat/tomcat.conf` (CentOS) or `/etc/default/tomcat7` (Ubuntu), and finding the `JAVA_OPTS` variable and setting the variables as shown below:
 
-    JAVA_OPTS="-Dspring.profiles.active=prod"
+    JAVA_OPTS="-Dspring.profiles.active=prod -Dirida.db.profile=prod"
 
 For high usage or high load installations of IRIDA, you may want to consider deploying IRIDA on multiple servers.  For more on this feature, see the [Multi Web Server Configuration](#multi-web-server-configuration) section.
 
@@ -175,9 +175,16 @@ The different application profiles and their functions are the following:
 
 To launch an IRIDA application server with one (or more) of these profiles, you must enable the profile with the `spring.profiles.active` variable in your Tomcat configuration.  For example to run an IRIDA server with the `web` and `analysis` profiles active, you would set the following configuration:
 
-`spring.profiles.active=web,analysis`
+```
+spring.profiles.active=web,analysis
+```
 
-See the [Servlet Container Configuration](#servlet-container-configuration) section for more on setting the `spring.profiles.active` variable for Tomcat.
+Using the multi server configuration it's also suggested you use the `irida.db.profile` setting in Tomcat:
+```
+irida.db.profile=prod
+```
+
+See the [Servlet Container Configuration](#servlet-container-configuration) section for more on setting the `spring.profiles.active` and `irida.db.profile` variables for Tomcat.
 
 #### Example moderate load deployment:
 
