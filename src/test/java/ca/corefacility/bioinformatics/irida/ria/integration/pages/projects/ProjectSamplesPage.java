@@ -130,7 +130,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(css = "div.ranges li")
 	private List<WebElement> dateRanges;
 
-	@FindBy(css = ".range_inputs .applyBtn")
+	@FindBy(className = "applyBtn")
 	private WebElement applyDateRangeBtn;
 
 	@FindBy(id = "selection-main")
@@ -372,19 +372,13 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("modal-content")));
 	}
 
-	public void filterByDateRange(String start, String end) {
+	public void filterByDateRange(String range) {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		openFilterModal();
 
 		dateRangeInput.clear();
-		dateRangeInput.click();
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("daterangepicker")));
+		dateRangeInput.sendKeys(range);
 
-		daterangepickerStart.clear();
-		daterangepickerStart.sendKeys(start);
-
-		daterangepickerEnd.clear();
-		daterangepickerEnd.sendKeys(end);
 		applyDateRangeBtn.click();
 		applyFiltersBtn.click();
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("modal-content")));
