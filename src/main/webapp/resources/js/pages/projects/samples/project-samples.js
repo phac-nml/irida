@@ -390,7 +390,7 @@ $(".associated-dd .dropdown-menu a").on("click", function(event) {
     // Update the select all checkbox
     $("#select-all-cb").prop(
       "checked",
-      ASSOCIATED_PROJECTS.size === ASSOCIATED_INPUTS.size()
+      ASSOCIATED_PROJECTS.size === ASSOCIATED_INPUTS.length
     );
     // Update the DataTable
     $dt.ajax.reload(null, false);
