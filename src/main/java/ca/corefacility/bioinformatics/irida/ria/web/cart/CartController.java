@@ -74,15 +74,11 @@ public class CartController {
 	}
 
 	/**
-	 * Clear the cart
-	 *
-	 * @return Success message
+	 * Remove all {@link Project}s and {@link Sample}s from the cart
 	 */
 	@RequestMapping(method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public Map<String, Object> clearCart() {
+	public void clearCart() {
 		cart.empty();
-		return ImmutableMap.of("success", true);
 	}
 
 	/**
