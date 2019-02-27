@@ -4,13 +4,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -134,31 +129,6 @@ public class CartControllerTest {
 		assertEquals("There are 2 different projects in the cart, therefore there still should be 2 samples", 2,
 				removeSampleResponse.getCount());
 
-	}
-
-	@Test
-	@Ignore
-	public void testGetCartMap() {
-		RequestAttributes ra = new ServletRequestAttributes(new MockHttpServletRequest());
-		RequestContextHolder.setRequestAttributes(ra);
-
-		Map<Project, Set<Sample>> selected = new HashMap<>();
-		selected.put(project, samples);
-		controller.addSelected(selected, Locale.ENGLISH);
-//
-//		Map<String, Object> cartMap = controller.getCartMap();
-//		assertTrue(cartMap.containsKey("projects"));
-//		@SuppressWarnings("unchecked")
-//		List<Map<String, Object>> pList = (List<Map<String, Object>>) cartMap.get("projects");
-//		Map<String, Object> projectMap = pList.iterator().next();
-//
-//		assertTrue(projectMap.containsKey("samples"));
-//		@SuppressWarnings("unchecked")
-//		List<Map<String, Object>> sList = (List<Map<String, Object>>) projectMap.get("samples");
-//		for (Map<String, Object> map : sList) {
-//			assertTrue(map.containsKey("id"));
-//			assertTrue(map.containsKey("label"));
-//		}
 	}
 
 	private void testData() {

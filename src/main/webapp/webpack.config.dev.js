@@ -1,6 +1,7 @@
 const webpack = require("webpack");
 
 exports.config = {
+  mode: "none",
   devtool: "eval-source-map",
   devServer: {
     proxy: {
