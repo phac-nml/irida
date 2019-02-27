@@ -22,9 +22,15 @@
     </main>
 
     <script>
-      if(typeof window.opener.handleGalaxyError === "function") {
+      /**
+       * Check to see if this is in a new window and can handle a galaxy error.
+       */
+      if (
+        window.opener !== null &&
+        typeof window.opener.handleGalaxyError === "function"
+      ) {
         window.opener.handleGalaxyError();
-        setTimeout(function () {
+        setTimeout(function() {
           window.close();
         }, 3000);
       }
