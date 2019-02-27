@@ -1,4 +1,5 @@
 const path = require("path");
+const webpack = require("webpack");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const cssnano = require("cssnano");
 const CleanWebpackPlugin = require("clean-webpack-plugin");
@@ -8,6 +9,9 @@ exports.config = {
   mode: "production",
   devtool: "source-map",
   plugins: [
+    new webpack.DefinePlugin({
+      "process.env.NODE_ENV": JSON.stringify("production")
+    }),
     new CleanWebpackPlugin([BUILD_PATH]),
     new OptimizeCSSAssetsPlugin({
       cssProcessor: cssnano,
