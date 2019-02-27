@@ -14,7 +14,7 @@ import PropTypes from "prop-types";
 function GalaxySamplesComponent({ getGalaxySamples, finished }) {
   useEffect(() => {
     getGalaxySamples();
-  }, []);
+  });
 
   return (
     <div style={{ marginBottom: SPACE_SM }}>
