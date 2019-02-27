@@ -9,6 +9,7 @@ import liquibase.exception.SetupException;
 import liquibase.exception.ValidationErrors;
 import liquibase.resource.ResourceAccessor;
 import liquibase.statement.SqlStatement;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -17,10 +18,12 @@ import org.springframework.jdbc.core.RowMapper;
 
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,36 +37,86 @@ public class FastqcToFilesystem implements CustomSqlChange {
 
 	private static final Logger logger = LoggerFactory.getLogger(FastqcToFilesystem.class);
 	private Path outputFileDirectory;
+	private Path tempOutputDirectory;
 
 	private DataSource dataSource;
 
 	@Override
 	public SqlStatement[] generateStatements(Database database) throws CustomChangeException {
+
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
-		//the chart types we're taking out of the database
-		List<String> chartTypes = Lists.newArrayList("perBaseQualityScoreChart", "perSequenceQualityScoreChart",
-				"duplicationLevelChart");
+		List<Path> writtenFiles = new ArrayList<>();
 
-		//inserting empty output files for charts
-		chartTypes.forEach(chart -> {
-			int update = jdbcTemplate.update(
-					"INSERT INTO analysis_output_file (created_date, execution_manager_file_id, analysis_id) SELECT createdDate, '"
-							+ chart + ".png', a.id FROM analysis a INNER JOIN analysis_fastqc q ON a.id=q.id");
+		//create a temp directory for fastqc files
+		try {
+			this.tempOutputDirectory = Files.createTempDirectory(outputFileDirectory, "irida-fastqc-temp");
+		} catch (IOException e) {
+			throw new CustomChangeException("Could not create temp directory for fastqc files", e);
+		}
 
-			logger.info("Inserted " + update + " temp output file entries for chart type " + chart);
-		});
+		logger.info("This update will be writing files temporarily to " + tempOutputDirectory
+				+ ".  They should be automatically transferred to your analysis output directory " + outputFileDirectory
+				+ "  upon completion.");
 
-		chartTypes.forEach(chart -> {
-			//write the files and update the analysis_output_file directory
-			writeFileForChartType(chart, jdbcTemplate);
+		//wrapping everything in a try/catch so we can log a nice error message in case of a problem.  Err
+		try {
 
-			//Add entries to analysis_output_file_map linking to the new analysis_output_file entries
-			jdbcTemplate.update(
-					"insert into analysis_output_file_map (analysis_id, analysisOutputFilesMap_id, analysis_output_file_key) SELECT analysis_id, id, '"
-							+ chart + "' FROM analysis_output_file where execution_manager_file_id='" + chart
-							+ ".png'");
-		});
+			//the chart types we're taking out of the database
+			List<String> chartTypes = Lists.newArrayList("perBaseQualityScoreChart", "perSequenceQualityScoreChart",
+					"duplicationLevelChart");
+
+			//inserting empty output files for charts
+			chartTypes.forEach(chart -> {
+				int update = jdbcTemplate.update(
+						"INSERT INTO analysis_output_file (created_date, execution_manager_file_id, analysis_id) SELECT createdDate, '"
+								+ chart + ".png', a.id FROM analysis a INNER JOIN analysis_fastqc q ON a.id=q.id");
+
+				logger.info("Inserted " + update + " temp output file entries for chart type " + chart);
+			});
+
+			//for each chart type, write the new files
+			chartTypes.forEach(chart -> {
+				//write the files and update the analysis_output_file directory
+				writtenFiles.addAll(writeFileForChartType(chart, jdbcTemplate));
+
+				//Add entries to analysis_output_file_map linking to the new analysis_output_file entries
+				jdbcTemplate.update(
+						"insert into analysis_output_file_map (analysis_id, analysisOutputFilesMap_id, analysis_output_file_key) SELECT analysis_id, id, '"
+								+ chart + "' FROM analysis_output_file where execution_manager_file_id='" + chart
+								+ ".png'");
+			});
+
+			//if everything went well, we can move those files into the real output directory
+			for (Path fileDir : writtenFiles) {
+				try {
+					FileUtils.moveDirectoryToDirectory(fileDir.toFile(), outputFileDirectory.toFile(), false);
+				} catch (IOException e) {
+					logger.error("Failed to move file " + fileDir);
+					throw new CustomChangeException("Failed to move fastqc file " + fileDir, e);
+				}
+			}
+
+			//ensure everything got moved
+			if (tempOutputDirectory.toFile()
+					.list().length == 0) {
+				tempOutputDirectory.toFile()
+						.delete();
+			} else {
+				throw new CustomChangeException("Temporary file directory " + tempOutputDirectory
+						+ " is not empty.  All files in here should have moved to output file directory "
+						+ outputFileDirectory);
+
+			}
+		} catch (CustomChangeException | RuntimeException e) {
+			//if there's an error we want to write a log message about it
+			logger.error(
+					"There was a problem moving the FastQC images from the database to the filesystem.  The directory "
+							+ tempOutputDirectory
+							+ " contains the temporary FastQC images that should have been moved to the analysis output directory.  In order to re-apply this update, please restore the database from a backup, and then re-start IRIDA.  You do *not* have to cleanup existing FastQC images on the filesystem as they will be re-written.  Once your upgrade has completed successfully, you can safely remove the temp directory.");
+
+			throw e;
+		}
 
 		return new SqlStatement[0];
 	}
@@ -74,7 +127,9 @@ public class FastqcToFilesystem implements CustomSqlChange {
 	 * @param chartType    the type of chart we're writing to the file system
 	 * @param jdbcTemplate {@link JdbcTemplate} to use for SQL
 	 */
-	private void writeFileForChartType(String chartType, JdbcTemplate jdbcTemplate) {
+	private List<Path> writeFileForChartType(String chartType, JdbcTemplate jdbcTemplate) {
+
+		List<Path> writtenFiles = new ArrayList<>();
 
 		//going to do the updates in batches so things go smoothly
 		long batchsize = 10000;
@@ -108,8 +163,8 @@ public class FastqcToFilesystem implements CustomSqlChange {
 							}
 
 							//get a path for <output files base dir>/<output file id>/1/
-							Path newFileDirectory = outputFileDirectory.resolve(chartId.toString())
-									.resolve("1");
+							Path baseFilePath = tempOutputDirectory.resolve(chartId.toString());
+							Path newFileDirectory = baseFilePath.resolve("1");
 
 							try {
 								//create the directory
@@ -118,6 +173,9 @@ public class FastqcToFilesystem implements CustomSqlChange {
 								newFileDirectory = newFileDirectory.resolve(chartType + ".png");
 								//write the chart bytes to file
 								Files.write(newFileDirectory, chart);
+
+								writtenFiles.add(baseFilePath);
+
 							} catch (IOException e) {
 								throw new SQLException("Couldn't create " + chartType + " file for analysis " + id, e);
 							}
@@ -126,7 +184,7 @@ public class FastqcToFilesystem implements CustomSqlChange {
 							String fullPath = newFileDirectory.toString();
 
 							//get a string representation of the output file directory
-							String basePath = outputFileDirectory.toString();
+							String basePath = tempOutputDirectory.toString();
 
 							// relativize the path by stripping the base file path
 							fullPath = fullPath.replaceFirst(basePath + "/", "");
@@ -143,6 +201,8 @@ public class FastqcToFilesystem implements CustomSqlChange {
 			jdbcTemplate.batchUpdate(updatesql, updates);
 
 		}
+
+		return writtenFiles;
 
 	}
 
