@@ -1,9 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.cart;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-
-import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -14,8 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -31,6 +25,11 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
+
+import com.google.common.collect.ImmutableMap;
+
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 /**
  * Controller managing interactions with the selected sequences
@@ -72,25 +71,6 @@ public class CartController {
 	public String getCartPage(Model model) {
 		model.addAttribute("pipeline_plugin_style", iridaPipelinePluginStyle);
 		return "cart";
-	}
-
-	/**
-	 * Get a modal dialog in order to export sample files to Galaxy
-	 * @param model
-	 *            The model to add attributes to for the template
-	 * @param principal
-	 *            A reference to the logged in user.
-	 * @param projectId
-	 *            The {@link Project} ID
-	 * @return the name of the galaxy export modal dialog page
-	 */
-	@RequestMapping(value = "/template/galaxy/project/{projectId}", produces = MediaType.TEXT_HTML_VALUE)
-	public String getGalaxyModal(Model model, Principal principal,@PathVariable Long projectId ) {
-		model.addAttribute("email", userService.getUserByUsername(principal.getName()).getEmail());
-		model.addAttribute("name", projectService.read(projectId).getName() + "-" + principal.getName());
-		String orgName = projectService.read(projectId).getOrganism() + "-" + principal.getName();
-		model.addAttribute("orgName", orgName);
-		return "templates/galaxy.tmpl";
 	}
 
 	/**
