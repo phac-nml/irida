@@ -144,8 +144,8 @@ public class FastqcToFilesystem implements CustomSqlChange {
 
 			//get a chunk of entries for this chart type
 			sql = "SELECT f.id, o.id, f." + chartType
-					+ " FROM analysis_fastqc f INNER JOIN analysis_output_file o ON f.id=o.analysis_id WHERE o.execution_manager_file_id=? limit "
-					+ batchsize + " offset " + offset;
+					+ " FROM analysis_fastqc f INNER JOIN analysis_output_file o ON f.id=o.analysis_id WHERE o.execution_manager_file_id=? ORDER BY f.id ASC LIMIT "
+					+ batchsize + " OFFSET " + offset;
 
 			List<Object[]> updates = jdbcTemplate.query(sql, new Object[] { chartType + ".png" },
 					//this mapper will look at the temp output file entry and write a file to the file system
