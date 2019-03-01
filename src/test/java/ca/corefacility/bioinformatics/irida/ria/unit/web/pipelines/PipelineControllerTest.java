@@ -41,8 +41,6 @@ import static org.mockito.Mockito.when;
  * Created by josh on 15-01-09.
  */
 public class PipelineControllerTest {
-	// Constants
-	public static final Locale LOCALE = Locale.US;
 	// Dependencies to mock
 	private ReferenceFileService referenceFileService;
 	private SequencingObjectService sequencingObjectService;
@@ -80,15 +78,6 @@ public class PipelineControllerTest {
 				workflowsService, projectService, userService, cartController, messageSource, namedParameterService,
 				updateSamplePermission, analysisSubmissionSampleProcessor, galaxyToolDataService, iridaPipelinePluginStyle);
 		when(messageSource.getMessage(any(), any(), any())).thenReturn("");
-	}
-
-	@Test
-	public void testGetPipelineLaunchPage() {
-		ExtendedModelMap model = new ExtendedModelMap();
-		String response = controller.getPipelineLaunchPage(model, LOCALE);
-		assertEquals(PipelineController.URL_LAUNCH, response);
-		assertTrue(model.containsKey("counts"));
-		assertTrue(model.containsKey("workflows"));
 	}
 
 	@Test

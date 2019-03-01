@@ -8,9 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.CartPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.PipelinesPhylogenomicsPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.PipelinesSelectionPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -28,10 +28,12 @@ import static org.junit.Assert.assertTrue;
 public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver {
 	private static final Logger logger = LoggerFactory.getLogger(PipelinesPhylogenomicsPageIT.class);
 	private PipelinesPhylogenomicsPage page;
+	private CartPage cartPage;
 
 	@Before
 	public void setUpTest() throws IOException {
 		page = new PipelinesPhylogenomicsPage(driver());
+		cartPage = new CartPage(driver());
 	}
 
 	@Test
@@ -54,7 +56,7 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 		samplesPage.selectSample(0);
 		samplesPage.addSelectedSamplesToCart();
 
-		PipelinesSelectionPage.goToPhylogenomicsPipeline(driver());
+		cartPage.selectPhylogenomicsPipeline();
 		assertTrue("Should display a warning to the user that there are no reference files.",
 				page.isNoReferenceWarningDisplayed());
 		String fileName = page.selectReferenceFile();
@@ -166,6 +168,6 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 		samplesPage.selectSample(0);
 		samplesPage.selectSample(1);
 		samplesPage.addSelectedSamplesToCart();
-		PipelinesSelectionPage.goToPhylogenomicsPipeline(driver());
+		cartPage.selectPhylogenomicsPipeline();
 	}
 }

@@ -19,13 +19,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.jmchilton.blend4j.galaxy.beans.TabularToolDataTable;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
 import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotDisplayableException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
@@ -61,6 +54,13 @@ import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.jmchilton.blend4j.galaxy.beans.TabularToolDataTable;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * Controller for pipeline related views
@@ -134,50 +134,6 @@ public class PipelineController extends BaseController {
 		this.analysisSubmissionSampleProcessor = analysisSubmissionSampleProcessor;
 		this.galaxyToolDataService = galaxyToolDataService;
 		this.iridaPipelinePluginStyle = iridaPipelinePluginStyle;
-	}
-
-	/**
-	 * Get the Pipeline Selection Page
-	 *
-	 * @param model
-	 * 		{@link Model}
-	 * @param locale
-	 * 		Current users {@link Locale}
-	 *
-	 * @return location of the pipeline selection page.
-	 */
-	@RequestMapping
-	public String getPipelineLaunchPage(final Model model, Locale locale) {
-		Set<AnalysisType> workflows = workflowsService.getDisplayableWorkflowTypes();
-
-		List<Map<String, String>> flows = new ArrayList<>(workflows.size());
-		workflows.stream().forEach(type -> {
-			IridaWorkflow flow = null;
-			try {
-				flow = workflowsService.getDefaultWorkflowByType(type);
-				IridaWorkflowDescription description = flow.getWorkflowDescription();
-				String name = type.getType();
-				String key = "workflow." + name;
-				flows.add(ImmutableMap.of(
-						"name", name,
-						"id", description.getId().toString(),
-						"title",
-						messageSource
-								.getMessage(key + ".title", null, locale),
-						"description",
-						messageSource
-								.getMessage(key + ".description", null, locale)
-				));
-			} catch (IridaWorkflowNotFoundException e) {
-				logger.error("Workflow not found - See stack:", e);
-			}
-		});
-
-		flows.sort((f1, f2) -> f1.get("name").compareTo(f2.get("name")));
-		model.addAttribute("counts", getCartSummaryMap());
-		model.addAttribute("workflows", flows);
-		model.addAttribute("pipeline_plugin_style", iridaPipelinePluginStyle);
-		return URL_LAUNCH;
 	}
 
 	/**
