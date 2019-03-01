@@ -109,16 +109,6 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 	}
 
 	@Test
-	public void testRemoveAllSample() {
-		addSamplesToCart();
-
-		page.removeFirstSample();
-		page.removeFirstSample();
-
-		assertTrue("user should be redirected to pipelinese page", driver().getCurrentUrl().endsWith("/pipelines"));
-	}
-
-	@Test
 	public void testModifyParameters() {
 		addSamplesToCart();
 		page.clickPipelineParametersBtn();
