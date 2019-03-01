@@ -15,7 +15,8 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Proje
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * <p>
@@ -80,19 +81,6 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 		page.clickSeePipeline();
 
 		assertTrue("Should be on analysis page", driver().getCurrentUrl().endsWith("/analysis"));
-	}
-
-	@Test
-	public void testClearPipelineAndGetSamples() {
-		addSamplesToCart();
-
-		page.clickLaunchPipelineBtn();
-		assertTrue("Message should be displayed once the pipeline finished submitting",
-				page.isPipelineSubmittedSuccessMessageShown());
-		page.clickClearAndFindMore();
-
-		assertTrue("Should be on projects page", driver().getCurrentUrl().endsWith("/projects"));
-		assertFalse("cart should be empty", page.isCartCountVisible());
 	}
 
 	@Test
