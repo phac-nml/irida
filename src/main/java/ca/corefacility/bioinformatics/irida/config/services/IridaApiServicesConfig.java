@@ -139,6 +139,9 @@ public class IridaApiServicesConfig {
 
 	@Value("${irida.debug.nrepl.server.port:#{null}}")
 	private Integer nreplPort;
+	
+	@Value("${irida.scheduled.analysis.threads}")
+	private int analysisTaskThreads;
 
 	@Autowired
 	private IridaPluginConfig.IridaPluginList pipelinePlugins;
@@ -344,7 +347,7 @@ public class IridaApiServicesConfig {
 	@Bean
 	@DependsOn("springLiquibase")
 	public Executor analysisTaskExecutor(UserService userService) {
-		ScheduledExecutorService delegateExecutor = Executors.newScheduledThreadPool(4);
+		ScheduledExecutorService delegateExecutor = Executors.newScheduledThreadPool(analysisTaskThreads);
 		SecurityContext schedulerContext = createAnalysisTaskSecurityContext(userService);
 		return new DelegatingSecurityContextScheduledExecutorService(delegateExecutor, schedulerContext);
 	}
