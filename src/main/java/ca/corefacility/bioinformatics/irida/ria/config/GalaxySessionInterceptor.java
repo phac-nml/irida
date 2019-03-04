@@ -11,8 +11,8 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 public class GalaxySessionInterceptor extends HandlerInterceptorAdapter {
 	// HTTP session variable name for Galaxy callback variable
-	private static final String GALAXY_CALLBACK_URL = "galaxyCallbackUrl";
-	private static final String GALAXY_CLIENT_ID = "galaxyClientID";
+	public static final String GALAXY_CALLBACK_URL = "galaxyCallbackUrl";
+	public static final String GALAXY_CLIENT_ID = "galaxyClientID";
 
 	@Autowired
 	private HttpSession session;
@@ -22,7 +22,9 @@ public class GalaxySessionInterceptor extends HandlerInterceptorAdapter {
 			throws Exception {
 		Map<String, String[]> requestMap = request.getParameterMap();
 
-		if (requestMap.containsKey(GALAXY_CALLBACK_URL) && requestMap.containsKey(GALAXY_CLIENT_ID)) {
+		boolean galaxyRequest = requestMap.containsKey(GALAXY_CALLBACK_URL) && requestMap.containsKey(GALAXY_CLIENT_ID);
+		boolean alreadySeen = session.getAttribute(GALAXY_CALLBACK_URL) != null;
+		if (galaxyRequest && !alreadySeen) {
 			session.setAttribute(GALAXY_CALLBACK_URL, requestMap.get(GALAXY_CALLBACK_URL));
 			session.setAttribute(GALAXY_CLIENT_ID, requestMap.get(GALAXY_CLIENT_ID));
 			request.removeAttribute(GALAXY_CLIENT_ID);

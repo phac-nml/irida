@@ -12,6 +12,7 @@
 </head>
 <body>
 <th:block layout:fragment="content">
+	<header class="js-page-header"></header>
 	<nav th:replace="template/main-navigation.html :: #topnav"></nav>
 	<div th:if="${crumbs != null and #lists.size(crumbs) > 1}" class="breadcrumbs">
 		<div class="container-fluid">
@@ -43,8 +44,9 @@
 	</script>
 
 	<script th:inline="javascript">
-		var TL = {
+		window.TL = {
 			BASE_URL      : /*[[@{/}]]*/ '/',
+			IN_GALAXY: /*[[${!#strings.isEmpty(session.galaxyCallbackUrl)}]]*/ false,
 		  	URLS: {
 			  cart: {
 			    add: /*[[@{/cart/add/samples}]]*/ "/cart/add/samples"
