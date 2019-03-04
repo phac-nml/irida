@@ -119,7 +119,7 @@ public class AssemblyPipelinePageIT extends AbstractIridaUIITChromeDriver {
 		ProjectSamplesPage samplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
 		samplesPage.selectSample(0);
 		samplesPage.addSelectedSamplesToCart();
-		cartPage.selectAssymblyPipeline();
+		cartPage.selectAssemblyPipeline();
 	}
 
 	private AnalysisSubmission findAnalysisSubmissionWithName(String name) {

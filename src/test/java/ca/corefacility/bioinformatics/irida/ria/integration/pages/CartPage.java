@@ -14,7 +14,7 @@ public class CartPage extends AbstractPage {
 		goToPipelinePage("t-SNVPhyl_Phylogenomics_Pipeline_btn");
 	}
 
-	public void selectAssymblyPipeline() {
+	public void selectAssemblyPipeline() {
 		goToPipelinePage("t-Assembly_and_Annotation_Pipeline_btn");
 	}
 
