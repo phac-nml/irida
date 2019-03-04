@@ -1,9 +1,10 @@
-import React, { Component } from "react";
+import React, { Component, Suspense } from "react";
 import PropTypes from "prop-types";
 import { ExportDropDown } from "../Export/ExportDropdown";
 import { AddSamplesToCartButton } from "../AddToCartButton/AddSamplesToCart";
 import { Button, Form, Input, Popover } from "antd";
-import LineListTour from "../Tour/LineListTour";
+
+const LineListTour = React.lazy(() => import("../Tour/LineListTour"));
 
 const { Search } = Input;
 
@@ -12,7 +13,7 @@ const { i18n, urls } = window.PAGE;
 export class Toolbar extends Component {
   state = { tourOpen: false, showTourPopover: false };
 
-  componentDidMount() {
+    componentDidMount() {
     if (typeof window.localStorage === "object") {
       if (!window.localStorage.getItem("linelist-tour")) {
         window.localStorage.setItem("linelist-tour", "complete");
@@ -85,10 +86,14 @@ export class Toolbar extends Component {
               />
             </Form.Item>
             <Form.Item>
-              <LineListTour
-                isOpen={this.state.tourOpen}
-                closeTour={this.closeTour}
-              />
+              <Suspense fallback={<span />}>
+                {this.state.tourOpen ? (
+                  <LineListTour
+                    isOpen={this.state.tourOpen}
+                    closeTour={this.closeTour}
+                  />
+                ) : null}
+              </Suspense>
               <Popover
                 content={
                   <strong

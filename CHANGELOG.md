@@ -7,6 +7,12 @@ Changes
 * [Documentation]: Added note with link to NGS Linker installation documentation to Command-line Linker modal
 * [UI/Developer]: Updated to lodash v4.17.11 to fix security issue. (19.01.1)
 * [UI/Developer]: Updated yarn to (1.13.0) and node to (11.10.0).
+* [UI/Developer]: Added expose loader to load external dependencies through the vendor bundle.
+* [UI/Developer]: Updated jquery to v3.3.1 to fix security issue.
+* [UI/Developer]: Updated bootstrap dependencies and cleaned up dependencies by running `yarn install --flat` and resolving dependencies.
+* [UI]: Fixed typo when loading data in **Advanced Phylogenomic Visualization** page.
+* [Admin]: Added message to add `irida.db.profile` param for Tomcat in docs and upgrading guide.
+* [UI/Developer]: Added code splitting to webpack bundles.
 
 0.22.0 to 19.01
 ----------------
