@@ -35,6 +35,7 @@ import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConf
 import ca.corefacility.bioinformatics.irida.config.services.WebEmailConfig;
 import ca.corefacility.bioinformatics.irida.ria.config.AnalyticsHandlerInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.BreadCrumbInterceptor;
+import ca.corefacility.bioinformatics.irida.ria.config.GalaxySessionInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequestResolver;
 
@@ -80,6 +81,11 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements Applica
 		LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
 		localeChangeInterceptor.setParamName(LOCALE_CHANGE_PARAMETER);
 		return localeChangeInterceptor;
+	}
+
+	@Bean
+	public GalaxySessionInterceptor galaxySessionInterceptor() {
+		return new GalaxySessionInterceptor();
 	}
 
 	@Bean
@@ -185,6 +191,7 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter implements Applica
 	public void addInterceptors(InterceptorRegistry registry) {
 		logger.debug("Adding Interceptors to the Registry");
 		registry.addInterceptor(localeChangeInterceptor());
+		registry.addInterceptor(galaxySessionInterceptor());
 		registry.addInterceptor(analyticsHandlerInterceptor());
 		registry.addInterceptor(breadCrumbInterceptor());
 		registry.addInterceptor(userSecurityInterceptor());

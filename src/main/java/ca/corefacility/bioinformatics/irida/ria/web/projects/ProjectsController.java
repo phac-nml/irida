@@ -11,7 +11,6 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
@@ -39,10 +38,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.config.web.IridaRestApiWebConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -75,6 +70,10 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.util.TreeNode;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for project related views
@@ -123,10 +122,6 @@ public class ProjectsController {
 	Formatter<Date> dateFormatter;
 	FileSizeConverter fileSizeConverter;
 
-	// HTTP session variable name for Galaxy callback variable
-	public static final String GALAXY_CALLBACK_VARIABLE_NAME = "galaxyExportToolCallbackURL";
-	public static final String GALAXY_CLIENT_ID_NAME = "galaxyExportToolClientID";
-
 	// CONSTANTS
 	private final List<Map<String, String>> EXPORT_TYPES = ImmutableList.of(
 			ImmutableMap.of("format", "xlsx", "name", "Excel"), ImmutableMap.of("format", "csv", "name", "CSV")
@@ -159,28 +154,14 @@ public class ProjectsController {
 	 *
 	 * @param model
 	 * 		The model to add attributes to for the template.
-	 * @param galaxyCallbackURL
-	 * 		The URL at which to call the Galaxy export tool
-	 * @param galaxyClientID
-	 * 		The OAuth2 client ID of the Galaxy instance to export to
-	 * @param httpSession
-	 * 		The user's session
 	 *
 	 * @return The name of the page.
 	 */
 	@RequestMapping("/projects")
-	public String getProjectsPage(Model model,
-			@RequestParam(value = "galaxyCallbackUrl", required = false) String galaxyCallbackURL,
-			@RequestParam(value = "galaxyClientID", required = false) String galaxyClientID, HttpSession httpSession) {
+	public String getProjectsPage(Model model) {
 		model.addAttribute("ajaxURL", "/projects/ajax/list");
 		model.addAttribute("exportTypes", EXPORT_TYPES);
 		model.addAttribute("isAdmin", false);
-
-		// External exporting functionality
-		if (galaxyCallbackURL != null && galaxyClientID != null) {
-			httpSession.setAttribute(GALAXY_CALLBACK_VARIABLE_NAME, galaxyCallbackURL);
-			httpSession.setAttribute(GALAXY_CLIENT_ID_NAME, galaxyClientID);
-		}
 
 		return LIST_PROJECTS_PAGE;
 	}
