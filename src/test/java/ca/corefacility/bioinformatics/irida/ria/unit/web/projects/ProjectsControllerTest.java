@@ -140,7 +140,7 @@ public class ProjectsControllerTest {
 	@Test
 	public void testGetCreateProjectPage() {
 		Model model = new ExtendedModelMap();
-		String page = controller.getCreateProjectPage(false, model);
+		String page = controller.getCreateProjectPage(false, model, false);
 		assertEquals("Reruns the correct New Project Page", "projects/project_new", page);
 		assertTrue("Model now has and error attribute", model.containsAttribute("errors"));
 	}
@@ -155,7 +155,7 @@ public class ProjectsControllerTest {
 		// Test creating project
 		when(projectService.create(any(Project.class))).thenReturn(project);
 		when(projectService.update(any(Project.class))).thenReturn(project);
-		String page = controller.createNewProject(model, new Project(projectName), false);
+		String page = controller.createNewProject(model, new Project(projectName), false, false);
 		assertEquals("Returns the correct redirect to the collaborators page",
 				"redirect:/projects/" + projectId + "/metadata", page);
 	}
