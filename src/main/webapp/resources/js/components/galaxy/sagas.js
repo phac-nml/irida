@@ -18,7 +18,7 @@ export function* checkOauthStatusSaga() {
     yield take(types.CHECK_OAUTH);
     const { authenticated } = yield call(
       getGalaxyClientAuthentication,
-      window.PAGE.galaxyClientID
+      window.GALAXY.CLIENT_ID
     );
 
     if (authenticated) {
@@ -34,7 +34,7 @@ export function* validateOauthClientSaga() {
     yield take(types.AUTHENTICATE_OATH);
     const code = yield call(
       authenticateOauthClient,
-      window.PAGE.galaxyClientID,
+      window.GALAXY.CLIENT_ID,
       redirect
     );
     if (typeof code === "undefined") {

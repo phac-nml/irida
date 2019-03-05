@@ -69,8 +69,15 @@
 		};
 	</script>
 
-	<script th:if="${!#strings.isEmpty(session.galaxyCallbackUrl)}">
-		window.TL.GALAXY = {};
+	<script th:if="${!#strings.isEmpty(session.galaxyCallbackUrl)}" th:inline="javascript">
+		window.GALAXY = {
+			URL: /*[[${session.galaxyCallbackUrl}]]*/ "",
+			CLIENT_ID: /*[[${session.galaxyClientID}]]*/ "",
+			TITLE: /*[[#{galaxy.session.title}]]*/ "Galaxy Export Session:",
+			MESSAGE: /*[[#{galaxy.session.message}]]*/ "IRIDA is set to export samples to Galaxy at",
+			CANCEL: /*[[#{galaxy.session.cancel}]]*/ "Cancel Galaxy Export",
+			DOCUMENTATION: /*[[#{galaxy.session.docs}]]*/ "Read the Official Documentation"
+		};
 	</script>
 
 	<script th:src="@{/resources/dist/js/vendor.bundle.js}"></script>

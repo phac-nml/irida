@@ -25,8 +25,8 @@ public class GalaxySessionInterceptor extends HandlerInterceptorAdapter {
 		boolean galaxyRequest = requestMap.containsKey(GALAXY_CALLBACK_URL) && requestMap.containsKey(GALAXY_CLIENT_ID);
 		boolean alreadySeen = session.getAttribute(GALAXY_CALLBACK_URL) != null;
 		if (galaxyRequest && !alreadySeen) {
-			session.setAttribute(GALAXY_CALLBACK_URL, requestMap.get(GALAXY_CALLBACK_URL));
-			session.setAttribute(GALAXY_CLIENT_ID, requestMap.get(GALAXY_CLIENT_ID));
+			session.setAttribute(GALAXY_CALLBACK_URL, requestMap.get(GALAXY_CALLBACK_URL)[0]);
+			session.setAttribute(GALAXY_CLIENT_ID, requestMap.get(GALAXY_CLIENT_ID)[0]);
 			response.sendRedirect(request.getRequestURI());
 		}
 

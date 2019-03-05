@@ -11,7 +11,7 @@ export class PageHeader extends React.Component {
   };
 
   componentDidMount() {
-    if (typeof window.TL.GALAXY !== "undefined") {
+    if (typeof window.GALAXY !== "undefined") {
       this.setState({ inGalaxy: true });
     }
   }
@@ -27,7 +27,7 @@ export class PageHeader extends React.Component {
               <div
                 style={{
                   backgroundColor: blue1,
-                  height: 37
+                  height: 58
                 }}
               />
             }
