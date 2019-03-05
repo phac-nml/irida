@@ -43,7 +43,7 @@ public class CartGalaxyController {
 	}
 
 	/**
-	 * This is a check to see if the is currently an authentication token for the Galaxy client.
+	 * This is a check to see if there is currently an authentication token for the Galaxy client.
 	 *
 	 * @param clientId {@link String} The clientId for the Galaxy client
 	 * @return {@link GalaxyExportAuthentication} which contains the status for the client.
