@@ -17,8 +17,6 @@ const initialState = {
   email: window.PAGE.user,
   makepairedcollection: true,
   samples: undefined,
-  oauthAuthorized: undefined,
-  oauthError: false,
   submittable: false
 };
 
@@ -32,20 +30,7 @@ export const reducer = (state = initialState, action = {}) => {
         makepairedcollection: action.payload.makepairedcollection
       };
     case types.SET_GALAXY_SAMPLES:
-      return { ...state, samples: action.payload.samples };
-    case types.SET_OAUTH_AUTHENTICATION:
-      return { ...state, oauthAuthorized: action.payload.isAuthorized };
-    case types.OAUTH_SUCCESS:
-      return {
-        ...state,
-        redirect: action.payload.redirect,
-        code: action.payload.code,
-        oauthAuthorized: true
-      };
-    case types.OAUTH_ERROR:
-      return { ...state, oauthError: true };
-    case types.SUBMITTABLE:
-      return { ...state, submittable: true };
+      return { ...state, samples: action.payload.samples, submittable: true };
     default:
       return { ...state };
   }
@@ -62,33 +47,12 @@ export const actions = {
     type: types.SET_GALAXY_SAMPLES,
     payload: { samples }
   }),
-  checkOauthStatus: () => ({ type: types.CHECK_OAUTH }),
-  setOathValidationStatus: isAuthorized => ({
-    type: types.SET_OAUTH_AUTHENTICATION,
+  submit: (email, makepairedcollection, samples) => ({
+    type: types.SUBMIT,
     payload: {
-      isAuthorized
+      email,
+      makepairedcollection,
+      samples
     }
-  }),
-  authenticateOauthClient: () => ({
-    type: types.AUTHENTICATE_OATH
-  }),
-  oauthSuccess: (code, redirect) => ({
-    type: types.OAUTH_SUCCESS,
-    payload: {
-      code,
-      redirect
-    }
-  }),
-  oauthError: () => ({
-    type: types.OAUTH_ERROR
-  }),
-  oauthComplete: () => ({
-    type: types.OAUTH_COMPLETE
-  }),
-  enableSubmit: () => ({
-    type: types.SUBMITTABLE
-  }),
-  submit: () => ({
-    type: types.SUBMIT
   })
 };

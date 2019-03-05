@@ -3,15 +3,13 @@ import PropTypes from "prop-types";
 import { Button } from "antd";
 import { getI18N } from "../../utilities/i18n-utilties";
 import { connect } from "react-redux";
-import { exportToGalaxy } from "../../apis/galaxy/oauth";
+import { actions } from "./reducer";
 
 /**
  * Component to actually send the samples to a Galaxy Client
  * @param {boolean} disabled - if the form is ready to be submitted.
  * @param {string} email - users galaxy email
  * @param {boolean} makepairedcollection
- * @param  {string} oauthCode
- * @param {string} oauthRedirect
  * @param {array} samples
  * @returns {*}
  */
@@ -19,21 +17,14 @@ export function GalaxySubmissionComponent({
   disabled,
   email,
   makepairedcollection,
-  oauthCode,
-  oauthRedirect,
-  samples
+  samples,
+  submitSamplesToGalaxy
 }) {
   const [submitting, setSubmitting] = useState(false);
 
   const submit = () => {
     setSubmitting(true);
-    exportToGalaxy(
-      email,
-      makepairedcollection,
-      oauthCode,
-      oauthRedirect,
-      samples
-    );
+    submitSamplesToGalaxy(email, makepairedcollection, samples);
   };
 
   return (
@@ -52,9 +43,8 @@ GalaxySubmissionComponent.propTypes = {
   disabled: PropTypes.bool.isRequired,
   email: PropTypes.string,
   makepairedcollection: PropTypes.bool,
-  oauthCode: PropTypes.string,
-  oauthRedirect: PropTypes.string,
-  samples: PropTypes.array
+  samples: PropTypes.array,
+  submitSamplesToGalaxy: PropTypes.func.isRequired
 };
 
 /*
@@ -64,12 +54,13 @@ const mapStateToProps = state => ({
   disabled: !state.galaxyReducer.submittable,
   email: state.galaxyReducer.email,
   makepairedcollection: state.galaxyReducer.makepairedcollection,
-  oauthCode: state.galaxyReducer.code,
-  oauthRedirect: state.galaxyReducer.redirect,
   samples: state.galaxyReducer.samples
 });
 
-const mapDispatchToProps = dispatch => ({});
+const mapDispatchToProps = dispatch => ({
+  submitSamplesToGalaxy: (email, makepairedcollection, samples) =>
+    dispatch(actions.submit(email, makepairedcollection, samples))
+});
 
 export const GalaxySubmission = connect(
   mapStateToProps,
