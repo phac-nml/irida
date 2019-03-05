@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import { Button } from "antd";
 import { getI18N } from "../../utilities/i18n-utilties";
@@ -8,22 +8,22 @@ import { actions } from "./reducer";
 /**
  * Component to actually send the samples to a Galaxy Client
  * @param {boolean} disabled - if the form is ready to be submitted.
+ * @param {boolean} submitted - if the form is being submitted
  * @param {string} email - users galaxy email
  * @param {boolean} makepairedcollection
  * @param {array} samples
+ * @param {function} submitSamplesToGalaxy - send samples to galaxy through saga.
  * @returns {*}
  */
 export function GalaxySubmissionComponent({
   disabled,
+  submitted,
   email,
   makepairedcollection,
   samples,
   submitSamplesToGalaxy
 }) {
-  const [submitting, setSubmitting] = useState(false);
-
   const submit = () => {
-    setSubmitting(true);
     submitSamplesToGalaxy(email, makepairedcollection, samples);
   };
 
@@ -31,7 +31,7 @@ export function GalaxySubmissionComponent({
     <Button
       type="primary"
       disabled={disabled}
-      loading={submitting}
+      loading={submitted}
       onClick={submit}
     >
       {getI18N("GalaxyFinalSubmission.submit")}
@@ -41,6 +41,7 @@ export function GalaxySubmissionComponent({
 
 GalaxySubmissionComponent.propTypes = {
   disabled: PropTypes.bool.isRequired,
+  submitted: PropTypes.bool.isRequired,
   email: PropTypes.string,
   makepairedcollection: PropTypes.bool,
   samples: PropTypes.array,
@@ -52,6 +53,7 @@ Connect the component to redux to get all the required values and functions.
  */
 const mapStateToProps = state => ({
   disabled: !state.galaxyReducer.submittable,
+  submitted: state.galaxyReducer.submitted,
   email: state.galaxyReducer.email,
   makepairedcollection: state.galaxyReducer.makepairedcollection,
   samples: state.galaxyReducer.samples

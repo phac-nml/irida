@@ -3,21 +3,19 @@ export const types = {
   MAKE_PAIRED_COLLECTION_UPDATED: "GALAXY/MAKE_PAIRED_COLLECTION_UPDATED",
   GET_GALAXY_SAMPLES: "GALAXY/GET_GALAXY_SAMPLES",
   SET_GALAXY_SAMPLES: "GALAXY/SET_GALAXY_SAMPLES",
-  CHECK_OAUTH: "GALAXY/CHECK_OAUTH",
-  SET_OAUTH_AUTHENTICATION: "GALAXY/CHECK_OAUTH_VALIDATION",
-  AUTHENTICATE_OATH: "GALAXY/AUTHENTICATE_OAUTH",
-  OAUTH_COMPLETE: "GALAXY/OAUTH_COMPLETE",
-  OAUTH_SUCCESS: "GALAXY/OAUTH_SUCCESS",
-  OAUTH_ERROR: "GALAXY/OAUTH_ERROR",
+  OAUTH_WINDOW_CLOSED: "GALAXY_OAUTH_WINDOW_CLOSED",
   SUBMITTABLE: "GALAXY/SUBMITTABLE",
-  SUBMIT: "GALAXY/SUBMIT"
+  SUBMIT: "GALAXY/SUBMIT",
+  SUBMIT_ERROR: "GALAXY/SUBMIT_ERROR"
 };
 
 const initialState = {
   email: window.PAGE.user,
   makepairedcollection: true,
   samples: undefined,
-  submittable: false
+  submitted: false,
+  submittable: false,
+  errored: false
 };
 
 export const reducer = (state = initialState, action = {}) => {
@@ -31,6 +29,12 @@ export const reducer = (state = initialState, action = {}) => {
       };
     case types.SET_GALAXY_SAMPLES:
       return { ...state, samples: action.payload.samples, submittable: true };
+    case types.OAUTH_WINDOW_CLOSED:
+      return { ...state, submittable: true, submitted: false };
+    case types.SUBMIT:
+      return { ...state, submitted: true };
+    case types.SUBMIT_ERROR:
+      return { ...state, submittable: true, submitted: false, errored: true };
     default:
       return { ...state };
   }
@@ -54,5 +58,11 @@ export const actions = {
       makepairedcollection,
       samples
     }
+  }),
+  submitError: () => ({
+    type: types.SUBMIT_ERROR
+  }),
+  oauthWindowClosed: () => ({
+    type: types.OAUTH_WINDOW_CLOSED
   })
 };

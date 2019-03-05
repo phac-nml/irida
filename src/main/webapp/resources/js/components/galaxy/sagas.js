@@ -15,30 +15,33 @@ async function validateOauthClient() {
   const redirect = `${window.TL.BASE_URL}galaxy/auth_code`;
   return authenticateOauthClient(window.PAGE.galaxyClientID, redirect)
     .then(code => code)
-    .then(response => response);
+    .catch(response => response);
 }
 
 export function* submitGalaxyDataSaga() {
-  // 1. Wait for the submit call
-  const {
-    payload: { email, makepairedcollection, samples }
-  } = yield take(types.SUBMIT);
+  while (true) {
+    // 1. Wait for the submit call
+    const {
+      payload: { email, makepairedcollection, samples }
+    } = yield take(types.SUBMIT);
 
-  // 2. Get galaxy Oauth2 code
-  // result code be the code, or constant 'ERROR' for authentication error or 'CLOSED' for window closed
-  const result = yield call(validateOauthClient);
-  if (result === "ERROR") {
-    console.log("ERROR");
-  } else if (result === "CLOSED") {
-    console.log("CLOSED");
-  } else {
-    // We have the code!
-    exportToGalaxy(
-      email,
-      makepairedcollection,
-      result,
-      `${window.TL.BASE_URL}galaxy/auth_code`,
-      samples
-    );
+    // 2. Get galaxy Oauth2 code
+    // result code be the code, or constant 'ERROR' for authentication error or 'CLOSED' for window closed
+    const result = yield call(validateOauthClient);
+
+    if (result === "ERROR") {
+      yield put(actions.submitError());
+    } else if (result === "CLOSED") {
+      yield put(actions.oauthWindowClosed());
+    } else {
+      // We have the code!
+      exportToGalaxy(
+        email,
+        makepairedcollection,
+        result,
+        `${window.TL.BASE_URL}galaxy/auth_code`,
+        samples
+      );
+    }
   }
 }
