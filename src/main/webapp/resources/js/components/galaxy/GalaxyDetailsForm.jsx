@@ -5,6 +5,7 @@ import { getI18N } from "../../utilities/i18n-utilties";
 import { connect } from "react-redux";
 import { actions } from "./reducer";
 import { validateEmail } from "../../utilities/validation-utilities";
+import { FONT_WEIGHT_HEAVY } from "../../styles/fonts";
 
 /**
  * Component to display a form containing all required and user modifiable fields.
@@ -27,24 +28,39 @@ function ExportToGalaxyFormComponent({
 
   const validEmail = validateEmail(email);
 
+  const galaxyUrl = window
+    .decodeURI(window.PAGE.galaxyCallback)
+    .split("/tool_runner")[0];
   return (
-    <Form layout="vertical" hideRequiredMark>
-      <Form.Item
-        label={getI18N("ExportToGalaxyForm.email")}
-        validateStatus={validEmail ? "success" : "error"}
-        help={getI18N("ExportToGalaxyForm.email.help")}
-      >
-        <Input onChange={emailModified} value={email} />
-      </Form.Item>
-      <Form.Item help={getI18N("ExportToGalaxyForm.makepairedcollection.help")}>
-        <Checkbox
-          onChange={makePairedCollectionModified}
-          checked={makepairedcollection}
+    <div>
+      <p>
+        <span style={{ fontWeight: FONT_WEIGHT_HEAVY }}>
+          {getI18N("ExportToGalaxyForm.galaxy")}
+        </span>{" "}
+        <a target="_blank" rel="noreferrer noopener" href={galaxyUrl}>
+          {galaxyUrl}
+        </a>
+      </p>
+      <Form layout="vertical" hideRequiredMark>
+        <Form.Item
+          label={getI18N("ExportToGalaxyForm.email")}
+          validateStatus={validEmail ? "success" : "error"}
+          help={getI18N("ExportToGalaxyForm.email.help")}
         >
-          {getI18N("ExportToGalaxyForm.makepairedcollection")}
-        </Checkbox>
-      </Form.Item>
-    </Form>
+          <Input onChange={emailModified} value={email} />
+        </Form.Item>
+        <Form.Item
+          help={getI18N("ExportToGalaxyForm.makepairedcollection.help")}
+        >
+          <Checkbox
+            onChange={makePairedCollectionModified}
+            checked={makepairedcollection}
+          >
+            {getI18N("ExportToGalaxyForm.makepairedcollection")}
+          </Checkbox>
+        </Form.Item>
+      </Form>
+    </div>
   );
 }
 
