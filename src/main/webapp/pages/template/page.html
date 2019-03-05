@@ -46,7 +46,6 @@
 	<script th:inline="javascript">
 		window.TL = {
 			BASE_URL      : /*[[@{/}]]*/ '/',
-			IN_GALAXY: /*[[${!#strings.isEmpty(session.galaxyCallbackUrl)}]]*/ false,
 		  	URLS: {
 			  cart: {
 			    add: /*[[@{/cart/add/samples}]]*/ "/cart/add/samples"
@@ -68,6 +67,10 @@
 				}
 			}
 		};
+	</script>
+
+	<script th:if="${!#strings.isEmpty(session.galaxyCallbackUrl)}">
+		window.TL.GALAXY = {};
 	</script>
 
 	<script th:src="@{/resources/dist/js/vendor.bundle.js}"></script>

@@ -27,8 +27,7 @@ public class GalaxySessionInterceptor extends HandlerInterceptorAdapter {
 		if (galaxyRequest && !alreadySeen) {
 			session.setAttribute(GALAXY_CALLBACK_URL, requestMap.get(GALAXY_CALLBACK_URL));
 			session.setAttribute(GALAXY_CLIENT_ID, requestMap.get(GALAXY_CLIENT_ID));
-			request.removeAttribute(GALAXY_CLIENT_ID);
-			request.removeAttribute(GALAXY_CALLBACK_URL);
+			response.sendRedirect(request.getRequestURI());
 		}
 
 		return super.preHandle(request, response, handler);

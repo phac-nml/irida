@@ -19,3 +19,5 @@ export const getGalaxyClientAuthentication = clientId =>
  */
 export const getGalaxySamples = () =>
   axios.get(`${GALAXY_AJAX_URL}/samples`).then(({ data }) => data);
+
+export const removeGalaxySession = () => axios.get(`${GALAXY_AJAX_URL}/remove`);
