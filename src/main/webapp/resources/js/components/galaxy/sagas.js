@@ -13,7 +13,7 @@ export function* getCartGalaxySamplesSaga() {
 
 async function validateOauthClient() {
   const redirect = `${window.TL.BASE_URL}galaxy/auth_code`;
-  return authenticateOauthClient(window.PAGE.galaxyClientID, redirect)
+  return authenticateOauthClient(window.GALAXY.CLIENT_ID, redirect)
     .then(code => code)
     .catch(response => response);
 }

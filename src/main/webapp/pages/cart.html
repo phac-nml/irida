@@ -3,7 +3,7 @@
   xmlns:th="http://www.thymeleaf.org"
   xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
   data-layout-decorate="~{template/page}"
-  th:with="galaxyUrl=${session.galaxyExportToolCallbackURL}"
+  th:with="galaxyUrl=${session.galaxyCallbackUrl}"
 >
   <head>
     <title th:text="#{page.cart.title}">MY AWESOME CART</title>
@@ -37,6 +37,7 @@
           "GalaxySamples.processing": /*[[#{GalaxySamples.processing}]]*/ "_SAMPLES_PREPARING_",
           "GalaxySubmissionError.message": /*[[#{GalaxySubmissionError.message}]]*/ "GalaxySubmissionError.message",
           "GalaxySubmissionError.description": /*[[#{GalaxySubmissionError.description}]]*/ "GalaxySubmissionError.description"
+        }
       };
     </script>
     <style>
