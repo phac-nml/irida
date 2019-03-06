@@ -29,7 +29,7 @@ function ExportToGalaxyFormComponent({
   const validEmail = validateEmail(email);
 
   const galaxyUrl = window
-    .decodeURI(window.GALAXY.galaxyCallback)
+    .decodeURI(window.GALAXY.URL)
     .split("/tool_runner")[0];
   return (
     <div>
