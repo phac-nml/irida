@@ -48,7 +48,8 @@ export async function authenticateOauthClient(clientId, redirectUrl) {
     // this is called from the galaxy_auth_code.tmpl.html page after authorization
     // is granted.
     window.handleGalaxyCode = code => resolve(code);
-    window.handleGalaxyError = () => reject();
+    window.handleGalaxyError = () => reject("ERROR");
+    window.handleClosing = () => reject("CLOSED");
 
     window.open(href, clientId, options);
   });

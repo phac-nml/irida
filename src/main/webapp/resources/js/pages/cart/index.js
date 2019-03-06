@@ -14,10 +14,8 @@ import {
   removeSampleFromCart
 } from "../../redux/sagas/cart";
 import {
-  checkOauthStatusSaga,
   getCartGalaxySamplesSaga,
-  submitGalaxyDataSaga,
-  validateOauthClientSaga
+  submitGalaxyDataSaga
 } from "../../components/galaxy/sagas";
 import { CartPage } from "./components/CartPage";
 
@@ -29,9 +27,7 @@ const store = getStore(
     removeSampleFromCart,
     removeProjectFromCart,
     getCartGalaxySamplesSaga,
-    submitGalaxyDataSaga,
-    checkOauthStatusSaga,
-    validateOauthClientSaga
+    submitGalaxyDataSaga
   }
 );
 
