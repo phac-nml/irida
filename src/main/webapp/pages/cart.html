@@ -40,16 +40,19 @@
         }
       };
     </script>
-    <style>
+    <style th:inline="css">
       body {
         position: relative;
       }
       .body-content {
         position: absolute;
-        top: 53px;
+        top:  [[${galaxyUrl != null ? 106 : 53}]]px;
         right: 0;
         left: 0;
         bottom: 0;
+      }
+      .ag-theme-balham .ag-header {
+        border-bottom: none;
       }
     </style>
   </head>

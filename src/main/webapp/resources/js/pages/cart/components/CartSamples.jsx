@@ -10,7 +10,7 @@ import { actions } from "../../../redux/reducers/cart";
 import { sampleDetailsActions } from "../../../components/SampleDetails/reducer";
 import { SampleRenderer } from "./SampleRenderer";
 import { getCartIds, getSamplesForProject } from "../../../apis/cart/cart";
-import { COLOR_BACKGROUND_LIGHT } from "../../../styles/colors";
+import { COLOR_BACKGROUND_LIGHT, grey4 } from "../../../styles/colors";
 import { SPACE_MD } from "../../../styles/spacing";
 
 const { Search } = Input;
@@ -36,6 +36,7 @@ const CartTools = styled(Row)`
   left: 0;
   padding: ${SPACE_MD};
   height: 65px;
+  border-bottom: 1px solid ${grey4};
 
   .ant-input {
     border: none;
@@ -142,6 +143,9 @@ class CartSamplesComponent extends React.Component {
             rowHeight={80}
             rowStyle={{ width: "100%" }}
             filter={true}
+            suppressRowClickSelection={true}
+            suppressCellSelection={true}
+            suppressRowHoverHighlight={true}
           />
         </CartSamplesWrapper>
       </div>
