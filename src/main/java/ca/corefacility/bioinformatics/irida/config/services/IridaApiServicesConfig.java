@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -41,7 +41,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.concurrent.DelegatingSecurityContextScheduledExecutorService;
+import org.springframework.security.concurrent.DelegatingSecurityContextExecutorService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -347,9 +347,9 @@ public class IridaApiServicesConfig {
 	@Bean
 	@DependsOn("springLiquibase")
 	public Executor analysisTaskExecutor(UserService userService) {
-		ScheduledExecutorService delegateExecutor = Executors.newScheduledThreadPool(analysisTaskThreads);
+		ExecutorService delegateExecutor = Executors.newFixedThreadPool(analysisTaskThreads);
 		SecurityContext schedulerContext = createAnalysisTaskSecurityContext(userService);
-		return new DelegatingSecurityContextScheduledExecutorService(delegateExecutor, schedulerContext);
+		return new DelegatingSecurityContextExecutorService(delegateExecutor, schedulerContext);
 	}
 	
 	@Bean
