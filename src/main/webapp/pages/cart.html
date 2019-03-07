@@ -3,7 +3,7 @@
   xmlns:th="http://www.thymeleaf.org"
   xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
   data-layout-decorate="~{template/page}"
-  th:with="galaxyUrl=${#httpSession.getAttribute('galaxyExportToolCallbackURL')}"
+  th:with="galaxyUrl=${session.galaxyExportToolCallbackURL}"
 >
   <head>
     <title th:text="#{page.cart.title}">MY AWESOME CART</title>
@@ -31,16 +31,13 @@
           "ExportToGalaxyForm.email.warning": /*[[#{ExportToGalaxyForm.email.warning}]]*/ "_EMAIL_WARNING_",
           "ExportToGalaxyForm.makepairedcollection": /*[[#{ExportToGalaxyForm.makepairedcollection}]]*/ "_MAKE_PAIRED_COLLECTION_",
           "ExportToGalaxyForm.makepairedcollection.help": /*[[#{ExportToGalaxyForm.makepairedcollection.help}]]*/ "_COLLECTION_HELP_",
+          "ExportToGalaxyForm.galaxy": /*[[#{ExportToGalaxyForm.galaxy}]]*/ '_EXPORTING AT_',
           "GalaxyFinalSubmission.submit": /*[[#{GalaxyFinalSubmission.submit}]]*/ "_EXPORT_",
-          "GalaxyStepOauth.authenticated": /*[[#{GalaxyStepOauth.authenticated}]]*/ "_AUTHENTICATED_",
-          "GalaxyStepOauth.authenticate": /*[[#{GalaxyStepOauth.authenticate}]]*/ "_AUTHENTICATE_",
-          "GalaxyStepOauth.authenticating": /*[[#{GalaxyStepOauth.authenticating}]]*/ "_AUTHENTICATING_CLIENT_",
-          "GalaxyStepOauth.error": /*[[#{GalaxyStepOauth.error}]]*/ "_AUTHENTICATE_ERROR_",
           "GalaxySamples.ready": /*[[#{GalaxySamples.ready}]]*/ "_SAMPLES_READY_",
           "GalaxySamples.processing": /*[[#{GalaxySamples.processing}]]*/ "_SAMPLES_PREPARING_",
-          "GalaxyOauth.Authentication.Required": /*[[#{GalaxyOauth.Authentication.Required}]]*/ "GALAXY_AUTH_REQUIRED"
-
-
+          "GalaxyOauth.Authentication.Required": /*[[#{GalaxyOauth.Authentication.Required}]]*/ "GALAXY_AUTH_REQUIRED",
+          "GalaxySubmissionError.message": /*[[#{GalaxySubmissionError.message}]]*/ "GalaxySubmissionError.message",
+          "GalaxySubmissionError.description": /*[[#{GalaxySubmissionError.description}]]*/ "GalaxySubmissionError.description"
         },
         galaxyCallback: /*[[${galaxyUrl}]]*/,
         galaxyClientID: /*[[${#httpSession.getAttribute('galaxyExportToolClientID')}]]*/ ""

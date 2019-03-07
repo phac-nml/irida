@@ -7,9 +7,9 @@
       href="/resources/dist/css/access_confirmation.bundle.css"
     />
     <style>
-        body {
-            padding: 14px;
-        }
+      body {
+        padding: 14px;
+      }
       form {
         display: inline-block;
       }
@@ -49,6 +49,7 @@
         class="button-form"
         name="confirmationForm"
         th:action="@{/api/oauth/authorize}"
+        onsubmit="return handleSubmit()"
         method="post"
       >
         <input
@@ -72,6 +73,7 @@
         class="button-form"
         name="denialForm"
         th:action="@{/api/oauth/authorize}"
+        onsubmit="return handleSubmit()"
         method="post"
       >
         <input
@@ -90,5 +92,17 @@
         />
       </form>
     </div>
+    <script>
+      window.onbeforeunload = function() {
+        if (window.opener) {
+          window.opener.handleClosing();
+        }
+      };
+
+      function handleSubmit() {
+        window.onbeforeunload = undefined;
+        return true;
+      }
+    </script>
   </body>
 </html>

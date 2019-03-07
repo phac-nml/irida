@@ -1,10 +1,8 @@
-import { all, call, delay, put, take } from "redux-saga/effects";
+import { call, delay, put, take } from "redux-saga/effects";
 import { actions, types } from "./reducer";
-import {
-  getGalaxyClientAuthentication,
-  getGalaxySamples
-} from "../../apis/galaxy/galaxy";
+import { getGalaxySamples } from "../../apis/galaxy/galaxy";
 import { authenticateOauthClient } from "../../apis/oauth/oauth";
+import { exportToGalaxy } from "../../apis/galaxy/submission";
 
 export function* getCartGalaxySamplesSaga() {
   yield take(types.GET_GALAXY_SAMPLES);
@@ -13,40 +11,37 @@ export function* getCartGalaxySamplesSaga() {
   yield put(actions.setGalaxySamples(samples));
 }
 
-export function* checkOauthStatusSaga() {
-  while (true) {
-    yield take(types.CHECK_OAUTH);
-    const { authenticated } = yield call(
-      getGalaxyClientAuthentication,
-      window.PAGE.galaxyClientID
-    );
-
-    if (authenticated) {
-      yield put(actions.oauthComplete());
-    }
-    yield put(actions.setOathValidationStatus(authenticated));
-  }
-}
-
-export function* validateOauthClientSaga() {
+async function validateOauthClient() {
   const redirect = `${window.TL.BASE_URL}galaxy/auth_code`;
-  while (true) {
-    yield take(types.AUTHENTICATE_OATH);
-    const code = yield call(
-      authenticateOauthClient,
-      window.PAGE.galaxyClientID,
-      redirect
-    );
-    if (typeof code === "undefined") {
-      yield put(actions.oauthError());
-    } else {
-      yield put(actions.oauthSuccess(code, redirect));
-      yield put(actions.oauthComplete());
-    }
-  }
+  return authenticateOauthClient(window.PAGE.galaxyClientID, redirect)
+    .then(code => code)
+    .catch(response => response);
 }
 
 export function* submitGalaxyDataSaga() {
-  yield all([take(types.SET_GALAXY_SAMPLES), take(types.OAUTH_COMPLETE)]);
-  yield put(actions.enableSubmit());
+  while (true) {
+    // 1. Wait for the submit call
+    const {
+      payload: { email, makepairedcollection, samples }
+    } = yield take(types.SUBMIT);
+
+    // 2. Get galaxy Oauth2 code
+    // result code be the code, or constant 'ERROR' for authentication error or 'CLOSED' for window closed
+    const result = yield call(validateOauthClient);
+
+    if (result === "ERROR") {
+      yield put(actions.submitError());
+    } else if (result === "CLOSED") {
+      yield put(actions.oauthWindowClosed());
+    } else {
+      // We have the code!
+      exportToGalaxy(
+        email,
+        makepairedcollection,
+        result,
+        `${window.TL.BASE_URL}galaxy/auth_code`,
+        samples
+      );
+    }
+  }
 }

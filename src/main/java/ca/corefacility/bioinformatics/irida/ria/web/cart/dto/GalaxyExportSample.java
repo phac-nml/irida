@@ -6,6 +6,7 @@ import java.util.Map;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
@@ -64,7 +65,8 @@ public class GalaxyExportSample {
 	 *
 	 * @return {@link Map} of links
 	 */
-	public Map<String, Map<String, String>> get_links() {
+	@JsonProperty("_links")
+	public Map<String, Map<String, String>> getLinks() {
 		return _links;
 	}
 
@@ -73,7 +75,8 @@ public class GalaxyExportSample {
 	 *
 	 * @return {@link Map} of file links
 	 */
-	public Map<String, List<Map<String, Map<String, Map<String, String>>>>> get_embedded() {
+	@JsonProperty("_embedded")
+	public Map<String, List<Map<String, Map<String, Map<String, String>>>>> getEmbedded() {
 		return _embedded;
 	}
 }
