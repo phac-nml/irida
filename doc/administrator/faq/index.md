@@ -133,6 +133,8 @@ You should see `sistr_cmd 1.0.2` as output of the above command.
 
 ## 1. MariaDB
 
+### max key length was too long
+
 MariaDB Ubuntu users may encounter errors when deploying IRIDA due to character set requirements. If the application does not launch and you see the following message in the IRIDA logs: 
 
 ```
@@ -161,4 +163,18 @@ collation-server = utf8_general_ci
 ```
 
 You will need to drop your databases, restart your mysql service, and then recreate your databases before re-running IRIDA for the changes to take effect.
+
+### only_full_group_by error
+
+You may also run into the following error.
+
+```
+Reason: liquibase.exception.DatabaseException: Expression #1 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'irida_uploader_test.ss.sample_id' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
+```
+
+You can fix this by removing the `only_full_group_by` mode from sql
+
+```
+mysql -e "SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
+```
 
