@@ -1,14 +1,39 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      data-layout-decorate="~{template/page}">
-<head>
-<title th:text="#{error.oauth.title}">_OAUTH ERROR_</title>
-</head>
-<body>
-    <main layout:fragment="page" data-error="oauth">
-    <h1 th:text="#{error.oauth.title}">_OAUTH ERROR_</h1>
-    <p th:text="#{error.oauth.content(${exception.message})}">_OAUTH ERROR_</p>
-    <p th:utext="#{error.contact_admins(${adminEmail})}">_contact admins_</p>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title th:text="#{error.oauth.title}">_OAUTH ERROR_</title>
+    <link
+      rel="stylesheet"
+      href="/resources/dist/css/access_confirmation.bundle.css"
+    />
+    <style>
+      body {
+        padding: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <main data-error="oauth">
+      <h1 th:text="#{error.oauth.title}">_OAUTH ERROR_</h1>
+      <p th:text="#{error.oauth.content(${exception.message})}">
+        _OAUTH ERROR_
+      </p>
+      <p th:utext="#{error.contact_admins(${adminEmail})}">_contact admins_</p>
     </main>
-</body>
+
+    <script>
+      /**
+       * Check to see if this is in a new window and can handle a galaxy error.
+       */
+      if (
+        window.opener !== null &&
+        typeof window.opener.handleGalaxyError === "function"
+      ) {
+        window.opener.handleGalaxyError();
+        setTimeout(function() {
+          window.close();
+        }, 3000);
+      }
+    </script>
+  </body>
 </html>

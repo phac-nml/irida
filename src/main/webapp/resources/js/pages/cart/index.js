@@ -7,16 +7,28 @@ import {
   sampleDetailsReducer
 } from "../../components/SampleDetails";
 import { actions } from "../../redux/reducers/app";
+import { reducer as galaxyReducer } from "../../components/galaxy/reducer";
 import {
   empty,
   removeProjectFromCart,
   removeSampleFromCart
 } from "../../redux/sagas/cart";
+import {
+  getCartGalaxySamplesSaga,
+  submitGalaxyDataSaga
+} from "../../components/galaxy/sagas";
 import { CartPage } from "./components/CartPage";
 
 const store = getStore(
-  { sampleDetailsReducer },
-  { empty, getDetailsForSample, removeSampleFromCart, removeProjectFromCart }
+  { sampleDetailsReducer, galaxyReducer },
+  {
+    empty,
+    getDetailsForSample,
+    removeSampleFromCart,
+    removeProjectFromCart,
+    getCartGalaxySamplesSaga,
+    submitGalaxyDataSaga
+  }
 );
 
 render(

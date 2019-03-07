@@ -3,6 +3,7 @@
   xmlns:th="http://www.thymeleaf.org"
   xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
   data-layout-decorate="~{template/page}"
+  th:with="galaxyUrl=${session.galaxyExportToolCallbackURL}"
 >
   <head>
     <title th:text="#{page.cart.title}">MY AWESOME CART</title>
@@ -10,6 +11,7 @@
     <style th:text="${pipeline_plugin_style}"></style>
     <script th:inline="javascript">
       window.PAGE = {
+        user: /*[[${#authentication.getPrincipal().getEmail()}]]*/ "user@nowhere.org",
         i18n: {
           "CartEmpty.heading": /*[[#{CartEmpty.heading}]]*/ "Your cart is empty",
           "CartEmpty.subheading": /*[[#{CartEmpty.subheading}]]*/ "Add some samples to it to make it happy :)",
@@ -22,8 +24,23 @@
           "SampleDetails.organism": /*[[#{SampleDetails.organism}]]*/ "_ORG",
           "SampleDetails.createdDate": /*[[#{SampleDetails.createdDate}]]*/ "_CREATED",
           "SampleDetails.modifiedDate": /*[[#{SampleDetails.modifiedDate}]]*/ "_MODIFIED",
-          "CartTools.menu.pipelines": /*[[#{CartTools.menu.pipelines}]]*/ "_PIPELINES"
-        }
+          "CartTools.menu.pipelines": /*[[#{CartTools.menu.pipelines}]]*/ "_PIPELINES_TAB_",
+          "CartTools.menu.galaxy": /*[[#{CartTools.menu.galaxy}]]*/ "_GALAXY_TAB_",
+          "ExportToGalaxyForm.email": /*[[#{ExportToGalaxyForm.email}]]*/ "_EMAIL_",
+          "ExportToGalaxyForm.email.help": /*[[#{ExportToGalaxyForm.email.help}]]*/ "_EMAIL_HELP_",
+          "ExportToGalaxyForm.email.warning": /*[[#{ExportToGalaxyForm.email.warning}]]*/ "_EMAIL_WARNING_",
+          "ExportToGalaxyForm.makepairedcollection": /*[[#{ExportToGalaxyForm.makepairedcollection}]]*/ "_MAKE_PAIRED_COLLECTION_",
+          "ExportToGalaxyForm.makepairedcollection.help": /*[[#{ExportToGalaxyForm.makepairedcollection.help}]]*/ "_COLLECTION_HELP_",
+          "ExportToGalaxyForm.galaxy": /*[[#{ExportToGalaxyForm.galaxy}]]*/ '_EXPORTING AT_',
+          "GalaxyFinalSubmission.submit": /*[[#{GalaxyFinalSubmission.submit}]]*/ "_EXPORT_",
+          "GalaxySamples.ready": /*[[#{GalaxySamples.ready}]]*/ "_SAMPLES_READY_",
+          "GalaxySamples.processing": /*[[#{GalaxySamples.processing}]]*/ "_SAMPLES_PREPARING_",
+          "GalaxyOauth.Authentication.Required": /*[[#{GalaxyOauth.Authentication.Required}]]*/ "GALAXY_AUTH_REQUIRED",
+          "GalaxySubmissionError.message": /*[[#{GalaxySubmissionError.message}]]*/ "GalaxySubmissionError.message",
+          "GalaxySubmissionError.description": /*[[#{GalaxySubmissionError.description}]]*/ "GalaxySubmissionError.description"
+        },
+        galaxyCallback: /*[[${galaxyUrl}]]*/,
+        galaxyClientID: /*[[${#httpSession.getAttribute('galaxyExportToolClientID')}]]*/ ""
       };
     </script>
     <style>
@@ -40,13 +57,14 @@
     </style>
   </head>
   <body>
-    <div
-      id="root"
-      style="height: 100%;"
-      layout:fragment="page"
-    ></div>
+    <div id="root" style="height: 100%;" layout:fragment="page"></div>
 
     <th:block layout:fragment="scripts">
+      <div th:if="${galaxyUrl != null}">
+        <form id="js-galaxy-form" th:action="${galaxyUrl}" method="post">
+          <input id="js-query" name="json_params" type="hidden">
+        </form>
+      </div>
       <script src="/resources/dist/js/cart.bundle.js"></script>
     </th:block>
   </body>
