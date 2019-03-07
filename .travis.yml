@@ -15,8 +15,6 @@ env:
     - "TEST_SUITE=service_testing"
     - "TEST_SUITE=rest_testing"
 
-dist: xenial
-
 services:
   - docker
 
