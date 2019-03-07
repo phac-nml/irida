@@ -1,6 +1,6 @@
 ---
-name: IRIDA development fixes
-about: Development fixes for IRIDA to make the dev's life easier and the codebase cleaner.  Refactors, new modules, etc.
+name: Development fixes
+about: Fixes for IRIDA's codebase to make the developer's life easier and the codebase cleaner.  Refactors, new modules, etc.
 title: ''
 labels: developer
 assignees: ''
