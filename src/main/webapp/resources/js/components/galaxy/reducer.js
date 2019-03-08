@@ -3,23 +3,19 @@ export const types = {
   MAKE_PAIRED_COLLECTION_UPDATED: "GALAXY/MAKE_PAIRED_COLLECTION_UPDATED",
   GET_GALAXY_SAMPLES: "GALAXY/GET_GALAXY_SAMPLES",
   SET_GALAXY_SAMPLES: "GALAXY/SET_GALAXY_SAMPLES",
-  CHECK_OAUTH: "GALAXY/CHECK_OAUTH",
-  SET_OAUTH_AUTHENTICATION: "GALAXY/CHECK_OAUTH_VALIDATION",
-  AUTHENTICATE_OATH: "GALAXY/AUTHENTICATE_OAUTH",
-  OAUTH_COMPLETE: "GALAXY/OAUTH_COMPLETE",
-  OAUTH_SUCCESS: "GALAXY/OAUTH_SUCCESS",
-  OAUTH_ERROR: "GALAXY/OAUTH_ERROR",
+  OAUTH_WINDOW_CLOSED: "GALAXY_OAUTH_WINDOW_CLOSED",
   SUBMITTABLE: "GALAXY/SUBMITTABLE",
-  SUBMIT: "GALAXY/SUBMIT"
+  SUBMIT: "GALAXY/SUBMIT",
+  SUBMIT_ERROR: "GALAXY/SUBMIT_ERROR"
 };
 
 const initialState = {
   email: window.PAGE.user,
   makepairedcollection: true,
   samples: undefined,
-  oauthAuthorized: undefined,
-  oauthError: false,
-  submittable: false
+  submitted: false,
+  submittable: false,
+  errored: false
 };
 
 export const reducer = (state = initialState, action = {}) => {
@@ -32,20 +28,13 @@ export const reducer = (state = initialState, action = {}) => {
         makepairedcollection: action.payload.makepairedcollection
       };
     case types.SET_GALAXY_SAMPLES:
-      return { ...state, samples: action.payload.samples };
-    case types.SET_OAUTH_AUTHENTICATION:
-      return { ...state, oauthAuthorized: action.payload.isAuthorized };
-    case types.OAUTH_SUCCESS:
-      return {
-        ...state,
-        redirect: action.payload.redirect,
-        code: action.payload.code,
-        oauthAuthorized: true
-      };
-    case types.OAUTH_ERROR:
-      return { ...state, oauthError: true };
-    case types.SUBMITTABLE:
-      return { ...state, submittable: true };
+      return { ...state, samples: action.payload.samples, submittable: true };
+    case types.OAUTH_WINDOW_CLOSED:
+      return { ...state, submittable: true, submitted: false };
+    case types.SUBMIT:
+      return { ...state, submitted: true };
+    case types.SUBMIT_ERROR:
+      return { ...state, submittable: true, submitted: false, errored: true };
     default:
       return { ...state };
   }
@@ -62,33 +51,18 @@ export const actions = {
     type: types.SET_GALAXY_SAMPLES,
     payload: { samples }
   }),
-  checkOauthStatus: () => ({ type: types.CHECK_OAUTH }),
-  setOathValidationStatus: isAuthorized => ({
-    type: types.SET_OAUTH_AUTHENTICATION,
+  submit: (email, makepairedcollection, samples) => ({
+    type: types.SUBMIT,
     payload: {
-      isAuthorized
+      email,
+      makepairedcollection,
+      samples
     }
   }),
-  authenticateOauthClient: () => ({
-    type: types.AUTHENTICATE_OATH
+  submitError: () => ({
+    type: types.SUBMIT_ERROR
   }),
-  oauthSuccess: (code, redirect) => ({
-    type: types.OAUTH_SUCCESS,
-    payload: {
-      code,
-      redirect
-    }
-  }),
-  oauthError: () => ({
-    type: types.OAUTH_ERROR
-  }),
-  oauthComplete: () => ({
-    type: types.OAUTH_COMPLETE
-  }),
-  enableSubmit: () => ({
-    type: types.SUBMITTABLE
-  }),
-  submit: () => ({
-    type: types.SUBMIT
+  oauthWindowClosed: () => ({
+    type: types.OAUTH_WINDOW_CLOSED
   })
 };
